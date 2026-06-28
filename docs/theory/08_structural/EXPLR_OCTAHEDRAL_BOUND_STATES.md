@@ -1,7 +1,6 @@
 # Exploration — Volumetric Properties + Structural Pontification on Octahedral Bound States
 
-**Tag:** [EXPLORATORY] / **[POLYTOPE-DUALITY HYPOTHESIS REFUTED 2026-04-27]** — the cluster-on-SC+FCC vs algebra-on-BCC duality reading was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a topology that INCLUDES the BCC corners. See §10 (Corrigendum, end of file). The volumetric properties (§1) and the centered-octahedral-number facts (§4) remain valid as math; only the polytope-duality interpretation (§2-§3) is refuted.
-**Date:** 2026-04-27 (with corrigendum same day)
+**Tag:** [EXPLORATORY] / **[POLYTOPE-DUALITY HYPOTHESIS REFUTED]** — the cluster-on-SC+FCC vs algebra-on-BCC duality reading was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a topology that INCLUDES the BCC corners. See §10 (Corrigendum, end of file). The volumetric properties (§1) and the centered-octahedral-number facts (§4) remain valid as math; only the polytope-duality interpretation (§2-§3) is refuted.
 **Builds on:** [`EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md`](EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md) (also has §11 corrigendum), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
 **Discipline reminder:** every numerical claim tagged per CLAUDE.md epistemic ladder; no pattern-matching promotion; the existing FTD-0097 look-elsewhere result rules out promotion based on monomial-level numerical fits at ε ≤ 10⁻⁴.
 
@@ -9,9 +8,9 @@
 
 ## 0 · Why this document exists
 
-`EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md` (companion, this morning) identified the cleanest mathematical interpretation of the FTD-0107 cluster: 25 = O(2) is the second centered octahedral number, and the cluster realizes the L¹-ball of radius 2 in ℤ³, which is the integer-point fillout of a regular octahedron. The cluster lives on SC + FCC + face2 sub-stencils, *complementary* to the BCC sub-stencil where FTD's algebraic spine lives.
+`EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md` (companion document) identified the cleanest mathematical interpretation of the FTD-0107 cluster: 25 = O(2) is the second centered octahedral number, and the cluster realizes the L¹-ball of radius 2 in ℤ³, which is the integer-point fillout of a regular octahedron. The cluster lives on SC + FCC + face2 sub-stencils, *complementary* to the BCC sub-stencil where FTD's algebraic spine lives.
 
-This document does two things the morning doc didn't:
+This document does two things the companion doc didn't:
 
 1. **Volumetric expansion**: surface area, interior structure, scaling, anisotropy, all of the size-3 thru size-6 octahedral sequence — what the cluster looks like as a 3D object and how that geometry behaves under L→ size scaling.
 
@@ -119,7 +118,7 @@ If this picture is correct, FTD is not a "physics-recovery" framework in the sta
 
 This is a meaningful claim. It either:
 - **Survives engine testing** (if cluster dynamics on SC+FCC track Watson-identity quantities on BCC in dual ratios), in which case it's a structural [SELECTION], or
-- **Fails engine testing** (if no such dual relationship is measurable), in which case the morning doc's complementarity hypothesis is closed-negative and we revisit.
+- **Fails engine testing** (if no such dual relationship is measurable), in which case the companion doc's complementarity hypothesis is closed-negative and we revisit.
 
 **The engine-testable prediction**: dynamics on the SC+FCC sub-stencil (where the cluster lives) and on the BCC sub-stencil (where the algebra lives) should exhibit **dual scaling**. Specifically, cluster-related observables (manifestation rate, cluster surface tension, 25-voxel saturation point) measured on SC+FCC voxels should track the BCC-sub-stencil eigenvalue spectrum (the FTD-0093 measurement, which closed-negative for a specific 45.31 ratio prediction but which has more spectrum content than that single ratio). If they're structurally related by O_h Plücker-type duality, ratios of cluster-side observables to algebra-side observables should have specific values predictable from the polytope duality.
 
@@ -205,7 +204,7 @@ If this holds, it's a structural reading that says **the lattice has two complem
 
 Whether this picture survives further engine testing — particularly the volumetric scaling experiment in §4 (does cluster size jump to O(3)=63 at higher injection?) — determines whether FTD has a structural unification or just a parallel pair of pillars.
 
-**The honest read:** the project is at the boundary between "two pillars without connection" (where it's been since at least 2026-04-19) and "two pillars connected by polytope duality" (which is the new hypothesis from today). The engine-testable predictions in §1-§4 are the way to decide which.
+**The honest read:** the project is at the boundary between "two pillars without connection" and "two pillars connected by polytope duality" (the hypothesis advanced here). The engine-testable predictions in §1-§4 are the way to decide which.
 
 ---
 
@@ -240,7 +239,7 @@ In order of leverage:
 
 ---
 
-## 10 · Corrigendum — polytope-duality hypothesis REFUTED by engine measurement (2026-04-27, same day)
+## 10 · Corrigendum — polytope-duality hypothesis REFUTED by engine measurement
 
 **See `EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md` §11 for the primary corrigendum.** This document built on that document's §3 hypothesis; both are refuted by the same measurement.
 
@@ -280,9 +279,9 @@ In order of leverage:
 
 ### Methodological note
 
-The polytope-duality reading was elegant and seemed to map cleanly onto the existing Moore Layer Theorem. The engine measurement directly refuted it within hours of being proposed — exactly the discipline working as intended. The morning's pontification is now a documented dead end, and the actual cluster topology is the new starting point.
+The polytope-duality reading was elegant and seemed to map cleanly onto the Moore Layer Theorem. The engine measurement directly refuted it — exactly the discipline working as intended. The polytope-duality pontification is a documented dead end, and the actual cluster topology is the starting point.
 
-The strongest positive structural finding (FTD-0107: 25-voxel cluster, deterministic, L-invariant) survives and is now **harder to interpret structurally** than this document claimed. The cluster shape involves all four Moore sub-stencils (center, SC, FCC, BCC), not the SC+FCC+face2 subset. The "WHY 25 voxels?" question persists; the morning's polytope-duality answer is wrong.
+The strongest positive structural finding (FTD-0107: 25-voxel cluster, deterministic, L-invariant) survives and is **harder to interpret structurally** than this document claimed. The cluster shape involves all four Moore sub-stencils (center, SC, FCC, BCC), not the SC+FCC+face2 subset. The "WHY 25 voxels?" question persists; the polytope-duality answer is wrong.
 
 The structural gap (algebra  engine) remains the load-bearing problem.
 

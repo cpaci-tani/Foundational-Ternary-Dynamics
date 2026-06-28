@@ -4,7 +4,6 @@
 the hash-locked pre-registration `PREREG_WEAK_SU2_PROVENANCE_v1.md`. It
 records one of the three pre-blessed verdicts. It promotes and demotes no
 LEDGER claim; where it finds a mistag it *recommends* a correction (§8).
-**Date:** 2026-05-22
 **LEDGER row:** FTD-0192.
 **Pre-registration audited:** [`PREREG_WEAK_SU2_PROVENANCE_v1.md`](PREREG_WEAK_SU2_PROVENANCE_v1.md)
 — SHA256 `25ee75f4cf472841bf79a2c14495728731b2b2c27f5395ab28f3b30ea2c61784`,
@@ -277,7 +276,7 @@ Out of scope, explicitly: this audit does **not** re-litigate
 
 ---
 
-*Audit executed 2026-05-22 against the commit tagged
+*Audit executed against the commit tagged
 `preregister-weak-su2-provenance-v1`. Verdict: COUNT-MATCH. The
 Q10 → Q11 → Q12 chain terminates: FTD's discrete ontology determines the
 electroweak skeleton but not the rank-2 `SU(2)×U(1)` structure; the

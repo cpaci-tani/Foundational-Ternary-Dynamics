@@ -2,8 +2,6 @@
 
 ## G* as the Bridge Between Geometric Self-Reference and Spectral Self-Duality
 
-**Date:** February 5, 2026
-**Framework:** Foundational Ternary Dynamics v5.17
 **Status:** Foundational extension - Information-theoretic perspective
 **Verification:** `scripts/verification/verify_trit_framework.py`
 

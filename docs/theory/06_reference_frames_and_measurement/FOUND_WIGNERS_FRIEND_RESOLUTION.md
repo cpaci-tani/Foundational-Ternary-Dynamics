@@ -2,12 +2,9 @@
 
 ## Why There Is No Paradox When Measurement Is Algebraic
 
-**Date:** March 17, 2026 (vocabulary refresh 2026-05-01)
-**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Foundational synthesis with epistemic classification
-**Authors:** cpaci & Claude
 
-> **Vocabulary refresh (2026-05-01):** The Wigner's Friend resolution is purely structural — it depends on measurement being an algebraic operation (Type-III → Type-I descent), not on the metaphysics of "reference frame context." This document's "observers" are restated as **reference frames with observation-layer coupling** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The paradox dissolves regardless of vocabulary because the resolution is algebraic; the rename only sharpens what work each "observer" actually does (it's frame-relative coupling, not subjective experience).
+> **Vocabulary:** The Wigner's Friend resolution is purely structural — it depends on measurement being an algebraic operation (Type-III → Type-I descent), not on the metaphysics of "reference frame context." This document's "observers" are stated as **reference frames with observation-layer coupling** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The paradox dissolves regardless of vocabulary because the resolution is algebraic; the naming only sharpens what work each "observer" actually does (it's frame-relative coupling, not subjective experience).
 
 **Depends on:**
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x), projection hierarchy, Born rule reconstruction
@@ -479,7 +476,3 @@ Three contributions not found in existing FTD documents:
 12. Takesaki, M. (1970). "Tomita's theory of modular Hilbert algebras and its applications." *Lecture Notes in Mathematics* **128**. Springer.
 
 ---
-
-*Wigner's Friend Resolution — Foundational Ternary Dynamics v5.28*
-*Prepared for critical evaluation*
-*March 17, 2026*

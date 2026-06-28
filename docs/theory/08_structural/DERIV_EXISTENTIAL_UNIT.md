@@ -1,6 +1,6 @@
 # The Existential Unit: The 3^3 Minimal Complete Lattice
 
-**Status:** v1.0 | April 5, 2026 | [THEOREM] (Sections 1-8), [CONJECTURE] (Section 9)
+**Status:** [THEOREM] (Sections 1-8), [CONJECTURE] (Section 9)
 **Proof script:** `scripts/exploration/lattice_3x3x3_symmetries.py`
 **Dependencies:** DERIV_MOORE_GAUGE_STRUCTURE, DERIV_CUBOCTAHEDRAL_INTEGERS, DERIV_STABILIZER_DECOMPOSITION
 

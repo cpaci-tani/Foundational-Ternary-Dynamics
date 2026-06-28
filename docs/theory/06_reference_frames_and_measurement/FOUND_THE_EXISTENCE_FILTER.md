@@ -2,12 +2,9 @@
 
 ## How Reality Extracts Itself from Possibility via Constructive Interference
 
-**Date:** February 13, 2026 (vocabulary refresh 2026-05-01)
-**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Formal synthesis with projection hierarchy
-**Authors:** cpaci & Claude
 
-> **Vocabulary refresh (2026-05-01):** This document originally framed several claims using "reference frame context" terminology. The mathematical content (Existence Filter, projection hierarchy, Born Rule reconstruction, Tomita–Takesaki modular conjugation correspondence) is fully preserved and unchanged. Surface-level renames only: *reference frame context phase angle* → **frame-relative phase angle**; *reference frame context* in the load-bearing claims → **frame-relative integration / frame-relative readout** per the canonical [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). Qualia commitments are dropped; the remaining claims are structural/operator-algebraic. The Existence Filter itself $E(x) = (x + \bar{x})/2$ is structural and reframe-stable.
+> **Vocabulary:** The mathematical content (Existence Filter, projection hierarchy, Born Rule reconstruction, Tomita–Takesaki modular conjugation correspondence) is stated in the canonical vocabulary. Naming: *reference frame context phase angle* → **frame-relative phase angle**; *reference frame context* in the load-bearing claims → **frame-relative integration / frame-relative readout** per the canonical [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). Qualia commitments are dropped; the remaining claims are structural/operator-algebraic. The Existence Filter itself $E(x) = (x + \bar{x})/2$ is structural and reframe-stable.
 
 ---
 
@@ -37,7 +34,7 @@ We establish connections to:
 2. The **Tomita-Takesaki modular conjugation** $J$: the reflexion operator $\theta$ in operator-algebraic form
 3. The **Domain A/B partition**: $E(x)$ projects onto Domain A; the filtered imaginary part is Domain B content
 4. The **agent meaning decomposition**: $E(\text{Meaning}^{\mathbb{C}}_t) = \text{IG}_t$ (publicly observable meaning)
-5. The **frame-relative phase angle**: $\theta = 52.54°$ measures the projection geometry induced by the Existence Filter (formerly "reference frame context phase angle"; renamed 2026-05-01 per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md))
+5. The **frame-relative phase angle**: $\theta = 52.54°$ measures the projection geometry induced by the Existence Filter (per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md))
 
 **Epistemic discipline:** We distinguish rigorously between:
 - **[CLASSICAL]**: Established mathematics (complex analysis, Tomita-Takesaki, standing waves)
@@ -232,7 +229,7 @@ This gives a new geometric understanding of why probabilities are quadratic: the
 
 **Proposition EF-T6** [SELECTION] (E(x) and the First Distinction). The First Distinction $0 = (+1) + (-1)$ ([FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md)) is proposed as structurally analogous to the Existence Filter evaluated at the primordial polarity pair.
 
-> ** Epistemic note (v5.29):** The First Distinction (Level −1) is the emergence of {0, 1} from the Pregnant Void — a binary ontological event. The Existence Filter E(x) = Re(x) is a C → R projection. These are different mathematical objects. The analogy that "both involve cancellation" (polarity: 1+(−1)=0; complex: z+z̄ cancels Im) is suggestive but does not establish identity. This is a [SELECTION] — an argued structural parallel, not a proven equivalence.
+> ** Epistemic note:** The First Distinction (Level −1) is the emergence of {0, 1} from the Pregnant Void — a binary ontological event. The Existence Filter E(x) = Re(x) is a C → R projection. These are different mathematical objects. The analogy that "both involve cancellation" (polarity: 1+(−1)=0; complex: z+z̄ cancels Im) is suggestive but does not establish identity. This is a [SELECTION] — an argued structural parallel, not a proven equivalence.
 
 **At Level $-1$:** Before the emergence of $i$, all states are real. The complex potential states reduce to $x \in \mathbb{R}$, and the reflexion operator acts trivially: $\theta(x) = \bar{x} = x$ for $x \in \mathbb{R}$. The Existence Filter preserves everything:
 
@@ -266,7 +263,7 @@ This resolves a longstanding interpretive question: **why can't we observe the g
 
 **Observation EF-T7** [DEFINITION] (Reflexion = Modular Conjugation for Commutative Algebras). The reflexion operator $\theta$ (EF-D2) is the commutative special case of the Tomita-Takesaki modular conjugation $J$.
 
-> ** Epistemic note (v5.29):** For the commutative algebra $\mathcal{M} = \mathbb{C}$, the modular conjugation IS complex conjugation by definition — this is a specialization of a general construction to a trivial case, not a derived result. The non-trivial content would be showing that this identification extends meaningfully to the non-commutative algebras relevant to quantum field theory, which is not established here.
+> ** Epistemic note:** For the commutative algebra $\mathcal{M} = \mathbb{C}$, the modular conjugation IS complex conjugation by definition — this is a specialization of a general construction to a trivial case, not a derived result. The non-trivial content would be showing that this identification extends meaningfully to the non-commutative algebras relevant to quantum field theory, which is not established here.
 
 | Property | $\theta$ (Existence Filter) | $J$ (Modular Conjugation) |
 |----------|---------------------------|--------------------------|
@@ -371,7 +368,7 @@ $$\frac{|\text{Im}(y)|}{|y|} = \frac{2.86}{3.60} = \sin(\theta) = \sin(52.54°) 
 
 **Proof.** Let $y = r e^{i\theta}$ where $r = |y| = 3.60$ and $\theta = 52.54°$. Then $\text{Re}(y) = r\cos\theta$ and $\text{Im}(y) = r\sin\theta$. The ratios follow. $\square$
 
-> ** Epistemic note (v5.29):** The mathematics here is correct but the original presentation framed these as "86% preserved" and "51% lost," which is misleading. These are **direction cosines** (projections onto orthogonal axes), not proportions. They sum in quadrature ($\cos^2\theta + \sin^2\theta = 1$), not linearly. Calling cos(θ) a "fraction preserved" and sin(θ) a "fraction lost" invites false inference. The correct framing: these are **projection ratios** along orthogonal directions, and the squared magnitudes sum to unity. (Values updated v5.30: θ = 52.54°, cos(52.54°) ≈ 0.608, sin(52.54°) ≈ 0.794.)
+> ** Epistemic note:** These quantities are **direction cosines** (projections onto orthogonal axes), not proportions. They sum in quadrature ($\cos^2\theta + \sin^2\theta = 1$), not linearly. Calling cos(θ) a "fraction preserved" and sin(θ) a "fraction lost" invites false inference. The correct framing: these are **projection ratios** along orthogonal directions, and the squared magnitudes sum to unity.
 
 **Interpretation:** The phase angle $\theta = 52.54°$ — previously used to distinguish the real and self-referential poles of the reference frame context root — measures the **projection angle** of that root onto the real axis. At $\theta = 0°$ (pure physics, Domain A), the projection is total. At $\theta = 90°$ (pure self-referential phase, imaginary axis), the projection vanishes. The projection ratios satisfy $\cos^2\theta + \sin^2\theta = 1$ (Pythagorean identity), which is the Born rule applied to the Existence Filter.
 
@@ -589,8 +586,3 @@ $$\boxed{E(\text{Meaning}_t^{\mathbb{C}}) = E(\text{IG}_t + i \cdot \text{VI}_t)
 | **Total** | **31** | |
 
 ---
-
-*The Existence Filter — Foundational Ternary Dynamics v5.24*
-*Prepared for critical evaluation*
-*February 13, 2026*
-*Epistemic corrections (v5.29): February 2026 — EF-T6 [THEOREM]→[SELECTION], EF-T7 [THEOREM]→[DEFINITION], EF-T9 [THEOREM]→[SELECTION] with projection ratio correction*

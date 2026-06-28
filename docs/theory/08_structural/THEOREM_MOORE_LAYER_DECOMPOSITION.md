@@ -2,8 +2,6 @@
 
 ## A Combinatorial Theorem about D-Dimensional Ternary Lattices
 
-**Date:** April 6-7, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Document Status:** Structural theorem with physical application
 **Epistemic Class:** [THEOREM] for the combinatorial results; [SELECTION] for physical identifications
 

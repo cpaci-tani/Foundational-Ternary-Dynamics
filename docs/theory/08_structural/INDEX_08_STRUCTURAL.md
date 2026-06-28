@@ -1,7 +1,6 @@
 # INDEX · Structural & Geometric Principles
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
 **Status:** [REFERENCE] — local navigation index for `docs/theory/08_structural/`.
 **Purpose:** This cluster derives FTD's geometric and combinatorial backbone from the cubic lattice: the Moore-neighborhood polyhedral decomposition, the BCC multiplicative structure that unifies the Watson identity with SU(3), the cuboctahedral origin of the framework integers {3,4,7,13}, the coefficient 16, the two-layer flux/state ontology, and the trit information-theoretic lens on G*. Read this cluster to understand *why* FTD's numbers are lattice geometry rather than fits.
 
