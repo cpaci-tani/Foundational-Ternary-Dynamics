@@ -1,11 +1,10 @@
 # AUDIT — detdet_ζ Structural Identity: UNDERDETERMINED
 
 **Tag:** `[UNDERDETERMINED]` (pre-reg §6 UNDERDETERMINED). **No spine claim moved.**
-**Date:** 2026-05-28
 **Result of:** `PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md` (FTD-0235 provisional), SHA256 `03b967c760fa38fffa8c7d08d5a75c34392dcd2c4c546f24a9c58b4d97a78122` (commit deferred by owner).
 **Verifier:** [`scripts/proofs/proof_det_identity.py`](../../../scripts/proofs/proof_det_identity.py).
 
-> **Correction (2026-05-28, post owner review).** This verdict was first written
+> **Correction (post owner review).** This verdict was first written
 > as **CLOSED-NEGATIVE**, resting partly on an argument that the operator
 > determinant is "a finite product, categorically different from an *infinite*
 > ζ-regularized determinant." **That argument was wrong.** As the owner noted,

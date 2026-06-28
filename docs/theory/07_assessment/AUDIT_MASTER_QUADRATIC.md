@@ -4,8 +4,7 @@
 `x² − 16G*²x + 16G*³ = 0` derives the fine-structure constant.
 **Trigger:** after Phase G+H resolved the engine-side V(r) measurement as
 geometric Coulomb, the master quadratic is the only remaining α-derivation
-claim in FTD. User requested a full audit.
-**Date:** 2026-04-19
+claim in FTD.
 **Scope:** the polynomial itself, the claim `x₊ = 1/α`, the 7-term precision
 series, and the status of each supporting document.
 **Verdict (short):** the master quadratic is **mathematically real and
@@ -15,9 +14,9 @@ which polynomial form? which root?) that are honestly flagged in the
 source material but overstated in summary headings. Tree-level result is
 **[STRONGLY MOTIVATED CONJECTURE]**. The 7-term precision series is a
 **post-hoc fit** and should be demoted from any "< 0.001 ppt derivation"
-framing. *(Historical:)* The dual-prediction property (x+ matches 1/α, x- matches N_c=3
+framing. The dual-prediction property (x+ matches 1/α, x- matches N_c=3
 simultaneously from the same polynomial) was the strongest structural
-evidence as of 2026-04-19. **2026-05-22 update:** the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now carried by FTD-0319's adversarial polynomial-template scan (2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×) — independent of the historical target-pair framing.
+evidence, but the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now carried by FTD-0319's adversarial polynomial-template scan (2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×) — independent of the historical target-pair framing.
 
 ---
 
@@ -190,7 +189,7 @@ is:
 
 - Numerical: 1/α ≈ 137.036, master quadratic gives 137.036, match to
   1.26 ppm.
-- ~~Dual: x- = 3.024 matches N_c = 3, simultaneously.~~ — **2026-05-22 update:** the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The dual-prediction argument no longer carries structural weight; FTD-0319's adversarial polynomial-template scan (0 non-G\* dual-matchers across 2.65 M polynomials over an 18-constant FTD-undesigned basket) is the new canonical structural-uniqueness evidence. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
+- ~~Dual: x- = 3.024 matches N_c = 3, simultaneously.~~ — the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The dual-prediction argument no longer carries structural weight; FTD-0319's adversarial polynomial-template scan (0 non-G\* dual-matchers across 2.65 M polynomials over an 18-constant FTD-undesigned basket) is the canonical structural-uniqueness evidence. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - Structural: in FTD's gauge-theory narrative, x+ is the "largest
   coupling" → identified with U(1) electromagnetism. *(The historical
   "x- = second coupling → SU(3) color" reading depended on the
@@ -216,7 +215,7 @@ and should be rewritten:
 - The 13 extra digits of agreement have no experimental content.
 - The coefficients were **fitted** to CODATA, then observed to have a
   clean base-integer decomposition in post-hoc form. Per
-  `CONJ_SEVEN_TERM_PRECISION_SERIES.md` §3.3 rigidity audit (2026-04-17):
+  `CONJ_SEVEN_TERM_PRECISION_SERIES.md` §3.3 rigidity audit:
   6 out of 7 coefficients are unique in the "clean integer" family, but
   only *after* they are constrained to match CODATA. That is circular.
 
@@ -253,7 +252,7 @@ physical content beyond the 11-digit measurement."
 
 ### What the structural-uniqueness argument buys (historical "dual-prediction" framing, post-v1.4)
 
-*(Historical claim, as of 2026-04-19:)* The strongest honest claim was: among all natural quadratic relations on
+The strongest honest dual-prediction claim was: among all natural quadratic relations on
 the graded period ring of E, **the master quadratic is the unique
 polynomial whose two roots simultaneously match the physical constants
 1/α (to 1.26 ppm) and N_c (to 0.8%).** This joint match was roughly
@@ -262,13 +261,12 @@ proof of an identity, but it was much stronger than either single-root
 match alone, and it was the piece of the argument most worth taking
 seriously.
 
-**2026-05-22 update.** The `x_-  N_c` identification is **retired** per v1.4 §5; the dual-prediction framing is no longer load-bearing. The polynomial-template-uniqueness fact, however, is **independent of the target identification** and has been substantially strengthened by FTD-0319 (the scan's dedicated LEDGER row, minted 2026-06-24 to resolve the FTD-0189 ID collision — that id is the graviton audit): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket (0 non-G\* dual-matchers; rank 1 by ~130×). This is the new canonical structural-uniqueness evidence going forward. **Caveats (2026-06-24 spine audit):** the ~130× gap is *within the G\*-family*; uniqueness is asymmetric-tolerance-conditioned (under a symmetric 1% gate ~32 dual-matchers appear across 11 constants); and the "~4×10⁵:1 Bayes" figure cited elsewhere is *not* computed by the runner (~19× scan-size only). Treat as `[NUMERICAL FACT]` (unique dual-matcher under the registered gate), not a structural Bayes result.
+The `x_-  N_c` identification is **retired** per v1.4 §5; the dual-prediction framing is no longer load-bearing. The polynomial-template-uniqueness fact, however, is **independent of the target identification** and has been substantially strengthened by FTD-0319 (the scan's dedicated LEDGER row, minted to resolve the FTD-0189 ID collision — that id is the graviton audit): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket (0 non-G\* dual-matchers; rank 1 by ~130×). This is the canonical structural-uniqueness evidence. **Caveats (spine audit):** the ~130× gap is *within the G\*-family*; uniqueness is asymmetric-tolerance-conditioned (under a symmetric 1% gate ~32 dual-matchers appear across 11 constants); and the "~4×10⁵:1 Bayes" figure cited elsewhere is *not* computed by the runner (~19× scan-size only). Treat as `[NUMERICAL FACT]` (unique dual-matcher under the registered gate), not a structural Bayes result.
 
-## 7 · Recommendations — status as of 2026-04-19
+## 7 · Recommendations
 
 Three follow-ups were identified as routes to elevate [SELECTION] to
-[THEOREM]. All three have been **attempted in the same audit session**;
-results below.
+[THEOREM]. All three have been **attempted**; results below.
 
 ### 7.1 · Alternative CM curves — **RESOLVED in favour of the master quadratic (all 9 class-number-1 fields)**
 
@@ -365,12 +363,12 @@ Until this is closed, the master quadratic's `x+ = 1/α` identification
 is a numerical match, not a derivation — and the `< 0.001 ppt` framing
 in CLAUDE.md remains misleading even after the 7-term retraction.
 
-### 7.4 · Retire the "< 0.001 ppt" headline (done — historical chronology)
+### 7.4 · Retire the "< 0.001 ppt" headline
 
-`CLAUDE.md` line 40 was rewritten in the 2026-04-19 session to replace the "< 0.001 ppt
+`CLAUDE.md` replaces the "< 0.001 ppt
 with 7-term expansion" framing with:
 - "1.26 ppm tree-level" on 1/α
-- *(Historical:)* Dual-prediction via x_- ≈ N_c (0.80%) — **subsequently retired** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (2026-05-22); LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now FTD-0319's adversarial polynomial-template scan.
+- Dual-prediction via x_- ≈ N_c (0.80%) — **retired** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now FTD-0319's adversarial polynomial-template scan.
 - [STRONGLY MOTIVATED CONJECTURE] tag on the physical identification `x_+  1/α` (FTD-0013)
 - 7-term expansion explicitly flagged as [CONJECTURE] post-hoc fit
   beyond experimental precision

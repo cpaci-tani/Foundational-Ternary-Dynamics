@@ -1,10 +1,8 @@
 # PROTOCOL — Pre-registered look-elsewhere scan for the FTD claim base
 
 **Tag:** [PROTOCOL]
-**Date:** 2026-04-26
 **LEDGER row:** FTD-0097
-**Implements:** Bayesian-chair recommendation from the 2026-04-25 roundtable; cross-validation instrument for FTD-0094 (L2 candidate identity) and any future ppm-level candidate identities.
-**Status:** Specification finalized; runner script (`tools/scan_look_elsewhere.py`) and SHA256 hash to be committed before scan execution.
+**Implements:** Bayesian-chair recommendation; cross-validation instrument for FTD-0094 (L2 candidate identity) and any future ppm-level candidate identities.
 **Output target:** `AUDIT_LOOK_ELSEWHERE_RESULTS.md` (D7).
 
 ---
