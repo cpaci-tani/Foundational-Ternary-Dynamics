@@ -2,7 +2,6 @@
 
 **Tag:** [INFRASTRUCTURE / METHODOLOGY] -- a research-navigation tool, not new mathematics.
 **LEDGER row:** FTD-0202.
-**Date:** 2026-05-23 (Path III Session A3 of `.claude/plans/let-s-proceed-on-the-eager-rocket.md`).
 **Sources:**
 - Graph data: [`scripts/verification/results/synonymy_graph.json`](../../../scripts/verification/results/synonymy_graph.json)
 - Graph extractor: [`scripts/verification/extract_synonymy_graph.py`](../../../scripts/verification/extract_synonymy_graph.py)
@@ -29,7 +28,7 @@ The graph **is**:
 
 ---
 
-## §2 -- Current graph state (extraction 2026-05-23)
+## §2 -- Graph state
 
 | Metric | Value |
 |---|---|
@@ -176,7 +175,7 @@ Adding a new `check()` to `verify_gstar_paper.py` automatically regenerates the 
 
 ---
 
-## §8 -- Successor: the corpus-wide math node map (FTD-0207, 2026-05-23)
+## §8 -- Successor: the corpus-wide math node map (FTD-0207)
 
 This roadmap is **G\*-paper-scoped** -- the synonymy graph it ranks covers only `verify_gstar_paper.py`'s 100 verified identities (72 objects, 216 bipartite edges). Subsequent work (FTD-0207) generalises the extraction across the full ~131-script corpus and adds a multi-layer structure (mathematical objects  identities  spine theorems  LEDGER claims with epistemic-tag overlay) rendered in four complementary output formats.
 

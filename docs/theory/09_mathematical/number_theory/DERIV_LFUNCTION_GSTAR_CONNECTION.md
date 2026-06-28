@@ -2,10 +2,8 @@
 
 ## G* = 8·L(E,1)/√π — The Fine Structure Constant from Arithmetic Geometry
 
-**Date:** March 16, 2026
 **Status:** Theorem (algebraic identity) + number-theoretic context
 **Dependencies:** MATH_MASTER_QUADRATIC.md, DERIV_WATSON_GSTAR_IDENTITY.md, EXPLR_MODULAR_QUADRATIC.md
-**Revised:** June 24, 2026 (spine audit) — §3.1's March-2026 algebra was numerically wrong and is corrected to match `DERIV_MASTER_QUADRATIC_CM_LVALUES.md`: the bad intermediate substitution $G^*=4\sqrt{2/\pi}\,L$ is replaced by the §1.2 identity $G^*=8L/\sqrt{\pi}$, so the coefficients become $512/\pi\to1024/\pi$ and $2048\sqrt2/\pi^{3/2}\to8192/\pi^{3/2}$ (re-verified at dps=80, both gaps $<10^{-78}$). Epistemic tags unchanged.
 
 ---
 
@@ -47,7 +45,7 @@ $$G^* = \frac{2\varpi}{\sqrt{\pi}} = \frac{2 \cdot 4\,L(E,1)}{\sqrt{\pi}} = \fra
 
 $$\frac{8}{\sqrt{\pi}} \times L(E,1) = 4.51352 \times 0.65551 = 2.95868 = G^* \quad \checkmark$$
 
-> **In-repo verification (2026-06-24, F1).** `scripts/proofs/proof_lvalue_deligne_verification.py`
+> **In-repo verification.** `scripts/proofs/proof_lvalue_deligne_verification.py`
 > now **reproduces** $L(E,1)=\varpi/4$ from first principles — point-counting the Hecke
 > eigenvalues $a_p$ of $E$ (CM fingerprint $a_p=0$ for $p\equiv 3\bmod 4$ confirmed across 280
 > primes; $a_{13}=6=2N_c$) and summing the rank-0 analytic series
@@ -126,15 +124,6 @@ $$16G^{*3} = 16 \cdot \frac{512}{\pi^{3/2}} L(E,1)^3 = \frac{8192}{\pi^{3/2}} L(
 The master quadratic becomes:
 
 $$x^2 - \frac{1024}{\pi} L(E,1)^2 \, x + \frac{8192}{\pi^{3/2}} L(E,1)^3 = 0$$
-
-<!-- CORRECTION 2026-06-24 (spine audit): §3.1 previously substituted the WRONG intermediate
-     form G* = 4√(2/π)·L(E,1) (= 2.0921, internally inconsistent with §1.2's correct
-     G* = 8·L(E,1)/√π = 2.95868), yielding wrong coefficients 512/π and 2048√2/π^(3/2).
-     Recomputed at dps=60: 16G*² = (1024/π)·L² = 140.0601353744945… and
-     16G*³ = (8192/π^(3/2))·L³ = 414.3924377227094… (both machine-exact). The √2 was an
-     artifact of the wrong substitution and is absent from the correct form. Consistent with
-     DERIV_MASTER_QUADRATIC_CM_LVALUES.md. -->
-
 
 This is algebraically correct but not illuminating. The natural form uses G* directly.
 

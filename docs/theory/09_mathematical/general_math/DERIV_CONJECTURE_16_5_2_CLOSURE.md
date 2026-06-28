@@ -1,7 +1,6 @@
 # Closure of Conjecture 16.5.2: the Sym^a Residual Reduces to Theorem 17.5
 
 **Status:** [DERIVED] — an explicit six-step reduction chain, not an independent theorem.
-**Date:** 2026-05-19
 **Companion:** G* opus follow-up Phase 1 lemma L5, target T-A3. Spec at `docs/superpowers/specs/2026-05-19-gstar-followup-attacks-design.md`.
 **Verification:** `scripts/exploration/gstar_sym_k_eigenlines.py` (functions `phi_is_real_forces_q_rational`, `phi_specialise_symbolic`) + `scripts/tests/test_gstar_sym_k_eigenlines.py` (43/43 pass, including `test_reality_collapse_lemma_sym2`, `test_reality_collapse_lemma_q_rational_gives_real`, `test_reality_collapse_lemma_imaginary_parts_independent`, `test_phi_is_real_forces_q_rational_helper`).
 

@@ -1,6 +1,5 @@
 # Exploration: α/42 as a Candidate 174-ppm Proton/Electron Mass Correction
 
-**Date:** 2026-04-24
 **Status:** [CONJECTURE] — numerical match with no derivation
 **Supersedes:** mass-gap closure claim in "Generated Document April 24, 2026 – 12:47 AM.pdf" (§3, labelled there as THEOREM 3)
 **Depends on:** [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md), [LEDGER.md:FTD-0016](../07_assessment/core_ledgers/LEDGER.md), [LEDGER.md:FTD-0060](../07_assessment/core_ledgers/LEDGER.md)
@@ -85,10 +84,10 @@ The EFT Recovery Program measured the lattice correction to $\alpha$ on FTD's ow
 
 ## 4. Honest status vs. the ledger
 
-The current ledger states:
+The ledger states:
 
 - **FTD-0016**: $m_p/m_e$ formula: [STRONGLY MOTIVATED CONJECTURE], 174 ppm residual unexplained.
-- **FTD-0060** (2026-04-23): the conjectured $K_{\mathrm{comp}} = m_e/\pi$ correction CLOSED NEGATIVE; the 174-ppm gap **remains [OPEN]**.
+- **FTD-0060**: the conjectured $K_{\mathrm{comp}} = m_e/\pi$ correction CLOSED NEGATIVE; the 174-ppm gap **remains [OPEN]**.
 
 This file adds FTD-0063 to the ledger as a second specific closed-negative **attempt** at that same gap, leaving the gap itself [OPEN].
 
@@ -109,4 +108,4 @@ The numerical arithmetic of §1 is correct and worth keeping on the shelf as a C
 
 ---
 
-*Filed 2026-04-24 in response to a PDF draft that labelled §3 as THEOREM 3. Preserves the numerical observation as a [CONJECTURE] candidate; the 174-ppm gap itself remains [OPEN].*
+*In response to a PDF draft that labelled §3 as THEOREM 3. Preserves the numerical observation as a [CONJECTURE] candidate; the 174-ppm gap itself remains [OPEN].*

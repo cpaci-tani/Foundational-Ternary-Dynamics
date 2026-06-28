@@ -1,6 +1,5 @@
 # Exploration: Walsh–Hadamard Grading of the b=2 Block vs. Cl(3,0)
 
-**Date:** 2026-04-24
 **Status:** [CONJECTURE] with [THEOREM] no-go for the spontaneous version
 **Supersedes:** fermion-emergence claim in "Generated Document April 24, 2026 – 12:47 AM.pdf" (§1, labelled there as THEOREM 1)
 **Depends on:** [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md), [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md)
@@ -90,7 +89,7 @@ The substantive claim of §1 of the PDF is therefore split:
 | Fermions are topological defects of the b=2 block | [CONJECTURE] | Contingent on the Clifford-product conjecture plus G5. |
 | The flux-transition rules equal Dirac $\gamma$-matrices | [CONJECTURE] / likely [OPEN NEGATIVE] at the signature level | Cl(3,0) is Euclidean; Dirac algebra is Lorentzian 16-dim. |
 
-## 6.5 Measurement outcome (2026-04-24)
+## 6.5 Measurement outcome
 
 Gate G1–G3 for the dynamical-emergence conjecture were carried out on the GPU via `engine/tests/test_wh_clifford_anticommutator.cpp` (ctest `wh_clifford_anticommutator`, labels gpu native eft). Protocol: L=8 lattice, 2³ corner block, inject flux ∝ A·χ_f along the matching axis (A=10 for deterministic genesis), run 1 tick, inject mode g, run 1 tick, WH-decompose the state field on the block.
 
@@ -119,4 +118,4 @@ This file adds one more [CONJECTURE] row (FTD-0061) to the ledger and one [CLOSE
 
 ---
 
-*Filed 2026-04-24 in response to a PDF draft that labelled the above as THEOREM 1. The reframe preserves the idea as a direction of work while keeping the tag honest.*
+*In response to a PDF draft that labelled the above as THEOREM 1. The reframe preserves the idea as a direction of work while keeping the tag honest.*

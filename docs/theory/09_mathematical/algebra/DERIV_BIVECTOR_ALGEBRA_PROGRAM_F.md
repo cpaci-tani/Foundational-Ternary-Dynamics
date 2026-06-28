@@ -2,14 +2,13 @@
 
 **Status:** Single empirical campaign (Program F-prime / F-double-prime / Path 1) testing whether FTD flux carries a $Cl(3,0)$ bivector subalgebra. Per-stage tags: §1 Program F-prime (FTD-0086) — **[MEASURED] [STRONG POSITIVE]** (plaquette-bivector matching signature, 3/3 pairs, 40× signal/off-axis). §2 Program F-double-prime (FTD-0087) — **[MEASURED] [PARTIAL]** (1/3 closure tests pass; iterated $\mathfrak{su}(2)$ closure fails at 4-injection scale). §3 Path 1 multi-grade decomposition (FTD-0088) — **[MEASURED] [POSITIVE]** (12/12 grade-structure tests pass at 2-injection order; F-double-prime failure reinterpreted as dynamical noise). **Net:** the $Cl(3,0)$ skeleton is internally consistent at 2-injection leading order; a closed Lie algebra at higher orders remains open, contingent on dynamical-noise control. No tag promotions beyond what each per-stage row carries.
 **Ledger rows:** FTD-0086, FTD-0087, FTD-0088
-**Date:** 2026-05-21
-**Consolidates:** `DERIV_PLAQUETTE_BIVECTOR_EMERGENCE.md` (FTD-0086), `DERIV_BIVECTOR_CLOSURE_PARTIAL.md` (FTD-0087), `DERIV_CLIFFORD_MULTIGRADE_CLEAN.md` (FTD-0088) (merged 2026-05-21)
+**Consolidates:** `DERIV_PLAQUETTE_BIVECTOR_EMERGENCE.md` (FTD-0086), `DERIV_BIVECTOR_CLOSURE_PARTIAL.md` (FTD-0087), `DERIV_CLIFFORD_MULTIGRADE_CLEAN.md` (FTD-0088)
 
 ---
 
 ## §0 — Campaign overview
 
-This doc consolidates one empirical campaign (all stages filed 2026-04-24) probing whether FTD's non-local flux dynamics realize a $Cl(3,0)$ Clifford algebra — the structure that would let fermion content emerge natively (Branch A) rather than be imposed by selection (Branch B):
+This doc consolidates one empirical campaign probing whether FTD's non-local flux dynamics realize a $Cl(3,0)$ Clifford algebra — the structure that would let fermion content emerge natively (Branch A) rather than be imposed by selection (Branch B):
 
 - **§1 — Program F-prime: Plaquette Bivector Emergence (FTD-0086).** Tests whether plaquette 2-form bivectors close $Cl(3,0)$ bivector commutation. **[STRONG POSITIVE]** on the matching-bivector signature.
 - **§2 — Program F-double-prime: Bivector Algebra Closure Tests (FTD-0087).** Runs three closure tests (multi-seed robustness, Casimir uniformity, iterated-commutator closure) to upgrade F-prime to a full $\mathfrak{su}(2)$ Lie algebra. **[PARTIAL]** — 1/3 pass.
@@ -30,7 +29,6 @@ The campaign lineage descends from **Program F (FTD-0085)** — documented separ
 
 **Tag:** [MEASURED] [STRONG POSITIVE] — bivector commutator structure on plaquette basis closes the matching-bivector signature; full $Cl(3,0)$ closure pending higher-order tests
 **Ledger row:** FTD-0086
-**Filed:** 2026-04-24
 **Companions:**
 - [DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md](DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md) (FTD-0085) — Program F detected non-commutativity in bilinear sector
 - [DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md](../number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) — site-local no-go this breaks
@@ -270,7 +268,7 @@ If full closure fails: F-prime stands as a strong positive matching-signature re
 
 ## 1.7 — Status (Program F-prime)
 
-**Program F-prime: STRONG POSITIVE on matching-bivector signature.** [MEASURED] on GPU 2026-04-24.
+**Program F-prime: STRONG POSITIVE on matching-bivector signature.** [MEASURED] on GPU.
 
 Test: `engine/tests/test_plaquette_bivector_clifford.cpp` (gpu native eft labels).
 
@@ -291,7 +289,7 @@ Key numbers:
 - Generalization to SU(3) (rank-2 plaquettes).
 - Spinor field construction.
 
-*Filed 2026-04-24. The first FTD probe to break the mode-erasure no-go on a structurally meaningful basis. Plaquette bivectors carry a $Cl(3,0)$-bivector matching signature with 3/3 pairs and 40× signal/off-axis ratio. Fermion emergence in FTD is no longer closed-negative; it has a concrete positive signature awaiting full-closure tests. Most consequential single result of the session.*
+*The first FTD probe to break the mode-erasure no-go on a structurally meaningful basis. Plaquette bivectors carry a $Cl(3,0)$-bivector matching signature with 3/3 pairs and 40× signal/off-axis ratio. Fermion emergence in FTD is no longer closed-negative; it has a concrete positive signature awaiting full-closure tests.*
 
 ---
 
@@ -299,7 +297,6 @@ Key numbers:
 
 **Tag:** [MEASURED] [PARTIAL] — 1/3 closure tests pass; F-prime matching signature robust but full Cl(3,0) bivector closure fails at 4-injection scale
 **Ledger row:** FTD-0087
-**Filed:** 2026-04-24
 **Companions:**
 - §1 above (FTD-0086) — F-prime matching signature
 - [test_bivector_closure.cpp](../../../engine/tests/test_bivector_closure.cpp) — GPU test
@@ -504,7 +501,7 @@ If Path 1 also fails: accept Path 2/3.
 
 ## 2.6 — Status (Program F-double-prime)
 
-**Program F-double-prime: PARTIAL CLOSURE** as of 2026-04-24.
+**Program F-double-prime: PARTIAL CLOSURE.**
 
 - **1/3** closure tests PASS (Casimir axis-isotropy).
 - F-prime matching signature **holds** (concentration robust, magnitudes vary by seed).
@@ -515,7 +512,7 @@ If Path 1 also fails: accept Path 2/3.
 - Bivector matching signature: still real and consequential.
 - Path forward: Wilson loop / alternative basis (Program F-triple-prime) or accept approximate closure.
 
-*Filed 2026-04-24. The honest closure of Program F. F-prime's matching-bivector concentration is robust across seeds, but the iterated bivector commutator does not close into a clean $\mathfrak{su}(2)$ Lie algebra at the 4-injection measurement scale. Branch-A native fermion derivation is not established; the Branch-B selection layer for fermion content remains the most likely accounting, with the constraint that any selection must reproduce the measured bivector matching signature.*
+*The honest closure of Program F. F-prime's matching-bivector concentration is robust across seeds, but the iterated bivector commutator does not close into a clean $\mathfrak{su}(2)$ Lie algebra at the 4-injection measurement scale. Branch-A native fermion derivation is not established; the Branch-B selection layer for fermion content remains the most likely accounting, with the constraint that any selection must reproduce the measured bivector matching signature.*
 
 ---
 
@@ -523,7 +520,6 @@ If Path 1 also fails: accept Path 2/3.
 
 **Tag:** [MEASURED] [POSITIVE] — full $Cl(3,0)$ grade structure verified at 2-injection order across all three off-diagonal pairs
 **Ledger row:** FTD-0088
-**Filed:** 2026-04-24
 **Companions:**
 - FTD-0086 (§1) — F-prime bivector matching signature
 - FTD-0087 (§2) — F-double-prime closure tests (1/3 PASS, 4-injection failure)
@@ -728,7 +724,7 @@ If any of these recover the closure, the answer is "noise issue." If none do, th
 
 ## 3.6 — Status (Path 1)
 
-**Path 1: CLEAN POSITIVE** as of 2026-04-24.
+**Path 1: CLEAN POSITIVE.**
 
 Test: `engine/tests/test_clifford_multigrade.cpp` (gpu native eft).
 
@@ -744,7 +740,7 @@ Test: `engine/tests/test_clifford_multigrade.cpp` (gpu native eft).
 
 **Most consequential follow-up:** noise-controlled re-test of FTD-0087 (time-averaged readouts, larger L, or lower A). This would either restore F-double-prime closure (algebraic skeleton extends) or confirm approximate closure (1% leakage is fundamental).
 
-*Filed 2026-04-24. The Path 1 multi-grade decomposition restores partial confidence in the FTD-0086 Branch-A bivector emergence claim. F-double-prime's iterated-commutator failure is reinterpreted as a 4-injection dynamical-noise issue rather than an algebraic defect, since the underlying 2-injection grade skeleton is consistent across all four Cl(3,0) grades. The most important next step is to determine whether higher-order closure can be recovered with noise control or whether the algebra is fundamentally approximate-Cl(3,0) at the 1% level.*
+*The Path 1 multi-grade decomposition restores partial confidence in the FTD-0086 Branch-A bivector emergence claim. F-double-prime's iterated-commutator failure is reinterpreted as a 4-injection dynamical-noise issue rather than an algebraic defect, since the underlying 2-injection grade skeleton is consistent across all four Cl(3,0) grades. The most important next step is to determine whether higher-order closure can be recovered with noise control or whether the algebra is fundamentally approximate-Cl(3,0) at the 1% level.*
 
 ---
 

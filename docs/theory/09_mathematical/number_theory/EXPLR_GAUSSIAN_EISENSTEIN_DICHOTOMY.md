@@ -1,7 +1,6 @@
 # EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY: Why the Master Quadratic is Gaussian, and What the Odd Term Wants
 
 **Tag:** `[EXPLORATORY MATH]` — mixed status; per-claim tags inline
-**Date:** 2026-05-30 (updated 2026-05-30: arithmetic kernel promoted to `[THEOREM]`; updated 2026-06-01: added §5.1 ramified-prime structural synthesis — `[SYNTHESIS]`/`[STRONGLY MOTIVATED]`, promotes nothing)
 **LEDGER:** FTD-0237
 **Status:** One new `[THEOREM]` — **Theorem GE-1 (Gaussian coefficient coincidence)**, §3.1, a finitely-provable statement about integers ($2^4=4^2$ is the unique $a^b=b^a$ coincidence, hence the master-quadratic coefficient $16$ is canonically defined only for $\mathbb{Q}(i)$) — supporting the existing `[STRUCTURAL OBSERVATION]` (§3, the doubly-sourced coefficient) + a `[CLARIFICATION]` of the $\mathbb{Z}[\omega]\leftrightarrow G^{*3}$ reading (§4) + a reframing of the MC-T4.3 odd-term gap (§5, FTD-0235) + **a new `[SYNTHESIS]`/`[STRONGLY MOTIVATED]` structural synthesis (§5.1): the half-power obstruction is the ramified prime at 2 ($\sqrt2 = |1+i|$); local–global cleanliness; the ontic/epistemic seam on which $\alpha$ sits.** **The new theorem is about integers, not about $\alpha$.** Its FTD significance ("hardens the $d=-4$ selection; no Eisenstein twin") stays `[STRUCTURAL OBSERVATION]`/`[SELECTION]`; §5.1 is interpretive synthesis that **localizes** MC-T4.3 without closing it. **No spine change, no promotion of any physics claim, no new derivation of physics.**
 
