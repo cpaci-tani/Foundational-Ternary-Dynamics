@@ -2,7 +2,6 @@
 
 ## A Complete Path from Pure Mathematics to the Fine Structure Constant
 
-**Date:** April 3, 2026
 **Status:** [DERIVED]
 **Proof script:** `scripts/proofs/proof_blind_derivation_chain.py`
 

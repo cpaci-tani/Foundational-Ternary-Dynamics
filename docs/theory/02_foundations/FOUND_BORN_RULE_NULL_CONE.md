@@ -2,7 +2,6 @@
 
 ## From i² = −1 to P = |ψ|² via a Single Equation
 
-**Date:** March 16, 2026
 **Status:** Foundational derivation with honest epistemic assessment
 **Dependencies:** FOUND_THE_COMPLETE_ALGEBRA_OF_i.md, FOUND_THE_EXISTENCE_FILTER.md, DERIV_QUADRATIC_NECESSITY.md
 **Extends:** The Existence Filter result P = E(x)² + E(ix)² = |x|²

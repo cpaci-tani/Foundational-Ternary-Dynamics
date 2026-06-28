@@ -2,7 +2,6 @@
 
 ## Why Physics Followed the Product — and What the Ratio Contains
 
-**Date:** April 3, 2026
 **Status:** [CONJECTURE] — structurally motivated, not proven
 **Depends on:** FOUND_BLIND_DERIVATION_CHAIN.md, MATH_LOG_GSTAR_IDENTITY.md, FOUND_THE_FIRST_DISTINCTION.md
 

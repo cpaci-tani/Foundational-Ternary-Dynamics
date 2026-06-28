@@ -1,6 +1,5 @@
 # Foundation: The Master Quadratic — Bare Algebraic Structure
 
-**Date:** 2026-04-24
 **Status:** [THEOREM] (all identities below are exact by Vieta; verified to machine precision)
 **Purpose:** Strip the master quadratic to its bare mathematical content. What does the underlying math actually say — without physics, without interpretation, just algebra?
 **Ledger row:** FTD-0082
@@ -124,7 +123,7 @@ The bare algebraic identity is $1/x_+ + 1/x_- = 1/G^*$ (Vieta). Under the histor
 
 $$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ }\quad\text{(historical slogan, retired)} $$
 
-**Post-v1.4 status (2026-05-22):** the paired identification `x_-  N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]); the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no current physics identification. The algebraic identity $1/x_+ + 1/x_- = 1/G^*$ stands; the physics-notation slogan above is preserved here only for historical reference. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
+**Status:** the paired identification `x_-  N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]); the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no physics identification. The algebraic identity $1/x_+ + 1/x_- = 1/G^*$ stands; the physics-notation slogan above is preserved here only for historical reference. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 
 **This is the entire physical content of the master quadratic in one line.**
 
@@ -228,9 +227,9 @@ The polynomial is a **pure algebraic relation** between three objects: two roots
 
 ## 10. What this decomposition accomplishes
 
-**Before:** the master quadratic was often presented as a specific polynomial with numerical roots 137.036 and 3.024.
+**Surface form:** the master quadratic can be read as a specific polynomial with numerical roots 137.036 and 3.024.
 
-**After:** the polynomial reveals itself as the algebraic encoding of a single relation
+**Bare structure:** the polynomial is the algebraic encoding of a single relation
 
 $$ \alpha + \frac{1}{N_c} = \frac{1}{G^*} $$
 
@@ -240,4 +239,4 @@ which says EM coupling + inverse color count = inverse lemniscatic ratio. Everyt
 
 ---
 
-*Filed 2026-04-24. Breaks the master quadratic into its bare algebraic parts, identifies $\alpha + 1/N_c = 1/G^*$ as the single deepest statement, verifies all identities to machine precision via `test_master_quadratic_identities`, and preserves the distinction between pure algebra (exact) and physical identification (SP4).*
+*Breaks the master quadratic into its bare algebraic parts, identifies $\alpha + 1/N_c = 1/G^*$ as the single deepest statement, verifies all identities to machine precision via `test_master_quadratic_identities`, and preserves the distinction between pure algebra (exact) and physical identification (SP4).*

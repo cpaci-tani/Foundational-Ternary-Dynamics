@@ -1,6 +1,5 @@
 # Foundation: The Master Quadratic — Unified Motivation (Physics + L-Value Routes)
 
-**Date:** 2026-04-24
 **Status:** [THEOREM] (polynomial form and coefficients, from two independent routes); [SELECTION narrowed] (degree 2, a single minimality principle)
 **Ledger row:** FTD-0081
 **Purpose:** Collect the two independent derivations of the master quadratic, show they converge on the same polynomial, and narrow the remaining selection (SP2 degree 2) to a single minimality principle — effectively closing the motivation of the master quadratic.
@@ -226,4 +225,4 @@ Program E (uniqueness-of-minimal-polynomial proof) would close the remaining sel
 
 ---
 
-*Filed 2026-04-24. Unifies the two existing master-quadratic derivations (physics + L-value), identifies their convergence as strong evidence for the polynomial, narrows the remaining selection from "free choice" to "minimum-degree minimal polynomial", and proposes Program E to close SP2 fully. Effectively motivates the master quadratic at theorem level.*
+*Unifies the two master-quadratic derivations (physics + L-value), identifies their convergence as strong evidence for the polynomial, narrows the remaining selection from "free choice" to "minimum-degree minimal polynomial", and proposes Program E to close SP2 fully. Effectively motivates the master quadratic at theorem level.*

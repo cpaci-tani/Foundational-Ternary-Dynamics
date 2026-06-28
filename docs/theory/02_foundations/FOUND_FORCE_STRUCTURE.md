@@ -2,8 +2,6 @@
 
 ## How the Master Quadratic Generates All Interactions
 
-**Date:** March 3, 2026
-**Framework:** FTD v5.27
 **Status:** Foundational analysis — force genealogy
 **Epistemic Level:** [THEOREM] for algebraic structure; [SELECTION] for physical interpretation; [CONJECTURE] for confinement/mass gap mechanisms
 
@@ -223,8 +221,4 @@ In D=3, these four mode types map exactly to the four forces. In D=2, the intern
 - **SU(2) weak sector**: [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
 - **SU(3) gauge theory**: [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md)
 - **Numerical verification**: `scripts/exploration/explore_force_structure.py`
-
----
-
-*Document created: March 3, 2026*
 *Framework: Foundational Ternary Dynamics v5.27*

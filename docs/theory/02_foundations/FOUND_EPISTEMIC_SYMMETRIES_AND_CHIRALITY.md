@@ -2,7 +2,6 @@
 
 ## Postulate of Epistemic Symmetries and Chiral Trajectories (Postulate Six / Observer Postulate)
 
-**Date:** June 2, 2026  
 **Status:** [CONJECTURE] — interpretively and structurally motivated, with rigorous disclaimers from the Noether Symmetry Audit  
 **Depends on:** [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md), [FOUND_THE_RATIO_AND_THE_PRODUCT.md](FOUND_THE_RATIO_AND_THE_PRODUCT.md), [FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md](FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md), [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md)  
 **Ledger Row:** [FTD-0248](file:///c:/Users/cpaci/Desktop/ftd/docs/theory/07_assessment/core_ledgers/LEDGER.md#L253)

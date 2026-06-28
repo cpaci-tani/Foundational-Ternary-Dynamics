@@ -1,7 +1,6 @@
 # FOUND — Is FTD's Spacetime Forced by the Postulates? (the reversibility boundary)
 
 **Tag:** `[SYNTHESIS]` + `[BOUNDARY]` — a boundary-mapping result (Goal-clause 2). Re-states existing tagged claims and draws the dividing line; **introduces no new theorem, derives nothing, promotes nothing.** FTD-0013 + α unchanged.
-**Date:** 2026-06-07
 **LEDGER:** FTD-0253.
 
 ---
@@ -76,7 +75,7 @@ that generates FTD's constants (`PAPER_RATIO_AND_THE_ARROW.tex`; `DERIV_HEAT_EQU
   `[THEOREM]` in `DERIV_HEAT_EQUATION_FROM_RATIO.md` §5).
 
 So **FTD's spacetime lives on the π (product / reversible) face, and its arrow on the G\* (ratio /
-irreversible) face of the same structure.** The `γ`-emergence measured this session (FTD-0252) is the
+irreversible) face of the same structure.** The `γ`-emergence measured in FTD-0252 is the
 π-face; manifestation's arrow is the G\*-face. The reversible/irreversible boundary of §2 *is* the
 π/G\* boundary that produces FTD's central constant — not a coincidence, a restatement.
 
@@ -113,7 +112,7 @@ FTD-0252); not a postulate change (P1–P5 are unchanged — this *maps* what th
 
 ## 6 · Concrete follow-ups
 
-- **Engine demonstration — DONE (2026-06-07):** `engine/tests/test_spacetime_forcing_demo.cpp` (CTest
+- **Engine demonstration — DONE:** `engine/tests/test_spacetime_forcing_demo.cpp` (CTest
   `spacetime_forcing_demo`, **9/9 PASS**, read-only / golden-safe). The *same* lattice and the *same*
   `laplacian_flux` stencil (so locality is byte-identical), evolved 2nd-order (WAVE) vs 1st-order (DIFFUSION).
   **Confirmed:** the **causal cone is bit-identical** (both fronts = 7.211 at t=8, within the locality bound
@@ -122,12 +121,12 @@ FTD-0252); not a postulate change (P1–P5 are unchanged — this *maps* what th
   DIFFUSION decays monotonically (no clock) + dissipates `Σ|J|² → 0.068` (irreversible) + spreads
   **diffusively** (`∝√t`, ×2.46 ≈ √4). So the Lorentzian metric empirically rides on the 2nd-order/reversible
   choice, **not** on the shared locality cone — FTD-0253 made vivid.
-- **User-visible web artifact — DONE (2026-06-10):** Scale-0 scenario
+- **User-visible web artifact — DONE:** Scale-0 scenario
   `s0-field-spacetime-forcing-boundary` exposes the WAVE branch as a clean center-pulse seed, and
   `engine/web/demos/spacetime-forcing-boundary.html` shows the labelled WAVE-vs-DIFFUSION counterfactual
   replay. Supporting run note: `engine/web/docs/SPEC_SPACETIME_FORCING_DEMO.md`. This promotes visibility
   only; it does **not** promote any claim or add a derivation.
-- **Theory — analysed (2026-06-07): finiteness does NOT motivate reversibility; it opposes it.** The 't Hooft
+- **Theory — finiteness does NOT motivate reversibility; it opposes it.** The 't Hooft
   hope is that a *finite* deterministic substrate must be reversible (information-preserving). But (i) finite +
   deterministic does **not** force reversibility — the "eventually periodic" theorem permits transients flowing
   into attractors (irreversible, many-to-one); (ii) the 't Hooft argument is a *motivation* (match observed
@@ -140,14 +139,14 @@ FTD-0252); not a postulate change (P1–P5 are unchanged — this *maps* what th
   *external* (matching observed approximate unitarity). This **tightens** §2/§4: the Lorentzian metric is
   conditional on an input that FTD's own foundational finiteness commitment argues *against*. `[SYNTHESIS]`
 
-## 7 · Addendum (2026-06-09): the missing ingredient is TWO axioms at two levels, not one
+## 7 · The missing ingredient is TWO axioms at two levels, not one
 
 **Status: `[SYNTHESIS]` / `[BOUNDARY refinement]` — sharpens §5's "not a proof that reversibility is the
 *unique* missing principle" into a precise two-axiom statement. Nothing promoted; P1–P5 unchanged; the
-cone `[THEOREM]`, the metric posited, FTD-0208/0243 all stand.** Provenance: the adversarial savant
-rounds recorded in `EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md` §11–§12.
+cone `[THEOREM]`, the metric posited, FTD-0208/0243 all stand.** See
+`EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md` §11–§12.
 
-This note named **reversibility** as the 6th-postulate-class input the metric rides on. That is the
+§6 named **reversibility** as the 6th-postulate-class input the metric rides on. That is the
 **dynamical half**. There is a second, logically independent **kinematic half** — Einstein's **relativity
 principle** (no privileged frame; the limiting speed frame-invariant) — and **neither subsumes the other**:
 

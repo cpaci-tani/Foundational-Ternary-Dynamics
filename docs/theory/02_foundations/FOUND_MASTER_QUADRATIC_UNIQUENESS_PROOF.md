@@ -2,7 +2,6 @@
 
 **Tag:** [THEOREM] (Program E uniqueness result) + [THEOREM] (SP2 promoted)
 **Ledger row:** FTD-0083
-**Filed:** 2026-04-24
 **Companions:**
 - [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) (FTD-0081) — proposed Program E
 - [FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md](FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md) (FTD-0082) — algebraic decomposition
@@ -314,7 +313,7 @@ Neither is in the Program E scope.
 
 ## 7. Status
 
-**Program E: CLOSED POSITIVE** as of 2026-04-24.
+**Program E: CLOSED POSITIVE.**
 
 - Enumeration test: `engine/tests/test_master_quadratic_uniqueness.cpp`
 - Test result: uniqueness at all $I_{\max} \in [16, 512]$
@@ -333,7 +332,7 @@ strongly-motivated conjecture pending FTD-0024-style sharpening.
 
 ---
 
-*Filed 2026-04-24. Closes Program E proposed in FTD-0081. Promotes SP2
+*Closes Program E proposed in FTD-0081. Promotes SP2
 from [SELECTION NARROWED] to [THEOREM] and S1 in FTD-0080 from
 [SELECTION] to [THEOREM]. Enumeration-based constructive proof with
 robustness verification up to $I_{\max} = 512$. The master quadratic
