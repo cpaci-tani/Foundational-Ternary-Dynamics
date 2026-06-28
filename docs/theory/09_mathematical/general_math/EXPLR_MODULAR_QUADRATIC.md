@@ -2,8 +2,6 @@
 
 ## Investigating Connections Between x^2 - 16G*^2 x + 16G*^3 = 0 and the Theory of Modular Forms
 
-**Date:** February 26, 2026
-**Framework:** Foundational Ternary Dynamics v5.27
 **Status:** [THEOREM] (definitive answers) + [SELECTION] (structural interpretations)
 
 ---

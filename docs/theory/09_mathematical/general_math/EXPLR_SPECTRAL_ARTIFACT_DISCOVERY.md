@@ -2,8 +2,6 @@
 
 ## How a Square Grid Created the Illusion of Born-Rule Symmetry Filtering
 
-**Date:** April 4, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Document Status:** Exploratory -- honest negative, artifact diagnosis
 **Epistemic Class:** [EMERGENT] for all simulation results
 **Category:** 9 (Mathematical Connections)

@@ -1,6 +1,5 @@
 # Derivation: Mode-Erasure Theorem for State-Field Readout + Spin-Field Partial Algebra
 
-**Date:** 2026-04-24 (Phase-4 capstone)
 **Status:** [THEOREM] for state-field mode erasure; [MEASURED] commutative algebra for spin-field readout
 **Companion of:** [DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md](../algebra/DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md), [EXPLR_WALSH_HADAMARD_B2_ALGEBRA.md](../algebra/EXPLR_WALSH_HADAMARD_B2_ALGEBRA.md)
 **Ledger row:** FTD-0073
@@ -148,4 +147,4 @@ For the first Branch-A paper, the honest statement is:
 
 ---
 
-*Filed 2026-04-24 as the Phase-4 capstone. Converts five empirical falsifications into a structural theorem and identifies the three remaining viable directions for FTD fermion emergence. First Branch-A paper can cite §5.3 to frame the fermion question honestly.*
+*The Phase-4 capstone. Converts five empirical falsifications into a structural theorem and identifies the three remaining viable directions for FTD fermion emergence. First Branch-A paper can cite §5.3 to frame the fermion question honestly.*

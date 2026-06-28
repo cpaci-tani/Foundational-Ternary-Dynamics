@@ -2,10 +2,7 @@
 
 ## How the Softplus Inverse Temperature Interpolates Between Von Neumann Factor Types
 
-**Date:** February 18, 2026
-**Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Formal exploration with epistemic classification
-**Authors:** cpaci & Claude (Opus 4.6)
 
 ---
 
@@ -622,6 +619,5 @@ $$\boxed{\text{III}_1 \;\xrightarrow{\;\rtimes_\sigma \mathbb{R}\;}\; \text{II}_
 
 ---
 
-*The ReLU Type Transition — Foundational Ternary Dynamics v5.26*
+*The ReLU Type Transition*
 *Prepared for critical evaluation*
-*February 18, 2026*

@@ -1,14 +1,13 @@
 # REF — Jesús Guillera's corpus, mapped to the FTD algebraic spine
 
 **Tag:** [REFERENCE] / external-literature map. Introduces no FTD claim, no derivation, no tag change.
-**Date:** 2026-05-21.
 **Purpose:** a single map of Jesús Guillera's body of work — Ramanujan-type series, the Wilf–Zeilberger (WZ) method, Borwein-like algorithms, self-replication — cross-referenced to the parts of FTD it genuinely touches, and explicitly to the parts it does not.
 
 ---
 
 ## §0 — Scope (read first)
 
-**This document IS:** a map of *external mathematics* that FTD's **algebraic-spine and computational** work draws on, or could draw on. Guillera (Universidad de Zaragoza) is a number theorist whose two-decade body of work is the mathematics of computing and proving closed-form identities for π, 1/π², and Γ-function values. Two FTD computational results verified in May 2026 — the Landen log-derivative route to `G*` (`scripts/proofs/proof_landen_gstar_compression.py`) and the quartic quarter-constant route (`scripts/proofs/proof_quartic_quarter_constants.py`) — sit *inside* his framework.
+**This document IS:** a map of *external mathematics* that FTD's **algebraic-spine and computational** work draws on, or could draw on. Guillera (Universidad de Zaragoza) is a number theorist whose two-decade body of work is the mathematics of computing and proving closed-form identities for π, 1/π², and Γ-function values. Two FTD computational results — the Landen log-derivative route to `G*` (`scripts/proofs/proof_landen_gstar_compression.py`) and the quartic quarter-constant route (`scripts/proofs/proof_quartic_quarter_constants.py`) — sit *inside* his framework.
 
 **This document IS NOT:** a claim that Guillera's work supports, endorses, or bears on FTD's **physics**. Guillera is not an FTD collaborator. His corpus concerns the computation and proof of identities for transcendental constants; it has nothing to say about `x₊ = 1/α` (FTD-0013), the boundary theorem (FTD-0186), the lattice ontology, or any FTD physics claim. **Citing Guillera in FTD work is scholarly attribution for specific mathematical tools FTD uses — it is not, and must never be presented as, third-party validation of the framework.** This sentence is the load-bearing content of §0.
 
@@ -39,9 +38,9 @@ Full publication list: `https://anamat.unizar.es/jguillera/publications.html` (�
 
 ## §3 — Where FTD cites Guillera (citation discipline)
 
-- **`scripts/proofs/proof_quartic_quarter_constants.py`** — the quartic iteration **is** Guillera's (arXiv:1702.05378); citation is **mandatory**. Attribution confirmed by literature search 2026-05-21.
+- **`scripts/proofs/proof_quartic_quarter_constants.py`** — the quartic iteration **is** Guillera's (arXiv:1702.05378); citation is **mandatory**. Attribution confirmed by literature search.
 - **`scripts/proofs/proof_landen_gstar_compression.py`** — the Landen log-derivative route is classical AGM/Landen mathematics; Guillera's Borwein-algorithm papers (2008, 2016) are the modern context, cite as "see also."
-- **Paper A (`PAPER_GSTAR_INTRODUCTION.tex`)** — *if* the Landen and/or quartic routes are added (e.g. as a computational remark in §4), citing Guillera (arXiv:1702.05378) and Cooper–Guillera–Straub–Zudilin (arXiv:1604.01106) is **mandatory attribution**. As of 2026-05-21 those routes are **not** in Paper A; this is a conditional, not a present obligation.
+- **Paper A (`PAPER_GSTAR_INTRODUCTION.tex`)** — *if* the Landen and/or quartic routes are added (e.g. as a computational remark in §4), citing Guillera (arXiv:1702.05378) and Cooper–Guillera–Straub–Zudilin (arXiv:1604.01106) is **mandatory attribution**. Those routes are **not** in Paper A; this is a conditional, not a present obligation.
 - **Anywhere else:** cite Guillera only where FTD genuinely uses a Guillera result. Do not cite him to lend the framework legitimacy by association (§0).
 
 ---

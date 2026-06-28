@@ -2,7 +2,6 @@
 
 **Tag:** A1 = [STRUCTURAL IDENTIFICATION]; A2 = [THEOREM NEGATIVE]
 **Ledger row:** FTD-0089
-**Filed:** 2026-04-25
 **Companions:**
 - FTD-0086 — F-prime bivector matching signature
 - FTD-0088 — Path 1 multi-grade decomposition (12/12 PASS)
@@ -233,4 +232,4 @@ Open follow-ups:
 
 ---
 
-*Filed 2026-04-25. Responds to A1+A2 from the Branch-B intuition exploration. A1 cleanly identifies FTD's 4-grade decomposition with the Dirac-Kähler field on the cubic lattice — a known mathematical object whose discrete equation is now written in FTD's language. A2 establishes a structural no-go: Cl(3,0) alone has one Casimir, which gives one mass scale, not a hierarchy. Mass ratios require Branch-B input. Together: FTD provides the algebraic skeleton; Branch-B selection provides the flavor-and-mass content.*
+*Responds to A1+A2 from the Branch-B intuition exploration. A1 cleanly identifies FTD's 4-grade decomposition with the Dirac-Kähler field on the cubic lattice — a known mathematical object whose discrete equation is now written in FTD's language. A2 establishes a structural no-go: Cl(3,0) alone has one Casimir, which gives one mass scale, not a hierarchy. Mass ratios require Branch-B input. Together: FTD provides the algebraic skeleton; Branch-B selection provides the flavor-and-mass content.*
