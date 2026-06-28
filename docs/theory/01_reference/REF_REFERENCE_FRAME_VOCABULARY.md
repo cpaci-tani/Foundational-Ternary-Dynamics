@@ -1,6 +1,5 @@
 # REF_REFERENCE_FRAME_VOCABULARY — Canonical FTD Language for Reference Frames & Measurement
 
-**Created:** 2026-05-01 (Updated 2026-05-30)
 **Status:** Proposed canonical vocabulary; pending application sweep across theory docs, manuscripts, and engine documentation.
 **Purpose:** Replace all "consciousness" / "observer" / "reflexivity" / "agency" rhetoric with standard physical "reference frame" terminology that carries mathematical precision and zero qualia or Hard-Problem baggage.
 **Audience:** Project owner + future AI agents performing the propagation sweep + reviewers of FTD papers.

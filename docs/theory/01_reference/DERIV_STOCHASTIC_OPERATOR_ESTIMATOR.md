@@ -34,7 +34,7 @@ The target value is
 \]
 
 > [!WARNING]
-> **Readout admissibility precondition (2026-06-15).** This estimator runs only on
+> **Readout admissibility precondition.** This estimator runs only on
 > a trajectory that has first passed the read-only, **$\alpha$-blind** scale-context
 > gate $\mathcal{C}_{\rm scale}$ (`SPEC_SCALE_CONTEXT_READOUT.md`, implemented in
 > `engine/src/scale_context.cpp`). Note this doc legitimately names the target

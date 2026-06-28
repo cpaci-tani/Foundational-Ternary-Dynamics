@@ -1,7 +1,6 @@
 # SPEC: Class C Infrastructure — Cluster-Cluster Interaction and Coupling Readout
 
 **Status:** Authoritative Instrument Specification (Theory + Protocol; Engine Implementation TBD)  
-**Filed:** May 27, 2026  
 **Tag:** [INFRASTRUCTURE SPEC] — protocol definition, not a derivation  
 **Ledger Row:** FTD-0222  
 **Parent SPEC:** [`SPEC_DISCRETE_NATIVE_DERIVATION.md`](SPEC_DISCRETE_NATIVE_DERIVATION.md) §2.3
