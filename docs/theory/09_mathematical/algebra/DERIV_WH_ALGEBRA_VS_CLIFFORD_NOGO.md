@@ -1,6 +1,5 @@
 # Derivation: Walsh–Hadamard Algebra on a 2³ Block Is Not Clifford
 
-**Date:** 2026-04-24
 **Status:** [THEOREM] (structural no-go); [CONJECTURE] narrowed for dynamical emergence
 **Companion of:** [EXPLR_WALSH_HADAMARD_B2_ALGEBRA.md](EXPLR_WALSH_HADAMARD_B2_ALGEBRA.md)
 **Ledger row:** FTD-0061
@@ -159,7 +158,7 @@ If yes: Clifford emergence from FTD dynamics would be **derived**, and the PDF's
 
 This is a concrete simulation protocol — 27 to ~100 tick runs on a 2³ block with the engine. It is cheap enough to do and would settle the question either way.
 
-## 8. Measurement (executed 2026-04-24)
+## 8. Measurement
 
 Steps 1–3 carried out via `engine/tests/test_wh_clifford_anticommutator.cpp`, registered as CTest `wh_clifford_anticommutator` (labels: gpu native eft). Ran on the CUDA backend (L=8 lattice, 2³ injection block at origin, amplitude $A = 10$ to make genesis deterministic, matched RNG seed across orderings).
 
@@ -187,9 +186,9 @@ The resulting anticommutator matrix on the three weight-1 modes $e_1 = \chi_{100
 3. **Moore-26 layer decomposition.** The SC + FCC + BCC structure of [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) carries richer algebraic content than the 2³ block. The 26-site stencil's grade structure could host Clifford generators that the 8-site block cannot.
 4. **Velocity-driven movement.** Enable `toggles.forces` so phase_forces drives velocity, which activates phase_movement's annihilation branch. Test whether annihilation between sequential injections is order-dependent.
 
-Each is a separate measurement protocol with the same test harness. Under the current falsification the "fermion emergence from b=2 block" direction is closed; the "fermion emergence from FTD" direction remains open through the four routes above.
+Each is a separate measurement protocol with the same test harness. Under this falsification the "fermion emergence from b=2 block" direction is closed; the "fermion emergence from FTD" direction remains open through the four routes above.
 
-## 9. Phase-4 alt-route measurements (executed 2026-04-24)
+## 9. Phase-4 alt-route measurements
 
 All four routes tested on GPU:
 

@@ -2,8 +2,6 @@
 
 ## Systematic Exploration of Every Constant and Its Relationships
 
-**Date:** March 3, 2026
-**Framework:** FTD v5.27
 **Status:** Exploration — verified numerically, interpretations are [SELECTION]
 **Epistemic Level:** [THEOREM] for algebraic identities; [SELECTION] for physical interpretations
 
@@ -373,6 +371,3 @@ The modular selector (which picks the lemniscatic curve from all possible ellipt
 - **Numerical verification**: `scripts/exploration/explore_ontic_constants.py`
 
 ---
-
-*Document created: March 3, 2026*
-*Framework: Foundational Ternary Dynamics v5.27*

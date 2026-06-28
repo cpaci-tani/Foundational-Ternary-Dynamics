@@ -2,7 +2,6 @@
 
 **Document type:** Exploratory (number-theoretic)
 **Status:** [EXPLORATORY] — not yet promoted to derivation; one prior conjecture in this neighborhood was falsified (recorded below)
-**Created:** 2026-04-30
 **Provenance:** distilled from `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §7 ("the Fourier curve")
 **Related:** `THEOREM_HARMONIC_INVARIANT_TOWER.md` (the (1+i)-tower whose level-indexing matches the Fourier-support exponents);
 `SPEC_ALGEBRAIC_SPINE.md` Theorem 9 (field-theoretic characterization of `Q(G*)`);

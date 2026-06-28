@@ -2,7 +2,6 @@
 
 ## Negative Result: The Tree-Level-to-CODATA Gap Is Not in the Simple Q-Span of Tested L-Values
 
-**Date:** 2026-04-17
 **Status:** [EMERGENT] (negative result, computationally established)
 **Method:** PARI/GP `lindep` integer-relation search at 100-digit precision
 **Related:** [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](DERIV_MASTER_QUADRATIC_CM_LVALUES.md), [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)
@@ -182,9 +181,3 @@ A reference implementation is available at `scripts/proofs/proof_lindep_search.p
 | $\varepsilon_X$ has a Langlands-theoretic closed form | Open |
 
 The practical takeaway: **the one-loop lattice mechanism is the correct direction, and the L-value direction is closed for the simple basis.**
-
----
-
-## Document History
-
-- **2026-04-17:** Created. Records negative `lindep` result for the tree-level correction in basis $\mathcal{B}_0$. Explicit coefficient vector preserved for future audit. Redirects correction search toward lattice-structural sources and extended Hecke bases.

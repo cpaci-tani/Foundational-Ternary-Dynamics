@@ -2,8 +2,6 @@
 
 ## Measurement Visualized in Fourier Space
 
-**Date:** April 4, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Document Status:** Exploratory -- simulation observation with mathematical interpretation
 **Epistemic Class:** [EMERGENT] for simulation results; [CONJECTURE] for interpretations and numerical coincidences
 **Category:** 9 (Mathematical Connections)
