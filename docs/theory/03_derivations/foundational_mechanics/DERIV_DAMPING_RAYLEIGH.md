@@ -1,8 +1,7 @@
 # DERIV · Rayleigh Dissipation Coefficient DAMPING = α
 
 **Tag:** [IMPOSED — with motivation]
-**Date:** 2026-05-05
-**Status:** [IMPOSED] retained; the three-roles diagnosis is honestly recorded; a route to [DERIVED] is identified but not closed in this commit.
+**Status:** [IMPOSED] retained; the three-roles diagnosis is honestly recorded; a route to [DERIVED] is identified but not yet closed.
 **Purpose:** Phase R2 of the FTD-EFT roadmap. Closes the open item "DAMPING = α as Rayleigh is [IMPOSED] in `ontic.h:771`. Either derive or document why imposed at structural-axiom level." The honest answer: it is **imposed**, and for legitimate reasons — but the imposition collapses three conceptually distinct processes onto the same coefficient, and that collapse is not yet derived. This doc records the situation precisely so future work can close it.
 
 ---

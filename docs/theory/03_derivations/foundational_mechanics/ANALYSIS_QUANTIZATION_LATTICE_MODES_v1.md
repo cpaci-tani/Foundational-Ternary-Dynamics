@@ -1,7 +1,6 @@
 # Analysis — FTD-0270: The Lattice Quantizes, But With the Wrong Dispersion (BOUNDARY)
 
 **Tag:** `[MEASURED — BOUNDARY]`
-**Date:** 2026-06-11
 **LEDGER row:** FTD-0270
 **Pre-registration:** `PREREG_QUANTIZATION_LATTICE_MODES_v1.md`, tag `preregister-quantization-lattice-modes-v1`, lock commit `e1c7377f`
 **Artifact:** `scripts/exploration/derive_quantization_lattice_modes_2026-06-11.py` (SHA `fe0a8ec1`); run of record `scripts/exploration/results/quantization_2026-06-11.csv`

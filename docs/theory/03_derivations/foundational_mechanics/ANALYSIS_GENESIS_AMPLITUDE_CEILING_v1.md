@@ -1,8 +1,7 @@
 # Analysis — Is there a maximum amplitude for coherent light in FTD? The genesis amplitude ceiling (FTD-0316)
 
 **Tag:** `[EMERGENT / MEASURED — DERIVED-FROM-RULE]` for the phenomenon; the *numeric* ceiling is `[IMPOSED]`-calibration-conditional. **NOT** a `[THEOREM]`, **NOT** a new physics derivation.
-**Date:** 2026-06-23
-**Lock (in-source pre-registration):** the three outcomes + the two numeric predictions were registered in the campaign header *before* running — `engine/tests/campaign_genesis_amplitude_ceiling.cpp:27-34` (outcomes 1/2/3), `:20` ("threshold: exactly A = K_GENESIS"), `:23` ("wavelength-invariance: NO"). Golden gate **certified green** this session — the three runtime override knobs (`genesis_threshold_override` / `manifest_scale_override` / `manifest_use_temperature`) are golden-neutral by construction (defaults reproduce compile-time `K_GENESIS`/`K_MANIFEST` byte-for-byte); `test_render_bridge_golden` **rebuilt from source + PASS** (`0xb604d81a3d79366e`). Read-only on physics phases.
+**Lock (in-source pre-registration):** the three outcomes + the two numeric predictions were registered in the campaign header *before* running — `engine/tests/campaign_genesis_amplitude_ceiling.cpp:27-34` (outcomes 1/2/3), `:20` ("threshold: exactly A = K_GENESIS"), `:23` ("wavelength-invariance: NO"). Golden gate **certified green** — the three runtime override knobs (`genesis_threshold_override` / `manifest_scale_override` / `manifest_use_temperature`) are golden-neutral by construction (defaults reproduce compile-time `K_GENESIS`/`K_MANIFEST` byte-for-byte); `test_render_bridge_golden` **rebuilt from source + PASS** (`0xb604d81a3d79366e`). Read-only on physics phases.
 **Precedence:** LEDGER > this doc.
 
 ---

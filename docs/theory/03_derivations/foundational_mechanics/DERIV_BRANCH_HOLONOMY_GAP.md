@@ -1,7 +1,6 @@
 # DERIV — Branch Holonomy Gap on a Periodic Torus
 
 **Tag:** [THEOREM]
-**Date:** 2026-05-22
 **LEDGER:** FTD-0194
 **Engine primitive:** [`../../../engine/include/ftd/branch_holonomy.h`](../../../engine/include/ftd/branch_holonomy.h)
 **Constructive verification:** [`../../../engine/tests/test_branch_holonomy_gap.cpp`](../../../engine/tests/test_branch_holonomy_gap.cpp) — `ctest -R "^branch_holonomy_gap$"` passes 1/1, all six sub-tests green at machine precision (λ_min match to 1e-12).
@@ -100,4 +99,4 @@ The gap formula has downstream physical readings (antiperiodic fermionic boundar
 
 ---
 
-*Module 1 of the three-module engine-native overlay pivot (commit `5b06324`). No `RenderBridge` change, no physics toggle wired, no spine claim promoted or demoted.*
+*Module 1 of the three-module engine-native overlay set (commit `5b06324`). No `RenderBridge` change, no physics toggle wired, no spine claim promoted or demoted.*

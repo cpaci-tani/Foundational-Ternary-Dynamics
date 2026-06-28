@@ -1,7 +1,5 @@
 # The Discrete Radial Metric Projection Theorem: Deriving the Schwarzschild $g_{rr}$ Component in FTD
 
-**Version:** 1.0  
-**Framework Version:** FTD v5.33  
 **Status:** [THEOREM] — Derivation of the spatial Schwarzschild radial component $g_{rr}$.  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
@@ -16,9 +14,9 @@ $$C(r) = C_0 \sqrt{1 - \frac{r_s}{r}}$$
 
 However, deriving the radial spatial component of the metric:
 $$g_{rr} = \left(1 - \frac{r_s}{r}\right)^{-1}$$
-has remained **`[OPEN]`** (Frontier 3). How does this spatial curvature emerge on a uniform coordinate lattice $\mathbb{Z}^3$?
+is **Frontier 3**. How does this spatial curvature emerge on a uniform coordinate lattice $\mathbb{Z}^3$?
 
-This document resolves this frontier by proving that **$g_{rr} = (1 - r_s/r)^{-1}$ emerges as a direct consequence of coordinate interval contraction** on a discrete substrate.
+This document resolves Frontier 3 by proving that **$g_{rr} = (1 - r_s/r)^{-1}$ emerges as a direct consequence of coordinate interval contraction** on a discrete substrate.
 
 ---
 
@@ -72,6 +70,4 @@ This completes the FTD derivation of the **Schwarzschild metric** from the subst
 
 ---
 
-*Document created: May 27, 2026*  
 *Topic: Derivation of the Schwarzschild $g_{rr}$ spatial metric component.*  
-*Framework: Foundational Ternary Dynamics v5.33*  

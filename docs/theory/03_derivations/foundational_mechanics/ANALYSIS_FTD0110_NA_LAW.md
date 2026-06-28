@@ -1,7 +1,6 @@
 # Analysis — FTD-0110 Nonlinear Bridge: N(A) Law is Engine-Emergent (BOUNDARY)
 
 **Tag:** `[MEASURED — BOUNDARY]`
-**Date:** 2026-06-11
 **LEDGER row:** FTD-0269 (adjudicates FTD-0110 nonlinear bridge)
 **Pre-registration:** `PREREG_FTD0110_NA_LAW_v1.md`, tag `preregister-ftd0110-na-law-v1`, lock commit `192203b5`
 **Artifacts:** `scripts/exploration/genesis_na_law_forward.py`, `analyze_na_law.py`, `engine/tests/campaign_genesis_geometry.cpp`; run of record `scripts/exploration/results/na_law_2026-06-11/`, `engine/results/genesis_geometry_2026-06-11/`
@@ -17,7 +16,7 @@ shape** of the FTD-0261 N(A) law from framework-derived inputs, but the law's **
 calibration** is fixed by **non-framework engine-tuning constants**. The frozen
 three-outcome adjudicator returns **BOUNDARY**: the N(A) broken-power law is
 **engine-emergent, not substrate-determined**. The FTD-0110 nonlinear bridge stays
-`[OPEN]` as a clean-derivation target; the boundary is now mapped.
+`[OPEN]` as a clean-derivation target; the boundary is mapped.
 
 This supersedes `DERIV_FTD0110_GENESIS_THROTTLE.md` (which omitted Gauss, matched 3
 counts, and mislocated the knee at 23.5).

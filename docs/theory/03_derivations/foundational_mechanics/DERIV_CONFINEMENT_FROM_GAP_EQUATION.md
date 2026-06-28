@@ -2,7 +2,6 @@
 
 ## Area-Law Wilson Loops and Linear Confinement from the Master Quadratic
 
-**Date:** March 17, 2026
 **Status:** [THEOREM for confinement at x₋; SELECTION for QCD identification]
 **Tier:** 2.1
 **Proof script:** `scripts/proofs/proof_confinement_wilson.py`
