@@ -2,10 +2,7 @@
 
 ## How div(J) = rho Produces E(theta) = -cos(theta) and S = 2sqrt(2)
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
 **Status:** [THEOREM] + [SELECTION] -- Mathematical chain verified (13/13 numerical checks). The Gauss-to-cosine link is theorem; the identification with quantum measurement is selection.
-**Authors:** cpaci & Claude (Opus 4.6)
 **Proof script:** [`scripts/proofs/proof_bell_cosine_from_gauss.py`](../../../scripts/proofs/proof_bell_cosine_from_gauss.py)
 
 **Depends on:**

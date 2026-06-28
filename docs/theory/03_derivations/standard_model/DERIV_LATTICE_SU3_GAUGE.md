@@ -1,8 +1,6 @@
 # SU(3) Lattice Gauge Theory: Gluons from Flux Geometry
 
 **Document Classification:** Theoretical Derivation
-**Version:** 1.0
-**Date:** February 25, 2026
 **Status:** [THEOREM] + [SELECTION] (mixed — see Claims Table §8)
 **Depends on:** DERIV_QFT_GRT_BRIDGE.md, DERIV_LATTICE_LOOP_CORRECTIONS.md, DERIV_OCTONIONIC_STRUCTURE.md, SPEC_FTD_LAGRANGIAN.md
 
@@ -498,11 +496,3 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 | SU3-OPEN-3 | Can the lattice reproduce the full QCD spectrum (glueballs, hybrids)? | **[OPEN]** |
 | SU3-OPEN-4 | Does the lattice naturally produce the correct anomaly structure? | **[OPEN]** (see Wave 4: DERIV_LATTICE_CHIRAL_ANOMALY.md) |
 | SU3-OPEN-5 | Can two-loop β₁ be computed on the FTD lattice? | **[OPEN]** |
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-02-25 | Initial document: SU(3) from flux geometry, gluon propagator, vertices, beta function, confinement |

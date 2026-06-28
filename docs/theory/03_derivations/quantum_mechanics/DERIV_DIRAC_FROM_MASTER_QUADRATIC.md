@@ -2,7 +2,6 @@
 
 ## Fermions Are the Complex Regime of Self-Consistency
 
-**Date:** March 17, 2026
 **Status:** Derivation with honest epistemic assessment
 **Dependencies:** FOUND_AXIOM_ZERO.md, FOUND_BORN_RULE_NULL_CONE.md, DERIV_QUADRATIC_NECESSITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md
 

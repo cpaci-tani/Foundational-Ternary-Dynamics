@@ -1,7 +1,6 @@
 # DERIV — Z₃ Center-Closure of the Color-Charge Graph
 
 **Tag:** `[THEOREM]` (closure characterisation + projector identity) + `[CANDIDATE PRINCIPLE]` (open-flux penalty — not asserted, not tested)
-**Date:** 2026-05-22
 **LEDGER:** FTD-0195
 **Engine primitive:** [`../../../engine/include/ftd/color_center.h`](../../../engine/include/ftd/color_center.h)
 **Constructive verification:** [`../../../engine/tests/test_z3_color_center.cpp`](../../../engine/tests/test_z3_color_center.cpp) — `ctest -R "^z3_color_center$"` passes 1/1, all six sub-tests green at machine precision.

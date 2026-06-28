@@ -1,8 +1,6 @@
 # The Discrete Atomic Spectrum and Shell Structure
 
 **Status:** Foundational theory [STRONGLY MOTIVATED CONJECTURE]
-**Date:** 2026-06-18
-**Framework:** Foundational Ternary Dynamics v5.47
 
 > **Epistemic Note:** This document establishes the derivation of the multi-electron atomic spectrum and the periodic table shell capacities entirely from the geometric topology of the 3D Moore neighborhood. It bypasses continuous $\mathbb{R}^3$ variational techniques and spherical harmonics, resolving the fundamental architecture of the atom as a strict geometric consequence of the FTD discrete lattice.
 

@@ -2,7 +2,6 @@
 
 ## Deriving N_gen = 3 from the Lattice
 
-**Date:** March 17, 2026
 **Status:** [THEOREM] for geometric counting; [SELECTION] for physical identification
 **Proof script:** `scripts/proofs/proof_three_generations.py`
 **Tier:** 2.2

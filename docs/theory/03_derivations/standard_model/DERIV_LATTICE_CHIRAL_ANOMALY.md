@@ -2,10 +2,7 @@
 
 ## Deriving the Axial Anomaly and pi-zero Decay from the FTD Lattice
 
-**Version:** 1.0
-**Date:** February 25, 2026
 **Status:** [THEOREM] + [SELECTION] (mixed -- see Claims Table Section 7)
-**Framework:** Foundational Ternary Dynamics v5.26
 **Epistemic Tag:** Triangle diagram (VVA) computed on the FTD lattice. UV finiteness is [THEOREM] (compact Brillouin zone). Vanishing anomaly for naive fermions is [THEOREM] (Nielsen-Ninomiya). Wilson fermion resolution recovering the correct anomaly coefficient is [THEOREM] for arbitrarily fine lattice spacing $a$, with violations bounded by $O(a)$. Choice of Wilson term is [SELECTION]. The pi-zero decay rate Gamma = 7.73 eV (1.2% vs PDG) is [THEOREM] with f_pi adopted as [IMPOSED]. Baryogenesis connection via lattice topological charge is [SELECTION].
 
 > The chiral anomaly -- the quantum mechanical breaking of classical axial symmetry -- is one of the most profound results in quantum field theory. It governs neutral pion decay, constrains the number of light quark flavors, and provides the microscopic mechanism for baryon number violation. This document derives the anomaly from the FTD lattice Feynman rules. The triangle diagram is computed on the compact Brillouin zone BZ = [-pi, pi]^4, yielding a UV-finite integral that requires no regularization. The anomaly coefficient is topological: it counts the winding number of the fermion determinant over BZ. Naive fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions recover the correct coefficient Q^2 alpha/(2pi) per physical fermion. With N_c = 3 derived from the master quadratic, the pi-zero decay rate follows with only f_pi as input.

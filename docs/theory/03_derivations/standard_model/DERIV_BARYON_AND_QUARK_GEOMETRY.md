@@ -3,10 +3,8 @@
 **Epistemic Status:** Proton ratio `[STRONGLY MOTIVATED CONJECTURE]` (via the prior
 $N_{eff}/\alpha$ formula) · the $L_9$ "knot" re-spelling `[PARAMETRIC]` · the six quark masses
 `[PARAMETRIC]`
-**Version:** 1.1
-**Date:** 2026-06-18 (corrected 2026-06-19)
 
-> **CORRECTION 2026-06-19 (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
+> **Epistemic note (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
 > is **RETRACTED** — these are substitution identities, not forcing chains; they fail the
 > FTD-0097/0189 look-elsewhere bar and the standing zero-promotion discipline.
 > **Honest tags:** the proton mass ratio is a `[STRONGLY MOTIVATED CONJECTURE]` via the
