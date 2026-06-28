@@ -1,6 +1,5 @@
 # Foundation: Minimal Instantiated Universe
 
-**Date:** 2026-04-24
 **Status:** [FOUNDATION] / [SELECTION]
 **Purpose:** List the minimum ingredients required for an instantiated universe,
 starting from distinguishability and building only as much structure as each
