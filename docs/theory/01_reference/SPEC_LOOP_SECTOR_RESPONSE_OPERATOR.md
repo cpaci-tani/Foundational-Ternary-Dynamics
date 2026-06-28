@@ -1,7 +1,6 @@
 # SPEC - Loop Sector Response Operator
 
 **Tag:** [SUPERSEDED]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0211 [SYNTHESIS] - replaces the dead derivative-of-winding math with the fluctuation response operator formulation.
 
 > **[SUPERSEDED]:** The spatial fluctuation response operator over a static loop sector was explicitly falsified by an engine-driven numerical check. The `[OPEN PROGRAM]` for the Alpha Readout target operator has been migrated to the dynamical return-map formulation defined in `SPEC_ALPHA_READOUT_OSCILLATORY_CLOUD.md`.

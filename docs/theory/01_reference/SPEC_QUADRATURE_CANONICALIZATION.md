@@ -1,7 +1,6 @@
 # SPEC - Quadrature Canonicalization
 
 **Tag:** [OPEN PROGRAM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0210 [SYNTHESIS] - formalizes the admissibility requirements for deriving the intrinsic $\mathbb{Z}[i]$ field $z(v)$.
 **Companion docs:** `SPEC_CONNECTION_EXTRACTION_RULE.md`
 
@@ -23,7 +22,7 @@ This document formally specifies the canonical derivation constraints for the co
 
 Any formulation of $z(v)$ that artificially singles out a preferred Euclidean plane (e.g., the $xy$-plane) without a dynamical or topological justification derived directly from the state-flux interaction is epistemically invalid. 
 
-*(Note: Geometric algebra/Clifford multivectors or integrations over the 18 local Moore neighborhood normals were historically considered, but the edge-covariant tangent projection provides the exact geometrical closure.)*
+*(Note: Geometric algebra/Clifford multivectors or integrations over the 18 local Moore neighborhood normals do not provide closure; the edge-covariant tangent projection provides the exact geometrical closure.)*
 
 ## 2. Status: [DERIVED]
 

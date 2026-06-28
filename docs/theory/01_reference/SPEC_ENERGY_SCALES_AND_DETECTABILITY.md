@@ -1,7 +1,7 @@
 # SPEC — Energy Scales & Detectability: where the FTD lattice sits, and what it can reasonably predict
 
 **Tag:** `[SYNTHESIS]` — an energy-scale *lens* on already-tagged claims. **No row is promoted by inclusion here**; every claim carries its source tag, and the LEDGER wins on any disagreement (precedence: LEDGER > constitution > this doc).
-**Date:** 2026-06-19. **LEDGER:** registry row (this synthesis).
+**LEDGER:** registry row (this synthesis).
 **Companions:** [`SPEC_DIMENSIONAL_MAP.md`](SPEC_DIMENSIONAL_MAP.md) (the calibration register), [`SPEC_PREDICTIONS_FORWARD_2026.md`](SPEC_PREDICTIONS_FORWARD_2026.md) (FP/EP rows), [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) (PL-1..PL-6), [`SPEC_FTD_FRAMEWORK_V1.md`](SPEC_FTD_FRAMEWORK_V1.md) (constitution).
 **Computed numbers:** every figure below is computed by [`scripts/exploration/energy_scales_2026.py`](../../../scripts/exploration/energy_scales_2026.py) (SHA256 `15d01ccca5a635aa3d24ec2608e5796d0e8218aa347a86f3fc0023aa3dcdc464`) — none is recalled or hand-copied from prose. Framework constants are imported from `scripts/constants.py`; SI/CODATA constants (ℓ_P, c, ℏc) are declared per [`REF_EXTERNAL_CONSTANTS.md`](../../reference/REF_EXTERNAL_CONSTANTS.md) (CODATA 2022 / PDG 2024).
 
