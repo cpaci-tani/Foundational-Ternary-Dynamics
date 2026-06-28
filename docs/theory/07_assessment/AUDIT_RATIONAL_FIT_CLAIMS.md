@@ -4,7 +4,6 @@
 **Trigger:** Option 4 from Phase I follow-through menu — apply the same
 rigidity method used on the master quadratic to the other
 [THEOREM]/[DERIVED] claims in `CATALOG_PARAMETRIC_INSERTIONS.md`.
-**Date:** 2026-04-19
 **Scope:** the electron-mass formula, proton/electron ratio, sin²θ_W,
 α_s(M_Z), PMNS mixing angles, and the Δm² ratio — all currently tagged
 [THEOREM] or [DERIVED].
@@ -76,7 +75,7 @@ that FTD would need to explain, not a derivation.
 
 ### 3.3 · α_s(M_Z) = 7/59 — [STRUCTURALLY MOTIVATED PARAMETRIC]
 
-> **CORRECTION 2026-06-19 (adjudicated):** the 2026-06-18 "[THEOREM] tag restored" edit (commit `24b31016`) is RETRACTED — the "$59 = b_3 + 4N_{eff}$, 52 = 4 Dirac × 13 axes" reading is a substitution identity, not a forcing chain; it fails the FTD-0097/0189 look-elsewhere bar (see §2: competitor 2/17 fits better) and contradicts §2 of this very document. The honest status below stands.
+> **CORRECTION (adjudicated):** the "[THEOREM] tag restored" edit (commit `24b31016`) is RETRACTED — the "$59 = b_3 + 4N_{eff}$, 52 = 4 Dirac × 13 axes" reading is a substitution identity, not a forcing chain; it fails the FTD-0097/0189 look-elsewhere bar (see §2: competitor 2/17 fits better) and contradicts §2 of this very document. The honest status below stands.
 
 - FTD prediction 0.11864 vs experimental 0.1179 → **0.63% error**
 - Experimental precision is ~8500 ppm (0.85%); FTD sits at 0.63%, just
@@ -157,11 +156,11 @@ dynamically.
 | N_c | [THEOREM] + [CONJECTURE] (already mixed) | unchanged | Already accurate |
 | {N_base, N_eff, b_3} | [THEOREM] | [THEOREM] | Moore integers, structurally proven |
 | G_C = √α | [THEOREM] | [DEFINITION] | Conditional on α; not an independent theorem |
-| **sin²θ_W = 3/13** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **3.5% error, 1700× exp precision; 2/9 fits better (2026-06-18 [THEOREM] RETRACTED 2026-06-19)** |
+| **sin²θ_W = 3/13** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **3.5% error, 1700× exp precision; 2/9 fits better (restored-[THEOREM] edit RETRACTED)** |
 | m_e formula | [DERIVED] | [STRONGLY MOTIVATED CONJECTURE] | 0.19% error, structurally tight among peers |
 | m_μ/m_e | [DERIVED] | (not audited; likely [PARAMETRIC]) | Similar epistemic tier probable |
 | m_p/m_e | [DERIVED] | [STRONGLY MOTIVATED CONJECTURE] | 173 ppm, 5.8× exp precision |
-| **α_s(M_Z) = 7/59** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **59 not structurally forced; 2/17 fits better (2026-06-18 [THEOREM] RETRACTED 2026-06-19)** |
+| **α_s(M_Z) = 7/59** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **59 not structurally forced; 2/17 fits better (restored-[THEOREM] edit RETRACTED)** |
 | **sin²θ_12 = 3/10** | **[DERIVED]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **2.3% error, 4 competitors** |
 | **sin²θ_23 = 16/29** | **[DERIVED]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **1.0% error, 3 competitors** |
 | **sin²θ_13 = 1/52** | **[DERIVED]** | **[PARAMETRIC]** or retract | **12.6% error, 37× exp precision** |

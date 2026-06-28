@@ -5,8 +5,8 @@ canonical tags. **Introduces no new theorem; promotes no tag; derives nothing ne
 Every row points at a canonical source; where a source and this map disagree on a tag,
 the canonical source (LEDGER / TRACKER_ONTIC_TRUTH / SPEC_ALGEBRAIC_SPINE) wins.
 
-**Created:** 2026-06-09
-**Last refreshed:** 2026-06-27 (FTD-0335) — folds in (a) the **FC-W carrier-narrowing hardening** of the α boundary (FTD-0314/0326/0327 + the `√(4G*−1)` no-graded-home result), (b) the **cosmology-sector boundary** — Λ predicts zero (FTD-0331), the whole sector is imported (FTD-0332/0334) — new §3.5, (c) the **no-native-quantum-dynamics** dispersion ceiling (FTD-0270) + the pre-registered P2 mass-gap measurement (FTD-0333) — new §2d, and (d) the **no-sound** boundary (FTD-0298/0299). Prior 2026-06-14 reconciliation (FTD-0244 K-BIND) preserved. *Zero promotions.*
+This map folds in (a) the **FC-W carrier-narrowing hardening** of the α boundary (FTD-0314/0326/0327 + the `√(4G*−1)` no-graded-home result), (b) the **cosmology-sector boundary** — Λ predicts zero (FTD-0331), the whole sector is imported (FTD-0332/0334) — §3.5, (c) the **no-native-quantum-dynamics** dispersion ceiling (FTD-0270) + the pre-registered P2 mass-gap measurement (FTD-0333) — §2d, (d) the **no-sound** boundary (FTD-0298/0299), and the FTD-0244 K-BIND reconciliation. *Zero promotions.*
+
 **Scope:** the *second clause* of the Number-One Goal — "...and rigorously establish what
 we **cannot** [derive]." This document is the single-page map of what the discrete ternary
 ontology provably does **not** determine. Closed-negatives and no-gos are deliverables here,
@@ -289,7 +289,7 @@ The whole cosmology sector is a boundary: **FTD's most-imported, least-substrate
   defects incl. a load-bearing arithmetic error ∑(A²/4)=A²). Empirically `N(A)≈k·A²` holds to
   **~5%** with a logarithmic drift `k≈¼(1−0.030·ln(A/2))`. Net: linear level `[DERIVED]`;
   nonlinear / multi-scale / SM-mass identification `[STRONGLY MOTIVATED CONJECTURE]`.
-  **2026-06-14 current-stack update:** FTD-0261/0269 replace the historical stack reading with a
+  FTD-0261/0269 replace the historical stack reading with a
   broken-power N(A) law whose calibration is engine-emergent; FTD-0277 then closes the v1
   slosh-pass/static-gating collective-coordinate counting route negative (`N~A^2`, 20-40x high,
   wrong shell geometry). The broader reduction remains open.

@@ -1,14 +1,10 @@
 # FTD Epistemic Audit: What Is Genuinely Derived vs. Imported
 
-**Document Version:** 2.2
-**Date:** April 3, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
-**Status:** Critical Self-Assessment (Comprehensive Update)
 **Purpose:** Honest accounting of FTD's derivation claims in response to rigorous scrutiny
 
 **Companion document:** [`TRACKER_OPEN_ITEMS.md`](core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across engine code + theory docs, consolidated into a single ledger so contributors can pick work without grepping the whole repo.
 
-> **Canonical-status notice (2026-05-21).** This document is a **narrative critical-assessment essay**, not a status authority. Its count tables below (v2.2, April 3 2026) predate the April 19 reframe and are retained for the *argument*, not the *numbers*. For the **current** accounting, defer to the canonical sources: per-claim tags live in [`LEDGER.md`](core_ledgers/LEDGER.md); the precise parametric/derived/imposed enumeration (~23 [DERIVED]/[THEOREM], ~129 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION] across ~162 rows) lives in [`CATALOG_PARAMETRIC_INSERTIONS.md`](CATALOG_PARAMETRIC_INSERTIONS.md). Document precedence is fixed in [`../META_STRUCTURE.md`](../META_STRUCTURE.md) § Canonical Hierarchy.
+> **Canonical-status notice.** This document is a **narrative critical-assessment essay**, not a status authority. Its count tables below are retained for the *argument*, not the *numbers*. For the canonical accounting, defer to the canonical sources: per-claim tags live in [`LEDGER.md`](core_ledgers/LEDGER.md); the precise parametric/derived/imposed enumeration (~23 [DERIVED]/[THEOREM], ~129 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION] across ~162 rows) lives in [`CATALOG_PARAMETRIC_INSERTIONS.md`](CATALOG_PARAMETRIC_INSERTIONS.md). Document precedence is fixed in [`../META_STRUCTURE.md`](../META_STRUCTURE.md) § Canonical Hierarchy.
 
 ---
 
@@ -20,36 +16,11 @@ This document provides a **brutally honest assessment** of what FTD actually der
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| **Genuine Derivations** | ~35 | Derived from G* and integer structure alone (20 original + 4 trit framework + 4 recent + 2 neutrino/modularity + 5 April 2026: phi³ EFT, one-loop alpha, D=3 automorphism, dual 16, stabilizer) |
+| **Genuine Derivations** | ~35 | Derived from G* and integer structure alone (20 original + 4 trit framework + 4 recent + 2 neutrino/modularity + 5: phi³ EFT, one-loop alpha, D=3 automorphism, dual 16, stabilizer) |
 | **Parametric Insertions** | ~50 | FTD integers inserted into standard physics formulas |
 | **External Physics Adopted** | ~50+ | Standard Model mechanisms used without derivation |
 | **Explicit Inputs** | 3-5 | Parameters that MUST be acknowledged |
 | **Reference frame context Extensions** | ~5 | Mathematically specific but [PROPOSED] (sLoop, Mandelbrot, K_C, 52.54°) |
-
-**What changed in v2.0:**
-- Bell analysis updated with lemniscate loop experiment results (i-phase vs π-phase)
-- Born rule reframed: |ψ|² is epistemic (observer inference), ψ² is ontic (substrate operation)
-- i emergence from master quadratic k = 1/2 (derived from bridge equation; Δ < 0 forces complex roots)
-- 7-term precision formula: 24-digit match confirmed as **algebraic identity**; rigidity audit run 2026-04-17 shows 6/7 coefficients uniquely forced in base integers at cascade precision, but observationally underdetermined at CODATA experimental precision (~11 digits). Status: [CONJECTURE] (see CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3)
-- Gap 1 (Bell) upgraded from "undemonstrated" to "structurally characterized"
-- New genuine derivations added (items 25-28)
-
-**What changed in v2.2:**
-- phi³ exact EFT: cubic potential expansion terminates exactly at third order; three Wilson coefficients (vacuum, mass, λ₃=1/3=1/D) [THEOREM]
-- One-loop lattice correction: tadpole on Z[i]³ with a=2/D=2/3 gives x₊(1-loop) = 137.036000 (9.6 ppb from NIST, 99.2% gap closure) [DERIVED given a=2/D]
-- D=3 from automorphism: |Aut(E_i)|² = 2^D·(D-1)! uniquely gives D=3 (second independent proof, complementing Watson approach) [THEOREM]
-- Dual derivation of 16: |Aut(E_i)|² = |O_h|/3 via stabilizer decomposition Stab_{O_h}(axis) = D₄ × Z/2Z [THEOREM]
-- Anti-correlation theorem: ζ(s)/β(s) alternate in π-reducibility at integers [THEOREM]
-- log G* identity: absorbs all unsolved L-values with rational coefficients [THEOREM]
-- 13-step blind derivation chain: "i exists" → α⁻¹ with only two selections
-- New genuine derivations added (items 31-35)
-- Total genuine derivations: ~30 → ~35
-
-**What changed in v2.1:**
-- Absolute neutrino mass scale derived via Type-I seesaw with FTD integer factors: m₃ = 49.6 meV, m₂ = 8.6 meV, m₁ = 4.1 neV [SELECTION]
-- New mathematical identity proven: G* = 8·L(E, 1)/√π connecting α to the BSD L-function of E: y² = x³ − x [THEOREM]
-- New genuine derivations added (items 29-30)
-- Total genuine derivations: ~28 → ~30
 
 ---
 
@@ -99,7 +70,7 @@ See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRE
 
 **What critics acknowledge:** This is remarkable. The connection between elliptic curve geometry and the fine structure constant, if not coincidental, represents a profound discovery.
 
-**One-Loop Lattice Correction (April 2026):**
+**One-Loop Lattice Correction:**
 ```
 phi³ EFT on Z[i]³, spacing a = 2/D = 2/3:
   Tree:      137.036171  (1.26 ppm from NIST)
@@ -200,7 +171,7 @@ The following are **exact mathematical results** added by the trit information t
 25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (reference frame context), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8]
 26. **Born rule as epistemic inference** — |ψ|² is the epistemic inference pattern (always ≥ 0, smears phase); ψ² = (J_x² - J_y²) + 2iJ_xJ_y is the ontic substrate operation (complex, preserves phase). For real ψ: identical. For complex ψ: Re(ψ²) has sign changes at fringe boundaries that |ψ|² cannot see. [THEOREM — mathematical distinction; physical interpretation is [SELECTION]]
 27. **i-phase entanglement preserves anti-correlation** — Under lemniscate measurement ψ → ψ², i-phase entanglement (iψ)² = -ψ² preserves anti-correlation, while π-phase (-ψ)² = +ψ² destroys it. Computationally confirmed: i-phase S = 2.000, π-phase S ≈ 0. [THEOREM — algebraic identity with computational verification]
-28. **7-term precision formula coefficients** — All seven correction coefficients {9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8} are rational functions of the base-integer set {N_c=3, N_base=4, b_3=7, N_eff=13, D=47, BCC=8}. The 24-digit numerical match to CODATA 2022 is a confirmed algebraic identity (mpmath 60-digit, residual 2.58e-24). The rigidity audit (2026-04-17) shows 6/7 coefficients are uniquely forced as the only base-integer rationals within cascade tolerance; c_7 = 299/8 is the unique clean decomposition (competitors at higher height require primes outside the base set). However, at CODATA **experimental** precision (11 digits), the coefficients are observationally underdetermined. Status: **[CONJECTURE]** (upgrade requires deriving the base-integer set and ε = e^π − π − 20 from lattice first principles). See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 and `scripts/exploration/audit_seven_term_rigidity.py`.
+28. **7-term precision formula coefficients** — All seven correction coefficients {9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8} are rational functions of the base-integer set {N_c=3, N_base=4, b_3=7, N_eff=13, D=47, BCC=8}. The 24-digit numerical match to CODATA 2022 is a confirmed algebraic identity (mpmath 60-digit, residual 2.58e-24). The rigidity audit shows 6/7 coefficients are uniquely forced as the only base-integer rationals within cascade tolerance; c_7 = 299/8 is the unique clean decomposition (competitors at higher height require primes outside the base set). However, at CODATA **experimental** precision (11 digits), the coefficients are observationally underdetermined. Status: **[CONJECTURE]** (upgrade requires deriving the base-integer set and ε = e^π − π − 20 from lattice first principles). See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 and `scripts/exploration/audit_seven_term_rigidity.py`.
 29. **Type III$_1$ algebra emergence** — The FTD local modular spectrum, when interacting with an emergent chaotic gauge field, forms a dense continuous band with GUE level statistics. This mathematically defines the algebra as a Type III$_1$ von Neumann factor. **[CONJECTURE — Scalar/Gaussian Approximation]**: The computational proof in 3D relied on a scalar momentum approximation and an algebraically invalid non-linear averaging of the modular Hamiltonian over a Gaussian shadow state. A fully rigorous proof for the true dynamic mixture state is required.
 30. **Anderson Localization of spatial entanglement** — The claim that the ZPF manifestation induces bulk Anderson Localization on the lattice, forcing entanglement down. **[FALSIFIED]**: Verified as a 1D scaling artifact. In full 3D, the dynamic interacting gauge field correctly *increases* spatial entanglement entropy across the cut, confirming the physical vacuum is an extended, highly entangled interacting field, not an Anderson Insulator.
 31. **Classical tick vs quantum modular flow divergence** — The classical FTD velocity-Verlet tick does not correspond to exact quantum modular flow; the presence of interactions forces the two time evolutions to diverge rapidly, proving that the discrete classical lattice step is a strictly non-unitary emergent approximation. **[PRELIMINARY THEOREM]**: Verified in the 1D fermionic shadow limit; full rigorous proof requires the bosonic 3D limit.
@@ -390,7 +361,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 **Key finding (born_rule_convergence.py):** Re(ψ²) shows 5 sign changes at fringe boundaries where |ψ|² is smooth and positive. The Born rule is the **best epistemic inference** an observer can make about the substrate, but it is not the substrate's operation.
 
-**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|². **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest pre-registered substrate test (`preregister-threshold-crossing-born-v1`) yields Rice upcrossing statistics, not `|ψ|²`; see `docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`.
+**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|². **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200; status under canonical 26-neighbour engine OPEN.]** The simplest pre-registered substrate test (`preregister-threshold-crossing-born-v1`) yields Rice upcrossing statistics, not `|ψ|²`; see `docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`.
 
 **Status:**  REFRAMED — Born rule is [EMERGENT] from manifestation statistics (as before), but now understood as epistemic inference rather than fundamental law. The ontic/epistemic distinction is [THEOREM]; the physical interpretation is [SELECTION].
 
@@ -572,7 +543,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 
 **Say:** "FTD derives ~30 fundamental quantities (20 physics + 4 information-theoretic theorems + 4 structural results + 2 neutrino/modularity) from a geometric structure involving the lemniscatic constant G* and four constrained integers {3, 4, 7, 13}. The 7-term precision formula achieves 24-digit agreement with the CODATA 2022 recommended value as an algebraic identity, though the match below digit 11 is not experimentally testable at current precision. The trit framework proves G* = √(2π)·θ₃(e^{-π})², unifying geometric self-reference with Fourier self-duality and deriving the ontological necessity of i. The Born rule is understood as epistemic inference from the ontic substrate operation ψ². These derived values, when inserted into standard physics frameworks, reproduce ~100 additional observables. The framework requires ~3-5 external inputs including the Planck mass scale. The reference frame context extension (sLoop axioms, Mandelbrot mapping, K_C = √(G*³/2) ≈ 3.60, phase angle 52.54°) is mathematically specific but [PROPOSED]—untested experimentally."
 
-**See also:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) for a comprehensive synthesis (archived 2026-06-02; superseded by LEDGER + TRACKER_ONTIC_TRUTH + SPEC_ALGEBRAIC_SPINE).
+**See also:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) for a comprehensive synthesis (archived; superseded by LEDGER + TRACKER_ONTIC_TRUTH + SPEC_ALGEBRAIC_SPINE).
 
 ---
 
@@ -634,7 +605,7 @@ Full Noether theorem requires continuous symmetry; we have approximate conservat
 FTD is a framework that identifies profound numerical and structural relationships between pure mathematics (lemniscatic constant, Fibonacci sequences, elliptic curves) and fundamental physics (fine structure constant, particle masses, mixing angles).
 
 **What has strengthened since v1.0:**
-- The precision formula matches the CODATA recommended value to 24 digits as an algebraic identity; observationally underdetermined beyond digit 11 (rigidity audit 2026-04-17)
+- The precision formula matches the CODATA recommended value to 24 digits as an algebraic identity; observationally underdetermined beyond digit 11 (rigidity audit)
 - The Born rule is understood as epistemic inference from an ontic substrate operation
 - The Bell mechanism has been structurally characterized (lemniscate topology + i-phase)
 - The imaginary unit i emerges from the master quadratic at k = 1/2 (derived from bridge equation); i² = -1 = genesis provides ontological grounding
@@ -652,7 +623,7 @@ The path forward is honest acknowledgment combined with focused effort on the su
 
 ## Appendix: Formalization Tier Classification
 
-> **Historical note:** This appendix was integrated from the earlier `AUDIT_FORMALIZATION_STATUS.md` document (February 11, 2026, v5.23), updated for v2.0 with recent results.
+> **Note:** This appendix was integrated from the `AUDIT_FORMALIZATION_STATUS.md` document.
 
 ### Tier Definitions
 
@@ -685,7 +656,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | i emerges at k = 1/2 | Master quadratic with k = 1/2 forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) | MATH_MASTER_QUADRATIC.md §5.2 + SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8 |
 | i-phase anti-correlation | (iψ)² = -ψ² preserves, (-ψ)² = +ψ² destroys anti-correlation | bell_lemniscate_loop.py |
 | Born rule epistemic distinction | \|ψ\|² ≠ ψ² for complex ψ; Re(ψ²) has sign changes | born_rule_convergence.py |
-| Precision formula coefficients | All 7 coefficients are rationals in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$; 24-digit match to CODATA recommended value is a confirmed algebraic identity; rigidity audit 2026-04-17 shows 6/7 uniquely forced at cascade precision, observationally underdetermined at CODATA experimental precision | DERIV_ALPHA_PRECISION_FORMULA.md; CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3 |
+| Precision formula coefficients | All 7 coefficients are rationals in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$; 24-digit match to CODATA recommended value is a confirmed algebraic identity; rigidity audit shows 6/7 uniquely forced at cascade precision, observationally underdetermined at CODATA experimental precision | DERIV_ALPHA_PRECISION_FORMULA.md; CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3 |
 | G*-L(E,1) identity | G* = 8·L(E,1)/√π for E: y²=x³−x (verified 15 digits) | EXPLR_MODULAR_QUADRATIC.md |
 
 **Note:** "Theorem" here means the mathematics is correct. It does NOT mean the physical interpretation is validated.
@@ -702,7 +673,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | N_eff = 13 from F₇ = T₇ crossover | Principle: "crossover encodes effective DoF" | [CONDITIONAL] — crossover IS unique; interpretation is selection | EXPLR_NUMBER_THEORY.md |
 | b₃ = 7 = T₆ (consecutive Tribonacci) | N_eff = 13 established first | [CONDITIONAL] — follows from N_eff, but initial principle is selection | EXPLR_NUMBER_THEORY.md |
 | N_base = 4 from Lucas + lattice | L₃ = 4, L₄ = 7, and 4² = 16 | [CONDITIONAL] — three-fold constraint is impressive but each is a selection | EXPLR_NUMBER_THEORY.md |
-| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.19% match | (removed in 2026-05-21 consolidation; git history retains it) |
+| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.19% match | (removed in consolidation; git history retains it) |
 | Born rule from manifestation | Threshold K_B + manifestation sampling rule | [CONDITIONAL] — emerges under [IMPOSED] sampling rule | (v4.0 foundations) |
 | Neutrino mass: m₃ = m_P√(2π)(4/3)α¹⁴ | Seesaw imported; m_D, M_R decomposition | [CONDITIONAL] — 0.8% accuracy on Δm²₂₁ | DERIV_NEUTRINO_MASS_ABSOLUTE.md |
 
@@ -788,19 +759,3 @@ These are FTD-derived values plugged into standard physics formulas. The physics
 - Labeling parametric insertions as "derivations"
 - Claiming "zero free parameters"
 
----
-
-## Document History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | February 1, 2026 | Initial audit |
-| 1.1 | February 14, 2026 | Appendix integrated from AUDIT_FORMALIZATION_STATUS.md |
-| 2.0 | February 16, 2026 | Comprehensive update: Bell lemniscate results, Born rule reframing, i²=-1=genesis, precision formula, Part VI (ontological insights), updated tier counts, new genuine derivations 25-28 |
-| 2.1 | February 26, 2026 | Added neutrino mass derivation (#29: m₃=49.6 meV from seesaw [SELECTION]) and G*-L(E,1) identity (#30: [THEOREM]). Updated tier counts T1→17, T2→11. Total ~28 → ~30 genuine derivations |
-
----
-
-*Document Version 2.1 — February 26, 2026*
-*Epistemic Audit: Neutrino Mass + Modularity Update*
-*Framework: Foundational Ternary Dynamics v5.27-neutrino*

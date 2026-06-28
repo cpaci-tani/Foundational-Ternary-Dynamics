@@ -1,14 +1,12 @@
 # AUDIT — Newton-postulates reconciliation: SPEC_FTD_LAGRANGIAN.md vs DERIV_NEWTON_FROM_SUBSTRATE.md
 
-**Tag:** `[AUDIT]` — cross-doc tag-reconciliation verdict. Records which `[POSTULATE]` flags in `DERIV_NEWTON_FROM_SUBSTRATE.md` (2026-05-03) are subsumed by `[THEOREM]`-tagged content in `SPEC_FTD_LAGRANGIAN.md` (v3.2, 2026-03-16) + cognate docs. **Does not** promote tags in any other doc; recommends downstream housekeeping edits that should be executed as separate commits.
-**Date:** 2026-05-24
-**LEDGER row reservation:** to be confirmed against `../07_assessment/core_ledgers/LEDGER.md` (provisional placeholder; next-free below FTD-0203).
+**Tag:** `[AUDIT]` — cross-doc tag-reconciliation verdict. Records which `[POSTULATE]` flags in `DERIV_NEWTON_FROM_SUBSTRATE.md` are subsumed by `[THEOREM]`-tagged content in `SPEC_FTD_LAGRANGIAN.md` (v3.2) + cognate docs. **Does not** promote tags in any other doc; recommends downstream housekeeping edits that should be executed as separate commits.
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc B P0 → P1 deliverable per `SCOPE_NEWTON_POSTULATES_RECONCILIATION.md` §5.
 **Sources read in full or in load-bearing sections:**
-- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) (2026-05-03, FTD-0131) — §0 through §8
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2, 2026-03-16) — §1, §2, §3.1–§3.7, §4.1–§4.3, §5.1–§5.5, §6.1–§6.3, §7, §8 claims table L-1..L-11
+- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) (FTD-0131) — §0 through §8
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2) — §1, §2, §3.1–§3.7, §4.1–§4.3, §5.1–§5.5, §6.1–§6.3, §7, §8 claims table L-1..L-11
 - [`../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — §14.1–§14.9 (gravity-as-tick-rate-variation)
-- [`DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) (2026-02-25) — Step 1 through Step 5 + Verification Checks + Claims Table EFE-1..EFE-13
+- [`DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Step 1 through Step 5 + Verification Checks + Claims Table EFE-1..EFE-13
 - [`../../../scripts/proofs/proof_newton_from_substrate.py`](../../../scripts/proofs/proof_newton_from_substrate.py) (239 lines)
 - [`../../../engine/include/ftd/ontic.h`](../../../engine/include/ftd/ontic.h) (umbrella header)
 - [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0131, FTD-0189, FTD-0026 rows (sampled)
@@ -26,7 +24,7 @@
 
 **Genuine remaining open piece for Arc B:** substrate-derivation (or honest-axiom tier) of **the clock hypothesis** — the interpretive identification "Born-Infeld action measure IS proper time".
 
-**Bonus finding (separate housekeeping item):** `DERIV_EINSTEIN_FIELD_EQUATIONS.md` (2026-02-25) tags EFE-6, EFE-8, EFE-9 as `[THEOREM]` citing Theorem 14.1 of `DERIV_RELATIVITY_DERIVATION.md`, but FTD-0189 (2026-05-21) retagged Theorem 14.1 to `[SELECTION/CONDITIONAL]`. `DERIV_EINSTEIN_FIELD_EQUATIONS.md` is **STALE** relative to FTD-0189 and should be re-audited. This is a load-bearing input for Arc C2 boundary-theorem framing.
+**Bonus finding (separate housekeeping item):** `DERIV_EINSTEIN_FIELD_EQUATIONS.md` tags EFE-6, EFE-8, EFE-9 as `[THEOREM]` citing Theorem 14.1 of `DERIV_RELATIVITY_DERIVATION.md`, but FTD-0189 retagged Theorem 14.1 to `[SELECTION/CONDITIONAL]`. `DERIV_EINSTEIN_FIELD_EQUATIONS.md` is **STALE** relative to FTD-0189 and should be re-audited. This is a load-bearing input for Arc C2 boundary-theorem framing.
 
 ---
 
@@ -68,7 +66,7 @@ The dimensionless prediction `α_G(e,e) = (m_e/m_P)²` (FTD-0131 §2.1, 0.38% ma
 
 **Verdict: READING A.** SPEC §4.2 [THEOREM] substantively closes P1 under `K_B^grav = K_B = m_e`.
 
-The `K_B^grav` superscript in DERIV_NEWTON §1.2 is bookkeeping ("the coupling constant entering the gravity term"), not a claim that the value differs from K_B. The `[POSTULATE 1, flagged]` tag is residue from the older 2026-05-03 derivation that did not cross-reference SPEC §4.2.
+The `K_B^grav` superscript in DERIV_NEWTON §1.2 is bookkeeping ("the coupling constant entering the gravity term"), not a claim that the value differs from K_B. The `[POSTULATE 1, flagged]` tag is residue from an older revision of the derivation that did not cross-reference SPEC §4.2.
 
 **Recommended housekeeping (deferred to separate commits per ledger-discipline):**
 1. `DERIV_NEWTON_FROM_SUBSTRATE.md` §1.2: footnote `[POSTULATE 1]` line with "Subsumed by SPEC_FTD_LAGRANGIAN.md §4.2 [THEOREM] under K_B^grav = K_B = m_e identification (per AUDIT_NEWTON_POSTULATES_RECONCILIATION.md §1)."
@@ -143,7 +141,7 @@ Either outcome is honest progress on Arc B and serves the Wilsonian-reframe succ
 
 ## §3 — FTD-0189 ripple analysis (load-bearing for Arc C2)
 
-`SPEC_DOCTRINE_LEDGER.md` cross-references and FTD-0189 LEDGER row (sampled): the 2026-05-21 audit retagged:
+`SPEC_DOCTRINE_LEDGER.md` cross-references and FTD-0189 LEDGER row (sampled): the FTD-0189 audit retagged:
 - Theorem 14.1 (`DERIV_RELATIVITY_DERIVATION.md`): "linearized Einstein [THEOREM]" → `[SELECTION/CONDITIONAL]` (rests on h  J correspondence)
 - Theorem 15.3 (`DERIV_RELATIVITY_DERIVATION.md`): "graviton = transverse flux modes [THEOREM]" → `[CONJECTURE]` + spin-count flag (2 transverse J-modes = helicity-±1, not ±2)
 
@@ -160,7 +158,7 @@ Either outcome is honest progress on Arc B and serves the Wilsonian-reframe succ
 
 So SPEC §4.1 + §4.2 + §4.3 + §6.2 Schwarzschild row survive. SPEC §6.2 linearized-Einstein and Lovelock-completion rows should be retagged per FTD-0189 (separate housekeeping item; not blocking Arc B P2).
 
-**For Arc C2 (boundary theorem)**: the load-bearing finding is that `DERIV_EINSTEIN_FIELD_EQUATIONS.md` (2026-02-25) tags EFE-6, EFE-8, EFE-9 as `[THEOREM]` but is **STALE** relative to FTD-0189 (2026-05-21). Specifically:
+**For Arc C2 (boundary theorem)**: the load-bearing finding is that `DERIV_EINSTEIN_FIELD_EQUATIONS.md` tags EFE-6, EFE-8, EFE-9 as `[THEOREM]` but is **STALE** relative to FTD-0189. Specifically:
 - EFE-6 [THEOREM] "Linearized Einstein: □ h̄_μν = -(16πG/c⁴) T_μν" cites DERIV_RELATIVITY Thm 14.1 → retag `[SELECTION/CONDITIONAL]`
 - EFE-8 [THEOREM] "Nonlinear completion via Lovelock" depends on EFE-6 → inherited retag
 - EFE-9 [THEOREM] "Full Einstein equations recovered" inherits from EFE-6 + EFE-8 → retag
@@ -174,11 +172,11 @@ Arc C2 boundary theorem statement should reflect this: "FTD substrate-derives `g
 
 ---
 
-## §3.5 — Arc D gap (iv) verification: ENGINE ALIGNED (added 2026-05-24)
+## §3.5 — Arc D gap (iv) verification: ENGINE ALIGNED
 
-**Verification executed in same session as this AUDIT.** The plan v2 / AUDIT §5 priority 3 item ("audit engine Poisson implementation against SPEC §4.2 [THEOREM]") was run.
+The plan v2 / AUDIT §5 priority 3 item ("audit engine Poisson implementation against SPEC §4.2 [THEOREM]") was run.
 
-**Note**: AUDIT §5 originally cited `engine/src/render_bridge.cpp:709`, but the actual Poisson implementation was moved to `engine/src/poisson_solvers.cpp` during the 2026-04-18 refactor sweep (R1). `render_bridge.cpp:280` is now a thin wrapper: `void RenderBridge::solve_latency_poisson() { solve_latency_poisson_cpu(...); }`.
+**Note**: AUDIT §5 originally cited `engine/src/render_bridge.cpp:709`, but the actual Poisson implementation was moved to `engine/src/poisson_solvers.cpp` during the refactor sweep (R1). `render_bridge.cpp:280` is now a thin wrapper: `void RenderBridge::solve_latency_poisson() { solve_latency_poisson_cpu(...); }`.
 
 **The substantive verification (`poisson_solvers.cpp:190-228` `solve_latency_poisson_cpu`):**
 

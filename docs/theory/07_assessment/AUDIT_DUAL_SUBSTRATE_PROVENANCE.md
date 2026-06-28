@@ -1,6 +1,5 @@
 # Provenance Audit: The Dual-Substrate Decomposition
 
-**Date:** 2026-05-08
 **Status:** [AUDIT FINDING] — F1-hygiene observation, no demotion of any spine claim.
 **Tag impact:** none on spine. Trims rhetoric in [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md); flags stale comment in [`engine/include/ftd/ontic/master_quadratic.h`](../../../engine/include/ftd/ontic/master_quadratic.h).
 **Verifier numerics:** verified to ≥10 digits; computation reproduced in §3.

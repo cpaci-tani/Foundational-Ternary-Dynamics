@@ -1,7 +1,6 @@
 # AUDIT — Independent adversarial review of the ARC-C1 / ARC-B2 "FOUND" α-readout verdicts
 
 **Tag:** `[AUDIT]` — independent adversarial review (GTCA P4 mode). **Recommends an epistemic correction to committed work; executes no tag moves.** No spine claim is affected either way (FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]` under every reading below).
-**Date:** 2026-05-28
 **LEDGER row:** FTD-0232
 **Reviewer scope:** the two "FOUND-at-ARC-2" verdicts for MC-T4.3 (the operational α-readout obstruction):
 - `FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md` (ARC-C1, LEDGER **FTD-0231**)
@@ -102,4 +101,4 @@ If, on the contrary, a reviewer can exhibit the forward derivation of `Det = 16G
 
 ## 6 · Provenance
 
-Independent adversarial review conducted 2026-05-28, desk analysis only, against the committed corpus and locked pre-regs. Method: GTCA P4 (aesthetic-inverted, monitor-hot), refute-by-default. The review's own load-bearing claim — that the determinant's third G\* power is selected, not derived — is itself falsifiable (§5 hinge) and should be independently checked before the §5 corrections are executed.
+Independent adversarial review, desk analysis only, against the committed corpus and locked pre-regs. Method: GTCA P4 (aesthetic-inverted, monitor-hot), refute-by-default. The review's own load-bearing claim — that the determinant's third G\* power is selected, not derived — is itself falsifiable (§5 hinge) and should be independently checked before the §5 corrections are executed.

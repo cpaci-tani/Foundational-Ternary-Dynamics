@@ -2,13 +2,9 @@
 
 **Purpose:** Canonical reference for all headline claims, their epistemic status, dependencies, and falsification criteria.
 
-**Version:** 2.14 (Neutrino + Modularity)
-**Date:** February 26, 2026
-**Framework Status:** Discrete Substrate Framework — Core derivations complete + Neutrino Masses + Modularity
+> This document subsumes the earlier `AUDIT_NOVEL_CLAIMS.md` (narrative-format claim listing). All claims from that document are represented here in structured matrix form with claim IDs, dependencies, and falsification criteria.
 
-> **Historical Note (v2.13):** This document now subsumes the earlier `AUDIT_NOVEL_CLAIMS.md` (narrative-format claim listing, v3.2). All claims from that document are represented here in structured matrix form with claim IDs, dependencies, and falsification criteria. The standalone narrative document was removed in the 2026-05-21 consolidation; git history retains it.
-
-> **v2.11 Note:** Corrected G*/varpi distinction across all documentation. G* = √2×Γ(1/4)²/(2π) ≈ 2.9587 (master quadratic coefficient) is distinct from ϖ = Γ(1/4)²/(2√(2π)) ≈ 2.6221 (classical lemniscate constant). Bell inequality claims updated to reflect that simple simulation shows classical S ≤ 2; quantum violation S ≈ 2.83 is a theoretical prediction requiring full Hilbert space implementation.
+> **G*/varpi distinction.** G* = √2×Γ(1/4)²/(2π) ≈ 2.9587 (master quadratic coefficient) is distinct from ϖ = Γ(1/4)²/(2√(2π)) ≈ 2.6221 (classical lemniscate constant). Bell inequality claims reflect that simple simulation shows classical S ≤ 2; quantum violation S ≈ 2.83 is a theoretical prediction requiring full Hilbert space implementation.
 
 ---
 
@@ -52,7 +48,7 @@
 | Claim ID | Statement | Status | Dependencies | Justified In | Falsification Criterion | Repro Script |
 |----------|-----------|--------|--------------|--------------|------------------------|--------------|
 | **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, SPEC_FTD_REFERENCE.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `scripts/verification/verify_quadratic.py` |
-| ~~**ALPHA-2**~~ | ~~x₋ = 3.024 → N_c = 3 via RG flow~~ | **RETIRED** per v1.4 §5 (2026-05-22; LEDGER FTD-0014 removed in commit `ca7eb61`) — `N_c = 3` independently sourced from D=3 (SU(D)=SU(3) [SELECTION]) via `DERIV_LATTICE_SU3_GAUGE.md` / `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem | n/a | n/a | n/a | n/a |
+| ~~**ALPHA-2**~~ | ~~x₋ = 3.024 → N_c = 3 via RG flow~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`) — `N_c = 3` independently sourced from D=3 (SU(D)=SU(3) [SELECTION]) via `DERIV_LATTICE_SU3_GAUGE.md` / `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem | n/a | n/a | n/a | n/a |
 | **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² connects Spatial Potential to Epistemic Probability | **BRIDGE PROTOCOL** | A1-A4, EPISTEMIC_BRIDGE | BORN_RULE_DERIVATION.md | Failure of probability to track potential density | `scripts/verification/verify_born_rule.py` (Corr: 0.94) |
 | **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
 | **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
@@ -61,7 +57,7 @@
 | **BELL-1** | Spatial Domain is Local ($S \le 2$); Info speed limited to c | **CONFIRMED** | A1, Relativity | EPISTEMIC_BRIDGE §2.1 | Observation of FTL information transfer in Dom A | `scripts/experiments/verify_bell_inequality.py` (S=2.00) |
 | **PLANCK-1** | 1 voxel = Planck length identification | IMPOSED | (scale calibration) | CLAUDE.md §7.1 | n/a (calibration choice) | n/a |
 | **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `scripts/constants.py` |
-| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | (removed in 2026-05-21 consolidation; git history retains it) | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
+| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | (standalone doc removed in consolidation; git history retains it) | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
 | **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% value-match; no L-dependence) | **[PARAMETRIC]** value-match / **[BOUNDARY]** (per FTD-0331 — FTD predicts Λ=0; value needs L_H, not native per FTD-0059) | ALPHA-1, MASS-1, GAUSS-1 | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) | Not a falsifier — w and the Λ value are [OPEN]/[BOUNDARY] per FTD-0331 | `scripts/verification/verify_vacuum_energy.py` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | FOUND_SLOOP_FORMALIZATION.md | Alternative collapse mechanism shown viable within axioms | n/a |
 | **OBSERVER-1** | Observer = manifested structure (s≠0), not reference frame context | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Reference frame context-specific effects observed | n/a |
@@ -69,8 +65,8 @@
 | **SPINOR-1** | Fermi statistics from π₁(SO(3)) = Z₂ | THEOREM (construction) | framed flux | SPEC_FTD_REFERENCE.md §5 | Mathematical counterexample | `scripts/verification/verify_symbolic.py` |
 | **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (3.5% error vs M_Z) | **STRUCTURALLY MOTIVATED PARAMETRIC** | framework integers (Moore-layer 3/13 = N_c/N_eff) | REF_CLAIMS_MATRIX.md (this doc) | >1% discrepancy unexplained; 2/9 fits better | `scripts/verification/verify_mixing.py` |
 | **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | **STRUCTURALLY MOTIVATED PARAMETRIC** | framework integers (numerator 7 = b_3; 59 not forced) | REF_CLAIMS_MATRIX.md (this doc) | RG flow incompatible with prediction; 2/17 fits better | `scripts/verification/verify_mixing.py` |
-| **ATOMIC-1** | Helium ground state screening $\sigma_{FTD} = G^*/10$ yielding $E_0 = -79.023$ eV (CORRECTION 2026-06-19: introduced by commit `24b31016` under a misleading message; UNAUDITED, out of the 2026-06-19 adjudication scope) | **STRONGLY MOTIVATED CONJECTURE** (unaudited) | 10 transverse (non-Coulomb) screening axes | DERIV_DISCRETE_ATOMIC_SPECTRUM.md | >0.1% discrepancy unexplained | n/a |
-| **ATOMIC-2** | Shell Capacities $(2, 8, 18)$ from Moore partition $(2 \text{ core}, 8 \text{ corners}, 18 \text{ faces/edges})$ (CORRECTION 2026-06-19: introduced by commit `24b31016`; UNAUDITED, out of the 2026-06-19 adjudication scope) | **STRONGLY MOTIVATED CONJECTURE** (unaudited) | Structural geometry of Moore bounding box | DERIV_DISCRETE_ATOMIC_SPECTRUM.md | Incompatible shell filling order observed | n/a |
+| **ATOMIC-1** | Helium ground state screening $\sigma_{FTD} = G^*/10$ yielding $E_0 = -79.023$ eV (introduced by commit `24b31016` under a misleading message; UNAUDITED, out of adjudication scope) | **STRONGLY MOTIVATED CONJECTURE** (unaudited) | 10 transverse (non-Coulomb) screening axes | DERIV_DISCRETE_ATOMIC_SPECTRUM.md | >0.1% discrepancy unexplained | n/a |
+| **ATOMIC-2** | Shell Capacities $(2, 8, 18)$ from Moore partition $(2 \text{ core}, 8 \text{ corners}, 18 \text{ faces/edges})$ (introduced by commit `24b31016`; UNAUDITED, out of adjudication scope) | **STRONGLY MOTIVATED CONJECTURE** (unaudited) | Structural geometry of Moore bounding box | DERIV_DISCRETE_ATOMIC_SPECTRUM.md | Incompatible shell filling order observed | n/a |
 | **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **SUSY-0** | No superpartners at any energy | THEOREM | discrete lattice incompatible with SUSY | REF_CLAIMS_MATRIX.md (this doc) | Discovery of any superpartner | n/a (exclusion) |
@@ -781,7 +777,7 @@ The lemniscate as the geometric signature of the void's primordial self-division
 | Lemniscate-Alpha | L × 91/732, with L_α = 23.79960517... | 2.9586940857... |
 | **Discrepancy** | | **+6.41 ppm** |
 
-(Corrected 2026-05-01 from prior "5.45 ppm". Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the corrected match is +6.41 ppm. The rigidity-scan verdict in `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches; the canonical curve is one of a measurable minority, not uniquely privileged.)
+(Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the match is +6.41 ppm. The rigidity-scan verdict in `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches; the canonical curve is one of a measurable minority, not uniquely privileged.)
 
 Two independent mathematical approaches produce the **same G*** to +6.41 ppm. The framework's [SELECTION] tag for this match (per FTD-0122 rigidity scan) is the correct epistemic status — the agreement is real and structurally interesting, but ~4-5% of natural Cayley-Dickson curves admit comparable matches, so this does not establish unique ontological privilege.
 
@@ -819,7 +815,7 @@ The Mandelbrot set is necessary (simplest nontrivial iteration). G* bridges uniq
 
 | Claim ID | Statement | Value | Status | Location |
 |----------|-----------|-------|--------|----------|
-| **MIT-1** | Bernoulli and Alpha produce same G* | +6.41 ppm | **[SELECTION]** (was [THEOREM]; retagged 2026-05-01 per AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md FTD-0122 — ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable matches) | MITOSIS_OF_THE_VOID.md §III |
+| **MIT-1** | Bernoulli and Alpha produce same G* | +6.41 ppm | **[SELECTION]** (was [THEOREM]; retagged per AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md FTD-0122 — ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable matches) | MITOSIS_OF_THE_VOID.md §III |
 | **MIT-2** | Void mitosis = lemniscate self-intersection | Topological | **[SELECTION]** | MITOSIS_OF_THE_VOID.md §I |
 | **MIT-3** | Triangle of Necessity (Mandelbrot anchor) | Proof structure | **[SELECTION]** | MITOSIS_OF_THE_VOID.md §IV |
 | **MIT-4** | 720° traversal = fermionic spin structure | Exact | **[THEOREM]** | MITOSIS_OF_THE_VOID.md §II |
@@ -861,7 +857,7 @@ The Mandelbrot set is necessary (simplest nontrivial iteration). G* bridges uniq
 | Function | Purpose |
 |----------|---------|
 | `bernoulli_lemniscate_parametric()` | Smooth parametric form |
-| `verify_gstar_from_both_curves()` | Verify +6.41 ppm match (corrected from prior 5.45 ppm) |
+| `verify_gstar_from_both_curves()` | Verify +6.41 ppm match |
 | `verify_mandelbrot_bridge()` | Verify k_c × c_cusp × G* = 1 |
 | `verify_master_quadratic()` | Verify roots and Vieta |
 
@@ -961,6 +957,4 @@ The strong force point gives the sum of all framework integers.
 
 ---
 
-*FTD Claims Matrix v2.13 (Consolidated) - Subsumes AUDIT_NOVEL_CLAIMS.md*
-*Document updated: February 14, 2026*
-*Structural corrections (v5.28): February 2026 — Cabibbo formula corrected, Jarlskog error flagged, "zero free parameters" removed*
+*FTD Claims Matrix — subsumes AUDIT_NOVEL_CLAIMS.md.*

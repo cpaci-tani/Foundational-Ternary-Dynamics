@@ -1,8 +1,7 @@
 # AUDIT — Can the α-binding axiom W be EARNED natively? The carrier-narrowing theorem (FTD-0314)
 
 **Tag:** `[THEOREM]` (the narrowing theorem + the three carrier closures) + `[OPEN]` (one surviving loophole) + `[CONJECTURE]` (the weight-inhomogeneity closure of that loophole). **Conditional on Chudnovsky 1976** (algebraic independence of π and Γ(1/4)), exactly as the spine's Theorem 9 / FTD-0112.
-**Date:** 2026-06-23
-**Lock (same-session, transparent — not a blind pre-reg):** the FOUND / CLOSED / UNDERDETERMINED verdict criteria were fixed before computing. Verification artifact: `scripts/proofs/proof_w_carrier_narrowing.py` SHA256 `7e1e90def51e…`, 11/11 PASS at dps=150. Read-only / pure mathematics — **golden gate untouched** (`0xb604d81a3d79366e`).
+**Lock (transparent — not a blind pre-reg):** the FOUND / CLOSED / UNDERDETERMINED verdict criteria were fixed before computing. Verification artifact: `scripts/proofs/proof_w_carrier_narrowing.py` SHA256 `7e1e90def51e…`, 11/11 PASS at dps=150. Read-only / pure mathematics — **golden gate untouched** (`0xb604d81a3d79366e`).
 **Precedence:** LEDGER > `SPEC_FTD_FRAMEWORK_V1.md` (constitution) > this doc.
 
 ---

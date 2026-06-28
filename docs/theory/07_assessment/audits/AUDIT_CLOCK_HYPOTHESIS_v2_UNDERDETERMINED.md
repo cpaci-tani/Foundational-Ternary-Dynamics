@@ -2,11 +2,10 @@
 
 **Tag:** `[AUDIT FINDING — UNDERDETERMINED per pre-reg v2 §6 Outcome B; pre-registration discipline VIOLATED per v2 §1 line 16]`. The v2 closure attempt produced two artifacts (`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md` + `FOUND_CLOCK_HYPOTHESIS.md`) that an external review finds invalidated on two independent axes: (i) **process** — the pre-reg was never committed-and-tagged before the result document was authored, in direct violation of v2's own §1 line-16 anti-laundering clause; (ii) **substance** — v2 added a quadratic L²-norm "budget-conservation" primitive to §4 item 7 that is not derived from FTD axioms, making the derivation chain trivially close on a smuggled magic ingredient. Per v2 §6 Outcome B, this is the canonical UNDERDETERMINED case: "*a derivation chain reaches `dτ/dt = √(f - v²/f)` but requires an intermediate principle outside the §4 catalog... that has not been independently substrate-derived.*"
 
-**Date:** 2026-05-25 (post-author audit; same-day reconciliation)
 **LEDGER row:** FTD-0208 (Arc B P2 v2 closure verdict)
 **Pre-registration analyzed:** `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md` (archived to `archive/retracted/` per Documentation Cleanup Discipline; original untracked content authored 2026-05-25 19:47, SHA256-as-content `4d4387...` per the FOUND doc's claim — verified neither committed nor tagged in git).
 **Closure-attempt doc analyzed:** `FOUND_CLOCK_HYPOTHESIS.md` (archived; original untracked content authored 2026-05-25 19:47 — same-minute mtime with the pre-reg, which is determinative of process failure).
-**Audit executor:** post-hoc external audit invoked when user requested reconciliation of the v2 work against the canonical state. Audit dispatched 2026-05-25 against the GTCA F6/F9/F10 discipline framework.
+**Audit executor:** post-hoc external audit reconciling the v2 work against the canonical state, dispatched against the GTCA F6/F9/F10 discipline framework.
 **Honest framing:** the v2 attempt repeated the F9 (collusion-bias) failure mode at a higher level: the v1 audit had already caught an under-claim ("CLOSED-NEGATIVE looked humble but was incorrect"); the v2 attempt produced the symmetric over-claim ("FOUND looked rigorous but was invalidated by process + substance"). The pre-registration discipline that mitigated v1's failure was itself **bypassed at v2** — there is no commit-then-tag step between pre-reg and result. Per v2 §1 line 16, this invalidates v2 by its own rule. The substantive content additionally fails Outcome A criteria. v3 is queued.
 **Companion docs:**
 - [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) — v1 audit; precedent for the UNDERDETERMINED verdict format
@@ -85,7 +84,7 @@ The honest reading: F-d and F-f would fire at the §4 budget-conservation step u
 | Discipline requirement | v1 status | v2 status |
 |---|---|---|
 | Pre-reg file committed |  commit `4c15ba1` |  untracked (`??`) |
-| Pre-reg git tag applied |  `preregister-clock-hypothesis-derivation-v1` exists |  `preregister-clock-hypothesis-derivation-v2` does **NOT** exist (`git tag --list` 2026-05-25) |
+| Pre-reg git tag applied |  `preregister-clock-hypothesis-derivation-v1` exists |  `preregister-clock-hypothesis-derivation-v2` does **NOT** exist (`git tag --list`) |
 | SHA256 in REF_PREREGISTER_MANIFEST.md |  `9feb9d5...` |  no committed entry (REF_PREREGISTER_MANIFEST.md is itself modified-uncommitted) |
 | Pre-reg committed BEFORE result authored |  v1 audit timestamp 2026-05-25 07:19 vs v1 pre-reg commit 4c15ba1 |  both files mtime `2026-05-25 19:47` (same minute) — pre-reg never had a state-locked moment to which subsequent edits could be flagged "post-hoc invalidating" |
 | Independent adversarial reviewer (per pre-reg §9 step 9) |  independent `general-purpose` agent caught under-claim |  FOUND §10 cites "independent `self` subagent" — this is a same-process review, not an independent reviewer; the v1 mechanism (separate agent dispatch) was not replicated |

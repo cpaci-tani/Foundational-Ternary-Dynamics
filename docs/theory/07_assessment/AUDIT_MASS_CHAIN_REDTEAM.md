@@ -1,7 +1,6 @@
 # AUDIT_MASS_CHAIN_REDTEAM: Adversarial Red-Team Critique of the FTD Mass Derivation Chain
 
 **Status:** `[ADVERSARIAL CRITIQUE / RED-TEAM REPORT]`  
-**Version:** 1.0  
 **Domain:** Epistemic Hygiene & Validation  
 **Authoritative Context:** Cross-cutting assessment under `META_STRUCTURE.md`  
 
@@ -98,6 +97,6 @@ The FTD leptonic and hadronic mass chain is an exceptionally beautiful and tight
 However, calling this an "unbroken physical derivation" is an **epistemic overclaim** that violates the strict discipline of FTD's non-circularity guidelines. 
 
 ### Recommendations:
-1. **Downgrade Individual Tags:** Update all references in `../05_particles/EXPLR_FTD_MASS_CHAIN.md` and related documents to reflect the audited grades (downgrade `[THEOREM]` to `[PARAMETRIC]` or `[CONJECTURE]` where physical coupling is asserted). **[Addressed 2026-05-29: the chain doc was retagged to mixed status and relocated `01_reference/SPEC_FTD_MASS_CHAIN.md` → `05_particles/EXPLR_FTD_MASS_CHAIN.md`.]**
+1. **Downgrade Individual Tags:** Update all references in `../05_particles/EXPLR_FTD_MASS_CHAIN.md` and related documents to reflect the audited grades (downgrade `[THEOREM]` to `[PARAMETRIC]` or `[CONJECTURE]` where physical coupling is asserted). **[Addressed: the chain doc was retagged to mixed status and relocated `01_reference/SPEC_FTD_MASS_CHAIN.md` → `05_particles/EXPLR_FTD_MASS_CHAIN.md`.]**
 2. **Prioritize the Readout Program (MC-T4.3):** Recognize that the mass chain will remain an elegant mathematical coincidence until the **operational alpha-readout program** (ARC-B1) is solved dynamically in the C++ engine.
 3. **Keep Gaps Honestly Documented:** Retain the 172-ppm proton mass residual and the MeV-calibration coordinate mismatch as open issues in `SPEC_OPEN_MATH_BY_SECTOR.md`.
