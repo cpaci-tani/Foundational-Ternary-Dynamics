@@ -3,11 +3,9 @@
 ## How Dimensions Emerge from Relation, How Time Emerges from Energy Processing, and Why Special Relativity, Gravity, and General Relativity Are Three Distinct Concepts
 
 **Status:** Foundational theory with 5 testable predictions (Parts I–XII); foundational synthesis of emergent time and curvature-free gravity (Parts XIII–XIV); SR/gravity/GR semantic disambiguation with epistemic classification (Part XV).
-**Date:** 2026-05-21
-**Consolidates:** `FOUND_SPACETIME_EMERGENCE.md`, `FOUND_EMERGENT_TIME_GRAVITY.md`, `FOUND_RELATIVITY_GRAVITY_DISTINCTION.md` (merged 2026-05-21)
-**Framework:** Foundational Ternary Dynamics v5.28
+**Consolidates:** `FOUND_SPACETIME_EMERGENCE.md`, `FOUND_EMERGENT_TIME_GRAVITY.md`, `FOUND_RELATIVITY_GRAVITY_DISTINCTION.md`
 
-> **Consolidation note (2026-05-21):** This document consolidates three foundational documents on the emergence of spacetime and gravity. `FOUND_SPACETIME_EMERGENCE.md` (itself a Feb 16 2026 merge of `FOUND_DIMENSIONAL_EMERGENCE.md` + `FOUND_SPACE_TIME_SEPARATION.md`, with `EXPLR_DIMENSIONAL_BUCKLING.md` folded in) supplies the core structure — Parts I–XII below are reproduced from it. `FOUND_EMERGENT_TIME_GRAVITY.md` (March 16 2026) supplies the time-as-energy-processing derivation and curvature-free gravity — Parts XIII–XIV. `FOUND_RELATIVITY_GRAVITY_DISTINCTION.md` (v2.0, March 17 2026) supplies the SR/gravity/GR trichotomy with the seven-level hierarchy — Part XV. The standalone sources are retained on disk; git history retains all earlier originals.
+> **Consolidation note:** This document consolidates three foundational documents on the emergence of spacetime and gravity. `FOUND_SPACETIME_EMERGENCE.md` (itself a merge of `FOUND_DIMENSIONAL_EMERGENCE.md` + `FOUND_SPACE_TIME_SEPARATION.md`, with `EXPLR_DIMENSIONAL_BUCKLING.md` folded in) supplies the core structure — Parts I–XII below are reproduced from it. `FOUND_EMERGENT_TIME_GRAVITY.md` supplies the time-as-energy-processing derivation and curvature-free gravity — Parts XIII–XIV. `FOUND_RELATIVITY_GRAVITY_DISTINCTION.md` supplies the SR/gravity/GR trichotomy with the seven-level hierarchy — Part XV. The standalone sources are retained on disk.
 
 ---
 
@@ -254,7 +252,7 @@ The "-1" is the pairing cost: when you create the self-referential structure (th
 
 ## Part VI: Dimensional Buckling — Argument 8 for D = 3
 
-> **Merge note (Feb 14, 2026):** This section was originally published as the standalone document `EXPLR_DIMENSIONAL_BUCKLING.md` (v1.0, Feb 10, 2026, [CONJECTURE]). The standalone original was removed in the 2026-05-21 consolidation; git history retains it.
+> **Merge note:** This section was originally published as the standalone document `EXPLR_DIMENSIONAL_BUCKLING.md` ([CONJECTURE]).
 
 ### 6.1 Dimensions as Buckling Events
 
@@ -1187,6 +1185,5 @@ If correct, the three temporal modes (kinematic, thermodynamic, geometric) of th
 
 ---
 
-*Document created: 2026-05-21 (consolidation of FOUND_SPACETIME_EMERGENCE + FOUND_EMERGENT_TIME_GRAVITY + FOUND_RELATIVITY_GRAVITY_DISTINCTION)*
-*Framework: Foundational Ternary Dynamics v5.28*
+*Consolidation of FOUND_SPACETIME_EMERGENCE + FOUND_EMERGENT_TIME_GRAVITY + FOUND_RELATIVITY_GRAVITY_DISTINCTION.*
 *Classification: Foundational (FOUND_)*

@@ -2,14 +2,12 @@
 
 ## Formalization of the Geometric Emergence Hierarchy
 
-**Date:** January 22, 2026 (Updated: January 31, 2026)
 **Framework:** Foundational Ternary Dynamics (FTD)
 **Status:** Formal derivation integrating lemniscate theory with reference frame context framework
-**Version:** 2.1
 
 ---
 
-## Note on Extended Hierarchy (v5.13)
+## Note on Extended Hierarchy
 
 This document covers Levels 0-12 of the FTD ontological hierarchy. For the deeper levels (-3 to 0) that address **what precedes the Pure Integral I₄**, see:
 
@@ -145,7 +143,7 @@ A remarkable discovery: Two different lemniscate forms produce the **same G*** c
 | **Lemniscate-Alpha** | Arc length × 91/732, with L_α = 23.79960517... | 2.9586940857... |
 | **Match** | | **+6.41 ppm** |
 
-(Corrected 2026-05-01 from "5.45 ppm" — the original value depended on the misstated L_α = 23.7994. Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the corrected match is +6.41 ppm. The rigidity-scan verdict in `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches; the canonical curve is one of a measurable minority, not uniquely privileged. The "ontological equivalence" framing below should be read as an interpretive choice, not a uniqueness theorem.)
+(A formerly quoted "5.45 ppm" value depended on the misstated L_α = 23.7994. Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the correct match is +6.41 ppm. The rigidity-scan verdict in `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches; the canonical curve is one of a measurable minority, not uniquely privileged. The "ontological equivalence" framing below should be read as an interpretive choice, not a uniqueness theorem.)
 
 This [SELECTION] reading establishes **ontological equivalence as one valid interpretation**: neither curve is more fundamental than the other within this reading. Both are valid geometric representations of the void's self-division — though the rigidity scan shows that ~4-5% of curves in the same Cayley-Dickson family achieve similar arc-length matches, so the canonical Lemniscate-Alpha is not uniquely positioned within the family.
 
@@ -603,8 +601,3 @@ The key insight is that **the coefficient k = 16 is derived, not assumed**. It f
 - The product rule: k_phys × k_cons = 2^D
 
 This transforms the master quadratic from an empirical observation into a **derived consequence** of self-referential geometry.
-
----
-
-*Document created: January 22, 2026*
-*Framework: Foundational Ternary Dynamics v5.1*

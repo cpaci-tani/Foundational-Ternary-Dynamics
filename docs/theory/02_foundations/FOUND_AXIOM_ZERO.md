@@ -3,15 +3,14 @@
 ## Everything from State and Position
 
 **Status:** Foundational axiom — proposed replacement for the five postulates. §7 absorbs the cogito-algebraic bridge and full reverse-engineering trace ([FOUNDATION], FTD-0080).
-**Date:** 2026-05-21
-**Consolidates:** also absorbs `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md` (2026-05-21)
+**Consolidates:** also absorbs `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md`
 **Dependencies:** SPEC_FTD.md, FOUND_SELF_REFERENTIAL_CLOSURE.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, DERIV_WATSON_GSTAR_IDENTITY.md, AUDIT_INFINITY_REFRAME.md, FOUND_THE_FIRST_DISTINCTION.md, FOUND_BLIND_DERIVATION_CHAIN.md, FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md.
 
 ---
 
 ## Abstract
 
-FTD currently rests on five postulates: discrete space, discrete time, ternary states, Moore locality, and determinism. This document argues that all five reduce to a single axiom with two clauses:
+FTD rests on five postulates: discrete space, discrete time, ternary states, Moore locality, and determinism. This document argues that all five reduce to a single axiom with two clauses:
 
 > **Axiom Zero.** Reality consists of voxels. Each voxel has exactly two irreducible properties:
 >
@@ -59,7 +58,7 @@ Postulates 1 and 3 are the two clauses of Axiom Zero. Postulates 2, 4, and 5 are
 
 Axiom Zero is a structural claim about the minimal ontology. It does NOT claim:
 
-- That the derivations of P2, P4, P5 from Axiom Zero are currently complete at the [THEOREM] level (they are not; see honest status below)
+- That the derivations of P2, P4, P5 from Axiom Zero are complete at the [THEOREM] level (they are not; see honest status below)
 - That Axiom Zero is the correct description of physical reality (that is an empirical question)
 - That Axiom Zero is unique (other axiom systems might produce equivalent physics)
 - That state and position are "really" two properties rather than one (this is a question about the axiom's reducibility, discussed in Section 5.3)
@@ -256,7 +255,7 @@ The roots are:
 | x_+ | 137.036 | 1/alpha (fine structure) | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
 | x_- | 3.024 | mathematical artifact of `P(x)`; no physics identification | n/a | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`, Moore Layer Theorem) |
 
-**Note (April 2026):** An updated 13-step chain starting from "i exists" is now canonical — see [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md). The coefficient 16 is now [THEOREM] via dual derivation (|Aut(E_i)|^2 = |O_h|/3 = 16, see DERIV_DUAL_DERIVATION_OF_16.md). The one-loop lattice correction closes 99.2% of the gap (9.6 ppb).
+**Note:** The 13-step chain starting from "i exists" is canonical — see [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md). The coefficient 16 is [THEOREM] via dual derivation (|Aut(E_i)|^2 = |O_h|/3 = 16, see DERIV_DUAL_DERIVATION_OF_16.md). The one-loop lattice correction closes 99.2% of the gap (9.6 ppb).
 
 **The original 10-step chain** (retained for historical reference):
 
@@ -347,7 +346,7 @@ The honest status:
 
 **The master quadratic is an algebraic identity, not a dynamical limit.**
 
-The polynomial `x² − 16 G*² x + 16 G*³ = 0` is built from a single quantity, G\* = √2·Γ(1/4)²/(2π), computable to arbitrary precision. The load-bearing origin of the coefficient 16 is the group-order fact `|Aut(E)|² = 4² = 16` for the CM curve E: y² = x³ − x ([THEOREM]). A second re-spelling, `z_BCC × 2 = 8 × 2 = 16` (BCC coordination times non-void ternary states; FOUND_DIMENSIONAL_COUNTING.md §5.4), is [SELECTION] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, not an independent derivation (corrected 2026-06-24 spine audit). The roots x₊ = 137.036 and x₋ = 3.024 follow by the quadratic formula.
+The polynomial `x² − 16 G*² x + 16 G*³ = 0` is built from a single quantity, G\* = √2·Γ(1/4)²/(2π), computable to arbitrary precision. The load-bearing origin of the coefficient 16 is the group-order fact `|Aut(E)|² = 4² = 16` for the CM curve E: y² = x³ − x ([THEOREM]). A second re-spelling, `z_BCC × 2 = 8 × 2 = 16` (BCC coordination times non-void ternary states; FOUND_DIMENSIONAL_COUNTING.md §5.4), is [SELECTION] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, not an independent derivation. The roots x₊ = 137.036 and x₋ = 3.024 follow by the quadratic formula.
 
 The polynomial is **not** the L → ∞ limit of any finite-L self-consistency equation:
 - An explicit finite-L gap-equation scan (`AUDIT_MASTER_QUADRATIC.md`, Item 1) does not converge to (137.036, 3.024).
@@ -356,7 +355,7 @@ The polynomial is **not** the L → ∞ limit of any finite-L self-consistency e
 
 What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8%. The physical identification x₊  1/α, x₋  N_c rests on (i) the dual match across two unrelated physical constants from one polynomial, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving this match (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
 
-**Update (April 2026; corrected 2026-06-24 spine audit):** The z_BCC × 2 = 8 × 2 = 16 reading (FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = BCC coordination number times non-void ternary states) is [SELECTION], not [THEOREM] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, so it is not an independent derivation. The load-bearing theorem for the coefficient 16 is the group-order fact |Aut(E)|^2 = 16 from the CM curve's automorphism group, which stays [THEOREM]. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
+The z_BCC × 2 = 8 × 2 = 16 reading (FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = BCC coordination number times non-void ternary states) is [SELECTION], not [THEOREM] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, so it is not an independent derivation. The load-bearing theorem for the coefficient 16 is the group-order fact |Aut(E)|^2 = 16 from the CM curve's automorphism group, which stays [THEOREM]. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
 
 ### 4.3 "The stencil doesn't use BCC corners for dynamics"
 
@@ -420,7 +419,7 @@ The claim IS: "the Z^3 lattice has a natural return Green's function (the BCC va
 The question is whether the construction is natural (each step forced by geometry) or contrived (steps chosen to hit the target). The honest answer:
 
 - Steps 0-5 (lattice -> symmetry -> BCC return Green's function G_BCC(0) -> lemniscatic modulus -> CM curve -> G\*) are **forced**. No choices are made. Any mathematician studying Z^3 would encounter these objects. [THEOREM]
-- Steps 6-7 (degree 2, coefficient 16): Degree 2 is argued via self-referential closure [SELECTION]. The z_BCC x 2 = 16 reading is [SELECTION] (FOUND_DIMENSIONAL_COUNTING.md Section 5.4; corrected 2026-06-24 spine audit), while the group-order fact |Aut(E)|^2 = 16 is [THEOREM].
+- Steps 6-7 (degree 2, coefficient 16): Degree 2 is argued via self-referential closure [SELECTION]. The z_BCC x 2 = 16 reading is [SELECTION] (FOUND_DIMENSIONAL_COUNTING.md Section 5.4), while the group-order fact |Aut(E)|^2 = 16 is [THEOREM].
 - Step 10 (identification x_+ = 1/alpha) is **observed**, not derived. The numerical agreement is striking (1.26 ppm) but no dynamical mechanism produces alpha from the gap equation. [STRONGLY MOTIVATED CONJECTURE]
 
 **Bottom line:** FTD has discovered a genuine mathematical connection between Z^3 lattice geometry and the number 137.036. Whether this connection has physical content -- whether it explains WHY alpha has this value -- depends on closing the physical-identification gap at Step 10. Until then, the connection is a provocation, not a proof.
@@ -506,7 +505,7 @@ A voxel has a state and a position; from these, and nothing else, the local geom
 
 ## Part VII: The Cogito Bridge and Full Reverse-Engineering Trace
 
-> **Consolidation note (2026-05-21):** This part absorbs the unique content of `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md` ([FOUNDATION], filed 2026-04-24, LEDGER row FTD-0080). The source's opening repeated Axiom Zero's reduction of the five postulates — already covered in Part I above — and that repetition is dropped here. What follows is the source's distinct content: the phenomenological "I exists" → algebraic $i$ bridge, and the complete trace from every FTD output back to the axiom. Note that this part frames the *sole formal axiom* as "$i$ exists" ($x^2 + 1 = 0$ has a solution); this is the algebraic-genesis reading and is complementary to the state-and-position framing of Parts I–VI — the two clauses of Axiom Zero (ternary state, cubic position) are themselves consequences of arranging the Gaussian-integer structure at $D = 3$, as §7.2.4 below traces.
+> **Consolidation note:** This part absorbs the unique content of `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md` ([FOUNDATION], LEDGER row FTD-0080). The source's opening repeated Axiom Zero's reduction of the five postulates — already covered in Part I above — and that repetition is dropped here. What follows is the source's distinct content: the phenomenological "I exists" → algebraic $i$ bridge, and the complete trace from every FTD output back to the axiom. Note that this part frames the *sole formal axiom* as "$i$ exists" ($x^2 + 1 = 0$ has a solution); this is the algebraic-genesis reading and is complementary to the state-and-position framing of Parts I–VI — the two clauses of Axiom Zero (ternary state, cubic position) are themselves consequences of arranging the Gaussian-integer structure at $D = 3$, as §7.2.4 below traces.
 
 ### 7.0 Executive statement
 
@@ -576,7 +575,7 @@ Everything below is a theorem from "$i$ exists", with standard mathematical deri
 | D | $\Gamma(1/4), \Gamma(3/4)$ — periods | [THEOREM] | Chowla–Selberg applied to $E_i$; real period of $E_i$ |
 | E | $G^* = \Gamma(1/4)/\Gamma(3/4)$ | [THEOREM] | The ratio; algebraically independent of $\pi$ |
 | F | $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$ | [THEOREM] | Bernoulli lemniscatic constant |
-| G | $G^*/\varpi = 2/\sqrt{\pi}$ | [THEOREM] | Via Euler reflection (proved in `archive/AUDIT_SESSION_2026_04_24.md`, archived 2026-06-02) |
+| G | $G^*/\varpi = 2/\sqrt{\pi}$ | [THEOREM] | Via Euler reflection (proved in `archive/AUDIT_SESSION_2026_04_24.md`) |
 | H | $|\mathrm{Aut}(E_i)|^2 = 16$ | [THEOREM] | Squaring Step C |
 | I | $D = 3$ uniquely satisfies $16 = 2^D(D-1)!$ | [THEOREM] | Verified for $D \in \{1,2,3,4,5\}$ |
 
@@ -586,10 +585,10 @@ Everything below is a theorem from "$i$ exists", with standard mathematical deri
 
 Two places in the chain are [SELECTION] — structurally motivated but not uniquely forced by theorem:
 
-| Selection | Statement | Why not forced | Status (2026-04-24) |
+| Selection | Statement | Why not forced | Status |
 |---|---|---|---|
 | **S1** | Master quadratic has form $x^2 - 16G^{*2} x + 16G^{*3} = 0$ | Chain gives coefficient $16$ and constant $G^*$ | **NARROWED to minimum-degree selection** via two-route unification (FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) — coefficients are L-value [THEOREM]s, only remaining selection is "polynomial is minimum-degree FTD-meaningful object" |
-| **S2** | Ladder walk addends $\{4, 3, 3, 6\}$ in that specific order | Each addend is forced ($N_{\rm base} = 4$, $N_c = 3$, $N_f = 6$); the ordering is motivated by the physical reading electron-at-n-11 but not yet proven from first principles | Unchanged — Program A (O_h subgroup chain) is the closure path |
+| **S2** | Ladder walk addends $\{4, 3, 3, 6\}$ in that specific order | Each addend is forced ($N_{\rm base} = 4$, $N_c = 3$, $N_f = 6$); the ordering is motivated by the physical reading electron-at-n-11 but not yet proven from first principles | Program A (O_h subgroup chain) is the closure path |
 
 **S1 has been substantially narrowed** by the L-value identification (DERIV_MASTER_QUADRATIC_CM_LVALUES.md) combined with the self-consistency derivation (DERIV_MASTER_QUADRATIC_FROM_Z.md). See FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md for the unified story: the master quadratic is derivable by two independent routes (physics + arithmetic) that converge to 100-digit precision, leaving only "minimum-degree polynomial" as residual selection. **Program E** (uniqueness-of-minimal-polynomial proof) would close S1 fully.
 
@@ -794,7 +793,7 @@ Levels 0–7 and 9 are purely arithmetic, forced by theorem. Level 8 is the firs
 | FTD's initial justification is complete to the 2-selection level | [THEOREM] (of the formal chain) |
 | Why $i$ exists in the first place | **[OUT OF SCOPE]** |
 
-*Originally filed 2026-04-24 as the initial-justification unification. Points every FTD output back to the single axiom "$i$ exists", makes the cogito-algebraic equivalence explicit, and identifies the two selection principles (S1 master quadratic Vieta exponents, S2 ladder walk ordering) as the only theoretical gaps. Closing S2 is Program A.*
+*The initial-justification unification points every FTD output back to the single axiom "$i$ exists", makes the cogito-algebraic equivalence explicit, and identifies the two selection principles (S1 master quadratic Vieta exponents, S2 ladder walk ordering) as the only theoretical gaps. Closing S2 is Program A.*
 
 ---
 

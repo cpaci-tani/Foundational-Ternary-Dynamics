@@ -1,7 +1,5 @@
 # Meta-Patterns of FTD: Criticality, Self-Reference, and Boundary Selection
 
-**Date:** March 6, 2026
-**Framework:** Foundational Ternary Dynamics v5.27
 **Status:** Formal unification of meta-principles scattered across the framework
 **Category:** 2 (Ontological Foundations), Entry 2.12
 
@@ -451,7 +449,7 @@ The 13-level hierarchy in FOUND_ONTOLOGICAL_GENESIS.md can be reinterpreted thro
 | Level 7 to 8/9 | Domain selection | Dynamical |
 | Level 10 | Measurement interface (Delta = 0) | Algebraic |
 
-The hierarchy IS a sequence of boundary crossings. This is consistent with MP-1 but was not previously stated.
+The hierarchy IS a sequence of boundary crossings. This is consistent with MP-1.
 
 ### 7.2 The Alpha-Power Ladder as a Boundary Sequence
 
@@ -564,6 +562,4 @@ The test is not "can we call it a boundary?" but "is it a NAMED boundary in a ST
 
 ---
 
-*Document created: March 6, 2026*
-*Framework: Foundational Ternary Dynamics v5.27*
 *Status: Formal unification of meta-principles; no new physics derived*
