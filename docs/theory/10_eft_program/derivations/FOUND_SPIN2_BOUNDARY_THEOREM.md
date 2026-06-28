@@ -1,11 +1,9 @@
 # FOUND — Spin-2 boundary theorem (free-theory + canonical-toggle scope)
 
-**Tag:** `[THEOREM at free-theory + Gauss-only level for clauses (C2-1), (C2-2), (C2-3)]` + `[STRONGLY MOTIVATED CONJECTURE for canonical toggle set per FTD-0193 empirical floor]` + `[REFERENCE for (C2-4)]` (effective-theory matching via Deser-bootstrap of POSITED `h_μν` per FTD-0189 + AUDIT_NEWTON_POSTULATES_RECONCILIATION §3 + DERIV_EINSTEIN_FIELD_EQUATIONS [SELECTION/CONDITIONAL] retags 2026-05-24). **Outcome A (FOUND)** per pre-reg §6 outcome-A criteria.
+**Tag:** `[THEOREM at free-theory + Gauss-only level for clauses (C2-1), (C2-2), (C2-3)]` + `[STRONGLY MOTIVATED CONJECTURE for canonical toggle set per FTD-0193 empirical floor]` + `[REFERENCE for (C2-4)]` (effective-theory matching via Deser-bootstrap of POSITED `h_μν` per FTD-0189 + AUDIT_NEWTON_POSTULATES_RECONCILIATION §3 + DERIV_EINSTEIN_FIELD_EQUATIONS [SELECTION/CONDITIONAL] retags). **Outcome A (FOUND)** per pre-reg §6 outcome-A criteria.
 
-**Date:** 2026-05-25 (Step 2+3 execution per Wilsonian-reframe plan v2 Strategic Decision)
 **LEDGER row:** FTD-0209 (Arc C2 P4 closure verdict)
-**Pre-registration:** [`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`](../preregistrations/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md) — git tag `preregister-spin2-boundary-theorem-v1`, commit `d8e016b`, SHA256 `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`. Hash-lock verified 2026-05-25 via `git rev-list -n1 preregister-spin2-boundary-theorem-v1`.
-**Closure-attempt executor:** FTD lead session.
+**Pre-registration:** [`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`](../preregistrations/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md) — git tag `preregister-spin2-boundary-theorem-v1`, commit `d8e016b`, SHA256 `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`. Hash-lock verified via `git rev-list -n1 preregister-spin2-boundary-theorem-v1`.
 **Adversarial reviewer (per pre-reg §9 step 10):** independent `general-purpose` agent (no project priors). Verdict cited verbatim in §11 below.
 **Companion docs (load-bearing proof scaffold):**
 - [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) — 4-clause consolidated derivation (commit `d2ec208`)
@@ -18,7 +16,7 @@
 
 The four-clause spin-2 boundary theorem of `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` §1 holds at the locked dual-tag scope. The closure attempt walked pre-reg §9 method 11-step: 0/10 F-a..F-j falsifiers fire; 0/8 B-1..B-8 banned moves invoked. Independent `general-purpose` agent adversarial review returned **PASS-WITH-CAVEATS** (verdict cited §11). The 4 caveats — all documentation-level scope clarifications, none structural — are incorporated inline in §5, §6, §7, §13 below.
 
-**Per pre-reg §1 honest framing:** this is **scope clarification** ("the boundary is mapped at theorem-grade rigor at the locked dual-tag scope"), not the substantive surprise of "we proved no graviton." The DERIV docs (commit `d2ec208`) authored 2026-05-24 already established the chain rigorously; this closure attempt verifies + finalizes + addresses adversarial-review caveats.
+**Per pre-reg §1 honest framing:** this is **scope clarification** ("the boundary is mapped at theorem-grade rigor at the locked dual-tag scope"), not the substantive surprise of "we proved no graviton." The DERIV docs (commit `d2ec208`) already establish the chain rigorously; this closure attempt verifies + finalizes + addresses adversarial-review caveats.
 
 **Verdict per pre-reg §6: Outcome A (FOUND).**
 
@@ -39,7 +37,7 @@ Per pre-reg D1 = `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` §1 verbatim:
 > **(C2-1) Linear spectrum.** 2 transverse spin-1 J modes per wavevector + 1 quasi-static scalar ℒ; no rank-2 propagating mode.
 > **(C2-2) J-bilinear non-separability.** TT projection of `O_ij = J_iJ_j − ⅓δ_ij|J|²` correlator is bubble-integral continuum, no isolated pole.
 > **(C2-3) No substrate-derived graviton in §4 catalog.** Composition of (C2-1) + (C2-2) + §5.1 uniqueness argument.
-> **(C2-4) Full nonlinear GR matched, not derived.** h_μν posited per Conjecture 10.1 [FTD-0189]; Deser-bootstrap chain [SELECTION/CONDITIONAL] per `DERIV_EINSTEIN_FIELD_EQUATIONS.md` retags 2026-05-24.
+> **(C2-4) Full nonlinear GR matched, not derived.** h_μν posited per Conjecture 10.1 [FTD-0189]; Deser-bootstrap chain [SELECTION/CONDITIONAL] per `DERIV_EINSTEIN_FIELD_EQUATIONS.md` retags.
 
 ---
 
@@ -47,7 +45,7 @@ Per pre-reg D1 = `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` §1 verbatim:
 
 Per pre-reg D2 + D3:
 - **Free-theory + Gauss-only level** (D2): state field s ≡ 0; no state-flux coupling; no manifestation thresholds; no Langevin noise; Gauss constraint is the only interaction.
-- **Canonical toggle set level** (D3): engine's default toggle configuration at the time of `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` hash-lock (commit `bb354b6`, 2026-05-22) — 11 toggles ON, `dual_substrate` + `weak_transmutation` OFF. Re-snapshotted via this pre-reg's D3 reference. This is the regime in which FTD-0193 measured.
+- **Canonical toggle set level** (D3): engine's default toggle configuration at the `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` hash-lock (commit `bb354b6`) — 11 toggles ON, `dual_substrate` + `weak_transmutation` OFF. Re-snapshotted via this pre-reg's D3 reference. This is the regime in which FTD-0193 measured.
 
 **Dual-tag structure** preserved throughout the walk-through and the final result-doc: [THEOREM] for free-theory clauses; [SMC] for canonical-toggle extension with FTD-0193 empirical floor; [REFERENCE] for the Deser-bootstrap clause (C2-4).
 
@@ -120,7 +118,7 @@ Verify DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §6 + reference to FTD-0189 audi
 
 | Sub-step | Source | Status |
 |---|---|---|
-| 6.1 Deser-bootstrap chain in DERIV_EINSTEIN_FIELD_EQUATIONS.md Step 5: h_μν enters as Conjecture 10.1 (posited) per FTD-0189 audit | DERIV_EINSTEIN_FIELD_EQUATIONS §1 + Step 3 + Step 5 (retagged 2026-05-24 per FTD-0189 ripple per commit `9e85bd7`) |  EFE-6/8/9 now [SELECTION/CONDITIONAL] per ripple housekeeping |
+| 6.1 Deser-bootstrap chain in DERIV_EINSTEIN_FIELD_EQUATIONS.md Step 5: h_μν enters as Conjecture 10.1 (posited) per FTD-0189 audit | DERIV_EINSTEIN_FIELD_EQUATIONS §1 + Step 3 + Step 5 (retagged per FTD-0189 ripple per commit `9e85bd7`) |  EFE-6/8/9 now [SELECTION/CONDITIONAL] per ripple housekeeping |
 | 6.2 Conjecture 10.1 status: **[CLOSED NEGATIVE for *substrate emergence* in the probed regime per FTD-0193]**; **importation as effective-theory scaffold per (C2-4) is *unaffected*** | FTD-0193 + REPORT_GRAVITON_SUBSTRATE_MODE.md §6 |  empirical floor confirmed (Caveat-4: scope explicit) |
 | 6.3 Net for (C2-4): full nonlinear GR matched via Deser-bootstrap of posited h_μν; NOT substrate-derived | Composition 6.1 + 6.2 |  [REFERENCE] tag (not derivation) |
 
@@ -132,10 +130,10 @@ Verify DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §6 + reference to FTD-0189 audi
 
 ## §8 — Arc B P2 verdict branch handling (pre-reg §9 step 7, D7)
 
-Per pre-reg D7: Arc B P2 verdict determines the scalar-sector statement. Status at this closure attempt:
+Per pre-reg D7: Arc B P2 verdict determines the scalar-sector statement. Status:
 
-- **Arc B P2 status (2026-05-25):** pre-reg `preregister-clock-hypothesis-derivation-v1` hash-locked at commit `4c15ba1` (this session); closure attempt scheduled as Phase B of Step 2+3 execution (immediately after this Arc C2 P4 closure). **Verdict: PENDING.**
-- **Branch handling per D7:** since Arc B P2 verdict is not yet in hand at this closure attempt time, this result-doc includes BOTH branch statements per D7 Branch C:
+- **Arc B P2 status:** pre-reg `preregister-clock-hypothesis-derivation-v1` hash-locked at commit `4c15ba1`; closure attempt pending. **Verdict: PENDING.**
+- **Branch handling per D7:** since the Arc B P2 verdict is not yet in hand, this result-doc includes BOTH branch statements per D7 Branch C:
   - **Branch A (Arc B P2 = FOUND):** scalar sector extends to full Schwarzschild proper time [THEOREM]; this boundary theorem's "scalar sector" statement reads as "FTD substrate-derivable scalar gravity reaches full Schwarzschild proper time [THEOREM via SPEC §4.3]".
   - **Branch B (Arc B P2 = CLOSED-NEGATIVE):** scalar sector stops at "g_00 form via Phase G + clock-hypothesis AXIOM"; this boundary theorem's "scalar sector" statement reads as "FTD substrate-derivable scalar gravity reaches Schwarzschild g_00 form via Phase G + the clock-hypothesis AXIOM tagged in SPEC §4.3".
 - **Verdict on (C2-3) is unaffected by Arc B P2 branch** per DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §8 (the boundary theorem's spin-2 forbiddenness depends only on (C2-1) ∧ (C2-2) ∧ §5.1 uniqueness, all of which are independent of the clock hypothesis).
@@ -186,7 +184,7 @@ Per pre-reg §8. Each rule: invoked (FAIL) or not (PASS) with justification. **I
 
 ## §11 — Adversarial review verdict (pre-reg §9 step 10) — PASS-WITH-CAVEATS
 
-**Adversarial reviewer:** independent `general-purpose` agent dispatched 2026-05-25 with: pre-reg path, DERIV docs paths, draft result-doc path, REPORT_GRAVITON_SUBSTRATE_MODE path, F-/B-checklist verification mandate.
+**Adversarial reviewer:** independent `general-purpose` agent dispatched with: pre-reg path, DERIV docs paths, draft result-doc path, REPORT_GRAVITON_SUBSTRATE_MODE path, F-/B-checklist verification mandate.
 
 **Reviewer's verdict (verbatim):** **PASS-WITH-CAVEATS**
 

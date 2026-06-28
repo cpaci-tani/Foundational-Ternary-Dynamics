@@ -3,24 +3,23 @@
 **Tag:** [OPEN] — structural statement of the remaining physics problem
 required to elevate the master quadratic from [STRONGLY MOTIVATED
 CONJECTURE] to [THEOREM].
-**Date:** 2026-04-19
 **Status:** scoping doc — lays out the problem, three candidate
 mechanisms, and the tests that would discriminate. Does NOT solve
 the problem.
 
-> **2026-06-13 continuation note.** FTD-0242 and FTD-0244 sharpened this from
+> **Continuation note.** FTD-0242 and FTD-0244 sharpened this from
 > "find an operator readout" to "test whether dynamics selects a coupling."
 > FTD-0284,
-> `../preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`, is now locked
+> `../preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`, is locked
 > as the discriminator that keeps native unit response, external Postulate-W
 > matching, and any future no-alpha-input engine measurement formally separate.
 > The first registered engine artifact, FTD-0285
 > (`../preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md` plus
 > `../ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`), invalidated its own
 > finite-protocol absolute Phase-G gate. It did not find dynamical alpha.
-> The next step is now FTD-0286
-> (`../preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`): validate
-> the production live-engine estimator against the existing matched-stencil EFT
+> FTD-0286
+> (`../preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`) validates
+> the production live-engine estimator against the matched-stencil EFT
 > projector before asking the no-alpha-vs-Postulate-W question again.
 > FTD-0286 v1 returned `ENERGY_FUNCTIONAL_MISMATCH` because v1 paired
 > `energy_audit().field_energy = ½Σ|J|²` with the legacy gate `2rG_L(r)`.
@@ -28,7 +27,7 @@ the problem.
 > `../ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`) re-pairs with `α_r = r G_L(r)`:
 > matched static projector **passes** (max rel err 0.26%); production live-tick
 > still fails on stencil drift. The canonical finite-cell estimator is
-> matched-stencil + half-energy gate. Next coupling-selection attempt:
+> matched-stencil + half-energy gate. The next coupling-selection attempt is
 > FTD-0285 no-alpha discriminator v2 on that pairing.
 
 ---
@@ -40,8 +39,8 @@ Phase G established that the engine's emergent Gauss law
 **geometric Coulomb** with `α_r(r, L) = 2 r G_L(r)` under the
 `Σ|J|²` energy convention (legacy Phase-G derivation).
 
-**Convention note (FTD-0286 v2, 2026-06-13):** the live engine reports
-`energy_audit().field_energy = ½ Σ|J|²` since 2026-04-27, so the paired
+**Convention note (FTD-0286 v2):** the live engine reports
+`energy_audit().field_energy = ½ Σ|J|²`, so the paired
 finite-cell gate for interaction readouts is `α_r = r G_L(r)`, not `2 r G_L(r)`.
 See `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` and
 `ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.
@@ -76,7 +75,7 @@ derivations.
 
 Three logically-distinct possibilities:
 
-### 2.1 · Mechanism A — Dirac-quantisation / topological  **(RULED OUT, 2026-04-19)**
+### 2.1 · Mechanism A — Dirac-quantisation / topological  **(RULED OUT)**
 
 In continuum QED, Dirac showed that if magnetic monopoles exist, then
 the electric charge is quantised: `eg = 2πn` for integer n. This is a
@@ -88,7 +87,7 @@ of the gauge bundle, independent of any dynamical input.
 `Γ(C) = ∮_C J · dl` around closed lattice loops takes quantised values;
 if it did, g_c would be forced by topology.
 
-**Tested 2026-04-19 via `engine/tests/test_wilson_topology.cpp`:**
+**Tested via `engine/tests/test_wilson_topology.cpp`:**
 
 Equilibrated two-opposite-charge configuration at L = 32, measured
 plaquette circulations on 5000+ loops at plaquette sizes 1×1, 2×2, 4×4.
@@ -113,9 +112,9 @@ that gives the sd. No discrete structure.
 
 1. Compactifying J (J → J mod 2π/g_c) — a lattice-gauge-theory-style
    reformulation. This is a major engine redesign; not a benchmark.
-2. Adding magnetic-monopole sources. Not currently in the theory.
+2. Adding magnetic-monopole sources. Not in the theory.
 
-Neither is a small change. For the current FTD engine design,
+Neither is a small change. For the FTD engine design as it stands,
 Mechanism A is **ruled out** and the path forward must go through
 Mechanisms B or C.
 
@@ -154,7 +153,7 @@ the ontic.h derivation chain has a candidate action. But the step
 from "classical equations of motion" to "partition function with
 measurable β" has not been rigorously taken.
 
-### 2.3 · Mechanism C — self-consistency / gap-equation fixed point  **(RULED OUT at classical level, 2026-04-19)**
+### 2.3 · Mechanism C — self-consistency / gap-equation fixed point  **(RULED OUT at classical level)**
 
 If the bare coupling `g_c` flows under some RG transformation to a
 fixed point `g_c*`, and if the master quadratic is the self-consistency
@@ -169,12 +168,12 @@ which can be read as "coupling × (total vacuum capacity − coupling) =
 **Problem:** Phase I Item 1 (`audit_gap_equation_convergence.py`) shows
 that the naive finite-L gap equation does NOT converge cleanly to the
 master quadratic. So the "master quadratic is the L → ∞ fixed point of
-a specific finite-lattice gap equation" claim is not currently
+a specific finite-lattice gap equation" claim is not
 numerically established. The identity `x_+ = 1/α` remains exact
 algebra, but its interpretation as a flow-to-fixed-point is
 [CONJECTURE].
 
-**Further evidence (Phase J, 2026-04-19):** Explicit computation of the
+**Further evidence (Phase J):** Explicit computation of the
 partition function on the L=2 torus
 (`DERIV_PARTITION_FUNCTION_L2.md`) shows the FTD analytical action is
 **ultralocal in the state field s**: under the Gauss constraint
@@ -229,7 +228,7 @@ the equations of motion. If the resulting S has a natural bare g_c,
 that's the answer; if it has a free parameter that must be tuned to
 match QED, that parameter is the insertion point.
 
-**(3) ~~Test Mechanism A on the engine directly.~~** DONE 2026-04-19
+**(3) ~~Test Mechanism A on the engine directly.~~** DONE
 (`test_wilson_topology.cpp`). Circulation is numerically zero for the
 equilibrated Coulomb configuration — no topological quantisation.
 Mechanism A is ruled out without engine reformulation (see §2.1).

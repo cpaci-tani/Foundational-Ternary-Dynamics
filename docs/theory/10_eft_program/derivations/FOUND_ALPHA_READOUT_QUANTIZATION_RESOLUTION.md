@@ -1,11 +1,11 @@
 # Foundational Resolution — Alpha Quantization Readout (ARC-C1)
 
-> ** CORRECTION (2026-05-28): verdict downgraded FOUND → UNDERDETERMINED.**
+> ** STATUS: verdict is UNDERDETERMINED (not FOUND).**
 > An independent adversarial review (`AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md`)
 > plus three pre-registered closure attempts
 > (`AUDIT_ALPHA_READOUT_DETERMINANT_GRADING_CLOSED_NEGATIVE.md` FTD-0233,
 > `AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md` FTD-0234,
-> `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` FTD-0235) established that
+> `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` FTD-0235) establish that
 > the §3 "Selection 1" (the transfer-matrix trace/determinant `= 16G*²`/`16G*³`)
 > is an **asserted** master-quadratic target, not a forward derivation: the
 > determinant `16G*³ = x₊x₋` is an ordinary product and a 2×2 operator's trace and
@@ -18,11 +18,9 @@
 > `16 = |μ₄|²`, Watson `G_BCC(0)=G*²/(2π)` — **stands**; the FOUND-at-ARC-2
 > *verdict* does **not**. Honest status: **UNDERDETERMINED**. MC-T4.3 remains a
 > `[FOUNDATIONAL OBSTRUCTION]`; `x₊=1/α` (FTD-0013) stays `[STRONGLY MOTIVATED
-> CONJECTURE]`. Original text preserved below for provenance.
+> CONJECTURE]`. The original FOUND-framed text is preserved below.
 
 **Tag:** [THEOREM] (for the cyclic subgroup $C_4$ representation decomposition of the BCC unit cell and the winding number index), [SELECTION] (for the transfer matrix trace/determinant mapping, readout prefactor, and observable projection)  
-**Date:** 2026-05-27  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Authoritative Reference:** [`docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`](../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)  
 **Pre-Registration:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) (FTD-0231)  
 **Companion Documents:** [`docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`](../../07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md) (FTD-0231), [`docs/theory/10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) (FTD-0230).
@@ -33,7 +31,7 @@
 
 This document executes the locked pre-registration protocol **PREREG_ALPHA_READOUT_QUANTIZATION_v1** to evaluate the **Quantization / Readout Rule (Candidate C)** as a candidate for the FTD-native electric charge readout rule ($ARC$).
 
-We resolve the technical program and ~~establish a **FOUND** verdict at the **ARC-2** level~~ **[CORRECTED 2026-05-28 → UNDERDETERMINED; see top banner]** (operational physical readout):
+We resolve the technical program and ~~establish a **FOUND** verdict at the **ARC-2** level~~ **[CORRECTED → UNDERDETERMINED; see top banner]** (operational physical readout):
 1. **Topological Quantization:** We define the topological winding index $\text{Ind}(\gamma)$ of projected flux fields on the complex subspace $V_{\text{complex}} \cong \mathbb{Z}[i]^2$ of the BCC unit cell. By showing that a localized charge/dipole preparation breaks the full cubic symmetry to the cyclic rotation subgroup $C_4 \subset O_h$, the 8 corners of the BCC unit cell decompose rigorously as two copies of the regular representation of $C_4$, yielding the complex subspace $V_{\text{complex}} \cong \mathbb{Z}[i]^2$ with no group-theoretic fabrication.
 2. **Infinite-Aperture Self-Energy:** We show that the self-energy of the unit topological source projects directly to the BCC Watson integral $W_3 = \frac{G^{*2}}{2\pi}$ at infinite aperture.
 3. **Master Quadratic Decoupling:** By combining the topological index with the $\mathbb{Z}[i]$-module automorphism group size $|\mu_4|^2 = 16$, the inverse coupling $\alpha_{\text{read}}^{-1}$ emerges as the dominant root $x_+$ of the master quadratic:
@@ -128,12 +126,12 @@ We verify the derivation against all 10 F-rules:
 - **F-c (Dominant selection): PASS.** Selected uniquely by fixed-point stability under coarse-graining.
 - **F-d (Operational protocol): PASS.** The protocol defines a localized preparation $P$ and self-energy back-reaction $O_{\text{EM}}$.
 - **F-e (No site-local Clifford): PASS.** The bivector and complex subspaces span the 8 corners of the BCC unit cell, making the construction non-site-local from step 1.
-- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED 2026-05-28].** §3 Selection 1 *admits* the trace/determinant `16G*²`/`16G*³` are "epistemic selections designed to couple ... to the algebraic master quadratic ... rather than ... first-principles derivations" — i.e. the target coefficients are pasted as scaffold. The Watson Green's function yields only the *even*-degree `G*²`; the determinant's *odd* `16G*³` is the asserted Vieta target, not a forward consequence (FTD-0233 parity no-go; FTD-0235 detdet_ζ no-go). F-j fires.
+- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED].** §3 Selection 1 *admits* the trace/determinant `16G*²`/`16G*³` are "epistemic selections designed to couple ... to the algebraic master quadratic ... rather than ... first-principles derivations" — i.e. the target coefficients are pasted as scaffold. The Watson Green's function yields only the *even*-degree `G*²`; the determinant's *odd* `16G*³` is the asserted Vieta target, not a forward consequence (FTD-0233 parity no-go; FTD-0235 detdet_ζ no-go). F-j fires.
 
 ---
 
 ## 6. Conclusion & Epistemic Status
 
 We reach a **genuine partial result** via **Candidate C (Quantization / Readout Rule)**:
-* **Verdict:** ~~**FOUND (ARC-2 Level)**~~ **UNDERDETERMINED [CORRECTED 2026-05-28].**
+* **Verdict:** ~~**FOUND (ARC-2 Level)**~~ **UNDERDETERMINED [CORRECTED].**
 * By formulating charge as a topological winding index on the complex projection $V_{\text{complex}} \cong \mathbb{Z}[i]^2$, we genuinely contact the modular-period structure (ARC-1): the $C_4$ decomposition, charge quantization to $\{-1,0,+1\}$, $16 = |\mu_4|^2$, and the Watson self-energy $G^{*2}/(2\pi)$ are all `[THEOREM]`/`[DERIVED]`. **However**, the bridge to the *full* master quadratic — the determinant $16 G^{*3}$ (the odd third power of $G^*$) — is an **asserted** Vieta target (§3 Selection 1), not a forward derivation; it is not a $\zeta$-regularized determinant of any operator, and a 2×2's trace and determinant are independent (FTD-0233/0234/0235). So $\alpha^{-1} = x_+$ is **not** derived "from first principles" here. MC-T4.3 stays open; surviving routes are ARC-D (engine-native measurement) or a new postulate.

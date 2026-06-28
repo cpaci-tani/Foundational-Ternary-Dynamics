@@ -1,7 +1,6 @@
 # DERIVATION · BCC Algebraic Readout and complex V_complex Observable (ARC-B2)
 
 **Tag:** [DERIVED] / [PARTIAL]
-**Date:** 2026-05-26
 **LEDGER row:** FTD-0212 (new derivation claim)
 **Depends on:** FTD-0122 / `DERIV_BCC_COMPLEX_STRUCTURE.md` ([THEOREM]), FTD-0152 (Alpha Readout Contract)
 **Status:** [DERIVED] for the algebraic projection; [PARTIAL] for the operational measurement protocol.

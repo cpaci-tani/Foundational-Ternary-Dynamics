@@ -1,7 +1,6 @@
 # ANALYSIS: Fixed-Charge Coupled Tick Source/Work Continuity v1
 
 **FTD ID:** FTD-0296
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- FIXED-CHARGE SOURCE WORK CONTINUITY CONFIRMED]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_COUPLED_SOURCE_WORK_v1.md`
 **Lock commit:** `5d88062e`

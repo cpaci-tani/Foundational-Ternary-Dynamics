@@ -3,7 +3,6 @@
 > **STATUS: [THEOREM] — proving the universal negative K-BIND relative to the admissible FTD-native construction set.**
 
 **Tag:** [THEOREM]
-**Date:** 2026-06-10
 **LEDGER id:** FTD-0244
 **Depends on:** FTD-0234 (J-twisted det_ζ ratio = G*), FTD-0242 (route-invariance boundary), FTD-0243 (RSI Leg 3 conditional theorem).
 

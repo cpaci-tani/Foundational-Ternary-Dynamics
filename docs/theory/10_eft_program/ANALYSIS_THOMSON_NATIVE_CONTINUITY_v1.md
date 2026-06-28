@@ -1,7 +1,6 @@
 # ANALYSIS: Thomson Native Finite-Volume Continuity Meter v1
 
 **FTD ID:** FTD-0291
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- NATIVE GRAPH CONTINUITY CANDIDATE INVALIDATED]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_NATIVE_CONTINUITY_v1.md`
 **Lock commit:** `47ccbee4`
