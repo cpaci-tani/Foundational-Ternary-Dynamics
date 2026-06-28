@@ -2,8 +2,6 @@
 
 ## Ternary Phase Cube on (S^1)^3
 
-**Date:** April 5, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Document Status:** Exploratory -- mathematical construction with structural isomorphism
 **Epistemic Class:** [THEOREM] for algebraic identities and Laplacian spectrum; [SELECTION] for Moore mapping; [CONJECTURE] for physical significance
 **Category:** 8 (Structural / Geometry)

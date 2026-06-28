@@ -4,7 +4,6 @@
 hash-locked pre-registration `PREREG_COLOUR_SINGLET_RANK_v1.md`. It records
 one of the three pre-blessed verdicts. It promotes and demotes no LEDGER
 claim.
-**Date:** 2026-05-22
 **LEDGER row:** FTD-0191.
 **Pre-registration audited:** [`PREREG_COLOUR_SINGLET_RANK_v1.md`](PREREG_COLOUR_SINGLET_RANK_v1.md)
 — SHA256 `08c55b8e060332a2311be7ae6dedf5d48cbf1af861db627195d1dd2f8a886dbe`,
@@ -16,7 +15,7 @@ reading; all assertions pass, exit 0. No numerical search.
 
 ---
 
-> **Update (2026-05-22) — Q11 resolved to CLOSED-NEGATIVE; the chain has
+> **Q11 resolves to CLOSED-NEGATIVE; the chain has
 > terminated.** Q11 below deferred one question to Q12: is the weak
 > `SU(2)` on `φ` a genuine `[SELECTION]` or a count-match? Q12
 > ([`AUDIT_WEAK_SU2_PROVENANCE.md`](AUDIT_WEAK_SU2_PROVENANCE.md),
@@ -311,7 +310,7 @@ stays `[CONJECTURE]`-grade.
 
 ---
 
-*Audit executed 2026-05-22 against the commit tagged
+*Audit executed against the commit tagged
 `preregister-colour-singlet-rank-v1`. Verdict: UNDERDETERMINED; Q10
 (FTD-0190) stays UNDERDETERMINED. The electroweak-rank question is reduced
 to one named `[SELECTION]` — the Q12 target (§6).*

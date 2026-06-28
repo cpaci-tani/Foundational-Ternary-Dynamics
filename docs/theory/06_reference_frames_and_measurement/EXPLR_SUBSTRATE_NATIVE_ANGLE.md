@@ -2,7 +2,6 @@
 
 **Document type:** Exploratory measurement + interpretation
 **Status:** `[MEASURED]` (the dynamical facts) + `[SELECTION]` (the quadrature identification) + `[BOUNDARY]` (separation from the α-readout). **No claim is promoted; FTD-0013 and MC-T4.3 are unchanged; this is not a derivation of QM.**
-**Created:** 2026-06-07
 **Runner:** [`engine/tests/test_substrate_angle_probe.cpp`](../../../engine/tests/test_substrate_angle_probe.cpp) (CTest `substrate_angle_probe`, CPU, 10/10 PASS)
 **Plan:** `.claude/plans/plan-an-intuitive-path-twinkling-gizmo.md`
 **LEDGER row:** FTD-0251.

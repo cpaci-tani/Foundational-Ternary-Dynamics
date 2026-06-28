@@ -1,7 +1,6 @@
 # DERIV — Modular Spectral Derivation of Connes Lambda(k)
 
 **Status:** [CONJECTURE — modular spectral flow]
-**Date:** 2026-05-27
 **Campaign ID:** FTD-0214
 **Gaps Addressed:** **GAP-B3 (Connes lambda derivation from modular flow)**
 **Cross-References:** `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md`, `docs/theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md`, `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`

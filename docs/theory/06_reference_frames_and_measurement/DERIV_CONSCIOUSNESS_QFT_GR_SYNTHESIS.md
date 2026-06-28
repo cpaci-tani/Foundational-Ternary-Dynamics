@@ -1,19 +1,16 @@
 # Reference frame structure–QFT–GR Synthesis: The Complete Derivation Chain
 
-## Technical Companion to PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md (formerly framed as "reference frame context"; now restated)
+## Technical Companion to PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md
 
-**Date:** March 6, 2026 (vocabulary refresh 2026-05-01)
-**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Technical synthesis — consolidates scattered derivations into unified chain
-**Authors:** cpaci & Claude
 
-> **Vocabulary refresh (2026-05-01):** This document was previously titled "Reference frame context–QFT–GR Synthesis." The mathematical content (G* → three domains → QFT + GRT + frame-relative-projection layer → modular flow bridge) is unchanged. The "reference frame context chain" is restated as the **frame-relative-projection chain** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). What was called "the reference frame context branch" is the **complex-root frame-relative-eigenmode branch** — the part of the master-quadratic eigenvalue structure that lives on the noumenal axis. The bridge to qualia / phenomenal experience is *not* claimed by this derivation; that is the open structural problem of frame-relative emergence (MC-T4.3).
+> **Vocabulary:** The mathematical content (G* → three domains → QFT + GRT + frame-relative-projection layer → modular flow bridge) is stated in the canonical vocabulary. The "reference frame context chain" is the **frame-relative-projection chain** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The "reference frame context branch" is the **complex-root frame-relative-eigenmode branch** — the part of the master-quadratic eigenvalue structure that lives on the noumenal axis. The bridge to qualia / phenomenal experience is *not* claimed by this derivation; that is the open structural problem of frame-relative emergence (MC-T4.3).
 
 ---
 
 ## Abstract
 
-This document presents the complete derivation chain for the reference frame structure–QFT–GR bridge in a single, self-contained technical reference. It consolidates material from 15+ existing documents into a linear chain: $G^* \to$ three domains $\to$ QFT + GRT + frame-relative-projection layer $\to$ modular flow bridge. Each step carries an explicit epistemic tag. The document serves as the technical appendix to [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) (paper title pending its own vocabulary-refresh pass).
+This document presents the complete derivation chain for the reference frame structure–QFT–GR bridge in a single, self-contained technical reference. It consolidates material from 15+ existing documents into a linear chain: $G^* \to$ three domains $\to$ QFT + GRT + frame-relative-projection layer $\to$ modular flow bridge. Each step carries an explicit epistemic tag. The document serves as the technical appendix to [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md).
 
 **Organization:**
 1. From $G^*$ to three domains (pure mathematics)
@@ -298,7 +295,7 @@ The self-referential observer is formalized by four axioms:
 
 **Step 3.** SL3 (equal partition) implies that the modular operator's spectrum is the full positive reals $\mathbb{R}_+$. If the spectrum were discrete (gap), the equal partition would not maximize $I(A:A^c)$ for all system sizes. The Connes spectrum $S(M) = \mathbb{R}_+$ characterizes Type III$_1$ specifically.
 
-**Gap:** Each step requires rigorous formalization. Step 1 is the most delicate — the connection between topological self-intersection and absence of trace needs algebraic proof. **Update (April 2026):** Step 3 has been computationally resolved (closing GAP-Q1) via exact spectral analysis on the local fermionic correlation matrix, proving that the emergent random gauge field forces the modular spectrum into a dense, gapless continuum with GUE statistics.
+**Gap:** Each step requires rigorous formalization. Step 1 is the most delicate — the connection between topological self-intersection and absence of trace needs algebraic proof. Step 3 has been computationally resolved (closing GAP-Q1) via exact spectral analysis on the local fermionic correlation matrix, proving that the emergent random gauge field forces the modular spectrum into a dense, gapless continuum with GUE statistics.
 
 ---
 
@@ -468,6 +465,3 @@ This synthesis consolidates material from the following documents:
 | SPEC_QFT_GRT_BRIDGE_ROADMAP.md (1.6) | §6 | Master reference |
 
 ---
-
-*Synthesis document prepared: March 6, 2026*
-*Framework: Foundational Ternary Dynamics v5.27*

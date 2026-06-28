@@ -1,9 +1,8 @@
 # INDEX · Measurement & Observer Layer
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
 **Status:** [REFERENCE] — local navigation index for `docs/theory/06_reference_frames_and_measurement/`.
-**Purpose:** The directory name is historical: this cluster is the **frame-relative-projection / measurement layer**, not a "reference frame context" theory. Per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md), every doc here has had a 2026-05-01 vocabulary refresh — "observers" are restated as reference frames with observation-layer coupling, and qualia commitments are dropped. The content is operator-algebraic: how FTD's ternary lattice resolves quantum measurement (von Neumann chain termination, Wigner's friend), the collapse mechanism (ReLU → Lindblad), the Existence Filter E(x) = Re(x), and the domain-partition / context-selection formalism. Read it when working on measurement, observation-layer coupling, or the QM-foundations sector.
+**Purpose:** This cluster is the **frame-relative-projection / measurement layer**, not a "reference frame context" theory. Per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md), "observers" are stated as reference frames with observation-layer coupling, and qualia commitments are dropped. The content is operator-algebraic: how FTD's ternary lattice resolves quantum measurement (von Neumann chain termination, Wigner's friend), the collapse mechanism (ReLU → Lindblad), the Existence Filter E(x) = Re(x), and the domain-partition / context-selection formalism. Read it when working on measurement, observation-layer coupling, or the QM-foundations sector.
 
 ## Read first
 
@@ -39,7 +38,7 @@
 | [EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) | [CLOSED NEGATIVE for Born in the 6-neighbour substrate] | Threshold-crossing alone does NOT produce Born scaling (Rice upcrossing R²=0.9923 ≫ power-law 0.7137); FTD-0200. The live citation source for the constitution's PL-1 deviation prediction. |
 | [PREREG_THRESHOLD_CROSSING_BORN_v1.md](PREREG_THRESHOLD_CROSSING_BORN_v1.md) | [PRE-REGISTRATION] | Hash-locked pre-reg for FTD-0200 (PL-1 provenance anchor). |
 | [PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md](PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md) | [PRE-REGISTRATION] | Hash-locked pre-reg for the DGZ-equilibrium-preservation test (FTD-0199). |
-| [archive/closed_negative/EXPLR_BORN_EQUILIBRIUM_PRESERVATION_NEGATIVE.md](archive/closed_negative/EXPLR_BORN_EQUILIBRIUM_PRESERVATION_NEGATIVE.md) | [CLOSED NEGATIVE] (archived 2026-06-15) | DGZ-equilibrium preservation fails in the 6-neighbour substrate (FTD-0199); archived provenance. |
+| [archive/closed_negative/EXPLR_BORN_EQUILIBRIUM_PRESERVATION_NEGATIVE.md](archive/closed_negative/EXPLR_BORN_EQUILIBRIUM_PRESERVATION_NEGATIVE.md) | [CLOSED NEGATIVE] (archived) | DGZ-equilibrium preservation fails in the 6-neighbour substrate (FTD-0199); archived provenance. |
 
 ---
 

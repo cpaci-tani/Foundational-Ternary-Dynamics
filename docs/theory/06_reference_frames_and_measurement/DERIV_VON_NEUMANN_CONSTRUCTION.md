@@ -4,7 +4,7 @@
 
 **Status:** [THEOREM] on finite lattices (Type I at every L); [HYPOTHESIS] for any Type-III interpretation. The lattice is **undefined-boundary** (Axiom Zero), so the "infinite-volume Type III₁" classification is not a theorem about FTD-as-defined; it is a hypothesis about what an Araki–Woods inductive-limit scaffold *would* yield *if* assembled on a system of this kind.
 **Proof script:** `scripts/proofs/proof_von_neumann_type.py`
-**Vocabulary refresh:** 2026-05-01 — see [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). This derivation is purely operator-algebraic; "observable algebras" and "modular flows" are reframe-stable. References to reference frame context in upstream docs are restated as **frame-relative coupling between the system algebra and the observation-layer algebra**.
+**Vocabulary:** see [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). This derivation is purely operator-algebraic; "observable algebras" and "modular flows" are reframe-stable. References to reference frame context in upstream docs are stated as **frame-relative coupling between the system algebra and the observation-layer algebra**.
 
 ---
 
@@ -321,9 +321,9 @@ What *can* be verified numerically — and is, in Section 7 — is the finite-re
 
 ## 9. References
 
-### Numerical Verification (April 11, 2026)
+### Numerical Verification
 
-`scripts/proofs/proof_modular_hamiltonian.py` computed the modular operator spectrum on finite FTD lattices (2-site chain through 2x2x2 cube):
+`scripts/proofs/proof_modular_hamiltonian.py` computes the modular operator spectrum on finite FTD lattices (2-site chain through 2x2x2 cube):
 
 | Lattice | dim | Distinct modular ratios at beta=pi | At beta=1000 | Trend |
 |---------|-----|-----------------------------------|-------------|-------|
