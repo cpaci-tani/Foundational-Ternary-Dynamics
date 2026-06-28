@@ -1,8 +1,6 @@
 # Fermi Coupling Constant from FTD First Principles
 
 **Document Classification:** Theoretical Derivation
-**Version:** 1.0
-**Date:** February 25, 2026
 **Status:** [THEOREM] (follows from DERIV_HIGGS_FROM_MANIFESTATION.md)
 **Depends on:** DERIV_HIGGS_FROM_MANIFESTATION.md, SPEC_FTD_REFERENCE.md
 
@@ -249,11 +247,3 @@ After this derivation, the external inputs required by FTD are reduced to:
 | $\Lambda_\text{QCD}$ | External | Partially addressed in DERIV_LAMBDA_QCD_DERIVATION.md |
 | Decay constants ($f_\pi$, $f_K$, ...) | External | SM non-perturbative QCD |
 | Phase space factors | External | SM kinematics |
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-02-25 | Initial derivation: G_F from v, numerical verification, muon lifetime cross-check |

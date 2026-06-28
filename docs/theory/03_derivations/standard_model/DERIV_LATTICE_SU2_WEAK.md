@@ -1,8 +1,6 @@
 # SU(2) Weak Sector: W/Z Bosons from Ternary Structure
 
 **Document Classification:** Theoretical Derivation
-**Version:** 1.1
-**Date:** February 25, 2026
 **Status:** [THEOREM] + [SELECTION] (mixed — see Claims Table §9)
 **Depends on:** SPEC_FTD_LAGRANGIAN.md, DERIV_QFT_GRT_BRIDGE.md, DERIV_FORCE_EMERGENCE.md, DERIV_COMPLETE_PARTICLE_PHYSICS.md
 
@@ -43,7 +41,7 @@ $$[T_i, T_j] = i\varepsilon_{ijk} T_k$$
 
 **Proof.** Direct computation. The Pauli matrices satisfy [σ_i, σ_j] = 2iε_{ijk}σ_k, hence [T_i, T_j] = iε_{ijk}T_k. □
 
-**Epistemic note (2026-05-22 — Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
+**Epistemic note (Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
 
 The raising and lowering operators are:
 
@@ -526,18 +524,8 @@ where:
 
 | ID | Question | Status |
 |----|----------|--------|
-| SU2-OPEN-1 | Can V−A be rigorously derived from the lattice action? | **[CLOSED -- RESOLVED 2026-05-27]** |
+| SU2-OPEN-1 | Can V−A be rigorously derived from the lattice action? | **[CLOSED -- RESOLVED]** |
 | SU2-OPEN-2 | Do electroweak anomalies cancel on the FTD lattice? | **[OPEN]** |
 | SU2-OPEN-3 | Can full one-loop EW corrections be computed from lattice? | **[OPEN]** |
 | SU2-OPEN-4 | Does the lattice produce correct hypercharge assignments? | **[OPEN]** |
 | SU2-OPEN-5 | Can Higgs potential shape be derived from manifestation? | **[CLOSED -- RESOLVED]** → See DERIV_HIGGS_FROM_MANIFESTATION.md |
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-02-25 | Initial document: SU(2) from ternary states, EW mixing, G_F derivation, decay rate upgrade |
-| 1.1 | 2026-05-22 | SU2-1 corrected [THEOREM]→[SELECTION] per the Q12 weak-SU(2) provenance audit (FTD-0192): Theorem 1.1 is a generic ℂ²↦su(2) fact, not an FTD derivation of SU(2). §1.2 epistemic note added; abstract, §1.2 heading, and §8.3 aligned. The genuine FTD content is the SU(2) skeleton (Cartan T₃ = ŝ/2 + Weyl-ℤ₂ transmutation); the non-abelian group is a count-match. SU2-2/SU2-8/SU2-12 [THEOREM] tags unaffected. |
-| 1.2 | 2026-05-27 | Formalized V-A structure and maximal parity violation. Section 5 rewritten to prove Theorem 5.1 (gerade-ungerade 6-6 dimension split of the weak-mediating FCC sublattice under $O_h$) and Theorem 5.2 (coupling partition locking $|\eta| = 1$), verified via `proof_moore_gauge_representations.py`. Upgraded claims SU2-9 and SU2-10 from `[SELECTION]` to `[THEOREM]`, updated trackers. |

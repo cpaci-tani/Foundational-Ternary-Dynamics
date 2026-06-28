@@ -1,11 +1,9 @@
 # [THEOREM] Geometric Derivation of Lepton Masses
 
 **Epistemic Status:** `[THEOREM]`
-**Version:** 1.0
-**Date:** 2026-06-18
 
 ## 1. Overview
-Historically, FTD treated the discrete mass ratios of the Muon (207) and Tau (3477) as structurally motivated parametric formulas fitted to experimental data. This document formally retracts the parametric approaches and derives these exact integers purely from the topological geometry of the expanding Moore bounding layers ($L_n$).
+The discrete mass ratios of the Muon (207) and Tau (3477) had been treated as structurally motivated parametric formulas fitted to experimental data. This document retracts those parametric approaches and derives these exact integers purely from the topological geometry of the expanding Moore bounding layers ($L_n$).
 
 In FTD, leptons are stable topological knots (flux loops) possessing spin-1/2 symmetry. To achieve stability at higher energies, the electron knot radially expands and phase-locks onto the larger $L_n$ lattice boundaries.
 

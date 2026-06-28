@@ -1,7 +1,6 @@
 # Measurement — (1+i)-tower level-scan falsifier blind run v1
 
 **Status:** [MEASURED · CONFIRMATORY BLIND, locked]
-**Date:** 2026-04-29
 **Pre-registration:** [`PROTOCOL_TOWER_LEVEL_FALSIFIER.md`](../foundational_mechanics/PROTOCOL_TOWER_LEVEL_FALSIFIER.md)
 **LEDGER:** FTD-0111
 

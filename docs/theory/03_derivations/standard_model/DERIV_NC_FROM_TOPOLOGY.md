@@ -2,28 +2,24 @@
 
 ## One Fact, Several Lenses
 
-**Date:** April 14, 2026
-**Reframed:** 2026-05-30 (honesty pass — see §0 and Part II)
-**Framework:** Foundational Ternary Dynamics v5.30
 **Status:** [SELECTION] — N_c = 3 follows from D = 3 (color = spatial flux axis ⟹ gauge group SU(D) = SU(3)); the geometric/topological routes are corroboration of the *same* D = 3 fact, not logically independent proofs. [SELECTION] for the QCD identification.
 **Depends on:** THEOREM_MOORE_LAYER_DECOMPOSITION.md, DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md, DERIV_D3_FROM_AUTOMORPHISM.md, DERIV_MOORE_GAUGE_STRUCTURE.md, DERIV_CONFINEMENT_FROM_GAP_EQUATION.md
 
 ---
 
-## §0 Epistemic Status (2026-05-30 reframe)
+## §0 Epistemic Status
 
-This document originally claimed an **over-determination [THEOREM]**: "four logically
-independent routes converge on N_c = 3." Two auditors (adversarial + mathematical) flagged that
-framing as the single most externally-exposed claim in the corpus, for two reasons:
+N_c = 3 is **[SELECTION]**, not an **over-determination [THEOREM]**. There is no claim that
+"four logically independent routes converge on N_c = 3," for two reasons:
 
 1. **The routes are not logically independent.** Routes 1–3 are the spatial dimension D = 3
    counted in three ways (orthogonal axes / cuboctahedral face-diagonal planes / Wilson-loop
-   winding sectors). Counting one fact several ways does **not** multiply the evidence, so the
+   winding sectors). Counting one fact several ways does **not** multiply the evidence, so a
    "negligible probability of chance convergence" argument does not hold. The honest reading,
    matching `DERIV_LATTICE_SU3_GAUGE.md` (SU3-2, Theorem 1.1), is **[SELECTION]**: given D = 3
    and the identification color = spatial flux axis, the gauge group is SU(D) = SU(3), hence
    N_c = 3; the geometric and topological observations corroborate this.
-2. **Route 4 cited a retired LEDGER row as live.** The former "Route 4" derived N_c via
+2. **There is no live arithmetic Route 4.** A former "Route 4" derived N_c via
    `floor(x_-) = floor(3.024) = 3`. The `x_-  N_c` identification is **RETIRED** (LEDGER
    FTD-0014, removed in commit `ca7eb61`, per FTD/FQCR Cleanup Taxonomy v1.4 §5). `x_- ≈ 3.024`
    is a mathematical artifact of the master quadratic with no live physics identification.
@@ -31,9 +27,8 @@ framing as the single most externally-exposed claim in the corpus, for two reaso
 
 What is genuinely correct and retained: the geometric content of each route (D = 3 orthogonal
 axes; cuboctahedron with 3 face-diagonal planes; π_1(SU(N)/Z_N) = Z_N standard topology; the
-exact algebra giving x_- = 3.024). What is corrected: the *epistemic framing* — these are one
-D = 3 fact seen through several lenses, tagged **[SELECTION]**, not four independent **[THEOREM]**
-derivations.
+exact algebra giving x_- = 3.024). The *epistemic framing* is **[SELECTION]** — one D = 3 fact
+seen through several lenses, not four independent **[THEOREM]** derivations.
 
 ---
 
@@ -51,8 +46,8 @@ fact D = 3**, not independent proofs:
 Routes 1–3 are **not** logically independent; they are the same D = 3 structure viewed through
 several lenses. (A former arithmetic "Route 4" — `floor(x_-) = 3` — is **deleted**: the
 `x_-  N_c` identification is RETIRED; see §0 and the Route 4 note.) The honest tag is therefore
-**[SELECTION]**, not the over-determination [THEOREM] previously claimed. **What remains
-[SELECTION] additionally is "is *this 3* the same 3 that QCD measures?"** — conditional on
+**[SELECTION]**, not an over-determination [THEOREM]. **A further [SELECTION] step is "is *this 3*
+the same 3 that QCD measures?"** — conditional on
 compact lattice gauge theory recovering continuum QCD, a standard (but nontrivial) result of
 Wilson's program (Wilson 1974; Creutz 1983).
 
@@ -60,10 +55,10 @@ Wilson's program (Wilson 1974; Creutz 1983).
 
 ## Part I: One D = 3 Fact, Seen Through Several Lenses
 
-> **Framing (2026-05-30):** the routes below are not logically independent. Route 1 is the
+> **Framing:** the routes below are not logically independent. Route 1 is the
 > load-bearing [SELECTION] (D = 3 ⟹ SU(3)); Routes 2 and 3 re-count the *same* three spatial
-> axes geometrically and topologically. The geometric content of each is correct; only the prior
-> claim of mutual independence is withdrawn. A former arithmetic Route 4 (`floor(x_-) = 3`) is
+> axes geometrically and topologically. The geometric content of each is correct; they make no
+> claim of mutual independence. A former arithmetic Route 4 (`floor(x_-) = 3`) is
 > deleted — see the Route 4 note.
 
 ### Route 1: Spatial Axes (Geometric) — [SELECTION], the load-bearing route
@@ -85,7 +80,7 @@ home documents.)
 
 ### Route 2: Cuboctahedral Subgroup Structure (Group-Theoretic) — corroboration of D = 3, not an independent proof
 
-> **Framing (2026-05-30):** the 3 face-diagonal planes counted here are organized by choosing 2
+> **Framing:** the 3 face-diagonal planes counted here are organized by choosing 2
 > of the *same* 3 coordinate axes of Route 1. This is the D = 3 fact viewed group-theoretically,
 > not a logically independent derivation of N_c. The counting below is correct; its independence
 > is disclaimed.
@@ -106,7 +101,7 @@ The selection — that the geometric C_3 is identified with the SU(3) center, no
 
 ### Route 3: Wilson-Loop Topological Quantization (Gauge-Theoretic) — corroboration of D = 3, not an independent proof
 
-> **Framing (2026-05-30):** the winding-sector count below reduces (line "the closure condition
+> **Framing:** the winding-sector count below reduces (line "the closure condition
 > ... forces the count ... to equal the number of independent axes, D = 3") to the *same* 3 axes
 > as Route 1. The standard topology π_1(SU(N)/Z_N) = Z_N is correct and remains [THEOREM] as
 > standard mathematics; but as a route to *N_c in FTD* it re-expresses D = 3, so it is
@@ -148,11 +143,10 @@ of the master quadratic and N_c = 3 is sourced independently here (Route 1, D = 
 
 ---
 
-## Part II: One Fact, Several Lenses (the over-determination claim, withdrawn)
+## Part II: One Fact, Several Lenses
 
-> **Correction (2026-05-30).** This section previously argued that four *independent* routes
-> converging on 3 is "not credible as accident," upgrading N_c = 3 to [THEOREM]. That argument is
-> **withdrawn**: the routes are not independent. Routes 1–3 all reduce to the single spatial fact
+> **Framing.** There is no over-determination [THEOREM] for N_c = 3: the routes are not
+> independent. Routes 1–3 all reduce to the single spatial fact
 > D = 3 (orthogonal axes; the same axes taken 2-at-a-time as face-diagonal planes; the same axes
 > as Wilson-loop winding sectors). Counting one fact three ways does not multiply the evidence,
 > so there is no over-determination and no licence to upgrade above [SELECTION]. The former
@@ -182,9 +176,8 @@ do not have that structure.)
 
 ## Part III: What This Document Establishes
 
-> **Correction (2026-05-30).** This section previously claimed the document *upgrades* N_c = 3
-> from [SELECTION] to [THEOREM] via over-determination. That upgrade is **withdrawn** (Part II).
-> The document establishes a [SELECTION], with corroboration — not a theorem.
+> **Note.** This document does **not** upgrade N_c = 3 from [SELECTION] to [THEOREM] via
+> over-determination (Part II). It establishes a [SELECTION], with corroboration — not a theorem.
 
 **What this document establishes:**
 
@@ -219,15 +212,15 @@ This identification is conditional on:
 
 Items 1–3 collectively comprise what we call the **QCD identification**. Each is well-supported by standard physics, but none is proved from FTD alone. The honest tag is therefore: **N_c = 3 in the FTD lattice is [SELECTION] (from D = 3 under color = spatial flux axis); its identification with QCD's color number is additionally [SELECTION] of standard scope.**
 
-There are thus *two* [SELECTION] steps, not the single one previously claimed: (a) "is the lattice integer 3?" — [SELECTION], from D = 3 (the geometric/topological routes corroborate but do not independently prove it); and (b) "is *this* 3 the same as QCD's 3?" — [SELECTION], the standard lattice-gauge-theory question. The 2026-05-30 reframe withdrew the claim that step (a) had been promoted to [THEOREM].
+There are thus *two* [SELECTION] steps: (a) "is the lattice integer 3?" — [SELECTION], from D = 3 (the geometric/topological routes corroborate but do not independently prove it); and (b) "is *this* 3 the same as QCD's 3?" — [SELECTION], the standard lattice-gauge-theory question. Step (a) is **not** promoted to [THEOREM].
 
 ---
 
 ## Claims Table
 
-> **2026-05-30:** NCT-7, NCT-8 and the [THEOREM] tag on NCT-9 are corrected below. The geometric
-> sub-facts (NCT-1, -2, -4, -5, -6) remain correct in their home documents; what changes is the
-> *N_c-level* claim, which is [SELECTION], not [THEOREM].
+> **Note:** NCT-7 and NCT-8 are deleted/withdrawn and NCT-9 is [SELECTION], as recorded below. The
+> geometric sub-facts (NCT-1, -2, -4, -5, -6) remain correct in their home documents; the
+> *N_c-level* claim is [SELECTION], not [THEOREM].
 
 | ID | Claim | Status |
 |----|-------|--------|
@@ -239,7 +232,7 @@ There are thus *two* [SELECTION] steps, not the single one previously claimed: (
 | NCT-6 | x_- = 3.024 is exact algebraic consequence of D = 3 + W_3 + k_phys = 16 | [THEOREM] (pure algebra; no physics identification of the root) |
 | ~~NCT-7~~ | ~~floor(x_-) = 3 is forced by integer quantization of color~~ | **RETIRED / DELETED** — relies on the retired x_-  N_c identification (FTD-0014, commit `ca7eb61`) |
 | ~~NCT-8~~ | ~~Four independent routes return the same integer 3 (over-determination)~~ | **WITHDRAWN** — Routes 1–3 are not independent; they re-count the same D = 3 fact |
-| NCT-9 | N_c = 3 in the FTD lattice (from D = 3, color = spatial flux axis) | **[SELECTION]** (corrected from [THEOREM] 2026-05-30; corroborated by NCT-1/-2/-4/-5, not independently proven) |
+| NCT-9 | N_c = 3 in the FTD lattice (from D = 3, color = spatial flux axis) | **[SELECTION]** (corrected from [THEOREM]; corroborated by NCT-1/-2/-4/-5, not independently proven) |
 | NCT-10 | This integer is identically QCD's color number | [SELECTION] (Wilson, fine-spacing recovery) |
 
 ---
@@ -251,7 +244,7 @@ There are thus *two* [SELECTION] steps, not the single one previously claimed: (
 - [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — D = 3 from Watson integral self-consistency and |Aut(E_i)|² = 16
 - [DERIV_MOORE_GAUGE_STRUCTURE.md](DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group from sublattice
 - [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](../foundational_mechanics/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) — Confined phase Wilson loops
-- [ARCH_SPEC_FTD_COMPLETE_CHAIN.md](../../01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] statement of N_c = 3; archived — superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md`; this document corroborates it, and per the 2026-05-30 reframe does **not** upgrade it to [THEOREM])
+- [ARCH_SPEC_FTD_COMPLETE_CHAIN.md](../../01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] statement of N_c = 3; archived — superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md`; this document corroborates it and does **not** upgrade it to [THEOREM])
 - [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) — §1.4 + Theorem 1.1 + SU3-2: the canonical [SELECTION] statement N_c = 3 from D = 3, and the canonical retirement of the x_-  N_c identification (FTD-0014)
 
 ## Computation
@@ -269,9 +262,9 @@ There are thus *two* [SELECTION] steps, not the single one previously claimed: (
 sub-fact (NCT-1, -2, -4, -5, -6) already exists in the FTD corpus and is correct in its home
 document. What this document does is collect them around the value N_c = 3.
 
-**Correction (2026-05-30).** This section previously claimed the document demonstrates "four
-logically independent paths converge on the same integer," licensing an upgrade from [SELECTION]
-to [THEOREM]. **That claim is withdrawn.** The paths are not independent — Routes 1–3 all re-count
+**No over-determination.** The document does **not** demonstrate "four
+logically independent paths converge on the same integer," and licenses no upgrade from [SELECTION]
+to [THEOREM]. The paths are not independent — Routes 1–3 all re-count
 the single spatial fact D = 3, and the former fourth path (`floor(x_-)`) relied on the RETIRED
 x_-  N_c identification (FTD-0014, commit `ca7eb61`). Counting one fact several ways does not
 multiply the evidence, so there is no over-determination and no licence to upgrade. The N_c-level

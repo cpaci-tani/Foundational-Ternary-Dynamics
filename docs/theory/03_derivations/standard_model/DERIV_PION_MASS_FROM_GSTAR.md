@@ -1,7 +1,5 @@
 # From G* to m_pi: The Complete Derivation Chain
 
-**Date:** March 6, 2026
-**Framework:** Foundational Ternary Dynamics v5.27
 **Status:** Complete derivation chain; 6 theorems, 3 selection principles, 5 conjectures, 1 algebra
 **Category:** 3 (Core Physics Derivations), Entry 3.26
 
@@ -337,6 +335,4 @@ This derivation depends on:
 
 ---
 
-*Document created: March 6, 2026*
-*Framework: Foundational Ternary Dynamics v5.27*
 *Status: Complete derivation chain; m_pi to 0.048%; integer reduction proven*
