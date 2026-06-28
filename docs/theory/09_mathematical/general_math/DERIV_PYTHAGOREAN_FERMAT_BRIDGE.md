@@ -1,8 +1,6 @@
 # Derivation of the Pythagorean-Fermat Bridge and the Master Quadratic (MC-T6.1)
 
 **Tag:** [SELECTION] / [CONJECTURE] (for the Fermat boundary and coefficient mapping), [THEOREM] (for the unique primitive triple leg constraint and modular CM period calculation)  
-**Date:** 2026-05-27  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
 **Companion Documents:** [`docs/theory/09_mathematical/DERIV_MASTER_QUADRATIC_FROM_PERIOD_ALGEBRA.md`](../number_theory/DERIV_MASTER_QUADRATIC_FROM_PERIOD_ALGEBRA.md), [`dissemination/manuscript/src/chapters/1.10a-fermat-encoding.qmd`](../../../dissemination/manuscript/src/chapters/1.10a-fermat-encoding.qmd).
 

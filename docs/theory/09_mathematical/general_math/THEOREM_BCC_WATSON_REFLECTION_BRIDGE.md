@@ -2,7 +2,6 @@
 
 ## Exact identity between the BCC Green's function and the reflection ratio
 
-**Date:** 2026-04-22  
 **Status:** [THEOREM] for the identity; [CONJECTURE] for the FTD interpretation  
 **Proof script:** `scripts/proofs/proof_bcc_watson_reflection_bridge.py`
 

@@ -1,6 +1,5 @@
 # Proposal · Observer Operator Extension for FQCR Model V (C1 sketch)
 
-**Date:** 2026-05-08
 **Status:** [PROPOSAL / SKETCH] — outlines the C1 closability path from [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](../fqcr_program/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) §5. Not derived; not numerically verified end-to-end. The structural constraint identified in §5 is, however, a [THEOREM] of the existing operator stack.
 **Tag impact:** none. This is brainstorming the operator extension that would, if realized, upgrade FTD-0013 [SMC] toward [DERIVED]. No upgrades performed here.
 **Companion:** [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](../fqcr_program/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md), [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md).
@@ -21,7 +20,7 @@ This doc sketches what (C1) would look like. It does not perform the calculation
 
 ## §2 — FTD's existing "observer" inventory
 
-[`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) (2026-05-01) explicitly disambiguates "observer." The relevant entries:
+[`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) explicitly disambiguates "observer." The relevant entries:
 
 | Vocabulary term | Meaning | Operator-theoretic content |
 |---|---|---|
@@ -224,7 +223,7 @@ with $\mu(t) = m_e/t$ (Map A) and tune $c_e$ such that $\partial x_+/\partial\lo
 - **If yes only after adjusting $c_e$**: the normalization isn't structural, and we've rediscovered "QED with a knob fitted to data." [SELECTION], not [DERIVED].
 - **If no** even with optimal $c_e$: phenomenological log-form isn't right; need different ansatz.
 
-I have not run this test in this session because the t-scale map question is a prerequisite, and the §5.3 chicken-and-egg means we'd be tuning two things simultaneously. Recommend doing this with a fixed t-scale map first (Map A as starting point) and a single-lepton $B^{(e)}$ term, then iterating.
+This test is not run here because the t-scale map question is a prerequisite, and the §5.3 chicken-and-egg means two things would be tuned simultaneously. The recommended order is a fixed t-scale map first (Map A as starting point) and a single-lepton $B^{(e)}$ term, then iterating.
 
 ---
 

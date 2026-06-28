@@ -1,7 +1,6 @@
 # Chowla–Selberg Extension to Class Number h ≥ 2
 
 **Tag:** [THEORY NOTE — literature synthesis]
-**Date:** 2026-05-02
 **Closes:** Math-complete checklist MC-T2.3 (and supports MC-T1.2 route a).
 **Audience:** project owner + future agents extending Theorem 3 to non-h=1 CM fields.
 
@@ -16,7 +15,7 @@ identity / Theorem 1) and FTD-0007 (coefficient 16) both depend on
 this h = 1 case via the curve E: y² = x³ − x (CM by Z[i], discriminant
 d = −4, class number 1).
 
-Theorem 3 (CM curve uniqueness) was retagged 2026-05-02 as
+Theorem 3 (CM curve uniqueness) carries the tag
 `[NUMERICAL FACT, exhaustive over 9-element h = 1 set]` (Tier-I
 MC-T1.2 closure via route b). The structural question — whether
 the dual permille match (1/α, N_c) extends to CM curves with
@@ -166,7 +165,7 @@ with familiarity with CM theory.** Beyond session scope but well-defined.
 
 ## 5. Connection to MC-T2.1 + MC-T2.2 (extended polynomial scan)
 
-The 2026-05-02 extended polynomial scan (`proof_polynomial_look_elsewhere_extended.py`)
+The extended polynomial scan (`proof_polynomial_look_elsewhere_extended.py`)
 searched 2.87M polynomials in the EXTENDED Gaussian-integer-tower
 family + Eisenstein-integer-tower family.
 

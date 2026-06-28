@@ -2,8 +2,6 @@
 
 ## Experimental Realization of the Lemniscatic Discriminant Trichotomy
 
-**Date:** March 5, 2026
-**Framework:** Foundational Ternary Dynamics v5.27+
 **Document Status:** Exploratory — cross-domain structural isomorphism
 **Epistemic Class:** [THEOREM] for mathematical identities; [SELECTION] for physics mapping; [CONJECTURE] for specific identifications
 **Category:** 9 (Cross-Domain Connections)

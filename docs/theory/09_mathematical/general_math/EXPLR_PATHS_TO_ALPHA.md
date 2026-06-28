@@ -2,8 +2,7 @@
 
 **Document type:** Exploratory survey (deliberate negative result for the record)
 **Status:** [SURVEY] — exhaustive enumeration with honest "no new path" verdict
-**Created:** 2026-05-01
-**Provenance:** User request "explore everything we have and see if there's any logical path to alpha", following completion of FTD-0110 closure attempt (closed-negative for representation-theoretic frameworks)
+**Provenance:** Exhaustive search for a logical path to alpha, following the FTD-0110 closure attempt (closed-negative for representation-theoretic frameworks)
 **Related:** Algebraic spine `SPEC_ALGEBRAIC_SPINE.md`; Maxwell-exploit thread (FTD-0113 through FTD-0120); FTD-0110 closure attempt (FTD-0119 + Phase B/C falsifications); FTD-0117 G* typo fix
 
 ---
@@ -18,7 +17,7 @@ This document records an exhaustive search. The honest verdict is **no new path 
 
 ## 1 · What we have that's α-relevant
 
-### 1.1 · Direct α paths (existing, status as of 2026-05-01)
+### 1.1 · Direct α paths (existing)
 
 | Path | Status | Strength |
 |---|---|---|
@@ -191,10 +190,9 @@ here. If no, that's a genuine new direction worth pursuing.
 
 ---
 
-## 7.5 · RG-running approach (added 2026-05-01 evening)
+## 7.5 · RG-running approach
 
-After the initial survey returned negative, the user requested attempting
-"a mechanism we haven't tried" successfully producing α. The genuinely
+Beyond the initial survey, one genuinely
 **untried route** is **RG running from FTD lattice scale to lab scale**:
 take FTD's natural coupling at the lattice scale (= M_Pl per a_phys ≡
 ℓ_P) and run it under some β-function down to laboratory energy
@@ -263,7 +261,7 @@ clean FTD structural constant matches this.
 
 **None of these escapes has a candidate in current project structures.**
 
-### 7.5.5 · Cumulative status of α-derivation routes (2026-05-01)
+### 7.5.5 · Cumulative status of α-derivation routes
 
 Adding RG-running to the prior list:
 

@@ -1,6 +1,5 @@
 # Exploration: The Euler Reflection Ratio, Gaussian Flow, and the Arrow of Time
 
-**Date:** April 23, 2026  
 **Status:** [CONJECTURE] — theoretical synthesis linking the reflection ratio to irreversible dynamics  
 **Depends on:** `FOUND_THE_RATIO_AND_THE_PRODUCT.md`, `PAPER_RATIO_AND_THE_ARROW.tex`, `measure_native_scale_flow.py`  
 

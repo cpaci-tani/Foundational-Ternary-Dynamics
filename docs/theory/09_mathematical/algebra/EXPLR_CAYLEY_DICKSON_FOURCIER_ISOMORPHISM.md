@@ -2,8 +2,6 @@
 
 ## The Fourcier Curve IS the Division Algebra Cascade
 
-**Date:** February 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.17+
 **Status:** Computationally verified — all 10 predictions confirmed
 
 ---
@@ -370,9 +368,4 @@ Full verification script: [investigate_cayley_dickson_fourcier.py](file:///C:/Us
 
 ![The Cayley-Dickson Fourcier Isomorphism — 9-panel computational verification](C:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/media/images/fourier-curve-art/cayley_dickson_fourcier_isomorphism.png)
 
----
-
-*Document created: February 17, 2026*
-*Last updated: February 17, 2026 (all predictions computationally verified)*
-*Framework: Foundational Ternary Dynamics v5.17+*
 *Status: Computationally verified — all 10 predictions confirmed*

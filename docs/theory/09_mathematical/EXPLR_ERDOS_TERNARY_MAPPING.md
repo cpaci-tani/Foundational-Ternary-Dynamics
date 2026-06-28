@@ -1,7 +1,6 @@
 # EXPLR_ERDOS_TERNARY_MAPPING
 
 **Tag:** [EXPLORATION] / [OPEN]
-**Date:** 2026-06-02
 **Subject:** Mapping the Erdős Cap Set Problem into FTD's Ternary Ontology
 
 ## 1. The Erdős Cap Set Problem
