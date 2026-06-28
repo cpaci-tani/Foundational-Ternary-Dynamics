@@ -181,8 +181,6 @@ What it does **not** establish:
 
 ## Part VII: Transfer-Matrix Interpretation [THEOREM, notational]
 
-**Added 2026-05-06 (FQCR integration).**
-
 The Finite Quarter-Conjugacy Recurrence framework (`SPEC_FQCR.md`) provides an **operator interpretation** of the master quadratic that complements the algebraic / number-theoretic framings of Parts I–IV. This is a notational identity, not a new physical claim.
 
 ### VII.1 — The transfer matrix

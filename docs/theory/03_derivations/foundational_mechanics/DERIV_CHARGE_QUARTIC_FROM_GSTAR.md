@@ -1,7 +1,5 @@
 # The Charge Quartic: EM and Color Charges from the Master Quadratic
 
-**Date:** March 6, 2026
-**Framework:** Foundational Ternary Dynamics v5.27
 **Status:** 6 theorems, 1 selection principle
 **Category:** 3 (Core Physics Derivations), Entry 3.27
 

@@ -1,7 +1,6 @@
 # DERIV · FTD-0110 Nonlinear Mass Bridge Closure (Perturbation Theory)
 
 **Tag:** [DERIVATION] / [OPEN PROGRAM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0110
 **Depends on:** `DERIV_OSCILLATORY_CLOUD_DYNAMICS.md`, `DERIV_18PT_LAPLACIAN_VARIATIONAL.md`
 **Status:** Analytical bound on the thermal knee established via spectral gap computation.

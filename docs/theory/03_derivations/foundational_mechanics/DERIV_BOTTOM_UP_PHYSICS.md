@@ -2,7 +2,6 @@
 
 **From 0 = (-1) + (+1) to the Standard Model**
 
-**Framework:** Foundational Ternary Dynamics v5.27
 **Document Status:** Ontological Foundation — Entry Point
 **Epistemic Class:** [AXIOM] → [THEOREM] / [SELECTION] / [CONJECTURE] (see tags per section; see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) for selection principles)
 
@@ -487,7 +486,7 @@ For honesty, we list what remains axiomatic or selected:
 2. **Why self-reference occurs** — observers existing is axiomatic
 3. **Five selection principles** (SP1-SP5) — motivated but not uniquely forced; see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)
 4. **Framework integers** {3, 4, 7, 13} — self-consistent (proven) but identified from known physics (circularity risk; see [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
-5. **Bell mechanism** — substrate gives S ≤ 2; aggregate QM emergence is **[SELECTION]** — S = 2√2 emergent from QM (Tsirelson's bound, April 2026)
+5. **Bell mechanism** — substrate gives S ≤ 2; aggregate QM emergence is **[SELECTION]** — S = 2√2 emergent from QM (Tsirelson's bound)
 
 **Given A1, A2, and SP1-SP5**, the constants (α, G*) and ~24 genuine derivations follow as conditional theorems. An additional ~50 results are parametric insertions (FTD values in standard physics formulas). See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for complete accounting.
 
@@ -523,7 +522,4 @@ $$0 = (-1) + (+1)$$
 
 ---
 
-*Document created: February 2, 2026*
-*Updated: February 16, 2026 (v5.27 — epistemic tag correction; hidden selections acknowledged; self-reference argument revised)*
-*Framework: Foundational Ternary Dynamics v5.27*
 *Classification: Ontological Foundation — Entry Point*

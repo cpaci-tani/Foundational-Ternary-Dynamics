@@ -2,7 +2,6 @@
 
 ## The One-Loop Self-Consistency Structure Forces Linked Coefficients
 
-**Date:** March 17, 2026
 **Status:** [THEOREM given self-consistency prescription]
 **Closes:** The gap equation form [SELECTION] in DERIV_MASTER_QUADRATIC_GAP_EQUATION.md
 

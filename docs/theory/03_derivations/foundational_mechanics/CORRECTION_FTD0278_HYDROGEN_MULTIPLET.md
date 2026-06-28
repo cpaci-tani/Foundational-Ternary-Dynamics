@@ -1,7 +1,6 @@
 # CORRECTION — FTD-0278 hydrogen: the "n=2 multiplet / Rydberg ladder" was overclaimed
 
 **Tag:** `[CORRECTION]` (honesty correction to a merged result; narrows the claim, retracts one falsifier)
-**Date:** 2026-06-12
 **Trigger:** a 4-lens adversarial audit workflow (run on the committed FTD-0278 + FTD-0279
 artifacts) flagged, at high confidence from two independent lenses (physics + numerics),
 that the hydrogen "n=2 multiplet" is dominated by free-torus continuum modes, not bound
