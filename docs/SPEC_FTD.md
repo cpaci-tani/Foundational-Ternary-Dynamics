@@ -3,30 +3,25 @@
 ## A Principled Framework for Universe Simulation
 
 **Document Classification:** Framework overview / readable orientation — **not** a status authority (defers to the canonical hierarchy in [`docs/theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md))
-**Version:** 5.30 (April 11, 2026) — **STALE TAGS NOTICE** (April 19, 2026; supplemental 2026-04-28)
-**Status (post-audit, 2026-04-19; supplemental 2026-04-28):** ~5 firm [THEOREM]s + ~8 [STRONGLY MOTIVATED CONJECTURE]s + 1 [DERIVED at linear level] (FTD-0110 ¼ coefficient, NEW 2026-04-28) + ~10 [STRUCTURALLY MOTIVATED PARAMETRIC] + remainder [PARAMETRIC] / [OPEN]
-**Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
 
-> ** NAVIGATION (2026-05-08):** For the single-page status map across all 14 doctrine sectors with canonical tags, see [`docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md`](theory/01_reference/SPEC_DOCTRINE_LEDGER.md) (FTD-0145 [SYNTHESIS]).
-> ** CONSTITUTION (2026-06-09):** The standalone-framework constitution — postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the deviation-prediction spine — is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md) (FTD-0254 [SYNTHESIS] + [AXIOM]-class declarations; promotes nothing). On any conflict: LEDGER > constitution > this overview.
+> ** NAVIGATION:** For the single-page status map across all 14 doctrine sectors with canonical tags, see [`docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md`](theory/01_reference/SPEC_DOCTRINE_LEDGER.md) (FTD-0145 [SYNTHESIS]).
+> ** CONSTITUTION:** The standalone-framework constitution — postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the deviation-prediction spine — is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md) (FTD-0254 [SYNTHESIS] + [AXIOM]-class declarations; promotes nothing). On any conflict: LEDGER > constitution > this overview.
 >
-> ** CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
+> ** STALE-TAG NOTICE:** This document's body uses an older version-marker style, and several epistemic tags in the prose below are **STALE** relative to the canonical ledger. The mathematical CONTENT remains mostly accurate, but tags must be read against the LEDGER. The corrected status of the load-bearing items:
 >
-> - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is an SMC bridge (1.26 ppm match, structurally unique but not dynamically derived).
-> - **"C2 PROVEN: x₋ → N_c = 3"** → **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; the `x_-  N_c` identification is dropped (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
-> - **sin²θ_W, sin²θ_13, α_s, PMNS angles** → downgraded to [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
-> - **"< 0.001 ppt with 7-term expansion"** framing → explicitly retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
-> - **"Thermodynamic limit"** language throughout → the framework now commits to undefined-boundary ontology, not completed-infinity ℤ³.
-> - **Cluster-mass identification (FTD-0110, 2026-04-28)** → was [OPEN] / [CONJECTURE] in the body; the cluster-efficiency coefficient `k = 1/N_base = 1/4` is now [DERIVED at linear level] from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster--mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
+> - **x₊ = 1/α** is **[STRONGLY MOTIVATED CONJECTURE]**, not a theorem. The polynomial identity is proven; the physical identification is an SMC bridge (1.26 ppm match, structurally unique but not dynamically derived).
+> - **`x₋ → N_c = 3`** is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; the `x_-  N_c` identification is dropped (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
+> - **sin²θ_W, sin²θ_13, α_s, PMNS angles** are **[PARAMETRIC]** or **[STRUCTURALLY MOTIVATED PARAMETRIC]**.
+> - The **"< 0.001 ppt with 7-term expansion"** framing is retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
+> - **"Thermodynamic limit"** language throughout is superseded; the framework commits to undefined-boundary ontology, not completed-infinity ℤ³.
+> - **Cluster-mass identification (FTD-0110)**: the cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster--mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
 >
 > **For current state, read first:** [`docs/WHERE_WE_LEFT_OFF.md`](WHERE_WE_LEFT_OFF.md).
 > **Full audit trail:** [`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`](theory/07_assessment/AUDIT_MASTER_QUADRATIC.md), [`AUDIT_RATIONAL_FIT_CLAIMS.md`](theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md), [`AUDIT_INFINITY_REFRAME.md`](theory/07_assessment/AUDIT_INFINITY_REFRAME.md).
->
-> An editorial pass to rewrite this document in line with the April 19 audits is queued as Option 4 in WHERE_WE_LEFT_OFF.md §3.
 
 > **This document is a readable framework overview, not a status authority.** For the epistemic status of any claim, the canonical sources are [`LEDGER.md`](theory/07_assessment/core_ledgers/LEDGER.md) (per-claim tags) and [`TRACKER_ONTIC_TRUTH.md`](theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) (truth tiers); the precedence of all status-bearing documents is fixed in [`theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md) § Canonical Hierarchy. Where this document's body and a canonical source disagree, the canonical source wins and this document is the drift to fix. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
 
-**Editorial note (2026):** The publication-ready narrative and epistemic taxonomy live in `dissemination/manuscript/`. This file uses occasional shorthand (e.g., "derived", "resolved", "first principles") to mean "derived within the stated FTD postulates/constraints" or "implemented and validated in simulation," not a claim of empirical establishment.
+**Editorial note:** The publication-ready narrative and epistemic taxonomy live in `dissemination/manuscript/`. This file uses occasional shorthand (e.g., "derived", "resolved", "first principles") to mean "derived within the stated FTD postulates/constraints" or "implemented and validated in simulation," not a claim of empirical establishment.
 
 > **Epistemic Discipline (v5.24):** The following practices are prohibited:
 > - **Do NOT** run numerical search scripts looking for near-misses or coincidences
@@ -39,13 +34,13 @@
 
 > **Major Update (v5.0 - Foundational Completeness)**: Historical status note; later audits reclassified several physical identifications:
 > - **C1 RECLASSIFIED**: x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]. The polynomial/root algebra is theorem-level; the physical identification is not dynamically derived.
-> - **C2 RETIRED** (2026-05-22, v1.4 §5): `x₋ → N_c = 3` is dropped as a physics identification; LEDGER FTD-0014 removed in commit `ca7eb61`. The master quadratic's smaller root `x_- ≈ 3.024` is a mathematical artifact of the polynomial only. Independent topology routes to `N_c = 3` remain separately tagged in the ledger (`DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem).
+> - **C2 RETIRED** (v1.4 §5): `x₋ → N_c = 3` is dropped as a physics identification; LEDGER FTD-0014 removed in commit `ca7eb61`. The master quadratic's smaller root `x_- ≈ 3.024` is a mathematical artifact of the polynomial only. Independent topology routes to `N_c = 3` remain separately tagged in the ledger (`DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem).
 > - **A1 DERIVED**: D = 3 is uniquely selected by atomic stability + gauge requirements (no longer axiom)
 > - **GR COMPLETE**: Einstein equations derived with correct 8πG coefficient
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
 > - **Baryogenesis DERIVED**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
 > - **Neutrinos COMPLETE**: Seesaw mechanism with M_R from framework integers
-> - **GR / inflation / baryogenesis / neutrino items above — RECLASSIFIED (2026-04-19 audit)**: these are **[PARAMETRIC]** insertions — standard physics formulas (the Einstein equations, slow-roll inflation, Sakharov/CP, the seesaw) populated with FTD constants — **not derivations from the FTD postulates**. The "COMPLETE" / "DERIVED" headings predate the audit and are retained only as historical version markers. See `docs/theory/07_assessment/core_ledgers/LEDGER.md` for live per-claim tags. Substrate gravity in particular is [CLOSED NEGATIVE] (FTD-0131); FTD strong-field gravity (Schwarzschild / Kerr) is imported from GR, not substrate-derived (FTD-0184).
+> - **GR / inflation / baryogenesis / neutrino items above — RECLASSIFIED**: these are **[PARAMETRIC]** insertions — standard physics formulas (the Einstein equations, slow-roll inflation, Sakharov/CP, the seesaw) populated with FTD constants — **not derivations from the FTD postulates**. The "COMPLETE" / "DERIVED" headings are retained only as historical version markers. See `docs/theory/07_assessment/core_ledgers/LEDGER.md` for live per-claim tags. Substrate gravity in particular is [CLOSED NEGATIVE] (FTD-0131); FTD strong-field gravity (Schwarzschild / Kerr) is imported from GR, not substrate-derived (FTD-0184).
 >
 > See [FTD_REFERENCE.md](theory/01_reference/SPEC_FTD_REFERENCE.md) for complete reference and [CHANGELOG.md](../CHANGELOG.md) for version history.
 
@@ -247,7 +242,7 @@ This is the same epistemic position as every effective field theory's matching t
 ### POSTULATE 3: Ternary States (J-primary, s as manifestation; values grounded in Axiom 0)
 Each voxel v ∈ **L** carries a flux field J(v, t) ∈ ℝ³ (the dispositional layer) and a discrete state s(v, t) ∈ {i², 0, |i²|} = {−1, 0, +1} (the manifestation layer). **J is primary; s is the action of J via the Genesis threshold rule** (§3.3): when |J(v, t)| crosses the manifestation threshold K_B, the void voxel manifests as s = ±1 according to the sign of the flux divergence; otherwise s = 0. Thus s is not an independent field — it is the discrete observable layer that records when J's local intensity crosses K_B.
 
-**Grounding via Axiom 0 (FTD-0128, 2026-05-03):** the state space is the real projection of `Z[i]^× ∪ {0}` (the unit group of Gaussian integers extended by the additive identity). Numerical values `{−1, 0, +1}` are algebraic consequences of Axiom 0 ("i exists") via `s = i²` plus the additive identity, not independent settings. The `{s, 0, |s|}` notation makes the polarity-magnitude pairing of the two non-zero states explicit: they are not arbitrary independent integers but a `(value, magnitude)` pair generated by `i²`. The voxel is the invariant lattice substrate; state assignment varies per tick; "infinite potential" content per non-zero state is carried by the continuous flux field `J ∈ ℝ³`. Axiomatic-footprint consequence: three previously-arbitrary numerical settings are now derivable from an existing axiom. See [`docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md`](theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md).
+**Grounding via Axiom 0 (FTD-0128):** the state space is the real projection of `Z[i]^× ∪ {0}` (the unit group of Gaussian integers extended by the additive identity). Numerical values `{−1, 0, +1}` are algebraic consequences of Axiom 0 ("i exists") via `s = i²` plus the additive identity, not independent settings. The `{s, 0, |s|}` notation makes the polarity-magnitude pairing of the two non-zero states explicit: they are not arbitrary independent integers but a `(value, magnitude)` pair generated by `i²`. The voxel is the invariant lattice substrate; state assignment varies per tick; "infinite potential" content per non-zero state is carried by the continuous flux field `J ∈ ℝ³`. Axiomatic-footprint consequence: three previously-arbitrary numerical settings are now derivable from an existing axiom. See [`docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md`](theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md).
 
 | State | Label | Interpretation (Speculative) |
 |-------|-------|------------------------------|
@@ -544,7 +539,7 @@ PHASE 12: Increment
 
 **CAUTION**: The update order matters. Different orderings may produce different emergent behaviors. The specified order is a design choice.
 
-**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
+**Gate function identification:** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
 
 ---
 
@@ -668,7 +663,7 @@ The following are now **derived**, not input parameters:
 
 > **Research Program**:  **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md).
 
-> **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the 2026-04-22 Structure-2 audit. This does not constitute independent physical confirmation.
+> **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the Structure-2 audit. This does not constitute independent physical confirmation.
 
 ---
 
@@ -757,7 +752,7 @@ The lemniscatic constant G* has theorem-level mathematical provenance through th
 2. **Γ(1/4)² factor**: Lattice regularization → elliptic integral K(1/√2)
 3. **Coefficient 16**: Physical degrees of freedom on 2×2×2 minimal lattice (24 - 7 - 1 = 16)
 
-**BCC Watson integral (April 2026):** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
+**BCC Watson integral:** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
 
 The master quadratic (degree 2 is forced by self-referential closure of the ternary constraint AND by the degree-2 CM field $\mathbb{Q}(i)$; see [DERIV_QUADRATIC_NECESSITY.md](theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md)):
 
@@ -770,7 +765,7 @@ produces two roots:
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
 | x₋ | 3.024 | mathematical artifact of P(x); no physics identification | n/a |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊  1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊  1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
@@ -1157,7 +1152,7 @@ FTD (sLoop):
 
 These are complementary, not conflicting.
 
-**Observer/object formalism (April 2026):** The observer/object distinction is grounded in the 3³ lattice: observer and object are structurally identical 3³ clusters, with the distinction being purely relational. Three observation modes emerge: external (disjoint clusters), overlapping (shared voxels), and self-referential (identical cluster). See [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) Part II.
+**Observer/object formalism:** The observer/object distinction is grounded in the 3³ lattice: observer and object are structurally identical 3³ clusters, with the distinction being purely relational. Three observation modes emerge: external (disjoint clusters), overlapping (shared voxels), and self-referential (identical cluster). See [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) Part II.
 
 ---
 
@@ -1737,7 +1732,7 @@ A computational simulation based on:
 ### Quantum-Like Features
 -  **Interference patterns** (flux superposition)
 -  **Spinor behavior** (720° symmetry from framed flux)
--  **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism characterized as three-level observer hierarchy (April 2026); S = 2 sqrt(2) follows from Tsirelson's bound once QM emergence is established
+-  **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism characterized as three-level observer hierarchy; S = 2 sqrt(2) follows from Tsirelson's bound once QM emergence is established
 -  **Born rule** (derived from flux concentration statistics)
 
 ### Constants and Phenomenology (historical v5.0 block; current tags live in LEDGER.md)
@@ -1781,7 +1776,7 @@ A computational simulation based on:
 - ~~**Numerical value of G_N**~~  **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
 - ~~**Why a 3D discrete lattice exists**~~  **DERIVED (v5.0)** — D = 3 is uniquely selected (see §22.5.1)
 - ~~**C1: x₊ = 1/α**~~  **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
-- ~~**C2: x₋ → N_c = 3**~~ **RETIRED (2026-05-22, v1.4 §5)** — `x_-  N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
+- ~~**C2: x₋ → N_c = 3**~~ **RETIRED (v1.4 §5)** — `x_-  N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
 - ~~**GR with 8πG**~~  **DERIVED** — Einstein equations with correct coefficient
 - ~~**Inflation mechanism**~~  **DERIVED** — n_s = 0.966, r = 0.022
 - ~~**Baryogenesis**~~  **DERIVED** — η ~ 10⁻¹⁰
@@ -2086,6 +2081,4 @@ This appendix provides a comprehensive reference for all notation used in FTD, o
 
 **END OF REVISED DOCUMENT**
 
-*Version 4.0 — Theoretically Founded*
 *Prepared for critical evaluation*
-*Audit completed: 2026-01-01*
