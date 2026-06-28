@@ -2,9 +2,6 @@
 
 ## How PF = π/4 Enters and Exits Every Sector of Physics
 
-**Document Version:** 1.0
-**Framework Version:** FTD v5.26
-**Date:** February 19, 2026
 **Standard:** Domain-by-domain algebraic reduction with three-layer epistemic separation
 
 **Depends on:**

@@ -1,6 +1,5 @@
 # Derivation: Material Emergence from the FTD Lattice
 
-**Date:** 2026-04-24 (Phase-4h)
 **Status:** [MEASURED] on GPU
 **Purpose:** Empirically determine the smallest particle that emerges from the FTD lattice under the engine's native genesis rule, and classify its quantum numbers against the Standard Model.
 **Ledger row:** FTD-0076
@@ -149,4 +148,4 @@ For the Branch-A native EFT paper, this means the honest framing of material con
 
 ---
 
-*Filed 2026-04-24 as Phase-4h. First empirical characterization of spontaneous material emergence in FTD. Upgrades the particle-physics ledger with a dynamical result that complements the algebraic mass formulas.*
+*An empirical characterization of spontaneous material emergence in FTD. Complements the algebraic mass formulas with a dynamical result.*

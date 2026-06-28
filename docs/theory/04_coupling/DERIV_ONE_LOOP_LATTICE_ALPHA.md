@@ -2,23 +2,21 @@
 
 ## From 1.26 ppm to 9.6 ppb via Brillouin-Zone Tadpole
 
-**Date:** April 3, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
 **Status:** [SELECTION] / scheme-conditional calculation (derived after choosing the SC scalar-EFT tadpole scheme and lattice spacing a = 2/D)
 **Proof script:** `scripts/verification/verify_one_loop_alpha.py`
 
 ---
 
-## 0. Audit update (2026-04-22)
+## 0. Scheme conditionality
 
-This document's arithmetic remains reproducible inside its stated scalar-EFT scheme, but the ppb interpretation is now conditional rather than universal.
+This document's arithmetic is reproducible inside its stated scalar-EFT scheme, but the ppb interpretation is conditional rather than universal.
 
-Subsequent GPU audits found:
+GPU audits found:
 
 1. The BCC tadpole value differs from the SC tadpole value used here, and the unrenormalized one-loop residual has no continuum limit without counterterms. See `docs/theory/10_eft_program/archive/campaign_complete/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`.
 2. A Ward-valid Structure-2 two-U(1) BCC scalar gauge completion with bubble plus seagull terms does not reproduce the Structure-1 ppb closure. See `docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
 
-Therefore the "9.6 ppb" result should be read as a Structure-1, fixed-regularization outcome. It is not currently a scheme-independent physical prediction.
+Therefore the "9.6 ppb" result should be read as a Structure-1, fixed-regularization outcome. It is not a scheme-independent physical prediction.
 
 ## 1. Setup: phi^3 EFT on the Cubic Lattice
 
@@ -37,7 +35,7 @@ Therefore the "9.6 ppb" result should be read as a Structure-1, fixed-regulariza
 **Claim 1LA-2.** [SELECTION PRINCIPLE] The lattice spacing a = 2/D = 2/3 is selected. Non-circular justifications:
 
 - **Geometric:** Boundary-to-bulk ratio in D = 3. The fraction of boundary directions per axis is (D-1)/D = 2/3.
-- **Rational approximation (quantitative, added 2026-04-17):** Among all rationals $p/q$ expressible in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ at height $\leq 15$, **2/3 is the uniquely best approximation to $a_\mathrm{opt} = 0.66486$ — by a factor of at least 12× against any competitor**. See [EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md) §2.2 for the full ranking. The next-best rational (9/14 at height 14) is off by $2.2 \times 10^{-2}$, vs 2/3's $1.8 \times 10^{-3}$.
+- **Rational approximation (quantitative):** Among all rationals $p/q$ expressible in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ at height $\leq 15$, **2/3 is the uniquely best approximation to $a_\mathrm{opt} = 0.66486$ — by a factor of at least 12× against any competitor**. See [EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md) §2.2 for the full ranking. The next-best rational (9/14 at height 14) is off by $2.2 \times 10^{-2}$, vs 2/3's $1.8 \times 10^{-3}$.
 - **Dimensional:** The unique rational of the form (D-1)/D for D = 3.
 
 **What the audit did NOT find:** No local extremum, zero-crossing, or inflection of $\delta x(a)$ at $a = 2/D$ ([EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md) §2.3). The function is monotonically smooth through this point — so $a = 2/D$ is not forced by a symmetry / stability condition from the one-loop tadpole alone. The 0.27% gap between $a_\mathrm{opt}$ and $2/D$ remains real.
@@ -82,7 +80,7 @@ Residual after one-loop correction: **9.6 ppb** (parts per billion).
 
 Gap closed by the one-loop lattice correction: **99.2%** of the original 1.26 ppm tree-level discrepancy.
 
-**Audit caveat (2026-04-22):** this closure is scheme-specific. It is not reproduced by the Ward-valid Structure-2 scalar gauge completion tested in `AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
+**Audit caveat:** this closure is scheme-specific. It is not reproduced by the Ward-valid Structure-2 scalar gauge completion tested in `AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
 
 ---
 
@@ -118,11 +116,11 @@ This is approximately 23% of the one-loop value in magnitude. The two-loop corre
 
 1. **Geometric:** In a D-dimensional hypercube, the fraction of boundary directions per axis is (D-1)/D.
 2. **Dimensional:** The only rational number of the form (D-1)/D for D = 3.
-3. **Best rational in the base-integer set (2026-04-17 audit):** Among all rationals in $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ at height $\leq 15$, 2/3 is the uniquely best approximation to $a_\mathrm{opt} = 0.66486$ (see [EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md)).
+3. **Best rational in the base-integer set:** Among all rationals in $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ at height $\leq 15$, 2/3 is the uniquely best approximation to $a_\mathrm{opt} = 0.66486$ (see [EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md)).
 
-The audit explicitly tested for a symmetry / stability selection at $a = 2/D$ (Q3 of the audit): $\delta x(a)$ has no local extremum, zero derivative, or inflection at $a = 2/D$. So items (1)-(3) are the complete non-circular basis; **no mechanism-style derivation exists as of 2026-04-17**.
+The audit explicitly tested for a symmetry / stability selection at $a = 2/D$ (Q3 of the audit): $\delta x(a)$ has no local extremum, zero derivative, or inflection at $a = 2/D$. So items (1)-(3) are the complete non-circular basis; **no mechanism-style derivation exists**.
 
-**Removed from earlier revisions:** the citations of up-quark charge $Q_u = 2/3$ and hypercharge $Y_{u_R} = 2/3$ as "independent derivations." These are SM quantum numbers downstream of α and cannot justify a selection that closes the α gap (circular). See §1 Honesty Note.
+**Excluded as circular:** up-quark charge $Q_u = 2/3$ and hypercharge $Y_{u_R} = 2/3$ are not "independent derivations" of the spacing. These are SM quantum numbers downstream of α and cannot justify a selection that closes the α gap (circular). See §1 Honesty Note.
 
 ---
 
@@ -176,4 +174,4 @@ The proposed duality with the epsilon-expansion remains conjectural and should n
 2. The 9.6 ppb result is only as good as the selected scalar-EFT scheme, regulator, and spacing a = 2/D. The BCC and Structure-2 audits show that changing the gauge completion or regularization changes the result.
 3. The two-loop estimate is preliminary (32^3 lattice). A 128^3 evaluation would be more reliable for the selected scheme, but it is not the current bottleneck.
 4. This is a **parametric insertion** of FTD values (G*, D=3) into standard lattice field theory formulas. The lattice QFT machinery is external physics, not derived from FTD axioms.
-5. As of 2026-04-22, the live blocker is the FTD-to-EFT matching principle documented in `docs/theory/10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md` and `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.
+5. The live blocker is the FTD-to-EFT matching principle documented in `docs/theory/10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md` and `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.

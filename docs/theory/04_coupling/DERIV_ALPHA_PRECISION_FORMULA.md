@@ -2,8 +2,6 @@
 
 ## Sub-Attometer Accuracy from Lemniscate Geometry and Framework Integers
 
-**Date:** January 31, 2026 (Updated v5.12.1; rigidity audit appended 2026-04-17)
-**Framework:** Foundational Ternary Dynamics v5.12.1
 **Status:** [CONJECTURE] — 24-digit agreement with CODATA 2022 *recommended value* confirmed as **algebraic identity** (mpmath 60-digit, residual 2.58e-24). Not experimentally verifiable beyond digit ~11. See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for full audit.
 
 ---
@@ -12,7 +10,7 @@
 
 We present the **complete 7-term precision formula** for the fine structure constant. The numerical expression matches the CODATA 2022 *recommended value* $137.035999177$ to 24 decimal digits as a confirmed algebraic identity.
 
-**Epistemic caveat (added 2026-04-17).** CODATA 2022 constrains $1/\alpha$ experimentally to $\pm 2.1 \times 10^{-8}$ — roughly 11 significant digits. The 24-digit "match" is therefore **not experimentally testable** below digit ~11; it is a structural property of the specific chosen rational coefficients rather than a tested prediction against data. The rigidity audit (`scripts/exploration/audit_seven_term_rigidity.py`) shows that 6 of 7 coefficients are uniquely forced as the only base-integer rationals within self-consistency (cascade) tolerance, with $c_7 = 299/8$ being the unique clean base-integer decomposition — but at CODATA experimental precision, hundreds of low-height base-integer rationals match to within uncertainty for each coefficient. The formula's precision claim is thus **algebraically strong, experimentally weak**.
+**Epistemic caveat.** CODATA 2022 constrains $1/\alpha$ experimentally to $\pm 2.1 \times 10^{-8}$ — roughly 11 significant digits. The 24-digit "match" is therefore **not experimentally testable** below digit ~11; it is a structural property of the specific chosen rational coefficients rather than a tested prediction against data. The rigidity audit (`scripts/exploration/audit_seven_term_rigidity.py`) shows that 6 of 7 coefficients are uniquely forced as the only base-integer rationals within self-consistency (cascade) tolerance, with $c_7 = 299/8$ being the unique clean base-integer decomposition — but at CODATA experimental precision, hundreds of low-height base-integer rationals match to within uncertainty for each coefficient. The formula's precision claim is thus **algebraically strong, experimentally weak**.
 
 **The Formula (7-term extended series):**
 
@@ -298,7 +296,7 @@ Error:     0.000263 ppt
 
 ### What IS Demonstrated
 
-1. **Algebraic identity**: The 4-term formula reproduces the CODATA 2022 recommended value $137.035999177$ to sub-ppt precision. The 7-term extension matches to 24 digits (residual 2.58e-24 at mpmath 60-digit precision, rigidity audit 2026-04-17).
+1. **Algebraic identity**: The 4-term formula reproduces the CODATA 2022 recommended value $137.035999177$ to sub-ppt precision. The 7-term extension matches to 24 digits (residual 2.58e-24 at mpmath 60-digit precision).
 2. **Algebraic closure**: All coefficients are exact rational combinations of the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\} = \{3, 4, 7, 13, 47, 8\}$.
 3. **Partial rigidity**: 6 of 7 coefficients are uniquely forced as the only base-integer rational within cascade tolerance (the self-consistency scale at which the 24-digit identity holds); $c_7 = 299/8$ is the unique clean base-integer decomposition.
 4. **Internal consistency**: Mathematically well-defined and reproducible via `scripts/exploration/audit_seven_term_rigidity.py`.
@@ -357,7 +355,7 @@ $$\frac{1}{\alpha} = 137.035999177000(1)...$$
 | Claim ID | Statement | Status | Epistemic Note |
 |----------|-----------|--------|----------------|
 | **ALPHAP-1** | 4-term formula matches CODATA 2022 recommended value to < 0.001 ppt | **[IMPOSED]** (parametric $\epsilon$-polynomial fit to CODATA) | Numerically verified; NOT experimentally verifiable beyond digit ~11 (CODATA $\sigma$ = 2.1e-8) |
-| **ALPHAP-1b** | 7-term extension matches CODATA recommended value to 24 digits | **[IMPOSED]** (parametric $\epsilon$-polynomial fit to CODATA, 2026-04-17 audit, residual 2.58e-24) | Same caveat as ALPHAP-1 |
+| **ALPHAP-1b** | 7-term extension matches CODATA recommended value to 24 digits | **[IMPOSED]** (parametric $\epsilon$-polynomial fit to CODATA, residual 2.58e-24) | Same caveat as ALPHAP-1 |
 | **ALPHAP-2** | All 7 coefficients decompose cleanly in base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ | **[THEOREM]** (algebraic) + **partial rigidity**: 6/7 uniquely forced at cascade precision | Algebraically verified; base-integer set itself is [SELECTION] |
 | **ALPHAP-3** | 20 = 1/c_Dirac = b_3 + N_eff | **[THEOREM]** | Convention-dependent |
 | **ALPHAP-4** | D = 47 = N_c x N_base^2 - 1 | **[THEOREM]** | Algebraic identity |
@@ -424,10 +422,5 @@ Until these are resolved, the formula should be understood as a **remarkable obs
 - **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Verification scripts:** `scripts/verification/verify_precision_formula_v3.py` (7-term), `scripts/verification/verify_precision_formula_v2.py` (3-term)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
-
----
-
-*Document updated: March 17, 2026 (v5.28)*
-*Framework: Foundational Ternary Dynamics v5.28*
 *Discovery: 7-term extended precision formula for fine structure constant (24 digits)*
 *History: v5.12.1 — 4-term formula; v5.28 — extended to 7 terms with framework-integer coefficients*

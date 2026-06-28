@@ -1,7 +1,6 @@
 # INDEX · Coupling Constants & Precision
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
 **Status:** [REFERENCE] — local navigation index for `docs/theory/04_coupling/`.
 **Purpose:** This cluster holds the derivations that turn the algebraic spine (G\*, the master quadratic) into coupling constants and precision predictions — the fine-structure constant α and its loop corrections, Λ_QCD, the cosmological constant, the Planck-mass scale-setting relation, and the G\*-decomposition bridges (Watson identity, ϖ/√PF). Read it when you need the chain from lemniscate geometry to a numerical coupling, or when checking the epistemic status of an α-precision claim.
 
@@ -41,4 +40,4 @@
 
 ---
 
-12 active docs in this cluster (+ 1 archived: `archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` — retracted 2026-06-01, archived 2026-06-02).
+12 active docs in this cluster (+ 1 archived: `archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` — retracted).

@@ -2,8 +2,7 @@
 
 ## G*²/(2π) = G_BCC(0) — The BCC Component of the Moore Neighborhood
 
-**Date:** March 16, 2026 (corrected March 17, 2026; naming + closed-form corrected 2026-06-24 spine audit)
-**Status:** Theorem (algebraic identity) + corrected physical interpretation
+**Status:** Theorem (algebraic identity) + physical interpretation
 **Dependencies:** MATH_MASTER_QUADRATIC.md, DERIV_GSTAR_PF_BRIDGE.md, DERIV_ALPHA_LATTICE_MECHANISM.md
 
 ---
@@ -12,7 +11,7 @@
 
 We prove that the FTD master constant satisfies $G^{*2}/(2\pi) = \Gamma(1/4)^4/(4\pi^3)$, which equals $G_{\rm BCC}(0)$ — the **body-centered cubic (BCC)** lattice Green's-function at the origin (the random-walk return-probability integral), NOT the simple cubic (SC) lattice self-energy. This identity is exact and holds to arbitrary precision.
 
-**Naming correction (2026-06-24 spine audit):** Earlier versions of this document called $\Gamma(1/4)^4/(4\pi^3) \approx 1.3932$ "Watson's integral $I_1$" / the "self-energy integral." That name is wrong. The standard **simple-cubic Watson self-energy integral** $I_1 = W_{\rm SC} = (1/\pi^3)\int_{[0,\pi]^3} d^3k\,/(3 - \cos k_x - \cos k_y - \cos k_z) \approx 0.5054$ — a different number entirely. The FTD quantity $1.3932$ is the **BCC return Green's function at the origin**, $G_{\rm BCC}(0)$, defined by the *product*-cosine eigenvalue $\sigma_{\rm BCC}(\mathbf k) = 1 - \cos k_x \cos k_y \cos k_z$. The numerical EQUALITY $W_3 := G^{*2}/(2\pi) = \Gamma(1/4)^4/(4\pi^3) = 2\,G_{\rm gauss}^2 = 1.39320392968\ldots$ is and remains a true **[THEOREM]** — only the *name* attached to $1.3932$ was wrong. Throughout this document $W_3$ now denotes $G_{\rm BCC}(0) = G^{*2}/(2\pi)$, not the SC Watson self-energy.
+**Naming:** $\Gamma(1/4)^4/(4\pi^3) \approx 1.3932$ is **not** "Watson's integral $I_1$" / the "self-energy integral." The standard **simple-cubic Watson self-energy integral** $I_1 = W_{\rm SC} = (1/\pi^3)\int_{[0,\pi]^3} d^3k\,/(3 - \cos k_x - \cos k_y - \cos k_z) \approx 0.5054$ — a different number entirely. The FTD quantity $1.3932$ is the **BCC return Green's function at the origin**, $G_{\rm BCC}(0)$, defined by the *product*-cosine eigenvalue $\sigma_{\rm BCC}(\mathbf k) = 1 - \cos k_x \cos k_y \cos k_z$. The numerical EQUALITY $W_3 := G^{*2}/(2\pi) = \Gamma(1/4)^4/(4\pi^3) = 2\,G_{\rm gauss}^2 = 1.39320392968\ldots$ is a true **[THEOREM]**. Throughout this document $W_3$ denotes $G_{\rm BCC}(0) = G^{*2}/(2\pi)$, not the SC Watson self-energy.
 
 This is structurally significant: the FTD lattice uses a **26-neighbor Moore neighborhood** that decomposes into SC (6 face neighbors), FCC (12 edge neighbors), and BCC (8 corner neighbors). G* connects specifically to the **BCC component** — the 8 corner neighbors at $(\pm 1, \pm 1, \pm 1)$ — whose $Z_4$ vertex symmetry selects the lemniscatic CM curve $E: y^2 = x^3 - x$.
 
@@ -20,9 +19,9 @@ This is structurally significant: the FTD lattice uses a **26-neighbor Moore nei
 
 ## Part I: The Three Cubic Lattice Green's-Function Integrals
 
-### 1.1 The Three Integrals [THEOREM] *(naming corrected 2026-06-24 spine audit)*
+### 1.1 The Three Integrals [THEOREM]
 
-The three cubic Bravais lattices each have a return Green's-function-at-origin integral, one per lattice eigenvalue $\sigma(\mathbf k)$. **Note (2026-06-24 spine audit):** the FTD-relevant value $1.3932$ is the **BCC** integral with the *product*-cosine eigenvalue, $G_{\rm BCC}(0)$ — it is **not** the simple-cubic Watson self-energy $I_1 = W_{\rm SC} \approx 0.5054$. The three integrals are:
+The three cubic Bravais lattices each have a return Green's-function-at-origin integral, one per lattice eigenvalue $\sigma(\mathbf k)$. The FTD-relevant value $1.3932$ is the **BCC** integral with the *product*-cosine eigenvalue, $G_{\rm BCC}(0)$ — it is **not** the simple-cubic Watson self-energy $I_1 = W_{\rm SC} \approx 0.5054$. The three integrals are:
 
 $$G_{\rm BCC}(0) = \frac{1}{\pi^3}\int_0^\pi\!\int_0^\pi\!\int_0^\pi \frac{da\,db\,dc}{1 - \cos a\,\cos b\,\cos c} \tag{1.1}$$
 
@@ -32,9 +31,9 @@ $$W_{\rm SC} = I_1^{\rm Watson} = \frac{1}{\pi^3}\int_0^\pi\!\int_0^\pi\!\int_0^
 
 | Integral | Lattice type | Eigenvalue $\sigma(\mathbf k)$ | CM field | Gamma function | Numerical value |
 |----------|-------------|-----------|----------|---------------|----------------|
-| $G_{\rm BCC}(0)$ | **BCC** | $1 - \cos k_x\cos k_y\cos k_z$ | $\mathbb{Q}(i)$ | $\Gamma(1/4)$ | **1.39320** (grid-confirmed 2026-06-24) |
+| $G_{\rm BCC}(0)$ | **BCC** | $1 - \cos k_x\cos k_y\cos k_z$ | $\mathbb{Q}(i)$ | $\Gamma(1/4)$ | **1.39320** (grid-confirmed) |
 | $W_{\rm FCC}$ | **FCC** | $3 - \sum_{i<j}\cos k_i\cos k_j$ | $\mathbb{Q}(\sqrt{-3})$ | $\Gamma(1/3)$ | 0.4461 |
-| $W_{\rm SC} = I_1^{\rm Watson}$ | **SC** | $3 - \sum_i\cos k_i$ | — | $\Gamma(n/24)$ | **0.50542** (grid-confirmed 2026-06-24) |
+| $W_{\rm SC} = I_1^{\rm Watson}$ | **SC** | $3 - \sum_i\cos k_i$ | — | $\Gamma(n/24)$ | **0.50542** (grid-confirmed) |
 
 The standard **Watson "self-energy" integral** in the literature is $W_{\rm SC} \approx 0.5054$ (the *sum*-cosine SC form, eq. 1.3) — NOT the FTD value $1.3932$. The FTD constant equals the **BCC return Green's function** $G_{\rm BCC}(0)$ (eq. 1.1).
 
@@ -52,7 +51,7 @@ $$W_3 = G_{\rm BCC}(0) = \frac{\Gamma(1/4)^4}{4\pi^3} \tag{1.6}$$
 
 This is a celebrated result in mathematical physics. The proof proceeds via reduction to elliptic integrals (expanding the *product*-cosine propagator as a geometric series, see §8.2), then evaluation through the arithmetic-geometric mean.
 
-**Numerical value (corrected 2026-06-24 spine audit; mpmath dps=40, this run):** $W_3 = \Gamma(1/4)^4/(4\pi^3) = 1.393203929685676859\ldots$ Direct grid integration of eq. (1.1) this run confirms $G_{\rm BCC}(0) \to 1.3932$ (1.3925 at $N=800$ midpoint, converging from below through the integrable origin singularity). By contrast the SC Watson self-energy (eq. 1.3) grid-integrates to $W_{\rm SC} = 0.5051 \to 0.5054$ — confirming the two are distinct.
+**Numerical value (mpmath dps=40):** $W_3 = \Gamma(1/4)^4/(4\pi^3) = 1.393203929685676859\ldots$ Direct grid integration of eq. (1.1) confirms $G_{\rm BCC}(0) \to 1.3932$ (1.3925 at $N=800$ midpoint, converging from below through the integrable origin singularity). By contrast the SC Watson self-energy (eq. 1.3) grid-integrates to $W_{\rm SC} = 0.5051 \to 0.5054$ — confirming the two are distinct.
 
 ### 1.4 Physical Meaning
 
@@ -61,7 +60,7 @@ $W_3 = G_{\rm BCC}(0)$ is the **return Green's function at the origin** of the B
 - The UV-finite one-loop self-energy on the lattice
 - The leading finite-size correction to lattice observables
 
-In lattice gauge theory, return Green's functions of this kind appear in one-loop calculations of the plaquette expectation value, the static quark potential, and Wilson loop corrections. The BCC return value $W_3 = G_{\rm BCC}(0)$ is as fundamental to the FTD lattice's BCC component as $\pi$ is to circular geometry. *(Note 2026-06-24 spine audit: this is the BCC return integral, distinct from the SC "Watson self-energy" $W_{\rm SC}\approx 0.5054$.)*
+In lattice gauge theory, return Green's functions of this kind appear in one-loop calculations of the plaquette expectation value, the static quark potential, and Wilson loop corrections. The BCC return value $W_3 = G_{\rm BCC}(0)$ is as fundamental to the FTD lattice's BCC component as $\pi$ is to circular geometry. *(This is the BCC return integral, distinct from the SC "Watson self-energy" $W_{\rm SC}\approx 0.5054$.)*
 
 ---
 
@@ -90,7 +89,7 @@ Agreement to 15 significant figures (limited by double-precision floating point)
 
 ## Part III: Consequences
 
-> **Terminology note (2026-06-24 spine audit).** For the remainder of this document the phrases "the Watson integral," "the lattice self-energy," and the symbol $W_3$ all denote the **BCC return Green's function at the origin**, $W_3 = G_{\rm BCC}(0) = G^{*2}/(2\pi) = \Gamma(1/4)^4/(4\pi^3) = 1.39320392968\ldots$ (eq. 1.4/1.6). They do **not** denote the standard simple-cubic Watson self-energy $W_{\rm SC} = I_1^{\rm Watson} \approx 0.5054$. The numerical identity $W_3 = G^{*2}/(2\pi)$ remains a true **[THEOREM]**; only the name "Watson self-energy" was a mislabel.
+> **Terminology note.** For the remainder of this document the phrases "the Watson integral," "the lattice self-energy," and the symbol $W_3$ all denote the **BCC return Green's function at the origin**, $W_3 = G_{\rm BCC}(0) = G^{*2}/(2\pi) = \Gamma(1/4)^4/(4\pi^3) = 1.39320392968\ldots$ (eq. 1.4/1.6). They do **not** denote the standard simple-cubic Watson self-energy $W_{\rm SC} = I_1^{\rm Watson} \approx 0.5054$. The numerical identity $W_3 = G^{*2}/(2\pi)$ is a true **[THEOREM]**; the name "Watson self-energy" is a mislabel.
 
 ### 3.1 The Master Quadratic Lives on the Lattice [THEOREM]
 
@@ -233,7 +232,7 @@ The Watson-G* identity is not an isolated coincidence. It is a specific instance
 
 ### 7.1 Watson's Three Cubic Lattice Integrals (1939)
 
-The return Green's-function integral for the cubic Bravais lattice types: *(table corrected 2026-06-24 spine audit — see correction note below)*
+The return Green's-function integral for the cubic Bravais lattice types:
 
 | Lattice | Planar symmetry | Return-Green's-fn closed form | Gamma function | Value | CM curve |
 |---------|----------------|-----------------|---------------|-------|----------|
@@ -241,7 +240,7 @@ The return Green's-function integral for the cubic Bravais lattice types: *(tabl
 | SC (simple cubic) | $Z_4$ (square faces) | $W_{\rm SC} = I_1^{\rm Watson}$ (no $\Gamma(1/4)$ closed form) | $\Gamma(n/24)$ | 0.50542 | — |
 | FCC (face-centered) | $Z_6$ (close-packed planes) | $W_{\rm FCC}$ involves $\Gamma(1/3)$ | $\Gamma(1/3)$ | 0.4461 | $j = 0$, Aut $\cong Z_6$ |
 
-**Correction (2026-06-24 spine audit):** An earlier version of this table contained two errors, now fixed. (i) It listed a spurious BCC closed form $\sqrt{6}\,\Gamma(1/4)^4/(32\pi^3)$. Computed this run (mpmath dps=40): $\sqrt{6}\,\Gamma(1/4)^4/(32\pi^3) = 0.42658\ldots$, which does **not** equal $1.39320392968\ldots$ — it is spurious and is removed. The correct, $\Gamma(1/4)^4$-bearing closed form is $G_{\rm BCC}(0) = \Gamma(1/4)^4/(4\pi^3) = 1.393203929685677\ldots$ (matching §1.1 / eq. 1.6). (ii) The earlier table mis-assigned $\Gamma(1/4)^4/(4\pi^3)$ to the **SC** lattice; the $\Gamma(1/4)^4/(4\pi^3) = 1.3932$ value belongs to the **BCC** return integral, not SC. The SC Watson self-energy is $W_{\rm SC}\approx 0.5054$ and has no $\Gamma(1/4)^4/(4\pi^3)$ closed form.
+**Caveat (two common errors avoided):** (i) $\sqrt{6}\,\Gamma(1/4)^4/(32\pi^3)$ is **not** the BCC closed form. Computed (mpmath dps=40): $\sqrt{6}\,\Gamma(1/4)^4/(32\pi^3) = 0.42658\ldots$, which does **not** equal $1.39320392968\ldots$ — it is spurious. The correct, $\Gamma(1/4)^4$-bearing closed form is $G_{\rm BCC}(0) = \Gamma(1/4)^4/(4\pi^3) = 1.393203929685677\ldots$ (matching §1.1 / eq. 1.6). (ii) $\Gamma(1/4)^4/(4\pi^3)$ does **not** belong to the **SC** lattice; the $\Gamma(1/4)^4/(4\pi^3) = 1.3932$ value belongs to the **BCC** return integral, not SC. The SC Watson self-energy is $W_{\rm SC}\approx 0.5054$ and has no $\Gamma(1/4)^4/(4\pi^3)$ closed form.
 
 The pattern is systematic: **the rotational symmetry of the lattice's coordinate planes determines which Gamma function appears in the lattice Green's function, which determines which CM elliptic curve governs it.** Only the BCC component carries the $\Gamma(1/4)$/lemniscatic structure relevant to $G^*$.
 
@@ -276,7 +275,7 @@ This resolves **SP1a** from AUDIT_HIDDEN_SELECTIONS.md: the curve selection is *
 
 ---
 
-## Part VIII: Numerical Confirmation (April 11, 2026)
+## Part VIII: Numerical Confirmation
 
 Independent numerical verification via `scripts/exploration/gap_equation_layer_convergence.py`:
 
