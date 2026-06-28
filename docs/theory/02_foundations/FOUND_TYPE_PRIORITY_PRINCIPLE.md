@@ -1,7 +1,7 @@
 # FOUND — The type-priority principle: context before content, and why the Framework Commitments are precondition-types
 
 **Tag:** `[SYNTHESIS]` — an organizing reading that unifies existing FTD structure (the Framework Commitments, the modulus/argument frontier, the act-count) under one principle. **The principle itself is an *adopted foundational commitment*, not a derived theorem** — fittingly, since its own content is *"you set types; you do not derive them."* **Promotes nothing.**
-**Date:** 2026-06-28 · **LEDGER id:** FTD-0339 · **Provenance:** the re-anointing dialogue (this session); deepens the modulus/argument frontier (FTD-0336) and the act-count (FTD-0322). Written under GTCA discipline (sentence-level epistemic tags; scope-honest: this is philosophy-of-mathematics, not a physics derivation).
+**Date:** 2026-06-28 · **LEDGER id:** FTD-0339 · **Deepens:** the modulus/argument frontier (FTD-0336) and the act-count (FTD-0322). Written under GTCA discipline (sentence-level epistemic tags; scope-honest: this is philosophy-of-mathematics, not a physics derivation).
 
 ---
 
@@ -83,9 +83,9 @@ A **reference frame is a type-instantiation**: it sets the context relative to w
 
 ---
 
-## 8 · The re-anointed organizing principle `[adopted commitment]`
+## 8 · The organizing principle `[adopted commitment]`
 
-Type-priority is offered as the **spine of the re-anointed project**: not *"derive physics,"* not *"exploit G\*,"* but —
+Type-priority is the **organizing spine of the project**: not *"derive physics,"* not *"exploit G\*,"* but —
 
 > **Set the smallest honest set of types (commitments); build the mathematics and physics forward as the tokens those types make meaningful; and mark — rigorously — exactly which types the discrete ontology can set for itself and which it must import.**
 
