@@ -1,7 +1,6 @@
 # DERIV — Newton's law of gravity from FTD substrate
 
 **Tag:** [STRONGLY MOTIVATED CONJECTURE] for the prediction itself (epistemic floor inherited from FTD-0015 via `α_G = (m_e/m_P)²` tautology); [DERIVED] for the chain steps 1.1–1.5 that recover Schwarzschild leading-order from substrate. Two flagged postulates (gravitational coupling form, linearized tick coefficient `2/c²`). Closes FTD-0130 resolution-path-(a). **Honest reading**: the 0.38% precision match is the squared FTD-0015 precision (mechanical, not new evidence); the substrate-derivation content is in the chain, not in the numerical match.
-**Date:** 2026-05-03 late night
 **LEDGER:** FTD-0131
 **Verification script:** `scripts/proofs/proof_newton_from_substrate.py` (PASS, 0.38% precision)
 **Depends on:**
@@ -48,7 +47,7 @@ For the gravitational source density, postulate that each manifested voxel acts 
 
 $$\rho_g(\mathbf{x}) \;=\; K_B^{\rm grav}\cdot\mathbb{1}_{\rm manifested}(\mathbf{x})$$
 
-**[POSTULATE 1, flagged]** — *2026-05-24 reconciliation update*: substantively closed by `SPEC_FTD_LAGRANGIAN.md` §4.2 [THEOREM] (variation of S w.r.t. ℒ derives Poisson `∇²ℒ = 4πGρ_mass` with `ρ_mass = K_B · n` in weak field) under the identification `K_B^grav = K_B = m_e` per SPEC §3.4. The `K_B^grav` superscript notation in this section is bookkeeping ("the coupling constant entering the gravity term"), not a claim that it differs from K_B = m_e. See [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §1 (Reading A confirmed). The original substrate-derivation [OPEN] is hereby closed; remaining open: FTD-0015 prefactor `√(2π)·(16/3)` derivation (separate question, governs α_G hierarchy SMC→DERIVED upgrade).
+**[POSTULATE 1, flagged]** — *reconciliation*: substantively closed by `SPEC_FTD_LAGRANGIAN.md` §4.2 [THEOREM] (variation of S w.r.t. ℒ derives Poisson `∇²ℒ = 4πGρ_mass` with `ρ_mass = K_B · n` in weak field) under the identification `K_B^grav = K_B = m_e` per SPEC §3.4. The `K_B^grav` superscript notation in this section is bookkeeping ("the coupling constant entering the gravity term"), not a claim that it differs from K_B = m_e. See [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §1 (Reading A confirmed). The original substrate-derivation [OPEN] is hereby closed; remaining open: FTD-0015 prefactor `√(2π)·(16/3)` derivation (separate question, governs α_G hierarchy SMC→DERIVED upgrade).
 
 ### 1.3 The discrete Poisson equation
 
@@ -70,7 +69,7 @@ $$\frac{d\tau}{dT_U}(\mathbf{x}) \;=\; 1 \,+\, \frac{2\,\phi_g(\mathbf{x})}{c^2}
 
 In lattice units (`c_lat² = 1/3`): `tick_rate = 1 + 6 · φ_g`.
 
-**[POSTULATE 2, flagged]** — *2026-05-24 reconciliation update*: substantively closed by `SPEC_FTD_LAGRANGIAN.md` §4.3 [THEOREM] (Born-Infeld core derives `dτ/dt = √(f - v²/f)`, exact Schwarzschild proper time for all f ∈ (0,1]) modulo the clock hypothesis. **Convention clarification**: "tick_rate" in the equation above refers to the metric component `g_00 ≈ 1 + 2Φ/c²` (coefficient `2`), NOT the proper-time ratio `dτ/dt = √g_00 ≈ 1 + Φ/c²` (coefficient `1`). The two are consistent under square-root. SPEC §4.3's [THEOREM] establishes the full nonlinear form for `dτ/dt`; the linearization above is a corollary. See [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (Reading A confirmed modulo clock hypothesis). The genuine remaining open piece narrows from "derive coefficient 2/c² from substrate dynamics" to: substrate-derivation (or honest-axiom tier) of the **clock hypothesis** used implicitly in SPEC §4.3 — interpretive step not formally tagged anywhere in the corpus.
+**[POSTULATE 2, flagged]** — *reconciliation*: substantively closed by `SPEC_FTD_LAGRANGIAN.md` §4.3 [THEOREM] (Born-Infeld core derives `dτ/dt = √(f - v²/f)`, exact Schwarzschild proper time for all f ∈ (0,1]) modulo the clock hypothesis. **Convention clarification**: "tick_rate" in the equation above refers to the metric component `g_00 ≈ 1 + 2Φ/c²` (coefficient `2`), NOT the proper-time ratio `dτ/dt = √g_00 ≈ 1 + Φ/c²` (coefficient `1`). The two are consistent under square-root. SPEC §4.3's [THEOREM] establishes the full nonlinear form for `dτ/dt`; the linearization above is a corollary. See [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (Reading A confirmed modulo clock hypothesis). The genuine remaining open piece narrows from "derive coefficient 2/c² from substrate dynamics" to: substrate-derivation (or honest-axiom tier) of the **clock hypothesis** used implicitly in SPEC §4.3 — interpretive step not formally tagged anywhere in the corpus.
 
 ### 1.5 Combining: leading-order Schwarzschild
 
@@ -149,13 +148,13 @@ The derivation chain has four substrate-derived steps and two postulates:
 |---|---|---|---|
 | 1.1 | `G_+(r) → 1/(4π r)` at large r | **[THEOREM]** | FTD-0004 (Phase G), classical Glasser-Zucker |
 | 1.2 | Cluster mass `M = N · m_e` | **[DERIVED at linear level]** | FTD-0110 |
-| 1.2 | `ρ_g = K_B^grav · 1_manifested` *(2026-05-24 reconciliation: K_B^grav = K_B = m_e)* | **[DERIVED via SPEC §4.2 [THEOREM]]** | SPEC_FTD_LAGRANGIAN.md §4.2 (was [POSTULATE 1]; AUDIT_NEWTON_POSTULATES_RECONCILIATION.md §1) |
+| 1.2 | `ρ_g = K_B^grav · 1_manifested` *(K_B^grav = K_B = m_e)* | **[DERIVED via SPEC §4.2 [THEOREM]]** | SPEC_FTD_LAGRANGIAN.md §4.2 (was [POSTULATE 1]; AUDIT_NEWTON_POSTULATES_RECONCILIATION.md §1) |
 | 1.3 | `φ_g(r) = M·K_B^grav/(4π·m_e·r)` at large r | **[DERIVED]** | combine 1.1 + 1.2 |
 | 1.4 | `tick_rate = 1 + 2φ_g/c²` (linearized; this is `g_00`, not `dτ/dt`) | **[DERIVED via SPEC §4.3 [THEOREM] modulo clock hypothesis]** | SPEC_FTD_LAGRANGIAN.md §4.3 (was [POSTULATE 2]; AUDIT_NEWTON_POSTULATES_RECONCILIATION.md §2) |
 | 1.5 | Schwarzschild form to leading order | **[DERIVED]** | combine 1.3 + 1.4 |
 | 2.0 | `α_G(e,e) = (m_e/m_P)² = (...)²·α²²` | **[STRONGLY MOTIVATED CONJECTURE]** | inherits FTD-0015 tag |
 
-**Net tag for Newton-from-substrate** *(post-2026-05-24 reconciliation)*: **[DERIVED]** *modulo* (a) the **clock hypothesis** used in SPEC §4.3 (P2's substantive closure mechanism) — interpretive step pending substrate-derivation or honest-axiom tier, and (b) the existing FTD-0015 `[SMC]` tag for the α_G(e,e) prediction floor. Both Postulates 1+2 of the original 2026-05-03 flagging are now subsumed by SPEC §4.2 + §4.3 [THEOREM]s respectively; the clock hypothesis is the single remaining open interpretive piece. See [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §4 for Arc B horizon implications.
+**Net tag for Newton-from-substrate**: **[DERIVED]** *modulo* (a) the **clock hypothesis** used in SPEC §4.3 (P2's substantive closure mechanism) — interpretive step pending substrate-derivation or honest-axiom tier, and (b) the existing FTD-0015 `[SMC]` tag for the α_G(e,e) prediction floor. Both Postulates 1+2 of the original flagging are subsumed by SPEC §4.2 + §4.3 [THEOREM]s respectively; the clock hypothesis is the single remaining open interpretive piece. See [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §4 for Arc B horizon implications.
 
 The **load-bearing epistemic floor** for the prediction `α_G(e,e) ≈ 1.75 × 10⁻⁴⁵` is **[STRONGLY MOTIVATED CONJECTURE]** — inherited from FTD-0015. Promoting this to [DERIVED] would require either (a) substrate derivation of the prefactor `√(2π)·(16/3)` in FTD-0015, or (b) an independent path to the gravitational hierarchy that doesn't route through FTD-0015.
 
@@ -198,4 +197,4 @@ Resolution-path-(b) (Planck-primary architectural restructuring) remains [OPEN] 
 
 ## 8 · Provenance
 
-Derivation work performed during the 2026-05-03 late-night session as the resolution-path-(a) execution for FTD-0130. The chain was identified in `scripts/exploration/audit_schwarzschild_form_2026-05-03.py` (form-comparison work) and made explicit + verified in `scripts/proofs/proof_newton_from_substrate.py`. The prediction `α_G(e,e) = (m_e/m_P)²` was derived using FTD-0015 as load-bearing input, achieving 0.38% agreement with measurement. The "1/100" framework-integer claim was tested and falsified across all four natural readings.
+Derivation work executed as the resolution-path-(a) execution for FTD-0130. The chain was identified in `scripts/exploration/audit_schwarzschild_form_2026-05-03.py` (form-comparison work) and made explicit + verified in `scripts/proofs/proof_newton_from_substrate.py`. The prediction `α_G(e,e) = (m_e/m_P)²` was derived using FTD-0015 as load-bearing input, achieving 0.38% agreement with measurement. The "1/100" framework-integer claim was tested and falsified across all four natural readings.

@@ -2,11 +2,10 @@
 
 **Tag:** `[SCOPING MEMO]` — not a closure, not a tag promotion, not a new derivation. Records a cross-doc tag-reconciliation question that materially affects what Arc B (Newton-postulate substrate derivation) needs to attempt.
 **LEDGER row reservation:** to be confirmed against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; provisional placeholder pending audit.
-**Date:** 2026-05-24
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc B P2 P0 deliverable.
 **Sources read:**
-- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](DERIV_NEWTON_FROM_SUBSTRATE.md) (2026-05-03, FTD-0131) — flags Postulate 1 (§1.2) + Postulate 2 (§1.4)
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2, 2026-03-16) — §4.2 [THEOREM] Poisson; §4.3 [THEOREM] Born-Infeld → Schwarzschild proper time; §8 claims table L-1 through L-11
+- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](DERIV_NEWTON_FROM_SUBSTRATE.md) (FTD-0131) — flags Postulate 1 (§1.2) + Postulate 2 (§1.4)
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2) — §4.2 [THEOREM] Poisson; §4.3 [THEOREM] Born-Infeld → Schwarzschild proper time; §8 claims table L-1 through L-11
 - [`../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) §14.1, §14.2 — `[THEOREM]` tick-rate-variation
 - [`../01_reference/SPEC_DOCTRINE_LEDGER.md`](../01_reference/SPEC_DOCTRINE_LEDGER.md) §13.5, §14 — Phase-2 priority 6 (gravity beyond Newtonian); FTD-0189 Step-0 Deser correction context
 
@@ -16,14 +15,14 @@
 
 ## §1 — The reconciliation question
 
-`DERIV_NEWTON_FROM_SUBSTRATE.md` (2026-05-03) flags two postulates:
+`DERIV_NEWTON_FROM_SUBSTRATE.md` flags two postulates:
 
 | Tag in DERIV_NEWTON | Statement | Doc section |
 |---|---|---|
 | `[POSTULATE 1, flagged]` | `ρ_g(x) = K_B^grav · 𝟙_manifested(x)` | §1.2 |
 | `[POSTULATE 2, flagged]` | `dτ/dT_U(x) = 1 + 2φ_g(x)/c²` (linearized tick-rate) | §1.4 |
 
-`SPEC_FTD_LAGRANGIAN.md` (v3.2, 2026-03-16) appears to tag the same substrate-physics content as `[THEOREM]`:
+`SPEC_FTD_LAGRANGIAN.md` (v3.2) appears to tag the same substrate-physics content as `[THEOREM]`:
 
 | Tag in SPEC_FTD_LAGRANGIAN | Statement | Doc section |
 |---|---|---|
@@ -84,7 +83,7 @@ Arc B P2's genuine target then becomes: substrate-derive (or honestly tier-flag)
 
 ## §3 — The FTD-0189 Step-0 Deser audit context
 
-`SPEC_DOCTRINE_LEDGER.md` §14 priority 6 cites FTD-0184 (branch-compliance/Yilmaz route [CLOSED NEGATIVE]) and FTD-0131 (partial closure with 2 postulates flagged). The 2026-05-21 FTD-0189 Step-0 audit retagged some related claims in `DERIV_RELATIVITY_DERIVATION.md`:
+`SPEC_DOCTRINE_LEDGER.md` §14 priority 6 cites FTD-0184 (branch-compliance/Yilmaz route [CLOSED NEGATIVE]) and FTD-0131 (partial closure with 2 postulates flagged). The FTD-0189 Step-0 audit retagged some related claims in `DERIV_RELATIVITY_DERIVATION.md`:
 
 - Theorem 14.1 "linearized Einstein [THEOREM]" → `[SELECTION/CONDITIONAL]` (rests on hJ correspondence)
 - Theorem 15.3 "graviton = transverse flux modes [THEOREM]" → `[CONJECTURE] + spin-count flag` (spin-content error: 2 transverse J-modes = helicity-±1, not ±2)

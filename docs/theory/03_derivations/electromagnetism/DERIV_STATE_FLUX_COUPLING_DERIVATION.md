@@ -2,15 +2,13 @@
 
 ## Why the Coupling Between Manifest States and Flux Field Equals the Square Root of the Fine Structure Constant
 
-**Date:** February 1, 2026
-**Framework:** Foundational Ternary Dynamics v5.16
-**Status:** Historical/conditional derivation; physical identification remains a matching selection
+**Status:** Conditional derivation; physical identification remains a matching selection
 
 ---
 
-## Audit update (2026-04-22)
+## Canonical reading
 
-This document should no longer be read as an unconditional first-principles derivation of the electromagnetic coupling. The algebraic relation `g_c^2 = 1/x_+` is useful inside the selected state-flux dictionary, but the physical identification `x_+ = 1/alpha` is now classified as a matching selection/conjecture rather than a theorem.
+This document is not an unconditional first-principles derivation of the electromagnetic coupling. The algebraic relation `g_c^2 = 1/x_+` is useful inside the selected state-flux dictionary, but the physical identification `x_+ = 1/alpha` is a matching selection/conjecture rather than a theorem.
 
 See:
 
@@ -21,7 +19,7 @@ See:
 
 ## Abstract
 
-This document records the conditional state-flux coupling chain `g_c = sqrt(alpha) ≈ 0.0854` within the selected FTD state-flux dictionary. Earlier versions claimed that `g_c = sqrt(alpha)` followed necessarily from FTD axioms. That framing was too strong. The current status is:
+This document records the conditional state-flux coupling chain `g_c = sqrt(alpha) ≈ 0.0854` within the selected FTD state-flux dictionary. The chain does not follow necessarily from FTD axioms; it rests on:
 
 1. **Dimensional analysis** in FTD natural units
 2. **Self-consistency** of the manifestation threshold
@@ -420,6 +418,4 @@ This matches α_s(M_Z) ≈ 0.118 to 0.6%.
 
 ---
 
-*Document created: February 1, 2026*
-*Framework: Foundational Ternary Dynamics v5.16*
 *Topic: First-principles derivation of the state-flux coupling*

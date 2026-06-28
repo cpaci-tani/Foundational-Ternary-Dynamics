@@ -2,8 +2,7 @@
 
 **Document type:** Derivation
 **Status:** [DERIVED] — kinematic identity; standard math applied to FTD's specific stencil family
-**Created:** 2026-04-30
-**Provenance:** Q2 of the Maxwell-exploit thread opened with FTD-0113
+**Scope:** Q2 of the Maxwell-exploit program (parent: FTD-0113)
 **Related:** `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` (FTD's vertex-centered flux-field
 ontology, G18 stencil family, longitudinal/transverse decomposition);
 `DERIV_RETARDED_GREEN_LATTICE.md` (FTD-0113, parallel result on the

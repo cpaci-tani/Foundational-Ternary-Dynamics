@@ -2,8 +2,6 @@
 
 ## Hawking Radiation, Entropy, and the Information Paradox — Resolved
 
-**Version:** 1.0
-**Date:** February 26, 2026
 **Status:** [THEOREM] (temperature, entropy formula, unitarity) + [SELECTION] (entropy per site)
 
 ---
@@ -284,5 +282,4 @@ The black hole loses mass in Planck-mass quanta, radiating its final energy in $
 
 ---
 
-*Version 1.0 — February 26, 2026*
 *Framework: Foundational Ternary Dynamics*

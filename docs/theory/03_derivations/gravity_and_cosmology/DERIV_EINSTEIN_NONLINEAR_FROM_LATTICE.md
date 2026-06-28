@@ -2,8 +2,6 @@
 
 ## Tier 2.3: Full R_μν − ½g_μνR = 8πGT_μν from the FTD Linearized Limit
 
-**Document Version:** 1.0
-**Date:** March 17, 2026
 **Status:** [THEOREM] (chain) + [SELECTION] (identifications)
 **Companion script:** `scripts/proofs/proof_einstein_nonlinear.py`
 
@@ -42,7 +40,7 @@ where $\bar{h}_{\mu\nu} = h_{\mu\nu} - \frac{1}{2}\eta_{\mu\nu}h$ is the trace-r
 
 This linearized form is the seed for the iterative bootstrap.
 
-> **[2026-06-10 correction — Graviton-provenance audit, FTD-0193]** The "Linearized EFE [THEOREM]" starting point is **not** substrate-emergent. The Frontier 4 graviton mode census ([`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md), FTD-0193) was resolved as **Outcome B (no pole)** across all scales $L \in \{32, 64, 128\}$. The FTD substrate carries no emergent propagating spin-2 (graviton) mode; the transverse-traceless correlator is dominated by a two-particle spin-1 continuum. Therefore, the Deser bootstrap below completes an **imported** (Branch-B) massless spin-2 field $h_{\mu\nu}$ rather than deriving one from the $s/J$ substrate. The bootstrap remains a mathematically sound `[THEOREM]` showing how self-coupling leads to GR, but the graviton itself (and hence GR) is an imported framework structure rather than a substrate-emergent phenomena. This locates the load-bearing assumption; it does not falsify the bootstrap.
+> **[Graviton-provenance audit, FTD-0193]** The "Linearized EFE [THEOREM]" starting point is **not** substrate-emergent. The Frontier 4 graviton mode census ([`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md), FTD-0193) was resolved as **Outcome B (no pole)** across all scales $L \in \{32, 64, 128\}$. The FTD substrate carries no emergent propagating spin-2 (graviton) mode; the transverse-traceless correlator is dominated by a two-particle spin-1 continuum. Therefore, the Deser bootstrap below completes an **imported** (Branch-B) massless spin-2 field $h_{\mu\nu}$ rather than deriving one from the $s/J$ substrate. The bootstrap remains a mathematically sound `[THEOREM]` showing how self-coupling leads to GR, but the graviton itself (and hence GR) is an imported framework structure rather than a substrate-emergent phenomena. This locates the load-bearing assumption; it does not falsify the bootstrap.
 
 ---
 
@@ -209,7 +207,7 @@ The agreement between two independent routes is a non-trivial consistency check.
 | ID | Claim | Status | Key dependency |
 |----|-------|--------|---------------|
 | ENL-1 | Linearized EFE: $\Box\bar{h}_{\mu\nu} = -16\pi G_N T_{\mu\nu}$ | **[SELECTION — conditional on Conjecture 10.1]** (FTD-0189) | DERIV_RELATIVITY Thm 14.1 (see §1 correction note) |
-| ENL-2 | $G_N = 1/(b_3 + N_c)^2 = 0.01$ | **[SELECTION at SUBSTRATE level; ENGINE-INTERNAL at numerical level]** (downgraded from [THEOREM] 2026-05-03 night per FTD-0131 falsification: this identification with physical G_N is structurally inconsistent under all natural calibrations; substrate-derived gravity gives α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵ instead) | Coupling hierarchy (engine-internal) |
+| ENL-2 | $G_N = 1/(b_3 + N_c)^2 = 0.01$ | **[SELECTION at SUBSTRATE level; ENGINE-INTERNAL at numerical level]** (downgraded from [THEOREM] per FTD-0131 falsification: this identification with physical G_N is structurally inconsistent under all natural calibrations; substrate-derived gravity gives α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵ instead) | Coupling hierarchy (engine-internal) |
 | ENL-3 | Gravitational stress-energy $t_{\mu\nu}^{\text{GR}}$ well-defined | **[THEOREM]** | Landau-Lifshitz formalism |
 | ENL-4 | Bootstrap converges for $G_N M / r < 1$ | **[THEOREM]** | Contraction mapping |
 | ENL-5 | Converged solution matches post-Newtonian expansion | **[THEOREM]** | Numerical verification |
@@ -251,6 +249,5 @@ The agreement between two independent routes is a non-trivial consistency check.
 
 ---
 
-*Document Version 1.0 — March 17, 2026*
 *Framework: Foundational Ternary Dynamics v5.28*
 *Companion: `scripts/proofs/proof_einstein_nonlinear.py`*

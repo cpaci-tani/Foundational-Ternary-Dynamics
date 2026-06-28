@@ -2,7 +2,6 @@
 
 ## The First Scattering Amplitude from the FTD Lagrangian
 
-**Date:** March 16, 2026
 **Status:** [THEOREM] — derived from the FTD Lagrangian with no external input
 **Dependencies:** DERIV_QFT_GRT_BRIDGE.md, DERIV_PATH_INTEGRAL_CONSTRUCTION.md
 

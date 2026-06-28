@@ -3,8 +3,6 @@
 ## Substrate-Derived Comoving Expansion and the Dark Sector
 
 **Tag:** [THEOREM] (for the discrete BZ finite limits and regular representation decompositions), [SELECTION] / [CONJECTURE] (for the comoving metric stretch, dark energy leak, and halo superposition)  
-**Date:** 2026-05-27  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
 **Companion Documents:** [`docs/theory/04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md`](../04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md), [`docs/theory/03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md`](DERIV_DARK_SECTOR_DYNAMICS.md).
 

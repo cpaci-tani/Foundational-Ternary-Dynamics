@@ -2,8 +2,7 @@
 
 **Document type:** Derivation
 **Status:** [DERIVED] — closed-form lattice boosted Coulomb at uniform velocity; general accelerating motion remains [OPEN]
-**Created:** 2026-04-30
-**Provenance:** Q1 of the Maxwell-exploit thread opened with FTD-0113
+**Scope:** Q1 of the Maxwell-exploit program (parent: FTD-0113)
 **Related:** `DERIV_RETARDED_GREEN_LATTICE.md` (FTD-0113, the static-source parent);
 `DERIV_LATTICE_HODGE_DUALITY.md` (FTD-0114, the algebraic-backbone parallel);
 `SPEC_ALGEBRAIC_SPINE.md §6` (Phase G, the static-Coulomb base);
