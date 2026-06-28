@@ -1,7 +1,6 @@
 # FOUND — The arrow's direction: forced-given-FC-2, not free (classification + reconciliation)
 
 **Tag:** `[SYNTHESIS]` — assembles existing canonical results under one taxonomy; introduces no theorem, derives nothing, **promotes no tag**.
-**Date:** 2026-06-25
 **LEDGER id:** FTD-0324
 **Pre-registration:** `PREREG_ARROW_DIRECTION_TEST_v1.md`, git tag `preregister-arrow-direction-test-v1`, SHA256 `7df442d02ee9cbb048c3ca2a138dc3706e316ab942a74f9ed07ed90d14f1cd48` (committed before this classification).
 **Reuse (not re-derived):** FTD-0253 (`FOUND_SPACETIME_FORCING_BOUNDARY.md`); FTD-0267 (genesis≫evaporation `[MEASURED]`); `DERIV_HEAT_EQUATION_FROM_RATIO.md` `[THEOREM]`; FC-2 (constitution §2.6); FTD-0322/0315.

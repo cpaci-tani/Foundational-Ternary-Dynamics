@@ -1,7 +1,6 @@
 # FOUND — The act-reduction count: does FTD reduce to a single i-act? (boundary-map)
 
 **Tag:** `[SYNTHESIS]` — assembles existing canonical claims at their canonical tags under one taxonomy; introduces no theorem, derives nothing, promotes nothing.
-**Date:** 2026-06-25
 **LEDGER id:** FTD-0322
 **Pre-registration:** `PREREG_ACT_REDUCTION_TEST_v1.md`, git tag `preregister-act-reduction-test-v1`, SHA256 `4c7b74599b98aa3e6f655d9322430222fface12842fdf12150144c87d4867bd7` (committed before this classification).
 **Reuse (not re-derived):** FTD-0244 (`FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`, `[THEOREM]`); FTD-0243; FTD-0080 (`FOUND_AXIOM_ZERO.md`); FTD-0128 (`FOUND_TERNARY_STATE_FROM_I.md`); `FOUND_BLIND_DERIVATION_CHAIN.md`; constitution §1–§2.

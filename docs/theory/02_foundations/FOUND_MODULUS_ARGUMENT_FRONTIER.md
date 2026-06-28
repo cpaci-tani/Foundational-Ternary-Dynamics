@@ -1,7 +1,7 @@
 # FOUND — The modulus/argument frontier: what a discrete deterministic substrate can and cannot ground
 
 **Tag:** `[SYNTHESIS]` (consolidation of established FTD results — promotes nothing) **+ `[CONJECTURE]`/`[SPECULATION]`** (the substrate-independent meta-claim of §3, a precise statement to attempt, **not** a theorem).
-**Date:** 2026-06-27 · **LEDGER id:** FTD-0336 · **Provenance:** this session's reframe (`EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md`), a 9-agent mathematical grounding, and a 5-vantage strategy panel that independently converged on stating this as FTD's central, most-defensible deliverable.
+**LEDGER id:** FTD-0336 · **Deepens:** `EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md`
 **Purpose:** the canonical internal statement of FTD's boundary — *and* the skeleton of a clean external structural-negative paper (Number-One-Goal clause 2 at maximum generality). It replaces the slogan "FTD is missing a second `i`" (a category error, §4) with a precise, falsifiable frontier.
 
 ---
