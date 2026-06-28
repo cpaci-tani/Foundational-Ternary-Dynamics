@@ -1,9 +1,6 @@
 # Physics Status — FTD Multi-Scale Engine
 
-> **Living document** — updated after each implementation phase.
-> Last updated: 2026-04-17 (Honesty + Consolidation sweeps — see Open Items Tracker)
->
-> **Canonical engine reference (since 2026-05):** [`SPEC_ENGINE.md`](SPEC_ENGINE.md) — version-aligned with code, last updated 2026-05-22 (post BH-F* GPU plumbing sweep + trim-the-fat rounds 2–4). For force tables, toggle catalogues, and test counts, prefer SPEC_ENGINE.md when this document and SPEC_ENGINE.md disagree.
+> **Canonical engine reference:** [`SPEC_ENGINE.md`](SPEC_ENGINE.md) — version-aligned with code. For force tables, toggle catalogues, and test counts, prefer SPEC_ENGINE.md when this document and SPEC_ENGINE.md disagree.
 
 **Canonical unresolved-work ledger:** [`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md).
 

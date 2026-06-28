@@ -1,6 +1,6 @@
 # SPEC — Scale-0 Lattice Performance: Sparse Tick + Worker Physics
 
-**Status:** `[DESIGN — awaiting approval]`  ·  **Date:** 2026-06-03  ·  **Scope:** `engine/web` Scale-0 (lattice) JS physics path only.
+**Status:** `[DESIGN — awaiting approval]`  ·  **Scope:** `engine/web` Scale-0 (lattice) JS physics path only.
 
 This spec addresses the FPS collapse on the in-browser lattice past L≈65. It is grounded in a
 direct per-frame profile (below), not assumptions. Two complementary phases:
@@ -12,9 +12,9 @@ direct per-frame profile (below), not assumptions. Two complementary phases:
 
 ---
 
-## 1. Problem & evidence (measured 2026-06-03, Chrome/wasm64, default `flux-pulse`, 14 overlays active)
+## 1. Problem & evidence (measured Chrome/wasm64, default `flux-pulse`, 14 overlays active)
 
-> ** Superseded for the worker-mode + all-panels-live case (2026-06-05).** This table predates two
+> ** Superseded for the worker-mode + all-panels-live case.** This table predates two
 > things: (a) the worker became the default Scale-0 path (so the tick is *off* the main thread, inverting
 > the "tick dominates" accounting), and (b) the energy-audit + Lagrangian sidepanels were wired live, which
 > added an unconditional O(N³) audit pass **every worker tick** (~14 ms/tick at L=97, measured). That
@@ -66,7 +66,7 @@ Tick decomposition at L=97 (toggle each pass off, measure the delta):
 - N1. Speeding up the compiled C++/WASM engine path (`empty`/`light-*`/`quantum-*`) — out of scope; those
   are already SIMD/compiled and are not the reported problem.
 - N2. WebGPU compute (separate 6–12 wk effort), the native CUDA `ws_server` path (already exists, untouched),
-  and the lattice resize cap (covered by the 2026-06-03 WASM64 work).
+  and the lattice resize cap (covered by the WASM64 work).
 - N3. Steady-state speedup for a fully-occupied lattice (a wave that has filled the box) — Phase 1 reverts to
   dense there by design; Phase 2 keeps the UI smooth regardless.
 
@@ -141,7 +141,7 @@ sparse — another reason it's the general upgrade.)
 ### 3.6 Expected payoff (honest)
 
 Tick cost ∝ active-box fraction; the box tracks nonzero support, which the 18-point stencil grows by ≤1
-voxel/tick. **Measured (2026-06-03, L=97, dense = 52 ms/tick):** the speedup is bit-exact but strongly
+voxel/tick. **Measured (L=97, dense = 52 ms/tick):** the speedup is bit-exact but strongly
 **scenario-dependent**:
 
 | Source | seeded fraction (tick 0) | sparse tick (early) | speedup |
@@ -227,7 +227,7 @@ worker for reads. (This is why §1 measured reads at ~0 ms — they stay ~0.)
 
 ### 4.5 Hard parts (call out explicitly)
 
-- **~~Timeline / scrubbing.~~**  **No longer applicable (2026-06-05).** The scrub-back / timeline
+- **~~Timeline / scrubbing.~~**  **No longer applicable.** The scrub-back / timeline
   feature was removed — the simulation is forward-only (single time source). There is no memory
   recorder and no "display-frozen vs live" state to reconcile, which *removes* what was the riskiest
   worker seam. The only freeze state the proxy forwards is plain pause (`setRunning(false)`). See
@@ -275,7 +275,7 @@ feature flag (see §6) so it can ship dark and be A/B'd against the main-thread 
 - **ε-prune** defaults to 0 (bit-exact); any nonzero ε is opt-in and logged.
 - **COOP/COEP** may interfere with third-party embeds / the WASM load — verify before adopting SAB; the
   transferable fallback needs no headers.
-- **Forward-only** (2026-06-05): scrub/timeline removed, so the formerly highest-risk Phase-2 seam
+- **Forward-only**: scrub/timeline removed, so the formerly highest-risk Phase-2 seam
   (display-frozen-vs-live snapshot reconciliation) no longer exists.
 - Worst case for Phase 1 (fully dense lattice): ~one extra bounds check per tick vs today — negligible.
 

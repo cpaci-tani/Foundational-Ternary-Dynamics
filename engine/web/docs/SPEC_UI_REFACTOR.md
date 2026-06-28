@@ -861,15 +861,15 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 | 6 | Scale toolbar contributions registered |  Done — all scales have `register-scaleN-ui.js` + `toolbar/component.js` |
 | 7 | Scale 0 pilot migration |  Done — `scales/scale0/ui/` fully componentized |
 | 8 | Remaining scale migrations (1–5, 11, 12) |  Done — all scales have `register-scaleN-ui.js`, toolbar, controls, overlays |
-| 9 | Retire transitional buckets (`layout.css`, `components.css`) |  Done — `components.css` deleted earlier; `layout.css` stubbed 2026-04-16 (rules migrated to `tokens.css`, `scale-visibility.css`, `themes/*.css`, `css/ui/shell/responsive.css`, `css/ui/components/*`) |
+| 9 | Retire transitional buckets (`layout.css`, `components.css`) |  Done — `components.css` deleted; `layout.css` stubbed (rules migrated to `tokens.css`, `scale-visibility.css`, `themes/*.css`, `css/ui/shell/responsive.css`, `css/ui/components/*`) |
 
 ### Pending work
 
 - Delete the residual `css/layout.css` stub and its `<link>` tag in `index.html` once deployment caches have cycled (non-blocking).
 
-### Completed this session (2026-04-16)
+### Completed work
 
--  Status bar styling — `css/ui/components/status-bar.css`; the unused JS wrapper was retired during the 2026-06-04 dead-code cleanup
+-  Status bar styling — `css/ui/components/status-bar.css`; the unused JS wrapper was retired during the dead-code cleanup
 -  All 9 missing panel components — `inspector-panel`, `zoo-panel`, `ontic-panel`, `physics-panel`, `planetary-panel`, `hierarchy-panel`, `cosmic-info-panel`, `meta-info-panel`, `quantum-lab-panel` (each with `component.js` + CSS stub in `css/ui/panels/`)
 -  `js/ui/panels/index.js` updated to export all 13 panels
 -  Playwright breakpoint tests — `tablet` at 768×1024, `desktop` at 1280×800
@@ -893,7 +893,7 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 
   Also removed **dead wiring** from `app.js` for elements that no longer exist in the markup: `particle-shape`, `size-opacity`, `size-global`, `size-manifested`, `size-void`, `s0-dt-slider`, `btn-enable-all`, `btn-disable-all`, `btn-clear-particles`, `_visualSettings` hook, plus the dead `loadScenario`/`_markScenarioOverrides`/`_syncComboSliders` trio that was commented "DEAD" but never deleted. `app.js`'s `wireControls()` now handles only Scale 1 (PE) and Scale 2/3 (AE) wiring.
 
-  Net effect: `app.js` shrunk ~340 lines; Scale 0 is now architecturally self-contained for its control-panel interactions.
+  Net effect: `app.js` shrunk ~340 lines; Scale 0 is architecturally self-contained for its control-panel interactions.
 
 ---
 
