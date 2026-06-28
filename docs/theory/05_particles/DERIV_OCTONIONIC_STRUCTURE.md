@@ -2,10 +2,6 @@
 
 ## Division Algebras, Heegner Numbers, and the Master Quadratic
 
-**Date:** February 1, 2026
-**Framework:** Foundational Ternary Dynamics v5.16
-**Status:** Consolidated from OCTONIONIC_ORIGIN.md and OCTONIONIC_ALGEBRA_UPDATE.md
-
 ---
 
 ## Executive Summary
@@ -299,18 +295,4 @@ The master quadratic x² - 16G*²x + 16G*³ = 0 encodes:
 - **j = 1728:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md) §II
 - **Physics encodings:** [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
-
----
-
-## Document History
-
-- **Original:** OCTONIONIC_ORIGIN.md (January 22, 2026, v5.7)
-- **Update:** OCTONIONIC_ALGEBRA_UPDATE.md (January 2026)
-- **Consolidated:** This document (February 1, 2026, v5.16)
-
-Originals archived in docs/archive/
-
----
-
-*Document consolidated: February 1, 2026*
 *Framework: Foundational Ternary Dynamics v5.16*

@@ -1,7 +1,6 @@
 # EXPLR — Generation Graph Γ_F(d) and CKM-Shape Overlap (Candidate Reconstruction)
 
 **Tag:** `[CANDIDATE RECONSTRUCTION]` — explicitly **NOT** a theorem. Equating the overlap magnitudes with the experimental CKM matrix is `[CONJECTURE]` at best, and is not asserted by this module or its test.
-**Date:** 2026-05-22
 **LEDGER:** FTD-0196
 **Engine primitive:** [`../../../engine/include/ftd/generation_graph.h`](../../../engine/include/ftd/generation_graph.h)
 **Constructive instrument:** [`../../../engine/tests/test_generation_graph.cpp`](../../../engine/tests/test_generation_graph.cpp) — `ctest -R "^generation_graph$"` passes 1/1; **only structural sanity asserted**, candidate overlap magnitudes printed informationally.
@@ -137,8 +136,8 @@ The eigensolver (Smith-1961 stable cubic + cross-product null vectors) is a gene
 - **Test:** [`../../../engine/tests/test_generation_graph.cpp`](../../../engine/tests/test_generation_graph.cpp).
 - **CMake:** `ftd_add_test(test_generation_graph … LABELS native)` in `engine/CMakeLists.txt`.
 - **LEDGER:** FTD-0196 (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
-- **Sibling overlays** (same campaign): [`../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md`](../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy `[THEOREM]`, FTD-0194), [`../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 closure `[THEOREM]`, FTD-0195).
+- **Sibling overlays:** [`../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md`](../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy `[THEOREM]`, FTD-0194), [`../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 closure `[THEOREM]`, FTD-0195).
 
 ---
 
-*Module 3 of the three-module engine-native overlay pivot (commit `92b7349`). `[CANDIDATE RECONSTRUCTION]` throughout — no spine claim promoted, no `[THEOREM]` tag applied to any flavour-physics claim. The instrument is the deliverable; the candidate match is the diagnostic.*
+*One of three engine-native overlay modules. `[CANDIDATE RECONSTRUCTION]` throughout — no spine claim promoted, no `[THEOREM]` tag applied to any flavour-physics claim. The instrument is the deliverable; the candidate match is the diagnostic.*

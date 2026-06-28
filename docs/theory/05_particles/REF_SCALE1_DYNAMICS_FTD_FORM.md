@@ -1,7 +1,6 @@
 # REF — Scale-1 Particle-Engine Dynamics, in FTD-Native Form
 
 **Tag:** `[REFERENCE]`
-**Date:** 2026-06-15
 **Status:** `[REFERENCE]` — a code-grounded cross-walk of every dynamic the web dashboard's **Scale 1 (Particle Engine)** computes, with each formula re-expressed in FTD's own constants where one genuinely exists.
 **Scope:** `engine/web/js/` Scale-1 modules (the particle engine) only. Scale 0 (lattice/substrate), Scale 2/3 (atoms/molecules), and the C++ engine are out of scope.
 
@@ -21,7 +20,7 @@ After substitution, the **only** FTD-native quantities driving Scale 1 are: `G_C
 | electron mass m_e | **K_B** = 0.511 (mass anchor); dimensional origin m_P·√(2π)·(16/3)·α¹¹ | `constants.js` | `[DERIVED]` anchor (FTD-0015) |
 | speed of light c | **1/√3** (`C_SPEED`, CFL stability on the cubic lattice) | `constants.js:117` | `[DERIVED]` |
 | Newton G_N | **1/(b₃+N_c)² = 1/100 = 0.01** | `constants.js:80–87` | `[IMPOSED]`; physical ID **falsified** (FTD-0131) |
-| Coulomb prefactor | **G_C²/(4π)** (`COULOMB_K_FORCE`) — used for both force and potential energy (the PE is the exact integral of the force; force-consistent, verified by the 2026-06-15 fidelity audit) | `mock-particle-engine.js:133,146` | — |
+| Coulomb prefactor | **G_C²/(4π)** (`COULOMB_K_FORCE`) — used for both force and potential energy (the PE is the exact integral of the force; force-consistent) | `mock-particle-engine.js:133,146` | — |
 | m_μ | **K_B·[3·b₃(b₃+N_c) − N_c] = 207·K_B** | `constants.js:125` | `[DERIVED]` (0.11%) |
 | m_τ | **K_B·[(N_eff+N_base)·207 − 2·N_c·b₃] = 3477·K_B** | `constants.js:126` | `[DERIVED]` (0.007%) |
 | m_p | **K_B·[N_eff/α + N_base·N_eff + N_c] = K_B·(N_eff·x₊ + 55) ≈ 1836.47·K_B** | `constants.js:130` | `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0016) |
@@ -109,7 +108,7 @@ All `[PARAMETRIC]` (Bohr/Dirac with FTD α; ħc external; engine uses PDG m_e �
 
 **Fields** (`fields.js`, 25×25 grid, visualization): Coulomb `φ = Σ(G_C²/4π)·q/r`; gravity `φ = −Σ(1/100)·m/r`; RK4 E-field streamlines. `[PARAMETRIC]`/`[IMPOSED]`.
 
-**Telemetry** (`pe-telemetry.js`, `mock-particle-engine.js`) — measured each tick (conservation laws are *measured*, not imposed, validating the integrator): KE `= Σ½mv²`; Coulomb PE `= Σ (G_C²/4π)·q_iq_j/r` (force-consistent — the exact integral of the Coulomb force, *not* a separate "bare G_C²" convention; confirmed by the 2026-06-15 fidelity audit); gravity PE `= −Σ(1/100)·m_im_j/r`; total energy + drift%; linear & angular momentum; virial `2K/|U|`; temperature `T = (2/3)·KE/N`; RMS velocity / CoM / radius; per-particle force table; full two-body Kepler analysis (μ, e, a, period, vis-viva); radial-velocity phase-space plot. (Source: `pe-telemetry.js:355–611`.)
+**Telemetry** (`pe-telemetry.js`, `mock-particle-engine.js`) — measured each tick (conservation laws are *measured*, not imposed, validating the integrator): KE `= Σ½mv²`; Coulomb PE `= Σ (G_C²/4π)·q_iq_j/r` (force-consistent — the exact integral of the Coulomb force, *not* a separate "bare G_C²" convention); gravity PE `= −Σ(1/100)·m_im_j/r`; total energy + drift%; linear & angular momentum; virial `2K/|U|`; temperature `T = (2/3)·KE/N`; RMS velocity / CoM / radius; per-particle force table; full two-body Kepler analysis (μ, e, a, period, vis-viva); radial-velocity phase-space plot. (Source: `pe-telemetry.js:355–611`.)
 
 ## §8 · External inputs with no FTD form (left as-is)
 

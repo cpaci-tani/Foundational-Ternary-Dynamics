@@ -2,8 +2,6 @@
 
 ## Algebraic EFT from the Master Cubic Potential
 
-**Date:** April 3, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
 **Status:** [THEOREM] for algebraic EFT construction; [SELECTION] for physical identification x+ = alpha^{-1}
 **Proof script:** `scripts/verification/verify_phi3_eft.py`
 

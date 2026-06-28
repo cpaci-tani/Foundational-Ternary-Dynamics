@@ -1,8 +1,6 @@
 # Planck Mass and Λ_QCD: Closing the External Input Loop
 
 **Document Classification:** Theoretical Derivation
-**Version:** 1.0
-**Date:** February 25, 2026
 **Status:** [THEOREM] (Λ_QCD) + [SELECTION] (M_P self-consistency)
 **Depends on:** SPEC_FTD_REFERENCE.md, DERIV_LAMBDA_QCD_DERIVATION.md, DERIV_HIGGS_FROM_MANIFESTATION.md, DERIV_FERMI_COUPLING_CONSTANT.md
 
@@ -253,11 +251,3 @@ The entire meson spectrum (42 states in DERIV_COMPLETE_PARTICLE_PHYSICS.md) trac
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Remove G_F, Λ_QCD from "External inputs"; clarify M_P as sole axiom |
 | [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Reclassify G_F and Λ_QCD; update counts |
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Update epistemic notice |
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-02-25 | M_P as sole axiom; Λ_QCD verification; external input inventory |
