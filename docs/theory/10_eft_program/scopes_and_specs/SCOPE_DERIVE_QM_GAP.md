@@ -1,7 +1,6 @@
 # SCOPE — The Derive-QM Gap: Can a Commutative Substrate Produce QM's Non-Commutativity?
 
-**Tag:** `[SCOPING MEMO]` — not a derivation, not a new theorem, no tag moves. Scopes the central gate identified across the 2026-05-29 session: B1 (modular time), FTD-0208 (the L² law), and MC-T4.3 (the α-readout) **all reduce to one question** — can FTD's commutative/classical substrate produce QM's non-commutative `[q,p]=i` structure? This memo maps the wall (Bell), the doors, the existing closed-negatives, the candidate mechanism, the sub-targets, and the anti-overclaim guards.
-**Date:** 2026-05-29
+**Tag:** `[SCOPING MEMO]` — not a derivation, not a new theorem, no tag moves. Scopes the central gate where B1 (modular time), FTD-0208 (the L² law), and MC-T4.3 (the α-readout) **all reduce to one question** — can FTD's commutative/classical substrate produce QM's non-commutative `[q,p]=i` structure? This memo maps the wall (Bell), the doors, the existing closed-negatives, the candidate mechanism, the sub-targets, and the anti-overclaim guards.
 **Cross-refs:** `DERIV_QM_FROM_LATTICE.md` (the standing "QM as statistics" program); FTD-0199 / FTD-0200 (Born-emergence CLOSED-NEGATIVE); the emergent-Bell `S=2√2` `[SELECTION]`; `AUDIT_MODULAR_TIME_ALGEBRA_TYPE_CLOSED_NEGATIVE.md` (B1 — the substrate is commutative); `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` (FTD-0208).
 
 > **Overclaim warning.** "Derive QM" is the single highest-overclaim-risk target in the program. Bell's theorem is the dominant constraint and must be honored, not finessed. Any result claiming to derive Bell-violating QM from a local deterministic substrate *without* an added postulate is, by Bell, wrong or hiding a postulate. This memo's prior-favoured outcome is that the Bell-violating layer is **not** derivable from the 5 postulates (it requires a 6th).
@@ -10,7 +9,7 @@
 
 ## 0. The gate
 
-Three of the session's closures share one root: the substrate is **commutative** (classical fields), and QM needs **non-commutativity** (`[q,p]=i`). So:
+Three of these closures share one root: the substrate is **commutative** (classical fields), and QM needs **non-commutativity** (`[q,p]=i`). So:
 
 > **Derive-QM gap:** does FTD's commutative substrate *produce* the non-commutative QM algebra (as emergent/effective), or must that algebra be *imported* (an added postulate)?
 

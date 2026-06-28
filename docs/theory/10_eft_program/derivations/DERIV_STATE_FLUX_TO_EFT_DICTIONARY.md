@@ -1,7 +1,6 @@
 # State/Flux to EFT Dictionary
 
-**Date:** 2026-04-22 (initial) / 2026-04-24 (P1.1 scaling closure)
-**Status:** [PARTIAL] bridge result; gauge redundancy not yet derived. **Scaling dimensions frozen 2026-04-24 under FTD-0059 `a_phys ≡ ℓ_P` calibration — see § "Frozen scaling contract" below (Gate 1 closure).**
+**Status:** [PARTIAL] bridge result; gauge redundancy not yet derived. **Scaling dimensions frozen under FTD-0059 `a_phys ≡ ℓ_P` calibration — see § "Frozen scaling contract" below (Gate 1 closure).**
 **Purpose:** Extract the minimal EFT dictionary from FTD state/flux variables without using the alpha target as input.
 
 ---
@@ -307,7 +306,7 @@ Those remain projected-matching problems.
 
 ---
 
-## Frozen scaling contract (P1.1 closure, 2026-04-24)
+## Frozen scaling contract (P1.1 closure)
 
 This section upgrades the qualitative "Continuum scaling contract" above to a
 **frozen** engineering-dimension contract, suitable as Gate 1 of the bridge
@@ -531,7 +530,7 @@ The usual gauge-invariant options would be:
 
 This is the first hard bridge result:
 
-> FTD's current state/flux variables naturally give a charge-like source coupled to a physical vector flux. They do not yet force compact U(1) gauge redundancy.
+> FTD's state/flux variables naturally give a charge-like source coupled to a physical vector flux. They do not force compact U(1) gauge redundancy.
 
 ---
 
@@ -619,7 +618,7 @@ This document resolves the first bridge target from `OPEN_FTD_TO_EFT_BRIDGE_STAT
 
 ```text
 State-to-field dictionary: PARTIAL  →  CLOSED for Gate 1 (scaling dimensions)
-                                        (2026-04-24, P1.1 of the EFT roadmap)
+                                        (P1.1 of the EFT roadmap)
 ```
 
 The derived part is:

@@ -1,8 +1,6 @@
 # Foundational Resolution — Stochastic Effective Action under Langevin Flow (MC-T2.1)
 
 **Tag:** [THEOREM] (for MSRDJ path integral and Parisi-Wu 4D stationary limit), [SELECTION] (for 5D stochastic time and vector potential extension)  
-**Date:** 2026-05-27  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
 **Pre-Registration:** [`docs/theory/10_eft_program/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md`](../preregistrations/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) (FTD-0218)  
 **Companion Documents:** [`docs/theory/10_eft_program/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`](DERIV_FTD_NATIVE_NONLINEAR_FLOW.md).

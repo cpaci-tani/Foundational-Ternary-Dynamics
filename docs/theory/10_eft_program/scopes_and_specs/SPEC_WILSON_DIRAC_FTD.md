@@ -1,7 +1,6 @@
 # Specification — Wilson-Dirac Matter Sector for FTD
 
 **Status:** [SELECTION] specification (Phase II.1 deliverable; first internal pre-registration milestone of `PREREG_PHASE_II_WILSON_DIRAC_G2.md`).
-**Date:** 2026-05-03
 **Pre-reg root:** `PREREG_PHASE_II_WILSON_DIRAC_G2.md` (tag `preregister-phase-ii-wilson-dirac-g2-v1`).
 **Branch:** Branch-B matter sector per `SPEC_FTD_EFT_BRIDGE_CONTRACT.md`.
 
@@ -150,15 +149,15 @@ Standard lattice-QED CUDA pattern: one thread per lattice site, applies the Wils
 
 Before Phase II.3 starts, the implementation must pass:
 
-1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `D_W` to plane-wave initial states at multiple momenta; verify the eigenvalue magnitude matches the analytical Wilson-Dirac dispersion `|λ(p)|² = M_eff(p)² + K(p)²` where `M_eff(p) = m + (r/a)·∑_μ(1−cos p_μ)` and `K²(p) = (1/a²)·∑_μ sin²(p_μ)`. Also verify RK4 evolution preserves total spinor norm (Schrödinger evolution is unitary). **STATUS: CLOSED 2026-05-03.**
-2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled). **STATUS: CLOSED 2026-05-03.**
-3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field. **STATUS: CLOSED 2026-05-03** (via plaquette-flux + gauge-covariance tests; full Landau-level diagonalisation deferred to II.3 since per-state energies are the orbit observable, not a smoke-test).
-4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1). **STATUS: CLOSED 2026-05-03.**
-5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation. **STATUS: CLOSED 2026-05-03.**
+1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `D_W` to plane-wave initial states at multiple momenta; verify the eigenvalue magnitude matches the analytical Wilson-Dirac dispersion `|λ(p)|² = M_eff(p)² + K(p)²` where `M_eff(p) = m + (r/a)·∑_μ(1−cos p_μ)` and `K²(p) = (1/a²)·∑_μ sin²(p_μ)`. Also verify RK4 evolution preserves total spinor norm (Schrödinger evolution is unitary). **STATUS: CLOSED.**
+2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled). **STATUS: CLOSED.**
+3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field. **STATUS: CLOSED** (via plaquette-flux + gauge-covariance tests; full Landau-level diagonalisation deferred to II.3 since per-state energies are the orbit observable, not a smoke-test).
+4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1). **STATUS: CLOSED.**
+5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation. **STATUS: CLOSED.**
 
 Each validation gets its own internal pre-registration milestone before declaring Phase II.2 complete.
 
-### II.2-A milestone result (2026-05-03)
+### II.2-A milestone result
 
 Implemented `engine/include/ftd/wilson_dirac.h`, `engine/src/wilson_dirac.cpp`, `engine/tests/test_wilson_dirac_smoke.cpp`. Built and ran on both Windows-native (`engine/build/Release/test_wilson_dirac_smoke.exe`) and WSL2 (`engine/build_wsl/test_wilson_dirac_smoke`).
 
@@ -169,7 +168,7 @@ Implemented `engine/include/ftd/wilson_dirac.h`, `engine/src/wilson_dirac.cpp`, 
 
 The free Wilson-Dirac operator and RK4 evolution are validated. **Phase II.2-A CLOSED.** Phase II.2-B (Wilson term verification across full BZ) is the next milestone.
 
-### II.2-B milestone result (2026-05-03)
+### II.2-B milestone result
 
 Implemented `engine/tests/test_wilson_dirac_bz_spectrum.cpp`. Exhaustive sweep over the full Brillouin zone at `L = 8`: every momentum mode `p_μ = 2π k_μ / L` with `k_μ ∈ {0, …, L−1}`, both spins. Total: `8³ × 2 = 1024` modes. Built and ran on Windows-native and WSL2.
 
@@ -180,7 +179,7 @@ Implemented `engine/tests/test_wilson_dirac_bz_spectrum.cpp`. Exhaustive sweep o
 
 The full Wilson-Dirac spectrum is verified across the entire Brillouin zone. **Phase II.2-B CLOSED.** Next milestone: II.2-C (gauge-link verification — uniform B field reproduces Landau-level spectrum).
 
-### II.2-C milestone result (2026-05-03)
+### II.2-C milestone result
 
 Implemented `engine/tests/test_wilson_dirac_gauge.cpp`. Two checks:
 
@@ -208,7 +207,7 @@ where the per-state energies become the physical orbit observable.
 Plaquette-flux + gauge-covariance is the load-bearing structural property
 verified at this milestone. **Phase II.2-C CLOSED.**
 
-### II.2-D milestone result (2026-05-03)
+### II.2-D milestone result
 
 Implemented `engine/tests/test_wilson_dirac_limit.cpp`. With
 `U_μ(n) = exp(i ε φ_μ(n))` for fixed random `φ_μ ∈ [-π, π]`, computed
@@ -221,7 +220,7 @@ Identity-link sanity check `‖D_id ψ − D_free ψ‖ = 0` exactly at both
 targets. **Phase II.2-D CLOSED.** D_W is continuous in the gauge phase;
 trivial-link limit reproduces free Wilson-Dirac exactly.
 
-### II.2-E milestone result (2026-05-03)
+### II.2-E milestone result
 
 Implemented `engine/cuda/wilson_dirac_gpu.cu`,
 `engine/include/ftd/wilson_dirac_gpu.h`,
@@ -243,15 +242,14 @@ worst-case sites. **Phase II.2-E CLOSED.**
 
 ### Phase II.2 status
 
-All 5 internal milestones (II.2-A through II.2-E) are CLOSED on 2026-05-03.
+All 5 internal milestones (II.2-A through II.2-E) are CLOSED.
 The Wilson-Dirac matter-sector implementation is fully validated:
 operator, evolution, full-BZ spectrum, gauge-link integration, gauge
 covariance, plaquette flux for uniform B, ε → 0 limit consistency, and
 CPU/GPU bit-exact parity. **Phase II.2 CLOSED.** Phase II.3 (single-electron
 stable orbit in B-field) can begin.
 
-### II.3 milestone result (2026-05-03, infrastructure CLOSED; physics
-tuning DEFERRED)
+### II.3 milestone result (infrastructure CLOSED; physics tuning DEFERRED)
 
 Implemented `engine/tests/benchmark_dirac_electron_in_B.cpp`. The benchmark
 initialises a Gaussian wave packet centred at `(L/4, L/2, L/2)` with
@@ -321,7 +319,7 @@ verdict would be meaningful.
 This is the honest state recorded in LEDGER FTD-0126 (NOT a closure of
 the pre-registered campaign — a registered intermediate observation).
 
-### II.4 + II.5 milestone result (2026-05-03, end-of-day extension)
+### II.4 + II.5 milestone result
 
 **Outcome verdict: C — SCHWINGER MISS.** Pre-registered campaign CLOSED.
 
@@ -416,8 +414,7 @@ Both results are consistent with the broader Phase J ultralocality
 diagnosis: the algebraic spine is structurally **decoupled** from the
 engine's action-level dynamics.
 
-**Where to go from here** (research-program territory, not session
-tasks): (a) full one-loop lattice EFT with dynamical gauge field,
+**Where to go from here** (research-program territory): (a) full one-loop lattice EFT with dynamical gauge field,
 (b) sparse-matrix diagonalization of `D_W(B)` to extract clean Landau
 levels and avoid wave-packet contamination, (c) reframe the matter
 sector to test a different observable (FTD-0120 transverse waves,
