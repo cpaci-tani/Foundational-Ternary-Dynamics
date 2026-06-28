@@ -1,7 +1,6 @@
-# Phase-4i: Color Binding Structure + Honest Assessment of m_e Promotion to [THEOREM]
+# Color Binding Structure + Honest Assessment of m_e Promotion to [THEOREM]
 
-**Date:** 2026-04-24
-**Status:** [MEASURED] for binding + color structure; [SELECTION] status of $m_e$ formula UNCHANGED (promotion blockers identified)
+**Status:** [MEASURED] for binding + color structure; [SELECTION] status of $m_e$ formula (promotion blockers identified)
 **Ledger row:** FTD-0077
 
 Three distinct results in one document:
@@ -124,7 +123,7 @@ Honest tag table after this audit:
 
 | Component | Tag |
 |---|---|
-| Prefactor $16 \sqrt{2\pi}/3$ | **[SELECTION]** (downgraded 2026-05-03 night per FTD-0133 audit; previously [THEOREM] but the √(2π) sub-factor was sourced to DERIV_MASTER_QUADRATIC_FROM_Z.md which was RETRACTED as FTD-0032 on 2026-04-19, and even that retracted derivation produced a *cancelling* 2π. √(2π) is more honestly understood as inherited from HIGGS-4's `v = M_P·√(2π)·α^8` [SELECTION]; it cancels in the cleaner ratio `m_e/v = (16/3)·α³`. The 16 = |Aut(E)|² remains [THEOREM] individually; the 3 = D or N_c remains [THEOREM] or [SMC] individually; their *quotient appearing as a Yukawa coupling* is [SELECTION].) |
+| Prefactor $16 \sqrt{2\pi}/3$ | **[SELECTION]** (per FTD-0133; the √(2π) sub-factor would source to DERIV_MASTER_QUADRATIC_FROM_Z.md, which is RETRACTED as FTD-0032, and even that derivation produced a *cancelling* 2π. √(2π) is more honestly understood as inherited from HIGGS-4's `v = M_P·√(2π)·α^8` [SELECTION]; it cancels in the cleaner ratio `m_e/v = (16/3)·α³`. The 16 = |Aut(E)|² remains [THEOREM] individually; the 3 = D or N_c remains [THEOREM] or [SMC] individually; their *quotient appearing as a Yukawa coupling* is [SELECTION].) |
 | Combined with $\alpha^n$ for unknown $n$ | [IMPOSED template] |
 | Specific $n = 11$ | [SELECTION] (bottleneck) |
 | Therefore $m_e$ formula | [SELECTION] (bottleneck) |
@@ -182,4 +181,4 @@ This is the honest state. No overclaim, no promotion without derivation.
 
 ---
 
-*Filed 2026-04-24 as Phase-4i. Preserves epistemic discipline: reports what is measured, classifies the binding and color structure honestly, and declines to promote $m_e$ without the required derivation. Future promotion path explicitly outlined.*
+*Preserves epistemic discipline: reports what is measured, classifies the binding and color structure honestly, and declines to promote $m_e$ without the required derivation. Future promotion path explicitly outlined.*

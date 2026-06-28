@@ -2,7 +2,6 @@
 
 ## M_Z to 0.02% and M_W to 0.5% — Zero Free Parameters
 
-**Date:** February 26, 2026
 **Status:** [THEOREM] (running + tree-level) + [PARAMETRIC] (radiative corrections imported from SM)
 **Inputs:** $\alpha = 1/x_+$, $\;\sin^2\theta_W = 3/13$, $\;v = M_P\sqrt{2\pi}\,\alpha^8$. **Nothing else.**
 
@@ -99,7 +98,3 @@ The overcorrection indicates that the full one-loop electroweak calculation (box
 | EW-2 | $M_Z = 91.20$ GeV (0.02%) | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 | EW-3 | $M_W = 80.0$ GeV tree-level (0.5%) | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 | EW-4 | FTD favors ATLAS/LHC over CDF II | [SELECTION] |
-
----
-
-*February 26, 2026 — Framework: Foundational Ternary Dynamics*

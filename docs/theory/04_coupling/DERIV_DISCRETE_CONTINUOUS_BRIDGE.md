@@ -2,8 +2,6 @@
 
 ## How x² - 16G*²x + 16G*³ = 0 Unifies Lattice Arithmetic and Lemniscate Analysis
 
-**Date:** February 19, 2026
-**Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Formal synthesis of bridge structure
 
 ---
@@ -386,6 +384,4 @@ The complete bridge path is composed entirely of [THEOREM]-level steps, with two
 
 ---
 
-*Document created: February 19, 2026*
-*Framework: Foundational Ternary Dynamics v5.26*
 *Topic: The master quadratic as the formal bridge between discrete lattice arithmetic and continuous lemniscate analysis*

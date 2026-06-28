@@ -2,7 +2,6 @@
 
 ## The Physical Mechanism Connecting Lattice Geometry to α
 
-**Date:** March 16, 2026
 **Status:** Derivation chain with honest epistemic assessment
 **Dependencies:** DERIV_GSTAR_PF_BRIDGE.md, EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md, FOUND_FORCE_STRUCTURE.md, DERIV_CUBOCTAHEDRAL_INTEGERS.md, DERIV_QUADRATIC_NECESSITY.md
 **Addresses:** SP4 in AUDIT_HIDDEN_SELECTIONS.md (physical mechanism for x₊ = 1/α)
@@ -120,13 +119,13 @@ But G* is not 3. It is 2.9587... — determined by the lemniscate geometry (ϖ),
 
 $$\frac{1}{\alpha}\bigg|_{G^*=3} = 141 \quad \longrightarrow \quad \frac{1}{\alpha}\bigg|_{G^*=2.9587} = 137.036$$
 
-**The interpretation (historical, retired):** x₋ = 3.024 was previously read as encoding TWO pieces of information:
+**The interpretation (retired):** x₋ = 3.024 was read as encoding TWO pieces of information:
 1. **Integer part** floor(x₋) = 3 = N_c (the number of color charges, from the cuboctahedral geometry)
 2. **Fractional part** 0.024 = the coupling correction that connects color charge to electromagnetic coupling through the shared quadratic structure
 
-**2026-05-22 update.** The `x_-  N_c` identification — including the "integer part = N_c" reading — is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes; the cuboctahedral geometry referenced above is one of them) and the Moore Layer Theorem. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of the polynomial only; the integer/fractional decomposition above is preserved as historical commentary.
+The `x_-  N_c` identification — including the "integer part = N_c" reading — is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes; the cuboctahedral geometry referenced above is one of them) and the Moore Layer Theorem. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of the polynomial only; the integer/fractional decomposition above is preserved as historical commentary.
 
-This was previously framed as analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c = 3 through the QCD beta function. Post-v1.4, the analogy depends on the retired identification and is no longer load-bearing.
+This reading was framed as analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c = 3 through the QCD beta function. That analogy depends on the retired identification and is not load-bearing.
 
 ---
 
@@ -169,7 +168,7 @@ This was previously framed as analogous to how α_s(M_Z) = 0.118 is not the inte
 The chain shows WHY the lemniscate is connected to the lattice (through the Z₄ symmetry match) and WHY EM is the most direct output of the quadratic. The step "the U(1) gauge coupling of the lattice field theory equals 1/x₊" is not derived from the lattice action, nor does the FTD Constitution require it to be, since $\alpha$ is dynamic/dynamical (FTD-0242).
 
 **Resolution of matching priorities:**
-The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why a native-electrodynamics matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Since $\alpha$ is dynamical rather than structural, we do not treat the recovery of the 9.6 ppb number as a search target.
+The Structure-2 audit (`docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why a native-electrodynamics matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Since $\alpha$ is dynamical rather than structural, we do not treat the recovery of the 9.6 ppb number as a search target.
 
 ---
 

@@ -2,8 +2,6 @@
 
 ## Standard Model Observables from Framework Structure
 
-**Date:** April 2026 (Epistemic Update)
-**Framework:** Foundational Ternary Dynamics v5.29
 **Status:** Mixed — ~35 [THEOREM] (genuine derivations), ~50 [PARAMETRIC INSERTION], ~50+ [EXTERNAL] (see epistemic breakdown below)
 
 ---
@@ -842,8 +840,6 @@ $$m_b^{baryon} = m_b + 2m_{light} + E_{binding}$$
 
 # PART VI: SCATTERING CROSS-SECTIONS [PARAMETRIC INSERTION]
 
-> **Historical Note:** This section incorporates content from the earlier `DERIV_OBSERVABLE_PHYSICS_DERIVATIONS.md` (February 2026), which has been archived. The scattering cross-section derivations and unification scale calculation were unique to that document.
-
 ## VI.1 Thomson Scattering
 
 **Theorem:** The Thomson cross-section for photon-electron scattering:
@@ -913,11 +909,3 @@ FTD produces **~126 Standard Model observables** using four integers {3, 4, 7, 1
 **External inputs required:** M_Planck, ~~G_F~~ (now derived, see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md)), Λ_QCD, decay constants f_π/f_K/f_D/f_B, phase space factors.
 
 The genuine derivations achieve sub-percent accuracy on dimensionless ratios. The parametric insertions demonstrate internal consistency but do not constitute independent predictions — they inherit their accuracy from the imported physics.
-
----
-
-*Document created: February 1, 2026*
-*Updated: February 2026 (merged content from DERIV_OBSERVABLE_PHYSICS_DERIVATIONS.md)*
-*Updated: April 2026 (G_F now derived; phi^3 EFT vertex structure; count updated to ~35)*
-*Framework: Foundational Ternary Dynamics v5.29*
-*Status: ~35 genuine derivations + ~100 parametric insertions/external physics*

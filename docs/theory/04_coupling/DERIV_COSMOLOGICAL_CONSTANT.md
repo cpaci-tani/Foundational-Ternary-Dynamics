@@ -2,9 +2,7 @@
 
 ## Deriving Λ from the Lattice Vacuum Energy
 
-**Document Version:** 2.0
-**Date:** February 25, 2026
-**Status:** [SELECTION] (upgraded from [CONJECTURE])
+**Status:** [SELECTION]
 **Supersedes:** DERIV_VACUUM_ENERGY_FORMULA.md v1.0
 **Closes:** EFE-10 in DERIV_EINSTEIN_FIELD_EQUATIONS.md
 
@@ -14,7 +12,7 @@
 - [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — T_μν from Noether's theorem
 - [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations
 
-> **⚠ Reconciliation (2026-06-26, FTD-0331 — [DERIV_LAMBDA_SCALE_COVARIANT.md](../03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md)).** The vacuum expectation value used below, `⟨T₀₀⟩_vac = ½ Σ ∫ ω(k)`, is a **quantum zero-point sum** (`½ℏω` per mode). FTD's substrate is classical and declines `ℏ` (FC-1, FTD-0255), so the empty void `(J=0, s=0)` is identically zero-energy and carries **no zero-point floor** — the `½ℏω` weighting has no FC-1 warrant. Consequently FTD does **not** have the `M_Planck⁴` catastrophe to "resolve"; it is dissolved by construction. The `ρ_Λ = m_e⁴·α¹⁶·G*²` / `α⁵⁷` result is a **value-match with no length dependence** and is canonically `[PARAMETRIC]` numerology (`SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` W-COSMO-4). The honest mechanism — Λ as a scale-covariant holographic ratio `Λ ~ (ℓ_P/L_H)²`, with the value a `[BOUNDARY]` — now lives in `DERIV_LAMBDA_SCALE_COVARIANT.md`. Per precedence (LEDGER > doc > prose) that account governs; this document is retained for provenance.
+> **⚠ Reconciliation (FTD-0331 — [DERIV_LAMBDA_SCALE_COVARIANT.md](../03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md)).** The vacuum expectation value used below, `⟨T₀₀⟩_vac = ½ Σ ∫ ω(k)`, is a **quantum zero-point sum** (`½ℏω` per mode). FTD's substrate is classical and declines `ℏ` (FC-1, FTD-0255), so the empty void `(J=0, s=0)` is identically zero-energy and carries **no zero-point floor** — the `½ℏω` weighting has no FC-1 warrant. Consequently FTD does **not** have the `M_Planck⁴` catastrophe to "resolve"; it is dissolved by construction. The `ρ_Λ = m_e⁴·α¹⁶·G*²` / `α⁵⁷` result is a **value-match with no length dependence** and is canonically `[PARAMETRIC]` numerology (`SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` W-COSMO-4). The honest mechanism — Λ as a scale-covariant holographic ratio `Λ ~ (ℓ_P/L_H)²`, with the value a `[BOUNDARY]` — now lives in `DERIV_LAMBDA_SCALE_COVARIANT.md`. Per precedence (LEDGER > doc > prose) that account governs; this document is retained for provenance.
 
 ---
 
@@ -364,18 +362,3 @@ The canonical formula remains $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, DOF count |
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Framework constants |
 | [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md) | Dynamical interpretation, dark sector unification |
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-01-22 | Original formula, numerical verification only |
-| 2.0 | 2026-02-25 | Physical derivation (3 pillars), Λ conversion, Ω_Λ calculation, upgraded to [SELECTION] |
-| 2.1 | 2026-03-17 | Part VIII: dynamical interpretation, α^57 reconciliation, dark sector cross-reference |
-
----
-
-*Document Version 2.1 — March 17, 2026*
-*Framework: Foundational Ternary Dynamics v5.27*

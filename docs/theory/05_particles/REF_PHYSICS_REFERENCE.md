@@ -2,11 +2,9 @@
 
 ## Integer Encodings and Standard Model Completeness
 
-**Date:** February 16, 2026
-**Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Comprehensive reference — integer survey + completeness audit
 
-> **Merge note (v5.26):** This document consolidates the former `REF_PHYSICS_ENCODINGS.md` (integer appearances in physics, Jan 22 2026) and `REF_PHYSICS_COMPLETENESS_MATRIX.md` (SM completeness audit, Feb 1 2026). The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
+This document covers integer appearances in physics and the Standard Model completeness audit.
 
 ---
 
@@ -129,7 +127,7 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 
 #### Quark Masses (6/6) — [PARAMETRIC]
 
-> **CORRECTION 2026-06-19 (adjudicated):** the 2026-06-18 `[THEOREM]` promotion (commit `fdc483d0`) and its "$L_n$ phase-space" recipes are **RETRACTED** — substitution identities, not a forcing chain; they fail the FTD-0097/0189 look-elsewhere bar and the zero-promotion discipline. **Honest tag: `[PARAMETRIC]` (all six; m_t imports Z=118/Oganesson from chemistry).** The prior integer-fit formulas are listed below for provenance. See `DERIV_BARYON_AND_QUARK_GEOMETRY.md` / `CATALOG_PARAMETRIC_INSERTIONS.md` §5.
+> **Note:** the `[THEOREM]`-grade "$L_n$ phase-space" recipes are **not used** — substitution identities, not a forcing chain; they fail the FTD-0097/0189 look-elsewhere bar and the zero-promotion discipline. **Honest tag: `[PARAMETRIC]` (all six; m_t imports Z=118/Oganesson from chemistry).** The integer-fit formulas are listed below. See `DERIV_BARYON_AND_QUARK_GEOMETRY.md` / `CATALOG_PARAMETRIC_INSERTIONS.md` §5.
 
 | Particle | FTD Formula (integer fit) | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
@@ -175,7 +173,7 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 | Proton | N_eff/α + T(10) | 938.27 MeV | 938.27 MeV | **0.017%** | [SMC] |
 | Neutron | m_p + (φ² - 12α)m_e | 939.57 MeV | 939.57 MeV | 0.53% |  |
 
-> **CORRECTION 2026-06-19 (adjudicated):** the proton `L₉ Phase Space − SU(3) knot = 1836` form of `fdc483d0` is **RETRACTED** — a substitution identity [PARAMETRIC] strictly less informative than the prior `N_eff/α + T(10)` formula. Honest tag for the prior formula: `[STRONGLY MOTIVATED CONJECTURE]` (173 ppm).
+> **Note:** the proton `L₉ Phase Space − SU(3) knot = 1836` form is **not used** — a substitution identity [PARAMETRIC] strictly less informative than the `N_eff/α + T(10)` formula. Honest tag for that formula: `[STRONGLY MOTIVATED CONJECTURE]` (173 ppm).
 
 #### Pseudoscalar Mesons (12/12)
 
@@ -247,8 +245,3 @@ Pions, kaons, η, η', D mesons, B mesons — all to < 0.1% accuracy. See comple
 - **Framework reference:** [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
-
----
-
-*Document created: February 16, 2026 (merged from REF_PHYSICS_ENCODINGS + REF_PHYSICS_COMPLETENESS_MATRIX)*
-*Framework: Foundational Ternary Dynamics v5.26*

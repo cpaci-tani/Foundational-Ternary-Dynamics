@@ -1,7 +1,6 @@
 # INDEX · Particle Physics Applications
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
 **Status:** [REFERENCE] — local navigation index for `docs/theory/05_particles/`.
 **Purpose:** This cluster applies the framework integers {3, 4, 7, 13} and the master quadratic to Standard Model particle content: lepton and quark mass ratios, electroweak boson masses, the absolute neutrino mass scale, the electron-mass formula, GPU-measured material emergence and color binding, and the division-algebra / octonionic origin of the four integers. Read it when you need a specific particle prediction and its honest epistemic status — most entries here mix genuine derivations with parametric insertions.
 
@@ -52,7 +51,7 @@
 
 ---
 
-## Engine-native overlay primitives — candidate reconstructions (2026-05-22)
+## Engine-native overlay primitives — candidate reconstructions
 
 Pure header-only theory overlays on the existing lattice engine, tagged `[CANDIDATE RECONSTRUCTION]` explicitly — diagnostic instruments, not theorems. No `RenderBridge` touch; the golden-tick hash is preserved.
 
