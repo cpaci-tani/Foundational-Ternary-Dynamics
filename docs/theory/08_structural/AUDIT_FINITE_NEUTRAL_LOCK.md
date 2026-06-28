@@ -4,7 +4,6 @@
 hash-locked pre-registration `PREREG_FINITE_NEUTRAL_LOCK_v1.md`. It records
 one of the three pre-blessed verdicts. It promotes and demotes no LEDGER
 claim.
-**Date:** 2026-05-22
 **LEDGER row:** FTD-0190.
 **Pre-registration audited:** [`PREREG_FINITE_NEUTRAL_LOCK_v1.md`](PREREG_FINITE_NEUTRAL_LOCK_v1.md)
 — SHA256 `41c3f86584270d59fd25736bfec3cee3efb6a656d34f12be44b93272e57ae346`,
@@ -16,7 +15,7 @@ charge claimed below; all assertions pass, exit 0. No numerical search.
 
 ---
 
-> **Update (2026-05-22) — Q10 closed negative; the chain has terminated.**
+> **Q10 is closed negative; the chain has terminated.**
 > The Q10 → Q11 → Q12 audit chain ran to completion. Q12
 > ([`AUDIT_WEAK_SU2_PROVENANCE.md`](AUDIT_WEAK_SU2_PROVENANCE.md),
 > FTD-0192) found the weak `SU(2)` is a **count-match**, which forces the
@@ -328,7 +327,7 @@ forced assembly is not.
 
 ---
 
-*Audit executed 2026-05-22 against the commit tagged
+*Audit executed against the commit tagged
 `preregister-finite-neutral-lock-v1`. Verdict: UNDERDETERMINED. The
 pre-registration is satisfied; the open item (the verdict) is closed; the
 upgrade path (§6) is a fresh, well-posed question.*

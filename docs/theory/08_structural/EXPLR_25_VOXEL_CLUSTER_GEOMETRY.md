@@ -1,7 +1,6 @@
 # Exploration — Mathematical Interpretation of the 25-Voxel ic1 Cluster
 
-**Tag:** [EXPLORATORY] / **[STRUCTURAL HYPOTHESIS REFUTED 2026-04-27]** — the L¹-ball-radius-2 topology prediction (§3) was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a different per-orbit decomposition. See §11 (Corrigendum, end of file) for the refutation details. The remaining content of this document — that 25 = O(2) is the second centered octahedral number, the integer-counting fact — is unaffected.
-**Date:** 2026-04-27 (with corrigendum same day)
+**Tag:** [EXPLORATORY] / **[STRUCTURAL HYPOTHESIS REFUTED]** — the L¹-ball-radius-2 topology prediction (§3) was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a different per-orbit decomposition. See §11 (Corrigendum, end of file) for the refutation details. The remaining content of this document — that 25 = O(2) is the second centered octahedral number, the integer-counting fact — is unaffected.
 **Builds on:** [`ANALYSIS_EMERGENT_SPECTRUM_G1.md`](../10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) (FTD-0107: deterministic 25-voxel cluster L-invariant), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md)
 **Open question (per `WHERE_WE_LEFT_OFF.md` §10):** WHY exactly 25 voxels for the point-injection bound state? (still open; the topology that produces 25 is NOT the L¹-ball-radius-2 — see §11.)
 
@@ -9,7 +8,7 @@
 
 ## 0 · The empirical fact
 
-Per FTD-0107 (measured 2026-04-27 at L ∈ {32, 64}): point injection of $10 K_\text{GENESIS}$ at lattice center produces a stable bound-state cluster with the following deterministic properties:
+Per FTD-0107 (measured at L ∈ {32, 64}): point injection of $10 K_\text{GENESIS}$ at lattice center produces a stable bound-state cluster with the following deterministic properties:
 
 - **Voxel count: exactly 25**, across 5/5 seeds at L=32 AND 5/5 seeds at L=64
 - **Centroid: exact integer lattice center** (32, 32, 32) at L=64; (16, 16, 16) ± 0.1 at L=32 (Langevin perturbations)
@@ -197,7 +196,7 @@ Per `WHERE_WE_LEFT_OFF.md` §10, the load-bearing gap in FTD is the absence of a
 
 ---
 
-## 11 · Corrigendum — engine measurement REFUTES the L¹-ball-radius-2 hypothesis (2026-04-27, same day)
+## 11 · Corrigendum — engine measurement REFUTES the L¹-ball-radius-2 hypothesis
 
 The §3 hypothesis ("the cluster is the L¹-ball of radius 2; lives on SC+FCC+face2; EXCLUDES BCC") was tested directly by `engine/tests/test_emergent_ic1_topology.cpp` immediately after this document was written. The test instruments the campaign to dump per-voxel coordinates, computes (L¹, L∞) per voxel, and bins into the Moore-orbit classes.
 

@@ -1,7 +1,5 @@
 # Loop-Grid Duality: The Two-Layer Ontology of FTD
 
-**Version:** 1.0
-**Date:** February 10, 2026
 **Status:** [SELECTION]
 **Epistemic Tag:** [SELECTION] -- The duality describes existing FTD structure; the deeper interpretation is proposed
 

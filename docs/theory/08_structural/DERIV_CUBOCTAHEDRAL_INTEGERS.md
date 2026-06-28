@@ -2,8 +2,6 @@
 
 ## Deriving {3, 4, 7, 13} from Lattice Geometry
 
-**Version:** 1.0
-**Date:** February 26, 2026
 **Status:** [THEOREM]
 **Significance:** Resolves the integer circularity problem (SP5)
 

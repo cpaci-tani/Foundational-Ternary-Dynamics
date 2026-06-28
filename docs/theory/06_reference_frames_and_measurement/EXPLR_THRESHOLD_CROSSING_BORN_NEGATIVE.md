@@ -2,7 +2,6 @@
 
 **Document type:** Exploratory test result (closed-negative)
 **Status:** `[CLOSED NEGATIVE]` — under the pre-registered construction, manifestation event frequency does NOT scale as `|J|²` (Born); it scales as Rice's upcrossing formula for a Gaussian-like process.
-**Created:** 2026-05-23
 **Pre-registration:** [`PREREG_THRESHOLD_CROSSING_BORN_v1.md`](PREREG_THRESHOLD_CROSSING_BORN_v1.md)
 **Git tag (hash-lock):** `preregister-threshold-crossing-born-v1` (commit `e4a5813`, runner SHA256 `2781b3cec9d62db9f3635c8672e8da6e31575a37e5c4903c4a9d14d060cab465`)
 **Runner:** `scripts/exploration/explore_threshold_crossing_born.py`
@@ -10,7 +9,7 @@
 **Sub-investigation of:** LEDGER FTD-0187 / target T1c (the `[OPEN]` step *probability = normalized energy density*).
 **LEDGER row:** FTD-0200.
 
-> **Renumbering note (2026-05-23):** This test was originally proposed as **FTD-0198** in the v1 manifest hash-locked at commit `e4a5813`. After commit, a corpus check found that FTD-0198 had already been assigned earlier the same session to the ARC-B1 alpha-readout pre-registration (commit `eaf7681`, chronologically earlier). Per the FTD-0189 renumbering convention, this test was renumbered to **FTD-0200**. The git tag `preregister-threshold-crossing-born-v1`, the runner SHA256 in §6 of the manifest, and the underlying commits are unchanged — they retain "FTD-0198" as registration-time provenance. All live cross-references in the corpus (LEDGER, retags in `SPEC_SIX_ALGORITHMS.md` + `AUDIT_EPISTEMIC_AUDIT.md`, the v2 DGZ manifest) use FTD-0200.
+> **Renumbering note:** This test was originally proposed as **FTD-0198** in the v1 manifest hash-locked at commit `e4a5813`. After commit, a corpus check found that FTD-0198 had already been assigned earlier the same session to the ARC-B1 alpha-readout pre-registration (commit `eaf7681`, chronologically earlier). Per the FTD-0189 renumbering convention, this test was renumbered to **FTD-0200**. The git tag `preregister-threshold-crossing-born-v1`, the runner SHA256 in §6 of the manifest, and the underlying commits are unchanged — they retain "FTD-0198" as registration-time provenance. All live cross-references in the corpus (LEDGER, retags in `SPEC_SIX_ALGORITHMS.md` + `AUDIT_EPISTEMIC_AUDIT.md`, the v2 DGZ manifest) use FTD-0200.
 
 ---
 
@@ -22,7 +21,7 @@ The pre-registered test fired **Outcome C** per the manifest's outcome → tag m
 
 ## 1 · What was tested
 
-LEDGER FTD-0187 (2026-05-21) tagged the load-bearing step *probability = normalized energy density* as `[OPEN]` (target T1c). A subsequent corpus sweep identified two documents NOT in the FTD-0187 consolidation that carry an even stronger claim:
+LEDGER FTD-0187 tags the load-bearing step *probability = normalized energy density* as `[OPEN]` (target T1c). A subsequent corpus sweep identified two documents NOT in the FTD-0187 consolidation that carry an even stronger claim:
 
 - [`SPEC_SIX_ALGORITHMS.md:65`](../01_reference/SPEC_SIX_ALGORITHMS.md): "the threshold crossing statistics produce the Born rule"
 - [`AUDIT_EPISTEMIC_AUDIT.md:393`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md): "threshold crossing statistics reproduce `|ψ|²`"
