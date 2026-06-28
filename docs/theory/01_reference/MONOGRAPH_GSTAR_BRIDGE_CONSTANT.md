@@ -3,7 +3,6 @@
 ## A Mathematical Monograph
 
 **Author:** C. cpaci-tani, with AI assistance
-**Version:** 1.3 (2026-04-26 — Euler-thread session: added Derivations 8 (Ramanujan-Sato d=1) and 9 (Stirling complement / β′(0)); Galois clarification in §5.2; sharpened §6.1; "Why d=1?" selection note in Derivation 8; Eisenstein-Watson identity `E_4(i) = (3/4) W_3²` in Derivation 6; Wallis-Stirling theorem with Bernoulli-vacuity proof in Derivation 9; companion Catalan §3.5 in MATH_LOG_GSTAR_IDENTITY.md)
 **Abstract:** We introduce the lemniscatic bridge constant G* = √2·Γ(1/4)²/(2π) ≈ 2.9587 as the central invariant connecting nine branches of mathematics — classical geometry, complex analysis, elliptic function theory, computational number theory, modular forms, lattice combinatorics, arithmetic geometry, Ramanujan-style hypergeometric series for 1/π, and the Hurwitz/Lerch L-derivative theory of Γ-asymptotics. We derive G* independently from each branch, prove the triad identity π = 4ϖ²/G*², and construct the master quadratic whose roots give 137.036 and 3.024. The constant has been computed since Gauss (1799) under various names; what is new is the quadratic and the conjecture that its larger root equals 1/α, the inverse fine structure constant.
 
 ---

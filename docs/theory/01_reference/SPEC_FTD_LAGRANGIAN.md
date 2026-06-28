@@ -2,8 +2,6 @@
 
 ## A Lattice Field Theory Unifying Quantum Propagators and Gravitational Potentials
 
-**Version:** 3.2
-**Date:** March 16, 2026
 **Status:** [THEOREM] (action, EOM, limits) + [SELECTION] (physical identifications)
 
 ---
@@ -357,7 +355,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM conditional on clock-hypothesis AXIOM]** *(2026-05-27 v3 closure: v3 audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is structurally incompatible with Scale 0 discrete primitives and must be posited as an independent macroscopic **[AXIOM]**; this theorem holds exactly conditional on that axiom; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
+| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM conditional on clock-hypothesis AXIOM]** *(audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is structurally incompatible with Scale 0 discrete primitives and must be posited as an independent macroscopic **[AXIOM]**; this theorem holds exactly conditional on that axiom; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
 

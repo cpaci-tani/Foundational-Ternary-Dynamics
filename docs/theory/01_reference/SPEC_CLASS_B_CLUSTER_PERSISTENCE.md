@@ -1,12 +1,11 @@
 # SPEC: Class B Infrastructure — Cluster Persistence Measurement
 
 **Status:** Instrument specification (theory + protocol; engine implementation TBD)
-**Filed:** 2026-05-04 (post-FTD-0136 Discrete-Native Derivation Program)
 **Tag:** [INFRASTRUCTURE SPEC] — protocol definition, not a derivation
 **LEDGER row:** filed under FTD-0136 program; specific instrument LEDGER row will land when first measurement campaign runs
 **Parent SPEC:** [`SPEC_DISCRETE_NATIVE_DERIVATION.md`](SPEC_DISCRETE_NATIVE_DERIVATION.md) §2.2
 
-> **NOTE (trim-the-fat round 4, commit `08c517e`):** §5.6 documents the full Phase B diagnostic arc with references to ~30 stepping-stone test files (`test_cluster_*`, `test_color_triad_*`, `test_resonance_map_*`, `test_n8_spatial_geometry`, `test_oh_*_injection`, `test_a10_soliton_characterization`, `test_a5_stable_L64_confirm`, `test_framework_integer_clusters`, `test_tau_bind_systematic`, `dump_string_*`, `dump_quark_data`, `dump_visualization_data`). **These files were deleted in commit `08c517e` after their findings were incorporated into the SPEC and LEDGER FTD-0136**; recover via `git log --diff-filter=D --follow -- engine/tests/<filename>.cpp` if needed. The load-bearing successor tests that remain in the active tree are `test_cluster_{tracker,persistence_quiescent,persistence_alpha_sweep,persistence_toggle_sweep,mask_persistence}` + `dump_{full_physics,full_physics_amp_scan,full_physics_l256,toggle_bisection}`. The §5.6 historical references are preserved in this SPEC for provenance and read order.
+> **NOTE on stepping-stone test files:** §5.6 documents the full Phase B diagnostic arc with references to ~30 stepping-stone test files (`test_cluster_*`, `test_color_triad_*`, `test_resonance_map_*`, `test_n8_spatial_geometry`, `test_oh_*_injection`, `test_a10_soliton_characterization`, `test_a5_stable_L64_confirm`, `test_framework_integer_clusters`, `test_tau_bind_systematic`, `dump_string_*`, `dump_quark_data`, `dump_visualization_data`). **These files were deleted in commit `08c517e` after their findings were incorporated into the SPEC and LEDGER FTD-0136**; recover via `git log --diff-filter=D --follow -- engine/tests/<filename>.cpp` if needed. The load-bearing successor tests that remain in the active tree are `test_cluster_{tracker,persistence_quiescent,persistence_alpha_sweep,persistence_toggle_sweep,mask_persistence}` + `dump_{full_physics,full_physics_amp_scan,full_physics_l256,toggle_bisection}`. The §5.6 historical references are preserved in this SPEC for provenance and read order.
 
 ---
 
@@ -74,7 +73,7 @@ Per measurement run:
 
 1. Set lattice size `L` (≥ 32 for sub-percent finite-size effects per FTD-0107).
 2. Initialize background as equilibrium void (`s = 0`, `J = 0` everywhere).
-3. **Apply FTD-0107 baseline toggle config** (canonical for cluster-persistence experiments per the 2026-05-04 toggle-sweep diagnostic): `disable_all()` then enable `wave_propagation`, `gauss_projection`, `genesis`, `langevin = true` with `langevin_T = 0.005` and `langevin_gamma = 0.02`. The small Langevin coupling at the baseline T is **required** for canonical cluster persistence — without it, clusters dissolve at ~45 ticks (default-toggle baseline) instead of persisting beyond 200 ticks. See `engine/tests/test_cluster_persistence_toggle_sweep.cpp` for the diagnostic; setup matches `setup_baseline_toggles()` in `engine/tests/campaign_emergent_spectrum_2026-04-27.cpp`.
+3. **Apply FTD-0107 baseline toggle config** (canonical for cluster-persistence experiments per the toggle-sweep diagnostic): `disable_all()` then enable `wave_propagation`, `gauss_projection`, `genesis`, `langevin = true` with `langevin_T = 0.005` and `langevin_gamma = 0.02`. The small Langevin coupling at the baseline T is **required** for canonical cluster persistence — without it, clusters dissolve at ~45 ticks (default-toggle baseline) instead of persisting beyond 200 ticks. See `engine/tests/test_cluster_persistence_toggle_sweep.cpp` for the diagnostic; setup matches `setup_baseline_toggles()` in `engine/tests/campaign_emergent_spectrum_2026-04-27.cpp`.
 4. Inject a single cluster at amplitude `A` and configuration `C_0` (point-pulse, displacement, or composite seed; specify per-particle). Canonical electron-identified injection per FTD-0110: `inject_flux(L/2, L/2, L/2, {10·K_GENESIS, 0, 0})`.
 5. Run engine to equilibration tick `t_0` (default: 100 ticks; tunable per particle type).
 
@@ -84,7 +83,7 @@ Two regimes:
 
 - **Baseline (FTD-0107 canonical):** small Langevin coupling at T = 0.005, gamma = 0.02. **This is the canonical persistence regime** — clusters persist beyond 200 ticks at L=32. Equivalent to "quiescent" in the operational sense (no extra perturbation beyond the baseline thermal bath required for engine equilibrium).
 - **Elevated thermal:** Langevin at higher T (sweep 0.01, 0.05, 0.1, ...) to probe cluster stability against decay channels and extract `Γ(T)` curves.
-- **Pure deterministic (`langevin = false`):** NOT useful for cluster persistence — clusters dissolve at ~45 ticks under default toggles per the 2026-05-04 toggle sweep. Retained as a reference baseline for diagnosing engine behavior, not as a Class B measurement regime.
+- **Pure deterministic (`langevin = false`):** NOT useful for cluster persistence — clusters dissolve at ~45 ticks under default toggles per the toggle sweep. Retained as a reference baseline for diagnosing engine behavior, not as a Class B measurement regime.
 
 Class B lifetime measurement uses the **elevated thermal** regime. Temperature `T` is the third pre-registered parameter; baseline config is implicit (FTD-0107 baseline always applied).
 
@@ -160,7 +159,7 @@ This routes around the absolute-time calibration entirely. The ratio of muon-to-
 
 **This is the load-bearing Class B observable for SM-particle measurement comparison: lifetime ratios.**
 
-### 5.6 Phase B.3 protocol — RESOLVED via engine-default toggles + mask persistence (2026-05-04)
+### 5.6 Phase B.3 protocol — RESOLVED via engine-default toggles + mask persistence
 
 **Resolution summary**: after a four-test diagnostic cycle (`test_cluster_persistence_alpha_sweep` → `test_cluster_persistence_toggle_sweep` → `test_cluster_gamma_t_exploratory` → `test_cluster_mask_persistence` → `test_cluster_cooling_evap` → `test_cluster_decay_channels`), the working Phase B.3 protocol is:
 
@@ -180,7 +179,7 @@ Empirical result on the worked example (electron-identified, A=10·K_GENESIS, L=
 
 The decay channel is **`weak_transmutation`** (toggle-gated, default ON in the engine). This is the matrix-element-driven decay channel analogous to W-boson-mediated lepton decay in the SM. Pair production / larmor / color+strong add regenerative dynamics that interact with mask measurement.
 
-### 5.6.1 τ_e(A) sweep + threshold refinement — DEATH-VALLEY finding (2026-05-04)
+### 5.6.1 τ_e(A) sweep + threshold refinement — DEATH-VALLEY finding
 
 Two amplitude sweeps were run:
 
@@ -207,7 +206,7 @@ Three substantive observations:
 
 Pattern is reminiscent of **nuclear-physics "magic numbers"** — specific configurations are anomalously stable or unstable. But it could also be an engine artifact: the `genesis` rule may have a deterministic resonance at integer multiples of K_GENESIS that produces specific cluster geometries triggering `weak_transmutation` cascade collapse.
 
-**L-invariance check** (`test_cluster_death_amps_L_invariance.cpp`, complete 2026-05-04): the death pattern at L=64 (2 seeds per A) reveals a **two-component structure**:
+**L-invariance check** (`test_cluster_death_amps_L_invariance.cpp`): the death pattern at L=64 (2 seeds per A) reveals a **two-component structure**:
 
 | L | A=8 | A=10 | A=11 | A=12 |
 |---|-----|------|------|------|
@@ -224,7 +223,7 @@ The death-amp positions don't simply scale with L; they superpose two components
 
 For Phase B.3 measurement protocol: only L-invariant death amplitudes (confirmed across at least L ∈ {32, 64}) should be treated as physics. Lattice-specific death amps must be filtered by L-invariance check before being used as Class B observables.
 
-### 5.6.2 Lightest stable cluster — SIZE THRESHOLD finding (2026-05-04)
+### 5.6.2 Lightest stable cluster — SIZE THRESHOLD finding
 
 A finer A < 10 sweep (`engine/tests/test_cluster_lightest_stable.cpp`, L=32, 3 seeds, A ∈ {6.0, 6.5, ..., 10.0}·K_GENESIS) revealed that **stability tracks N_obs (cluster size), not A directly**:
 
@@ -253,7 +252,7 @@ The lightest stable amplitude at L=32 is **A = 7.0 · K_GENESIS** (which over-nu
 
 **Reconciliation with FTD-0110**: the static formula `N(A) ≈ ¼·(A/K_GENESIS)²` is an *upper bound* on cluster size at large A; for small A the engine's discrete attractor structure dominates and produces non-monotonic cluster sizes. The "electron-identified amplitude" A=10 from FTD-0110 is *unstable* in the engine because it nucleates to N=14 (just below the size threshold). The actual lightest stable cluster has size ≈15 voxels at A=8.0, *not* 25 voxels at A=10.
 
-**L-invariance check** at L=64 (`test_cluster_lightest_stable_L64.cpp`, complete 2026-05-04, 2 seeds per A): partial L-invariance with significant complications.
+**L-invariance check** at L=64 (`test_cluster_lightest_stable_L64.cpp`, 2 seeds per A): partial L-invariance with significant complications.
 
 | A/K_G | L=32 (N, verdict) | L=64 (N, verdict) | L-invariance |
 |-------|-------------------|-------------------|--------------|
@@ -284,12 +283,12 @@ This means the simple FTD-0110 reading "cluster of size N corresponds to mass N�
 
 For Phase B.4 (PDG comparison), the load-bearing engine observable is: **the set of L-invariant stable amplitudes** and their dimensionless properties (initial decay rate for unstable amps; equilibrium-mass fraction f_eq for stable amps; ratios across stable amplitudes). The amplitude *spectrum* of L-invariant stable clusters is what the framework can falsifiably predict against PDG.
 
-**Future-session work** (not for this session):
+**Open follow-ups:**
 - Multi-seed pre-registered campaign at L ∈ {32, 64, 128} to characterize the L-invariant stable spectrum
 - L → ∞ extrapolation of N(A) and stability boundaries
 - Comparison to PDG mass spectrum + decay-stability classifications
 
-### 5.6.3 SOLITON-vs-FLOODING decomposition — the persistence metric was wrong (2026-05-04)
+### 5.6.3 SOLITON-vs-FLOODING decomposition — the persistence metric was wrong
 
 A cascade-trace + centroid-drift diagnostic (`engine/tests/test_cluster_a10_cascade_trace.cpp` + `test_cluster_a10_centroid_drift.cpp`) on the A=10 universal-death amplitude revealed that **the persistence metric was systematically miscounting both stability and decay**. The actual engine behavior:
 
@@ -328,13 +327,13 @@ decay:     total_manifested decreases   ∧  centroid stationary            ∧ 
 
 Mask persistence alone can confuse soliton  decay and bound  flooding. Centroid drift + total_manifested + RMS radius distinguish all four.
 
-**Next-session priorities**:
+**Open follow-ups:**
 1. Build a Phase B.3 protocol using the triplet metric and re-classify all amplitudes A ∈ {6, ..., 16}·K_GENESIS at L=32, 64
 2. Determine whether engine has a true bound-state regime under any toggle config (try `confinement`, `latency_field`, `pair_production`, etc.)
 3. If true bound states exist, identify the lightest one for FTD-0110 reconciliation
 4. If true bound states do NOT exist under default toggles, the FTD-0110 derivation needs reformulation — bound states may require a specific toggle combination not currently in the canonical engine config
 
-### 5.6.4 Bound-state toggle sweep — NO TRUE BOUND STATE FOUND (2026-05-04)
+### 5.6.4 Bound-state toggle sweep — NO TRUE BOUND STATE FOUND
 
 A toggle-configuration sweep (`engine/tests/test_cluster_bound_state_search.cpp`) tested 8 toggle configurations × 3 amplitudes (A=7, 10, 14)·K_GENESIS for the bound-state regime:
 
@@ -368,7 +367,7 @@ Substantive findings:
 
 The third reading is the most defensible — FTD-0110's static derivation gives the cluster mass-content; the engine confirms matter conservation via solitons. The discrete substrate may not support classical "stationary bound particles" — that may itself be a continuous-physics idealization, not a discrete-substrate reality.
 
-### 5.6.5 Soliton characterization — leaky wavepacket, not true soliton (2026-05-04)
+### 5.6.5 Soliton characterization — leaky wavepacket, not true soliton
 
 A direction + amplitude characterization (`engine/tests/test_a10_soliton_characterization.cpp`) measured the A=10 "soliton" properties across 8 injection configurations:
 
@@ -411,7 +410,7 @@ For PDG comparison purposes, the engine's A=10 dynamics are not a clean "moving 
 
 **Cleanest substantive Phase B finding from the (β'') + (γ'') sweep**: the engine's default-toggle dynamics produce three regimes (soliton, flooding, decay) with stochastic boundaries; classical bound states are not found in the tested toggle space; FTD-0110's mass-from-cluster-size identification needs reformulation in terms of soliton matter content (when soliton emerges) rather than static cluster size.
 
-### 5.6.6 +color+triad A=7 quasi-bound was a TRANSIENT — not a true bound state (2026-05-04)
+### 5.6.6 +color+triad A=7 quasi-bound was a TRANSIENT — not a true bound state
 
 The bound-state search (§5.6.4) flagged `+color+triad` at A=7 as the closest approach to a true bound state — drift=1.19 (stationary centroid), n=15→19 (matter quasi-conserved), rms=10.19 (slightly above L/4 threshold). A multi-seed follow-up (`engine/tests/test_color_triad_a7_multiseed.cpp`, 10 seeds × 300 ticks at L=32) **falsified the bound-state reading**:
 
@@ -421,9 +420,9 @@ The bound-state search (§5.6.4) flagged `+color+triad` at A=7 as the closest ap
 
 All 10 seeds produce *identical* n_init=15 and n_mid=15 (the cluster is quasi-bound through tick ~200) **but flood to ~30,000 voxels by tick 350**. The previous "quasi-bound" reading was correct *for tick 200* but the cluster transitions to flooding between tick 200 and 350. The +color+triad config **delays** flooding compared to defaults (defaults flood by tick ~50 at A=7; +color+triad delays to tick ~250-300) but does not prevent it.
 
-**This is the cleanest finding so far**: there is no true bound state in any tested (toggle, A) configuration; even the closest candidate is a delayed-flood metastable transient. The Phase B observable should be **binding lifetime** = time-to-flood, not "is bound".
+**Cleanest finding**: there is no true bound state in any tested (toggle, A) configuration; even the closest candidate is a delayed-flood metastable transient. The Phase B observable should be **binding lifetime** = time-to-flood, not "is bound".
 
-**Phase B observable hierarchy (post-§5.6.6 reframe)**:
+**Phase B observable hierarchy (§5.6.6)**:
 
 1. **Binding lifetime** `τ_bind`: ticks from injection to flood onset (dimensionless, integer, well-defined)
 2. **Pre-flood matter content** `n_pre_flood`: the conserved cluster size during the metastable phase (analog of "mass" while the cluster exists as a localized object)
@@ -432,15 +431,15 @@ All 10 seeds produce *identical* n_init=15 and n_mid=15 (the cluster is quasi-bo
 
 These are all dimensionless lattice observables. Their RATIOS across (toggle, A, L) configurations are the Phase B falsifiable spine for PDG comparison — *if* a meaningful mapping to SM particles can be constructed.
 
-**Reframing FTD-0110 in light of §5.6.6**:
+**FTD-0110 in light of §5.6.6**:
 
 The static FTD-0110 derivation `N(A) ≈ ¼·(A/K_GENESIS)²` correctly predicts the *pre-flood matter content* `n_pre_flood` — at A=7, the engine produces `n_pre_flood = 15` (FTD-0110 predicts 12; close). The cluster *exists as a localized object* during the metastable phase. It just doesn't exist forever. The mass identification `n_pre_flood × m_e` corresponds to a "cluster mass while bound", not a "stable particle mass".
 
 Under FTD-0136 (discrete-native derivation reframe), this is consistent with the SM's view that *no particle is truly stable* on infinite timescales — the proton is metastable (predicted decay at 10^34 yr), the electron is stable only by conservation laws, etc. The engine's metastable clusters with `τ_bind = 200-300 ticks` may correspond to particles with finite (very short) lifetimes — and the dimensionless ratio `τ_bind(toggle_A, A_A) / τ_bind(toggle_B, A_B)` becomes the falsifiable engine-vs-PDG observable.
 
-**Interim conclusion before continuing the investigation**: Phase B has surfaced a substantive structural finding — the engine's discrete dynamics produce metastable clusters with finite binding lifetimes, and this is the correct frame for engine-to-PDG mapping. The "stable bound particle" idealization was a continuous-physics importation that the discrete substrate does not support.
+**Structural conclusion**: the engine's discrete dynamics produce metastable clusters with finite binding lifetimes, and this is the correct frame for engine-to-PDG mapping. The "stable bound particle" idealization was a continuous-physics importation that the discrete substrate does not support.
 
-### 5.6.7 +color+triad amplitude scan — A=5, A=6 SOLITONS + A=4 trivial BOUND (2026-05-04)
+### 5.6.7 +color+triad amplitude scan — A=5, A=6 SOLITONS + A=4 trivial BOUND
 
 A finer amplitude sweep (`engine/tests/test_color_triad_amplitude_scan.cpp`, 2 seeds × 10 amplitudes at L=32, 300 ticks) of the +color+triad config revealed:
 
@@ -461,15 +460,15 @@ A finer amplitude sweep (`engine/tests/test_color_triad_amplitude_scan.cpp`, 2 s
 
 **FTD-0110 connection at A=5**: cluster size n=4 = N_base. This is the smallest soliton matter content and matches one of FTD-0110's structural integers. The static FTD-0110 prediction at A=5 is `N(5) ≈ ¼·25 = 6.25`; observed n=4 is close (within ~30%). The N_base = 4 = mult(A_{1g})² coincidence is striking — *the smallest stable engine cluster matches the smallest A_{1g} multiplicity squared*.
 
-**Phase B candidate observables refined** (post §5.6.7):
+**Phase B candidate observables refined** (§5.6.7):
 
 - **Smallest stable matter content** (under +color+triad): n = 1 (trivial, A=4) or n = 4 (A=5 soliton) or n = 11 (A=6 soliton). The non-trivial smallest is n = 4 = N_base.
 - **Soliton velocities** at A=5, 6 (drift ≈ 7-8 voxels over 300 ticks → v ≈ 0.025-0.027 voxels/tick = 0.04-0.05 c_lat).
 - **Flood threshold amplitude** under +color+triad: between A=6 and A=7 (much sharper than under defaults).
 
-**Open question (test in progress)**: do the A=5 and A=6 solitons remain matter-conserving over 1000+ ticks, or do they also eventually flood like A=7? If they're truly stable, they're the engine's first identified "stable particle-like states".
+**Open question**: do the A=5 and A=6 solitons remain matter-conserving over 1000+ ticks, or do they also eventually flood like A=7? If they're truly stable, they're the engine's first identified "stable particle-like states".
 
-### 5.6.8 Deterministic flood-onset for A=7 +color+triad — τ_bind = 210 ticks (2026-05-04)
+### 5.6.8 Deterministic flood-onset for A=7 +color+triad — τ_bind = 210 ticks
 
 A 5-seed long-time evolution test (`engine/tests/test_color_triad_flood_onset.cpp`, 1000 ticks per seed at L=32, A=7·K_GENESIS, +color+triad) produced an extraordinarily clean result:
 
@@ -483,19 +482,19 @@ After flood, the manifested-voxel count plateaus at ~30,000 (~92% of L=32 lattic
 
 **Phase B candidate observable**: `τ_bind(toggle, A, L)` = number of ticks the cluster persists in matter-conservation regime before transitioning to flooding. For (toggle=defaults+color+triad, A=7, L=32): `τ_bind = 210` ticks, deterministic across seeds.
 
-**Reframe**: this is the cleanest dimensionless engine-physics observable identified so far in Phase B. Whatever physical particle-decay observable corresponds to engine flooding (likely some vacuum-decay or pair-production-cascade analog), the dimensionless ratio `τ_bind(config_A) / τ_bind(config_B)` is a falsifiable engine-vs-PDG measurable.
+**Observable note**: this is the cleanest dimensionless engine-physics observable in Phase B. Whatever physical particle-decay observable corresponds to engine flooding (likely some vacuum-decay or pair-production-cascade analog), the dimensionless ratio `τ_bind(config_A) / τ_bind(config_B)` is a falsifiable engine-vs-PDG measurable.
 
 **Mechanism conjecture**: the deterministic flood-onset at exactly tick 210 likely corresponds to the cluster reaching some critical configuration (maybe a specific cluster-size threshold, or a critical RMS spread, or a specific local-energy condition that triggers genesis cascade). Identifying the trigger mechanism would convert τ_bind from a measurement to a derivation.
 
 **Comparative measurements needed**:
 - τ_bind for default toggles at A=7 (probably much shorter, <50 ticks)
 - τ_bind for +exchange_force at various amplitudes (the exchange_force was the most anti-flooding toggle in §5.6.4)
-- τ_bind for A=5, A=6 +color+triad solitons (test in progress; if τ_bind > 1500 ticks, those are stable particle candidates)
+- τ_bind for A=5, A=6 +color+triad solitons (if τ_bind > 1500 ticks, those are stable particle candidates)
 - L-invariance of τ_bind at L=64
 
-### 5.6.9 PHASE B.3 STATE OF KNOWLEDGE — consolidated summary (2026-05-04)
+### 5.6.9 PHASE B.3 STATE OF KNOWLEDGE — consolidated summary
 
-After 13 diagnostic tests over 2026-05-04, Phase B has built a mature picture of the engine's cluster dynamics. This section consolidates the load-bearing findings.
+This section consolidates the load-bearing findings of the Phase B diagnostic arc on the engine's cluster dynamics.
 
 **Engine dynamical regimes** (under default + binding-channel toggles):
 
@@ -525,7 +524,7 @@ After 13 diagnostic tests over 2026-05-04, Phase B has built a mature picture of
 
 **Reframing the FTD-0110 mass-from-cluster-size identification**:
 
-Under §5.6.9 consolidation, FTD-0110's mass identification is best read as:
+FTD-0110's mass identification is best read as:
 
 > "The engine's metastable cluster matter content `n_pre_flood` (during the binding-lifetime regime) corresponds to particle mass via `m = n × m_e` under the K_B = m_e calibration. The cluster's binding lifetime `τ_bind` corresponds to particle decay timescale. SM particle stability classification (stable / unstable) maps to engine regime classification (soliton-stable / metastable-transient / flooding)."
 
@@ -539,16 +538,16 @@ This is consistent with FTD-0136 (discrete-native derivation reframe) and resolv
 4. Pre-register with FTD-0027 hash discipline
 5. Report `(predicted_ratio, measured_PDG_ratio)` pairs with explicit calibration assumptions
 
-This is a substantial next-session scope (~5-10 sessions for a complete pre-registered Phase B.4 campaign) but the *structure* of the deliverable is now clear from §5.6.1-§5.6.9 findings.
+This is a substantial scope (a complete pre-registered Phase B.4 campaign) but the *structure* of the deliverable is clear from the §5.6.1-§5.6.9 findings.
 
 **Open questions remaining**:
 
-1. **Are A=5, A=6 +color+triad SOLITONS truly long-lived?** *RESOLVED 2026-05-04* — see §5.6.10 below: A=5 IS truly stable at L=32 (4/4 seeds, 1500 ticks); A=6 floods at τ_bind ≈ 1250 ticks (4/4 seeds).
+1. **Are A=5, A=6 +color+triad SOLITONS truly long-lived?** *RESOLVED* — see §5.6.10 below: A=5 IS truly stable at L=32 (4/4 seeds, 1500 ticks); A=6 floods at τ_bind ≈ 1250 ticks (4/4 seeds).
 2. **Does τ_bind at A=7 +color+triad remain 210 ticks at L=64?** (L-invariance of binding lifetime not yet tested.)
 3. **Is the N_base coincidence at A=5 generalizable?** Are other engine cluster sizes coincident with FTD-0110 algebraic integers?
 4. **What is the deterministic mechanism that triggers flood at exactly tick 210?** (Cluster geometry threshold? Local-energy condition? Genesis-rule resonance?)
 
-### 5.6.10 BREAKTHROUGH: A=5 +color+triad SOLITON IS TRULY STABLE — n=4=N_base (2026-05-04)
+### 5.6.10 BREAKTHROUGH: A=5 +color+triad SOLITON IS TRULY STABLE — n=4=N_base
 
 A long-time multi-seed test (`engine/tests/test_color_triad_a5_a6_long.cpp`, 4 seeds × 2 amplitudes × 1500 ticks at L=32) revealed:
 
@@ -576,11 +575,11 @@ The A=5 stable matter content `n=4` is the same N_base = 4 that appears in:
 - **Cluster-size linear coefficient k = 1/N_base = 1/4** (FTD-0110 [DERIVED])
 - **Framework integer N_base in FTD's algebraic spine** (master quadratic, Watson identity, mass formula prefactors)
 
-This is the strongest structural alignment between *engine dynamics* and *FTD-0110 algebraic prediction* identified in this entire investigation. The smallest non-trivial truly-stable engine cluster has matter content equal to the N_base structural integer.
+This is the strongest structural alignment between *engine dynamics* and *FTD-0110 algebraic prediction* in the investigation. The smallest non-trivial truly-stable engine cluster has matter content equal to the N_base structural integer.
 
 **Significance**:
 
-If this finding holds at L=64 (test in progress), then:
+If this finding holds at L=64, then:
 
 - The engine has a **canonical "lightest stable particle"** = A=5 +color+triad SOLITON with n=4 voxels
 - This particle's matter content equals N_base — a number that derives from O_h representation theory of the 27-block (rigorously proven in FTD-0110)
@@ -603,7 +602,7 @@ If energy is also conserved (unlike A=10), this is closer to a true soliton (mat
 
 **Phase B.4 deliverable now has a concrete anchor**: the A=5 +color+triad SOLITON is the first FALSIFIABLE engine prediction matching an FTD-0110 algebraic-spine integer (n=4 = N_base). Whether this is a coincidence (engine produces n=4 by chance) or a genuine derivation (engine dynamics force n=N_base structurally) is the critical follow-up question.
 
-### 5.6.11 RETRACTION: §5.6.10 "BREAKTHROUGH" was an L=32 finite-size resonance (2026-05-04)
+### 5.6.11 RETRACTION: §5.6.10 "BREAKTHROUGH" was an L=32 finite-size resonance
 
 A critical L=64 verification (`engine/tests/test_a5_stable_L64_confirm.cpp`, 3 seeds × 1000 ticks at L=64, A=5·K_GENESIS, +color+triad) **FALSIFIES the §5.6.10 stability claim**:
 
@@ -638,7 +637,7 @@ At L=64 with the same toggle config and amplitude:
 - The three-regime classification (§5.6.9) is unaffected
 - The general conclusion that the engine has no truly L-invariant stable bound state is *strengthened* by this falsification
 
-**Honest meta-note (per CLAUDE.md F1/F9)**: this is a textbook F9 failure mode — under the gameplan's "let's continue exploring" momentum, an L=32 finding was tagged "BREAKTHROUGH" and connected to FTD-0110's algebraic spine before L-invariance was confirmed. The L=64 verification (run as planned) falsified it within ~10 minutes. **The investigation discipline worked**: the critical L=64 test was queued before §5.6.10's celebration was finalized. The retraction is clean and immediate. *This is what good F9 hygiene looks like.*
+**Methodological note (per CLAUDE.md F1/F9)**: this is a textbook F9 failure mode — an L=32 finding was tagged "BREAKTHROUGH" and connected to FTD-0110's algebraic spine before L-invariance was confirmed. The L=64 verification falsified it. The critical L=64 test was queued before §5.6.10's claim was finalized, so the retraction is clean and immediate — the discipline of confirming L-invariance before any algebraic-spine connection is the load-bearing lesson.
 
 **Refined status**: there is *no* L-invariant truly-stable engine cluster identified in any tested toggle configuration. The closest finding is the **L-DEPENDENT stability at L=32** for A=5 +color+triad — interesting as a finite-size lattice phenomenon but not as a particle-physics identification. The Phase B.4 program needs to either:
 
@@ -648,9 +647,9 @@ At L=64 with the same toggle config and amplitude:
 
 Option 3 is consistent with the broader §5.6.6-5.6.9 picture: the engine produces *metastable transients* with deterministic τ_bind; no classical bound states; particle-physics analog is via decay-channel matrix elements (τ_bind ratios) not bound-state mass identification.
 
-### 5.6.12 FINAL SYNTHESIS — Phase B.3 boundary investigation (2026-05-04)
+### 5.6.12 FINAL SYNTHESIS — Phase B.3 boundary investigation
 
-After 16 sequential diagnostic tests this session (post-§5.6.4 + §5.6.5 closure), the boundary-configuration investigation has produced the following **cleanly-supported findings**:
+The boundary-configuration investigation has produced the following **cleanly-supported findings**:
 
 **Confirmed engine-physics findings**:
 
@@ -680,7 +679,7 @@ After 16 sequential diagnostic tests this session (post-§5.6.4 + §5.6.5 closur
 
 **What remains genuinely open**:
 
-1. **τ_bind table across (toggle, A, L)** is not yet built systematically. Test 6 (`test_tau_bind_systematic.cpp`) would fill this; not run this session.
+1. **τ_bind table across (toggle, A, L)** is not yet built systematically. Test 6 (`test_tau_bind_systematic.cpp`) would fill this.
 2. **Mechanism of deterministic flood-onset at exactly tick 210** (for A=7 +color+triad) is not yet identified. Some specific cluster-geometry threshold or local-energy condition triggers the cascade.
 3. **Whether ANY (toggle, A, L) configuration produces an L-invariant truly-stable cluster** is unresolved. Negative finding so far across ~50 (config, A, L) tests; would require a much larger sweep to confidently claim non-existence.
 4. **FTD-0110 mass-from-cluster-size identification under the metastable-transient reading**: how do τ_bind ratios map to PDG lifetime ratios? This is the Phase B.4 deliverable.
@@ -701,9 +700,9 @@ This is a multi-session program (5-15 sessions) but the *structure* is now well-
 
 The engine is producing rich, complex, deterministic dynamics that reveal genuinely substantive physics findings. The discrete-native derivation program (FTD-0136) remains viable. The classical-bound-state idealization may not survive the discrete substrate. Alternative reframings (metastable-transient mass content; τ_bind as decay-rate analog) are the productive directions.
 
-The investigation is substantively informative both in what it found (rich regime structure, deterministic τ_bind, soliton dynamics) and in what it falsified (no L-invariant stable bound state under tested configs; the N_base coincidence was an L=32 artifact). Phase B is in much better shape than it was at the start of the session — it has a clear research roadmap, identified observables, falsifiability surfaces, and a track record of catching premature claims.
+The investigation is substantively informative both in what it found (rich regime structure, deterministic τ_bind, soliton dynamics) and in what it falsified (no L-invariant stable bound state under tested configs; the N_base coincidence was an L=32 artifact). Phase B has a clear research roadmap, identified observables, and falsifiability surfaces.
 
-### 5.6.13 Framework-integer scan — only N_base matches, others do NOT (2026-05-04)
+### 5.6.13 Framework-integer scan — only N_base matches, others do NOT
 
 A final scan (`engine/tests/test_framework_integer_clusters.cpp`, 21 amplitudes A ∈ {3.0, 3.5, ..., 16.0}·K_GENESIS at L=32, +color+triad, 1000-tick stability cutoff) tested whether the engine produces stable clusters at the OTHER FTD framework integers (N_c=3, b_3=7, N_eff=13) in addition to N_base=4.
 
@@ -739,7 +738,7 @@ Either of these alone would weaken the claim; both together essentially eliminat
 2. *Explicitly L-dependent observables* with L-extrapolation methodology, OR
 3. *Different toggle configurations* not yet tested (the binding-toggle search of §5.6.4 was 8-toggle; ~20 more toggles exist in the engine that haven't been tested for bound-state production)
 
-**The cleanest substantive findings of this session that survive all scrutiny**:
+**The cleanest substantive findings that survive all scrutiny**:
 
 1. The engine's discrete dynamics produce **three regimes** (soliton, transient, flooding) with **deterministic boundaries** at fixed (toggle, A, L)
 2. **Binding lifetime τ_bind** is the cleanest dimensionless engine observable identified (e.g., τ_bind = 210 ticks for A=7 +color+triad at L=32, deterministic across 5 seeds)
@@ -747,9 +746,9 @@ Either of these alone would weaken the claim; both together essentially eliminat
 4. **Engine cluster sizes are amplitude- AND L-quantized**: discrete attractor structure that depends on both
 5. **Cluster decay channel is `weak_transmutation`** (matrix-element-driven, not Boltzmann thermal)
 
-These five findings are robust and form the load-bearing Phase B knowledge base. The §5.6.10 BREAKTHROUGH claim is retracted; the §5.6.11 retraction is the cleanest example of F1/F9 hygiene in this session's work.
+These five findings are robust and form the load-bearing Phase B knowledge base. The §5.6.10 BREAKTHROUGH claim is retracted; the §5.6.11 retraction is the cleanest example of F1/F9 hygiene in the arc.
 
-### 5.6.14 L=32 fine resonance map — 3 of 4 FTD framework integers appear (2026-05-04)
+### 5.6.14 L=32 fine resonance map — 3 of 4 FTD framework integers appear
 
 A finer A-scan at L=32 with +color+triad (`engine/tests/test_resonance_map_l32.cpp`, A ∈ [3, 8] in 0.25 steps, 600 ticks per amplitude, single seed) revealed a far richer resonance structure than previously seen.
 
@@ -779,15 +778,15 @@ The previous framework-integer test (§5.6.13) used coarser 0.5 step and MISSED 
 
 **Anti-resonance observation**: A=7.25 has anomalously short τ_bind=25 ticks (vs ~200 at neighbors A=7.00, 7.50) — possible destructive interference / "anti-resonant" amplitude.
 
-**Critical caveat (per §5.6.11 lesson)**: this is an L=32 finding. L-invariance must be verified at L=48 and L=64 before any structural-alignment claim is made. **The §5.6.10 BREAKTHROUGH retraction shows that L=32 stability can be a finite-size resonance**. Tests at L=48 and L=64 with same fine A-scan are queued.
+**Critical caveat (per §5.6.11 lesson)**: this is an L=32 finding. L-invariance must be verified at L=48 and L=64 before any structural-alignment claim is made. **The §5.6.10 BREAKTHROUGH retraction shows that L=32 stability can be a finite-size resonance.** The L=48 and L=64 fine A-scans (§5.6.15, §5.6.16) are the gate.
 
 **If the resonances persist at L=48, L=64**: this would be substantive — the engine would produce stable clusters at FTD framework integers across L, and the pattern would survive the §5.6.11 falsification mode. Multi-L confirmation is the gate.
 
 **If the resonances shift at L=48, L=64**: the L=32 finding is another lattice-resonance artifact (similar to §5.6.10 → §5.6.11). The framework-integer alignment would be falsified again.
 
-The cleanest substantive interpretation either way: cluster stability is a **resonance phenomenon** (the user's intuition) — stable amplitudes correspond to eigenmode-like windows; the question is whether those windows are L-invariant.
+The cleanest substantive interpretation either way: cluster stability is a **resonance phenomenon** — stable amplitudes correspond to eigenmode-like windows; the question is whether those windows are L-invariant.
 
-### 5.6.15 L=48 fine resonance map — partial L-invariance, resonance shifts confirmed (2026-05-04)
+### 5.6.15 L=48 fine resonance map — partial L-invariance, resonance shifts confirmed
 
 The L=48 fine A-scan (`engine/tests/test_resonance_map_l48.cpp`, A ∈ [3, 8] in 0.25 steps) revealed:
 
@@ -820,12 +819,12 @@ The L=48 fine A-scan (`engine/tests/test_resonance_map_l48.cpp`, A ∈ [3, 8] in
 
 - **Resonance phenomenon confirmed**: stability tracks specific (A, L) windows. The user's intuition ("resonance behaviors deeply") is empirically supported.
 - **L-invariance is partial, not full**: only some n-values survive across L (likely N_eff=13 and perhaps N_base=4). Others (N_c=3, b_3=7) appear at one L but not another.
-- **The "resonance positions shift with L"** is the cleanest characterization — confirming the user's intuition that stability resolves around resonance and resonance changes with size.
+- **The "resonance positions shift with L"** is the cleanest characterization — stability resolves around resonance and resonance changes with size.
 - **Only N_eff=13 has held up across L=32 → L=48 with the same cluster size** at slightly shifted amplitude. If this also holds at L=64, that's a robust structural alignment.
 
-The L=48 finding is consistent with the user's intuition: cluster stability IS a resonance phenomenon, AND the resonance positions DO shift with L. Whether any FTD framework integer is robustly L-invariant requires the L=64 confirmation (in progress).
+The L=48 finding is consistent with the resonance hypothesis: cluster stability IS a resonance phenomenon, AND the resonance positions DO shift with L. Whether any FTD framework integer is robustly L-invariant requires the L=64 confirmation (§5.6.16).
 
-### 5.6.16 L=64 fine resonance map + 3-L-invariance analysis (2026-05-04)
+### 5.6.16 L=64 fine resonance map + 3-L-invariance analysis
 
 The L=64 fine A-scan (`engine/tests/test_resonance_map_l64.cpp`) and unified L-scaling analysis (`scripts/exploration/analyze_resonance_scaling.py`) gave the cleanest comparative picture:
 
@@ -898,7 +897,7 @@ If n=8 is the engine's L-invariant lightest non-trivial stable cluster, then the
 
 **Caveat (per §5.6.11 hygiene)**: this 3-L-invariance is single-seed at each L. Multi-seed verification at all three L is the next required test before promoting "n=8 BCC corner" from observation to characterization.
 
-### 5.6.17 SECOND RETRACTION: n=8 was multi-cluster coincidence, not BCC corner orbit (2026-05-04)
+### 5.6.17 SECOND RETRACTION: n=8 was multi-cluster coincidence, not BCC corner orbit
 
 After the §5.6.16 finding identified n=8 at A=5.75 as the only non-trivial 3-L-invariant stable cluster, both savant agents (ontological-polymath + ftd-lead-physicist) independently prescribed the same critical test: **measure the spatial configuration of the 8 voxels** to distinguish "BCC corner orbit" (Hypothesis A — 8 voxels at corners of sub-cube; pairwise distance signature 12 edges + 12 face-diagonals + 4 body-diagonals = 3 unique distances) from "geometric coincidence" (Hypothesis B — arbitrary 8-voxel configuration).
 
@@ -933,7 +932,7 @@ The spatial-geometry test (`engine/tests/test_n8_spatial_geometry.cpp`, L ∈ {3
 
 **Methodological win (F1/F9 hygiene model)**:
 
-This is the *second* clean retraction this session (§5.6.10 → §5.6.11 and now §5.6.16 → §5.6.17). Both followed the same pattern:
+This is the *second* clean retraction in the arc (§5.6.10 → §5.6.11 and §5.6.16 → §5.6.17). Both followed the same pattern:
 - Premature claim: "We found a structurally-aligned stable cluster!"
 - Critical test: queued before the claim was finalized
 - Falsification: returned within minutes of the claim's documentation
@@ -941,7 +940,7 @@ This is the *second* clean retraction this session (§5.6.10 → §5.6.11 and no
 
 The savant agents specifically predicted both the falsification mode (Hypothesis B) and the test that would distinguish it. Their "structural-tightness" filtering correctly identified that n=8 = 2^D was suggestive but not load-bearing without spatial-configuration confirmation.
 
-**Honest meta-note**: with two retractions this session, the right tag for ANY new "L-invariant stable cluster" claim should be [CONJECTURE — pending spatial configuration + multi-seed + L≥96 verification]. The bar is now correctly calibrated.
+**Calibration note**: given the two retractions, the right tag for ANY new "L-invariant stable cluster" claim is [CONJECTURE — pending spatial configuration + multi-seed + L≥96 verification].
 
 **Phase B.3 final state** (after both retractions):
 
@@ -964,11 +963,11 @@ Either:
 
 Option 3 is the most likely productive next direction: instead of waiting for the engine's nucleation dynamics to find an O_h orbit by chance, INJECT directly at the orbit positions and see if the resulting cluster is L-invariant. This was not previously considered because the prior tests injected at single point. The polymath agent's path-3 (BCC Brillouin-zone-corner eigenmode) suggests a related approach: inject momentum at k=(π,π,π) and see if the resulting Fourier-dual real-space cluster is the BCC corner orbit by construction.
 
-**No new claim is being made**. The session ends with a clean negative finding (no L-invariant non-trivial stable cluster) plus a methodological win (two retractions in same hygiene pattern). Phase B is in honest epistemic shape.
+**No new claim is being made**: the net result is a clean negative finding (no L-invariant non-trivial stable cluster) plus a methodological win (two retractions in the same hygiene pattern).
 
-### 5.6.18 Direct O_h-symmetric injection at 8 BCC corner positions (2026-05-04)
+### 5.6.18 Direct O_h-symmetric injection at 8 BCC corner positions
 
-Per the polymath agent's path-3 recommendation, this test bypasses the engine's nucleation dynamics and DIRECTLY constructs an O_h-symmetric initial condition: inject flux at the 8 BCC corner positions of a size-1 sub-cube around the lattice center, with radial-outward flux of magnitude `A_per_voxel · K_GENESIS` at each corner. Then test whether the engine preserves O_h symmetry under +color+triad dynamics.
+This test bypasses the engine's nucleation dynamics and DIRECTLY constructs an O_h-symmetric initial condition: inject flux at the 8 BCC corner positions of a size-1 sub-cube around the lattice center, with radial-outward flux of magnitude `A_per_voxel · K_GENESIS` at each corner. Then test whether the engine preserves O_h symmetry under +color+triad dynamics.
 
 **Setup**: 8 corners at (c±1, c±1, c±1) where c = L/2; flux at each corner pointing radially outward (along normalized displacement from center); A_per_voxel ∈ {0.5, 1, 2, 3, 5}; L ∈ {32, 48, 64}; 600-tick run.
 
@@ -1004,7 +1003,7 @@ Per the polymath agent's path-3 recommendation, this test bypasses the engine's 
 
 If no such regime exists, the radial-outward flux geometry is fundamentally incompatible with bound-state preservation; alternate injection geometries (tangential flux, no-flux + state injection) become the next test candidates.
 
-### 5.6.19 Threshold scan + state-only injection: definitive negative for O_h-symmetric bound state (2026-05-04)
+### 5.6.19 Threshold scan + state-only injection: definitive negative for O_h-symmetric bound state
 
 **Threshold-amplitude scan** (`engine/tests/test_oh_threshold_scan.cpp`, A_per_voxel ∈ [0.5, 1.5] in 0.05 steps × 3 L = 63 runs):
 
@@ -1035,11 +1034,11 @@ If no such regime exists, the radial-outward flux geometry is fundamentally inco
 
 The BCC corner positions are dynamically robust as MANIFESTATION POSITIONS (the originally-lit corners stay lit through entire runs, including through flooding) — but the LOCALIZED 8-cluster configuration is NOT a stable bound state. The +color+triad toggle combination is intrinsically a flood-driving configuration regardless of initial conditions.
 
-### 5.6.20 PHASE B FINAL POSITION — 3 retractions, no L-invariant bound state, clean methodological track record (2026-05-04)
+### 5.6.20 PHASE B FINAL POSITION — 3 retractions, no L-invariant bound state, clean methodological track record
 
-The Phase B.3 boundary investigation is now complete with a definitive set of findings, three clean retractions in the F1/F9 hygiene pattern, and a clear path forward.
+The Phase B.3 boundary investigation reaches a definitive set of findings, three clean retractions in the F1/F9 hygiene pattern, and a clear path forward.
 
-**Three retractions this session, all following the same pattern**:
+**Three retractions, all following the same pattern**:
 
 | # | Premature claim | Critical test | Outcome | SPEC |
 |---|---|---|---|---|
@@ -1051,7 +1050,7 @@ The Phase B.3 boundary investigation is now complete with a definitive set of fi
 
 **Substantive negative findings** (load-bearing for FTD-0136 / FTD-0110 reformulation):
 
-- The engine has **no L-invariant non-trivial stable bound-state cluster** under any tested toggle configuration (>30 (toggle, A, L) combinations across the session)
+- The engine has **no L-invariant non-trivial stable bound-state cluster** under any tested toggle configuration (>30 (toggle, A, L) combinations)
 - The engine has **no O_h-symmetric stable bound state** under any tested injection geometry (radial-outward flux, threshold-amplitude flux, state-only)
 - The engine's **discrete dynamics may genuinely not support classical bound states** — this is consistent with the reading that "stable particle at rest" is a continuous-physics idealization not supported by the discrete substrate
 - **Stability IS a resonance phenomenon** (user's intuition empirically confirmed): cluster stability tracks discrete (A, L) windows; resonance positions shift with L
@@ -1059,11 +1058,11 @@ The Phase B.3 boundary investigation is now complete with a definitive set of fi
 
 **The question reframed**:
 
-After this thorough investigation, the question "does the FTD engine support a stable bound state?" should be reframed as:
+The question "does the FTD engine support a stable bound state?" is best reframed as:
 
 > "Under what conditions, if any, does the FTD engine produce a localized matter-conserving cluster that persists indefinitely?"
 
-The answer based on this session: **none of the tested configurations produce such a cluster**. The engine produces metastable transients (matter conserved + drifting + flooding eventually), trivial single-voxel bound states (n=1, no internal structure), or runaway flooding (lattice fills). Classical "particles at rest" are not realized.
+The answer: **none of the tested configurations produce such a cluster**. The engine produces metastable transients (matter conserved + drifting + flooding eventually), trivial single-voxel bound states (n=1, no internal structure), or runaway flooding (lattice fills). Classical "particles at rest" are not realized.
 
 **Phase B.4 path forward** (revised after the third falsification):
 
@@ -1077,7 +1076,7 @@ The answer based on this session: **none of the tested configurations produce su
 
 **The user's resonance intuition** ("stability seems to resolve around resonance and that resonance stability seems to change with size") is fully empirically supported as a phenomenological observation. The deeper structural question (do those resonances correspond to FTD-spine integers, O_h orbits, or something else?) has been investigated and the structural alignments tested have failed L-invariance or geometric verification. The cleanest interpretation is that **the resonances are L-dependent finite-size eigenmodes of the engine's discrete Laplacian + binding-channel dynamics**, with no structural alignment to the FTD algebraic spine identified.
 
-**Engine tests landed in this Phase B.3 boundary investigation** (12 new tests, 3 retractions, 1 confirmed user-intuition):
+**Engine tests in the Phase B.3 boundary investigation** (12 tests, 3 retractions, 1 confirmed resonance intuition):
 - `test_color_triad_a7_multiseed`, `test_color_triad_amplitude_scan`, `test_color_triad_flood_onset`, `test_color_triad_a5_a6_long`
 - `test_a5_stable_L64_confirm` (first retraction)
 - `test_framework_integer_clusters`
@@ -1088,11 +1087,9 @@ The answer based on this session: **none of the tested configurations produce su
 
 Plus SPEC sections §5.6.6 through §5.6.20 documenting the full diagnostic chain with transparent retraction documentation.
 
-**Phase B is in honest, comprehensive epistemic shape.** Welcome back.
+### 5.6.21 STRING discovery — visual-led finding
 
-### 5.6.21 STRING discovery — visual-led finding (2026-05-04 evening)
-
-After three retractions and a definitive negative on bound states, the user redirected investigation to "see how quarks behave on the lattice". A visualization-led investigation surfaced a structural finding the cardinality-only analysis had completely missed.
+After three retractions and a definitive negative on bound states, the investigation turned to how quarks behave on the lattice. A visualization-led investigation surfaced a structural finding the cardinality-only analysis had completely missed.
 
 **Observation**: pure single-axis flux injection produces NOT a localized 0D cluster but a **1D color-pure string along the flux axis**. Examples at L=32:
 
@@ -1141,9 +1138,9 @@ To test L-invariance, the same multi-seed test ran at L ∈ {48, 64, 128} (`engi
 
 The three prior retractions were TOTAL falsifications — the claimed result didn't survive at the next L. **This is a PARTIAL retraction**: the broader triple-match story falls, but ONE clean identification (R=N_base) survives across the L=32 → L=128 jump. That R-axis result has now been verified at 5 seeds across a factor-of-4 L range. **It is the cleanest piece of evidence so far that the engine's discrete dynamics realize an FTD-0110 algebraic-spine [THEOREM] result dynamically.**
 
-**The methodological lesson**: visual inspection (the user's "I have eyes" instinct) caught structural content (1D string geometry) that cardinality summaries had missed. The strings were always there in the data; we summed them into scalars and called the result noise. **Geometric observables are first-class.**
+**The methodological lesson**: visual inspection caught structural content (1D string geometry) that cardinality summaries had missed. The strings were always there in the data; summing them into scalars discarded the structure as noise. **Geometric observables are first-class.**
 
-**Engine tests added in this final investigation arc**:
+**Engine tests added in the visualization-led arc**:
 - `dump_quark_data.cpp` — 10 quark/color experiments
 - `dump_string_verification.cpp` — multi-seed × multi-L (L=32, 48, 64) verification
 - `dump_string_l128.cpp` — L=128 critical falsifier
@@ -1152,15 +1149,13 @@ The three prior retractions were TOTAL falsifications — the claimed result did
 - `scripts/exploration/analyze_string_verification.py` — A/B/B' verdict
 - `scripts/exploration/analyze_string_l128.py` — combined L analysis
 
-**Phase B final state after the visualization-led arc**: one [STRONGLY MOTIVATED CONJECTURE] candidate (R=N_base across L) emerged from the wreckage of the three earlier retraction attempts. The session arc is: 3 total retractions + 1 partial retraction + 1 surviving identification + 1 confirmed user intuition (resonance phenomenology). The surviving identification is publication-grade if it holds at L=256 (next test) and across multiple toggle configurations.
+**Phase B state after the visualization-led arc**: one [STRONGLY MOTIVATED CONJECTURE] candidate (R=N_base across L) emerged from the three earlier retraction attempts. The net arc is: 3 total retractions + 1 partial retraction + 1 surviving identification + 1 confirmed resonance intuition. The surviving identification is publication-grade if it holds at L=256 and across multiple toggle configurations.
 
 **Combined visualization at all 4 L values**: `dissemination/interactive/quark_pngs/string_lengths_all_L.png` shows the per-axis string-length scatter with FTD framework integer reference lines.
 
-### 5.6.23 FULL-PHYSICS retest — the +color+triad finding was config-specific (2026-05-04 evening)
+### 5.6.23 FULL-PHYSICS retest — the +color+triad finding was config-specific
 
-User observation: "we're going about this wrong because it's software and emergent behaviors are a result of the sum being greater than the parts. we need to do these experiments on a complete physics lattice like the GPU engine we have."
-
-This was correct. The +color+triad-only config we'd been using was a STRIPPED-DOWN engine, not the full FTD physics. The R=N_base=4 finding was **config-specific**, not a general property of the full FTD engine.
+Emergent behavior is a property of the full physics lattice, not of any toggle subset. The +color+triad-only config used in §5.6.21-22 is a STRIPPED-DOWN engine, not the full FTD physics. The R=N_base=4 finding was **config-specific**, not a general property of the full FTD engine.
 
 **Full-physics config** (`engine/tests/dump_full_physics.cpp`): all 13 default toggles ON + `color_forces` + `strong_force` + `triad_binding` + `pair_production` + `exchange_force` + `latency_field` + `langevin` (T=0.005). The only physics toggle EXCLUDED was `larmor_radiation` (mutually exclusive with langevin per the engine's validator).
 
@@ -1201,7 +1196,7 @@ The string-length results from §5.6.21-22 (R=N_base=4 across L=32, 128) were **
 - The L=128 R=4 reproduction was config-specific (full physics likely gives different)
 - The L-invariance of R=N_base was a +color+triad-specific resonance, NOT a fundamental engine property
 
-**The user's methodological correction was load-bearing**: testing at the FULL PHYSICS level reveals the engine's actual emergent behavior, not toggle-subset artifacts.
+**The methodological correction is load-bearing**: testing at the FULL PHYSICS level reveals the engine's actual emergent behavior, not toggle-subset artifacts.
 
 **Honest tagging at the current evidence level**:
 
@@ -1211,11 +1206,11 @@ The string-length results from §5.6.21-22 (R=N_base=4 across L=32, 128) were **
 
 **Methodological lesson for the entire investigation**:
 
-ALL prior findings in this investigation arc that used reduced-toggle configurations (+color+triad only, defaults only, etc.) need re-examination at the full-physics level. The engine is designed to run with all physics ON; isolating subsets produces artifact resonances rather than emergent physics. **The right experimental design for FTD is full-physics tests with the same multi-seed × multi-L falsification discipline applied so far.**
+ALL prior findings in the investigation arc that used reduced-toggle configurations (+color+triad only, defaults only, etc.) need re-examination at the full-physics level. The engine is designed to run with all physics ON; isolating subsets produces artifact resonances rather than emergent physics. **The right experimental design for FTD is full-physics tests with the same multi-seed × multi-L falsification discipline.**
 
-**Next**: L=128 full-physics result (in progress) will determine if n=2 isotropy is L-invariant or just a finite-size feature.
+The L=128 full-physics result (§5.6.24) determines whether n=2 isotropy is L-invariant or just a finite-size feature.
 
-### 5.6.24 FULL-PHYSICS L=128 — pair production emerges, n=2 isotropy was L=64-specific (2026-05-04 evening)
+### 5.6.24 FULL-PHYSICS L=128 — pair production emerges, n=2 isotropy was L=64-specific
 
 The L=128 full-physics test (`engine/tests/dump_full_physics.cpp` extended to L ∈ {32, 64, 128}, 2 seeds at L=128) returned the third L data point:
 
@@ -1227,7 +1222,7 @@ The L=128 full-physics test (`engine/tests/dump_full_physics.cpp` extended to L 
 
 **Critical observation at L=128 z**: n=6 with **4 matter + 2 antimatter** voxels (all pure-B color). **This is the engine's emergent vacuum-pair-production phenomenon at full physics** — the `pair_production` toggle is enabled and at L=128 it spontaneously creates a quark+antiquark configuration. Not visible at smaller L or in stripped-down configs.
 
-**Three substantive findings under FULL PHYSICS** (the user's correct methodology):
+**Three substantive findings under FULL PHYSICS**:
 
 **Finding 1: ALL string lengths are FTD framework integers across L=32, 64, 128.**
 
@@ -1275,9 +1270,9 @@ This is a structural property of the full FTD engine that does NOT depend on tog
 - **[STRONGLY MOTIVATED CONJECTURE] emergent pair production at L >= 128 under full physics** — deterministic 4 q + 2 q̄ B-cluster at L=128 z, both seeds. Pair_production toggle activates at sufficient lattice scale.
 - **[OPEN]** which L-modular condition selects which framework integer per (axis, L). Likely the lattice's discrete Laplacian eigenmode structure × the genesis-rule axis-priority.
 
-**Methodological lesson — completed**:
+**Methodological lesson**:
 
-The user's correction "test the complete physics lattice" was load-bearing. ALL of §5.6.21-22's findings (R=N_base across L) were toggle-subset artifacts. Under full physics:
+Testing the complete physics lattice is load-bearing. ALL of §5.6.21-22's findings (R=N_base across L) were toggle-subset artifacts. Under full physics:
 - The cluster sizes are SMALLER and more uniform
 - They're ALL FTD framework integers
 - Pair production EMERGES at large L
@@ -1287,17 +1282,17 @@ This is the cleanest substantive evidence that the FTD engine, when run as a com
 
 **Phase B final status (after full-physics arc)**:
 
-Phase B has identified one robust emergent pattern: the FTD engine under full physics produces deterministic FTD-framework-integer cluster sizes with emergent pair production at sufficient L. This is structurally tight to FTD-0110's algebraic spine [THEOREM] (mult(E_g)=2, mult(T_{1u})=N_c=3 in 27-block O_h decomposition). It survives multi-seed × multi-L falsification under the F1/F9 hygiene that killed four prior claims this session.
+Phase B has identified one robust emergent pattern: the FTD engine under full physics produces deterministic FTD-framework-integer cluster sizes with emergent pair production at sufficient L. This is structurally tight to FTD-0110's algebraic spine [THEOREM] (mult(E_g)=2, mult(T_{1u})=N_c=3 in 27-block O_h decomposition). It survives multi-seed × multi-L falsification under the F1/F9 hygiene that killed four prior claims in the arc.
 
-**Next-session priorities**:
+**Open follow-ups:**
 1. Run the same full-physics test at L=256 to confirm the pattern continues (should give framework integers, possibly with more pair production)
 2. Vary specific toggle combinations (turn off one physics toggle at a time, see which is responsible for which feature)
 3. Test multi-amplitude scan at full physics (the entire amplitude landscape under full physics, not just A=5)
 4. Theoretical derivation: why does pair_production trigger at L=128 z and not other (axis, L) combinations? Connect to genesis-rule + Laplacian eigenmode structure
 
-### 5.6.25 Toggle-bisection at L=32 — clean attribution map (2026-05-04 night)
+### 5.6.25 Toggle-bisection at L=32 — clean attribution map
 
-Per the user's request to vary toggle combinations to identify which physics drives which feature, ran 15 toggle configurations at L=32 with pure +x flux, single seed (deterministic).
+To identify which physics drives which feature, 15 toggle configurations were run at L=32 with pure +x flux, single seed (deterministic).
 
 **Baseline measurements**:
 
@@ -1345,7 +1340,7 @@ Per the user's request to vary toggle combinations to identify which physics dri
 - **In isolation** (defaults + one only): both cause cluster DECAY (n→1)
 - **Under full physics** (with all other toggles ON): `pair_production` SUSTAINS the cluster, `strong_force` DAMPS growth
 
-This is exactly the user's "sum is greater than the parts" observation made concrete. The toggles interact non-linearly — a toggle that decays the cluster alone can SUSTAIN it when combined with others. **The full-physics equilibrium is genuine emergent behavior**, not a sum of individual effects.
+This is the "sum is greater than the parts" observation made concrete. The toggles interact non-linearly — a toggle that decays the cluster alone can SUSTAIN it when combined with others. **The full-physics equilibrium is genuine emergent behavior**, not a sum of individual effects.
 
 **Reframe of §5.6.21 (R-string finding)**:
 
@@ -1368,7 +1363,7 @@ The N_c = mult(T_{1u}) identification is more L-invariant than N_base across the
 
 - **[STRONGLY MOTIVATED CONJECTURE]** R-string = N_c = mult(T_{1u}) = 3 at L=32 under both defaults and full physics. Verified across multiple toggle configurations.
 - **[CONJECTURE]** The full-physics equilibrium produces emergent stable clusters whose matter content equals an O_h irrep multiplicity, with the specific multiplicity depending on (L, axis, toggle) but always in the framework integer set.
-- **[OBSERVATION]** Toggles interact non-linearly: `pair_production` and `strong_force` cause decay in isolation but sustain/damp in combination. The "sum greater than the parts" intuition is operationally confirmed.
+- **[OBSERVATION]** Toggles interact non-linearly: `pair_production` and `strong_force` cause decay in isolation but sustain/damp in combination. The "sum greater than the parts" property is operationally confirmed.
 
 **Engine tests added**:
 - `dump_toggle_bisection.cpp` — 15 toggle configurations at L=32
@@ -1403,9 +1398,9 @@ This is genuine physics, not just measurement protocol — the engine produces a
 
 **Pre-registration discipline**: a full Phase B.3 campaign should pre-register A-grid + N_warmup + N_measure + decay metric (Γ_0 vs f_eq) before running M=100 seeds per amplitude.
 
-### 5.6.26 Full-physics amplitude scan at L=64 — stability islands amid flooding (2026-05-04 night)
+### 5.6.26 Full-physics amplitude scan at L=64 — stability islands amid flooding
 
-Per the user's "sum greater than the parts" methodological correction, ran an amplitude scan under the **same full-physics configuration** used in §5.6.23–§5.6.25. Pure +x flux at the lattice center, single seed (Langevin seed=1, deterministic), L=64, 200 ticks, A swept from 1.0 to 16.0 in steps of 0.5 (31 amplitudes).
+An amplitude scan was run under the **same full-physics configuration** used in §5.6.23–§5.6.25. Pure +x flux at the lattice center, single seed (Langevin seed=1, deterministic), L=64, 200 ticks, A swept from 1.0 to 16.0 in steps of 0.5 (31 amplitudes).
 
 **Engine test**: `engine/tests/dump_full_physics_amp_scan.cpp`. Output: `full_amp_scan.json`.
 
@@ -1446,17 +1441,17 @@ These are post-hoc fits to two datapoints. **Not entered in LEDGER. Not used in 
 
 **Until the falsification protocol runs, the islands are [OBSERVATION] only — not [CONJECTURE], not [STRONGLY MOTIVATED CONJECTURE].**
 
-**Connection to user's resonance intuition (Arc 2)**: this directly validates the user's Arc 2 observation that "stability seems to resolve around resonance and that resonance stability seems to change with size". The stability islands at A=9 and A=13 amid flooding regimes — narrow A-windows where the engine produces small bound clusters surrounded by amplitudes that produce uncontrolled growth — are exactly resonance-window behavior. The Arc 1 →13 ratio that closed negative as a 3-axis triple-match (§5.6.22) was a different identification; the current islands are an A-axis (amplitude-resonance) finding under full-physics coupling, not an L-axis finding.
+**Connection to the resonance hypothesis**: this directly validates the observation that "stability seems to resolve around resonance and that resonance stability seems to change with size". The stability islands at A=9 and A=13 amid flooding regimes — narrow A-windows where the engine produces small bound clusters surrounded by amplitudes that produce uncontrolled growth — are exactly resonance-window behavior. The →13 ratio that closed negative as a 3-axis triple-match (§5.6.22) was a different identification; these islands are an A-axis (amplitude-resonance) finding under full-physics coupling, not an L-axis finding.
 
-**Connection to FTD-0110 cluster-size identification**: FTD-0110's `N(A) ≈ ¼·(A/K_GENESIS)²` predicts at A=9 → N ≈ 20.25, at A=10 → N ≈ 25, at A=13 → N ≈ 42.25. **A=9 island matches the FTD-0110 prediction within 1 voxel**; A=10 floods (FTD-0110 prediction 25 lost in 2.4×10⁵ flood); A=13 island gives n=34 vs predicted 42 (~20% short). **The amp-scan finding is consistent with FTD-0110's linear-mode prediction at A=9, but the flooding at A=10 means the linear-mode prediction is NOT robust under full-physics coupling — at A=10 (canonical electron amplitude), full physics catastrophically destabilizes the would-be 25-voxel cluster.** This is the user's "sum greater than parts" point made quantitative: the linear-mode O_h derivation tells you what *would* form in a non-interacting projection; full-physics coupling can destroy that prediction.
+**Connection to FTD-0110 cluster-size identification**: FTD-0110's `N(A) ≈ ¼·(A/K_GENESIS)²` predicts at A=9 → N ≈ 20.25, at A=10 → N ≈ 25, at A=13 → N ≈ 42.25. **A=9 island matches the FTD-0110 prediction within 1 voxel**; A=10 floods (FTD-0110 prediction 25 lost in 2.4×10⁵ flood); A=13 island gives n=34 vs predicted 42 (~20% short). **The amp-scan finding is consistent with FTD-0110's linear-mode prediction at A=9, but the flooding at A=10 means the linear-mode prediction is NOT robust under full-physics coupling — at A=10 (canonical electron amplitude), full physics catastrophically destabilizes the would-be 25-voxel cluster.** This is the "sum greater than parts" point made quantitative: the linear-mode O_h derivation tells you what *would* form in a non-interacting projection; full-physics coupling can destroy that prediction.
 
 **Status**: [OBSERVATION] pending replication. No tag promotion in LEDGER; no claim in any external document.
 
 **Visual artifact**: `dissemination/interactive/full_physics_amp_scan.png` (3-panel: log(n_total) vs A with island markers; R/G/B color counts on symlog scale; matter:anti ratio).
 
-### 5.6.27 Full-physics L=256 spot check — linear axis→color binding with {1, 2, 3} sizes (2026-05-04 night)
+### 5.6.27 Full-physics L=256 spot check — linear axis→color binding with {1, 2, 3} sizes
 
-Per the user's "do a b and c" directive (§5.6.25 + §5.6.26 are b + c), this is (a): L=256 full-physics 3-axis spot check (`engine/tests/dump_full_physics_l256.cpp`). Full physics config matches §5.6.23–§5.6.26 (defaults + color_forces + strong_force + triad_binding + pair_production + exchange_force + latency_field + langevin T=0.005 γ=0.02 seed=1; larmor_radiation excluded). Pure axis flux at A=5·K_GENESIS injected at lattice center. Run via WSL2/CUDA per CLAUDE.md "GPU MUST go through WSL2" (Windows-native run was killed; ~30 min wall on RTX 5090).
+L=256 full-physics 3-axis spot check (`engine/tests/dump_full_physics_l256.cpp`). Full physics config matches §5.6.23–§5.6.26 (defaults + color_forces + strong_force + triad_binding + pair_production + exchange_force + latency_field + langevin T=0.005 γ=0.02 seed=1; larmor_radiation excluded). Pure axis flux at A=5·K_GENESIS injected at lattice center. Run via WSL2/CUDA per CLAUDE.md "GPU MUST go through WSL2" (Windows-native run was killed; ~30 min wall on RTX 5090).
 
 **Tick budget**: 100 ticks (vs 200 ticks at smaller L). This is a known caveat — flux dispersion from a single-voxel injection takes longer to fully saturate a 16M-voxel lattice; the L=256 clusters may be sub-saturated.
 
@@ -1503,11 +1498,11 @@ Until these run, the §5.6.27 finding is **[OBSERVATION] only — not [CONJECTUR
 - The cross-L (32, 64, 128, 256) pattern under full physics is consistent: (i) cluster sizes are always small framework integers, (ii) clusters are always pure-color or low-color-mix at small sizes, (iii) only L=128 z-axis showed pair production in the tested grid.
 - The discrete-native-derivation program (FTD-0136) has **measurable, deterministic, structurally-relevant** observables across factor-of-8 L range under full physics. The Phase B (cluster persistence) measurement infrastructure works as designed.
 
-**Status**: [OBSERVATION] pending replication. (a) closed for the user's "do a b and c" directive scope.
+**Status**: [OBSERVATION] pending replication.
 
-### 5.7 Phase B.3 historical design-challenge findings (2026-05-04, superseded by §5.6)
+### 5.7 Phase B.3 historical design-challenge findings (superseded by §5.6)
 
-Earlier in the same diagnostic cycle, two design challenges were identified that turned out to be artifacts of incorrect toggle configurations rather than fundamental obstructions:
+Two design challenges were identified that turned out to be artifacts of incorrect toggle configurations rather than fundamental obstructions:
 
 **Challenge 1 — lattice flooding at high Langevin T**: simple identity-tracking + thermal-T-ramp protocol breaks down at T ≥ 0.20 because thermal energy exceeds genesis threshold globally, producing widespread spontaneous nucleation rather than cluster-localized decay (413 / 363 clusters at T=0.2/0.5; max sizes 6734 / 16505 voxels filling 21-50% of L=32 lattice).
 
@@ -1521,7 +1516,7 @@ Both findings are correct OBSERVATIONS but were diagnosed wrongly: they were not
 
 ### 5.0 Original challenge text (deprecated; retained for context)
 
-The exploratory Γ(T) scan (`engine/tests/test_cluster_gamma_t_exploratory.cpp`, 2026-05-04) found that the simple "ramp Langevin T to induce decay" protocol breaks down at T ≥ 0.20:
+The exploratory Γ(T) scan (`engine/tests/test_cluster_gamma_t_exploratory.cpp`) found that the simple "ramp Langevin T to induce decay" protocol breaks down at T ≥ 0.20:
 
 - T ∈ [0.005, 0.10]: cluster persists, no decay observed
 - T = 0.20: 413 clusters tracked, max size 6734 voxels (~21% of L=32 lattice)
@@ -1531,7 +1526,7 @@ The exploratory Γ(T) scan (`engine/tests/test_cluster_gamma_t_exploratory.cpp`,
 
 **Implication**: a simple "single-cluster + uniform Langevin" protocol cannot directly extract a clean Γ(T) curve over a wide T range. Two scaling regimes coexist (cluster-stability scale + spontaneous-nucleation scale) and the latter dominates well before the former produces measurable decay.
 
-**Candidate alternative protocols for Phase B.3** (not yet tested; future-session work):
+**Candidate alternative protocols for Phase B.3** (not yet tested):
 
 1. **Localized perturbation**: apply Langevin to a small region (e.g., a sphere of radius `r ~ cluster_radius * 2`) around the injected cluster only, leaving the bulk of the lattice cold. Probes cluster stability against local thermal noise without inducing global nucleation.
 2. **Impulsive collision**: collide the cluster with a counter-propagating injected pulse (cf. FTD-0107 ic3_collision); measure decay via dispersion of the post-collision manifested matter.
@@ -1541,7 +1536,7 @@ The exploratory Γ(T) scan (`engine/tests/test_cluster_gamma_t_exploratory.cpp`,
 
 The right protocol may be a combination (e.g., localized perturbation + larger amplitude). Phase B.3 must establish a working measurement protocol before pre-registering a campaign.
 
-**This is a substantive Phase B.3 design problem identified 2026-05-04**; it does not invalidate the discrete-native-program reframe (FTD-0136), and it does not change any existing tag in LEDGER. It does mean that single-particle absolute lifetimes — which are computationally infeasible by absolute-tick count anyway (per the calibration feasibility audit) — also have a non-trivial *measurement protocol* problem at the engine level. Lifetime *ratios* (§5.5) remain the load-bearing Class B observable; the protocol challenge is producing the underlying Γ measurements that ratios are built from.
+**This is a substantive Phase B.3 design problem**; it does not invalidate the discrete-native-program reframe (FTD-0136), and it does not change any existing tag in LEDGER. It does mean that single-particle absolute lifetimes — which are computationally infeasible by absolute-tick count anyway (per the calibration feasibility audit) — also have a non-trivial *measurement protocol* problem at the engine level. Lifetime *ratios* (§5.5) remain the load-bearing Class B observable; the protocol challenge is producing the underlying Γ measurements that ratios are built from.
 
 ---
 
@@ -1644,7 +1639,7 @@ These are honest open questions, not architectural blockers. They are expected t
 - **FTD-0110** (cluster-mass identification — load-bearing for which `(A, C_0)` is identified with which particle)
 - **FTD-0041** (calibration ladder for tick → second conversion)
 - **FTD-0027** (pre-registration discipline)
-- **FTD-0050 / 2026-04-20 Langevin work** (thermal regime infrastructure already built in `render_bridge.cpp`)
+- **FTD-0050 Langevin work** (thermal regime infrastructure already built in `render_bridge.cpp`)
 - **FTD-0107** (deterministic cluster counts L-invariant — establishes that `τ_persist` measurement is L-invariant for L ≥ 32)
 - **engine/include/ftd/tracker.h** (existing per-particle tracker; extension target for `ClusterTracker`)
 - **engine/tests/campaign_emergent_spectrum_2026-04-27.cpp** (existing campaign infrastructure pattern; template for B.2-B.4 campaigns)

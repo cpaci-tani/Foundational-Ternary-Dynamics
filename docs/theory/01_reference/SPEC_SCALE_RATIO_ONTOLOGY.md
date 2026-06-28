@@ -1,7 +1,7 @@
 # SPEC_SCALE_RATIO_ONTOLOGY.md
 
 **Title:** Scale-Ratio Ontology — Framework Commitment **FC-3**
-**Status:** `[AXIOM]`-class Framework Commitment (a declaration, **not** a derivation) — **FTD-0304** (registered 2026-06-15)
+**Status:** `[AXIOM]`-class Framework Commitment (a declaration, **not** a derivation) — **FTD-0304**
 **Depends on:** `SPEC_FTD_FRAMEWORK_V1.md` (the constitution, FTD-0254), `SPEC_SCALE_CONTEXT_READOUT.md`
 **Precedence:** `LEDGER > constitution > this SPEC` (per the 5.46 conflict-precedence rule)
 
@@ -131,11 +131,11 @@ FC-3 unifies three existing notions of scale as **instances** of one `ScaleConte
 | Any ontic entity (`scale.h` `OnticEntity.boundary`) | the entity's `boundary` field | per-level | exists; expose as `ScaleContext` |
 
 The retrofits (rewiring these three to the shared object, and replacing the gate's box-relative
-classifier with the identity criterion) are a **later implementation arc**, not this pass.
+classifier with the identity criterion) are a **separate implementation arc**.
 
 ---
 
-## 6. Minimal reference implementation (the only code built now)
+## 6. Minimal reference implementation
 
 A pure, header-only, dependency-free value object — `engine/include/ftd/scale_ratio.h`:
 
@@ -196,9 +196,7 @@ trajectory — same discipline as `SPEC_SCALE_CONTEXT_READOUT §5.4`).
 
 ---
 
-## 8. Owner actions (status)
+## 8. Owner actions
 
-- ~~Register FC-3 in `SPEC_FTD_FRAMEWORK_V1.md` (the constitution) and add the **FTD-0304** LEDGER row.~~ **DONE — 2026-06-15.**
-- ~~Minimal reference implementation (`engine/include/ftd/scale_ratio.h` + `engine/tests/test_scale_ratio.cpp`, 23 assertions, NO_CORE CMake target).~~ **DONE — commit `29d234e0`, 2026-06-15.**
 - Retrofit the three instances of §5 to the shared `ScaleContext` (separate implementation arc).
 - Calibrate the `[IMPOSED]` identity bands against a known-good instance.

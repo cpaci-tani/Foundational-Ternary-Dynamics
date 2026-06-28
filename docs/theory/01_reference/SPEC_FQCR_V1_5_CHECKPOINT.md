@@ -1,7 +1,6 @@
 # FTD/FQCR v1.5 Checkpoint Package
 
 **Checkpoint:** Phase G/H — finite pointer-clock gravity, finite aperture readout, layered constants taxonomy  
-**Date:** 2026-05-22  
 **Status:** Strict ledger; no theorem upgrades by assertion.
 
 ---

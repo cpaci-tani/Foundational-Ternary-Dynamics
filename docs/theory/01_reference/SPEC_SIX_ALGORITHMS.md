@@ -1,9 +1,5 @@
 # The Six Algorithms of Physics
 
-**Version:** 1.0
-**Date:** February 9, 2026
-**Status:** Reference Document
-
 > Everything in the Standard Model — every particle, every force, every coupling constant — is the consequence of six algorithms running on a 3D grid with a low-entropy initial condition. This document is the complete technical reference.
 
 ---
@@ -62,7 +58,7 @@ A particle appears when flux density exceeds the threshold.
 
 **In plain English:** When the flux field concentrates enough energy at a point, that point "crystallizes" into a particle. The sign of the flux divergence (is flux flowing in or out?) determines whether it's matter or antimatter.
 
-**This IS wave function collapse.** The flux field (= wave function) is spread out. When it concentrates past K_B somewhere, that point manifests. The probability follows from |ψ|² because ρ = |**J**| and the threshold crossing statistics produce the Born rule. **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest substrate setting tested (linear 6-neighbour wave equation, Gaussian-envelope initial flux, deterministic ReLU manifestation) produces Rice upcrossing statistics `freq ∝ exp(−(K_B−μ)²/2σ²)` rather than `|ψ|²` scaling. See [`docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](../06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md).
+**This IS wave function collapse.** The flux field (= wave function) is spread out. When it concentrates past K_B somewhere, that point manifests. The probability follows from |ψ|² because ρ = |**J**| and the threshold crossing statistics produce the Born rule. **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200; status under canonical 26-neighbour engine OPEN.]** The simplest substrate setting tested (linear 6-neighbour wave equation, Gaussian-envelope initial flux, deterministic ReLU manifestation) produces Rice upcrossing statistics `freq ∝ exp(−(K_B−μ)²/2σ²)` rather than `|ψ|²` scaling. See [`docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](../06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md).
 
 ## 1B. Evaporation (±1 → 0)
 
