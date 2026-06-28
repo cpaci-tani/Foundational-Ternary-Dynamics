@@ -53,7 +53,7 @@ physics numbers chain from `D=3` + `ϖ` (lemniscatic). Never hardcode; import.
 
 **The one hard constraint on the native engine:** a **golden-hash regression gate**
 (`engine/tests/test_render_bridge_golden.cpp`) freezes a CPU `RenderBridge` tick
-sweep at L=17 to the hash **`0xb604d81a3d79366e`** (re-pinned 2026-06-17). Any
+sweep at L=17 to the hash **`0xb604d81a3d79366e`**. Any
 change reachable from `RenderBridge::tick()` must be **byte-identical** — see §6.
 
 ---
@@ -229,7 +229,7 @@ the C++ analysis and §1 of the web analysis** captured in the session report.
 What exists is strong but **Scale-0-weighted**. The real gaps:
 
 1. **Scales 1–6 have no README/SPEC/module index.** An agent must reverse-engineer particles/atoms/molecules/planetary/cosmic from controller headers. The knowledge lives in the **per-scale subagents** (`scale1-particle-expert` … `scale6-meta-expert`) — a cold agent that doesn't invoke them is stuck. **Biggest gap.**
-2. **No maintained per-file index for the 383-file JS tree** — until now. This map + the manifest fill it; keep them current.
+2. **No other maintained per-file index for the 383-file JS tree.** This map + the manifest fill it; keep them current.
 3. **The renderer/app/telemetry megafiles have no dedicated doc** beyond one ARCHITECTURE paragraph each (the bridge big files *are* well covered by 3 excellent module READMEs).
 4. **Zero-doc subsystems:** `js/ui/`, `js/telemetry/`, `js/audio/`, `js/backgrounds/`, `js/cosmic/`, `js/inspector/`, `js/orbitals/`, `js/physics/`, `js/core/`, `js/config/`, `js/atlas/`.
 5. **Two stale docs (self-flagged):** `engine/PHYSICS_STATUS.md` (2026-04-17) and `engine/CHECKLIST_PHYSICS.md` (2026-04-13) defer to SPEC_ENGINE. `viewport/REFACTOR_MAP.md` is CLOSED/historical with stale line numbers.

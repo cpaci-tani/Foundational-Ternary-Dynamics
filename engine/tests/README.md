@@ -8,8 +8,7 @@ in [engine/SPEC_ENGINE.md](../SPEC_ENGINE.md), not in this README.
 registered in `engine/CMakeLists.txt` via `ftd_add_test(...)`,
 `add_executable(...)`, or explicit `target_sources(...)`. A new test file
 should arrive with its CMake registration and labels in the same commit.
-The last full registration audit was the 2026-05-27 cleanup batch; rerun
-that methodology before making fresh hard-count claims.
+Run a full registration audit before making fresh hard-count claims.
 
 ## Public API
 
@@ -42,12 +41,11 @@ telemetry API contract.
 | `test_*.cpp` | Standalone unit tests (1 per concern) | `test_constants.cpp`, `test_lorentz.cpp`, `test_audit_regression.cpp` |
 | `benchmark_*.cpp` | Engine-theory bridge tests (numerical comparison) | `benchmark_engine_theory.cpp`, `benchmark_emergent_alpha.cpp`, `benchmark_black_hole_thermo.cpp` |
 | `campaign_*.cpp` | Long-running measurement campaigns | `campaign_gluon_dynamics.cpp`, `campaign_wigner.cpp`, `campaign_lorentz_measure.cpp` |
-| `support/` | Shared fixtures and telemetry impl (post-Phase 7, commits 2db67ca…87158ae) — see "Shared infrastructure" below |
+| `support/` | Shared fixtures and telemetry impl (commits 2db67ca…87158ae) — see "Shared infrastructure" below |
 
-### Engine-flawless audit additions (2026-06-01)
+### Lifecycle / callstack tests
 
-The engine-flawless lifecycle/callstack audit added three focused tests
-(branch `flawless-engine-2026-06-01`):
+Three focused lifecycle/callstack tests:
 
 | Test | Concern | Labels |
 |---|---|---|
@@ -71,7 +69,7 @@ engine/build/Release/test_audit_regression.exe
 # Subset by name pattern
 ctest --test-dir engine/build -R "lorentz" --output-on-failure -C Release
 
-# Subset by label (Phase 7 — live)
+# Subset by label
 ctest --test-dir engine/build -L unit    -j 24 --output-on-failure -C Release
 ctest --test-dir engine/build -L physics -j 24 --output-on-failure -C Release
 ctest --test-dir engine/build -L golden  -j 24 --output-on-failure -C Release
@@ -79,15 +77,15 @@ ctest --test-dir engine/build -L slow    -j 24 --output-on-failure -C Release
 ctest --test-dir engine/build -L gpu     -j 24 --output-on-failure -C Release  # CUDA: route via WSL2
 ```
 
-## CTest labels (Phase 7, live)
+## CTest labels
 
-Every test now carries at least one label:
+Every test carries at least one label:
 
 | Label | Coverage | Wall time |
 |---|---|---|
 | `unit` | Pure unit tests; no GPU; generally <1s each | ~30s total |
 | `physics` | Energy conservation, Coulomb, locked particle, absorbing BC | ~2 min |
-| `golden` | Bit-exact regression vs frozen byte-hash (`test_render_bridge_golden`, hash `0xb604d81a3d79366e` @ L=17, re-baselined 2026-06-17) | <10s |
+| `golden` | Bit-exact regression vs frozen byte-hash (`test_render_bridge_golden`, hash `0xb604d81a3d79366e` @ L=17) | <10s |
 | `slow` | Multi-tick scenarios, perf-sensitive | 1-5 min each |
 | `gpu` | Requires CUDA; route via WSL2 | varies |
 
@@ -97,13 +95,13 @@ stencil split, etc.). See ADR-0012.
 
 ## Shared infrastructure
 
-Phase 7 split (commits 2db67ca…87158ae): the test telemetry header is
-now declarations-only; the implementation lives in a static support
+The test telemetry header is declarations-only (split in commits
+2db67ca…87158ae); the implementation lives in a static support
 library auto-linked to every test.
 
 | File | LOC | Role |
 |---|---:|---|
-| `engine/include/ftd/test_telemetry.h` | 154 | Declarations only (was 412 LOC header-only) |
+| `engine/include/ftd/test_telemetry.h` | 154 | Declarations only |
 | `engine/tests/support/test_telemetry.cpp` | 312 | Implementation (compiled once, not per-TU) |
 | `engine/tests/support/bridge_fixtures.h` / `.cpp` | — | Shared bridge fixtures: `ToggleProfile { Logic6, LogicOnly, FullEM, FullSM, Custom }`, `make_bridge(L, profile, seed=42, force_cpu=true)`, `run_for(rb, n)`, `inject_particle_at_center(rb, state, v)`, `assert_energy_conserved(rb, n_ticks, eps_rel)` |
 
