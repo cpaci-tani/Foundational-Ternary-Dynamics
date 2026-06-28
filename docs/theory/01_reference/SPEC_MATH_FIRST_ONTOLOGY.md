@@ -1,7 +1,6 @@
 # SPEC - Math-First Ontology
 
 **Tag:** [REFERENCE] / [SYNTHESIS] / [OPEN PROGRAM]
-**Date:** 2026-05-18
 **LEDGER:** FTD-0153 [SYNTHESIS] - canonical ordering principle for math-first FTD ontology; introduces no new theorem and promotes no claim.
 **Companion docs:** `SPEC_ALPHA_READOUT_CONTRACT.md`, `SPEC_DOCTRINE_LEDGER.md`, `SPEC_FQCR.md`, `SPEC_ALGEBRAIC_SPINE.md`, `FOUND_STRUCTURAL_DECOUPLING.md`, `REF_REFERENCE_FRAME_VOCABULARY.md`
 

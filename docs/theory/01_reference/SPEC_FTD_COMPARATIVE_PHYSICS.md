@@ -2,9 +2,6 @@
 
 ## Comparative Physics of the Standard Model and FTD
 
-**Document Version:** 1.0
-**Framework Version:** FTD v5.26
-**Date:** February 19, 2026
 **Standard:** Side-by-side decomposition of standard physics formulas through PF = π/4
 
 **Depends on:**
