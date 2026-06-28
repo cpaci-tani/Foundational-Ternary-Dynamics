@@ -1,7 +1,6 @@
 # FOUND — The arrow of time as a square root: the ratio, `D^{−1/2}`, and the act-of-intent lens unified
 
 **Tag:** `[SYNTHESIS]` — assembles three existing canonical results under one reading; introduces no theorem, derives nothing new, and **promotes no tag**. Per the constitution §3.4, the identification of the irreducible diffusive sector with *physical* time remains FC-2's `[AXIOM]`-class declaration, "not a derivation."
-**Date:** 2026-06-25
 **LEDGER id:** FTD-0323
 **Reuse (not re-derived):**
 - `DERIV_HEAT_EQUATION_FROM_RATIO.md` (`[THEOREM]`) — the ratio `R(z)=Γ(z)/Γ(1−z)` at `z=1/4` forces the half-operator `D^{−1/2}`; `G*` is its eigenvalue; `D^{−1/2}` is irreversible.
@@ -35,8 +34,8 @@ The **product** branch `Γ(z)Γ(1−z) = π√2` is commutative → integer-orde
 
 The half-derivative satisfies `∂_t^{1/2} ∘ ∂_t^{1/2} = ∂_t`. It is, by definition, **a square root of the time-derivative operator.** Therefore the arrow's operator is not merely *associated with* a square root — it *is* one.
 
-This collapses the session's two lenses into one:
-- **"act of intent = `√` = an unforced `ℤ/2`-break"** (the lens applied across this session), and
+This collapses the two lenses into one:
+- **"act of intent = `√` = an unforced `ℤ/2`-break"** (the act-of-intent lens), and
 - **"the arrow = the ratio, not the product"** (the Euler-reflection reading),
 
 are the same because **the ratio's operator is the square root of `∂_t`**. And the lens's claim about *why* a `√` is irreversible — you choose a branch you cannot un-choose — is exactly the operator fact: `∂_t^{1/2}` is a Volterra integral over the past, non-invertible, entropy-generating. **The irreversibility of the arrow is the non-invertibility of the time square-root.** The product (an integer-order, locally invertible operator) takes no root and carries no arrow; the ratio takes the root and is the arrow.

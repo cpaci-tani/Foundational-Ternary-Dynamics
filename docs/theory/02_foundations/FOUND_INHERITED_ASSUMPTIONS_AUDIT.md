@@ -1,7 +1,7 @@
 # FOUND — The Inherited-Assumptions Audit
 
 **Tag:** `[SYNTHESIS]` (a method and a status map; restates existing FTD claims at their canonical tags, and introduces **no new theorem and no promotion**)
-**Date:** 2026-06-26 · **LEDGER:** FTD-0329 · **Companion to:** the constitution (`SPEC_FTD_FRAMEWORK_V1.md`, FTD-0254)
+**LEDGER:** FTD-0329 · **Companion to:** the constitution (`SPEC_FTD_FRAMEWORK_V1.md`, FTD-0254)
 
 > **Purpose.** The mathematical formalism of early-twentieth-century physics was assembled rapidly and pragmatically, using the analytic tools available between roughly 1900 and 1935, and an interpretive layer (operationalism, the Copenhagen account) was adopted alongside it because the formalism predicted well, independently of any settled account of *why*. A number of structures conventionally treated as foundational are therefore better understood as representational choices fixed by the mathematics of that period than as consequences of a deeper principle — a point developed in the modern reconstruction programme (Hardy 2001; Chiribella–D'Ariano–Perinotti 2011; Masanes–Müller 2011). This document applies that lens systematically within FTD. It audits the load-bearing inherited objects of physics, classifies each, and records — at canonical tags — where FTD's discrete logical core re-derives the object, where it declines the object by design, and where it reaches a boundary. The audit is as much a map of what FTD does **not** reach as of what it does.
 
