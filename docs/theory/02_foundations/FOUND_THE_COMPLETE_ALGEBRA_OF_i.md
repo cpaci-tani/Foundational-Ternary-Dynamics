@@ -2,8 +2,6 @@
 
 ## A Unified Mathematical Exploration of the Imaginary Unit
 
-**Date:** February 3, 2026
-**Framework:** Foundational Ternary Dynamics v5.17
 **Status:** Foundational Extension - Comprehensive Treatment
 
 ---
@@ -743,7 +741,7 @@ This document contributes three genuinely new results:
 
 ## 7.3 Connections to FTD Framework
 
-> **Historical Note:** This document subsumes the earlier `FOUND_THE_EMERGENCE_OF_i.md` (January 2026), which introduced the "second self-reference" argument for i. All content from that document — the rotation requirement, 2D number system uniqueness, Born rule as C→R projection — is incorporated here with rigorous proofs added (Parts I, III, V). The earlier document has been archived.
+> **Note:** This document subsumes the earlier `FOUND_THE_EMERGENCE_OF_i.md`, which introduced the "second self-reference" argument for i. All content from that document — the rotation requirement, 2D number system uniqueness, Born rule as C→R projection — is incorporated here with rigorous proofs added (Parts I, III, V). The earlier document has been archived.
 
 This document extends and deepens:
 - **FOUND_THE_FIRST_DISTINCTION.md**: Clarifies Level 0.5
@@ -773,7 +771,5 @@ This document extends and deepens:
 
 ---
 
-*Document created: February 3, 2026*
-*Epistemic corrections (v5.29): February 2026 — i-T1 R² assumption flagged, lemniscate/elliptic curve distinction clarified*
-*Framework: Foundational Ternary Dynamics v5.17*
+*Epistemic note: i-T1 R² assumption flagged; lemniscate/elliptic curve distinction clarified.*
 *Topic: Comprehensive mathematical exploration of the imaginary unit*

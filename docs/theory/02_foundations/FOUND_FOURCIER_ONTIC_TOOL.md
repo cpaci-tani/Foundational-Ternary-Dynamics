@@ -2,8 +2,6 @@
 
 ## The Generalized Distinction-Drawing Instrument
 
-**Date:** February 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.17+
 **Status:** Theoretical synthesis with computational verification
 **Dependencies:** FOUND_THE_FIRST_DISTINCTION.md, FOUND_THE_EXISTENCE_FILTER.md, EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md
 
@@ -398,6 +396,4 @@ The Fourcier curve doesn't *describe* reality — it is the mechanism by which G
 
 ---
 
-*Document created: February 17, 2026*
-*Framework: Foundational Ternary Dynamics v5.17+*
-*Status: Theoretical synthesis — connects the Fourcier curve to the full ontological hierarchy*
+*Theoretical synthesis — connects the Fourcier curve to the full ontological hierarchy.*

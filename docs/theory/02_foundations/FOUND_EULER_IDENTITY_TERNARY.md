@@ -2,8 +2,6 @@
 
 ## Annihilation Algebra and the Emergence of i from G*
 
-**Date:** February 21, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Status:** Foundational -- Engine-Formalized (Layer 2b of ontic chain)
 
 ---
@@ -344,7 +342,4 @@ This document is a **focused companion** to FOUND_THE_COMPLETE_ALGEBRA_OF_i.md, 
 
 ---
 
-*Document created: February 21, 2026*
-*Revised: April 2026 -- removed ontological language, standardized G* = Gamma(1/4)/Gamma(3/4)*
-*Framework: Foundational Ternary Dynamics v5.29*
-*Engine status: 80/80 audit checks passing, 55/55 tests passing*
+*G* is standardized as G* = Gamma(1/4)/Gamma(3/4).*
