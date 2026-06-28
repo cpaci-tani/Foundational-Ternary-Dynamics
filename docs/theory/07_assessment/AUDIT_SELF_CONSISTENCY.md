@@ -1,12 +1,10 @@
 # Self-Consistency of the Framework Integers {3, 4, 7, 13}
 
-**Date:** February 11, 2026
-**Framework:** Foundational Ternary Dynamics v5.23
 **Status:** Self-consistency demonstrated; uniqueness NOT proven
 **Prior art:** Argument originally presented in EXPLR_NUMBER_THEORY.md Part II
-**Consolidates:** also absorbs `DERIV_INTEGER_UNIQUENESS.md` (2026-05-21)
+**Consolidates:** also absorbs `DERIV_INTEGER_UNIQUENESS.md`
 
-> **Update note (uniqueness).** The original (February 11, 2026) version of this document showed self-consistency but explicitly left uniqueness open. A later exhaustive-enumeration result (March 17, 2026, `DERIV_INTEGER_UNIQUENESS.md`) closes part of that open question. Its content is consolidated here as the new section **"Exhaustive Uniqueness Verification {3, 4, 7, 13}"** below, after "What Is NOT Proven: Uniqueness". That section establishes a `[THEOREM]`-grade uniqueness result *conditional* on N_c = 3 and N_gen = N_c; the residual `[SELECTION]` items (N_gen = N_c, the sequence choices, the additive closure) remain open exactly as described in this document's original body.
+> **Update note (uniqueness).** This document shows self-consistency but explicitly leaves uniqueness open. An exhaustive-enumeration result (`DERIV_INTEGER_UNIQUENESS.md`) closes part of that open question. Its content is consolidated here as the section **"Exhaustive Uniqueness Verification {3, 4, 7, 13}"** below, after "What Is NOT Proven: Uniqueness". That section establishes a `[THEOREM]`-grade uniqueness result *conditional* on N_c = 3 and N_gen = N_c; the residual `[SELECTION]` items (N_gen = N_c, the sequence choices, the additive closure) remain open exactly as described in this document's body.
 
 ---
 
@@ -140,7 +138,7 @@ This has not been done.
 
 ## Exhaustive Uniqueness Verification {3, 4, 7, 13}
 
-> **Consolidated from `DERIV_INTEGER_UNIQUENESS.md` (March 17, 2026).** This section reports the exhaustive-enumeration result that closes part of the uniqueness question left open above. It updates this document's self-consistency analysis with exhaustive search results.
+> **Consolidated from `DERIV_INTEGER_UNIQUENESS.md`.** This section reports the exhaustive-enumeration result that closes part of the uniqueness question left open above. It updates this document's self-consistency analysis with exhaustive search results.
 >
 > **Status:** [THEOREM] for uniqueness given N_c = 3 and N_gen = N_c; [SELECTION] for N_gen = N_c.
 > **Proof script:** `scripts/proofs/proof_integer_uniqueness.py`
@@ -234,6 +232,4 @@ The honest summary: the integers were identified from physics, but they satisfy 
 
 ---
 
-*Created: February 11, 2026*
-*Framework: Foundational Ternary Dynamics v5.23*
 *Status: Self-consistency demonstrated; uniqueness open*

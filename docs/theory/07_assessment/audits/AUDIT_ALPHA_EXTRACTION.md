@@ -2,9 +2,8 @@
 
 **Status:** [AUDIT] — line-by-line review of every code path feeding the Phase F
 `α_largeL ≈ 3.6 × α_ref` continuum extrapolation.
-**Trigger:** user pushed back on the headline number as "a bold claim" and
-asked for a full math/logic audit before publication.
-**Date:** 2026-04-19
+**Trigger:** the headline number "a bold claim" warranting a full math/logic
+audit before publication.
 **Scope:** `measure_alpha_eff()` and every function it calls, plus the two
 pipeline ports (`measure_v_of_r.h`, `benchmark_emergent_alpha.cpp`) and the
 continuum-extrapolation script.
@@ -13,7 +12,7 @@ The headline "3.6× α_ref" is arithmetically correct for what the engine
 measures, but the comparison carries a factor-of-2 convention artifact
 plus an unresolved ~1.85× residual.
 
-**Verdict (final, Phase G 2026-04-19):** the residual is **not a
+**Verdict (final, Phase G):** the residual is **not a
 residual**. It is the zero-parameter value of the periodic lattice
 Poisson Green's function `2 · r · G_L(r)` at the chosen r/L slice.
 See [DERIV_EMERGENT_COULOMB_GEOMETRIC.md](../../10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md):

@@ -1,6 +1,5 @@
 # Post-Experiment Report: Detector Information Loss in the Double-Slit Field
 
-**Date:** 2026-03-27
 **Epistemic Status:** [EXPLORATION]
 **Suite Location:** `scripts/experiments/detector_information_loss/`
 **Design Spec:** `docs/superpowers/specs/2026-03-27-detector-information-loss-design.md`

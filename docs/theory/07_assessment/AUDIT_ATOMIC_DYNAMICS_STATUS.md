@@ -1,7 +1,6 @@
 # Audit — Atomic Dynamics in FTD: Honest Derivation-Status Map
 
 **Tag:** `[SYNTHESIS]` (consolidation; promotes nothing)
-**Date:** 2026-06-11
 **Scope:** every ingredient required to compute an atom's quantum dynamics, and FTD's actual derivation status for each.
 **Why this exists:** an external "derive the helium spectrum" challenge prompted a full audit. This document is the canonical, reviewer-facing answer to *"how much of atomic physics does FTD derive from the substrate?"* — so the question can never again be answered by an over-tagged benchmark comment.
 

@@ -1,7 +1,6 @@
 # AUDIT — FTD-0110 nonlinear-bridge "resolution" (2026-05-27 §6 theorems)
 
 **Tag:** [P4 ADVERSARIAL AUDIT] — challenges a recent tag promotion.
-**Date:** 2026-05-27
 **Subject:** the 2026-05-27 retag of FTD-0110 to `[DERIVED]` at nonlinear pipeline level via the "Orbit-Equipartition Theorem" and "Timescale Separation Theorem" introduced in [`DERIV_FTD0110_NONLINEAR_BRIDGE.md`](../../03_derivations/foundational_mechanics/DERIV_FTD0110_NONLINEAR_BRIDGE.md) §6.
 **Recommended outcome:** **revert the 2026-05-27 LEDGER update**; restore the 2026-05-04 honest position (bridge `[OPEN]` after Option A falsification, `[SMC]` for the cluster-size formula, `[DERIVED]` retained for the linear-level theorem and Bridge-I global O_h-equivariance only). Queue Mechanism α perturbation calculation as the actual closure work, per the 2026-05-23 scoping memo (FTD-0203).
 

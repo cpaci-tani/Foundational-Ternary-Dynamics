@@ -1,7 +1,6 @@
 # AUDIT — Completed-Infinity Reframe (Portfolio Triage)
 
 **Tag:** [AUDIT] — foundational commitment change with portfolio-wide consequences.
-**Date:** 2026-04-19
 **Trigger:** shift from "completed-infinity" ontology (the lattice is
 an infinite totality ℤ³ as a single completed object) to
 "undefined-boundary" ontology (at every specified position, adjacent
