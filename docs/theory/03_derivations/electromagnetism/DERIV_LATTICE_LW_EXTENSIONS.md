@@ -2,8 +2,7 @@
 
 **Document type:** Derivation (Q5/Q6/Q7) + Audit (Q8)
 **Status:** [DERIVED] for Q6, Q7, Q8 (closed-form or audit); [PARTIAL DERIVED] for Q5 (sinusoidal case closed; general accelerating source as frequency-domain integral with no closed form)
-**Created:** 2026-05-01
-**Provenance:** Closure of the remaining open follow-ups Q5-Q8 from FTD-0113/FTD-0115 (Maxwell-exploit thread)
+**Scope:** Closure of follow-ups Q5–Q8 of the Maxwell-exploit program (parents: FTD-0113/FTD-0115)
 **Related:**
 - `DERIV_RETARDED_GREEN_LATTICE.md` (FTD-0113, retarded Phase G base)
 - `DERIV_LATTICE_LIENARD_WIECHERT.md` (FTD-0115, uniform-velocity LW + Cherenkov pole)
