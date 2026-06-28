@@ -2,7 +2,6 @@
 
 **Tag:** [SCOPING MEMO] -- not a derivation, not a new theorem, not a tag promotion. Classifies the FTD-0110 closure work into session-scoped desk tracks and multi-week engine campaigns.
 **LEDGER row:** FTD-0203.
-**Date:** 2026-05-23 (Path IV Session B1 of `.claude/plans/let-s-proceed-on-the-eager-rocket.md`).
 **Owner-question this answers:** *"For each remaining FTD-0110 sub-investigation, is it desk-analytical work I can land in a session, or engine-resourced campaign work that needs WSL2/CUDA time?"*
 **Sources read:**
 - [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) -- the linear-level closure (`k = 1/N_base = 1/4` from O_h character-table multiplicity, [THEOREM]).
@@ -49,7 +48,7 @@ These can be drafted and (provisionally) executed in a single focused session of
 
 ### §2.2 -- Engine-resourced (multi-week campaigns)
 
-The four D3a/b/c/d engine experiments listed in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §6.5 and re-stated in `EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` §3 are all engine-resourced parameter sweeps. Each requires a full pre-registration before execution per the project's pre-registration discipline (CLAUDE.md "NEW INFRASTRUCTURE 2026-04-27").
+The four D3a/b/c/d engine experiments listed in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §6.5 and re-stated in `EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` §3 are all engine-resourced parameter sweeps. Each requires a full pre-registration before execution per the project's pre-registration discipline.
 
 | ID | Work item | Track | Effort | Prerequisites | Discrimination value |
 |---|---|---|---|---|---|

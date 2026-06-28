@@ -1,7 +1,6 @@
 # ANALYSIS: Alpha Estimator Validation v2
 
 **FTD ID:** FTD-0286 (v2)
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT ANALYSIS -- HALF ENERGY GATE CONFIRMED MATCHED]
 **Pre-registration:** `preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v2.md`
 **Artifact:** `engine/tests/campaign_alpha_estimator_validation_v2.cpp`
@@ -76,7 +75,7 @@ production-path issue, not an observable-definition failure.
 
 **Theorem/code drift note:** `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` §2 still
 derives against `Σ|J|²`. The engine accumulator changed in
-`diagnostics_compute.cpp` (2026-04-27). Future Phase-G citations must state
+`diagnostics_compute.cpp`. Future Phase-G citations must state
 which convention is paired.
 
 This analysis does not promote, demote, or reclassify `x_+ = 1/alpha`.

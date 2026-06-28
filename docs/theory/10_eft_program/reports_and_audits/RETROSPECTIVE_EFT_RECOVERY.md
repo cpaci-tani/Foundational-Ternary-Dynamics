@@ -1,15 +1,14 @@
-# RETROSPECTIVE — The EFT Recovery Program (2026-04 .. 2026-05)
+# RETROSPECTIVE — The EFT Recovery Program
 
 **Tag:** [SYNTHESIS]
-**Date:** 2026-05-22
-**Status:** Narrative roll-up of a largely-completed program. Records what happened; introduces no new result, theorem, or claim, and changes no tag.
-**Scope:** the `docs/theory/10_eft_program/` cluster — the multi-month attempt (April–May 2026) to recover a defensible effective field theory from the FTD lattice engine.
+**Status:** Narrative roll-up of the program. Records what happened; introduces no new result, theorem, or claim, and changes no tag.
+**Scope:** the `docs/theory/10_eft_program/` cluster — the multi-month attempt to recover a defensible effective field theory from the FTD lattice engine.
 
 ---
 
 ## 1 · Purpose & scope
 
-The EFT Recovery Program generated ~89 top-level documents. Most are process scaffolding — protocols, pre-registrations, analyses, audits, and measurement triplets around campaigns that have since run and recorded their result. In the 2026-05-22 cluster consolidation, ~48 of those scaffolding documents were archived (`git mv` into `archive/closed_negative/` or `archive/campaign_complete/`), with every epistemic tag, closed-negative finding, and `FTD-NNNN` cross-reference preserved in the moved file and in `LEDGER.md`.
+The EFT Recovery Program generated ~89 top-level documents. Most are process scaffolding — protocols, pre-registrations, analyses, audits, and measurement triplets around campaigns that have since run and recorded their result. In the cluster consolidation, ~48 of those scaffolding documents were archived (`git mv` into `archive/closed_negative/` or `archive/campaign_complete/`), with every epistemic tag, closed-negative finding, and `FTD-NNNN` cross-reference preserved in the moved file and in `LEDGER.md`.
 
 This document exists so the *narrative thread* survives in one readable place once the scaffolding is no longer top-level. It is a `[SYNTHESIS]`: it integrates existing claims at their canonical tags. Where it states a result, that result keeps the tag its canonical source assigns it; nothing here is promoted, re-derived, or re-graded.
 
@@ -28,11 +27,11 @@ The canonical survivors this retrospective points back to — read these for the
 
 ## 2 · The original program (Phase 0–F)
 
-The program was pre-registered. `SPEC_EFT_RECOVERY_PROGRAM.md` (tag `[REFERENCE]`, 2026-04-19) committed to the repository — *before any measurement ran* — a five-pillar checklist for FTD to qualify as a Wilsonian effective field theory: a measured β-function, Ward-identity closure for composite operators, Lorentz covariance after rescaling by `c = 1/√3`, an operator expansion classifying lattice operators as relevant/marginal/irrelevant, and continuum matching with controlled `O(1/L^p)` error. The spec's §11 explicitly forbids editing a pre-registered expectation to match a measurement; §10 lists known limitations up-front (no lattice fermions, cubic-lattice rotation breaking at the `a`-scale, three blocking stages as the minimum for β extraction).
+The program was pre-registered. `SPEC_EFT_RECOVERY_PROGRAM.md` (tag `[REFERENCE]`) committed to the repository — *before any measurement ran* — a five-pillar checklist for FTD to qualify as a Wilsonian effective field theory: a measured β-function, Ward-identity closure for composite operators, Lorentz covariance after rescaling by `c = 1/√3`, an operator expansion classifying lattice operators as relevant/marginal/irrelevant, and continuum matching with controlled `O(1/L^p)` error. The spec's §11 explicitly forbids editing a pre-registered expectation to match a measurement; §10 lists known limitations up-front (no lattice fermions, cubic-lattice rotation breaking at the `a`-scale, three blocking stages as the minimum for β extraction).
 
 The pre-registered falsifiable target (§7.3) was sharp: the continuum-extrapolated `α_eff(∞)` should land within **1% of CODATA**.
 
-**Outcome: NULL on the QED-α target.** The post-audit headline recorded in the spec itself is an `α_∞` plateau at **1.8–3.6× α_ref** across `L ∈ {64, 128, 256, 384}`, the range spanning the engine-internal versus classical energy-accumulator convention. The pre-registered 1%-of-CODATA target was not met under any convention. Per the program's own discipline, the spec was not edited to match — the miss was reported honestly and reframed downstream (§3 below). An interim Day-2 "1.23×" claim was retracted as under-equilibrated (ticks=100). Several pillars produced real positive content even as the α target failed — notably Lorentz anisotropy (§8).
+**Outcome: NULL on the QED-α target.** The post-audit headline recorded in the spec itself is an `α_∞` plateau at **1.8–3.6× α_ref** across `L ∈ {64, 128, 256, 384}`, the range spanning the engine-internal versus classical energy-accumulator convention. The pre-registered 1%-of-CODATA target was not met under any convention. Per the program's own discipline, the spec was not edited to match — the miss was reported honestly and reframed downstream (§3 below). An interim "1.23×" claim was retracted as under-equilibrated (ticks=100). Several pillars produced real positive content even as the α target failed — notably Lorentz anisotropy (§8).
 
 ---
 
@@ -49,16 +48,16 @@ The first instinct — extract physical `α` by *projecting* the FTD flux/state 
 
 Two audits closed the *interpretation* of the Phase-F headline:
 
-- `AUDIT_ALPHA_EXTRACTION.md` (`[AUDIT]`, LOAD-BEARING) audited the "3.6× α_ref plateau" line by line, confirmed the three V(r) codepaths are bit-consistent, identified a factor-2 energy-convention artifact, and retracted the Day-2 "1.23×" claim.
+- `AUDIT_ALPHA_EXTRACTION.md` (`[AUDIT]`, LOAD-BEARING) audited the "3.6× α_ref plateau" line by line, confirmed the three V(r) codepaths are bit-consistent, identified a factor-2 energy-convention artifact, and retracted the interim "1.23×" claim.
 - `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` (`[THEOREM]`, Phase-G resolution) supplied the closed form: the engine's emergent-forces `V(r)` is `V = −2·G_L(r)`, `α_r = 2·r·G_L(r)`, where `G_L` is the periodic lattice Poisson Green's function — a zero-free-parameter quantity verified against Phase-F data at `R² = 1.0000`, 0.07% median residual at L=384. The "plateau" was a category error: it is pure lattice geometry with **no fine-structure content**. The same doc records Phase H — inserting an explicit Gauss coupling `g_c` scales the measurement exactly as `g_c²·2rG_L(r)`, confirmed to 0.0000%.
 
 The QED-α projection route was therefore not abandoned out of fatigue; it was closed by a chain of pre-registered falsifications and a theorem showing the headline observable carries no `α`.
 
 ---
 
-## 4 · The 2026-04-22 methodological pivot
+## 4 · The methodological pivot
 
-`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md` (tag `[CURRENT-ACTION CLOSED NEGATIVE for QED alpha]`, 2026-04-22) is the program's keystone honesty document. It states plainly that the FTD→QED-α bridge is closed negative under the current projected action: the matching chain (FTD dynamics → unique continuum fields → unique matter content → unique operator/regulator → unique renormalized observable → physical α) has several steps that are *selected*, not *forced*. As long as matter content, kinetic operator, regulator, and α-observable are chosen rather than derived, any number that lands near CODATA is calibration or fitting — explicitly disallowed by the project's anti-near-miss rule.
+`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md` (tag `[CURRENT-ACTION CLOSED NEGATIVE for QED alpha]`) is the program's keystone honesty document. It states plainly that the FTD→QED-α bridge is closed negative under the current projected action: the matching chain (FTD dynamics → unique continuum fields → unique matter content → unique operator/regulator → unique renormalized observable → physical α) has several steps that are *selected*, not *forced*. As long as matter content, kinetic operator, regulator, and α-observable are chosen rather than derived, any number that lands near CODATA is calibration or fitting — explicitly disallowed by the project's anti-near-miss rule.
 
 The pivot redefined the target. Instead of "derive QED α," the program would **measure FTD's own native source/flux response coefficients in the lattice's own units**, and demote the QED comparison to a diagnostic. The bridge endpoint for the central conjecture was stated honestly: `x₊` remains arithmetic-only under the current projected action (route R4). This is the document the rest of the cluster is downstream of.
 
@@ -70,7 +69,7 @@ The post-pivot program is governed by two specs. `SPEC_FTD_EFT_BRIDGE_CONTRACT.m
 
 The constructive result of this program is real but modest, and the native-family docs are scrupulous in saying so. The bare linear FTD source/flux sector is a **free Gaussian theory with canonical normalization**: the native response tuple `(C_L, K_T, Z_j, g_sJ) = (1,1,1,1)`, derived for the linear G18 generator by constrained minimisation of flux energy under the Gauss constraint, and *preserved* (unit coefficients) under native `b=2` blocking. Per-quantity tags are mixed and honest: `C_L`/`c_FTD` `[THEOREM]`, `K_T`/`g_sJ` `[DEFINITION]`, `Z_j`/`W_18` `[MEASURED]`. A multiscale measurement at `b ∈ {1,2,4,8}` finds all three β-function estimates consistent with zero within 1σ — a stable Gaussian IR attractor (`[MEASURED]`, FTD-0070). A Langevin-thermostatted tick cycle has a unique stationary, equipartitioned ensemble (`[THEOREM]`, FTD-0069; standard Ornstein–Uhlenbeck theory).
 
-This content is, in plain terms, "the bare linear lattice is a free theory with canonical normalization" — true, useful as a boundary marker, but carrying **no fine-structure content**. The native-family docs state exactly this. In the 2026-05-22 consolidation the eleven thin `DERIV_FTD_NATIVE_*` docs were merged into three consolidated docs (`..._RESPONSE_AND_BLOCKING`, `..._NONLINEAR_FLOW`, `..._HISTORY_ACTION`), every tag carried verbatim; the closure doc `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` (`g_sJ = √α_QED` `[CLOSED NEGATIVE]`; native `g_sJ = 1` `[DEFINITION]`) was archived with the other closed routes.
+This content is, in plain terms, "the bare linear lattice is a free theory with canonical normalization" — true, useful as a boundary marker, but carrying **no fine-structure content**. The native-family docs state exactly this. In the consolidation the eleven thin `DERIV_FTD_NATIVE_*` docs were merged into three consolidated docs (`..._RESPONSE_AND_BLOCKING`, `..._NONLINEAR_FLOW`, `..._HISTORY_ACTION`), every tag carried verbatim; the closure doc `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` (`g_sJ = √α_QED` `[CLOSED NEGATIVE]`; native `g_sJ = 1` `[DEFINITION]`) was archived with the other closed routes.
 
 The interesting physics, if it exists, must therefore live in the **nonlinear** sector. The blocked nonlinear effective action `S_eff` is `[OPEN]` — this is the cluster's central live deliverable (see §10).
 
@@ -80,9 +79,9 @@ The interesting physics, if it exists, must therefore live in the **nonlinear** 
 
 For the engine's geometric Coulomb to reproduce QED Coulomb, the Gauss coupling needs the specific value `g_c = √(2π·α_ref) ≈ 0.2141` (engine convention). `OPEN_GC_FROM_FIRST_PRINCIPLES.md` (`[OPEN]`, LOAD-BEARING) scopes whether that value is derivable, and addresses all three candidate mechanisms:
 
-- **Mechanism A — topological / Dirac quantisation.** RULED OUT (2026-04-19, `test_wilson_topology.cpp`). FTD's flux `J ∈ ℝ³` is real-valued and non-compact; measured plaquette circulations are numerically zero with a continuous distribution. There is no discrete structure to quantise `g_c`. Making A viable would require compactifying `J` or adding magnetic-monopole sources — neither is in the theory.
+- **Mechanism A — topological / Dirac quantisation.** RULED OUT (`test_wilson_topology.cpp`). FTD's flux `J ∈ ℝ³` is real-valued and non-compact; measured plaquette circulations are numerically zero with a continuous distribution. There is no discrete structure to quantise `g_c`. Making A viable would require compactifying `J` or adding magnetic-monopole sources — neither is in the theory.
 - **Mechanism B — lattice-to-continuum matching.** `[OPEN]`. A standard lattice-gauge matching would relate a bare `g_c` to a continuum renormalised coupling via a one-loop coefficient — but FTD's engine is classical, with no explicit β-function to match against. This requires promoting the engine to a quantum path integral with an explicit UV regulator. It is a separate program; it remains genuinely open. (The companion `archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md` records a closed attempt within this route.)
-- **Mechanism C — self-consistent / gap-equation fixed point.** `[CLOSED NEGATIVE]` (FTD-0093, closed 2026-04-27 at `L ∈ {24,32,48}` with a non-monotonic ratio rejecting the predicted `λ₊/λ₋ ≈ 45.31`). `DERIV_PARTITION_FUNCTION_L2.md` supplies the structural reason: on the 2×2×2 torus, under the Gauss constraint, the FTD action `S_E` depends only on the *count* of manifested voxels, not their placement — the Lagrangian is **ultralocal** in the state field. Two dipoles at different separations give identical `S_E`. Therefore no classical variational principle can fix `g_c`.
+- **Mechanism C — self-consistent / gap-equation fixed point.** `[CLOSED NEGATIVE]` (FTD-0093, closed at `L ∈ {24,32,48}` with a non-monotonic ratio rejecting the predicted `λ₊/λ₋ ≈ 45.31`). `DERIV_PARTITION_FUNCTION_L2.md` supplies the structural reason: on the 2×2×2 torus, under the Gauss constraint, the FTD action `S_E` depends only on the *count* of manifested voxels, not their placement — the Lagrangian is **ultralocal** in the state field. Two dipoles at different separations give identical `S_E`. Therefore no classical variational principle can fix `g_c`.
 
 Net: with A ruled out, C closed, and B open-but-not-classical, `g_c` remains `[OPEN]`. FTD's `α` is consequently an **algebraic prediction whose physical identification is `[SELECTION]`/`[STRONGLY MOTIVATED CONJECTURE]`**, not a dynamical derivation. The master quadratic's single live identification `x₊  1/α` (FTD-0013) lives in the motivic/algebraic structure — the Watson identity, CM curve periods, Moore-neighbourhood integers — not in the dynamical action. *(The historical paired identification `x₋  N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 
@@ -174,9 +173,9 @@ Every archived scaffolding doc, its archive subdirectory, and the one-line resul
 | `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` | `closed_negative/` | Mechanism-C BCC-spectrum falsifier protocol; Mechanism C closed negative (FTD-0093). |
 | `PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md` | `campaign_complete/` | FTD-0102 emergent-spectrum protocol; campaign ran. |
 | `ANALYSIS_EMERGENT_SPECTRUM.md` | `campaign_complete/` | FTD-0102 result — L=32 three-regime phase structure. |
-| `PROTOCOL_EMERGENT_SPECTRUM_G1.md` | `campaign_complete/` | FTD-0107 L=64 protocol; campaign completed 2026-04-27. |
+| `PROTOCOL_EMERGENT_SPECTRUM_G1.md` | `campaign_complete/` | FTD-0107 L=64 protocol; campaign completed. |
 | `ANALYSIS_EMERGENT_SPECTRUM_G1.md` | `campaign_complete/` | FTD-0107 L=64 result — deterministic cluster counts L-invariant. |
-| `PROTOCOL_EMERGENT_SPECTRUM_G2.md` | `campaign_complete/` | L=128 protocol; G2 campaign completed 2026-04-28. |
+| `PROTOCOL_EMERGENT_SPECTRUM_G2.md` | `campaign_complete/` | L=128 protocol; G2 campaign completed. |
 | `ANALYSIS_EMERGENT_SPECTRUM_G2.md` | `campaign_complete/` | L=128 result — L-invariance locked across `{32,64,128}`. |
 | `PROTOCOL_TOPOLOGICAL_OBSERVABLES.md` | `campaign_complete/` | FTD-0104 topology-atlas protocol; campaign ran. |
 | `ANALYSIS_TOPOLOGICAL_OBSERVABLES.md` | `campaign_complete/` | FTD-0104 result `[PARTIAL]` — four observables on unique outcome cells. |

@@ -1,21 +1,16 @@
 # Readout-Structure Independence — the MC-T4.3 boundary theorem
 
 > **STATUS: [THEOREM] — independence *relative to the admissible FTD-native construction set `𝔉`*
-> (explicitly NOT strong forbiddance, per F-i).** Final whole-proof adversarial review **PASSED**
-> (2026-05-31, two fresh independent reviewers): the FORCED-construction reviewer exhausted 11
-> candidate operators and could build none; the logic/scope reviewer found the argument sound and no
-> smuggled premise, flagging two wording over-reaches that are now corrected (the §3/§4 "only odd
-> source" lines are qualified "within `𝔉`"; §4.1's L-A strand is marked non-load-bearing). The
-> scoped independence verdict survives both. **Draft — pending LEDGER registration + commit (owner
-> trigger); FTD-id to confirm against the contended 0238–0243 range.** No spine tag moves:
+> (explicitly NOT strong forbiddance, per F-i).** Whole-proof adversarial review **PASSED**: the
+> FORCED-construction strand exhausted 11 candidate operators and could build none; the logic/scope
+> strand found the argument sound and no smuggled premise. Two wording over-reaches are corrected (the
+> §3/§4 "only odd source" lines are qualified "within `𝔉`"; §4.1's L-A strand is marked
+> non-load-bearing). The scoped independence verdict survives both. No spine tag moves:
 > `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`.
 
 **Tag:** [THEOREM] (scoped to `𝔉`; not strong forbiddance)
-**Date:** 2026-05-31
 **Closure attempt against:** `../preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md`
 (Leg 3c / FORCED-escape) and `../scopes_and_specs/SCOPE_DET_IDENTITY_ATTACK_v1.md` (Obligation A).
-**LEDGER row:** *to assign at commit — next genuinely-free id; grep the whole `docs/` tree first
-(0238–0243 contended by concurrent sessions).*
 **Depends on (all imported at their canonical tags, none re-derived):** FTD-0122
 (`V_complex ≅ Z[i]^2`), FTD-0234 (J-twisted det_ζ ratio = G\*), Watson bridge
 (`G*^2/(2π) = G_BCC(0)`), Legs 1–2 (machine-checked here), Leg 3b (reduction-collapse, CONFIRMED).
@@ -188,19 +183,19 @@ sixth-postulate-class selection, not a forced detdet_ζ identity. ∎(modulo fin
 ## §9 — Provenance of the argument
 
 Established across two pre-registered, GTCA-disciplined multi-agent prove+adversarial-verify
-rounds (2026-05-31): the first localized the obstruction to Obligation A; the second (force-via-D3 /
+rounds: the first localized the obstruction to Obligation A; the second (force-via-D3 /
 refute-to-INDEPENDENT / neutral analytic, each broken by a fresh skeptic) converged — all three
 settle-agents and all three skeptics returned NOT-FORCED, with every reviewer engaging the full
 question landing INDEPENDENT (one conservative agent's UNDERDETERMINED was itself reviewed as
 *under*-claiming). The two new lemmas (L-A Bernoulli rationality, L-B degree⟺multiplicity) and the
 group-theoretic legs were independently re-verified by hand and by the two committed proof scripts.
 
-**Final whole-proof review: PASSED** (2026-05-31, two fresh independent reviewers). The
-FORCED-construction reviewer exhausted 11 candidate operators (multiplicity-3 J-twist, weighted
+**Whole-proof review: PASSED.** The
+FORCED-construction strand exhausted 11 candidate operators (multiplicity-3 J-twist, weighted
 two-sector, Dirichlet-`L`, the literal BCC Laplacian, finite⊗infinite tensor, …) and built none;
 the root obstruction it surfaced — `G*` is intrinsically a determinant-channel (`ζ'(0)`) object
 whose trace-channel image `ζ(−1)` is a Bernoulli rational, and the `16 = |μ₄|²` multiplier has no
 spectral home (it enters as an external `[SELECTION]`) — reinforces the verdict. The logic/scope
-reviewer found the argument sound with no smuggled premise; its two flagged over-reaches are
+strand found the argument sound with no smuggled premise; its two flagged over-reaches are
 corrected above (§3/§4 qualified "within `𝔉`"; §4.1 L-A marked non-load-bearing). `[THEOREM]`
-(scoped to `𝔉`) earned. Pending LEDGER registration + commit (owner trigger).
+(scoped to `𝔉`) earned.

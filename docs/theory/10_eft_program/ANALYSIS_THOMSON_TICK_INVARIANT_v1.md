@@ -1,7 +1,6 @@
 # ANALYSIS: Source-Free Discrete Tick Energy Invariant v1
 
 **FTD ID:** FTD-0292
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- NUMERIC GATE INVALIDATED]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_INVARIANT_v1.md`
 **Lock commit:** `87f0cda2`

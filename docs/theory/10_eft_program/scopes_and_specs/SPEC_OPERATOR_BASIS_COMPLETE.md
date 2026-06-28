@@ -1,6 +1,5 @@
 # Complete Operator Basis under the Frozen Gate-1 Contract
 
-**Date:** 2026-04-24
 **Status:** [THEOREM] (enumeration under frozen dimensions); [SELECTION] on C/P/T conventions
 **Purpose:** Gate 3 closure of the bridge contract. Enumerate all $O_h$-invariant, $C$-invariant local operators in $(\rho, J, j, A)$ through engineering dimension $D \le 6$ under the frozen scaling of [FTD-0064](../07_assessment/core_ledgers/LEDGER.md).
 **Supersedes:** [SPEC_OPERATOR_BASIS.md](archive/campaign_complete/SPEC_OPERATOR_BASIS.md) (Phase-3 lattice-unit spec) in the continuum EFT sense.
@@ -166,4 +165,4 @@ This closes Gate 3 of the bridge contract at the symmetry-enumeration level. Ful
 
 ---
 
-*Filed 2026-04-24. Upgrades bridge-contract Gate 3 from [PARTIAL] to [CLOSED] at the enumeration level; quantitative flow determinations of the mixing matrix remain a Gate-4 / Phase-2 task.*
+*Upgrades bridge-contract Gate 3 from [PARTIAL] to [CLOSED] at the enumeration level; quantitative flow determinations of the mixing matrix remain a Gate-4 / Phase-2 task.*

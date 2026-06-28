@@ -1,8 +1,7 @@
 # REPORT — Frontier 4 Step 4a-ii: emergent spin-2 substrate mode — canonical measurement
 
 **Tag:** [MEASUREMENT REPORT] — records the canonical engine measurement registered by `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` (tag `preregister-graviton-substrate-mode-v2`, commit `bb354b6`). The Outcome A/B/Indeterminate verdict is applied here strictly against PREREG v2 §6/§7.
-**Date:** 2026-05-22
-**LEDGER:** FTD-0193 (renumbered 2026-05-22 from FTD-0190 to resolve a duplicate-id collision with the Q10 finite-neutral-lock FTD-0190; see the LEDGER row notes)
+**LEDGER:** FTD-0193 (renumbered from FTD-0190 to resolve a duplicate-id collision with the Q10 finite-neutral-lock FTD-0190; see the LEDGER row notes)
 **Pre-registration:** [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](../preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md)
 **Instrument:** `engine/tests/campaign_graviton_tt_correlator.cpp` (v2-locked in `bb354b6`; cuFFT performance revision committed alongside this report — see §2 and §7)
 **Raw data:** [`data/graviton_tt/`](data/graviton_tt/) — `tt_correlator_L32.csv`, `tt_correlator_L64.csv`, `meta_L64.json` (preserved from `engine/build_wsl/graviton_tt_results/`, which is gitignored)
@@ -118,7 +117,7 @@ Per PREREG v2 §6, this is a genuine boundary result serving **project-goal clau
 
 **Pre-registration:** PREREG v2, commit `bb354b6`, tag `preregister-graviton-substrate-mode-v2` — locked before any canonical measurement. Original locked instrument: CPU radix-2 FFT (`spectral.h`).
 
-**Canonical measurement** 2026-05-22 on the WSL2/CUDA build (`engine/build_wsl`), RTX 5090. Equilibration 200 ticks + measurement window 512 ticks; fixed broadband perturbation seed `0x4A21B7`, amplitude 0.02. L=32 + L=64 resolved; $L=128$ was subsequently resolved in **7 minutes 52 seconds** on 2026-05-26 using the fully GPU-native pipeline.
+**Canonical measurement** on the WSL2/CUDA build (`engine/build_wsl`), RTX 5090. Equilibration 200 ticks + measurement window 512 ticks; fixed broadband perturbation seed `0x4A21B7`, amplitude 0.02. L=32 + L=64 resolved; $L=128$ resolved in **7 minutes 52 seconds** using the fully GPU-native pipeline.
 
 **Instrument performance revision (cuFFT).** To attempt L=128, the per-tick 3-D FFTs were moved from CPU radix-2 (`spectral.h`) to double-precision cuFFT (Z2Z), via `engine/tests/graviton_fft_cuda.{h,cu}` and a small modification to the campaign + CMake. **Bit-faithful to printed precision against the locked instrument** at both L=32 and L=64 (§2).
 

@@ -1,8 +1,6 @@
 # FTD Dynamical SU(3) Hadrodynamics: Compact Gauge Fields and Confinement
 
 **Document Classification:** Theoretical Design & Protocol Specification  
-**Version:** 1.0  
-**Date:** May 27, 2026  
 **Status:** [THEOREM] + [SELECTION] (mixed — see Section 6)  
 **Campaign ID:** FTD-0223  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
