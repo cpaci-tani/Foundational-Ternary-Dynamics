@@ -1,6 +1,6 @@
 # FTD Web Engine Architecture
 
-**Status:** active architecture map, refreshed after the June 2026 cleanup pass.
+**Status:** active architecture map.
 **Scope:** `engine/web/` browser runtime, UI shell, bridges, scale controllers,
 rendering, docs, and tests. The C++ engine is documented in
 `engine/SPEC_ENGINE.md`.

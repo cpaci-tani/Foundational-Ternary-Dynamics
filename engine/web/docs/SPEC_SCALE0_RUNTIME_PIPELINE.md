@@ -7,11 +7,11 @@ scheduler, the diagnostics/telemetry path, the shared rAF coordinator, and the f
 **Companions:** [`SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](SPEC_SCALE0_SCENARIO_ARCHITECTURE.md)
 (what seeds the lattice), [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md)
 (what the loop ticks/reads). Perf history: [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md),
-[`AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md) (active-owner routing, 2026-06-13),
+[`AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md) (active-owner routing),
 [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md), [`PLAN_SCALE0_SPARSE_TICK.md`](PLAN_SCALE0_SPARSE_TICK.md).
 
 **Path convention:** JS paths relative to `engine/web/js/`; `scale0/` = `scales/scale0/`. Every claim
-carries a `file:line` (verified against 2026-06-05 source; re-derive before relying on line numbers).
+carries a `file:line`; re-derive against source before relying on line numbers.
 
 ---
 
@@ -99,13 +99,14 @@ toggle forces a repaint — then calls `viewportAdapter.render()`.
 - **Active-bridge selector** (`frame-sync.js`, `field-overlays.js`, panels): use
   `getActiveScale0Bridge` / `getActiveScale0Capability` / `getActiveLatticeSize` from
   `scale0/state/store.js` — not ad-hoc `(useFluxMock ? fluxMock : bridge)` ternaries. Sampling the
-  wrong owner shows stale/frozen data (the same bug class the flux-slice panel hit pre-2026-04-26).
+  wrong owner shows stale/frozen data (the same bug class the flux-slice panel once hit).
 - **Uploads** (`:18-41`): the particle frame always; confinement strings, the flux **volume**, and the
   flux **slice** (every enabled axis of yz/xz/xy, packed into one update) when their overlays are on.
 - **Clear** (`:43`): `latticeNeedsUpload = false` after a successful upload (one-shot).
 
-This stage is also where the 2026-06-04 large-L upload optimizations live (the flux-volume scan
-decimated to the drawn-point step; the adaptive flux-dot budget) — see the 06-04 audit §4.
+This stage is also where the large-L upload optimizations live (the flux-volume scan
+decimated to the drawn-point step; the adaptive flux-dot budget) — see
+[`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md) §4.
 
 ---
 
@@ -194,9 +195,9 @@ panels poll the *same* live hub/state at their own low Hz via the coordinator �
 
 The **engine tick is the only clock the simulation has.** Sim state advances *only* when
 `advanceSimulation` runs a tick (§3); nothing in the lattice moves between ticks. There is exactly
-**one** tick source — `bridge._tick`, surfaced through `getScale0Diagnostics().tick`. (The former
-`globalTick` render-frame counter was removed 2026-06-05; the render loop no longer carries a second
-clock, and the dual `t=… (g=…)` readout is gone.)
+**one** tick source — `bridge._tick`, surfaced through `getScale0Diagnostics().tick`. (There is no
+`globalTick` render-frame counter; the render loop carries no second
+clock, and there is no dual `t=… (g=…)` readout.)
 
 The **render loop is the observer's external time** — an uncapped `requestAnimationFrame`
 (`app.js:695-696`, scheduled unconditionally) that runs at the monitor's native refresh, independent
@@ -214,9 +215,9 @@ control is **Scale 0 only** — scales 1/2/4/5 keep the global toolbar slider.
 
 The simulation is **forward-only**: there is no reverse, rewind, or scrub-back timeline. The play bar
 (`ui/components/play-bar/`) exposes play/pause, single-step, reset, speed, and the forward "T N" tick
-readout — nothing that moves the clock backward. (A snapshot/scrub-back recorder — `MemoryRecorder` +
-`timeline/` + the `setScale0*Buffer`/`getScale0*Buffer` bridge hooks — was removed 2026-06-05:
-recording every tick to a memory buffer did not fit the perf budget at large L, and a forward-only
+readout — nothing that moves the clock backward. (There is no snapshot/scrub-back recorder —
+`MemoryRecorder` + `timeline/` + the `setScale0*Buffer`/`getScale0*Buffer` bridge hooks are absent:
+recording every tick to a memory buffer does not fit the perf budget at large L, and a forward-only
 substrate is the cleaner ontological match to "time is only recorded.")
 
 ---
@@ -256,4 +257,4 @@ The Scale-0 runtime is coordinated by one state object (`store.js:66-87`) and it
 | State | `scale0/state/store.js` |
 | Main loop dispatch | `app.js` (`animate` → per-scale controller) |
 
-*`file:line` references verified against 2026-06-05 source; re-derive before relying on line numbers.*
+*Re-derive all `file:line` references against source before relying on line numbers.*

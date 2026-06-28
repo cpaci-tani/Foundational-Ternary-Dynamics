@@ -1,6 +1,5 @@
 # FTD Engine Constructor Contract
 
-**Date:** 2026-04-26
 **Status:** [SPECIFICATION] / [AUDIT]
 **Scope:** Formal engine obligations implied by
 `docs/theory/02_foundations/FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md`.
