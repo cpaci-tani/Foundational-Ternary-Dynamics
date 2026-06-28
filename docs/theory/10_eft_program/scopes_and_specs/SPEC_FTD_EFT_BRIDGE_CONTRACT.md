@@ -1,6 +1,5 @@
 # FTD to EFT Bridge Contract
 
-**Date:** 2026-04-23
 **Status:** [SELECTION] bridge contract; native EFT first, QED matching second
 **Purpose:** Freeze the minimal contract that lets FTD become a Wilsonian EFT without using physical alpha or Standard Model targets as bridge inputs.
 
@@ -112,7 +111,7 @@ projection convention
 boundary/zero-mode convention
 ```
 
-Status: **[CLOSED] (2026-04-24, FTD-0064).** Frozen-scaling contract added as
+Status: **[CLOSED] (FTD-0064).** Frozen-scaling contract added as
 "Frozen scaling contract" section of `DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`.
 Dimensions `[ρ] = L⁻³`, `[J] = L⁻²`, `[j] = L⁻²T⁻¹`, `[A] = L⁻¹` fixed under
 `a_phys ≡ ℓ_P`. Z-factors, zero-mode conventions, and L→∞ / a→0 boundary
@@ -140,7 +139,7 @@ source insertion rules
 reflection/unitarity/stability statement, as appropriate
 ```
 
-Status: **[CLOSED] at ensemble-existence level (2026-04-24, FTD-0069).**
+Status: **[CLOSED] at ensemble-existence level (FTD-0069).**
 Langevin thermostat (FTD-0051) promoted to Gate-2 stationary ensemble in
 `DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`. OU update on `wave_vel` has a unique
 stationary distribution with `⟨|w|²⟩ = 3T` verified to 4% on GPU
@@ -171,7 +170,7 @@ engineering dimensions
 renormalization mixing classes
 ```
 
-Status: **[CLOSED] at symmetry-enumeration level (2026-04-24, FTD-0068).**
+Status: **[CLOSED] at symmetry-enumeration level (FTD-0068).**
 Complete `O_h × C × P` enumeration through `D ≤ 6` now in
 `SPEC_OPERATOR_BASIS_COMPLETE.md`: 1 relevant (`A²`), 0 at `D=3`, 4 marginal
 (`J²`, `F²`, `B²`, `j·A`) identified with running couplings
@@ -207,7 +206,7 @@ Z_j^FTD(L)
 g_sJ^FTD(L)
 ```
 
-Status: **[MEASURED] at b ∈ {1,2,4,8} (2026-04-24, FTD-0065 + FTD-0067 +
+Status: **[MEASURED] at b ∈ {1,2,4,8} (FTD-0065 + FTD-0067 +
 FTD-0070, Phase-2 closure).** `SPEC_FTD_NATIVE_BLOCKING_MAP.md` defines
 the finite-volume native blocking contract. The Gaussian b=2 tuple flow
 is closed by `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`:
@@ -216,7 +215,7 @@ is closed by `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`:
 (C_L, K_T, Z_j, g_sJ)(b=2) = (1, 1, 1, 1)
 ```
 
-**2026-04-24 extensions (P1.2 + P1.3):** (a) full Moore-26 transport routing
+**Extensions (P1.2 + P1.3):** (a) full Moore-26 transport routing
 (6 face + 12 edge + 8 corner routes) verified by NET-1..NET-14 in
 `test_native_engine_transport_flow` with Ward residual < 1e-12 per route;
 (b) first mixed-toggle multi-tick Ward measurement closed by
@@ -256,7 +255,7 @@ contact/seagull terms included
 renormalized current conserved
 ```
 
-Status: **[CLOSED] on native branch (2026-04-24, FTD-0066 + FTD-0067).** Per-toggle
+Status: **[CLOSED] on native branch (FTD-0066 + FTD-0067).** Per-toggle
 Ward identity verified to 1e-12 for every reaction toggle class (genesis,
 pair_production, weak_transmutation, annihilation-during-movement) via
 `test_native_engine_history_flow` (NEH-1..NEH-4) and
@@ -319,7 +318,7 @@ uncertainty budget
 comparison ledger
 ```
 
-Status: **[MEASURED] for native response tuple (2026-04-24, FTD-0070,
+Status: **[MEASURED] for native response tuple (FTD-0070,
 Phase-2 closure).** Native flux-energy density
 $\mathcal{E}(b) = (4.26 \pm 0.16) \times 10^{-2}$ at $b = 1$ with
 $|\beta_{\mathcal{E}}| \le 0.08$ per b-decade across $b \in \{1, 2, 4, 8\}$ at
@@ -424,7 +423,7 @@ passes its own gates.
 
 ## Immediate work queue
 
-### Phase 1 (P1.1–P1.6): CLOSED 2026-04-24
+### Phase 1 (P1.1–P1.6): CLOSED
 
 1. ~~Write the scaling section for `DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`.~~
    **DONE — FTD-0064, Gate 1 closed.**
@@ -444,7 +443,7 @@ passes its own gates.
 Additional Phase-1 deliverable: ~~full Moore-26 transport ledger.~~
 **DONE — FTD-0065, Gate 4 closed at b=2 transport level.**
 
-### Phase 2: CLOSED 2026-04-24
+### Phase 2: CLOSED
 
 1. ~~**β-function determination.** Measure `(C_L, K_T, Z_j, g_sJ)(b)` at b ∈
    {2, 4, 8} under the mixed-toggle non-linear dynamics.~~ **DONE —

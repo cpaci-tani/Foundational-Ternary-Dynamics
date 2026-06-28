@@ -1,7 +1,6 @@
 # ANALYSIS: Thomson Flux-Excess Discriminator v1
 
 **FTD ID:** FTD-0289
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- NATIVE EMERGENT EXCESS FLUX DEFLECTION]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_FLUX_EXCESS_v1.md`
 **Lock commit:** `acb4005a`

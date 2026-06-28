@@ -1,6 +1,5 @@
 # DERIV: Discrete Tick Energy Invariant
 
-**Date:** 2026-06-13
 **Status:** [THEOREM -- LINEAR TICK ENERGY, LOCAL CURRENT, AND ADDITIVE SOURCE WORK] / [MEASURED -- SUBVOXEL RECOIL ACCOUNTING] / [OPEN -- INTEGER TRANSPORT WORK]
 **Campaigns:** FTD-0292, FTD-0293, FTD-0294, FTD-0295, FTD-0296, FTD-0297
 **Engine anchors:** `phase_read` + `phase_write`

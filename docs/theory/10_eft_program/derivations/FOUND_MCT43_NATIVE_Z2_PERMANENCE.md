@@ -1,7 +1,6 @@
 # FOUND — No FTD-native ℤ/2 supplies δ: the MC-T4.3 boundary is robust against every native orientation symmetry (PERMANENT-EXTENDED)
 
 **Tag:** `[DERIVED]` (the field-extension enumeration, extending FTD-0244 `[THEOREM]`) + `[SYNTHESIS]` (the act-lens interpretation). Introduces no theorem of its own, **derives no α, promotes no tag.**
-**Date:** 2026-06-25
 **LEDGER id:** FTD-0326
 **Pre-registration:** `PREREG_MCT43_NATIVE_Z2_PERMANENCE_TEST_v1.md`, git tag `preregister-mct43-native-z2-permanence-test-v1`, SHA256 `9ece1ba2c0d95e6e11b66a976ce8907f09924f6a2bd86a660b32f5503dee46f9` (committed before this result).
 **Reuse (not re-derived):** FTD-0244 (`FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`); FTD-0242 (`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`); FTD-0322/0315/0317.

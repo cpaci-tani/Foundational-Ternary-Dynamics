@@ -1,11 +1,8 @@
 # SCOPE — Arc C2 spin-2 boundary theorem: structural-decoupling sibling for the substrate-gravity content
 
 **Tag:** `[SCOPING MEMO]` — not a pre-registration, not a closure, not a tag promotion. Identifies the theorem-statement structure, axiom dependencies, proof-structure preview, falsifier-criteria preview, and connection to existing work for the Arc C2 boundary theorem of Wilsonian-reframe plan v2. Mirrors the form of `SCOPE_NEWTON_POSTULATES_RECONCILIATION.md` (Arc B P0) and the prior-art template of `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md` (FTD-0186 Stage 1).
-**Date:** 2026-05-24
-**LEDGER row reservation:** to be confirmed against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; provisional placeholder pending audit.
-**Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc C2 P0 deliverable.
 **Companion docs:**
-- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE per Outcome B]` 2026-05-22 — the decisive empirical evidence
+- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE per Outcome B]` — the decisive empirical evidence
 - [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](../preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) — the pre-registration FTD-0193 closed against
 - [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md`](../preregistrations/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md) — FTD-0186 Stage 1 v2 (template for Arc C2's pre-reg v1)
 - [`../02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md`](../02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md) — the v1-execution result (boundary-theorem prior-art)
@@ -19,9 +16,9 @@
 
 ## §1 — Why a boundary theorem here, and what it serves
 
-**Origin.** The Wilsonian reframe (plan v2, 2026-05-24) collapses "gravity across all discrete levels" into three components: discrete floor (a_phys ≡ ℓ_P, ESTABLISHED), upper undefined boundary (no completed-infinity, ESTABLISHED), and the scaling law between them (P1+P2 of DERIV_NEWTON, see Arc B). Arc C2 is the **upper-end formalization** — it states precisely where the substrate-derived scaling stops and where effective-theory matching takes over. This is the "honestly establish what we cannot derive" deliverable for the gravity-recovery program.
+**Origin.** The Wilsonian reframe collapses "gravity across all discrete levels" into three components: discrete floor (a_phys ≡ ℓ_P, ESTABLISHED), upper undefined boundary (no completed-infinity, ESTABLISHED), and the scaling law between them (P1+P2 of DERIV_NEWTON, see Arc B). Arc C2 is the **upper-end formalization** — it states precisely where the substrate-derived scaling stops and where effective-theory matching takes over. This is the "honestly establish what we cannot derive" deliverable for the gravity-recovery program.
 
-**Empirical input already in hand.** `FTD-0193` (2026-05-22) measured the substrate's connected transverse-traceless rank-2 correlator at L∈{32,64} and returned **Outcome B (no gapless helicity-±2 pole)**. The decisive finding: the flux-quadrupole TT operator's extracted ω is identical to the spin-1 control ω at 11/12 k-points to 7 significant digits — the rank-2 bilinear carries the spin-1 mode through, not an independent emergent spin-2 collective mode. Both spin-2 channels are 7-9 orders of magnitude below the validated spin-1 control. This is a positive identification of "continuum, no pole," not an unresolved Indeterminate.
+**Empirical input already in hand.** `FTD-0193` measured the substrate's connected transverse-traceless rank-2 correlator at L∈{32,64} and returned **Outcome B (no gapless helicity-±2 pole)**. The decisive finding: the flux-quadrupole TT operator's extracted ω is identical to the spin-1 control ω at 11/12 k-points to 7 significant digits — the rank-2 bilinear carries the spin-1 mode through, not an independent emergent spin-2 collective mode. Both spin-2 channels are 7-9 orders of magnitude below the validated spin-1 control. This is a positive identification of "continuum, no pole," not an unresolved Indeterminate.
 
 **Doctrine clause this serves.** CLAUDE.md goal-clause 2: "Derive everything we can from a discrete ontology — **and rigorously establish what we cannot.**" Arc C2 makes the substrate-gravity boundary precise and theorem-grade: substrate hosts scalar (FTD-0131 g_00 via Phase G + Born-Infeld §4.3) and vector (transverse-J spin-1 per FTD-0193 control) sectors; helicity-±2 is forbidden under the §4-catalog observable algebra; full nonlinear GR enters as Deser-bootstrap extension of POSITED `h_μν` per FTD-0189 (Conjecture 10.1, structural import).
 
@@ -38,7 +35,7 @@
 > **(C2-1)** The substrate's linear-wave spectrum on the flux field `J ∈ ℝ³` decomposes per wavevector as 1 spin-0 mode ⊕ 2 spin-1 transverse modes ⊕ 1 spin-1 longitudinal mode (Gauss-constrained), totalling 4 degrees of freedom per voxel after Gauss projection.
 > **(C2-2)** Any rank-2 observable built as a J-bilinear or J-derivative bilinear has its transverse-traceless projection contain only the spin-1 mode propagated through the bilinear (a continuum/branch-cut contribution), not a separable spin-2 collective mode.
 > **(C2-3)** Therefore there is no substrate-derived emergent graviton in the §4-catalog observable class within the probed regime; the metric perturbation `h_μν` enters the substrate-gravity content as Conjecture 10.1 per FTD-0189, not as a derived quantity.
-> **(C2-4)** Full nonlinear GR (Einstein equations, gravitational waves) is recovered via the Deser-bootstrap construction `(h_μν posited) → (linearized EFE [SELECTION/CONDITIONAL]) → (Lovelock completion [SELECTION/CONDITIONAL])`, as documented in `DERIV_EINSTEIN_FIELD_EQUATIONS.md` (corrected 2026-05-24 per FTD-0189 ripple); this is effective-theory matching, not substrate emergence.
+> **(C2-4)** Full nonlinear GR (Einstein equations, gravitational waves) is recovered via the Deser-bootstrap construction `(h_μν posited) → (linearized EFE [SELECTION/CONDITIONAL]) → (Lovelock completion [SELECTION/CONDITIONAL])`, as documented in `DERIV_EINSTEIN_FIELD_EQUATIONS.md` (corrected per FTD-0189 ripple); this is effective-theory matching, not substrate emergence.
 >
 > The substrate-derivable gravity content is therefore: (a) Schwarzschild g_00 (scalar sector) via FTD-0131 + Phase G + Born-Infeld §4.3 modulo the clock hypothesis (Arc B P2 status pending); (b) Newtonian 1/r² + lab-scale time dilation as derived limits; (c) the Wilsonian-reframe scaling law from discrete floor (ℓ_P) to undefined-boundary upper limit via P1+P2. The boundary above which substrate derivation stops: full nonlinear GR + gravitational waves + cosmological-scale GR. These are matched, not derived.
 
@@ -74,7 +71,7 @@ The theorem's stated axiom set should include:
 4. **§4 frozen observable catalog** from `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4 — closed flux-loops, plaquette bivectors, bilinear link observables, boundary-to-boundary transfer observables, reference frame projections. Arc C2 inherits this catalog.
 5. **FTD-0193 empirical input** (L∈{32,64}, twice-validated instrument) — used as load-bearing evidence in the proof chain, not as a derivation primitive.
 6. **FTD-0073 [CLOSED NEGATIVE]** — the site-local Clifford route is closed; Arc C2 cannot recover spin-2 via site-local primitives.
-7. **FTD-0189 [AUDIT FINDING]** — h_μν enters as Conjecture 10.1; the Deser-bootstrap chain in DERIV_EINSTEIN_FIELD_EQUATIONS.md is [SELECTION/CONDITIONAL] per the 2026-05-24 ripple housekeeping.
+7. **FTD-0189 [AUDIT FINDING]** — h_μν enters as Conjecture 10.1; the Deser-bootstrap chain in DERIV_EINSTEIN_FIELD_EQUATIONS.md is [SELECTION/CONDITIONAL] per the FTD-0189 ripple housekeeping.
 
 **Conditional dependency:** Arc B P2 verdict on the clock hypothesis (FOUND or CLOSED-NEGATIVE); the theorem's "substrate-derivable scalar sector" claim adjusts accordingly. The pre-reg should specify both branches.
 

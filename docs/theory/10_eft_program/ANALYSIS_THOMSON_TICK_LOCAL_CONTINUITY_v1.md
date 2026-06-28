@@ -1,7 +1,6 @@
 # ANALYSIS: Source-Free Discrete Tick Local Continuity v1
 
 **FTD ID:** FTD-0294
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- NUMERIC RELATIVE-GATE INVALIDATED]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`
 **Lock commit:** `7ebc236e`

@@ -1,8 +1,6 @@
 # Foundational Resolution — Color Confinement Substrate Derivation (MC-T5.1)
 
 **Tag:** [THEOREM] (for the true non-Abelian $SU(3)$ character expansion and strong-coupling area-law), [SELECTION] / [CONJECTURE] (for the effective $U(1)$ Abelian projection analogy)  
-**Date:** 2026-05-27  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
 **Pre-Registration:** [`docs/theory/10_eft_program/PREREG_COLOR_CONFINEMENT_v1.md`](../preregistrations/PREREG_COLOR_CONFINEMENT_v1.md) (FTD-0217)  
 **Companion Documents:** [`docs/theory/03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md`](../03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md).

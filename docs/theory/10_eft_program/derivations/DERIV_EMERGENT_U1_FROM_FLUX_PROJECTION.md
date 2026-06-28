@@ -1,6 +1,5 @@
 # Emergent U(1) from Flux Projection
 
-**Date:** 2026-04-22
 **Status:** [PARTIAL] bridge result; emergent redundancy, not primitive gauge ontology
 **Purpose:** Decide whether FTD needs microscopic U(1) gauge structure, or whether U(1) is an effective description of projected flux degrees of freedom.
 
@@ -254,7 +253,7 @@ This is more natural than treating `J` itself as a gauge potential. It also alig
 
 ---
 
-## 2026-04-22 matter-coupling follow-up
+## Matter-coupling follow-up
 
 `DERIV_PROJECTED_EFT_MATTER_COUPLING.md` records the next bridge span:
 

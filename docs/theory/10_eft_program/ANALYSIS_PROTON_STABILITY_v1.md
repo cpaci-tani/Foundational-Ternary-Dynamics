@@ -1,7 +1,6 @@
-# Proton-stability forcedness audit (FTD-0301) — run-of-record verdict
+# Proton-stability forcedness audit (FTD-0301)
 
 **Status:** `[MEASURED — UNFORCED-METASTABLE (frozen); boundary]`
-**Date:** 2026-06-13
 **Pre-registration:** `PREREG_PROTON_STABILITY_v1.md`, tag `preregister-proton-stability-v1`,
 lock commit `bb99a20d`. Artifacts SHA256-bound (§3 of the pre-reg). Golden-neutral
 (`render_bridge_golden = 0x56fa28acb5b9fe88`, green with the new TU).
