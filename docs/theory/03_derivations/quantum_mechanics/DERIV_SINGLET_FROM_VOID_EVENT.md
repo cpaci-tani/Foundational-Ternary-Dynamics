@@ -2,10 +2,7 @@
 
 ## How 0 → (+1)_A + (−1)_B Maps to |singlet⟩ = (|↑↓⟩ − |↓↑⟩)/√2 in the Emergent Hilbert Space
 
-**Date:** April 14, 2026
-**Framework:** Foundational Ternary Dynamics v5.30
 **Status:** [THEOREM] for the four constraint lemmas (charge, chirality-as-helicity, spin, antisymmetry); [SELECTION] for the complexification J → ψ; [THEOREM] for the singlet uniqueness given the four constraints.
-**Authors:** cpaci & Claude (Opus 4.6, 1M context)
 
 **Depends on:** [DERIV_QM_FROM_LATTICE](DERIV_QM_FROM_LATTICE.md) (identifies this exact lemma as the open [SELECTION → THEOREM] target), [DERIV_BELL_COSINE_FROM_GAUSS](DERIV_BELL_COSINE_FROM_GAUSS.md) (Gauss → 2 transverse DOF → cosine → S = 2√2), [DERIV_OBSERVER_BELL_MECHANISM](DERIV_OBSERVER_BELL_MECHANISM.md) (three-level hierarchy), [DERIV_SPIN_STATISTICS_BRIDGE](DERIV_SPIN_STATISTICS_BRIDGE.md) (π₁(SO(3)) = ℤ₂), [SPEC_FTD §2.2, §4.1](../../SPEC_FTD.md), [FOUND_LATTICE_PHYSICS_INTUITIONS](../02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md).
 

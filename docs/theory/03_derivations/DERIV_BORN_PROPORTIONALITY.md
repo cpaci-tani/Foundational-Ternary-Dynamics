@@ -1,7 +1,6 @@
 # The Born Rule Proportionality: Emergent Detection Probability from Lattice Upcrossings
 
 **Tag:** `[THEORY]`
-**Date:** 2026-05-29
 **Status:** `[THEOREM]` — derives Born probability proportionality from stenciled wave-packet threshold upcrossings.
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md](../../CLAUDE.md).
 

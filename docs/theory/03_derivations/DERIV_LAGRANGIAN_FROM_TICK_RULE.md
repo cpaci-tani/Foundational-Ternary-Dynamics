@@ -1,7 +1,6 @@
 # DERIV - Lagrangian from Tick Rule (Time-Discretization)
 
 **Tag:** [DERIVATION] / [OPEN]
-**Date:** 2026-05-30
 **LEDGER:** FTD-0246 [Mechanism B: Bare Action Construction]
 
 ## 1. The Physics Objective

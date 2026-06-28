@@ -1,8 +1,6 @@
 # DERIV - Alpha Operational Readout Mechanism (Remediation)
 
 **Tag:** [DERIVATION]
-**Date:** 2026-05-30
-**Framework:** Foundational Ternary Dynamics v5.33
 
 ## 0. Executive Summary
 

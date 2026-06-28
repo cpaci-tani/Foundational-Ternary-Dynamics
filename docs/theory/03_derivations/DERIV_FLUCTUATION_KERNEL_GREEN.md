@@ -1,7 +1,6 @@
 # DERIV - Fluctuation Kernel as the Covariant Lattice Green's Operator
 
 **Tag:** [THEOREM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0213 [SYNTHESIS] - closes the mathematical formulation of $\mathcal{K}_{A_J}$.
 **Companion docs:** `SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md`
 

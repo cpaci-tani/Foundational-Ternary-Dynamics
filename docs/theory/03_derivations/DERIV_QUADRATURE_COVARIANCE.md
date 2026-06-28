@@ -1,7 +1,6 @@
 # DERIV - Quadrature Covariance and Edge Projection
 
 **Tag:** [THEOREM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0212 [SYNTHESIS] - closes the spatial projection No-Go (FTD-0210).
 **Companion docs:** `SPEC_QUADRATURE_CANONICALIZATION.md`, `SPEC_CONNECTION_EXTRACTION_RULE.md`
 

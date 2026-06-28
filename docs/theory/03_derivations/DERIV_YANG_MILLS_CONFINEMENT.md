@@ -7,7 +7,7 @@ author: "FTD Orchestration Team"
 
 # Derivation of Yang-Mills Mass Gap and Quark Confinement
 
-> **Epistemic reconciliation (2026-06-15).** This document's result is an **engine-measured area-law signature at an inserted coupling** (β = x₋, a `[SELECTION]`), not a continuum mathematical proof of confinement. Per the constitution (`SPEC_FTD_FRAMEWORK_V1.md` §5.1 row 9) and the LEDGER, the full Yang-Mills mass-gap "proof" was **RETRACTED (FTD-0042)**; the only surviving `[THEOREM]`-grade Yang-Mills claim is the narrow **per-voxel mass gap** (FTD-0044, `spec(H) ⊂ {0} ∪ [K_B, ∞)`). The frontmatter `type` and the "proof" language in §3 are reconciled downward accordingly; no numeric result is changed.
+> **Epistemic reconciliation.** This document's result is an **engine-measured area-law signature at an inserted coupling** (β = x₋, a `[SELECTION]`), not a continuum mathematical proof of confinement. Per the constitution (`SPEC_FTD_FRAMEWORK_V1.md` §5.1 row 9) and the LEDGER, the full Yang-Mills mass-gap "proof" was **RETRACTED (FTD-0042)**; the only surviving `[THEOREM]`-grade Yang-Mills claim is the narrow **per-voxel mass gap** (FTD-0044, `spec(H) ⊂ {0} ∪ [K_B, ∞)`). The frontmatter `type` and the "proof" language in §3 are reconciled downward accordingly; no numeric result is changed.
 
 ## 1. The Confinement Problem
 

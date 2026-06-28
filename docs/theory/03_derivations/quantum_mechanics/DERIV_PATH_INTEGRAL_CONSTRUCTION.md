@@ -2,8 +2,6 @@
 
 ## The Partition Function, Generating Functional, and Effective Action on a Discrete Substrate
 
-**Version:** 1.0
-**Date:** February 25, 2026
 **Status:** [THEOREM] + [SELECTION] + [CONJECTURE]
 **Epistemic Tag:** The partition function Z, generating functional W, and effective action Gamma are constructed directly on the FTD lattice. UV finiteness is [THEOREM] (compact Brillouin zone). Recovery of established Feynman rules is [THEOREM]. Thermodynamic partition function and KMS states are [THEOREM]. Phase transition at K_B is [SELECTION]. Connection to Hawking temperature is [CONJECTURE].
 
@@ -597,5 +595,5 @@ The KMS connection (Section 6) is [THEOREM] for the standard results (Gibbs stat
 
 **End of document.**
 
-*Version 1.0 -- Path integral construction on the FTD lattice*
+*Path integral construction on the FTD lattice*
 *All theorems are rigorous on the finite lattice; no regularization required*

@@ -1,10 +1,8 @@
 # Geometric Derivation of Electroweak and Strong Mixing Parameters
 
 **Status:** Foundational theory [THEOREM: LATTICE PROJECTION]
-**Date:** 2026-06-18
-**Framework:** Foundational Ternary Dynamics v5.47
 
-> **Epistemic Note:** This document formally upgrades the epistemic tags for the Weinberg angle ($\sin^2\theta_W$) and the Strong coupling ($\alpha_s(M_Z)$) from `[PARAMETRIC]` to `[THEOREM: LATTICE PROJECTION]`. These constants were previously downgraded on 2026-04-19 due to their reliance on "integer combinations" without structural justification. This document provides the geometric proof that the integers $\{3, 13, 52, 59\}$ are natively determined by the Moore neighborhood topology and discrete Dirac algebra.
+> **Epistemic Note:** This document assigns the epistemic tag `[THEOREM: LATTICE PROJECTION]` to the Weinberg angle ($\sin^2\theta_W$) and the Strong coupling ($\alpha_s(M_Z)$), upgrading them from `[PARAMETRIC]`. The `[PARAMETRIC]` tag reflected reliance on "integer combinations" without structural justification; this document provides the geometric proof that the integers $\{3, 13, 52, 59\}$ are natively determined by the Moore neighborhood topology and discrete Dirac algebra.
 
 ---
 

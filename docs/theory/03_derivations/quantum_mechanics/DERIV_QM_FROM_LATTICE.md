@@ -1,8 +1,5 @@
 # Quantum Mechanics Is Statistics
 
-**Date:** April 10, 2026
-**Version:** 4.0
-
 ---
 
 ## The Lattice
@@ -101,7 +98,7 @@ This is superdeterminism. On a deterministic lattice, it's not an exotic interpr
 
 The experimenter experiences the choice as free. The O-operation (center integrating shell) IS the experience of choosing. The output wasn't known to the center until integration completed. But the output was determined by the inputs. Free will is how determinism feels from inside an O-structure.
 
-**The resolution (discovered April 10, 2026):**
+**The resolution:**
 
 The continuous flux projections correlate as:
 
@@ -113,7 +110,7 @@ Binary sign measurements give the triangle -(1 - 2*theta/pi), with S <= 2.
 
 The gap: Bell tests use binary outcomes (+/-1) where raw and normalized correlations coincide. The lattice flux is continuous, where they differ by the 1/3 factor. The continuous-projection CHSH value (using raw <AB>) is S = 2*sqrt(2)/3 ≈ 0.94 — below 2, not above.
 
-**Resolution (April 11, 2026): Bell violation is EMERGENT, not a separate derivation target.**
+**Resolution: Bell violation is EMERGENT, not a separate derivation target.**
 
 The three "resolution paths" (superdeterminism, detection loophole, continuous-to-discrete projection) were attacking the wrong problem. They tried to explain how a local lattice produces S > 2 at the *substrate* level. It can't — and it doesn't need to.
 
