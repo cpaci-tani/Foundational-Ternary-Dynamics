@@ -3,8 +3,6 @@
 
 **Agent ID:** PHY-PART
 **Domain:** High Energy Physics, Standard Model, Particle Masses, Mixing Matrices
-**Evaluation Date:** 2026-01-24
-**Status:** COMPLETED
 
 ---
 

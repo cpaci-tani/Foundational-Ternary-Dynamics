@@ -279,4 +279,3 @@ CHSH parameter: S = |E(a,b) - E(a,b') + E(a',b) + E(a',b')|
 ---
 
 *Report prepared by QIS Agent*
-*Evaluation date: January 2026*

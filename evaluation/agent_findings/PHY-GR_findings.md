@@ -3,8 +3,6 @@
 
 **Agent ID:** PHY-GR
 **Domain:** General Relativity, Differential Geometry, Black Holes, Gravitational Waves
-**Evaluation Date:** 2026-01-24
-**Status:** COMPLETED
 
 ---
 

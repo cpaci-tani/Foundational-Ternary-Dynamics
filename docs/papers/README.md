@@ -43,9 +43,9 @@ Root `*.tex` and `*.md` files are companion sources or indexes for papers that a
 | PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY | Gauge coupling constants from lattice coordination geometry (.md + .tex + .pdf) |
 | PAPER_LIFECYCLE_SOFTPLUS | Lifecycle of the softplus function |
 
-### PDF-Only Papers (Session 3, 2026-04-19: all archived or retracted)
+### PDF-Only Papers (all archived or retracted)
 
-The following PDFs lacked recoverable TeX source (verified via `git log --all --diff-filter=AD` archaeology — only figure files were ever committed). All were processed in Session 3:
+The following PDFs lacked recoverable TeX source (verified via `git log --all --diff-filter=AD` archaeology — only figure files were ever committed):
 
 **Archived to `archive/pdf_only_no_source/`** (status pending owner re-authoring or accept-as-historical; `pdftotext` extractions provided):
 
@@ -87,7 +87,7 @@ Speculative extensions and applications of FTD to open mathematical problems.
 | FTD_Riemann_Hypothesis | Riemann Hypothesis connection — **PARKED for owner deeper read (`docs/theory/07_assessment/PARKING_LOT.md`)** |
 | LETTER_HERMITIAN_COPE | Open letter on the Hermitian inner product |
 
-**Retracted under the undefined-boundary reframe (2026-04-19):**
+**Retracted under the undefined-boundary reframe:**
 - `FTD_Yang_Mills_Mass_Gap` — moved to `docs/papers/archive/retracted_under_reframe/`. Per-voxel mass gap (Theorem 5.1) preserved in archived `.tex` (LEDGER FTD-0044). See `RETRACTION_NOTES.md`.
 - `FTD_Navier_Stokes` — moved to `docs/papers/archive/retracted_under_reframe/`. No surviving Clay-eligible content. See `RETRACTION_NOTES.md`.
 
