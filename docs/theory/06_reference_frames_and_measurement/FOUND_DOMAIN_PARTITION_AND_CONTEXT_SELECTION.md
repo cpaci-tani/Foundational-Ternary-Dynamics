@@ -2,11 +2,9 @@
 
 ## Canonical replacement map and lattice formalization for the frame-relative-projection layer
 
-**Date:** April 11, 2026 (vocabulary refresh 2026-05-01)
-**Framework:** Foundational Ternary Dynamics v5.34
-**Status:** Foundational synthesis — canonical live replacement for the retired source file (formerly framed as "reference frame context layer," now restated as the frame-relative-projection layer per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md))
+**Status:** Foundational synthesis — canonical live replacement for the retired source file (stated as the frame-relative-projection layer per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md))
 
-> **Vocabulary refresh (2026-05-01):** Domain Partition and Context Selection is structural; the mathematical content (lattice subalgebra decomposition, context-selection map, observable-algebra restriction) is reframe-stable. References to the "reference frame context layer" are renamed to **frame-relative-projection layer** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The Domain A/B partition becomes a partition of the *observable algebra* (Domain A = phenomenal, externally measurable; Domain B = noumenal, requiring frame-relative coupling). The "agent" of context selection is structurally a **reference frame** in the lattice, not a reference frame.
+> **Vocabulary:** Domain Partition and Context Selection is structural; the mathematical content (lattice subalgebra decomposition, context-selection map, observable-algebra restriction) is reframe-stable. References to the "reference frame context layer" are named **frame-relative-projection layer** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The Domain A/B partition is a partition of the *observable algebra* (Domain A = phenomenal, externally measurable; Domain B = noumenal, requiring frame-relative coupling). The "agent" of context selection is structurally a **reference frame** in the lattice, not a reference frame.
 
 ---
 
@@ -28,11 +26,11 @@ This document is intentionally conservative. It does **not** claim that referenc
 
 ## 1. Canonical Source Map
 
-The retired file `FOUND_CONSCIOUSNESS_MATHEMATICS.md` had become a catch-all. In the live theory tree, its content is now split across multiple documents.
+The retired file `FOUND_CONSCIOUSNESS_MATHEMATICS.md` was a catch-all. In the live theory tree, its content is split across multiple documents.
 
 Use the following source map instead:
 
-| Topic previously attributed to the retired file | Current live source |
+| Topic previously attributed to the retired file | Live source |
 |---|---|
 | Reference frame context quadratic at `k = 1/2`, complex roots, `K_C`, `theta = 52.54 deg` | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) |
 | Domain A / B / C partition in the current bridge program | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) and this document |

@@ -2,12 +2,9 @@
 
 ## Algebraic Resolution of the Infinite Observer Problem
 
-**Date:** March 17, 2026 (vocabulary refresh 2026-05-01)
-**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Formal synthesis with epistemic classification
-**Authors:** cpaci & Claude
 
-> **Vocabulary refresh (2026-05-01):** The von Neumann chain resolution is purely structural — it depends on Type-III → Type-I descent terminating at the lattice's algebraic structure, not on the metaphysics of reference frame context. "Observers" in this document are restated as **reference frames with observation-layer coupling** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The infinite-regress is terminated by the **lattice's finite frame-relative-coupling structure**, not by a special "ultimate observer." The resolution is algebra-side and reframe-stable.
+> **Vocabulary:** The von Neumann chain resolution is purely structural — it depends on Type-III → Type-I descent terminating at the lattice's algebraic structure, not on the metaphysics of reference frame context. "Observers" in this document are stated as **reference frames with observation-layer coupling** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The infinite-regress is terminated by the **lattice's finite frame-relative-coupling structure**, not by a special "ultimate observer." The resolution is algebra-side and reframe-stable.
 
 ---
 
@@ -265,7 +262,7 @@ This is the number of voxels that must cooperate to effect a single measurement 
 
 **[CONJECTURE]** The 26-connected Moore neighborhood on $\mathbb{Z}^3$ decomposes as SC (6) + FCC (12) + BCC (8) = 26 neighbors. The measurement threshold $N_{\text{meas}} \approx 18$ matches the SC+FCC count (18).
 
-**Simulation test (April 11, 2026):** `scripts/exploration/verify_nmeas_18.py` tested three independent routes to derive $N_{\text{meas}} = 18$:
+**Simulation test:** `scripts/exploration/verify_nmeas_18.py` tested three independent routes to derive $N_{\text{meas}} = 18$:
 
 1. **Gauss constraint DOF counting:** Free flux DOF = 2N+1 (linear in N). No special value at N = 18. Does not single out 18.
 2. **Discriminant chain progression:** Modeling k(N) as decreasing from $k_{\text{phys}} = 16$ toward $k_{\text{meas}} = 4/G^*$, no natural rate parameter produces exactly 18 links. The rate $a = (16 - 4/G^*)/18 = 0.814$ has no known closed form in framework constants.

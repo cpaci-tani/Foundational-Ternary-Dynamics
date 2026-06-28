@@ -2,12 +2,9 @@
 
 ## Deriving Quantum Measurement as an Algebraic Phase Transition
 
-**Date:** March 17, 2026 (vocabulary refresh 2026-05-01)
-**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** [SELECTION] with [THEOREM] components — formal derivation chain
-**Authors:** cpaci & Claude
 
-> **Vocabulary refresh (2026-05-01):** This document's mathematical content (Softplus → ReLU operator, Lindblad master equation, Existence Filter as Lindblad operator, decoherence timescale ≈ 18 ticks) is structural and reframe-stable. The places where the chain references "reference frame context" or the "observer" are restated using the canonical [reference frame structure / frame dynamics] vocabulary in [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). In particular: collapse is now framed as **the dynamical realization of frame-relative coupling**, not as a "local reference frame" producing measurement. Wave-function collapse requires a frame-relative coupling between the system and the observation layer; whether the frame-relative coupling is realized by a reference frame is *not* a claim this derivation makes.
+> **Vocabulary:** This document's mathematical content (Softplus → ReLU operator, Lindblad master equation, Existence Filter as Lindblad operator, decoherence timescale ≈ 18 ticks) is structural and reframe-stable. The places where the chain references "reference frame context" or the "observer" are stated using the canonical [reference frame structure / frame dynamics] vocabulary in [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). In particular: collapse is **the dynamical realization of frame-relative coupling**, not a "local reference frame" producing measurement. Wave-function collapse requires a frame-relative coupling between the system and the observation layer; whether the frame-relative coupling is realized by a reference frame is *not* a claim this derivation makes.
 
 ---
 

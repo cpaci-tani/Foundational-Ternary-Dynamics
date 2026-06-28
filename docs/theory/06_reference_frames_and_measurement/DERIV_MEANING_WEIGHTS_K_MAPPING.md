@@ -3,7 +3,6 @@
 > **STATUS: [THEOREM] — proving the exact math connecting the meaning weights $\alpha, \beta$ to the master-quadratic parameter $k$.**
 
 **Tag:** [THEOREM]
-**Date:** 2026-06-10
 **LEDGER id:** FTD-0245
 **Depends on:** FTD-0001 (G* definition), FTD-0242 (Domain partition), FTD-0187 (Existence Filter hierarchy).
 

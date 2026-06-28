@@ -2,7 +2,6 @@
 
 ## Number Theory and Geometry Converge on the Master Quadratic Coefficient
 
-**Date:** April 3, 2026
 **Status:** [THEOREM]
 **Proof script:** `scripts/proofs/proof_stabilizer_decomposition.py`
 

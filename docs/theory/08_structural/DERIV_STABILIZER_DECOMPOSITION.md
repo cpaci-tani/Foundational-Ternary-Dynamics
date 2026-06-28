@@ -2,7 +2,6 @@
 
 ## The Structural Bridge Between $\text{Aut}(E_i)$ and $O_h$
 
-**Date:** April 3, 2026
 **Status:** [THEOREM]
 **Proof script:** `scripts/proofs/proof_stabilizer_decomposition.py`
 
