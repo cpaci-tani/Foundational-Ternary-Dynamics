@@ -1,7 +1,6 @@
 # AUDIT · Charge Quantization and QED Normalization Integrity (ARC-C1)
 
 **Tag:** [AUDIT] / canonical
-**Date:** 2026-05-26
 **LEDGER row:** FTD-0231 (new methodological audit claim)
 **Depends on:** FTD-0152 (Alpha Readout Contract), FTD-0153 (Math-First Ontology)
 **Status:** [AUDIT] complete; establishes the mathematical and methodological boundary separating QED imports from native FTD observables.
