@@ -4725,3 +4725,313 @@ This release upgrades the epistemic status of the master quadratic:
 ---
 
 *Changelog maintained as part of FTD documentation suite*
+
+---
+
+## Historical CLAUDE.md framework version banners and epistemic-state log
+
+These baseline version banners and dated "epistemic state" snapshots were previously embedded at the top of `CLAUDE.md` as a running log. They are preserved here verbatim for provenance; per-claim status is canonical in the LEDGER (`docs/theory/07_assessment/core_ledgers/LEDGER.md`), and the framework statement of record is the constitution (`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`).
+
+### Framework version banners (v5.39 - v5.52)
+
+**Version:** 5.52 (post-2026-06-25 — **corpus-wide reconciliation of the FTD-0318 spine-audit demotions + FC-W/act-count sync (FTD-0328)**, branch `docs/reconcile-spine-audit-2026-06-25`, golden `0xb604d81a3d79366e` untouched (docs + 1 regenerated map), **ZERO promotions — demotion-only honesty**. The 2026-06-24 FTD-0318 audit had landed its demotions in ~15 files + LEDGER + CLAUDE but they had not propagated corpus-wide, and the bedrock tracker was stale. This pass (LEDGER **FTD-0328**, `[RECONCILIATION / TAG-HONESTY]`) propagated them into the live canonical corpus: **TRACKER_ONTIC_TRUTH** (Phase-J `L≥4`→[OPEN]; "~4×10⁵ Bayes"→[NUMERICAL FACT]; d=−4 *dual-match privilege*→[NUMERICAL FACT]; FC-W/FTD-0314/0315 pinning added — **no tier change**); the reference specs + prose (Thm 9 "maximal"→"a" π-free; z_BCC·2=16→[SELECTION]; Watson "I₁"→G_BCC(0); Sym²⊕Sym³ forcing→[SELECTION]; harmonic Schneider-1941→Chudnovsky-1976; "nine theorems"→"seven theorem-grade + two honestly-tiered"); the doctrine ledger, open-math, constitution, META_INDEX, and the dimensional map (regenerated). **CRITICAL fix:** a numerically-FALSE `[THEOREM]` — `G*=4√(2/π)·L(E,1)` (=2.0921) — was live in `SPEC_FTD_REFERENCE`, `AUDIT_EPISTEMIC_AUDIT`, `REF_CLAIMS_MATRIX`, `META_INDEX` 9.8; corrected to `G*=8·L(E,1)/√π` (=2.95868). Every **scan-context** "FTD-0189" repointed to **FTD-0319**; the **graviton-provenance** FTD-0189 (9 gravity docs) left intact (keyword-gated; adversarially verified — no over-edit). Executed via a 6-agent file-partitioned workflow + adversarial verify. **ZERO promotions: x₊=1/α `[SMC]`; MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`; FC-W an adopted `[AXIOM]`; no α derived.** Papers reconciliation (3 light touches) reserved for follow-up **FTD-0329**. **Next free id FTD-0329.** Prior baseline 5.51 preserved below.)
+
+**Version:** 5.51 (post-2026-06-25 — **parallel act-count arc reconciled + merged: FTD-0322–0327 + FC-4 fold into FC-W**, golden `0xb604d81a3d79366e` untouched (docs + 1 script), **ZERO promotions**. A concurrent session (branch `claude/inspiring-goodall-o6ow79`) had independently minted **FTD-0314→0319** for a different arc — it branched from `main`@0313 without seeing the FC-W/genesis/spine stack, a total id collision. The arc was fetched, verified, **renumbered 0314–0319 → 0322–0327**, FC-4-reconciled, and merged. **The arc — the "a √ is the one thing in math that must be taken by an act of intent" lens, pre-registered + adversarially red-teamed SOUND throughout:** **FTD-0322** act-reduction count `[SYNTHESIS]` PARTIAL (`i=√(−1)` is FTD's unique *generative* act ≡ FC-0; but α's δ-selection + FC-3 covariance + the calibration register are non-empty breakers — the universe is chosen more than once); **FTD-0323** arrow-as-√ `[SYNTHESIS]` (the Euler-reflection ratio `Γ(z)/Γ(1−z)=G*` = the half-derivative `∂_t^{1/2}`; the arrow's identification-with-time stays FC-2's `[AXIOM]`, NOT promoted); **FTD-0324** arrow direction = **forced-given-FC-2** `[SYNTHESIS]` (the many-to-one manifestation map ⇒ no ℤ/2 to choose; reconciles a 3-way canon split); **FTD-0325** SM act-count `[SYNTHESIS]` CLOSED (every exactly-expressible dimensionless SM quantity reduces to `{i, δ}`; lepton ratios + mixing angles are pure rationals; a 3rd field-act is empty); **FTD-0326** no FTD-native ℤ/2 supplies δ `[DERIVED]+[SYNTHESIS]` PERMANENT-EXTENDED (all 5 native ℤ/2's are `ℚ(G*)`-entry ⇒ Galois-blind to `δ` — **corroborates** main's FTD-0314 carrier-narrowing along the orientation-symmetry axis; strengthens FTD-0242); **FTD-0327** the AGM place-bridge `[SYNTHESIS]` (`G*=2√π/AGM(1,√2)`; the AGM's forced-magnitude geometric means land on `G*`, never on `δ` — the witness unifying the operator/arithmetic/act faces). Plus `scripts/audit/check_registry.py`, a next-free-id/FC registry guardrail. **FC-4 reconciliation:** the arc's "proposed FC-4 (δ-act)" is the **same commitment as the already-live FC-W** (FTD-0315 = the constitution's FC-4) — both declare the selection of `δ=√(G*(4G*−1))`; **folded into FC-W, no separate FC minted**; `DRAFT_FC4_DELTA_ACT_DECLARATION.md` retitled as FC-W's act-of-intent reading. **ZERO promotions: x₊=1/α stays `[SMC]` (FTD-0013); MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]` (boundary corroborated, not closed); FC-W stays an adopted `[AXIOM]`; FTD-0244 cited not re-derived; NO α derived anywhere.** Branch `reconcile/act-count-2026-06-25`; LEDGER FTD-0322–0327 + maintenance-log entry. **Next free id FTD-0328.** Prior baseline 5.50 preserved below.)
+
+**Version:** 5.50 (post-2026-06-24 — **algebraic-spine deep adversarial audit + demotion-only corrections (FTD-0318)**, on branch `audit/spine-corrections-2026-06-24`, golden `0xb604d81a3d79366e` untouched (docs + Python only), **ZERO promotions**. A multi-agent audit re-ran every spine proof script and recomputed every load-bearing identity at dps 100–150 with 3 hostile lenses per theorem. **Genuine theorem-grade core confirmed** (G\* Γ-reflection identity, master quadratic + Vieta, Watson equality, harmonic tower, BCC triple-cosine, |Aut(E)|²=16, |μ|=|disc| uniqueness — all reproduce to machine zero; Deligne exponents are **k=9 (512) / k=13 (8192)**, NOT 2^10), but the core is **smaller and more conditional than the "nine theorems" headline** — much rests on **Chudnovsky 1976** (alg. indep. π & Γ(1/4)), a legitimate `[CONDITIONAL THEOREM]` whose clause must ride along. **CRITICAL fix:** `DERIV_LFUNCTION_GSTAR_CONNECTION.md` §3.1 carried a numerically FALSE `[THEOREM]` (`G*=4√(2/π)L`=2.0921, inconsistent with its own §1.2 `G*=8L/√π`=2.95868) → coefficients corrected `512/π→1024/π`, `2048√2/π^1.5→8192/π^1.5` (machine-exact). **MAJOR demotions (tags reconciled to proofs):** Thm 9 "**maximal**"→"a" π-free (maximality unproven + false as stated); **D=3 forcing** `[THEOREM]`→`[SELECTION]` (circular — LHS \|Aut\|²=16 is D-independent, RHS uses \|O_h\|/3=48/3); **CM d=−4** "mathematically proven"→`[NUMERICAL FACT]` (flips under rational-multiplier); **Phase-J** "DISCONFIRMED L≥3"→`[NUMERICAL EVIDENCE L=3 ultralocal / OPEN L≥4]`; **z_BCC·2=16 (FTD-0007)**→`[SELECTION]`; **Watson "1.3932=I₁"**→G_BCC(0); **motivic uniqueness**→`[SELECTION]`; harmonic **Schneider-1941→Chudnovsky-1976**. **Hygiene:** dangling `THEOREM_D_EQUALS_3.md`→`DERIV_D3_FROM_AUTOMORPHISM.md`; `constants.py` ALPHA_INV `[CONJECTURE/post-hoc]` caveat; "two verified G\* routes"→one (Guillera artifact absent). Plus follow-on the same branch: **FTD-0319** (resolves the FTD-0189 ID collision — the polynomial look-elsewhere scan gets a dedicated row; its "~4×10⁵:1 Bayes" is unsupported by the runner, ~19× scan-size, tolerance-conditioned) and **FTD-0320** (pre-registered rigidity-catalog scan over the ~125 unscanned `[PARAMETRIC]` claims). **ZERO promotions: x₊=1/α stays `[SMC]` (FTD-0013); MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; FC-W stays an adopted `[AXIOM]` (FTD-0315); the spine + linear k=¼ theorem untouched; NO α derived anywhere.** Files: `AUDIT_ALGEBRAIC_SPINE_2026-06-24.md` (new), LEDGER FTD-0318+; 15-file demotion-only changeset. **Next free id FTD-0321.** Prior baseline 5.49 preserved below.)
+
+**Version:** 5.49 (post-2026-06-23 — **EARN-W carrier-narrowing theorem (FTD-0314) + FC-W / FC-4 declared (FTD-0315)**, on branch `engine/atomic-spectroscopy-helium`, golden `0xb604d81a3d79366e` untouched (docs + proof-script only), **ZERO promotions**. The "could W be an *information field a brain connects to*" thread (7-agent adjudication: **`[CATEGORY-MISMATCH]`** — W is an arithmetic ℤ/2 Galois *selector* realizing `√(G*(4G*−1))`, not a dynamical/observer field; an observer-selection field is the measurement map **M that FC-1 *declines*** (FTD-0205/0226 closed-negative), and selection presupposes the very distinguishability W must first create; the corpus's own k=1/2 "reference-frame/consciousness" branch of the same quadratic is provably **Galois-disconnected** from the k=16 α root) resolved — via the "earn it first" path — into a real deliverable. **FTD-0314 — the NARROWING THEOREM `[THEOREM]` (conditional on Chudnovsky; `scripts/proofs/proof_w_carrier_narrowing.py` 11/11 PASS dps=150):** the surd `√(G*(4G*−1))` that distinguishes the master-quadratic roots is **transcendental over ℚ** (G\* transcendental ⇒ `Q(G*)∩Q^ab=Q`), so every finite-symmetry carrier (chirality, ±1 ternary sign, binary-octahedral 2O double cover, permutation parity) **and** every native operator (Tr/Det ∈ Q(G\*), FTD-0244) is structurally **excluded** — this **extends K-BIND from operators to the entire finite-symmetry class and geometrically explains the wall** (the transcendence gap between Q(G\*) and the surd's degree-2 extension). The only surviving door, a ℤ/2 twist on a G\*-bearing **analytic** carrier, closes on all three natural ones: the **BCC-Watson twist degenerates exactly** (G_odd=G_even — odd-n angular integrals vanish, branch-difference 0 not the surd), the **second Watson is moot** (`4G*−1 = 4·G*−1 ∈ Q(G*)`, PSLQ `[1,−4,1]`), the **CM period sits outside** `Q̄(π,Γ(1/4))` (surd² is degree-1 in π). One loophole (a NEW forward-derived transcendental period) survives `[OPEN]`, pressured by the surd²'s motivic **weight-inhomogeneity** (period of no pure graded motive), but cannot be opened without the banned W-CRIT-2 value-planting. **Verdict: W cannot be earned natively (~85% CLOSED)** — a Number-One-Goal boundary. **FTD-0315 — FC-W (the constitution's FC-4), `[AXIOM]`-class declaration:** because the narrowing theorem **pins *exactly* what an external W must be and proves no cheaper object suffices**, the constitution now **adopts** W — *an external order-2 ℤ/2 twist on a G\*-bearing analytic structure realizing `√(G*(4G*−1))` and breaking the master-quadratic root-swap x₊↔x₋.* Under FC-W, `x₊ = 1/α` becomes a `[CONDITIONAL THEOREM given W]`, **explicitly NOT `[DERIVED]`**. **Honest cost (stated in LEDGER + constitution, not buried):** FC-W is the framework's **first *adopted* import** — unlike FC-1/FC-2, which *decline* imports (M, reversibility) and thereby *buy* the falsifiable deviation spine — and it does **no work beyond the α-root** unless its carrier also forces independent content (`[OPEN]`); so it is a *declared-but-conditional* commitment, not a load-bearing derivation. **ZERO promotions: `x₊ = 1/α` stays `[SMC]` unconditional (FTD-0013 unchanged); MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]` (FC-W is an external axiom, not a closure); FTD-0244 extended-not-altered; the algebraic spine + linear k=¼ O_h theorem untouched; NO α derived anywhere.** Files: `AUDIT_W_CARRIER_NARROWING.md` (new), `proof_w_carrier_narrowing.py` (new), LEDGER FTD-0314/0315, `SPEC_FTD_FRAMEWORK_V1.md` §3.5 + §0.2/§6.2/§7.3, `SPEC_ALPHA_DYNAMICAL_BOUNDARY.md` §3.2, META_INDEX 10.76a; verify_index_links 400/0. Next free id FTD-0316. Prior baseline 5.48 preserved below.)
+
+**Version:** 5.48 (post-2026-06-20 — **Convention-Audit + overclaim-retraction + engine-native atomic spectroscopy**: a three-part session, **all on `main`, golden `0xb604d81a3d79366e` green throughout, ZERO promotions**. **FTD-0307 — FTD-0110 Convention Audit [MEASURED — BOUNDARY]:** attacked the never-attempted **exit (ii)** of the FTD-0110 nonlinear bridge (is the N(A) cluster-mass calibration pure CONVENTION or PHYSICAL?). **Verdict PHYSICAL on both engine knobs ⇒ exit (ii) CLOSED NEGATIVE ⇒ the FTD-0269 boundary is HARDENED** (the calibration is irreducibly engine-emergent — neither derivable by the simple routes nor removable as convention). Method correction: the discriminator is **exponent-invariance**, NOT FTD-0269's knee-shift (a broken power law's exponents are invariant under any affine (A,N) rescaling). Run of record (`campaign_drain_scan`, L=32, 8 seeds, 12 deterministic parallel workers bit-identical to serial): clean super-knee exponent DECREASES monotonically **1.91→1.59** across drain (~6σ); γ established PHYSICAL from existing FTD-0276 Leg B. Pre-reg tag `preregister-ftd0110-convention-audit-v1`. **Integrity fix — 2026-06-18 overclaim RETRACTION:** an adversarial audit found two prior commits had promoted **8 SM claims to [THEOREM] via substitution identities** (16/3 re-spelling, 1938−102=1836 knot, m_t importing Z=118/Oganesson from the periodic table) and minted **2 DUPLICATE ledger ids**, self-citing — ALL retracted to honest motivated tags (m_e/m_p `[SMC]`, quarks `[PARAMETRIC]`, sin²θ_W=3/13 + α_s=7/59 `[STRUCTURALLY MOTIVATED PARAMETRIC]`, G_N=1/100 `[CLOSED NEGATIVE]` per FTD-0131); the duplicate rows deleted (the real FTD-0259/0260 untouched); `AUDIT_RATIONAL_FIT_CLAIMS` + the proof scripts reconciled. This is the substitution-identity move the Epistemic Discipline explicitly forbids. **FTD-0308 — engine-native atomic spectroscopy [CONDITIONAL — DERIVED-GIVEN-IMPOSED] + [BOUNDARY]:** built `campaign_atomic_spectroscopy.cpp` (CPU+GPU, golden-neutral; GPU-ported `db_clock_coulomb` with CPU↔GPU parity machine-precision; `--Z`/`--offset` knobs; runs to L=256 on the RTX 5090). Engine↔operator match at L=32 (0.53%); the **operator built from the engine's own φ_C confirms the hydrogen excited ladder binds (n_bound=6 @ L=128) and He⁺ (n_bound=8)** — the excited spectrum IS finite-size-resolvable (box-size, not structural; exactly what the Python LOBPCG could not reach). But the **engine-native time-domain FFT readout is dynamics-limited** — a parametric leapfrog instability of the inhomogeneous KG well (C(t) grows ~13 orders, ρ≈1.0022/tick, dt-invariant) swamps the ladder; the operator-on-φ_C path is the accurate readout, and a stable integrator would be needed to fix the FFT route. "Wavepacket-blending"/"excitation-limited" reads RETRACTED. ω₀ + coupling `[IMPOSED]`; FTD-0270/FC-1 ceiling stands; never "FTD derives hydrogen/helium." **Also:** restored the G\* paper's compilability (36pp, math.NT-ready) and fixed a CUDA-13 `atomicAdd(long long)` build break in `kernels_poisson.cu`. **ZERO promotions: FTD-0013 stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FTD-0110 linear k=¼ O_h theorem untouched; nonlinear bridge stays [OPEN] with its boundary now hardened; NO α derived anywhere.** Next free id FTD-0309. Prior baseline 5.47 preserved below.)
+
+**Version:** 5.47 (post-2026-06-10 — **open-items arc FTD-0259→0267 + engine-stack re-baseline**: the session executed the FTD-0110 sub-knee/k(A) open-items queue end-to-end, all pre-registered, **nothing promoted**. **FTD-0259** Mechanism α (multi-block irrep leakage) quantified + **[CLOSED NEGATIVE]** as the drift mechanism (λ(r)→(2/3)/r² lemma; genesis basis-free ⇒ re-projection ≠ harvest loss). **FTD-0260** thermostat-OFF discriminator run **INVALID** → ic1 reproducibility break → **RESOLVED by owner decision** (current stack canonical; test re-baselined; gpc_03 made quantitative; FTD-0110 empirical leg **[STACK-PINNED — historical]**). **FTD-0261** current-stack N(A) law **[MEASURED]**: broken power law, knee A≈16, k_eff≈0.05 (NOT the historical ¼); thermostat = pure friction (T-flat) ⇒ FTD-0259's thermal-knee sub-reading **[CLOSED NEGATIVE]**. **FTD-0262** SM clustermass identification **IDENT-NULL** (electron anchor exact 20/20; no specialness at the SM ratios, p_local=2.052). **FTD-0263** sub-knee 27-block hypothesis **GEOM-PARTIAL** (knee_N=14.6 outside band) + Mechanism β v2 **BETA_v2_CONFIRMED** (center back-reaction shifts onset up) + ¼-scaling **[CLOSED NEGATIVE]** + Kaon/Proton/Tau scans. **FTD-0265** β envelope **BETA-PARTIAL**, **FTD-0266** β dwell-time **DWELL-FAIL** (both engine-free models over-predicted genesis ~4–5×). **FTD-0267** genesis-vs-survival **engine telemetry** (first *direct* measurement of genesis/evaporation EVENTS; two observation-only counters + `campaign_genesis_trajectory.cpp`, golden-neutral): **SURVIVAL-NULL** — at A=10 the engine fires ~5 genesis events (not β's ~23), one-shot burst, evaporation≈0 ⇒ **suppression is GENESIS-STAGE nonlinear throttling, cluster ≈ genesis-firing count**; the β post-genesis-survival premise (0265/0266) is **FALSIFIED**; sharpens the FTD-0110 nonlinear bridge **[OPEN]**. **Engine-stack re-baseline:** the concurrent backend-parity refactor (`c2a8f606`: post-write genesis divergence + per-voxel Langevin) intentionally changed CPU genesis; **golden hash re-pinned `0xc13713f0e11a96da` → `0xebaa6f314f66db3f` @ L=17** (commit `b2c1cb7c`); the FTD-0267 counters are proven observation-only (bit-identical hash with/without). **ZERO promotions: FTD-0013 stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FTD-0110 linear [DERIVED] / nonlinear bridge [OPEN] / identification [SMC] all unchanged; NO α derived anywhere.** Prior baseline 5.46 (the constitution) preserved below.)
+
+**5.46 baseline** (post-2026-06-09 — **Framework Spec v1 — the constitution** (`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`, FTD-0254 [SYNTHESIS]; commits `5e62e760`+`0c926aad`): FTD declared as a **standalone discrete+emergent ontology with a computational EFT**, ordered Ontology > Logic > Math > Philosophy > Physics > Science. Introduces the **three-register structure** — Postulates P1–P5 (frozen) / **Framework Commitments** / Calibrations — and declares, as **[AXIOM]-class commitments (declarations, not derivations — the theorem proves the fork; the commitment picks the branch)**: **FC-0** (the ℤ[i] reading is an [AXIOM]/choice, canonized from FTD-0249), **FC-1 (FTD-0255)** (the commutative observable algebra A₅ is complete — **FTD declines the measurement-map import M**; QM's non-commutativity is not part of FTD's model; licensed by FTD-0243's independence [THEOREM]), **FC-2 (FTD-0256)** (**the arrow is native**; global reversibility declined; the **Lorentzian metric is an emergent IR property of the flux wave sector only**; **space ⊥ time fundamental**, Minkowski mixing emergent; licensed by FTD-0253 + FTD-0252's scoped L⁻² IR measurement). **FTD-0257** formalizes the **two-orthogonal-fields ontology** (primary pair flux J ⊥ state s, coupled only via genesis↓/Gauss↑; nested symplectic (q,p) quadrature pair carrying the native clock FTD-0251; decompositions-not-dimensions). **FTD-0258** registers the **structural deviation-prediction spine** (`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`): PL-1 Rice-not-Born (R² 0.9923 vs 0.7137, scoped), PL-2 substrate Bell bound S≤2 (**with the mandatory lab-Bell honesty block — labs measure S>2; FTD's observer-layer account is [SELECTION]+[OPEN]; highest-risk row**), PL-3 co-measurable quadratures, PL-4 γ IR-emergent ∝L⁻² (⟨100⟩, scoped) with UV bend below γ, PL-5 UV anisotropy dying as k⁴ (p=4.0008±0.0006), PL-6 structural nulls [THEOREM]. Supersession matrix vs Copenhagen/MWI/RQM/Bohm/'t Hooft/Spekkens/strings with the mandatory what-FTD-has-not-delivered row; framework-level falsification criteria (constitution §6.2) make the commitments themselves killable. Owner decisions locked: two-field reading; native-postulate posture; constitution-first. Conflict precedence: **LEDGER > constitution > other prose**. verify_index_links 334/0. **Documentation-only arc — no engine changes; golden gate untouched. ZERO promotions: FTD-0013 stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FTD-0208 stands; spine count unchanged; NO α derived anywhere.**)
+**5.45 baseline** (post-2026-06-06 — **Unified FTD Mass arc, Phase 0–3** (branch `engine/unified-mass-2026-06-06`, 8 commits `4028bc1f`→`f627126d`): made the C++/CUDA engine **HONOR the action's equivalence-principle [THEOREM]** (one mass = inertial = gravitational source, SPEC_FTD_LAGRANGIAN §4.1§4.2). **Phase 0**: disentangled `K_B` → `M_REST` + `K_MANIFEST` (`K_GENESIS = N_c·K_MANIFEST`), resolving FTD-0130 finding (1) at the type level (no-op, all = 0.511). **Phase 1**: `s0-seed-massive-body` scenario sources a real latency-Poisson well from LOCKED rest mass. **Phase 2**: default-off `cluster_inertia` toggle makes a LOCKED N-voxel cluster carry inertial mass `N·M_REST` so `a_COM = F_cluster/(N·M_REST)` — making FTD-0110's "mass = cluster size N" dynamical (a∝1/N falsifier holds ~6 ppm; CUDA host-side reduction = bit-exact). **Phase 3**: **EP DEMONSTRATED** (test CI-5: two unequal-N clusters free-fall identically while F_cluster ∝ N). Cluster transport inertia ships **[IMPOSED] (LEDGER FTD-0250)**; collective-coordinate reduction **[OPEN]** = dynamical twin of FTD-0110's nonlinear bridge; rigid-lattice translation **[BOUNDARY — blocked]**. Golden bit-exact `0xc13713f0e11a96da` @ L=17, gpu_parity 70/0, sim_parity 5/5. Also: construction-monograph LEDGER row added (FTD-0249 [SYNTHESIS]); det=G\*→140.04 mislabel fixed in AUDIT_RSI_LEG3 §5. **NO tag promotions, NO new theorems, NO α derived anywhere; FTD-0013 + MC-T4.3 unchanged; zero promotions.**)
+**5.44 baseline** (post-2026-06-02 — four-arc session: **(A) RSI Leg 3 conditional theorem (FTD-0243)**: flip ruled out [THEOREM], 3b-scope [THEOREM] (mechanism corrected: REALITY→scalar-i→C₄→O, not conjugacy), reduction route-invariant [THEOREM] (Q(G*) is the Galois-fixed field; forward-forced symmetric data blind to which root is 1/α), conditional theorem [THEOREM] (𝔉 does not force α unless W natively realizes √(G*(4G*−1))), K-BIND [CLOSED THEOREM-NEGATIVE] (FTD-0244). FTD-0013 unchanged; MC-T4.3 unchanged; zero promotions. **(B) Numeric consistency audit**: canonical triple (constants.py/ontic.h/constants.js) VERIFIED CLEAN; 8 downstream transcription errors fixed. **(C) Web engine**: E/B field overlay translation-offset bug fixed (particle snapshot per sweep + COST_STREAMLINE halved); CI lint 266→0 + fail-fast:false; all GitHub checks green. **(D) Mobile web overhaul**: CSS Grid shell (100dvh, 4-row compact grid, visualViewport browser-nav-inset listener); left-default panel (force-reset migration v2); +20% mobile scale; comprehensive responsive audit — fluid clamp() typography, 30+ CSS files, landscape guard, JS overlay viewport-aware; 0 overflow at all breakpoints; 59 Playwright tests green.)
+**5.43 baseline** (post-2026-06-01 — two-part checkpoint: **(A) Engine-flawless lifecycle/callstack/toggle audit** (16 commits, branch `flawless-engine-2026-06-01`) added a web verification harness (lifecycle-harness / reconcile-claims / toggle-coverage / overlay-scheduler Playwright specs) + three C++ tests (conservation-profile / tick-phase-order / engine-lifecycle); FOUND+fixed a `_repro_gpu_empty_bridge` dangling `CMakeLists.txt` reference that broke clean-checkout `cmake` for ~5 weeks; documented `DagEngine::entity_count()==0` and deprecate-clearly'd DagEngine; pinned the real energy-conservation profile (the non-variational Gauss-projection **operator** is the conservation leak, not the solver tolerance). **(B) MC-T4.3 sharpened to a route-invariant boundary** (new audit `docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`, FTD-0242): 0/4 FTD-native routes force the master-quadratic operator assembly, so α is **dynamical, not structural**; `DERIV_ALPHA_READOUT_RESOLUTION.md` retracted. The boundary is a `[STRONGLY MOTIVATED CONJECTURE no-go]`, **not** a `[THEOREM]`. **NO tag promotions, NO new theorems, NO α derived anywhere; zero promotions; FTD-0013 unchanged.**)
+**5.40 baseline** (post-2026-05-08 F6 — FTD/FQCR Doctrine Ledger v1.2 shipped: FTD-0145 [SYNTHESIS] roll-up of LEDGER + TRACKER_ONTIC_TRUTH + SPEC_ALGEBRAIC_SPINE + SPEC_FQCR + CHECKLIST_MATH_COMPLETE into single-page status map; §7 bivector/Dirac bridges [OPEN] per FTD-0073; §8 sin²θ_W at two scales (GUT 3/8 [SELECTION] / IR 3/13 [PARAMETRIC FTD-0018]); §10 flavor depth matrices [PARAMETRIC scaffold]; §12 cites FTD-0131 partial gravity closure α_G(e,e)≈0.38%; **NO tag promotions, NO new claims, NO derivations**; baseline 5.39 prior content preserved below)
+**5.39 baseline** (post-2026-05-04 night Phase B cluster-persistence arc + trim-the-fat round 4 — 4 retractions in F1/F9 hygiene pattern + (a)+(b)+(c) closure under FTD-0136; **toggle interactions are non-linear under full physics** ("sum greater than parts" operationally confirmed at L=32); **two stability islands at A∈{9.0–9.5} and A=13.0** amid flooding regimes at L=64 full physics ([OBSERVATION], pre-registered falsification queued); **L=256 full-physics 3-axis spot check** via WSL2/CUDA (linear axis→color binding x→R y→G z→B sizes {1,2,3}, sub-saturation caveat); cross-L set-property holds: every (axis, L) under full physics returns a framework integer; SPEC §5.6.21–§5.6.27 documents full arc; LEDGER FTD-0136 carries provenance; **trim-the-fat round 4** removed 30 superseded Phase B exploratory tests (-5,397 LOC; commit `08c517e`); 9 load-bearing Phase B keepers (cluster_tracker + 4 persistence sanity tests + 4 dump_full_physics* runners) build clean via WSL2/CUDA ninja)
+
+### Epistemic-state snapshots
+
+## Current epistemic state (2026-06-09 — post Framework Spec v1 / the constitution)
+
+> **Read `docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md` (FTD-0254) for the canonical framework statement** and `docs/WHERE_WE_LEFT_OFF.md` §0.23 for the session record. This arc shipped the **constitution** — the three-register structure (Postulates P1–P5 / Framework Commitments FC-0, FC-1, FC-2 / Calibrations) — plus the **structural deviation-prediction ledger** (`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`, FTD-0258, rows PL-1..PL-6) and LEDGER rows FTD-0254–0258. The commitments are **[AXIOM]-class declarations, not derivations**: FC-1 declines the measurement-map import M (the fork proven open by FTD-0243); FC-2 declares the arrow native, global reversibility declined, the Lorentzian metric emergent-IR + sector-scoped, and space ⊥ time fundamental (the gap mapped by FTD-0253). The two-orthogonal-fields ontology (FTD-0257: flux ⊥ state primary pair + nested symplectic (q,p)) is the canonical anchor. **Framework-level falsification criteria** (constitution §6.2) state in advance what kills each commitment. **ZERO promotions** — FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`, MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`, FTD-0208 stands, the spine count is unchanged, and the PL-2 honesty block records the lab-Bell open burden as the framework's highest-risk entry. Documentation-only; golden gate untouched.
+
+## Previous epistemic state (2026-06-01 — post engine-flawless audit + MC-T4.3 route-invariance)
+
+> **Read `docs/WHERE_WE_LEFT_OFF.md` §0.18 for the live state.** This checkpoint shipped two deliverables and **zero new theorems**. The epistemic record is unchanged in the up direction and one route-class is now mapped as a boundary; `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; the algebraic spine is untouched.
+
+- **(A) Engine-flawless lifecycle/callstack/toggle audit** (16 commits, branch `flawless-engine-2026-06-01`). A web verification harness (`engine/web/tests/lifecycle-harness.spec.js`, `reconcile-claims.spec.js`, `toggle-coverage.spec.js`, `overlay-scheduler.spec.js`) plus three C++ tests (`engine/tests/test_conservation_profile.cpp`, `test_tick_phase_order.cpp`, `test_engine_lifecycle.cpp`) now pin engine lifecycle, tick-phase order, toggle coverage, and the energy-conservation profile. The audit **found and fixed a `_repro_gpu_empty_bridge` dangling `CMakeLists.txt` reference** that had broken clean-checkout `cmake` for ~5 weeks; documented `DagEngine::entity_count()==0` and marked DagEngine deprecate-clearly. **Conservation finding:** the energy-conservation leak is pinned to the **non-variational Gauss-projection operator** (a structural property of the projection step), *not* the Poisson solver tolerance — tightening the solver does not close it.
+
+- **(B) MC-T4.3 sharpened to a route-invariant boundary** (new audit `docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`, FTD-0242). Across **0/4 FTD-native routes**, none *forces* the master-quadratic operator assembly `(Tr, Det) = (16G*², 16G*³)`; the operator structure remains an imposed selection at every route. The honest reading: **α is dynamical, not structural** — the discrete ontology does not, by any of the four routes examined, fix the EM coupling. `DERIV_ALPHA_READOUT_RESOLUTION.md` is **retracted**. This is a `[STRONGLY MOTIVATED CONJECTURE no-go]` (a route-invariant boundary mapping, in the spirit of the Number-One Goal's second clause), **not a `[THEOREM]`** and **not** a derivation of α. **Nothing was promoted; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`.** Surviving MC-T4.3 exits are a 6th-postulate-class input that *forces* the operator assembly, or a fresh engine-native ARC-D measurement (note: ARC-D1 already returned `[CLOSED NEGATIVE]`, 2026-05-30).
+
+---
+
+## Current epistemic state (2026-05-23 — post ARC-B1 pre-registration + G\* paper polish)
+
+> ** 2026-05-28 update (read `docs/WHERE_WE_LEFT_OFF.md` §0.15 for the live state; LEDGER FTD-0224).** The MC-T4.3 alpha-readout program advanced well past "FTD-0198 design lock only": ARC-A and ARC-B1 closed `[CLOSED NEGATIVE]` (2026-05-23, FTD-0204/0205), and ARC-B2/ARC-C1 (BCC-bridge / quantization) were claimed **FOUND-at-ARC-2** on 2026-05-27 — but an independent adversarial review (2026-05-28) found that **FOUND is an overclaim**; honest status **UNDERDETERMINED** (the determinant grading `16G*³` is an asserted master-quadratic Vieta target, not a forward detdet_ζ identity; three pre-registered rescue attempts found the rescue **UNDERDETERMINED** (the coefficients `16=|μ₄|²`, `G*²=2π·G_BCC(0)`, `G*`=det_ζ ratio are forward-derived *scalars*, so `16G*³` IS assemblable — the J-twisted det_ζ ratio `=G*` is a genuine clean odd source — but the readout's operator structure `(Tr,Det)=(16G*²,16G*³)` is unforced, the imposed master quadratic / W-CRIT-2, not a hard parity/kind no-go)). The two FOUND resolution docs now carry FOUND→UNDERDETERMINED correction banners. **MC-T4.3 remains a `[FOUNDATIONAL OBSTRUCTION]`**; surviving route ARC-D or a new postulate; `x₊=1/α` (FTD-0013) unchanged. (A pre-existing LEDGER-numbering tangle in the 0210–0216 alpha-readout range is flagged for separate cleanup.)
+
+The 2026-05-23 session landed two deliverables and zero new theorems. The epistemic record is unchanged; FTD-0013 (`x_+ = 1/α`) stays `[STRONGLY MOTIVATED CONJECTURE]`; the spine is untouched.
+
+- **MC-T4.3 ARC-B1 pre-registration (FTD-0198) hash-locked.** `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`, git tag `preregister-alpha-readout-observable-selection-v1` (commit `0e79820`), SHA256 `e273ca85234c04406c14b0b0bb01bb2ea760367ca7286c2b35649b80563b582a`. The first session-scoped attack on the Priority-0 central foundational obstruction (MC-T4.3 per `SPEC_DOCTRINE_LEDGER.md` §14 Phase 2). ARC-B1 = Observable-Selection Readout per `SPEC_ALPHA_READOUT_CONTRACT.md` §5B — the narrowest unclosed mechanism class after the 11 closed-negative alpha-derivation routes. 9-section format following PREREG_FINITE_NEUTRAL_LOCK_v1 / PREREG_COLOUR_SINGLET_RANK_v1 templates; three-outcome scheme (FOUND / UNDERDETERMINED / CLOSED-NEGATIVE); 10 falsifier rules F-a..F-j with mechanical checking; §8 banned moves cover all 11+ closed routes. **Design lock only — no closure attempt run.** Closure attempt is a downstream multi-session arc against the locked pre-reg; prior-favoured outcome is CLOSED-NEGATIVE; the value of the pre-reg is in making whichever verdict lands rigorous and providing load-bearing input to FTD-0186 v2 boundary theorem if it closes negative.
+
+- **G\* paper (`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`) polished through 4 red-team rounds → final grade A.** Pre-submission audit + 5 stylized personas (Zagier/Deligne/Tao/Cohen/Poonen) found and fixed 11 Sev-2 items across the rounds (including 4 self-introduced edit-bugs the iterative protocol caught — e.g. Chowla-Selberg misattribution introduced in round 1's Z2 edit, criterion-numbering inconsistency from round 2's P6 reformulation, Bernoulli arithmetic bug in round 4's Z5/Z6 edit). Paper now **30 pages, compile-clean, MSC 11G15 primary**, ready for arXiv math.NT upload. **Edits uncommitted** pending user's upload workflow (`\author{}` deliberately left empty per user instruction; needs fill at arXiv form-fill time; math.NT endorsement may be needed for first submission).
+
+- **Working memory** (`docs/WHERE_WE_LEFT_OFF.md` §0.11) records the full session work. Paths I/II/IV (Theorem 7 documentation alignment, FTD-0186 v2 boundary theorem pre-reg, FTD-0110 nonlinear bridge scoping memo) remain queued per the plan `.claude/plans/let-s-proceed-on-the-eager-rocket.md`.
+
+---
+
+## Previous epistemic state (2026-05-21 — post physics-panel review, boundary-theorem correction, FTD-0189 Outcome A)
+
+The 2026-05-21 session subjected the framework to an adversarial physics-panel review and acted on the verdict. Net effect: the epistemic record got **more honest** (two claims corrected, none promoted), and the one decisive pre-registered test ran and returned a favourable but tightly-scoped result.
+
+- **Physics-panel review.** A five-physicist adversarial panel (Pauli, Feynman, Dirac, Noether, Einstein) stress-tested the ontic chain. Verdict: the algebraic spine is genuine theorem-grade mathematics; everything that turns it toward *physics* is weaker than prior framing implied. A forward plan (priorities P1–P6) was adopted.
+
+- **Boundary theorem (FTD-0186) — honesty-corrected.** The structural/dynamical discriminator's v1 pre-registered falsifier **fired** (type-ii closed-negatives violate criterion A1 as locked). Honest status: `[DEFINITION]` (the discriminator stands) + `[OPEN]` (the classification — a fresh v2 pre-registration + re-run is required). It is **not** a "theorem." See `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` §5.
+
+- **Algebraic spine reconciled to its honest count.** "Nine theorems" → **6 theorem-grade + 3 honestly-tiered** (CM-uniqueness = `[NUMERICAL FACT]`; coefficient-16 = a value-level identity whose structural necessity is `[CONJECTURE]`, T4; Phase-J = `[THEOREM at L=2]`). Canonical: `SPEC_ALGEBRAIC_SPINE.md` §0.
+
+- **FTD-0189 — adversarial look-elsewhere scan, Outcome A.** Pre-registered (tag `preregister-adversarial-look-elsewhere-v1`, commit `9e5ad8f`) and run: the master-quadratic template over an 18-constant basket FTD did **not** design. The master quadratic is the **unique** dual-matcher — 0 non-G\* dual-matchers across 2.65M degree-2 polynomials; rank 1 by ~130×. The family-conditioning objection (Pauli/Dirac) is answered. **`x₊ = 1/α` (FTD-0013) retains `[STRONGLY MOTIVATED CONJECTURE]`** — evidential basis upgraded, **no tag promotion**. Analysis doc + LEDGER FTD-0189 row pending. (Renumbered from FTD-0187 on 2026-05-21 — that ID is held by the Born-rule consolidation LEDGER row; FTD-0188 is the κ_ψ=4π audit.)
+
+- **FTD-0184** (FQCR red-team — the exponential-metric gravity route is the Yilmaz metric, `[CLOSED NEGATIVE]`); **FTD-0185** (alpha-arithmetic-generativity pre-registration / desk-audit gate).
+
+- **G\* computation routes.** One verified fast route to G\* (the Landen log-derivative form, `scripts/proofs/proof_landen_gstar_compression.py`); the Guillera quartic self-replication route (arXiv:1702.05378) is documented but its proof script + `REF_GUILLERA_CORPUS_MAP.md` are not in the main checkout (corrected 2026-06-24 spine audit). The Landen route strengthens the *computation* of G\* (spine link ②); it bears on no physics claim.
+
+- **The honest headline.** The central conjecture `x₊ = 1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`. No claim was promoted this session; two were honesty-corrected. The physics mechanism (MC-T4.3) and a real-theorem Stage 2 of the boundary theorem remain `[OPEN]`. `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` (pure number theory) is submission-ready and not yet on arXiv.
+
+- **Corpus consolidation — merge pass complete (2026-05-22).** The reconcile + archive + restructure consolidation ran to completion: canonical-layer drift reconciled, dead content archived, the navigation layer restructured, and a merge pass consolidated 28 overlapping documents into 13 (every tagged claim, theorem, numeric result, and `FTD-NNNN` cross-reference preserved; husk references repointed corpus-wide; LEDGER edits path-only). Every cluster now carries a local `INDEX_*` navigation file. A subsequent state-of-the-theory roundtable (`docs/theory/07_assessment/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`) and an EFT-cluster consolidation (`10_eft_program` reduced 89→35 top-level docs; 48 scaffolding docs archived, the 11-doc native-flow family merged to 3) followed. The active theory corpus is **~298 documents** across 10 clusters. Plan: `.claude/plans/take-the-role-of-fancy-kahn.md`.
+
+Read **`docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`** (canonical bedrock) and **`docs/theory/07_assessment/core_ledgers/LEDGER.md`** (per-claim status) before defending any FTD math claim.
+
+---
+
+## Previous epistemic state (2026-05-03 — post-publication-trio + tracker consolidation)
+
+After 2026-05-02 + 2026-05-03 (19 commits across two days), the project has its most externally-defensible state to date and its most consolidated documentation footprint. Key updates:
+
+- **Publication trio complete**, all build clean, all anti-target audited:
+  - **Paper A v2** (`PAPER_A_PI_FREE_GENERATOR.tex`, 8pp, LMP-target): π-free generator + extended polynomial scan (2.87M polynomials, ~4×10⁵:1 Bayes, 0 Eisenstein-family dual-matchers). Pre-reg tag `preregister-polynomial-scan-extended-v1`.
+  - **Paper B v1** (`PAPER_B_BCC_COMPLEX_STRUCTURE.tex`, 7pp, LMP-target): BCC complex-structure theorem + dual-4 partial unification (Roles 1+3 [DERIVED]) + honest no-go (Roles 2+4 cannot unify with Z[i]^×).
+  - **Paper C revision** (`PAPER_FTD_AS_WILSONIAN_EFT.tex`, 15pp): Branch-A native EFT measurements + Phase-G reframe + structural-decoupling diagnosis. Old "160× QED β" framing wrapped in `\sout` with retraction note.
+
+- **3 new LEDGER entries** (FTD-0122 through FTD-0124):
+  - **FTD-0122 [DERIVED for Roles 1+3] + [NO-GO for Roles 2+4]**: BCC complex-structure theorem. Z[BCC] ⊗ Q decomposes as `V_triv² ⊕ V_sign² ⊕ V_complex²` with V_complex carrying natural Z[i]-module structure ≅ Z[i]². Unifies CM Aut count + tower level k=4 via Z[i]; no-go for O_h^ab (Klein four, not Z/4) and 27-block orbit count (sizes (1,6,12,8) cannot be permuted).
+  - **FTD-0123 [NUMERICAL FACT]**: Chowla-Selberg h≥2 scan. 63 fundamental discriminants spanning class numbers 1-4 (|d| ≤ 907). ZERO h ≥ 2 dual-matchers via Γ-product analogue. Theorem 3 numerical net 7× larger.
+  - **FTD-0124 [NUMERICAL FACT + METHODOLOGICAL]**: 9-Heegner rigidity scan + criterion-bifurcation. 5814-quadruple grid. Trivial-multiplier criterion: 1/5814 match (canonical d=−4). Rational-multiplier criterion: 21/5814 matches. Load-bearing methodological finding: framework currently applies BOTH criteria in different places without flagging.
+
+- **Theorem 3 honestly restated** (SPEC_ALGEBRAIC_SPINE.md §3): now `[NUMERICAL FACT, exhaustive across class numbers 1-4 with |d| ≤ 907; under the trivial-multiplier criterion declared in §3]`. Criterion declaration is load-bearing per FTD-0124.
+
+- **Canonical bedrock tracker shipped**: [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md). 5 truth tiers; 6 T1 ★★★★★ rock-solid + 3 T2 ★★★★ conditional + 4 T3 ★★★ numerical + 1 T4 ★★ (coefficient 16 = |Aut(E)|²) + 2 T5 ★ (the central α / N_c conjectures). Each row has unique `OT-N.M` ID and points at a verification artifact. **Read this FIRST before defending any FTD math claim.**
+
+- **87-paper inventory database**: [`dissemination/papers/INVENTORY.json`](dissemination/papers/INVENTORY.json) + [`INVENTORY.md`](dissemination/papers/INVENTORY.md). Auto-generated by `scripts/build_paper_inventory.py`. Anti-target audit + heuristic tier + verdict (KEEP/REVISE/RETIRE/ARCHIVED) per row. Initial: 12 KEEP, 2 REVISE, 43 RETIRE, 30 ARCHIVED.
+
+- **6 live trackers, 0 stale** (post 2026-05-03 consolidation):
+  - `TRACKER_ONTIC_TRUTH.md` (canonical bedrock)
+  - `TRACKER_OPEN_ITEMS.md` (every [OPEN] item)
+  - `LEDGER.md` (per-claim provenance)
+  - `SPEC_OPEN_MATH_BY_SECTOR.md` (sector-organised research queue; replaces archived `CHECKLIST_MATH_COMPLETE.md`)
+  - `INVENTORY.{json,md}` (papers)
+  - `AUDIT_WEAKNESSES_MASTER.md` (cross-cutting weaknesses)
+
+  4 stale trackers deleted (TRACKER_DOCUMENT_STATUS, ISSUE_TRACKER, TRACKER_PDF_ONLY_PAPERS, TRACKER_REFRAME_FLAGS — total 1499 lines; git history preserves them).
+
+- **MC-T4.1 reframed** (`cc93c2d`): not a Severity-1 ontological gap. SPEC_FTD §1.1 graded-monism table establishes J-primary; Postulate 3 made explicit. Severity demoted to docs-alignment.
+
+- **Overclaim cleanup** (`be045b3`): README, manuscript v2 prefaces (src + vol1), FAQ data.js. 6 FAQ THEOREM tags downgraded. Browser preview verified.
+
+- **MC-checklist current state** (Tier breakdown):
+  - **Tier I: 5/5 closed**
+  - **Tier II: 3/3 closed** (T2.3 §4 item 3 also closed today via FTD-0123; structural theorem item 4 remains [OPEN])
+  - **Tier III: 1/5 closed (T3.2 m_e exponent n=11 [DERIVED])**, 3/5 investigated, 1/5 blocked
+  - **Tier IV: T4.5 Roles 1+3 [DERIVED] + Roles 2+4 [NO-GO]** (FTD-0122 closure); T4.1 reframed (docs-alignment); T4.2, T4.3 (foundational obstruction), T4.4 unchanged
+
+- **α-derivation routes status**: R1/R2/R3/R4, Z-factor, RG-running, algebraic combinations, 1/√d, Langevin-equipart all closed-negative (carried over). The IDENTIFICATION x_+ = 1/α stays [STRONGLY MOTIVATED CONJECTURE]; structural evidence is the strongest the framework has held — Bayes ~4×10⁵:1, Eisenstein-family null, h≥2 null, BCC complex-structure unification of CM Aut count with tower level k=4.
+
+Read **`docs/WHERE_WE_LEFT_OFF.md` §0.6** for the comprehensive
+2026-05-02 evening + 2026-05-03 session summary, **`TRACKER_ONTIC_TRUTH.md`** for the canonical bedrock, and **`SPEC_PHYSICS_BRIDGE.md`** for the physics-bridge synthesis.
+
+The publication trio (Papers A, B, C) is ready for external pre-submission review by a number-theory / representation-theory colleague unfamiliar with FTD. Suggested review focus: tightness of Paper A §6 / Paper B Theorem 3.1 proofs + honesty of Paper B §6 no-go + Paper C Phase-G reframe consistency.
+
+---
+
+### Earlier today (2026-05-01 morning — post Maxwell-exploit thread closure)
+
+After the 2026-04-30 / 2026-05-01 two-day session, the project gained
+**9 new LEDGER entries** (FTD-0112 through FTD-0120) and the algebraic
+spine is now at **9 theorems** (Theorem 8 = (1+i)-tower harmonic invariant,
+Theorem 9 = field-theoretic Q(G\*) characterization). The
+**Maxwell-exploit thread is COMPLETE** with all 8 sub-questions Q1-Q8
+addressed. A canonical-reference G\* typo bug (FTD-0117) was caught and
+fixed across 5 docs. The FTD-0110 nonlinear-bridge gap was analyzed and
+sharpened (FTD-0119) but not closed.
+
+Read **`docs/WHERE_WE_LEFT_OFF.md` §0** for the latest-session summary
+and §0.3 for the priority queue. The previous-session foundations
+(2026-04-27 engine refactor + 2026-04-28 FTD-0110 linear-level closure)
+are preserved below as historical context.
+
+Do **not** claim results stronger than what's listed in
+`docs/WHERE_WE_LEFT_OFF.md` §0 / §0.1 without re-auditing.
+
+---
+
+### Previous epistemic state (2026-04-27 evening — post engine refactor sweep)
+
+After the 2026-04-27 engine-as-instrument portfolio + look-elsewhere scan,
+the project is in a structurally narrowed but defensible state. The
+engine codebase was then decomposed across 8 phases (17 commits 2db67ca…87158ae)
+with bit-exact physics preservation; physics-bearing claims are unchanged
+by the refactor. Do **not** claim results stronger than what's listed in
+`docs/WHERE_WE_LEFT_OFF.md` §4 without re-auditing. The bird's-eye
+assessment lives in `WHERE_WE_LEFT_OFF.md` §10 — read that for
+"what's missing" diagnosis.
+
+**Engine architecture (post-refactor):** the 5 hottest files were
+decomposed into focused modules following 4 newly-codified patterns:
+cascade callback (ADR-0010), mesh-factory callback (ADR-0011), golden-tick
+regression gate (ADR-0012), and TOGGLE_SPECS[] table-driven toggles
+(ADR-0013). `viewport.js` 3953→1256 LOC; `bridge-init.js` 2395→42 LOC;
+`render_bridge.cpp` 1231→545 LOC; `kernels_stencil.cu` 1530→deleted-and-split-into-3-TUs.
+See [META_PROJECT_ATLAS.md §10](META_PROJECT_ATLAS.md#10--refactor-sweep-history-2026-04-27-completed)
+for the full commit ledger and [docs/audits/AUDIT_2026-04_refactor-sweep.md](docs/audits/AUDIT_2026-04_refactor-sweep.md)
+for the audit. **WSL2 GPU parity verified 2026-04-28** (golden hash `0xcd957b601d47868a` bit-exact at L=16 on CUDA backend; `gpu_parity_complete` 70/0 across all 20 physics domains at L=32; `sim_parity` PASS at 100 + 500 ticks). The refactor sweep is fully verified end-to-end across both CPU and CUDA backends.
+
+**Firm theorems (nine numbered: seven theorem-grade + two honestly-tiered below theorem grade — canonical reference: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` §0):**
+G\* algebraic identity (= Γ(1/4)/Γ(3/4) ≈ 2.9587 — note: NOT the
+Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; per FTD-0117 fix), master
+quadratic polynomial + roots, CM curve uniqueness among class-number-1
+fields (operationally tabulated in `EXPLR_CM_RATIO_TOWER.md`),
+coefficient 16 = |Aut(E)|² for E: y² = x³ − x, Watson identity
+W₃ = G\*²/(2π), Phase G geometric Coulomb = lattice Poisson Green's
+function at every finite L, Phase J partition-function ultralocality,
+**(1+i)-tower harmonic invariant** (Theorem 8, FTD-0111, 2026-04-29:
+1/y₊ + 1/y₋ = 1 with anomaly transcendence A_k ∉ Q for k ≥ 4),
+**field-theoretic Q(G\*)** (Theorem 9, FTD-0112, 2026-04-30: maximal
+π-free subfield of Q(π, Γ(1/4)) conditional on Chudnovsky 1976).
+**All nine numbered results stand — seven theorem-grade, two honestly tiered below theorem grade (see `SPEC_ALGEBRAIC_SPINE.md` §0).**
+
+**Maxwell-exploit thread COMPLETE (2026-04-30 / 2026-05-01):** 9 LEDGER
+entries FTD-0112 through FTD-0120. Lattice ED framework now covers
+every classical EM phenomenon — static Coulomb (Phase G FTD-0004),
+retarded radiation (FTD-0113), Bianchi identities (FTD-0114), boosted
+Coulomb + lattice Cherenkov pole (FTD-0115), extended sources + Cherenkov
+rate (FTD-0120 Q6/Q7), Larmor (FTD-0120 Q5), source-half consistency
+(FTD-0120 Q8). The Z-factor reading FTD-0116 was floated as
+[HYPOTHESIS] and falsified via Q4a numerical test (CLOSED NEGATIVE).
+What remains for full Maxwell-on-FTD: dynamical source coupling
+(g_s  α relationship, EFT recovery program territory). 5 new proof
+scripts; all PASS at machine precision (where applicable).
+
+**[STRONGLY MOTIVATED CONJECTURE]:** x+ = 1/α (1.26 ppm); x− = N_c
+(0.80%); the master quadratic dual-prediction property (both roots
+simultaneously matching unrelated physical sectors) is the strongest
+structural evidence — explicitly distinguished from monomial-level fits
+that the FTD-0097 scan ruled as chance-level on 2026-04-27.
+
+**[PARTIAL] — engine-as-instrument findings (2026-04-27):**
+- **FTD-0107: deterministic cluster counts L-invariant at L ∈ {32, 64}**
+  (1 from point injection, 2 from collision; 5/5 seeds at both L; cluster
+  sizes absolute, ~25 voxels for ic1, ~3-5 voxels for ic3). The most
+  novel positive structural finding of the engine-as-instrument program.
+  See `ANALYSIS_EMERGENT_SPECTRUM_G1.md`.
+- **FTD-0103 continuum-limit**: cond(S) monotone improving across L;
+  Wilson eigenvalue positivity non-monotonic.
+- **FTD-0104 topology atlas**: clean grid match across Wilson loop, flux
+  tube, monopole, vacuum instanton at L=32.
+- **FTD-0105 lemniscatic 2-sphere test**: PASS-NONE strict, secondary
+  closed-negative — lattice horizon is sphere-symmetric.
+
+**[MEASURED] — methodological-hygiene scans (2026-04-27):**
+- **FTD-0097 look-elsewhere scan**: NULL REJECTED upward at ε = 10⁻⁴
+  (62 raw / 11 dedup hits vs Poisson null λ=4); χ²(df=19) = 470 raw / 38
+  dedup; per-target uniformity rejected at 99.9%+ raw / 99% dedup. Catalog
+  is over-rich at the monomial level. The L2 identity 8·G\*²·α appears
+  in the scan as a chance-level fit at exactly its reported 68.77 ppm
+  precision. **Confirms FTD-0094 [PARAMETRIC] from methodological side.**
+  See `AUDIT_LOOK_ELSEWHERE_RESULTS.md`.
+
+**[CLOSED NEGATIVE]:**
+- **FTD-0050** (master quadratic as characteristic polynomial of RG step;
+  2026-04-20). Engine stencil orthogonal to BCC. Does NOT demote
+  FTD-0001/0013/0014 — algebraic spine unchanged.
+- **FTD-0093 Mechanism C** (g_c as bridge-operator eigenvalue on σ_BCC;
+  closed 2026-04-27 at L ∈ {24, 32, 48} with non-monotonic ratio trend
+  rejecting predicted 45.31). Combined with prior closures of Mechanisms
+  A and B, **all three first-principles routes for g_c are now closed
+  negative; g_c remains [PARAMETRIC]**.
+
+**[PARAMETRIC] (terminal demotion 2026-04-27):**
+- **FTD-0094** (L2 candidate identity 2·m_e/α = 16G\*²; demoted per
+  pre-registered criterion: FTD-0093 closed AND FTD-0096 [OPEN]). Confirmed
+  from methodological side by FTD-0097's m_e-cluster of chance-level fits.
+- sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59, PMNS angles — already
+  demoted April 19.
+
+**[OPEN] (the real research program):**
+- ~~**WHY 25 voxels for ic1 cluster?**~~ — **ANSWERED 2026-04-28 (FTD-0110 [DERIVED at linear level])**:
+  cluster size scales as `N(A) ≈ ¼·(A/K_GENESIS)²` with `k = 1/N_base = ¼`.
+  ¼ coefficient now **DERIVED** from O_h representation theory: mult(A_{1g}) = 4
+  in the 27-block by character-table formula [THEOREM]; δ_center is A_{1g}-pure
+  (O_h-fixed point); the 18-point Laplacian preserves the 4-dim A_{1g} subspace;
+  δ_center projects onto 4 A_{1g} eigenmodes with energies {3/8, 1/8, 3/8, 1/8},
+  mean = 1/N_base = ¼; cluster harvests the mean. Direction-invariance follows
+  automatically (per-component scalar evolution). See `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`.
+  25 voxels at A=10 is the canonical-amplitude steady state. SM-particle masses
+  identified with cluster size N at amplitude A=2√(m/m_e): e/μ/π/K/p/τ match within
+  0/1.1/2.0/10/15/18% naively, ~5% with empirical k(A) drift correction.
+  Open sub-question: rigorously prove the linear→nonlinear bridge (engine
+  reproduces linear-mode equipartition under genesis + Langevin + projection).
+- **FTD-0096 μ-from-ℓ_P missing arrow** — mass-unit calibration; either
+  closes or terminally demotes L2.
+- **FTD-0106 G\*/π asymmetry** per-domain engine measurements
+  (Domain A Langevin dissipation; Domain B Coulomb phase; Domain C BH evap)
+  — pre-registered, theory-only catalog committed, engine measurements
+  deferred.
+- **L=128 G2 follow-up to FTD-0107** — locks L-invariance further.
+- ~~**The structural bridge between algebraic spine and engine
+  phenomenology**~~ — **CANDIDATE BRIDGE IDENTIFIED 2026-04-27 late evening**:
+  the framework integer N_base = 4 connects O_h-cubic-point-group structure
+  (algebraic) to cluster-efficiency coefficient ¼ (engine). Verified via two
+  code paths: GPU campaign (T5b/T6/T7/T8, 5/5 amplitudes + 5 SM particles)
+  and WASM dashboard (Poynting-vector asymmetry visual cross-check). See
+  `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` and `WHERE_WE_LEFT_OFF.md §10.6`.
+
+**[NEW INFRASTRUCTURE 2026-04-27]:**
+- Pre-registration discipline operationalized via SHA256 hash + git tags
+  applied BEFORE measurement. Today's tags: `preregister-lemniscatic-v1`,
+  `preregister-gstar-asymmetry-v1`, `preregister-emergent-spectrum-g1`,
+  `preregister-look-elsewhere-scan-v1`. All measurements held the gate.
+- `tools/scan_look_elsewhere.py` — deterministic look-elsewhere runner
+  (FTD-0097, hash-locked).
+- Engine extension: `--lemniscatic-mode` in `benchmark_black_hole_thermo.cpp`
+  (FTD-0105); `--output-dir` in `campaign_emergent_spectrum_2026-04-27.cpp`
+  (FTD-0107).
+
+**Demoted 2026-04-19:** sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59,
+PMNS angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
+
+**Foundational commitment:** undefined-boundary lattice ontology (not
+completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`.
+
+**The structural gap (2026-04-27 diagnosis + 2026-04-28 closure, see
+WHERE_WE_LEFT_OFF.md §10 and §10.6):** at the start of 2026-04-27 evening,
+the algebraic spine and engine phenomenology stood as two defensible
+pillars without a derivation chain. **The bridge is now CLOSED at the
+linear level**: `k = 1/N_base = 1/4` is **[DERIVED]** from the O_h
+representation theory of the 27-block (character-table formula gives
+mult(A_{1g}) = 4; δ_center is A_{1g}-pure; the 4×4 Laplacian projection
+gives mean energy 1/4 across A_{1g} eigenmodes). The derivation is direction-
+invariant (axial vs body-diagonal), matching the GPU campaign D3g result.
+See `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. **The cluster--mass
+identification (FTD-0110 main claim) remains [STRONGLY MOTIVATED CONJECTURE]
+for the full nonlinear engine regime** — the linear-mode prediction matches
+the engine empirically within ~5% across 5 SM particles (e to τ) and 11
+amplitudes, but the formal proof that nonlinear genesis + Langevin + projection
+preserves the linear-mode equipartition is [OPEN]. This is the cleanest
+remaining derivation gap; closing it via perturbation theory in the irrep
+mixing would convert FTD-0110 to [THEOREM]-grade.
+
+---
+
