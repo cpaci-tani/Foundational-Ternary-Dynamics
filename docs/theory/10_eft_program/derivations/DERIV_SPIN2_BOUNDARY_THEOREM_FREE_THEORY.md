@@ -1,18 +1,15 @@
 # DERIV — Spin-2 boundary theorem (free-theory + canonical-toggle scope)
 
-**Tag:** `[THEOREM at free-theory + Gauss-only level, for clauses (C2-1), (C2-2 free), (C2-3 within §4 catalog)]` + `[STRONGLY MOTIVATED CONJECTURE for full canonical toggle set per FTD-0193 empirical validation]` + `[REFERENCE for clause (C2-4)]` (effective-theory matching via Deser bootstrap of posited h_μν per FTD-0189 + AUDIT_NEWTON_POSTULATES_RECONCILIATION §3 + DERIV_EINSTEIN_FIELD_EQUATIONS [SELECTION/CONDITIONAL] retags 2026-05-24).
+**Tag:** `[THEOREM at free-theory + Gauss-only level, for clauses (C2-1), (C2-2 free), (C2-3 within §4 catalog)]` + `[STRONGLY MOTIVATED CONJECTURE for full canonical toggle set per FTD-0193 empirical validation]` + `[REFERENCE for clause (C2-4)]` (effective-theory matching via Deser bootstrap of posited h_μν per FTD-0189 + AUDIT_NEWTON_POSTULATES_RECONCILIATION §3 + DERIV_EINSTEIN_FIELD_EQUATIONS [SELECTION/CONDITIONAL] retags).
 
-This document consolidates Arc C2 P1 substantive derivation into a unified free-theory + canonical-toggle-set version of the boundary theorem. It is the load-bearing pre-pre-reg derivation underlying the future `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` (Arc C2 P3). Tag promotion to a full closed-form theorem requires P3 pre-reg + P4 closure attempt against the locked design.
+This document consolidates the Arc C2 P1 substantive derivation into a unified free-theory + canonical-toggle-set version of the boundary theorem. It is the load-bearing pre-pre-reg derivation underlying `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` (Arc C2 P3). Tag promotion to a full closed-form theorem requires P3 pre-reg + P4 closure attempt against the locked design.
 
-**Date:** 2026-05-24 (Arc C2 P1 consolidated deliverable, Wilsonian-reframe plan v2)
-**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; expected to be cited by `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`.
-**Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 Arc C2 P1 deliverable.
 **Companion docs:**
 - [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent; this is its P1 closure)
 - [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 derivation (J-bilinear bubble integral has no isolated pole)
-- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE]` 2026-05-22 empirical validation
+- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE]` empirical validation
 - [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — FTD-0189 ripple establishing (C2-4) framing
-- [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — retagged 2026-05-24 (EFE-6/8/9 → [SELECTION/CONDITIONAL]); the Deser-bootstrap chain cited by (C2-4)
+- [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — retagged (EFE-6/8/9 → [SELECTION/CONDITIONAL]); the Deser-bootstrap chain cited by (C2-4)
 - [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) — §3 action functional, §4.2 [THEOREM] Poisson on ℒ, §4.3 [THEOREM modulo clock hypothesis] Born-Infeld Schwarzschild
 - [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) — FTD-0131 substrate gravity (the scalar-sector lower-end of the boundary statement)
 - [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) §4 — frozen non-site-local observable catalog Arc C2 inherits
@@ -39,7 +36,7 @@ Inherit from [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POL
 >
 > **(C2-3) No substrate-derived emergent graviton in §4 catalog.** Since (i) the only candidate non-site-local rank-2 observables in the §4 frozen catalog are J-bilinears or J-derivative bilinears (`O_ij`, `Õ_ij` per `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` §5; see uniqueness argument in [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §2.2), and (ii) per (C2-2) these observables produce no isolated pole in the TT channel, there is no substrate-derived emergent graviton within the §4 catalog. Extension outside the §4 catalog (e.g., to finite-trace `s_m` variation per Doctrine §12 candidate principles) is Arc C1 territory and is `[OPEN]` if pursued.
 >
-> **(C2-4) Full nonlinear GR is matched, not derived.** The metric perturbation `h_μν` enters the FTD gravity content as Conjecture 10.1 per FTD-0189 [AUDIT FINDING] (2026-05-21) — *posited*, not substrate-constructed. The Deser-bootstrap chain `(h_μν posited) → (linearized Einstein equations [SELECTION/CONDITIONAL]) → (Lovelock-completion [SELECTION/CONDITIONAL])` documented in [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) (EFE-6/8/9 retagged 2026-05-24 per FTD-0189 ripple) recovers full GR as effective-theory matching of imported scaffold. Gravitational-wave dynamics, perihelion precession, light bending, and other strong-field GR phenomena are matched via this chain; they are not substrate-derived from FTD axioms 1-5.
+> **(C2-4) Full nonlinear GR is matched, not derived.** The metric perturbation `h_μν` enters the FTD gravity content as Conjecture 10.1 per FTD-0189 [AUDIT FINDING] — *posited*, not substrate-constructed. The Deser-bootstrap chain `(h_μν posited) → (linearized Einstein equations [SELECTION/CONDITIONAL]) → (Lovelock-completion [SELECTION/CONDITIONAL])` documented in [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) (EFE-6/8/9 retagged per FTD-0189 ripple) recovers full GR as effective-theory matching of imported scaffold. Gravitational-wave dynamics, perihelion precession, light bending, and other strong-field GR phenomena are matched via this chain; they are not substrate-derived from FTD axioms 1-5.
 >
 > **Net statement.** The substrate-derivable gravity content within the §4 catalog at free-theory + Gauss-only level is **scalar (latency ℒ, via Phase G Poisson, [THEOREM]) + transverse vector (J spin-1, propagating, [THEOREM])**. Helicity-±2 is forbidden by (C2-3) within the catalog at this level. Full nonlinear GR enters by (C2-4) as effective-theory matching of imported h_μν, conditional on Conjecture 10.1 (which FTD-0193 [CLOSED NEGATIVE] establishes as falsified in the probed regime for substrate emergence).
 
@@ -59,7 +56,7 @@ The candidate "rank-2 substrate content" is built from these three fields. No fu
 
 ### §2.2 — Canonical toggle set (snapshot reference)
 
-The canonical toggle set at the time of `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` lock (commit `bb354b6`, 2026-05-22) is the engine's default with 11 toggles ON, `dual_substrate` + `weak_transmutation` OFF. This is the regime in which FTD-0193 measured the [CLOSED NEGATIVE] verdict. Arc C2's boundary theorem statement at P3 pre-reg lock will re-snapshot this set explicitly; the present derivation uses it as inherited.
+The canonical toggle set at the `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` lock (commit `bb354b6`) is the engine's default with 11 toggles ON, `dual_substrate` + `weak_transmutation` OFF. This is the regime in which FTD-0193 measured the [CLOSED NEGATIVE] verdict. Arc C2's boundary theorem statement at P3 pre-reg lock will re-snapshot this set explicitly; the present derivation uses it as inherited.
 
 **Free-theory limit (used in §3, §4):** s ≡ 0, no state-flux coupling, no Gauss constraint applied (or Gauss applied as the only interaction), no Langevin noise, no manifestation thresholds active. This is the regime in which the [THEOREM]-grade results of §3 + §4 are rigorous.
 
@@ -161,7 +158,7 @@ The argument:
 
 ### §6.1 — The Deser-bootstrap chain (per FTD-0189 + AUDIT §3 ripple)
 
-Per [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) Steps 1-5 (retagged 2026-05-24 per FTD-0189 ripple):
+Per [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) Steps 1-5 (retagged per FTD-0189 ripple):
 
 - **Step 1 (Metric emergence):** `g_μν = η_μν + h_μν(ℒ)` — h_μν is *posited*, not substrate-constructed. Per FTD-0189: Conjecture 10.1.
 - **Step 2 (Stress-energy via Noether):** [THEOREM]; survives FTD-0189 unchanged (no h_μν dependence).
@@ -196,7 +193,7 @@ Full nonlinear GR (Einstein equations, gravitational waves, Mercury perihelion, 
 | α_G(e,e) hierarchy prediction | YES (0.38% match) | [SMC] (inherits FTD-0015) | FTD-0131 §2.1 |
 | Vector gravity (transverse spin-1) | YES (propagating modes) | [THEOREM] (linear lattice wave equation per §3.1) | `DERIV_J_BILINEAR_NO_SPIN2_POLE.md` §1.2 |
 | **Spin-2 emergent graviton** | **NO** (within §4 catalog at free-theory + Gauss-only rigorously; SMC for canonical toggles per FTD-0193) | **[THEOREM]** at free-theory level for (C2-3) | This document §5 |
-| Full nonlinear GR (Einstein eqs, GW) | NO (matched, not derived) | [SELECTION — conditional on Conjecture 10.1] | `DERIV_EINSTEIN_FIELD_EQUATIONS.md` retagged 2026-05-24 |
+| Full nonlinear GR (Einstein eqs, GW) | NO (matched, not derived) | [SELECTION — conditional on Conjecture 10.1] | `DERIV_EINSTEIN_FIELD_EQUATIONS.md` retagged |
 | Mercury perihelion, light bending, GPS | NO (matched via Deser bootstrap) | [SELECTION — inherited] | `DERIV_EINSTEIN_FIELD_EQUATIONS.md` Step 3 chain |
 
 **Wilsonian reframe placement:** this boundary theorem caps the upper end of the substrate-derived scaling law. The scaling law from discrete floor (ℓ_P, FTD-0041 ESTABLISHED) through scalar gravity (Phase G ESTABLISHED) and vector gravity (J spin-1 modes ESTABLISHED) reaches the Schwarzschild scalar sector (FTD-0131 [DERIVED modulo clock hypothesis]). Above that, gravity content is matched via Deser-bootstrap of posited h_μν per (C2-4). The boundary is **precisely**: substrate-derivation reaches scalar + vector; emergent spin-2 is forbidden in §4 catalog; full GR is matched.
@@ -207,7 +204,7 @@ This serves CLAUDE.md project-goal clause 2 ("rigorously establish what we canno
 
 ## §8 — Arc B P2 verdict matrix (conditional scaling-law branch)
 
-The boundary statement's "scalar gravity sector" depends on Arc B P2 verdict (clock-hypothesis substrate-derivation attempt; pre-reg `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md` authored 2026-05-24, hash-lock pending). Two branches:
+The boundary statement's "scalar gravity sector" depends on the Arc B P2 verdict (clock-hypothesis substrate-derivation attempt; pre-reg `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`, hash-lock pending). Two branches:
 
 **Branch A: Arc B P2 closes FOUND** (clock hypothesis substrate-derived).
 - SPEC §4.3 promoted to fully [THEOREM] (no qualifier).
@@ -231,7 +228,7 @@ The boundary statement's "scalar gravity sector" depends on Arc B P2 verdict (cl
 | C2-1 | Linear spectrum: 2 transverse spin-1 + 1 quasi-static scalar; no rank-2 propagating mode | **[THEOREM]** | **[SMC]** (interactions don't add new fundamental field per §3.4) | OPEN at L > 64 / non-canonical toggles |
 | C2-2 | J-bilinear TT projection has no isolated pole | **[THEOREM]** (per DERIV_J_BILINEAR_NO_SPIN2_POLE.md §3) | **[SMC]** (per §5 + FTD-0193 empirical 11/12 k-points L=64) | OPEN at L > 64 / non-bilinear observables |
 | C2-3 | No substrate-derived emergent graviton in §4 catalog | **[THEOREM]** (composition C2-1 + C2-2 + §5.1 uniqueness) | **[SMC]** (inherits C2-2 [SMC]) | OPEN for non-§4-catalog observables (Arc C1) |
-| C2-4 | Full nonlinear GR via Deser bootstrap of posited h_μν | **[REFERENCE]** — `DERIV_EINSTEIN_FIELD_EQUATIONS.md` retagged 2026-05-24 per FTD-0189; chain is [SELECTION/CONDITIONAL] not [THEOREM] | inherited | inherited |
+| C2-4 | Full nonlinear GR via Deser bootstrap of posited h_μν | **[REFERENCE]** — `DERIV_EINSTEIN_FIELD_EQUATIONS.md` retagged per FTD-0189; chain is [SELECTION/CONDITIONAL] not [THEOREM] | inherited | inherited |
 
 **Net tag for the boundary theorem statement** (at free-theory + Gauss-only + §4-catalog scope): **[THEOREM]**. At canonical-toggle-set scope: **[SMC]** with FTD-0193 empirical floor. At general / extended scope: **[OPEN]** pending Arc C1 work.
 

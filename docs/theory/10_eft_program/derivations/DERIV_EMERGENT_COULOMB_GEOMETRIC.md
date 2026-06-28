@@ -4,7 +4,6 @@
 energy accumulator that matches measurement to permille precision with
 **zero free parameters**.
 **Status:** Phase G closes the Phase-F alpha-plateau interpretation audit.
-**Date:** 2026-04-19
 **Supersedes:** `AUDIT_ALPHA_EXTRACTION.md`'s [OPEN] residual of 1.8× α_ref —
 that residual was a category error, not a physics gap.
 
@@ -65,13 +64,13 @@ For one −1 charge at n₂:
 
 Superposition: `J_pair = J₁ + J₂`, so `|J_pair|² = |J₁|² + |J₂|² + 2 J₁·J₂`.
 
-Engine energy accumulator (`diagnostics_compute.cpp:92`, **updated 2026-04-27**):
+Engine energy accumulator (`diagnostics_compute.cpp:92`):
 
 ```
-  field_energy = ½ Σ_n |J(n)|²   ← canonical since April 2026 refactor
+  field_energy = ½ Σ_n |J(n)|²   ← canonical convention
 ```
 
-**Convention pairing (FTD-0286 v2, 2026-06-13):** with the ½ prefactor,
+**Convention pairing (FTD-0286 v2):** with the ½ prefactor,
 the interaction readout pairs with
 
 ```
@@ -81,7 +80,7 @@ the interaction readout pairs with
 
 The legacy form `α_r = 2 r G_L(r)` in this document's original derivation
 assumed `field_energy = Σ |J|²` without the ½. That assumption matched the
-pre-2026-04-27 accumulator but not the current engine. See
+legacy accumulator but not the canonical engine convention. See
 `ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.
 
 Original derivation (Σ|J|² convention):

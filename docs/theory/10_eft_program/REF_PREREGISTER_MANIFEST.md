@@ -37,7 +37,7 @@ git tag -l <tag-name>            # tag listing
 The launcher script `engine/tools/run_emergent_spectrum_g1.sh` wraps
 the FTD-0107 invocation; see `commit a0983ca` for the script body.
 
-## Campaign 2 — dynamical time dilation (2026-06-07)
+## Campaign 2 — dynamical time dilation
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -45,16 +45,16 @@ the FTD-0107 invocation; see `commit a0983ca` for the script body.
 | **FTD-0252** v2 (IR limit) | `preregister-dynamical-time-dilation-v2` (owner-deferred) | (pending) | runner SHA256 `28c99f87f82b82bb25eea14be7e72ae4c422307e955840ac92c7dbd75b3b1140` (mode `--nperp-fixed=3`); analysis `scripts/exploration/analyze_time_dilation_v2.py` SHA256 `9a7559046f8bac01f5644a4f908f080ff220d6d7492a85cd90e90a72c5d9046c` | `--nperp-fixed=3 --Llist=33,65,97,129,193` | `engine/results/time_dilation_v2_2026-06-07/` | [`PREREG_DYNAMICAL_TIME_DILATION_v2.md`](../03_derivations/foundational_mechanics/PREREG_DYNAMICAL_TIME_DILATION_v2.md) → `ANALYSIS_DYNAMICAL_TIME_DILATION.md` §v2 (IR_CONFIRMED, scoped) |
 | **FTD-0268** blind L=257 extension | `preregister-time-dilation-L257-blind-v1` | `ee8976b6` | runner unchanged from v2 (SHA256 `28c99f87…b1140`); predictor/scorer `scripts/exploration/predict_time_dilation_L257.py` SHA256 `d6d8799ff0981c2f5b49bcf29e63806e6d6e0d2209547d832f2adf7ec36b0816` | `--L=257 --nperp-fixed=3` | `engine/results/time_dilation_L257_blind_2026-06-11/` | [`PREREG_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/foundational_mechanics/PREREG_TIME_DILATION_L257_BLIND_v1.md) → [`ANALYSIS_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/foundational_mechanics/ANALYSIS_TIME_DILATION_L257_BLIND_v1.md) |
 
-## FTD-0110 nonlinear bridge — quantitative N(A) law (2026-06-11)
+## FTD-0110 nonlinear bridge — quantitative N(A) law
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
 | **FTD-0110** N(A) law from substrate params | `preregister-ftd0110-na-law-v1` | (lock commit) | model `scripts/exploration/genesis_na_law_forward.py` SHA256 `ea17ccc294e87eac1fcd7d8b6ae9e7c6525b18167fbf0fa27ebd366850ff59b1`; adjudicator `scripts/exploration/analyze_na_law.py` SHA256 `867d99dfbef6187f945c7953b111e3c0f0d9b14dec1bdfbcfa39d369dadcd6c2`; engine instrument `engine/tests/campaign_genesis_geometry.cpp` SHA256 `7bda40a6e57c63e926e3b9183f3565093b96b1b570f32600b7103949b6b2cc36` | model `--sweep --L=32 --seeds=8 --gauss on --coupling on`; engine `--L=32 --A=14,30 --cpu` | `engine/results/genesis_geometry_2026-06-11/` + `scripts/exploration/results/na_law_2026-06-11/` | [`PREREG_FTD0110_NA_LAW_v1.md`](../03_derivations/foundational_mechanics/PREREG_FTD0110_NA_LAW_v1.md) → `ANALYSIS_FTD0110_NA_LAW.md` (post-run) |
 | **FTD-0277** collective-coordinate genesis counting v1 | (local hash-lock; no clean git tag) | (pending owner commit) | model `scripts/exploration/genesis_counting_model.py` SHA256 `4fdaa1f9e9e32735fbab9d0ed9752b09bc6610a19e637c778595b397fc1d617b`; adjudicator `scripts/exploration/analyze_genesis_counting.py` SHA256 `7a4506022cf6927062b3d587a3c4082a5cda076ad3ea8c36bdf80ade96fd9a1b` | `python scripts/exploration/analyze_genesis_counting.py --out scripts/exploration/results/genesis_counting_v1/analysis.txt --json-out scripts/exploration/results/genesis_counting_v1/analysis.json` | `scripts/exploration/results/genesis_counting_v1/` | [`PREREG_GENESIS_COUNTING_v1.md`](preregistrations/PREREG_GENESIS_COUNTING_v1.md) → [`ANALYSIS_GENESIS_COUNTING_v1.md`](../03_derivations/archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md): `COUNTING_MODEL_V1_CLOSED_NEGATIVE` |
 
-Platform: current canonical post-optimization stack atop HEAD `761daa75` + uncommitted 8-color-SOR Gauss optimization (owner-declared canonical 2026-06-11); physics-diff fingerprint SHA256 `961916b56569d1409984994121f51f3b897c02fe993ebf2ce0e2b03b3d07e381`. Genesis/flux field verified bit-reproducible (identical-seed firing geometry); golden-hash energy-audit non-determinism is a separate flagged regression that does not touch the genesis field. Three-outcome scheme: PROMOTE (framework-only model hits knee∈[14,18] + p_lo∈[3.3,4.1] + p_hi∈[1.6,2.1] + curve-RMS≤0.10 + shell-L1≤0.30) / BOUNDARY (drain or √α-coupling load-bearing) / FALSIFY. Priors PROMOTE 35 / BOUNDARY 45 / FALSIFY-UNDET 20. Supersedes the over-tagged `DERIV_FTD0110_GENESIS_THROTTLE.md`.
+Platform: canonical post-optimization stack atop HEAD `761daa75` + uncommitted 8-color-SOR Gauss optimization (owner-declared canonical); physics-diff fingerprint SHA256 `961916b56569d1409984994121f51f3b897c02fe993ebf2ce0e2b03b3d07e381`. Genesis/flux field verified bit-reproducible (identical-seed firing geometry); golden-hash energy-audit non-determinism is a separate flagged regression that does not touch the genesis field. Three-outcome scheme: PROMOTE (framework-only model hits knee∈[14,18] + p_lo∈[3.3,4.1] + p_hi∈[1.6,2.1] + curve-RMS≤0.10 + shell-L1≤0.30) / BOUNDARY (drain or √α-coupling load-bearing) / FALSIFY. Priors PROMOTE 35 / BOUNDARY 45 / FALSIFY-UNDET 20. Supersedes the over-tagged `DERIV_FTD0110_GENESIS_THROTTLE.md`.
 
-## Atomic sector hardening — replay/manifest package (FTD-0280; 2026-06-13, locked/run)
+## Atomic sector hardening — replay/manifest package (FTD-0280; locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -65,7 +65,7 @@ prereg tags, manifest provenance, and replay verdicts. The underlying result cla
 remains `[CONDITIONAL -- DERIVED-GIVEN-IMPOSED-INPUT]`; FTD-0270, FC-1, FTD-0013,
 and MC-T4.3 remain unchanged.
 
-## Atomic next-three campaigns (FTD-0281/0282/0283; 2026-06-13, locked/run)
+## Atomic next-three campaigns (FTD-0281/0282/0283; locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -77,7 +77,7 @@ These campaigns are deliberately split. FTD-0281 verifies live-engine semantics
 before any FFT-spectrum claim. FTD-0282 is a negative-boundary test, not a fit.
 FTD-0283 uses a fixed ion set and dimensionless scaling gates only.
 
-## Alpha dynamical readout discriminator (FTD-0284; 2026-06-13, locked)
+## Alpha dynamical readout discriminator (FTD-0284; locked)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -88,7 +88,7 @@ It does not search couplings. It freezes three distinct outcomes before any
 future no-alpha-input engine measurement: native unit response (`NATIVE-NULL`),
 external matching/Postulate-W, and a much stricter `DYNAMICAL-FOUND` branch.
 
-## Alpha no-alpha engine probe (FTD-0285; 2026-06-13, locked/run invalidated)
+## Alpha no-alpha engine probe (FTD-0285; locked/run invalidated)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -101,7 +101,7 @@ the master-quadratic normalization. Its Postulate-W arm is a positive control,
 not a derivation. The v1 run invalidated the absolute Phase-G gate for this
 finite live-engine protocol; it did not produce a dynamical alpha result.
 
-## Alpha estimator validation (FTD-0286; 2026-06-13, locked/run)
+## Alpha estimator validation (FTD-0286; locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -114,7 +114,7 @@ returned `ENERGY_FUNCTIONAL_MISMATCH`: matched projection converged, but the
 field-energy observable still missed the analytic normalization. It does not
 include a Postulate-W arm and cannot promote `x_+ = 1/alpha`.
 
-## Alpha estimator validation v2 (FTD-0286 v2; 2026-06-13)
+## Alpha estimator validation v2 (FTD-0286 v2)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -125,7 +125,7 @@ Matched static projector passes (max rel err 0.26%); production live-tick still
 fails (~12% systematic stencil drift). Resolves the v1 pairing error; does not
 promote `x_+ = 1/alpha`.
 
-## Thomson unlocked recoil (FTD-0288; 2026-06-13, locked/run)
+## Thomson unlocked recoil (FTD-0288; locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -137,7 +137,7 @@ diagnostic qE hook. The native emergent arm recoils deterministically; legacy
 does not. The diagnostic qE arm responds transversely but remains imposed. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
 
-## Thomson flux-excess discriminator (FTD-0289; 2026-06-13, locked/run)
+## Thomson flux-excess discriminator (FTD-0289; locked/run)
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
 | **FTD-0289** Thomson flux-excess discriminator | `preregister-thomson-flux-excess-v1` | `acb4005a` | engine artifact `engine/tests/campaign_thomson_flux_excess.cpp` SHA256 `1f562ac9e9e0f3fdeb72bce00fda2c00f70117271439ef27d418d05c29ec7589` | build target `campaign_thomson_flux_excess`; run `ctest --test-dir engine/build -C Release -R "^thomson_flux_excess$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_FLUX_EXCESS_v1.md`](ANALYSIS_THOMSON_FLUX_EXCESS_v1.md): `NATIVE_EMERGENT_EXCESS_FLUX_DEFLECTION_DETECTED` |
@@ -146,56 +146,56 @@ charge-only field from the charge-plus-beam run. Locked and legacy residuals
 stay at machine noise; the native emergent flux-gradient path leaves an
 above-gate residual. The frozen transverse-centroid subtype does not fire. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
-## Thomson radiation shell meter (FTD-0290; 2026-06-13, locked/run)
+## Thomson radiation shell meter (FTD-0290; locked/run)
 | **FTD-0290** Thomson radiation shell meter | `preregister-thomson-radiation-shells-v1` | `8ccfee7b` | engine artifact `engine/tests/campaign_thomson_radiation_shells.cpp` SHA256 `a47de9c1bb52f92a6dc35471f4eba516fb76acaf9b66abd3de44dd6431d67edf` | build target `campaign_thomson_radiation_shells`; run `ctest --test-dir engine/build -C Release -R "^thomson_radiation_shells$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md`](ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md): `NO_BASELINE_SUBTRACTED_OUTWARD_POWER` |
 This campaign follows FTD-0289. It computes `S_res = (-W_res) × curl(J_res)`
 from the baseline-subtracted residual field and sums outward radial Poynting
 power on fixed shells `{5,7,9,11,13,15}`. Locked and legacy shell powers are
 machine-zero; the native emergent trace remains below the frozen gate. No
 radiation, Thomson cross-section, QED amplitude, or alpha claim is promoted.
-## Thomson native finite-volume continuity meter (FTD-0291; 2026-06-13, locked/run)
+## Thomson native finite-volume continuity meter (FTD-0291; locked/run)
 | **FTD-0291** Thomson native finite-volume continuity meter | `preregister-thomson-native-continuity-v1` | `47ccbee4` | engine artifact `engine/tests/campaign_thomson_native_continuity.cpp` SHA256 `357a2a2b4bd7fb8d8604a4c30490f68ab9a404e8574ed6e55b034056a5b3f3e8` | build target `campaign_thomson_native_continuity`; run `ctest --test-dir engine/build -C Release -R "^thomson_native_continuity$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md`](ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md): `NATIVE_GRAPH_CONTINUITY_CANDIDATE_INVALIDATED` |
 This campaign follows FTD-0290. It replaces the borrowed Poynting shell meter
 with an 18-neighbor graph-energy finite-volume balance candidate. Repeat and
 locked-linear residual controls pass, but the candidate current fails the
 free-wave balance gate, so no native radiation, source, Thomson cross-section,
 QED amplitude, or alpha claim is promoted.
-## Source-free discrete tick energy invariant v1 (FTD-0292; 2026-06-13, locked/run)
+## Source-free discrete tick energy invariant v1 (FTD-0292; locked/run)
 | **FTD-0292** Source-free discrete tick energy invariant v1 | `preregister-thomson-tick-invariant-v1` | `87f0cda2` | engine artifact `engine/tests/campaign_thomson_tick_invariant.cpp` SHA256 `5e6e2b77796d8a91f02bc7b2a85c9c862dd1f4e91b832be19ae5d5b41c455e16` | build target `campaign_thomson_tick_invariant`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_invariant$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_INVARIANT_v1.md`](ANALYSIS_THOMSON_TICK_INVARIANT_v1.md): `DISCRETE_TICK_INVARIANT_INVALIDATED` |
 This campaign follows FTD-0291. It tests the modified energy of the source-free
 tick with ordinary double accumulation. The modified energy stayed much tighter
 than naive energy but missed the frozen relative gate; v1 is a numeric-gate
 invalidation, not a promoted theorem.
-## Source-free discrete tick energy invariant v2 (FTD-0293; 2026-06-13, locked/run)
+## Source-free discrete tick energy invariant v2 (FTD-0293; locked/run)
 | **FTD-0293** Source-free discrete tick energy invariant v2 | `preregister-thomson-tick-invariant-v2` | `83863d5e` | engine artifact `engine/tests/campaign_thomson_tick_invariant_v2.cpp` SHA256 `c362d35e1a2c61216982bb7ae2c8cf4ee916e59f1e3bcc77a62cee993caa8b5f` | build target `campaign_thomson_tick_invariant_v2`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_invariant_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_INVARIANT_v2.md`](ANALYSIS_THOMSON_TICK_INVARIANT_v2.md): `DISCRETE_TICK_MODIFIED_ENERGY_CONFIRMED` |
 This campaign keeps the v1 update, initial condition, invariant formula, and
 gates, but measures with long-double Kahan accumulation. It confirms the
 source-free modified tick energy while the naive continuum energy visibly
 drifts. No radiation, Thomson cross-section, QED amplitude, or alpha claim is
 promoted.
-## Source-free discrete tick local continuity v1 (FTD-0294; 2026-06-13, locked/run)
+## Source-free discrete tick local continuity v1 (FTD-0294; locked/run)
 | **FTD-0294** Source-free discrete tick local continuity v1 | `preregister-thomson-tick-local-continuity-v1` | `7ebc236e` | engine artifact `engine/tests/campaign_thomson_tick_local_continuity.cpp` SHA256 `6b137c83016b9aefb10d47d22df0094487ab761c06e167870a209004ada99aa3` | build target `campaign_thomson_tick_local_continuity`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_local_continuity$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`](ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md): `SOURCE_FREE_LOCAL_TICK_CONTINUITY_INVALIDATED` |
 This campaign tests the exact source-free local tick density/current. Absolute
 balance closes at roundoff, but the exchange-relative denominator is
 degenerate on quiet exchanges, so v1 is not promoted.
-## Source-free discrete tick local continuity v2 (FTD-0295; 2026-06-13, locked/run)
+## Source-free discrete tick local continuity v2 (FTD-0295; locked/run)
 | **FTD-0295** Source-free discrete tick local continuity v2 | `preregister-thomson-tick-local-continuity-v2` | `1d4a29a5` | engine artifact `engine/tests/campaign_thomson_tick_local_continuity_v2.cpp` SHA256 `9b48ca418e784ba98e35708563214b22c78cf2580f880fda9fa923cef4c7a804` | build target `campaign_thomson_tick_local_continuity_v2`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_local_continuity_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`](ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md): `SOURCE_FREE_LOCAL_TICK_CONTINUITY_CONFIRMED` |
 This campaign keeps the v1 density/current unchanged and gates the relative
 residual against finite-volume energy scale. It confirms source-free local
 tick continuity. Coupled source/work terms remain the next open target.
-## Fixed-charge coupled tick source/work continuity (FTD-0296; 2026-06-13, locked/run)
+## Fixed-charge coupled tick source/work continuity (FTD-0296; locked/run)
 | **FTD-0296** Fixed-charge coupled tick source/work continuity | `preregister-thomson-coupled-source-work-v1` | `5d88062e` | engine artifact `engine/tests/campaign_thomson_coupled_source_work.cpp` SHA256 `95747a57895973577e0054d075752b79e74173507097652e31498b125d7ec88e` | build target `campaign_thomson_coupled_source_work`; run `ctest --test-dir engine/build -C Release -R "^thomson_coupled_source_work$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md`](ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md): `FIXED_CHARGE_SOURCE_WORK_CONTINUITY_CONFIRMED` |
 This campaign adds the engine's additive state-flux source term with one
 locked charge and movement off. The native source/work term closes the
 finite-volume balance at roundoff. Moving-source recoil accounting remains the
 next open target.
-## Thomson moving-recoil source/work accounting (FTD-0297; 2026-06-13, locked/run)
+## Thomson moving-recoil source/work accounting (FTD-0297; locked/run)
 | **FTD-0297** Thomson moving-recoil source/work accounting | `preregister-thomson-moving-recoil-accounting-v1` | `0ba544f5` | engine artifact `engine/tests/campaign_thomson_moving_recoil_accounting.cpp` SHA256 `aae604ea897943102273f89b819735283804474d26a2a531f769835dc46f5c89` | build target `campaign_thomson_moving_recoil_accounting`; run `ctest --test-dir engine/build -C Release -R "^thomson_moving_recoil_accounting$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`](ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md): `SUBVOXEL_RECOIL_ACCOUNTED_BY_ADDITIVE_SOURCE_WORK` |
 This campaign unlocks the charge in native legacy and native emergent modes.
 The emergent mode recoils deterministically, but the fixed 200-tick protocol
 has zero integer transport events, so the additive source/work balance still
 closes at roundoff. Integer transport work remains open.
-## Halo-exponent forcedness audit (FTD-0300; 2026-06-13, locked/run)
+## Halo-exponent forcedness audit (FTD-0300; locked/run)
 | **FTD-0300** halo-exponent forcedness | `preregister-halo-forcedness-v1` | `168148e0` | engine `engine/tests/campaign_halo_forcedness.cpp` SHA256 `84f7c407bbdc3bd8e9530235f828dec68c90a9b48f3a39896635609ae92b188e`; analyzer `scripts/exploration/analyze_halo_forcedness.py` SHA256 `44f09ac4d01b3be40359266bf56bb77526524499e85d165316d60762c8c5ad76`; wrapper `scripts/exploration/run_halo_constant_sweeps.py` SHA256 `384bd0481dd332c3e339f4eed8dcbba1be392b85e7d8076a899d8f89abeee896` | GPU `engine/build_wsl`; `--arm=det --Ls=64,96,128,160 --selective=on,off --toggles=minimal --ticks=1500` | `engine/results/halo_forcedness/halo_forcedness_v1.csv` | [`ANALYSIS_HALO_FORCEDNESS_v1.md`](ANALYSIS_HALO_FORCEDNESS_v1.md): `INDETERMINATE (frozen); SPARC boundary` |
 Gate (Step 1) of the dark-matter / SPARC rotation-curve program. The lossless dark-matter
 halo (`selective_damping = ON`, §4.2) **box-fills** the periodic lattice (`r_eff ≈ L/2`)
@@ -204,7 +204,7 @@ yet its windowed exponent **converges to −1.25** (the doc's −0.69 is an L=64
 drift-tuned). The damped Coulomb near-field (`selective OFF`) is the only forced, localized
 self-field (−2.15, localized, R0 PASS). **SPARC not founded** (box-fill ⇒ no localized
 scale). Golden `0x56fa28acb5b9fe88` green; observation-only; zero promotions.
-## Proton-stability forcedness audit (FTD-0301; 2026-06-13, locked/run)
+## Proton-stability forcedness audit (FTD-0301; locked/run)
 | **FTD-0301** proton-stability forcedness | `preregister-proton-stability-v1` | `bb99a20d` | engine `engine/tests/campaign_proton_stability.cpp` SHA256 `56fe09548e98787e66b988161b4e57e66f42aa235c8ac4ea7930c8009058bd48`; analyzer `scripts/exploration/analyze_proton_stability.py` SHA256 `eb076a16c4033cd869ac4bdfd08e49862d3a3a01a4b13e89e41229529786a8e0` | CPU `engine/build/Release`; cold `--heat=none --radius=1,2 --genesis=on --seeds=16 --ticks=2000`; heated `--heat=inject --genesis=off` and `--heat=langevin --dual=off --heat-T=0.3,0.8` | `engine/results/proton_stability/proton_stability_ror_*.csv` | [`ANALYSIS_PROTON_STABILITY_v1.md`](ANALYSIS_PROTON_STABILITY_v1.md): `UNFORCED-METASTABLE [BOUNDARY] (frozen)` |
 The "micro" pier candidate after FTD-0300. `proof_complete_sm.py:460–471` tags `τ_p = ∞`
 `[THEOREM]`; this audit finds it **unforced**. The triad lock locks only same-sign triples
@@ -216,7 +216,7 @@ Frozen verdict **UNFORCED-METASTABLE [BOUNDARY]**; corrects the `proof_complete_
 `τ_p = ∞` tag `[THEOREM]` → `[SELECTION]`. Golden `0x56fa28acb5b9fe88` green;
 observation-only; zero other promotions.
 
-## Lattice wave sectors — dispersion atlas + condensate-compression probe (FTD-0299; 2026-06-14, locked/run)
+## Lattice wave sectors — dispersion atlas + condensate-compression probe (FTD-0299; locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -224,7 +224,7 @@ observation-only; zero other promotions.
 
 Executes the FTD-0298-SOUND `[OPEN]`. Q1 LIGHT-CONFIRMED (ω matches the 18-pt stencil to machine zero across ⟨100⟩/⟨110⟩/⟨111⟩; isotropic c=1/√3). Q2 NULL (no propagating compression branch — FTD-0298 boundary engine-confirmed). Hardened pre-lock by a 24-blocker adversarial review. Golden-neutral; no promotions.
 
-## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
+## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -236,7 +236,7 @@ Backend: pure Python via mpmath (no engine GPU required). Scan execution ~1-2 ho
 
 When launching: confirm `git rev-list -n1 preregister-fqcr-quotient-uniqueness-v1` resolves to `557593e` and that the scan-runner's content hash is recorded against this anchor at runtime per FTD-0097's precedent.
 
-## Alpha arithmetic generativity Test 4 (2026-05-20; candidate inventory queued)
+## Alpha arithmetic generativity Test 4 (candidate inventory queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -244,7 +244,7 @@ When launching: confirm `git rev-list -n1 preregister-fqcr-quotient-uniqueness-v
 
 Pre-reg SHA256: `b222c2a0873fa21dcf28b87111ecab5de8753ec3a4a38e3074d038b6f3d06a27`. This pre-registration locks the rules for Test 4, not a measurement script.
 
-## Derive-QM / epistemic arc — desk pre-regs (2026-05-29; closure attempts complete)
+## Derive-QM / epistemic arc — desk pre-regs (closure attempts complete)
 
 Desk pre-registrations (in-session SHA256 lock recorded **before** each analysis; no engine GPU; commit deferred per owner, integrated this commit). Per the FTD-0224 alpha-readout precedent, the lock is the pre-reg file's SHA256 recorded in-session, not a `preregister-*` git tag anchored before a separate engine run.
 
@@ -257,7 +257,7 @@ Desk pre-registrations (in-session SHA256 lock recorded **before** each analysis
 
 Companion scopes: `SCOPE_ROUTE_B_MODULAR_TIME.md`, `SCOPE_DERIVE_QM_GAP.md`. Verdict docs: the matching `AUDIT_*` files. No spine claim promoted or demoted (`x₊=1/α` FTD-0013 unchanged).
 
-## R3a operator-mixing L-scan (2026-05-05; campaign queued)
+## R3a operator-mixing L-scan (campaign queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -265,7 +265,7 @@ Companion scopes: `SCOPE_ROUTE_B_MODULAR_TIME.md`, `SCOPE_DERIVE_QM_GAP.md`. Ver
 
 Pre-reg SHA256: `290005066803b2cada8be9820c50f35ef3f810ae61fba53d436d9a393a5c2f0d`.
 
-Backend anchor: HEAD `00f41fe` post BH-F5/F8/F9 RNG portability closure (commits `c1a4f88` + `c8e03a5`). Per-voxel CPUGPU bit-exact at unit mass under stochastic toggles. The campaign launches when GPU is clear (currently at 94% external contention; user picked "pre-register now, launch later" on 2026-05-05).
+Backend anchor: HEAD `00f41fe` post BH-F5/F8/F9 RNG portability closure (commits `c1a4f88` + `c8e03a5`). Per-voxel CPUGPU bit-exact at unit mass under stochastic toggles. The campaign is pre-registered now and launches when GPU is clear.
 
 When launching: confirm `git rev-list -n1 preregister-operator-mixing-l-scan-v1` resolves to `f3fa700` and that the campaign binary's commit-sha matches that anchor.
 
@@ -285,21 +285,21 @@ manually trace via `git log --follow` if reproducing.
 
 ---
 
-## Structural / dynamical discriminator -- boundary theorem Stage 1 (2026-05-20 v1, 2026-05-23 v2 close-positive)
+## Structural / dynamical discriminator -- boundary theorem Stage 1 (v1, v2 close-positive)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0186** structural/dynamical discriminator (v1, historical — archived 2026-06-15 → `archive/superseded/`, preserved as provenance) | `preregister-structural-dynamical-discriminator-v1` | `75ebe56` | `scripts/proofs/proof_structural_dynamical_partition.py` | desk classification of the LEDGER record; no numerical search | n/a (classification is a theory doc) | `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md` (pre-reg) -> `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` (Stage-1 result; v1 falsifier A1 fired -- see §5) |
+| **FTD-0186** structural/dynamical discriminator (v1, historical — archived to `archive/superseded/`, preserved as provenance) | `preregister-structural-dynamical-discriminator-v1` | `75ebe56` | `scripts/proofs/proof_structural_dynamical_partition.py` | desk classification of the LEDGER record; no numerical search | n/a (classification is a theory doc) | `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md` (pre-reg) -> `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` (Stage-1 result; v1 falsifier A1 fired -- see §5) |
 | **FTD-0186** structural/dynamical discriminator (v2, current) | `preregister-structural-dynamical-discriminator-v2` | `d550bca` | `scripts/proofs/proof_structural_dynamical_partition.py` (script encodes v2-style expectations per its header; same code as v1, re-applied against v2 wording -- no script edit required) | desk classification of the decisive set; no numerical search | n/a (classification is a theory doc) | `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md` (pre-reg, supersedes v1's falsifier wording) -> `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` §5.2 (v2 result: Outcome A -- clean partition, A1 v2 PASS / A2 PASS / A3 PASS) |
 
 Pre-reg v1 SHA256: `a6562dca56154401e7a2cfb8785266cef0d5b4ee70d3755797762ddffa3e538d`.
 Pre-reg v2 SHA256: `a233fa28be54c63c6a7ebae26c6b54e129c9f2120e535f92d85999ac84d9068a`.
 
-When auditing: confirm `git rev-list -n1 preregister-structural-dynamical-discriminator-v1` resolves to `75ebe56` and `git rev-list -n1 preregister-structural-dynamical-discriminator-v2` resolves to `d550bca`. The discriminator definition (pre-reg §2) was locked under v1 and **carried over verbatim** into v2; the v1 falsifier (§4) fired on its own pre-registered wording -- v2 sharpens A1 to "failed attempt to derive a non-universal *dynamical value*" (rather than v1's broader "failed derivation attempt") and adds A3 to record structural-provenance closed-negatives as a separate honest category. The v2 re-run (`python scripts/proofs/proof_structural_dynamical_partition.py`, 2026-05-23) returns clean partition: 12 spine theorems all STRUCTURAL; 13 type-i closed-negatives all NON-UNIVERSAL DYNAMICAL / CALIBRATION-CONDITIONAL; 3 type-ii closed-negatives all STRUCTURAL targets (structural-provenance, outside the boundary-theorem axis). LEDGER FTD-0186 status updated from `[DEFINITION] + [OPEN]` to `[DEFINITION] + [STAGE 1 CLOSED POSITIVE per v2]`. **Honest framing per v2 §1:** v2 is a scope clarification, not a "win"; v2's falsifier is partly engineered to produce Outcome A; the discipline-bearing test is whether Stage 2 produces a provable proposition with stated axioms, independently of v2's outcome. **No FTD claim promoted or demoted.** Both v1 and v2 rows are preserved -- v1 as historical provenance, v2 as the current locked falsifier.
+When auditing: confirm `git rev-list -n1 preregister-structural-dynamical-discriminator-v1` resolves to `75ebe56` and `git rev-list -n1 preregister-structural-dynamical-discriminator-v2` resolves to `d550bca`. The discriminator definition (pre-reg §2) was locked under v1 and **carried over verbatim** into v2; the v1 falsifier (§4) fired on its own pre-registered wording -- v2 sharpens A1 to "failed attempt to derive a non-universal *dynamical value*" (rather than v1's broader "failed derivation attempt") and adds A3 to record structural-provenance closed-negatives as a separate honest category. The v2 re-run (`python scripts/proofs/proof_structural_dynamical_partition.py`) returns clean partition: 12 spine theorems all STRUCTURAL; 13 type-i closed-negatives all NON-UNIVERSAL DYNAMICAL / CALIBRATION-CONDITIONAL; 3 type-ii closed-negatives all STRUCTURAL targets (structural-provenance, outside the boundary-theorem axis). LEDGER FTD-0186 status updated from `[DEFINITION] + [OPEN]` to `[DEFINITION] + [STAGE 1 CLOSED POSITIVE per v2]`. **Honest framing per v2 §1:** v2 is a scope clarification, not a "win"; v2's falsifier is partly engineered to produce Outcome A; the discipline-bearing test is whether Stage 2 produces a provable proposition with stated axioms, independently of v2's outcome. **No FTD claim promoted or demoted.** Both v1 and v2 rows are preserved -- v1 as historical provenance, v2 as the current locked falsifier.
 
 ---
 
-## Finite neutral lock -- finite-closure SM-shadow audit (Q10) (2026-05-22)
+## Finite neutral lock -- finite-closure SM-shadow audit (Q10)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -311,7 +311,7 @@ When auditing: confirm `git rev-list -n1 preregister-finite-neutral-lock-v1` res
 
 ---
 
-## Colour-singlet rank -- electroweak-rank audit (Q11) (2026-05-22)
+## Colour-singlet rank -- electroweak-rank audit (Q11)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -323,7 +323,7 @@ When auditing: confirm `git rev-list -n1 preregister-colour-singlet-rank-v1` res
 
 ---
 
-## Weak-SU(2) provenance audit (Q12) (2026-05-22)
+## Weak-SU(2) provenance audit (Q12)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -335,7 +335,7 @@ When auditing: confirm `git rev-list -n1 preregister-weak-su2-provenance-v1` res
 
 ---
 
-## Alpha-readout ARC-B1 observable-selection -- MC-T4.3 closure attempt design (2026-05-23)
+## Alpha-readout ARC-B1 observable-selection -- MC-T4.3 closure attempt design
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -347,7 +347,7 @@ When auditing: confirm `git rev-list -n1 preregister-alpha-readout-observable-se
 
 ---
 
-## Catalan algebraic-independence frontier-documentation (Conjecture 19.2) (2026-05-23)
+## Catalan algebraic-independence frontier-documentation (Conjecture 19.2)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -359,7 +359,7 @@ When auditing: confirm `git rev-list -n1 preregister-catalan-independence-v1` re
 
 ---
 
-## Clock-hypothesis substrate-derivation -- Arc B P2 closure attempt design (2026-05-24)
+## Clock-hypothesis substrate-derivation -- Arc B P2 closure attempt design
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -370,15 +370,15 @@ When auditing: confirm `git rev-list -n1 preregister-catalan-independence-v1` re
 Pre-reg v1 SHA256: `9feb9d57ee53709ca419a6d068ed183b4b1426186bdaf662fad84061438ee4a5`.
 Pre-reg v3 SHA256: `646cca3ac8b37502df2ef190afea6fff02338b6b73440b0b0065120780c00a78`.
 
-When auditing: confirm `git rev-list -n1 preregister-clock-hypothesis-derivation-v1` resolves to commit `4c15ba1` (the commit that introduced `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/03_derivations/archive/superseded/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`). This pre-registration locks the design of the Arc B P2 closure attempt of the Wilsonian-reframe plan v2 (`~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md`). The Arc B P0 reconciliation audit (`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2, commit `a7d8b8f`) found that SPEC_FTD_LAGRANGIAN.md §4.3 [THEOREM] subsumes DERIV_NEWTON_FROM_SUBSTRATE.md §1.4's [POSTULATE 2] modulo the clock hypothesis (the identification "Born-Infeld action measure IS proper time"). A grep across `docs/` (2026-05-24) returns the clock hypothesis only in SPEC §4.3 and the AUDIT — not formally tagged anywhere. This pre-reg locks the question (§2 Q-CH-1), definitions D1-D6 (§3), the FROZEN admissible search space (§4 = SPEC §3.7 bandwidth constraint + substrate manifestation rate + Born-Infeld action measure; explicitly excludes GR's empirical clock postulate + standard relativistic-particle-theory moves + Schwarzschild form insertion), the benchmark (§5 = `dτ/dt = √(f - v²/f)` SPEC §4.3 form), the three pre-blessed outcomes (§6 = FOUND / UNDERDETERMINED / CLOSED-NEGATIVE), the falsifier F-a..F-j (§7), the banned moves B-1..B-8 (§8), and the locked 11-step method (§9) with mandatory adversarial review checkpoint at step 9 BEFORE the numerical comparison at step 10. **Prior-favoured outcome: UNDERDETERMINED** — the clock hypothesis is a standard interpretive step in relativistic-particle theory; a substrate-physics derivation via the bandwidth-constraint route (SPEC §3.7's "v and ℒ draw from same bandwidth budget") is plausible but unattempted; the likely failure mode is requiring an intermediate principle outside the §4 catalog. **F9 collusion-bias risk HIGH** (target value `√(f - v²/f)` is canonical GR proper-time formula known to any physics-trained agent or reviewer); §7 + §8 + §9 step 9 calibrated specifically to catch reverse-engineering toward the target. **No FTD claim is promoted or demoted by this pre-reg** — tag changes happen only at result-doc landing per §6 verdict, never in this pre-reg or in this manifest entry.
+When auditing: confirm `git rev-list -n1 preregister-clock-hypothesis-derivation-v1` resolves to commit `4c15ba1` (the commit that introduced `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/03_derivations/archive/superseded/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`). This pre-registration locks the design of the Arc B P2 closure attempt of the Wilsonian-reframe plan v2. The Arc B P0 reconciliation audit (`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2, commit `a7d8b8f`) found that SPEC_FTD_LAGRANGIAN.md §4.3 [THEOREM] subsumes DERIV_NEWTON_FROM_SUBSTRATE.md §1.4's [POSTULATE 2] modulo the clock hypothesis (the identification "Born-Infeld action measure IS proper time"). A grep across `docs/` returns the clock hypothesis only in SPEC §4.3 and the AUDIT — not formally tagged anywhere. This pre-reg locks the question (§2 Q-CH-1), definitions D1-D6 (§3), the FROZEN admissible search space (§4 = SPEC §3.7 bandwidth constraint + substrate manifestation rate + Born-Infeld action measure; explicitly excludes GR's empirical clock postulate + standard relativistic-particle-theory moves + Schwarzschild form insertion), the benchmark (§5 = `dτ/dt = √(f - v²/f)` SPEC §4.3 form), the three pre-blessed outcomes (§6 = FOUND / UNDERDETERMINED / CLOSED-NEGATIVE), the falsifier F-a..F-j (§7), the banned moves B-1..B-8 (§8), and the locked 11-step method (§9) with mandatory adversarial review checkpoint at step 9 BEFORE the numerical comparison at step 10. **Prior-favoured outcome: UNDERDETERMINED** — the clock hypothesis is a standard interpretive step in relativistic-particle theory; a substrate-physics derivation via the bandwidth-constraint route (SPEC §3.7's "v and ℒ draw from same bandwidth budget") is plausible but unattempted; the likely failure mode is requiring an intermediate principle outside the §4 catalog. **F9 collusion-bias risk HIGH** (target value `√(f - v²/f)` is canonical GR proper-time formula known to any physics-trained agent or reviewer); §7 + §8 + §9 step 9 calibrated specifically to catch reverse-engineering toward the target. **No FTD claim is promoted or demoted by this pre-reg** — tag changes happen only at result-doc landing per §6 verdict, never in this pre-reg or in this manifest entry.
 
-When auditing v3: confirm `git rev-list -n1 preregister-clock-hypothesis-derivation-v3` resolves to commit `0dbc5aa` (the commit that introduced `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v3.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/03_derivations/foundational_mechanics/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v3.md`). This pre-registration locked the design of the Arc B P2 v3 closure attempt. The v2 attempt's process and substance failure highlighted that the budget-conservation primitive itself must be derived from FTD axioms, not imported. v3 focused on whether the quadratic relation $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is forced by the discrete FTD substrate. **Result landed 2026-05-27:** CLOSED-NEGATIVE, AXIOM-LEVEL; B-9 and B-10 complied, and independent adversarial review passed.
+When auditing v3: confirm `git rev-list -n1 preregister-clock-hypothesis-derivation-v3` resolves to commit `0dbc5aa` (the commit that introduced `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v3.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/03_derivations/foundational_mechanics/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v3.md`). This pre-registration locked the design of the Arc B P2 v3 closure attempt. The v2 attempt's process and substance failure highlighted that the budget-conservation primitive itself must be derived from FTD axioms, not imported. v3 focused on whether the quadratic relation $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is forced by the discrete FTD substrate. **Result:** CLOSED-NEGATIVE, AXIOM-LEVEL; B-9 and B-10 complied, and independent adversarial review passed.
 
-**v2 attempt INVALIDATED 2026-05-25** per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` — the v2 pre-reg and result document were authored within the same minute with no intervening commit-and-tag step (`git tag --list` confirmed no v2 tag exists; both files were untracked at the time of FOUND-verdict claim). Per v2's own §1 line 16 anti-laundering clause this is determinative of process failure; per v2's own Outcome B the substantive verdict is UNDERDETERMINED because the v2 §4 catalog smuggled in the Pythagorean budget-conservation primitive as a derivation input rather than deriving it from FTD axioms. v3 then executed with sharpened admissibility (target = the budget-conservation primitive itself), new falsifiers F-k/F-l, and new banned moves B-9 (no same-minute mtime) / B-10 (independent-agent adversarial review mandatory), landing CLOSED-NEGATIVE.
+**v2 attempt INVALIDATED** per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` — the v2 pre-reg and result document were authored within the same minute with no intervening commit-and-tag step (`git tag --list` confirmed no v2 tag exists; both files were untracked at the time of FOUND-verdict claim). Per v2's own §1 line 16 anti-laundering clause this is determinative of process failure; per v2's own Outcome B the substantive verdict is UNDERDETERMINED because the v2 §4 catalog smuggled in the Pythagorean budget-conservation primitive as a derivation input rather than deriving it from FTD axioms. v3 then executed with sharpened admissibility (target = the budget-conservation primitive itself), new falsifiers F-k/F-l, and new banned moves B-9 (no same-minute mtime) / B-10 (independent-agent adversarial review mandatory), landing CLOSED-NEGATIVE.
 
 ---
 
-## Spin-2 boundary theorem -- Arc C2 P3 closure attempt design (2026-05-24)
+## Spin-2 boundary theorem -- Arc C2 P3 closure attempt design
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -389,7 +389,7 @@ Pre-reg SHA256: `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440d
 When auditing: confirm `git rev-list -n1 preregister-spin2-boundary-theorem-v1` resolves to commit `d8e016b` (the commit that introduced `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/10_eft_program/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`). This pre-registration locks the design of the Arc C2 P4 closure attempt of the Wilsonian-reframe plan v2 (Arc C2: spin-2 boundary theorem, caps the upper end of substrate-derived gravity scaling per the Wilsonian reframe). The substantive proof scaffold is already authored in `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` (4-clause consolidated derivation with dual tag structure) + `DERIV_J_BILINEAR_NO_SPIN2_POLE.md` (load-bearing C2-2 bubble-integral analysis, [THEOREM] free-theory + [SMC] canonical-toggle with FTD-0193 11/12 k-point empirical floor); this pre-reg's function is verdict-discipline lockdown, not new derivation. The pre-reg locks the four-clause theorem statement (§2 Q-SPIN2-BOUNDARY-v1, verbatim D1 from DERIV doc §1), definitions D1-D7 (§3, including D7 Arc B P2 verdict-branch handling that accommodates FOUND / CLOSED-NEGATIVE / pending without blocking C2 closure), the FROZEN admissible search space (§4: 14 inclusions including FTD axioms 1-5 + calibration + §4 frozen catalog + DERIV docs + FTD-0193 + Peskin-Schroeder §10.2 + Montvay-Münster §3 lattice analog; 6 exclusions including h_μν import as derivation input + Deser-bootstrap as substrate-emergence evidence + Lovelock-implies-substrate-GR + Doctrine §12 candidate principles + LIGO-as-evidence + closed-negative routes FTD-0073/FTD-0184/FTD-0050), the benchmark (§5 = four-clause theorem statement at dual-tag scope), the three pre-blessed outcomes (§6 = FOUND / CLOSED-NEGATIVE / UNDERDETERMINED), the falsifier F-a..F-j (§7) with F-h critically distinguishing structural [THEOREM]-grade argument from FTD-0193 empirical floor (catches F9 risk), the banned moves B-1..B-8 (§8) with B-5 enforcing dual-tag preservation in result-doc + B-3/B-4 preventing metaphysical priors and LIGO-as-substrate-spin2-evidence framings, and the locked 11-step method (§9) with mandatory adversarial review checkpoint at step 10 (separate reviewer; executor cannot self-review). **Prior-favoured outcome: FOUND** — the DERIV docs already establish the chain at [THEOREM] free-theory + Gauss-only + [SMC] canonical-toggle level; the closure attempt is mechanical F-/B-checklist verification + adversarial review, not new derivation work. **F9 risk HIGH** ("easy theorem hides assumptions"); the §7/§8/§9 step 10 discipline is calibrated specifically to catch this. §1 honest framing per FTD-0186 v2 §1 precedent: this is scope clarification, not "we proved no graviton." **Sibling to FTD-0186 Stage 1** (structural/dynamical-value discriminator [STAGE 1 CLOSED POSITIVE per v2]): both are boundary theorems on independent axes; methodologically parallel. **No FTD claim is promoted or demoted by this pre-reg** — tag changes happen only at result-doc landing per §6 verdict.
 
 
-## x_- physical-identification search -- Arc B P1 closure attempt design (2026-05-27)
+## x_- physical-identification search -- Arc B P1 closure attempt design
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -401,7 +401,7 @@ When auditing: confirm `git rev-list -n1 preregister-x-minus-physical-identifica
 
 ---
 
-## W5 Moore-shell DM weighting independent confirmation -- Arc B P1 closure attempt design (2026-05-27)
+## W5 Moore-shell DM weighting independent confirmation -- Arc B P1 closure attempt design
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -413,7 +413,7 @@ When auditing: confirm `git rev-list -n1 preregister-w5-confirmation-v1` resolve
 
 ---
 
-## Lemniscatic K_2-regulator closed-form derivation -- Arc B P1 Path A design (2026-05-27)
+## Lemniscatic K_2-regulator closed-form derivation -- Arc B P1 Path A design
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -425,7 +425,7 @@ When auditing: confirm `git rev-list -n1 preregister-lemniscatic-k2-regulator-v1
 
 ---
 
-## FTD Native strong-field gravity signature campaign -- FTD emergent gravity audit (FTD-0213) (2026-05-27)
+## FTD Native strong-field gravity signature campaign -- FTD emergent gravity audit (FTD-0213)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -437,7 +437,7 @@ When auditing: confirm `git rev-list -n1 preregister-strong-field-gravity-v1` re
 
 ---
 
-## No 4th Generation Fermions No-Go Formalization Campaign -- Moore Layer Theorem (FTD-0220) (2026-05-27)
+## No 4th Generation Fermions No-Go Formalization Campaign -- Moore Layer Theorem (FTD-0220)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
