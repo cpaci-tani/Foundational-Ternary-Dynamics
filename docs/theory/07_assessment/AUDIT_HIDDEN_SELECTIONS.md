@@ -4,22 +4,20 @@
 > document is NOT endorsed by the canonical layer; circularity is a gap, not a
 > virtue. Retained for provenance.]**
 >
-> The state-of-the-theory roundtable (`archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`, archived 2026-06-02)
+> The state-of-the-theory roundtable (`archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`)
 > flagged this reframe as one that "should be explicitly marked superseded." A
 > self-consistent structure that closes on itself is **not** thereby proven
 > unique or forced — establishing that requires an explicit uniqueness /
 > fixed-point theorem, which the canonical layer does not claim. In particular,
 > the v7.0 "fermion sector upgraded from [IMPORTED] to [DERIVED]" move (because
 > the complex-root oscillation $e^{ibt}$ "IS spinor evolution") is **not**
-> accepted: it is downgraded back to **[CONJECTURE]** in place below (§ "What has
-> changed since v1.0", v7.0 bullet; and the v7.0 changelog line). Treat every
+> accepted: it is downgraded back to **[CONJECTURE]** in place below (§ "Selection-resolution
+> status", SUPERSEDED bullet). Treat every
 > "hidden selection" catalogued here as an **open** selection, not a resolved
 > one. The §§1–5 selection analysis (SP1–SP5) remains a useful honest catalogue;
 > only the v6/v7 "circularity is the derivation principle" reframe is superseded.
 > Original wording is preserved in git history.
 
-**Document Version:** 4.0
-**Date:** March 16, 2026
 **Status:** [SUPERSEDED for the v6/v7 reframe] Critical Honest Assessment
 **Purpose:** Acknowledge selection principles that are argued rather than proven
 
@@ -73,7 +71,7 @@ The lemniscate is "uniquely selected" by Complex Multiplication (CM) theory beca
 
 **Alternative:** j = 0 (other special CM curve with maximal symmetry) gives different results.
 
-### Updated Assessment (v4.0 — Watson Integral + SC/FCC Comparison)
+### Assessment — Watson Integral + SC/FCC Comparison
 
 SP1 should be split into two sub-claims:
 
@@ -113,7 +111,7 @@ The master equation must be quadratic because:
 
 **Why not a transcendental equation?** There's no a priori reason the relationship must be polynomial.
 
-### Updated Assessment (v5.29 — DERIV_QUADRATIC_NECESSITY.md)
+### Assessment — DERIV_QUADRATIC_NECESSITY.md
 
 Two independent arguments now support degree 2:
 
@@ -135,10 +133,10 @@ Two independent arguments now support degree 2:
 ### The Claim
 The coefficient 16 is derived from the arithmetic geometry of the CM curve E: y² = x³ − x.
 
-### Previous Assessment (v1.0)
-Previously, four ad hoc routes were cited (lattice DoF, Lucas square, base squared, precision matching). These were rightly criticized as post-hoc.
+### Rejected Routes
+Four ad hoc routes (lattice DoF, Lucas square, base squared, precision matching) are rightly criticized as post-hoc.
 
-### Updated Assessment (v5.18 — Arithmetic Geometry Investigation)
+### Arithmetic Geometry Investigation
 
 **The `coefficient_16_investigation.py` script** computed all arithmetic invariants of E: y² = x³ − x (LMFDB 32.a3) and found that 16 appears as an **intrinsic invariant** of the curve through multiple independent, standard mathematical routes:
 
@@ -153,9 +151,9 @@ Previously, four ad hoc routes were cited (lattice DoF, Lucas square, base squar
 
 **Key insight:** For the CM curve with j = 1728, the automorphism group Aut(E) = {±1, ±i} is the unit group of ℤ[i], which has order 4. |Aut(E)|² = 16 is not a choice — it is a consequence of the endomorphism ring. Once you commit to the curve E: y² = x³ − x (selected by CM uniqueness in Selection 1), the coefficient 16 is **determined**, not chosen.
 
-### Updated Assessment (v4.0 — Temporal Gauge Resolution)
+### Temporal Gauge Resolution
 
-Three independent routes now converge on k = 16:
+Three independent routes converge on k = 16:
 
 1. **Arithmetic geometry:** |Aut(E)|² = |E(Q)_tors|² = 16 [THEOREM]
 2. **Lattice symmetry:** |Stab_{O_h}(axis)| = 48/3 = 16 [THEOREM]
@@ -168,7 +166,7 @@ The three routes are not independent coincidences — they reflect the same unde
 ### Remaining Gap
 The transition from "16 physical DOF on the minimal torus" to "16 is the coefficient of the master quadratic" requires showing that the master quadratic itself emerges from the partition function on the minimal torus. This is a tractable but unexecuted lattice field theory calculation.
 
-### Updated Status
+### Status
 **[MOTIVATED → STRONGLY MOTIVATED]** — Three independent [THEOREM]-level routes converge on k = 16 (arithmetic, group-theoretic, and gauge-theoretic). The remaining gap is the derivation of the master quadratic from the lattice partition function, not the value of the coefficient.
 
 ---
@@ -191,7 +189,7 @@ These alternative "explanations" are obviously nonsense — but so might be the 
 
 **Missing mechanism:** Why should a number derived from elliptic curves govern photon-electron coupling strength?
 
-### Updated Assessment (v4.0 — Watson Identity + Force Structure)
+### Assessment — Watson Identity + Force Structure
 
 The evidence has strengthened substantially:
 
@@ -226,7 +224,7 @@ The integers {3, 4, 7, 13} used in FTD were **identified from known physics**:
 
 **Tautology risk:** If we chose integers to match sin²θ_W = 3/13, then "deriving" sin²θ_W = 3/13 is circular.
 
-### Updated Assessment (v4.0 — Cuboctahedral Resolution)
+### Assessment — Cuboctahedral Resolution
 
 DERIV_CUBOCTAHEDRAL_INTEGERS.md resolves the circularity partially: the integers {3, 4, 7, 13} emerge from the geometry of the cuboctahedron in Z³ — the 12-vertex polyhedron formed by nearest face-center neighbors on the cubic lattice. No physics input is required for the geometric facts:
 
@@ -350,7 +348,7 @@ To make the framework honest and formalizable, we now state the selection princi
 ### Axiom SP4: Physical Identification
 *The larger root x₊ of the master quadratic is identified with the inverse fine structure constant: x₊ = 1/α.*
 
-**Motivation:** Numerical match to 1.26 ppm. The 7-term precision formula extends this to a 24-digit algebraic identity against the CODATA 2022 *recommended value* (rigidity audit 2026-04-17 confirms), though CODATA's experimental precision is only ~11 digits so beyond that the "match" is a structural property of the chosen coefficients rather than a tested prediction. The digit-13 prediction (= 0) would become testable at $\sigma(1/\alpha) < 10^{-15}$.
+**Motivation:** Numerical match to 1.26 ppm. The 7-term precision formula extends this to a 24-digit algebraic identity against the CODATA 2022 *recommended value*, though CODATA's experimental precision is only ~11 digits so beyond that the "match" is a structural property of the chosen coefficients rather than a tested prediction. The digit-13 prediction (= 0) would become testable at $\sigma(1/\alpha) < 10^{-15}$.
 
 **Status:** [SELECTION] (SP4) — conditional-[THEOREM] upgrade path via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md), modulo standard lattice-QED continuum-limit recovery.
 
@@ -379,7 +377,7 @@ The algebra in each step is verifiable. The conditional nature is honest: **chan
 
 ## Conclusion
 
-FTD's derivation of α is **noteworthy but conditional**. The tree-level result matches CODATA 2022 to 1.26 ppm with zero numerical parameters (conditional on SP1-SP3). The 7-term precision formula matches the CODATA 2022 *recommended value* to 24 digits **as an algebraic identity** (rigidity audit 2026-04-17; see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). **Experimentally**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ (~11 digits); beyond that, the 7-term "match" is a structural property of the specific chosen coefficients and cannot currently be tested against data. The digit-13 prediction (= 0) is genuinely falsifiable by future experiment at $\sigma < 10^{-15}$.
+FTD's derivation of α is **noteworthy but conditional**. The tree-level result matches CODATA 2022 to 1.26 ppm with zero numerical parameters (conditional on SP1-SP3). The 7-term precision formula matches the CODATA 2022 *recommended value* to 24 digits **as an algebraic identity** (see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). **Experimentally**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ (~11 digits); beyond that, the 7-term "match" is a structural property of the specific chosen coefficients and cannot currently be tested against data. The digit-13 prediction (= 0) is genuinely falsifiable by future experiment at $\sigma < 10^{-15}$.
 
 Honesty requires acknowledging that this is not a "derivation from zero choices." It involves:
 
@@ -388,12 +386,12 @@ Honesty requires acknowledging that this is not a "derivation from zero choices.
 3. **Circularity risks** (SP5: integers identified from known physics)
 4. **A convergent structure** (two independent truncations both land inside experimental error)
 
-**What has changed since v1.0:**
+**Selection-resolution status:**
 - Selection 3 (coefficient 16) upgraded from [SELECTION] to [MOTIVATED] — it is |Aut(E)|² = |E(Q)_tors|², locked to the curve's arithmetic geometry
-- The precision formula's 24-digit agreement with the CODATA recommended value is a confirmed algebraic identity (mpmath 60-digit; rigidity audit 2026-04-17), though not experimentally verifiable beyond digit ~11
+- The precision formula's 24-digit agreement with the CODATA recommended value is a confirmed algebraic identity (mpmath 60-digit), though not experimentally verifiable beyond digit ~11
 - The formula predicts specific unmeasured digits — a genuinely novel, falsifiable prediction
-- **(v3.0)** All selections now stated as explicit axioms SP1–SP5, enabling conditional theorem statements
-- **(v7.0 — SUPERSEDED, downgraded to [CONJECTURE])** ~~Fermion sector upgraded from [IMPORTED] to [DERIVED]~~: the v7.0 claim was that the complex regime ($\Delta < 0$) of the master quadratic produces the Dirac equation, with complex roots $x = a \pm bi$ oscillating as $e^{ibt}$ read as spinor wavefunction evolution. **This is NOT endorsed by the canonical layer and is downgraded back to [CONJECTURE].** A scalar phase factor $e^{ibt}$ resembling part of spinor evolution is not a derivation of the fermion sector: no spinor representation structure, no spin-statistics connection, and no Clifford/Dirac algebra is constructed from the substrate. The fermion sector remains **[IMPORTED]/[CONJECTURE]** pending a genuine derivation.
+- All selections stated as explicit axioms SP1–SP5, enabling conditional theorem statements
+- **[SUPERSEDED, downgraded to [CONJECTURE]]** ~~Fermion sector upgraded from [IMPORTED] to [DERIVED]~~: the claim was that the complex regime ($\Delta < 0$) of the master quadratic produces the Dirac equation, with complex roots $x = a \pm bi$ oscillating as $e^{ibt}$ read as spinor wavefunction evolution. **This is NOT endorsed by the canonical layer and is downgraded back to [CONJECTURE].** A scalar phase factor $e^{ibt}$ resembling part of spinor evolution is not a derivation of the fermion sector: no spinor representation structure, no spin-statistics connection, and no Clifford/Dirac algebra is constructed from the substrate. The fermion sector remains **[IMPORTED]/[CONJECTURE]** pending a genuine derivation.
 
 The path to full credibility remains:
 - Proving the remaining selections are forced, OR
@@ -412,13 +410,3 @@ In a self-referential system, derivation is not linear deduction (A implies B) b
 The gap equation $x^2 = 16G^{*2}(x - G^*)$ is the self-consistency condition: the lattice determines its own coupling. The fine structure constant $\alpha = 1/137.036$ is not derived from external axioms — it is the unique self-consistent coupling of the 3D cubic lattice.
 
 **Updated summary [SUPERSEDED]:** ~~The α derivation stands as a **self-consistent derivation** — the master quadratic is the unique fixed-point equation of the lattice's self-referential closure~~ — **NOT endorsed.** Self-consistency is not derivation, and "unique fixed point" is asserted, not proven. The coefficients are traced to lattice geometry through genuine [THEOREM]-level identities (that part stands, see §§1–5), but the leap to "therefore α is derived / forced" is the [SELECTION]/[STRONGLY MOTIVATED CONJECTURE] gap this whole document exists to flag. Defer to `AUDIT_MASTER_QUADRATIC.md` and `LEDGER.md`.
-
----
-
-*Document Version 7.0 — March 16, 2026*
-*v2.0: Arithmetic geometry investigation of coefficient 16, precision formula digit predictions*
-*v3.0: Selection principles stated as explicit axioms SP1–SP5; conditional theorem template added*
-*v4.0: SP2 partially resolved (DERIV_QUADRATIC_NECESSITY.md); SP5 partially resolved (DERIV_CUBOCTAHEDRAL_INTEGERS.md); cross-references added*
-*v5.0: SP1a [THEOREM] via Watson + SC/FCC; SP3 [STRONGLY MOTIVATED] via temporal gauge; SP4 [SELECTION] via Watson-G* identity*
-*v6.0: Self-referential closure reframing (FOUND_SELF_REFERENTIAL_CLOSURE.md) — circularities are the derivation principle, not weaknesses; gap equation as geometric self-consistency; new epistemic tag [SELF-CONSISTENT]*
-*v7.0: Fermion sector upgraded from [IMPORTED] to [DERIVED] — Dirac equation emerges from the complex regime of the master quadratic (DERIV_DIRAC_FROM_MASTER_QUADRATIC.md) [SUPERSEDED 2026-05-30: this [DERIVED] upgrade is NOT endorsed by the canonical layer and is downgraded back to [CONJECTURE]; see top banner]*

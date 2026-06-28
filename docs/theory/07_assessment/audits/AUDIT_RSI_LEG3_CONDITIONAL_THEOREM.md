@@ -1,6 +1,5 @@
 # AUDIT — RSI Leg 3 Conditional Theorem + Operator-Assembly Independence
 
-**Date:** 2026-06-01
 **Status:** `[THEOREM — conditional + flip-ruled-out + reduction]` + `[OPEN — universal negative 3c]`
 **Scope:** RSI Leg 3 of `PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md` §5; MC-T4.3 (EM sector).
 **Method:** four-route attack (`rsi-leg3-closure`, 9 agents: 4 × attempt → adversarial-refute → synthesize), G\* kept symbolic throughout, no α/x₊/g_c/M_N(t) inserted.
@@ -117,6 +116,6 @@ This is a **universal negative** over substrate-native operator constructions. U
 ---
 
 ### Provenance
-- Workflow: `rsi-leg3-closure` (9 agents, 4 × attempt+refute + synthesis), 2026-06-01.
+- Workflow: `rsi-leg3-closure` (9 agents, 4 × attempt+refute + synthesis).
 - Discharged legs verified: `scripts/proofs/proof_readout_multE_zero.py` (6/6), `proof_det_identity.py` (7/7).
 - Canonical anchors: `PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md` (§5–§6); `AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` FTD-0242 (§4, §6 — corrected mechanism); `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` FTD-0235 (W-CRIT-2); `AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md` FTD-0234 (J-twisted det_ζ source).

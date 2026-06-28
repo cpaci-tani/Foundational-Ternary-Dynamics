@@ -1,8 +1,6 @@
 # 0011 — Mesh-factory callback pattern (cross-sub-renderer helpers)
 
 **Status:** Accepted
-**Date:** 2026-04-27
-**Author:** refactor sweep Phase 3c (commit 506805b)
 
 ## Context
 

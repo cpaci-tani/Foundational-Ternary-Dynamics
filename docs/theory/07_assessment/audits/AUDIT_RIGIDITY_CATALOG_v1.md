@@ -1,7 +1,6 @@
 # AUDIT — Rigidity of the Catalog Rational Identifications (v1)
 
 **Tag:** [MEASURED — rigidity audit]
-**Date:** 2026-06-24
 **LEDGER row:** FTD-0320
 **Pre-registration:** `PREREG_RIGIDITY_CATALOG_v1.md` (tag `preregister-rigidity-catalog-v1`)
 **Runner:** `scripts/exploration/rigidity_audit_catalog.py` (SHA256 `5935005107b341bd82741016cb24ba4dc2d68faa9658d48edb7b0e09a4b47efb`; deterministic)

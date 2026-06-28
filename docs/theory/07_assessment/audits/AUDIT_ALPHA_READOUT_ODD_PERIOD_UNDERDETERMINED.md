@@ -1,7 +1,6 @@
 # AUDIT — Odd-Period via J-Twisted Regularized Determinant: UNDERDETERMINED
 
 **Tag:** `[UNDERDETERMINED]` — pre-reg §6 UNDERDETERMINED ("the J-twisted det_ζ ratio is real and FTD-native, but its identification with the operator determinant is natural-yet-unforced — a structural lead, not a closure"). **No spine claim moved.**
-**Date:** 2026-05-28
 **Result of:** the pre-registered attempt `PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md` (FTD-0234 provisional), SHA256 `a5c97b7363a1e389ea5e2eff0f139a00f0bd04f8b0d21166845fefd38c53faa1` (recorded in-session before the analysis; commit deferred by owner — §6).
 **Verifier:** [`scripts/proofs/proof_odd_period_jtwisted.py`](../../../scripts/proofs/proof_odd_period_jtwisted.py) — 6/6 facts verified.
 **Chains from:** `AUDIT_ALPHA_READOUT_DETERMINANT_GRADING_CLOSED_NEGATIVE.md` (FTD-0233, the parity no-go this attempt broadens) and the owner's hint *"the lattice is J²."*

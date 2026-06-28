@@ -1,8 +1,6 @@
 # 0013 — Toggle table-driven design (TOGGLE_SPECS[])
 
 **Status:** Accepted
-**Date:** 2026-04-27
-**Author:** refactor sweep Phase 6 (commit 2aa2df9)
 
 ## Context
 

@@ -1,8 +1,6 @@
 # 0001 — Viewport decomposition
 
 **Status:** Accepted (Phase 3 of refactor sweep will extend this)
-**Date:** 2026-04 (retroactive)
-**Author:** refactor sweep, codified 2026-04-27
 
 ## Context
 

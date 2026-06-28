@@ -1,8 +1,6 @@
 # 0005 — Live-reference factory pattern (cache-coherent extraction)
 
 **Status:** Accepted (load-bearing for Phase 2)
-**Date:** 2026-04 (retroactive)
-**Author:** codified 2026-04-27
 
 ## Context
 

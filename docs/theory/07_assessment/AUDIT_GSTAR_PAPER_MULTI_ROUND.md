@@ -1,8 +1,7 @@
 # Multi-Round Referee Report on PAPER_GSTAR_INTRODUCTION (+ PAPER_GSTAR_FTD_BRIDGE)
 
-**Status:** [CRITIC SYNTHESIS] — ontological-polymath deployed 2026-05-19 in critic mode across three sequential review rounds. Audit-trail document: every grade, finding, and verdict from all three rounds is preserved verbatim.
-**Date:** 2026-05-21
-**Consolidates:** `REFEREE_REPORT_GSTAR_2026-05-19.md` (Round 1), `REFEREE_REPORT_GSTAR_2026-05-19_ROUND2.md` (Round 2), `REFEREE_REPORT_GSTAR_2026-05-19_ROUND3.md` (Round 3) (merged 2026-05-21)
+**Status:** [CRITIC SYNTHESIS] — ontological-polymath deployed in critic mode across three sequential review rounds. Audit-trail document: every grade, finding, and verdict from all three rounds is preserved verbatim.
+**Consolidates:** `REFEREE_REPORT_GSTAR_2026-05-19.md` (Round 1), `REFEREE_REPORT_GSTAR_2026-05-19_ROUND2.md` (Round 2), `REFEREE_REPORT_GSTAR_2026-05-19_ROUND3.md` (Round 3)
 
 **Manuscripts graded:**
 - `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` — "Paper A" (the G\* paper itself)
