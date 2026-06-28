@@ -1,9 +1,8 @@
 # ADR 0001 — Decompose `viewport.js`
 
 **Status:** Accepted (deferred execution)
-**Date:** 2026-04-14
 **Decider:** Engine team
-**Context:** Phase D.4 of the April 2026 web-engine refactor
+**Context:** Phase D.4 of the web-engine refactor
 
 ## Context
 
@@ -35,9 +34,9 @@ navigate the entire file to understand surrounding state.
 
 **Decompose `viewport.js` into a small `Viewport` orchestrator plus
 ~6 focused renderer modules in a future dedicated initiative.
-Do NOT decompose it as part of the April 2026 refactor pass.**
+Do NOT decompose it as part of this refactor pass.**
 
-The April 2026 pass (this one) limits itself to:
+This pass limits itself to:
 
 - Updating the file header to enumerate the eight concern groups.
 - Grouping related methods visually in the file (sections 1-8 above).
@@ -153,7 +152,7 @@ land:
 
 ## Alternatives considered
 
-1. **Do the split now as part of the April 2026 refactor pass.**
+1. **Do the split now as part of this refactor pass.**
    Rejected — blast radius, no visual regression coverage, violates
    the "small atomic commits" safety posture established after the
    `cccb38f` revert.
@@ -171,7 +170,7 @@ land:
 
 ## References
 
-- Phase D.4 of `dazzling-tumbling-moth.md` (April 2026 refactor plan)
+- Phase D.4 of `dazzling-tumbling-moth.md` (refactor plan)
 - `engine/web/js/viewport.js` header comment (categorized concerns)
 - Commit `cccb38f` — "revert engine/web/ + engine/wasm/ to pre-session
   state" (precedent for cautious diffs)

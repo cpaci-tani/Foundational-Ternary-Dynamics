@@ -1,8 +1,8 @@
 # GPU Port Plan: AtomEngine + ParticleEngine
 
-**Status**: Wave 5.3 WIP (2026-04-14). Wave 5.1 (GPU latency Poisson) and
-Wave 5.2 (auto-push voxels mutations) are shipped. This doc plans the
-bigger port of the two CPU-only engine classes to GPU.
+**Scope**: Wave 5.1 (GPU latency Poisson) and Wave 5.2 (auto-push voxels
+mutations) are in place; Wave 5.3 ports the two CPU-only engine classes to
+GPU. This doc plans that port.
 
 **Design intent**: All tests GPU primary, CPU backup (TEST_AUDIT §10).
 `RenderBridge` already runs on GPU via `gpu::GpuEngine`. The two classes
@@ -210,29 +210,17 @@ careful work + debugging.
 
 ---
 
-## 7. What ships in this commit (Wave 5.3 scaffolding)
+## 7. Wave 5.3 Phase 1 — gpu::AtomEngine pair-force backend (51a625b)
 
-This doc + placeholder files for the two new CUDA engines. The actual
-kernel implementations will land in follow-up commits as Phase 1 / 2 / 3
-material. Until then, `AtomEngine` and `ParticleEngine` stay CPU-only —
-tests using them continue to run on CPU. No regression.
-
-**Next commit** (Wave 5.3 Phase 1): minimal gpu::AtomEngine with pair
-forces only. Validated by a new `test_gpu_atom_parity.cpp`.
-
----
-
-## 8. Wave 5.3 Phase 1 shipped (51a625b)
-
-Landed as commit `gpu: Wave 5.3 Phase 1 — gpu::AtomEngine pair-force
-backend`. Coulomb + vdW Lennard-Jones handled on the device. Bonds,
-angle strain, dipole-dipole, thermostat, h-bonds still CPU.
+Commit `gpu: Wave 5.3 Phase 1 — gpu::AtomEngine pair-force backend`.
+Coulomb + vdW Lennard-Jones handled on the device. Bonds, angle strain,
+dipole-dipole, thermostat, h-bonds still CPU.
 
 Parity evidence (from test_atom_engine_forces cpu_gpu_parity section):
 - Ionic: max abs err 5.9e-23, rel err 1.6e-16 (double-precision noise)
 - Ionic+vdW: max abs err 1.55e-10 (CPU total 9.4e-9)
 
-## 9. Wave 5.4 — gpu::ParticleEngine Phase 1 plan
+## 8. Wave 5.4 — gpu::ParticleEngine Phase 1 plan
 
 Parallel port for ParticleEngine. Phase 1 covers Coulomb + Gravity
 (the two toggles that ship ON by default in `minimal()`). Any test

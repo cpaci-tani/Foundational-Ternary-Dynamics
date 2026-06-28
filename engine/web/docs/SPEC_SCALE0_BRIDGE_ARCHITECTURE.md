@@ -12,7 +12,7 @@ surface, the Web-Worker proxy + SharedArrayBuffer design, bridge selection, and 
 
 **Path convention:** JS paths relative to `engine/web/js/`; docs relative to `engine/web/docs/`.
 Every claim carries a `file:line` — re-derive from source before relying on it (the discipline that
-keeps these docs honest; counts/line numbers are as of 2026-06-05).
+keeps these docs honest; counts/line numbers may drift).
 
 ---
 
@@ -90,7 +90,7 @@ JS scenario library. Sparse-tick optimization (`_sparseTick`/`_activeBox`, `SPEC
 ### 2.4 MockBridgeProxy — Web Worker (`bridge/mock-bridge-proxy.js`)
 
 A main-thread proxy whose physics runs in a Web Worker so the heavy O(N³) tick never stalls render.
-The **default deployed Scale-0 path** since 2026-06-03 (cross-origin-isolation enabled). Flags:
+The **default deployed Scale-0 path** (cross-origin-isolation enabled). Flags:
 `isWorker: true`. Architecture in §5. A live counter `window.__ftdScale0Workers()` →
 `{live, created, terminated}` backs `tests/scale0-worker-teardown.spec.js` (worker conservation).
 
@@ -123,7 +123,7 @@ method closes over that bridge: `tickScale0: () => bridge.tick()`, `setupScenari
 bridge.setupScenario(name)` (`:56`), `getScale0FieldSamples({kind, stride})` (a dispatcher over
 `e`/`b`/`poynting`/`divJ`/`vorticity`/`helicity`/`kretschmann`/`latency`/`fisher`/`coherence`/`curlJ`/
 `state`/`gaussResidual`), `getScale0Diagnostics`, `getScale0EnergyAudit`, `getScale0Lagrangian`,
-`setToggle`, `setBoundaryShape`, etc. (The snapshot/scrub capability pair was removed 2026-06-05 — the
+`setToggle`, `setBoundaryShape`, etc. (The snapshot/scrub capability pair was removed — the
 simulation is forward-only; see `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8.)
 
 **Why the indirection:** (1) a guaranteed-present, uniform surface so callers never branch on bridge
@@ -179,7 +179,7 @@ small per-frame `postMessage`, not shared memory. The module requires cross-orig
   (the bug fixed by `b319fd90`). Instead the **worker** computes them and posts scalars; the proxy
   serves the latest (`_lastAudit`/`_lastLagrangian`/`_lastParticleList`, exposed via the
   `getScale0EnergyAudit`/`getScale0Lagrangian` caps **and** bare `getEnergyAudit()`/`getLagrangian()`
-  forwarders). Under demand-gating (`FTD_TELEMETRY_ONDEMAND`, 2026-06-05) the worker computes audit +
+  forwarders). Under demand-gating (`FTD_TELEMETRY_ONDEMAND`) the worker computes audit +
   Lagrangian **only when a visible consumer's want-mask is set**, at a cadence decoupled from the tick
   — see [`SPEC_SCALE0_PERF_TELEMETRY_PANELS.md`](SPEC_SCALE0_PERF_TELEMETRY_PANELS.md) §5.
   (`getScale0ParticleList` ships every `PLIST_EVERY` frames.)
@@ -188,7 +188,7 @@ small per-frame `postMessage`, not shared memory. The module requires cross-orig
 applies boundary/reflective/scenario via `applyInit` (`:75-86`), then calls `publishShared(N)`
 (`:28-35`: reads `getSharedField()` for the SAB set, posts `ready` with the SABs), and starts a
 self-ticking `setTimeout` loop (~60 Hz, tick-time-limited at large L).
-**SAB-ensure invariant (fix 2026-06-05, health audit §A.1):** `_useSAB` `_initFluxGrid` only runs
+**SAB-ensure invariant (health audit §A.1):** `_useSAB` `_initFluxGrid` only runs
 when the scenario actually injects flux, so a **particle-only / no-flux** scenario (e.g.
 `flux-annihilation`, whose kicks all fell below the injection threshold) left `_sharedField` null and
 `publishShared` crashed on `getSharedField().ctrl`. `applyInit` now force-calls `_initFluxGrid()` if
@@ -255,8 +255,8 @@ guard (§6).
 | **MockBridgeProxy** (`:176-182`) | re-`create` on the worker | `terminate()`: decrement live counter, post `dispose`, `worker.terminate()` — idempotent |
 
 Scenario switches reset via `setupScenario`→`reset` inside the dispatcher; scale switches dispose
-panels + the flux-mock via the lifecycle controller (`scales/scale0/controller.js` `mount`/`destroy`,
-audit 06-04). Lifecycle validity (no leaked rAF subscribers / GPU memory / workers across switches)
+panels + the flux-mock via the lifecycle controller (`scales/scale0/controller.js` `mount`/`destroy`).
+Lifecycle validity (no leaked rAF subscribers / GPU memory / workers across switches)
 is verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/71) and
 `scale0-worker-teardown.spec.js`.
 
@@ -275,6 +275,6 @@ is verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/7
 | Construction / re-export shim | `bridge-init.js` |
 | Selection / boot probe | `app.js` (native → WASM → mock); flux-mock: `scales/scale0/runtime/scenario-loader.js:121-150` |
 
-*`file:line` references are as of the 2026-06-05 source; re-derive before relying on them. The
+*`file:line` references reflect the source at writing; re-derive before relying on them. The
 capability-getter and SAB layout (§3, §5) were verified verbatim; the rest is mapped from source with
 file:line and should be re-confirmed for exact line numbers.*

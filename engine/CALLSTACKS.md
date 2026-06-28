@@ -4,7 +4,7 @@ This document maps the primary simulation features from public entrypoints down
 to the implementation functions that mutate state. It is documentation of the
 runtime call graph, not a physics proof ledger.
 
-> Last verified against source at commit `e7f17d35` (2026-06-19).
+> Verified against source at commit `e7f17d35`.
 
 Companion references:
 
