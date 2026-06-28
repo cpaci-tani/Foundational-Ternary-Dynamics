@@ -1,7 +1,6 @@
 # Analysis — Order of the FTD Genesis Transition (RG-spectrum probe)
 
 **Tag:** `[MEASURED — BOUNDARY] = GENESIS-FIRST-ORDER`
-**Date:** 2026-06-11
 **LEDGER row:** FTD-0272
 **Pre-registration:** `PREREG_GENESIS_CRITICALITY_v1.md`, tag `preregister-genesis-criticality-v1` (lock `c7371211`; pre-run stats amendment `05caee9a`)
 **Artifacts:** `engine/tests/campaign_genesis_criticality.cpp` (FSS), `engine/tests/campaign_genesis_hysteresis.cpp` (first-order confirmation), `scripts/exploration/analyze_genesis_criticality.py`

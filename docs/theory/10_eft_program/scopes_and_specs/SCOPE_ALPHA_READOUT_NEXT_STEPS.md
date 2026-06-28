@@ -1,17 +1,16 @@
 # SCOPE — FTD-0152 Alpha Readout Contract: Next Steps and Scoping Analysis
 
 **Tag:** [SCOPING MEMO] / canonical
-**Date:** 2026-05-26
 **LEDGER row:** FTD-0210 (new scoping memo claim)
 **Depends on:** FTD-0152 (Alpha Readout Contract), FTD-0205 (ARC-B1 closed-negative synthesis)
 
-> ** Status update (2026-06-01) — this is now a historical scoping memo; its "unattempted routes" framing and success-probability column are superseded.** All three routes below were subsequently attempted: ARC-C1 (FTD-0231/0236) and ARC-B2 (FTD-0230) returned **UNDERDETERMINED** (the initial "FOUND" was an overclaim; corrected 2026-05-28, FTD-0232/0234/0235), and ARC-A1 (FTD-0239) likewise **UNDERDETERMINED**. The obstruction is now sharpened to a **route-invariant boundary** (FTD-0242, `../../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`): 0/4 FTD-native routes force the `(Tr,Det)` operator assembly (W-CRIT-2); α is **dynamical, not structural**; the boundary is `[STRONGLY MOTIVATED CONJECTURE no-go]`, not `[THEOREM]`. MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; `x₊=1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`. The text below is preserved as provenance.
+> ** Status: this is a historical scoping memo; its "unattempted routes" framing and success-probability column are superseded.** All three routes below were attempted: ARC-C1 (FTD-0231/0236) and ARC-B2 (FTD-0230) returned **UNDERDETERMINED** (the initial "FOUND" was an overclaim; corrected, FTD-0232/0234/0235), and ARC-A1 (FTD-0239) likewise **UNDERDETERMINED**. The obstruction is sharpened to a **route-invariant boundary** (FTD-0242, `../../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`): 0/4 FTD-native routes force the `(Tr,Det)` operator assembly (W-CRIT-2); α is **dynamical, not structural**; the boundary is `[STRONGLY MOTIVATED CONJECTURE no-go]`, not `[THEOREM]`. MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; `x₊=1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`. The text below is preserved as provenance.
 
 ---
 
 ## 0 · Purpose and context
 
-Following the 2026-05-23 **CLOSED-NEGATIVE** synthesis of the three primary **ARC-B1** observable-selection routes (plaquette bivectors, boundary-to-boundary transfer, and reference frame projections; recorded in [`AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md`](../10_eft_program/AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md)), the search space for the central foundational obstruction **MC-T4.3 (Operational alpha-readout mechanism)** must narrow and adapt.
+Following the **CLOSED-NEGATIVE** synthesis of the three primary **ARC-B1** observable-selection routes (plaquette bivectors, boundary-to-boundary transfer, and reference frame projections; recorded in [`AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md`](../10_eft_program/AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md)), the search space for the central foundational obstruction **MC-T4.3 (Operational alpha-readout mechanism)** must narrow and adapt.
 
 The ARC-B1 closures demonstrated a profound **categorical structural mismatch**:
 * **Substrate arithmetic:** FTD-native lattice observables yield eigenvalues and characteristic equations whose coefficients are finite-combinatorial (e.g., Lie algebra structure constants, subalgebra dimensions) or lattice-spectral (e.g., discrete Laplacian exponentials $e^{-E_k \tau}$).

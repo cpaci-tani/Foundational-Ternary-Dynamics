@@ -1,7 +1,6 @@
 # ANALYSIS: Thomson Moving-Recoil Source/Work Accounting v1
 
 **FTD ID:** FTD-0297
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- SUBVOXEL RECOIL ACCOUNTED BY ADDITIVE SOURCE WORK]
 **Pre-registration:** `preregister-thomson-moving-recoil-accounting-v1`
 **Lock commit:** `0ba544f5`

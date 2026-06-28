@@ -1,7 +1,6 @@
 # ANALYSIS: Source-Free Discrete Tick Energy Invariant v2
 
 **FTD ID:** FTD-0293
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- DISCRETE TICK MODIFIED ENERGY CONFIRMED]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_INVARIANT_v2.md`
 **Lock commit:** `83863d5e`
