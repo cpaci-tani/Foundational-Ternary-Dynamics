@@ -1,10 +1,9 @@
 # EXPLR — Dark Matter / Baryon Ratio under Moore-Shell W5 Weighting
 
 **Status:** [SELECTION — post-hoc structural finding, awaiting pre-registered confirmation against an independent observable]
-**Date:** 2026-05-27
 **Tag discipline:** This document records a numerical observation made via post-hoc enumeration of 9 weighting schemes. Per CLAUDE.md anti-target rules (no fishing for matches; pre-register before search) the W5 weighting is [SELECTION] — structurally motivated but NOT [DERIVED] from FTD axioms. A pre-registered confirmation against an independent cosmological observable is required to move this beyond [SELECTION].
 
-**LEDGER:** No new row required. The W5 weighting is filed as a subsidiary observation under FTD-0028 (Moore Layer Theorem) with the cosmological identification remaining `[SELECTION]` per the existing audit-corrected constants.js convention (P0-15 update, 2026-05-27).
+**LEDGER:** No new row required. The W5 weighting is filed as a subsidiary observation under FTD-0028 (Moore Layer Theorem) with the cosmological identification remaining `[SELECTION]` per the audit-corrected constants.js convention (P0-15).
 
 **Depends on:**
 - `THEOREM_MOORE_LAYER_DECOMPOSITION.md` (FTD-0028, the 27-site partition: 1 + 6 + 12 + 8 sites by Moore shell)
@@ -14,7 +13,7 @@
 - `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0028 site count theorem)
 
 **Related:**
-- `engine/web/js/ui/components/faq/data.js` `dark-matter` entry (updated 2026-05-27 to cite this document)
+- `engine/web/js/ui/components/faq/data.js` `dark-matter` entry (cites this document)
 - `engine/web/docs/audits/AUDIT_WEB_ENGINE_2026-05-27.md` P0-15 (the audit ticket that corrected `[THEOREM]` → `[SELECTION]` on the cosmological constants, opening the door to this exploration)
 
 **Verification scripts:**
@@ -41,7 +40,7 @@ The W5 finding is **suggestive but not derivative**. Its load-bearing status dep
 
 ### 1.1 Canonical reading (uniform voxel-counting)
 
-`engine/web/js/constants.js` Layer 9 exports (post 2026-05-27 audit):
+`engine/web/js/constants.js` Layer 9 exports (post-audit):
 
 ```js
 export const DM_FRACTION     = 17.0 / 27.0;   // = 0.6296
@@ -62,7 +61,7 @@ Three readings of these fractions are admissible — all numerically identical, 
 
 Cosmological Ω fractions are **energy-density-weighted**: Ω_X = ρ_X / ρ_crit. Each species' contribution to Ω is proportional to its mass-energy density, not its particle count. If different Moore-shell sites have different effective mass-energy contributions per site, the voxel-counted 17:10 is a mis-estimate.
 
-The lead-physicist's hypothesis (2026-05-27 brainstorm, post-audit): a weighting that "gives heavier weight to the 12 cuboctahedral states (the weak / heavy lepton layer) could compress 17:10 toward 5:1." This document tests that hypothesis against 8 alternatives.
+The lead-physicist's hypothesis (post-audit brainstorm): a weighting that "gives heavier weight to the 12 cuboctahedral states (the weak / heavy lepton layer) could compress 17:10 toward 5:1." This document tests that hypothesis against 8 alternatives.
 
 ---
 
@@ -144,7 +143,7 @@ The universe-fraction deviations (5-7%) are dominated by the Ω_Λ = 2/3 vs obse
 
 ### 5.1 What was done
 
-On 2026-05-27, a 9-weighting enumeration was run via `moore_shell_dm_baryon_weightings.py`. The lead-physicist's W5 hypothesis was named in advance of the numerical comparison (in the 2026-05-27 prediction brainstorm) but was tested alongside 8 alternatives I generated. No pre-registration document was filed before the search.
+A 9-weighting enumeration was run via `moore_shell_dm_baryon_weightings.py`. The lead-physicist's W5 hypothesis was named in advance of the numerical comparison (in the prediction brainstorm) but was tested alongside 8 alternatives I generated. No pre-registration document was filed before the search.
 
 ### 5.2 Look-elsewhere accounting
 
@@ -209,10 +208,10 @@ A future `PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md` would:
 
 ## §9 — Provenance
 
-- 2026-05-27 evening: lead-physicist brainstorm names W5 (cuboctahedron weighting) as a candidate compression for the 17:10 → 5.4 discrepancy.
-- 2026-05-27 same session: `scripts/exploration/moore_shell_dm_baryon_weightings.py` enumerates 9 weighting candidates and identifies W5 as the unique Planck-compatible scheme.
-- 2026-05-27 same session: FAQ entry `dark-matter` updated to cite both readings (uniform 1.7 and W5 5.3) and this document.
-- 2026-05-27 same session: this document filed at `docs/theory/10_eft_program/EXPLR_DM_BARYON_W5_WEIGHTING.md`.
+- The lead-physicist brainstorm names W5 (cuboctahedron weighting) as a candidate compression for the 17:10 → 5.4 discrepancy, in advance of the numerical comparison.
+- `scripts/exploration/moore_shell_dm_baryon_weightings.py` enumerates 9 weighting candidates and identifies W5 as the unique Planck-compatible scheme.
+- FAQ entry `dark-matter` cites both readings (uniform 1.7 and W5 5.3) and this document.
+- This document is filed at `docs/theory/10_eft_program/EXPLR_DM_BARYON_W5_WEIGHTING.md`.
 
 The exploration was prompted by the audit P0-15 correction that demoted constants.js's `DM_FRACTION` tag from `[THEOREM]` to `[SELECTION]`, which surfaced the cosmological-mismatch question as a genuine `[OPEN]` rather than a `[THEOREM]` overclaim. The W5 hypothesis is an attempt to resolve that `[OPEN]` constructively rather than negatively. The verdict on whether W5 stands or falls awaits pre-registered confirmation per §6.4.
 

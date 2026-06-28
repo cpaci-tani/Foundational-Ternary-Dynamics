@@ -1,10 +1,6 @@
 # FTD-Native Nonlinear Flow
 
 **Tag:** [THEOREM] (Langevin stationary ensemble exists and is equipartitioned, FTD-0069); [MEASURED] (Gaussian fixed point at $b \le 8$, FTD-0070); [PARTIAL] (source-coupled generator $Z[J]$ under nonlinear dynamics, FTD-0069; real-engine transport histories connected to native blocking)
-**Date:** 2026-05-22
-**Status:** FTD-native RG flow into the nonlinear regime — Langevin ensemble closed at the stationary-ensemble level, Gaussian fixed point measured at $b \le 8$, engine-transport plumbing connected to the dual-cell continuity ledger.
-**Consolidates:** `DERIV_FTD_NATIVE_MULTISCALE_FLOW.md`, `DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE.md`, `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md` (merged 2026-05-22)
-**Prior provenance:** `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md` was itself a prior consolidation — *"Consolidates: also absorbs `DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md` (2026-05-21)"*.
 **Ledger rows:** FTD-0069 (Langevin ensemble), FTD-0070 (multiscale flow).
 **Depends on:** [FTD-0051](../07_assessment/core_ledgers/LEDGER.md) (Langevin thermostat, CPU+GPU validated), [FTD-0064](../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [FTD-0065](../07_assessment/core_ledgers/LEDGER.md) (dual-cell adapter), [FTD-0066](../07_assessment/core_ledgers/LEDGER.md) (Ward identity), [FTD-0067](../07_assessment/core_ledgers/LEDGER.md) (mixed-toggle multi-tick Ward), [FTD-0068](../07_assessment/core_ledgers/LEDGER.md) (operator basis), [FTD-0069](../07_assessment/core_ledgers/LEDGER.md) (Langevin ensemble).
 
@@ -114,7 +110,7 @@ This is a concrete proposal for Phase 2 (RG flow measurements at $b \ge 4$) of t
 - [`test_langevin_equipartition`](../../../engine/tests/test_langevin_equipartition.cpp): CPU + GPU acceptance test.
 - [`benchmark_langevin_gpu`](../../../engine/tests/benchmark_langevin_gpu.cpp): scan over $(T, \gamma)$ on GPU.
 
-*Filed 2026-04-24 as P1.6 of the EFT-completion roadmap. Closes Gate 2 at the "stationary-ensemble-exists" level; full source-coupled Gate-2 computation and Gate-7 observable derivations await Phase-2 RG flow measurements at $b \ge 4$.*
+*P1.6 of the EFT-completion roadmap. Closes Gate 2 at the "stationary-ensemble-exists" level; full source-coupled Gate-2 computation and Gate-7 observable derivations await Phase-2 RG flow measurements at $b \ge 4$.*
 
 ---
 
@@ -233,17 +229,16 @@ This derivation together with FTD-0064 through FTD-0069 supplies the full 6-item
 
 This is a Branch-A result — independent of QED-$\alpha$ matching.
 
-*Filed 2026-04-24 as the Phase-2 deliverable. All six Minimum Viable Real EFT items now satisfied at the native-branch level. Branch-A paper is writable.*
+*Phase-2 deliverable. All six Minimum Viable Real EFT items are satisfied at the native-branch level. Branch-A paper is writable.*
 
 ---
 
 # Part III — Engine Transport $b = 2$ Flow
 
-*Source: `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md` (a prior consolidation — see "Prior provenance" in the header). Status: [PARTIAL] real-engine Moore transport, collision, mixed histories, multi-tick intervals, and GPU-native movement ledgers connected to native finite-volume blocking. Purpose: extract signed face currents from actual `RenderBridge::tick()` movement histories and verify native $b = 2$ continuity flow.*
+*Status: [PARTIAL] real-engine Moore transport, collision, mixed histories, multi-tick intervals, and GPU-native movement ledgers connected to native finite-volume blocking. Purpose: extract signed face currents from actual `RenderBridge::tick()` movement histories and verify native $b = 2$ continuity flow.*
 
 ## III.0 Engine reaction-history context
 
-**Date:** 2026-04-23
 **Status:** [PARTIAL] real-engine reaction histories connected to native finite-volume blocking
 **Purpose:** Connect actual `RenderBridge::tick()` reaction histories to the dual-cell continuity ledger used by native RG flow tests.
 
@@ -341,9 +336,9 @@ in either case Delta rho + div I = S_R.
 `engine/tests/test_native_reaction_ledger.cpp` was updated to reflect this
 current engine behavior.
 
-### III.0.4 Combined native battery (2026-04-23, reaction-only milestone)
+### III.0.4 Combined native battery (reaction-only)
 
-Result on 2026-04-23:
+Result:
 
 ```text
 native_reaction_ledger passed
@@ -488,7 +483,7 @@ All native dual-cell tests still pass after the alignment.
 
 ## III.4 Combined native battery
 
-Result on 2026-04-23:
+Result:
 
 ```text
 native_continuity passed

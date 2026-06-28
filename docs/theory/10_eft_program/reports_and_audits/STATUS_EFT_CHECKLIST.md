@@ -1,12 +1,11 @@
 # FTD Native EFT Checklist
 
-**Date:** 2026-05-05 (R1 refresh; previous: 2026-04-26 — FTD-0098/0099/0100 mixing-matrix measurements)
-**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4); GPU full-tick ledgers in place; microscopic native action selected as a constrained history measure (`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`); first nonlinear operator-mixing matrix $M_{ab}(b=2)$ measured 2026-04-26 (FTD-0098/0099/0100, asymmetric fluxstate mixing structure recovered); blocking-diagonal identities $M_{JJ}=16$, $M_{J^4}=256$ established as [THEOREM] (`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`, 2026-04-30); structural-decoupling diagnosis L-independent at L∈{24,32,48,64} (`ANALYSIS_GATE_C_VS_L.md`, 2026-04-30); engine-side CPUGPU parity bugs F1/F4/F6 + diagnostics + F3 + F12 + F2 + F15 all closed (2026-05-04/05). **Full nonlinear effective EFT $S_\text{eff}$ remains open** — central R3 deliverable of the FTD-EFT roadmap.
+**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4); GPU full-tick ledgers in place; microscopic native action selected as a constrained history measure (`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`); first nonlinear operator-mixing matrix $M_{ab}(b=2)$ measured (FTD-0098/0099/0100, asymmetric fluxstate mixing structure recovered); blocking-diagonal identities $M_{JJ}=16$, $M_{J^4}=256$ established as [THEOREM] (`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`); structural-decoupling diagnosis L-independent at L∈{24,32,48,64} (`ANALYSIS_GATE_C_VS_L.md`); engine-side CPUGPU parity bugs F1/F4/F6 + diagnostics + F3 + F12 + F2 + F15 all closed. **Full nonlinear effective EFT $S_\text{eff}$ remains open** — central R3 deliverable of the FTD-EFT roadmap.
 
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
-current pivot documented in `INDEX_FTD_NATIVE_EFT.md` (R1 deliverable, 2026-05-05;
-supersedes archived `archive/ARCH_00_INDEX_2026-04-27.md`): the projected `x_+` / QED-alpha RG interpretation is
+pivot documented in `INDEX_FTD_NATIVE_EFT.md`
+(supersedes archived `archive/ARCH_00_INDEX_2026-04-27.md`): the projected `x_+` / QED-alpha RG interpretation is
 closed negative; the active program is the native finite-volume/blocking EFT of
 FTD histories.
 
@@ -33,8 +32,8 @@ FTD histories.
 - [x] Native dual-cell / finite-volume containers implemented.
 - [x] Engine flat indexing aligned across native continuity/blocking code.
 - [ ] Decide whether the formal master-quadratic paper's BCC/corner channel is part of the canonical field basis or a delayed/nonlinear sector.
-- [x] Decide whether the canonical EFT field basis is collocated `(s,J)` or face-centered/dual-cell `J*`. **R2 closed 2026-05-05: `DECISION_FIELD_BASIS.md` picks collocated $(s, J)$ at lattice vertices. Field tuple $(s, J, v_\text{wave}, \mathcal{L})$.**
-- [x] Define the final minimal field tuple for nonlinear campaigns. **R2 closed 2026-05-05 (same DECISION).**
+- [x] Decide whether the canonical EFT field basis is collocated `(s,J)` or face-centered/dual-cell `J*`. **R2 closed: `DECISION_FIELD_BASIS.md` picks collocated $(s, J)$ at lattice vertices. Field tuple $(s, J, v_\text{wave}, \mathcal{L})$.**
+- [x] Define the final minimal field tuple for nonlinear campaigns. **R2 closed (same DECISION).**
 
 ## 2. Native Kinematics And Constraints
 
@@ -44,8 +43,8 @@ FTD histories.
 - [x] Native b=2 blocking map implemented for density, reaction, and oriented currents.
 - [x] Dual-cell Gauss prototype implemented and tested.
 - [x] Moore-shell and source-core alternatives compared.
-- [x] Resolve source-core compromise: skipped particle sites vs exact full-site `div J = s`. **R2 closed 2026-05-05 (`DECISION_GAUSS_REPRESENTATION.md`): source-core fork remains as prototype path, not adopted; canonical enforcement is everywhere via cuFFT.**
-- [x] Select production Gauss representation: collocated, source-core fork, or dual-cell face flux. **R2 closed 2026-05-05: `DECISION_GAUSS_REPRESENTATION.md` picks collocated cuFFT (GPU production path) with residual ≤ 1e-8.**
+- [x] Resolve source-core compromise: skipped particle sites vs exact full-site `div J = s`. **R2 closed (`DECISION_GAUSS_REPRESENTATION.md`): source-core fork remains as prototype path, not adopted; canonical enforcement is everywhere via cuFFT.**
+- [x] Select production Gauss representation: collocated, source-core fork, or dual-cell face flux. **R2 closed: `DECISION_GAUSS_REPRESENTATION.md` picks collocated cuFFT (GPU production path) with residual ≤ 1e-8.**
 
 ## 3. Engine History Ledger
 
@@ -70,8 +69,8 @@ FTD histories.
 - [x] Linear generator derived for Gaussian response flow.
 - [x] b=2 Gaussian response flow closes for the canonical couplings.
 - [x] Response flow tests pass in engine.
-- [x] Re-run and archive a fresh full campaign table after the GPU-ledger changes. **2026-04-26 — 21/21 Gaussian-flow ctests PASS on GPU (RTX 5090, commit 347a38f). Headline `nonlinear_flow_multiscale` reproduces FTD-0070 verdict: β consistent with 0 within 1σ at b ∈ {1,2,4,8}, K(b+1)/K(b) ratios stable. Note: 70-75 % uniform level shift in E_b vs. FTD-0070 baseline (commit 347a38f stencil-weights derivation moved an internal normalization); fixed-point classification unchanged. Per-test logs + meta.json archived in `engine/results/gaussian_expansion_2026-04-26/`. Inventory: `docs/theory/10_eft_program/GAUSSIAN_EXPANSION_DATA_INVENTORY.md`.**
-- [x] Decide whether Gaussian fixed-point data is a theorem-level result or a measured engine result. **2026-04-26 — both. The bare-tuple statement `(C_L, K_T, Z_j, g_sJ)(b) = (1,1,1,1)` for the bare linear generator under the dual-cell b=2 blocking map is a [THEOREM] of the finite-volume Wilsonian map (`SPEC_FTD_NATIVE_BLOCKING_MAP.md` lemmas; `native_response_flow` + `native_blocking_map` tests verify floating-point closure). The Gaussian-fixed-point *behavior on a full nonlinear Langevin ensemble* is [MEASURED] (FTD-0070 + 2026-04-26 GPU rerun). See `GAUSSIAN_EXPANSION_DATA_INVENTORY.md` §6 for the per-component classification.**
+- [x] Re-run and archive a fresh full campaign table after the GPU-ledger changes. **21/21 Gaussian-flow ctests PASS on GPU (RTX 5090, commit 347a38f). Headline `nonlinear_flow_multiscale` reproduces FTD-0070 verdict: β consistent with 0 within 1σ at b ∈ {1,2,4,8}, K(b+1)/K(b) ratios stable. Note: 70-75 % uniform level shift in E_b vs. FTD-0070 baseline (commit 347a38f stencil-weights derivation moved an internal normalization); fixed-point classification unchanged. Per-test logs + meta.json archived in `engine/results/gaussian_expansion_2026-04-26/`. Inventory: `docs/theory/10_eft_program/GAUSSIAN_EXPANSION_DATA_INVENTORY.md`.**
+- [x] Decide whether Gaussian fixed-point data is a theorem-level result or a measured engine result. **Both. The bare-tuple statement `(C_L, K_T, Z_j, g_sJ)(b) = (1,1,1,1)` for the bare linear generator under the dual-cell b=2 blocking map is a [THEOREM] of the finite-volume Wilsonian map (`SPEC_FTD_NATIVE_BLOCKING_MAP.md` lemmas; `native_response_flow` + `native_blocking_map` tests verify floating-point closure). The Gaussian-fixed-point *behavior on a full nonlinear Langevin ensemble* is [MEASURED] (FTD-0070 + GPU rerun). See `GAUSSIAN_EXPANSION_DATA_INVENTORY.md` §6 for the per-component classification.**
 
 ## 5. Operator Basis
 
@@ -79,24 +78,24 @@ FTD histories.
 - [x] Current, reaction, source-response, and transport moments represented.
 - [x] Native operator spectrum test exists.
 - [x] Ward-identity and matched-Poisson tests exist.
-- [~] Extend basis with all nonlinear/reaction operators observed in full-tick GPU histories. **2026-04-30 — `THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md` establishes $M_{JJ}=16$ and $M_{J^4}=256$ exact under blocking; `ANALYSIS_OFFDIAGONAL_ASYMMETRY.md` and `MEASUREMENT_GATE_D_T_PERTURBATION.md` extend the operator catalogue. Pre-registered 12-operator basis (per `SPEC_EFT_RECOVERY_PROGRAM.md` §6) remains pending full measurement under R3b.**
-- [~] Define operator mixing matrix from blocked full-history ensembles. **[PARTIAL] 2026-04-26 (FTD-0098 + FTD-0099 + FTD-0100)** — first measured M_ab(b=2) on a Langevin+genesis ensemble at L=16 (FTD-0098) and at L=32 (FTD-0099 follow-up); first **full 6×6** measurement at L=16 with `inj-mult=1.0` (FTD-0100 follow-up — F2 closure). Per-config artifacts in `engine/results/operator_mixing_2026-04-26/{L16_b2, L16_b4, L32_b4, L16_b4_inj1.00}/`. FTD-0098/-0099 5×5 reduced subspace (s² dropped by ensemble state saturation); FTD-0100 with boundary injection (`inj-mult=1.0`) restores 6×6 active subspace, recovers M_stateSq,stateSq = +8.0 = b³ (trivial scaling) AND non-trivial flux→s² off-diagonal mixing (M_J⁴,stateSq = +6.47); s² → flux row at machine precision (asymmetric mixing — state is a sink under blocking, not a source). cond(S) 5.80×10⁷ (L=16, inj=3.0) → 8.74×10⁶ (L=32, inj=3.0) → 3.51×10⁷ (L=16, inj=1.0). Bootstrap-converged entries 6/25 → 7/25 → 10/36. Wilson positive eigenvalues 3/5 → 4/5 → 4/6. See `PROTOCOL_OPERATOR_MIXING_MATRIX.md` §7b and `engine/results/operator_mixing_2026-04-26/ANALYSIS.md` Appendices B + C.
-- [~] Classify relevant, marginal, and irrelevant directions from measured native flow. **[PARTIAL] 2026-04-25** — `AUDIT_OPERATOR_SPECTRUM.md` (FTD-0091): all 5 measurable operators classify as "relevant" (Δ < D = 4) at L=32 in both the pulse and flux-baryon scenarios; the marginal/irrelevant bands of the pre-reg bracket are not recovered. Operator stratification IS present (divJ² Δ jumps ×3.4 between scenarios), so the basis is non-degenerate; the pulse-regime "all Δ ≈ 0.5" collapse is a scenario envelope artefact, not strong-coupling. Full classification requires L ≥ 64 + multi-scenario ensemble. **2026-04-26 (FTD-0098):** mixing-matrix eigenvalue diagnostic on the L=16 Langevin+genesis ensemble independently confirms the all-relevant compression — same finding via complementary mechanism.
+- [~] Extend basis with all nonlinear/reaction operators observed in full-tick GPU histories. **`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md` establishes $M_{JJ}=16$ and $M_{J^4}=256$ exact under blocking; `ANALYSIS_OFFDIAGONAL_ASYMMETRY.md` and `MEASUREMENT_GATE_D_T_PERTURBATION.md` extend the operator catalogue. Pre-registered 12-operator basis (per `SPEC_EFT_RECOVERY_PROGRAM.md` §6) remains pending full measurement under R3b.**
+- [~] Define operator mixing matrix from blocked full-history ensembles. **[PARTIAL] (FTD-0098 + FTD-0099 + FTD-0100)** — first measured M_ab(b=2) on a Langevin+genesis ensemble at L=16 (FTD-0098) and at L=32 (FTD-0099 follow-up); first **full 6×6** measurement at L=16 with `inj-mult=1.0` (FTD-0100 follow-up — F2 closure). Per-config artifacts in `engine/results/operator_mixing_2026-04-26/{L16_b2, L16_b4, L32_b4, L16_b4_inj1.00}/`. FTD-0098/-0099 5×5 reduced subspace (s² dropped by ensemble state saturation); FTD-0100 with boundary injection (`inj-mult=1.0`) restores 6×6 active subspace, recovers M_stateSq,stateSq = +8.0 = b³ (trivial scaling) AND non-trivial flux→s² off-diagonal mixing (M_J⁴,stateSq = +6.47); s² → flux row at machine precision (asymmetric mixing — state is a sink under blocking, not a source). cond(S) 5.80×10⁷ (L=16, inj=3.0) → 8.74×10⁶ (L=32, inj=3.0) → 3.51×10⁷ (L=16, inj=1.0). Bootstrap-converged entries 6/25 → 7/25 → 10/36. Wilson positive eigenvalues 3/5 → 4/5 → 4/6. See `PROTOCOL_OPERATOR_MIXING_MATRIX.md` §7b and `engine/results/operator_mixing_2026-04-26/ANALYSIS.md` Appendices B + C.
+- [~] Classify relevant, marginal, and irrelevant directions from measured native flow. **[PARTIAL]** — `AUDIT_OPERATOR_SPECTRUM.md` (FTD-0091): all 5 measurable operators classify as "relevant" (Δ < D = 4) at L=32 in both the pulse and flux-baryon scenarios; the marginal/irrelevant bands of the pre-reg bracket are not recovered. Operator stratification IS present (divJ² Δ jumps ×3.4 between scenarios), so the basis is non-degenerate; the pulse-regime "all Δ ≈ 0.5" collapse is a scenario envelope artefact, not strong-coupling. Full classification requires L ≥ 64 + multi-scenario ensemble. **(FTD-0098):** mixing-matrix eigenvalue diagnostic on the L=16 Langevin+genesis ensemble independently confirms the all-relevant compression — same finding via complementary mechanism.
 - [ ] Separate engine-rule operators from emergent coarse operators.
 
 ## 6. Nonlinear Flow
 
 - [x] Real engine histories can now be converted into native continuity ledgers.
 - [x] Full-tick GPU histories expose all currently known state-changing channels.
-- [~] Build systematic nonlinear b=2 flow campaigns from engine histories. **[PARTIAL] 2026-04-26 (FTD-0098)** — first nonlinear-flow campaign of this kind landed: `engine/tests/campaign_operator_mixing_2026-04-26.cpp` consumes the same Langevin+genesis ensemble as `test_nonlinear_flow_multiscale.cpp` and assembles M_ab(b=2). Pre-reg + analysis cited above.
-- [~] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`. **2026-04-26 — Cluster A engine build complete (`engine/include/ftd/sublattice.h`, `correlations.h`, `spectrum_extraction.h`, `term_toggles.h::bcc_stencil`, `campaign_bcc_band_spectrum.cpp`, all tests PASS); D2 protocol drafted (`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`); D1 derivation archived at `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` after FTD-0093 closure.**
-- [~] Measure operator mixing under blocking. **[PARTIAL] 2026-04-26 (FTD-0098)** — first measurement landed (5×5 reduced subspace after pre-registered s² degradation ladder; bootstrap-stderr-limited at this ensemble size; tag = [PARTIAL]). See FTD-0098.
+- [~] Build systematic nonlinear b=2 flow campaigns from engine histories. **[PARTIAL] (FTD-0098)** — first nonlinear-flow campaign of this kind landed: `engine/tests/campaign_operator_mixing_2026-04-26.cpp` consumes the same Langevin+genesis ensemble as `test_nonlinear_flow_multiscale.cpp` and assembles M_ab(b=2). Pre-reg + analysis cited above.
+- [~] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`. **Cluster A engine build complete (`engine/include/ftd/sublattice.h`, `correlations.h`, `spectrum_extraction.h`, `term_toggles.h::bcc_stencil`, `campaign_bcc_band_spectrum.cpp`, all tests PASS); D2 protocol drafted (`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`); D1 derivation archived at `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` after FTD-0093 closure.**
+- [~] Measure operator mixing under blocking. **[PARTIAL] (FTD-0098)** — first measurement landed (5×5 reduced subspace after pre-registered s² degradation ladder; bootstrap-stderr-limited at this ensemble size; tag = [PARTIAL]). See FTD-0098.
 - [ ] Measure reaction-sector scaling.
 - [ ] Measure transport-sector scaling.
 - [ ] Measure mixed transport/reaction couplings.
 - [ ] Pre-register any trace/determinant comparison to the master-quadratic Vieta data before measuring.
 - [ ] Determine whether a nontrivial native fixed point exists. **R4 deliverable of the FTD-EFT roadmap. `SPEC_FTD_NATIVE_FIXED_POINTS.md` queued.**
-- [ ] Determine whether continuum symmetries improve, degrade, or stay lattice-native under flow. **`AUDIT_LORENTZ_ANISOTROPY.md` (2026-04-25) provides one data point: anisotropy exponent p=4.0008±0.0006, rotation-breaking operator dimension 7 (Wilsonian-irrelevant). Need extension to other symmetries.**
+- [ ] Determine whether continuum symmetries improve, degrade, or stay lattice-native under flow. **`AUDIT_LORENTZ_ANISOTROPY.md` provides one data point: anisotropy exponent p=4.0008±0.0006, rotation-breaking operator dimension 7 (Wilsonian-irrelevant). Need extension to other symmetries.**
 
 ## 7. Gauge / Electrodynamics Status
 
@@ -115,21 +114,21 @@ FTD histories.
 - [x] `K_B` status remains calibration/manifestation scale.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
-- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **2026-04-27 — Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
-- [~] Evaluate "G18 direct sector vs BCC/CM capacity matching" as a possible `g_c` mechanism, tagged [CONJECTURE] until derived. **2026-04-26 — predecessor reading of Mechanism C bridge-operator hypothesis (FTD-0093 §3 cites the BCC sub-stencil structural argument).**
+- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
+- [~] Evaluate "G18 direct sector vs BCC/CM capacity matching" as a possible `g_c` mechanism, tagged [CONJECTURE] until derived. **Predecessor reading of Mechanism C bridge-operator hypothesis (FTD-0093 §3 cites the BCC sub-stencil structural argument).**
 - [ ] Decide whether `coulomb_charge_coupling` is a measurement knob, calibration, or derived engine convention.
 - [ ] Separate dimensionless native couplings from physical-unit calibrations in all docs and APIs.
 
 ## 9. Statistical Measure / Action
 
 - [x] L=2 partition function exists as a first explicit finite example.
-- [x] Define the full native path measure over state/flux histories. **2026-04-26 — selected in `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md` as a constrained source-coupled history measure over `(q_t, ledger_t)` with deterministic tick constraints plus stochastic log-likelihood terms.**
-- [x] Decide whether the EFT object is an action, transfer matrix, Markov/deterministic pushforward measure, or constrained history measure. **2026-04-26 — microscopic object is a transfer-kernel/history action; smooth continuum Lagrangian is deferred to blocked `S_eff`.**
+- [x] Define the full native path measure over state/flux histories. **Selected in `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md` as a constrained source-coupled history measure over `(q_t, ledger_t)` with deterministic tick constraints plus stochastic log-likelihood terms.**
+- [x] Decide whether the EFT object is an action, transfer matrix, Markov/deterministic pushforward measure, or constrained history measure. **Microscopic object is a transfer-kernel/history action; smooth continuum Lagrangian is deferred to blocked `S_eff`.**
 - [ ] Decide whether the BCC Watson denominator `1 - cos(kx) cos(ky) cos(kz)` enters the native transfer/action kernel.
-- [~] Include deterministic update Jacobian or prove it cancels/does not enter. **2026-04-26 — exact microscopic object uses a delta/indicator transfer kernel, so no smooth change-of-variables Jacobian is needed at that level; a Jacobian question reappears only if rewritten as a continuum field integral.**
-- [~] Include stochastic genesis/Langevin sectors in the measure when toggled on. **2026-04-26 — Langevin OU cost specified; discrete channel log-likelihood form specified; channel-by-channel probability catalogue remains open.**
-- [x] Derive the native effective action after b=2 blocking. **Closes the central R3 deliverable of the FTD-EFT roadmap. Derived and synthesized in [`DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md`](../derivations/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md) (2026-06-10 / FTD-0264) based on the L=32/64/128 mixing-matrix campaigns: diagonal identities are [THEOREM] (Theorems 1–3 verified to machine precision); 9-op active subspace is block-diagonalized into Spatial/Density/Reaction-Flux sectors (decoupled at 5σ bootstrap significance); explicit polynomial action and Wilson coefficients measured; semigroup iterability fails at L>=64 due to L-dependent flow.**
-- [x] Connect the action/measure to the observed operator-flow matrix. **2026-06-10 — closed in `DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md` using the measured mixing matrix diagonals as Wilson coefficients.**
+- [~] Include deterministic update Jacobian or prove it cancels/does not enter. **Exact microscopic object uses a delta/indicator transfer kernel, so no smooth change-of-variables Jacobian is needed at that level; a Jacobian question reappears only if rewritten as a continuum field integral.**
+- [~] Include stochastic genesis/Langevin sectors in the measure when toggled on. **Langevin OU cost specified; discrete channel log-likelihood form specified; channel-by-channel probability catalogue remains open.**
+- [x] Derive the native effective action after b=2 blocking. **Closes the central R3 deliverable of the FTD-EFT roadmap. Derived and synthesized in [`DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md`](../derivations/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md) (FTD-0264) based on the L=32/64/128 mixing-matrix campaigns: diagonal identities are [THEOREM] (Theorems 1–3 verified to machine precision); 9-op active subspace is block-diagonalized into Spatial/Density/Reaction-Flux sectors (decoupled at 5σ bootstrap significance); explicit polynomial action and Wilson coefficients measured; semigroup iterability fails at L>=64 due to L-dependent flow.**
+- [x] Connect the action/measure to the observed operator-flow matrix. **Closed in `DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md` using the measured mixing matrix diagonals as Wilson coefficients.**
 
 ## 10. GPU-First Engine Infrastructure
 
@@ -145,7 +144,7 @@ FTD histories.
 
 ## 11. Documentation Hygiene
 
-- [x] Current live index exists.
+- [x] Live index exists.
 - [x] Closed-negative projected attempts are documented.
 - [x] Transport-flow doc updated for GPU full-tick ledgers.
 - [x] Master-quadratic formal paper correlated with EFT open items in `ANALYSIS_MASTER_QUADRATIC_EFT_OPEN_ITEMS.md`.
@@ -202,9 +201,9 @@ EFT quick-suite CTest label seeded; needs expansion as FORM tickets close
 
 ---
 
-## Current Verdict
+## Verdict
 
-FTD now has a serious native EFT skeleton with a first measured operator-mixing matrix:
+FTD has a serious native EFT skeleton with a first measured operator-mixing matrix:
 
 ```text
 fields -> constraints -> per-tick histories -> finite-volume ledger -> b=2 blocking
@@ -228,17 +227,17 @@ first-principles status of g_c
 constructor-domain metadata and observable registry
 ```
 
-**FTD-0099 update (2026-04-26):** F1 (multilatitude at L=32) closed positive — at L=32 the Wilson eigendecomposition recovers a fourth positive eigenvalue (3⁺/2⁻ at L=16 → 4⁺/1⁻ at L=32), and cond(S) improves 7×, confirming finite-sample noise as the leading-order constraint at L=16. F3 (Wilson eigendecomp) emitted for all configs. F5 (RG semigroup test M(b=4) ≈ M(b=2)·M(b=2)) closed negative — fails at the 50% threshold for both L (relerr 1.61–1.80×); bootstrap noise on the 4³–8³ b=4 grid is the leading-order explanation.
+**FTD-0099:** F1 (multilatitude at L=32) closed positive — at L=32 the Wilson eigendecomposition recovers a fourth positive eigenvalue (3⁺/2⁻ at L=16 → 4⁺/1⁻ at L=32), and cond(S) improves 7×, confirming finite-sample noise as the leading-order constraint at L=16. F3 (Wilson eigendecomp) emitted for all configs. F5 (RG semigroup test M(b=4) ≈ M(b=2)·M(b=2)) closed negative — fails at the 50% threshold for both L (relerr 1.61–1.80×); bootstrap noise on the 4³–8³ b=4 grid is the leading-order explanation.
 
-**FTD-0100 update (2026-04-26):** F2 (s² zero-variance break via parameter sweep) closed positive — `inj-mult=1.0` (injecting AT the genesis threshold rather than 3× above) restores Var(s²) > 0 and unlocks the first **full 6×6** mixing-matrix measurement. M_stateSq,stateSq = exactly +8.0 = b³ (trivial volume-weight scaling for an integer per-cell scalar); non-trivial flux→s² off-diagonal entries (M_J⁴,stateSq = +6.47); s²→flux row at machine precision — asymmetric mixing structure recovered (state crystallization is a sink for flux information under blocking, not a source). 4 of 6 FTD-0098 follow-ups closed. The over-saturation in the original FTD-0098 baseline is a parameter-regime artifact, not a fundamental property; future canonical mixing-matrix campaigns should use boundary injection (`inj-mult=1.0`).
+**FTD-0100:** F2 (s² zero-variance break via parameter sweep) closed positive — `inj-mult=1.0` (injecting AT the genesis threshold rather than 3× above) restores Var(s²) > 0 and unlocks the first **full 6×6** mixing-matrix measurement. M_stateSq,stateSq = exactly +8.0 = b³ (trivial volume-weight scaling for an integer per-cell scalar); non-trivial flux→s² off-diagonal entries (M_J⁴,stateSq = +6.47); s²→flux row at machine precision — asymmetric mixing structure recovered (state crystallization is a sink for flux information under blocking, not a source). 4 of 6 FTD-0098 follow-ups closed. The over-saturation in the original FTD-0098 baseline is a parameter-regime artifact, not a fundamental property; future canonical mixing-matrix campaigns should use boundary injection (`inj-mult=1.0`).
 
 The next milestone is **L=32/L=64 multilatitude continuation at `inj-mult=1.0`** to land a clean 6×6 at multiple scales (combines FTD-0099's L-trend + FTD-0100's 6×6 unlock). If cond(S) and bootstrap stderr both improve as predicted, this would be the upgrade path from [PARTIAL] toward [MEASUREMENT]. F4 (multi-scenario) and F6 (Vieta trace/det) remain open.
 
 ---
 
-## Engine-as-Instrument Portfolio Verdict (2026-04-27)
+## Engine-as-Instrument Portfolio Verdict
 
-Per the user's 2026-04-26 reorientation toward "use the engine as a primary instrument; let it produce phenomena and measure what emerges." Four-campaign portfolio executed in a single session on RTX 5090 / WSL2.
+A reorientation toward "use the engine as a primary instrument; let it produce phenomena and measure what emerges" drives a four-campaign portfolio executed on RTX 5090 / WSL2.
 
 | # | Campaign | LEDGER | Outcome | Tag |
 |---|---|---|---|---|
@@ -252,19 +251,19 @@ Per the user's 2026-04-26 reorientation toward "use the engine as a primary inst
 - **All three first-principles routes for `g_c` (Mechanisms A, B, C) are now closed-negative.** The coupling remains [PARAMETRIC]. Master quadratic / G* / Watson identity unaffected (independent number-theoretic [THEOREMs]).
 - **Engine has structural phase content not anticipated by SM-targeted measurements.** Campaign B's three-regime finding (vacuum / bound states / runaway crystallization) and the deterministic cluster counts (1 for point injection, 2 for collision; 5/5 seeds) are engine-native observations that SM-comparison framings would have masked or tuned away.
 - **Continuum-limit measurement shows monotone cond(S) improvement but non-monotone eigenvalue positivity** at fixed N_SAMPLES — finite-sample noise is the dominant constraint, not basis closure or genuine L-dependence (consistent across FTD-0099/0103).
-- **Negative results outnumber positive results in this portfolio**, by design. The user's reorientation explicitly framed negative results as informative; this portfolio confirms that framing produces structurally informative content even when prior conjectures fail.
+- **Negative results outnumber positive results in this portfolio**, by design. The reorientation explicitly frames negative results as informative; this portfolio confirms that framing produces structurally informative content even when prior conjectures fail.
 
 **FTD-0094 (L2 candidate identity 2·m_e/α = 16G*²)** terminally demoted to [PARAMETRIC] per pre-registered FTD-0093 closure criterion. FTD-0096 (μ-from-ℓ_P missing arrow) remains [OPEN]; the demotion is conditional on FTD-0096 staying open.
 
-**Status of the algebraic spine (refreshed 2026-05-05; nine numbered results — six theorem-grade + three honestly-tiered — per `SPEC_ALGEBRAIC_SPINE.md` §0):**
+**Status of the algebraic spine (nine numbered results — six theorem-grade + three honestly-tiered — per `SPEC_ALGEBRAIC_SPINE.md` §0):**
 - FTD-0001 G* algebraic identity — [THEOREM]
 - FTD-0013 master quadratic single physics identification (x₊  1/α) — [STRONGLY MOTIVATED CONJECTURE]. *(Historical formulation here read "dual prediction (x₊ ≈ 1/α, x₋ ≈ N_c)"; the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 - ~~FTD-0014 master quadratic algebraic identity x² − 16G*²x + 16G*³ = 0~~ — *(citation correction: the master quadratic algebraic identity is **FTD-0001** [THEOREM], not FTD-0014; FTD-0014 carried the `x_-  N_c` physics identification and is **retired** per v1.4 §5, row removed in commit `ca7eb61`.)*
-- FTD-0015 CM-curve uniqueness h=1 — [NUMERICAL FACT, h=1 only] (downgraded 2026-05-02 — see MC-T1.2)
+- FTD-0015 CM-curve uniqueness h=1 — [NUMERICAL FACT, h=1 only] (downgraded — see MC-T1.2)
 - FTD-0016 coefficient 16 = |Aut(E)|² — [THEOREM]
 - Phase G geometric Coulomb α_r(r,L) = 2r·G_L(r) — [THEOREM]
 - Watson identity W₃ = G*²/(2π) — [THEOREM]
-- Phase J ultralocality at L=2 — [THEOREM at L=2 — Nyquist-mode degeneracy origin] (downgraded 2026-05-02 — see MC-T1.1)
+- Phase J ultralocality at L=2 — [THEOREM at L=2 — Nyquist-mode degeneracy origin] (downgraded — see MC-T1.1)
 - FTD-0111 (1+i)-tower harmonic invariant (Theorem 8) — [THEOREM]
 - FTD-0112 field-theoretic Q(G*) characterization (Theorem 9) — [THEOREM]
 
@@ -272,31 +271,20 @@ These are independent of the engine-as-instrument campaigns and stand on number-
 
 ---
 
-## R1 closure milestones (2026-04-27 → 2026-05-05)
+## R1 closure milestones
 
-The following items closed or substantively advanced since the previous checklist refresh (2026-04-26):
+The following items are closed or substantively advanced:
 
-**2026-04-27 evening**: FTD-0107 cluster-tracker findings — deterministic L-invariant cluster counts at L ∈ {32, 64} from canonical genesis injection. 5/5 seed reproducibility. Cluster--mass identification candidate bridge.
+- FTD-0107 cluster-tracker findings — deterministic L-invariant cluster counts at L ∈ {32, 64} from canonical genesis injection. 5/5 seed reproducibility. Cluster--mass identification candidate bridge.
+- FTD-0110 linear-level closure. $k = 1/N_\text{base} = 1/4$ derived from O_h representation theory (`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`). Cluster-size formula $N(A) \approx \tfrac{1}{4}(A/K_\text{GENESIS})^2$ at the linear level — closes the long-standing "why 25 voxels at A=10" question structurally.
+- FTD-0111 / Theorem 8 — (1+i)-tower harmonic invariant. $1/y_+ + 1/y_- = 1$ with anomaly transcendence $A_k \notin \mathbb{Q}$ for $k \geq 4$.
+- Maxwell-exploit thread completion (`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md` $M_{JJ}=16$, $M_{J^4}=256$); `ANALYSIS_GATE_C_VS_L.md` (sector decoupling L-independent at L∈{24,32,48,64}); `AUDIT_GAUSSIANITY_v1_LARGE.md`; `ANALYSIS_OFFDIAGONAL_ASYMMETRY.md`; `MEASUREMENT_GATE_D_T_PERTURBATION.md`; `AUDIT_S_EFF_SMOKE_VALIDATION.md`. FTD-0112 / Theorem 9 — field-theoretic Q(G*) maximal π-free subfield characterization (conditional on Chudnovsky 1976).
+- `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` complete — Cayley-Dickson 5-harmonic curve found in ~4.3% of natural alternatives; retagged [SELECTION].
+- Math-completion checklist Tier I 5/5 closed + Tier II 3/3 closed; `AUDIT_HEEGNER_TOWER_RIGIDITY.md` complete (CM Uniqueness bifurcates by methodology); Theorem 7 retagged [L=2 only]; Theorem 3 retagged [h=1 only].
+- `PREREG_PHASE_I_NATIVE_COUPLING.md` + `PREREG_PHASE_II_WILSON_DIRAC_G2.md` + `SPEC_WILSON_DIRAC_FTD.md`. FTD-0127 (G* parity-twist between $\zeta$ and $L(s, \chi_{-4})$) [DERIVED]. Reference frame structure-vocabulary sweep across theory + manuscript + whitepaper.
+- Phase B cluster-persistence arc (FTD-0136) — full physics returns FTD framework integers across 18 runs at L ∈ {32, 64, 256}; FTD-0110 baseline drift discovered (cluster sizes ~5× smaller than the FTD-0110 LEDGER reference); engine bug-hunt commit `f2a721a` fixes F1 (color sign), F4 (genesis energy), F6 (evaporation toggle) + diagnostics; `SPEC_DISCRETE_NATIVE_DERIVATION.md` methodological pivot.
 
-**2026-04-28**: FTD-0110 linear-level closure. $k = 1/N_\text{base} = 1/4$ derived from O_h representation theory (`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`). Cluster-size formula $N(A) \approx \tfrac{1}{4}(A/K_\text{GENESIS})^2$ at the linear level — closes the long-standing "why 25 voxels at A=10" question structurally.
-
-**2026-04-29**: FTD-0111 / Theorem 8 — (1+i)-tower harmonic invariant. $1/y_+ + 1/y_- = 1$ with anomaly transcendence $A_k \notin \mathbb{Q}$ for $k \geq 4$.
-
-**2026-04-30**: Maxwell-exploit thread completion (`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md` $M_{JJ}=16$, $M_{J^4}=256$); `ANALYSIS_GATE_C_VS_L.md` (sector decoupling L-independent at L∈{24,32,48,64}); `AUDIT_GAUSSIANITY_v1_LARGE.md`; `ANALYSIS_OFFDIAGONAL_ASYMMETRY.md`; `MEASUREMENT_GATE_D_T_PERTURBATION.md`; `AUDIT_S_EFF_SMOKE_VALIDATION.md`. FTD-0112 / Theorem 9 — field-theoretic Q(G*) maximal π-free subfield characterization (conditional on Chudnovsky 1976).
-
-**2026-05-01**: `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` complete — Cayley-Dickson 5-harmonic curve found in ~4.3% of natural alternatives; retagged [SELECTION].
-
-**2026-05-02**: Math-completion checklist Tier I 5/5 closed + Tier II 3/3 closed; `AUDIT_HEEGNER_TOWER_RIGIDITY.md` complete (CM Uniqueness bifurcates by methodology); Theorem 7 retagged [L=2 only]; Theorem 3 retagged [h=1 only].
-
-**2026-05-03**: `PREREG_PHASE_I_NATIVE_COUPLING.md` + `PREREG_PHASE_II_WILSON_DIRAC_G2.md` + `SPEC_WILSON_DIRAC_FTD.md`. FTD-0127 (G* parity-twist between $\zeta$ and $L(s, \chi_{-4})$) [DERIVED]. Reference frame structure-vocabulary sweep across theory + manuscript + whitepaper.
-
-**2026-05-04**: Phase B cluster-persistence arc (FTD-0136) — full physics returns FTD framework integers across 18 runs at L ∈ {32, 64, 256}; FTD-0110 baseline drift discovered (cluster sizes ~5× smaller than 2026-04-28 LEDGER reference); engine bug-hunt commit `f2a721a` fixes F1 (color sign), F4 (genesis energy), F6 (evaporation toggle) + diagnostics; `SPEC_DISCRETE_NATIVE_DERIVATION.md` methodological pivot.
-
-**2026-05-05** (this R1 refresh): engine cleanup commits `c714f71`, `56985a4`, `2881238`, `255c1dd`, `37c3fcd`, `10f00f9`, `c887948`, `2504c9b`, `8b1a750` close out CALLSTACK F1–F10 + bug-hunt F2/F3/F12/F15 + add `toggles.evaporation` flag + `gpu_continuity_ledger` test fix + RNG portability design note + STATUS doc.
-
-**2026-05-05 evening** (BH-F5/F8/F9 RNG portability — Option A landed): commits `c1a4f88` (shared SplitMix64 header + CPU refactor) + `c8e03a5` (GPU plumbing in genesis_kernel, genesis_dual_kernel, phase_write_kernel, wave_update_kernel, launchers, gpu_engine dispatch). Both backends now share `engine/include/ftd/voxel_rng.h`'s SplitMix64 stream for: (a) genesis Boltzmann probability; (b) genesis zero-curl spin fallback (BH-F8 fix — pre-fix GPU assigned deterministic +1 vs CPU's stochastic ±1); (c) Langevin OU Gaussian noise (Box-Muller of two SplitMix64 uniforms per axis). Verified: golden hash bit-exact, gpu_parity_complete PASS at 41s (3-4× slower than pre-fix due to in-kernel Box-Muller transcendentals; parity holds per-voxel), genesis/baryogenesis/toggle_matrix PASS. Out of scope: weak_transmutation + pair_production kernels still use cuRAND (separate BH-F5 follow-up); GPU evaporation criterion uses deterministic threshold while CPU is stochastic Boltzmann (a CRITERION divergence, not RNG portability — separately deferred).
-
-**Engine-side CPUGPU parity work is now substantially complete.** All bug-hunt audit items from the 2026-05-04 commit `f2a721a` body — F1, F2, F3, F4, F5 (genesis/Langevin RNG portion), F6, F8, F9, F12, F15 — are closed at HEAD `c8e03a5`. Residual items are: (i) deterministic-vs-stochastic GPU evaporation criterion, (ii) weak_transmutation + pair_production cuRAND-to-SplitMix64 migration, (iii) FTD-0110 baseline drift bisect (research, separate session). None of these block the R3a measurement campaign.
+**Engine-side CPUGPU parity work is substantially complete.** All bug-hunt audit items from the commit `f2a721a` body — F1, F2, F3, F4, F5 (genesis/Langevin RNG portion), F6, F8, F9, F12, F15 — are closed at HEAD `c8e03a5`. Both backends share `engine/include/ftd/voxel_rng.h`'s SplitMix64 stream for genesis Boltzmann probability, genesis zero-curl spin fallback (BH-F8 fix), and Langevin OU Gaussian noise; golden hash bit-exact, `gpu_parity_complete`/genesis/baryogenesis/toggle_matrix PASS. Residual items are: (i) deterministic-vs-stochastic GPU evaporation criterion, (ii) weak_transmutation + pair_production cuRAND-to-SplitMix64 migration, (iii) FTD-0110 baseline drift bisect. None of these block the R3a measurement campaign.
 
 ---
 

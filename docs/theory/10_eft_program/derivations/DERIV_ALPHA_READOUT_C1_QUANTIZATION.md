@@ -1,8 +1,6 @@
 # Derivation — Alpha Readout via Topological Winding (ARC-C1)
 
 **Tag:** [UNDERDETERMINED] (Mathematical mapping achieved for trace; determinant mapping unforced)
-**Date:** 2026-05-30
-**Framework:** Foundational Ternary Dynamics v5.33
 **Reference:** `SPEC_ALPHA_READOUT_CONTRACT.md`, `AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`
 **LEDGER:** FTD-0236 (ARC-C1 Execution)
 

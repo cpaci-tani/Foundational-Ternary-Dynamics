@@ -1,7 +1,6 @@
 # ANALYSIS: Thomson Recoil Observatory v1
 
 **FTD ID:** FTD-0287
-**Date:** 2026-06-13
 **Status:** [OBSERVATION -- LINEAR SUPERPOSITION, NO MECHANICAL RECOIL]
 **Artifact:** `engine/tests/campaign_thomson_recoil_observatory.cpp`
 **Artifact SHA256:** `E6D6BE58F2C1EC808F8F1C0FFC7B40DDEA48D193DE3F596C23651DEDD942EA45`
