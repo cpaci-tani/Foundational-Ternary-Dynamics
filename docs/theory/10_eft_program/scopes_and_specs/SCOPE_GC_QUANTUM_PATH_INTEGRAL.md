@@ -1,9 +1,8 @@
 # SCOPE — Mechanism B: Quantum Path Integral Matching on the BCC Sub-Stencil (FTD-0216)
 
 **Tag:** [SCOPING MEMO]
-**Date:** 2026-05-26
-**LEDGER row reservation:** FTD-0216 (downstream of FTD-0031 and FTD-0110)
-**Consolidates/Supersedes:** `archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md` (the classical circularity post-mortem; CLOSED NEGATIVE 2026-04-25)
+**LEDGER row:** FTD-0216 (downstream of FTD-0031 and FTD-0110)
+**Consolidates/Supersedes:** `archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md` (the classical circularity post-mortem; CLOSED NEGATIVE)
 
 ---
 

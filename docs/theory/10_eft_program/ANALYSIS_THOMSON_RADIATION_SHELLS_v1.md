@@ -1,7 +1,6 @@
 # ANALYSIS: Thomson Radiation Shell Meter v1
 
 **FTD ID:** FTD-0290
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- NO BASELINE-SUBTRACTED OUTWARD POWER]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_RADIATION_SHELLS_v1.md`
 **Lock commit:** `8ccfee7b`

@@ -1,10 +1,8 @@
 # FOUND — No 4th Generation Fermions No-Go Formalization
 
 **Status:** [Outcome A — FOUND]
-**Date:** 2026-05-27
 **Campaign ID:** FTD-0220
 **Pre-registration Tag:** `preregister-no-4th-generation-no-go-v1`
-**Execution Commit:** `Current (exec)`
 
 ---
 
