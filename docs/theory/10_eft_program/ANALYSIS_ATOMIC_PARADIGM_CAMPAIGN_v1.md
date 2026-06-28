@@ -1,7 +1,7 @@
 # ANALYSIS -- Atomic paradigm campaign FTD-0280 through FTD-0283
 
-> **CROSS-CUTTING CORRECTION (2026-06-12, from a parallel session's adversarial audit —
-> [`../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md)).**
+> **CROSS-CUTTING CORRECTION** (see
+> [`../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md)).
 > The FTD-0278 hydrogen **"n=2 multiplet / O_h T1u triple / Rydberg ladder"** was found
 > OVERCLAIMED and corrected to **HYDROGEN-1s-CONFIRMED**: in most record cells only the 1s
 > is bound, and the "exactly degenerate T1u triple" is **torus momentum degeneracy, not
@@ -15,7 +15,6 @@
 > FTD-0281 (the engine hook) and the helium replay are unaffected.
 
 **Status:** `[MIXED RESULT -- CONDITIONAL SECTOR HARDENED; NO-NEW-KNOB LADDER FALSIFIED]`  
-**Date:** 2026-06-13  
 **Lock commit:** `fe55b42f`  
 **Tags:** `preregister-atomic-sector-hardening-v1`,
 `preregister-db-clock-coulomb-spectroscopy-v1`,

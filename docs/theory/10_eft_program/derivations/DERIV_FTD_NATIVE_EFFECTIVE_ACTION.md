@@ -1,7 +1,6 @@
 # FTD-Native Effective Action after Blocking
 
 **Tag:** [THEOREM] (diagonal identities) / [MEASURED] (Wilson coefficients) / [SELECTION] (dictionary)
-**Date:** 2026-06-10
 **LEDGER id:** FTD-0264 (closes the blocked effective action task in the checklist)
 **Depends on:** [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](../scopes_and_specs/SPEC_FTD_NATIVE_BLOCKING_MAP.md), [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md), [`ANALYSIS_GATE_C_VS_L.md`](../archive/campaign_complete/ANALYSIS_GATE_C_VS_L.md), [`ANALYSIS_OFFDIAGONAL_ASYMMETRY.md`](../archive/campaign_complete/ANALYSIS_OFFDIAGONAL_ASYMMETRY.md).
 

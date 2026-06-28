@@ -1,7 +1,6 @@
 # ANALYSIS: Source-Free Discrete Tick Local Continuity v2
 
 **FTD ID:** FTD-0295
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT -- SOURCE-FREE LOCAL TICK CONTINUITY CONFIRMED]
 **Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`
 **Lock commit:** `1d4a29a5`

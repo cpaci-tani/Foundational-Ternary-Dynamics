@@ -1,6 +1,5 @@
 # Derivation: FTD Native Complete History Action
 
-**Date:** 2026-04-26
 **Status:** [SELECTION] canonical microscopic history action; [THEOREM] reduction
 to the linear G18 generator; [OPEN] explicit nonlinear effective action after
 blocking.

@@ -2,7 +2,6 @@
 
 **Status:** `[DERIVED — branch (A) closure]` + `[UNDERDETERMINED — branch (B)]`
 = **FORCED-ESCAPE NARROWED.**
-**Date:** 2026-06-13.
 **Pre-registration:** [`PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md`](preregistrations/PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md),
 tag `preregister-alpha-d3-forced-escape-v1`; artifact SHA `b320e0eb…`.
 **What this is:** a genuine, rigorous swing at the α obstruction — the single surviving exit

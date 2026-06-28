@@ -1,7 +1,6 @@
 # No-Go Theorem — Commutativity Independence
 
 **Tag:** [THEOREM]
-**Date:** 2026-05-30
 **LEDGER row:** FTD-0243
 **Dependencies:** Postulates 1–5 (`FOUND_AXIOM_ZERO.md`), `lean/Standalone.lean`, `DERIV_BELL_COSINE_FROM_GAUSS.md`, `DERIV_SINGLET_FROM_VOID_EVENT.md`.
 **Supersedes status of:** `docs/theory/07_assessment/archive/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md` (promoted to [THEOREM]; original now archived).

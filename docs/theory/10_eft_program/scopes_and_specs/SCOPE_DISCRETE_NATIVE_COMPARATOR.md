@@ -1,8 +1,6 @@
 # SCOPE — Discrete-Native Comparator Inventory (ARC-D1)
 
 **Tag:** [SCOPING MEMO]
-**Date:** 2026-05-30
-**Framework:** Foundational Ternary Dynamics v5.33
 **Reference:** `SPEC_ALPHA_READOUT_CONTRACT.md` (Candidate D)
 **LEDGER:** FTD-0237 (ARC-D1 Scoping)
 

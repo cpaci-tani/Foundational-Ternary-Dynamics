@@ -1,7 +1,6 @@
 # No-Go Theorem — Mass-Unit μ is Not Derivable from Axiom Zero
 
 **Tag:** [THEOREM] / [CLOSED NEGATIVE for FTD-0096]
-**Date:** 2026-04-28
 **LEDGER row:** FTD-0096 (extension of FTD-0059)
 **Dependencies:** FTD-0059 (a_phys no-go theorem; `THEOREM_A_PHYS_NO_GO.md`).
 **Supersedes status of:** FTD-0096 ([OPEN] → [CLOSED THEOREM-NEGATIVE]); confirms terminal [PARAMETRIC] for FTD-0094 (the L₂ identity).
@@ -24,7 +23,7 @@ FTD-0059's Corollary 4.1 explicitly extends the length no-go to mass:
 
 This says: by the same ring-algebra argument as for `a_phys`, no element of the Axiom-Zero ring `R` has SI mass dimension `M¹`. Therefore no function of Axiom-Zero invariants produces a quantity with mass units.
 
-**The FTD-0096 [OPEN] caveat (LEDGER row, 2026-04-26):** the ring-algebra proof technique applied to kinematic dimensions assumes Axiom Zero defines only *kinematic* primitives (lattice geometry, time-stepping, ternary states). The 2026-04-26 LEDGER row noted: "*mass enters through dynamical threshold (manifestation rule, K_GENESIS), not the dimensional ring*", suggesting that the threshold parameters might supply a hidden mass-dimensional generator that escapes the kinematic ring-algebra argument.
+**The FTD-0096 caveat this theorem must address:** the ring-algebra proof technique applied to kinematic dimensions assumes Axiom Zero defines only *kinematic* primitives (lattice geometry, time-stepping, ternary states). The caveat is that "*mass enters through dynamical threshold (manifestation rule, K_GENESIS), not the dimensional ring*", suggesting that the threshold parameters might supply a hidden mass-dimensional generator that escapes the kinematic ring-algebra argument.
 
 This document closes that hypothesis: **`K_GENESIS` and the other threshold parameters are dimensionless in the same sense as `a_phys` — they are pure numbers in the abstract update rules — and therefore Corollary 4.1 applies to them too.**
 
@@ -100,7 +99,7 @@ The L₂ identity is therefore terminally [PARAMETRIC]:
 - The numerical match to `1` at 68.77 ppm is calibration-dependent: under the canonical `K_B = m_e` calibration, the match is exact by construction; under any other calibration, the match would be different.
 - No further structural promotion is possible without an external mass anchor — which would be a calibration choice, not a derivation.
 
-This **independently confirms** the terminal [PARAMETRIC] tag that the LEDGER (2026-04-27) assigned to FTD-0094 based on the methodological FTD-0097 look-elsewhere null-rejected-upward verdict. **The structural side (this document) and the methodological side (FTD-0097) now jointly close FTD-0094 as [PARAMETRIC] from two independent directions.**
+This **independently confirms** the terminal [PARAMETRIC] tag that the LEDGER assigns to FTD-0094 based on the methodological FTD-0097 look-elsewhere null-rejected-upward verdict. **The structural side (this document) and the methodological side (FTD-0097) jointly close FTD-0094 as [PARAMETRIC] from two independent directions.**
 
 ### 5.2 The dimensional-ring of FTD has exactly two calibrations
 
@@ -114,9 +113,9 @@ The cluster-mass identification of FTD-0110 (`N(A = 2√R) = R · m_e^{phys}/m_e
 
 **This means FTD-0110 main claim is structurally untouched by the μ no-go theorem.** The cluster-mass identification is a dimensionless ratio statement, not a dimensional mass-derivation. The no-go closes FTD-0096 (calibration is calibration); it does not close FTD-0110 (which is about ratio-of-masses, calibration-independent).
 
-### 5.4 Updated calibration narrative for SPEC_FTD.md
+### 5.4 Calibration narrative for SPEC_FTD.md
 
-The current calibration declaration in `SPEC_FTD.md` ("LATTICE  PHYSICAL CALIBRATION") declares two calibrations as design choices. With this theorem, the declaration becomes a **theorem-enforced minimum**: exactly two calibrations are required by the no-go, and any third calibration would over-determine the system.
+The calibration declaration in `SPEC_FTD.md` ("LATTICE  PHYSICAL CALIBRATION") declares two calibrations as design choices. With this theorem, the declaration is a **theorem-enforced minimum**: exactly two calibrations are required by the no-go, and any third calibration would over-determine the system.
 
 Suggested SPEC_FTD update text:
 
@@ -139,16 +138,16 @@ FTD-0094 (the L₂ identity `2m_e/α = 16G*²`) had pre-registered demotion cond
 1. FTD-0093 (Mechanism C structural derivation of `g_c`) closes negative.
 2. FTD-0096 (μ-from-ℓ_P missing arrow) remains [OPEN] or closes negative.
 
-Both conditions are now met:
+Both conditions are met:
 
-- **2026-04-27**: FTD-0093 [CLOSED NEGATIVE] at L ∈ {24, 32, 48} (LEDGER FTD-0093).
-- **2026-04-28** (this document): FTD-0096 [CLOSED THEOREM-NEGATIVE] via mass-dimensional ring-algebra extension.
+- FTD-0093 [CLOSED NEGATIVE] at L ∈ {24, 32, 48} (LEDGER FTD-0093).
+- FTD-0096 [CLOSED THEOREM-NEGATIVE] via mass-dimensional ring-algebra extension (this document).
 
 **FTD-0094 is therefore terminally [PARAMETRIC] under three independent closures:**
 
-1. Methodological (FTD-0097 look-elsewhere scan, 2026-04-27): the L₂ identity appears among chance-level monomial fits at exactly its claimed 68.77 ppm precision.
-2. Structural-mechanism (FTD-0093 closed negative, 2026-04-27): the proposed structural mechanism for `g_c` (which would have anchored the L₂ identity) closes.
-3. Dimensional (FTD-0096 closed theorem-negative, 2026-04-28; this document): the mass unit required to evaluate the L₂ identity numerically is calibration, not derivation.
+1. Methodological (FTD-0097 look-elsewhere scan): the L₂ identity appears among chance-level monomial fits at exactly its claimed 68.77 ppm precision.
+2. Structural-mechanism (FTD-0093 closed negative): the proposed structural mechanism for `g_c` (which would have anchored the L₂ identity) closes.
+3. Dimensional (FTD-0096 closed theorem-negative; this document): the mass unit required to evaluate the L₂ identity numerically is calibration, not derivation.
 
 Three independent closures from different directions all agree: the L₂ identity is terminally [PARAMETRIC] and cannot be promoted further within the current Axiom-Zero framework.
 
@@ -156,17 +155,11 @@ Three independent closures from different directions all agree: the L₂ identit
 
 ## 8 · LEDGER tag movement
 
-**FTD-0096 (μ-from-ℓ_P missing arrow):**
-- Was: [OPEN] (2026-04-26)
-- Becomes: **[CLOSED THEOREM-NEGATIVE]** (2026-04-28). Mass-dimensional ring-algebra argument (this document) extends FTD-0059 to cover threshold parameters; mass-unit μ is calibration, not derivation.
+**FTD-0096 (μ-from-ℓ_P missing arrow):** **[CLOSED THEOREM-NEGATIVE]**. Mass-dimensional ring-algebra argument (this document) extends FTD-0059 to cover threshold parameters; mass-unit μ is calibration, not derivation.
 
-**FTD-0094 (L₂ identity 2m_e/α = 16G*²):**
-- Was: [PARAMETRIC] terminal (2026-04-27, conditional on FTD-0096 staying [OPEN])
-- Becomes: **[PARAMETRIC] terminal under three independent closures** (2026-04-28). Tag unchanged but no longer conditional; closure dimensions expanded.
+**FTD-0094 (L₂ identity 2m_e/α = 16G*²):** **[PARAMETRIC] terminal under three independent closures** — no longer conditional on FTD-0096 staying [OPEN]; closure dimensions expanded.
 
-**FTD-0059 (a_phys no-go theorem):**
-- Tag unchanged (still [THEOREM]).
-- Cross-reference added: this document is the dual closure of Corollary 4.1's mass extension.
+**FTD-0059 (a_phys no-go theorem):** [THEOREM]. Cross-reference: this document is the dual closure of Corollary 4.1's mass extension.
 
 ---
 

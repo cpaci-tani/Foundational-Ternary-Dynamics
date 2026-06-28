@@ -1,9 +1,8 @@
 # ANALYSIS: Alpha Estimator Validation v1
 
 **FTD ID:** FTD-0286
-**Date:** 2026-06-13
 **Status:** [MEASUREMENT ANALYSIS -- ENERGY FUNCTIONAL MISMATCH]
-**Pre-registration:** `archive/superseded/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md` (archived 2026-06-15)
+**Pre-registration:** `archive/superseded/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`
 **Lock tag:** `preregister-alpha-estimator-validation-v1`
 **Lock commit:** `7cf8bd5caab26a6c66a78be3b1270c571ebbbf97`
 **Artifact:** `engine/tests/campaign_alpha_estimator_validation.cpp`
@@ -82,8 +81,8 @@ introduced here.
 This campaign does not promote, demote, or reclassify `x_+ = 1/alpha`. It does
 not support a dynamical-alpha claim. It says the next alpha-readout attempt must
 first derive or directly measure the correct finite-cell observable: potential
-response, source-response work, or a proven energy normalization. **Update
-(2026-06-13): FTD-0286 v2 shows the v1 failure was a ½-prefactor gate pairing
+response, source-response work, or a proven energy normalization. **FTD-0286 v2
+shows the v1 failure was a ½-prefactor gate pairing
 error; see `ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.** Only after
 that may the no-alpha-vs-Postulate-W discriminator be asked again.
 
