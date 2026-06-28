@@ -2,7 +2,6 @@
 
 ## From Mass to Black Hole Evaporation in Lattice Terms
 
-**Date:** April 8, 2026
 **Status:** [SELECTION] overall; individual claims tagged below
 **Depends on:** SPEC_FTD.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, DERIV_BLACK_HOLE_PHYSICS.md, DERIV_DARK_SECTOR_DYNAMICS.md, DERIV_ELECTRON_MASS_MOTIVATION.md, SPEC_FTD_LAGRANGIAN.md
 

@@ -2,9 +2,6 @@
 
 ## A Complete Formal Derivation of Special and General Relativity
 
-**Document Version:** 1.0
-**Framework Version:** FTD v5.17
-**Date:** February 2, 2026
 **Standard:** Rigorous derivation with explicit gap marking
 
 ---
@@ -695,7 +692,7 @@ where $\bar{h}_{\mu\nu} = h_{\mu\nu} - \frac{1}{2}\eta_{\mu\nu}h$ is the trace-r
 
 **Status:** [SELECTION / CONDITIONAL] — *not* [THEOREM].
 
-> **[2026-05-21 correction — Step-0 graviton-provenance audit, LEDGER FTD-0189]** The original [THEOREM] tag overclaimed. This result is conditional on **Conjecture 10.1** (§10.1) — the rank-2 metric perturbation $h_{\mu\nu}$ is *posited*, not constructed from the substrate — and on **Gap 10.1** (§10.3) — its spin-2-bearing spatial components are explicitly not derived. The correspondence step "$h \sim J$" above maps a rank-2 tensor to a rank-1 vector; it is an identification, not a derivation. Honest tag: [SELECTION], conditional on Conjecture 10.1. Whether the FTD substrate carries a derived massless spin-2 mode is [OPEN] — Frontier 4; see `docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`.
+> **[Step-0 graviton-provenance audit, LEDGER FTD-0189]** The original [THEOREM] tag overclaimed. This result is conditional on **Conjecture 10.1** (§10.1) — the rank-2 metric perturbation $h_{\mu\nu}$ is *posited*, not constructed from the substrate — and on **Gap 10.1** (§10.3) — its spin-2-bearing spatial components are explicitly not derived. The correspondence step "$h \sim J$" above maps a rank-2 tensor to a rank-1 vector; it is an identification, not a derivation. Honest tag: [SELECTION], conditional on Conjecture 10.1. Whether the FTD substrate carries a derived massless spin-2 mode is [OPEN] — Frontier 4; see `docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`.
 
 ### 14.2 The 8πG Coefficient [SELECTION]
 
@@ -783,7 +780,7 @@ This is a wave equation with solutions propagating at $c$.
 
 **Status:** [CONJECTURE] — *not* [THEOREM].
 
-> **[2026-05-21 correction — Step-0 graviton-provenance audit, LEDGER FTD-0189]** Step 3→4 is a representation-content error. The 2 transverse modes of the **vector** flux field $J$ carry helicity $\pm1$ — they are **spin-1** (this is the photon). The 2 graviton polarizations carry helicity $\pm2$ — **spin-2**. Matching the *count* (2  2) is necessary but not sufficient: a photon and a graviton both have 2 polarizations. The distinguishing invariant — the transformation law under rotation about the propagation axis ($e^{\pm i\theta}$ vs $e^{\pm 2i\theta}$) — is not checked. As stated the claim identifies spin-1 with spin-2. Honest tag: [CONJECTURE]. A genuine derivation of an emergent spin-2 substrate mode is [OPEN] — Frontier 4; see `docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`.
+> **[Step-0 graviton-provenance audit, LEDGER FTD-0189]** Step 3→4 is a representation-content error. The 2 transverse modes of the **vector** flux field $J$ carry helicity $\pm1$ — they are **spin-1** (this is the photon). The 2 graviton polarizations carry helicity $\pm2$ — **spin-2**. Matching the *count* (2  2) is necessary but not sufficient: a photon and a graviton both have 2 polarizations. The distinguishing invariant — the transformation law under rotation about the propagation axis ($e^{\pm i\theta}$ vs $e^{\pm 2i\theta}$) — is not checked. As stated the claim identifies spin-1 with spin-2. Honest tag: [CONJECTURE]. A genuine derivation of an emergent spin-2 substrate mode is [OPEN] — Frontier 4; see `docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`.
 
 ### 15.4 Speed of Gravitational Waves [VERIFIED]
 
@@ -965,6 +962,5 @@ Either outcome would be scientifically valuable.
 
 ---
 
-*Document created: February 2, 2026*
 *Framework: Foundational Ternary Dynamics v5.17*
 *Standard: Rigorous derivation with explicit gap marking*

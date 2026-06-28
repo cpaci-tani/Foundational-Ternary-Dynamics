@@ -1,8 +1,5 @@
 # Lattice Black Hole Derivations: Schwarzschild, Kerr, and Reissner-Nordstrom
 
-**Date:** March 6, 2026
-**Framework:** Foundational Ternary Dynamics v5.27
-**Status:** Consolidated from three individual derivations
 **Category:** 3 (Core Physics Derivations)
 
 **Depends on:**
@@ -1656,7 +1653,5 @@ Compare with Schwarzschild at the same radius: $f_{\text{Schw}} = 1 - 2/3 = 0.33
 
 ---
 
-*Consolidated document version 1.0*
-*March 6, 2026*
 *Framework: Foundational Ternary Dynamics v5.27*
-*Consolidated from: DERIV_LATTICE_SCHWARZSCHILD.md (v1.0, Feb 19, 2026), DERIV_LATTICE_KERR.md (v1.0, Feb 24, 2026), DERIV_LATTICE_REISSNER_NORDSTROM.md (v1.0, Feb 25, 2026)*
+*Consolidated from: DERIV_LATTICE_SCHWARZSCHILD.md, DERIV_LATTICE_KERR.md, DERIV_LATTICE_REISSNER_NORDSTROM.md*
