@@ -1,8 +1,6 @@
 # 0004 — Scale controllers + 3-folder package structure
 
 **Status:** Accepted
-**Date:** 2026-04 (retroactive)
-**Author:** codified 2026-04-27
 
 ## Context
 

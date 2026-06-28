@@ -1,7 +1,5 @@
 # FTD Experimental Status Report
 
-**Last Updated:** February 2026
-
 ---
 
 ## Executive Summary
@@ -81,7 +79,7 @@ $$\frac{1}{\alpha} = x_+ = 137.0360$$
 
 ### Status
 
-**Tree-level arithmetic match.** The 1.26 ppm discrepancy is the robust master-quadratic comparison. A Structure-1 scalar-EFT one-loop correction improves the residual to ppb scale within that chosen scheme, but the 2026-04-22 Ward-valid Structure-2 audit does not reproduce that correction. The ppb correction should therefore be treated as scheme-conditional unless a unique FTD-to-EFT matching principle is derived.
+**Tree-level arithmetic match.** The 1.26 ppm discrepancy is the robust master-quadratic comparison. A Structure-1 scalar-EFT one-loop correction improves the residual to ppb scale within that chosen scheme, but the Ward-valid Structure-2 audit does not reproduce that correction. The ppb correction should therefore be treated as scheme-conditional unless a unique FTD-to-EFT matching principle is derived.
 
 ### Future Tests
 
@@ -179,7 +177,7 @@ $$S \approx 2\sqrt{2} \approx 2.83$$
 
 ### Status
 
-**Three-level observer hierarchy established (v5.27-bell):**
+**Three-level observer hierarchy established:**
 
 - **Level 1 (substrate):** Deterministic lattice gives S = 2 — correct for local deterministic axioms [THEOREM]
 - **Level 2 (independent complex observer):** Born rule from complexification gives S = √2 [THEOREM]

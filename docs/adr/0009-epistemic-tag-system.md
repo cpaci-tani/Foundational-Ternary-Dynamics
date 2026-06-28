@@ -1,8 +1,6 @@
 # 0009 — Epistemic tag system (7-tag vocabulary for claims)
 
 **Status:** Accepted (load-bearing for CLAUDE.md epistemic discipline)
-**Date:** 2026-04 (retroactive)
-**Author:** codified 2026-04-27
 
 ## Context
 

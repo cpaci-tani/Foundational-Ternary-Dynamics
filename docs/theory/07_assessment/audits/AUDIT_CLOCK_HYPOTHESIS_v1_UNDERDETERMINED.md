@@ -1,10 +1,8 @@
 # AUDIT — Clock-hypothesis substrate-derivation v1 closure attempt: UNDERDETERMINED
 
 **Tag:** `[AUDIT FINDING — UNDERDETERMINED per pre-reg §6 Outcome B]`. v1 closure attempt is **incomplete** (not closed-negative): two §4-admissible routes were declined; the §5.3 transition-rate identification has F-d/F-f firings; the right verdict at v1 scope is UNDERDETERMINED. A v2 pre-reg is required with sharpened admissibility + the two queued routes added.
-**Date:** 2026-05-25 (Step 2+3 execution Phase B per Wilsonian-reframe plan v2 Strategic Decision)
 **LEDGER row:** FTD-0208 (Arc B P2 closure verdict)
 **Pre-registration:** [`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../../03_derivations/archive/superseded/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) — git tag `preregister-clock-hypothesis-derivation-v1`, commit `4c15ba1`, SHA256 `9feb9d57ee53709ca419a6d068ed183b4b1426186bdaf662fad84061438ee4a5`. Hash-lock verified 2026-05-25.
-**Closure-attempt executor:** FTD lead session.
 **Adversarial reviewer (per pre-reg §9 step 9):** independent `general-purpose` agent. Verdict: **FAIL → UNDERDETERMINED**. Reviewer verdict + reasoning cited verbatim §11 below.
 **Honest framing:** the F9 risk register's HIGHEST-risk arc behaved as predicted — the executor under-claimed (CLOSED-NEGATIVE looked epistemically humble but was actually incorrect at the operational level given untested routes + falsifier firings the executor missed). The adversarial review checkpoint caught this. **The framework works.** This audit document records the correct UNDERDETERMINED verdict + queues v2 pre-reg work.
 **Companion docs:**
@@ -163,7 +161,7 @@ All 8 banned moves: PASS per both executor self-check and adversarial review. Ex
 
 ## §10 — Adversarial review verdict (pre-reg §9 step 9) — FAIL → UNDERDETERMINED
 
-**Adversarial reviewer:** independent `general-purpose` agent dispatched 2026-05-25 with: pre-reg path, AUDIT §2 reconciliation context, SPEC §3.3/§3.7/§4.3 context, draft result-doc path, F-/B-checklist verification mandate including specific attention to over-claim and under-claim risks.
+**Adversarial reviewer:** independent `general-purpose` agent dispatched with: pre-reg path, AUDIT §2 reconciliation context, SPEC §3.3/§3.7/§4.3 context, draft result-doc path, F-/B-checklist verification mandate including specific attention to over-claim and under-claim risks.
 
 **Reviewer's verdict (verbatim):** **FAIL → verdict should be UNDERDETERMINED instead**
 
@@ -201,7 +199,7 @@ Per pre-reg §9 step 10: "only after steps 1–9 close cleanly." Since the closu
 - **SPEC §4.3 + §8 L-1 retain** `[THEOREM modulo clock hypothesis]` — clock hypothesis NOT promoted to explicit `[AXIOM]` per v1 (that would be Outcome C consequence); status unchanged pending v2.
 - **LEDGER FTD-0208 row created** with tag `[UNDERDETERMINED, v1 incomplete; v2 pre-reg queued with calibration-declaration + bandwidth-internal-time routes added + §5.3 sharpened admissibility]`.
 - **Plan v2 Arc B P5 marked PARTIAL**, NOT CLOSED.
-- **LEDGER FTD-0131 row** unchanged — the substrate-derivation chain still rests on the clock hypothesis as "1 flagged interpretive step" per the 2026-05-24 reconciliation; v1 closure attempt did not change this status.
+- **LEDGER FTD-0131 row** unchanged — the substrate-derivation chain still rests on the clock hypothesis as "1 flagged interpretive step" per the reconciliation; v1 closure attempt did not change this status.
 - **Arc C2 boundary theorem (FTD-0209, FOUND)** inherits Branch C (dual-branch statement for the scalar sector) per pre-reg D7, since Arc B P2 verdict is now formally PARTIAL/UNDERDETERMINED.
 - **`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2.4** updated to record v1 closure attempt UNDERDETERMINED; the "1 flagged interpretive step" status stands pending v2.
 

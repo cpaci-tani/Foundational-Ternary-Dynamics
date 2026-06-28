@@ -1,7 +1,6 @@
 # AUDIT — Look-Elsewhere Scan Results (FTD-0097)
 
 **Tag:** [MEASURED] — pre-registered scan executed; verdict per PROTOCOL §7
-**Date:** 2026-04-27
 **LEDGER row:** FTD-0097
 **Pre-registration:** [`PROTOCOL_LOOK_ELSEWHERE_SCAN.md`](PROTOCOL_LOOK_ELSEWHERE_SCAN.md)
 **Pre-reg tag:** `preregister-look-elsewhere-scan-v1` (commit `f11dcaa`, 2026-04-27)
@@ -46,7 +45,7 @@ The FTD constant catalog produces dramatically more 10⁻⁴-level matches again
 
 Both raw and value-dedup accountings give the same verdict. The catalog is over-rich and clustered.
 
-**FTD-0094 (L2 candidate identity 2·m_e/α = 16G\*²) status post-scan**: terminally [PARAMETRIC] (already there per FTD-0093 closure 2026-04-27; this scan **confirms** the demotion from the methodological side). Per PROTOCOL §7: "NULL REJECTED upward → L2 demoted to [PARAMETRIC]; closes the chain definitively from the look-elsewhere side."
+**FTD-0094 (L2 candidate identity 2·m_e/α = 16G\*²) status post-scan**: terminally [PARAMETRIC] (already there per FTD-0093 closure; this scan **confirms** the demotion from the methodological side). Per PROTOCOL §7: "NULL REJECTED upward → L2 demoted to [PARAMETRIC]; closes the chain definitively from the look-elsewhere side."
 
 ---
 
@@ -157,7 +156,7 @@ The runner enumerates EVERY hit at ε ≤ 10⁻³, including those at ε > 10⁻
 
 Per PROTOCOL §7 verdict matrix, NULL REJECTED upward implies **L2 demoted to [PARAMETRIC]**.
 
-FTD-0094 was already terminally [PARAMETRIC] as of 2026-04-27 (per FTD-0093 closure: all three first-principles routes for g_c — Mechanisms A, B, C — closed negative; FTD-0096 μ-arrow remains OPEN). This scan **confirms** the demotion from the look-elsewhere side: the L2 identity 2·m_e/α = 16G\*² is **directly visible in the scan as one of the 13 raw hits on m_e_in_MeV** at residual 6.88×10⁻⁵. That residual is exactly the L2 identity's reported precision (68.77 ppm = 6.88×10⁻⁵). The scan reproduces FTD-0094 as one of the catalog's chance-level monomial fits.
+FTD-0094 is terminally [PARAMETRIC] (per FTD-0093 closure: all three first-principles routes for g_c — Mechanisms A, B, C — closed negative; FTD-0096 μ-arrow remains OPEN). This scan **confirms** the demotion from the look-elsewhere side: the L2 identity 2·m_e/α = 16G\*² is **directly visible in the scan as one of the 13 raw hits on m_e_in_MeV** at residual 6.88×10⁻⁵. That residual is exactly the L2 identity's reported precision (68.77 ppm = 6.88×10⁻⁵). The scan reproduces FTD-0094 as one of the catalog's chance-level monomial fits.
 
 **Consequence**: any future attempt to promote a [CONJECTURE]-tagged identity past [SELECTION] purely on ppm-strength of monomial fit is now ruled out methodologically. Promotion requires either:
 - An **independent structural derivation** (the route attempted by FTD-0093 Mechanism C, closed negative)
