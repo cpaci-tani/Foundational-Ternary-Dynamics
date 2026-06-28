@@ -2,13 +2,11 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** June 10, 2026 (comprehensive corpus checkpoint — verified 586 theory docs, 520 Python scripts, 298 C++ test files, 211 CTest targets all passing, 254 ledger entries through FTD-0267)
-**Framework version:** v1.5 (Phase G/H Checkpoint)
 **Engine version:** v2.18.0
 
-> **2026-04-27 priority reading:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — full-day synthesis with §10 bird's-eye assessment ("what's physically missing"). Then per topic: [`docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) for the seven [THEOREM]s; [`docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md`](docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md) for the 9-Heegner tower; [`docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) for FTD-0107 (deterministic cluster counts L-invariant — strongest positive structural finding); [`docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) for FTD-0097 (catalog over-rich at monomial level — methodological hygiene confirms FTD-0094 [PARAMETRIC]).
+> **Priority reading:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — synthesis with §10 bird's-eye assessment ("what's physically missing"). Then per topic: [`docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) for the seven [THEOREM]s; [`docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md`](docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md) for the 9-Heegner tower; [`docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) for FTD-0107 (deterministic cluster counts L-invariant — strongest positive structural finding); [`docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) for FTD-0097 (catalog over-rich at monomial level — methodological hygiene confirms FTD-0094 [PARAMETRIC]).
 
-For historical documentation-cleanup provenance and deferred remediation notes, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
+For documentation-cleanup provenance and deferred remediation notes, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 
 ---
 
@@ -60,7 +58,7 @@ For historical documentation-cleanup provenance and deferred remediation notes, 
 2. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) — Every implicit assumption made explicit
 3. [AUDIT_BELL_ANALYSIS.md](docs/theory/07_assessment/AUDIT_BELL_ANALYSIS.md) — Bell inequality theory and simulation
 4. [AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md) — Master weakness compilation
-5. [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) — **(2026-06-01 / FTD-0242)** MC-T4.3 route-invariant boundary: 0/4 FTD-native routes force the master-quadratic α operator, so α is **dynamical, not structural**. `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is not derived; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`.
+5. [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) — **(FTD-0242)** MC-T4.3 route-invariant boundary: 0/4 FTD-native routes force the master-quadratic α operator, so α is **dynamical, not structural**. `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is not derived; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`.
 
 ---
 
@@ -89,7 +87,7 @@ ftd/
 │   │   ├── 06_reference_frames_and_measurement/ # Reference frame context and measurement
 │   │   ├── 07_assessment/           # Epistemic audits
 │   │   ├── 08_structural/           # Geometry and information theory
-│   │   │   └── DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC multiplicative structure: Watson identity + SU(3) (April 2026)
+│   │   │   └── DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC multiplicative structure: Watson identity + SU(3)
 │   │   ├── 09_mathematical/         # Number theory and connections
 │   │   └── archive/                 # Superseded/historical documents
 │   │
@@ -143,12 +141,12 @@ ftd/
 │   ├── constants.py                 # Canonical shared constants
 │   ├── verification/                # Formal derivation verification
 │   ├── proofs/                      # Formal mathematical proofs with error bounds
-│   │   └── proof_modular_hamiltonian.py  # Tomita-Takesaki modular operator on finite FTD lattice (April 2026)
+│   │   └── proof_modular_hamiltonian.py  # Tomita-Takesaki modular operator on finite FTD lattice
 │   ├── experiments/                 # Bell tests, CERN analysis, physics sims
 │   ├── exploration/                 # Focused research investigations
-│   │   ├── gap_equation_layer_convergence.py  # Sublattice Watson integrals and gap equation convergence (April 2026)
-│   │   ├── verify_zero_modes.py               # Zero mode count verification across lattice types (April 2026)
-│   │   └── verify_nmeas_18.py                 # Three routes to N_meas = 18 — all negative (April 2026)
+│   │   ├── gap_equation_layer_convergence.py  # Sublattice Watson integrals and gap equation convergence
+│   │   ├── verify_zero_modes.py               # Zero mode count verification across lattice types
+│   │   └── verify_nmeas_18.py                 # Three routes to N_meas = 18 — all negative
 │   ├── tests/                       # Python test suites (pytest)
 │   │   └── comprehensive/           # 7-tier verification framework
 │   ├── visualization/               # Publication figure generation
@@ -188,7 +186,7 @@ Cleanup note:
 
 - The curated index and the raw filesystem are not the same thing right now.
 - The live theory tree currently contains more active-category Markdown files than the indexed catalog because some superseded or historical-in-place documents still live outside `archive/`.
-- For cleanup provenance and raw-count context from the 2026-04 documentation pass, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
+- For cleanup provenance and raw-count context from the documentation pass, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 - For category boundaries and archive rules, see [docs/theory/META_STRUCTURE.md](docs/theory/META_STRUCTURE.md).
 
 The current theory categories are:
@@ -202,7 +200,7 @@ The current theory categories are:
 7. Critical Self-Assessment
 8. Structural Principles
 9. Mathematical Connections
-10. EFT Recovery Program (pre-registered 7-phase measurement campaign; Phase 0 → F complete April 19, 2026)
+10. EFT Recovery Program (pre-registered 7-phase measurement campaign; Phase 0 → F complete)
 
 ### EFT Recovery Program documents (`docs/theory/10_eft_program/`)
 
