@@ -1,7 +1,7 @@
 # ANALYSIS — The nonlinear-loop mass-gap measurement (FTD-0270 P2): verdict INVALID, with a strong no-gap hint
 
 **Tag:** `[MEASURED — INVALID per pre-reg]` (the run trips the frozen instability gate; FTD-0270 unchanged)
-**Date:** 2026-06-27 · **LEDGER:** FTD-0333 · **Pre-registration:** `PREREG_QDYN_MASS_GAP_v1.md`, git tag `preregister-qdyn-mass-gap-v1`, commit `399093e9`, instrument SHA256 `44a20d76a53779297a8bbf96d84e23a4cd15573be1cc094469ea017bc2fdd21d`.
+**LEDGER:** FTD-0333 · **Pre-registration:** `PREREG_QDYN_MASS_GAP_v1.md`, git tag `preregister-qdyn-mass-gap-v1`, commit `399093e9`, instrument SHA256 `44a20d76a53779297a8bbf96d84e23a4cd15573be1cc094469ea017bc2fdd21d`.
 
 > **Verdict (pre-reg-faithful): INVALID.** The canonical sweep does not produce a valid measurement — the G2 instability gate fails on every run (`ρ ≈ 1.0025 > 1.0005`), the G1 linear control was mis-calibrated (it measures a dispersing wavepacket mode, not a pure `k=0`), and L=32 floods (`N = L³`). The strong, uniform *science hint* — native `ω₀` pinned at the FFT resolution floor (`≈ 0`, no gap) while the control rings at 0.25–0.38 — points CLOSED-NEGATIVE, but **cannot be claimed as the verdict from runs that fail the frozen gates.** FTD-0270 stays `[MEASURED — BOUNDARY]`; nothing is promoted. The pre-registration did its job: the gates were locked before the run, they flagged it invalid, and no clean story was cherry-picked from compromised data.
 

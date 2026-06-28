@@ -2,7 +2,6 @@
 
 ## Tracing Each Integer to Its Physical Role
 
-**Date:** March 17, 2026
 **Status:** [THEOREM] for all identifications given N_gen = N_c [SELECTION]
 **Proof script:** `scripts/proofs/proof_integer_identification.py`
 **Prior:** Depends on DERIV_D3_FROM_AUTOMORPHISM.md, AUDIT_SELF_CONSISTENCY.md, DERIV_MASTER_QUADRATIC_FROM_Z.md

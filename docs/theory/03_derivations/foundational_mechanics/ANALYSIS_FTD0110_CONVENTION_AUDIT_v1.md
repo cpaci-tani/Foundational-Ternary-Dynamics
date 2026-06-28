@@ -1,7 +1,6 @@
 # Analysis — FTD-0110 Convention Audit: the N(A) calibration is PHYSICAL, not convention
 
 **Tag:** `[MEASURED — BOUNDARY: exit (ii) CLOSED NEGATIVE]`
-**Date:** 2026-06-19
 **LEDGER row:** FTD-0307 (provisional — confirm against corpus max-id before allocating; the main table trails the true max 0306, with 0305 reserved-uncommitted)
 **Pre-registration:** [`PREREG_FTD0110_CONVENTION_AUDIT_v1.md`](PREREG_FTD0110_CONVENTION_AUDIT_v1.md), tag `preregister-ftd0110-convention-audit-v1`, lock commit `5023d259`.
 **Run of record:** `engine/results/convention_audit/drain_scan_convention_v1.csv` (528 rows, 6 drains × 11 amplitudes × 8 seeds).
@@ -61,7 +60,7 @@ Adjudicator output (`analyze_drain_convention.py`, segmented log-log fit + seed 
 | 0.625 | 25 | 2.44 | 1.74 | 1.717 ± 0.060 |
 | 0.750 | 30 | 2.07 | 1.88 | 1.796 ± 0.109 |
 
-Locked STRICT gates (owner decision 2026-06-19):
+Locked STRICT gates (owner decision):
 - `spread(p_lo) = 166%` ≥ 10% → **fail**
 - `spread(p_hi) = 16%` ≥ 10% → **fail**
 - `collapse median-CV = 19%` ≥ 5% → **fail**
