@@ -1,16 +1,11 @@
 # Bell Inequality in FTD: Theory and Simulation
 
-**Document Version:** 1.0 (Consolidated)
-**Date:** February 14, 2026
-**Status:** Complete Analysis (Theory + Simulation)
 **Purpose:** Comprehensive Bell inequality analysis for FTD: honest theoretical assessment and systematic lattice simulation investigation
 **Script:** `scripts/experiments/bell_lattice_test.py`
 
 > **Consolidation Note:** This document merges two earlier analyses into a single reference:
-> - Part I (Theory) originates from `AUDIT_BELL_MECHANISM_HONEST.md` (v2.0, February 5, 2026)
-> - Part II (Simulation) originates from `AUDIT_BELL_LATTICE_INVESTIGATION.md` (v1.0, February 5, 2026)
->
-> The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
+> - Part I (Theory) originates from `AUDIT_BELL_MECHANISM_HONEST.md`
+> - Part II (Simulation) originates from `AUDIT_BELL_LATTICE_INVESTIGATION.md`
 
 ---
 
@@ -471,7 +466,7 @@ In FTD's lattice, measurement is commutative: reading flux projection onto axis 
 
 ---
 
-## 12. Updated Assessment of the Three Resolutions
+## 12. Assessment of the Three Resolutions
 
 **Resolution 1 (Superdeterminism):** Our simulation uses externally chosen measurement angles (statistical independence is maintained). The sLoop coupling does not introduce setting-HV correlations. Superdeterminism would require a different mechanism.
 
@@ -664,6 +659,4 @@ The quantum cosine and classical triangle agree at theta = 0, pi/2, pi but diffe
 
 ---
 
-*Document Version 1.0 (Consolidated) -- February 14, 2026*
-*Combines theoretical analysis and systematic simulation investigation*
 *Result: S <= 2 confirmed across all configurations; CLAIM.8 remains [CONJECTURE]*

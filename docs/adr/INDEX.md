@@ -12,22 +12,22 @@ header but the original record stays.
 
 ## Active decisions
 
-| # | Title | Status | Date | One-line rationale |
-|---|---|---|---|---|
-| 0001 | [Viewport decomposition](0001-viewport-decomposition.md) | Accepted | 2026-04 | Sub-renderers extracted from monolithic Viewport class |
-| 0002 | [Capability factories](0002-capability-factories.md) | Accepted | 2026-04 | Factory functions (not class inheritance) for scale capabilities |
-| 0003 | [WASM bridge DAG refactor](0003-wasm-bridge-dag-refactor.md) | Accepted | 2026-04 | DAG scheduler over linear pipeline for tick orchestration |
-| 0004 | [Scale controllers + 3-folder structure](0004-scale-controllers.md) | Accepted | 2026-04 | Each scale owns its own controller/runtime/ui/state package |
-| 0005 | [Live-reference factory pattern](0005-live-reference-pattern.md) | Accepted | 2026-04 | Factories hold state ref; never destructure |
-| 0006 | [Prefix-dispatch scenarios](0006-prefix-dispatch-scenarios.md) | Accepted | 2026-04 | Filename-prefix routing (flux-, light-, quantum-, s0-seed-, s0-field-) |
-| 0007 | [CUDA helper consolidation](0007-cuda-helper-consolidation.md) | Accepted | 2026-04 | Shared headers (cuda_index.cuh) over per-kernel local helpers |
-| 0008 | [R1-R5 phase extraction](0008-r1-r5-phase-extraction.md) | Accepted | 2026-04 | render_bridge.cpp phases extracted to focused TUs |
-| 0009 | [Epistemic tag system](0009-epistemic-tag-system.md) | Accepted | 2026-04 | 7-tag vocabulary ([THEOREM]/[CONJECTURE]/...) for claims |
-| 0010 | [Cascade callback pattern](0010-cascade-callback-pattern.md) | Accepted | 2026-04-27 | Sub-renderer lifecycle (onLatticeSizeChanged etc.) — Phase 3 viewport split |
-| 0011 | [Mesh-factory callback](0011-mesh-factory-callback.md) | Accepted | 2026-04-27 | Single canonical home + ctor-time bound callbacks for cross-sub-renderer helpers |
-| 0012 | [Golden-tick regression gate](0012-golden-tick-regression-gate.md) | Accepted | 2026-04-27 | 100-tick byte-hash gate for physics-touching extractions (Phase 4) |
-| 0013 | [Toggle table-driven](0013-toggle-table-driven.md) | Accepted | 2026-04-27 | TOGGLE_SPECS[] replaces 5-place edit with 2-place (Phase 6) |
-| 0014 | [CUDA constant memory for invariants](0014-cuda-constant-memory-for-invariants.md) | Accepted | 2026-05-23 | `__constant__` pattern for small read-only matrices + companion scalars |
+| # | Title | Status | One-line rationale |
+|---|---|---|---|
+| 0001 | [Viewport decomposition](0001-viewport-decomposition.md) | Accepted | Sub-renderers extracted from monolithic Viewport class |
+| 0002 | [Capability factories](0002-capability-factories.md) | Accepted | Factory functions (not class inheritance) for scale capabilities |
+| 0003 | [WASM bridge DAG refactor](0003-wasm-bridge-dag-refactor.md) | Accepted | DAG scheduler over linear pipeline for tick orchestration |
+| 0004 | [Scale controllers + 3-folder structure](0004-scale-controllers.md) | Accepted | Each scale owns its own controller/runtime/ui/state package |
+| 0005 | [Live-reference factory pattern](0005-live-reference-pattern.md) | Accepted | Factories hold state ref; never destructure |
+| 0006 | [Prefix-dispatch scenarios](0006-prefix-dispatch-scenarios.md) | Accepted | Filename-prefix routing (flux-, light-, quantum-, s0-seed-, s0-field-) |
+| 0007 | [CUDA helper consolidation](0007-cuda-helper-consolidation.md) | Accepted | Shared headers (cuda_index.cuh) over per-kernel local helpers |
+| 0008 | [R1-R5 phase extraction](0008-r1-r5-phase-extraction.md) | Accepted | render_bridge.cpp phases extracted to focused TUs |
+| 0009 | [Epistemic tag system](0009-epistemic-tag-system.md) | Accepted | 7-tag vocabulary ([THEOREM]/[CONJECTURE]/...) for claims |
+| 0010 | [Cascade callback pattern](0010-cascade-callback-pattern.md) | Accepted | Sub-renderer lifecycle (onLatticeSizeChanged etc.) — Phase 3 viewport split |
+| 0011 | [Mesh-factory callback](0011-mesh-factory-callback.md) | Accepted | Single canonical home + ctor-time bound callbacks for cross-sub-renderer helpers |
+| 0012 | [Golden-tick regression gate](0012-golden-tick-regression-gate.md) | Accepted | 100-tick byte-hash gate for physics-touching extractions (Phase 4) |
+| 0013 | [Toggle table-driven](0013-toggle-table-driven.md) | Accepted | TOGGLE_SPECS[] replaces 5-place edit with 2-place (Phase 6) |
+| 0014 | [CUDA constant memory for invariants](0014-cuda-constant-memory-for-invariants.md) | Accepted | `__constant__` pattern for small read-only matrices + companion scalars |
 
 ---
 
@@ -37,8 +37,6 @@ header but the original record stays.
 # NNNN — Title
 
 **Status:** Accepted | Superseded by ADR-####  | Deprecated
-**Date:** YYYY-MM-DD
-**Author:** <handle or session>
 
 ## Context
 

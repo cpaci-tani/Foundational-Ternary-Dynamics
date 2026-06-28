@@ -1,8 +1,6 @@
 # 0007 — CUDA helper consolidation (single shared header pattern)
 
 **Status:** Accepted
-**Date:** 2026-04 (retroactive, formalized 2026-04-27)
-**Author:** codified during Wave 2 audit sweep
 
 ## Context
 

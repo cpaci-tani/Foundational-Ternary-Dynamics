@@ -1,8 +1,6 @@
 # 0002 — Capability factories (symmetric polymorphism without inheritance)
 
 **Status:** Accepted
-**Date:** 2026-04 (retroactive)
-**Author:** codified 2026-04-27
 
 ## Context
 

@@ -1,13 +1,12 @@
 # AUDIT — α Operator-Forcing: Route-Invariance of the MC-T4.3 Boundary
 
-**Date:** 2026-06-01
 **Status:** `[STRONGLY MOTIVATED CONJECTURE no-go]` — sharpens, promotes nothing.
 **Scope:** MC-T4.3 (the operational α-readout obstruction), EM sector.
 **Method:** four-route adversarial workflow (force → adversarial-refute → synthesize), run
-`alpha-operator-forcing` (`wf_a82f3af9-536`, 9 agents, ftd-lead-physicist type).
+`alpha-operator-forcing` (9 agents, ftd-lead-physicist type).
 **Net epistemic effect:** **zero promotions, zero demotions.** `x₊ = 1/α` (FTD-0013) stays
 `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`. The spine is untouched.
-**LEDGER id:** FTD-0242 (assigned 2026-06-01; next-free verified — 0238–0241 spoken-for). Re-check for collision on merge-to-main per the concurrent-session id hazard.
+**LEDGER id:** FTD-0242
 
 ---
 
@@ -115,25 +114,25 @@ by a logically independent convention, not derived; the discrete ontology determ
   the escape, none proved it impossible.
 
 To label this `[THEOREM]` would itself violate the discipline (cf. the retracted "conformal-anomaly"
-substitution-identity facade, `docs/theory/04_coupling/archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` (archived 2026-06-02), retracted same
-session). `[CLOSED NEGATIVE]` applies only to the bare-parity route (FTD-0233, scoped) and the eleven prior
+substitution-identity facade, `docs/theory/04_coupling/archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md`,
+retracted). `[CLOSED NEGATIVE]` applies only to the bare-parity route (FTD-0233, scoped) and the eleven prior
 α-derivation routes; the operator-assembly boundary remains a `[STRONGLY MOTIVATED CONJECTURE]` no-go.
 
 ## 7. The two surviving exits (per the Number-One Goal: this maps the boundary)
 
 1. A **6th-postulate-class** input supplying the operator-assembly W (logically independent of P1–P5).
-   **Sharpened 2026-06-25 (FTD-0326, `FOUND_MCT43_NATIVE_Z2_PERMANENCE.md`):** this input cannot be a
+   **Sharpened (FTD-0326, `FOUND_MCT43_NATIVE_Z2_PERMANENCE.md`):** this input cannot be a
    native substrate symmetry. No FTD-native ℤ/2 (i-conjugation, ±ω wave orientation, matter/antimatter,
    lattice parity, time-reversal) can supply the `δ`-selection — all act by `ℚ`-entry operators that fix
    `ℚ(G*)`, while `δ`'s ℤ/2 is the Galois orbit `Gal(ℚ(G*)(δ)/ℚ(G*))`, realized by no substrate operator.
    Exit-(i) is therefore necessarily a **declaration** — adopted on main as **FC-W** (FTD-0315, the constitution's FC-4), not a derivation.
-2. The **engine-native ARC-D** measurement — but ARC-D1 already returned `[CLOSED NEGATIVE]` (2026-05-30,
-   `DERIV_ALPHA_READOUT_EMPIRICAL.md`: 0 macroscopic cluster fissions across 2000 seeds; the lattice is
+2. The **engine-native ARC-D** measurement — but ARC-D1 already returned `[CLOSED NEGATIVE]`
+   (`DERIV_ALPHA_READOUT_EMPIRICAL.md`: 0 macroscopic cluster fissions across 2000 seeds; the lattice is
    topologically rigid, and a count of 0 is precision-independent).
 
 This audit establishes that **machine numerical precision is decoupled from MC-T4.3**: the obstruction
 lives in the operator-assembly (math) and in topological cluster rigidity (engine combinatorics), neither
-of which is the conservation-law floor. Tightening the Gauss projection (§1 of the 2026-06-01 physics
+of which is the conservation-law floor. Tightening the Gauss projection (§1 of the physics
 grade) reopens no route here.
 
 ---

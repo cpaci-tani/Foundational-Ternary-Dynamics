@@ -1,8 +1,6 @@
 # 0008 — R1-R5 phase extraction (render_bridge.cpp decomposition)
 
 **Status:** Accepted (Phase 4 of refactor sweep will continue this)
-**Date:** 2026-04 (retroactive)
-**Author:** codified 2026-04-27
 
 ## Context
 

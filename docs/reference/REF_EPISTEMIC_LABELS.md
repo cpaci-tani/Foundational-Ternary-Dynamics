@@ -1,8 +1,7 @@
 # EPISTEMIC LABELS REFERENCE
-## Foundational Ternary Dynamics v5.27-bell
+## Foundational Ternary Dynamics
 
 **Document Status:** AUTHORITATIVE REFERENCE
-**Last Updated:** 2026-02-26
 
 ---
 
@@ -202,5 +201,3 @@ From strongest to weakest:
 ---
 
 *Document Classification: AUTHORITATIVE REFERENCE*
-*Created: 2026-01-24*
-*Updated: 2026-02-26*
