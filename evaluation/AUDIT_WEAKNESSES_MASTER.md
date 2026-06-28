@@ -213,5 +213,4 @@
 
 ---
 
-*Compiled: 2026-01-25*
 *Source: 18 Expert Agent Findings*

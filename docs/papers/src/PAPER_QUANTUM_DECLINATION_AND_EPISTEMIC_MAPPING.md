@@ -1,9 +1,6 @@
 # Quantum Declination and Epistemic Mapping: The Foundational Ternary Dynamics Position on Quantum Foundations
 
-**Date:** June 10, 2026  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Status:** Framework Position Paper — conceptual and algebraic analysis  
-**Authors:** cpaci & Antigravity (v5.33)  
 
 ---
 

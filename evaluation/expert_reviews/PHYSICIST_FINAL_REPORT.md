@@ -263,4 +263,3 @@ To distinguish these, we need:
 ---
 
 *Report prepared from the perspective of a skeptical but open-minded physicist*
-*Date: 2026-01-21*

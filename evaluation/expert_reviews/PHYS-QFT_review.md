@@ -1,7 +1,6 @@
 # PHYS-QFT Expert Review
 
 **Reviewer**: Quantum Field Theory Expert (Specialization: Gauge Theories, Renormalization, Standard Model)
-**Date**: 2026-01-25
 **Document Version**: FTD Manuscript (v5.0+)
 **Files Reviewed**: 1.8, 1.8a, 1.11, 1.13, 1.14, 2.1, 2.3, 2.4, 2.5, 2.6, 2.7
 
