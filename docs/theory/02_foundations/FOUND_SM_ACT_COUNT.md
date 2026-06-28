@@ -1,7 +1,6 @@
 # FOUND — Completing the act-count: the exactly-expressible SM needs no field-act beyond {i, δ} (CLOSED)
 
 **Tag:** `[SYNTHESIS]` — assembles existing canonical forms under one classification; introduces no theorem, derives nothing, **promotes no tag**.
-**Date:** 2026-06-25
 **LEDGER id:** FTD-0325
 **Pre-registration:** `PREREG_SM_ACT_COUNT_TEST_v1.md`, git tag `preregister-sm-act-count-test-v1`, SHA256 `8dd5f5143ef136e02d245667ee1788d168171cc9fe2de3aae39efc370ff80998` (committed before this classification).
 **Reuse (not re-derived):** FTD-0322 (`FOUND_ACT_REDUCTION_COUNT.md`); FTD-0244 (`FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`); `CATALOG_PARAMETRIC_INSERTIONS.md`.
