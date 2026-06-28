@@ -1,10 +1,8 @@
 # SPEC — The Physics Bridge: What FTD's Algebraic Spine Says About α
 
 **Document type:** Reference specification (synthesis)
-**Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constant 1/α as it currently stands
-**Created:** 2026-05-01 evening (closing session on tractable open gaps)
-**2026-05-22 update:** The `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is now `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
-**Provenance:** Closes the "physics bridge" by making its logical structure crisp; consolidates `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` + `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` + `EXPLR_PATHS_TO_ALPHA.md` into a single reference position
+**Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constant 1/α
+**Re-tag note:** The `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 **Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: six theorem-grade + three honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture; FTD-0014 retired); FTD-0097 (look-elsewhere monomial); FTD-0319 (adversarial polynomial-template uniqueness, the canonical structural-uniqueness evidence; formerly cited as FTD-0189); FTD-0117 (G\* notational fix)
 
 ---
@@ -40,11 +38,10 @@ not design).
 This document crystallizes what's established, what's not, and what
 the bridge LOGICALLY SAYS.
 
-**2026-05-18 bridge audit update.** The status is sharper than the
-original synthesis: the algebraic/uniqueness layer is stronger
+**Bridge-audit status.** The algebraic/uniqueness layer is strong
 (extended scan evidence; the "~4×10^5:1" Bayes figure is retracted to
-[NUMERICAL FACT] — not runner-computed, ~19× scan-size; 2026-06-24 spine
-audit), while the physical mechanism problem is narrower. The missing
+[NUMERICAL FACT] — not runner-computed, ~19× scan-size), while the
+physical mechanism problem is narrow. The missing
 object is not "more algebraic evidence"; it is a non-action readout
 rule that maps the algebraic root/eigenvalue to an operational
 electromagnetic coupling without inserting α. This is MC-T4.3 in
@@ -115,7 +112,7 @@ is unproven and false — `Q(Γ(1/4))` is larger.) The master
 quadratic's coefficients live in `Z[16]·Q(G*)` — i.e., in the π-free
 field extended by the integer 16.
 
-### 1.6 · Polynomial uniqueness (this session's results)
+### 1.6 · Polynomial uniqueness
 
 **Tower-scan uniqueness** (`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`):
 among 58 (m, k) pairs in the natural Gaussian-integer-tower family
@@ -129,7 +126,7 @@ norms) and k ∈ {3, 4, 5, 6, 7}: **(m=2, k=4) is rank 1 in closeness to
 1/α with a 5-orders-of-magnitude gap to rank 2**.
 
 **Polynomial-scan uniqueness** (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`,
-extended 2026-05-02; superseded by FTD-0319 (formerly cited as FTD-0189) adversarial scan 2026-05-21):
+superseded by the FTD-0319 (formerly cited as FTD-0189) adversarial scan):
 the original 147,456-polynomial scan was extended to 2,871,576
 polynomials/multipliers in the natural master-quadratic family,
 including rational-coefficient, cubic-embedding, and Eisenstein/Gaussian
@@ -139,10 +136,10 @@ integer multiplier checks. The family includes polynomials of the form
 M_{n,p,m,q}(x) = x² − n · G*^p · x + m · G*^q
 ```
 
-with n, m ∈ [1, 64] and p, q ∈ [0, 5]. **At the time of the original
-scan, the search targeted polynomials whose roots match the pair
-(1/α, N_c) jointly at MQ precision** — this dual-matching framing
-reflects the pre-v1.4 state (FTD-0014 was live). The polynomial-
+with n, m ∈ [1, 64] and p, q ∈ [0, 5]. **The original scan targeted
+polynomials whose roots match the pair (1/α, N_c) jointly at MQ
+precision** — a dual-matching framing from the pre-v1.4 state, when
+FTD-0014 was live. The polynomial-
 uniqueness fact (exactly one structure matches both targets at MQ
 precision — the master quadratic itself; the Eisenstein-integer
 family contributes 0 such matchers) is **independent of the target
@@ -150,7 +147,7 @@ identification**: the structural rigidity of the master quadratic's
 polynomial template within the declared natural family is what the
 scan establishes, regardless of how its roots are physically read.
 
-FTD-0319 (adversarial look-elsewhere, 2026-05-21; formerly cited as
+FTD-0319 (adversarial look-elsewhere; formerly cited as
 FTD-0189) extends and generalises this: the master quadratic is the
 **unique dual-matcher** across 2.65 M degree-2 polynomials over an
 18-constant basket FTD did not design — 0 non-G\* dual-matchers, rank 1
@@ -195,7 +192,7 @@ routes) and the Moore Layer Theorem.
 
 ### 3.1 · Bayesian strength estimate
 
-Combining the two uniqueness scans (this session, commits `0074f92` +
+Combining the two uniqueness scans (commits `0074f92` +
 `f36b741`):
 
 | Search space | Scan result |
@@ -203,8 +200,8 @@ Combining the two uniqueness scans (this session, commits `0074f92` +
 | Tower scan (1-parameter, 58 candidates) | rank 1, ~50× gap to rank 2 |
 | Extended polynomial/multiplier scan (2,871,576 candidates) | 0 non-G\* dual-matchers; rank 1 by ~130× |
 
-> **The "~4×10^5:1 Bayes factor" figure is retracted to [NUMERICAL FACT]
-> (2026-06-24 spine audit): it is NOT computed by the runner — the runner
+> **The "~4×10^5:1 Bayes factor" figure is retracted to [NUMERICAL FACT]:
+> it is NOT computed by the runner — the runner
 > yields only a ~19× scan-size factor — and it is tolerance-conditioned.
 > The measured, runner-backed result stands: 0 dual-matchers across
 > 2,871,576 polynomials, rank 1 by ~130×.**
@@ -215,7 +212,7 @@ theorem would be needed.
 
 ### 3.2 · What the bridge LOGICALLY says
 
-**The disciplined statement (revised post-v1.4 retirement of `x_-  N_c`):**
+**The disciplined statement (post-v1.4 retirement of `x_-  N_c`):**
 
 > *Within FTD's natural polynomial complexity class (degree-2 polynomials
 > with coefficients in Z[1..64]·Q(G*)^[0..5]), the master quadratic is
@@ -231,11 +228,11 @@ theorem would be needed.
 > coefficient 16, and degree 2 are accepted. The empirical match
 > `x_+  1/α` is at 1.26 ppm. (The previously-quoted "~4×10^5:1
 > Bayesian strength" figure is retracted to [NUMERICAL FACT] — not
-> runner-computed, ~19× scan-size; 2026-06-24 spine audit.) The single
+> runner-computed, ~19× scan-size.) The single
 > live physics identification `x_+ = 1/α`
 > remains formally [STRONGLY MOTIVATED CONJECTURE] because no derivation
 > chain from FTD axioms to physical α has been established despite
-> multiple session-scale attempts. The historical identification
+> multiple attempts. The historical identification
 > `x_-  N_c` is retired (v1.4 §5).*
 
 ### 3.3 · What the bridge does NOT say
@@ -263,7 +260,7 @@ established:
 2. **Decisive look-elsewhere argument.** A decisive structural-uniqueness
    argument over a broad polynomial family. (The previously-quoted
    "~4×10^5:1 Bayes factor" is retracted to [NUMERICAL FACT] — not
-   runner-computed, ~19× scan-size; 2026-06-24 spine audit. The
+   runner-computed, ~19× scan-size. The
    runner-backed result is 0 dual-matchers across 2.65 M polynomials,
    rank 1 by ~130×.) Broader polynomial families and tighter tolerances
    would push this further. This route would strengthen the conjecture,
@@ -352,8 +349,7 @@ The framework's standing is:
 - **Empirical match**: precise (1.26 ppm + 0.80%) and uniquely
   selective within the natural family (0 dual-matchers across 2.65 M
   polynomials, rank 1 by ~130×; the "~4×10^5:1" Bayes figure is
-  retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size;
-  2026-06-24 spine audit).
+  retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size).
 - **Physical bridge**: open at the IDENTIFICATION level; closed at
   the structural-rigidity level.
 
@@ -367,12 +363,12 @@ This document does NOT introduce a new LEDGER entry. It crystallizes
 the position synthesized from existing entries:
 
 - FTD-0001 (master quadratic): [THEOREM] — unchanged
-- FTD-0013 (x_+ = 1/α identification): [STRONGLY MOTIVATED CONJECTURE] — unchanged tag, **strengthened** by 2026-05-01 uniqueness results and 2026-05-21 FTD-0319 (formerly cited as FTD-0189) adversarial scan
+- FTD-0013 (x_+ = 1/α identification): [STRONGLY MOTIVATED CONJECTURE] — unchanged tag, **strengthened** by the uniqueness results and the FTD-0319 (formerly cited as FTD-0189) adversarial scan
 - ~~FTD-0014 (x_- = N_c identification)~~: **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`
-- FTD-0097 (look-elsewhere monomial): [MEASURED] — extended to polynomial level via this session
+- FTD-0097 (look-elsewhere monomial): [MEASURED] — extended to polynomial level
 - FTD-0111 (harmonic invariant tower): [THEOREM] with Q1 progressed
 - FTD-0117 (G\* typo fix): [BUG RESOLVED]
-- FTD-0319 (adversarial polynomial-template uniqueness, 2026-05-21; formerly cited as FTD-0189): [MEASURED] — the canonical structural-uniqueness evidence; rank 1 by ~130× across 2.65 M polynomials over an 18-constant FTD-undesigned basket
+- FTD-0319 (adversarial polynomial-template uniqueness; formerly cited as FTD-0189): [MEASURED] — the canonical structural-uniqueness evidence; rank 1 by ~130× across 2.65 M polynomials over an 18-constant FTD-undesigned basket
 
 ---
 
