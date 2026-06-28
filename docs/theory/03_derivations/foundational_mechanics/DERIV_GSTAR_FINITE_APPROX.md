@@ -1,11 +1,10 @@
 # DERIV · G\* as a Finite-N Attractor
 
 **Tag:** [THEOREM]
-**Date:** 2026-05-06
 **LEDGER row reservation:** FTD-0142
 **Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141), [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`AUDIT_INFINITY_REFRAME.md`](../07_assessment/AUDIT_INFINITY_REFRAME.md), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §1, §10.
 **Verifier script:** [`scripts/proofs/proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py)
-**Purpose:** Establishes a finite-$N$ approximation $G_N^*$ to the bridge constant $G^*$ such that $G_N^* \to G^*$ as $N \to \infty$ at a controlled rate. This is **Model II** of the Finite Quarter-Conjugacy Recurrence (FQCR) framework. The result discharges an open obligation from `AUDIT_INFINITY_REFRAME.md` (2026-04-19): any FTD claim of the form "$X = \lim_{L \to \infty} X_L$" must be restated as "$X_L \to X$ at rate $r(L)$ with $X_L$ defined for all finite $L$." This doc provides exactly that restatement for $G^*$.
+**Purpose:** Establishes a finite-$N$ approximation $G_N^*$ to the bridge constant $G^*$ such that $G_N^* \to G^*$ as $N \to \infty$ at a controlled rate. This is **Model II** of the Finite Quarter-Conjugacy Recurrence (FQCR) framework. The result discharges an open obligation from `AUDIT_INFINITY_REFRAME.md`: any FTD claim of the form "$X = \lim_{L \to \infty} X_L$" must be restated as "$X_L \to X$ at rate $r(L)$ with $X_L$ defined for all finite $L$." This doc provides exactly that restatement for $G^*$.
 
 ---
 
@@ -82,7 +81,7 @@ Reaching double-precision machine epsilon ($\sim 10^{-15}$) would require $N \si
 
 ## §4 — Discharge of the undefined-boundary reframe obligation
 
-`AUDIT_INFINITY_REFRAME.md` (2026-04-19) committed FTD to the **undefined-boundary lattice ontology**: arbitrarily-large finite computations are permitted, but completed-infinity claims are not well-posed without explicit ε-$L$ restatement. The audit listed several spine-level claims that needed restatement; $G^* = \Gamma(1/4)/\Gamma(3/4)$ was one of them.
+`AUDIT_INFINITY_REFRAME.md` commits FTD to the **undefined-boundary lattice ontology**: arbitrarily-large finite computations are permitted, but completed-infinity claims are not well-posed without explicit ε-$L$ restatement. The audit listed several spine-level claims that needed restatement; $G^* = \Gamma(1/4)/\Gamma(3/4)$ was one of them.
 
 The restatement:
 
@@ -106,7 +105,7 @@ The companion proof script [`scripts/proofs/proof_fqcr_convergence.py`](../../..
 2. $|G_N^* - G^*| < 10^{-8}$ at $N = 4096$.
 3. The product $N^2 \cdot |G_N^* - G^*|$ is approximately constant (within 10%) for $N \ge 1024$ — confirms $O(1/N^2)$ leading behaviour with no contamination by lower-order terms.
 
-If any assertion fails, the proof script exits non-zero. Running takes $<3$ seconds. Latest run output (2026-05-06): all assertions PASS; empirical $C = 0.0462$.
+If any assertion fails, the proof script exits non-zero. Running takes $<3$ seconds. Run output: all assertions PASS; empirical $C = 0.0462$.
 
 ---
 
@@ -124,7 +123,7 @@ If any assertion fails, the proof script exits non-zero. Running takes $<3$ seco
 | Cross-reference | Purpose |
 |---|---|
 | `DERIV_GSTAR_QUARTER_CONJUGACY.md` (FTD-0141) | Operator-theoretic provenance of $G^*$; this finite-$N$ reframe is its truncation-friendly cousin. |
-| `AUDIT_INFINITY_REFRAME.md` | The 2026-04-19 reframe obligation that this derivation discharges. |
+| `AUDIT_INFINITY_REFRAME.md` | The reframe obligation that this derivation discharges. |
 | `SPEC_FQCR.md` | Capstone reference for the full FQCR framework; this is Model II. |
 | `SPEC_ALGEBRAIC_SPINE.md` §1 / §10 | Where the finite-$N$ statement is cited as a subsidiary to Theorem 1. |
 | `scripts/proofs/proof_fqcr_convergence.py` | Numerical verification (machine-epsilon convergence + $1/N^2$ rate). |

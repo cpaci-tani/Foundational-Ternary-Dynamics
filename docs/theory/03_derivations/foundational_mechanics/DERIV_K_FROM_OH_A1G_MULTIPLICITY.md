@@ -1,7 +1,6 @@
 # Derivation — cluster-efficiency `k = 1/N_base = 1/4` from O_h representation theory
 
 **Tag:** [DERIVED at linear level] / [STRONGLY MOTIVATED CONJECTURE for nonlinear regime]
-**Date:** 2026-04-28
 **LEDGER row:** FTD-0110
 **Verification script:** [`scripts/exploration/verify_k_derivation_2026-04-28.py`](../../../scripts/exploration/verify_k_derivation_2026-04-28.py)
 **Depends on:** FTD-0107 (cluster measurement), FTD-0084 (N_base structural), FTD-0088 (Cl(3,0) decomposition), FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md
@@ -34,7 +33,7 @@ Each link is independently verifiable; the chain is closed at the linear level.
 
 ## 1 · The empirical fact
 
-Per FTD-0110 (engine measurements, 2026-04-27, RTX 5090 WSL2):
+Per FTD-0110 (engine measurements, RTX 5090 WSL2):
 
 ```
 N(A) ≈ k · A²    with k = 0.239 ± 0.018  (mean across A ∈ [10, 50]·K_GENESIS)

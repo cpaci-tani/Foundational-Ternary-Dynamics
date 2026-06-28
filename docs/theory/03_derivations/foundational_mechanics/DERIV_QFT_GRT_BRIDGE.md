@@ -2,10 +2,8 @@
 
 ## The Same Flux Field as Both Quantum Propagator and Gravitational Source
 
-**Version:** 1.0
-**Date:** February 19, 2026
 **Status:** [THEOREM] + [SELECTION]
-**Epistemic Tag:** Lattice Green's functions identified as Euclidean propagators (QFT); stress-energy tensor T_μν derived from flux Lagrangian via Noether's theorem (GRT). Previously GAP-G3; now [DERIVED].
+**Epistemic Tag:** Lattice Green's functions identified as Euclidean propagators (QFT); stress-energy tensor T_μν derived from flux Lagrangian via Noether's theorem (GRT). [DERIVED].
 
 > The lattice Green's function IS the Euclidean propagator. The stress-energy tensor IS the Noether current of the flux Lagrangian. QFT and GRT are not separate theories — they are two descriptions of the same flux field at different scales.
 
@@ -273,15 +271,15 @@ $$\Box \bar{h}_{\mu\nu} = -\frac{16\pi G}{c^4} T_{\mu\nu}$$
 
 where h̄_μν is the trace-reversed metric perturbation.
 
-Previously, T_μν was listed as [CONJECTURE] (Conjecture 14.1 in DERIV_RELATIVITY_DERIVATION.md). **This document resolves that gap:** T_μν is now the canonical stress-energy tensor of the flux Lagrangian (Theorem 2.1 above).
+Where DERIV_RELATIVITY_DERIVATION.md (Conjecture 14.1) leaves T_μν conjectured, **this document supplies the derivation:** T_μν is the canonical stress-energy tensor of the flux Lagrangian (Theorem 2.1 above).
 
-**The upgrade:**
+**Status of each component under this derivation:**
 
-| Component | Before | After |
-|-----------|--------|-------|
-| □h̄_μν = -16πG T_μν | [THEOREM] with T_μν [CONJECTURE] | [THEOREM] with T_μν [THEOREM] |
-| T^00 = energy density | Conjectured form | Derived via Noether |
-| ∂_μ T^μν = 0 | Assumed | Proven from wave equation |
+| Component | Status |
+|-----------|--------|
+| □h̄_μν = -16πG T_μν | [THEOREM] with T_μν [THEOREM] |
+| T^00 = energy density | Derived via Noether |
+| ∂_μ T^μν = 0 | Proven from wave equation |
 
 **Schwarzschild recovery.** Outside a static, spherically symmetric mass distribution, T_μν = 0. The vacuum Einstein equations □h̄_μν = 0 yield the Schwarzschild metric as derived in DERIV_LATTICE_SCHWARZSCHILD.md.
 

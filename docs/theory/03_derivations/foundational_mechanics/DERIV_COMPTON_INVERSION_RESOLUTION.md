@@ -1,7 +1,5 @@
 # The Compton Volume Duality Theorem: Resolving the Dimension Inversion Paradox in FTD
 
-**Version:** 1.0  
-**Framework Version:** FTD v5.33  
 **Status:** [THEOREM] — Formal resolution of the spatial-vs-spectral Compton paradox.  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
@@ -73,6 +71,4 @@ This establishes a clean, mathematically rigorous duality between the discrete P
 
 ---
 
-*Document created: May 27, 2026*  
 *Topic: Resolution of the Compton Dimension Inversion Paradox.*  
-*Framework: Foundational Ternary Dynamics v5.33*  

@@ -1,7 +1,6 @@
 # DERIV · 18-Point Isotropic Lattice Laplacian from the Action Principle
 
 **Tag:** [THEOREM]
-**Date:** 2026-05-05
 **Status:** [THEOREM] for the variational identity (kinetic-functional → 18-pt stencil); [SELECTION] for the {1/3, 1/6} weight pair (one of a finite family of isotropic-restoring choices, picked by leading-order isotropy).
 **Purpose:** Phase R2 of the FTD-EFT roadmap. Closes the open item in `SPEC_OPERATOR_BASIS_COMPLETE.md`: "linear G18 generator [THEOREM] for cubic lattice; mixed-sublattice variants are [OPEN]." Derives the engine's 18-point face+edge Laplacian stencil with canonical weights $w_\text{face} = 1/3$, $w_\text{edge} = 1/6$ from the kinetic Lagrangian density `field_gradient_term()` at `engine/include/ftd/lagrangian.h:86-100`, by direct variational derivative.
 
@@ -176,7 +175,7 @@ where the diagonal "$-4$" is $\bigl(6 \cdot \tfrac{1}{3} + 12 \cdot \tfrac{1}{6}
 
 ---
 
-## §6 — Sublattice variants (still [OPEN] as of 2026-05-05)
+## §6 — Sublattice variants ([OPEN])
 
 The variational identity in §2 is general — it holds for any choice of weights including sublattice-specific ones (BCC face-only, FCC face+edge, SC face-only, etc.). The 18-point {1/3, 1/6} weights are the canonical isotropic choice on the **full cubic lattice with single substrate**.
 

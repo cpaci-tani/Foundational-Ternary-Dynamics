@@ -2,8 +2,6 @@
 
 **Document type:** Exploratory analysis (does NOT close the bridge)
 **Status:** [PARTIAL] — bridge analyzed and sharpened; closure requires engine measurements + further perturbation theory
-**Created:** 2026-05-01
-**Provenance:** Path D from the 2026-05-01 strategic-direction recommendation; explicit response to CLAUDE.md flag "the cleanest remaining derivation gap; closing it via perturbation theory in the irrep mixing would convert FTD-0110 to [THEOREM]-grade"
 **Related:** `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (linear theorem); `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5` (empirical k(A) data)
 
 ---
@@ -12,7 +10,7 @@
 
 **Linear theorem (closed):** for δ-localised injection of amplitude `A` at the O_h-fixed center voxel, the 18-point Laplacian's A_{1g} subspace of the 27-block carries mean energy `1/N_base = 1/4` per A_{1g} eigenmode. Verified at machine precision: energy fractions `{3/8, 1/8, 3/8, 1/8}` with mean exactly 0.25.
 
-**Empirical engine data (10 amplitudes from FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5, GPU RTX 5090, 2026-04-27):**
+**Empirical engine data (10 amplitudes from FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5, GPU RTX 5090):**
 
 | A | k_eng(A) = N_eng/A² |
 |---|---|
@@ -291,7 +289,7 @@ analysis does NOT give a clean closed-form derivation of empirical
 k(A) drift**. The 1/√d match at large A reported in commit `e05d9d6`
 remains POSSIBLY COINCIDENTAL.
 
-Bridge closure via this route is now closed-negative. Future work
+Bridge closure via this route is closed-negative. Future work
 must either:
 1. Invoke Mechanism β (genesis-kink induced energy redistribution)
 2. Invoke Mechanism γ (Langevin amplitude-crossover dynamics)
@@ -311,9 +309,9 @@ New verification script: `scripts/proofs/proof_ftd0110_full_aggregation.py`.
 
 ---
 
-## 8.6 · Mechanism α 1/√d hypothesis FALSIFIED (2026-05-01, Phase B)
+## 8.6 · Mechanism α 1/√d hypothesis FALSIFIED (Phase B)
 
-**The 1/√d empirical match identified in §8.5 is now FALSIFIED as a
+**The 1/√d empirical match identified in §8.5 is FALSIFIED as a
 structural per-block efficiency law** by the Phase B analysis
 (`scripts/proofs/proof_ftd0110_langevin_steady_state.py`).
 
@@ -452,15 +450,15 @@ New verification script: `scripts/proofs/proof_ftd0110_langevin_steady_state.py`
 
 ---
 
-## 8.5 · Mechanism α detailed analysis (2026-05-01 — SUPERSEDED by §8.6)
+## 8.5 · Mechanism α detailed analysis (SUPERSEDED by §8.6)
 
-> **NOTE (2026-05-01 evening):** The 1/√d empirical regularity reported
+> **NOTE:** The 1/√d empirical regularity reported
 > in this section was tested via direct calculation in Phase B and
 > **FALSIFIED**. See §8.6 for the falsification analysis. The content
-> below is preserved for the historical record.
+> below is preserved for provenance.
 
-A focused session on Mechanism α (multi-block irrep leakage) yielded a
-**non-trivial empirical regularity** but did not close the bridge.
+Mechanism α (multi-block irrep leakage) yields a
+**non-trivial empirical regularity** but does not close the bridge.
 
 ### 8.5.1 · Off-center block trivial-irrep dimensions
 
@@ -494,7 +492,7 @@ For a sphere of radius R(A), this gives `< η > = 0.10 → 0.04` across
 A ∈ {10, 120}. Empirical k(A) drops only from 0.25 to 0.20 — the naive
 1/d prediction overshoots empirical drift by ~5×.
 
-### 8.5.3 · The 1/√d empirical regularity (NEW, 2026-05-01)
+### 8.5.3 · The 1/√d empirical regularity
 
 Substituting `η = 1/√d` instead:
 

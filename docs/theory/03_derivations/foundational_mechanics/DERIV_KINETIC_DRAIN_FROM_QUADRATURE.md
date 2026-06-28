@@ -1,7 +1,6 @@
 # Analysis — Can the kinetic drain (and the ¼ coefficient) be derived? (FTD-0276)
 
 **Tag:** `[CLOSED NEGATIVE]` (drain² origin) + `[MEASURED]` (k_eff(drain), γ-map)
-**Date:** 2026-06-12
 **LEDGER row:** FTD-0276 (Legs A + B + C); adjudicates the FTD-0269 §4 queued follow-ups.
 **Pre-registration (Leg A):** [`PREREG_DRAIN_SCALING_v1.md`](../../10_eft_program/preregistrations/PREREG_DRAIN_SCALING_v1.md), tag `preregister-drain-scaling-v1`, lock commit `1dc4db23`.
 **Artifacts:** `engine/tests/campaign_drain_scan.cpp`, `scripts/exploration/analyze_drain_scan.py` (Leg A, SHA-locked); `scripts/exploration/genesis_na_law_gamma_sweep.py` + the post-lock γ knob in `genesis_na_law_forward.py` (Leg B). Runs of record: `engine/results/drain_scan/drain_scan_v1.csv`, `gamma_sweep_legB.log`.
