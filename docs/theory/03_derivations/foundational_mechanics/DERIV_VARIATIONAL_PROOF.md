@@ -2,8 +2,6 @@
 
 ## Computational Verification that Every Simulation Force Derives from the FTD Lagrangian
 
-**Version:** 2.0
-**Date:** February 22, 2026
 **Status:** [THEOREM] — verified by `engine/tests/test_variational_proof.cpp` (60 checks, 0 failures)
 **Epistemic Tag:** Each Lagrangian term's Euler-Lagrange equation is verified against the simulation's update rule to machine precision (~10⁻⁹ relative error). This is a mathematical identity check, not an empirical claim.
 

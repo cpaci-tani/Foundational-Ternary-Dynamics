@@ -1,12 +1,11 @@
 # SCOPE — The genesis-counting model: a conditional derivation of the N(A) law (FTD-0277, Arc 3)
 
 **Tag:** `[SCOPE — design document]` (no claims; defines the target, the imposed register, and the frozen falsifier classes for the downstream pre-registration)
-**Date:** 2026-06-12
 **LEDGER id (reserved):** FTD-0277
-**Program:** Arc 3 of the 4-arc emergent-physics forward program (the multi-session centerpiece). Arcs 1 (FTD-0275) and 2 (FTD-0276) complete.
-**Owner posture (2026-06-12, on record):** *"I don't mind imposing stuff if we have the motivation and derivation of things. Our framework is cutting edge. We must be willing to do that."* — motivated `[IMPOSED]` inputs + a rigorous conditional derivation is a first-class result (the FTD-0271 `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` pattern).
+**Program:** Arc 3 of the 4-arc emergent-physics forward program. Arcs 1 (FTD-0275) and 2 (FTD-0276) complete.
+**Owner posture:** *"I don't mind imposing stuff if we have the motivation and derivation of things. Our framework is cutting edge. We must be willing to do that."* — motivated `[IMPOSED]` inputs + a rigorous conditional derivation is a first-class result (the FTD-0271 `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` pattern).
 
-> **2026-06-14 execution note:** v1 was hash-locked and run as
+> **Execution note:** v1 was hash-locked and run as
 > [`PREREG_GENESIS_COUNTING_v1.md`](../../10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md).
 > The verdict is **`COUNTING_MODEL_V1_CLOSED_NEGATIVE`**; see
 > [`ANALYSIS_GENESIS_COUNTING_v1.md`](../archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md).

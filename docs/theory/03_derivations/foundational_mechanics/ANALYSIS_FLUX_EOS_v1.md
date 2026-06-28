@@ -1,8 +1,7 @@
 # Analysis — Is x₋ = 3.024 the dimensionless pressure of the flux? (FTD-0312)
 
 **Tag:** `[MEASURED — CLOSED NEGATIVE]`
-**Date:** 2026-06-22
-**Lock (same-session, transparent — not a blind pre-reg):** the EoS formula + verdict logic were fixed before the run-of-record; SHA256-locked artifacts —
+**Lock (transparent — not a blind pre-reg):** the EoS formula + verdict logic were fixed before the run-of-record; SHA256-locked artifacts —
 `engine/tests/campaign_flux_equation_of_state.cpp` `95429e7e…`,
 `scripts/exploration/flux_eos_analytical.py` `c6f5be0e…` (Leg A),
 `scripts/exploration/analyze_flux_eos.py` `0855e4f5…` (Leg B analyzer).

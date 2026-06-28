@@ -2,9 +2,6 @@
 
 ## Closing OPEN.1 Section 6.3 Point 2 — Joint Probability from Dynamics
 
-**Version:** 1.0
-**Date:** March 3, 2026
-**Framework:** Foundational Ternary Dynamics v5.27-bell
 **Status:** [SELECTION] — Mechanism identified, GPU-verified (10/10 checks), alternatives not excluded
 **Epistemic Tag:** The K_comp shell existence and properties are [THEOREM] (measured from engine dynamics). The identification with the measurement mechanism is [SELECTION]. The macroscopic threshold N_meas is [EMERGENT].
 
@@ -204,16 +201,16 @@ Starting from the FTD action S[s,J]:
 8. **Factor of 2** enhancement from L2 to L3 [follows from 7]
 9. **S = 2*sqrt(2)** (Tsirelson bound) [follows from 8 + DERIV_OBSERVER_BELL_MECHANISM.md]
 
-### 5.2 What Is Now Derived vs Previously Argued
+### 5.2 What the K_comp Shell Mechanism Derives
 
-| Element | Before (v5.27) | After (v5.27+K_comp) |
-|---------|----------------|----------------------|
-| L1 -> L2 transition | [THEOREM] (Gauss constraint) | [THEOREM] (unchanged) |
-| Non-factorizable joint probability | [SELECTION] (argued from sLoop) | [SELECTION] (derived from shell overlap dynamics) |
-| Factor of 2 enhancement | [SELECTION] (imposed covariance) | [SELECTION] (follows from Gauss + conservation) |
-| Section 6.3 point 2 gap | [OPEN] | [SELECTION] (dynamical mechanism identified) |
-| Measurement requires detector | [CONJECTURE] | [EMERGENT] (N_meas = K_B/J_peak ~ 18) |
-| Quantum-classical boundary | [OPEN] | [EMERGENT] (N_meas threshold) |
+| Element | Status with the K_comp shell mechanism |
+|---------|----------------------------------------|
+| L1 -> L2 transition | [THEOREM] (Gauss constraint) |
+| Non-factorizable joint probability | [SELECTION] (derived from shell overlap dynamics) |
+| Factor of 2 enhancement | [SELECTION] (follows from Gauss + conservation) |
+| Section 6.3 point 2 gap | [SELECTION] (dynamical mechanism identified) |
+| Measurement requires detector | [EMERGENT] (N_meas = K_B/J_peak ~ 18) |
+| Quantum-classical boundary | [EMERGENT] (N_meas threshold) |
 
 ### 5.3 What Remains Open
 

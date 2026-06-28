@@ -1,7 +1,6 @@
 # Analysis — FTD-0271: Given a Rest-Mass Clock, FTD is a Single-Particle Pilot-Wave Theory (CONDITIONAL)
 
 **Tag:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]`
-**Date:** 2026-06-11
 **LEDGER row:** FTD-0271
 **Pre-registration:** `PREREG_DE_BROGLIE_CLOCK_v1.md`, tag `preregister-de-broglie-clock-v1`, lock commit `3df173b1`
 **Artifact:** `scripts/exploration/derive_de_broglie_clock_2026-06-11.py` (SHA `a55b5c36`); run of record `scripts/exploration/results/de_broglie_clock_2026-06-11.csv`
@@ -44,7 +43,7 @@ Schrödinger and de Broglie are **analytic consequences of any Klein-Gordon fiel
 
 ## 4 · A5 — what makes it more than an import (the FTD-native half)
 
-The imposed part is smaller than it looks. A de Broglie clock needs two things: a **rest frequency** `ω₀` and a **relativistically covariant clock rate** (a moving clock must red-shift as `√(1−v²)` — that is what makes the phase wave come out `λ = h/p` in every frame). FTD **already supplies the second, natively and measured**: `accumulate_proper_time` (`transmutation_phases.cpp`) integrates `dτ/dt = √(f²−v²)/√f` per particle, and **FTD-0252 measured (IR-confirmed) that this clock dilates as `√(1−v²)`**. So the covariant clock *rate* is FTD-native machinery (FTD-0252), currently computed but discarded (read-only). Wiring the clock phase as `dφ/dt = ω₀·dτ/dt` would source the de Broglie clock's *relativistic behavior* from FTD's own proper-time, leaving **only the scalar `ω₀ ∝ M_REST` imposed**. That shrinks the import from "the whole quantum clock" to "one rest-frequency constant," and upgrades the covariant-clock half from `[IMPOSED]` toward `[SELECTION]`. (Demonstrating it in the engine — toggle + τ→phase wiring + the moving-clock red-shift test — is the next phase; the analytic case rests on the already-measured FTD-0252.)
+The imposed part is smaller than it looks. A de Broglie clock needs two things: a **rest frequency** `ω₀` and a **relativistically covariant clock rate** (a moving clock must red-shift as `√(1−v²)` — that is what makes the phase wave come out `λ = h/p` in every frame). FTD **already supplies the second, natively and measured**: `accumulate_proper_time` (`transmutation_phases.cpp`) integrates `dτ/dt = √(f²−v²)/√f` per particle, and **FTD-0252 measured (IR-confirmed) that this clock dilates as `√(1−v²)`**. So the covariant clock *rate* is FTD-native machinery (FTD-0252), computed but discarded (read-only). Wiring the clock phase as `dφ/dt = ω₀·dτ/dt` would source the de Broglie clock's *relativistic behavior* from FTD's own proper-time, leaving **only the scalar `ω₀ ∝ M_REST` imposed**. That shrinks the import from "the whole quantum clock" to "one rest-frequency constant," and upgrades the covariant-clock half from `[IMPOSED]` toward `[SELECTION]`. (Demonstrating it in the engine — toggle + τ→phase wiring + the moving-clock red-shift test — is the next phase; the analytic case rests on the already-measured FTD-0252.)
 
 ## 5 · Status of the program & what remains OPEN
 

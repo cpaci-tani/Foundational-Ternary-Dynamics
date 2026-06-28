@@ -1,10 +1,8 @@
 # [STRONGLY MOTIVATED CONJECTURE] The Electron Mass Anchor ($16/3$)
 
 **Epistemic Status:** `[STRONGLY MOTIVATED CONJECTURE]`
-**Version:** 1.1
-**Date:** 2026-06-18 (corrected 2026-06-19)
 
-> **CORRECTION 2026-06-19 (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
+> **CORRECTION (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
 > is **RETRACTED** — the "Dimensional Equipartition" step is a substitution identity, not a
 > forcing chain; it fails the FTD-0097/0189 look-elsewhere bar and the standing
 > zero-promotion discipline. **Honest tag: `[STRONGLY MOTIVATED CONJECTURE]`.**

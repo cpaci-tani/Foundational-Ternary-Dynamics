@@ -2,7 +2,6 @@
 
 ## Two Independent Proofs of Degree-2 Necessity
 
-**Date:** March 16, 2026
 **Status:** Derivation with honest epistemic assessment
 **Dependencies:** MATH_MASTER_QUADRATIC.md, FOUND_THE_COMPLETE_ALGEBRA_OF_i.md, FOUND_THE_FIRST_DISTINCTION.md
 **Addresses:** Selection Principle SP2 in AUDIT_HIDDEN_SELECTIONS.md
