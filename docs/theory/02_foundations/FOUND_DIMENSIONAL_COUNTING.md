@@ -2,8 +2,6 @@
 
 ## A Constructive Argument for Why Three Spatial Dimensions
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
 **Status:** Constructive argument with mixed epistemic status
 **Dependencies:** FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, DERIV_WATSON_GSTAR_IDENTITY.md
 
@@ -182,7 +180,7 @@ The gap equation coefficient $n_{\text{DOF}} = 16$ was previously [OPEN]. The $z
 - Under that assumption only the 2 non-void states ($+1$ and $-1$) contribute degrees of freedom
 - Therefore: $n_{\text{DOF}} = z_{\text{BCC}} \times (\text{non-void states}) = 8 \times 2 = 16$
 
-<!-- corrected 2026-06-24 spine audit: the "non-void states = 2" step is a [SELECTION] (no proof that void cannot contribute a DOF), and 8×2 is a re-spelling of 2^4 on a highly composite target — not an independent derivation. -->
+<!-- the "non-void states = 2" step is a [SELECTION] (no proof that void cannot contribute a DOF), and 8×2 is a re-spelling of 2^4 on a highly composite target — not an independent derivation. -->
 The arithmetic $8 \times 2 = 16$ is trivially true; what is **not** established is that this counting is forced. The "non-void states = 2" step is a [SELECTION] — there is no proof that the void state contributes zero degrees of freedom rather than being included. This route is therefore demoted from [THEOREM] to [SELECTION].
 
 **Several equivalent decompositions of $2^4$ (not independent confirmations):**
@@ -194,12 +192,12 @@ The arithmetic $8 \times 2 = 16$ is trivially true; what is **not** established 
 | $2^{D+1}$ | $2^4 = 16$ | Binary DOF in $D+1$ causal dimensions |
 | $|\text{Aut}(E)|^2$ | $4^2 = 16$ | Lemniscatic curve automorphism group ([THEOREM] — group order) |
 
-<!-- corrected 2026-06-24 spine audit: these are re-spellings of 2^4 on a highly composite target, NOT four independent routes converging on 16. They coincide because each is 2^4 written differently: 8×2, 4², 2⁴, |Aut|²=4². Coincidence-on-a-composite is not multi-route confirmation. -->
+<!-- these are re-spellings of 2^4 on a highly composite target, NOT four independent routes converging on 16. They coincide because each is 2^4 written differently: 8×2, 4², 2⁴, |Aut|²=4². Coincidence-on-a-composite is not multi-route confirmation. -->
 These all equal 16 because each is the same power $2^4$ written four ways: $D = 3$ forces $z_{\text{BCC}} = 2^3 = 8$ and $N_{\text{base}} = 2^{(D+1)/2} = 4$, and $|\text{Aut}(E)| = 4$ for the lemniscatic curve. Because 16 is highly composite, agreement among these expressions is **not** evidence of independent confirmation — they are equivalent decompositions of the same integer, not four separate derivations. The only one of the four that is itself a [THEOREM] is the group-order fact $|\text{Aut}(E_i)|^2 = 4^2 = 16$ (the automorphism group of the lemniscatic curve $E: y^2 = x^3 - x$ has order 4).
 
 **Self-referential ReLU closure:** The ternary threshold $K_B \sim \alpha^{11}$ is astronomically small compared to the flux scale $\sigma = \sqrt{G_{\text{BCC}}(0)} \approx 1.18$. Therefore the manifested fraction $p \approx 1$ and $n_{\text{DOF}} = 16p^2 \approx 16$ to machine precision. The circle closes: $\alpha \to K_B \to p \approx 1 \to n_{\text{DOF}} = 16 \to \text{master quadratic} \to \alpha$.
 
-**Epistemic status:** [SELECTION] — the $z_{\text{BCC}} \times 2 = 8 \times 2 = 16$ route is a motivated reading whose "non-void states = 2" step is unproven (corrected 2026-06-24 spine audit; demoted from [THEOREM]). The arithmetic is trivially true; the structural-independence claim is what is demoted. The companion group-order fact $|\text{Aut}(E)|^2 = 16$ remains [THEOREM].
+**Epistemic status:** [SELECTION] — the $z_{\text{BCC}} \times 2 = 8 \times 2 = 16$ route is a motivated reading whose "non-void states = 2" step is unproven (demoted from [THEOREM]). The arithmetic is trivially true; the structural-independence claim is what is demoted. The companion group-order fact $|\text{Aut}(E)|^2 = 16$ remains [THEOREM].
 
 ---
 
@@ -424,7 +422,7 @@ This eliminates the "one-loop ansatz" previously listed as an assumption. The re
 | DC-3 | Orthogonal depth adds 1D → 2D | [THEOREM] | High (standard geometry) |
 | DC-4 | Time adds 1D → D = 3 | [CONJECTURE] | Low (weakest link) |
 | DC-5 | D = 3 → Moore → BCC → G* | [THEOREM] | High (algebraic identity) |
-| DC-6 | Coefficient 16 = z_BCC × (non-void ternary) | [SELECTION] | "non-void = 2" unproven; 8×2 is a re-spelling of 2⁴ (corrected 2026-06-24 spine audit). Group-order \|Aut(E)\|²=16 stays [THEOREM] |
+| DC-6 | Coefficient 16 = z_BCC × (non-void ternary) | [SELECTION] | "non-void = 2" unproven; 8×2 is a re-spelling of 2⁴. Group-order \|Aut(E)\|²=16 stays [THEOREM] |
 
 ### 6.2 DC-4: The Weakest Link
 
@@ -458,7 +456,7 @@ The argument that time contributes to effective dimensionality faces two objecti
 | **DC-3** | Orthogonal depth adds 1D → 2D | **[THEOREM]** |
 | **DC-4** | Time completes causal dimensionality → D = 3 | **[CONJECTURE]** |
 | **DC-5** | D = 3 → Moore(26) → BCC(8) → G* via Watson | **[THEOREM]** |
-| **DC-6** | Coefficient 16 = z_BCC × (non-void ternary states) = 8 × 2 | **[SELECTION]** <!-- corrected 2026-06-24 spine audit: demoted from [THEOREM]; "non-void=2" unproven, 8×2 is a re-spelling of 2⁴ not an independent route. Group-order \|Aut(E)\|²=16 stays [THEOREM]. --> |
+| **DC-6** | Coefficient 16 = z_BCC × (non-void ternary states) = 8 × 2 | **[SELECTION]** <!-- demoted from [THEOREM]; "non-void=2" unproven, 8×2 is a re-spelling of 2⁴ not an independent route. Group-order \|Aut(E)\|²=16 stays [THEOREM]. --> |
 | **DC-7** | Self-referential ReLU closure: α → K_B → p ≈ 1 → n_DOF = 16 → α | **[THEOREM]** |
 | **DC-8** | Ontic gap equation: x² = 16G*²(x − G*) is pi-free | **[THEOREM]** |
 | **DC-9** | Dimensionless Vieta: y₊ + y₋ = y₊·y₋ = 16G* | **[THEOREM]** |
@@ -489,8 +487,3 @@ The argument that time contributes to effective dimensionality faces two objecti
 - **Master quadratic:** [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)
 - **Moore decomposition:** [DERIV_ALPHA_LATTICE_MECHANISM.md](../04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md)
 - **G* as bridge constant:** [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
-
----
-
-*Document created: March 17, 2026*
-*Framework: Foundational Ternary Dynamics v5.28*

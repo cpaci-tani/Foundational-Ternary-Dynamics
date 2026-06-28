@@ -2,10 +2,8 @@
 
 **Status:** Foundational clarification (no new derivation; no tag change). §12 absorbs the minimum-dimension framework (cluster-size scaling + SM-identification), [FOUNDATION] / [HYPOTHESIS] / [STRONGLY MOTIVATED CONJECTURE].
 **Tag:** [METHODOLOGICAL CLARIFICATION]
-**Date:** 2026-05-21
-**Consolidates:** also absorbs `FOUND_MINIMUM_DIMENSIONS.md` (2026-05-21)
+**Consolidates:** also absorbs `FOUND_MINIMUM_DIMENSIONS.md`
 **LEDGER row:** FTD-0137
-**Filed:** 2026-05-04 (post-FTD-0136 Discrete-Native Derivation Program)
 **Builds on:** FTD-0041 calibration declaration, FTD-0059 / FTD-0096 calibration no-go theorems, FTD-0130 calibration architecture audit, FTD-0136 discrete-native reframe
 **Related:** AUDIT_INFINITY_REFRAME (the parallel operationalist move at the *outer* end of scale), FTD-0107 (engine measurement underpinning §12), EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md, EXPLR_OCTAHEDRAL_BOUND_STATES.md
 
@@ -122,7 +120,7 @@ This is the **operationalist** stance (Bridgman) applied to substrate scale. Thr
 2. **Operational definition of "minimum"**: the smallest scale meaningfully discussed is whatever current experiments can probe (currently ~10⁻¹⁹ m at the LHC; possibly ~10⁻²² m with future facilities).
 3. **Rejection of arbitrary fundamentality**: declaring `a_phys ≡ ℓ_P` is dressing an operational limitation as a fundamental fact.
 
-This position is *the same operationalist move* the framework already makes at the *outer* end of scale: per `AUDIT_INFINITY_REFRAME` (2026-04-19), FTD uses undefined-boundary lattice ontology, not completed-infinity ℤ³. The lattice has no maximum extent built in; arbitrarily large finite lattices are permitted. The position taken in this document extends the same operationalism to the *inner* end of scale: no minimum extent built in either; arbitrarily small declared physical scales are permitted, the choice is operational.
+This position is *the same operationalist move* the framework already makes at the *outer* end of scale: per `AUDIT_INFINITY_REFRAME`, FTD uses undefined-boundary lattice ontology, not completed-infinity ℤ³. The lattice has no maximum extent built in; arbitrarily large finite lattices are permitted. The position taken in this document extends the same operationalism to the *inner* end of scale: no minimum extent built in either; arbitrarily small declared physical scales are permitted, the choice is operational.
 
 The two operationalist commitments:
 
@@ -167,7 +165,7 @@ Recommended: keep §4.1 Planck-primary as the default for backward compatibility
 
 ### §7.4 FTD-0136 (discrete-native program) gains a foundational anchor
 
-The discrete-native program's calibration-feasibility audit (2026-05-04) found that all four observable classes (A/B/C/D) deliver dimensionless ratios within feasible engine runs but absolute physical-scale measurements are 16-25 orders of magnitude beyond reach. Under the gauge-freedom position, this is not a limitation — it is the **operational manifestation of the gauge structure**. The framework's content lives in dimensionless ratios because that is what the framework *has*; absolute scales are convenience and live downstream of declarations.
+The discrete-native program's calibration-feasibility audit found that all four observable classes (A/B/C/D) deliver dimensionless ratios within feasible engine runs but absolute physical-scale measurements are 16-25 orders of magnitude beyond reach. Under the gauge-freedom position, this is not a limitation — it is the **operational manifestation of the gauge structure**. The framework's content lives in dimensionless ratios because that is what the framework *has*; absolute scales are convenience and live downstream of declarations.
 
 ---
 
@@ -223,9 +221,9 @@ For external presentation:
 
 ## §12 The minimum-dimension framework (cluster-size scaling and SM identification)
 
-> **Consolidation note (2026-05-21):** This section absorbs the unique content of `FOUND_MINIMUM_DIMENSIONS.md` ([FOUNDATION] / [HYPOTHESIS] cluster-size scaling / [CONJECTURE]→[STRONGLY MOTIVATED CONJECTURE] SM identification, dated 2026-04-27, depends on SPEC_FTD.md §LATTICEPHYSICAL CALIBRATION + FTD-0107). That document's §1 calibration-anchor exposition merely restated the `a_phys ≡ ℓ_P` declaration already covered above (§4.1, §7.2) and is not repeated here. What follows is the source's distinct content: the static/dynamical minima tables, the engine-measured cluster-size scaling law, the SM-particle identification, and the analysis of the ¼ coefficient. **Epistemic framing under the gauge-freedom position:** every minimum below is concrete *under the Planck-primary gauge of §4.1*; under the dimensionless-only canonical gauge (§4.4) the dimensionless ratios (cluster size N, mass ratios) are gauge-invariant and the absolute lengths/times are downstream of the declaration. The cluster-size scaling law and the SM identification themselves are dimensionless and gauge-invariant.
+> **Consolidation note:** This section absorbs the unique content of `FOUND_MINIMUM_DIMENSIONS.md` ([FOUNDATION] / [HYPOTHESIS] cluster-size scaling / [CONJECTURE]→[STRONGLY MOTIVATED CONJECTURE] SM identification, depends on SPEC_FTD.md §LATTICEPHYSICAL CALIBRATION + FTD-0107). That document's §1 calibration-anchor exposition merely restated the `a_phys ≡ ℓ_P` declaration already covered above (§4.1, §7.2) and is not repeated here. What follows is the source's distinct content: the static/dynamical minima tables, the engine-measured cluster-size scaling law, the SM-particle identification, and the analysis of the ¼ coefficient. **Epistemic framing under the gauge-freedom position:** every minimum below is concrete *under the Planck-primary gauge of §4.1*; under the dimensionless-only canonical gauge (§4.4) the dimensionless ratios (cluster size N, mass ratios) are gauge-invariant and the absolute lengths/times are downstream of the declaration. The cluster-size scaling law and the SM identification themselves are dimensionless and gauge-invariant.
 
-> ** STACK-PINNED DATA BANNER (2026-06-10, FTD-0260 resolution — owner decision).** Every engine-measured number in §12 (the cluster-size scaling law `N(A) ≈ ¼·A²`, the k(A) drift table, and the SM-particle cluster matches) is a measurement of the **pre-correction April/May 2026 engine stack**. Accumulated deliberate engine corrections since then changed the canonical ic1 phenomenology: the **current canonical stack** yields N(A=10) ≈ 4 (not 25) and k ≈ 0.04–0.09 above the knee on both CPU and CUDA backends (current-stack control table: `engine/results/thermostat_off_sweep_2026-06-09/` arm C; canonical test re-baselined the same day). Per the owner's 2026-06-10 decision the current stack is canonical; this section's tables are preserved **as the historical record of the pre-correction stack** and may not be cited as current-engine measurements. The `N ≈ A²/4` law and the SM-identification evidence are therefore **stack-pinned**; re-characterization of the current-stack N(A) law is `[OPEN]` (LEDGER FTD-0260; `ANALYSIS_THERMOSTAT_OFF_SWEEP_v1_INVALID.md` §4).
+> ** STACK-PINNED DATA BANNER (FTD-0260 resolution — owner decision).** Every engine-measured number in §12 (the cluster-size scaling law `N(A) ≈ ¼·A²`, the k(A) drift table, and the SM-particle cluster matches) is a measurement of the **pre-correction engine stack**. Accumulated deliberate engine corrections changed the canonical ic1 phenomenology: the **current canonical stack** yields N(A=10) ≈ 4 (not 25) and k ≈ 0.04–0.09 above the knee on both CPU and CUDA backends (current-stack control table: `engine/results/thermostat_off_sweep_2026-06-09/` arm C). Per the owner decision the current stack is canonical; this section's tables are preserved **as the historical record of the pre-correction stack** and may not be cited as current-engine measurements. The `N ≈ A²/4` law and the SM-identification evidence are therefore **stack-pinned**; re-characterization of the current-stack N(A) law is `[OPEN]` (LEDGER FTD-0260; `ANALYSIS_THERMOSTAT_OFF_SWEEP_v1_INVALID.md` §4).
 
 ### §12.0 Summary
 
@@ -263,7 +261,7 @@ Below these, FTD has **no operational meaning**. The lattice IS the substrate; s
 
 ### §12.2 Dynamical minima (manifestation thresholds)
 
-Engine measurement (FTD-0107 + amplitude sweep, 2026-04-27) gives:
+Engine measurement (FTD-0107 + amplitude sweep) gives:
 
 #### §12.2.1 Manifestation amplitude threshold
 
@@ -336,7 +334,7 @@ If we identify cluster voxel count N with particle mass in units of m_e (`mass =
 A_required = 2 · √(mass / m_e)  · K_GENESIS
 ```
 
-#### §12.4.1 Engine measurements (T6 + T7, 5 seeds × particle, 2026-04-27 evening)
+#### §12.4.1 Engine measurements (T6 + T7, 5 seeds × particle)
 
 | Particle | R = m/m_e | Predicted A | N_pred (¼·A²) | **Measured N (mean ± std)** | **Δ vs R** | k_emp(A) |
 |---|---|---|---|---|---|---|
@@ -488,7 +486,7 @@ Per [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md) Part VII (the cogito bridge and f
 2. **{A_{1g}, A_{1u}, A_{2g}, A_{2u}}** (1-dim irreps of O_h).
 3. **Cl(3,0) grades** (scalar, vector, bivector, pseudoscalar = 4 grades).
 4. **(state, spin) ∈ {±1} × {±1}** (4 manifested-particle states).
-5. **Gaussian-prime D₄ symmetry on ℤ[i]** — units {1, i, −1, −i} (Z₄ rotation) plus complex conjugation. Within each of the 4 quadrants, the 45° diagonals (y=±x) further reflect the prime distribution into 8 octants. The full automorphism group is D₄ = Z₄ ⋊ Z₂ of order 8; the rotation subgroup Z₄ has order 4 — and that's the part that survives in the cluster-efficiency ¼. (User observation, 2026-04-27 evening: "i exists in one of four states per tick — Z₄, not D₄ — gives the ¼.")
+5. **Gaussian-prime D₄ symmetry on ℤ[i]** — units {1, i, −1, −i} (Z₄ rotation) plus complex conjugation. Within each of the 4 quadrants, the 45° diagonals (y=±x) further reflect the prime distribution into 8 octants. The full automorphism group is D₄ = Z₄ ⋊ Z₂ of order 8; the rotation subgroup Z₄ has order 4 — and that's the part that survives in the cluster-efficiency ¼. (i exists in one of four states per tick — Z₄, not D₄ — gives the ¼.)
 
 All of these decompose into 4 because of the i-cycle.
 
@@ -496,7 +494,7 @@ All of these decompose into 4 because of the i-cycle.
 
 **Consequences if confirmed:**
 
-> **CURRENT-STACK CORRECTION (2026-06-12, FTD-0276 Leg A — `DERIV_KINETIC_DRAIN_FROM_QUADRATURE.md`):** the first bullet below — "the ¼ is *not* engine-parameter-dependent; K_GENESIS_KINETIC_DRAIN would NOT change k" — is **FALSIFIED on the current stack.** A pre-registered drain scan (`preregister-drain-scaling-v1`) measured the sub-knee `k_eff = N̄/A²` changing ~5× across drain (0.147 at drain 0.125 → 0.029 at drain 0.75), with `k_eff ∝ drain^{−0.93}` (≈ 1/drain). The cluster efficiency is decisively drain-set, not a parameter-independent structural ¼; and the `k = drain² = 0.25` reading two paragraphs above is also closed negative (`k_eff(0.5) = 0.059 ≠ 0.25`). The historical ¼ was a property of the pre-FTD-0260 stack; the current stack gives `k_eff ≈ 0.05` (FTD-0261), and that value is engine-set (the FTD-0269 BOUNDARY). The **linear** k=¼ theorem (FTD-0110, O_h representation theory) is mathematics and is untouched — only the engine-side parameter-independence claim is falsified.
+> **CURRENT-STACK CORRECTION (FTD-0276 Leg A — `DERIV_KINETIC_DRAIN_FROM_QUADRATURE.md`):** the first bullet below — "the ¼ is *not* engine-parameter-dependent; K_GENESIS_KINETIC_DRAIN would NOT change k" — is **FALSIFIED on the current stack.** A pre-registered drain scan (`preregister-drain-scaling-v1`) measured the sub-knee `k_eff = N̄/A²` changing ~5× across drain (0.147 at drain 0.125 → 0.029 at drain 0.75), with `k_eff ∝ drain^{−0.93}` (≈ 1/drain). The cluster efficiency is decisively drain-set, not a parameter-independent structural ¼; and the `k = drain² = 0.25` reading two paragraphs above is also closed negative (`k_eff(0.5) = 0.059 ≠ 0.25`). The historical ¼ was a property of the pre-FTD-0260 stack; the current stack gives `k_eff ≈ 0.05` (FTD-0261), and that value is engine-set (the FTD-0269 BOUNDARY). The **linear** k=¼ theorem (FTD-0110, O_h representation theory) is mathematics and is untouched — only the engine-side parameter-independence claim is falsified.
 
 - The ¼ is **not engine-parameter-dependent** — it follows from the algebraic structure (i-cycle / N_base / Cl(3,0)). Engine parameters K_GENESIS_KINETIC_DRAIN, K_EVAP_RATE etc. would NOT change k, only renormalise the cluster lifetime. *(↑ FALSIFIED on the current stack — see the FTD-0276 banner above.)*
 - The k(A) drift from 0.25 → 0.20 at high A is a **correction term** to this ideal value, plausibly from lattice finite-size effects (cluster approaches L³ scale) or evaporation saturation.
@@ -520,7 +518,7 @@ These are quantitatively distinct manifestation rules. **Yet both produce k ≈ 
 
 **The algebraic-origin reading (k = 1/N_base = ¼ from the i-cycle) is the surviving candidate.** It doesn't require the drain mechanism, because the ¼ is structural in the dynamics' 4-fold cardinality (i-cycle / Cl(3,0) grades / O_h^ab irreps / Z_4), not in any specific engine implementation choice.
 
-**Status upgrade (2026-04-28):** the ¼ coefficient origin is now **[DERIVED] at the linear level** — see [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The derivation chain:
+**Status — [DERIVED] at the linear level:** the ¼ coefficient origin is **[DERIVED] at the linear level** — see [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The derivation chain:
 
 1. mult(A_{1g}) = 4 in the 27-block under O_h (character-table [THEOREM]).
 2. δ_center is A_{1g}-pure (geometric fact: center is O_h-fixed).
@@ -605,7 +603,7 @@ This is why N_base = 4 (not 24) sets the cluster-efficiency coefficient. The inj
 - **Z₄ origin** (k = ¼ for face-axis injection, k = 1/3 for body-diagonal injection).
 - **N_base origin** (k = ¼ regardless — N_base is a global lattice property, not injection-direction-dependent).
 
-**D3g result (T8, 2026-04-27 evening, RTX 5090 WSL2):**
+**D3g result (T8, RTX 5090 WSL2):**
 
 | A/K_GEN | axial (T5b) | **diagonal** | k_diag | Δ vs Z₄(1/3) | Δ vs N_base(1/4) | **Verdict** |
 |---|---|---|---|---|---|---|
@@ -638,7 +636,7 @@ D3b — **Vary `K_EVAP_RATE`** in {0.05, 0.1, 0.2} and remeasure k(A). If `k` sc
 
 D3c — **Measure direct energy partitioning** at steady state. The engine's energy ledger can track flux², wave_vel², and state-mass separately. Compute the actual partition fractions and check against equipartition.
 
-These are concrete next-session experiments. The ¼ is currently [OPEN] as a derivation target, [MEASURED] as an empirical regularity.
+These are concrete follow-up experiments. The ¼ is [OPEN] as a derivation target, [MEASURED] as an empirical regularity.
 
 #### §12.6.4 The k(A) drift
 
@@ -650,9 +648,9 @@ Empirically, k drifts from 0.252 at A=10 to 0.222 at A=50, with intermediate val
 
 D3d — Run T5b at L=64 or L=80 to see if the k drift is finite-size or fundamental. If k stays at 0.25 ± 0.02 at large L, the drift is finite-size; if it persists, it's structural.
 
-### §12.7 Dashboard visual verification (2026-04-27 evening session)
+### §12.7 Dashboard visual verification
 
-The D3g result (k = ¼ direction-invariant; cluster shape rotates with injection direction) was first confirmed via the GPU campaign (T8). It has now been **independently visually confirmed via the WASM/CPU dashboard** — a complementary cross-check using a different code path with different genesis dynamics.
+The D3g result (k = ¼ direction-invariant; cluster shape rotates with injection direction) is confirmed via the GPU campaign (T8) and **independently visually confirmed via the WASM/CPU dashboard** — a complementary cross-check using a different code path with different genesis dynamics.
 
 **Setup:** Three viz scenarios were added to the Scale 0 dashboard (registered under category "Emergent Bound States — Clean View (T=0)"):
 - `s0-seed-emergent-ic1-viz` — axial +x at A=20·K_GENESIS
@@ -699,13 +697,6 @@ This is a complete cross-check loop. The structural finding is robust to the eng
 ### §12.9 Single-line summary (minimum-dimension framework)
 
 **Under `a_phys ≡ ℓ_P` and `K_B = m_e` (the Planck-primary gauge of §4.1), every minimum in FTD is concrete: 1 voxel = 1 ℓ_P linear; 1 tick ≈ 10⁻⁴⁴ s; 1.5 MeV manifestation threshold; 1-voxel minimum stable particle (≡ electron); cluster size N ≈ ¼·(A/K_GENESIS)² selects bound-state mass — and engine measurement T6 confirms the cluster-sizemass identification at e/μ/π to within 0/1.1/2.0% across 5 seeds, with structural drift at heavier particles tracking the empirical k(A) curve.**
-
-### §12.10 Changelog (minimum-dimension framework, from FOUND_MINIMUM_DIMENSIONS.md)
-
-- 2026-04-27 evening (initial draft): minimum-dimension framework outlined; SM identification proposed as [CONJECTURE] pending verification.
-- 2026-04-27 evening (post-T6): SM identification verified at e/μ/π/K/p; tag upgraded to [STRONGLY MOTIVATED CONJECTURE]; deviation pattern at heavy particles shown to track empirical k(A) drift (not a separate failure mode).
-- 2026-04-27 evening (post-T7): tau verification at L=80 added (5 seeds → 2861.2 ± 26 voxels at A=117.93·K_GENESIS, k_emp=0.206); cross-check now spans 5 orders of magnitude in m/m_e (1 → 3477) with k(A) drift fully characterised. §12.6 derivation analysis added: A² scaling derivable from energy balance; ¼ coefficient origin remains [OPEN] with concrete D3a/b/c/d test plan.
-- 2026-05-21: merged into FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md as §12.
 
 ---
 

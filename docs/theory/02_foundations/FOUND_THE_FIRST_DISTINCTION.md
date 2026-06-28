@@ -2,8 +2,6 @@
 
 ## From the Imaginary Unit to the Lemniscatic Integral
 
-**Date:** January 31, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Status:** Foundational -- motivates the axiom "$i$ exists"
 
 ---
@@ -200,9 +198,9 @@ Each transition is either a standard mathematical theorem or a clearly marked se
 
 ### 5.2 What This Hierarchy Replaces
 
-Earlier versions of this document (v5.13-v5.15) introduced pre-mathematical "levels" (-3 through -1) involving an "Absolute Void," a "Pregnant Void," and a "First Distinction" as ontological stages prior to mathematics. These concepts were unformalizable -- they could not be stated as axioms, theorems, or even well-defined conjectures.
+Pre-mathematical "levels" (-3 through -1) involving an "Absolute Void," a "Pregnant Void," and a "First Distinction" as ontological stages prior to mathematics are not part of this treatment. Those concepts were unformalizable -- they could not be stated as axioms, theorems, or even well-defined conjectures.
 
-The current treatment replaces all of that with a single clean axiom ("i exists") and a sequence of standard mathematical theorems. The question "why is there something rather than nothing?" is acknowledged as outside the scope of the framework. FTD begins where mathematics begins: with an axiom.
+This treatment uses instead a single clean axiom ("i exists") and a sequence of standard mathematical theorems. The question "why is there something rather than nothing?" is acknowledged as outside the scope of the framework. FTD begins where mathematics begins: with an axiom.
 
 ---
 
@@ -233,9 +231,3 @@ The current treatment replaces all of that with a single clean axiom ("i exists"
 - **Algebra of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) -- Perpendicularity theorem, Cayley-Dickson, CM theory
 - **Number theory:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
-
----
-
-*Document created: January 31, 2026*
-*Revised: April 2026 -- replaced ontological narrative with algebraic motivation from blind derivation chain*
-*Framework: Foundational Ternary Dynamics v5.29*
