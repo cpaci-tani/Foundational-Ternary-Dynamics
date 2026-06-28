@@ -1,7 +1,7 @@
 # FOUND — The type-priority principle: context before content, and why the Framework Commitments are precondition-types
 
 **Tag:** `[SYNTHESIS]` — an organizing reading that unifies existing FTD structure (the Framework Commitments, the modulus/argument frontier, the act-count) under one principle. **The principle itself is an *adopted foundational commitment*, not a derived theorem** — fittingly, since its own content is *"you set types; you do not derive them."* **Promotes nothing.**
-**Date:** 2026-06-28 · **LEDGER id:** FTD-0339 · **Deepens:** the modulus/argument frontier (FTD-0336) and the act-count (FTD-0322). Written under GTCA discipline (sentence-level epistemic tags; scope-honest: this is philosophy-of-mathematics, not a physics derivation).
+**LEDGER id:** FTD-0339 · **Deepens:** the modulus/argument frontier (FTD-0336) and the act-count (FTD-0322). Written under GTCA discipline (sentence-level epistemic tags; scope-honest: this is philosophy-of-mathematics, not a physics derivation).
 
 ---
 

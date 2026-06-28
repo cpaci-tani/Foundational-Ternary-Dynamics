@@ -1,7 +1,6 @@
 # INDEX · Ontological Foundations
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
 **Status:** [REFERENCE] — local navigation index for `docs/theory/02_foundations/`.
 **Purpose:** `02_foundations/` holds FTD's ontological groundwork — the documents that argue *why* the framework starts where it starts. It covers the foundational axiom (Axiom Zero), the emergence of i / the ternary state space / dimensionality / spacetime from first principles, the master-quadratic motivation and uniqueness, the boundary-theorem discriminator, and the framework's interpretive vocabulary. Read this cluster to understand the starting points; read `03_derivations/` for the physics worked from them and `01_reference/` for the canonical theorem statements.
 
@@ -45,7 +44,7 @@
 | [FOUND_DIMENSIONAL_COUNTING.md](FOUND_DIMENSIONAL_COUNTING.md) | constructive argument (mixed) | Constructive 0.5D → D = 3 counting argument from the pairing ontology. |
 | [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | foundational theory (5 predictions) | Dimensions from relation, time from energy processing, SR/gravity/GR trichotomy; consolidated. |
 | [FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md](FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md) | [METHODOLOGICAL CLARIFICATION] | Lattice spacing as gauge freedom; absorbs the minimum-dimension cluster-scaling framework (FTD-0137). |
-| [FOUND_NONLINEAR_SPACETIME_EMERGENCE.md](FOUND_NONLINEAR_SPACETIME_EMERGENCE.md) | mixed (reconciled 2026-06-15) | Tick-rate saturation → metric: §3 kinematic Schwarzschild-encoding is [THEOREM at kinematic level]+[SELECTION]; §4 full Einstein equations + "resolves GAP-G2/G5" are [GAP]/[CONJECTURE], not derived (canonical GAP doc = FOUND_SPACETIME_EMERGENCE_AND_GRAVITY; LEDGER FTD-0303). |
+| [FOUND_NONLINEAR_SPACETIME_EMERGENCE.md](FOUND_NONLINEAR_SPACETIME_EMERGENCE.md) | mixed | Tick-rate saturation → metric: §3 kinematic Schwarzschild-encoding is [THEOREM at kinematic level]+[SELECTION]; §4 full Einstein equations + "resolves GAP-G2/G5" are [GAP]/[CONJECTURE], not derived (canonical GAP doc = FOUND_SPACETIME_EMERGENCE_AND_GRAVITY; LEDGER FTD-0303). |
 | [FOUND_BASE_INTEGERS_UNCONSTRAINED.md](FOUND_BASE_INTEGERS_UNCONSTRAINED.md) | [THEOREM] (integers) + [NEEDS-RECONCILE] (the argument) | Derives {3,4,7,13} ab-initio. The integers' [THEOREM] status rests on the Moore/O_h route (DERIV_NC_FROM_TOPOLOGY + FTD-0008), not this doc's Fibonacci/Lucas argument, which over-credits and is pending owner adjudication (LEDGER FTD-0303). |
 
 ## The master quadratic — motivation & uniqueness
@@ -78,7 +77,7 @@
 | [FOUND_GSTAR_SCALE.md](FOUND_GSTAR_SCALE.md) | [CONJECTURE] | The G*ⁿ scale as the symmetric algebra of h¹(E_i) — the ring of physics. |
 | [FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md](FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md) | [FOUNDATION] | Two-layer phenomenal/noumenal ontology; reclassifies all tags by layer (FTD-0078). |
 | [FOUND_EPISTEMIC_SYMMETRIES_AND_CHIRALITY.md](FOUND_EPISTEMIC_SYMMETRIES_AND_CHIRALITY.md) | [CONJECTURE] | Postulate Six: longitudinal trajectory parity, chiral laterals/verticals, inside/outside inversion. |
-| [EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md](EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md) | [EXPLORATION] / [OPEN] | Candidate 6th postulates + the observer frame; two adversarially-falsified formalization attempts preserved as provenance (2026-06-09). |
+| [EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md](EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md) | [EXPLORATION] / [OPEN] | Candidate 6th postulates + the observer frame; two adversarially-falsified formalization attempts preserved as provenance. |
 | [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) | foundational conjecture note | Vocabulary for context-conditioned manifestation; 3³ lattice grounding. |
 | [FOUND_BORN_RULE_NULL_CONE.md](FOUND_BORN_RULE_NULL_CONE.md) | foundational derivation | The Born rule P = \|ψ\|² as null-cone geometry from i² = −1. |
 | [FOUND_FOURCIER_ONTIC_TOOL.md](FOUND_FOURCIER_ONTIC_TOOL.md) | theoretical synthesis | The Fourcier curve as the generalized distinction-drawing instrument. |

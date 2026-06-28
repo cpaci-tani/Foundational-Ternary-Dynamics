@@ -1,8 +1,7 @@
 # EXPLR — The "new math" grounded: the missing structure is the **chosen adjoint of the lossy map**, and the one attemptable test is the genesis-cokernel graded square root
 
 **Tag:** `[SYNTHESIS]` (the grounding + diagnosis — reorganizes existing canonical results and published external mathematics, promotes nothing) **+ `[SPECULATION]`** (the crystallized object of §5 — a conjecture about a theorem to attempt, unbuilt).
-**Date:** 2026-06-27
-**Provenance:** a 9-agent grounding + adversarial-novelty workflow over the owner's "new math" intuition ("a supersquare with a non-commutative inner product… almost the inverse of the integral… a renormalization group of informational context… statistics of events, not statistics of choice — marbles in a bag"). This memo records what that intuition *is* in rigorous mathematics, what is genuinely new vs. a renaming, and the single binary test it sharpens. It introduces no theorem and **promotes no tag.**
+This memo records what the "new math" intuition ("a supersquare with a non-commutative inner product… almost the inverse of the integral… a renormalization group of informational context… statistics of events, not statistics of choice — marbles in a bag") *is* in rigorous mathematics, what is genuinely new vs. a renaming, and the single binary test it sharpens. It introduces no theorem and **promotes no tag.**
 **Reuse (not re-derived):** `FOUND_ARROW_AS_SQUARE_ROOT.md` (FTD-0323, `[SYNTHESIS]`); `DERIV_HEAT_EQUATION_FROM_RATIO.md` (`[THEOREM]`); `DERIV_DIRAC_KAHLER_IDENTIFICATION.md` (FTD-0089); `FOUND_MCT43_NATIVE_Z2_PERMANENCE.md` (FTD-0326); `FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md` (FTD-0327); `FOUND_ACT_REDUCTION_COUNT.md` (FTD-0322); `AUDIT_W_CARRIER_NARROWING.md` (FTD-0314); `SCOPE_ROUTE_B_MODULAR_TIME.md` (FTD-0214/0225).
 
 ---
