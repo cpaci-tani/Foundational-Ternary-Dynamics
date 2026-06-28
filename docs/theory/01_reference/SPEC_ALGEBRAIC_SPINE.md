@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. **[corrected 2026-06-24 spine audit: "maximal" struck — only π-freeness is proven; maximality is [OPEN], and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield.]** The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`). **Supplemental 2026-05-20 (physics-panel review) and 2026-05-25 (MC-T2.3-4 closure):** the "nine theorems" count is reconciled — **seven are theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9), **two are honestly tiered below theorem grade** (Theorem 4 a value-level identity with conjectural structural necessity, and Theorem 7 [THEOREM at L=2] only). The nine numbered sections remain; the theorem-grade count is **seven**. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
+**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven; maximality is [OPEN] and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield. The spine has **nine numbered results** — **seven theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two honestly tiered below theorem grade** (Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, [THEOREM at L=2] only). This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
 **Purpose:** state the load-bearing algebraic content of FTD in
 **[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -31,7 +31,7 @@ The numerical match between two roots of the master quadratic and (1/α,
 N_c) is a separate empirical observation — recorded in §10 below as
 [STRONGLY MOTIVATED CONJECTURE], NOT promoted to theorem.
 
-**Why this distinction matters.** As of 2026-04-27 the FTD program has
+**Why this distinction matters.** The FTD program has
 closed-negative all three first-principles routes for the gauge
 coupling g_c (Mechanisms A, B, C; LEDGER FTD-0031, FTD-0093). The
 physics-recovery surface has narrowed materially. The algebraic spine
@@ -44,7 +44,7 @@ Scope discipline (CLAUDE.md Constraint 9): **lead with the algebraic
 spine; present physics identifications at their actual LEDGER status;
 do not let rhetorical momentum promote conjectures.**
 
-**Visualization (added 2026-05-23, FTD-0207).** A spine-theorem view of
+**Visualization (FTD-0207).** A spine-theorem view of
 the multi-layer math node map renders the 9 spine theorems (T1-T9) + 4
 subsidiaries + their LEDGER anchors + `ledger-depends-on` edges as:
 `scripts/visualization/results/math_node_map/spine_only.{svg,png}` (high-
@@ -69,14 +69,14 @@ where ϖ = Γ(1/4)² / (2 · (2\pi)^{1/2}) ≈ 2.62205755... is the Bernoulli/Ga
 
 The two equivalent closed forms follow from the Γ-function reflection identity Γ(1/4)·Γ(3/4) = π/sin(π/4) = π · 2^{1/2}.
 
-**The Gauss AGM Constant Bridge (2026-05-30 synthesis).** The reflection ratio $G^*$ is exactly twice the product of the Gauss Constant $G = 1 / M(2^{1/2}, 1) \approx 0.83462684$ and the square root of $\pi$:
+**The Gauss AGM Constant Bridge.** The reflection ratio $G^*$ is exactly twice the product of the Gauss Constant $G = 1 / M(2^{1/2}, 1) \approx 0.83462684$ and the square root of $\pi$:
 $$G^* = 2 G \pi^{1/2}$$
 Substituting this identity into the FTD electrostatic self-energy formula expresses the electron rest mass $m_e$ in lattice units as a pure transcendental function of the Gauss constant $G$:
 $$m_e = \frac{2}{2 + \left(4 - \frac{1}{2G\pi^{1/2}}\right)^{1/2}} \approx 0.51103345$$
 
 **Notational warning.** G* (project canonical, ≈ 2.959) and the Bernoulli/Gauss lemniscate constant ϖ (≈ 2.622) are sometimes both called "the lemniscate constant" in informal usage. They are distinct: the master quadratic `x² − 16G*²x + 16G*³ = 0` produces x_+ = 137.036 (= 1/α numerically) ONLY at G* = 2.959, not at ϖ = 2.622 (which would give x_+ = 107.3, far from 1/α). Always cross-check against `scripts/constants.py` (`G_STAR`) when a numerical value is needed.
 
-This document was previously stated with an erroneous formula `Γ(1/4)²/(2 · (2\pi)^{1/2}·Γ(1/2))` (which evaluates to 1.479, not 2.622) and an erroneous asserted value 2.622 (which is ϖ, not G*). Corrected 2026-04-30 per LEDGER FTD-0117.
+An earlier erroneous formula `Γ(1/4)²/(2 · (2\pi)^{1/2}·Γ(1/2))` (which evaluates to 1.479, not 2.622) and an erroneous asserted value 2.622 (which is ϖ, not G*) are superseded by the closed forms above, per LEDGER FTD-0117.
 
 **Proof reference.** Follows directly from Chowla-Selberg evaluation of the L-function L(s, χ_{-4}) at s=1, applied to the lemniscatic elliptic curve y² = x³ − x. See `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` for the four independent derivations (Γ-function ratio, Watson period integral, lemniscate arc length, modular-form value).
 
@@ -108,7 +108,7 @@ Numerically: x+ = 137.0362..., x− = 3.0240... .
 roots follow from the quadratic formula. The discriminant is positive
 because G* > 1/4 (Theorem 1). See
 `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`
-(rewritten 2026-04-19 as algebraic identity + physical match) and
+(an algebraic identity + physical match) and
 `scripts/proofs/proof_motivic_master_quadratic.py`.
 
 **LEDGER:** FTD-0001 (Master Quadratic Polynomial + Roots, [THEOREM]);
@@ -132,7 +132,7 @@ identification x−  N_c is retired per v1.4 §5.
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
-**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among the class-number-1 fields). The underlying numerical scans over Heegner and class numbers 1–4 are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof] (corrected 2026-06-24 spine audit):** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan ($|d| \le 907$ via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
+**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among the class-number-1 fields). The underlying numerical scans over Heegner and class numbers 1–4 are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan ($|d| \le 907$ via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
@@ -176,7 +176,7 @@ Hence, d = 1 is the unique solution. ∎
 
 See also `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` for context.
 
-**LEDGER:** FTD-0003 (quick-index entry, promoted to `[THEOREM]` 2026-05-26); FTD-0123 (Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion bifurcation finding); FTD-0181 (Integer-4 Unification and $|\mu| = |\text{disc}|$ coincidence).
+**LEDGER:** FTD-0003 (quick-index entry, `[THEOREM]`); FTD-0123 (Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion bifurcation finding); FTD-0181 (Integer-4 Unification and $|\mu| = |\text{disc}|$ coincidence).
 
 **Dependencies:** Theorems 1, 2; arithmetic of imaginary quadratic fields; Damerell-style identities at h ≥ 2 (theory note in `EXPLR_CHOWLA_SELBERG_HIGHER_H.md` for the proper analogue).
 
@@ -193,7 +193,7 @@ Its automorphism group over ℚ̄ has order 4, so |Aut(E)|² = 16. The
 coefficient 16 in the master quadratic P(x) (Theorem 2) coincides with
 this automorphism-group order squared.
 
-**Status (added 2026-05-20, physics-panel review).** The arithmetic
+**Status.** The arithmetic
 fact |Aut(E)| = 4, hence |Aut(E)|² = 16, is a `[THEOREM]`. That the
 master quadratic's coefficient is *forced* to equal |Aut(E)|² is
 **not** proven — it is a structural identification, conjectural
@@ -242,7 +242,7 @@ Watson's literature.
 **Dependencies:** Theorem 1; Watson's integral identities.
 
 **What it does NOT claim.** That the Watson identity drives any
-physical mechanism. The 2026-04-26 / 2026-04-27 attempt to use the
+physical mechanism. The attempt to use the
 BCC sub-stencil two-state spectrum as a derivation route for g_c
 (Mechanism C, FTD-0093) closed NEGATIVE; the Watson identity itself
 remains a [THEOREM] in pure number theory but does not yield a
@@ -276,7 +276,7 @@ geometric identity for the lattice Poisson kernel. The physical α
 enters separately through the coupling g_c, which is [PARAMETRIC]
 (see §10).
 
-**Subsidiary (retarded extension, 2026-04-30).** Phase G is the
+**Subsidiary (retarded extension).** Phase G is the
 time-integrated specialization of a parent retarded identity. Define
 `α_r(r, t, L) := 2r · G^ret_L(r, t)` where `G^ret_L` is the retarded
 Green's function of the lattice wave equation
@@ -296,9 +296,7 @@ verification at L=8 to machine precision).
 
 **Status.** [THEOREM at L = 2 — mode-degeneracy origin] + [NUMERICAL EVIDENCE
 at L = 3] + [AMBIGUOUS / OPEN for L ≥ 4]. The L = 2 case is proven by explicit
-construction. **Corrected 2026-06-24 (spine audit):** the earlier
-"DISCONFIRMED for general L" framing was itself an overclaim *in the negative
-direction*. Re-running `scripts/proofs/proof_phase_j_general_L.py` this audit
+construction. `scripts/proofs/proof_phase_j_general_L.py`
 shows L = 3 charge-neutral configurations are **also ultralocal to machine
 precision** (action spread 8.9e-16), because the matched-stencil Laplacian
 λ(k) is non-degenerate on every nonzero k at L = 3. At L ≥ 4 the Laplacian
@@ -307,9 +305,7 @@ kernel; the naive scan then shows placement-dependent S_E (≈3–28% spread), b
 this is plausibly a setup/masking artifact, not a structural failure — so
 L ≥ 4 is **ambiguous**, neither confirmed nor cleanly disconfirmed. Honest
 reading: ultralocality is PROVEN at L = 2, holds numerically at L = 3, and is
-OPEN at L ≥ 4. (Audit 2026-05-01 added the [CONJECTURE for general L] bracket;
-audit 2026-05-23 over-closed it to DISCONFIRMED; this 2026-06-24 audit
-corrects that.) Spine count is unchanged at 6 theorem-grade + 3 honestly-tiered.
+OPEN at L ≥ 4. Spine count is unchanged at 6 theorem-grade + 3 honestly-tiered.
 
 **Statement (L = 2, [THEOREM]).** The classical FTD partition function
 on a 2³ lattice has Euclidean action S_E that depends on the state
@@ -326,7 +322,7 @@ so the result is **ambiguous** — it may reflect a setup issue rather than a
 structural failure of ultralocality. See
 `scripts/proofs/proof_phase_j_general_L.py` (Test 2 + the `main()` note) for
 the L ∈ {3, 4, 6, 8} scan. The earlier "DISCONFIRMED at L ≥ 3" claim is
-**retracted** (L = 3 is ultralocal; corrected 2026-06-24 spine audit).
+**retracted** (L = 3 is ultralocal).
 
 **Origin of the L=2 phenomenon.** On a 2³ lattice with centered
 first-derivative ∂_i (eigenvalue i·sin(k_i)), the only available
@@ -336,18 +332,16 @@ configuration — trivially ultralocal. The continuum Parseval identity
 Σ |∇J|² = Σ s² holds cleanly at L = 2 (all nonzero modes have sin(k_i) = 0)
 **and also at L = 3** (λ(k) non-degenerate on every nonzero k). It becomes
 ambiguous only at L ≥ 4, where Gauss-excluded zero modes of λ(k) require
-special treatment (corrected 2026-06-24 spine audit; the earlier
-"fails for L ≥ 3" reading was wrong — L = 3 is ultralocal).
+special treatment (L = 3 is ultralocal).
 
 **Proof (L = 2 only).** Explicit construction of the L=2 partition
 function in `docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`.
 
 **LEDGER.** FTD-0005 (Phase J partition-function ultralocality at L=2)
 tag UNAFFECTED — the LEDGER row never claimed general-L ultralocality,
-so the L=2-only scope of the spine §7 entry is now consistent with the
-canonical LEDGER scope. Methodological clarification recorded as a
-fresh LEDGER row (see latest `[METHODOLOGICAL CLARIFICATION]`
-addition); no claim promotion or demotion.
+so the L=2-only scope of the spine §7 entry is consistent with the
+canonical LEDGER scope. The methodological clarification is recorded as a
+`[METHODOLOGICAL CLARIFICATION]` LEDGER row; no claim promotion or demotion.
 
 **Dependencies:** None beyond the FTD axioms (5 postulates per
 SPEC_FTD.md).
@@ -361,13 +355,12 @@ at L ≥ 3 the action does depend on spatial placement and the
 informational obstruction does not apply in the same form. A quantum
 extension (Mechanism B per FTD-0031) was attempted as the remaining
 first-principles route for g_c and closed NEGATIVE (circular in the
-boundary of the projection). g_c remains [PARAMETRIC] as of
-2026-04-27.
+boundary of the projection). g_c remains [PARAMETRIC].
 
 **What it does NOT claim.** That the L=2 ultralocality has any
 particular physical content beyond its information structure at L=2.
 The proven scope is L = 2; L = 3 holds numerically; L ≥ 4 is OPEN/ambiguous
-(not "DISCONFIRMED" — corrected 2026-06-24 spine audit).
+(not "DISCONFIRMED").
 
 ---
 
@@ -427,7 +420,7 @@ the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
   is **[OPEN; empirical agreement, structural identification not
   proven]** (Tier-I MC-T1.5 in the math-complete checklist; Tier-IV
   MC-T4.5 escalates this question to "why-level-k=4 from N_base=4").
-  The 2026-05-02 Tier-I closure pass reclassifies this as an
+  The Tier-I closure pass reclassifies this as an
   acceptance (structural identification deferred to Tier-IV) rather
   than a structural theorem.
 - Uniqueness of the (1+i)-multiplier choice. The harmonic invariant
@@ -449,10 +442,10 @@ the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
 **Statement.** `Q(G*)` is a `π`-free subfield of
 `Q(π, Γ(1/4))` (conditional on Chudnovsky 1976). Specifically:
 
-<!-- CORRECTED 2026-06-24 (spine audit): "maximal" struck. The proof below establishes only
+<!-- NOTE: "maximal" is deliberately NOT claimed. The proof below establishes only
      containment + π-freeness (Q(G*) ∩ Q(π) = Q); no maximality argument exists, and as stated
-     "maximal" is false — Q(Γ(1/4)) is a strictly larger π-free subfield by the identical
-     Chudnovsky argument. The "What it does NOT claim" block (below) already conceded this.
+     "maximal" would be false — Q(Γ(1/4)) is a strictly larger π-free subfield by the identical
+     Chudnovsky argument. The "What it does NOT claim" block (below) states this.
      Maximality is [OPEN/CONJECTURE], not part of the theorem. -->
 
 
@@ -506,29 +499,28 @@ admits clean rational-coefficient × integer-power form), Theorem 9
 characterizes `Q(G*)` as **a distinguished π-free subfield** of
 `Q(π, Γ(1/4))` — the algebraic content of the spine that is invisible
 to `Q(π)` alone. (It is **not** claimed maximal or canonical; see "What
-it does NOT claim" below — corrected 2026-06-24 spine audit.)
+it does NOT claim" below.)
 
-**LEDGER:** FTD-0112 (filed 2026-04-30 alongside this theorem).
+**LEDGER:** FTD-0112.
 
 **Dependencies:** Theorem 1 (`G*` identity), Chudnovsky 1976.
 
 **What it does NOT claim.**
 - That `G*` is in OEIS under its own A-number. (A085565 is the
-  lemniscate constant `L = 2ϖ`, not `G*`. As of 2026-04-30 audit, no
-  A-number for `Γ(1/4)/Γ(3/4)` itself has been confirmed.)
+  lemniscate constant `L = 2ϖ`, not `G*`. No
+  A-number for `Γ(1/4)/Γ(3/4)` itself is confirmed.)
 - That Gauss computed `G*` as a privileged object. (Gauss computed
-  `Γ(1/4)` and `ϖ`; the specific ratio `Γ(1/4)/Γ(3/4)` was retracted
-  during the 2026-04-30 audit unless a citation is produced.)
+  `Γ(1/4)` and `ϖ`; the specific ratio `Γ(1/4)/Γ(3/4)` is not
+  attributed to Gauss unless a citation is produced.)
 - Maximality of `Q(G*)` as a subfield in any sense beyond
   `π`-freeness. There may be larger π-free subfields of
   `Q(π, Γ(1/4))`; the theorem does not exclude them.
 
-**Provenance.** Imported from external session synthesis on
-2026-04-30; the synthesis is archived at
-`docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1
+**Provenance.** Archived at
+`docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1,
 where this is "Theorem 3".
 
-### 9.1 · Operational reading via the parity-twist (FTD-0127, 2026-05-03)
+### 9.1 · Operational reading via the parity-twist (FTD-0127)
 
 Theorem 9 admits a clean operational reading in L-function language:
 
@@ -582,7 +574,7 @@ above:
 - **D = 3 from |Aut(E)|² = 2^D · (D−1)!** — the *arithmetic* uniqueness
   (f(D) = 2^D·(D−1)! equals 16 only at D = 3; f(1..5) = {2, 4, 16, 96, 768})
   is a **[THEOREM]**. The *dimension-forcing* itself is **[SELECTION]**, not
-  forced (corrected 2026-06-24 spine audit): the LHS |Aut(E_i)|² = 16 is a
+  forced: the LHS |Aut(E_i)|² = 16 is a
   D-independent constant, and the RHS target value is justified via
   |O_h|/3 = 48/3, which already presupposes D = 3 (circular). See
   `docs/theory/02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md` (the previously
@@ -638,7 +630,7 @@ provenance.
   could group these under a unified "$Z_4$ algebraic-spine" subsection;
   not done in the current spine version.
 
-### 10.Y · G\* opus subsidiaries (2026-05-19)
+### 10.Y · G\* opus subsidiaries
 
 The G\* publication opus (Papers A/B/C/D/E in `docs/papers/`,
 ~48 pages total) consolidates the algebraic spine into publication-ready
@@ -695,14 +687,14 @@ spine. It is recorded in the LEDGER as
 
 It is NOT promoted to theorem. The motivation is the algebraic rigidity
 of `P(x)` (Theorem 2 + uniqueness from Theorem 3) plus the **adversarial
-look-elsewhere scan** (FTD-0319; formerly cited as "FTD-0189" — repointed
-2026-06-24, that id is the graviton audit; pre-reg tag
+look-elsewhere scan** (FTD-0319; formerly cited as "FTD-0189", which
+is the graviton-audit id; pre-reg tag
 `preregister-adversarial-look-elsewhere-v1`): across **2.65 M degree-2
 polynomials** over an 18-constant basket FTD did not design, the master
 quadratic is the **unique dual-matcher** — zero non-G* dual-matchers,
 rank 1 by ~130×. That is structural evidence of polynomial-template
-uniqueness; it is not a derivation of α from FTD axioms. **Honest caveats
-(2026-06-24 spine audit):** the ~130× rank gap is *within the G\*-family*
+uniqueness; it is not a derivation of α from FTD axioms. **Honest caveats:**
+the ~130× rank gap is *within the G\*-family*
 (the rank-2 is itself a G\* polynomial); uniqueness is asymmetric-
 tolerance-conditioned (x₊ at 2 ppm vs x₋ at 1% — under a symmetric 1% gate
 ~32 dual-matchers appear across 11 constants); and the "~4×10⁵:1 Bayes"
@@ -724,8 +716,8 @@ constant one tries to identify with `x_-`, and is unchanged by the
 retirement.
 
 The methodological gap that prevents promotion of the α identification:
-there is no derivation chain from the FTD axioms to it. As of
-2026-04-27, all three attempted derivation routes for the gauge
+there is no derivation chain from the FTD axioms to it. All three
+attempted derivation routes for the gauge
 coupling g_c (Mechanisms A, B, C) have closed negative, so the route
 from "P(x) root x₊" to "physical α" runs through `g_c` at
 [PARAMETRIC] status.
@@ -759,7 +751,7 @@ In order from most to least defensible:
    Theorem 6.
 
 4. "The classical FTD action is ultralocal in state space; classical
-   extremization cannot fix the gauge coupling, and as of 2026-04-27
+   extremization cannot fix the gauge coupling, and
    all three first-principles derivation routes for g_c have closed
    negative." — Theorem 7 + LEDGER FTD-0031 + FTD-0093.
 
@@ -794,11 +786,11 @@ What this document explicitly does NOT allow you to claim:
 | 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0006 / FTD-0007 |
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
-| 7 Phase J ultralocal (THEOREM at L=2; NUMERICAL EVIDENCE at L=3; OPEN/ambiguous L≥4 — corrected 2026-06-24) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
+| 7 Phase J ultralocal (THEOREM at L=2; NUMERICAL EVIDENCE at L=3; OPEN/ambiguous L≥4) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
 
 | Subsidiary | Primary doc | LEDGER |
 |---|---|---|
-| D = 3 (arithmetic uniqueness THEOREM; dimension-forcing [SELECTION], corrected 2026-06-24) | `DERIV_D3_FROM_AUTOMORPHISM.md` | FTD-0010 / FTD-0036 area |
+| D = 3 (arithmetic uniqueness THEOREM; dimension-forcing [SELECTION]) | `DERIV_D3_FROM_AUTOMORPHISM.md` | FTD-0010 / FTD-0036 area |
 | Moore integers | `THEOREM_MOORE_LAYER_DECOMPOSITION.md` | FTD-0008 area |
 | a_phys ≡ ℓ_P no-go | `THEOREM_A_PHYS_NO_GO.md` | FTD-0059 |
 | Phase H scaling | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` §H | (Phase H) |
@@ -822,12 +814,12 @@ Coulomb α_r = 2r·G_L(r), Phase J classical-action ultralocality, the
 (1+i)-tower harmonic invariant 1/y₊ + 1/y₋ = 1 with anomaly transcendence
 A_k ∉ Q for k ≥ 4, and the field-theoretic characterization of Q(G*)
 as a π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky
-1976; "maximal" struck 2026-06-24 — only π-freeness is proven). All nine
+1976; "maximal" not claimed — only π-freeness is proven). All nine
 are independent of physics interpretation. The dual
 numerical match x+ ≈ 1/α (1.26 ppm) + x− ≈ N_c (0.80%) is recorded as
 [STRONGLY MOTIVATED CONJECTURE], not theorem; promotion requires
 either a derivation (all three first-principles routes for g_c are
-closed-negative as of 2026-04-27) or a look-elsewhere scan
+closed-negative) or a look-elsewhere scan
 demonstrating selectivity (FTD-0097 pre-registered, not run).
 
 ---

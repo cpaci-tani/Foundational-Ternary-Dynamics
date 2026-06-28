@@ -1,9 +1,7 @@
 # The Master-Quadratic Physics Bridge: Selection Principles and Physical Correspondences
 
 **Status:** Epistemic bridge document — each selection principle is stated, justified, critiqued, and tagged; all physical correspondences are conditional on SP1–SP5. Consolidated reference superseding the three-layer split.
-**Date:** 2026-05-21
-**Consolidates:** `BRIDGE_QUADRATIC_PHYSICS.md`, `PHYS_QUADRATIC_APPLICATIONS.md`, `FOUND_BRIDGE_FUNCTIONAL.md` (merged 2026-05-21)
-**Framework Version:** 5.27 (source-document framework version; preserved for provenance)
+**Consolidates:** `BRIDGE_QUADRATIC_PHYSICS.md`, `PHYS_QUADRATIC_APPLICATIONS.md`, `FOUND_BRIDGE_FUNCTIONAL.md`
 **Prerequisite:** `MATH_MASTER_QUADRATIC.md` (Layer 1: pure mathematics — NOT merged here; stays separate)
 
 ---
@@ -151,7 +149,7 @@ Neither produces a root near any known coupling constant. Only $k = 16$ yields $
 
 **Numerical proximity.** $x_+ = 137.0361714\ldots$ compared to $1/\alpha_{\mathrm{em}} = 137.035999177(21)$ (CODATA 2022). The discrepancy is 1.26 ppm.
 
-**Precision formula.** The 4-term (and extended 7-term) correction series (`MATH_MASTER_QUADRATIC.md`, Theorem M-13; [`CONJ_SEVEN_TERM_PRECISION_SERIES.md`](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)) achieves 24-digit **algebraic-identity** agreement with the CODATA 2022 *recommended value* $137.035999177$ (mpmath-verified residual $\sim 10^{-24}$; rigidity audit 2026-04-17). The rigidity audit shows 6/7 coefficients are uniquely forced in the base-integer set at cascade precision. **However**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ — only ~11 digits — so the 24-digit "match" is not currently experimentally verifiable beyond digit ~11. The precision claim below that point is a structural property of the chosen coefficients, not a tested prediction.
+**Precision formula.** The 4-term (and extended 7-term) correction series (`MATH_MASTER_QUADRATIC.md`, Theorem M-13; [`CONJ_SEVEN_TERM_PRECISION_SERIES.md`](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)) achieves 24-digit **algebraic-identity** agreement with the CODATA 2022 *recommended value* $137.035999177$ (mpmath-verified residual $\sim 10^{-24}$; rigidity audit). The rigidity audit shows 6/7 coefficients are uniquely forced in the base-integer set at cascade precision. **However**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ — only ~11 digits — so the 24-digit "match" is not currently experimentally verifiable beyond digit ~11. The precision claim below that point is a structural property of the chosen coefficients, not a tested prediction.
 
 **Uniqueness of $\alpha$ near 1/137.** Among the ~25 free parameters of the Standard Model, the fine-structure constant is the *only* one whose inverse lies in the interval $[100, 200]$. This reduces (but does not eliminate) the probability of a coincidental match.
 
@@ -188,7 +186,7 @@ with digit 13 (after the decimal) predicted to be **0**. Future precision measur
 
 ### 4.6 The Bridge Functional: Mass as a Functional of the Root Spectrum
 
-*(This subsection folds in `FOUND_BRIDGE_FUNCTIONAL.md` — LEDGER row FTD-0095, tag [THEOREM], date 2026-05-29. It specializes SP4: where SP4 identifies a single root with a single coupling, the bridge functional addresses how mass scales are extracted from the* whole *root spectrum. Dependencies: FTD-0001 (master quadratic), FTD-0028 (Moore Layer Theorem). Dependents: FTD-0094 (L2 candidate identity). Status: mathematically proven via 't Hooft beable equiprobability.)*
+*(This subsection folds in `FOUND_BRIDGE_FUNCTIONAL.md` — LEDGER row FTD-0095, tag [THEOREM]. It specializes SP4: where SP4 identifies a single root with a single coupling, the bridge functional addresses how mass scales are extracted from the* whole *root spectrum. Dependencies: FTD-0001 (master quadratic), FTD-0028 (Moore Layer Theorem). Dependents: FTD-0094 (L2 candidate identity). Status: mathematically proven via 't Hooft beable equiprobability.)*
 
 #### 4.6.1 Mass-as-functional declaration
 
@@ -256,9 +254,9 @@ This resolves **FTD-0095** and upgrades it to **[THEOREM]**.
 
 #### 4.6.3 Slogan upgrade
 
-Previous slogan in `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_*` (where present): *"the master quadratic predicts α and N_c"* — the dual-prediction framing is **retired** along with the `x_-  N_c` identification (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). The live framing is single-root: *"the master quadratic predicts 1/α as its larger root"*.
+The dual-prediction framing *"the master quadratic predicts α and N_c"* is **retired** along with the `x_-  N_c` identification (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). The live framing is single-root: *"the master quadratic predicts 1/α as its larger root"*.
 
-Adopted as active and fully resolved:
+The active slogan:
 
 > **"Mass is the stationary expectation of the master beable, computed by Vieta."**
 
@@ -459,7 +457,7 @@ The result's genuine strength lies in its **structural convergence**:
 1. **Two independent truncations** (tree level and 4-term) both land within experimental error
 2. **The coefficient 16 is intrinsic** to the curve, not a free parameter (conditional on SP1)
 3. **The precision formula predicts specific unmeasured digits** — a genuinely falsifiable claim
-4. **Polynomial-template uniqueness** (FTD-0319, formerly cited as FTD-0189, 2026-05-21): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — rank 1 by ~130×.
+4. **Polynomial-template uniqueness** (FTD-0319, formerly cited as FTD-0189): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — rank 1 by ~130×.
 
 (The historical "smaller root $x_-$ matches $N_c$" point is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template-uniqueness fact replaces it as the canonical structural-uniqueness evidence; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)
 
@@ -827,7 +825,7 @@ equals the conductor of the elliptic curve $E: y^2 = x^3 - x$.
 > is classed Tier 5 / unfalsifiable). It is retained for provenance only; do NOT
 > cite it externally as an FTD prediction. The canonical home for this material,
 > with all tags downgraded to [SPECULATIVE CONJECTURE], is the legacy doc
-> `../07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` (archived 2026-06-02).
+> `../07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` (archived).
 
 In the FTD framework, the complex roots are **proposed** to correspond to reference frame context:
 
@@ -972,4 +970,4 @@ The strongest tests of this framework are:
 
 ---
 
-*Consolidated 2026-05-21 from `BRIDGE_QUADRATIC_PHYSICS.md` (Layer 2, Version 1.0 — February 25, 2026), `PHYS_QUADRATIC_APPLICATIONS.md` (Layer 3, Version 1.0 — February 25, 2026), and `FOUND_BRIDGE_FUNCTIONAL.md` (FTD-0095, 2026-04-26). Part I = selection principles bridging mathematics to physical identification; Part II = physical correspondences conditional on SP1–SP5; §4.6 = the bridge functional specializing SP4. See `MATH_MASTER_QUADRATIC.md` for pure mathematics (Layer 1, not merged).*
+*Consolidated from `BRIDGE_QUADRATIC_PHYSICS.md` (Layer 2), `PHYS_QUADRATIC_APPLICATIONS.md` (Layer 3), and `FOUND_BRIDGE_FUNCTIONAL.md` (FTD-0095). Part I = selection principles bridging mathematics to physical identification; Part II = physical correspondences conditional on SP1–SP5; §4.6 = the bridge functional specializing SP4. See `MATH_MASTER_QUADRATIC.md` for pure mathematics (Layer 1, not merged).*
