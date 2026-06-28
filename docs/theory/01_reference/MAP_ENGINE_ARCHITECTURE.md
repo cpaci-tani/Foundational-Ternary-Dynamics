@@ -1,7 +1,5 @@
 # Foundational Ternary Dynamics (FTD) C++ Engine: Complete Architectural Map & Gap Analysis
 
-**Version:** 5.41 (sync to 2026-06-07 engine-system documentation pass)
-**Date:** 2026-06-07
 **Subject:** Master FTD C++ Engine Architecture & Verification Report
 **Target:** `docs/theory/01_reference/MAP_ENGINE_ARCHITECTURE.md`
 **Classification:** Canonical Capstone Reference [REFERENCE / SYNTHESIS / ANALYSIS]

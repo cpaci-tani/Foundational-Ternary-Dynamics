@@ -1,7 +1,6 @@
 # SPEC: Discrete-Native Derivation Program
 
 **Status:** Methodological framework specification
-**Filed:** 2026-05-04 (post-FTD-0135 closure)
 **Tag:** [METHODOLOGICAL REFRAME] — not a derivation, not a claim
 **LEDGER row:** FTD-0136
 **Supersedes (in scope):** the implicit goal "substrate-derive SM theoretical structures" embedded in Phase A-F EFT campaigns, FTD-0050, FTD-0135, and the MC-T4.3 framing as currently stated
@@ -206,7 +205,7 @@ This is the falsifiability surface. It is real and finite. The reframe is not an
 
 ---
 
-## 6.4 Calibration feasibility audit (2026-05-04)
+## 6.4 Calibration feasibility audit
 
 A computational audit (`scripts/exploration/audit_calibration_feasibility_2026-05-04.py`) confirms the per-class feasibility under FTD-0041 calibration. Aggregate matrix:
 
