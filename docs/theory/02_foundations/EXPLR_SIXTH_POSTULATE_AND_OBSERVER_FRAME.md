@@ -1,7 +1,7 @@
 # EXPLR — The Sixth-Postulate Hole and the Observer Frame
 
 **Tag:** `[EXPLORATION]` / `[OPEN]`. **This document promotes no claim, derives nothing, and
-touches no canonical tag.** It records a long foundational exploration (2026-06-09) of candidate
+touches no canonical tag.** It records a long foundational exploration of candidate
 6th postulates for FTD, including **two formalization attempts that were adversarially falsified** —
 both preserved here as provenance so they are not re-attempted as zombies. Where this doc and any
 canonical source (`core_ledgers/LEDGER.md`, `SPEC_ALGEBRAIC_SPINE.md`, `AUDIT_BOUNDARY_MAP.md`)
@@ -80,7 +80,7 @@ threads cleanly:
 
 "Two orthogonal fields" = the real-vector form of a complex amplitude. FTD already has it twice:
 the symplectic quadrature `(q,p)` (FTD-0251) and `(Re, Im)` (EF-T5: `|x|² = E(x)² + E(ix)²`). The
-apparent fork **(q,p) vs (J,s)** dissolved (savant round, 2026-06-09) into a **division of labor**:
+apparent fork **(q,p) vs (J,s)** dissolves into a **division of labor**:
 
 - **(q,p)** — reversible, conservative — supplies the *phased amplitude* (the disposition that is sampled).
 - **(J,s) / ReLU** — irreversible, lossy — is the *act* that samples it (genesis, the arrow, collapse).
@@ -120,7 +120,7 @@ The ontology "inanimate = deterministic, animate = stochastic" was refined twice
 
 ### 6a · meaning ≈ observation-depth `d` — **`[METAPHOR, NOT DERIVATION]`**
 Conjecture: the Chebyshev observation-distance `d` (self-referential `d=0` / overlapping `1≤d≤2` /
-external `d>2`, PI-T1) behaves like mutual information. **Killed** (adversarial savant, 2026-06-09):
+external `d>2`, PI-T1) behaves like mutual information. **Killed** (adversarial):
 - **Category error** — `d` is a lattice distance (topology); MI is a functional of a joint
   distribution (probability). Equating them is the substitution-identity move CLAUDE.md forbids.
 - **Monotonicity fails** — small `d` can carry low MI (independent dynamics on shared support); large
@@ -133,7 +133,7 @@ external `d>2`, PI-T1) behaves like mutual information. **Killed** (adversarial 
 
 ### 6b · meaning ≈ `I(readout ; field)` — **`[REJECTED]` as a theory of meaning; residue `[PARAMETRIC]`/`[EXPLORATION]`**
 Repair: re-anchor to the mutual information between an observer's *readout* and the field — a genuine
-information functional. **Killed again** (adversarial savant, 2026-06-09):
+information functional. **Killed again** (adversarial):
 - **Triviality** — "coarser readout preserves less MI" is just the **data-processing inequality**,
   true of every system, zero FTD-specific content.
 - **Semantics ≠ correlation** — MI is symmetric and syntactic; high MI is not *aboutness* (Searle,
@@ -236,7 +236,7 @@ written relative to it; there is no view from nowhere. The hypothesis under expl
 
 ---
 
-## 11 · Round 3 (2026-06-09): the kinematic Frame Postulate — adversarially scoped down
+## 11 · Round 3: the kinematic Frame Postulate — adversarially scoped down
 
 The §9 kinematic face was run through a three-lens savant round (constructive / logical-relation /
 falsifier). Verdict: **the naive form fails; a heavily-scoped form survives as
@@ -306,7 +306,7 @@ experiment queued `[OPEN]`.*
 
 ---
 
-## 12 · Round 4 (2026-06-09): the grand unification — **object-level CLOSED-NEGATIVE**, schema survives as navigation only
+## 12 · Round 4: the grand unification — **object-level CLOSED-NEGATIVE**, schema survives as navigation only
 
 The highest-risk question was put directly: can a **single frame primitive** carry both axiom-halves —
 and, the grand prize, subsume all five §1/§8 holes as sections of one "redundancy bundle"? Three lenses
@@ -380,7 +380,7 @@ L≤257 isotropy sweep (§11d), `[OPEN]`, pre-registration required.*
 
 ---
 
-## 13 · Round 5 (2026-06-09): the consolidation bet — Instantiation → non-commutativity — **theorem-level CLOSED-NEGATIVE**
+## 13 · Round 5: the consolidation bet — Instantiation → non-commutativity — **theorem-level CLOSED-NEGATIVE**
 
 The last live consolidation ("go big"): can a single **stochastic-Instantiation** postulate purchase
 *both* the actualization face *and* the quantum-non-commutativity face — the latter emergent via
@@ -466,7 +466,7 @@ neither claimed.
 
 ---
 
-## 15 · Spin-off (2026-06-09): the Spekkens placement → does FTD make a falsifiable QM divergence? **No.**
+## 15 · Spin-off: the Spekkens placement → does FTD make a falsifiable QM divergence? **No.**
 
 A *distinct, positive* line opened from §13d's Spekkens characterization (not a reopening of the closed
 unification arc): if FTD is a Spekkens-type (non-contextual) model, and quantum **contextuality** is
