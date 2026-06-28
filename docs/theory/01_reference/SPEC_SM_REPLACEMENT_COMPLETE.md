@@ -1,9 +1,7 @@
 # The Complete Standard Model Replacement: From L_SM to L_RB
 
 **Document Classification:** Capstone Specification
-**Version:** 1.1 (2026-05-01 audit re-tag — abstract corrected; in-document SU(2)/QCD tags reconciled with LEDGER 2026-04-19 demotions)
-**Date:** February 25, 2026 (original); 2026-05-01 (re-tag pass)
-**Status:** Synthesis of Waves 1--4 derivations. **Re-tag pass 2026-05-01:** abstract claims of "25 [THEOREM] / 0 open items" replaced by the canonical algebraic spine + LEDGER current state. Several in-document `[THEOREM]` tags on SU(2)/QCD observables (sin²θ_W, α_s = 7/59, Yukawa-power masses) demoted to `[PARAMETRIC]` or `[STRUCTURALLY MOTIVATED PARAMETRIC]` per LEDGER FTD-0018/0019/0020 (demoted 2026-04-19) and FTD-0094 (demoted 2026-04-27).
+**Status:** Synthesis of Waves 1--4 derivations. Abstract claims of "25 [THEOREM] / 0 open items" are replaced by the canonical algebraic spine + LEDGER state. Several in-document `[THEOREM]` tags on SU(2)/QCD observables (sin²θ_W, α_s = 7/59, Yukawa-power masses) are demoted to `[PARAMETRIC]` or `[STRUCTURALLY MOTIVATED PARAMETRIC]` per LEDGER FTD-0018/0019/0020 and FTD-0094.
 **Depends on:** All documents in Categories 1--3 of META_INDEX.md
 **Authoritative source for tag conflicts:** [`07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) wins over this document.
 
@@ -15,7 +13,7 @@ The Standard Model Lagrangian $\mathcal{L}_{\text{SM}}$ consists of six disconne
 
 $$\mathcal{L}_{\text{RB}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}} - g_c \cdot s \cdot (\nabla \cdot \mathbf{J}) - \lambda_G(\nabla \cdot \mathbf{J} - \rho_{\text{charge}})^2$$
 
-from which all gauge sectors, the Higgs mechanism, fermion masses, mixing angles, and gravity emerge. The entire framework traces to one physical axiom ($D = 3$ cubic lattice with ternary states and local deterministic updates) and one canonical mathematical constant (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$; **note: $G^*$ is NOT the lemniscate constant $\varpi \approx 2.6221$ — the two are related by $G^* = \varpi \cdot 2/\sqrt{\pi}$ but are distinct quantities, see FTD-0117 typo-bug closure**). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ and $x_- = 3.024$. The polynomial itself is [THEOREM] (FTD-0001); the **physical identifications** $x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c = 3$ (0.80%) are tagged [STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014; downgraded from [THEOREM] in the 2026-04-19 reframe). The framework integers $\{3, 4, 7, 13\}$ structure many coupling and mass formulas, but their use in deriving observables is mostly [PARAMETRIC]/[STRUCTURALLY MOTIVATED PARAMETRIC] rather than [DERIVED]. Gravity via the lattice availability factor $f = 1 - \mathcal{L}^2$ reproduces Schwarzschild, Kerr, and Reissner-Nordstrom metrics ([THEOREM] / [SELECTION] depending on the specific result). **Honest accounting per LEDGER (2026-05-01):** the canonical algebraic spine has six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered; see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0); roughly 23 individual derivations carry [DERIVED] or sub-[THEOREM] tags across the project; ~129 [PARAMETRIC] insertions remain (per [`CATALOG_PARAMETRIC_INSERTIONS.md`](../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)); ~10 [IMPOSED]/[SELECTION] choices; **at least 87 [OPEN] items** are tracked in [`TRACKER_OPEN_ITEMS.md`](../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) (NOT zero); the framework rests on 5 axioms + a two-layer ontology + the calibration $a_{\text{phys}} \equiv \ell_P$ (FTD-0041, 2026-04-19). What is genuinely achieved and what is honestly not yet derived are distinguished throughout.
+from which all gauge sectors, the Higgs mechanism, fermion masses, mixing angles, and gravity emerge. The entire framework traces to one physical axiom ($D = 3$ cubic lattice with ternary states and local deterministic updates) and one canonical mathematical constant (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$; **note: $G^*$ is NOT the lemniscate constant $\varpi \approx 2.6221$ — the two are related by $G^* = \varpi \cdot 2/\sqrt{\pi}$ but are distinct quantities, see FTD-0117 typo-bug closure**). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ and $x_- = 3.024$. The polynomial itself is [THEOREM] (FTD-0001); the **physical identifications** $x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c = 3$ (0.80%) are tagged [STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014; downgraded from [THEOREM]). The framework integers $\{3, 4, 7, 13\}$ structure many coupling and mass formulas, but their use in deriving observables is mostly [PARAMETRIC]/[STRUCTURALLY MOTIVATED PARAMETRIC] rather than [DERIVED]. Gravity via the lattice availability factor $f = 1 - \mathcal{L}^2$ reproduces Schwarzschild, Kerr, and Reissner-Nordstrom metrics ([THEOREM] / [SELECTION] depending on the specific result). **Honest accounting per LEDGER:** the canonical algebraic spine has six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered; see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0); roughly 23 individual derivations carry [DERIVED] or sub-[THEOREM] tags across the project; ~129 [PARAMETRIC] insertions remain (per [`CATALOG_PARAMETRIC_INSERTIONS.md`](../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)); ~10 [IMPOSED]/[SELECTION] choices; **at least 87 [OPEN] items** are tracked in [`TRACKER_OPEN_ITEMS.md`](../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) (NOT zero); the framework rests on 5 axioms + a two-layer ontology + the calibration $a_{\text{phys}} \equiv \ell_P$ (FTD-0041). What is genuinely achieved and what is honestly not yet derived are distinguished throughout.
 
 ---
 
@@ -201,7 +199,7 @@ $$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightar
 | 3-gluon and 4-gluon vertices from BI nonlinearity | [SELECTION] | DERIV_LATTICE_SU3_GAUGE, Section 3 |
 | QCD beta function $\beta_0 = (11N_c - 2N_f)/3 = 7$ | [THEOREM] | DERIV_LATTICE_SU3_GAUGE, Theorem 4.1 |
 | Asymptotic freedom ($\beta_0 > 0$) | [THEOREM] | DERIV_LATTICE_SU3_GAUGE, Corollary 4.1 |
-| $\alpha_s(M_Z) = b_3/(b_3 + 4N_{\text{eff}}) = 7/59 = 0.1186$ | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) | DERIV_COMPLETE_PARTICLE_PHYSICS |
+| $\alpha_s(M_Z) = b_3/(b_3 + 4N_{\text{eff}}) = 7/59 = 0.1186$ | [PARAMETRIC] (LEDGER FTD-0020, demoted) | DERIV_COMPLETE_PARTICLE_PHYSICS |
 | Confinement via Wilson loops | [SELECTION] | DERIV_LATTICE_SU3_GAUGE, Section 5 |
 | $\Lambda_{\text{QCD}}$ via dimensional transmutation | [THEOREM] | DERIV_LAMBDA_QCD_DERIVATION |
 
@@ -219,7 +217,7 @@ $$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightar
 |--------|--------|--------|
 | SU(2) from ternary doublet | [THEOREM] | DERIV_LATTICE_SU2_WEAK, Theorem 1.1 |
 | Void as SU(2) singlet | [THEOREM] | DERIV_LATTICE_SU2_WEAK, Theorem 1.2 |
-| $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13 = 0.23077$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19; numbers fit at 3.5%, mechanism is structural-fit not derived) | DERIV_LATTICE_SU2_WEAK |
+| $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13 = 0.23077$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted; numbers fit at 3.5%, mechanism is structural-fit not derived) | DERIV_LATTICE_SU2_WEAK |
 | $M_W = v \cdot g/2 = 80.36$ GeV | [THEOREM] | DERIV_LATTICE_SU2_WEAK |
 | $M_Z = M_W / \cos\theta_W = 91.19$ GeV | [THEOREM] | DERIV_LATTICE_SU2_WEAK |
 | $G_F = 1/(\sqrt{2}\,v^2)$ derived (no longer external) | [THEOREM] | DERIV_LATTICE_SU2_WEAK |
@@ -311,16 +309,16 @@ Following AUDIT_EPISTEMIC_AUDIT.md, every claim in the framework is classified:
 
 ## 4.2 What Is Genuinely Derived [THEOREM]
 
-> **2026-05-01 audit re-tag**: this table pre-dates the 2026-04-19 reframe and the 2026-05-01 spine canonicalization. **The original tags were uniformly [THEOREM]; LEDGER current state is mixed.** Tags below are reconciled against LEDGER.md as of 2026-05-01. Authoritative source: [`07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md). The canonical algebraic spine has six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered); see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0. Many "framework-integer arithmetic" results below are [STRUCTURALLY MOTIVATED PARAMETRIC] or [PARAMETRIC] in current LEDGER tagging.
+> **Tag reconciliation:** the tags below are reconciled against LEDGER.md, which is the authoritative source on tag conflicts: [`07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md). The canonical algebraic spine has six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered); see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0. Many "framework-integer arithmetic" results below are [STRUCTURALLY MOTIVATED PARAMETRIC] or [PARAMETRIC] in LEDGER tagging.
 
 These results follow from $G^*$, the master quadratic, and integer arithmetic alone:
 
-| # | Result | Formula | Status (2026-05-01) |
+| # | Result | Formula | Status |
 |---|--------|---------|--------|
 | 1 | Fine structure constant | $1/\alpha = x_+ = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, identification x_+  1/α is conjecture) |
 | 2 | Color charge number | $N_c = 3$ (independently sourced, [SELECTION]) | The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only. `N_c = 3` follows from D=3 (color = spatial flux axis ⟹ SU(D)=SU(3)) [SELECTION] — see `DERIV_LATTICE_SU3_GAUGE.md` (Theorem 1.1) and `DERIV_NC_FROM_TOPOLOGY.md` (D=3 with geometric/topological corroboration; the routes are not independent). |
-| 3 | Weak mixing angle | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19; 3.5% accuracy) |
-| 4 | Strong coupling at $M_Z$ | $\alpha_s = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) |
+| 3 | Weak mixing angle | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted; 3.5% accuracy) |
+| 4 | Strong coupling at $M_Z$ | $\alpha_s = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020, demoted) |
 | 5 | Electron mass | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [SELECTION] (LEDGER FTD-0015; prefactor $16\sqrt{2\pi}/3$ is structural [THEOREM] per FTD-0077, exponent $n=11$ is [SELECTION]) |
 | 6 | Muon/electron mass ratio | $m_\mu/m_e = 3 \times 7 \times 10 - 3 = 207$ | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 | 7 | Tau/electron mass ratio | $m_\tau/m_e = 17 \times 207 - 42 = 3477$ | [STRUCTURALLY MOTIVATED PARAMETRIC] |
@@ -333,8 +331,8 @@ These results follow from $G^*$, the master quadratic, and integer arithmetic al
 | 14 | QCD beta coefficient | $\beta_0 = (11 \times 3 - 2 \times 6)/3 = 7$ | [DERIVED] (genuine — counts physical fermion flavors at $M_Z$) |
 | 15 | CKM $\theta_{12}$ | $\arcsin\sqrt{N_c/N_{\text{eff}}} = \arcsin\sqrt{3/13}$ | [PARAMETRIC] (depends on demoted SM-3; predicted 28.7° vs measured 13.04° — 2.3% accuracy is on $|V_{us}|$, not the angle itself) |
 | 16 | CKM $\delta$ (CP phase) | $\arctan(b_3/N_c) = \arctan(7/3) = 66.8°$ | [THEOREM] |
-| 17 | PMNS $\theta_{12}$ (solar) | From $\{3, 7, 13\}$ structure | [PARAMETRIC] (LEDGER FTD-0021, demoted 2026-04-19) |
-| 18 | PMNS $\theta_{23}$ (atmospheric) | From $\{3, 7, 13\}$ structure | [PARAMETRIC] (LEDGER FTD-0021, demoted 2026-04-19) |
+| 17 | PMNS $\theta_{12}$ (solar) | From $\{3, 7, 13\}$ structure | [PARAMETRIC] (LEDGER FTD-0021, demoted) |
+| 18 | PMNS $\theta_{23}$ (atmospheric) | From $\{3, 7, 13\}$ structure | [PARAMETRIC] (LEDGER FTD-0021, demoted) |
 | 19 | Schwinger $g - 2$ | $\alpha/(2\pi)$ from one-loop vertex correction | [THEOREM] |
 | 20 | QED beta function | $\beta(\alpha) = 2\alpha^2/(3\pi)$ | [THEOREM] |
 | 21 | $\pi^0 \to \gamma\gamma$ rate | 7.73 eV from chiral anomaly | [THEOREM] (with $f_\pi$ input) |
@@ -398,8 +396,8 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 | Parameter | SM Status | FTD Formula | FTD Value | PDG/CODATA | Error | Tag |
 |-----------|-----------|-------------|-----------|------------|-------|-----|
 | $1/\alpha$ | Free (19.1) | $x_+$ from master quadratic | 137.036 | 137.035999177(21) | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, the *identification* x_+  1/α is conjecture) |
-| $\alpha_s(M_Z)$ | Free (19.2) | $b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | 0.11864 | 0.1179(9) | 0.6% | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) |
-| $\sin^2\theta_W$ | Free (19.3) | $N_c/N_{\text{eff}} = 3/13$ | 0.23077 | 0.23122(4) | 0.2% | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19) |
+| $\alpha_s(M_Z)$ | Free (19.2) | $b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | 0.11864 | 0.1179(9) | 0.6% | [PARAMETRIC] (LEDGER FTD-0020, demoted) |
+| $\sin^2\theta_W$ | Free (19.3) | $N_c/N_{\text{eff}} = 3/13$ | 0.23077 | 0.23122(4) | 0.2% | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted) |
 | $g_c$ | N/A | $\sqrt{\alpha}$ | 0.08542 | -- | -- | [PARAMETRIC] (LEDGER FTD-0031; Mechanisms A, B, C all closed-negative) |
 
 ## 5.2 Electroweak Sector
@@ -437,9 +435,9 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 |-----------|-----------|-------------|-----------|-----|-------|-----|
 | CKM $\theta_{12}$ | Free | $\arcsin\sqrt{3/13}$ | 28.7° | 13.04° (as $|V_{us}|$) | 2.3% (on $|V_{us}|$, not the angle) | [PARAMETRIC] (LEDGER; depends on demoted SM-3 sin²θ_W) |
 | CKM $\delta$ (CP) | Free | $\arctan(7/3)$ | 66.8° | 67.8° | 1.5% | [STRUCTURALLY MOTIVATED PARAMETRIC] |
-| PMNS $\theta_{12}$ | Free | From $\{3, 7, 13\}$ | ~33° | 33.44° | ~1% | [PARAMETRIC] (LEDGER FTD-0021, demoted 2026-04-19) |
-| PMNS $\theta_{23}$ | Free | From $\{3, 7, 13\}$ | ~49° | 49.0° | ~1% | [PARAMETRIC] (LEDGER FTD-0021, demoted 2026-04-19) |
-| PMNS $\theta_{13}$ | Free | From $\{3, 7, 13\}$ | ~8.6° | 8.57° | 12.6% | [PARAMETRIC] (LEDGER FTD-0019, demoted 2026-04-19; the ~1% accuracy claim is on a different fit) |
+| PMNS $\theta_{12}$ | Free | From $\{3, 7, 13\}$ | ~33° | 33.44° | ~1% | [PARAMETRIC] (LEDGER FTD-0021, demoted) |
+| PMNS $\theta_{23}$ | Free | From $\{3, 7, 13\}$ | ~49° | 49.0° | ~1% | [PARAMETRIC] (LEDGER FTD-0021, demoted) |
+| PMNS $\theta_{13}$ | Free | From $\{3, 7, 13\}$ | ~8.6° | 8.57° | 12.6% | [PARAMETRIC] (LEDGER FTD-0019, demoted; the ~1% accuracy claim is on a different fit) |
 
 ## 5.6 Gravity and Cosmology
 
@@ -486,7 +484,7 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 | Quantity | FTD Result | PDG | Status | Source |
 |----------|-----------|-----|--------|--------|
 | QCD $\beta_0$ | $(11 \times 3 - 2 \times 6)/3 = 7$ | 7 | [THEOREM] | DERIV_LATTICE_SU3_GAUGE |
-| $\alpha_s(M_Z)$ | 0.1186 | 0.1179(9) | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) | DERIV_LATTICE_SU3_GAUGE |
+| $\alpha_s(M_Z)$ | 0.1186 | 0.1179(9) | [PARAMETRIC] (LEDGER FTD-0020, demoted) | DERIV_LATTICE_SU3_GAUGE |
 | $\Lambda_{\text{QCD}}$ | ~217 MeV (dimensional transmutation) | ~217(25) MeV | [THEOREM] | DERIV_LAMBDA_QCD_DERIVATION |
 | Confinement string tension | From Wilson loop area law | ~0.18 GeV$^2$ | [SELECTION] | DERIV_LATTICE_SU3_GAUGE |
 

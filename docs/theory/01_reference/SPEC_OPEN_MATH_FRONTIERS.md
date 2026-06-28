@@ -1,8 +1,7 @@
 # SPEC — Open Math Frontiers of the Algebraic Spine
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-06-24
-**LEDGER:** companion to FTD-0318 (the 2026-06-24 spine audit) and FTD-0320 (rigidity-catalog scan).
+**LEDGER:** companion to FTD-0318 (the spine audit) and FTD-0320 (rigidity-catalog scan).
 **Purpose:** the honest, per-frontier map of what the FTD algebraic spine **can still close in-repo**, **can close only by importing a tool**, and **cannot close internally** (deep external problems). This is the goal-clause-2 deliverable — *rigorously establishing what discreteness does not determine* — for the pure-math layer. Precedence: **LEDGER > constitution > this > other prose.**
 
 Each frontier is graded:
@@ -12,7 +11,7 @@ Each frontier is graded:
 
 ---
 
-## F1 — In-repo L-value verification — **(a), PARTLY CLOSED 2026-06-24**
+## F1 — In-repo L-value verification — **(a), PARTLY CLOSED**
 
 **Question.** Are the Deligne special values behind the master-quadratic coefficients reproducible in-repo, or only asserted as cited imports?
 
@@ -22,7 +21,7 @@ Each frontier is graded:
 
 ## F2 — Maximality / canonicality of ℚ(G\*) — **(c), deep external boundary**
 
-**Question.** Theorem 9 proves only that ℚ(G\*) is a **π-free** subfield of ℚ(π, Γ(1/4)) (conditional on Chudnovsky). The 2026-06-24 audit **struck "maximal"** — it is unproven and, as literally stated, **false**: ℚ(Γ(1/4)) is a strictly larger π-free subfield by the identical Chudnovsky argument.
+**Question.** Theorem 9 proves only that ℚ(G\*) is a **π-free** subfield of ℚ(π, Γ(1/4)) (conditional on Chudnovsky). The audit **struck "maximal"** — it is unproven and, as literally stated, **false**: ℚ(Γ(1/4)) is a strictly larger π-free subfield by the identical Chudnovsky argument.
 
 **What closing requires.** A genuine maximality statement would need a lattice argument over π-free subfields of ℚ(π, Γ(1/4)) — i.e. characterizing the transcendence-degree structure of all intermediate fields. That is a **Schanuel-conjecture-class** problem in transcendence theory; FTD cannot close it internally.
 
@@ -54,7 +53,7 @@ Each frontier is graded:
 
 **Status.** No. Proving alg. independence of {π, Γ(1/4)} from first principles is a summit of transcendence theory (would follow from Schanuel). FTD cannot close it. But Chudnovsky 1976 is an **established theorem** (Waldschmidt 2000 §1.4), so "`[CONDITIONAL THEOREM given Chudnovsky 1976]`" is a legitimate, honest status — **standard mathematical practice** (no paper reproves Chudnovsky; all cite it).
 
-**Discipline (load-bearing).** The conditional clause **must ride along in every mention** — stripping it in compressed cross-refs is exactly how the over-claim crept in (the harmonic-tower doc's incoherent "Lindemann–Weierstrass via Schneider 1941" attribution, corrected 2026-06-24 → Chudnovsky 1976). Canonical surfaces that correctly state the clause: `SPEC_ALGEBRAIC_SPINE.md` §9 "Conditional clause"; LEDGER FTD-0112/0314; `AUDIT_W_CARRIER_NARROWING.md` §2. Any new mention of a transcendence-dependent result inherits the clause.
+**Discipline (load-bearing).** The conditional clause **must ride along in every mention** — stripping it in compressed cross-refs is exactly how the over-claim crept in (the harmonic-tower doc's incoherent "Lindemann–Weierstrass via Schneider 1941" attribution, corrected to Chudnovsky 1976). Canonical surfaces that correctly state the clause: `SPEC_ALGEBRAIC_SPINE.md` §9 "Conditional clause"; LEDGER FTD-0112/0314; `AUDIT_W_CARRIER_NARROWING.md` §2. Any new mention of a transcendence-dependent result inherits the clause.
 
 ## Rigidity of the integer catalog — **(a/b), PARTLY ADDRESSED; the deepest methodological question**
 
