@@ -2,12 +2,8 @@
 
 **Tag:** [THEOREM] for the computation itself, [OPEN FINDING] for the
 interpretation.
-**Status:** first explicit FTD partition-function computation (noted as
-"Priority #1" in project memory; never attempted before).
-**Date:** 2026-04-19
+**Status:** explicit FTD partition-function computation.
 **Script:** `scripts/proofs/partition_function_L2.py`
-**Trigger:** user requested a derivation from lattice first principles,
-consulting theory docs first.
 
 ---
 

@@ -1,6 +1,6 @@
 # ANALYSIS — Thermal phase map of the FTD lattice, run of record (FTD-0275)
 
-**Status:** `[MEASURED]` (pre-registered run of record). **Date:** 2026-06-12.
+**Status:** `[MEASURED]` (pre-registered run of record).
 **Pre-registration:** [`PREREG_THERMAL_PHASE_MAP_v1.md`](preregistrations/PREREG_THERMAL_PHASE_MAP_v1.md),
 git tag `preregister-thermal-phase-map-v1`, lock commit `74caabec`.
 **Artifacts (SHA256-locked):** `engine/tests/campaign_thermal_ignition.cpp`

@@ -1,7 +1,6 @@
 # ANALYSIS: Halo-exponent forcedness audit (FTD-0300)
 
 **FTD ID:** FTD-0300
-**Date:** 2026-06-13
 **Status:** `[MEASUREMENT ANALYSIS — INDETERMINATE (frozen); SPARC boundary]`
 **Pre-registration:** [`PREREG_HALO_FORCEDNESS_v1.md`](preregistrations/PREREG_HALO_FORCEDNESS_v1.md)
 **Lock tag:** `preregister-halo-forcedness-v1`  **Lock commit:** `168148e0`
