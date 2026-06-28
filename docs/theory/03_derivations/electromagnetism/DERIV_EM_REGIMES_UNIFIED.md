@@ -1,11 +1,10 @@
 # DERIV · The Three EM-Force Regimes as Different Blocking Limits
 
 **Tag:** [PARTIAL — DERIVED for PoissonLegacy equivalence; SELECTION for Emergent regime]
-**Date:** 2026-05-05
 **Status:** [DERIVED] for the equivalence between Poisson Coulomb and Legacy Gradient modes (both are computational routes to the same force derived from `L_coupling = -g_c s (∇·J)`). [SELECTION] for the relationship between these two and the Emergent mode (`L_vc = -g_c s |J|_t2` with single-vertex coupling) — emergent is a *different* effective coupling that becomes selected under different blocking assumptions, not a third regime of the same Lagrangian term.
 **Purpose:** Phase R2 of the FTD-EFT roadmap. Closes part of `STATUS_EFT_CHECKLIST.md` §7 ("Resolve exact Gauss representation for production") and clarifies the engine's three-mode toggle structure (Poisson Coulomb / direct gradient / emergent forces — see `engine/src/render_bridge_phases/phase_forces.cpp:80-106`).
 
-The original R2 plan-line claimed "show that the three EM-force modes are different regimes of the same effective coupling, not three independent insertions." The honest finding is **partial**: two of the three regimes are computational routes to the same term, and the third is a different term whose dominance is regime-dependent. This doc states that finding precisely.
+The finding on whether the three EM-force modes are different regimes of the same effective coupling (rather than three independent insertions) is **partial**: two of the three regimes are computational routes to the same term, and the third is a different term whose dominance is regime-dependent. This doc states that finding precisely.
 
 ---
 

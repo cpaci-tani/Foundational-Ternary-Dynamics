@@ -1,7 +1,7 @@
 # DERIV — The Cosmological Constant as a Scale-Covariant Holographic Ratio
 
 **Tag:** `[SELECTION]` + `[BOUNDARY]` (a *mechanism* for the smallness of Λ; **not** a derivation of its value)
-**Date:** 2026-06-26 · **LEDGER:** FTD-0331
+**LEDGER:** FTD-0331
 **Supersedes the rationale of:** `DERIV_COSMOLOGICAL_CONSTANT.md` (the `m_e⁴·α¹⁶·G*²` / `α⁵⁷` numerology) and reconciles its zero-point basis against FC-1.
 **Depends on:** FC-1 (FTD-0255), FC-3 (FTD-0304), the undefined-boundary ontology (`AUDIT_INFINITY_REFRAME.md`), the no-native-length no-go (FTD-0059), the area-law / holographic-principle results (`DERIV_BLACK_HOLE_PHYSICS.md`).
 

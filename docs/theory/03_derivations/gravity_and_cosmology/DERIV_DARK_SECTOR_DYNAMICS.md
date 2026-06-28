@@ -2,10 +2,7 @@
 
 ## Unifying the Coupling Source and Selective Damping
 
-**Document Version:** 1.0
-**Date:** March 17, 2026
 **Status:** [SELECTION] (subsections vary; see Claims Table S8)
-**Framework:** Foundational Ternary Dynamics v5.28
 
 > **Per FTD-0331 (governing)** the matter-driven flux injection carries **NO
 > L-dependence** and is **NOT a viable Λ source** — the source is **[OPEN]** and
@@ -149,7 +146,7 @@ Every manifested particle builds a self-field envelope through the coupling sour
 | Peak flux | 0.0316 | J_peak at particle site neighbors |
 | Power-law exponent | -0.69 | log-log fit for r >= 7 |
 
-> **FTD-0300 (2026-06-13) — the -0.69 above is falsified as a forced value.** A
+> **FTD-0300 — the -0.69 above is falsified as a forced value.** A
 > pre-registered GPU L-grid {64,96,128,160} audit (`preregister-halo-forcedness-v1`)
 > found -0.69 is the L=64 transient; the windowed exponent **converges to -1.25** at
 > L >= 128, and the lossless (selective-ON) self-field **box-fills** the periodic
@@ -293,15 +290,4 @@ resolution is asserted.
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | Gravitational force from density gradient |
 | campaign_dark_sector.cpp | 8 verification tests (DS-1 through DS-8) |
 
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-03-17 | Initial: coupling injection, selective damping, dark sector unification |
-
----
-
-*Document Version 1.0 -- March 17, 2026*
 *Framework: Foundational Ternary Dynamics v5.28*
