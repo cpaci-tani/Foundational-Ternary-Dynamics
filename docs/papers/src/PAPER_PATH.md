@@ -1,7 +1,6 @@
 # FTD Paper Path — Complete
 
 **Status:** 11 path papers, all written/edited. Math-first foundation → physics claims.
-**Date:** March 28, 2026
 
 **Layout rule:** TeX sources for the path live in `docs/papers/src/`; active compiled PDFs live in `docs/papers/`; archived PDFs live in `docs/papers/archive/`.
 
