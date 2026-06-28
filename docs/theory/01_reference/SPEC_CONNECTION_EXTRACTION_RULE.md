@@ -1,7 +1,6 @@
 # SPEC - Connection Extraction Rule & Topological Holonomy
 
 **Tag:** [OPEN PROGRAM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0209 [SYNTHESIS] - formalizes the extraction of $A_J$ to bypass the longitudinal holonomy obstruction.
 **Companion docs:** `SPEC_CLOSED_FLUX_LOOP_READOUT.md`, `SPEC_LATTICE_HODGE_CONNECTION.md`
 

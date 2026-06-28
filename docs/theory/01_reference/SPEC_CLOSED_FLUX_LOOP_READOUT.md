@@ -1,7 +1,6 @@
 # SPEC - Closed Flux-Loop Readout Formalism
 
 **Tag:** [SUPERSEDED]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0207 [SYNTHESIS] - defines the focused topological candidate for alpha readout and the two-phase proof obligation.
 
 > **[SUPERSEDED]:** This static geometric/topological approach was falsified by direct engine evaluation. The Phase 2 operator failed the "Gauge Trap" test. This entire formalism is replaced by the dynamical return-map architecture in `SPEC_ALPHA_READOUT_OSCILLATORY_CLOUD.md`.

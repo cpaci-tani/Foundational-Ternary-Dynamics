@@ -1,7 +1,6 @@
 # SPEC - Lattice Hodge Connection & Holonomy Sector
 
 **Tag:** [OPEN PROGRAM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0208 [SYNTHESIS] - formalizes the lattice Hodge decomposition for Phase 1 of the alpha readout proof.
 **Companion docs:** `SPEC_CLOSED_FLUX_LOOP_READOUT.md`
 

@@ -1,16 +1,15 @@
 # The δ-act — the act-of-intent reading of FC-W (the constitution's live FC-4)
 
-> **STATUS: RECONCILED (2026-06-25 merge).** This document was originally drafted in a parallel session as a *proposed* FC-4 (declare the δ-branch), written before that session knew **FC-W** had already been adopted on `main` as the constitution's FC-4 (FTD-0315). **FC-4 is live — it is FC-W.** This document is therefore **not** a separate proposal and does **not** mint anything; it is the **act-of-intent characterization of the same commitment**. It is retained because the act-lens (a square root taken by an act, not by a structure) is the deepest reading of *why* FC-W is the honest move — but no second declaration is introduced.
+> **The δ-act is FC-W, not a separate commitment.** **FC-4 is live — it is FC-W** (FTD-0315). This document is therefore **not** a separate proposal and does **not** mint anything; it is the **act-of-intent characterization of the same commitment**. It is retained because the act-lens (a square root taken by an act, not by a structure) is the deepest reading of *why* FC-W is the honest move — but no second declaration is introduced.
 
 **Tag:** `[SYNTHESIS]` — an interpretive reading of the live FC-W (`[AXIOM]`-class, FTD-0315). Introduces no new commitment.
-**Date:** 2026-06-25 (drafted); reconciled to FC-W on merge.
 **Canonical declaration:** `SPEC_FTD_FRAMEWORK_V1.md` §3.5 (FC-W). **Context:** FTD-0326 (`FOUND_MCT43_NATIVE_Z2_PERMANENCE.md`) — no FTD-native ℤ/2 supplies `δ = √(G*(4G*−1))`; corroborates the broader carrier-narrowing theorem **FTD-0314** (no native finite-symmetry carrier realizes it). FTD-0244 `[THEOREM]` is the field-theoretic core; FTD-0242 maps MC-T4.3; FTD-0323 supplies the act-lens.
 
 ---
 
 ## 1 · FC-W and the δ-act are the same commitment
 
-The carrier-narrowing arc (`main`) and the act-count arc (this branch) **converged on the same wall and the same fix**. Both prove the substrate cannot, by any native symmetry, select the master-quadratic root `x₊ = 8G*² + 4G*·δ` — performing the `δ ↦ −δ` ℤ/2 requires moving outside `ℚ(G*)`, while every native operator fixes `ℚ(G*)` (FTD-0244 Lemma 1; FTD-0326). The surviving exit-(i) ("a 6th-postulate-class input forcing the operator," FTD-0242 §7) therefore cannot be a *derivation* — only a **declaration** that the model realizes the branch. `main` made exactly that declaration as **FC-W**.
+The carrier-narrowing arc and the act-count arc **converge on the same wall and the same fix**. Both prove the substrate cannot, by any native symmetry, select the master-quadratic root `x₊ = 8G*² + 4G*·δ` — performing the `δ ↦ −δ` ℤ/2 requires moving outside `ℚ(G*)`, while every native operator fixes `ℚ(G*)` (FTD-0244 Lemma 1; FTD-0326). The surviving exit-(i) ("a 6th-postulate-class input forcing the operator," FTD-0242 §7) therefore cannot be a *derivation* — only a **declaration** that the model realizes the branch. That declaration is **FC-W**.
 
 | | **FC-W** — the carrier framing (live, FTD-0315) | **the δ-act** — the act-of-intent framing (this reading) |
 |---|---|---|
