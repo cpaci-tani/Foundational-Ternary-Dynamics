@@ -1,7 +1,6 @@
 # FTD Web Dashboard — Power-User Guide
 
 **Status:** `[REFERENCE]`
-**Updated:** 2026-04-18
 **Audience:** Researchers, contributors, and curious physicists who want to get real work out of the dashboard
 
 **Companion:** [engine/VISUAL_GUIDE.md](../../VISUAL_GUIDE.md) is the visual
@@ -73,7 +72,7 @@ The dashboard has **two simulation backends**:
 
 **Force MockBridge for development:** append `?dev=1` to the URL. Useful when iterating on scenario authoring (edit `engine/web/js/bridge/scenarios/*.js`, refresh page, changes live — no WASM rebuild needed).
 
-**Why two backends exist:** The WASM backend runs real FTD physics at native speed. MockBridge exists so new scenario authors can iterate in pure JS, and so CI can test the UI without an Emscripten toolchain. Both implementations were audited for parity in April 2026 — every UI scenario produces equivalent behavior on both.
+**Why two backends exist:** The WASM backend runs real FTD physics at native speed. MockBridge exists so new scenario authors can iterate in pure JS, and so CI can test the UI without an Emscripten toolchain. Both implementations are audited for parity — every UI scenario produces equivalent behavior on both.
 
 ---
 
@@ -143,7 +142,7 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 Six scenarios use randomness:
 - `flux-random-genesis`, `flux-thermalization`, `flux-vacuum-foam`, `flux-zero-point`, `quantum-born-rule`, `quantum-casimir`
 
-The RNG is **reset to a fixed seed on every `setupScenario` call** (as of 2026-04-18), so repeated runs in the same browser session produce identical results. A page reload also produces the same sequence. This is intentional — it makes snapshot-based testing possible.
+The RNG is **reset to a fixed seed on every `setupScenario` call**, so repeated runs in the same browser session produce identical results. A page reload also produces the same sequence. This is intentional — it makes snapshot-based testing possible.
 
 ### Scale 1 particle scenarios
 
@@ -495,7 +494,7 @@ forward navigation precise:
 - **Fix:** Pick a scenario that actually seeds flux (e.g. `flux-pulse`). Verify via `window._ftdBridge.getDiagnostics().totalFlux > 0`.
 
 ### "Scenario loads but lattice stays empty on WASM (not Mock)"
-- **As of 2026-04-18 this is fixed.** All 84 UI scenarios now run on WASM. If you still see this, hard-refresh (Ctrl+Shift+R) to clear cached WASM binary.
+- All 84 UI scenarios run on WASM. If you see this, hard-refresh (Ctrl+Shift+R) to clear cached WASM binary.
 
 ### "Sim runs too fast / blinks particles"
 - **Cause:** Ticks-per-frame is too high.
@@ -503,7 +502,7 @@ forward navigation precise:
 
 ### "Paused simulation's opacity still pulses"
 - **Cause:** Animation clock advancing during pause.
-- **Fix (as of 2026-04-18):** This is the ticket-14 regression test. If you see it, it's a regression — file a bug and re-run `tests/animation-clock-freeze.spec.js`.
+- **Fix:** This is the ticket-14 regression test. If you see it, it's a regression — file a bug and re-run `tests/animation-clock-freeze.spec.js`.
 
 ### "Scenario xyz doesn't work"
 - Check the console for a JS error.
@@ -562,7 +561,7 @@ cd engine/web/tests && npx playwright test wasm-scenario-coverage.spec.js
 cd engine/web/tests && npx playwright test animation-clock-freeze.spec.js
 cd engine/web/tests && npx playwright test perf-baseline.spec.js
 
-# JSC++ scenario parity guard (new 2026-04-19):
+# JSC++ scenario parity guard:
 # Fails CI if a scenario exists in the JS group files but not in
 # engine/src/scenarios.cpp (or vice versa). Fast — runs in <1s.
 cd engine/web/tests && npx playwright test scenario-parity.spec.js

@@ -1,18 +1,17 @@
 # RNG Portability Design — CPUGPU Bit-Exact Stochastic Operations
 
 **Status:** [DESIGN — awaiting implementation choice]
-**Date:** 2026-05-05
 **Scope:** bug-hunt deferred items BH-F5 (evaporation Boltzmann probability), BH-F8 (spin fallback), BH-F9 (RNG portability).
 
 ## Problem statement
 
-The 2026-05-04 bug-hunt audit (commit `f2a721a`) flagged three deferred CPUGPU parity bugs whose root cause is shared:
+The bug-hunt audit (commit `f2a721a`) flagged three deferred CPUGPU parity bugs whose root cause is shared:
 
 - **BH-F5** — evaporation Boltzmann probability uses different RNG streams: CPU `voxel_uniform()` (SplitMix64) at `engine/src/render_bridge_phases/phase_write.cpp:53-64`; GPU `curandGenerateUniformDouble` (Philox4_32_10 internally) at `engine/cuda/gpu_engine.cu:256`.
 - **BH-F8** — genesis spin fallback (when curl is zero, spin is chosen randomly): CPU at `phase_write.cpp:104-106`; GPU has no equivalent fallback at all (it leaves spin uninitialised on the genesis-with-zero-curl path).
 - **BH-F9** — RNG portability writ large: same as F5 but framed as a cross-cutting issue. Any future stochastic kernel will hit the same divergence by default.
 
-All three boil down to: **the same physical operation reads different random streams on CPU vs GPU**. Per-voxel state diverges deterministically from tick 1 onwards in any test that exercises a stochastic toggle. The 2026-05-04 `gpu_parity_complete` 20-domain sweep does pass, because its assertions either disable stochastic toggles or compare ensemble quantities (total manifested count) rather than per-voxel state.
+All three boil down to: **the same physical operation reads different random streams on CPU vs GPU**. Per-voxel state diverges deterministically from tick 1 onwards in any test that exercises a stochastic toggle. The `gpu_parity_complete` 20-domain sweep does pass, because its assertions either disable stochastic toggles or compare ensemble quantities (total manifested count) rather than per-voxel state.
 
 ## Two options
 
@@ -66,7 +65,7 @@ Add a CONVENTION note to `engine/SPEC_ENGINE.md`: "CPU and GPU diverge at per-vo
 **Pros:**
 - Minimal code change (~50 LOC of test relaxation + documentation).
 - Retains cuRAND's high statistical quality on GPU.
-- On audit: `render_bridge_golden` produces hash `0xb604d81a3d79366e` at L=17, 100 ticks (CPU-only, force_cpu; re-baselined 2026-06-17 for the audit m1 gauss_violation scope fix — was `0x56fa28acb5b9fe88`). If genesis stochastic operations diverge between CPU and GPU, the hash should fire on a GPU run. **The golden test runs the CPU path only by design.**
+- On audit: `render_bridge_golden` produces hash `0xb604d81a3d79366e` at L=17, 100 ticks (CPU-only, force_cpu; re-baselined for the audit m1 gauss_violation scope fix — was `0x56fa28acb5b9fe88`). If genesis stochastic operations diverge between CPU and GPU, the hash should fire on a GPU run. **The golden test runs the CPU path only by design.**
 
 **Cons:**
 - "Bit-exact CPUGPU" claim becomes scope-restricted to deterministic operations — a documentation-and-marketing-grade weakening.

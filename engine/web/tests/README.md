@@ -65,7 +65,7 @@ with the 8080 that many developers leave running manually.
   checks the conservative toggle recipe, Maxwell Hamiltonian conservation,
   `c_lat`, strict locality, charge conservation, genesis scaling/cluster
   count/null control, determinism, and Gauss projection.
-- **Lifecycle harness** (engine-flawless audit, 2026-06-01): `lifecycle-harness`
+- **Lifecycle harness**: `lifecycle-harness`
   drives a per-scale mount → unmount round trip and asserts the net listener /
   resource leak is zero across scales.
 - **Claim reconciliation**: `reconcile-claims` re-asserts the four prior

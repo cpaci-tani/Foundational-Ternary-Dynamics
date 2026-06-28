@@ -1,8 +1,6 @@
 # Scientific Status of FTD Engine Tests
 
-**Last updated: 2026-05-27**
-
-> **Provenance note (2026-05-27 cleanup):** Phase B diagnostic arc closed 2026-05-04 (FTD-0136 retractions, commit `08c517e` removed 30 superseded exploratory tests). Canonical engine reference is `engine/SPEC_ENGINE.md`. The Phase B keepers (9 files: `cluster_tracker` + 4 persistence sanity tests + 4 `dump_full_physics*` runners) build clean via WSL2/CUDA ninja. See SPEC_ENGINE.md §"May 2026" entries and §5.6.21–§5.6.27 for the closure record. The grade tables below predate the Phase B closure and the 2026-05 BH-F* GPU plumbing sweep; treat them as a snapshot, not a current measurement. No grade values are revised in this refresh — content edits beyond the date stamp are out of scope for a cleanup pass.
+> **Provenance note:** The Phase B diagnostic arc is closed (FTD-0136 retractions, commit `08c517e` removed 30 superseded exploratory tests). Canonical engine reference is `engine/SPEC_ENGINE.md`. The Phase B keepers (9 files: `cluster_tracker` + 4 persistence sanity tests + 4 `dump_full_physics*` runners) build clean via WSL2/CUDA ninja. See SPEC_ENGINE.md §5.6.21–§5.6.27 for the closure record. The grade tables below predate the Phase B closure and the BH-F* GPU plumbing sweep; treat them as a snapshot, not a current measurement.
 
 ## What These Tests DO Verify
 
@@ -89,17 +87,17 @@
 3. **Blind predictions**: Make a prediction BEFORE the measurement, not after
 4. **Independent replication**: Someone outside the project reproduces the results
 
-### Current Assessment (Updated April 13, 2026)
+### Current Assessment
 - **Software engineering**: Excellent (A)
 - **Internal consistency**: Very good (A-)
-- **Physical validation**: Good (B+) — was C; 20-benchmark engine-theory bridge now exists
+- **Physical validation**: Good (B+) — was C; 20-benchmark engine-theory bridge exists
 - **External cross-validation**: Partial (C) — was F; internal theory validated, no external data yet
 - **Novel predictions**: Post-dictions only (D+)
 - **Overall scientific credibility**: B — was C+
 
-### Engine-Theory Bridge (April 13, 2026)
+### Engine-Theory Bridge
 
-For the first time, engine output has been quantitatively compared to theoretical predictions via 20 benchmarks in `benchmark_engine_theory.cpp`:
+Engine output is quantitatively compared to theoretical predictions via 20 benchmarks in `benchmark_engine_theory.cpp`:
 
 | Benchmark | Grade | Key Result |
 |-----------|-------|------------|
@@ -118,15 +116,15 @@ For the first time, engine output has been quantitatively compared to theoretica
 | Spin-orbit splitting | B+ | 2.7e-12 energy shift detected |
 | Relativistic correction | A | Peak velocity limited by gamma factor |
 
-### EFT Reconstruction (April 13, 2026)
+### EFT Reconstruction
 
-Alpha is now a DERIVED quantity: `ALPHA_EFT = G_C * G_C` where G_C is the wave equation coupling. The `emergent_forces` toggle computes force from the flux field gradient without a Poisson solver. Emergent force IS detected (nonzero acceleration from field dynamics alone).
+Alpha is a DERIVED quantity: `ALPHA_EFT = G_C * G_C` where G_C is the wave equation coupling. The `emergent_forces` toggle computes force from the flux field gradient without a Poisson solver. Emergent force IS detected (nonzero acceleration from field dynamics alone).
 
-### Budget Equation (April 13, 2026)
+### Budget Equation
 
-The master quadratic self-consistency equation x/K + G*/x = 1 has been **verified on the lattice** to 0.2% at optimal measurement radius (r=6 on L=32, r=8 on L=48). This is the first lattice evidence that the budget equation is real physics.
+The master quadratic self-consistency equation x/K + G*/x = 1 is **verified on the lattice** to 0.2% at optimal measurement radius (r=6 on L=32, r=8 on L=48). This is lattice evidence that the budget equation is real physics.
 
-### New Physics Domains (April 13, 2026)
+### New Physics Domains
 
 | Domain | File | Pass Rate | Key Result |
 |--------|------|-----------|------------|
@@ -135,7 +133,7 @@ The master quadratic self-consistency equation x/K + G*/x = 1 has been **verifie
 | Einstein Eqns | test_einstein_equations.cpp | ~10/25 | **Superposition to 0.08%** |
 | BH Thermo | benchmark_black_hole_thermo.cpp | ~5/15 | Entropy area-law hint, Smarr exact |
 
-**FIXED (Late April 13, 2026)**: Latency field sign issue resolved. One-line change in `render_bridge.cpp` (`sqrt(max(phi,0))` -> `sqrt(|phi|)`). GR sector now fully operational.
+**Latency field sign fix**: One-line change in `render_bridge.cpp` (`sqrt(max(phi,0))` -> `sqrt(|phi|)`) makes the GR sector fully operational.
 
 ### GR Validation (Post-Fix)
 - **Einstein EIN-4c**: tau ratio 0.9837 matches theoretical sqrt(1-L^2) to **0.004%**
@@ -143,22 +141,22 @@ The master quadratic self-consistency equation x/K + G*/x = 1 has been **verifie
 - **BH latency profiles**: L_peak = 0.327/0.494/0.616 for cluster_r=2/3/4 (approaching horizon at L=1)
 - **BH proper time**: clocks at r=5 run 2.9% slower than r=9 (first lattice GR demonstration)
 
-### Theory-paper updates (April 13, 2026)
-Historical April status; current claim tags defer to the project LEDGER.
+### Theory-paper references
+Current claim tags defer to the project LEDGER.
 1. `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — continuum-limit/QED equivalence scope; `x_+ = 1/alpha` remains ledger-scoped
 2. `DERIV_SINGLET_FROM_VOID_EVENT.md` — Void event -> singlet state in 5 lemmas (Bell loop closed)
 3. `DERIV_NC_FROM_TOPOLOGY.md` — N_c = 3 from 4 independent routes (over-determination)
 
-### Infrastructure (April 13, 2026)
-- **WASM rebuilt**: ftd_core.js/wasm deployed to engine/web/wasm/
-- **DagEngine fixed**: 4 missing pure virtual overrides added (unblocks WASM build)
+### Infrastructure
+- **WASM**: ftd_core.js/wasm deployed to engine/web/wasm/
+- **DagEngine**: 4 pure virtual overrides present (required for WASM build)
 
-### Updated Assessment (Session End, April 13, 2026)
+### Updated Assessment
 - **Software engineering**: Excellent (A)
 - **Internal consistency**: Very good (A-)
 - **Physical validation**: Strong (B+/A-) — 20 benchmarks + Wilson/gluon/Einstein/BH + latency fix
 - **External cross-validation**: Partial (C) — internal theory only
-- **Overall scientific credibility**: **B+** (was C+ in March)
+- **Overall scientific credibility**: **B+** (was C+)
 
 ### Path Forward
 The test suite needs to evolve from "does the code work?" to "does the physics work?" The most impactful additions would be:

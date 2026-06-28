@@ -1,7 +1,7 @@
 # Theme Design Specification
 
 Status: `[SELECTION]` canonical design spec for the FTD web UI palette system
-Version: 1.0 (2026-04-16)
+Version: 1.0
 Applies to: `engine/web/css/**`, all JS template strings in `engine/web/js/**`
 
 ---
@@ -574,11 +574,3 @@ engine/web/
     ├── historical/SPEC_CSS_REVAMP.md — Five-phase CSS refactor provenance
     └── SPEC_THEME_DESIGN.md    — THIS FILE
 ```
-
----
-
-## 10. Version History
-
-| Version | Date | Change |
-|---|---|---|
-| 1.0 | 2026-04-16 | Initial spec: two-region token model, 5-theme parity, WCAG AA validated |
