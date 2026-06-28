@@ -1,7 +1,5 @@
 # Lattice Physics Reference
 
-**Living document.** Last updated: April 10, 2026
-
 Physics phenomena to recover from empirical observation, paired with their lattice-based definitions and current status.
 
 ---
@@ -150,7 +148,7 @@ Physics phenomena to recover from empirical observation, paired with their latti
 
 ---
 
-## The 2^3 / 3^3 Distinction: Matter vs Life (April 2026)
+## The 2^3 / 3^3 Distinction: Matter vs Life
 
 Two minimal cubic lattices encode two fundamentally different modes of being:
 
@@ -179,7 +177,7 @@ F sits inside O as the 8 corner vertices. But F has no center. The step from F t
 
 ---
 
-## Two-Mechanism Gravity (April 2026, revised April 10)
+## Two-Mechanism Gravity
 
 GR packages gravity into one mechanism (spacetime curvature). FTD decomposes it into two:
 
@@ -216,7 +214,7 @@ Scripts: `explore_gr_decomposition.py`, `explore_two_mechanism_gravity.py`, `exp
 
 ---
 
-## Tension Resolution Status (April 2026, revised April 10)
+## Tension Resolution Status
 
 ### Tension 1: Metric Scaling (1/r^2 vs 1/r) -- DISSOLVED
 
@@ -246,7 +244,7 @@ The formula N_crit = G*^3/alpha = 3549 (matching ~3500 observed) is:
 
 ---
 
-## Master Quadratic Audit (April 2026)
+## Master Quadratic Audit
 
 The chain from Z[i] to alpha, verified link by link:
 
@@ -270,7 +268,7 @@ Scripts: `explore_master_quadratic_audit.py`, `explore_link5_derivation.py`
 
 ---
 
-## Prime Splitting and the Forces (April 2026)
+## Prime Splitting and the Forces
 
 The imaginary unit i sorts primes by their behavior in Z[i]:
 

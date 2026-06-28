@@ -2,7 +2,6 @@
 
 ## Why the "Circular" Arguments Are the Derivation
 
-**Date:** March 16, 2026
 **Status:** Foundational principle — upgrades the derivation chain
 **Dependencies:** DERIV_QUADRATIC_NECESSITY.md, DERIV_WATSON_GSTAR_IDENTITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, FOUND_BORN_RULE_NULL_CONE.md
 

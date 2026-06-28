@@ -2,12 +2,10 @@
 
 ## The Constant Chain γ → ϖ → M → π → G*
 
-**Date:** February 10, 2026
-**Framework:** Foundational Ternary Dynamics v5.22
-**Status:** Historical/interpretive structural atlas of the γ → ϖ → M → π → G* constant chain; **not** the canonical derivation chain for α.
+**Status:** Interpretive structural atlas of the γ → ϖ → M → π → G* constant chain; **not** the canonical derivation chain for α.
 **Epistemic Tags:** [THEOREM] for structural results, [DEFINITION] for defining relations, [STANDARD] for classical analysis, [SELECTION] for ordering, [CONJECTURE] for physical interpretation
 
-> **Reevaluation note (2026-05-18).** This document predates the current FQCR / Algebraic Spine / Ontic Truth tracker stack. Its useful content is the classical-analysis atlas showing how Euler's constant γ appears in Γ(1/4), and hence in ϖ and G*. It should not be cited as deriving the physical fine-structure constant. Current canonical status lives in `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`, `docs/theory/01_reference/SPEC_FQCR.md`, and `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`: the G* identities and master quadratic are theorem-level; the physical identification `x_+ = 1/α` remains [STRONGLY MOTIVATED CONJECTURE].
+> **Scope note.** This document's useful content is the classical-analysis atlas showing how Euler's constant γ appears in Γ(1/4), and hence in ϖ and G*. It should not be cited as deriving the physical fine-structure constant. Canonical status lives in `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`, `docs/theory/01_reference/SPEC_FQCR.md`, and `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`: the G* identities and master quadratic are theorem-level; the physical identification `x_+ = 1/α` remains [STRONGLY MOTIVATED CONJECTURE].
 
 ---
 
@@ -374,7 +372,4 @@ The physical implication (if the master quadratic identification x₊ = 1/α is 
 
 ---
 
-*Document created: February 10, 2026*
-*Revised: February 11, 2026 (v3 — honest reclassification: structural results distinguished from definitional tautologies and numerical searches)*
-*Epistemic corrections (v5.29): February 2026 — standard analysis results re-tagged [STANDARD] (not FTD [THEOREM]s); gamma chain summary clarified*
-*Framework: Foundational Ternary Dynamics v5.22*
+*Epistemic note: structural results are distinguished from definitional tautologies and numerical searches; standard-analysis results are tagged [STANDARD] (not FTD [THEOREM]s).*

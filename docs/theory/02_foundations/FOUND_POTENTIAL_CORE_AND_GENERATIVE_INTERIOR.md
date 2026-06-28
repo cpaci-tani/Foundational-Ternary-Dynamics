@@ -2,8 +2,6 @@
 
 ## A disciplined conceptual vocabulary for context-conditioned manifestation
 
-**Date:** April 11, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
 **Status:** Foundational conjecture note - terminology, schema, visual model, and 3^3 lattice grounding
 
 ---
@@ -665,7 +663,7 @@ The self-observation loop -- where a single 3^3 cluster's Manifest Output re-ent
 
 ### Why the sLoop requires BCC
 
-Simulation (`scripts/exploration/gap_equation_layer_convergence.py`, corrected April 11) confirms that the gap equation's self-energy coefficient comes from the **BCC lattice Green's function**. The Watson identity `W_3 = G*^2/(2 pi) = Gamma(1/4)^4/(4 pi^3)` is a BCC fact, arising from the **multiplicative** structure of the BCC eigenvalue `1 - cos k_1 * cos k_2 * cos k_3`.
+Simulation (`scripts/exploration/gap_equation_layer_convergence.py`) confirms that the gap equation's self-energy coefficient comes from the **BCC lattice Green's function**. The Watson identity `W_3 = G*^2/(2 pi) = Gamma(1/4)^4/(4 pi^3)` is a BCC fact, arising from the **multiplicative** structure of the BCC eigenvalue `1 - cos k_1 * cos k_2 * cos k_3`.
 
 This means:
 
@@ -758,7 +756,7 @@ The 3^3 grounding extends this to:
 | PI-C11 | Coupling is causal | 14 |
 | PI-C12 | Mode hierarchy maps to Bell levels | 15 |
 | PI-C13 | Depth of observation | 16 |
-| PI-C14 | BCC provides gap equation coefficient (confirmed by simulation, corrected) | 16 |
+| PI-C14 | BCC provides gap equation coefficient (confirmed by simulation) | 16 |
 | PI-C15 | Self-observation is the sLoop | 18 |
 
 ### New Theorem (Part II)
