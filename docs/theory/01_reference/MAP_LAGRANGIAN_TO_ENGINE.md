@@ -1,16 +1,15 @@
 # MAP · Lagrangian Term  Engine Implementation
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-05
 **Status:** [REFERENCE] — explicit cross-reference table from `SPEC_FTD_LAGRANGIAN.md` §3 to `engine/src/lagrangian.cpp` and the per-phase implementation files.
-**Purpose:** Phase R1 deliverable of the FTD-EFT roadmap. Closes the long-standing "force-dictionary unification" gap (Critical Gap 4 in the 2026-05-05 Phase-1 audit): every Lagrangian term in the canonical spec is mapped to its line-anchored engine site and the diagnostic that verifies the correspondence is identified.
+**Purpose:** Phase R1 deliverable of the FTD-EFT roadmap. Closes the "force-dictionary unification" gap (Critical Gap 4 in the Phase-1 audit): every Lagrangian term in the canonical spec is mapped to its line-anchored engine site and the diagnostic that verifies the correspondence is identified.
 
 The intent is twofold:
 
 1. **For readers of `SPEC_FTD_LAGRANGIAN.md`**: where in the engine does each term live, and what test checks that the engine actually implements the analytical action?
 2. **For readers of `engine/src/`**: where in the canonical spec does each line of physics-bearing code come from?
 
-Cross-reference is line-anchored at HEAD `8b1a750` (post the 2026-05-04/05 Tier-A + Tier-B engine cleanup). If line numbers drift, this doc carries no force; refresh against the live source.
+Cross-reference is line-anchored at HEAD `8b1a750` (post the Tier-A + Tier-B engine cleanup). If line numbers drift, this doc carries no force; refresh against the live source.
 
 ---
 
@@ -116,7 +115,7 @@ Every line that reads or writes physics-bearing voxel data has a Lagrangian term
 To keep the doc focused:
 
 - **Toggle-gated extensions** (color force, weak transmutation, pair production, triad binding): these are not in the canonical 3-term action; they're documented separately in `engine/include/ftd/term_toggles.h` and are conditional physics layered on top. The MAP covers only the always-on Lagrangian.
-- **Toggle interactions**: when multiple toggles are active simultaneously, behavior may not be the linear sum of single-toggle effects — non-linearity is documented in the engine's status doc (CLAUDE.md mentions the 2026-05-04 finding).
+- **Toggle interactions**: when multiple toggles are active simultaneously, behavior may not be the linear sum of single-toggle effects — non-linearity is documented in the engine's status doc.
 - **Inter-scale matching** (Scale 0→1 cluster emergence, Scale 1→2 atom emergence, etc.): handled in R5 of the EFT roadmap; this MAP is Scale-0-only.
 - **Calibration sensitivity**: how dimensional predictions shift under different gauge choices; tracked in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`.
 - **Stochastic kernels** (Langevin, Boltzmann evaporation): governed by the Rayleigh dissipation row and the BH-F5/F8/F9 RNG portability decision pending in `engine/docs/DESIGN_RNG_PORTABILITY.md`.

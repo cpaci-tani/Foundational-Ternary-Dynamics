@@ -1,7 +1,6 @@
 # SPEC · Alpha Readout as an Oscillatory Cloud Return Map
 
 **Tag:** [REFERENCE] / [OPEN PROGRAM]
-**Date:** 2026-06-15
 **Status:** Canonical replacement for the falsified `LOOP_SECTOR` formalism, upgraded with Resolvent Target geometry.
 
 ---

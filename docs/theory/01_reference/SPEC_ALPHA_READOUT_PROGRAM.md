@@ -32,7 +32,7 @@ To prevent circularity or post-hoc parameter fitting, any proposed non-circular 
 ## 3. The Pivot to Stochastic Transfer-Operator Readout
 
 > [!WARNING]
-> **Status update (2026-06-15):** The deterministic tangent map formulation (Floquet readout) is officially **[CLOSED NEGATIVE]**. A rigorous topological obstruction proves that under fixed-itinerary boundary conditions, the continuous Floquet multiplier decays identically to the open-lattice vacuum matrix $A^m$ (see `DERIV_ALPHA_READOUT_CLOSED_NEGATIVE.md`). 
+> The deterministic tangent map formulation (Floquet readout) is officially **[CLOSED NEGATIVE]**. A rigorous topological obstruction proves that under fixed-itinerary boundary conditions, the continuous Floquet multiplier decays identically to the open-lattice vacuum matrix $A^m$ (see `DERIV_ALPHA_READOUT_CLOSED_NEGATIVE.md`).
 
 The FTD alpha readout must instead be formulated over the **Langevin-stabilized cloud**. Because the stabilization relies on stochastic noise, the $A=14$ soliton is a noise-sustained statistical attractor, not a pristine limit cycle.
 
@@ -60,7 +60,7 @@ readout admissibility gate $\mathcal{C}_{\rm scale}$
 public readout**, regardless of how cleanly the estimator returns a number.
 
 > [!WARNING]
-> **Measurement of record + box scan (2026-06-15):** the canonical $A=14$ Langevin
+> **Measurement of record + box scan:** the canonical $A=14$ Langevin
 > attractor is **`REJECTED_SCALE_CONTEXT`** at every box size tested. It reaches a
 > *stationary* steady state at $R_{\rm eff}\approx L/2$ with **$\zeta\approx0.50$
 > $L$-invariant** — $(L,R_{\rm eff})=(32,15.9),(64,31.8)$, i.e. $R_{\rm eff}\propto L$.

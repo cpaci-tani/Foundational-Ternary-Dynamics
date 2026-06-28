@@ -1,7 +1,6 @@
 # SPEC - Electromagnetic Public Observable Classification
 
 **Tag:** [REFERENCE] / [OPEN PROGRAM]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0206 [SYNTHESIS] - formalizes the taxonomy of public electromagnetic measurement channels under the FTD phase-law.
 **Companion docs:** `SPEC_ALPHA_READOUT_CONTRACT.md`, `SPEC_ALPHA_READOUT_PROGRAM.md`
 
