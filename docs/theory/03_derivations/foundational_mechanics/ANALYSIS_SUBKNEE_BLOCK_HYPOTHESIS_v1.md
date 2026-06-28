@@ -1,7 +1,6 @@
 # ANALYSIS — Sub-Knee Onset Mechanism (FTD-0263): GEOM-PARTIAL — the sharp 27-block reading fails its own kill-line; the onset is local, smooth, and elbowed at N ≈ 15
 
-**Tag:** `[MEASURED — GEOM-PARTIAL]`: C1 (knee-N in the block band) **FAILED**; C2 (direction invariance) **PASSED**; C3 (sub-knee L-invariance) **PASSED 6/6**. The **sharp 27-block-boundary hypothesis is disfavored by its own pre-registered kill-line**; what survives is a *local-geometry onset* — direction-invariant, L-invariant, smooth — with the elbow at N ≈ 14.6. The sub-knee mechanism stays `[OPEN]`, now under the tightest constraint set it has had. **Nothing promoted; FTD-0110/0013/MC-T4.3 untouched.**
-**Date:** 2026-06-10
+**Tag:** `[MEASURED — GEOM-PARTIAL]`: C1 (knee-N in the block band) **FAILED**; C2 (direction invariance) **PASSED**; C3 (sub-knee L-invariance) **PASSED 6/6**. The **sharp 27-block-boundary hypothesis is disfavored by its own pre-registered kill-line**; what survives is a *local-geometry onset* — direction-invariant, L-invariant, smooth — with the elbow at N ≈ 14.6. The sub-knee mechanism stays `[OPEN]`, under the tightest constraint set it has had. **Nothing promoted; FTD-0110/0013/MC-T4.3 untouched.**
 **Pre-registration:** [`PREREG_SUBKNEE_BLOCK_HYPOTHESIS_v1.md`](PREREG_SUBKNEE_BLOCK_HYPOTHESIS_v1.md) (lock `5e26ac7b`, tag `preregister-subknee-block-hypothesis-v1`; priors GEOM-CONFIRMED 45 / **PARTIAL 30 — landed** / DISFAVORED 20 / UNDETERMINED 5)
 **Run of record:** `engine/results/subknee_block_2026-06-10/` (37 CSVs + frozen `verdict.txt`; 147 seed-runs, 0 failures; canonical protocol; WSL2 build).
 **LEDGER:** FTD-0263.

@@ -1,9 +1,8 @@
 # Analysis — Engine-native atomic spectroscopy (FTD-0281 Leg-2 / FTD-0308)
 
 **Tag:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` + `[MEASURED — engine↔operator consistency, sparse-regime]` + `[BOUNDARY — engine FFT readout]`
-**Date:** 2026-06-20
-**Branch:** `engine/atomic-spectroscopy` (commits `9dfad16b` rung-a, `0869603d` GPU port, `e94f4c0b` GPU parity + probe-gather).
-**Status:** the spectroscopy coupling `db_clock_coulomb` already existed (FTD-0281 hook, 2026-06-13); this is the FFT spectroscopy run of record + the GPU port. **Golden-neutral** (default-OFF toggles; `0xb604d81a3d79366e` green on CPU and after the GPU kernel change).
+**Commits:** `9dfad16b` rung-a, `0869603d` GPU port, `e94f4c0b` GPU parity + probe-gather.
+**Status:** the spectroscopy coupling `db_clock_coulomb` is the FTD-0281 hook; this is the FFT spectroscopy run of record + the GPU port. **Golden-neutral** (default-OFF toggles; `0xb604d81a3d79366e` green on CPU and after the GPU kernel change).
 
 ---
 
@@ -24,8 +23,7 @@ The honest result is a **split**:
   (clustered near the continuum edge): the boundary mapped earlier is **box-size, not
   structural**, and the engine's field reaches it.
 - **But the engine's native FFT readout does NOT extract that ladder — the cause is a
-  numerical INSTABILITY, not blending (corrected 2026-06-20; mechanism further corrected
-  2026-06-27 `[from-recon]`):** at L=64..256 the autocorrelation→FFT yields **one** bound
+  numerical INSTABILITY, not blending (`[from-recon]`):** at L=64..256 the autocorrelation→FFT yields **one** bound
   peak at every L. A three-step diagnosis (He+ `--Z 2` + off-center `--offset` + finer dt)
   overturned two earlier reads: (i) the **deep He+ well resolves a sharp, clean 1s**
   (binding 0.21, FWHM ~23× narrower than the 1s–2s gap) ⇒ **not** resolution/blending;

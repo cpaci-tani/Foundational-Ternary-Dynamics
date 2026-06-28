@@ -1,10 +1,9 @@
 # Derivation — Cluster phenomenology as free-energy landscape (FTD-0110 Phase 6)
 
 **Tag:** [DERIVED · structural framework] / [PARTIAL · empirical landscape parameters from Phase 4 data]
-**Date:** 2026-04-29
 **LEDGER row:** FTD-0110 (theoretical extension of Phase 1-5 empirical results)
 **Companion:** [`DERIV_FTD0110_VARIANCE_ENTROPY.md`](DERIV_FTD0110_VARIANCE_ENTROPY.md) — empirical variance + regime structure
-**Reframe origin:** chat conversation 2026-04-28/29 (user: "frequency IS time; amplitude is event complexity; entropy is difficult bookkeeping").
+**Reframe origin:** "frequency IS time; amplitude is event complexity; entropy is difficult bookkeeping".
 
 ---
 
@@ -118,7 +117,7 @@ The 22% asymptote at T=0.020-0.040 is interpretable: in the active regime, both 
 
 ## 3 · Phase boundary `T*(A)` empirically mapped (Phases 4-7)
 
-The activation threshold was measured at twelve amplitudes A ∈ {10, 20, 30, 40, 45, 50, 55, 60, 65, 70, 80, 118} across the Phase 4-7 campaign (2026-04-29 RTX 5090). **Initial reading at three amplitudes (20/50/118) suggested a non-monotone U-shape with a "sweet spot" at A=50; the Phase 7 fine-grained scan refutes that framing.** The actual structure is:
+The activation threshold was measured at twelve amplitudes A ∈ {10, 20, 30, 40, 45, 50, 55, 60, 65, 70, 80, 118} across the Phase 4-7 campaign (RTX 5090). **Initial reading at three amplitudes (20/50/118) suggested a non-monotone U-shape with a "sweet spot" at A=50; the Phase 7 fine-grained scan refutes that framing.** The actual structure is:
 
 > **A monotone activation threshold around A ≈ 40 at L=32, T=0.020, with progressive increase through A ≈ 70, gated by lattice-relative occupancy. The "frozen at large A" finding for A=80 (L=64) and A=118 (L=80) is a finite-lattice-size effect: at larger L the cluster occupies a smaller fraction of L³ and does not feel the boundary stress that drives activation.**
 
@@ -203,7 +202,7 @@ The earlier reading "tau cluster std=26.1 at L=80 ⇒ regime-3 boundary thickeni
 ### 3.6 What this actually establishes empirically
 
 ```
-Cluster phenomenology — full empirical map (Phases 1-7, 2026-04-29):
+Cluster phenomenology — full empirical map (Phases 1-7):
 
   Order parameter  Active regime?    Mechanism
   ===============  ==============    ==============================
@@ -230,7 +229,7 @@ This is a substantive correction to the post-Phase-4 reading. Within the activat
 
 ## 4 · LEDGER tag movement
 
-**FTD-0110 (post-2026-04-29 Phase 6 free-energy framework):**
+**FTD-0110 (Phase 6 free-energy framework):**
 
 - **Spatial regimes 1-3:** [DERIVED + EMPIRICALLY CONFIRMED] (per cadd2ef commit)
 - **Regime 4 temporal/frequency:** [DERIVED + EMPIRICALLY MEASURED across (A, T)] (per cadd2ef + this followup)
@@ -260,4 +259,4 @@ The free-energy landscape framing **structurally explains** the four-regime vari
 
 ## 6 · Single-line summary
 
-**The four-regime variance structure of FTD's cluster phenomenology, as measured in Phases 1–7 (2026-04-29), separates cleanly into spatial initial-condition variance (regimes 1–3, Var_between) and temporal boundary-event variance (regime-4, Var_within). The Phase 7 fine-grained amplitude scan (A ∈ {40, 45, 55, 60, 65, 70} at L=32, T=0.020) refutes the earlier "A=50 sweet-spot" reading from Phase 4: regime-4 activation is governed by lattice-relative occupancy N/L³, with a threshold around N/L³ ≈ 1% (corresponding to A ≳ 40 at L=32), progressive activation through N/L³ ≈ 5% (A ≈ 70 at L=32), and a percolation transition past that. The "frozen at large A" outcomes for A=80 (L=64) and A=118 (L=80) are not bulk-stabilization — they are simply lattice-bulk measurements at N/L³ ≲ 0.6%, where the cluster is decoupled from the lattice boundary and regime-4 is kinematically inaccessible. Regime-4 is therefore a finite-lattice-size phenomenon driven by cluster-boundary / lattice-boundary interaction, not an intrinsic feature of the cluster's free-energy landscape. This does not affect Bridge-I (O_h-equivariance, derived) or Bridge-II at the linear level (k = 1/4, derived from O_h representation theory), which operate on cluster-internal structure.**
+**The four-regime variance structure of FTD's cluster phenomenology, as measured in Phases 1–7, separates cleanly into spatial initial-condition variance (regimes 1–3, Var_between) and temporal boundary-event variance (regime-4, Var_within). The Phase 7 fine-grained amplitude scan (A ∈ {40, 45, 55, 60, 65, 70} at L=32, T=0.020) refutes the earlier "A=50 sweet-spot" reading from Phase 4: regime-4 activation is governed by lattice-relative occupancy N/L³, with a threshold around N/L³ ≈ 1% (corresponding to A ≳ 40 at L=32), progressive activation through N/L³ ≈ 5% (A ≈ 70 at L=32), and a percolation transition past that. The "frozen at large A" outcomes for A=80 (L=64) and A=118 (L=80) are not bulk-stabilization — they are simply lattice-bulk measurements at N/L³ ≲ 0.6%, where the cluster is decoupled from the lattice boundary and regime-4 is kinematically inaccessible. Regime-4 is therefore a finite-lattice-size phenomenon driven by cluster-boundary / lattice-boundary interaction, not an intrinsic feature of the cluster's free-energy landscape. This does not affect Bridge-I (O_h-equivariance, derived) or Bridge-II at the linear level (k = 1/4, derived from O_h representation theory), which operate on cluster-internal structure.**

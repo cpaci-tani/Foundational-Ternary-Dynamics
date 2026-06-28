@@ -1,7 +1,6 @@
 # ANALYSIS — SM ClusterMass Identification on the Current Stack (FTD-0262): IDENT-NULL
 
 **Tag:** `[MEASURED — IDENT-NULL]`: the electron anchor holds `[MEASURED]`, law self-consistency holds `[MEASURED — circular, as pre-flagged]`, and the specialness probe returns **SMOOTH** — the current stack assigns **no structural distinction to the SM mass ratios**. **FTD-0110's clustermass identification stays `[SMC]`** with its quantitative SM evidence **historical/stack-pinned only**; the current-stack support is exactly: the anchor. **Nothing promoted; nothing demoted by fiat — this documents the evidence basis.**
-**Date:** 2026-06-10
 **Pre-registration:** [`PREREG_SM_MASS_IDENT_CURRENT_STACK_v1.md`](PREREG_SM_MASS_IDENT_CURRENT_STACK_v1.md) (lock `2adf80b1`, tag `preregister-sm-mass-ident-current-stack-v1`; priors: IDENT-NULL 65 % — **landed**)
 **Run of record:** `engine/results/sm_mass_ident_2026-06-10/` (15 CSVs + frozen `verdict.txt`; 65 seed-runs, 0 failures; canonical protocol, WSL2 build).
 **LEDGER:** FTD-0262.

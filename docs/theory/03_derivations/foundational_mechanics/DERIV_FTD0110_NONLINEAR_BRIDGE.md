@@ -1,10 +1,9 @@
 # Derivation — Nonlinear-bridge closure for FTD-0110
 
 > [!CAUTION]
-> **AUDIT NOTICE — 2026-05-27 (later).** The §6 "Orbit-Equipartition Theorem" and "Timescale Separation Theorem" and the `[DERIVED]` retag claimed in §0 / §5.3 / §6 / §8 are **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md), which identifies four defects: (1) arithmetic error at the load-bearing $A^2/4$ step (sum of 4 copies of $A^2/4 = A^2$, not $A^2/4$); (2) single-block analysis applied to a multi-scale phenomenon (single-block prediction is saturation at 27 voxels, not $A^2$ scaling); (3) §6.2 is a phenomenological exponential-decay fit with empirical timescales, not a derivation; (4) §6 would predict pure $k = 1/4$ with no drift — contradicting the empirical log-A signature. Pending §5 falsifier refutation, the canonical position is the 2026-05-04 honest line: **`[DERIVED]` for linear-level theorem + Bridge-I global $O_h$-equivariance (§§1–4 and §§2.1–2.7) only**; **`[STRONGLY MOTIVATED CONJECTURE]` for the nonlinear-pipeline coefficient origin and multi-scale extension**, supported by the 5% empirical match across 11 amplitudes × 5 SM particles × 3 lattice scales × 2 injection geometries. §§1–4 and §§2.1–2.7 of this document are NOT challenged.
+> **AUDIT NOTICE.** The §6 "Orbit-Equipartition Theorem" and "Timescale Separation Theorem" and the `[DERIVED]` retag claimed in §0 / §5.3 / §6 / §8 are **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md), which identifies four defects: (1) arithmetic error at the load-bearing $A^2/4$ step (sum of 4 copies of $A^2/4 = A^2$, not $A^2/4$); (2) single-block analysis applied to a multi-scale phenomenon (single-block prediction is saturation at 27 voxels, not $A^2$ scaling); (3) §6.2 is a phenomenological exponential-decay fit with empirical timescales, not a derivation; (4) §6 would predict pure $k = 1/4$ with no drift — contradicting the empirical log-A signature. Pending §5 falsifier refutation, the canonical position is the honest line: **`[DERIVED]` for linear-level theorem + Bridge-I global $O_h$-equivariance (§§1–4 and §§2.1–2.7) only**; **`[STRONGLY MOTIVATED CONJECTURE]` for the nonlinear-pipeline coefficient origin and multi-scale extension**, supported by the 5% empirical match across 11 amplitudes × 5 SM particles × 3 lattice scales × 2 injection geometries. §§1–4 and §§2.1–2.7 of this document are NOT challenged.
 
-**Tag:** **[DISPUTED 2026-05-27]** — honest position: `[DERIVED]` at linear level + Bridge-I global $O_h$-equivariance only; `[STRONGLY MOTIVATED CONJECTURE]` for nonlinear-pipeline coefficient origin and multi-scale extension. See [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md).
-**Date:** 2026-04-28 (original) · 2026-05-04 (Option A empirical update) · 2026-05-27 (§6 theorems formalized) · 2026-05-27 (later, §6 disputed via audit)
+**Tag:** **[DISPUTED]** — honest position: `[DERIVED]` at linear level + Bridge-I global $O_h$-equivariance only; `[STRONGLY MOTIVATED CONJECTURE]` for nonlinear-pipeline coefficient origin and multi-scale extension. See [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md).
 **LEDGER row:** FTD-0110 (extended)
 **Companion:** [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) (the linear-level derivation of `k = 1/N_base = 1/4`)
 **Paper section:** `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` §4 + §8
@@ -13,7 +12,7 @@
 
 ## 0 · Summary
 
-`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (2026-04-28) closed the **linear-level** derivation of the cluster-efficiency coefficient `k = 1/N_base = 1/4`: starting from the initial condition `δ_center · A` and evolving under the linearised lattice wave equation `φ̈ = c²L_18 φ`, the time-averaged per-mode energy across the four `A_{1g}` eigenmodes equals `A²/N_base = A²/4` exactly.
+`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` closed the **linear-level** derivation of the cluster-efficiency coefficient `k = 1/N_base = 1/4`: starting from the initial condition `δ_center · A` and evolving under the linearised lattice wave equation `φ̈ = c²L_18 φ`, the time-averaged per-mode energy across the four `A_{1g}` eigenmodes equals `A²/N_base = A²/4` exactly.
 
 The remaining structural gap (paper §8) was the **linear→nonlinear bridge**: does the full FTD engine pipeline (genesis threshold + Langevin + Gauss projection + evaporation + state back-reaction) preserve this `A_{1g}`-mode budget in steady state?
 
@@ -25,10 +24,10 @@ This document closes the bridge in three parts:
 
 **Net effect on FTD-0110 LEDGER tag (DISPUTED — see AUDIT banner at top of document):**
 
-- **[2026-05-27 morning, since disputed]:** the structural origin of `k = 1/4` is now fully **[DERIVED]** at the nonlinear pipeline level, resolving the local A1g decay gap.
-- **[2026-05-27 audit revert, current canonical]:** the §6 derivation has four defects per [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md); honest position is **[DERIVED]** at linear level + Bridge-I global $O_h$-equivariance (§§1–4, §§2.1–2.7) only; **[STRONGLY MOTIVATED CONJECTURE]** for the nonlinear-pipeline coefficient and multi-scale extension; multi-scale closure work queued per scoping memo FTD-0203 Mechanism α.
+- **Disputed claim:** the structural origin of `k = 1/4` is fully **[DERIVED]** at the nonlinear pipeline level, resolving the local A1g decay gap.
+- **Canonical position:** the §6 derivation has four defects per [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md); honest position is **[DERIVED]** at linear level + Bridge-I global $O_h$-equivariance (§§1–4, §§2.1–2.7) only; **[STRONGLY MOTIVATED CONJECTURE]** for the nonlinear-pipeline coefficient and multi-scale extension; multi-scale closure work queued per scoping memo FTD-0203 Mechanism α.
 
-The physical cluster-mass identification across SM particles remains a **[STRONGLY MOTIVATED CONJECTURE]** (unchanged by either the morning retag or the audit revert).
+The physical cluster-mass identification across SM particles remains a **[STRONGLY MOTIVATED CONJECTURE]** (unchanged by either the disputed retag or the canonical position).
 
 ---
 
@@ -182,7 +181,7 @@ The argument above assumes:
 1. **Voxel-independent RNG** (Step 3): Langevin noise per voxel is iid; the RNG seed depends only on `(seed, voxel_index, tick, salt)`, not on the order of processing.
 2. **Voxel-parallel updates** (Steps 2, 5, 6): per-voxel updates do not depend on the order of voxel processing within a tick.
 
-Both conditions hold under the post-fix engine implementation (LEDGER row FTD-0107 RE-MEASURED post-engine-fix, 2026-04-27): the `voxel_uniform(seed, voxel_idx, tick, salt)` SplitMix64 hash replaces the serial-state RNG that was breaking `y/z` reflection symmetry.
+Both conditions hold under the post-fix engine implementation (LEDGER row FTD-0107 RE-MEASURED post-engine-fix): the `voxel_uniform(seed, voxel_idx, tick, salt)` SplitMix64 hash replaces the serial-state RNG that was breaking `y/z` reflection symmetry.
 
 If either condition fails (e.g., a future engine revision introduces tick-order-dependence), Bridge-I would need to be re-audited. **The current engine satisfies both conditions; Bridge-I holds.**
 
@@ -278,27 +277,27 @@ Independent of the analytical closure, the multi-scale cluster-size formula `N(A
 
 ### 4.3 LEDGER tag movement for FTD-0110
 
-**Pre-2026-04-28 (paper):**
+**Paper baseline:**
 - `k = 1/N_base = 1/4` coefficient: [DERIVED at linear level]
 - Cluster-mass identification across SM particles: [STRONGLY MOTIVATED CONJECTURE]
 
-**Post-2026-04-28 (this document):**
+**This document's bridge claims:**
 - `k = 1/N_base = 1/4` coefficient: **[DERIVED]** (Bridge-I closure removes the "linear level" qualifier)
 - Cluster-size formula `N(A) ≈ A²/N_base` within a single 27-block: **[DERIVED]**
 - Multi-scale extension across cluster's spatial extent: **[STRONGLY MOTIVATED CONJECTURE supported by empirical 5% match across 4 dimensions of variation]**, **[OPEN]** for full analytical closure
 - Cluster-mass identification across SM particles: **[STRONGLY MOTIVATED CONJECTURE]** (the *physical* identification step — that cluster size = mass in `m_e` units — is a separate physical-interpretation claim independent of the structural derivation)
 
-**Net effect:** the structural origin of `k = 1/4` is now **[DERIVED]** at full nonlinear pipeline level (modulo the multi-scale boundary correction). The SM-particle mass identification's empirical 5% match is unchanged but now sits on a more robust structural foundation.
+**Net effect (per this document's bridge claims):** the structural origin of `k = 1/4` is **[DERIVED]** at full nonlinear pipeline level (modulo the multi-scale boundary correction). The SM-particle mass identification's empirical 5% match sits on a more robust structural foundation.
 
 ---
 
 ## 5 · Verification
 
 The Bridge-I argument is verifiable by:
-1. **Source audit** of the post-fix engine (`engine/src/render_bridge.cpp` for genesis/evaporation/Langevin steps; `engine/src/gauss_project.cpp` for projection): each step is voxel-local, voxel-parallel, voxel-independent-RNG. This audit was implicit in the LEDGER's FTD-0107 RE-MEASUREMENT note (2026-04-27); explicit completion is queued as a follow-up.
+1. **Source audit** of the post-fix engine (`engine/src/render_bridge.cpp` for genesis/evaporation/Langevin steps; `engine/src/gauss_project.cpp` for projection): each step is voxel-local, voxel-parallel, voxel-independent-RNG. This audit was implicit in the LEDGER's FTD-0107 RE-MEASUREMENT note; explicit completion is queued as a follow-up.
 2. **Empirical cross-check** of `A_{1g}`-energy fraction during steady-state runs: instrument the engine to log `⟨φ(t), P_{A_{1g}} φ(t)⟩` per snapshot.
 
-### 5.1 · Status (updated 2026-05-04, Option A empirical campaign)
+### 5.1 · Status (Option A empirical campaign)
 
 The §5.2 instrument was built and run. The result is a substantive
 empirical finding that **demotes the Bridge-I claim's tag for the
@@ -329,14 +328,14 @@ The diagnosis is **non-locality of the Poisson convolution**. The argument in §
 
 ### 5.2 · Implication for Bridge-II
 
-Bridge-II's single-block argument in §3.1 invokes the **local** 27-block A_{1g}### 5.3 · Tag movement and Resolution (post 2026-05-27) — DISPUTED
+Bridge-II's single-block argument in §3.1 invokes the **local** 27-block A_{1g}### 5.3 · Tag movement and Resolution — DISPUTED
 
 > [!WARNING]
-> The "resolution" claimed in this subsection is **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md). The §6 theorems on which the retag depends contain an arithmetic error, a scale-conflation, a phenomenological fit, and an empirical inadequacy (would predict pure $k = 1/4$ contradicting the observed log-A drift). The "Post-2026-05-27" column below is therefore NOT canonical; the canonical position is the "Pre-2026-05-27" column with multi-scale closure remaining [OPEN].
+> The "resolution" claimed in this subsection is **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md). The §6 theorems on which the retag depends contain an arithmetic error, a scale-conflation, a phenomenological fit, and an empirical inadequacy (would predict pure $k = 1/4$ contradicting the observed log-A drift). The "Disputed (§6 retag)" column below is therefore NOT canonical; the canonical position is the "Canonical" column with multi-scale closure remaining [OPEN].
 
 Following the formalization of the **Orbit-Equipartition Theorem** and the **Timescale Separation Theorem**, the local A1g decay gap is *claimed* (but disputed) to be resolved, and the `k = 1/4` coefficient is *claimed* (but disputed) to be restored to full `[DERIVED]` status.
 
-| Claim | Pre-2026-05-27 | Post-2026-05-27 |
+| Claim | Canonical | Disputed (§6 retag) |
 |---|---|---|
 | Bridge-I (global O_h-equivariance of `P_div-free`) | [DERIVED] | [DERIVED] (unchanged — global statement) |
 | Bridge-I (local 27-block A_{1g} preservation under full pipeline) | [FALSIFIED] empirically | **[RESOLVED via Timescale Separation]** |
@@ -428,7 +427,7 @@ We now formalize the two theorems that resolve the local $A_{1g}$ fraction decay
 - Linear-level derivation: [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md)
 - Paper §4 (algebra-engine bridge): `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex`
 - LEDGER row: `docs/theory/07_assessment/core_ledgers/LEDGER.md` row FTD-0110
-- Engine implementation: `engine/src/render_bridge.cpp` (post-fix, 2026-04-27 voxel_uniform RNG)
+- Engine implementation: `engine/src/render_bridge.cpp` (post-fix voxel_uniform RNG)
 - Verification suite: `scripts/exploration/verify_k_derivation_2026-04-28.py` (C1-C4 PASS for the linear level; nonlinear-level verification queued)
 
 ---

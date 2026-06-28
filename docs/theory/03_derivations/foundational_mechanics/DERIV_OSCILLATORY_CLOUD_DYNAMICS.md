@@ -1,7 +1,6 @@
 # DERIV · Oscillatory Cloud Dynamics & The FTD-0110 Mass Bridge
 
 **Tag:** [OPEN PROGRAM] / [DERIVATION FRAMEWORK]
-**Date:** 2026-06-15
 **LEDGER:** FTD-0110 (Nonlinear Mass Bridge) / FTD-0152 (Alpha Readout)
 **Status:** Core theoretical architecture for the dynamic return-map formalism.
 
