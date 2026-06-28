@@ -1,7 +1,6 @@
 # PHYS-GR Expert Review: General Relativity, Cosmology, and Gravitational Physics
 
 **Reviewer:** PHYS-GR (General Relativity, Cosmology, Gravitational Physics Expert)
-**Date:** 2026-01-25
 **Manuscript:** Foundational Ternary Dynamics (FTD)
 **Files Reviewed:**
 - 1.12-gravity-from-integers.qmd

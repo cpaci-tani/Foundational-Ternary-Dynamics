@@ -1,8 +1,7 @@
 # PHYS-PART Expert Review: Particle Physics Content
 
 **Reviewer:** PHYS-PART (Particle Physics, Standard Model, Experimental High-Energy Physics)
-**Date:** 2026-01-25
-**Document Version:** FTD Manuscript (Current)
+**Document Reviewed:** FTD Manuscript
 
 ---
 

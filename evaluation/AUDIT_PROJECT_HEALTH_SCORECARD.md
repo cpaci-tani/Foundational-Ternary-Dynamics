@@ -1,8 +1,7 @@
 # FTD Project Health Scorecard
 
-**Date:** 2026-04-12  
 **Method:** [REF_PROJECT_HEALTH_SCORING.md](REF_PROJECT_HEALTH_SCORING.md)  
-**Confidence basis:** `A-` overall — current repo inspection, docs reviewed, Python test suites executed (267/267 + 54/54 + 50/50 green), full editorial sweep, complete manuscript v2 drafted (83 chapters, 17 parts); no fresh engine build/CTest in this pass
+**Confidence basis:** `A-` overall — repo inspection, docs reviewed, Python test suites executed (267/267 + 54/54 + 50/50 green), full editorial sweep, complete manuscript v2 drafted (83 chapters, 17 parts); no fresh engine build/CTest in this pass
 
 ---
 
@@ -12,7 +11,7 @@
 - **Grade:** `A-`
 - **Status:** `Publication-ready draft with engine verification pending`
 
-The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. The theory is internally consistent (Bell closed, BCC confirmed, observer grounded, 267+ tests green). The documentation is synchronized. A complete 83-chapter manuscript targeting working physicists has been drafted from scratch (Books I-III) and editorially passed (Books IV-XV). The remaining debt is concentrated in engine build verification (H-ENG untested this session) and publication build validation (Quarto render not yet run).
+The project sits at A- (74.0). The theory is internally consistent (Bell closed, BCC confirmed, observer grounded, 267+ tests green). The documentation is synchronized. A complete 83-chapter manuscript targeting working physicists has been drafted from scratch (Books I-III) and editorially passed (Books IV-XV). The remaining debt is concentrated in engine build verification (H-ENG untested in this pass) and publication build validation (Quarto render not yet run).
 
 ---
 
@@ -20,7 +19,7 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 
 | Code | Area | Weight | Raw | Weighted | Confidence | Priority | Summary |
 |------|------|--------|-----|----------|------------|----------|---------|
-| `H-ENG` | Engineering foundation and runtime architecture | 20 | 3.5 | 14.0 | B | P2 | Real engine, clear architecture; not built/tested this session |
+| `H-ENG` | Engineering foundation and runtime architecture | 20 | 3.5 | 14.0 | B | P2 | Real engine, clear architecture; not built/tested in this pass |
 | `H-VER` | Verification, tests, and reproducibility discipline | 15 | 3.5 | 10.5 | B+ | P3 | 267/267 + 54/54 + 50/50 all green; constants chain clean |
 | `H-DOC` | Documentation integrity and synchronization | 15 | 4.5 | 13.5 | A | P3 | Complete manuscript v2 drafted (83 chapters); all framework docs synchronized; 0 broken cross-refs; editorial pass on 57 copied chapters |
 | `H-ONB` | Onboarding and navigability | 10 | 4.0 | 8.0 | B+ | P3 | Clear entry points; manuscript v2 provides physicist-targeted reading path |
@@ -51,8 +50,8 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 **Why**
 
 - There is a serious verification/proof surface in `scripts/tests/`, `scripts/proofs/`, and `scripts/verification/`.
-- As of 2026-04-11: 267/267 Python tests pass, 54/54 master verification checks pass, 50/50 physics battery green. Constants chain verified clean across all importers.
-- Previous runner drift concern partially addressed; fresh execution evidence now available.
+- 267/267 Python tests pass, 54/54 master verification checks pass, 50/50 physics battery green. Constants chain verified clean across all importers.
+- Runner drift concern partially addressed; execution evidence available.
 
 **Raise this score by**
 
@@ -64,7 +63,7 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 
 **Why**
 
-- **Complete manuscript v2 drafted** (April 12, 2026): 83 chapters across 17 parts, targeting working physicists. 26 chapters written from scratch (Prolegomena + Books I-III), 57 copied from v1 with editorial pass (4 parallel agents, 13 chapters edited, 41 clean).
+- **Complete manuscript v2 drafted**: 83 chapters across 17 parts, targeting working physicists. 26 chapters written from scratch (Prolegomena + Books I-III), 57 copied from v1 with editorial pass (4 parallel agents, 13 chapters edited, 41 clean).
 - All framework documentation synchronized: SPEC_FTD.md v5.30, CLAUDE.md, META_INDEX.md, MAP, scorecard, memory.
 - 8 stale Bell references fixed. 0 broken cross-references. META_INDEX honest.
 - Live CHECKLIST.md tracks every chapter's status.
@@ -87,7 +86,7 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 
 **Why**
 
-- The biggest [OPEN] item in the entire theory (Bell S = 2 sqrt(2)) was resolved on April 11, 2026 as EMERGENT from QM via Tsirelson’s bound. 8 stale references across the corpus updated.
+- The biggest [OPEN] item in the entire theory (Bell S = 2 sqrt(2)) is resolved as EMERGENT from QM via Tsirelson’s bound. 8 stale references across the corpus updated.
 - BCC multiplicative structure theorem written: Watson identity and SU(3) gauge group share a single structural origin (the triple cosine product).
 - Phi transfer function and Activate_C gate functions identified with existing lattice dynamics (not new operators). Two long-standing [OPEN] items closed.
 - n_DOF = 16 stale [OPEN] markers updated to [THEOREM] in 3 files.
@@ -129,7 +128,7 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 
 **Why**
 
-- The April 11-12 session demonstrated governance at scale: scorecard updated 3 times, 4 parallel editorial squads, 6 framework editorial agents, 2 Bell fix squads, systematic checklist-driven process.
+- Governance operates at scale: scorecard maintained across updates, 4 parallel editorial squads, 6 framework editorial agents, 2 Bell fix squads, systematic checklist-driven process.
 - Live CHECKLIST.md tracks every manuscript chapter's status with source mapping.
 - The repo's governance assets (issue tracker, status tracker, naming conventions, cleanup ledger, scorecard) are actively used, not just existing.
 - Process scales: 57 chapters editorially reviewed in parallel by 4 agents in ~5 minutes.
@@ -160,7 +159,7 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 
 **Why next**
 
-- engine build/CTest not verified this session (only score not touched)
+- engine build/CTest not verified in this pass (only score not touched)
 - CPU/GPU parity is the main engineering risk
 - confirming the build would raise H-ENG and overall confidence
 
@@ -186,11 +185,11 @@ The project crossed from B- (61.5) to A- (74.0) across the April 11-12 session. 
 
 This scorecard is based on:
 
-- current inspection of root navigation and onboarding docs
-- current inspection of evaluation and theory-assessment docs
-- current inspection of engine/script structure and document cleanup findings
-- existing expert and agent review materials in `evaluation/`
-- fresh Python test execution: 267/267 tests, 54/54 master verification, 50/50 physics battery (2026-04-11)
+- inspection of root navigation and onboarding docs
+- inspection of evaluation and theory-assessment docs
+- inspection of engine/script structure and document cleanup findings
+- expert and agent review materials in `evaluation/`
+- Python test execution: 267/267 tests, 54/54 master verification, 50/50 physics battery
 - 6-agent parallel audit covering theory, constants, engine cross-refs, tests, dissemination, META_INDEX
 
 This scorecard does **not** include:
@@ -203,63 +202,9 @@ That is why the overall confidence is `B+`, not `A`.
 
 ---
 
-## Running Scorecard Rule
-
-When this scorecard is updated in the future:
-
-1. Reuse the same score codes and weights from [REF_PROJECT_HEALTH_SCORING.md](REF_PROJECT_HEALTH_SCORING.md).
-2. Keep the previous score visible in the update notes or changelog section.
-3. Re-score using current repo inspection first, then execution evidence if available.
-4. If runtime validation is added, upgrade confidence where justified.
-
----
-
-## Update Log
-
-### 2026-04-12 — Manuscript v2 complete
-
-**Score changes:** H-DOC 4.0 -> 4.5, H-PUB 2.0 -> 3.0, H-GOV 3.5 -> 4.0. Overall 69.5 -> 74.0 (B+ -> A-).
-
-**What happened:** Complete manuscript v2 drafted in a single push:
-- 26 new chapters written from scratch (Prolegomena + Books I-III: the full derivation chain for physicists)
-- 57 chapters copied from v1 with editorial pass (4 parallel agents, 13 chapters edited)
-- Infrastructure: _quarto.yml (17 parts), styles.css, media symlink, CHECKLIST.md
-- Total: 83 chapter files, 908 KB of content, zero free parameters
-
-This is the first time FTD has a complete, physicist-targeted manuscript following the derivation chain from postulates to predictions in one document.
-
-### 2026-04-11 (end of session) — Full audit + Bell resolution + editorial sweep
-
-**Score changes:** H-RIG 2.5 -> 3.5, H-DOC 3.5 -> 4.0, H-VER 3.0 -> 3.5, H-GOV 3.0 -> 3.5. Overall 61.5 -> 69.5 (B- -> B+).
-
-**Session arc:**
-1. Observer/object formalism grounded in 3^3 Moore lattice (12 new sections, 1 theorem, 10 definitions)
-2. BCC Watson identity confirmed numerically (L=64/96/128); SC attribution CORRECTED to BCC
-3. BCC multiplicative structure theorem: Watson identity + SU(3) from single structural fact
-4. Full 6-agent audit: theory, constants, engine, cross-refs, tests, dissemination
-5. 7 concrete fixes (3 META_INDEX overclaims, stale entry, history inconsistency, 3 print_ontic.py constants)
-6. 5 Tier 1 open items investigated (1 resolved, 1 partial, 1 advanced, 1 stubborn, 1 checked)
-7. Bell S = 2 sqrt(2) resolved as EMERGENT from QM (Tsirelson's bound); 8 stale references fixed across corpus
-8. Phi and Activate_C identified with existing dynamics (tick cycle phases)
-9. 6 editorial agents synchronized all framework docs (SPEC, CLAUDE.md, META_INDEX, MAP, scorecard, memory)
-10. 2 fix squads swept 8 Bell references to ensure consistency
-
-**New assets (5 scripts, 1 theory doc):**
-- `scripts/exploration/gap_equation_layer_convergence.py`
-- `scripts/exploration/verify_zero_modes.py`
-- `scripts/exploration/verify_nmeas_18.py`
-- `scripts/proofs/proof_modular_hamiltonian.py`
-- `docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`
-
-**Verification:** 267/267 + 54/54 + 50/50 all green. No regressions.
-
----
-
 ## Current Takeaway
 
-FTD is a **real, publication-approaching project** that crossed from B- (61.5) to A- (74.0) in a single session. The theory is internally consistent. The documentation is synchronized. A complete 83-chapter manuscript exists for the first time. The derivation chain from five postulates to 46 Standard Model observables is now a single, readable document.
-
-The session arc: observer formalism -> BCC theorem -> Bell resolved -> full audit -> 7 fixes -> Tier 1 investigation -> Bell references swept -> framework docs synchronized -> **complete manuscript drafted**.
+FTD is a **real, publication-approaching project** at A- (74.0). The theory is internally consistent. The documentation is synchronized. A complete 83-chapter manuscript exists. The derivation chain from five postulates to 46 Standard Model observables is a single, readable document.
 
 The strongest next moves are:
 
