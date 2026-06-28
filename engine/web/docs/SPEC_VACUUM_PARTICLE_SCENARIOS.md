@@ -1,7 +1,6 @@
 # SPEC: Vacuum Particle Scenarios (`s0-vacuum-*` family)
 
-**Status:** Draft 2026-04-28
-**Owner:** William
+**Status:** Draft
 **Companion:** existing scenario system at `engine/web/js/bridge/scenarios/`,
 existing C++ scenarios at `engine/src/scenarios/`,
 parity guard `engine/web/tests/scenario-parity.spec.js`.
@@ -115,7 +114,7 @@ two families separable in the scenario dropdown and in CI parity.
 ## Out of scope (v1)
 
 - **Absorbing-boundary toggle.** Currently does not exist as a
-  discrete toggle (per audit 2026-04-28). Periodic boundaries are used.
+  discrete toggle. Periodic boundaries are used.
   A future spec can add an `absorbing_boundary` term_toggle that drains
   flux + wave_vel in an N-voxel-thick boundary shell; vacuum scenarios
   would opt in once available.

@@ -1,27 +1,26 @@
 # SPEC — Scale-0 Performance: Telemetry Demand-Gating, Panel Rendering, and Config Hardening
 
-**Status:** `[PARTIALLY IMPLEMENTED — 2026-06-05]` — Phase 1 + Phase 2 shipped, verified, and **on by
+**Status:** `[PARTIALLY IMPLEMENTED]` — Phase 1 + Phase 2 shipped, verified, and **on by
 default**; Phase 3 partial (G done); Phase 3-F, the §6.2/§6.3 render items, and Phase 4-N deferred (see
-§9 status).  ·  **Date:** 2026-06-05  ·  **Scope:** `engine/web` Scale-0
+§9 status).  ·  **Scope:** `engine/web` Scale-0
 consumption-side per-frame cost (telemetry collection, sidepanel rendering, overlay sampling, GC
 hygiene, worker-path config). The **producer** side (the wave tick + worker offload) is covered by
-[`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) and is already shipped — this spec is the
-*next* round: the cost the new live sidepanels (energy-audit + Lagrangian, 2026-06-05) added on the
+[`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) and is already shipped — this spec covers
+the cost the live sidepanels (energy-audit + Lagrangian) add on the
 **consumption** side.
 
 **Companions:** [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the per-frame
 `animate()` pipeline), [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md)
 (worker/shadow), [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) (tick/worker offload).
 
-**Provenance:** grounded in a 5-engineer source-verified redteam (2026-06-05). All `file:line` are as of
-2026-06-05 source; re-derive before relying on line numbers.
+Re-derive all `file:line` references from source before relying on line numbers.
 
 ---
 
 ## 1. Problem & evidence
 
 **Symptom:** choppy sim *playback* — low/falling FPS while the simulation is running, worse at large
-lattice L (L≈97–129). It appeared after the 2026-06-05 work that wired energy-audit + Lagrangian
+lattice L (L≈97–129). It appeared after the work that wired energy-audit + Lagrangian
 telemetry and made "all sidepanels live" (commits `9cfd63f0`, `b319fd90`, `a3a79c2d`).
 
 **Root cause (one sentence):** telemetry collection is **decoupled from consumption** — the expensive
@@ -34,7 +33,7 @@ while collapsed. The heavy *producer* offload is already correct; the regression
 | # | Cause | Bites on | Evidence (`file:line`) |
 |---|-------|----------|------------------------|
 | **C1** | The **worker** recomputes `getScale0EnergyAudit()` (a full O(N³) curl/Poynting/div pass) + `getScale0Lagrangian()` **every tick, unconditionally**, stretching its `setTimeout` budget so the sim-advance rate (`FRAME` counter) drops at L≥97. Panels need ≤4 Hz; the worker computes at ~60 Hz. | **Default (worker) path** (`flux-*` scenarios, COOP/COEP on) | `mock-bridge.worker.js:39,48,49`; cadence `:78`; audit pass `mock-diagnostics.js:110-188` |
-| **C2** | `collectScale0Audit` + `collectScale0Lagrangian` fire **every 3rd render frame even when `activeTab='controls'`** (the default tab) and no panel consumes them. On the in-thread/WASM paths this is a main-thread O(N³) (in-thread `MockBridge`) or an **uncached** native call (WASM). | **In-thread path** (Safari/no-COI) and **WASM-scenario path** (`s0-*`/`light-*`/`quantum-*`) | `diagnostics.js:11-14`; default `activeTab` `app.js:86`; the consumer-gate existed through 2026-05-26 and was lifted by commit `9cfd63f0` |
+| **C2** | `collectScale0Audit` + `collectScale0Lagrangian` fire **every 3rd render frame even when `activeTab='controls'`** (the default tab) and no panel consumes them. On the in-thread/WASM paths this is a main-thread O(N³) (in-thread `MockBridge`) or an **uncached** native call (WASM). | **In-thread path** (Safari/no-COI) and **WASM-scenario path** (`s0-*`/`light-*`/`quantum-*`) | `diagnostics.js:11-14`; default `activeTab` `app.js:86`; the consumer-gate was lifted by commit `9cfd63f0` |
 | **C3** | A **floated** Telemetry Grid renders 23 sparklines at **60 Hz** (no `%3` skip) and **keeps rendering while collapsed** — ~1,380 uPlot full-repaints/sec + 46 fresh typed-array allocs/update + 23 `querySelector`s/update, all invisible to the user. | **Any path, when the grid is floated** | `app.js:722` + `_shouldAppUpdatePanel` `app.js:745-752`; gate `telemetry-grid/component.js:185` misses `is-collapsed`; collapse is CSS-only `floating-window/component.js:101-110,222-224`; allocs `:212-213`; querySelector `:225` |
 
 ### 1.2 The silent-fallback trap (C4)
@@ -51,7 +50,7 @@ check. `serve.py:57-59` sends the headers in dev; production may not.
   scalars (`mock-bridge-proxy.js:121-122`), main-thread cost ~0. (So the audit/Lagrangian are *not*
   computed on the render thread on the default path — C1, not a main-thread sweep, is the default-path cause.)
 - `SPEC_SCALE0_LATTICE_PERF.md §1` — the profile table (tick 12/38/89 ms; diagnostics 11/33 ms) was
-  measured **2026-06-03, in-thread, 14 overlays**, *before* this regression and *before* the worker became
+  measured **in-thread, 14 overlays**, *before* this regression and *before* the worker became
   the default path. It does not bound the worker-mode, all-panels-live, 19-scalar case users actually run.
   **→ Phase 0 re-measures it.**
 
@@ -211,7 +210,7 @@ and use it in all four panels' `update()`. Add the missing self-guard to `diagno
   touched cells. (Flux-only scenarios already skip it.)
 - **H — `getFluxSlice` allocation.** `mock-bridge.js:1508-1523` returns a fresh `Float64Array(N²)` per axis
   per upload (3×). Use two rotating persistent per-axis scratch buffers (preserves the deliberate no-alias
-  contract from the 2026-04-26 fix without per-call allocation).
+  contract without per-call allocation).
 - **L — empty particle upload.** `frame-sync.js:18-19` uploads the particle frame unconditionally; skip
   when `count === 0` and was 0 last frame.
 - **M — dead-code sweep.** Confirm the removed timeline/`MemoryRecorder`/`globalTick`/`setScale0*Buffer`
@@ -251,7 +250,7 @@ and use it in all four panels' `update()`. Add the missing self-guard to `diagno
 After each phase: re-run the Phase-0 harness (gains confirmed, no regression) **and** the regression suite
 (§11).
 
-### Implementation status (2026-06-05)
+### Implementation status
 
 | Item | Status | Notes |
 |---|---|---|
@@ -263,7 +262,7 @@ After each phase: re-run the Phase-0 harness (gains confirmed, no regression) **
 | **Phase 3-M** dead-code sweep |  done | `MemoryRecorder`/`globalTick`/`timeline/`/`*Scale0*Buffer` confirmed gone (one stale worker comment fixed). |
 | **Phase 3-F** conservation/spectrum/p1 wrong-bridge |  deferred | Routing to the worker entangles with the Phase-1 want-set (an always-on consumer would defeat gating); needs a visibility gate + conditional want-mask. Tracked. |
 | **Phase 3-H/L** `getFluxSlice` double-buffer / empty-particle skip |  deferred | Marginal GC (off-by-default overlays); Phase 1 already reduced audit frequency. |
-| **Phase 4-O** doc reconciliation (stale §5 shadow note + §1 table) |  done | This commit. |
+| **Phase 4-O** doc reconciliation (stale §5 shadow note + §1 table) |  done | — |
 | **Phase 4-N** COOP/COEP indicator |  deferred | Verify prod headers; add a "worker path active?" status chip. |
 
 ---

@@ -1,369 +1,9 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-06-17 (comprehensive physics audit + remediation; golden RE-BASELINED to `0xb604d81a3d79366e`)
-**Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
-**Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`. Treat numeric test-count statements below as dated audit snapshots unless they explicitly say "current."
-
-### 2026-06-17 — Comprehensive physics audit + remediation; golden RE-BASELINED
-
-52-agent audit of the whole engine + "everything actionable" remediation
-(3 commits on `main`: `5b0d6b8f` C++/WASM, `21a7a3c2` JS, `6e72ffd4` CUDA-UNVERIFIED).
-The canonical CPU run-of-record path is physics-sound; defects clustered in the
-CUDA backend, JS/WASM mirrors, and Scale-0 visualization.
-
-**⚠ GOLDEN HASH RE-BASELINED `0x56fa28acb5b9fe88` → `0xb604d81a3d79366e`** —
-intentional diagnostic-scope fix (audit m1: `gauss_violation`/`max_gauss_error`
-now summed only over vacuum (state==0) sites with the mean-subtracted,
-coupling-scaled target the SOR projection actually enforces). Per-voxel
-state/flux/wave_vel/velocity is BYTE-IDENTICAL; only the two gauss audit scalars
-moved; deterministic (OMP=1 == full pool). Rationale in
-`test_render_bridge_golden.cpp`. **The older dated entries below cite the
-pre-baseline hash and remain accurate as of their dates.**
-
-Key fixes: M2 (C++ `PROTON_RATIO` → canonical FTD-0016 1836.47 = physical
-m_p/m_e, matching JS/Python; M_PROTON now ~938 MeV); GAP1 (Langevin σ=√(2γT)
-→ FDT-consistent √(γ(2−γ)T) — shifts thermal-campaign equilibrium temps);
-M3 (plane-wave/photon-pulse wave_vel onto the polarization axis, ω=2c·sin(k/2));
-M5 (JS α_s running); M6 (dead DM-halo/genesis overlays); M7/M8 (worker-proxy
-parity + inspector routing); M1/M4 GPU parity (charge_coupling + color guard —
-UNVERIFIED, need WSL2 GPU). GAP2–GAP7 investigated, no new fixes warranted
-(GAP2 a misdiagnosis; GAP4/5/6/7 clean). `test_helium_scale1` failure is
-PRE-EXISTING (FTD-0270 boundary). Full record: `engine/CHECKLIST_ENGINE.md`
-ROUND 6. **Nothing promoted** (engineering-health, not physics-claims).
-
-### 2026-06-13 — Golden determinism verification + FTD-0286 v2 alpha estimator
-
-**Sprint A:** OpenMP race fixes (2026-06-11, `poisson_solvers.cpp` +
-`phase_write.cpp`) verified green — `render_bridge_golden`, `determinism`,
-`campaign_determinism_gate` PASS; hash `0x56fa28acb5b9fe88` @ L=17
-bit-identical OMP=1 vs full pool. Stale golden-hash citations reconciled
-(ADR-0012, phase comments, `tests/README.md`, `cuda/README.md`).
-
-**Sprint B:** `campaign_alpha_estimator_validation_v2` + `lattice_coulomb_gate.h`
-pair `energy_audit().field_energy = ½Σ|J|²` with gate `α_r = r G_L(r)`.
-Verdict `HALF_ENERGY_GATE_CONFIRMED_MATCHED` (matched PASS; production stencil
-drift still ~12%). Analysis: `docs/theory/10_eft_program/ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.
-**No alpha claim promoted.**
-
-### 2026-06-07 — Engine System Documentation Pass
-
-Documentation-only reconciliation of `engine/SPEC_ENGINE.md`,
-`engine/ARCHITECTURE.md`, `engine/CALLSTACKS.md`,
-`engine/SCENARIO_ARCHITECTURE.md`, `engine/VISUAL_GUIDE.md`, and
-`engine/README.md`. This pass explains the end-to-end Scale 0 system through
-loop dynamics and manifestation, maps feature callstacks and scenario seed
-architecture, adds a learner-facing visual guide to the discrete simulation
-perspective, aligns CPU
-and GPU tick-ladder wording, updates the `TermToggles` count to the current
-registry, corrects stale integration-scheme and latency-field language, and
-keeps physics claim status deferred to the project ledgers. No code or physics
-behavior changed.
-
-### 2026-06-01 — Engine-Flawless Lifecycle/Callstack/Toggle Audit (16 commits)
-
-A 16-commit audit of the engine's lifecycle, callstack, and toggle
-surface (branch `flawless-engine-2026-06-01`, HEAD `09eaa0c1`).
-**Documentation + verification + two real-bug fixes only; golden hash
-`0x56fa28acb5b9fe88` @ L=17 unchanged since 2026-06-11 determinism re-pin; zero behavioral drift.**
-
-- **Verification harness.** New web specs `lifecycle-harness` (per-scale
-  mount→unmount round-trip leak net), `reconcile-claims` (re-asserts four
-  prior fixes), `toggle-coverage` (all 32 Scale-0 field toggles),
-  `overlay-scheduler` (scheduler invariants); new C++ tests
-  `test_conservation_profile`, `test_tick_phase_order`,
-  `test_engine_lifecycle`. Web lifecycle fixes: `BaseLifecycleController`
-  adoption across Scale-2/3/6, `MountToggle` teardown, `physics-harness`
-  verified LIVE. New TOGGLE_REGISTRY doc + Scale-0 field-toggle coverage.
-- **Clean-checkout fix (real bug).** A committed dangling
-  `_repro_gpu_empty_bridge` CMakeLists reference had broken clean-checkout
-  `cmake` *configure* for ~5 weeks; removed — a fresh clone configures
-  again and **242 tests register**.
-- **Conservation profile (pinned).** The energy-conservation leak is the
-  non-variational **Gauss projection operator** (`J -= ∇φ`), **not** the
-  solver tolerance. `gauss_violation` has an iteration-independent stencil
-  floor (~5e-3 RMS) from the 18-point-Laplacian / 6-point-divergence
-  mismatch; bare leapfrog is well-posed by boundedness.
-- **DagEngine deprecation.** The three legacy stub methods now
-  `warn + skip + assert` and carry `[[deprecated]]`. Second real bug
-  documented (not fixed — DagEngine is deprecated): `entity_count()` is
-  permanently 0 (`active_indices_` never written); see `CONTRACTS.md §13`.
-
-### 2026-05-19 / 21 — F9 Tier-1 BLOCKER fixes (FTD-0148) + F11.A Tier-3 deep-dive (FTD-0151)
-
-Two audit-closure passes against the engine's standing F-series fix queue.
-Both status / correction only — no architecture or physics changes.
-
-- **F9 Tier-1 BLOCKER fixes** (`263c0a6`, FTD-0148 `[CORRECTION]`): three
-  Tier-1 blocking issues from the F9 web/engine audit closed; touched
-  engine + web layers.
-- **F11.A Tier-3 deep-dive** (`89479c0`, FTD-0151): re-evaluation pass of
-  Tier-3 audit items; closures + remaining items logged.
-
-### 2026-05-09 — BH-F* GPU plumbing sweep + RNG portability (Option A)
-
-Multi-week GPU-port effort consolidating CPUGPU parity across the BH
-feature batch. Centerpiece: a shared portable RNG that makes GPU outputs
-bit-exact with the CPU path for stochastic toggles.
-
-- **SplitMix64 RNG header + CPU refactor** (`c1a4f88`): shared
-  `include/ftd/splitmix64.h` replaces ad-hoc per-call RNGs; CPU refactored
-  to use it; primes BH-F5/F8/F9 GPU plumbing.
-- **BH-F5/F8/F9 CUDA GPU plumbing** (`c8e03a5`): RNG portability **Option
-  A** — GPU kernels seed and step through the same SplitMix64 stream as
-  the CPU, giving per-voxel bit-exact parity at unit mass under Langevin
-  / stochastic toggles. The anchor for all subsequent GPU campaign work.
-- **BH-F2** γ_FTD momentum integration ported to GPU (`2504c9b`).
-- **BH-F3** CPUGPU `accel_mag` definition unified (`10f00f9`).
-- **BH-F12** `emergent_forces` mode ported to GPU (`c887948`).
-- Prior CPUGPU parity bug-hunt (`f2a721a`, F1/F4/F6) + locked-particle
-  skip in `phase_forces_kernel` (`2fa326f`) + `inject_flux_cpu`
-  `flush_host_mutations` fix (`843c6f6`).
-- Toggle cleanup: `toggles.evaporation` flag with dual-path propagation
-  (`255c1dd`); dead `wv_x/y/z` params removed from `phase_movement_kernel`
-  (`2881238`); `ALPHA == ALPHA_EFT` vestigial comments dropped (`56985a4`).
-
-Net: the BH feature batch now has uniform CPUGPU parity and a portable
-deterministic RNG. WSL2 GPU re-verification of the new ports is on the
-standing queue.
-
-### 2026-05-04 — Trim-the-fat rounds 2-4 + 100% test pass + library extraction
-
-A three-pass test-corpus consolidation removing superseded / duplicate /
-exploratory ctest targets, paired with an effort to drive pass rate to 100%.
-
-- **Round 2** (`e8eb8e8`): −4609 LOC, 10 superseded/duplicate ctest files.
-- **Round 3** (`f2945cb`): 4 more deletions + `test_lagrangian` fixes
-  (net 9 residual fails closed).
-- **Round 4** (`08c517e`): −5397 LOC, 30 Phase B exploratory tests
-  (cluster_persistence arc consolidation under FTD-0136).
-- **`ftd_eft` static library extracted** (`11c7212`): fixes a circular
-  `ftd_core  ftd_cuda` link-order issue; unblocks 42 previously Not-Run
-  tests.
-- **100% pass at WSL2** (`c62ae8e`, `3c8dda0`): GPU energy 0.5-factor fix
-  + 13 individual test fixes + maxwell M1b/M5a fixes; 6 multi-hour
-  benchmarks disabled with explicit reasons.
-- Misc: maxwell timeout 1800→3600 s under `-j4` contention (`4bf42b1`);
-  TH1/EIN-2/WP3/PV4 follow-ups (`dccd8f7`).
-
-Net: ~10,000 LOC of test code removed; **211 active CMake targets** remain;
-the WSL2 CUDA path reaches 100% pass on the in-scope ctest set.
-
-### 2026-05-03 — Phase B cluster-persistence arc + FTD-0110 follow-up
-
-- **Phase B + multi-session cluster-persistence arc** (`d40f879`): 4
-  retractions under F1/F9 hygiene + (a)+(b)+(c) closure under FTD-0136;
-  two stability islands at A ∈ {9.0–9.5} and A = 13.0 amid flooding
-  regimes at L = 64; theory pass attached.
-- **FTD-0110 Option A — A₁g projector campaign** (`2f67503`): local-block
-  claim falsified — the linear-mode A₁g prediction does not survive the
-  full nonlinear engine. Closed-negative.
-- **FTD-0110 cluster-geometry diagnostic + baseline-drift finding**
-  (`b4f1dcf`): separate baseline-drift observation flagged `[OPEN]`.
-
-### 2026-05-02 — Scale 11 (reference frame context / reference frame structure) UI deletion
-
-`054b530`: the Scale 11 web-dashboard surface removed (~5200 LOC). Per the
-2026-05-02 reference frame structure-vocabulary refresh, the reference frame context/reference frame structure
-content was retired as a separate web scale; the underlying physics layer
-remains accessible via the existing flux/state APIs.
-
-### 2026-04-29 — Phase I C++ cross-check + Wilson-Dirac Phase II pre-reg (FTD-0125)
-
-`e4cebf4`: the FTD-0125 Phase I (cyclotomic / spectral) verification ported
-to C++ as a cross-check of the Python implementation; the Phase II
-Wilson-Dirac campaign pre-registration staged.
-
----
-
-### April 27, 2026 — Modular refactor sweep (8 phases, 17 commits)
-
-The engine was decomposed across 8 phases following the plan in
-`.claude/plans/i-want-to-try-crispy-charm.md` (closed). Driven by the
-audit observation that 5 specific files had accumulated structural
-bloat. Bit-exact physics preservation enforced by a 100-tick
-deterministic byte-hash gate (`test_render_bridge_golden`, hash
-`0x56fa28acb5b9fe88` @ L=17, re-pinned 2026-06-11 after OpenMP
-determinism fixes) that held across every commit since.
-
-**Cumulative LOC reductions:**
-
-| File | Before | After | Δ |
-|---|---:|---:|---:|
-| `engine/web/js/viewport.js` | 3953 | 1256 | **−68%** |
-| `engine/web/js/bridge-init.js` | 2395 | 42 | **−98%** |
-| `engine/src/render_bridge.cpp` | 1231 | 545 | **−56%** |
-| `engine/cuda/kernels_stencil.cu` | 1530 | 0 (deleted, split into 3 TUs) | **−100%** |
-| `engine/include/ftd/render_bridge.h` | 506 | 369 | **−27%** |
-| `engine/include/ftd/test_telemetry.h` | 412 | 154 | **−63%** |
-
-**New infrastructure created:**
-- 4 viewport sub-renderer modules (4948 LOC across 5 files): `scene-core.js`, `flux-renderer.js`, `particle-renderer.js`, `field-renderer.js`
-- 7 bridge layer modules: `mock-bridge.js`, `wasm-bridge.js`, `capabilities/{install,scale0,scale1,scale2}.js`
-- 5 `render_bridge_phases/` TUs: `phase_write.cpp`, `phase_forces.cpp`, `phase_read.cpp`, `phase_movement.cpp` (Phase 4) + R1-R5 prior
-- 3 CUDA TUs: `kernels_stencil_single.cu`, `kernels_stencil_dual.cu`, `kernels_aux.cu` + shared `kernels_stencil_common.cuh`
-- `ftd_test_support` library (test_telemetry impl + bridge_fixtures)
-- 4 new ADRs: 0010 (cascade callback), 0011 (mesh-factory callback), 0012 (golden-tick gate), 0013 (toggle TOGGLE_SPECS[])
-
-**Key patterns established:**
-- **Cascade callback** (ADR-0010): every sub-renderer exposes `onLatticeSizeChanged`, `setBoundaryShape`, `setEngineMode`, `dispose`; orchestrator dispatches unconditionally.
-- **Mesh-factory callback** (ADR-0011): single canonical home + ctor-bound callbacks for cross-sub-renderer helpers.
-- **Golden-tick regression gate** (ADR-0012): `test_render_bridge_golden.cpp` hashes 100 ticks; bit-exact preservation required.
-- **TOGGLE_SPECS[] table-driven** (ADR-0013): adding a toggle = 2-place edit (was 5-place).
-
-See [docs/audits/AUDIT_2026-04_refactor-sweep.md](../docs/audits/AUDIT_2026-04_refactor-sweep.md)
-for the full ledger including commit hashes, deferred items, and lessons learned.
-
-**Outstanding deferral:** Phase 5 GPU runtime parity at L=64 — kernels_stencil split is host-compile-verified + CPU-deterministic-verified, but bit-exact GPU-stencil parity needs a WSL2 follow-up session (per CLAUDE.md GPU-via-WSL2 mandate).
-
----
-
-### April 27, 2026 — Lattice cleanup pass + plumbing leak plugs (pre-refactor)
-
-**Web engine architecture additions:**
-- **PhysicsHarness layer** (`engine/web/js/physics/`) — single canonical
-  read/write surface across MockBridge and WasmBridge. Lazy-attached
-  per bridge; exposes `getParticleCharge`,
-  `findOppositeChargePairFromList`, `sampleEFieldAlongRay`, particle
-  injection, scenario dispatch. Retired the JS migrated-scenario
-  registry and mirror-bridge plumbing — both bridges own their
-  scenario libraries directly.
-- **Bridge contract typedef** (`engine/web/js/bridge/bridge-contract.js`)
-  — `@typedef ScaleBridge` documents the 16-method symmetric surface;
-  both `MockBridge` and `WasmBridge` carry `@implements` annotations.
-- **C-3 inversion**: `harness.setupScenario` defers to
-  `bridge.setupScenario` (C++ canonical when `isWasm=true`,
-  MockBridge native JS otherwise).
-- **Lazy fluxMock allocation**: scenario-loader only allocates the
-  parallel JS MockBridge when `shouldUseFluxMock` returns true. Saves
-  ~21 MB / quantum-* / light-* scenario load.
-
-**Scenario library DRY (JS + C++):**
-- New shared `engine/web/js/bridge/scenarios/_helpers.js` exporting
-  `injectRadialEnvelope`, `injectParticleFull`, `injectDressedParticle`,
-  `injectTriad`, `TRIAD_ANGLES`. Six bespoke radial-Gaussian loops in
-  `s0-seed-scenarios.js` collapsed to helper calls.
-- `1/sqrt(3)` literals removed from JS (light, s0-field) and C++
-  (light, s0_field) scenarios in favor of imported `C_SPEED`.
-- `SCN_PI` shadow dropped from C++ `engine/src/scenarios/_helpers.h`;
-  callsites use `ftd::PI` directly.
-- Toggle-whitelist contract documented in `scenario-loader.js` and
-  `engine/include/ftd/scenarios.h`.
-
-**Plumbing + memory leak plugs (21 tickets across two audit passes):**
-- WasmBridge gained `dispose()` symmetric with `MockBridge.dispose()`;
-  `reset()` now cleans `_pe` / `_ae` / `_aeFallback` / harness key
-  before destroying the C++ RenderBridge.
-- `MockBridge.dispose()` extended to null `_stateGrid`,
-  `_selectiveDampMask`, `_boundaryMask`, `_latencyProxy`, `_peEngine`,
-  `_aeEngine`.
-- `physics-harness.sampleEFieldAlongRay` position-index Map cache
-  moved off the bridge-emitted `efs` object onto `harness._efsIndex`.
-- Two leaked `BoxGeometry`s in `viewport.js` (voxelHighlight,
-  symHighlights) now disposed after `EdgesGeometry` construction.
-- `cosmic-renderer._cleanGeometries` now disposes `_nebulaCloud`.
-- `chart-fullscreen` active-card stack handles concurrent
-  fullscreen requests.
-- `scrub-bar.mount()` idempotent; step-by-N chain generation-tagged.
-- `rafCoordinator` auto-unsubscribes callbacks that throw 10 frames
-  in a row; new `clear()` API for HMR / test teardown.
-- Cross-cutting `window.__ftd*Panel` singleton retention fixed.
-- P1 observables panel migrated from raw recursive
-  `requestAnimationFrame` to `rafCoordinator.subscribe`; per-frame
-  listener pattern replaced with single panel-level click delegation;
-  full `dispose()` returned from api.
-- Scale 11 `disableAudio()` now closes the AudioContext.
-- `pagehide` hook releases the lazy fluxMock on bfcache freeze.
-
-**C++ engine:**
-- `RenderBridge::tick` strict_validation `throw` guarded with
-  `#ifdef __EMSCRIPTEN__` → `std::cerr` + `std::abort` fallback so
-  the WASM build (`-fno-exceptions`) doesn't abort the module
-  silently on configuration bugs.
-
-**Tooling:**
-- `engine/web/serve.py` — no-cache dev server (Cache-Control:
-  no-store) so JS edits hit the browser without manual hard-refresh.
-- `engine/build_wasm.bat` — Windows wrapper around emcmake/emmake.
-- `.githooks/commit-msg` — enforces no-`Co-Authored-By` policy.
-- New `engine/web/docs/REF_DEBUG_GLOBALS.md` catalogues the 10
-  `window.__ftd*` debug globals.
-
-**Cumulative LOC delta:** ~−380 LOC across harness + scenario libraries;
-~+250 LOC of new shared primitives + typedef + helpers; 21 plumbing
-tickets closed; 9 infrastructure tickets closed. WASM rebuilt twice;
-both clean.
-
-### April 17, 2026 — Engine cleanup sweep (6 tracker items closed)
-
-Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered sequence. Summary:
-
-| § | Title | Verdict | What changed |
-|---|---|---|---|
-| 1.4 | Symplectic leapfrog integrator | Already symplectic | Corrected comments + new audit test |
-| 1.8 | Moore-Laplacian isotropy | Already isotropic (Taylor proof) | Corrected comments + new isotropy test |
-| 1.5 | `ALPHA_PRECISION` rollout | Wiring needed | `ALPHA`, `G_C`, JS mirror all upgraded; `ALPHA_TREE` retained as reference |
-| 1.2 | γ_FTD momentum integration | Real physics change | Velocity clamp replaced with `p = γmv` in `phase_forces`; removed the over-strict secondary clamp in latency block |
-| 1.7 | GPU-path `EnergyLedger` | Hook needed | `tick()`'s GPU path now calls `gpu_sync_to_host()` + `update_energy_ledger()` |
-| 1.9 | Muon / tau spatial seeds | JS feature | Two new scale-0 scenarios (`s0-seed-muon`, `s0-seed-tau`) with full epistemic metadata |
-
-**All six viable engine opens are now  CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) for the full ledger.
-
-### April 17, 2026: Open items tracker + cleanup sweep
-- **`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, reference frame context, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
-- **Dead-code removal:** `vec3Str` / `fmtForce` in `engine/web/js/inspector.js` (unused, superseded by `units.js`).
-- See [CHANGELOG.md](../CHANGELOG.md) → "Open Items Tracker + Cleanup Sweep" for full list.
-
-### April 17, 2026: Consolidation sweep
-- **`DagEngine` marked EXPERIMENTAL.** Banner at the top of `dag_engine.h` and `dag_engine.cpp` makes clear that `gauss_project` / `phase_forces` / `phase_movement` are `[OPEN]` stubs — the production physics path is `RenderBridge`.
-- **DagEngine WASM binding removed.** The web engine never called it; the Emscripten export was dead weight inviting users into an unfinished code path.
-- **`engine/README.md`** got a new "Engine files — what's production, what's experimental" table.
-- **`EnergyLedger`** auto-populated via `RenderBridge::update_energy_ledger()` at the end of every CPU-path `tick()`. Tests can now assert on `|residual| < tol` and refuse energy-drift regressions. GPU-path caveat documented (host voxels stale between syncs).
-
-### April 17, 2026: Honesty sweep
-- **`X_PLUS_PRECISION = 137.035999177`** and **`ALPHA_PRECISION = 1/X_PLUS_PRECISION`** added to `ontic.h` and re-exported. α derivation now first-class in engine headers, not just in docs. Engine force paths still use tree-level `ALPHA` (3.8 ppm wider than CODATA — below every benchmark's resolution). Swap when a benchmark needs < 1 ppm.
-- **`ALPHA_EFT = G_C²` re-framed.** G_C was *defined* as √α, so `G_C² = α` is an identity by construction — a consistency check, not a derivation. The real α derivation is the master quadratic. (Engine behavior unchanged.)
-- **Colour force re-tagged** `[PHENOMENOLOGICAL FIT]` (was `[EMERGENT]`). Colour labelling is emergent; the three-regime force law is imposed. Genuine SU(3) derivation tracked in `TRACKER_OPEN_ITEMS.md` §1.3 + §2.4.
-- **Velocity clamp re-tagged** `[APPROXIMATION — NON-RELATIVISTIC CLAMP]`. Proper `γ_FTD` momentum integration is `[OPEN]`.
-- **Gravity regime banner** at `G_N` in `ontic.h`: explicit that engine runs at lattice-toy strength (~10³⁷× physical). Every gravity-benchmark claim must state the regime.
-- **Integration-scheme notes** added in `phase_read` header. Historical note: the
-  wording in that sweep was superseded by later leapfrog/isotropy audits and by
-  the current §4.3 staggered-update description.
-
-### April 17, 2026: Dashboard UX refresh
-- **Panels redesign** (`docs/superpowers/specs/2026-04-16-panels-redesign-design.md`): diagnostics / charts / lagrangian tabs rebuilt on vendored uPlot 1.6.30 + a shared descriptor-driven table primitive. 27 diagnostic rows with physics-accurate units, 20 inline sparklines, chip-picker chart grid, stacked-area Lagrangian.
-- **Playback timeline** (`docs/superpowers/specs/2026-04-16-playback-timeline-design.md`): floating scrub bar absorbs the play / local / step / reset / speed controls. Reverse-scrub backed by an LOD-tiered `TimelineBuffer` (working-memory analogue — snapshots block-average as they age). `Render 30s` button pre-computes a scrubbable clip via main-thread slicing + cancellable progress chip.
-- **Weak force visualization**: shader swap → `PointsMaterial` + radial-gradient `CanvasTexture` sprite with additive blending; flow-style streamlines bumped to 320 seeds / full-length lines.
-- **Overlay panel collapsible**: Scale 0 visualization panel gets a header chevron; per-scale collapse state in localStorage.
-
-### April 13, 2026: Engine-Theory Bridge, EFT, GR Unlocked, 3 Theory Papers
-- **20-benchmark suite** (`benchmark_engine_theory.cpp`): first quantitative engine-to-theory comparison
-- **EFT reconstruction**: `ALPHA_EFT = G_C * G_C` — engine coupling squared is the runtime force coupling; this is not a derivation of the physical fine-structure constant
-- **Emergent forces toggle**: computes force from flux field gradient without Poisson solver
-- **6 emergence experiments** (`benchmark_emergent_alpha.cpp`): self-energy, interaction potential, emergent force, bound state, null baseline, EFT force
-- **Budget equation** (`benchmark_budget_equation.cpp`): x/K + G*/x = 1 verified to 0.2% on lattice
-- **Wilson loops** (`benchmark_wilson_loops.cpp`): 12/17 pass, flux tube collimation detected, area law sigma > 0
-- **Gluon dynamics** (`campaign_gluon_dynamics.cpp`): 7/11 pass, linear E(r), E/r ~ constant
-- **Einstein equations** (`test_einstein_equations.cpp`): gravitational superposition to 0.08%, **time dilation 0.004% match (after latency fix)**
-- **BH thermodynamics** (`benchmark_black_hole_thermo.cpp`): **L_peak=0.62, proper time dilation** (after latency fix), Smarr S*T=M/2 exact
-- **LATENCY FIX** (one line): `sqrt(max(phi,0))` -> `sqrt(|phi|)` in render_bridge.cpp line 735. Unlocks entire GR sector.
-- **Three theory papers** (historical April status; current claim tags defer to the LEDGER):
-  - `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — continuum-limit/QED equivalence scope; `x_+ = 1/alpha` remains ledger-scoped
-  - `DERIV_SINGLET_FROM_VOID_EVENT.md` — Bell loop via void event
-  - `DERIV_NC_FROM_TOPOLOGY.md` — N_c = 3 from 4 independent routes
-- **WASM rebuilt and deployed**: ftd_core.js + ftd_core.wasm now in engine/web/wasm/
-- **DagEngine fixed**: added 4 missing pure virtual overrides (current_tick, dt, set_dt, entity_count). **Update 2026-04-17:** DagEngine is now explicitly EXPERIMENTAL — see top-of-file April 17 consolidation entry.
-- **6 SM visualization scenarios**: Particle Zoo, Higgs Field, Higgs Mechanism, Electroweak, Three Generations, QCD Vacuum
-- **Scientific status: C+ -> B+** (20 benchmarks + 4 physics domains + GR + 3 theorems)
-- Consolidated index.html (removed index_dag.html), fixed dag_engine.h missing include
-
-### April 10-11, 2026 Session Additions
-- **Stellar Lifecycle scenario** (Scale 5 JS): cloud collapse -> star formation -> death -> WD/NS/BH + Hawking evaporation
-- **Fuel tracking and stellar evolution** in mock-scale5.js (fuel_fraction, fuel_stage, supernova ejecta)
-- **Fuel-stage-aware rendering** in cosmic-renderer.js (red giants, late burners, dying stars)
-- **Master verification script**: `scripts/proofs/proof_master_verification.py` (54/54 checks across 10 domains)
-
----
+**Engine version:** 2.18.0
+**Golden regression hash:** `0xb604d81a3d79366e` @ L=17 (`test_render_bridge_golden`). The two gauss audit scalars `gauss_violation`/`max_gauss_error` are summed only over vacuum (state==0) sites with the mean-subtracted, coupling-scaled target the SOR projection enforces; per-voxel state/flux/wave_vel/velocity is bit-exact; deterministic (OMP=1 == full pool). Rationale in `test_render_bridge_golden.cpp`.
+**Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`.
 
 ## 0. System Narrative: From Field Capacity to Manifested Events
 
@@ -515,7 +155,7 @@ engine/
     atom_engine.h             # AtomEngine -- Scale 2 composite atoms + bonds (327L)
     cosmic_engine.h           # [v2.12] CosmicEngine : ScaleEngine -- Scale 5 N-body+SPH (523L)
     scale.h                   # OnticEntity + scale bridge declarations (83L)
-    scenarios.h               # [NEW Apr 2026] Public dispatch_scenario() -- C++ port of JS scenario library
+    scenarios.h               # Public dispatch_scenario() -- C++ port of JS scenario library
     correlations.h            # Correlation function analysis (205L)
     ensemble.h                # Statistical ensemble infrastructure (200L)
     spectral.h                # Spectral analysis utilities (195L)
@@ -539,7 +179,7 @@ engine/
     atom_engine.cpp           # AtomEngine: ionic + vdW + covalent forces (762L)
     cosmic_engine.cpp         # [v2.12] CosmicEngine: Barnes-Hut + SPH + Friedmann (900L)
     scale_bridge.cpp          # Scale 0<->1<->2<->5 coarsen/refine round-trip (283L)
-    scenarios.cpp             # [NEW Apr 2026] 83 scenarios from JS ported to C++ (flux-/light-/quantum-/s0-seed-/s0-field-)
+    scenarios.cpp             # 83 scenarios from JS ported to C++ (flux-/light-/quantum-/s0-seed-/s0-field-)
     constructors.cpp          # Shared scenario/state constructor helpers
     dag_engine.cpp            # DagEngine [EXPERIMENTAL] -- see banner in header
     ontic_audit.cpp           # Ontic-chain self-audit (prints derivations and consistency checks)
@@ -562,7 +202,7 @@ engine/
       scale5.json             # 4 cosmic scenarios + camera presets
       scale6.json             # Meta scenario + 13 toggle controls
   tests/
-    257 test files            # 211 active CMake targets after 2026-05-04 trim-the-fat round 4
+    257 test files            # 211 active CMake targets
   wasm/
     ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1512L)
     CMakeLists.txt            # WASM build rules (Emscripten-only)
@@ -927,10 +567,9 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 
 ## 8. TermToggles
 
-The `TermToggles` struct is a table-driven Scale 0 runtime registry. As of the
-2026-06-07 documentation pass it contains **33 boolean toggles** in
-`TOGGLE_SPECS[]` plus **6 typed configuration fields** that are intentionally
-kept outside the boolean table.
+The `TermToggles` struct is a table-driven Scale 0 runtime registry. It contains
+**33 boolean toggles** in `TOGGLE_SPECS[]` plus **6 typed configuration fields**
+that are intentionally kept outside the boolean table.
 
 Adding a new boolean toggle requires a struct field and one registry row; the
 helper methods (`validate`, `enable_all`, `disable_all`,
@@ -1056,11 +695,10 @@ Files: `scale.h` (68L), `scale_bridge.cpp` (202L).
 
 ### Summary
 
-Current project-level count is listed in the header: **257 C++ test source
-files**, **211 active CMake targets** after the 2026-05-04 trim-the-fat pass,
-plus 18 Playwright specs and 25 Python test files. CTest labels include
-`unit`, `physics`, `golden`, `slow`, and `gpu`; CUDA targets are conditional on
-`FTD_ENABLE_CUDA`.
+Project-level count: **257 C++ test source files**, **211 active CMake
+targets**, plus 18 Playwright specs and 25 Python test files. CTest labels
+include `unit`, `physics`, `golden`, `slow`, and `gpu`; CUDA targets are
+conditional on `FTD_ENABLE_CUDA`.
 
 The category list below is a representative map of the suite rather than a
 line-by-line target registry.
@@ -1194,7 +832,7 @@ line-by-line target registry.
 
 14. **Double damping is intentional (Rayleigh dissipation)**: Both `flux` and `wave_vel` are damped by `(1-ALPHA)` each tick in `phase_write`. This is deliberate Rayleigh dissipation -- it damps both the position-like degree of freedom (flux) and the velocity-like degree of freedom (wave_vel). Damping only one would leave undamped oscillatory modes. The dual damping ensures monotonic energy decay in the field, which is required for stable self-field buildup and physically correct radiation loss.
 
-15. **Speed limit enforced by γ_FTD momentum integration in phase_forces()**: As of 2026-04-17 (TRACKER §1.2), the velocity update in `phase_forces` uses `p = γmv` dynamics. Momentum reconstructs from `v + latency`, Newton's law updates `p`, and the new `v` extracts from `p` via `v = p · C · √((1−L²)/(C²+|p|²))`. This respects the FTD bandwidth `v²/C² + L² < 1` by construction — `|v|` asymptotes to `C·√(1−L²)`, never crosses. No clamp needed anywhere downstream; `phase_movement` receives an already-bounded velocity. Previous implementation used a non-relativistic clamp that discarded energy and was Lorentz-violating; the γ-integration replaces it cleanly.
+15. **Speed limit enforced by γ_FTD momentum integration in phase_forces()** (TRACKER §1.2): the velocity update in `phase_forces` uses `p = γmv` dynamics. Momentum reconstructs from `v + latency`, Newton's law updates `p`, and the new `v` extracts from `p` via `v = p · C · √((1−L²)/(C²+|p|²))`. This respects the FTD bandwidth `v²/C² + L² < 1` by construction — `|v|` asymptotes to `C·√(1−L²)`, never crosses. No clamp needed anywhere downstream; `phase_movement` receives an already-bounded velocity. A non-relativistic clamp would discard energy and be Lorentz-violating; the γ-integration avoids that.
 
 ---
 
@@ -1212,8 +850,8 @@ line-by-line target registry.
 | `inject_particle(x,y,z, state)` | Inject single particle at lattice site |
 | `inject_wavepacket(x,y,z, state, sigma, amplitude)` | Inject Gaussian wavepacket |
 | `inject_flux(x,y,z, fx,fy,fz)` | Raw flux injection (overwrites site) |
-| `inject_flux_add(x,y,z, flux_val)` | **[NEW Apr 2026]** Additive flux injection — accumulates instead of overwriting. Required by ported JS scenarios that sum overlapping Gaussians. |
-| `inject_wave_vel_add(x,y,z, wv_val)` | **[NEW Apr 2026]** Additive wave-velocity injection — same additive semantics, for wave-equation initial conditions. |
+| `inject_flux_add(x,y,z, flux_val)` | Additive flux injection — accumulates instead of overwriting. Required by ported JS scenarios that sum overlapping Gaussians. |
+| `inject_wave_vel_add(x,y,z, wv_val)` | Additive wave-velocity injection — same additive semantics, for wave-equation initial conditions. |
 | `create_entangled_pair(x,y,z, dx,dy,dz)` | Pair production with partner tracking |
 
 ### Diagnostics
@@ -1236,7 +874,7 @@ line-by-line target registry.
 
 ### Scenario library
 
-**[NEW April 2026]** `ftd::dispatch_scenario(RenderBridge& rb, const std::string& name)`
+`ftd::dispatch_scenario(RenderBridge& rb, const std::string& name)`
 (declared in `include/ftd/scenarios.h`, implemented in `src/scenarios.cpp`,
 ~1240 LOC) is the public C++ entry point for scenario setup. It is a
 straight port of the browser-side JS scenario library under
@@ -1289,7 +927,7 @@ Replaces CPU's iterative SOR with spectral method via cuFFT:
 - **Single-pass**: No iteration count to tune
 - Precomputed Green's function reused every tick
 
-**Numerical parity note (F6 callstack audit 2026-04-17):** CPU and GPU
+**Numerical parity note:** CPU and GPU
 solve the SAME Poisson equation but with different numerical methods
 (SOR iterative vs FFT spectral). CPU output carries a residual ≤ 10⁻⁴
 at the default `SOR_ITERATIONS = 6`; GPU output is exact to floating-
@@ -1374,7 +1012,7 @@ ftd_core (C++ library)
     +-- CLI (src/main.cpp, native)
 ```
 
-### Dashboard Layout (April 2026 refresh)
+### Dashboard Layout
 
 ```
 +----------------------------------------------------------------+
@@ -1423,9 +1061,9 @@ Hydration uses two Scale 0 bridge capabilities:
 
 Scrubbing is a pure "load, don't re-simulate" operation: `hydrateToTick(tick)` picks the nearest snapshot by tick from the render buffer (if an active clip exists) else the memory buffer, and loads it directly. No fast-forward ticks run during a drag, so the cost per scrub frame is one upsample + one buffer write — latency is independent of scrub distance. Pointer moves are coalesced to one hydrate per animation frame via `requestAnimationFrame`, so 240 Hz trackpads cannot saturate the loader. Live simulation resumes on pointerup (`onScrubEnd`).
 
-### Panels Redesign (April 2026)
+### Panels
 
-The three Scale 0 dashboard tabs were rebuilt on a shared chart/table primitive set:
+The three Scale 0 dashboard tabs are built on a shared chart/table primitive set:
 
 - **Charts primitives** (`js/ui/charts/`): vendored uPlot 1.6.30, a theme reader that maps CSS custom properties into uPlot config, and three primitive classes:
   - `UPlotChart` — line/area using bulk `flattenInto()` extraction from SoA MultiRingBuffers for O(1) contiguous typed-array render passes. DPR + ResizeObserver handling, localStorage-persisted series-hidden state.

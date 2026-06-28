@@ -1,15 +1,12 @@
 # SPEC — Scale 0 Scenario Subsystem Architecture
 
 **Status:** foundation reference (descriptive — documents the system as built).
-**Baseline:** the working tree as of 2026-06-05, reflecting this session's committed scenario
-work — forward-only time model + play-bar (`9cc1f38b`), `flux-zero-point` + the per-scenario
-boundary mechanism (`34c19160`), and the all-scenario health sweep + worker fix (`7fc4296b`).
 **Companion docs:** the gap/drift findings live in
 [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md);
 the per-scenario mount/telemetry + physics-sense audit in
 [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md);
 the remediation roadmap in [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md).
-**2026-06-13 addendum:** active-owner + harness routing —
+Active-owner + harness routing —
 [`audits/AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md),
 [`audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md`](audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md).
 Foundation companions: [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md) (the
@@ -26,8 +23,8 @@ Adjacent surfaces already specced: [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](
 `scales/scale0/runtime/scenario-loader.js`); docs relative to `engine/web/docs/`;
 C++ paths from the repo root (`engine/src/...`, `engine/include/...`). Every claim below
 carries a `file:line` so it can be re-verified against source — and should be, per the
-project's verify-before-claiming discipline (the 2026-05-27 web audit over-counted dead
-code by ~10 items by inferring rather than reading).
+project's verify-before-claiming discipline (inferring rather than reading source has
+over-counted dead code in past audits).
 
 ---
 
@@ -80,7 +77,7 @@ scenario is decided per-load by `shouldUseFluxMock()` and `workerEligible()`.
 |---|---|---|
 | **WasmBridge** | `bridge/wasm-bridge.js` | Emscripten-compiled C++ engine — the canonical fast path. `setupScenario` (`:373-376`) → `this._module.setupScenario(this._bridge, name)` → C++ `dispatch_scenario`. |
 | **MockBridge** | `bridge-init.js` / `bridge/mock-bridge.js` | Pure-JS lattice. `setupScenario(name, harness)` (`mock-bridge.js:1651`) → `runSetupScenario` (the JS dispatcher). In-thread. |
-| **MockBridgeProxy** | `bridge/mock-bridge-proxy.js` | Worker wrapper around a MockBridge running in a Web Worker; a main-thread "shadow" reads the worker's `SharedArrayBuffer`s zero-copy. `setupScenario` (`:121`). **The default deployed path for `flux-*` scenarios** since 2026-06-03 (see `AUDIT_BRIDGE_WIRING_2026-06-03.md`). |
+| **MockBridgeProxy** | `bridge/mock-bridge-proxy.js` | Worker wrapper around a MockBridge running in a Web Worker; a main-thread "shadow" reads the worker's `SharedArrayBuffer`s zero-copy. `setupScenario` (`:121`). **The default deployed path for `flux-*` scenarios** (see `AUDIT_BRIDGE_WIRING_2026-06-03.md`). |
 
 **Ownership decision** — `scales/scale0/runtime/scenario-loader.js`:
 
@@ -92,7 +89,7 @@ scenario is decided per-load by `shouldUseFluxMock()` and `workerEligible()`.
   && crossOriginIsolated && shouldUseFluxMock(...)` → use `MockBridgeProxy`, else in-thread
   `MockBridge`. `makeFluxMock()` (`:95-99`) builds the chosen instance.
 
-> **Resolved ownership (verified 2026-06-05 via the all-scenario health sweep).** Only
+> **Resolved ownership (verified via the all-scenario health sweep).** Only
 > `flux-*` is unconditionally mock-owned (rule 2). **Every other scenario** — `empty`,
 > `light-*`, `quantum-*`, `s0-seed-*`, `s0-field-*`, `s0-vacuum-*` — runs on the **WASM
 > engine** whenever the WASM bridge exposes a flux volume (rule 3 returns `false`), and
@@ -101,7 +98,7 @@ scenario is decided per-load by `shouldUseFluxMock()` and `workerEligible()`.
 > [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md) §A.
 > *Consequence:* a **JS-only** scenario bug is latent (mock-fallback path only) — e.g. the
 > `vacuum-scenarios.js` `harness` ReferenceError that affected every `s0-vacuum-*` on the mock
-> path but never the deployed WASM path (health audit §A.4; **fixed** 2026-06-05, guarded by a
+> path but never the deployed WASM path (health audit §A.4; **fixed**, guarded by a
 > `?engine=mock` test in `tests/scale0-scenario-health.spec.js`).
 
 When a fluxMock owns the scenario, **two bridges coexist**: `ctx.bridge` (the primary
@@ -119,7 +116,7 @@ documented scenario touches all four.
 ### 3.1 UI registry — `scales/scale0/scenario-registry.js`
 
 The canonical catalogue the dropdown is built from. `SCALE0_SCENARIOS` (`:17-398`) is an
-array of **96 descriptors** (as extracted 2026-06-05: **86** built by the `makeScenario`
+array of **96 descriptors** (**86** built by the `makeScenario`
 factory `:1-15` + **10** hand-written object literals — `s0-seed-quark-gluon-plasma`
 `:74-97` and nine `s0-seed-emergent-ic*` `:133-375`). Helpers:
 
@@ -136,7 +133,7 @@ factory `:1-15` + **10** hand-written object literals — `s0-seed-quark-gluon-p
 
 Six prefix group files, each exporting `setupXxxScenario(name, harness, ctx)` that returns
 `true` iff it handled `name`. Dispatched by `runSetupScenario` in `bridge/scenarios/index.js`
-(`:51-91`). Case counts (extracted 2026-06-05):
+(`:51-91`). Case counts:
 
 | Group file | prefix | `case` count |
 |---|---|---|
@@ -171,8 +168,7 @@ order (contract in `engine/include/ftd/scenarios.h:58-68`). `name ==` branch cou
 > **Raw counts ≠ unique scenarios.** These are `name ==` *occurrences*; some scenarios are
 > tested in more than one branch (e.g. `name == "a" || name == "b"`), so the deduplicated
 > set is **95 unique C++ scenarios** — exactly matching the 95 unique JS scenarios. The
-> JSC++ parity guard (§6.3) is **GREEN** (6/6, verified 2026-06-05 after adding
-> `flux-zero-point` and removing `frw-patch`: inventory `UI 96 / JS 96 / C++ 95 / shared 95`,
+> JSC++ parity guard (§6.3) is **GREEN** (6/6: inventory `UI 96 / JS 96 / C++ 95 / shared 95`,
 > +1 C++ legacy). Do **not** read the per-file occurrence counts as drift; the unique scenario
 > sets are in parity.
 
@@ -263,7 +259,7 @@ controller.loadScenario(ctx, id, params)   scales/scale0/controller.js
     10. restoreOverlayPreferences; viewport.setLatticeSize(activeN) when N differs
 ```
 
-> **2026-06-13 corrections (supersedes steps in older `file:line` blocks below):**
+> **Authoritative corrections (supersede steps in older `file:line` blocks below):**
 > - Do **not** call `fluxMock.setupScenario()` before `scenario.load()` (double-seed).
 > - Harness must target **activeBridge**, not always `ctx.bridge`.
 > - `setFluxMock` / `setForceStyle` are imported from `store.js` (init crash if missing).
@@ -322,8 +318,8 @@ harness layer — `setupScenario` defers straight to whichever bridge owns the r
   (Lifecycle validity verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`.)
 - **Resize:** `resizeScale0Lattice` (`:356-433`) heap-guards the new size, resizes the
   bridge, then **re-loads the scenario** via `getScale0Scenario(id).load(getPhysicsHarness(bridge), { id })`
-  (`:400`) — fixed 2026-06-05 (A1). Pre-fix this passed a bare `{ bridge }`, which the refactored
-  factory `load` could not call `setupScenario` on, silently breaking resize on every factory
+  (`:400`, fix A1). Earlier this passed a bare `{ bridge }`, which the factory
+  `load` could not call `setupScenario` on, silently breaking resize on every factory
   scenario (the fluxMock was never rebuilt).
 
 ### 5.5 Overlay-preference round-trip
@@ -331,10 +327,10 @@ harness layer — `setupScenario` defers straight to whichever bridge owns the r
 Because `resetScale0VisualState` (`:288-299`) clears every field overlay, the loader snapshots
 the user's overlay buttons before the reset (`captureOverlayPreferences` `:237-248`) and
 re-applies them after (`restoreOverlayPreferences` `:257-286`). Both walk `FIELD_BUTTON_IDS`
-and `FIELD_BUTTON_TO_FLAG`, which — since the B1 fix (2026-06-05) — are **derived** from
+and `FIELD_BUTTON_TO_FLAG`, which (fix B1) are **derived** from
 `ui/dom.js` `FIELD_TOGGLE_BINDINGS`, the canonical **36-entry** buttonflag map shared with
-`bindings.js` and kept in lockstep with `store.js` `FIELD_TOGGLE_KEYS` (also 36). Before the fix
-they were a hand-maintained 32-entry mirror that had fallen behind the four 2026-06-03 substrate
+`bindings.js` and kept in lockstep with `store.js` `FIELD_TOGGLE_KEYS` (also 36). Earlier
+they were a hand-maintained 32-entry mirror that had fallen behind the four substrate
 overlays (`showStateField`/`showLatency`/`showGaussResidual`/`showMooreDecomp`).
 
 ---
@@ -382,7 +378,7 @@ particle-empty lattice.
    (`:157-174`);
 4. every **UI-registry** scenario has a JS impl (`:176-188`).
 
-The guard is **GREEN** (6/6, 2026-06-05). It was hardened (B5) so the registry extractor
+The guard is **GREEN** (6/6). It was hardened (B5) so the registry extractor
 (`:112-123`) now matches **both** the `makeScenario(...)` factory form **and** the custom
 object-literal `id:` form — the 10 custom-literal scenarios are no longer invisible (UI inventory
 86 → 96) — plus a new **orphan-metadata** assertion (every `S0_SEED_SCENARIO_METADATA` key must map
@@ -414,7 +410,7 @@ boundary-application site: the flux-mock create (`:270-271`), `applyAuxiliaryDef
 (`:120-128`), and the resize path (`:351-364`). Scenarios without an entry fall back to
 `#boundary-select` / `#toggle-reflective` (unchanged behavior).
 
-Added 2026-06-05 with `flux-zero-point`, which declares `reflective: true` so its irreducible
+`flux-zero-point` declares `reflective: true` so its irreducible
 energy floor is trapped rather than absorbed at the lattice edges (without it the floor bleeds
 away — not "zero-point"). This **removes a real coupling**: before, the loader read the boundary
 **only** from the DOM controls, so a scenario could not declare its own boundary need (the
@@ -497,6 +493,6 @@ Higher payoff, larger one-time churn; the C++ seed bodies stay hand-written but 
 | Parity | `tests/scenario-parity.spec.js` |
 
 *Counts — 96 registry entries (86 factory + 10 custom literals), 95 unique JS scenarios,
-95 unique C++ scenarios (+1 C++ legacy; JSC++ parity verified **green** 6/6 2026-06-05); raw
-`case` / `name ==` occurrences are 101 / 99. All `file:line` references are as of the 2026-06-05
-working tree; re-derive from source before relying on them.*
+95 unique C++ scenarios (+1 C++ legacy; JSC++ parity verified **green** 6/6); raw
+`case` / `name ==` occurrences are 101 / 99. Re-derive all `file:line` references from
+source before relying on them.*

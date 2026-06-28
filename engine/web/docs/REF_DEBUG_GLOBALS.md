@@ -10,7 +10,7 @@ a sign a missing export or factory is needed in the relevant module.
 
 | Global | Type | Source | Purpose |
 |---|---|---|---|
-| `window.__ftdCtx` | object | [scale0/controller.js](../js/scales/scale0/controller.js) | Live Scale-0 controller context: `{ bridge, viewport, controls, running, frameCount, … }`. Bridge accessor for panels, scenario-loader, and ad-hoc console probes. (The `globalTick` render-frame counter was removed 2026-06-05 — the engine tick is the single time source.) |
+| `window.__ftdCtx` | object | [scale0/controller.js](../js/scales/scale0/controller.js) | Live Scale-0 controller context: `{ bridge, viewport, controls, running, frameCount, … }`. Bridge accessor for panels, scenario-loader, and ad-hoc console probes. (There is no `globalTick` render-frame counter — the engine tick is the single time source.) |
 | `window.__ftdScale0State` | function `() ⇒ State` | [scale0/state/store.js](../js/scales/scale0/state/store.js) | Returns a snapshot of the Scale-0 store: `currentScenarioId`, `useFluxMock`, `fluxMock`, field-overlay flags, etc. Polled per-frame by panels via the function form so reads stay live. |
 | `window.__ftdRAF` | object | [lib/raf-coordinator.js](../js/lib/raf-coordinator.js) | The shared rAF coordinator singleton. Use `__ftdRAF.size()` to inspect current subscriber count, `__ftdRAF.clear()` for HMR/test teardown. |
 | `window.__ftdFluxSlicePanel` | object \| null | [overlays/flux-slice-panel.js](../js/scales/scale0/ui/overlays/flux-slice-panel.js) | Singleton handle to the live flux-slice panel. Cleared by the panel's `dispose()` so detached subtrees become GC-eligible. |

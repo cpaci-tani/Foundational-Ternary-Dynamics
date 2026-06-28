@@ -78,8 +78,8 @@ to enumerate tests. Defaults to `engine/build` if omitted.
 
 ## What's explicitly deferred (not in this branch)
 
-The plan had additional work that was intentionally scoped OUT of this session
-to land a shippable core deliverable first. These are documented follow-ups, not
+The plan had additional work that was intentionally scoped OUT to land a
+shippable core deliverable first. These are documented follow-ups, not
 regressions.
 
 ### Phase 1 (full sweep) — 12 more consolidation families
