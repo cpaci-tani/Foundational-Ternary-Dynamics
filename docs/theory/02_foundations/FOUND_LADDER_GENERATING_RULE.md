@@ -2,8 +2,6 @@
 
 ## Why the Alpha-Power Exponents Are What They Are
 
-**Date:** March 3, 2026
-**Framework:** FTD v5.27
 **Status:** Foundational analysis — structural identity
 **Epistemic Level:** [THEOREM] for algebraic identities; [SELECTION] for physical interpretation
 
@@ -248,12 +246,8 @@ The second differences measure the "acceleration" of the walk. The walk starts f
 ## Cross-References
 
 - **Constant atlas**: [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/EXPLR_ONTIC_CONSTANT_ATLAS.md)
-- **G* status stack**: current status stack lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR/TRACKER_ONTIC_TRUTH
+- **G* status stack**: the status stack lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR/TRACKER_ONTIC_TRUTH
 - **Dual substrate**: see `ontic.h` Layer 3b
 - **Numerical verification**: `scripts/exploration/explore_ladder_generating_rule.py`
 - **Algebraic proof of LGR-8**: `scripts/proofs/prove_dual_substrate_identity.py`
-
----
-
-*Document created: March 3, 2026*
 *Framework: Foundational Ternary Dynamics v5.27*

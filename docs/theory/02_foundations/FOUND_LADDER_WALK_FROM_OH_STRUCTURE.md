@@ -2,7 +2,6 @@
 
 **Tag:** [THEOREM] (step-size multiset) + [SELECTION, narrowed] (step order)
 **Ledger row:** FTD-0084
-**Filed:** 2026-04-24
 **Companions:**
 - [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md) — the ladder walk this closes
 - [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md) — S2 selection in chain §2.3
@@ -232,7 +231,7 @@ Accept **[THEOREM on multiset + SELECTION on order]** as the final status of S2,
 
 ## 7. Status summary
 
-**Program A: PARTIAL CLOSURE** as of 2026-04-24.
+**Program A: PARTIAL CLOSURE.**
 
 Test: `engine/tests/test_ladder_walk_from_oh.cpp`
 - O_h irrep decomposition verified numerically (integer multiplicities, total dim = 27).
@@ -254,4 +253,4 @@ Test: `engine/tests/test_ladder_walk_from_oh.cpp`
 
 ---
 
-*Filed 2026-04-24. Closes Program A as a partial closure of S2. Promotes step-size multiset $\{3, 3, 4, 6\}$ from [SELECTION] to [THEOREM] via $O_h$ structural integers + partition theorem. Step ORDER remains [SELECTION, narrowed] pending additional derivation work. Combined with Program E (FTD-0083), the cogito-axiom ladder is reduced from 2 selections to 1 narrow selection.*
+*Closes Program A as a partial closure of S2. Promotes step-size multiset $\{3, 3, 4, 6\}$ from [SELECTION] to [THEOREM] via $O_h$ structural integers + partition theorem. Step ORDER remains [SELECTION, narrowed] pending additional derivation work. Combined with Program E (FTD-0083), the cogito-axiom ladder is reduced from 2 selections to 1 narrow selection.*

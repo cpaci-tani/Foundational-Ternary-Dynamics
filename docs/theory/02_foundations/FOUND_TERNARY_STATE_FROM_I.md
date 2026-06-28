@@ -1,7 +1,6 @@
 # FOUND — Ternary state field as real projection of `Z[i]^× ∪ {0}`, grounded in Axiom 0
 
-**Tag:** [SYNTHESIS] — exposition update grounding Postulate 3 in Axiom 0; no change to algebra, theorems, or engine implementation.
-**Date:** 2026-05-03 (evening session).
+**Tag:** [SYNTHESIS] — exposition grounding Postulate 3 in Axiom 0; no change to algebra, theorems, or engine implementation.
 **LEDGER:** FTD-0128 — exposition / framework-deductive-chain entry.
 **Verification:** No script needed (pure exposition; no new identity).
 **Depends on:** Axiom 0 ("i exists"); Postulate 3 (current SPEC_FTD.md form); FTD-0122 (BCC complex-structure, `V_complex ≅ Z[i]²` in BCC decomposition); Theorem 8 (FTD-0111, (1+i)-tower); FTD-0110 / `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (existing 4-unification observation); FTD-0127 (G\* parity-twist, conductor-4 connection).
@@ -11,7 +10,7 @@
 
 ## 0 · Summary
 
-Postulate 3 of `SPEC_FTD.md` currently states: voxels carry one of three discrete states `s ∈ {−1, 0, +1}`. The numerical values −1, 0, +1 are presented as independent settings. This document grounds them as algebraic consequences of Axiom 0 ("i exists") via:
+Postulate 3 of `SPEC_FTD.md` states: voxels carry one of three discrete states `s ∈ {−1, 0, +1}`. The numerical values −1, 0, +1 are presented as independent settings. This document grounds them as algebraic consequences of Axiom 0 ("i exists") via:
 
 ```
 Axiom 0:  i exists
@@ -160,7 +159,7 @@ Plus Axiom 0: "i exists."
 
 The total axiomatic footprint **does not change** (Axiom 0 was already there). What changes is that **three previously-arbitrary numerical settings (−1, 0, +1) become derivable from existing commitments**. This is a small but real reduction in the framework's free-parameter count at the postulate level.
 
-This is the same kind of move as `DERIV_D3_FROM_AUTOMORPHISM.md` — D=3 was previously postulated, now re-grounded via `|Aut(E)|² = 2^D · (D−1)!` (the arithmetic uniqueness is [THEOREM]; the dimension-*forcing* itself is [SELECTION] per the 2026-06-24 spine audit). Postulate 3's numerical values are similarly re-grounded.
+This is the same kind of move as `DERIV_D3_FROM_AUTOMORPHISM.md` — D=3 re-grounded via `|Aut(E)|² = 2^D · (D−1)!` (the arithmetic uniqueness is [THEOREM]; the dimension-*forcing* itself is [SELECTION] per the spine audit). Postulate 3's numerical values are similarly re-grounded.
 
 ---
 
@@ -172,4 +171,4 @@ This is the same kind of move as `DERIV_D3_FROM_AUTOMORPHISM.md` — D=3 was pre
 
 ## 8 · Provenance
 
-Identified during the 2026-05-03 evening session. The user's `{s, 0, |s|}` ontology proposal made the polarity-magnitude pairing of Postulate 3's two non-zero states structurally visible. The further identification `s = i²` ties the polarity grounding directly to Axiom 0, eliminating the apparent independence of Postulate 3's three numerical settings. The unification of multiple 4-fold structures across FTD's spine via `Z[i]^×` was already noted in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md §6` and partially proved in FTD-0122 (Roles 1+3); this document makes the chain Axiom 0 → Postulate 3 explicit and adds the state-field 4 as one more entry in the existing (conjectural) unification.
+The `{s, 0, |s|}` ontology makes the polarity-magnitude pairing of Postulate 3's two non-zero states structurally visible. The further identification `s = i²` ties the polarity grounding directly to Axiom 0, eliminating the apparent independence of Postulate 3's three numerical settings. The unification of multiple 4-fold structures across FTD's spine via `Z[i]^×` is noted in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md §6` and partially proved in FTD-0122 (Roles 1+3); this document makes the chain Axiom 0 → Postulate 3 explicit and adds the state-field 4 as one more entry in the (conjectural) unification.

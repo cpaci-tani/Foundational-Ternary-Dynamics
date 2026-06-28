@@ -1,11 +1,10 @@
 # Foundation: The Phenomenal / Noumenal Bridge
 
-**Date:** 2026-04-24 (vocabulary refresh 2026-05-01)
 **Status:** [FOUNDATION] — reorganizing principle for the entire FTD corpus
-**Purpose:** Name the two-layer ontology that FTD has been implicitly working in, make the geometric encoding explicit, and reclassify all existing tags by layer.
+**Purpose:** Name the two-layer ontology that FTD works in, make the geometric encoding explicit, and reclassify all existing tags by layer.
 **Ledger row:** FTD-0078
 
-> **Vocabulary refresh (2026-05-01):** §8 of this document originally framed the noumenal-axis content as "reference frame context." It is now restated using the canonical [reference frame structure / frame dynamics] vocabulary defined in [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The mathematical content is unchanged; the framing is sharper and physics-readable. **Old "reference frame context" claims become structural claims about the reference frame projection from the noumenal (3³ / Moore-26 / G*-bearing) layer to the phenomenal (2³ / Moore-18 / ϖ-bearing) layer.** Qualia commitments are dropped; frame-relative-emergence is the open structural problem that takes their place.
+> **Vocabulary:** §8 frames the noumenal-axis content using the canonical [reference frame structure / frame dynamics] vocabulary defined in [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). **Reference-frame claims are structural claims about the reference frame projection from the noumenal (3³ / Moore-26 / G*-bearing) layer to the phenomenal (2³ / Moore-18 / ϖ-bearing) layer.** Qualia commitments are dropped; frame-relative-emergence is the open structural problem that takes their place.
 
 ---
 
@@ -18,7 +17,7 @@ Numerical identities link the layer sizes to $\Gamma$-function arithmetic:
 - Noumenal shell: $\sqrt[3]{26} \approx G^*$ (Euler reflection ratio), 0.13% match
 - The 8 BCC corner neighbors upgrade $\varpi$ to $G^*$ by the Gaussian-normalization factor $G^*/\varpi = 2/\sqrt{\pi}$.
 
-**Bridge factor status (post-audit, 2026-04-24):** the block-volume ratio $27/8 = 3.375$ is a structurally-motivated candidate for the phenomenal/noumenal bridge factor, but the engine's Phase-F measurement of 3.6× that I originally identified with 27/8 is a **category error** (engine measures lattice Green's-function geometry, not physical α — see §3). A proper bridge measurement is still an open task.
+**Bridge factor status:** the block-volume ratio $27/8 = 3.375$ is a structurally-motivated candidate for the phenomenal/noumenal bridge factor, but identifying it with the engine's Phase-F measurement of 3.6× is a **category error** (engine measures lattice Green's-function geometry, not physical α — see §3). A proper bridge measurement is an open task.
 
 This document makes the split explicit and specifies which FTD results live on which layer.
 
@@ -63,7 +62,7 @@ Numerical check: $26/18 = 13/9 \approx 1.444$, agreement 0.4%.
 
 **Hypothesis** (pre-audit): $\alpha_\infty / \alpha_{\rm ref} = 27/8 = 3.375$ is the phenomenal-to-noumenal block-volume ratio.
 
-**Audit** ([AUDIT_ALPHA_EXTRACTION.md](../10_eft_program/AUDIT_ALPHA_EXTRACTION.md), 2026-04-19; re-read 2026-04-24): **hypothesis falsified at the identification level**. The engine's measured 3.6× is decomposed by the audit as:
+**Audit** ([AUDIT_ALPHA_EXTRACTION.md](../10_eft_program/AUDIT_ALPHA_EXTRACTION.md)): **hypothesis falsified at the identification level**. The engine's measured 3.6× is decomposed by the audit as:
 
 $$ 3.6 = \underbrace{2}_{\text{convention factor}} \times \underbrace{1.8}_{\text{lattice Green's function}} $$
 
@@ -99,9 +98,9 @@ In light of the audit, I am revising the tags from my first draft:
 
 **The phenomenal/noumenal split is preserved.** What's falsified is the claim that a single scalar bridge factor exists.
 
-### 3.2 Direct Watson-integral computation (2026-04-24)
+### 3.2 Direct Watson-integral computation
 
-`engine/tests/test_watson_integrals.cpp` (CTest `watson_integrals`, trapezoidal quadrature N=200) computes the missing Moore-18 Watson integral for the first time:
+`engine/tests/test_watson_integrals.cpp` (CTest `watson_integrals`, trapezoidal quadrature N=200) computes the missing Moore-18 Watson integral:
 
 | Stencil | Computed $W_L$ | Reference | Agreement |
 |---|---|---|---|
@@ -126,7 +125,7 @@ Different observables translate between layers with different factors:
 | Volume-extensive quantities | $(3/2)^3 = 27/8 = 3.375$ | Block size cubed |
 | Shell-count | $26/18 = 13/9 \approx 1.44$ | Moore-26 vs Moore-18 neighbor count |
 | Linear length-scale | $G^*/\varpi = 2/\sqrt{\pi} \approx 1.13$ | Gaussian normalization |
-| Watson integral (Green's function origin) | $W_{\rm M18}/W_{\rm BCC} \approx 0.91$ | **Measured 2026-04-24** |
+| Watson integral (Green's function origin) | $W_{\rm M18}/W_{\rm BCC} \approx 0.91$ | **Measured** |
 | Lattice Coulomb at specific $r/L$ (Phase-F) | $\approx 1.8$ | Pure stencil geometry, not a bridge |
 
 **There is no scalar "bridge factor." The phenomenal/noumenal translation is a family of observable-specific factors.** This is the correct, audit-honest statement.
@@ -262,4 +261,4 @@ This is the reorganizing principle. It does not invalidate prior work; it places
 
 ---
 
-*Filed 2026-04-24 as the session's synthesis capstone. The two-layer ontology was implicit in every piece of the project's epistemic discipline; this document makes it explicit so that subsequent work starts from the right frame. Three named research programs (A, B, C, plus bonus D) carry the implications forward.*
+*The two-layer ontology is implicit in every piece of the project's epistemic discipline; this document makes it explicit so that work starts from the right frame. Three named research programs (A, B, C, plus bonus D) carry the implications forward.*

@@ -2,10 +2,9 @@
 
 ## A New Proof of Spatial Dimensionality from CM Theory
 
-**Date:** April 3, 2026
 **Status:** [THEOREM] (arithmetic uniqueness only) + [SELECTION] (dimension-forcing)
-<!-- corrected 2026-06-24 spine audit: the ARITHMETIC fact "f(D)=2^D(D-1)! equals 16 only at D=3" is a genuine (if trivial) [THEOREM] and stands. But the DIMENSION-FORCING (that this equation *selects* the physical D=3) is [SELECTION], not [THEOREM], and is circular: the LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant (it does not contain D), and the only justification of the RHS target value 16 is |O_h|/D = 48/3 (§3.3 / §5.5), which already PRESUPPOSES D=3 (O_h is the point group of the D=3 cubic lattice). See the §2 claim, §5.5 [SELECTION], the [OPEN] item, and the Honesty Note. No upward promotion. -->
-**Consolidates:** also absorbs `DERIV_D3_UNIQUENESS.md` (2026-05-21)
+<!-- the ARITHMETIC fact "f(D)=2^D(D-1)! equals 16 only at D=3" is a genuine (if trivial) [THEOREM] and stands. But the DIMENSION-FORCING (that this equation *selects* the physical D=3) is [SELECTION], not [THEOREM], and is circular: the LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant (it does not contain D), and the only justification of the RHS target value 16 is |O_h|/D = 48/3 (§3.3 / §5.5), which already PRESUPPOSES D=3 (O_h is the point group of the D=3 cubic lattice). See the §2 claim, §5.5 [SELECTION], the [OPEN] item, and the Honesty Note. No upward promotion. -->
+**Consolidates:** also absorbs `DERIV_D3_UNIQUENESS.md`
 **Proof script:** `scripts/verification/verify_blind_derivation.py` (step 8); Watson-integral route — `scripts/proofs/proof_d3_uniqueness.py`
 
 ---
@@ -36,7 +35,7 @@ No other $j$-invariant gives $|\text{Aut}| = 4$. (The only other enhanced case i
 
 **Claim D3A-2.** The equation $|\text{Aut}(E_i)|^2 = 2^D \cdot (D-1)!$ has the unique positive integer solution $D = 3$. **[THEOREM]** (arithmetic uniqueness only)
 
-<!-- corrected 2026-06-24 spine audit: the arithmetic uniqueness below is a genuine [THEOREM]. The further step "therefore the physical spatial dimension is forced to be D=3" is [SELECTION], NOT [THEOREM]: it is circular. The LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant, and the RHS target 16 is only justified via |O_h|/D = 48/3 (§3.3), which already presupposes D=3. -->
+<!-- the arithmetic uniqueness below is a genuine [THEOREM]. The further step "therefore the physical spatial dimension is forced to be D=3" is [SELECTION], NOT [THEOREM]: it is circular. The LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant, and the RHS target 16 is only justified via |O_h|/D = 48/3 (§3.3), which already presupposes D=3. -->
 
 *Proof.* The left-hand side is $|\text{Aut}(E_i)|^2 = 4^2 = 16$ — a **$D$-independent constant** (it carries no dependence on $D$).
 
@@ -96,7 +95,7 @@ The two proofs share no logical dependencies. Their convergence on $D = 3$ is a 
 
 ## $\S 5$. The Watson Integral Approach in Full
 
-> **Consolidation note (2026-05-21):** This section absorbs the full content of `DERIV_D3_UNIQUENESS.md` ("D = 3 Uniqueness from the Watson Integral," March 17, 2026, [THEOREM]). The automorphism approach above ($\S\S 1$–$4$) and the Watson-integral approach here ($\S 5$) are logically independent derivations of $D = 3$ — $\S 4$ tabulates their differences; this section supplies the second derivation in full so both [THEOREM] arguments live in one document.
+> **Consolidation note:** This section absorbs the full content of `DERIV_D3_UNIQUENESS.md` ("D = 3 Uniqueness from the Watson Integral," [THEOREM]). The automorphism approach above ($\S\S 1$–$4$) and the Watson-integral approach here ($\S 5$) are logically independent derivations of $D = 3$ — $\S 4$ tabulates their differences; this section supplies the second derivation in full so both [THEOREM] arguments live in one document.
 
 ### $\S 5.1$. Abstract
 
@@ -165,7 +164,7 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 4. Independence from the Watson integral approach (no shared premises)
 
 **[SELECTION] (automorphism approach — the dimension-forcing):**
-<!-- corrected 2026-06-24 spine audit: surfaced into the status block so downstream readers see the circularity. -->
+<!-- surfaced into the status block so downstream readers see the circularity. -->
 - That the arithmetic uniqueness *forces the physical spatial dimension* to be $D = 3$ is **[SELECTION], not [THEOREM]**, and is **circular**: the LHS $|\text{Aut}(E_i)|^2 = 16$ is a $D$-independent constant, and the only justification of the RHS target value $16$ is $|O_h|/D = 48/3$ (§3.3 / §5.5), which already presupposes $D = 3$ ($O_h$ is the point group of the $D=3$ cubic lattice). See the [OPEN] item below and the Honesty Note.
 
 **[THEOREM] (Watson-integral approach, $\S 5$):**
