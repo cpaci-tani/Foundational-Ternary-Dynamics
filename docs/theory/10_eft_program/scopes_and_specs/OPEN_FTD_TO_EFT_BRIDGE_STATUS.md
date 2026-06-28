@@ -1,6 +1,5 @@
 # FTD-to-EFT Bridge Status
 
-**Date:** 2026-04-22  
 **Status:** [CURRENT-ACTION CLOSED NEGATIVE for QED alpha] / pivot to FTD-native electrodynamics  
 **Purpose:** State where the FTD-to-QED-alpha bridge failed, and define the replacement target as native FTD source/flux physics.
 
@@ -199,7 +198,7 @@ or is x_+ only an arithmetic match plus a scheme-specific correction?
 
 That is the next decisive question.
 
-### 2026-04-22 first bridge-span result
+### First bridge-span result
 
 `DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` narrows the missing theorem:
 
@@ -210,7 +209,7 @@ FTD state/flux variables -> compact U(1) gauge theory     not yet derived
 
 So the next proof obligation is not numerical. It is to derive the projected EFT completion: matter representation, local coupling to the auxiliary potential, regulator/counterterms, and the alpha observable.
 
-### 2026-04-22 emergent-U(1) result
+### Emergent-U(1) result
 
 `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` refines the bridge:
 
@@ -222,7 +221,7 @@ full QED matter/coupling/alpha matching                 still open
 
 This avoids forcing primitive gauge ontology onto FTD. U(1) is now treated as an effective description of projected degrees of freedom.
 
-### 2026-04-22 projected-matter result
+### Projected-matter result
 
 `DERIV_PROJECTED_EFT_MATTER_COUPLING.md` adds:
 
@@ -236,7 +235,7 @@ Dirac matter                                 preferred QED-facing completion, st
 
 The next bridge target is charge normalization and the projected Dirac operator.
 
-### 2026-04-22 projected-Dirac result
+### Projected-Dirac result
 
 `archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` adds the charge gate:
 
@@ -249,7 +248,7 @@ e0^2 = 1/x_+                          not derived
 
 The next bridge target is now the regulator/counterterm/observable gate.
 
-### 2026-04-22 renormalization/observable gate
+### Renormalization/observable gate
 
 `archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` reduces the remaining bridge to one precise decision:
 
@@ -263,7 +262,7 @@ derive how x_+ enters the projected EFT:
 
 No new alpha loop calculation should be classified as a framework prediction until this gate is passed.
 
-### 2026-04-22 stiffness attempt
+### Stiffness attempt
 
 `archive/closed_negative/DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` tests R1 and closes it negative under the current action:
 
@@ -274,7 +273,7 @@ K_T,0 = x_+                                         not derived
 
 That left R3 as the next algebraically natural question, because the master quadratic has two roots and can be written as a characteristic polynomial.
 
-### 2026-04-22 response-eigenvalue attempt
+### Response-eigenvalue attempt
 
 `archive/closed_negative/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` tests R3 and closes it negative under the current projected action:
 
@@ -291,7 +290,7 @@ R2. derive e0^2 = 1/x_+ from source-current normalization
 R4. keep x_+ as arithmetic-only
 ```
 
-### 2026-04-22 source-current normalization attempt
+### Source-current normalization attempt
 
 `archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` tests R2 and closes it negative under the current projected action:
 
@@ -309,7 +308,7 @@ The current bridge endpoint is:
 R4. x_+ remains arithmetic-only under the current projected action.
 ```
 
-### 2026-04-22 native dual-cell Gauss closure
+### Native dual-cell Gauss closure
 
 The user hypothesis that the true source object is `J*J` / dual-cell boundary
 flux was tested as a fixed native audit. The result closes one major ambiguity:
@@ -333,7 +332,7 @@ Classification:
 This is a real bridge improvement because it tells us where the source lives in
 FTD-native language before any QED-facing interpretation is introduced.
 
-### 2026-04-22 Moore/BCC role closure
+### Moore/BCC role closure
 
 The BCC question is now narrowed:
 
@@ -367,7 +366,7 @@ Classification:
        principle that selects `c`.
 ```
 
-### 2026-04-22 self-dual half-shell status
+### Self-dual half-shell status
 
 The `k = 1/2` / `m = 1/2` thread now has two different statuses:
 
@@ -384,7 +383,7 @@ stronger open item "does this derive `G*` dynamically?"
 
 ### Current native theory queue
 
-The live open items are therefore sharper than before:
+The live open items are:
 
 1. Decide whether exact production Gauss should migrate to a dual-cell flux
    representation.
@@ -399,7 +398,7 @@ The live open items are therefore sharper than before:
 None of these items require recovering QED alpha. QED comparisons remain
 diagnostic until a separate matching theorem exists.
 
-### 2026-04-22 native source-flux coupling closure
+### Native source-flux coupling closure
 
 `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` closes the current-action
 `g_sJ` item:

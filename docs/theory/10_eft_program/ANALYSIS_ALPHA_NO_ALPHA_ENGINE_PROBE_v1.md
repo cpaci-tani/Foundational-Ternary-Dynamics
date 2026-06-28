@@ -1,7 +1,6 @@
 # ANALYSIS: Alpha No-Alpha Engine Probe v1
 
 **FTD ID:** FTD-0285  
-**Date:** 2026-06-13  
 **Status:** [INVALIDATED PROTOCOL -- NO CLAIM PROMOTED]  
 **Pre-reg:** [`PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md)  
 **Lock tag:** `preregister-alpha-no-alpha-engine-probe-v1`  

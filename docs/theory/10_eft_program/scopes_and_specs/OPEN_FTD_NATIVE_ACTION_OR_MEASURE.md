@@ -1,6 +1,5 @@
 # Open Problem: Native Action or Measure for the FTD EFT
 
-**Date:** 2026-04-23
 **Status:** [PARTIAL] bridge gate 2 from `SPEC_FTD_EFT_BRIDGE_CONTRACT.md`; linear source/flux generator derived; microscopic constrained-history measure selected in `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`; explicit nonlinear blocked effective action remains open
 **Purpose:** Define the source-coupled generator required before FTD-native source/flux dynamics can be called a Wilsonian EFT.
 
@@ -40,7 +39,7 @@ history measure whose observables reproduce the measured source/flux response.
 No physical alpha value, Standard Model mass, or CODATA input is allowed in this
 construction.
 
-**2026-04-26 update.** The native microscopic object is now selected as a
+The native microscopic object is selected as a
 constrained source-coupled history measure:
 
 ```text
@@ -50,7 +49,7 @@ S_H = -log mu_0(q_0) - sum_t log K_u(q_{t+1}, l_t | q_t)
 with Gauss, continuity, locality, ledger, deterministic tick, Langevin, and
 discrete channel terms carried by the transfer kernel. This resolves the
 "action vs transfer matrix vs deterministic history measure" choice at the
-microscopic level. The open problem is now narrower:
+microscopic level. The open problem is then narrower:
 
 ```text
 derive/measure the blocked nonlinear effective action S_eff after B_b,

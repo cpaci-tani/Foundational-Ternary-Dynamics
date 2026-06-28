@@ -1,9 +1,8 @@
 # FTD-Native Response Tuple & Blocking Flow
 
 **Tag:** [PARTIAL] native electrodynamics result + [THEOREM] bare Gaussian fixed point; linear source/flux sector closed, nonlinear state-history measure still open
-**Date:** 2026-05-22
-**Status:** Bare linear FTD source/flux response tuple `(C_L, K_T, Z_j, g_sJ) = (1,1,1,1)` derived by constrained minimisation and verified invariant under native b=2 finite-volume blocking; bare Gaussian fixed point is scale-invariant.
-**Consolidates:** `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md`, `DERIV_FTD_NATIVE_LINEAR_GENERATOR.md`, `DERIV_FTD_NATIVE_BARE_FLOW.md`, `DERIV_FTD_NATIVE_RESPONSE_FLOW.md`, `DERIV_FTD_NATIVE_CURRENT_FLOW.md`, `DERIV_FTD_NATIVE_SCALE_FLOW.md` (merged 2026-05-22)
+**Result:** Bare linear FTD source/flux response tuple `(C_L, K_T, Z_j, g_sJ) = (1,1,1,1)` derived by constrained minimisation and verified invariant under native b=2 finite-volume blocking; bare Gaussian fixed point is scale-invariant.
+**Consolidates:** `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md`, `DERIV_FTD_NATIVE_LINEAR_GENERATOR.md`, `DERIV_FTD_NATIVE_BARE_FLOW.md`, `DERIV_FTD_NATIVE_RESPONSE_FLOW.md`, `DERIV_FTD_NATIVE_CURRENT_FLOW.md`, `DERIV_FTD_NATIVE_SCALE_FLOW.md`
 **Purpose:** Record the bare linear FTD source/flux response tuple, its derivation from a constrained flux-energy generator, and its preservation under native b=2 finite-volume blocking — the "canonical-normalisation bookkeeping" result. No CODATA value is used, no parameter is fit, no numerical search is performed; QED alpha is not part of this result.
 
 ---
@@ -127,7 +126,7 @@ used the convention in which the engine reference value is approximately
 W_18(N=512) = 1.266168225133
 ```
 
-converging toward the previously recorded engine 18-point value near `1.2679`.
+converging toward the recorded engine 18-point value near `1.2679`.
 
 ---
 
@@ -710,7 +709,7 @@ engine/tests/test_native_flow.cpp
 ctest --test-dir engine/build_audit_cpu -C Release -R "^native_flow$" --output-on-failure
 ```
 
-Result on 2026-04-23:
+Result:
 
 ```text
 native_flow passed
@@ -813,7 +812,7 @@ engine/tests/test_native_current_flow.cpp
 ctest --test-dir engine/build_audit_cpu -C Release -R "^native_current_flow$" --output-on-failure
 ```
 
-Result on 2026-04-23:
+Result:
 
 ```text
 native_current_flow passed
@@ -985,7 +984,7 @@ engine/tests/test_native_response_flow.cpp
 ctest --test-dir engine/build_audit_cpu -C Release -R "^native_response_flow$" --output-on-failure
 ```
 
-Result on 2026-04-23:
+Result:
 
 ```text
 native_response_flow passed

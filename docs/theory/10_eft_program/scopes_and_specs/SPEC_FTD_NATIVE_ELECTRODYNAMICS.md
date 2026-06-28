@@ -1,6 +1,5 @@
 # Specification: FTD-Native Electrodynamics
 
-**Date:** 2026-04-22
 **Status:** [SELECTION] program specification after QED-alpha bridge closure
 **Purpose:** Replace the failed attempt to derive QED `alpha` with a native FTD source/flux response theory and its own observables.
 
@@ -8,7 +7,7 @@
 
 ## Executive pivot
 
-The current projected-action audits close the attempted QED-alpha bridge:
+The projected-action audits close the attempted QED-alpha bridge:
 
 ```text
 R1. x_+ as transverse stiffness          closed negative

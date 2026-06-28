@@ -1,6 +1,6 @@
 # ANALYSIS — Cluster energy spectroscopy: mass as flux-energy in flip-quanta (FTD-0273)
 
-**Status:** `[MEASURED — BOUNDARY]`. **Date:** 2026-06-11. **Pre-registration:**
+**Status:** `[MEASURED — BOUNDARY]`. **Pre-registration:**
 [`PREREG_CLUSTER_ENERGY_SPECTROSCOPY_v1.md`](preregistrations/PREREG_CLUSTER_ENERGY_SPECTROSCOPY_v1.md)
 (verdict logic frozen by analyzer SHAs before the run of record). **Prior-favoured
 outcome:** BOUNDARY — confirmed.
