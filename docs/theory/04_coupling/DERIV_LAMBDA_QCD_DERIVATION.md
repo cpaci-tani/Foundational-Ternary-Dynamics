@@ -1,8 +1,6 @@
 # Lambda_QCD from FTD: Non-Circular Derivation via Dimensional Transmutation
 
-**Document Version:** 2.0
-**Date:** February 19, 2026
-**Status:** Loop Closed (upgrades from [PARAMETRIC] to [SELECTION])
+**Status:** Loop Closed — [SELECTION]
 **Purpose:** Establish non-circular derivation of Lambda_QCD from FTD integers
 **Companion script:** `scripts/verification/verify_lambda_qcd.py`
 
@@ -247,14 +245,9 @@ Version 1.0 included multiple ad hoc formulas (m_e * integers, m_p * alpha^n, et
 
 ## 7. Cross-References
 
-- **alpha_s derivation**: AUDIT_EPISTEMIC_AUDIT.md (Section I.2), archive/AUDIT_WHAT_IS_GENUINELY_NEW.md (archived 2026-06-02; superseded by LEDGER + TRACKER_ONTIC_TRUTH)
+- **alpha_s derivation**: AUDIT_EPISTEMIC_AUDIT.md (Section I.2), archive/AUDIT_WHAT_IS_GENUINELY_NEW.md (archived; superseded by LEDGER + TRACKER_ONTIC_TRUTH)
 - **Master quadratic**: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md
 - **Higgs VEV**: DERIV_COMPLETE_PARTICLE_PHYSICS.md
 - **Mass hierarchy**: DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md
 - **QFT bridge**: DERIV_QFT_GRT_BRIDGE.md (lattice propagators and QCD vertex)
 - **Constants**: scripts/constants.py (ALPHA_S = b_3/(b_3 + 4*N_eff))
-
----
-
-*Document Version 2.0 -- February 19, 2026*
-*Non-circular derivation established; convention error corrected*

@@ -1,6 +1,5 @@
 # Audit: Is `a = 2/D` Forced from Lattice First Principles?
 
-**Date:** 2026-04-17
 **Status:** [EMERGENT] — audit result, not a derivation
 **Method:** Numerical BZ triple integration via `mpmath.quad` on the 3D cubic lattice
 **Script:** [`scripts/exploration/audit_lattice_spacing_a.py`](../../../scripts/exploration/audit_lattice_spacing_a.py)
@@ -139,12 +138,6 @@ This audit's result justifies the following tag/wording updates:
 
 ---
 
-## Document History
-
-- **2026-04-17:** Created with full audit results. Verdict: PARTIAL (b) positive, (a,c) negative. Upgrade to "uniquely best base-integer rational at height ≤ 15." Not upgraded to [THEOREM].
-
----
-
 ## §5. What Would Force a = 2/D Independently
 
 A clean derivation would need one of the following structural arguments:
@@ -155,9 +148,3 @@ A clean derivation would need one of the following structural arguments:
 4. **Dimensional analysis:** a dimensional argument that $2/D$ is the unique scale-free combination of lattice primitives.
 
 None of these is currently in place. This audit's role is to narrow the search by ruling out (3) if the specific ratio $2/3$ is not structurally singled out.
-
----
-
-## Document History
-
-- **2026-04-17:** Created. Results to be filled after running `scripts/exploration/audit_lattice_spacing_a.py`.

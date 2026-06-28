@@ -1,7 +1,6 @@
 # EXPLR_FTD_MASS_CHAIN: The Foundational Ternary Dynamics Mass Chain
 
 **Status:** `[REFERENCE — arithmetic synthesis; MIXED epistemic status]`  
-**Version:** 1.1 (2026-05-29 epistemic correction + relocation to 05_particles)  
 **Domain:** Hadronic & Leptonic Mass Sectors  
 **Authoritative Context:** Companion to `../01_reference/SPEC_FTD_REFERENCE.md`; paired with the adversarial red-team `../07_assessment/AUDIT_MASS_CHAIN_REDTEAM.md`
 

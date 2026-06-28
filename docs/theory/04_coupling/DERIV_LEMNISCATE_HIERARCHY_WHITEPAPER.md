@@ -3,7 +3,6 @@
 **A White Paper on the Mathematical Structure Connecting Elliptic Geometry to Particle Physics**
 
 *Foundational Ternary Dynamics Framework*
-*January 30, 2026*
 
 ---
 
@@ -79,11 +78,11 @@ A remarkable result: the classical Bernoulli lemniscate and the Lemniscate-Alpha
 | **Lemniscate-Alpha** | Arc Length | G* = L × 91/732, with L_α = 23.79960517... | 2.9586940857... |
 | **Discrepancy** | | | **+6.41 ppm** |
 
-(Corrected 2026-05-01 from prior 5.45 ppm. Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the corrected match is +6.41 ppm.)
+(Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the match is +6.41 ppm.)
 
 #### Why This Might Matter (with rigidity-scan caveat)
 
-1. **Not pure coincidence, but not unique either:** The original claim "probability of random agreement to 5.45 ppm is ~10⁻⁶" was based on a free-real-line null model. The pre-registered Lemniscate-Alpha rigidity scan (2026-05-01, `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`, FTD-0122) tested the *natural* null model — random Cayley-Dickson 5-harmonic curves with rational coefficients — and found that **~4.3% of valid curves admit framework-integer-factorable rational multipliers** landing within 5.45 ppm of any of 14 natural framework constants. This is far above the 10⁻⁶ free-line estimate; the canonical Lemniscate-Alpha is one of a measurable minority (~1 in 23) of natural curves with similar matches, **not uniquely privileged**.
+1. **Not pure coincidence, but not unique either:** The original claim "probability of random agreement to 5.45 ppm is ~10⁻⁶" was based on a free-real-line null model. The pre-registered Lemniscate-Alpha rigidity scan (`docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`, FTD-0122) tested the *natural* null model — random Cayley-Dickson 5-harmonic curves with rational coefficients — and found that **~4.3% of valid curves admit framework-integer-factorable rational multipliers** landing within 5.45 ppm of any of 14 natural framework constants. This is far above the 10⁻⁶ free-line estimate; the canonical Lemniscate-Alpha is one of a measurable minority (~1 in 23) of natural curves with similar matches, **not uniquely privileged**.
 
 2. **[SELECTION], not [THEOREM]:** Both curves access G* through different geometric routes. The agreement at 6.41 ppm is real and the framework-integer factorization 91 = 7 × 13 = b₃ × N_eff is structurally interesting, but the rigidity scan finds non-canonical curves with strictly cleaner factorizations and tighter precision (e.g., L = 23.71 with multiplier 189/512 = 3³·7 / 2⁹ landing on G*² at +0.71 ppm). The two-road agreement is a [SELECTION] reading, not a forced structural identity.
 
@@ -478,5 +477,4 @@ See accompanying figures:
 
 ---
 
-*Document created: January 30, 2026*
 *Foundational Ternary Dynamics Framework*
