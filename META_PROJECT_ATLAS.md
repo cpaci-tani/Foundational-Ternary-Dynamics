@@ -41,8 +41,8 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 | Build WASM | `engine/build_wasm.bat` (Windows) or `emcmake cmake -S engine -B engine/build_wasm` | |
 | Run web dashboard | `python engine/web/serve.py 8080` | no-cache dev server |
 | Run GPU campaign | WSL2 only: `wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && engine/build_wsl/<test>"` | per CLAUDE.md mandate |
-| Find session-resume context | `docs/WHERE_WE_LEFT_OFF.md` | always start here when resuming |
-| Find project epistemic state | `CLAUDE.md` §"Current epistemic state" | versioned per session |
+| Find current-state overview | `docs/WHERE_WE_LEFT_OFF.md` | timeless current-state pointer |
+| Find per-claim status / epistemic state | `docs/theory/07_assessment/core_ledgers/LEDGER.md` + `TRACKER_ONTIC_TRUTH.md` | canonical bedrock |
 | Understand the simulation visually | `engine/VISUAL_GUIDE.md` | scenarios, tick cycle, manifestation, and discrete emergence |
 | Read engine architecture | `engine/SPEC_ENGINE.md` | living doc |
 | Read FTD theory spec | `docs/SPEC_FTD.md` | authoritative |
@@ -457,7 +457,7 @@ Physics invariants preserved across all 17 commits:
 ---
 
 **Cross-references:**
-- [CLAUDE.md](CLAUDE.md) — current epistemic state, naming conventions, build/test instructions
+- [CLAUDE.md](CLAUDE.md) — working instructions, navigation, commit policy, build/test instructions
 - [CONTRACTS.md](CONTRACTS.md) — formal interface specs
 - [docs/adr/INDEX.md](docs/adr/INDEX.md) — architectural decisions
 - [docs/audits/INDEX.md](docs/audits/INDEX.md) — historical audit ledgers
