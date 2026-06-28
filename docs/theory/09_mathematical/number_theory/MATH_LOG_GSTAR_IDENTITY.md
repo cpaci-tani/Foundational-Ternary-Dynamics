@@ -2,7 +2,6 @@
 
 ## G* as the Universal Container for Arithmetically Irreducible Constants
 
-**Date:** April 3, 2026 (cross-link added 2026-04-26)
 **Status:** [THEOREM] (identity verified to 80+ digits)
 **Proof script:** `scripts/verification/verify_log_gstar_identity.py`
 

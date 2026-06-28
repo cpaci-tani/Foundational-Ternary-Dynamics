@@ -2,7 +2,6 @@
 
 ## Why Solvability Alternates Between Zeta and Beta
 
-**Date:** April 3, 2026
 **Status:** [THEOREM] (pure number theory, no physics claims)
 **Proof script:** `scripts/verification/verify_anti_correlation.py`
 

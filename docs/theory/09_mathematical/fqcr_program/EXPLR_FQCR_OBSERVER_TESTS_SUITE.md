@@ -2,14 +2,13 @@
 
 **Status:** [EXPLORATORY] campaign — testing FQCR Model V against QED running across four tests. Per-test verdicts: §A single-lepton observer term — **positive structural observation** ($c_e = \delta/(3\pi G^*) \approx 0.0343$ supported at the asymptotic-UV slope level, 0.4-0.6% match, when $\lambda + A$ are removed; fails when added on top). §B multi-lepton extension — **[EXPLORATORY / POSITIVE STRUCTURAL OBSERVATION]** (same $c$ matches QED slope to 1-5% in each lepton-active regime). §C response-law comparison — **[EXPLORATORY]**, [SELECTION] tag stands (no law dominates on structural-stability criteria). §D $t \leftrightarrow$ scale map — **[EXPLORATORY]**, does not close the question; [SELECTION] tag on $t = 1$ stands.
 **Tag impact:** none across all four tests. C1 path moves "speculative" → "structurally suggestive" (§A) → "structurally validated at three thresholds" (§B). The [SELECTION] tags on the additive response law (SPEC_FQCR §3.3) and on $t = 1$ (SPEC_FQCR §3.2) both stand.
-**Date:** 2026-05-21
-**Consolidates:** `EXPLR_FQCR_OBSERVER_TERM_TEST.md`, `EXPLR_FQCR_MULTILEPTON_TEST.md`, `EXPLR_FQCR_RESPONSE_LAW_TEST.md`, `EXPLR_FQCR_T_SCALE_MAP.md` (merged 2026-05-21)
+**Consolidates:** `EXPLR_FQCR_OBSERVER_TERM_TEST.md`, `EXPLR_FQCR_MULTILEPTON_TEST.md`, `EXPLR_FQCR_RESPONSE_LAW_TEST.md`, `EXPLR_FQCR_T_SCALE_MAP.md`
 
 ---
 
 ## §0 — Suite overview
 
-This suite consolidates one exploratory campaign (2026-05-08) that stress-tested FQCR Model V against QED running coupling along four axes:
+This suite consolidates one exploratory campaign that stress-tested FQCR Model V against QED running coupling along four axes:
 
 - **§A — Single-lepton observer-term test (C1 path validation).** Empirically tests the structural prediction $c_e = \delta/(3\pi G^*) \approx 0.0343$ for an electron-loop observer term.
 - **§B — Multi-lepton FQCR observer test (C1 Stage 2).** Extends §A to all three charged leptons; confirms the structural coefficient at three independent thresholds.
@@ -28,7 +27,6 @@ The forward-looking proposal sketch lives in a separate doc — [`PROPOSAL_OBSER
 
 # §A — Single-Lepton Observer-Term Test (C1 Path Validation)
 
-**Date:** 2026-05-08
 **Status:** [EXPLORATORY] — empirical test of the structural prediction in [`PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md`](../general_math/PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md). **Positive structural observation:** the structural prediction $c_e = \delta/(3\pi G^*) \approx 0.0343$ is empirically supported at the asymptotic-UV slope level (0.4-0.6% match to QED at $\mu \in [5, 10]$ MeV) **when $\lambda + A$ are removed**, but fails when added on top of $\lambda + A$.
 **Tag impact:** none. The C1 path moves from "speculative" to "structurally suggestive."
 
@@ -157,7 +155,6 @@ This is **partial validation of the C1 path** in §D below. The structural-coeff
 
 # §B — Multi-Lepton FQCR Observer Test (C1 Stage 2)
 
-**Date:** 2026-05-08
 **Status:** [EXPLORATORY / POSITIVE STRUCTURAL OBSERVATION] — extends the single-electron test in §A to all three charged leptons. The structural coefficient $c = \delta/(3\pi G^*) \approx 0.0343$ matches QED slope to within 1-5% in each lepton-active regime, with degradation near threshold transitions.
 **Tag impact:** none. C1 path moves further from "structurally suggestive" toward "structurally validated" — but threshold-form refinements and chain-rule-non-constancy issues remain open.
 
@@ -297,9 +294,8 @@ If items 1-3 close, FTD-0013 has an end-to-end derivation chain $J^2 = -I \to G^
 
 # §C — FQCR Response-Law Comparison
 
-**Date:** 2026-05-08
-**Status:** [EXPLORATORY] — structural-stability test of the additive response law $R_N(t) = 1 + \lambda_N(4it) + A_N(t)$ currently tagged [SELECTION] in [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.3.
-**Tag impact:** none. The [SELECTION] tag stands. This test was *not* pre-registered; criteria were declared in the same session as execution.
+**Status:** [EXPLORATORY] — structural-stability test of the additive response law $R_N(t) = 1 + \lambda_N(4it) + A_N(t)$ tagged [SELECTION] in [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.3.
+**Tag impact:** none. The [SELECTION] tag stands. This test was *not* pre-registered; criteria were declared at execution time.
 
 ## C.1 — Setup
 
@@ -436,7 +432,7 @@ The actually load-bearing test for FQCR Model V is **[FTD-0143 quotient uniquene
 
 ## C.9 — Engaging with the four open questions
 
-The 2026-05-08 operator-stack discussion raised four open questions. Brief audit of each against existing FTD machinery:
+The operator-stack discussion raised four open questions. Brief audit of each against existing FTD machinery:
 
 ### Q1 — Why $R_N(t) = 1 + \lambda_N + A_N$?
 
@@ -450,7 +446,7 @@ This is consistent with the canonical provenance per [`DERIV_MASTER_QUADRATIC_GA
 - Route A: $|\mathrm{Aut}(E)|^2 = 4^2 = 16$ — matches the user's clock-order reading exactly, since $\mathrm{Aut}(E) = \mathbb{Z}/4 = \langle J \rangle$.
 - Route B: $z_\mathrm{BCC} \times 2 = 8 \times 2 = 16$ — coordination-times-non-void.
 
-The user's "test other $m$" suggestion is already done structurally: [`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`](../number_theory/EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md) (META_INDEX 9.31, 2026-05-01) scanned 58 $(m, k)$ pairs of the natural Gaussian-integer-tower family, and $(m, k) = (2, 4) \Rightarrow m^k = 16$ is **rank 1 with a 5-orders-of-magnitude gap to rank 2**. So the empirical scan supports $4^2 = 16$ as structurally privileged in the natural family.
+The "test other $m$" question is already addressed structurally: [`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`](../number_theory/EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md) (META_INDEX 9.31) scanned 58 $(m, k)$ pairs of the natural Gaussian-integer-tower family, and $(m, k) = (2, 4) \Rightarrow m^k = 16$ is **rank 1 with a 5-orders-of-magnitude gap to rank 2**. So the empirical scan supports $4^2 = 16$ as structurally privileged in the natural family.
 
 **Status:** [STRUCTURAL OBSERVATION] from FTD-0131 / EXPLR_TOWER_MULTIPLIER_UNIQUENESS, with an explicit clock-order-vs-quadratic-scale interpretation that is consistent with the user's reading. The full derivation chain through CM theory + ternary states is fairly tight; the only piece still [SELECTION] is which combinatorial route (A vs B) is "primary."
 
@@ -487,7 +483,6 @@ The §C.2 finding above adds support to $t = 1$ as the natural base point for a 
 
 # §D — FQCR Model V $t \leftrightarrow$ Scale Map Candidates
 
-**Date:** 2026-05-08
 **Status:** [EXPLORATORY] — addresses the gating question for [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §6 Test 3 (running behaviour). **Does not close the question.**
 **Tag impact:** none. The [SELECTION] tag on $t = 1$ in SPEC_FQCR §3.2 stands. The "physical interpretation of $t$" listed under SPEC_FQCR §7 (out of scope) remains open.
 
@@ -620,7 +615,7 @@ So the framework gives a value at $t = 1$ but does not naturally give *running*.
 - **(C2)** A reinterpretation of $t$ as something other than an RG scale parameter — e.g., a topological / loop-order index, a worldsheet modulus, or a holographic radial coordinate — under which $x_+(t)$ predicts something measurable that isn't running $\alpha$.
 - **(C3)** Acceptance that the FQCR Model V identification is fixed at $t = 1$ only, with $t \neq 1$ being mathematically meaningful but physically inert. In this reading, SPEC_FQCR §6 Test 3 (running behaviour) is permanently OPEN as long as FQCR Model V is the only operator stack.
 
-**My assessment:** (C3) is the honest current state. (C1) is the path that would actually upgrade the FTD-0013 [SMC] tag, but requires substantial new operator content. (C2) is interesting but speculative.
+**Assessment:** (C3) is the honest position. (C1) is the path that would actually upgrade the FTD-0013 [SMC] tag, but requires substantial new operator content. (C2) is interesting but speculative.
 
 The single-lepton (§A) and multi-lepton (§B) observer-term tests are the concrete advance on path (C1): they validate the structural coefficient $c = \delta/(3\pi G^*)$ that any C1 closure must reproduce.
 

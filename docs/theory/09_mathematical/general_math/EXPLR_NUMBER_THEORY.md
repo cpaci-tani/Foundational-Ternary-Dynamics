@@ -2,11 +2,9 @@
 
 ## The Deep Mathematical Structure Behind {3, 4, 7, 13}
 
-**Date:** February 16, 2026 (merged)
-**Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Verified mathematical connections with derivation chain established
 
-> **Merge note (v5.26):** This document consolidates the former `EXPLR_NUMBER_THEORY_CONNECTIONS.md` (framework integer analysis, Jan 22 2026) and `EXPLR_THE_42_NEXUS.md` (seven routes to 42, Feb 1 2026). The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
+This document consolidates the framework-integer analysis of {3, 4, 7, 13} with the seven-routes-to-42 analysis.
 
 ---
 
@@ -490,8 +488,6 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 
 ## Part XI: Integer Uniqueness Proof
 
-> **Merge note (Feb 14, 2026):** This section was previously a standalone document (`EXPLR_INTEGER_UNIQUENESS_ANALYSIS.md`, Jan 24 2026). Merged here to consolidate all number-theory analysis of {3, 4, 7, 13} in one place. The standalone original was removed in the 2026-05-21 consolidation; git history retains it.
-
 **Document Status:** [SELECTION] - Argued, Not Proven Unique
 
 ### 11.1 Constraints Each Integer Must Satisfy
@@ -685,6 +681,3 @@ The fact that FTD discovers these integers through physical reasoning (discrete 
 - **Physics reference:** [REF_PHYSICS_REFERENCE.md](../05_particles/REF_PHYSICS_REFERENCE.md)
 
 ---
-
-*Document created: February 16, 2026 (merged from EXPLR_NUMBER_THEORY_CONNECTIONS + EXPLR_THE_42_NEXUS)*
-*Framework: Foundational Ternary Dynamics v5.26*

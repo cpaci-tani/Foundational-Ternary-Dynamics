@@ -1,6 +1,6 @@
 # Higher-Dimensional Watson Identity
 
-**Status:** [THEOREM] — proved 2026-05-19 as part of the G* paper open-question
+**Status:** [THEOREM] — proved as part of the G* paper open-question
 closure (Q3 in `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` §13).
 
 **Canonical citation:** `PAPER_GSTAR_INTRODUCTION.tex` Theorem 13.2 (generalised
@@ -95,8 +95,3 @@ ratio `G*`. The generalisation above shows:
   (canonical statement of Watson identity).
 - **Resolves**: Q3 of `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` §10
   (now §13 with the theorem).
-
-## Provenance
-
-- 2026-05-19: derivation completed; numerical verification at 50 digits;
-  paper Theorem 13.2 written; this document created.

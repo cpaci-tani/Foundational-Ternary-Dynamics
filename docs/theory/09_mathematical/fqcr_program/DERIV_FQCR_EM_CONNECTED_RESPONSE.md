@@ -1,8 +1,6 @@
 # Derivation of the FQCR-EM Connected Response at Tree Level
 
 **Tag:** [THEOREM] (for the mathematical limits), [SELECTION] (for the choice of FQCR-EM connected response variable structure)  
-**Date:** 2026-05-27  
-**Framework:** Foundational Ternary Dynamics v5.33  
 **Authoritative Reference:** [`docs/theory/01_reference/SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md)  
 **Companion Documents:** [`docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md`](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md), [`docs/theory/09_mathematical/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md)
 

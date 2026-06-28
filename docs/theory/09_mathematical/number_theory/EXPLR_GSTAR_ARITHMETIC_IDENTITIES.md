@@ -1,8 +1,7 @@
 # EXPLR — G\* Arithmetic Identities: Dimensional, Theta-Nullwert, Parity-Twist, Barnes G, and Gauss AGM Readings
 
 **Status:** Five arithmetic readings of the reflection ratio G\*. Per-section tags preserved from sources: the dimensional reading is [SELECTION] for the flux/energy/time identifications and [THEOREM] for the underlying algebra; the theta-nullwert reading is [SYNTHESIS] (operationally useful re-statement of classical results — Gauss–Jacobi theta nullwert + Euler reflection; no new mathematics); the parity-twist reading is [DERIVED] (operational reading of Theorem 1 + Theorem 9 in L-function language; three boundary identities derivable from classical theorems); the Barnes G reading is [SYNTHESIS] (classical Adamchik–Kinkelin material re-stated in the FTD-canonical basis); the Gauss AGM reading is [SYNTHESIS] (proven algebraic identity mapping G\* to the Gauss Constant G, collapsing the electron rest mass and Watson BCC constant W_3 into pure AGM and \pi functions).
-**Date:** 2026-05-21; Barnes G reading appended 2026-05-27; Gauss AGM reading appended 2026-05-30
-**Consolidates:** `EXPLR_GSTAR_FLUX_TIME.md`, `EXPLR_G_STAR_AS_THETA_NULLWERT.md`, `DERIV_G_STAR_PARITY_TWIST.md` (merged 2026-05-21); Barnes G reading (Part D) added 2026-05-27; Gauss AGM reading (Part E) added 2026-05-30 from a collaboration session.
+**Consolidates:** `EXPLR_GSTAR_FLUX_TIME.md`, `EXPLR_G_STAR_AS_THETA_NULLWERT.md`, `DERIV_G_STAR_PARITY_TWIST.md`; Barnes G reading (Part D); Gauss AGM reading (Part E).
 
 **LEDGER:** FTD-0127 (parity-twist; subsidiary of FTD-0112 / Theorem 9; companion to FTD-0001 / Theorem 1), FTD-0132 (theta-nullwert). Part D and Part E are filed as subsidiary identities under Theorem 1 (FTD-0001) — no new LEDGER row required because the identities are classical re-stated in FTD-canonical form.
 **Depends on:**
@@ -324,7 +323,7 @@ In the C++ engine, the flux field J is initialized with magnitude K_B (electron 
 
 # PART B — The Theta-Nullwert Reading: G\* as the Squared Theta Nullwert of Z[i]
 
-*Consolidates `EXPLR_G_STAR_AS_THETA_NULLWERT.md` — [SYNTHESIS]: operationally useful re-statement of classical results (Gauss–Jacobi theta nullwert + Euler reflection); no new mathematics. LEDGER FTD-0132. Date: 2026-05-03 (late evening session).*
+*Consolidates `EXPLR_G_STAR_AS_THETA_NULLWERT.md` — [SYNTHESIS]: operationally useful re-statement of classical results (Gauss–Jacobi theta nullwert + Euler reflection); no new mathematics. LEDGER FTD-0132.*
 
 ## B.0 · Summary
 
@@ -437,15 +436,15 @@ Citations follow `docs/reference/REF_BIBLIOGRAPHY.md`. The relevant entries:
 
 ## B.8 · Provenance (theta-nullwert reading)
 
-Identified during the 2026-05-03 late-evening session. The user asked "is G\* the theta of a lattice as opposed to theta of a circle?" — an intuitive question that turned out to have a literal positive answer via Gauss–Jacobi `θ_3(0|i) = π^(1/4)/Γ(3/4)`. The classical identity is in standard textbooks; the FTD-internal value is the operational re-statement and the parallel `π : ℤ-theta = G* : ℤ[i]-theta`.
+The question "is G\* the theta of a lattice as opposed to theta of a circle?" has a literal positive answer via Gauss–Jacobi `θ_3(0|i) = π^(1/4)/Γ(3/4)`. The classical identity is in standard textbooks; the FTD-internal value is the operational re-statement and the parallel `π : ℤ-theta = G* : ℤ[i]-theta`.
 
-The writeup honestly acknowledges (per `CLAUDE.md` epistemic discipline + GTCA F1/F9 failure modes) that the underlying mathematics is classical. A draft response that risked treating this as "novel" was course-corrected before commit; the [SYNTHESIS] tag and the explicit "what this is NOT" §B.5 are deliberate epistemic-hygiene anchors.
+The underlying mathematics is classical. The [SYNTHESIS] tag and the explicit "what this is NOT" §B.5 are deliberate epistemic-hygiene anchors.
 
 ---
 
 # PART C — The Parity-Twist Reading: G\* as the ζ / L(s, χ_{−4}) Parity-Twist
 
-*Consolidates `DERIV_G_STAR_PARITY_TWIST.md` — [DERIVED]: operational reading of Theorem 1 + Theorem 9 in L-function language; three boundary identities derivable from classical theorems (Lerch 1894, Gauss digamma, functional equation). LEDGER FTD-0127 (subsidiary of FTD-0112 / Theorem 9; companion to FTD-0001 / Theorem 1). Date: 2026-05-03 (evening session).*
+*Consolidates `DERIV_G_STAR_PARITY_TWIST.md` — [DERIVED]: operational reading of Theorem 1 + Theorem 9 in L-function language; three boundary identities derivable from classical theorems (Lerch 1894, Gauss digamma, functional equation). LEDGER FTD-0127 (subsidiary of FTD-0112 / Theorem 9; companion to FTD-0001 / Theorem 1).*
 
 ## C.0 · Summary
 
@@ -608,13 +607,13 @@ This Result is one more entry in the multiple-4 catalogue: the conductor of the 
 
 ## C.9 · Provenance (parity-twist reading)
 
-Identified during the 2026-05-03 evening session. Initial framing: the user asked whether Theorem 9's positioning of G\* inside Q(π, Γ(1/4)) carries content for ζ's critical line. The answer separated into a positive part (Result D + Identities A/B/C, which together complete the boundary structure of L(s, χ_{−4})) and a clean negative part (ζ(1/2), L(1/2, χ_{−4}), Catalan G all outside Q(G\*) by PSLQ at high precision). The user then clarified the intuition behind the chi function `Γ((1−s+a)/2)/Γ((s+a)/2)`, which led to recognising it as the literal Γ-content of the L-function functional equation's chi function with `a` as the parity parameter — and to the parity-twist identification at s = 1/2.
+Initial framing: whether Theorem 9's positioning of G\* inside Q(π, Γ(1/4)) carries content for ζ's critical line. The answer separates into a positive part (Result D + Identities A/B/C, which together complete the boundary structure of L(s, χ_{−4})) and a clean negative part (ζ(1/2), L(1/2, χ_{−4}), Catalan G all outside Q(G\*) by PSLQ at high precision). The chi function `Γ((1−s+a)/2)/Γ((s+a)/2)` is recognisable as the literal Γ-content of the L-function functional equation's chi function with `a` as the parity parameter — and leads to the parity-twist identification at s = 1/2.
 
 ---
 
 # PART D — The Barnes G Reading: G\* in the Multiple-Gamma Hierarchy
 
-*Added 2026-05-27 from a PSLQ side-discovery during a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. Path A (deriving `(S, P_*) = (16G*², 16G*³)` from higher-order ζ-determinant invariants) returned CLOSED-NEGATIVE at the naive Hessian-identity level (see `scripts/exploration/check_zeta_hessian_gstar2.py`); the Barnes G identity below was found in passing when PSLQ surfaced a clean basis sub-relation involving the Barnes G ratio at quarter-integer arguments. The identity itself is classical (Kinkelin 1860; Adamchik 1998 §3 "Multiple Gamma Function"; Choi 2003 §4 "Some integral representations of the Clausen function") — what's new here is the FTD-canonical form where G\* is the fundamental constant and Γ(1/4) is the derived quantity (rather than the other way around in classical writeups).*
+*A PSLQ side-discovery from a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. Path A (deriving `(S, P_*) = (16G*², 16G*³)` from higher-order ζ-determinant invariants) returned CLOSED-NEGATIVE at the naive Hessian-identity level (see `scripts/exploration/check_zeta_hessian_gstar2.py`); the Barnes G identity below surfaced when PSLQ returned a clean basis sub-relation involving the Barnes G ratio at quarter-integer arguments. The identity itself is classical (Kinkelin 1860; Adamchik 1998 §3 "Multiple Gamma Function"; Choi 2003 §4 "Some integral representations of the Clausen function") — what's new here is the FTD-canonical form where G\* is the fundamental constant and Γ(1/4) is the derived quantity (rather than the other way around in classical writeups).*
 
 ## D.1 · The identity [SYNTHESIS]
 
@@ -665,7 +664,7 @@ The identity holds **exactly** in closed form. The 10⁻²⁴⁵ residual is mpm
 
 ## D.4 · Provenance: how the identity was found
 
-During the 2026-05-27 session, an attempted Path A derivation for the x_- physical-identification pre-registration explored higher-order ζ-determinant invariants of the J-chain. The naive Hessian identity `ζ''(0, 1/4) − ζ''(0, 3/4) =? log(16·G*²)` was tested and returned CLOSED-NEGATIVE (residual at order 1, not closed-form precision). A follow-up PSLQ search at 150-digit precision against a basis including `{1, G_Catalan, log G*, log 2, log π, γ, log G_Barnes(1/4) − log G_Barnes(3/4), products}` was run to look for any closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4) ≈ 1.81380334…`.
+An attempted Path A derivation for the x_- physical-identification pre-registration explored higher-order ζ-determinant invariants of the J-chain. The naive Hessian identity `ζ''(0, 1/4) − ζ''(0, 3/4) =? log(16·G*²)` was tested and returned CLOSED-NEGATIVE (residual at order 1, not closed-form precision). A follow-up PSLQ search at 150-digit precision against a basis including `{1, G_Catalan, log G*, log 2, log π, γ, log G_Barnes(1/4) − log G_Barnes(3/4), products}` was run to look for any closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4) ≈ 1.81380334…`.
 
 PSLQ did NOT find a relation involving `c` (consistent with c likely requiring K_2-regulator-of-E machinery; multi-month research direction), but it DID find a clean **basis sub-relation** with all-small-integer coefficients:
 
@@ -698,13 +697,13 @@ The two readings are related by the Mellin transform that connects multiple gamm
 
 ## D.8 · Provenance (Barnes G reading)
 
-Discovered 2026-05-27 during a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. The PSLQ search (`scripts/exploration/pslq_zeta_hessian_diff_v2.py`) was originally targeting a closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4)` and returned a basis sub-relation instead. The relation was identified as the classical Adamchik–Kinkelin Barnes G ratio at quarter-integer arguments, verified at 250-digit precision (`scripts/proofs/proof_barnes_g_quarter_identity.py`), and filed here as Part D. Path A's primary target (a closed form for c) remains [OPEN] at the elementary-closed-form level and is conjectured to require K_2-regulator-of-E machinery.
+Surfaced during a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. The PSLQ search (`scripts/exploration/pslq_zeta_hessian_diff_v2.py`) was originally targeting a closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4)` and returned a basis sub-relation instead. The relation is the classical Adamchik–Kinkelin Barnes G ratio at quarter-integer arguments, verified at 250-digit precision (`scripts/proofs/proof_barnes_g_quarter_identity.py`), and filed here as Part D. Path A's primary target (a closed form for c) remains [OPEN] at the elementary-closed-form level and is conjectured to require K_2-regulator-of-E machinery.
 
 ---
 
 # PART E — The Gauss AGM Reading: G* as the Gauss Constant G Bridge
 
-*Added 2026-05-30 during a collaborative mathematical synthesis. The identity directly links FTD's reflection ratio $G^*$ to the classical Gauss constant $G = 1 / M(2^{1/2}, 1)$ representing the Arithmetic-Geometric Mean (AGM) of circle rectification. This collapses the FTD leptonic rest-mass and Watson BCC lattice constants into direct algebraic functions of $G$ and $\pi$.*
+*The identity directly links FTD's reflection ratio $G^*$ to the classical Gauss constant $G = 1 / M(2^{1/2}, 1)$ representing the Arithmetic-Geometric Mean (AGM) of circle rectification. This collapses the FTD leptonic rest-mass and Watson BCC lattice constants into direct algebraic functions of $G$ and $\pi$.*
 
 ## E.1 · The Gauss Constant AGM Bridge [SYNTHESIS]
 
@@ -761,7 +760,7 @@ Verified at 100 decimal-digit precision via `scripts/verification/test_gauss_con
 
 ## E.4 · Provenance
 
-Synthesized on 2026-05-30 during an exploration of the mathematical spine. During a discussion on the role of Lemniscatic curves, the connection between $G^*$ as the reflection ratio and the Gauss AGM constant $G = 1 / M(2^{1/2}, 1)$ was verified to high precision, proving that $G^*$ is the exact AGM counterpart to the circular perimeter.
+The connection between $G^*$ as the reflection ratio and the Gauss AGM constant $G = 1 / M(2^{1/2}, 1)$ is verified to high precision, proving that $G^*$ is the exact AGM counterpart to the circular perimeter.
 
 ---
 

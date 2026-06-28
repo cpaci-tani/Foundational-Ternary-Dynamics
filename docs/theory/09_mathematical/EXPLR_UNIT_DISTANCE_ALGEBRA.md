@@ -1,7 +1,6 @@
 # EXPLR_UNIT_DISTANCE_ALGEBRA
 
 **Tag:** [EXPLORATION] / [OPEN]
-**Date:** 2026-06-02
 **Subject:** Embedding the Erdős Unit Distance Graph in FTD
 
 ## 1. The Erdős Unit Distance Problem

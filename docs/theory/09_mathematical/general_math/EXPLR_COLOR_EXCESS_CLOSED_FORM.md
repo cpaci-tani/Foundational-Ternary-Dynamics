@@ -1,9 +1,7 @@
 # EXPLR — The Algebraic & Number-Theoretic Closed Form of Color Excess $\delta_c$
 
 **Status:** [THEOREM] for algebraic relation over $\mathbb{Q}(G^*)$; [STRONG NUMERICAL CONJECTURE] for CM period algebra embedding; [CLOSED NEGATIVE] for continuous post-hoc near-miss fits
-**Date:** 2026-05-27
 **Campaign ID:** FTD-0224
-**Authors:** FTD Mathematical Foundations Group
 **Verification Script:** `scripts/exploration/explore_color_excess.py` (100-digit precision PSLQ audit)
 
 ---

@@ -1,6 +1,5 @@
 # Exploration: Topological-Drag α Derivation — Audit
 
-**Date:** 2026-04-24
 **Status:** [CONJECTURE] of the physical claim; [THEOREM] of the tautology observation
 **Supersedes:** α-derivation claim in "Generated Document April 24, 2026 – 12:47 AM.pdf" (§2, labelled there as THEOREM 2)
 **Depends on:** [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md)
@@ -91,8 +90,8 @@ Until G1–G5 are passed, the claim is a restatement of "$x_+ = 1/\alpha$" in di
 
 - [CONJ_ALPHA_FROM_CM.md](CONJ_ALPHA_FROM_CM.md) already carries the $\alpha \leftrightarrow x_+$ bridge as [CONJECTURE]. This file adds the observation that the proposed "derivation via topological drag" is a tautology and does not move the claim along the tag hierarchy.
 - [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md) records the 3.6× discrepancy.
-- [OPEN_FTD_TO_EFT_BRIDGE_STATUS.md](../10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md) (2026-04-22) explicitly states "the QED-alpha bridge is [CLOSED NEGATIVE] under the current projected action" and lists this kind of derivation attempt as not load-bearing.
+- [OPEN_FTD_TO_EFT_BRIDGE_STATUS.md](../10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md) explicitly states "the QED-alpha bridge is [CLOSED NEGATIVE] under the current projected action" and lists this kind of derivation attempt as not load-bearing.
 
 ---
 
-*Filed 2026-04-24 in response to a PDF draft that labelled §2 as THEOREM 2. The tautology identification is a small theorem; the underlying bridge $x_+ \leftrightarrow \alpha$ remains conjectural exactly as the project ledger records.*
+*Filed in response to a PDF draft that labelled §2 as THEOREM 2. The tautology identification is a small theorem; the underlying bridge $x_+ \leftrightarrow \alpha$ remains conjectural exactly as the project ledger records.*
