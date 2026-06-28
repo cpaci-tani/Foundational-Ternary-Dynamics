@@ -1,7 +1,6 @@
 # INDEX · Number Theory & Mathematical Connections
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
 **Status:** [REFERENCE] — local navigation index for `docs/theory/09_mathematical/`.
 **Purpose:** This cluster is FTD's pure-mathematics layer: the number-theoretic and arithmetic-geometric structures behind G\*, the master quadratic, and the framework integers {3, 4, 7, 13}. It covers the algebraic-spine math (L-values, CM elliptic curves, Watson identities), the structural-uniqueness scans that underpin the central α conjecture, the Clifford/bivector algebra program for fermion emergence, cross-domain explorations (Fourcier curves, Cayley-Dickson tower, von Neumann factors), and the FQCR observer-test suite. Read it when you need a math result FTD cites, want to know what α-derivation routes are exhausted, or need to place a claim's epistemic tag.
 

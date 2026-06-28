@@ -2,8 +2,7 @@
 
 **Document type:** Exploratory result (positive)
 **Status:** [STRUCTURAL OBSERVATION] — substantially tightens the (m=2, k=4) selection in FTD-0111
-**Created:** 2026-05-01 evening
-**Provenance:** Q1 follow-up from `THEOREM_HARMONIC_INVARIANT_TOWER.md` (FTD-0111); user request "focus on other open gaps" after α-derivation routes documented as exhausted
+**Provenance:** Q1 follow-up from `THEOREM_HARMONIC_INVARIANT_TOWER.md` (FTD-0111), after α-derivation routes documented as exhausted
 **Related:** `THEOREM_HARMONIC_INVARIANT_TOWER.md`; `SPEC_ALGEBRAIC_SPINE.md §8`; `EXPLR_PATHS_TO_ALPHA.md` (which this slightly strengthens)
 
 ---

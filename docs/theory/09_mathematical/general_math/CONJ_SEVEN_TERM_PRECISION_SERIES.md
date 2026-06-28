@@ -2,7 +2,6 @@
 
 ## Conjecture: α⁻¹ = x₊ + Σ sₙ cₙ |ε|ⁿ to 24-Digit CODATA Agreement
 
-**Date:** 2026-04-17 (rigidity audit run same day)
 **Status:** [CONJECTURE] — 24-digit agreement independently reproduced; 6/7 coefficients uniquely forced at cascade precision; unique clean base-integer decomposition confirmed; observationally underdetermined at CODATA precision. See §3.3 for full audit table.
 **Precision claim:** 24-digit agreement confirmed as algebraic identity (mpmath 60-digit); not experimentally verifiable beyond digit ~11.
 **Audit script:** [`scripts/exploration/audit_seven_term_rigidity.py`](../../../scripts/exploration/audit_seven_term_rigidity.py)
@@ -77,7 +76,7 @@ These are lattice-structural. But the same base integers admit other rational co
 
 This is a tractable computer-search question. The proof script at §7 is the recommended audit.
 
-### 3.3 Status of the audit — run 2026-04-17
+### 3.3 Status of the audit
 
 The rigidity audit has been run (script: [`scripts/exploration/audit_seven_term_rigidity.py`](../../../scripts/exploration/audit_seven_term_rigidity.py)). Outcome:
 
@@ -143,7 +142,7 @@ $$\varepsilon \;=\; e^\pi - \pi - 20 \;\approx\; -9.000 \times 10^{-4}$$
 
 This is a transcendental small parameter with $|\varepsilon| \sim 10^{-3}$, not a CM L-value (see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](../number_theory/EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md) on why the correction is lattice-side). With $|\varepsilon| \sim 10^{-3}$, a 7-term series can in principle reach 24 digits since each term is ~10³ smaller than the last — convergence is not the issue.
 
-**On the integer 20 in $\varepsilon = e^\pi - \pi - 20$.** The 2026-04-17 audit initially flagged the 20 as unmotivated. On review, manuscript v2 ch 11 ([11-precision-formula.qmd](../../../dissemination/manuscript_v2/vol1/src/chapters/11-precision-formula.qmd)) records the identity $20 = b_3 + N_{\mathrm{eff}} = 7 + 13$ — so the integer is expressible in the base-integer set after all. The residual concern is weaker: **why that particular combination** (rather than $N_{\mathrm{eff}} + N_c + N_{\mathrm{base}} = 20$, also valid) and why the $e^\pi - \pi$ form specifically. The "which base-integer expression for 20" question is genuinely open but lower-stakes than an inserted integer would be.
+**On the integer 20 in $\varepsilon = e^\pi - \pi - 20$.** The audit initially flagged the 20 as unmotivated. On review, manuscript v2 ch 11 ([11-precision-formula.qmd](../../../dissemination/manuscript_v2/vol1/src/chapters/11-precision-formula.qmd)) records the identity $20 = b_3 + N_{\mathrm{eff}} = 7 + 13$ — so the integer is expressible in the base-integer set after all. The residual concern is weaker: **why that particular combination** (rather than $N_{\mathrm{eff}} + N_c + N_{\mathrm{base}} = 20$, also valid) and why the $e^\pi - \pi$ form specifically. The "which base-integer expression for 20" question is genuinely open but lower-stakes than an inserted integer would be.
 
 ### 4.2 The base integers
 
@@ -263,10 +262,3 @@ A rigidity audit variant would wrap this in an enumeration over alternative deno
 **Upgrade criterion:** [CONJECTURE] → [THEOREM] if and only if §3.2 rigidity audit passes.
 
 **Refutation criterion:** [CONJECTURE] → [ARCHIVED] if §3.2 rigidity audit fails (i.e., alternative denominator assignments match CODATA to comparable precision).
-
----
-
-## Document History
-
-- **2026-04-17:** Created. Preserves the 7-term coefficient table with explicit rigidity-audit falsifier. Status [CONJECTURE] pending §3.2 audit and §5.1 reproduction. Cross-references the one-loop mechanism as the structurally grounded alternative.
-- **2026-04-17 (same day):** Rigidity audit run (`scripts/exploration/audit_seven_term_rigidity.py`). Step (A) 24-digit match confirmed as algebraic identity (residual $2.58 \times 10^{-24}$). Step (B) $c_1$–$c_6$ unique in base integers at cascade tolerance; $c_7 = 299/8$ unique under strict base-integer decomposition (competitors at higher height require primes 89, 157 outside the base set). Step (C) observationally underdetermined at CODATA experimental precision. Verdict: **[CONJECTURE] preserved** with strengthened algebraic claims and explicit weakening of the "experimentally verified to 24 digits" framing. See §3.3 for full audit table.

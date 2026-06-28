@@ -1,8 +1,7 @@
 # BCC complex structure theorem — partial unification of dual-4
 
 **Type:** [DERIVED] (proof complete; verification: `scripts/proofs/proof_bcc_complex_structure.py`)
-**Date:** 2026-05-02
-**MC-T4.5 status:** substantively advanced from [STRUCTURAL CONJECTURE supported] to **[DERIVED for Roles 1 + 3; honest no-go for Roles 2 + 4]**
+**MC-T4.5 status:** **[DERIVED for Roles 1 + 3; honest no-go for Roles 2 + 4]**
 **Paper B candidate:** YES — this is the primary mathematical content
 **Citation target:** future paper B; replaces / complements `proof_a1g_dual4_via_zi_units.py`
 
@@ -153,5 +152,5 @@ Algebraic content is exact (uses `fractions.Fraction` throughout). The proof is 
 
 ## 7. Provenance
 
-- Predecessor: `scripts/proofs/proof_a1g_dual4_via_zi_units.py` (committed `df4a407`, 2026-05-02 morning) — verifies the three roles individually but defers the unification to a "natural Z[i]-module structure on BCC" left informal.
+- Predecessor: `scripts/proofs/proof_a1g_dual4_via_zi_units.py` (committed `df4a407`) — verifies the three roles individually but defers the unification to a "natural Z[i]-module structure on BCC" left informal.
 - This document: formalises and proves what the predecessor deferred, while honestly noting the obstruction at Roles 2 + 4 that the predecessor's "structural conjecture" framing did not flag.
