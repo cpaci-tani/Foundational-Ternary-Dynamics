@@ -1,6 +1,6 @@
 # ANALYSIS — Lattice Wave Sectors: dispersion atlas + condensate-compression probe, run of record (FTD-0299)
 
-**Status:** `[MEASURED]` (pre-registered run of record). **Date:** 2026-06-14.
+**Status:** `[MEASURED]` (pre-registered run of record).
 **Pre-registration:** [`PREREG_WAVE_SECTORS_v1.md`](../../10_eft_program/preregistrations/PREREG_WAVE_SECTORS_v1.md), git tag `preregister-wave-sectors-v1`, lock commit `8fff0187`.
 **Artifacts (SHA256-locked):** `engine/tests/campaign_wave_sectors.cpp` (`e25396b8…`), `scripts/exploration/analyze_wave_sectors.py` (`b76869fe…`).
 **Runs of record (local, gitignored):** `engine/results/wave_sectors/wave_sectors_{light_L24,light_L32,light_L48,sound_L24}.csv`.

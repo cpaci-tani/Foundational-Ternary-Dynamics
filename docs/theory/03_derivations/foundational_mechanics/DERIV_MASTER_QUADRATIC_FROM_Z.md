@@ -2,8 +2,7 @@
 
 ## The Gap Equation Derived from Z(x)
 
-**Date:** March 17, 2026
-**Status (per LEDGER 2026-04-19, updated 2026-05-22 for v1.4 retirement):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra. The single live physical identification is $x_+ \leftrightarrow 1/\alpha$ ([STRONGLY MOTIVATED CONJECTURE] FTD-0013) resting on the empirical match (1.26 ppm) + polynomial-template uniqueness (FTD-0319, formerly cited as FTD-0189) + CM-curve uniqueness. The historical paired identification $x_- \leftrightarrow N_c$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
+**Status (per LEDGER, v1.4 retirement):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra. The single live physical identification is $x_+ \leftrightarrow 1/\alpha$ ([STRONGLY MOTIVATED CONJECTURE] FTD-0013) resting on the empirical match (1.26 ppm) + polynomial-template uniqueness (FTD-0319, formerly cited as FTD-0189) + CM-curve uniqueness. The historical paired identification $x_- \leftrightarrow N_c$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 **Depends on:** DERIV_GAP_EQUATION_FORM.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md
 **Proof script:** `scripts/proofs/proof_gap_equation_from_partition_function.py`
 
@@ -142,10 +141,9 @@ The gap equation x^2 - Kx + KG\* = 0 is the unique degree-2 self-consistency equ
 - This is narrowed from "assumed form" to "unique degree-2 screened form with lattice-determined coefficients"
 - What is NOT proven: why self-consistency takes the specific functional form x = K(1 - G\*/x) rather than some other function satisfying the degree-2 constraint
 
-**Improvement over previous status:**
-- Previously: F(x) = K(1 - G\*/x) was the "one-loop ansatz"
-- Now: "one-loop" is proven EXACT (no higher loops exist because S\_E is quadratic in J)
-- The [SELECTION] is narrowed to the operational definition of "self-consistent coupling"
+**Strength of the [SELECTION]:**
+- F(x) = K(1 - G\*/x) is not merely a "one-loop ansatz": the "one-loop" structure is proven EXACT (no higher loops exist because S\_E is quadratic in J)
+- The [SELECTION] is therefore narrowed to the operational definition of "self-consistent coupling"
 
 ---
 

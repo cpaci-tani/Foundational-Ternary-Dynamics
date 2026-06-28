@@ -1,7 +1,6 @@
 # ANALYSIS — The Current-Stack N(A) Law (FTD-0261): broken power law with knee at A≈16; thermostat effect = pure friction
 
 **Tag:** `[MEASURED — current-stack baseline]` (Q1 law) + `[MEASURED — Outcome A]` (Q2 thermostat) + `[CLOSED NEGATIVE — the FTD-0259 thermal-crossover knee reading]`. **Nothing promoted: FTD-0110's clustermass identification stays `[SMC]` with its evidential basis historical; the linear theorem (k = ¼ from O_h) is mathematics, untouched; FTD-0013/MC-T4.3 untouched.**
-**Date:** 2026-06-10
 **Pre-registration:** [`PREREG_NA_LAW_CURRENT_STACK_v1.md`](PREREG_NA_LAW_CURRENT_STACK_v1.md) (lock commit `be63223e`, tag `preregister-na-law-current-stack-v1`; runner SHA `2795b5b5…`, analysis SHA `270dea76…`)
 **Run of record:** `engine/results/na_law_current_stack_2026-06-10/` (34 CSVs + frozen `verdict.txt`; WSL2 canonical build; 0 failures). **V-1 rig gate: PASS 5/5** — the first valid run of the discriminator program.
 **LEDGER:** FTD-0261.

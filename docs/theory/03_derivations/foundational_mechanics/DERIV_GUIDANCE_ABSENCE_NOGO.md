@@ -2,7 +2,7 @@
 
 **Tag:** `[THEOREM at engine level]` (by-inspection enumeration of the force law) +
 `[MEASURED]` (the dynamic null, FTD-0271 Phase E)
-**Date:** 2026-06-12 (formalizes the FTD-0271 E-result; Leg 0 of the FTD-0278 arc)
+**Role:** formalizes the FTD-0271 E-result; Leg 0 of the FTD-0278 arc.
 **Engine sources:** `engine/src/render_bridge_phases/phase_forces.cpp` (the complete
 force law), `engine/tests/campaign_de_broglie_guidance.cpp` (the measurement).
 **Context:** FTD-0271 established that, GIVEN the imposed rest-mass clock, FTD's flux

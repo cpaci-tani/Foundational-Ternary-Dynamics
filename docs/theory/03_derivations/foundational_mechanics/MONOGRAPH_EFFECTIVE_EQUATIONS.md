@@ -1,8 +1,5 @@
 # The Emergent Field Equations: A Comprehensive Monograph of Effective Continuum Physics in Foundational Ternary Dynamics (FTD)
 
-**Version:** 1.0  
-**Framework Version:** FTD v5.33  
-**Date:** May 27, 2026  
 **Status:** [REFERENCE] — Core synthesis monograph of effective continuum derivations.  
 **Epistemic Standard:** Strict compliance with FTD Epistemic Discipline (`AGENTS.md`). All claims explicitly tagged: `[AXIOM]`, `[THEOREM]`, `[SELECTION]`, `[CONJECTURE]`, `[IMPOSED]`. Gaps are transparently cataloged, not minimized.
 
@@ -387,7 +384,7 @@ To maintain complete epistemic integrity, we catalog the exact status of every e
 
 ### 7.2 The Resolutions of the Gaps
 
-The four primary open frontiers of the continuous emergence program have been successfully closed:
+Four primary frontiers of the continuous emergence program are resolved:
 
 1.  **The Compton Dimension Inversion Paradox (RESOLVED):**
     Proved the **Compton Volume Duality Theorem** showing that the physical Compton wavelength $\lambda_C = 1/m$ is the Fourier spectral dual of the discrete spatial compact-packing volume $V_K \propto R^3$. As the cluster volume grows, the field equation's mass-pole shifts to higher energy, causing the emergent wave footprint to contract ($\lambda_C \propto 1/R^3$).
@@ -400,6 +397,4 @@ The four primary open frontiers of the continuous emergence program have been su
 
 ---
 
-*Document created: May 27, 2026*  
 *Topic: The mathematical derivations of all effective continuous physics from the discrete FTD substrate.*  
-*Framework: Foundational Ternary Dynamics v5.33*  

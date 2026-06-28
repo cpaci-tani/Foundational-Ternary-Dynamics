@@ -1,7 +1,6 @@
 # Analysis — FTD-0110 nonlinear bridge: the v2 genesis-counting model (FTD-0309)
 
 **Tag:** `[MEASURED — BOUNDARY: collective-coordinate reduction obstructed]` + `[DERIVED — super-knee energy-budget exponent, given imposed register]`
-**Date:** 2026-06-21
 **Status:** the second attempt (after FTD-0277 v1 `[CLOSED NEGATIVE]`) to land the FTD-0110 cluster-mass law N(A) as `[CONDITIONAL — DERIVED-GIVEN-IMPOSED]`. Lands a **boundary-sharpening** result: a faithful *scalar* (O_h-radial) collective-coordinate reduction is structurally obstructed; the derivable content is the super-knee exponent.
 **Artifacts:** `scripts/exploration/genesis_counting_model_v2.py` (model) + `scripts/exploration/analyze_genesis_counting_v2.py` (adjudicator) + run of record `scripts/exploration/results/genesis_counting_v2/analysis.{txt,json}`.
 **Gates:** the FTD-0277/0261 frozen gates, **inherited UNCHANGED** (no goalpost-moving). **Honesty:** this is NOT a blind pre-registration — the model was developed and the obstruction diagnosed before the lock; the lock provides reproducibility, and the result is a diagnostic boundary-mapping.

@@ -1,7 +1,6 @@
 # ANALYSIS — Dynamical Time Dilation of a Moving Lattice Clock (Campaign 2 result)
 
 **Tag:** `[OBSERVATION]` — pre-registered verdict **OTHER** (PREREG §6). **Nothing promoted; FTD-0013 and α unchanged; FTD-0208 clarified, not refuted.**
-**Date:** 2026-06-07
 **Pre-registration:** [`PREREG_DYNAMICAL_TIME_DILATION_v1.md`](PREREG_DYNAMICAL_TIME_DILATION_v1.md) (design + analysis locked before the verdict)
 **Runner (frozen):** `engine/tests/campaign_time_dilation.cpp` SHA256 `ea29260b…`
 **Analysis (frozen):** `scripts/exploration/analyze_time_dilation.py` SHA256 `323b2e7d…`
@@ -70,7 +69,7 @@ Found by the author and/or the independent review; none invalidate the OTHER ver
 
 ---
 
-## v2 (2026-06-07) — the IR limit, SCOPED `[MEASURED]`
+## v2 — the IR limit, SCOPED `[MEASURED]`
 
 **Pre-reg:** [`PREREG_DYNAMICAL_TIME_DILATION_v2.md`](PREREG_DYNAMICAL_TIME_DILATION_v2.md) (runner SHA `28c99f87…`, analysis `scripts/exploration/analyze_time_dilation_v2.py` SHA `9a755904…`). **Independent review:** RedTeamAuditor v2 (fresh context) — **accept IR_CONFIRMED in scoped form, 7.5/10.** Data: `engine/results/time_dilation_v2_2026-06-07/`.
 

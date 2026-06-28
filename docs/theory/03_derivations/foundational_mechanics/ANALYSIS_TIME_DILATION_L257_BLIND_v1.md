@@ -1,7 +1,7 @@
 # ANALYSIS — Blind L=257 extension of the FTD-0252 time-dilation residual law: PREDICTION_CONFIRMED (7/9, at threshold)
 
 **Tag:** `[MEASURED — blind extension]` (per the locked outcome scheme). **Nothing promoted: PL-4's measured-domain note extends to L=257; FTD-0013, FC-2, and every other tag are untouched.**
-**Date:** 2026-06-11 (post-dates the lock; B-5 satisfied).
+**Blindness:** the analysis post-dates the lock (B-5 satisfied).
 **Pre-registration:** [`PREREG_TIME_DILATION_L257_BLIND_v1.md`](PREREG_TIME_DILATION_L257_BLIND_v1.md) — lock commit `ee8976b6`, tag `preregister-time-dilation-L257-blind-v1`, locked **before** any L=257 data existed.
 **Run of record:** `engine/results/time_dilation_L257_blind_2026-06-11/` (CSV + `score_report.md`; run log `engine/results/time_dilation_L257_blind_2026-06-11.log`). First completed run; nothing discarded (F-c).
 **LEDGER:** FTD-0268.
