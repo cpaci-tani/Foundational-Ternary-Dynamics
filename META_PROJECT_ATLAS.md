@@ -2,7 +2,6 @@
 
 **Audience: LLM agents and humans needing to find code/docs fast.**
 **Update trigger: any directory creation, public-API change, or architectural decision.**
-**Last refreshed: 2026-06-10 (post engine-flawless lifecycle/callstack/toggle audit, 16 commits on branch `flawless-engine-2026-06-01`; prior baseline: 2026-04-27 8-phase refactor sweep, 17 commits 2db67ca…87158ae).**
 
 This file is the entry point for navigating the FTD codebase. If you are a
 fresh agent looking at this project for the first time, read this file →
@@ -146,7 +145,7 @@ ftd/
 │   │   ├── test_*.cpp                 # Unit tests (use test_telemetry.h)
 │   │   ├── benchmark_*.cpp            # Engine-theory bridge tests
 │   │   ├── campaign_*.cpp             # Long-running measurement campaigns
-│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0xb604d81a3d79366e @ L=17, re-baselined 2026-06-17 audit m1)
+│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0xb604d81a3d79366e @ L=17)
 │   │   ├── test_audit_regression.cpp  # 14-15/15 audit fix coverage
 │   │   └── support/                   # Phase 7 ftd_test_support library
 │   │       ├── test_telemetry.cpp     # 312 LOC impl (was header-only, parsed 155+ times)
@@ -362,14 +361,14 @@ Windows-native CUDA build (`engine/build/`) is acceptable for compile-time
 checks and single-tick correctness only. Any measurement campaign, sweep,
 or multi-seed run goes through WSL2.
 
-**WSL2 GPU parity verification — CLOSED 2026-04-28.** Phase 5
+**WSL2 GPU parity verification.** Phase 5
 (`kernels_stencil.cu` split into 3 TUs) was host-compile-verified +
-CPU-deterministic-verified at refactor close. Runtime GPU parity has
-now been verified end-to-end on WSL2 + RTX 5090:
+CPU-deterministic-verified at refactor close. Runtime GPU parity is
+verified end-to-end on WSL2 + RTX 5090:
 
 | Test | L | Result |
 |---|---:|---|
-| `test_render_bridge_golden` | 17 | hash `0xb604d81a3d79366e` bit-exact (CPU; OMP determinism verified; re-baselined 2026-06-17 for audit m1 gauss_violation scope fix — was `0x56fa28acb5b9fe88`) |
+| `test_render_bridge_golden` | 17 | hash `0xb604d81a3d79366e` bit-exact (CPU; OMP determinism verified; re-baselined for the audit m1 gauss_violation scope fix — was `0x56fa28acb5b9fe88`) |
 | `test_gpu_parity_complete` | 32 | 70/0 PASS across 20 physics domains |
 | `test_force_diag_parity` | — | 7/7 PASS (`|a−b| = 0.000e+00` on strong force) |
 | `test_sim_parity` | 16 | TotalFieldEnergy parity ≤ 1e-2 at 100 + 500 ticks |
@@ -383,8 +382,7 @@ wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
     engine/build_wsl/test_gpu_parity_complete"
 ```
 
-**Engine-flawless verification harness — added 2026-06-01** (branch
-`flawless-engine-2026-06-01`, 16 commits). A lifecycle/callstack/toggle
+**Engine-flawless verification harness.** A lifecycle/callstack/toggle
 audit added a verification surface pinning engine lifecycle, tick-phase
 order, toggle coverage, and the energy-conservation profile:
 
@@ -398,7 +396,7 @@ order, toggle coverage, and the energy-conservation profile:
 | JS (Playwright) | `engine/web/tests/toggle-coverage.spec.js` | toggle coverage |
 | JS (Playwright) | `engine/web/tests/overlay-scheduler.spec.js` | overlay scheduler |
 
-This audit also **fixed a 5-week clean-checkout `cmake` break** (dangling
+This audit also **fixed a clean-checkout `cmake` break** (dangling
 `_repro_gpu_empty_bridge` reference in `engine/CMakeLists.txt`) and marked
 **DagEngine deprecate-clearly**. The MC-T4.3 theory-side companion is the
 route-invariance boundary audit
@@ -408,7 +406,7 @@ structural; **nothing promoted**).
 
 ---
 
-## §10 — Refactor sweep history (2026-04-27, completed)
+## §10 — Refactor sweep history
 
 The 8-phase sweep that produced the structure documented above. See
 [docs/audits/AUDIT_2026-04_refactor-sweep.md](docs/audits/AUDIT_2026-04_refactor-sweep.md)
@@ -471,4 +469,4 @@ Physics invariants preserved across all 17 commits:
 
 ---
 
-*Project version: FTD v5.47 | Engine version: v2.18.0 | Atlas refreshed 2026-06-10*
+*Engine version: v2.18.0*

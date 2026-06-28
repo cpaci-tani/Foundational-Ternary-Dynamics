@@ -1,6 +1,5 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.47 (sync to CLAUDE.md, post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 **Authoritative project instructions:** [`CLAUDE.md`](CLAUDE.md) — this file (AGENTS.md) is a sibling reference; if the two disagree, CLAUDE.md wins.
 
@@ -172,11 +171,11 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Loop derivations**: `scripts/exploration/compute_c2.py`, `derive_all_loops.py`, `gauge_loops.py`
 - **Arrow paper**: `docs/papers/PAPER_RATIO_AND_THE_ARROW.tex`
 - **Engine coupling test**: `engine/tests/test_intervoxel_coupling.cpp`
-- **Complete Chain** (April 2026): `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`
-- **QM as Statistics** (April 2026): `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md`
-- **Lattice Physics Reference** (April 2026): `docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md`
-- **Stellar Lifecycle** (April 2026): `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md`
-- **Master Verification** (April 2026): `scripts/proofs/proof_master_verification.py` (54/54 checks)
+- **Complete Chain**: `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`
+- **QM as Statistics**: `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md`
+- **Lattice Physics Reference**: `docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md`
+- **Stellar Lifecycle**: `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md`
+- **Master Verification**: `scripts/proofs/proof_master_verification.py` (54/54 checks)
 
 ---
 

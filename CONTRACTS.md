@@ -1,7 +1,6 @@
 # CONTRACTS — Cross-Module Interface Summary
 
 **Audience:** humans and agents changing shared module boundaries.
-**Status:** active summary, refreshed after the June 2026 web cleanup pass.
 
 This file is intentionally a summary. Detailed web contracts live beside the
 web engine:

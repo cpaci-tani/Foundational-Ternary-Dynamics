@@ -168,7 +168,7 @@ code-review flag.
 
 Each hazard has three lines: **Symptom** (what you see when you've
 hit it), **Cause** (the project invariant being violated), **Fix**
-(the exact corrective action). Linked to a recent commit so you can
+(the exact corrective action). Linked to a commit so you can
 read the pattern in context.
 
 #### H1 — Panel-registry  DOM-stub contract
@@ -221,7 +221,7 @@ read the pattern in context.
   PARAMETRIC, not THEOREM**. THEOREM requires a proof from
   postulates (D=3, ternary states, varpi). SELECTION requires a
   consistency argument. CONJECTURE is acceptable but must be
-  labeled as such. See commit `6ca091f` for a recent downgrade
+  labeled as such. See commit `6ca091f` for a downgrade
   example (Born rule and dark-matter 17/27).
 
 #### H4 — Constants single source of truth
@@ -432,7 +432,7 @@ Deliberately terse — more detail in the linked examples.
 3. Click tabs via `page.evaluate(() => document.querySelector('#tab-bar .tab[data-panel="X"]')?.click())` — not `locator.click()` — to bypass pointer-event hit-testing on the tab-strip scroll container.
 4. Prefer stable id selectors (`#panel-X`, `#btn-Y`) over class selectors.
 
-**Verify:** `cd engine/web/tests && npx playwright test <feature>.spec.js --reporter=list`. Also run the full suite (`npx playwright test --reporter=list`) to confirm no regression; baseline is 122 passing as of commit `966e684`.
+**Verify:** `cd engine/web/tests && npx playwright test <feature>.spec.js --reporter=list`. Also run the full suite (`npx playwright test --reporter=list`) to confirm no regression; baseline is 122 passing at commit `966e684`.
 
 #### R12 — Add a Python proof
 
@@ -476,7 +476,7 @@ Deliberately terse — more detail in the linked examples.
 **Steps:**
 1. `git status --short` — confirm the only files staged are the ones your task touched.
 2. Craft a commit message: short imperative subject line (≤ 72 chars), blank line, body explaining the *why* plus verification evidence (test counts, review outcomes).
-3. End the body with the standard `Co-Authored-By` trailer if an AI agent wrote significant portions of the change.
+3. End the body with the substantive description and nothing else. Per the project's commit policy (see `CLAUDE.md`), do **not** add a `Co-Authored-By` or any other AI-attribution trailer.
 4. Prefer many small commits over one giant commit when changes are separable.
 5. Never force-push to `main`. Ask before any destructive git operation.
 
@@ -488,8 +488,7 @@ Deliberately terse — more detail in the linked examples.
 
 Live inventory of known debt on the code/UX side. The theory side
 lives in `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`. Cross-
-references noted inline. Expect this section to update as things land
-and new debt accrues.
+references noted inline.
 
 ### 3.1 Live debt
 
@@ -571,12 +570,6 @@ every `[OPEN]` tag across the theory corpus. Items that span both:
 
 When either side changes, cross-check the other.
 
----
-
-## Document history
-
-- 2026-04-19 — initial authoring.
-
 <!-- When extending: update the TOC entries, keep hazards and
 recipes in their numbered slots, append new debt/deferred items to
-Part 3 in reverse chronological order within each section. -->
+Part 3 within each section. -->
