@@ -2,7 +2,6 @@
 
 **Tag:** [MEASURED] — first non-commutative algebraic structure detected in FTD native dynamics
 **Ledger row:** FTD-0085
-**Filed:** 2026-04-24
 **Companions:**
 - [DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md](../number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) — the no-go theorem Program F tests against
 - [test_link_bilinear_clifford.cpp](../../../engine/tests/test_link_bilinear_clifford.cpp) — GPU test
@@ -178,13 +177,13 @@ P_{ij}(x) \;=\; J_i(x)\, J_j(x + \hat{e}_i) \;-\; J_i(x + \hat{e}_j)\, J_j(x)
 $$
 on each oriented plaquette. Measure $\{P_{ij}, P_{kl}\}$ and compare to the $Cl(3,0)$ bivector anticommutation relations.
 
-If Program F-prime closes positive: fermion emergence shifts from Branch-B selection to Branch-A derivation (on the bivector basis). This would be the most consequential FTD result of the session.
+If Program F-prime closes positive: fermion emergence shifts from Branch-B selection to Branch-A derivation (on the bivector basis). This would be a highly consequential FTD result.
 
 ---
 
 ## 6. Status
 
-**Program F: PARTIAL POSITIVE** as of 2026-04-24.
+**Program F: PARTIAL POSITIVE.**
 
 Test: `engine/tests/test_link_bilinear_clifford.cpp` (GPU).
 
@@ -197,4 +196,4 @@ Test: `engine/tests/test_link_bilinear_clifford.cpp` (GPU).
 
 ---
 
-*Filed 2026-04-24. First FTD probe to detect non-commutative algebraic structure. Fermion-emergence no-go narrows from "universal across engine toggles" to "universal on site-local and axial bases; open on non-local and bivector bases." Program F-prime (plaquette bivector probe) identified as the natural follow-up.*
+*First FTD probe to detect non-commutative algebraic structure. Fermion-emergence no-go narrows from "universal across engine toggles" to "universal on site-local and axial bases; open on non-local and bivector bases." Program F-prime (plaquette bivector probe) identified as the natural follow-up.*

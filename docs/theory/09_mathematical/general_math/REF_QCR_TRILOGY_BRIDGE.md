@@ -1,8 +1,6 @@
 # REF · QCR Trilogy — Branch / Curve / Compatibility Bridge
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-07
-**Version:** 1.0
 **LEDGER row reservation:** FTD-0144 [STRUCTURAL CORRESPONDENCE]
 **Companion docs:** [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142), [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) Part VII, [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10.X (FTD-0111 Theorem 8).
 **Verifier script:** [`scripts/proofs/proof_fqcr_branch_value.py`](../../../scripts/proofs/proof_fqcr_branch_value.py)
@@ -11,7 +9,7 @@
 
 ## §1 — The trilogy
 
-Three short authorless mathematical notes were shared in 2026-05-06 / 2026-05-07. Together they constitute a self-contained framework on quarter-conjugacy recurrences and dyadic Fourier curves. **They are not part of FTD.** This document records (a) what each paper formalises, (b) where each cross-confirms an existing FTD construct, (c) what genuinely new structural content the compatibility paper introduces, and (d) how the cross-paper correspondence is integrated into FTD's documentation without inflating any tag.
+Three short authorless mathematical notes constitute a self-contained framework on quarter-conjugacy recurrences and dyadic Fourier curves. **They are not part of FTD.** This document records (a) what each paper formalises, (b) where each cross-confirms an existing FTD construct, (c) what genuinely new structural content the compatibility paper introduces, and (d) how the cross-paper correspondence is integrated into FTD's documentation without inflating any tag.
 
 | Paper | Contribution | Status in FTD |
 |---|---|---|
@@ -122,7 +120,7 @@ FTD adopts this guard rail. The numerical equalities $2 = |\{z_+, z_-\}|$ (recip
 
 ## §5 — The compatibility framework's genuinely new content
 
-Section §3 above lists what cross-confirms FTD or reproduces standalone trilogy results. This section lists what is **genuinely new structural content** the compatibility paper supplies that FTD did not have before 2026-05-07.
+Section §3 above lists what cross-confirms FTD or reproduces standalone trilogy results. This section lists what is **genuinely new structural content** the compatibility paper supplies that FTD did not previously have.
 
 ### 5.1 — Curve-side geometric spectrum
 

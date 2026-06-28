@@ -2,8 +2,6 @@
 
 ## Counter-Rotation, Lobe Genesis, and the Trefoil Bridge
 
-**Date:** March 5, 2026
-**Framework:** Foundational Ternary Dynamics v5.27+
 **Document Status:** Exploratory — novel algebraic-geometric results with cross-domain interpretation
 **Epistemic Class:** [THEOREM] for proven identities; [SELECTION] for structural mappings; [CONJECTURE] for unverified proposals
 **Category:** 9 (Cross-Domain Connections)

@@ -1,11 +1,9 @@
 # EXPLR — Master Quadratic Structural Readings: Volumetric, 2×2 Mixing-Matrix, and Conjugate-Lattice Interpretations
 
 **Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0111; historical FTD-0014 references throughout this document refer to the now-retired `x_-  N_c` identification, **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. All "dual prediction" prose below is preserved as historical interpretation but no longer load-bearing). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
-**Date:** 2026-05-21
-**Consolidates:** `EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md`, `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md`, `EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md` (merged 2026-05-21)
+**Consolidates:** `EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md`, `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md`, `EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md`
 
 **Document type:** Structural interpretation (brainstorm cluster)
-**Provenance:** User directive "let's brainstorm with FTD logic on what α actually means" + "do the harmonic-conjugacy reading because harmonics/resonance feel structural" → 2×2 mixing-matrix reading; then user correction "look at it volumetrically, not in flat space 2D" → volumetric reading; then user directive to explore the "conjugate lattice" interpretation of `16 = N_base²` → conjugate-lattice reading.
 **Related:** `SPEC_PHYSICS_BRIDGE.md` (the bridge synthesis); `THEOREM_HARMONIC_INVARIANT_TOWER.md` (FTD-0111); `EXPLR_PATHS_TO_ALPHA.md`; `EXPLR_TWO_PI_GSTAR_CONNECTION.md`; `EXPLR_3X3_MIXING_NEGATIVE.md` (3×3 generalization failure); `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (BCC Watson identity); `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (A_{1g} structure); `SPEC_ALGEBRAIC_SPINE.md` (Theorems 3, 4); `EXPLR_CM_RATIO_TOWER.md`
 
 ---
@@ -651,7 +649,7 @@ None of the three readings introduces a new LEDGER entry. Each records a structu
 - FTD-0003 (CM uniqueness): [THEOREM] — picks E
 - FTD-0004 (= Theorem 4, |Aut(E)|² = 16): [THEOREM] — establishes the squaring
 - FTD-0013 (x_+ = 1/α): [STRONGLY MOTIVATED CONJECTURE] — unchanged
-- ~~FTD-0014 (x_- = N_c)~~: **RETIRED** per v1.4 §5 (2026-05-22); LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
+- ~~FTD-0014 (x_- = N_c)~~: **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - FTD-0111 (harmonic invariant tower): [THEOREM] — establishes level-k=4 selection; unchanged
 - FTD-0121 (physics bridge synthesis): [SYNTHESIS] — extended in spirit by the 2×2 reading
 

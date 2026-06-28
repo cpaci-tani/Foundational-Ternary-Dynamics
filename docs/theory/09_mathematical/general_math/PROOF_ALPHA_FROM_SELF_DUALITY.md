@@ -1,7 +1,6 @@
 # The Fine Structure Constant from Self-Duality
 
 **Status:** [THEOREM] (Steps 1-6) + [AXIOM] (Step 7: physical identification)
-**Version:** 1.0 (2026-03-30)
 **Result:** α⁻¹ = 137.036... from the CM elliptic curve E: y² = x³ − x
 
 ---
@@ -180,7 +179,7 @@ The self-duality of the L-function (Step 3) is the arithmetic manifestation of t
 
 **Formally:** The coupling polynomial is the characteristic polynomial of an element of K acting on a 2-dimensional space. Self-duality means this element is invariant under the Galois involution σ. The invariant elements of the norm-trace pairing satisfy Tr = N. ■
 
-**Note:** This is the step that was previously "Gap 3" — the self-consistency form F(x) = K(1 − G*/x). In the present argument, it is replaced by a cleaner statement: self-duality of the L-function at the center point forces Tr = N. The root number ε = +1 is the reason this works. If ε = −1, L(E,1) = 0, no self-duality, no constraint, no real roots.
+**Note:** This step replaces the self-consistency form F(x) = K(1 − G*/x) with a cleaner statement: self-duality of the L-function at the center point forces Tr = N. The root number ε = +1 is the reason this works. If ε = −1, L(E,1) = 0, no self-duality, no constraint, no real roots.
 
 ### Step 5: The Master Quadratic [THEOREM]
 

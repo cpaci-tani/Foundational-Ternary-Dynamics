@@ -2,10 +2,7 @@
 
 ## How Hawking Temperature Connects Wave Function Collapse to Spacetime Curvature via the Softplus β Parameter
 
-**Date:** February 19, 2026
-**Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Formal exploration with epistemic classification
-**Authors:** cpaci & Claude (Opus 4.6)
 
 ---
 
@@ -493,6 +490,5 @@ Under the FTD Constitution (FTD-0254) and the dynamic-alpha pivot (FTD-0242), al
 
 ---
 
-*Collapse-Gravity Bridge — Foundational Ternary Dynamics v5.26*
+*Collapse-Gravity Bridge*
 *Prepared for critical evaluation*
-*February 19, 2026*
