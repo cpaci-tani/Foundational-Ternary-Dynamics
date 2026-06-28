@@ -1,6 +1,5 @@
 # Derivation: The Arrow of Time and the Heat Equation from the Euler Reflection Ratio
 
-**Date:** April 23, 2026  
 **Status:** [THEOREM]  
 **Depends on:** `FOUND_THE_RATIO_AND_THE_PRODUCT.md`, `EXPLR_EULER_RATIO_RICCI_FLOW.md`
 

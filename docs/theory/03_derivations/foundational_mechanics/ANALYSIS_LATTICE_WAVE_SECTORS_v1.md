@@ -1,7 +1,6 @@
 # Analysis — FTD-0298: Lattice Wave Sectors — Light + Radio = One Flux-Wave Sector; No Acoustic Sector (BOUNDARY)
 
 **Tag:** `[SYNTHESIS]` + `[BOUNDARY]`
-**Date:** 2026-06-14
 **LEDGER row:** FTD-0298
 **Verification:** `scripts/exploration/wave_sector_unit_map.py` (the unit-map numbers in §2/§4 are computed there, not asserted).
 

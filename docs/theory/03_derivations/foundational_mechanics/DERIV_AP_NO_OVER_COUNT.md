@@ -1,9 +1,8 @@
 # Derivation — AP-no-over-count: Active-Block Partitioning Aggregation Rule
 
 **Tag:** [DERIVED] / canonical
-**Date:** 2026-05-26
-**LEDGER row:** FTD-0182 (new claim representing this derivation)
-**Verification script:** `scripts/proofs/proof_ftd0110_active_partition.py` (new verification script)
+**LEDGER row:** FTD-0182
+**Verification script:** `scripts/proofs/proof_ftd0110_active_partition.py`
 **Depends on:** FTD-0110 (nonlinear bridge), FTD-0119 (bridge analysis)
 
 ---

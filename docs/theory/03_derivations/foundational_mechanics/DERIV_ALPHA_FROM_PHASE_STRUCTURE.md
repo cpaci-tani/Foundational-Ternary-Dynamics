@@ -2,15 +2,14 @@
 
 ## The Coulomb Phase Coupling IS the Fine Structure Constant
 
-**Date:** March 17, 2026
-**Status:** Historical argument; [SELECTION] pending FTD-to-EFT matching
-**Does not close:** The `x_+ = 1/alpha` physical identification. As of the 2026-04-22 bridge audit, this document is supporting evidence only.
+**Status:** [SELECTION] pending FTD-to-EFT matching
+**Does not close:** The `x_+ = 1/alpha` physical identification. This document is supporting evidence only.
 
 ---
 
-## Audit update (2026-04-22)
+## Audit note
 
-This document's phase-structure argument remains useful, but its original theorem-level framing was too strong. The bridge-span audits in `docs/theory/10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` and `docs/theory/10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` show:
+This document's phase-structure argument is useful, but a theorem-level framing of it would be too strong. The bridge-span audits in `docs/theory/10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` and `docs/theory/10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` show:
 
 ```text
 FTD state/flux variables -> source-coupled vector EFT              supported

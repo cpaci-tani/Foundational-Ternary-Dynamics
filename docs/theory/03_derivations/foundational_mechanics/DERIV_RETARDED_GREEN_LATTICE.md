@@ -2,8 +2,7 @@
 
 **Document type:** Derivation (subsidiary of Theorem 6 / FTD-0004)
 **Status:** [DERIVED] — clean three-line lattice Fourier argument; the underlying d'Alembert relation is standard, the FTD-stencil-specific statement is new
-**Created:** 2026-04-30
-**Provenance:** opens the "exploit Maxwell's wave equation" research thread; identifies the radiation-zone extension of Phase G's static Coulomb identity
+**Role:** the radiation-zone extension of Phase G's static Coulomb identity, in the "exploit Maxwell's wave equation" research thread
 **Related:** `SPEC_ALGEBRAIC_SPINE.md §6` (Phase G static identity);
 `DERIV_HEAT_EQUATION_FROM_RATIO.md` (heat-equation-side analog, where G* is the half-derivative eigenvalue);
 `scripts/proofs/proof_retarded_green_identity.py` (numerical sanity check at L = 8)

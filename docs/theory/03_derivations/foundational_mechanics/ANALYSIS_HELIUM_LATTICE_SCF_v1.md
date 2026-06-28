@@ -1,7 +1,6 @@
 # ANALYSIS — Helium on the FTD lattice: HELIUM-CONFIRMED (FTD-0279)
 
 **Status:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` (pre-registered run of record).
-**Date:** 2026-06-12.
 **Pre-registration:** [`PREREG_HELIUM_LATTICE_SCF_v1.md`](../../10_eft_program/preregistrations/PREREG_HELIUM_LATTICE_SCF_v1.md),
 tag `preregister-helium-lattice-scf-v1`, lock commit `310ad4ee`; artifact SHA `ecfa2cd0…`.
 **Verdict per frozen logic: `HELIUM-CONFIRMED`** (F-He-A ∧ B ∧ C ∧ D all PASS, including
@@ -17,7 +16,7 @@ FTD-0270 (the helium challenge that this finally answers, at its honest ceiling)
 The helium challenge — "FTD cannot compute helium" — produced FTD-0270's verdict that
 atomic dynamics is ~0% substrate-derived. That unconditional verdict **stands**. What
 this run establishes is the conditional answer: **GIVEN three motivated imports** —
-(I1) the rest-mass clock, (I2) the scalar-potential coupling, and (I3, new) the
+(I1) the rest-mass clock, (I2) the scalar-potential coupling, and (I3) the
 **mode-occupancy import** — **the engine's exact lattice machinery produces a mean-field
 helium atom with the correct screening and ionization physics**, where the nuclear
 attraction AND the electron–electron repulsion are both supplied by the engine's own
@@ -66,7 +65,7 @@ screening physics), I_He/I_He⁺ → **0.4519**.
 | e–e Hartree repulsion −q·(φ_G ⊛ ρ) | **`[THEOREM]`** machinery (the same Green's function, FFT-convolved against the engine symbol) |
 | Clock scalar ω₀ | `[IMPOSED]` (I1, FTD-0271) |
 | Scalar-potential coupling | `[IMPOSED — motivated]` (I2, FTD-0278) |
-| **Mode-occupancy (two electrons)** | **`[IMPOSED — motivated]` (I3, NEW)** — the minimal second-quantization slice; declared, not derived |
+| **Mode-occupancy (two electrons)** | **`[IMPOSED — motivated]` (I3)** — the minimal second-quantization slice; declared, not derived |
 | Screening σ, ionization structure, mean-field E_He | **derived given the register** (this run) |
 
 ## 3 · Methodology findings (load-bearing for future spectroscopy)
@@ -97,7 +96,7 @@ queued as a possible follow-up, not attempted.
 
 **Nothing is promoted.** FTD-0270's unconditional boundary stands; FC-1 stands (and is
 *illustrated* by §4); FTD-0013 `[SMC]`, MC-T4.3 unchanged; FTD-0278's register and
-honesty rails carry over with I3 added. The conditional atomic sector now contains:
+honesty rails carry over with I3 included. The conditional atomic sector contains:
 hydrogen (the **1s ground state** — `HYDROGEN-1s-CONFIRMED`; the n≥2 ladder / O_h multiplets were **retracted** as torus-momentum artifacts, FTD-0278 correction) and mean-field helium (screening
 + ionization structure, this row) — each priced against its explicit import register.
 Next free LEDGER id: **FTD-0280**.

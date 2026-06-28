@@ -1,9 +1,7 @@
 # Force Emergence from the Lattice Action Principle
 
-**Version:** 1.0
-**Date:** February 19, 2026
 **Status:** [THEOREM] + [SELECTION]
-**Epistemic Tag:** Force functional forms (Coulomb, Yukawa, Lorentz) derived from the lattice Green's function of the FTD wave equation. Previously [IMPOSED] in forces.py, now [DERIVED].
+**Epistemic Tag:** Force functional forms (Coulomb, Yukawa, Lorentz) derived from the lattice Green's function of the FTD wave equation. [DERIVED] (the functional forms in forces.py are recovered, not [IMPOSED]).
 
 > The four forces of nature are not four separate postulates. They are four regimes of a single Green's function acting on a single flux field, distinguished only by source type, coupling strength, and exchange mass.
 

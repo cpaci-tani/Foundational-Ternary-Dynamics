@@ -1,6 +1,6 @@
 # ANALYSIS — Hydrogen-like spectrum on the FTD lattice: HYDROGEN-CONFIRMED (FTD-0278 Leg 1)
 
-> **CORRECTED 2026-06-12 — see [`CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md).**
+> **CORRECTED — see [`CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md).**
 > A 4-lens adversarial audit (independently re-verified) found that the **"n=2 multiplet /
 > O_h T1u triple / Rydberg ladder"** claims below are **OVERCLAIMED**: in most record cells
 > only the 1s is bound (n_bound=1 at a₀=4), and the "exactly degenerate T1u triple" is
@@ -14,7 +14,6 @@
 
 
 **Status:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` (pre-registered run of record).
-**Date:** 2026-06-12.
 **Pre-registration:** [`PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md`](../../10_eft_program/preregistrations/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md),
 tag `preregister-hydrogen-lattice-spectrum-v1`, lock commit `6be49fe9`; artifact SHA
 `8e953fac…`. **Verdict per frozen logic: `HYDROGEN-CONFIRMED`** (G-1 ∧ F-A ∧ F-B ∧ F-C ∧ F-E all PASS).

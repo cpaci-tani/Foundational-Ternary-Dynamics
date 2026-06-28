@@ -1,7 +1,6 @@
 # SPEC — The FTD-0110 nonlinear-bridge boundary (canonical status map)
 
 **Tag:** `[SYNTHESIS / BOUNDARY HARDENED]` — consolidation of established results; introduces NO new claim and promotes nothing.
-**Date:** 2026-06-22
 **Scope:** the single canonical statement of where the FTD-0110 cluster-mass bridge stands. It re-states FTD-0269/0276/0307/0309 at their existing tags; if any prose elsewhere disagrees, **LEDGER > this doc > other prose**.
 **Read-with:** `SPEC_OPEN_MATH_BY_SECTOR.md` §9 (engine–algebra bridge), `TRACKER_OPEN_ITEMS.md` (FTD-0110 entries), and the three run-of-record analyses cited below.
 

@@ -1,8 +1,7 @@
 # Analysis — Does spatial information do "creative work" in FTD genesis? (FTD-0317)
 
 **Tag:** `[MEASURED / EMERGENT]` — a narrow, operational substrate measurement. **NOT** a derivation, **NOT** a claim that "information is a fundamental creative agent."
-**Date:** 2026-06-23
-**Lock (in-source):** the test + its decisive permutation control + the two parity gates are defined in `engine/tests/campaign_genesis_amplitude_ceiling.cpp` (`--info` mode, "Test 3") and the analyzer `scripts/exploration/analyze_info_creation.py`. Golden-neutral (read-only `--info` campaign; golden certified green this session). Run of record produced on the RTX 5090 (`engine/results/info_full/`, L=32, settle=150, 6 seeds).
+**Lock (in-source):** the test + its decisive permutation control + the two parity gates are defined in `engine/tests/campaign_genesis_amplitude_ceiling.cpp` (`--info` mode, "Test 3") and the analyzer `scripts/exploration/analyze_info_creation.py`. Golden-neutral (read-only `--info` campaign; golden certified green). Run of record produced on the RTX 5090 (`engine/results/info_full/`, L=32, settle=150, 6 seeds).
 **Precedence:** LEDGER > this doc.
 
 ---
