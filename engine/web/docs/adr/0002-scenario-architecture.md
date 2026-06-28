@@ -1,9 +1,8 @@
 # ADR 0002 — Scale 0 scenario definition: guard four layers, or unify to one
 
 **Status:** Proposed (STUB — awaiting a direction decision; do not treat as Accepted)
-**Date:** 2026-06-05
 **Decider:** _unassigned_
-**Context:** Scale-0 scenario subsystem audit + modularization plan (2026-06-05)
+**Context:** Scale-0 scenario subsystem audit + modularization plan
 
 ## Context
 
@@ -13,7 +12,7 @@ C++ seed impl (`engine/src/scenarios/*.cpp`), and the metadata (`config/scenario
 toggle profile (`config/toggles.js`). Full treatment in
 [`../SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](../SPEC_SCALE0_SCENARIO_ARCHITECTURE.md).
 
-The 2026-06-05 audit ([`../audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](../audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md))
+The audit ([`../audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](../audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md))
 found JSC++ parity healthy (guarded, green) but the *other* edges unguarded and drifting: a stale
 overlay round-trip mirror (`B1`), two parallel toggle mechanisms one of which leaks (`B2`/`B3`),
 an orphaned scenario id referenced in three places but implemented in none (`B4`), and partial

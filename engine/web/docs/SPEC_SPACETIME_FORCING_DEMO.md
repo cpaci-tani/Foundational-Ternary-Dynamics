@@ -1,7 +1,6 @@
 # SPEC - FTD-0253 Spacetime-Forcing Demo
 
 **Status:** `[DEMO]` + `[BOUNDARY]`
-**Date:** 2026-06-10
 **Theory source:** `docs/theory/02_foundations/FOUND_SPACETIME_FORCING_BOUNDARY.md`
 **Regression source:** `engine/tests/test_spacetime_forcing_demo.cpp`
 

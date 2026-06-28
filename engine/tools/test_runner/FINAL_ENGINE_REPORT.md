@@ -3,9 +3,9 @@
 > **Superseded for current state** by [`TEST_AUDIT_2026_04_14.md`](TEST_AUDIT_2026_04_14.md).
 > Retained as the historical snapshot of the post-WIP-merge ctest baseline (94/175).
 
-Closing report for the "finish strong with the engine" session. Covers the
-state of `main` after the FTD Test Bench merge, the full-engine build +
-test results, known failure categories, and what's ready to hand off.
+Closing report covering the state of `main` after the FTD Test Bench merge, the
+full-engine build + test results, known failure categories, and what's ready to
+hand off.
 
 ## Tree of commits since the merge base
 
@@ -211,8 +211,7 @@ on the suite.
 The pre-existing failure cluster (EM/latency sign bug) was NOT fixed
 by the user's WIP commits. Those need deeper engine work targeting
 `render_bridge.cpp`'s `solve_latency_poisson()` and the `phi_latency`
-sign handling — which appears to be what the user is actively
-developing and is intentionally out of this session's scope.
+sign handling — out of scope for the test-bench work.
 
 ## Known pre-existing failures — categorized by physics sector
 
@@ -327,7 +326,6 @@ engine/build_strong/tools/test_runner/Release/ftd_test_runner.exe --build-dir en
    test the full live 3D lattice viz / streaming charts experience.
 
 3. **Phase 8b — more Python PyTorch conversions** (122 scripts remaining).
-   A parallel subagent is running during this session.
 
 4. **Pre-existing engine failures** (~40 tests) — out of scope for the
    test bench work, but now visible via the runner.

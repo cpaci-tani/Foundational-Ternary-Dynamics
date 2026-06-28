@@ -3,7 +3,7 @@
 **Ticket:** W3-1 · **Scope:** the browser dashboard (`engine/web/`) toggle surface only.
 **Companion test:** [`engine/web/tests/toggle-coverage.spec.js`](../tests/toggle-coverage.spec.js) (W3-2) — proves every user-facing toggle is wired (clicking it changes state) against a live Chromium.
 
-> **Why this doc exists.** The 2026-05-27 web audit flagged a long list of Scale-0 field toggles as "orphans / dead code." That audit grepped `index.html` for `id="toggle-..."` literals and found **zero** — so it concluded the buttons did not exist. They *do* exist; they are **dynamically rendered at runtime** (see [Source 3](#source-3--dom-template-dynamically-rendered)), not authored into static HTML. This registry is the verify-don't-assume answer: it maps every toggle to its real source-of-truth, and the companion spec proves wiring with a live click test rather than a grep. **Result: 0 orphans, 0 broken toggles — every Scale-0 field toggle is wired (see [Findings](#findings)).**
+> **Why this doc exists.** A web audit flagged a long list of Scale-0 field toggles as "orphans / dead code." That audit grepped `index.html` for `id="toggle-..."` literals and found **zero** — so it concluded the buttons did not exist. They *do* exist; they are **dynamically rendered at runtime** (see [Source 3](#source-3--dom-template-dynamically-rendered)), not authored into static HTML. This registry is the verify-don't-assume answer: it maps every toggle to its real source-of-truth, and the companion spec proves wiring with a live click test rather than a grep. **Result: 0 orphans, 0 broken toggles — every Scale-0 field toggle is wired (see [Findings](#findings)).**
 
 ---
 
@@ -154,6 +154,6 @@ Sim-side toggles for the atom engine (`AtomToggles`), dispatched via the Scale-2
 
 ## Findings
 
-1. **The 2026-05-27 audit over-counted Scale-0 field toggles as orphans.** Root cause: the buttons are dynamically rendered by `overlays/template.js` at boot, not authored in `index.html`; a literal grep of `index.html` returns zero matches. They are real, rendered, and wired.
+1. **An earlier audit over-counted Scale-0 field toggles as orphans.** Root cause: the buttons are dynamically rendered by `overlays/template.js` at boot, not authored in `index.html`; a literal grep of `index.html` returns zero matches. They are real, rendered, and wired.
 2. **All 32 Scale-0 field/overlay toggles are wired.** `FIELD_TOGGLE_KEYS` (store, 32) and `FIELD_TOGGLE_BINDINGS` (dom, 32) are in exact 1:1 lockstep — no orphan button, no buttonless key, no duplicate id. The companion [`toggle-coverage.spec.js`](../tests/toggle-coverage.spec.js) proves each one flips its `fieldFlags` key on click and flips back on second click, with zero real console errors across the full sweep.
 3. **Three scattered sources** (physics-term whitelist in `config/toggles.js`; field-flag store in `state/store.js`; button HTML in `ui/overlays/template.js` + idkey map in `ui/dom.js` + click wiring in `ui/bindings.js`). The field-toggle idkey map is already lockstep-verified; the residual fragmentation is the per-family three-file spread, for which a future single-source-render consolidation is recommended (not implemented here).

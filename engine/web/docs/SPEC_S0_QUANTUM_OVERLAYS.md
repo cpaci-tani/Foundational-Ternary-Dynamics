@@ -1,14 +1,14 @@
 # Scale 0 Quantum & Physics Overlay Spec
 
-Status: `[SELECTION]` design + implementation spec for new Scale 0 viewport overlays
-Version: 1.0 (2026-04-16)
+Status: `[SELECTION]` design + implementation spec for Scale 0 viewport overlays
+Version: 1.0
 Scope: `engine/web/js/scales/scale0/**`, `engine/web/css/ui/**`
 
 ---
 
 ## 1. Motivation
 
-The current Scale 0 overlay has 18 toggles covering flux volume, fields (E/B/Poynting/Light), forces (EM/Gravity/Strong/Weak), and phenomena (Dual J / Chirality / DM Halo / Genesis / Damping / Confinement). The audit in the Gemini conversation flagged **17 quantum & physics quantities** that the FTD lattice exposes but that the UI doesn't yet surface.
+The Scale 0 overlay has 18 toggles covering flux volume, fields (E/B/Poynting/Light), forces (EM/Gravity/Strong/Weak), and phenomena (Dual J / Chirality / DM Halo / Genesis / Damping / Confinement). An audit flagged **17 quantum & physics quantities** that the FTD lattice exposes but that the UI does not surface.
 
 This spec:
 
@@ -329,11 +329,3 @@ When `_showPsi2` is true and flux-volume is rendered, the point-cloud shader sub
 - [ ] Theme-switch preserves swatch visibility on all 5 themes (swatches are data colors — do not theme)
 - [ ] Contrast probe (§7 of [SPEC_THEME_DESIGN.md](./SPEC_THEME_DESIGN.md)) still passes
 - [ ] SPEC_S0_OVERLAYS tier-2/3 tickets filed with links back to this spec
-
----
-
-## 9. Revision log
-
-| Version | Date | Change |
-|---|---|---|
-| 1.0 | 2026-04-16 | Initial 17-item catalog; Tier 1 implementation started |
