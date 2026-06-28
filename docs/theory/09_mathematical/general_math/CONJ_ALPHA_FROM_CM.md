@@ -1,7 +1,6 @@
 # Conjecture: The Fine Structure Constant from CM Arithmetic
 
 **Status:** [CONJECTURE]
-**Version:** 1.0 (2026-03-30)
 **Depends on:** Watson integral identity, CM theory of E: y² = x³ − x, Fermat two-square theorem
 
 ---

@@ -1,7 +1,6 @@
 # DERIV — Jones Index and Manifestation Threshold Ratio
 
 **Status:** [CONJECTURE — structural subfactor correspondence]
-**Date:** 2026-05-27
 **Campaign ID:** FTD-0214
 **Gaps Addressed:** **GAP-P3 (Jones index and K_B/K_C = 4sqrt(2) ratio)**
 **Cross-References:** `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md`, `docs/theory/09_mathematical/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`

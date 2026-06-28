@@ -2,7 +2,6 @@
 
 ## Sum-of-Roots = 2⁹ · L(Sym² E, 1) for E: y² = x³ − x
 
-**Date:** 2026-04-17
 **Status:** [THEOREM] (sum-of-roots identification); [COROLLARY] (product-of-roots)
 **Verified:** PARI/GP, 100-digit precision, both identities
 **Dependencies:** [DERIV_LFUNCTION_GSTAR_CONNECTION.md](DERIV_LFUNCTION_GSTAR_CONNECTION.md), [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md), [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)
@@ -296,9 +295,3 @@ SP4 (physical identification $x_+ = 1/\alpha$) remains a selection principle and
 - Rubin, K. "The 'main conjectures' of Iwasawa theory for imaginary quadratic fields." *Invent. Math.* **103** (1991), 25–68.
 - Chowla, S. and Selberg, A. "On Epstein's zeta-function." *J. reine angew. Math.* **227** (1967), 86–110.
 - LMFDB entry 32.a3: https://www.lmfdb.org/EllipticCurve/Q/32/a/3
-
----
-
-## Document History
-
-- **2026-04-17:** Created. Separates the genuinely novel Sym² L-value identification from the elementary Sym¹ corollary per audit of π^(3/2) factor. Integer prefactors decomposed as $|\mathrm{Aut}(E)|^2 \cdot c_{\mathrm{Dam}}$. PARI verification at 100 digits. Physics identification (SP4) explicitly deferred.

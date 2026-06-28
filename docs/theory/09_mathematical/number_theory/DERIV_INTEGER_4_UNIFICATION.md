@@ -1,7 +1,6 @@
 # Integer-4 Unification: The Lemniscatic Catalogue and the |μ| = |disc| Coincidence
 
 **Status:** [THEOREM] for the classification + the |μ_K| = |disc(K)| uniqueness; the claim that the catalogue co-occurrences are "non-coincidental" is [DERIVED] (an explicit functorial-origin chain, not an independent theorem).
-**Date:** 2026-05-19
 **Companion:** G* opus follow-up Phase 1, lemma L6, target T-A2. Spec at `docs/superpowers/specs/2026-05-19-gstar-followup-attacks-design.md`.
 **Verification:** `scripts/exploration/gstar_sym_k_eigenlines.py` (functions `unit_group_order_imag_quad`, `discriminant_imag_quad`, `classify_catalogue_4`) + `scripts/tests/test_gstar_sym_k_eigenlines.py` (4 tests: `test_mu_disc_coincidence_unique_to_Q_i` and 3 others). 39/39 tests pass.
 

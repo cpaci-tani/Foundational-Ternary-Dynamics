@@ -1,7 +1,5 @@
 # Deriving the Master Quadratic from the CM Period Algebra of $\mathbb{Q}(i)$
 
-**Version:** 1.0  
-**Framework Version:** FTD v5.33  
 **Status:** [THEOREM] — Formal derivation of the master quadratic from motivic period invariants.  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
@@ -74,9 +72,3 @@ This derivation completely closes the **Self-Consistency Gap** of the master qua
 4. The 3D lattice plane automorphism order (fixing the prefactor to 16).
 
 This establishes the formal algebraic derivation of the master quadratic directly from the motivic periods of the CM curve.
-
----
-
-*Document created: May 27, 2026*  
-*Topic: Derivation of the Master Quadratic from the CM Period Algebra.*  
-*Framework: Foundational Ternary Dynamics v5.33*  

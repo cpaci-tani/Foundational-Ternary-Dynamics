@@ -1,7 +1,6 @@
 # FOUND — The AGM place-bridge: why the substrate's √-machinery lands on G\*, never on δ (three faces of one fact)
 
 **Tag:** `[SYNTHESIS]` — assembles existing canonical results (FTD-0326, the prime-duality §5.1, FTD-0325, Theorem 9, the AGM identities) under one reading. **Introduces no theorem, derives nothing, promotes no tag.**
-**Date:** 2026-06-25
 **LEDGER id:** FTD-0327
 **Reuse (not re-derived):** FTD-0326 (`FOUND_MCT43_NATIVE_Z2_PERMANENCE.md`); `EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md` §5.1 (`[SYNTHESIS]`/`[STRONGLY MOTIVATED]`); FTD-0325 (`FOUND_SM_ACT_COUNT.md`); Theorem 9 (`SPEC_ALGEBRAIC_SPINE.md` §9, FTD-0112); the AGM identities (`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`; `PAPER_GSTAR_INTRODUCTION.tex`, Gauss 1799).
 
