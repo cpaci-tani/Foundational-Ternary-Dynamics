@@ -1,7 +1,5 @@
 # The Boundary Partition Commutator Theorem: Emergent Non-Commutativity in FTD
 
-**Version:** 1.0  
-**Framework Version:** FTD v5.33  
 **Status:** [THEOREM] — Formal resolution of Non-Commutative Algebra Emergence (GAP-S2).  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
@@ -75,6 +73,4 @@ This mathematically demonstrates that quantum non-commutativity is the natural, 
 
 ---
 
-*Document created: May 27, 2026*  
 *Topic: Resolution of GAP-S2 (Non-Commutative Algebra Emergence).*  
-*Framework: Foundational Ternary Dynamics v5.33*  

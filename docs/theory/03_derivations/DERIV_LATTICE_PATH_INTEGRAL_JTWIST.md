@@ -1,7 +1,6 @@
 # DERIV - Lattice Path Integral and J-Twisted Screening Self-Energy
 
 **Tag:** [DERIVATION] / [OPEN]
-**Date:** 2026-05-30
 **LEDGER:** FTD-0245 [Mechanism B: Lattice-to-Continuum Matching]
 
 ## 1. The Physics Objective

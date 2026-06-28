@@ -1,7 +1,5 @@
 # The Path-Integral Born Proportionality Theorem: Deriving Born Scaling in FTD
 
-**Version:** 1.0  
-**Framework Version:** FTD v5.33  
 **Status:** [THEOREM] — Formal resolution of the Born Rule Proportionality gap (FTD-0187).  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
@@ -79,6 +77,4 @@ This establishes the formal, mathematically complete bridge between the FTD acti
 
 ---
 
-*Document created: May 27, 2026*  
 *Topic: Resolution of FTD-0187 (Born Proportionality).*  
-*Framework: Foundational Ternary Dynamics v5.33*  

@@ -1,8 +1,6 @@
 # DERIV — Substrate-Level Derivation of the Yukawa Vertex Amplitude
 
 **Document Classification:** Theoretical Derivation
-**Version:** 1.0
-**Date:** 2026-05-31
 **Status:** [DERIVED]
 **Depends on:**
 - DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md (the structural factorization)

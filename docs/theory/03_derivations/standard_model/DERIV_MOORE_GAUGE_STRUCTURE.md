@@ -1,6 +1,5 @@
 # Gauge Group Structure from Moore Neighborhood and J² Orthogonality
 
-**Status:** v1.0 — March 2026
 **Depends on:** SPEC_FTD.md, DERIV_MASTER_QUADRATIC_FROM_Z.md, DERIV_THREE_GENERATIONS.md, DERIV_CONFINEMENT_FROM_GAP_EQUATION.md
 **Proof script:** `scripts/proofs/proof_moore_gauge_structure.py` (32 tests, all pass)
 

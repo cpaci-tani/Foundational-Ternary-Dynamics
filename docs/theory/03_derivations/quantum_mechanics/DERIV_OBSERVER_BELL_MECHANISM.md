@@ -2,10 +2,7 @@
 
 ## How a Local Substrate Produces S = 2sqrt(2) Through Aggregate Emergence
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
 **Status:** [SELECTION] -- Mechanism identified and numerically verified (4/4 Monte Carlo checks). Argued from consistency, not uniquely proven.
-**Authors:** cpaci & Claude (Opus 4.6)
 
 **Depends on:**
 
@@ -442,7 +439,7 @@ The checks do NOT demonstrate:
 
 11. **Reference frame context connection.** The identification of the complex-root regime (k = 1/2, Delta < 0) with observer experience, and the claim that the Bell mechanism is a specific instance of the reference frame context-to-physics projection, is speculative.
 
-### 9.4 What Is [CLOSED DECLINED] — Updated June 10, 2026
+### 9.4 What Is [CLOSED DECLINED]
 
 Under **Framework Commitment 1 (FC-1)**, the FTD program formally declines the requirement to recover a continuous, infinite-dimensional multi-particle Hilbert space, continuous singlet mappings, or multi-particle tensor products as fundamental targets. The local, discrete lattice is complete and self-contained; continuous Bell violations are a property of the coarse-grained, emergent statistical description (QM) which is an epistemic tool of observer ignorance, not a fundamental physical property of the substrate.
 
@@ -463,7 +460,7 @@ The observer Bell mechanism resolves the apparent tension between FTD's local su
 
 3. **Observer (sLoop coupling):** Shared substrate origin creates non-factorizable joint probability. Combined with cosine correlations, this produces S = 2sqrt(2).
 
-The mechanism is classified [SELECTION] -- it is structurally motivated, numerically verified (4/4 Monte Carlo checks), and physically interpretable. As of April 11, 2026, the Bell violation is understood as EMERGENT: S = 2 sqrt(2) follows from the emergent quantum mechanics (Tsirelson's bound) rather than requiring a separate lattice derivation. The remaining target is the singlet-state lemma: proving that void events produce maximally entangled states in the emergent Hilbert space.
+The mechanism is classified [SELECTION] -- it is structurally motivated, numerically verified (4/4 Monte Carlo checks), and physically interpretable. The Bell violation is understood as EMERGENT: S = 2 sqrt(2) follows from the emergent quantum mechanics (Tsirelson's bound) rather than requiring a separate lattice derivation. The remaining target is the singlet-state lemma: proving that void events produce maximally entangled states in the emergent Hilbert space.
 
 ---
 
@@ -492,6 +489,5 @@ The mechanism is classified [SELECTION] -- it is structurally motivated, numeric
 
 ---
 
-*Document Version 1.0 -- March 17, 2026*
 *Three-level hierarchy: substrate (S=2) -> aggregate (complexification) -> observer (S=2sqrt(2))*
 *Epistemic status: [SELECTION] -- argued from consistency, numerically verified, not uniquely proven*

@@ -1,7 +1,6 @@
 # DERIV — The electron Yukawa prefactor `16√2/3` from O_h character theory + Z[i]-norm structure
 
 **Tag:** [STRUCTURALLY MOTIVATED PARAMETRIC] — each factor in the decomposition is independently [THEOREM]; the *combination as the Yukawa coupling* is [SELECTION] justified by 0.14% empirical match. Honest upgrade from FTD-0133's [SELECTION].
-**Date:** 2026-05-04 (early morning, autonomous-mode P1 attack on prefactor question).
 **LEDGER:** FTD-0134 (partial closure of FTD-0133's open question).
 **Verification script:** `scripts/proofs/proof_yukawa_from_27block_character.py` (ALL STEPS PASS, 0.14% precision).
 **Depends on:**
@@ -108,7 +107,7 @@ This is the SAME 16 as `|Aut(E)|²` for the lemniscatic CM curve `y² = x³ − 
 
 The multiplicity of the vector irrep in the 27-block. Numerically `3 = N_c = D`. The structural identification ties the "color count" / "spatial dimension count" to the *number of independent vector-like polarizations* available on the Moore block.
 
-This is one structural reading of the "3 in the denominator" that has been ambiguous between Reading A (D = 3 spatial dimensions) and Reading B (N_c = 3 color charges) in prior FTD docs (per agent A's audit). The character-theoretic reading `mult(T_{1u})` is the cleanest of the three because it depends only on the O_h action on the 27-block — not on a separate physics-interpretation choice.
+This is one structural reading of the "3 in the denominator," which is otherwise ambiguous between Reading A (D = 3 spatial dimensions) and Reading B (N_c = 3 color charges) across FTD docs. The character-theoretic reading `mult(T_{1u})` is the cleanest of the three because it depends only on the O_h action on the 27-block — not on a separate physics-interpretation choice.
 
 **Factor 3: √2 = `|1+i|`**
 
@@ -205,6 +204,6 @@ This is the natural P1 follow-up: take the structural decomposition filed here a
 
 ## 7 · Provenance
 
-Identified during the 2026-05-04 early-morning session, autonomous-mode P1 attack on the FTD-0015 prefactor question per the project gameplan (P1 = "Close FTD-0015 prefactor"). The decomposition draws on agent A's earlier reformulation surfacing `m_e/v = (16/3)·α³` (Route E in agent A's analysis). Agent A's tentative suggestion to look at "O_h character theory analogous to FTD-0110" was the seed; this work executed the analysis and verified `mult(T_{1u}) = 3` independently from the standard character table. Each structural identification is honest at the per-factor level; the [SMP] tag for the combination is the calibrated honest position per CLAUDE.md F1/F9 discipline.
+This work addresses the FTD-0015 prefactor question (P1 = "Close FTD-0015 prefactor"). The decomposition draws on the reformulation `m_e/v = (16/3)·α³` (Route E), following the seed observation that the prefactor admits an O_h character-theory treatment analogous to FTD-0110; the analysis verifies `mult(T_{1u}) = 3` independently from the standard character table. Each structural identification is honest at the per-factor level; the [SMP] tag for the combination is the calibrated honest position per CLAUDE.md F1/F9 discipline.
 
-The [SMP] tag rather than [DERIVED] reflects that this is a **structural sharpening**, not a derivation. A draft response considered tagging this [DERIVED at SELECTION level for combination] but was course-corrected to the cleaner [STRUCTURALLY MOTIVATED PARAMETRIC] tag, which more honestly reflects the epistemic status: the factors are theorems, the combination is a structurally-evidenced selection.
+The [SMP] tag rather than [DERIVED] reflects that this is a **structural sharpening**, not a derivation. The cleaner [STRUCTURALLY MOTIVATED PARAMETRIC] tag (over [DERIVED at SELECTION level for combination]) honestly reflects the epistemic status: the factors are theorems, the combination is a structurally-evidenced selection.
