@@ -1,8 +1,6 @@
 # Foundational Ternary Dynamics (FTD) - Complete Reference
 
-**Version:** 5.29 (Complete Particle Physics + One-Loop Alpha)
 **Status:** Framework achieving 100% PDG format coverage; awaiting experimental validation
-**Last Updated:** April 2026
 
 ---
 
@@ -216,7 +214,7 @@ Tau (L12 Boundary + L3 Phase-Lock Cross): 3458 + 19 = 3477 ✓
 
 Quark masses are scale- and scheme-dependent (e.g. MS-bar at $\mu = 2\text{ GeV}$). 
 
-> ** RETRACTED 2026-05-27:** All previous quark mass ratio conjectures (Up, Down, Strange, Charm, Bottom, Top) are officially **retracted** per strict epistemic discipline (FTD-0221). They are recognized as post-hoc continuous-integer matches with no ab-initio C++ engine dynamical basis.
+> **RETRACTED:** All quark mass ratio conjectures (Up, Down, Strange, Charm, Bottom, Top) are officially **retracted** per strict epistemic discipline (FTD-0221). They are recognized as post-hoc continuous-integer matches with no ab-initio C++ engine dynamical basis.
 > 
 > For the new, rigorous discrete-native mass paradigm (mass as voxel cardinality $N \in \mathbb{N}$), see the foundational spec:
 > *   [`FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`](../05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md)
@@ -244,7 +242,7 @@ Proton mass ratio [STRONGLY MOTIVATED CONJECTURE, 173 ppm]:
   T(10) = 10 × 11 / 2 = 55  (triangular number)
   n_eff/α = 13 / 0.007297 = 1781.47
   m_p/m_e = n_eff/α + T(10) = 1781.47 + 55 = 1836.47 ✓
-  (CORRECTION 2026-06-19: the "L_9 Phase Space (1938) - SU(3) knot (102) = 1836"
+  (CORRECTION: the "L_9 Phase Space (1938) - SU(3) knot (102) = 1836"
    knot re-spelling of fdc483d0 is RETRACTED — substitution identity, [PARAMETRIC];
    prefer this prior formula.)
 
@@ -270,7 +268,7 @@ Neutron-proton difference:
 
 #### Absolute Neutrino Mass Scale [RETRACTED]
 
-> ** RETRACTED 2026-05-27:** The absolute neutrino mass scale seesaw parameterization ($m_D = v\alpha$, $M_R = (3/4)v/\alpha^4$) is officially **retracted** per strict epistemic discipline (FTD-0221). It is recognized as a post-hoc continuous-QFT fit that is not native to the discrete lattice.
+> **RETRACTED:** The absolute neutrino mass scale seesaw parameterization ($m_D = v\alpha$, $M_R = (3/4)v/\alpha^4$) is officially **retracted** per strict epistemic discipline (FTD-0221). It is recognized as a post-hoc continuous-QFT fit that is not native to the discrete lattice.
 > 
 > The discrete-native program will measure cluster persistence (Class B) and interactions (Class C) in C++ to determine physical lifetimes and couplings directly from relational grid coordinates.
 
@@ -496,7 +494,7 @@ m_τ/m_e = (n_eff+N_base)×207 - 2×N_c×b_3 = 3477
 ```
 m_p/m_e = n_eff/α + N_base·n_eff + N_c = 1836.47
 ```
-(CORRECTION 2026-06-19: the `L_9 Phase Space − 6×SU(3) Edges = 1836` knot form of
+(CORRECTION: the `L_9 Phase Space − 6×SU(3) Edges = 1836` knot form of
 fdc483d0 is RETRACTED — substitution identity [PARAMETRIC]; prefer this prior formula.)
 
 **CP Phase:**
@@ -541,7 +539,7 @@ fdc483d0 is RETRACTED — substitution identity [PARAMETRIC]; prefer this prior 
 
 ---
 
-## 17. Experimental Status (January 2026)
+## 17. Experimental Status
 
 | Experiment | FTD Prediction | Result | Status |
 |------------|----------------|--------|--------|
@@ -622,7 +620,7 @@ PREDICTIONS:   No SUSY, no WIMPs, no extra dimensions
 
 **Achievement:** Framework with ~35 genuine derivations (α, mass ratios, mixing angles, neutrino masses) plus ~100 parametric insertions using standard physics formulas.
 
-**Status:** Mathematically interesting. Key gaps remain (hidden selections; Bell mechanism now [SELECTION] resolved as emergent). Foundations involve selection principles, not pure derivation. Awaiting independent experimental validation.
+**Status:** Mathematically interesting. Key gaps remain (hidden selections; Bell mechanism [SELECTION] resolved as emergent). Foundations involve selection principles, not pure derivation. Awaiting independent experimental validation.
 
 **Probability assessment:** The ~35 genuine derivations at sub-percent accuracy are remarkable. However, "~10⁻⁴⁰" probability estimates assume independence—predictions from the same 4 integers are correlated, making naive statistics misleading.
 
@@ -843,9 +841,9 @@ The j-invariant of the lemniscatic curve:
 j = 1728 = (N_base × N_c)³ = (4 × 3)³ = 12³
 ```
 
-Previously [SELECTION], now [THEOREM].
+[THEOREM].
 
-### k = 16 is DERIVED (v5.1)
+### k = 16 is DERIVED
 
 The lattice DOF:
 ```
@@ -857,7 +855,7 @@ from complementation principle:
   k = 2^(D+1) = 16
 ```
 
-Previously [IMPOSED], now [DERIVED].
+[DERIVED].
 
 ### Fibonacci-Tribonacci Crossover
 
@@ -901,13 +899,9 @@ Appearances:
 *Reference document for AI systems and researchers*
 *All formulas mathematically verified - January 10, 2026*
 *Independent mathematical verification completed - January 18, 2026*
-*v5.1-v5.8 Foundations derived - January 22, 2026*
-*v5.17 Complete Particle Physics - February 1, 2026*
-*v5.29 One-Loop Alpha + Blind Derivation Chain - April 2026*
-
 ---
 
-## 26. Independent Verification Report (January 18, 2026)
+## 26. Independent Verification Report
 
 All core mathematical claims have been independently verified using Python/SciPy.
 
@@ -1083,7 +1077,7 @@ FREE PARAMETERS: Multiple (M_P, G_F, Λ_QCD used as inputs)
 
 ---
 
-## 29. April 2026 Results (v5.29)
+## 29. Phi-Cubed EFT, One-Loop Alpha, and the Blind Derivation Chain
 
 ### 29.1 Phi-cubed Exact EFT
 
@@ -1108,7 +1102,7 @@ Error:         9.6 ppb (99.2% gap closure from tree-level)
 
 This closes 99.2% of the gap between the tree-level G* quadratic and the experimental value inside the Structure-1 SC scalar-EFT scheme.
 
-**Audit update 2026-04-22:** This is not currently a scheme-independent physical prediction. The BCC tadpole and continuum scans show regulator dependence, and the Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure. See `docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md` and ledger row FTD-0058.
+**Audit note:** This is not a scheme-independent physical prediction. The BCC tadpole and continuum scans show regulator dependence, and the Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure. See `docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md` and ledger row FTD-0058.
 
 ### 29.3 The 13-Step Blind Derivation Chain (i to alpha)
 
@@ -1138,7 +1132,5 @@ D = 3 is the unique solution, eliminating the dimensionality axiom.
 
 ---
 
-*FTD Framework v5.29 - Complete Particle Physics Coverage*
 *~35 genuine derivations + ~100 parametric/external results*
-*Epistemic revision: February 2, 2026*
-*Structural corrections (v5.28): February 2026 — Uniqueness Theorem → [CONJECTURE], C1/C2 → [SELECTION], precision formula flagged*
+*Structural corrections: Uniqueness Theorem → [CONJECTURE], C1/C2 → [SELECTION], precision formula flagged*
