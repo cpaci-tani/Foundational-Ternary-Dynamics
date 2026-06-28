@@ -1,7 +1,6 @@
 # SPEC — α is dynamical, not structural (the MC-T4.3 boundary, canonical verdict)
 
 **Tag:** `[SYNTHESIS / FOUNDATIONAL OBSTRUCTION — ACCEPTED BOUNDARY]` — consolidation of established results; introduces NO new claim and promotes nothing.
-**Date:** 2026-06-22
 **Scope:** the single canonical statement of the α-derivation question. The α-readout program is large (20+ docs under `10_eft_program/` + `07_assessment/audits/`); this is the one-page final verdict + the map over it. Precedence: **LEDGER > this doc > other prose.**
 
 ---
@@ -30,7 +29,7 @@ This is a **Number-One-Goal boundary result** (clause 2): a rigorously-mapped li
 
 ## 2 · The closed-negative route ledger
 
-All of the following are `[CLOSED NEGATIVE]` (preserved for provenance to prevent zombie re-attempts): R1/R2/R3/R4, Z-factor (FTD-0116), RG-running, algebraic combinations, 1/√d, Langevin-equipartition, **ARC-A** boundary readout (FTD-0214), **ARC-B1** observable-selection (FTD-0205), **ARC-B2/C1** BCC-bridge/quantization (FTD-0224, FOUND→UNDERDETERMINED corrected), **K-BIND** (FTD-0244), **ARC-D1** engine-native fission-rate (FTD-0224), the deterministic oscillatory-cloud Floquet readout (2026-06-15). FTD-0050 (master quadratic as RG-step characteristic polynomial) closed-negative (engine stencil is (SC+FCC)/2, BCC-orthogonal).
+All of the following are `[CLOSED NEGATIVE]` (preserved for provenance to prevent zombie re-attempts): R1/R2/R3/R4, Z-factor (FTD-0116), RG-running, algebraic combinations, 1/√d, Langevin-equipartition, **ARC-A** boundary readout (FTD-0214), **ARC-B1** observable-selection (FTD-0205), **ARC-B2/C1** BCC-bridge/quantization (FTD-0224, FOUND→UNDERDETERMINED corrected), **K-BIND** (FTD-0244), **ARC-D1** engine-native fission-rate (FTD-0224), the deterministic oscillatory-cloud Floquet readout. FTD-0050 (master quadratic as RG-step characteristic polynomial) closed-negative (engine stencil is (SC+FCC)/2, BCC-orthogonal).
 
 ---
 
@@ -43,14 +42,14 @@ All of the following are `[CLOSED NEGATIVE]` (preserved for provenance to preven
 
 ### 3.1 · The BCC-stencil sub-route, closed (FTD-0313 — the geometric anatomy of the obstruction)
 
-A 2026-06-22 adversarial deep dive (4-agent workflow, all grounded claims survived refutation) sharpened *why* exit (1) is a selection, via the lattice **Green's function**:
+FTD-0313 sharpens *why* exit (1) is a selection, via the lattice **Green's function**:
 - **G\* IS a pure body-diagonal (BCC-corner) return value** `[THEOREM]`: `G* = √(2π·G_BCC(0))`, `G_BCC(0) = Γ(1/4)⁴/(4π³) = 1.3932` is G_BCC(0) — the BCC return Green's function at the origin for the triple-product operator `D = 1 − cx·cy·cz` (independently Richardson-extrapolated to 1.393204). (Note: this 1.3932 is NOT the standard SC Watson self-energy, which is a different number ≈0.5054.) The master quadratic is then **pure-BCC-sublattice algebra**: G\* (from the BCC return Green's function at the origin) + `16 = |ℤ[i]^×|²` (the BCC corners' Z₄ automorphism count).
 - **But EM does not propagate there.** The engine's dynamical wave operator is the **18-pt (SC+FCC) Laplacian**, **variationally derived** with the 8 BCC corners at weight **zero** (forced by leading-order isotropy; `DERIV_18PT_LAPLACIAN_VARIATIONAL.md`). Only the *pure* body-diagonal symbol yields a lemniscatic constant — SC+FCC and the full 26-Moore do not. So G\*'s sublattice is **orthogonal to the EM-propagation sublattice** (FTD-0050 RG-step road; FTD-0079 no exact (SC+FCC)/2↔BCC identity).
 - **Verdict `[SELECTION + THEOREM-NEGATIVE]`:** routing the physical EM kinetic operator onto the pure-BCC sublattice is a **6th-postulate-class selection, not forced** — three independent grounds: (i) the wave operator is already variationally fixed as SC+FCC; (ii) P1–P5 do not pick a sub-stencil; (iii) **even granting the BCC selection, the assembly is still unforced** — the roots require `√(G*(4G*−1))` with `4t²−t` squarefree, so the surd lies in a genuine **degree-2 extension of Q(G\*)** that no native operator supplies (FTD-0244 K-BIND; a symmetric-2×2 natural-element scan returned 0 hits — only the hand-built companion form realizes it). This is the **third road** (after FTD-0050's RG-step road) into the same W-CRIT-2 / branch-(B) boundary; it dies on the same algebraic wall, route-invariantly. No computation (including a σ_BCC spectrum measurement) can flip it — only the W-postulate of exit (1) can, and that is a new axiom, not a derivation.
 
 ### 3.2 · Exit (1) precisely pinned, then ADOPTED — the carrier-narrowing theorem (FTD-0314) + FC-W (FTD-0315)
 
-A 2026-06-23 pre-registered adversarial attack (7-agent workflow; `scripts/proofs/proof_w_carrier_narrowing.py` 11/11 PASS at dps=150) asked whether exit (1)'s W can be **earned** from native structure rather than postulated. Verdict: **W cannot be earned natively (~85% CLOSED)** — and the failure is a new `[THEOREM]` ([`AUDIT_W_CARRIER_NARROWING.md`](../07_assessment/audits/AUDIT_W_CARRIER_NARROWING.md)):
+A pre-registered adversarial attack (`scripts/proofs/proof_w_carrier_narrowing.py` 11/11 PASS at dps=150) asked whether exit (1)'s W can be **earned** from native structure rather than postulated. Verdict: **W cannot be earned natively (~85% CLOSED)** — and the failure is a new `[THEOREM]` ([`AUDIT_W_CARRIER_NARROWING.md`](../07_assessment/audits/AUDIT_W_CARRIER_NARROWING.md)):
 
 - **The narrowing theorem `[THEOREM]` (conditional on Chudnovsky):** the distinguishing surd `√(G*(4G*−1))` is **transcendental over ℚ** (G\* transcendental ⇒ `Q(G*)∩Q^ab=Q`; the surd is degree-2 over `Q(G*)`). So **every** carrier with algebraic invariants is excluded — chirality, the ±1 ternary sign, the binary-octahedral 2O double cover, permutation parity, and every native operator (Tr/Det ∈ `Q(G*)`, FTD-0244). This **extends K-BIND from operators to the whole finite-symmetry class** and explains it geometrically (the transcendence gap between `Q(G*)` and the surd's degree-2 extension). The only door: a forced ℤ/2 **twist on a G\*-bearing analytic carrier**.
 - **The three natural analytic carriers close `[THEOREM]`:** the BCC-Watson twist **degenerates** (`G_odd = G_even` exactly — odd-n angular integrals vanish); a second Watson integral is moot (`4G*−1 ∈ Q(G*)`, PSLQ `[1,−4,1]`); the CM period/L-value route stays inside `F = Q̄(π, Γ(1/4))` (the surd's square is degree-1 in π ⇒ outside F). One loophole — a *new* forward-derived transcendental period — survives `[OPEN]` but leans CLOSED (pressured by the surd's motivic **weight-inhomogeneity**) and cannot be opened without the banned W-CRIT-2 planting.

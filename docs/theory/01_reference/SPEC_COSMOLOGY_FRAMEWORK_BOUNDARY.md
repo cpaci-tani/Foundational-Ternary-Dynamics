@@ -1,7 +1,6 @@
 # SPEC — The cosmology-sector boundary (canonical verdict)
 
 **Tag:** `[SYNTHESIS / BOUNDARY]` — consolidation of established status; introduces NO new claim and promotes nothing.
-**Date:** 2026-06-22
 **Scope:** the single canonical statement of what FTD's cosmology sector (§8) is and is not. It consolidates the already-honest tags in `SPEC_OPEN_MATH_BY_SECTOR.md` §8 + `evaluation/AUDIT_WEAKNESSES_MASTER.md` (W-COSMO 1–7) into one citable boundary. Precedence: **LEDGER > this doc > other prose.**
 
 ---

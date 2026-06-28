@@ -1,7 +1,7 @@
-# SPEC — Forward Predictions on Behalf of the Framework (2026-06-11)
+# SPEC — Forward Predictions on Behalf of the Framework
 
 **Tag:** `[SYNTHESIS]` — a registry. **No row is promoted by inclusion here**; every claim carries its source tag, and the LEDGER wins on any disagreement.
-**Date:** 2026-06-11. **LEDGER:** FTD-0268 (the EP-1 blind measurement) + this registry row.
+**LEDGER:** FTD-0268 (the EP-1 blind measurement) + this registry row.
 **Companions:** [`SPEC_NOVEL_PREDICTIONS.md`](SPEC_NOVEL_PREDICTIONS.md) (value catalog, pre/post-diction flagged), [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) (FTD-0258, structural deviations PL-1..PL-6), [`SPEC_FTD_FRAMEWORK_V1.md`](SPEC_FTD_FRAMEWORK_V1.md) (constitution; FC kill conditions §6.2), [`SPEC_ENERGY_SCALES_AND_DETECTABILITY.md`](SPEC_ENERGY_SCALES_AND_DETECTABILITY.md) (energy-scale lens; FTD-0306).
 **Computed numbers:** every number below is computed by `scripts/exploration/forward_predictions_2026.py` (SHA256 `bb3b61d3ab98b78c4ca936625ec4e143a7868ecc19d836ff2c6c51d2e29ecd6d`, lock commit `ee8976b6`) — none is recalled or hand-copied from prose.
 
@@ -11,7 +11,7 @@
 
 This registry collects **genuinely forward-looking, falsifiable predictions** that follow from already-tagged claims. It adds no derivations and runs no searches. The FTD-0258 standard caveat applies to every row: engine results are substrate-level statements at the stated lattice size/stencil/protocol; physical readings are conditional on the calibration register (`a_phys ≡ ℓ_P`, `M_REST = m_e`, `t_phys = √3·ℓ_P/c`); dimensionless deviation structure is calibration-invariant, absolute scales are not. A tag is a label, not a resolution (F10).
 
-## §1 · Digest — the honest shape of the framework (as of 2026-06-11)
+## §1 · Digest — the honest shape of the framework
 
 - **Theorem-grade spine** (`SPEC_ALGEBRAIC_SPINE.md` §0): the G* identity, the master quadratic, CM uniqueness (h=1 scope), coefficient 16 = |Aut(E)|², the Watson identity, Phase-G geometric Coulomb, plus the honestly-tiered rows. This is mathematics and stands independent of physics.
 - **Central conjectures, unpromoted:** `x₊ = 1/α` is `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013); the cluster-mass identification is `[SMC]` with historical evidential basis (FTD-0110/0261/0262); MC-T4.3 remains a `[FOUNDATIONAL OBSTRUCTION]` — **FTD does not derive α**, and 11+ routes are closed negative.
@@ -53,11 +53,11 @@ The clean `[THEOREM]` nulls: **no magnetic monopole** is ever detected (∇·B =
 
 ## §3 · Engine-native blind predictions (EP rows — the lockable spine)
 
-### EP-1 — Blind L=257 extension of the FTD-0252 time-dilation residual law ⟶ **RUN THIS SESSION**
+### EP-1 — Blind L=257 extension of the FTD-0252 time-dilation residual law
 
 Pre-registered in [`PREREG_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/foundational_mechanics/PREREG_TIME_DILATION_L257_BLIND_v1.md) (lock commit `ee8976b6`, tag `preregister-time-dilation-L257-blind-v1`): per-group 95% prediction intervals for the nine ⟨100⟩/n⊥=3 residuals at the never-measured L=257, locked before the run. Registered observation: the fitted per-group exponents drift from p ≈ 2.6 (low v) to ≈ 0.7 (highest n_z) — the "L⁻²" shorthand of PL-4 is accurate only at low velocity.
 
-**Verdict (2026-06-11, frozen scorer): PREDICTION_CONFIRMED — 7/9 groups inside their locked 95% intervals (the frozen threshold exactly), median residual 0.002517 → 0.001415.** The two misses are the two lowest-velocity groups (|R| ~ 10⁻⁵), in opposite directions — an `[OBSERVATION]` consistent with a signed-residual zero crossing, not a stall. The frozen v2 secondary analysis over the combined six-point sweep strengthens IR_CONFIRMED (median ratio 0.153 → 0.109). Full result: [`ANALYSIS_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/foundational_mechanics/ANALYSIS_TIME_DILATION_L257_BLIND_v1.md) (FTD-0268). **No tag promoted.**
+**Verdict (frozen scorer): PREDICTION_CONFIRMED — 7/9 groups inside their locked 95% intervals (the frozen threshold exactly), median residual 0.002517 → 0.001415.** The two misses are the two lowest-velocity groups (|R| ~ 10⁻⁵), in opposite directions — an `[OBSERVATION]` consistent with a signed-residual zero crossing, not a stall. The frozen v2 secondary analysis over the combined six-point sweep strengthens IR_CONFIRMED (median ratio 0.153 → 0.109). Full result: [`ANALYSIS_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/foundational_mechanics/ANALYSIS_TIME_DILATION_L257_BLIND_v1.md) (FTD-0268). **No tag promoted.**
 
 ### EP-2 — N(A) blind interpolation at A ∈ {35, 60} (registered now, run later)
 
@@ -66,9 +66,9 @@ Pre-registered in [`PREREG_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/fo
   - **N(35) = 72.6**, band [52.5, 100.4]
   - **N(60) = 180.9**, band [130.9, 250.1]
 - **Protocol when run:** the FTD-0261 rig unchanged (`campaign_thermostat_off_sweep` arm-N invocation: L=32, γ=0.02, T=0.005, thermostat=on, coupling=on, 8 seeds, 50 samples/seed); verdict = inside/outside band per point; no re-fitting.
-- **Verdict (run 2026-06-11, same session, after the bands were committed in `3f909301`): BOTH INSIDE — 2/2 CONFIRMED.** N̄(35) = **66.1** (8 seeds, range 59–70; −8.9% from the point prediction) and N̄(60) = **192.3** (range 187–199; +6.3%). k_eff = 0.054/0.053 at the two points, consistent with FTD-0261's asymptotic ≈ 0.05. Run of record `engine/results/ep2_na_blind_2026-06-11/`. The FTD-0261 broken-power law now has two blind interpolation confirmations in addition to its fit.
+- **Verdict (run after the bands were committed in `3f909301`): BOTH INSIDE — 2/2 CONFIRMED.** N̄(35) = **66.1** (8 seeds, range 59–70; −8.9% from the point prediction) and N̄(60) = **192.3** (range 187–199; +6.3%). k_eff = 0.054/0.053 at the two points, consistent with FTD-0261's asymptotic ≈ 0.05. Run of record `engine/results/ep2_na_blind_2026-06-11/`. The FTD-0261 broken-power law now has two blind interpolation confirmations in addition to its fit.
 
-### EP-3 — k⁴ anisotropy extrapolation to L ∈ {512, 768} ⟶ **VERIFIED THIS SESSION**
+### EP-3 — k⁴ anisotropy extrapolation to L ∈ {512, 768}
 
 - **Source:** PL-5 closed-form law (`AUDIT_LORENTZ_ANISOTROPY.md`). The power-law fit over L ∈ [32, 256] (p = 4.0003, prefactor 6.95×10⁻⁴) was extrapolated to the never-tabulated L = 512 and 768, then checked against the exact 18-point Moore symbol at 50-digit precision (double precision underflows beyond L ≈ 384 — a previously unrecorded boundary, now noted).
 - **Locked rule:** extrapolation holds iff pred/exact ∈ [0.95, 1.05] at both L. **Result: pred/exact = 0.9997 (L=512) and 0.9995 (L=768) — HOLDS.** PL-5's tabulated domain extends a factor 2 deeper into the IR, δ down to 3.11×10⁻¹².
