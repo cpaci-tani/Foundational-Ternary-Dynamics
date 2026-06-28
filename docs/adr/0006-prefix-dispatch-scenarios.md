@@ -1,8 +1,6 @@
 # 0006 — Prefix-dispatch scenario registry
 
 **Status:** Accepted
-**Date:** 2026-04 (retroactive)
-**Author:** codified 2026-04-27
 
 ## Context
 

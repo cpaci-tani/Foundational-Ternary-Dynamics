@@ -4,7 +4,7 @@
 
 **Format:** Citations are organized by topic, then chronologically within topic. Each entry includes: author(s), year, title, role-in-FTD (one line). FTD-internal documents are NOT listed here — they live in `META_INDEX.md` and `LEDGER.md`. This file is for *external* references only.
 
-**Status:** Living document. Started 2026-05-03 (FTD-0132 synthesis). Add new entries as new classical citations are discovered to be load-bearing in FTD work.
+**Status:** Living document. Add new entries as new classical citations are discovered to be load-bearing in FTD work.
 
 ---
 
@@ -24,7 +24,7 @@
 
 **Borwein, J. & Borwein, P. (1987).** *Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity.* Wiley.
 - **Used in FTD for:** modern textbook coverage of theta nullwerten at CM points; Borwein-Borwein-Joyce evaluation of the simple-cubic Watson integral as a Γ-product at 1/24, 5/24, 7/24, 11/24.
-- **Citation contexts:** FTD-0132 (theta synthesis); Phase G small-r Green's function rank-3 module (engineering exploration 2026-05-03 evening).
+- **Citation contexts:** FTD-0132 (theta synthesis); Phase G small-r Green's function rank-3 module.
 
 **Chandrasekharan, K. (1985).** *Elliptic Functions.* Grundlehren der mathematischen Wissenschaften 281, Springer.
 - **Used in FTD for:** modern reference for the theory of elliptic functions, periods, and CM evaluations.
@@ -64,7 +64,7 @@
 
 **Joyce, G. S. (1973).** *On the simple cubic lattice Green function.* Phil. Trans. Roy. Soc. London A 273, 583–610.
 - **Used in FTD for:** closed-form evaluations of the simple-cubic lattice Green's function via complete elliptic integrals at the singular modulus `k_3`; the rank-3 ℚ-module structure of small-r SC Green's function values.
-- **Citation contexts:** Phase G small-r exploration (2026-05-03 evening).
+- **Citation contexts:** Phase G small-r exploration.
 
 **Glasser, M. L. & Zucker, I. J. (1980).** *Lattice sums.* In *Theoretical Chemistry: Advances and Perspectives* 5, 67–139.
 - **Used in FTD for:** comprehensive collection of lattice Green's function and Watson-integral evaluations; the structure of lattice constants for SC, BCC, FCC lattices.
@@ -84,7 +84,7 @@
 
 **Schneider, T. (1957).** *Einführung in die transzendenten Zahlen.* Springer.
 - **Used in FTD for:** the Schneider–Chudnovsky transcendence machinery underlying claims about the transcendence of `G*` over `Q` (via algebraic independence of Γ-values and π). *(This CM-period transcendence-machinery role is unchanged.)*
-- **Citation contexts:** Theorem 8 (FTD-0111) anomaly factor `A_k` transcendence at `k ≥ 4` now cites **Chudnovsky 1976 (Waldschmidt 2000 §1.4)**, not Schneider; the `A_k` (k ≥ 4) transcendence is a [CONDITIONAL THEOREM given Chudnovsky 1976] (corrected 2026-06-24 spine audit — the earlier "Schneider 1941" attribution for the tower-discriminant transcendence was wrong; the Schneider–Chowla–Selberg CM-period role above is unaffected).
+- **Citation contexts:** Theorem 8 (FTD-0111) anomaly factor `A_k` transcendence at `k ≥ 4` cites **Chudnovsky 1976 (Waldschmidt 2000 §1.4)**, not Schneider; the `A_k` (k ≥ 4) transcendence is a [CONDITIONAL THEOREM given Chudnovsky 1976]. (The correct citation for the tower-discriminant transcendence is Chudnovsky 1976, not the earlier "Schneider 1941" attribution; the Schneider–Chowla–Selberg CM-period role above is unaffected.)
 
 ---
 

@@ -2,9 +2,8 @@
 
 **Document type:** Audit (delivers results of pre-registered scan)
 **Status:** [COMPLETE] — verdict landed
-**Created:** 2026-05-01 evening
 **Pre-registration:** [PREREG_LEMNISCATE_ALPHA_RIGIDITY.md](archive/campaign_complete/PREREG_LEMNISCATE_ALPHA_RIGIDITY.md)
-**Companion fixes:** `DERIV_SPIN_STATISTICS_BRIDGE.md` (L_α value, denominator decomposition formula, agreement ppm — three corrections applied 2026-05-01); `SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` (spin-statistics tag drift fixed: "Derived" → "[SELECTION]").
+**Companion fixes:** `DERIV_SPIN_STATISTICS_BRIDGE.md` (L_α value, denominator decomposition formula, agreement ppm — three corrections); `SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` (spin-statistics tag drift fixed: "Derived" → "[SELECTION]").
 
 ---
 
@@ -60,7 +59,7 @@ Direct rational-approximant scan over `q ≤ 1000`:
 
 ### 1.3 · Cross-doc tag drift caught and fixed
 
-`SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` listed spin-statistics as "Derived from `π_1(SO(3)) = ℤ_2`". The underlying derivation `DERIV_SPIN_STATISTICS_BRIDGE.md §1.4` (SSB-4) tags the curve--SO(3) identification step as **[SELECTION]**, not [DERIVED]. The summary table inflated the source tag. Corrected 2026-05-01 to match. F10-class hygiene fix.
+`SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` listed spin-statistics as "Derived from `π_1(SO(3)) = ℤ_2`". The underlying derivation `DERIV_SPIN_STATISTICS_BRIDGE.md §1.4` (SSB-4) tags the curve--SO(3) identification step as **[SELECTION]**, not [DERIVED]. The summary table inflated the source tag. Corrected to match. F10-class hygiene fix.
 
 ---
 
@@ -218,7 +217,7 @@ FTD-0122  [PARTIAL]  Lemniscate-Alpha rigidity-scan result
 
 ### 5.3 · `SPEC_ALGEBRAIC_SPINE.md` impact
 
-The nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) are NOT affected — they are stated independent of the Lemniscate-Alpha narrative, and the Lemniscate-Alpha is not part of the canonical algebraic spine. The Bernoulli-route G\* derivation (Theorem 1: G\* = Γ(1/4)/Γ(3/4)) is a true algebraic identity; the Lemniscate-Alpha route is structurally weaker than previously framed.
+The nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) are NOT affected — they are stated independent of the Lemniscate-Alpha narrative, and the Lemniscate-Alpha is not part of the canonical algebraic spine. The Bernoulli-route G\* derivation (Theorem 1: G\* = Γ(1/4)/Γ(3/4)) is a true algebraic identity; the Lemniscate-Alpha route is structurally weak.
 
 ---
 

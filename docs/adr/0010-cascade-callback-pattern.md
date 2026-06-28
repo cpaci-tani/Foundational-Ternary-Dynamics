@@ -1,8 +1,6 @@
 # 0010 — Cascade callback pattern (sub-renderer lifecycle)
 
 **Status:** Accepted
-**Date:** 2026-04-27
-**Author:** refactor sweep Phase 3 (commits 8b4732d, 1506079, 1499a11, 506805b)
 
 ## Context
 

@@ -1,7 +1,6 @@
 # FALSIFICATION LEDGER — Construction Monograph Red-Team
 
 **Tag:** `[AUDIT]` — red-team record (not a theory claim)
-**Date:** 2026-06-02
 **Target:** [`MONOGRAPH_FTD_CONSTRUCTION.md`](../../01_reference/MONOGRAPH_FTD_CONSTRUCTION.md) (`[SYNTHESIS]`, 11,333 words, Part 0 → I → II → III → Coda)
 **Protocol:** A sympathetic-but-incorruptible red-team of five role-specialized agents, each running **steelman → attack → verdict** on its domain, returning findings for the controller to integrate. Plus an F9 collusion-auditor re-attack of every "SURVIVES" claim (§6). The monograph is `[SYNTHESIS]`; the red-team's job was to verify it **promotes nothing**, **states every claim at its canonical tag**, and **survives external scrutiny by mathematicians and philosophers of physics**.
 

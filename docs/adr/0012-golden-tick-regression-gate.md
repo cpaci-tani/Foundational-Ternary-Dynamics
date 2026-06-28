@@ -1,8 +1,6 @@
 # 0012 — Golden-tick regression gate (Phase 4 physics-touching extractions)
 
 **Status:** Accepted
-**Date:** 2026-04-27
-**Author:** refactor sweep Phase 4 pre-flight (commit 8afc8be)
 
 ## Context
 
@@ -29,10 +27,10 @@ subsequent commit must reproduce the hash exactly.
 - Run exactly 100 ticks
 - 64-bit FNV-1a hash over: every voxel's state + flux + wave_vel +
   velocity, every `EnergyAudit` field, manifested-site state
-- Assert `hash == 0xb604d81a3d79366eULL` (re-baselined 2026-06-17 for the
+- Assert `hash == 0xb604d81a3d79366eULL` (re-baselined for the
   audit m1 `gauss_violation` scope fix — per-voxel state/flux/wave_vel/velocity
   byte-identical, only the two gauss audit scalars changed; re-pinned
-  2026-06-11 after OpenMP race fixes in poisson_solvers.cpp + phase_write.cpp;
+  after OpenMP race fixes in poisson_solvers.cpp + phase_write.cpp;
   prior pins were `0xcd957b601d47868a` @ L=16, then `0xebaa6f314f66db3f` and
   `0x56fa28acb5b9fe88` @ L=17)
 

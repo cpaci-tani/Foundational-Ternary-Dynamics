@@ -1,7 +1,6 @@
 # AUDIT — Rigidity of the load-bearing rational identifications (FTD-0310)
 
 **Tag:** `[MEASURED — rigidity audit]`
-**Date:** 2026-06-22
 **Runner (SHA256-locked):** `scripts/exploration/rigidity_audit_loadbearing.py` — `3c8c42f43983b7daa61bceef3696ecd7aaf2eaac7bdcf6f2dc35967f84acd23f`
 **Lock honesty:** this is a **same-session frozen-logic lock, not a blind multi-session pre-registration.** The integrity guarantees are: (a) the verdict LOGIC + thresholds (`Q_MAX=120, W=0.30, K=200000, P_THRESH=0.05, seed=20260622`) are principled-standard and were frozen in the runner **before execution** — none is tuned to any per-claim result; (b) the runner is SHA-locked + deterministic (reproducible); (c) the result runs **deflationary** (it demotes the framework's own claims), the opposite of motivated reasoning. This is the FTD-0097 / FTD-0189 look-elsewhere discipline, aimed at **debunking**, not fishing.
 
@@ -9,7 +8,7 @@
 
 ## 0 · Why (the F10 gap)
 
-A LEDGER tag (`[PARAMETRIC]` / `[STRUCTURALLY MOTIVATED PARAMETRIC]`) **labels** a claim's status; it does **not** answer the underlying methodological question: *is the match to experiment statistically surprising, or is the space of simple rationals dense enough that some low-complexity fraction would hit the target this well by chance?* Only **x₊=1/α** has been put through such a test (FTD-0189: 0 non-G\* dual-matchers / 2.65M → rigid). This audit applies the analogous test to the three **load-bearing physics identifications** that were promoted-then-retracted in the 2026-06-18 overclaim wave and currently sit at `[STRUCTURALLY MOTIVATED PARAMETRIC]` / `[SELECTION]`.
+A LEDGER tag (`[PARAMETRIC]` / `[STRUCTURALLY MOTIVATED PARAMETRIC]`) **labels** a claim's status; it does **not** answer the underlying methodological question: *is the match to experiment statistically surprising, or is the space of simple rationals dense enough that some low-complexity fraction would hit the target this well by chance?* Only **x₊=1/α** has been put through such a test (FTD-0189: 0 non-G\* dual-matchers / 2.65M → rigid). This audit applies the analogous test to the three **load-bearing physics identifications** that were promoted-then-retracted in the overclaim wave and currently sit at `[STRUCTURALLY MOTIVATED PARAMETRIC]` / `[SELECTION]`.
 
 ## 1 · Method (frozen)
 

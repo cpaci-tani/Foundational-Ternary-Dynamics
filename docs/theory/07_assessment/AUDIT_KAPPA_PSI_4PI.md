@@ -1,7 +1,6 @@
 # AUDIT — κ_ψ = 4π: convention, conditional theorem, or physical law?
 
 **Tag:** [AUDIT]. Findings: the FQCR source-law coupling `κ_ψ` is a **[DEFINITION]** (a normalization convention); it takes the value `4π` only inside one specific convention triple, and is at most a **[CONDITIONAL THEOREM]** given that triple together with `D = 3`. The proposition *"the finite / lattice closure law forces `κ_ψ = 4π`"* is **[CLOSED NEGATIVE]**. `κ_ψ = 4π` is **not** theorem-forceable as a physical law. No FTD LEDGER claim is promoted or demoted by this audit — it confirms the v1.4-taxonomy Layer-E label and supplies the structural reason that label can never be upgraded.
-**Date:** 2026-05-21
 **LEDGER:** FTD-0188
 **Audit context:** FTD/FQCR Cleanup & Taxonomy v1.4 — Path Forward §8 ("first task in the new thread"); Frontier 3.
 **Depends on:**
@@ -174,4 +173,4 @@ No FTD LEDGER tag is promoted or demoted. The FQCR source law's *structure* (`U`
 
 ## 10 · Provenance
 
-Audit performed 2026-05-21 as the first task of the FTD/FQCR Cleanup & Taxonomy v1.4 "new thread" (Path Forward §8). Method: first-principles derivation of the lattice vs continuum closure structure, cross-checked against committed FTD theorems — FTD-0004 (Green's-function tail, [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.1), FTD-0059 ([`THEOREM_A_PHYS_NO_GO.md`](../10_eft_program/THEOREM_A_PHYS_NO_GO.md)), FTD-0131, FTD-0137, FTD-0184. No numerical search was run; the only constant involved (`4π = 2π^{3/2}/Γ(3/2)`) is elementary and exact. LEDGER row: FTD-0188.
+Audit performed under the FTD/FQCR Cleanup & Taxonomy v1.4 "new thread" (Path Forward §8). Method: first-principles derivation of the lattice vs continuum closure structure, cross-checked against committed FTD theorems — FTD-0004 (Green's-function tail, [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.1), FTD-0059 ([`THEOREM_A_PHYS_NO_GO.md`](../10_eft_program/THEOREM_A_PHYS_NO_GO.md)), FTD-0131, FTD-0137, FTD-0184. No numerical search was run; the only constant involved (`4π = 2π^{3/2}/Γ(3/2)`) is elementary and exact. LEDGER row: FTD-0188.

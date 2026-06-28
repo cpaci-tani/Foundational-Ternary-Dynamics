@@ -1,8 +1,7 @@
 # SCOPE LIMITATIONS
-## Foundational Ternary Dynamics v5.27-bell
+## Foundational Ternary Dynamics
 
 **Document Status:** REQUIRED FOR ALL DISTRIBUTIONS
-**Last Updated:** 2026-02-26
 
 ---
 
@@ -163,7 +162,7 @@ Limited. Most predictions are:
 
 **For All Distributions:**
 
-> **Foundational Ternary Dynamics v5.27-bell** is a discrete computational framework for particle physics and cosmology with the following acknowledged limitations:
+> **Foundational Ternary Dynamics** is a discrete computational framework for particle physics and cosmology with the following acknowledged limitations:
 >
 > 1. **Gravity:** Einstein equations derived with 8πG coefficient (v5.0); diffeomorphism invariance fundamentally violated by discrete lattice
 > 2. **Gauge theory:** U(1) emergence argued; SU(2) × SU(3) conjectured, not proven
@@ -176,6 +175,4 @@ Limited. Most predictions are:
 
 ---
 
-*Document Classification: REQUIRED FOR v5.27-bell CERTIFICATION*
-*Created: 2026-01-24*
-*Updated: 2026-02-26*
+*Document Classification: REQUIRED FOR CERTIFICATION*
