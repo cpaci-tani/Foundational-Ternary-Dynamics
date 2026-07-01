@@ -9,8 +9,14 @@ This map folds in (a) the **FC-W carrier-narrowing hardening** of the α boundar
 
 **Scope:** the *second clause* of the Number-One Goal — "...and rigorously establish what
 we **cannot** [derive]." This document is the single-page map of what the discrete ternary
-ontology provably does **not** determine. Closed-negatives and no-gos are deliverables here,
-not failures: they map how far discreteness reaches.
+ontology provably does **not** determine. **This map distinguishes two different kinds of
+claim, and conflating them was flagged as a corpus-wide problem in
+`AUDIT_REDTEAM_DISSECTION_2026-07-01.md` §2 (2026-07-01):** a **proven impossibility** is a
+structural no-go theorem, valid within stated assumptions; an **attempted-and-failed** result
+is an empirical or computational trial that came back negative, which raises the prior that
+the next attempt also fails and nothing more. Neither is "a deliverable" to be celebrated —
+both are honestly reported constraints on how far discreteness reaches. See §0.5 for the
+classification of every section below.
 
 **Companion canonical sources:**
 - `02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md` (FTD-0336) — **the one-statement positioning result this map instantiates:** a discrete/deterministic/forward-only substrate owns the *modulus* half and cannot self-supply the *argument* (the chosen adjoint of its own lossy map); FTD's boundaries below are its five instances. Replaces the "second i" framing.
@@ -57,6 +63,42 @@ not yet expressible in the current simulator without breaking the bit-exact gold
 
 ---
 
+## 0.5 · Reading key — two kinds of claim, classified per section
+
+Every item in §1–§5 is exactly one of:
+
+- **PROVEN** — a structural no-go theorem, valid within stated (and stated-explicitly)
+  assumptions. Overturning it requires either disproving one of those assumptions or
+  exhibiting the construction the theorem says cannot exist.
+- **ATTEMPTED** — an empirical or computational trial that returned negative. This raises
+  the prior that the *next* attempt along the same route also fails; it proves nothing about
+  routes not yet tried, and it does not "strengthen" anything the way a proof would.
+- **OPEN** (§6 only) — neither of the above; still live.
+
+A third, narrower flavor of ATTEMPTED is **engine-blocked**: a result plausible in principle
+but not yet measurable without breaking the current simulator's golden-tick gate — an
+implementation gap, not a claim about the ontology at all.
+
+| Section | Theme | Classification | Concrete falsifier / what would overturn it |
+|---|---|---|---|
+| §1 rows 2, 3, 6 (route-invariance, K-BIND, Tr/Det independence) | assembly of α's readout operator | **PROVEN** (conditional on the stated axiomatized operator calculus) | An FC-W-class axiom forcing the assembly, or a flaw in the trace/determinant independence argument itself |
+| §1 row 1 ("0/4 routes force assembly") | the route search feeding the above | **ATTEMPTED** (4 native + 1 red-team route, all failed) | A 6th route, not yet tried, that succeeds |
+| §1 row 4 (x₋ has no SM correspondent) | x₋'s physical status | **ATTEMPTED** (25 pre-specified observables tested, all falsified) | A 26th observable not yet tested that matches |
+| §1 FC-W carrier-narrowing (FTD-0314/0326/0327) | transcendence of √(G\*(4G\*−1)) | **PROVEN, conditional on Chudnovsky (1976)** | Disproof of Chudnovsky's algebraic-independence theorem, or an un-exhibited forward-derived weight-mixing period surviving the FTD-0314 pressure |
+| §2a (QM non-commutativity, 4 angles) | commutative substrate ⇒ no quantum core | **PROVEN** (structural; each angle a distinct argument from the substrate's stated commutativity) | A demonstration that the substrate's flux/state algebra is non-commutative under a reading not yet considered |
+| §2b (Lorentzian metric / reversibility) | P5 = determinism, not reversibility | **PROVEN** (structural; the π/G\* reversible/irreversible split is exact) | A forcing argument deriving reversibility from P1–P5 as stated |
+| §2c (clock hypothesis / L²-not-L¹ budget) | Pythagorean norm absent from Scale-0 primitives | **PROVEN** (v3, after 2 earlier attempts — v1 UNDERDETERMINED, v2 INVALIDATED — were superseded, not stacked as extra evidence) | A native Scale-0 construction carrying an L²-norm without importing it |
+| §2d (dispersion ceiling, FTD-0270) | cavity- not Schrödinger-dispersion | **ATTEMPTED** (`[MEASURED]` — an empirical finding, not a proof that quadratic dispersion is impossible in this substrate class) | A measurement at a different scale/coupling/regime showing ω∝k² natively |
+| §2d (P2 mass-gap swing, FTD-0333) | native rest-mass gap | **ATTEMPTED**, and the attempt itself is `[INVALID per pre-registration]` — a gate failure, not a clean negative | A stable-integrator rerun that passes the pre-registered gate |
+| §3 (gravity: G_N=1/100, Yilmaz, scalar-vector, a_phys-γ) | every gravity route tried | **ATTEMPTED** (parametric/numerical falsification in each case) | A recalibration or candidate route not yet tried |
+| §3 (emergent spin-2) | graviton provenance | **ATTEMPTED** (measured null, L∈{32,64}, 11/12 k-points identical to spin-1 control) | A measurement at larger L showing a genuine spin-2 signature |
+| §3.5 (cosmology sector) | Λ, Ω_Λ, DM halo, the rest | **mixed** — Λ=0 is a `[DERIVED]` positive result, not a no-go; the DM halo exponent is an **ATTEMPTED** falsified measurement; "the sector is imported" is a forcing-audit fact, not an attempt | See individual FTD-0331/0332/0334/0300 entries |
+| §4 (FTD-0110 local A1g purity; FTD-0277 v1 counting route) | mass-bridge reduction | **ATTEMPTED** (empirical pipeline measurement; static-gating route fails on shape, magnitude, and geometry) | A successful collective-coordinate proof |
+| §4 (FTD-0250 rigid-cluster translation) | transport-inertia visual | **engine-blocked** (implementation gap, not a claim about the ontology) | A cluster-aware translation phase that preserves the golden gate |
+| §5 catalog (~52 routes) | closed-negative catalog | **ATTEMPTED, overwhelmingly** (numerical/parametric disproof or null measurement); a handful cross-reference the §1/§2 structural proofs above | See each row's "reason for closure" |
+
+---
+
 ## 1 · The central boundary — α is dynamical, not structural
 
 > **One-liner (FTD-0242 §5):** *"The substrate forces every ingredient of α's defining
@@ -79,7 +121,9 @@ not yet expressible in the current simulator without breaking the bit-exact gold
   master-quadratic Vieta target (**W-CRIT-2**), `[UNDERDETERMINED]` (FTD-0235).
 - Attacked from **four FTD-native routes** (jtwist, bcc, cm, novel): **0/4 force the assembly**
   (FTD-0242, `[STRONGLY MOTIVATED CONJECTURE no-go]`). A sympathetic red-team's attempt at a
-  *5th* route also failed (0/5), *strengthening* the boundary.
+  *5th* route also failed (0/5) — this is **ATTEMPTED** (§0.5), not a proof: it raises the
+  prior that a 6th route also fails, and nothing more. It does not "strengthen" the boundary
+  the way FTD-0242/0243/0244's actual proofs do.
 
 **The route-invariance theorem (FTD-0243, RSI Leg 3):**
 - **Flip ruled out** `[THEOREM]` — the only geometric alternative (the D6 ⟨111⟩ three-plane
@@ -309,6 +353,12 @@ Closing the reduction upgrades **both** FTD-0110 and FTD-0250 to `[DERIVED]`/`[T
 
 ## 5 · The closed-negative catalog (~52 sealed routes, by theme)
 
+**Classification (§0.5): overwhelmingly ATTEMPTED-and-failed** — numerical/parametric disproof
+or a null measurement, each raising the prior against the next attempt in that theme and
+proving nothing beyond it. A handful of rows (the QM non-commutativity and route-invariance
+entries) are cross-references to the **PROVEN** structural closures already tabulated in §1/§2,
+not independent empirical trials.
+
 Preserved for provenance — to prevent zombie re-emergence of exhausted routes.
 
 | Theme | IDs | One-line reason for closure |
@@ -333,6 +383,9 @@ epistemic/retraction (0219, 0208 v1–v2) · pre-registered adverse outcome (019
 ---
 
 ## 6 · Open boundaries still genuinely researchable
+
+(Neither **PROVEN** nor **ATTEMPTED**-and-failed per §0.5 — these are the third, still-live
+bucket.)
 
 - **MC-T4.3** — central `[FOUNDATIONAL OBSTRUCTION]` (3+ months). Surviving exits: a 6th-postulate
   W that forces the operator assembly, or a fresh ARC-D engine measurement (ARC-A/B
