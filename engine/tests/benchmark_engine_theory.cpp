@@ -887,6 +887,17 @@ void benchmark_higgs(int L, int ticks) {
 
 // ================================================================
 // B16: Bell substrate CHSH test
+//
+// CORRECTED 2026-07-01 (red-team-confirmed): this is a STANDALONE
+// local-hidden-variable (LHV) toy -- it does not read from or exercise
+// the RenderBridge lattice engine at all. Its pass criterion S<=2.0 is
+// the CLASSICAL local bound; a genuinely quantum substrate would EXCEED
+// 2 toward Tsirelson's bound 2*sqrt(2)~=2.83. Do NOT read "S=2.000
+// exact, PASS" as a quantum-mechanics confirmation -- it confirms this
+// toy (and, by extension, FTD's native commutative substrate per
+// FC-1) is local/classical, which is the opposite of a QM result.
+// See scripts/benchmarks/analyze_convergence.py B16 for the corrected
+// scorecard framing.
 // ================================================================
 void benchmark_bell() {
     std::cerr << "  Bell substrate:\n";

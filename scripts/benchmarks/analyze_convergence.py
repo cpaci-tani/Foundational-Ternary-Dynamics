@@ -34,7 +34,7 @@ def generate_report():
         ("B4",  "Gauss constraint div(J)=rho",       "A",  "RMS = 0.0085"),
         ("B5",  "Energy conservation (pure flux)",   "B-", "5.6% drift over 50 ticks"),
         ("B6",  "Charge conservation",               "A+", "EXACT"),
-        ("B7",  "Hydrogen E_n/E_1 = 1/n^2",         "A+", "< 0.001% all 4 levels"),
+        ("B7",  "Hydrogen E_n/E_1 = 1/n^2",         "A+", "< 0.001% all 4 levels [CAVEAT 2026-07-01: classical Kepler/virial 1/n^2, generic to any 1/r force with a CALIBRATED Rydberg scale -- campaign_hydrogen_spectrum.cpp's own EPISTEMIC NOTE: 'do not cite this as FTD derives the hydrogen spectrum']"),
         ("B8",  "Born ensemble (ParticleEngine)",    "B",  "Structured non-uniform distribution"),
         ("B9",  "Color force signs (SU(3))",         "A+", "Same repels, diff attracts: CORRECT"),
         ("B10", "Confinement string tension",        "C",  "Coulomb-like at tested radii (need r>8)"),
@@ -44,7 +44,7 @@ def generate_report():
         ("B14", "Weak transmutation (parity)",       "B+", "1025 pos vs 550 neg (parity violation!)"),
         ("B15", "Higgs threshold (genesis)",         "A+", "0 below K_GENESIS, 891 above: EXACT"),
         ("B15b","Goldstone mode speed",              "B",  "0.233 (matches wave speed in dual mode)"),
-        ("B16", "Bell CHSH inequality",              "A+", "S = 2.000 exactly, E(a,a) = -1.000"),
+        ("B16", "Bell CHSH inequality (classical bound)", "N/A", "S = 2.000 exactly [RE-GRADED 2026-07-01: this IS the classical local-hidden-variable bound, not a quantum result -- a genuinely quantum substrate would EXCEED 2 toward Tsirelson's 2.83. This benchmark confirms the substrate is local/classical, the OPPOSITE of a QM confirmation. Previously graded A+ and cited as QM-domain evidence below; that was backwards. Measured by a standalone LHV toy (engine/tests/benchmark_engine_theory.cpp benchmark_bell(), lines ~891-942) that does not exercise the lattice engine at all."),
         ("B17", "Born rule on LATTICE",              "A-", "Manifest sites 10x higher density"),
         ("B18", "Spin-orbit fine structure",         "B+", "Splitting = 2.7e-12 DETECTED"),
         ("B19", "Relativistic gamma correction",     "C-", "No slowing (need higher v ~ c)"),
@@ -65,7 +65,7 @@ def generate_report():
 
     domains = [
         ("Electromagnetism (Coulomb, Maxwell)",   "B+", "B1-B4: Force law converges, alpha recovered 2.4%, Gauss A"),
-        ("Quantum Mechanics (Born, Bell, wave)",  "A-", "B16-B17: Bell S=2.000 exact, Born lattice bias 10x confirmed"),
+        ("Quantum Mechanics (Born, Bell, wave)",  "A-", "B17: Born lattice bias 10x confirmed [CORRECTED 2026-07-01: B16's Bell S=2.000 REMOVED from QM-domain evidence -- it is the classical bound, confirming locality, not quantumness; see B16 scorecard row]"),
         ("Strong Force / QCD (color, confine)",   "B",  "B9: Color signs CORRECT, B10: confinement needs larger lattice"),
         ("Weak Force (transmutation, parity)",    "B+", "B14: Parity violation 1025/550, chirality flip works"),
         ("Higgs Mechanism (threshold, Goldstone)", "A",  "B15: Genesis threshold EXACT, Goldstone mode propagates"),
@@ -73,7 +73,7 @@ def generate_report():
         ("Fine Structure (spin-orbit, Larmor)",   "B+", "B13: Larmor A, B18: splitting detected"),
         ("Relativistic Effects",                   "C-", "B19: No slowing at tested velocity"),
         ("Conservation Laws",                      "A+", "B6: charge exact, B5: energy 5.6% drift"),
-        ("Particle Spectrum (hydrogen)",           "A+", "B7: 1/n^2 to < 0.001%"),
+        ("Particle Spectrum (hydrogen)",           "A+", "B7: 1/n^2 to < 0.001% [CAVEAT 2026-07-01: classical Kepler/virial, calibrated Rydberg scale, no quantum content -- see B7 scorecard row]"),
     ]
 
     lines.append(f"  {'Domain':<45} {'Grade':>5}  {'Evidence'}")
@@ -107,7 +107,9 @@ def generate_report():
     lines.append("  NEWLY VALIDATED PHYSICS (this session):")
     lines.append("    [x] Color forces: same-color repels, different attracts (SU(3) sign)")
     lines.append("    [x] Higgs threshold: genesis at K_GENESIS is exact phase transition")
-    lines.append("    [x] Bell inequality: S = 2.000 (local deterministic substrate)")
+    lines.append("    [x] Bell inequality: S = 2.000 -- confirms LOCALITY/CLASSICALITY of the substrate,")
+    lines.append("        NOT a quantum-mechanics confirmation (corrected 2026-07-01; a quantum system")
+    lines.append("        would exceed 2 toward Tsirelson's bound 2*sqrt(2)=2.83)")
     lines.append("    [x] Born rule on lattice: manifestation favors high |J|^2 sites")
     lines.append("    [x] Larmor radiation: accelerated charges radiate more (P ~ a^2)")
     lines.append("    [x] Parity violation: weak transmutation creates +/- asymmetry")

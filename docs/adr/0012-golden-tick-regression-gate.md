@@ -46,6 +46,20 @@ CTest label `golden`; ~0.22s wall at L=17.
 - (−) Adding new physics requires a deliberate gate-rebaseline commit
   (capture new hash → freeze) before extraction work; this is by design
 
+**Scoping caveat (added 2026-07-01 — red-team-confirmed gap: this gate has
+been described corpus-wide with the unqualified word "physics," which
+overstates its actual coverage).** The frozen scenario (L=17, 100 ticks,
+seed 42, Logic6-like toggle profile) runs with roughly 14 phenomenological
+subsystems toggled OFF by default (color/strong force, gravity, Langevin
+thermostat, weak transmutation, dual-substrate, and others — see
+`engine/include/ftd/term_toggles.h`). A regression in any OFF-by-default
+subsystem, or any behavior that only manifests at L>17 or beyond 100 ticks,
+passes this gate untouched. "The golden hash is preserved" means exactly
+what it says — the specific fingerprinted quantities at this one frozen
+configuration are byte-identical — not that "physics" in the unqualified,
+general sense is verified. Campaigns exercising a toggled-off subsystem
+need their own regression coverage; this gate does not provide it.
+
 ## Alternatives considered
 
 - Hand-rolled per-quantity assertions — rejected: hashes catch
@@ -60,4 +74,4 @@ CTest label `golden`; ~0.22s wall at L=17.
 
 - Files: `engine/tests/test_render_bridge_golden.cpp`,
   `engine/CMakeLists.txt` (`ftd_add_test render_bridge_golden LABELS unit;golden`)
-- Cross-refs: CONTRACTS.md §12, ADR-0008 (R1-R5 phase extraction precedent)
+- Cross-refs: CONTRACTS.md §5 (corrected 2026-07-01 — was mis-cited as "§12", a section number that does not exist in the current 6-section CONTRACTS.md; the golden hash is actually documented under §5 Telemetry Contract), ADR-0008 (R1-R5 phase extraction precedent)
