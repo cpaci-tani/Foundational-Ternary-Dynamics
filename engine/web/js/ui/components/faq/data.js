@@ -231,7 +231,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 ftdAngle: [
                     { tag: 'SELECTION', text: 'Both QM and GR are framed as emergent from the same lattice dynamics: QM as the statistics of manifestation events on short scales, GR as the coarse-grained flux-field geometry on long scales.' },
-                    { tag: 'SELECTION', text: 'A Deser-iterative bootstrap from linear spin-2 flux modes to the nonlinear Einstein equations is presented; engine benchmarks (test_einstein_equations.cpp) report a 0.004% time-dilation match. The full derivation chain currently sits at [SELECTION] / [PARTIAL DERIVED] post-2026-04-19 reframe.' },
+                    { tag: 'CONJECTURE', text: 'A Deser-iterative bootstrap completes a POSITED (not lattice-derived) linear spin-2 field into the nonlinear Einstein equations (FTD-0189); engine benchmarks (test_einstein_equations.cpp) report a 0.004% time-dilation match for the metric sector. A pre-registered measurement found no independent emergent spin-2 mode in the substrate itself (FTD-0193, closed negative at L in {32,64}) -- "spin-2 flux modes" is not a confirmed existence claim. Corrected 2026-07-01: this entry previously presented the spin-2 modes as an established premise under a [SELECTION] tag, which cannot carry an empirically-refuted existence claim.' },
                     { tag: 'CONJECTURE', text: 'The UV divergences of naive quantum gravity are absent because the lattice is discrete by postulate — there is no continuum to renormalise over.' },
                 ],
                 stillOpen: [
