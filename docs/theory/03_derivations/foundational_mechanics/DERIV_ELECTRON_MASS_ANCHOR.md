@@ -19,10 +19,17 @@ The formula reproduces $m_e$ to **0.19%**. Two pieces carry genuine structural w
 
 ## 2. What is genuinely motivated
 
-### 2.1 The exponent $n = 11$ — `[DERIVED]`
-The $\alpha^{11}$ scaling is established from the multiset/dimensional-emergence argument
-(MC-T3.2 closure; multiset theorem FTD-0084 plus two SM-hierarchy `[SELECTION]`s). This leg
-is the strong part of the formula and stands at `[DERIVED]`. See `proof_m_e_exponent_n11.py`.
+### 2.1 The exponent $n = 11$ — `[SELECTION]` (corrected 2026-07-01 — was `[DERIVED]`, a tag collision now reconciled)
+The $\alpha^{11}$ scaling follows from the multiset/dimensional-emergence argument
+(MC-T3.2 closure; multiset theorem FTD-0084 plus two SM-hierarchy `[SELECTION]`s). A later,
+more scrutinized audit (`DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS.md`, "promotion blockers
+identified") found the specific ladder-walk ordering $4+4+3$ that produces $n=11$ is not
+uniquely forced from first principles — it is `[SELECTION]` (a bottleneck), not `[DERIVED]`.
+This document previously stated `[DERIVED]` here, contradicting that finding; the later,
+more careful tag governs. This leg remains the *strongest-motivated* part of the formula
+(a real multiset argument constrains the exponent to a small set of candidates), but it is a
+selection among that set, not a forced derivation. See `proof_m_e_exponent_n11.py` for the
+multiset construction (still valid); the uniqueness claim is what is downgraded.
 
 ### 2.2 The prefactor $16/3$ — simplest-rational tightness, not a derivation
 Among 6489 rational-prefactor + integer-exponent combinations ($p, q \le 50$, $n \in [8, 14]$),
@@ -45,7 +52,8 @@ motivated re-statement, not a theorem.
 
 ## 4. Conclusion
 The electron-mass formula stays a `[STRONGLY MOTIVATED CONJECTURE]`: the exponent $n=11$ is
-`[DERIVED]`, the prefactor $16/3$ is the tightest simple rational at that exponent, and the
+`[SELECTION]` (corrected 2026-07-01, see §2.1 — a multiset-constrained choice, not a forced
+derivation), the prefactor $16/3$ is the tightest simple rational at that exponent, and the
 $(N_{eff}+N_c)/N_c$ re-spelling is algebra. No "parametric insertion abolished" claim and no
 "structurally derived axiom" status is warranted. Promotion to `[THEOREM]` requires a
 pre-registered derivation that forces the prefactor without a look-elsewhere escape.
