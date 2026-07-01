@@ -74,9 +74,13 @@
 
 ## 4 · Transcendence theory
 
-**Chudnovsky, D. V. (1976).** *Algebraic independence of values of exponential and hypergeometric functions.* Proc. ICM, Vancouver, 339–350. Consolidated in Waldschmidt, *Diophantine Approximation on Linear Algebraic Groups* (2000), §1.4.
-- **Used in FTD for:** the algebraic independence of `π` and `Γ(1/4)` over `Q`, which makes Theorem 9's statement `Q(G*) ∩ Q(π) = Q` non-trivial.
+**Chudnovsky, D. V. (1976).** *Algebraic independence of constants connected with the exponential and elliptic functions.* Dokl. Akad. Nauk Ukrain. SSR Ser. A (also presented Proc. ICM, Vancouver, 339–350). Consolidated in Waldschmidt, *Diophantine Approximation on Linear Algebraic Groups* (2000), §1.4.
+- **Used in FTD for:** the algebraic independence of `π` and `Γ(1/4)` over `Q` (a 2-element independence), which makes Theorem 9's statement `Q(G*) ∩ Q(π) = Q` non-trivial. This is the *minimal sufficient* hypothesis Theorem 9 literally needs.
 - **Citation contexts:** Theorem 9 (FTD-0112) is conditional on this. Without Chudnovsky, the π-free statement is unproved.
+
+**Nesterenko, Yu. V. (1996).** *Modular functions and transcendence questions.* Mat. Sbornik 187, no. 9, 65–96 (Russian); English translation Sb. Math. 187, 1319–1348.
+- **Used in FTD for:** the *strictly stronger* 3-element algebraic-independence theorem — `π`, `e^π`, and `Γ(1/4)` are algebraically independent over `Q` (transcendence degree 3). This implies Chudnovsky's (1976) 2-element result above; it is not a competing or contradictory attribution.
+- **Citation contexts:** `lean/FTD/Axioms.lean`'s `nesterenko_algebraic_independence` axiom formalizes *this* theorem, not Chudnovsky's — a valid but non-minimal choice (the Lean proof invokes a stronger-than-necessary hypothesis for what Theorem 9 actually needs). Recorded here so a reader checking the Lean formalization against prose that conditions on "Chudnovsky 1976" is not misled into thinking these are unrelated or conflicting results.
 
 **Waldschmidt, M. (2000).** *Diophantine Approximation on Linear Algebraic Groups.* Grundlehren 326, Springer.
 - **Used in FTD for:** modern textbook reference for Chudnovsky's theorem and the broader transcendence-theoretic landscape.
@@ -104,6 +108,33 @@
 **Bossavit, A. (1998).** *Computational Electromagnetism.* Academic Press.
 - **Used in FTD for:** standard reference for lattice exterior calculus, vertex/edge/face decompositions, and the classical proofs that `d² = 0` on lattice differential complexes.
 - **Citation contexts:** FTD-0114 (lattice Hodge duality / Bianchi identities).
+
+---
+
+## 7 · Operator algebras and holographic bounds
+
+*(Added 2026-07-01 — remediation of a red-team-confirmed gap: these five sources are load-bearing in the modular-time/reference-frame-context and cosmological-constant sectors but were previously entirely absent from this file, in violation of its own maintenance protocol below.)*
+
+**Takesaki, M. (1970).** *Tomita's Theory of Modular Hilbert Algebras and its Applications.* Lecture Notes in Mathematics 128, Springer-Verlag. (Exposition of M. Tomita's 1967 unpublished lecture notes.)
+- **Used in FTD for:** the standard reference for Tomita-Takesaki modular theory — the modular operator `Δ`, modular conjugation `J`, and modular automorphism group of a von Neumann algebra with a cyclic separating vector.
+- **Citation contexts:** `FOUND_MODULUS_ARGUMENT_FRONTIER.md` §2 (probabilistic face); `DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md` §1; `PREREG_MODULAR_TIME_ALGEBRA_TYPE_v1.md`.
+
+**Bisognano, J. J. & Wichmann, E. H. (1975, 1976).** *On the duality condition for a Hermitian scalar field.* J. Math. Phys. 16, 985–1007; *On the Duality Condition for Quantum Fields.* J. Math. Phys. 17, 303–321.
+- **Used in FTD for:** the theorem that the modular flow of a wedge algebra (in relativistic QFT, under the Wightman axioms and the spectrum condition) coincides with the Lorentz boost preserving that wedge — the bridge from modular theory to spacetime geometry.
+- **Domain-validity caveat (load-bearing):** this theorem is proven for **relativistic** QFT algebras satisfying Lorentz covariance and the spectrum condition. FTD's substrate is deterministic, forward-only, and does not natively possess these hypotheses; any FTD-internal application of this theorem is importing its conclusion, not deriving it from the lattice. See `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` §14 (corrected 2026-07-01) for where this caveat is now placed.
+- **Citation contexts:** `SCOPE_ROUTE_B_MODULAR_TIME.md`; `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` §14.
+
+**Connes, A. & Rovelli, C. (1994).** *Von Neumann algebra automorphisms and time-thermodynamics relation in generally covariant quantum theories.* Class. Quantum Grav. 11, 2899–2917.
+- **Used in FTD for:** the thermal-time hypothesis — for a type III₁ von Neumann algebra plus a thermal state, the modular flow is a canonical, state-independent (up to inner automorphism) candidate for physical time.
+- **Citation contexts:** `SCOPE_ROUTE_B_MODULAR_TIME.md`; `DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md`.
+
+**Cohen, A. G., Kaplan, D. B. & Nelson, A. E. (1999).** *Effective Field Theory, Black Holes, and the Cosmological Constant.* Phys. Rev. Lett. 82, 4971–4974.
+- **Used in FTD for:** the UV-IR relation (the "CKN bound") — an effective field theory with UV cutoff `M_P` in a region of size `L` cannot store more vacuum energy than its largest non-collapsing configuration permits, `ρ_vac ≲ M_P²/L²`.
+- **Citation contexts:** `DERIV_LAMBDA_SCALE_COVARIANT.md` §3 (the holographic ceiling on Λ — a ceiling, not a source).
+
+**Hsu, S. D. H. (2004).** *Entropy Bounds and Dark Energy.* Phys. Lett. B594, 13.
+- **Used in FTD for:** the no-go result that the naive Hubble-horizon holographic dark-energy cutoff gives equation-of-state `w ≈ 0` (no cosmic acceleration), not the observed `w ≈ −1`.
+- **Citation contexts:** `DERIV_LAMBDA_SCALE_COVARIANT.md` §4 (why the dynamics/equation-of-state question stays `[OPEN]`).
 
 ---
 

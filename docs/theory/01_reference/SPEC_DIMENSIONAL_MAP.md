@@ -39,7 +39,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Value:** 2.958675119
 - **LEDGER:** [FTD-0002](../07_assessment/LEDGER.md#ftd-0002)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`
-- **Notes:** Direct Chowla–Selberg evaluation of L(s, χ_{-4}) at s=1 on the lemniscatic curve y² = x³ − x. Four independent derivations enumerated in MONOGRAPH_GSTAR_BRIDGE_CONSTANT (Γ-ratio, Watson period integral, lemniscate arc length, modular-form value).
+- **Notes:** The identity follows from the elementary Γ-function reflection formula at z=1/4 (corrected 2026-07-01 — see `SPEC_ALGEBRAIC_SPINE.md` §1 "Proof reference"; the earlier "direct Chowla–Selberg L-value" attribution misidentified the mechanism, though the value was always correct). Four independent derivations enumerated in MONOGRAPH_GSTAR_BRIDGE_CONSTANT (Γ-ratio via reflection, Watson period integral, lemniscate arc length, modular-form value) — of these, Chowla-Selberg is genuinely load-bearing for the latter three, not the first.
 
 ### Master quadratic polynomial + roots (`master_quadratic`)
 
