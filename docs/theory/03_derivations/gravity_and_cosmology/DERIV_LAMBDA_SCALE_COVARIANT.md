@@ -75,6 +75,8 @@ But this is a mechanism, not a prediction of the number. Obtaining the value req
 
 **Net:** the *form* is fixed (Λ is a scale-ratio, `Λ~1/L²`), but FTD supplies neither the *source* (§3 — it predicts `Λ = 0`) nor the *value* (`L_H` imported; FTD-0059 boundary). The equation of state is **not** a free bonus (an earlier draft over-stated this): read as a static magnitude the result is only the coincidence "Λ today ≈ 1/horizon² today"; read as a *dynamical* law with `L_H` growing it is holographic dark energy, whose Hubble-horizon version is known to give **no** acceleration (`w ≈ 0`, the Hsu 2004 problem) and yields `w ≈ −1` only under a different (future-event-horizon) cutoff. So the dynamics / equation of state is itself `[OPEN]`, not a prediction.
 
+**Cross-reference (FTD-0344, `[CONJECTURE]`).** `FOUND_MODULUS_ARGUMENT_FRONTIER.md` §7.1 records that the *same* renunciation driving §1's dissolution here — no imported continuum, no zero-point, no chosen adjoint — is also exactly what forbids the argument-half of that document's modulus/argument frontier: `Λ = 0`'s dissolution and δ's unreachability (MC-T4.3) share one structural root, not two independent facts. This does **not** change any tag in this document; §3's source stays `[OPEN]` and §4's value stays `[BOUNDARY]`.
+
 ---
 
 ## 5 · Epistemic status and what would upgrade it
