@@ -17,6 +17,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 ## Scope map
 
+- **§0 Process — external review status** — is any of this reviewed by a human outside the project? (Read this one first.)
 - **§1 Engine code** — stubs, unfinished physics, known approximations in `engine/`.
 - **§2 Theory — derivations** (`docs/theory/03_derivations/`).
 - **§3 Theory — foundations** (`docs/theory/02_foundations/`).
@@ -26,6 +27,34 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 - **§7 Theory — roadmaps, reference, specs** (`01_reference/`).
 - **§8 Scripts** — unfinished verification / proof / exploration scripts (`scripts/`).
 - **§9 Full inventory** — every file with `[OPEN]` + count (auto-refreshable).
+
+---
+
+## §0 Process — external review status
+
+**[OPEN] — standing item, not resolvable by any documentation pass.**
+
+**External human review status (2026-07-01): zero items in this corpus have been reviewed by
+a human outside the project.** Every adversarial / referee / critic / red-team pass performed
+to date — including `AUDIT_REDTEAM_DISSECTION_2026-07-01.md` (the 21-agent red-team dissection
+that produced this remediation), `FALSIFICATION_LEDGER_CONSTRUCTION.md` (the 5-persona
+"Ivy League" monograph red-team), `REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md`, and every other
+document in this corpus using the words "referee," "red-team," "adversarial," or "survives
+scrutiny" — is **AI-generated self-critique**: parallel or sequential instances of the same
+family of models critiquing output produced by that same family of models, in the same
+session or a closely related one. This is a real and useful internal-consistency check. It is
+**not** external validation, and no document in this corpus should be read as if it were.
+
+This is deliberately tracked here as a **standing open item**, not stated once and then
+repeated inertly as boilerplate across documents (the pattern this entry replaces — see
+`FOUND_TYPE_PRIORITY_PRINCIPLE.md` §9, `FOUND_SQUARE_ROOT_AS_ACT.md` §5,
+`FOUND_TICK_AND_FOLD_AS_TEMPORAL_GENERATORS.md` §9, and others, each of which independently
+said "needs external non-AI critique" and then moved on without any mechanism to track it).
+**Closing this item requires an actual external human reviewer — a mathematician or physicist
+outside the project reading the algebraic spine and the modulus/argument frontier and trying
+to break them — a real-world scheduling task no further internal documentation pass can
+substitute for.** Until that happens, every self-audit in this corpus, however many rounds
+deep, remains one thing critiquing itself.
 
 ---
 
