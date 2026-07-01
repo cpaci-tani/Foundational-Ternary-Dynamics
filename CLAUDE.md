@@ -107,7 +107,7 @@ A discrete computational framework for simulating physical systems from explicit
 - **Moore Layer Theorem**: gauge groups U(1)×SU(2)×SU(3), 3 generations of 4 fermions, matter-antimatter symmetry, 17 dark states — all from Moore neighborhood polyhedral decomposition (octahedron + cuboctahedron + stella octangula)
 - BCC multiplicative structure: Watson identity W₃ = G*²/(2π) and SU(3) gauge group both arise from the BCC eigenvalue's triple cosine product (docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
 - Confinement from area-law Wilson loops at x₋ (σ = 0.209)
-- Bell violation S = 2√2 [SELECTION] resolved as emergent from QM lattice emergence (Tsirelson's bound)
+- Bell correlations: S = 2√2 (Tsirelson) is **imported standard QM conditional on the [SELECTION] singlet** (the J→ψ complexification is not forced by the lattice axioms) — "FTD does not violate Bell; FTD produces the singlet, QM handles the rest" (`DERIV_SINGLET_FROM_VOID_EVENT.md`); the substrate itself is local/classical, S ≤ 2 natively (a native S > 2 is an FC-1 **falsifier**, not a prediction)
 - Full nonlinear Einstein equations via Deser iterative bootstrap — **[Step-0 correction, FTD-0189]** the bootstrap *completes* a posited massless spin-2 field, it does not derive one; its linearized-EFE input is conditional on Conjecture 10.1 (h_μν posited, not substrate-constructed; spin-2 spatial part is Gap 10.1). Whether the substrate carries an emergent spin-2 mode is [OPEN] — Frontier 4
 - D = 3 uniquely selected (no longer axiomatic)
 - Cyclotomic structure: Hamiltonian parameters are Phi_4, Phi_1·Phi_2, Phi_6 evaluated at sqrt(pi)
@@ -117,7 +117,7 @@ A discrete computational framework for simulating physical systems from explicit
 
 **Honest accounting:** ~23 derived/theorem-grade claims, ~129 parametric insertions (FTD values in standard QFT formulas), ~10 imposed/selected, ~50+ external physics adopted. 50 physics tests pass across three tiers (see clarification above — reproduction-of-fit, not independent prediction). Test suite: 255/255 Python tests pass, 54/54 master verification pass, 211/211 CTest pass. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md).
 
-**Engine-theory bridge:** 20-benchmark suite connects engine output to theory. Coulomb 1/r^2 converges (B+), hydrogen 1/n^2 < 0.001% (A+; **classical Kepler check, NOT a quantum eigenvalue derivation** — generic to any 1/r force; see `AUDIT_ATOMIC_DYNAMICS_STATUS.md`), color forces correct (A+), Higgs threshold exact (A+), Bell S=2.000 (A+), Born lattice bias 10x (A-). EFT reconstruction: alpha = G_C^2 (derived, not input). Added Wilson loops (12/17, flux tube detected), gluon dynamics (7/11, linear E(r)), budget equation (0.2% at r=6). LATENCY FIX unlocked GR: time dilation 0.004% match, BH gravitational wells L_peak=0.62. Three theorem papers: continuum limit -> QED, singlet from void event, N_c from topology. WASM rebuilt and deployed. 211/211 CTest passing. Scientific status: C+ -> B+.
+**Engine-theory bridge:** 20-benchmark suite connects engine output to theory. Coulomb 1/r^2 converges (B+), hydrogen 1/n^2 < 0.001% (A+; **classical Kepler check, NOT a quantum eigenvalue derivation** — generic to any 1/r force; see `AUDIT_ATOMIC_DYNAMICS_STATUS.md`), color forces correct (A+), Higgs threshold exact (A+), Bell S=2.000 (**N/A as a QM grade, re-graded 2026-07-01** — this is the *classical* local-hidden-variable bound, measured by a standalone LHV toy that never touches the lattice engine; it confirms the substrate is local/classical, the opposite of a QM confirmation), Born lattice bias 10x (A-). EFT reconstruction: alpha = G_C^2 (an algebraic identity by construction — a consistency check, not a derivation of alpha; see `constants.h` HONEST FRAMING note). Added Wilson loops (12/17, flux tube detected), gluon dynamics (7/11, linear E(r)), budget equation (0.2% at r=6). LATENCY FIX unlocked GR: time dilation 0.004% match, BH gravitational wells L_peak=0.62. Three theorem papers: continuum limit -> QED, singlet from void event, N_c from topology. WASM rebuilt and deployed. 211/211 CTest passing. Scientific status: C+ -> B+.
 
 ---
 
@@ -288,12 +288,12 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 
 ## EFT Reconstruction
 
-Alpha is now a DERIVED quantity in the engine:
-- `ALPHA_EFT = G_C * G_C` defined in `constants.h` with compile-time `static_assert`
+Alpha is restructured (not derived) in the engine — `ALPHA_EFT = G_C²` is an algebraic identity by construction (G_C ≡ √α), a consistency check per `constants.h`'s own HONEST FRAMING note:
+- `ALPHA_EFT = G_C * G_C` defined in `constants.h` with compile-time `static_assert` pinning it to the hardcoded `ALPHA` (α is the INPUT; B2's "alpha recovery" measures solver self-consistency, not α)
 - G_C (wave equation coupling) is the fundamental lattice parameter
 - All force computations use `ALPHA_EFT` (= G_C²), not hardcoded `ALPHA`
 - New toggle `emergent_forces` computes force from flux gradient without Poisson solver
-- 20-benchmark suite validates: Coulomb convergence (B+), hydrogen spectrum (A+), color forces (A+), Higgs threshold (A+), Bell S=2 (A+), Born lattice bias (A-); 211/211 CTest passing
+- 20-benchmark scorecard (re-graded 2026-07-01, see `analyze_convergence.py`): Coulomb convergence (B+), hydrogen spectrum (A+ — classical Kepler check, not a quantum eigenvalue derivation), color forces (A+), Higgs threshold (A+), Bell S=2.000 (N/A — classical LHV bound from a standalone toy, confirms locality, not a QM result), Born lattice bias (A-); 211/211 CTest passing
 
 ---
 
