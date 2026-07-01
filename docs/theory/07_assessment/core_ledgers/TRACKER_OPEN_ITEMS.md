@@ -505,6 +505,14 @@ bird's-eye assessment in
 
 **Last audit refresh:** 2026-06-10 (FTD-0263 resolved — Mechanism Beta v2 model confirmed, explaining the shift in manifestation threshold to A ≈ 8.5 under center kinetic/flux drains + Gauss projection; 1/4 scaling closed negative; multi-scale L-scan closed measured. FTD-0262 IDENT-NULL; FTD-0261 law MEASURED; FTD-0260 resolved).
 
+### 7.8 Round-table discussion residue — **3 `[OPEN]`** (2026-06-30, no canonical doc)
+
+Three unresolved threads from a discussion-only QM/GR-incompatibility round table (`FOUND_MODULUS_ARGUMENT_FRONTIER.md` §7.1 / FTD-0344 records the one narrower observation from that same table that *was* banked; these three were not, and are recorded here so they are not silently lost). None has a canonical backing document; none is a claim — each is a named gap.
+
+- **[OPEN] The black-hole-information-paradox gap.** No position in the round table addressed it. The paradox is a *single* lossy map QM forbids (information must be recoverable); the round table's "two different imported arguments" picture (one for QM's measurement, one for GR's missing time/spin-2) was never tested against this case and may not accommodate it. Unattempted.
+- **[OPEN] Same-or-different chosen adjoint for QM's "imported time" and GR's "missing time"?** Possibly **background-dependent**: generically argued to be *distinct* chosen adjoints (a state-relative modular flow vs. a diffeomorphism-covariant section), but in AdS the Ryu–Takayanagi/JLMS result (modular Hamiltonian = area) makes them the *same* object as a *theorem* — stronger than the Connes–Rovelli thermal-time hypothesis the round table otherwise leaned on. Undecided; not engaged past this framing.
+- **[OPEN] Asymptotic safety and causal sets threaten the frontier's premise, not just its conclusion.** A continuum UV fixed point (asymptotic safety) or a native primitive causal order (causal sets) would shrink `FOUND_MODULUS_ARGUMENT_FRONTIER.md`'s meta-conjecture (§3) from a *substrate-class* theorem to an *FTD-specific* claim — i.e. attack the premise "no S-class substrate can self-supply the argument-half," not merely the conclusion drawn from it. Neither program was engaged by any round-table position.
+
 ---
 
 ## §8 Scripts
