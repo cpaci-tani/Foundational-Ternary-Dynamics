@@ -83,6 +83,12 @@ And the **modulus half FTD provably owns**: the algebraic spine (`G* = Γ(1/4)/�
 - **The category-theoretic formalization** of "an `S`-substrate cannot self-supply the section/non-tracial pairing of its own kernel," for a defined substrate sub-class.
 - **The genesis-cokernel test** (frozen pre-registration `PREREG_GENESIS_COKERNEL_GRADING_v1`, tag `preregister-genesis-cokernel-grading-v1`) as the empirical probe of whether the lossy step carries δ — the one structurally-distinct carrier still unexamined.
 
+### 7.1 · Wins and walls share one root `[CONJECTURE]`
+
+An adversarial round table on the QM/GR incompatibility (assessing whether this frontier explains it) returned mostly `[relabeling]` of known quantum-gravity problems with no forward-distinguishable content — **that reading is explicitly not adopted here.** One narrower observation from the same round table survives its own skeptic and *is* recorded: the **same** substrate renunciation — importing no continuum, no zero-point energy, no chosen adjoint — does three things at once. It (a) dissolves the UV divergence (the compact Brillouin zone makes every mode sum finite, `DERIV_VACUUM_ENERGY_CUTOFF.md`); it (b) dissolves the cosmological-constant catastrophe (`Λ = 0` by construction — the classical void is zero-energy under FC-1, `DERIV_LAMBDA_SCALE_COVARIANT.md` §1); and it (c) is *exactly* what this document's §3 conjecture says forbids the argument-half. Wins (a)+(b) and the wall (c) are not three separate facts — they are one renunciation, read three ways. Mainstream quantum-gravity programs typically treat UV-finiteness as a prize to *engineer*; this reframes it as the very thing that *costs* a substrate its argument-half: **"no UV divergence" was never the real obstruction.**
+
+**What this is not.** This is **not** a claim that FTD diagnoses or resolves the QM/GR incompatibility — the round table's own mainstream-physics skeptic judged that broader reading mostly a relabeling of the problem-of-time / measurement-problem / non-renormalizability literature, with zero forward-distinguishable prediction, and that verdict is accepted, not contested. This is a narrower, self-contained claim about **FTD's own renunciation** — that its wins and its walls share one structural root — independent of whether the QM/GR framing has any further merit. `[CONJECTURE]`; promotes nothing; `Λ`'s value stays `[BOUNDARY]` (FTD-0059) and its source stays `[OPEN]` (FTD-0331).
+
 ---
 
 ## 8 · Status line
