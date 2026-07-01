@@ -3,11 +3,19 @@
 **Status:** [RED-TEAM SYNTHESIS] — four specialist agents deployed in parallel 2026-05-19
 **Manuscripts graded:** post round-3 polish (commit `fbc605b`)
 
+**(AI-simulated, corrected 2026-07-01 per `AUDIT_REDTEAM_DISSECTION_2026-07-01.md` §4 —
+see `TRACKER_OPEN_ITEMS.md` §0):** the institutional labels below ("Princeton/IAS-grade,"
+"Annals/Inventiones/Acta-grade," "Pittsburgh/LSE/Princeton") are role-play framing for AI
+persona prompts, not credentials of an actual reviewer. No mathematician, journal editor, or
+philosopher from any of these institutions has reviewed this document. The title's "Ivy
+League" is the same kind of framing — read it as flavor text for the prompts, not as a claim
+about who did the review.
+
 Four agents in parallel:
-1. **CM theorist** (Princeton/IAS-grade number theorist) — mathematical accuracy
-2. **Mathematical prose editor** (Annals/Inventiones/Acta-grade) — prose quality
+1. **CM theorist** (persona prompt: "Princeton/IAS-grade number theorist") — mathematical accuracy
+2. **Mathematical prose editor** (persona prompt: "Annals/Inventiones/Acta-grade") — prose quality
 3. **Consistency auditor** — internal consistency across the two papers
-4. **Philosophy of physics specialist** (Pittsburgh/LSE/Princeton) — Paper B philosophical defensibility
+4. **Philosophy of physics specialist** (persona prompt: "Pittsburgh/LSE/Princeton") — Paper B philosophical defensibility
 
 ## Critical finding (CM theorist)
 
