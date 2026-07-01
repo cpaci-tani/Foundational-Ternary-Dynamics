@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven; maximality is [OPEN] and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield. The spine has **nine numbered results** — **seven theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two honestly tiered below theorem grade** (Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, [THEOREM at L=2] only). This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
+**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven; maximality is [OPEN] and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield. The spine has **nine numbered results** — **seven theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two honestly tiered below theorem grade** (Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, [THEOREM at L=2] only). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* dual-match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the 7+2-with-split formulation here is the single canonical count, and every count statement below now matches it. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
 **Purpose:** state the load-bearing algebraic content of FTD in
 **[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -15,7 +15,10 @@ the Standard Model.
 
 **This document IS:** a canonical statement of FTD's rigorous
 mathematical core — nine numbered results, of which **seven are
-theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two are honestly
+theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9 — Theorem 3 at its
+arithmetic core only; its physics dual-match landing is separately
+`[NUMERICAL FACT]`, see the count convention in the Subsidiary note
+above) and **two are honestly
 tiered below theorem grade**, so marked in their own sections
 (Theorem 4 — a value-level identity whose structural necessity is
 conjectural; Theorem 7 — `[THEOREM at L=2]` only). The tiering matches
@@ -202,8 +205,10 @@ equal 16; the structural reason for this coincidence is conjectured
 but not proved"). The Proof below establishes only the arithmetic
 fact, not the forcing; Paper A §13.5 reports three negative tests
 (N1–N3) finding no CM-internal arrow that produces the polynomial
-*form*. Theorem 4 is therefore one of the three honestly-tiered
-subsidiary results, not one of the six theorems.
+*form*. Theorem 4 is therefore one of the two honestly-tiered
+subsidiary results (with Theorem 7), not one of the seven
+theorem-grade results (count convention: see the Subsidiary note
+above §0).
 
 **Proof.** Three independent arithmetic routes establish 16 =
 |Aut(E)|²:
@@ -305,7 +310,10 @@ kernel; the naive scan then shows placement-dependent S_E (≈3–28% spread), b
 this is plausibly a setup/masking artifact, not a structural failure — so
 L ≥ 4 is **ambiguous**, neither confirmed nor cleanly disconfirmed. Honest
 reading: ultralocality is PROVEN at L = 2, holds numerically at L = 3, and is
-OPEN at L ≥ 4. Spine count is unchanged at 6 theorem-grade + 3 honestly-tiered.
+OPEN at L ≥ 4. Spine count is unchanged at seven theorem-grade + two
+honestly-tiered — Theorem 7 sits in the tiered bucket precisely because
+of this L ≥ 4 openness (count convention: see the Subsidiary note
+above §0).
 
 **Statement (L = 2, [THEOREM]).** The classical FTD partition function
 on a 2³ lattice has Euclidean action S_E that depends on the state
@@ -734,9 +742,12 @@ not a derivation of α from FTD axioms.
 
 In order from most to least defensible:
 
-1. "FTD has a rigorous algebraic core: six theorem-grade results
-   (Theorems 1, 2, 5, 6, 8, 9) plus three honestly-tiered subsidiary
-   results (Theorems 3, 4, 7 — see §0), centered on the constant
+1. "FTD has a rigorous algebraic core: seven theorem-grade results
+   (Theorems 1, 2, 3, 5, 6, 8, 9 — Theorem 3 at its arithmetic core
+   only, |μ_K| = |disc(K)| unique to ℚ(i); its physics dual-match
+   landing is separately [NUMERICAL FACT]) plus two honestly-tiered
+   subsidiary results (Theorems 4, 7 — see the count convention in
+   the Subsidiary note above §0), centered on the constant
    G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
    Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; see §1)." — §§1-9.
 
@@ -805,7 +816,7 @@ What this document explicitly does NOT allow you to claim:
 
 ## 14 · Single-line summary
 
-**FTD's algebraic spine is six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered sections; see §0), centered on G* =
+**FTD's algebraic spine is seven theorem-grade results plus two honestly-tiered subsidiary results (nine numbered sections; Theorem 3 counting at its arithmetic core only — see the count convention above §0), centered on G* =
 Γ(1/4)/Γ(3/4) ≈ 2.9587: the G* identity (Chowla-Selberg), the master
 quadratic P(x) = x² − 16G*²x + 16G*³ and its two roots, CM uniqueness
 within class-number-1 fields, the coefficient 16 = |Aut(E)|² for E:
