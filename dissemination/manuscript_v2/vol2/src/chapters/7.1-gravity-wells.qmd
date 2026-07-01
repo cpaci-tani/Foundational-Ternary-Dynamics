@@ -148,7 +148,7 @@ The stress-energy tensor T_μν corresponds to the flux density and momentum dis
 At higher flux densities (strong gravity), nonlinear effects appear:
 - Metric perturbations interact with each other
 - Geodesic deviation becomes significant
-- Full Einstein equations emerge
+- A Deser-iterative bootstrap *completes* the linearized theory into the full nonlinear Einstein equations — **conditional on a posited massless spin-2 field** (`h_μν`), not one built from the lattice (FTD-0189). A pre-registered engine measurement found the substrate's flux-quadrupole channel carries the spin-1 signal through unchanged rather than an independent emergent spin-2 mode (FTD-0193, closed negative at L∈{32,64}) — whether the substrate carries any native spin-2 mode remains genuinely open. *(Corrected 2026-07-01: this bullet previously stated "Full Einstein equations emerge" without this conditionality.)*
 
 This is why FTD naturally incorporates:
 - Gravitational waves (flux ripples)

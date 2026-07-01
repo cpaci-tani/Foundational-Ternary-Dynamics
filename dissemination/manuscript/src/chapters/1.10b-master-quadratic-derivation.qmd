@@ -13,7 +13,7 @@ This chapter constructs the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$
 
 The identification of the roots with physical quantities is a **[STRONGLY MOTIVATED CONJECTURE]**, not a theorem:
 
-- **C1 ($x_+ = 1/\alpha$)**: [STRONGLY MOTIVATED CONJECTURE] - the larger root $x_+ = 137.0361...$ *matches* the inverse fine structure constant to 1.26 ppm. The CM selection of $j = 1728$ and the structural-uniqueness scans (Bayes weight $\sim 4{\times}10^5$:1) make the identification strongly motivated, but no derivation chain forces $x_+ = 1/\alpha$ from the axioms.
+- **C1 ($x_+ = 1/\alpha$)**: [STRONGLY MOTIVATED CONJECTURE] - the larger root $x_+ = 137.0361...$ *matches* the inverse fine structure constant to 1.26 ppm. The CM selection of $j = 1728$ and the structural-uniqueness scans ($\sim 4{\times}10^5$:1 against null — a [NUMERICAL FACT] from the scan enumeration, not a rigorous Bayes-factor computation; asymmetric-tolerance-conditioned, inverting to $\sim 32$ dual-matchers under a symmetric 1% gate; corrected 2026-07-01) make the identification strongly motivated, but no derivation chain forces $x_+ = 1/\alpha$ from the axioms.
 - **C2 ($x_- \to N_c = 3$)**: [STRONGLY MOTIVATED CONJECTURE] - the smaller root $x_- = 3.024...$ is near the integer 3 (0.80%); $N_c = 3$ has independent structural derivations (topology, Moore Layer Theorem), so the $x_- \approx N_c$ relation is a motivated match, not a derivation.
 :::
 

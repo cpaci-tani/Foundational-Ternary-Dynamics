@@ -2,9 +2,14 @@
 
 *"The hierarchy of being is written in the powers of alpha."*
 
+::: {.callout-important}
+## Epistemic status (added 2026-07-01 — this chapter previously carried zero epistemic tags anywhere, confirmed by a red-team audit as indistinguishable from the numerology the project's own discipline bans)
+Each rung below carries its actual canonical LEDGER status, not a uniform "derivation chain." None of the five rungs is `[THEOREM]`/`[DERIVED]`; most are `[PARAMETRIC]` or `[IMPOSED]`; the electron-mass rung is the only one with a partially-derived exponent, and even that exponent's status was itself corrected 2026-07-01 (see the Electron Mass row). Read the per-row tags, not the chapter's rhetorical framing.
+:::
+
 ::: {.callout-note}
 ## Key Insight
-The disparate mass and energy scales of the Standard Model, from the cosmological constant to the Higgs VEV, are not independent parameters. They form a contiguous **Alpha Power Ladder** where each rung corresponds to a specific power of the fine structure constant $\alpha$.
+The disparate mass and energy scales of the Standard Model, from the cosmological constant to the Higgs VEV, are not independent parameters. They form a contiguous **Alpha Power Ladder** where each rung corresponds to a specific power of the fine structure constant $\alpha$ — **a pattern, not a proof**: see per-row tags below.
 :::
 
 ## The Hierarchical Scale Formula
@@ -21,13 +26,13 @@ where:
 
 ## The Contiguous Chain
 
-| Quantity | Formula | Power ($n$) | Accuracy |
-| :--- | :--- | :--- | :--- |
-| **GUT Scale** | $m_P \cdot \alpha^2$ | 2 | $\sim 2 \times 10^{16}$ GeV |
-| **Higgs VEV** | $m_P \sqrt{2\pi} \alpha^8$ | 8 | 0.05% |
-| **Electron Mass** | $m_P \sqrt{2\pi} (16/3) \alpha^{11}$ | 11 | 0.27% |
-| **Vacuum Energy** | $m_e^4 G^{*2} \alpha^{16}$ | 16* | 1.0% |
-| **Gravity** | $\alpha_G \propto \alpha^{20}$ | 20 | 0.06% |
+| Quantity | Formula | Power ($n$) | Accuracy | Epistemic status |
+| :--- | :--- | :--- | :--- | :--- |
+| **GUT Scale** | $m_P \cdot \alpha^2$ | 2 | $\sim 2 \times 10^{16}$ GeV | [SPECULATION] — no canonical FTD derivation doc found for this exponent; not a value FTD predicts independently |
+| **Higgs VEV** | $m_P \sqrt{2\pi} \alpha^8$ | 8 | 0.05% | [PARAMETRIC] — the VEV $v$ itself is canonically [IMPOSED] (imported SM reference input, `CATALOG_PARAMETRIC_INSERTIONS.md` §12); this formula is a post-hoc fit to that imported value, not a derivation of it |
+| **Electron Mass** | $m_P \sqrt{2\pi} (16/3) \alpha^{11}$ | 11 | 0.27% | [STRONGLY MOTIVATED CONJECTURE] — exponent $n=11$ is [SELECTION] (corrected 2026-07-01; not the uniquely-forced [DERIVED] this table implies — see `DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS.md`), prefactor $16/3$ is the tightest simple rational at that exponent |
+| **Vacuum Energy** | $m_e^4 G^{*2} \alpha^{16}$ | 16* | 1.0% | [PARAMETRIC] numerology, superseded in rationale by `DERIV_LAMBDA_SCALE_COVARIANT.md` (FTD-0331) — FTD's actual current position is that the cosmological constant's *source* is [OPEN] and FTD predicts $\Lambda=0$; this formula is a coincidence-match, not FTD's governing account |
+| **Gravity** | $\alpha_G \propto \alpha^{20}$ | 20 | 0.06% | [STRONGLY MOTIVATED CONJECTURE] — the canonical formula is $\alpha_G(e,e)=(m_e/m_P)^2$ (`DERIV_NEWTON_FROM_SUBSTRATE.md`); **note (flagged 2026-07-01, not resolved here):** squaring the electron-mass formula above gives $\alpha^{22}$, not $\alpha^{20}$ as this row states — this exponent discrepancy needs owner reconciliation, not asserted away by this remediation pass |
 
 \*Note: Vacuum energy power is relative to the manifestation threshold $m_e^4$.
 
@@ -50,20 +55,19 @@ The transition from the electron mass ($n=11$) to the gravitational coupling ($n
 $$\Delta n = 20 - 11 = 9 = N_c^2$$
 The square of the color charge number mediates the hierarchy between electromagnetism and gravity.
 
-## Proton Mass Unification
+## Proton Mass Unification [SPECULATION] (flagged 2026-07-01)
 
 The proton mass arises from the **Circular Mode** of the lattice action. While the electron follows the power ladder, the proton is anchored by the transcendental geometry of the circle:
 
 $$m_p = m_e \cdot 6\pi^5 \approx 1836.12 \text{ m}_e$$ {#eq-proton-mass-unified}
 
-**Derivation Link**:
-The factor $6\pi^5$ emerges from the 5-dimensional embedding of the 3D lattice (2 transverse + 3 spatial) acting on the 6 permutations of the color triads.
+**Derivation Link** (untagged "emerges" language corrected to `[SPECULATION]`): The factor $6\pi^5$ is presented here without a canonical LEDGER row backing it, and is a **different formula** from the corpus's canonical proton/electron ratio $m_p/m_e = N_{\text{eff}}/\alpha + N_{\text{base}}\cdot N_{\text{eff}} + N_c = 1836.47$ (174 ppm, `DERIV_BARYON_AND_QUARK_GEOMETRY.md`, itself [STRONGLY MOTIVATED CONJECTURE], not [DERIVED]). Two competing untagged/lightly-tagged formulas for the same ratio in the same corpus is itself a red flag; this remediation flags rather than silently resolves it — owner reconciliation needed.
 
 ## Significance of the Ladder
 
-The Alpha Power Ladder transforms the Standard Model hierarchy problem (why is $m_e \ll v \ll m_P$?) into a **combinatorial problem**. The scales are not "fine-tuned"; they are simply the possible rungs allowed by the integer interactions of the lattice operators.
+The Alpha Power Ladder reframes the Standard Model hierarchy problem (why is $m_e \ll v \ll m_P$?) as a **combinatorial pattern** across framework integers — a suggestive organizing observation, not a proof that the scales are forced. Per the per-row tags above, most rungs are `[PARAMETRIC]`/`[SPECULATION]`, not derivations; the pattern itself has not been shown to be the unique one framework integers could produce (no look-elsewhere/rigidity scan of this specific chain is on record, unlike the mass-formula rigidity audits elsewhere in the corpus).
 
 ::: {.callout-important}
-## Conclusion
-Unification is achieved not by a single equation, but by a single **derivation chain**. Once $\alpha$ is fixed by the Master Quadratic, the entire spectrum of physical mass scales follows as a discrete sequence of geometric couplings.
+## Conclusion (corrected 2026-07-01)
+This is **not** "a single derivation chain." $\alpha$ itself is `x_+ = 1/\alpha`, a `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013), never `[DERIVED]` or fixed by the Master Quadratic alone (MC-T4.3 remains a `[FOUNDATIONAL OBSTRUCTION]`). Each rung above then carries its own independent, and generally weaker, epistemic status. The "discrete sequence of geometric couplings" is an observed pattern across several separately-motivated formulas, not a single forced chain — the prior framing overstated this by an order of magnitude.
 :::
