@@ -8,6 +8,22 @@
   The "sorry-debt" is tracked explicitly: each axiom here represents
   a theorem that COULD be proven in Lean once Mathlib is extended.
 
+  HONEST DISCLOSURE (added 2026-07-01, provisional-review finding,
+  AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md):
+  Every axiom in this file has body `True` — the actual mathematical
+  statement lives only in the trailing comment. `axiom foo : True`
+  asserts nothing (True is already inhabited; it discharges to
+  `trivial`) and cannot be consumed to prove any nontrivial downstream
+  theorem — and indeed nothing downstream consumes these axioms; the
+  names are merely re-declared as `: True` in LFunction.lean /
+  SelfDuality.lean. This file is therefore CITATION BOOKKEEPING wearing
+  Lean syntax, not machine-checked formalization. Do NOT cite it as
+  Lean verification of the listed results. The genuinely rigorous,
+  axiom-clean machine-checked artifact in this repository is the
+  separate FtdNoGo/Standalone.lean tree ([propext, Quot.sound] only).
+  The mathematical claims themselves stand or fall on their prose
+  proofs and cited literature, unaffected by this note.
+
   Reference: CONJ_ALPHA_FROM_CM.md, PROOF_ALPHA_FROM_SELF_DUALITY.md
 -/
 

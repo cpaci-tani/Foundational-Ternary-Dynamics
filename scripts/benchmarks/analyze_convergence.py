@@ -29,7 +29,7 @@ def generate_report():
     # Full scorecard
     scorecard = [
         ("B1",  "Coulomb exponent convergence",     "B+", "-2.195 (9.7% from -2.0, R^2=0.9998)"),
-        ("B2",  "Alpha from Coulomb amplitude",      "A-", "0.0075 at r=5 (2.4% from theory)"),
+        ("B2",  "Alpha from Coulomb amplitude",      "A-", "0.0075 at r=5 (2.4% from theory) [CAVEAT 2026-07-01: alpha is the INPUT here, not an output -- ALPHA_EFT = G_C^2 = alpha by construction (static_assert-pinned in constants.h), so the Coulomb amplitude IS alpha in every force mode; this row measures Poisson-solver/discretization self-consistency, not a fine-structure measurement]"),
         ("B3",  "Wave propagation speed",            "C",  "0.233 (60% dispersion error)"),
         ("B4",  "Gauss constraint div(J)=rho",       "A",  "RMS = 0.0085"),
         ("B5",  "Energy conservation (pure flux)",   "B-", "5.6% drift over 50 ticks"),
@@ -64,7 +64,7 @@ def generate_report():
     lines.append("")
 
     domains = [
-        ("Electromagnetism (Coulomb, Maxwell)",   "B+", "B1-B4: Force law converges, alpha recovered 2.4%, Gauss A"),
+        ("Electromagnetism (Coulomb, Maxwell)",   "B+", "B1-B4: Force law converges, alpha self-consistency 2.4% (input, not output -- see B2 caveat), Gauss A"),
         ("Quantum Mechanics (Born, Bell, wave)",  "A-", "B17: Born lattice bias 10x confirmed [CORRECTED 2026-07-01: B16's Bell S=2.000 REMOVED from QM-domain evidence -- it is the classical bound, confirming locality, not quantumness; see B16 scorecard row]"),
         ("Strong Force / QCD (color, confine)",   "B",  "B9: Color signs CORRECT, B10: confinement needs larger lattice"),
         ("Weak Force (transmutation, parity)",    "B+", "B14: Parity violation 1025/550, chirality flip works"),
