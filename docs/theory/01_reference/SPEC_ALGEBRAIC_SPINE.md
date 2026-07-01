@@ -78,7 +78,7 @@ $$m_e = \frac{2}{2 + \left(4 - \frac{1}{2G\pi^{1/2}}\right)^{1/2}} \approx 0.511
 
 An earlier erroneous formula `Γ(1/4)²/(2 · (2\pi)^{1/2}·Γ(1/2))` (which evaluates to 1.479, not 2.622) and an erroneous asserted value 2.622 (which is ϖ, not G*) are superseded by the closed forms above, per LEDGER FTD-0117.
 
-**Proof reference.** Follows directly from Chowla-Selberg evaluation of the L-function L(s, χ_{-4}) at s=1, applied to the lemniscatic elliptic curve y² = x³ − x. See `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` for the four independent derivations (Γ-function ratio, Watson period integral, lemniscate arc length, modular-form value).
+**Proof reference (corrected 2026-07-01 — the prior wording misattributed this step; the value was always correct, only the named mechanism was wrong).** The base identity `G* = Γ(1/4)/Γ(3/4)` follows directly from the **elementary Γ-function reflection formula** `Γ(z)Γ(1−z) = π/sin(πz)` at `z=1/4` (giving `Γ(1/4)Γ(3/4) = π√2`, already used at line 70 above) — **not** from a Chowla-Selberg L-function evaluation. `L(1,χ_{−4}) = π/4` (Leibniz) is a pure-π quantity carrying zero Γ(1/4) content, so it cannot by itself yield G*. Chowla-Selberg's genuine, load-bearing role is one theorem deeper: it explains *why* this specific ratio is the natural period-ratio of the CM curve `y² = x³ − x` — see Theorem 5 (`W₃ = G*²/(2π)`, the Watson bridge), where Chowla-Selberg is correctly load-bearing. See `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` for the four independent derivations (Γ-function ratio via elementary reflection, Watson period integral, lemniscate arc length, modular-form value) — of these, the first is elementary; the latter three genuinely invoke Chowla-Selberg-adjacent period theory.
 
 **LEDGER:** FTD-0001.
 
