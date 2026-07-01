@@ -31,7 +31,9 @@ with coefficients derived from lattice Feynman diagrams:
 | $c_3$ | $4/141 = 0.02837\ldots$ | Three-loop, gauge factor $11/6$ | [SELECTION] (not yet independently computed) |
 | $c_4$--$c_7$ | Framework integer expressions | Higher-loop gauge contributions | [CONJECTURE] |
 
-## The one-loop correction [THEOREM]
+## The one-loop correction [SELECTION] (scheme-conditional — corrected 2026-07-01)
+
+*This section was previously headed `[THEOREM]`, inconsistent with its own canonical source `DERIV_ONE_LOOP_LATTICE_ALPHA.md`, tagged `[SELECTION] / scheme-conditional calculation` there and explicit that "the 9.6 ppb result... is not a scheme-independent physical prediction." The lattice integral below is a genuine, reproducible FFT computation; the scheme choice (SC scalar-EFT tadpole, lattice spacing a=2/D) and the resulting CODATA match are `[SELECTION]`, not `[THEOREM]`.*
 
 The one-loop tadpole integral on the periodic lattice:
 
@@ -40,11 +42,11 @@ I_1 = \frac{1}{L^3} \sum_{\mathbf{k} \neq 0} \frac{1}{\hat{k}^2 + m^2_{\text{lat
 \tag{11.3}
 $$
 
-computed on $128^3$ and $150^3$ lattices via FFT. The loop expansion parameter $g^2 I_1 = 4 \times 0.01527 = 0.061$ ($\sim 6\%$), well within perturbative control.
+computed on $128^3$ and $150^3$ lattices via FFT — reproducible within the stated scheme. The loop expansion parameter $g^2 I_1 = 4 \times 0.01527 = 0.061$ ($\sim 6\%$), well within perturbative control.
 
 The coefficient $c_1 = 9/D_{47} = 9/47$ where $D_{47} = N_c \cdot N_{\text{base}}^2 - 1 = 3 \times 16 - 1 = 47$. This is the effective constraint dimension on the Moore-weighted lattice after Gauss projection.
 
-**Result:** The one-loop corrected value matches CODATA 2022 to **9.6 ppb** (parts per billion), closing 99.2% of the original 1.26 ppm tree-level gap.
+**Result (scheme-conditional):** The one-loop corrected value matches CODATA 2022 to **9.6 ppb** (parts per billion) *within this fixed regularization scheme* — closing 99.2% of the original 1.26 ppm tree-level gap. A GPU audit found the BCC tadpole value differs from the SC tadpole used here, and a Ward-valid two-U(1) BCC gauge completion does not reproduce this closure — so the 9.6 ppb figure is a Structure-1, fixed-scheme outcome, not a scheme-independent prediction.
 
 ## The two-loop status [SELECTION]
 
