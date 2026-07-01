@@ -109,8 +109,14 @@ $$
 
 where the product on the LHS is over the ideal-class group of $K$.
 
-This is the **Damerell–Anderson–Schipnitzer formula** (1971; cf.
-also Gross–Koblitz, p-adic version).
+This generalizes Chowla–Selberg via Damerell's (1970, 1971) per-ideal-class
+L-function evaluations, with the p-adic analogue given by Gross–Koblitz
+(1979); see also Anderson (1982) for the abelian-variety generalization.
+(Corrected 2026-07-01: an earlier draft attributed this to a
+"Damerell–Anderson–Schipnitzer formula (1971)" — "Schipnitzer" does not
+exist in the CM-periods literature and appears nowhere in this document's
+own §7 reference list below; the fabricated name is struck and replaced
+with the grounded attribution.)
 
 ### What's different at h ≥ 2
 
