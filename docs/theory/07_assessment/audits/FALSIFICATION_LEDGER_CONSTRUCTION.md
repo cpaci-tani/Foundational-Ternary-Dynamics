@@ -2,17 +2,17 @@
 
 **Tag:** `[AUDIT]` — red-team record (not a theory claim)
 **Target:** [`MONOGRAPH_FTD_CONSTRUCTION.md`](../../01_reference/MONOGRAPH_FTD_CONSTRUCTION.md) (`[SYNTHESIS]`, 11,333 words, Part 0 → I → II → III → Coda)
-**Protocol:** A sympathetic-but-incorruptible red-team of five role-specialized agents, each running **steelman → attack → verdict** on its domain, returning findings for the controller to integrate. Plus an F9 collusion-auditor re-attack of every "SURVIVES" claim (§6). The monograph is `[SYNTHESIS]`; the red-team's job was to verify it **promotes nothing**, **states every claim at its canonical tag**, and **survives external scrutiny by mathematicians and philosophers of physics**.
+**Protocol:** A sympathetic-but-incorruptible red-team of five role-specialized **AI agents** (Number-Theorist, Epistemic-Tag Auditor, Boundary-Prover, Numeric Sentinel, Philosopher-Referee — all AI personas run by the same system, not human reviewers), each running **steelman → attack → verdict** on its domain, returning findings for the controller to integrate. Plus an F9 collusion-auditor re-attack of every "SURVIVES" claim (§6). The monograph is `[SYNTHESIS]`; the red-team's job was to verify it **promotes nothing** and **states every claim at its canonical tag**. **(2026-07-01 correction, per `AUDIT_REDTEAM_DISSECTION_2026-07-01.md` §4:** the original framing here — "survives external scrutiny by mathematicians and philosophers of physics" — was misleading: no mathematician or philosopher of physics has reviewed this document. What this section verifies is internal consistency under an AI-simulated adversarial persona, which is a real check but not external validation. See `TRACKER_OPEN_ITEMS.md`'s external-review-status entry.)
 
 ---
 
 ## 0 · Headline verdict
 
-**The monograph is fundamentally sound.** Across five independent adversarial passes:
+**The monograph is fundamentally sound.** Across five AI-persona adversarial passes (not independent human reviews — see the Protocol note above):
 
 - **No BROKEN theorem.** Every theorem-grade claim in Part I recomputed to 40–60 digits (Number-Theorist) and holds; every Part II boundary component is machine-verified group theory (Boundary-Prover).
 - **No tag promotion.** All 464 lines sit at — or below — the tier their canonical source assigns (Epistemic-Tag Auditor). The three hardest places to keep honest (`x₊=1/α`, the α no-go's grade, the `[PARAMETRIC]` physics layer) are each correctly tiered.
-- **The boundary is strengthened, not broken.** The Boundary-Prover's attempt to construct a **5th** FTD-native route to *force* the operator assembly **failed across all 5 candidate principles** — every one landing on the same `Q(G*)`-vs-`√(G*(4G*−1))` wall the route-invariance theorem predicts. The full C₄-orbit det_ζ product collapses to the rational number `2`, confirming the odd content `G*` lives only in the *ratio*, never in any symmetric construction.
+- **The boundary attempt failed (ATTEMPTED, not PROVEN — see `AUDIT_BOUNDARY_MAP.md` §0.5).** The Boundary-Prover's attempt to construct a **5th** FTD-native route to *force* the operator assembly **failed across all 5 candidate principles** — every one landing on the same `Q(G*)`-vs-`√(G*(4G*−1))` wall the route-invariance theorem predicts. This raises the prior against a 6th route succeeding; it does not "strengthen" the boundary the way the underlying route-invariance proof (FTD-0242/0243) does. The full C₄-orbit det_ζ product collapses to the rational number `2`, confirming the odd content `G*` lives only in the *ratio*, never in any symmetric construction.
 - **The F10 honesty note (§III.2) is exemplary** — it concedes the rigidity gap rather than performing concession.
 
 **11 refinements were applied** (§§1–5 below). All were "prose running slightly ahead of the tags" or one propagated numeric mislabel — **none was a false claim, a broken proof, or a promotion**. After fixes: monograph links 0 broken, all numerics match the canonical triple, Paper A recompiles clean.
@@ -106,7 +106,7 @@ Read the whole monograph adversarially. **No tag promotion; the α claim held at
 | PR-12 | §III.5 cites flattering gauge ratios, omits competitor-density | CRACKS (cherry-pick by omission) | **F7 applied** |
 | PR-11/13/14 | α match honesty / framing hygiene / open questions | HONEST | none |
 
-**Domain verdict:** **survives a skeptical philosopher-of-physics referee — would ask for tightening, not retraction.** The single most damaging honest objection — *"the boundary is dressed-up Tr/Det independence + under-specification, rhetorically inflated to 'harder than a derivation'"* — landed on the **prose, not the tags**, and was answered by rhetorical de-escalation (**F3, F4, F5 applied**), not by new mathematics.
+**Domain verdict:** **survives a skeptical philosopher-of-physics referee *persona* (AI-simulated, not a human referee) — would ask for tightening, not retraction.** The single most damaging honest objection — *"the boundary is dressed-up Tr/Det independence + under-specification, rhetorically inflated to 'harder than a derivation'"* — landed on the **prose, not the tags**, and was answered by rhetorical de-escalation (**F3, F4, F5 applied**), not by new mathematics.
 
 ---
 
