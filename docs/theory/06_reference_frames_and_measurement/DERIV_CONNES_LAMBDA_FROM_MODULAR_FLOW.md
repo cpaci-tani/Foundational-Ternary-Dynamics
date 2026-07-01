@@ -28,7 +28,7 @@ In FTD, the sLoop self-referential structure is governed by the interacting alge
 $$H(k) = k H_{\text{self}} + (1-k) H_{\text{ZPF}}$$
 where $k \in [0, 1]$ is the coupling parameter from the master quadratic.
 
-According to Tomita-Takesaki theory, the faithful thermal KMS state $\omega$ at inverse temperature $\beta = \pi$ defines the modular operator:
+According to Tomita-Takesaki theory, the faithful thermal KMS state $\omega$ at inverse temperature $\beta = \pi$ (a standard convention imported from the classical modular-theory literature, its applicability to FTD's substrate carrying the same status as the document's overall `[CONJECTURE — modular spectral flow]` tag above — added 2026-07-01, not previously caveated at point of use) defines the modular operator:
 $$\Delta = e^{-\pi H_{\text{mod}}}$$
 The **modular Hamiltonian** $H_{\text{mod}}$ represents the relative entropy operator of the interacting systems. Under the bipartite decomposition of the Hilbert space into the localized sLoop ($A$) and its complement ($A^c$), the modular Hamiltonian is scaled by the interaction discriminant:
 $$H_{\text{mod}}(k) = \sqrt{1 - 4k(1-k)} H_{\text{ZPF}}$$

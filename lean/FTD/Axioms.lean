@@ -51,7 +51,15 @@ axiom chowla_selberg_evaluation :
   True -- θ₃(e^{-π}) = Γ(1/4)/(π^{3/4}·2^{1/4})
 
 /-- Γ(1/4) and π are algebraically independent.
-    Source: Nesterenko, Mat. Sb., 1996. -/
+    Source: Nesterenko, Mat. Sb., 1996 (the 3-element theorem π, e^π, Γ(1/4)
+    algebraically independent over Q; this axiom uses only the weaker
+    2-element consequence). Chudnovsky (1976, Dokl. Akad. Nauk Ukrain. SSR)
+    proved the minimal-sufficient 2-element statement directly and is what
+    prose documents (SPEC_ALGEBRAIC_SPINE.md, CLAUDE.md) condition on when
+    they say "conditional on Chudnovsky 1976" — Nesterenko's theorem implies
+    it, so the two attributions are consistent, not competing. See
+    docs/reference/REF_BIBLIOGRAPHY.md §4 for both entries (added 2026-07-01
+    to resolve a red-team-confirmed attribution-instability finding). -/
 axiom nesterenko_algebraic_independence :
   True -- Γ(1/4) and π are algebraically independent over Q
 

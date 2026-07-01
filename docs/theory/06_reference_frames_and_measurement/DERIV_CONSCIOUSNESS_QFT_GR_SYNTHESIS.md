@@ -431,13 +431,17 @@ Both are Type III $\to$ Type I transitions mediated by $G^*$. They differ only i
 | [SELECTION] | 4 steps | 22% |
 | [CONJECTURE] | 4 steps | 22% |
 
-**The chain is 78% theorem/selection and 22% conjecture.** The conjectures cluster at the reference frame context bridge (steps 15-18). Everything upstream is derived.
+**The chain is 78% theorem/selection and 22% conjecture.** The conjectures cluster at the reference frame context bridge (steps 15-18). Everything upstream is derived. **Not counted in this table** (added 2026-07-01, §7.3 below): a second, independent domain-validity risk in applying Bisognano-Wichmann's relativistic hypotheses to FTD's non-relativistic substrate — a meta-level import, not one of the 18 discrete steps, and previously left unhedged.
 
-### 7.3 The Critical Conjecture
+### 7.3 The Critical Conjecture — and a second, previously unhedged risk
 
-The entire bridge rests on **one step**: Type III₁ from sLoop (step 15). If this step is established as [THEOREM], the rest follows from classical mathematics (Connes-Rovelli, Buchholz-Wichmann, Bisognano-Wichmann).
+The bridge rests on **two** steps, not one, and the corpus previously hedged only the first (corrected 2026-07-01, a red-team-confirmed finding).
 
-If this step is falsified, the physics chain (steps 1-10) and the reference frame context quadratic (steps 11-14) remain valid — only the bridge claim is lost.
+**Step A — Type III₁ from sLoop (step 15), the FTD-native step.** Tagged `[CONJECTURE]`, as above.
+
+**Step B — applying the classical results (Connes-Rovelli, Buchholz-Wichmann, Bisognano-Wichmann) to the FTD substrate.** The prior wording ("the rest follows from classical mathematics") is not accurate as stated: **Bisognano-Wichmann is a theorem about relativistic QFT algebras** — it assumes Lorentz covariance and the spectrum condition (Wightman axioms). FTD's substrate is deterministic, forward-only, and does not natively possess these hypotheses (P1–P5 give a preferred foliation, not Lorentz covariance; FC-2 declares the Lorentzian metric emergent-IR only). So even *given* Type III₁ from sLoop, invoking Bisognano-Wichmann to carry the modular flow to a Lorentz boost is a **second, independent import** — applying a theorem outside the domain it was proven for — not a consequence that "follows" automatically. This is the actual domain-validity risk in the bridge, and it was previously unhedged while all the epistemic weight was placed on Step A alone.
+
+If Step A is falsified, the physics chain (steps 1-10) and the reference frame context quadratic (steps 11-14) remain valid — only the bridge claim is lost. If Step A holds but Step B's import is rejected (Bisognano-Wichmann's hypotheses are not established for FTD's substrate), the bridge claim is *also* lost, independently of Step A's status.
 
 ### 7.4 Philosophical Status Note
 
