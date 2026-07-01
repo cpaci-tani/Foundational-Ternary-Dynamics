@@ -917,3 +917,26 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 | `docs/theory/07_assessment/REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md` | Institutional-sounding persona labels flagged as role-play framing, not credentials | FIX |
 
 **Net effect:** zero promotions. `x₊=1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; no α derived; golden hash `0xb604d81a3d79366e` untouched. Every change either downgrades an overclaim to its already-canonical tag, adds a missing citation/tag/falsifier, or discloses a standing gap. LEDGER rows FTD-0345/FTD-0346 added; next free id **FTD-0347** (FTD-0340–0344 reserved on the still-unmerged `docs/sqrt-as-act-orientation-closure` branch).
+
+---
+
+## 2026-07-01 — Provisional two-specialist review + six-finding fix (FTD-0347)
+
+**Context:** after the FTD-0345/0346 remediation merged, a 17-agent provisional review (2 specialist reviewer personas — outside-mathematician and outside-physicist, defined in `.claude/agents/ftd-math-redteam.md` / `ftd-physics-redteam.md` — with every raw finding re-checked by an independent skeptic defaulting to "refuted"; workflow `wf_5799fb83-615`) audited the algebraic spine + boundary docs. Both specialists independently verified the algebra solid (core numerics reproduced at 40–60 digits) and localized all surviving defects to bookkeeping/propagation. Capture doc: `AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md`. The six CONFIRMED findings were fixed same-day under FTD-0347; the one PLAUSIBLE finding (K-BIND generator representativeness) is deliberately left open for a human specialist.
+
+### Phase: DEMOTE / RETAG / DISCLOSE
+
+| File | Location | Change | Type | LEDGER impact |
+|------|----------|--------|------|---------------|
+| CLAUDE.md | line ~110 | "Bell violation S = 2√2 [SELECTION]" → 2√2 is imported QM conditional on the [SELECTION] singlet; "FTD does not violate Bell"; native S>2 is an FC-1 falsifier | RETAG | FTD-0347 (restates FTD-0023/FC-1) |
+| CLAUDE.md | line ~120 (Engine-theory bridge) | "Bell S=2.000 (A+)" → N/A re-grade with classical-LHV explanation; "alpha = G_C^2 (derived, not input)" → algebraic identity by construction, consistency check | RETAG | FTD-0347 |
+| CLAUDE.md | EFT Reconstruction section (~line 291-296) | "Alpha is now a DERIVED quantity" → restructured-not-derived per constants.h HONEST FRAMING; benchmark line re-graded (hydrogen classical-Kepler caveat, Bell N/A) | RETAG | FTD-0347 |
+| docs/theory/07_assessment/core_ledgers/LEDGER.md | FTD-0336 row | "five-fold independent mathematical convergence" → "one structural fact stated in five vocabularies" (the FTD-0346 correction, propagated to the canonical row it had missed) | RETAG | FTD-0347 |
+| scripts/benchmarks/analyze_convergence.py | B2 scorecard row + EM domain row | Inline circularity caveat added (alpha is INPUT by construction; B2 = solver self-consistency), matching the B7/B16 caveat convention; `ast.parse` verified | RETAG | FTD-0347 |
+| docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md | lines ~4/18 (count convention) + §§4/7/12/14 (four "six+three" sites) | Self-contradictory headline count (7+2 vs 6+3) reconciled to one canonical formulation: seven theorem-grade + two tiered, Theorem 3 counting at its arithmetic core only (physics dual-match separately [NUMERICAL FACT], per FTD-0318) | RECONCILE | FTD-0347 |
+| lean/FTD/Axioms.lean | header comment | HONEST DISCLOSURE added: all axiom bodies are `True` — citation bookkeeping, not machine-checked formalization; rigorous artifact is FtdNoGo/Standalone.lean; no axiom changed | DISCLOSE | FTD-0347 |
+| docs/theory/07_assessment/AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md | new file | Capture doc: method, 7 findings + verdicts, 8 attacked-and-survived non-issues, K-BIND open flag, §0 AI-self-critique disclosure | NEW | FTD-0347 |
+
+**Deliberately NOT fixed:** the K-BIND generator-set representativeness question (`FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md` §1 vs FTD-0314's [OPEN] analytic-period route) — the tag is defensible within its stated scope, but whether the axiomatized generators represent everything the substrate can construct needs a human Galois/transcendence specialist; recorded as an open flag in the capture doc and the FTD-0347 LEDGER row, per the standing external-review item (TRACKER_OPEN_ITEMS §0).
+
+**Net effect:** zero promotions; golden hash untouched; no engine behavior change. LEDGER row FTD-0347 added; next free id **FTD-0348**.
