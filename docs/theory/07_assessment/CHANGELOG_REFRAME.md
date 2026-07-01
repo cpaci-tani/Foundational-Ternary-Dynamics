@@ -127,7 +127,7 @@ Engine audit (`ENGINE_AUDIT_REFRAME.md`) flagged 3 HIGH risk findings. Same-day 
 
 Classifier agent (`FLAGGED_PASSAGES_PAPERS.md`) processed 34 TeX/MD source files in `docs/papers/`:
 
-- **10/34 papers clean** (zero proscribed passages): mostly algebraic-geometry papers (0A, 0B, 0E, 3A) and short-form papers (PAPER_PATH, README, RATIO_AND_THE_ARROW, LETTER_HERMITIAN_COPE, GEOMETRIC_BIOPHYSICS).
+- **10/34 papers clean** (zero proscribed passages): mostly algebraic-geometry papers (0A, 0B, 0E, 3A) and short-form papers (PAPER_PATH, README, RATIO_AND_THE_ARROW, LETTER_HERMITIAN_COPE, GEOMETRIC_BIOPHYSICS). **Correction (2026-07-01, red-team-confirmed):** "clean" here was scoped to completed-infinity language only (this classifier's specific hunt); it is not a general clean bill of health. GEOMETRIC_BIOPHYSICS specifically is *not* clean by the substitution-identity/numerology standard applied at line ~513 below (the "speculative+Riemann audit" correctly flagged it as a hazard) — it carried zero epistemic tags and asserted untagged numerology as demonstrated fact throughout, now remediated with explicit `[SPECULATION]` tags in the paper itself. The two audits were checking different things; do not read this line as endorsing the paper's epistemic soundness.
 - **~37 load-bearing proscribed passages** total, concentrated in 7 files.
 - **Heavy reliance papers (>5 passages):**
   - `speculative/FTD_Yang_Mills_Mass_Gap.tex` — entire premise = infinite-volume + path-integral over all configurations + Wightman on ℝ⁴. RE-DERIVE.
@@ -871,3 +871,49 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 **FIX 4 — FIX1 over-reach corrected (14.5 Postulate 1/3).** FIX1 inadvertently reverted 14.5 Postulate-1/3 tags to `[T] THEOREM` (and the callout to "Ternary States: Theorem, Not Axiom") when it restored pristine-vol1 content to recover the gravity/Weinberg demotions; corrected back to `[A] AXIOM`/`[SELECTION]`/J-primary (and "Ternary States: J-primary, $s$ as manifestation projection") in a follow-up, from the `b26fa6ca` canonical forms. Gravity/Weinberg/α_s/CC demotions kept intact. Files: `14.5-assumption-ledger.qmd` (v2-src + vol1).
 
 **Net effect (review pass):** Zero net promotions. CRITICAL vol1 regression undone (FTD-0131/0018 demotions restored to canonical state); 14.9 Λ~α⁴ "prediction" → open boundary; FIX1's transient P1/P3 over-reach reverted (FIX 4). Final state: demotion-only relative to the pre-arc baseline.
+
+---
+
+## 2026-07-01 — Red-team remediation (FTD-0345 mechanical sweep + FTD-0346 boundary-framing restructuring)
+
+**Context:** user-requested 21-agent red-team dissection (10 specialists + 10 independent verifiers + chair synthesis, 447 corpus searches) captured in `AUDIT_REDTEAM_DISSECTION_2026-07-01.md`. Verdict: not fraud, not crank-numerology, tagging discipline genuinely good, algebraic spine correct — but two systemic problems: (1) corrections to flagship docs don't propagate everywhere they're cited; (2) the boundary/frontier framing had institutionalized unfalsifiability as a virtue. This entry covers both remediation passes. Branch `docs/redteam-remediation-2026-07-01` (off `main`; not pushed).
+
+### FTD-0345 — mechanical propagation sweep
+
+| File | Change | Type |
+|------|--------|------|
+| `docs/reference/REF_BIBLIOGRAPHY.md` | Added Nesterenko 1996 (§4, alongside Chudnovsky 1976, non-competing) + new §7 (Tomita-Takesaki, Bisognano-Wichmann, Connes-Rovelli, Cohen-Kaplan-Nelson, Hsu 2004) | ADD |
+| `lean/FTD/Axioms.lean` | Doc-comment clarifying Chudnovsky/Nesterenko relationship above `nesterenko_algebraic_independence` | ADD (comment-only) |
+| `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`, `SPEC_DIMENSIONAL_MAP.md` | Theorem 1 proof attribution corrected: elementary Euler reflection, not Chowla-Selberg | RETAG |
+| `docs/theory/09_mathematical/number_theory/EXPLR_CHOWLA_SELBERG_HIGHER_H.md` | Fabricated "Damerell-Anderson-Schipnitzer (1971)" replaced with doc's own correct §7 sources | FIX |
+| `docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md`, `DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md` | Epistemic hedge moved from FTD-native step to actual domain-validity risk (relativistic theorem on non-relativistic substrate) | RETAG |
+| `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0001/0121/0129 rows) | 4×10⁵:1 Bayes-figure caveat propagated (already correct elsewhere) | RETAG |
+| `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex`, `dissemination/manuscript/src/chapters/1.10b-master-quadratic-derivation.qmd` | Same Bayes caveat | RETAG |
+| `dissemination/manuscript/src/chapters/7.1-gravity-wells.qmd`, `dissemination/manuscript_v2/src/chapters/7.1-gravity-wells.qmd`, `dissemination/manuscript_v2/vol2/src/chapters/7.1-gravity-wells.qmd` | "Full Einstein equations emerge" caveated with FTD-0189/FTD-0193 | RETAG |
+| `engine/web/js/ui/components/faq/data.js` | Deser-bootstrap FAQ entry `[SELECTION]`→`[CONJECTURE]` | RETAG |
+| `docs/papers/ontological_chain/ch3_mathematics.tex` | Phase-J / Q(G*) rows corrected to match `SPEC_ALGEBRAIC_SPINE.md` | RETAG |
+| `dissemination/manuscript_v2/src/chapters/11-precision-formula.qmd`, `vol1/src/chapters/11-precision-formula.qmd` | §11.3 blanket `[THEOREM]` → `[SELECTION] (scheme-conditional)` matching `DERIV_ONE_LOOP_LATTICE_ALPHA.md` | RETAG |
+| `docs/theory/03_derivations/foundational_mechanics/DERIV_ELECTRON_MASS_ANCHOR.md`, LEDGER FTD-0015, `CATALOG_PARAMETRIC_INSERTIONS.md` | m_e exponent n=11 `[DERIVED]`→`[SELECTION]` per `DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS.md` | RETAG |
+| `dissemination/manuscript/src/chapters/2.15-the-alpha-ladder.qmd` | Per-rung epistemic tags added; 2 numerical inconsistencies (α²⁰ vs α²², proton-mass formula mismatch) flagged for owner reconciliation, not silently resolved | RETAG + FLAG |
+| `docs/papers/speculative/DERIV_GEOMETRIC_BIOPHYSICS.tex` | `[SPECULATION]` tagged throughout; abstract/conclusion de-escalated | RETAG |
+| `docs/theory/07_assessment/CHANGELOG_REFRAME.md` (this file, line ~130) | Self-contradiction (listed both "clean" and "hazard") resolved with explanatory note | FIX |
+| `CLAUDE.md` | a_e bullet `[PARAMETRIC]` tagged; "50 physics tests pass" clarified as internal consistency | RETAG |
+| `docs/adr/0012-golden-tick-regression-gate.md`, `CONTRACTS.md` §5 | Golden-hash "physics preserved" scoped to the frozen L=17/~14-subsystems-off config; stale "§12" cross-ref fixed to actual §5 | FIX |
+| `scripts/benchmarks/analyze_convergence.py` | Bell-CHSH (B16) A+→N/A (classical LHV bound, not a QM confirmation); hydrogen (B7) classical-Kepler caveat added | RETAG |
+| `engine/tests/benchmark_engine_theory.cpp` | Comment above `benchmark_bell()` stating it is a standalone LHV toy | ADD (comment-only) |
+
+### FTD-0346 — boundary-framing restructuring + external-review disclosure
+
+| File | Change | Type |
+|------|--------|------|
+| `docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md` | New §0.5 PROVEN/ATTEMPTED classification of every section; struck "attempt... strengthening the boundary" language; classification note added to §5 catalog header and scope paragraph | RESTRUCTURE |
+| `docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md` | §4 table gained PROVEN/ATTEMPTED column + concrete falsifier per row; §5 "five-fold convergence" corrected to "one fact, five vocabularies"; §6 "most defensible asset because invariant" replaced with the honest narrower claim | RESTRUCTURE |
+| `docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md` | 9 instances of "climax"/"the deliverable"/"harder and more useful thing" rhetoric rewritten to state results plainly without ranking Part II against Part I | RESTRUCTURE |
+| `docs/theory/10_eft_program/derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` | Cross-reference added distinguishing PROVEN free-theory clauses from ATTEMPTED canonical-toggle-set extension (FTD-0193) | ADD |
+| `docs/theory/02_foundations/FOUND_TYPE_PRIORITY_PRINCIPLE.md` §9 | Note added: FTD-0336/0339/0340/0342 are one organizing intuition in four vocabularies, not four independent results | ADD |
+| `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` | New §0: standing `[OPEN]` external-human-review-status item, naming this session's own audit as an instance of the pattern, not an exception | ADD |
+| `docs/theory/07_assessment/audits/FALSIFICATION_LEDGER_CONSTRUCTION.md` | "Survives external scrutiny by mathematicians and philosophers of physics" corrected to disclose AI-persona methodology; "boundary strengthened" → ATTEMPTED framing | FIX |
+| `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0249 row) | Matching "strengthening" correction | FIX |
+| `docs/theory/07_assessment/REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md` | Institutional-sounding persona labels flagged as role-play framing, not credentials | FIX |
+
+**Net effect:** zero promotions. `x₊=1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; no α derived; golden hash `0xb604d81a3d79366e` untouched. Every change either downgrades an overclaim to its already-canonical tag, adds a missing citation/tag/falsifier, or discloses a standing gap. LEDGER rows FTD-0345/FTD-0346 added; next free id **FTD-0347** (FTD-0340–0344 reserved on the still-unmerged `docs/sqrt-as-act-orientation-closure` branch).
