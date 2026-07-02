@@ -378,7 +378,7 @@ To maintain complete epistemic integrity, we catalog the exact status of every e
 | **§5.2** | Schrödinger Wave Equation | **`[THEOREM]`** | Slow-velocity limit of Dirac |
 | **§5.3** | Born Probability Rule ($P \propto |\psi|^2$) | **`[THEOREM]`** | Proved in [DERIV_BORN_PROPORTIONALITY_RESOLUTION.md](../quantum_mechanics/DERIV_BORN_PROPORTIONALITY_RESOLUTION.md) via path integral |
 | **§5.4** | Compton Volume Duality | **`[THEOREM]`** | Proved in [DERIV_COMPTON_INVERSION_RESOLUTION.md](DERIV_COMPTON_INVERSION_RESOLUTION.md) via Fourier duality |
-| **§5.5** | Non-Commutative Emergence (GAP-S2) | **`[THEOREM]`** | Proved in [DERIV_NONCOMMUTATIVE_EMERGENCE.md](../quantum_mechanics/DERIV_NONCOMMUTATIVE_EMERGENCE.md) via boundary localization |
+| **§5.5** | Non-Commutative Emergence (GAP-S2) | **`[RETRACTED 2026-07-01]`** | The cited proof ([DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md](../archive/retracted/DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md)) is invalid; GAP-S2 is CLOSED DECLINED under FC-1 (the substrate algebra is commutative, FTD-0243 [THEOREM]; non-commutativity is a declined import, FC-1/FTD-0255) |
 | **§6.1** | Regularity Ladder ($z(t) \in C^m$) | **`[THEOREM]`** | Uniform dyadic convergence theorem |
 | **§6.3** | Cluster-Mass Ratio: $k = 1/4$ | **`[THEOREM]`** | Linearized $O_h$ multiplicity limit |
 
@@ -388,8 +388,8 @@ Four primary frontiers of the continuous emergence program are resolved:
 
 1.  **The Compton Dimension Inversion Paradox (RESOLVED):**
     Proved the **Compton Volume Duality Theorem** showing that the physical Compton wavelength $\lambda_C = 1/m$ is the Fourier spectral dual of the discrete spatial compact-packing volume $V_K \propto R^3$. As the cluster volume grows, the field equation's mass-pole shifts to higher energy, causing the emergent wave footprint to contract ($\lambda_C \propto 1/R^3$).
-2.  **Non-Commutative Algebra Emergence (GAP-S2, RESOLVED):**
-    Proved the **Boundary Partition Commutator Theorem** showing that while the global lattice algebra is classical and commutative, projecting these fields onto a localized observer boundary subdomain $S$ via $\Pi_b$ creates an open system where time-translated boundary operators do not commute ($[P(t_1), P(t_2)] \neq 0$), yielding Type III₁ von Neumann factors in the $t \to \infty$ limit.
+2.  **Non-Commutative Algebra Emergence (GAP-S2, RETRACTED 2026-07-01 — was "RESOLVED"):**
+    The claimed **Boundary Partition Commutator Theorem** is retracted: its proof is a non-sequitur (its step 7 concludes $[P(t_1), P(t_2)] \neq 0$ from $[U, \Pi_b] \neq 0$, which does not follow) and its Type III₁ claim is unsupported and contradicts FTD-0225 `[CLOSED NEGATIVE]`. GAP-S2's canonical status is **CLOSED DECLINED under FC-1**: the substrate observable algebra is commutative (FTD-0243 `[THEOREM]`) and quantum non-commutativity is a declined 6th-postulate-class import, not an emergent consequence. See `docs/theory/03_derivations/archive/retracted/DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md`.
 3.  **Strong-Field Metric Components ($g_{rr}$, RESOLVED):**
     Proved the **Discrete Radial Metric Projection Theorem** showing that since radial coordinate intervals contract under wave speed contraction ($dr = \sqrt{1 - r_s/r} a$), the physical interval $dl = a$ requires $dl^2 = g_{rr} dr^2$, which algebraically forces $g_{rr} = (1 - r_s/r)^{-1}$ on a uniform discrete coordinate grid.
 4.  **The Proportionality of the Born Rule (FTD-0187, RESOLVED):**
