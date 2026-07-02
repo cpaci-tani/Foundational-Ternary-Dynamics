@@ -1,7 +1,34 @@
 # The Boundary Partition Commutator Theorem: Emergent Non-Commutativity in FTD
 
-**Status:** [THEOREM] — Formal resolution of Non-Commutative Algebra Emergence (GAP-S2).  
-**Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
+**Status:** **[RETRACTED 2026-07-01 — invalid proof; FTD-0348]** (was: [THEOREM])
+
+> **RETRACTION NOTICE (2026-07-01, per the Fable specialist review,
+> `AUDIT_FABLE_SPECIALIST_REVIEW_2026-07-01.md`).** This document's central proof is
+> invalid, and its claim contradicts the corpus's canonical closed-negative results:
+>
+> 1. **The proof of Theorem 1 is a non-sequitur.** Steps 5–6 establish only that *if*
+>    `[U, Π_b] = 0` the commutator `[P(t₁), P(t₂)]` would vanish; step 7 concludes
+>    non-vanishing *from* `[U, Π_b] ≠ 0`. That is denying the antecedent: non-commuting
+>    `U, Π_b` is fully compatible with commuting compressed observables (e.g. any `P_v`
+>    supported inside `b` whose one-tick light-cone neighborhood stays in `b`).
+> 2. **The §4 Type III₁ claim has no supporting argument** — Type III₁ classification
+>    requires modular-operator spectral analysis, none of which is set up — and it
+>    contradicts FTD-0225 `[CLOSED NEGATIVE]` (commutative substrate → abelian → type-I →
+>    trivial modular flow).
+> 3. **Even a repaired proof would establish only the trivial non-commutativity of
+>    compressions of Koopman-evolved classical observables** — no CCR, no uncertainty
+>    relation, no Bell content; not what "the non-commutative operator algebra of QFT"
+>    means.
+> 4. **The canonical status of GAP-S2 is CLOSED DECLINED under FC-1**
+>    (`docs/theory/01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`;
+>    FC-1/FTD-0255 declines the measurement-map import M; the substrate's observable
+>    algebra is commutative per FTD-0243 `[THEOREM]`). This document claimed exactly the
+>    falsifier the boundary map's §2a PROVEN row names, and does not deliver it.
+>
+> Preserved for provenance per the Documentation Cleanup Discipline. Do not cite as a
+> live result.
+
+**Epistemic Standard (original claim, retracted):** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
 ---
 
