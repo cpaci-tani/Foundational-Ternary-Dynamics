@@ -1,7 +1,38 @@
 # The Path-Integral Born Proportionality Theorem: Deriving Born Scaling in FTD
 
-**Status:** [THEOREM] — Formal resolution of the Born Rule Proportionality gap (FTD-0187).  
-**Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
+**Status:** **[RETRACTED 2026-07-02 — invalid proof; FTD-0356]** (was: [THEOREM])
+
+> **RETRACTION NOTICE (2026-07-02, per the FTD-0356 cluster review executing the
+> FTD-0348 §3 item-6 flag, `AUDIT_FABLE_SPECIALIST_REVIEW_2026-07-01.md`).** This
+> document's central proof is invalid, and its claim contradicts the corpus's canonical
+> status rows:
+>
+> 1. **Step 9 is a non-sequitur.** The document's own exact step-6 result gives
+>    `ΔP ≡ P(s=1) − P(s=0) = A·(1 − |ψ|²/4σ²) − C₀` with `A = 2^{−3/2}e^{K_B²/2σ²}`
+>    and `C₀ ≠ A` — an **affine** function of `|ψ|²` with a non-zero constant term and a
+>    **negative** slope. Declaring `ΔP ∝ |ψ|²` silently drops the constant and ignores the
+>    sign. Numerically verified under FTD-0356 (σ = 1, K_B = 0.5, direct 3D integration
+>    matching the step-6 closed form to 6 digits): `ΔP = −1.458·|ψ|² − 9.447`. Born
+>    requires *positive* proportionality with *zero* offset; this derivation yields neither.
+> 2. **The sign is irreparable.** As written, `S_int = +s_v(|J_v|²−K_B²)/2σ²` makes high
+>    energy density *suppress* manifestation (anti-Born). Flipping the coupling sign to fix
+>    this gives the `s_v = 1` Gaussian weight a vanishing quadratic term (`(1−s_v)|J|²`),
+>    so the integral diverges — the mechanism has no valid-sign regime.
+> 3. **The exact (unexpanded) result is Gaussian in ψ** — `P(s=1) ∝ e^{−|ψ|²/4σ²}` —
+>    i.e. Rice-family threshold statistics, the very outcome FTD-0200 `[CLOSED NEGATIVE]`
+>    established is *not* Born scaling. The Gaussian noise ensemble `σ²` is itself an
+>    unstated import into a deterministic substrate (Postulate P5); FTD-0200's structural
+>    reading stands: linear + Gaussian ⇒ Rice, and "Born scaling would require non-Gaussian
+>    substrate structure."
+> 4. **The canonical status of FTD-0187 is unchanged**: `[SELECTION]` for the `|ψ|²` form,
+>    `[OPEN]` for the probability = energy-density step (T1c). This document's §4 claim to
+>    "completely resolve FTD-0187" never reached the LEDGER row; per the project's
+>    precedence rule (LEDGER > prose), the row governs.
+>
+> Preserved for provenance per the Documentation Cleanup Discipline. Do not cite as a
+> live result.
+
+**Epistemic Standard (original claim, retracted):** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
 ---
 
