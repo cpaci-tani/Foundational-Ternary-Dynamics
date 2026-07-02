@@ -2731,3 +2731,18 @@ add_test(NAME dump_koopman_trajectory COMMAND dump_koopman_trajectory)
 # slow, exploratory). Build target only. See SPEC_SCALE_CONTEXT_READOUT §5.5.
 add_executable(campaign_scale_context_confine tests/campaign_scale_context_confine.cpp)
 target_link_libraries(campaign_scale_context_confine PRIVATE ftd_core)
+# ============================================================================
+# merge_gate label — fast pre-push verification bundle (revision 0.3).
+# ============================================================================
+# `ctest -L merge_gate -j 32 -C Release` is the <2-minute local gate to run
+# before every push (see engine/docs/CI_GATE.md). Composition: the absolute
+# golden gates + phase-order/lifecycle/determinism guards. GPU parity is NOT
+# in this bundle (run `ctest -L gpu` on the WSL2 build for that); neither are
+# campaign/benchmark tests. Labels are additive metadata only — test set,
+# commands, and timeouts are unchanged.
+foreach(_t render_bridge_golden knot_tracking_golden tick_phase_order
+            engine_lifecycle determinism)
+    if(TEST ${_t})
+        set_property(TEST ${_t} APPEND PROPERTY LABELS "merge_gate")
+    endif()
+endforeach()
