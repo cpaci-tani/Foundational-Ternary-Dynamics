@@ -145,7 +145,7 @@ ALPHA_S = mpf(B_3) / (B_3 + 4*N_EFF)  # 7/59
 # derivation gives alpha_G(e,e) = (m_e/m_P)^2 instead (see DERIV_NEWTON_FROM_SUBSTRATE.md).
 G_N = mpf(1) / (B_3 + N_C)**2   # 0.01 (lattice-internal [PARAMETRIC]; NOT physical G_N — FTD-0131)
 
-# Gravitational hierarchy [THEOREM]
+# Gravitational hierarchy [STRUCTURALLY MOTIVATED PARAMETRIC] (corrected 2026-07-01, FTD-0348)
 ALPHA_G = 2*PI_FTD * (mpf(N_BASE**2)/N_C)**2 * (N_EFF + mpf(N_C)/B_3)**2 * ALPHA**20
 
 print(f"\n--- SECTION 3: Coupling Constants ---")
@@ -179,7 +179,12 @@ report("1/alpha (7-term)", ALPHA_INV_7TERM, CODATA_ALPHA_INV, "[THEOREM]")
 report("sin^2(theta_W)", SIN2_W, mpf('0.23122'), "[SM-PARAMETRIC]")
 report("alpha_s(M_Z)", ALPHA_S, mpf('0.1179'), "[SM-PARAMETRIC]")
 report("G_N (lattice)", G_N, mpf('0.01'), "[PARAMETRIC]")  # NOT physical G_N (FTD-0131 [CLOSED NEG])
-report("alpha_G", ALPHA_G, mpf('5.91e-39'), "[THEOREM]")
+# Tag corrected 2026-07-01 (FTD-0348): the alpha^20 integer dressing of the imported
+# dimensional relation is [STRUCTURALLY MOTIVATED PARAMETRIC], not [THEOREM] (any alpha_G
+# claim inherits FTD-0015's [SMC] floor per FTD-0131/0133); note the sub-0.1% precision is
+# spelling-dependent -- the implicit (N_eff+3/b_3)/alpha = 1840.35 proton spelling conflicts
+# with the canonical m_p/m_e = 1836.47, which instead gives -0.33%.
+report("alpha_G", ALPHA_G, mpf('5.91e-39'), "[SM PARAMETRIC]")
 
 # ============================================================================
 # SECTION 4: MASS SCALES
@@ -236,7 +241,10 @@ report("m_p (MeV, FTD)", M_P_FTD, mpf('938.272'), "[SMC]", "MeV")
 report("m_mu (MeV)", M_MUON, mpf('105.658'), "[SM PARAMETRIC]", "MeV")
 report("m_tau (MeV)", M_TAU, mpf('1776.86'), "[SM PARAMETRIC]", "MeV")
 report("v_Higgs (GeV)", V_HIGGS, mpf('246.22'), "[SELECTION]", "GeV")
-report("m_Higgs (GeV)", M_HIGGS, mpf('125.11'), "[SELECTION]", "GeV")
+# Comparator edition-tagged 2026-07-01 (FTD-0348): PDG 2024 m_H = 125.20 +- 0.11 GeV
+# per REF_EXTERNAL_CONSTANTS.md (the prior untagged 125.11 was PDG-2020-era). At this
+# precision the FTD value 124.75 is -0.36% = -4.1 sigma: excluded as an exact relation.
+report("m_Higgs (GeV)", M_HIGGS, mpf('125.20'), "[SELECTION]", "GeV")
 
 # ============================================================================
 # SECTION 5: NEUTRINO SECTOR
