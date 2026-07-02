@@ -2799,3 +2799,31 @@ foreach(_t render_bridge_golden render_bridge_golden_default knot_tracking_golde
         set_property(TEST ${_t} APPEND PROPERTY LABELS "merge_gate")
     endif()
 endforeach()
+
+# ============================================================================
+# ftd_sim CLI smoke tests (revision 1.5) — the CLI research data-product path
+# (CSV/VTK export bundles) previously had zero automated coverage. Three
+# representative routes at tiny L/ticks via cmake/FtdCliSmoke.cmake: exit 0
+# + expected non-empty output files. Not in merge_gate (see CI_GATE.md).
+# ============================================================================
+if(NOT EMSCRIPTEN)
+    add_test(NAME cli_smoke_D
+             COMMAND ${CMAKE_COMMAND}
+                     -DFTD_SIM=$<TARGET_FILE:ftd_sim> -DSCENARIO=D -DL=9 -DTICKS=5
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
+    add_test(NAME cli_smoke_H_csv
+             COMMAND ${CMAKE_COMMAND}
+                     -DFTD_SIM=$<TARGET_FILE:ftd_sim> -DSCENARIO=H -DL=9 -DTICKS=5
+                     -DOUTDIR=${CMAKE_BINARY_DIR}/cli_smoke_out_H
+                     -DEXPECT_GLOB=timeseries.csv
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
+    add_test(NAME cli_smoke_V_vtk
+             COMMAND ${CMAKE_COMMAND}
+                     "-DFTD_SIM=$<TARGET_FILE:ftd_sim>" -DSCENARIO=V -DL=9 -DTICKS=5
+                     -DOUTDIR=${CMAKE_BINARY_DIR}/cli_smoke_out_V
+                     "-DEXTRA_ARGS=2;1"
+                     -DEXPECT_GLOB=*.pvd
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
+    set_tests_properties(cli_smoke_D cli_smoke_H_csv cli_smoke_V_vtk
+                         PROPERTIES TIMEOUT 300 LABELS "unit;cli")
+endif()
