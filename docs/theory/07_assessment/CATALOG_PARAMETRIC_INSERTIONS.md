@@ -116,7 +116,7 @@ Status: [PARAMETRIC]. See `AUDIT_EPISTEMIC_AUDIT.md` §II.4.
 
 ## 7 · Mixing Angles — mixed [DERIVED] / [PARAMETRIC]
 
-### 7.1 PMNS (neutrino mixing) — [DERIVED]
+### 7.1 PMNS (neutrino mixing) — [PARAMETRIC] (header reconciled to its own rows 2026-07-01, FTD-0348; previously said [DERIVED] over four demoted [PARAMETRIC] rows)
 | Angle | FTD formula | Value | Tag | Source |
 |---|---|---|---|---|
 | sin²θ₁₂ | N_c / (N_c + b_3) = 3/10 | 0.300 (exp 0.307) | **[PARAMETRIC]** (FTD-0320 rigidity audit dropped the [STRUCTURALLY MOTIVATED] qualifier: **CHANCE_LEVEL**, null p=0.48 — hitting this target at its complexity is routine; downgraded → demoted) | 2.28% error; 4 rational competitors within same tolerance (4/13, 7/23, etc.). `proof_complete_sm.py:229`; `AUDIT_RIGIDITY_CATALOG_v1.md` |
@@ -214,7 +214,7 @@ The mass *ratios* (§7.1) are [DERIVED]; the *absolute scale* is set by the sees
 | Quantity | Value | Derivation | Tag | Source |
 |---|---|---|---|---|
 | v (Higgs VEV) | 246.09 GeV | **Imported** — reference input from SM | [IMPOSED] | `constants.py:375` |
-| M_H | 124.8 GeV | M_H = (N_eff/α²)·m_e | [SELECTION] (0.24% error; formula argued, not derived) | `proof_complete_sm.py:199` |
+| M_H | 124.75 GeV | M_H = (N_eff/α²)·m_e | [SELECTION] (−0.36% vs PDG 2024's 125.20 ± 0.11 = **−4.1σ**, i.e. experimentally excluded as an exact relation at current precision; the earlier "0.24%" reproduced only against superseded PDG-2020 — corrected 2026-07-01, FTD-0348; formula argued, not derived) | `proof_complete_sm.py` §Higgs |
 | M_W | 80.4 GeV | M_Z · cos θ_W | [DERIVED] given M_Z, θ_W | `proof_complete_sm.py:288` |
 | M_Z | 91.1876 GeV | **Imported** | [IMPOSED] | `proof_complete_sm.py:262` |
 | G_F | 1/(√2·v²) | [DERIVED] given v | [DERIVED]* | `proof_complete_sm.py:291` |
@@ -230,6 +230,15 @@ The mass *ratios* (§7.1) are [DERIVED]; the *absolute scale* is set by the sees
 | Λ_QCD (1-loop) | M_Z · exp(−2π/(b₀·α_s)) | M_Z, b₀ = 23/3, α_s = 7/59 | [PARAMETRIC] (imported RG) | `proof_complete_sm.py:268` |
 | Λ_QCD (2-loop) | 1-loop × exp(0.85) | Imported NLO correction | [PARAMETRIC] | `proof_complete_sm.py:271` |
 | σ (string tension) | −ln(I₁(β)/I₀(β)) at β = x_− (formula corrected 2026-07-01, FTD-0348 — this row had copied a corrupted spelling −ln(x_−/(x_−+1)) = 0.286, 37% off the cited 0.209) | x_− = 3.024 | [SELECTION] (was [DERIVED]; the functional form is imported strong-coupling lattice-gauge machinery, the coupling insertion is a selection per the constitution — and per FTD-0210 x_− has no physical correspondent) | `proof_complete_sm.py` §6 |
+
+---
+
+## 13b · Gravitational Coupling — [STRUCTURALLY MOTIVATED PARAMETRIC] (section added 2026-07-01, FTD-0348 — this catalog previously carried **no row at all** for FTD's most-quoted gravity number)
+
+| Quantity | Value | Formula | FTD inputs | Tag | Source |
+|---|---|---|---|---|---|
+| α_G(p,p) | 5.909×10⁻³⁹ (vs measured 5.906×10⁻³⁹) | 2π(16/3)²(N_eff + 3/b_3)²·α²⁰ | {N_base, N_c, N_eff, b_3, α} | **[STRUCTURALLY MOTIVATED PARAMETRIC]** — the dimensional relation G = α_G·ħc/m_p² is imported; only the α²⁰ integer dressing is FTD's. **Precision caveat:** the +0.05% headline is spelling-dependent — the formula's implicit proton spelling (N_eff+3/b_3)/α = 1840.35 m_e conflicts with FTD's canonical m_p/m_e = 1836.47 (+0.21% apart); the canonical-mass spelling gives −0.33%. Two mutually inconsistent spellings each cited where they score best is the look-elsewhere pattern this catalog's discipline bans. Any α_G claim inherits FTD-0015's [SMC] floor (FTD-0131/0133). | `proof_complete_sm.py` §3; `DERIV_EINSTEIN_FIELD_EQUATIONS.md` Step 4 (corrected same date) |
+| α_G(e,e) | 1.745×10⁻⁴⁵ (vs measured 1.752×10⁻⁴⁵, −0.38%) | (m_e/m_P)² via FTD-0015's m_e | {α (via m_e formula)} | **[DERIVED modulo clock-hypothesis axiom, inheriting FTD-0015 [SMC]]** — the substrate-derived gravity quantity (FTD-0131) | `DERIV_NEWTON_FROM_SUBSTRATE.md` |
 
 ---
 
