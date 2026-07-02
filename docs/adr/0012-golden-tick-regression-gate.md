@@ -60,6 +60,23 @@ configuration are byte-identical — not that "physics" in the unqualified,
 general sense is verified. Campaigns exercising a toggled-off subsystem
 need their own regression coverage; this gate does not provide it.
 
+**Amendment (2026-07-02, engine revision program 0.5): multi-profile gate.**
+The scoping caveat above is now partially closed. The hash-fold harness was
+extracted verbatim to `engine/tests/support/golden_hash.h` (extraction
+verified bit-exact against `0xb604d81a3d79366e`), and a SECOND pinned
+profile landed: `test_render_bridge_golden_default.cpp` — identical harness
+geometry but ZERO toggle writes, i.e. the `TermToggles{}` shipping defaults
+(dual_substrate, selective_damping, weak_transmutation, damping, gravity,
+lorentz_force ON), folded with the EXTENDED hash (original fields +
+per-voxel `flux_L/R`, `wave_vel_L/R`, `latency`). Pinned
+`GOLDEN_HASH_DEFAULT = 0x115a6350fcbe39a0` (3 consecutive runs + OMP=1
+identical). Consequences: (a) the default-ON extension paths are now
+bit-exact-gated; (b) changing any toggle DEFAULT now moves this hash, so
+default changes require a stated rebaseline commit; (c) the re-baseline
+policy applies per-profile — each pinned constant is independent. Further
+profiles (boundary modes, L=9, GPU) are registered under the same policy as
+they land (revision tickets 0.6/0.7).
+
 ## Alternatives considered
 
 - Hand-rolled per-quantity assertions — rejected: hashes catch
