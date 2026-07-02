@@ -1,5 +1,17 @@
 # AUDIT — α Extraction Pipeline (Phase F "3.6× α_ref" claim)
 
+> **STALENESS NOTICE (2026-07-01, FTD-0348 — Fable specialist review).** This audit's central
+> code fact is **no longer true at HEAD**: `engine/src/diagnostics_compute.cpp` now applies the
+> canonical `½·|·|²` convention to `field_energy`/`wave_energy` (the ½ was restored 2026-04-27,
+> per the comment at that site — the pre-fix accumulator this audit describes dropped it).
+> Consequently the "NO 1/2 prefactor" quotations below (§"three codepaths", items 2–4) and the
+> factor-2 bookkeeping built on them describe the **registration-era engine**, not the current
+> one. The Phase-G physics conclusion is unaffected (the α_r measurement is lattice-Green's-
+> function geometry either way; see `DERIV_EMERGENT_COULOMB_GEOMETRIC.md`, whose FTD-0286-v2
+> canonical pairing `α_r = r·G_L(r)` matches the post-fix convention, while its §1 headline
+> `α_r = 2·r·G_L(r)` matches the Phase-F-era CSVs this audit analyzed). Readers citing this
+> audit for the current code should re-verify against HEAD.
+
 **Status:** [AUDIT] — line-by-line review of every code path feeding the Phase F
 `α_largeL ≈ 3.6 × α_ref` continuum extrapolation.
 **Trigger:** the headline number "a bold claim" warranting a full math/logic
