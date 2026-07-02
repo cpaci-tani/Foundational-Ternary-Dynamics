@@ -956,6 +956,20 @@ Both specialist reviewers re-dispatched post-commit with narrow verify-the-fixes
 
 Left as provenance: `AUDIT_CLOCK_HYPOTHESIS_v2` (before/after table), `AUDIT_LEMNISCATE_ALPHA_RIGIDITY` (dated audit). Left for owner: `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex`'s older "seven theorems total" framing. Zero promotions throughout.
 
+### Second-residuals pass (same FTD-0347 arc, 2026-07-02) — surviving sLoop-Bell copies + compiled-artifact sync
+
+A follow-up verification pass found the FTD-0347 sLoop-Bell correction had missed sibling sites in the same documents, a whole "sLoop Mechanism Validated" section in chapter 15.1, and the git-tracked compiled manuscript artifacts. All fixed to the same canon (substrate S ≤ 2 [THEOREM]; 2√2 imported [SELECTION]; native S > 2 falsifies FC-1; the sLoop continuous-Bell target CLOSED DECLINED under FC-1, 2026-06-10). Zero promotions; no engine changes.
+
+| File(s) | Change | Type |
+|------|--------|------|
+| `14.5-assumption-ledger.qmd` (v2-src/vol1/v1, per PROPAGATION_RULE) | Two sibling rows the first pass missed: "sLoop Bell parameter / S ≈ 1.95→2.85 / [V] VERIFIED" → [R] RETIRED; "Verified (simulation) **17** / sLoop, Lorentz, SU(3)" → count flagged as pre-retirement, sLoop dropped from exemplars | DEMOTE |
+| `14.3-glossary.qmd` (v2-src/vol1/v1) | "Path Identity" entry: the 2025 Bell-without-entanglement result "directly supporting FTD's sLoop interpretation" → reading RETIRED; the result is standard QM, not FTD-specific support | DEMOTE |
+| `15.1-observational-confirmations.qmd` (v2-src/vol1/v1) | Bell-without-entanglement section: status [REMARKABLY CONSISTENT] → [RETIRED AS FTD SUPPORT]; "Why This Validates the sLoop Mechanism" block + ✓-prediction table → retirement paragraph; "sLoop Mechanism Validated" callout → "sLoop-Bell Reading RETIRED (FTD-0347)"; summary-table row ✅ STRONGLY CONSISTENT → [R] RETIRED; "Quantum interpretation supported" bullet → claim RETIRED; "seven discoveries … all consistent" → five-of-seven accounting (DESI indeterminate, sLoop-Bell retired) | DEMOTE |
+| `dissemination/manuscript_v2/src/Foundational-Ternary-Dynamics.tex` + `vol1/src/Foundational-Ternary-Dynamics.tex` (tracked compiled artifacts) | All 11 sLoop-Bell family sites per file hand-synced to the corrected sources (both assumption-ledger rows + count row, both glossary entries, full 15.1 section). ⚠ These artifacts remain stale on OTHER already-corrected claims (e.g. "α (confirmed) 0.21 ppt", DESI "STRONGLY CONSISTENT" rows) — a full Quarto re-render is the durable fix | SYNC |
+| `dissemination/whitepaper/figures/generate_all_figures.py` Panel-D summary row | Residual row `('Bell S-param', '2.85', '> 2√2 ✓')` the first pass missed (it corrected only Panel C) → `S ≤ 2.00 / ✓ LOCAL` | DEMOTE |
+| `LEDGER.md` FTD-0112 row, `STRATEGY_PAPER_SPLIT_2026-04-30.md`, `EXPLR_FOURIER_CURVE_LEVEL_4.md`, `THEOREM_HARMONIC_INVARIANT_TOWER.md` | Stale `07_assessment/archive_session_outputs/` provenance paths → `07_assessment/campaigns/archive_session_outputs/` (CLAUDE.md and TRACKER_ONTIC_TRUTH had already been fixed under FTD-0348) | FIX |
+
+Left as-is: `scripts/verification/results/math_node_map.json` (generated artifact) and the historical rows of this changelog retain the old archive path as provenance; the Migdal-section "sLoop Coupling" interpretive bullet in 15.1 (a measurement-coupling claim, not the Bell-violation family) is untouched and would need its own FC-1 audit if targeted.
 
 ---
 
