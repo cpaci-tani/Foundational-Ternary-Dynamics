@@ -1,7 +1,7 @@
 # NODE MAP — FTD math connectivity
 
 **Tag:** [INFRASTRUCTURE / METHODOLOGY] — descriptive navigation, not theorem-production.
-**Generated from:** `scripts/verification/results/math_node_map.json` (commit `52bd1b4`).
+**Generated from:** `scripts/verification/results/math_node_map.json` (commit `2389ff8`).
 **Renderer:** `scripts/verification/parsers/mermaid_renderer.py` via `scripts/verification/build_math_node_map.py`.
 
 > **Scope discipline.** This document is descriptive: it shows which LEDGER claims and spine theorems sit in each sector and how they depend on each other. The full multi-layer graph (with identities + objects + epistemic-tag overlay) is in the interactive HTML at `dissemination/interactive/math_node_map.html`. The Markdown Mermaid blocks below cap each sector at 40 LEDGER rows for renderer-budget reasons; the full set is in the JSON + HTML.
@@ -10,56 +10,58 @@
 
 ## §1 — Reading guide
 
-**Nodes:** 13 spine theorems (T1–T9, S1–S4) + 222 LEDGER claims + 82 mathematical objects + 934 identities.
-**Edges:** 1275 total across 5 types (theorem→ledger anchor, ledger→ledger deps, identity→theorem witness, identity→ledger witness, object→identity participation).
+**Nodes:** 13 spine theorems (T1–T9, S1–S4) + 310 LEDGER claims + 85 mathematical objects + 948 identities.
+**Edges:** 1688 total across 5 types (theorem→ledger anchor, ledger→ledger deps, identity→theorem witness, identity→ledger witness, object→identity participation).
 
 **Sectors (with row count):**
 
-- `engine-bridge` — 13 LEDGER rows
-- `physics/EM-alpha` — 22 LEDGER rows
+- `engine-bridge` — 16 LEDGER rows
+- `physics/EM-alpha` — 62 LEDGER rows
 - `physics/EW-Higgs` — 2 LEDGER rows
-- `physics/QCD` — 11 LEDGER rows
-- `physics/QM-foundations` — 14 LEDGER rows
+- `physics/QCD` — 15 LEDGER rows
+- `physics/QM-foundations` — 16 LEDGER rows
 - `physics/cosmology` — 1 LEDGER rows
-- `physics/flavor` — 5 LEDGER rows
-- `physics/gravity` — 5 LEDGER rows
+- `physics/flavor` — 7 LEDGER rows
+- `physics/gravity` — 6 LEDGER rows
 - `pure-math/CM-curves` — 5 LEDGER rows
-- `pure-math/G*-family` — 22 LEDGER rows
+- `pure-math/G*-family` — 35 LEDGER rows
 - `pure-math/Watson-Catalan` — 3 LEDGER rows
-- `pure-math/master-quadratic` — 48 LEDGER rows
-- `pure-math/modular-FQCR` — 9 LEDGER rows
-- `pure-math/structure` — 26 LEDGER rows
-- `pure-math/unclassified` — 36 LEDGER rows
+- `pure-math/master-quadratic` — 58 LEDGER rows
+- `pure-math/modular-FQCR` — 10 LEDGER rows
+- `pure-math/structure` — 30 LEDGER rows
+- `pure-math/unclassified` — 44 LEDGER rows
 
 **Epistemic tags appearing:**
 
-- `THEOREM` (43, color #2e7d32)
-- `CLOSED_NEGATIVE` (28, color #c62828)
-- `UNKNOWN` (26, color #bdbdbd)
-- `DERIVED` (15, color #388e3c)
-- `MEASURED` (14, color #66bb6a)
-- `PARTIAL` (12, color #ffb74d)
-- `SYNTHESIS` (11, color #00897b)
-- `SELECTION` (9, color #fbc02d)
+- `THEOREM` (49, color #2e7d32)
+- `MEASURED` (36, color #66bb6a)
+- `CLOSED_NEGATIVE` (35, color #c62828)
+- `SYNTHESIS` (34, color #00897b)
+- `UNKNOWN` (28, color #bdbdbd)
+- `DERIVED` (24, color #388e3c)
+- `SELECTION` (14, color #fbc02d)
+- `PARTIAL` (13, color #ffb74d)
+- `OPEN` (9, color #757575)
+- `CONJECTURE` (7, color #fb8c00)
 - `POSITIVE` (7, color #43a047)
 - `PRE_REGISTRATION` (7, color #1976d2)
-- `CONJECTURE` (6, color #fb8c00)
-- `OPEN` (6, color #757575)
-- `RETRACTED` (6, color #424242)
+- `RETRACTED` (7, color #424242)
 - `INFRASTRUCTURE` (5, color #00897b)
+- `STRUCTURAL_PARAMETRIC` (5, color #bdbdbd)
+- `AXIOM` (5, color #4527a0)
 - `SMC` (4, color #f57c00)
-- `PARAMETRIC` (4, color #9e9e9e)
-- `STRUCTURAL_PARAMETRIC` (3, color #bdbdbd)
+- `PARAMETRIC` (3, color #9e9e9e)
 - `HYPOTHESIS` (3, color #ffa000)
+- `METHODOLOGICAL_CLARIFICATION` (3, color #00838f)
 - `DEFINITION` (2, color #5e35b1)
-- `AXIOM` (2, color #4527a0)
 - `NUMERICAL_FACT` (2, color #7cb342)
-- `METHODOLOGICAL_CLARIFICATION` (2, color #00838f)
+- `AUDIT_FINDING` (2, color #1976d2)
 - `BRIDGE_ANALYZED` (1, color #00bcd4)
 - `METHODOLOGICAL_REFRAME` (1, color #00acc1)
-- `AUDIT_FINDING` (1, color #1976d2)
 - `CANDIDATE_RECONSTRUCTION` (1, color #7b1fa2)
 - `SCOPING_MEMO` (1, color #26c6da)
+- `IMPOSED` (1, color #7e57c2)
+- `EMERGENT` (1, color #26a69a)
 
 ---
 
@@ -100,10 +102,17 @@ graph LR
     style FTD_0236 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0248["FTD-0248: Epistemic Symmetries and Chiral Trajectories"]
     style FTD_0248 fill:#fb8c00,color:white,stroke:#222,stroke-width:1px
+    FTD_0258["FTD-0258: Deviation-prediction ledger — six structural de..."]
+    style FTD_0258 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0263["FTD-0263: Sub-knee onset: 27-block hypothesis — **GEOM-PA..."]
+    style FTD_0263 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0265["FTD-0265: Mechanism β, envelope variant — BETA-PARTIAL pe..."]
+    style FTD_0265 fill:#ffb74d,color:white,stroke:#222,stroke-width:1px
     T7 ==> FTD_0005
     S2 ==> FTD_0008
     S3 ==> FTD_0059
     FTD_0059 --> FTD_0030
+    FTD_0265 --> FTD_0263
 ```
 
 ### physics/EM-alpha
@@ -152,8 +161,44 @@ graph LR
     style FTD_0238 fill:#1976d2,color:white,stroke:#222,stroke-width:1px
     FTD_0239["FTD-0239: ARC-A1 v2 boundary-closure execution"]
     style FTD_0239 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
-    FTD_0240["FTD-0240: detdet_ζ identity attack scope (MC-T4.3 hinge)..."]
+    FTD_0240["FTD-0240: detdet_ζ identity attack scope (MC-T4.3 hinge) ..."]
     style FTD_0240 fill:#757575,color:white,stroke:#222,stroke-width:1px
+    FTD_0251["FTD-0251: The substrate's only native dynamical angle is ..."]
+    style FTD_0251 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0254["FTD-0254: Framework Spec v1 — the constitution (standalon..."]
+    style FTD_0254 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0267["FTD-0267: Genesis-vs-survival engine telemetry — first di..."]
+    style FTD_0267 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0268["FTD-0268: Blind L=257 extension of the FTD-0252 time-dila..."]
+    style FTD_0268 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0301["FTD-0301: Proton-stability forcedness audit (the 'micro' ..."]
+    style FTD_0301 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0270["FTD-0270: Lattice quantization & the atomic-dispersion bo..."]
+    style FTD_0270 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0271["FTD-0271: The de Broglie internal clock: GIVEN a rest-mas..."]
+    style FTD_0271 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
+    FTD_0273["FTD-0273: Mass as flux-energy in flip-quanta + quark quan..."]
+    style FTD_0273 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0274["FTD-0274: Min/max temperature + ignition map of the latti..."]
+    style FTD_0274 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0275["FTD-0275: Thermal phase map of the lattice, run of record..."]
+    style FTD_0275 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0279["FTD-0279: Helium on the FTD lattice — mean-field SCF, ver..."]
+    style FTD_0279 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
+    FTD_0285["FTD-0285: Alpha no-alpha engine probe — finite-protocol a..."]
+    style FTD_0285 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0286["FTD-0286: Alpha estimator validation — v1 ENERGY_FUNCTION..."]
+    style FTD_0286 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0298["FTD-0298: Lattice wave sectors synthesis — light + radio ..."]
+    style FTD_0298 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0299["FTD-0299: Lattice wave sectors run of record — light disp..."]
+    style FTD_0299 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0307["FTD-0307: FTD-0110 Convention Audit (exit ii): is the N(A..."]
+    style FTD_0307 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0308["FTD-0308: Engine-native atomic spectroscopy (FTD-0281 Leg..."]
+    style FTD_0308 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
+    FTD_0310["FTD-0310: Rigidity audit of the load-bearing rational ide..."]
+    style FTD_0310 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
     FTD_0115 --> FTD_0004
     FTD_0115 --> FTD_0113
     FTD_0115 --> FTD_0114
@@ -173,6 +218,30 @@ graph LR
     FTD_0085 --> FTD_0073
     FTD_0131 --> FTD_0004
     FTD_0209 --> FTD_0131
+    FTD_0254 --> FTD_0251
+    FTD_0301 --> FTD_0273
+    FTD_0270 --> FTD_0004
+    FTD_0271 --> FTD_0251
+    FTD_0271 --> FTD_0270
+    FTD_0273 --> FTD_0004
+    FTD_0274 --> FTD_0004
+    FTD_0274 --> FTD_0273
+    FTD_0274 --> FTD_0275
+    FTD_0275 --> FTD_0273
+    FTD_0275 --> FTD_0274
+    FTD_0279 --> FTD_0004
+    FTD_0279 --> FTD_0270
+    FTD_0298 --> FTD_0004
+    FTD_0298 --> FTD_0113
+    FTD_0298 --> FTD_0270
+    FTD_0298 --> FTD_0271
+    FTD_0299 --> FTD_0270
+    FTD_0299 --> FTD_0298
+    FTD_0308 --> FTD_0004
+    FTD_0308 --> FTD_0270
+    FTD_0308 --> FTD_0271
+    FTD_0308 --> FTD_0279
+    note["...22 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ### physics/EW-Higgs
@@ -193,6 +262,8 @@ graph LR
     style FTD_0167 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0016["FTD-0016: m_p/m_e = N_eff/α + N_base·N_eff + N_c (174 ppm)"]
     style FTD_0016 fill:#f57c00,color:white,stroke:#222,stroke-width:1px
+    FTD_0018["FTD-0018: sin²θ_W = 3/13 = 0.2308 at M_Z scale (CODATA M_..."]
+    style FTD_0018 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0041["FTD-0041: a_phys ≡ ℓ_P calibration declaration (with K_B ..."]
     style FTD_0041 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0076["FTD-0076: Phase-4h material emergence: smallest spontaneo..."]
@@ -211,6 +282,12 @@ graph LR
     style FTD_0223 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0228["FTD-0228: Full symplectic budget symmetry from FTD geomet..."]
     style FTD_0228 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0257["FTD-0257: Two-orthogonal-fields formalization — Flux ⊥ St..."]
+    style FTD_0257 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0266["FTD-0266: Mechanism β, sustained-kinetics (dwell-time Bol..."]
+    style FTD_0266 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0320["FTD-0320: Rigidity audit of the catalog rational identifi..."]
+    style FTD_0320 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
     FTD_0041 --> FTD_0130
     FTD_0130 --> FTD_0041
 ```
@@ -247,6 +324,10 @@ graph LR
     style FTD_0214 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0226["FTD-0226: Derive-QM gap — manifestation non-commutativity..."]
     style FTD_0226 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0250["FTD-0250: Cluster transport inertia = N·M_REST (unified-m..."]
+    style FTD_0250 fill:#7e57c2,color:white,stroke:#222,stroke-width:1px
+    FTD_0255["FTD-0255: FC-1 — the framework declines the measurement-m..."]
+    style FTD_0255 fill:#4527a0,color:white,stroke:#222,stroke-width:1px
     FTD_0074 --> FTD_0061
     FTD_0107 --> FTD_0102
     FTD_0101 --> FTD_0099
@@ -276,6 +357,10 @@ graph LR
     style FTD_0096 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0196["FTD-0196: Generation graph Γ_F(d) — CKM-shape overlap mat..."]
     style FTD_0196 fill:#7b1fa2,color:white,stroke:#222,stroke-width:1px
+    FTD_0262["FTD-0262: SM clustermass identification re-assessed on th..."]
+    style FTD_0262 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0325["FTD-0325: **Act-count completed over the SM — no field-ac..."]
+    style FTD_0325 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0063 --> FTD_0060
 ```
 
@@ -291,8 +376,10 @@ graph LR
     style FTD_0213 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0220["FTD-0220: No 4th Generation Fermions No-Go Formalization ..."]
     style FTD_0220 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
-    FTD_0229["FTD-0229: Kerr-Newman Black Hole Derivation & Limits"]
+    FTD_0229["FTD-0229: Kerr-Newman Black Hole Derivation, Limits & Ext..."]
     style FTD_0229 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0261["FTD-0261: Current-stack N(A) law characterized — broken p..."]
+    style FTD_0261 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
 ```
 
 ### pure-math/CM-curves
@@ -300,6 +387,7 @@ graph LR
 ```mermaid
 graph LR
     T4{{ "T4: Coefficient 16 from /Aut(E)/²" }}
+    S1{{ "S1: D = 3 (arithmetic uniqueness THEOREM; dimension-forci..." }}
     FTD_0003["FTD-0003: CM-curve uniqueness across class-number-1 fields"]
     style FTD_0003 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0006["FTD-0006: Coefficient 16 from \/Aut(E)\/² (Route A)"]
@@ -311,6 +399,7 @@ graph LR
     FTD_0172["FTD-0172: Round-2 referee polish: residual FTD content in..."]
     style FTD_0172 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     T4 ==> FTD_0006
+    S1 ==> FTD_0010
 ```
 
 ### pure-math/G*-family
@@ -318,7 +407,7 @@ graph LR
 ```mermaid
 graph LR
     FTD_0007["FTD-0007: Coefficient 16 from z_BCC × 2 (Route B)"]
-    style FTD_0007 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
+    style FTD_0007 fill:#fbc02d,color:white,stroke:#222,stroke-width:1px
     FTD_0158["FTD-0158: Quasi-modular value algebra at τ=i: Q(E_2(i),E_..."]
     style FTD_0158 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0159["FTD-0159: L(E_lemn, 1) closed form: L(E_lemn, 1) = ϖ/4 = ..."]
@@ -361,10 +450,48 @@ graph LR
     style FTD_0212 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0230["FTD-0230: BCC Algebraic Bridge Readout (ARC-B2)"]
     style FTD_0230 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0259["FTD-0259: FTD-0110 Mechanism α (multi-block irrep leakage..."]
+    style FTD_0259 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0260["FTD-0260: Thermostat-OFF amplitude sweep v1 — pre-registe..."]
+    style FTD_0260 fill:#757575,color:white,stroke:#222,stroke-width:1px
+    FTD_0300["FTD-0300: Halo-exponent forcedness audit (dark-matter / S..."]
+    style FTD_0300 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0269["FTD-0269: FTD-0110 nonlinear bridge: quantitative N(A) la..."]
+    style FTD_0269 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0272["FTD-0272: Order of the genesis transition (RG-spectrum pr..."]
+    style FTD_0272 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0277["FTD-0277: Collective-coordinate genesis-counting model v1..."]
+    style FTD_0277 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0309["FTD-0309: FTD-0110 nonlinear bridge, v2 genesis-counting ..."]
+    style FTD_0309 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0314["FTD-0314: Can the α-binding axiom W be EARNED from native..."]
+    style FTD_0314 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0326["FTD-0326: **No FTD-native ℤ/2 supplies δ — MC-T4.3 bounda..."]
+    style FTD_0326 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
+    FTD_0328["FTD-0328: **Corpus-wide reconciliation of the FTD-0318 sp..."]
+    style FTD_0328 fill:#757575,color:white,stroke:#222,stroke-width:1px
+    FTD_0335["FTD-0335: **Boundary-map refresh — fold the 2026-06-26/27..."]
+    style FTD_0335 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0340["FTD-0340: **The square root as an act of selection — the ..."]
+    style FTD_0340 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0341["FTD-0341: **The four named analytic-orientation carriers ..."]
+    style FTD_0341 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
     FTD_0159 --> FTD_0174
     FTD_0193 --> FTD_0190
     FTD_0191 --> FTD_0190
     FTD_0200 --> FTD_0187
+    FTD_0260 --> FTD_0259
+    FTD_0300 --> FTD_0269
+    FTD_0277 --> FTD_0269
+    FTD_0309 --> FTD_0269
+    FTD_0309 --> FTD_0277
+    FTD_0326 --> FTD_0314
+    FTD_0328 --> FTD_0314
+    FTD_0335 --> FTD_0300
+    FTD_0335 --> FTD_0314
+    FTD_0340 --> FTD_0341
+    FTD_0341 --> FTD_0314
+    FTD_0341 --> FTD_0340
 ```
 
 ### pure-math/Watson-Catalan
@@ -395,8 +522,8 @@ graph LR
     style FTD_0163 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0164["FTD-0164: Three structural candidates for closing the χ_{..."]
     style FTD_0164 fill:#c62828,color:white,stroke:#222,stroke-width:1px
-    FTD_0175["FTD-0175: Sym²⊕Sym³ exponent pair — constraint set {a&lt;b&lt;2a} ∪ {b=2a+1} [THEOREM]; (2,3) choice [SELECTION] conditional on W-CRIT-2; minimal-a uniqueness RETRACTED, survivor (1,3) (demoted per FTD-0351; label updated 2026-07-02, FTD-0356)"]
-    style FTD_0175 fill:#fbc02d,color:white,stroke:#222,stroke-width:1px
+    FTD_0175["FTD-0175: Sym²⊕Sym³ uniqueness theorem (Paper A §16.5): (..."]
+    style FTD_0175 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0176["FTD-0176: chi_{-4} structure in engine: GPU campaign (WSL..."]
     style FTD_0176 fill:#43a047,color:white,stroke:#222,stroke-width:1px
     FTD_0182["FTD-0182: Phase 1 L5: Conjecture 16.5.2 closed — the Sym^..."]
@@ -435,7 +562,7 @@ graph LR
     style FTD_0121 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0112["FTD-0112: Field-theoretic characterization of `Q(G*)` as ..."]
     style FTD_0112 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
-    FTD_0110["FTD-0110: Cluster-sizemass identification: bound-state s..."]
+    FTD_0110["FTD-0110: Cluster-sizemass identification: bound-state sp..."]
     style FTD_0110 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
     FTD_0105["FTD-0105: Lemniscatic replacement for the 2-sphere in Ein..."]
     style FTD_0105 fill:#ffb74d,color:white,stroke:#222,stroke-width:1px
@@ -461,12 +588,12 @@ graph LR
     style FTD_0133 fill:#fbc02d,color:white,stroke:#222,stroke-width:1px
     FTD_0134["FTD-0134: Electron Yukawa prefactor `16√2/3` decomposed a..."]
     style FTD_0134 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0189["FTD-0189: Step-0 graviton-provenance audit — FTD's massle..."]
+    style FTD_0189 fill:#1976d2,color:white,stroke:#222,stroke-width:1px
     FTD_0210["FTD-0210: x_- physical-identification search — Arc B P1 o..."]
     style FTD_0210 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0205["FTD-0205: ARC-B1 alpha-readout observable-selection -- cl..."]
     style FTD_0205 fill:#c62828,color:white,stroke:#222,stroke-width:1px
-    FTD_0204["FTD-0204: ARC-B1 alpha-readout observable-selection closu..."]
-    style FTD_0204 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     T2 ==> FTD_0001
     T5 ==> FTD_0001
     T8 ==> FTD_0111
@@ -505,9 +632,7 @@ graph LR
     FTD_0205 --> FTD_0001
     FTD_0205 --> FTD_0050
     FTD_0205 --> FTD_0122
-    FTD_0205 --> FTD_0204
-    FTD_0204 --> FTD_0001
-    note["...8 more LEDGER rows in this sector (see HTML map)"]
+    note["...18 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ### pure-math/modular-FQCR
@@ -528,15 +653,15 @@ graph LR
     style FTD_0132 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0188["FTD-0188: κ_ψ = 4π audit — FQCR source-law normalization ..."]
     style FTD_0188 fill:#5e35b1,color:white,stroke:#222,stroke-width:1px
-    FTD_0189["FTD-0189: Step-0 graviton-provenance audit — FTD's massle..."]
-    style FTD_0189 fill:#1976d2,color:white,stroke:#222,stroke-width:1px
     FTD_0234["FTD-0234: Odd Period Pre-Reg & Audit"]
     style FTD_0234 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0327["FTD-0327: **The AGM place-bridge — why the substrate's √-..."]
+    style FTD_0327 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0348["FTD-0348: **Fable two-specialist review + fix of its mech..."]
+    style FTD_0348 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0181 --> FTD_0128
     FTD_0132 --> FTD_0128
     FTD_0188 --> FTD_0184
-    FTD_0189 --> FTD_0184
-    FTD_0189 --> FTD_0188
 ```
 
 ### pure-math/structure
@@ -595,6 +720,14 @@ graph LR
     style FTD_0202 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0201["FTD-0201: Phase J ultralocality (Theorem 7) honest retag ..."]
     style FTD_0201 fill:#00838f,color:white,stroke:#222,stroke-width:1px
+    FTD_0276["FTD-0276: Kinetic-drain scaling + N(A) friction-knob map ..."]
+    style FTD_0276 fill:#c62828,color:white,stroke:#222,stroke-width:1px
+    FTD_0278["FTD-0278: Hydrogen-like bound-state spectrum on the FTD l..."]
+    style FTD_0278 fill:#424242,color:white,stroke:#222,stroke-width:1px
+    FTD_0303["FTD-0303: Epistemic-tag honesty reconciliation — three do..."]
+    style FTD_0303 fill:#00838f,color:white,stroke:#222,stroke-width:1px
+    FTD_0351["FTD-0351: **Theorem repairs: OT-2.7/FTD-0175 demoted to c..."]
+    style FTD_0351 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
     FTD_0178 --> FTD_0177
     FTD_0179 --> FTD_0177
     FTD_0179 --> FTD_0178
@@ -619,7 +752,6 @@ graph LR
 ```mermaid
 graph LR
     T1{{ "T1: G* algebraic identity" }}
-    S1{{ "S1: D = 3" }}
     FTD_0002["FTD-0002: G* algebraic identity (Watson–Chowla–Selberg)"]
     style FTD_0002 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0009["FTD-0009: Charge conservation per tick"]
@@ -639,13 +771,11 @@ graph LR
     FTD_0180["FTD-0180: Phase 1 L4: H4 confirmed — (a,b) = (2,3) is the..."]
     style FTD_0180 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
     FTD_0015["FTD-0015: m_e = m_P · √(2π) · (16/3) · α¹¹ (0.19%)"]
-    style FTD_0015 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
-    FTD_0018["FTD-0018: sin²θ_W = 3/13 = 0.2308 at M_Z scale (CODATA M_..."]
-    style FTD_0018 fill:#9e9e9e,color:white,stroke:#222,stroke-width:1px
+    style FTD_0015 fill:#fbc02d,color:white,stroke:#222,stroke-width:1px
     FTD_0019["FTD-0019: sin²θ_13 = 1/52"]
     style FTD_0019 fill:#9e9e9e,color:white,stroke:#222,stroke-width:1px
     FTD_0020["FTD-0020: α_s = 7/59"]
-    style FTD_0020 fill:#9e9e9e,color:white,stroke:#222,stroke-width:1px
+    style FTD_0020 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0022["FTD-0022: 7-term α series matching CODATA to 24 digits"]
     style FTD_0022 fill:#fb8c00,color:white,stroke:#222,stroke-width:1px
     FTD_0023["FTD-0023: Bell violation S = 2√2"]
@@ -692,29 +822,43 @@ graph LR
     style FTD_0225 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0227["FTD-0227: Spekkens knowledge-balance from the internal-ob..."]
     style FTD_0227 fill:#ffb74d,color:white,stroke:#222,stroke-width:1px
+    FTD_0252["FTD-0252: Dynamical time dilation of a moving lattice 'wa..."]
+    style FTD_0252 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
+    FTD_0253["FTD-0253: Is FTD's spacetime forced by the postulates? — ..."]
+    style FTD_0253 fill:#00897b,color:white,stroke:#222,stroke-width:1px
+    FTD_0256["FTD-0256: FC-2 — the arrow is native; global reversibilit..."]
+    style FTD_0256 fill:#4527a0,color:white,stroke:#222,stroke-width:1px
+    FTD_0264["FTD-0264: FTD-native polynomial effective action after bl..."]
+    style FTD_0264 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
+    FTD_0323["FTD-0323: **The arrow of time as a square root**"]
+    style FTD_0323 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     T1 ==> FTD_0002
-    S1 ==> FTD_0036
+    FTD_0253 --> FTD_0252
+    FTD_0256 --> FTD_0252
+    FTD_0256 --> FTD_0253
+    FTD_0323 --> FTD_0256
+    note["...4 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ---
 
 ## §3 — Object backbone (top-30 by valence)
 
-Edges = pairs of objects co-participating in ≥ 3 verified identities. Shows the connective tissue of the corpus (G_G  π  G\*  Γ-tower).
+Edges = pairs of objects co-participating in ≥ 3 verified identities. Shows the connective tissue of the corpus (G_G ↔ π ↔ G\* ↔ Γ-tower).
 
 ```mermaid
 graph LR
-    Gstar[("G* (v=98)")]
-    N_c[("N_c (v=49)")]
+    Gstar[("G* (v=102)")]
+    N_c[("N_c (v=50)")]
     N_base[("N_base (v=42)")]
     N_eff[("N_eff (v=42)")]
     x_plus[("x₊ (v=35)")]
     G_G[("G_G (v=34)")]
     x_minus[("x₋ (v=34)")]
-    varpi[("ϖ (v=30)")]
-    alpha[("α (v=29)")]
+    varpi[("ϖ (v=31)")]
+    alpha[("α (v=30)")]
+    pi[("π (v=29)")]
     math[("math (v=29)")]
-    pi[("π (v=28)")]
     b_3[("b₃ (v=19)")]
     D[("D=3 (v=19)")]
     Gamma_quarter[("Γ(1/4) (v=19)")]
@@ -741,22 +885,22 @@ graph LR
     Gstar --- N_base
     N_c --- N_eff
     Gstar --- N_eff
-    Gamma_quarter --- Gstar
     Gstar --- alpha
+    Gamma_quarter --- Gstar
+    N_c --- alpha
     Gstar --- x_minus
     Gstar --- x_plus
-    N_c --- alpha
     N_base --- alpha
-    N_eff --- alpha
     Gstar --- varpi
+    N_eff --- alpha
     pi --- sqrt
     Gstar --- PF
     D --- Gstar
+    Gstar --- pi
     N_base --- PF
     N_c --- PF
     N_eff --- PF
     G_G --- pi
-    Gstar --- pi
     PF --- varpi
     Gamma_quarter --- x_minus
     Gamma_quarter --- x_plus
@@ -785,6 +929,7 @@ graph LR
     Gamma_quarter --- N_c
     Gamma_quarter --- N_eff
     Gstar --- sqrt
+    pi --- varpi
     gamma_fn --- sqrt
     Gstar --- gamma_fn
     N_eff --- k_B
@@ -794,7 +939,6 @@ graph LR
     Gamma_quarter --- varpi
     Gstar --- L
     G_G --- varpi
-    pi --- varpi
     N_c --- k_B
     all --- c_speed
     Gstar --- W3
