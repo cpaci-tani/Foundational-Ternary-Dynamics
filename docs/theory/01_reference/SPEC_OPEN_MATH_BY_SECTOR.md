@@ -5,7 +5,7 @@
 **LEDGER:** FTD-0146 [SYNTHESIS] — sector-organised consolidation; introduces no new theorems
 **Companion docs:**
 - [`SPEC_DOCTRINE_LEDGER.md`](SPEC_DOCTRINE_LEDGER.md) — single-page status map (closed + open)
-- [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical algebraic-spine reference (nine numbered results: six theorem-grade + three honestly-tiered, see §0)
+- [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical algebraic-spine reference (nine numbered results: seven theorem-grade + two honestly-tiered, see §0)
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR Models I–V
 - [`SPEC_MATH_FIRST_ONTOLOGY.md`](SPEC_MATH_FIRST_ONTOLOGY.md) — primitives -> invariants -> readouts -> physics ordering principle
 - [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 closure contract / "earn the map" criteria
