@@ -291,7 +291,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 Alpha is restructured (not derived) in the engine — `ALPHA_EFT = G_C²` is an algebraic identity by construction (G_C ≡ √α), a consistency check per `constants.h`'s own HONEST FRAMING note:
 - `ALPHA_EFT = G_C * G_C` defined in `constants.h` with compile-time `static_assert` pinning it to the hardcoded `ALPHA` (α is the INPUT; B2's "alpha recovery" measures solver self-consistency, not α)
 - G_C (wave equation coupling) is the fundamental lattice parameter
-- All force computations use `ALPHA_EFT` (= G_C²), not hardcoded `ALPHA`
+- Force computations use `ALPHA` or `ALPHA_EFT` depending on mode (equal by construction via `static_assert`; `phase_forces.cpp` uses `ALPHA` directly in Poisson/legacy modes, `G_C` in emergent mode)
 - New toggle `emergent_forces` computes force from flux gradient without Poisson solver
 - 20-benchmark scorecard (re-graded 2026-07-01, see `analyze_convergence.py`): Coulomb convergence (B+), hydrogen spectrum (A+ — classical Kepler check, not a quantum eigenvalue derivation), color forces (A+), Higgs threshold (A+), Bell S=2.000 (N/A — classical LHV bound from a standalone toy, confirms locality, not a QM result), Born lattice bias (A-); 211/211 CTest passing
 
