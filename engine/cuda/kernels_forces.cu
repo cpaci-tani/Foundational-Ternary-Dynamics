@@ -9,7 +9,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
-#include "ftd/constants_gpu.cuh"
+#include "ftd/constants_shared.h"
 #include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d, ftd::decode_xyz, ftd::periodic_delta
 #include <cuda_runtime.h>
 #include <cmath>
@@ -690,7 +690,7 @@ __global__ void color_force_kernel(
         double as = alpha_s_lattice_d(r);
 
         // Three-regime force profile (magnitude; sign from cf)
-        // Regime boundaries from constants_gpu.cuh (shared single source of truth).
+        // Regime boundaries from constants_shared.h (shared single source of truth).
         double f_mag;
         if (r < COLOR_COULOMB_RADIUS) {
             f_mag = as * cf / r2;                            // Coulomb
