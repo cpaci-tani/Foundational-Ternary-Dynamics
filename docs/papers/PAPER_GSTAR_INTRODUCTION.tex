@@ -1854,7 +1854,7 @@ ${\Gs}^{k}$ up to the standard $\pi$-normalisation; for this reason we
 write the polynomial in the $\Gs$-coordinate throughout.
 \end{definition}
 
-\begin{theorem}[Structural constraints and the minimal-$a$ pair]\label{thm:sym-23-uniqueness}
+\begin{theorem}[Structural constraints on the exponent pair --- corrected]\label{thm:sym-23-uniqueness}
 Consider leading-period polynomials
 $P_{(a, b)}(x) = x^{2} - 16\,{\Gs}^{a}\,x + 16\,{\Gs}^{b}$
 with $a < b$ positive integers and integer prefactor
@@ -1862,25 +1862,79 @@ $|\Aut_\C(E_{\mathrm{lemn}})|^{2} = 16$ on each non-leading coefficient.
 The joint conditions
 \begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*, itemsep=2pt]
 \item the two roots are not scalar multiples of any single period
-${\Gs}^{k}$ for any rational $k$,
+${\Gs}^{k}$ --- scalar meaning an algebraic constant independent of
+$\Gs$, and $k$ rational,
 \item the polynomial is non-degenerate (positive discriminant),
 \end{enumerate}
 constrain $(a, b)$ to the set
-$\{(a, b) \in \Z_{>0}^{2} : a < b < 2a\}$.
-Among elements of this set, the pair $(2, 3)$ is the unique element
-with minimal $a$ (see Figure~\ref{fig:exponent-lattice}).
+\[
+\{(a, b) \in \Z_{>0}^{2} : a < b < 2a\} \;\cup\;
+\{(a, b) \in \Z_{>0}^{2} : b = 2a + 1\}.
+\]
+Condition \textup{(i)} excludes exactly the line $b = 2a$; condition
+\textup{(ii)} excludes exactly $b \geq 2a + 2$ (since
+$\ln 4/\ln\Gs = 1.2779\ldots < 2$, while $\Gs = 2.9586\ldots < 4$
+keeps $b = 2a + 1$ alive). The minimal-$a$ element of this set is
+$(1, 3)$, \emph{not} $(2, 3)$: no minimal-$a$ uniqueness of $(2, 3)$
+follows from \textup{(i)}--\textup{(ii)}
+(see Figure~\ref{fig:exponent-lattice}).
 \end{theorem}
 
-\begin{remark}[Status of the minimal-$a$ selection]\label{rem:sym-23-selection-status}
-The selection of $a = 2$ (and hence the specific pair $(2, 3)$) from
-the set $\{(a, b) : a < b < 2a\}$ permitted by the structural
-conditions is a \emph{selection convention}, not a derivation: minimal
-$a$ is a natural minimality choice within the family but is not forced
-by $\chi_{-4}$-internal data. Other elements of the set, including
-$\{(3, 4), (3, 5), (4, 5), (4, 6), (4, 7), \ldots\}$, produce roots
-whose magnitudes scale differently from $(x_+, x_-) \approx (137, 3)$
-(see Observation~\ref{obs:23-joint-match}). A class-field-theoretic
-derivation forcing $a = 2$ from $\chi_{-4}$-internal data, if it
+\begin{remark}[Dated correction: FTD-0351, repairing the 2026-07-01 review finding FTD-0348 \S3.1]
+\label{rem:sym-23-correction}
+Earlier versions of this section stated
+Theorem~\ref{thm:sym-23-uniqueness} with constraint set
+$\{a < b < 2a\}$ alone and claimed $(2, 3)$ as its unique minimal-$a$
+element. That statement was \emph{false}, for two reasons.
+First, the former proof's case split ($2a > b$ versus $2a < b$) was
+purely notational: in every case the roots are identically
+\[
+x_\pm \;=\; 8\,{\Gs}^{a} \pm 4\sqrt{4\,{\Gs}^{2a} - {\Gs}^{b}}
+      \;=\; 8\,{\Gs}^{a} \pm 4\,{\Gs}^{b/2}\sqrt{4\,{\Gs}^{2a-b} - 1}
+      \;=\; 4\,{\Gs}^{a}\bigl(2 \pm \sqrt{4 - {\Gs}^{b-2a}}\,\bigr),
+\]
+the three radical spellings being the same number (verified
+symbolically and at 35 digits), so ``the roots involve two distinct
+${\Gs}$-powers'' cannot hold on one side of $b = 2a$ and fail on the
+other. Read correctly (roots $= c_\pm{\Gs}^{k}$ with $c_\pm$ algebraic
+constants), condition \textup{(i)} excludes only $b = 2a$, where
+$x_\pm = (8 \pm 4\sqrt3)\,{\Gs}^{a}$.
+Second, the pair $(1, 3)$ satisfies every substantive criterion:
+$\Delta(1, 3) = 64\,{\Gs}^{2}(4 - \Gs) = 583.392\ldots > 0$, with roots
+$x_\pm = 8\Gs \pm 4\Gs\sqrt{4 - \Gs} = 35.746\ldots,\; 11.592\ldots$,
+not constant multiples of any single ${\Gs}$-power.
+The prior \textup{[THEOREM]} tag on the minimal-$a$ uniqueness claim
+(FTD-0175 / OT-2.7) is therefore \emph{retracted}; the surviving
+theorem content is the constraint set stated above, and the selection
+of $(2, 3)$ is restated at \textup{[SELECTION]} in
+Remark~\ref{rem:sym-23-selection-status}. The companion enumeration
+script \texttt{sym23\_uniqueness\_proof.py}, which had encoded the
+flawed case classification by fiat, has been repaired to enumerate
+honestly and now reports the $(1, 3)$ survivor.
+\end{remark}
+
+\begin{remark}[Status of the $(2, 3)$ selection --- \textup{[SELECTION]}]\label{rem:sym-23-selection-status}
+The selection of $(a, b) = (2, 3)$ from the constraint set of
+Theorem~\ref{thm:sym-23-uniqueness} is \emph{not} a minimality theorem
+(the minimal-$a$ element is $(1, 3)$). The honest selection chain is
+conditional:
+(1) matching the trace coefficient to the independently proven Watson
+normalisation $16\,\Gss = 32\pi\,W^{(3)}_{\mathrm{BCC}}$
+(Theorem~\ref{thm:watson}) forces $a = 2$ within the family;
+(2) the Vieta ratio ansatz $x_+ x_- = (x_+ + x_-)\cdot\Gs$, i.e.\
+$b = a + 1$, then forces $b = 3$. Step (2) is precisely the
+determinant-identity assembly known in the framework's boundary
+accounting as W-CRIT-2 (FTD-0235, \textup{[UNDERDETERMINED]}): nothing
+substrate-native forces the determinant's exponent. Hence $(2, 3)$ is
+forced by the proven trace \emph{given} the
+$\mathrm{Det} = \mathrm{Tr}\cdot\Gs$ ansatz, the ansatz itself being an
+acknowledged imported boundary --- a conditional selection, not a
+derivation. Alternative descriptive characterisations single out
+$(2, 3)$ as well (the non-vanishing constant additive shift of
+Proposition~\ref{prop:exponent-regimes}; the joint magnitude match of
+Observation~\ref{obs:23-joint-match}) but are post-hoc: no framework
+commitment independently demands them. A class-field-theoretic
+derivation forcing $(2, 3)$ from $\chi_{-4}$-internal data, if it
 exists, would promote this selection to a theorem; this is the
 residual structural gap noted in Observation~\ref{obs:gap-localised}.
 \end{remark}
@@ -1907,12 +1961,14 @@ residual structural gap noted in Observation~\ref{obs:gap-localised}.
   }
   % b = a line (lower bound, exclusive)
   \draw[dashed, black!50] (0,0) -- (7,7) node[above, sloped, font=\footnotesize, pos=0.85] {$b = a$ \,(excluded: criterion $a<b$)};
-  % b = 2a line (upper bound, exclusive)
+  % b = 2a line (excluded: the ONLY line criterion (i) removes)
   \draw[dashed, black!50] (0,0) -- (3.75,7.5) node[above, sloped, font=\footnotesize, pos=0.7] {$b = 2a$ \,(excluded: criterion (i) fails)};
-  % Shaded wedge between
+  % b = 2a+1 line (SURVIVES: G* < 4 keeps the discriminant positive)
+  \draw[dash dot, black!70] (0,1) -- (3.25,7.5) node[above, sloped, font=\footnotesize, pos=0.55] {$b = 2a{+}1$ \,(survives: $\Gs < 4$)};
+  % Shaded wedge a < b < 2a
   \fill[black!8] (0,0) -- (7,7) -- (3.75,7.5) -- (0,0);
   % Integer lattice points in the wedge a < b < 2a (for a >= 2)
-  \node[best, label={[font=\footnotesize, label distance=2pt]right:{\bfseries$(2,3)$ minimal-$a$}}] at (2, 3) {2,3};
+  \node[best, label={[font=\footnotesize, label distance=2pt]right:{\bfseries$(2,3)$ selected (Rem.~\ref{rem:sym-23-selection-status})}}] at (2, 3) {2,3};
   \node[ok] at (3, 4) {};   \node[font=\footnotesize, above right=-2pt] at (3,4) {(3,4)};
   \node[ok] at (3, 5) {};   \node[font=\footnotesize, above right=-2pt] at (3,5) {(3,5)};
   \node[ok] at (4, 5) {};   \node[font=\footnotesize, above right=-2pt] at (4,5) {(4,5)};
@@ -1921,79 +1977,94 @@ residual structural gap noted in Observation~\ref{obs:gap-localised}.
   \node[ok] at (5, 6) {};
   \node[ok] at (5, 7) {};
   \node[ok] at (6, 7) {};
-  % Empty region a=1 callout
-  \node[font=\footnotesize, text=black!60] at (1, 4.5) {\begin{tabular}{c}no integer $b$\\for $a=1$\end{tabular}};
+  % Integer lattice points on the surviving branch b = 2a+1
+  \node[ok, label={[font=\footnotesize, label distance=2pt]left:{$(1,3)$ minimal-$a$ survivor}}] at (1, 3) {};
+  \node[ok] at (2, 5) {};   \node[font=\footnotesize, above left=-2pt] at (2,5) {(2,5)};
+  \node[ok] at (3, 7) {};   \node[font=\footnotesize, above left=-2pt] at (3,7) {(3,7)};
 \end{tikzpicture}
 \caption{Integer exponent pairs $(a, b)$ admissible under criteria
-(i)--(ii) of Theorem~\ref{thm:sym-23-uniqueness} occupy the open wedge
-$a < b < 2a$ (shaded). The pair $(2, 3)$ (highlighted) is the unique
-minimal-$a$ element of this set; $a = 1$ admits no integer $b$, and
-$a \geq 3$ admits multiple candidates $(3, 4), (3, 5), (4, 5), \ldots$
-which are excluded only by the selection criterion (iv). The
-minimal-$a$ choice is a convention, not a derivation
-(Remark~\ref{rem:sym-23-selection-status}).}\label{fig:exponent-lattice}
+(i)--(ii) of Theorem~\ref{thm:sym-23-uniqueness}: the open wedge
+$a < b < 2a$ (shaded) \emph{together with} the branch $b = 2a + 1$
+(dash-dotted), which survives because $\Gs = 2.9586\ldots < 4$ keeps
+the discriminant positive. The minimal-$a$ element of the admissible
+set is $(1, 3)$, not $(2, 3)$ (corrected 2026-07-01/02, FTD-0351;
+see Remark~\ref{rem:sym-23-correction} --- an earlier version of this
+figure asserted ``no integer $b$ for $a = 1$'', which is false). The
+pair $(2, 3)$ (highlighted) is \emph{selected}, not forced, by the
+conditional chain of Remark~\ref{rem:sym-23-selection-status}:
+Watson trace ($a = 2$) plus the W-CRIT-2 ansatz
+$\mathrm{Det} = \mathrm{Tr}\cdot\Gs$ ($b = a + 1$).}\label{fig:exponent-lattice}
 \end{figure}
 
 \begin{proof}
 The discriminant of $P_{(a, b)}$ is
 \[
 \Delta(a, b) \;=\; (16\,{\Gs}^{a})^{2} - 4 \cdot 16\,{\Gs}^{b}
-              \;=\; 64\,(4\,{\Gs}^{2a} - {\Gs}^{b}).
+              \;=\; 64\,(4\,{\Gs}^{2a} - {\Gs}^{b}),
 \]
-We factor out the dominant ${\Gs}$-power in three cases.
-
-\emph{Case $2a > b$.} Then ${\Gs}^{2a-b} > 0$ and
-$\Delta = 64\,{\Gs}^{b}(4\,{\Gs}^{2a-b} - 1)$, hence
-$\sqrt\Delta = 8\,{\Gs}^{b/2}\sqrt{4\,{\Gs}^{2a-b} - 1}$. The roots are
+and whenever $\Delta > 0$ the roots are, in all cases,
 \[
-x_\pm \;=\; \frac{16\,{\Gs}^{a} \pm 8\,{\Gs}^{b/2}\sqrt{4\,{\Gs}^{2a-b} - 1}}{2}
-       \;=\; 8\,{\Gs}^{a} \pm 4\,{\Gs}^{b/2}\sqrt{4\,{\Gs}^{2a-b} - 1}.
+x_\pm \;=\; 8\,{\Gs}^{a} \pm 4\sqrt{4\,{\Gs}^{2a} - {\Gs}^{b}},
 \]
-The two ${\Gs}$-powers ${\Gs}^{a}$ and ${\Gs}^{b/2}$ are distinct
-(since $2a > b$ implies $a > b/2$), so the roots are not scalar
-multiples of any single ${\Gs}^{k}$. Condition (i) holds.
+in which the radical may be spelled equivalently as
+${\Gs}^{b/2}\sqrt{4\,{\Gs}^{2a-b} - 1}$ or as
+${\Gs}^{a}\sqrt{4 - {\Gs}^{b-2a}}$; no case distinction is induced by
+the choice of factoring. (An earlier version of this proof drew a
+three-way case split from these spellings and concluded differently;
+see Remark~\ref{rem:sym-23-correction}.)
 
-\emph{Case $2a = b$.} Then $\Delta = 64\,{\Gs}^{b}(4 - 1) = 192\,{\Gs}^{2a}$,
-so $\sqrt\Delta = 8\sqrt 3\,{\Gs}^{a}$. The roots are
-$x_\pm = (8 \pm 4\sqrt 3)\,{\Gs}^{a}$, both scalar multiples of ${\Gs}^{a}$.
-Condition (i) \emph{fails}.
+\emph{Condition (i).} Since $\Gs$ is transcendental
+(\S\ref{sec:transcendence}), treat it as an indeterminate $t$ and work
+in $\overline\Q(t^{1/N})$ for a common denominator $N$ of the exponents
+involved. Suppose $x_\pm = c_\pm\,t^{k_\pm}$ with algebraic constants
+$c_\pm \neq 0$ and rational $k_\pm$. Vieta gives
+$c_+ t^{k_+} + c_- t^{k_-} = 16\,t^{a}$ and
+$c_+ c_-\, t^{k_+ + k_-} = 16\,t^{b}$. A sum of two nonzero monomials
+is a monomial only if $k_+ = k_- =: k$; then $k = a$ from the trace and
+$2k = b$ from the product, forcing $b = 2a$. Conversely, at $b = 2a$,
+$\Delta = 192\,{\Gs}^{2a}$ and $x_\pm = (8 \pm 4\sqrt 3)\,{\Gs}^{a}$.
+Hence condition (i) fails precisely on the line $b = 2a$ and holds at
+every other pair.
 
-\emph{Case $2a < b$.} Then $\Delta = 64\,{\Gs}^{2a}(4 - {\Gs}^{b-2a})$,
-so $\sqrt\Delta = 8\,{\Gs}^{a}\sqrt{4 - {\Gs}^{b-2a}}$ (real when $\Delta > 0$).
-The roots are $x_\pm = 4\,{\Gs}^{a}(2 \pm \sqrt{4 - {\Gs}^{b-2a}})$, both
-scalar multiples of ${\Gs}^{a}$. Condition (i) \emph{fails}.
-
-Hence condition (i) forces $2a > b$. Combined with $a < b$, this gives
+\emph{Condition (ii).} For $b \leq 2a$ the discriminant is manifestly
+positive ($4\,{\Gs}^{2a} > {\Gs}^{b}$ since ${\Gs} > 1$). For $b > 2a$,
 \[
-a < b < 2a.
+\Delta > 0 \;\iff\; {\Gs}^{b - 2a} < 4 \;\iff\; (b - 2a)\ln\Gs < \ln 4
+         \;\iff\; b - 2a \leq 1 \quad\text{(integers)},
 \]
-Enumerating integer pairs:
+since $\ln 4/\ln\Gs = 1.2779\ldots$; equivalently,
+$\Gs = 2.9586\ldots < 4 < \Gss = 8.7537\ldots$, so $b = 2a + 1$ survives
+and $b \geq 2a + 2$ fails.
+
+Combining with $a < b$, the admissible set is exactly
+$\{a < b < 2a\} \cup \{b = 2a + 1\}$. Enumerating small $a$:
 \begin{itemize}[leftmargin=*, itemsep=2pt]
-\item $a = 1$: the interval $(1, 2)$ contains no integer; no valid $b$.
-\item $a = 2$: $b \in (2, 4)$ has the unique integer $b = 3$.
-\item $a = 3$: $b \in (3, 6)$ admits $b \in \{4, 5\}$.
-\item $a \geq 4$: $b \in (a, 2a)$ admits $a - 1$ valid choices, all with $a + b > 5$.
+\item $a = 1$: $b = 3$ ($= 2a + 1$) is admissible, with
+$\Delta(1,3) = 64\,{\Gs}^{2}(4 - \Gs) = 583.392\ldots$ and roots
+$35.746\ldots,\ 11.592\ldots$;
+\item $a = 2$: $b = 3$ (wedge) and $b = 5$ ($= 2a + 1$) are admissible;
+\item $a = 3$: $b \in \{4, 5\}$ (wedge) and $b = 7$ are admissible;
+and so on.
 \end{itemize}
-The minimal-$a$ valid pair is $(2, 3)$, and at $a = 2$ the value
-$b = 3$ is uniquely determined.
-
-Condition (ii) at $(2, 3)$: $\Delta(2, 3) = 64\,{\Gs}^{3}(4\,\Gs - 1) > 0$
-since $\Gs \approx 2.959 > 1/4$, so the polynomial is non-degenerate.
-The integer prefactor $16$ is built into the setup of the theorem.
+The minimal-$a$ admissible pair is $(1, 3)$. The integer prefactor $16$
+is built into the setup of the theorem.
 \qedhere
 \end{proof}
 
 \begin{remark}[Scope of Theorem~\ref{thm:sym-23-uniqueness} and the residual conjecture]
 \label{rem:sym-thm-scope}
-The theorem establishes uniqueness of $(2, 3)$ within the
+The theorem (as corrected; Remark~\ref{rem:sym-23-correction})
+establishes the exact admissible exponent set within the
 leading-period polynomial family (Def.~\ref{def:leading-period-poly}),
 where each coefficient is a scalar multiple of the leading period
-${\Gs}^{a}$ or ${\Gs}^{b}$. The full structural question --- uniqueness
-within the larger family of polynomials whose coefficients are
-arbitrary elements of the symmetric powers $\mathrm{Sym}^{a} H^{1}$
-and $\mathrm{Sym}^{b} H^{1}$ (not just the leading periods $\omega^{a},
-\omega^{b}$) --- remains open and is recorded as Conjecture~\ref{conj:sym-general}
-below.
+${\Gs}^{a}$ or ${\Gs}^{b}$; it does \emph{not} establish uniqueness of
+$(2, 3)$, whose selection is the conditional chain of
+Remark~\ref{rem:sym-23-selection-status}. The full structural
+question --- the admissible-set analysis within the larger family of
+polynomials whose coefficients are arbitrary elements of the symmetric
+powers $\mathrm{Sym}^{a} H^{1}$ and $\mathrm{Sym}^{b} H^{1}$ (not just
+the leading periods $\omega^{a}, \omega^{b}$) --- remains open and is
+recorded as Conjecture~\ref{conj:sym-general} below.
 
 The technical obstacles to the general statement are:
 (a) explicit identification of the period map
@@ -2001,26 +2072,32 @@ $\mathrm{Sym}^{\bullet}(H^{1}) \otimes \Q[\pi^{\pm 1/2}] \to \C$
 specialising to $\omega^{k} \mapsto (\Gs\sqrt\pi)^{k}$;
 (b) reconciliation of the non-homogeneous bigrading with the
 motivic-weight formalism, possibly via a relative filtration.
-The uniqueness argument itself ---
-the load-bearing combinatorial step of the original conjecture --- is
-the content of Theorem~\ref{thm:sym-23-uniqueness} above.
+The load-bearing combinatorial step that survives --- the exact
+admissible exponent set at leading-period level --- is the content of
+Theorem~\ref{thm:sym-23-uniqueness} above; the original conjecture's
+uniqueness component is \emph{not} established
+(Remark~\ref{rem:sym-23-correction}).
 \end{remark}
 
-\begin{conjecture}[Full $\mathrm{Sym}^{a}$ uniqueness, residual]\label{conj:sym-general}
+\begin{conjecture}[Full $\mathrm{Sym}^{a}$ admissible set, residual]\label{conj:sym-general}
 Among monic quadratics $x^{2} + B\,x + C$ with $B = 16 \cdot b'$ for
 $b' \in \mathrm{Sym}^{a} H^{1}(E_{\mathrm{lemn}})$ (arbitrary, not just
 leading-period $\omega^{a}$) and $C = 16 \cdot c'$ for
-$c' \in \mathrm{Sym}^{b} H^{1}$, the pair $(a, b) = (2, 3)$ remains
-uniquely minimal in the sense of Theorem~\ref{thm:sym-23-uniqueness}.
-The leading-period uniqueness theorem is the
-restriction of this statement to $b' = \omega^{a}$, $c' = \omega^{b}$.
+$c' \in \mathrm{Sym}^{b} H^{1}$, the admissible exponent set under the
+analogues of criteria \textup{(i)}--\textup{(ii)} is no larger than the
+leading-period set
+$\{a < b < 2a\} \cup \{b = 2a + 1\}$ of
+Theorem~\ref{thm:sym-23-uniqueness}. (Statement adjusted 2026-07-01/02,
+FTD-0351: the previous phrasing ``$(2, 3)$ remains uniquely minimal''
+inherited the retracted unique-minimality claim.) The leading-period
+statement is the restriction to $b' = \omega^{a}$, $c' = \omega^{b}$.
 \end{conjecture}
 
 \begin{remark}[On Conjecture~\ref{conj:sym-general}]
 \label{rem:sym-general-status}
 The minimal proof of Conjecture~\ref{conj:sym-general} would require
 the explicit period-algebra map of obstacle (a) above and a
-finite-dimensional uniqueness argument on $(\mathrm{Sym}^{a}H^{1}) \oplus
+finite-dimensional admissibility argument on $(\mathrm{Sym}^{a}H^{1}) \oplus
 (\mathrm{Sym}^{b}H^{1})$ for each $(a, b)$. Theorem~\ref{thm:sym-23-uniqueness}
 shows the leading-period restriction; extending to general elements is
 a dimension-counting refinement over the period algebra, expected to be
@@ -2040,15 +2117,26 @@ For the family $y^2 - 16\,R^p\,y + 16\,R^q = 0$ with $R > 1/4$ and
 $(p, q) \in \Z_{>0}^2$:
 \begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*, itemsep=2pt]
 \item If $q \neq p+1$, then $y_-(R)/R$ does \emph{not} tend to $1$ as
-$R \to \infty$. The smaller root scales as $R^{q-p}$ when $q < p+1$ or
-$R^{p}$ when $q > p+1$.
-\item If $q = p+1$, then $y_-(R) = R + 16^{-1}\,R^{2-p} + O(R^{1-p})$ as
+$R \to \infty$: for $q \leq p$ the smaller root scales as $R^{q-p} \to 0$
+(relative to $R$, as $R^{q-p-1} \to 0$); for $p+1 < q < 2p$ it scales as
+$R^{q-p}$, so $y_-/R \to \infty$; at $q = 2p$,
+$y_-(R) = (8 - 4\sqrt3)\,R^{p}$ identically; and for $q > 2p$ the roots
+are complex for all large $R$. \emph{(Subcase scalings corrected
+2026-07-01/02, FTD-0351; the earlier text gave $R^{p}$ for all
+$q > p+1$.)}
+\item If $q = p+1$ and $p \geq 2$, then
+$y_-(R) = R + 16^{-1}\,R^{2-p} + O(R^{1-p})$ as
 $R \to \infty$. In particular:
    \begin{itemize}[leftmargin=*, itemsep=2pt]
    \item $(p, q) = (2, 3)$: $y_-(R) = R + 1/16 + O(1/R)$ (constant shift),
    \item $(p, q) = (3, 4)$: $y_-(R) = R + 1/(16R) + O(1/R^3)$ (vanishing shift),
    \item $(p, q) = (k, k+1)$, $k \geq 3$: $y_-(R) = R + O(R^{2-k})$ (faster vanishing).
    \end{itemize}
+For $p = 1$ (the pair $(1, 2)$, which lies on $q = 2p$), the expansion
+parameter $u = R^{1-p}/4 = 1/4$ does not tend to $0$ and instead
+$y_-(R) = (8 - 4\sqrt3)\,R$ identically, so $y_-/R \to 1.0717\ldots \neq 1$.
+\emph{($p \geq 2$ restriction added 2026-07-01/02, FTD-0351; the earlier
+statement asserted the expansion for all $q = p+1$.)}
 \end{enumerate}
 Thus $(p, q) = (2, 3)$ is the unique exponent pair with $q = p+1$ and
 \emph{non-vanishing constant additive shift} on $y_-$ as $R \to \infty$.
@@ -2060,19 +2148,28 @@ The quadratic formula gives
 y_-(R) \;=\; 8\,R^p \;-\; \tfrac{1}{2}\sqrt{(16 R^p)^2 - 4\cdot 16 R^q}
        \;=\; 8\,R^p\,\Bigl(1 - \sqrt{1 - R^{q - 2p}/4}\Bigr).
 \]
-For $q = p+1$, set $u = R^{q-2p}/4 = R^{1-p}/4$ and expand
+For $q = p+1$ with $p \geq 2$, set $u = R^{q-2p}/4 = R^{1-p}/4$, which
+tends to $0$ as $R \to \infty$, and expand
 $\sqrt{1-u} = 1 - u/2 - u^2/8 - O(u^3)$:
 \[
 y_-(R) \;=\; 8\,R^p\,\bigl(u/2 + u^2/8 + O(u^3)\bigr)
        \;=\; R \,+\, R^{2-p}/16 \,+\, O(R^{1-p}).
 \]
 The leading correction $R^{2-p}/16$ is constant (in $R$) iff $p = 2$,
-vanishing as $R \to \infty$ for $p \geq 3$. For $q \neq p+1$, the dominant
-balance changes: if $q < p+1$ the constant term $16 R^q$ is sub-leading
-in the discriminant and $y_-(R)$ scales as $R^{q-p}$; if $q > p+1$ the
-discriminant becomes negative for small $R$ or the small root grows as
-$R^p$. Hence $q = p+1$ is necessary for $y_-(R) \to R$, and within that
-case $p = 2$ is the unique value yielding a non-vanishing constant shift.
+vanishing as $R \to \infty$ for $p \geq 3$. For $q = p+1$ with $p = 1$,
+$u = 1/4$ for all $R$ and $y_-(R) = 8R(1 - \sqrt{3}/2) = (8 - 4\sqrt3)R$
+identically. For $q \neq p+1$, the dominant balance changes: if
+$q \leq p$ the constant term $16 R^q$ is sub-leading in the discriminant
+and $y_-(R) \sim 16R^{q}/(16R^{p}) = R^{q-p}$, so $y_-/R \to 0$; if
+$p+1 < q < 2p$ the same product-over-trace balance gives
+$y_-(R) \sim R^{q-p}$ with $q - p > 1$, so $y_-/R \to \infty$; at
+$q = 2p$ the discriminant is $192R^{2p}$ exactly and
+$y_-(R) = (8 - 4\sqrt3)R^{p}$; for $q > 2p$ the discriminant
+$256R^{2p} - 64R^{q}$ is negative for all large $R$ and the roots leave
+$\R$. Hence $q = p+1$ (with $p \geq 2$) is necessary for
+$y_-(R) = R + o(R)$, and within that case $p = 2$ is the unique value
+yielding a non-vanishing constant shift. \emph{(Proof subcases aligned
+with the corrected statement, 2026-07-01/02, FTD-0351.)}
 \end{proof}
 
 \begin{observation}[Numerical roots across exponent pairs at $R = \Gs$]\label{obs:23-joint-match}
