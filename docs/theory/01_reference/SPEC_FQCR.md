@@ -14,7 +14,7 @@ The Finite Quarter-Conjugacy Recurrence (FQCR) is a five-model framework that:
 4. Parameterises a **modular-anomaly form** $R_N(t)$ via a $(4, 6; 3, 2)$ exponent quadruple (Model IV, [SELECTION]).
 5. Reframes the FTD master quadratic as a **transfer-matrix characteristic polynomial** $M_N(t)$, with the dominant eigenvalue identified conjecturally with $\alpha^{-1}$ at $t = 1$ (Model V, [SMC] for the physical claim, [THEOREM] for the structural identity).
 
-**Core message.** FQCR is not a replacement for FTD's existing algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0). It is a **complementary set of operator-theoretic lenses** that anchor several spine claims to a unified primitive — the conjugacy operator $J$ with $J^2 = -I$. Model I + II are subsidiaries to Theorem 1 ($G^*$ identity); Model V is a subsidiary to Theorem 2 (master quadratic). Models III + IV are new structural content.
+**Core message.** FQCR is not a replacement for FTD's existing algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). It is a **complementary set of operator-theoretic lenses** that anchor several spine claims to a unified primitive — the conjugacy operator $J$ with $J^2 = -I$. Model I + II are subsidiaries to Theorem 1 ($G^*$ identity); Model V is a subsidiary to Theorem 2 (master quadratic). Models III + IV are new structural content.
 
 ---
 
