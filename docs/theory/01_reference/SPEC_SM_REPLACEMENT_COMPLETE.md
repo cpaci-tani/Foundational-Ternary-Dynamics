@@ -443,7 +443,7 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 
 | Parameter | SM Status | FTD Formula | FTD Value | Measured | Error | Tag |
 |-----------|-----------|-------------|-----------|----------|-------|-----|
-| $\alpha_G$ | Not in SM | $2\pi(16/3)^2(N_{\text{eff}} + 3/b_3)^2\alpha^{20}$ | $5.91 \times 10^{-39}$ | $5.91 \times 10^{-39}$ | 0.06% | [THEOREM] |
+| $\alpha_G$ | Not in SM | $2\pi(16/3)^2(N_{\text{eff}} + 3/b_3)^2\alpha^{20}$ | $5.91 \times 10^{-39}$ | $5.91 \times 10^{-39}$ | 0.06% (spelling-dependent; the canonical-mass spelling gives −0.33% — corrected 2026-07-01, FTD-0348) | [STRUCTURALLY MOTIVATED PARAMETRIC] (was [THEOREM], contradicting this doc's own §gravity filing) |
 | $n_s$ (inflation) | Not in SM | Sub-threshold flux dynamics | 0.966 | 0.9649(42) | 0.2$\sigma$ | [THEOREM] |
 | $r$ (tensor/scalar) | Not in SM | From inflation mechanism | 0.022 | $< 0.036$ | Below bound | [THEOREM] |
 | $\eta$ (baryon asymmetry) | Not in SM | CP violation + Sakharov | $\sim 10^{-10}$ | $6.1 \times 10^{-10}$ | Order of magnitude | [THEOREM] |
