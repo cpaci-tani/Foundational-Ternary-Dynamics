@@ -8,6 +8,9 @@ __pycache__/
 .eggs/
 dist/
 build/
+# Vendored Three.js keeps the npm package layout, which includes a directory
+# literally named build/ — re-include it (see engine/web/js/vendor/three/README.md)
+!engine/web/js/vendor/three/build/
 
 # Quarto build artifacts
 dissemination/manuscript/.quarto/
