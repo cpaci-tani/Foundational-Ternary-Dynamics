@@ -3,7 +3,7 @@
 **Purpose.** GPU-accelerated implementations of the FTD engine's hot phases.
 Compiled into `ftd_cuda` static library; linked into `ftd_core` when
 `FTD_ENABLE_CUDA` is on. CPU/GPU parity is enforced via shared constants
-(`constants_gpu.cuh`) and tested via `test_gpu_parity_complete.cpp`.
+(`constants_shared.h`) and tested via `test_gpu_parity_complete.cpp`.
 
 ## Public API
 
@@ -37,7 +37,7 @@ auxiliary kernels.
 |---|---|
 | `kernels_stencil_common.cuh` | 82 LOC — shared device helpers used by both single-/dual-substrate stencil TUs: `wrap`, `idx3d`, `effective_damping`, `scale_field_pair` |
 | `cuda_index.cuh` | Shared `__device__ __forceinline__` helpers: `idx3d`, `wrap`, `decode_xyz`, `periodic_delta` |
-| `../include/ftd/constants_gpu.cuh` | `inline constexpr` mirrors of host constants — compiles under both g++ and nvcc; not `__constant__` memory (those live in `cuda_invariants.cu`, ADR-0014) |
+| `../include/ftd/constants_shared.h` | `inline constexpr` mirrors of host constants — compiles under both g++ and nvcc; not `__constant__` memory (those live in `cuda_invariants.cu`, ADR-0014) |
 | `../include/ftd/gpu_buffers.h`, `gpu_engine.h` | Public C++ API consumed by `render_bridge.cpp` |
 
 ## Dependencies
@@ -68,7 +68,7 @@ correctness; multi-seed campaigns or measurement runs go through
 For every host-side phase in `engine/src/render_bridge.cpp` there is a
 device-side equivalent kernel. Parity is enforced by:
 
-- Shared constants via `engine/include/ftd/constants_gpu.cuh` (mirrors
+- Shared constants via `engine/include/ftd/constants_shared.h` (mirrors
   `constants.h` to bit precision via static_asserts)
 - Shared geometry helpers via `cuda_index.cuh` (no per-kernel local copies)
 - `test_gpu_parity_complete.cpp` (and similar) running identical scenarios
@@ -97,7 +97,7 @@ verification routes through `engine/build_wsl/` per CLAUDE.md).
    `kernels_stencil_common.cuh`; do NOT redefine `idx3d`, `wrap`,
    `effective_damping`, etc. locally (drift risk).
 3. If the kernel needs a host-side launcher, add it to `gpu_engine.cu`.
-4. If it needs new constants, add to `constants_gpu.cuh` (and host-side
+4. If it needs new constants, add to `constants_shared.h` (and host-side
    `constants.h` for parity).
 5. Write a CPU mirror in `engine/src/render_bridge.cpp` or an extracted
    phase TU.
@@ -113,7 +113,7 @@ verification routes through `engine/build_wsl/` per CLAUDE.md).
 
 - All `__global__` kernels accept the same launch geometry as their CPU
   mirror (same loop bounds, same neighbor offsets)
-- All shared constants flow through `constants_gpu.cuh`; literal numeric
+- All shared constants flow through `constants_shared.h`; literal numeric
   values in kernel bodies are a bug
 - Index computations use `cuda_index.cuh` helpers; local copies are a bug
 
@@ -125,4 +125,4 @@ verification routes through `engine/build_wsl/` per CLAUDE.md).
 - [docs/adr/0012-golden-tick-regression-gate.md](../../docs/adr/0012-golden-tick-regression-gate.md) — bit-exact regression gate (hash `0xb604d81a3d79366e` @ L=17) covering physics-touching kernel changes
 - [engine/SPEC_ENGINE.md](../SPEC_ENGINE.md)
 - CPU mirror: `engine/src/render_bridge.cpp` (545 LOC) + `engine/src/render_bridge_phases/{phase_read,phase_write,phase_forces,phase_movement}.cpp`
-- Constants: `engine/include/ftd/constants_gpu.cuh`
+- Constants: `engine/include/ftd/constants_shared.h`

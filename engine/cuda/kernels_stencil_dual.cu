@@ -220,7 +220,7 @@ __global__ void strong_field_stencil_kernel(
     int8_t c = color[i];
     if (state[i] != 0 && c > 0) {
         // VERTEX_GAUGE = (11/6) / sqrt(8) — Watson c3 loop gauge, stella-octangula
-        // Single source of truth: include/ftd/constants_gpu.cuh
+        // Single source of truth: include/ftd/constants_shared.h
         double src = G_C * state[i] * VERTEX_GAUGE;
         if (c == 1) djx += src;
         else if (c == 2) djy += src;
@@ -281,7 +281,7 @@ __global__ void weak_field_stencil_kernel(
     // Source term: flavor (chirality) acts as isotropic source
     if (state[i] != 0 && flavor[i] != 0) {
         // EDGE_GAUGE = (13/9) / sqrt(12) — Watson c2 loop gauge, cuboctahedron
-        // Single source of truth: include/ftd/constants_gpu.cuh
+        // Single source of truth: include/ftd/constants_shared.h
         double src = G_C * state[i] * flavor[i] * EDGE_GAUGE;
         djx += src;
         djy += src;

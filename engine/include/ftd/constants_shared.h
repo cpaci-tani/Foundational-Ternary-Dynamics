@@ -1,6 +1,9 @@
 #pragma once
 /**
  * Shared physics constants — included by both constants.h and CUDA kernels.
+ * (Renamed constants_gpu.cuh -> constants_shared.h, revision 2.5: the content
+ * was always host-safe pure C++; the .cuh extension wrongly implied every
+ * CPU-only TU was pulling in CUDA-flavored code.)
  *
  * KEEP THIS FILE FREE of any host-only stdlib includes (<iostream>, <string>,
  * <algorithm>, etc.).  It must compile cleanly under both g++ and nvcc.
