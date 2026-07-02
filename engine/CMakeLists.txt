@@ -407,6 +407,11 @@ ftd_add_test(test_boundary_modes_golden tests/test_boundary_modes_golden.cpp
 # catches L-dependent indexing/boundary regressions the L=17 gates miss.
 ftd_add_test(test_render_bridge_golden_l9 tests/test_render_bridge_golden_l9.cpp
              CTEST_NAME render_bridge_golden_l9 LABELS golden regression)
+# GPU-backend golden characterization (revision 0.7/C4): separate pinned
+# constant, strict on the canonical WSL2 platform, informational on Windows
+# CUDA (compile-check tier), self-skipping on CPU-only builds.
+ftd_add_test(test_gpu_golden tests/test_gpu_golden.cpp GPU_HEAVY
+             CTEST_NAME gpu_golden TIMEOUT 300 LABELS golden)
 # SU(2)/SU(3) gauge-sector characterization (revision 0.9): the sector is
 # defined-but-disconnected on both backends (zero call sites; toggles are
 # silent no-ops) — this pins that fact (tripwire) + unitarity/finiteness/
