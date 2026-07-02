@@ -388,6 +388,9 @@ private:
     int tick_ = 0;
     int next_id_ = 0;
     double dt_ = 1.0;          // Time step (default 1 tick = ~1 fs/10)
+    // Intentionally smaller than ParticleEngine's 1.0 — see the softening
+    // strategy note in particle_engine.h (revision 2.4): per-scale [IMPOSED]
+    // regularization, not drift.
     double soft_ = 0.5;         // Softening length (smaller than Scale 1)
     double target_temperature_ = 0.0;  // Thermostat target (0 = disabled)
     double thermostat_tau_ = THERMOSTAT_TAU_DEFAULT; // Coupling timescale
