@@ -41,14 +41,14 @@ These are pure algebra. They cannot be wrong without an arithmetic mistake. Each
 
 ---
 
-## TIER 2 — Conditional on classical published theorems (3)
+## TIER 2 — Conditional on classical published theorems (7) <!-- header count corrected 2026-07-01, FTD-0348; previously said (3) over a 7-row table -->
 
 These depend on named external results from analytic number theory or transcendence theory. Rigor equals the source; the dependency is explicitly named.
 
 | ID | Statement | Conditional on | Verification |
 |---|---|---|---|
 | **OT-2.1** | Watson identity: `W₃ = G*²/(2π)`, where `W₃ = (1/π³)∫∫∫_[0,π]³ dk_1 dk_2 dk_3 / (1 − cos k_1 cos k_2 cos k_3)` is the BCC Watson integral | Watson 1939; closed form via Glasser-Zucker 1980 | `DERIV_WATSON_GSTAR_IDENTITY.md`; numerically verified at 100-digit precision in PARI |
-| **OT-2.2** | Tower discriminant transcendence: `A_k := 2^{k-2} G*^{k-3} − 1 ∉ Q̄` for all `k ≥ 4`. (Rational at `k = 3`.) | Schneider–Chudnovsky 1949/1976 (`Γ(1/4)` transcendental over Q ⇒ G* transcendental over Q ⇒ non-rational polynomial in transcendental over Q with rational coefficients takes transcendental values, Waldschmidt §1.4) | Paper A Thm 3.1(iii) |
+| **OT-2.2** | Tower discriminant transcendence: `A_k := 2^{k-2} G*^{k-3} − 1 ∉ Q̄` for all `k ≥ 4`. (Rational at `k = 3`.) | Chudnovsky 1976 — *algebraic independence* of {π, Γ(1/4)} ⇒ G* = Γ(1/4)²/(π√2) transcendental over Q (a nonconstant rational function of algebraically independent transcendentals) ⇒ a non-constant rational-coefficient polynomial in G* takes transcendental values (Waldschmidt §1.4). *(Proof sketch corrected 2026-07-01, FTD-0348 — the prior sketch "Γ(1/4) transcendental ⇒ G* transcendental" was a non-sequitur [a quotient involving π can be algebraic; independence is required], and "Schneider–Chudnovsky 1949" matched no relevant Schneider result. The load-bearing docs — THEOREM_HARMONIC_INVARIANT_TOWER.md, spine §8/§9 — already used the correct route; only this sketch was wrong.)* | Paper A Thm 3.1(iii) |
 | **OT-2.3** | `Q(G*)` is π-free in `Q(π, Γ(1/4))`: `Q(G*) ∩ Q(π) = Q` | Chudnovsky 1976 (algebraic independence of `{π, Γ(1/4)}` over Q) | Paper A Thm 4.1; `proof_field_theoretic_qgstar.py` |
 | **OT-2.4** | Lemniscatic L-value: `L(E_lemn, 1) = ϖ/4 = πG_G/4 = G*√π/8 ≈ 0.6555143885...`, where E_lemn: y² = x³ − x (Cremona 32.a3). Full BSD formula with c_∞ = 2 real components, c_2 = 2 Tamagawa (Kodaira III), \|E_tors\| = 4, \|Sha\| = 1. | Rubin 1991 (Inventiones 103); full BSD formula for CM rank-0 case via main conjecture for imaginary quadratic fields. (Coates-Wiles 1977 proves only L≠0 ⇒ rank=0 implication, not the precise BSD ratio.) | Paper A §11 Thm Lvalue; Paper E (overview); FTD-0159 [THEOREM]; verified to 27 digits vs LMFDB 32.a3 direct. **Errata note**: earlier session work (pre-2026-05-19) had this as ϖ/2 due to BSD-formula convention-mixing (using Ω_E^+ = 2ϖ AND c_∞ = 2, which double-counts). Caught by ivy-league CM-theorist red team; FTD-0174 / FTD-0159 (revised). |
 | **OT-2.5** | χ_{-4} four-level unification: the Kronecker character χ_{-4} on (Z/4Z)^× generates the entire G*/G_G identity algebra through four functorial projections: (L1) lattice \|Z[i]^×\| = 4, (L2) Chowla-Selberg ∏Γ(a/4)^{χ_{-4}(a)} = G*, (L3) Hecke a_p splitting in L(E_lemn,s), (L4) Dirichlet L(χ_{-4},1) = π/4 | Deligne's period conjecture for CM motives (Blasius 1986, Anderson 1986, Shimura 1979); standard CFT for imaginary quadratic fields | Paper A §16 Thm character-unification; FTD-0163 [THEOREM]; consistent with the algebraic-spine structure of OT-1.2 and OT-1.7. The four levels form a motivic-weight tower; consistency across L2-L3 is Deligne's conjecture restricted to the lemniscatic motive. |
@@ -121,7 +121,7 @@ The following are **not raw math** and are tracked elsewhere:
 | Calibration declaration (`a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys`) | [IMPOSED] | `SPEC_DIMENSIONAL_MAP.md`; SPEC_FTD.md |
 | FTD-0110 nonlinear cluster-mass identification | [STRONGLY MOTIVATED CONJECTURE] | `DERIV_FTD0110_NONLINEAR_BRIDGE.md`; not in this tracker |
 
-The 7 [THEOREM]-grade entries of the algebraic spine (OT-1.1, OT-1.2, OT-1.3, OT-1.9, OT-2.1, OT-2.3, and OT-2.4) plus the BCC complex-structure theorem (OT-1.5/1.6) and FTD-0110 (OT-3.4) are the bedrock. **Everything else is downstream**.
+The 7 [THEOREM]-grade entries of the algebraic spine (OT-1.1, OT-1.2, OT-1.3, OT-1.4, OT-1.9, OT-2.1, and OT-2.3 — list corrected 2026-07-01, FTD-0348: OT-1.4 was missing and OT-2.4, a §10.Y subsidiary L-value rather than one of the nine numbered results, was listed in its place) plus the BCC complex-structure theorem (OT-1.5/1.6) and FTD-0110 (OT-3.4) are the bedrock. **Everything else is downstream**.
 
 ---
 
