@@ -222,8 +222,10 @@ radial-inward flux envelope), just with amplitude boosted slightly:
 All kept safely below `K_GENESIS = 3·K_B` so no spurious genesis fires.
 
 **Epistemic tagging:**
-- Mass ratios (m_μ/m_e = 207, m_τ/m_e = 3477) are [THEOREM] — derived
-  from framework integers.
+- Mass ratios (m_μ/m_e = 207, m_τ/m_e = 3477) are [STRUCTURALLY MOTIVATED
+  PARAMETRIC] — integer recipes matched to experiment, per this tracker's own
+  §"Lepton Mass Ratios" demotion of record (corrected here 2026-07-01, FTD-0348;
+  this line previously said "[THEOREM] — derived", contradicting that demotion).
 - Spatial envelope shape is [SELECTION] — same as electron, chosen for
   visualization. FTD has no theory prescription for lepton spatial form
   (the rest-mass energy lives in the Lagrangian mass term, not in J).

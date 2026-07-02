@@ -207,8 +207,12 @@ M_PROTON = K_B * PROTON_RATIO
 V_HIGGS = mpf('246.09')  # GeV
 M_HIGGS = mpf(N_EFF) / ALPHA**2 * K_B / 1000  # GeV: (N_eff/alpha^2)*m_e
 
-report("m_mu/m_e", mpf(MU_RATIO), mpf('206.768'), "[THEOREM]")
-report("m_tau/m_e", mpf(TAU_RATIO), mpf('3477.48'), "[THEOREM]")
+# Tags corrected 2026-07-01 (FTD-0348): the mu/tau integer recipes are
+# [STRUCTURALLY MOTIVATED PARAMETRIC] per their demotion of record
+# (TRACKER_OPEN_ITEMS "Lepton Mass Ratios" / SPEC_SM_REPLACEMENT_COMPLETE);
+# the prior [THEOREM] prints here were never reconciled to that demotion.
+report("m_mu/m_e", mpf(MU_RATIO), mpf('206.768'), "[SM PARAMETRIC]")
+report("m_tau/m_e", mpf(TAU_RATIO), mpf('3477.48'), "[SM PARAMETRIC]")
 # Proton mass from FTD:
 # m_p / m_e = N_eff / alpha + N_base * N_eff + N_c
 #           = 13 * 137.036  +  4 * 13  +  3
@@ -223,8 +227,8 @@ M_P_RATIO = mpf(N_EFF) / ALPHA + mpf(N_BASE * N_EFF) + mpf(N_C)
 M_P_FTD = K_B * M_P_RATIO
 report("m_p/m_e (FTD)", M_P_RATIO, mpf('1836.15'), "[SMC]")
 report("m_p (MeV, FTD)", M_P_FTD, mpf('938.272'), "[SMC]", "MeV")
-report("m_mu (MeV)", M_MUON, mpf('105.658'), "[THEOREM]", "MeV")
-report("m_tau (MeV)", M_TAU, mpf('1776.86'), "[THEOREM]", "MeV")
+report("m_mu (MeV)", M_MUON, mpf('105.658'), "[SM PARAMETRIC]", "MeV")
+report("m_tau (MeV)", M_TAU, mpf('1776.86'), "[SM PARAMETRIC]", "MeV")
 report("v_Higgs (GeV)", V_HIGGS, mpf('246.22'), "[SELECTION]", "GeV")
 report("m_Higgs (GeV)", M_HIGGS, mpf('125.11'), "[SELECTION]", "GeV")
 
