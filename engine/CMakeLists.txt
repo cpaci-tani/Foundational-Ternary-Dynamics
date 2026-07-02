@@ -418,6 +418,18 @@ ftd_add_test(test_gpu_golden tests/test_gpu_golden.cpp GPU_HEAVY
 # single-thread determinism of the relax functions themselves.
 ftd_add_test(test_gauge_links tests/test_gauge_links.cpp
              CTEST_NAME gauge_links TIMEOUT 120 LABELS unit)
+# WebSocket protocol unit tests (revision 1.4): first automated coverage for
+# the ws_server remote-control surface — SHA-1/base64/RFC-6455 accept-key
+# vectors + the JSON helpers command dispatch relies on. Compiles
+# ws_protocol.cpp directly (it is not part of ftd_core).
+add_executable(test_ws_protocol tests/test_ws_protocol.cpp src/ws_protocol.cpp)
+target_include_directories(test_ws_protocol PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_ws_protocol PRIVATE ftd_test_support)
+if(WIN32)
+    target_link_libraries(test_ws_protocol PRIVATE ws2_32)
+endif()
+add_test(NAME ws_protocol COMMAND test_ws_protocol)
+set_tests_properties(ws_protocol PROPERTIES TIMEOUT 60 LABELS "unit")
 
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
