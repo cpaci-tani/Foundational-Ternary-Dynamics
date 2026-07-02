@@ -377,6 +377,11 @@ ftd_add_test(test_render_bridge_golden tests/test_render_bridge_golden.cpp
 # wave_vel_L/R, latency.
 ftd_add_test(test_render_bridge_golden_default tests/test_render_bridge_golden_default.cpp
              CTEST_NAME render_bridge_golden_default LABELS golden regression)
+# Boundary-mode characterization goldens (revision 0.6): one pinned hash per
+# non-default boundary path (flux Reflective/Dispersal, absorbing sponge,
+# movement mirror-bounce) — safety net for the boundary-shell dedup (2.3).
+ftd_add_test(test_boundary_modes_golden tests/test_boundary_modes_golden.cpp
+             CTEST_NAME boundary_modes_golden LABELS golden regression)
 
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
