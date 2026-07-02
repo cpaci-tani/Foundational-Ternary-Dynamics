@@ -108,6 +108,11 @@ export class WasmBridge {
     }
 
     async init(latticeSize = 33) {
+        // Revision 2.7: introspectable load state ('loading'|'ready'|'failed')
+        // so diagnostics/tests/UI can distinguish "still compiling" from
+        // "failed" without parsing console output. Additive — no consumer is
+        // required to read it.
+        this.wasmLoadState = 'loading';
         let size = parseInt(latticeSize, 10);
         if (isNaN(size) || size <= 0 || size > 257) {
             console.warn('[WasmBridge] Invalid init latticeSize:', latticeSize, '- falling back to 33');
@@ -157,9 +162,11 @@ export class WasmBridge {
                 throw err;
             }
             this.ready = true;
+            this.wasmLoadState = 'ready';
             debugLog('FTD WASM engine loaded successfully');
             return true;
         } catch (e) {
+            this.wasmLoadState = 'failed';
             console.warn('WASM module not available:', e.message);
             return false;
         }
@@ -271,21 +278,37 @@ export class WasmBridge {
         this.ready = false;
     }
 
+    // Revision 2.7: every injection method carries the same try-catch guard
+    // injectFlux always had. A BindingError from a bad argument (or a
+    // scenario bug) now logs instead of unwinding through the scenario
+    // loader — the asymmetry looked intentional but was accretion. NOTE: no
+    // heap-death recovery is attempted anywhere; ftd_core builds with
+    // -fno-exceptions, so a WASM abort() stays permanent by design.
     injectParticle(x, y, z, state) {
-        if (this._module && this._bridge) {
+        if (!(this._module && this._bridge)) return;
+        try {
             this._module.injectParticle(this._bridge, x, y, z, state);
             this._invalidateScale0AuditCache();
+        } catch (e) {
+            console.error('WASM injectParticle failed:', e);
         }
     }
 
     injectWaveVel(x, y, z, vx, vy, vz) {
-        if (this._module && this._bridge && typeof this._module.injectWaveVel === 'function')
+        if (!(this._module && this._bridge && typeof this._module.injectWaveVel === 'function')) return;
+        try {
             this._module.injectWaveVel(this._bridge, x, y, z, vx, vy, vz);
+        } catch (e) {
+            console.error('WASM injectWaveVel failed:', e);
+        }
     }
     injectWavepacket(x, y, z, state) {
-        if (this._module && this._bridge) {
+        if (!(this._module && this._bridge)) return;
+        try {
             this._module.injectWavepacket(this._bridge, x, y, z, state);
             this._invalidateScale0AuditCache();
+        } catch (e) {
+            console.error('WASM injectWavepacket failed:', e);
         }
     }
 
@@ -314,9 +337,12 @@ export class WasmBridge {
     }
 
     createEntangledPair(x, y, z, fx, fy, fz) {
-        if (this._module && this._bridge) {
+        if (!(this._module && this._bridge)) return;
+        try {
             this._module.createEntangledPair(this._bridge, x, y, z, fx, fy, fz);
             this._invalidateScale0AuditCache();
+        } catch (e) {
+            console.error('WASM createEntangledPair failed:', e);
         }
     }
 
