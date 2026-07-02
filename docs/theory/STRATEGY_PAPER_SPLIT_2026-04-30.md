@@ -14,8 +14,9 @@ The FTD program presently bundles two distinct contributions inside a
 single rhetorical envelope:
 
 1. A **rigorous mathematical core** — nine numbered results (seven
-   theorem-grade + two honestly-tiered below theorem grade; see
-   `SPEC_ALGEBRAIC_SPINE.md` §0) on `G*`, the master
+   theorem-grade + two honestly-tiered below theorem grade — Theorem 3
+   at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count
+   convention) on `G*`, the master
    quadratic, the (1+i)-tower harmonic invariant, the Watson identity,
    CM uniqueness, the coefficient `16 = |Aut(E)|²`, the Phase G geometric
    Coulomb identity, Phase J ultralocality, and the field-theoretic

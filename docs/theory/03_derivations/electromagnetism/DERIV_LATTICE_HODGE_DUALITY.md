@@ -184,7 +184,7 @@ not a structural compromise.
 
 - **NOT a new spine theorem.** Filed as FTD-0114 [DERIVED],
   subsidiary to FTD-0113 / Phase G / EFT-recovery program. The spine
-  count is unchanged — nine numbered results, seven theorem-grade + two honestly-tiered (see `SPEC_ALGEBRAIC_SPINE.md` §0).
+  count is unchanged — nine numbered results, seven theorem-grade + two honestly-tiered (Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention).
 
 ---
 
