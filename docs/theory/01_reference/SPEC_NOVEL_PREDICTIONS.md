@@ -106,7 +106,7 @@ The derivation requires identifying 1 voxel = 1 Planck length, which sets $M_P$.
 | **FTD value** | $5.909 \times 10^{-39}$ |
 | **Experimental** | $5.906 \times 10^{-39}$ |
 | **Discrepancy** | 0.06% |
-| **Epistemic status** | **[THEOREM]** (integer structure with $\alpha^{20}$ hierarchy) |
+| **Epistemic status** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — inherits FTD-0015's [SMC] floor per FTD-0131/0133; precision is spelling-dependent) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $G_N$ was measured in 1798 (Cavendish). |
 
 The exponent $20 = N_{\text{eff}} + b_3 = 13 + 7$ comes from cross-domain coupling (spatial to temporal degrees of freedom). The factor $(N_{\text{eff}} + 3/b_3)^2 = (13 + 3/7)^2 = (94/7)^2$ is derived from the framework integers.
@@ -534,7 +534,7 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 | NP-5 | $m_\tau/m_e = 3477$ | [STRONGLY MOTIVATED CONJECTURE] | Now (0.007% off PDG) | Post |
 | NP-6 | $m_H = (N_{\text{eff}}/\alpha^2) m_e \approx 124.8$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | Now (0.36% off PDG) | Post |
 | NP-7 | $v = M_P\sqrt{2\pi}\alpha^8 = 246.09$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | Now (0.05% off PDG) | Post |
-| NP-8 | $\alpha_G = 2\pi(16/3)^2(N_{\text{eff}}+3/b_3)^2\alpha^{20}$ | [THEOREM] | Now (0.06% off experimental) | Post |
+| NP-8 | $\alpha_G = 2\pi(16/3)^2(N_{\text{eff}}+3/b_3)^2\alpha^{20}$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (corrected 2026-07-01, FTD-0348) | Now (0.06% spelling-dependent; canonical-mass spelling −0.33%) | Post |
 | NP-9 | $a_e = \alpha/(2\pi)$ from lattice vertex correction | [THEOREM] | Now (Schwinger re-derivation) | Post |
 | NP-10 | $\Gamma(\pi^0 \to \gamma\gamma) = 7.73$ eV from lattice anomaly | [THEOREM] | Now (1.2% off PDG) | Post |
 | NP-11 | $\beta_0 = 7$ (QCD one-loop) | [THEOREM] | Now (exact match) | Check |

@@ -55,7 +55,7 @@ A discrete computational framework for simulating physical systems from explicit
 - Fine structure constant α = 1/137.036 from lemniscatic constant G* (1.26 ppm tree-level) — identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]
 - Loop coefficients c1–c3 derived from lattice Feynman diagrams: c1 = 9/47 (0.8%), c2 = 5/64 via gauge factor 13/9 (0.07%), c3 = 4/141 via gauge factor 11/6 (0.33%)
 - Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.19% error)
-- Higgs mass m_H = (N_eff/α²)·m_e = 124.8 GeV (0.24% error), λ_H = m_H²/(2v²)
+- Higgs mass m_H = (N_eff/α²)·m_e = 124.75 GeV — **−0.36% vs PDG 2024's 125.20 ± 0.11 GeV, a −4.1σ discrepancy at current precision** (corrected 2026-07-01, FTD-0348: the earlier "0.24% error" reproduced only against the superseded PDG-2020 value 125.10; at PDG-2024 precision the exact relation is experimentally excluded), λ_H = m_H²/(2v²)
 - Proton mass m_p/m_e = N_eff/α + N_base·N_eff + N_c = 1836.47 (174 ppm)
 - Electron g-2: a_e = α/(2π) to 5-loop = 2.55 ppb — **[PARAMETRIC]** (imported multi-loop QED with FTD's α inserted; evidence for α's value, not a substrate derivation of g-2)
 - Lamb shift: 1055.4 MHz (0.23% from experiment) — **[PARAMETRIC]** (standard QED one-loop with FTD's α inserted)

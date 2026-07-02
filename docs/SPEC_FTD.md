@@ -723,7 +723,7 @@ These define the model's fundamental scales:
 | α (ALPHA) | 0.00729 | dimensionless | Fine structure constant | **STRONGLY MOTIVATED CONJECTURE** from x₊ (§7.4); ppb corrections scheme-conditional |
 | g_c | ~α^(1/2) | dimensionless | State-flux coupling | Conditional on α identification |
 | G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Gravitational coupling |  Derived (1/(b₃+N_c)²) |
-| α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy |  Derived (2π(16/3)²(N_eff+3/7)²α²⁰, 0.06%) |
+| α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy | [STRUCTURALLY MOTIVATED PARAMETRIC] (2π(16/3)²(N_eff+3/7)²α²⁰; 0.06% is spelling-dependent, canonical-mass spelling −0.33% — corrected 2026-07-01, FTD-0348) |
 | γ (DECAY_RATE) | 0.00729 = α | [T]⁻¹ | Dissipation rate |  **[IMPOSED]** (see §4.3, ASSUMP.6) |
 | φ (PHI) | 1.618... | dimensionless | Golden ratio |  Mathematical constant |
 
@@ -1685,7 +1685,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.13 | Can CP violation be predicted? |  **DERIVED** | Jarlskog J = 3.9×10⁻⁵ (27%), CKM phase δ = 68° (1.5%) |
 | OPEN.14 | Can neutrino masses be derived? |  **DERIVED** | Δm²₃₁ exact match, see-saw mechanism with m_D ~ m_τ × α |
 | OPEN.15 | What is the UV distribution P_UV? |  **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
-| OPEN.16 | What determines G_N? |  **DERIVED** | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ (0.06% accuracy) |
+| OPEN.16 | What determines G_N? | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — not DERIVED; inherits FTD-0015's [SMC] floor, precision spelling-dependent) | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ |
 | OPEN.17 | Why does a 3D lattice exist? |  **DERIVED (v5.0)** | D=3 uniquely selected by atomic stability + gauge renormalizability + Fibonacci constraint |
 | OPEN.18 | Can GR be derived with correct coefficient? |  **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
 | OPEN.19 | Can inflation observables be derived? |  **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |

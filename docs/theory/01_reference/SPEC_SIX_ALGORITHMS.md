@@ -347,7 +347,7 @@ The weak force is the only force that **changes particle identity.** EM and stro
 
 | Component | Formula | Value | Origin |
 |-----------|---------|-------|--------|
-| **Full formula** | α_G = 2π(16/3)²(N_eff + 3/b₃)² × α²⁰ | 5.909 × 10⁻³⁹ |  DERIVED |
+| **Full formula** | α_G = 2π(16/3)²(N_eff + 3/b₃)² × α²⁰ | 5.909 × 10⁻³⁹ | [STRUCTURALLY MOTIVATED PARAMETRIC] (corrected 2026-07-01, FTD-0348) |
 | 2π | Action principle normalization | 6.283 | From S[s,J] |
 | (16/3)² | (N_base²/N_c)² = \|Aut(E)\|⁴/N_c² | 28.44 | Curve geometry |
 | (94/7)² | (N_eff + N_c/b₃)² | 180.3 | Framework integers |

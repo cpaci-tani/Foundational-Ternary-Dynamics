@@ -194,7 +194,7 @@ The historical `x_- → N_c = 3` identification is **RETIRED** per v1.4 §5; LED
 | Fine structure α | 1/x₊ | 1/137.036 | 1/137.036 | **1.26 ppm** |
 | Weinberg angle sin²θ_W | N_c/n_eff | 0.2308 | 0.2312 | **0.19%** |
 | Strong coupling α_s | b_3/(b_3+4n_eff) | 0.1186 | 0.1179 | **0.6%** |
-| Gravitational α_G | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | 5.91×10⁻³⁹ | 5.91×10⁻³⁹ | **0.01%** |
+| Gravitational α_G | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | 5.909×10⁻³⁹ | 5.906×10⁻³⁹ | **+0.05%** (spelling-dependent; canonical-mass spelling −0.33% — corrected 2026-07-01, FTD-0348; the prior "0.01%" is not reproducible) |
 
 ### 7.2 Charged Lepton Masses
 
