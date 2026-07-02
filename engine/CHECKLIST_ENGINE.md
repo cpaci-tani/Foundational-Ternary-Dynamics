@@ -464,3 +464,19 @@ so any flavor change is GPU-behavior-relevant even though it is golden-invisible
   AtomEngine physics. Add to the ticket-5.4 diagnosis scope alongside
   helium_scale1 (same discipline: instrument, bisect, three costed options —
   no silent tolerance changes).
+
+### Revision-program pre-existing failure inventory (running list, 2026-07-02)
+Found by actually running suites (the "211/211" tally is stale). All fold
+into the ticket-5.4 diagnosis discipline (instrument, bisect, three costed
+options — never silent tolerance edits):
+1. `helium_scale1` — documented previously (FTD-0270 boundary hypothesis).
+2. `atomic_energy` — AE-6d/6e bound-state energy sign / factor-2 circular
+   check; test unchanged since 2026-03-16.
+3. `particle_toggles` §4 + `particle_engine` PE5/PE6 — gravity assertions
+   expect a legacy-scale G_PE; the engine's committed G_PE is the physical
+   FTD-0131 coupling (~1e-45), so "gravity ON -> nonzero force" asserts
+   below double noise. Stash-verified independent of revision-2.4.
+4. `particle_lifetime` — fails (~90 s, not timeout); tests the RenderBridge
+   substrate (includes only render_bridge.h), so unreachable by the 2.4
+   Scale-1 edit; possibly interacts with the concurrent gauge-wiring WIP —
+   re-baseline once that lands.
