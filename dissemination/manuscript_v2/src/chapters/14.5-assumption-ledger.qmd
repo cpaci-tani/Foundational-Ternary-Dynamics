@@ -237,7 +237,7 @@ The ternary state space $\{-1, 0, +1\}$ has been clarified — it is not an inde
 | Spinor behavior (720° symmetry) | Confirmed | [V] VERIFIED |
 | Fermion exchange antisymmetry | Confirmed | [V] VERIFIED |
 | Pauli exclusion | Confirmed | [V] VERIFIED |
-| sLoop Bell parameter | S ≈ 1.95→2.85 | [V] VERIFIED |
+| sLoop Bell parameter | RETIRED (corrected 2026-07-01, FTD-0347): substrate/engine S ≤ 2 [THEOREM]; the S ≈ 1.95→2.85 scaling belongs to the continuous-Bell sLoop reading CLOSED DECLINED under FC-1 (2026-06-10); S > 2 arises only under the imported complexification readout [SELECTION] | [R] RETIRED |
 | SU(3) color from lattice | Derived via Günaydin-Gürsey | [†] DERIVED (G₂ → SU(3)) |
 | Linear confinement | Confirmed | [V] VERIFIED |
 
@@ -393,7 +393,7 @@ These claims interpret FTD entities in terms of physics. They are **not** deriva
 | Core Paper Theorems (T1-T8) | **6** | D=3 uniqueness, C1/C2 proven |
 | Selection Principles (S1-S4) | 4 | |
 | Companion Work [†] | **38** | GR, inflation, baryogenesis |
-| Verified (simulation) | **17** | sLoop, Lorentz, SU(3) |
+| Verified (simulation) | **17** (pre-retirement count; the sLoop-Bell entry was RETIRED 2026-07-01, FTD-0347) | Lorentz, SU(3) |
 | Emergent | 7 | |
 | Imposed | 0 | |
 | Conjectures | **2** | |
