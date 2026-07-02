@@ -15,7 +15,8 @@ Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 
 | CTest name | What it pins |
 |---|---|
-| `render_bridge_golden` | Absolute golden gate — pinned `GOLDEN_HASH` (L=17, 100 ticks, seed 42, CPU, ADR-0012) |
+| `render_bridge_golden` | Absolute golden gate — pinned `GOLDEN_HASH` (L=17, 100 ticks, seed 42, CPU, minimal profile, ADR-0012) |
+| `render_bridge_golden_default` | Default-profile golden — pinned `GOLDEN_HASH_DEFAULT` (same harness, ZERO toggle writes = shipping defaults, extended fold incl. flux_L/R + latency) |
 | `knot_tracking_golden` | Knot-tracking observation-only bit-neutrality golden |
 | `tick_phase_order` | Tick phase ordering constraints (PO-2/PO-3) |
 | `engine_lifecycle` | RAII/clear() lifecycle contract |
