@@ -39,9 +39,29 @@ $\eta$-tower theorem $|\eta(\tau_K)|^{2 w_K} = \GK^{w_K}/(2\pi|d_K|)^{w_K/2}$
 that uniformly recovers the lemniscatic case and the Heegner near-integer
 phenomenon $e^{\pi\sqrt{163}} \approx 640320^{3} + 744$ as instances of
 the same arithmetic structure. The opus consists of four papers, total
-$44$ pages of new mathematics, with the master quadratic uniqueness
-theorem and the value-algebra polynomial-ring statement as the principal
-structural results.
+$44$ pages of new mathematics, with the master quadratic exponent
+constraints (see Erratum below) and the value-algebra polynomial-ring
+statement as the principal structural results.
+
+\subsection*{Erratum (2026-07-02, FTD-0356, propagating FTD-0351)}
+
+The ``master quadratic uniqueness theorem'' referred to in this overview
+(Paper A \S 16.5, formerly Theorem 16.5.1: $(a,b)=(2,3)$ as the
+\emph{unique minimal-$a$} exponent pair) was \textbf{retracted} on
+2026-07-01 (LEDGER FTD-0351): its Case-A/Case-C discriminant analysis was
+notationally vacuous --- the roots are identically
+$8\,{\Gs}^{a} \pm 4\sqrt{4\,{\Gs}^{2a} - {\Gs}^{b}}$ in every case --- and
+the pair $(1,3)$ in fact survives every substantive criterion
+($\Delta(1,3) = 64\,{\Gs}^{2}(4-{\Gs}) > 0$, roots $35.746/11.593$), making
+$(1,3)$, not $(2,3)$, the minimal-$a$ element. What stands as a theorem is
+the corrected \emph{constraint set} $\{a < b < 2a\} \cup \{b = 2a+1\}$;
+the $(2,3)$ choice is a \emph{selection}, conditional on the Watson trace
+($a = 2$) and the $\mathrm{Det} = \mathrm{Tr}\cdot{\Gs}$ Vieta ansatz
+(the underdetermined W-CRIT-2 assembly, FTD-0235). Paper A \S 16.5 carries
+the corrected statement with dated remarks; every mention of the
+``uniqueness theorem'' in this overview should be read against this
+erratum. Conjecture 16.5.2, restated as an admissible-set conjecture,
+remains open.
 
 \section{The four papers}
 
@@ -63,7 +83,8 @@ All four are LaTeX-compiled, internally cross-referenced, and verified to
 50--80 digit numerical precision. Paper A contains the structural spine
 (50+ identities, the $\chi_{-4}$-unification theorem, the $\eta$-half-tower,
 quasi-modular value algebra, equianharmonic dichotomy, the master
-quadratic with its $(2, 3)$ uniqueness theorem). Papers B--D are short
+quadratic with its $(2, 3)$ exponent constraints --- formerly a
+``uniqueness theorem,'' retracted per the Erratum above). Papers B--D are short
 companions that extend particular threads.
 
 \section{The mathematical spine: $\chi_{-4}$, the master quadratic, the atlas}
@@ -91,13 +112,19 @@ $\Gs = G_{\Q(i)}$ and the equianharmonic $R_{3}^{3/2} = G_{\Q(\rho)}$
 are the only two with $w_K > 2$ and hence the only two supporting a
 dual-constant dichotomy.
 
-\paragraph{The master quadratic uniqueness (Paper A \S 16.5, Theorem).}
+\paragraph{The master quadratic exponent constraints (Paper A \S 16.5;
+corrected 2026-07-02 --- see Erratum).}
 Among polynomials of the form $x^{2} - 16\,{\Gs}^{a}\,x + 16\,{\Gs}^{b}$
-($a < b$ positive integers), the pair $(a, b) = (2, 3)$ is the unique
-minimal-$a$ choice whose roots are not scalar multiples of any single
-period ${\Gs}^{k}$. (Restriction: leading-period polynomials. The general
-case where coefficients range over $\mathrm{Sym}^{a}H^{1}$ remains as
-Conjecture 16.5.2.)
+($a < b$ positive integers), the criteria (roots not \emph{constant}
+multiples of any single period ${\Gs}^{k}$; positive discriminant)
+constrain $(a,b)$ to $\{a < b < 2a\} \cup \{b = 2a+1\}$ [theorem]. The
+former claim that $(2,3)$ is the unique minimal-$a$ choice is retracted
+(FTD-0351): $(1,3)$ survives all criteria and is the minimal-$a$ element;
+$(2,3)$ is a selection conditional on the Watson trace and the
+$\mathrm{Det}=\mathrm{Tr}\cdot{\Gs}$ ansatz (W-CRIT-2). (Restriction:
+leading-period polynomials. The general case where coefficients range
+over $\mathrm{Sym}^{a}H^{1}$ remains as Conjecture 16.5.2, restated as an
+admissible-set conjecture.)
 
 \section{Reading order by audience}
 
@@ -149,9 +176,10 @@ ordered by tractability:
 
 \begin{enumerate}[label=\textbf{(\Roman*)}, leftmargin=*, itemsep=4pt]
 \item \textbf{Conjecture 16.5.2 (full $\mathrm{Sym}^{a}$ extension; Paper A).} Extend
-the master quadratic uniqueness Theorem 16.5.1 from leading-period
+the corrected \S 16.5 constraint-set theorem (formerly the ``uniqueness
+Theorem 16.5.1,'' retracted per the Erratum) from leading-period
 polynomials to polynomials with arbitrary coefficients in $\mathrm{Sym}^{a}H^{1}$
-and $\mathrm{Sym}^{b}H^{1}$. \emph{Estimated:} 2--4 months, requires
+and $\mathrm{Sym}^{b}H^{1}$, in the admissible-set restatement. \emph{Estimated:} 2--4 months, requires
 explicit period-algebra map.
 
 \item \textbf{Cubic-AGM analog for $G_{\rho}$ (Paper A \S 17 P2).} For
@@ -246,7 +274,10 @@ $[\textsc{SYNTHESIS}]$, $[\textsc{CLOSED NEGATIVE}]$. The Sym$^{2}\oplus$Sym$^{3
 conjecture (Paper A \S 16.5) was initially stated as a conjecture; it
 was refined into Theorem 16.5.1 (leading-period restriction) +
 Conjecture 16.5.2 (general residual) once the proof scope was
-isolated.
+isolated --- and Theorem 16.5.1's uniqueness component was subsequently
+\emph{retracted} (2026-07-01, FTD-0351; see Erratum), leaving the
+corrected constraint-set theorem: the tagging discipline working in both
+directions.
 
 \paragraph{Negative results are documented.} The CM-internal candidates
 for deriving the $(2, 3)$ exponent pair (Hilbert class polynomial,
