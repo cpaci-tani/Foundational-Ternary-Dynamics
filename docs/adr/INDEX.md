@@ -28,6 +28,7 @@ header but the original record stays.
 | 0012 | [Golden-tick regression gate](0012-golden-tick-regression-gate.md) | Accepted | 100-tick byte-hash gate for physics-touching extractions (Phase 4) |
 | 0013 | [Toggle table-driven](0013-toggle-table-driven.md) | Accepted | TOGGLE_SPECS[] replaces 5-place edit with 2-place (Phase 6) |
 | 0014 | [CUDA constant memory for invariants](0014-cuda-constant-memory-for-invariants.md) | Accepted | `__constant__` pattern for small read-only matrices + companion scalars |
+| 0015 | [Engine merge gate: local + CI policy](0015-engine-merge-gate-ci.md) | Accepted | merge_gate label tiers: ci_local scripts, CI engine job (soak), Pages deploy gate |
 
 ---
 

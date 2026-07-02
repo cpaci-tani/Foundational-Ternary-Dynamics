@@ -1,6 +1,7 @@
 # FTD Continuous Integration Pipeline
-# Runs Python tests, linting, and physics validation on every push and pull request
-# C++ engine and Quarto manuscript are built locally (not in CI)
+# Runs Python tests, linting, physics validation, and the C++ engine merge
+# gate (revision 1.2 / ADR-0015) on every push and pull request.
+# Quarto manuscript is built locally (not in CI).
 
 name: CI
 
@@ -11,6 +12,34 @@ on:
     branches: [main]
 
 jobs:
+  # Engine merge gate (ADR-0015, revision 1.2): CPU-only MSVC build + the
+  # pinned-golden merge_gate bundle + unit label. Matches the platform the
+  # golden hashes are pinned on (MSVC /fp:precise — see
+  # engine/docs/DESIGN_RNG_PORTABILITY.md). GPU/campaign/benchmark labels
+  # are excluded (GPU runs only on the local WSL2 RTX 5090 rig).
+  # SOAK MODE: continue-on-error until one week of green runs, then flip to
+  # required (ADR-0015 records the flip criteria).
+  engine:
+    runs-on: windows-latest
+    continue-on-error: true   # SOAK — remove after a week of green runs
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (CPU-only, Release)
+        run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
+
+      - name: Build
+        run: cmake --build engine/build --config Release --parallel 4
+
+      - name: merge_gate bundle (pinned goldens + determinism)
+        working-directory: engine/build
+        run: ctest -L merge_gate -j 4 -C Release --output-on-failure
+
+      - name: unit label (excl. known pre-existing helium_scale1)
+        working-directory: engine/build
+        run: ctest -L unit -E "^helium_scale1$" -j 4 -C Release --timeout 600 --output-on-failure
+
   test:
     runs-on: ubuntu-latest
     strategy:

@@ -17,7 +17,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Engine gate (revision 1.2 / ADR-0015): a public deploy can no longer ship
+  # an engine regression — the pinned-golden merge_gate bundle must pass on
+  # the hash-canonical platform (windows MSVC) before Pages publishes.
+  engine-gate:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (CPU-only, Release)
+        run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
+
+      - name: Build
+        run: cmake --build engine/build --config Release --parallel 4
+
+      - name: merge_gate bundle (pinned goldens + determinism)
+        working-directory: engine/build
+        run: ctest -L merge_gate -j 4 -C Release --output-on-failure
+
   deploy:
+    needs: engine-gate
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
