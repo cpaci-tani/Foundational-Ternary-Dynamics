@@ -654,13 +654,23 @@ explicitly state material already covered by Theorems 1-9. Spine count remains 9
   four projections at $\tau = i$ is Deligne's period conjecture restricted to
   the CM case (proved unconditionally; Blasius 1986, Anderson 1986, Shimura 1979).
 
-- **Sym²⊕Sym³ uniqueness of (2,3) (Paper A §16.5 Thm 16.5.1, [THEOREM], FTD-0175)** —
+- **Sym²⊕Sym³ exponent constraint set (Paper A §16.5, [THEOREM: constraint set]
+  + [SELECTION: (2,3) choice], FTD-0175 — corrected 2026-07-01/02, FTD-0351)** —
   among leading-period polynomials $x^2 - 16\,G^{*a}\,x + 16\,G^{*b}$ with
-  $a < b$ positive integers, the pair $(a, b) = (2, 3)$ is uniquely minimal-$a$
-  satisfying integer prefactor 16 + roots-not-scalar-multiples + positive
-  discriminant. Closes the load-bearing combinatorial step of the original
-  Conjecture 16.5.1. Residual Conjecture 16.5.2 (full $\text{Sym}^a$ coefficients,
-  not just leading-period $\omega^a$) remains open. Subsidiary to Theorem 2.
+  $a < b$ positive integers and prefactor 16, the criteria
+  (roots not *constant* multiples of a single $G^{*k}$; positive discriminant)
+  constrain $(a,b)$ to $\{a < b < 2a\} \cup \{b = 2a+1\}$, whose minimal-$a$
+  element is $(1, 3)$. **The former "(2,3) uniquely minimal-$a$" [THEOREM] is
+  retracted** (FTD-0348 §3.1 finding: the old proof's Case-A/Case-C split was
+  notationally vacuous — the roots are identically
+  $8G^{*a} \pm 4\sqrt{4G^{*2a} - G^{*b}}$ in every case — and $(1,3)$ survives
+  every substantive criterion, $\Delta(1,3) = 64G^{*2}(4 - G^*) > 0$). The
+  $(2,3)$ selection is conditional: $a = 2$ from the independently proven
+  Watson trace $16G^{*2} = 32\pi W_3$ (Theorems 1/5 lineage; FTD-0002/0006),
+  $b = a{+}1$ from the $\mathrm{Det} = \mathrm{Tr}\cdot G^*$ ansatz — the
+  [UNDERDETERMINED] W-CRIT-2 assembly (FTD-0235). Residual Conjecture 16.5.2
+  (full $\text{Sym}^a$ coefficients, restated as an admissible-set conjecture)
+  remains open. Subsidiary to Theorem 2.
 
 - **L(E\_lemn, 1) = ϖ/4 closed form (Paper A §11, [THEOREM], FTD-0159 corrected)** —
   the central L-value of the lemniscatic curve has clean closed form
