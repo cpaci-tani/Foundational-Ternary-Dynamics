@@ -118,9 +118,13 @@ def main():
     print("=" * 72)
     
     if all_pass:
-        print("ALL CHECKS PASS -- The splitting field has Galois degree 2 over Q(G*).")
-        print("No operator in the native calculus Q(G*) can distinguish the roots or force")
-        print("the master-quadratic assembly without the external selection W.")
+        print("ALL CHECKS PASS -- root numerics, the Galois swap arithmetic, and PSLQ")
+        print("linear-independence of the surd against G*-powers <= 4 all verify.")
+        print("NOTE (banner corrected 2026-07-01, FTD-0348): these checks support but do")
+        print("NOT themselves establish the operator-calculus no-go -- PSLQ linear-span")
+        print("independence is strictly weaker than delta not in Q(G*) (the field statement")
+        print("rests on the squarefree argument, proof_delta_weight_zero.py / FTD-0314),")
+        print("and nothing here touches operator constructibility or forcing.")
         return 0
     else:
         print("FAILURE -- One or more checks failed.")

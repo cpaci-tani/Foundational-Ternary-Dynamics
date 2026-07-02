@@ -103,7 +103,7 @@ sG = sqrt(Gstar)
 # Any carrier whose output lands in Q(G*) (or Q(sqrt2)*G*) therefore cannot reach it.
 # --------------------------------------------------------------------------- #
 rel_in_QGstar = pslq([s4Gm1, mpf(1), Gstar], maxcoeff=10 ** 9, maxsteps=10 ** 6)
-C.true("sqrt(4G*-1) NOT in Q-span{1, G*}  (PSLQ finds no relation => genuine deg-2 ext)",
+C.true("sqrt(4G*-1) NOT in Q-span{1, G*}  (PSLQ null relation -- supports, but the deg-2 field statement rests on the squarefree argument, proof_delta_weight_zero.py; label corrected 2026-07-01 FTD-0348)",
        rel_in_QGstar is None, note=f"pslq={rel_in_QGstar}")
 rel_square = pslq([s4Gm1 ** 2, Gstar, mpf(1)], maxcoeff=10 ** 6, maxsteps=10 ** 6)
 C.true("(4G*-1) IS in Q(G*)  (PSLQ -> [1,-4,1], i.e. the square lands back inside)",
