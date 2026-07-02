@@ -981,3 +981,17 @@ Left as provenance: `AUDIT_CLOCK_HYPOTHESIS_v2` (before/after table), `AUDIT_LEM
 **Flagged open, NOT fixed** (specialist/owner judgment; recorded in the capture doc §3 + the FTD-0348 LEDGER row): OT-2.7/FTD-0175 false-as-proved ((1,3) survives all criteria — do not cite as `[THEOREM]` pending repair); FTD-0244 Lemma-1 field-enlargement rewrite; Theorem-3 scan-domain restatement (86 not 63; h=4 truncated) + Damerell pre-reg complement; two PROVEN-row justification rewrites + frontier row-4 falsifier scoping; the `MONOGRAPH_EFFECTIVE_EQUATIONS` Born/Schrödinger/Dirac `[THEOREM]` cluster; `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` "seven theorems total".
 
 **Net effect:** zero promotions; golden hash untouched; no engine behavior change. One retraction, ~10 demotions, ~30 corrections/disclosures. LEDGER row FTD-0348 added; next free id **FTD-0349**.
+
+---
+
+## 2026-07-01 — Fable derivation + repair arc (FTD-0349/0350/0351)
+
+Three parallel Fable agents on gaps 1–3 of the post-review roadmap; every script controller-re-run; the one promotion adversarially verified before application.
+
+| Id | Outcome | Files |
+|---|---|---|
+| FTD-0349 | Collective-coordinate reduction: **PARTIAL** — [DERIVED conditional on GNC]; GNC fails for both pinned profiles (new exact trace identity N q^2(1−N/L^3); exact surface law); GNC-satisfying textures exist ⇒ obstruction dynamical; v2 engine discriminator specified; FTD-0110/0250 unchanged | `DERIV_CLUSTER_COLLECTIVE_COORDINATE_v1.md`, `proof_cluster_collective_coordinate.py` (28/28) |
+| FTD-0350 | Phase-J ultralocality: **[THEOREM at all L ≥ 2]** on the matched-stencil Gauss-realizable space (exact-constraint AXIOM + stencil SELECTION); L≥4 ambiguity = proven masking artifact; adversarial verifier CONFIRMED-WITH-SCOPE-CORRECTION, corrected scope applied verbatim to spine §7 + the internally-contradictory "Consequence" paragraph fixed + LEDGER FTD-0005 tag clause corrected; **7+2 headline count deliberately unchanged pending owner bucket decision**; strengthened g_c negative (stays [PARAMETRIC]) | `ANALYSIS_PHASE_J_ZERO_MODES_v1.md`, `proof_phase_j_zero_modes.py` (44/44), spine §7, LEDGER FTD-0005 |
+| FTD-0351 | Repairs: OT-2.7 **demoted** (false-as-proved uniqueness → corrected-constraint [THEOREM] + (2,3) as W-CRIT-2-conditional [SELECTION]; honest-enumeration script; paper §16.5 dated corrections incl. 2 prop edge-case fixes); FTD-0244 Lemma 1 **completed over ℚ(G*,π)** ([THEOREM] retained; representativeness flag preserved); line-172 quick-ref leftover fixed. **Queued:** FTD-0175's ~8 downstream [THEOREM]-framing citers | `PAPER_GSTAR_INTRODUCTION.tex`(+pdf), TRACKER OT-2.7/172, spine §10.Y, `sym23_uniqueness_proof.py`, `FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`, `proof_k_bind_field_enlargement.py` (14/14) |
+
+Zero promotions except the adversarially-verified Theorem-7 scope extension; x₊=1/α [SMC]; MC-T4.3 [FOUNDATIONAL OBSTRUCTION]; golden untouched. Next free id **FTD-0352**.

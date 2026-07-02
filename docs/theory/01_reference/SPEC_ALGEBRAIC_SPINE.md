@@ -299,8 +299,29 @@ verification at L=8 to machine precision).
 
 ## 7 · Theorem 7 — Phase J partition-function ultralocality
 
-**Status.** [THEOREM at L = 2 — mode-degeneracy origin] + [NUMERICAL EVIDENCE
-at L = 3] + [AMBIGUOUS / OPEN for L ≥ 4]. The L = 2 case is proven by explicit
+**Status (retagged 2026-07-01, FTD-0350 — adversarially verified, CONFIRMED-WITH-SCOPE-CORRECTION).**
+**[THEOREM at all L ≥ 2]**: for any real-coefficient translation-invariant
+first-difference stencil D used consistently in both the divergence and the
+kinetic norm (the FTD-0090 matched-stencil discipline, a [SELECTION] whose
+choice fixes only the realizable domain *within the consistent class*), on the
+Gauss-realizable space S_phys(D) = {s : s-hat vanishing on Ker(D)}, conditional
+on the exact-constraint lambda_G-to-infinity [AXIOM] (SPEC_FTD_LAGRANGIAN.md
+S3.3; softened by ultralocality at every finite lambda_G > 0 on S_phys),
+S_E = (c^2/2 + g_c)*Sum s^2. Instances: **forward** (engine-Poisson-consistent)
+— no exclusions beyond global neutrality, nonvacuous at every L including L=2
+(all 1107 neutral configs); **centered** — nonvacuous at odd L, restricted at
+even L to the 8-parity-sublattice-neutral subspace, **vacuous at L=2**. The
+engine's historical mismatched pairing (FTD-0090 SOR) is genuinely
+non-ultralocal at L >= 4 and is **not covered** by this theorem. The prior
+[AMBIGUOUS/OPEN at L >= 4] is closed as a **proven masking artifact** (the old
+3–28% spread is exactly the kernel content of constraint-unsolvable
+configurations) — proof + verification:
+`docs/theory/09_mathematical/ANALYSIS_PHASE_J_ZERO_MODES_v1.md` +
+`scripts/proofs/proof_phase_j_zero_modes.py` (44/44). **Headline-count note:**
+the 7+2 count convention (S0) is NOT changed by this retag — whether the all-L
+theorem moves Theorem 7 into the theorem-grade bucket is an owner decision
+pending, since the result is conditional on the stencil-consistency
+[SELECTION]; until then Theorem 7 stays counted as honestly-tiered. The L = 2 case is proven by explicit
 construction. `scripts/proofs/proof_phase_j_general_L.py`
 shows L = 3 charge-neutral configurations are **also ultralocal to machine
 precision** (action spread 8.9e-16), because the matched-stencil Laplacian
@@ -357,10 +378,14 @@ SPEC_FTD.md).
 **Consequence (NOT promoted to theorem in this document).**
 Ultralocality of the classical action at L=2 means classical
 extremization on the 2³ lattice cannot fix the gauge coupling g_c —
-informationally, the L=2 action sees only Σ s², not the spatial
-structure that g_c would couple to. This consequence is L=2-specific;
-at L ≥ 3 the action does depend on spatial placement and the
-informational obstruction does not apply in the same form. A quantum
+informationally, the action sees only Σ s², not the spatial
+structure that g_c would couple to. **(Corrected 2026-07-01, FTD-0350:
+this paragraph previously called the obstruction "L=2-specific," claiming
+placement dependence at L >= 3 — contradicting this section's own L=3
+machine-precision ultralocality statement above. Under the all-L theorem the
+informational obstruction holds at every L on the realizable space — a
+strengthened negative for the g_c program; g_c stays [PARAMETRIC], nothing
+promoted.)** A quantum
 extension (Mechanism B per FTD-0031) was attempted as the remaining
 first-principles route for g_c and closed NEGATIVE (circular in the
 boundary of the projection). g_c remains [PARAMETRIC].
