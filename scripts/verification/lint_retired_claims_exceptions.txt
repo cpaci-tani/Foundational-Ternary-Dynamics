@@ -1,0 +1,41 @@
+# Exceptions file for lint_retired_claims.py
+#
+# Format (one per line, pipe-separated, comments start with #):
+#   rule_id | repo-relative posix path | dated reason
+#
+# Every entry is a deliberate decision, not a suppression of convenience.
+# Legitimate exception classes:
+#   (a) controller-owned canonical ledgers whose rows RECORD the retired
+#       claim's own history (LEDGER > prose; those rows are the demotion
+#       of record, not live assertions);
+#   (b) correction banners / catalog rows that QUOTE the retired spelling
+#       in order to retire it;
+#   (c) machine-generated mirrors of (a) (node-map artifacts regenerated
+#       from the LEDGER by build_math_node_map.py);
+#   (d) compiled artifacts whose source is already corrected and whose
+#       regeneration is tracked elsewhere (cite the tracking note).
+# When the underlying text is removed, the lint reports the exception as
+# stale — delete the line in the same commit.
+#
+# Seeded 2026-07-02 (FTD-0360).
+
+# --- (a) controller-owned canonical ledgers -------------------------------
+bell-violation-live   | docs/theory/07_assessment/core_ledgers/LEDGER.md | FTD-0023 row TITLE at [SELECTION] (aggregate mechanism), not a live substrate assertion; controller-owned
+five-fold-convergence | docs/theory/07_assessment/core_ledgers/LEDGER.md | FTD-0336/0346/0347 rows quote the retired framing inside its correction history; controller-owned
+nyquist-origin        | docs/theory/07_assessment/core_ledgers/LEDGER.md | FTD-0201/0350 tag_history rows quote the prior tag they retired; controller-owned
+nyquist-origin        | docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md | OT-3.1 row predates the FTD-0350 retag (still says L>=4 [OPEN]) — controller-owned; FLAGGED 2026-07-02 (FTD-0360) for controller follow-up, do not silently edit
+
+# --- (b) correction banners / catalog rows quoting the retired spelling ---
+five-fold-convergence | docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md | §65 correction-of-record quotes the retired phrase to retire it (corrected 2026-07-01)
+sigma-old-spelling    | docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md | catalog row quotes the corrupted spelling inside its FTD-0348 correction note
+sigma-old-spelling    | scripts/proofs/proof_complete_sm.py | dated FTD-0348 correction comment quotes the corrupted spelling it replaced
+
+# --- (c) machine-generated mirrors of the LEDGER --------------------------
+bell-violation-live   | docs/theory/09_mathematical/NODE_MAP_FTD_MATH.md | generated node label mirrors the LEDGER FTD-0023 row title (mermaid_renderer output)
+bell-violation-live   | scripts/verification/results/math_node_map.json | generated mirror of LEDGER rows (build_math_node_map.py)
+five-fold-convergence | scripts/verification/results/math_node_map.json | generated mirror of LEDGER rows (build_math_node_map.py)
+nyquist-origin        | scripts/verification/results/math_node_map.json | generated mirror of LEDGER rows (build_math_node_map.py)
+
+# --- (d) compiled artifacts, regeneration tracked elsewhere ---------------
+sloop-bell-verified   | dissemination/manuscript_v2/src/Foundational-Ternary-Dynamics.tex | compiled Quarto artifact; .qmd source corrected (FTD-0347); tracked-but-globally-stale, awaiting full re-render per the FTD-0347 note of record
+sloop-bell-verified   | dissemination/manuscript_v2/vol1/src/Foundational-Ternary-Dynamics.tex | compiled Quarto artifact; .qmd source corrected (FTD-0347); tracked-but-globally-stale, awaiting full re-render per the FTD-0347 note of record

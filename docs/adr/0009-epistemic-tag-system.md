@@ -8,7 +8,12 @@ FTD makes a wide range of claims: rigorous theorems (master quadratic
 identity), strongly motivated conjectures (x_+ = 1/α to 1.26 ppm),
 parametric insertions (electron mass formula coefficients), selection
 arguments (D=3 from |Aut(E)|²), open questions (g_c first-principles
-derivation), emergent behaviors (Bell violation S = 2√2). Without a
+derivation), emergent behaviors (engine-measured flux-tube formation in
+Wilson-loop campaigns). *(Example corrected 2026-07-02, FTD-0360: this
+line previously cited the Tsirelson-bound Bell correlation S = 2√2 as an
+[EMERGENT] behavior — canon-contradicting; per FC-1 the substrate is
+local/classical with native S ≤ 2, and that S-value is imported standard
+QM conditional on the [SELECTION] singlet.)* Without a
 shared vocabulary, claims drift in epistemic status — derivations get
 relabeled as theorems, parametric insertions get presented as
 predictions. Critique becomes impossible.
