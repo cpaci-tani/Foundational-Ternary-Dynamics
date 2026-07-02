@@ -2,7 +2,7 @@
 
 ## A New Proof of Spatial Dimensionality from CM Theory
 
-**Status:** [THEOREM] (arithmetic uniqueness only) + [SELECTION] (dimension-forcing)
+**Status:** PERMANENT (2026-07-01, FTD-0355): [THEOREM] (arithmetic uniqueness only) + [SELECTION — declared, no longer awaiting proof] (dimension-forcing). The circularity of the dimension-forcing (RHS target 16 justified via |O_h|/3 = 48/3, which presupposes D = 3) is a *declared, permanent feature of this route*, not an open to-do.
 <!-- the ARITHMETIC fact "f(D)=2^D(D-1)! equals 16 only at D=3" is a genuine (if trivial) [THEOREM] and stands. But the DIMENSION-FORCING (that this equation *selects* the physical D=3) is [SELECTION], not [THEOREM], and is circular: the LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant (it does not contain D), and the only justification of the RHS target value 16 is |O_h|/D = 48/3 (§3.3 / §5.5), which already PRESUPPOSES D=3 (O_h is the point group of the D=3 cubic lattice). See the §2 claim, §5.5 [SELECTION], the [OPEN] item, and the Honesty Note. No upward promotion. -->
 **Consolidates:** also absorbs `DERIV_D3_UNIQUENESS.md`
 **Proof script:** `scripts/verification/verify_blind_derivation.py` (step 8); Watson-integral route — `scripts/proofs/proof_d3_uniqueness.py`
@@ -163,22 +163,22 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 3. The three group-theoretic interpretations are equivalent (standard finite group theory)
 4. Independence from the Watson integral approach (no shared premises)
 
-**[SELECTION] (automorphism approach — the dimension-forcing):**
+**[SELECTION — declared] (automorphism approach — the dimension-forcing; PERMANENT classification, 2026-07-01, FTD-0355):**
 <!-- surfaced into the status block so downstream readers see the circularity. -->
-- That the arithmetic uniqueness *forces the physical spatial dimension* to be $D = 3$ is **[SELECTION], not [THEOREM]**, and is **circular**: the LHS $|\text{Aut}(E_i)|^2 = 16$ is a $D$-independent constant, and the only justification of the RHS target value $16$ is $|O_h|/D = 48/3$ (§3.3 / §5.5), which already presupposes $D = 3$ ($O_h$ is the point group of the $D=3$ cubic lattice). See the [OPEN] item below and the Honesty Note.
+- That the arithmetic uniqueness *forces the physical spatial dimension* to be $D = 3$ is **[SELECTION — declared], not [THEOREM]**, and is **circular**: the LHS $|\text{Aut}(E_i)|^2 = 16$ is a $D$-independent constant, and the only justification of the RHS target value $16$ is $|O_h|/D = 48/3$ (§3.3 / §5.5), which already presupposes $D = 3$ ($O_h$ is the point group of the $D=3$ cubic lattice). **This classification is permanent, not promotion-pending:** the circularity is a declared feature of the route, plainly named here, and no proof is being awaited. A future non-circular derivation of the RHS target (a $D$-free reason the master-quadratic prefactor should equal $2^D(D-1)!$) would be a **new result requiring its own LEDGER row**, not a promotion of this one. See the question below and the Honesty Note.
 
 **[THEOREM] (Watson-integral approach, $\S 5$):**
 5. Watson integrals $W_D$ computed for $D = 1\ldots6$ ($D=3$ exact, $D=4\ldots6$ Monte Carlo with 5M samples)
 6. $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ (exhaustive check $D = 1\ldots6$)
-7. The self-referential identity $N_c = D$ holds only for $D = 3$
+7. The self-referential identity $\lfloor x_- \rfloor = D$ holds only for $D = 3$ *(precision fix 2026-07-01, FTD-0355: this line previously said "$N_c = D$" — the $x_- \leftrightarrow N_c$ identification is RETIRED per v1.4 §5, as §5.5 item 3 above already states; the surviving content is the pure-math floor identity)*
 
 **[SELECTION] (Watson-integral approach, $\S 5$):**
 - The coefficient $K = 16 G^{*2}$ is assumed uniform across dimensions; the Faddeev-Popov $48/3 = 16$ derivation is specific to $O_h$.
 - $D \geq 4$ Watson integrals are Monte Carlo estimates (finite statistical error).
 - The self-referential criterion "$\lfloor x_- \rfloor = D$" is chosen as the selection principle.
 
-**[OPEN]:**
-- Why should $|\text{Aut}(E_i)|^2$ equal $2^D \cdot (D-1)!$? The equation is verified to select $D = 3$, but a deeper structural reason connecting the CM automorphism group to the hyperoctahedral group would strengthen the derivation. See DERIV\_STABILIZER\_DECOMPOSITION.md for the stabilizer bridge.
+**[OPEN] (standalone mathematical question — does NOT gate this document's status, which is PERMANENT per FTD-0355):**
+- Why should $|\text{Aut}(E_i)|^2$ equal $2^D \cdot (D-1)!$? The equation is verified to select $D = 3$, but no non-circular structural reason connecting the CM automorphism group to the hyperoctahedral group is known. DERIV\_STABILIZER\_DECOMPOSITION.md's stabilizer bridge shows the two sides count the same group *once $D = 3$ is given*; it does not remove the circularity. An answer would be a new result with its own LEDGER row — it is not a pending promotion of the dimension-forcing claim, which remains [SELECTION — declared] permanently.
 
 ---
 
