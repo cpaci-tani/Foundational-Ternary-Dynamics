@@ -229,7 +229,7 @@ The mass *ratios* (§7.1) are [DERIVED]; the *absolute scale* is set by the sees
 |---|---|---|---|---|
 | Λ_QCD (1-loop) | M_Z · exp(−2π/(b₀·α_s)) | M_Z, b₀ = 23/3, α_s = 7/59 | [PARAMETRIC] (imported RG) | `proof_complete_sm.py:268` |
 | Λ_QCD (2-loop) | 1-loop × exp(0.85) | Imported NLO correction | [PARAMETRIC] | `proof_complete_sm.py:271` |
-| σ (string tension) | −ln(x_−/(x_−+1)) | x_− = 3.024 | [DERIVED] | `proof_complete_sm.py:275` |
+| σ (string tension) | −ln(I₁(β)/I₀(β)) at β = x_− (formula corrected 2026-07-01, FTD-0348 — this row had copied a corrupted spelling −ln(x_−/(x_−+1)) = 0.286, 37% off the cited 0.209) | x_− = 3.024 | [SELECTION] (was [DERIVED]; the functional form is imported strong-coupling lattice-gauge machinery, the coupling insertion is a selection per the constitution — and per FTD-0210 x_− has no physical correspondent) | `proof_complete_sm.py` §6 |
 
 ---
 
