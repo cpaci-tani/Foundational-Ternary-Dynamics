@@ -126,7 +126,7 @@ $$\boxed{\;\alpha_{\text{tree}} \;=\; \frac{1}{2 G^*} \;-\; \frac{\sqrt{4 G^* - 
 - `√(4 G* − 1) / (4 G*^{3/2})` = `0.161697216626683099…`
 - `α_tree` = `0.007297343390138083…`
 - `α_tree⁻¹` = `137.036171458155483…`
-- CODATA 2022: `α⁻¹ = 137.035999177(21)` → tree residual = **1.258 ppm**
+- CODATA 2022: `α⁻¹ = 137.035999177(21)` → tree residual = **1.2572 ppm**
 
 This is the canonical FTD-0001 1.26 ppm tree-level result, expressed as a difference of two `G*`-algebraic terms rather than as `1/x_+`. The two forms are algebraically identical — the closed form is FTD-0001 in publication-grade prose, not a new claim.
 
