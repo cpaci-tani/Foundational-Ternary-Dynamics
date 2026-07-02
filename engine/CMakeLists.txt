@@ -370,6 +370,13 @@ target_link_libraries(test_audit_regression ftd_core)
 # See `.claude/plans/i-want-to-try-crispy-charm.md` Phase 4 + ADR-0008.
 ftd_add_test(test_render_bridge_golden tests/test_render_bridge_golden.cpp
              CTEST_NAME render_bridge_golden)
+# Default-profile golden (revision 0.5b, ADR-0012 amendment): same harness,
+# ZERO toggle writes — pins the TermToggles{} shipping defaults (incl. the
+# default-ON dual_substrate / selective_damping / weak_transmutation paths
+# the minimal golden leaves unprotected). Extended fold: + flux_L/R,
+# wave_vel_L/R, latency.
+ftd_add_test(test_render_bridge_golden_default tests/test_render_bridge_golden_default.cpp
+             CTEST_NAME render_bridge_golden_default LABELS golden regression)
 
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
@@ -2745,7 +2752,7 @@ target_link_libraries(campaign_scale_context_confine PRIVATE ftd_core)
 # in this bundle (run `ctest -L gpu` on the WSL2 build for that); neither are
 # campaign/benchmark tests. Labels are additive metadata only — test set,
 # commands, and timeouts are unchanged.
-foreach(_t render_bridge_golden knot_tracking_golden tick_phase_order
+foreach(_t render_bridge_golden render_bridge_golden_default knot_tracking_golden tick_phase_order
             engine_lifecycle determinism)
     if(TEST ${_t})
         set_property(TEST ${_t} APPEND PROPERTY LABELS "merge_gate")
