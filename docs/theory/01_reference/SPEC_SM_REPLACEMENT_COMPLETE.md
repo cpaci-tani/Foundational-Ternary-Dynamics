@@ -309,7 +309,7 @@ Following AUDIT_EPISTEMIC_AUDIT.md, every claim in the framework is classified:
 
 ## 4.2 What Is Genuinely Derived [THEOREM]
 
-> **Tag reconciliation:** the tags below are reconciled against LEDGER.md, which is the authoritative source on tag conflicts: [`07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md). The canonical algebraic spine has seven theorem-grade results plus two honestly-tiered subsidiary results (nine numbered); see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0. Many "framework-integer arithmetic" results below are [STRUCTURALLY MOTIVATED PARAMETRIC] or [PARAMETRIC] in LEDGER tagging.
+> **Tag reconciliation:** the tags below are reconciled against LEDGER.md, which is the authoritative source on tag conflicts: [`07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md). The canonical algebraic spine has seven theorem-grade results plus two honestly-tiered subsidiary results (nine numbered; Theorem 3 counting at its arithmetic core only); see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0 count convention. Many "framework-integer arithmetic" results below are [STRUCTURALLY MOTIVATED PARAMETRIC] or [PARAMETRIC] in LEDGER tagging.
 
 These results follow from $G^*$, the master quadratic, and integer arithmetic alone:
 
