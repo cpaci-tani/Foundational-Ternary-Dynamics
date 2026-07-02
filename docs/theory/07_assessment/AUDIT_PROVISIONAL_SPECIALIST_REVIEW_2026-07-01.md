@@ -63,7 +63,7 @@ with the system that produced the corpus) and may dismiss concerns raised here a
 | 4 | MEDIUM | **PLAUSIBLE — OPEN, owner judgment required** | `FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md` §1 | K-BIND's `[THEOREM]` closes a generator set whose members are each chosen with invariants in ℚ(G\*) — Lemma 1 is near-tautological relative to that choice. The verifier found the doc **already self-scopes** ("relative to the admissible FTD-native construction set") and that FTD-0314 treats FTD-0244 as *extended, not contradicted* — so the tag is defensible within its stated scope — but a genuine residual tension stands: §5's boxed "K-BIND [OPEN] → [CLOSED THEOREM-NEGATIVE]" transition over-reads for a reader of FTD-0244 alone, while FTD-0314 keeps the analytic-period sub-route `[OPEN]`. **Whether the axiomatized generators are *representative* of what the substrate can construct is a question for a working Galois/transcendence theorist, not resolvable by another documentation pass.** | **NOT FIXED — recorded as open flag** |
 | 5 | LOW | CONFIRMED | `LEDGER.md` :325 (FTD-0336 row) | The row still carries "five-fold independent mathematical convergence" — the framing its own source doc (`FOUND_MODULUS_ARGUMENT_FRONTIER.md` §5) corrected to "one structural fact, five vocabularies" under FTD-0346; under LEDGER>prose precedence the canonical record asserted what the source disavows | **FIXED (FTD-0347)** |
 | 6 | LOW | CONFIRMED | `analyze_convergence.py` :32, :67 | Benchmark B2 ("alpha recovered 2.4%") is circular — α is the input by construction (`ALPHA_EFT = G_C²`, static_assert-pinned; the force code's Coulomb amplitude IS α in every mode) — self-disclosed only in a buried REMAINING-GAPS line while the B2 scorecard row and EM domain-grade carry no inline caveat, unlike the freshly-caveated B7/B16 | **FIXED (FTD-0347)** |
-| 7 | LOW | CONFIRMED | `lean/FTD/Axioms.lean` | Every axiom body is the trivial `True` with the real statement in a comment — the file is citation bookkeeping wearing Lean syntax, not machine-checked formalization; nothing downstream consumes these axioms to prove a nontrivial theorem (the genuinely rigorous artifact is the separate `FtdNoGo/Standalone.lean` tree); the "sorry-debt: 10 proven in literature" report overstates what Lean verifies | **FIXED (FTD-0347)** — header disclosure added, no axiom changed |
+| 7 | LOW | CONFIRMED | `lean/FTD/Axioms.lean` | Every axiom body is the trivial `True` with the real statement in a comment — the file is citation bookkeeping wearing Lean syntax, not machine-checked formalization; nothing downstream consumes these axioms to prove a nontrivial theorem (the genuinely rigorous artifacts are `lean/Standalone.lean` — axiom-clean, `[propext, Quot.sound]` only, compile-verified by the follow-up review — and the `lean/FtdNoGo/` Mathlib rendering; pathname corrected 2026-07-01, an earlier version of this row mis-cited "FtdNoGo/Standalone.lean"); the "sorry-debt: 10 proven in literature" report overstates what Lean verifies | **FIXED (FTD-0347)** — header disclosure added, no axiom changed |
 
 ## §3 · Attacked and survived (reported for transparency)
 
@@ -109,3 +109,51 @@ another AI pass editing the doc would simulate resolution without providing it.
 **Zero promotions:** `x₊=1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays
 `[FOUNDATIONAL OBSTRUCTION]`; no α derived; golden hash `0xb604d81a3d79366e` untouched. Every
 fix downgrades an overclaim, reconciles a count to its per-claim sources, or discloses a gap.
+
+---
+
+## §5 · Follow-up verification pass (same day) — verdicts and residuals fixed
+
+After the six fixes were committed (50a56644, 4fe31eb7), both specialist reviewers were
+re-dispatched with narrow verify-the-fixes briefs. **Verdicts:** all six fixes CORRECT as
+worded in-file; the promotion spot-check PASSED on both sides (the math reviewer additionally
+verified the 7+2 count move is *non-circular* — the tracker whose tiering justifies it was not
+touched by either commit — and machine-compiled the Lean artifacts to check the disclosure's
+claims: `lean/Standalone.lean` compiles on bare Lean 4.30.0 with `#print axioms =
+[propext, Quot.sound]`). The reviewers found the following residuals, all fixed in the same-day
+follow-up commit:
+
+- **`AGENTS.md`** — carried the exact pre-fix "Bell violation S = 2√2" bullet plus the same
+  stale g-2/Lamb/Einstein/50-tests bullets FTD-0345 fixed in `CLAUDE.md`; synced to the
+  canonical corrected forms.
+- **`CLAUDE.md` line ~294** — "All force computations use ALPHA_EFT, not hardcoded ALPHA" was
+  false as a code fact (`phase_forces.cpp` uses `ALPHA` directly in Poisson/legacy modes);
+  reworded.
+- **Lean pathname defect (introduced by fix 7, caught by the reviewer):** the disclosure cited
+  a non-existent `FtdNoGo/Standalone.lean`; corrected to `lean/Standalone.lean` +
+  `lean/FtdNoGo/` in both the Lean header and this document's §2 row.
+- **`EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md`** — the source memo FTD-0336 consolidates still
+  asserted "five independent areas... HARDENS FC-1 and FC-W"; corrected to the
+  one-fact-five-vocabularies framing.
+- **The retired sLoop continuous-Bell lineage** (pre-existing, distinct from the benchmark
+  grades; target CLOSED DECLINED under FC-1 on 2026-06-10, `DERIV_OBSERVER_BELL_MECHANISM.md`):
+  "[V] VERIFIED — sLoop produces Bell violations" in `14.5-assumption-ledger.qmd`
+  (v2-src/vol1/v1) → RETIRED with the honest status; the `14.3-glossary.qmd` sLoop entry
+  (3 copies) corrected; the whitepaper figure (`generate_all_figures.py`) re-titled and its
+  **synthetic** S-curve disclosed as such (the plotted values are formula+noise, not engine
+  data); the notebook `05_quantum_phenomena.ipynb` cells 19/22/23 corrected;
+  `FTD_One_Unit_Final.tex`'s "S=2√2 is a computational fact of the engine" qualified (measured
+  on the complexified readout [SELECTION]; substrate-native S ≤ 2);
+  `REF_EXPERIMENTAL_STATUS.md` §6 re-headed RETIRED-as-a-prediction.
+- **The 6+3 spine-count census** — 35 sites across 20 live docs (SPEC_PHYSICS_BRIDGE, SPEC_FQCR,
+  SPEC_OPEN_MATH_BY_SECTOR, SPEC_SM_REPLACEMENT_COMPLETE, META_INDEX, the FOUND_*/DERIV_*/EXPLR_*
+  citers, STATUS_EFT_CHECKLIST, STRATEGY_PAPER_SPLIT) still asserted the pre-reconciliation
+  "six theorem-grade + three honestly-tiered" while citing §0 (which now says 7+2); all updated
+  to the reconciled formulation. The LEDGER FTD-0204 row's "6+3" got a dated reconciliation note.
+
+**Left as provenance (not errors):** `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` (an explicit
+before/after table documenting the count mismatch itself) and `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`
+(dated audit record). **Left for owner judgment:** `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` uses an
+older "the seven theorems of FTD's algebraic spine" *total* formulation (seven numbered results,
+predating Theorems 8/9) — a different claim needing an owner decision on whether to modernize
+that paper's spine framing wholesale.

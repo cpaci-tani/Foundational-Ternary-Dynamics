@@ -96,7 +96,7 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 - **FTD-0002** (G\* identity [THEOREM]) — unchanged
 - **FTD-0013** (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — unchanged
 - ~~**FTD-0014** (x_− = N_c at 0.80%)~~ — **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`).
-- All nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) — unchanged
+- All nine numbered spine results (seven theorem-grade + two honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) — unchanged
 - The structural-uniqueness scan from FTD-0121 / Paper A (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×) — unchanged. *(The "~4×10⁵:1 Bayes factor" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; per the spine audit.)*
 - The BCC complex-structure theorem (FTD-0122) — unchanged
 

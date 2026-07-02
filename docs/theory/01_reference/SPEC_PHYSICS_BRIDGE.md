@@ -3,7 +3,7 @@
 **Document type:** Reference specification (synthesis)
 **Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constant 1/α
 **Re-tag note:** The `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
-**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: six theorem-grade + three honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture; FTD-0014 retired); FTD-0097 (look-elsewhere monomial); FTD-0319 (adversarial polynomial-template uniqueness, the canonical structural-uniqueness evidence; formerly cited as FTD-0189); FTD-0117 (G\* notational fix)
+**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: seven theorem-grade + two honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture; FTD-0014 retired); FTD-0097 (look-elsewhere monomial); FTD-0319 (adversarial polynomial-template uniqueness, the canonical structural-uniqueness evidence; formerly cited as FTD-0189); FTD-0117 (G\* notational fix)
 
 ---
 
@@ -328,7 +328,7 @@ strength.
 ## 5 · Honest meta-statement
 
 The "physics bridge" of FTD is:
-1. **A mathematical spine** (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0) producing a specific algebraic
+1. **A mathematical spine** (nine numbered results: seven theorem-grade + two honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0) producing a specific algebraic
    object whose roots are computable.
 2. **An empirical observation** that these roots match two unrelated
    Standard Model constants at high precision.
@@ -377,7 +377,7 @@ the position synthesized from existing entries:
 - NOT a theorem of α-derivation.
 - NOT a theorem of N_c-derivation (N_c = 3 is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem).
 - NOT a falsification of any prior closed-negative route.
-- NOT a new spine theorem (spine count unchanged — nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0).
+- NOT a new spine theorem (spine count unchanged — nine numbered results: seven theorem-grade + two honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0).
 - NOT a promotion of FTD-0013 from [STRONGLY MOTIVATED CONJECTURE].
 
 ---
@@ -385,7 +385,7 @@ the position synthesized from existing entries:
 ## 8 · Single-line summary
 
 **FTD's physics bridge consists of a mathematically rigid spine (nine
-numbered results — six theorem-grade + three honestly-tiered, see
+numbered results — seven theorem-grade + two honestly-tiered, see
 `SPEC_ALGEBRAIC_SPINE.md` §0 — producing the master quadratic with
 computable roots ≈ 137.036 and ≈ 3.024), the empirical observation
 that the larger root matches 1/α at 1.26 ppm, and a polynomial-template

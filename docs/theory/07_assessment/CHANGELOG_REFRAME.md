@@ -940,3 +940,18 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 **Deliberately NOT fixed:** the K-BIND generator-set representativeness question (`FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md` §1 vs FTD-0314's [OPEN] analytic-period route) — the tag is defensible within its stated scope, but whether the axiomatized generators represent everything the substrate can construct needs a human Galois/transcendence specialist; recorded as an open flag in the capture doc and the FTD-0347 LEDGER row, per the standing external-review item (TRACKER_OPEN_ITEMS §0).
 
 **Net effect:** zero promotions; golden hash untouched; no engine behavior change. LEDGER row FTD-0347 added; next free id **FTD-0348**.
+
+### Verification-pass follow-up (same FTD-0347 arc) — reviewer residuals fixed
+
+Both specialist reviewers re-dispatched post-commit with narrow verify-the-fixes briefs returned: all six fixes CORRECT, promotion check PASS on both sides. Residuals they surfaced, fixed same-day (full detail: capture doc §5):
+
+| File(s) | Change | Type |
+|------|--------|------|
+| `AGENTS.md` | Pre-fix "Bell violation" bullet + stale g-2/Lamb/Einstein/50-tests bullets synced to the canonical CLAUDE.md corrected forms | RETAG |
+| `CLAUDE.md` ~294 | "All force computations use ALPHA_EFT" (false code fact) reworded to mode-accurate statement | FIX |
+| `lean/FTD/Axioms.lean` + capture doc §2 | Reviewer-caught pathname defect in fix 7: non-existent `FtdNoGo/Standalone.lean` → `lean/Standalone.lean` + `lean/FtdNoGo/` | FIX |
+| `docs/theory/02_foundations/EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md` | "five independent areas... HARDENS FC-1/FC-W" → one-fact-five-vocabularies correction | RETAG |
+| `14.5-assumption-ledger.qmd` (v2-src/vol1/v1), `14.3-glossary.qmd` (×3), `dissemination/whitepaper/figures/generate_all_figures.py`, `dissemination/notebooks/05_quantum_phenomena.ipynb`, `docs/papers/src/FTD_One_Unit_Final.tex`, `docs/reference/REF_EXPERIMENTAL_STATUS.md` | Retired-sLoop continuous-Bell lineage ("[V] VERIFIED Bell violations", "computational fact of the engine", synthetic S-curve undisclosed) corrected to the FC-1 CLOSED-DECLINED canon: substrate S ≤ 2 [THEOREM]; 2√2 imported [SELECTION]; native S > 2 falsifies FC-1 | DEMOTE / RETAG / DISCLOSE |
+| 20 live docs, 35 sites (SPEC_PHYSICS_BRIDGE, SPEC_FQCR, SPEC_OPEN_MATH_BY_SECTOR, SPEC_SM_REPLACEMENT_COMPLETE, META_INDEX, FOUND_*/DERIV_*/EXPLR_* citers, STATUS_EFT_CHECKLIST, STRATEGY_PAPER_SPLIT) + LEDGER FTD-0204 row | Stale "six theorem-grade + three honestly-tiered" spine-count citations updated to the reconciled seven + two formulation | RECONCILE |
+
+Left as provenance: `AUDIT_CLOCK_HYPOTHESIS_v2` (before/after table), `AUDIT_LEMNISCATE_ALPHA_RIGIDITY` (dated audit). Left for owner: `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex`'s older "seven theorems total" framing. Zero promotions throughout.
