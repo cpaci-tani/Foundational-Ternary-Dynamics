@@ -483,7 +483,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : Counter tracking relativistic time. Particle updates when τ ≥ 1.
 
 **Path Identity (Quantum Indistinguishability)**
-: Mechanism by which quantum correlations arise from indistinguishable particle paths rather than entanglement. Demonstrated in 2025 Bell violation experiment (S = 2.275 ± 0.057, >4σ) without entangled particles, directly supporting FTD's sLoop interpretation that correlations arise from shared substrate access.
+: Mechanism by which quantum correlations arise from indistinguishable particle paths rather than entanglement. Demonstrated in 2025 Bell violation experiment (S = 2.275 ± 0.057, >4σ) without entangled particles. (Corrected 2026-07-01, FTD-0347: the earlier reading of this result as "directly supporting FTD's sLoop interpretation" is RETIRED — the continuous-Bell sLoop target was CLOSED DECLINED under FC-1 on 2026-06-10; the substrate is local/classical, S ≤ 2 natively, and the result is standard QM, not FTD-specific support.)
 
 **Photon**
 : Massless boson carrying electromagnetic force. In FTD, flux waves in void.
