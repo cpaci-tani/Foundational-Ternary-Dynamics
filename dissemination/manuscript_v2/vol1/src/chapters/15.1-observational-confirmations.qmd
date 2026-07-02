@@ -263,7 +263,7 @@ DESI's $4.2\sigma$ evidence for evolving dark energy is **indeterminate** with r
 
 ### Bell Violation Without Entanglement {#sec-bell-without-entanglement}
 
-**Status:** [REMARKABLY CONSISTENT]
+**Status:** [RETIRED AS FTD SUPPORT — corrected 2026-07-01, FTD-0347]
 
 In August 2025, Science Advances published a groundbreaking result: **Bell inequality violation achieved without quantum entanglement** [@wang2025bell].
 
@@ -278,27 +278,13 @@ In August 2025, Science Advances published a groundbreaking result: **Bell inequ
 
 Instead of entangling photons, researchers sent four photons through a crystal arrangement where determining which path each particle took was impossible. This created "quantum indistinguishability by path identity": correlations arising from shared substrate access, not particle entanglement.
 
-**Why This Validates the sLoop Mechanism:**
+**Why this no longer counts as sLoop support (corrected 2026-07-01, FTD-0347):**
 
-FTD's sLoop interpretation (Ch. 19 in v2; formerly §12.4) predicts that Bell violations arise from **shared substrate access**, not magical entanglement between particles. (Bell violation is now understood as emergent from QM via Tsirelson's bound; see Ch. 17.)
-
-```
-STANDARD QM INTERPRETATION:
-  Entangled particles → Nonlocal correlations → Bell violation
-
-SLOOP INTERPRETATION:
-  Shared void substrate → Path indistinguishability → Bell violation
-```
-
-| Experiment | sLoop Prediction |
-|------------|-----------------|
-| Bell violation without entanglement | ✓ Correlations from shared substrate, not particle property |
-| Path identity mechanism | ✓ Particles accessing same flux field region |
-| S = 2.275 (exceeds classical bound) | ✓ Quantum bound accessible via substrate coupling |
+An earlier version of this section read the result as validating FTD's sLoop interpretation ("Bell violations arise from shared substrate access"). That reading is RETIRED: the continuous-Bell sLoop target was CLOSED DECLINED under FC-1 on 2026-06-10 (`DERIV_OBSERVER_BELL_MECHANISM.md`). FTD does not predict Bell violations — the substrate is local/classical (S ≤ 2 natively [THEOREM]; the engine measures S ≈ 1.95–2.00), S = 2√2 arises only under the imported complexification/measurement reading [SELECTION], and a native S > 2 would *falsify* FC-1. The 2025 result is a striking demonstration *within standard quantum mechanics* (path identity rather than entanglement); it carries no FTD-specific support.
 
 ::: {.callout-important}
-## sLoop Mechanism Validated
-This experiment directly supports FTD's interpretation: Bell violations are signatures of **ontological unity** in the void substrate, not properties transmitted between entangled particles. The sLoop predicts exactly this: correlations arise when measurement apparatuses and particles share the same flux field.
+## sLoop-Bell Reading RETIRED (FTD-0347)
+An earlier version of this callout was titled "sLoop Mechanism Validated" and claimed the experiment "directly supports FTD's interpretation". Per the framework constitution's Bell wall (`SPEC_FTD_FRAMEWORK_V1.md` §2.3): FTD produces the singlet, QM handles the rest — the substrate is local/classical (S ≤ 2), and the sLoop continuous-Bell mechanism is CLOSED DECLINED under FC-1.
 :::
 
 ### CP Violation in Baryons {#sec-cp-violation-baryons}
@@ -409,7 +395,7 @@ The eEDM measurement **constrains** potential extensions to FTD. Any future FTD-
 | Migdal effect mechanism | Detection physics | ✅ **CONFIRMED** (Nature 2025) |
 | Emergent gauge bosons from lattice | Gauge structure | ✅ **CONFIRMED** (Quantum Spin Ice 2025) |
 | Dark energy equation of state | Cosmology | ⚠ **INDETERMINATE** (w is open in FTD; DESI DR2 neither confirms nor falsifies) |
-| sLoop mechanism (substrate correlations) | Quantum foundations | ✅ **STRONGLY CONSISTENT** (Bell w/o entanglement 2025) |
+| sLoop mechanism (substrate correlations) | Quantum foundations | [R] **RETIRED** (corrected 2026-07-01, FTD-0347: continuous-Bell sLoop target CLOSED DECLINED under FC-1; the 2025 result is standard QM, not FTD support) |
 | CP violation in triads | Particle physics | ✅ **CONSISTENT** (LHCb baryons 2025) |
 | d_e ≈ 0 (no electron CP violation) | Precision tests | ✅ **CONSISTENT** (JILA eEDM 2025) |
 | No 4th generation | Particle physics | ✅ Consistent (LHC) |
@@ -430,12 +416,12 @@ The year 2025 marks a qualitative transformation in FTD's empirical standing. Wh
 - **Structural prediction confirmed** (Cloud-9: spherical dark halos)
 - **Core mechanism validated** (Quantum Spin Ice: emergent gauge bosons from lattice)
 - **DESI DR2:** w is open in FTD; finding of $w \neq -1$ is indeterminate (neither confirms nor falsifies)
-- **Quantum interpretation supported** (Bell without entanglement: sLoop mechanism)
+- **Quantum-interpretation claim RETIRED** (Bell without entanglement: the sLoop-Bell reading was CLOSED DECLINED under FC-1 — FTD-0347)
 - **Baryogenesis mechanism confirmed** (LHCb: CP violation in triads)
 - **Detection physics validated** (Migdal effect: flux perturbation propagation)
 - **Precision constraint satisfied** (JILA eEDM: no BSM CP violation in fundamental particles)
 
-That seven discoveries across cosmology, particle physics, quantum foundations, condensed matter, and precision tests are all consistent with FTD is collectively striking. However, these are not fully independent (they involve the same framework), so naive probability estimates overstate the significance.
+Of the seven 2025 discoveries across cosmology, particle physics, quantum foundations, condensed matter, and precision tests, five remain consistent with FTD (DESI is indeterminate; the Bell-without-entanglement sLoop reading is RETIRED — FTD-0347). However, these are not fully independent (they involve the same framework), so naive probability estimates overstate the significance.
 
 This does not "prove" FTD, but it transforms the framework from speculative to **empirically grounded**.
 :::

@@ -2,7 +2,7 @@
 
 **Document type:** Exploratory (number-theoretic)
 **Status:** [EXPLORATORY] — not yet promoted to derivation; one prior conjecture in this neighborhood was falsified (recorded below)
-**Provenance:** distilled from `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §7 ("the Fourier curve")
+**Provenance:** distilled from `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §7 ("the Fourier curve")
 **Related:** `THEOREM_HARMONIC_INVARIANT_TOWER.md` (the (1+i)-tower whose level-indexing matches the Fourier-support exponents);
 `SPEC_ALGEBRAIC_SPINE.md` Theorem 9 (field-theoretic characterization of `Q(G*)`);
 `DERIV_LFUNCTION_GSTAR_CONNECTION.md` (Watson identity W₃ = G*²/(2π) and L(1, χ_{−4}) = π/4)
