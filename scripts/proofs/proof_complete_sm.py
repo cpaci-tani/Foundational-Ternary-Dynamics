@@ -195,8 +195,14 @@ MU_RATIO  = 3 * B_3 * (B_3 + N_C) - N_C                              # 207
 TAU_RATIO = (N_EFF + N_BASE) * MU_RATIO - 2 * N_C * B_3              # 3477
 
 # Proton mass ratio [STRONGLY MOTIVATED CONJECTURE] (173 ppm; CORRECTION 2026-06-19:
-# the 1938-102 knot re-spelling of fdc483d0 is RETRACTED [PARAMETRIC]; this formula stands)
-PROTON_RATIO = N_EFF * X_PLUS + TAU_RATIO * mpf(B_3 + N_C) / (N_EFF + B_3)
+# the 1938-102 knot re-spelling of fdc483d0 is RETRACTED [PARAMETRIC]; the canonical
+# formula stands. CORRECTION 2026-07-01, FTD-0348: the expression previously assigned
+# here -- N_EFF*X_PLUS + TAU_RATIO*(B_3+N_C)/(N_EFF+B_3) -- evaluates to 3519.97, not
+# 1836.47; it was dead code (M_PROTON is reassigned to the experimental value before
+# use, and the reported ratio below uses the canonical formula), but the false formula
+# sat under a comment claiming "173 ppm ... this formula stands". Replaced with the
+# canonical formula so the definition is true.)
+PROTON_RATIO = mpf(N_EFF) / ALPHA + mpf(N_BASE * N_EFF) + mpf(N_C)
 
 M_ELECTRON = K_B                                                       # 0.511 MeV
 M_MUON = K_B * MU_RATIO                                                # 105.777 MeV
@@ -238,16 +244,20 @@ report("m_Higgs (GeV)", M_HIGGS, mpf('125.11'), "[SELECTION]", "GeV")
 
 print(f"\n--- SECTION 5: Neutrino Sector ---")
 
-# PMNS mixing angles [THEOREM] — rational functions of framework integers
+# PMNS mixing angles — rational functions of framework integers.
+# Tags corrected 2026-07-01 (FTD-0348): all four were demoted to [PARAMETRIC]
+# by the FTD-0320 rigidity audit (see CATALOG_PARAMETRIC_INSERTIONS rows,
+# which also use PDG-2024-era comparators); the [THEOREM] prints here were
+# never reconciled to that demotion.
 SIN2_12 = mpf(N_C) / (N_C + B_3)                              # 3/10
 SIN2_23 = mpf(N_EFF + N_C) / (2*N_EFF + N_C)                  # 16/29
 SIN2_13 = mpf(1) / (N_BASE * N_EFF)                           # 1/52
 DM2_RATIO = mpf((B_3 + N_C)**2) / N_C                         # 100/3
 
-report("sin^2(theta_12)", SIN2_12, mpf('0.304'), "[THEOREM]")
-report("sin^2(theta_23)", SIN2_23, mpf('0.573'), "[THEOREM]")
-report("sin^2(theta_13)", SIN2_13, mpf('0.02203'), "[THEOREM]")
-report("Dm^2_31/Dm^2_21", DM2_RATIO, mpf('33.8'), "[THEOREM]")
+report("sin^2(theta_12)", SIN2_12, mpf('0.304'), "[PARAMETRIC]")
+report("sin^2(theta_23)", SIN2_23, mpf('0.573'), "[PARAMETRIC]")
+report("sin^2(theta_13)", SIN2_13, mpf('0.02203'), "[PARAMETRIC]")
+report("Dm^2_31/Dm^2_21", DM2_RATIO, mpf('33.8'), "[PARAMETRIC]")
 
 # Absolute neutrino masses [SELECTION — seesaw mechanism imported]
 M_D_NU = V_HIGGS * ALPHA * 1000  # Dirac mass in MeV: v * alpha
@@ -283,13 +293,23 @@ LAMBDA_QCD_1LOOP = M_Z * mp_exp(-2*PI_FTD / (B0_NF5 * ALPHA_S))
 B1_NF5 = mpf(102 - 38*mpf(5)/3) / mpf(16*PI_FTD**2)  # NLO beta
 LAMBDA_QCD_2LOOP = LAMBDA_QCD_1LOOP * mp_exp(mpf('0.85'))  # empirical 2-loop/1-loop ratio
 
-# String tension at x- [THEOREM from Wilson loop area law]
-# sigma = -ln(x-/(x-+1)) from strong-coupling expansion
-SIGMA_CONF = -mp_log(X_MINUS / (X_MINUS + 1))
+# String tension at beta = x- (corrected 2026-07-01, FTD-0348):
+# the canonical strong-coupling result cited corpus-wide is
+#   sigma = -ln(I1(beta)/I0(beta)) at beta = x_- = 3.024  ~=  0.208
+# (imported compact-lattice-gauge strong-coupling machinery with x_-
+# inserted as the coupling). A corrupted spelling -ln(x-/(x-+1)) =
+# 0.2857 had replaced it here, printing 37% off its own 0.209
+# comparator under [THEOREM]. Tag reconciled to the constitution
+# (SPEC_FTD_FRAMEWORK_V1 Sec "QCD"): the coupling insertion is a
+# [SELECTION], not a derivation; and per FTD-0210 x_- has no physical
+# correspondent, so any physical reading of "confinement at x_-" is
+# itself unreconciled.
+from mpmath import besseli as mp_besseli
+SIGMA_CONF = -mp_log(mp_besseli(1, X_MINUS) / mp_besseli(0, X_MINUS))
 
 report("Lambda_QCD 1-loop (GeV)", LAMBDA_QCD_1LOOP, mpf('0.091'), "[PARAMETRIC]", "GeV")
 report("Lambda_QCD 2-loop (GeV)", LAMBDA_QCD_2LOOP, mpf('0.213'), "[PARAMETRIC]", "GeV")
-report("sigma (confinement)", SIGMA_CONF, mpf('0.209'), "[THEOREM]")
+report("sigma (confinement)", SIGMA_CONF, mpf('0.209'), "[SELECTION]")
 
 # ============================================================================
 # SECTION 7: ELECTROWEAK SECTOR
