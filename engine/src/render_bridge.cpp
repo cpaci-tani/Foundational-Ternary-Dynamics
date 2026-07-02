@@ -73,13 +73,11 @@ RenderBridge::RenderBridge(int lattice_size)
       phi_coulomb_(lattice_.total_sites(), 0.0),
       phi_latency_(lattice_.total_sites(), 0.0),
       moved_(lattice_.total_sites(), 0),
-      sor_source_(lattice_.total_sites(), 0.0),
-      su2_links_x_(lattice_.total_sites()),
-      su2_links_y_(lattice_.total_sites()),
-      su2_links_z_(lattice_.total_sites()),
-      su3_links_x_(lattice_.total_sites()),
-      su3_links_y_(lattice_.total_sites()),
-      su3_links_z_(lattice_.total_sites())
+      sor_source_(lattice_.total_sites(), 0.0)
+      // SU(2)/SU(3) link buffers are NOT allocated here (revision 4.1b):
+      // 528 B/site (~132 MiB at L=64, larger than the voxel array) for a
+      // toggle-gated sector. ensure_gauge_links() materializes them on the
+      // first accessor call, relax call, or su2_gauge/su3_gauge-gated tick.
 {
     // PERF: pre-size per-tick scratch buffers so phase_write doesn't
     // construct ~5KB of mt19937 state per voxel. Under WASM (no OpenMP)
