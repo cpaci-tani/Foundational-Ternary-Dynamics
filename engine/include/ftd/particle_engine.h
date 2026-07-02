@@ -309,6 +309,13 @@ private:
     int tick_ = 0;
     int next_id_ = 0;
     double dt_ = 1.0;           // Time step (default 1, can increase for Scale 1)
+    // Softening length. INTENTIONALLY scale-dependent across engines
+    // (revision 2.4 documentation — do not "unify"): Scale 1 uses 1.0
+    // (one lattice unit, the minimum resolvable separation), Scale 2
+    // (AtomEngine) uses 0.5 (sub-lattice atomic separations), Scale 5
+    // (CosmicEngine) recomputes as box_size * SOFTENING_SCALE(0.01) per
+    // scenario. Each is an [IMPOSED] regularization matched to its scale's
+    // typical separations, not a shared derived constant.
     double soft_ = 1.0;         // Softening length (matches lattice minimum)
 
 public:
