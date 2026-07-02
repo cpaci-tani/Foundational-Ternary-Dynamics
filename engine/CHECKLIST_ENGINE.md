@@ -429,3 +429,27 @@ diagnostic-scope fix, per-voxel field byte-identical, deterministic OMP1==pool; 
 ---
 
 *Filed 2026-04-25. Living doc — update on each round closure.*
+
+---
+
+## Revision-program 0.11 — verify-before-delete evidence audit (2026-07-02)
+
+Grep-evidence dispositions for every dead-code candidate named by the
+engine-revision exploration (plan `i-want-you-to-clever-frost`). **Later
+phases may only delete items marked DEAD here; everything else is ALIVE or
+QUARANTINE.** The 2026-05-27 web audit's over-counting is confirmed again —
+three of six candidates turned out to be load-bearing.
+
+| Candidate | Verdict | Evidence |
+|---|---|---|
+| `Voxel::flavor` | **ALIVE — do not remove or repurpose** | Read by `engine/src/vtk_export.cpp:261,376` (particle scalar export), marshalled to/from GPU (`gpu_buffers.cu:380,662`), written by `gpu_engine.cu:629`, and **gates GPU weak-field activation** (`gpu_engine.cu:746` `v.flavor != 0`). The explorer claim "never read" was false. NOT in any golden fold (state/flux/wave_vel/velocity + ext dual/latency only). Plan ticket 4.2 downgraded to comment-only documentation of these consumers. |
+| `_repro_gpu_empty_bridge.cpp` | **DEAD (unregistered)** | Zero references in `engine/CMakeLists.txt`; carries a "Local repro — do not commit" marker; the `CTestCostData.txt` entry is stale local build-dir residue. Disposition per ticket 5.1: `git mv` to `engine/tests/archive/` with provenance note after confirming `campaign_beta_measurement.cpp` covers the measure_kt_on_bg scenario. |
+| `cognitive_lattice` (src+header) | **QUARANTINE, not dead** | Consumed by `engine/tests/test_cognitive_lattice.cpp` + `benchmark_cognitive_lattice.cpp` (both CTest-registered). Goes under `FTD_BUILD_EXPERIMENTAL` (ticket 3.7 / ADR-0016), never deleted. |
+| Legacy WASM scenario branches (`bindings_render_bridge.cpp` "L52-114") | **ALREADY CLEAN** | Only 2 `name ==` occurrences remain in the file; the claimed legacy block no longer exists. No action. |
+| `Scale1LifecycleController` stub | **DEAD candidate (web)** | Sole reference is its own definition in `engine/web/js/scales/scale1/controller.js`; no test/spec/selector references found. Eligible for ticket 2.x safe-subset removal after a Playwright selector grep in the same commit. |
+| `cosmic-inspector-content` DOM block | **ALIVE** | Bound by `engine/web/js/inspector/dom-bindings.js`; the 2026-05-27 audit claim is stale. Do not remove. |
+| SU(2)/SU(3) gauge sector | **QUARANTINE + tripwire (see `test_gauge_links.cpp`)** | Defined-but-disconnected on both backends (zero call sites; toggles are no-ops); 528 B/site of never-touched link buffers (`render_bridge.cpp:77-82`) — lazy-allocation ticket 4.1b. Never delete: characterized + tripwired. |
+
+Golden-fold / flavor cross-check (required by ticket 0.11): the golden hash
+folds do NOT read `Voxel::flavor` — but GPU weak-field auto-activation does,
+so any flavor change is GPU-behavior-relevant even though it is golden-invisible.
