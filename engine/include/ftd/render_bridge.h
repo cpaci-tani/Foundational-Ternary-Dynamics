@@ -290,13 +290,29 @@ public:
     // Force diagnostics (separate buffer for cache-friendly Voxel layout)
     const std::vector<ForceDiag>& force_diag() const { return force_diag_; }
 
-    // Scale 0 Gauge Field link variable getters
-    const std::vector<SU2Link>& su2_links_x() const { return su2_links_x_; }
-    const std::vector<SU2Link>& su2_links_y() const { return su2_links_y_; }
-    const std::vector<SU2Link>& su2_links_z() const { return su2_links_z_; }
-    const std::vector<SU3Link>& su3_links_x() const { return su3_links_x_; }
-    const std::vector<SU3Link>& su3_links_y() const { return su3_links_y_; }
-    const std::vector<SU3Link>& su3_links_z() const { return su3_links_z_; }
+    // Scale 0 Gauge Field link variable getters. Buffers are lazily
+    // allocated (revision 4.1b): 528 B/site — larger than the voxel array —
+    // so nothing is paid until the gauge sector is actually used. Accessors
+    // allocate-on-demand (identity links), preserving the pre-4.1b contract
+    // that these always return total_sites()-sized identity-initialized arrays.
+    const std::vector<SU2Link>& su2_links_x() const { ensure_gauge_links(); return su2_links_x_; }
+    const std::vector<SU2Link>& su2_links_y() const { ensure_gauge_links(); return su2_links_y_; }
+    const std::vector<SU2Link>& su2_links_z() const { ensure_gauge_links(); return su2_links_z_; }
+    const std::vector<SU3Link>& su3_links_x() const { ensure_gauge_links(); return su3_links_x_; }
+    const std::vector<SU3Link>& su3_links_y() const { ensure_gauge_links(); return su3_links_y_; }
+    const std::vector<SU3Link>& su3_links_z() const { ensure_gauge_links(); return su3_links_z_; }
+    // True once the link buffers exist (first accessor call, first relax
+    // call, or first gauge-gated tick). Exposed so tests can pin laziness.
+    bool gauge_links_allocated() const { return !su2_links_x_.empty(); }
+    // Allocate + identity-initialize the 6 link buffers if not yet present.
+    // const because read-only accessors must be able to materialize the
+    // identity configuration (members are mutable for exactly this).
+    void ensure_gauge_links() const {
+        if (!su2_links_x_.empty()) return;
+        const std::size_t n = lattice_.total_sites();
+        su2_links_x_.resize(n); su2_links_y_.resize(n); su2_links_z_.resize(n);
+        su3_links_x_.resize(n); su3_links_y_.resize(n); su3_links_z_.resize(n);
+    }
     const ForceDiag& force_diag_at(int x, int y, int z) const {
         return force_diag_[lattice_.index(x, y, z)];
     }
@@ -470,13 +486,26 @@ private:
     std::vector<double> phi_coulomb_;  // Coulomb potential (warm-started between ticks)
     std::vector<double> phi_latency_;  // Latency (gravitational) potential (warm-started)
 
-    // Scale 0 Gauge Field link variable arrays (edge variables)
-    std::vector<SU2Link> su2_links_x_;
-    std::vector<SU2Link> su2_links_y_;
-    std::vector<SU2Link> su2_links_z_;
-    std::vector<SU3Link> su3_links_x_;
-    std::vector<SU3Link> su3_links_y_;
-    std::vector<SU3Link> su3_links_z_;
+    // Scale 0 Gauge Field link variable arrays (edge variables).
+    // Lazily allocated via ensure_gauge_links() (revision 4.1b) — empty until
+    // the sector is used; mutable so const accessors can materialize the
+    // identity configuration on demand.
+    mutable std::vector<SU2Link> su2_links_x_;
+    mutable std::vector<SU2Link> su2_links_y_;
+    mutable std::vector<SU2Link> su2_links_z_;
+    mutable std::vector<SU3Link> su3_links_x_;
+    mutable std::vector<SU3Link> su3_links_y_;
+    mutable std::vector<SU3Link> su3_links_z_;
+    // Jacobi double-buffer scratch for relax_su2/su3_links_cpu (race fix,
+    // revision 0.9 option a): each sweep reads the previous state and writes
+    // here, then the vectors swap. Persistent members so the sweep does not
+    // allocate per tick after first use; sized lazily inside the relax calls.
+    std::vector<SU2Link> su2_links_scratch_x_;
+    std::vector<SU2Link> su2_links_scratch_y_;
+    std::vector<SU2Link> su2_links_scratch_z_;
+    std::vector<SU3Link> su3_links_scratch_x_;
+    std::vector<SU3Link> su3_links_scratch_y_;
+    std::vector<SU3Link> su3_links_scratch_z_;
     EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
     mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
     std::string last_validation_warn_;  // ARCH-3: dedup repeated validate() warnings to one per unique string

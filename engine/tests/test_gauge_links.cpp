@@ -11,16 +11,19 @@
 //   - The public toggles su2_gauge / su3_gauge (TOGGLE_SPECS, settable from
 //     JS via rb_toggle_map) are read by NOTHING — setting them is a silent
 //     no-op.
-//   - Yet every RenderBridge unconditionally allocates the 6 link buffers
-//     (render_bridge.cpp:77-82): 3×32 B (SU2) + 3×144 B (SU3) = 528 B/site
-//     — ~132 MiB at L=64, larger than the voxel array itself. (Memory
-//     ticket: revision plan Phase 4.)
-//   - relax_su2_links_cpu's `#pragma omp parallel for` relaxes IN PLACE
-//     while reading neighbor links other threads are writing — a data race
-//     that must be double-buffered before this sector is ever wired in.
+//   - The 6 link buffers (528 B/site = 3×32 B SU2 + 3×144 B SU3; ~132 MiB
+//     at L=64, larger than the voxel array itself) were allocated
+//     unconditionally by every RenderBridge; they are now LAZY
+//     (revision 4.1b — ensure_gauge_links(), asserted by G0 below).
+//   - relax_su2/su3_links_cpu previously relaxed IN PLACE under
+//     `#pragma omp parallel for`, reading neighbor links other threads were
+//     writing — a data race. FIXED (revision 0.9 option a, step 1): both
+//     sweeps are Jacobi double-buffered (read pre-sweep state, write
+//     scratch, swap), so the result is thread-count invariant (G4).
 //
-// This test therefore characterizes what EXISTS, so the sector has coverage
-// the day someone wires it:
+// Sections:
+//   G0. Link buffers are lazily allocated; accessors materialize the
+//       identity configuration on demand.
 //   G1. Toggle tripwire: su2_gauge/su3_gauge ON produces a bit-identical
 //       run to defaults. If this FAILS, the toggles have been wired into
 //       the tick — write a gauge golden profile and update this test.
@@ -29,9 +32,10 @@
 //       on every update) and produces finite values.
 //   G3. SU(3) relaxation from a perturbed configuration stays finite;
 //       U†U−I deviation is measured and reported (characterization).
-//   G4. Single-thread determinism: two identical runs produce byte-
-//       identical link arrays. (Multi-thread determinism is NOT asserted —
-//       see the in-place race note above.)
+//   G4. Determinism + thread-count invariance: repeat runs are byte-
+//       identical, and a single-thread run matches a full-thread-pool run
+//       bit-exactly (the Jacobi double-buffer guarantee — this is the
+//       regression tripwire for the fixed race).
 // ============================================================================
 
 #include "ftd/render_bridge.h"
@@ -92,6 +96,21 @@ static std::uint64_t hash_su2_links(const RenderBridge& rb) {
     return h;
 }
 
+static std::uint64_t hash_all_links(const RenderBridge& rb) {
+    std::uint64_t h = hash_su2_links(rb);
+    for (const auto* v : {&rb.su3_links_x(), &rb.su3_links_y(), &rb.su3_links_z()}) {
+        for (const auto& l : *v) {
+            for (int i = 0; i < 3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    h = mix_double(h, l.m[i][j].real());
+                    h = mix_double(h, l.m[i][j].imag());
+                }
+            }
+        }
+    }
+    return h;
+}
+
 static void inject_standard_state(RenderBridge& rb) {
     rb.inject_particle( 3,  3,  3, +1, Vec3{0.0, 0.0, 0.0});
     rb.inject_particle(12, 12, 12, -1, Vec3{0.0, 0.0, 0.0});
@@ -114,12 +133,24 @@ static std::uint64_t run_default_harness(bool gauge_toggles_on) {
 }
 
 void test_gauge_sector() {
-#ifdef _OPENMP
-    // Single-thread for the direct-exercise sections: relax_su2_links_cpu
-    // relaxes in place under a parallel-for (cross-thread neighbor race), so
-    // only the single-thread result is well-defined enough to characterize.
-    omp_set_num_threads(1);
-#endif
+    // G0 — lazy allocation (revision 4.1b).
+    section("G0: link buffers are lazily allocated");
+    {
+        RenderBridge rb0(9);
+        check("fresh bridge allocates NO link buffers (528 B/site saved)",
+              !rb0.gauge_links_allocated(),
+              "link buffers are eagerly allocated again — revision 4.1b regressed");
+        const auto& lx = rb0.su2_links_x();  // accessor materializes on demand
+        check("accessor materializes total_sites() identity links",
+              rb0.gauge_links_allocated()
+                  && lx.size() == static_cast<std::size_t>(9 * 9 * 9)
+                  && rb0.su3_links_z().size() == static_cast<std::size_t>(9 * 9 * 9),
+              "ensure_gauge_links() did not produce full-size buffers");
+        check("materialized SU(2) links are the identity",
+              lx[0].a == std::complex<double>(1.0, 0.0)
+                  && lx[0].b == std::complex<double>(0.0, 0.0),
+              "lazy allocation no longer identity-initializes");
+    }
 
     // G1 — toggle tripwire.
     section("G1: su2_gauge/su3_gauge toggles are currently no-ops");
@@ -180,20 +211,42 @@ void test_gauge_sector() {
           "SU(3) relaxation diverging from the group manifold far faster "
           "than at characterization time");
 
-    // G4 — single-thread determinism.
-    section("G4: single-thread determinism of the relaxation");
+    // G4 — determinism + thread-count invariance (race-fix tripwire).
+    section("G4: determinism + thread-count invariance of the relaxation");
     RenderBridge ra(9), rc(9);
     ra.force_cpu(); rc.force_cpu();
     perturb_links(ra, 0.05);
     perturb_links(rc, 0.05);
+#ifdef _OPENMP
+    // Run A single-thread, run B with the full thread pool. The Jacobi
+    // double-buffer (revision 0.9 option a) makes the sweep read only the
+    // pre-sweep state, so the two MUST agree bit-exactly. A mismatch means
+    // the in-place neighbor race has been reintroduced.
+    const int max_threads = omp_get_max_threads();
+    omp_set_num_threads(1);
+#endif
     for (int it = 0; it < 5; ++it) relax_su2_links_cpu(ra, 0.1, 1.0);
+    for (int it = 0; it < 2; ++it) relax_su3_links_cpu(ra, 0.1, 1.0);
+#ifdef _OPENMP
+    omp_set_num_threads(max_threads);
+#endif
     for (int it = 0; it < 5; ++it) relax_su2_links_cpu(rc, 0.1, 1.0);
-    const std::uint64_t ha = hash_su2_links(ra);
-    const std::uint64_t hc = hash_su2_links(rc);
-    std::printf("[gauge] run A = 0x%016llx run B = 0x%016llx\n",
+    for (int it = 0; it < 2; ++it) relax_su3_links_cpu(rc, 0.1, 1.0);
+    const std::uint64_t ha = hash_all_links(ra);
+    const std::uint64_t hc = hash_all_links(rc);
+    std::printf("[gauge] run A (1 thread) = 0x%016llx run B (thread pool) = 0x%016llx\n",
                 (unsigned long long)ha, (unsigned long long)hc);
-    check("two identical single-thread relaxations agree bit-exactly",
-          ha == hc, "relaxation is non-deterministic even single-threaded");
+    check("single-thread and full-thread-pool relaxations agree bit-exactly",
+          ha == hc,
+          "thread-count changes the result — the in-place neighbor race is back");
+    // Repeat-run determinism at the same thread count.
+    RenderBridge rd(9);
+    rd.force_cpu();
+    perturb_links(rd, 0.05);
+    for (int it = 0; it < 5; ++it) relax_su2_links_cpu(rd, 0.1, 1.0);
+    for (int it = 0; it < 2; ++it) relax_su3_links_cpu(rd, 0.1, 1.0);
+    check("two identical relaxations agree bit-exactly",
+          hash_all_links(rd) == hc, "relaxation is non-deterministic");
 }
 
 }}  // namespace ftd::test
