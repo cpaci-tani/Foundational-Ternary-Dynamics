@@ -83,14 +83,50 @@ echo === Build WASM32+threads ftd_wasm target ===
 call "%EMMAKE%" cmake --build "%BUILDMT%" --target ftd_wasm
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm_mt build FAILED & exit /b 1 )
 
-REM --- Deploy all three module pairs ---
-echo === Deploy to engine/web/wasm/ ===
-copy /y "%BUILD32%\wasm\ftd_core.js"      "%DEPLOY_DIR%\" >nul
-copy /y "%BUILD32%\wasm\ftd_core.wasm"    "%DEPLOY_DIR%\" >nul
-copy /y "%BUILD64%\wasm\ftd_core64.js"    "%DEPLOY_DIR%\" >nul
-copy /y "%BUILD64%\wasm\ftd_core64.wasm"  "%DEPLOY_DIR%\" >nul
-copy /y "%BUILDMT%\wasm\ftd_core_mt.js"   "%DEPLOY_DIR%\" >nul
-copy /y "%BUILDMT%\wasm\ftd_core_mt.wasm" "%DEPLOY_DIR%\" >nul
-echo [build_wasm] OK -- wasm32 + wasm64 + wasm32-threads modules deployed to %DEPLOY_DIR%
+REM --- Deploy all three module pairs (revision 1.3: staged all-or-nothing) ---
+REM Copies were previously unguarded: a failed copy could leave a
+REM mixed-generation engine/web/wasm/. Now every artifact is staged, checked
+REM for existence + plausible size, stamped with the git SHA, and only then
+REM moved into the deploy dir.
+echo === Deploy to engine/web/wasm/ (staged) ===
+set "STAGE_DIR=%DEPLOY_DIR%\.staging"
+if exist "%STAGE_DIR%" rmdir /s /q "%STAGE_DIR%"
+mkdir "%STAGE_DIR%"
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] staging dir creation FAILED & exit /b 1 )
+
+copy /y "%BUILD32%\wasm\ftd_core.js"      "%STAGE_DIR%\" >nul
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] stage ftd_core.js FAILED & exit /b 1 )
+copy /y "%BUILD32%\wasm\ftd_core.wasm"    "%STAGE_DIR%\" >nul
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] stage ftd_core.wasm FAILED & exit /b 1 )
+copy /y "%BUILD64%\wasm\ftd_core64.js"    "%STAGE_DIR%\" >nul
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] stage ftd_core64.js FAILED & exit /b 1 )
+copy /y "%BUILD64%\wasm\ftd_core64.wasm"  "%STAGE_DIR%\" >nul
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] stage ftd_core64.wasm FAILED & exit /b 1 )
+copy /y "%BUILDMT%\wasm\ftd_core_mt.js"   "%STAGE_DIR%\" >nul
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] stage ftd_core_mt.js FAILED & exit /b 1 )
+copy /y "%BUILDMT%\wasm\ftd_core_mt.wasm" "%STAGE_DIR%\" >nul
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] stage ftd_core_mt.wasm FAILED & exit /b 1 )
+
+REM Smoke: every staged artifact must exist and be non-trivially sized.
+for %%F in (ftd_core.js ftd_core.wasm ftd_core64.js ftd_core64.wasm ftd_core_mt.js ftd_core_mt.wasm) do (
+    if not exist "%STAGE_DIR%\%%F" ( echo [build_wasm] staged %%F MISSING & exit /b 1 )
+    for %%A in ("%STAGE_DIR%\%%F") do if %%~zA LSS 1024 ( echo [build_wasm] staged %%F suspiciously small: %%~zA bytes & exit /b 1 )
+)
+
+REM Stamp the deployed generation so committed-binary vs source drift is
+REM auditable (deploy-pages publishes engine/web/** verbatim).
+set "GIT_SHA=unknown"
+for /f %%H in ('git -C "%ENGINE_DIR%" rev-parse HEAD 2^>nul') do set "GIT_SHA=%%H"
+> "%STAGE_DIR%\build_info.txt" echo sha=%GIT_SHA%
+>> "%STAGE_DIR%\build_info.txt" echo built=%DATE% %TIME%
+>> "%STAGE_DIR%\build_info.txt" echo variants=wasm32,wasm64,wasm32-threads
+
+REM All artifacts verified good -- move into place (same-volume renames).
+for %%F in (ftd_core.js ftd_core.wasm ftd_core64.js ftd_core64.wasm ftd_core_mt.js ftd_core_mt.wasm build_info.txt) do (
+    move /y "%STAGE_DIR%\%%F" "%DEPLOY_DIR%\" >nul
+    if ERRORLEVEL 1 ( echo [build_wasm] deploy move %%F FAILED -- deploy dir may be mixed-generation, re-run & exit /b 1 )
+)
+rmdir /s /q "%STAGE_DIR%"
+echo [build_wasm] OK -- wasm32 + wasm64 + wasm32-threads modules deployed to %DEPLOY_DIR% (sha=%GIT_SHA%)
 
 endlocal
