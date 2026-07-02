@@ -13,7 +13,7 @@
  */
 
 #include "ontic.h"
-#include "ftd/constants_gpu.cuh"
+#include "ftd/constants_shared.h"
 #include <algorithm>
 #include <cmath>
 
@@ -384,7 +384,7 @@ inline constexpr double K_EVAP_RATE = 0.1;
 // in the flux pre-drain integral.
 inline constexpr double K_GENESIS_FLUX_EPSILON = 1e-9;
 
-// Color force regime boundaries — now defined in ftd/constants_gpu.cuh (shared with GPU).
+// Color force regime boundaries — now defined in ftd/constants_shared.h (host+device shared header, renamed from constants_gpu.cuh in revision 2.5).
 // Using declarations bring them into the ftd:: namespace so existing callers are unchanged.
 using ::COLOR_COULOMB_RADIUS;
 using ::COLOR_TRANSITION_RADIUS;
