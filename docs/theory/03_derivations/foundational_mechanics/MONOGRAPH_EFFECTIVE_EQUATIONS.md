@@ -267,8 +267,27 @@ $$\Box \bar{h}_{\mu\nu} = -\frac{16\pi G}{c^4} T_{\mu\nu}$$
 
 ## 5. Quantum Mechanics and Fermionic Dynamics
 
-### 5.1 The Dirac Equation from Wave Equation Factorization [THEOREM]
-**Theorem 5.1.** *The fermionic Dirac equation $(i\gamma^\mu \partial_\mu - m)\psi = 0$ emerges as the natural first-order complex factorization of the second-order massive wave equation in the complex-conjugate root regime of the master quadratic.*
+### 5.1 The Dirac Equation from Wave Equation Factorization [PARAMETRIC — imported standard QM, conditional on the [IMPOSED] rest-mass term; see FTD-0271]
+
+> **DATED CORRECTION (2026-07-02, FTD-0356; was `[THEOREM]`).** The proof below is the
+> textbook Clifford-algebra factorization of a *massive Klein–Gordon* operator — correct
+> as imported algebra, but it is not a substrate derivation: (i) the mass term is **not
+> FTD-native** — the flux dynamics has no restoring term (native flux is massless;
+> `ω₀ ∝ M_REST` is `[IMPOSED]`, FTD-0271 A0 gate); (ii) no fermionic content is derived
+> — the construction dresses any KG solution in Dirac form, while spinor transformation
+> behavior, statistics, and ℏ are nowhere obtained from the lattice (FTD-0270), and the
+> complex structure is the Axiom-Zero / FC-1 `[SELECTION]` complexification, not forced;
+> (iii) the closing sentence's claim that the complex structure and `m = K_B = 0.511` are
+> "supplied by the complex root regime of the master quadratic when the coupling parameter
+> falls below `k_crit = 4/G*`" cannot carry `[THEOREM]` grade: the `k_crit = 4/G*`
+> trichotomy belongs to the *generalized* quadratic `x² − kG*²x + kG*³`
+> (`DERIV_DIRAC_FROM_MASTER_QUADRATIC.md`, `Δ = kG*³(kG*−4)`), whose own tags are
+> "`[THEOREM]` for algebra, `[SELECTION]` for identification" — the canonical master
+> quadratic sits at `k = 16 ≫ 4/G* ≈ 1.352`, firmly in the *real*-root regime
+> (`Δ = 64G*³(4G*−1) > 0`), and `K_B = m_e` is a calibration `[IMPOSED]` (FTD-0130).
+> Per the canon: never headline this as "FTD derives Dirac."
+
+**Proposition 5.1 (imported).** *The fermionic Dirac equation $(i\gamma^\mu \partial_\mu - m)\psi = 0$ arises as the standard first-order Clifford factorization of the second-order massive wave equation, given an imposed mass term and an imposed complex structure.*
 
 **Proof.** Begin with the second-order massive Klein-Gordon wave equation for a vector component:
 $$\left( \Box + m^2 \right) \mathbf{J}_a = 0$$
@@ -284,8 +303,22 @@ Defining the spinor field $\psi \equiv (-i\gamma^\nu \partial_\nu + m)\mathbf{J}
 $$\left( i\gamma^\mu \partial_\mu - m \right) \psi = 0$$
 The complex structure ($i = \sqrt{-1}$) and the mass parameter $m = K_B = 0.511$ are supplied by the complex root regime of the master quadratic when the coupling parameter falls below $k_{\text{crit}} = 4/G^*$. $\blacksquare$
 
-### 5.2 The Schrödinger Equation as the Long-Wavelength Limit [THEOREM]
-**Theorem 5.2.** *The non-relativistic Schrödinger equation emerges as the slow-velocity limit ($v \ll c$) of the fermionic Dirac equation.*
+### 5.2 The Schrödinger Equation as the Long-Wavelength Limit [PARAMETRIC — imported standard QM, conditional per FTD-0271]
+
+> **DATED CORRECTION (2026-07-02, FTD-0356; was `[THEOREM]`).** Per the canonical row
+> FTD-0271: "Schrödinger + de Broglie are textbook KG consequences — confirming them on
+> the lattice is `[DERIVED — lattice correctness]`, *conditional on the imposed clock*;
+> NOT an unconditional FTD derivation." The reduction below is the standard
+> non-relativistic limit of the Dirac equation — imported QM inheriting §5.1's
+> conditionality (imposed mass, imposed complex structure). Never headline this as
+> "FTD derives Schrödinger." Two technical slips in the display, noted for the record:
+> the large/small-component split with the mass on the diagonal is the **Dirac**
+> representation, not "Weyl" as stated; and the second coupled equation's sign
+> ($i\dot\chi - 2m\chi = \sigma\cdot p\,\varphi$) is inconsistent with the stated
+> conclusion $\chi \approx +\sigma\cdot p\,\varphi/(2m)$ (the standard equation is
+> $i\dot\chi = \sigma\cdot p\,\varphi - 2m\chi$).
+
+**Proposition 5.2 (imported).** *The non-relativistic Schrödinger equation is the slow-velocity limit ($v \ll c$) of the Dirac equation.*
 
 **Proof.** In the non-relativistic limit, the energy is dominated by the rest mass $m$. Write the Dirac spinor $\psi$ as:
 $$\psi(t, \mathbf{x}) = e^{-i m t} \begin{pmatrix} \varphi(t, \mathbf{x}) \\ \chi(t, \mathbf{x}) \end{pmatrix}$$
@@ -302,7 +335,18 @@ Using the Pauli matrix identity $(\mathbf{\sigma} \cdot \mathbf{p})^2 = \mathbf{
 $$i\frac{\partial \varphi}{\partial t} = -\frac{\nabla^2}{2m} \varphi$$
 This is the standard, free non-relativistic Schrödinger equation. $\blacksquare$
 
-### 5.3 The Born Rule: Energy Density Monotonicity [SELECTION]
+### 5.3 The Born Rule: Energy Density Monotonicity [SELECTION (|ψ|² form) + [OPEN] (probability = energy density, T1c)]
+
+> **DATED NOTE (2026-07-02, FTD-0356).** The `[SELECTION]` tag matches the canon for the
+> $|\psi|^2$ *form* (FTD-0187). But the Argument's middle step — "increases the
+> probability … converges to the normalized energy density" — is exactly the
+> probability = energy-density bridge the canonical row holds `[OPEN]` (target T1c): no
+> FTD document derives it, and the simplest linear-Gaussian threshold mechanism was
+> pre-registered, tested, and produced **Rice** upcrossing statistics, not Born
+> (FTD-0200 `[CLOSED NEGATIVE]`). The path-integral "proof" this monograph's §7.1 table
+> formerly cited for a `[THEOREM]` grade is **retracted** — see
+> [`DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md`](../archive/retracted/DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md).
+
 **Proposition 5.3.** *The quantum-mechanical Born rule (probability density $P \propto |\psi|^2$) is identified with the normalized flux energy density $|\mathbf{J}|^2$ at the manifestation threshold.*
 
 **Argument.** Manifestation (transition from ternary state $s = 0$ to $s = \pm 1$) requires the local energy density to cross the genesis threshold $K_B$:
@@ -374,9 +418,9 @@ To maintain complete epistemic integrity, we catalog the exact status of every e
 | **§4.2** | Stress-Energy Conservation: $\partial_\mu T^{\mu\nu} = 0$ | **`[THEOREM]`** | Noether current of wave Lagrangian |
 | **§4.3** | Linearized Einstein Equations | **`[SELECTION]`** | Conditional on posited rank-2 metric |
 | **§4.4** | Schwarzschild Radial Component: $g_{rr}$ | **`[THEOREM]`** | Proved in [DERIV_RADIAL_METRIC_RESOLUTION.md](DERIV_RADIAL_METRIC_RESOLUTION.md) via coordinate contraction |
-| **§5.1** | Dirac Spinor Equation | **`[THEOREM]`** | Wave operator Clifford factorization |
-| **§5.2** | Schrödinger Wave Equation | **`[THEOREM]`** | Slow-velocity limit of Dirac |
-| **§5.3** | Born Probability Rule ($P \propto |\psi|^2$) | **`[THEOREM]`** | Proved in [DERIV_BORN_PROPORTIONALITY_RESOLUTION.md](../quantum_mechanics/DERIV_BORN_PROPORTIONALITY_RESOLUTION.md) via path integral |
+| **§5.1** | Dirac Spinor Equation | **`[PARAMETRIC — imported standard QM]`** *(retagged 2026-07-02, FTD-0356; was `[THEOREM]`)* | Textbook Clifford factorization; mass term `[IMPOSED]` (FTD-0271 A0), complex structure FC-1 `[SELECTION]`; no substrate-native fermionic content |
+| **§5.2** | Schrödinger Wave Equation | **`[PARAMETRIC — imported standard QM]`** *(retagged 2026-07-02, FTD-0356; was `[THEOREM]`)* | Standard NR limit of Dirac; conditional on the imposed clock per FTD-0271 — never "FTD derives Schrödinger" |
+| **§5.3** | Born Probability Rule ($P \propto |\psi|^2$) | **`[SELECTION (form)] + [OPEN (T1c)]`** *(retagged 2026-07-02, FTD-0356; was `[THEOREM]`)* | Canon per FTD-0187/FTD-0200; the formerly cited path-integral proof is **RETRACTED** — see [DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md](../archive/retracted/DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md) |
 | **§5.4** | Compton Volume Duality | **`[THEOREM]`** | Proved in [DERIV_COMPTON_INVERSION_RESOLUTION.md](DERIV_COMPTON_INVERSION_RESOLUTION.md) via Fourier duality |
 | **§5.5** | Non-Commutative Emergence (GAP-S2) | **`[RETRACTED 2026-07-01]`** | The cited proof ([DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md](../archive/retracted/DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md)) is invalid; GAP-S2 is CLOSED DECLINED under FC-1 (the substrate algebra is commutative, FTD-0243 [THEOREM]; non-commutativity is a declined import, FC-1/FTD-0255) |
 | **§6.1** | Regularity Ladder ($z(t) \in C^m$) | **`[THEOREM]`** | Uniform dyadic convergence theorem |
@@ -384,7 +428,7 @@ To maintain complete epistemic integrity, we catalog the exact status of every e
 
 ### 7.2 The Resolutions of the Gaps
 
-Four primary frontiers of the continuous emergence program are resolved:
+Four primary frontiers of the continuous emergence program were claimed resolved; **two of the four resolution claims have since been retracted** (items 2 and 4 below — dated notes in place; items 1 and 3 cite sibling documents of the same vintage and await their own review pass):
 
 1.  **The Compton Dimension Inversion Paradox (RESOLVED):**
     Proved the **Compton Volume Duality Theorem** showing that the physical Compton wavelength $\lambda_C = 1/m$ is the Fourier spectral dual of the discrete spatial compact-packing volume $V_K \propto R^3$. As the cluster volume grows, the field equation's mass-pole shifts to higher energy, causing the emergent wave footprint to contract ($\lambda_C \propto 1/R^3$).
@@ -392,8 +436,8 @@ Four primary frontiers of the continuous emergence program are resolved:
     The claimed **Boundary Partition Commutator Theorem** is retracted: its proof is a non-sequitur (its step 7 concludes $[P(t_1), P(t_2)] \neq 0$ from $[U, \Pi_b] \neq 0$, which does not follow) and its Type III₁ claim is unsupported and contradicts FTD-0225 `[CLOSED NEGATIVE]`. GAP-S2's canonical status is **CLOSED DECLINED under FC-1**: the substrate observable algebra is commutative (FTD-0243 `[THEOREM]`) and quantum non-commutativity is a declined 6th-postulate-class import, not an emergent consequence. See `docs/theory/03_derivations/archive/retracted/DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md`.
 3.  **Strong-Field Metric Components ($g_{rr}$, RESOLVED):**
     Proved the **Discrete Radial Metric Projection Theorem** showing that since radial coordinate intervals contract under wave speed contraction ($dr = \sqrt{1 - r_s/r} a$), the physical interval $dl = a$ requires $dl^2 = g_{rr} dr^2$, which algebraically forces $g_{rr} = (1 - r_s/r)^{-1}$ on a uniform discrete coordinate grid.
-4.  **The Proportionality of the Born Rule (FTD-0187, RESOLVED):**
-    Proved the **Path-Integral Born Proportionality Theorem** showing that when high-frequency continuous flux fluctuations are integrated out around the mean wave envelope $\psi$, the effective action for the discrete states is linear in the flux energy density, yielding strict Born scaling $P \propto |\psi|^2$ in the high-noise limit.
+4.  **The Proportionality of the Born Rule (FTD-0187, RETRACTED 2026-07-02 — was "RESOLVED"):**
+    The claimed **Path-Integral Born Proportionality Theorem** is retracted: its final step is a non-sequitur — the derivation's own exact result is *affine* in $|\psi|^2$ with a non-zero offset and a **negative** slope (numerically verified: $\Delta P = -1.458\,|\psi|^2 - 9.447$ at $\sigma=1$, $K_B=0.5$), i.e. anti-Born; the unexpanded form is Gaussian/Rice statistics — exactly the FTD-0200 `[CLOSED NEGATIVE]` outcome; and the noise ensemble is an unstated import into the deterministic substrate (P5). FTD-0187's canonical status is unchanged: `[SELECTION]` for the $|\psi|^2$ form, `[OPEN]` for probability = energy-density (T1c). See `docs/theory/03_derivations/archive/retracted/DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md`.
 
 ---
 
