@@ -21,7 +21,7 @@ Proof: 3 lines (Vieta + the normalization `c_k = G* · b_k`).
 
 The discriminant factors cleanly at every level:
 
-> **[THEOREM 2 (tower discriminant factorization).]** `disc(M_k) = 2^{k+2} · G*^{k−1} · A_k` where `A_k := 2^{k−2} G*^{k−3} − 1` is the **level-`k` discriminant correction**. `A_3 = 1`; `A_k` is **transcendental** over `Q` for every `k ≥ 4`. (Proof: `G*` is transcendental by Chowla–Selberg + Chudnovsky 1976; for `k ≥ 4` the expression `2^{k−2}·G*^{k−3}` is a non-constant polynomial in `G*` with rational coefficients, hence transcendental, and `A_k` differs from a transcendental by a rational, so `A_k` is itself transcendental. The weaker corollary "`A_k` is irrational for `k ≥ 4`" follows a fortiori; cf. `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` Theorem 6.)
+> **[THEOREM 2 (tower discriminant factorization).]** `disc(M_k) = 2^{k+2} · G*^{k−1} · A_k` where `A_k := 2^{k−2} G*^{k−3} − 1` is the **level-`k` discriminant correction**. `A_3 = 1`; `A_k` is **transcendental** over `Q` for every `k ≥ 4`. (Proof: `G*` is transcendental by Chowla–Selberg + Chudnovsky 1976; for `k ≥ 4` the expression `2^{k−2}·G*^{k−3}` is a non-constant polynomial in `G*` with rational coefficients, hence transcendental, and `A_k` differs from a transcendental by a rational, so `A_k` is itself transcendental. The weaker corollary "`A_k` is irrational for `k ≥ 4`" follows a fortiori; cf. `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` Theorem 6.)
 
 A clean closed form for α at tree level follows from Theorem 1 applied to k = 4 (Vieta inversion of FTD-0001):
 

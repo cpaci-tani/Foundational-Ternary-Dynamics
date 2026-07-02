@@ -450,7 +450,9 @@ def create_emergent_phenomena_figure():
         ("Kepler's Law", '0.55%', '✓ PASS'),
         ('Hydrogen n²', 'Quantized', '✓ PASS'),
         ('Rutherford', '1.88%', '✓ PASS'),
-        ('Bell S-param', '2.85', '> 2√2 ✓'),
+        # sLoop ">2 via substrate overlap" reading RETIRED (FTD-0347);
+        # substrate is local/classical -- engine Bell S <= 2.
+        ('Bell S-param', 'S ≤ 2.00', '✓ LOCAL'),
     ]
 
     table_text = '┌─────────────────┬──────────┬──────────┐\n'

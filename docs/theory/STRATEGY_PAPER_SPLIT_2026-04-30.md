@@ -3,7 +3,7 @@
 **Document type:** Strategy / Planning
 **Created:** 2026-04-30
 **Author of recommendation:** session synthesis 2026-04-30 §14, refined here
-**Provenance:** distilled from `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §14
+**Provenance:** distilled from `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §14
 **Status:** [STRATEGIC RECOMMENDATION] — not yet acted upon; awaits owner go/no-go before drafting begins
 
 ---
