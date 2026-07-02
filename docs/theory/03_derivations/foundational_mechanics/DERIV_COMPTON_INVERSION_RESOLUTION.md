@@ -1,6 +1,38 @@
 # The Compton Volume Duality Theorem: Resolving the Dimension Inversion Paradox in FTD
 
-**Status:** [THEOREM] — Formal resolution of the spatial-vs-spectral Compton paradox.  
+**Status:** `[DERIVED — conditional; retagged 2026-07-02, FTD-0360]` *(was: [THEOREM])* — the §3 algebra is exact and the paradox-dissolution is sound, but two premises are imported/conditional (see the dated correction below).
+
+> **DATED CORRECTION (2026-07-02, per the FTD-0360 finalization batch, adjudicating the
+> two monograph rows flagged by the FTD-0356 cluster review).** This document was verified
+> on its merits like its retracted siblings, and — unlike them — its mathematics **checks
+> out**: the §3 chain is an exact substitution identity ($\lambda_C = 3a^3/(4\pi K_B R^3)$
+> given the three premises; re-verified symbolically under FTD-0360), the screening-length
+> reading of the massive propagator is standard ($(-\nabla^2 + m^2)\,e^{-mr}/4\pi r = 0$
+> away from the origin, screening length $1/m$), and the central clarification is **sound
+> and confirmed**: $R$ (a real-space cluster extent, $\propto m^{1/3}$) and $\lambda_C$
+> (a spectral screening scale, $\propto m^{-1}$) are different *kinds* of scale, so the
+> "Dimension Inversion Paradox" was a category error, not a contradiction.
+>
+> The former bare `[THEOREM]` tag nevertheless overreached on three counts:
+>
+> 1. **§2.2's KG envelope is imported, not a substrate theorem.** $(\Box_L + m^2)\psi = 0$
+>    tagged [THEOREM] is standard QM conditional on the imposed rest-mass clock — the same
+>    defect class the FTD-0356 review corrected in §§5.1–5.2 of the citing monograph
+>    (FTD-0271/FTD-0270; the engine-measured dispersion moreover differs from KG,
+>    FTD-0270).
+> 2. **The mass-parameter identification is assumed.** Equating the envelope's spectral
+>    mass with the extensive cluster mass $m = K_B N$ rests on FTD-0110
+>    [DERIVED at linear level] / FTD-0273; for composite clusters the reduction of
+>    cluster inertia to voxel count is [IMPOSED]/[OPEN] (FTD-0250). The document assumes
+>    the identification without argument.
+> 3. **"Fourier dual of its ontic volume" oversells.** $\lambda_C$ is the reciprocal of
+>    the *mass*; $R^3$ enters only through the extensive-mass premise. The "duality" is a
+>    substitution identity, not new structure.
+>
+> Cite as: an exact algebraic scaling identity plus a sound dissolution of a
+> pseudo-paradox, **conditional on** the imported KG dispersion and the extensive-mass
+> identification. Zero promotions elsewhere.
+
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
 ---
