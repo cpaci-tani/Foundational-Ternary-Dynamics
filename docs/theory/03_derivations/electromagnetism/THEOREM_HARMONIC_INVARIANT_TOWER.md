@@ -2,8 +2,8 @@
 
 **Tag:** [THEOREM] (harmonic invariant) + [DERIVED] (closed form for α)
 **LEDGER row:** FTD-0111
-**Companion canonical reference:** [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10
-**Convention.** Throughout this document `G* := Γ(1/4)/Γ(3/4) ≈ 2.9586751` per `scripts/constants.py` line 103/265. (The lemniscate constant `ϖ = Γ(1/4)²/(2√(2π))` differs from this by a factor `2/√π`; the spine doc §1 has a long-standing notation drift between the displayed Γ-ratio formula and the numerical value, which we do not address here. The operative master-quadratic identity `Δ = 64 G*³(4G*−1)` requires the larger value.)
+**Companion canonical reference:** [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) §8 (pointer + relative link corrected 2026-07-01, FTD-0348 — Theorem 8 moved from §10 to §8 in the 9-result reconciliation, and this file lives one directory deeper than the old link assumed)
+**Convention.** Throughout this document `G* := Γ(1/4)/Γ(3/4) ≈ 2.9586751` per `scripts/constants.py` line 103/265. (The lemniscate constant `ϖ = Γ(1/4)²/(2√(2π))` differs from this by a factor `2/√π`. A stale note here previously claimed the spine doc §1 carried "a long-standing notation drift between the displayed Γ-ratio formula and the numerical value" — that drift was the FTD-0117 bug, fixed in the spine before HEAD; the spine's §1 is now internally consistent and the claim is withdrawn [corrected 2026-07-01, FTD-0348]. The operative master-quadratic identity `Δ = 64 G*³(4G*−1)` requires the larger value G* ≈ 2.9587.)
 
 ---
 
