@@ -127,6 +127,34 @@ int ParticleEngine::add_locked_particle(int8_t charge, Vec3 position, double mas
     return p.id;
 }
 
+namespace {
+// Shared Coulomb + gravity accumulation (revision 2.4 dedup): the pairwise
+// loop and the Barnes-Hut monopole branch computed identical expressions,
+// differing only in the source terms (per-particle charge/mass vs the
+// node's aggregated totals). Exact operation order preserved — int8 charges
+// convert to double losslessly at the call site.
+inline void accumulate_coulomb_gravity(const ParticleToggles& toggles,
+                                       double pi_charge, double pi_mass,
+                                       double src_charge, double src_mass,
+                                       const Vec3& r_hat, double r2,
+                                       Vec3& f, ParticleForceDiag* diag) {
+    // Coulomb: F = -alpha * qi * qj / (4*pi*r²) * r_hat
+    if (toggles.coulomb) {
+        double f_em = -ALPHA_EFT * pi_charge * src_charge / (4.0 * PI * r2);  // EFT: G_C²
+        Vec3 fc = r_hat * f_em;
+        f += fc;
+        if (diag) diag->f_coulomb += fc;
+    }
+    // Gravity: F = +G_PE * mi * mj / r² * r_hat  (FTD-0131 physical coupling)
+    if (toggles.gravity) {
+        double f_grav = G_PE * pi_mass * src_mass / r2;
+        Vec3 fg = r_hat * f_grav;
+        f += fg;
+        if (diag) diag->f_gravity += fg;
+    }
+}
+}  // namespace
+
 Vec3 ParticleEngine::compute_pairwise_force(int i, int j) const {
     Vec3 f;
     const auto& pi = particles_[i];
@@ -144,21 +172,9 @@ Vec3 ParticleEngine::compute_pairwise_force(int i, int j) const {
 
         Vec3 r_hat = r_vec * (1.0 / r);
 
-        // 1. Coulomb: F = -alpha * qi * qj / (4*pi*r²) * r_hat
-        if (toggles.coulomb) {
-            double f_em = -ALPHA_EFT * pi.charge * pj.charge / (4.0 * PI * r2);  // EFT: G_C²
-            Vec3 fc = r_hat * f_em;
-            f += fc;
-            if (diag) diag->f_coulomb += fc;
-        }
-
-        // 2. Gravity: F = +G_PE * mi * mj / r² * r_hat  (FTD-0131 physical coupling)
-        if (toggles.gravity) {
-            double f_grav = G_PE * pi.mass * pj.mass / r2;
-            Vec3 fg = r_hat * f_grav;
-            f += fg;
-            if (diag) diag->f_gravity += fg;
-        }
+        // 1+2. Coulomb + gravity (shared with the Barnes-Hut monopole branch).
+        accumulate_coulomb_gravity(toggles, pi.charge, pi.mass,
+                                   pj.charge, pj.mass, r_hat, r2, f, diag);
 
         // 3. Exchange (Pauli): same-spin, same-charge repulsion
         if (toggles.exchange && pi.spin != 0 && pj.spin == pi.spin
@@ -281,18 +297,9 @@ Vec3 ParticleEngine::tree_force(int i, int node_idx) const {
         ParticleForceDiag* diag = nullptr;
         if (i < static_cast<int>(force_diag_.size())) diag = &force_diag_[i];
         
-        if (toggles.coulomb) {
-            double f_em = -ALPHA_EFT * pi.charge * node.total_charge / (4.0 * PI * r2);  // EFT
-            Vec3 fc = r_hat * f_em;
-            f += fc;
-            if (diag) diag->f_coulomb += fc;
-        }
-        if (toggles.gravity) {
-            double f_grav = G_PE * pi.mass * node.total_mass / r2;
-            Vec3 fg = r_hat * f_grav;
-            f += fg;
-            if (diag) diag->f_gravity += fg;
-        }
+        accumulate_coulomb_gravity(toggles, pi.charge, pi.mass,
+                                   node.total_charge, node.total_mass,
+                                   r_hat, r2, f, diag);
         return f;
     }
 
