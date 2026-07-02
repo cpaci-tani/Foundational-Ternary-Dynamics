@@ -57,17 +57,17 @@ A discrete computational framework for simulating physical systems from explicit
 - Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.19% error)
 - Higgs mass m_H = (N_eff/α²)·m_e = 124.8 GeV (0.24% error), λ_H = m_H²/(2v²)
 - Proton mass m_p/m_e = N_eff/α + N_base·N_eff + N_c = 1836.47 (174 ppm)
-- Electron g-2: a_e = α/(2π) to 5-loop = 2.55 ppb
-- Lamb shift: 1055.4 MHz (0.23% from experiment)
+- Electron g-2: a_e = α/(2π) to 5-loop = 2.55 ppb — **[PARAMETRIC]** (imported multi-loop QED with FTD's α inserted; evidence for α's value, not a substrate derivation of g-2)
+- Lamb shift: 1055.4 MHz (0.23% from experiment) — **[PARAMETRIC]** (standard QED one-loop with FTD's α inserted)
 - Color charge number N_c = 3 from RG flow + topological quantization
 - **Moore Layer Theorem**: gauge groups U(1)×SU(2)×SU(3), 3 generations of 4 fermions, matter-antimatter symmetry, 17 dark states — all from Moore neighborhood polyhedral decomposition (octahedron + cuboctahedron + stella octangula)
 - Confinement from area-law Wilson loops at x₋ (σ = 0.209)
-- Bell violation S = 2√2 from Gauss constraint → 2D transverse flux
-- Full nonlinear Einstein equations via Deser iterative bootstrap
+- Bell correlations: S = 2√2 (Tsirelson) is imported standard QM conditional on the [SELECTION] singlet — "FTD does not violate Bell"; the substrate itself is local/classical, S ≤ 2 natively (corrected 2026-07-01, FTD-0347)
+- Full nonlinear Einstein equations via Deser iterative bootstrap — the bootstrap *completes* a posited massless spin-2 field, it does not derive one (FTD-0189; emergent spin-2 mode is [OPEN])
 - D = 3 uniquely selected (no longer axiomatic)
 - Cyclotomic structure: Hamiltonian parameters are Phi_4, Phi_1·Phi_2, Phi_6 evaluated at sqrt(pi)
 - The Ratio and the Arrow: Euler reflection product (commutative, gives pi, time-symmetric) vs ratio (non-commutative, gives G*, time-asymmetric)
-- 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py`
+- 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py` — an internal-consistency check (insertions reproduce fitted values), not 50 independently-confirmed predictions
 - Complete Standard Model computation: `scripts/proofs/proof_complete_sm.py`
 
 **Honest accounting:** ~23 derived/theorem-grade claims, ~129 parametric insertions (FTD values in standard QFT formulas), ~10 imposed/selected, ~50+ external physics adopted. 50 physics tests pass across three tiers. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md).
