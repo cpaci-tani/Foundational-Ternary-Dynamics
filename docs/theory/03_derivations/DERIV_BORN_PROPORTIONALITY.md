@@ -1,7 +1,43 @@
 # The Born Rule Proportionality: Emergent Detection Probability from Lattice Upcrossings
 
 **Tag:** `[THEORY]`
-**Status:** `[THEOREM]` — derives Born probability proportionality from stenciled wave-packet threshold upcrossings.
+**Status:** `[DERIVED — conditional candidate mechanism; demoted 2026-07-02, FTD-0356]` *(was: `[THEOREM]`)* — within an `[IMPOSED]` Langevin noise model, the *excess* upcrossing rate over the vacuum background is $\propto |J_{\text{coh}}|^2$ at leading order in the weak-field regime. **T1c (probability = energy density) remains `[OPEN]` per LEDGER FTD-0187.**
+
+> **DATED CORRECTION (2026-07-02, FTD-0356 cluster review).** The §4 Gaussian-process
+> mathematics **checks out** and is recorded as sound: the ±K_B symmetry cancellation of
+> the linear term (the summed rate is $\propto \cosh(K_B J/\sigma_n^2)\,e^{-J^2/2\sigma_n^2}$,
+> even in $J$) and the leading quadratic coefficient $(K_B^2-\sigma_n^2)/2\sigma_n^4$ were
+> independently re-derived under this review. But the former `[THEOREM]` tag and the
+> closing "resolves FTD-0187" claim overreach on five counts:
+>
+> 1. **The mechanism is conditional on an `[IMPOSED]` stochastic ensemble** (the Langevin
+>    noise ξ, §3) that the deterministic substrate (Postulate P5) nowhere supplies — the
+>    doc's own §3/§5 tags concede this. A theorem *about the model* is not a theorem
+>    *about FTD*.
+> 2. **Weak-field only.** The full rate $\propto \cosh(K_B|J|/\sigma_n^2)e^{-|J|^2/2\sigma_n^2}$
+>    is not $\propto |J|^2$ globally; eq. (4.11)'s "exactly proportional" is a leading-order
+>    Taylor coefficient, valid for $|J_{\text{coh}}| \ll \min(K_B, \sigma_n)$.
+> 3. **Sign-conditional.** The $|J|^2$ coefficient is positive only if $\sigma_n < K_B$
+>    (eq. 4.10); the doc states this condition nowhere. For $\sigma_n > K_B$ the mechanism
+>    is anti-Born.
+> 4. **Offset-subtraction reading.** Born scaling is obtained only for the *excess* rate
+>    after subtracting the constant background $\nu_0$ (a dark-count-subtraction
+>    convention). Raw manifestation frequencies are *not* $\propto |\psi|^2$; whether the
+>    background is independently identifiable in the substrate is itself open.
+> 5. **Canon.** LEDGER FTD-0187 (`[SELECTION]` form / `[OPEN]` T1c) was never updated by
+>    this document — LEDGER > prose — and FTD-0200's closure requires a **pre-registered
+>    engine test** before any candidate mechanism counts ("v2 engine pre-registration
+>    required"). §1's characterization of the FTD-0200 negative (anisotropy/directional
+>    bias) also misstates the recorded finding: the 6-neighbour run failed because a
+>    linear Gaussian substrate yields **Rice** statistics, per FTD-0200's structural
+>    reading — this doc's own eq. (4.2) *is* that Rice law, reinterpreted at leading
+>    order with background subtraction.
+>
+> Cite this document as a **candidate mechanism awaiting its pre-registered test**, not as
+> a resolution of FTD-0187. (Contrast: the sibling path-integral route,
+> `archive/retracted/DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md`, is invalid
+> outright — its exact result is anti-Born affine. The two failure modes are different;
+> this one's math is right and its scope was oversold.)
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md](../../CLAUDE.md).
 
 ---
@@ -64,7 +100,7 @@ where $\sigma_n^2 = \langle |\delta J|^2 \rangle$ is the local variance of the s
 
 ---
 
-## 4. Derivation of the Born Rule Proportionality `[THEOREM]`
+## 4. Derivation of the Born Rule Proportionality `[DERIVED — conditional on the §3 [IMPOSED] model; retagged 2026-07-02, FTD-0356, was [THEOREM]]`
 
 A manifestation event ($s = 0 \to \pm 1$) occurs at voxel $\mathbf{r}$ when the local flux magnitude $|J(\mathbf{r}, t)|$ crosses the manifestation threshold $K_B = 0.511$ `[AXIOM]`.
 
@@ -125,6 +161,6 @@ This proves the **Born Rule Proportionality as a rigorous theorem of discrete th
 | Manifestation Threshold | $K_B = 0.511$ | `[AXIOM]` | Voxel activation energy. |
 | Noise Distribution | Gaussian White | `[IMPOSED]` | Microscopic substrate vacuum fluctuations. |
 | Moore Stencil | 26-neighbor isotropic | `[AXIOM]` | Rotational stability in intermediate regimes. |
-| Manifestation Probability | $P(\mathbf{r}) \propto \|J\|^2$ | `[EMERGENT]` | The Born rule emerges from Rice upcrossing statistics. |
+| Excess manifestation probability | $\Delta P(\mathbf{r}) \propto \|J_{\text{coh}}\|^2$ (weak-field, $\sigma_n < K_B$, background-subtracted) | `[DERIVED — conditional on the imposed model]` *(retagged 2026-07-02, FTD-0356; was `[EMERGENT]` — nothing has been verified in simulation; FTD-0200 requires a pre-registered engine test)* | Candidate Born mechanism from Rice upcrossing statistics; T1c remains `[OPEN]` (FTD-0187). |
 
-This resolves the long-standing open item **FTD-0187** and confirms that quantum probability is the coarse-grained, statistical consequence of a deterministic substrate undergoing threshold-crossing dynamics.
+~~This resolves the long-standing open item **FTD-0187**~~ *(corrected 2026-07-02, FTD-0356: it does **not** — see the banner. Within the imposed Langevin model, the excess-over-background upcrossing rate is $\propto |J_{\text{coh}}|^2$ at leading order in the weak-field regime with $\sigma_n < K_B$; whether the FTD substrate realizes any of these conditions is the `[OPEN]` T1c question, and per FTD-0200 only a pre-registered engine test can close it.)*
