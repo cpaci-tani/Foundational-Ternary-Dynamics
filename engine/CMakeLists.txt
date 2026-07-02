@@ -10,6 +10,27 @@ if(MSVC)
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/utf-8>)
 endif()
 
+# ── Floating-point determinism policy (revision 0.2) ────────────────────────
+# The golden-tick gates (ADR-0012) pin bit-exact hashes across MSVC (Windows)
+# and gcc (WSL2 campaign builds). Measured 2026-07-02: both toolchains
+# reproduce GOLDEN_HASH 0xb604d81a3d79366e at their CURRENT defaults. These
+# flags make that agreement explicit and immune to toolchain-default drift:
+#   MSVC  /fp:precise      — the current default, pinned against future
+#                            /fp:fast-by-default changes.
+#   GCC   -ffp-contract=off — forbids FMA contraction (gcc at -O2/-O3 defaults
+#                            to -ffp-contract=fast; x86-64 without -march
+#                            AVX2/FMA doesn't emit FMA today, which is WHY the
+#                            hashes agree — this pin keeps it true if -march or
+#                            the default ISA ever changes).
+# See engine/docs/DESIGN_RNG_PORTABILITY.md (per-platform hash policy).
+if(NOT EMSCRIPTEN)
+    if(MSVC)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/fp:precise>)
+    else()
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>)
+    endif()
+endif()
+
 # OpenMP for multi-threaded tick phases (not available under Emscripten)
 if(NOT EMSCRIPTEN)
     find_package(OpenMP)
