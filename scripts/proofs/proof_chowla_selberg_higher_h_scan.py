@@ -25,12 +25,26 @@ the canonical tolerances:
   - 1.26 ppm on x_+ vs alpha^{-1} = 137.035999177
   - 0.80% on x_- vs N_c = 3
 
-The test space:
-  - h = 1: 9 discriminants {-3, -4, -7, -8, -11, -19, -43, -67, -163}
-           (sanity check: only d = -4 should match)
-  - h = 2: first 18 discriminants {-15, -20, -24, -35, -40, ...}
-           (the substantive new test)
-  - h >= 3: optional extension
+The test space (domain restated 2026-07-01, FTD-0355 — closes FTD-0348
+math flag F3; the CLASS_NUMBERS dict below is and always was exactly
+this 63-element set):
+  - h = 1: all 9 discriminants {-3, -4, -7, -8, -11, -19, -43, -67, -163}
+           (complete; sanity check: only d = -4 should match)
+  - h = 2: all 18 discriminants (complete; largest |d| = 427)
+  - h = 3: all 16 discriminants (complete; largest |d| = 907)
+  - h = 4: the 20 SMALLEST discriminants only (|d| <= 312) — a deliberate
+           truncation: 20 of the 54 known h = 4 fields; the 23 with
+           312 < |d| <= 907 and the 11 with 907 < |d| <= 1555 are NOT
+           scanned.
+  Total: 43 (all h <= 3, complete) + 20 (smallest h = 4) = 63.
+
+  DOMAIN-MISSTATEMENT CORRECTION: prose elsewhere historically described
+  this domain as "63 fundamental discriminants, h in {1..4} with
+  |d| <= 907" — that phrase describes an 86-element set (there are 43
+  h = 4 fundamental discriminants with |d| <= 907), not this 63-element
+  set. Counts independently recomputed at finalization by reduced-form
+  enumeration over every fundamental |d| <= 2000 (FTD-0355). The frozen
+  PREREG_DAMERELL_SCAN_v1.md is deliberately NOT edited by this pass.
 
 EXPECTED OUTCOME (under the "d = -4 is structurally privileged"
 hypothesis): exactly one match across all discriminants, namely
