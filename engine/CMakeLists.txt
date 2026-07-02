@@ -2839,3 +2839,13 @@ if(NOT EMSCRIPTEN)
     set_tests_properties(cli_smoke_D cli_smoke_H_csv cli_smoke_V_vtk
                          PROPERTIES TIMEOUT 300 LABELS "unit;cli")
 endif()
+
+# Source-text lint (revision 2.6): tree-level X_PLUS/X_MINUS must never leak
+# into runtime physics paths (banners/audits/CLI display are exempt — only
+# force/physics TUs are scanned). See cmake/FtdSourceLint.cmake.
+if(NOT EMSCRIPTEN)
+    add_test(NAME source_lint
+             COMMAND ${CMAKE_COMMAND} -DENGINE_DIR=${CMAKE_SOURCE_DIR}
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdSourceLint.cmake)
+    set_tests_properties(source_lint PROPERTIES TIMEOUT 60 LABELS "unit;lint")
+endif()
