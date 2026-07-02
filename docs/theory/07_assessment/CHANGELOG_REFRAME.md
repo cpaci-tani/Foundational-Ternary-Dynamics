@@ -955,3 +955,29 @@ Both specialist reviewers re-dispatched post-commit with narrow verify-the-fixes
 | 20 live docs, 35 sites (SPEC_PHYSICS_BRIDGE, SPEC_FQCR, SPEC_OPEN_MATH_BY_SECTOR, SPEC_SM_REPLACEMENT_COMPLETE, META_INDEX, FOUND_*/DERIV_*/EXPLR_* citers, STATUS_EFT_CHECKLIST, STRATEGY_PAPER_SPLIT) + LEDGER FTD-0204 row | Stale "six theorem-grade + three honestly-tiered" spine-count citations updated to the reconciled seven + two formulation | RECONCILE |
 
 Left as provenance: `AUDIT_CLOCK_HYPOTHESIS_v2` (before/after table), `AUDIT_LEMNISCATE_ALPHA_RIGIDITY` (dated audit). Left for owner: `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex`'s older "seven theorems total" framing. Zero promotions throughout.
+
+
+---
+
+## 2026-07-01 — Fable two-specialist review + mechanical-fix pass (FTD-0348)
+
+**Context:** third same-day adversarial pass — the two specialist reviewer agents run on their intended Fable model against post-remediation HEAD `85c4be23`, primary-sources-first, prior-pass findings excluded. Both overturned the earlier "surviving defects are bookkeeping" verdict while re-confirming the core (spine numerics at 50–100 digits; proof scripts re-run; Lean artifacts compiled; zero promotions found). Capture doc: `AUDIT_FABLE_SPECIALIST_REVIEW_2026-07-01.md`. Fixes landed as per-finding commits on `main` (45a71f60, 284dee90, 2c2d6488, 9c9e22ed, d712ab07, 4490e960, da800a3c, 1495fbd7 + this bookkeeping commit).
+
+### Phase: RETRACT / DEMOTE / CORRECT
+
+| File(s) | Change | Type |
+|------|--------|------|
+| `docs/theory/03_derivations/archive/retracted/DERIV_NONCOMMUTATIVE_EMERGENCE_RETRACTED.md` (git mv from `quantum_mechanics/`) + META_INDEX 3.61 + INDEX_03_DERIVATIONS + `MONOGRAPH_EFFECTIVE_EQUATIONS.md` §5.5/§7.2 | Invalid `[THEOREM]` deriving "emergent non-commutativity" RETRACTED (non-sequitur proof; unsupported Type III₁ contradicting FTD-0225; GAP-S2 is CLOSED DECLINED under FC-1); archived per cleanup discipline; 3 live citations corrected | RETRACT |
+| `DERIV_EINSTEIN_FIELD_EQUATIONS.md` Step 4 + EFE-7 + tables/diagram/citations | m_e²-definition/proton-formula mismatch fixed; α²⁰ factor-2 arithmetic corrected (5.909e-39 vs measured 5.906e-39); false whitepaper citation repointed; `[THEOREM]`→`[STRUCTURALLY MOTIVATED PARAMETRIC]`; spelling-dependence + α_G(e,e) caveats added | CORRECT + DEMOTE |
+| `CATALOG_PARAMETRIC_INSERTIONS.md` rows + §2 accounting, `DERIV_LEPTON_MASS_GEOMETRY.md`, `proof_complete_sm.py` ×4 prints, `TRACKER_OPEN_ITEMS.md` ~225, `CLAUDE.md`/`AGENTS.md` headline | μ/τ mass-ratio demotion of record propagated ([SMP]); mis-stated formula + nonexistent `proof_mass_ratios.py` citation fixed; accounting ~23→~21 derived / ~131 parametric | DEMOTE (propagation) |
+| `SPEC_SM_REPLACEMENT_COMPLETE.md` ×2, `SPEC_NOVEL_PREDICTIONS.md` ×2, `SPEC_SIX_ALGORITHMS.md`, `docs/SPEC_FTD.md` ×2, `SPEC_FTD_REFERENCE.md`, `proof_complete_sm.py` | α_G(p,p) `[THEOREM]`/`[DERIVED]` → `[SMP]` everywhere (imported dimensional relation; α²⁰ dressing parametric; precision spelling-dependent +0.05% vs −0.33%); **new catalog §13b** (previously no α_G row existed); PMNS §7.1 header + 4 script prints reconciled to the FTD-0320 demotion | DEMOTE + ADD |
+| `CLAUDE.md`, `AGENTS.md`, catalog, `proof_complete_sm.py` | m_H "0.24%" → −0.36% = −4.1σ vs canonical PDG 2024 (125.20±0.11); comparator edition-tagged | CORRECT |
+| `proof_complete_sm.py` §6 + catalog §13 | Corrupted σ formula −ln(x₋/(x₋+1))=0.2857 → canonical −ln(I₁(β)/I₀(β))=0.2086; `[THEOREM]`/`[DERIVED]` → `[SELECTION]` per the constitution; dead PROTON_RATIO formula (=3519.97) replaced with the canonical one | CORRECT + DEMOTE |
+| `SPEC_ALGEBRAIC_SPINE.md` §1/§12/§13/§14, `TRACKER_ONTIC_TRUTH.md` OT-2.2/OT-3.3/line-124/Tier-2 header, `THEOREM_HARMONIC_INVARIANT_TOWER.md` | Spine-tail retired-id/"scan not run"/pointer fixes; OT-2.2 non-sequitur sketch → Chudnovsky-independence route; two-scans conflation disambiguated; list typo + header count; FTD-0002 pointer + dependency line; Theorem-8/9 rows added; ppm digit + stale drift note | CORRECT |
+| `CLAUDE.md` ×5 + spine ×2 | Stale `archive_session_outputs` paths → `campaigns/archive_session_outputs`; tower path → `electromagnetism/` | FIX |
+| `proof_k_bind_axiomatization.py`, `proof_orientation_carriers_closed.py` | Verdict banners outrunning their checks corrected (PSLQ-linear vs field statement); re-run clean | FIX |
+| `AUDIT_ALPHA_EXTRACTION.md`, `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | Staleness banner ("NO ½ prefactor" false at HEAD — ½ restored 2026-04-27); §1 convention note reconciling 2rG_L (Phase-F era) with rG_L (FTD-0286-v2/HEAD) | DISCLOSE |
+
+**Flagged open, NOT fixed** (specialist/owner judgment; recorded in the capture doc §3 + the FTD-0348 LEDGER row): OT-2.7/FTD-0175 false-as-proved ((1,3) survives all criteria — do not cite as `[THEOREM]` pending repair); FTD-0244 Lemma-1 field-enlargement rewrite; Theorem-3 scan-domain restatement (86 not 63; h=4 truncated) + Damerell pre-reg complement; two PROVEN-row justification rewrites + frontier row-4 falsifier scoping; the `MONOGRAPH_EFFECTIVE_EQUATIONS` Born/Schrödinger/Dirac `[THEOREM]` cluster; `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` "seven theorems total".
+
+**Net effect:** zero promotions; golden hash untouched; no engine behavior change. One retraction, ~10 demotions, ~30 corrections/disclosures. LEDGER row FTD-0348 added; next free id **FTD-0349**.
