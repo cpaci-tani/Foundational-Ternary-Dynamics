@@ -14,9 +14,9 @@
  *   - sequential post-pass: pending-particle-id assignment
  *
  * The extraction preserves the parallel-for body BYTE-IDENTICAL. The golden
- * tick test (test_render_bridge_golden) hashes 100 ticks to
- * 0x56fa28acb5b9fe88 and is the strict gate on this refactor: any drift
- * here is a physics bug.
+ * tick test (test_render_bridge_golden) hashes 100 ticks to the pinned
+ * GOLDEN_HASH (current value lives in test_render_bridge_golden.cpp) and is
+ * the strict gate on this refactor: any drift here is a physics bug.
  *
  * RF-4 deduplication: the manifest-at body (state, particle_id sentinel,
  * spin from curl, color from dominant flux axis) was byte-identical between

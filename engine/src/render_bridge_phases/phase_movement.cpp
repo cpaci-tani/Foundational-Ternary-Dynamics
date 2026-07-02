@@ -17,9 +17,9 @@
  *   - sets moved_[target] to prevent double-processing this tick
  *
  * The extraction preserves the per-voxel loop body BYTE-IDENTICAL. The
- * golden tick test (test_render_bridge_golden) hashes 100 ticks to
- * 0x56fa28acb5b9fe88 and is the strict gate on this refactor: any drift
- * here is a physics bug.
+ * golden tick test (test_render_bridge_golden) hashes 100 ticks to the pinned
+ * GOLDEN_HASH (current value lives in test_render_bridge_golden.cpp) and is
+ * the strict gate on this refactor: any drift here is a physics bug.
  *
  * Why no per-pass split: each iteration mutates two voxels (the moving
  * particle and its target). Subsequent iterations read those mutations via
