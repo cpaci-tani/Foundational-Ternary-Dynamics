@@ -1,9 +1,24 @@
-# [THEOREM] Geometric Derivation of Lepton Masses
+# Geometric Reading of the Lepton Mass-Ratio Integers
 
-**Epistemic Status:** `[THEOREM]`
+**Epistemic Status:** `[STRUCTURALLY MOTIVATED PARAMETRIC]` **(corrected 2026-07-01, FTD-0348 — was `[THEOREM]`)**
+
+> **Correction notice.** The demotion of record for the μ/τ mass-ratio formulas
+> (`TRACKER_OPEN_ITEMS.md` §"Lepton Mass Ratios": demoted to `[STRUCTURALLY MOTIVATED
+> PARAMETRIC]` in `SPEC_SM_REPLACEMENT_COMPLETE.md` and `[IMPOSED]` in `FOUND_AXIOM_ZERO.md`,
+> "as they lack a rigorous derivation from the core FTD lattice Lagrangian") was never
+> propagated to this document's `[THEOREM]` header. The Fable specialist review
+> (`AUDIT_FABLE_SPECIALIST_REVIEW_2026-07-01.md`) additionally found: (i) each move in the
+> L₃-shell counting below (why L₃, why reject the 8 corners, why subtract exactly 3 "Dirac
+> defect nodes") is chosen to land on 207 — a structural *rationalization* of a known
+> integer, not a forcing derivation; (ii) attributing the residual 0.11% gap "strictly to
+> QED vacuum polarization" is an unfalsifiable promissory note — both masses in the ratio
+> are already dressed pole masses, no bare theory is defined in which a "bare 207" acquires
+> a computable −0.112% QED shift, and no such computation is offered. The geometric reading
+> below is retained as *motivation* at the corrected tag; this document's earlier claim to
+> "retract the parametric approaches" in favor of a derivation is itself withdrawn.
 
 ## 1. Overview
-The discrete mass ratios of the Muon (207) and Tau (3477) had been treated as structurally motivated parametric formulas fitted to experimental data. This document retracts those parametric approaches and derives these exact integers purely from the topological geometry of the expanding Moore bounding layers ($L_n$).
+The discrete mass ratios of the Muon (207) and Tau (3477) are structurally motivated parametric formulas matched to experimental data. This document offers a geometric *reading* of these integers via the topological geometry of the expanding Moore bounding layers ($L_n$) — motivation, not derivation, per the correction notice above.
 
 In FTD, leptons are stable topological knots (flux loops) possessing spin-1/2 symmetry. To achieve stability at higher energies, the electron knot radially expands and phase-locks onto the larger $L_n$ lattice boundaries.
 
