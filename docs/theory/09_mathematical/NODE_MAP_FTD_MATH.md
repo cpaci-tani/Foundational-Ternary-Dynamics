@@ -395,7 +395,7 @@ graph LR
     style FTD_0163 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0164["FTD-0164: Three structural candidates for closing the χ_{..."]
     style FTD_0164 fill:#c62828,color:white,stroke:#222,stroke-width:1px
-    FTD_0175["FTD-0175: Sym²⊕Sym³ (2,3) — numeric identities [THEOREM]; the uniqueness/forcing step is [SELECTION] (Paper A §16.5)"]
+    FTD_0175["FTD-0175: Sym²⊕Sym³ exponent pair — constraint set {a&lt;b&lt;2a} ∪ {b=2a+1} [THEOREM]; (2,3) choice [SELECTION] conditional on W-CRIT-2; minimal-a uniqueness RETRACTED, survivor (1,3) (demoted per FTD-0351; label updated 2026-07-02, FTD-0356)"]
     style FTD_0175 fill:#fbc02d,color:white,stroke:#222,stroke-width:1px
     FTD_0176["FTD-0176: chi_{-4} structure in engine: GPU campaign (WSL..."]
     style FTD_0176 fill:#43a047,color:white,stroke:#222,stroke-width:1px

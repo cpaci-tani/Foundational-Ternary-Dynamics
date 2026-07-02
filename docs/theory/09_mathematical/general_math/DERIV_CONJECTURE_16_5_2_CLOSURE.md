@@ -1,6 +1,24 @@
 # Closure of Conjecture 16.5.2: the Sym^a Residual Reduces to Theorem 17.5
 
-**Status:** [DERIVED] — an explicit six-step reduction chain, not an independent theorem.
+**Status:** [DERIVED — reduction chain only; endpoint superseded]. *(was: [DERIVED] closure of the conjecture)*
+
+> **DATED CORRECTION (2026-07-02, FTD-0356, propagating the FTD-0351 demotion of FTD-0175/OT-2.7).**
+> This document's endpoint — Paper A "Theorem 17.5" / Theorem 16.5.1, the claim that
+> (a,b) = (2,3) is the *unique minimal-a admissible pair* — was **retracted** on 2026-07-01
+> (FTD-0351): the Case-A/Case-C discriminant split underlying it was notationally vacuous
+> (the roots are identically 8G*^a ± 4√(4G*^{2a} − G*^b) in every case), the corrected
+> constraint set is **{a < b < 2a} ∪ {b = 2a+1}** `[THEOREM]`, the true minimal-a survivor is
+> **(1,3)**, and the (2,3) choice is a W-CRIT-2-conditional `[SELECTION]` (FTD-0235).
+>
+> **What survives here:** the §2 reality-collapse lemma (Φ(b') ∈ ℝ forces Q-rational
+> coefficients, by Q-linear independence of distinct G*-powers under Chudnovsky 1976) is
+> **sound and unaffected** — it was independently re-checked under FTD-0356. The §3 reduction
+> therefore still collapses the general-Sym^a freedom to the leading-period case; but it now
+> lands on the *corrected constraint-set theorem*, not on a (2,3)-uniqueness. **The §3 closure
+> statement as titled ("(2,3) is the unique minimum-a admissible pair even when …") is
+> superseded**: per OT-2.7 (corrected), the residual Conjecture 16.5.2, restated as an
+> admissible-set conjecture, **remains open**. The §5 "Duke/JAMS upgrade available" reading is
+> likewise superseded. Do not cite this document as closing Conjecture 16.5.2.
 **Companion:** G* opus follow-up Phase 1 lemma L5, target T-A3. Spec at `docs/superpowers/specs/2026-05-19-gstar-followup-attacks-design.md`.
 **Verification:** `scripts/exploration/gstar_sym_k_eigenlines.py` (functions `phi_is_real_forces_q_rational`, `phi_specialise_symbolic`) + `scripts/tests/test_gstar_sym_k_eigenlines.py` (43/43 pass, including `test_reality_collapse_lemma_sym2`, `test_reality_collapse_lemma_q_rational_gives_real`, `test_reality_collapse_lemma_imaginary_parts_independent`, `test_phi_is_real_forces_q_rational_helper`).
 
