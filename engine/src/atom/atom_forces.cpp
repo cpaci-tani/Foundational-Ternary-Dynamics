@@ -122,21 +122,29 @@ Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
                 }
             }
 
-            // Case 1: i is H-donor, j is electronegative acceptor (j != donor of i)
-            if (i_is_hdonor && is_electronegative(aj.Z) && j != donor_idx) {
-                double sig_hb = 0.5 * (ai.radius + aj.radius) * N_BASE;
-                if (sig_hb > 0.0 && r > 1e-10) {
+            // Shared H-bond force (revision 2.2 dedup — the two
+            // donor/acceptor orientations below were byte-identical copies).
+            // Radial: F = -dV/dr of the LJ 10-12 well V = eps*(5*sr^12 -
+            // 6*sr^10); both terms share the derivative factor 12*5 = 10*6 =
+            // 60 — a fixed algebraic coefficient, not a tunable parameter.
+            // Angular: cos^2(theta_DHA), D = donor, H = the hydrogen, A =
+            // the acceptor. Exact operation order of the original blocks is
+            // preserved (AtomEngine tests are tolerance-based, but keep this
+            // bit-identical anyway).
+            constexpr double HB_1012_DERIV_COEFF = 60.0;
+            double sig_hb = 0.5 * (ai.radius + aj.radius) * N_BASE;
+            if (sig_hb > 0.0 && r > 1e-10) {
+                auto hbond_force = [&](const Vec3& h_pos, const Vec3& acc_pos,
+                                       int donor) -> Vec3 {
                     double sr = sig_hb / r;
                     double sr10 = std::pow(sr, 10.0);
                     double sr12 = sr10 * sr * sr;
-                    // Radial: F = eps * [60*sig^12/r^13 - 60*sig^10/r^11]
-                    double f_rad = H_BOND_EPSILON * 60.0 * (sr12 - sr10) / r;
+                    double f_rad = H_BOND_EPSILON * HB_1012_DERIV_COEFF * (sr12 - sr10) / r;
 
-                    // Angular: cos^2(theta_DHA) where D is donor, H is i, A is j
                     double cos_theta = 1.0;
-                    if (donor_idx >= 0) {
-                        Vec3 dh = ai.position - atoms_[donor_idx].position;
-                        Vec3 ha = aj.position - ai.position;
+                    if (donor >= 0) {
+                        Vec3 dh = h_pos - atoms_[donor].position;
+                        Vec3 ha = acc_pos - h_pos;
                         double dh_mag = std::sqrt(dh.mag2());
                         double ha_mag = std::sqrt(ha.mag2());
                         if (dh_mag > 1e-30 && ha_mag > 1e-30) {
@@ -145,36 +153,19 @@ Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
                         }
                     }
                     double ang_factor = cos_theta * cos_theta;
+                    return r_hat * (f_rad * ang_factor);
+                };
 
-                    Vec3 fhb = r_hat * (f_rad * ang_factor);
+                // Case 1: i is H-donor, j is electronegative acceptor (j != donor of i)
+                if (i_is_hdonor && is_electronegative(aj.Z) && j != donor_idx) {
+                    Vec3 fhb = hbond_force(ai.position, aj.position, donor_idx);
                     f += fhb;
                     if (diag) diag->f_hbond += fhb;
                 }
-            }
 
-            // Case 2: j is H-donor, i is electronegative acceptor (i != donor of j)
-            if (j_is_hdonor && is_electronegative(ai.Z) && i != donor_idx_j) {
-                double sig_hb = 0.5 * (ai.radius + aj.radius) * N_BASE;
-                if (sig_hb > 0.0 && r > 1e-10) {
-                    double sr = sig_hb / r;
-                    double sr10 = std::pow(sr, 10.0);
-                    double sr12 = sr10 * sr * sr;
-                    double f_rad = H_BOND_EPSILON * 60.0 * (sr12 - sr10) / r;
-
-                    double cos_theta = 1.0;
-                    if (donor_idx_j >= 0) {
-                        Vec3 dh = aj.position - atoms_[donor_idx_j].position;
-                        Vec3 ha = ai.position - aj.position;
-                        double dh_mag = std::sqrt(dh.mag2());
-                        double ha_mag = std::sqrt(ha.mag2());
-                        if (dh_mag > 1e-30 && ha_mag > 1e-30) {
-                            cos_theta = (dh.x*ha.x + dh.y*ha.y + dh.z*ha.z)
-                                      / (dh_mag * ha_mag);
-                        }
-                    }
-                    double ang_factor = cos_theta * cos_theta;
-
-                    Vec3 fhb = r_hat * (f_rad * ang_factor);
+                // Case 2: j is H-donor, i is electronegative acceptor (i != donor of j)
+                if (j_is_hdonor && is_electronegative(ai.Z) && i != donor_idx_j) {
+                    Vec3 fhb = hbond_force(aj.position, ai.position, donor_idx_j);
                     f += fhb;
                     if (diag) diag->f_hbond += fhb;
                 }

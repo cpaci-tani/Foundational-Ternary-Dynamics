@@ -453,3 +453,14 @@ three of six candidates turned out to be load-bearing.
 Golden-fold / flavor cross-check (required by ticket 0.11): the golden hash
 folds do NOT read `Voxel::flavor` — but GPU weak-field auto-activation does,
 so any flavor change is GPU-behavior-relevant even though it is golden-invisible.
+
+### Revision-program note (2026-07-02): second pre-existing failure found
+- **`atomic_energy` FAILS — PRE-EXISTING, not a revision-program regression.**
+  Assertions AE-6d (total energy negative / bound state; measured
+  E_actual/E_circ = -0.64) and AE-6e (within factor 2 of circular-orbit
+  prediction) fail. Verified unrelated to the 2.2 atom_forces dedup via
+  stash round-trip (fails identically without the edit); the test source is
+  unchanged since 2026-03-16 and nothing on the revision branch touches
+  AtomEngine physics. Add to the ticket-5.4 diagnosis scope alongside
+  helium_scale1 (same discipline: instrument, bisect, three costed options —
+  no silent tolerance changes).
