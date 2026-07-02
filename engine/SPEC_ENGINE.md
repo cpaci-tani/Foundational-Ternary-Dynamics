@@ -584,7 +584,24 @@ helper methods (`validate`, `enable_all`, `disable_all`,
 | Field extensions | `dual_substrate`, `exact_dual_gauss`, `latency_field`, `field_energy_gravity`, `symplectic_leapfrog` | Split substrate, latency/proper-time sector, explicit-`dt` wave integration |
 | Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, boundary sponge, traversal artifact control |
 | Particle-sector extensions | `color_forces`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
-| Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Non-Abelian-gauge intent flags and strict validation behavior |
+| Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Non-Abelian-gauge intent flags (dormant — not wired into the tick) and strict validation behavior |
+
+**Dormant non-Abelian gauge sector.** `su2_gauge` / `su3_gauge` are intent
+flags in the same sense as `confinement`: publicly settable (including from
+JS via `rb_toggle_map`) but read by nothing, so setting them is a no-op on
+both backends. The sector's implementation exists but is disconnected —
+`relax_su2_links_cpu` / `relax_su3_links_cpu`
+(`src/transmutation_phases.cpp`) and the CUDA launchers
+`launch_relax_su2_links` / `launch_relax_su3_links`
+(`cuda/kernels_gauge.cu`) have zero call sites. This is a deliberate
+keep-dormant decision (engine revision program, ticket 0.9): nothing
+downstream consumes the link variables (the `color_forces` path uses color
+labels, not links), and wiring the sector in is gated on first fixing the
+in-place `parallel for` neighbor race in `relax_su2_links_cpu`
+(double-buffer) and pinning a new gauge golden profile per ADR-0012.
+`engine/tests/test_gauge_links.cpp` characterizes the relax functions and
+pins the disconnection with a tripwire (G1) that fails loudly if the
+toggles are ever wired.
 
 ### 8.2 Defaults and validation
 
