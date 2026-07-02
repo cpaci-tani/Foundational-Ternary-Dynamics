@@ -327,7 +327,11 @@ description}`). Beyond the core physics toggles (`wave_propagation`,
 - `exact_dual_gauss` - exact dual-cell face-flux Gauss projection (non-bulk)
 - `emergent_forces` - EFT force-from-gradient; conflicts `poisson_coulomb`
 - `langevin` - stochastic OU thermostat (CPU only at runtime, non-bulk)
-- `symplectic_leapfrog`, `su2_gauge`, `su3_gauge`, `symmetric_movement_order`
+- `symplectic_leapfrog`, `symmetric_movement_order`
+- `su2_gauge` / `su3_gauge` - dormant intent flags (not wired into tick; the relax
+  functions and CUDA launchers have zero call sites, so the toggles are no-ops —
+  pinned by `test_gauge_links` G1 tripwire; wiring is gated on the
+  `relax_su2_links_cpu` double-buffer race fix + a gauge golden profile per ADR-0012)
 - `absorbing_boundary`, `reflective_boundary`
 - `field_energy_gravity` - `[IMPOSED]` latency Poisson sources from 1/2|J|^2
 - `cluster_inertia` - `[IMPOSED]` rigid-body cluster a_COM = F_cluster/(N*M_REST); requires `forces` (non-bulk)
