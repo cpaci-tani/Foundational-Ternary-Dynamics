@@ -263,7 +263,7 @@ A reorientation toward "use the engine as a primary instrument; let it produce p
 - FTD-0016 coefficient 16 = |Aut(E)|² — [THEOREM]
 - Phase G geometric Coulomb α_r(r,L) = 2r·G_L(r) — [THEOREM]
 - Watson identity W₃ = G*²/(2π) — [THEOREM]
-- Phase J ultralocality at L=2 — [THEOREM at L=2 — Nyquist-mode degeneracy origin] (downgraded — see MC-T1.1)
+- Phase J ultralocality — [THEOREM at all L ≥ 2 — matched-stencil, on the Gauss-realizable space] *(line updated 2026-07-02, FTD-0360, to the FTD-0350 retag of record: adversarially verified, conditional on the stencil-consistency [SELECTION]; the prior L=2-only Nyquist-degeneracy-origin headline is superseded and the L ≥ 4 ambiguity closed as a proven masking artifact; headline 7+2 spine count unchanged pending owner decision — see MC-T1.1)*
 - FTD-0111 (1+i)-tower harmonic invariant (Theorem 8) — [THEOREM]
 - FTD-0112 field-theoretic Q(G*) characterization (Theorem 9) — [THEOREM]
 
