@@ -18,9 +18,9 @@
  *       * γ_FTD bandwidth-respecting relativistic momentum integration
  *
  * The extraction preserves the per-voxel loop body BYTE-IDENTICAL. The
- * golden tick test (test_render_bridge_golden) hashes 100 ticks to
- * 0x56fa28acb5b9fe88 and is the strict gate on this refactor: any drift
- * here is a physics bug.
+ * golden tick test (test_render_bridge_golden) hashes 100 ticks to the pinned
+ * GOLDEN_HASH (current value lives in test_render_bridge_golden.cpp) and is
+ * the strict gate on this refactor: any drift here is a physics bug.
  *
  * Why no per-force split: each force contributes to a single f_total that
  * is consumed by the relativistic-momentum integration in the same loop
