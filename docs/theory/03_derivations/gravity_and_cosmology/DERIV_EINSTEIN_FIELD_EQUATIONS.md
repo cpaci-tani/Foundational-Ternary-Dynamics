@@ -10,7 +10,7 @@
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) — SR, linearized GR (§§1-15)
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — T_μν via Noether's theorem
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld render-bridge action
-- [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) — α_G derivation
+- [SPEC_SM_REPLACEMENT_COMPLETE.md](../../01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md) — the α_G integer-dressing formula's canonical [STRUCTURALLY MOTIVATED PARAMETRIC] filing (citation corrected 2026-07-01 — the previously-cited lemniscate-hierarchy whitepaper does not contain this formula)
 
 ---
 
@@ -148,15 +148,17 @@ The linearized equations are equivalent to linearized GR. They correctly predict
 
 ---
 
-# Step 4: Newton's Constant from the Lattice [THEOREM + SELECTION]
+# Step 4: Newton's Constant from the Lattice [STRUCTURALLY MOTIVATED PARAMETRIC + SELECTION]
+
+**(Corrected 2026-07-01, FTD-0348, per the Fable specialist review — the previous version of this Step defined $\alpha_G$ with $m_e^2$ but applied the proton-coupling formula (a $(m_p/m_e)^2 \approx 3.4\times10^6$ definitional mismatch), mis-stated $\alpha^{20}$ by a factor of 1.99, cited a whitepaper that does not contain the formula, and tagged the result [THEOREM]. All fixed below; nothing promoted.)**
 
 ## 4.1 The Gravitational Coupling Hierarchy
 
-Newton's constant $G$ is related to the gravitational fine structure constant $\alpha_G$ by:
+Newton's constant $G$ is related to the **proton** gravitational fine structure constant by the standard (imported) dimensional relation:
 
-$$\alpha_G = \frac{G m_e^2}{\hbar c} = \frac{m_e^2}{M_P^2}$$
+$$\alpha_G(p,p) = \frac{G m_p^2}{\hbar c} = \frac{m_p^2}{M_P^2} \approx 5.906 \times 10^{-39} \quad \text{(CODATA 2022)}$$
 
-From the FTD coupling hierarchy (DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md):
+The FTD integer-dressing formula for this quantity — **[STRUCTURALLY MOTIVATED PARAMETRIC]**, as filed in `SPEC_SM_REPLACEMENT_COMPLETE.md` (the functional form $G = \alpha_G \hbar c/m^2$ is standard dimensional analysis; only the $\alpha^{20}$ integer dressing is FTD's) — is:
 
 $$\alpha_G = 2\pi \left(\frac{16}{3}\right)^2 \left(N_\text{eff} + \frac{3}{b_3}\right)^2 \alpha^{20}$$
 
@@ -166,13 +168,9 @@ with $\{N_\text{eff} = 13, b_3 = 7\}$.
 
 $$\alpha_G = 2\pi \times \frac{256}{9} \times \left(13 + \frac{3}{7}\right)^2 \times \alpha^{20}$$
 
-$$= 2\pi \times 28.44 \times (13.4286)^2 \times (7.297 \times 10^{-3})^{20}$$
+$$= 178.72 \times 180.33 \times 1.834 \times 10^{-43} = 5.909 \times 10^{-39}$$
 
-$$= 178.76 \times 180.33 \times 3.647 \times 10^{-43} = 1.176 \times 10^{-38}$$
-
-This gives the Newton-to-Planck conversion. The exact value of $G$ follows:
-
-$$G = \frac{\alpha_G \hbar c}{m_e^2} = \frac{1.176 \times 10^{-38} \times 1.97 \times 10^{-14}\;\text{GeV·cm}}{(0.511 \times 10^{-3}\;\text{GeV})^2}$$
+against the measured $(m_p/m_P)^2 = 5.906 \times 10^{-39}$: a $+0.05\%$ match. **Two honesty caveats:** (i) the formula's implicit proton-mass spelling, $(N_\text{eff}+3/b_3)/\alpha = 1840.35\,m_e$, is inconsistent with FTD's canonical $m_p/m_e = N_\text{eff}/\alpha + N_\text{base}N_\text{eff} + N_c = 1836.47$ ($+0.21\%$ apart); computing $\alpha_G(p,p)$ from the canonical mass formulas instead gives $-0.33\%$. The sub-0.1% precision is spelling-dependent, not robust. (ii) The substrate-*derived* gravity result is a different, weaker quantity: $\alpha_G(e,e) = (m_e/m_P)^2$ per FTD-0131 (`DERIV_NEWTON_FROM_SUBSTRATE.md`), `[DERIVED]` modulo the clock-hypothesis axiom, inheriting FTD-0015's `[SMC]` floor (0.38% match).
 
 The coefficient $8\pi G/c^4$ in the Einstein equations then emerges from:
 
@@ -184,7 +182,7 @@ $$\frac{8\pi G}{c^4} = \frac{8\pi}{M_P^2} \quad \text{(in natural units)}$$
 |-----------|--------|-----|
 | $\pi$ | Solid angle integration (Gauss law on lattice) | [THEOREM] |
 | Factor 8 | $2 \times N_\text{base} = 2 \times 4$ from trace-reversal and spinor dimension | [SELECTION] |
-| $G = \alpha_G \hbar c / m_e^2$ | Coupling hierarchy from $\alpha^{20}$ | [THEOREM] |
+| $G = \alpha_G \hbar c / m_p^2$ | $\alpha^{20}$ integer dressing of the imported dimensional relation | [STRUCTURALLY MOTIVATED PARAMETRIC] (corrected 2026-07-01; was [THEOREM]) |
 
 ---
 
@@ -249,7 +247,7 @@ where:
 | $g_{\mu\nu}$ | Effective metric from latency field $\mathcal{L}$ | [SELECTION] |
 | $R_{\mu\nu}$ | Ricci curvature (from $g_{\mu\nu}$ and its derivatives) | [THEOREM] (mathematics) |
 | $T_{\mu\nu}$ | Noether current of flux Lagrangian | [THEOREM] |
-| $G$ | From $\alpha_G = 2\pi(16/3)^2(N_\text{eff}+3/b_3)^2\alpha^{20}$ | [THEOREM] |
+| $G$ | From $\alpha_G = 2\pi(16/3)^2(N_\text{eff}+3/b_3)^2\alpha^{20}$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (corrected 2026-07-01) |
 | $\Lambda$ | No native source; FTD predicts $\Lambda = 0$, form fixed by FC-3, value a [BOUNDARY] (FTD-0331) | [OPEN] (source) |
 
 ---
@@ -333,7 +331,7 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 | EFE-4 | $T_{\mu\nu}$ via Noether from flux $\mathcal{L}$ | **[THEOREM]** | DERIV_QFT_GRT_BRIDGE Thm 2.1 |
 | EFE-5 | $\nabla_\mu T^{\mu\nu} = 0$ from wave equation | **[THEOREM]** | DERIV_QFT_GRT_BRIDGE Thm 2.2 |
 | EFE-6 | Linearized Einstein: $\Box\bar{h}_{\mu\nu} = -16\pi G T_{\mu\nu}/c^4$ | **[SELECTION — conditional on Conjecture 10.1]** *(retagged per FTD-0189 ripple; was [THEOREM])* | DERIV_RELATIVITY Thm 14.1 ([SELECTION/CONDITIONAL]) |
-| EFE-7 | $G$ from $\alpha_G$ hierarchy ($\alpha^{20}$) | **[THEOREM]** | DERIV_LEMNISCATE_HIERARCHY |
+| EFE-7 | $G$ from $\alpha_G$ hierarchy ($\alpha^{20}$) | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01; was [THEOREM]) | SPEC_SM_REPLACEMENT_COMPLETE §gravity (Step 4 above) |
 | EFE-8 | Nonlinear completion via Lovelock | **[SELECTION — conditional on EFE-6]** *(inherits from EFE-6)* | Lovelock (1971) + Premises 1-5 |
 | EFE-9 | Full Einstein equations recovered | **[SELECTION — conditional on Conjecture 10.1]** *(inherits from EFE-6 + EFE-8)* | EFE-1 through EFE-8 |
 | EFE-10 | $\Lambda$: no native source (FTD predicts $\Lambda=0$); form [DERIVED-from-FC-3], value a [BOUNDARY] | **[OPEN]** (source) | FTD-0331 (CC dissolved, not solved) |
@@ -341,7 +339,7 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 | EFE-12 | Poisson equation in weak-field limit | **[VERIFIED]** | Standard GR + SPEC_FTD_LAGRANGIAN |
 | EFE-13 | GW propagation (2 polarizations, speed $c$) | **[VERIFIED]** | DERIV_RELATIVITY §15 |
 
-**Epistemic breakdown** *(per FTD-0189 ripple; EFE-10 reconciled per FTD-0331)*: 6 [THEOREM] (EFE-1, EFE-2, EFE-3, EFE-4, EFE-5, EFE-7) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [OPEN] (EFE-10, the $\Lambda$ source) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 retagged the load-bearing Theorem 14.1 input.
+**Epistemic breakdown** *(per FTD-0189 ripple; EFE-10 reconciled per FTD-0331; EFE-7 corrected per FTD-0348)*: 5 [THEOREM] (EFE-1, EFE-2, EFE-3, EFE-4, EFE-5) + 1 [STRUCTURALLY MOTIVATED PARAMETRIC] (EFE-7, corrected 2026-07-01 — the dimensional relation is imported, the α²⁰ dressing is a parametric insertion, and the previous Step-4 arithmetic was wrong by 2× under a mismatched m_e² definition) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [OPEN] (EFE-10, the $\Lambda$ source) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 retagged the load-bearing Theorem 14.1 input.
 
 ---
 
@@ -372,7 +370,7 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 | [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) | SR, linearized GR, GAP-2 now resolved |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation, conservation law |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, Poisson equation |
-| [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) | α_G derivation |
+| [SPEC_SM_REPLACEMENT_COMPLETE.md](../../01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md) | α_G integer-dressing formula ([STRUCTURALLY MOTIVATED PARAMETRIC]; citation corrected 2026-07-01) |
 
 ---
 
@@ -395,7 +393,7 @@ Theorem 2.2: ∂_μ T^μν = 0                       (conservation)
     ↓ [flux wave equation + metric identification]
 Theorem 14.1: □h̄_μν = -(16πG/c⁴) T_μν          (linearized Einstein)
     ↓ [α_G = 2π(16/3)²(N_eff+3/b₃)²α²⁰]
-G = α_G ℏc/m_e² = M_P⁻²                        (Newton's constant)
+G = α_G ℏc/m_p² = M_P⁻²                        (Newton's constant; m_p² — corrected 2026-07-01)
     ↓ [Lovelock's theorem: unique divergence-free 2-tensor in D=4]
     ↓ [only possible nonlinear completion of linearized form]
 ╔══════════════════════════════════════════════════════════════╗
