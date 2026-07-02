@@ -19,6 +19,14 @@ has a closed-form prediction with zero free parameters:
   α_r(r, L)      = -V · r  =  2 · r · G_L(r)
 ```
 
+> **Convention note (added 2026-07-01, FTD-0348):** the factor 2 above is the
+> **Phase-F-era accumulator convention** (`field_energy = Σ|J|²`, no ½) under which the
+> Phase-F CSVs were produced. The engine at HEAD uses the canonical `½·|·|²` convention
+> (restored 2026-04-27), under which the FTD-0286-v2 canonical pairing further below —
+> `α_r = r · G_L(r)` — applies. The two statements are the same geometry read under two
+> declared accumulator conventions, not two competing predictions; the zero-free-parameter
+> claim holds under either, since the factor is fixed by the declared convention, not fitted.
+
 where `G_L(r)` is the periodic lattice Poisson Green's function on the L³
 cubic torus with the 7-point Laplacian:
 
