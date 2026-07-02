@@ -11,6 +11,7 @@
 #include <cmath>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 namespace ftd {
 
@@ -187,13 +188,31 @@ inline int idx(int x, int y, int z, int L) {
 } // namespace
 
 void relax_su2_links_cpu(RenderBridge& rb, double dt, double beta) {
+  rb.ensure_gauge_links();  // revision 4.1b: buffers are lazy — materialize
   auto& links_x = rb.su2_links_x_;
   auto& links_y = rb.su2_links_y_;
   auto& links_z = rb.su2_links_z_;
   const int L = rb.lattice_.size();
 
-  // Helper lambda to fetch a link safely
-  auto fetch_link = [&](int s, int dir) -> SU2Link {
+  // Jacobi double-buffer (race fix, revision 0.9 option a). The previous
+  // in-place sweep read neighbour links that other OpenMP threads were
+  // concurrently writing — a data race — and even single-threaded the result
+  // was traversal-order dependent (Gauss-Seidel). Every staple read now comes
+  // from the pre-sweep state (`links_*`, via fetch_link); every write goes to
+  // the scratch buffers, which swap in at the end. The sweep is therefore
+  // thread-count invariant (asserted by test_gauge_links G4) and matches the
+  // GPU kernel's src→dst semantics (kernels_gauge.cu).
+  auto& out_x = rb.su2_links_scratch_x_;
+  auto& out_y = rb.su2_links_scratch_y_;
+  auto& out_z = rb.su2_links_scratch_z_;
+  if (out_x.size() != links_x.size()) {
+    out_x.resize(links_x.size());
+    out_y.resize(links_y.size());
+    out_z.resize(links_z.size());
+  }
+
+  // Helper lambda to fetch a link (pre-sweep state) safely
+  auto fetch_link = [&](int s, int dir) -> const SU2Link& {
     if (dir == 0) return links_x[s];
     if (dir == 1) return links_y[s];
     return links_z[s];
@@ -285,24 +304,41 @@ void relax_su2_links_cpu(RenderBridge& rb, double dt, double beta) {
           SU2Link u_new(u_old.a + staple_adj.a * (dt * beta), u_old.b + staple_adj.b * (dt * beta));
           u_new.normalize();
 
-          // Write back
-          if (mu == 0)      links_x[site] = u_new;
-          else if (mu == 1) links_y[site] = u_new;
-          else              links_z[site] = u_new;
+          // Write to the scratch buffer (Jacobi: never to the arrays being read)
+          if (mu == 0)      out_x[site] = u_new;
+          else if (mu == 1) out_y[site] = u_new;
+          else              out_z[site] = u_new;
         }
       }
     }
   }
+
+  // Swap the relaxed sweep in; scratch retains the previous state's storage.
+  std::swap(links_x, out_x);
+  std::swap(links_y, out_y);
+  std::swap(links_z, out_z);
 }
 
 void relax_su3_links_cpu(RenderBridge& rb, double dt, double beta) {
+  rb.ensure_gauge_links();  // revision 4.1b: buffers are lazy — materialize
   auto& links_x = rb.su3_links_x_;
   auto& links_y = rb.su3_links_y_;
   auto& links_z = rb.su3_links_z_;
   const int L = rb.lattice_.size();
 
-  // Helper lambda to fetch a link safely
-  auto fetch_link = [&](int s, int dir) -> SU3Link {
+  // Jacobi double-buffer — same race fix as relax_su2_links_cpu above:
+  // reads come from the pre-sweep state, writes go to scratch, swap at end.
+  auto& out_x = rb.su3_links_scratch_x_;
+  auto& out_y = rb.su3_links_scratch_y_;
+  auto& out_z = rb.su3_links_scratch_z_;
+  if (out_x.size() != links_x.size()) {
+    out_x.resize(links_x.size());
+    out_y.resize(links_y.size());
+    out_z.resize(links_z.size());
+  }
+
+  // Helper lambda to fetch a link (pre-sweep state) safely
+  auto fetch_link = [&](int s, int dir) -> const SU3Link& {
     if (dir == 0) return links_x[s];
     if (dir == 1) return links_y[s];
     return links_z[s];
@@ -446,14 +482,19 @@ void relax_su3_links_cpu(RenderBridge& rb, double dt, double beta) {
           }
           normalize_su3(u_new);
 
-          // Write back
-          if (mu == 0)      links_x[site] = u_new;
-          else if (mu == 1) links_y[site] = u_new;
-          else              links_z[site] = u_new;
+          // Write to the scratch buffer (Jacobi: never to the arrays being read)
+          if (mu == 0)      out_x[site] = u_new;
+          else if (mu == 1) out_y[site] = u_new;
+          else              out_z[site] = u_new;
         }
       }
     }
   }
+
+  // Swap the relaxed sweep in; scratch retains the previous state's storage.
+  std::swap(links_x, out_x);
+  std::swap(links_y, out_y);
+  std::swap(links_z, out_z);
 }
 
 }  // namespace ftd
