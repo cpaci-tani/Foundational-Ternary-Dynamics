@@ -53,7 +53,21 @@ const DELEGATED_SCENARIOS = new Set([
 
 function extractJsScenarios() {
     const groupDir = join(WEB_ROOT, 'js', 'bridge', 'scenarios');
-    const files = readdirSync(groupDir).filter((f) =>
+    const allFiles = readdirSync(groupDir).filter((f) => f.endsWith('.js'));
+    // Scenario-id constants defined anywhere in the group dir, e.g.
+    // spectrum-comparator.js: `export const RF_LATTICE_WAVE_SCENARIO_ID =
+    // 's0-field-rf-lattice-wave';` — group files use these in identifier-form
+    // `case RF_LATTICE_WAVE_SCENARIO_ID:` labels, which the string-literal
+    // regex below cannot see (revision 0.4 lint-blindness fix: the four
+    // spectrum-comparator wave scenarios were implemented all along).
+    const idConsts = new Map();
+    for (const f of allFiles) {
+        const src = readFileSync(join(groupDir, f), 'utf8');
+        const reConst = /const\s+([A-Z][A-Z0-9_]*)\s*=\s*['"]([^'"]+)['"]/g;
+        let m;
+        while ((m = reConst.exec(src))) idConsts.set(m[1], m[2]);
+    }
+    const files = allFiles.filter((f) =>
         f.endsWith('-scenarios.js') && f !== 'index.js'
     );
     const names = new Set();
@@ -63,6 +77,12 @@ function extractJsScenarios() {
         const re = /case\s+['"]([^'"]+)['"]\s*:/g;
         let m;
         while ((m = re.exec(src))) names.add(m[1]);
+        // Matches `case SOME_SCENARIO_ID:` resolved through idConsts.
+        const reIdent = /case\s+([A-Z][A-Z0-9_]*)\s*:/g;
+        while ((m = reIdent.exec(src))) {
+            const resolved = idConsts.get(m[1]);
+            if (resolved) names.add(resolved);
+        }
     }
     // 'empty' is handled by the dispatcher itself (index.js), not in any group file.
     names.add('empty');
@@ -157,7 +177,91 @@ function extractTogglesTypedefScenarios() {
     return names;
 }
 
+// ── Toggle extractors (revision 0.4 toggle-parity lint) ─────────────
+
+function extractScale0Toggles() {
+    // Parses the SCALE0_TOGGLES whitelist in engine/web/js/config/toggles.js:
+    //   ['toggle_name', <default>, 'dom-id'],
+    const src = readFileSync(join(WEB_ROOT, 'js', 'config', 'toggles.js'), 'utf8');
+    const blockMatch = src.match(/export const SCALE0_TOGGLES = \[([\s\S]*?)\n\];/);
+    if (!blockMatch) return new Map();
+    const entries = new Map();
+    const re = /\['([a-z0-9_]+)',\s*(true|false)/g;
+    let m;
+    while ((m = re.exec(blockMatch[1]))) entries.set(m[1], m[2] === 'true');
+    return entries;
+}
+
+function extractCppToggleSpecs() {
+    // Parses TOGGLE_SPECS[] rows in engine/include/ftd/term_toggles.h:
+    //   {"name", &TermToggles::field, <default>, ...},
+    const src = readFileSync(
+        join(ENGINE_ROOT, 'include', 'ftd', 'term_toggles.h'), 'utf8');
+    const entries = new Map();
+    const re = /\{"([a-z0-9_]+)",\s*&TermToggles::[a-z0-9_]+,\s*(true|false)/g;
+    let m;
+    while ((m = re.exec(src))) entries.set(m[1], m[2] === 'true');
+    return entries;
+}
+
+// SCALE0_TOGGLES defaults are the dashboard's SCENARIO-RESET baseline, not the
+// C++ construction default — four toggles intentionally diverge (the dashboard
+// baseline profile starts them off; the C++ TermToggles constructor starts
+// them on). This map characterizes the known divergences as {js, cpp} pairs.
+// If a divergence disappears (or a new one appears) this lint fails, forcing
+// the change to be acknowledged here in the same commit.
+const INTENTIONAL_DEFAULT_DIVERGENCES = new Map([
+    ['gravity',            { js: false, cpp: true }],
+    ['lorentz_force',      { js: false, cpp: true }],
+    ['dual_substrate',     { js: false, cpp: true }],
+    ['weak_transmutation', { js: false, cpp: true }],
+]);
+
 // ── Tests ───────────────────────────────────────────────────────────
+
+test.describe('Toggle parity (JS whitelist ⊆ C++ TOGGLE_SPECS)', () => {
+    test('every SCALE0_TOGGLES key exists in TOGGLE_SPECS', () => {
+        const js = extractScale0Toggles();
+        const cpp = extractCppToggleSpecs();
+        // Regex-rot guards: both extractions must find a plausible population.
+        expect(js.size, 'SCALE0_TOGGLES extraction found too few entries — regex rot?')
+            .toBeGreaterThanOrEqual(15);
+        expect(cpp.size, 'TOGGLE_SPECS extraction found too few entries — regex rot?')
+            .toBeGreaterThanOrEqual(30);
+        const unknown = [...js.keys()].filter((name) => !cpp.has(name));
+        expect(unknown,
+            `${unknown.length} SCALE0_TOGGLES keys have no TOGGLE_SPECS row in ` +
+            `engine/include/ftd/term_toggles.h — a C++ rename/removal has stranded the JS ` +
+            `whitelist (setToggle on these is silently dropped by rb_toggle_map).\n` +
+            `Unknown:\n  - ${unknown.join('\n  - ')}`
+        ).toEqual([]);
+        // NOTE: subset only — the C++-side extra toggles (research controls,
+        // non-whitelisted by design per CONTRACTS.md §4 and the comment block
+        // below SCALE0_TOGGLES) are intentionally absent from JS.
+    });
+
+    test('scenario-reset defaults match C++ defaults except documented divergences', () => {
+        const js = extractScale0Toggles();
+        const cpp = extractCppToggleSpecs();
+        const problems = [];
+        for (const [name, jsDefault] of js) {
+            if (!cpp.has(name)) continue; // covered by the subset test above
+            const cppDefault = cpp.get(name);
+            const known = INTENTIONAL_DEFAULT_DIVERGENCES.get(name);
+            if (known) {
+                if (known.js !== jsDefault || known.cpp !== cppDefault) {
+                    problems.push(`${name}: documented divergence {js:${known.js}, cpp:${known.cpp}} ` +
+                        `no longer matches reality {js:${jsDefault}, cpp:${cppDefault}} — update ` +
+                        `INTENTIONAL_DEFAULT_DIVERGENCES in this spec`);
+                }
+            } else if (jsDefault !== cppDefault) {
+                problems.push(`${name}: JS scenario-reset default (${jsDefault}) drifted from C++ ` +
+                    `TOGGLE_SPECS default (${cppDefault}) with no documented divergence entry`);
+            }
+        }
+        expect(problems, problems.join('\n')).toEqual([]);
+    });
+});
 
 test.describe('Scenario parity (JS ↔ C++)', () => {
     test('every JS scenario has a C++ implementation in scenarios.cpp', () => {
@@ -180,6 +284,9 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
         const cpp = extractCppScenarios();
         const missing = [];
         for (const name of cpp) {
+            // DELEGATED_SCENARIOS reach their physics via another scenario in
+            // the JS registry load(); C++ keeps a native branch for CLI/tests.
+            if (DELEGATED_SCENARIOS.has(name)) continue;
             if (!js.has(name)) missing.push(name);
         }
         expect(missing,
