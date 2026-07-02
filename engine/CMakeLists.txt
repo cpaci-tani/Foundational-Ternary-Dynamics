@@ -275,6 +275,11 @@ ftd_add_test(test_ternary_field tests/test_ternary_field.cpp
              CTEST_NAME ternary_field TIMEOUT 120 LABELS unit foundation)
 ftd_add_test(test_field_soa tests/test_field_soa.cpp
              CTEST_NAME field_soa TIMEOUT 120 LABELS unit foundation)
+# Voxel memory-layout characterization guard (revision 0.8): pins
+# sizeof(Voxel) + the trailing strong/weak block so struct growth is a
+# conscious decision and the Phase-4.1 side-buffer extraction has a baseline.
+ftd_add_test(test_voxel_layout tests/test_voxel_layout.cpp
+             CTEST_NAME voxel_layout TIMEOUT 60 LABELS unit foundation)
 add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
 target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_cognitive_lattice PRIVATE ftd_cognition)
