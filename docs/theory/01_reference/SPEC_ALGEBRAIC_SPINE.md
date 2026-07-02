@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven; maximality is [OPEN] and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield. The spine has **nine numbered results** — **seven theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two honestly tiered below theorem grade** (Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, [THEOREM at L=2] only). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* dual-match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the 7+2-with-split formulation here is the single canonical count, and every count statement below now matches it. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
+**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven; maximality is [OPEN] and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield. The spine has **nine numbered results** — **seven theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two honestly tiered below theorem grade** (Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, [THEOREM at L=2] only). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* dual-match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the 7+2-with-split formulation here is the single canonical count, and every count statement below now matches it. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
 **Purpose:** state the load-bearing algebraic content of FTD in
 **[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -397,7 +397,7 @@ transcendental over `Q` with rational coefficients is transcendental).
 **Proof reference.** Three-line Vieta computation for the harmonic
 invariant; direct factorization for the discriminant. Full derivation
 plus the closed-form corollary `α_tree = 1/(2G*) − √(4G*−1)/(4G*^{3/2})`
-in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`.
+in `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md`.
 Numerical confirmation at 50-digit precision for `k ∈ {3, 4, 5, 6, 7}`
 in `scripts/proofs/proof_harmonic_invariant_tower.py`.
 
@@ -525,7 +525,7 @@ it does NOT claim" below.)
   `Q(π, Γ(1/4))`; the theorem does not exclude them.
 
 **Provenance.** Archived at
-`docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1,
+`docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1,
 where this is "Theorem 3".
 
 ### 9.1 · Operational reading via the parity-twist (FTD-0127)
@@ -811,6 +811,8 @@ What this document explicitly does NOT allow you to claim:
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
 | 7 Phase J ultralocal (THEOREM at L=2; NUMERICAL EVIDENCE at L=3; OPEN/ambiguous L≥4) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
+| 8 Harmonic invariant tower (rows added 2026-07-01, FTD-0348 — this table previously stopped at Theorem 7) | `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md` | `proof_harmonic_invariant_tower.py` | FTD-0111 |
+| 9 Q(G*) π-free subfield (conditional on Chudnovsky 1976) | `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 | `proof_field_theoretic_qgstar.py` | FTD-0112 |
 
 | Subsidiary | Primary doc | LEDGER |
 |---|---|---|
