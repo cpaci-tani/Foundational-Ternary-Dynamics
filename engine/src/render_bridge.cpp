@@ -384,7 +384,7 @@ double RenderBridge::compute_entropy() const { return ::ftd::compute_entropy_cpu
 // 18-pt isotropic Laplacian with interior fast path + boundary slow path,
 // plus state-flux coupling) is preserved BYTE-IDENTICAL inside
 // phase_read_main_loop. The bit-exact gate is test_render_bridge_golden
-// (hash 0x56fa28acb5b9fe88).
+// (current pin: GOLDEN_HASH in test_render_bridge_golden.cpp).
 void RenderBridge::phase_read() {
   sync_ternary_from_voxels_if_needed();
   ::ftd::phase_read_main_loop(*this);
@@ -494,8 +494,8 @@ void RenderBridge::phase_forces() {
   // here (~225 LOC of EM/gravity/Lorentz/color force computation plus
   // γ_FTD relativistic momentum integration) is preserved BYTE-IDENTICAL
   // inside phase_forces_main_loop. The golden-tick test
-  // (test_render_bridge_golden, hash 0x56fa28acb5b9fe88) is the strict
-  // gate on this refactor.
+  // (test_render_bridge_golden; current pin: GOLDEN_HASH in that file) is
+  // the strict gate on this refactor.
   ::ftd::phase_forces_solve_potentials(*this);
   ::ftd::phase_forces_build_color_cache(*this);
   ::ftd::phase_forces_main_loop(*this);
@@ -526,7 +526,7 @@ void RenderBridge::phase_forces() {
 // same-sign elastic bounce + opposite-sign annihilation with 6-neighbor flux
 // burst, dual-substrate-aware) is preserved BYTE-IDENTICAL inside
 // phase_movement_main_loop. The bit-exact gate is test_render_bridge_golden
-// (hash 0x56fa28acb5b9fe88). Splitting the per-voxel body further would break
+// (current pin: GOLDEN_HASH in that file). Splitting the per-voxel body further would break
 // the golden gate — see the header comment for why.
 void RenderBridge::phase_movement() {
   ::ftd::phase_movement_main_loop(*this);
