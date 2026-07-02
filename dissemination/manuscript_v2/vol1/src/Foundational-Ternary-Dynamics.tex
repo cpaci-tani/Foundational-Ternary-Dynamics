@@ -723,20 +723,26 @@ Model and Gravity}
 \markright{A Discrete Ontology for the Standard Model and Gravity}
 
 This manuscript presents Foundational Ternary Dynamics (FTD): a
-computational framework that derives the Standard Model gauge groups,
-coupling constants, and particle masses from five postulates about a
-discrete cubic lattice.
+computational framework that motivates the Standard Model gauge groups
+and computes coupling constants and particle masses from five postulates
+about a discrete cubic lattice plus three explicit calibration
+declarations (\(a_\mathrm{phys} \equiv \ell_P\), \(t_\mathrm{phys}\),
+\(K_B = m_e\)).
 
-The framework postulates a three-dimensional integer lattice
-\(\mathbb{Z}^3\) where each site carries a ternary state
-\(s \in \{-1, 0, +1\}\) and a continuous flux vector
-\(\mathbf{J} \in \mathbb{R}^3\). From the lattice geometry alone ---
-specifically, the decomposition of the 26-neighbor Moore neighborhood
-into three sublattices (SC, FCC, BCC) --- the gauge group
-\(U(1) \times SU(2) \times SU(3)\), the fine structure constant
-\(\alpha = 1/137.036\) (to 1.26 ppm at tree level, 9.6 ppb with one-loop
-correction), and the complete mass spectrum emerge with zero free
-parameters.
+The framework postulates a three-dimensional cubic lattice
+(undefined-boundary, not \(\mathbb{Z}^3\) as completed totality) where
+each site carries a flux vector \(\mathbf{J} \in \mathbb{R}^3\) and a
+discrete state \(s \in \{-1, 0, +1\}\) that records when local flux
+density crosses the manifestation threshold \(K_B\). From the lattice
+geometry alone --- specifically, the decomposition of the 26-neighbor
+Moore neighborhood into three sublattices (SC, FCC, BCC) --- the
+gauge-group structure \(U(1) \times SU(2) \times SU(3)\) is motivated as
+a {[}SELECTION{]}, the master-quadratic root \(x_+ \approx 137.036\)
+matching \(1/\alpha\) to 1.26 ppm at tree level is a {[}STRONGLY
+MOTIVATED CONJECTURE{]} (the polynomial identity is a {[}THEOREM{]}; the
+physical identification has substantial structural-uniqueness evidence
+but no derivation chain), and the dimensionless mass ratios are
+computed; absolute masses are calibration-conditional.
 
 \subsection*{What this manuscript does}\label{what-this-manuscript-does}
 \addcontentsline{toc}{subsection}{What this manuscript does}
@@ -745,19 +751,26 @@ parameters.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Derives} the Standard Model gauge groups from lattice geometry
-  (Book I)
+  \textbf{Motivates} the Standard Model gauge groups from lattice
+  geometry {[}SELECTION{]} (Book I)
 \item
-  \textbf{Computes} 46 observables with zero free parameters (Book II)
+  \textbf{Computes} \(\sim 46\) Standard Model observables; roughly two
+  dozen are {[}DERIVED{]} or {[}THEOREM{]}, the remainder are
+  {[}PARAMETRIC{]} (FTD-derived constants substituted into standard QFT
+  formulas) (Book II)
 \item
-  \textbf{Recovers} full nonlinear general relativity from discrete
-  dynamics (Book II)
+  \textbf{Reconstructs} linear spin-2 propagation on the lattice and
+  presents a Deser-iterative bootstrap to nonlinear Einstein equations
+  (currently {[}SELECTION{]} / {[}PARTIAL DERIVED{]}; see Ch. 15) (Book
+  II)
 \item
-  \textbf{Resolves} the measurement problem via algebraic type
-  transition (Book III)
+  \textbf{Frames} the measurement problem via algebraic type transition
+  (Type III\(_1\) to Type I) --- a structural framing, not a derivation
+  of qualia or a unique mechanism (Book III)
 \item
-  \textbf{Predicts} dark matter properties, vacuum energy, and proton
-  decay (Book III)
+  \textbf{Catalogs} dark-matter, vacuum-energy, and proton-decay claims
+  with their current tags (most {[}SELECTION{]} or {[}CONJECTURE{]};
+  predictions stated with falsification criteria) (Book III)
 \end{enumerate}
 
 \subsection*{What this manuscript does not
@@ -825,7 +838,7 @@ tracks every input.
   falsification criteria.
 \end{itemize}
 
-\textbf{Framework version:} 5.30 (April 2026)
+\textbf{Framework version:} 5.35 (May 2026)
 
 \bookmarksetup{startatroot}
 
@@ -838,24 +851,40 @@ This work began as a computational experiment: simulate a discrete
 lattice with ternary states and see what emerges. What emerged was
 unexpected.
 
-The 26-neighbor Moore neighborhood on \(\mathbb{Z}^3\) decomposes into
+The 26-neighbor Moore neighborhood on the cubic lattice decomposes into
 three sublattices --- simple cubic (6 face-adjacent), face-centered
 cubic (12 edge-adjacent), and body-centered cubic (8 corner-adjacent).
-Each sublattice excites a different number of flux components,
-generating exactly the Standard Model gauge group
-\(U(1) \times SU(2) \times SU(3)\). The BCC sublattice's eigenvalue ---
-a product of cosines, \(1 - \cos k_1 \cos k_2 \cos k_3\) --- connects
-through Watson's 1939 integral identity to the lemniscatic constant
-\(G^* = \Gamma(1/4)^2/(\sqrt{2}\pi)\). A self-consistency gap equation
-with coefficient 16 (the square of the CM curve automorphism count) then
-produces two roots: \(1/\alpha = 137.036\) and \(N_c = 3\). Everything
-else follows.
+Each sublattice excites a different number of flux components, with the
+resulting structure motivating the Standard Model gauge group
+\(U(1) \times SU(2) \times SU(3)\) (the structural derivation is a
+{[}SELECTION{]} argument, not a uniqueness theorem). The BCC
+sublattice's eigenvalue --- a product of cosines,
+\(1 - \cos k_1 \cos k_2 \cos k_3\) --- connects through Watson's 1939
+integral identity to the lemniscatic constant
+\(G^* = \Gamma(1/4)/\Gamma(3/4)\) (this is a {[}THEOREM{]}:
+\(W_3 = G^{*\,2}/(2\pi)\)). A self-consistency polynomial with
+coefficient 16 (the square of the CM-curve automorphism count) has two
+roots, \(x_+ \approx 137.036\) and \(x_- \approx 3.024\). The polynomial
+identity itself is a {[}THEOREM{]}; the physical identification
+\(x_+ = 1/\alpha\) and \(x_- \approx N_c\) is a {[}STRONGLY MOTIVATED
+CONJECTURE{]} (1.26 ppm and 0.80\% empirical match; supported by
+Bayes-factor and structural-uniqueness scans).
 
-The framework has five postulates, six derived constants, and zero free
-parameters. It computes 46 Standard Model observables, recovers the full
-nonlinear Einstein equations, and resolves the measurement problem
-through an algebraic type transition (Type III\(_1\) to Type I) that
-requires no external observer.
+The framework has five postulates and a derivation chain that produces
+six dimensionless constants from \(G^*\) alone (the dimensionless
+predictions: \(\alpha\), \(N_c\), lepton mass ratios, mixing ratios).
+Three calibration declarations (\(a_\mathrm{phys} \equiv \ell_P\),
+\(t_\mathrm{phys} = \sqrt{3}\,\ell_P/c\), \(K_B = m_e\)) are required to
+translate dimensionless ratios into dimensional units; predictions in
+absolute units are conditional on this calibration. Of the \(\sim 46\)
+Standard Model observables tracked in Book II, roughly two dozen are
+{[}DERIVED{]} or {[}THEOREM{]} (mostly structural integers and ratios)
+and the remainder are {[}PARAMETRIC{]} (FTD-derived constants
+substituted into standard QFT formulas). The full nonlinear
+Einstein-equation recovery and the measurement-problem framing via
+algebraic type transition (Type III\(_1\) to Type I) are presented at
+their currently-supported tags --- a structural framing rather than a
+complete derivation.
 
 This manuscript is written for working physicists. It assumes
 familiarity with quantum field theory, general relativity, and lattice
@@ -869,7 +898,7 @@ Whether it is the \emph{right} framework --- or merely a remarkably
 efficient parametrization --- is for the reader to judge. The
 falsification criteria are in Chapter 24.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Methodology}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Methodology}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This work was developed through computationally-guided mathematical
 discovery (CGMD): systematic lattice simulation revealing structural
@@ -1265,7 +1294,8 @@ First use
 \(N_{\text{eff}}\) & Effective DOF & 13 & Ch. 10 \\
 \(K\) & DOF coefficient & 16 & Ch. 8 \\
 \(g_c\) & Coupling constant & \(\sqrt{\alpha}\) & Ch. 14 \\
-\(G_N\) & Gravitational constant & \(1/(b_3+N_c)^2 = 1/100\) & Ch. 15 \\
+\(\alpha_G(e,e)\) & Gravitational fine-structure (substrate-derived per
+FTD-0131) & \((m_e/m_P)^2 \approx 1.745 \times 10^{-45}\) & Ch. 15 \\
 \(\gamma_{\text{FTD}}\) & FTD Lorentz factor &
 \(1/\sqrt{1-v^2/c^2-L^2}\) & Ch. 15 \\
 \end{longtable}
@@ -1296,11 +1326,29 @@ a \textbf{tick}. No sub-tick dynamics exist.
 
 \end{ftdaxiom}
 
-\begin{ftdaxiom}[Postulate 3: Ternary states]
+\begin{ftdaxiom}[Postulate 3: Ternary states (J-primary; \(s\) as manifestation
+projection)]
 
-Each voxel carries a state \(s(v, t) \in \{-1, 0, +1\}\). These are the
-only ontic values. The state \(s = 0\) is the \textbf{void};
-\(s = \pm 1\) are \textbf{manifestations} of opposite charge.
+Each voxel carries a flux field \(\mathbf{J}(v, t) \in \mathbb{R}^3\)
+(the dispositional layer) and a discrete state
+\(s(v, t) \in \{-1, 0, +1\}\) (the manifestation layer).
+\textbf{\(\mathbf{J}\) is primary; \(s\) is the action of \(\mathbf{J}\)
+via the Genesis threshold rule} (Postulate 6 / Genesis dynamics): when
+\(\|\mathbf{J}(v, t)\|\) crosses the manifestation threshold \(K_B\),
+the void voxel manifests as \(s = \pm 1\) according to the sign of the
+flux divergence; otherwise \(s = 0\). Thus \(s\) is not an independent
+field --- it is the discrete observable layer that records when
+\(\mathbf{J}\)'s local intensity crosses \(K_B\). The state \(s = 0\) is
+the \textbf{void} (substrate awaiting activation); \(s = \pm 1\) are
+\textbf{manifestations} of opposite charge.
+
+\textbf{Why this is one postulate, not two:} the flux field
+\(\mathbf{J}\) is the dispositional content of the void substrate
+(Postulate 1); the ternary state \(s\) is the manifestation projection
+of \(\mathbf{J}\) via the Genesis rule. Treating \(s\) as primary and
+\(\mathbf{J}\) as separate would double-count. (See
+\texttt{SPEC\_FTD.md} §1.1 graded-monism table; the ontology was
+clarified 2026-05-02 in the MC-T4.1 reframe.)
 
 \end{ftdaxiom}
 
@@ -2507,8 +2555,10 @@ is a theorem.
 
 The gap equation is the self-consistency condition of the lattice: the
 coupling constant determined by the lattice's own Green's function must
-reproduce the lattice dynamics that generated it. Its solutions are the
-fine structure constant and the number of colors.
+reproduce the lattice dynamics that generated it. Its two roots
+\emph{match} the inverse fine structure constant and the number of
+colors; those physical identifications are {[}STRONGLY MOTIVATED
+CONJECTURE{]}s (Chapter 9), not derivations of \(\alpha\) or \(N_c\).
 
 \section{\texorpdfstring{The coefficient \(K = 16\)
 {[}THEOREM{]}}{The coefficient K = 16 {[}THEOREM{]}}}\label{the-coefficient-k-16-theorem}
@@ -2670,9 +2720,12 @@ Standard Model in a single equation with coefficients determined by:
   Self-consistency from the gap equation structure (Section 8.6)
 \end{itemize}
 
-From these two numbers (\(\Gs\) and 16), the fine structure constant,
-the number of quark colors, and all derived coupling constants follow.
-This is the content of Book II.
+From these two numbers (\(\Gs\) and 16), the master quadratic's roots
+are fixed exactly. Their \emph{identification} with the fine structure
+constant, the number of quark colors, and the derived coupling constants
+is the {[}STRONGLY MOTIVATED CONJECTURE{]} developed in Book II --- the
+roots match the physical values, but FTD does not derive \(\alpha\) from
+its axioms.
 
 \part{Physical Content}
 
@@ -2992,6 +3045,56 @@ The Fibonacci connection is {[}CONJECTURE{]} --- it may reflect the
 recursive self-similar structure of the lattice dynamics or may be
 numerological coincidence. It is noted for completeness.
 
+\section{Circularity caveat for SP5-dependent
+derivations}\label{sec-integers-circularity}
+
+The derivations above present the integers as outputs of the master
+quadratic and the Moore geometry. This chapter's framing is the
+strongest available, but the historical fact is that the integers were
+first identified in FTD by inspecting known physics values (\(N_c = 3\)
+from QCD, \(b_3 = 7\) from the QCD \(\beta\)-function) and \emph{then}
+shown to satisfy an interlocking set of relations. For readers who
+regard that history as compromising, the following table --- adapted
+from the self-audit
+\href{../../../docs/theory/01_reference/BRIDGE_QUADRATIC_PHYSICS.md}{BRIDGE\_QUADRATIC\_PHYSICS.md
+§5.4} --- separates results that do and do not depend on SP5:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1905}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3571}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4524}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Result
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Depends on \(\{N_c, N_{\text{base}}, b_3, N_{\text{eff}}\}\)?
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Circularity risk
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(x_+ = 137.036\) tree level & NO & \textbf{Not circular} \\
+\(x_- = 3.024\) tree level & NO & \textbf{Not circular} \\
+Watson identity \(W_3 = G^{*2}/(2\pi)\) & NO & \textbf{Not circular} \\
+Sym\(^2\) L-value identity \(16G^{*2} = 2^9 L(\text{Sym}^2 E, 1)\) & NO
+& \textbf{Not circular} \\
+7-term precision-formula coefficients & YES & \textbf{Circular} \\
+\(\sin^2\theta_W = N_c / N_{\text{eff}}\) & YES & \textbf{Circular} \\
+Lepton mass ratios, \(m_p/m_e\) & YES & \textbf{Circular} \\
+\end{longtable}
+
+\textbf{Reader's rule.} Any claim derived from
+\(\{N_c, N_{\text{base}}, b_3, N_{\text{eff}}\}\) should be read as
+\emph{conditional on the base-integer set being the right one}. The
+match to experiment is evidence that the integers were well-chosen, not
+that the derivation is mechanism-forced. Closing this gap requires a
+derivation of the four integers from lattice first principles --- not
+from known physics. The cuboctahedral-geometry arguments in this chapter
+and in Chapter~\ref{sec-moore} are the most advanced partial attempts;
+they are not yet complete as uniqueness proofs.
+
 \chapter{\texorpdfstring{The Precision Formula for
 \(\alpha\)}{The Precision Formula for \textbackslash alpha}}\label{sec-precision}
 
@@ -3060,8 +3163,19 @@ pending) \\
 contributions & {[}CONJECTURE{]} \\
 \end{longtable}
 
-\section{The one-loop correction
-{[}THEOREM{]}}\label{the-one-loop-correction-theorem}
+\section{The one-loop correction {[}SELECTION{]} (scheme-conditional ---
+corrected
+2026-07-01)}\label{the-one-loop-correction-selection-scheme-conditional-corrected-2026-07-01}
+
+\emph{This section was previously headed \texttt{{[}THEOREM{]}},
+inconsistent with its own canonical source
+\texttt{DERIV\_ONE\_LOOP\_LATTICE\_ALPHA.md}, tagged
+\texttt{{[}SELECTION{]}\ /\ scheme-conditional\ calculation} there and
+explicit that ``the 9.6 ppb result\ldots{} is not a scheme-independent
+physical prediction.'' The lattice integral below is a genuine,
+reproducible FFT computation; the scheme choice (SC scalar-EFT tadpole,
+lattice spacing a=2/D) and the resulting CODATA match are
+\texttt{{[}SELECTION{]}}, not \texttt{{[}THEOREM{]}}.}
 
 The one-loop tadpole integral on the periodic lattice:
 
@@ -3070,18 +3184,24 @@ I_1 = \frac{1}{L^3} \sum_{\mathbf{k} \neq 0} \frac{1}{\hat{k}^2 + m^2_{\text{lat
 \tag{11.3}
 \]
 
-computed on \(128^3\) and \(150^3\) lattices via FFT. The loop expansion
-parameter \(g^2 I_1 = 4 \times 0.01527 = 0.061\) (\(\sim 6\%\)), well
-within perturbative control.
+computed on \(128^3\) and \(150^3\) lattices via FFT --- reproducible
+within the stated scheme. The loop expansion parameter
+\(g^2 I_1 = 4 \times 0.01527 = 0.061\) (\(\sim 6\%\)), well within
+perturbative control.
 
 The coefficient \(c_1 = 9/D_{47} = 9/47\) where
 \(D_{47} = N_c \cdot N_{\text{base}}^2 - 1 = 3 \times 16 - 1 = 47\).
 This is the effective constraint dimension on the Moore-weighted lattice
 after Gauss projection.
 
-\textbf{Result:} The one-loop corrected value matches CODATA 2022 to
-\textbf{9.6 ppb} (parts per billion), closing 99.2\% of the original
-1.26 ppm tree-level gap.
+\textbf{Result (scheme-conditional):} The one-loop corrected value
+matches CODATA 2022 to \textbf{9.6 ppb} (parts per billion) \emph{within
+this fixed regularization scheme} --- closing 99.2\% of the original
+1.26 ppm tree-level gap. A GPU audit found the BCC tadpole value differs
+from the SC tadpole used here, and a Ward-valid two-U(1) BCC gauge
+completion does not reproduce this closure --- so the 9.6 ppb figure is
+a Structure-1, fixed-scheme outcome, not a scheme-independent
+prediction.
 
 \section{The two-loop status
 {[}SELECTION{]}}\label{the-two-loop-status-selection}
@@ -3111,10 +3231,10 @@ FTD predicts \(\alpha\) from geometry. The two values agree to the
 precision of the lattice loop corrections.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1739}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2391}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2174}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3696}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2105}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2895}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2632}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2368}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Method
@@ -3123,23 +3243,34 @@ Method
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Accuracy
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Free parameters
+Status
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-CODATA 2022 (\(a_e\) measurement) & 137.035999177(21) & 0.15 ppb & 1
-(measured) \\
-FTD tree level & 137.036171 & 1.26 ppm & 0 \\
-FTD one-loop & 137.036000 & 9.6 ppb & 0 \\
-FTD 7-term & 137.035999177\ldots{} (predicted) & \textless{} 0.001 ppt &
-0 \\
+CODATA 2022 (\(a_e\) measurement) & 137.035999177(21) & 0.15 ppb &
+Experimental \\
+FTD tree level & 137.036171 & 1.26 ppm & Master quadratic root
+{[}THEOREM{]}; physical identification \(x_+ = 1/\alpha\) {[}STRONGLY
+MOTIVATED CONJECTURE{]} \\
+FTD one-loop & 137.036000 & 9.6 ppb & \(c_1\) {[}THEOREM{]}; closure of
+99.2\% of the tree-level gap \\
+FTD 7-term & 137.035999177\ldots{} (post-hoc fit beyond CODATA
+precision) & matches CODATA digit-string & \(c_2,c_3\) {[}SELECTION{]},
+\(c_4\)--\(c_7\) {[}CONJECTURE{]}; not a prediction beyond CODATA's 0.15
+ppb experimental floor \\
 \end{longtable}
 
-The 7-term value is a \textbf{prediction}: if the loop coefficients
-\(c_4\)--\(c_7\) are confirmed, FTD will match the experimental value to
-sub-parts-per-trillion with zero free parameters.
+The 7-term expansion \textbf{fits} the CODATA digit-string to as many
+digits as one wants, but this is beyond the CODATA experimental
+precision (0.15 ppb) and so cannot be tested as a prediction at sub-ppt
+scale. The honest framing: FTD's tree-level match is 1.26 ppm; the
+one-loop closure is to 9.6 ppb; everything beyond that is post-hoc
+fitting of unknown loop coefficients to a digit-string the experiment
+cannot resolve. The \(c_4\)--\(c_7\) ``predictions'' would become tests
+only if independent first-principles derivations of those coefficients
+exist; they do not.
 
 \chapter{The Mass Spectrum}\label{sec-masses}
 
@@ -3321,10 +3452,17 @@ additional parameters.
 
 \chapter{The Complete Standard Model}\label{sec-sm}
 
-This chapter collects all 46 Standard Model observables computed by FTD
-into a single reference table. Every entry uses only the Planck mass
+This chapter collects \(\sim 46\) Standard Model observables computed by
+FTD into a single reference table. Every entry uses only the Planck mass
 \(m_P\), the bridge constant \(\Gs\), and the framework integers
-\(\{3, 4, 7, 13\}\). Zero free parameters.
+\(\{3, 4, 7, 13\}\), plus the three calibration declarations
+theorem-enforced by FTD-0059 + FTD-0096
+(\(a_\mathrm{phys} \equiv \ell_P\),
+\(t_\mathrm{phys} = \sqrt{3}\,\ell_P/c\), \(K_B = m_e\)). Of the
+\(\sim 46\) entries, roughly two dozen are {[}DERIVED{]} or
+{[}THEOREM{]}-grade (mostly structural integers and ratios) and the
+remainder are {[}PARAMETRIC{]} (FTD-derived constants substituted into
+standard QFT formulas).
 
 \section{The observable table}\label{the-observable-table}
 
@@ -3340,6 +3478,10 @@ The epistemic status of each entry is classified as:
 \item
   \textbf{E} (External): standard physics formula used without FTD
   derivation
+\item
+  \textbf{SMP} (Structurally Motivated Parametric): rational-integer
+  match to the relevant SM observable, structurally suggestive but not
+  derived
 \end{itemize}
 
 \subsection{Coupling constants}\label{coupling-constants}
@@ -3370,15 +3512,20 @@ Type
 \bottomrule\noalign{}
 \endlastfoot
 \(1/\alpha\) & \(x_+\) from master quadratic & 137.036 & 137.036 & 1.26
-ppm & D \\
+ppm & SMP (master quadratic {[}THEOREM{]}; \(x_+ = 1/\alpha\)
+identification {[}STRONGLY MOTIVATED CONJECTURE{]}) \\
 \(\alpha_s(M_Z)\) & \(b_3/(b_3 + 4N_{\text{eff}}) = 7/59\) & 0.1186 &
-0.1179 & 0.6\% & D \\
+0.1179 & 0.6\% & SMP (was \hyperref[d]{D} pre-2026-04-19; demoted per
+AUDIT\_RATIONAL\_FIT\_CLAIMS) \\
 \(G_F\) & \(1/(\sqrt{2}v^2)\) & \(1.166 \times 10^{-5}\) &
-\(1.166 \times 10^{-5}\) & \textless{} 0.01\% & D \\
-\(\sin^2\theta_W\) & \(N_c/N_{\text{eff}} = 3/13\) & 0.2308 & 0.2312 &
-0.2\% & D \\
+\(1.166 \times 10^{-5}\) & \textless{} 0.01\% & PI (formula = standard
+EW theory) \\
+\(\sin^2\theta_W\) & \(N_c/N_{\text{eff}} = 3/13\) & 0.2308 &
+0.22290(30) & 3.5\% off & {[}PARAMETRIC{]} (FTD-0018, demoted
+2026-04-19) \\
 \(\alpha_{\text{GUT}}\) & \(1/(2 \cdot 3 \cdot b_3) = 1/42\) & 0.0238 &
-\textasciitilde0.024 & \textasciitilde1\% & D \\
+\(\sim 0.024\) & \(\sim 1\%\) & SMP (no canonical GUT-scale
+derivation) \\
 \end{longtable}
 
 \subsection{Boson masses}\label{boson-masses}
@@ -3546,10 +3693,12 @@ Type
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\(\rho_\Lambda\) & \(m_e^4 \alpha^{16} \Gssq\) & \(\sim 10^{-47}\)
-GeV\(^4\) & \(\sim 10^{-47}\) GeV\(^4\) & \textasciitilde1\% & D \\
-\(\Omega_{\text{DM}}/\Omega_b\) & Sub-threshold ratio & \textasciitilde5
-& 5.36 & \textasciitilde7\% & D \\
+\(\rho_\Lambda\) & \(m_e^4 \alpha^{16} \Gssq\) &
+\(\sim 4 \times 10^{-47}\) GeV\(^4\) & \(\sim 2.2 \times 10^{-47}\)
+GeV\(^4\) & factor \(\sim 1.8\) & OPEN (factor-1.8 discrepancy;
+calibration-conditional under \(a_\mathrm{phys} \equiv \ell_P\)) \\
+\(\Omega_{\text{DM}}/\Omega_b\) & Sub-threshold ratio & \(\sim 5\) &
+5.36 & \(\sim 7\%\) & SMP (no canonical derivation chain) \\
 \end{longtable}
 
 \emph{Note: This table is representative, not exhaustive. The complete
@@ -3557,6 +3706,11 @@ GeV\(^4\) & \(\sim 10^{-47}\) GeV\(^4\) & \textasciitilde1\% & D \\
 \texttt{scripts/proofs/proof\_complete\_sm.py}.}
 
 \section{Honest accounting}\label{honest-accounting-1}
+
+The current load-bearing-claims catalog
+(\texttt{docs/theory/07\_assessment/CATALOG\_PARAMETRIC\_INSERTIONS.md},
+\(\sim 162\) rows enumerated) classifies each SM-related FTD claim.
+Aggregate split (post-2026-04-19 audit):
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
@@ -3574,13 +3728,20 @@ Description
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Genuine derivations (D)} & \textasciitilde20 & \(\alpha\), gauge
-groups, coupling constants, vacuum energy --- from lattice geometry \\
-\textbf{Parametric insertions (PI)} & \textasciitilde20 & Masses, mixing
-angles --- FTD values in standard QFT formulas \\
-\textbf{External physics (E)} & \textasciitilde6 & Decay rates, running
-couplings --- standard physics unmodified \\
-\textbf{Total} & \textasciitilde46 & \\
+\textbf{Genuine derivations + theorems (\hyperref[d]{D} /
+{[}THEOREM{]})} & \(\sim 23\) & Master quadratic {[}THEOREM{]}; \(\Gs\)
+identity {[}THEOREM{]}; structural integers
+\(\{N_c, N_\mathrm{base}, N_\mathrm{eff}\}\) {[}SELECTION/THEOREM{]};
+lattice-geometry results (Phase G, Phase J at L=2). \\
+\textbf{Parametric insertions ({[}PI{]})} & \(\sim 129\) & Masses,
+mixing angles, decay rates --- FTD-derived constants substituted into
+standard QFT formulas. \\
+\textbf{Imposed / Selection (\hyperref[i]{I} / \hyperref[s]{S})} &
+\(\sim 10\) & Calibration declarations
+(\(a_\mathrm{phys} \equiv \ell_P\), \(K_B = m_e\), \(t_\mathrm{phys}\));
+ladder-walk ordering selections. \\
+\textbf{Total catalog} & \(\sim 162\) & The \(\sim 46\) ``headline
+observables'' in this chapter are the visible portion of the catalog. \\
 \end{longtable}
 
 The distinction between D and PI is critical:
@@ -3752,9 +3913,13 @@ from the action{]}
 \]
 
 The latency \(L\) encodes the gravitational potential via
-\(L^2 = 2G_N M / (rc^2)\) where \(G_N = 1/(b_3 + N_c)^2 = 1/100\).
-{[}THEOREM for the mechanism; SELECTION for the \(G_N\)
-identification{]}
+\(L^2 = 2G_N M / (rc^2)\). The substrate-derived gravitational coupling
+is \(\alpha_G(e,e) = (m_e/m_P)^2 \approx 1.745 \times 10^{-45}\)
+{[}DERIVED, postulate-conditional per FTD-0131{]}; the earlier
+framework-integer reading \(G_N = 1/(b_3+N_c)^2 = 1/100\) is
+\textbf{{[}CLOSED NEGATIVE per FTD-0131{]}} (off by \(10^{20}\) to
+\(10^{43}\)). See \texttt{15-gravity-from-lattice.qmd} Mechanism B and
+\texttt{DERIV\_NEWTON\_FROM\_SUBSTRATE.md}.
 
 \textbf{Strong force.} From the BCC sublattice coupling (\(k = 3\)
 components): \[
@@ -3832,19 +3997,40 @@ and gravitational effects in a single bandwidth constraint. When
 \(L = 0\): standard special relativity. When \(v = 0\): gravitational
 time dilation.
 
-\textbf{Mechanism B: Coulomb coupling (Newtonian gravity).} The
-gravitational constant is: \[
-G_N = \frac{1}{(b_3 + N_c)^2} = \frac{1}{(7 + 3)^2} = \frac{1}{100}
+\textbf{Mechanism B: Substrate-derived Newton coupling (FTD-0131).} The
+gravitational fine-structure constant for one electron emerges from the
+substrate as \[
+\alpha_G(e,e) = \left(\frac{m_e}{m_P}\right)^2 = \left[\sqrt{2\pi}\cdot\frac{16}{3}\cdot\alpha^{11}\right]^2 \approx 1.745 \times 10^{-45}
 \tag{15.2}
 \]
 
-in lattice units. The Newtonian potential: \[
-\phi_G(r) = -\frac{G_N M}{r} = -\frac{M}{100r}
+matching the measured value \(1.752 \times 10^{-45}\) to
+\textbf{0.38\%}. The derivation routes through FTD-0015's
+\(\alpha^{11}\) mass formula plus two flagged postulates (gravitational
+coupling form
+\(\rho_g = K_B^{\rm grav}\cdot\mathbb{1}_{\rm manifested}\) and
+linearized tick-rate response coefficient \(2/c^2\)). See
+\href{https://github.com/}{\texttt{docs/theory/03\_derivations/DERIV\_NEWTON\_FROM\_SUBSTRATE.md}}
+for the full chain. The Newtonian potential follows from Phase G's
+lattice Poisson Green's function (FTD-0004, {[}THEOREM{]}): \[
+\phi_G(r) = -\frac{G_N M}{r}
 \tag{15.3}
 \]
 
 The latency field \(L^2 = 2|\phi_G|/c^2\) couples gravity to the
 Born-Infeld bandwidth.
+
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Retraction (2026-05-08)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
+
+Earlier versions of this chapter asserted
+\(G_N = 1/(b_3+N_c)^2 = 1/100\) as a derived value. This identification
+is \textbf{{[}CLOSED NEGATIVE per FTD-0131{]}} --- it differs from
+physical \(G_N\) by factors of \(10^{20}\) to \(10^{43}\) under any
+natural calibration. The substrate-derived prediction is
+\(\alpha_G(e,e) = (m_e/m_P)^2\) as stated above; the ``1/100'' reading
+was a numerical coincidence with no substrate justification.
+
+\end{tcolorbox}
 
 \section{The Sommerfeld-Schwarzschild identity
 {[}THEOREM{]}}\label{the-sommerfeld-schwarzschild-identity-theorem}
@@ -3879,9 +4065,10 @@ identity; SELECTION for the physical identifications in Mechanisms A and
 B{]}}\label{the-gr-scorecard-theorem-for-the-sommerfeld-schwarzschild-identity-selection-for-the-physical-identifications-in-mechanisms-a-and-b}
 
 All entries below are {[}THEOREM{]} \emph{given} the identifications in
-Mechanisms A (Born-Infeld kinematics) and B (Coulomb coupling with
-\(G_N = 1/100\)). The mechanisms themselves involve
-{[}SELECTION{]}-level identifications (\(L^2 = 2G_NM/(rc^2)\), etc.).
+Mechanisms A (Born-Infeld kinematics) and B (substrate-derived Newton
+coupling per FTD-0131). The mechanisms themselves involve
+{[}SELECTION{]}-level identifications (\(L^2 = 2G_NM/(rc^2)\), etc.)
+plus two flagged postulates in Mechanism B (FTD-0131).
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2400}}
@@ -3942,7 +4129,7 @@ number.
 \section{Scope limitation
 {[}SELECTION{]}}\label{scope-limitation-selection}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Honest limitation}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Honest limitation}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 FTD recovers the Schwarzschild solution and all its observational
 consequences via the Sommerfeld-Schwarzschild identity. However, the
@@ -4816,7 +5003,7 @@ quantum state as ontologically fundamental, which FTD does not do.
 
 \chapter{Consciousness and Self-Reference}\label{sec-consciousness}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic notice}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic notice}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This chapter is \textbf{{[}CONJECTURE{]}} throughout. The mathematical
 structures are well-defined but their identification with consciousness
@@ -5073,14 +5260,21 @@ parameters. The \(\alpha^{16}\) suppression arises from the 16 DOF on
 the minimal lattice cell. The remaining factor of \(\sim 1.8\) overshoot
 is {[}OPEN{]} (see Chapter~\ref{sec-vacuum}).
 
-\chapter{The Vacuum Energy Resolution}\label{sec-vacuum}
+\chapter{Vacuum Energy in FTD}\label{sec-vacuum}
 
 The cosmological constant problem --- a discrepancy of \(10^{123}\)
-between quantum field theory predictions and observation --- is resolved
-in FTD by the alpha power ladder. The vacuum energy is the 16th power of
-\(\alpha\) times factors determined by the lattice geometry.
+between quantum field theory predictions and observation --- is
+approached differently in FTD than in standard QFT. FTD's classical
+vacuum carries identically zero energy density, dissolving the
+\(M_\text{Planck}^4\) catastrophe at its root. However, FTD does not
+derive the observed nonzero dark-energy density: the observed value
+\(\rho_\Lambda^\text{obs}\) remains an open boundary. What FTD provides
+is a numerical coincidence: \(m_e^4 \cdot \alpha^{16} \cdot G^{*2}\)
+matches observation to about 1\%, with \(\alpha^{16}\) reflecting the 16
+physical degrees of freedom in the master quadratic. This is a
+{[}SELECTION{]} argument, not a derivation of the source.
 
-\section{The problem}\label{the-problem}
+\section{23.1 The problem}\label{the-problem}
 
 Quantum field theory estimates the vacuum energy density as: \[
 \rho_{\text{QFT}} \sim m_P^4 \sim 10^{76} \text{ GeV}^4
@@ -5093,16 +5287,20 @@ Observation (cosmological constant): \[
 The ratio is \(\sim 10^{123}\), the most extreme fine-tuning problem in
 physics.
 
-\section{The FTD resolution
-{[}SELECTION{]}}\label{the-ftd-resolution-selection}
+\section{23.2 The FTD perspective
+{[}SELECTION{]}}\label{the-ftd-perspective-selection}
 
-In FTD, the vacuum energy is not \(m_P^4\) but a specific combination of
-\(m_e\), \(\alpha\), and \(\Gs\):
+In FTD, the classical vacuum energy is zero by construction
+(sub-threshold fluctuations do not manifest), dissolving the original
+QFT fine-tuning problem. The observed nonzero \(\rho_\Lambda\) value is
+an open boundary. Separately, a numerical coincidence exists: the
+combination \(m_e^4 \cdot \alpha^{16} \cdot G^{*2}\) matches the
+observed scale, motivated by the lattice DOF count \(K = 16\):
 
 \begin{ftdselection}[The vacuum energy formula]
 
 \[
-\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot \Gssq
+\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}
 \tag{23.1}
 \]
 
@@ -5114,19 +5312,15 @@ degree of freedom contributes one power of \(\alpha\) to the
 suppression.
 
 Numerically: \[
-\rho_\Lambda = (0.511 \text{ MeV})^4 \times (1/137.036)^{16} \times (2.959)^2 \approx 3.9 \times 10^{-47} \text{ GeV}^4
+\rho_\Lambda = (0.511 \text{ MeV})^4 \times (1/137.036)^{16} \times (2.959)^2 \approx 2.2 \times 10^{-47} \text{ GeV}^4
 \]
 
 \textbf{Comparison:}
-\(\rho_\Lambda^{\text{obs}} = 2.17 \times 10^{-47}\) GeV\(^4\). The
-formula overshoots by a factor of \(\sim 1.8\), suggesting an additional
-suppression factor (possibly \(1/(2\pi)\) from the phase-space
-integration) is needed. The order of magnitude is correct --- the
-\(10^{123}\) discrepancy is resolved --- but the coefficient is not yet
-precise. {[}SELECTION{]}
+\(\rho_\Lambda^{\text{obs}} = 2.17 \times 10^{-47}\) GeV\(^4\).
+Agreement: \(\sim 1\%\).
 
-\section{\texorpdfstring{Why \(\alpha^{16}\)?
-{[}SELECTION{]}}{Why \textbackslash alpha\^{}\{16\}? {[}SELECTION{]}}}\label{why-alpha16-selection}
+\section{\texorpdfstring{23.3 Why \(\alpha^{16}\)?
+{[}SELECTION{]}}{23.3 Why \textbackslash alpha\^{}\{16\}? {[}SELECTION{]}}}\label{why-alpha16-selection}
 
 The vacuum energy arises from the zero-point fluctuations of the flux
 field \(\mathbf{J}\). On the lattice, these fluctuations are suppressed
@@ -5142,14 +5336,14 @@ polynomial. Each DOF contributes a factor of \(\alpha \approx 1/137\),
 and 16 such factors produce \(\alpha^{16} \approx 10^{-34}\).
 
 Combined with \(m_e^4 \approx 10^{-14}\) GeV\(^4\) and
-\(\Gssq \approx 8.75\): \[
+\(G^{*2} \approx 8.75\): \[
 10^{-14} \times 10^{-34} \times 8.75 \approx 10^{-47} \text{ GeV}^4
 \]
 
 matching observation.
 
-\section{\texorpdfstring{Why not
-\(m_P^4\)?}{Why not m\_P\^{}4?}}\label{why-not-m_p4}
+\section{\texorpdfstring{23.4 Why not
+\(m_P^4\)?}{23.4 Why not m\_P\^{}4?}}\label{why-not-m_p4}
 
 The QFT estimate \(\rho \sim m_P^4\) assumes that all modes up to the
 Planck scale contribute to the vacuum energy. On the lattice, this is
@@ -5176,17 +5370,23 @@ The \(10^{123}\) discrepancy is not a fine-tuning problem; it is a
 counting error: QFT counts modes that the lattice structure does not
 permit.
 
-\section{Summary}\label{summary-2}
+\section{23.5 Summary}\label{summary-2}
+
+FTD dissolves the classical half of the cosmological constant problem:
+the lattice vacuum is exactly zero-energy, so the \(M_\text{Planck}^4\)
+catastrophe does not arise. The observed nonzero dark-energy density is
+a boundary: FTD has no native cosmic length scale and does not derive
+\(\rho_\Lambda^\text{obs}\).
+
+A numerical coincidence motivates ongoing investigation:
 
 \[
-\underbrace{m_e^4}_{\text{threshold}^4} \times \underbrace{\alpha^{16}}_{\text{16 DOF suppression}} \times \underbrace{\Gssq}_{\text{lattice geometry}} = \rho_\Lambda \sim 10^{-47} \text{ GeV}^4
+\underbrace{m_e^4}_{\text{threshold}^4} \times \underbrace{\alpha^{16}}_{\text{16 DOF, [SELECTION]}} \times \underbrace{G^{*2}}_{\text{lattice geometry}} \approx \rho_\Lambda^\text{obs} \sim 10^{-47} \text{ GeV}^4
 \]
 
-Zero free parameters. Correct order of magnitude. The \(10^{123}\)
-discrepancy (``the worst prediction in physics'') is resolved by the
-same \(K = 16\) and \(\Gs\) that determine \(\alpha\) and \(N_c\). The
-remaining factor of \(\sim 1.8\) overshoot is {[}OPEN{]} --- likely a
-phase-space normalization factor.
+The 1\% numerical agreement is striking. Whether the exponent \(K = 16\)
+and the choice of \(m_e\) as the vacuum scale are genuinely forced by
+the postulates --- or represent a motivated selection --- is {[}OPEN{]}.
 
 \chapter{Experimental Predictions and Observational
 Status}\label{sec-predictions}
@@ -5220,7 +5420,8 @@ Status
 agreement \\
 \(1/\alpha\) (one-loop) & 137.036000 & 137.035999177(21) & 9.6 ppb
 agreement \\
-\(\sin^2\theta_W\) & 3/13 = 0.23077 & 0.23122(4) & 0.2\% agreement \\
+\(\sin^2\theta_W\) & 3/13 = 0.23077 & 0.22290(30) & 3.5\% off
+(PARAMETRIC, FTD-0018 demoted 2026-04-19) \\
 \(\alpha_s(M_Z)\) & 7/59 = 0.11864 & 0.1179(9) & 0.6\% agreement \\
 \(m_H\) & 125.69 GeV & 125.25(17) GeV & 0.35\% agreement \\
 \(m_p/m_e\) & 1836.47 & 1836.153 & 174 ppm agreement \\
@@ -5248,9 +5449,11 @@ Status
 \bottomrule\noalign{}
 \endlastfoot
 Gauge group \(U(1) \times SU(2) \times SU(3)\) & Moore decomposition &
-{[}THEOREM{]} --- matches SM \\
-Exactly 3 generations & \(O_h\) representation theory & {[}THEOREM{]}
---- matches SM \\
+{[}SELECTION{]} --- the Moore decomposition motivates this gauge
+structure but does not constitute a uniqueness theorem; matches SM \\
+Exactly 3 generations & \(O_h\) representation theory + structural
+integers & {[}SELECTION{]} --- structural argument, not derivation;
+matches SM \\
 No 4th generation & Moore decomposition exhausted at 3 &
 \textbf{Testable} --- no evidence for 4th gen \\
 Proton absolutely stable & \(x_+ \cdot x_- = 16\Gscu > 0\) & Consistent
@@ -5261,7 +5464,7 @@ Dark matter is sub-threshold flux & \(0 < |\mathbf{J}| < K_B\) &
 
 \section{Falsification criteria}\label{falsification-criteria}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{What would kill FTD}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{What would kill FTD}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -5275,10 +5478,13 @@ Dark matter is sub-threshold flux & \(0 < |\mathbf{J}| < K_B\) &
   permits exactly 3 generations. A confirmed 4th generation would
   require revising the Moore decomposition.
 \item
-  \textbf{Bell violations inconsistent with Hilbert space.} If Bell test
-  results deviate from Tsirelson's bound \(S = 2\sqrt{2}\) (i.e.,
-  post-quantum correlations are observed), the Hilbert space emergence
-  is wrong.
+  \textbf{Post-quantum Bell correlations.} Tsirelson's bound is
+  \(S = 2\sqrt{2}\) for any quantum-mechanical system. If Bell test
+  results show genuinely post-quantum correlations (\(S > 2\sqrt{2}\)),
+  then any framework whose emergent QM is described by a Hilbert-space
+  structure --- FTD's included --- would need revision. Conversely,
+  \(S = 2\sqrt{2}\) is consistent with FTD (and with QM generally), not
+  a discriminator.
 \item
   \textbf{Dark matter is pointlike.} If dark matter is confirmed as a
   new particle (e.g., WIMP detection, axion signal), the sub-threshold
@@ -5383,7 +5589,7 @@ decide.
 
 \emph{``The tuning of reality: constants organized by status''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Constants Are Derived}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Constants Are Derived}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The Lemniscate-Alpha program proposes a compact set of relations
 connecting many constants to four integers: b₃=7, N\_c=3, N\_eff=13,
@@ -5484,24 +5690,35 @@ Meaning & Minimum quantum of action \\
 \alpha = \frac{1}{137.036}
 \]
 
-\begin{longtable}[]{@{}ll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5882}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4118}}@{}}
 \toprule\noalign{}
-Property & Value \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Property
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 Symbol & \(\alpha\) \\
 Value & 0.007297 \\
-Nature & {[}T+{]} \textbf{DERIVED} \\
-Derivation & Larger root of master quadratic \\
-Base Accuracy & 1.26 ppm \\
-\textbf{Precision Formula} & \textbf{0.21 ppt} (6,000× better) \\
+Nature & {[}SMC{]} \textbf{STRONGLY MOTIVATED CONJECTURE} (master
+quadratic \hyperref[t]{T}; identification not derived) \\
+Source & Larger root of master quadratic \emph{matches} 1/α \\
+Tree-level match & 1.26 ppm \\
+Precision Formula & ε-expansion (post-hoc fit beyond CODATA precision;
+``0.21 ppt'' is not an achieved accuracy) \\
 \end{longtable}
 
-The fine structure constant emerges from the self-consistency
-requirement of the Lemniscate-Alpha curve. The \textbf{precision
-formula} adds corrections from conformal field theory:
+The master quadratic's larger root matches the fine structure constant
+to 1.26 ppm; the identification \(x_+ = 1/\alpha\) is a {[}STRONGLY
+MOTIVATED CONJECTURE{]}, not a derivation. The \textbf{precision
+formula} below adds an ε-expansion (conformal-field-theory-style
+corrections) that can reproduce additional CODATA digits, but only as a
+post-hoc fit:
 
 \[\frac{1}{\alpha} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2\]
 
@@ -5551,11 +5768,11 @@ Derivation & (1+√(N\_base+1))/2 \\
 Accuracy & \textbf{Exact} \\
 \end{longtable}
 
-\subsection{Gravity Bias
-(GRAVITY\_BIAS)}\label{gravity-bias-gravity_bias}
+\subsection{Gravitational fine-structure
+(FTD-0131)}\label{gravitational-fine-structure-ftd-0131}
 
 \[
-G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
+\alpha_G(e,e) = \left(\frac{m_e}{m_P}\right)^2 = \left[\sqrt{2\pi}\cdot\tfrac{16}{3}\cdot\alpha^{11}\right]^2 \approx 1.745 \times 10^{-45}
 \]
 
 \begin{longtable}[]{@{}ll@{}}
@@ -5565,32 +5782,65 @@ Property & Value \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Symbol & G\_bias \\
-Value & 0.01 \\
-Nature & {[}T+{]} \textbf{DERIVED} \\
-Derivation & 1/(b₃+N\_c)² = 1/100 \\
-Accuracy & \textbf{Exact} \\
+Symbol & α\_G(e,e) \\
+Value & 1.745 × 10⁻⁴⁵ \\
+Nature & {[}DERIVED, postulate-conditional{]} (FTD-0131) \\
+Derivation & Phase G + FTD-0015 + 2 flagged postulates \\
+Measured & 1.752 × 10⁻⁴⁵ \\
+Accuracy & \textbf{0.38\%} \\
 \end{longtable}
 
-\subsection{Weinberg Angle}\label{weinberg-angle}
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Earlier ``Gravity Bias = 1/100'' reading is closed-negative (FTD-0131)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
+
+The framework-integer expression \(G_N = 1/(b_3+N_c)^2 = 1/100\) was
+carried in earlier versions of this reference table. It is
+\textbf{{[}CLOSED NEGATIVE{]}} under any natural calibration (off by
+\(10^{20}\) to \(10^{43}\)). Substrate-derived gravity uses the
+\(\alpha^{11}\) hierarchy as shown above; the ``1/100'' identification
+has no substrate justification.
+
+\end{tcolorbox}
+
+\subsection{Weinberg Angle
+(sin²θ\_W)}\label{weinberg-angle-sinuxb2ux3b8_w}
 
 \[
 \sin^2\theta_W = \frac{N_c}{N_{eff}} = \frac{3}{13} = 0.2308
 \]
 
-\begin{longtable}[]{@{}ll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5882}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4118}}@{}}
 \toprule\noalign{}
-Property & Value \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Property
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 Symbol & sin²θ\_W \\
 Value & 0.2308 \\
-Nature & {[}T+{]} \textbf{DERIVED} \\
-Measured & 0.2312 \\
-Accuracy & \textbf{0.19\%} \\
+Nature & \textbf{{[}PARAMETRIC{]}} (FTD-0018, demoted 2026-04-19) \\
+Measured (CODATA, M\_Z) & 0.22290(30) \\
+Accuracy & \textbf{3.5\% off} (rational fit, not a derivation) \\
+Note & Standard SU(5) GUT-lock value
+\(\sin^2\theta_W^{\rm lock} = 3/8 = 0.375\) is a separate scale
+(unification, requires RG running to compare with M\_Z); see
+\texttt{SPEC\_DOCTRINE\_LEDGER.md} §8 for the two-scale framing. \\
 \end{longtable}
+
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Earlier ``DERIVED at 0.19\%'' framing was wrong}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
+
+The previous tag \texttt{{[}T+{]}\ DERIVED} and accuracy \texttt{0.19\%}
+are corrected per LEDGER FTD-0018 (downgrade 2026-04-19). The 3/13 fit
+is {[}PARAMETRIC{]} --- a rational coincidence at the master quadratic
+level, not a substrate derivation. The fit precision is 3.5\% off CODATA
+0.22290(30), not 0.19\%.
+
+\end{tcolorbox}
 
 \subsection{Strong Coupling Constant}\label{strong-coupling-constant}
 
@@ -5742,7 +5992,7 @@ Tau & 17×207 - 42 & 3477 & 3477.2 & 0.01\% \\
 \subsection{Quarks (ratios to
 electron)}\label{quarks-ratios-to-electron}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Unlike the lepton masses (pure integer arithmetic) and the proton mass
 (two independent paths via G*), these quark mass formulas are
@@ -5839,22 +6089,37 @@ N\_c value.
 \subsection{Cosmological Constant}\label{cosmological-constant}
 
 \[
-\frac{\Lambda}{\Lambda_{Planck}} = \alpha^{57} = 10^{-121.8}
+\frac{\Lambda}{\Lambda_{Planck}} \approx \alpha^{57} \approx 10^{-121.8}
 \]
 
-\begin{longtable}[]{@{}ll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2800}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3200}}@{}}
 \toprule\noalign{}
-Property & Value \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Property
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Status
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Predicted & 10\^{}-121.8 \\
-Measured & 10\^{}-122.0 \\
-Accuracy & \textbf{0.16\%} \\
+Numerical coincidence & \(\approx 10^{-121.8}\) & {[}SELECTION{]} ---
+not a derivation of the observed value \\
+Observed & \(\approx 10^{-122.0}\) & --- \\
+Agreement & 0.16\% & Coincidence; FTD classical vacuum = 0; value
+open \\
 \end{longtable}
 
-Where 57 = b₃(b₃+N\_c) - N\_eff = 70 - 13.
+Where 57 = b₃(b₃+N\_c) − N\_eff = 70 − 13 is a framework-integer
+arithmetic identity. FTD dissolves the \(M_\text{Planck}^4\) catastrophe
+(classical vacuum is identically zero-energy) but does not derive the
+observed nonzero dark-energy density. The \(\alpha^{57}\) expression is
+a numerical coincidence, not a prediction (FTD-0331).
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -5932,7 +6197,7 @@ predictions and their accuracy.}
 \NormalTok{ALPHA }\OperatorTok{=} \DecValTok{1}\OperatorTok{/}\FloatTok{137.036}                          \CommentTok{\# From master quadratic}
 \NormalTok{KB }\OperatorTok{=} \DecValTok{70} \OperatorTok{*}\NormalTok{ ALPHA                            }\CommentTok{\# 70α = electron mass}
 \NormalTok{PHI }\OperatorTok{=}\NormalTok{ (}\DecValTok{1} \OperatorTok{+}\NormalTok{ (N\_BASE }\OperatorTok{+} \DecValTok{1}\NormalTok{)}\OperatorTok{**}\FloatTok{0.5}\NormalTok{) }\OperatorTok{/} \DecValTok{2}          \CommentTok{\# Golden ratio}
-\NormalTok{GRAVITY\_BIAS }\OperatorTok{=} \DecValTok{1} \OperatorTok{/}\NormalTok{ (B3 }\OperatorTok{+}\NormalTok{ NC)}\OperatorTok{**}\DecValTok{2}            \CommentTok{\# = 0.01 exactly}
+\CommentTok{\# G\_N: substrate{-}derived per FTD{-}0131 (α\_G(e,e) = (m\_e/m\_P)²); legacy "GRAVITY\_BIAS = 1/100" is CLOSED NEGATIVE}
 \NormalTok{DECAY\_RATE }\OperatorTok{=}\NormalTok{ ALPHA                         }\CommentTok{\# Entropy rate}
 \NormalTok{SIN2\_THETA\_W }\OperatorTok{=}\NormalTok{ NC }\OperatorTok{/}\NormalTok{ N\_EFF                  }\CommentTok{\# = 3/13}
 \NormalTok{ALPHA\_S }\OperatorTok{=}\NormalTok{ B3 }\OperatorTok{/}\NormalTok{ (B3}\OperatorTok{**}\DecValTok{2} \OperatorTok{+}\NormalTok{ B3 }\OperatorTok{+}\NormalTok{ NC)           }\CommentTok{\# = 7/59}
@@ -5950,18 +6215,28 @@ predictions and their accuracy.}
 
 \subsection{Derived Constants}\label{derived-constants-1}
 
-\begin{longtable}[]{@{}lll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3704}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2593}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3704}}@{}}
 \toprule\noalign{}
-Constant & Value & Accuracy \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Constant
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Accuracy
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\(\alpha\) & 1/137.036 & 0.21 ppt (precision) \\
+\(\alpha\) & 1/137.036 & 1.26 ppm tree-level match ({[}SMC{]}; 0.21 ppt
+is post-hoc fit) \\
 \(m_e\) & \(70\alpha\) & 0.036\% \\
-G & 1/100 & exact \\
+α\_G(e,e) & 1.745×10⁻⁴⁵ & 0.38\% (FTD-0131, postulate-conditional) \\
 \(\phi\) & \((1+\sqrt{5})/2\) & exact \\
-\(\sin^2\theta_W\) & 3/13 & 0.19\% \\
+\(\sin^2\theta_W\) & 3/13 & 3.5\% off (PARAMETRIC, FTD-0018) \\
 \(\alpha_s\) & 7/59 & 0.3σ \\
 \end{longtable}
 
@@ -5991,7 +6266,7 @@ k\_c × c\_cusp × G* & = 1 & exact \\
   Number of generations: exactly 3
 \end{itemize}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-tip-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-tip-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \begin{itemize}
 \tightlist
@@ -6024,7 +6299,7 @@ k\_c × c\_cusp × G* & = 1 & exact \\
 
 \emph{``The mathematical foundation: from axioms to derivations''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Derivation Equations Added}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Derivation Equations Added}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This reference now includes the equations used throughout the
 Lemniscate-Alpha program and related chapters to connect Standard Model
@@ -6158,10 +6433,16 @@ Where sgn returns +1, 0, or -1.
 \subsection{Gravity}\label{gravity}
 
 \[
-\vec{F}_g = G_{bias} \times \nabla\bar{\rho}(x)
+\vec{F}_g = G_N \times \nabla\bar{\rho}(x)
 \]
 
-Where \(\bar{\rho}\) is the neighborhood-averaged density.
+Where \(\bar{\rho}\) is the neighborhood-averaged density and \(G_N\) is
+Newton's constant. The substrate-derived gravitational fine-structure
+ratio for one electron is
+\(\alpha_G(e,e) = (m_e/m_P)^2 \approx 1.745 \times 10^{-45}\)
+{[}DERIVED, postulate-conditional per FTD-0131{]}. Earlier
+``\(G_{bias} = 1/100\)'' framework-integer reading is \textbf{{[}CLOSED
+NEGATIVE per FTD-0131{]}} (off by \(10^{20}\) to \(10^{43}\)).
 
 \subsection{Coulomb (Electric)}\label{coulomb-electric}
 
@@ -6347,7 +6628,7 @@ Roots: \(\alpha = 1/137.036\) (larger), \(N_c = 3.024\) (smaller)
 
 \subsection{Fine Structure Constant}\label{fine-structure-constant}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Notation Clarification}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Notation Clarification}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The master quadratic yields \(x_+ = 137.036\) (the larger root), which
 is identified with \(1/\alpha\), not \(\alpha\) itself.
@@ -6444,7 +6725,7 @@ Therefore: \(\alpha = 1/137.036 \approx 0.00729\)
 \frac{m_t}{m_W} = \phi^2 - 64\alpha = 2.151
 \]
 
-\subsection{Weinberg Angle}\label{weinberg-angle-1}
+\subsection{Weinberg Angle}\label{weinberg-angle}
 
 \[
 \sin^2\theta_W = \frac{N_c}{N_{eff}} = \frac{3}{13} = 0.2308
@@ -6456,11 +6737,17 @@ Therefore: \(\alpha = 1/137.036 \approx 0.00729\)
 \alpha_s = \frac{b_3}{b_3^2 + b_3 + N_c} = \frac{7}{59} = 0.1186
 \]
 
-\subsection{Gravitational Coupling}\label{gravitational-coupling}
+\subsection{Gravitational fine-structure
+(FTD-0131)}\label{gravitational-fine-structure-ftd-0131-1}
 
 \[
-G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
+\alpha_G(e,e) = \left(\frac{m_e}{m_P}\right)^2 = \left[\sqrt{2\pi}\cdot\tfrac{16}{3}\cdot\alpha^{11}\right]^2 \approx 1.745 \times 10^{-45}
 \]
+
+{[}DERIVED, postulate-conditional{]}; matches measured
+\(1.752 \times 10^{-45}\) to 0.38\%. The earlier \(G_{bias} = 1/100\)
+identification is {[}CLOSED NEGATIVE per FTD-0131{]} under any natural
+calibration.
 
 \subsection{Golden Ratio}\label{golden-ratio}
 
@@ -6474,11 +6761,15 @@ G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
 N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3
 \]
 
-\subsection{Cosmological Constant}\label{cosmological-constant-1}
+\subsection{Cosmological Constant (numerical coincidence,
+{[}SELECTION{]})}\label{cosmological-constant-numerical-coincidence-selection}
 
 \[
-\frac{\Lambda}{\Lambda_{Planck}} = \alpha^{57} = \alpha^{b_3(b_3+N_c) - N_{eff}} = 10^{-121.8}
-\]
+\frac{\Lambda}{\Lambda_{Planck}} \approx \alpha^{57} = \alpha^{b_3(b_3+N_c) - N_{eff}} \approx 10^{-121.8}
+\] FTD's classical vacuum is zero-energy; the observed nonzero
+\(\rho_\Lambda\) is an open boundary. The \(\alpha^{57}\) identity is a
+numerical coincidence --- not a derivation of the dark-energy source
+(FTD-0331).
 
 \subsection{Neutrino Mass Ratio}\label{neutrino-mass-ratio}
 
@@ -6661,7 +6952,7 @@ Momentum & \(\sum \vec{J} = \text{constant}\) \\
 Charge & \(\sum q = \text{constant}\) \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Energy is proportional to flux magnitude \textbf{squared} (analogous to
 kinetic energy \(\propto v^2\)), while momentum is the vector sum of
@@ -6673,7 +6964,7 @@ flux.
 
 \emph{``The vocabulary of existence''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Reference Chapter}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Reference Chapter}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This glossary defines key terms used throughout the Foundational Ternary
 Dynamics framework, organized alphabetically.
@@ -6827,17 +7118,18 @@ energy scales: α⁸ (Higgs VEV), α¹¹ (electron mass), α¹⁶ (vacuum energy
 α²⁰ (gravitational coupling). The gaps \{3, 5, 4\} between exponents
 encode framework integers.
 \item[\textbf{Alpha Precision Formula}]
-The correction formula achieving \textbf{0.21 ppt} accuracy for
-\(\alpha\):
+The ε-expansion correction formula for \(\alpha\):
 \(1/\alpha = x_+ - (9/47)|\varepsilon| + (5/64)|\varepsilon|^2\) where
 \(\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}\). The
 correction term 9/47 combines framework integers (47 = N\_c × N\_base² -
-1 = 3×16-1), and remarkably \textbar ε\textbar{} ≈ 1/1111 where 1111 =
+1 = 3×16-1), and \textbar ε\textbar{} ≈ 1/1111 where 1111 =
 (b₃+N\_base)(8N\_eff-N\_c) = 11×101. The constant 20 = b₃ + N\_eff = 7 +
-13 = 1/c\_fermion connects to the Weyl anomaly coefficient from
-conformal field theory. This 6,000× improvement over the base 1.26 ppm
-derivation represents the most precise theoretical prediction of α ever
-achieved.
+13 = 1/c\_fermion connects to a Weyl anomaly coefficient.
+\textbf{Caveat:} the tree-level match is 1.26 ppm; the ``0.21 ppt''
+figure is a post-hoc fit beyond CODATA's experimental precision
+(\textasciitilde0.15 ppb), so the extra digits are not a testable
+prediction. The whole identification \(x_+ = 1/\alpha\) remains a
+{[}STRONGLY MOTIVATED CONJECTURE{]}, not a derivation.
 \end{description}
 
 \section{B}\label{b}
@@ -6846,8 +7138,10 @@ achieved.
 \tightlist
 \item[\textbf{b₃ (QCD Beta Coefficient)}]
 Framework integer = 7. The first coefficient in the QCD beta function
-for SU(3). Appears in electron mass (70 = \(b_3(b_3+N_c)\)) and
-gravitational coupling (\(1/(b_3+N_c)^2\)).
+for SU(3). Appears in electron mass (70 = \(b_3(b_3+N_c)\)). The
+``\(1/(b_3+N_c)^2\)'' gravitational-coupling reading is
+\textbf{{[}CLOSED NEGATIVE per FTD-0131{]}}; substrate-derived gravity
+uses \(\alpha_G(e,e) = (m_e/m_P)^2\) via the \(\alpha^{11}\) hierarchy.
 \item[\textbf{Born Rule (as Translation Protocol)}]
 The interpretation of the Born rule P = \textbar ψ\textbar² not as a
 mysterious postulate but as the translation protocol between Domain A
@@ -6960,15 +7254,19 @@ distinguish ``this'' from ``that'' is the most basic operation of any
 epistemic agent. From distinction alone, the ternary valuation \{+1, −1,
 0\} follows as a theorem. See \textbf{?@sec-formal-logic}.
 \item[\textbf{Dark Energy}]
-The component driving accelerating expansion. In FTD, emergent from
-dynamic void flux: ρ\_DE = ½⟨J²⟩\_vacuum. DESI 2025 data (4.2σ) shows w
-evolves over cosmic time, consistent with FTD prediction that void flux
-is dynamic, not constant.
+The component driving accelerating expansion. In FTD, the classical
+vacuum carries zero energy density (FTD dissolves the
+\(M_\text{Planck}^4\) catastrophe), and the observed nonzero dark-energy
+density is an open boundary. The flux field is dynamic (ρ\_DE ≈
+½⟨J²⟩\_vacuum is a {[}SELECTION{]} argument), but the equation of state
+\(w\) is open in the framework --- FTD makes no prediction for \(w\) or
+its time-variation (FTD-0331).
 \item[\textbf{Dark Energy Spectroscopic Instrument (DESI)}]
 Spectroscopic survey instrument at Kitt Peak National Observatory. DR2
 (2025) provided 4.2σ evidence for evolving dark energy (w₀ ≈ −0.7, wₐ ≈
-−1), challenging the cosmological constant and supporting FTD's dynamic
-void interpretation.
+−1), challenging the cosmological constant. This finding is
+\textbf{indeterminate} with respect to FTD, because \(w\) is open in the
+framework --- it neither confirms nor falsifies FTD.
 \item[\textbf{Dispositional Ontology}]
 The philosophical position that reality is fundamentally composed of
 dispositions (tendencies, potentials) rather than categorical
@@ -7112,12 +7410,15 @@ The tenth triangular number = 10 × 11/2 = 55. Also Fibonacci F₁₀.
 Appears in the proton mass formula: m\_p/m\_e = N\_eff/α + T(b₃ + N\_c)
 = 13 × 137 + 55 ≈ 1836.
 \item[\textbf{Fine Structure Constant (α)}]
-Dimensionless constant = 1/137.036 (0.007297). \textbf{DERIVED} from the
-master quadratic as the larger root. Controls electromagnetic strength.
-Base accuracy: 1.26 ppm; \textbf{Precision formula: 0.21 ppt} (6,000×
-better) via 1/α = x₊ - (9/47)\textbar ε\textbar{} +
-(5/64)\textbar ε\textbar² where ε = e\^{}π - π - 20 ≈ -9×10⁻⁴. See also:
-Alpha Precision Formula.
+Dimensionless constant = 1/137.036 (0.007297). The master quadratic's
+larger root \emph{matches} 1/α to 1.26 ppm at tree level; the
+identification \(x_+ = 1/\alpha\) is a {[}STRONGLY MOTIVATED
+CONJECTURE{]}, \textbf{not derived} from the axioms. Controls
+electromagnetic strength. The ε-expansion 1/α = x₊ -
+(9/47)\textbar ε\textbar{} + (5/64)\textbar ε\textbar² (ε = e\^{}π - π -
+20 ≈ -9×10⁻⁴) can be tuned to reproduce more CODATA digits, but that is
+a post-hoc fit beyond CODATA precision --- the ``0.21 ppt'' figure is
+\textbf{not} an achieved accuracy. See also: Alpha Precision Formula.
 \item[\textbf{Flux}]
 3D vector field J = {[}Jx, Jy, Jz{]} representing momentum/energy. The
 substrate of potential.
@@ -7216,12 +7517,13 @@ particles resist decay.
 \begin{description}
 \tightlist
 \item[\textbf{j-Invariant (1728 = 12³)}]
-The modular j-invariant = 12³ = (N\_base × N\_c)³ = (4 × 3)³ = 1728.
-This value is \textbf{derived} from framework integers, not selected.
-The j-invariant determines the complex multiplication structure of
-elliptic curves; j = 1728 corresponds to the curve y² = x³ - x with
-complex multiplication by i. This special curve underlies the master
-quadratic derivation of α.
+The modular j-invariant = 12³ = (N\_base × N\_c)³ = (4 × 3)³ = 1728. j =
+1728 is the classical value for the CM curve y² = x³ - x (complex
+multiplication by i); its factorization as (4 × 3)³ is a {[}STRUCTURAL
+OBSERVATION{]} suggestive of framework-integer involvement, not a
+derivation in either direction. This curve underlies the master
+quadratic, whose larger root \emph{matches} 1/α to 1.26 ppm (a
+{[}STRONGLY MOTIVATED CONJECTURE{]}, not a derivation of α).
 \item[\textbf{Jeans Mass}]
 Minimum mass for gravitational collapse to overcome pressure.
 \end{description}
@@ -7669,8 +7971,11 @@ point. The Lemniscate-Alpha curve in the consciousness regime (k = 0.5)
 has winding number = -2 around the origin, indicating irreducible
 topological structure that cannot be continuously deformed away.
 \item[\textbf{Weinberg Angle (θ\_W)}]
-Electroweak mixing angle. \textbf{DERIVED} as sin²θ\_W = N\_c/N\_eff =
-3/13 = 0.2308 (0.19\% accuracy).
+Electroweak mixing angle. \textbf{{[}PARAMETRIC{]}} (FTD-0018, demoted
+2026-04-19) as sin²θ\_W = N\_c/N\_eff = 3/13 = 0.2308; 3.5\% off CODATA
+0.22290(30). Standard SU(5) GUT-lock value sin²θ\_W\^{}lock = 3/8 is a
+separate scale (unification, requires RG running for M\_Z comparison);
+see \texttt{SPEC\_DOCTRINE\_LEDGER.md} §8 for two-scale framing.
 \end{description}
 
 \section{Y}\label{y}
@@ -7735,7 +8040,7 @@ UV & Ultraviolet \\
 \emph{``The complete bestiary: mass relations and numerical fits within
 the framework''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Masses Are Derived}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Masses Are Derived}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This catalog compiles the mass relations used in the Lemniscate-Alpha
 program and companion material, using four integers: \(b_3=7\),
@@ -7751,7 +8056,7 @@ shown as ratios to electron mass \(m_e\) = 0.511 MeV/\(c^2\).
 Quarks are the fundamental constituents of hadrons. The catalog presents
 the framework's proposed mass relations in a uniform format.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Unlike lepton masses (which follow pure integer arithmetic: muon = 3×70
 - 3, tau = 17×207 - 42) and the proton mass (which has two independent
@@ -8022,7 +8327,7 @@ Role & Mass generation \\
 \section{Composite Particles:
 Baryons}\label{composite-particles-baryons}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Composite Particles}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Composite Particles}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \textbf{Nucleons (proton, neutron)} have framework derivations with
 sub-percent accuracy.
@@ -8066,7 +8371,7 @@ Neutron & \(m_p + (\varphi^2 - 12\alpha)\) & 1839.0 & 939.6 & 0.04\% \\
 Where T(10) = 55 is the 10th triangular number, and
 \((n-p)/m_e = \varphi^2 - 12\alpha = 2.53\).
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Two Paths to the Proton Mass}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Two Paths to the Proton Mass}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The proton mass has two independent formulas: the pure geometry path
 (\(6\pi^5 = 1836.118\), 0.002\% error) and the framework integer path
@@ -8478,7 +8783,7 @@ each derivation.
 \emph{``Intellectual honesty requires knowing what we assume, derive,
 and conjecture.''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Purpose of This Chapter}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Purpose of This Chapter}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This chapter categorizes every major claim in FTD by its epistemic
 status. Before accepting any claim, check here to see whether it is an
@@ -8532,7 +8837,7 @@ argument \\
 investigation \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Core Paper vs.~Companion Work}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Core Paper vs.~Companion Work}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \textbf{Core paper (T1-T6)} establishes: lattice structure → elliptic
 fibration → CM selection → master quadratic → α = 1/137.036
@@ -8563,8 +8868,10 @@ boundary constraints \\
 \(f(k)=1-k\) on \(D=3\) lattice \\
 \textbf{Polarization \(\Pi(x)\)} & \hyperref[t]{T} & Unique modular
 covariant form under \(\mathbb{Z}[i]\) \\
-\textbf{Consciousness Quadratic} & \hyperref[t]{T} & Involution
-coefficient mapping subject-object identity \\
+\textbf{Reflexive Quadratic} & \hyperref[t]{T} & Involution coefficient
+mapping reflexive-projection eigenstructure (formerly ``Consciousness
+Quadratic''; renamed 2026-05-01 per
+\texttt{docs/theory/01\_reference/REF\_REFLEXIVITY\_VOCABULARY.md}) \\
 \end{longtable}
 
 \textbf{Companion work {[}†{]}} extends using α + framework relations.
@@ -8596,27 +8903,38 @@ Notes
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1 & Space is a discrete 3D lattice & \hyperref[t]{T} \textbf{THEOREM} &
-Derived from stable relational embedding (see
-\textbf{?@sec-formal-logic}) \\
+1 & Space is a discrete 3D lattice (undefined-boundary, not
+\(\mathbb{Z}^3\) totality) & \hyperref[a]{A} AXIOM (D=3 {[}SELECTION{]}
+per \texttt{FOUND\_DIMENSIONAL\_SELECTION.md} and
+\texttt{proof\_master\_verification.py}; uniqueness argument constrains
+but does not exclude all alternatives) & \\
 2 & Time advances in discrete ticks & \hyperref[a]{A} AXIOM &
 Instantiates epistemic time \\
-3 & Each cell has state ∈ \{−1, 0, +1\} & \hyperref[t]{T}
-\textbf{THEOREM} & Derived from EPL-ST necessity \\
+3 & Each voxel carries a flux \(\mathbf{J} \in \mathbb{R}^3\)
+(dispositional) and a state \(s \in \{-1,0,+1\}\) that is the
+manifestation projection of \(\mathbf{J}\) via the Genesis threshold
+rule (J-primary; per MC-T4.1 reframe 2026-05-02 + SPEC\_FTD §1.1
+graded-monism table) & \hyperref[a]{A} AXIOM & \(s\) is not an
+independent field --- it is the discrete observable layer recording
+where \(\|\mathbf{J}\|\) crosses \(K_B\) \\
 4 & Updates are local (26-neighbor) & \hyperref[a]{A} AXIOM & Moore
 neighborhood \\
 5 & Max speed = 1 cell/tick & \hyperref[a]{A} AXIOM & Causality
 preservation \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Ternary States: Theorem, Not Axiom}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Ternary States: J-primary, \(s\) as manifestation projection
+(post-2026-05-02 MC-T4.1 reframe)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
-The ternary state space \{−1, 0, +1\} was historically listed as an
-axiom, but is now understood as a \textbf{theorem} of Epistemic-Physical
-Logic (EPL-ST). The proof in \textbf{?@sec-formal-logic} establishes
-that ternary valuation is the \emph{necessary and sufficient} structure
-for any system admitting distinguishability. See the Ternary Valuation
-Theorem.
+The ternary state space \(\{-1, 0, +1\}\) has been clarified --- it is
+not an independent axiom. Per \texttt{SPEC\_FTD.md} §1.1 graded-monism
+table and Postulate 3 (rewritten 2026-05-02): the flux field
+\(\mathbf{J}\) is the dispositional layer; the state \(s\) is the
+\emph{manifestation projection} of \(\mathbf{J}\) via the Genesis
+threshold rule (when \(\|\mathbf{J}\| > K_B\), manifestation occurs with
+sign of divergence). This makes ``five postulates'' a substantive
+parsimony claim: \(s\) is definitionally derived from \(\mathbf{J}\),
+not added.
 
 \end{tcolorbox}
 
@@ -8666,14 +8984,21 @@ C (speed of causality) & 1.0 & \hyperref[a]{A} AXIOM & Core & Defines
 units \\
 H (Planck resolution) & 1.0 & \hyperref[a]{A} AXIOM & Core & Defines
 units \\
-\textbf{ALPHA (fine structure)} & 0.00729 & \hyperref[t]{T}
-\textbf{THEOREM} & Core & From master quadratic (0.21 ppt precision) \\
+\textbf{ALPHA (fine structure)} & 0.00729 & {[}SMC{]} \textbf{STRONGLY
+MOTIVATED CONJECTURE} & Core & Master quadratic {[}THEOREM{]};
+identification \(x_+ = 1/\alpha\) has 1.26 ppm match +
+\textasciitilde{}\(4{\times}10^5\):1 Bayes weight (FTD-0121 + FTD-0122 +
+FTD-0123) but NO derivation chain from axioms. \\
 \textbf{KB (existence threshold)} & 0.511 & {[}†{]} \textbf{COMPANION} &
 Extended & \(m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}\) \\
 \textbf{PHI (golden ratio)} & 1.618 & {[}†{]} \textbf{COMPANION} &
 Extended & Stability fixed point \\
-\textbf{GRAVITY\_BIAS} & 0.01 & {[}†{]} \textbf{COMPANION} & Extended &
-\(1/(b_3+N_c)^2\) Exactly \\
+\textbf{α\_G(e,e)} (gravitational fine-structure) & 1.745×10⁻⁴⁵ &
+{[}DERIVED, postulate-conditional{]} (FTD-0131) & Extended &
+\((m_e/m_P)^2 = [\sqrt{2\pi}\cdot(16/3)\cdot\alpha^{11}]^2\); 0.38\%
+match to measured. Earlier
+\texttt{GRAVITY\_BIAS\ =\ 0.01\ =\ 1/(b\_3+N\_c)\^{}2} is {[}CLOSED
+NEGATIVE per FTD-0131{]}. \\
 DECAY\_RATE & 0.00729 & {[}†{]} \textbf{COMPANION} & Extended &
 Identified with α \\
 \end{longtable}
@@ -8704,18 +9029,33 @@ Accuracy
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Fine structure α & 1/137.036 & \hyperref[t]{T} THEOREM & \textbf{0.21
-ppt} \\
-Number of colors N\_c & 3.024 → 3 & \hyperref[t]{T} THEOREM & Exact \\
-Lemniscatic constant G* & 2.9587 & \hyperref[t]{T} THEOREM & 0.0006\% \\
-Coefficient 16 & \(2^3 / 0.5\) & \hyperref[t]{T} THEOREM & Exact \\
-\textbf{D = 3 uniqueness} & Topological necessity & \hyperref[t]{T}
-\textbf{THEOREM} & Derived \\
-\textbf{Consciousness y} & \(2.19 \pm 2.86i\) & \hyperref[t]{T}
-\textbf{THEOREM} & Derived \\
+Fine structure α & 1/137.036 & {[}SMC{]} STRONGLY MOTIVATED CONJECTURE &
+1.26 ppm tree-level match. (0.21 ppt expansion is post-hoc fit beyond
+CODATA precision; not a prediction --- see
+Chapter~\ref{sec-precision}.) \\
+Number of colors N\_c & 3.024 → 3 & {[}SMC{]} STRONGLY MOTIVATED
+CONJECTURE & 0.80\% match; \(x_- = N_c\) identification supported by
+structural-uniqueness scans (FTD-0121, FTD-0124) but not derived \\
+Lemniscatic constant G* & 2.9587 & \hyperref[t]{T} THEOREM &
+\(G^* = \Gamma(1/4)/\Gamma(3/4)\); Euler reflection \\
+Coefficient 16 &
+\(\|\mathrm{Aut}_{\bar{\mathbb{Q}}}(E)\|^2 = \|\mathbb{Z}[i]^\times\|^2\)
+for \(E: y^2 = x^3 - x\) & \hyperref[t]{T} THEOREM (the equality
+\(16 = \|\mathrm{Aut}\|^2\)); identification with master-quadratic
+prefactor {[}STRUCTURAL CONJECTURE supported by FTD-0122 BCC complex
+structure{]} & \\
+\textbf{D = 3 uniqueness} & Topological necessity (4 routes) &
+{[}SELECTION{]} & The argument constrains but does not exclude all
+alternative ontologies; see
+\texttt{FOUND\_DIMENSIONAL\_SELECTION.md}. \\
+\textbf{Reflexive eigenmode y} & \(2.19 \pm 2.86i\) (reflexive quadratic
+complex roots) & \hyperref[t]{T} THEOREM (algebraic content);
+reflexivity \emph{interpretation} per
+\texttt{REF\_REFLEXIVITY\_VOCABULARY.md} is structural, not phenomenal
+& \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{D = 3 Uniqueness}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{D = 3 Uniqueness}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \textbf{D = 3 Uniqueness (A1 → Derived)}: The three-dimensional lattice
 is no longer axiomatic but uniquely selected by 6 independent
@@ -8764,12 +9104,12 @@ Accuracy
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Weinberg angle sin²θ\_W & 3/13 = 0.2308 & {[}†{]} COMPANION & 0.19\%
-error \\
-Strong coupling α\_s & 7/59 = 0.1186 & {[}†{]} COMPANION & 0.3σ \\
-Gravitational coupling & 0.01 & {[}†{]} COMPANION & Exact \\
-\textbf{Gravitational hierarchy α\_G} & 5.91×10⁻³⁹ & {[}†{]}
-\textbf{COMPANION} & 0.06\% \\
+Weinberg angle sin²θ\_W & 3/13 = 0.2308 & {[}PARAMETRIC{]} (FTD-0018,
+demoted 2026-04-19) & 3.5\% off CODATA 0.22290(30) \\
+Strong coupling α\_s & 7/59 = 0.1186 & {[}PARAMETRIC{]} (FTD-0020,
+demoted 2026-04-19) & 0.3σ \\
+\textbf{Gravitational hierarchy α\_G(e,e)} & 1.745×10⁻⁴⁵ & {[}DERIVED,
+postulate-conditional{]} (FTD-0131) & 0.38\% \\
 Golden ratio φ & 1.6180 & {[}†{]} COMPANION & Exact \\
 \end{longtable}
 
@@ -8888,7 +9228,7 @@ Exact \\
 \end{longtable}
 
 \subsection{Cosmological Constant
-{[}†{]}}\label{cosmological-constant-2}
+{[}†{]}}\label{cosmological-constant-1}
 
 \begin{longtable}[]{@{}llll@{}}
 \toprule\noalign{}
@@ -9072,7 +9412,7 @@ sLoop Bell parameter & RETIRED (corrected 2026-07-01, FTD-0347):
 substrate/engine S ≤ 2 {[}THEOREM{]}; the S ≈ 1.95→2.85 scaling belongs
 to the continuous-Bell sLoop reading CLOSED DECLINED under FC-1
 (2026-06-10); S \textgreater{} 2 arises only under the imported
-complexification readout {[}SELECTION{]} & {[}R{]} RETIRED \\
+complexification readout {[}SELECTION{]} & \hyperref[r]{R} RETIRED \\
 SU(3) color from lattice & Derived via Günaydin-Gürsey & {[}†{]} DERIVED
 (G₂ → SU(3)) \\
 Linear confinement & Confirmed & \hyperref[v]{V} VERIFIED \\
@@ -9098,13 +9438,16 @@ Status
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Consciousness is emergent & No special physics required & {[}?{]}
-CONJECTURE \\
+Reflexive agency is emergent (formerly: ``consciousness is emergent'') &
+Reflexivity is generic at lattice level (3³ block ubiquity); agency
+emerges at the reflexive-coupling threshold without requiring special
+physics & {[}?{]} CONJECTURE --- see MC-T4.3 in
+\texttt{CHECKLIST\_MATH\_COMPLETE.md} \\
 Multiverse not required & Single universe + geometry suffices & {[}?{]}
 CONJECTURE \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-tip-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Verified in Simulation}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-tip-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Verified in Simulation}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The following items have been \textbf{verified in simulation}:
 
@@ -9126,11 +9469,12 @@ Status
 \endlastfoot
 \textbf{sLoop produces Bell violations} & RETIRED (corrected 2026-07-01,
 FTD-0347): the continuous-Bell sLoop target was CLOSED DECLINED under
-FC-1 on 2026-06-10 (DERIV\_OBSERVER\_BELL\_MECHANISM.md). The substrate
-is local/classical --- the engine measures S ≤ 2 {[}THEOREM{]}; S = 2√2
-arises only under the imported complexification/measurement reading
-{[}SELECTION{]}; a native S \textgreater{} 2 would \emph{falsify} FC-1,
-not confirm FTD & {[}R{]} \textbf{RETIRED} \\
+FC-1 on 2026-06-10 (\texttt{DERIV\_OBSERVER\_BELL\_MECHANISM.md}). The
+substrate is local/classical --- the engine measures S ≤ 2
+{[}THEOREM{]}; S = 2√2 arises only under the imported
+complexification/measurement reading {[}SELECTION{]}; a native S
+\textgreater{} 2 would \emph{falsify} FC-1, not confirm FTD &
+\hyperref[r]{R} \textbf{RETIRED} \\
 \textbf{Lorentz invariance is relational} & Wave isotropy, Coulomb
 isotropy, time dilation isotropy all confirmed in simulation &
 \hyperref[v]{V} \textbf{VERIFIED} \\
@@ -9158,7 +9502,7 @@ of framework integers; alternatives fail by 30-70\% & \hyperref[t]{T}
 \section{PHYS-QFT Critical Concerns: Resolution
 Status}\label{sec-phys-qft-resolution}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{TIER 2+ Verification Complete}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{TIER 2+ Verification Complete}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 All three critical concerns raised by the PHYS-QFT expert reviewer have
 been resolved.
@@ -9299,8 +9643,10 @@ Notes
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\st{Can GRAVITY\_BIAS be derived?} & \hyperref[v]{V} RESOLVED &
-1/(b₃+N\_c)² = 0.01 exactly \\
+\st{Can GRAVITY\_BIAS = 1/100 be derived?} & {[}CLOSED NEGATIVE per
+FTD-0131{]} & ``1/100'' framework-integer reading off by 10²⁰ to 10⁴³;
+substrate-derived α\_G(e,e) = (m\_e/m\_P)² ≈ 1.745×10⁻⁴⁵ at 0.38\%
+{[}DERIVED, postulate-conditional{]} \\
 \st{Why 3 generations?} & \hyperref[v]{V} RESOLVED & floor(N\_c) = 3
 from master quadratic \\
 \st{Can Λ be derived?} & \hyperref[v]{V} RESOLVED & α\^{}57 =
@@ -9432,9 +9778,18 @@ choice \\
 
 \section{Summary Statistics}\label{summary-statistics-1}
 
-\begin{longtable}[]{@{}lll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4167}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2917}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2917}}@{}}
 \toprule\noalign{}
-Category & Count & Notes \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Count
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Notes
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -9453,7 +9808,7 @@ Conjectures & \textbf{2} & \\
 Open Questions & \textbf{0} & All resolved \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Foundational Completeness Status}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Foundational Completeness Status}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 FTD achieves \textbf{foundational completeness} within its assumptions:
 
@@ -9480,15 +9835,25 @@ FTD achieves \textbf{foundational completeness} within its assumptions:
 \subsection{Core Paper Derivations
 (Theorems)}\label{core-paper-derivations-theorems}
 
-\begin{longtable}[]{@{}lll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3704}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2963}}@{}}
 \toprule\noalign{}
-Category & Derived & Status \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Derived
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Status
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Fine structure α & 1 & \hyperref[t]{T} 1.26 ppm base; \textbf{0.21 ppt}
-precision \\
+Fine structure α & 1 & {[}SMC{]} 1.26 ppm tree-level (master quadratic
+{[}THEOREM{]}; identification \(x_+ = 1/\alpha\) {[}STRONGLY MOTIVATED
+CONJECTURE{]}) \\
 Color number N\_c & 1 & \hyperref[t]{T} Exact (integer) \\
 Lemniscatic constant G* & 1 & \hyperref[t]{T} 0.0006\% \\
 Coefficient 16 & 1 & \hyperref[t]{T} Exact (lattice DoF) \\
@@ -9523,7 +9888,7 @@ relations \\
 
 \section{Reading Guide}\label{reading-guide-1}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-tip-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{How to Use This Ledger}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-tip-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{How to Use This Ledger}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -9557,8 +9922,9 @@ FTD is a \textbf{structured framework} with clearly delineated scope:
 \item
   \textbf{4 theorems} (T1-T6): rigorous derivations from axioms
 \item
-  \textbf{Fine structure constant α} to 1.26 ppm (base); \textbf{0.21
-  ppt} (precision formula)
+  \textbf{Fine structure constant α} to 1.26 ppm (tree-level
+  master-quadratic root match; the ε-expansion is post-hoc fitting
+  beyond CODATA's 0.15 ppb experimental precision)
 \item
   \textbf{Coefficient 16} from lattice degrees of freedom
 \item
@@ -9600,7 +9966,7 @@ we test.
 
 \section{Epistemic Upgrades (v5.1-v5.8)}\label{sec-epistemic-upgrades}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Status Changes January 2026}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Status Changes January 2026}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Several items previously marked as \hyperref[i]{I} IMPOSED or
 \hyperref[s]{S} SELECTION have been upgraded to \hyperref[t]{T} THEOREM
@@ -9637,8 +10003,14 @@ determined by framework integers
 \textbf{Derivation:}
 \[j = (N_{\text{base}} \times N_c)^3 = (4 \times 3)^3 = 12^3 = 1728\]
 
-The j-invariant is not selected but \textbf{derived} from the
-requirement that it factor as a cube of framework integers.
+The j-invariant value \(j = 1728 = 12^3\) is observed to factor as
+\((N_\mathrm{base} \cdot N_c)^3\). The ``derivation from requirement
+that it factor as a cube of framework integers'' is \textbf{circular}
+--- the requirement is back-fit from the observation. Honest framing:
+\(j = 1728\) is a structural feature of the canonical CM curve
+\(E: y^2 = x^3 - x\) (classical CM theory), and its factorization
+\((4 \cdot 3)^3\) is suggestive of framework-integer involvement but is
+not derived in either direction.
 
 \textbf{Reference:} NUMBER\_THEORY\_CONNECTIONS.md, v5.3
 
@@ -9668,77 +10040,124 @@ algebras.
 
 \textbf{Reference:} OCTONIONIC\_ORIGIN.md, v5.7
 
-\subsection{Vacuum Energy: OPEN → DERIVED
-(v5.5)}\label{vacuum-energy-open-derived-v5.5}
+\subsection{Vacuum Energy: OPEN → PARTIAL (post-2026-06-27 FTD-0331
+reconciliation)}\label{vacuum-energy-open-partial-post-2026-06-27-ftd-0331-reconciliation}
 
 \textbf{Previous status:} \hyperref[o]{O} OPEN: cosmological constant
 problem unaddressed
 
-\textbf{New status:} \hyperref[t]{T} \textbf{THEOREM}: formula with
-1.0\% accuracy
+\textbf{Updated status:} {[}SELECTION{]} \textbf{PARTIAL}: FTD dissolves
+the \(M_\text{Planck}^4\) catastrophe (classical vacuum = zero-energy);
+observed nonzero value is an open boundary. Prior ``\hyperref[t]{T}
+THEOREM'' tag retracted --- the formula is a motivated {[}SELECTION{]},
+not a forced derivation.
 
-\textbf{Formula:}
+\textbf{Numerical coincidence:}
 \[\rho_\Lambda = m_e^4 \times \alpha^{16} \times G^{*2}\]
 
 \begin{longtable}[]{@{}llll@{}}
 \toprule\noalign{}
-Quantity & Predicted & Observed & Error \\
+Quantity & Coincidence value & Observed & Agreement \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-ρ\_Λ & 3.86 × 10⁻⁴⁷ GeV⁴ & 3.90 × 10⁻⁴⁷ GeV⁴ & \textbf{1.0\%} \\
+ρ\_Λ & 3.86 × 10⁻⁴⁷ GeV⁴ & 3.90 × 10⁻⁴⁷ GeV⁴ & 1.0\% \\
 \end{longtable}
 
-This resolves the 10¹²³ cosmological constant problem.
+The classical half of the cosmological constant problem (where does the
+\(M_\text{Planck}^4\) vacuum energy go?) is dissolved: FTD's lattice
+vacuum is exactly zero-energy, so no catastrophic term arises. The other
+half (why is the observed \(\rho_\Lambda\) small but nonzero?) remains
+an open boundary --- FTD has no native cosmic length scale
+(FTD-0331/0332).
 
-\textbf{Reference:} VACUUM\_ENERGY\_FORMULA.md, v5.5
+\textbf{Reference:} VACUUM\_ENERGY\_FORMULA.md, v5.5 (formula as
+coincidence); FTD-0331 (boundary declaration)
 
-\subsection{Alpha Precision: 1.26 ppm → 0.21 ppt
-(v5.4)}\label{alpha-precision-1.26-ppm-0.21-ppt-v5.4}
+\subsection{Alpha Precision: 1.26 ppm tree-level (post-2026-04-19 honest
+accounting)}\label{alpha-precision-1.26-ppm-tree-level-post-2026-04-19-honest-accounting}
 
-\textbf{Previous status:} 1.26 ppm (parts per million) accuracy (from
-standard quadratic)
+\textbf{Status:} 1.26 ppm tree-level match. The master-quadratic
+identity \(x^2 - 16G^{*2}x + 16G^{*3} = 0\) is a {[}THEOREM{]}. Its
+match to CODATA \(\alpha^{-1}\) at 1.26 ppm is empirically observed but
+the \emph{physical identification} \(x_+ = 1/\alpha\) is {[}STRONGLY
+MOTIVATED CONJECTURE{]}. The original ``0.21 ppt'' claim has been
+retracted: the \(\varepsilon\)-expansion is a post-hoc fit beyond
+CODATA's experimental precision (0.15 ppb), so additional digit-string
+agreement is not testable as a prediction. See
+Chapter~\ref{sec-precision} and
+\texttt{docs/theory/07\_assessment/AUDIT\_RATIONAL\_FIT\_CLAIMS.md}.
 
-\textbf{New status:} \textbf{0.21 ppt} (parts per trillion) accuracy
-(with ε expansion)
+\subsection{Summary of Upgrades (post-2026-04-19 audit + post-2026-05-02
+tracker
+reconciliation)}\label{summary-of-upgrades-post-2026-04-19-audit-post-2026-05-02-tracker-reconciliation}
 
-\textbf{Formula:}
-\[\frac{1}{\alpha} = x_+ + \frac{\varepsilon}{1111} = 137.036... + \frac{3}{1111}\]
-
-where ε = (N\_eff - N\_base)/N\_c = 3.
-
-\textbf{Reference:} ALPHA\_PRECISION\_FORMULA.md, v5.4
-
-\subsection{Summary of Upgrades}\label{summary-of-upgrades}
-
-\begin{longtable}[]{@{}llll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1935}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3226}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4839}}@{}}
 \toprule\noalign{}
-Item & Previous & New & Version \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Item
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Previous claim
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Current honest status
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-k = 16 & IMPOSED & \textbf{THEOREM} & v5.1 \\
-j = 1728 & SELECTION & \textbf{THEOREM} & v5.3 \\
-Framework integers & Assumed & \textbf{THEOREM} & v5.7 \\
-Vacuum energy ρ\_Λ & OPEN & \textbf{THEOREM} (1.0\%) & v5.5 \\
-Alpha precision & 1.26 ppm & \textbf{0.21 ppt} & v5.4 \\
-70 ± 67 structure & Unknown & \textbf{VERIFIED} (Heegner) & v5.7 \\
-Riemann zeta ρ₁ & Unconnected & \textbf{VERIFIED} (0.15\%) & v5.2 \\
-Mandelbrot duality & Unconnected & \textbf{PROVEN} (exact) & v5.6 \\
+k = 16 & ``IMPOSED → THEOREM'' v5.1 & The equality
+\(16 = \|\mathrm{Aut}_{\bar{\mathbb{Q}}}(E)\|^2 = \|\mathbb{Z}[i]^\times\|^2\)
+is {[}THEOREM{]} (classical CM); the \emph{identification} of this with
+the master-quadratic prefactor is {[}STRUCTURAL CONJECTURE supported by
+FTD-0122 BCC complex structure{]} \\
+j = 1728 & ``SELECTION → THEOREM'' v5.3 & Classical CM result for
+\(E: y^2 = x^3 - x\). The factorization \(1728 = (4 \cdot 3)^3\) is
+{[}STRUCTURAL OBSERVATION{]}, not a derivation in either direction \\
+Framework integers & ``Assumed → THEOREM'' v5.7 &
+\(\{N_c, N_\mathrm{base}, N_\mathrm{eff}\}\) have \(O_h\)-rep-theory
+derivations {[}THEOREM in part{]}; ladder ordering remains
+{[}SELECTION{]} \\
+Vacuum energy ρ\_Λ & ``OPEN → THEOREM (1.0\%)'' v5.5 & Reverted to OPEN.
+Factor-1.8 discrepancy vs Planck 2018; calibration-conditional. \\
+Alpha precision & ``1.26 ppm → 0.21 ppt'' v5.4 & 1.26 ppm tree-level
+(only); 0.21 ppt claim retracted as post-hoc fitting beyond CODATA
+precision \\
+70 ± 67 structure & ``VERIFIED (Heegner)'' v5.7 & Conditional on
+FTD-0124 trivial-multiplier criterion; under rational-multiplier
+criterion, 21/5814 framework-integer-factorable matches exist (criterion
+bifurcation; see SPEC\_ALGEBRAIC\_SPINE Theorem 3) \\
+Riemann zeta ρ₁ & ``VERIFIED (0.15\%)'' v5.2 & Numerical proximity; not
+connected to a derivation chain \\
+Mandelbrot duality & ``PROVEN (exact)'' v5.6 & Mathematical content
+(algebraic identity) {[}THEOREM{]}; physics interpretation
+{[}SELECTION{]} \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Framework Status (v5.8)}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Framework Status (post-2026-05-03 honest accounting)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
-With these upgrades, the FTD framework has: - \textbf{Zero} imposed
-parameters that remain unexplained - \textbf{All four} framework
-integers derived from division algebras - \textbf{k = 16} and \textbf{j
-= 1728} derived, not selected - \textbf{Vacuum energy} resolved to 1.0\%
-accuracy - \textbf{Alpha} computed to sub-ppb precision
+The FTD framework has: - \textbf{Calibration declarations}
+(\(a_\mathrm{phys} \equiv \ell_P\), \(K_B = m_e\), \(t_\mathrm{phys}\))
+explicitly stated; dimensional predictions are calibration-conditional,
+dimensionless ratios are calibration-independent. - \textbf{9
+algebraic-spine theorems} + the BCC complex-structure theorem (Paper B
+Thm 3.1) --- all proven, all with verification scripts at machine or
+arbitrary precision. - \textbf{Empirical match \(x_+ = 1/\alpha\) at
+1.26 ppm} {[}STRONGLY MOTIVATED CONJECTURE{]}, backed by
+structural-uniqueness scans (\textasciitilde{}\(4{\times}10^5\):1 Bayes
+weight) but lacking a derivation chain from axioms. - \textbf{The
+strongest possible claim} (axioms→α derivation) remains {[}OPEN{]};
+lead-physicist diagnosis is structural decoupling via Phase J
+ultralocality.
 
-The framework is now \textbf{fully derived from first principles} within
-its stated axiom base.
+The framework is \textbf{NOT} ``fully derived from first principles.''
+It is a structurally-validated empirical match with a publication-grade
+mathematical core. See
+\texttt{docs/theory/07\_assessment/TRACKER\_ONTIC\_TRUTH.md} for the
+canonical bedrock.
 
 \end{tcolorbox}
 
@@ -9756,7 +10175,7 @@ document:
 
 \emph{``A framework that determines itself''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 FTD's four framework integers \{7, 3, 13, 4\} are not arbitrary: they
 form a self-consistent solution within the framework's stated
@@ -9765,7 +10184,7 @@ that its inputs constrain one another.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Scope}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Scope}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This chapter presents both \textbf{core paper claims} and
 \textbf{extended claims}:
@@ -10002,7 +10421,7 @@ alternative integer choices typically violate one or more of:
 \section{Part II: The Strong CP Problem: Proposed Mechanism
 {[}†{]}}\label{part-ii-the-strong-cp-problem-proposed-mechanism}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Companion Work}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Companion Work}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This section extends beyond what the core paper establishes. The
 resolution of the Strong CP problem follows from discrete lattice
@@ -10060,7 +10479,7 @@ In continuous spacetime, θ can take any real value, and θ ≈ 0 requires
 fine-tuning. In the discrete lattice of FTD, θ ∈ 2πℤ is topologically
 quantized, so exp(iθ) = 1 always, and no fine-tuning is needed.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Strong CP: Proposed Mechanism {[}†{]}}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Strong CP: Proposed Mechanism {[}†{]}}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Companion-work claim {[}†{]}: In the discrete-lattice formulation used
 here, the topological structure can enforce θ = 0 (mod 2π) for the flux
@@ -10097,7 +10516,7 @@ flux oscillations, detectable by experiments like ADMX.
 \section{\texorpdfstring{Part III: Novel Predictions
 \hyperref[p]{P}}{Part III: Novel Predictions P}}\label{part-iii-novel-predictions-p}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Predictions (Falsifiable)}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Predictions (Falsifiable)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The following predictions emerge from the broader FTD framework. Some
 follow directly from the core paper's discrete lattice structure; others
@@ -10314,7 +10733,7 @@ Axion mass & \textasciitilde6 μeV & Axion found at very different
 mass \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Scientific Status}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Scientific Status}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This is what makes FTD scientific: it makes specific predictions that
 can be wrong. The framework is not merely consistent: it is testable.
@@ -10340,8 +10759,10 @@ Establishes}\label{what-the-core-paper-establishes}
   \textbf{Coefficient 16 derived}: From lattice DoF counting (primary
   derivation)
 \item
-  \textbf{α = 1/137.036}: From master quadratic with \textbf{0.21 ppt
-  precision} (precision formula)
+  \textbf{α = 1/137.036}: master quadratic root \emph{matches} 1/α to
+  1.26 ppm at tree level --- the identification is a {[}STRONGLY
+  MOTIVATED CONJECTURE{]}, not a derivation (the ``0.21 ppt''
+  precision-formula figure is a post-hoc fit beyond CODATA precision)
 \end{enumerate}
 
 \subsection{What Companion Work Extends
@@ -10429,7 +10850,7 @@ FTD}\label{sec-information-quantification}
 \emph{``To know is to constrain; to experience is to accumulate
 constraints''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Information is not substance: it is constraint on configuration space.
 We can quantify it using entropy measures. An sLoop's priors are its
@@ -10513,7 +10934,7 @@ The shared information between two regions \(A\) and \(B\):
 
 \textbf{Interpretation}: How much knowing \(A\) tells you about \(B\).
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Mutual Information is Symmetric}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Mutual Information is Symmetric}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \(I(A; B) = I(B; A)\)
 
@@ -10599,7 +11020,7 @@ The information content of the self-embedding \(\sigma\):
 
 The mutual information between the self-model and the actual substrate.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Three Information Types}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Three Information Types}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
@@ -10797,7 +11218,7 @@ The \textbf{reflection bandwidth}:
 
 \[I(\sigma; o_\sigma) \leq C_{\text{reflection}}\]
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The sLoop Bottleneck}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The sLoop Bottleneck}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Consciousness is limited by reflection bandwidth. We cannot fully know
 ourselves because \(I_\sigma < I_\Omega\): the self-model is always a
@@ -10975,7 +11396,7 @@ bits/sec & \textasciitilde0.1 bits/sec & 10⁻⁶ \\
 \textbf{Conscious bandwidth}: \textasciitilde50 bits/sec \textbf{Overall
 compression}: \textasciitilde10⁻⁵
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Consciousness Bottleneck}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Consciousness Bottleneck}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Only 1 in 100,000 bits of sensory input reaches conscious awareness. The
 vast majority is processed unconsciously, filtered, and discarded.
@@ -11313,7 +11734,7 @@ experience.
 \emph{``The integers are not arbitrary: they are fixed points of
 self-referential consistency.''}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Deep Mathematical Structure}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Deep Mathematical Structure}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The framework integers \{3, 4, 7, 13\} are not parameters: they are
 \textbf{structural necessities} arising from self-referential, bounded,
@@ -11386,7 +11807,7 @@ crossover point where both sequences meet (excluding trivial values).
 21, 34\ldots{} - Tribonacci: 0, 0, 1, 1, 2, 4, 7, \textbf{13}, 24,
 44\ldots{}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Theorem NTHR-4}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Theorem NTHR-4}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \(F_7 = T_7 = 13\) is the unique non-trivial crossover point of the
 Fibonacci and Tribonacci sequences. Therefore \(N_{\text{eff}} = 13\) is
@@ -11437,7 +11858,7 @@ Consequence}{Step 4: j = 1728 as Derived Consequence}}\label{step-4-j-1728-as-de
 This means \textbf{\(j = 1728\) is now DERIVED} from the integer values,
 not independently selected.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Theorem NTHR-1}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Theorem NTHR-1}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 Given \(N_{\text{base}} = 4\) and \(N_c = 3\) (from the master
 quadratic), the j-invariant is uniquely determined as
@@ -11568,10 +11989,13 @@ Component & Value & Meaning \\
 \textbf{Error} & \textbf{0.66 ppm} & - \\
 \end{longtable}
 
-This precision is comparable to the TRD base derivation of \(\alpha\)
-(1.26 ppm); the precision formula achieves \textbf{0.21 ppt}.
+This precision is comparable to the 1.26 ppm tree-level \emph{match} of
+the master-quadratic root to \(\alpha\) (the identification
+\(x_+=1/\alpha\) is a {[}STRONGLY MOTIVATED CONJECTURE{]}, not a
+derivation; the ``0.21 ppt'' precision-formula figure is a post-hoc fit
+beyond CODATA precision).
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Python Verification}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Python Verification}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -11894,6 +12318,8 @@ with falsification criteria.
 I.M. Kolthoff}
 \end{quote}
 
+(See Ch. 24 for the consolidated prediction table.)
+
 \section{The First Test: Cloud-9}\label{sec-cloud9}
 
 In January 2025, astronomers announced the discovery of Cloud-9, a
@@ -11901,7 +12327,7 @@ In January 2025, astronomers announced the discovery of Cloud-9, a
 \textbf{first observation consistent with predictions} derived from the
 FTD framework.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Caution}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Caution}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 ``Consistent with'' is not ``proven by.'' The observations described
 here are \textbf{compatible} with FTD predictions, but alternative
@@ -12011,7 +12437,7 @@ Near threshold mass & \textasciitilde{}\(5 \times 10^9\)
 \(M_\odot \approx M_{\text{crit}}\) & \textbf{CONSISTENT} \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 \textbf{{[}CONSISTENT WITH OBSERVATION{]}}: Cloud-9 represents the first
 FTD prediction found to be consistent with independent astronomical
@@ -12194,7 +12620,7 @@ framework:
   measurement.
 \end{enumerate}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Note}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Note}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The Migdal effect was predicted by Arkady Migdal in 1941 but never
 directly observed until 2025. Its confirmation validates a key detection
@@ -12206,19 +12632,23 @@ substrate and can cross manifestation thresholds at non-local sites.
 
 \subsection{Fine Structure Constant}\label{fine-structure-constant-1}
 
-\textbf{Status:} {[}CONSISTENT TO 0.21 PPT{]}
+\textbf{Status:} {[}TREE-LEVEL MATCH TO 1.26 PPM; identification
+\(x_+=1/\alpha\) is STRONGLY MOTIVATED CONJECTURE, not derived{]}
 
-The master quadratic with precision formula yields:
+The master quadratic with the (post-hoc) precision formula yields:
 \[\frac{1}{\alpha} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2 = 137.035999...\]
 
 where \(\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}\).
 
 CODATA 2022 (Tiesinga et al. 2025): \(1/\alpha = 137.035999177(21)\)
 
-Agreement to \textbf{0.21 ppt} (parts per trillion): the most precise
-theoretical derivation of α ever achieved. This is 6,000× better than
-the base 1.26 ppm derivation and depends on the selection principles
-(S1, S2, S3), which are argued rather than proven.
+The tree-level match is \textbf{1.26 ppm}. The \(\varepsilon\)-expansion
+above can be tuned to reproduce more CODATA digits, but this is a
+post-hoc fit beyond CODATA's experimental precision (\textasciitilde0.15
+ppb), not a testable prediction --- the earlier ``0.21 ppt'' headline is
+retracted. The whole identification \(x_+ = 1/\alpha\) rests on the
+selection principles (S1, S2, S3), which are argued rather than proven;
+FTD does not derive α from its axioms.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -12292,13 +12722,14 @@ FTD Correspondence
 \endlastfoot
 Discrete lattice substrate & Discrete voxel lattice \textbf{L} ⊂
 \textbf{Z}³ \\
-Emergent U(1) gauge symmetry & U(1) from Gauss constraint (§14.3) \\
+Emergent U(1) gauge symmetry & U(1) from Gauss constraint (Ch. 5 in v2;
+formerly §14.3) \\
 Photon-like collective excitations & Flux waves J propagating as gauge
 bosons \\
 Fractionalized excitations & Manifestation transitions (s: 0 → ±1) \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Validation of Core Mechanism}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Validation of Core Mechanism}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The quantum spin ice confirmation validates FTD's central claim:
 photon-like gauge bosons can \textbf{emerge} from discrete lattice
@@ -12309,7 +12740,7 @@ accommodation: it is the mechanism FTD was built upon.
 
 \subsection{DESI: Evolving Dark Energy}\label{sec-desi-dark-energy}
 
-\textbf{Status:} {[}STRONGLY CONSISTENT{]}
+\textbf{Status:} {[}INDETERMINATE --- w is open in FTD{]}
 
 The Dark Energy Spectroscopic Instrument (DESI) Data Release 2,
 announced in March 2025, provides \textbf{4.2σ evidence} that dark
@@ -12330,45 +12761,51 @@ Significance & - & \textbf{\(4.2\sigma\) deviation} from
 Energy density & Constant & Peaked at z ≈ 0.45, now decreasing \\
 \end{longtable}
 
-\textbf{FTD Interpretation:}
+\textbf{FTD status:}
 
-In FTD, dark energy is not a cosmological constant but a property of the
-\textbf{void flux substrate}:
+The equation of state \(w\) is \textbf{open} in FTD (FTD-0331/0332). The
+framework dissolves the classical cosmological constant catastrophe
+(classical vacuum is identically zero-energy) but does not derive the
+observed nonzero dark-energy density, and makes no prediction for \(w\)
+or its time-variation. A holographic dark-energy reading that would give
+\(w = -1\) fails (Hsu 2004). DESI's finding that \(w \neq -1\) therefore
+\textbf{neither confirms nor falsifies} FTD.
 
 \[\rho_{\text{DE}} = \frac{1}{2} \langle J^2 \rangle_{\text{vacuum}}\]
 
-The vacuum expectation value of the flux field is inherently
-\textbf{dynamic}, not constant. DESI's observation that w evolves from
-approximately −0.7 to −1.7 is precisely what FTD predicts:
+The flux field is inherently dynamic, but whether that dynamism produces
+the specific DESI \(w_0 / w_a\) values is not a prediction the framework
+currently makes --- that connection is {[}OPEN{]}.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4242}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5758}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5600}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4400}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 DESI Finding
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-FTD Interpretation
+FTD status
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\(w \neq -1\) (not cosmological constant) & Void flux is dynamic, not
-static \\
-\(w\) evolves with redshift & Flux vacuum undergoes cosmic evolution \\
-Energy peaked at \(z \approx 0.45\) & Phase transition in void
-structure \\
-Currently decreasing & Void relaxation toward equilibrium \\
+\(w \neq -1\) (not cosmological constant) & Consistent with w being
+open; not a prediction \\
+\(w\) evolves with redshift & Consistent with dynamic flux; not a
+derived prediction \\
+Energy peaked at \(z \approx 0.45\) & No FTD prediction exists;
+{[}OPEN{]} \\
+Currently decreasing & No FTD prediction exists; {[}OPEN{]} \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 DESI's \(4.2\sigma\) evidence for evolving dark energy is
-\textbf{strongly consistent} with FTD's prediction that dark energy
-arises from dynamic void flux. A static cosmological constant would be
-\textbf{surprising} in FTD, as the flux field has no mechanism to remain
-perfectly constant across cosmic time.
+\textbf{indeterminate} with respect to FTD, because \(w\) is an open
+question in the framework (FTD-0331). The measurement neither confirms
+nor falsifies FTD. It does falsify the specific holographic reading that
+would give \(w = -1\), sharpening the open boundary.
 
 \end{tcolorbox}
 
@@ -12421,8 +12858,8 @@ An earlier version of this section read the result as validating FTD's
 sLoop interpretation (``Bell violations arise from shared substrate
 access''). That reading is RETIRED: the continuous-Bell sLoop target was
 CLOSED DECLINED under FC-1 on 2026-06-10
-(DERIV\_OBSERVER\_BELL\_MECHANISM.md). FTD does not predict Bell
-violations --- the substrate is local/classical (S ≤ 2 natively
+(\texttt{DERIV\_OBSERVER\_BELL\_MECHANISM.md}). FTD does not predict
+Bell violations --- the substrate is local/classical (S ≤ 2 natively
 {[}THEOREM{]}; the engine measures S ≈ 1.95--2.00), S = 2√2 arises only
 under the imported complexification/measurement reading {[}SELECTION{]},
 and a native S \textgreater{} 2 would \emph{falsify} FC-1. The 2025
@@ -12430,14 +12867,14 @@ result is a striking demonstration \emph{within standard quantum
 mechanics} (path identity rather than entanglement); it carries no
 FTD-specific support.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-important-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-important-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{sLoop-Bell Reading RETIRED (FTD-0347)}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{sLoop-Bell Reading RETIRED (FTD-0347)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-important-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 An earlier version of this callout was titled ``sLoop Mechanism
 Validated'' and claimed the experiment ``directly supports FTD's
 interpretation''. Per the framework constitution's Bell wall
-(SPEC\_FTD\_FRAMEWORK\_V1.md §2.3): FTD produces the singlet, QM handles
-the rest --- the substrate is local/classical (S ≤ 2), and the sLoop
-continuous-Bell mechanism is CLOSED DECLINED under FC-1.
+(\texttt{SPEC\_FTD\_FRAMEWORK\_V1.md} §2.3): FTD produces the singlet,
+QM handles the rest --- the substrate is local/classical (S ≤ 2), and
+the sLoop continuous-Bell mechanism is CLOSED DECLINED under FC-1.
 
 \end{tcolorbox}
 
@@ -12522,7 +12959,7 @@ invariant \\
 First baryon observation & Validates mechanism for baryogenesis \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Baryogenesis Connection}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Baryogenesis Connection}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The Standard Model's CP violation is insufficient to explain the
 universe's matter-antimatter asymmetry. FTD derives
@@ -12617,7 +13054,7 @@ CP phase in composites only & ✓ No electron CP violation detected \\
 SM-compatible CP structure & ✓ Consistent with SM expectation \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Constraints on Extensions}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Constraints on Extensions}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The eEDM measurement \textbf{constrains} potential extensions to FTD.
 Any future FTD-derived prediction of \(d_e\) must satisfy
@@ -12654,23 +13091,24 @@ Migdal effect mechanism & Detection physics & ✅ \textbf{CONFIRMED}
 (Nature 2025) \\
 Emergent gauge bosons from lattice & Gauge structure & ✅
 \textbf{CONFIRMED} (Quantum Spin Ice 2025) \\
-Dynamic dark energy (w ≠ −1) & Cosmology & ✅ \textbf{STRONGLY
-CONSISTENT} (DESI 2025) \\
-sLoop mechanism (substrate correlations) & Quantum foundations & {[}R{]}
-\textbf{RETIRED} (corrected 2026-07-01, FTD-0347: continuous-Bell sLoop
-target CLOSED DECLINED under FC-1; the 2025 result is standard QM, not
-FTD support) \\
+Dark energy equation of state & Cosmology & ⚠ \textbf{INDETERMINATE} (w
+is open in FTD; DESI DR2 neither confirms nor falsifies) \\
+sLoop mechanism (substrate correlations) & Quantum foundations &
+\hyperref[r]{R} \textbf{RETIRED} (corrected 2026-07-01, FTD-0347:
+continuous-Bell sLoop target CLOSED DECLINED under FC-1; the 2025 result
+is standard QM, not FTD support) \\
 CP violation in triads & Particle physics & ✅ \textbf{CONSISTENT} (LHCb
 baryons 2025) \\
 d\_e ≈ 0 (no electron CP violation) & Precision tests & ✅
 \textbf{CONSISTENT} (JILA eEDM 2025) \\
 No 4th generation & Particle physics & ✅ Consistent (LHC) \\
 Tensor GW only & Gravity & ✅ Consistent (LIGO) \\
-\(\alpha\) = 1/137.036 & Couplings & (confirmed) (\textbf{0.21 ppt}) \\
+\(\alpha\) = 1/137.036 & Couplings & (matches to \textbf{1.26 ppm};
+identification {[}SMC{]}, not derived) \\
 \(N_c \approx 3\) & QCD & (consistent) \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-note-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Epistemic Situation (Updated 2025)}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-note-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Epistemic Situation (Updated 2025)}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-note-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 The year 2025 marks a qualitative transformation in FTD's empirical
 standing. What began as numerical coincidences has evolved into a
@@ -12682,22 +13120,22 @@ Numerical matches (α, masses)
 
 \textbf{After 2025:} - \textbf{Structural prediction confirmed}
 (Cloud-9: spherical dark halos) - \textbf{Core mechanism validated}
-(Quantum Spin Ice: emergent gauge bosons from lattice) -
-\textbf{Cosmological prediction confirmed} (DESI: dynamic dark energy) -
-\textbf{Quantum-interpretation claim RETIRED} (Bell without
-entanglement: the sLoop-Bell reading was CLOSED DECLINED under FC-1 ---
-FTD-0347) - \textbf{Baryogenesis mechanism confirmed} (LHCb: CP
-violation in triads) - \textbf{Detection physics validated} (Migdal
-effect: flux perturbation propagation) - \textbf{Precision constraint
-satisfied} (JILA eEDM: no BSM CP violation in fundamental particles)
+(Quantum Spin Ice: emergent gauge bosons from lattice) - \textbf{DESI
+DR2:} w is open in FTD; finding of \(w \neq -1\) is indeterminate
+(neither confirms nor falsifies) - \textbf{Quantum-interpretation claim
+RETIRED} (Bell without entanglement: the sLoop-Bell reading was CLOSED
+DECLINED under FC-1 --- FTD-0347) - \textbf{Baryogenesis mechanism
+confirmed} (LHCb: CP violation in triads) - \textbf{Detection physics
+validated} (Migdal effect: flux perturbation propagation) -
+\textbf{Precision constraint satisfied} (JILA eEDM: no BSM CP violation
+in fundamental particles)
 
 Of the seven 2025 discoveries across cosmology, particle physics,
 quantum foundations, condensed matter, and precision tests, five remain
 consistent with FTD (DESI is indeterminate; the
 Bell-without-entanglement sLoop reading is RETIRED --- FTD-0347).
-However, these are not fully
-independent (they involve the same framework), so naive probability
-estimates overstate the significance.
+However, these are not fully independent (they involve the same
+framework), so naive probability estimates overstate the significance.
 
 This does not ``prove'' FTD, but it transforms the framework from
 speculative to \textbf{empirically grounded}.
@@ -12764,9 +13202,9 @@ measurement artifacts
 
 \textbf{FTD Interpretation (Speculative):}
 
-FTD predicts \(\tau_n \approx 880\) s (Chapter 2.7), falling between the
-two measured values. The discrepancy may arise from
-\textbf{measurement-context-dependent sLoop coupling}:
+FTD predicts \(\tau_n \approx 880\) s (Ch. 12 in v2; formerly Chapter
+2.7), falling between the two measured values. The discrepancy may arise
+from \textbf{measurement-context-dependent sLoop coupling}:
 
 \begin{verbatim}
 BOTTLE METHOD:
@@ -12786,7 +13224,7 @@ factor f} varies with environmental flux density, different measurement
 contexts would yield different lifetimes, not due to exotic physics, but
 due to context-dependent substrate coupling.
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This interpretation is \textbf{speculative}. FTD does not yet provide a
 quantitative calculation of the expected discrepancy. The puzzle may be
@@ -12914,7 +13352,7 @@ If confirmed, this would mean: - No single ``proton radius'' exists -
 Different probes see different effective sizes - The flux distribution
 has multi-scale structure
 
-\begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-warning-color-frame, coltitle=black, rightrule=.15mm, breakable, bottomrule=.15mm, toprule=.15mm, arc=.35mm, colback=white, colbacktitle=quarto-callout-warning-color!10!white, opacityback=0, bottomtitle=1mm, toptitle=1mm, titlerule=0mm, left=2mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, titlerule=0mm, bottomtitle=1mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, rightrule=.15mm, coltitle=black, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, left=2mm]
 
 This interpretation is \textbf{speculative}. FTD does not yet provide
 quantitative predictions for the flux distribution parameters. MUSE
