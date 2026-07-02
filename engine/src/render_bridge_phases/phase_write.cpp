@@ -411,7 +411,9 @@ static inline void copy_flux_fields(Voxel& dst, const Voxel& src) {
 // z-outer/y-mid/x-inner order — the traversal both one-layer passes share.
 template <typename Fn>
 static inline void for_each_shell_voxel(RenderBridge& rb, Fn&& fn) {
-  const int N = rb.lattice_.size();
+  // Public accessor, not rb.lattice_: this file-static template is NOT a
+  // RenderBridge friend (only the boundary passes that call it are).
+  const int N = rb.lattice().size();
   const int Nm1 = N - 1;
   for (int z = 0; z < N; ++z)
   for (int y = 0; y < N; ++y)
