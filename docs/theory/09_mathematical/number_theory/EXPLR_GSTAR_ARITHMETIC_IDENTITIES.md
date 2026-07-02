@@ -406,7 +406,7 @@ This makes one of the framework's most opaque features ("why G\*?") into a one-s
 **What this is NOT:**
 - *Not new mathematics.* Each ingredient has a 150–200-year pedigree (Euler ~1750, Gauss ~1800, Jacobi ~1830). Anyone who knew both classical identities would derive `G* = √(2π)·θ_3(0|i)²` in two lines.
 - *Not a derivation of any physics quantity.* The identity is purely about classical analysis; FTD-0013/0014 (the empirical α/N_c match) are unaffected and remain [STRONGLY MOTIVATED CONJECTURE].
-- *Not a new spine theorem.* The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as [SYNTHESIS], not [THEOREM] or [DERIVED].
+- *Not a new spine theorem.* The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). This is filed as [SYNTHESIS], not [THEOREM] or [DERIVED].
 - *Not a uniqueness claim.* `G* = √(2π)·θ_3(0|i)²` does not assert that G\* is the *only* lattice-theta combination with this property; analogous identities exist for higher-conductor CM lattices (e.g., the Eisenstein lattice at τ = e^{iπ/3} produces analogous Γ(1/3)-content).
 - *Not a route to deriving α.* The synthesis sits inside the algebraic spine and does not bridge to the engine or to physics.
 
@@ -452,7 +452,7 @@ The lemniscatic constant `G* = Γ(1/4)/Γ(3/4)` admits a clean operational readi
 
 Combined with three derived boundary identities for L(s, χ_{−4}), this characterizes Q(G\*) **operationally** as the field of L-function content at the boundary of the Q(i) Dirichlet L-function's critical strip. The center of the critical line is explicitly OUTSIDE Q(G\*) (PSLQ-falsified at maxcoeff 10^7 / tol 1e-50 / 80 dps).
 
-This is the same mathematical content as Theorem 9 (no new spine theorem; spine count unchanged — nine numbered results, seven theorem-grade + two honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0). What is new is (a) the operational identification of the natural L-function partner, (b) three explicit derivable boundary identities, and (c) a clean negative scoping result for the central critical-line value.
+This is the same mathematical content as Theorem 9 (no new spine theorem; spine count unchanged — nine numbered results, seven theorem-grade + two honestly-tiered, Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). What is new is (a) the operational identification of the natural L-function partner, (b) three explicit derivable boundary identities, and (c) a clean negative scoping result for the central critical-line value.
 
 ## C.1 · Result D — G\* as the parity-twist (the operational reading)
 
@@ -599,7 +599,7 @@ This Result is one more entry in the multiple-4 catalogue: the conductor of the 
 - **Not a derivation of α.** The single live identification `x_+ ≈ 1/α` (1.26 ppm) remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); this Result extends the algebraic spine's *characterization* of G\*, not its bridge to physics. *(The historical "dual-prediction" framing paired with `x_-  N_c` is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 - **Not a connection to ζ's critical line.** Strong claim "FTD  Riemann critical line" is FALSIFIED in the strong form (PSLQ on ζ(1/2) returned None in every tested basis). The partial true form is "FTD  L(s, χ_{−4}) boundary of critical strip"; the center of either critical line is outside the algebraic spine's reach as currently stated.
 - **Not an extension of the spine to higher L-functions.** Result D as stated applies to ζ vs L(s, χ_{−4}) at conductor 4. Higher conductors would require analogous `G*_q` constants (related to FTD-0123's Γ-product analogue `G*_d := ∏ Γ(a/|d|)^{χ_d(a)}`) and analogous parity-twist identifications. Whether the structure generalizes cleanly is an OPEN extension.
-- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as a subsidiary of Theorem 9 (FTD-0112), not as Theorem 10.
+- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). This is filed as a subsidiary of Theorem 9 (FTD-0112), not as Theorem 10.
 
 ## C.8 · Parity-twist reading — single-line summary
 
@@ -688,7 +688,7 @@ The two readings are related by the Mellin transform that connects multiple gamm
 
 - **Not new mathematics.** The identity has been in the analytic-number-theory literature since Kinkelin 1860 (in implicit form) and Adamchik 1998 (in modern form). What's new here is the FTD-canonical re-statement and the PSLQ-recovery provenance. Filed as `[SYNTHESIS]`.
 - **Not a closed form for `c = ζ''(0, 1/4) − ζ''(0, 3/4)`.** That number remains outside elementary closed form in `{1, G_Catalan, log G*, log 2, log π, γ, log A_Glaisher, products}` at maxcoeff = 50000 (per `scripts/exploration/pslq_zeta_hessian_diff_v3.py`); it likely lives at the K_2-regulator-of-E level (Beilinson territory), which is the multi-month math-side research direction.
-- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as a subsidiary identity under Theorem 1 (FTD-0001), not as Theorem 10.
+- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). This is filed as a subsidiary identity under Theorem 1 (FTD-0001), not as Theorem 10.
 - **Not load-bearing for x_- physical identification.** The Path A derivation effort that surfaced this identity remains CLOSED-NEGATIVE; the Barnes G identity does NOT inform or alter the PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md verdict. It is recorded here as a clean side-discovery, not as evidence for any physical identification.
 
 ## D.7 · Barnes G reading — single-line summary
