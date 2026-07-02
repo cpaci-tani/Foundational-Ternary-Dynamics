@@ -382,6 +382,10 @@ ftd_add_test(test_render_bridge_golden_default tests/test_render_bridge_golden_d
 # movement mirror-bounce) — safety net for the boundary-shell dedup (2.3).
 ftd_add_test(test_boundary_modes_golden tests/test_boundary_modes_golden.cpp
              CTEST_NAME boundary_modes_golden LABELS golden regression)
+# Secondary lattice-size golden (revision 0.7): L=9, shipping defaults —
+# catches L-dependent indexing/boundary regressions the L=17 gates miss.
+ftd_add_test(test_render_bridge_golden_l9 tests/test_render_bridge_golden_l9.cpp
+             CTEST_NAME render_bridge_golden_l9 LABELS golden regression)
 
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
