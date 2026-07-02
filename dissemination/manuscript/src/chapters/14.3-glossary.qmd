@@ -558,7 +558,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : Any process where output becomes input for the next cycle. The Mandelbrot iteration z_{n+1} = z_n^2 + c is the purest mathematical example. In FTD, the sLoop phi -> phi(phi) + input has identical structure: the self-model feeds back as input to the next state.
 
 **sLoop (Self-referential Loop)**
-: A closed causal structure where an observing system is part of the system being observed. The defining structure of FTD's approach to measurement and consciousness. In an sLoop, the observer and observed share a common flux substrate, creating correlations that exceed classical bounds. Key to Bell violations (S ≈ 2√2). Distinguished from external observation by ontological continuity between observer and system. See also: Meta-sLoop.
+: A closed causal structure where an observing system is part of the system being observed. The defining structure of FTD's approach to measurement and consciousness. In an sLoop, the observer and observed share a common flux substrate. (Corrected 2026-07-01, FTD-0347: the earlier claim that sLoop correlations "exceed classical bounds" / are "key to Bell violations (S ≈ 2√2)" is RETIRED — the continuous-Bell sLoop target was CLOSED DECLINED under FC-1 on 2026-06-10; the substrate is local/classical, S ≤ 2 natively, and 2√2 arises only under the imported complexification/measurement reading [SELECTION].) Distinguished from external observation by ontological continuity between observer and system. See also: Meta-sLoop.
 
 **Singularity**
 : Point of infinite density. Classical concept; may be resolved by quantum gravity.

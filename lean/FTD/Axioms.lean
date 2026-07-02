@@ -19,8 +19,12 @@
   SelfDuality.lean. This file is therefore CITATION BOOKKEEPING wearing
   Lean syntax, not machine-checked formalization. Do NOT cite it as
   Lean verification of the listed results. The genuinely rigorous,
-  axiom-clean machine-checked artifact in this repository is the
-  separate FtdNoGo/Standalone.lean tree ([propext, Quot.sound] only).
+  axiom-clean machine-checked artifacts in this repository are
+  lean/Standalone.lean (namespace FtdStandalone; compiles on bare
+  Lean 4, #print axioms = [propext, Quot.sound]) and the
+  lean/FtdNoGo/ Mathlib rendering (core theorems [propext] only).
+  (Pathname corrected 2026-07-01 — an earlier version of this note
+  cited a non-existent "FtdNoGo/Standalone.lean".)
   The mathematical claims themselves stand or fall on their prose
   proofs and cited literature, unaffected by this note.
 

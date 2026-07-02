@@ -171,23 +171,23 @@ Definitive measurement of **inverted hierarchy** (m₃ < m₁ < m₂) would **fa
 
 ### FTD Prediction
 
-The sLoop mechanism predicts Bell inequality violations matching quantum mechanics:
+**RETIRED as a prediction (corrected 2026-07-01, FTD-0347).** The sLoop continuous-Bell target was CLOSED DECLINED under FC-1 on 2026-06-10 (`DERIV_OBSERVER_BELL_MECHANISM.md` in `TRACKER_OPEN_ITEMS.md` §2.12). FTD does not predict Bell violations: the substrate is local/classical (S ≤ 2 natively, an FC-1 commitment — a native S > 2 would *falsify* FC-1), and S = 2√2 arises only under the imported complexification/measurement reading [SELECTION]:
 
-$$S \approx 2\sqrt{2} \approx 2.83$$
+$$S \approx 2\sqrt{2} \approx 2.83 \quad \text{(imported QM, conditional on the [SELECTION] singlet — not an FTD prediction)}$$
 
 ### Status
 
-**Three-level observer hierarchy established:**
+**Three-level observer hierarchy (historical analysis; Level 3's [SELECTION] reading declined under FC-1):**
 
 - **Level 1 (substrate):** Deterministic lattice gives S = 2 — correct for local deterministic axioms [THEOREM]
 - **Level 2 (independent complex observer):** Born rule from complexification gives S = √2 [THEOREM]
-- **Level 3 (entangled/sLoop observer):** Joint substrate coupling gives S = 2√2 ≈ 2.83 [SELECTION]
+- **Level 3 (entangled/sLoop observer):** Joint substrate coupling gives S = 2√2 ≈ 2.83 [SELECTION — DECLINED under FC-1, 2026-06-10]
 - Two mechanisms: complexification (Gauss constraint → ψ = J_x + iJ_y) changes correlation shape; sLoop (shared substrate) doubles correlation strength
-- Verified: 4/4 Monte Carlo checks (1M samples). See DERIV_OBSERVER_BELL_MECHANISM.md
+- Monte Carlo checks (4/4, 1M samples) verified the *analytic formulas*, not a substrate Bell violation. See DERIV_OBSERVER_BELL_MECHANISM.md (CLOSED DECLINED)
 
 ### Distinguishing Test
 
-FTD's sLoop mechanism makes a **unique prediction**: S should vary with the degree of substrate overlap between measurement apparatus and system.
+**(Historical — belongs to the DECLINED sLoop reading above, not a live FTD prediction.)** The retired sLoop mechanism would have made a distinguishing prediction: S varying with the degree of substrate overlap between measurement apparatus and system.
 
 A dedicated experiment could test whether:
 1. S depends on apparatus material/configuration (sLoop predicts yes)
