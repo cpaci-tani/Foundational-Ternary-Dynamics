@@ -255,7 +255,7 @@ A reorientation toward "use the engine as a primary instrument; let it produce p
 
 **FTD-0094 (L2 candidate identity 2·m_e/α = 16G*²)** terminally demoted to [PARAMETRIC] per pre-registered FTD-0093 closure criterion. FTD-0096 (μ-from-ℓ_P missing arrow) remains [OPEN]; the demotion is conditional on FTD-0096 staying open.
 
-**Status of the algebraic spine (nine numbered results — six theorem-grade + three honestly-tiered — per `SPEC_ALGEBRAIC_SPINE.md` §0):**
+**Status of the algebraic spine (nine numbered results — seven theorem-grade + two honestly-tiered — per `SPEC_ALGEBRAIC_SPINE.md` §0):**
 - FTD-0001 G* algebraic identity — [THEOREM]
 - FTD-0013 master quadratic single physics identification (x₊  1/α) — [STRONGLY MOTIVATED CONJECTURE]. *(Historical formulation here read "dual prediction (x₊ ≈ 1/α, x₋ ≈ N_c)"; the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 - ~~FTD-0014 master quadratic algebraic identity x² − 16G*²x + 16G*³ = 0~~ — *(citation correction: the master quadratic algebraic identity is **FTD-0001** [THEOREM], not FTD-0014; FTD-0014 carried the `x_-  N_c` physics identification and is **retired** per v1.4 §5, row removed in commit `ca7eb61`.)*
