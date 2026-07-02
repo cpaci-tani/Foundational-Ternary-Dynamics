@@ -385,7 +385,7 @@ at appropriate engine precision floors.
 This document closes Q5/Q6/Q7/Q8 of the Maxwell-exploit thread. Filed
 as **FTD-0120** at the [DERIVED] tag, subsidiary to FTD-0113/FTD-0114/
 FTD-0115. No new spine theorem; the spine count is unchanged — nine
-numbered results, six theorem-grade + three honestly-tiered (see
+numbered results, seven theorem-grade + two honestly-tiered (see
 `SPEC_ALGEBRAIC_SPINE.md` §0). This is a closure of follow-up
 sub-questions.
 
@@ -424,7 +424,7 @@ Path A Paper A draft (publication target).
   the `a_phys ≡ ℓ_P` calibration, these are at Planck wavelengths and
   far below any laboratory detection threshold.
 - **NOT a new spine theorem.** The spine count is unchanged — nine
-  numbered results, six theorem-grade + three honestly-tiered (see
+  numbered results, seven theorem-grade + two honestly-tiered (see
   `SPEC_ALGEBRAIC_SPINE.md` §0); FTD-0120 is a closure of follow-up
   sub-questions, not a new structural theorem.
 - **NOT a re-derivation** of FTD-0113 / FTD-0114 / FTD-0115. Those
