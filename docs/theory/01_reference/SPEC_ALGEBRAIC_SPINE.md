@@ -135,7 +135,9 @@ identification x−  N_c is retired per v1.4 §5.
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
-**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among the class-number-1 fields). The underlying numerical scans over Heegner and class numbers 1–4 are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan ($|d| \le 907$ via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
+**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among imaginary quadratic fields — the PROOF below covers all squarefree $d$, matching `TRACKER_ONTIC_TRUTH.md` OT-1.9; an earlier copy of this line understated the scope as "the class-number-1 fields"). The underlying numerical scans over Heegner and higher class numbers are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan (via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
+
+**Scan-domain restatement (PERMANENT, 2026-07-01, FTD-0355 — closes FTD-0348 math flag F3; precision fix, no result change).** The FTD-0123 scan domain is: **all 43 fields of class number h ≤ 3** (complete lists — 9 at h=1, 18 at h=2, 16 at h=3, with largest $|d|$ = 163, 427, 907 respectively; the imaginary-quadratic class-number problem is solved for h ≤ 3) **plus the 20 smallest h = 4 discriminants ($|d| \le 312$)** — **63 discriminants in total, with h = 4 deliberately truncated** (20 of the 54 known h = 4 fields; the 23 with $312 < |d| \le 907$ and the 11 with $907 < |d| \le 1555$ were NOT scanned). The domain phrase in the Statement and Verification bullets below — "63 fundamental discriminants (h ∈ {1, 2, 3, 4} with $|d| \le 907$)" — is **superseded by this restatement**: "h ∈ {1..4} with $|d| \le 907$" describes an **86**-element set, not a 63-element set. All counts were independently recomputed at finalization (reduced-binary-quadratic-form enumeration over every fundamental $|d| \le 2000$). The scan's registered result (d = −4 as the sole trivial-multiplier dual-matcher *within the 63-element domain*) is unchanged; the frozen `PREREG_DAMERELL_SCAN_v1.md` is untouched by this note (its own complement-count fix is owner-only, per FTD-0348 §3).
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
@@ -196,16 +198,30 @@ Its automorphism group over ℚ̄ has order 4, so |Aut(E)|² = 16. The
 coefficient 16 in the master quadratic P(x) (Theorem 2) coincides with
 this automorphism-group order squared.
 
-**Status.** The arithmetic
+**Status (PERMANENT classification, 2026-07-01, FTD-0355 — finalized;
+no longer promotion-pending).** The arithmetic
 fact |Aut(E)| = 4, hence |Aut(E)|² = 16, is a `[THEOREM]`. That the
 master quadratic's coefficient is *forced* to equal |Aut(E)|² is
-**not** proven — it is a structural identification, conjectural
-(`TRACKER_ONTIC_TRUTH.md` OT-4.1, Tier 4: "two distinct objects both
-equal 16; the structural reason for this coincidence is conjectured
-but not proved"). The Proof below establishes only the arithmetic
-fact, not the forcing; Paper A §13.5 reports three negative tests
-(N1–N3) finding no CM-internal arrow that produces the polynomial
-*form*. Theorem 4 is therefore one of the two honestly-tiered
+**[SELECTION — declared, no longer awaiting proof]**: a bounded-effort
+finalization search (FTD-0355) found no corpus result that forces it —
+the stabilizer bridge |Aut(E_i)|² = |Stab_{O_h}(e₃)|
+(`DERIV_DUAL_DERIVATION_OF_16.md`, whose own Honesty Note disclaims
+forcing of the master-quadratic power) and the tower-level k = 4
+unification (FTD-0122 / Paper B Thm 5.1) are partial structural
+unifications, not forcing theorems (`TRACKER_ONTIC_TRUTH.md` OT-4.1,
+Tier 4). The Proof below establishes only the arithmetic fact, not the
+forcing. **Closure evidence for declaring rather than awaiting:** Paper
+A's three negative tests N1–N3 (`PAPER_GSTAR_INTRODUCTION.tex`, Remark
+`rem:three-negatives` in the "Where the polynomial form comes from —
+and where it doesn't" subsection `sec:not-CM-derived`; cited elsewhere
+in the corpus as "Paper A §13.5") found no CM-internal arrow — class
+polynomial, η-quotient PSLQ, or Hecke eigenvalue — that produces the
+polynomial *form*; per Paper A's own scope remark (`rem:n1-n3-scope`)
+these bound the searched depth and are not a nonexistence proof, which
+is exactly why the permanent tag is [SELECTION — declared], not
+[CLOSED NEGATIVE]. Any future forcing proof would be a **new result
+requiring its own LEDGER row**, not a pending promotion of this one.
+Theorem 4 remains one of the two honestly-tiered
 subsidiary results (with Theorem 7), not one of the seven
 theorem-grade results (count convention: see the Subsidiary note
 above §0).
