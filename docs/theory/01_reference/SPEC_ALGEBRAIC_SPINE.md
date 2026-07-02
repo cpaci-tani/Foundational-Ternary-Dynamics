@@ -83,9 +83,9 @@ An earlier erroneous formula `Γ(1/4)²/(2 · (2\pi)^{1/2}·Γ(1/2))` (which eva
 
 **Proof reference (corrected 2026-07-01 — the prior wording misattributed this step; the value was always correct, only the named mechanism was wrong).** The base identity `G* = Γ(1/4)/Γ(3/4)` follows directly from the **elementary Γ-function reflection formula** `Γ(z)Γ(1−z) = π/sin(πz)` at `z=1/4` (giving `Γ(1/4)Γ(3/4) = π√2`, already used at line 70 above) — **not** from a Chowla-Selberg L-function evaluation. `L(1,χ_{−4}) = π/4` (Leibniz) is a pure-π quantity carrying zero Γ(1/4) content, so it cannot by itself yield G*. Chowla-Selberg's genuine, load-bearing role is one theorem deeper: it explains *why* this specific ratio is the natural period-ratio of the CM curve `y² = x³ − x` — see Theorem 5 (`W₃ = G*²/(2π)`, the Watson bridge), where Chowla-Selberg is correctly load-bearing. See `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` for the four independent derivations (Γ-function ratio via elementary reflection, Watson period integral, lemniscate arc length, modular-form value) — of these, the first is elementary; the latter three genuinely invoke Chowla-Selberg-adjacent period theory.
 
-**LEDGER:** FTD-0001.
+**LEDGER:** FTD-0002 (corrected 2026-07-01, FTD-0348 — this line previously said FTD-0001, which is the master-quadratic row; the spine's own §13 table already said FTD-0002).
 
-**Dependencies:** Γ-function functional equation; Chowla-Selberg formula (Chowla & Selberg 1949); arithmetic of CM curves over ℚ(i).
+**Dependencies:** Γ-function functional equation (elementary reflection — the sole load-bearing input for the identity itself; dependency line reconciled 2026-07-01 to the corrected proof-reference paragraph above, which reserves Chowla-Selberg for Theorem 5).
 
 **What it does NOT claim.** Nothing about physics. G* is a specific real number defined by gamma-function values; the theorem records its algebraic identity, nothing more.
 
@@ -751,10 +751,17 @@ In order from most to least defensible:
    G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
    Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; see §1)." — §§1-9.
 
-2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has roots that
-   match 1/α and N_c simultaneously to permille precision; this
-   polynomial is unique among class-number-1 CM curve constructions
-   to produce this dual match." — Theorems 2, 3 + observation §9.
+2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has a root
+   matching 1/α to 1.26 ppm (the historical x₋ ↔ N_c reading, 0.8%,
+   is RETIRED — see §2/§11); under the FTD-0319 adversarial scan the
+   polynomial is the unique dual-matcher over an 18-constant basket,
+   with the tolerance-conditioning caveat declared in §11 and the
+   Theorem-3 criterion declaration of §3 required whenever the CM
+   uniqueness is invoked." — Theorems 2, 3 + observation §11.
+   *(Corrected 2026-07-01, FTD-0348 — this item previously claimed a
+   live dual match "to permille precision" [x₊ is ppm, x₋ was 0.8%],
+   pointed at §9 for an observation that lives in §11, and omitted
+   both mandatory caveats.)*
 
 3. "The corresponding lattice simulator reproduces the lattice Poisson
    Green's function as its Coulomb interaction exactly, with no
@@ -766,12 +773,18 @@ In order from most to least defensible:
    all three first-principles derivation routes for g_c have closed
    negative." — Theorem 7 + LEDGER FTD-0031 + FTD-0093.
 
-5. "The physical identification of P(x)'s roots with α and N_c is a
+5. "The physical identification of P(x)'s dominant root with 1/α is a
    structurally-motivated conjecture, not a derivation; it sits in the
-   LEDGER at [STRONGLY MOTIVATED CONJECTURE] and remains there until
-   either a derivation is found OR the look-elsewhere scan (FTD-0097)
-   demonstrates the dual match is selective rather than expected." —
-   §9 + FTD-0013 / FTD-0017 / FTD-0097.
+   LEDGER at [STRONGLY MOTIVATED CONJECTURE]. The look-elsewhere scans
+   HAVE been run — FTD-0097 [MEASURED, 2026-04-27] and the FTD-0319
+   adversarial 18-constant scan [NUMERICAL FACT, with the §11
+   tolerance-conditioning caveat] — and support selectivity without
+   promoting the identification; promotion still requires a
+   derivation." — §11 + FTD-0013 / FTD-0097 / FTD-0319.
+   *(Corrected 2026-07-01, FTD-0348 — this item previously described
+   FTD-0097 as awaiting a run it completed on 2026-04-27, cited the
+   retired x₋ identification under FTD-0017 — which is the Higgs-mass
+   parametric row, not a Bell/N_c id — and pointed at §9 for §11.)*
 
 What this document explicitly does NOT allow you to claim:
 
@@ -809,8 +822,8 @@ What this document explicitly does NOT allow you to claim:
 | Empirical observation | LEDGER |
 |---|---|
 | x+ = 1/α | FTD-0013 [STRONGLY MOTIVATED CONJECTURE] |
-| x− = N_c | FTD-0017 [STRONGLY MOTIVATED CONJECTURE] |
-| Look-elsewhere scan | FTD-0097 [HYPOTHESIS] (not yet run) |
+| x− = N_c | **RETIRED** (was FTD-0014, removed in `ca7eb61`; see §2/§11 — N_c=3 is independently sourced. This row previously mis-cited FTD-0017, the Higgs-mass parametric row; corrected 2026-07-01, FTD-0348) |
+| Look-elsewhere scans | FTD-0097 [MEASURED, 2026-04-27] + FTD-0319 adversarial scan [NUMERICAL FACT, tolerance-conditioned — see §11] (this row previously said "not yet run"; corrected 2026-07-01) |
 
 ---
 
@@ -826,12 +839,15 @@ Coulomb α_r = 2r·G_L(r), Phase J classical-action ultralocality, the
 A_k ∉ Q for k ≥ 4, and the field-theoretic characterization of Q(G*)
 as a π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky
 1976; "maximal" not claimed — only π-freeness is proven). All nine
-are independent of physics interpretation. The dual
-numerical match x+ ≈ 1/α (1.26 ppm) + x− ≈ N_c (0.80%) is recorded as
-[STRONGLY MOTIVATED CONJECTURE], not theorem; promotion requires
-either a derivation (all three first-principles routes for g_c are
-closed-negative) or a look-elsewhere scan
-demonstrating selectivity (FTD-0097 pre-registered, not run).
+are independent of physics interpretation. The
+numerical match x+ ≈ 1/α (1.26 ppm) is recorded as
+[STRONGLY MOTIVATED CONJECTURE], not theorem (the historical
+x− ≈ N_c reading is RETIRED, see §2/§11 — corrected 2026-07-01,
+FTD-0348, this summary previously presented it live); promotion
+requires a derivation (all three first-principles routes for g_c are
+closed-negative) — the look-elsewhere scans have been run (FTD-0097
+[MEASURED, 2026-04-27]; FTD-0319 adversarial scan, tolerance-conditioned
+per §11) and support selectivity without promoting the identification.
 
 ---
 
