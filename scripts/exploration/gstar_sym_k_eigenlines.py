@@ -332,6 +332,14 @@ def phi_is_real_forces_q_rational(k):
     This collapses Conjecture 16.5.2's "arbitrary Sym^a coefficient" freedom to the
     leading-period (Q-rational) case, reducing it to Theorem 17.5.
 
+    DATED NOTE (2026-07-02, FTD-0356, propagating FTD-0351): Theorem 17.5's
+    "(2,3) unique minimal-a" endpoint was RETRACTED on 2026-07-01 -- the
+    corrected constraint set is {a < b < 2a} UNION {b = 2a+1} and the true
+    minimal-a survivor is (1,3); see OT-2.7 (corrected) and
+    scripts/exploration/sym23_uniqueness_proof.py (repaired). The
+    reality-collapse lemma implemented here is sound and unaffected; only
+    the reduction's endpoint is superseded.
+
     Returns:
       List of sympy expressions (the monomial Phi-images), in sym_k_basis(k) order.
       Each is real; the list is Q-linearly independent.

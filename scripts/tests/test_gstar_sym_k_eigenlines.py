@@ -813,6 +813,18 @@ def test_leading_period_real_roots_admissibility():
 def test_H4_uniqueness_minimum_a_in_admissible_family():
     """Pre-registered hypothesis H4 (from preregister-sym-k-c-invariant-parity-v1 tag):
 
+    DATED NOTE (2026-07-02, FTD-0356, propagating FTD-0351): this test is
+    preserved as registration-time provenance of H4 *within its declared
+    family* (the "2a > b" admissibility below). That family definition
+    encoded the Case-A/Case-C analysis RETRACTED on 2026-07-01: the
+    "roots not scalar multiples" criterion actually excludes only b = 2a
+    (constant multiples), so the corrected constraint set is
+    {a < b < 2a} UNION {b = 2a+1}, and (1,3) survives all criteria
+    (the true minimal-a element). Within the {2a > b} family the
+    enumeration below stands as a computation; do NOT cite it as a
+    minimal-a uniqueness theorem. See OT-2.7 (corrected), LEDGER
+    FTD-0175/FTD-0180 dated notes, and sym23_uniqueness_proof.py (repaired).
+
     Among monic quadratics P_{(a,b)} = x^2 - 16*G*^a*x + 16*G*^b with a < b,
     a <= 5, b <= 6, the pair (a, b) = (2, 3) is uniquely picked out as the
     minimum-a admissible pair under Paper A Theorem 17.5 criteria:

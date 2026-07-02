@@ -12913,14 +12913,14 @@
       },
       {
         "id": "FTD-0175",
-        "short_name": "Sym²⊕Sym³ uniqueness theorem (Paper A §16.5): (a, b) = (2, 3) is the unique minimal-a exponent pair such that the leading-period polynomial x² - 16 G*^a x + 16 G*^b satisfies (i) integer prefactor 16, (ii) roots not scalar multiples of a single period G*^k, (iii) positive discriminant. Closes the (b) 'uniqueness argument' obstacle from Paper A §16.5 status remark. Proof: discriminant case analysis (2a > b: roots have distinct G*-powers, criterion ii PASSES; 2a = b: roots are (8±4√3)G*^a, FAILS; 2a < b: roots are 4G*^a(2±sqrt(4-G*^{b-2a})), FAILS) forces 2a > b, combined with a < b gives a < b < 2a, enumeration gives a=1 empty, a=2 unique b=3 minimal",
-        "tag_raw": "THEOREM (leading-period restriction); CONJECTURE (general Sym^a coefficients, residual)",
+        "short_name": "Sym²⊕Sym³ exponent constraint set (Paper A §16.5) — DEMOTED per FTD-0351 (node updated 2026-07-02, FTD-0356): the former \"(2,3) uniquely minimal-a\" uniqueness claim is RETRACTED (the Case-A/Case-C split was notationally vacuous; roots are identically 8G*^a ± 4√(4G*^{2a}−G*^b) in every case, and (1,3) survives all criteria — Δ(1,3) = 64G*²(4−G*) > 0, roots 35.746/11.593, the true minimal-a element). What stands: [THEOREM] constraint set {a<b<2a} ∪ {b=2a+1}; the (2,3) choice is [SELECTION], conditional on the Watson trace (a=2, FTD-0002/0006) and the Det=Tr·G* / W-CRIT-2 ansatz (FTD-0235)",
+        "tag_raw": "DEMOTED 2026-07-01 (FTD-0351): THEOREM (corrected constraint set) + SELECTION ((2,3) choice); minimal-a uniqueness RETRACTED (was: THEOREM (leading-period restriction); CONJECTURE (residual))",
         "tags": [
-          "THEOREM"
+          "SELECTION"
         ],
-        "primary_tag": "THEOREM",
-        "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-05-19 — Paper A §16.5 Theorem 16.5.1 (refined from prior Conjecture 16.5.1). Verified by scripts/exploration/sym23_uniqueness_proof.py enumerating (a,b) with a+b ≤ 12: 8 valid pairs total ({(2,3), (3,4), (3,5), (4,5), (4,6), (4,7), (5,6), (5,7)}), minimal-a is (2,3). Residual Conjecture 16.5.2 (full Sym^a, not just leading-period ω^a) remains open. Closes the load-bearing combinatorial step of the original conjecture; obstacles (a) period-algebra map formalism and (c) motivic-weight reconciliation remain as multi-month research targets.",
+        "primary_tag": "SELECTION",
+        "epistemic_color": "#fbc02d",
+        "description": "NEW 2026-05-19 — Paper A §16.5 Theorem 16.5.1 (refined from prior Conjecture 16.5.1). Verified by scripts/exploration/sym23_uniqueness_proof.py enumerating (a,b) with a+b ≤ 12: 8 valid pairs total ({(2,3), (3,4), (3,5), (4,5), (4,6), (4,7), (5,6), (5,7)}), minimal-a is (2,3). Residual Conjecture 16.5.2 (full Sym^a, not just leading-period ω^a) remains open. Closes the load-bearing combinatorial step of the original conjecture; obstacles (a) period-algebra map formalism and (c) motivic-weight reconciliation remain as multi-month research targets. [Dated note 2026-07-02, FTD-0356: this node was hand-corrected to the FTD-0351 demotion of record; regenerate via build_math_node_map.py against the annotated LEDGER row for the durable fix. sym23_uniqueness_proof.py was rewritten 2026-07-01 to the honest enumeration.]",
         "sector": "pure-math/master-quadratic",
         "primary_doc": null,
         "script_refs": [
