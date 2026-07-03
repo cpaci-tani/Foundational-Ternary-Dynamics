@@ -158,6 +158,16 @@ struct Voxel {
 
   // Flavor state for weak field interactions
   // 0 = none, 1 = e, 2 = mu, 3 = tau
+  //
+  // LOAD-BEARING despite looking dormant (revision 4.2 / 0.11 evidence —
+  // an audit claimed "never read"; that was false). Live consumers:
+  //   - GPU weak-field AUTO-ACTIVATION: gpu_engine.cu:746 gates the weak
+  //     substrate kernels on `flavor != 0` (refresh_weak_field_active_from_host)
+  //   - GPU SoA marshalling: gpu_buffers.cu uploads/downloads it
+  //   - VTK research export: vtk_export.cpp writes it as a particle scalar
+  // It is NOT in any golden-hash fold (golden-invisible) but IS
+  // GPU-behavior-relevant. Do not remove or repurpose without a weak-field
+  // activation redesign.
   int8_t flavor = 0;
 
   // Larmor radiation: acceleration magnitude from previous tick
