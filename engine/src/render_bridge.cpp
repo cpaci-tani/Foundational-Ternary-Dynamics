@@ -686,6 +686,19 @@ void RenderBridge::tick() {
   if (toggles.triad_binding)
     triad_binding_cpu();
 
+  // Rule 7b: non-Abelian gauge-link relaxation (revision 0.9 option a).
+  // [IMPOSED] Wilson-action staple relaxation imported from standard lattice
+  // gauge theory — one Jacobi sweep per tick over the SU(2)/SU(3) edge link
+  // variables. The links are WRITE-ONLY w.r.t. the substrate: nothing
+  // downstream consumes them (color_forces uses color labels, not links), so
+  // this phase cannot alter voxel state, energy audit, or any golden hash —
+  // enforced by test_gauge_links G1a. Buffers are lazily allocated inside the
+  // relax calls (revision 4.1b). Default OFF ⇒ golden-neutral.
+  if (toggles.su2_gauge)
+    relax_su2_links_cpu(*this, GAUGE_RELAX_DT, GAUGE_RELAX_BETA);
+  if (toggles.su3_gauge)
+    relax_su3_links_cpu(*this, GAUGE_RELAX_DT, GAUGE_RELAX_BETA);
+
   // Rule 8: Proper time accumulation (gravity sector).
   // F5 (callstack audit 2026-04-17): extracted to accumulate_proper_time().
   // FTD-0271 (A5): also run when the de Broglie clock is on (latency_field may

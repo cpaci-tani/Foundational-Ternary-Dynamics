@@ -448,7 +448,7 @@ three of six candidates turned out to be load-bearing.
 | Legacy WASM scenario branches (`bindings_render_bridge.cpp` "L52-114") | **ALREADY CLEAN** | Only 2 `name ==` occurrences remain in the file; the claimed legacy block no longer exists. No action. |
 | `Scale1LifecycleController` stub | **DEAD candidate (web)** | Sole reference is its own definition in `engine/web/js/scales/scale1/controller.js`; no test/spec/selector references found. Eligible for ticket 2.x safe-subset removal after a Playwright selector grep in the same commit. |
 | `cosmic-inspector-content` DOM block | **ALIVE** | Bound by `engine/web/js/inspector/dom-bindings.js`; the 2026-05-27 audit claim is stale. Do not remove. |
-| SU(2)/SU(3) gauge sector | **QUARANTINE + tripwire (see `test_gauge_links.cpp`)** | Defined-but-disconnected on both backends (zero call sites; toggles are no-ops); 528 B/site of never-touched link buffers (`render_bridge.cpp:77-82`) — lazy-allocation ticket 4.1b. Never delete: characterized + tripwired. |
+| SU(2)/SU(3) gauge sector | **ALIVE — WIRED (revision 0.9 option a, 2026-07-02)** | Superseded disposition (was QUARANTINE): the sector is wired into the tick on both backends behind `su2_gauge`/`su3_gauge` (CPU Rule 7b / GPU Phase 7b), Jacobi race fixed, link buffers lazy per ticket 4.1b (DONE). Gauge golden `GAUGE_GOLDEN_HASH=0xa4dec20d1dd94ec8` + write-only-substrate guarantee in `test_gauge_links.cpp`; CPU/GPU parity in `test_gauge_gpu_parity.cpp`. [IMPOSED] measurement infrastructure; links still have zero downstream consumers. |
 
 Golden-fold / flavor cross-check (required by ticket 0.11): the golden hash
 folds do NOT read `Voxel::flavor` — but GPU weak-field auto-activation does,
