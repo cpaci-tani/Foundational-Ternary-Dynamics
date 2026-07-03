@@ -1,3 +1,20 @@
+// =============================================================================
+// SUPERSEDED (2026-07-03, FTD-0364) — DO NOT USE FOR THE Λ SOURCE-GAP CHECK.
+// -----------------------------------------------------------------------------
+// This instrument is doubly disqualified for the FTD-0331 cosmological-constant
+// question:
+//   (1) WRONG PHYSICS: it integrates the ½·ℏω Brillouin-zone zero-point sum that
+//       FC-1 explicitly declines (DERIV_LAMBDA_SCALE_COVARIANT.md §1), and bakes
+//       in the retired α¹⁶·G*² numerology (see `suppression = pow(ALPHA,16)`
+//       below) that DERIV_LAMBDA_SCALE_COVARIANT.md supersedes.
+//   (2) WRONG ARCHITECTURE: it is a standalone k-space integral with no
+//       RenderBridge, no lattice state, and no box size L — it cannot perform an
+//       L-scan at all.
+// The Λ source-gap L-scan was scoped and found boundary-limited (not cleanly
+// measurable by the current engine): see FTD-0364 /
+// docs/theory/03_derivations/gravity_and_cosmology/ANALYSIS_LAMBDA_LSCAN_FEASIBILITY_v1.md.
+// Retained for provenance only; recommended for retirement from the build.
+// =============================================================================
 #include <iostream>
 #include <cmath>
 #include <iomanip>
