@@ -11,6 +11,7 @@
 #include "ftd/backend.h"
 #include "ftd/render_bridge.h"
 #include "ftd/render_bridge_phases.h"   // phase_forces_integrate_clusters (GPU cluster-inertia mirror)
+#include "ftd/eft/dual_cell_continuity.h"  // complete type for continuity_step (revision 3.1)
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
@@ -200,6 +201,35 @@ void GpuBackend::mark_gpu_dirty() {
     // Used by inject_*_cpu free functions after a GPU-side inject call.
     bridge_.gpu_dirty_ = true;
 }
+
+void GpuBackend::set_rng_seed(unsigned int seed) {
+    // Revision 3.1 (was an ifdef in RenderBridge::seed_rng): cuRAND picks the
+    // seed up on the next device tick.
+    if (engine_) engine_->set_rng_seed(seed);
+}
+
+bool GpuBackend::continuity_step(eft::DualCellContinuity& out) {
+    // Revision 3.1 (was an ifdef in RenderBridge::continuity_step).
+    if (!engine_) return false;
+    out = engine_->continuity_step();
+    return true;
+}
 #endif
+
+// ─── Default backend factory (revision 3.1) ────────────────────────────────
+// Owns the LAST backend-selection ifdef: GPU-default when CUDA is compiled in
+// (ARCH-2 policy), CPU otherwise. RenderBridge's constructor is now
+// ifdef-free apart from the gpu_engine.h include its defaulted destructor
+// needs for complete-type unique_ptr deletion.
+std::unique_ptr<Backend> make_default_backend(RenderBridge& bridge, int lattice_size) {
+#ifdef FTD_ENABLE_CUDA
+    bridge.gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
+    std::fprintf(stderr, "[RenderBridge] GPU backend active (CUDA, L=%d)\n", lattice_size);
+    return std::make_unique<GpuBackend>(bridge, bridge.gpu_.get());
+#else
+    (void)lattice_size;
+    return std::make_unique<CpuBackend>(bridge);
+#endif
+}
 
 }  // namespace ftd

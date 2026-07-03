@@ -49,6 +49,11 @@
 #include "ftd/parallel.h"
 
 #ifdef FTD_ENABLE_CUDA
+// The ONLY remaining CUDA conditional in this TU (revision 3.1): the
+// defaulted ~RenderBridge() destroys unique_ptr<gpu::GpuEngine> gpu_, which
+// requires the complete type here. Everything behavioral dispatches through
+// the Backend virtuals; the selection policy lives in backend.cpp
+// (make_default_backend).
 #include "ftd/gpu_engine.h"
 #endif
 
@@ -99,15 +104,11 @@ RenderBridge::RenderBridge(int lattice_size)
     kt_params.min_cluster_size = 1;
     knot_tracker_ = std::make_unique<KnotTracker>(kt_params);
     colored_sites_cache_.reserve(256);
-#ifdef FTD_ENABLE_CUDA
-    gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
-    // ARCH-2-M: backend_ is now the single source of truth for backend
-    // selection (the legacy `use_gpu_` flag was deleted).
-    backend_ = std::make_unique<GpuBackend>(*this, gpu_.get());
-    std::cerr << "[RenderBridge] GPU backend active (CUDA, L=" << lattice_size << ")\n";
-#else
-    backend_ = std::make_unique<CpuBackend>(*this);
-#endif
+    // ARCH-2-M: backend_ is the single source of truth for backend selection.
+    // Revision 3.1: the selection POLICY (GPU-default when CUDA is compiled
+    // in) moved to make_default_backend() in backend.cpp — the last
+    // backend-selection ifdef lives there, not here.
+    backend_ = make_default_backend(*this, lattice_size);
 }
 
 // Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
@@ -287,9 +288,8 @@ void RenderBridge::seed_rng(unsigned int seed) {
     rng_state_->seed(seed);
     langevin_seed_initialized_ = false;   // force thread_seeds_ rederive
     toggles.langevin_seed       = seed;   // GPU cuRAND picks this up next tick
-#ifdef FTD_ENABLE_CUDA
-    if (gpu_) gpu_->set_rng_seed(seed);
-#endif
+    // Revision 3.1: Backend virtual replaces the ifdef (CPU no-op).
+    if (backend_) backend_->set_rng_seed(seed);
 }
 
 void RenderBridge::set_dt(double dt) {
@@ -737,14 +737,13 @@ void RenderBridge::triad_binding_cpu()      { ::ftd::triad_binding_cpu(*this);  
 void RenderBridge::update_energy_ledger() { ::ftd::update_energy_ledger_cpu(*this); }
 
 eft::DualCellContinuity RenderBridge::continuity_step() const {
-  // ARCH-2-K (2026-04-25): const-method GPU branch routed through the
-  // public gpu_engine_ptr() accessor (returns nullptr when no GPU).
-#ifdef FTD_ENABLE_CUDA
-  if (auto* gpu = const_cast<RenderBridge*>(this)->gpu_engine_ptr()) {
-    return gpu->continuity_step();
-  }
-#endif
-  return eft::DualCellContinuity(lattice_.size());
+  // Revision 3.1 (was ARCH-2-K's ifdef): Backend virtual dispatch. The
+  // GpuBackend override fills `out` from the device; CPU backends return
+  // false and the host default is used. Semantics-preserving under
+  // force_cpu(): gpu_engine_ptr() already gated on the ACTIVE backend.
+  eft::DualCellContinuity out(lattice_.size());
+  const_cast<RenderBridge*>(this)->backend_->continuity_step(out);
+  return out;
 }
 
 void RenderBridge::run(int num_ticks) {
