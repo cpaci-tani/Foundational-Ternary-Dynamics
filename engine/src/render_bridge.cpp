@@ -295,7 +295,11 @@ void RenderBridge::seed_rng(unsigned int seed) {
 }
 
 void RenderBridge::set_dt(double dt) {
-    dt_ = (toggles.symplectic_leapfrog || dt >= 1.0) ? dt : 1.0;
+    // E1 (FTD-0337): the Verlet wave integrator honors dt < 1 exactly like
+    // the symplectic-leapfrog path (the FTD-0337 recon showed the default
+    // non-symplectic leapfrog silently clamps dt to 1 — the "dt-invariance"
+    // artifact). Both toggles default OFF ⇒ default behavior unchanged.
+    dt_ = (toggles.symplectic_leapfrog || toggles.verlet_wave_integrator || dt >= 1.0) ? dt : 1.0;
     // ARCH-2: backend dispatch replaces the explicit ifdef. CpuBackend is a
     // no-op (RenderBridge::dt_ is the source of truth); GpuBackend forwards
     // to GpuEngine.
@@ -626,6 +630,34 @@ void RenderBridge::tick() {
 
   // Rule 2: Commit flux, damping, manifestation/evaporation
   phase_write();
+
+  // Rule 2a (E1, FTD-0333 §5.1 / FTD-0337): velocity-Verlet (KDK) completion.
+  // phase_write applied half-kick + drift; here we recompute the acceleration
+  // at the post-drift field (phase_read is deterministic and only writes the
+  // delta_j buffers) and apply the second half-kick to wave_vel. The wave
+  // sub-integrator is thereby KDK-complete BEFORE the Gauss projection — the
+  // projection remains a separate constraint map applied between wave steps
+  // (operator splitting; same interleaving as the legacy leapfrog). Genesis
+  // state changes from phase_write are visible to the re-read via set_state's
+  // synchronous ternary update, so the coupling source g_c·∇s is current.
+  // Default OFF ⇒ dead branch ⇒ golden hash 0xb604d81a3d79366e untouched.
+  if (toggles.verlet_wave_integrator) {
+    phase_read();
+    const int Nv = static_cast<int>(lattice_.total_sites());
+    const double half_dt = 0.5 * dt_;
+    if (toggles.dual_substrate) {
+      for (int i = 0; i < Nv; ++i) {
+        Voxel& v = voxels_[i];
+        v.wave_vel_L += delta_j_L_[i] * half_dt;
+        v.wave_vel_R += delta_j_R_[i] * half_dt;
+        v.wave_vel = v.wave_vel_L + v.wave_vel_R;
+      }
+    } else {
+      for (int i = 0; i < Nv; ++i) {
+        voxels_[i].wave_vel += delta_j_[i] * half_dt;
+      }
+    }
+  }
 
   // Rule 2b: Pair production (correlated ±1 pairs from high-flux void).
   // F2 (callstack audit 2026-04-17): matching GPU path order. No-op on
