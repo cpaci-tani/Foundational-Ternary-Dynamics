@@ -21,6 +21,19 @@
 namespace ftd {
 
 // ============================================================================
+// Engine version — SINGLE SOURCE OF TRUTH (revision 6.1).
+// Was prose-only in SPEC_ENGINE.md ("2.18.0") while CMake said
+// project(... VERSION 1.0) and nothing was exposed at runtime. This constant
+// is now the canonical value; CMake mirrors it, SPEC cites it, ftd_sim
+// --version and the WASM getEngineVersion() binding return it.
+// Bump here on every release; keep CMakeLists project(VERSION ...) in sync.
+// ============================================================================
+inline constexpr int         ENGINE_VERSION_MAJOR = 2;
+inline constexpr int         ENGINE_VERSION_MINOR = 18;
+inline constexpr int         ENGINE_VERSION_PATCH = 0;
+inline constexpr const char* ENGINE_VERSION       = "2.18.0";
+
+// ============================================================================
 // Re-export ontic constants into ftd:: namespace for engine use
 // ============================================================================
 
