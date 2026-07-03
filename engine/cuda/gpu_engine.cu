@@ -746,9 +746,27 @@ eft::DualCellContinuity GpuEngine::continuity_step() const {
 }
 
 void GpuEngine::upload_from_host(const std::vector<Voxel>& voxels) {
+    // C5 (CUDA ticket): host_voxels_ currently mirrors the device SoA — it was
+    // populated by the last ensure_host_synced()/sync_to_host() download, and
+    // nothing mutates the device between that download and this call (this is
+    // invoked at tick start via GpuBackend::flush_host_mutations, or from the
+    // post-sync cluster-inertia push). So we diff the incoming host array
+    // against host_voxels_ and upload ONLY the changed voxels — byte-identical
+    // to the previous full push_to_device() because the device already holds
+    // the correct bytes at every unchanged index. A single-voxel edit uploads
+    // ~325 B instead of the whole ~40-array voxel image (85 MB at L=64).
+    //
+    // Cold start (host_voxels_ empty) falls back to a full upload inside
+    // upload_voxels_delta. phi/phi_coulomb are intentionally NOT re-uploaded
+    // here (unlike the old push_to_device()): they are device-authoritative and
+    // already equal host_phi_/host_phi_coulomb_ from the last sync, so skipping
+    // them is byte-identical AND keeps the single-voxel path off the two N-sized
+    // potential arrays (2×2 MB at L=64) that would otherwise blow the <<1 MB
+    // budget.
+    bufs_.upload_voxels_delta(voxels, host_voxels_);
     host_voxels_ = voxels;
     refresh_weak_field_active_from_host();
-    push_to_device();
+    host_dirty_ = false;   // device now equals host_voxels_
     continuity_ledger_valid_ = false;
 }
 
