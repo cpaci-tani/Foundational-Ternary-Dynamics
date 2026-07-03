@@ -77,8 +77,8 @@ struct TermToggles {
                                     // is honored (see set_dt). CPU path only; conflicts with
                                     // symplectic_leapfrog (both own the wave update). Default OFF ⇒
                                     // dead branch ⇒ golden hash 0xb604d81a3d79366e untouched.
-    bool su2_gauge = false;         // Scale 0: SU(2) non-Abelian link variables
-    bool su3_gauge = false;         // Scale 0: SU(3) non-Abelian link variables
+    bool su2_gauge = false;         // Scale 0: SU(2) non-Abelian link variables (dormant — read by nothing; see TOGGLE_SPECS row)
+    bool su3_gauge = false;         // Scale 0: SU(3) non-Abelian link variables (dormant — read by nothing; see TOGGLE_SPECS row)
     bool symmetric_movement_order = false; // phase_movement: coordinate-independent update traversal & axis ordering
     bool absorbing_boundary = false; // tick: graduated sponge layer — outgoing waves disperse into the void at lattice faces (no reflect/wrap)
     bool reflective_boundary = false; // phase_movement: mirror-bounce at faces when on; particles exhaust into the void when off (no periodic wrap)
@@ -210,8 +210,8 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", "", ToggleBackend::ANY, "Stochastic OU thermostat (CPU only at runtime)"},
     {"symplectic_leapfrog", &TermToggles::symplectic_leapfrog, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Symplectic leapfrog wave integration"},
     {"verlet_wave_integrator", &TermToggles::verlet_wave_integrator, false, false, "wave_propagation", "symplectic_leapfrog", "", ToggleBackend::CPU, "[E1/FTD-0337] Velocity-Verlet (KDK) bare-wave integrator: half-kick + drift in phase_write, second half-kick after a post-drift phase_read. CPU-only; honors dt<1. Default OFF => golden-neutral"},
-    {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) non-Abelian link variables"},
-    {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) non-Abelian link variables"},
+    {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) non-Abelian link variables (not wired into tick yet — relax_su2_links_cpu / launch_relax_su2_links have zero call sites, so setting this is a no-op; pinned by test_gauge_links G1 tripwire)"},
+    {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) non-Abelian link variables (not wired into tick yet — relax_su3_links_cpu / launch_relax_su3_links have zero call sites, so setting this is a no-op; pinned by test_gauge_links G1 tripwire)"},
     {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 "", ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering"},
     {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Sponge boundary: outgoing waves disperse into the void at lattice faces"},
     {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 "", ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
