@@ -514,3 +514,25 @@ fail for one shared root cause, now pinned:
   expectation predates a physics recalibration; bisect against the AE force
   history before proposing options), `particle_lifetime` (re-baseline after
   the gauge wiring + concurrent-session churn settles).
+
+---
+
+## Pinned golden-profile inventory (revision 6.2 — single lookup table)
+
+All bit-exact gates, ADR-0012 multi-profile policy (each constant re-baselines
+independently, never to make a refactor pass). Harness fold:
+`engine/tests/support/golden_hash.h`.
+
+| Profile | Pinned hash | Test (CTest name) | Platform | Fold |
+|---|---|---|---|---|
+| Minimal (Logic6-like, L=17) | `0xb604d81a3d79366e` | `render_bridge_golden` | MSVC `/fp:precise` ≡ WSL2-gcc `-ffp-contract=off` | original |
+| Shipping defaults (L=17) | `0x115a6350fcbe39a0` | `render_bridge_golden_default` | MSVC ≡ WSL2-gcc | extended (+L/R, latency) |
+| L=9 defaults | `0x774ae2ef158a50d6` | `render_bridge_golden_l9` | MSVC | extended |
+| Boundary: flux Reflective | `0xbe736c3006d4fed0` | `boundary_modes_golden` | MSVC | extended |
+| Boundary: flux Dispersal | `0x9778edf520396c54` | `boundary_modes_golden` | MSVC | extended |
+| Boundary: absorbing sponge | `0x208c18ce2f75082c` | `boundary_modes_golden` | MSVC | extended |
+| Boundary: movement bounce (genesis/evap off + crosser) | `0x285566e618111ead` | `boundary_modes_golden` | MSVC | extended |
+| GPU backend (L=17 defaults) | `0xd6c0f7007f5a4f24` | `gpu_golden` | WSL2 RTX 5090 (canonical; informational on Win-CUDA) | extended |
+| Gauge links (su2+su3 ON, perturbed start) | `0xa4dec20d1dd94ec8` | `gauge_links` G1b | MSVC ≡ WSL2-gcc | links-only (`hash_all_links`) |
+
+Fast gate: `ctest -L merge_gate -j 32 -C Release` (see `engine/docs/CI_GATE.md`).
