@@ -33,6 +33,7 @@ import { debugLog } from '../core/log.js';
 import { createParticleEngine } from './mock-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
+import { samplerOr } from './bridge-contract.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
@@ -733,6 +734,8 @@ export class WasmBridge {
         return _wasmCallOr(this, 'getGaussResidualSampled', EMPTY_SCALAR_SAMPLE,
             (m, b) => m.getGaussResidualSampled(b, stride));
     }
+    /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
+    getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
 
     // Force-field decomposition samplers (2026-04-19). Delegated to native
     // C++ implementations in ftd_wasm.cpp (see get_gravity_field_sampled,
