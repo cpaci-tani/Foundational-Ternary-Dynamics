@@ -31,7 +31,7 @@ namespace cli_demos {
 
 void print_header() {
     std::cout << "================================================================\n";
-    std::cout << "  FTD RENDER-BRIDGE ENGINE\n";
+    std::cout << "  FTD RENDER-BRIDGE ENGINE  v" << ftd::ENGINE_VERSION << "\n";
     std::cout << "  G* = " << std::setprecision(10) << ftd::G_STAR
               << "  alpha^-1 = " << ftd::X_PLUS << "\n";
     std::cout << "================================================================\n\n";

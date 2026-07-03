@@ -24,11 +24,18 @@
 #include <cstdlib>
 
 #include "ftd/cli_demos.h"
+#include "ftd/constants.h"   // ENGINE_VERSION (revision 6.1)
 
 int main(int argc, char* argv[]) {
     char scenario = 'D';
     int lattice_size = 32;
     int num_ticks = 2000;
+
+    // --version: print the single-sourced engine version and exit (revision 6.1).
+    if (argc > 1 && (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")) {
+        std::cout << "ftd_sim " << ftd::ENGINE_VERSION << "\n";
+        return 0;
+    }
 
     if (argc > 1) {
         char c = argv[1][0];

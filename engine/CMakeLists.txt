@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
-project(ftd_engine VERSION 1.0 LANGUAGES CXX)
+# VERSION mirrors ftd::ENGINE_VERSION in include/ftd/constants.h (revision 6.1
+# single-sourcing — keep in sync on release bumps).
+project(ftd_engine VERSION 2.18.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
