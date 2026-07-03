@@ -1,39 +1,53 @@
 # The Compton Volume Duality Theorem: Resolving the Dimension Inversion Paradox in FTD
 
-**Status:** `[DERIVED — conditional; retagged 2026-07-02, FTD-0360]` *(was: [THEOREM])* — the §3 algebra is exact and the paradox-dissolution is sound, but two premises are imported/conditional (see the dated correction below).
-
-> **DATED CORRECTION (2026-07-02, per the FTD-0360 finalization batch, adjudicating the
-> two monograph rows flagged by the FTD-0356 cluster review).** This document was verified
-> on its merits like its retracted siblings, and — unlike them — its mathematics **checks
-> out**: the §3 chain is an exact substitution identity ($\lambda_C = 3a^3/(4\pi K_B R^3)$
-> given the three premises; re-verified symbolically under FTD-0360), the screening-length
-> reading of the massive propagator is standard ($(-\nabla^2 + m^2)\,e^{-mr}/4\pi r = 0$
-> away from the origin, screening length $1/m$), and the central clarification is **sound
-> and confirmed**: $R$ (a real-space cluster extent, $\propto m^{1/3}$) and $\lambda_C$
-> (a spectral screening scale, $\propto m^{-1}$) are different *kinds* of scale, so the
-> "Dimension Inversion Paradox" was a category error, not a contradiction.
->
-> The former bare `[THEOREM]` tag nevertheless overreached on three counts:
->
-> 1. **§2.2's KG envelope is imported, not a substrate theorem.** $(\Box_L + m^2)\psi = 0$
->    tagged [THEOREM] is standard QM conditional on the imposed rest-mass clock — the same
->    defect class the FTD-0356 review corrected in §§5.1–5.2 of the citing monograph
->    (FTD-0271/FTD-0270; the engine-measured dispersion moreover differs from KG,
->    FTD-0270).
-> 2. **The mass-parameter identification is assumed.** Equating the envelope's spectral
->    mass with the extensive cluster mass $m = K_B N$ rests on FTD-0110
->    [DERIVED at linear level] / FTD-0273; for composite clusters the reduction of
->    cluster inertia to voxel count is [IMPOSED]/[OPEN] (FTD-0250). The document assumes
->    the identification without argument.
-> 3. **"Fourier dual of its ontic volume" oversells.** $\lambda_C$ is the reciprocal of
->    the *mass*; $R^3$ enters only through the extensive-mass premise. The "duality" is a
->    substitution identity, not new structure.
->
-> Cite as: an exact algebraic scaling identity plus a sound dissolution of a
-> pseudo-paradox, **conditional on** the imported KG dispersion and the extensive-mass
-> identification. Zero promotions elsewhere.
-
+**Status:** `[PARAMETRIC — imported KG screening relation, conditional on two [IMPOSED] inputs; demoted 2026-07-02, FTD-0361]` *(was: `[THEOREM]`)*  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
+
+> **DATED CORRECTION (2026-07-02, FTD-0361 cluster review — the follow-up pass FTD-0356
+> left queued for this document).** The §3 algebra **checks out** and is recorded as
+> sound: `λ_C = 1/(K_B·N)` with `N = 4πR³/3a³` gives exactly `λ_C = 3a³/(4πK_B R³)`
+> (re-verified symbolically under FTD-0361). But the former `[THEOREM]` tag overreaches:
+> both load-bearing inputs are imposed or imported, not substrate-derived, and the
+> derivation itself is a two-line substitution between them.
+>
+> 1. **The massive envelope equation `(□_L + m²)ψ = 0` (§2.2) is not FTD-native.** Its
+>    `[THEOREM]` tag below is wrong by the same standard FTD-0356 applied to the
+>    monograph's §5.1: the native flux dynamics has no restoring term (native flux is
+>    massless); the rest-mass term `ω₀ ∝ M_REST` is `[IMPOSED]` (FTD-0271, A0 gate).
+>    The propagator-pole relation `λ_C = 1/m` is imported standard Klein–Gordon
+>    screening — correct mathematics, borrowed mechanism.
+> 2. **The identification pole-mass = `K_B·N` is asserted, not derived.** That the
+>    imposed envelope equation for a cluster of `N` voxels carries spectral mass
+>    parameter exactly equal to the extensive count `K_B·N` is precisely the
+>    cluster-mass ↔ dynamical-mass bridge the LEDGER holds open: cluster inertia is
+>    `[IMPOSED]` (FTD-0250, engine model; collective-coordinate reduction `[OPEN]`),
+>    and FTD-0273's verdict is `[MEASURED — BOUNDARY]` (flux energy collapses to voxel
+>    count N), not a derivation of the spectral identification. §3 step 3 substitutes
+>    the one into the other by fiat — and that substitution is the entire "theorem."
+>    (Note also `K_B`'s role-conflation, FTD-0130: mass anchor vs manifestation
+>    threshold.)
+> 3. **Per the CLAUDE.md discipline this is the definition of a parametric insertion:**
+>    a standard physics formula (Compton wavelength from the KG propagator pole) filled
+>    with FTD's numbers (`m = K_B·N`). The conceptual point survives at `[SELECTION]`
+>    grade — `λ_C` is a screening/propagation scale, not a matter radius, so
+>    `R ∝ m^{1/3}` vs `λ_C ∝ 1/m` was never a geometric contradiction (the same
+>    dissolution is textbook for nuclei: charge radius `∝ A^{1/3}`, Compton wavelength
+>    `∝ 1/A`) — but a dissolved pseudo-paradox is not a duality *theorem*, and "Fourier
+>    dual of the ontic volume" oversells a substitution. (For the canonical elementary
+>    case the relation is also nearly contentless: per FTD-0273 the electron is a
+>    single-voxel cluster, `N = 1`.)
+>
+> Cite this document as a conditional parametric relation within the imposed
+> cluster-mass model, not as a substrate theorem. Contrast the sibling reviewed in the
+> same pass: `archive/retracted/DERIV_RADIAL_METRIC_RESOLUTION_RETRACTED.md` is invalid
+> outright (its conclusion contradicts its premise); this document's algebra is right
+> and only its epistemic grade was oversold.
+>
+> *(Provenance: an independent same-day pass, the FTD-0360 finalization batch, verified
+> the same algebra and interim-retagged this document `[DERIVED — conditional]`; the
+> FTD-0361 demotion above is the adjudication of record — the review pass dedicated to
+> this cluster, and the lower tag, per ambiguity-defaults-down. Reconciled at the
+> 2026-07-03 merge.)*
 
 ---
 
@@ -63,7 +77,7 @@ The physical spatial volume occupied by the cluster is:
 $$V_K = N a^3 = \frac{4}{3}\pi R^3 \implies N = \frac{4\pi R^3}{3 a^3}$$
 where $a$ is the lattice spacing.
 
-### 2.2 The Wave Equation Spectral Pole [THEOREM]
+### 2.2 The Wave Equation Spectral Pole [IMPOSED + imported — retagged 2026-07-02, FTD-0361; was [THEOREM]]
 The continuous wave function $\psi(\mathbf{x}, t)$ emerges as the long-wavelength envelope of the vector flux field $\mathbf{J}(\mathbf{v}, t)$. The effective field equations governing the propagation of the wave envelope are:
 $$\left( \Box_L + m^2 \right) \psi = 0$$
 The characteristic screening length and spatial footprint of the propagating wave envelope are determined by the primary pole of the massive green's function $G_m(\mathbf{r})$ in the spectral representation:
@@ -73,7 +87,7 @@ $$\lambda_C \equiv \frac{1}{\|\mathbf{k}\|_{\text{pole}}} = \frac{1}{m}$$
 
 ---
 
-## 3. Proof of the Compton Volume Duality Theorem [THEOREM]
+## 3. Proof of the Compton Volume Duality Theorem [CONDITIONAL — algebra sound, both inputs [IMPOSED]; retagged 2026-07-02, FTD-0361; was [THEOREM]]
 
 **Theorem 1.** *The emergent continuous Compton wavelength $\lambda_C$ is inversely proportional to the ontic volume of the discrete voxel cluster $R^3$, satisfying the exact geometric duality:*
 $$\lambda_C = \frac{3 a^3}{4\pi K_B R^3}$$
