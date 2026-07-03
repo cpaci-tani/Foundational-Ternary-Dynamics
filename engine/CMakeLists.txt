@@ -136,10 +136,12 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # ftd_cognition — sidecar ternary memory/retrieval substrate for LLM/agent
 # workflows. Deliberately independent of ftd_core / RenderBridge / Voxel.
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_library(ftd_cognition STATIC
     src/cognition/cognitive_lattice.cpp
 )
 target_include_directories(ftd_cognition PUBLIC ${CMAKE_SOURCE_DIR}/include)
+endif()  # FTD_BUILD_EXPERIMENTAL (ftd_cognition)
 
 # ftd_eft — leaf library for EFT objects shared between ftd_core and ftd_cuda.
 # Solves a static-archive link-order issue (2026-05-03): gpu_engine.cu
@@ -157,7 +159,7 @@ target_include_directories(ftd_eft PUBLIC ${CMAKE_SOURCE_DIR}/include)
 # Core library
 add_library(ftd_core
     src/render_bridge.cpp
-    src/dag_engine.cpp
+    # src/dag_engine.cpp is quarantined — added below under FTD_BUILD_EXPERIMENTAL (ADR-0016)
     src/lagrangian.cpp
     src/particle_engine.cpp
     src/atom_engine.cpp
@@ -221,10 +223,26 @@ add_library(ftd_core
 # (golden gates verified). FTD_ENABLE_PCH=OFF is the instant opt-out; the
 # Emscripten guard keeps the three WASM build trees untouched.
 option(FTD_ENABLE_PCH "Use precompiled headers for ftd_core (compile-speed only)" ON)
+
+# Experimental-module quarantine (revision 3.7, ADR-0016): DagEngine (sparse
+# octree prototype, deprecated ticket W6), the cognition sidecar, and the
+# discrete-universe CUDA prototype are kept — never deleted (provenance
+# convention) — but their build membership is now an EXPLICIT boundary.
+# Default ON = zero change to any existing build; OFF produces a lean core
+# with the experimental targets absent. A source-lint (cmake/FtdSourceLint.cmake)
+# guards that no production TU includes the quarantined headers.
+option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" ON)
 if(FTD_ENABLE_PCH AND NOT EMSCRIPTEN)
     target_precompile_headers(ftd_core PRIVATE
         include/ftd/render_bridge.h
         <vector> <cmath> <cstdint> <algorithm> <memory> <string>)
+endif()
+
+# ADR-0016: DagEngine is compiled into ftd_core only when the experimental
+# boundary is open (its WASM binding was removed in the 2026 consolidation
+# sweep; the only consumer is test_dag_engine, gated below).
+if(FTD_BUILD_EXPERIMENTAL)
+    target_sources(ftd_core PRIVATE src/dag_engine.cpp)
 endif()
 
 target_include_directories(ftd_core PUBLIC
@@ -332,6 +350,7 @@ ftd_add_test(test_field_soa tests/test_field_soa.cpp
 # conscious decision and the Phase-4.1 side-buffer extraction has a baseline.
 ftd_add_test(test_voxel_layout tests/test_voxel_layout.cpp
              CTEST_NAME voxel_layout TIMEOUT 60 LABELS unit foundation)
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
 target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_cognitive_lattice PRIVATE ftd_cognition)
@@ -339,6 +358,7 @@ add_test(NAME cognitive_lattice COMMAND test_cognitive_lattice)
 set_tests_properties(cognitive_lattice PROPERTIES TIMEOUT 120)
 set_property(TEST cognitive_lattice APPEND PROPERTY LABELS unit cognition)
 set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS cognitive_lattice)
+endif()  # FTD_BUILD_EXPERIMENTAL (cognitive test)
 # Conservation profile: pins the engine's REAL energy-conservation physics
 # (bare-leapfrog well-posedness, gauss-projection runaway, iteration-independent
 # gauss_violation floor). Documentation-of-reality, not a quality gate.
@@ -602,8 +622,10 @@ add_executable(test_lagrangian tests/test_lagrangian.cpp)
 target_link_libraries(test_lagrangian ftd_core)
 
 # DAG Engine Phase 3
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(test_dag_engine tests/test_dag_engine.cpp)
 target_link_libraries(test_dag_engine ftd_core)
+endif()
 
 # Ontic physics
 add_executable(test_ontic_chain tests/test_ontic_chain.cpp)
@@ -1084,6 +1106,7 @@ if(FTD_ENABLE_CUDA)
                          PROPERTIES TIMEOUT 120 LABELS "gpu;benchmark")
 
     # Standalone hyper-optimized GPU Discrete Universe simulation engine prototype
+    if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
     add_executable(experimental_discrete_universe cuda/experimental_discrete_universe.cu)
     target_link_libraries(experimental_discrete_universe ftd_core ftd_cuda)
     target_compile_options(experimental_discrete_universe PRIVATE
@@ -1100,6 +1123,7 @@ if(FTD_ENABLE_CUDA)
                           CUDA_RESOLVE_DEVICE_SYMBOLS ON
                           COMPILE_PDB_NAME ""
                           COMPILE_PDB_OUTPUT_DIRECTORY "")
+    endif()  # FTD_BUILD_EXPERIMENTAL (discrete-universe prototype)
 endif()
 
 # ============================================================================
@@ -1830,6 +1854,7 @@ ftd_add_test(benchmark_field_soa_cpu
              tests/benchmark_field_soa_cpu.cpp
              CTEST_NAME benchmark_field_soa_cpu TIMEOUT 600
              LABELS benchmark)
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(benchmark_cognitive_lattice tests/benchmark_cognitive_lattice.cpp)
 target_include_directories(benchmark_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(benchmark_cognitive_lattice PRIVATE ftd_cognition)
@@ -1837,6 +1862,7 @@ add_test(NAME benchmark_cognitive_lattice COMMAND benchmark_cognitive_lattice)
 set_tests_properties(benchmark_cognitive_lattice PROPERTIES TIMEOUT 600)
 set_property(TEST benchmark_cognitive_lattice APPEND PROPERTY LABELS benchmark cognition)
 set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS benchmark_cognitive_lattice)
+endif()  # FTD_BUILD_EXPERIMENTAL (cognitive benchmark)
 ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
              CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
 if(FTD_ENABLE_CUDA)
@@ -2098,7 +2124,9 @@ add_test(NAME boundary_movement COMMAND test_boundary_movement)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016
 add_test(NAME dag_engine COMMAND test_dag_engine)
+endif()
 add_test(NAME ontic_chain COMMAND test_ontic_chain)
 add_test(NAME dual_substrate COMMAND test_dual_substrate)
 add_test(NAME genesis COMMAND test_genesis)
