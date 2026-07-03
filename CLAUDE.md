@@ -109,7 +109,7 @@ A discrete computational framework for simulating physical systems from explicit
 - Confinement from area-law Wilson loops at x₋ (σ = 0.209)
 - Bell correlations: S = 2√2 (Tsirelson) is **imported standard QM conditional on the [SELECTION] singlet** (the J→ψ complexification is not forced by the lattice axioms) — "FTD does not violate Bell; FTD produces the singlet, QM handles the rest" (`DERIV_SINGLET_FROM_VOID_EVENT.md`); the substrate itself is local/classical, S ≤ 2 natively (a native S > 2 is an FC-1 **falsifier**, not a prediction)
 - Full nonlinear Einstein equations via Deser iterative bootstrap — **[Step-0 correction, FTD-0189]** the bootstrap *completes* a posited massless spin-2 field, it does not derive one; its linearized-EFE input is conditional on Conjecture 10.1 (h_μν posited, not substrate-constructed; spin-2 spatial part is Gap 10.1). Whether the substrate carries an emergent spin-2 mode is [OPEN] — Frontier 4
-- D = 3 uniquely selected (no longer axiomatic)
+- D = 3: **[SELECTION — declared]**, not forced (FTD-0355 permanent verdict; the earlier "uniquely selected / no longer axiomatic" forcing claim was demoted — bounded search, circularity named)
 - Cyclotomic structure: Hamiltonian parameters are Phi_4, Phi_1·Phi_2, Phi_6 evaluated at sqrt(pi)
 - The Ratio and the Arrow: Euler reflection product (commutative, gives pi, time-symmetric) vs ratio (non-commutative, gives G*, time-asymmetric)
 - 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py` — **clarified 2026-07-01**: this verifies that ~20 [PARAMETRIC]/[SELECTION] integer-ratio insertions reproduce the values they were fit to, i.e. an internal-consistency check across the catalog, not 50 independently-confirmed predictions
