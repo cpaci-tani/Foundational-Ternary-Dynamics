@@ -26,6 +26,7 @@
 #include <cmath>
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace ftd {
 
@@ -50,37 +51,89 @@ struct AtomToggles {
     bool thermostat = false;
     bool electronegativity = false;
 
-    // Validates known dependency constraints between toggles.
-    // Returns true if the combination is valid.
-    // If err != nullptr, appends a human-readable description of each violation.
-    bool validate(std::string* err = nullptr) const {
-        std::string msg;
-        if (angle_strain && !covalent_bonds)
-            msg += "angle_strain requires covalent_bonds (needs bond geometry)\n";
-        if (torsional && !covalent_bonds)
-            msg += "torsional requires covalent_bonds (needs dihedral chain)\n";
-        if (improper_torsional && !covalent_bonds)
-            msg += "improper_torsional requires covalent_bonds (needs bond topology)\n";
-        if (thermostat && !damping)
-            msg += "thermostat requires damping (Berendsen rescaling applies velocity damping)\n";
-        if (dipole_dipole && !electronegativity)
-            msg += "dipole_dipole requires electronegativity (dipole moments computed from chi)\n";
-        if (err) *err = msg;
-        return msg.empty();
-    }
-
-    void enable_all() {
-        ionic = van_der_waals = covalent_bonds = auto_bonding = damping = true;
-        h_bonds = dipole_dipole = angle_strain = torsional = improper_torsional = true;
-        thermostat = electronegativity = true;
-    }
-    void minimal() {
-        ionic = van_der_waals = covalent_bonds = auto_bonding = true;
-        damping = false;
-        h_bonds = dipole_dipole = angle_strain = torsional = improper_torsional = false;
-        thermostat = electronegativity = false;
-    }
+    // ── Table-managed helpers (ADR-0013; bodies below ATOM_TOGGLE_SPECS) ──
+    // Adding a toggle is a 2-place edit: the field above + one table row. The
+    // struct fields are preserved verbatim so every direct consumer compiles.
+    bool validate(std::string* err = nullptr) const; // false + message on violation
+    void enable_all();                               // every toggle ON
+    void minimal();                                  // recommended-default profile
+    bool get_toggle(std::string_view name) const;    // false if unknown
+    bool set_toggle(std::string_view name, bool value); // false if unknown
 };
+
+// ─────────────────────────────────────────────────────────────────────
+// AtomToggleSpec — one row per boolean toggle (ADR-0013 pattern, ported
+// from term_toggles.h). The helpers above iterate this table.
+//   default_value — constructor default (copied verbatim from the fields)
+//   minimal_value — value applied by minimal() (== default for every Atom row)
+//   requires_     — single dependency name that must also be ON (empty = none).
+//                   Every Atom dependency is a single AND-dependency, so it maps
+//                   cleanly here; validate() needs no hand-rolled pass. The
+//                   generated message is "X requires Y" (the legacy parenthetical
+//                   reasons are kept as row comments); no caller or test pins the
+//                   wording, and the pass/fail verdict is identical.
+// ─────────────────────────────────────────────────────────────────────
+struct AtomToggleSpec {
+    const char* name;
+    bool AtomToggles::* field;
+    bool default_value;
+    bool minimal_value;
+    const char* requires_;
+    const char* description;
+};
+
+inline constexpr AtomToggleSpec ATOM_TOGGLE_SPECS[] = {
+    // {name, field, default, minimal, requires_, description}
+    {"ionic",              &AtomToggles::ionic,              true,  true,  "",                  "Ionic Coulomb force"},
+    {"van_der_waals",      &AtomToggles::van_der_waals,      true,  true,  "",                  "Van der Waals (Lennard-Jones 12-6)"},
+    {"covalent_bonds",     &AtomToggles::covalent_bonds,     true,  true,  "",                  "Harmonic covalent bond force"},
+    {"auto_bonding",       &AtomToggles::auto_bonding,       true,  true,  "",                  "Auto-detect bond formation/breaking"},
+    {"damping",            &AtomToggles::damping,            false, false, "",                  "Velocity damping (off for energy conservation)"},
+    {"h_bonds",            &AtomToggles::h_bonds,            false, false, "",                  "Hydrogen bonds (10-12 potential)"},
+    {"dipole_dipole",      &AtomToggles::dipole_dipole,      false, false, "electronegativity", "Dipole-dipole force (needs chi-derived dipole moments)"},
+    {"angle_strain",       &AtomToggles::angle_strain,       false, false, "covalent_bonds",    "Angle strain (needs bond geometry)"},
+    {"torsional",          &AtomToggles::torsional,          false, false, "covalent_bonds",    "Torsional/dihedral force (needs dihedral chain)"},
+    {"improper_torsional", &AtomToggles::improper_torsional, false, false, "covalent_bonds",    "Improper torsional force (needs bond topology)"},
+    {"thermostat",         &AtomToggles::thermostat,         false, false, "damping",           "Berendsen thermostat (applies velocity damping)"},
+    {"electronegativity",  &AtomToggles::electronegativity,  false, false, "",                  "Electronegativity/QEq charge transfer"},
+};
+static_assert(sizeof(ATOM_TOGGLE_SPECS) / sizeof(ATOM_TOGGLE_SPECS[0]) == 12,
+              "AtomToggles has 12 boolean toggles — update the table and this pin together");
+
+inline bool AtomToggles::get_toggle(std::string_view name) const {
+    for (const auto& s : ATOM_TOGGLE_SPECS)
+        if (name == s.name) return this->*(s.field);
+    return false;
+}
+inline bool AtomToggles::set_toggle(std::string_view name, bool value) {
+    for (const auto& s : ATOM_TOGGLE_SPECS)
+        if (name == s.name) { this->*(s.field) = value; return true; }
+    return false;
+}
+inline void AtomToggles::enable_all() {
+    for (const auto& s : ATOM_TOGGLE_SPECS) this->*(s.field) = true;
+}
+inline void AtomToggles::minimal() {
+    for (const auto& s : ATOM_TOGGLE_SPECS) this->*(s.field) = s.minimal_value;
+}
+inline bool AtomToggles::validate(std::string* err) const {
+    std::string msg;
+    for (const auto& s : ATOM_TOGGLE_SPECS) {
+        if (!(this->*(s.field))) continue;         // only check enabled toggles
+        if (s.requires_ && *s.requires_) {
+            for (const auto& dep : ATOM_TOGGLE_SPECS) {
+                if (std::string_view(s.requires_) == dep.name) {
+                    if (!(this->*(dep.field))) {
+                        msg += s.name; msg += " requires "; msg += dep.name; msg += "\n";
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    if (err) *err = msg;
+    return msg.empty();
+}
 
 // ============================================================================
 // Per-atom force decomposition (for diagnostics + visualization)
@@ -335,35 +388,15 @@ public:
     const char* scale_name() const override { return "AtomEngine"; }
     int entity_count() const override { return static_cast<int>(atoms_.size()); }
 
+    // Table-backed (ADR-0013): delegates to AtomToggles, which iterates
+    // ATOM_TOGGLE_SPECS. Unknown names read false / are ignored, exactly as
+    // the former hand-written if-ladders did.
     bool get_toggle(const std::string& name) const override {
-        if (name == "ionic")              return toggles.ionic;
-        if (name == "van_der_waals")      return toggles.van_der_waals;
-        if (name == "covalent_bonds")     return toggles.covalent_bonds;
-        if (name == "auto_bonding")       return toggles.auto_bonding;
-        if (name == "damping")            return toggles.damping;
-        if (name == "h_bonds")            return toggles.h_bonds;
-        if (name == "dipole_dipole")      return toggles.dipole_dipole;
-        if (name == "angle_strain")       return toggles.angle_strain;
-        if (name == "torsional")          return toggles.torsional;
-        if (name == "improper_torsional") return toggles.improper_torsional;
-        if (name == "thermostat")         return toggles.thermostat;
-        if (name == "electronegativity")  return toggles.electronegativity;
-        return false;
+        return toggles.get_toggle(name);
     }
 
     void set_toggle(const std::string& name, bool value) override {
-        if (name == "ionic")              { toggles.ionic = value; return; }
-        if (name == "van_der_waals")      { toggles.van_der_waals = value; return; }
-        if (name == "covalent_bonds")     { toggles.covalent_bonds = value; return; }
-        if (name == "auto_bonding")       { toggles.auto_bonding = value; return; }
-        if (name == "damping")            { toggles.damping = value; return; }
-        if (name == "h_bonds")            { toggles.h_bonds = value; return; }
-        if (name == "dipole_dipole")      { toggles.dipole_dipole = value; return; }
-        if (name == "angle_strain")       { toggles.angle_strain = value; return; }
-        if (name == "torsional")          { toggles.torsional = value; return; }
-        if (name == "improper_torsional") { toggles.improper_torsional = value; return; }
-        if (name == "thermostat")         { toggles.thermostat = value; return; }
-        if (name == "electronegativity")  { toggles.electronegativity = value; return; }
+        toggles.set_toggle(name, value);
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {
