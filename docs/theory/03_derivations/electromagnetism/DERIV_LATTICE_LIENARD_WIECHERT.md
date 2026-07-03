@@ -322,8 +322,9 @@ between the engine's dynamics and the analytical lattice LW result.
 
 - **NOT a new spine theorem.** Filed as FTD-0115 [DERIVED],
   subsidiary to FTD-0004/0113. The spine count is unchanged — nine
-  numbered results, seven theorem-grade + two honestly-tiered (see
-  `SPEC_ALGEBRAIC_SPINE.md` §0).
+  numbered results, seven theorem-grade + two honestly-tiered (Theorem 3
+  at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count
+  convention).
 
 ---
 
