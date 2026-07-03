@@ -2327,6 +2327,8 @@ set_tests_properties(
 # particle_toggles (FTD-0131 G_PE scale) — no force is ever computed.
 ftd_add_test(test_particle_toggles_table tests/test_particle_toggles_table.cpp
              CTEST_NAME particle_toggles_table TIMEOUT 120 LABELS scale1)
+ftd_add_test(test_atom_toggles_table tests/test_atom_toggles_table.cpp
+             CTEST_NAME atom_toggles_table TIMEOUT 120 LABELS scale2)
 
 # Tritium ternary compute library tests
 # Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
