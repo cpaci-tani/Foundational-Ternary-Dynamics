@@ -214,6 +214,19 @@ add_library(ftd_core
     src/atom/atom_bonding.cpp        # check_bonding
     src/atom/atom_thermostat.cpp     # speed limit, damping, thermostat, dipole moments
 )
+
+# Precompiled headers (revision 3.6): every ftd_core TU re-parses
+# render_bridge.h (which pulls the ontic chain + stdlib); 300+ test targets
+# re-parse it again. PCH is compile-time only — zero codegen/behavior change
+# (golden gates verified). FTD_ENABLE_PCH=OFF is the instant opt-out; the
+# Emscripten guard keeps the three WASM build trees untouched.
+option(FTD_ENABLE_PCH "Use precompiled headers for ftd_core (compile-speed only)" ON)
+if(FTD_ENABLE_PCH AND NOT EMSCRIPTEN)
+    target_precompile_headers(ftd_core PRIVATE
+        include/ftd/render_bridge.h
+        <vector> <cmath> <cstdint> <algorithm> <memory> <string>)
+endif()
+
 target_include_directories(ftd_core PUBLIC
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/sim/include   # Phase B: Pipeline<Backend> + observables
