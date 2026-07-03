@@ -2,6 +2,7 @@
 
 **Tag:** `[SYNTHESIS]` (the grounding + diagnosis — reorganizes existing canonical results and published external mathematics, promotes nothing) **+ `[SPECULATION]`** (the crystallized object of §5 — a conjecture about a theorem to attempt, unbuilt).
 This memo records what the "new math" intuition ("a supersquare with a non-commutative inner product… almost the inverse of the integral… a renormalization group of informational context… statistics of events, not statistics of choice — marbles in a bag") *is* in rigorous mathematics, what is genuinely new vs. a renaming, and the single binary test it sharpens. It introduces no theorem and **promotes no tag.**
+**Post-lock status (2026-07-03):** the §5 test was pre-registered (`PREREG_GENESIS_COKERNEL_GRADING_v1.md`, tag `preregister-genesis-cokernel-grading-v1`) and **executed** — verdict **UNDERDETERMINED (re-scope)**, registered as **FTD-0365**; the fiber's section-invariant content is exact-rational + K_B (no G\*, a fortiori no δ), and the run formally does NOT harden the wall (null / section-dependent grading is not Outcome B). See `ANALYSIS_GENESIS_COKERNEL_GRADING_v1.md`.
 **Reuse (not re-derived):** `FOUND_ARROW_AS_SQUARE_ROOT.md` (FTD-0323, `[SYNTHESIS]`); `DERIV_HEAT_EQUATION_FROM_RATIO.md` (`[THEOREM]`); `DERIV_DIRAC_KAHLER_IDENTIFICATION.md` (FTD-0089); `FOUND_MCT43_NATIVE_Z2_PERMANENCE.md` (FTD-0326); `FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md` (FTD-0327); `FOUND_ACT_REDUCTION_COUNT.md` (FTD-0322); `AUDIT_W_CARRIER_NARROWING.md` (FTD-0314); `SCOPE_ROUTE_B_MODULAR_TIME.md` (FTD-0214/0225).
 
 ---

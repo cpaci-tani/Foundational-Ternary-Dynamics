@@ -81,7 +81,7 @@ And the **modulus half FTD provably owns**: the algebraic spine (`G* = Γ(1/4)/�
 
 - **The four-walls-are-one forcing theorem** (T2): are FC-1, FC-2, FC-W, and the L²-not-L¹ budget the *same* import — does adopting any one force the others? A win collapses 3+ axioms to one structural deficiency and firms the frontier for FTD. (High ceiling, currently no proof sketch.)
 - **The category-theoretic formalization** of "an `S`-substrate cannot self-supply the section/non-tracial pairing of its own kernel," for a defined substrate sub-class.
-- **The genesis-cokernel test** (frozen pre-registration `PREREG_GENESIS_COKERNEL_GRADING_v1`, tag `preregister-genesis-cokernel-grading-v1`) as the empirical probe of whether the lossy step carries δ — the one structurally-distinct carrier still unexamined.
+- **The genesis-cokernel test** (frozen pre-registration `PREREG_GENESIS_COKERNEL_GRADING_v1`, tag `preregister-genesis-cokernel-grading-v1`) as the empirical probe of whether the lossy step carries δ — the one structurally-distinct carrier then unexamined. **Executed 2026-07-02, registered as FTD-0365: verdict UNDERDETERMINED (re-scope)** — the fiber's section-invariant content is exact-rational + the K_B import (no G\*, a fortiori no δ); formally NOT Outcome B (null / section-dependent grading per the frozen gates), so the wall is **not** hardened by the run. See `ANALYSIS_GENESIS_COKERNEL_GRADING_v1.md`.
 
 ### 7.1 · Wins and walls share one root `[CONJECTURE]`
 
