@@ -292,11 +292,16 @@ struct AtomDiagnostics {
  * [EXTENDED] Models ionic, van der Waals, and covalent bonding driven by
  * first-principles ontic constants natively. Integrates using Velocity Verlet.
  */
-class AtomEngine {
+// Revision 3.4: inherits ScaleEngine like ParticleEngine/CosmicEngine —
+// SPEC_ENGINE's "all scale engines inherit ScaleEngine" claim is now true.
+// Purely additive: consumers dispatch duck-typed per ADR-0002, so no call
+// site changes; the base class only adds the uniform virtual surface.
+class AtomEngine : public ScaleEngine {
 public:
     AtomEngine();
-    ~AtomEngine();  // Out-of-line so the forward-declared GpuBackend pimpl
-                    // doesn't trip incomplete-type unique_ptr deletion.
+    ~AtomEngine() override;  // Out-of-line so the forward-declared GpuBackend
+                             // pimpl doesn't trip incomplete-type unique_ptr
+                             // deletion.
 
     // Toggle struct — public for direct access (like TermToggles on RenderBridge)
     AtomToggles toggles;
@@ -319,11 +324,59 @@ public:
     // Access
     std::vector<Atom>& atoms() { return atoms_; }
     const std::vector<Atom>& atoms() const { return atoms_; }
-    int current_tick() const { return tick_; }
-    double dt() const { return dt_; }
-    void set_dt(double d) { dt_ = d; }
+    int current_tick() const override { return tick_; }
+    double dt() const override { return dt_; }
+    void set_dt(double d) override { dt_ = d; }
     double softening() const { return soft_; }
     void set_softening(double s) { soft_ = s; }
+
+    // ── ScaleEngine interface (revision 3.4) ────────────────────────────
+    int scale_level() const override { return static_cast<int>(ScaleLevel::ATOM); }
+    const char* scale_name() const override { return "AtomEngine"; }
+    int entity_count() const override { return static_cast<int>(atoms_.size()); }
+
+    bool get_toggle(const std::string& name) const override {
+        if (name == "ionic")              return toggles.ionic;
+        if (name == "van_der_waals")      return toggles.van_der_waals;
+        if (name == "covalent_bonds")     return toggles.covalent_bonds;
+        if (name == "auto_bonding")       return toggles.auto_bonding;
+        if (name == "damping")            return toggles.damping;
+        if (name == "h_bonds")            return toggles.h_bonds;
+        if (name == "dipole_dipole")      return toggles.dipole_dipole;
+        if (name == "angle_strain")       return toggles.angle_strain;
+        if (name == "torsional")          return toggles.torsional;
+        if (name == "improper_torsional") return toggles.improper_torsional;
+        if (name == "thermostat")         return toggles.thermostat;
+        if (name == "electronegativity")  return toggles.electronegativity;
+        return false;
+    }
+
+    void set_toggle(const std::string& name, bool value) override {
+        if (name == "ionic")              { toggles.ionic = value; return; }
+        if (name == "van_der_waals")      { toggles.van_der_waals = value; return; }
+        if (name == "covalent_bonds")     { toggles.covalent_bonds = value; return; }
+        if (name == "auto_bonding")       { toggles.auto_bonding = value; return; }
+        if (name == "damping")            { toggles.damping = value; return; }
+        if (name == "h_bonds")            { toggles.h_bonds = value; return; }
+        if (name == "dipole_dipole")      { toggles.dipole_dipole = value; return; }
+        if (name == "angle_strain")       { toggles.angle_strain = value; return; }
+        if (name == "torsional")          { toggles.torsional = value; return; }
+        if (name == "improper_torsional") { toggles.improper_torsional = value; return; }
+        if (name == "thermostat")         { toggles.thermostat = value; return; }
+        if (name == "electronegativity")  { toggles.electronegativity = value; return; }
+    }
+
+    ScaleBaseDiagnostics base_diagnostics() const override {
+        const AtomDiagnostics d = diagnostics();
+        ScaleBaseDiagnostics b;
+        b.tick = d.tick;
+        b.entity_count = d.atom_count;
+        b.total_energy = d.total_energy;
+        b.total_ke = d.total_ke;
+        b.total_pe = d.total_pe_ionic + d.total_pe_vdw + d.total_pe_bond;
+        b.total_momentum = d.total_momentum;
+        return b;
+    }
 
     // Backward-compatible toggle accessors (delegate to toggles struct)
     bool damping_enabled() const { return toggles.damping; }
@@ -341,10 +394,10 @@ public:
     const std::vector<AtomForceDiag>& force_diag() const { return force_diag_; }
 
     /// Advance one time step (Velocity Verlet)
-    void tick();
+    void tick() override;
 
     /// Advance N time steps
-    void run(int num_ticks);
+    void run(int num_ticks) override;
 
     /// Compute diagnostics for current state
     AtomDiagnostics diagnostics() const;
@@ -359,7 +412,7 @@ public:
     Vec3 compute_force(int i) const;
 
     /// Clear all atoms
-    void clear() { atoms_.clear(); forces_.clear(); force_diag_.clear(); tick_ = 0; next_id_ = 0; }
+    void clear() override { atoms_.clear(); forces_.clear(); force_diag_.clear(); tick_ = 0; next_id_ = 0; }
 
 private:
     // Velocity Verlet phases
