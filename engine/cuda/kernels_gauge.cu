@@ -8,6 +8,7 @@
 #include <cuda_runtime.h>
 #include <cmath>
 #include "ftd/gauge_field.h"
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C2)
 
 namespace ftd {
 namespace gpu {
@@ -460,6 +461,7 @@ extern "C" void launch_relax_su2_links(
     dim3 blocks((L + 3) / 4, (L + 3) / 4, (L + 3) / 4);
     relax_su2_links_kernel<<<blocks, threads, 0, stream>>>(
         src_x, src_y, src_z, dst_x, dst_y, dst_z, L, dt, beta);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
 
 extern "C" void launch_relax_su3_links(
@@ -471,6 +473,7 @@ extern "C" void launch_relax_su3_links(
     dim3 blocks((L + 3) / 4, (L + 3) / 4, (L + 3) / 4);
     relax_su3_links_kernel<<<blocks, threads, 0, stream>>>(
         src_x, src_y, src_z, dst_x, dst_y, dst_z, L, dt, beta);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
 
 } // namespace gpu

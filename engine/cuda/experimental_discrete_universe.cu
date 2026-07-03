@@ -14,14 +14,7 @@
 #include <random>
 #include <string>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 namespace ftd {
 namespace eft {
