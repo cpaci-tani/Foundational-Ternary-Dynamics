@@ -186,7 +186,16 @@ void phase_write_main_loop(RenderBridge& rb) {
 
     if (dual) {
       // ---- Dual-substrate leapfrog integration ----
-      if (rb.toggles.symplectic_leapfrog) {
+      if (rb.toggles.verlet_wave_integrator) {
+        // E1 (FTD-0337): velocity-Verlet KDK part 1 — half-kick + drift.
+        // The second half-kick (wave_vel += ½·dt·ΔJ' at the post-drift
+        // field) is applied by tick() after phase_write. Default OFF ⇒
+        // dead branch ⇒ golden hash untouched.
+        v.wave_vel_L += rb.delta_j_L_[i] * (0.5 * rb.dt_);
+        v.wave_vel_R += rb.delta_j_R_[i] * (0.5 * rb.dt_);
+        v.flux_L += v.wave_vel_L * rb.dt_;
+        v.flux_R += v.wave_vel_R * rb.dt_;
+      } else if (rb.toggles.symplectic_leapfrog) {
         v.wave_vel_L += rb.delta_j_L_[i] * rb.dt_;
         v.wave_vel_R += rb.delta_j_R_[i] * rb.dt_;
         v.flux_L += v.wave_vel_L * rb.dt_;
@@ -218,7 +227,12 @@ void phase_write_main_loop(RenderBridge& rb) {
       v.wave_vel = v.wave_vel_L + v.wave_vel_R;
     } else {
       // ---- Single-substrate leapfrog integration (non-dual path) ----
-      if (rb.toggles.symplectic_leapfrog) {
+      if (rb.toggles.verlet_wave_integrator) {
+        // E1 (FTD-0337): velocity-Verlet KDK part 1 — half-kick + drift.
+        // Second half-kick applied by tick() after phase_write.
+        v.wave_vel += rb.delta_j_[i] * (0.5 * rb.dt_);
+        v.flux += v.wave_vel * rb.dt_;
+      } else if (rb.toggles.symplectic_leapfrog) {
         v.wave_vel += rb.delta_j_[i] * rb.dt_;
         v.flux += v.wave_vel * rb.dt_;
       } else {
