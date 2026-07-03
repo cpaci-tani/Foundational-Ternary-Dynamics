@@ -21,23 +21,13 @@ export function createScale0Capabilities(bridge) {
         getScale0ParticleFrame: () => bridge.getParticleData(),
         getScale0FluxVolume: () => bridge.getFluxVolume(),
         getScale0FluxSlice: (axis, index) => bridge.getFluxSlice(axis, index),
-        getScale0FieldSamples: ({ kind, stride = 2 } = {}) => {
-            if (kind === 'e') return bridge.getEFieldSampled(stride);
-            if (kind === 'b') return bridge.getBFieldSampled(stride);
-            if (kind === 'poynting') return bridge.getPoyntingSampled(stride);
-            if (kind === 'divJ') return bridge.getDivJSampled(stride);
-            if (kind === 'fluxVector') return bridge.getFluxVectorSampled(stride);
-            if (kind === 'vorticity')  return bridge.getVorticitySampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'helicity')   return bridge.getHelicitySampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'kretschmann') return bridge.getKretschmannSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'latency')    return bridge.getLatencySampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'fisher')     return bridge.getFisherSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'coherence')  return bridge.getCoherenceSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'curlJ')      return bridge.getCurlJSampled?.(stride) ?? { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-            if (kind === 'state')      return bridge.getStateFieldSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            if (kind === 'gaussResidual') return bridge.getGaussResidualSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-            return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        },
+        // Single kind-dispatched chokepoint (bridge.getSamplerOr, defined once in
+        // bridge-contract.js): maps `kind` → the bridge's concrete sampler, keeps
+        // the empty-sample fallback (CONTRACTS.md §2.3 — the optional pattern is
+        // intentional), and — unlike the old per-site `?.() ?? empty` — logs loudly
+        // if a bridge has DROPPED a sampler (§2.4 surface drift) instead of blanking
+        // the overlay silently. Consolidation only; behavior is unchanged.
+        getScale0FieldSamples: ({ kind, stride = 2 } = {}) => bridge.getSamplerOr(kind, stride),
         getScale0ForceField: (type, stride = 2) => {
             if (type === 'em') return bridge.getEMForceField(stride);
             if (type === 'gravity') return bridge.getGravityForceField(stride);
