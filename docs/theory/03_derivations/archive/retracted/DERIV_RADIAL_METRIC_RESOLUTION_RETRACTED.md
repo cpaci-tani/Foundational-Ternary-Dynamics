@@ -1,43 +1,73 @@
 # The Discrete Radial Metric Projection Theorem: Deriving the Schwarzschild $g_{rr}$ Component in FTD
 
-**Status:** **[RETRACTED 2026-07-02 — invalid proof; FTD-0360]** (was: [THEOREM])
+**Status:** **[RETRACTED 2026-07-02 — invalid proof; FTD-0360/FTD-0361, independent convergent passes]** (was: [THEOREM])
 
-> **RETRACTION NOTICE (2026-07-02, per the FTD-0360 finalization batch, adjudicating the
-> two monograph rows flagged by the FTD-0356 cluster review, `MONOGRAPH_EFFECTIVE_EQUATIONS.md`
-> §7.2 "await their own review pass").** This document's central proof is invalid; each
-> defect below was verified symbolically (sympy, exact) under FTD-0360:
+> **RETRACTION NOTICE (2026-07-02, per the FTD-0361 cluster review — the follow-up pass
+> the FTD-0356 review left queued for the two unadjudicated sibling `[THEOREM]` rows of
+> `MONOGRAPH_EFFECTIVE_EQUATIONS.md` §7.1; the same retraction was performed
+> independently the same day by the FTD-0360 finalization batch, with a convergent
+> defect analysis — reconciled at the 2026-07-03 merge).** This document's central proof
+> is invalid: its conclusion contradicts its own premise, and its claim contradicts the
+> corpus's canonical status rows.
 >
-> 1. **The premises force $g_{rr} = 1$, not $(1-r_s/r)^{-1}$.** For the metric
->    $ds^2 = -f\,c^2dt^2 + g_{rr}\,dr^2$ with $f = 1 - r_s/r$, a radial null ray has
->    coordinate speed $c\sqrt{f/g_{rr}}$. The document's own premise (step 1, inherited
->    from `DERIV_RELATIVITY_DERIVATION.md` §11's time-dilation-only saturation slowing):
->    coordinate wave speed $C(r) = C_0\sqrt{f}$. Requiring the locally measured light
->    speed to be $C_0$ then gives $\sqrt{f/g_{rr}} = \sqrt{f}$, i.e. $g_{rr} = 1$ — a
->    **flat** radial metric.
-> 2. **The conclusion contradicts the premise.** The concluded metric
->    $\{g_{00} = -f,\; g_{rr} = 1/f\}$ propagates radial light at coordinate speed
->    $c\,f$ (**first** power), not the premise's $c\sqrt{f}$. Premise and conclusion
->    cannot both hold. This is the classic scalar-medium pitfall: the $g_{00}$/$g_{rr}$
->    split is precisely the physical content that doubles GR's light deflection over the
->    time-dilation-only value; a single scalar $C(r)$ cannot fix two metric functions.
-> 3. **The load-bearing step begs the question and violates local light-speed constancy.**
->    §2.2's "physical length invariance" $dl \equiv a = C_0\Delta t$ *per coordinate
->    tick* is tagged [THEOREM] but never proven — $a^2 = g_{rr}\,dr^2$ **is** the
->    conclusion. Under $g_{00} = -f$ it implies a locally measured light speed
->    $C_0/\sqrt{f} > C_0$ (superluminal, divergent at the horizon), contradicting §2.2's
->    own local-inertial-frame language. The consistent proper-time reading
->    ($dl = C_0\,d\tau$) yields $g_{rr} = 1$ again.
-> 4. **Substrate ontology.** On FTD's uniform lattice with the declared calibration
->    $a_{\text{phys}} \equiv \ell_P$, coordinate distance and physical distance coincide
->    by construction (rulers are voxel counts); the $dl \neq dr$ split would require a
->    derived ruler-contraction mechanism, which this document does not attempt.
+> 1. **The conclusion contradicts the premise.** The premise (§1, imported from
+>    `DERIV_RELATIVITY_DERIVATION.md`) is a radial coordinate wave speed
+>    `C(r) = C₀√(1 − r_s/r)`. But the concluded metric — `g₀₀ = −(1 − r_s/r)` together
+>    with `g_rr = (1 − r_s/r)⁻¹` — has radial null-cone speed
+>    `dr/dt = C₀·(1 − r_s/r)`, not `C₀√(1 − r_s/r)`. At `r = 2r_s` the premise says
+>    `0.707 C₀` while the conclusion's metric says `0.5 C₀` (verified symbolically and
+>    numerically under FTD-0361). A derivation whose output metric is inconsistent with
+>    its own input propagation law is not a proof.
+> 2. **The single contraction factor is spent twice.** The one physical input — waves
+>    slow by `√(1 − r_s/r)` — was already fully booked as a *clock-rate* effect to
+>    obtain `g₀₀` (`DERIV_RELATIVITY_DERIVATION.md` §11.1, where
+>    `f_sat = √(1 − r_s/r)` is `dτ/dt`, "time runs slower where flux is concentrated").
+>    Step 3's `dl = a = C₀Δt` books the same factor a second time as pure *ruler*
+>    stretching, by silently using undilated coordinate ticks as local proper time.
+>    Accounted consistently — `g₀₀` fixed, plus this document's own §2.2 local
+>    light-speed invariance — the premise forces `g_rr = 1` (spatially flat):
+>    `dl/dτ = √g_rr · C(r)/√(1 − r_s/r) = C₀ ⟹ g_rr = 1`. Conversely, holding both of
+>    the document's claims simultaneously makes the locally measured light speed
+>    `C₀/√(1 − r_s/r) ≠ C₀`, violating its own §2.2 invariance premise.
+> 3. **It proves too much.** The argument never invokes the vacuum field equations, so
+>    if valid it would force `g₀₀·g_rr = −1` in *any* static spherically symmetric
+>    region — including matter interiors, where GR gives
+>    `g_rr = (1 − 2G m(r)/r)⁻¹ ≠ −1/g₀₀` (TOV interior solutions). The product relation
+>    `g₀₀·g_rr = −1` is a special property of the Schwarzschild *vacuum*, enforced by
+>    `R_μν = 0`; no purely kinematic ruler argument can be its source.
+> 4. **The premise is the classic half-deflection medium.** An isotropic index
+>    `n = C₀/C(r) = (1 − r_s/r)^{−1/2} ≈ 1 + r_s/2r` yields light deflection `r_s/b` —
+>    half the GR value `2r_s/b` (verified by direct quadrature under FTD-0361; this is
+>    Einstein's 1911-vs-1915 factor of 2). The missing half *is* the `g_rr` spatial
+>    curvature; a medium encoding only time dilation cannot also source it.
+> 5. **Canon.** `DERIV_RELATIVITY_DERIVATION.md`'s own Gap 10.1 ("the spatial metric
+>    components `g_ij` are NOT derived from FTD first principles"; the
+>    consistency-demand approach flagged *circular*) and Gap 11.1 (full Schwarzschild
+>    NOT derived) were never closed by this document — and FTD-0189 (Step-0
+>    graviton-provenance audit) holds the metric perturbation *posited* (Conjecture
+>    10.1) with its spin-2 spatial part underived (Gap 10.1) and Frontier 4 `[OPEN]`.
+>    A kinematic `[THEOREM]` delivering the full Schwarzschild spatial metric would
+>    leapfrog all three rows; LEDGER > prose.
+> 6. **Substrate ontology (recorded by the convergent FTD-0360 pass).** On FTD's uniform
+>    lattice with the declared calibration $a_{\text{phys}} \equiv \ell_P$, coordinate
+>    distance and physical distance coincide by construction (rulers are voxel counts);
+>    the $dl \neq dr$ split would require a derived ruler-contraction mechanism, which
+>    this document does not attempt.
 >
 > **Frontier 3 (the spatial metric component) reverts to [OPEN]** — exactly
 > `DERIV_RELATIVITY_DERIVATION.md` §12's listed remaining work ("show $g_{rr} = -1/g_{00}$
 > from area preservation in flux"), which stands unresolved. Same vintage and failure
 > family as the retracted non-commutativity and Born path-integral siblings in this
-> directory. Preserved for provenance per the Documentation Cleanup Discipline. Do not
-> cite as a live result.
+> directory.
+>
+> Not covered by this retraction: `DERIV_LATTICE_BLACK_HOLES.md` Part A claims `g_rr`
+> via a *different* route (velocity-cost amplification, `v²/f` computational-budget
+> reasoning), which is what `DERIV_RELATIVITY_DERIVATION.md` §18.2's "GAP-1 RESOLVED"
+> line cites. That sibling argument has not received this review and is not adjudicated
+> either way here.
+>
+> Preserved for provenance per the Documentation Cleanup Discipline. Do not cite as a
+> live result.
 
 **Epistemic Standard (original claim, retracted):** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
