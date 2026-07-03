@@ -68,6 +68,10 @@ class RenderBridge {
 #ifdef FTD_ENABLE_CUDA
     friend class GpuBackend;
 #endif
+    // Revision 3.1: the default-backend factory constructs (and, under CUDA,
+    // assigns) the private gpu_ engine — the backend-selection policy now
+    // lives entirely in backend.h/backend.cpp.
+    friend std::unique_ptr<Backend> make_default_backend(RenderBridge&, int);
 
     // Extracted physics modules (2026-04-18 refactor R1-R6) need access to
     // internal state (rng_, uniform_, next_particle_id_, phi_, buffers).
