@@ -31,6 +31,24 @@ if(NOT EMSCRIPTEN)
     endif()
 endif()
 
+# gcc lowers every std::complex<double> multiply to the checked __muldc3
+# libcall (C99 Annex G NaN/Inf recovery); MSVC inlines the naive arithmetic.
+# In the SU(2)/SU(3) staple sweeps (relax_su2/su3_links_cpu) that libcall is
+# the dominant cost: test_gauge_links measured 1.3 s (MSVC) vs ~4.5 min
+# (WSL2 gcc 11.4 -O3), with 100 __muldc3 relocation sites in this one TU.
+# -fcx-limited-range emits the naive ac−bd / ad+bc inline. For finite inputs
+# this is BIT-IDENTICAL to __muldc3 — the libcall computes those exact
+# products first and only branches into its recovery path when the result is
+# NaN — and the TU contains no complex division (zero __divdc3 relocs), so
+# the flag's non-value-identical division rewrite (naive instead of Smith's
+# algorithm) never fires. FMA contraction is already pinned off above.
+# GAUGE_GOLDEN_HASH 0xa4dec20d1dd94ec8 re-verified on WSL2-gcc after this
+# flag landed; MSVC codegen is untouched (ADR-0012 record).
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set_source_files_properties(src/transmutation_phases.cpp PROPERTIES
+        COMPILE_OPTIONS "-fcx-limited-range")
+endif()
+
 # OpenMP for multi-threaded tick phases (not available under Emscripten)
 if(NOT EMSCRIPTEN)
     find_package(OpenMP)
@@ -412,12 +430,22 @@ ftd_add_test(test_render_bridge_golden_l9 tests/test_render_bridge_golden_l9.cpp
 # CUDA (compile-check tier), self-skipping on CPU-only builds.
 ftd_add_test(test_gpu_golden tests/test_gpu_golden.cpp GPU_HEAVY
              CTEST_NAME gpu_golden TIMEOUT 300 LABELS golden)
-# SU(2)/SU(3) gauge-sector characterization (revision 0.9): the sector is
-# defined-but-disconnected on both backends (zero call sites; toggles are
-# silent no-ops) — this pins that fact (tripwire) + unitarity/finiteness/
-# single-thread determinism of the relax functions themselves.
+# SU(2)/SU(3) gauge sector (revision 0.9 option a — WIRED): Rule 7b staple
+# relaxation behind su2_gauge/su3_gauge (default OFF). Pins the gauge golden
+# profile (GAUGE_GOLDEN_HASH, ADR-0012), the write-only-substrate guarantee,
+# lazy buffer allocation (4.1b), unitarity/finiteness, and thread-count
+# invariance of the Jacobi double-buffered sweeps.
+#   TIMEOUT 600: measured 1.3s on MSVC but ~4m30s on WSL2-gcc Release -O3 —
+#   the SU(3) staple sweeps hit gcc's checked complex-multiply semantics
+#   (__muldc3) where MSVC inlines the arithmetic; correctness identical
+#   (bit-exact pins pass on both). Perf-divergence investigation chip filed.
 ftd_add_test(test_gauge_links tests/test_gauge_links.cpp
-             CTEST_NAME gauge_links TIMEOUT 120 LABELS unit)
+             CTEST_NAME gauge_links TIMEOUT 600 LABELS unit golden regression)
+# CPU/GPU gauge-link parity + GPU determinism (revision 0.9 option a).
+# Canonical platform WSL2 (engine/build_wsl); self-skipping on CPU-only
+# builds via backend_kind() detection.
+ftd_add_test(test_gauge_gpu_parity tests/test_gauge_gpu_parity.cpp GPU_HEAVY
+             CTEST_NAME gauge_gpu_parity TIMEOUT 300 LABELS unit)
 # WebSocket protocol unit tests (revision 1.4): first automated coverage for
 # the ws_server remote-control surface — SHA-1/base64/RFC-6455 accept-key
 # vectors + the JSON helpers command dispatch relies on. Compiles

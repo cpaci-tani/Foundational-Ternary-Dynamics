@@ -1,41 +1,43 @@
 // ============================================================================
-// test_gauge_links.cpp — SU(2)/SU(3) gauge-link sector characterization
-// (revision 0.9).
+// test_gauge_links.cpp — SU(2)/SU(3) gauge-link sector: golden profile +
+// invariants (revision 0.9, option a — WIRED).
 //
-// AUDIT FINDING (2026-07-02, engine revision program): the non-Abelian
-// gauge sector is DEFINED BUT DISCONNECTED on both backends:
-//   - CPU: relax_su2_links_cpu / relax_su3_links_cpu
-//     (engine/src/transmutation_phases.cpp:189/298) have ZERO call sites.
-//   - GPU: launch_relax_su2_links / launch_relax_su3_links
-//     (engine/cuda/kernels_gauge.cu:440/449) have ZERO call sites.
-//   - The public toggles su2_gauge / su3_gauge (TOGGLE_SPECS, settable from
-//     JS via rb_toggle_map) are read by NOTHING — setting them is a silent
-//     no-op.
-//   - The 6 link buffers (528 B/site = 3×32 B SU2 + 3×144 B SU3; ~132 MiB
-//     at L=64, larger than the voxel array itself) were allocated
-//     unconditionally by every RenderBridge; they are now LAZY
-//     (revision 4.1b — ensure_gauge_links(), asserted by G0 below).
-//   - relax_su2/su3_links_cpu previously relaxed IN PLACE under
-//     `#pragma omp parallel for`, reading neighbor links other threads were
-//     writing — a data race. FIXED (revision 0.9 option a, step 1): both
-//     sweeps are Jacobi double-buffered (read pre-sweep state, write
-//     scratch, swap), so the result is thread-count invariant (G4).
+// SECTOR STATUS (2026-07-02, engine revision program 0.9 option a): the
+// non-Abelian gauge sector is WIRED into the tick on both backends, gated on
+// toggles.su2_gauge / toggles.su3_gauge (default OFF):
+//   - CPU: RenderBridge::tick() Rule 7b calls relax_su2/su3_links_cpu
+//     (engine/src/transmutation_phases.cpp) once per tick.
+//   - GPU: GpuEngine::tick() Phase 7b launches the kernels_gauge.cu sweeps
+//     via launch_relax_su2/su3_links; GpuBackend marshals the host arrays
+//     (upload once on activation, download each gauge tick).
+//   - Both sweeps are Jacobi double-buffered (read pre-sweep state, write
+//     scratch, swap) — the original in-place parallel-for neighbor race is
+//     fixed and G4 below is its regression tripwire.
+//   - The 6 link buffers (528 B/site) are LAZY on both sides (revision
+//     4.1b — ensure_gauge_links() / upload_gauge_links(); G0 pins this).
+//
+// EPISTEMIC STATUS: the relaxation is an [IMPOSED] dynamic — the standard
+// Wilson-action staple update imported from lattice gauge theory, with
+// [IMPOSED] rate calibrations GAUGE_RELAX_DT/GAUGE_RELAX_BETA (constants.h).
+// The links are WRITE-ONLY w.r.t. the substrate: nothing downstream consumes
+// them (color_forces uses color labels, not links), so the sector is
+// measurement infrastructure, not a derivation of anything. No LEDGER claim
+// rides on this wiring.
 //
 // Sections:
 //   G0. Link buffers are lazily allocated; accessors materialize the
 //       identity configuration on demand.
-//   G1. Toggle tripwire: su2_gauge/su3_gauge ON produces a bit-identical
-//       run to defaults. If this FAILS, the toggles have been wired into
-//       the tick — write a gauge golden profile and update this test.
-//   G2. SU(2) relaxation from a deterministically perturbed configuration
-//       preserves unitarity (|a|²+|b|²=1, the projection normalize() runs
-//       on every update) and produces finite values.
-//   G3. SU(3) relaxation from a perturbed configuration stays finite;
-//       U†U−I deviation is measured and reported (characterization).
-//   G4. Determinism + thread-count invariance: repeat runs are byte-
-//       identical, and a single-thread run matches a full-thread-pool run
-//       bit-exactly (the Jacobi double-buffer guarantee — this is the
-//       regression tripwire for the fixed race).
+//   G1a. Write-only guarantee: a gauge-enabled run (perturbed links) folds
+//        to the SAME substrate hash as a defaults run — the link sector
+//        cannot alter voxel state, energy audit, or any pinned golden.
+//   G1b. Gauge golden profile (ADR-0012): pinned link-fold hash for the
+//        L=17 / seed-42 / 100-tick harness with su2_gauge+su3_gauge ON from
+//        the standard perturbed configuration. Fails if the sector is
+//        unwired, if the sweep semantics change, or if the perturbation
+//        stream drifts.
+//   G2. SU(2) relaxation preserves unitarity and stays finite.
+//   G3. SU(3) relaxation stays finite; U†U−I deviation measured.
+//   G4. Determinism + thread-count invariance (the race-fix tripwire).
 // ============================================================================
 
 #include "ftd/render_bridge.h"
@@ -44,6 +46,7 @@
 #include "ftd/voxel.h"
 #include "ftd/test_telemetry.h"
 #include "support/golden_hash.h"
+#include "support/gauge_test_utils.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -58,59 +61,6 @@
 
 namespace ftd { namespace test {
 
-// Deterministic perturbation of the (identity-initialized) link fields.
-// Test-only const_cast: the buffers have const accessors and the relax
-// functions are RenderBridge friends; there is no public mutator because
-// nothing in the engine writes them yet.
-static void perturb_links(RenderBridge& rb, double eps) {
-    auto& lx = const_cast<std::vector<SU2Link>&>(rb.su2_links_x());
-    auto& ly = const_cast<std::vector<SU2Link>&>(rb.su2_links_y());
-    auto& lz = const_cast<std::vector<SU2Link>&>(rb.su2_links_z());
-    auto& mx = const_cast<std::vector<SU3Link>&>(rb.su3_links_x());
-    std::uint64_t s = 0x9e3779b97f4a7c15ULL;
-    auto next = [&s]() {
-        s ^= s << 13; s ^= s >> 7; s ^= s << 17;
-        return (double)(s >> 11) / (double)(1ULL << 53) - 0.5;
-    };
-    for (std::size_t i = 0; i < lx.size(); ++i) {
-        for (auto* l : {&lx[i], &ly[i], &lz[i]}) {
-            l->a += std::complex<double>(eps * next(), eps * next());
-            l->b += std::complex<double>(eps * next(), eps * next());
-            l->normalize();
-        }
-        // SU3: small off-diagonal perturbation, x-direction only (enough to
-        // move the relaxation off the identity fixed point).
-        mx[i].m[0][1] += std::complex<double>(eps * next(), eps * next());
-        mx[i].m[1][0] -= std::conj(mx[i].m[0][1]);
-    }
-}
-
-static std::uint64_t hash_su2_links(const RenderBridge& rb) {
-    std::uint64_t h = GOLDEN_FNV_OFFSET;
-    for (const auto* v : {&rb.su2_links_x(), &rb.su2_links_y(), &rb.su2_links_z()}) {
-        for (const auto& l : *v) {
-            h = mix_double(h, l.a.real()); h = mix_double(h, l.a.imag());
-            h = mix_double(h, l.b.real()); h = mix_double(h, l.b.imag());
-        }
-    }
-    return h;
-}
-
-static std::uint64_t hash_all_links(const RenderBridge& rb) {
-    std::uint64_t h = hash_su2_links(rb);
-    for (const auto* v : {&rb.su3_links_x(), &rb.su3_links_y(), &rb.su3_links_z()}) {
-        for (const auto& l : *v) {
-            for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 3; ++j) {
-                    h = mix_double(h, l.m[i][j].real());
-                    h = mix_double(h, l.m[i][j].imag());
-                }
-            }
-        }
-    }
-    return h;
-}
-
 static void inject_standard_state(RenderBridge& rb) {
     rb.inject_particle( 3,  3,  3, +1, Vec3{0.0, 0.0, 0.0});
     rb.inject_particle(12, 12, 12, -1, Vec3{0.0, 0.0, 0.0});
@@ -118,18 +68,37 @@ static void inject_standard_state(RenderBridge& rb) {
     rb.inject_flux(8, 8, 8, Vec3{1.0, 0.0, 0.0});
 }
 
-static std::uint64_t run_default_harness(bool gauge_toggles_on) {
+// ---------------------------------------------------------------------------
+// FROZEN GAUGE GOLDEN HASH (CPU backend; ADR-0012 multi-profile policy).
+// Profile: L=17, seed 42, standard injection, su2_gauge + su3_gauge ON,
+// links perturbed by perturb_links(rb, 0.05) BEFORE the run, 100 ticks,
+// hash_all_links() fold (SU2 then SU3, x/y/z, fixed traversal order).
+//   - 2026-07-02: initial capture (revision 0.9 option a wiring commit) —
+//     stable across 3 consecutive runs and OMP_NUM_THREADS=1 vs full pool
+//     (Jacobi thread-count invariance). Re-baseline policy: ADR-0012.
+// ---------------------------------------------------------------------------
+static constexpr std::uint64_t GAUGE_GOLDEN_HASH = 0xa4dec20d1dd94ec8ULL;  // captured 2026-07-02 (MSVC, /fp:precise), stable ×3 + OMP=1
+
+struct GaugeRun {
+    std::uint64_t substrate;  // compute_state_hash_ext fold (voxels + audit)
+    std::uint64_t links;      // hash_all_links fold
+};
+
+static GaugeRun run_profile(bool gauge_on) {
     RenderBridge rb(17);
     rb.force_cpu();
     rb.seed_rng(42);
-    if (gauge_toggles_on) {
+    if (gauge_on) {
         rb.toggles.su2_gauge = true;
         rb.toggles.su3_gauge = true;
+        // Identity links are exactly stationary under the staple update, so
+        // the golden profile starts from the standard perturbed configuration.
+        perturb_links(rb, 0.05);
     }
     inject_standard_state(rb);
     rb.seed_rng(42);
     for (int t = 0; t < 100; ++t) rb.tick();
-    return compute_state_hash_ext(rb);
+    return { compute_state_hash_ext(rb), hash_all_links(rb) };
 }
 
 void test_gauge_sector() {
@@ -152,18 +121,41 @@ void test_gauge_sector() {
               "lazy allocation no longer identity-initializes");
     }
 
-    // G1 — toggle tripwire.
-    section("G1: su2_gauge/su3_gauge toggles are currently no-ops");
-    const std::uint64_t h_off = run_default_harness(false);
-    const std::uint64_t h_on  = run_default_harness(true);
-    std::printf("[gauge] default=0x%016llx gauge-toggles-on=0x%016llx\n",
-                (unsigned long long)h_off, (unsigned long long)h_on);
-    check("gauge toggles do not change the tick (disconnected sector)",
-          h_off == h_on,
-          "su2_gauge/su3_gauge now ALTER the tick — the gauge sector has "
-          "been wired in. That is a feature change: add a gauge golden "
-          "profile (ADR-0012 policy), fix the in-place parallel-for race in "
-          "relax_su2_links_cpu first, and update this characterization.");
+    // G1a — write-only guarantee.
+    section("G1a: gauge relaxation is write-only w.r.t. the substrate");
+    const GaugeRun off = run_profile(false);
+    const GaugeRun on  = run_profile(true);
+    std::printf("[gauge] substrate: defaults=0x%016llx gauge-on=0x%016llx\n",
+                (unsigned long long)off.substrate, (unsigned long long)on.substrate);
+    check("gauge-enabled run folds to the identical substrate hash",
+          off.substrate == on.substrate,
+          "the link sector now FEEDS BACK into the substrate — that is a new "
+          "physics coupling, not a wiring detail: it needs its own golden "
+          "profile decision (ADR-0012), an epistemic-tag statement, and a "
+          "LEDGER-facing rationale before it can land.");
+
+    // G1b — gauge golden profile.
+    section("G1b: gauge golden profile (ADR-0012)");
+    std::printf("[gauge] links fold = 0x%016llx (pinned 0x%016llx)\n",
+                (unsigned long long)on.links,
+                (unsigned long long)GAUGE_GOLDEN_HASH);
+    // Unwire tripwire: a freshly perturbed, UNRELAXED configuration must not
+    // match the post-run fold — if it does, the toggles no longer drive the
+    // relaxation and the sector has been silently disconnected again.
+    {
+        RenderBridge ref(17);
+        ref.force_cpu();
+        perturb_links(ref, 0.05);
+        check("wired sector actually evolves the links",
+              on.links != hash_all_links(ref),
+              "su2_gauge/su3_gauge no longer relax the links — the sector has "
+              "been unwired; restore Rule 7b or retire the toggles honestly");
+    }
+    check("links fold matches frozen GAUGE_GOLDEN_HASH",
+          on.links == GAUGE_GOLDEN_HASH,
+          "gauge-link relaxation output changed. If intentional (rate "
+          "constants, sweep semantics, perturbation stream), state the "
+          "rationale and re-pin per ADR-0012.");
 
     // G2 — SU(2) unitarity + finiteness under direct relaxation.
     section("G2: SU(2) relaxation preserves unitarity");
