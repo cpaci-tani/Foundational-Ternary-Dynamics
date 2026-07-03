@@ -52,6 +52,19 @@ void GpuBackend::tick() {
     flush_host_mutations();
     // Sync toggle state to the GPU engine each tick.
     engine_->toggles = bridge_.toggles;
+    // Revision 0.9 option (a): prime the device gauge-link buffers on the
+    // first su2_gauge/su3_gauge-enabled tick. The RenderBridge host arrays
+    // are the canonical store (lazily materialized, revision 4.1b); the
+    // upload happens ONCE on activation — host-side link mutations after
+    // activation are not tracked (no engine path writes them; tests perturb
+    // links before the first tick). Downloads happen in sync_to_host().
+    if ((bridge_.toggles.su2_gauge || bridge_.toggles.su3_gauge)
+        && !engine_->gauge_links_on_device()) {
+        bridge_.ensure_gauge_links();
+        engine_->upload_gauge_links(
+            bridge_.su2_links_x_, bridge_.su2_links_y_, bridge_.su2_links_z_,
+            bridge_.su3_links_x_, bridge_.su3_links_y_, bridge_.su3_links_z_);
+    }
     engine_->tick();
     bridge_.gpu_dirty_ = true;
     bridge_.physical_time_ += bridge_.dt_;
@@ -131,6 +144,15 @@ void GpuBackend::sync_to_host() {
             d.f_magnetic = { fd.magnetic_x[i], fd.magnetic_y[i], fd.magnetic_z[i] };
             d.f_gravity  = { fd.gravity_x[i],  fd.gravity_y[i],  fd.gravity_z[i]  };
             d.f_exchange = { fd.exchange_x[i], fd.exchange_y[i], fd.exchange_z[i] };
+        }
+        // Revision 0.9 option (a): mirror the relaxed gauge links back into
+        // the RenderBridge host arrays so su2/su3_links_*() accessors (and
+        // the CPU/GPU parity test) see the device state. No-op unless the
+        // gauge sector was activated (buffers are lazy on both sides).
+        if (engine_->gauge_links_on_device()) {
+            engine_->download_gauge_links(
+                bridge_.su2_links_x_, bridge_.su2_links_y_, bridge_.su2_links_z_,
+                bridge_.su3_links_x_, bridge_.su3_links_y_, bridge_.su3_links_z_);
         }
         bridge_.sync_ternary_from_voxels();
         bridge_.sync_fields_from_voxels();

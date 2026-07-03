@@ -83,6 +83,32 @@ public:
     // Physics toggles (same as CPU engine)
     TermToggles toggles;
 
+    // --- Non-Abelian gauge link sector (revision 0.9 option a) ---
+    // Device link buffers are lazily allocated by upload_gauge_links() on the
+    // first su2_gauge/su3_gauge-enabled tick: 528 B/site live + the same again
+    // for the Jacobi scratch set — zero cost unless the sector is active
+    // (mirrors the CPU-side lazy allocation, revision 4.1b). GpuBackend::tick()
+    // uploads the RenderBridge host arrays ONCE on activation (host-side link
+    // mutations after activation are not tracked — no engine path writes them)
+    // and downloads after each gauge-enabled tick via sync_to_host(), so the
+    // RenderBridge su2/su3_links_*() accessors stay truthful. Separately
+    // allocated from GpuBuffers so the gauge sector never touches the
+    // golden/parity buffer lifecycle (same rationale as the spectroscopy
+    // probe facility below).
+    void upload_gauge_links(const std::vector<SU2Link>& su2_x,
+                            const std::vector<SU2Link>& su2_y,
+                            const std::vector<SU2Link>& su2_z,
+                            const std::vector<SU3Link>& su3_x,
+                            const std::vector<SU3Link>& su3_y,
+                            const std::vector<SU3Link>& su3_z);
+    void download_gauge_links(std::vector<SU2Link>& su2_x,
+                              std::vector<SU2Link>& su2_y,
+                              std::vector<SU2Link>& su2_z,
+                              std::vector<SU3Link>& su3_x,
+                              std::vector<SU3Link>& su3_y,
+                              std::vector<SU3Link>& su3_z) const;
+    bool gauge_links_on_device() const { return gauge_links_device_; }
+
     // --- Spectroscopy probe facility (FTD-0281 rung-b, 2026-06-20) ---
     // Device-side shell-autocorrelation so large-L spectroscopy does NOT pay the
     // per-tick full-lattice download. spectro_set_probes() uploads the scattered
@@ -111,6 +137,8 @@ private:
     void gpu_particle_forces();
     void gpu_triad_detection();
     void gpu_pair_production();
+    void gpu_gauge_relax();      // revision 0.9 option a: SU(2)/SU(3) staple sweep
+    void free_gauge_links();     // dtor helper for the lazily-allocated buffers
 
     int size_;              // lattice side length
     int N_;                 // total sites (size^3)
@@ -137,6 +165,15 @@ private:
     std::vector<double> host_phi_latency_;  // Wave 5: GPU latency Poisson shadow
     ForceDiagHost host_force_diag_;          // Per-site force component mirror
     bool host_dirty_ = true;  // true = device has newer data than host
+
+    // Non-Abelian gauge link device buffers (revision 0.9 option a) — live +
+    // Jacobi scratch per direction; lazily allocated by upload_gauge_links(),
+    // swapped after each relax launch, freed in the dtor.
+    SU2Link* d_su2_[3]     = {nullptr, nullptr, nullptr};
+    SU2Link* d_su2_scr_[3] = {nullptr, nullptr, nullptr};
+    SU3Link* d_su3_[3]     = {nullptr, nullptr, nullptr};
+    SU3Link* d_su3_scr_[3] = {nullptr, nullptr, nullptr};
+    bool gauge_links_device_ = false;
 
     // Spectroscopy probe device buffers (FTD-0281 rung-b). Separately allocated
     // from GpuBuffers so the probe facility is self-contained and never touches

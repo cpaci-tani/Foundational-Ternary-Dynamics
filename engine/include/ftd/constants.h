@@ -395,6 +395,20 @@ using ::COLOR_LINEAR_DENOM;
 inline constexpr double LATENCY_HORIZON_CLAMP = 0.998;   // f = 1 - L² floor
 
 // ============================================================================
+// Non-Abelian gauge-link relaxation (revision 0.9 option a — tick wiring)
+// ============================================================================
+// Per-tick step size and coupling for the SU(2)/SU(3) Wilson-action staple
+// relaxation (relax_su2/su3_links_cpu + kernels_gauge.cu), gated on
+// toggles.su2_gauge / toggles.su3_gauge. [IMPOSED]: the staple/plaquette
+// relaxation form is imported from standard lattice gauge theory and these
+// rates are calibrations, not derived quantities — values match the
+// test_gauge_links characterization exercise (dt=0.1, beta=1.0) under which
+// unitarity/finiteness/determinism were pinned. Same constants feed both
+// backends so CPU/GPU parity is meaningful.
+inline constexpr double GAUGE_RELAX_DT   = 0.1;
+inline constexpr double GAUGE_RELAX_BETA = 1.0;
+
+// ============================================================================
 // Scale 2 Phase 3 Constants — Inter-atomic forces
 // ============================================================================
 

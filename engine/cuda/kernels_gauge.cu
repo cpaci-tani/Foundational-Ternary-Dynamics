@@ -165,10 +165,15 @@ __device__ __forceinline__ int idx(int x, int y, int z, int L) {
 }
 
 // -----------------------------------------------------------------------------
-// SU(2) Relaxation Kernel
+// SU(2) Relaxation Kernel — Jacobi double-buffered (revision 0.9 option a):
+// every staple read comes from src_*, every write goes to dst_*, so threads
+// never observe half-updated neighbor links. Matches the CPU sweep semantics
+// in relax_su2_links_cpu (transmutation_phases.cpp). The caller swaps the
+// src/dst pointers after each launch.
 // -----------------------------------------------------------------------------
 __global__ void relax_su2_links_kernel(
-    SU2Link* links_x, SU2Link* links_y, SU2Link* links_z,
+    const SU2Link* src_x, const SU2Link* src_y, const SU2Link* src_z,
+    SU2Link* dst_x, SU2Link* dst_y, SU2Link* dst_z,
     int L, double dt, double beta)
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -201,18 +206,18 @@ __global__ void relax_su2_links_kernel(
             else if (nu == 1) site_xpnu = idx(x, y + 1, z, L);
             else site_xpnu = idx(x, y, z + 1, L);
 
-            // Fetch links
+            // Fetch links (from the pre-sweep src buffers — never dst)
             auto fetch_link = [&](int s, int dir) {
                 GpuSU2 res;
                 if (dir == 0) {
-                    res.a = GpuComplex(links_x[s].a.real(), links_x[s].a.imag());
-                    res.b = GpuComplex(links_x[s].b.real(), links_x[s].b.imag());
+                    res.a = GpuComplex(src_x[s].a.real(), src_x[s].a.imag());
+                    res.b = GpuComplex(src_x[s].b.real(), src_x[s].b.imag());
                 } else if (dir == 1) {
-                    res.a = GpuComplex(links_y[s].a.real(), links_y[s].a.imag());
-                    res.b = GpuComplex(links_y[s].b.real(), links_y[s].b.imag());
+                    res.a = GpuComplex(src_y[s].a.real(), src_y[s].a.imag());
+                    res.b = GpuComplex(src_y[s].b.real(), src_y[s].b.imag());
                 } else {
-                    res.a = GpuComplex(links_z[s].a.real(), links_z[s].a.imag());
-                    res.b = GpuComplex(links_z[s].b.real(), links_z[s].b.imag());
+                    res.a = GpuComplex(src_z[s].a.real(), src_z[s].a.imag());
+                    res.b = GpuComplex(src_z[s].b.real(), src_z[s].b.imag());
                 }
                 return res;
             };
@@ -262,14 +267,14 @@ __global__ void relax_su2_links_kernel(
         auto fetch_link = [&](int s, int dir) {
             GpuSU2 res;
             if (dir == 0) {
-                res.a = GpuComplex(links_x[s].a.real(), links_x[s].a.imag());
-                res.b = GpuComplex(links_x[s].b.real(), links_x[s].b.imag());
+                res.a = GpuComplex(src_x[s].a.real(), src_x[s].a.imag());
+                res.b = GpuComplex(src_x[s].b.real(), src_x[s].b.imag());
             } else if (dir == 1) {
-                res.a = GpuComplex(links_y[s].a.real(), links_y[s].a.imag());
-                res.b = GpuComplex(links_y[s].b.real(), links_y[s].b.imag());
+                res.a = GpuComplex(src_y[s].a.real(), src_y[s].a.imag());
+                res.b = GpuComplex(src_y[s].b.real(), src_y[s].b.imag());
             } else {
-                res.a = GpuComplex(links_z[s].a.real(), links_z[s].a.imag());
-                res.b = GpuComplex(links_z[s].b.real(), links_z[s].b.imag());
+                res.a = GpuComplex(src_z[s].a.real(), src_z[s].a.imag());
+                res.b = GpuComplex(src_z[s].b.real(), src_z[s].b.imag());
             }
             return res;
         };
@@ -277,31 +282,32 @@ __global__ void relax_su2_links_kernel(
         GpuSU2 u_old = fetch_link(site, mu);
         GpuSU2 staple_adj = staple.conj();
         GpuComplex scale(dt * beta, 0.0);
-        
+
         GpuSU2 u_new;
         u_new.a = u_old.a + staple_adj.a * scale;
         u_new.b = u_old.b + staple_adj.b * scale;
         u_new.normalize();
 
-        // Write back
+        // Write back (to the dst buffers — Jacobi, never in place)
         if (mu == 0) {
-            links_x[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
-            links_x[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
+            dst_x[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
+            dst_x[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
         } else if (mu == 1) {
-            links_y[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
-            links_y[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
+            dst_y[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
+            dst_y[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
         } else {
-            links_z[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
-            links_z[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
+            dst_z[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
+            dst_z[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
         }
     }
 }
 
 // -----------------------------------------------------------------------------
-// SU(3) Relaxation Kernel
+// SU(3) Relaxation Kernel — Jacobi double-buffered (see SU(2) note above).
 // -----------------------------------------------------------------------------
 __global__ void relax_su3_links_kernel(
-    SU3Link* links_x, SU3Link* links_y, SU3Link* links_z,
+    const SU3Link* src_x, const SU3Link* src_y, const SU3Link* src_z,
+    SU3Link* dst_x, SU3Link* dst_y, SU3Link* dst_z,
     int L, double dt, double beta)
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -334,17 +340,17 @@ __global__ void relax_su3_links_kernel(
             else if (nu == 1) site_xpnu = idx(x, y + 1, z, L);
             else site_xpnu = idx(x, y, z + 1, L);
 
-            // Fetch links
+            // Fetch links (from the pre-sweep src buffers — never dst)
             auto fetch_link = [&](int s, int dir) {
                 GpuSU3 res;
                 for (int r = 0; r < 3; ++r) {
                     for (int c = 0; c < 3; ++c) {
                         if (dir == 0) {
-                            res.m[r][c] = GpuComplex(links_x[s].m[r][c].real(), links_x[s].m[r][c].imag());
+                            res.m[r][c] = GpuComplex(src_x[s].m[r][c].real(), src_x[s].m[r][c].imag());
                         } else if (dir == 1) {
-                            res.m[r][c] = GpuComplex(links_y[s].m[r][c].real(), links_y[s].m[r][c].imag());
+                            res.m[r][c] = GpuComplex(src_y[s].m[r][c].real(), src_y[s].m[r][c].imag());
                         } else {
-                            res.m[r][c] = GpuComplex(links_z[s].m[r][c].real(), links_z[s].m[r][c].imag());
+                            res.m[r][c] = GpuComplex(src_z[s].m[r][c].real(), src_z[s].m[r][c].imag());
                         }
                     }
                 }
@@ -398,11 +404,11 @@ __global__ void relax_su3_links_kernel(
             for (int r = 0; r < 3; ++r) {
                 for (int c = 0; c < 3; ++c) {
                     if (dir == 0) {
-                        res.m[r][c] = GpuComplex(links_x[s].m[r][c].real(), links_x[s].m[r][c].imag());
+                        res.m[r][c] = GpuComplex(src_x[s].m[r][c].real(), src_x[s].m[r][c].imag());
                     } else if (dir == 1) {
-                        res.m[r][c] = GpuComplex(links_y[s].m[r][c].real(), links_y[s].m[r][c].imag());
+                        res.m[r][c] = GpuComplex(src_y[s].m[r][c].real(), src_y[s].m[r][c].imag());
                     } else {
-                        res.m[r][c] = GpuComplex(links_z[s].m[r][c].real(), links_z[s].m[r][c].imag());
+                        res.m[r][c] = GpuComplex(src_z[s].m[r][c].real(), src_z[s].m[r][c].imag());
                     }
                 }
             }
@@ -412,7 +418,7 @@ __global__ void relax_su3_links_kernel(
         GpuSU3 u_old = fetch_link(site, mu);
         GpuSU3 staple_adj = staple.conj();
         GpuComplex scale(dt * beta, 0.0);
-        
+
         GpuSU3 u_new;
         for (int r = 0; r < 3; ++r) {
             for (int c = 0; c < 3; ++c) {
@@ -421,38 +427,50 @@ __global__ void relax_su3_links_kernel(
         }
         u_new.normalize();
 
-        // Write back
+        // Write back (to the dst buffers — Jacobi, never in place)
         for (int r = 0; r < 3; ++r) {
             for (int c = 0; c < 3; ++c) {
                 if (mu == 0) {
-                    links_x[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
+                    dst_x[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
                 } else if (mu == 1) {
-                    links_y[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
+                    dst_y[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
                 } else {
-                    links_z[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
+                    dst_z[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
                 }
             }
         }
     }
 }
 
-// Host wrappers to launch the kernels from other source files if needed
+// Host wrappers to launch the kernels from other source files (GpuEngine's
+// gauge phase). Double-buffered (revision 0.9 option a): the kernels read
+// src_* and write dst_*; callers swap the pointer sets after each launch.
+// Block shape: 4x4x4 = 64 threads. The staple kernels are register-heavy
+// (GpuSU3 is 18 doubles; several matrix temporaries live across the mu loop)
+// — at 8x8x8 = 512 threads/block the SU(3) launch fails with "too many
+// resources requested for launch" (register budget). 64 threads/block
+// launches on any SM. Per-site independent (no shared memory, no
+// reductions), so the block shape cannot affect results or determinism.
 extern "C" void launch_relax_su2_links(
-    SU2Link* links_x, SU2Link* links_y, SU2Link* links_z,
+    const SU2Link* src_x, const SU2Link* src_y, const SU2Link* src_z,
+    SU2Link* dst_x, SU2Link* dst_y, SU2Link* dst_z,
     int L, double dt, double beta, cudaStream_t stream)
 {
-    dim3 threads(8, 8, 8);
-    dim3 blocks((L + 7) / 8, (L + 7) / 8, (L + 7) / 8);
-    relax_su2_links_kernel<<<blocks, threads, 0, stream>>>(links_x, links_y, links_z, L, dt, beta);
+    dim3 threads(4, 4, 4);
+    dim3 blocks((L + 3) / 4, (L + 3) / 4, (L + 3) / 4);
+    relax_su2_links_kernel<<<blocks, threads, 0, stream>>>(
+        src_x, src_y, src_z, dst_x, dst_y, dst_z, L, dt, beta);
 }
 
 extern "C" void launch_relax_su3_links(
-    SU3Link* links_x, SU3Link* links_y, SU3Link* links_z,
+    const SU3Link* src_x, const SU3Link* src_y, const SU3Link* src_z,
+    SU3Link* dst_x, SU3Link* dst_y, SU3Link* dst_z,
     int L, double dt, double beta, cudaStream_t stream)
 {
-    dim3 threads(8, 8, 8);
-    dim3 blocks((L + 7) / 8, (L + 7) / 8, (L + 7) / 8);
-    relax_su3_links_kernel<<<blocks, threads, 0, stream>>>(links_x, links_y, links_z, L, dt, beta);
+    dim3 threads(4, 4, 4);
+    dim3 blocks((L + 3) / 4, (L + 3) / 4, (L + 3) / 4);
+    relax_su3_links_kernel<<<blocks, threads, 0, stream>>>(
+        src_x, src_y, src_z, dst_x, dst_y, dst_z, L, dt, beta);
 }
 
 } // namespace gpu
