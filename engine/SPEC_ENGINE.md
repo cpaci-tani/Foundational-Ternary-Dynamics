@@ -1,7 +1,7 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Engine version:** 2.18.0
+**Engine version:** 2.18.0 (single-sourced as `ftd::ENGINE_VERSION` in `include/ftd/constants.h`; mirrored by CMake `project(VERSION)`, `ftd_sim --version`, and the WASM `getEngineVersion()` binding — revision 6.1)
 **Golden regression hash:** `0xb604d81a3d79366e` @ L=17 (`test_render_bridge_golden`). The two gauss audit scalars `gauss_violation`/`max_gauss_error` are summed only over vacuum (state==0) sites with the mean-subtracted, coupling-scaled target the SOR projection enforces; per-voxel state/flux/wave_vel/velocity is bit-exact; deterministic (OMP=1 == full pool). Rationale in `test_render_bridge_golden.cpp`.
 **Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`.
 
