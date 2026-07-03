@@ -236,7 +236,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 stillOpen: [
                     'FTD demonstrates that QM and GR coexist as emergent limits but does not yet quantitatively reproduce all gravitational scattering amplitudes.',
-                    'The specific continuum limit that recovers QFT perturbation theory from FTD is a work in progress.',
+                    'The specific large-lattice (ε-L) regime that recovers QFT perturbation theory from FTD is a work in progress. (FTD uses ε-L statements, not completed continuum limits — see AUDIT_INFINITY_REFRAME.)',
                 ],
                 theoryRefs: [
                     'docs/theory/03_derivations/electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md',
@@ -371,7 +371,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Loop quantum cosmology, string-theoretic fuzzballs, and effective-field-theory regularisations each offer candidate replacements. None has experimental support or decisive theoretical consensus.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Because the lattice is discrete by axiom, curvature and density cannot diverge. A "singularity" in the continuum limit corresponds to a voxel whose flux gradient has reached the confinement scale — a finite, well-defined state.' },
+                    { tag: 'SELECTION', text: 'Because the lattice is discrete by axiom, curvature and density cannot diverge. What the coarse-grained (large-lattice) description calls a "singularity" corresponds to a voxel whose flux gradient has reached the confinement scale — a finite, well-defined state.' },
                     { tag: 'CONJECTURE', text: 'The Big Bang is proposed as a phase of maximal flux-field structure that gradually manifests outward; it is a boundary in the lattice\'s manifestation history, not a point of infinite density.' },
                 ],
                 stillOpen: [
@@ -393,7 +393,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'In mainstream physics discreteness is a consequence of eigenvalue problems on continuous operators. That is a technique, not an explanation: it answers "where do these integers come from in this formalism" but not "why is reality integer-valued in the first place".',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Discreteness is primitive in FTD: the lattice and the ternary states are discrete by postulate. Integer-valued observables in the continuum limit are not a mystery — they are the original structure surviving coarse-graining.' },
+                    { tag: 'SELECTION', text: 'Discreteness is primitive in FTD: the lattice and the ternary states are discrete by postulate. Integer-valued observables in the coarse-grained (large-lattice) description are not a mystery — they are the original structure surviving coarse-graining.' },
                     { tag: 'SELECTION', text: 'Specific integer ratios (3 generations, \\(N_c = 3\\) colors, \\(17/27\\) structural dark-state fraction, 3 spatial dimensions) are read off the Moore Layer decomposition. The decomposition itself is structural; whether the framework uniquely selects each ratio (vs admits other decompositions) is a [SELECTION] argument, and the cosmological identification of \\(17/27\\) with \\(\\Omega_\\mathrm{DM}/\\Omega_m\\) is rejected by Planck 2018 (see dark-matter entry).' },
                 ],
                 stillOpen: [
