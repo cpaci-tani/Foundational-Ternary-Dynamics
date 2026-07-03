@@ -2319,6 +2319,15 @@ set_tests_properties(
     wz_mass
     PROPERTIES TIMEOUT 600)
 
+# Ticket 3.3 — ADR-0013 table-driven toggle characterization guards.
+# Pure toggle-state pins (defaults / enable_all / minimal / validate / string
+# get_toggle-set_toggle round-trip) for the three sub-engines, written from
+# current source BEFORE the table-driven port so behavior preservation is
+# provable. Independent of the pre-existing physics failures in
+# particle_toggles (FTD-0131 G_PE scale) — no force is ever computed.
+ftd_add_test(test_particle_toggles_table tests/test_particle_toggles_table.cpp
+             CTEST_NAME particle_toggles_table TIMEOUT 120 LABELS scale1)
+
 # Tritium ternary compute library tests
 # Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
 # (registered by ftd_add_test() above).

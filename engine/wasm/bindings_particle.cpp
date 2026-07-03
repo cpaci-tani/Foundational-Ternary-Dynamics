@@ -274,22 +274,16 @@ static void pe_clear(ftd::ParticleEngine& pe) {
 }
 
 // ── PE Toggle getter/setter (generic, by name) ────────────────────
-// Pointer-to-member map for ParticleToggles.
+// Pointer-to-member map for ParticleToggles, built once from the single
+// source of truth PARTICLE_TOGGLE_SPECS (ADR-0013, ticket 3.3) so a new
+// toggle needs no edit here.
 using PeBoolPTM = bool ftd::ParticleToggles::*;
 static const std::unordered_map<std::string, PeBoolPTM>& pe_toggle_map() {
-    static const std::unordered_map<std::string, PeBoolPTM> kMap = {
-        {"coulomb",         &ftd::ParticleToggles::coulomb},
-        {"gravity",         &ftd::ParticleToggles::gravity},
-        {"damping",         &ftd::ParticleToggles::damping},
-        {"lorentz",         &ftd::ParticleToggles::lorentz},
-        {"exchange",        &ftd::ParticleToggles::exchange},
-        {"strong",          &ftd::ParticleToggles::strong},
-        {"radiation",       &ftd::ParticleToggles::radiation},
-        {"spin_orbit",      &ftd::ParticleToggles::spin_orbit},
-        {"relativistic",    &ftd::ParticleToggles::relativistic},
-        {"magnetic_dipole", &ftd::ParticleToggles::magnetic_dipole},
-        {"relativistic_verlet", &ftd::ParticleToggles::relativistic_verlet},
-    };
+    static const std::unordered_map<std::string, PeBoolPTM> kMap = []{
+        std::unordered_map<std::string, PeBoolPTM> m;
+        for (const auto& s : ftd::PARTICLE_TOGGLE_SPECS) m.emplace(s.name, s.field);
+        return m;
+    }();
     return kMap;
 }
 
