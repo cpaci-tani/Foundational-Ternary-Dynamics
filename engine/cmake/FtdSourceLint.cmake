@@ -81,3 +81,59 @@ if(_qviolations)
         "header (ADR-0016 boundary):\n  ${_qmsg}")
 endif()
 message(STATUS "FtdSourceLint: OK — quarantine boundary intact (ADR-0016)")
+
+# ── CPU tick phase-order pin (revision 3.2) ─────────────────────────────────
+# The CPU tick ladder's ordering constraints (CALLSTACKS.md §3.1, ADR-0008)
+# are enforced structurally (private methods, sequential code) and validated
+# causally by test_tick_phase_order PO-2/PO-3. This lint additionally pins
+# the SOURCE ORDER of the phase dispatch sites as data, so any reorder —
+# accidental or intentional — fails a test until this expected sequence is
+# updated in the same commit (the "single source of truth to diff
+# CALLSTACKS.md against" from revision ticket 3.2, implemented as a lint
+# instead of a runtime table to avoid churning the engine's most
+# load-bearing function).
+set(_tick_sequence
+    "toggles.validate"
+    "toggles.ew_background_sweep"
+    "toggles.db_clock_coulomb"
+    "phase_read()"
+    "phase_write()"
+    "pair_production_cpu()"
+    "gauss_project()"
+    "solve_latency_poisson()"
+    "phase_forces()"
+    "phase_movement()"
+    "apply_absorbing_boundary"
+    "apply_reflective_flux_boundary"
+    "apply_dispersal_flux_boundary"
+    "weak_transmutation_cpu()"
+    "triad_binding_cpu()"
+    "relax_su2_links_cpu"
+    "relax_su3_links_cpu"
+    "accumulate_proper_time()"
+    "knot_tracker_->record"
+    "update_energy_ledger()"
+)
+file(READ "${ENGINE_DIR}/src/render_bridge.cpp" _rb_src)
+# Scope to the tick() body: from the definition to the transmutation-wrapper
+# banner that follows it.
+string(FIND "${_rb_src}" "void RenderBridge::tick()" _tick_begin)
+string(FIND "${_rb_src}" "Transmutation phase bodies extracted" _tick_end)
+if(_tick_begin EQUAL -1 OR _tick_end EQUAL -1)
+    message(FATAL_ERROR "FtdSourceLint: could not locate the tick() body markers in render_bridge.cpp — update the phase-order lint scope")
+endif()
+math(EXPR _tick_len "${_tick_end} - ${_tick_begin}")
+string(SUBSTRING "${_rb_src}" ${_tick_begin} ${_tick_len} _tick_body)
+set(_cursor 0)
+foreach(_marker ${_tick_sequence})
+    string(SUBSTRING "${_tick_body}" ${_cursor} -1 _rest)
+    string(FIND "${_rest}" "${_marker}" _pos)
+    if(_pos EQUAL -1)
+        message(FATAL_ERROR
+            "FtdSourceLint: tick() phase-order pin broken — '${_marker}' not found "
+            "after the previous phase. If the tick ladder changed INTENTIONALLY, "
+            "update _tick_sequence here and CALLSTACKS.md in the same commit.")
+    endif()
+    math(EXPR _cursor "${_cursor} + ${_pos} + 1")
+endforeach()
+message(STATUS "FtdSourceLint: OK — tick() phase order matches the pinned sequence (revision 3.2)")
