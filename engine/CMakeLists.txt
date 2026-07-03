@@ -465,6 +465,9 @@ ftd_add_test(test_render_bridge_golden_l9 tests/test_render_bridge_golden_l9.cpp
 # CUDA (compile-check tier), self-skipping on CPU-only builds.
 ftd_add_test(test_gpu_golden tests/test_gpu_golden.cpp GPU_HEAVY
              CTEST_NAME gpu_golden TIMEOUT 300 LABELS golden)
+# (C5 test_gpu_delta_upload is registered inside the if(FTD_ENABLE_CUDA) block
+#  below — unlike test_gpu_golden it includes gpu_engine.h/cufft.h, so it must
+#  not be configured on a CPU-only build.)
 # SU(2)/SU(3) gauge sector (revision 0.9 option a — WIRED): Rule 7b staple
 # relaxation behind su2_gauge/su3_gauge (default OFF). Pins the gauge golden
 # profile (GAUGE_GOLDEN_HASH, ADR-0012), the write-only-substrate guarantee,
@@ -1071,6 +1074,14 @@ if(FTD_ENABLE_CUDA)
 
     add_executable(test_gpu_parity_complete tests/test_gpu_parity_complete.cpp)
     target_link_libraries(test_gpu_parity_complete ftd_core ftd_cuda)
+
+    # C5 (CUDA ticket): host→device delta upload (GpuBuffers::upload_voxels_delta).
+    # Verifies the delta path lands byte-identical DEVICE state to a full upload
+    # (read back via download_voxels) and that a handful-of-voxels edit transfers
+    # <<1 MB. Registered here (inside the CUDA guard) because it includes
+    # gpu_engine.h/cufft.h. GPU_HEAVY → "gpu" label for serial dispatch.
+    ftd_add_test(test_gpu_delta_upload tests/test_gpu_delta_upload.cpp GPU_HEAVY
+                 CTEST_NAME gpu_delta_upload TIMEOUT 300 LABELS unit)
 
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)

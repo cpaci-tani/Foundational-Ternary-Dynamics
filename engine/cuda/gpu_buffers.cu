@@ -9,6 +9,8 @@
 #include <cufft.h>
 #include <cstdio>
 #include <cmath>
+#include <cstring>   // std::memcpy — bit-exact double compare in the C5 delta path
+#include <vector>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -338,145 +340,251 @@ void GpuBuffers::upload(const std::vector<Voxel>& host_voxels,
     CUDA_CHECK(cudaMemcpy(d_phi_coulomb, host_phi_coulomb.data(), N * sizeof(double), cudaMemcpyHostToDevice));
 }
 
+// ─── C5: upload instrumentation + delta-diff helpers ───────────────────────
+std::size_t g_gpu_upload_bytes      = 0;
+bool        g_gpu_force_full_upload = false;
+
+namespace {
+// Bitwise inequality of two doubles' object representations. We compare BITS,
+// not values, so the delta path reproduces a full upload byte-for-byte:
+// +0.0/-0.0 and distinct NaN payloads are genuinely different device bytes and
+// must be re-uploaded if they differ (value-equality `==` would wrongly treat
+// -0.0 == +0.0 as unchanged and let the device drift from the full-upload
+// result).
+inline bool bits_differ(double a, double b) {
+    std::uint64_t ua, ub;
+    std::memcpy(&ua, &a, sizeof(ua));
+    std::memcpy(&ub, &b, sizeof(ub));
+    return ua != ub;
+}
+inline bool vec_differ(const Vec3& a, const Vec3& b) {
+    return bits_differ(a.x, b.x) || bits_differ(a.y, b.y) || bits_differ(a.z, b.z);
+}
+// True iff any field that upload_voxels_range() uploads differs between a and b.
+// MUST stay in lockstep with the field set copied in upload_voxels_range()
+// below — if a field is uploaded there but omitted here, the delta path can
+// silently skip a changed voxel and diverge from a full upload.
+inline bool uploaded_fields_differ(const Voxel& a, const Voxel& b) {
+    return a.state != b.state
+        || a.color != b.color
+        || a.flavor != b.flavor
+        || a.spin != b.spin
+        || a.locked != b.locked
+        || a.particle_id != b.particle_id
+        || a.pair_id != b.pair_id
+        || bits_differ(a.accel_mag, b.accel_mag)
+        || bits_differ(a.latency, b.latency)
+        || bits_differ(a.tau, b.tau)
+        || vec_differ(a.flux, b.flux)
+        || vec_differ(a.wave_vel, b.wave_vel)
+        || vec_differ(a.velocity, b.velocity)
+        || vec_differ(a.remainder, b.remainder)
+        || vec_differ(a.flux_L, b.flux_L)
+        || vec_differ(a.flux_R, b.flux_R)
+        || vec_differ(a.wave_vel_L, b.wave_vel_L)
+        || vec_differ(a.wave_vel_R, b.wave_vel_R)
+        || vec_differ(a.flux_strong, b.flux_strong)
+        || vec_differ(a.wave_vel_strong, b.wave_vel_strong)
+        || vec_differ(a.flux_weak, b.flux_weak)
+        || vec_differ(a.wave_vel_weak, b.wave_vel_weak);
+}
+}  // namespace
+
 void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
-    // Scatter AoS fields into separate host staging arrays, then upload
-    std::vector<int8_t>  h_state(N);
-    std::vector<double>  h_fx(N), h_fy(N), h_fz(N);
-    std::vector<double>  h_wvx(N), h_wvy(N), h_wvz(N);
-    std::vector<double>  h_vx(N), h_vy(N), h_vz(N);
-    std::vector<double>  h_rx(N), h_ry(N), h_rz(N);
-    std::vector<bool>    h_locked(N);
-    std::vector<int32_t> h_pid(N);
-    std::vector<int8_t>  h_spin(N), h_color(N), h_flavor(N);
-    std::vector<double>  h_accel(N);
-    std::vector<int32_t> h_pair_id(N);
-    std::vector<double>  h_latency(N);
-    std::vector<double>  h_tau(N);
+    upload_voxels_range(host_voxels, 0, N);
+}
+
+void GpuBuffers::upload_voxels_range(const std::vector<Voxel>& host_voxels,
+                                     int lo, int count) {
+    if (count <= 0) return;
+
+    // Scatter the AoS fields for [lo, lo+count) into per-field host staging,
+    // then upload each staging array to the matching offset in its device SoA
+    // array. Field set here is the single source of truth (see
+    // uploaded_fields_differ).
+    std::vector<int8_t>  h_state(count);
+    std::vector<double>  h_fx(count), h_fy(count), h_fz(count);
+    std::vector<double>  h_wvx(count), h_wvy(count), h_wvz(count);
+    std::vector<double>  h_vx(count), h_vy(count), h_vz(count);
+    std::vector<double>  h_rx(count), h_ry(count), h_rz(count);
+    std::vector<uint8_t> h_locked(count);
+    std::vector<int32_t> h_pid(count);
+    std::vector<int8_t>  h_spin(count), h_color(count), h_flavor(count);
+    std::vector<double>  h_accel(count);
+    std::vector<int32_t> h_pair_id(count);
+    std::vector<double>  h_latency(count);
+    std::vector<double>  h_tau(count);
     // Dual-substrate staging
-    std::vector<double>  h_fLx(N), h_fLy(N), h_fLz(N);
-    std::vector<double>  h_fRx(N), h_fRy(N), h_fRz(N);
-    std::vector<double>  h_wvLx(N), h_wvLy(N), h_wvLz(N);
-    std::vector<double>  h_wvRx(N), h_wvRy(N), h_wvRz(N);
-
+    std::vector<double>  h_fLx(count), h_fLy(count), h_fLz(count);
+    std::vector<double>  h_fRx(count), h_fRy(count), h_fRz(count);
+    std::vector<double>  h_wvLx(count), h_wvLy(count), h_wvLz(count);
+    std::vector<double>  h_wvRx(count), h_wvRy(count), h_wvRz(count);
     // Strong field staging
-    std::vector<double>  h_fsx(N), h_fsy(N), h_fsz(N);
-    std::vector<double>  h_wvsx(N), h_wvsy(N), h_wvsz(N);
-
+    std::vector<double>  h_fsx(count), h_fsy(count), h_fsz(count);
+    std::vector<double>  h_wvsx(count), h_wvsy(count), h_wvsz(count);
     // Weak field staging
-    std::vector<double>  h_fwx(N), h_fwy(N), h_fwz(N);
-    std::vector<double>  h_wvwx(N), h_wvwy(N), h_wvwz(N);
+    std::vector<double>  h_fwx(count), h_fwy(count), h_fwz(count);
+    std::vector<double>  h_wvwx(count), h_wvwy(count), h_wvwz(count);
 
-    for (int i = 0; i < N; ++i) {
-        const auto& v = host_voxels[i];
-        h_state[i]  = v.state;
-        h_color[i]  = v.color;
-        h_flavor[i] = v.flavor;
-        h_fx[i]     = v.flux.x;
-        h_fy[i]     = v.flux.y;
-        h_fz[i]     = v.flux.z;
-        h_wvx[i]    = v.wave_vel.x;
-        h_wvy[i]    = v.wave_vel.y;
-        h_wvz[i]    = v.wave_vel.z;
-        h_vx[i]     = v.velocity.x;
-        h_vy[i]     = v.velocity.y;
-        h_vz[i]     = v.velocity.z;
-        h_rx[i]     = v.remainder.x;
-        h_ry[i]     = v.remainder.y;
-        h_rz[i]     = v.remainder.z;
-        h_locked[i] = v.locked;
-        h_pid[i]    = v.particle_id;
-        h_spin[i]   = v.spin;
-        h_color[i]  = v.color;
-        h_accel[i]  = v.accel_mag;
-        h_pair_id[i] = v.pair_id;
-        h_latency[i] = v.latency;
-        h_tau[i]     = v.tau;
+    for (int k = 0; k < count; ++k) {
+        const auto& v = host_voxels[lo + k];
+        h_state[k]  = v.state;
+        h_color[k]  = v.color;
+        h_flavor[k] = v.flavor;
+        h_fx[k]     = v.flux.x;
+        h_fy[k]     = v.flux.y;
+        h_fz[k]     = v.flux.z;
+        h_wvx[k]    = v.wave_vel.x;
+        h_wvy[k]    = v.wave_vel.y;
+        h_wvz[k]    = v.wave_vel.z;
+        h_vx[k]     = v.velocity.x;
+        h_vy[k]     = v.velocity.y;
+        h_vz[k]     = v.velocity.z;
+        h_rx[k]     = v.remainder.x;
+        h_ry[k]     = v.remainder.y;
+        h_rz[k]     = v.remainder.z;
+        h_locked[k] = v.locked ? 1 : 0;
+        h_pid[k]    = v.particle_id;
+        h_spin[k]   = v.spin;
+        h_accel[k]  = v.accel_mag;
+        h_pair_id[k] = v.pair_id;
+        h_latency[k] = v.latency;
+        h_tau[k]     = v.tau;
         // Dual-substrate
-        h_fLx[i]  = v.flux_L.x;
-        h_fLy[i]  = v.flux_L.y;
-        h_fLz[i]  = v.flux_L.z;
-        h_fRx[i]  = v.flux_R.x;
-        h_fRy[i]  = v.flux_R.y;
-        h_fRz[i]  = v.flux_R.z;
-        h_wvLx[i] = v.wave_vel_L.x;
-        h_wvLy[i] = v.wave_vel_L.y;
-        h_wvLz[i] = v.wave_vel_L.z;
-        h_wvRx[i] = v.wave_vel_R.x;
-        h_wvRy[i] = v.wave_vel_R.y;
-        h_wvRz[i] = v.wave_vel_R.z;
+        h_fLx[k]  = v.flux_L.x;
+        h_fLy[k]  = v.flux_L.y;
+        h_fLz[k]  = v.flux_L.z;
+        h_fRx[k]  = v.flux_R.x;
+        h_fRy[k]  = v.flux_R.y;
+        h_fRz[k]  = v.flux_R.z;
+        h_wvLx[k] = v.wave_vel_L.x;
+        h_wvLy[k] = v.wave_vel_L.y;
+        h_wvLz[k] = v.wave_vel_L.z;
+        h_wvRx[k] = v.wave_vel_R.x;
+        h_wvRy[k] = v.wave_vel_R.y;
+        h_wvRz[k] = v.wave_vel_R.z;
         // Strong field
-        h_fsx[i]  = v.flux_strong.x;
-        h_fsy[i]  = v.flux_strong.y;
-        h_fsz[i]  = v.flux_strong.z;
-        h_wvsx[i] = v.wave_vel_strong.x;
-        h_wvsy[i] = v.wave_vel_strong.y;
-        h_wvsz[i] = v.wave_vel_strong.z;
+        h_fsx[k]  = v.flux_strong.x;
+        h_fsy[k]  = v.flux_strong.y;
+        h_fsz[k]  = v.flux_strong.z;
+        h_wvsx[k] = v.wave_vel_strong.x;
+        h_wvsy[k] = v.wave_vel_strong.y;
+        h_wvsz[k] = v.wave_vel_strong.z;
         // Weak field
-        h_fwx[i]  = v.flux_weak.x;
-        h_fwy[i]  = v.flux_weak.y;
-        h_fwz[i]  = v.flux_weak.z;
-        h_wvwx[i] = v.wave_vel_weak.x;
-        h_wvwy[i] = v.wave_vel_weak.y;
-        h_wvwz[i] = v.wave_vel_weak.z;
+        h_fwx[k]  = v.flux_weak.x;
+        h_fwy[k]  = v.flux_weak.y;
+        h_fwz[k]  = v.flux_weak.z;
+        h_wvwx[k] = v.wave_vel_weak.x;
+        h_wvwy[k] = v.wave_vel_weak.y;
+        h_wvwz[k] = v.wave_vel_weak.z;
     }
 
-    CUDA_CHECK(cudaMemcpy(d_state, h_state.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_x, h_fx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_y, h_fy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_z, h_fz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_x, h_wvx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_y, h_wvy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_z, h_wvz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_velocity_x, h_vx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_velocity_y, h_vy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_velocity_z, h_vz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_remainder_x, h_rx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_remainder_y, h_ry.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_remainder_z, h_rz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    // Note: bool vector is not guaranteed contiguous in all implementations.
-    // Use uint8_t staging buffer for safe upload.
-    {
-        std::vector<uint8_t> h_locked_u8(N);
-        for (int i = 0; i < N; ++i) h_locked_u8[i] = h_locked[i] ? 1 : 0;
-        CUDA_CHECK(cudaMemcpy(d_locked, h_locked_u8.data(), N * sizeof(uint8_t), cudaMemcpyHostToDevice));
-    }
-    CUDA_CHECK(cudaMemcpy(d_particle_id, h_pid.data(), N * sizeof(int32_t), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_spin, h_spin.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_color, h_color.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flavor, h_flavor.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_accel_mag, h_accel.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_pair_id, h_pair_id.data(), N * sizeof(int32_t), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_latency, h_latency.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_tau, h_tau.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    std::size_t bytes = 0;
+    // Upload a staging array into dev[lo .. lo+count). Accumulates transfer
+    // volume so both the full and delta paths are measured identically.
+    #define FTD_UPLOAD_RANGE(dev, src, T)                                        \
+        do {                                                                     \
+            CUDA_CHECK(cudaMemcpy((dev) + lo, (src).data(),                      \
+                                  static_cast<std::size_t>(count) * sizeof(T),   \
+                                  cudaMemcpyHostToDevice));                      \
+            bytes += static_cast<std::size_t>(count) * sizeof(T);                \
+        } while (0)
+
+    FTD_UPLOAD_RANGE(d_state, h_state, int8_t);
+    FTD_UPLOAD_RANGE(d_flux_x, h_fx, double);
+    FTD_UPLOAD_RANGE(d_flux_y, h_fy, double);
+    FTD_UPLOAD_RANGE(d_flux_z, h_fz, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_x, h_wvx, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_y, h_wvy, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_z, h_wvz, double);
+    FTD_UPLOAD_RANGE(d_velocity_x, h_vx, double);
+    FTD_UPLOAD_RANGE(d_velocity_y, h_vy, double);
+    FTD_UPLOAD_RANGE(d_velocity_z, h_vz, double);
+    FTD_UPLOAD_RANGE(d_remainder_x, h_rx, double);
+    FTD_UPLOAD_RANGE(d_remainder_y, h_ry, double);
+    FTD_UPLOAD_RANGE(d_remainder_z, h_rz, double);
+    FTD_UPLOAD_RANGE(d_locked, h_locked, uint8_t);
+    FTD_UPLOAD_RANGE(d_particle_id, h_pid, int32_t);
+    FTD_UPLOAD_RANGE(d_spin, h_spin, int8_t);
+    FTD_UPLOAD_RANGE(d_color, h_color, int8_t);
+    FTD_UPLOAD_RANGE(d_flavor, h_flavor, int8_t);
+    FTD_UPLOAD_RANGE(d_accel_mag, h_accel, double);
+    FTD_UPLOAD_RANGE(d_pair_id, h_pair_id, int32_t);
+    FTD_UPLOAD_RANGE(d_latency, h_latency, double);
+    FTD_UPLOAD_RANGE(d_tau, h_tau, double);
     // Dual-substrate
-    CUDA_CHECK(cudaMemcpy(d_flux_L_x, h_fLx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_L_y, h_fLy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_L_z, h_fLz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_R_x, h_fRx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_R_y, h_fRy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_R_z, h_fRz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_L_x, h_wvLx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_L_y, h_wvLy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_L_z, h_wvLz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_R_x, h_wvRx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_R_y, h_wvRy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_R_z, h_wvRz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-
+    FTD_UPLOAD_RANGE(d_flux_L_x, h_fLx, double);
+    FTD_UPLOAD_RANGE(d_flux_L_y, h_fLy, double);
+    FTD_UPLOAD_RANGE(d_flux_L_z, h_fLz, double);
+    FTD_UPLOAD_RANGE(d_flux_R_x, h_fRx, double);
+    FTD_UPLOAD_RANGE(d_flux_R_y, h_fRy, double);
+    FTD_UPLOAD_RANGE(d_flux_R_z, h_fRz, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_L_x, h_wvLx, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_L_y, h_wvLy, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_L_z, h_wvLz, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_R_x, h_wvRx, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_R_y, h_wvRy, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_R_z, h_wvRz, double);
     // Strong field
-    CUDA_CHECK(cudaMemcpy(d_flux_strong_x, h_fsx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_strong_y, h_fsy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_strong_z, h_fsz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_strong_x, h_wvsx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_strong_y, h_wvsy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_strong_z, h_wvsz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-
+    FTD_UPLOAD_RANGE(d_flux_strong_x, h_fsx, double);
+    FTD_UPLOAD_RANGE(d_flux_strong_y, h_fsy, double);
+    FTD_UPLOAD_RANGE(d_flux_strong_z, h_fsz, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_strong_x, h_wvsx, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_strong_y, h_wvsy, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_strong_z, h_wvsz, double);
     // Weak field
-    CUDA_CHECK(cudaMemcpy(d_flux_weak_x, h_fwx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_weak_y, h_fwy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_flux_weak_z, h_fwz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_weak_x, h_wvwx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_weak_y, h_wvwy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(d_wave_vel_weak_z, h_wvwz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    FTD_UPLOAD_RANGE(d_flux_weak_x, h_fwx, double);
+    FTD_UPLOAD_RANGE(d_flux_weak_y, h_fwy, double);
+    FTD_UPLOAD_RANGE(d_flux_weak_z, h_fwz, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_weak_x, h_wvwx, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_weak_y, h_wvwy, double);
+    FTD_UPLOAD_RANGE(d_wave_vel_weak_z, h_wvwz, double);
+
+    #undef FTD_UPLOAD_RANGE
+    g_gpu_upload_bytes += bytes;
+}
+
+void GpuBuffers::upload_voxels_delta(const std::vector<Voxel>& host_voxels,
+                                     const std::vector<Voxel>& shadow) {
+    // Fall back to a full upload when we cannot trust a partial one:
+    //   - g_gpu_force_full_upload: test knob capturing the pre-C5 reference;
+    //   - shadow not a valid device mirror of size N (cold start / resize).
+    if (g_gpu_force_full_upload ||
+        static_cast<int>(shadow.size()) != N ||
+        static_cast<int>(host_voxels.size()) != N) {
+        upload_voxels(host_voxels);
+        return;
+    }
+
+    // Collect the indices whose uploaded fields changed vs the device shadow.
+    std::vector<int> dirty;
+    for (int i = 0; i < N; ++i) {
+        if (uploaded_fields_differ(host_voxels[i], shadow[i])) dirty.push_back(i);
+    }
+    if (dirty.empty()) return;  // device already equals host_voxels — no-op
+
+    // If a large fraction changed, one contiguous full upload is cheaper than
+    // many small strided copies (and identical in effect). N/4 is a heuristic;
+    // correctness holds for any threshold.
+    if (static_cast<std::size_t>(dirty.size()) * 4 > static_cast<std::size_t>(N)) {
+        upload_voxels(host_voxels);
+        return;
+    }
+
+    // Coalesce the ascending dirty indices into maximal contiguous runs and
+    // upload each run. Byte-identical to a full upload: the caller guarantees
+    // device == shadow at every non-dirty index, so writing exactly the dirty
+    // runs makes the device equal host_voxels everywhere.
+    int run_lo = dirty[0];
+    int run_hi = dirty[0];
+    for (std::size_t k = 1; k < dirty.size(); ++k) {
+        const int idx = dirty[k];
+        if (idx == run_hi + 1) { run_hi = idx; continue; }
+        upload_voxels_range(host_voxels, run_lo, run_hi - run_lo + 1);
+        run_lo = idx;
+        run_hi = idx;
+    }
+    upload_voxels_range(host_voxels, run_lo, run_hi - run_lo + 1);
 }
 
 // ---------- SoA → AoS Download ----------
