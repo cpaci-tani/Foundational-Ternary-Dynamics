@@ -480,3 +480,37 @@ options — never silent tolerance edits):
    substrate (includes only render_bridge.h), so unreachable by the 2.4
    Scale-1 edit; possibly interacts with the concurrent gauge-wiring WIP —
    re-baseline once that lands.
+
+### Ticket-5.4 diagnosis, part 1 (2026-07-03): the G_PE-class failures DIAGNOSED
+`particle_toggles` §4 ("Gravity ON -> nonzero force" + gravity diag) and
+`particle_engine` PE5/PE6 (force magnitude within 1%; pure-gravity check)
+fail for one shared root cause, now pinned:
+
+- **Root cause:** the tests' expectations date from the legacy G_N=0.01-era
+  coupling. The engine's committed `G_PE = G_DERIVED` is the PHYSICAL
+  FTD-0131 gravitational coupling `1/(4pi*m_P^2)` (~1e-45 scale;
+  `ontic/particle_masses.h:101-107`), so a two-electron gravity force is
+  ~5e-48 — below the tests' "nonzero"/1% thresholds by ~40 orders of
+  magnitude. Measured: PE6 pure-gravity force = 5.26e-48; PE5 expected
+  grav term 2.6e-05 vs actual EM-only 5.8e-06 (81.8% "error" = the grav
+  term the test wrongly expects to be EM-comparable). The test source is
+  unchanged since 2026-03-16; the physics moved under it (deliberately,
+  FTD-0131) and nobody re-ran the suite.
+
+- **Three costed options (5.4 discipline — no silent tolerance edits):**
+  1. **RECOMMENDED — re-baseline the expectations to the physical coupling**
+     (S effort): PE5 expects EM-only magnitude (grav negligible by 40
+     orders); PE6/toggles-§4 assert the RATIO F_grav/F_coulomb ≈ alpha_G
+     scale (m1*m2/q1*q2 * G_PE*4pi/ALPHA_EFT) instead of "nonzero above
+     double noise". Turns the failures into a genuine pin of FTD-0131.
+  2. Test-local legacy-G override knob (S): rejected — masks the physical
+     coupling and re-creates the drift that caused this.
+  3. Label `known_fail` + exclude (S): honest but wasteful — option 1 is
+     barely more work and yields real coverage.
+
+- **Still open in 5.4:** `helium_scale1` (FTD-0270 boundary hypothesis —
+  needs its own instrumented pass), `atomic_energy` AE-6d/6e (bound-state
+  energy sign; E_actual/E_circ = -0.64 measured — likely the same class:
+  expectation predates a physics recalibration; bisect against the AE force
+  history before proposing options), `particle_lifetime` (re-baseline after
+  the gauge wiring + concurrent-session churn settles).
