@@ -8,12 +8,27 @@
  */
 
 #include "voxel.h"
+#include <cstddef>   // std::size_t
 #include <cstdint>   // uint8_t etc. — Linux/clang require explicit include
 #include <vector>
 #include <cufft.h>
 
 namespace ftd {
 namespace gpu {
+
+// ─── C5 (CUDA ticket): host→device upload instrumentation + test knob ───────
+// g_gpu_upload_bytes accumulates the bytes actually memcpy'd host→device by
+// upload_voxels_range() — i.e. by BOTH the full and the delta upload paths —
+// so campaigns/tests can record transfer volume before/after. Reset it to 0
+// before a measured operation and read it afterwards.
+//
+// g_gpu_force_full_upload forces upload_voxels_delta() to fall back to a full
+// upload. It exists ONLY so test_gpu_delta_upload can capture the pre-C5
+// (full-upload) reference and prove the delta path is byte-identical. Default
+// false; pure host-side state that never changes any device byte, so it is
+// golden-neutral.
+extern std::size_t g_gpu_upload_bytes;
+extern bool        g_gpu_force_full_upload;
 
 struct GpuBuffers {
     int N = 0;    // total sites (L^3)
@@ -167,8 +182,30 @@ struct GpuBuffers {
                   std::vector<double>& host_phi,
                   std::vector<double>& host_phi_coulomb) const;
 
-    // Upload only state + flux (for inject_particle / inject_wavepacket)
+    // Upload all voxel fields for the whole lattice (equivalent to
+    // upload_voxels_range(host_voxels, 0, N)). Used by inject_particle /
+    // inject_wavepacket / the full-upload fallback.
     void upload_voxels(const std::vector<Voxel>& host_voxels);
+
+    // Upload the AoS voxel fields for the contiguous index range [lo, lo+count)
+    // into the SoA device arrays. The field set copied here is the SINGLE
+    // SOURCE OF TRUTH for a voxel upload; upload_voxels() is the lo=0,count=N
+    // case and the C5 delta path (upload_voxels_delta) calls this once per
+    // contiguous dirty run. Adds count·sizeof(voxel-fields) to
+    // g_gpu_upload_bytes.
+    void upload_voxels_range(const std::vector<Voxel>& host_voxels,
+                             int lo, int count);
+
+    // C5: partial host→device upload. `shadow` is the host mirror of the
+    // CURRENT device SoA state (the caller guarantees device == shadow at every
+    // index). Diffs `host_voxels` against `shadow`, uploads only the changed
+    // voxels (coalesced into contiguous runs), and is byte-identical to
+    // upload_voxels(host_voxels) because every unchanged index already holds
+    // the correct bytes. Falls back to a full upload on cold start
+    // (shadow.size()!=N), when a large fraction changed, or when
+    // g_gpu_force_full_upload is set.
+    void upload_voxels_delta(const std::vector<Voxel>& host_voxels,
+                             const std::vector<Voxel>& shadow);
 
     // Download only voxels (for diagnostics)
     void download_voxels(std::vector<Voxel>& host_voxels) const;
