@@ -151,7 +151,7 @@ This is the **constructive** content of FTD's discreteness. The discreteness liv
 
 ### §7.1 No tag changes
 
-The algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0) is dimensionless throughout. Every existing [THEOREM] tag stands. Every existing [SMC]/[SELECTION]/[PARAMETRIC] tag stands. The dimensional content of any FTD prediction was already calibration-conditional per SPEC_DIMENSIONAL_MAP; this doc does not change that.
+The algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention) is dimensionless throughout. Every existing [THEOREM] tag stands. Every existing [SMC]/[SELECTION]/[PARAMETRIC] tag stands. The dimensional content of any FTD prediction was already calibration-conditional per SPEC_DIMENSIONAL_MAP; this doc does not change that.
 
 ### §7.2 FTD-0041 is reframed (not retired)
 
@@ -194,7 +194,7 @@ The honest position: **"context-driven" has substrate**; **"fractal-like" is a c
 For FTD-internal use:
 
 1. **Lattice spacing is gauge.** No fundamental physical scale is asserted by the framework.
-2. **The falsifiable spine is dimensionless.** The nine numbered algebraic-spine results (seven theorem-grade + two honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) + the 4 dimensionless physical identifications + the dimensionless ratios extracted from engine measurements are the framework's content.
+2. **The falsifiable spine is dimensionless.** The nine numbered algebraic-spine results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention) + the 4 dimensionless physical identifications + the dimensionless ratios extracted from engine measurements are the framework's content.
 3. **Dimensional calibrations are convenience.** They enable cross-translation with SI-quoted measurements but are not derivations and not load-bearing for FTD's own falsifiability surface.
 4. **The default gauge is Planck-primary** (§4.1) for backward compatibility with existing documentation, but the dimensionless-only gauge (§4.4) is the canonical form for falsifiable predictions.
 5. **Different operational contexts may use different gauges.** Switching gauges is a documented transformation; the dimensionless content is invariant.
