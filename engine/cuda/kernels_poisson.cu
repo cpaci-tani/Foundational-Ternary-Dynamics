@@ -14,23 +14,9 @@
 #include <cufft.h>
 #include <cstdio>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#define FTD_CUDA_ERROR_WANT_CUFFT
+#include "cuda_error.cuh"  // CUDA_CHECK + CUFFT_CHECK (revision C1)
 
-#define CUFFT_CHECK(call) do { \
-    cufftResult err = (call); \
-    if (err != CUFFT_SUCCESS) { \
-        fprintf(stderr, "cuFFT error at %s:%d: %d\n", \
-                __FILE__, __LINE__, (int)err); \
-        exit(1); \
-    } \
-} while(0)
 
 namespace ftd {
 namespace gpu {
@@ -145,18 +131,21 @@ static void fft_poisson_solve_f(
 
     // 1. Pack double RHS into float complex
     pack_real_to_complex_f<<<blocks, threads>>>(d_rhs, d_fft_buf, N);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 2. Forward C2C FFT (in-place, single precision)
     CUFFT_CHECK(cufftExecC2C(plan_fwd, d_fft_buf, d_fft_buf, CUFFT_FORWARD));
 
     // 3. Apply Green's function
     apply_green_f<<<blocks, threads>>>(d_fft_buf, d_green, N);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 4. Inverse C2C FFT (in-place)
     CUFFT_CHECK(cufftExecC2C(plan_inv, d_fft_buf, d_fft_buf, CUFFT_INVERSE));
 
     // 5. Unpack float to double + normalize
     unpack_complex_to_real_f<<<blocks, threads>>>(d_fft_buf, d_phi, N);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
 
 // ============================================================================
@@ -383,18 +372,21 @@ static void fft_poisson_solve(
 
     // 1. Pack real RHS into complex buffer
     pack_real_to_complex<<<blocks, threads>>>(d_rhs, d_fft_buf, N);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 2. Forward FFT (in-place)
     CUFFT_CHECK(cufftExecZ2Z(plan_fwd, d_fft_buf, d_fft_buf, CUFFT_FORWARD));
 
     // 3. Apply Green's function in k-space
     apply_green<<<blocks, threads>>>(d_fft_buf, d_green, N);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 4. Inverse FFT (in-place)
     CUFFT_CHECK(cufftExecZ2Z(plan_inv, d_fft_buf, d_fft_buf, CUFFT_INVERSE));
 
     // 5. Unpack + normalize
     unpack_complex_to_real<<<blocks, threads>>>(d_fft_buf, d_phi, N);
+    CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
 
 // ---------- Launcher: Gauss Projection ----------

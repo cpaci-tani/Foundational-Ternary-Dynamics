@@ -14,14 +14,7 @@
 #include <cmath>
 #include <algorithm>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 #define CUFFT_CHECK(call) do { \
     cufftResult err = (call); \
@@ -233,6 +226,13 @@ void GpuEngine::tick() {
     // may have already written its updated flux[j] in the same kernel launch. The separate
     // kernel approach provides the necessary global barrier between reading neighbors (phase_read)
     // and writing self (phase_write). Double-buffering could fix this in the future.
+    //
+    // ORDERING GUARANTEE (revision C7): both launches go to the same CUDA
+    // stream (the default stream throughout this engine), and CUDA serializes
+    // kernels on one stream in issue order — phase_write can NEVER begin
+    // before every phase_read thread has retired. No explicit sync primitive
+    // is needed or wanted here; do NOT move these onto different streams
+    // without re-introducing the barrier explicitly.
     gpu_phase_read();
     gpu_phase_write();
 

@@ -36,7 +36,8 @@ auxiliary kernels.
 | Header | Role |
 |---|---|
 | `kernels_stencil_common.cuh` | 82 LOC — shared device helpers used by both single-/dual-substrate stencil TUs: `wrap`, `idx3d`, `effective_damping`, `scale_field_pair` |
-| `cuda_index.cuh` | Shared `__device__ __forceinline__` helpers: `idx3d`, `wrap`, `decode_xyz`, `periodic_delta` |
+| `cuda_index.cuh` | Shared `__device__ __forceinline__` helpers: `idx3d`, `wrap`, `decode_xyz`, `periodic_delta`, `atomicCAS_byte` (revision C3 — was duplicated in kernels_forces/kernels_aux) |
+| `cuda_error.cuh` | Shared `CUDA_CHECK` / `CUFFT_CHECK` error macros (revision C1 — was duplicated verbatim across 11 TUs) |
 | `../include/ftd/constants_shared.h` | `inline constexpr` mirrors of host constants — compiles under both g++ and nvcc; not `__constant__` memory (those live in `cuda_invariants.cu`, ADR-0014) |
 | `../include/ftd/gpu_buffers.h`, `gpu_engine.h` | Public C++ API consumed by `render_bridge.cpp` |
 
