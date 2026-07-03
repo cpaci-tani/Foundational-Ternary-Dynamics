@@ -1461,6 +1461,29 @@ ftd_add_test(campaign_mass_gap tests/campaign_mass_gap.cpp
              CTEST_NAME campaign_mass_gap TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0270 P2 v2 (2026-07-02): mass-gap swing rebuilt per the FTD-0333
+# postmortem + FTD-0337 mechanism correction (bare-wave leapfrog growth).
+# E1 stable integrator (toggles.verlet_wave_integrator, default OFF ⇒
+# golden-neutral) at dt=0.5, injection-subtracted G2 growth metric + a
+# bare-wave stability control, k0-isolating (uniform-J) G1 control, and the
+# stable-island amplitudes A∈{9,9.5,13} at L∈{48,64}. Frozen instrument for
+# PREREG_QDYN_MASS_GAP_v2. Default CTest invocation is the trivial no-arg
+# smoke; the canonical sweep is run by hand post-lock.
+ftd_add_test(campaign_mass_gap_v2 tests/campaign_mass_gap_v2.cpp
+             CTEST_NAME campaign_mass_gap_v2 TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
+# FTD-0349 §9 / FTD-0354 (2026-07-02): the GNC-w discriminator. Measures the
+# READ-ONLY member-site gradient quadratic form Q_ij on constructed, locked,
+# Gauss-dressed clusters (cube/rod/L-shape × N∈{8,27,64} × L∈{32,48}), CPU
+# deterministic seed 42. Q gates SUMMED GNC-w only (FTD-0354 §4.4); zero
+# promotions (FTD-0110/0250 move only via the pre-registered outcomes in
+# PREREG_GNC_QIJ_v1). Golden-neutral (public API only). Default CTest
+# invocation is the no-arg smoke; the canonical sweep is run by hand.
+ftd_add_test(campaign_gnc_qij tests/campaign_gnc_qij.cpp
+             CTEST_NAME campaign_gnc_qij TIMEOUT 3600
+             LABELS native observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
