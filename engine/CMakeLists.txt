@@ -2361,6 +2361,16 @@ if(FTD_ENABLE_CUDA)
     set_tests_properties(gpu_continuity_ledger PROPERTIES
                          LABELS "gpu;constructor;ledger;observable;eft_quick")
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
+    # gpu_parity_complete runs 22 CPU-vs-GPU domain checks, several under
+    # enable_all() whose CPU side drives iterative SOR Poisson solves (Gauss +
+    # Coulomb + latency) every tick — plus GPC-20's 1000-tick sweep. On the
+    # canonical WSL2-gcc -O3 platform that CPU path is far slower than MSVC
+    # (same class as gauge_links, whose timeout was raised for this reason), so
+    # the 600 s group cap above is not enough (it was timing the gate out at
+    # baseline). This override lifts it (a later set_tests_properties wins).
+    # C6 (2026-07-03) added the GPC-21/22 weak-field domains; they are lean, but
+    # the pre-existing enable_all domains dominate (~44 min total on WSL2).
+    set_tests_properties(gpu_parity_complete PROPERTIES TIMEOUT 3600)
 endif()
 
 # Campaign tests
