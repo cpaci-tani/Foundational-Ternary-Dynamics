@@ -28,14 +28,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 namespace ftd {
 namespace gpu {
@@ -541,6 +534,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction, L
         );
+        CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
     }
     CUDA_CHECK(cudaGetLastError());
 }

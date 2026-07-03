@@ -10,9 +10,9 @@
  * plus their host-side launchers (launch_weak_transmutation,
  * launch_pair_production).
  *
- * The byte-level atomicCAS shim atomicCAS_byte_stencil is local to this TU;
- * the same pattern lives in kernels_forces.cu (atomicCAS_byte). Keeping each
- * copy local avoids cross-TU device-symbol resolution for an inlinable helper.
+ * The byte-level atomicCAS shim atomicCAS_byte is shared via cuda_index.cuh
+ * (revision C3 — header-inlining needs no cross-TU device-symbol
+ * resolution, so the old keep-local rationale no longer applies).
  *
  * Helper functions wrap / idx3d live in kernels_stencil_common.cuh so all
  * stencil-flavoured TUs share one X-major index source of truth.
@@ -21,20 +21,13 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
 #include "ftd/voxel_rng.h"
-#include "kernels_stencil_common.cuh"   // wrap, idx3d (atomicCAS_byte_stencil is local)
+#include "kernels_stencil_common.cuh"   // wrap, idx3d (+ cuda_index.cuh: atomicCAS_byte)
 #include <cuda_runtime.h>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 namespace ftd {
 namespace gpu {
@@ -198,27 +191,7 @@ __global__ void weak_transmutation_kernel(
 // Enhanced genesis: when flux > 2×K_GENESIS at a void site, produce correlated
 // +1/-1 pair at adjacent sites. Uses atomicCAS_byte to claim two sites atomically.
 
-// Byte-level atomicCAS (duplicate from kernels_forces.cu — not shared across TUs)
-__device__ __forceinline__
-int8_t atomicCAS_byte_stencil(int8_t* addr, int8_t compare, int8_t val) {
-    unsigned int* word_addr = reinterpret_cast<unsigned int*>(
-        reinterpret_cast<size_t>(addr) & ~3ULL);
-    unsigned int byte_offset = (reinterpret_cast<size_t>(addr) & 3) * 8;
-    unsigned int byte_mask = 0xFFu << byte_offset;
-
-    unsigned int old_word = *word_addr;
-    unsigned int assumed;
-    do {
-        assumed = old_word;
-        unsigned int old_byte = (assumed >> byte_offset) & 0xFF;
-        if (old_byte != static_cast<unsigned char>(compare))
-            return static_cast<int8_t>(old_byte);
-        unsigned int new_word = (assumed & ~byte_mask)
-                              | (static_cast<unsigned int>(static_cast<unsigned char>(val)) << byte_offset);
-        old_word = atomicCAS(word_addr, assumed, new_word);
-    } while (old_word != assumed);
-    return compare;
-}
+// atomicCAS_byte now lives in cuda_index.cuh (revision C3, ADR-0007).
 
 __global__ void pair_production_kernel(
     int8_t* __restrict__ state,
@@ -273,10 +246,10 @@ __global__ void pair_production_kernel(
     if (best_j < 0) return;  // No adjacent void site
 
     // Atomically claim both sites: first site → +1, second → -1
-    int8_t old_i = atomicCAS_byte_stencil(&state[i], 0, 1);
+    int8_t old_i = atomicCAS_byte(&state[i], 0, 1);
     if (old_i != 0) return;  // Someone else claimed it
 
-    int8_t old_j = atomicCAS_byte_stencil(&state[best_j], 0, -1);
+    int8_t old_j = atomicCAS_byte(&state[best_j], 0, -1);
     if (old_j != 0) {
         // Rollback: release first site
         state[i] = 0;
