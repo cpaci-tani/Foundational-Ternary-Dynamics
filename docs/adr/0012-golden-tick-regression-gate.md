@@ -77,6 +77,25 @@ policy applies per-profile — each pinned constant is independent. Further
 profiles (boundary modes, L=9, GPU) are registered under the same policy as
 they land (revision tickets 0.6/0.7).
 
+**Amendment (2026-07-02, engine revision program 0.9 option a): gauge golden
+profile.** The SU(2)/SU(3) gauge sector was wired into the tick behind
+`su2_gauge`/`su3_gauge` (default OFF — every prior pin verified bit-identical
+before and after wiring). New pinned profile in `test_gauge_links.cpp`:
+`GAUGE_GOLDEN_HASH = 0xa4dec20d1dd94ec8` — the L=17 / seed-42 / 100-tick
+harness with BOTH gauge toggles ON, links seeded by the standard deterministic
+perturbation (`tests/support/gauge_test_utils.h`; identity links are exactly
+stationary under the staple update, so the profile must start off the fixed
+point), folded over ALL link variables (`hash_all_links`), NOT over the
+substrate. The substrate fold is asserted UNCHANGED vs defaults in the same
+test (the sector is write-only — nothing downstream consumes the links), so
+this profile gates the link dynamics without spending any substrate golden
+surface. Captured on MSVC `/fp:precise`, stable ×3 + OMP_NUM_THREADS=1, and
+reproduced bit-identically on WSL2-gcc (`-ffp-contract=off`). GPU behavior is
+gated by `test_gauge_gpu_parity` (element-wise CPU/GPU tolerance ~1e-15 +
+bit-exact GPU run-to-run determinism), not by a pinned GPU link hash — the
+CPU↔GPU FMA-contraction and product-association differences are documented in
+that test.
+
 ## Alternatives considered
 
 - Hand-rolled per-quantity assertions — rejected: hashes catch

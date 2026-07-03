@@ -1,5 +1,43 @@
 # Foundational Ternary Dynamics Changelog
 
+## Non-Abelian gauge sector wired into the tick (2026-07-02)
+
+Engine revision program ticket 0.9, option (a) — reversing the same-day
+option-b keep-dormant decision (commit `979d70da` on
+`claude/elegant-pasteur-60a015`, never merged) by owner instruction. On
+`engine/revision-program-p0`:
+
+- **Race fix first** (`363c1fed`): `relax_su2/su3_links_cpu` relaxed links
+  in place under `#pragma omp parallel for` while reading neighbor links
+  other threads were writing. Both sweeps are now Jacobi double-buffered
+  (read pre-sweep state → write scratch → swap); result is thread-count
+  invariant (tripwire: `test_gauge_links` G4). GPU kernels double-buffered
+  the same way (src→dst + pointer swap); block size 8³→4³ (SU(3) staple
+  kernel exceeds the register budget at 512 threads/block).
+- **Lazy link buffers** (ticket 4.1b, both backends): the 6 link arrays
+  (528 B/site — larger than the voxel array; ~132 MiB at L=64) are no longer
+  allocated by every `RenderBridge`; `ensure_gauge_links()` /
+  `upload_gauge_links()` materialize on first use.
+- **Wiring**: CPU tick Rule 7b + `GpuEngine` Phase 7b, gated on
+  `su2_gauge`/`su3_gauge` (default OFF), shared [IMPOSED] rate constants
+  `GAUGE_RELAX_DT=0.1` / `GAUGE_RELAX_BETA=1.0` (`constants.h`);
+  `GpuBackend` marshals host↔device (upload once on activation, download
+  per gauge tick in `sync_to_host`).
+- **Gates**: new gauge golden profile `GAUGE_GOLDEN_HASH =
+  0xa4dec20d1dd94ec8` (links-only fold from the standard perturbed start;
+  bit-identical MSVC↔WSL2-gcc; ADR-0012 amendment) + write-only-substrate
+  guarantee (gauge-ON substrate fold equals the default-profile pin) + new
+  `test_gauge_gpu_parity` (CPU↔GPU max element delta 5.6e-16 on WSL2 RTX
+  5090; GPU run-to-run bit-identical). All pre-existing pinned goldens
+  (minimal `0xb604d81a3d79366e`, default, L9, boundary ×3, knot, GPU
+  `0xd6c0f7007f5a4f24`) verified bit-identical.
+- **Epistemic status of record**: the wired sector is [IMPOSED] measurement
+  infrastructure — the standard Wilson-action staple relaxation imported
+  from lattice gauge theory. The links are write-only w.r.t. the substrate;
+  nothing downstream consumes them (`color_forces` uses color labels). No
+  LEDGER claim is created or supported; Moore-layer gauge-group results are
+  independent of this code path.
+
 ## Comprehensive engine physics audit + remediation (2026-06-17)
 
 Multi-agent audit of the whole engine + "everything actionable" remediation.
