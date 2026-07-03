@@ -15,6 +15,7 @@
 // threading once on-demand nested pthread_create is resolved.
 
 import { createScale0Capabilities } from './capabilities/scale0.js';
+import { samplerOr } from './bridge-contract.js';
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), count: 0 });
@@ -303,6 +304,8 @@ export class WasmBridgeProxy {
     getEMForceField(stride = 2)         { return this._wantSampler('em',           stride, EMPTY_VEC); }
     getGravityForceField(stride = 2)    { return this._wantSampler('gravity',      stride, EMPTY_VEC); }
     getStrongForceField(stride = 2)     { return this._wantSampler('strong',       stride, EMPTY_VEC); }
+    /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
+    getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
     getGravityMetricAgg() {
         const key = 'gravityMetricAgg@0';
         if (!this._samplerWant.has(key)) {
