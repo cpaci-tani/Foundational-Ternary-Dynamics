@@ -37,6 +37,7 @@
 #include <cmath>
 #include <array>
 #include <string>
+#include <string_view>
 
 namespace ftd {
 
@@ -163,21 +164,92 @@ struct CosmicToggles {
     bool relativistic_jets = false;   // Bipolar jets from BH/Quasar
     bool gravitational_waves = false; // GW emission from mergers
 
-    void enable_all() {
-        gravity = sph_gas = hubble_expansion = true;
-        dark_energy = dark_matter_halos = black_hole_accretion = true;
-        cosmic_radiation = star_formation = stellar_evolution = true;
-        galaxy_mergers = magnetic_fields = radiation_pressure = true;
-        relativistic_jets = gravitational_waves = true;
-    }
-    void minimal() {
-        gravity = sph_gas = hubble_expansion = true;
-        dark_energy = dark_matter_halos = black_hole_accretion = false;
-        cosmic_radiation = star_formation = stellar_evolution = false;
-        galaxy_mergers = magnetic_fields = radiation_pressure = false;
-        relativistic_jets = gravitational_waves = false;
-    }
+    // ── Table-managed helpers (ADR-0013; bodies below COSMIC_TOGGLE_SPECS) ──
+    // Adding a toggle is a 2-place edit: the field above + one table row. The
+    // struct fields are preserved verbatim so every direct consumer compiles.
+    // validate() is NEW here (ticket 3.3): Cosmic previously had none, so it
+    // matches the ADR-0013 surface used by the other sub-engines.
+    bool validate(std::string* err = nullptr) const; // false + message on violation
+    void enable_all();                               // every toggle ON
+    void minimal();                                  // recommended-default profile
+    bool get_toggle(std::string_view name) const;    // false if unknown
+    bool set_toggle(std::string_view name, bool value); // false if unknown
 };
+
+// ─────────────────────────────────────────────────────────────────────
+// CosmicToggleSpec — one row per boolean toggle (ADR-0013 pattern, ported
+// from term_toggles.h). The helpers above iterate this table.
+//   default_value — constructor default (copied verbatim from the fields)
+//   minimal_value — value applied by minimal() (== default for every Cosmic row)
+//   requires_     — single dependency name that must also be ON (empty = none).
+//                   Cosmic declares no cross-toggle constraints, so every row is
+//                   empty and validate() always succeeds; the method exists only
+//                   to give Cosmic the same ADR-0013 surface as the other engines.
+// ─────────────────────────────────────────────────────────────────────
+struct CosmicToggleSpec {
+    const char* name;
+    bool CosmicToggles::* field;
+    bool default_value;
+    bool minimal_value;
+    const char* requires_;
+    const char* description;
+};
+
+inline constexpr CosmicToggleSpec COSMIC_TOGGLE_SPECS[] = {
+    // {name, field, default, minimal, requires_, description}
+    {"gravity",              &CosmicToggles::gravity,              true,  true,  "", "N-body gravitational force"},
+    {"sph_gas",              &CosmicToggles::sph_gas,              true,  true,  "", "SPH gas dynamics"},
+    {"hubble_expansion",     &CosmicToggles::hubble_expansion,     true,  true,  "", "Friedmann scale factor a(t)"},
+    {"dark_energy",          &CosmicToggles::dark_energy,          false, false, "", "Cosmological constant Omega_Lambda"},
+    {"dark_matter_halos",    &CosmicToggles::dark_matter_halos,    false, false, "", "DM substructure & halo profiles"},
+    {"black_hole_accretion", &CosmicToggles::black_hole_accretion, false, false, "", "Bondi-Hoyle accretion + jets"},
+    {"cosmic_radiation",     &CosmicToggles::cosmic_radiation,     false, false, "", "Radiative cooling/heating"},
+    {"star_formation",       &CosmicToggles::star_formation,       false, false, "", "Gas -> star conversion (Jeans)"},
+    {"stellar_evolution",    &CosmicToggles::stellar_evolution,    false, false, "", "Star -> WD/NS/BH transitions"},
+    {"galaxy_mergers",       &CosmicToggles::galaxy_mergers,       false, false, "", "Dynamical friction"},
+    {"magnetic_fields",      &CosmicToggles::magnetic_fields,      false, false, "", "Cosmic dynamo B-field"},
+    {"radiation_pressure",   &CosmicToggles::radiation_pressure,   false, false, "", "Luminosity-driven gas pushing"},
+    {"relativistic_jets",    &CosmicToggles::relativistic_jets,    false, false, "", "Bipolar jets from BH/Quasar"},
+    {"gravitational_waves",  &CosmicToggles::gravitational_waves,  false, false, "", "GW emission from mergers"},
+};
+static_assert(sizeof(COSMIC_TOGGLE_SPECS) / sizeof(COSMIC_TOGGLE_SPECS[0]) == 14,
+              "CosmicToggles has 14 boolean toggles — update the table and this pin together");
+
+inline bool CosmicToggles::get_toggle(std::string_view name) const {
+    for (const auto& s : COSMIC_TOGGLE_SPECS)
+        if (name == s.name) return this->*(s.field);
+    return false;
+}
+inline bool CosmicToggles::set_toggle(std::string_view name, bool value) {
+    for (const auto& s : COSMIC_TOGGLE_SPECS)
+        if (name == s.name) { this->*(s.field) = value; return true; }
+    return false;
+}
+inline void CosmicToggles::enable_all() {
+    for (const auto& s : COSMIC_TOGGLE_SPECS) this->*(s.field) = true;
+}
+inline void CosmicToggles::minimal() {
+    for (const auto& s : COSMIC_TOGGLE_SPECS) this->*(s.field) = s.minimal_value;
+}
+inline bool CosmicToggles::validate(std::string* err) const {
+    std::string msg;
+    // Table-driven single-name requires_ (none declared for Cosmic today).
+    for (const auto& s : COSMIC_TOGGLE_SPECS) {
+        if (!(this->*(s.field))) continue;
+        if (s.requires_ && *s.requires_) {
+            for (const auto& dep : COSMIC_TOGGLE_SPECS) {
+                if (std::string_view(s.requires_) == dep.name) {
+                    if (!(this->*(dep.field))) {
+                        msg += s.name; msg += " requires "; msg += dep.name; msg += "\n";
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    if (err) *err = msg;
+    return msg.empty();
+}
 
 // ============================================================================
 // Per-body force decomposition (for diagnostics + visualization)
@@ -359,39 +431,15 @@ public:
     const char* scale_name() const override { return "CosmicEngine"; }
     int entity_count() const override { return static_cast<int>(bodies_.size()); }
 
+    // Table-backed (ADR-0013): delegates to CosmicToggles, which iterates
+    // COSMIC_TOGGLE_SPECS. Unknown names read false / are ignored, exactly as
+    // the former hand-written if-ladders did.
     bool get_toggle(const std::string& name) const override {
-        if (name == "gravity")              return toggles.gravity;
-        if (name == "sph_gas")              return toggles.sph_gas;
-        if (name == "hubble_expansion")     return toggles.hubble_expansion;
-        if (name == "dark_energy")          return toggles.dark_energy;
-        if (name == "dark_matter_halos")    return toggles.dark_matter_halos;
-        if (name == "black_hole_accretion") return toggles.black_hole_accretion;
-        if (name == "cosmic_radiation")     return toggles.cosmic_radiation;
-        if (name == "star_formation")       return toggles.star_formation;
-        if (name == "stellar_evolution")    return toggles.stellar_evolution;
-        if (name == "galaxy_mergers")       return toggles.galaxy_mergers;
-        if (name == "magnetic_fields")      return toggles.magnetic_fields;
-        if (name == "radiation_pressure")   return toggles.radiation_pressure;
-        if (name == "relativistic_jets")    return toggles.relativistic_jets;
-        if (name == "gravitational_waves")  return toggles.gravitational_waves;
-        return false;
+        return toggles.get_toggle(name);
     }
 
     void set_toggle(const std::string& name, bool value) override {
-        if (name == "gravity")              { toggles.gravity = value; return; }
-        if (name == "sph_gas")              { toggles.sph_gas = value; return; }
-        if (name == "hubble_expansion")     { toggles.hubble_expansion = value; return; }
-        if (name == "dark_energy")          { toggles.dark_energy = value; return; }
-        if (name == "dark_matter_halos")    { toggles.dark_matter_halos = value; return; }
-        if (name == "black_hole_accretion") { toggles.black_hole_accretion = value; return; }
-        if (name == "cosmic_radiation")     { toggles.cosmic_radiation = value; return; }
-        if (name == "star_formation")       { toggles.star_formation = value; return; }
-        if (name == "stellar_evolution")    { toggles.stellar_evolution = value; return; }
-        if (name == "galaxy_mergers")       { toggles.galaxy_mergers = value; return; }
-        if (name == "magnetic_fields")      { toggles.magnetic_fields = value; return; }
-        if (name == "radiation_pressure")   { toggles.radiation_pressure = value; return; }
-        if (name == "relativistic_jets")    { toggles.relativistic_jets = value; return; }
-        if (name == "gravitational_waves")  { toggles.gravitational_waves = value; return; }
+        toggles.set_toggle(name, value);
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {

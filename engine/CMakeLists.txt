@@ -2329,6 +2329,8 @@ ftd_add_test(test_particle_toggles_table tests/test_particle_toggles_table.cpp
              CTEST_NAME particle_toggles_table TIMEOUT 120 LABELS scale1)
 ftd_add_test(test_atom_toggles_table tests/test_atom_toggles_table.cpp
              CTEST_NAME atom_toggles_table TIMEOUT 120 LABELS scale2)
+ftd_add_test(test_cosmic_toggles_table tests/test_cosmic_toggles_table.cpp
+             CTEST_NAME cosmic_toggles_table TIMEOUT 120 LABELS scale5 cosmic)
 
 # Tritium ternary compute library tests
 # Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
