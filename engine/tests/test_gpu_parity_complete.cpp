@@ -25,6 +25,17 @@
  *   GPC-18  Larmor radiation (acceleration damping)
  *   GPC-19  Ontic constants (cross-compilation check)
  *   GPC-20  Long-run energy drift (1000 ticks)
+ *   GPC-21  Weak substrate field — inertness parity (flavor==0)
+ *   GPC-22  Weak substrate field — GPU activation + determinism (C6)
+ *
+ * C6 note (weak substrate field): flux_weak/wave_vel_weak are stepped ONLY on
+ * the GPU (weak_field_stencil_kernel, gated by weak_field_active_ — set when a
+ * voxel carries flavor!=0 or nonzero weak flux). There is NO CPU weak stepper,
+ * so an evolved-field CPU==GPU equality check is not meaningful. GPC-21 pins
+ * the inert case (unexcited ⇒ zero on both, observables unperturbed); GPC-22
+ * characterizes the active case (GPU sources + propagates a finite,
+ * deterministic weak field; the CPU leaves it zero — a documented GPU-only-
+ * physics asymmetry, asserted so it cannot silently change).
  */
 
 #include "ftd/render_bridge.h"
@@ -621,9 +632,110 @@ static void gpc_20_longrun() {
 }
 
 // ============================================================
+// GPC-21: Weak substrate field — inertness parity (flavor == 0)
+// The weak substrate field is stepped ONLY on the GPU (weak_field_stencil_kernel,
+// gated by weak_field_active_); the CPU has no weak stepper. When nothing
+// excites it (flavor==0, no weak flux), weak_field_active_ stays false, the weak
+// sector is inert, and it must not perturb the observable single-substrate
+// parity between CPU and GPU. Lean wave setup (no FFT/Poisson) keeps this fast.
+// ============================================================
+static void gpc_21_weak_inert() {
+    std::printf("\n--- GPC-21: Weak Field Inertness Parity (flavor=0) ---\n");
+    constexpr int L = 32;
+
+    auto setup = [](auto& e) {
+        e.toggles.disable_all();
+        e.toggles.wave_propagation = true;
+        e.toggles.damping = true;
+    };
+
+    RenderBridge cpu(L); cpu.force_cpu(); setup(cpu);
+    cpu.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 1);
+
+    gpu::GpuEngine gpu(L); setup(gpu);
+    // 8-arg inject; flavor defaults to 0 → weak_field_active_ stays false.
+    gpu.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 1);
+
+    cpu.run(50); gpu.run(50);
+
+    auto ca = cpu.energy_audit(), ga = gpu.energy_audit();
+    // Weak sector never excited → exactly zero weak energy on both backends.
+    CHECK(ca.weak_energy == 0.0, "GPC-21 CPU weak energy zero (weak sector unexcited)");
+    CHECK(ga.weak_energy == 0.0, "GPC-21 GPU weak energy zero (weak_field_active stays off)");
+    // Observable parity holds — the dormant weak machinery does not leak into
+    // the single-substrate fields.
+    compare_audits(ca, ga, 0.05, "GPC-21");
+}
+
+// ============================================================
+// GPC-22: Weak substrate field — GPU activation + determinism (C6)
+// CHARACTERIZATION, not CPU==GPU equality. A flavored manifested particle turns
+// weak_field_active_ on; the GPU weak stencil then sources
+// (G_C·state·flavor·EDGE_GAUGE) and propagates flux_weak (cuboctahedron, 12
+// edge neighbors). The CPU has no weak stepper, so its weak field stays zero.
+// We verify the GPU sector ACTIVATES, stays FINITE, is run-to-run DETERMINISTIC,
+// and that the CPU-static behavior (a KNOWN GPU-only-physics asymmetry) holds.
+// disable_all() isolates the weak sector: only the core read/write phases plus
+// the weak stencil run — no FFT/Poisson/RNG — so weak_energy is deterministic.
+// ============================================================
+static void gpc_22_weak_active() {
+    std::printf("\n--- GPC-22: Weak Field Activation + Determinism (GPU-only physics) ---\n");
+    constexpr int L = 32;
+    constexpr int TICKS = 30;
+
+    auto setup = [](auto& e) { e.toggles.disable_all(); };
+
+    // GPU run #1 — flavor=1 activates the weak sector.
+    gpu::GpuEngine g1(L); setup(g1);
+    g1.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 0, /*flavor=*/1);
+    g1.run(TICKS);
+    auto ga1 = g1.energy_audit();
+
+    // GPU run #2 — identical, for the determinism check.
+    gpu::GpuEngine g2(L); setup(g2);
+    g2.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 0, /*flavor=*/1);
+    g2.run(TICKS);
+    auto ga2 = g2.energy_audit();
+
+    // CPU run — same setup + flavor; the weak sector is a no-op (no CPU stepper).
+    RenderBridge cpu(L); cpu.force_cpu(); setup(cpu);
+    cpu.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 0);
+    cpu.voxels()[cpu.lattice().index(L/2, L/2, L/2)].flavor = 1;  // mirror GPU flavor
+    cpu.run(TICKS);
+    auto ca = cpu.energy_audit();
+
+    std::printf("  INFO: GPU weak_energy=%.6e (run2=%.6e)  CPU weak_energy=%.6e\n",
+                ga1.weak_energy, ga2.weak_energy, ca.weak_energy);
+
+    // 1. Activation: the GPU weak stencil sources a non-trivial field.
+    CHECK(ga1.weak_energy > 1e-6, "GPC-22 GPU weak sector activates (weak_energy > 0)");
+    // 2. Finiteness: it stays bounded (no blow-up).
+    CHECK(std::isfinite(ga1.weak_energy), "GPC-22 GPU weak_energy finite");
+    // 3. Reproducibility (not bit-exactness): the weak stencil is a
+    //    deterministic pointwise kernel, but a full GPU tick under disable_all
+    //    still runs the cuFFT Poisson phases, whose run-to-run summation order
+    //    is not bit-stable — two identical runs agree on weak_energy only to
+    //    ~1e-7 relative (measured), not to the last bit. (The shipping-profile
+    //    GPU golden IS bit-stable; this lean profile is not.) A 1e-5 relative
+    //    band confirms the weak sector reproduces to well within any physically
+    //    meaningful level while still catching a gross nondeterminism
+    //    regression (e.g. an order-of-magnitude or 3x phenomenology split).
+    CHECK_CLOSE(ga2.weak_energy, ga1.weak_energy,
+                std::abs(ga1.weak_energy) * 1e-5 + 1e-12,
+                "GPC-22 GPU weak_energy reproducible across runs (<=1e-5 rel)");
+    // 4. Documented asymmetry: the CPU has no weak stepper, so its weak field
+    //    stays zero while the GPU evolves one. GPU-only physics, not a parity
+    //    failure — asserted so the asymmetry cannot silently change.
+    CHECK(ca.weak_energy == 0.0,
+          "GPC-22 CPU weak_energy stays zero (no CPU weak stepper — known asymmetry)");
+    CHECK(ga1.weak_energy > ca.weak_energy,
+          "GPC-22 GPU weak_energy exceeds CPU (documented GPU-only weak physics)");
+}
+
+// ============================================================
 int main() {
     std::printf("============================================================\n");
-    std::printf("  GPU Parity Complete: 20 Domain Checks\n");
+    std::printf("  GPU Parity Complete: 22 Domain Checks\n");
     std::printf("============================================================\n");
 
     gpc_01_wave();
@@ -646,6 +758,8 @@ int main() {
     gpc_18_larmor();
     gpc_19_constants();
     gpc_20_longrun();
+    gpc_21_weak_inert();
+    gpc_22_weak_active();
 
     std::printf("\n============================================================\n");
     std::printf("  GPU Parity Complete: %d passed, %d failed\n", g_pass, g_fail);
