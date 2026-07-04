@@ -47,6 +47,16 @@ construction site for ℚ(G*):
   partition-graded FTD objects. Mapping table + §5 item 8 + falsifier in the
   doc; toolkit shelved for any future symmetric-function layer. TRACKER §6.8
   → CLOSED/ANSWERED.
+- **RQ-MM-2 closed same day at gate G-A, zero q-evaluations performed** (the
+  anti-near-miss gate's designed exit): literature scan finds no q-analog of
+  Watson/finite-L lattice Green's functions; non-tunability fails structurally
+  (Jackson q-grids are geometric/multiplicative, lattice torus grids are
+  arithmetic/uniform; root-of-unity order = CHPS orbifold sector rank, not
+  volume — L ≠ r); map non-uniqueness; no exact identity candidate (algebraic
+  finite trig sums vs infinite q-Pochhammer products; Phase-G finite-L already
+  fully captured by its own closed form). Re-open condition: a *derived*
+  multiplicative structure on an FTD-native object, via fresh pre-registration.
+  TRACKER §6.7 → CLOSED/GATE-OUT.
 - Navigation: INDEX_09 (56→57 docs), META_INDEX row 9.61, LEDGER FTD-0366
   row + maintenance log, spine §9.1 pointer, frontier §2 ensemble-face row,
   type-priority §2 exhibit.
