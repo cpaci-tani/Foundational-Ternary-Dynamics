@@ -2,8 +2,8 @@
 
 **Tag:** [SYNTHESIS] + [STRUCTURAL OBSERVATION] — external-literature map plus a machine-verified intersection with the algebraic spine. Introduces no FTD physics claim; promotes no tag.
 **LEDGER id:** FTD-0366.
-**Verification:** `scripts/proofs/proof_gstar_matrix_models.py` (144/144 PASS, ~80 s; per-check tags `[EXTERNAL]` for re-verified CHPS statements, `[THEOREM]` for spine-side identities) + `scripts/tests/test_gstar_matrix_models.py` (pytest wrapper, 5 tests).
-**Opens:** RQ-MM-1/2/3 (TRACKER_OPEN_ITEMS §6.6–6.8; falsifiers in §6 below).
+**Verification:** `scripts/proofs/proof_gstar_matrix_models.py` (155/155 PASS, ~80 s; per-check tags `[EXTERNAL]` for re-verified CHPS statements, `[THEOREM]` for spine-side identities) + `scripts/tests/test_gstar_matrix_models.py` (pytest wrapper, 5 tests).
+**Research questions:** RQ-MM-1/2/3 were registered (TRACKER_OPEN_ITEMS §6.6–6.8) and all three resolved same-day 2026-07-04 — RQ-MM-1 answered (parity-selection; d=−4 analogy non-bridge), RQ-MM-2 closed at gate G-A (zero evaluations), RQ-MM-3 answered (non-bridge, prior confirmed); verdicts in §6, deflations in §5.
 **Audience:** project owner + agents working on the spine's ℚ(G\*) positioning (Theorem 9 / FTD-0112/0127), the modulus/argument frontier, or any future matrix-model / q-deformation exploration.
 
 ---

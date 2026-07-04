@@ -22,7 +22,8 @@ construction site for ℚ(G*):
   quadratic is NOT in the model (substitution identities prohibited); no α
   content; Link-8 distinctness; CHPS's own physics applications not imported.
 - **New verifier** `scripts/proofs/proof_gstar_matrix_models.py` (144/144
-  PASS, ~80 s; [EXTERNAL]/[THEOREM] per-check tags) + pytest wrapper: CHPS
+  at registration, extended to 155/155 by the RQ-MM-1 checks below; ~80 s;
+  [EXTERNAL]/[THEOREM] per-check tags) + pytest wrapper: CHPS
   Theorem 1 re-proven in full (moment determinant = δ·amplitude, sign
   included, r ∈ {3,4}, all a, N ≤ 6), sector gradings, ratio/product
   dichotomy, ℚ(G*) correlator membership, single-trace rationality, r=3
