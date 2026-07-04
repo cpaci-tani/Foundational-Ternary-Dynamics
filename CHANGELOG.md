@@ -34,6 +34,13 @@ construction site for ℚ(G*):
   required; "smallest", never "unique"); RQ-MM-2 q-deformation (hard-gated:
   no evaluation without a pre-registered non-tunable q-map); RQ-MM-3 ternary
   partition-combinatorics survey (prior: non-bridge).
+- **RQ-MM-1 answered same day** (checks C11a–e, verifier now 155/155):
+  RP-admissibility is parity-selection + minimality — odd r excluded on every
+  contour at N=1 (exact-form zero-norm operator; N>1 stays CHPS-"expected"),
+  every even r manifestly RP on ℝ (r=6 verified alongside r=4), CHPS Gram
+  bound 2^(−1/2)·3^(−7/4) reproduced to 1e-6. The d=−4-uniqueness analogy
+  (FTD-0003) closes as a NON-BRIDGE (same endpoint, different mechanism);
+  TRACKER §6.6 → CLOSED/ANSWERED.
 - Navigation: INDEX_09 (56→57 docs), META_INDEX row 9.61, LEDGER FTD-0366
   row + maintenance log, spine §9.1 pointer, frontier §2 ensemble-face row,
   type-priority §2 exhibit.

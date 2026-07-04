@@ -574,6 +574,111 @@ def check_c10() -> None:
 
 
 # =============================================================================
+# C11 — RQ-MM-1: reflection positivity as a parity discriminator (CHPS §2.3).
+#
+# (a) Odd r: the (r-1)-th moment vanishes in EVERY pure phase — from the CHPS
+#     moment formula, delta_{r | (r-1)+1-a} = delta_{r | r-a} = 0 for all
+#     a in {1..r-1} — equivalently x^{r-1} e^{-x^r} = -(1/r) d/dx e^{-x^r} is
+#     an exact form, so it integrates to zero on every closed contour.  Since
+#     r-1 is EVEN for odd r, O = x^{(r-1)/2} is a nonzero operator with
+#     <O^dag O> = 0: reflection positivity fails on every admissible contour
+#     at N=1.  (CHPS prove the lambda-deformed version; N>1 remains their
+#     "expected".)
+# (b) The lambda-deformed zero-norm operator (CHPS eq 2.23) for the cubic:
+#     O = x e^{x^2/4}  =>  <O^dag O> integrand = x^2 e^{-lambda x^3}, exact.
+# (c) The cubic N=1 Gram bound: with moments determined by the loop equations
+#     up to the single unknown m1, the Gram matrix of {1, x, x^2} admits a
+#     PSD completion iff |lambda| < 2^(-1/2) 3^(-7/4) (CHPS §2.3).  Verified
+#     by bisection on the semidefinite feasibility boundary.
+# (d) Even r: the real-line measure e^{-x^r} dx is positive, so Hankel moment
+#     matrices are positive-definite (manifest RP) — checked for r = 4, 6
+#     at sizes up to 7x7.  Minimality, not uniqueness: EVERY even r is RP on
+#     the real line; r=4 is only the smallest interacting case.
+# (e) Even r on non-real contours: RP still fails (e.g. x has zero norm on
+#     C_{4,1} since the second moment vanishes there).
+# =============================================================================
+
+def check_c11() -> None:
+    lam, x = sp.symbols("lambda_ x", positive=False)
+
+    # (a) odd-r zero-norm operator on every pure phase, symbolic.
+    for r in (3, 5, 7):
+        all_vanish = all(moment(r, a, r - 1) == 0 for a in range(1, r))
+        suite.assert_true(
+            f"C11a odd r={r}: (r-1)-moment = 0 in every pure phase "
+            f"=> x^{(r - 1) // 2} has zero norm", all_vanish, tag="[EXTERNAL]")
+        exact = sp.simplify(x**(r - 1) * sp.exp(-x**r)
+                            + sp.diff(sp.exp(-x**r), x) / r)
+        suite.assert_true(
+            f"C11a odd r={r}: x^(r-1) e^(-x^r) is an exact form", exact == 0,
+            tag="[THEOREM]")
+
+    # (b) CHPS eq 2.23 integrand is exact for the lambda-cubic.
+    integrand = x**2 * sp.exp(x**2 / 2) * sp.exp(-x**2 / 2 - lam * x**3)
+    exact_b = sp.simplify(integrand + sp.diff(sp.exp(-lam * x**3), x) / (3 * lam))
+    suite.assert_true("C11b lambda-cubic zero-norm integrand (2.23) is exact",
+                      exact_b == 0, tag="[EXTERNAL]")
+
+    # (c) Gram bound |lambda| < 2^(-1/2) 3^(-7/4) for the cubic at N=1.
+    # Loop equations for W = x^2/2 + lambda x^3 (m0 = 1):
+    #   m_{k+1} + 3 lambda m_{k+2} = k m_{k-1}
+    # => m2 = -m1/(3L); m3 = (1 - m2)/(3L); m4 = (2 m1 - m3)/(3L).
+    import numpy as np
+
+    def min_eig_best(L: float) -> float:
+        def gram_eigmin(m1: float) -> float:
+            m2 = -m1 / (3 * L)
+            m3 = (1 - m2) / (3 * L)
+            m4 = (2 * m1 - m3) / (3 * L)
+            G = np.array([[1, m1, m2], [m1, m2, m3], [m2, m3, m4]])
+            return float(np.linalg.eigvalsh(G)[0])
+        # coarse-to-fine 1D maximization over the single free parameter m1
+        best, grid = -np.inf, np.linspace(-3, 3, 601)
+        for _ in range(4):
+            vals = [gram_eigmin(m) for m in grid]
+            i = int(np.argmax(vals))
+            best = vals[i]
+            lo = grid[max(0, i - 1)]
+            hi = grid[min(len(grid) - 1, i + 1)]
+            grid = np.linspace(lo, hi, 601)
+        return best
+
+    lo, hi = 0.05, 0.2  # bracket: feasible at 0.05, infeasible at 0.2
+    ok_bracket = min_eig_best(lo) > 0 > min_eig_best(hi)
+    for _ in range(40):
+        mid = 0.5 * (lo + hi)
+        if min_eig_best(mid) > 0:
+            lo = mid
+        else:
+            hi = mid
+    lam_crit = 0.5 * (lo + hi)
+    lam_chps = float(2 ** (-0.5) * 3 ** (-1.75))
+    suite.assert_true(
+        "C11c cubic N=1 Gram bound = 2^(-1/2) 3^(-7/4) (bisection, rel 1e-6)",
+        ok_bracket and abs(lam_crit - lam_chps) / lam_chps < 1e-6,
+        tag="[EXTERNAL]")
+
+    # (d) even r: real-line Hankel positivity (manifest RP), r = 4 and 6.
+    for r in (4, 6):
+        def m_even(q: int, r: int = r) -> mpm.mpf:
+            return mpm.gamma(mpm.mpf(q + 1) / r) if q % 2 == 0 else mpm.mpf(0)
+        n = 7
+        H = mpm.matrix(n, n)
+        for i in range(n):
+            for j in range(n):
+                H[i, j] = m_even(i + j)
+        eigs = mpm.eigsy(H, eigvals_only=True)
+        suite.assert_true(
+            f"C11d real-line r={r} Hankel 7x7 positive-definite (manifest RP)",
+            all(e > 0 for e in eigs), tag="[EXTERNAL]")
+
+    # (e) even r, non-real contour: x has zero norm on C_{4,1}.
+    suite.assert_true("C11e second moment vanishes on C_{4,1} => x zero-norm "
+                      "(pure phases are not RP)", moment(4, 1, 2) == 0,
+                      tag="[EXTERNAL]")
+
+
+# =============================================================================
 # Main
 # =============================================================================
 
@@ -595,6 +700,7 @@ def main() -> int:
     check_c8()
     check_c9()
     check_c10()
+    check_c11()
 
     suite.print_summary()
 
