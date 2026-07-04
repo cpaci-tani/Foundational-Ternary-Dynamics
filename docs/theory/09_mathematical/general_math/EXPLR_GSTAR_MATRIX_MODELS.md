@@ -87,6 +87,7 @@ Mirroring `REF_GUILLERA_CORPUS_MAP.md` §4: the following *look* like FTD bridge
 5. **The paper's physics applications are not FTD bridges.** CHPS's motivations and applications (5d gauge theories on S⁵, superconformal indices on Lens spaces, AGT/para-Liouville, Witten r-spin classes) are their field's physics. Importing any of it into FTD would be exactly the kind of borrowed-authority move the Number-One Goal's ordering (Ontology > Logic > Math > Physics) exists to prevent. Cite the mathematics; leave the physics where it lives.
 6. **The ternary-valued signatures are not FTD's ternary states.** δ_r(λ), δ_{r,a}(N) ∈ {0,±1} is "vanishes or contributes with a sign" — standard determinant bookkeeping, not a ternary ontology. (The genuine mod-3 combinatorial content is RQ-MM-3's subject, at survey level.)
 7. **Reflection positivity does not re-derive the d=−4 selection** (RQ-MM-1 verdict, 2026-07-04). RP-admissibility among monomial ensembles is a **parity** statement (odd r excluded by an exact-form zero-norm operator on every contour at N=1; every even r manifestly RP on ℝ — r=6 verified alongside r=4), so the quartic is only the *smallest interacting* positive case. The spine's d=−4 uniqueness (FTD-0003, |μ_K| = |disc K|) is a different mechanism entirely; same endpoint, no bridge. Say "smallest", never "unique". [STRUCTURAL OBSERVATION — deflationary; checks C11a–e]
+8. **The 3-quotient triple is not FTD's C₃ triple** (RQ-MM-3 verdict, 2026-07-04). CHPS's 3-quotients grade *partitions* (S_n/GL representation theory); FTD's ℤ₃ structures index *axes, center classes, shells, and characters* (point-group geometry, Lie topology, abelian Fourier). The corpus carries no partition-graded object for the toolkit to organize; "ℤ₃ indexes a triple" is shape-resonance, not a bridge. Toolkit shelved for any future symmetric-function layer. [STRUCTURAL OBSERVATION — survey level]
 
 ---
 
@@ -111,10 +112,24 @@ Mirroring `REF_GUILLERA_CORPUS_MAP.md` §4: the following *look* like FTD bridge
 **Gate (mandatory, expected exit = closure).** q must be an output of a declared structural correspondence, never an input chosen after seeing numbers. Phase A is a doc-only target-selection study (literature scan first; then non-tunability / map-uniqueness / exactness questions per candidate); if no candidate passes, RQ-MM-2 **closes negative with zero evaluations performed** — approximate q-matches are precisely the near-miss class the Epistemic Discipline bans, and a tunable q can approximate anything. If a candidate survives, a hash-locked pre-registration (PREREG + manifest row + git tag) precedes the single evaluation.
 **Status:** [OPEN — gated]. **Closure conditions:** gate-out (no admissible target — itself the deliverable); or literature-answered (the identity already exists — recorded as [REFERENCE] attribution); or a pre-registered SUPPORTED/REFUTED/UNDERDETERMINED verdict. Even SUPPORTED promotes nothing: it would be a structural identity, not physics.
 
-### RQ-MM-3 — Ternary partition combinatorics for the ℤ₃/qutrit layer (survey)
+### RQ-MM-3 — Ternary partition combinatorics for the ℤ₃/qutrit layer — **ANSWERED 2026-07-04: NON-BRIDGE (the declared prior confirmed at survey level)**
 
-**Question.** CHPS Appendix A's mod-r toolkit at r=3 — 3-cores, 3-quotients, abacus diagrams, the 3-signature — is the standard machinery for mod-3 selection rules on partitions. Does any object in FTD's ℤ₃/qutrit layer (`THEOREM_MOORE_LAYER_DECOMPOSITION.md`, `DERIV_NC_FROM_TOPOLOGY.md`, the qutrit ℤ₃-Fourier decomposition) carry a natural partition grading that this toolkit would organize?
-**Status:** [OPEN — survey level]. **Expected outcome, stated as the prior:** non-bridge (no current FTD object is partition-graded), recorded in the §5 register if confirmed. **Falsifier of the non-bridge verdict:** an FTD-native object with a genuine partition grading whose mod-3 selection rules match the 3-core/3-quotient structure exactly.
+**Question (as registered).** CHPS Appendix A's mod-r toolkit at r=3 — 3-cores, 3-quotients, abacus diagrams, the 3-signature — is the standard machinery for mod-3 selection rules on partitions. Does any object in FTD's ℤ₃/qutrit layer carry a natural partition grading that this toolkit would organize?
+
+**Verdict: no — the two mod-3 structures live in different categories, and no FTD object is partition-graded.** [STRUCTURAL OBSERVATION — survey level] The mapping table:
+
+| mod-3 structure | what its "3" indexes | category |
+|---|---|---|
+| CHPS 3-core | the obstruction class to removing length-3 rim hooks from a Young diagram | S_n / GL(N) representation theory (partitions) |
+| CHPS 3-quotient | a ℤ₃-indexed triple of independent sub-partitions (λ ↔ core + (λ⁽⁰⁾,λ⁽¹⁾,λ⁽²⁾)) — the combinatorial shadow of the ℤ₃-orbifold factorization (their Thm 4) | same |
+| FTD C₃ ⊂ O_h | the 3 face-diagonal planes of the cuboctahedron / ⟨111⟩ axis rotations (`DERIV_NC_FROM_TOPOLOGY.md`; NCT-3 [SELECTION] identifies it with Z(SU(3))) | finite point-group geometry |
+| FTD π₁(SU(3)/ℤ₃) = ℤ₃ | winding/center classes | Lie-group topology |
+| FTD Moore shells | binomial 3-cube counts C(3,k)·2^k = 6/12/8 (octahedron / cuboctahedron / stella octangula) | lattice geometry |
+| FTD ternary states | the state alphabet {−1, 0, +1} with its ℤ₃-Fourier characters | abelian character theory |
+
+Corpus-wide scan (2026-07-04): outside this program's own files, the corpus contains **zero** occurrences of Young diagrams, Schur functions, 3-cores, rim hooks, or abacus structures — FTD has no symmetric-function or Fock-graded layer for the toolkit to organize. The one genuine shape-resonance — "ℤ₃ indexes a triple of independent sub-objects" (CHPS 3-quotients ↔ the corpus's three-ℤ[i]-planes-under-C₃ readings, e.g. FTD-0237) — is a resonance of shape with no object carrying both structures, which is precisely what §5 exists to deflate. Recorded as §5 item 8.
+
+**Toolkit pointer (the survey's positive residue):** if FTD ever constructs a multiparticle / second-quantized layer with symmetric-function observables (e.g., cluster statistics as power sums), CHPS Appendix A is the ready-made mod-3 selection machinery — a tool on the shelf, not a bridge. **Falsifier of the non-bridge verdict:** an FTD-native object with a genuine partition grading whose mod-3 selection rules match the 3-core/3-quotient structure exactly.
 
 ---
 
