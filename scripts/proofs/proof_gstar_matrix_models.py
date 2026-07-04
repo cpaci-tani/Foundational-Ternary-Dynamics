@@ -286,6 +286,15 @@ def check_c4() -> None:
         suite.assert_true(f"C4 full Z ratio (4,1)/(4,3) at N={N} = Q*G*^{N}",
                           sp.simplify(ratio - want) == 0, tag="[EXTERNAL]")
 
+    # General-r N=1 conjugate-sector amplitude ratio realizes the race-constant
+    # family R_r = Gamma(1/r)/Gamma(1-1/r) of MATH_FAMILY_OF_RACES.md (R_4 = G*):
+    for r in range(3, 9):
+        ratio_r = sp.cancel(sp.simplify(amplitude(r, 1, 1) / amplitude(r, r - 1, 1)))
+        want_r = sp.gamma(sp.Rational(1, r)) / sp.gamma(1 - sp.Rational(1, r))
+        suite.assert_true(
+            f"C4 N=1 sector ratio of Tr X^{r} model = race constant R_{r}",
+            sp.simplify(ratio_r - want_r) == 0, tag="[EXTERNAL]")
+
     # Amplitude product at N=1 = Gamma(1/4)*Gamma(3/4) = sqrt(2)*pi
     # (Euler reflection at z=1/4). Disambiguation: sqrt(2)*pi ~ 4.443, NOT
     # sqrt(2*pi) ~ 2.507.

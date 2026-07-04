@@ -431,6 +431,15 @@ Under FC-1, all continuous observer and reference frame context measurement targ
 ### 6.5 α from CM (conjectural route) —  CLOSED/RESOLVED 2026-06-10
 **File:** `CONJ_ALPHA_FROM_CM.md`. The self-consistency form gap is closed. The sum = product form represents an unforced selection rather than a structural consequence of the postulates (FTD-0242).
 
+### 6.6 RQ-MM-1: reflection-positivity discriminator (matrix models) — **1 `[OPEN]`**
+**File:** `docs/theory/09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md` §6 (FTD-0366). Among monomial ensembles Tr Xʳ, the smallest interacting reflection-positive one is the quartic (lemniscatic-adjacent); the cubic is RP on no contour (CHPS §2.3; N=1 proven, N>1 expected). Open: does this connect structurally to FTD-0003 (d=−4 uniqueness), or is it parity-selection only? The r=6 branch is the discriminating analysis. Closure routes: reproduce CHPS §2.3 + Gram-positivity checks + the r=6 analysis, then verdict at [STRUCTURAL OBSERVATION] ceiling. Falsifiers in the doc §6.
+
+### 6.7 RQ-MM-2: q-deformation of FTD lattice objects (GATED) — **1 `[OPEN]`**
+**File:** `docs/theory/09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md` §6 (FTD-0366). Whether any FTD-native discrete object (finite-L BCC Green's function; Phase-G periodic Poisson Green's function; Phase-J finite-L sums) admits an exact q-identity at a construction-forced q(L). Hard gate: doc-only target-selection first (literature scan; non-tunability/uniqueness/exactness); **no evaluation before a pre-registered non-tunable target exists**; expected exit = gate-out closure with zero evaluations. Closure routes: gate-out negative; literature-answered [REFERENCE]; or pre-registered SUPPORTED/REFUTED/UNDERDETERMINED verdict (even SUPPORTED promotes nothing).
+
+### 6.8 RQ-MM-3: ternary partition combinatorics vs the ℤ₃/qutrit layer — **1 `[OPEN]`**
+**File:** `docs/theory/09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md` §6 (FTD-0366). Survey-level: does any object in the ℤ₃/qutrit layer (Moore layer theorem, N_c-from-topology, qutrit ℤ₃-Fourier) carry a natural partition grading organized by the 3-core/3-quotient/abacus toolkit (CHPS App. A)? Declared prior: non-bridge. Closure route: mapping table + verdict recorded in the doc's §5 non-bridge register (or, if positive, a new registered observation).
+
 ---
 
 ## §7 Theory — roadmaps, reference, specs

@@ -39,6 +39,7 @@ The number-theoretic core. These establish the identities the framework's centra
 | [EXPLR_CM_RATIO_TOWER.md](number_theory/EXPLR_CM_RATIO_TOWER.md) | [REFERENCE] / [EXPLORATORY MATH] | The 9-element tower of class-number-1 Chowla-Selberg ratios; only d=−4 anchors physics. |
 | [EXPLR_CHOWLA_SELBERG_HIGHER_H.md](number_theory/EXPLR_CHOWLA_SELBERG_HIGHER_H.md) | [THEORY NOTE — literature synthesis] | Analytic machinery to extend Theorem 3 to class number h ≥ 2. |
 | [REF_GUILLERA_CORPUS_MAP.md](general_math/REF_GUILLERA_CORPUS_MAP.md) | [REFERENCE] / external-literature map | Guillera's Ramanujan-type-series corpus mapped to the spine; scholarly attribution only. |
+| [EXPLR_GSTAR_MATRIX_MODELS.md](general_math/EXPLR_GSTAR_MATRIX_MODELS.md) | [SYNTHESIS] + [STRUCTURAL OBSERVATION] | **(FTD-0366)** CHPS 2018 strongly-coupled matrix models as an external construction site for ℚ(G\*): quartic-model observables are rational in G\*; ℤ₄ sectors realize the χ₋₄ parity split (product → π, ratio → G\*); race constants R_q as sector data. Verified 144/144 (`proof_gstar_matrix_models.py`). Opens RQ-MM-1/2/3. |
 | [DERIV_JONES_INDEX_THRESHOLD_RATIO.md](general_math/DERIV_JONES_INDEX_THRESHOLD_RATIO.md) | [CONJECTURE] | Jones Index and manifestation threshold ratio: KB/KC = 4sqrt(2) derived from the hyperfinite Type III subfactor inclusion Jones Index [N:M] = 32. |
 
 
@@ -131,4 +132,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-56 active docs in this cluster (+ 2 archived).
+57 active docs in this cluster (+ 2 archived).
