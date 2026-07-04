@@ -3,7 +3,8 @@
 Thin pytest wrapper around scripts/proofs/proof_gstar_matrix_models.py — the
 G* / strongly-coupled matrix-model verification suite (CHPS, Commun. Math.
 Phys. 361 (2018) 1235-1274, arXiv:1611.03142).  Fast symbolic core checks run
-inline; the full 138-check suite runs once as a subprocess integration test.
+inline; the full suite (155 checks as of 2026-07-04) runs once as a
+subprocess integration test asserting exit code 0, not a count.
 """
 
 import os
@@ -45,7 +46,7 @@ def test_support_rule_off_support():
 
 
 def test_full_suite_subprocess():
-    """The complete 138-check suite passes (exit 0)."""
+    """The complete proof suite passes (exit 0)."""
     script = os.path.join(PROOFS_DIR, "proof_gstar_matrix_models.py")
     result = subprocess.run(
         [sys.executable, script], capture_output=True, text=True, timeout=300

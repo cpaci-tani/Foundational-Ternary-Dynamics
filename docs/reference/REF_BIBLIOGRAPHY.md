@@ -138,6 +138,22 @@
 
 ---
 
+## 8 · Matrix models and exactly solvable ensembles
+
+*(Added 2026-07-04 with FTD-0366 — remediation of the same maintenance-protocol gap as §7: a load-bearing external citation used across eight corpus files was absent from this file.)*
+
+**Córdova, C., Heidenreich, B., Popolitov, A. & Shakirov, S. (2018).** *Orbifolds and Exact Solutions of Strongly-Coupled Matrix Models.* Commun. Math. Phys. 361, 1235–1274. DOI 10.1007/s00220-017-3072-x; arXiv:1611.03142 (single version, v1; the OSTI 1537659 public-access copy carries identical equation numbering).
+- **Used in FTD for:** the exact solution of monomial one-matrix models S = Tr Xʳ on ℤ_r contour eigenbases (their Theorems 1–6): the Γ-product partition functions whose r=4 sector grading carries the three classes {Γ(1/4), π, Γ(3/4)}, realizing the χ₋₄ parity twist in ensemble language and placing the quartic model's observables in ℚ(G\*); the loop-equation contour underdetermination (their §2.2, the frontier's "ensemble face"); the reflection-positivity parity discriminator (their §2.3).
+- **Attribution discipline (load-bearing):** citing CHPS is scholarly attribution for an independent mathematical exhibit — never third-party validation of FTD (`EXPLR_GSTAR_MATRIX_MODELS.md` §0).
+- **Citation contexts:** FTD-0366; `EXPLR_GSTAR_MATRIX_MODELS.md`; `SPEC_ALGEBRAIC_SPINE.md` §9.1 (external ensemble exhibit); `FOUND_MODULUS_ARGUMENT_FRONTIER.md` §2; `FOUND_TYPE_PRIORITY_PRINCIPLE.md` §2; `scripts/proofs/proof_gstar_matrix_models.py`.
+
+**Guillera, J. (2018).** *Self-replication and Borwein-like algorithms.* Ramanujan J. 47(2), 447–455; arXiv:1702.05378. Companion: Cooper, S., Guillera, J., Straub, A. & Zudilin, W., *Crouching AGM, Hidden Modularity*, arXiv:1604.01106.
+- **Used in FTD for:** the quartic Borwein-type iteration computing Γ(3/4), Γ(1/4), G\* and π without a Γ-library (`scripts/proofs/proof_quartic_quarter_constants.py`); the self-replication framework that is the rigorous home of the Landen/quartic "G\* compression" routes.
+- **Attribution discipline:** cite Guillera only where FTD genuinely uses a Guillera result (`REF_GUILLERA_CORPUS_MAP.md` §0/§3 — mandatory attribution, never legitimacy-by-association).
+- **Citation contexts:** `REF_GUILLERA_CORPUS_MAP.md`; `scripts/proofs/proof_quartic_quarter_constants.py`; `scripts/proofs/proof_landen_gstar_compression.py` ("see also" context).
+
+---
+
 ## Maintenance protocol
 
 When citing classical mathematics in FTD documents:

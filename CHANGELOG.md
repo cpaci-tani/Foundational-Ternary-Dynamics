@@ -61,6 +61,19 @@ construction site for ℚ(G*):
 - Navigation: INDEX_09 (56→57 docs), META_INDEX row 9.61, LEDGER FTD-0366
   row + maintenance log, spine §9.1 pointer, frontier §2 ensemble-face row,
   type-priority §2 exhibit.
+- **Adversarial review pass (ftd-math-redteam, same day): package SURVIVES
+  as registered; nothing demoted.** 22/22 independent re-derivations to 50
+  digits; citation chain confirmed; the CHPS Gram bound shown EXACT
+  (λ_c = √2·3^(1/4)/18); verifier audited clean (no vacuous checks, no
+  circularity). Six findings fixed: frontier-row amplitude/χ₋₄-support
+  wording, attribution hedge ("in effect name" + [sic]), "simplest
+  reflection-positive" qualifier, [EXTERNAL] retag of the race-constant row,
+  stale wrapper docstring, CHPS + Guillera added to REF_BIBLIOGRAPHY (new
+  §8). Steelman recorded in RQ-MM-2: the lemniscatic nome q = e^(−π)
+  (θ₃(e^(−π)) = π^(1/4)/Γ(3/4), G* = √(2π)·θ₃², verified 40 digits,
+  FTD-0132-consonant) is continuum-side structure outside the gate's
+  finite-L scope — does not re-open. Standing disclosure: AI-simulated
+  review, not the external human review the corpus still lacks (TRACKER §0).
 
 ## Non-Abelian gauge sector wired into the tick (2026-07-02)
 
