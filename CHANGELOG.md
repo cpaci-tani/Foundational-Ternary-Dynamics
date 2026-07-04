@@ -1,5 +1,43 @@
 # Foundational Ternary Dynamics Changelog
 
+## G* matrix-model external anchor — CHPS map + verification suite (2026-07-04)
+
+FTD-0366 ([SYNTHESIS] + [STRUCTURAL OBSERVATION]; docs + scripts only, golden
+untouched, zero promotions). Córdova–Heidenreich–Popolitov–Shakirov's exact
+solutions of strongly-coupled monomial matrix models (Commun. Math. Phys. 361
+(2018) 1235–1274, arXiv:1611.03142) mapped into the corpus as an external
+construction site for ℚ(G*):
+
+- **New doc** `docs/theory/09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md`
+  (Guillera-map template): the quartic model's observables are rational
+  functions of G* (⟨Tr X²⟩ = 1/G* at N=1, (G*²+4)/(4G*) at N=2); CHPS
+  themselves name Γ(1/4)/Γ(3/4) ≈ 2.958675 as the model's irreducible
+  transcendental; the ℤ₄ contour sectors carry exactly the three Γ-classes,
+  with the (ℤ/4)^× conjugate pair realizing the FTD-0127 χ₋₄ parity twist in
+  ensemble language (product → √2·π, ratio → G*); N=1 sector ratios of Tr Xʳ
+  models = race constants R_r (MATH_FAMILY_OF_RACES realized as ensemble
+  data). Frontier/type-priority exhibits [grounded]: the contour datum is an
+  imported argument-type (Ward identities underdetermine the ensemble;
+  invisible at leading large-N). Non-bridges recorded: 48 ≠ |O_h|; the master
+  quadratic is NOT in the model (substitution identities prohibited); no α
+  content; Link-8 distinctness; CHPS's own physics applications not imported.
+- **New verifier** `scripts/proofs/proof_gstar_matrix_models.py` (144/144
+  PASS, ~80 s; [EXTERNAL]/[THEOREM] per-check tags) + pytest wrapper: CHPS
+  Theorem 1 re-proven in full (moment determinant = δ·amplitude, sign
+  included, r ∈ {3,4}, all a, N ≤ 6), sector gradings, ratio/product
+  dichotomy, ℚ(G*) correlator membership, single-trace rationality, r=3
+  equianharmonic separation, Theorem-6 Vandermonde ℤ_r-projection,
+  floor-hardening. First complex-contour quadrature precedent in the repo
+  (real-parameterized rays).
+- **Three [OPEN] research questions registered** (TRACKER §6.6–6.8):
+  RQ-MM-1 reflection-positivity discriminator (r=4 vs r=3; r=6 branch
+  required; "smallest", never "unique"); RQ-MM-2 q-deformation (hard-gated:
+  no evaluation without a pre-registered non-tunable q-map); RQ-MM-3 ternary
+  partition-combinatorics survey (prior: non-bridge).
+- Navigation: INDEX_09 (56→57 docs), META_INDEX row 9.61, LEDGER FTD-0366
+  row + maintenance log, spine §9.1 pointer, frontier §2 ensemble-face row,
+  type-priority §2 exhibit.
+
 ## Non-Abelian gauge sector wired into the tick (2026-07-02)
 
 Engine revision program ticket 0.9, option (a) — reversing the same-day
