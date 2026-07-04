@@ -25,13 +25,14 @@ That is the type-priority principle stated in arithmetic: **the argument (type) 
 
 ## 2 · Cross-domain support — analogies, NOT proofs `[grounded-external; explicitly not proof]`
 
-Three independent disciplines carry the same shape. Each is offered as a *structural analogy*, **not** as a proof of the principle (Constraint 5: an analogy is not a derivation):
+Four independent disciplines carry the same shape. Each is offered as a *structural analogy*, **not** as a proof of the principle (Constraint 5: an analogy is not a derivation):
 
 - **Type theory (computer science).** In a typed calculus a term is **ill-formed — meaningless — until a type judgment is in place**; the type is prior to the term. `[grounded]` (Caveat: this is a property of formal systems we *design*; it motivates, but does not prove, a metaphysical reading.)
 - **Philosophy of language.** Reference requires a pre-established interpretive context; a symbol denotes nothing without a background that fixes its sense (the Fregean *sense-before-reference*, the Wittgensteinian *background*). `[grounded-external]`
 - **Information theory.** A bit carries information only relative to a code/model; raw bits with no code are valueless (Shannon: information is defined against a prior probability model). `[grounded-external]`
+- **Exactly solvable ensembles (matrix models).** In the strongly-coupled monomial matrix models of Córdova–Heidenreich–Popolitov–Shakirov (arXiv:1611.03142, their §2.2), the action plus *all* Ward identities underdetermine the theory: a discrete contour datum — which ℤ_r phase-sector combination the integral runs over — must be supplied before correlators have values, and nothing in the model's own lawful content selects it; the import is moreover invisible at leading large-N (entering the free energy at relative O(1/N²)). A content-rule that cannot set its own type, in mainstream mathematics. `[grounded]` (Caveat: an external formal system; motivates, does not prove — see `09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md` §4, FTD-0366.)
 
-The convergence of three unrelated fields on *context-precedes-content* is the **motivation** for adopting the principle; it is not its proof. `[SYNTHESIS]`
+The convergence of four unrelated fields on *context-precedes-content* is the **motivation** for adopting the principle; it is not its proof. `[SYNTHESIS]`
 
 ### 2.1 · Why type theory, not object-oriented programming `[SYNTHESIS]`
 
