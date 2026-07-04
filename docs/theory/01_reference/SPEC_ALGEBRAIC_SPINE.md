@@ -621,7 +621,7 @@ language: the (ℤ/4)^× = {1,3} conjugate contour sectors carry Γ(1/4)- and
 Γ(3/4)-classes, their χ₋₄-symmetric combination (product) is π-valued and
 their χ₋₄-antisymmetric combination (ratio) is `G*`-valued, and the even
 sector is pure π-class — machine-verified in
-`scripts/proofs/proof_gstar_matrix_models.py` (144/144); see
+`scripts/proofs/proof_gstar_matrix_models.py` (155/155); see
 `docs/theory/09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md`
 (scholarly attribution, not third-party validation).
 
