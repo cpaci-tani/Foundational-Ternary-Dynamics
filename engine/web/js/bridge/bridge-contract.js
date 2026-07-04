@@ -1,16 +1,21 @@
 /**
  * Bridge contract — the surface every Scale-0 bridge must implement.
  *
- * Two concrete bridges live in `bridge-init.js`:
- *   - `MockBridge` — pure JS lattice for offline / parity testing.
- *   - `WasmBridge` — Emscripten-compiled C++ engine, the canonical path.
+ * The engine is WASM-only (the JS MockBridge was deleted); the live
+ * Scale-0 bridges are:
+ *   - `WasmBridge` (wasm-bridge.js) — Emscripten-compiled C++ engine, the
+ *     canonical main-thread path; re-exported from `bridge-init.js`.
+ *   - `WasmBridgeProxy` (wasm-bridge-proxy.js) — main-thread proxy over a
+ *     worker-hosted `WasmBridge` (zero-copy SharedArrayBuffer field views).
+ *   - `WebSocketBridge` (ws-bridge.js) — the same surface backed by a native
+ *     server over WebSocket.
  *
- * Neither class formally `implements` this typedef (JS has no nominal
- * interfaces), but every method listed below MUST exist on both
- * classes with matching shape. Callers — particularly
+ * None of these classes formally `implements` this typedef (JS has no
+ * nominal interfaces), but every method listed below MUST exist on every
+ * live bridge with matching shape. Callers — particularly
  * `physics-harness.js` and the dashboard panels — depend on the
  * surface being symmetric. Adding a method to one bridge without the
- * other will break panels silently when the active bridge changes.
+ * others will break panels silently when the active bridge changes.
  *
  * This file exists for documentation + future static-analysis hooks
  * (e.g. a TS check pass), and exports the canonical direct-read surface
@@ -61,16 +66,17 @@
 //
 // Methods that dashboard consumers call DIRECTLY on a Scale-0 bridge object
 // (NOT via `bridge.capabilities.scale0.*`). Under the worker path the bridge is
-// a `MockBridgeProxy`; it must forward every one of these to its shadow (which
-// reads the worker's SharedArrayBuffers) or the consumer silently blanks. This
-// is the single source of truth, consumed by:
-//   • mock-bridge-proxy.js        — installs one shadow-delegating forwarder per
-//                                   name (any not already defined on the proxy).
-//   • tests/scale0-worker.spec.js — asserts the proxy answers every name.
-// Add a new entry here whenever you add a direct-read method to MockBridge that
-// a panel/overlay calls on the raw bridge — the proxy and its regression test
-// then pick it up automatically instead of drifting (cf. the one-at-a-time
-// `inspectVoxel` patch in 68024ba1).
+// a `WasmBridgeProxy` (wasm-bridge-proxy.js); it serves every one of these from
+// worker-sourced data — a zero-copy view over the worker's WASM heap for the
+// flux volume plus the last diagnostics/particle/audit frame, with no JS shadow
+// — or the consumer silently blanks. This list is the single source of truth
+// that pins the surface, consumed by:
+//   • tests/scale0-worker.spec.js — asserts the WasmBridgeProxy answers every
+//                                   name (the anti-drift regression gate).
+// Add a new entry here whenever you add a direct-read method to WasmBridge that
+// a panel/overlay calls on the raw bridge, then implement it on WasmBridgeProxy
+// — the regression test above then enforces coverage instead of letting the
+// worker path drift (cf. the one-at-a-time `inspectVoxel` patch in 68024ba1).
 
 /** Empty sampler payload (vector + scalar shaped) for pre-ready fallbacks. */
 export function emptySampleResult() {
