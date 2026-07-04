@@ -276,23 +276,16 @@ static void ae_clear(ftd::AtomEngine& ae) {
 }
 
 // ── AE Toggle getter/setter (generic, by name) ────────────────────
-// Pointer-to-member map for AtomToggles.
+// Pointer-to-member map for AtomToggles, built once from the single source
+// of truth ATOM_TOGGLE_SPECS (ADR-0013, ticket 3.3) so a new toggle needs no
+// edit here.
 using AeBoolPTM = bool ftd::AtomToggles::*;
 static const std::unordered_map<std::string, AeBoolPTM>& ae_toggle_map() {
-    static const std::unordered_map<std::string, AeBoolPTM> kMap = {
-        {"ionic",               &ftd::AtomToggles::ionic},
-        {"van_der_waals",       &ftd::AtomToggles::van_der_waals},
-        {"covalent_bonds",      &ftd::AtomToggles::covalent_bonds},
-        {"auto_bonding",        &ftd::AtomToggles::auto_bonding},
-        {"damping",             &ftd::AtomToggles::damping},
-        {"h_bonds",             &ftd::AtomToggles::h_bonds},
-        {"dipole_dipole",       &ftd::AtomToggles::dipole_dipole},
-        {"angle_strain",        &ftd::AtomToggles::angle_strain},
-        {"torsional",           &ftd::AtomToggles::torsional},
-        {"improper_torsional",  &ftd::AtomToggles::improper_torsional},
-        {"thermostat",          &ftd::AtomToggles::thermostat},
-        {"electronegativity",   &ftd::AtomToggles::electronegativity},
-    };
+    static const std::unordered_map<std::string, AeBoolPTM> kMap = []{
+        std::unordered_map<std::string, AeBoolPTM> m;
+        for (const auto& s : ftd::ATOM_TOGGLE_SPECS) m.emplace(s.name, s.field);
+        return m;
+    }();
     return kMap;
 }
 

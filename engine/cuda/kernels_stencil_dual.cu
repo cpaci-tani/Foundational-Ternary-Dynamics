@@ -28,14 +28,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 namespace ftd {
 namespace gpu {
@@ -220,7 +213,7 @@ __global__ void strong_field_stencil_kernel(
     int8_t c = color[i];
     if (state[i] != 0 && c > 0) {
         // VERTEX_GAUGE = (11/6) / sqrt(8) — Watson c3 loop gauge, stella-octangula
-        // Single source of truth: include/ftd/constants_gpu.cuh
+        // Single source of truth: include/ftd/constants_shared.h
         double src = G_C * state[i] * VERTEX_GAUGE;
         if (c == 1) djx += src;
         else if (c == 2) djy += src;
@@ -281,7 +274,7 @@ __global__ void weak_field_stencil_kernel(
     // Source term: flavor (chirality) acts as isotropic source
     if (state[i] != 0 && flavor[i] != 0) {
         // EDGE_GAUGE = (13/9) / sqrt(12) — Watson c2 loop gauge, cuboctahedron
-        // Single source of truth: include/ftd/constants_gpu.cuh
+        // Single source of truth: include/ftd/constants_shared.h
         double src = G_C * state[i] * flavor[i] * EDGE_GAUGE;
         djx += src;
         djy += src;
@@ -541,6 +534,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction, L
         );
+        CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
     }
     CUDA_CHECK(cudaGetLastError());
 }

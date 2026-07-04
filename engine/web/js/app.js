@@ -501,7 +501,18 @@ async function init() {
         showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
     } else {
         _loadProgress(20, 'Compiling WASM engine...');
-        bridge = await createBridge(latticeSize);
+        try {
+            bridge = await createBridge(latticeSize);
+        } catch (err) {
+            // Revision 2.7: specific, actionable failure surface (the generic
+            // top-level overlay hid WHAT failed). There is no mock fallback on
+            // this path by design — scenarios need the native engine.
+            _loadProgress(25, 'WASM engine FAILED to load');
+            throw new Error(
+                'WASM engine failed to load (' + err.message + '). The dashboard ' +
+                'cannot run scenarios without it — rebuild via engine\\build_wasm.bat ' +
+                'and check the browser console / network tab for the failing module.');
+        }
         _loadProgress(30, 'WASM engine ready');
         engineEl.textContent = 'WASM Engine';
         engineEl.style.color = '#4ade80';

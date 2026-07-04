@@ -49,6 +49,11 @@
 #include "ftd/parallel.h"
 
 #ifdef FTD_ENABLE_CUDA
+// The ONLY remaining CUDA conditional in this TU (revision 3.1): the
+// defaulted ~RenderBridge() destroys unique_ptr<gpu::GpuEngine> gpu_, which
+// requires the complete type here. Everything behavioral dispatches through
+// the Backend virtuals; the selection policy lives in backend.cpp
+// (make_default_backend).
 #include "ftd/gpu_engine.h"
 #endif
 
@@ -73,13 +78,11 @@ RenderBridge::RenderBridge(int lattice_size)
       phi_coulomb_(lattice_.total_sites(), 0.0),
       phi_latency_(lattice_.total_sites(), 0.0),
       moved_(lattice_.total_sites(), 0),
-      sor_source_(lattice_.total_sites(), 0.0),
-      su2_links_x_(lattice_.total_sites()),
-      su2_links_y_(lattice_.total_sites()),
-      su2_links_z_(lattice_.total_sites()),
-      su3_links_x_(lattice_.total_sites()),
-      su3_links_y_(lattice_.total_sites()),
-      su3_links_z_(lattice_.total_sites())
+      sor_source_(lattice_.total_sites(), 0.0)
+      // SU(2)/SU(3) link buffers are NOT allocated here (revision 4.1b):
+      // 528 B/site (~132 MiB at L=64, larger than the voxel array) for a
+      // toggle-gated sector. ensure_gauge_links() materializes them on the
+      // first accessor call, relax call, or su2_gauge/su3_gauge-gated tick.
 {
     // PERF: pre-size per-tick scratch buffers so phase_write doesn't
     // construct ~5KB of mt19937 state per voxel. Under WASM (no OpenMP)
@@ -101,15 +104,11 @@ RenderBridge::RenderBridge(int lattice_size)
     kt_params.min_cluster_size = 1;
     knot_tracker_ = std::make_unique<KnotTracker>(kt_params);
     colored_sites_cache_.reserve(256);
-#ifdef FTD_ENABLE_CUDA
-    gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
-    // ARCH-2-M: backend_ is now the single source of truth for backend
-    // selection (the legacy `use_gpu_` flag was deleted).
-    backend_ = std::make_unique<GpuBackend>(*this, gpu_.get());
-    std::cerr << "[RenderBridge] GPU backend active (CUDA, L=" << lattice_size << ")\n";
-#else
-    backend_ = std::make_unique<CpuBackend>(*this);
-#endif
+    // ARCH-2-M: backend_ is the single source of truth for backend selection.
+    // Revision 3.1: the selection POLICY (GPU-default when CUDA is compiled
+    // in) moved to make_default_backend() in backend.cpp — the last
+    // backend-selection ifdef lives there, not here.
+    backend_ = make_default_backend(*this, lattice_size);
 }
 
 // Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
@@ -289,9 +288,8 @@ void RenderBridge::seed_rng(unsigned int seed) {
     rng_state_->seed(seed);
     langevin_seed_initialized_ = false;   // force thread_seeds_ rederive
     toggles.langevin_seed       = seed;   // GPU cuRAND picks this up next tick
-#ifdef FTD_ENABLE_CUDA
-    if (gpu_) gpu_->set_rng_seed(seed);
-#endif
+    // Revision 3.1: Backend virtual replaces the ifdef (CPU no-op).
+    if (backend_) backend_->set_rng_seed(seed);
 }
 
 void RenderBridge::set_dt(double dt) {
@@ -388,7 +386,7 @@ double RenderBridge::compute_entropy() const { return ::ftd::compute_entropy_cpu
 // 18-pt isotropic Laplacian with interior fast path + boundary slow path,
 // plus state-flux coupling) is preserved BYTE-IDENTICAL inside
 // phase_read_main_loop. The bit-exact gate is test_render_bridge_golden
-// (hash 0x56fa28acb5b9fe88).
+// (current pin: GOLDEN_HASH in test_render_bridge_golden.cpp).
 void RenderBridge::phase_read() {
   sync_ternary_from_voxels_if_needed();
   ::ftd::phase_read_main_loop(*this);
@@ -498,8 +496,8 @@ void RenderBridge::phase_forces() {
   // here (~225 LOC of EM/gravity/Lorentz/color force computation plus
   // γ_FTD relativistic momentum integration) is preserved BYTE-IDENTICAL
   // inside phase_forces_main_loop. The golden-tick test
-  // (test_render_bridge_golden, hash 0x56fa28acb5b9fe88) is the strict
-  // gate on this refactor.
+  // (test_render_bridge_golden; current pin: GOLDEN_HASH in that file) is
+  // the strict gate on this refactor.
   ::ftd::phase_forces_solve_potentials(*this);
   ::ftd::phase_forces_build_color_cache(*this);
   ::ftd::phase_forces_main_loop(*this);
@@ -530,7 +528,7 @@ void RenderBridge::phase_forces() {
 // same-sign elastic bounce + opposite-sign annihilation with 6-neighbor flux
 // burst, dual-substrate-aware) is preserved BYTE-IDENTICAL inside
 // phase_movement_main_loop. The bit-exact gate is test_render_bridge_golden
-// (hash 0x56fa28acb5b9fe88). Splitting the per-voxel body further would break
+// (current pin: GOLDEN_HASH in that file). Splitting the per-voxel body further would break
 // the golden gate — see the header comment for why.
 void RenderBridge::phase_movement() {
   ::ftd::phase_movement_main_loop(*this);
@@ -720,6 +718,19 @@ void RenderBridge::tick() {
   if (toggles.triad_binding)
     triad_binding_cpu();
 
+  // Rule 7b: non-Abelian gauge-link relaxation (revision 0.9 option a).
+  // [IMPOSED] Wilson-action staple relaxation imported from standard lattice
+  // gauge theory — one Jacobi sweep per tick over the SU(2)/SU(3) edge link
+  // variables. The links are WRITE-ONLY w.r.t. the substrate: nothing
+  // downstream consumes them (color_forces uses color labels, not links), so
+  // this phase cannot alter voxel state, energy audit, or any golden hash —
+  // enforced by test_gauge_links G1a. Buffers are lazily allocated inside the
+  // relax calls (revision 4.1b). Default OFF ⇒ golden-neutral.
+  if (toggles.su2_gauge)
+    relax_su2_links_cpu(*this, GAUGE_RELAX_DT, GAUGE_RELAX_BETA);
+  if (toggles.su3_gauge)
+    relax_su3_links_cpu(*this, GAUGE_RELAX_DT, GAUGE_RELAX_BETA);
+
   // Rule 8: Proper time accumulation (gravity sector).
   // F5 (callstack audit 2026-04-17): extracted to accumulate_proper_time().
   // FTD-0271 (A5): also run when the de Broglie clock is on (latency_field may
@@ -758,14 +769,13 @@ void RenderBridge::triad_binding_cpu()      { ::ftd::triad_binding_cpu(*this);  
 void RenderBridge::update_energy_ledger() { ::ftd::update_energy_ledger_cpu(*this); }
 
 eft::DualCellContinuity RenderBridge::continuity_step() const {
-  // ARCH-2-K (2026-04-25): const-method GPU branch routed through the
-  // public gpu_engine_ptr() accessor (returns nullptr when no GPU).
-#ifdef FTD_ENABLE_CUDA
-  if (auto* gpu = const_cast<RenderBridge*>(this)->gpu_engine_ptr()) {
-    return gpu->continuity_step();
-  }
-#endif
-  return eft::DualCellContinuity(lattice_.size());
+  // Revision 3.1 (was ARCH-2-K's ifdef): Backend virtual dispatch. The
+  // GpuBackend override fills `out` from the device; CPU backends return
+  // false and the host default is used. Semantics-preserving under
+  // force_cpu(): gpu_engine_ptr() already gated on the ACTIVE backend.
+  eft::DualCellContinuity out(lattice_.size());
+  const_cast<RenderBridge*>(this)->backend_->continuity_step(out);
+  return out;
 }
 
 void RenderBridge::run(int num_ticks) {

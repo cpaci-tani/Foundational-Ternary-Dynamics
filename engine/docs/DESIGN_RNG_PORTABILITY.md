@@ -119,3 +119,31 @@ Single commit:
 Which option? My recommendation is **A** for the philosophy + future-proofing reasons above, but B is defensible if the project decides "CPUGPU bit-exact" is intentionally scope-restricted to deterministic operations.
 
 Either way, this is one commit (or a small commit chain), and the work is bounded. The decision gate is whether you want CPU-equivalence on stochastic kernels as a structural property of the engine, or as an ensemble-level approximation.
+
+---
+
+## Per-platform floating-point / golden-hash policy (revision 0.2, 2026-07-02)
+
+The golden gates (ADR-0012) are pinned under EXPLICIT floating-point flags,
+set in `engine/CMakeLists.txt` ("Floating-point determinism policy" block):
+
+| Toolchain | Flag | Measured golden hash (minimal profile) |
+|---|---|---|
+| MSVC (Windows, `engine/build`) | `/fp:precise` (default, now pinned) | `0xb604d81a3d79366e` |
+| gcc (WSL2, `engine/build_wsl`) | `-ffp-contract=off` (default is `fast`) | `0xb604d81a3d79366e` — identical |
+
+Measured 2026-07-02: the two toolchains agreed bit-exactly BEFORE the flags
+were pinned (x86-64 without `-march=native` does not emit FMA, so gcc's
+`-ffp-contract=fast` default had nothing to contract). The pin exists so that
+a future `-march`/AVX2 build, gcc default change, or MSVC `/fp` default change
+cannot silently break Windows↔WSL2 hash comparability — GPU campaign results
+from WSL2 are routinely compared against Windows-pinned goldens.
+
+Policy:
+- The pinned hashes are per-{profile}; MSVC and WSL2-gcc currently share the
+  same value and any divergence after a toolchain upgrade is a finding to
+  investigate, not to re-baseline away.
+- Never add `-ffast-math`, `/fp:fast`, or `-march=native` to `ftd_core` or
+  test targets without recapturing every pinned golden on BOTH platforms and
+  amending ADR-0012.
+- Emscripten (WASM) is exempt from the flag block (no golden runs in WASM).

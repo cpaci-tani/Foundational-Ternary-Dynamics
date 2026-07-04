@@ -23,11 +23,14 @@
  *   transfer or a 262144-voxel kernel launch.
  */
 
+#include <memory>
+
 namespace ftd {
 
 class RenderBridge;
 
 namespace gpu { class GpuEngine; }
+namespace eft { struct DualCellContinuity; }
 
 /// Abstract execution backend for RenderBridge. Implementations:
 ///   - CpuBackend: invokes the CPU phase methods on the bridge directly.
@@ -70,6 +73,20 @@ public:
     /// through `voxels()` will trigger `sync_to_host`. CPU no-op.
     virtual void mark_gpu_dirty() = 0;
 
+    /// Seed the device-side RNG (cuRAND). Default no-op — the host RNG is
+    /// owned by RenderBridge::rng_state_; GpuBackend forwards to GpuEngine.
+    /// (Revision 3.1: retired the seed_rng() ifdef in render_bridge.cpp.)
+    virtual void set_rng_seed(unsigned int /*seed*/) {}
+
+    /// Device-side dual-cell continuity measurement. Returns false when the
+    /// backend has no device implementation — the caller then uses the CPU
+    /// default. Forward-declared parameter type keeps backend.h include-light
+    /// (the GPU override lives in backend.cpp).
+    /// (Revision 3.1: retired the continuity_step() ifdef in render_bridge.cpp;
+    /// gpu_engine_ptr() already gated on the ACTIVE backend, so dispatching
+    /// through the virtual is semantics-preserving under force_cpu().)
+    virtual bool continuity_step(eft::DualCellContinuity& /*out*/) { return false; }
+
     /// Identification — useful for tests that want to assert which backend
     /// is actually executing (not just which was requested).
     enum class Kind { Cpu, Gpu };
@@ -109,6 +126,8 @@ public:
     void flush_host_mutations() override;
     void mirror_phi_latency() override;
     void mark_gpu_dirty() override;
+    void set_rng_seed(unsigned int seed) override;
+    bool continuity_step(eft::DualCellContinuity& out) override;
     Kind kind() const override { return Kind::Gpu; }
 
 private:
@@ -116,5 +135,11 @@ private:
     gpu::GpuEngine*  engine_;  // Non-owning; RenderBridge owns the unique_ptr.
 };
 #endif
+
+/// Construct the default backend for a fresh RenderBridge: GpuBackend (and
+/// the owned GpuEngine) when CUDA is compiled in, CpuBackend otherwise.
+/// Revision 3.1: this factory owns the LAST backend-selection ifdef — the
+/// policy lives here and in backend.cpp, nowhere else.
+std::unique_ptr<Backend> make_default_backend(RenderBridge& bridge, int lattice_size);
 
 }  // namespace ftd

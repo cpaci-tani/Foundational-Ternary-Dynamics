@@ -1,7 +1,7 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Engine version:** 2.18.0
+**Engine version:** 2.18.0 (single-sourced as `ftd::ENGINE_VERSION` in `include/ftd/constants.h`; mirrored by CMake `project(VERSION)`, `ftd_sim --version`, and the WASM `getEngineVersion()` binding — revision 6.1)
 **Golden regression hash:** `0xb604d81a3d79366e` @ L=17 (`test_render_bridge_golden`). The two gauss audit scalars `gauss_violation`/`max_gauss_error` are summed only over vacuum (state==0) sites with the mean-subtracted, coupling-scaled target the SOR projection enforces; per-voxel state/flux/wave_vel/velocity is bit-exact; deterministic (OMP=1 == full pool). Rationale in `test_render_bridge_golden.cpp`.
 **Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`.
 
@@ -144,7 +144,7 @@ engine/
     scale_engine.h            # [v2.12] Abstract base class for all scale engines (111L)
     ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1221L)
     constants.h               # Re-exports ontic + engine-specific constants (279L)
-    constants_gpu.cuh         # GPU-side `inline constexpr` constants mirror (compiles under both g++ and nvcc; no `__constant__` memory)
+    constants_shared.h        # Host+device shared `inline constexpr` constants (renamed from constants_gpu.cuh, revision 2.5; compiles under g++, MSVC, and nvcc; no `__constant__` memory)
     voxel.h                   # Vec3, ForceDiag, Voxel struct (203L)
     lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
     render_bridge.h           # RenderBridge -- main engine API, tick(), diagnostics() (239L)
@@ -335,6 +335,7 @@ RenderBridge::tick()
   5b. apply_absorbing_boundary()   [absorbing_boundary]
   6.  weak_transmutation_cpu()     [weak_transmutation]
   7.  triad_binding_cpu()          [triad_binding]
+  7b. relax_su2/su3_links_cpu()    [su2_gauge / su3_gauge]  (links only — no substrate writes)
   8.  accumulate_proper_time()     [latency_field]
   9.  physical_time_ += dt_; ++tick_
   10. sync/dirty flags/energy ledger updates
@@ -354,6 +355,7 @@ RenderBridge::tick()
 | `apply_absorbing_boundary` | `absorbing_boundary` | Damps the outer shell after movement to reduce periodic wraparound artifacts in selected runs. |
 | `weak_transmutation_cpu` | `weak_transmutation` | Stress-threshold stochastic polarity flips. In dual-substrate mode the L/R fluxes are swapped with the flip. |
 | `triad_binding_cpu` | `triad_binding` | Detects compact same-sign triples and locks them as bound structures. |
+| `relax_su2/su3_links_cpu` | `su2_gauge`, `su3_gauge` | One Jacobi double-buffered Wilson staple sweep per tick over the SU(2)/SU(3) edge links ([IMPOSED] lattice-gauge import; see §8.1). Write-only w.r.t. the substrate — links feed nothing downstream. Buffers lazily allocated on first use. |
 | `accumulate_proper_time` | `latency_field` | Updates `tau` for manifested sites using the latency/speed bandwidth factor. |
 
 ### 4.2 GPU phase ladder
@@ -584,24 +586,30 @@ helper methods (`validate`, `enable_all`, `disable_all`,
 | Field extensions | `dual_substrate`, `exact_dual_gauss`, `latency_field`, `field_energy_gravity`, `symplectic_leapfrog` | Split substrate, latency/proper-time sector, explicit-`dt` wave integration |
 | Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, boundary sponge, traversal artifact control |
 | Particle-sector extensions | `color_forces`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
-| Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Non-Abelian-gauge intent flags (dormant — not wired into the tick) and strict validation behavior |
+| Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Per-tick SU(2)/SU(3) link staple relaxation (tick Rule 7b) and strict validation behavior |
 
-**Dormant non-Abelian gauge sector.** `su2_gauge` / `su3_gauge` are intent
-flags in the same sense as `confinement`: publicly settable (including from
-JS via `rb_toggle_map`) but read by nothing, so setting them is a no-op on
-both backends. The sector's implementation exists but is disconnected —
-`relax_su2_links_cpu` / `relax_su3_links_cpu`
-(`src/transmutation_phases.cpp`) and the CUDA launchers
-`launch_relax_su2_links` / `launch_relax_su3_links`
-(`cuda/kernels_gauge.cu`) have zero call sites. This is a deliberate
-keep-dormant decision (engine revision program, ticket 0.9): nothing
-downstream consumes the link variables (the `color_forces` path uses color
-labels, not links), and wiring the sector in is gated on first fixing the
-in-place `parallel for` neighbor race in `relax_su2_links_cpu`
-(double-buffer) and pinning a new gauge golden profile per ADR-0012.
-`engine/tests/test_gauge_links.cpp` characterizes the relax functions and
-pins the disconnection with a tripwire (G1) that fails loudly if the
-toggles are ever wired.
+**Non-Abelian gauge sector (revision 0.9 option a — wired 2026-07-02).**
+`su2_gauge` / `su3_gauge` (default OFF) gate one Jacobi-double-buffered
+Wilson-action staple sweep per tick over the SU(2)/SU(3) edge link variables:
+CPU `relax_su2/su3_links_cpu` (tick Rule 7b, `transmutation_phases.cpp`), GPU
+`kernels_gauge.cu` via `GpuEngine::gpu_gauge_relax()` with `GpuBackend`
+marshalling host↔device (upload once on activation, download each gauge tick).
+Epistemic status: **[IMPOSED]** — the staple/plaquette relaxation form and its
+rate calibrations (`GAUGE_RELAX_DT`, `GAUGE_RELAX_BETA` in `constants.h`) are
+imported from standard lattice gauge theory, not derived from the postulates.
+The links are **write-only w.r.t. the substrate**: nothing downstream consumes
+them (`color_forces` uses per-voxel color labels, not links), so the wired
+sector is measurement infrastructure — a live link field on which
+plaquette/Wilson-loop observables can later be defined against engine state —
+and **no LEDGER claim rides on it** (the Moore-layer gauge-group results are
+independent of this code path and gain no evidence from it). Guarantees, all
+test-enforced: toggles-OFF runs are bit-identical to every pinned golden;
+toggles-ON runs leave the substrate fold unchanged (`test_gauge_links` G1a)
+and reproduce the pinned gauge golden profile `GAUGE_GOLDEN_HASH` (G1b,
+ADR-0012, bit-identical MSVC↔WSL2-gcc); link buffers are lazily allocated
+(528 B/site only when the sector is used, revision 4.1b); CPU/GPU agree to
+machine-epsilon scale with bit-exact GPU determinism (`test_gauge_gpu_parity`,
+WSL2-canonical).
 
 ### 8.2 Defaults and validation
 

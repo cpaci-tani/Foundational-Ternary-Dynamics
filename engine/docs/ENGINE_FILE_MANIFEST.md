@@ -492,7 +492,7 @@
 | [`gauge_field.h`](../../engine/include/ftd/gauge_field.h) | 54 | @file engine/include/ftd/gauge_field.h @purpose Declarations of edge-based SU(2) and SU(3) link variable structures for non-Abelian gauge field simulations (Scale 0 upgrades). |
 | [`ontic.h`](../../engine/include/ftd/ontic.h) | 48 | The Ontic Derivation Chain — umbrella header. |
 | [`gpu_discrete_universe.h`](../../engine/include/ftd/eft/gpu_discrete_universe.h) | 45 | @file ftd/eft/gpu_discrete_universe.h @brief Standalone, hyper-optimized GPU Discrete Universe simulation engine prototype. |
-| [`constants_gpu.cuh`](../../engine/include/ftd/constants_gpu.cuh) | 44 | Shared physics constants — included by both constants.h and CUDA kernels. |
+| [`constants_shared.h`](../../engine/include/ftd/constants_shared.h) | 44 | Shared physics constants — included by both constants.h and CUDA kernels. |
 | [`scale_ratio.h`](../../engine/include/ftd/scale_ratio.h) | 44 | engine/include/ftd/scale_ratio.h This module implements FC-3 (SPEC_SCALE_RATIO_ONTOLOGY.md §6). |
 | [`test_telemetry_snapshot.h`](../../engine/include/ftd/test_telemetry_snapshot.h) | 44 | @file engine/include/ftd/test_telemetry_snapshot.h @purpose RenderBridge-aware lattice snapshot encoder for FTD Test Bench NDJSON. |
 | [`cli_demos.h`](../../engine/include/ftd/cli_demos.h) | 39 | CLI demo scenarios extracted from main.cpp. |

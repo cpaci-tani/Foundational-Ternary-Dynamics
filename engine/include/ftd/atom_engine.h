@@ -26,6 +26,7 @@
 #include <cmath>
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace ftd {
 
@@ -50,37 +51,89 @@ struct AtomToggles {
     bool thermostat = false;
     bool electronegativity = false;
 
-    // Validates known dependency constraints between toggles.
-    // Returns true if the combination is valid.
-    // If err != nullptr, appends a human-readable description of each violation.
-    bool validate(std::string* err = nullptr) const {
-        std::string msg;
-        if (angle_strain && !covalent_bonds)
-            msg += "angle_strain requires covalent_bonds (needs bond geometry)\n";
-        if (torsional && !covalent_bonds)
-            msg += "torsional requires covalent_bonds (needs dihedral chain)\n";
-        if (improper_torsional && !covalent_bonds)
-            msg += "improper_torsional requires covalent_bonds (needs bond topology)\n";
-        if (thermostat && !damping)
-            msg += "thermostat requires damping (Berendsen rescaling applies velocity damping)\n";
-        if (dipole_dipole && !electronegativity)
-            msg += "dipole_dipole requires electronegativity (dipole moments computed from chi)\n";
-        if (err) *err = msg;
-        return msg.empty();
-    }
-
-    void enable_all() {
-        ionic = van_der_waals = covalent_bonds = auto_bonding = damping = true;
-        h_bonds = dipole_dipole = angle_strain = torsional = improper_torsional = true;
-        thermostat = electronegativity = true;
-    }
-    void minimal() {
-        ionic = van_der_waals = covalent_bonds = auto_bonding = true;
-        damping = false;
-        h_bonds = dipole_dipole = angle_strain = torsional = improper_torsional = false;
-        thermostat = electronegativity = false;
-    }
+    // ── Table-managed helpers (ADR-0013; bodies below ATOM_TOGGLE_SPECS) ──
+    // Adding a toggle is a 2-place edit: the field above + one table row. The
+    // struct fields are preserved verbatim so every direct consumer compiles.
+    bool validate(std::string* err = nullptr) const; // false + message on violation
+    void enable_all();                               // every toggle ON
+    void minimal();                                  // recommended-default profile
+    bool get_toggle(std::string_view name) const;    // false if unknown
+    bool set_toggle(std::string_view name, bool value); // false if unknown
 };
+
+// ─────────────────────────────────────────────────────────────────────
+// AtomToggleSpec — one row per boolean toggle (ADR-0013 pattern, ported
+// from term_toggles.h). The helpers above iterate this table.
+//   default_value — constructor default (copied verbatim from the fields)
+//   minimal_value — value applied by minimal() (== default for every Atom row)
+//   requires_     — single dependency name that must also be ON (empty = none).
+//                   Every Atom dependency is a single AND-dependency, so it maps
+//                   cleanly here; validate() needs no hand-rolled pass. The
+//                   generated message is "X requires Y" (the legacy parenthetical
+//                   reasons are kept as row comments); no caller or test pins the
+//                   wording, and the pass/fail verdict is identical.
+// ─────────────────────────────────────────────────────────────────────
+struct AtomToggleSpec {
+    const char* name;
+    bool AtomToggles::* field;
+    bool default_value;
+    bool minimal_value;
+    const char* requires_;
+    const char* description;
+};
+
+inline constexpr AtomToggleSpec ATOM_TOGGLE_SPECS[] = {
+    // {name, field, default, minimal, requires_, description}
+    {"ionic",              &AtomToggles::ionic,              true,  true,  "",                  "Ionic Coulomb force"},
+    {"van_der_waals",      &AtomToggles::van_der_waals,      true,  true,  "",                  "Van der Waals (Lennard-Jones 12-6)"},
+    {"covalent_bonds",     &AtomToggles::covalent_bonds,     true,  true,  "",                  "Harmonic covalent bond force"},
+    {"auto_bonding",       &AtomToggles::auto_bonding,       true,  true,  "",                  "Auto-detect bond formation/breaking"},
+    {"damping",            &AtomToggles::damping,            false, false, "",                  "Velocity damping (off for energy conservation)"},
+    {"h_bonds",            &AtomToggles::h_bonds,            false, false, "",                  "Hydrogen bonds (10-12 potential)"},
+    {"dipole_dipole",      &AtomToggles::dipole_dipole,      false, false, "electronegativity", "Dipole-dipole force (needs chi-derived dipole moments)"},
+    {"angle_strain",       &AtomToggles::angle_strain,       false, false, "covalent_bonds",    "Angle strain (needs bond geometry)"},
+    {"torsional",          &AtomToggles::torsional,          false, false, "covalent_bonds",    "Torsional/dihedral force (needs dihedral chain)"},
+    {"improper_torsional", &AtomToggles::improper_torsional, false, false, "covalent_bonds",    "Improper torsional force (needs bond topology)"},
+    {"thermostat",         &AtomToggles::thermostat,         false, false, "damping",           "Berendsen thermostat (applies velocity damping)"},
+    {"electronegativity",  &AtomToggles::electronegativity,  false, false, "",                  "Electronegativity/QEq charge transfer"},
+};
+static_assert(sizeof(ATOM_TOGGLE_SPECS) / sizeof(ATOM_TOGGLE_SPECS[0]) == 12,
+              "AtomToggles has 12 boolean toggles — update the table and this pin together");
+
+inline bool AtomToggles::get_toggle(std::string_view name) const {
+    for (const auto& s : ATOM_TOGGLE_SPECS)
+        if (name == s.name) return this->*(s.field);
+    return false;
+}
+inline bool AtomToggles::set_toggle(std::string_view name, bool value) {
+    for (const auto& s : ATOM_TOGGLE_SPECS)
+        if (name == s.name) { this->*(s.field) = value; return true; }
+    return false;
+}
+inline void AtomToggles::enable_all() {
+    for (const auto& s : ATOM_TOGGLE_SPECS) this->*(s.field) = true;
+}
+inline void AtomToggles::minimal() {
+    for (const auto& s : ATOM_TOGGLE_SPECS) this->*(s.field) = s.minimal_value;
+}
+inline bool AtomToggles::validate(std::string* err) const {
+    std::string msg;
+    for (const auto& s : ATOM_TOGGLE_SPECS) {
+        if (!(this->*(s.field))) continue;         // only check enabled toggles
+        if (s.requires_ && *s.requires_) {
+            for (const auto& dep : ATOM_TOGGLE_SPECS) {
+                if (std::string_view(s.requires_) == dep.name) {
+                    if (!(this->*(dep.field))) {
+                        msg += s.name; msg += " requires "; msg += dep.name; msg += "\n";
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    if (err) *err = msg;
+    return msg.empty();
+}
 
 // ============================================================================
 // Per-atom force decomposition (for diagnostics + visualization)
@@ -292,11 +345,16 @@ struct AtomDiagnostics {
  * [EXTENDED] Models ionic, van der Waals, and covalent bonding driven by
  * first-principles ontic constants natively. Integrates using Velocity Verlet.
  */
-class AtomEngine {
+// Revision 3.4: inherits ScaleEngine like ParticleEngine/CosmicEngine —
+// SPEC_ENGINE's "all scale engines inherit ScaleEngine" claim is now true.
+// Purely additive: consumers dispatch duck-typed per ADR-0002, so no call
+// site changes; the base class only adds the uniform virtual surface.
+class AtomEngine : public ScaleEngine {
 public:
     AtomEngine();
-    ~AtomEngine();  // Out-of-line so the forward-declared GpuBackend pimpl
-                    // doesn't trip incomplete-type unique_ptr deletion.
+    ~AtomEngine() override;  // Out-of-line so the forward-declared GpuBackend
+                             // pimpl doesn't trip incomplete-type unique_ptr
+                             // deletion.
 
     // Toggle struct — public for direct access (like TermToggles on RenderBridge)
     AtomToggles toggles;
@@ -319,11 +377,39 @@ public:
     // Access
     std::vector<Atom>& atoms() { return atoms_; }
     const std::vector<Atom>& atoms() const { return atoms_; }
-    int current_tick() const { return tick_; }
-    double dt() const { return dt_; }
-    void set_dt(double d) { dt_ = d; }
+    int current_tick() const override { return tick_; }
+    double dt() const override { return dt_; }
+    void set_dt(double d) override { dt_ = d; }
     double softening() const { return soft_; }
     void set_softening(double s) { soft_ = s; }
+
+    // ── ScaleEngine interface (revision 3.4) ────────────────────────────
+    int scale_level() const override { return static_cast<int>(ScaleLevel::ATOM); }
+    const char* scale_name() const override { return "AtomEngine"; }
+    int entity_count() const override { return static_cast<int>(atoms_.size()); }
+
+    // Table-backed (ADR-0013): delegates to AtomToggles, which iterates
+    // ATOM_TOGGLE_SPECS. Unknown names read false / are ignored, exactly as
+    // the former hand-written if-ladders did.
+    bool get_toggle(const std::string& name) const override {
+        return toggles.get_toggle(name);
+    }
+
+    void set_toggle(const std::string& name, bool value) override {
+        toggles.set_toggle(name, value);
+    }
+
+    ScaleBaseDiagnostics base_diagnostics() const override {
+        const AtomDiagnostics d = diagnostics();
+        ScaleBaseDiagnostics b;
+        b.tick = d.tick;
+        b.entity_count = d.atom_count;
+        b.total_energy = d.total_energy;
+        b.total_ke = d.total_ke;
+        b.total_pe = d.total_pe_ionic + d.total_pe_vdw + d.total_pe_bond;
+        b.total_momentum = d.total_momentum;
+        return b;
+    }
 
     // Backward-compatible toggle accessors (delegate to toggles struct)
     bool damping_enabled() const { return toggles.damping; }
@@ -341,10 +427,10 @@ public:
     const std::vector<AtomForceDiag>& force_diag() const { return force_diag_; }
 
     /// Advance one time step (Velocity Verlet)
-    void tick();
+    void tick() override;
 
     /// Advance N time steps
-    void run(int num_ticks);
+    void run(int num_ticks) override;
 
     /// Compute diagnostics for current state
     AtomDiagnostics diagnostics() const;
@@ -359,7 +445,7 @@ public:
     Vec3 compute_force(int i) const;
 
     /// Clear all atoms
-    void clear() { atoms_.clear(); forces_.clear(); force_diag_.clear(); tick_ = 0; next_id_ = 0; }
+    void clear() override { atoms_.clear(); forces_.clear(); force_diag_.clear(); tick_ = 0; next_id_ = 0; }
 
 private:
     // Velocity Verlet phases
@@ -388,6 +474,9 @@ private:
     int tick_ = 0;
     int next_id_ = 0;
     double dt_ = 1.0;          // Time step (default 1 tick = ~1 fs/10)
+    // Intentionally smaller than ParticleEngine's 1.0 — see the softening
+    // strategy note in particle_engine.h (revision 2.4): per-scale [IMPOSED]
+    // regularization, not drift.
     double soft_ = 0.5;         // Softening length (smaller than Scale 1)
     double target_temperature_ = 0.0;  // Thermostat target (0 = disabled)
     double thermostat_tau_ = THERMOSTAT_TAU_DEFAULT; // Coupling timescale

@@ -14,6 +14,7 @@
 
 import { debugLog } from './core/log.js';
 import { WasmBridge } from './bridge/wasm-bridge.js';
+import { samplerOr } from './bridge/bridge-contract.js';
 import { K_B } from './constants.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
@@ -533,6 +534,10 @@ export class WebSocketBridge {
     getEMForceField(stride = 2) { return EMPTY_FIELD_SAMPLE; }
     getGravityForceField(stride = 2) { return EMPTY_FIELD_SAMPLE; }
     getStrongForceField(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr.
+     *  This bridge stubs several derived samplers, so samplerOr will warn-once
+     *  (loud drift) for kretschmann/latency/fisher/coherence/state/gaussResidual. */
+    getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
 
     // Scale 1 (ParticleEngine) fallback delegation
     initPE() { this._ensureFallback().initPE(); }

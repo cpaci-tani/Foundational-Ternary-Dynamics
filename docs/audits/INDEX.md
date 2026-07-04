@@ -24,6 +24,22 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 | 2026-04-11 | [documentation cleanup ledger](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) | repo-wide documentation drift ledger | mixed | yes | n/a |
 | 2026-04-27 | [pre-refactor sweep](AUDIT_2026-04_pre-refactor.md) | 122 | 78 | 40 | 4 |
 | 2026-04-27 | [refactor sweep (8-phase)](AUDIT_2026-04_refactor-sweep.md) | 8 phases · 17 commits | 17 | 1 (WSL2 GPU parity) | 0 |
+| 2026-07-02 | engine revision program (plan `i-want-you-to-clever-frost` + `engine/CHECKLIST_ENGINE.md` revision sections) | 38-agent audit → phased execution on `engine/revision-program-p0` | Phases 0–3 + 2.10/4.2/6.1 | 4.1, 5.1–5.6, 6.2 | 7 refuted + 5 stale claims (recorded) |
+
+---
+
+## Known UNAUDITED areas (revision 6.3 — no sweep has covered these)
+
+| Area | Contents | Risk note |
+|---|---|---|
+| `engine/tools/test_runner/` | Qt6 desktop GUI (~15 C++ sources: MainWindow, LatticeViewer+OpenGL shaders, HistoryDb/SQLite, TelemetryCharts, NdjsonParser, SmartDispatcher); CMake gate `FTD_BUILD_TEST_RUNNER=AUTO` | Entire GUI application with zero audit or test coverage; NDJSON/SQLite schemas can drift silently against `test_telemetry.h` output |
+| `engine/tools/*.sh` | WSL2 campaign shell runners (`op_mixing_sweep.sh`, `run_topological_production.sh`, …) | Research data-product paths, uncovered; failures surface only mid-campaign |
+| `engine/tools/` Python visualizers + `build_file_manifest.py` | Plot/manifest utilities | Low risk; manifest generator's output IS committed (`engine/docs/ENGINE_FILE_MANIFEST.*`) so drift is visible in diffs |
+
+A scoped follow-up sweep of `engine/tools/` (schema pinning for NDJSON/SQLite,
+smoke build of the Qt app under `FTD_BUILD_TEST_RUNNER=AUTO`, shellcheck of the
+campaign runners) is the recorded next step; until then, treat results produced
+via these tools as unaudited-pipeline outputs.
 
 ---
 

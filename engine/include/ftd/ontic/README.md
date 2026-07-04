@@ -54,7 +54,7 @@ adding new derived constants is required (see ADR-0009 / CONTRACTS.md §7).
 
 - **Add a new constant** → place at the right layer; update
   `constants.h` re-export; mirror to `engine/web/js/constants.js`
-  (canonical JS) and `engine/include/ftd/constants_gpu.cuh` (device);
+  (canonical JS) and `engine/include/ftd/constants_shared.h` (device);
   optionally `scripts/constants.py` (canonical Python).
 - **Change a layer's derivation** → write a derivation note in
   `docs/theory/03_derivations/DERIV_*.md`; cite from the new constant's
@@ -76,4 +76,4 @@ adding new derived constants is required (see ADR-0009 / CONTRACTS.md §7).
 - [docs/adr/0009-epistemic-tag-system.md](../../../../docs/adr/0009-epistemic-tag-system.md)
 - [docs/SPEC_FTD.md](../../../../docs/SPEC_FTD.md)
 - [docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md](../../../../docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) (canonical theorems-only reference)
-- Mirrors: `scripts/constants.py`, `engine/web/js/constants.js`, `engine/include/ftd/constants_gpu.cuh`
+- Mirrors: `scripts/constants.py`, `engine/web/js/constants.js`, `engine/include/ftd/constants_shared.h`
