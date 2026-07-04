@@ -41,6 +41,12 @@ construction site for ℚ(G*):
   bound 2^(−1/2)·3^(−7/4) reproduced to 1e-6. The d=−4-uniqueness analogy
   (FTD-0003) closes as a NON-BRIDGE (same endpoint, different mechanism);
   TRACKER §6.6 → CLOSED/ANSWERED.
+- **RQ-MM-3 answered same day** (survey level, prior confirmed): NON-BRIDGE.
+  CHPS's mod-3 combinatorics grades partitions; FTD's ℤ₃ structures index
+  axes/center-classes/shells/characters; corpus scan finds zero
+  partition-graded FTD objects. Mapping table + §5 item 8 + falsifier in the
+  doc; toolkit shelved for any future symmetric-function layer. TRACKER §6.8
+  → CLOSED/ANSWERED.
 - Navigation: INDEX_09 (56→57 docs), META_INDEX row 9.61, LEDGER FTD-0366
   row + maintenance log, spine §9.1 pointer, frontier §2 ensemble-face row,
   type-priority §2 exhibit.
