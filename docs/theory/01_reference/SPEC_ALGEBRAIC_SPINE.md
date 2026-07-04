@@ -613,6 +613,18 @@ scripts: `scripts/proofs/proof_g_star_parity_twist.py` (identity check)
 and `scripts/proofs/proof_lprime_chi4_boundary.py` (Identities A/B/C at
 high precision). LEDGER row: FTD-0127.
 
+**External ensemble exhibit (FTD-0366; no spine change — the count stays
+7+2).** The ℤ₄-sector decomposition of the strongly-coupled quartic matrix
+model of Córdova–Heidenreich–Popolitov–Shakirov (Commun. Math. Phys. 361
+(2018) 1235–1274, arXiv:1611.03142) realizes this parity split in ensemble
+language: the (ℤ/4)^× = {1,3} conjugate contour sectors carry Γ(1/4)- and
+Γ(3/4)-classes, their χ₋₄-symmetric combination (product) is π-valued and
+their χ₋₄-antisymmetric combination (ratio) is `G*`-valued, and the even
+sector is pure π-class — machine-verified in
+`scripts/proofs/proof_gstar_matrix_models.py` (144/144); see
+`docs/theory/09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md`
+(scholarly attribution, not third-party validation).
+
 ---
 
 ## 10 · Subsidiary theorems and structural nulls

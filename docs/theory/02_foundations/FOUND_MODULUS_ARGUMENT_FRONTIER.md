@@ -27,6 +27,7 @@ The load-bearing feature is **(iv)**: such a substrate has a *forward map* and a
 | | **MODULUS half** (owned) | **ARGUMENT half** (not self-supplyable) |
 |---|---|---|
 | algebraic face | even; `Γ(z)Γ(1−z)=π` (the reflection **product**) | odd; `Γ(z)/Γ(1−z)=G*` (the reflection **ratio**) |
+| ensemble face `[grounded]` (FTD-0366) | contour-independent data: the loop equations (Ward identities) and the χ₋₄-even combinations — conjugate-sector amplitude **product** `= √2·π` (N=1), the even sector's `ℚ·π^{N/2}` class | the **contour choice** `C_{r,a}`, left underdetermined by the model's own Ward identities ((N+1)(N+2)/2 independent quartic contours); its χ₋₄-odd invariant — conjugate-sector **ratio** `= G*` at N=1, `ℚ·G*^N` at general N (CHPS strongly-coupled matrix models; `09_mathematical/general_math/EXPLR_GSTAR_MATRIX_MODELS.md` §4) |
 | operator face | self-adjoint Laplacian `Δ = (operator)∘(adjoint)` | the **chosen adjoint** `Q*` that turns a nilpotent `Q` into `H={Q,Q*}` (SUSY-QM) |
 | graded-√ face | Dirac–Kähler `K=d−δ`, `K²=−Δ_Hodge`; `∂_t^{1/2}` with a **cyclotomic** branch sign | a graded √ whose square is the **one-to-many inverse** of a lossy collapse (does not exist over the modulus field) |
 | probabilistic face | the trace `τ(ab)=τ(ba)`; the pushforward / marginalization | the **non-tracial state** / modular flow (Tomita–Takesaki, nonzero *iff* `ω(ab)≠ω(ba)`); the disintegrating **section** (Rokhlin), multivalued off-support |
