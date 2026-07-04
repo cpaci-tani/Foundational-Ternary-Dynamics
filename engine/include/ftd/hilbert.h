@@ -162,8 +162,10 @@ inline double fidelity(const HilbertState& a, const HilbertState& b) {
  * H = -c^2 * nabla^2 + V(x) is the lattice Hamiltonian.
  *
  * This is the discrete Schrodinger equation on the FTD lattice.
- * The continuum limit recovers the standard Schrodinger equation
- * (see CLAUDE.md Part G, §3.5).
+ * In the ε-L regime (lattice spacing a ≪ de Broglie wavelength, on a box
+ * of linear size L ≫ the spread of |ψ|²) it approximates the standard
+ * Schrodinger equation to any required ε — an ε-L statement, not a
+ * completed continuum limit (AUDIT_INFINITY_REFRAME.md; reframe item MED-6).
  *
  * Note: First-order Euler integrator. For strict unitarity over
  * many time steps, Crank-Nicolson or split-operator methods are

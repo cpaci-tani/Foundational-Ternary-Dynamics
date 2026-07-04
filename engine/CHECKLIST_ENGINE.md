@@ -90,7 +90,7 @@ needed to make those claims auditable.
 | ID | Status | Title | Effort | Where |
 |---|---|---|---|---|
 | ARCH-1 |  | Split `RenderBridge` god-class — Injector + RenderBridgeView extracted; delegators deprecated; 17/17 regression pass. (Cleanup 2026-05-27: the `RenderBridgeView` type alias in `bridge_view.h` was deleted as never-consumed scaffolding; the existing const-ref convention in diagnostics_compute.cpp / energy_ledger_compute.cpp continues to satisfy the read-only contract. Injector portion retained.) | done 2026-04-25 | [injector.h](include/ftd/injector.h), [render_bridge.h](include/ftd/render_bridge.h) |
-| ARCH-2 |  | Backend abstraction — full migration. All ifdef blocks collapsed; `use_gpu_` flag deleted; 6 inject friends dropped; 18/18 regression pass | done 2026-04-25 | [backend.h](include/ftd/backend.h), [backend.cpp](src/backend.cpp), [render_bridge.h](include/ftd/render_bridge.h), [render_bridge.cpp](src/render_bridge.cpp) |
+| ARCH-2 |  | Backend abstraction — full migration. `use_gpu_` flag deleted; 6 inject friends dropped; 18/18 regression pass. **(Revision 3.1 completion, 2026-07-02): the 2026-04-25 "all ifdef blocks collapsed" was aspirational — 4 `#ifdef FTD_ENABLE_CUDA` sites survived in render_bridge.cpp (ctor backend selection, seed_rng, continuity_step, and the gpu_engine.h include). Now retired: `set_rng_seed`/`continuity_step` are Backend virtuals; the selection policy moved to `make_default_backend()` in backend.cpp. The ONLY remaining conditional in render_bridge.cpp is the `gpu_engine.h` include the defaulted destructor needs for complete-type `unique_ptr<GpuEngine>` deletion — irreducible without PIMPL.)** | done 2026-04-25 (completed 2026-07-02) | [backend.h](include/ftd/backend.h), [backend.cpp](src/backend.cpp), [render_bridge.h](include/ftd/render_bridge.h), [render_bridge.cpp](src/render_bridge.cpp) |
 | ARCH-3 |  | Toggle validator strictness: dedup repeated warnings (one per unique error string) + opt-in `strict_validation` toggle that throws std::logic_error. 3 contract tests added (test_strict_validation). | done 2026-04-25 | [render_bridge.cpp:tick()](src/render_bridge.cpp), [term_toggles.h:strict_validation](include/ftd/term_toggles.h) |
 | ARCH-4 |  | `seed_rng()` now propagates to: bridge mt19937 + thread_rngs_ (via langevin_seed_initialized_=false) + toggles.langevin_seed (cuRAND picks up next tick) + direct gpu_->set_rng_seed() call. Determinism test PASS. | done 2026-04-25 | [render_bridge.h:seed_rng](include/ftd/render_bridge.h), [render_bridge.cpp:seed_rng](src/render_bridge.cpp) |
 | ARCH-5 | ☐ | Device-side energy-ledger reduction (avoid 3 MB PCIe download per tick) | ~80 LOC | [gpu_engine.cu:454](cuda/gpu_engine.cu) — TODO comment already exists |
@@ -429,3 +429,110 @@ diagnostic-scope fix, per-voxel field byte-identical, deterministic OMP1==pool; 
 ---
 
 *Filed 2026-04-25. Living doc — update on each round closure.*
+
+---
+
+## Revision-program 0.11 — verify-before-delete evidence audit (2026-07-02)
+
+Grep-evidence dispositions for every dead-code candidate named by the
+engine-revision exploration (plan `i-want-you-to-clever-frost`). **Later
+phases may only delete items marked DEAD here; everything else is ALIVE or
+QUARANTINE.** The 2026-05-27 web audit's over-counting is confirmed again —
+three of six candidates turned out to be load-bearing.
+
+| Candidate | Verdict | Evidence |
+|---|---|---|
+| `Voxel::flavor` | **ALIVE — do not remove or repurpose** | Read by `engine/src/vtk_export.cpp:261,376` (particle scalar export), marshalled to/from GPU (`gpu_buffers.cu:380,662`), written by `gpu_engine.cu:629`, and **gates GPU weak-field activation** (`gpu_engine.cu:746` `v.flavor != 0`). The explorer claim "never read" was false. NOT in any golden fold (state/flux/wave_vel/velocity + ext dual/latency only). Plan ticket 4.2 downgraded to comment-only documentation of these consumers. |
+| `_repro_gpu_empty_bridge.cpp` | **DEAD (unregistered)** | Zero references in `engine/CMakeLists.txt`; carries a "Local repro — do not commit" marker; the `CTestCostData.txt` entry is stale local build-dir residue. Disposition per ticket 5.1: `git mv` to `engine/tests/archive/` with provenance note after confirming `campaign_beta_measurement.cpp` covers the measure_kt_on_bg scenario. |
+| `cognitive_lattice` (src+header) | **QUARANTINE, not dead** | Consumed by `engine/tests/test_cognitive_lattice.cpp` + `benchmark_cognitive_lattice.cpp` (both CTest-registered). Goes under `FTD_BUILD_EXPERIMENTAL` (ticket 3.7 / ADR-0016), never deleted. |
+| Legacy WASM scenario branches (`bindings_render_bridge.cpp` "L52-114") | **ALREADY CLEAN** | Only 2 `name ==` occurrences remain in the file; the claimed legacy block no longer exists. No action. |
+| `Scale1LifecycleController` stub | **DEAD candidate (web)** | Sole reference is its own definition in `engine/web/js/scales/scale1/controller.js`; no test/spec/selector references found. Eligible for ticket 2.x safe-subset removal after a Playwright selector grep in the same commit. |
+| `cosmic-inspector-content` DOM block | **ALIVE** | Bound by `engine/web/js/inspector/dom-bindings.js`; the 2026-05-27 audit claim is stale. Do not remove. |
+| SU(2)/SU(3) gauge sector | **ALIVE — WIRED (revision 0.9 option a, 2026-07-02)** | Superseded disposition (was QUARANTINE): the sector is wired into the tick on both backends behind `su2_gauge`/`su3_gauge` (CPU Rule 7b / GPU Phase 7b), Jacobi race fixed, link buffers lazy per ticket 4.1b (DONE). Gauge golden `GAUGE_GOLDEN_HASH=0xa4dec20d1dd94ec8` + write-only-substrate guarantee in `test_gauge_links.cpp`; CPU/GPU parity in `test_gauge_gpu_parity.cpp`. [IMPOSED] measurement infrastructure; links still have zero downstream consumers. |
+
+Golden-fold / flavor cross-check (required by ticket 0.11): the golden hash
+folds do NOT read `Voxel::flavor` — but GPU weak-field auto-activation does,
+so any flavor change is GPU-behavior-relevant even though it is golden-invisible.
+
+### Revision-program note (2026-07-02): second pre-existing failure found
+- **`atomic_energy` FAILS — PRE-EXISTING, not a revision-program regression.**
+  Assertions AE-6d (total energy negative / bound state; measured
+  E_actual/E_circ = -0.64) and AE-6e (within factor 2 of circular-orbit
+  prediction) fail. Verified unrelated to the 2.2 atom_forces dedup via
+  stash round-trip (fails identically without the edit); the test source is
+  unchanged since 2026-03-16 and nothing on the revision branch touches
+  AtomEngine physics. Add to the ticket-5.4 diagnosis scope alongside
+  helium_scale1 (same discipline: instrument, bisect, three costed options —
+  no silent tolerance changes).
+
+### Revision-program pre-existing failure inventory (running list, 2026-07-02)
+Found by actually running suites (the "211/211" tally is stale). All fold
+into the ticket-5.4 diagnosis discipline (instrument, bisect, three costed
+options — never silent tolerance edits):
+1. `helium_scale1` — documented previously (FTD-0270 boundary hypothesis).
+2. `atomic_energy` — AE-6d/6e bound-state energy sign / factor-2 circular
+   check; test unchanged since 2026-03-16.
+3. `particle_toggles` §4 + `particle_engine` PE5/PE6 — gravity assertions
+   expect a legacy-scale G_PE; the engine's committed G_PE is the physical
+   FTD-0131 coupling (~1e-45), so "gravity ON -> nonzero force" asserts
+   below double noise. Stash-verified independent of revision-2.4.
+4. `particle_lifetime` — fails (~90 s, not timeout); tests the RenderBridge
+   substrate (includes only render_bridge.h), so unreachable by the 2.4
+   Scale-1 edit; possibly interacts with the concurrent gauge-wiring WIP —
+   re-baseline once that lands.
+
+### Ticket-5.4 diagnosis, part 1 (2026-07-03): the G_PE-class failures DIAGNOSED
+`particle_toggles` §4 ("Gravity ON -> nonzero force" + gravity diag) and
+`particle_engine` PE5/PE6 (force magnitude within 1%; pure-gravity check)
+fail for one shared root cause, now pinned:
+
+- **Root cause:** the tests' expectations date from the legacy G_N=0.01-era
+  coupling. The engine's committed `G_PE = G_DERIVED` is the PHYSICAL
+  FTD-0131 gravitational coupling `1/(4pi*m_P^2)` (~1e-45 scale;
+  `ontic/particle_masses.h:101-107`), so a two-electron gravity force is
+  ~5e-48 — below the tests' "nonzero"/1% thresholds by ~40 orders of
+  magnitude. Measured: PE6 pure-gravity force = 5.26e-48; PE5 expected
+  grav term 2.6e-05 vs actual EM-only 5.8e-06 (81.8% "error" = the grav
+  term the test wrongly expects to be EM-comparable). The test source is
+  unchanged since 2026-03-16; the physics moved under it (deliberately,
+  FTD-0131) and nobody re-ran the suite.
+
+- **Three costed options (5.4 discipline — no silent tolerance edits):**
+  1. **RECOMMENDED — re-baseline the expectations to the physical coupling**
+     (S effort): PE5 expects EM-only magnitude (grav negligible by 40
+     orders); PE6/toggles-§4 assert the RATIO F_grav/F_coulomb ≈ alpha_G
+     scale (m1*m2/q1*q2 * G_PE*4pi/ALPHA_EFT) instead of "nonzero above
+     double noise". Turns the failures into a genuine pin of FTD-0131.
+  2. Test-local legacy-G override knob (S): rejected — masks the physical
+     coupling and re-creates the drift that caused this.
+  3. Label `known_fail` + exclude (S): honest but wasteful — option 1 is
+     barely more work and yields real coverage.
+
+- **Still open in 5.4:** `helium_scale1` (FTD-0270 boundary hypothesis —
+  needs its own instrumented pass), `atomic_energy` AE-6d/6e (bound-state
+  energy sign; E_actual/E_circ = -0.64 measured — likely the same class:
+  expectation predates a physics recalibration; bisect against the AE force
+  history before proposing options), `particle_lifetime` (re-baseline after
+  the gauge wiring + concurrent-session churn settles).
+
+---
+
+## Pinned golden-profile inventory (revision 6.2 — single lookup table)
+
+All bit-exact gates, ADR-0012 multi-profile policy (each constant re-baselines
+independently, never to make a refactor pass). Harness fold:
+`engine/tests/support/golden_hash.h`.
+
+| Profile | Pinned hash | Test (CTest name) | Platform | Fold |
+|---|---|---|---|---|
+| Minimal (Logic6-like, L=17) | `0xb604d81a3d79366e` | `render_bridge_golden` | MSVC `/fp:precise` ≡ WSL2-gcc `-ffp-contract=off` | original |
+| Shipping defaults (L=17) | `0x115a6350fcbe39a0` | `render_bridge_golden_default` | MSVC ≡ WSL2-gcc | extended (+L/R, latency) |
+| L=9 defaults | `0x774ae2ef158a50d6` | `render_bridge_golden_l9` | MSVC | extended |
+| Boundary: flux Reflective | `0xbe736c3006d4fed0` | `boundary_modes_golden` | MSVC | extended |
+| Boundary: flux Dispersal | `0x9778edf520396c54` | `boundary_modes_golden` | MSVC | extended |
+| Boundary: absorbing sponge | `0x208c18ce2f75082c` | `boundary_modes_golden` | MSVC | extended |
+| Boundary: movement bounce (genesis/evap off + crosser) | `0x285566e618111ead` | `boundary_modes_golden` | MSVC | extended |
+| GPU backend (L=17 defaults) | `0xd6c0f7007f5a4f24` | `gpu_golden` | WSL2 RTX 5090 (canonical; informational on Win-CUDA) | extended |
+| Gauge links (su2+su3 ON, perturbed start) | `0xa4dec20d1dd94ec8` | `gauge_links` G1b | MSVC ≡ WSL2-gcc | links-only (`hash_all_links`) |
+
+Fast gate: `ctest -L merge_gate -j 32 -C Release` (see `engine/docs/CI_GATE.md`).

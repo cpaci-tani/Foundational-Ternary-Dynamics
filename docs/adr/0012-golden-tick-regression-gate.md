@@ -60,6 +60,42 @@ configuration are byte-identical — not that "physics" in the unqualified,
 general sense is verified. Campaigns exercising a toggled-off subsystem
 need their own regression coverage; this gate does not provide it.
 
+**Amendment (2026-07-02, engine revision program 0.5): multi-profile gate.**
+The scoping caveat above is now partially closed. The hash-fold harness was
+extracted verbatim to `engine/tests/support/golden_hash.h` (extraction
+verified bit-exact against `0xb604d81a3d79366e`), and a SECOND pinned
+profile landed: `test_render_bridge_golden_default.cpp` — identical harness
+geometry but ZERO toggle writes, i.e. the `TermToggles{}` shipping defaults
+(dual_substrate, selective_damping, weak_transmutation, damping, gravity,
+lorentz_force ON), folded with the EXTENDED hash (original fields +
+per-voxel `flux_L/R`, `wave_vel_L/R`, `latency`). Pinned
+`GOLDEN_HASH_DEFAULT = 0x115a6350fcbe39a0` (3 consecutive runs + OMP=1
+identical). Consequences: (a) the default-ON extension paths are now
+bit-exact-gated; (b) changing any toggle DEFAULT now moves this hash, so
+default changes require a stated rebaseline commit; (c) the re-baseline
+policy applies per-profile — each pinned constant is independent. Further
+profiles (boundary modes, L=9, GPU) are registered under the same policy as
+they land (revision tickets 0.6/0.7).
+
+**Amendment (2026-07-02, engine revision program 0.9 option a): gauge golden
+profile.** The SU(2)/SU(3) gauge sector was wired into the tick behind
+`su2_gauge`/`su3_gauge` (default OFF — every prior pin verified bit-identical
+before and after wiring). New pinned profile in `test_gauge_links.cpp`:
+`GAUGE_GOLDEN_HASH = 0xa4dec20d1dd94ec8` — the L=17 / seed-42 / 100-tick
+harness with BOTH gauge toggles ON, links seeded by the standard deterministic
+perturbation (`tests/support/gauge_test_utils.h`; identity links are exactly
+stationary under the staple update, so the profile must start off the fixed
+point), folded over ALL link variables (`hash_all_links`), NOT over the
+substrate. The substrate fold is asserted UNCHANGED vs defaults in the same
+test (the sector is write-only — nothing downstream consumes the links), so
+this profile gates the link dynamics without spending any substrate golden
+surface. Captured on MSVC `/fp:precise`, stable ×3 + OMP_NUM_THREADS=1, and
+reproduced bit-identically on WSL2-gcc (`-ffp-contract=off`). GPU behavior is
+gated by `test_gauge_gpu_parity` (element-wise CPU/GPU tolerance ~1e-15 +
+bit-exact GPU run-to-run determinism), not by a pinned GPU link hash — the
+CPU↔GPU FMA-contraction and product-association differences are documented in
+that test.
+
 ## Alternatives considered
 
 - Hand-rolled per-quantity assertions — rejected: hashes catch

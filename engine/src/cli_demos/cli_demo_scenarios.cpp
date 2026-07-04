@@ -31,7 +31,7 @@ namespace cli_demos {
 
 void print_header() {
     std::cout << "================================================================\n";
-    std::cout << "  FTD RENDER-BRIDGE ENGINE\n";
+    std::cout << "  FTD RENDER-BRIDGE ENGINE  v" << ftd::ENGINE_VERSION << "\n";
     std::cout << "  G* = " << std::setprecision(10) << ftd::G_STAR
               << "  alpha^-1 = " << ftd::X_PLUS << "\n";
     std::cout << "================================================================\n\n";
@@ -362,7 +362,10 @@ void scenario_default(int lattice_size, int num_ticks) {
     std::cout << "tick,total_flux,manifested,positive,negative\n";
     for (int t = 0; t < num_ticks; ++t) {
         engine.tick();
-        if ((t + 1) % (num_ticks/10) == 0) {
+        // std::max guard matches every other progress-interval site in this
+        // file — bare num_ticks/10 crashed with integer divide-by-zero for
+        // num_ticks < 10 (found by cli_smoke_D, revision 1.5).
+        if ((t + 1) % (std::max(1, num_ticks / 10)) == 0) {
             auto d = engine.diagnostics();
             std::cout << d.tick << "," << std::setprecision(6) << d.total_flux
                       << "," << d.manifested_count << "," << d.positive_count

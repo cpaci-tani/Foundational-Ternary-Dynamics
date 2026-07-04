@@ -13,9 +13,9 @@
  *   - adds state-flux coupling g_c·∇s + g_c·∇×(s·v) (when toggles.coupling on)
  *
  * The extraction preserves the parallel-for body BYTE-IDENTICAL. The golden
- * tick test (test_render_bridge_golden) hashes 100 ticks to
- * 0x56fa28acb5b9fe88 and is the strict gate on this refactor: any drift
- * here is a physics bug.
+ * tick test (test_render_bridge_golden) hashes 100 ticks to the pinned
+ * GOLDEN_HASH (current value lives in test_render_bridge_golden.cpp) and is
+ * the strict gate on this refactor: any drift here is a physics bug.
  *
  * Why no per-branch split: the parallel-for would have to be re-walked once
  * per branch (cache-hostile and observable in microbenchmarks) or the

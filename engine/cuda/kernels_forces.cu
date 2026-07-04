@@ -9,21 +9,14 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
-#include "ftd/constants_gpu.cuh"
+#include "ftd/constants_shared.h"
 #include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d, ftd::decode_xyz, ftd::periodic_delta
 #include <cuda_runtime.h>
 #include <cmath>
 #include <cstdio>   // fprintf — Linux/clang stricter than MSVC
 #include <cstdlib>  // exit
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 namespace ftd {
 namespace gpu {
@@ -64,29 +57,7 @@ void periodic_delta_d(int ix, int iy, int iz,
     dz = ::ftd::periodic_delta(jz, iz, L);
 }
 
-// Byte-level atomicCAS: CUDA only supports 32-bit+ atomicCAS,
-// so we operate on the containing 32-bit word.
-__device__ __forceinline__
-int8_t atomicCAS_byte(int8_t* addr, int8_t compare, int8_t val) {
-    // Find the 4-byte aligned word containing our byte
-    unsigned int* word_addr = reinterpret_cast<unsigned int*>(
-        reinterpret_cast<size_t>(addr) & ~3ULL);
-    unsigned int byte_offset = (reinterpret_cast<size_t>(addr) & 3) * 8;
-    unsigned int byte_mask = 0xFFu << byte_offset;
-
-    unsigned int old_word = *word_addr;
-    unsigned int assumed;
-    do {
-        assumed = old_word;
-        unsigned int old_byte = (assumed >> byte_offset) & 0xFF;
-        if (old_byte != static_cast<unsigned char>(compare))
-            return static_cast<int8_t>(old_byte);
-        unsigned int new_word = (assumed & ~byte_mask)
-                              | (static_cast<unsigned int>(static_cast<unsigned char>(val)) << byte_offset);
-        old_word = atomicCAS(word_addr, assumed, new_word);
-    } while (old_word != assumed);
-    return compare;  // Success: old value was indeed `compare`
-}
+// atomicCAS_byte now lives in cuda_index.cuh (revision C3, ADR-0007).
 
 // Unconditional atomic byte store: avoids races with atomicCAS_byte
 // on bytes sharing the same 32-bit word.
@@ -690,7 +661,7 @@ __global__ void color_force_kernel(
         double as = alpha_s_lattice_d(r);
 
         // Three-regime force profile (magnitude; sign from cf)
-        // Regime boundaries from constants_gpu.cuh (shared single source of truth).
+        // Regime boundaries from constants_shared.h (shared single source of truth).
         double f_mag;
         if (r < COLOR_COULOMB_RADIUS) {
             f_mag = as * cf / r2;                            // Coulomb

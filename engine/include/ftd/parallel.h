@@ -18,7 +18,8 @@
 //   few shared-state writes (set_state) go through with_critical(). Therefore
 //   ANY static partition of [begin,end) yields bit-identical results, so the
 //   pthread-pool and OpenMP and serial backends all match the pinned golden
-//   hash 0x56fa28acb5b9fe88. (Verified natively by test_render_bridge_golden
+//   hash (current pin: GOLDEN_HASH in test_render_bridge_golden.cpp).
+//   (Verified natively by test_render_bridge_golden
 //   and campaign_determinism_gate's omp1==pool check.)
 //
 // USAGE — convert

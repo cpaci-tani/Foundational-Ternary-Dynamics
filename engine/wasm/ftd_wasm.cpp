@@ -24,6 +24,7 @@
 #include <emscripten/val.h>
 #include <algorithm>
 #include <cmath>
+#include <string>   // get_engine_version (revision 6.1)
 #include "ftd/render_bridge.h"
 #include "ftd/field_operators.h"
 #include "ftd/lagrangian.h"
@@ -1490,6 +1491,9 @@ val get_knot_aggregate(ftd::RenderBridge& rb) {
 //
 // If you're reading this because you hit a missing-binding error:
 // use RenderBridge. The API surface is identical for tick/run/etc.
+// Revision 6.1: expose the single-sourced engine version to the dashboard.
+static std::string get_engine_version() { return ftd::ENGINE_VERSION; }
+
 EMSCRIPTEN_BINDINGS(ftd_module_core) {
     class_<ftd::RenderBridge>("RenderBridge")
         .constructor<int>()
@@ -1497,4 +1501,5 @@ EMSCRIPTEN_BINDINGS(ftd_module_core) {
         .function("run",  &ftd::RenderBridge::run)
         .function("currentTick", &ftd::RenderBridge::current_tick)
         ;
+    emscripten::function("getEngineVersion", &get_engine_version);
 }

@@ -26,10 +26,9 @@ Mock bridge subsystems use the live-reference factory pattern. A provider
 factory receives the bridge instance and must keep that live reference, not a
 destructured snapshot.
 
-Reference examples:
+Reference examples (the Scale-1/2 engine helpers; Scale-0 is WASM-only and no
+longer has JS live-ref factories):
 
-- `engine/web/js/bridge/mock-diagnostics.js`
-- `engine/web/js/bridge/mock-lattice-samplers.js`
 - `engine/web/js/bridge/mock-particle-engine.js`
 - `engine/web/js/bridge/mock-atom-engine.js`
 
@@ -63,7 +62,8 @@ Rules:
 2. Methods must be safe to call as object methods without manual binding.
 3. Optional capabilities may return `null`/empty samples, but the absence must
    be guarded by consumers.
-4. Mock/WASM/native/worker bridges must satisfy the same consumer-facing
+4. All live bridges — `WasmBridge`, the `WasmBridgeProxy` worker path, and
+   `WebSocketBridge` (native server) — must satisfy the same consumer-facing
    surface for the scale they claim to support.
 5. Adding a new public sampler or diagnostic requires updates to the bridge
    implementation, capability factory, docs, and regression tests.
@@ -186,7 +186,11 @@ Rules:
    `0xb604d81a3d79366e`) is preserved by construction — scoped to the frozen
    L=17/100-tick/seed-42 configuration with ~14 subsystems toggled off by
    default (see `docs/adr/0012-golden-tick-regression-gate.md`, scoping
-   caveat added 2026-07-01); it does not certify unqualified "physics."
+   caveat added 2026-07-01; the caveat is now PARTIALLY CLOSED by the
+   2026-07-02 multi-profile amendment — nine pinned profiles including
+   shipping-defaults, boundary modes, L=9, GPU, and gauge links; canonical
+   inventory table in `engine/CHECKLIST_ENGINE.md` §"Pinned golden-profile
+   inventory"); it does not certify unqualified "physics."
 2. **$\alpha$-blind by contract:** the module must NEVER reference `ALPHA`,
    `ALPHA_EFT`, the Koopman eigenvalue, or `137.036`. Its inputs are lattice
    geometry, $|J|^2$, and the observation-only genesis/evaporation counters only.
