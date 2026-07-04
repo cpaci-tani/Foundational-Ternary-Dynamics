@@ -24,6 +24,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <string_view>
 #include <memory>
 
 namespace ftd {
@@ -48,34 +49,97 @@ struct ParticleToggles {
     bool magnetic_dipole = false;
     bool relativistic_verlet = false;
 
-    // Validates known dependency constraints between toggles.
-    // Returns true if the combination is valid.
-    // If err != nullptr, appends a human-readable description of each violation.
-    bool validate(std::string* err = nullptr) const {
-        std::string msg;
-        // spin_orbit and magnetic_dipole act on spin axes; no other toggle gate,
-        // but they are meaningless without any pairwise force to perturb.
-        if (spin_orbit && !coulomb && !gravity)
-            msg += "spin_orbit has no effect without coulomb or gravity\n";
-        if (magnetic_dipole && !coulomb && !gravity)
-            msg += "magnetic_dipole has no effect without coulomb or gravity\n";
-        if (err) *err = msg;
-        return msg.empty();
-    }
-
-    void enable_all() {
-        coulomb = gravity = damping = true;
-        relativistic_verlet = true;
-        lorentz = exchange = strong = radiation = true;
-        spin_orbit = relativistic = magnetic_dipole = true;
-    }
-    void minimal() {
-        coulomb = gravity = damping = true;
-        relativistic_verlet = true;
-        lorentz = exchange = strong = radiation = false;
-        spin_orbit = relativistic = magnetic_dipole = false;
-    }
+    // ── Table-managed helpers (ADR-0013; bodies below PARTICLE_TOGGLE_SPECS) ──
+    // Adding a toggle is a 2-place edit: the field above + one table row. The
+    // struct fields are preserved verbatim so `pe.toggles.coulomb = false` and
+    // every other direct consumer keeps compiling.
+    bool validate(std::string* err = nullptr) const; // false + message on violation
+    void enable_all();                               // every toggle ON
+    void minimal();                                  // recommended-default profile
+    bool get_toggle(std::string_view name) const;    // false if unknown
+    bool set_toggle(std::string_view name, bool value); // false if unknown
 };
+
+// ─────────────────────────────────────────────────────────────────────
+// ParticleToggleSpec — one row per boolean toggle (ADR-0013 pattern,
+// ported from term_toggles.h). The helpers above iterate this table.
+//   default_value — constructor default (copied verbatim from the fields)
+//   minimal_value — value applied by minimal(); differs from default only for
+//                   relativistic_verlet (default OFF, minimal ON — the legacy
+//                   minimal() turned it on)
+//   requires_     — single dependency name that must also be ON (empty = none).
+//                   Particle's OR-dependencies (spin_orbit / magnetic_dipole need
+//                   coulomb OR gravity) cannot be expressed by a single-name AND
+//                   requires_, so they live in validate()'s Pass 2, exactly like
+//                   term_toggles.h keeps cross-cutting rules hand-rolled.
+// ─────────────────────────────────────────────────────────────────────
+struct ParticleToggleSpec {
+    const char* name;
+    bool ParticleToggles::* field;
+    bool default_value;
+    bool minimal_value;
+    const char* requires_;
+    const char* description;
+};
+
+inline constexpr ParticleToggleSpec PARTICLE_TOGGLE_SPECS[] = {
+    // {name, field, default, minimal, requires_, description}
+    {"coulomb",             &ParticleToggles::coulomb,             true,  true,  "", "Electrostatic Coulomb force"},
+    {"gravity",             &ParticleToggles::gravity,             true,  true,  "", "Newtonian gravity (alpha_G scale)"},
+    {"damping",             &ParticleToggles::damping,             true,  true,  "", "Velocity damping"},
+    {"lorentz",             &ParticleToggles::lorentz,             false, false, "", "Magnetic Lorentz force F = alpha*s*(v x B)"},
+    {"exchange",            &ParticleToggles::exchange,            false, false, "", "Pauli exclusion repulsion (same-spin)"},
+    {"strong",              &ParticleToggles::strong,              false, false, "", "Color/strong short-range force"},
+    {"radiation",           &ParticleToggles::radiation,           false, false, "", "Radiation-reaction (acceleration) damping"},
+    {"spin_orbit",          &ParticleToggles::spin_orbit,          false, false, "", "Spin-orbit coupling"},
+    {"relativistic",        &ParticleToggles::relativistic,        false, false, "", "Relativistic gamma force correction"},
+    {"magnetic_dipole",     &ParticleToggles::magnetic_dipole,     false, false, "", "Magnetic dipole-dipole force"},
+    {"relativistic_verlet", &ParticleToggles::relativistic_verlet, false, true,  "", "Relativistic velocity-Verlet integrator"},
+};
+static_assert(sizeof(PARTICLE_TOGGLE_SPECS) / sizeof(PARTICLE_TOGGLE_SPECS[0]) == 11,
+              "ParticleToggles has 11 boolean toggles — update the table and this pin together");
+
+inline bool ParticleToggles::get_toggle(std::string_view name) const {
+    for (const auto& s : PARTICLE_TOGGLE_SPECS)
+        if (name == s.name) return this->*(s.field);
+    return false;
+}
+inline bool ParticleToggles::set_toggle(std::string_view name, bool value) {
+    for (const auto& s : PARTICLE_TOGGLE_SPECS)
+        if (name == s.name) { this->*(s.field) = value; return true; }
+    return false;
+}
+inline void ParticleToggles::enable_all() {
+    for (const auto& s : PARTICLE_TOGGLE_SPECS) this->*(s.field) = true;
+}
+inline void ParticleToggles::minimal() {
+    for (const auto& s : PARTICLE_TOGGLE_SPECS) this->*(s.field) = s.minimal_value;
+}
+inline bool ParticleToggles::validate(std::string* err) const {
+    std::string msg;
+    // Pass 1: table-driven single-name requires_ (none declared for Particle).
+    for (const auto& s : PARTICLE_TOGGLE_SPECS) {
+        if (!(this->*(s.field))) continue;
+        if (s.requires_ && *s.requires_) {
+            for (const auto& dep : PARTICLE_TOGGLE_SPECS) {
+                if (std::string_view(s.requires_) == dep.name) {
+                    if (!(this->*(dep.field))) {
+                        msg += s.name; msg += " requires "; msg += dep.name; msg += "\n";
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    // Pass 2: OR-dependencies the single-name requires_ column cannot express.
+    // Preserves the exact verdicts of the pre-refactor validate().
+    if (spin_orbit && !coulomb && !gravity)
+        msg += "spin_orbit has no effect without coulomb or gravity\n";
+    if (magnetic_dipole && !coulomb && !gravity)
+        msg += "magnetic_dipole has no effect without coulomb or gravity\n";
+    if (err) *err = msg;
+    return msg.empty();
+}
 
 // ============================================================================
 // Per-particle force decomposition (for diagnostics + visualization)
@@ -236,33 +300,15 @@ public:
         next_id_ = 0;
     }
 
+    // Table-backed (ADR-0013): delegates to ParticleToggles, which iterates
+    // PARTICLE_TOGGLE_SPECS. Unknown names read false / are ignored, exactly
+    // as the former hand-written if-ladders did.
     bool get_toggle(const std::string& name) const override {
-        if (name == "coulomb")         return toggles.coulomb;
-        if (name == "gravity")         return toggles.gravity;
-        if (name == "damping")         return toggles.damping;
-        if (name == "lorentz")         return toggles.lorentz;
-        if (name == "exchange")        return toggles.exchange;
-        if (name == "strong")          return toggles.strong;
-        if (name == "radiation")       return toggles.radiation;
-        if (name == "spin_orbit")      return toggles.spin_orbit;
-        if (name == "relativistic")    return toggles.relativistic;
-        if (name == "magnetic_dipole") return toggles.magnetic_dipole;
-        if (name == "relativistic_verlet") return toggles.relativistic_verlet;
-        return false;
+        return toggles.get_toggle(name);
     }
 
     void set_toggle(const std::string& name, bool value) override {
-        if (name == "coulomb")         { toggles.coulomb = value; return; }
-        if (name == "gravity")         { toggles.gravity = value; return; }
-        if (name == "damping")         { toggles.damping = value; return; }
-        if (name == "lorentz")         { toggles.lorentz = value; return; }
-        if (name == "exchange")        { toggles.exchange = value; return; }
-        if (name == "strong")          { toggles.strong = value; return; }
-        if (name == "radiation")       { toggles.radiation = value; return; }
-        if (name == "spin_orbit")      { toggles.spin_orbit = value; return; }
-        if (name == "relativistic")    { toggles.relativistic = value; return; }
-        if (name == "magnetic_dipole") { toggles.magnetic_dipole = value; return; }
-        if (name == "relativistic_verlet") { toggles.relativistic_verlet = value; return; }
+        toggles.set_toggle(name, value);
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {
@@ -309,6 +355,13 @@ private:
     int tick_ = 0;
     int next_id_ = 0;
     double dt_ = 1.0;           // Time step (default 1, can increase for Scale 1)
+    // Softening length. INTENTIONALLY scale-dependent across engines
+    // (revision 2.4 documentation — do not "unify"): Scale 1 uses 1.0
+    // (one lattice unit, the minimum resolvable separation), Scale 2
+    // (AtomEngine) uses 0.5 (sub-lattice atomic separations), Scale 5
+    // (CosmicEngine) recomputes as box_size * SOFTENING_SCALE(0.01) per
+    // scenario. Each is an [IMPOSED] regularization matched to its scale's
+    // typical separations, not a shared derived constant.
     double soft_ = 1.0;         // Softening length (matches lattice minimum)
 
 public:

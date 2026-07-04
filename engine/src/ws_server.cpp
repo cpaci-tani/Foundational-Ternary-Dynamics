@@ -6,8 +6,11 @@
  * implementation over raw winsock2 sockets -- no external dependencies.
  *
  * Build: link against ftd_core (and ftd_cuda when available).
- * Usage: ws_server.exe [lattice_size] [port]
- *        Defaults: lattice_size=32, port=9100
+ * Usage: ws_server.exe [lattice_size] [port] [--bind <addr>]
+ *        Defaults: lattice_size=32, port=9100, bind=127.0.0.1 (loopback)
+ *        LAN/remote control requires explicit opt-in: --bind 0.0.0.0
+ *        (the protocol has no auth / no Origin check — see the runtime
+ *        warning; revision 1.4 hardening, prior default was INADDR_ANY)
  *
  * Framing + handshake live in ws_protocol.{h,cpp}.  SHA-1 lives in ws_sha1.h.
  * This file is the command-dispatch loop and main().
@@ -428,9 +431,23 @@ bool handle_command(const std::string& json, SOCKET client,
 int main(int argc, char* argv[]) {
     int lattice_size = 32;
     int port = 9100;
+    // Revision 1.4 hardening: default to loopback. The protocol has NO
+    // authentication and no Origin check, so the previous INADDR_ANY default
+    // let any LAN host (or any webpage — same-origin policy does not block
+    // cross-origin WebSocket) drive the engine. LAN/remote use is preserved
+    // via an explicit opt-in flag: --bind <addr> (e.g. --bind 0.0.0.0).
+    std::string bind_addr = "127.0.0.1";
 
-    if (argc >= 2) lattice_size = std::atoi(argv[1]);
-    if (argc >= 3) port = std::atoi(argv[2]);
+    std::vector<const char*> positional;
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--bind") == 0 && i + 1 < argc) {
+            bind_addr = argv[++i];
+        } else {
+            positional.push_back(argv[i]);
+        }
+    }
+    if (positional.size() >= 1) lattice_size = std::atoi(positional[0]);
+    if (positional.size() >= 2) port = std::atoi(positional[1]);
     if (lattice_size < 4) lattice_size = 4;
     if (lattice_size > 256) lattice_size = 256;
     if (port < 1 || port > 65535) port = 9100;
@@ -482,14 +499,20 @@ int main(int argc, char* argv[]) {
     setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR,
                reinterpret_cast<const char*>(&opt), sizeof(opt));
 
-    // Bind
+    // Bind (loopback by default — see the --bind flag in main; revision 1.4)
     sockaddr_in addr{};
-    addr.sin_family      = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port        = htons(static_cast<uint16_t>(port));
+    addr.sin_family = AF_INET;
+    if (bind_addr == "0.0.0.0") {
+        addr.sin_addr.s_addr = INADDR_ANY;
+    } else if (::inet_pton(AF_INET, bind_addr.c_str(), &addr.sin_addr) != 1) {
+        std::cerr << "[ws_server] invalid --bind address '" << bind_addr << "'\n";
+        closesocket(server_sock);
+        return 1;
+    }
+    addr.sin_port = htons(static_cast<uint16_t>(port));
 
     if (::bind(server_sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == SOCKET_ERROR) {
-        std::cerr << "[ws_server] bind() failed on port " << port << "\n";
+        std::cerr << "[ws_server] bind() failed on " << bind_addr << ":" << port << "\n";
         closesocket(server_sock);
         return 1;
     }
@@ -500,7 +523,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "[ws_server] Listening on port " << port << "\n";
+    std::cout << "[ws_server] Listening on " << bind_addr << ":" << port << "\n";
+    if (bind_addr != "127.0.0.1") {
+        std::cout << "[ws_server] *** WARNING: bound to " << bind_addr << " — this protocol has\n"
+                     "[ws_server] *** NO authentication and NO Origin check; any host or webpage\n"
+                     "[ws_server] *** that can reach this port can drive the engine (toggles,\n"
+                     "[ws_server] *** scenarios, injection). Use only on trusted networks.\n";
+    }
 
     // Main accept loop: one client at a time
     while (true) {

@@ -50,6 +50,12 @@ namespace ontic {
 
 inline constexpr int COEFFICIENT = 16;  // |Aut(E)|² where E: y²=x³-x
 
+// GUARDRAIL (revision 2.6): X_PLUS / X_MINUS are REFERENCE / TREE-LEVEL
+// values only — for banners, audits, and docs. Runtime physics paths
+// (render_bridge*, render_bridge_phases/, poisson_solvers, CUDA kernels)
+// must use ALPHA = 1/X_PLUS_PRECISION (see below and constants.h); a
+// source-lint CTest (source_lint, cmake/FtdSourceLint.cmake) fails the
+// build's test run if a tree-level constant leaks into a force path.
 inline constexpr double X_PLUS  = 137.0361714582;   // tree-level 1/α (master-quadratic root)
 inline constexpr double X_MINUS = 3.0239639163;      // smaller root (artifact; NOT N_c — retired FTD-0014)
 
