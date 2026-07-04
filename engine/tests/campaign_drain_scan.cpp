@@ -19,7 +19,8 @@
  *
  * GOLDEN-NEUTRAL: read-only campaign; at the default drain 0.5 the engine is
  * bit-identical to the legacy constexpr path (verify: test_render_bridge_golden
- * prints 0x56fa28acb5b9fe88). Uses the FTD-0276 runtime kinetic_drain toggle.
+ * prints the pinned GOLDEN_HASH from test_render_bridge_golden.cpp). Uses the
+ * FTD-0276 runtime kinetic_drain toggle.
  *
  * Output: drain_scan_<tag>.csv
  *   drain,A,seed,N,settle,L

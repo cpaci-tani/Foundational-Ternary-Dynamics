@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
-project(ftd_engine VERSION 1.0 LANGUAGES CXX)
+# VERSION mirrors ftd::ENGINE_VERSION in include/ftd/constants.h (revision 6.1
+# single-sourcing — keep in sync on release bumps).
+project(ftd_engine VERSION 2.18.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,6 +10,45 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # sequences in string literals (e.g. ontic_audit.cpp) are accepted correctly.
 if(MSVC)
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/utf-8>)
+endif()
+
+# ── Floating-point determinism policy (revision 0.2) ────────────────────────
+# The golden-tick gates (ADR-0012) pin bit-exact hashes across MSVC (Windows)
+# and gcc (WSL2 campaign builds). Measured 2026-07-02: both toolchains
+# reproduce GOLDEN_HASH 0xb604d81a3d79366e at their CURRENT defaults. These
+# flags make that agreement explicit and immune to toolchain-default drift:
+#   MSVC  /fp:precise      — the current default, pinned against future
+#                            /fp:fast-by-default changes.
+#   GCC   -ffp-contract=off — forbids FMA contraction (gcc at -O2/-O3 defaults
+#                            to -ffp-contract=fast; x86-64 without -march
+#                            AVX2/FMA doesn't emit FMA today, which is WHY the
+#                            hashes agree — this pin keeps it true if -march or
+#                            the default ISA ever changes).
+# See engine/docs/DESIGN_RNG_PORTABILITY.md (per-platform hash policy).
+if(NOT EMSCRIPTEN)
+    if(MSVC)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/fp:precise>)
+    else()
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>)
+    endif()
+endif()
+
+# gcc lowers every std::complex<double> multiply to the checked __muldc3
+# libcall (C99 Annex G NaN/Inf recovery); MSVC inlines the naive arithmetic.
+# In the SU(2)/SU(3) staple sweeps (relax_su2/su3_links_cpu) that libcall is
+# the dominant cost: test_gauge_links measured 1.3 s (MSVC) vs ~4.5 min
+# (WSL2 gcc 11.4 -O3), with 100 __muldc3 relocation sites in this one TU.
+# -fcx-limited-range emits the naive ac−bd / ad+bc inline. For finite inputs
+# this is BIT-IDENTICAL to __muldc3 — the libcall computes those exact
+# products first and only branches into its recovery path when the result is
+# NaN — and the TU contains no complex division (zero __divdc3 relocs), so
+# the flag's non-value-identical division rewrite (naive instead of Smith's
+# algorithm) never fires. FMA contraction is already pinned off above.
+# GAUGE_GOLDEN_HASH 0xa4dec20d1dd94ec8 re-verified on WSL2-gcc after this
+# flag landed; MSVC codegen is untouched (ADR-0012 record).
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set_source_files_properties(src/transmutation_phases.cpp PROPERTIES
+        COMPILE_OPTIONS "-fcx-limited-range")
 endif()
 
 # OpenMP for multi-threaded tick phases (not available under Emscripten)
@@ -97,10 +138,12 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # ftd_cognition — sidecar ternary memory/retrieval substrate for LLM/agent
 # workflows. Deliberately independent of ftd_core / RenderBridge / Voxel.
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_library(ftd_cognition STATIC
     src/cognition/cognitive_lattice.cpp
 )
 target_include_directories(ftd_cognition PUBLIC ${CMAKE_SOURCE_DIR}/include)
+endif()  # FTD_BUILD_EXPERIMENTAL (ftd_cognition)
 
 # ftd_eft — leaf library for EFT objects shared between ftd_core and ftd_cuda.
 # Solves a static-archive link-order issue (2026-05-03): gpu_engine.cu
@@ -118,7 +161,7 @@ target_include_directories(ftd_eft PUBLIC ${CMAKE_SOURCE_DIR}/include)
 # Core library
 add_library(ftd_core
     src/render_bridge.cpp
-    src/dag_engine.cpp
+    # src/dag_engine.cpp is quarantined — added below under FTD_BUILD_EXPERIMENTAL (ADR-0016)
     src/lagrangian.cpp
     src/particle_engine.cpp
     src/atom_engine.cpp
@@ -175,6 +218,35 @@ add_library(ftd_core
     src/atom/atom_bonding.cpp        # check_bonding
     src/atom/atom_thermostat.cpp     # speed limit, damping, thermostat, dipole moments
 )
+
+# Precompiled headers (revision 3.6): every ftd_core TU re-parses
+# render_bridge.h (which pulls the ontic chain + stdlib); 300+ test targets
+# re-parse it again. PCH is compile-time only — zero codegen/behavior change
+# (golden gates verified). FTD_ENABLE_PCH=OFF is the instant opt-out; the
+# Emscripten guard keeps the three WASM build trees untouched.
+option(FTD_ENABLE_PCH "Use precompiled headers for ftd_core (compile-speed only)" ON)
+
+# Experimental-module quarantine (revision 3.7, ADR-0016): DagEngine (sparse
+# octree prototype, deprecated ticket W6), the cognition sidecar, and the
+# discrete-universe CUDA prototype are kept — never deleted (provenance
+# convention) — but their build membership is now an EXPLICIT boundary.
+# Default ON = zero change to any existing build; OFF produces a lean core
+# with the experimental targets absent. A source-lint (cmake/FtdSourceLint.cmake)
+# guards that no production TU includes the quarantined headers.
+option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" ON)
+if(FTD_ENABLE_PCH AND NOT EMSCRIPTEN)
+    target_precompile_headers(ftd_core PRIVATE
+        include/ftd/render_bridge.h
+        <vector> <cmath> <cstdint> <algorithm> <memory> <string>)
+endif()
+
+# ADR-0016: DagEngine is compiled into ftd_core only when the experimental
+# boundary is open (its WASM binding was removed in the 2026 consolidation
+# sweep; the only consumer is test_dag_engine, gated below).
+if(FTD_BUILD_EXPERIMENTAL)
+    target_sources(ftd_core PRIVATE src/dag_engine.cpp)
+endif()
+
 target_include_directories(ftd_core PUBLIC
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/sim/include   # Phase B: Pipeline<Backend> + observables
@@ -275,6 +347,12 @@ ftd_add_test(test_ternary_field tests/test_ternary_field.cpp
              CTEST_NAME ternary_field TIMEOUT 120 LABELS unit foundation)
 ftd_add_test(test_field_soa tests/test_field_soa.cpp
              CTEST_NAME field_soa TIMEOUT 120 LABELS unit foundation)
+# Voxel memory-layout characterization guard (revision 0.8): pins
+# sizeof(Voxel) + the trailing strong/weak block so struct growth is a
+# conscious decision and the Phase-4.1 side-buffer extraction has a baseline.
+ftd_add_test(test_voxel_layout tests/test_voxel_layout.cpp
+             CTEST_NAME voxel_layout TIMEOUT 60 LABELS unit foundation)
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
 target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_cognitive_lattice PRIVATE ftd_cognition)
@@ -282,6 +360,7 @@ add_test(NAME cognitive_lattice COMMAND test_cognitive_lattice)
 set_tests_properties(cognitive_lattice PROPERTIES TIMEOUT 120)
 set_property(TEST cognitive_lattice APPEND PROPERTY LABELS unit cognition)
 set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS cognitive_lattice)
+endif()  # FTD_BUILD_EXPERIMENTAL (cognitive test)
 # Conservation profile: pins the engine's REAL energy-conservation physics
 # (bare-leapfrog well-posedness, gauss-projection runaway, iteration-independent
 # gauss_violation floor). Documentation-of-reality, not a quality gate.
@@ -365,6 +444,58 @@ target_link_libraries(test_audit_regression ftd_core)
 # See `.claude/plans/i-want-to-try-crispy-charm.md` Phase 4 + ADR-0008.
 ftd_add_test(test_render_bridge_golden tests/test_render_bridge_golden.cpp
              CTEST_NAME render_bridge_golden)
+# Default-profile golden (revision 0.5b, ADR-0012 amendment): same harness,
+# ZERO toggle writes — pins the TermToggles{} shipping defaults (incl. the
+# default-ON dual_substrate / selective_damping / weak_transmutation paths
+# the minimal golden leaves unprotected). Extended fold: + flux_L/R,
+# wave_vel_L/R, latency.
+ftd_add_test(test_render_bridge_golden_default tests/test_render_bridge_golden_default.cpp
+             CTEST_NAME render_bridge_golden_default LABELS golden regression)
+# Boundary-mode characterization goldens (revision 0.6): one pinned hash per
+# non-default boundary path (flux Reflective/Dispersal, absorbing sponge,
+# movement mirror-bounce) — safety net for the boundary-shell dedup (2.3).
+ftd_add_test(test_boundary_modes_golden tests/test_boundary_modes_golden.cpp
+             CTEST_NAME boundary_modes_golden LABELS golden regression)
+# Secondary lattice-size golden (revision 0.7): L=9, shipping defaults —
+# catches L-dependent indexing/boundary regressions the L=17 gates miss.
+ftd_add_test(test_render_bridge_golden_l9 tests/test_render_bridge_golden_l9.cpp
+             CTEST_NAME render_bridge_golden_l9 LABELS golden regression)
+# GPU-backend golden characterization (revision 0.7/C4): separate pinned
+# constant, strict on the canonical WSL2 platform, informational on Windows
+# CUDA (compile-check tier), self-skipping on CPU-only builds.
+ftd_add_test(test_gpu_golden tests/test_gpu_golden.cpp GPU_HEAVY
+             CTEST_NAME gpu_golden TIMEOUT 300 LABELS golden)
+# (C5 test_gpu_delta_upload is registered inside the if(FTD_ENABLE_CUDA) block
+#  below — unlike test_gpu_golden it includes gpu_engine.h/cufft.h, so it must
+#  not be configured on a CPU-only build.)
+# SU(2)/SU(3) gauge sector (revision 0.9 option a — WIRED): Rule 7b staple
+# relaxation behind su2_gauge/su3_gauge (default OFF). Pins the gauge golden
+# profile (GAUGE_GOLDEN_HASH, ADR-0012), the write-only-substrate guarantee,
+# lazy buffer allocation (4.1b), unitarity/finiteness, and thread-count
+# invariance of the Jacobi double-buffered sweeps.
+#   TIMEOUT 600: measured 1.3s on MSVC but ~4m30s on WSL2-gcc Release -O3 —
+#   the SU(3) staple sweeps hit gcc's checked complex-multiply semantics
+#   (__muldc3) where MSVC inlines the arithmetic; correctness identical
+#   (bit-exact pins pass on both). Perf-divergence investigation chip filed.
+ftd_add_test(test_gauge_links tests/test_gauge_links.cpp
+             CTEST_NAME gauge_links TIMEOUT 600 LABELS unit golden regression)
+# CPU/GPU gauge-link parity + GPU determinism (revision 0.9 option a).
+# Canonical platform WSL2 (engine/build_wsl); self-skipping on CPU-only
+# builds via backend_kind() detection.
+ftd_add_test(test_gauge_gpu_parity tests/test_gauge_gpu_parity.cpp GPU_HEAVY
+             CTEST_NAME gauge_gpu_parity TIMEOUT 300 LABELS unit)
+# WebSocket protocol unit tests (revision 1.4): first automated coverage for
+# the ws_server remote-control surface — SHA-1/base64/RFC-6455 accept-key
+# vectors + the JSON helpers command dispatch relies on. Compiles
+# ws_protocol.cpp directly (it is not part of ftd_core).
+add_executable(test_ws_protocol tests/test_ws_protocol.cpp src/ws_protocol.cpp)
+target_include_directories(test_ws_protocol PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_ws_protocol PRIVATE ftd_test_support)
+if(WIN32)
+    target_link_libraries(test_ws_protocol PRIVATE ws2_32)
+endif()
+add_test(NAME ws_protocol COMMAND test_ws_protocol)
+set_tests_properties(ws_protocol PROPERTIES TIMEOUT 60 LABELS "unit")
 
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
@@ -496,8 +627,10 @@ add_executable(test_lagrangian tests/test_lagrangian.cpp)
 target_link_libraries(test_lagrangian ftd_core)
 
 # DAG Engine Phase 3
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(test_dag_engine tests/test_dag_engine.cpp)
 target_link_libraries(test_dag_engine ftd_core)
+endif()
 
 # Ontic physics
 add_executable(test_ontic_chain tests/test_ontic_chain.cpp)
@@ -942,6 +1075,14 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_parity_complete tests/test_gpu_parity_complete.cpp)
     target_link_libraries(test_gpu_parity_complete ftd_core ftd_cuda)
 
+    # C5 (CUDA ticket): host→device delta upload (GpuBuffers::upload_voxels_delta).
+    # Verifies the delta path lands byte-identical DEVICE state to a full upload
+    # (read back via download_voxels) and that a handful-of-voxels edit transfers
+    # <<1 MB. Registered here (inside the CUDA guard) because it includes
+    # gpu_engine.h/cufft.h. GPU_HEAVY → "gpu" label for serial dispatch.
+    ftd_add_test(test_gpu_delta_upload tests/test_gpu_delta_upload.cpp GPU_HEAVY
+                 CTEST_NAME gpu_delta_upload TIMEOUT 300 LABELS unit)
+
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
 
@@ -978,6 +1119,7 @@ if(FTD_ENABLE_CUDA)
                          PROPERTIES TIMEOUT 120 LABELS "gpu;benchmark")
 
     # Standalone hyper-optimized GPU Discrete Universe simulation engine prototype
+    if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
     add_executable(experimental_discrete_universe cuda/experimental_discrete_universe.cu)
     target_link_libraries(experimental_discrete_universe ftd_core ftd_cuda)
     target_compile_options(experimental_discrete_universe PRIVATE
@@ -994,6 +1136,7 @@ if(FTD_ENABLE_CUDA)
                           CUDA_RESOLVE_DEVICE_SYMBOLS ON
                           COMPILE_PDB_NAME ""
                           COMPILE_PDB_OUTPUT_DIRECTORY "")
+    endif()  # FTD_BUILD_EXPERIMENTAL (discrete-universe prototype)
 endif()
 
 # ============================================================================
@@ -1747,6 +1890,7 @@ ftd_add_test(benchmark_field_soa_cpu
              tests/benchmark_field_soa_cpu.cpp
              CTEST_NAME benchmark_field_soa_cpu TIMEOUT 600
              LABELS benchmark)
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(benchmark_cognitive_lattice tests/benchmark_cognitive_lattice.cpp)
 target_include_directories(benchmark_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(benchmark_cognitive_lattice PRIVATE ftd_cognition)
@@ -1754,6 +1898,7 @@ add_test(NAME benchmark_cognitive_lattice COMMAND benchmark_cognitive_lattice)
 set_tests_properties(benchmark_cognitive_lattice PROPERTIES TIMEOUT 600)
 set_property(TEST benchmark_cognitive_lattice APPEND PROPERTY LABELS benchmark cognition)
 set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS benchmark_cognitive_lattice)
+endif()  # FTD_BUILD_EXPERIMENTAL (cognitive benchmark)
 ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
              CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
 if(FTD_ENABLE_CUDA)
@@ -2015,7 +2160,9 @@ add_test(NAME boundary_movement COMMAND test_boundary_movement)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)
+if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016
 add_test(NAME dag_engine COMMAND test_dag_engine)
+endif()
 add_test(NAME ontic_chain COMMAND test_ontic_chain)
 add_test(NAME dual_substrate COMMAND test_dual_substrate)
 add_test(NAME genesis COMMAND test_genesis)
@@ -2206,6 +2353,19 @@ set_tests_properties(
     wz_mass
     PROPERTIES TIMEOUT 600)
 
+# Ticket 3.3 — ADR-0013 table-driven toggle characterization guards.
+# Pure toggle-state pins (defaults / enable_all / minimal / validate / string
+# get_toggle-set_toggle round-trip) for the three sub-engines, written from
+# current source BEFORE the table-driven port so behavior preservation is
+# provable. Independent of the pre-existing physics failures in
+# particle_toggles (FTD-0131 G_PE scale) — no force is ever computed.
+ftd_add_test(test_particle_toggles_table tests/test_particle_toggles_table.cpp
+             CTEST_NAME particle_toggles_table TIMEOUT 120 LABELS scale1)
+ftd_add_test(test_atom_toggles_table tests/test_atom_toggles_table.cpp
+             CTEST_NAME atom_toggles_table TIMEOUT 120 LABELS scale2)
+ftd_add_test(test_cosmic_toggles_table tests/test_cosmic_toggles_table.cpp
+             CTEST_NAME cosmic_toggles_table TIMEOUT 120 LABELS scale5 cosmic)
+
 # Tritium ternary compute library tests
 # Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
 # (registered by ftd_add_test() above).
@@ -2224,6 +2384,16 @@ if(FTD_ENABLE_CUDA)
     set_tests_properties(gpu_continuity_ledger PROPERTIES
                          LABELS "gpu;constructor;ledger;observable;eft_quick")
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
+    # gpu_parity_complete runs 22 CPU-vs-GPU domain checks, several under
+    # enable_all() whose CPU side drives iterative SOR Poisson solves (Gauss +
+    # Coulomb + latency) every tick — plus GPC-20's 1000-tick sweep. On the
+    # canonical WSL2-gcc -O3 platform that CPU path is far slower than MSVC
+    # (same class as gauge_links, whose timeout was raised for this reason), so
+    # the 600 s group cap above is not enough (it was timing the gate out at
+    # baseline). This override lifts it (a later set_tests_properties wins).
+    # C6 (2026-07-03) added the GPC-21/22 weak-field domains; they are lean, but
+    # the pre-existing enable_all domains dominate (~44 min total on WSL2).
+    set_tests_properties(gpu_parity_complete PROPERTIES TIMEOUT 3600)
 endif()
 
 # Campaign tests
@@ -2754,3 +2924,56 @@ add_test(NAME dump_koopman_trajectory COMMAND dump_koopman_trajectory)
 # slow, exploratory). Build target only. See SPEC_SCALE_CONTEXT_READOUT §5.5.
 add_executable(campaign_scale_context_confine tests/campaign_scale_context_confine.cpp)
 target_link_libraries(campaign_scale_context_confine PRIVATE ftd_core)
+# ============================================================================
+# merge_gate label — fast pre-push verification bundle (revision 0.3).
+# ============================================================================
+# `ctest -L merge_gate -j 32 -C Release` is the <2-minute local gate to run
+# before every push (see engine/docs/CI_GATE.md). Composition: the absolute
+# golden gates + phase-order/lifecycle/determinism guards. GPU parity is NOT
+# in this bundle (run `ctest -L gpu` on the WSL2 build for that); neither are
+# campaign/benchmark tests. Labels are additive metadata only — test set,
+# commands, and timeouts are unchanged.
+foreach(_t render_bridge_golden render_bridge_golden_default knot_tracking_golden tick_phase_order
+            engine_lifecycle determinism)
+    if(TEST ${_t})
+        set_property(TEST ${_t} APPEND PROPERTY LABELS "merge_gate")
+    endif()
+endforeach()
+
+# ============================================================================
+# ftd_sim CLI smoke tests (revision 1.5) — the CLI research data-product path
+# (CSV/VTK export bundles) previously had zero automated coverage. Three
+# representative routes at tiny L/ticks via cmake/FtdCliSmoke.cmake: exit 0
+# + expected non-empty output files. Not in merge_gate (see CI_GATE.md).
+# ============================================================================
+if(NOT EMSCRIPTEN)
+    add_test(NAME cli_smoke_D
+             COMMAND ${CMAKE_COMMAND}
+                     -DFTD_SIM=$<TARGET_FILE:ftd_sim> -DSCENARIO=D -DL=9 -DTICKS=5
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
+    add_test(NAME cli_smoke_H_csv
+             COMMAND ${CMAKE_COMMAND}
+                     -DFTD_SIM=$<TARGET_FILE:ftd_sim> -DSCENARIO=H -DL=9 -DTICKS=5
+                     -DOUTDIR=${CMAKE_BINARY_DIR}/cli_smoke_out_H
+                     -DEXPECT_GLOB=timeseries.csv
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
+    add_test(NAME cli_smoke_V_vtk
+             COMMAND ${CMAKE_COMMAND}
+                     "-DFTD_SIM=$<TARGET_FILE:ftd_sim>" -DSCENARIO=V -DL=9 -DTICKS=5
+                     -DOUTDIR=${CMAKE_BINARY_DIR}/cli_smoke_out_V
+                     "-DEXTRA_ARGS=2;1"
+                     -DEXPECT_GLOB=*.pvd
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
+    set_tests_properties(cli_smoke_D cli_smoke_H_csv cli_smoke_V_vtk
+                         PROPERTIES TIMEOUT 300 LABELS "unit;cli")
+endif()
+
+# Source-text lint (revision 2.6): tree-level X_PLUS/X_MINUS must never leak
+# into runtime physics paths (banners/audits/CLI display are exempt — only
+# force/physics TUs are scanned). See cmake/FtdSourceLint.cmake.
+if(NOT EMSCRIPTEN)
+    add_test(NAME source_lint
+             COMMAND ${CMAKE_COMMAND} -DENGINE_DIR=${CMAKE_SOURCE_DIR}
+                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdSourceLint.cmake)
+    set_tests_properties(source_lint PROPERTIES TIMEOUT 60 LABELS "unit;lint")
+endif()

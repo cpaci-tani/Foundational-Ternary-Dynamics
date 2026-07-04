@@ -252,6 +252,8 @@ RenderBridge::tick()
                                    [flux_boundary == Reflective / Dispersal]
   -> weak_transmutation_cpu()      [weak_transmutation]
   -> triad_binding_cpu()           [triad_binding]
+  -> relax_su2_links_cpu()         [su2_gauge]   (Rule 7b — links only, no substrate writes)
+  -> relax_su3_links_cpu()         [su3_gauge]   (Rule 7b — links only, no substrate writes)
   -> accumulate_proper_time()      [latency_field || de_broglie_clock]
   -> physical_time_ += dt_; ++tick_
   -> knot_tracker_->record(*this)  [knot_tracking]  (observation-only)
@@ -328,10 +330,7 @@ description}`). Beyond the core physics toggles (`wave_propagation`,
 - `emergent_forces` - EFT force-from-gradient; conflicts `poisson_coulomb`
 - `langevin` - stochastic OU thermostat (CPU only at runtime, non-bulk)
 - `symplectic_leapfrog`, `symmetric_movement_order`
-- `su2_gauge` / `su3_gauge` - dormant intent flags (not wired into tick; the relax
-  functions and CUDA launchers have zero call sites, so the toggles are no-ops —
-  pinned by `test_gauge_links` G1 tripwire; wiring is gated on the
-  `relax_su2_links_cpu` double-buffer race fix + a gauge golden profile per ADR-0012)
+- `su2_gauge` / `su3_gauge` - `[IMPOSED]` per-tick Wilson staple relaxation of the SU(2)/SU(3) link variables (CPU tick Rule 7b, GPU Phase 7b; revision 0.9 option a). Links are WRITE-ONLY w.r.t. the substrate (nothing consumes them; `color_forces` uses color labels) — gauge golden profile + write-only guarantee pinned in `test_gauge_links`; CPU/GPU parity in `test_gauge_gpu_parity`. Link buffers lazily allocated (528 B/site, revision 4.1b)
 - `absorbing_boundary`, `reflective_boundary`
 - `field_energy_gravity` - `[IMPOSED]` latency Poisson sources from 1/2|J|^2
 - `cluster_inertia` - `[IMPOSED]` rigid-body cluster a_COM = F_cluster/(N*M_REST); requires `forces` (non-bulk)
@@ -736,6 +735,31 @@ RenderBridge::tick()
         -> require same sign, unlocked, pairwise distances <= TRIAD_RADIUS
         -> require rmin / rmax >= TRIAD_RATIO_THRESHOLD
         -> set locked = true on all three
+```
+
+### 4.13b Non-Abelian Gauge-Link Relaxation (Rule 7b, revision 0.9 option a)
+
+`[IMPOSED]` Wilson-action staple relaxation imported from standard lattice
+gauge theory (rates `GAUGE_RELAX_DT`/`GAUGE_RELAX_BETA`, constants.h). The
+links are write-only w.r.t. the substrate — nothing downstream consumes them —
+so this phase cannot move any pinned golden (enforced by `test_gauge_links`
+G1a/G1b; CPU/GPU parity by `test_gauge_gpu_parity`).
+
+```text
+RenderBridge::tick()                              (CPU path)
+  -> [su2_gauge] relax_su2_links_cpu(rb, GAUGE_RELAX_DT, GAUGE_RELAX_BETA)
+     -> ensure_gauge_links()   (lazy 528 B/site buffers, revision 4.1b)
+     -> Jacobi sweep: read su2_links_*, staple update, write scratch, swap
+  -> [su3_gauge] relax_su3_links_cpu(rb, GAUGE_RELAX_DT, GAUGE_RELAX_BETA)
+     -> same double-buffered sweep over su3_links_*
+
+GpuBackend::tick()                                (GPU path)
+  -> first gauge-enabled tick: bridge.ensure_gauge_links()
+     -> GpuEngine::upload_gauge_links(host arrays)   (lazy device alloc)
+  -> GpuEngine::tick() Phase 7b
+     -> [su2_gauge] launch_relax_su2_links(src, dst) (kernels_gauge.cu) + swap
+     -> [su3_gauge] launch_relax_su3_links(src, dst) + swap
+  -> sync_to_host(): GpuEngine::download_gauge_links() -> host arrays
 ```
 
 ### 4.14 Energy Ledger And Diagnostics

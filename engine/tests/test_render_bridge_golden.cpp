@@ -44,48 +44,12 @@
 #include "ftd/render_bridge.h"
 #include "ftd/voxel.h"
 #include "ftd/test_telemetry.h"
+#include "support/golden_hash.h"   // shared fold harness (revision 0.5 extraction)
 
 #include <cstdint>
-#include <cstring>
 #include <cstdio>
-#include <cmath>
 
 namespace ftd { namespace test {
-
-// ---------------------------------------------------------------------------
-// Hash mixer — FNV-1a 64-bit prime. Each contribution is multiplied through
-// the mixer before being xored into the running hash, so reordering inputs
-// changes the hash (catches voxel-permutation regressions).
-// ---------------------------------------------------------------------------
-static constexpr std::uint64_t FNV_PRIME = 0x100000001b3ULL;
-static constexpr std::uint64_t FNV_OFFSET = 0xcbf29ce484222325ULL;
-
-static inline std::uint64_t mix_u64(std::uint64_t h, std::uint64_t v) {
-    h ^= v;
-    h *= FNV_PRIME;
-    return h;
-}
-
-static inline std::uint64_t mix_double(std::uint64_t h, double d) {
-    // Bit-cast double -> uint64. NaNs collapse to a sentinel so a NaN bug
-    // still gives a stable hash (failure is then visible in the audit, not
-    // in the hash diff).
-    if (std::isnan(d)) return mix_u64(h, 0x7ff8000000000000ULL);
-    std::uint64_t u;
-    std::memcpy(&u, &d, sizeof(u));
-    return mix_u64(h, u);
-}
-
-static inline std::uint64_t mix_vec3(std::uint64_t h, const Vec3& v) {
-    h = mix_double(h, v.x);
-    h = mix_double(h, v.y);
-    h = mix_double(h, v.z);
-    return h;
-}
-
-static inline std::uint64_t mix_i64(std::uint64_t h, std::int64_t i) {
-    return mix_u64(h, static_cast<std::uint64_t>(i));
-}
 
 // ---------------------------------------------------------------------------
 // Toggle profile — exercises the cleanest physics path.
@@ -143,60 +107,9 @@ static void inject_initial_state(RenderBridge& rb) {
 }
 
 // ---------------------------------------------------------------------------
-// Compute the byte-hash of the current engine state.
+// State hash: compute_state_hash() now lives in support/golden_hash.h
+// (revision 0.5 extraction — verified to reproduce GOLDEN_HASH bit-exact).
 // ---------------------------------------------------------------------------
-static std::uint64_t compute_state_hash(const RenderBridge& rb) {
-    std::uint64_t h = FNV_OFFSET;
-
-    // 1. Voxel fields — every site, in linear index order.
-    const auto& voxels = rb.voxels();
-    const int N = static_cast<int>(voxels.size());
-    h = mix_i64(h, N);
-    for (int idx = 0; idx < N; ++idx) {
-        const auto& v = voxels[idx];
-        h = mix_i64(h, static_cast<std::int64_t>(v.state));
-        h = mix_vec3(h, v.flux);
-        h = mix_vec3(h, v.wave_vel);
-        h = mix_vec3(h, v.velocity);
-    }
-
-    // 2. Energy audit — 22 doubles + 2 ints + Vec3 poynting.
-    auto a = rb.energy_audit();
-    h = mix_double(h, a.field_energy);
-    h = mix_double(h, a.wave_energy);
-    h = mix_double(h, a.particle_ke);
-    h = mix_double(h, a.total_energy);
-    h = mix_double(h, a.gauss_violation);
-    h = mix_double(h, a.max_gauss_error);
-    h = mix_double(h, a.self_field_injection);
-    h = mix_double(h, a.coulomb_pe);
-    h = mix_double(h, a.E_field_energy);
-    h = mix_double(h, a.B_field_energy);
-    h = mix_i64(h, static_cast<std::int64_t>(a.charge_total));
-    h = mix_i64(h, static_cast<std::int64_t>(a.manifested_count));
-    h = mix_vec3(h, a.total_poynting);
-    h = mix_double(h, a.E_L_total);
-    h = mix_double(h, a.E_R_total);
-    h = mix_double(h, a.wv_L_total);
-    h = mix_double(h, a.wv_R_total);
-    h = mix_double(h, a.chirality_total);
-    h = mix_double(h, a.strong_energy);
-    h = mix_double(h, a.weak_energy);
-
-    // 3. Manifested-particle list — (idx, state, velocity) per manifested site.
-    int n_manifested = 0;
-    for (int idx = 0; idx < N; ++idx) {
-        if (voxels[idx].state != 0) {
-            h = mix_i64(h, idx);
-            h = mix_i64(h, static_cast<std::int64_t>(voxels[idx].state));
-            h = mix_vec3(h, voxels[idx].velocity);
-            ++n_manifested;
-        }
-    }
-    h = mix_i64(h, n_manifested);
-
-    return h;
-}
 
 // ---------------------------------------------------------------------------
 // FROZEN GOLDEN HASH.

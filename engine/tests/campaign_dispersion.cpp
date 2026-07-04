@@ -124,8 +124,11 @@ static void section_dispersion_relation() {
         ftd::test::check(check_names[i], error < 0.001);
     }
 
-    // DISP-6: Long-wavelength limit ω ≈ c·k
-    std::printf("\n--- DISP-6: Continuum limit ---\n");
+    // DISP-6: Long-wavelength regime ω ≈ c·k. (ε-L reframe, MED-5: this is a
+    // finite-L statement at the campaign's single L — "continuum limit" in the
+    // printed header wrongly implied a completed limit; see
+    // AUDIT_INFINITY_REFRAME.md.)
+    std::printf("\n--- DISP-6: Long-wavelength regime (finite L) ---\n");
     double ratio_continuum = omega_meas[0] / (ftd::C_WAVE * k_vals[0]);
     std::printf("  INFO: ω/(c·k) for n=1 = %.6f (expect ~1.0)\n", ratio_continuum);
     ftd::test::check("DISP-6: Long-wavelength limit ω ≈ c·k (within 5%)",

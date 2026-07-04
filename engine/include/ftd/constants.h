@@ -13,12 +13,25 @@
  */
 
 #include "ontic.h"
-#include "ftd/constants_gpu.cuh"
+#include "ftd/constants_shared.h"
 #include <algorithm>
 #include <cmath>
 
 
 namespace ftd {
+
+// ============================================================================
+// Engine version — SINGLE SOURCE OF TRUTH (revision 6.1).
+// Was prose-only in SPEC_ENGINE.md ("2.18.0") while CMake said
+// project(... VERSION 1.0) and nothing was exposed at runtime. This constant
+// is now the canonical value; CMake mirrors it, SPEC cites it, ftd_sim
+// --version and the WASM getEngineVersion() binding return it.
+// Bump here on every release; keep CMakeLists project(VERSION ...) in sync.
+// ============================================================================
+inline constexpr int         ENGINE_VERSION_MAJOR = 2;
+inline constexpr int         ENGINE_VERSION_MINOR = 18;
+inline constexpr int         ENGINE_VERSION_PATCH = 0;
+inline constexpr const char* ENGINE_VERSION       = "2.18.0";
 
 // ============================================================================
 // Re-export ontic constants into ftd:: namespace for engine use
@@ -384,7 +397,7 @@ inline constexpr double K_EVAP_RATE = 0.1;
 // in the flux pre-drain integral.
 inline constexpr double K_GENESIS_FLUX_EPSILON = 1e-9;
 
-// Color force regime boundaries — now defined in ftd/constants_gpu.cuh (shared with GPU).
+// Color force regime boundaries — now defined in ftd/constants_shared.h (host+device shared header, renamed from constants_gpu.cuh in revision 2.5).
 // Using declarations bring them into the ftd:: namespace so existing callers are unchanged.
 using ::COLOR_COULOMB_RADIUS;
 using ::COLOR_TRANSITION_RADIUS;
@@ -393,6 +406,20 @@ using ::COLOR_LINEAR_DENOM;
 
 // Latency / horizon clamps used by the GR sector
 inline constexpr double LATENCY_HORIZON_CLAMP = 0.998;   // f = 1 - L² floor
+
+// ============================================================================
+// Non-Abelian gauge-link relaxation (revision 0.9 option a — tick wiring)
+// ============================================================================
+// Per-tick step size and coupling for the SU(2)/SU(3) Wilson-action staple
+// relaxation (relax_su2/su3_links_cpu + kernels_gauge.cu), gated on
+// toggles.su2_gauge / toggles.su3_gauge. [IMPOSED]: the staple/plaquette
+// relaxation form is imported from standard lattice gauge theory and these
+// rates are calibrations, not derived quantities — values match the
+// test_gauge_links characterization exercise (dt=0.1, beta=1.0) under which
+// unitarity/finiteness/determinism were pinned. Same constants feed both
+// backends so CPU/GPU parity is meaningful.
+inline constexpr double GAUGE_RELAX_DT   = 0.1;
+inline constexpr double GAUGE_RELAX_BETA = 1.0;
 
 // ============================================================================
 // Scale 2 Phase 3 Constants — Inter-atomic forces

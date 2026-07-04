@@ -14,14 +14,7 @@
 #include <cmath>
 #include <algorithm>
 
-#define CUDA_CHECK(call) do { \
-    cudaError_t err = (call); \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
-                __FILE__, __LINE__, cudaGetErrorString(err)); \
-        exit(1); \
-    } \
-} while(0)
+#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
 
 #define CUFFT_CHECK(call) do { \
     cufftResult err = (call); \
@@ -143,6 +136,7 @@ GpuEngine::~GpuEngine() {
     if (fft_plan_forward_f_) cufftDestroy(fft_plan_forward_f_);
     if (fft_plan_inverse_f_) cufftDestroy(fft_plan_inverse_f_);
     spectro_free();
+    free_gauge_links();
     bufs_.free();
 }
 
@@ -232,6 +226,13 @@ void GpuEngine::tick() {
     // may have already written its updated flux[j] in the same kernel launch. The separate
     // kernel approach provides the necessary global barrier between reading neighbors (phase_read)
     // and writing self (phase_write). Double-buffering could fix this in the future.
+    //
+    // ORDERING GUARANTEE (revision C7): both launches go to the same CUDA
+    // stream (the default stream throughout this engine), and CUDA serializes
+    // kernels on one stream in issue order — phase_write can NEVER begin
+    // before every phase_read thread has retired. No explicit sync primitive
+    // is needed or wanted here; do NOT move these onto different streams
+    // without re-introducing the barrier explicitly.
     gpu_phase_read();
     gpu_phase_write();
 
@@ -282,6 +283,17 @@ void GpuEngine::tick() {
     // Phase 6: Weak transmutation (stress-threshold polarity flip)
     if (toggles.weak_transmutation) {
         gpu_weak_transmutation();
+    }
+
+    // Phase 7b (revision 0.9 option a): non-Abelian gauge-link relaxation —
+    // mirrors the CPU tick's Rule 7b. [IMPOSED] Wilson-action staple sweep;
+    // links are write-only w.r.t. the substrate (no kernel reads them), so
+    // this cannot perturb the GPU golden or parity domains. Requires the
+    // device buffers primed by upload_gauge_links() — GpuBackend::tick()
+    // does that on the first gauge-enabled tick; if an embedder drives
+    // GpuEngine directly without priming, the phase is skipped.
+    if ((toggles.su2_gauge || toggles.su3_gauge) && gauge_links_device_) {
+        gpu_gauge_relax();
     }
 
     tick_++;
@@ -734,9 +746,27 @@ eft::DualCellContinuity GpuEngine::continuity_step() const {
 }
 
 void GpuEngine::upload_from_host(const std::vector<Voxel>& voxels) {
+    // C5 (CUDA ticket): host_voxels_ currently mirrors the device SoA — it was
+    // populated by the last ensure_host_synced()/sync_to_host() download, and
+    // nothing mutates the device between that download and this call (this is
+    // invoked at tick start via GpuBackend::flush_host_mutations, or from the
+    // post-sync cluster-inertia push). So we diff the incoming host array
+    // against host_voxels_ and upload ONLY the changed voxels — byte-identical
+    // to the previous full push_to_device() because the device already holds
+    // the correct bytes at every unchanged index. A single-voxel edit uploads
+    // ~325 B instead of the whole ~40-array voxel image (85 MB at L=64).
+    //
+    // Cold start (host_voxels_ empty) falls back to a full upload inside
+    // upload_voxels_delta. phi/phi_coulomb are intentionally NOT re-uploaded
+    // here (unlike the old push_to_device()): they are device-authoritative and
+    // already equal host_phi_/host_phi_coulomb_ from the last sync, so skipping
+    // them is byte-identical AND keeps the single-voxel path off the two N-sized
+    // potential arrays (2×2 MB at L=64) that would otherwise blow the <<1 MB
+    // budget.
+    bufs_.upload_voxels_delta(voxels, host_voxels_);
     host_voxels_ = voxels;
     refresh_weak_field_active_from_host();
-    push_to_device();
+    host_dirty_ = false;   // device now equals host_voxels_
     continuity_ledger_valid_ = false;
 }
 
@@ -750,6 +780,95 @@ void GpuEngine::refresh_weak_field_active_from_host() {
             return;
         }
     }
+}
+
+// ---------- Non-Abelian gauge link sector (revision 0.9 option a) ----------
+
+// Double-buffered launchers defined in kernels_gauge.cu (extern "C" linkage).
+extern "C" void launch_relax_su2_links(
+    const SU2Link* src_x, const SU2Link* src_y, const SU2Link* src_z,
+    SU2Link* dst_x, SU2Link* dst_y, SU2Link* dst_z,
+    int L, double dt, double beta, cudaStream_t stream);
+extern "C" void launch_relax_su3_links(
+    const SU3Link* src_x, const SU3Link* src_y, const SU3Link* src_z,
+    SU3Link* dst_x, SU3Link* dst_y, SU3Link* dst_z,
+    int L, double dt, double beta, cudaStream_t stream);
+
+void GpuEngine::upload_gauge_links(const std::vector<SU2Link>& su2_x,
+                                   const std::vector<SU2Link>& su2_y,
+                                   const std::vector<SU2Link>& su2_z,
+                                   const std::vector<SU3Link>& su3_x,
+                                   const std::vector<SU3Link>& su3_y,
+                                   const std::vector<SU3Link>& su3_z) {
+    const std::size_t bytes2 = static_cast<std::size_t>(N_) * sizeof(SU2Link);
+    const std::size_t bytes3 = static_cast<std::size_t>(N_) * sizeof(SU3Link);
+    if (!gauge_links_device_) {
+        // Lazy allocation (mirrors CPU revision 4.1b): live + Jacobi scratch.
+        for (int d = 0; d < 3; ++d) {
+            CUDA_CHECK(cudaMalloc(&d_su2_[d],     bytes2));
+            CUDA_CHECK(cudaMalloc(&d_su2_scr_[d], bytes2));
+            CUDA_CHECK(cudaMalloc(&d_su3_[d],     bytes3));
+            CUDA_CHECK(cudaMalloc(&d_su3_scr_[d], bytes3));
+        }
+        gauge_links_device_ = true;
+    }
+    const std::vector<SU2Link>* h2[3] = {&su2_x, &su2_y, &su2_z};
+    const std::vector<SU3Link>* h3[3] = {&su3_x, &su3_y, &su3_z};
+    for (int d = 0; d < 3; ++d) {
+        CUDA_CHECK(cudaMemcpy(d_su2_[d], h2[d]->data(), bytes2, cudaMemcpyHostToDevice));
+        CUDA_CHECK(cudaMemcpy(d_su3_[d], h3[d]->data(), bytes3, cudaMemcpyHostToDevice));
+    }
+}
+
+void GpuEngine::download_gauge_links(std::vector<SU2Link>& su2_x,
+                                     std::vector<SU2Link>& su2_y,
+                                     std::vector<SU2Link>& su2_z,
+                                     std::vector<SU3Link>& su3_x,
+                                     std::vector<SU3Link>& su3_y,
+                                     std::vector<SU3Link>& su3_z) const {
+    if (!gauge_links_device_) return;
+    const std::size_t bytes2 = static_cast<std::size_t>(N_) * sizeof(SU2Link);
+    const std::size_t bytes3 = static_cast<std::size_t>(N_) * sizeof(SU3Link);
+    std::vector<SU2Link>* h2[3] = {&su2_x, &su2_y, &su2_z};
+    std::vector<SU3Link>* h3[3] = {&su3_x, &su3_y, &su3_z};
+    for (int d = 0; d < 3; ++d) {
+        if (h2[d]->size() != static_cast<std::size_t>(N_)) h2[d]->resize(N_);
+        if (h3[d]->size() != static_cast<std::size_t>(N_)) h3[d]->resize(N_);
+        CUDA_CHECK(cudaMemcpy(h2[d]->data(), d_su2_[d], bytes2, cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(h3[d]->data(), d_su3_[d], bytes3, cudaMemcpyDeviceToHost));
+    }
+}
+
+void GpuEngine::gpu_gauge_relax() {
+    if (!gauge_links_device_) return;
+    // One Jacobi sweep per enabled group per tick, matching the CPU Rule 7b
+    // (same GAUGE_RELAX_DT/GAUGE_RELAX_BETA constants). Default stream so the
+    // sweep serializes with the rest of the tick's kernels (same-stream
+    // ordering guarantee); src -> scratch, then pointer swap.
+    if (toggles.su2_gauge) {
+        launch_relax_su2_links(d_su2_[0], d_su2_[1], d_su2_[2],
+                               d_su2_scr_[0], d_su2_scr_[1], d_su2_scr_[2],
+                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, 0);
+        CUDA_CHECK(cudaGetLastError());
+        for (int d = 0; d < 3; ++d) std::swap(d_su2_[d], d_su2_scr_[d]);
+    }
+    if (toggles.su3_gauge) {
+        launch_relax_su3_links(d_su3_[0], d_su3_[1], d_su3_[2],
+                               d_su3_scr_[0], d_su3_scr_[1], d_su3_scr_[2],
+                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, 0);
+        CUDA_CHECK(cudaGetLastError());
+        for (int d = 0; d < 3; ++d) std::swap(d_su3_[d], d_su3_scr_[d]);
+    }
+}
+
+void GpuEngine::free_gauge_links() {
+    for (int d = 0; d < 3; ++d) {
+        if (d_su2_[d])     { cudaFree(d_su2_[d]);     d_su2_[d] = nullptr; }
+        if (d_su2_scr_[d]) { cudaFree(d_su2_scr_[d]); d_su2_scr_[d] = nullptr; }
+        if (d_su3_[d])     { cudaFree(d_su3_[d]);     d_su3_[d] = nullptr; }
+        if (d_su3_scr_[d]) { cudaFree(d_su3_scr_[d]); d_su3_scr_[d] = nullptr; }
+    }
+    gauge_links_device_ = false;
 }
 
 }  // namespace gpu

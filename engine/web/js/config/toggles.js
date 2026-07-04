@@ -81,7 +81,9 @@
  * 's0-field-rf-lattice-wave' |
  * 's0-field-light-lattice-wave' |
  * 's0-field-sound-lattice-wave' |
+ * 's0-field-sound-collision' |
  * 's0-field-thomson-scattering' |
+ * 's0-field-thomson-unlocked-recoil' |
  * 's0-field-spacetime-forcing-boundary' |
  * 's0-field-electric-dipole' |
  * 's0-field-magnetic-dipole' |
@@ -121,6 +123,7 @@
  * 's0-seed-cluster-law-subknee' |
  * 's0-seed-cluster-law-knee' |
  * 's0-seed-cluster-law-superknee' |
+ * 's0-seed-thermal-ignition' |
  * 's0-seed-de-broglie-clock')} ScenarioId
  */
 
