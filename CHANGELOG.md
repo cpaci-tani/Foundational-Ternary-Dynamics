@@ -1,5 +1,31 @@
 # Foundational Ternary Dynamics Changelog
 
+## Reflection flow parity — the modulus/argument split at flow-law level (2026-07-05)
+
+FTD-0367 ([THEOREM — classical assembled] + [coherent-interpretation]; docs +
+one script, golden untouched, zero promotions). New
+`docs/theory/09_mathematical/general_math/MATH_REFLECTION_FLOW_PARITY.md` +
+verifier `scripts/proofs/proof_reflection_flow_parity.py` (16/16, <1 s):
+
+- Both reflection branches are first-order flows: P′ = −π·cot(πz)·P and
+  R′ = [ψ(z)+ψ(1−z)]·R, with a parity CROSS-OVER (χ-even product ← odd
+  digamma combination; χ-odd ratio ← even combination).
+- Differential-algebraicity split: the product's coefficient satisfies its
+  own autonomous ADE c′ = π² + c² (verified); the ratio's is
+  hypertranscendental (Hölder 1887 + the verified reduction c_R + c_P = 2ψ)
+  — the modulus flow is self-closing, the argument flow's law is unwritable
+  in any differentially-algebraic world.
+- Value split at z = 1/4: −π (π-world) vs −2(γ + 3 ln 2) — the ratio slope
+  joins the FTD-0127 L′(s, χ₋₄) γ/log boundary family; G* now carries a
+  canonical first-order flow datum beside its value.
+- Doc §4 deflates the named temptation (hypertranscendence of c_R is
+  shape-consonant with MC-T4.3, NOT a mechanism claim; no "ODE whose
+  solution is a constant" games). Frontier §2 algebraic-face row annotated;
+  Hölder 1887 added to REF_BIBLIOGRAPHY §1; INDEX_09 57→58; META_INDEX 9.62.
+  In-suite confabulation-guard anecdote preserved in the LEDGER row: check
+  F6 initially failed on a hand-extended G* literal and was fixed to the
+  symbolic route.
+
 ## G* matrix-model external anchor — CHPS map + verification suite (2026-07-04)
 
 FTD-0366 ([SYNTHESIS] + [STRUCTURAL OBSERVATION]; docs + scripts only, golden
