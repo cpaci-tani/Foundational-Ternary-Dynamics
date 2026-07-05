@@ -337,6 +337,9 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 ### 3.5 Bridge Functional ontology — **1 `[OPEN]`** (arithmetic-mean derivation target)
 **File:** `docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md`. LEDGER row FTD-0095. Mass-as-functional commitment. The arithmetic-mean rule `M(x₊, x₋) = α·(x₊+x₋)/2` is asserted (matching L2's selection); explicit derivation from the lattice action is open. Closure routes: variational principle on σ_BCC, 't Hooft beable equivalence, Beilinson regulator slot. Slogan upgrade ("mass is the stationary expectation of the master beable, computed by Vieta") conditional on FTD-0093 PASS + this [OPEN] closure.
 
+### 3.6 δ-independence program (FTD-0368) — **1 `[OPEN]`** (RP; stages S1–S3 live, S4 aspirational)
+**File:** `docs/theory/02_foundations/SCOPE_DELTA_INDEPENDENCE_PROGRAM.md`. MC-T4.3's negative-side completion as a stated conjecture: δ = √(G\*(4G\*−1)) ∉ N for a *defined* native closure N — upgrading the FTD-0353/0360 valuation theorem from inventory-relative ([SELECTION] completeness) to definition-relative. Next actionable stage: **S1 Lemma 0** (six spec-level rules semi-algebraic ⇒ finite-horizon native constants algebraic ⇒ the independence question lives in the admissible-limit policy). Then S2 (define N at rung N1, adequacy theorem, **pre-register the definition before δ is tested**), S3 (valuation argument relative to defined N → verdict row minted then). Closure routes: S3 [THEOREM — conditional on Chudnovsky] (δ-IND proven relative to N); or a constructed δ ∈ N (outcome-symmetric revolutionary positive — an MC-T4.3 exit); or a documented adequacy/properness failure of every candidate N (program closes UNDERDETERMINED with the definition fight as the residue). Guards binding at every stage per charter §5.
+
 ---
 
 ## §4 Theory — particles + couplings
