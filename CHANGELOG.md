@@ -1,5 +1,37 @@
 # Foundational Ternary Dynamics Changelog
 
+## δ-independence program chartered (2026-07-05)
+
+FTD-0368 ([SCOPE / PROGRAM CHARTER]; docs only, golden untouched; registers a
+conjecture, proves nothing, promotes nothing). New
+`docs/theory/02_foundations/SCOPE_DELTA_INDEPENDENCE_PROGRAM.md` — the
+rigorous negative-side completion of MC-T4.3:
+
+- **Target conjecture (δ-IND):** δ = √(G*(4G*−1)) — the FC-W import, with
+  x₊ = 8G*² + 4G*δ — lies outside a *defined* native closure N. Success
+  upgrades the FTD-0353/0360 valuation theorem from "relative to the
+  documented inventory [SELECTION]" to a theorem about a definition, making
+  FC-W's import status a proven necessity relative to N (Number-One Goal
+  clause 2 at theorem grade).
+- **Formalization ladder:** N0 finite-horizon semi-algebraic closure (Lemma-0
+  target: all finite-horizon native constants are algebraic — so the α-wall
+  lives entirely in the admissible-limit policy; the ε-L/infinity-reframe
+  becomes load-bearing); N1 = N0 + effective ε-L limits (expected
+  battlefield; adequacy vs properness falsifiers both named); N2 period ring
+  (Kontsevich–Zagier shape; FTD-0353's ℚ(t,u) model is its shadow); N3
+  proof-theoretic logical independence (aspirational, FO).
+- **Stages S0–S4 with gates:** S2 requires pre-registering the definition of
+  N *before* δ is tested against it (no definition-tuning); outcome symmetry
+  declared (a constructed δ ∈ N = revolutionary positive MC-T4.3 exit,
+  registered with equal ceremony).
+- **Six binding guards** incl. no closure/logical-independence equivocation
+  (the Gödel/Hölder motivation stays [coherent-interpretation] even at
+  success), engine/theory separation (the engine hardcodes α — reachability
+  there is evidence for nothing), and the FTD-0367 DA-temptation inherited.
+- Nav: INDEX_02 boundary section, META_INDEX 2.36, LEDGER row + log (next
+  free FTD-0369), TRACKER §3.6 opened. MC-T4.3, x₊=1/α [SMC], FC-W [AXIOM]
+  all unmoved.
+
 ## Reflection flow parity — the modulus/argument split at flow-law level (2026-07-05)
 
 FTD-0367 ([THEOREM — classical assembled] + [coherent-interpretation]; docs +

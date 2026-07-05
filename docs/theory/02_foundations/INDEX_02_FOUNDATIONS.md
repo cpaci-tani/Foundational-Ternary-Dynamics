@@ -70,6 +70,7 @@
 | [FOUND_META_PATTERNS.md](FOUND_META_PATTERNS.md) | formal unification | Every FTD selection is boundary/critical-point selection; taxonomy of five boundary types. |
 | [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) | [DERIVED] | The 13-step blind derivation from i to α⁻¹; only two steps need selection principles. |
 | [FOUND_SPACETIME_FORCING_BOUNDARY.md](FOUND_SPACETIME_FORCING_BOUNDARY.md) | [SYNTHESIS] + [BOUNDARY] | Is FTD's spacetime forced by the postulates? The reversibility boundary; re-states tagged claims, derives nothing (FTD-0253). |
+| [SCOPE_DELTA_INDEPENDENCE_PROGRAM.md](SCOPE_DELTA_INDEPENDENCE_PROGRAM.md) | [SCOPE / PROGRAM CHARTER] | **(FTD-0368)** The δ-independence program: define the native closure N, then prove (or refute) δ = √(G\*(4G\*−1)) ∉ N — MC-T4.3's negative-side completion, upgrading the FTD-0353 valuation theorem's inventory-[SELECTION] to a definition. Formalization ladder N0–N3, stages S0–S4, adequacy/properness falsifiers, six binding guards. Registers a conjecture; proves nothing. |
 
 ## Interpretive layer & ontic vocabulary
 
