@@ -156,6 +156,7 @@ Corpus-wide scan (2026-07-04): outside this program's own files, the corpus cont
 - `docs/papers/src/PAPER_RATIO_AND_THE_ARROW.tex` — the product/ratio dichotomy §3 realizes.
 - `docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md` — the closed negative §5.4 keeps distinct.
 - `docs/theory/09_mathematical/general_math/REF_GUILLERA_CORPUS_MAP.md` — the template this map follows (scope discipline, non-bridges register, citation rules).
+- `docs/theory/09_mathematical/general_math/MATH_REFLECTION_FLOW_PARITY.md` (FTD-0367) — the ODE-level sibling: the same product/ratio parity split realized in first-order flow *laws* (differential algebraicity vs hypertranscendence) rather than ensemble values.
 
 ---
 
