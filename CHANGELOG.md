@@ -1,5 +1,40 @@
 # Foundational Ternary Dynamics Changelog
 
+## δ-independence program S1 delivered — Lemma 0, finite-horizon algebraicity (2026-07-05)
+
+FTD-0368 Stage S1 ([DERIVED — schema-level]; docs + one script, golden
+untouched, zero promotions, no new id). New
+`docs/theory/02_foundations/FOUND_FINITE_HORIZON_ALGEBRAICITY.md` +
+`scripts/proofs/proof_lemma0_finite_horizon.py` (9/9, exact arithmetic):
+
+- **Lemma 0:** with the declared calibration symbols (g_c, α, G_N,
+  K_GENESIS, K_B, dt) treated as independent indeterminates — the ontology
+  does not natively assign coupling values; that assignment IS an import —
+  plus the forced algebraic constants (c² = 1/3, C_SPEED = 1/√3), all nine
+  default-substrate rules (SPEC_ENGINE §1's core six + the three default-ON
+  toggles) are piecewise-polynomial/semi-algebraic maps, so the T-tick
+  evolution is semi-algebraic and every finite-horizon native observable is
+  ALGEBRAIC over k₀(initial data).
+- **Corollary 1 (transcendence inertness):** no finite-horizon computation
+  produces G*, π, or δ — all transcendental content in native outputs is
+  limit-borne (the corpus's finite-L Watson values are exact rationals).
+- **Corollary 2 (the wall factorizes):** δ-IND splits into exactly two
+  policies — admissible limits (the FTD-0353/0360 valuation theorem's door)
+  and parameter assignment (MC-T4.3's door, restated algebraically). The
+  finite dynamics is out of the fight.
+- Verifier details: exact 27-site matched-stencil Gauss projection over Q
+  (LUsolve; residue = constant zero-mode, exact); the speed clamp's
+  quadratic surds exhibited with minimal polynomial (why the lemma says
+  "algebraic", not "rational"); composed toy tick end-to-end rational. Two
+  instructive toy failures preserved in the note: L=2 central-difference
+  degeneracy, and the compact-vs-matched stencil mismatch — the toy forced
+  the same lesson the engine learned empirically (Phase-F matched-stencil
+  CG; FTD-0363 E2 postmortem).
+- Charter S1 gate satisfied (enumeration completeness flag stated);
+  TRACKER §3.6 → next actionable S2 (define N at rung N1; pre-register the
+  definition BEFORE δ is tested against it). MC-T4.3, x₊=1/α [SMC], FC-W
+  all unmoved.
+
 ## δ-independence program chartered (2026-07-05)
 
 FTD-0368 ([SCOPE / PROGRAM CHARTER]; docs only, golden untouched; registers a
