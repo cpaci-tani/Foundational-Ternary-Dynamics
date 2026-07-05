@@ -453,7 +453,7 @@ When auditing: confirm `git rev-list -n1 preregister-no-4th-generation-no-go-v1`
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0368 S2** δ-IND native-closure definition v1 (frozen before δ is tested) | `preregister-delta-ind-closure-v1` | `63e9c506` | [`proof_s2_adequacy_anchors.py`](../../../scripts/proofs/proof_s2_adequacy_anchors.py) | n/a | n/a (exact-arithmetic adequacy anchors; stdout) | [`PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md`](../02_foundations/PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md) (pre-reg) → S3 verdict doc (pending; verdict LEDGER row minted at S3 registration) |
+| **FTD-0368 S2** δ-IND native-closure definition v1 (frozen before δ is tested) | `preregister-delta-ind-closure-v1` | `63e9c506` | [`proof_s2_adequacy_anchors.py`](../../../scripts/proofs/proof_s2_adequacy_anchors.py) | n/a | n/a (exact-arithmetic adequacy anchors; stdout) | [`PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md`](../02_foundations/PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md) (pre-reg) → [`ANALYSIS_DELTA_IND_CLOSURE_v1.md`](../02_foundations/ANALYSIS_DELTA_IND_CLOSURE_v1.md) (post-lock verdict, FTD-0369: **PROVEN-CONDITIONAL**, 2026-07-05) |
 
 Instrument SHA256: `452038d1164f04524dc7345627dcd13e7e3c67fd088923acf7678ab603073394`.
 

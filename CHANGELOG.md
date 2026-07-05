@@ -1,5 +1,41 @@
 # Foundational Ternary Dynamics Changelog
 
+## δ-independence program S3 verdict: PROVEN-CONDITIONAL (FTD-0369, 2026-07-05)
+
+The program's theorem stage, executed post-lock against the frozen verdict
+map (docs + one instrument; golden untouched; zero promotions; the outcome
+matches the pre-registered prior P2).
+
+- **Theorem (FTD-0369):** δ = √(G*(4G*−1)) — the FC-W import, the gate to
+  the α-candidate root via x₊ = 8G*² + 4G*δ — lies **outside the frozen
+  native closure N**, conditional on the enumerated package: E0 = Chudnovsky
+  1976 (proven; the spine's standing conditionality), E1 = joint algebraic
+  independence of the SC/FCC Watson-class values (Γ(1/3)-/Γ(1/24)-content)
+  with {π, Γ(1/4)} (open — pre-named by THEOREM_VALUATION §2.2), E2 =
+  independence of the exponential-period generators (open,
+  Schanuel-adjacent). Sharp form: (4t−1) stays unramified in the compositum.
+- **Characterization lemma** [DERIVED — schema-level]: every D1–D4 schema
+  limit is a lattice-symbol (exponential) period (solves diagonalize in
+  Fourier; D4-limits are torus integrals). The SC-sector escape from
+  ℚ(G*, π) is what forces conditionality — plain PROVEN was structurally
+  unreachable, exactly as the declared prior anticipated.
+- **Mechanism verified 11/11** (`proof_s3_delta_independence.py`; gate-G4
+  dps-{50,100} bands): δ² = t(4t−1) from the master quadratic symbolically;
+  all 13 documented hull-monomials are (4t−1)-units (integral valuation);
+  v(δ) = 1/2 non-integral; √-unit towers preserve integral valuations —
+  the parity obstruction no unit-adjunction can repair.
+- **BCC-sector sub-theorem, conditional on Chudnovsky alone:** the
+  BCC-restricted dynamical closure's generators reduce to the hull
+  (τ = i CM-point evaluations) — the dynamical-side inventory-[SELECTION]
+  of FTD-0353 retires for that sector. The list→class upgrade delivered.
+- **What it means and doesn't:** FC-W's necessity is now pinned relative to
+  N (realizing δ = adopting ramification over (4G*−1)); MC-T4.3 is
+  sharpened, NOT closed; x₊ = 1/α stays [SMC]; closure-independence, never
+  logical independence. The wall is now a theorem with a price list —
+  whoever settles E1/E2, or exhibits the FTD-0353 §8 shared falsifier,
+  moves it. Residues: E1/E2 (open mathematics), the nonlinear-rung v2
+  pre-registration, S4 (proof-theoretic, aspirational).
+
 ## δ-independence program S2 locked — the closure definition pre-registered (2026-07-05)
 
 FTD-0368 Stage S2 ([PRE-REGISTRATION]; docs + one instrument, golden

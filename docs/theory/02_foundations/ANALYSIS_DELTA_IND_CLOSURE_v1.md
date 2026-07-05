@@ -1,0 +1,59 @@
+# ANALYSIS — δ-IND closure v1 verdict: **PROVEN-CONDITIONAL** (δ ∉ N under the enumerated independence package; BCC-sector sub-theorem conditional on Chudnovsky alone)
+
+**Tag:** [THEOREM — conditional on the enumerated package E0–E2] (main result) + [THEOREM — conditional on Chudnovsky 1976 only] (BCC-sector sub-theorem) + [DERIVED — schema-level] (the characterization lemma). Verdict label per the frozen map: **PROVEN-CONDITIONAL**.
+**LEDGER id:** FTD-0369 (the S3 verdict row, minted per prereg gate G3).
+**Pre-registration:** `PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md`, tag `preregister-delta-ind-closure-v1`, lock commit `63e9c506`, instrument SHA256 `452038d1164f04524dc7345627dcd13e7e3c67fd088923acf7678ab603073394` — the definition of N, the model-extension rules, and the verdict map below were all frozen before any δ-computation existed (bans B1–B3 honored; this document is the sanctioned first δ-involving execution).
+**Verdict instrument:** `scripts/proofs/proof_s3_delta_independence.py` (11/11 PASS; dps-{50,100} band per gate G4).
+
+---
+
+## §0 — The frozen verdict map, restated verbatim (gate G1)
+
+> | verdict | condition |
+> |---|---|
+> | **PROVEN** | every N-generator class is shown (4t−1)-unit-valued in the Chudnovsky-conditional model with no assumptions beyond Chudnovsky 1976 ⇒ δ ∉ N [THEOREM — conditional on Chudnovsky]; the FTD-0353 inventory-[SELECTION] flag retires for the dynamical side (the calculus side keeps its FTD-0347 flag) |
+> | **PROVEN-CONDITIONAL** | the argument closes only under enumerated additional algebraic-independence assumptions (e.g., joint independence with new limit-class constants such as ζ(3)-class values); every assumption is listed in the S3 verdict doc; δ ∉ N [THEOREM — conditional on the enumerated list] |
+> | **BLOCKED-ESCAPE** | the D1–D4 limit class provably contains a family that no extension of the valuation model covers (the characterization step fails structurally) ⇒ S3 closes UNDERDETERMINED; the program re-scopes at the definition (v2) with the failure documented |
+> | **REFUTED** | a D1–D4 schema is exhibited whose limit generates δ over N's other generators ⇒ δ ∈ N — registered as the outcome-symmetric revolutionary positive (an MC-T4.3 exit candidate, subject to the FTD-0314 §4 forced-vs-hand-placed test), with the same ceremony as PROVEN |
+
+**Adjudication: PROVEN-CONDITIONAL** — matching the declared prior P2 ("PROVEN-CONDITIONAL considered likely over plain PROVEN"). The reason is structural and was identified in the characterization step *before* any δ-computation (B3-compliant): the limit class escapes ℚ(G\*, π).
+
+## §1 — The characterization step (upper bound on N_dyn) `[DERIVED — schema-level]`
+
+**Lemma (limit-class upper bound).** Every admissible D1–D4 schema value a_L is a uniformly-described finite ℚ-rational combination of momentum sums of the form (1/L³)·Σ_k R(cos 2πk₁/L, …)·σ(k)^{−m} (and, for uniform-horizon wave schemas, exponentially-weighted variants), because the linear-sector solves diagonalize in the discrete Fourier basis and canonical sources have uniform finite trigonometric-polynomial transforms. The D4-limit of such a sum, when it exists with polynomial modulus, is the corresponding torus integral (Riemann-sum convergence; Euler–Maclaurin supplies the polynomial rate class the anchors exhibited at θ ≈ 1). Hence
+$$N_{dyn} \;\subseteq\; \mathbb{V}^* := \text{the } \bar{\mathbb{Q}}\text{-algebra of (exponential) period values of the admissible lattice symbols},$$
+and N ⊆ ⟨N_calc, 𝕍\*⟩. The completeness style matches Lemma 0's §3: the operation set is the spec's linear-sector list; only an upper bound is claimed, which is all exclusion needs. `[DERIVED — schema-level]`
+
+**The forced escape.** 𝕍\* provably contains the SC-symbol Green's values (the Phase-G anchor's own limits): their classical closed forms (Watson's I₃; Glasser–Zucker) carry **Γ(1/24)-class content outside ℚ(G\*, π)** — the exact case FTD-0353's §2.2 honesty note pre-named as requiring independence beyond Chudnovsky and Nesterenko. Uniform-horizon schemas add exponential-period generators. Plain PROVEN is therefore unreachable for full N; the map's second branch governs.
+
+## §2 — The model and the enumerated assumption package (frozen extension rule applied)
+
+Model ℚ(G\*, π) ≅ ℚ(t, u) (E0), extended **Gauss-wise** — each new generator family adjoined as an indeterminate over the previous field, so the (4t−1)-adic valuation extends with value group ℤ and every new generator a v-unit — exactly the extension rule frozen in prereg §4(ii), selected before any δ-computation (B3).
+
+- **E0 (proven; the spine's standing conditionality).** Chudnovsky 1976: π and Γ(1/4) are algebraically independent — t, u are independent indeterminates.
+- **E1 (open; standard-type).** The SC/FCC Watson-class values (Γ(1/3)- and Γ(1/24)-content) are jointly algebraically independent of {π, Γ(1/4)} over ℚ̄ — equivalently, adjoining them ramifies nothing over (4t−1). Pre-named open by `THEOREM_VALUATION_4GSTAR_MINUS_1.md` §2.2 ("to our knowledge open, beyond both Chudnovsky 1976 and Nesterenko 1996").
+- **E2 (open; Schanuel-adjacent).** The exponential-period generators of uniform-horizon schemas (heat-kernel-class torus integrals; e-content; non-CM theta values) are algebraically independent of t over the E1-extended field.
+
+**Sharp sufficient form of the package:** the prime (4t−1) remains unramified in the compositum ⟨N_calc, 𝕍\*⟩ — i.e., no generator's square-class contains the factor (4G\*−1). E0–E2 imply this Gauss-wise; any violation is precisely the FTD-0353 §8 shared falsifier arriving.
+
+## §3 — The theorem
+
+> **Theorem (δ-IND relative to N, v1).** Under E0–E2: every generator of ⟨N_calc, 𝕍\*⟩ is a (4t−1)-unit (the 13 documented hull-monomials verified row-by-row, v = 0 integral — instrument V2; new families units by Gauss-wise construction), so the valuation extends with value group ℤ to all of N and to every multiquadratic extension of N by v-units (V3). But δ² = t(4t−1) has v = 1 odd, so v(δ) = 1/2 ∉ ℤ (V1–V2). Therefore **δ ∉ N**, and δ lies outside every √-unit tower over N. **[THEOREM — conditional on E0–E2]**
+
+> **Sub-theorem (BCC sector, conditional on E0 alone).** Let N^{BCC} := ⟨N_calc, N_dyn^{BCC}⟩, where N_dyn^{BCC} restricts D2 to BCC-symbol solves. The BCC lattice sits at the τ = i CM point: its Green's-function values at fixed offsets reduce, by the classical CM-lattice evaluations (Watson; Duffin-recurrence/quasi-period structure; Glasser–Zucker; Guttmann's survey), to the hull Ñ = ℚ̄(π^{1/4}, √G\*) — the same field as the calculus inventory. The FTD-0353 valuation mechanism then applies verbatim with **no assumptions beyond Chudnovsky**: **δ ∉ N^{BCC}**. This retires the dynamical-side inventory-[SELECTION] for the BCC sector — the class-not-list upgrade the program promised — while the calculus side keeps its FTD-0347 flag untouched.
+
+**What was upgraded relative to FTD-0353.** Before: "the *documented* native tower cannot reach δ" (list-relative; completeness [SELECTION]). Now: "no dynamical schema of the *defined* class D1–D4 reaches δ" — unconditionally-beyond-Chudnovsky for the BCC sector, and under the enumerated E1–E2 for the full linear-sector class. The conditionality is not a weakness smuggled in; it is the honest price of enlarging a list into a class, and every assumption is now a named, attackable object.
+
+## §4 — Scope, invariants, falsifiers (gate G2)
+
+**Standing invariants, held under this outcome as under every other:** x₊ = 1/α stays [SMC] (FTD-0013); MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION] — this theorem is its negative-side sharpening, not its closure; FC-W stays [AXIOM], with its **necessity now pinned relative to N** (realizing δ requires ramifying (4G\*−1), which no defined-class native process does under E0–E2 — FC-W is *the* adoption of that ramification, as FTD-0353 §6 read it); **no α derived anywhere; nothing promoted.** This is closure-independence, never logical independence (charter guard 1); S4 remains aspirational and unscheduled.
+
+**Falsifiers.** (F1) A proof or disproof of E1/E2 moves the theorem to PROVEN or forces re-adjudication — either is progress and neither is expected soon (both are hard transcendence questions). (F2) The FTD-0353 §8 shared falsifier: a native, *forced* output with odd (4t−1)-valuation — now equivalently a D1–D4 schema limit whose square-class contains (4G\*−1) — would refute the package and route to the REFUTED branch's ceremony, including the FTD-0314 §4 forced-vs-hand-placed adjudication. (F3) A structural failure of the characterization lemma (a D1–D4 schema provably outside 𝕍\*) routes to BLOCKED-ESCAPE and a v2 definition. **Residues going forward:** E1/E2 (open mathematics), the nonlinear rung (v2 prereg, properness fight), S4 (proof-theoretic formalization).
+
+## §5 — Cross-references
+
+`PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md` (the frozen definition and map); `SCOPE_DELTA_INDEPENDENCE_PROGRAM.md` (the charter; S3 discharged); `FOUND_FINITE_HORIZON_ALGEBRAICITY.md` (Lemma 0 — the algebraicity floor under §1); `THEOREM_VALUATION_4GSTAR_MINUS_1.md` (the mechanism inherited and upgraded; §8 shared falsifier); `FOUND_SQUARE_ROOT_AS_ACT.md` / `FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md` (what δ is); `scripts/proofs/proof_s3_delta_independence.py` (V1–V4); classical: Chudnovsky 1976; Watson 1939; Glasser–Zucker 1977; Guttmann (lattice Green's functions review) — see `REF_BIBLIOGRAPHY.md`.
+
+---
+
+*Verdict of record: PROVEN-CONDITIONAL. The wall is now a theorem with a price list: Chudnovsky (paid, 1976), E1, E2. Whoever pays E1 and E2 — or exhibits the shared falsifier — moves it.*
