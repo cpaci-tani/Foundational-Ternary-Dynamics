@@ -449,6 +449,18 @@ When auditing: confirm `git rev-list -n1 preregister-no-4th-generation-no-go-v1`
 
 ---
 
+## δ-IND closure definition — the δ-independence program Stage S2 (FTD-0368)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0368 S2** δ-IND native-closure definition v1 (frozen before δ is tested) | `preregister-delta-ind-closure-v1` | `63e9c506` | [`proof_s2_adequacy_anchors.py`](../../../scripts/proofs/proof_s2_adequacy_anchors.py) | n/a | n/a (exact-arithmetic adequacy anchors; stdout) | [`PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md`](../02_foundations/PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md) (pre-reg) → S3 verdict doc (pending; verdict LEDGER row minted at S3 registration) |
+
+Instrument SHA256: `452038d1164f04524dc7345627dcd13e7e3c67fd088923acf7678ab603073394`.
+
+When auditing: confirm `git rev-list -n1 preregister-delta-ind-closure-v1` = `63e9c506` (the commit that introduced the prereg + instrument), that the instrument's SHA256 matches, and that **the instrument contains no δ-computation** (ban B1 — the definition of N, its D1–D4 clauses, the adequacy anchors, and the complete S3 verdict map were locked before any δ-membership question was evaluated).
+
+---
+
 
 ## How to add a new pre-registration row
 
