@@ -18,6 +18,10 @@
 - **Used in FTD for:** the lemniscate constant `ϖ = Γ(1/4)²/(2√(2π))` as half-perimeter of the unit lemniscate; the identification of τ = i as the CM point of `y² = x³ − x`.
 - **Citation contexts:** Theorem 1, the geometric content of `G*`, FTD-0117 (G* / ϖ disambiguation).
 
+**Hölder, O. (1887).** *Ueber die Eigenschaft der Gammafunction keiner algebraischen Differentialgleichung zu genügen.* Math. Ann. 28, 1–13.
+- **Used in FTD for:** the hypertranscendence of Γ (it satisfies no algebraic differential equation over ℂ(z)), which via DA-closure forces the ratio branch's flow coefficient ψ(z)+ψ(1−z) to be hypertranscendental while the product branch's −π·cot(πz) satisfies its own algebraic ODE — the differential-algebraicity level of the modulus/argument split.
+- **Citation contexts:** FTD-0367 (`MATH_REFLECTION_FLOW_PARITY.md` §2); `FOUND_MODULUS_ARGUMENT_FRONTIER.md` §2 (algebraic-face row annotation).
+
 **Whittaker, E. T. & Watson, G. N. (1927).** *A Course of Modern Analysis.* 4th ed., Cambridge University Press. Chapter 21 (theta functions) and Chapter 22 (Jacobi elliptic functions).
 - **Used in FTD for:** standard reference for theta nullwerten including `θ_3(0|i) = π^(1/4)/Γ(3/4)`.
 - **Citation contexts:** FTD-0132 (theta-nullwert synthesis).
