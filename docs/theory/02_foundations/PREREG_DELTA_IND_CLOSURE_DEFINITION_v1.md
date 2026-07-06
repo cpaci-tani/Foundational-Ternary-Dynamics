@@ -94,3 +94,13 @@ Adequacy is hereby discharged for v1: **inventory ⊆ N**, with the dynamical si
 ---
 
 *Frozen at lock. The next δ-involving computation in this program is S3's registered execution, and not before.*
+
+---
+
+## v1.1 scope note (2026-07-05, post-lock; adjudicated by the A0 adversarial audit — a disambiguation of frozen intent, NOT an amendment of D1–D4)
+
+**D2 symbol scope, disambiguated to exactly what the lock fixed.** The clause "rules-1/2/3/5 linear machinery" is hereby read as covering: **(i) the spec's default 18-point (SC+FCC)/2 operators** (rule-1 wave Laplacian; all Gauss/Poisson solves — unambiguous on any reading), and **(ii) the two instrument-anchored sublattice families — the BCC symbol and the 7-point SC symbol** — whose admissibility was fixed *before any δ-computation* by this pre-registration's own hash-locked instrument (`proof_s2_adequacy_anchors.py`, SHA `452038d1…3394`, which computes both as N_dyn anchors) and by Lemma 0's toy (7-pt). The audit's adjudication: documenting this is disambiguation, not amendment — the resolution *enlarges* N (the anti-tuning direction; a bigger excluded field is a harder theorem), and the evidence of pre-lock intent is the lock artifact itself. **Anything broader — FCC symbols, arbitrary rational stencils, engine sublattice modes generally — was NOT fixed at lock and requires a v2 pre-registration per ban B2's enlargement clause.** The S3 statements of record are scoped accordingly (see the amended `ANALYSIS_DELTA_IND_CLOSURE_v1.md`).
+
+**"Observable" pinned (audit recommendation m-4):** a D1–D4 observable is a fixed finite ℚ-combination of field values at fixed offsets (and their solve-images), per the uniform description of D1 — L-power rescaling tricks are excluded by this reading together with D1's fixed-ladder clause.
+
+**Rhetoric correction (audit finding m-5):** §0's "before δ's behavior against it was ever computed" protects the D1–D4 *boundary choices* only; δ's behavior against the model and against N_calc was computed pre-lock in FTD-0353 and declared as prior P1. The freeze's evidential value is real but is confined to the definition of N_dyn — stated here so no reader over-credits it.

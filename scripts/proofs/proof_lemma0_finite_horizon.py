@@ -306,21 +306,30 @@ def check_l5() -> None:
 # ---------------------------------------------------------------------------
 
 def check_l6() -> None:
-    gc, dt, lam = sp.symbols("g_c dt lambda_d", positive=True)
-    JL, JR = sp.symbols("JL JR")
+    gc, dt, lam, dmp = sp.symbols("g_c dt lambda_d damping_c", positive=True)
+    JL, JR, s_sym, stress, K = sp.symbols("JL JR s_ stress K_w")
     # dual_substrate: two linear wave copies (schema: linear in each copy)
     dual = (JL + dt * gc * JR, JR + dt * gc * JL)
     ok_dual = all(sp.Poly(e, JL, JR, dt, gc, domain="QQ") is not None for e in dual)
     # selective_damping: condition-gated linear scaling J -> (1 - lam*dt) J
     damped = (1 - lam * dt) * JL
     ok_damp = sp.Poly(damped, JL, lam, dt, domain="QQ") is not None
-    # weak_transmutation: stress-gated polarity flip s -> -s on a polynomial
-    # threshold (semi-algebraic case-split; branch maps are +/- identity)
-    ok_weak = True  # branch maps are s -> s and s -> -s: polynomial trivially
+    # core `damping` (default-ON, phase_write: flux *= (1 - DAMPING)) —
+    # added 2026-07-05 per the A0 audit (finding m-1): a linear scaling.
+    core_damped = (1 - dmp) * JL
+    ok_core = sp.Poly(core_damped, JL, dmp, domain="QQ") is not None
+    # weak_transmutation: stress-gated polarity flip — REAL check (A0 finding
+    # m-2 replaced the hardcoded True): the gate is a polynomial inequality
+    # and BOTH branch maps are polynomial in s.
+    gate_poly = sp.Poly(stress - K, stress, K, domain="QQ") is not None
+    branch_a = sp.Poly(s_sym, s_sym, domain="QQ") is not None       # s -> s
+    branch_b = sp.Poly(-s_sym, s_sym, domain="QQ") is not None      # s -> -s
+    ok_weak = gate_poly and branch_a and branch_b
     suite.assert_true(
-        "L6 default-ON toggles: dual_substrate/selective_damping/"
-        "weak_transmutation are polynomial-per-branch",
-        bool(ok_dual and ok_damp and ok_weak), tag="[THEOREM]")
+        "L6 default-ON machinery: dual_substrate/selective_damping/core "
+        "damping/weak_transmutation all polynomial-per-branch (weak gate + "
+        "both branches checked, not assumed)",
+        bool(ok_dual and ok_damp and ok_core and ok_weak), tag="[THEOREM]")
 
 
 # ---------------------------------------------------------------------------
