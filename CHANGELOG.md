@@ -1,5 +1,50 @@
 # Foundational Ternary Dynamics Changelog
 
+## The priced-import ledger — Clause 1 of the goal-evolution program (FTD-0371, 2026-07-05)
+
+The Number-One Goal's second face — *"mark which types the ontology must
+import"* — made **quantitative**: a canonical ledger that prices every FTD
+import in a common currency, each with a falsifier. Doc + JSON manifest + one
+verifier; no constitutional edit (deferred); golden untouched; zero promotions.
+
+- **FTD-0371 — the priced-import ledger.** `SPEC_IMPORT_LEDGER.md` +
+  `import_ledger.json` (the single source) + `proof_import_ledger.py` (8/8).
+  It rolls up the qualitative modulus/argument frontier (FTD-0336) into a
+  priced accounting: **the entire import surface is the *argument* half of the
+  frontier; the self-set column is the *modulus* half** the substrate owns.
+- **The currencies** (each row falsifier-tagged): **1 adopted bit** (FC-W /
+  the δ branch — the framework's *one* adopted import); **3 selected types**
+  (D=3 [SELECTION per FTD-0355], the singlet, the ℭ generator-set); **4 named
+  results** (Chudnovsky 1976 proven-external; CM class-number h=1, E1, E\*/E\*\*
+  open); **3 calibrations** (a_phys / t_phys / K_B — A2's grade-0 closure
+  forces *all* dimension through here); the **empirical bridges** (x₊=1/α
+  [SMC] + the ~131-row [PARAMETRIC] catalog + ~50 adopted external physics);
+  and **2 declined** (the measurement map M via FC-1, global reversibility via
+  FC-2 — falsifiable *bets*, not paid debts).
+- **Reading guard (load-bearing).** The "1 adopted bit" is the α-sector
+  algebraic branch choice ONLY — never FTD's total cost of physics. The [SMC]
+  identification, the [PARAMETRIC] catalog, and the calibrations are separate,
+  larger debts. The verifier asserts this guard is present (C4) so it cannot be
+  edited out.
+- **The score, done honestly.** No single headline number (building one would
+  be the abuse the guard warns against). Two readings: (1) the import surface
+  *is* the argument half of FTD-0336 — self-set modulus in full, argument-half
+  adopted-one-bit / declined-two / calibrated-three / conjectured-a-short-list;
+  (2) the cost is **stratified** — the dimensionless spine is cheapest and most
+  self-set, the bill rising monotonically toward dimensional and empirical
+  physics. The quantitative form of "a rigorous algebraic core with suggestive
+  physics connections."
+- **Reconciliation flag RF-1.** Building against the sources surfaced live
+  drift: the constitution §3.3 still lists D=3 as "Forced [THEOREM]" while
+  FTD-0355 demoted it to [SELECTION — declared]. Flagged, **not fixed**
+  (constitutional edits are out of scope here); the verifier (C7) asserts the
+  stale line really exists so the flag can't rot into a phantom. Recommended:
+  an owner-approved constitutional pass to update §3.3.
+- **Discipline.** Introduces no theorem; moves no tag. x₊=1/α [SMC], MC-T4.3
+  [FOUNDATIONAL OBSTRUCTION], FC-W [AXIOM], D=3 [SELECTION] all unmoved. Nav:
+  META_INDEX 1.23, INDEX_01_REFERENCE, CLAUDE.md key-nav, LEDGER claims row +
+  maintenance line. Next free id **FTD-0372**.
+
 ## Native-closure realizability lower bounds — Clause-2/3 program B1 (last stage), 2026-07-05
 
 The positive mirror of FTD-0369 and the **final chartered stage** of the
