@@ -104,6 +104,20 @@
 
 ---
 
+**Glasser, M. L. & Zucker, I. J. (1977).** *Extended Watson integrals for the cubic lattices.* Proc. Natl. Acad. Sci. USA 74, 1800–1801. **Erratum caveat (load-bearing):** the originally published SC evaluation required later correction; cite the corrected closed form (Γ(1/24)-class) as reconciled in the subsequent literature, not the raw 1977 expression.
+- **Used in FTD for:** the SC lattice Green's function closed form (Γ(1/24)-class content) — the source of assumption E1's Γ-classes in FTD-0369; FCC Γ(1/3)-class content.
+- **Citation contexts:** FTD-0369 (`ANALYSIS_DELTA_IND_CLOSURE_v1.md` §1–§3); `EXPLR_STENCIL_SPECTRUM.md`.
+
+**Duffin, R. J. (1953).** *Discrete potential theory.* Duke Math. J. 20, 233–251.
+- **Used in FTD for:** the recurrence/difference structure of lattice Green's functions at offsets (the m = 1 offset-reduction machinery cited by the restricted BCC sub-theorem).
+- **Citation contexts:** FTD-0369 (BCC sub-theorem, restricted form).
+
+**Guttmann, A. J. (2010).** *Lattice Green's functions in all dimensions.* J. Phys. A: Math. Theor. 43, 305205.
+- **Used in FTD for:** the survey of LGF evaluations and the LGF/Calabi–Yau-operator program — the framework classifying which lattice symbols have CM/modular Green's functions and how their ODEs are derived (the B0 stencil-spectrum stage's method source).
+- **Citation contexts:** `EXPLR_STENCIL_SPECTRUM.md`; FTD-0369 §1 (characterization lemma context).
+
+---
+
 ## 6 · Modern auxiliary references
 
 **Cox, D. A. (1984).** *The Arithmetic-Geometric Mean of Gauss.* Enseign. Math. 30, 275–330.
