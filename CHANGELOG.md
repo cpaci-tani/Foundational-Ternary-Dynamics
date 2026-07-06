@@ -1,5 +1,54 @@
 # Foundational Ternary Dynamics Changelog
 
+## L² wall recast + stencil operator bounded (Clause-2/3 program A3 + B0, 2026-07-05)
+
+Two Clause-2/3 program stages; docs + two verifiers + one exact-reconstruction
+script; no new LEDGER id (program-internal under FTD-0368); golden untouched;
+zero promotions.
+
+- **A3 — the L² wall as closure-conservation.** `FOUND_L2_CLOSURE_RECAST.md`
+  + `proof_l2_closure_recast.py` (5/5). The Scale-0 budget-combination closure
+  **B** (FTD-0208 v3's primitive inventory: coordinate magnitudes under `+`,
+  `max`, ℚ⁺·scaling) consists of O_h-invariant *piecewise-ℚ-linear
+  (polyhedral)* forms. **Polyhedrality is conserved** by every native
+  combination; every polyhedral norm admits non-parallel additive-equality
+  pairs (unit-ball faces), while L² has none — the Lagrange identity
+  (u·u)(v·v) − (u·v)² = |u×v|² forces triangle-equality only for parallel
+  vectors (strict convexity). Hence c·L² ∉ B, and stronger, **B contains no
+  SO(3)-invariant form at all** (an SO(3)-invariant norm is a multiple of L²;
+  the forcing rotation e₁ ↦ (1,1,1)/√3 is exhibited exactly, RᵀR = I,
+  det = 1). The Pythagorean clock budget (dτ/dt)² + v² = 1 is thereby an
+  import; the clock hypothesis (`SPEC_FTD_LAGRANGIAN.md` §4.3, Arc B P2
+  prereg) is priced — it buys exactly the strict convexity the native closure
+  provably lacks. O_h is *not* the obstruction (L¹ is O_h-invariant and
+  non-spherical); SO(3) is. The **fourth conserved charge** of the boundary
+  program (budget sector — a *different* closure than the frozen N; scope
+  guard inside). [DERIVED — formalization] + [SYNTHESIS]; degeneration gate
+  honored (v3 stays the result of record; no new id).
+
+- **B0(ii)+(iii) — the engine's default stencil operator: holonomic but
+  large.** `EXPLR_STENCIL_SPECTRUM.md` §2 rewritten from the executed
+  attempt (`explr_stencil18_ode_attempt.py` RUN 1 + `..._run2.py` RUN 2). The
+  18-pt (SC+FCC)/2 moment generating function F(z) = Σ CT[σ₁₈ⁿ] zⁿ is the
+  constant term of a rational function, hence **holonomic** (Lipshitz 1988) —
+  an annihilating ODE is *guaranteed* to exist. Exact differential-approximant
+  reconstruction over ℚ on 85 integer moments (pipeline validated by first
+  recovering the known order-3 simple-cubic ODE) finds **no operator of
+  (order ≤ 6, degree ≤ 8)**. Reading: a *lower bound on operator complexity*
+  — the isotropized mixture is arithmetically harder than its pure
+  constituents (SC order 3), evaluation still UNKNOWN, CM-vs-generic still
+  open. B0 CLOSED at "UNKNOWN — attempted, obstruction recorded"; CAS
+  creative-telescoping (Koutschan's *HolonomicFunctions*) deferred
+  out-of-environment. Exported problem **P3** sharpened accordingly;
+  Lipshitz 1988 + Koutschan 2013 added to `REF_BIBLIOGRAPHY.md` §5.
+
+- **Program state:** A0 ✅ A1 ✅ A2 ✅ **A3 ✅** A4/B2 ✅ (FTD-0370) B0(i) ✅
+  **B0(ii/iii) ✅** B3 ✅. Remaining on "continue": **B1** (realizability
+  lower bounds for N_dyn). Clause-1 (priced-import ledger) deferred; no
+  constitutional edits. Four conserved charges of N now inventoried
+  (algebraicity / (4t−1)-parity-ramification / dimension-grade /
+  polyhedrality). Next free id **FTD-0371**.
+
 ## Ramification-locus flagship + export one-pagers (FTD-0370, 2026-07-05)
 
 The Clause-2/3 program's flagship and its outward face (docs + one verifier;
