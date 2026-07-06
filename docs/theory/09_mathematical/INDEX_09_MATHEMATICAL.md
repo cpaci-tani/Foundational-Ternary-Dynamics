@@ -38,6 +38,7 @@ The number-theoretic core. These establish the identities the framework's centra
 | [EXPLR_MODULAR_QUADRATIC.md](general_math/EXPLR_MODULAR_QUADRATIC.md) | [THEOREM] + [SELECTION] | Is the master quadratic a modular equation? Definitive answers (no; L(E,1) appears). |
 | [EXPLR_CM_RATIO_TOWER.md](number_theory/EXPLR_CM_RATIO_TOWER.md) | [REFERENCE] / [EXPLORATORY MATH] | The 9-element tower of class-number-1 Chowla-Selberg ratios; only d=−4 anchors physics. |
 | [EXPLR_CHOWLA_SELBERG_HIGHER_H.md](number_theory/EXPLR_CHOWLA_SELBERG_HIGHER_H.md) | [THEORY NOTE — literature synthesis] | Analytic machinery to extend Theorem 3 to class number h ≥ 2. |
+| [EXPLR_STENCIL_SPECTRUM.md](number_theory/EXPLR_STENCIL_SPECTRUM.md) | [EXPLR — B0 in progress] | **(Clause-3 program B0)** The arithmetic of the spec's lattice symbols: BCC exact CM τ=i; SC Γ(1/24)-class; FCC Γ(1/3)-class; **the engine's default 18-pt (SC+FCC)/2 Green's function has UNKNOWN closed form** (literature verdict: ODE-class derivable per Guttmann's LGF/Calabi–Yau program, closed form not found; exact-ODE stage queued; no PSLQ). Sharpens E1's statement. |
 | [REF_GUILLERA_CORPUS_MAP.md](general_math/REF_GUILLERA_CORPUS_MAP.md) | [REFERENCE] / external-literature map | Guillera's Ramanujan-type-series corpus mapped to the spine; scholarly attribution only. |
 | [EXPLR_GSTAR_MATRIX_MODELS.md](general_math/EXPLR_GSTAR_MATRIX_MODELS.md) | [SYNTHESIS] + [STRUCTURAL OBSERVATION] | **(FTD-0366)** CHPS 2018 strongly-coupled matrix models as an external construction site for ℚ(G\*): quartic-model observables are rational in G\*; ℤ₄ sectors realize the χ₋₄ parity split (product → π, ratio → G\*); race constants R_q as sector data. Verified 155/155 (`proof_gstar_matrix_models.py`). RQ-MM-1/2/3 all resolved 2026-07-04 (two non-bridges + one gate-out; §5–§6). |
 | [MATH_REFLECTION_FLOW_PARITY.md](general_math/MATH_REFLECTION_FLOW_PARITY.md) | [THEOREM — classical assembled] + [coherent-interpretation] | **(FTD-0367)** The reflection branches as first-order flows: P′ = −π·cot(πz)·P (coefficient differentially algebraic — satisfies its own ADE c′ = π² + c²) vs R′ = [ψ(z)+ψ(1−z)]·R (coefficient hypertranscendental, via Hölder 1887). Slope datum at the lemniscatic point: (log R)′(1/4) = −2(γ + 3 ln 2) — the FTD-0127 γ/log boundary class. The modulus/argument split at flow-law level. Verified 16/16 (`proof_reflection_flow_parity.py`). |
@@ -133,4 +134,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-58 active docs in this cluster (+ 2 archived).
+59 active docs in this cluster (+ 2 archived).

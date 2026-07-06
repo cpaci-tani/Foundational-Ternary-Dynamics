@@ -66,6 +66,19 @@ The functional $R_{\text{EM}}$ must explicitly bridge the mathematical operator 
 
 The proposal passes the **admissibility gate** only if these four objects are completely deterministic before checking the $(137)$ target value.
 
+### 2.5 Ramification Checkpoint (added 2026-07-05; theorem basis FTD-0369)
+
+Reaching the α-candidate root is, algebraically, reaching δ = √(G\*(4G\*−1)) over ℚ(G\*): x₊ = 8G\*² + 4G\*δ. FTD-0369 (δ-IND v1, `02_foundations/ANALYSIS_DELTA_IND_CLOSURE_v1.md`) proves — conditional on its enumerated package — that every native construction of the frozen closure N is a **unit at the prime (4G\*−1)** (even valuation), while δ's square-class carries that prime with **odd** valuation. Therefore:
+
+> **Every claim that touches α or δ (any step claiming to force a root-selection, a coefficient of the master quadratic's splitting field, or a branch) must state explicitly where it ramifies (4G\*−1)** — i.e., at which step the odd square-class enters.
+
+Grade anatomy for the declaration:
+- **Grade 0** — the claim stays in unit territory (ℚ(G\*, π)-class values, Watson/Green data, the even sector, all documented native outputs). Grade-0 claims *cannot have reached δ*; if they assert an α-readout anyway, they are substitution identities under §3.
+- **Grade ½** — the claim adjoins the δ square-class. It must (a) name the step, (b) reconcile with the FTD-0369 mechanism (which native operation allegedly produced odd valuation — this is exactly the FTD-0353 §8 shared falsifier, and triggers its ceremony including the FTD-0314 §4 forced-vs-hand-placed adjudication), or (c) declare the step an **import** (FC-W's adoption of ramification).
+- **Branch choice** — beyond the square-class, selecting +δ vs −δ (equivalently x₊ vs x₋ as the physical root) is a further one-bit choice; name where it is made and by what.
+
+**Gate:** a claim that cannot answer "where do you ramify?" is **ramification-opaque** and does not advance past ARC-0 (§7). This checkpoint polices algebraic honesty; §3 polices mechanism honesty — a claim must pass both.
+
 ---
 
 ## 3. Hard Exclusion Rules
@@ -79,8 +92,9 @@ A closure attempt fails immediately if it does any of the following:
 - Produces a distinguished number but does not explain why electromagnetic measurements read that number.
 - Depends on an arbitrary dimensional calibration where a dimensionless ratio should suffice.
 - Treats standard QED/SM formulae as if they were FTD substrate results.
+- Is ramification-opaque under §2.5 (cannot state where the δ square-class enters).
 
-These rules preserve the difference between a physical readout and a substitution identity.
+These rules preserve the difference between a physical readout and a substitution identity; §2.5 adds the algebraic layer of the same discipline.
 
 ---
 
@@ -213,6 +227,8 @@ No tag changes occur before ARC-3.
 | ARC-D1 | Discrete-native comparator inventory | List engine observables with real experimental comparators and dimensionless ratios | [OPEN] |
 
 Recommended order: ARC-B1 -> ARC-C1 -> ARC-D1 -> ARC-A1. Boundary conditions are attractive but high-risk for hidden parameter insertion; observable-selection exposes the core issue fastest.
+
+All ARC-A1/B1/C1/D1 submittals must pass the §2.5 ramification checkpoint before any ARC-status advancement: state the grade (0 / ½ / branch) of every step, or be held at ARC-0 as ramification-opaque.
 
 ---
 
