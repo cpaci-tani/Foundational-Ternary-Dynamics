@@ -2,7 +2,7 @@
 
 A single-page orientation to where the framework stands and where its canonical truth lives. This page carries **no change log** — what changed and when lives in `CHANGELOG.md` and git history; per-claim status lives in the LEDGER.
 
-Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` — set the smallest honest set of types a discrete ontology can speak from, build the content forward, and mark rigorously which types the ontology sets for itself and which it must import.
+Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` — set the smallest honest set of types a discrete ontology can speak from, build the content forward, and mark and price rigorously which types the ontology sets for itself and which it must import (the boundary marked *qualitatively* by the modulus/argument frontier and *quantitatively* by the priced-import ledger, FTD-0371).
 
 ## Where the canonical truth lives (in precedence)
 
