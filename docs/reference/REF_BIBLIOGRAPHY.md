@@ -116,6 +116,14 @@
 - **Used in FTD for:** the survey of LGF evaluations and the LGF/Calabi–Yau-operator program — the framework classifying which lattice symbols have CM/modular Green's functions and how their ODEs are derived (the B0 stencil-spectrum stage's method source).
 - **Citation contexts:** `EXPLR_STENCIL_SPECTRUM.md`; FTD-0369 §1 (characterization lemma context).
 
+**Lipshitz, L. (1988).** *The diagonal of a D-finite power series is D-finite.* J. Algebra 113, 373–378.
+- **Used in FTD for:** the theorem that constant terms / diagonals of rational power series are holonomic (D-finite) — establishing that the 18-pt stencil's moment generating function *must* satisfy a linear ODE (so B0(ii)'s reconstruction search is well-posed, and its negative result bounds operator complexity rather than denying holonomicity).
+- **Citation contexts:** `EXPLR_STENCIL_SPECTRUM.md` §2; `REF_EXPORTED_PROBLEMS_E1_E2.md` §P3.
+
+**Koutschan, C. (2013).** *HolonomicFunctions (User's Guide).* RISC Report Series 10-01, JKU Linz. (Software for creative-telescoping computation of annihilating operators.)
+- **Used in FTD for:** named as the natural CAS tool for the deferred exact creative-telescoping computation of the 18-pt LGF operator (out of the current environment; B0(ii)/P3(a) residue).
+- **Citation contexts:** `EXPLR_STENCIL_SPECTRUM.md` §2; `REF_EXPORTED_PROBLEMS_E1_E2.md` §P3.
+
 ---
 
 ## 6 · Modern auxiliary references
