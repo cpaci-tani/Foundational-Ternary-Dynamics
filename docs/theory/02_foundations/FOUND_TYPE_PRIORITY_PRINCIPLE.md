@@ -94,7 +94,7 @@ A **reference frame is a type-instantiation**: it sets the context relative to w
 
 Type-priority is the **organizing spine of the project**: not *"derive physics,"* not *"exploit G\*,"* but —
 
-> **Set the smallest honest set of types (commitments); build the mathematics and physics forward as the tokens those types make meaningful; and mark — rigorously — exactly which types the discrete ontology can set for itself and which it must import.**
+> **Set the smallest honest set of types (commitments); build the mathematics and physics forward as the tokens those types make meaningful; and mark and price — rigorously — exactly which types the discrete ontology can set for itself and which it must import.**
 
 G\* / ℚ(G\*) is a *lever* under this principle, not the goal: an acknowledged-but-underexploited mathematical structure that an ontology-first, type-first construction forces into centrality — and whose orphaned status in mainstream math is itself a clue worth pursuing. `[coherent-interpretation]`
 
