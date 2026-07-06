@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "id": "FTD-0371",
+    "title": "The priced-import ledger",
+    "tag": "[SYNTHESIS]",
+    "date": "2026-07-05",
+    "renderer": "docs/theory/01_reference/SPEC_IMPORT_LEDGER.md",
+    "verifier": "scripts/proofs/proof_import_ledger.py",
+    "purpose": "Number-One-Goal clause 'mark which types must be imported', made quantitative: price every import in a common currency, each with a falsifier. Rolls up FTD-0336 (frontier), FTD-0059/0096 (calibrations), the constitution's FCs, and the LEDGER's empirical tags. Introduces NO theorem; promotes NOTHING.",
+    "currency_note": "Five import currencies: adopted-bit (a binary structural choice the substrate cannot force); selected-type (a declared selection among discrete alternatives); named-result (an external mathematical result the spine leans on, proven-elsewhere or open); calibration (a dimensional scale anchor); empirical-identification (a 'this math IS this physics' bridge). Plus a DECLINED column (imports FTD refuses at falsification risk) and a SELF-SET column (what the ontology grounds for itself).",
+    "reading_guard": "The 'adopted-bit total = 1' is the ALGEBRAIC branch choice of the alpha-sector ONLY (FC-W, the delta sign). It is NOT the total physics import: the empirical identification x+ = 1/alpha [SMC], the ~131 [PARAMETRIC] insertions, and the 3 calibrations are separate, larger debts listed below. Never cite '1 bit' as FTD's total cost of physics."
+  },
+  "self_set": [
+    {"ref": "SS-1", "type": "The five postulates P1-P5 (discrete space, discrete time, ternary states, local Moore causality, determinism)", "status": "[AXIOM]", "provenance": "SPEC_FTD_FRAMEWORK_V1.md Sec 1; the ontology's own smallest-honest type set", "frontier_half": "the adopted foundation (context set first)"},
+    {"ref": "SS-2", "type": "FC-0: the native complex structure / i = sqrt(-1) (the Z[i] reading)", "status": "[AXIOM]", "provenance": "FC-0 / FTD-0254; i is a native generator (FTD-0244)", "frontier_half": "modulus (the self-set counterpart of the imported delta)"},
+    {"ref": "SS-3", "type": "G* = Gamma(1/4)/Gamma(3/4) ~ 2.9587", "status": "[THEOREM]", "provenance": "spine Theorem 1; four independent constructions converge; SPEC_FTD_FRAMEWORK_V1.md Sec 3.3 'Forced'", "frontier_half": "modulus (forced magnitude)"},
+    {"ref": "SS-4", "type": "The master quadratic x^2 - 16 G*^2 x + 16 G*^3 = 0 (pure algebra)", "status": "[THEOREM]", "provenance": "spine Theorem 2; DERIV_MASTER_QUADRATIC_GAP_EQUATION.md", "frontier_half": "modulus"},
+    {"ref": "SS-5", "type": "N_c = 3 (color number) from RG flow + topological quantization", "status": "[THEOREM]", "provenance": "DERIV_NC_FROM_TOPOLOGY.md (4 independent routes)", "frontier_half": "modulus"},
+    {"ref": "SS-6", "type": "The theorem-grade algebraic spine (7 of 9 numbered results)", "status": "[THEOREM]", "provenance": "SPEC_ALGEBRAIC_SPINE.md", "frontier_half": "modulus (even/self-adjoint/tracial half, FTD-0336)"}
+  ],
+  "imports": [
+    {
+      "ref": "IMP-B1", "kind": "adopted-bit", "type_imported": "the delta branch: a Z/2 twist realizing sqrt(G*(4G*-1)), breaking the master-quadratic root-swap x+ <-> x-",
+      "price": 1, "unit": "bit", "canonical_tag": "[AXIOM]",
+      "provenance": "FC-W (= FC-4) / FTD-0315; carrier-narrowing FTD-0314 [THEOREM]; delta-as-act FTD-0322/0340; the substrate CANNOT self-supply this (delta ∉ N, FTD-0369/0370)",
+      "frontier_face": "graded-sqrt / chosen-adjoint (FTD-0336)",
+      "falsifier": "a native FORCED Z/2 carrier is exhibited (a forward-derived substrate object realizing sqrt(G*(4G*-1)) with a forced sign) -> FC-W superseded by a derivation (constitution FC-W kill condition 1); or delta shown to be IN N (FTD-0369 REFUTED branch)."
+    },
+    {
+      "ref": "IMP-S1", "kind": "selected-type", "type_imported": "spatial dimension D = 3",
+      "price": 1, "unit": "selected type", "canonical_tag": "[SELECTION -- declared]",
+      "provenance": "FTD-0355 permanent verdict (NOT forced; bounded search + circularity named). NOTE: SPEC_FTD_FRAMEWORK_V1.md Sec 3.3 still reads 'Forced [THEOREM]' -- STALE per LEDGER > constitution; reconciliation flag RF-1.",
+      "frontier_face": "selection among discrete alternatives",
+      "falsifier": "a forcing proof of D=3 (removes this row to self-set); or an equally-consistent alternate D (confirms a genuine free choice)."
+    },
+    {
+      "ref": "IMP-S2", "kind": "selected-type", "type_imported": "the singlet (J -> psi complexification enabling Bell/Tsirelson)",
+      "price": 1, "unit": "selected type", "canonical_tag": "[SELECTION]",
+      "provenance": "DERIV_SINGLET_FROM_VOID_EVENT.md; the complexification is not forced by the lattice axioms; substrate is natively local/classical (S <= 2)",
+      "frontier_face": "non-tracial state / chosen section",
+      "falsifier": "a native forced singlet exhibited; or a native S > 2 measured on the lattice engine (which is instead an FC-1 falsifier)."
+    },
+    {
+      "ref": "IMP-S3", "kind": "selected-type", "type_imported": "the operator-calculus C generator-set representativeness (N_calc)",
+      "price": 1, "unit": "selected type", "canonical_tag": "[SELECTION]",
+      "provenance": "FTD-0244 (as repaired FTD-0351); FTD-0347 flag; inherited by N_calc in PREREG_DELTA_IND_CLOSURE_DEFINITION_v1.md",
+      "frontier_face": "chosen adjoint / generating set",
+      "falsifier": "a canonically forced generating set for C (retires the [SELECTION]); or a generator outside the documented set changing N_calc."
+    },
+    {
+      "ref": "IMP-C1", "kind": "named-result", "status_flag": "proven-external", "type_imported": "Chudnovsky 1976 algebraic independence -> the model Q(G*, pi) ~ Q(t, u)",
+      "price": 1, "unit": "external theorem", "canonical_tag": "[EXTERNAL -- proven]",
+      "provenance": "the entire algebraic spine is conditional on it (spine audit); ANALYSIS_DELTA_IND_CLOSURE_v1.md E0",
+      "frontier_face": "the transcendence base the argument-half valuations live over",
+      "falsifier": "n/a (proven by Chudnovsky); the IMPORT is the spine's dependence on it -- a retraction of Chudnovsky 1976 would collapse the model."
+    },
+    {
+      "ref": "IMP-C2", "kind": "named-result", "status_flag": "open-partial", "type_imported": "CM class-number h=1 uniqueness (the coefficient-16 / Watson identity uniqueness beyond h=1)",
+      "price": 1, "unit": "open conjecture", "canonical_tag": "[NUMERICAL FACT, h=1 only]",
+      "provenance": "spine Theorem 3; EXPLR_CHOWLA_SELBERG_HIGHER_H.md (MC-T2.3)",
+      "frontier_face": "modulus-side uniqueness still owed for h>=2",
+      "falsifier": "an h>=2 CM curve reproducing the identity (breaks uniqueness); or a structural proof covering all h (retires the import)."
+    },
+    {
+      "ref": "IMP-C3", "kind": "named-result", "status_flag": "open", "type_imported": "E1: joint independence of the SC/FCC Watson Gamma-classes with {pi, Gamma(1/4)}",
+      "price": 1, "unit": "open conjecture", "canonical_tag": "[OPEN -- exported as P1]",
+      "provenance": "FTD-0369 conditionality; FTD-0371-companion B1 (N strict-superset Q(G*,pi) rests on it); REF_EXPORTED_PROBLEMS_E1_E2.md P1",
+      "frontier_face": "argument-half independence (distinct CM points don't talk)",
+      "falsifier": "a proof either way re-adjudicates FTD-0369 via its frozen verdict map (E1 false would put W_S in Q(G*,pi))."
+    },
+    {
+      "ref": "IMP-C4", "kind": "named-result", "status_flag": "open", "type_imported": "E*/E**: no admissible-symbol period value has (4G*-1) in its square class (family-quantified)",
+      "price": 1, "unit": "open conjecture", "canonical_tag": "[OPEN]",
+      "provenance": "FTD-0369 (E*, amended package E0+E*); FTD-0370 R2 (E**, uniform); the delta-independence sharp assumption",
+      "frontier_face": "the ramification-locus condition (the substrate ramifies only where it lives)",
+      "falsifier": "the FTD-0353 Sec 8 shared falsifier: a forced native output with odd (4t-1)-valuation -> REFUTED."
+    },
+    {
+      "ref": "IMP-K1", "kind": "calibration", "type_imported": "a_phys == l_P (one voxel = one Planck length): the LENGTH scale",
+      "price": 1, "unit": "dimensional anchor", "canonical_tag": "[IMPOSED -- calibration]",
+      "provenance": "FTD-0059/0096; declared in SPEC_FTD.md; A2 grade-0 closure (FOUND_DIMENSIONAL_GRADE_CLOSURE.md) proves it CANNOT be native; Mechanism-gamma derivation attempt CLOSED NEGATIVE",
+      "frontier_face": "grade-carrying import (N is grade-0)",
+      "falsifier": "a substrate derivation of a_phys from Axiom-Zero invariants (retires the import); currently genuinely imported (Mechanism-gamma closed)."
+    },
+    {
+      "ref": "IMP-K2", "kind": "calibration", "type_imported": "t_phys == sqrt(3) l_P / c (one tick): the TIME scale",
+      "price": 1, "unit": "dimensional anchor", "canonical_tag": "[IMPOSED -- calibration]",
+      "provenance": "FTD-0059/0096; C_SPEED = 1/sqrt(3) CFL; A2 grade-0 closure",
+      "frontier_face": "grade-carrying import",
+      "falsifier": "a substrate derivation of the tick-to-second ratio independent of a_phys."
+    },
+    {
+      "ref": "IMP-K3", "kind": "calibration", "type_imported": "K_B = m_e (mass-unit == m_e / K_B = 1 MeV/c^2): the MASS scale",
+      "price": 1, "unit": "dimensional anchor", "canonical_tag": "[IMPOSED -- calibration]",
+      "provenance": "FTD-0096; SPEC_DIMENSIONAL_MAP.md; FTD-0130 role-conflation flag (mass anchor vs manifestation threshold)",
+      "frontier_face": "grade-carrying import",
+      "falsifier": "disentangling the FTD-0130 conflation such that the mass anchor is forced; or a substrate mass scale."
+    },
+    {
+      "ref": "IMP-E1", "kind": "empirical-identification", "type_imported": "x+ = 1/alpha (the master-quadratic large root IS the inverse fine-structure constant)",
+      "price": 1, "unit": "empirical identification", "canonical_tag": "[STRONGLY MOTIVATED CONJECTURE]",
+      "provenance": "FTD-0013; 1.26 ppm tree-level match; structural-uniqueness scan FTD-0319 (a [NUMERICAL FACT], not a structural Bayes result)",
+      "frontier_face": "the one adopted empirical bridge the FC-W bit serves",
+      "falsifier": "alpha measured to disagree beyond the tree-level tolerance (constitution FC-W kill condition 3)."
+    },
+    {
+      "ref": "IMP-E2", "kind": "empirical-identification", "type_imported": "the parametric-insertion catalog (~131 rows: mass formulas, gauge ratios, Higgs, proton, Lamb shift, g-2, ...)",
+      "price": 131, "unit": "empirical identification (category, approximate count)", "canonical_tag": "[PARAMETRIC]",
+      "provenance": "CATALOG_PARAMETRIC_INSERTIONS.md (~162 rows enumerated: ~23 [DERIVED]/[THEOREM], ~131 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION])",
+      "frontier_face": "standard-physics functional form + FTD numbers (mechanism borrowed)",
+      "falsifier": "per-row: the standard formula it borrows is itself the falsifiable object; FTD supplies only the number."
+    },
+    {
+      "ref": "IMP-E3", "kind": "empirical-identification", "type_imported": "adopted external physics (~50+): QM's Born/Tsirelson GIVEN the singlet, standard multi-loop QED functionals, GR field equations",
+      "price": 50, "unit": "adopted external physics (category, approximate count)", "canonical_tag": "[IMPORTED -- external]",
+      "provenance": "EPISTEMIC_AUDIT honest accounting; DERIV_SINGLET_FROM_VOID_EVENT ('FTD produces the singlet, QM handles the rest'); the g-2 and Lamb-shift [PARAMETRIC] lines",
+      "frontier_face": "argument-half physics FTD rides on rather than derives",
+      "falsifier": "each is the established physics's own falsifier; FTD imports the framework, not the test."
+    }
+  ],
+  "declined": [
+    {
+      "ref": "DEC-1", "type_declined": "the measurement map M (non-commutative Hilbert-space formalism, Born statistics, operator observables)",
+      "commitment": "FC-1 / FTD-0255", "independence_status": "[THEOREM] (FTD-0243: the substrate cannot generate the formalism)",
+      "stance": "FTD DECLINES M and predicts the substrate where M would differ (Born, S>2, complementarity) -- a falsifiable BET, not a paid debt",
+      "falsifier": "constitution FC-1 kill conditions (the substrate is shown to require M to reproduce an established structural prediction it currently stakes against)."
+    },
+    {
+      "ref": "DEC-2", "type_declined": "global reversibility (and with it the Lorentzian metric as fundamental)",
+      "commitment": "FC-2 / FTD-0256", "independence_status": "arrow native [AXIOM-class]; metric emergent-IR sector-scoped",
+      "stance": "FTD DECLINES reversibility as a postulate; the arrow is native (manifestation many-to-one); reversibility survives only as a flux-sector property",
+      "falsifier": "constitution FC-2 kill conditions (a native reversibility requirement, or the metric shown non-emergent)."
+    }
+  ],
+  "totals": {
+    "self_set_entries": 6,
+    "adopted_bits": 1,
+    "selected_types": 3,
+    "named_results": 4,
+    "named_results_open": 3,
+    "calibrations": 3,
+    "empirical_identification_rows_paradigm": 1,
+    "empirical_parametric_category_count_approx": 131,
+    "declined": 2,
+    "reconciliation_flags": ["RF-1: SPEC_FTD_FRAMEWORK_V1.md Sec 3.3 D=3 'Forced [THEOREM]' is stale vs FTD-0355 [SELECTION -- declared]"]
+  },
+  "standing_invariants": "x+ = 1/alpha stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FC-W stays [AXIOM]; D=3 stays [SELECTION -- declared] (FTD-0355); no tag moves; this ledger prices existing commitments and introduces none."
+}
