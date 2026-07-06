@@ -11,6 +11,7 @@
 1. [SPEC_FTD_FRAMEWORK_V1.md](SPEC_FTD_FRAMEWORK_V1.md) — **the constitution** (FTD-0254): postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the supersession matrix + framework-level falsification criteria. The forward-facing statement of what FTD is, declines, and stakes.
 2. [SPEC_ALGEBRAIC_SPINE.md](SPEC_ALGEBRAIC_SPINE.md) — the nine numbered algebraic results (seven theorem-grade + two honestly-tiered), physics-free. The rigorous core.
 3. [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) — single-page status map across spine + FQCR + bridge; start here for "what is the status of X".
+3b. [SPEC_IMPORT_LEDGER.md](SPEC_IMPORT_LEDGER.md) — the priced-import ledger (FTD-0371); start here for "what does FTD import, and at what price?" — every imported type in a common currency, each with a falsifier.
 4. [SPEC_FQCR.md](SPEC_FQCR.md) — Finite Quarter-Conjugacy Recurrence capstone; operator-theoretic provenance of G* (Models I–V).
 5. [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) — standalone mathematical monograph deriving G* from nine branches of mathematics.
 6. [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) — canonical ordering principle: ontology = finite invariant structure, physics = stable readout of it.
@@ -24,6 +25,7 @@
 |---|---|---|
 | [SPEC_FTD_FRAMEWORK_V1.md](SPEC_FTD_FRAMEWORK_V1.md) | [SYNTHESIS] + [AXIOM]-class FC declarations | **The constitution (FTD-0254)**: three registers (Postulates / Framework Commitments FC-0,FC-1,FC-2 / Calibrations); two-orthogonal-fields ontology (FTD-0257); computational-EFT IR catalog; supersession matrix; framework falsification criteria. Declarations, not derivations — promotes nothing. |
 | [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) | [REFERENCE] / [SYNTHESIS] | Doctrine Ledger v1.4 — single-page status map; per-element tags; introduces no new theorems. |
+| [SPEC_IMPORT_LEDGER.md](SPEC_IMPORT_LEDGER.md) | [REFERENCE] / [SYNTHESIS] | Priced-import ledger (FTD-0371) — every imported type in a common currency (1 adopted bit / 3 selected / 4 named results / 3 calibrations / empirical bridges / 2 declined) with a falsifier each; the modulus/argument frontier (FTD-0336) priced. ⚠ "1 bit" = the α-branch only, not the total physics import. Data `import_ledger.json`; verifier 8/8. Introduces no theorem. |
 | [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) | [REFERENCE] / [SYNTHESIS] / [OPEN PROGRAM] | Canonical math-first ontology + readout-ordering principle (FTD-0153). |
 | [SPEC_OPEN_MATH_BY_SECTOR.md](SPEC_OPEN_MATH_BY_SECTOR.md) | [REFERENCE] | Sector-organised open research-questions queue, 10 SM sectors (FTD-0146); replaces tier-aligned checklist. |
 | [REF_REFERENCE_FRAME_VOCABULARY.md](REF_REFERENCE_FRAME_VOCABULARY.md) | [REFERENCE] (proposed canonical) | Canonical reference frame structure/frame dynamics vocabulary replacing "reference frame context" terminology. |
