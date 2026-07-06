@@ -111,8 +111,45 @@ def val(a=0, b=0, c=0, d=0, e=0, half_b=0):
 
 
 def check_v2() -> None:
-    # The 13 documented inventory rows as hull monomials s^a w^b (FTD-0353
-    # §2.2 table): (row label, d = power of s, e = power of w).
+    # STRENGTHENED 2026-07-05 per the A0 audit (finding M-4): the original
+    # V2 was valuation bookkeeping over author-supplied exponents and could
+    # not catch a mistyped hull form.  It now RECOMPUTES the hull identities
+    # numerically at dps=50 (value expression vs coeff * s^d * w^e with
+    # s = sqrt(G*), w = pi^(1/4)) for every row with an independent value
+    # expression, before doing the valuation bookkeeping.  The row
+    # identities' 40-58 digit verification of record remains FTD-0353's
+    # instrument (51/51); this check is a re-verification, not the source.
+    with mpm.workdps(50):
+        Gs = mpm.gamma(mpm.mpf(1) / 4) / mpm.gamma(mpm.mpf(3) / 4)
+        s_ = mpm.sqrt(Gs)
+        w_ = mpm.pi ** mpm.mpf("0.25")
+        g14 = mpm.gamma(mpm.mpf(1) / 4)
+        g34 = mpm.gamma(mpm.mpf(3) / 4)
+        q = mpm.exp(-mpm.pi)
+        # (label, value_expr, coeff, d, e) — coeff * s^d * w^e
+        numeric_rows = [
+            ("det_zeta D_{1/4}", mpm.sqrt(2 * mpm.pi) / g14, 2 ** mpm.mpf("0.25"), -1, 0),
+            ("det_zeta D_{3/4}", mpm.sqrt(2 * mpm.pi) / g34, 2 ** mpm.mpf("0.25"), 1, 0),
+            ("Watson G_BCC(0)", g14 ** 4 / (4 * mpm.pi ** 3), mpm.mpf(1) / 2, 4, -4),
+            ("theta3(0,i)", mpm.jtheta(3, 0, q), 2 ** mpm.mpf("-0.25"), 1, -1),
+            ("theta2(0,i)", mpm.jtheta(2, 0, q), 2 ** mpm.mpf("-0.5"), 1, -1),
+            ("theta4(0,i)", mpm.jtheta(4, 0, q), 2 ** mpm.mpf("-0.5"), 1, -1),
+            ("AGM(1,sqrt2)", mpm.agm(1, mpm.sqrt(2)), 2, -2, 2),
+            ("lemniscate varpi", g14 ** 2 / (2 * mpm.sqrt(2 * mpm.pi)), mpm.mpf(1) / 2, 2, 2),
+            ("CM period Omega", g14 ** 2 / mpm.sqrt(2 * mpm.pi), 1, 2, 2),
+        ]
+        ok_num = True
+        for label, valexpr, coeff, d, e in numeric_rows:
+            hull = coeff * s_ ** d * w_ ** e
+            if mpm.fabs(valexpr - hull) > mpm.mpf(10) ** (-40):
+                ok_num = False
+    suite.assert_true(
+        f"V2 hull identities RECOMPUTED numerically for {len(numeric_rows)} "
+        "rows (value = coeff*s^d*w^e at dps=50; catches mistyped exponents)",
+        bool(ok_num), tag="[THEOREM]")
+
+    # The 13 documented inventory rows as hull monomials s^d w^e (FTD-0353
+    # §2.2 table; identities of record verified there at 40-58 digits).
     rows = [
         ("det_zeta D_{1/4}", -1, 0), ("det_zeta D_{3/4}", 1, 0),
         ("det ratio = G*", 2, 0), ("Watson G_BCC(0)", 4, -4),
@@ -124,7 +161,8 @@ def check_v2() -> None:
     ]
     ok_units = all(val(d=d, e=e) == 0 for (_, d, e) in rows)
     suite.assert_true(
-        "V2 all 13 inventory hull-monomials are (4t-1)-units (v = 0, integral)",
+        "V2 all 13 inventory hull-monomials are (4t-1)-units (v = 0, "
+        "integral; valuation bookkeeping over the recomputed rows)",
         bool(ok_units), tag="[THEOREM]")
     v_delta = val(d=1, half_b=1)   # delta = s * (4t-1)^{1/2}
     suite.assert_true(
@@ -155,8 +193,10 @@ def check_v3() -> None:
                 v_elem += Fraction(val(**uu), 2)
         ok = ok and (v_elem.denominator == 1)
     suite.assert_true(
-        "V3 every element of a sqrt(unit)-tower keeps INTEGRAL valuation "
-        "(8/8 sign patterns)", bool(ok), tag="[THEOREM]")
+        "V3 bookkeeping illustration of the classical unramified-tower "
+        "lemma: sqrt(unit)-tower elements keep INTEGRAL valuation (8/8 sign "
+        "patterns; the lemma itself is classical, not proven here)",
+        bool(ok), tag="[THEOREM]")
     # delta over the same tower: v = 1/2 + 0 -> still half-integral
     ok_d = all((Fraction(1, 2)
                 + sum(Fraction(val(**uu), 2) for e_i, uu in zip(eps, units) if e_i)
