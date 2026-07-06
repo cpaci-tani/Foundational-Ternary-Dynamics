@@ -1,5 +1,35 @@
 # Foundational Ternary Dynamics Changelog
 
+## Ramification-locus flagship + export one-pagers (FTD-0370, 2026-07-05)
+
+The Clause-2/3 program's flagship and its outward face (docs + one verifier;
+golden untouched; zero promotions):
+
+- **FTD-0370 — the ramification locus of the native closure.** R1 [THEOREM —
+  Chudnovsky only; pure Kummer bookkeeping]: the hull Ñ = ℚ̄(√t, u^{1/4})
+  ramifies over the t-line only at the coordinate places {0, ∞} (radicand
+  divisors supported on coordinates), so for every c ≠ 0 the (t−c)-valuation
+  extends with value group ℤ and **every √(affine-composite) is excluded
+  from the hull at once** — declared 7-radicand sweep verified at places
+  {1/4, 1/2, −1, ±i} with all 13 documented hull monomials unit-checked.
+  **δ is de-specialized: the α-wall is the physically-pointed c = 1/4
+  instance of a coordinate-ramification law** ("the substrate ramifies only
+  where it lives"). R2 [THEOREM — conditional on E0 + E**]: under uniform
+  unramifiedness (E** — the family-quantified strengthening of the
+  A0-amended E*, which is its c = 1/4 slice), Ram_t(N) ⊆ {0, ∞} and the
+  family transfers to all of N; one place-indexed falsifier schema
+  (FTD-0353 §8 generalized) covers the whole family. R2 inherits every
+  A0-audit amendment; nothing suspended is re-awarded. The (4t−1)-parity
+  conserved charge is this theorem's c = 1/4 slice — the three charges gain
+  a geometric parent. Verifier 7/7 (declared lists fixed before the sweep).
+- **B3 — REF_EXPORTED_PROBLEMS_E1_E2.md:** three mathematician-facing open
+  problems, FTD-free statements first (P1 Watson-constant joint
+  independence = E1; P2 exponential lattice periods = E2; P3 the 18-pt
+  mixed-coupling LGF ODE/CM classification = B0's question), project
+  context confined to the appendix under the attribution-not-endorsement
+  discipline. The corpus's first artifact designed for external
+  circulation — the external-review approach's concrete instrument.
+
 ## Clause-2/3 program session 1 — checkpoint, grade closure, stencil spectrum (2026-07-05)
 
 The boundary-theorem-ization + N-as-object program (plan: calm-dijkstra v2;
