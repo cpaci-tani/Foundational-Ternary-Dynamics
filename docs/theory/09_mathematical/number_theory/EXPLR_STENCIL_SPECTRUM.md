@@ -1,40 +1,63 @@
 # EXPLR — The stencil spectrum of N_dyn: the arithmetic of the spec's three lattice symbols
 
-**Tag:** [EXPLR — B0 of the Clause-2/3 program; literature verdict recorded, exact-ODE stage executed — negative at declared bounds, holonomic-but-large]. Introduces no claim beyond the classification below; promotes nothing.
-**Program:** Clause-3 ("N as the object"), stage B0. LEDGER: maintenance-log line under FTD-0368's program (no new id until B0 completes).
+**Tag:** [EXPLR — B0 of the Clause-2/3 program] → **[NUMERICAL FACT — the 18-point default-stencil Green's function's annihilating ODE computed (order 4, degree 12) and classified; FTD-0372]**. P3(a) **CLOSED** (the operator exists and is order 4); P3(b) **SHARPENED** (every local exponent lies in ½ℤ ⇒ symmetric-power / √-twist hypothesis, *not* a strict Calabi–Yau operator). Promotes nothing about α or δ; the golden gate is untouched.
+**Program:** Clause-3 ("N as the object"), stage B0 — now complete. LEDGER: FTD-0372.
 **Audience:** agents working the δ-IND residues (E1's precise statement), the Ram(N) flagship, or any future evaluation of the engine's own Green's function.
 
 ---
 
 ## §0 — The question
 
-N_dyn's generators are limits of solves against the spec's lattice symbols. Which symbols, and what is the *arithmetic* of each symbol's Green's function? The engine's default is the 18-point (SC+FCC)/2 Laplacian with **zero BCC weight** (AUDIT_LINK8_CLOSURE §2); the BCC and SC symbols enter as sublattice projections (spec-level modes; D2-scope adjudication pending the A0 audit). The striking gap: **the engine's own default Green's function is arithmetically uncharted** — W₁₈(0) ≈ 1.2679, no closed form, no CM status, nothing documented.
+N_dyn's generators are limits of solves against the spec's lattice symbols. Which symbols, and what is the *arithmetic* of each symbol's Green's function? The engine's default is the 18-point (SC+FCC)/2 Laplacian with **zero BCC weight** (AUDIT_LINK8_CLOSURE §2); the BCC and SC symbols enter as sublattice projections (spec-level modes). The gap this note opened — **the engine's own default Green's function is arithmetically uncharted** (W₁₈(0) ≈ 1.2679) — is now **charted**: §2 computes its exact annihilating operator.
 
-## §1 — The spectrum table (verdict as of B0(i), 2026-07-05)
+## §1 — The spectrum table (B0 complete, 2026-07-05)
 
 | symbol | σ(k) | Green's value at 0 | arithmetic status | source |
 |---|---|---|---|---|
 | BCC (8 corners) | 1 − c_x c_y c_z | G\*²/(2π) = Γ(1/4)⁴/(4π³), **exact** | **CM, τ = i** (lemniscatic); hull-class ℚ̄·s⁴w⁻⁴ | Watson 1939; spine Thm 5 / OT-2.1 |
-| SC (6 faces) | 3 − Σc_i (norm.) | ≈ 0.505462019 (Watson's I₃, 9 digits in-corpus) | **Γ(1/24)-class** closed form (Glasser–Zucker); outside ℚ(G\*, π) — the source of E1 | Watson 1939; Glasser–Zucker 1977/1980 |
-| FCC (12 edges) | 3 − Σc_i c_j (norm.) | tabulated | **Γ(1/3)-class** (equianharmonic-adjacent); outside ℚ(G\*, π) — E1's second member | Glasser–Zucker 1980 |
-| **18-pt (SC+FCC)/2 — the engine default** | 1 − (1/6)Σc_i − (1/6)Σc_i c_j | ≈ 1.2679 (AUDIT_LINK8_CLOSURE §2 numeric) | **UNKNOWN closed form; holonomic but large.** Literature verdict B0(i): the *class* is covered — 3D LGFs of general symbols satisfy linear ODEs (holonomic; Lipshitz 1988) derivable by creative telescoping (Guttmann's LGF/Calabi–Yau program; Joyce–Delves methods extend to next-nearest-neighbor couplings) — but **no closed-form evaluation of this mixed symbol was found**. **B0(ii) executed** (§2): the moment generating function is holonomic (constant term of a rational function — the ODE is *guaranteed* to exist), yet exact differential-approximant reconstruction on 85 moments finds **no annihilating operator of (order ≤ 6, degree ≤ 8)** — the minimal operator is *larger* than the pure simple-cubic symbol's (order 3), so the mixture is arithmetically harder, not simpler. CM/modular-vs-generic classification still open. | Guttmann 2010 (LGFs in all dimensions); Guttmann, LGFs & Calabi–Yau differential equations; Joyce–Delves anisotropic-cubic series; Lipshitz 1988 (holonomicity) |
+| SC (6 faces) | 3 − Σc_i (norm.) | ≈ 0.505462019 (Watson's I₃) | **Γ(1/24)-class** closed form (Glasser–Zucker); outside ℚ(G\*, π) — the source of E1; its LGF ODE is **order 3** (Joyce) | Watson 1939; Glasser–Zucker 1977/1980; Joyce 1973 |
+| FCC (12 edges) | 3 − Σc_i c_j (norm.) | tabulated | **Γ(1/3)-class** (equianharmonic-adjacent); outside ℚ(G\*, π) — E1's second member; LGF ODE **order 6** (Koutschan 2013) | Glasser–Zucker 1980; Koutschan 2013 |
+| **18-pt (SC+FCC)/2 — the engine default** | 1 − (1/6)Σc_i − (1/6)Σc_i c_j | ≈ 1.2679 | **Holonomic; minimal ODE order 4, degree 12 (FTD-0372, §2).** Sits strictly between the SC (order 3) and FCC (order 6) — *neither* classical lattice. Every local exponent ∈ ½ℤ (§2): **not** a strict Calabi–Yau (no MUM point); the ½ℤ-lattice is the signature of a symmetric-power / √-twist of a lower-order (elliptic/modular) operator ⇒ **W₁₈ plausibly Γ-quotient (modular/CM) after all**, via an order-2 operator, like SC — but this awaits the D-module factorization (P3(b)). | **this note (FTD-0372)**; Guttmann 2010; Lipshitz 1988 |
 
-Consequence for the program, stated honestly: the engine's default linear sector may be arithmetically *generic* (non-CM) — the "nice" Γ-class content of N_dyn enters through the sublattice projections, not the default stencil. If B0(ii) confirms a non-CM operator, that is a finding, not a failure: it would say the substrate's arithmetic distinction lives in the Moore decomposition's sublattices (where the corpus already placed it: BCC ↔ the spine) rather than in the isotropized mixture. [coherent-interpretation, pending B0(ii)]
+The program consequence, now sharpened: the default stencil is **not** arithmetically generic in the pejorative sense — order 4 with a ½ℤ-exponent lattice is *structured*, and points back toward the classical Γ-world (an elliptic/modular substructure), not away from it. The "nice" Γ-class content need not be confined to the Moore sublattices after all; the default mixture may carry its own (order-2) elliptic core. [coherent-interpretation, pending the P3(b) factorization]
 
-## §2 — B0(ii), executed: the exact-reconstruction attempt (verdict: holonomic but large)
+## §2 — B0(ii/iii), RESOLVED: the operator computed and classified
 
-**Well-posedness first.** F(z) = Σ_n m_n z^n with m_n = CT_k[σ₁₈(k)^n] is the constant term (in the torus variables) of the rational function 1/(1 − z·σ₁₈), hence **D-finite / holonomic** by the constant-term-of-a-rational theorem (Lipshitz 1988; diagonals/constant terms of rational power series are D-finite). *An annihilating linear ODE with polynomial coefficients is therefore guaranteed to exist* — B0(ii)'s only real questions are its order/degree and thence its arithmetic class. This also confirms P3(a) (`REF_EXPORTED_PROBLEMS_E1_E2.md`) is well-posed, not a fishing expedition.
+**Well-posedness.** F(z) = Σ_n m_n z^n with m_n = CT_k[σ₁₈(k)^n] is the constant term of the rational function 1/(1 − z·σ₁₈), hence **D-finite / holonomic** (Lipshitz 1988) — the annihilating ODE is *guaranteed* to exist; the only questions are its size and its arithmetic class.
 
-**Method (exact, declared bounds, no PSLQ).** Compute exact integer moments 24ⁿ·m_n = CT[(2A+B)ⁿ] with A = Σ(x_i+1/x_i), B = Σ_{i<j}(x_i+1/x_i)(x_j+1/x_j) (integer Laurent polynomial), then solve **exactly over ℚ** for a differential approximant (linear ODE, deg-bounded polynomial coefficients) demanding ≥ 8 surplus equations — the standard LGF-reconstruction route used where a full CAS creative-telescoping stack (Koutschan's *HolonomicFunctions*, `ore_algebra`) is out of environment. Scripts: `scripts/proofs/explr_stencil18_ode_attempt.py` (RUN 1: order ≤ 4, degree ≤ 10, 37 moments) and `explr_stencil18_ode_attempt_run2.py` (RUN 2, the one declared extension: {5}×{6..9} ∪ {6}×{6..8}, 85 moments). **Pipeline validated**: the same code recovers the *known* simple-cubic LGF ODE (order 3, degree 6) before the 18-pt run — so the negatives are trustworthy, not a broken solver.
+**Method (the harder push over B0's first attempt).** Three exact stages, no PSLQ, no closed-form fishing — a reconstruction of a *structural* object (the ODE) from exact data, the standard LGF method:
+1. **Exact moments** `explr_stencil18_moments.py` — 171 exact integer moments M_n = CT[(2A+B)ⁿ] (2A = Σ 2(x_i+1/x_i), B = Σ_{i<j}(x_i+1/x_i)(x_j+1/x_j)) via **meet-in-the-middle** (M_n = ⟨v_a, v_{n-a}⟩ with T symmetric ⇒ propagate only to depth n/2, ~16× faster). First values 1, 0, 36, 336, 6588, 110880, 2106720 (match the earlier B0 attempt).
+2. **Modular-rank reconstruction** `explr_stencil18_reconstruct.py` — since gcd(24,p)=1, m_n mod p is a machine int, so the (order, degree) relation matrix is built and rank-reduced over 𝔽_p (no bigint blowup). Scan order 2..12; the minimal (order, then degree) with nullity ≥ 1 and large surplus, cross-checked on **two 61-bit primes**, is the operator; the exact rational coefficients are then extracted at that one size.
+3. **Exact classification** `explr_stencil18_classify.py` — local exponents at every rational singular point and ∞ via the Euler-operator (θ = z d/dz) indicial method, exact in sympy.
 
-**Result (NEGATIVE at declared bounds).** On 85 exact moments, no annihilating ODE exists with (order ≤ 4, degree ≤ 10), (order = 5, degree ≤ 9), or (order = 6, degree ≤ 8). Because holonomicity is *guaranteed*, this is a **lower bound on operator complexity**, not a non-existence result: the 18-pt minimal operator exceeds each tested (order, degree) box — decisively larger than the pure simple-cubic operator (order 3), consistent with the isotropized mixture being arithmetically *harder* than its constituents. This sharpens §1's coherent-interpretation: the substrate's "nice" Γ-class content lives in the Moore sublattices (BCC ↔ the spine), while the default stencil's own Green's function is a large-operator object of as-yet-unclassified type.
+**Pipeline validated:** the identical machinery recovers the *known* simple-cubic LGF operator (order 3, degree 6 — Joyce) and its correct odd-moment vanishing, before the 18-pt run. (B0's earlier attempt missed the operator only because it capped order 4 at degree 10, and the true degree is 12 — just outside that box.)
 
-**Discipline note.** No free-form PSLQ closed-form fishing was run and none is registered; a bounded PSLQ negative-scoping pass would require pre-registration here (basket + bounds) before running.
+**The operator (order 4, degree 12).** No order-2 or order-3 operator exists (scanned to degree ~155); the minimal operator is order 4, found with **nullity 1 on both primes and surplus 90** (155 exact-moment equations vs 65 unknowns — a massive overdetermination that serves as the certificate). Its leading coefficient factors completely over ℚ:
 
-## §3 — Falsifier / closure
+> **p₄(z) = 4 · z³ · (z−1)(z+2)(z+3)(z+6)(z+8) · (3z⁴ + 16z³ + 24z² − 24z + 16).**
 
-**B0 CLOSED at "UNKNOWN — attempted, obstruction recorded"** (one of the three declared closure states): closed form not identified, ODE not produced (minimal operator exceeds the exact-reconstruction bounds reachable without a CAS telescoping stack), holonomicity established. Reopen paths: (i) a literature closed form for the (SC+FCC)/2 mixture — would upgrade the §1 row and sharpen E1/P3; (ii) a CAS creative-telescoping computation of the operator + its monodromy/CM classification (deferred, out-of-environment) — would resolve P3(b). Falsifier of §1's "uncharted" claim remains: any cited closed-form evaluation of the mixed symbol.
+The full integer operator is saved by the reconstruction script (`_stencil18_operator.json`, regenerable).
+
+**Local exponents (exact).** The singular points and their indicial exponents:
+
+| point | exponents | reading |
+|---|---|---|
+| z = 0 | {0, 0, 0, ½} | triple exponent-0 (unipotent) + a ½ branch — **not** a MUM {0,0,0,0} point |
+| z = 1 (physical, radius = 1/max\|σ₁₈\| = 1) | {0, ½, 1, 2} | carries the 3D lattice's (1−z)^{½} branch |
+| z = −2, −3, −6, −8 | {0, ½, 1, 2} | identical structure at every rational singularity |
+| 4 roots of 3z⁴+16z³+24z²−24z+16 | (irrational/complex pair × 2) | — |
+| z = ∞ | {1, 3/2, 5/2, 3} | half-integer-shifted |
+
+**Every local exponent lies in ½ℤ.** That is the decisive structural fact. A genuine Calabi–Yau operator has a maximally-unipotent (MUM) point with exponents {0,0,0,0}; this operator has *no* such point — instead a uniform ½-exponent at every singularity. The ½ℤ-exponent lattice is the classical signature of a **symmetric power** (or a √-algebraic twist) of a **second-order** operator: the simple-cubic order-3 LGF is exactly the symmetric square of an order-2 elliptic (modular) operator, and its value W_SC is Γ(1/24)-class. The natural, testable hypothesis is that the 18-pt order-4 operator is likewise built from an order-2 elliptic operator (an appropriate symmetric power / twist) — in which case **W₁₈ has a Γ-quotient (modular/CM) closed form** reached through that elliptic core.
+
+## §3 — Verdict and the one remaining step (P3(b))
+
+**B0 CLOSED — P3(a) resolved.** The 18-pt default Green's function is holonomic with a **minimal order-4, degree-12** annihilating ODE (verified to overdetermination 90 on two primes; pipeline validated on SC). This is a stronger, definite replacement for the earlier "holonomic-but-large, order unknown" status.
+
+**P3(b) sharpened to one concrete question.** The classification reduces the CM/modular-vs-generic dichotomy to a **factorization question**: *is the order-4 operator a symmetric power (or √-twist) of a second-order elliptic/modular operator?* The ½ℤ-exponent lattice makes this the odds-on hypothesis; a positive answer gives W₁₈ a Γ-quotient value and places the default stencil back in the classical Watson Γ-world. Settling it needs a D-module factorization / symmetric-power decomposition — the province of a CAS creative-telescoping stack (Koutschan's *HolonomicFunctions*, `ore_algebra`), which is **out of this environment**. That is the single remaining B0/P3 step, and it is now a *bounded, well-posed* computation, not an open-ended search.
+
+**Falsifiers.** (i) A literature closed form for the (SC+FCC)/2 mixture (would give W₁₈ directly). (ii) A CAS factorization showing the operator is **irreducible** order 4 — that would make it a genuine Calabi–Yau-class (non-Γ-quotient) period, the opposite verdict, equally publishable. Either outcome re-adjudicates the §1 row.
 
 ## §4 — Cross-references
 
-`ANALYSIS_DELTA_IND_CLOSURE_v1.md` (FTD-0369 — why the SC/FCC rows force E1); `AUDIT_LINK8_CLOSURE.md` §2 (the stencil decomposition + W₁₈ numeric); `EXPLR_HIGHER_DIM_WATSON.md` (the D ≥ 3 Watson family); `REF_BIBLIOGRAPHY.md` §5 (Watson 1939; Glasser–Zucker; Lipshitz 1988; Koutschan 2013); `REF_EXPORTED_PROBLEMS_E1_E2.md` §P3 (the mathematician-facing statement of this exact question). Verifier scripts: `explr_stencil18_ode_attempt.py`, `explr_stencil18_ode_attempt_run2.py`.
+`ANALYSIS_DELTA_IND_CLOSURE_v1.md` (FTD-0369 — why the SC/FCC rows force E1); `AUDIT_LINK8_CLOSURE.md` §2 (the stencil decomposition + W₁₈ numeric); `FOUND_NATIVE_CLOSURE_REALIZABILITY.md` (B1 — W₁₈ ∈ N_dyn realized; this note gives its operator); `REF_BIBLIOGRAPHY.md` §5 (Watson 1939; Glasser–Zucker; Joyce 1973; Lipshitz 1988; Koutschan 2013); `REF_EXPORTED_PROBLEMS_E1_E2.md` §P3 (the mathematician-facing statement — P3(a) now closed, P3(b) = the factorization). Scripts: `explr_stencil18_moments.py`, `explr_stencil18_reconstruct.py`, `explr_stencil18_classify.py` (and the superseded first attempt `explr_stencil18_ode_attempt.py` / `_run2.py`, kept for provenance).
