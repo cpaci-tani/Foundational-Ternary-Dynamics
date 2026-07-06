@@ -1,5 +1,44 @@
 # Foundational Ternary Dynamics Changelog
 
+## The engine's default Green's function, charted — its ODE computed (FTD-0372, 2026-07-05)
+
+New mathematics: the exact annihilating ODE of the substrate's **own default**
+18-point (SC+FCC)/2 lattice Green's function, closing exported problem P3(a).
+Docs + three scripts; no physics claim moved; golden gate untouched.
+
+- **FTD-0372 — the 18-point LGF operator.** The engine default stencil's
+  Green's function F(z) = Σ CT[σ₁₈ⁿ] zⁿ is holonomic (Lipshitz 1988) with a
+  **minimal annihilating ODE of order 4, degree 12** — no order ≤ 3 operator
+  exists (scanned to degree ~155). Computed by:
+  - **exact moments** (`explr_stencil18_moments.py`) — 171 exact integer
+    moments by *meet-in-the-middle* (M_n = ⟨v_a, v_{n−a}⟩ with T symmetric ⇒
+    propagate only depth n/2, ~16× faster);
+  - **modular-rank reconstruction** (`explr_stencil18_reconstruct.py`) — since
+    24 is invertible mod p, detect the minimal operator over 𝔽_p (machine ints,
+    no bigint blowup), cross-checked on two 61-bit primes with **nullity 1 and
+    surplus 90** (155 equations vs 65 unknowns — the certificate);
+  - **exact classification** (`explr_stencil18_classify.py`) — Euler-operator
+    indicial exponents, exact in sympy.
+  The pipeline is validated by recovering the *known* simple-cubic order-3
+  operator (Joyce). B0's earlier attempt missed the operator only because it
+  capped order 4 at degree 10, and the true degree is 12.
+- **The structure.** Leading coefficient factors over ℚ:
+  `4z³(z−1)(z+2)(z+3)(z+6)(z+8)(3z⁴+16z³+24z²−24z+16)`. Local exponents
+  `{0,0,0,½}` at z=0; `{0,½,1,2}` at z=1 (physical), −2, −3, −6, −8;
+  `{1,3/2,5/2,3}` at ∞. **Every exponent lies in ½ℤ, and there is no
+  maximally-unipotent (MUM) point** — so this is *not* a strict Calabi–Yau
+  operator; the ½ℤ-lattice is the classical signature of a **symmetric power /
+  √-twist of a second-order elliptic operator** (as the SC order-3 LGF is the
+  symmetric square of an elliptic order-2 operator). The 18-pt sits strictly
+  between SC (order 3) and FCC (order 6) — neither classical lattice.
+- **Verdict.** P3(a) **closed**; P3(b) **sharpened** from "unknown" to one
+  bounded factorization question: symmetric power of an order-2 elliptic
+  operator (⇒ W₁₈ a Γ-quotient / modular-CM value, back in the classical
+  Watson Γ-world) vs irreducible order-4 (⇒ a genuine Calabi–Yau-class period).
+  Deciding it needs a D-module CAS (`ore_algebra` / Koutschan's
+  *HolonomicFunctions*), out of environment. `EXPLR_STENCIL_SPECTRUM.md`
+  rewritten; the P3 export and realizability R3 updated. Next free id FTD-0373.
+
 ## The priced-import ledger — Clause 1 of the goal-evolution program (FTD-0371, 2026-07-05)
 
 The Number-One Goal's second face — *"mark which types the ontology must
