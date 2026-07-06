@@ -42,7 +42,7 @@ This pass classifies the **decisive set** the falsifier tests: the algebraic-spi
 | FTD-0006 / 0007 coefficient 16 = \|Aut(E)\|^2 | STRUCTURAL | automorphism-group order squared -- pure combinatorics |
 | FTD-0008 Moore integers {N_base=4, N_eff=13, b_3=7} | STRUCTURAL | neighbour/shell counts of the Moore neighbourhood |
 | FTD-0009 charge conservation per tick | STRUCTURAL | conservation = the identity 0 = (-1)+(+1) |
-| FTD-0010 D = 3 from \|Aut(E)\|^2 = 2^D(D-1)! | STRUCTURAL | combinatorial identity forcing the integer D |
+| FTD-0010 D = 3 from \|Aut(E)\|^2 = 2^D(D-1)! | STRUCTURAL | combinatorial identity solving for the integer D (arithmetic uniqueness [THEOREM]; dimension-forcing is [SELECTION — declared], FTD-0355) |
 | FTD-0011 Phase H coupling-scaling *relation* | STRUCTURAL | a structural relation (alpha_r scales with g_c^2), not a value-claim |
 | FTD-0012 discriminant trichotomy (algebra) | STRUCTURAL | Delta < 0 / = 0 / > 0 is an algebraic fact |
 | FTD-0154-0166 G*-opus theorems (block) | STRUCTURAL | modular-form / chi_-4 identities; algebraic, calibration-invariant |

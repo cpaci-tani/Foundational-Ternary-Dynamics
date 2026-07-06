@@ -39,6 +39,7 @@ Physics identifications ride at their actual tags and are never promoted by rhet
 The map of what the discrete ontology can and cannot set for itself: `docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md`.
 
 - **The modulus/argument frontier** (`docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md`): a finite, discrete, deterministic, forward-only substrate owns the forced/modulus/even half (π) and cannot self-supply the chosen/argument/odd half (G*, the chosen adjoint δ).
+- **The priced-import ledger** (`docs/theory/01_reference/SPEC_IMPORT_LEDGER.md`, FTD-0371): the frontier made *quantitative* — every imported type in a common currency with a falsifier each: 1 adopted bit (FC-W/δ), 3 selected types (incl. **D=3 — [SELECTION — declared], FTD-0355**), 4 named results (Chudnovsky + CM-h=1/E1/E\*/E\*\*), 3 calibrations (a_phys/t_phys/K_B), the empirical bridges, and 2 *declined* bets (M, reversibility). ⚠ Reading guard: the "1 bit" is the α-branch choice only, not the total physics import.
 - **The type-priority principle** (`docs/theory/02_foundations/FOUND_TYPE_PRIORITY_PRINCIPLE.md`): context (a type) is prior to and the precondition for the value of content (a token); the Framework Commitments are precondition-types, which is why they are adopted rather than derived.
 - Which predictions are dimensionless vs calibration-conditional: `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md`.
 

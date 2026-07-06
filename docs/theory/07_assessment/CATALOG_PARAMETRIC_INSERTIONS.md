@@ -278,7 +278,7 @@ Absence claims are testable and count as evidence. FTD's ternary + lattice struc
 | τ_proton = ∞ | Σs (U(1)) charge conservation is exact, but FTD has **no baryon/B−L current** — does not forbid charge-balanced `p→e⁺+π⁰`; the mixed-sign uud proton is unprotected by the same-sign triad lock, metastable, and decayed by FTD's own weak channel | [SELECTION] / [BOUNDARY] (FTD-0301) | `proof_complete_sm.py:460–476` |
 | N_monopole = 0 | div(B) ≡ div(curl J) = 0 identity | [THEOREM] | `proof_complete_sm.py:495` |
 | N_SUSY = 0 | Ternary {−1,0,+1} carries no fermionic grading | [THEOREM] | `proof_complete_sm.py:500` |
-| Extra dimensions = 0 | \|Aut(E)\|² = 2^D·(D−1)! forces D = 3 | [THEOREM] | `proof_complete_sm.py:503` |
+| Extra dimensions = 0 | \|Aut(E)\|² = 2^D·(D−1)! = 16 has D = 3 as its unique arithmetic solution ([THEOREM]); the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355) — the RHS target 16 = \|O_h\|/3 presupposes D=3, a circularity named (bounded search) | arithmetic-uniqueness [THEOREM] / dimension-forcing [SELECTION — declared] (FTD-0355) | `proof_complete_sm.py:503` |
 
 **Experimental status.** Proton decay, monopoles, SUSY partners, and extra dimensions have all been *searched for and not found*, consistent with FTD null-predictions.
 

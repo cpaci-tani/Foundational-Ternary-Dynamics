@@ -36,7 +36,7 @@ Indeed the result is sharper than required: the **lepton mass ratios and mixing 
 | `m_p/m_e` | `N_eff·x₊ + …` | **uses `δ`** (via `x₊`) | δ-act |
 | `α_G` | `2π·(…)·α²⁰` | **uses `δ`** (via α) + `π` magnitude | δ-act |
 | `G_C = √α` | positive root of `α ∈ ℚ(G*,δ)` | **forced magnitude** | none — a positive coupling, one branch |
-| `C_SPEED = 1/√3` | `1/√D`, `D=3` forced | **forced magnitude** | none — a positive speed |
+| `C_SPEED = 1/√3` | `1/√D` at `D=3` [SELECTION] | **forced magnitude** (given D) | none — a positive speed |
 | `√(2π)` (in `m_e`) | Gaussian normalization | **forced magnitude** + **calibration** | none |
 | `m_e` (MeV), `ℓ_P`, VEV, `M_Z` | dimensional | **calibration** | none (separate register) |
 

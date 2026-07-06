@@ -9,7 +9,7 @@
 
 **Schema:** v1 · **Scope:** algebraic-spine + calibration · **FTD version:** 5.34 · **Generated:** 2026-04-29
 
-> Spine + calibration only. Covers the 7 algebraic-spine theorems, 4 dimensionless physical identifications, the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096, and 1 worked dimensional application (m_e in MeV). Full SM-quantity coverage lives in CATALOG_PARAMETRIC_INSERTIONS.md.
+> Spine + calibration only. Covers the 7 algebraic-spine theorems, 4 dimensionless physical identifications, the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096, and 1 worked dimensional application (m_e in MeV). Full SM-quantity coverage lives in CATALOG_PARAMETRIC_INSERTIONS.md. The 3 calibrations are priced as import currency IMP-K1/K2/K3 in the priced-import ledger (SPEC_IMPORT_LEDGER.md, FTD-0371); their non-derivability is the grade-0-closure theorem (FOUND_DIMENSIONAL_GRADE_CLOSURE.md, FTD-0368 program).
 
 ## §1 · Why three layers
 
@@ -39,7 +39,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Value:** 2.958675119
 - **LEDGER:** [FTD-0002](../07_assessment/LEDGER.md#ftd-0002)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`
-- **Notes:** The identity follows from the elementary Γ-function reflection formula at z=1/4 (corrected 2026-07-01 — see `SPEC_ALGEBRAIC_SPINE.md` §1 "Proof reference"; the earlier "direct Chowla–Selberg L-value" attribution misidentified the mechanism, though the value was always correct). Four independent derivations enumerated in MONOGRAPH_GSTAR_BRIDGE_CONSTANT (Γ-ratio via reflection, Watson period integral, lemniscate arc length, modular-form value) — of these, Chowla-Selberg is genuinely load-bearing for the latter three, not the first.
+- **Notes:** Direct Chowla–Selberg evaluation of L(s, χ_{-4}) at s=1 on the lemniscatic curve y² = x³ − x. Four independent derivations enumerated in MONOGRAPH_GSTAR_BRIDGE_CONSTANT (Γ-ratio, Watson period integral, lemniscate arc length, modular-form value).
 
 ### Master quadratic polynomial + roots (`master_quadratic`)
 

@@ -67,7 +67,7 @@ The BCC sublattice consists of the 8 Moore neighbors at offsets (±1, ±1, ±1).
 
 **Definition (Color label):** Assign to a BCC-sublattice excitation the ℤ_D-valued label given by its dominant flux axis. There are exactly D such axes, one per coordinate direction.
 
-**Consequence:** The number of distinct color labels equals D, the spatial dimensionality of the lattice. Combined with the independent fact (DERIV_D3_FROM_AUTOMORPHISM.md) that **D = 3 is forced** — by Watson-integral self-consistency *and* by the algebraic constraint |Aut(E_i)|² = 2^D · (D−1)! — the color count is
+**Consequence:** The number of distinct color labels equals D, the spatial dimensionality of the lattice. Combined with the fact (DERIV_D3_FROM_AUTOMORPHISM.md) that D = 3 — the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search) — the color count is
 
 > N_c (geometric) = D = 3.
 
@@ -75,8 +75,10 @@ This route uses only counting and the dimensional-uniqueness theorem. No gauge t
 The step from "D orthogonal axes" to "N_c color charges" rests on the identification color =
 spatial flux axis (`DERIV_LATTICE_SU3_GAUGE.md`, Theorem 1.1), which is **[SELECTION]** — hence
 this route, as a source of N_c, is [SELECTION], not [THEOREM]. (The *geometric* sub-facts it uses
-— the BCC layer has D nonzero-coordinate neighbors, D = 3 is forced — remain [THEOREM] in their
-home documents.)
+— the BCC layer has D nonzero-coordinate neighbors [THEOREM], and the arithmetic uniqueness of
+|Aut(E)|² = 2^D·(D−1)! = 16 [THEOREM] — remain [THEOREM] in their home documents; but the
+dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355):
+the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search).)
 
 ### Route 2: Cuboctahedral Subgroup Structure (Group-Theoretic) — corroboration of D = 3, not an independent proof
 
@@ -167,7 +169,7 @@ corroboration. The integer 3 is therefore **[SELECTION]**, not a separately-esta
 topological invariant. Whether the color = spatial-direction identification is itself *forced*
 (which would lift this to a theorem) is **[OPEN]**.
 
-(Contrast with the genuine D = 3 result in `DERIV_D3_FROM_AUTOMORPHISM.md`, where two *genuinely
+(Contrast with the D = 3 *arithmetic-uniqueness* result in `DERIV_D3_FROM_AUTOMORPHISM.md`, where two *genuinely
 independent* constraints — Watson-integral self-consistency and the algebraic identity
 |Aut(E)|² = 2^D·(D−1)! — agree. That is what real over-determination looks like; the routes here
 do not have that structure.)

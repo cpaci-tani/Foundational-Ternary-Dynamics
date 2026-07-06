@@ -57,7 +57,7 @@ OUTPUT: ~126 numerical results covering PDG particle physics format
 - +1 = Positive manifestation (matter-like)
 - -1 = Negative manifestation (antimatter-like)
 
-**Why D = 3?** (Previously axiomatic, now DERIVED)
+**Why D = 3?** ([SELECTION — declared], FTD-0355 — not forced; sufficiency arguments below, circularity named)
 - D < 3: No stable atoms, trivial gauge theories
 - D = 3: Unique dimension with stable atoms AND asymptotic freedom
 - D > 3: Atomic collapse, non-renormalizable gauge theories
@@ -453,7 +453,7 @@ Error: **0.01%**
 - **Prediction:** No superpartners will be found
 
 ### Extra Dimensions: EXCLUDED
-- D = 3 is uniquely selected (see Section 2)
+- D = 3 is a [SELECTION — declared] (FTD-0355; not forced — see Section 2), so no extra spatial dimensions
 - **Prediction:** No Kaluza-Klein modes; no gravity deviation from 1/r²
 
 ### String Theory: INCOMPATIBLE
@@ -1116,7 +1116,7 @@ Each step is forced by the previous one via algebraic necessity, CM theory, or l
 
 ### 29.4 Dimensional Uniqueness: D = 3 from Elliptic Automorphisms
 
-The spatial dimension D = 3 is no longer axiomatic. It is derived from the automorphism group of the CM elliptic curve E: y^2 = x^3 - x:
+The spatial dimension D = 3 is a [SELECTION — declared] (FTD-0355). The automorphism identity below has D = 3 as its unique arithmetic solution [THEOREM], but does not force it as the physical dimension (the RHS target presupposes D = 3 — circularity named):
 
 ```
 |Aut(E_i)|^2 = 4^2 = 16 = 2^D * (D-1)!
@@ -1128,7 +1128,7 @@ Solving: 2^D * (D-1)! = 16
   D=4: 16*6 = 96    (no)
 ```
 
-D = 3 is the unique solution, eliminating the dimensionality axiom.
+D = 3 is the unique arithmetic solution of 2^D·(D−1)!=16 [THEOREM]; this does not eliminate the dimensionality axiom — the dimension-forcing is [SELECTION — declared] (FTD-0355, circularity named).
 
 ---
 

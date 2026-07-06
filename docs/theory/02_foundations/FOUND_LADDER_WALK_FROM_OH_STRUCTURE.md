@@ -94,7 +94,7 @@ These three readings agree: **$N_{\text{base}} = 4$ is forced by $O_h$**.
 - $T_{1u}$ is the standard vector rep (the action of $O_h$ on Cartesian axes).
 - $N_c = 3$ = spatial dimension $D$ = smallest faithful-vector irrep dimension.
 
-**$N_c = 3$ is forced by $O_h$** (and equivalently by $D = 3$, which itself is forced by the combinatorial identity $16 = 2^D(D-1)!$ from FTD-0080).
+**$N_c = 3$ is forced by $O_h$** (and equivalently by $D = 3$). The arithmetic uniqueness of the combinatorial identity $16 = 2^D(D-1)!$ from FTD-0080 is a **[THEOREM]** ($D=3$ is its unique positive-integer solution), but the dimension-forcing (that $D=3$ *is* the physical spatial dimension) is **[SELECTION — declared] (FTD-0355)**: the RHS target $16 = |O_h|/3$ presupposes $D=3$, a circularity named (bounded search).
 
 **$N_f = 6$ from $O_h$:**
 - $|$face orbit$|$ = $6$ (the $O_h$-orbit of a face, with stabilizer $C_{4v}$ of order $8$; $48 / 8 = 6$).

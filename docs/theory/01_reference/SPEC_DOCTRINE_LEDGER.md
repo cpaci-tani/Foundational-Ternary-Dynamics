@@ -370,7 +370,7 @@ This audit is a roll-up of the canonical LEDGER tags into four layers. **It intr
 
 These have proof chains entirely inside FTD's axiom set or its rigorous algebraic spine:
 
-`J² = −I`, `J⁴ = I`; `G* = Γ(1/4)/Γ(3/4)`; `G* = Γ(1/4)²/(π√2)`; `G_N* → G*` at `O(1/N²)`; `det_ζ D_{3/4}/det_ζ D_{1/4} = G*`; `G* = 2 cosh(χ_G)`; `q* = e^{−χ_G}`; symmetric recurrence; transfer-matrix `det = 1`; Casimir invariant `I_m`; Möbius reduction `z_{m+1} = s − 1/z_m`; regime split `\|s\| < 2 / = 2 / > 2`; `x² + y² ↦ x² − y²` under `y ↦ Jy`; light-cone boundary; `cos(2θ) = x² − y²`; `P_G = (G*/2, √(G*²−4)/2)`; coefficient 16 = `\|Aut(E)\|²`; tower harmonic invariant `1/y_+ + 1/y_- = 1`; `Q(G*) ∩ Q(π) = Q` (conditional on Chudnovsky 1976); per-voxel mass gap; D = 3 from `\|Aut(E)\|² = 2^D(D−1)!`; Moore integers `{N_c=3, N_base=4, b_3=7, N_eff=13}`; `a_phys ≡ ℓ_P` no-go theorem.
+`J² = −I`, `J⁴ = I`; `G* = Γ(1/4)/Γ(3/4)`; `G* = Γ(1/4)²/(π√2)`; `G_N* → G*` at `O(1/N²)`; `det_ζ D_{3/4}/det_ζ D_{1/4} = G*`; `G* = 2 cosh(χ_G)`; `q* = e^{−χ_G}`; symmetric recurrence; transfer-matrix `det = 1`; Casimir invariant `I_m`; Möbius reduction `z_{m+1} = s − 1/z_m`; regime split `\|s\| < 2 / = 2 / > 2`; `x² + y² ↦ x² − y²` under `y ↦ Jy`; light-cone boundary; `cos(2θ) = x² − y²`; `P_G = (G*/2, √(G*²−4)/2)`; coefficient 16 = `\|Aut(E)\|²`; tower harmonic invariant `1/y_+ + 1/y_- = 1`; `Q(G*) ∩ Q(π) = Q` (conditional on Chudnovsky 1976); per-voxel mass gap; the *arithmetic uniqueness* of D = 3 in `\|Aut(E)\|² = 2^D(D−1)!=16` (the dimension-forcing itself is `[SELECTION]`, FTD-0355 — see §13.2); Moore integers `{N_c=3, N_base=4, b_3=7, N_eff=13}`; `a_phys ≡ ℓ_P` no-go theorem.
 
 **Anchor:** `SPEC_ALGEBRAIC_SPINE.md` 9 theorems + subsidiaries; `TRACKER_ONTIC_TRUTH.md` T1 + T2 + T3.4.
 

@@ -62,7 +62,7 @@ N_eff = b_3 + 2 N_c = 7 + 6 = 13
 
 The framework integers form a closed self-referential system:
 
-1. **N_c = D = 3:** The dimension selects itself
+1. **N_c = D = 3:** the dimension selects itself — [SELECTION — declared] (FTD-0355): the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) presupposes the RHS target 16 = |O_h|/3, a circularity named (bounded search)
 2. **b_3 = N_base + N_c:** Additive closure
 3. **N_eff = F_{b_3} = T_{b_3}:** The crossover index IS b_3
 4. **sin^2(theta_W) = N_c / N_eff:** Ratio of first and last integers
@@ -74,17 +74,16 @@ No free parameters remain once N_gen = N_c is assumed.
 ## Epistemic Status
 
 **[THEOREM]:**
-1. N_c = floor(x_-) = 3 from master quadratic
-2. N_c = D (self-referential, unique to D = 3)
-3. N_base = 2^((D+1)/2) = 4
-4. b_3 = (11 N_c - 2 N_f)/3 = 7 (integer-exact)
-5. b_3 = N_base + N_c (additive closure)
-6. N_eff = b_3 + 2 N_c = 13
-7. sin^2(theta_W) = 3/13
+1. N_base = 2^((D+1)/2) = 4
+2. b_3 = (11 N_c - 2 N_f)/3 = 7 (integer-exact)
+3. b_3 = N_base + N_c (additive closure)
+4. N_eff = b_3 + 2 N_c = 13
+5. sin^2(theta_W) = 3/13
 
 **[SELECTION]:**
 - N_gen = N_c (three generations equals three colors)
 - N_base interpretation as spinor dimension (standard physics identification)
+- N_c = D as a forcing identity — the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). The historical `N_c = floor(x_-) = 3` route is separately RETIRED (x_-  N_c identification removed, FTD-0014); N_c = 3 stands on topology (`DERIV_NC_FROM_TOPOLOGY.md`), not on N_c = D.
 
 ---
 

@@ -379,7 +379,7 @@ These mechanisms are adopted from standard physics without derivation from FTD a
 
 | Input | Status | Note |
 |-------|--------|------|
-| $D = 3$ | [AXIOM] | Physical axiom (uniqueness argued from 6 independent constraints) |
+| $D = 3$ | [SELECTION — declared] | FTD-0355 — adopted lattice dimension; sufficiency arguments (not a uniqueness/forcing proof), circularity named |
 | $\varpi = 2.6221$ | [DEFINITION] | Mathematical constant (not a physical input -- determined by $\Gamma(1/4)$) |
 | ~~$M_{\text{Planck}}$~~ | [THEOREM] | Absorbed: $M_P$ sets the lattice unit scale; all masses are ratios times $M_P$ |
 | ~~$G_F$~~ | [THEOREM] | Now derived: $G_F = 1/(\sqrt{2}\,v^2)$ with $v$ from master quadratic |
@@ -684,7 +684,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-34 | Substrate-to-aggregate transition yields $S > 2$ | [SELECTION] | Three-level hierarchy: L1=2, L2=sqrt(2), L3=2*sqrt(2); see [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) |
 | SM-35 | Two-loop correction closes 1.26 ppm gap | [CONJECTURE] | Right magnitude; exact coefficient not computed |
 | SM-36 | Dark matter = sub-threshold flux, $\mathcal{L} = 0.75$ | [CONJECTURE] | Qualitative consistency only |
-| SM-37 | $D = 3$ uniquely selected by 6 independent constraints | [THEOREM] | Gauge + atomic stability + Fibonacci |
+| SM-37 | $D = 3$ as the physical spatial dimension | [SELECTION — declared] (FTD-0355) | Sufficiency arguments (gauge + atomic stability + Fibonacci), not a forcing proof; the RHS target 16 = \|O_h\|/3 presupposes D=3 — circularity named |
 | SM-38 | $\Lambda_{\text{QCD}}$ from non-circular dimensional transmutation | [THEOREM] | SM-11 + energy-momentum relation |
 | SM-39 | No Landau pole (compact BZ provides UV cutoff) | [THEOREM] | Lattice structure |
 | SM-40 | ABJ anomaly coefficient is topological | [THEOREM] | Winding number over BZ |
