@@ -332,3 +332,6 @@ traj_temp_64.csv
 traj_temp.csv
 traj_temp_128.csv
 .gitignore
+
+# 18-pt stencil moment intermediate (regenerable via explr_stencil18_moments.py)
+scripts/proofs/_stencil18_moments.txt
