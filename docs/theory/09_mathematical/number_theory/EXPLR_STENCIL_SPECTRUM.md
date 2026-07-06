@@ -1,6 +1,6 @@
 # EXPLR — The stencil spectrum of N_dyn: the arithmetic of the spec's three lattice symbols
 
-**Tag:** [EXPLR — B0 of the Clause-2/3 program] → **[NUMERICAL FACT — the 18-point default-stencil Green's function's annihilating ODE computed (order 4, degree 12) and classified; FTD-0372]**. P3(a) **CLOSED** (the operator exists and is order 4); P3(b) **SHARPENED** (every local exponent lies in ½ℤ ⇒ symmetric-power / √-twist hypothesis, *not* a strict Calabi–Yau operator). Promotes nothing about α or δ; the golden gate is untouched.
+**Tag:** [EXPLR — B0 of the Clause-2/3 program] → **[NUMERICAL FACT — the 18-point default-stencil Green's function's annihilating ODE computed (order 4, degree 12), classified, and factored; FTD-0372]**. **P3(a) CLOSED** (order-4 operator) and **P3(b) CLOSED** (irreducible over ℚ̄(z), Sage/ore_algebra; not a symmetric cube; W₁₈ is a genuinely new order-4 period, not a classical elliptic Γ-quotient). Promotes nothing about α or δ; the golden gate is untouched.
 **Program:** Clause-3 ("N as the object"), stage B0 — now complete. LEDGER: FTD-0372.
 **Audience:** agents working the δ-IND residues (E1's precise statement), the Ram(N) flagship, or any future evaluation of the engine's own Green's function.
 
@@ -17,7 +17,7 @@ N_dyn's generators are limits of solves against the spec's lattice symbols. Whic
 | BCC (8 corners) | 1 − c_x c_y c_z | G\*²/(2π) = Γ(1/4)⁴/(4π³), **exact** | **CM, τ = i** (lemniscatic); hull-class ℚ̄·s⁴w⁻⁴ | Watson 1939; spine Thm 5 / OT-2.1 |
 | SC (6 faces) | 3 − Σc_i (norm.) | ≈ 0.505462019 (Watson's I₃) | **Γ(1/24)-class** closed form (Glasser–Zucker); outside ℚ(G\*, π) — the source of E1; its LGF ODE is **order 3** (Joyce) | Watson 1939; Glasser–Zucker 1977/1980; Joyce 1973 |
 | FCC (12 edges) | 3 − Σc_i c_j (norm.) | tabulated | **Γ(1/3)-class** (equianharmonic-adjacent); outside ℚ(G\*, π) — E1's second member; LGF ODE **order 6** (Koutschan 2013) | Glasser–Zucker 1980; Koutschan 2013 |
-| **18-pt (SC+FCC)/2 — the engine default** | 1 − (1/6)Σc_i − (1/6)Σc_i c_j | ≈ 1.2679 | **Holonomic; minimal ODE order 4, degree 12 (FTD-0372, §2).** Sits strictly between the SC (order 3) and FCC (order 6) — *neither* classical lattice. Every local exponent ∈ ½ℤ (§2): **not** a strict Calabi–Yau (no MUM point); the ½ℤ-lattice is the signature of a symmetric-power / √-twist of a lower-order (elliptic/modular) operator ⇒ **W₁₈ plausibly Γ-quotient (modular/CM) after all**, via an order-2 operator, like SC — but this awaits the D-module factorization (P3(b)). | **this note (FTD-0372)**; Guttmann 2010; Lipshitz 1988 |
+| **18-pt (SC+FCC)/2 — the engine default** | 1 − (1/6)Σc_i − (1/6)Σc_i c_j | ≈ 1.2679 | **Holonomic; minimal ODE order 4, degree 12; IRREDUCIBLE over ℚ̄(z) (FTD-0372, §2).** Sits strictly between the SC (order 3) and FCC (order 6) — *neither* classical lattice. Every genuine local exponent ∈ ½ℤ; no MUM point; **and (Sage/ore_algebra) the operator does not factor and is not a symmetric cube of an order-2** ⇒ **W₁₈ does NOT reduce to a classical elliptic Γ-quotient** — it is a *genuinely new order-4 period*, outside ℚ(G\*,π). This is the *opposite* of the sibling SC/FCC/BCC lattices, whose constants are all classical CM Γ-classes. | **this note (FTD-0372)**; Guttmann 2010; Lipshitz 1988; ore_algebra |
 
 The program consequence, now sharpened: the default stencil is **not** arithmetically generic in the pejorative sense — order 4 with a ½ℤ-exponent lattice is *structured*, and points back toward the classical Γ-world (an elliptic/modular substructure), not away from it. The "nice" Γ-class content need not be confined to the Moore sublattices after all; the default mixture may carry its own (order-2) elliptic core. [coherent-interpretation, pending the P3(b) factorization]
 
@@ -42,19 +42,29 @@ The full integer operator is saved by the reconstruction script (`_stencil18_ope
 
 | point | exponents | reading |
 |---|---|---|
-| z = 0 | {0, 0, 0, ½} | triple exponent-0 (unipotent) + a ½ branch — **not** a MUM {0,0,0,0} point |
+| z = 0 | {0, 0, 0, ½} | solution basis {√z, 1, log z, log²z}: a **rank-3 unipotent** block + a ½ branch — **not** a MUM {0,0,0,0} point |
 | z = 1 (physical, radius = 1/max\|σ₁₈\| = 1) | {0, ½, 1, 2} | carries the 3D lattice's (1−z)^{½} branch |
-| z = −2, −3, −6, −8 | {0, ½, 1, 2} | identical structure at every rational singularity |
-| 4 roots of 3z⁴+16z³+24z²−24z+16 | (irrational/complex pair × 2) | — |
+| z = −2, −3 | {0, ½, 1, 2} | genuine singularities |
+| z = −6, −8 and the 4 roots of 3z⁴+16z³+24z²−24z+16 | integer exponents | **apparent** (removable) — ore_algebra confirms |
 | z = ∞ | {1, 3/2, 5/2, 3} | half-integer-shifted |
 
-**Every local exponent lies in ½ℤ.** That is the decisive structural fact. A genuine Calabi–Yau operator has a maximally-unipotent (MUM) point with exponents {0,0,0,0}; this operator has *no* such point — instead a uniform ½-exponent at every singularity. The ½ℤ-exponent lattice is the classical signature of a **symmetric power** (or a √-algebraic twist) of a **second-order** operator: the simple-cubic order-3 LGF is exactly the symmetric square of an order-2 elliptic (modular) operator, and its value W_SC is Γ(1/24)-class. The natural, testable hypothesis is that the 18-pt order-4 operator is likewise built from an order-2 elliptic operator (an appropriate symmetric power / twist) — in which case **W₁₈ has a Γ-quotient (modular/CM) closed form** reached through that elliptic core.
+The **true singular locus is {0, 1, −2, −3, ∞}** (Sage/ore_algebra; z=−6, −8 and the complex roots of the leading coefficient are apparent). **Every genuine local exponent lies in ½ℤ.**
 
-## §3 — Verdict and the one remaining step (P3(b))
+**The factorization (Sage + ore_algebra) settles P3(b) — and refutes the natural guess.** The ½ℤ-exponent lattice *looked* like the signature of a symmetric power / √-twist of a second-order elliptic operator (the simple-cubic order-3 LGF *is* the symmetric square of an elliptic order-2, with W_SC a Γ(1/24)-quotient) — which would have handed W₁₈ its own Γ-quotient closed form. The differential-operator factorization decides otherwise, three ways:
 
-**B0 CLOSED — P3(a) resolved.** The 18-pt default Green's function is holonomic with a **minimal order-4, degree-12** annihilating ODE (verified to overdetermination 90 on two primes; pipeline validated on SC). This is a stronger, definite replacement for the earlier "holonomic-but-large, order unknown" status.
+- **The operator is IRREDUCIBLE over ℚ̄(z).** `right_factor()` returns None and `factor()` returns the operator itself (Sage 9.5 + ore_algebra 0.5). The factorizer **self-validated** first, in the same finite-singularity regime: a Fuchsian *reducible* operator → an order-1 right factor, and the irreducible *elliptic-K* operator → None. Script: `factor_stencil18_sage.py`.
+- **It is not a symmetric cube of an order-2 operator** — an exact-arithmetic argument independent of the CAS: if it were `Sym³(M)` with M's z=0 exponents {a,b}, the operator's exponents would be {3a, 2a+b, a+2b, 3b}, a multiset that can hold three equal values only when a=b (which forces all four equal); but z=0 has {0,0,0,½}, three-and-one. No {a,b} produces it.
+- **No MUM point**, so it is not a Calabi–Yau operator in the strict AESZ sense either.
 
-**P3(b) sharpened to one concrete question.** The classification reduces the CM/modular-vs-generic dichotomy to a **factorization question**: *is the order-4 operator a symmetric power (or √-twist) of a second-order elliptic/modular operator?* The ½ℤ-exponent lattice makes this the odds-on hypothesis; a positive answer gives W₁₈ a Γ-quotient value and places the default stencil back in the classical Watson Γ-world. Settling it needs a D-module factorization / symmetric-power decomposition — the province of a CAS creative-telescoping stack (Koutschan's *HolonomicFunctions*, `ore_algebra`), which is **out of this environment**. That is the single remaining B0/P3 step, and it is now a *bounded, well-posed* computation, not an open-ended search.
+Therefore W₁₈ is the period of a **genuinely irreducible order-4 operator**: it does **not** reduce to a classical elliptic (order-2, Γ-quotient) period the way the SC/FCC/BCC lattice constants do. The substrate's own default Green's constant is arithmetically *new* — outside ℚ(G\*, π) not as a quadratic surd (like δ) nor as a sibling Γ-class (like W_S), but as a higher, order-4 period. (Whether that period has its *own* non-classical closed form — a rigid-Calabi–Yau weight-4 modular link, or a quadratic pullback rationalizing the ½ℤ lattice — is a further question; the P3(b) dichotomy is resolved on the "does not reduce to order-2" side.)
+
+## §3 — Verdict: B0 complete, P3(a) **and** P3(b) resolved
+
+**P3(a) — the operator.** The 18-pt default Green's function is holonomic with a **minimal order-4, degree-12** annihilating ODE (reconstructed from 171 exact moments; verified to overdetermination 90 on two primes; pipeline validated on SC). True singular locus {0, 1, −2, −3, ∞}.
+
+**P3(b) — the arithmetic nature: RESOLVED (irreducible).** The differential-operator factorization (Sage 9.5 + ore_algebra 0.5, WSL2; self-validated on a Fuchsian reducible operator and the irreducible elliptic-K operator) shows the operator is **irreducible over ℚ̄(z)**, and the exact exponent argument shows it is **not a symmetric cube** of an order-2 operator; it also has **no MUM point**. So the CM/modular-vs-generic dichotomy resolves on the *generic* side: **W₁₈ does not reduce to a classical elliptic (Γ-quotient) period** — it is a genuinely irreducible order-4 period, a new arithmetic object outside ℚ(G\*, π). The earlier "odds-on symmetric-power hypothesis" is **refuted**. Scripts: `factor_stencil18_sage.py` (D-module), `explr_stencil18_{moments,reconstruct,classify}.py` (operator + exponents). LEDGER FTD-0372.
+
+**Residual (not needed for the P3 verdict).** The *own* closed form of this order-4 period — a possible rigid-Calabi–Yau weight-4 modular interpretation, or a quadratic pullback rationalizing the ½ℤ-exponent lattice — is a further, harder question; it does not change the classical-vs-new dichotomy, which is settled.
 
 **Falsifiers.** (i) A literature closed form for the (SC+FCC)/2 mixture (would give W₁₈ directly). (ii) A CAS factorization showing the operator is **irreducible** order 4 — that would make it a genuine Calabi–Yau-class (non-Γ-quotient) period, the opposite verdict, equally publishable. Either outcome re-adjudicates the §1 row.
 
