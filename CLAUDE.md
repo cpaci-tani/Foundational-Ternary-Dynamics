@@ -317,6 +317,7 @@ Alpha is restructured (not derived) in the engine — `ALPHA_EFT = G_C²` is an 
   ```
   Windows-native CUDA is acceptable for compile-time checks and single-tick correctness tests only. Any measurement campaign, sweep, or multi-seed run goes through WSL2.
 - Python tests: `scripts/tests/` (pytest). C++ tests: `engine/tests/` (CTest). No overlap between them
+- **D-module / holonomic CAS (WSL2 Ubuntu-22.04):** SageMath 9.5 (`apt sagemath`) + **ore_algebra 0.5** are installed for differential-operator work (factorization, symmetric powers, local solutions). ⚠ numpy is pinned to **1.24.4** in Sage's pip env (ore_algebra pulls numpy 2.x, which breaks Sage 9.5's compiled Cython modules). Run: `wsl.exe -d Ubuntu-22.04 -- bash -lc "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python <script>"`. ⚠ ore_algebra's analytic `right_factor()`/`factor()` need **finite singularities** — constant-coefficient operators (e.g. `Dz²−1`) are degenerate and hang; use Fuchsian operators. Example: `scripts/proofs/factor_stencil18_sage.py` (FTD-0372). WolframScript is present but **license-blocked** (unusable).
 - `scripts/constants.py` is the canonical shared constants module imported by 20+ scripts
 - Build `.bat` files live in `engine/` — use `vswhere.exe` for portable VS detection
 - `dissemination/media/`, `models/`, and `archive/` are gitignored — they exist on disk but not in git

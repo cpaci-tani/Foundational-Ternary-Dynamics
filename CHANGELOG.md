@@ -1,5 +1,35 @@
 # Foundational Ternary Dynamics Changelog
 
+## The default Green's function is arithmetically new — P3(b) closed (FTD-0372, 2026-07-06)
+
+Wired up the D-module toolchain (**Sage 9.5 + ore_algebra 0.5** in WSL2) and
+factored the order-4 operator from the previous entry. Docs + one self-
+validating script; no physics claim moved; golden untouched.
+
+- **The operator is IRREDUCIBLE over ℚ̄(z).** `right_factor()` returns None and
+  `factor()` returns the operator itself. The factorizer **self-validates** in
+  the same finite-singularity regime our operator lives in: a Fuchsian
+  *reducible* operator `(z Dz−2)((z−1)Dz−1)` → an order-1 right factor, and the
+  irreducible *elliptic-K* operator (a=b=½, c=1) → None. (The earlier `Dz²−1`
+  "hang" was a bad test — constant-coefficient operators have *no* finite
+  singularities, degenerate for the analytic algorithm.) True singular locus
+  {0, 1, −2, −3, ∞}; z=0 solution basis {√z, 1, log z, log²z}.
+- **Not a symmetric cube of an order-2 operator** — an exact-arithmetic
+  obstruction independent of the CAS: `Sym³(M)` would give exponents
+  {3a, 2a+b, a+2b, 3b}, which can hold three equal values only when a=b (all
+  four equal); z=0's {0,0,0,½} is three-and-one, so no {a,b} works.
+- **Verdict.** With no MUM point either, W₁₈ does **not** reduce to a classical
+  elliptic (order-2, Γ-quotient) period the way the SC/FCC/BCC lattice
+  constants do — it is a **genuinely new order-4 period**, outside ℚ(G\*,π).
+  This **refutes** the ½ℤ-exponent "symmetric-power / plausibly-Γ-quotient"
+  hypothesis from the previous entry. The substrate's isotropized default
+  mixture manufactures an arithmetic object the pure classical lattices do not.
+- **Residual (doesn't affect the verdict):** the order-4 period's own closed
+  form — a possible rigid-Calabi–Yau / weight-4 modular link, or a quadratic
+  pullback rationalizing the ½ℤ lattice — stays open, exported in P3.
+  `factor_stencil18_sage.py` is self-validating; `EXPLR_STENCIL_SPECTRUM.md`,
+  the P3 export, and realizability R3 updated. Next free id FTD-0373.
+
 ## The engine's default Green's function, charted — its ODE computed (FTD-0372, 2026-07-05)
 
 New mathematics: the exact annihilating ODE of the substrate's **own default**
