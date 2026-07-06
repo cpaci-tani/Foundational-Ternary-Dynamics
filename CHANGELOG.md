@@ -1,5 +1,48 @@
 # Foundational Ternary Dynamics Changelog
 
+## Clause-2/3 program session 1 — checkpoint, grade closure, stencil spectrum (2026-07-05)
+
+The boundary-theorem-ization + N-as-object program (plan: calm-dijkstra v2;
+docs + two verifiers; golden untouched; zero promotions):
+
+- **A1 — ramification checkpoint:** SPEC_ALPHA_READOUT_CONTRACT.md §2.5
+  (theorem basis FTD-0369). Every α/δ-touching claim must state where it
+  ramifies (4G*−1): grade 0 (unit territory — cannot have reached δ; an
+  α-assertion there is a §3 substitution identity), grade ½ (the δ
+  square-class — names the step, reconciles with the FTD-0353 §8 shared
+  falsifier, or declares the FC-W import), branch choice (the ±δ bit).
+  Ramification-opaque claims are held at ARC-0. New §3 exclusion bullet +
+  §8 gate cross-link.
+- **A2 — dimensional grade-0 closure:** FOUND_DIMENSIONAL_GRADE_CLOSURE.md
+  + proof_dimensional_grade_closure.py (8/8, graded algebra provably
+  non-vacuous): all nine default rules are grade-homogeneous and D4-limits
+  grade-preserving ⇒ N is grade-(0,0,0) — no dimensional constant is
+  native; the calibrations carry all dimension. Complementary to
+  FTD-0059/0096 (cannot-eliminate vs cannot-derive); K_B's FTD-0130
+  role-conflation diagnosed as a grade conflation. The boundary now reads
+  as three conserved charges of N (algebraicity / (4t−1)-parity / grade)
+  [coherent-interpretation]. Template-degeneration gate honored.
+- **B0(i) — stencil spectrum opened:** EXPLR_STENCIL_SPECTRUM.md — BCC
+  exact CM (τ=i), SC Γ(1/24)-class, FCC Γ(1/3)-class, and the finding: the
+  engine's own default 18-pt (SC+FCC)/2 Green's function is arithmetically
+  UNCHARTED (literature verdict: ODE-class derivable per Guttmann's
+  LGF/Calabi–Yau program, closed form not found). B0(ii)
+  creative-telescoping stage queued; PSLQ banned unless pre-registered.
+- **A0 — δ-IND chain audited (ftd-math-redteam): verdict label STANDS;
+  bookkeeping repaired same-day.** The assumption package restated as
+  E0 + E* (the σ₁₈ default-stencil family was admissible-and-unnamed under
+  E1/E2; E1's value-phrasing failed on internal ℚ-dependencies; Gauss-wise
+  withdrawn for dependent families); v1.1 D2 scope note appended to the
+  prereg (instrument-anchored BCC + 7-pt SC fixed at lock; broader → v2);
+  BCC sub-theorem restricted to m=1 offsets and its flag-retirement
+  SUSPENDED (post-hoc branch; the reviewer's own 34-digit identities
+  support the full conclusion — quasi-period lemma queued); S3's V2
+  strengthened to numeric hull recomputation (12/12); Lemma 0 enumeration
+  extended (core damping + λ_d; weak_transmutation check made real);
+  Glasser–Zucker 1977 (erratum caveat), Duffin 1953, Guttmann 2010 added
+  to the bibliography. Lock untouched (63e9c506). Mechanism, anchors,
+  gates, bans: all CHECKED-OK.
+
 ## δ-independence program S3 verdict: PROVEN-CONDITIONAL (FTD-0369, 2026-07-05)
 
 The program's theorem stage, executed post-lock against the frozen verdict
