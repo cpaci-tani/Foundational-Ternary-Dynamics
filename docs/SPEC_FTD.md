@@ -15,6 +15,7 @@
 > - The **"< 0.001 ppt with 7-term expansion"** framing is retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
 > - **"Thermodynamic limit"** language throughout is superseded; the framework commits to undefined-boundary ontology, not completed-infinity ℤ³.
 > - **Cluster-mass identification (FTD-0110)**: the cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster--mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
+> - **D = 3 status:** [SELECTION — declared] (FTD-0355 permanent verdict) — the |Aut(E)|² arithmetic uniqueness is [THEOREM] but the dimension-forcing is not forced (circularity named). Body occurrences retagged 2026-07-05.
 >
 > **For current state, read first:** [`docs/WHERE_WE_LEFT_OFF.md`](WHERE_WE_LEFT_OFF.md).
 > **Full audit trail:** [`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`](theory/07_assessment/AUDIT_MASTER_QUADRATIC.md), [`AUDIT_RATIONAL_FIT_CLAIMS.md`](theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md), [`AUDIT_INFINITY_REFRAME.md`](theory/07_assessment/AUDIT_INFINITY_REFRAME.md).
@@ -35,7 +36,7 @@
 > **Major Update (v5.0 - Foundational Completeness)**: Historical status note; later audits reclassified several physical identifications:
 > - **C1 RECLASSIFIED**: x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]. The polynomial/root algebra is theorem-level; the physical identification is not dynamically derived.
 > - **C2 RETIRED** (v1.4 §5): `x₋ → N_c = 3` is dropped as a physics identification; LEDGER FTD-0014 removed in commit `ca7eb61`. The master quadratic's smaller root `x_- ≈ 3.024` is a mathematical artifact of the polynomial only. Independent topology routes to `N_c = 3` remain separately tagged in the ledger (`DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem).
-> - **A1 DERIVED**: D = 3 is uniquely selected by atomic stability + gauge requirements (no longer axiom)
+> - **A1 [SELECTION — declared] (FTD-0355)**: D = 3 — the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared]: the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). The earlier "uniquely selected / no longer axiom" forcing claim is demoted.
 > - **GR COMPLETE**: Einstein equations derived with correct 8πG coefficient
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
 > - **Baryogenesis DERIVED**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
@@ -82,7 +83,7 @@ Key achievements within the framework (with several items representing proposed 
 - **Blind derivation**: 13 steps from "i exists" to α⁻¹ with only two selection principles
 - **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms
-- **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
+- **D = 3 status** [SELECTION — declared] (FTD-0355): the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] — the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). Atomic stability + gauge requirements stand as motivation, not a forcing proof.
 - **Reference frame structure layer** [CONJECTURE]: an exploratory interpretive reading via the same G* geometry (complex roots y = 2.19 ± 2.86i) — a proposed correspondence, **not a derivation**; see the reference frame structure-vocabulary reframe [REF_REFERENCE_FRAME_VOCABULARY.md](theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md)
 
 The framework demonstrates that U(1) gauge symmetry emerges naturally from the constraint structure (Gauss law), SU(2) from the ternary state structure, SU(3) from the three spatial dimensions, and Lorentz invariance emerges at scales >> lattice spacing.
@@ -1686,7 +1687,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.14 | Can neutrino masses be derived? |  **DERIVED** | Δm²₃₁ exact match, see-saw mechanism with m_D ~ m_τ × α |
 | OPEN.15 | What is the UV distribution P_UV? |  **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
 | OPEN.16 | What determines G_N? | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — not DERIVED; inherits FTD-0015's [SMC] floor, precision spelling-dependent) | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ |
-| OPEN.17 | Why does a 3D lattice exist? |  **DERIVED (v5.0)** | D=3 uniquely selected by atomic stability + gauge renormalizability + Fibonacci constraint |
+| OPEN.17 | Why does a 3D lattice exist? |  **[SELECTION — declared] (FTD-0355)** | The |Aut(E)|² = 2^D·(D−1)! = 16 arithmetic uniqueness is [THEOREM]; the dimension-forcing is [SELECTION — declared] (RHS target 16 = |O_h|/3 presupposes D=3, circularity named). Atomic stability + gauge renormalizability + Fibonacci constraint are motivation, not a forcing proof. |
 | OPEN.18 | Can GR be derived with correct coefficient? |  **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
 | OPEN.19 | Can inflation observables be derived? |  **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
 | OPEN.20 | Can baryogenesis be explained? |  **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
@@ -1774,7 +1775,7 @@ A computational simulation based on:
 
 ### Historical v5.0 Resolutions (reclassified by later audits)
 - ~~**Numerical value of G_N**~~  **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
-- ~~**Why a 3D discrete lattice exists**~~  **DERIVED (v5.0)** — D = 3 is uniquely selected (see §22.5.1)
+- ~~**Why a 3D discrete lattice exists**~~  **[SELECTION — declared] (FTD-0355)** — the |Aut(E)|² = 2^D·(D−1)! = 16 arithmetic uniqueness is [THEOREM], but the dimension-forcing is not forced (RHS target 16 = |O_h|/3 presupposes D=3, a circularity named). See §22.5.1.
 - ~~**C1: x₊ = 1/α**~~  **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
 - ~~**C2: x₋ → N_c = 3**~~ **RETIRED (v1.4 §5)** — `x_-  N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
 - ~~**GR with 8πG**~~  **DERIVED** — Einstein equations with correct coefficient
@@ -1788,7 +1789,7 @@ A computational simulation based on:
 
 ### 22.5.1 On the 3D Discrete Lattice
 
-**UPDATE (v5.0):** D = 3 is now **derived**, not axiomatic. Six independent arguments establish uniqueness.
+**STATUS (FTD-0355):** D = 3 is **[SELECTION — declared]**. The arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is not forced: the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). The six arguments below are motivation for the [SELECTION], not a forcing proof.
 
 #### The Dimensional Hierarchy
 
@@ -1806,7 +1807,7 @@ Before examining why D = 3, we must understand how dimensions emerge at all. A s
 
 This has a profound implication: **relativity and subjectivity are emergent**. At 0.5D there is only pure existence without perspective. At 1D (two axes in relation), the very concept of "relative to what?" emerges—the birth of perspective, relativity, and the precondition for observers. Subjectivity is not added to an objective universe; it is co-emergent with spatial relation itself.
 
-#### Six Independent Arguments for D = 3
+#### Six Independent Arguments Motivating D = 3 [SELECTION — declared]
 
 **Argument 1: Gauge Theory Requirements**
 SU(3) gauge theory with confinement, asymptotic freedom, AND chiral anomaly (needed for baryogenesis) exists only in 3+1 dimensions.
@@ -1826,7 +1827,7 @@ A 3D cubic lattice is the simplest structure supporting gauge theories + observe
 **Argument 6: Fibonacci Constraint (v5.0)**
 The self-referential closure condition n_eff = F_7 = 13 = b_3 + 2N_c is only satisfied for D = 3.
 
-**Status (v5.0)**: D = 3 is **derived from multiple independent constraints**. No alternative dimension supports all requirements simultaneously.
+**Status (FTD-0355)**: D = 3 is **[SELECTION — declared]**. The |Aut(E)|² = 2^D·(D−1)! = 16 arithmetic uniqueness is a [THEOREM], but the dimension-forcing is not forced — the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). The arguments above motivate the selection; they do not constitute a forcing proof.
 
 ## 22.6 The Appropriate Epistemic Stance
 

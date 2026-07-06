@@ -89,7 +89,7 @@ This is the coefficient that appears in the master quadratic. See DERIV\_DUAL\_D
 - $D = 3$: $2^3 \cdot 2! = 16 = 16$ $\checkmark$
 - $D \geq 4$: $f(D) = 2^D \cdot (D-1)!$ is strictly increasing and $f(4) = 96 > 16$
 
-Therefore $D = 3$ is uniquely selected.
+Therefore $D = 3$ is the unique *arithmetic* solution `[THEOREM]`. (The dimension-*forcing* — D = 3 as the physical spatial dimension — is a separate step and is `[SELECTION — declared]`, FTD-0355: the target $16 = |O_h|/3$ presupposes D = 3, a circularity named.)
 
 ---
 

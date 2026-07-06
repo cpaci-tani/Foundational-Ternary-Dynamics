@@ -43,7 +43,7 @@
 |---|---|---|
 | [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md) | formal derivation | The void-to-physics geometric emergence hierarchy, Levels 0–12. |
 | [FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md](FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md) | [FOUNDATION] / [SELECTION] | Minimum ingredients for an instantiated universe, built stage by stage. |
-| [DERIV_D3_FROM_AUTOMORPHISM.md](DERIV_D3_FROM_AUTOMORPHISM.md) | [THEOREM] | D = 3 proved unique from \|Aut(E_i)\|²; absorbs the Watson-route uniqueness proof. |
+| [DERIV_D3_FROM_AUTOMORPHISM.md](DERIV_D3_FROM_AUTOMORPHISM.md) | [THEOREM] (arithmetic uniqueness) + [SELECTION — declared] (dimension-forcing, FTD-0355) | The arithmetic uniqueness of \|Aut(E_i)\|² = 2^D·(D−1)! = 16 is a [THEOREM] (absorbs the Watson-route uniqueness proof), but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = \|O_h\|/3 presupposes D=3, a circularity named (bounded search). |
 | [FOUND_DIMENSIONAL_COUNTING.md](FOUND_DIMENSIONAL_COUNTING.md) | constructive argument (mixed) | Constructive 0.5D → D = 3 counting argument from the pairing ontology. |
 | [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | foundational theory (5 predictions) | Dimensions from relation, time from energy processing, SR/gravity/GR trichotomy; consolidated. |
 | [FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md](FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md) | [METHODOLOGICAL CLARIFICATION] | Lattice spacing as gauge freedom; absorbs the minimum-dimension cluster-scaling framework (FTD-0137). |
