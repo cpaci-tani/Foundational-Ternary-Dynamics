@@ -1,5 +1,47 @@
 # Foundational Ternary Dynamics Changelog
 
+## Native-closure realizability lower bounds — Clause-2/3 program B1 (last stage), 2026-07-05
+
+The positive mirror of FTD-0369 and the **final chartered stage** of the
+Clause-2/3 boundary program; doc + one verifier; no new LEDGER id
+(program-internal under FTD-0368); golden untouched; zero promotions.
+
+- **B1 — realizability lower bounds for N.** `FOUND_NATIVE_CLOSURE_REALIZABILITY.md`
+  + `proof_b1_realizability.py` (6/6). Where FTD-0369 proved constants
+  *outside* N, B1 exhibits explicit **D1–D4-admissible schemas** placing named
+  constants *inside* it — the origin values of zero-mode-excluded lattice
+  Green's functions of the **frozen-scope** symbols (σ₁₈ default, BCC, 7-point
+  SC; FCC honestly held to v2 per the v1.1 scope note):
+  - **R1** G\*²/(2π) ∈ ℚ(G\*,π) — the S2 BCC anchor, re-verified (1/L
+    extrapolant matches to 2×10⁻⁶).
+  - **R2** W_S/2, the simple-cubic Watson value — **Γ(1/24)-class, outside
+    ℚ(G\*,π)** (Glasser–Zucker). Computed via the non-singular Bessel form
+    ∫₀^∞ e^{−3t}I₀(t)³dt (no hand-typed constant); extrapolant err 5×10⁻⁷.
+    The load-bearing row.
+  - **R3** W₁₈ ≈ 1.2679 — the engine's *own default* Green's constant, native
+    by construction though holonomic-but-large (B0).
+  - **R4** π ∈ N (N_calc base generator; independent cross-route via the BCC
+    anchor and G\*).
+  - Finite-L values are exact rationals (244/243, 44/243, 232/243) — the
+    Lemma-0 "finite dynamics is transcendence-inert" witness for the full B1
+    symbol set.
+- **Lower bound.** N ⊇ ℚ(G\*,π,W_S,W₁₈) unconditional; **N ⊋ ℚ(G\*,π)
+  conditional on E1** (W_S ∉ ℚ(G\*,π)) — the *same* E1 on which FTD-0369's
+  conditionality rests. **The sandwich:** ℚ(G\*,π) ⊊ N (mod E1) yet δ ∉ N
+  (mod E\*, FTD-0369) with the whole √-family excluded (FTD-0370) ⇒ **N is a
+  large period ring that specifically dodges the (4G\*−1) square class** —
+  FTD-0370's ramification law from the membership side. δ's exclusion is the
+  selectivity of a rich closure, not the poverty of a small one.
+- **Tier-C (honestly not realized):** δ (NOT attempted — that is S3's banned
+  REFUTED fish); FCC (v2 scope); nonlinear-sector constants (v2 properness
+  rung).
+- **Program complete.** All chartered Clause-2/3 stages delivered (A0/A1/A2/A3/
+  A4-B2/B0/B1/B3); TRACKER §3.7 → 0 open. The δ-IND upper bound (FTD-0369) and
+  this lower bound now bracket N. Clause-1 (priced-import ledger) remains
+  deferred by the user; no constitutional edits. Four conserved charges of N
+  inventoried (algebraicity / (4t−1)-parity-ramification / dimension-grade /
+  polyhedrality). Next free id **FTD-0371**.
+
 ## L² wall recast + stencil operator bounded (Clause-2/3 program A3 + B0, 2026-07-05)
 
 Two Clause-2/3 program stages; docs + two verifiers + one exact-reconstruction
