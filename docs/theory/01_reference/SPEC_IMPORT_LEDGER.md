@@ -2,13 +2,13 @@
 
 **Tag:** [SYNTHESIS] (prices existing commitments at their canonical tags; introduces no theorem, promotes nothing) · **LEDGER id:** FTD-0371
 **Data:** `import_ledger.json` (machine-readable, the single source) · **Verifier:** `scripts/proofs/proof_import_ledger.py` (8/8 PASS) · **Date:** 2026-07-05
-**Serves:** the Number-One Goal's second face — *"rigorously mark which types the ontology sets for itself and which it must import."* The modulus/argument frontier (`FOUND_MODULUS_ARGUMENT_FRONTIER.md`, FTD-0336) states that boundary *qualitatively*; this ledger prices it *quantitatively*, with a falsifier on every line.
+**Serves:** the Number-One Goal's second face — *"rigorously mark and price which types the ontology sets for itself and which it must import."* **This ledger is the *price* half of that clause.** The modulus/argument frontier (`FOUND_MODULUS_ARGUMENT_FRONTIER.md`, FTD-0336) states that boundary *qualitatively*; this ledger prices it *quantitatively*, with a falsifier on every line.
 
 ---
 
 ## 0 · What this is, and the one reading that would abuse it
 
-The goal has two faces: **derive** (build content forward from the types the ontology sets) and **mark the boundary** (name the types it cannot set and must import). The second face is a deliverable only if it is *auditable* — so this ledger enumerates every import in a common currency, tags each at its canonical LEDGER status, and attaches a falsifier to each. It is the dual of `CATALOG_PARAMETRIC_INSERTIONS.md`: that catalogs one currency (parametric insertions); this rolls up **all** of them and adds the self-set credits and the declined bets.
+The goal has two faces: **derive** (build content forward from the types the ontology sets) and **mark and price the boundary** (name the types it cannot set and must import — and count each in a common currency with its falsifier). The second face is a deliverable only if it is *auditable* — so this ledger enumerates every import in a common currency, tags each at its canonical LEDGER status, and attaches a falsifier to each. It is the dual of `CATALOG_PARAMETRIC_INSERTIONS.md`: that catalogs one currency (parametric insertions); this rolls up **all** of them and adds the self-set credits and the declined bets.
 
 > **Reading guard (load-bearing).** The **adopted-bit total is 1** — the FC-W branch choice of the α-sector algebra (the sign of δ). This is **not** FTD's total cost of physics. The empirical identification `x₊ = 1/α` [SMC], the ~131 [PARAMETRIC] insertions, and the 3 dimensional calibrations are *separate, larger* debts, all listed below. Anyone who reads "1 bit" as "FTD imports only one bit of physics" has misread the ledger. The 1 bit is the *algebraic branch*; the *physics* is imported separately and abundantly, at its honest tags.
 
