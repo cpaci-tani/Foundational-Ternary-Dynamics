@@ -19,7 +19,7 @@ One principle runs through the whole framework ([`FOUND_TYPE_PRIORITY_PRINCIPLE.
 
 So FTD proceeds in one order, and the goal is stated in that order:
 
-> **Set the smallest honest set of types from which a discrete ontology can speak; build the mathematics and physics forward as the content those types make meaningful; and rigorously mark which types the substrate sets for itself and which it must import.**
+> **Set the smallest honest set of types from which a discrete ontology can speak; build the mathematics and physics forward as the content those types make meaningful; and rigorously mark and price which types the substrate sets for itself and which it must import.**
 
 Marking the boundary — which types are *not* native — is as much a deliverable as any derivation. (Type-priority is an adopted organizing commitment, not a theorem; it is offered for outside critique, not asserted as proven.)
 

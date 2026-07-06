@@ -17,7 +17,7 @@ This is the **constitution of Foundational Ternary Dynamics as a standalone fram
 
 The ordering is a methodological commitment, not a ranking of importance: each layer is *accountable to* the layers after it (a constitution whose physics layer ignored measurement would be worthless), but *constructed from* the layers before it. It instantiates the math-first ordering of [`SPEC_MATH_FIRST_ONTOLOGY.md`](SPEC_MATH_FIRST_ONTOLOGY.md) (FTD-0153 `[SYNTHESIS]`): *ontology = finite mathematical invariant structure; physics = operationally stable readout of that structure.*
 
-This document serves the project's Number-One Goal in both clauses: **derive everything we can from a discrete ontology — and rigorously establish what we cannot.** The framework commitments declared here (§2.4, §2.6) sit exactly on that boundary: they are the framework's chosen answers to questions its own theorems prove the postulates *do not* answer. Ontology-first is therefore **not** evidence-optional — §6 makes the commitments themselves falsifiable.
+This document serves the project's Number-One Goal in both clauses: **derive everything we can from a discrete ontology — and rigorously mark and price what we cannot.** The framework commitments declared here (§2.4, §2.6) sit exactly on that boundary: they are the framework's chosen answers to questions its own theorems prove the postulates *do not* answer. Ontology-first is therefore **not** evidence-optional — §6 makes the commitments themselves falsifiable.
 
 ### 0.2 The three registers
 
