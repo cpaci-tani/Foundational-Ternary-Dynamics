@@ -25,7 +25,7 @@
 
 | ID | Statement | Status | Location |
 |----|-----------|--------|----------|
-| A1 | Space is a finite 3D cubic lattice L ⊂ Z³ | **DERIVED (v5.0)** | CLAUDE.md §22.5.1, SPEC_FTD_REFERENCE.md §2 |
+| A1 | Space is a finite 3D cubic lattice L ⊂ Z³ | **[SELECTION — declared] (FTD-0355)** | CLAUDE.md §22.5.1, SPEC_FTD_REFERENCE.md §2 |
 | A2 | Each site carries flux field J ∈ R³ | AXIOM | CLAUDE.md §1.1 |
 | A3 | Gauss constraint ∇·J = ρ at each site | AXIOM | CLAUDE.md §1.1 |
 | A4 | Ternary state variable s ∈ {-1, 0, +1} | AXIOM | CLAUDE.md §1.1 |
@@ -70,7 +70,7 @@
 | **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **SUSY-0** | No superpartners at any energy | THEOREM | discrete lattice incompatible with SUSY | REF_CLAIMS_MATRIX.md (this doc) | Discovery of any superpartner | n/a (exclusion) |
-| **DIM-3** | D=3 is unique viable spatial dimension | THEOREM | stability + gauge theory requirements | REF_CLAIMS_MATRIX.md (this doc) | Detection of KK modes or 1/r² deviation | n/a (exclusion) |
+| **DIM-3** | D=3 is unique viable spatial dimension | [SELECTION — declared] (FTD-0355) | stability + gauge theory requirements | REF_CLAIMS_MATRIX.md (this doc) | Detection of KK modes or 1/r² deviation | n/a (exclusion) |
 | **GEN-3** | N_gen = N_c = 3 (NOT via ⌊x₋⌋ — that route is RETIRED, FTD-0014; sourced from S3) | **CONJECTURE** | S3 | REF_CLAIMS_MATRIX.md (this doc) | 4th generation with standard couplings | n/a (exclusion) |
 | **STRING-0** | String theory incompatible (requires D=10/11, SUSY, continuous spacetime) | THEOREM | DIM-3, SUSY-0, A1 | REF_CLAIMS_MATRIX.md (this doc) | Demonstration of string-FTD compatibility | n/a (exclusion) |
 | **DIGIT13-1** | 4-term precision formula predicts digit 13 of 1/α = 0 | **PREDICTION** | ALPHAP-1, ALPHAP-1b | DERIV_ALPHA_PRECISION_FORMULA.md | Digit 13 measured as non-zero | `scripts/verification/verify_precision_formula_v2.py` |
@@ -183,7 +183,7 @@
 |-----|-----------------|-------------|------------|
 | **C1** | CONJECTURE | **PROVEN** | CM selection uniquely determines α |
 | **C2** | CONJECTURE | **PROVEN** | RG flow + topological quantization |
-| **A1** | AXIOM | **DERIVED** | D=3 uniquely selected by multiple constraints |
+| **A1** | AXIOM | **[SELECTION — declared] (FTD-0355)** | D=3 is a [SELECTION — declared], not forced by the constraints (bounded search; circularity named) |
 | **GR** | Partial | **COMPLETE** | Einstein equations with 8πG coefficient |
 | **Inflation** | Not addressed | **DERIVED** | n_s = 0.966, r = 0.022 |
 | **Baryogenesis** | Not addressed | **DERIVED** | η ~ 10⁻¹⁰ |
@@ -237,7 +237,7 @@ The ontological hierarchy establishes the complete chain from void to physics th
 | 1 | Threshold | ϖ (varpi) | 2.622 | Boundary of existence | **[THEOREM]** |
 | 2 | Shell | π (circle) | 3.14159... | Boundary the void pays | **[THEOREM]** |
 | 3 | Twist | G* (lemniscate) | 2.9587 | Self-reference, observer | **[THEOREM]** |
-| 4 | Space | D | 3 | Spatial dimensions | **[THEOREM]** |
+| 4 | Space | D | 3 | Spatial dimensions | **[SELECTION — declared] (FTD-0355)** |
 | 5 | Physics | α, Nc | 1/137, 3 | Coupling constants | **[SELECTION]** |
 
 ### Key Claims
@@ -275,7 +275,7 @@ The ontological hierarchy establishes the complete chain from void to physics th
 1. **k = 16 is DERIVED**: From k_cons = 1/2 (complementation) and D = 3 (spatial dimensions)
 2. **π is DERIVED**: From the lemniscatic constants ω and G*
 3. **Spin-1/2 is GEOMETRIC**: From lemniscate's 720° periodicity
-4. **3D space is DERIVED**: From the twist "using up" one dimension: 4 + (-1) = 3
+4. **3D space is [SELECTION — declared] (FTD-0355)**: the "4 + (-1) = 3" twist bookkeeping does not force D=3 as the physical spatial dimension (bounded search; circularity named)
 
 See [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) for complete formalization.
 

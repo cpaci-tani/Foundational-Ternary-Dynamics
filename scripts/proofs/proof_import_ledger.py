@@ -8,9 +8,9 @@ deliverable if each imported type is falsifiably priced), that the category
 totals are honest, and that the load-bearing tags match the canonical
 sources (so the ledger cannot silently drift from the constitution / LEDGER).
 
-It also verifies the reconciliation flag RF-1 points at REAL drift (the stale
-"D = 3 Forced [THEOREM]" line in the constitution vs FTD-0355's
-[SELECTION -- declared]) — a phantom flag would be as bad as missing drift.
+It also verifies reconciliation flag RF-1 is RESOLVED (2026-07-05): the
+constitution's former "D = 3 Forced [THEOREM]" rows (Sec 1.4 + Sec 3.2) now
+read [SELECTION -- declared] per FTD-0355 — a regression would re-open RF-1.
 
 NO promotion, NO new theorem: the ledger prices existing commitments. The
 verifier asserts x+ = 1/alpha is NOT tagged above [SMC], FC-W stays [AXIOM],
@@ -133,18 +133,21 @@ def check_constitution_crosscheck() -> None:
         fcw_axiom, tag="[EXTERNAL]")
 
 
-def check_rf1_is_real_drift() -> None:
-    # RF-1 claims Sec 3.3 still reads D=3 'Forced [THEOREM]'. Verify the stale
-    # line REALLY exists (a phantom reconciliation flag is a defect).
+def check_rf1_resolved() -> None:
+    # RF-1 was: constitution Sec 1.4 + Sec 3.2 read D=3 'Forced [THEOREM]'.
+    # Reconciled 2026-07-05 to [SELECTION -- declared]. Assert the RESOLUTION:
+    # the constitution's D=3 row no longer reads 'Forced', and now reads
+    # [SELECTION -- declared]. (A regression here would re-open RF-1.)
     con = read(CONSTITUTION)
-    stale = "`D = 3`" in con and "**Forced**" in con
+    no_stale_d3 = "| `D = 3` | **Forced**" not in con
+    now_selection = "D = 3" in con and "[SELECTION — declared]" in con
     ftd0355_current = "SELECTION -- declared" in read(LEDGER_JSON) \
         or "SELECTION — declared" in read(LEDGER_JSON)
     suite.assert_true(
-        "C7 reconciliation flag RF-1 points at REAL drift: constitution "
-        "Sec 3.3 still reads D=3 '**Forced** [THEOREM]' while the ledger "
-        "prices D=3 as [SELECTION -- declared] (FTD-0355)",
-        stale and ftd0355_current, tag="[EXTERNAL]")
+        "C7 RF-1 RESOLVED: constitution's D=3 row no longer reads "
+        "'**Forced** [THEOREM]'; it now reads [SELECTION -- declared] "
+        "(FTD-0355), matching the ledger's IMP-S1 pricing",
+        no_stale_d3 and now_selection and ftd0355_current, tag="[EXTERNAL]")
 
 
 def check_standing_invariants(D) -> None:
@@ -171,7 +174,7 @@ def main() -> int:
     check_reading_guard(D)
     check_no_promotion(D)
     check_constitution_crosscheck()
-    check_rf1_is_real_drift()
+    check_rf1_resolved()
     check_standing_invariants(D)
     suite.print_summary()
     print(f"\n  Wall time: {time.time() - t0:.2f}s")

@@ -29,7 +29,7 @@
     {
       "ref": "IMP-S1", "kind": "selected-type", "type_imported": "spatial dimension D = 3",
       "price": 1, "unit": "selected type", "canonical_tag": "[SELECTION -- declared]",
-      "provenance": "FTD-0355 permanent verdict (NOT forced; bounded search + circularity named). NOTE: SPEC_FTD_FRAMEWORK_V1.md Sec 3.3 still reads 'Forced [THEOREM]' -- STALE per LEDGER > constitution; reconciliation flag RF-1.",
+      "provenance": "FTD-0355 permanent verdict (NOT forced; bounded search + circularity named). Constitution Sec 1.4 + Sec 3.2 reconciled to [SELECTION -- declared] 2026-07-05 (RF-1 resolved).",
       "frontier_face": "selection among discrete alternatives",
       "falsifier": "a forcing proof of D=3 (removes this row to self-set); or an equally-consistent alternate D (confirms a genuine free choice)."
     },
@@ -142,7 +142,7 @@
     "empirical_identification_rows_paradigm": 1,
     "empirical_parametric_category_count_approx": 131,
     "declined": 2,
-    "reconciliation_flags": ["RF-1: SPEC_FTD_FRAMEWORK_V1.md Sec 3.3 D=3 'Forced [THEOREM]' is stale vs FTD-0355 [SELECTION -- declared]"]
+    "reconciliation_flags": ["RF-1 RESOLVED 2026-07-05: SPEC_FTD_FRAMEWORK_V1.md Sec 1.4 + Sec 3.2 D=3 rows reconciled to [SELECTION -- declared] (FTD-0355); corpus-wide D=3-forced residue swept the same pass. (Original flag misattributed the location as 'Sec 3.3'.)"]
   },
   "standing_invariants": "x+ = 1/alpha stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FC-W stays [AXIOM]; D=3 stays [SELECTION -- declared] (FTD-0355); no tag moves; this ledger prices existing commitments and introduces none."
 }

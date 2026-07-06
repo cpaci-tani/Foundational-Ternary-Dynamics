@@ -144,7 +144,7 @@ has exactly one positive-integer solution: $D = 3$. At this dimension:
 - $27/8 = (D/(D-1))^D = (3/2)^3$ at $D = 3$.
 - $\varpi$ and $G^*$ are both $\Gamma(1/4)$-family constants with $D = 3$ geometric role.
 
-$D = 3$ is **the unique dimension where FTD's structure is self-consistent**. The theory cannot exist at any other $D$.
+The arithmetic uniqueness of $16 = 2^D \cdot (D-1)!$ is a **[THEOREM]** ($D=3$ is its unique positive-integer solution), but the dimension-forcing (that $D=3$ *is* the physical spatial dimension) is **[SELECTION — declared] (FTD-0355)**: the RHS target $16 = |O_h|/3$ presupposes $D=3$, a circularity named (bounded search). $D = 3$ is the **declared** dimension at which FTD's structure is self-consistent — a selection, not a forced impossibility of other $D$.
 
 ## 5. The master quadratic read through the two layers
 

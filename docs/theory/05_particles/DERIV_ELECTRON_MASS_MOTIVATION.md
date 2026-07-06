@@ -35,7 +35,7 @@ This ratio appears throughout FTD:
 
 - **16 = |Aut(Eᵢ)|²**: the squared automorphism order of the CM elliptic curve, which is the coefficient of the master quadratic. It counts the gauge-fixed degrees of freedom on the minimal torus (Faddeev-Popov ghost counting, O_h/ℤ₃ = 48/3 = 16). [THEOREM]
 
-- **3 = D**: the spatial dimension, uniquely selected by 16 = 2^D · (D−1)!. [THEOREM]
+- **3 = D**: the spatial dimension. The arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search).
 
 - **16/3**: the number of gauge DOF per spatial dimension. This is the lattice's "charge-per-axis" — how many independent field configurations contribute to the self-energy along each coordinate direction. [SELECTION for interpretation]
 
@@ -84,7 +84,7 @@ Each factor has a structural origin:
 | m_e = M_P · prefactor · α^n (dimensional form) | [IMPOSED] | Standard Planck-scale mass formula |
 | √(2π) from Gaussian J-integral | [SELECTION] | The DERIV_MASTER_QUADRATIC_FROM_Z.md Step 1 chain that would tag this [THEOREM] is RETRACTED (FTD-0032), and even that chain gave a *cancelling* 2π. The √(2π) factor is more honestly understood as inherited from `v = M_P·√(2π)·α^8` (HIGGS-4 [SELECTION]), per FTD-0133. |
 | 16 = |Aut(Eᵢ)|² from Faddeev-Popov | [THEOREM] | O_h gauge fixing on minimal torus |
-| 3 = D from |Aut|² = 2^D·(D−1)! | [THEOREM] | Algebraic uniqueness |
+| 3 = D from |Aut|² = 2^D·(D−1)! | [THEOREM] for the arithmetic uniqueness of the equation; [SELECTION — declared] (FTD-0355) for the dimension-forcing | Algebraic uniqueness is a [THEOREM]; but D=3 as the physical spatial dimension presupposes the RHS target 16 = |O_h|/3, a circularity named (bounded search) |
 | Exponent 11 from ladder position | [SELECTION] | Structural walk, not uniquely forced |
 | Combined formula | [SELECTION] | Motivated but not derived from the action |
 

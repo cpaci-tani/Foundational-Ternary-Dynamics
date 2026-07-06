@@ -79,7 +79,7 @@ matching PDG to 0.19%. The question: can it be promoted from [SELECTION] to [THE
 | Dimensional form $m \propto m_P \cdot \alpha^n$ | [IMPOSED] | Standard template |
 | $\sqrt{2\pi}$ | [THEOREM] | Gaussian J-integral, exact |
 | $16 = |\mathrm{Aut}(E_i)|^2$ | [THEOREM] | Faddeev–Popov on $O_h/\mathbb{Z}_3$ |
-| $3 = D$ (spatial dimension) | [THEOREM] | $16 = 2^D \cdot (D-1)!$ algebraic uniqueness |
+| $3 = D$ (spatial dimension) | [THEOREM] for the arithmetic uniqueness of the equation; [SELECTION — declared] (FTD-0355) for the dimension-forcing | $16 = 2^D \cdot (D-1)!$ algebraic uniqueness is a [THEOREM]; but D=3 as the physical spatial dimension presupposes the RHS target $16 = |O_h|/3$, a circularity named (bounded search) |
 | Exponent $n = 11$ | **[SELECTION]** | Ladder walk $4 + 4 + 3$ |
 | Combined formula | **[SELECTION]** | Not derived from FTD action |
 
@@ -114,7 +114,7 @@ Compute the pole mass in a standard lattice QED (not FTD) and argue that FTD rep
 
 ### Honest conclusion
 
-**$m_e$ cannot be promoted to [THEOREM] with existing FTD tooling.** The three prefactor components (√(2π), 16, D=3) are already [THEOREM] — that gives the structural prefactor $16\sqrt{2\pi}/3$ rigorously. The remaining blockers:
+**$m_e$ cannot be promoted to [THEOREM] with existing FTD tooling.** Two prefactor components (√(2π), 16) are already [THEOREM]; the third, D=3, is [THEOREM] only for the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16, while the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). Together these give the structural prefactor $16\sqrt{2\pi}/3$ conditional on that [SELECTION]. The remaining blockers:
 
 1. **Exponent 11** requires uniquely fixing the ladder ordering, which is currently [SELECTION].
 2. **Combined formula** requires a Lagrangian-level derivation, which is blocked by the flux field's ultralocality (FTD-0075).

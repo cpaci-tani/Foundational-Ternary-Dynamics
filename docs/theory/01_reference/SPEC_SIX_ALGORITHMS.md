@@ -503,7 +503,7 @@ Every number in the entire framework:
 
 | Parameter | Value | What it defines |
 |-----------|-------|-----------------|
-| Lattice dimension | D = 3 | Space is 3D (now derived from 6 independent arguments) |
+| Lattice dimension | D = 3 | Space is 3D — [SELECTION — declared] (FTD-0355); sufficiency arguments, not a forcing derivation |
 | Ternary states | {−1, 0, +1} | Minimum nontrivial state space |
 | Moore neighborhood | 26 connected | Local causality |
 | Speed of causality | C = 1 unit/tick | Maximum information speed |

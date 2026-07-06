@@ -22,7 +22,7 @@ So FTD is **not** chosen once. It is chosen *once generatively* (`i`), plus a sm
 
 | # | Element | Category | Canonical tag | Basis |
 |---|---|---|---|---|
-| 1 | P1 — discrete space (lattice) | **generative-structural** | `[AXIOM]` | A lattice; no `ℤ/2`/√. `D=3` forced given FC-0 (FTD-0010). |
+| 1 | P1 — discrete space (lattice) | **generative-structural** | `[AXIOM]` | A lattice; no `ℤ/2`/√. `D=3`: the arithmetic uniqueness of `16 = 2^D(D−1)!` is `[THEOREM]` (FTD-0010), but the dimension-forcing is `[SELECTION — declared]` (FTD-0355) — the target `16 = |O_h|/3` presupposes `D=3`, a circularity named (bounded search); consistent with row 15. |
 | 2 | P2 — discrete time (tick) | **generative-structural** | `[AXIOM]` | A tick. (Its *emergence* is a separate `[SELECTION]`, row 15.) |
 | 3 | P3 — ternary states (act-content) | **the i-act** | `[AXIOM]` + `[SYNTHESIS]` | `{−1,0,+1} = {i², 0, \|i²\|}` (FTD-0128): the void `0` = branch point, `±1 = i²,\|i²\|`. |
 | 4 | P4 — Moore locality | **generative-structural** | `[AXIOM]` | Neighborhood; consequence of `ℤ³` geometry (FTD-0080 §2.3). |

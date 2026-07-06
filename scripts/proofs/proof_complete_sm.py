@@ -548,8 +548,8 @@ print(f"  {'[THEOREM]':14s} {'Magnetic monopoles':30s} = 0                      
 # NP-17: No SUSY [THEOREM — ternary states {-1,0,+1} have no fermionic partners]
 print(f"  {'[THEOREM]':14s} {'SUSY particles':30s} = 0                             (ternary algebra has no grading)")
 
-# NP-18: No extra spatial dimensions [THEOREM — D=3 uniquely from |Aut(E)|^2 = 2^D(D-1)!]
-print(f"  {'[THEOREM]':14s} {'Extra dimensions':30s} = 0                             (D=3 forced by automorphism constraint)")
+# NP-18: No extra spatial dimensions [THEOREM — structural null; D=3 dimension-forcing is [SELECTION], FTD-0355]
+print(f"  {'[THEOREM]':14s} {'Extra dimensions':30s} = 0                             (no 4th spatial dim; D=3 [SELECTION], not forced -- FTD-0355)")
 
 # NP-20: Normal neutrino hierarchy [SELECTION from seesaw structure]
 print(f"  {'[SELECTION]':14s} {'Neutrino hierarchy':30s} = Normal (m3 > m2 >> m1)       (JUNO ~2027)")

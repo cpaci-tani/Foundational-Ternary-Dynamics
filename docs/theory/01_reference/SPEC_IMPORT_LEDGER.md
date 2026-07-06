@@ -53,7 +53,7 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 
 | ref | imported type | tag | falsifier |
 |---|---|---|---|
-| IMP-S1 | spatial dimension **D = 3** | [SELECTION — declared] (FTD-0355) | a forcing proof (→ self-set); or an equally-consistent alternate D (confirms free choice). **⚠ constitution §3.3 still reads "Forced [THEOREM]" — stale; see §6 RF-1** |
+| IMP-S1 | spatial dimension **D = 3** | [SELECTION — declared] (FTD-0355) | a forcing proof (→ self-set); or an equally-consistent alternate D (confirms free choice). **✓ constitution reconciled 2026-07-05** (§1.4 + §3.2 now read [SELECTION — declared]; the RF-1 drift is closed — see §6) |
 | IMP-S2 | the **singlet** (J→ψ complexification for Bell/Tsirelson) | [SELECTION] | a native forced singlet; or a native S>2 on the engine (an FC-1 falsifier) |
 | IMP-S3 | the **ℭ generator-set** representativeness (N_calc) | [SELECTION] (FTD-0347 flag) | a canonically forced generating set retires the flag |
 
@@ -112,7 +112,7 @@ The dimensionless spine is the cheapest and the most self-set; the price rises m
 
 Building the ledger against the canonical sources surfaced live drift. These are **flagged, not fixed** — editing the constitution is out of scope for this accounting (and deferred per the program charter); they are logged for a future owner-approved reconciliation.
 
-- **RF-1 — D=3 status drift.** `SPEC_FTD_FRAMEWORK_V1.md` §3.3 still lists `D = 3` as **"Forced [THEOREM]"** (citing FTD-0010), but FTD-0355's permanent verdict demoted it to **[SELECTION — declared]** (bounded search, circularity named). LEDGER > constitution, so the ledger prices D=3 as a *selected type* (IMP-S1). The verifier (`proof_import_ledger.py` C7) asserts this drift is *real* (the stale line still exists), so the flag cannot rot into a phantom. **Recommended reconciliation:** update the §3.3 row to [SELECTION — declared] in an owner-approved constitutional pass.
+- **RF-1 — D=3 status drift — RESOLVED 2026-07-05.** The constitution (`SPEC_FTD_FRAMEWORK_V1.md`) formerly listed `D = 3` as **"Forced [THEOREM]"** at **§1.4 (line 82) and §3.2 (line 159)** — the original flag misattributed the location as "§3.3"; the actual sites were §1.4 + §3.2. FTD-0355's permanent verdict demoted D=3 to **[SELECTION — declared]** (bounded search, circularity named), and per LEDGER > constitution the ledger always priced D=3 as a *selected type* (IMP-S1). **The drift is now reconciled:** both constitution rows read [SELECTION — declared] (FTD-0355), and the corpus-wide "D=3 forced" residue was swept in the same 2026-07-05 pass (see the LEDGER maintenance log). The verifier (`proof_import_ledger.py` C7) now asserts the *resolved* state — the constitution's D=3 row reads [SELECTION] with no surviving "Forced [THEOREM]" for D=3.
 
 ## 7 · Falsifiers, invariants, cross-references
 
