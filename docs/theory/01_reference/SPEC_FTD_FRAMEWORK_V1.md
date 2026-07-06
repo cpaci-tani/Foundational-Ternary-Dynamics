@@ -79,7 +79,7 @@ Everything else in the framework is dynamics *within* one field or the other. Th
 
 ### 1.4 More fields, not more dimensions `[SYNTHESIS]`
 
-`D = 3` is a theorem of the framework given FC-0 (`|Aut(E)|² = 2^D·(D−1)!` forces D = 3 — FTD-0010 `[THEOREM]`). Everything beyond the primary pair is a **derived or imposed decomposition over the same three dimensions**, never a new dimension:
+`D = 3` is a **[SELECTION — declared]** given FC-0 (FTD-0355): the arithmetic identity `|Aut(E)|² = 2^D·(D−1)!` has D = 3 as its unique solution `[THEOREM]`, but the *dimension-forcing* is not forced — the RHS target `16 = |O_h|/3` presupposes D = 3, a circularity named in FTD-0355; the earlier "forces D = 3 — FTD-0010 `[THEOREM]`" is demoted. Everything beyond the primary pair is a **derived or imposed decomposition over the same three dimensions**, never a new dimension:
 
 | Field/decomposition | Status | Provenance |
 |---|---|---|
@@ -156,7 +156,7 @@ The framework's honest map of which numbers its ontology fixes:
 | Quantity | Status | Source |
 |---|---|---|
 | `c = 1/√3` (causal speed) | **Forced** `[THEOREM]` (P4 + CFL on the cubic lattice) | `FOUND_AXIOM_ZERO.md` §2.2(d) |
-| `D = 3` | **Forced** `[THEOREM]` (given FC-0) | FTD-0010 |
+| `D = 3` | **[SELECTION — declared]** (FTD-0355; arithmetic uniqueness of `2^D·(D−1)! = 16` is `[THEOREM]`, dimension-forcing is `[SELECTION]` — circularity named) | FTD-0355 / FTD-0010 |
 | `G*` | **Forced** `[THEOREM]` (given FC-0) — four independent constructions converge | spine Theorem 1; monograph §I.2 |
 | `N_c = 3` | **Forced** `[THEOREM]` from lattice topology (four independent routes) — **not** from `x₋` | [`DERIV_NC_FROM_TOPOLOGY.md`](../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md) |
 | `N_base = 4`, `N_eff = 13`, `b₃ = 7` | **Forced** `[THEOREM]` (Moore-neighborhood integers) | FTD-0008 |

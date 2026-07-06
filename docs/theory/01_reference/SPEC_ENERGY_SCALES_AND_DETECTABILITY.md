@@ -109,7 +109,7 @@ The ontology *forbids* a set of energy-frontier positives — FTD's sharpest ene
 |---|---|---|---|
 | N_monopole = 0 | ∇·B = ∇·(∇×J) = 0, an identity | monopole searches | `[THEOREM]` (PL-6) |
 | N_SUSY = 0 | ternary state space carries no fermionic grading | collider SUSY | `[THEOREM]` (PL-6) |
-| extra dimensions = 0 | \|Aut(E)\|² = 2^D·(D−1)! forces D = 3 | short-range gravity / collider | `[THEOREM]` (PL-6) |
+| extra dimensions = 0 | the arithmetic 2^D·(D−1)!=16 has D=3 as its unique solution `[THEOREM]`; dimension-forcing is `[SELECTION — declared]`, FTD-0355 | short-range gravity / collider | `[THEOREM]` (PL-6) |
 | fermion generations = 3 (no 4th) | Moore-layer decomposition yields exactly 3 | collider | `[THEOREM]` (topological) / `[OPEN]` (dynamical) |
 
 **Two honesty caveats.** (i) **Proton decay is *not* a forced null.** PL-6 lists `τ_proton = ∞`, but the canonical LEDGER (FTD-0301) re-tags it `[MEASURED — UNFORCED-METASTABLE BOUNDARY]`: the substrate carries only the U(1) Σs charge (no baryon / B−L current), the proton is a mixed-sign `uud` cluster the triad-lock cannot protect, and FTD's *own* weak/baryogenesis sector decays it — so a forced infinite proton lifetime is **not** a prediction (`proof_complete_sm.py` tags it `[SELECTION]`; PL-6, FP-4, NP-16/NP-34, and CATALOG §16 now carry the same `[SELECTION]/[BOUNDARY]` retag per FTD-0301). (ii) The three-generation count is `[THEOREM]` topologically but `[OPEN]` dynamically (`CATALOG_PARAMETRIC_INSERTIONS.md` §16) — an addition beyond PL-6's registered four.

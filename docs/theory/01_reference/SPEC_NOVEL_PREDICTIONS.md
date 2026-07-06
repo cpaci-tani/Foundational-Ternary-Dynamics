@@ -409,7 +409,7 @@ FTD predicts that certain entities and phenomena will never be observed. These a
 
 ### 5.4 No Extra Spatial Dimensions
 
-**Prediction:** $D = 3$ is uniquely selected. No Kaluza-Klein modes, no large extra dimensions, no deviations from $1/r^2$ gravity at any scale.
+**Prediction:** No extra spatial dimensions — $D = 3$ is a [SELECTION — declared] (FTD-0355); no Kaluza-Klein modes, no large extra dimensions, no deviations from $1/r^2$ gravity at any scale.
 
 **Falsification:** Detection of KK excitations, or gravitational deviation from inverse-square law.
 
@@ -440,7 +440,7 @@ FTD predicts that certain entities and phenomena will never be observed. These a
 | No WIMPs | SM is agnostic | **Predicted null** | Null (consistent) |
 | No proton decay | SM allows it; GUTs predict it | **Absolute stability** | Null (consistent) |
 | No monopoles | SM is agnostic; GUTs predict them | **Structurally impossible** | Null (consistent) |
-| No extra dimensions | SM is agnostic | **$D = 3$ unique** | Null (consistent) |
+| No extra dimensions | SM is agnostic | **No extra spatial D ($D = 3$ [SELECTION — declared], FTD-0355)** | Null (consistent) |
 | No SUSY | SM is agnostic | **Incompatible with lattice** | Null (consistent) |
 | No Landau pole | SM predicts one (irrelevantly far) | **Compact BZ prevents it** | Untestable |
 | No CPT violation | SM preserves CPT | **Exact** | Preserved (consistent) |
