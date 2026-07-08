@@ -83,6 +83,30 @@ The identities used here (`∂_t = (∂_t^{1/2})²`, the `π/4` phase, `(i)^{1/2
 
 ---
 
-## 6 · Status line
+## 6 · The quarter-point map: arrow and α as reflection partners `[CONJECTURE]`
 
-**Nothing is promoted.** Tag `[SYNTHESIS]`. FC-2 stays `[AXIOM]`-class; `DERIV_HEAT_EQUATION_FROM_RATIO.md` stays `[THEOREM]` (operator content); the §3.4 framing stays `[SYNTHESIS]`; FTD-0013 stays `[SMC]`; no α derived; P1–P5 and the FC register untouched. This document is exposition unifying existing claims at their existing tags.
+The fractional form of §1, `D^{2z−1}[x^{z−1}] = R(z)·x^{−z}` with `R(z) = Γ(z)/Γ(1−z)`, carries **two** z-dependent outputs at once: an operator **order** `2z−1` and a **value** `R(z)`. Reading them together across the three ℤ[i]-relevant reflection points:
+
+| `z` | order `2z−1` | value `R(z)` | dynamical face |
+|---|---|---|---|
+| `1/2` | `0` | `1` | **symmetric** — integer-order, reversible; the ratio is the identity and **π** appears as the reflection *product* here (`EXPLR_CM_RATIO_TOWER`). No half-operator ⇒ **no arrow**. |
+| `1/4` | `−1/2` | `G*` | **backward** half-derivative — the **arrow** (§§1–2), and the master-quadratic source of `1/α`. |
+| `3/4` | `+1/2` | `1/G*` | **forward** half-derivative — value `1/G* = 0.33799`, numerically the wave-equation self-consistency target `c² = 1/G*` (`FOUND_GSTAR_DYNAMICAL_ROLE.md` §4). |
+
+Two observations, both **`[CONJECTURE]`** — each ingredient is canonical, but these specific connections are not made elsewhere in the corpus:
+
+**(a) The symmetric point is arrow-off.** At `z = 1/2` the order is exactly `0`: a local, reversible (zeroth-order) operator — no half-derivative, hence **no arrow** — with the trivial value `R = 1`. This is the same `z = 1/2` where π appears as the reflection product. So the arrow is not "always on": it is **off at the symmetric point and switched on when the substrate departs `z = 1/2` toward the ℤ[i] quarter**, where the order becomes half-integer. π-reversibility and arrow-irreversibility are one z-axis seen at the symmetric vs the quarter point.
+
+**(b) Arrow and propagation-closure are reflection partners.** `z = 1/4` and `z = 3/4` are conjugate under `z ↔ 1−z`, carrying `R = G*` and `R = 1/G*`. The **backward** half-derivative (`z=1/4`, order `−1/2`, `G*`) is the arrow (§1); the **forward** half-derivative (`z=3/4`, order `+1/2`, `1/G*`) carries the value `1/G*` that Face 4 of `FOUND_GSTAR_DYNAMICAL_ROLE` identifies with the wave-equation closure target `c² = 1/G*`. The value coincidence is trivial (both are `1/G*`); the `[CONJECTURE]` is *structural* — that the arrow (Face 2) and the `c²=1/G*` "detuned-3" origin of α (Face 4) are the **backward/forward reflection partners of one half-derivative pair**, not two unrelated appearances of `G*`.
+
+**One origin, two roots, asymmetric status (the guard).** The shared origin — the `z=1/4` ratio branch downstream of the i-act — is the `[SYNTHESIS]` of §§1/3, already canonical (`ratio_and_the_arrow.tex`; `DERIV_HEAT_EQUATION_FROM_RATIO` §5). But the roots taken there are **not** symmetric, and this section does not imply they are:
+- the **arrow's** root `∂_t^{1/2}=√(∂_t)` is a **phase** the substrate takes for free — *forced-given-FC-2* (§3, FTD-0324), a non-invertible fold, no free branch;
+- **α's** distinguishing root `δ = √(G*(4G*−1))` is a **magnitude** the substrate *cannot* set and must **import** (FC-W) — "the substrate can choose a direction (phase) but not the size of the choice (magnitude)" (`FOUND_SQUARE_ROOT_AS_ACT` §1c).
+
+Nor do they share an epistemic tier: the arrow's operator content is `[THEOREM]` (physical-time identification FC-2 `[AXIOM]`-class), while `x₊=1/α` stays `[SMC]`. This asymmetry is the content, not a caveat — it is *why* FTD obtains the arrow natively but must import the α-readout: **one phase-root taken, one magnitude-root priced, at a single quarter-point.**
+
+---
+
+## 7 · Status line
+
+**Nothing is promoted.** Tag `[SYNTHESIS]` for §§0–5; §6 adds two `[CONJECTURE]` observations (the `z=1/2` arrow-off symmetry, and the `z=1/4 ↔ 3/4` arrow/propagation reflection-partner reading) — conjectures below the synthesis core, promoting nothing and preserving the phase/magnitude and tier asymmetry between the arrow-root and α's `δ`. FC-2 stays `[AXIOM]`-class; `DERIV_HEAT_EQUATION_FROM_RATIO.md` stays `[THEOREM]` (operator content); the §3.4 framing stays `[SYNTHESIS]`; FTD-0013 stays `[SMC]`; no α derived; P1–P5 and the FC register untouched. This document is exposition unifying existing claims at their existing tags, plus two clearly-flagged conjectural extensions.
