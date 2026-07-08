@@ -1,5 +1,37 @@
 # Foundational Ternary Dynamics Changelog
 
+## W₁₈ is not self-dual — the rigid-CY / weight-4-modular branch is closed (FTD-0373, 2026-07-06)
+
+The residual left by the previous entry — whether the genuinely-new order-4
+period W₁₈ nonetheless has a rigid-Calabi–Yau / weight-4-modular closed form — is
+settled **negative** by an exact local-exponent argument, independent of the CAS.
+Docs + one operator-derived verifier; no physics claim moved; golden untouched.
+
+- **W₁₈ is not self-dual.** Every rigid-CY / K3 / Sym²·Sym³-elliptic /
+  weight-4-newform (Mazur–van Straten–Yui / Gouvêa–Yui) identification needs the
+  order-4 monodromy local system to be a **self-dual polarized VHS** — a
+  nondegenerate invariant bilinear form — which forces per-point exponent
+  symmetry (`a+d = b+c`, sorted; the center may vary point to point, as for the
+  mirror quintic: 0 at MUM, 1 at the conifold, ½ at ∞). W₁₈'s {0,½,1,2} at
+  z=1,−2,−3 has `0+2 = 2 ≠ ½+1 = 3⁄2`: symmetric about **no** center ⇒ no
+  invariant form (neither symplectic nor orthogonal) ⇒ **not self-dual**.
+- **Consequence.** W₁₈ is not a rigid-CY H³ period, not Sym²/Sym³ of an elliptic
+  curve, not a K3 transcendental piece, and its L-function is not a weight-4
+  newform L-function. The rigid-CY / weight-4 branch of the P3 residual is
+  **CLOSED NEGATIVE**. (This also refutes the concurrent "orthogonal SO₄ /
+  weight-2 K3" reading — orthogonal self-duality fails the same test.)
+- **Positive redirect.** W₁₈ is a non-self-dual **diagonal** period — the LGF is
+  literally the diagonal of 1/(1 − z·σ₁₈) — whose Hadamard-type closed form is
+  the remaining open branch of the residual.
+- Verifier `explr_stencil18_selfduality_derived.py` derives the exponents from
+  the operator (no hardcoding), validated on a hypergeometric operator with known
+  exponents and on point-varying self-dual controls (mirror quintic; Sym³-elliptic).
+  `EXPLR_STENCIL_SPECTRUM.md` §2.5 + header + §2 + §3, the P3 export, and
+  META_INDEX 9.63 / INDEX_09 updated. **Deleted** (not archived — the path is
+  closed) the superseded/contradictory scratch: `explr_stencil18_selfduality.py`
+  (hardcoded exponents), `explr_w18_mumford_tate.sage[.py]` (the refuted
+  orthogonal reading), `_w18check_tmp.sage.py`. Next free id FTD-0374.
+
 ## The default Green's function is arithmetically new — P3(b) closed (FTD-0372, 2026-07-06)
 
 Wired up the D-module toolchain (**Sage 9.5 + ore_algebra 0.5** in WSL2) and
