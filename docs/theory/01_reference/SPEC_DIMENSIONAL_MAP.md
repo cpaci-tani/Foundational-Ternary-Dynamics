@@ -164,7 +164,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 - **Tag:** `CALIBRATION`
 - **LEDGER:** [FTD-0030](../07_assessment/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/LEDGER.md#ftd-0059)
 - **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
-- **Calibration note:** FTD-0059 (no-go theorem): no length is expressible from Axiom-Zero invariants alone. Mechanisms α/β/γ/δ all closed negative. The Planck-length declaration is theorem-enforced as the irreducible minimum, not a convenience choice. ℓ_P value from CODATA 2022: ≈1.616255 × 10⁻³⁵ m.
+- **Calibration note:** Under the DEFAULT electron-primary gauge (FTD-0137 §4.5, FOUND_ELECTRON_PRIMARY_GAUGE.md), a_phys = ℓ_P is DERIVED: ℓ_P = ƛ_C·Kα¹¹ via the FTD-0015 m_e/m_P ladder, ≈1.616255×10⁻³⁵ m to 0.19% ([DERIVED ~0.19%]). Legacy Planck-primary instead declares it exactly. FTD-0059 forbids deriving a length from Axiom-Zero invariants ALONE (Mechanisms α/β/γ/δ all closed negative); electron-primary derives it from the imported {ℏ,c,m_e}, not Axiom Zero. ℓ_P reference value from CODATA 2022.
 - **Notes:** First of two SI-dimensional calibrations theorem-enforced by FTD-0096.
 
 ### t_phys (one tick in seconds) (`t_phys_lattice_tick`)
