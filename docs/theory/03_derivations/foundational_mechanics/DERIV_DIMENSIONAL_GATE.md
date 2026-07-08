@@ -39,7 +39,7 @@ a **dimensionless native number `q̂`** times a **calibration monomial**. The ex
 
 The intuitive picture: **length and mass are *defined* because the substrate provably cannot set any absolute scale (grade-0 closure); time is *derived* because once the length scale and the lattice's own dimensionless speed are fixed, the tick follows.** Two imports, one derivation.
 
-**Ledger consequence.** The priced-import ledger's IMP-K2 (`t_phys`) is therefore **not an independent import** — it is `[DERIVED from IMP-K1 + c_lat]`. The genuine dimensional imports number **two** (length, mass), plus the physical value of `c` that bridges L and T. This tightens the boundary by one line in FTD's favour.
+**Ledger consequence.** The priced-import ledger's IMP-K2 (`t_phys`) is therefore **not an independent import** — it is `[DERIVED from IMP-K1 + c_lat]`. The genuine dimensional imports number **two** (length, mass), plus the physical value of `c` that bridges L and T. This tightens the boundary by one line in FTD's favour. And of those two, the *length* import can itself be dropped: anchoring the electron mass and deriving the Planck scale + `G` from the α-ladder leaves a single beyond-universal import — the **electron-primary gauge**, `FOUND_ELECTRON_PRIMARY_GAUGE.md`, the recommended proper entry.
 
 ---
 
@@ -80,4 +80,4 @@ The gate is exact algebra on top of established theorems; it introduces no new p
 
 ## §6 — Cross-references
 
-`FOUND_DIMENSIONAL_GRADE_CLOSURE.md` (FTD-0368, the grade-0 conservation theorem this operationalizes); `THEOREM_A_PHYS_NO_GO.md` (FTD-0059); `THEOREM_MU_NO_GO_FTD0096.md` (FTD-0096); `SPEC_DIMENSIONAL_MAP.md` + `dimensional_map.json` (the three-layer catalog); `SPEC_IMPORT_LEDGER.md` (IMP-K1/K2/K3 pricing); `FOUND_MODULUS_ARGUMENT_FRONTIER.md` (the qualitative boundary this is the dimensional face of); `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` (FTD-0137, the four gauge choices).
+`FOUND_DIMENSIONAL_GRADE_CLOSURE.md` (FTD-0368, the grade-0 conservation theorem this operationalizes); `THEOREM_A_PHYS_NO_GO.md` (FTD-0059); `THEOREM_MU_NO_GO_FTD0096.md` (FTD-0096); `SPEC_DIMENSIONAL_MAP.md` + `dimensional_map.json` (the three-layer catalog); `SPEC_IMPORT_LEDGER.md` (IMP-K1/K2/K3 pricing); `FOUND_MODULUS_ARGUMENT_FRONTIER.md` (the qualitative boundary this is the dimensional face of); `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` (FTD-0137, the four gauge choices); `FOUND_ELECTRON_PRIMARY_GAUGE.md` (the recommended G-free entry into dimensionful units).

@@ -87,7 +87,7 @@ m_e then derived: m_e = m_P · √(2π) · (16/3) · α¹¹  (FTD-0015 promoted 
 
 ```
 a_phys ≡ 1 fm = 10⁻¹⁵ m (confinement scale)
-t_tick ≡ √3 · 10⁻¹⁵ / c ≈ 5.78 × 10⁻²⁴ s
+t_tick ≡ 10⁻¹⁵ / (√3 · c) ≈ 1.93 × 10⁻²⁴ s
 K_B ≡ m_p (proton mass anchor) or m_e (status quo)
 ```
 
@@ -105,6 +105,17 @@ No dimensional calibration. The framework is purely dimensionless.
 - **Pros**: removes circularity entirely; matches the falsifiable-spine content; is computationally what the framework already does for tractable predictions (per the calibration feasibility audit)
 - **Cons**: absolute predictions ("what is `m_e` in MeV/c²?") become *cross-framework translation questions*, not FTD-internal predictions. Loses the satisfying narrative of "FTD predicts the electron mass is 0.511 MeV"; gains the honest narrative of "FTD predicts the electron-to-Planck mass ratio is 4.18×10⁻²³ (matching measurement to 0.19% per FTD-0015)"
 - **Status**: Most consistent with the discrete-native program (FTD-0136); most consistent with the operationalist position (§5); least convenient for SM-bridge popularization
+
+### §4.5 Electron-primary (the *proper* entry — recommended)
+
+```
+Import {ℏ, c, m_e};  derive everything else.
+a_phys, t_phys, m_P, ℓ_P, and G are all DERIVED (not imported).
+```
+
+- **Pros**: imports exactly **one** scale beyond the universal constants `{ℏ, c}` — the electron mass `m_e`, a lab number — versus Planck-primary's **two** (`ℓ_P` ≡ `G`, and `m_e`), which are redundant since `m_e/m_P = Kα¹¹` is a predicted ratio. **`G` becomes an output**: `α_G(e,e) = (m_e/m_P)² = (Kα¹¹)² ≈ 1.745×10⁻⁴⁵` (0.38% vs measured, FTD-0015). Non-circular (no borrowed `G`), operational (`m_e` measurable), spine-centered (the α-ladder is *built around* `m_e`).
+- **Cons**: `c, ℏ` remain imports (Buckingham floor is 3 for SI); the `G`-output rides at `[SMC]` (FTD-0015/0131), not `[THEOREM]`.
+- **Status**: the **recommended** gauge — the operational inverse of §4.2 cluster-primary (it anchors the *measurable* endpoint `m_e`, not the unmeasurable `m_P`). Full treatment: `FOUND_ELECTRON_PRIMARY_GAUGE.md`. Adopting it as the SPEC_FTD default is a separate owner decision.
 
 ---
 

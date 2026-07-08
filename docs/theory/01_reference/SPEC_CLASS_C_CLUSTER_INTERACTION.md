@@ -112,7 +112,7 @@ where $n_i$ is the voxel cardinality of the dark-state clusters.
 To compare lattice measurements to physical SI observables, we apply the FTD-0041 calibration ladder:
 
 *   **Lattice Spacing:** $a \equiv \ell_P \approx 1.616 \times 10^{-35}\text{ m}$
-*   **Time Spacing:** $dt \equiv t_{\text{tick}} = \sqrt{3}\,\ell_P / c \approx 9.34 \times 10^{-44}\text{ s}$
+*   **Time Spacing:** $dt \equiv t_{\text{tick}} = \ell_P / (\sqrt{3}\,c) \approx 3.11 \times 10^{-44}\text{ s}$
 *   **Mass Anchor:** $\mu_0 \equiv m_e \approx 9.109 \times 10^{-31}\text{ kg}$
 
 The conversion from lattice force $F_{\text{lat}}$ to SI Newtons ($F_{\text{SI}}$) is derived strictly from dimensional analysis:
