@@ -60,7 +60,7 @@ This is consistent with the existing position (FTD-0059 + FTD-0096 close the fou
 
 Any external declaration that respects all dimensionless predictions is a valid gauge choice. Four natural candidates:
 
-### §4.1 Planck-primary (current default per FTD-0041)
+### §4.1 Planck-primary (legacy default — superseded as default by §4.5 on 2026-07-08; still a valid gauge)
 
 ```
 a_phys ≡ ℓ_P ≈ 1.616 × 10⁻³⁵ m
@@ -115,7 +115,7 @@ a_phys, t_phys, m_P, ℓ_P, and G are all DERIVED (not imported).
 
 - **Pros**: imports exactly **one** scale beyond the universal constants `{ℏ, c}` — the electron mass `m_e`, a lab number — versus Planck-primary's **two** (`ℓ_P` ≡ `G`, and `m_e`), which are redundant since `m_e/m_P = Kα¹¹` is a predicted ratio. **`G` becomes an output**: `α_G(e,e) = (m_e/m_P)² = (Kα¹¹)² ≈ 1.745×10⁻⁴⁵` (0.38% vs measured, FTD-0015). Non-circular (no borrowed `G`), operational (`m_e` measurable), spine-centered (the α-ladder is *built around* `m_e`).
 - **Cons**: `c, ℏ` remain imports (Buckingham floor is 3 for SI); the `G`-output rides at `[SMC]` (FTD-0015/0131), not `[THEOREM]`.
-- **Status**: the **recommended** gauge — the operational inverse of §4.2 cluster-primary (it anchors the *measurable* endpoint `m_e`, not the unmeasurable `m_P`). Full treatment: `FOUND_ELECTRON_PRIMARY_GAUGE.md`. Adopting it as the SPEC_FTD default is a separate owner decision.
+- **Status**: the **default** gauge (adopted 2026-07-08 per FTD-0041; SPEC_FTD calibration section) — the operational inverse of §4.2 cluster-primary (it anchors the *measurable* endpoint `m_e`, not the unmeasurable `m_P`). Full treatment: `FOUND_ELECTRON_PRIMARY_GAUGE.md`. Legacy Planck-primary (§4.1) remains valid.
 
 ---
 

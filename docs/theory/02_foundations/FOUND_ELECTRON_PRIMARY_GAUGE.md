@@ -79,7 +79,7 @@ Electron-primary is the *operational inverse* of the doc's existing **cluster-pr
 - **`c` and `ℏ` remain imports.** SI cannot be reached below 3 constants; the win is *which* three (universal + leptonic, G-free) — not a smaller count in absolute terms. The "one import" framing is *beyond the universal constants*.
 - **The gravity output rides at [SMC].** `m_e/m_P = Kα¹¹` is `[DERIVED ~0.19%]` with the `√(2π)` factor `[SELECTION]`; `α_G` is FTD-0015/FTD-0131 `[SMC]`. "G is a prediction" is *structurally* proper but epistemically `[SMC]`, not `[THEOREM]`. No promotion.
 - **Dimensionless predictions are unchanged.** This is a gauge choice (FTD-0137); the falsifiable spine (α, mass ratios, mixing angles) is gauge-invariant. Only absolute-unit readings differ, and they agree with Planck-primary wherever the ladder is exact.
-- **Adopting it as the SPEC_FTD *default* is a separate owner decision.** This note documents and recommends the gauge; it does **not** flip the declared default calibration. Switching the default touches the constitution/LEDGER and should be done deliberately.
+- **Adopted as the SPEC_FTD default (2026-07-08).** Electron-primary is now the declared default gauge (SPEC_FTD calibration section, constitution §3.3, LEDGER FTD-0041, CLAUDE.md); the legacy Planck-primary declaration remains a valid alternative gauge (FTD-0137 §4.1). The switch changes **no** prediction (gauge-invariant spine) — it re-anchors the import surface and reclassifies `a_phys`/`G` as derived-at-`[SMC]`.
 
 ---
 
