@@ -64,7 +64,7 @@ Any external declaration that respects all dimensionless predictions is a valid 
 
 ```
 a_phys ≡ ℓ_P ≈ 1.616 × 10⁻³⁵ m
-t_tick ≡ √3 · ℓ_P / c ≈ 9.34 × 10⁻⁴⁴ s
+t_tick ≡ ℓ_P / (√3 · c) = t_P/√3 ≈ 3.11 × 10⁻⁴⁴ s
 K_B ≡ m_e ≈ 0.511 MeV/c²
 ```
 
@@ -76,7 +76,7 @@ K_B ≡ m_e ≈ 0.511 MeV/c²
 ```
 K_B ≡ m_P (Planck mass anchor)
 a_phys ≡ ℓ_P (length unchanged)
-t_tick ≡ √3 · ℓ_P / c (time unchanged)
+t_tick ≡ ℓ_P / (√3 · c) (time unchanged)
 m_e then derived: m_e = m_P · √(2π) · (16/3) · α¹¹  (FTD-0015 promoted to load-bearing)
 ```
 
@@ -239,7 +239,7 @@ The calibration anchors (under the Planck-primary gauge of §4.1):
 | Lattice quantity | Physical quantity | Value |
 |---|---|---|
 | 1 voxel | Planck length ℓ_P | 1.616 × 10⁻³⁵ m |
-| 1 tick | √3 · ℓ_P / c | 9.34 × 10⁻⁴⁴ s |
+| 1 tick | ℓ_P / (√3 · c) | 3.11 × 10⁻⁴⁴ s |
 | K_B (manifestation energy) | electron mass m_e | 0.511 MeV |
 | K_GENESIS (genesis threshold) | 3·K_B = 3·m_e | 1.533 MeV |
 
@@ -252,7 +252,7 @@ These follow directly from the cubic-lattice substrate + CFL stability:
 | Quantity | Lattice | Physical |
 |---|---|---|
 | Minimum length | 1 voxel | 1 ℓ_P = 1.616 × 10⁻³⁵ m |
-| Minimum tick | 1 tick | √3 · ℓ_P / c ≈ 9.34 × 10⁻⁴⁴ s |
+| Minimum tick | 1 tick | ℓ_P / (√3 · c) ≈ 3.11 × 10⁻⁴⁴ s |
 | Minimum volume | 1 voxel | 1 ℓ_P³ = 4.22 × 10⁻¹⁰⁵ m³ |
 | Minimum information unit | 1 ternary state ∈ {−1, 0, +1} | log₂(3) ≈ 1.585 bits |
 | Lattice signal speed | c_lat = 1/√3 voxels/tick | c (physical) |
