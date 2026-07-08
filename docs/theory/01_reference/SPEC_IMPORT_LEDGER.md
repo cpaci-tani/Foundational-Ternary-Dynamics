@@ -71,7 +71,7 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | ref | imported anchor | tag | falsifier |
 |---|---|---|---|
 | IMP-K1 | `a_phys ≡ ℓ_P` (length) | [IMPOSED — calibration] | a substrate derivation of `a_phys` (Mechanism-γ **closed negative** — currently genuinely imported) |
-| IMP-K2 | `t_phys ≡ √3·ℓ_P/c` (time) | [IMPOSED — calibration] | a substrate derivation of the tick-to-second ratio independent of `a_phys` |
+| IMP-K2 | `t_phys = ℓ_P/(√3·c)` (time) | [DERIVED from IMP-K1 + c_lat] | not an independent import: fixed by `a_phys` (IMP-K1) + the CFL Courant speed `c_lat = 1/√3` ([THEOREM]) + physical `c`. Corrected 2026-07-08 from `√3·ℓ_P/c` (factor-3 inconsistency with `c_lat=1/√3`); see `DERIV_DIMENSIONAL_GATE.md` |
 | IMP-K3 | `K_B = m_e` (mass) | [IMPOSED — calibration] | disentangling the FTD-0130 role-conflation so the anchor is forced |
 
 ### 3.5 Empirical identifications (𝔼) — the largest debt surface

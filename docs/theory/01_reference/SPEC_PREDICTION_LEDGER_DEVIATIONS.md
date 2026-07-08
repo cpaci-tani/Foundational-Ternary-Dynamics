@@ -9,7 +9,7 @@
 
 ## 0 · The standard caveat (applies to every row)
 
-> Engine-native `[MEASURED]` results are statements about the FTD substrate at the stated lattice size, stencil, and protocol. Their **physical** readings are conditional on: **(i)** the calibration register (`a_phys ≡ ℓ_P`, `M_REST = m_e`, `t_phys = √3·ℓ_P/c` — constitution §3.3; gauge choices per FTD-0137); **(ii)** the manifestation  detection mapping at its LEDGER tag (`[CONJECTURE]`-grade where used); **(iii)** FC-1/FC-2 as **declared commitments** (constitution §2.4/§2.6/§5.2 — declarations, not derivations). Dimensionless deviation *structure* (which law, which exponent) is calibration-invariant; absolute physical scales are not.
+> Engine-native `[MEASURED]` results are statements about the FTD substrate at the stated lattice size, stencil, and protocol. Their **physical** readings are conditional on: **(i)** the calibration register (`a_phys ≡ ℓ_P`, `M_REST = m_e`, `t_phys = ℓ_P/(√3·c)` — constitution §3.3; gauge choices per FTD-0137); **(ii)** the manifestation  detection mapping at its LEDGER tag (`[CONJECTURE]`-grade where used); **(iii)** FC-1/FC-2 as **declared commitments** (constitution §2.4/§2.6/§5.2 — declarations, not derivations). Dimensionless deviation *structure* (which law, which exponent) is calibration-invariant; absolute physical scales are not.
 
 **Physical-scale honesty for PL-4/PL-5:** under `a_phys ≡ ℓ_P` the UV corrections are Planck-suppressed; laboratory reach is bounded by existing Lorentz-violation searches. The engine-native versions are testable now; the physical versions are long-horizon. Both readings are stated per row.
 
