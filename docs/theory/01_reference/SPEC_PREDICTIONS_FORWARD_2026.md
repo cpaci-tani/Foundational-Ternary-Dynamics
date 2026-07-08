@@ -9,7 +9,7 @@
 
 ## §0 · Scope and standard caveat
 
-This registry collects **genuinely forward-looking, falsifiable predictions** that follow from already-tagged claims. It adds no derivations and runs no searches. The FTD-0258 standard caveat applies to every row: engine results are substrate-level statements at the stated lattice size/stencil/protocol; physical readings are conditional on the calibration register (`a_phys ≡ ℓ_P`, `M_REST = m_e`, `t_phys = √3·ℓ_P/c`); dimensionless deviation structure is calibration-invariant, absolute scales are not. A tag is a label, not a resolution (F10).
+This registry collects **genuinely forward-looking, falsifiable predictions** that follow from already-tagged claims. It adds no derivations and runs no searches. The FTD-0258 standard caveat applies to every row: engine results are substrate-level statements at the stated lattice size/stencil/protocol; physical readings are conditional on the calibration register (`a_phys ≡ ℓ_P`, `M_REST = m_e`, `t_phys = ℓ_P/(√3·c)`); dimensionless deviation structure is calibration-invariant, absolute scales are not. A tag is a label, not a resolution (F10).
 
 ## §1 · Digest — the honest shape of the framework
 

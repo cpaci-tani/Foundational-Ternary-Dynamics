@@ -50,7 +50,7 @@ Every inventoried element is assigned **exactly one**:
 | 10 | FC-3 — scale-ratio-covariance | SPEC_SCALE_RATIO_ONTOLOGY; FTD-0304 |
 | 11 | calibration `a_phys ≡ ℓ_P` | constitution §3.3; FTD-0059 |
 | 12 | calibration `M_REST = m_e` | constitution §3.3 |
-| 13 | calibration `t_phys = √3·ℓ_P/c` | constitution §3.3 |
+| 13 | calibration `t_phys = ℓ_P/(√3·c)` | constitution §3.3 |
 | 14 | α operator/branch selection (`W`, the `k=1` exponent, `δ`) | FTD-0244, FTD-0243 |
 | 15 | blind-chain `[SELECTION]` steps (D=3 minimality; time-emergence; Vieta `k`; lattice gauge `a`) | FOUND_BLIND_DERIVATION_CHAIN; FTD-0080 |
 

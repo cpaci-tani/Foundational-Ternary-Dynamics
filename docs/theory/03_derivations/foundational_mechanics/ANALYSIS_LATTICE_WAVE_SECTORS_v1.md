@@ -98,7 +98,7 @@ The lattice speaks in mode numbers; the map to SI is the declared calibration in
 | Quantity | lattice | physical |
 |---|---|---|
 | length | 1 voxel | `a_phys ≡ ℓ_P = 1.616×10⁻³⁵ m` `[CALIBRATION]` |
-| time | 1 tick | `t_phys = √3·ℓ_P/c ≈ 9.34×10⁻⁴⁴ s` `[CALIBRATION]` |
+| time | 1 tick | `t_phys = ℓ_P/(√3·c) ≈ 3.11×10⁻⁴⁴ s` `[CALIBRATION]` |
 | wavenumber | `k` (rad/voxel) | `k/a_phys` (rad/m); wavelength `λ_phys = λ_lattice·ℓ_P` |
 | frequency | `ω` (rad/tick) | `ω/t_phys` (rad/s); `ν = ω/(2π·t_phys)` |
 

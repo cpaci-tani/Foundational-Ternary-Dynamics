@@ -34,7 +34,7 @@ So FTD is **not** chosen once. It is chosen *once generatively* (`i`), plus a sm
 | 10 | FC-3 — scale-ratio-covariance | **covariance** | `[AXIOM]`-class declaration | "Only internal ratios physical." Not i-act/orientation/refusal (FTD-0304). |
 | 11 | `a_phys ≡ ℓ_P` | **calibration** | `[DECLARED]` | Theorem-non-derivable (FTD-0059); unit anchor. |
 | 12 | `M_REST = m_e` | **calibration** | `[DECLARED]` | Unit anchor. |
-| 13 | `t_phys = √3·ℓ_P/c` | **calibration** | `[DECLARED]` | Unit anchor (follows from `c=1/√3` + `ℓ_P`). |
+| 13 | `t_phys = ℓ_P/(√3·c)` | **calibration** | `[DECLARED]` | Unit anchor (follows from `c=1/√3` + `ℓ_P`). |
 | 14 | α operator/branch selection (`W`, `k=1`, `δ`) | **independent algebraic selection** | `[THEOREM]`-negative (FTD-0244) | `δ=√(G*(4G*−1))` generates a **degree-2** extension of `ℚ(G*)` not in the i-native calculus; `W`/`k=1` logically independent of the generators. |
 | 15 | blind-chain `[SELECTION]` steps (D=3 minimality; time-emergence; Vieta `k`; lattice gauge `a`) | **selection / calibration** (not i-acts) | `[SELECTION]` | Non-theorem steps of the `i→α` chain; `k` overlaps row 14, `a` overlaps rows 11–13. |
 

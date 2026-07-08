@@ -499,7 +499,7 @@
 
 ### FTD-0041: a_phys ≡ ℓ_P calibration declaration
 
-- **statement:** One voxel ≡ one Planck length. Tick: t_phys = √3 · ℓ_P / c. Mass unit: M_unit = m_e / K_B = 1 MeV/c².
+- **statement:** One voxel ≡ one Planck length. Tick: t_phys = ℓ_P / (√3 · c) = t_P/√3 ≈ 3.11 × 10⁻⁴⁴ s (derived from a_phys ≡ ℓ_P + CFL Courant speed c_lat = 1/√3; corrected 2026-07-08 from the earlier √3·ℓ_P/c, which was inconsistent with c_lat = 1/√3 by a factor of 3 — see `DERIV_DIMENSIONAL_GATE.md`). Mass unit: M_unit = m_e / K_B = 1 MeV/c².
 - **tag:** CALIBRATION (declared, not derived)
 - **declared in:** `SPEC_FTD.md` (between Postulate 2 and Postulate 3, "LATTICE  PHYSICAL CALIBRATION" section).
 - **rationale:** `a_phys` cannot be derived from Axiom-Zero invariants alone. Mechanisms α / β / γ all closed (see FTD-0030, FTD-0035). Planck-length declaration is the natural calibration if the framework operates at the smallest length physics has reason to invoke.
