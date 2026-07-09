@@ -38,6 +38,12 @@
 | [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) | [THEOREM] (identities) + [SELECTION] (interpretation) + [CONJECTURE] (Fourier self-duality) | The master quadratic as connector between lattice arithmetic and lemniscate analysis. |
 | [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) | [THEOREM]/[CONTEXT] mixed (white paper) | Lemniscate Hierarchy white paper: nested algebraic curves encoding the four forces; 137-lobe curve and 2πα moiré period. |
 
+## Research programs
+
+| File | Tag | Purpose |
+|---|---|---|
+| [SCOPE_DISCRETE_FEYNMAN_PROGRAM.md](SCOPE_DISCRETE_FEYNMAN_PROGRAM.md) | [SCOPE] — promotes nothing | Discrete-Feynman-integral program: the one-loop lattice integral (return Green's function) is pinned to a CM point by the structure function — BCC→ℤ[i]/Γ(1/4)=G\*, FCC→ℤ[ω]/Γ(1/3), SC→disc −24 (a [THEOREM] per DERIV_WATSON_GSTAR_IDENTITY §7.4, confirmed by `lattice_period_map.py`). M2 (open): does the **two-loop** BCC period stay lemniscatic or climb like the continuum sunrise? Ceiling: cannot force α (MC-T4.3); a deterministic resolvent series, not a path integral; studies periods, not literal self-energies. |
+
 ---
 
-12 active docs in this cluster (+ 1 archived: `archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` — retracted).
+13 active docs in this cluster (+ 1 archived: `archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` — retracted).
