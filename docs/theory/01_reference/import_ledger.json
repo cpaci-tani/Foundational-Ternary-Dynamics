@@ -69,7 +69,7 @@
       "falsifier": "a proof either way re-adjudicates FTD-0369 via its frozen verdict map (E1 false would put W_S in Q(G*,pi))."
     },
     {
-      "ref": "IMP-C4", "kind": "named-result", "status_flag": "open", "type_imported": "E*/E**: no admissible-symbol period value has (4G*-1) in its square class (family-quantified); subsumes E2, whose exponential-period leg is gated by the Fresan-Jossen exponential period conjecture (Conj 8.2.6; priced FTD-0376)",
+      "ref": "IMP-C4", "kind": "named-result", "status_flag": "open", "type_imported": "E*/E**: no admissible-symbol period value has (4G*-1) in its square class (family-quantified); subsumes E2, whose exponential-period leg is gated by the Fresan-Jossen exponential period conjecture (Conj 8.2.6; priced FTD-0376; sharpened FTD-0378: individual transcendence of H_sigma(tau) CLOSED for SC/BCC via Siegel-Shidlovskii -- only independence from {pi, Gamma(1/4)} remains, behind the (e,pi) wall)",
       "price": 1, "unit": "open conjecture", "canonical_tag": "[OPEN]",
       "provenance": "FTD-0369 (E*, amended package E0+E*); FTD-0370 R2 (E**, uniform); the delta-independence sharp assumption",
       "frontier_face": "the ramification-locus condition (the substrate ramifies only where it lives)",
