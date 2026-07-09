@@ -117,6 +117,7 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 | [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](algebra/EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) | computationally verified | The Fourcier curve's {1,2,4,8,16} frequencies are the Cayley-Jackson dimensions. |
 | [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](algebra/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Counter-rotation, lobe genesis, and the trefoil bridge of the Fourcier curve. |
 | [EXPLR_HALF_MOBIUS_LEMNISCATE.md](general_math/EXPLR_HALF_MOBIUS_LEMNISCATE.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Z₄ topology from period lattice to molecular orbitals; discriminant trichotomy. |
+| [EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md](general_math/EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md) | [EXPLORATORY] | Four-mode dyadic lacunary Fourier seed `C_3`: degree-16 algebraic image, Fibonacci velocity spine `2^k a_k=(1,1,2,3)`, uniform 3:1 chirality ledger, trigonal node relay, and Holder/Weierstrass thresholds for the infinite tail. |
 | [EXPLR_FOURIER_CURVE_LEVEL_4.md](general_math/EXPLR_FOURIER_CURVE_LEVEL_4.md) | [EXPLORATORY] | Fourier curve at level 4: triple-cusp structure and class divisibility. |
 | [EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md](general_math/EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md) | [EMERGENT] / [CONJECTURE] | The Born rule visualised as a Joukowski transform (circle → lemniscate). |
 | [EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md](general_math/EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md) | [EMERGENT] (honest negative) | 2D-FFT gauge-group selection diagnosed as a square-grid artifact, not physics. |
@@ -135,4 +136,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-60 active docs in this cluster (+ 2 archived).
+61 active docs in this cluster (+ 2 archived).
