@@ -1,0 +1,2722 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dyadic Lacunary Curve Lab</title>
+  <style>
+    :root {
+      --bg: #111514;
+      --panel: #18201e;
+      --panel-2: #202927;
+      --ink: #eef6f2;
+      --muted: #a8bbb3;
+      --line: #34403d;
+      --accent: #72d6c9;
+      --accent-2: #f2bf5e;
+      --accent-3: #e8787a;
+      --accent-4: #9fb7ff;
+      --field: #0d1110;
+      --shadow: rgba(0, 0, 0, 0.24);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: #141a18;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .app {
+      height: calc(100vh - 48px);
+      display: grid;
+      grid-template-columns: minmax(420px, 1fr) 420px;
+      min-width: 0;
+    }
+
+    .stage {
+      position: relative;
+      min-width: 0;
+      background:
+        linear-gradient(0deg, rgba(255,255,255,0.018), rgba(255,255,255,0.018)),
+        #0d1110;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .three-mount {
+      position: absolute;
+      inset: 0;
+      display: none;
+      pointer-events: none;
+    }
+
+    .three-mount canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .stage.lift-active #curveCanvas {
+      opacity: 0;
+    }
+
+    .stage.lift-active .three-mount {
+      display: block;
+    }
+
+    .hud {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      gap: 8px;
+      pointer-events: none;
+      max-width: min(520px, calc(100% - 28px));
+    }
+
+    .hud-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: rgba(20, 26, 24, 0.78);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+
+    .sidebar {
+      overflow: auto;
+      border-left: 1px solid var(--line);
+      background: var(--panel);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+      min-width: 0;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 0;
+      flex: 0 0 auto;
+    }
+
+    .panel h2 {
+      margin: 0;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-body {
+      padding: 10px 12px 12px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      min-width: 0;
+    }
+
+    .inline-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--field);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 7px 8px;
+      min-height: 32px;
+    }
+
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: #222c29;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 7px 10px;
+      min-height: 32px;
+      cursor: pointer;
+      white-space: nowrap;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn:hover {
+      border-color: #60706b;
+      background: #293431;
+    }
+
+    .btn.primary {
+      border-color: rgba(114, 214, 201, 0.7);
+      background: #193633;
+    }
+
+    .btn.warn {
+      border-color: rgba(232, 120, 122, 0.65);
+      background: #382222;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .segmented .btn {
+      padding-left: 6px;
+      padding-right: 6px;
+      font-size: 12px;
+    }
+
+    .mode-table {
+      display: grid;
+      gap: 6px;
+      max-height: 310px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .mode-head,
+    .mode-row {
+      display: grid;
+      grid-template-columns: 28px 34px 54px 1fr 1fr 1fr 1fr;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .mode-head {
+      color: var(--muted);
+      font-size: 11px;
+      padding: 0 2px;
+    }
+
+    .mode-row {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #171f1d;
+      padding: 6px;
+    }
+
+    .mode-row input[type="number"] {
+      min-height: 28px;
+      padding: 4px 5px;
+      font-size: 12px;
+    }
+
+    .mode-k {
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      background: #171f1d;
+      border-radius: 6px;
+      padding: 7px 8px;
+      min-width: 0;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 2px;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .regime-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .regime-chip {
+      border: 1px solid var(--line);
+      background: #171f1d;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .regime-chip.primary {
+      border-color: rgba(114, 214, 201, 0.72);
+      background: #193633;
+    }
+
+    .regime-chip.warn {
+      border-color: rgba(242, 191, 94, 0.72);
+      background: #342b1d;
+    }
+
+    .regime-readout {
+      display: grid;
+      gap: 6px;
+    }
+
+    .regime-line {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      align-items: baseline;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 6px;
+      min-width: 0;
+    }
+
+    .regime-line span {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .regime-line strong {
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fiber-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .fiber-pill {
+      border: 1px solid rgba(114, 214, 201, 0.45);
+      background: #152422;
+      border-radius: 6px;
+      padding: 6px 7px;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+    }
+
+    .genealogy-strip {
+      height: 92px;
+      display: flex;
+      align-items: end;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #171f1d;
+      padding: 8px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .genealogy-bar {
+      flex: 1 1 0;
+      min-width: 5px;
+      border-radius: 4px 4px 2px 2px;
+      background: linear-gradient(180deg, rgba(114,214,201,0.92), rgba(40,105,98,0.72));
+      border: 1px solid rgba(114,214,201,0.28);
+    }
+
+    .genealogy-bar.delta-hot {
+      background: linear-gradient(180deg, rgba(242,191,94,0.95), rgba(112,79,31,0.72));
+      border-color: rgba(242,191,94,0.35);
+    }
+
+    .genealogy-bar.disabled {
+      opacity: 0.34;
+      background: rgba(168,187,179,0.2);
+      border-color: rgba(168,187,179,0.18);
+    }
+
+    .toggles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: #171f1d;
+      border-radius: 6px;
+      padding: 7px 8px;
+      min-height: 32px;
+      font-size: 12px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      padding: 0 2px 4px;
+    }
+
+    @media (max-width: 980px) {
+      body {
+        overflow: auto;
+      }
+
+      .app {
+        height: auto;
+        min-height: calc(100vh - 48px);
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        height: 62vh;
+        min-height: 420px;
+      }
+
+      .sidebar {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        overflow-x: hidden;
+      }
+
+      .topbar {
+        width: 100vw;
+        max-width: 100vw;
+        height: auto;
+        min-height: 48px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .brand {
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+      }
+
+      .brand span {
+        white-space: normal;
+      }
+
+      .top-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .top-actions .btn {
+        width: 100%;
+      }
+
+      .app,
+      .stage,
+      .sidebar {
+        width: 100vw;
+        max-width: 100vw;
+      }
+
+      .segmented {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mode-table {
+        min-width: 0;
+      }
+
+      .mode-head,
+      .mode-row {
+        min-width: 0;
+      }
+
+      .grid-2,
+      .grid-3,
+      .metrics,
+      .toggles {
+        grid-template-columns: 1fr;
+      }
+
+      .mode-head,
+      .mode-row {
+        grid-template-columns: 28px 30px 48px 1fr 1fr;
+      }
+
+      .mode-head .phase-col,
+      .mode-row .phase-col {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Dyadic Lacunary Curve Lab</h1>
+      <span id="statusLine">EXPLORATORY math surface</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn primary" id="playBtn" type="button">Play</button>
+      <button class="btn" id="resetViewBtn" type="button">Center</button>
+      <button class="btn" id="exportBtn" type="button">Export JSON</button>
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="stage" id="stage">
+      <canvas id="curveCanvas" aria-label="Interactive dyadic Fourier curve visualization"></canvas>
+      <div class="three-mount" id="threeMount" aria-hidden="true"></div>
+      <div class="hud">
+        <div class="hud-row">
+          <div class="chip" id="regimeChip">lambda: finite</div>
+          <div class="chip" id="areaChip">area: --</div>
+          <div class="chip" id="nodeChip">nodes: --</div>
+        </div>
+        <div class="hud-row">
+          <div class="chip" id="hoverChip">t: --</div>
+          <div class="chip" id="liftChip">lift: planar</div>
+          <div class="chip" id="fiberChip">fiber: none</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>Presets</h2>
+        <div class="panel-body">
+          <div class="segmented">
+            <button class="btn" data-preset="seed" type="button">C3</button>
+            <button class="btn" data-preset="fibonacci" type="button">Fib</button>
+            <button class="btn" data-preset="geometric" type="button">Tail</button>
+            <button class="btn" data-preset="qcr" type="button">QCR</button>
+            <button class="btn" data-preset="bookend" type="button">Ends</button>
+          </div>
+          <div class="grid-2">
+            <label>Tail lambda
+              <input id="lambda" type="range" min="0.05" max="0.95" step="0.005" value="0.375">
+            </label>
+            <label>Mode count
+              <input id="modeCount" type="range" min="1" max="24" step="1" value="4">
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>Frequency base
+              <select id="freqBase">
+                <option value="2">2 dyadic</option>
+                <option value="3">3 triadic</option>
+                <option value="4">4 quartic</option>
+              </select>
+            </label>
+            <label>Sign pattern
+              <select id="signPattern">
+                <option value="alternating">alternating</option>
+                <option value="same">same</option>
+                <option value="negative">negative</option>
+                <option value="custom">custom</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid-3">
+            <button class="btn" id="applyRatioBtn" type="button">Apply ratio</button>
+            <button class="btn" id="onlyEndsBtn" type="button">Only ends</button>
+            <button class="btn warn" id="zeroTailBtn" type="button">Zero tail</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Global Shape</h2>
+        <div class="panel-body">
+          <div class="grid-2">
+            <label>Y ratio
+              <input id="yRatio" type="range" min="-4" max="4" step="0.01" value="2">
+            </label>
+            <label>Amplitude
+              <input id="ampScale" type="range" min="0.1" max="3" step="0.01" value="1">
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>Rotation
+              <input id="rotation" type="range" min="-3.14159" max="3.14159" step="0.002" value="0">
+            </label>
+            <label>Phase
+              <input id="phase" type="range" min="0" max="6.28318" step="0.0001" value="0">
+            </label>
+          </div>
+          <div class="grid-3">
+            <label>Zoom
+              <input id="zoom" type="range" min="0.35" max="4" step="0.01" value="1">
+            </label>
+            <label>X offset
+              <input id="offsetX" type="range" min="-4" max="4" step="0.01" value="0">
+            </label>
+            <label>Y offset
+              <input id="offsetY" type="range" min="-4" max="4" step="0.01" value="0">
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Render</h2>
+        <div class="panel-body">
+          <div class="grid-2">
+            <label>Samples
+              <select id="samples">
+                <option value="768">768</option>
+                <option value="1536">1536</option>
+                <option value="3072" selected>3072</option>
+                <option value="6144">6144</option>
+                <option value="8192">8192</option>
+              </select>
+            </label>
+            <label>Color
+              <select id="colorMode">
+                <option value="phase">phase</option>
+                <option value="speed">speed</option>
+                <option value="curvature">curvature</option>
+                <option value="solid">solid</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid-3">
+            <label>Line
+              <input id="lineWidth" type="range" min="0.5" max="6" step="0.1" value="1.6">
+            </label>
+            <label>Alpha
+              <input id="lineAlpha" type="range" min="0.15" max="1" step="0.01" value="0.9">
+            </label>
+            <label>Speed
+              <input id="animSpeed" type="range" min="0.001" max="4" step="0.001" value="0.12">
+            </label>
+          </div>
+          <div class="grid-3">
+            <label>Rib lag
+              <input id="ribbonLag" type="range" min="0.25" max="4" step="0.05" value="1">
+            </label>
+            <label>Ribs
+              <input id="ribbonDensity" type="range" min="120" max="620" step="10" value="340">
+            </label>
+            <label>Rib alpha
+              <input id="ribbonAlpha" type="range" min="0.01" max="0.16" step="0.005" value="0.045">
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>Lift mode
+              <select id="liftMode">
+                <option value="lag">phase lag</option>
+                <option value="phase">clock phase</option>
+                <option value="speed">speed</option>
+                <option value="curvature">curvature</option>
+                <option value="dominant">dominant mode</option>
+                <option value="area">area sweep</option>
+              </select>
+            </label>
+            <label>Lift depth
+              <input id="liftDepth" type="range" min="2.2" max="6.5" step="0.05" value="3.8">
+            </label>
+          </div>
+          <div class="grid-3">
+            <label>Z scale
+              <input id="liftScale" type="range" min="-2" max="2" step="0.01" value="0.72">
+            </label>
+            <label>Yaw
+              <input id="liftYaw" type="range" min="-3.14159" max="3.14159" step="0.01" value="0.7">
+            </label>
+            <label>Pitch
+              <input id="liftPitch" type="range" min="0.18" max="1.35" step="0.01" value="0.68">
+            </label>
+          </div>
+          <div class="grid-3">
+            <label>Surface
+              <input id="liftSurfaceDensity" type="range" min="80" max="900" step="10" value="360">
+            </label>
+            <label>Point size
+              <input id="liftPointSize" type="range" min="2" max="14" step="0.5" value="6">
+            </label>
+            <label>Floor alpha
+              <input id="liftFloorAlpha" type="range" min="0.02" max="0.28" step="0.01" value="0.1">
+            </label>
+          </div>
+          <div class="toggles">
+            <label class="toggle"><input id="showGrid" type="checkbox" checked>Grid</label>
+            <label class="toggle"><input id="showAxes" type="checkbox" checked>Axes</label>
+            <label class="toggle"><input id="showFill" type="checkbox">Area fill</label>
+            <label class="toggle"><input id="showNodes" type="checkbox" checked>Nodes</label>
+            <label class="toggle"><input id="showCurvature" type="checkbox" checked>Curvature</label>
+            <label class="toggle"><input id="showParticle" type="checkbox" checked>Phase point</label>
+            <label class="toggle"><input id="showTangent" type="checkbox">Tangent</label>
+            <label class="toggle"><input id="showNormal" type="checkbox">Normal</label>
+            <label class="toggle"><input id="showEpicycle" type="checkbox" checked>Epicycle</label>
+            <label class="toggle"><input id="showSpectrum" type="checkbox" checked>Spectrum</label>
+            <label class="toggle"><input id="showRibbon" type="checkbox">Ribbon shadow</label>
+            <label class="toggle"><input id="showBranch" type="checkbox">Branch inset</label>
+            <label class="toggle"><input id="mirrorY" type="checkbox">Mirror Y</label>
+            <label class="toggle"><input id="showLift3d" type="checkbox">3D lift</label>
+            <label class="toggle"><input id="showLiftSurface" type="checkbox" checked>Lift surface</label>
+            <label class="toggle"><input id="showLiftFloor" type="checkbox" checked>Lift floor</label>
+            <label class="toggle"><input id="showDepthFade" type="checkbox" checked>Depth fade</label>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Modes</h2>
+        <div class="panel-body">
+          <div class="mode-head">
+            <span>on</span><span>k</span><span>n</span><span>a</span><span>b</span><span class="phase-col">px</span><span class="phase-col">py</span>
+          </div>
+          <div class="mode-table" id="modeTable"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Live Invariants</h2>
+        <div class="panel-body">
+          <div class="metrics" id="metrics"></div>
+          <div class="footer-note" id="guardrail">
+            Exact claims here are curve-local. Mutating coefficients turns the display into a sandbox, not a new FTD derivation.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Regime Classifier</h2>
+        <div class="panel-body">
+          <div class="regime-list" id="regimeList"></div>
+          <div class="regime-readout" id="regimeReadout"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Fibers & Nodes</h2>
+        <div class="panel-body">
+          <div class="grid-3">
+            <label>Probe radius
+              <input id="fiberRadius" type="range" min="0.005" max="0.22" step="0.005" value="0.045">
+            </label>
+            <label>Genealogy samples
+              <select id="genealogySamples">
+                <option value="384">384</option>
+                <option value="640" selected>640</option>
+                <option value="960">960</option>
+              </select>
+            </label>
+            <label>Genealogy cap
+              <input id="genealogyCap" type="range" min="40" max="260" step="10" value="180">
+            </label>
+          </div>
+          <div class="grid-3">
+            <button class="btn" id="clearFiberBtn" type="button">Clear probe</button>
+            <label class="toggle"><input id="showFiberProbe" type="checkbox" checked>Fibers</label>
+            <label class="toggle"><input id="showFiberLinks" type="checkbox" checked>Fiber links</label>
+          </div>
+          <label class="toggle"><input id="showNodeGenealogy" type="checkbox" checked>Node genealogy</label>
+          <div class="regime-readout" id="fiberReadout"></div>
+          <div class="fiber-list" id="fiberList"></div>
+          <div class="regime-readout" id="genealogyReadout"></div>
+          <div class="genealogy-strip" id="genealogyStrip"></div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const TAU = Math.PI * 2;
+      const canvas = document.getElementById("curveCanvas");
+      const ctx = canvas.getContext("2d");
+      const stage = document.getElementById("stage");
+      const threeMount = document.getElementById("threeMount");
+      const modeTable = document.getElementById("modeTable");
+      const metricsEl = document.getElementById("metrics");
+      const regimeListEl = document.getElementById("regimeList");
+      const regimeReadoutEl = document.getElementById("regimeReadout");
+      const fiberReadoutEl = document.getElementById("fiberReadout");
+      const fiberListEl = document.getElementById("fiberList");
+      const genealogyReadoutEl = document.getElementById("genealogyReadout");
+      const genealogyStripEl = document.getElementById("genealogyStrip");
+      const playBtn = document.getElementById("playBtn");
+      const liftChip = document.getElementById("liftChip");
+      const fiberChip = document.getElementById("fiberChip");
+
+      const inputs = {
+        lambda: document.getElementById("lambda"),
+        modeCount: document.getElementById("modeCount"),
+        freqBase: document.getElementById("freqBase"),
+        signPattern: document.getElementById("signPattern"),
+        yRatio: document.getElementById("yRatio"),
+        ampScale: document.getElementById("ampScale"),
+        rotation: document.getElementById("rotation"),
+        phase: document.getElementById("phase"),
+        zoom: document.getElementById("zoom"),
+        offsetX: document.getElementById("offsetX"),
+        offsetY: document.getElementById("offsetY"),
+        samples: document.getElementById("samples"),
+        colorMode: document.getElementById("colorMode"),
+        lineWidth: document.getElementById("lineWidth"),
+        lineAlpha: document.getElementById("lineAlpha"),
+        animSpeed: document.getElementById("animSpeed"),
+        ribbonLag: document.getElementById("ribbonLag"),
+        ribbonDensity: document.getElementById("ribbonDensity"),
+        ribbonAlpha: document.getElementById("ribbonAlpha"),
+        liftMode: document.getElementById("liftMode"),
+        liftDepth: document.getElementById("liftDepth"),
+        liftScale: document.getElementById("liftScale"),
+        liftYaw: document.getElementById("liftYaw"),
+        liftPitch: document.getElementById("liftPitch"),
+        liftSurfaceDensity: document.getElementById("liftSurfaceDensity"),
+        liftPointSize: document.getElementById("liftPointSize"),
+        liftFloorAlpha: document.getElementById("liftFloorAlpha"),
+        fiberRadius: document.getElementById("fiberRadius"),
+        genealogySamples: document.getElementById("genealogySamples"),
+        genealogyCap: document.getElementById("genealogyCap"),
+        showGrid: document.getElementById("showGrid"),
+        showAxes: document.getElementById("showAxes"),
+        showFill: document.getElementById("showFill"),
+        showNodes: document.getElementById("showNodes"),
+        showCurvature: document.getElementById("showCurvature"),
+        showParticle: document.getElementById("showParticle"),
+        showTangent: document.getElementById("showTangent"),
+        showNormal: document.getElementById("showNormal"),
+        showEpicycle: document.getElementById("showEpicycle"),
+        showSpectrum: document.getElementById("showSpectrum"),
+        showRibbon: document.getElementById("showRibbon"),
+        showBranch: document.getElementById("showBranch"),
+        mirrorY: document.getElementById("mirrorY"),
+        showLift3d: document.getElementById("showLift3d"),
+        showLiftSurface: document.getElementById("showLiftSurface"),
+        showLiftFloor: document.getElementById("showLiftFloor"),
+        showDepthFade: document.getElementById("showDepthFade"),
+        showFiberProbe: document.getElementById("showFiberProbe"),
+        showFiberLinks: document.getElementById("showFiberLinks"),
+        showNodeGenealogy: document.getElementById("showNodeGenealogy")
+      };
+
+      const state = {
+        modes: [],
+        playing: false,
+        pointerT: null,
+        lastFrame: 0,
+        cache: null,
+        nodes: [],
+        fiber: null,
+        genealogyKey: "",
+        genealogyData: []
+      };
+
+      const lift3d = {
+        THREE: null,
+        renderer: null,
+        scene: null,
+        camera: null,
+        ready: false,
+        loading: false,
+        failed: false,
+        error: ""
+      };
+
+      function fib(n) {
+        let a = 0;
+        let b = 1;
+        for (let i = 0; i < n; i += 1) {
+          const c = a + b;
+          a = b;
+          b = c;
+        }
+        return a;
+      }
+
+      function getNumber(id) {
+        return Number(inputs[id].value);
+      }
+
+      function getBool(id) {
+        return inputs[id].checked;
+      }
+
+      function makeMode(k, a, b) {
+        return {
+          enabled: true,
+          a,
+          b,
+          px: 0,
+          py: 0
+        };
+      }
+
+      function ensureModeCount(count) {
+        while (state.modes.length < count) {
+          const k = state.modes.length;
+          const a = k === 0 ? 1 : Math.pow(0.5, k);
+          state.modes.push(makeMode(k, a, 2 * (k % 2 === 0 ? 1 : -1) * a));
+        }
+        state.modes.length = count;
+      }
+
+      function seedPreset() {
+        state.modes = [
+          makeMode(0, 1, 2),
+          makeMode(1, 0.5, -1),
+          makeMode(2, 0.5, 1),
+          makeMode(3, 0.375, -0.75)
+        ];
+        inputs.modeCount.value = 4;
+        inputs.freqBase.value = 2;
+        inputs.lambda.value = 0.375;
+        inputs.yRatio.value = 2;
+        inputs.signPattern.value = "alternating";
+        rebuildModeTable();
+        render();
+      }
+
+      function fibonacciPreset() {
+        const count = Math.max(4, getNumber("modeCount"));
+        state.modes = [];
+        for (let k = 0; k < count; k += 1) {
+          const a = fib(k + 1) / Math.pow(2, k);
+          state.modes.push(makeMode(k, a, 2 * (k % 2 === 0 ? 1 : -1) * a));
+        }
+        inputs.freqBase.value = 2;
+        inputs.yRatio.value = 2;
+        inputs.signPattern.value = "alternating";
+        rebuildModeTable();
+        render();
+      }
+
+      function geometricPreset() {
+        const count = Math.max(4, getNumber("modeCount"));
+        const lambda = getNumber("lambda");
+        const seed = [1, 0.5, 0.5, 0.375];
+        state.modes = [];
+        for (let k = 0; k < count; k += 1) {
+          const a = k < 4 ? seed[k] : 0.375 * Math.pow(lambda, k - 3);
+          state.modes.push(makeMode(k, a, 2 * (k % 2 === 0 ? 1 : -1) * a));
+        }
+        inputs.freqBase.value = 2;
+        inputs.yRatio.value = 2;
+        inputs.signPattern.value = "alternating";
+        rebuildModeTable();
+        render();
+      }
+
+      function qcrPreset() {
+        state.modes = [
+          makeMode(0, 1, 1),
+          makeMode(1, 0.5, -0.5),
+          makeMode(2, 0.5, 0.5),
+          makeMode(3, 0.4, -0.35),
+          makeMode(4, 0.0625, 0.0625)
+        ];
+        inputs.modeCount.value = 5;
+        inputs.freqBase.value = 2;
+        inputs.yRatio.value = 1;
+        inputs.signPattern.value = "custom";
+        rebuildModeTable();
+        render();
+      }
+
+      function bookendPreset() {
+        const count = Math.max(12, getNumber("modeCount"));
+        state.modes = [];
+        for (let k = 0; k < count; k += 1) {
+          const isFirst = k === 0;
+          const isLast = k === count - 1;
+          const a = isFirst ? 1 : isLast ? 0.18 : Math.pow(0.5, k);
+          const b = 2 * (k % 2 === 0 ? 1 : -1) * a;
+          const mode = makeMode(k, a, b);
+          mode.enabled = isFirst || isLast;
+          state.modes.push(mode);
+        }
+        inputs.modeCount.value = count;
+        inputs.freqBase.value = 2;
+        inputs.lambda.value = 0.375;
+        inputs.yRatio.value = 2;
+        inputs.signPattern.value = "alternating";
+        rebuildModeTable();
+        render();
+      }
+
+      function applyRatio() {
+        const ratio = getNumber("yRatio");
+        const pattern = inputs.signPattern.value;
+        state.modes.forEach((m, k) => {
+          let sign = 1;
+          if (pattern === "alternating") sign = k % 2 === 0 ? 1 : -1;
+          if (pattern === "negative") sign = -1;
+          if (pattern === "custom") return;
+          m.b = ratio * sign * m.a;
+        });
+        rebuildModeTable();
+        render();
+      }
+
+      function onlyEndpointModes() {
+        const count = Math.max(2, getNumber("modeCount"));
+        ensureModeCount(count);
+        inputs.modeCount.value = count;
+        state.modes.forEach((m, k) => {
+          m.enabled = k === 0 || k === count - 1;
+        });
+        rebuildModeTable();
+        render();
+      }
+
+      function zeroTail() {
+        state.modes.forEach((m, k) => {
+          if (k >= 4) {
+            m.a = 0;
+            m.b = 0;
+          }
+        });
+        rebuildModeTable();
+        render();
+      }
+
+      function rebuildModeTable() {
+        modeTable.innerHTML = "";
+        state.modes.forEach((m, k) => {
+          const row = document.createElement("div");
+          row.className = "mode-row";
+          row.innerHTML = [
+            `<input type="checkbox" data-field="enabled" ${m.enabled ? "checked" : ""} aria-label="mode ${k} enabled">`,
+            `<span class="mode-k">${k}</span>`,
+            `<span class="mode-k">${formatFreq(freqFor(k))}</span>`,
+            `<input type="number" data-field="a" value="${roundForInput(m.a)}" step="0.001" aria-label="mode ${k} a">`,
+            `<input type="number" data-field="b" value="${roundForInput(m.b)}" step="0.001" aria-label="mode ${k} b">`,
+            `<input class="phase-col" type="number" data-field="px" value="${roundForInput(m.px)}" step="0.05" aria-label="mode ${k} x phase">`,
+            `<input class="phase-col" type="number" data-field="py" value="${roundForInput(m.py)}" step="0.05" aria-label="mode ${k} y phase">`
+          ].join("");
+          row.querySelectorAll("input").forEach((input) => {
+            input.addEventListener("input", () => {
+              const field = input.dataset.field;
+              if (field === "enabled") {
+                m.enabled = input.checked;
+              } else {
+                m[field] = Number(input.value);
+              }
+              inputs.signPattern.value = "custom";
+              render();
+            });
+          });
+          modeTable.appendChild(row);
+        });
+      }
+
+      function roundForInput(value) {
+        return Number(value.toFixed(6));
+      }
+
+      function freqFor(k) {
+        return Math.pow(getNumber("freqBase"), k);
+      }
+
+      function formatFreq(value) {
+        if (Math.abs(value - Math.round(value)) < 1e-8) return String(Math.round(value));
+        return value.toFixed(2);
+      }
+
+      function evalAt(t, derivOrder, modeFilter) {
+        const amp = getNumber("ampScale");
+        const phase = getNumber("phase");
+        let x = 0;
+        let y = 0;
+        for (let k = 0; k < state.modes.length; k += 1) {
+          const m = state.modes[k];
+          if (!m.enabled) continue;
+          if (modeFilter && !modeFilter(k, m)) continue;
+          const n = freqFor(k);
+          const a = amp * m.a;
+          const b = amp * (getBool("mirrorY") ? -m.b : m.b);
+          const xt = n * (t + phase) + m.px;
+          const yt = n * (t + phase) + m.py;
+          if (derivOrder === 0) {
+            x += a * Math.cos(xt);
+            y += b * Math.sin(yt);
+          } else if (derivOrder === 1) {
+            x += -a * n * Math.sin(xt);
+            y += b * n * Math.cos(yt);
+          } else if (derivOrder === 2) {
+            x += -a * n * n * Math.cos(xt);
+            y += -b * n * n * Math.sin(yt);
+          }
+        }
+        return { x, y };
+      }
+
+      function sampleCurve() {
+        const samples = getNumber("samples");
+        const pts = [];
+        let minX = Infinity;
+        let maxX = -Infinity;
+        let minY = Infinity;
+        let maxY = -Infinity;
+        let maxSpeed = 0;
+        let maxCurv = 0;
+        let maxSignedCurv = 0;
+        let maxWedge = 0;
+        for (let i = 0; i <= samples; i += 1) {
+          const t = (i / samples) * TAU;
+          const p = evalAt(t, 0);
+          const d = evalAt(t, 1);
+          const dd = evalAt(t, 2);
+          const speed = Math.hypot(d.x, d.y);
+          const signedCurv = speed > 1e-10 ? (d.x * dd.y - d.y * dd.x) / Math.pow(speed, 3) : 0;
+          const curv = Math.abs(signedCurv);
+          const wedge = p.x * d.y - p.y * d.x;
+          const point = { t, x: p.x, y: p.y, dx: d.x, dy: d.y, ddx: dd.x, ddy: dd.y, speed, curv, signedCurv, wedge };
+          pts.push(point);
+          minX = Math.min(minX, p.x);
+          maxX = Math.max(maxX, p.x);
+          minY = Math.min(minY, p.y);
+          maxY = Math.max(maxY, p.y);
+          maxSpeed = Math.max(maxSpeed, speed);
+          maxCurv = Math.max(maxCurv, curv);
+          maxSignedCurv = Math.max(maxSignedCurv, Math.abs(signedCurv));
+          maxWedge = Math.max(maxWedge, Math.abs(wedge));
+        }
+        return { pts, bounds: { minX, maxX, minY, maxY }, maxSpeed, maxCurv, maxSignedCurv, maxWedge };
+      }
+
+      function computeMetrics(curve) {
+        const pts = curve.pts;
+        let area2 = 0;
+        let cxAcc = 0;
+        let cyAcc = 0;
+        let length = 0;
+        for (let i = 0; i < pts.length - 1; i += 1) {
+          const a = pts[i];
+          const b = pts[i + 1];
+          const cross = a.x * b.y - b.x * a.y;
+          area2 += cross;
+          cxAcc += (a.x + b.x) * cross;
+          cyAcc += (a.y + b.y) * cross;
+          length += Math.hypot(b.x - a.x, b.y - a.y);
+        }
+        const area = area2 / 2;
+        const centroid = Math.abs(area2) > 1e-12
+          ? { x: cxAcc / (3 * area2), y: cyAcc / (3 * area2) }
+          : { x: 0, y: 0 };
+
+        let turn = 0;
+        let prev = Math.atan2(pts[0].dy, pts[0].dx);
+        for (let i = 1; i < pts.length; i += 1) {
+          const a = Math.atan2(pts[i].dy, pts[i].dx);
+          let delta = a - prev;
+          while (delta > Math.PI) delta -= TAU;
+          while (delta < -Math.PI) delta += TAU;
+          turn += delta;
+          prev = a;
+        }
+
+        const energy = [0, 0, 0, 0];
+        state.modes.forEach((m, k) => {
+          if (!m.enabled) return;
+          const n = freqFor(k);
+          const amp = getNumber("ampScale");
+          const a2 = Math.pow(amp * m.a, 2);
+          const b2 = Math.pow(amp * m.b, 2);
+          for (let j = 0; j < energy.length; j += 1) {
+            energy[j] += Math.PI * Math.pow(n, 2 * j) * (a2 + b2);
+          }
+        });
+
+        const areaAnalytic = analyticArea();
+        const nodes = getBool("showNodes") ? findIntersections(pts) : [];
+        state.nodes = nodes;
+
+        return {
+          area,
+          areaAnalytic,
+          centroid,
+          length,
+          turn: turn / TAU,
+          energy,
+          nodes
+        };
+      }
+
+      function analyticArea() {
+        let area = 0;
+        state.modes.forEach((m, k) => {
+          if (!m.enabled) return;
+          const n = freqFor(k);
+          const amp = getNumber("ampScale");
+          const b = getBool("mirrorY") ? -m.b : m.b;
+          area += Math.PI * n * (amp * m.a) * (amp * b) * Math.cos(m.px - m.py);
+        });
+        return area;
+      }
+
+      function findIntersections(points, maxSegments = 1300, maxNodes = 220) {
+        const stride = Math.max(1, Math.floor((points.length - 1) / maxSegments));
+        const sampled = [];
+        for (let i = 0; i < points.length - 1; i += stride) sampled.push(points[i]);
+        sampled.push(points[points.length - 1]);
+        const segs = [];
+        for (let i = 0; i < sampled.length - 1; i += 1) {
+          segs.push({ i, a: sampled[i], b: sampled[i + 1] });
+        }
+        const nodes = [];
+        for (let i = 0; i < segs.length; i += 1) {
+          for (let j = i + 2; j < segs.length; j += 1) {
+            if (i === 0 && j === segs.length - 1) continue;
+            const hit = segmentIntersection(segs[i].a, segs[i].b, segs[j].a, segs[j].b);
+            if (hit) {
+              if (!nodes.some((n) => Math.hypot(n.x - hit.x, n.y - hit.y) < 0.018)) {
+                nodes.push(hit);
+              }
+              if (nodes.length > maxNodes) return nodes;
+            }
+          }
+        }
+        return nodes;
+      }
+
+      function segmentIntersection(p1, p2, p3, p4) {
+        const x1 = p1.x;
+        const y1 = p1.y;
+        const x2 = p2.x;
+        const y2 = p2.y;
+        const x3 = p3.x;
+        const y3 = p3.y;
+        const x4 = p4.x;
+        const y4 = p4.y;
+        const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        if (Math.abs(den) < 1e-12) return null;
+        const px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / den;
+        const py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / den;
+        const eps = 1e-9;
+        if (
+          px < Math.min(x1, x2) - eps || px > Math.max(x1, x2) + eps ||
+          px < Math.min(x3, x4) - eps || px > Math.max(x3, x4) + eps ||
+          py < Math.min(y1, y2) - eps || py > Math.max(y1, y2) + eps ||
+          py < Math.min(y3, y4) - eps || py > Math.max(y3, y4) + eps
+        ) {
+          return null;
+        }
+        return { x: px, y: py };
+      }
+
+      function normT(t) {
+        return ((t % TAU) + TAU) % TAU;
+      }
+
+      function circularGap(a, b) {
+        const d = Math.abs(normT(a) - normT(b));
+        return Math.min(d, TAU - d);
+      }
+
+      function distanceToTarget(t, target) {
+        const p = evalAt(normT(t), 0);
+        return Math.hypot(p.x - target.x, p.y - target.y);
+      }
+
+      function refineFiberT(t0, target, step) {
+        let lo = t0 - step * 2.5;
+        let hi = t0 + step * 2.5;
+        for (let i = 0; i < 22; i += 1) {
+          const m1 = lo + (hi - lo) / 3;
+          const m2 = hi - (hi - lo) / 3;
+          if (distanceToTarget(m1, target) < distanceToTarget(m2, target)) hi = m2;
+          else lo = m1;
+        }
+        const t = normT((lo + hi) / 2);
+        const p = evalAt(t, 0);
+        const d = evalAt(t, 1);
+        const dd = evalAt(t, 2);
+        const speed = Math.hypot(d.x, d.y);
+        const signedCurv = speed > 1e-10 ? (d.x * dd.y - d.y * dd.x) / Math.pow(speed, 3) : 0;
+        return {
+          t,
+          x: p.x,
+          y: p.y,
+          dist: Math.hypot(p.x - target.x, p.y - target.y),
+          speed,
+          curv: Math.abs(signedCurv)
+        };
+      }
+
+      function findFiberMatches(curve, target) {
+        const pts = curve.pts;
+        if (pts.length < 4) return [];
+        const radius = getNumber("fiberRadius");
+        const radius2 = radius * radius;
+        const step = TAU / Math.max(1, pts.length - 1);
+        const d2 = pts.map((p) => {
+          const dx = p.x - target.x;
+          const dy = p.y - target.y;
+          return dx * dx + dy * dy;
+        });
+        const candidates = [];
+        let nearestIndex = 0;
+        for (let i = 1; i < pts.length - 1; i += 1) {
+          if (d2[i] < d2[nearestIndex]) nearestIndex = i;
+          if (d2[i] <= radius2 && d2[i] <= d2[i - 1] && d2[i] <= d2[i + 1]) {
+            candidates.push(i);
+          }
+        }
+        const nearest = refineFiberT(pts[nearestIndex].t, target, step);
+        if (!candidates.length) return [{ ...nearest, outside: true }];
+
+        const refined = candidates
+          .map((i) => refineFiberT(pts[i].t, target, step))
+          .sort((a, b) => a.dist - b.dist);
+        const clustered = [];
+        refined.forEach((match) => {
+          if (clustered.some((item) => circularGap(item.t, match.t) < step * 5)) return;
+          if (match.dist <= radius || !clustered.length) clustered.push(match);
+        });
+        const inside = clustered.filter((match) => match.dist <= radius);
+        if (!inside.length) return [{ ...nearest, outside: true }];
+        return inside.slice(0, 18).sort((a, b) => a.t - b.t);
+      }
+
+      function updateFiber(curve) {
+        if (!state.fiber) return;
+        state.fiber.radius = getNumber("fiberRadius");
+        state.fiber.matches = findFiberMatches(curve, state.fiber.target);
+      }
+
+      function makeReadoutRow(label, value) {
+        const row = document.createElement("div");
+        row.className = "regime-line";
+        const labelEl = document.createElement("span");
+        labelEl.textContent = label;
+        const valueEl = document.createElement("strong");
+        valueEl.textContent = value;
+        row.append(labelEl, valueEl);
+        return row;
+      }
+
+      function updateFiberReadout() {
+        fiberReadoutEl.replaceChildren();
+        fiberListEl.replaceChildren();
+        if (!state.fiber) {
+          fiberChip.textContent = "fiber: none";
+          fiberReadoutEl.appendChild(makeReadoutRow("target", "--"));
+          fiberReadoutEl.appendChild(makeReadoutRow("fibers", "--"));
+          return;
+        }
+        const matches = state.fiber.matches || [];
+        const target = state.fiber.target;
+        const inside = matches.filter((match) => !match.outside);
+        const gaps = inside.length > 1
+          ? inside.map((m, i) => circularGap(m.t, inside[(i + 1) % inside.length].t))
+          : [];
+        const minGap = gaps.length ? Math.min(...gaps) : 0;
+        fiberChip.textContent = inside.length
+          ? `fiber: ${inside.length} t-values r ${fmt(state.fiber.radius)}`
+          : `fiber: nearest d ${fmt(matches[0]?.dist || 0)}`;
+        fiberReadoutEl.appendChild(makeReadoutRow("target", `${fmt(target.x)}, ${fmt(target.y)}`));
+        fiberReadoutEl.appendChild(makeReadoutRow("radius", fmt(state.fiber.radius)));
+        fiberReadoutEl.appendChild(makeReadoutRow("fibers", inside.length ? String(inside.length) : "0 in radius"));
+        fiberReadoutEl.appendChild(makeReadoutRow("min gap", inside.length > 1 ? fmt(minGap) : "--"));
+        matches.forEach((match, index) => {
+          const pill = document.createElement("div");
+          pill.className = "fiber-pill";
+          pill.textContent = match.outside
+            ? `nearest: t ${fmt(match.t)} d ${fmt(match.dist)}`
+            : `${index + 1}: t ${fmt(match.t)} d ${fmt(match.dist)}`;
+          fiberListEl.appendChild(pill);
+        });
+      }
+
+      function genealogyFingerprint() {
+        return JSON.stringify({
+          base: inputs.freqBase.value,
+          amp: inputs.ampScale.value,
+          mirror: inputs.mirrorY.checked,
+          samples: inputs.genealogySamples.value,
+          cap: inputs.genealogyCap.value,
+          modes: state.modes.map((m) => [
+            m.enabled,
+            roundForInput(m.a),
+            roundForInput(m.b),
+            roundForInput(m.px),
+            roundForInput(m.py)
+          ])
+        });
+      }
+
+      function sampleCurvePrefix(maxK, samples) {
+        const pts = [];
+        const filter = (k) => k <= maxK;
+        for (let i = 0; i <= samples; i += 1) {
+          const t = (i / samples) * TAU;
+          const p = evalAt(t, 0, filter);
+          pts.push({ t, x: p.x, y: p.y });
+        }
+        return pts;
+      }
+
+      function computeNodeGenealogy() {
+        const samples = Number(inputs.genealogySamples.value);
+        const cap = getNumber("genealogyCap");
+        const maxSegments = Math.min(560, samples);
+        const data = [];
+        let previous = 0;
+        for (let k = 0; k < state.modes.length; k += 1) {
+          const activeCount = state.modes.slice(0, k + 1).filter((m) => m.enabled).length;
+          const pts = activeCount ? sampleCurvePrefix(k, samples) : [];
+          const nodes = activeCount ? findIntersections(pts, maxSegments, cap).length : 0;
+          data.push({
+            k,
+            n: freqFor(k),
+            enabled: state.modes[k].enabled,
+            activeCount,
+            nodes,
+            delta: nodes - previous
+          });
+          previous = nodes;
+        }
+        return data;
+      }
+
+      function updateNodeGenealogy(metrics) {
+        genealogyReadoutEl.replaceChildren();
+        genealogyStripEl.replaceChildren();
+        if (!getBool("showNodeGenealogy")) {
+          genealogyReadoutEl.appendChild(makeReadoutRow("genealogy", "off"));
+          return;
+        }
+        const key = genealogyFingerprint();
+        if (state.genealogyKey !== key) {
+          state.genealogyKey = key;
+          state.genealogyData = computeNodeGenealogy();
+        }
+        const data = state.genealogyData;
+        const maxNodes = Math.max(1, ...data.map((item) => item.nodes));
+        const maxDeltaItem = data.reduce((best, item) => (
+          !best || item.delta > best.delta ? item : best
+        ), null);
+        const maxItem = data.reduce((best, item) => (
+          !best || item.nodes > best.nodes ? item : best
+        ), null);
+        genealogyReadoutEl.appendChild(makeReadoutRow("current", `${metrics.nodes.length} approx`));
+        genealogyReadoutEl.appendChild(makeReadoutRow("max prefix", maxItem ? `k${maxItem.k} n${maxItem.n} -> ${maxItem.nodes}` : "--"));
+        genealogyReadoutEl.appendChild(makeReadoutRow("birth pulse", maxDeltaItem ? `k${maxDeltaItem.k} +${maxDeltaItem.delta}` : "--"));
+        data.forEach((item) => {
+          const bar = document.createElement("div");
+          bar.className = "genealogy-bar";
+          if (!item.enabled) bar.classList.add("disabled");
+          if (item.delta >= Math.max(8, maxNodes * 0.18)) bar.classList.add("delta-hot");
+          bar.style.height = `${Math.max(7, 72 * item.nodes / maxNodes)}px`;
+          bar.title = `k${item.k} n${item.n}: ${item.nodes} nodes, delta ${item.delta}`;
+          genealogyStripEl.appendChild(bar);
+        });
+      }
+
+      function resizeCanvas() {
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const rect = stage.getBoundingClientRect();
+        const w = Math.max(320, Math.floor(rect.width));
+        const h = Math.max(320, Math.floor(rect.height));
+        if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          canvas.style.width = w + "px";
+          canvas.style.height = h + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+      }
+
+      function maxActiveFrequency() {
+        return state.modes.reduce((max, m, k) => (
+          m.enabled ? Math.max(max, freqFor(k)) : max
+        ), 0);
+      }
+
+      function activeModeStats() {
+        const amp = getNumber("ampScale");
+        const modes = [];
+        state.modes.forEach((m, k) => {
+          if (!m.enabled) return;
+          const n = freqFor(k);
+          const a = amp * m.a;
+          const b = amp * (getBool("mirrorY") ? -m.b : m.b);
+          const size = Math.hypot(a, b);
+          const e2 = Math.PI * Math.pow(n, 4) * (a * a + b * b);
+          const e3 = Math.PI * Math.pow(n, 6) * (a * a + b * b);
+          const area = Math.PI * n * a * b * Math.cos(m.px - m.py);
+          modes.push({ k, n, a, b, size, e2, e3, area });
+        });
+        const count = modes.length;
+        const minN = count ? Math.min(...modes.map((m) => m.n)) : 0;
+        const maxN = count ? Math.max(...modes.map((m) => m.n)) : 0;
+        const totalSize = modes.reduce((sum, m) => sum + m.size, 0);
+        const highSize = modes.reduce((sum, m) => sum + (m.n > Math.max(2, minN) ? m.size : 0), 0);
+        const highCount = modes.filter((m) => m.n >= Math.max(8, minN * 4)).length;
+        const totalE2 = modes.reduce((sum, m) => sum + m.e2, 0);
+        const topMode = modes.reduce((best, m) => (!best || m.e2 > best.e2 ? m : best), null);
+        return {
+          modes,
+          count,
+          minN,
+          maxN,
+          highCount,
+          highShare: totalSize > 0 ? highSize / totalSize : 0,
+          totalE2,
+          topMode,
+          e2Share: totalE2 > 0 && topMode ? topMode.e2 / totalE2 : 0
+        };
+      }
+
+      function classifyRegime(metrics) {
+        const stats = activeModeStats();
+        const samplesPerCycle = stats.maxN > 0 ? getNumber("samples") / stats.maxN : Infinity;
+        const nodes = metrics.nodes.length;
+        const base = getNumber("freqBase");
+        const lambda = getNumber("lambda");
+        const ribbon = getBool("showRibbon");
+        const shellBias = ribbon && (
+          getNumber("ribbonAlpha") >= 0.075 ||
+          getNumber("ribbonDensity") >= 420 ||
+          getNumber("ribbonLag") >= 1.4
+        );
+        const bookend = stats.count === 2 &&
+          stats.modes.some((m) => m.k === 0) &&
+          stats.modes.some((m) => m.n === stats.maxN) &&
+          stats.maxN > stats.minN;
+        const tags = [];
+        const add = (label, kind = "") => {
+          if (!tags.some((t) => t.label === label)) tags.push({ label, kind });
+        };
+
+        if (stats.count === 0) add("dormant", "warn");
+        if (samplesPerCycle < 4) add("alias-risk", "warn");
+        else if (samplesPerCycle < 8) add("alias-watch", "warn");
+        if (nodes >= 80) add("web", "primary");
+        else if (nodes >= 12) add("branch-web", "primary");
+        if (shellBias) add("shell", "primary");
+        else if (ribbon) add("ribbon", "");
+        if (stats.count === 1) add("single-clock", "primary");
+        if (bookend) add("bookend", "primary");
+        if (stats.count >= 3 && stats.highCount >= 2 && stats.e2Share < 0.82) add("braid", "primary");
+        if (stats.highShare >= 0.18 && stats.highShare < 0.58 && stats.highCount >= 1) add("rider", "primary");
+        if (stats.highShare < 0.18 && stats.count <= 3 && stats.count > 0) add("carrier", "primary");
+        if (stats.count >= 8 && lambda >= 1 / base) add("rough-tail", "warn");
+        if (stats.e2Share >= 0.86 && stats.maxN >= 8) add("high-clock", "");
+        if (!tags.length) add("mixed", "primary");
+        if (!tags.some((t) => t.kind === "primary")) tags[0].kind = "primary";
+
+        const pressure = Math.log10(Math.max(1, metrics.energy[2] / (Math.abs(metrics.areaAnalytic) + 1)));
+        const top = stats.topMode;
+        const rows = [
+          ["active", `${stats.count} mode${stats.count === 1 ? "" : "s"} · n ${stats.minN || 0}->${stats.maxN || 0}`],
+          ["sampling", stats.maxN ? `${fmt(samplesPerCycle)} samples/n` : "--"],
+          ["dominant", top ? `k${top.k} n${top.n} · ${fmt(100 * stats.e2Share)}% E2` : "--"],
+          ["high reach", `${fmt(100 * stats.highShare)}%`],
+          ["crossings", `${nodes} approx · turn ${fmt(metrics.turn)}`],
+          ["pressure", `log10 E2/area ${fmt(pressure)}`]
+        ];
+        return { tags: tags.slice(0, 6), rows };
+      }
+
+      function updateRegimeClassifier(metrics) {
+        const summary = classifyRegime(metrics);
+        regimeListEl.replaceChildren();
+        summary.tags.forEach((tag) => {
+          const chip = document.createElement("span");
+          chip.className = `regime-chip${tag.kind ? ` ${tag.kind}` : ""}`;
+          chip.textContent = tag.label;
+          regimeListEl.appendChild(chip);
+        });
+
+        regimeReadoutEl.replaceChildren();
+        summary.rows.forEach(([label, value]) => {
+          const row = document.createElement("div");
+          row.className = "regime-line";
+          const labelEl = document.createElement("span");
+          labelEl.textContent = label;
+          const valueEl = document.createElement("strong");
+          valueEl.textContent = value;
+          row.append(labelEl, valueEl);
+          regimeReadoutEl.appendChild(row);
+        });
+      }
+
+      function stableWorldReach() {
+        const amp = getNumber("ampScale");
+        let reachX = 0;
+        let reachY = 0;
+        state.modes.forEach((m) => {
+          if (!m.enabled) return;
+          reachX += Math.abs(amp * m.a);
+          reachY += Math.abs(amp * m.b);
+        });
+        return {
+          x: Math.max(1, reachX) * 1.16,
+          y: Math.max(1, reachY) * 1.16
+        };
+      }
+
+      function makeTransform() {
+        const rect = canvas.getBoundingClientRect();
+        const w = rect.width;
+        const h = rect.height;
+        const rot = getNumber("rotation");
+        const cos = Math.cos(rot);
+        const sin = Math.sin(rot);
+        const reach = stableWorldReach();
+        const corners = [
+          [-reach.x, -reach.y],
+          [-reach.x, reach.y],
+          [reach.x, -reach.y],
+          [reach.x, reach.y]
+        ].map(([x, y]) => ({ x: x * cos - y * sin, y: x * sin + y * cos }));
+        const minX = Math.min(...corners.map((p) => p.x));
+        const maxX = Math.max(...corners.map((p) => p.x));
+        const minY = Math.min(...corners.map((p) => p.y));
+        const maxY = Math.max(...corners.map((p) => p.y));
+        const spanX = Math.max(0.1, maxX - minX);
+        const spanY = Math.max(0.1, maxY - minY);
+        const scale = 0.86 * getNumber("zoom") * Math.min(w / spanX, h / spanY);
+        const cx = -getNumber("offsetX");
+        const cy = -getNumber("offsetY");
+        return {
+          w,
+          h,
+          scale,
+          worldExtent: Math.max(reach.x, reach.y, w / Math.max(1, scale), h / Math.max(1, scale)),
+          toScreen(p) {
+            const rx = p.x * cos - p.y * sin;
+            const ry = p.x * sin + p.y * cos;
+            return {
+              x: w / 2 + (rx - cx) * scale,
+              y: h / 2 - (ry - cy) * scale
+            };
+          },
+          toWorld(s) {
+            const rx = (s.x - w / 2) / scale + cx;
+            const ry = (h / 2 - s.y) / scale + cy;
+            return {
+              x: rx * cos + ry * sin,
+              y: -rx * sin + ry * cos
+            };
+          }
+        };
+      }
+
+      function clearCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        ctx.fillStyle = "#0d1110";
+        ctx.fillRect(0, 0, rect.width, rect.height);
+      }
+
+      function drawGrid(transform) {
+        if (!getBool("showGrid")) return;
+        const step = 0.5;
+        const extent = Math.max(12, Math.ceil(transform.worldExtent / step) * step + 2);
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,255,255,0.055)";
+        ctx.lineWidth = 1;
+        for (let v = -extent; v <= extent; v += step) {
+          const a = transform.toScreen({ x: -extent, y: v });
+          const b = transform.toScreen({ x: extent, y: v });
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          const c = transform.toScreen({ x: v, y: -extent });
+          const d = transform.toScreen({ x: v, y: extent });
+          ctx.beginPath();
+          ctx.moveTo(c.x, c.y);
+          ctx.lineTo(d.x, d.y);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawAxes(transform) {
+        if (!getBool("showAxes")) return;
+        ctx.save();
+        ctx.strokeStyle = "rgba(238,246,242,0.28)";
+        ctx.lineWidth = 1.2;
+        const a = transform.toScreen({ x: -20, y: 0 });
+        const b = transform.toScreen({ x: 20, y: 0 });
+        const c = transform.toScreen({ x: 0, y: -20 });
+        const d = transform.toScreen({ x: 0, y: 20 });
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.moveTo(c.x, c.y);
+        ctx.lineTo(d.x, d.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function colorFor(point, curve, index) {
+        const alpha = getNumber("lineAlpha");
+        const mode = inputs.colorMode.value;
+        if (mode === "solid") return `rgba(114,214,201,${alpha})`;
+        if (mode === "speed") {
+          const q = curve.maxSpeed > 0 ? point.speed / curve.maxSpeed : 0;
+          return `rgba(${Math.floor(80 + 160 * q)},${Math.floor(150 + 80 * (1 - q))},${Math.floor(255 - 120 * q)},${alpha})`;
+        }
+        if (mode === "curvature") {
+          const q = curve.maxCurv > 0 ? Math.min(1, Math.sqrt(point.curv / curve.maxCurv)) : 0;
+          return `rgba(${Math.floor(90 + 230 * q)},${Math.floor(220 - 110 * q)},${Math.floor(185 - 80 * q)},${alpha})`;
+        }
+        const hue = (index / Math.max(1, curve.pts.length - 1)) * 360;
+        return `hsla(${hue}, 72%, 64%, ${alpha})`;
+      }
+
+      function drawCurve(curve, transform) {
+        const pts = curve.pts;
+        if (getBool("showFill")) {
+          ctx.save();
+          ctx.fillStyle = "rgba(114,214,201,0.08)";
+          ctx.beginPath();
+          pts.forEach((p, i) => {
+            const s = transform.toScreen(p);
+            if (i === 0) ctx.moveTo(s.x, s.y);
+            else ctx.lineTo(s.x, s.y);
+          });
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+
+        ctx.save();
+        ctx.lineWidth = getNumber("lineWidth");
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        for (let i = 0; i < pts.length - 1; i += 1) {
+          const a = transform.toScreen(pts[i]);
+          const b = transform.toScreen(pts[i + 1]);
+          ctx.strokeStyle = colorFor(pts[i], curve, i);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawRibbon(curve, transform) {
+        if (!getBool("showRibbon")) return;
+        const pts = curve.pts;
+        if (pts.length < 4) return;
+        const maxN = Math.max(1, maxActiveFrequency());
+        const lag = Math.min(0.9, Math.PI / Math.max(2, maxN) * getNumber("ribbonLag"));
+        const stride = Math.max(2, Math.floor(pts.length / getNumber("ribbonDensity")));
+        const alpha = getNumber("ribbonAlpha");
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        for (let i = 0; i < pts.length - stride; i += stride) {
+          const p0 = pts[i];
+          const p1 = pts[i + stride];
+          const q0 = evalAt(p0.t + lag, 0);
+          const q1 = evalAt(p1.t + lag, 0);
+          const a = transform.toScreen(p0);
+          const b = transform.toScreen(p1);
+          const c = transform.toScreen(q1);
+          const d = transform.toScreen(q0);
+          const hue = (i / Math.max(1, pts.length - 1)) * 360;
+
+          ctx.fillStyle = `hsla(${hue}, 78%, 58%, ${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineTo(c.x, c.y);
+          ctx.lineTo(d.x, d.y);
+          ctx.closePath();
+          ctx.fill();
+
+          if (Math.floor(i / stride) % 2 === 0) {
+            ctx.strokeStyle = `hsla(${hue}, 86%, 72%, ${Math.min(0.48, alpha * 4.2)})`;
+            ctx.lineWidth = Math.max(0.7, getNumber("lineWidth") * 0.42);
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(d.x, d.y);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      async function ensureThree() {
+        if (lift3d.ready || lift3d.loading || lift3d.failed) return;
+        lift3d.loading = true;
+        try {
+          const THREE = await loadThreeGlobal();
+          lift3d.THREE = THREE;
+          lift3d.scene = new THREE.Scene();
+          lift3d.camera = new THREE.PerspectiveCamera(44, 1, 0.01, 2000);
+          lift3d.camera.up.set(0, 0, 1);
+          lift3d.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: false,
+            preserveDrawingBuffer: true
+          });
+          lift3d.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+          lift3d.renderer.setClearColor(0x0d1110, 1);
+          threeMount.replaceChildren(lift3d.renderer.domElement);
+          lift3d.ready = true;
+        } catch (error) {
+          lift3d.failed = true;
+          lift3d.error = error && error.message ? error.message : String(error);
+        } finally {
+          lift3d.loading = false;
+          render();
+        }
+      }
+
+      function loadThreeGlobal() {
+        if (window.THREE) return Promise.resolve(window.THREE);
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = new URL("vendor/three.global.js", document.baseURI).href;
+          script.onload = () => {
+            if (window.THREE) resolve(window.THREE);
+            else reject(new Error("Three.js loaded without window.THREE"));
+          };
+          script.onerror = () => reject(new Error("could not load vendor/three.global.js"));
+          document.head.appendChild(script);
+        });
+      }
+
+      function clearThreeScene() {
+        const scene = lift3d.scene;
+        if (!scene) return;
+        while (scene.children.length) {
+          const obj = scene.children.pop();
+          disposeThreeObject(obj);
+        }
+      }
+
+      function disposeThreeObject(obj) {
+        obj.traverse((child) => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            const materials = Array.isArray(child.material) ? child.material : [child.material];
+            materials.forEach((mat) => mat.dispose());
+          }
+        });
+      }
+
+      function showLiftMessage(message) {
+        clearCanvas();
+        const rect = canvas.getBoundingClientRect();
+        ctx.save();
+        ctx.fillStyle = "rgba(238,246,242,0.88)";
+        ctx.font = "14px ui-sans-serif, system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(message, rect.width / 2, rect.height / 2);
+        ctx.restore();
+      }
+
+      function liftModeLabel() {
+        const labels = {
+          lag: "phase lag",
+          phase: "clock phase",
+          speed: "speed",
+          curvature: "curvature",
+          dominant: "dominant mode",
+          area: "area sweep"
+        };
+        return labels[inputs.liftMode.value] || inputs.liftMode.value;
+      }
+
+      function liftLag() {
+        const maxN = Math.max(1, maxActiveFrequency());
+        return Math.min(0.9, Math.PI / Math.max(2, maxN) * getNumber("ribbonLag"));
+      }
+
+      function clampUnit(value) {
+        return Math.max(-1, Math.min(1, value));
+      }
+
+      function liftRawValue(point, curve, stats, extent) {
+        const mode = inputs.liftMode.value;
+        if (mode === "phase") {
+          const n = Math.max(1, stats.maxN || 1);
+          return Math.sin(n * (point.t + getNumber("phase")));
+        }
+        if (mode === "speed") {
+          return curve.maxSpeed > 1e-9 ? clampUnit(2 * point.speed / curve.maxSpeed - 1) : 0;
+        }
+        if (mode === "curvature") {
+          return curve.maxSignedCurv > 1e-9 ? clampUnit(point.signedCurv / curve.maxSignedCurv) : 0;
+        }
+        if (mode === "dominant" && stats.topMode) {
+          const modeState = state.modes[stats.topMode.k];
+          const n = stats.topMode.n;
+          const tx = n * (point.t + getNumber("phase")) + modeState.px;
+          const ty = n * (point.t + getNumber("phase")) + modeState.py;
+          return clampUnit((Math.cos(tx) + Math.sin(ty)) * 0.5);
+        }
+        if (mode === "area") {
+          return curve.maxWedge > 1e-9 ? clampUnit(point.wedge / curve.maxWedge) : 0;
+        }
+
+        const q = evalAt(point.t + liftLag(), 0);
+        const tangentLen = Math.max(1e-9, Math.hypot(point.dx, point.dy));
+        const nx = -point.dy / tangentLen;
+        const ny = point.dx / tangentLen;
+        const normalLag = (q.x - point.x) * nx + (q.y - point.y) * ny;
+        return clampUnit(normalLag / Math.max(1e-9, extent));
+      }
+
+      function makeLiftedPoints(curve, stats, extent) {
+        const zScale = getNumber("liftScale") * extent * 0.62;
+        return curve.pts.map((point, index) => {
+          const raw = liftRawValue(point, curve, stats, extent);
+          return {
+            index,
+            raw,
+            x: point.x,
+            y: point.y,
+            z: raw * zScale,
+            point
+          };
+        });
+      }
+
+      function threeColorFor(THREE, point, curve, index, raw) {
+        const color = new THREE.Color();
+        const depth = getBool("showDepthFade") ? (raw + 1) * 0.5 : 0.62;
+        const light = 0.44 + 0.24 * depth;
+        const mode = inputs.colorMode.value;
+        if (mode === "speed") {
+          const q = curve.maxSpeed > 0 ? point.speed / curve.maxSpeed : 0;
+          color.setHSL(0.55 - 0.42 * q, 0.76, light);
+        } else if (mode === "curvature") {
+          const q = curve.maxCurv > 0 ? Math.min(1, Math.sqrt(point.curv / curve.maxCurv)) : 0;
+          color.setHSL(0.46 - 0.38 * q, 0.78, light);
+        } else if (mode === "solid") {
+          color.setHSL(0.48, 0.56, light);
+        } else {
+          color.setHSL(index / Math.max(1, curve.pts.length - 1), 0.72, light);
+        }
+        return color;
+      }
+
+      function addLineSegments(root, points, color, opacity, width = 1) {
+        const THREE = lift3d.THREE;
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
+        const mat = new THREE.LineBasicMaterial({
+          color,
+          transparent: true,
+          opacity,
+          linewidth: width,
+          depthWrite: false
+        });
+        const line = new THREE.LineSegments(geom, mat);
+        root.add(line);
+        return line;
+      }
+
+      function addLiftGrid(root, extent) {
+        if (!getBool("showLiftFloor")) return;
+        const step = 0.5;
+        const reach = Math.max(2, Math.ceil(extent / step) * step + 1);
+        const points = [];
+        for (let v = -reach; v <= reach + 1e-9; v += step) {
+          points.push(-reach, v, 0, reach, v, 0);
+          points.push(v, -reach, 0, v, reach, 0);
+        }
+        addLineSegments(root, points, 0x9fb7aa, getNumber("liftFloorAlpha"), 1);
+      }
+
+      function addLiftAxes(root, extent) {
+        if (!getBool("showAxes")) return;
+        const reach = Math.max(2, extent * 1.15);
+        addLineSegments(root, [-reach, 0, 0, reach, 0, 0], 0x72d6c9, 0.5, 1.4);
+        addLineSegments(root, [0, -reach, 0, 0, reach, 0], 0xf2bf5e, 0.42, 1.4);
+        addLineSegments(root, [0, 0, -reach * 0.65, 0, 0, reach * 0.65], 0xe8787a, 0.44, 1.4);
+      }
+
+      function addLiftCurve(root, lifted, curve) {
+        const THREE = lift3d.THREE;
+        const positions = [];
+        const colors = [];
+        lifted.forEach((p) => {
+          positions.push(p.x, p.y, p.z);
+          const color = threeColorFor(THREE, p.point, curve, p.index, p.raw);
+          colors.push(color.r, color.g, color.b);
+        });
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+        geom.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+        const mat = new THREE.LineBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: getNumber("lineAlpha"),
+          linewidth: Math.max(1, getNumber("lineWidth")),
+          depthWrite: false
+        });
+        root.add(new THREE.Line(geom, mat));
+
+        if (getBool("showRibbon")) {
+          const floorPositions = [];
+          lifted.forEach((p) => floorPositions.push(p.x, p.y, 0));
+          const floorGeom = new THREE.BufferGeometry();
+          floorGeom.setAttribute("position", new THREE.Float32BufferAttribute(floorPositions, 3));
+          const floorMat = new THREE.LineBasicMaterial({
+            color: 0x72d6c9,
+            transparent: true,
+            opacity: Math.min(0.32, getNumber("ribbonAlpha") * 3),
+            depthWrite: false
+          });
+          root.add(new THREE.Line(floorGeom, floorMat));
+        }
+      }
+
+      function addLiftSurface(root, lifted, curve) {
+        if (!getBool("showLiftSurface")) return;
+        const THREE = lift3d.THREE;
+        const stride = Math.max(1, Math.floor((lifted.length - 1) / getNumber("liftSurfaceDensity")));
+        const positions = [];
+        const colors = [];
+        const pushVertex = (p, z) => {
+          positions.push(p.x, p.y, z);
+          const color = threeColorFor(THREE, p.point, curve, p.index, p.raw);
+          colors.push(color.r, color.g, color.b);
+        };
+        for (let i = 0; i < lifted.length - stride; i += stride) {
+          const a = lifted[i];
+          const b = lifted[i + stride];
+          pushVertex(a, a.z);
+          pushVertex(b, b.z);
+          pushVertex(a, 0);
+          pushVertex(b, b.z);
+          pushVertex(b, 0);
+          pushVertex(a, 0);
+        }
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+        geom.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+        geom.computeVertexNormals();
+        const mat = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: Math.max(0.08, Math.min(0.52, getNumber("ribbonAlpha") * 4.4)),
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        root.add(new THREE.Mesh(geom, mat));
+      }
+
+      function addLiftNodes(root) {
+        if (!getBool("showNodes") || !state.nodes.length) return;
+        const THREE = lift3d.THREE;
+        const positions = [];
+        state.nodes.forEach((node) => positions.push(node.x, node.y, 0));
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+        const mat = new THREE.PointsMaterial({
+          color: 0xf2bf5e,
+          size: getNumber("liftPointSize") * 0.018,
+          transparent: true,
+          opacity: 0.88,
+          depthWrite: false
+        });
+        root.add(new THREE.Points(geom, mat));
+      }
+
+      function addLiftMarker(root, lifted, extent) {
+        if (!getBool("showParticle") || !lifted.length) return;
+        const THREE = lift3d.THREE;
+        const p = lifted[0];
+        const radius = Math.max(0.018, extent * getNumber("liftPointSize") / 420);
+        const geom = new THREE.SphereGeometry(radius, 18, 12);
+        const mat = new THREE.MeshBasicMaterial({ color: 0xeef6f2 });
+        const sphere = new THREE.Mesh(geom, mat);
+        sphere.position.set(p.x, p.y, p.z);
+        root.add(sphere);
+      }
+
+      function addLiftFibers(root, lifted, extent) {
+        if (!getBool("showFiberProbe") || !state.fiber || !state.fiber.matches.length) return;
+        const THREE = lift3d.THREE;
+        const radius = Math.max(0.02, extent * getNumber("liftPointSize") / 520);
+        const linkPoints = [];
+        state.fiber.matches.forEach((match) => {
+          const idx = Math.max(0, Math.min(lifted.length - 1, Math.round(match.t / TAU * (lifted.length - 1))));
+          const p = lifted[idx];
+          const material = new THREE.MeshBasicMaterial({ color: match.outside ? 0xe8787a : 0xf2bf5e });
+          const sphere = new THREE.Mesh(new THREE.SphereGeometry(radius, 14, 10), material);
+          sphere.position.set(p.x, p.y, p.z);
+          root.add(sphere);
+          if (getBool("showFiberLinks")) {
+            linkPoints.push(state.fiber.target.x, state.fiber.target.y, 0, p.x, p.y, p.z);
+          }
+        });
+        if (linkPoints.length) addLineSegments(root, linkPoints, 0xf2bf5e, 0.46, 1);
+      }
+
+      function draw3DLift(curve, metrics) {
+        stage.classList.add("lift-active");
+        if (!lift3d.ready) {
+          if (lift3d.failed) {
+            showLiftMessage("3D lift unavailable: " + lift3d.error);
+            liftChip.textContent = "lift: unavailable";
+          } else {
+            ensureThree();
+            showLiftMessage("loading 3D phase lift");
+            liftChip.textContent = "lift: loading";
+          }
+          return;
+        }
+
+        const THREE = lift3d.THREE;
+        const rect = stage.getBoundingClientRect();
+        const width = Math.max(320, Math.floor(rect.width));
+        const height = Math.max(320, Math.floor(rect.height));
+        lift3d.renderer.setSize(width, height, false);
+        lift3d.camera.aspect = width / height;
+        lift3d.camera.updateProjectionMatrix();
+        clearThreeScene();
+
+        const reach = stableWorldReach();
+        const extent = Math.max(1, reach.x, reach.y);
+        const stats = activeModeStats();
+        const lifted = makeLiftedPoints(curve, stats, extent);
+        const root = new THREE.Group();
+        root.rotation.z = getNumber("rotation");
+        lift3d.scene.add(root);
+
+        addLiftGrid(root, extent);
+        addLiftAxes(root, extent);
+        addLiftSurface(root, lifted, curve);
+        addLiftCurve(root, lifted, curve);
+        addLiftNodes(root);
+        addLiftMarker(root, lifted, extent);
+        addLiftFibers(root, lifted, extent);
+
+        const distance = Math.max(2.8, getNumber("liftDepth")) * extent;
+        const yaw = getNumber("liftYaw");
+        const pitch = getNumber("liftPitch");
+        const cp = Math.cos(pitch);
+        lift3d.camera.position.set(
+          distance * Math.sin(yaw) * cp,
+          -distance * Math.cos(yaw) * cp,
+          distance * Math.sin(pitch)
+        );
+        lift3d.camera.near = Math.max(0.01, extent / 800);
+        lift3d.camera.far = Math.max(200, distance * 5);
+        lift3d.camera.lookAt(0, 0, 0);
+        lift3d.camera.updateProjectionMatrix();
+        lift3d.renderer.render(lift3d.scene, lift3d.camera);
+
+        const maxZ = lifted.reduce((max, p) => Math.max(max, Math.abs(p.z)), 0);
+        liftChip.textContent = `lift: ${liftModeLabel()} z ${fmt(maxZ)}`;
+        void metrics;
+      }
+
+      function drawNodes(transform) {
+        if (!getBool("showNodes")) return;
+        ctx.save();
+        ctx.fillStyle = "rgba(242,191,94,0.92)";
+        ctx.strokeStyle = "rgba(0,0,0,0.45)";
+        ctx.lineWidth = 1;
+        state.nodes.forEach((n) => {
+          const s = transform.toScreen(n);
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 4.2, 0, TAU);
+          ctx.fill();
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      function drawFiberMicroscope(transform) {
+        if (!getBool("showFiberProbe") || !state.fiber) return;
+        const target = transform.toScreen(state.fiber.target);
+        const radius = Math.max(6, state.fiber.radius * transform.scale);
+        const matches = state.fiber.matches || [];
+        ctx.save();
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = "rgba(242,191,94,0.72)";
+        ctx.fillStyle = "rgba(242,191,94,0.1)";
+        ctx.beginPath();
+        ctx.arc(target.x, target.y, radius, 0, TAU);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(target.x - 8, target.y);
+        ctx.lineTo(target.x + 8, target.y);
+        ctx.moveTo(target.x, target.y - 8);
+        ctx.lineTo(target.x, target.y + 8);
+        ctx.stroke();
+
+        matches.forEach((match, index) => {
+          const s = transform.toScreen(match);
+          const hue = (index / Math.max(1, matches.length)) * 360;
+          if (getBool("showFiberLinks")) {
+            ctx.strokeStyle = match.outside ? "rgba(232,120,122,0.32)" : `hsla(${hue}, 82%, 66%, 0.34)`;
+            ctx.beginPath();
+            ctx.moveTo(target.x, target.y);
+            ctx.lineTo(s.x, s.y);
+            ctx.stroke();
+          }
+          ctx.fillStyle = match.outside ? "rgba(232,120,122,0.95)" : `hsla(${hue}, 88%, 66%, 0.95)`;
+          ctx.strokeStyle = "rgba(0,0,0,0.55)";
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 5.6, 0, TAU);
+          ctx.fill();
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      function drawCurvatureEvents(curve, transform) {
+        if (!getBool("showCurvature")) return;
+        const peaks = curve.pts
+          .filter((_, i) => i > 0 && i < curve.pts.length - 1)
+          .filter((p, i, arr) => {
+            const realIndex = i + 1;
+            return curve.pts[realIndex].curv >= curve.pts[realIndex - 1].curv &&
+              curve.pts[realIndex].curv >= curve.pts[realIndex + 1].curv;
+          })
+          .sort((a, b) => b.curv - a.curv)
+          .slice(0, 14);
+        ctx.save();
+        peaks.forEach((p, i) => {
+          const s = transform.toScreen(p);
+          const r = Math.max(3, 9 - i * 0.32);
+          ctx.strokeStyle = "rgba(232,120,122,0.85)";
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, r, 0, TAU);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      function drawPhaseMarker(transform) {
+        if (!getBool("showParticle") && !getBool("showTangent") && !getBool("showNormal")) return;
+        const t = getNumber("phase");
+        const p = evalAt(0, 0);
+        const d = evalAt(0, 1);
+        const len = Math.max(1e-9, Math.hypot(d.x, d.y));
+        const s = transform.toScreen(p);
+        ctx.save();
+        if (getBool("showTangent")) {
+          const e = transform.toScreen({ x: p.x + d.x / len * 0.42, y: p.y + d.y / len * 0.42 });
+          drawArrow(s, e, "rgba(159,183,255,0.9)");
+        }
+        if (getBool("showNormal")) {
+          const e = transform.toScreen({ x: p.x - d.y / len * 0.42, y: p.y + d.x / len * 0.42 });
+          drawArrow(s, e, "rgba(242,191,94,0.88)");
+        }
+        if (getBool("showParticle")) {
+          ctx.fillStyle = "rgba(238,246,242,0.95)";
+          ctx.strokeStyle = "rgba(0,0,0,0.55)";
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 6, 0, TAU);
+          ctx.fill();
+          ctx.stroke();
+        }
+        document.getElementById("hoverChip").textContent = `phase: ${fmt(t)}  speed: ${fmt(len)}`;
+        ctx.restore();
+      }
+
+      function drawArrow(a, b, color) {
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        const angle = Math.atan2(b.y - a.y, b.x - a.x);
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(b.x - 8 * Math.cos(angle - 0.45), b.y - 8 * Math.sin(angle - 0.45));
+        ctx.lineTo(b.x - 8 * Math.cos(angle + 0.45), b.y - 8 * Math.sin(angle + 0.45));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawEpicycleInset() {
+        if (!getBool("showEpicycle")) return;
+        const rect = canvas.getBoundingClientRect();
+        const size = Math.min(210, rect.width * 0.28, rect.height * 0.34);
+        if (size < 120) return;
+        const x0 = 18;
+        const y0 = rect.height - size - 18;
+        const center = { x: x0 + size / 2, y: y0 + size / 2 };
+        const amp = getNumber("ampScale");
+        const phase = getNumber("phase");
+        const maxReach = Math.max(1e-6, state.modes.reduce((s, m) => (
+          m.enabled ? s + Math.hypot(m.a, m.b) * amp : s
+        ), 0));
+        const scale = size * 0.38 / maxReach;
+        ctx.save();
+        ctx.fillStyle = "rgba(20,26,24,0.82)";
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        ctx.lineWidth = 1;
+        roundRect(ctx, x0, y0, size, size, 8);
+        ctx.fill();
+        ctx.stroke();
+        let px = center.x;
+        let py = center.y;
+        state.modes.forEach((m, k) => {
+          if (!m.enabled) return;
+          const n = freqFor(k);
+          const vx = amp * m.a * Math.cos(n * phase + m.px) * scale;
+          const vy = -amp * (getBool("mirrorY") ? -m.b : m.b) * Math.sin(n * phase + m.py) * scale;
+          ctx.strokeStyle = k % 2 === 0 ? "rgba(114,214,201,0.88)" : "rgba(242,191,94,0.88)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(px + vx, py + vy);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(px, py, Math.abs(vx || vy) + 0.001, 0, TAU);
+          ctx.strokeStyle = "rgba(255,255,255,0.06)";
+          ctx.stroke();
+          px += vx;
+          py += vy;
+        });
+        ctx.fillStyle = "rgba(238,246,242,0.95)";
+        ctx.beginPath();
+        ctx.arc(px, py, 4.5, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawSpectrumInset(metrics) {
+        if (!getBool("showSpectrum")) return;
+        const rect = canvas.getBoundingClientRect();
+        const w = Math.min(300, rect.width * 0.38);
+        const h = 126;
+        if (w < 180 || rect.height < 350) return;
+        const x0 = rect.width - w - 18;
+        const y0 = rect.height - h - 18;
+        ctx.save();
+        ctx.fillStyle = "rgba(20,26,24,0.84)";
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        roundRect(ctx, x0, y0, w, h, 8);
+        ctx.fill();
+        ctx.stroke();
+        const weights = state.modes.map((m, k) => {
+          const n = freqFor(k);
+          return m.enabled ? Math.pow(n, 4) * (m.a * m.a + m.b * m.b) : 0;
+        });
+        const max = Math.max(1e-9, ...weights);
+        const barW = (w - 28) / Math.max(1, weights.length);
+        weights.forEach((val, k) => {
+          const bh = (h - 34) * Math.sqrt(val / max);
+          const x = x0 + 14 + k * barW;
+          const y = y0 + h - 18 - bh;
+          ctx.fillStyle = k % 2 === 0 ? "rgba(114,214,201,0.78)" : "rgba(242,191,94,0.78)";
+          ctx.fillRect(x + 2, y, Math.max(2, barW - 5), bh);
+        });
+        ctx.fillStyle = "rgba(238,246,242,0.85)";
+        ctx.font = "12px ui-sans-serif, system-ui";
+        ctx.fillText("acceleration energy", x0 + 12, y0 + 18);
+        ctx.fillStyle = "rgba(168,187,179,0.9)";
+        ctx.fillText(`E2 ${fmt(metrics.energy[2])}`, x0 + 12, y0 + 36);
+        ctx.restore();
+      }
+
+      function drawBranchInset(transform) {
+        if (!getBool("showBranch")) return;
+        const rect = canvas.getBoundingClientRect();
+        const w = Math.min(280, rect.width * 0.34);
+        const h = 180;
+        if (w < 180 || rect.height < 380) return;
+        const x0 = rect.width - w - 18;
+        const y0 = 18;
+        ctx.save();
+        ctx.fillStyle = "rgba(20,26,24,0.84)";
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        roundRect(ctx, x0, y0, w, h, 8);
+        ctx.fill();
+        ctx.stroke();
+        const upper = [];
+        const lower = [];
+        for (let i = 0; i <= 260; i += 1) {
+          const u = -1 + 2 * i / 260;
+          const t = Math.acos(Math.max(-1, Math.min(1, u)));
+          const p = evalAt(t, 0);
+          upper.push(p);
+          lower.push({ x: p.x, y: -p.y });
+        }
+        const all = upper.concat(lower);
+        const minX = Math.min(...all.map((p) => p.x));
+        const maxX = Math.max(...all.map((p) => p.x));
+        const minY = Math.min(...all.map((p) => p.y));
+        const maxY = Math.max(...all.map((p) => p.y));
+        const sx = (w - 24) / Math.max(1e-6, maxX - minX);
+        const sy = (h - 44) / Math.max(1e-6, maxY - minY);
+        const sc = Math.min(sx, sy);
+        function map(p) {
+          return {
+            x: x0 + w / 2 + (p.x - (minX + maxX) / 2) * sc,
+            y: y0 + h / 2 - (p.y - (minY + maxY) / 2) * sc + 8
+          };
+        }
+        [upper, lower].forEach((arr, idx) => {
+          ctx.strokeStyle = idx === 0 ? "rgba(114,214,201,0.9)" : "rgba(232,120,122,0.82)";
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          arr.forEach((p, i) => {
+            const q = map(p);
+            if (i === 0) ctx.moveTo(q.x, q.y);
+            else ctx.lineTo(q.x, q.y);
+          });
+          ctx.stroke();
+        });
+        ctx.fillStyle = "rgba(238,246,242,0.85)";
+        ctx.font = "12px ui-sans-serif, system-ui";
+        ctx.fillText("u-branch readout", x0 + 12, y0 + 18);
+        ctx.restore();
+      }
+
+      function roundRect(context, x, y, w, h, r) {
+        context.beginPath();
+        context.moveTo(x + r, y);
+        context.lineTo(x + w - r, y);
+        context.quadraticCurveTo(x + w, y, x + w, y + r);
+        context.lineTo(x + w, y + h - r);
+        context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        context.lineTo(x + r, y + h);
+        context.quadraticCurveTo(x, y + h, x, y + h - r);
+        context.lineTo(x, y + r);
+        context.quadraticCurveTo(x, y, x + r, y);
+        context.closePath();
+      }
+
+      function updateMetrics(metrics) {
+        const base = getNumber("freqBase");
+        const lambda = getNumber("lambda");
+        const holder = lambda > 0 ? -Math.log(lambda) / Math.log(base) : Infinity;
+        const derivativeBoundary = 1 / base;
+        const areaBoundary = 1 / Math.sqrt(base);
+        const regime = lambda < derivativeBoundary
+          ? "smooth tail"
+          : lambda < areaBoundary
+            ? "rough, area-controlled"
+            : "rough, area-unstable";
+        const maxActiveN = maxActiveFrequency();
+        const samplesPerCycle = maxActiveN > 0 ? getNumber("samples") / maxActiveN : Infinity;
+        const data = [
+          ["numeric area", fmt(metrics.area)],
+          ["analytic area", fmt(metrics.areaAnalytic)],
+          ["length", fmt(metrics.length)],
+          ["turn", fmt(metrics.turn)],
+          ["centroid x", fmt(metrics.centroid.x)],
+          ["centroid y", fmt(metrics.centroid.y)],
+          ["nodes approx", String(metrics.nodes.length)],
+          ["Holder H", isFinite(holder) ? fmt(holder) : "--"],
+          ["max active n", fmt(maxActiveN)],
+          ["samples/n", isFinite(samplesPerCycle) ? fmt(samplesPerCycle) : "--"],
+          ["E0", fmt(metrics.energy[0])],
+          ["E1", fmt(metrics.energy[1])],
+          ["E2", fmt(metrics.energy[2])],
+          ["E3", fmt(metrics.energy[3])]
+        ];
+        metricsEl.innerHTML = data.map(([k, v]) => (
+          `<div class="metric"><span>${k}</span><strong>${v}</strong></div>`
+        )).join("");
+        document.getElementById("regimeChip").textContent = `${regime}  lambda ${fmt(lambda)}`;
+        document.getElementById("areaChip").textContent = `area ${fmt(metrics.areaAnalytic)}`;
+        document.getElementById("nodeChip").textContent = `nodes ${metrics.nodes.length}`;
+        document.getElementById("statusLine").textContent = `H ${fmt(holder)} | d ${fmt(derivativeBoundary)} | area ${fmt(areaBoundary)}`;
+      }
+
+      function fmt(value) {
+        if (!Number.isFinite(value)) return "--";
+        const abs = Math.abs(value);
+        if (abs >= 10000 || (abs > 0 && abs < 0.001)) return value.toExponential(3);
+        return value.toFixed(abs >= 100 ? 2 : abs >= 10 ? 3 : 4).replace(/\.?0+$/, "");
+      }
+
+      function render() {
+        resizeCanvas();
+        const curve = sampleCurve();
+        const metrics = computeMetrics(curve);
+        const transform = makeTransform();
+        state.cache = { curve, metrics, transform };
+        updateFiber(curve);
+        if (getBool("showLift3d")) {
+          draw3DLift(curve, metrics);
+        } else {
+          stage.classList.remove("lift-active");
+          liftChip.textContent = "lift: planar";
+          clearCanvas();
+          drawGrid(transform);
+          drawAxes(transform);
+          drawRibbon(curve, transform);
+          drawCurve(curve, transform);
+          drawNodes(transform);
+          drawFiberMicroscope(transform);
+          drawCurvatureEvents(curve, transform);
+          drawPhaseMarker(transform);
+          drawBranchInset(transform);
+          drawEpicycleInset();
+          drawSpectrumInset(metrics);
+        }
+        updateMetrics(metrics);
+        updateRegimeClassifier(metrics);
+        updateFiberReadout();
+        updateNodeGenealogy(metrics);
+      }
+
+      function tick(now) {
+        if (!state.lastFrame) state.lastFrame = now;
+        const dt = Math.min(0.05, (now - state.lastFrame) / 1000);
+        state.lastFrame = now;
+        if (state.playing) {
+          inputs.phase.value = (getNumber("phase") + getNumber("animSpeed") * dt) % TAU;
+          render();
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function pickLiftFloor(clientX, clientY) {
+        if (!lift3d.ready || !lift3d.THREE) return null;
+        const THREE = lift3d.THREE;
+        const rect = stage.getBoundingClientRect();
+        const ndc = new THREE.Vector2(
+          ((clientX - rect.left) / rect.width) * 2 - 1,
+          -((clientY - rect.top) / rect.height) * 2 + 1
+        );
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(ndc, lift3d.camera);
+        const hit = new THREE.Vector3();
+        if (!raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit)) return null;
+        const rot = getNumber("rotation");
+        const cos = Math.cos(rot);
+        const sin = Math.sin(rot);
+        return {
+          x: hit.x * cos + hit.y * sin,
+          y: -hit.x * sin + hit.y * cos
+        };
+      }
+
+      function handleStagePick(event) {
+        if (!state.cache) return;
+        const rect = canvas.getBoundingClientRect();
+        let target = null;
+        if (getBool("showLift3d")) {
+          target = pickLiftFloor(event.clientX, event.clientY);
+        }
+        if (!target) {
+          target = state.cache.transform.toWorld({
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+          });
+        }
+        state.fiber = {
+          target,
+          radius: getNumber("fiberRadius"),
+          matches: []
+        };
+        render();
+      }
+
+      function bindControls() {
+        Object.entries(inputs).forEach(([key, el]) => {
+          el.addEventListener("input", () => {
+            if (key === "modeCount") {
+              ensureModeCount(getNumber("modeCount"));
+              rebuildModeTable();
+            }
+            if (key === "freqBase") rebuildModeTable();
+            render();
+          });
+        });
+        document.querySelectorAll("[data-preset]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const preset = btn.dataset.preset;
+            if (preset === "seed") seedPreset();
+            if (preset === "fibonacci") fibonacciPreset();
+            if (preset === "geometric") geometricPreset();
+            if (preset === "qcr") qcrPreset();
+            if (preset === "bookend") bookendPreset();
+          });
+        });
+        document.getElementById("applyRatioBtn").addEventListener("click", applyRatio);
+        document.getElementById("onlyEndsBtn").addEventListener("click", onlyEndpointModes);
+        document.getElementById("zeroTailBtn").addEventListener("click", zeroTail);
+        document.getElementById("clearFiberBtn").addEventListener("click", () => {
+          state.fiber = null;
+          render();
+        });
+        document.getElementById("resetViewBtn").addEventListener("click", () => {
+          inputs.zoom.value = 1;
+          inputs.offsetX.value = 0;
+          inputs.offsetY.value = 0;
+          inputs.rotation.value = 0;
+          render();
+        });
+        playBtn.addEventListener("click", () => {
+          state.playing = !state.playing;
+          playBtn.textContent = state.playing ? "Pause" : "Play";
+          playBtn.classList.toggle("primary", !state.playing);
+        });
+        document.getElementById("exportBtn").addEventListener("click", exportState);
+        stage.addEventListener("click", handleStagePick);
+        window.addEventListener("resize", render);
+      }
+
+      function exportState() {
+        const payload = {
+          controls: Object.fromEntries(Object.entries(inputs).map(([key, el]) => [key, el.type === "checkbox" ? el.checked : el.value])),
+          modes: state.modes
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "dyadic_curve_state.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      bindControls();
+      seedPreset();
+      requestAnimationFrame(tick);
+    }());
+  </script>
+</body>
+</html>
