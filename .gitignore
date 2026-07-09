@@ -335,3 +335,6 @@ traj_temp_128.csv
 
 # 18-pt stencil moment intermediate (regenerable via explr_stencil18_moments.py)
 scripts/proofs/_stencil18_moments.txt
+# LGF control-lattice moment intermediates (regenerable via explr_*_moments.py)
+scripts/proofs/_square2d_moments.txt
+scripts/proofs/_sc3d_moments.txt
