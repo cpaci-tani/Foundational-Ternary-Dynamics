@@ -341,3 +341,6 @@ scripts/proofs/_sc3d_moments.txt
 # two-loop BCC sunset c_N sequence (regenerable via lattice_two_loop_bcc_series.py)
 scripts/exploration/_bcc_sunset_cN.txt
 scripts/exploration/_bcc_sunset_cN_600.txt
+# mod-p c_N (regenerable via lattice_two_loop_bcc_modp.py) + scratch
+scripts/exploration/_bcc_sunset_cN_modp_*.txt
+scripts/exploration/_modp_test*.txt
