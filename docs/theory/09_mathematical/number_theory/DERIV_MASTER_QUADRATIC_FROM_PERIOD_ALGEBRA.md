@@ -1,6 +1,6 @@
 # Deriving the Master Quadratic from the CM Period Algebra of $\mathbb{Q}(i)$
 
-**Status:** [THEOREM] — Formal derivation of the master quadratic from motivic period invariants.  
+**Status:** **[THEOREM]** for the period identities (§2) · **[SELECTION]** for the operator-assembly forcing (§3–§4) — reconciled 2026-07-09 to the canonical split in [`proof_motivic_master_quadratic.py`](../../../../scripts/proofs/proof_motivic_master_quadratic.py). The earlier blanket-[THEOREM] "closes the Self-Consistency Gap / uniquely determined" reading is **withdrawn**: no FTD-native route forces the operator assembly (route-invariant no-go FTD-0242; K-BIND theorem-negative FTD-0244), and the prefactor 16 is [SELECTION — declared, PERMANENT] (FTD-0355). `x₊ = 1/α` stays **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013); MC-T4.3 stays **[FOUNDATIONAL OBSTRUCTION]**.  
 **Epistemic Standard:** Strictly compliant with FTD Epistemic Discipline (`AGENTS.md`).  
 
 ---
@@ -13,7 +13,7 @@ leads to the dominant root $x_+ \approx 137.036$, matching the inverse fine stru
 
 In previous formulations, the specific polynomial template—and the equality of the normalized trace and norm coefficients—was treated as a strong conjecture (`[STRONG CONJECTURE]` in the $G^*$ monograph, §4.3). While self-duality of $L(E,s)$ at the central point $s=1$ was identified as the physical motivation, the formal number-theoretic derivation was missing.
 
-This document closes the **Self-Consistency Gap** by proving that **the master quadratic is uniquely and algebraically determined by the Galois-equivariant period invariants of the symmetric period algebra** of the CM curve $E_{\text{lemn}}: y^2 = x^3 - x$.
+This document exhibits the master quadratic as a **graded period relation** in the symmetric period algebra of the CM curve $E_{\text{lemn}}: y^2 = x^3 - x$. **The period identities (§2) are [THEOREM]; the claim that this operator assembly is *forced/unique* (§3–§4) is a [SELECTION], not a proof** (reconciled 2026-07-09). The weight non-homogeneity $w_b - w_a = 1$ is admitted and resolved interpretively, and the prefactor $16$ is canonical-but-not-forced — see [`proof_motivic_master_quadratic.py`](../../../../scripts/proofs/proof_motivic_master_quadratic.py) STEPS 5–6, the route-invariant no-go (FTD-0242), and the K-BIND theorem-negative closure (FTD-0244). The earlier "closes the Self-Consistency Gap" framing overstated this; α remains **dynamical, not structural** (MC-T4.3 [FOUNDATIONAL OBSTRUCTION]).
 
 ---
 
@@ -39,9 +39,9 @@ The Galois group $\text{Gal}(\mathbb{Q}(i)/\mathbb{Q}) \cong \{1, \sigma\}$ acts
 
 ---
 
-## 3. Derivation of the Master Quadratic [THEOREM]
+## 3. Assembly of the Master Quadratic [SELECTION — argued, not forced]
 
-**Theorem 1.** *The unique monic quadratic coupling polynomial $P(x) = x^2 - S x + P = 0$ whose coefficients are the lowest-weight real period invariants of the CM period algebra scales as $S = 16 G^{*2}$ and $P = 16 G^{*3}$, yielding the master quadratic.*
+**Claim 1 [SELECTION].** *The monic quadratic $P(x) = x^2 - S x + P = 0$ whose coefficients are taken as the lowest-weight real period invariants of the CM period algebra scales as $S = 16 G^{*2}$ and $P = 16 G^{*3}$, reproducing the master quadratic.* This is a **selection**, not a forcing theorem: the steps below make canonical choices — the self-duality target $S_u = P_u$ (Step 4) and the prefactor $16$ (Step 5) — that are motivated but **not forced** by the period algebra alone (FTD-0242 route-invariant no-go; FTD-0244 K-BIND).
 
 **Proof.**
 1. Let the physical coupling roots $x_\pm$ represent the eigenvalues of a Galois-equivariant coupling operator acting on the real tangent space. The trace $S = x_+ + x_-$ and the determinant $P = x_+ x_-$ are invariants of the coupling algebra.
@@ -51,10 +51,10 @@ The Galois group $\text{Gal}(\mathbb{Q}(i)/\mathbb{Q}) \cong \{1, \sigma\}$ acts
 3. Define the normalized coupling eigenvalues $u_\pm \equiv x_\pm / G^*$. The normalized polynomial is $u^2 - S_u u + P_u = 0$, where:
    $$S_u = \frac{S}{G^*} = c_1 G^*$$
    $$P_u = \frac{P}{G^{*2}} = c_2 G^*$$
-4. By the **Symmetric Self-Duality of the Motive**: The root number of the CM elliptic curve is $\varepsilon(E) = +1$, making the L-function self-dual at the central critical point $s=1$. This forces the additive (trace) and multiplicative (norm) projections of the normalized coupling algebra to be symmetric:
-   $$S_u = P_u \implies c_1 G^* = c_2 G^* \implies c_1 = c_2$$
-5. The integer coefficient $c_1$ represents the number of round-trip channels between the coordinate axes of the 3D lattice. In FTD, the 4-fold rotational symmetry of each plane embeds the Gaussian automorphism group $\text{Aut}(E) \cong \mathbb{Z}/4\mathbb{Z}$. The total channels are the square of the group order:
-   $$c_1 = c_2 = |\text{Aut}(E)|^2 = 16$$
+4. **Symmetric Self-Duality of the Motive [SELECTION — asserted target, not forced].** The root number of the CM elliptic curve is $\varepsilon(E) = +1$, so the L-function is self-dual at the central point $s=1$. This *motivates* equating the additive (trace) and multiplicative (norm) projections — but does **not force** it: for a $2\times 2$ operator the trace and determinant are independent invariants, so self-duality supplies no constraint gluing $S_u$ to $P_u$ (route-invariant no-go, FTD-0242; K-BIND theorem-negative, FTD-0244). Adopting the symmetric target:
+   $$S_u = P_u \implies c_1 G^* = c_2 G^* \implies c_1 = c_2 \qquad \text{[SELECTION]}$$
+5. The integer coefficient is identified with the square of the Gaussian automorphism group order, $\text{Aut}(E) \cong \mathbb{Z}/4\mathbb{Z}$, giving $c_1 = c_2 = |\text{Aut}(E)|^2 = 16$. This is the coefficient-16 identification, **[SELECTION — declared, PERMANENT]** (FTD-0355): the canonical choice among several coincident integer counts, not a forced value.
+   $$c_1 = c_2 = |\text{Aut}(E)|^2 = 16 \qquad \text{[SELECTION — declared, FTD-0355]}$$
 6. Substituting $c_1 = 16$ and $c_2 = 16$ into the coefficient equations:
    $$S = 16 G^{*2}$$
    $$P = 16 G^{*3}$$
@@ -63,12 +63,12 @@ The Galois group $\text{Gal}(\mathbb{Q}(i)/\mathbb{Q}) \cong \{1, \sigma\}$ acts
 
 ---
 
-## 4. Conclusion and Galois Unification [THEOREM]
+## 4. Conclusion and Galois Unification [SELECTION]
 
-This derivation completely closes the **Self-Consistency Gap** of the master quadratic. The polynomial is not a heuristic template selected to match $1/\alpha$, but rather the **unique mathematical consequence** of:
-1. The CM period lattice of $Q(i)$ (selecting $G^*$).
-2. The symmetric powers of the motive (selecting the weights $G^{*2}$ and $G^{*3}$).
-3. The central critical self-duality $L(E, 1) = \varpi/4$ (forcing $S_u = P_u$).
-4. The 3D lattice plane automorphism order (fixing the prefactor to 16).
+This construction exhibits the master quadratic as a graded period relation of the CM motive **modulo two declared selections**; it does **not** close the Self-Consistency Gap and does **not** make the polynomial the unique mathematical consequence of the period data. Under those selections the polynomial follows from:
+1. The CM period lattice of $Q(i)$ (period identity — [THEOREM]; supplies $G^*$).
+2. The symmetric powers of the motive (period identity — [THEOREM]; supplies the weights $G^{*2}$ and $G^{*3}$).
+3. The central critical self-duality $L(E, 1) = \varpi/4$ (the *selected* symmetric target $S_u = P_u$ — [SELECTION], not forced; FTD-0242).
+4. The 3D lattice plane automorphism order (the prefactor 16 — [SELECTION — declared, FTD-0355]).
 
-This establishes the formal algebraic derivation of the master quadratic directly from the motivic periods of the CM curve.
+This exhibits the master quadratic as a graded period relation of the CM curve's motivic periods under the two declared selections above — a motivic *reading*, not a forcing derivation. The physical identification $x_+ = 1/\alpha$ stays [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); forcing the operator assembly is the central open obstruction MC-T4.3 [FOUNDATIONAL OBSTRUCTION].
