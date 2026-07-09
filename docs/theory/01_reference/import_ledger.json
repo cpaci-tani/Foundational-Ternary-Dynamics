@@ -62,14 +62,14 @@
       "falsifier": "an h>=2 CM curve reproducing the identity (breaks uniqueness); or a structural proof covering all h (retires the import)."
     },
     {
-      "ref": "IMP-C3", "kind": "named-result", "status_flag": "open", "type_imported": "E1: joint independence of the SC/FCC Watson Gamma-classes with {pi, Gamma(1/4)}",
+      "ref": "IMP-C3", "kind": "named-result", "status_flag": "open", "type_imported": "E1: joint independence of the SC/FCC Watson Gamma-classes with {pi, Gamma(1/4)} -- a case of Rohrlich-Lang / GPC (Waldschmidt Conj 5.23; Lang proven only n=3,4,6; trdeg floor 2 / conjectural 4; priced FTD-0376)",
       "price": 1, "unit": "open conjecture", "canonical_tag": "[OPEN -- exported as P1]",
       "provenance": "FTD-0369 conditionality; FTD-0371-companion B1 (N strict-superset Q(G*,pi) rests on it); REF_EXPORTED_PROBLEMS_E1_E2.md P1",
       "frontier_face": "argument-half independence (distinct CM points don't talk)",
       "falsifier": "a proof either way re-adjudicates FTD-0369 via its frozen verdict map (E1 false would put W_S in Q(G*,pi))."
     },
     {
-      "ref": "IMP-C4", "kind": "named-result", "status_flag": "open", "type_imported": "E*/E**: no admissible-symbol period value has (4G*-1) in its square class (family-quantified)",
+      "ref": "IMP-C4", "kind": "named-result", "status_flag": "open", "type_imported": "E*/E**: no admissible-symbol period value has (4G*-1) in its square class (family-quantified); subsumes E2, whose exponential-period leg is gated by the Fresan-Jossen exponential period conjecture (Conj 8.2.6; priced FTD-0376)",
       "price": 1, "unit": "open conjecture", "canonical_tag": "[OPEN]",
       "provenance": "FTD-0369 (E*, amended package E0+E*); FTD-0370 R2 (E**, uniform); the delta-independence sharp assumption",
       "frontier_face": "the ramification-locus condition (the substrate ramifies only where it lives)",
