@@ -4,6 +4,7 @@
 **Program:** Clause-2/3, stage B3. Attribution discipline per `REF_GUILLERA_CORPUS_MAP.md` §0/§3: these problems are offered as mathematics; a solution in either direction is progress for its own field first.
 **Audience:** working number theorists / transcendence theorists / lattice-Green's-function specialists; the project's external-review approach.
 **FTD-internal frame:** [`MATH_PERIOD_IMPORT_FRONTIER.md`](MATH_PERIOD_IMPORT_FRONTIER.md) (FTD-0375) uses Problem 1's E1 (SC/FCC Watson-class independence) and E2 as the *open* assumptions above which the general δ∉N carries beyond Chudnovsky 1976; closing them upgrades δ∉N (FTD-0369) from PROVEN-CONDITIONAL toward PROVEN.
+**Companion (closed results):** [`REF_EXPORTED_RESULTS_SPINE.md`](REF_EXPORTED_RESULTS_SPINE.md) exports the *theorem-grade* results around G\* = Γ(1/4)/Γ(3/4) in the same FTD-free register — this document exports the open problems, that one the closed results.
 
 ---
 
