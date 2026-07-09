@@ -127,7 +127,7 @@ Each of those is a *continuous-QFT shape* that the substrate need not reproduce.
 
 - A clear specification of the engine measurement protocol (deterministic, hash-locked under the FTD-0027 pre-registration discipline)
 - A theory document specifying the FTD-native observable's identification with a *measured* quantity (cross-section in barns, lifetime in seconds, binding energy in eV)
-- A comparison protocol that respects the calibration ladder (FTD-0041: a_phys ≡ ℓ_P, t_tick ≡ √3·ℓ_P/c, K_B ≡ m_e [provisional])
+- A comparison protocol that respects the calibration ladder (FTD-0041: a_phys ≡ ℓ_P, t_tick ≡ ℓ_P/(√3·c), K_B ≡ m_e [provisional])
 
 ---
 

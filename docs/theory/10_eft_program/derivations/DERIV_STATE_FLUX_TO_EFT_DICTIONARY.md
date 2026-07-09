@@ -320,8 +320,8 @@ Axiom-Zero invariants alone. The project therefore fixes once and for all:
 
 ```text
 a_phys        ≡ ℓ_P                         (one voxel = one Planck length)
-τ_phys        ≡ √3 · ℓ_P / c  = a_phys / c_FTD
-c_FTD         = 1/√3  (lattice units) = c (SI)
+τ_phys        ≡ ℓ_P / (√3 · c) = t_P/√3      (from physical c = c_lat·a_phys/τ_phys)
+c_lat         = 1/√3  (lattice units, CFL Courant number)
 ```
 
 All dimensional claims below are conditional on this calibration. Dimensionless

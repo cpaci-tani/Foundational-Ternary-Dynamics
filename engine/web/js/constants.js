@@ -329,10 +329,11 @@ export const LATTICE_TO_SOLAR_MASS = 50.0;
 // the Keplerian G in heliocentric units. mock-scale4.js: use this
 // when running orbital-period-faithful demos.
 export const G_HELIOCENTRIC = 4.0 * Math.PI * Math.PI;
-// FTD tick in seconds: 1 tick = √3·ℓ_P/c (per CLAUDE.md a_phys ≡ ℓ_P
-// declaration). Distinct from PLANCK_TIME_S = ℓ_P/c. Use this when
-// converting tick counts to physical seconds.
-export const FTD_TICK_S = Math.sqrt(3.0) * 5.391247e-44;
+// FTD tick in seconds: 1 tick = ℓ_P/(√3·c) = t_P/√3. From the CFL Courant
+// speed c_lat = 1/√3 and a_phys ≡ ℓ_P: physical c = c_lat·(a_phys/t_phys)
+// forces t_phys = ℓ_P/(√3·c). Distinct from PLANCK_TIME_S = ℓ_P/c = t_P.
+// Use this when converting tick counts to physical seconds.
+export const FTD_TICK_S = 5.391247e-44 / Math.sqrt(3.0);
 // Bohr-radius conversion: voxels-per-Bohr divided by Bohr-meters-per-Bohr.
 // Multiply lattice positions by this to get meters in Bohr-radius units.
 // R_BOHR is the FTD-natural Bohr radius (lattice voxels); BOHR_RADIUS_M

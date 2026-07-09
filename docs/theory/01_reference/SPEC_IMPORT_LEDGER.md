@@ -71,8 +71,10 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | ref | imported anchor | tag | falsifier |
 |---|---|---|---|
 | IMP-K1 | `a_phys ≡ ℓ_P` (length) | [IMPOSED — calibration] | a substrate derivation of `a_phys` (Mechanism-γ **closed negative** — currently genuinely imported) |
-| IMP-K2 | `t_phys ≡ √3·ℓ_P/c` (time) | [IMPOSED — calibration] | a substrate derivation of the tick-to-second ratio independent of `a_phys` |
+| IMP-K2 | `t_phys = ℓ_P/(√3·c)` (time) | [DERIVED from IMP-K1 + c_lat] | not an independent import: fixed by `a_phys` (IMP-K1) + the CFL Courant speed `c_lat = 1/√3` ([THEOREM]) + physical `c`. Corrected 2026-07-08 from `√3·ℓ_P/c` (factor-3 inconsistency with `c_lat=1/√3`); see `DERIV_DIMENSIONAL_GATE.md` |
 | IMP-K3 | `K_B = m_e` (mass) | [IMPOSED — calibration] | disentangling the FTD-0130 role-conflation so the anchor is forced |
+
+> **Gauge note.** The three rows above price the **legacy Planck-primary** gauge (FTD-0041). Under the **default electron-primary** gauge (`FOUND_ELECTRON_PRIMARY_GAUGE.md`, FTD-0137 §4.5; adopted 2026-07-08), IMP-K1 (length) is also **derived** — `ℓ_P` follows from `{ℏ, c, m_e}` via the predicted `m_e/m_P = Kα¹¹` ladder — so the beyond-universal import surface collapses to the **single** anchor `m_e` (IMP-K3), and `G` becomes a 0.38% *output* rather than a hidden import. Under the default, IMP-K1 reads `[DERIVED ~0.19%]` and IMP-K2 stays derived; only IMP-K3 (`m_e`) is a genuine import. Same falsifiable spine either way (gauge-invariant, FTD-0137).
 
 ### 3.5 Empirical identifications (𝔼) — the largest debt surface
 
