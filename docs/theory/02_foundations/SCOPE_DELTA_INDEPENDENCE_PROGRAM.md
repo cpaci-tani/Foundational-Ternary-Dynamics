@@ -75,6 +75,7 @@ Under the Number-One Goal this program is clause 2 pursued to its strongest form
 - `docs/theory/09_mathematical/number_theory/THEOREM_VALUATION_4GSTAR_MINUS_1.md` (FTD-0353/0360) — the instrument S3 upgrades.
 - `FOUND_SQUARE_ROOT_AS_ACT.md` (FTD-0340), `FOUND_ACT_REDUCTION_COUNT.md` (FTD-0322), `FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md` (FTD-0327) — the two-makings structure and the carrier closures.
 - `FOUND_MODULUS_ARGUMENT_FRONTIER.md` (FTD-0336) + `FOUND_TYPE_PRIORITY_PRINCIPLE.md` (FTD-0339) — the frontier this theorem would harden; type-priority is the program's philosophical spine.
+- `docs/theory/09_mathematical/number_theory/MATH_PERIOD_IMPORT_FRONTIER.md` (FTD-0375) — the period-conjecture *framing* of this program's boundary: δ located relative to the CM motive `h¹(E_lemn)` whose GPC is a Chudnovsky theorem (trdeg=2); it makes explicit that the general δ∉N is Chudnovsky **+ open E1/E2** (not Chudnovsky alone), and that the frame re-describes rather than corroborates δ∉N (shared Chudnovsky input — no double-counting).
 - `docs/theory/09_mathematical/general_math/MATH_REFLECTION_FLOW_PARITY.md` (FTD-0367) — the DA/hypertranscendence instrument; its §4 guard is inherited here as guard 6.
 - `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` — the ε-L limit-policy vocabulary N1 is built from.
 - Classical: O. Hölder (1887), Math. Ann. 28, 1–13 (see `REF_BIBLIOGRAPHY.md` §1); D.V. & G.V. Chudnovsky (1976) — the standing conditionality of the spine.
