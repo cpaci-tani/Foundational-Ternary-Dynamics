@@ -3,7 +3,7 @@
 **Document type:** Exploratory mathematical note
 **Status:** [EXPLORATORY] for FTD; exact claims below are theorems of the explicitly defined curve only
 **Provenance:** incorporated from a user-supplied technical note on the four-mode dyadic Fourier seed curve
-**Related:** [EXPLR_FOURIER_CURVE_LEVEL_4.md](EXPLR_FOURIER_CURVE_LEVEL_4.md), [REF_QCR_TRILOGY_BRIDGE.md](REF_QCR_TRILOGY_BRIDGE.md), [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](../algebra/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md)
+**Related:** [EXPLR_DYADIC_LACUNARY_PHASE_RIBBONS.md](EXPLR_DYADIC_LACUNARY_PHASE_RIBBONS.md), [EXPLR_FOURIER_CURVE_LEVEL_4.md](EXPLR_FOURIER_CURVE_LEVEL_4.md), [REF_QCR_TRILOGY_BRIDGE.md](REF_QCR_TRILOGY_BRIDGE.md), [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](../algebra/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md)
 
 ---
 
@@ -1121,5 +1121,330 @@ This is FTD-relevant as a boundary lesson, not as an ontology change:
 - the signed-area failure threshold coincides with the Holder
   image-dimension cap threshold;
 - none of this licenses completed-infinity lattice ontology inside FTD.
+
+---
+
+## 14. Geometric intuition pass
+
+This section records a deliberately non-promotional geometry reading. It is
+not a new theorem layer; it is a disciplined intuition scaffold for future
+exact probes.
+
+### 14.1 Projection / aliasing machine
+
+The hidden object is simple:
+
+```text
+t in S^1.
+```
+
+The visible object is complicated because the readout folds that phase circle
+through four dyadic elliptical modes:
+
+```text
+one smooth hidden phase
+  -> two visible Chebyshev branches in u = cos(t)
+  -> finite transverse node network
+  -> residual signed area after alternating chirality cancellation.
+```
+
+So `C_3` is best viewed as a projection/aliasing machine. The plane point
+does not remember enough to reconstruct the hidden phase. This is the same
+lesson already visible in the branch-overlap data, now phrased geometrically.
+
+### 14.2 Finite algebraic world vs rough analytic world
+
+Finite `C_3` lives in the algebraic world:
+
+- regular analytic immersion;
+- degree-16 algebraic image;
+- finitely many visible real nodes;
+- exact signed area;
+- exact turning number `-2`;
+- exact branch-relay grammar.
+
+The infinite tail changes category. The source remains a circle and the image
+remains continuous for `lambda < 1`, but the readout is no longer a finite
+algebraic curve. Above `lambda = 1/2`, wrinkles shrink too slowly to preserve
+tangent control; the image becomes coastline-like: continuous, infinite length,
+and without a stable tangent field.
+
+The `lambda = 1/sqrt(2)` threshold is especially geometric. Since it is the
+point where
+
+```text
+H(lambda) = 1/2,
+```
+
+it is also the Young/rough-path area boundary: below it, the path is rough but
+its signed area is still canonically controlled by Fourier summation; at and
+above it, area requires extra second-order data rather than being a clean
+ledger of the path alone.
+
+### 14.3 Exact structures that matter most
+
+The strongest exact structures found so far are:
+
+1. **Trigonal node relay.** Axis branch-collapse roots generate off-axis node
+   pairs by the hidden-phase move `theta -> theta +/- 2*pi/3`.
+2. **Chirality ledger.** Every mode has a `3:1` rotating-amplitude imbalance,
+   and the dominant orientation alternates by dyadic level.
+3. **Rational normalization.** A degree-16 plane curve with genus-zero
+   normalization should hide a large singularity budget over its complex
+   projective completion. The nine real nodes are likely only the real-visible
+   part of the algebraic singularity story.
+
+### 14.4 Exact follow-up probes
+
+The next worthwhile exact probes are:
+
+1. Compute the full projective singular locus of the degree-16 implicit curve:
+   real, complex, and points at infinity. Reconcile this with the genus
+   formula.
+2. Build the exact self-intersection chord diagram on `S^1`, then compute
+   immersed-plane-curve invariants such as rotation number and Arnold-style
+   invariants.
+3. Decompose the full branch-overlap correspondence in `(u,v)`, isolating the
+   trigonal relay factor from the residual complex factors.
+4. Prove the infinite-tail regularity sharply: exact Holder exponent,
+   differentiability obstructions, and projection-wise nondegeneracy.
+5. Reformulate the `lambda = 1/sqrt(2)` boundary using Young integration or
+   rough-path language, so the area threshold is geometric rather than only
+   Fourier-bookkeeping.
+
+### 14.5 Guardrail
+
+This intuition pass adds no LEDGER row and promotes no FTD physics claim. The
+valid takeaway is:
+
+```text
+C_3 is a finite, exact, dyadic readout benchmark whose geometry teaches how a
+simple hidden phase can project to branch-rich visible structure.
+```
+
+---
+
+## 15. Projective singularity budget
+
+The geometric-intuition pass predicted that the nine real nodes should be only
+the visible part of a much larger projective singularity budget. This section
+turns that into an exact accounting.
+
+The verifier is:
+
+```text
+python scripts/proofs/proof_dyadic_curve_singularity_budget.py
+```
+
+### 15.1 Homogeneous phase parametrization
+
+Use the complex-linear coordinate
+
+```text
+v = i y.
+```
+
+This does not change singularity invariants; it only removes explicit `i`
+from the Laurent parametrization.
+
+With `w = exp(it)`, both affine coordinates have common denominator
+`16w^8`:
+
+```text
+x(w) = N_x(w)/(16w^8),
+v(w) = N_v(w)/(16w^8),
+```
+
+where
+
+```text
+N_x(w) =
+3(w^16+1) + 4(w^12+w^4) + 4(w^10+w^6) + 8(w^9+w^7),
+
+N_v(w) =
+-6(w^16-1) + 8(w^12-w^4) - 8(w^10-w^6) + 16(w^9-w^7).
+```
+
+The corresponding homogeneous map `P^1 -> P^2` is:
+
+```text
+[S:T] ->
+[
+  3(S^16+T^16)
+  +4(S^12T^4+S^4T^12)
+  +4(S^10T^6+S^6T^10)
+  +8(S^9T^7+S^7T^9),
+
+  -6(S^16-T^16)
+  +8(S^12T^4-S^4T^12)
+  -8(S^10T^6-S^6T^10)
+  +16(S^9T^7-S^7T^9),
+
+  16S^8T^8
+].
+```
+
+It has degree 16 and no base point. Since the implicit image also has total
+degree 16, the parametrization is generically one-to-one onto its image. The
+normalization is therefore `P^1`, so the geometric genus is zero.
+
+For a degree-16 plane curve, the arithmetic genus is
+
+```text
+g_a = (16-1)(16-2)/2 = 105.
+```
+
+Thus all singularities together must account for defect `105`.
+
+### 15.2 Finite double-pair budget
+
+In the affine chart, two non-diagonal parameters `w != z` give the same point
+when
+
+```text
+N_x(w) z^8 - N_x(z) w^8 = 0,
+N_v(w) z^8 - N_v(z) w^8 = 0.
+```
+
+After removing the diagonal factor `w-z`, the resultant in `z` factors as:
+
+```text
+w^150 * F_14(w) * F_28(w) * F_108(w)
+```
+
+where the nonzero finite factors have degrees
+
+```text
+14, 28, 108.
+```
+
+The `w^150` factor is the projective-infinity contribution introduced by
+clearing denominators. The finite nonzero degree sum is
+
+```text
+14 + 28 + 108 = 150.
+```
+
+These are ordered preimages. Dividing by 2 gives
+
+```text
+75
+```
+
+finite unordered double-pair units.
+
+The factor meanings align with the earlier branch grammar:
+
+| Factor degree | Geometric role |
+|---:|---|
+| `14` | axis branch-collapse pairs from `P(u)=0` |
+| `28` | trigonal relay off-axis pairs |
+| `108` | residual complex finite double-pair units |
+
+The nine visible real nodes are contained in the first two factors. Most
+finite double-pair units are complex.
+
+### 15.3 The two infinity cusps
+
+There are two points at infinity:
+
+```text
+w = 0        -> [3: 6:0],
+w = infinity -> [3:-6:0].
+```
+
+Near `w=0`, use the affine chart `X != 0`:
+
+```text
+eta = V/X - 2,
+xi  = Z/X.
+```
+
+The local expansions begin:
+
+```text
+eta ~ w^4,
+xi  ~ w^8.
+```
+
+After removing the quadratic tangent term,
+
+```text
+rho = xi - (3/16) eta^2,
+```
+
+one gets
+
+```text
+rho ~ w^11.
+```
+
+The same orders occur at `w=infinity`, using `q=1/w` and `eta = V/X + 2`.
+
+Thus each infinity branch has first Puiseux data bounded below by
+
+```text
+(4, 11),
+```
+
+which gives local defect at least
+
+```text
+delta_infinity >= (4-1)(11-1)/2 = 15.
+```
+
+There are two such points, so infinity contributes at least
+
+```text
+2*15 = 30.
+```
+
+### 15.4 Budget closure
+
+The verified lower-bound budget is:
+
+```text
+finite double-pair units + infinity cusp lower bounds
+= 75 + 15 + 15
+= 105.
+```
+
+This equals the full arithmetic-genus defect. Therefore there is no room for
+additional hidden defect:
+
+- the finite double-pair units account for `75`;
+- each infinity cusp contributes exactly `15`;
+- the total singularity defect is exactly `105`.
+
+This gives the projective skeleton:
+
+```text
+degree-16 rational image
+  -> genus-zero normalization
+  -> 75 finite double-pair units
+  -> two infinity cusps of defect 15 each
+  -> total defect 105.
+```
+
+### 15.5 FTD-facing interpretation
+
+The projective budget reinforces the readout-machine picture. The visible
+plane curve looks like a finite drawing with nine real crossings, but the
+projective algebraic object carries a much larger hidden singularity ledger:
+
+```text
+real-visible nodes: 9
+finite projective double-pair units: 75
+total projective defect: 105
+```
+
+So the external readout is strongly lossy. It exposes only a small real slice
+of the singularity structure forced by the hidden phase map.
+
+This is useful FTD intuition, but not a physics claim:
+
+```text
+simple hidden phase -> lossy visible projection -> large hidden algebraic budget.
+```
 
 *End of document.*

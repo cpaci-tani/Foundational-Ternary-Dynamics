@@ -8,6 +8,20 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 
 ## Simulations
 
+### Dyadic Lacunary Curve Lab (`dyadic_lacunary_curve_lab.html`)
+**Model:** finite dyadic Fourier readout `C_K(t)` plus geometric-tail controls
+
+- Standalone canvas workbench for the `C_3` curve and its mutable Fourier family
+- Direct per-mode editing of amplitudes, phases, enable flags, tail laws, render modes, and bookend-only sparse mode experiments
+- Live signed area, centroid, length, turning, energy hierarchy, node estimates, Holder thresholds, max active frequency, and samples-per-cycle readouts
+- Heuristic regime classifier for bookend, ribbon, shell, braid/web, rough-tail, and alias-risk states
+- Click-based phase fiber microscope plus prefix-mode node genealogy strip
+- Three.js 3D phase-lift mode with selectable `z` channels: phase lag, clock phase, speed, curvature, dominant mode, and area sweep
+- Optional overlays for self-intersections, curvature events, mutable ribbon/tesseract shadow, epicycle chain, spectrum, and branch readout
+- Stable absolute-grid camera during animation; phase motion no longer refits the view to sampled curve bounds
+- Ultra-slow animation control with fine speed and phase increments for smooth phase-shadow drift
+- Exploratory mathematics only; no FTD physics claim is promoted by coefficient mutations
+
 ### 0. Potential Core Explorer (`potential_core_explorer.html`)
 **Model:** `P_c -> G(P_c) -> C -> G_C(P_c) -> B_C(P_c, r) -> M_C(P_c, r)`
 
