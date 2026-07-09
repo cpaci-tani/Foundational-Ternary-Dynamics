@@ -62,7 +62,7 @@
       "falsifier": "an h>=2 CM curve reproducing the identity (breaks uniqueness); or a structural proof covering all h (retires the import)."
     },
     {
-      "ref": "IMP-C3", "kind": "named-result", "status_flag": "open", "type_imported": "E1: joint independence of the SC/FCC Watson Gamma-classes with {pi, Gamma(1/4)} -- a case of Rohrlich-Lang / GPC (Waldschmidt Conj 5.23; Lang proven only n=3,4,6; trdeg floor 2 / conjectural 4; priced FTD-0376)",
+      "ref": "IMP-C3", "kind": "named-result", "status_flag": "open", "type_imported": "E1: joint independence of the SC/FCC Watson Gamma-classes with {pi, Gamma(1/4)} -- a case of MULTI-CURVE Chudnovsky, strictly weaker than Rohrlich-Lang (priced FTD-0376; sharpened FTD-0377: per-constant floor CLOSED via the disc -24 reduction W_S = (3 sqrt6/2) Omega_{-24}/pi^2 -- only the cross-disc joint independence is open; marker: Bertrand 1997)",
       "price": 1, "unit": "open conjecture", "canonical_tag": "[OPEN -- exported as P1]",
       "provenance": "FTD-0369 conditionality; FTD-0371-companion B1 (N strict-superset Q(G*,pi) rests on it); REF_EXPORTED_PROBLEMS_E1_E2.md P1",
       "frontier_face": "argument-half independence (distinct CM points don't talk)",
