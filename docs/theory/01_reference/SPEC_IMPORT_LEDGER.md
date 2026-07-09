@@ -66,6 +66,8 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | IMP-C3 | **E1** (SC/FCC Watson-class independence) | open | [OPEN — exported P1] | a proof either way re-adjudicates FTD-0369 |
 | IMP-C4 | **E\*/E\*\*** (no admissible period has (4G*−1) in its square class) | open | [OPEN] | FTD-0353 §8 shared falsifier (forced native output, odd (4t−1)-valuation → REFUTED) |
 
+> **Period-conjecture frame (FTD-0375).** The transcendence content of IMP-C1 — and the general δ∉N that IMP-C3/C4 leave open — is restated period-conjecture-relative in [`MATH_PERIOD_IMPORT_FRONTIER.md`](../09_mathematical/number_theory/MATH_PERIOD_IMPORT_FRONTIER.md): IMP-C1's Chudnovsky input *is* the Grothendieck period conjecture proven for the single CM motive `h¹(E_lemn)` (trdeg = dim = 2); IMP-C3/C4 are exactly the open assumptions (E1/E2) above which δ∉N carries beyond Chudnovsky. That node **re-prices nothing here** — it imports nothing new, so this table is unchanged.
+
 ### 3.4 Calibrations (𝕂) — total: **3** (A2: N is grade-0, so *every* dimensional prediction pays here)
 
 | ref | imported anchor | tag | falsifier |

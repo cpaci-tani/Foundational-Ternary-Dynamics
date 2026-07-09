@@ -2,6 +2,7 @@
 
 **Tag:** `[SYNTHESIS]` (consolidation of established FTD results — promotes nothing) **+ `[CONJECTURE]`/`[SPECULATION]`** (the substrate-independent meta-claim of §3, a precise statement to attempt, **not** a theorem).
 **LEDGER id:** FTD-0336 · **Deepens:** `EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md`
+**Period-conjecture frame:** [`MATH_PERIOD_IMPORT_FRONTIER.md`](../09_mathematical/number_theory/MATH_PERIOD_IMPORT_FRONTIER.md) (FTD-0375) restates this frontier period-conjecture-relative and records the sharpening that this doc's "exact, not analogical" even/odd (Euler-reflection parity) split is a **different** object from a claimed strict-period-ring decomposition of period integrals — the latter refuted externally (2026-07-09), the parity split unaffected.
 **Purpose:** the canonical internal statement of FTD's boundary — *and* the skeleton of a clean external structural-negative paper (Number-One-Goal clause 2 at maximum generality). It replaces the slogan "FTD is missing a second `i`" (a category error, §4) with a precise, falsifiable frontier.
 
 ---
