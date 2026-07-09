@@ -338,3 +338,6 @@ scripts/proofs/_stencil18_moments.txt
 # LGF control-lattice moment intermediates (regenerable via explr_*_moments.py)
 scripts/proofs/_square2d_moments.txt
 scripts/proofs/_sc3d_moments.txt
+# two-loop BCC sunset c_N sequence (regenerable via lattice_two_loop_bcc_series.py)
+scripts/exploration/_bcc_sunset_cN.txt
+scripts/exploration/_bcc_sunset_cN_600.txt
