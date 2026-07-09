@@ -70,7 +70,7 @@ All three §6 outcomes are pre-blessed. The verdict is genuinely open — Outcom
 The closure attempt may use ONLY the following derivation primitives and evidence (frozen 2026-05-24 at v1 hash-lock):
 
 1. **FTD axioms 1-5** from `SPEC_FTD.md`.
-2. **Calibration declarations** `a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys = √3·ℓ_P/c` per FTD-0041 / FTD-0137.
+2. **Calibration declarations** `a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys = ℓ_P/(√3·c)` per FTD-0041 / FTD-0137.
 3. **§4 frozen observable catalog** per D4 above.
 4. **Linear lattice wave equation** `Δ_t² J_a = C² L_18 J_a` per SPEC_FTD_LAGRANGIAN.md §6.1 [THEOREM].
 5. **Gauss constraint** `∇_L · J = ρ` per SPEC §3.6 term 4 [THEOREM/AXIOM at λ_G → ∞].

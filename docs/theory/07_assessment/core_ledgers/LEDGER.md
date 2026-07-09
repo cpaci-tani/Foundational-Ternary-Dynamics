@@ -499,10 +499,10 @@
 
 ### FTD-0041: a_phys ≡ ℓ_P calibration declaration
 
-- **statement:** One voxel ≡ one Planck length. Tick: t_phys = √3 · ℓ_P / c. Mass unit: M_unit = m_e / K_B = 1 MeV/c².
-- **tag:** CALIBRATION (declared, not derived)
+- **statement:** **Default gauge: electron-primary** (FTD-0137 §4.5; switched 2026-07-08). Import `{ℏ, c, m_e}`; single beyond-universal anchor `m_e`. Derived: a_phys = ℓ_P = ƛ_C·Kα¹¹ (≈ Planck length, 0.19%, [DERIVED]); tick t_phys = ℓ_P/(√3·c) = t_P/√3 ≈ 3.11 × 10⁻⁴⁴ s (from a_phys + CFL Courant c_lat = 1/√3; corrected 2026-07-08 from √3·ℓ_P/c, a factor-3 error — see `DERIV_DIMENSIONAL_GATE.md`); Newton G = ℏc(Kα¹¹)²/m_e², α_G(e,e)=(m_e/m_P)² [SMC output]. Mass unit M_unit = m_e/K_B = 1 MeV/c². Legacy Planck-primary (a_phys ≡ ℓ_P declared exactly) remains a valid gauge; dimensionless spine unchanged (gauge-invariant).
+- **tag:** CALIBRATION (electron-primary default: `m_e` declared; `a_phys`/`t_phys`/`G` derived — length/gravity scales at [DERIVED ~0.19%]/[SMC])
 - **declared in:** `SPEC_FTD.md` (between Postulate 2 and Postulate 3, "LATTICE  PHYSICAL CALIBRATION" section).
-- **rationale:** `a_phys` cannot be derived from Axiom-Zero invariants alone. Mechanisms α / β / γ all closed (see FTD-0030, FTD-0035). Planck-length declaration is the natural calibration if the framework operates at the smallest length physics has reason to invoke.
+- **rationale:** FTD-0059/0096 prove no length or mass is derivable from Axiom Zero *alone*, so one dimensional import is irreducible (grade-0 closure, FTD-0368). Electron-primary spends it on the **measurable** `m_e` — importing one beyond-universal scale vs legacy Planck-primary's two (`ℓ_P ≡ G` and `m_e`, redundant since `m_e/m_P` is predicted) — and borrows no `G` (G is a 0.38% output). Tradeoff: `a_phys`/`G` become derived-at-[SMC] rather than declared. Mechanisms α/β/γ/δ for deriving a_phys from Axiom Zero all closed negative (FTD-0030, FTD-0035).
 - **discipline:** every dimensional FTD prediction is **conditional on this calibration**. Dimensionless predictions are calibration-independent and constitute the falsifiable spine.
 - **dependents:** every dimensional engine benchmark; FTD-0045.
 - **dimensional_map_ids:** `a_phys_planck`, `t_phys_lattice_tick`, `mass_unit_anchor`, `m_electron_dimensional` (see `docs/theory/01_reference/dimensional_map.json` and rendered `SPEC_DIMENSIONAL_MAP.md`).

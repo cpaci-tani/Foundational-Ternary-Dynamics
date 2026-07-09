@@ -22,7 +22,7 @@ So the honest statement is **not** "the engine sees what CERN sees, only smaller
 | Anchor | Formula | Value | Tag |
 |---|---|---|---|
 | a_phys | 1 voxel ≡ ℓ_P | 1.616255×10⁻³⁵ m | `[CALIBRATION]` |
-| t_phys | √3·ℓ_P/c (CFL, c_lat=1/√3) | 9.338×10⁻⁴⁴ s | `[CALIBRATION]` |
+| t_phys | ℓ_P/(√3·c) (CFL, c_lat=1/√3) | 3.113×10⁻⁴⁴ s | `[CALIBRATION]` |
 | mass unit | K_B = m_e | 1 MeV/c² per K_B | `[IMPOSED]` |
 
 > **Conversion note (load-bearing).** The energy-scale predictions in §1–§3 route through `E_P = ℏc/ℓ_P` (= `M_PLANCK` = 1.220890×10¹⁹ GeV, cross-checked two independent ways to 1.2×10⁻⁷) and the mass-unit `K_B` — **both independent of the tick↔second convention**. So the dimensionless map `k = E/E_P` is unambiguous regardless of the `√3`/`t_phys` factor. (Note the naive grid speed `a_phys/t_phys = c/√3` does *not* reproduce `c` — a known subtlety of the canonical time calibration, FTD-0041 / `SPEC_DIMENSIONAL_MAP.md` §4; the §1–§3 predictions are immune precisely because they route through `E_P`, not `t_phys`.) Absolute *time* conversions (Hz, seconds) use the canonical `t_phys` and inherit its convention.

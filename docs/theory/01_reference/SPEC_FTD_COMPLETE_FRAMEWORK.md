@@ -16,7 +16,7 @@
 |---|---|---|
 | **Postulates P1–P5** | discrete 3D lattice (undefined boundary) · discrete time · ternary states {−1,0,+1} · 26-neighbour local causality · determinism | `[AXIOM]` (frozen) |
 | **Framework Commitments** | **FC-0** ℤ[i] reading of the order-4 symmetry · **FC-1** declines the measurement-map M (the commutative observable algebra is complete) · **FC-2** native arrow + emergent IR-only Lorentzian metric · **FC-3** scale-ratio-covariance (only internal ratios physical) · **FC-4 (FC-W)** adopts the external α-binding axiom W, pinned by FTD-0314 | `[AXIOM]`-class **declarations, not derivations** — each sits on a fork a theorem proved *open* (§3); FC-W is the framework's first *adopted* (vs declined) import |
-| **Calibrations** | `a_phys ≡ ℓ_P` · `M_REST = m_e` · `t_phys = √3·ℓ_P/c` | `[IMPOSED]` (dimensionless predictions are calibration-independent; dimensional ones ride these) |
+| **Calibrations** | `a_phys ≡ ℓ_P` · `M_REST = m_e` · `t_phys = ℓ_P/(√3·c)` | `[IMPOSED]` (dimensionless predictions are calibration-independent; dimensional ones ride these) |
 
 ---
 

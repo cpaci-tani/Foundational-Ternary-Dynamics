@@ -179,7 +179,7 @@ export function mountScaleContextPanel(host, getBridge) {
         const gap = latM / LHC_LEN_M;     // lattice span ÷ one LHC resolution element
         el('len').innerHTML =
             row('1 voxel = ℓ_P', `${sci(PLANCK_LENGTH_M)} m`, false, 'a_phys ≡ ℓ_P [CALIBRATION] (FTD-0059 no-go).') +
-            row('1 tick', `${sci(FTD_TICK_S)} s`, false, 't_phys = √3·ℓ_P/c [CALIBRATION].') +
+            row('1 tick', `${sci(FTD_TICK_S)} s`, false, 't_phys = ℓ_P/(√3·c) = t_P/√3 [CALIBRATION].') +
             row(`this lattice (L=${L})`, `${sci(latM)} m · ${L}³ voxels`, true, 'Span = L·ℓ_P; updates with the lattice-size control.') +
             row('LHC resolves', `${sci(LHC_LEN_M)} m`, false, 'ℏc / 13.6 TeV — one resolution element.') +
             row('… in voxels', `${sci(LHC_VOXELS)}`, false, 'A CERN-probed structure spans ~10¹⁵ voxels — infeasible to simulate.') +

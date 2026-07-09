@@ -108,7 +108,7 @@ Per particle type, run M independent seeds (default M = 100) at fixed `(L, A, T,
 Per FTD-0041 calibration ladder:
 
 ```
-t_tick = √3 · ℓ_P / c ≈ 9.34 × 10^-44 s
+t_tick = ℓ_P / (√3 · c) = t_P/√3 ≈ 3.11 × 10^-44 s
 ```
 
 So:
@@ -130,7 +130,7 @@ This is unmeasurable in the engine. **Class B prediction for electron is "stable
 Muon lifetime in ticks:
 
 ```
-τ_μ / t_tick = 2.197 × 10^-6 s / 9.34 × 10^-44 s ≈ 2.35 × 10^37 ticks
+τ_μ / t_tick = 2.197 × 10^-6 s / 3.11 × 10^-44 s ≈ 7.06 × 10^37 ticks
 ```
 
 This is also unmeasurable in feasible engine runs (single-tick cost ~ ms, total ~ 10^34 yr to simulate).

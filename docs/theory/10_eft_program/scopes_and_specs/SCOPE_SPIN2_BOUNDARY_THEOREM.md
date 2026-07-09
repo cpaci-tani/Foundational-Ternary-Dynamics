@@ -30,7 +30,7 @@
 
 ## §2 — Working theorem statement (DRAFT for scoping — to be locked at Arc C2 P3 pre-reg)
 
-> **Spin-2 Boundary Theorem (working draft, not locked).** Under FTD axioms 1-5 (lattice, discrete time, ternary states, 26-Moore locality, determinism per `SPEC_FTD.md`), the canonical toggle set (engine default `latency_field` on, `wave_propagation` on, etc.), the calibration declarations (`a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys = √3·ℓ_P/c`), and the non-site-local observable algebra of `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4 frozen catalog, the FTD substrate's connected two-point correlator in the transverse-traceless rank-2 sector contains no gapless helicity-±2 pole, equivalently:
+> **Spin-2 Boundary Theorem (working draft, not locked).** Under FTD axioms 1-5 (lattice, discrete time, ternary states, 26-Moore locality, determinism per `SPEC_FTD.md`), the canonical toggle set (engine default `latency_field` on, `wave_propagation` on, etc.), the calibration declarations (`a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys = ℓ_P/(√3·c)`), and the non-site-local observable algebra of `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4 frozen catalog, the FTD substrate's connected two-point correlator in the transverse-traceless rank-2 sector contains no gapless helicity-±2 pole, equivalently:
 >
 > **(C2-1)** The substrate's linear-wave spectrum on the flux field `J ∈ ℝ³` decomposes per wavevector as 1 spin-0 mode ⊕ 2 spin-1 transverse modes ⊕ 1 spin-1 longitudinal mode (Gauss-constrained), totalling 4 degrees of freedom per voxel after Gauss projection.
 > **(C2-2)** Any rank-2 observable built as a J-bilinear or J-derivative bilinear has its transverse-traceless projection contain only the spin-1 mode propagated through the bilinear (a continuum/branch-cut contribution), not a separable spin-2 collective mode.
@@ -67,7 +67,7 @@ The theorem's stated axiom set should include:
 
 1. **FTD axioms 1-5** (the five postulates of `SPEC_FTD.md`) — cubic lattice + discrete time + ternary states + 26-Moore locality + determinism.
 2. **Canonical toggle set** — the engine's default ON/OFF set as documented at the time of pre-registration (snapshot needed); equivalent to the §8 toggle set of `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` (11 toggles ON, `dual_substrate` + `weak_transmutation` OFF).
-3. **Calibration declarations** — `a_phys ≡ ℓ_P` (FTD-0041 / FTD-0137 gauge), `K_B = m_e` (mass anchor), `t_phys = √3·ℓ_P/c` (tick calibration). These do NOT affect the dimensionless theorem content (the spin-2 emergence question is dimensionless) but are listed for completeness.
+3. **Calibration declarations** — `a_phys ≡ ℓ_P` (FTD-0041 / FTD-0137 gauge), `K_B = m_e` (mass anchor), `t_phys = ℓ_P/(√3·c)` (tick calibration). These do NOT affect the dimensionless theorem content (the spin-2 emergence question is dimensionless) but are listed for completeness.
 4. **§4 frozen observable catalog** from `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4 — closed flux-loops, plaquette bivectors, bilinear link observables, boundary-to-boundary transfer observables, reference frame projections. Arc C2 inherits this catalog.
 5. **FTD-0193 empirical input** (L∈{32,64}, twice-validated instrument) — used as load-bearing evidence in the proof chain, not as a derivation primitive.
 6. **FTD-0073 [CLOSED NEGATIVE]** — the site-local Clifford route is closed; Arc C2 cannot recover spin-2 via site-local primitives.
