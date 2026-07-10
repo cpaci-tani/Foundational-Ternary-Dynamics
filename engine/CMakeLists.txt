@@ -1772,6 +1772,26 @@ ftd_add_test(test_clifford_multigrade
              CTEST_NAME clifford_multigrade TIMEOUT 120
              LABELS gpu native eft)
 
+# M1 (FTD-0379): Dirac-Kahler evolution test. Executes the never-run
+# verification path of DERIV_DIRAC_KAHLER_IDENTIFICATION.md A1.5: does the
+# engine's evolution satisfy the discrete DK equation (d - delta)Phi = mPhi
+# dynamically on the local grade fields, vs a per-grade Klein-Gordon
+# comparator? Pre-registered: PREREG_VERTEX_DK_CLOSURE_v1.md S2.
+ftd_add_test(test_dk_evolution
+             tests/test_dk_evolution.cpp
+             CTEST_NAME dk_evolution TIMEOUT 900
+             LABELS native eft vertex)
+
+# M2 (FTD-0380): noise-controlled bivector closure re-test. Executes the
+# decisive follow-up named in DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md S3.5.3:
+# FTD-0087's Part D closure failure re-tested under L in {8,16,32},
+# A in {1,3,10}, instant vs time-averaged readouts, 16 seeds.
+# Pre-registered: PREREG_VERTEX_DK_CLOSURE_v1.md S3.
+ftd_add_test(test_bivector_closure_v2
+             tests/test_bivector_closure_v2.cpp
+             CTEST_NAME bivector_closure_v2 TIMEOUT 3600
+             LABELS native eft vertex)
+
 # Determinism regression: same seed + same protocol -> bit-identical voxel
 # arrays. Closes a structural test-coverage hole flagged by the 2026-04-25
 # audit (no existing test asserts byte-identical reproducibility, despite
