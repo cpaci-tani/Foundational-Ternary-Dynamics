@@ -218,28 +218,33 @@ bool self_checks(int L) {
         const double l = dotMG(applyD(g,A), B), r = -dotMG(A, applyD(g,B));
         rel_check("<D A, B> = -<A, D B>", l, r, std::abs(l)+std::abs(r));
     }
-    // D^2 = -Delta componentwise
+    // D^2 = -Hodge-Laplacian = +componentwise second-difference operator
+    // (Delta_H = dd* + d*d is POSITIVE semidefinite; the componentwise
+    // lattice lap is NEGATIVE semidefinite; on the flat torus
+    // Delta_H = -lap, so D^2 = -Delta_H = +lap. First lock's gate had the
+    // sign inverted; corrected pre-measurement, 2026-07-10 — no dynamics
+    // output was observed before the correction.)
     {
         MG DD = applyD(g, applyD(g, A));
         Field l0 = lap(g, A.g0), l3 = lap(g, A.g3);
         double num = 0, den = 0;
         for (int s = 0; s < g.n3(); ++s) {
-            num += (DD.g0[s] + l0[s]) * (DD.g0[s] + l0[s]);
-            num += (DD.g3[s] + l3[s]) * (DD.g3[s] + l3[s]);
+            num += (DD.g0[s] - l0[s]) * (DD.g0[s] - l0[s]);
+            num += (DD.g3[s] - l3[s]) * (DD.g3[s] - l3[s]);
             den += l0[s]*l0[s] + l3[s]*l3[s];
         }
         for (int a = 0; a < 3; ++a) {
             Field l1 = lap(g, A.g1[a]), l2 = lap(g, A.g2[a]);
             for (int s = 0; s < g.n3(); ++s) {
-                num += (DD.g1[a][s] + l1[s]) * (DD.g1[a][s] + l1[s]);
-                num += (DD.g2[a][s] + l2[s]) * (DD.g2[a][s] + l2[s]);
+                num += (DD.g1[a][s] - l1[s]) * (DD.g1[a][s] - l1[s]);
+                num += (DD.g2[a][s] - l2[s]) * (DD.g2[a][s] - l2[s]);
                 den += l1[s]*l1[s] + l2[s]*l2[s];
             }
         }
         const double d = std::sqrt(num) / std::sqrt(std::max(den, 1e-30));
         const bool pass = d < 1e-12;
         std::printf("    [%s] %-34s rel.norm = %.2e\n", pass ? "PASS" : "FAIL",
-                    "D^2 = -Laplacian (all grades)", d);
+                    "D^2 = +lap = -Hodge (all grades)", d);
         if (!pass) ok = false;
     }
     return ok;
