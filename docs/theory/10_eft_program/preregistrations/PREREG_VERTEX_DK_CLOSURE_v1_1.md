@@ -43,6 +43,8 @@ Net vs v1: eq0's sign and eq2's T-coupling sign flip; eq1, eq3 unchanged.
 
 | Item | Path | SHA256 |
 |---|---|---|
-| v1.1 runner | `engine/tests/test_dk_evolution_v11.cpp` | `cdd8f6c7b50ee8996a202341bb08e30aefe94ef2a76bc59ca7c6740fda3f6205` |
+| v1.1 runner | `engine/tests/test_dk_evolution_v11.cpp` | `cfe38b5729fce787cc5db74315d5aa0679560c7c87c0a77a436cbd8141710247` |
+
+**Lock amendment (2026-07-10, pre-measurement):** the first-lock runner (SHA `cdd8f6c7…`, commit `07a03489`) failed its own D² harness gate with rel.norm exactly 2.00 — the gate had asserted D² = −lap, but with δ = d\* the Hodge Laplacian is Δ_H = −lap (positive semidefinite), so the Diracness identity is D² = −Δ_H = **+lap**, and ∂ₜΦ = aDΦ squares to the wave equation ∂ₜ²Φ = a²·lap·Φ as required. The gate sign was corrected (operator code, criteria, bands, priors all untouched); **no dynamics output was produced or observed under the first lock** (the runner aborted at the gate, exit 1). Corrected-runner SHA above; amendment commit follows this file.
 
 CTest `dk_evolution_v11` (LABELS native eft vertex). Output to `engine/results/vertex_dk_closure_2026-07-10/m1_dk_evolution_v11.log`. Verdict impact: whatever lands updates the FTD-0379 row's scope — from "the §A1.3 literal variant at unit scale" to the corrected operator at fitted scale; no other tag can move. Ramification grade 0 (unchanged).
