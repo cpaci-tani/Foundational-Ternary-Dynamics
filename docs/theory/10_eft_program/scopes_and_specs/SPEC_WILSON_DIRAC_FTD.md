@@ -42,7 +42,7 @@ $$
 U_\mu(n) = \exp\!\left[ i a g_{\mathrm{FTD}}\, A_\mu(n) \right], \qquad g_{\mathrm{FTD}} = \sqrt{1 / x_+}
 $$
 
-where `g_FTD` is the FTD-native coupling [DERIVED from master quadratic, FTD-0125] and `A_μ(n)` is the gauge field projected from the FTD flux. The projection convention is per `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`:
+where `g_FTD` is the imposed vertex-coupling calibration (label corrected 2026-07-10: the *value* √(1/x₊) is theorem-grade algebra of the master quadratic; the *identification* g²_FTD = α is FTD-0013 [STRONGLY MOTIVATED CONJECTURE]; the *wiring into this vertex* is the [IMPOSED — calibration] declared in `SCOPE_VERTEX_PROGRAM.md` §2. The former annotation "[DERIVED from master quadratic, FTD-0125]" overstated — FTD-0125 is a closed-negative diagnostic, not a derivation source) and `A_μ(n)` is the gauge field projected from the FTD flux. The projection convention is per `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`:
 
 $$
 A_\mu(n) = \mathcal{P}_T J_\mu(n)
@@ -103,7 +103,7 @@ $$
 a_e = \frac{g - 2}{2} = \frac{\omega_s - \omega_c}{\omega_c}
 $$
 
-Schwinger's tree-level prediction is `a_e = α/(2π)` where `α = g_FTD² = 1/x_+` in the FTD-native convention. For `α ≈ 1/137`:
+Schwinger's tree-level prediction is `a_e = α/(2π)` where `α = g_FTD² = 1/x_+` under the imposed vertex-coupling calibration (`SCOPE_VERTEX_PROGRAM.md` §2 — not an FTD-native output). For `α ≈ 1/137`:
 
 $$
 a_e^{\mathrm{Schwinger}} \approx 1.16 \times 10^{-3}
@@ -118,7 +118,7 @@ $$
 | Bare mass `m = m_e` | Calibration-conditional | FTD-0096 K_B = m_e |
 | γ-matrices, chiral basis | Standard | Convention |
 | Gauge field `A_μ` from flux projection | [SELECTION] | `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` |
-| FTD-native coupling `g_FTD = √(1/x_+)` | [DERIVED] | Master quadratic [THEOREM] + Phase I (FTD-0125) |
+| Vertex coupling `g_FTD = √(1/x_+)` | [IMPOSED — calibration] (value = master-quadratic algebra [THEOREM]; identification g² = α = FTD-0013 [SMC]; row corrected 2026-07-10 — the former "[DERIVED] + FTD-0125" citation was wrong on both counts, FTD-0125 being a closed-negative diagnostic) | `SCOPE_VERTEX_PROGRAM.md` §2 |
 | Magnetic field `B = B_0 ẑ` | Initial condition | Lab-style setup |
 | Time-step `τ = √3 ℓ_P / c` | Calibration | FTD canonical (matches `t_phys`) |
 | Tree-level `g = 2` | Standard Dirac | Will verify in Phase II.4 |

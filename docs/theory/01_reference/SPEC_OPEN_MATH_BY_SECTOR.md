@@ -88,8 +88,8 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 |---|---|---|---|---|
 | **MC-T4.3** | **Operational alpha-readout mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/alpha` from FTD structure rather than insert it. All natural action-level/operator routes are closed negative through FTD-0244: ARC-A/B1 closed negative, ARC-B2/C1 sharpened to route-invariant/operator-calculus no-go, and K-BIND closed theorem-negative. The surviving positive exits are a new W-like framework commitment or a fresh ARC-D engine-native measurement. | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | **TEST4-GEN** | **Alpha arithmetic generativity test.** Pre-registers the Balmer-to-Bohr gate: the same lemniscatic CM/FQCR rigidity that produces the alpha candidate must generate one additional independent physical dimensionless observable or relation with no new tuned freedom. *(The `x_- ≈ N_c` match does not count as the prize; that identification is **RETIRED** entirely per v1.4 §5 — see `DERIV_NC_FROM_TOPOLOGY.md` for the independent `N_c = 3` sources.)* Target declaration must precede numerical comparison. | [PRE-REGISTRATION] | D-W | MC-T4.3; `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md` |
-| §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
-| §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
+| §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics). **Measured state 2026-07-10 (FTD-0379/0380, `../09_mathematical/algebra/ANALYSIS_VERTEX_DK_CLOSURE_v1.md`):** both dynamical-emergence branches CLOSED NEGATIVE at the protocols tested — FTD-0089's literal DK evolution fails (grades better described by KG than DK, 4/4) and su(2) closure does not recover under the FTD-0088-prescribed noise controls (FTD-0088's noise reading REFUTED; instrument-scope caveats in the analysis §1.3). Surviving substrate foothold: the *kinematic* Cl(3,0) grade skeleton (FTD-0088, subject to the effective-toggle audit) + matching-bivector signature (FTD-0086); the formal construction question stays open on that kinematic basis only | [OPEN — kinematic basis only] | RP | — |
+| §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac. **Branch-B route chartered 2026-07-10:** matter imported (Wilson–Dirac, `../10_eft_program/scopes_and_specs/SPEC_WILSON_DIRAC_FTD.md`), vertex coupling an [IMPOSED — calibration] = IMP-E1 ∘ IMP-E3 composed (`../10_eft_program/scopes_and_specs/SCOPE_VERTEX_PROGRAM.md` §2); execution = charter stage V1 (free-sector bring-up + tree g=2 behind the FTD-0126 Wilson-r-artifact gate); no longer gated on native §7-bivector closure | [OPEN — IMPORTED scaffold; Branch-B chartered] | M | SCOPE_VERTEX_PROGRAM V1 |
 | §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR  α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
 | §7-qed | Full QED `g − 2` precision (= MC-T4.4 in old checklist) | [OPEN] | W–M | §7-dirac |
 | α-from-CM | `CONJ_ALPHA_FROM_CM.md` Step 3 (Z₄ symmetry selects this CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM] | [CLOSED RESOLVED / RECLASSIFIED] | RP | — |
@@ -334,8 +334,8 @@ Effort: D (scan execution; analysis already templated).
 
 §2 EM / α
    MC-T4.3      ── needs MC-T4.1, MC-T4.2  [foundational obstruction]
-   §7-bivector  ── (no deps; FTD-0073 closed-negative scopes the construction)
-   §7-dirac     ── needs §7-bivector
+   §7-bivector  ── (no deps; FTD-0073 closed-negative scopes the construction; kinematic basis only per FTD-0379/0380)
+   §7-dirac     ── needs SCOPE_VERTEX_PROGRAM V1 (Branch-B; de-gated from §7-bivector 2026-07-10)
    §7-loop      ── needs MC-T4.3
    §7-qed       ── needs §7-dirac
 
