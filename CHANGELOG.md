@@ -1,5 +1,67 @@
 # Foundational Ternary Dynamics Changelog
 
+## The vertex program v1 — both native-fermion hypotheses closed negative, Branch-B chartered (FTD-0379/0380, 2026-07-10)
+
+The two decisive, previously-scoped-but-never-executed fermion-emergence
+measurements were pre-registered (`PREREG_VERTEX_DK_CLOSURE_v1.md`, lock
+`b46fdfe0`, tag `preregister-vertex-dk-closure-v1`; runner SHA256s locked;
+compile-only before lock) and run. Both returned clean negatives on their
+locked criteria; a same-day adversarial physics-redteam pass corrected the
+interpretive scope (quantifiers, instrument caveats) without moving either
+verdict. New tests + docs only; golden untouched; zero promotions.
+
+- **M1 (FTD-0379) — DK-STATIC-ONLY.** The engine's evolution does not satisfy
+  FTD-0089's literal (unit-coefficient) discrete Dirac–Kähler equation on the
+  local grade fields (executes the never-run §A1.5): all grade residuals
+  ≥ 1.0, the per-grade Klein–Gordon comparator wins the discriminator on 4/4
+  grades in both toggle configs (absolute KG residuals 0.39–0.76 — "the
+  composites are KG fields" is not claimed), and the pre-registered sanity
+  anchor held (CONFIG-M grade-1 ρ_KG = 0.088). The Dirac–Kähler
+  identification is **kinematic only at the tested scope**. Instrument
+  caveats recorded (analysis §1.3a/b): unit-fixed DK velocity vs fitted KG
+  c²; amplitude-degree inhomogeneity confounds the ρ₁ = 8.6 reading — a
+  velocity-fitted, per-grade-normalized M1 v2 is the named follow-up. Guard:
+  the fitted m* ≈ 0.21 carries no evidential weight at ρ ≥ 1 — never cite it
+  as a mass.
+- **M2 (FTD-0380) — CLOSURE-ROBUST-FAIL.** The FTD-0087 su(2) closure failure
+  does not recover under any noise control its own reinterpretation predicted
+  (L ∈ {8,16,32} × A ∈ {1,3,10} × instant/time-averaged, 16 seeds): baseline
+  replicated (no engine drift), 0/18 cells close, no monotone improvement.
+  **FTD-0088's dynamical-noise reading is REFUTED under its own prescribed
+  controls** (robustness strongest in the L-direction and time-averaging; the
+  low-A cells were partially power-limited). The FTD-0086 matching signature
+  is unaffected. Branch-A is closed at the protocols **tested**; Branch-B is
+  the **current** accounting.
+- **Branch-B chartered.** `SCOPE_VERTEX_PROGRAM.md`: imported Wilson–Dirac
+  matter + the vertex coupling g² ≡ 1/x₊ declared [IMPOSED — calibration] —
+  deliberately priced as the composition of existing import-ledger lines
+  IMP-E1 ∘ IMP-E3 (no new line; double-counting guard), δ-branch content
+  inherited from IMP-B1. `SPEC_WILSON_DIRAC_FTD.md` §2.2's overstated
+  "[DERIVED …, FTD-0125]" g_FTD label corrected. Stages V1–V4 defined, each
+  behind its own pre-registration; the FTD-0126 Wilson-r-artifact lesson is
+  V1's gate.
+- **Disclosed anomaly.** The FTD-0088/multigrade toggle set is flagged invalid
+  by current `TermToggles` validation (3 phases lack prerequisites;
+  warning-only; same code path then and now). A Program-F effective-toggle
+  audit is queued as a separate task.
+- **Adversarial review + M1 v1.1 (same day).** The math redteam proved the
+  FTD-0089 §A1.3 system is not the DK operator (δ ≠ d\*) and flagged the
+  unit-speed lock; the prescribed corrected-operator, free-scale re-test ran
+  under a fresh pre-registration (`PREREG_VERTEX_DK_CLOSURE_v1_1.md`, locks
+  `07a03489`/`280e5d86`) and returned **DK-STATIC-ONLY with fitted operator
+  speed a\* ≈ 0** — the genuine skew-adjoint DK operator (gates: uniform
+  adjointness, skew-adjointness, D² = +lap, all exact) contributes nothing at
+  any velocity normalization. M2's verdict was independently recomputed and
+  is forced by the printed numbers; two M2 descriptions corrected (baseline
+  magnitudes drifted since FTD-0087 — refutation measured on today's engine;
+  the 3 isolated closes share the time-averaged readout and 2 carry the
+  wrong sign — noise-consistent, now reported in full). Both reviews are
+  AI-simulated; external human review before outward citation.
+- Analysis `ANALYSIS_VERTEX_DK_CLOSURE_v1.md`; sector queue §7-bivector /
+  §7-dirac rows updated; META_INDEX 9.53b + 10.49b/c; LEDGER maintenance log.
+  Standing invariants: x₊=1/α [SMC], FC-W [AXIOM], MC-T4.3 [FOUNDATIONAL
+  OBSTRUCTION], FTD-0073 [THEOREM] — all untouched. Next free id FTD-0381.
+
 ## W₁₈ is not self-dual — the rigid-CY / weight-4-modular branch is closed (FTD-0373, 2026-07-06)
 
 The residual left by the previous entry — whether the genuinely-new order-4

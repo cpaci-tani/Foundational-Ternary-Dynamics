@@ -467,6 +467,15 @@ When auditing: confirm `git rev-list -n1 preregister-delta-ind-closure-v1` = `63
 |---|---|---|---|---|---|---|
 | **FTD-0379** DK evolution test (M1) | `preregister-vertex-dk-closure-v1` | (lock commit) | engine artifact `engine/tests/test_dk_evolution.cpp` SHA256 `cb3083d4180127d76b38cd504a8107aea44c874b04592588a0e5fbac81696f96` | build target `test_dk_evolution`; run `ctest --test-dir engine/build -C Release -R "^dk_evolution$" --output-on-failure` | `engine/results/vertex_dk_closure_2026-07-10/` | [`PREREG_VERTEX_DK_CLOSURE_v1.md`](preregistrations/PREREG_VERTEX_DK_CLOSURE_v1.md) §2 → analysis doc post-run |
 | **FTD-0380** noise-controlled bivector closure (M2) | `preregister-vertex-dk-closure-v1` | (lock commit) | engine artifact `engine/tests/test_bivector_closure_v2.cpp` SHA256 `c6c74322dbf2f46fdfcefe9252391feb13364dc37e2dc1bb0ae028c0f9f8637a` | build target `test_bivector_closure_v2`; run `ctest --test-dir engine/build -C Release -R "^bivector_closure_v2$" --output-on-failure` | `engine/results/vertex_dk_closure_2026-07-10/` | [`PREREG_VERTEX_DK_CLOSURE_v1.md`](preregistrations/PREREG_VERTEX_DK_CLOSURE_v1.md) §3 → analysis doc post-run |
+| **FTD-0379 v1.1** corrected-operator, free-scale DK re-test | `preregister-vertex-dk-closure-v1-1` | `07a03489` (+ pre-measurement gate-sign amendment `280e5d86`; the first-lock runner failed its own D² gate, exit 1, no dynamics output observed) | engine artifact `engine/tests/test_dk_evolution_v11.cpp` SHA256 `cfe38b5729fce787cc5db74315d5aa0679560c7c87c0a77a436cbd8141710247` | build target `test_dk_evolution_v11`; run `ctest --test-dir engine/build -C Release -R "^dk_evolution_v11$" --output-on-failure` | `engine/results/vertex_dk_closure_2026-07-10/` | [`PREREG_VERTEX_DK_CLOSURE_v1_1.md`](preregistrations/PREREG_VERTEX_DK_CLOSURE_v1_1.md) → [`ANALYSIS_VERTEX_DK_CLOSURE_v1.md`](../09_mathematical/algebra/ANALYSIS_VERTEX_DK_CLOSURE_v1.md) §1.5: **DK-STATIC-ONLY, fitted operator speed a\* ≈ 0** |
+
+Lock/run provenance for the v1 pair: lock commit `b46fdfe0`, results same-day
+(M1 DK-STATIC-ONLY; M2 CLOSURE-ROBUST-FAIL). The v1.1 row is the adversarial
+math review's prescribed decisive follow-up (the v1 harness executed FTD-0089
+§A1.3 literally, whose δ-convention is provably not the DK operator — see the
+analysis §1.3c); v1.1's true-adjoint, free-scale instrument returned the same
+verdict with the operator scale fitted to zero, closing both instrument
+loopholes.
 
 The two decisive, previously-scoped-but-never-executed measurements of the
 vertex program (§7-bivector → §7-dirac critical path). M1 executes
