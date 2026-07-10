@@ -93,8 +93,9 @@ The Walsh-Hadamard / Cl(3,0) / Dirac-Kähler thread testing whether fermions eme
 | [DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md](algebra/DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md) | [THEOREM] (no-go) + [CONJECTURE] | Full multiplication tables: the 2³-block algebra is not Clifford. |
 | [DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md](number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) | [THEOREM] + [MEASURED] | Mode-erasure theorem for state-field readout; spin-field partial algebra. |
 | [DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md](algebra/DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md) | [MEASURED] | Program F: first non-commutative algebra in FTD native dynamics (link-bilinear probe). |
-| [DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md](algebra/DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md) | [MEASURED] (per-stage) | Consolidated Cl(3,0) multigrade campaign (F-prime / F-double-prime / Path 1). |
-| [DERIV_DIRAC_KAHLER_IDENTIFICATION.md](algebra/DERIV_DIRAC_KAHLER_IDENTIFICATION.md) | [STRUCTURAL ID] + [THEOREM NEGATIVE] | FTD's 4-grade structure is a Dirac-Kähler field; Cl(3,0) cannot give mass ratios. |
+| [DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md](algebra/DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md) | [MEASURED] (per-stage) | Consolidated Cl(3,0) multigrade campaign (F-prime / F-double-prime / Path 1). ⚠ §3's noise reinterpretation REFUTED 2026-07-10 (FTD-0380). |
+| [DERIV_DIRAC_KAHLER_IDENTIFICATION.md](algebra/DERIV_DIRAC_KAHLER_IDENTIFICATION.md) | [STRUCTURAL ID — kinematic only] + [THEOREM NEGATIVE] | FTD's 4-grade structure is a Dirac-Kähler field (kinematic; dynamical clause CLOSED NEGATIVE 2026-07-10, FTD-0379); Cl(3,0) cannot give mass ratios. |
+| [ANALYSIS_VERTEX_DK_CLOSURE_v1.md](algebra/ANALYSIS_VERTEX_DK_CLOSURE_v1.md) | [CLOSED NEGATIVE] ×2 + [MEASURED] | Vertex program v1 (FTD-0379/0380, pre-registered): FTD-0089's literal DK evolution fails (grades better described by KG, 4/4); su(2) closure does not recover under the prescribed noise controls (0/18 cells). Branch-A closed at the protocols tested; instrument caveats §1.3. |
 
 ## FQCR & observer-operator program
 

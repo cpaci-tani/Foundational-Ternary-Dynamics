@@ -1,7 +1,8 @@
 # DERIV — A1 + A2: Dirac-Kähler Identification + Mass-Ratio No-Go
 
-**Tag:** A1 = [STRUCTURAL IDENTIFICATION]; A2 = [THEOREM NEGATIVE]
+**Tag:** A1 = [STRUCTURAL IDENTIFICATION — kinematic only; dynamical clause CLOSED NEGATIVE 2026-07-10, FTD-0379]; A2 = [THEOREM NEGATIVE]
 **Ledger row:** FTD-0089
+**Dynamical closure (2026-07-10):** the §A1.5 verification path was executed as the pre-registered FTD-0379 measurement (`PREREG_VERTEX_DK_CLOSURE_v1.md` §2 → `ANALYSIS_VERTEX_DK_CLOSURE_v1.md` §1), then re-run as **v1.1** after an adversarial math review proved the §A1.3 sign convention is not the Dirac–Kähler operator (δ ≠ d\*; see the analysis §1.3c) — v1.1 uses the true skew-adjoint D with a freely fitted operator speed (`PREREG_VERTEX_DK_CLOSURE_v1_1.md`). Verdict **DK-STATIC-ONLY in both instruments**, and in v1.1 the fitted speed is a\* ≈ 0: the genuine DK operator contributes nothing to the grade evolution at any velocity normalization (all grade residuals ≈ 1.0; every grade better described by the KG comparator). A1 stands as a *kinematic* identification of the 4-grade component structure; "FTD's flux dynamics SHOULD satisfy the DK equation" (§A1.4) is answered at the tested protocol: it does not. **Also note (§1.3c of the analysis): the §A1.3 equations as written here carry a δ-sign convention that breaks Diracness — use the corrected uniform-adjoint form for any future work.**
 **Companions:**
 - FTD-0086 — F-prime bivector matching signature
 - FTD-0088 — Path 1 multi-grade decomposition (12/12 PASS)
