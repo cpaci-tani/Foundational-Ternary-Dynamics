@@ -461,6 +461,27 @@ When auditing: confirm `git rev-list -n1 preregister-delta-ind-closure-v1` = `63
 
 ---
 
+## Vertex program v1 — DK evolution + noise-controlled bivector closure (FTD-0379/0380; locked)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0379** DK evolution test (M1) | `preregister-vertex-dk-closure-v1` | (lock commit) | engine artifact `engine/tests/test_dk_evolution.cpp` SHA256 `cb3083d4180127d76b38cd504a8107aea44c874b04592588a0e5fbac81696f96` | build target `test_dk_evolution`; run `ctest --test-dir engine/build -C Release -R "^dk_evolution$" --output-on-failure` | `engine/results/vertex_dk_closure_2026-07-10/` | [`PREREG_VERTEX_DK_CLOSURE_v1.md`](preregistrations/PREREG_VERTEX_DK_CLOSURE_v1.md) §2 → analysis doc post-run |
+| **FTD-0380** noise-controlled bivector closure (M2) | `preregister-vertex-dk-closure-v1` | (lock commit) | engine artifact `engine/tests/test_bivector_closure_v2.cpp` SHA256 `c6c74322dbf2f46fdfcefe9252391feb13364dc37e2dc1bb0ae028c0f9f8637a` | build target `test_bivector_closure_v2`; run `ctest --test-dir engine/build -C Release -R "^bivector_closure_v2$" --output-on-failure` | `engine/results/vertex_dk_closure_2026-07-10/` | [`PREREG_VERTEX_DK_CLOSURE_v1.md`](preregistrations/PREREG_VERTEX_DK_CLOSURE_v1.md) §3 → analysis doc post-run |
+
+The two decisive, previously-scoped-but-never-executed measurements of the
+vertex program (§7-bivector → §7-dirac critical path). M1 executes
+`DERIV_DIRAC_KAHLER_IDENTIFICATION.md` §A1.5 (does engine evolution satisfy
+the discrete Dirac-Kähler equation, vs a Klein-Gordon comparator?). M2
+executes the noise-controlled re-test named in
+`DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md` §3.5.3 (does the FTD-0087 4-injection
+closure failure recover under time-averaged readouts / larger L / lower A?).
+Four pre-blessed outcomes each, priors stated in the pre-reg, ramification
+grade 0 throughout (no α/δ content anywhere). **No FTD claim is promoted or
+demoted by this pre-reg** — tag changes happen only at analysis-doc landing
+per the pre-reg's tag-impact table (§5), never in this manifest entry.
+
+---
+
 
 ## How to add a new pre-registration row
 
