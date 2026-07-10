@@ -86,6 +86,9 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | IMP-E2 | the **parametric-insertion catalog** (mass formulas, gauge ratios, Higgs, proton, Lamb, g-2, …) | ~131 rows | [PARAMETRIC] | per-row: the borrowed standard formula is the falsifiable object; FTD supplies only the number |
 | IMP-E3 | **adopted external physics** (QM's Born/Tsirelson *given* the singlet, multi-loop QED functionals, GR) | ~50+ | [IMPORTED — external] | each is the established physics's own test; FTD imports the framework, not the falsifier |
 
+> **Pointer (2026-07-10, no new line):** the vertex program's imposed coupling — g²_vertex ≡ 1/x₊ wired into Branch-B Wilson–Dirac matter (`../10_eft_program/scopes_and_specs/SCOPE_VERTEX_PROGRAM.md` §2) — is the **composition IMP-E1 ∘ IMP-E3**, already priced above; a separate line would double-count. Its δ-branch content is inherited from IMP-B1 (no new ramification act). Retirement path: an ARC-3 closure of `SPEC_ALPHA_READOUT_CONTRACT.md` moves the coupling to the self-set column. The Branch-A alternative (native fermion emergence, which would have made the vertex partially self-set) is CLOSED NEGATIVE at the protocols tested per FTD-0379/0380.
+> **Known gap (flagged 2026-07-10, redteam finding):** the vertex's gauge-connection identification **A_μ = 𝒫_T J_μ** ([SELECTION], `SPEC_WILSON_DIRAC_FTD.md` §6) is a selected type with **no priced row here** — a candidate IMP-S4 for the next ledger revision (falsifier: an alternative flux-to-connection map with inequivalent vertex phenomenology at matched protocol). Until priced, vertex-program results carry it as an explicit conditional (charter §2).
+
 ## 4 · Declined — the bets (imports FTD refuses, at falsification risk)
 
 Not every argument-half type is paid for. Two, FTD **declines** — and stakes the substrate's prediction where the imported structure would differ. These are the opposite of debts: they are falsifiable wagers.
