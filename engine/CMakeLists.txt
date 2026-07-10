@@ -1792,6 +1792,15 @@ ftd_add_test(test_bivector_closure_v2
              CTEST_NAME bivector_closure_v2 TIMEOUT 3600
              LABELS native eft vertex)
 
+# M1 v1.1 (FTD-0379 scope extension): corrected-operator (true delta = d*,
+# skew-adjoint D, D^2 = -Laplacian), free-scale (a, m), per-grade-weighted
+# DK evolution re-test. Closes the two instrument defects the adversarial
+# math review found in v1. Pre-registered: PREREG_VERTEX_DK_CLOSURE_v1_1.md.
+ftd_add_test(test_dk_evolution_v11
+             tests/test_dk_evolution_v11.cpp
+             CTEST_NAME dk_evolution_v11 TIMEOUT 900
+             LABELS native eft vertex)
+
 # Determinism regression: same seed + same protocol -> bit-identical voxel
 # arrays. Closes a structural test-coverage hole flagged by the 2026-04-25
 # audit (no existing test asserts byte-identical reproducibility, despite
