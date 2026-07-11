@@ -1,5 +1,28 @@
 # Foundational Ternary Dynamics Changelog
 
+## The parity twist is a superdeterminant — restricted and rigid (FTD-0381, 2026-07-11)
+
+The FTD-0127/0366 parity twist — χ₋₄-even sector combination → √2π-class,
+odd → G\*-class — upgraded from bookkeeping to structure on the CHPS r=4
+model, at the scope a same-day adversarial math review forced: **at exactly
+N ≡ 0 (mod 4)**, the twist's Γ-classes are the **determinant and Berezinian
+of one native, canonically oriented graded Hankel object** (Ber = G\*⁴/48
+exactly at N=4; the bare constants √2π and G\* are amplitude-level
+identities, attained by the native object at no matrix size). Grading
+ε = χ₋₄(q+1) is choice-free — and therefore the orientation is **forced**
+(the first draft's "orientation bit" and its branch-bit consonance paragraph
+withdrawn). The odd operator Q = x² acts on the monomial module with
+Q² = the model's **Ward-identity/string-equation operator** (integration by
+parts). Sector exchange corrected to the Galois action i ↦ −i on the
+ℤ₄-Fourier weights (geometric conjugation provably fixes the sectors). Ber
+class is normalization-invariant; the even class is not — G\* is the robust
+invariant of the pair. Verifier 14/14 (now including actual Hankel
+determinants and off-support degeneracy). 11 redteam findings applied; the
+review is AI-simulated — external human eyes before outward citation.
+**No fermion claim** (FTD-0379/0380 stand — a Berezinian is Grassmann-free),
+no α, zero promotions; 48 ≠ |O_h| hazard re-affirmed. Doc
+`EXPLR_PARITY_TWIST_SUPERDETERMINANT.md`. Next free id FTD-0382.
+
 ## The vertex program v1 — both native-fermion hypotheses closed negative, Branch-B chartered (FTD-0379/0380, 2026-07-10)
 
 The two decisive, previously-scoped-but-never-executed fermion-emergence
