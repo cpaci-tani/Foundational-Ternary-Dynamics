@@ -124,11 +124,12 @@ $$ \Psi_N(t) := \prod_{n=1}^{N} \frac{(1 - Q^{4n})^6}{(1 - Q^{3n})^2}, \qquad Q 
 
 The exponent quadruple $(k, d; \ell, m) = (4, 6; 3, 2)$ is **not derived from FTD axioms** — it is a structural choice. The interpretation: $(4, 6)$ is a "primitive antisymmetric relational sector" and $(3, 2)$ is a "projected transverse observable sector". This is **[SELECTION]** grade content.
 
-The pre-registered uniqueness scan in `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md` (FTD-0143) tests whether $(4, 6; 3, 2)$ is privileged among the $7^4 = 2401$ alternatives in $\{2, ..., 8\}^4$. Until that scan executes:
+The pre-registered uniqueness scan (`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`, FTD-0143) **executed 2026-07-12 and REJECTED the privileged-choice claim** ([CLOSED NEGATIVE], Outcome B): all 2401 alternatives in $\{2, ..., 8\}^4$ reproduce $\alpha^{-1}$ at the $10^{-5}$ criterion, and $(4,6;3,2)$ ranks 1333/2401 by α-residual — the readout is quadruple-insensitive at $t = 1$. Standing consequences:
 
-- **Tag stays at [SELECTION].**
-- The doc must NOT claim $(4,6;3,2)$ is uniquely selected.
-- Anti-target: avoid the FTD-0097 look-elsewhere overclaim pattern.
+- **Tag stays at [SELECTION] — permanently without uniqueness backing** at $t = 1$.
+- The doc must NOT claim $(4,6;3,2)$ is uniquely selected; scan-negative provenance now guards re-attempt.
+- The FTD-0097 look-elsewhere anti-target is confirmed rather than avoided: the quadruple family is precisely the over-rich regime the discipline anticipated.
+- Full record: [`ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md`](../10_eft_program/reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md).
 
 ### §3.2 — The base point $t = 1$
 
@@ -168,7 +169,7 @@ The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other 
 | III — symmetric recurrence | $u_{m+1} + u_{m-1} = s u_m$ | [THEOREM] | Standard reparameterisation |
 | III — Casimir invariant | $\mathcal{I}_m = u_m^2 + u_{m-1}^2 - su_m u_{m-1}$ | [THEOREM] | Proposition 3 |
 | III — Möbius reduction | $z_{m+1} = s - 1/z_m$, $z_+z_- = 1$ | [THEOREM] | Proposition 4 |
-| IV — exponent quadruple $(4,6;3,2)$ | privileged choice in $\{2,...,8\}^4$ | **[SELECTION]** | Pending FTD-0143 uniqueness scan |
+| IV — exponent quadruple $(4,6;3,2)$ | privileged choice in $\{2,...,8\}^4$ | **[SELECTION] — uniqueness REJECTED (FTD-0143 [CLOSED NEGATIVE], 2026-07-12)** | Scan executed: all 2401 quadruples match $\alpha^{-1}$ at $10^{-5}$; canonical ranks 1333/2401 by α-residual; the readout is quadruple-insensitive at $t=1$. No privileged-choice claim is supportable; do not re-attempt. See `reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md` |
 | IV — base point $t = 1$ | physical calibration anchor | **[SELECTION]** | Pending interpretation of $t$ |
 | IV — additive form $R = 1 + \lambda + A$ | combination choice | **[SELECTION]** | One of several plausible combinations |
 | V — transfer matrix $M_N(t)$ | Char poly = master quadratic at $R=1$ | [THEOREM] (notational) | Proposition 5 — provides operator interpretation; doesn't add new physical content |
@@ -217,13 +218,9 @@ The FQCR research program identifies four falsifiable tests. Their status:
 - $1/N^2$ scaling holds to 10% across $N \ge 1024$ with empirical $C \approx 0.046$ ✓
 
 ### Test 2 — quotient uniqueness
-**Status: PRE-REGISTERED.** See [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143). Scan execution awaiting separate session.
+**Status: EXECUTED 2026-07-12 — Outcome B, uniqueness REJECTED (FTD-0143 [CLOSED NEGATIVE]).** Pre-reg: [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md); execution: [`ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md`](../10_eft_program/reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md); artifacts: `engine/results/fqcr_quotient_uniqueness_2026-05-06_l_scan/`.
 
-Pre-registered outcomes:
-- **Outcome A (uniqueness confirmed):** $(4,6;3,2)$ scores in top-3 across $\ge 3$ tolerances AND no other quadruple matches $> 1$ target at $\le 10^{-4}$. Model IV upgrades to [SELECTION with uniqueness backing].
-- **Outcome B (uniqueness rejected):** $(4,6;3,2)$ is one of many near-misses. Model IV stays [SELECTION], FQCR's $\alpha^{-1}$ readout becomes a chance-level fit.
-
-Either outcome is publishable as honest pre-reg result.
+Result: **all 2401 quadruples** in the locked space match $\alpha^{-1}$ at the $10^{-5}$ criterion (§3.3 fails maximally); the canonical quadruple ranks 1333/2401 by α-residual, beaten by the identity quadruple $(2,2;2,2)$ whose anomaly term is exactly zero. At $t=1$ the anomaly term is $Q$-suppressed ($Q = e^{-2\pi}$), so the readout is numerically quadruple-insensitive — the α-proximity is carried entirely by the quadruple-independent part ($R = 1 + \lambda_N(4i)$). Per the pre-registered Outcome B: Model IV stays [SELECTION] with no uniqueness backing; the $(4,6;3,2)$ choice is a chance-level fit at the look-elsewhere-corrected level; Model V's physical [SMC] claim is unaffected (independent provenance via FTD-0013). The mechanical criterion-split ("C") and the B/C outcome-definition overlap are disclosed and adjudicated in the analysis §5. Test 3 ($t$-running) remains the only route by which the quadruple could acquire discriminating content — it would need its own pre-reg.
 
 ### Test 3 — running behaviour
 **Status: OPEN — out of scope until $t$ has a-priori interpretation.** Compute $\alpha_N^{-1}(t)$ for $t \in [0.5, 2]$. If $t$ is inverse-scale-like, the model should produce coherent monotonic running matching physical $\beta$-function expectations. Without an a-priori interpretation of $t$, this test risks confirming a coincidence.
