@@ -1,7 +1,7 @@
 # NODE MAP — FTD math connectivity
 
 **Tag:** [INFRASTRUCTURE / METHODOLOGY] — descriptive navigation, not theorem-production.
-**Generated from:** `scripts/verification/results/math_node_map.json` (commit `b5a5491`).
+**Generated from:** `scripts/verification/results/math_node_map.json` (commit `2389ff8`).
 **Renderer:** `scripts/verification/parsers/mermaid_renderer.py` via `scripts/verification/build_math_node_map.py`.
 
 > **Scope discipline.** This document is descriptive: it shows which LEDGER claims and spine theorems sit in each sector and how they depend on each other. The full multi-layer graph (with identities + objects + epistemic-tag overlay) is in the interactive HTML at `dissemination/interactive/math_node_map.html`. The Markdown Mermaid blocks below cap each sector at 40 LEDGER rows for renderer-budget reasons; the full set is in the JSON + HTML.
@@ -10,38 +10,38 @@
 
 ## §1 — Reading guide
 
-**Nodes:** 13 spine theorems (T1–T9, S1–S4) + 337 LEDGER claims + 91 mathematical objects + 1093 identities.
-**Edges:** 1996 total across 5 types (theorem→ledger anchor, ledger→ledger deps, identity→theorem witness, identity→ledger witness, object→identity participation).
+**Nodes:** 13 spine theorems (T1–T9, S1–S4) + 310 LEDGER claims + 85 mathematical objects + 948 identities.
+**Edges:** 1688 total across 5 types (theorem→ledger anchor, ledger→ledger deps, identity→theorem witness, identity→ledger witness, object→identity participation).
 
 **Sectors (with row count):**
 
-- `engine-bridge` — 17 LEDGER rows
-- `physics/EM-alpha` — 69 LEDGER rows
+- `engine-bridge` — 16 LEDGER rows
+- `physics/EM-alpha` — 62 LEDGER rows
 - `physics/EW-Higgs` — 2 LEDGER rows
-- `physics/QCD` — 16 LEDGER rows
+- `physics/QCD` — 15 LEDGER rows
 - `physics/QM-foundations` — 16 LEDGER rows
 - `physics/cosmology` — 1 LEDGER rows
 - `physics/flavor` — 7 LEDGER rows
 - `physics/gravity` — 6 LEDGER rows
-- `pure-math/CM-curves` — 7 LEDGER rows
-- `pure-math/G*-family` — 41 LEDGER rows
-- `pure-math/Watson-Catalan` — 5 LEDGER rows
-- `pure-math/master-quadratic` — 59 LEDGER rows
-- `pure-math/modular-FQCR` — 11 LEDGER rows
-- `pure-math/structure` — 31 LEDGER rows
-- `pure-math/unclassified` — 49 LEDGER rows
+- `pure-math/CM-curves` — 5 LEDGER rows
+- `pure-math/G*-family` — 35 LEDGER rows
+- `pure-math/Watson-Catalan` — 3 LEDGER rows
+- `pure-math/master-quadratic` — 58 LEDGER rows
+- `pure-math/modular-FQCR` — 10 LEDGER rows
+- `pure-math/structure` — 30 LEDGER rows
+- `pure-math/unclassified` — 44 LEDGER rows
 
 **Epistemic tags appearing:**
 
-- `THEOREM` (59, color #2e7d32)
-- `SYNTHESIS` (40, color #00897b)
-- `CLOSED_NEGATIVE` (38, color #c62828)
-- `MEASURED` (38, color #66bb6a)
-- `UNKNOWN` (30, color #bdbdbd)
+- `THEOREM` (49, color #2e7d32)
+- `MEASURED` (36, color #66bb6a)
+- `CLOSED_NEGATIVE` (35, color #c62828)
+- `SYNTHESIS` (34, color #00897b)
+- `UNKNOWN` (28, color #bdbdbd)
 - `DERIVED` (24, color #388e3c)
-- `SELECTION` (15, color #fbc02d)
+- `SELECTION` (14, color #fbc02d)
 - `PARTIAL` (13, color #ffb74d)
-- `OPEN` (10, color #757575)
+- `OPEN` (9, color #757575)
 - `CONJECTURE` (7, color #fb8c00)
 - `POSITIVE` (7, color #43a047)
 - `PRE_REGISTRATION` (7, color #1976d2)
@@ -50,11 +50,11 @@
 - `STRUCTURAL_PARAMETRIC` (5, color #bdbdbd)
 - `AXIOM` (5, color #4527a0)
 - `SMC` (4, color #f57c00)
-- `NUMERICAL_FACT` (4, color #7cb342)
 - `PARAMETRIC` (3, color #9e9e9e)
 - `HYPOTHESIS` (3, color #ffa000)
 - `METHODOLOGICAL_CLARIFICATION` (3, color #00838f)
 - `DEFINITION` (2, color #5e35b1)
+- `NUMERICAL_FACT` (2, color #7cb342)
 - `AUDIT_FINDING` (2, color #1976d2)
 - `BRIDGE_ANALYZED` (1, color #00bcd4)
 - `METHODOLOGICAL_REFRAME` (1, color #00acc1)
@@ -108,8 +108,6 @@ graph LR
     style FTD_0263 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
     FTD_0265["FTD-0265: Mechanism β, envelope variant — BETA-PARTIAL pe..."]
     style FTD_0265 fill:#ffb74d,color:white,stroke:#222,stroke-width:1px
-    FTD_0359["FTD-0359: **PL-1 quantified: the Rice-vs-Born deviation i..."]
-    style FTD_0359 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     T7 ==> FTD_0005
     S2 ==> FTD_0008
     S3 ==> FTD_0059
@@ -243,14 +241,14 @@ graph LR
     FTD_0308 --> FTD_0270
     FTD_0308 --> FTD_0271
     FTD_0308 --> FTD_0279
-    note["...29 more LEDGER rows in this sector (see HTML map)"]
+    note["...22 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ### physics/EW-Higgs
 
 ```mermaid
 graph LR
-    FTD_0017["FTD-0017: Higgs mass m_H = (N_eff/α²)·m_e (−0.36%, −4.1σ ..."]
+    FTD_0017["FTD-0017: Higgs mass m_H = (N_eff/α²)·m_e (0.24%)"]
     style FTD_0017 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
     FTD_0192["FTD-0192: Weak-SU(2) provenance (Q12) — weak-SU(2) proven..."]
     style FTD_0192 fill:#1976d2,color:white,stroke:#222,stroke-width:1px
@@ -290,8 +288,6 @@ graph LR
     style FTD_0266 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0320["FTD-0320: Rigidity audit of the catalog rational identifi..."]
     style FTD_0320 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
-    FTD_0382["FTD-0382: **The bilateral-symmetry criterion for an orien..."]
-    style FTD_0382 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0041 --> FTD_0130
     FTD_0130 --> FTD_0041
 ```
@@ -402,13 +398,8 @@ graph LR
     style FTD_0157 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0172["FTD-0172: Round-2 referee polish: residual FTD content in..."]
     style FTD_0172 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
-    FTD_0372["FTD-0372: **The engine's default 18-point (SC+FCC)/2 Gree..."]
-    style FTD_0372 fill:#7cb342,color:white,stroke:#222,stroke-width:1px
-    FTD_0373["FTD-0373: **W₁₈ is not self-dual — the rigid-Calabi–Yau /..."]
-    style FTD_0373 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     T4 ==> FTD_0006
     S1 ==> FTD_0010
-    FTD_0373 --> FTD_0372
 ```
 
 ### pure-math/G*-family
@@ -485,16 +476,6 @@ graph LR
     style FTD_0340 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0341["FTD-0341: **The four named analytic-orientation carriers ..."]
     style FTD_0341 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
-    FTD_0358["FTD-0358: **Construction-class closure: representativenes..."]
-    style FTD_0358 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
-    FTD_0363["FTD-0363: **GNC-w discriminator (Q_ij on locked Gauss-dre..."]
-    style FTD_0363 fill:#66bb6a,color:white,stroke:#222,stroke-width:1px
-    FTD_0367["FTD-0367: **Reflection flow parity — the product and rati..."]
-    style FTD_0367 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
-    FTD_0370["FTD-0370: **The ramification locus of the native closure ..."]
-    style FTD_0370 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
-    FTD_0369["FTD-0369: **δ-IND v1 verdict: PROVEN-CONDITIONAL — δ = √(..."]
-    style FTD_0369 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0159 --> FTD_0174
     FTD_0193 --> FTD_0190
     FTD_0191 --> FTD_0190
@@ -511,11 +492,6 @@ graph LR
     FTD_0340 --> FTD_0341
     FTD_0341 --> FTD_0314
     FTD_0341 --> FTD_0340
-    FTD_0370 --> FTD_0340
-    FTD_0370 --> FTD_0369
-    FTD_0369 --> FTD_0314
-    FTD_0369 --> FTD_0370
-    note["...1 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ### pure-math/Watson-Catalan
@@ -528,10 +504,6 @@ graph LR
     style FTD_0161 fill:#fb8c00,color:white,stroke:#222,stroke-width:1px
     FTD_0162["FTD-0162: Conjecture: G_Catalan = L(χ_{-4}, 2) is algebra..."]
     style FTD_0162 fill:#fb8c00,color:white,stroke:#222,stroke-width:1px
-    FTD_0374["FTD-0374: **The two-loop BCC sunset period retains lemnis..."]
-    style FTD_0374 fill:#7cb342,color:white,stroke:#222,stroke-width:1px
-    FTD_0377["FTD-0377: **{π, W_SC} algebraically independent — the dis..."]
-    style FTD_0377 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
 ```
 
 ### pure-math/master-quadratic
@@ -660,15 +632,13 @@ graph LR
     FTD_0205 --> FTD_0001
     FTD_0205 --> FTD_0050
     FTD_0205 --> FTD_0122
-    note["...19 more LEDGER rows in this sector (see HTML map)"]
+    note["...18 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ### pure-math/modular-FQCR
 
 ```mermaid
 graph LR
-    FTD_0143["FTD-0143: FQCR Model-IV (4,6;3,2) quotient-uniqueness sca..."]
-    style FTD_0143 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0155["FTD-0155: Level-one modular forms at τ=i: f(i) ∈ Q·E₄(i)^..."]
     style FTD_0155 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0171["FTD-0171: Paper split per referee report 2026-05-19: PAPE..."]
@@ -758,8 +728,6 @@ graph LR
     style FTD_0303 fill:#00838f,color:white,stroke:#222,stroke-width:1px
     FTD_0351["FTD-0351: **Theorem repairs: OT-2.7/FTD-0175 demoted to c..."]
     style FTD_0351 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
-    FTD_0360["FTD-0360: **Finalization mechanical batch: META_INDEX rec..."]
-    style FTD_0360 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0178 --> FTD_0177
     FTD_0179 --> FTD_0177
     FTD_0179 --> FTD_0178
@@ -777,7 +745,6 @@ graph LR
     FTD_0206 --> FTD_0202
     FTD_0203 --> FTD_0051
     FTD_0202 --> FTD_0201
-    FTD_0360 --> FTD_0351
 ```
 
 ### pure-math/unclassified
@@ -870,7 +837,7 @@ graph LR
     FTD_0256 --> FTD_0252
     FTD_0256 --> FTD_0253
     FTD_0323 --> FTD_0256
-    note["...9 more LEDGER rows in this sector (see HTML map)"]
+    note["...4 more LEDGER rows in this sector (see HTML map)"]
 ```
 
 ---
@@ -881,12 +848,10 @@ Edges = pairs of objects co-participating in ≥ 3 verified identities. Shows th
 
 ```mermaid
 graph LR
-    Gstar[("G* (v=103)")]
-    bool[("bool (v=54)")]
+    Gstar[("G* (v=102)")]
     N_c[("N_c (v=50)")]
     N_base[("N_base (v=42)")]
     N_eff[("N_eff (v=42)")]
-    ok[("ok (v=39)")]
     x_plus[("x₊ (v=35)")]
     G_G[("G_G (v=34)")]
     x_minus[("x₋ (v=34)")]
@@ -900,9 +865,8 @@ graph LR
     sqrt[("√ (v=18)")]
     PF[("PF (v=17)")]
     c_speed[("c (v=16)")]
-    all[("all (v=16)")]
     k_B[("K_B (v=15)")]
-    sp[("sp (v=12)")]
+    all[("all (v=13)")]
     L[("L (v=10)")]
     G_rho[("G_ρ (v=9)")]
     gamma_fn[("Γ(·) (v=9)")]
@@ -910,14 +874,16 @@ graph LR
     ALPHA_INV_CODATA[("ALPHA_INV_CODATA (v=9)")]
     W3[("W^(3)_BCC (v=8)")]
     xp[("xp (v=8)")]
-    mpm[("mpm (v=8)")]
+    eta_i[("η(i) (v=7)")]
+    Gamma_three_quarter[("Γ(3/4) (v=6)")]
+    xm[("xm (v=6)")]
+    n[("n (v=6)")]
     N_base --- N_c
     x_minus --- x_plus
     N_base --- N_eff
     Gstar --- N_c
     Gstar --- N_base
     N_c --- N_eff
-    bool --- ok
     Gstar --- N_eff
     Gstar --- alpha
     Gamma_quarter --- Gstar
@@ -949,9 +915,12 @@ graph LR
     N_eff --- b_3
     ALPHA_INV_CODATA --- Gstar
     G_G --- sqrt
+    G_G --- eta_i
     N_c --- b_3
     N_c --- x_minus
     D --- N_c
+    Gamma_quarter --- Gamma_three_quarter
+    Gamma_three_quarter --- Gstar
     D --- x_minus
     D --- x_plus
     alpha --- x_minus
@@ -965,6 +934,7 @@ graph LR
     Gstar --- gamma_fn
     N_eff --- k_B
     ALPHA_INV_CODATA --- Gamma_quarter
+    ALPHA_INV_CODATA --- Gamma_three_quarter
     N_c --- x_plus
     Gamma_quarter --- varpi
     Gstar --- L
@@ -973,6 +943,9 @@ graph LR
     all --- c_speed
     Gstar --- W3
     ALPHA_INV_CODATA --- D
+    D --- Gamma_three_quarter
+    Gamma_three_quarter --- x_minus
+    Gamma_three_quarter --- x_plus
     N_base --- x_minus
     N_base --- x_plus
     N_eff --- x_minus
@@ -982,14 +955,10 @@ graph LR
     D --- varpi
     D --- L
     G_rho --- sqrt
+    all --- n
     ALPHA_INV_CODATA --- x_minus
     ALPHA_INV_CODATA --- x_plus
     Gstar --- k_B
-    N_base --- k_B
-    alpha --- k_B
-    k_B --- varpi
-    D --- alpha
-    W3 --- varpi
 ```
 
 ---
