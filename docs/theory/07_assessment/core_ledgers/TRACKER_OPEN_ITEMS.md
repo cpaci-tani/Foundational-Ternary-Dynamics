@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed 14 G* (Theme 1) open items, closed epistemic integrity/consciousness gaps, and formally declined continuous Hilbert space / QM recovery (Option 3) under FC-1. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~168 real `[OPEN]` items across ~64 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-12 — **the finishing arc**: tracker-to-tracker reconciliation (FTD-0348 Higgs propagation §2.6, FTD-0095 §3.5, forward-Euler §1.4, complete-chain §7.4), FTD-0143 scan EXECUTED [CLOSED NEGATIVE — uniqueness rejected], MC-T4.1 CLOSED, IMP-S4 minted (import ledger v1.1), capstone SPEC_FTD_COMPLETE_FRAMEWORK v2 (with the consolidated falsifier table), §9 snapshot regenerated, dissemination-layer staleness queued as §10. Zero promotions. (Previous: 2026-06-10 — closed 14 G* (Theme 1) open items, closed epistemic integrity/consciousness gaps, and formally declined continuous Hilbert space / QM recovery (Option 3) under FC-1. 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -460,8 +460,8 @@ Under the FTD Constitution (`SPEC_FTD_FRAMEWORK_V1.md`, FTD-0254), the explorato
 ### 7.3 Novel predictions — **1 `[OPEN]`**
 **File:** `docs/theory/01_reference/SPEC_NOVEL_PREDICTIONS.md`.
 
-### 7.4 Complete chain — **1 `[OPEN]`**
-**File:** `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`.
+### 7.4 Complete chain — **0 `[OPEN]`** (archived; not counted)
+**File:** archived 2026-06-22 to `docs/theory/01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md`, superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md` (FTD-0311, v2 as of 2026-07-12). The archived file's internal `[OPEN]` marker is provenance, not live work.
 
 ### 7.5 Main FTD spec — **1 `[OPEN]`**
 **File:** `docs/SPEC_FTD.md`. Top-level spec has one unresolved note.
@@ -565,85 +565,38 @@ grep -rc "\[OPEN\]" docs/ engine/src/ engine/include/ engine/web/js/ \
   engine/cuda/ engine/wasm/ scripts/ resources/ \
   --include="*.md" --include="*.cpp" --include="*.h" --include="*.cuh" \
   --include="*.py" --include="*.js" \
-  | grep -v ":0$" | grep -v ".venv\|node_modules\|build/\|build_\|__pycache__" \
+  | grep -v ":0$" | grep -v ".venv\|node_modules\|build/\|build_\|__pycache__\|archive" \
   | sort -t: -k2 -rn
 ```
 
-Snapshot (2026-04-17):
+Snapshot (2026-07-12, regenerated; the archive/ exclusion added to the command this pass — archived docs' markers are provenance, not live work):
+
+**Raw total: 907 `[OPEN]` string-markers across 263 files.** ⚠ The raw count is NOT a live-work count: the top entries are the ledgers/trackers themselves (LEDGER.md 97, this tracker 71, SPEC_OPEN_MATH_BY_SECTOR 33, META_INDEX 20, SPEC_DOCTRINE_LEDGER 15) — rows *about* open items, closed-context mentions, and tag-legend examples. The curated math-relevant queue lives in `SPEC_OPEN_MATH_BY_SECTOR.md` (v1.1); the curated engine/doc items live in §§1–8 above. Top non-meta densities:
 
 | File | Count |
 |---|---:|
-| `docs/theory/01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md` | RESOLVED |
-| `docs/theory/03_derivations/gravity_and_cosmology/DERIV_LATTICE_BLACK_HOLES.md` | RESOLVED |
-| `engine/src/dag_engine.cpp` | 6 |
-| `docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md` | 6 |
-| `docs/theory/02_foundations/FOUND_AXIOM_ZERO.md` | 6 |
-| `docs/theory/archive/DERIV_QUARK_MASSES_FROM_LATTICE_RETRACTED.md` | RETRACTED |
-| `docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md` | 5 |
-| `docs/theory/03_derivations/DERIV_LATTICE_SU2_WEAK.md` | 3 |
-| `scripts/verification/verify_chiral_anomaly.py` | 3 |
-| `scripts/exploration/archive_proof_quark_masses_lattice.py` | RETRACTED |
-| `scripts/proofs/proof_moore_gauge_structure.py` | 3 |
-| `scripts/exploration/explore_precision_deep.py` | 3 |
-| `engine/include/ftd/ontic.h` | 3 |
-| `docs/theory/09_mathematical/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md` | RESOLVED |
-| `docs/theory/09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md` | RESOLVED |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_WIGNERS_FRIEND_RESOLUTION.md` | RESOLVED |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_VON_NEUMANN_CHAIN.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md` | 3 |
-| `docs/theory/03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md` | 3 |
-| `docs/theory/03_derivations/standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md` | 0 |
-| `docs/theory/01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md` | 3 |
-| `scripts/verification/verify_two_loop.py` | 2 |
-| `scripts/proofs/proof_moore_gauge_orthogonal.py` | 2 |
-| `scripts/exploration/explore_remaining_four.py` | 2 |
-| `engine/src/render_bridge.cpp` | 2 |
-| `docs/theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md` | RESOLVED |
-| `docs/theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md` | RESOLVED |
-| `docs/theory/09_mathematical/CONJ_ALPHA_FROM_CM.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_VARIATIONAL_PROOF.md` | 2 |
-| `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_KCOMP_VOLUMETRIC_SHELL.md` | 2 |
-| `docs/theory/02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md` | 2 |
-| `docs/theory/01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md` | RESOLVED |
-| `docs/reference/REF_EPISTEMIC_LABELS.md` | 2 |
-| `docs/internal/SPEC_CLAUDE.md` | 2 |
-| `scripts/verification/verify_thermodynamic_limit.py` | 1 |
-| `scripts/verification/verify_modular_structure.py` | 1 |
-| `scripts/proofs/proof_partition_function_gstar.py` | 1 |
-| `scripts/exploration/explore_two_mechanism_gravity.py` | 1 |
-| `scripts/exploration/explore_five_gaps.py` | 1 |
-| `engine/web/js/bridge-init.js` | 1 |
-| `engine/include/ftd/dag_engine.h` | 1 |
-| `docs/theory/META_INDEX.md` | 1 |
-| `docs/theory/07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` | RESOLVED |
-| `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` | 1 |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md` | RESOLVED |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` | RESOLVED |
-| `docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` | RESOLVED |
-| `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` | RESOLVED |
-| `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md` | 1 |
-| `docs/theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_DIRAC_FROM_MASTER_QUADRATIC.md` | 1 |
-| `docs/theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md` | 1 |
-| `docs/theory/02_foundations/FOUND_GSTAR_SCALE.md` | 1 |
-| `docs/theory/02_foundations/FOUND_DIMENSIONAL_COUNTING.md` | 1 |
-| `docs/theory/02_foundations/FOUND_BORN_RULE_NULL_CONE.md` | RESOLVED |
-| `docs/theory/02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md` | 1 |
-| `docs/theory/01_reference/SPEC_NOVEL_PREDICTIONS.md` | 1 |
-| `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md` | 1 |
-| `docs/SPEC_FTD.md` | 1 |
+| `docs/theory/03_derivations/INDEX_03_DERIVATIONS.md` | 13 |
+| `docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md` | 12 |
+| `docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md` | 12 |
+| `docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md` | 10 |
+| `docs/theory/01_reference/SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` | 10 |
+| `docs/theory/04_coupling/SCOPE_DISCRETE_FEYNMAN_PROGRAM.md` | 9 |
+| `docs/theory/02_foundations/FOUND_AXIOM_ZERO.md` | 9 |
+| `docs/theory/02_foundations/EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md` | 9 |
+| `engine/web/js/config/scenarios.js` | 8 |
+| `docs/theory/04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md` | 8 |
+| `docs/theory/03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md` | 8 |
+| `docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md` | 8 |
+| `docs/theory/10_eft_program/derivations/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` | 7 |
+| `docs/theory/07_assessment/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md` | 7 |
+| `docs/theory/03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` | 7 |
+| `docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md` | 6 |
+| `docs/theory/06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md` | 6 |
+| `docs/theory/03_derivations/standard_model/DERIV_MOORE_GAUGE_STRUCTURE.md` | 6 |
+| `docs/theory/03_derivations/foundational_mechanics/MONOGRAPH_EFFECTIVE_EQUATIONS.md` | 6 |
+| `docs/theory/02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md` | 6 |
 
-**Non-physics mentions excluded from "real open work" count** (they're convention labels, not unresolved items):
-- `resources/cheatsheets/EPISTEMIC_TAGS.md` (5) — tag cheatsheet uses `[OPEN]` as an example.
-- `resources/templates/DERIVATION_TEMPLATE.md` (3) — template.
-- `resources/README.md` (1), `resources/glossary/GLOSSARY.md` (1) — glossary mentions.
-- `engine/web/js/scales/scale0/scenario-registry.js` (1) — default-value parameter.
-- `engine/web/js/config/scenarios.js` (1) — enum documentation.
-- `engine/web/js/ui/components/knowledge-base/data.js` (1) — UI string literal.
-- This tracker itself (62) — mostly examples and cross-references.
+**Non-physics mentions excluded from any "real open work" reading** (convention labels, not unresolved items): the tag cheatsheet, templates, glossary, UI string literals, and the meta/tracker layer's own cross-references — as in the 2026-04-17 audit's exclusion list.
 
 ---
 

@@ -283,7 +283,7 @@ This slogan is preferable because:
 
 Bridge Functional cross-references:
 - `THEOREM_MOORE_LAYER_DECOMPOSITION.md` (FTD-0028): polyhedral decomposition that gives U(1) × SU(2) × SU(3) and the BCC sub-stencil.
-- `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`: master quadratic chain.
+- `docs/theory/01_reference/SPEC_FTD_COMPLETE_FRAMEWORK.md` (FTD-0311 v2 — the capstone; the old complete-chain doc is archived at `01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md`): master quadratic chain context.
 - `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`: master quadratic algebraic identity.
 - `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093, closed negative): structural derivation attempt for the BCC bridge operator.
 - `docs/theory/10_eft_program/archive/closed_negative/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093, closed negative): falsifier.
@@ -965,7 +965,7 @@ The strongest tests of this framework are:
 - **`DERIV_TWO_LOOP_ALPHA.md`** — Lattice-based two-loop corrections to $\alpha$.
 - **`SPEC_SM_REPLACEMENT_COMPLETE.md`** — Complete SM replacement status.
 - **`THEOREM_MOORE_LAYER_DECOMPOSITION.md`** (FTD-0028) — polyhedral decomposition giving U(1) × SU(2) × SU(3) and the BCC sub-stencil.
-- **`SPEC_FTD_COMPLETE_CHAIN.md`** — master quadratic chain.
+- **`SPEC_FTD_COMPLETE_FRAMEWORK.md`** (FTD-0311 v2 capstone; supersedes the archived complete chain) — master quadratic chain context.
 - **`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`** — master quadratic algebraic identity.
 
 ---

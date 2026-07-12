@@ -258,7 +258,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Loop derivations**: `scripts/exploration/compute_c2.py`, `derive_all_loops.py`, `gauge_loops.py`
 - **Arrow paper**: `docs/papers/PAPER_RATIO_AND_THE_ARROW.tex`
 - **Engine coupling test**: `engine/tests/test_intervoxel_coupling.cpp`
-- **Complete Chain**: `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`
+- **Complete Framework (capstone, FTD-0311 v2)**: `docs/theory/01_reference/SPEC_FTD_COMPLETE_FRAMEWORK.md` — the unified honest map (derives / cannot-derive priced / predicts / falsifier table / rigidity coverage). Supersedes the complete chain (archived at `01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md`)
 - **QM as Statistics**: `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md`
 - **Lattice Physics Reference**: `docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md`
 - **Stellar Lifecycle**: `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md`

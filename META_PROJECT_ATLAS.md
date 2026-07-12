@@ -77,7 +77,7 @@ ftd/
 │   │   └── AUDIT_2026-04_refactor-sweep.md # 8-phase refactor (17 commits, archived)
 │   ├── theory/                        # 586 theory documents
 │   │   ├── META_INDEX.md              # Catalog (586 files, 11.8 MB)
-│   │   ├── 01_reference/              # SPEC_ALGEBRAIC_SPINE, SPEC_FTD_COMPLETE_CHAIN
+│   │   ├── 01_reference/              # SPEC_ALGEBRAIC_SPINE, SPEC_FTD_COMPLETE_FRAMEWORK
 │   │   ├── 02_foundations/            # FOUND_*.md
 │   │   ├── 03_derivations/            # DERIV_*.md
 │   │   ├── 04_coupling/               # alpha, alpha_s, sin²θ_W, ...
