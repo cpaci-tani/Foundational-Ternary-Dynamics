@@ -119,7 +119,7 @@ Empirical audit via `tests/test_leapfrog_integrator_audit.cpp` showed the pair `
 
 The `max_residual_seen` per tick is large because `½|J|² + ½|v|²` is an L² indicator, not the true conserved Hamiltonian (which involves `|∇J|²`). Energy sloshes between the two forms every half period; leapfrog keeps cumulative injection ≈ dissipation.
 
-`C_SPEED = 1/√D = 1/√3` is the leapfrog CFL limit, correctly identified. **No code change needed.** Honesty-sweep comments about "forward Euler" in `phase_read` header and `dag_engine.cpp` should be corrected in a follow-up doc pass.
+`C_SPEED = 1/√D = 1/√3` is the leapfrog CFL limit, correctly identified. **No code change needed.** **Follow-up completed (verified 2026-07-12):** the "forward Euler" honesty-sweep comments in `render_bridge.cpp` (~lines 372–380) and `dag_engine.cpp` (~lines 45–50) were already corrected to Störmer–Verlet in source; the last residue — `engine/PHYSICS_STATUS.md:27` — was fixed this pass. No live "forward Euler" description remains.
 
 ### 1.5 Engine α upgrade to precision value —  CLOSED 2026-04-17
 
