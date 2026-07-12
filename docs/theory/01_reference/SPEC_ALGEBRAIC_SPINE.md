@@ -21,8 +21,11 @@ arithmetic core only; its physics dual-match landing is separately
 above) and **two are honestly
 tiered below theorem grade**, so marked in their own sections
 (Theorem 4 — a value-level identity whose structural necessity is
-conjectural; Theorem 7 — `[THEOREM at L=2]` only). The tiering matches
-`TRACKER_ONTIC_TRUTH.md`.
+conjectural; Theorem 7 — `[THEOREM at all L ≥ 2]` per FTD-0350,
+matched-stencil / Gauss-realizable scope, conditional on the
+exact-constraint AXIOM + stencil-consistency SELECTION — kept in the
+honestly-tiered bucket pending the owner's bucket-move decision, §7).
+The tiering matches `TRACKER_ONTIC_TRUTH.md`.
 Each result is independent of any physics interpretation. The objects
 involved (Γ-function values, CM elliptic curves, lattice Green's
 functions, Watson integrals) are standard mathematical objects with
