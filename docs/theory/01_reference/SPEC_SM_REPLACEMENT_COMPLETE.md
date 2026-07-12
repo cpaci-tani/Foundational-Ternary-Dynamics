@@ -405,7 +405,7 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 | Parameter | SM Status | FTD Formula | FTD Value | PDG | Error | Tag |
 |-----------|-----------|-------------|-----------|-----|-------|-----|
 | $v$ (Higgs VEV) | Free | $M_P\sqrt{2\pi}\alpha^8$ | 246.09 GeV | 246.22 GeV | 0.05% | [THEOREM] |
-| $m_H$ (Higgs mass) | Free | $(N_{\text{eff}}/\alpha^2) \cdot m_e$ | 124.8 GeV | 125.25 GeV | 0.36% | [SELECTION] |
+| $m_H$ (Higgs mass) | Free | $(N_{\text{eff}}/\alpha^2) \cdot m_e$ | 124.75 GeV | 125.20 ± 0.11 GeV (PDG 2024) | −0.36% = −4.1σ (excluded as exact relation; FTD-0348) | [SELECTION] |
 | $M_W$ | Derived in SM | $v \cdot g/2$ | 80.36 GeV | 80.377 GeV | 0.02% | [THEOREM] |
 | $M_Z$ | Derived in SM | $M_W/\cos\theta_W$ | 91.19 GeV | 91.1876 GeV | 0.003% | [THEOREM] |
 | $G_F$ | Measured | $1/(\sqrt{2}\,v^2)$ | $1.1659 \times 10^{-5}$ GeV$^{-2}$ | $1.1664 \times 10^{-5}$ | < 0.1% | [THEOREM] |

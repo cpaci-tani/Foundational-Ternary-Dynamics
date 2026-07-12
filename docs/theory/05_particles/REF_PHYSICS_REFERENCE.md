@@ -145,7 +145,7 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 | Photon | Unbroken U(1) | 0 | < 10⁻¹⁸ eV | exact |  |
 | W | 67/(8α²) × m_e | 80.36 GeV | 80.38 GeV | **0.016%** |  |
 | Z | m_W × √(13/10) | 91.01 GeV | 91.19 GeV | 0.20% |  |
-| Higgs | 13/α² × m_e | 124.8 GeV | 125.1 GeV | 0.24% |  |
+| Higgs | 13/α² × m_e | 124.75 GeV | 125.20 ± 0.11 GeV (PDG 2024) | −0.36% = **−4.1σ** (excluded as exact relation; FTD-0348) |  |
 
 #### CKM Matrix (4/4 parameters)
 
