@@ -228,7 +228,7 @@ Executes the FTD-0298-SOUND `[OPEN]`. Q1 LIGHT-CONFIRMED (ω matches the 18-pt s
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0143** FQCR (4,6;3,2) uniqueness scan | `preregister-fqcr-quotient-uniqueness-v1` | `557593e` | (scan-runner not yet authored; sketched in pre-reg §5 — extends `tools/scan_look_elsewhere.py` with FQCR-readout inner loop) | (k, d, ℓ, m) ∈ {2,...,8}^4; tolerances {1e-3, 1e-4, 1e-5, 1e-6}; targets = 20 FTD-0097 spine targets | `engine/results/fqcr_quotient_uniqueness_2026-05-06_l_scan/` | `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md` (pre-reg) → `ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md` (post-launch) |
+| **FTD-0143** FQCR (4,6;3,2) uniqueness scan | `preregister-fqcr-quotient-uniqueness-v1` | `557593e` | `tools/scan_fqcr_quotient_uniqueness.py` — SHA256 `719015e253037a8d699d4aa95d524625f5d6fd08a5ec04ff25715919b28903da` (registered at runtime 2026-07-12 per FTD-0097 precedent; imports TARGETS/TOLERANCES from `tools/scan_look_elsewhere.py` to preclude copy-drift) | (k, d, ℓ, m) ∈ {2,...,8}^4; tolerances {1e-3, 1e-4, 1e-5, 1e-6}; targets = 20 FTD-0097 spine targets | `engine/results/fqcr_quotient_uniqueness_2026-05-06_l_scan/` | `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md` (pre-reg) → **EXECUTED 2026-07-12, verdict Outcome B [CLOSED NEGATIVE — uniqueness rejected]** (`reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md`; mechanical criterion-split C disclosed and adjudicated therein) |
 
 Pre-reg SHA256: `94bc4cd74cbf90017996bf90a19f0bbeaae7937f8c47a6317b3409f58c268a1f`.
 

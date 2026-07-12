@@ -65,7 +65,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** Number-theoretic and algebraic content of FTD's algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0); independent of physics interpretation.
 
-**Status snapshot:** Spine: nine numbered results — seven theorem-grade + two honestly-tiered (see `SPEC_ALGEBRAIC_SPINE.md` §0). Tier I 5/5 closed. Tier II 4/4 closed; 0 structural theorems [OPEN]. 1 pre-registered scan awaiting execution. δ_c closed-form gap CLOSED scan-negative (FTD-0224); MC-T1.1-ext CLOSED (FTD-0350, [THEOREM at all L ≥ 2]).
+**Status snapshot:** Spine: nine numbered results — seven theorem-grade + two honestly-tiered (see `SPEC_ALGEBRAIC_SPINE.md` §0). Tier I 5/5 closed. Tier II 4/4 closed; 0 structural theorems [OPEN]. Pre-registered scan queue empty (FTD-0143 executed 2026-07-12 — uniqueness rejected). δ_c closed-form gap CLOSED scan-negative (FTD-0224); MC-T1.1-ext CLOSED (FTD-0350, [THEOREM at all L ≥ 2]).
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -319,11 +319,11 @@ not merely a distinguished algebraic number.
 
 # §11 · Pre-registered scans awaiting execution
 
-| ID | Pre-reg tag | Search space | Pre-registered outcomes |
-|---|---|---|---|
-| **FTD-0143** | `preregister-fqcr-quotient-uniqueness-v1` | 7⁴ = 2,401 exponent quadruples in `{2,…,8}⁴` × 20 dimensionless physics targets × 4 tolerances `{10⁻³, 10⁻⁴, 10⁻⁵, 10⁻⁶}` | A: uniqueness confirmed → FQCR Model IV [SELECTION with uniqueness]; B: rejected → Model IV stays [SELECTION] without privileged-choice claim; C: partial → [PARTIAL] |
+**None.** The queue's last entry executed 2026-07-12:
 
-Effort: D (scan execution; analysis already templated).
+| ID | Pre-reg tag | Search space | Verdict |
+|---|---|---|---|
+| **FTD-0143** | `preregister-fqcr-quotient-uniqueness-v1` | 7⁴ = 2,401 exponent quadruples in `{2,…,8}⁴` × 20 targets × 4 tolerances | **EXECUTED 2026-07-12 — Outcome B [CLOSED NEGATIVE]: uniqueness rejected** (all 2401 quadruples match α⁻¹ at 10⁻⁵; canonical ranks 1333/2401; readout quadruple-insensitive at t=1). Model IV stays [SELECTION], no uniqueness backing. `reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md` |
 
 ---
 
@@ -445,4 +445,4 @@ When refreshing, increment the version line in the header (v1.0 → v1.1). When 
 
 # §16 · Single-line summary
 
-**Open math, sector-organised: §1 spine is closed (`δ_c` closed-form gap CLOSED scan-negative per FTD-0224; MC-T1.1-ext CLOSED per FTD-0350); §2 EM/α centers on MC-T4.3 after K-BIND closed theorem-negative (positive exits now require W-like commitment or fresh ARC-D) plus the §7 bivector/Dirac bridge sector all OPEN per FTD-0073; §3 EW has GUT→IR running and `χ_H` (Higgs-manif doc cluster CLOSED at its honest [SELECTION]+[PARAMETRIC] status); §4 QCD has confinement substrate with structural obstruction recognised; §5 flavor has depth matrices [PARAMETRIC scaffold] and `m_e` prefactor; §6 gravity keeps beyond-leading-order GR, EP, curvature-source, and general-motion LW open while the clock hypothesis is [CLOSED NEGATIVE, AXIOM-LEVEL] and the lattice-BH doc cluster is CLOSED/reclassified (TRACKER §2.1; FTD-0184 guardrail); §7 QM-foundations has Lorentz recovery as the live load-bearing item after FC-1 declines Hilbert/Bell recovery targets; §8 cosmology is mostly [SELECTION]/[PARAMETRIC] with 6 W-COSMO weaknesses; §9 engine-bridge has the FTD-0269 current-stack nonlinear N(A) calibration boundary and FTD-0277 v1 counting closed negative (MC-T3.4 CLOSED — FTD-0095 [THEOREM]); §10 cross-cutting carries MC-T4.3 + MC-T4.1 doc + MC-T4.2 + W-CRIT-1, while W-CRIT-2 is closed theorem-negative for current operator forcing; 1 pre-registered scan (FTD-0143) remains awaiting execution; closed-negative provenance now includes FTD-0208, FTD-0224, FTD-0244, and FTD-0277 v1.**
+**Open math, sector-organised: §1 spine is closed (`δ_c` closed-form gap CLOSED scan-negative per FTD-0224; MC-T1.1-ext CLOSED per FTD-0350); §2 EM/α centers on MC-T4.3 after K-BIND closed theorem-negative (positive exits now require W-like commitment or fresh ARC-D) plus the §7 bivector/Dirac bridge sector all OPEN per FTD-0073; §3 EW has GUT→IR running and `χ_H` (Higgs-manif doc cluster CLOSED at its honest [SELECTION]+[PARAMETRIC] status); §4 QCD has confinement substrate with structural obstruction recognised; §5 flavor has depth matrices [PARAMETRIC scaffold] and `m_e` prefactor; §6 gravity keeps beyond-leading-order GR, EP, curvature-source, and general-motion LW open while the clock hypothesis is [CLOSED NEGATIVE, AXIOM-LEVEL] and the lattice-BH doc cluster is CLOSED/reclassified (TRACKER §2.1; FTD-0184 guardrail); §7 QM-foundations has Lorentz recovery as the live load-bearing item after FC-1 declines Hilbert/Bell recovery targets; §8 cosmology is mostly [SELECTION]/[PARAMETRIC] with 6 W-COSMO weaknesses; §9 engine-bridge has the FTD-0269 current-stack nonlinear N(A) calibration boundary and FTD-0277 v1 counting closed negative (MC-T3.4 CLOSED — FTD-0095 [THEOREM]); §10 cross-cutting carries MC-T4.3 + MC-T4.1 doc + MC-T4.2 + W-CRIT-1, while W-CRIT-2 is closed theorem-negative for current operator forcing; the pre-registered scan queue is empty (FTD-0143 EXECUTED 2026-07-12 — uniqueness rejected [CLOSED NEGATIVE]); closed-negative provenance now includes FTD-0143, FTD-0208, FTD-0224, FTD-0244, and FTD-0277 v1.**
