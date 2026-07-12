@@ -600,6 +600,25 @@ Snapshot (2026-07-12, regenerated; the archive/ exclusion added to the command t
 
 ---
 
+## §10 Dissemination + residual-claim sweeps — queued arcs (not counted open here)
+
+Queued 2026-07-12 (deferred from the finishing arc by owner decision — `dissemination/` deliberately untouched that arc). Each is one coherent future arc; **do not patch piecemeal.**
+
+### 10.1 Dissemination layer vs canon (the public-facing staleness)
+The dissemination layer still headlines claims the canon retired or corrected:
+- **`dissemination/whitepaper/FTD_Whitepaper.tex`** — the **abstract** itemize (~line 63) states "x₋ ↔ N_c (0.80%) [STRONGLY MOTIVATED CONJECTURE]" — the identification is **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`); plus body sites ~145/150/199; also Planck-primary calibration (pre-electron-primary default), old calibration ids FTD-0030/0041, and the pre-reconciliation "9-theorem spine" count.
+- **`dissemination/manuscript_v2/src/chapters/09-roots-alpha-and-nc.qmd`** — the chapter is titled around the retired x₋↔N_c claim (§9.2 presents "N_c = ⌊x₋⌋ = 3 [SELECTION]" as live with an upgrade path), with spillover in ch08, ch10, 14.5-assumption-ledger, P1-epistemic-framework; m_H "0.24%" figures also present.
+- **Constraint:** any manuscript edit must follow `dissemination/manuscript_v2/PROPAGATION_RULE.md` (src/chapters is the single source of truth; vol1/vol2 are diverged snapshots requiring copy-propagation; v1⇄v2 have no chapter-level identity; every reframe edit set logged in `CHANGELOG_REFRAME.md`).
+
+### 10.2 Internal-docs x₋↔N_c residual live-claim sweep
+A 2026-07-12 scope-check grep (`floor\(x_-\)|x_- = 3\.0|N_c = x_-`) hits **20+ active theory files**; at least two carry the retired identification as a live claim: `FOUND_AXIOM_ZERO.md` §7.2.3 (~line 602: "N_c = x₋ = 3.024 … [THEOREM given S1]") and `FOUND_LATTICE_PHYSICS_INTUITIONS.md` (~lines 69–70: "3 = floor(x₋) from master quadratic"). Many other hits are legitimate (retirement discussions, the independent N_c derivation, spine caveats) — the sweep needs per-site adjudication, not a blind replace. Canonical statement to propagate: x₋ ≈ 3.024 is a mathematical artifact of P(x) [THEOREM as algebra]; the x₋↔N_c *identification* is RETIRED; N_c = 3 comes from independent structural sources (Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`).
+
+### 10.3 Bookkeeping notes for the future arc
+- `NODE_MAP_FTD_MATH.md` regenerates from the LEDGER (`scripts/verification/build_math_node_map.py`) — refresh after any LEDGER sweep.
+- The whitepaper/manuscript refresh should also carry: electron-primary default, the 7+2 spine count, the priced-boundary framing (FTD-0371 v1.1), and the FTD-0348 Higgs figures.
+
+---
+
 ## Recently closed
 
 Move items here with the closing commit / PR when an `[OPEN]` becomes ``.
