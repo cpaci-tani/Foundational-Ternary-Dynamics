@@ -48,6 +48,13 @@
       "falsifier": "a canonically forced generating set for C (retires the [SELECTION]); or a generator outside the documented set changing N_calc."
     },
     {
+      "ref": "IMP-S4", "kind": "selected-type", "type_imported": "the gauge-connection identification A_mu = P_T J_mu (the substrate's transverse flux projection IS the U(1) connection the imported Wilson-Dirac fermion minimally couples to)",
+      "price": 1, "unit": "selected type", "canonical_tag": "[SELECTION]",
+      "provenance": "SPEC_WILSON_DIRAC_FTD.md Sec 6 ('Gauge field A_mu from flux projection' [SELECTION], via DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md); flagged unpriced 2026-07-10 (SCOPE_VERTEX_PROGRAM.md Sec 2, FTD-0380 redteam finding); priced 2026-07-12 (FTD-0371 rev). NOTE: the vertex coupling g^2 = 1/x+ itself is NOT this row -- it stays priced as the composition IMP-E1 o IMP-E3 (a separate line would double-count).",
+      "frontier_face": "chosen section (argument half): which flux functional carries the connection",
+      "falsifier": "an alternative flux-to-connection map with inequivalent vertex phenomenology at matched protocol (the drafted falsifier of record); until tested, vertex-program results carry this selection as an explicit conditional."
+    },
+    {
       "ref": "IMP-C1", "kind": "named-result", "status_flag": "proven-external", "type_imported": "Chudnovsky 1976 algebraic independence -> the model Q(G*, pi) ~ Q(t, u)",
       "price": 1, "unit": "external theorem", "canonical_tag": "[EXTERNAL -- proven]",
       "provenance": "the entire algebraic spine is conditional on it (spine audit); ANALYSIS_DELTA_IND_CLOSURE_v1.md E0",
@@ -135,14 +142,15 @@
   "totals": {
     "self_set_entries": 6,
     "adopted_bits": 1,
-    "selected_types": 3,
+    "selected_types": 4,
     "named_results": 4,
     "named_results_open": 3,
     "calibrations": 3,
     "empirical_identification_rows_paradigm": 1,
     "empirical_parametric_category_count_approx": 131,
     "declined": 2,
-    "reconciliation_flags": ["RF-1 RESOLVED 2026-07-05: SPEC_FTD_FRAMEWORK_V1.md Sec 1.4 + Sec 3.2 D=3 rows reconciled to [SELECTION -- declared] (FTD-0355); corpus-wide D=3-forced residue swept the same pass. (Original flag misattributed the location as 'Sec 3.3'.)"]
+    "reconciliation_flags": ["RF-1 RESOLVED 2026-07-05: SPEC_FTD_FRAMEWORK_V1.md Sec 1.4 + Sec 3.2 D=3 rows reconciled to [SELECTION -- declared] (FTD-0355); corpus-wide D=3-forced residue swept the same pass. (Original flag misattributed the location as 'Sec 3.3'.)"],
+    "revision_log": ["v1.1 2026-07-12: IMP-S4 minted -- the FTD-0380-flagged unpriced selection A_mu = P_T J_mu priced as the 4th selected type; totals 14 -> 15 imports; no other line moved; promotes nothing."]
   },
   "standing_invariants": "x+ = 1/alpha stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FC-W stays [AXIOM]; D=3 stays [SELECTION -- declared] (FTD-0355); no tag moves; this ledger prices existing commitments and introduces none."
 }
