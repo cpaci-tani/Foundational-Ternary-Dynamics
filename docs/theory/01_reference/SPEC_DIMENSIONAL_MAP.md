@@ -7,7 +7,7 @@
 
 # FTD Dimensionless ↔ Dimensional Map
 
-**Schema:** v1 · **Scope:** algebraic-spine + calibration · **FTD version:** 5.34 · **Generated:** 2026-04-29
+**Schema:** v1 · **Scope:** algebraic-spine + calibration · **FTD version:** 5.34 · **Generated:** 2026-07-12
 
 > Spine + calibration only. Covers the 7 algebraic-spine theorems, 4 dimensionless physical identifications, the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096, and 1 worked dimensional application (m_e in MeV). Full SM-quantity coverage lives in CATALOG_PARAMETRIC_INSERTIONS.md. The 3 calibrations are priced as import currency IMP-K1/K2/K3 in the priced-import ledger (SPEC_IMPORT_LEDGER.md, FTD-0371); their non-derivability is the grade-0-closure theorem (FOUND_DIMENSIONAL_GRADE_CLOSURE.md, FTD-0368 program).
 

@@ -24,7 +24,7 @@
 ## Scale 0 — Lattice Field Theory (RenderBridge)
 
 Discrete 3D cubic lattice. Voxel states {-1, 0, +1}. Flux field J in R^3.
-**Forward-Euler-like wave propagation** (not symplectic leapfrog — DAMPING masks drift) + Gauss projection (SOR) + Poisson Coulomb solver + per-tick `EnergyLedger` for conservation drift.
+**Störmer–Verlet leapfrog wave propagation under the stagger interpretation** (TRACKER_OPEN_ITEMS §1.4 adjudication; verified by `tests/test_leapfrog_integrator_audit.cpp` — the earlier "forward-Euler-like" description was incorrect) + Gauss projection (SOR) + Poisson Coulomb solver + per-tick `EnergyLedger` for conservation drift.
 
 ### Forces
 
