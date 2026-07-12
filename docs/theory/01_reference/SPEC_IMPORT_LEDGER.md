@@ -1,7 +1,7 @@
 # The Priced-Import Ledger — What FTD Must Borrow, Counted in a Common Currency
 
 **Tag:** [SYNTHESIS] (prices existing commitments at their canonical tags; introduces no theorem, promotes nothing) · **LEDGER id:** FTD-0371
-**Data:** `import_ledger.json` (machine-readable, the single source) · **Verifier:** `scripts/proofs/proof_import_ledger.py` (8/8 PASS) · **Date:** 2026-07-05
+**Data:** `import_ledger.json` (machine-readable, the single source) · **Verifier:** `scripts/proofs/proof_import_ledger.py` (8/8 PASS) · **Date:** 2026-07-05 · **Rev:** v1.1 2026-07-12 (IMP-S4 minted)
 **Serves:** the Number-One Goal's second face — *"rigorously mark and price which types the ontology sets for itself and which it must import."* **This ledger is the *price* half of that clause.** The modulus/argument frontier (`FOUND_MODULUS_ARGUMENT_FRONTIER.md`, FTD-0336) states that boundary *qualitatively*; this ledger prices it *quantitatively*, with a falsifier on every line.
 
 ---
@@ -49,13 +49,14 @@ Every type FTD touches falls into one column. The organizing fact (FTD-0336): **
 
 This is the single most important line in the ledger: FTD's one *adopted* structural import (constitution §1: "the framework's one adopted import, vs the declined M / reversibility"). The substrate provably cannot reach δ (FTD-0369/0370); FC-W adopts the one bit that supplies it.
 
-### 3.2 Selected types (𝕊) — total: **3**
+### 3.2 Selected types (𝕊) — total: **4**
 
 | ref | imported type | tag | falsifier |
 |---|---|---|---|
 | IMP-S1 | spatial dimension **D = 3** | [SELECTION — declared] (FTD-0355) | a forcing proof (→ self-set); or an equally-consistent alternate D (confirms free choice). **✓ constitution reconciled 2026-07-05** (§1.4 + §3.2 now read [SELECTION — declared]; the RF-1 drift is closed — see §6) |
 | IMP-S2 | the **singlet** (J→ψ complexification for Bell/Tsirelson) | [SELECTION] | a native forced singlet; or a native S>2 on the engine (an FC-1 falsifier) |
 | IMP-S3 | the **ℭ generator-set** representativeness (N_calc) | [SELECTION] (FTD-0347 flag) | a canonically forced generating set retires the flag |
+| IMP-S4 | the **gauge-connection identification A_μ = 𝒫_T J_μ** (the transverse flux projection IS the U(1) connection the imported Wilson–Dirac fermion minimally couples to) | [SELECTION] (`SPEC_WILSON_DIRAC_FTD.md` §6; minted 2026-07-12 from the FTD-0380-flagged known gap) | an alternative flux-to-connection map with inequivalent vertex phenomenology at matched protocol; until tested, vertex-program results carry this selection as an explicit conditional |
 
 ### 3.3 Named results (ℂ) — total: **4** (1 proven-external, 3 open)
 
@@ -87,7 +88,7 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | IMP-E3 | **adopted external physics** (QM's Born/Tsirelson *given* the singlet, multi-loop QED functionals, GR) | ~50+ | [IMPORTED — external] | each is the established physics's own test; FTD imports the framework, not the falsifier |
 
 > **Pointer (2026-07-10, no new line):** the vertex program's imposed coupling — g²_vertex ≡ 1/x₊ wired into Branch-B Wilson–Dirac matter (`../10_eft_program/scopes_and_specs/SCOPE_VERTEX_PROGRAM.md` §2) — is the **composition IMP-E1 ∘ IMP-E3**, already priced above; a separate line would double-count. Its δ-branch content is inherited from IMP-B1 (no new ramification act). Retirement path: an ARC-3 closure of `SPEC_ALPHA_READOUT_CONTRACT.md` moves the coupling to the self-set column. The Branch-A alternative (native fermion emergence, which would have made the vertex partially self-set) is CLOSED NEGATIVE at the protocols tested per FTD-0379/0380.
-> **Known gap (flagged 2026-07-10, redteam finding):** the vertex's gauge-connection identification **A_μ = 𝒫_T J_μ** ([SELECTION], `SPEC_WILSON_DIRAC_FTD.md` §6) is a selected type with **no priced row here** — a candidate IMP-S4 for the next ledger revision (falsifier: an alternative flux-to-connection map with inequivalent vertex phenomenology at matched protocol). Until priced, vertex-program results carry it as an explicit conditional (charter §2).
+> **Priced 2026-07-12 as IMP-S4 (§3.2):** the vertex's gauge-connection identification **A_μ = 𝒫_T J_μ** ([SELECTION], `SPEC_WILSON_DIRAC_FTD.md` §6) had been flagged 2026-07-10 (redteam finding) as a selected type with no priced row; it is now the ledger's 4th selected type with the drafted falsifier of record. The charter-§2 conditional-carry note is retired by the pricing — vertex-program results now cite IMP-S4 directly.
 
 ## 4 · Declined — the bets (imports FTD refuses, at falsification risk)
 
@@ -123,7 +124,7 @@ Building the ledger against the canonical sources surfaced live drift. These are
 
 ## 7 · Falsifiers, invariants, cross-references
 
-Every import row above carries its own falsifier (verifier C2 enforces non-empty falsifiers on all 14 imports + 2 declined items) — that is what makes the boundary a *deliverable* and not a disclaimer. The sharpest single falsifier of the whole α-sector import stack is the FC-W one: **a forward-derived substrate object realizing `√(G*(4G*−1))` with a forced ℤ/2** would convert IMP-B1 from an adopted bit into a derivation, retire the largest line in the ledger, and upgrade `x₊ = 1/α` toward [SELECTED/DERIVED]. It is, in the constitution's words, "the one refutation FTD would welcome."
+Every import row above carries its own falsifier (verifier C2 enforces non-empty falsifiers on all 15 imports + 2 declined items) — that is what makes the boundary a *deliverable* and not a disclaimer. The sharpest single falsifier of the whole α-sector import stack is the FC-W one: **a forward-derived substrate object realizing `√(G*(4G*−1))` with a forced ℤ/2** would convert IMP-B1 from an adopted bit into a derivation, retire the largest line in the ledger, and upgrade `x₊ = 1/α` toward [SELECTED/DERIVED]. It is, in the constitution's words, "the one refutation FTD would welcome."
 
 **Standing invariants:** x₊ = 1/α [SMC]; MC-T4.3 [FOUNDATIONAL OBSTRUCTION]; FC-W [AXIOM]; D=3 [SELECTION — declared]; no tag moves — this ledger prices existing commitments and introduces none.
 
