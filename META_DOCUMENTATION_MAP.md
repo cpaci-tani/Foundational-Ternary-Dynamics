@@ -59,7 +59,7 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 3. [AUDIT_BELL_ANALYSIS.md](docs/theory/07_assessment/AUDIT_BELL_ANALYSIS.md) — Bell inequality theory and simulation
 4. [AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md) — Master weakness compilation
 5. [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) — **(FTD-0242)** MC-T4.3 route-invariant boundary: 0/4 FTD-native routes force the master-quadratic α operator, so α is **dynamical, not structural**. `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is not derived; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`.
-6. [SPEC_IMPORT_LEDGER.md](docs/theory/01_reference/SPEC_IMPORT_LEDGER.md) — **(FTD-0371)** the priced-import ledger: every type FTD must import, counted in a common currency (1 adopted bit / 3 selected types / 4 named results / 3 calibrations / empirical bridges / 2 declined) with a falsifier on each line. The boundary made *auditable*. ⚠ The "1 adopted bit" is the α-branch choice only, not the total physics import.
+6. [SPEC_IMPORT_LEDGER.md](docs/theory/01_reference/SPEC_IMPORT_LEDGER.md) — **(FTD-0371)** the priced-import ledger: every type FTD must import, counted in a common currency (1 adopted bit / 4 selected types / 4 named results / 3 calibrations / empirical bridges / 2 declined) with a falsifier on each line. The boundary made *auditable*. ⚠ The "1 adopted bit" is the α-branch choice only, not the total physics import.
 
 ---
 
