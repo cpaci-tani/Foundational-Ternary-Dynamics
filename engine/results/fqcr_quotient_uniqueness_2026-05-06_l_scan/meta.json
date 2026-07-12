@@ -1,0 +1,91 @@
+{
+  "prereg": "docs/theory/10_eft_program/preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md",
+  "prereg_tag": "preregister-fqcr-quotient-uniqueness-v1",
+  "prereg_tag_commit": "557593e44ff72ac300741e0f79d8345d5908f351",
+  "run_date": "2026-07-12",
+  "head_commit": "d69cfbfb7b5e9ebde7deb64d0c6617824ed586f5",
+  "runner": "tools/scan_fqcr_quotient_uniqueness.py",
+  "runner_sha256": "719015e253037a8d699d4aa95d524625f5d6fd08a5ec04ff25715919b28903da",
+  "config": {
+    "N": 4096,
+    "t": 1,
+    "dps": 50,
+    "search_space": "(k,d;l,m) in {2..8}^4 = 2401",
+    "targets": "20 locked (tools/scan_look_elsewhere.py TARGETS)",
+    "tolerances": [
+      "1e-03",
+      "1e-04",
+      "1e-05",
+      "1e-06"
+    ],
+    "hit_convention": "relative residual |v-t|/|t| < eps (FTD-0097)"
+  },
+  "primitives": {
+    "Q": "0.00186744273170798881443021293483",
+    "lambda_N_4i": "0.0000557959210499423734518538813033",
+    "G_N_star": "2.95867512194277484029430135138"
+  },
+  "criteria": {
+    "3.1_top3_at_geq3_tolerances": {
+      "pass": true,
+      "tie_inclusive_pass_tolerances": [
+        "1e-03",
+        "1e-04",
+        "1e-05",
+        "1e-06"
+      ],
+      "per_tolerance": {
+        "1e-03": {
+          "canonical_hits": 1,
+          "distinct_hit_counts_desc": [
+            1
+          ],
+          "third_highest_distinct": 1,
+          "tie_inclusive_top3": true,
+          "n_quadruples_with_hits_geq_canonical": 2401
+        },
+        "1e-04": {
+          "canonical_hits": 1,
+          "distinct_hit_counts_desc": [
+            1
+          ],
+          "third_highest_distinct": 1,
+          "tie_inclusive_top3": true,
+          "n_quadruples_with_hits_geq_canonical": 2401
+        },
+        "1e-05": {
+          "canonical_hits": 1,
+          "distinct_hit_counts_desc": [
+            1
+          ],
+          "third_highest_distinct": 1,
+          "tie_inclusive_top3": true,
+          "n_quadruples_with_hits_geq_canonical": 2401
+        },
+        "1e-06": {
+          "canonical_hits": 1,
+          "distinct_hit_counts_desc": [
+            1,
+            0
+          ],
+          "third_highest_distinct": 0,
+          "tie_inclusive_top3": true,
+          "n_quadruples_with_hits_geq_canonical": 1969
+        }
+      },
+      "note": "pre-reg defines no tie-break; tie-inclusive reading used, both readings reported in ANALYSIS.md"
+    },
+    "3.2_no_competitor_gt1_target_at_1e-4": {
+      "pass": true,
+      "n_violators": 0,
+      "violators_first_20": []
+    },
+    "3.3_unique_alpha_match_at_1e-5": {
+      "pass": false,
+      "n_alpha_matchers_at_1e-5": 2401,
+      "canonical_among_them": true
+    }
+  },
+  "verdict": "C",
+  "wall_seconds": 0.9
+}
