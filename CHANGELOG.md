@@ -1,5 +1,46 @@
 # Foundational Ternary Dynamics Changelog
 
+## What is an orientation carrier? The bilateral-symmetry criterion (FTD-0382, 2026-07-12)
+
+Answers "what is an orientation carrier" from an empirical anchor — everything
+that moves forward (people, cars, birds, fish) is bilaterally symmetric: one
+signed travel axis, one signed gravity axis, one surviving transverse mirror.
+
+- **Group theory [MATH-FACT, verified 12/12, redteam-reproduced]:** an
+  orientation carrier = the point group **C_s = Stab_{O(3)}(v, g)** — fixing two
+  independent vectors leaves only the mirror through their plane; achiral,
+  distinct from chirality (C₁). An oriented axis = a ray = a ℤ/2-torsor element
+  (a *vector*, magnitude-free).
+- **D=3 singled out:** Stab_{O(D)}(v,g) = I₂⊕O(D−2); D=2→C₁ (over-determined),
+  **D=3→C_s (exactly one mirror)**, D=4→O(2) infinite. Exactly-C_s residual
+  symmetry holds **iff D=3** — consonance with FTD-0355's |O_h|/D = 2^D(D−1)! =
+  16 axis-stabilizer, flagged NOT a derivation (dimension-forcing stays
+  [SELECTION — declared circular]).
+- **Frontier placement [coherent-interpretation]:** bilateral C_s = emergent
+  **phase-orientation** = the reachable argument-phase; movers carry a
+  directional arrow with **no magnitude**, illustrating FTD-0341's magnitude/
+  phase theorem (direction reachable, size not). The substrate is O_h with no
+  native polar axis. Sharpens FTD-0248's diffuse "four broken symmetries" to a
+  precise point group.
+- **The δ/magnitude probe (user-commissioned) CLOSED-NEGATIVE:** a reflection is
+  an algebraic orthogonal map (transcendence-degree-preserving), so no
+  reflection-reduction reaches the imported surd δ (trdeg-1 over ℚ, cond.
+  Chudnovsky). The reflection side (order-2, algebraic) and the CM-magnitude
+  side (order-4, transcendental G*) are separated by exactly the gap that keeps
+  FTD-0355's order-4↔reflection seam open. Completeness load-bearer = FTD-0341.
+- **Biology honest-hedged:** the "movers are bilateral" tendency holds only
+  external/leading-order (C₁ exact), macroscopic/inertial (scallop theorem),
+  manoeuvring (jellyfish move along the radial axis), whole-body (wheels are
+  parts). Attribution flagged [TEXTBOOK]/[HYPOTHESIS, Holló & Novák]/[SYNTHESIS].
+- Same-day AI math-redteam: group theory + numerics reproduced; 6 presentation
+  findings applied (foregrounded FTD-0341 for the δ-exclusion completeness;
+  labeled the transcendence assumed-not-verified; "achiral core of" vs "exactly"
+  C_s; "illustrates" vs "corroborates"; δ-coset gloss fixed). External human
+  review still owed. Zero promotions: FC-W [AXIOM], δ imported, MC-T4.3
+  [FOUNDATIONAL OBSTRUCTION], x₊=1/α [SMC] untouched; golden untouched (docs + 1
+  verifier). Doc `FOUND_ORIENTATION_CARRIER_BILATERAL_CRITERION.md`. Next free
+  id FTD-0383.
+
 ## The parity twist is a superdeterminant — restricted and rigid (FTD-0381, 2026-07-11)
 
 The FTD-0127/0366 parity twist — χ₋₄-even sector combination → √2π-class,
