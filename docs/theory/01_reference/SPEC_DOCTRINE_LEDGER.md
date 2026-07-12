@@ -463,7 +463,7 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 
 # §16 · Refresh policy
 
-This v1.4 document is refreshed when:
+This document is refreshed when:
 
 - A LEDGER row's tag changes for any claim cited in §1–§13.
 - `SPEC_ALGEBRAIC_SPINE.md` adds, removes, or retags a theorem.
