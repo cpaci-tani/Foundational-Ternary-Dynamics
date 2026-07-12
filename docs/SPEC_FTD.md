@@ -642,15 +642,15 @@ Features arising as **symptoms** of the dynamics, without being explicitly coded
 
 These are genuine emergent properties—they were not designed in but follow from the rules.
 
-### Derived Constants (v4.1)
+### Derived-and-identified constants (per-claim tags; retagged 2026-07-12 to canon)
 
-The following are now **derived**, not input parameters:
+The following are not free input parameters — but their honest status splits per claim (LEDGER wins):
 
 | Feature | Value | Status | Derivation |
 |---------|-------|--------|------------|
-| Fine structure α | 1/137.036 |  **[THEOREM]** | Master quadratic from G* (1.26 ppm) |
-| Electron mass m_e | 0.511 MeV |  **[THEOREM]** | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) |
-| Higgs VEV v | 246 GeV |  **[THEOREM]** | v = m_P √(2π) α⁸ (0.05%) |
+| Fine structure α | 1/137.036 | **[THEOREM] algebra + [SMC] identification** | Master quadratic root x₊ is pure algebra from G* [THEOREM]; the identification x₊ = 1/α (1.26 ppm) is [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| Electron mass m_e | 0.511 MeV | **[SMC]** | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) — FTD-0015; exponent n=11 is [SELECTION] |
+| Higgs VEV v | 246 GeV | **[SELECTION]** | v = m_P √(2π) α⁸ (0.05%) — HIGGS-4 |
 
 ### Still Imposed (Structural) **[IMPOSED]**
 
@@ -717,7 +717,7 @@ These define the model's fundamental scales:
 |-----------|-------|------------|------|--------|
 | C | 1.0 | [L]/[T] | Maximum propagation speed |  Axiomatic |
 | H | 1.0 | [L] | Planck-scale unit (lattice spacing) |  Axiomatic |
-| KB | 0.511 | dimensionless | Manifestation threshold |  **DERIVED**: m_e = m_P √(2π) (16/3) α¹¹ |
+| KB | 0.511 | dimensionless | Manifestation threshold | **[IMPOSED — calibration]** (K_B ≡ m_e anchor, IMP-K3/FTD-0130 role-conflation flagged; the m_e ladder itself is [SMC] FTD-0015) |
 
 ## 7.3 Coupling Parameters
 
@@ -725,7 +725,7 @@ These define the model's fundamental scales:
 |-----------|-------|------------|------|--------|
 | α (ALPHA) | 0.00729 | dimensionless | Fine structure constant | **STRONGLY MOTIVATED CONJECTURE** from x₊ (§7.4); ppb corrections scheme-conditional |
 | g_c | ~α^(1/2) | dimensionless | State-flux coupling | Conditional on α identification |
-| G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Gravitational coupling |  Derived (1/(b₃+N_c)²) |
+| G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Engine gravity parameter | **[CLOSED NEGATIVE as physical-G_N identification]** (FTD-0131 — the 1/(b₃+N_c)² reading is off by 10²⁰–10⁴³; engine parameter only; the substrate route instead gives α_G(e,e) = (m_e/m_P)² [SMC], next row) |
 | α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy | [STRUCTURALLY MOTIVATED PARAMETRIC] (2π(16/3)²(N_eff+3/7)²α²⁰; 0.06% is spelling-dependent, canonical-mass spelling −0.33% — corrected 2026-07-01, FTD-0348) |
 | γ (DECAY_RATE) | 0.00729 = α | [T]⁻¹ | Dissipation rate |  **[IMPOSED]** (see §4.3, ASSUMP.6) |
 | φ (PHI) | 1.618... | dimensionless | Golden ratio |  Mathematical constant |
@@ -757,7 +757,7 @@ The lemniscatic constant G* has theorem-level mathematical provenance through th
 
 **BCC Watson integral:** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
 
-The master quadratic (degree 2 is forced by self-referential closure of the ternary constraint AND by the degree-2 CM field $\mathbb{Q}(i)$; see [DERIV_QUADRATIC_NECESSITY.md](theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md)):
+The master quadratic (the degree-2 form is **[SELECTION]-backed** — motivated by self-referential closure of the ternary constraint and by the degree-2 CM field $\mathbb{Q}(i)$, see [DERIV_QUADRATIC_NECESSITY.md](theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md); the operator assembly is **not forced** — 0/4 native routes, FTD-0242 route-invariant boundary + FTD-0244 K-BIND theorem-negative):
 
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
@@ -1680,19 +1680,19 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.5 | Can coupling constants be derived within FTD assumptions? |  **[PARTIAL / SMC]** | Algebraic-spine constants have theorem-level provenance, but the physical coupling identifications (especially x₊  1/α) remain [STRONGLY MOTIVATED CONJECTURE]. See SPEC_ALGEBRAIC_SPINE.md, SPEC_FQCR.md, TRACKER_ONTIC_TRUTH.md, and LEDGER.md. |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? |  **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
 | OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? |  **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
-| OPEN.8 | Can particle masses be derived from FTD? |  **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.19% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
+| OPEN.8 | Can particle masses be derived from FTD? |  **[SMC] / [PARAMETRIC]** (retagged 2026-07-12 to canon) | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) is [SMC] FTD-0015 (exponent n=11 [SELECTION]); other masses per CATALOG_PARAMETRIC_INSERTIONS |
 | OPEN.9 | What determines the complexity functional C(g)? |  **OPEN** | Candidates: MDL, departure from unification, parameter counting |
 | OPEN.10 | Can spinor behavior emerge from framed flux? |  **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
-| OPEN.11 | Can CKM matrix be derived from FTD? |  **DERIVED** | All elements to 3-6% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
-| OPEN.12 | Can PMNS mixing be derived from FTD? |  **DERIVED** | All three angles to 1-3% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
-| OPEN.13 | Can CP violation be predicted? |  **DERIVED** | Jarlskog J = 3.9×10⁻⁵ (27%), CKM phase δ = 68° (1.5%) |
-| OPEN.14 | Can neutrino masses be derived? |  **DERIVED** | Δm²₃₁ exact match, see-saw mechanism with m_D ~ m_τ × α |
+| OPEN.11 | Can CKM matrix be derived from FTD? |  **[PARAMETRIC]** (retagged 2026-07-12 — integer-ratio insertions, not a forcing chain) | All elements to 3-6%; see FLAVOR_PHYSICS_DERIVATION.md + CATALOG_PARAMETRIC_INSERTIONS |
+| OPEN.12 | Can PMNS mixing be derived from FTD? |  **[STRUCTURALLY MOTIVATED PARAMETRIC]** (demotion of record FTD-0320/FTD-0021) | All three angles to 1-3%; see FLAVOR_PHYSICS_DERIVATION.md |
+| OPEN.13 | Can CP violation be predicted? |  **[PARAMETRIC]** (retagged 2026-07-12) | Jarlskog J = 3.9×10⁻⁵ (27%), CKM phase δ = 68° (1.5%) |
+| OPEN.14 | Can neutrino masses be derived? |  **[PARAMETRIC]** (see-saw machinery imported; retagged 2026-07-12) | Δm²₃₁ match via see-saw with m_D ~ m_τ × α |
 | OPEN.15 | What is the UV distribution P_UV? |  **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
 | OPEN.16 | What determines G_N? | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — not DERIVED; inherits FTD-0015's [SMC] floor, precision spelling-dependent) | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ |
 | OPEN.17 | Why does a 3D lattice exist? |  **[SELECTION — declared] (FTD-0355)** | The |Aut(E)|² = 2^D·(D−1)! = 16 arithmetic uniqueness is [THEOREM]; the dimension-forcing is [SELECTION — declared] (RHS target 16 = |O_h|/3 presupposes D=3, circularity named). Atomic stability + gauge renormalizability + Fibonacci constraint are motivation, not a forcing proof. |
-| OPEN.18 | Can GR be derived with correct coefficient? |  **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
-| OPEN.19 | Can inflation observables be derived? |  **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
-| OPEN.20 | Can baryogenesis be explained? |  **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
+| OPEN.18 | Can GR be derived with correct coefficient? |  **RECLASSIFIED [PARAMETRIC]/[SELECTION]** (the v5.0 "DERIVED" label is historical — the Deser bootstrap *completes* a posited massless spin-2 field, it does not derive one; conditional on Conjecture 10.1, FTD-0189; substrate spin-2 mode [CLOSED NEGATIVE in probed regime], FTD-0193) | R_μν - ½g_μν R = 8πG T_μν; bootstrap per FTD-0026 |
+| OPEN.19 | Can inflation observables be derived? |  **RECLASSIFIED [PARAMETRIC]** (v5.0 label historical — standard slow-roll formulas with FTD numbers; W-COSMO-1 inflaton identification [OPEN]) | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
+| OPEN.20 | Can baryogenesis be explained? |  **RECLASSIFIED [PARAMETRIC]** (v5.0 label historical — standard Sakharov machinery with FTD inputs) | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
 | OPEN.21 | Is x₊ = 1/α a theorem or conjecture? |  **[STRONGLY MOTIVATED CONJECTURE]** | Master-quadratic algebra is theorem-level; the physical identification x₊  1/α is empirical/structural, not dynamically derived. |
 | OPEN.22 | Is `x₋ → N_c = 3` a theorem? | **RETIRED (v1.4 §5)** | The `x_-  N_c` identification is dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. The small root `x_- ≈ 3.024` is a mathematical artifact of P(x). `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). |
 
@@ -1776,13 +1776,13 @@ A computational simulation based on:
 - ~~Flavor physics (CKM, PMNS)~~  **ADDRESSED (within assumptions)**
 
 ### Historical v5.0 Resolutions (reclassified by later audits)
-- ~~**Numerical value of G_N**~~  **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
+- ~~**Numerical value of G_N**~~  **RECLASSIFIED [STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0348) — α_G = 2π(16/3)²(N_eff + 3/7)²α^20; precision is spelling-dependent (+0.06% vs −0.33% canonical-mass spelling); inherits FTD-0015's [SMC] floor
 - ~~**Why a 3D discrete lattice exists**~~  **[SELECTION — declared] (FTD-0355)** — the |Aut(E)|² = 2^D·(D−1)! = 16 arithmetic uniqueness is [THEOREM], but the dimension-forcing is not forced (RHS target 16 = |O_h|/3 presupposes D=3, a circularity named). See §22.5.1.
 - ~~**C1: x₊ = 1/α**~~  **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
 - ~~**C2: x₋ → N_c = 3**~~ **RETIRED (v1.4 §5)** — `x_-  N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
-- ~~**GR with 8πG**~~  **DERIVED** — Einstein equations with correct coefficient
-- ~~**Inflation mechanism**~~  **DERIVED** — n_s = 0.966, r = 0.022
-- ~~**Baryogenesis**~~  **DERIVED** — η ~ 10⁻¹⁰
+- ~~**GR with 8πG**~~  **RECLASSIFIED [PARAMETRIC]/[SELECTION]** (FTD-0189) — the Deser bootstrap completes a *posited* massless spin-2 field (Conjecture 10.1); substrate spin-2 mode [CLOSED NEGATIVE in probed regime] (FTD-0193)
+- ~~**Inflation mechanism**~~  **RECLASSIFIED [PARAMETRIC]** — standard slow-roll formulas with FTD numbers (n_s = 0.966, r = 0.022); inflaton identification W-COSMO-1 [OPEN]
+- ~~**Baryogenesis**~~  **RECLASSIFIED [PARAMETRIC]** — standard Sakharov machinery with FTD inputs (η ~ 10⁻¹⁰)
 
 ### Genuinely Open (v5.27)
 - ~~Substrate-to-aggregate transition~~  **[SELECTION]** — Three-level observer Bell mechanism identified: complexification + sLoop joint coupling. Net: S_substrate × √2 = S_observer. See DERIV_OBSERVER_BELL_MECHANISM.md. Dynamical derivation of joint probability from S[s,J] remains future work.
