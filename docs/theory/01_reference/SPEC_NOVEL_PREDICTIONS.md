@@ -82,8 +82,8 @@ The derivation requires identifying 1 voxel = 1 Planck length, which sets $M_P$.
 |----------|-------|
 | **FTD formula** | $m_H = (N_{\text{eff}} / \alpha^2) \cdot m_e$ |
 | **FTD value** | $124.8$ GeV |
-| **PDG** | $125.25 \pm 0.17$ GeV |
-| **Discrepancy** | 0.36% |
+| **PDG** | $125.20 \pm 0.11$ GeV (PDG 2024, canonical per `REF_EXTERNAL_CONSTANTS.md`) |
+| **Discrepancy** | −0.36% = **−4.1σ** (excluded as an exact relation at current precision; FTD-0348) |
 | **Epistemic status** | **[SELECTION]** (the formula structure is argued, not uniquely derived) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $m_H$ was measured in 2012. |
 
@@ -154,7 +154,7 @@ This is not a novel prediction---it is a verification that the FTD lattice Feynm
 | P-3 | $\sin^2\theta_W$ | 0.2308 | 0.2312 | 0.2% | Post |
 | P-4 | $m_e$ | 0.5096 MeV | 0.5110 MeV | 0.19% | Post |
 | P-5 | $m_\tau$ | 1776.7 MeV | 1776.9 MeV | 0.007% | Post |
-| P-6 | $m_H$ | 124.8 GeV | 125.25 GeV | 0.36% | Post |
+| P-6 | $m_H$ | 124.75 GeV | 125.20 ± 0.11 GeV (PDG 2024) | −0.36% = −4.1σ (excluded as exact; FTD-0348) | Post |
 | P-7 | $v$ (Higgs VEV) | 246.09 GeV | 246.22 GeV | 0.05% | Post |
 | P-8 | $\alpha_G$ | $5.909 \times 10^{-39}$ | $5.906 \times 10^{-39}$ | 0.06% | Post |
 | P-9 | $a_e$ (g-2) | $\alpha/(2\pi)$ | $\alpha/(2\pi) + \ldots$ | 0.1% | Post |

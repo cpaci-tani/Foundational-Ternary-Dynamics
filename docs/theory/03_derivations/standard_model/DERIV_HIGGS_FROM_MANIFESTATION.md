@@ -1,7 +1,7 @@
 # Higgs Mechanism from Manifestation Dynamics
 
 **Document Classification:** Theoretical Derivation
-**Status:** [THEOREM] (see Claims Table §9)
+**Status:** mixed — per-claim tags in Claims Table §9 ([THEOREM] / [SELECTION] / [STRUCTURALLY MOTIVATED PARAMETRIC]); the $(1-\alpha)$ loop step is **applied, not derived** (FTD-0268 digest; wording reconciled 2026-07-12)
 **Depends on:** SPEC_FTD_LAGRANGIAN.md, DERIV_STATE_FLUX_COUPLING_DERIVATION.md, DERIV_LATTICE_SU2_WEAK.md, DERIV_COMPLETE_PARTICLE_PHYSICS.md
 **Proof script:** `scripts/proofs/proof_quartic_coupling.py`
 
@@ -259,13 +259,13 @@ The Higgs mass is:
 
 $$m_H^2 = V''(v) = \left.\frac{d^2 V_{\text{total}}}{d\rho_0^2}\right|_{\rho_0 = v}$$
 
-## 5.2 The Higgs Mass and Radiative Corrections [THEOREM]
+## 5.2 The Higgs Mass and Radiative Corrections [SELECTION]+[PARAMETRIC]
 
-The tree-level Higgs mass follows from the derived quartic coupling $\lambda = 3/23$ and VEV $v = 246.08$ GeV:
+The tree-level Higgs mass follows from the quartic coupling $\lambda = 3/23$ (a [SELECTION]-backed chain, HIGGS-8/15/16) and VEV $v = 246.08$ GeV:
 
 $$m_{H,\text{tree}} = v\sqrt{2\lambda} = v\sqrt{\frac{6}{23}} = 125.69 \text{ GeV}$$
 
-However, the physical Higgs mass receives a highly specific radiative correction in FTD. Because the Higgs boson is a scalar excitation of the flux density field $|J|$, its effective potential inherits the fundamental $(1-\alpha)$ dissipation factor applied to all flux dynamics per tick in `phase_write`. This suppresses the physical quartic self-coupling by a one-loop $\alpha$ factor:
+This tree-level value is **+4.44σ** from the canonical PDG 2024 measurement ($125.20 \pm 0.11$ GeV). The claimed correction: because the Higgs boson is a scalar excitation of the flux density field $|J|$, its effective potential inherits the $(1-\alpha)$ dissipation factor applied to all flux dynamics per tick in `phase_write`. **This factor is applied, not derived** (FTD-0268): the identification of the per-tick engine dissipation with a one-loop suppression of the physical quartic is a physical motivation, not a derivation chain — it suppresses the quartic by:
 
 $$\lambda_{\text{loop}} = \lambda_{\text{tree}}(1 - \alpha)$$
 
@@ -273,13 +273,13 @@ Applying this suppression to the Higgs mass:
 
 $$\boxed{m_{H,\text{loop}} = v\sqrt{2\lambda_{\text{loop}}} = m_{H,\text{tree}}\sqrt{1-\alpha} \approx m_{H,\text{tree}}\left(1 - \frac{\alpha}{2}\right) = 125.23 \text{ GeV}}$$
 
-| Quantity | FTD (Tree) | FTD (Loop) | PDG (2024) | Accuracy |
+| Quantity | FTD (Tree) | FTD (Loop, $(1-\alpha)$ applied) | PDG 2024 (canonical, `REF_EXTERNAL_CONSTANTS.md`) | Deviation |
 |----------|------------|------------|------------|----------|
-| m_H | 125.69 GeV | **125.23 GeV** | 125.25 ± 0.17 GeV | **0.01%** |
+| m_H | 125.69 GeV (**+4.44σ**) | **125.23 GeV** | 125.20 ± 0.11 GeV | **+0.27σ (+0.024%)** |
 
-The flux dissipation mechanism precisely accounts for the -0.36% downward shift required to land exactly on the experimental target.
+With the applied $(1-\alpha)$ factor the loop value sits at +0.27σ of the canonical PDG 2024 measurement. (An earlier revision of this table quoted a superseded PDG edition, $125.25 \pm 0.17$, and described the match as "0.01%"; corrected 2026-07-12.) Because the factor is applied rather than derived, this agreement is evidence at the `[SELECTION]+[PARAMETRIC]` level, not a landing predicted in advance.
 
-**Superseded formula:** The earlier formula $m_H = (N_{eff}/\alpha^2) \cdot m_e = 124.75$ GeV is now superseded.
+**Relation to the other canonical route:** the formula $m_H = (N_{eff}/\alpha^2) \cdot m_e = 124.75$ GeV (FTD-0017, `[STRUCTURALLY MOTIVATED PARAMETRIC]`) is a *different* formula that remains in canon at its own tag; at PDG-2024 precision it is **−4.1σ** and experimentally excluded as an exact relation (FTD-0348). The two routes are not reconciled into one derivation; neither promotes the other.
 
 ## 5.3 Physical Interpretation [THEOREM]
 
@@ -498,7 +498,7 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 | Quantity | SM Status | FTD Status | FTD Value | PDG Value | Accuracy |
 |----------|-----------|------------|-----------|-----------|----------|
 | v | Free parameter | **Derived** | 246.08 GeV | 246.22 GeV | 0.05% |
-| m_H | Free parameter | **Derived** | 125.69 GeV | 125.25 GeV | 0.47% |
+| m_H | Free parameter | **[SELECTION]+[PARAMETRIC]** (§5.2) | 125.69 GeV (tree) | 125.20 ± 0.11 GeV (PDG 2024) | +0.39% = +4.44σ tree; +0.27σ with the applied (1−α) factor |
 | λ | Free parameter | **Derived** | 3/23 = 0.1304 | ~0.129 | 1.05% |
 | μ² | Free parameter | **Derived** | −(88.8 GeV)² | −(88.5 GeV)² | ~0.4% |
 | sin²θ_W | Free parameter | **Derived** | 3/13 = 0.2308 | 0.2312 | 0.19% |
@@ -522,10 +522,10 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 
 | Claim | SM Status | FTD Status |
 |-------|-----------|------------|
-| V(φ) = λ(|φ|² − v²/2)² | [IMPOSED] | [THEOREM] (from BI + feedback) |
-| v = 246 GeV | [IMPOSED] | [THEOREM] (M_P√(2π)α⁸) |
-| m_H = 125 GeV | [IMPOSED] | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0017; v√(6/23) = 125.69 GeV) |
-| λ = 0.129 | [IMPOSED] | [THEOREM] (3/23 from ternary decomposition) |
+| V(φ) = λ(|φ|² − v²/2)² | [IMPOSED] | [THEOREM] (BI expansion, HIGGS-2) + [SELECTION] (feedback → Mexican hat, HIGGS-3) |
+| v = 246 GeV | [IMPOSED] | [SELECTION] (M_P√(2π)α⁸, HIGGS-4) |
+| m_H = 125 GeV | [IMPOSED] | [STRUCTURALLY MOTIVATED PARAMETRIC] (HIGGS-5; v√(6/23) = 125.69 GeV tree) |
+| λ = 0.129 | [IMPOSED] | [SELECTION] chain (HIGGS-8/15) with the identity λ = N_C/(N_C³−N_BASE) [THEOREM] (HIGGS-16) |
 | Hierarchy resolution | [OPEN] | [SELECTION] (lattice cutoff) |
 | Goldstone mechanism | [THEOREM] | [THEOREM] (lattice mode counting) |
 
@@ -539,7 +539,7 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 | HIGGS-2 | BI expansion gives parabolic + quartic | **[THEOREM]** | V_BI = ρ₀²/(2K_B) + ρ₀⁴/(8K_B³) + ... |
 | HIGGS-3 | Manifestation feedback → Mexican hat | **[SELECTION]** | μ²_eff = (1 − 2g_c²⟨s²⟩)/K_B < 0 when feedback strong |
 | HIGGS-4 | VEV: v = M_P√(2π)α⁸ = 246.08 GeV | **[SELECTION]** | 0.05% vs PDG 246.22 GeV |
-| HIGGS-5 | m_H = v√(6/23) = 125.69 GeV | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | 0.47% vs PDG 125.25 GeV |
+| HIGGS-5 | m_H = v√(6/23) = 125.69 GeV | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | tree: +4.44σ vs PDG 2024 (125.20 ± 0.11); with the applied-not-derived (1−α) factor: 125.23 GeV = +0.27σ (FTD-0268) |
 | HIGGS-6 | Goldstone counting: 3 + 1 = 4 | **[THEOREM]** | 3 transverse + 1 radial = dim(SU(2)×U(1)) |
 | HIGGS-7 | Hierarchy resolved by lattice UV cutoff | **[SELECTION]** | v/M_P = √(2π)α⁸ derived, not tuned |
 | HIGGS-8 | λ = 3/23 from ternary decomposition | **[SELECTION]** | 1.05% vs SM ~0.129 |
@@ -579,7 +579,7 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 
 | ID | Question | Status |
 |----|----------|--------|
-| HIGGS-OPEN-1 | ~~Source of the 0.47% Higgs mass discrepancy~~ | **[RESOLVED]** — The Higgs field is an excitation of the flux density, inheriting the 1-loop flux dissipation factor $\lambda_{loop} = \lambda_{tree}(1-\alpha)$. This shifts the mass to 125.23 GeV (0.01% error). |
+| HIGGS-OPEN-1 | ~~Source of the 0.47% Higgs mass discrepancy~~ | **[RESOLVED at [SELECTION] level]** — The Higgs field is an excitation of the flux density; applying the flux dissipation factor $\lambda_{loop} = \lambda_{tree}(1-\alpha)$ — **applied, not derived** (FTD-0268) — shifts the mass to 125.23 GeV (+0.27σ vs PDG 2024). A derivation of the factor from the substrate would be required to upgrade this. |
 | HIGGS-OPEN-2 | Higgs trilinear coupling λ_HHH from FTD | Predicted: 3m²_H/v = 192.8 GeV (testable at HL-LHC) |
 | HIGGS-OPEN-3 | ~~Is the EW phase transition crossover or first-order in FTD?~~ | **[RESOLVED]** — First-order. Demonstrated computationally that genesis/evaporation thresholds ($3K_B$ vs $K_B$) create a massive hysteresis loop. |
 | HIGGS-OPEN-4 | ~~Connection between BI maximum field strength and pair creation?~~ | **[RESOLVED]** — Pair production probability $p = 1 - \exp(-(|J| - 3K_B)/K_B)$ acts as a kinetic UV cutoff, enforcing the BI limit $\rho_0 \le K_B$ probabilistically without continuum singularities. |

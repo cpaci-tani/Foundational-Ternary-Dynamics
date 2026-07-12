@@ -603,7 +603,7 @@ These two selections are the ONLY gaps between "$i$ exists" and the full FTD pre
 | $m_\mu/m_e = 3 B_3(B_3 + N_c) - N_c = 207$ | Integer formula in framework constants | [IMPOSED] (0.11% match to experiment, parametric insertion) |
 | $m_\tau/m_e = 3477$ | Extended integer formula | [IMPOSED] (0.006% match, parametric insertion) |
 | $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11}$ | $m_P$ = UV scale, prefactor from $G^*$ chain, exponent from ladder | [SELECTION given S2] (0.19%) |
-| $m_H = (N_{\rm eff}/\alpha^2) \, m_e$ | Higgs VEV relation | Structural identity (0.24%) |
+| $m_H = (N_{\rm eff}/\alpha^2) \, m_e$ | Higgs mass relation | [STRUCTURALLY MOTIVATED PARAMETRIC] (−0.36% = −4.1σ vs PDG 2024; excluded as an exact relation at current precision, FTD-0348) |
 | $m_p/m_e = N_{\rm eff}/\alpha + N_{\rm base} N_{\rm eff} + N_c = 1836.47$ | 174 ppm gap | [SELECTION], 174 ppm [OPEN] |
 
 #### 7.2.4 Geometric consequences (forced at $D = 3$)
@@ -749,7 +749,7 @@ Here is what the chain provides:
 **At the match-to-data level:**
 - $\alpha^{-1}$ to 9.6 ppb via the blind chain at tree level
 - Lepton ratios to 0.006–0.19% via exact integer formulas
-- $m_H$ to 0.24% via structural identity
+- $m_H$ to −0.36% (= −4.1σ vs PDG 2024 — excluded as an exact relation at current precision, FTD-0348) via the [STRUCTURALLY MOTIVATED PARAMETRIC] relation
 - $m_p/m_e$ to 174 ppm (gap [OPEN])
 - Quark masses [OPEN] (phenomenal, scheme-dependent)
 
