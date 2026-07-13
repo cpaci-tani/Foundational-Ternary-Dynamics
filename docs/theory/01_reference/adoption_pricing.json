@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "id": "FTD-0387",
+    "title": "Adoption Pricing Rules (Unification Annex Stage U0)",
+    "tag": "[SCOPE / METHODOLOGY -- DRAFT awaiting owner ratification at D5/D6/D7]",
+    "date": "2026-07-13",
+    "renderer": "docs/theory/01_reference/SPEC_ADOPTION_PRICING_RULES.md",
+    "verifier": "scripts/proofs/proof_adoption_pricing.py",
+    "charter": "SCOPE_CONSUMPTION_PROGRAM.md Sec 5.5 (the Unification Annex), Stage U0",
+    "status": "DRAFT -- ratifies nothing, adopts nothing, promotes no claim; binds only when the owner books D5/D6/D7 in the LEDGER",
+    "purpose": "Proposes the rules by which a candidate axiom is priced (D5 currency), judged (D6 compression predicate), and calibrated against the one existing adoption (D7 FC-W calibration). Adds a decision rule over the prices in import_ledger.json (FTD-0371) and revises none of them."
+  },
+  "D5_currency": {
+    "reporting": "stratified vector across the five currencies; NO headline scalar (preserves the FTD-0371 reading guard: the 1 adopted bit is never the total physics import)",
+    "predicate_scalar_note": "a conservative bit-equivalent used INSIDE the D6 predicate only, never exported as a headline cost",
+    "bit_equivalents": [
+      {"currency": "adopted-bit", "cost": "1 bit", "basis": "definitional -- a binary structural choice"},
+      {"currency": "selected-type", "cost": "log2(|alternatives|); 1 bit if binary; flagged-unknown if the alternative set is open", "basis": "a selection among N discrete options carries log2 N bits"},
+      {"currency": "named-result-proven", "cost": "0 bits (dependency)", "basis": "a proven external theorem is a fact, not a choice; it constrains but does not cost"},
+      {"currency": "named-result-open", "cost": "0 bits (risk)", "basis": "an open result is a conditionality the yield inherits, tracked on the risk side not the cost side"},
+      {"currency": "calibration", "cost": "EXCLUDED (irreducible floor)", "basis": "A2 grade-0 closure (FTD-0368; FOUND_DIMENSIONAL_GRADE_CLOSURE.md) shows at least one dimensional anchor is irreducible; a forced floor is not weighed against yield"},
+      {"currency": "empirical-identification", "cost": "not a cost -- counted on the yield side", "basis": "a bridge is content the axiom licenses, measured in D6"}
+    ],
+    "predicate_weighs": "structural adoption cost only: adopted-bits + selected-types (bit-equivalents) + any adopted dynamics posit at its declared bit-equivalent",
+    "revision_trigger": "a candidate whose selected-type has an open (non-enumerable) alternative set cannot be priced until the set is bounded; routes back to the owner"
+  },
+  "D6_predicate": {
+    "statement": "adopt A only if y(A) > c(A): the licensed structural content, in distinct weighted gap-classes, strictly exceeds the adoption cost in bit-equivalents. y = c is a MARGINAL outcome, admissible only when the single gap-class is high-value (independently checkable, free of tunable parameters), and is flagged marginal.",
+    "index_caveat": "y - c and the ordering index y/c are DECISION HEURISTICS, not information-theoretic measures: cost is in bit-equivalents and yield in weighted distinct gap-classes, so the two sides are incommensurable and the index carries no compression-theoretic meaning beyond ranking. It operationalizes the charter's 'explain more than its own degrees of freedom' as a declared rule whose parameters the owner ratifies.",
+    "cost_def": "c(A) = structural adoption cost in D5 bit-equivalents, excluding the calibration floor and external dependencies",
+    "yield_def": "y(A) = content A licenses that was not licensed before, counted in DISTINCT GAP-CLASSES (not raw rows), weighted by structural strength",
+    "yield_weights": [
+      {"kind": "[CONDITIONAL THEOREM] / [DERIVED] / retired [OPEN]->[THEOREM] wall", "weight": 1.0, "per": "distinct gap-class"},
+      {"kind": "[MEASURED] engine signature at a stated protocol", "weight": 0.5, "per": "distinct gap-class"},
+      {"kind": "[PARAMETRIC] match", "weight": 0.0, "per": "-- borrowed form, F10 caution; recorded as consequence, contributes nothing to yield"}
+    ],
+    "weight_note": "unit weight credits the conditional content the axiom licenses GIVEN ITSELF (the quantity the compression accounting measures), not substrate-level theorems; it does not assert a [CONDITIONAL THEOREM given a new axiom] has the standing of a substrate [THEOREM]",
+    "anti_gaming": "the gap-class unit: rows sharing one mechanism count as ONE gap-class (matches the program metric 'rows counted only with distinct gap-classes named')",
+    "guards": [
+      "a candidate whose entire yield is parametric fails by construction (y = 0) -- blocks adopting an axiom that relabels fitted numbers as content",
+      "yield counts only content INDEPENDENT of the candidate's own free parameters -- a candidate cannot pay for itself by licensing restatements of its own posit"
+    ]
+  },
+  "D7_fcw_calibration": {
+    "candidate": "FC-W (the adopted alpha-binding law; the delta branch / Z-2 twist)",
+    "not_an_adjudication": "the retro-test does NOT adjudicate FC-W: an owner-declared [AXIOM] is not subject to disqualification by these rules, and because the marginal clause is defined to fit the FC-W point, this is calibration by construction, not independent validation; its purpose is to anchor the floor to a real datum",
+    "cost_bits": 1,
+    "cost_basis": "one adopted-bit -- a binary Z/2 orientation the substrate cannot force; the minimal possible structural cost",
+    "yield_gapclasses": 1,
+    "yield_weight": 1.0,
+    "yield_basis": "one high-value gap-class in the EM-coupling sector. Two statements stand separately: given W, x+ = 1/alpha as [CONDITIONAL THEOREM given W] (constitution Sec 3.5); the PHYSICAL identification of x+ with the measured fine-structure constant stays [SMC] (FTD-0013, FTD-0386 U-4). High-value because it is the framework's single scan-rigid identification (FTD-0319, a tolerance-conditioned [NUMERICAL FACT], NOT a structural/Bayes result); the constitution records W does no work beyond the alpha-root",
+    "verdict": "MARGINAL point (y = c = 1); the rule takes this as its floor",
+    "consistency": "consistent with -- not a restatement or revision of -- FC-W's standing of record (constitution Sec 3.5: declared-but-conditional, full commitment gated on the [OPEN] condition that W's carrier force independent structural content); the open condition is exactly what would raise y above one gap-class; no tag moves",
+    "calibration_role": "FC-W fixes the scale: 1 bit buying 1 high-value scan-rigid gap-class is the weakest adoption on record; a candidate costing > 1 bit must license proportionally more distinct gap-classes to reach the same point"
+  },
+  "illustrative_ranking": {
+    "status": "NON-BINDING, NOT owner-ratified; estimates only; each stated yield is itself conditional on proofs not yet built; no candidate has its narrowing theorem or independence proof; authorizes no purchase. Costs price the headline posit as one structural choice (1 bit-equivalent) except the UV distribution, whose many degrees of freedom are counted explicitly. Outcome is against the FC-W floor (index y/c: > 1 pass, = 1 marginal, < 1 fail).",
+    "floor_ratio": 1.0,
+    "candidates": [
+      {"id": "P6C-C", "name": "compact SU(3) link variables", "cost_est_bits": 1, "yield_est_gapclasses": 1, "yield_value": "confinement and the QCD scaffold (one mechanism -- compact SU(3) gauge dynamics -- so one gap-class under the anti-gaming rule)", "ratio": 1.0, "verdict": "marginal", "rank": 1, "note": "the SU(3) slot is already in the register; only compactness is new; confinement and the spectrum follow from the single posited mechanism"},
+      {"id": "P6C-G", "name": "spin-2 posit", "cost_est_bits": 1, "yield_est_gapclasses": 1, "yield_value": "the gravity sector -- full nonlinear EFE via the Deser bootstrap (itself conditional on Conjecture 10.1, FTD-0189 step-0)", "ratio": 1.0, "verdict": "marginal", "rank": 2, "note": "one posit buys an entire interaction, yet scores as ONE gap-class -- the same count as FC-W's single identification; reads as marginal ONLY because the distinct-gap-class metric does not reward sector breadth (see yield_individuation_question)"},
+      {"id": "P6C-M", "name": "Z/3 sharpness action", "cost_est_bits": 1, "yield_est_gapclasses": 1, "yield_value": "Born-sharpness (the QM-statistics gap-class)", "ratio": 1.0, "verdict": "marginal", "rank": 3, "note": "the minimal QM purchase; barred from expanding to wholesale M (AM-5)"},
+      {"id": "P6C-U", "name": "UV / initial-condition distribution", "cost_est_bits": 8, "yield_est_gapclasses": 1, "yield_value": "the cosmology apparatus, heavily conditional", "ratio": 0.125, "verdict": "fail", "rank": 4, "note": "an initial-condition distribution is many degrees of freedom for one soft, heavily conditional gap-class; the weakest compressor"},
+      {"id": "P6C-F", "name": "matter axiom", "cost_est_bits": 1, "yield_est_gapclasses": 0, "yield_value": "consolidates already-priced imports (IMP-S4, IMP-E1 o IMP-E3) into one declared type; no NEW independent content", "ratio": 0.0, "verdict": "fail", "rank": 5, "note": "the tied-cheapest candidate, yet fails: under the independence guard, repackaging already-priced content yields zero new structural content; consolidation may be desirable for bookkeeping but does not pay for itself as yield"}
+    ],
+    "yield_individuation_question": "The central D6 design question this calibration surfaces: under the conservative default (one posit = one gap-class, no scope weight), every single-posit candidate lands at the marginal point (P6C-C/G/M all y/c = 1), so the predicate separates the two failures but does not rank the three viable candidates. Making it discriminate requires one or both of two declared rulings, neither settleable by the metric: (i) YIELD INDIVIDUATION -- whether distinct phenomena from a single mechanism (P6C-C's confinement vs spectrum) may count as separate gap-classes; (ii) SECTOR SCOPE -- whether breadth of a single sector (P6C-G's whole-gravity yield) counts toward yield, at the cost of a scope weight's own gaming risk. Left unweighted, the predicate rewards multiplicity of distinct mechanisms over breadth of any one, and reports the three viable candidates as a tie.",
+    "discrimination_note": "two honest, counterintuitive outputs: the most-physics candidate (P6C-U) is weakest because a distribution is expensive, and the tied-cheapest candidate (P6C-F) fails because consolidating priced content yields nothing new. Neither is visible from cost or scope alone."
+  },
+  "ratification_gate": "these rules take effect only when the owner books D5 (currency), D6 (predicate, incl. the yield-individuation and sector-scope rulings), D7 (acceptance of the FC-W calibration) in the LEDGER; until then [DRAFT awaiting ratification] and no Stage-U2 candidate is priced under them",
+  "standing_invariants": "x+ = 1/alpha stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FC-W stays [AXIOM] (calibration confirms, does not move); D=3 stays [SELECTION -- declared]; no tag moves; this document prices the process of adoption and introduces no claim"
+}
