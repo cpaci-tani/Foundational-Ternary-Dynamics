@@ -6,7 +6,7 @@
 
 ---
 
-## 0 · What this is, and the one reading that would abuse it
+## 0 · Scope and reading guard
 
 The goal has three faces (amended 2026-07-12, FTD-0383): **derive** (build content forward from the types the ontology sets), **mark and price the boundary** (name the types it cannot set and must import — and count each in a common currency with its falsifier), and **drive** (treat every priced line as a standing work item: run its falsifier, attack its retirement path under a fresh lock, prove its no-go, or convert it via a declared minimal adoption). The second face is a deliverable only if it is *auditable* — so this ledger enumerates every import in a common currency, tags each at its canonical LEDGER status, and attaches a falsifier to each. It is the dual of `CATALOG_PARAMETRIC_INSERTIONS.md`: that catalogs one currency (parametric insertions); this rolls up **all** of them and adds the self-set credits and the declined bets.
 
