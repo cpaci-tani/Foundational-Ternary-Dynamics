@@ -1,0 +1,322 @@
+{
+ "preregister-act-reduction-test-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-adversarial-look-elsewhere-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-d3-forced-escape-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-det-forcing-v2": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-readout-bcc-bridge-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-readout-det-identity-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-readout-determinant-grading-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-readout-odd-period-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-alpha-readout-quantization-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-arrow-direction-test-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-born-equilibrium-preservation-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-chowla-selberg-higher-h-scan-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-clock-hypothesis-derivation-v2": {
+  "status": "historical-superseded",
+  "note": "superseded by v3 [CLOSED NEGATIVE, AXIOM-LEVEL]; docs archived/retracted",
+  "date": "2026-07-12"
+ },
+ "preregister-cluster-A-vN": {
+  "status": "historical-superseded",
+  "note": "template placeholder string in archived protocol doc; not a tag",
+  "date": "2026-07-12"
+ },
+ "preregister-color-confinement-v1": {
+  "status": "retracted",
+  "note": "FTD-0217 verdict RETRACTED (owner ruling 2026-07-12): tag never cut, no LEDGER row, contradicts confinement obstruction of record; correction banner on FOUND doc",
+  "date": "2026-07-12"
+ },
+ "preregister-commutativity-derivation-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-commutativity-independence-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-damerell-scan-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-de-broglie-clock-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_DE_BROGLIE_CLOCK_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-domain-a-v1": {
+  "status": "historical-superseded",
+  "note": "archived campaign-complete protocol mention (G* asymmetry scan family)",
+  "date": "2026-07-12"
+ },
+ "preregister-drain-scaling-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/02_foundations/FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-ftd0110-convention-audit-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_FTD0110_CONVENTION_AUDIT_v1.md; docs/theory/03_derivations/foundational_mechanics/PREREG_FTD0110_CONVENTION_AUDIT_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-ftd0110-nonlinear-bridge-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-genesis-cokernel-grading-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/02_foundations/ANALYSIS_GENESIS_COKERNEL_GRADING_v1.md; docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-genesis-criticality-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/ANALYSIS_GENESIS_CRITICALITY_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-gnc-qij-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_GNC_QIJ_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-graviton-substrate-mode-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-graviton-substrate-mode-v2": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/AUDIT_LEDGER_ID_COLLISIONS.md; docs/theory/10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-heegner-tower-rigidity-v1": {
+  "status": "historical-superseded",
+  "note": "archived campaign-complete (AUDIT_HEEGNER_TOWER_RIGIDITY executed, FTD-0124)",
+  "date": "2026-07-12"
+ },
+ "preregister-helium-lattice-scf-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_HELIUM_LATTICE_SCF_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-helium-lattice-spectrum-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-hydrogen-lattice-spectrum-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_HYDROGEN_LATTICE_SPECTRUM_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-lemniscate-alpha-rigidity-v1": {
+  "status": "historical-superseded",
+  "note": "archived campaign-complete",
+  "date": "2026-07-12"
+ },
+ "preregister-manifestation-noncommutativity-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-mct43-native-z2-permanence-test-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-modular-time-algebra-type-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-na-law-current-stack-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_NA_LAW_CURRENT_STACK_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-noether-cut-classification-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-phase-i-native-coupling-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/02_foundations/FOUND_STRUCTURAL_DECOUPLING.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-phase-ii-wilson-dirac-g2-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/02_foundations/FOUND_STRUCTURAL_DECOUPLING.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-polynomial-scan-extended-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-qdyn-mass-gap-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md; docs/theory/03_derivations/foundational_mechanics/ANALYSIS_QDYN_MASS_GAP_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-qdyn-mass-gap-v2": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_QDYN_MASS_GAP_v2.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-quantization-lattice-modes-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_QUANTIZATION_LATTICE_MODES_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-readout-structure-independence-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-rigidity-catalog-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/audits/AUDIT_RIGIDITY_CATALOG_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-s-eff-nonlinear-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-s-eff-nonlinear-v2": {
+  "status": "historical-superseded",
+  "note": "archived campaign-complete protocol design; superseded by SPEC_DISCRETE_NATIVE pivot",
+  "date": "2026-07-12"
+ },
+ "preregister-scale0-substrate-protocol-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/audits/AUDIT_SCALE0_SUBSTRATE_RESULTS.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-scale0-substrate-protocol-v2": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/audits/AUDIT_SCALE0_SUBSTRATE_RESULTS.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-sm-act-count-test-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-sm-mass-ident-current-stack-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_SM_MASS_IDENT_CURRENT_STACK_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-spekkens-knowledge-balance-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-stochastic-effective-action-v1": {
+  "status": "retracted",
+  "note": "FTD-0218 verdict RETRACTED (owner ruling 2026-07-12): tag never cut, no LEDGER row; correction banner on FOUND doc",
+  "date": "2026-07-12"
+ },
+ "preregister-subknee-block-hypothesis-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/foundational_mechanics/ANALYSIS_SUBKNEE_BLOCK_HYPOTHESIS_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-sym-k-c-invariant-parity-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-symplectic-budget-symmetry-v1": {
+  "status": "anchored-late",
+  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
+  "date": "2026-07-12"
+ },
+ "preregister-ternary-matrix-bcc-snap-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-thermal-phase-map-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/ANALYSIS_THERMAL_PHASE_MAP_v1.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-thermostat-off-sweep-v1": {
+  "status": "arc2-disposition-pending",
+  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
+  "date": "2026-07-12"
+ },
+ "preregister-threshold-crossing-born-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-tower-level-scan-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; verdict doc(s): docs/theory/03_derivations/quantum_mechanics/MEASUREMENT_TOWER_LEVEL_SCAN.md; manifest row owed via census addendum",
+  "date": "2026-07-12"
+ },
+ "preregister-tower-level-scan-vN": {
+  "status": "arc2-disposition-pending",
+  "note": "cited but no tag and no adjudication located mechanically; Arc-2 adjudication",
+  "date": "2026-07-12"
+ },
+ "preregister-vacuum-energy-arealaw-v1": {
+  "status": "historical-superseded",
+  "note": "prose mention of a never-registered candidate in SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY; no prereg doc exists",
+  "date": "2026-07-12"
+ }
+}
