@@ -715,8 +715,8 @@ These define the model's fundamental scales:
 
 | Parameter | Value | Dimensions | Role | Status |
 |-----------|-------|------------|------|--------|
-| C | 1.0 | [L]/[T] | Maximum propagation speed |  Axiomatic |
-| H | 1.0 | [L] | Planck-scale unit (lattice spacing) |  Axiomatic |
+| C | 1.0 | [L]/[T] | The **causal bound** (L∞/Moore: one site per axis per tick) — NOT the light speed; emergent light propagates at the CFL wave speed 1/√3 voxel/tick ([THEOREM]; see FOUND_PLANCK_CALIBRATION_SEMANTICS.md) |  Axiomatic (P1/P4 geometry) |
+| H | 1.0 | [L] | Lattice spacing (the **edge**) — calibrated `a_phys ≡ ℓ_P` (IMP-K1; [DERIVED ~0.19%] under electron-primary). One tick = t_P/√3, so that c·t_P = ℓ_P holds exactly (FTD-0385 naming theorem) |  Axiomatic unit; Planck naming per calibration register |
 | KB | 0.511 | dimensionless | Manifestation threshold | **[IMPOSED — calibration]** (K_B ≡ m_e anchor, IMP-K3/FTD-0130 role-conflation flagged; the m_e ladder itself is [SMC] FTD-0015) |
 
 ## 7.3 Coupling Parameters
