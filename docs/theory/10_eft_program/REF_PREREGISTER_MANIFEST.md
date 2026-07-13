@@ -568,6 +568,12 @@ git checkout main
 
 ---
 
+## Consumption Program governance lock (Arc-6 review; locked 2026-07-12)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| (governance — under FTD-0383/0384) program review at Arc-6 close | `preregister-program-review-arc6-v1` | `5ec5e992` | n/a (desk review; executor = owner + six-chair AI panel) | frozen outcome map RE-SCOPE / ARCHIVE-AS-MAPPED-BOUNDARY / CONTINUE(re-chartered); window = Arc-6 close or 6 months, whichever first; unexecuted-past-window blocks all lock-cutting | n/a | [`PREREG_PROGRAM_REVIEW_ARC6_v1.md`](preregistrations/PREREG_PROGRAM_REVIEW_ARC6_v1.md) (SHA256 `af6ad402095feeb0ab4cc37f9e25a6f22fb8c1e41876f8dd40d9f0e9959a00c7`) |
+
 ## Census addendum — closure over the tag namespace (2026-07-12, FTD-0384)
 
 This manifest's per-campaign tables above are **not exhaustive** over the `preregister-*` git-tag
