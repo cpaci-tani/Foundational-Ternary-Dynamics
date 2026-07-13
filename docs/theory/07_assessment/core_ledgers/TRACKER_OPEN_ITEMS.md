@@ -600,6 +600,10 @@ Snapshot (2026-07-12, regenerated; the archive/ exclusion added to the command t
 
 ---
 
+## §9.5 Effective-toggle audit (Program-F) — ✅ EXECUTED 2026-07-12; 4 smoke-run follow-ups [OPEN]
+
+**Doc:** `docs/theory/07_assessment/AUDIT_EFFECTIVE_TOGGLES_2026-07.md` (Arc 1 "Honest Mint"). Verdict: the M1/M2/FTD-0085..0089 campaigns ran on the **GPU backend**, where the three §1.4-flagged phases were **not inert** (weak_transmutation degraded-but-active; exchange_force/triad_binding fully active) — the F2 "no-op" finding is CPU-only. **FTD-0088's 12/12 [MEASURED] survives unchanged** (flux-only kinematic observable; anomaly common-mode/symmetric). Corrections documentary only ("full non-local" relabel; one stale CPU comment). Residue [OPEN]: smoke runs **SR-1..SR-4** (SR-2 decisive; none required to accept the verdict) + the V-1 finding that `requires_` validation edges are intent-level, not data-level (future lock hazard). Every future "matched protocol" lock uses the audit's §5 matched-EFFECTIVE-protocol template (LOCK-STD point 4).
+
 ## §10 Dissemination + residual-claim sweeps — queued arcs (not counted open here)
 
 Queued 2026-07-12 (deferred from the finishing arc by owner decision — `dissemination/` deliberately untouched that arc). Each is one coherent future arc; **do not patch piecemeal.**
