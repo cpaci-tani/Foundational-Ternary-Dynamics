@@ -129,7 +129,7 @@ The master quadratic self-consistency equation x/K + G*/x = 1 is **verified on t
 | Domain | File | Pass Rate | Key Result |
 |--------|------|-----------|------------|
 | Wilson Loops | benchmark_wilson_loops.cpp (DELETED 2026-05-03, e8eb8e82) | 12/17 (historical) | Flux tube detected, area law sigma > 0 — confinement of record: LEDGER FTD-0025 |
-| Gluon Dynamics | campaign_gluon_dynamics.cpp | 7/11 | Linear E(r), E/r constant |
+| Gluon Dynamics | campaign_gluon_dynamics.cpp (consolidated into campaign_qcd_forces.cpp, d1e4a056; DELETED 2026-05-03, e8eb8e82) | 7/11 (historical) | Linear E(r), E/r constant — strong-sector of record: LEDGER FTD-0020 (α_s [STRUCTURALLY MOTIVATED PARAMETRIC]) + FTD-0025 |
 | Einstein Eqns | test_einstein_equations.cpp | ~10/25 | **Superposition to 0.08%** |
 | BH Thermo | benchmark_black_hole_thermo.cpp | ~5/15 | Entropy area-law hint, Smarr exact |
 

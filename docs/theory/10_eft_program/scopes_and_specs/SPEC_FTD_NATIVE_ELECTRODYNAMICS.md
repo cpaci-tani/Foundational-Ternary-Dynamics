@@ -671,8 +671,8 @@ engine/tests/test_native_moore_temporal_layers.cpp
 ```
 
 checks the current G18 engine directly and treats the older broad
-`test_intervoxel_coupling.cpp` as a legacy diagnostic rather than the native
-status test. The native audit asserts only:
+`test_intervoxel_coupling.cpp` (since DELETED 2026-05-03, `e8eb8e82`) as a
+legacy diagnostic rather than the native status test. The native audit asserts only:
 
 ```text
 SC flux > FCC flux > BCC flux > 0
