@@ -570,7 +570,7 @@ The bridge is now ready for mixed-history and nonlinear-flow measurements.
 
 # Part IV — Blocked Nonlinear Effective Action ($S_{\text{eff}}$) & Onsager-Machlup Flow
 
-*Source: `FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md`. Ledger row: FTD-0218. Maps the 5D stochastic history action under Parisi-Wu stochastic quantization to the 4D physical effective action $S_{\text{eff}}$ in the stationary limit $\tau \to \infty$ and its multi-scale blocking flow.*
+*Source: `FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md` — **RETRACTED 2026-07-12** (its lock tag never existed and no FTD-0218 LEDGER row was ever minted; census audit §2, FTD-0384). The Parisi–Wu 5D→4D mapping summarized in this Part is imported stochastic-quantization machinery preserved as provenance only; do not cite it as an FTD result. Any future stochastic-effective-action claim requires a fresh LOCK-STD pre-registration.*
 
 ## IV.1 The 5D Onsager-Machlup Blocked Action
 

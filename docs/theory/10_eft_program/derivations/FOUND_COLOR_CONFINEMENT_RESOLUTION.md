@@ -1,6 +1,20 @@
 # Foundational Resolution — Color Confinement Substrate Derivation (MC-T5.1)
 
-**Tag:** [THEOREM] (for the true non-Abelian $SU(3)$ character expansion and strong-coupling area-law), [SELECTION] / [CONJECTURE] (for the effective $U(1)$ Abelian projection analogy)  
+> ⚠ **RETRACTED (2026-07-12, owner ruling of record — Arc 1 "Honest Mint", FTD-0384; method: FTD-0042 retraction precedent, banner + preserved kernel).**
+> This document's verdicts are **withdrawn**. Grounds: (i) the pre-registration it claims to execute
+> (`PREREG_COLOR_CONFINEMENT_v1.md`) declared hash-lock tag `preregister-color-confinement-v1`, which
+> **was never created** — no lock existed at execution time and no content SHA was recorded, so the
+> "locked protocol" framing is void (see `07_assessment/AUDIT_PREREGISTER_CENSUS_2026-07.md` §2);
+> (ii) the provisional id FTD-0217 was never minted as a LEDGER row (reassigned per FTD-0232), so the
+> verdict was never in canon; (iii) the headline claim — a native substrate derivation of confinement —
+> **contradicts the confinement structural obstruction of record** (FTD-0025; all three classical
+> substrate routes CLOSED NEGATIVE; `SPEC_OPEN_MATH_BY_SECTOR.md` §4). The strong-coupling character-
+> expansion mathematics below is standard imported lattice-QCD machinery and is preserved as provenance;
+> **no sentence of this document may be cited as an FTD result.** The confinement question remains at its
+> canonical status: [OPEN STRUCTURAL OBSTRUCTION], expected priced-no-go territory (Consumption Program
+> Front D P5, `SCOPE_CONSUMPTION_PROGRAM.md` §4 — this retraction is named prior art there).
+
+**Tag:** ~~[THEOREM] (for the true non-Abelian $SU(3)$ character expansion and strong-coupling area-law), [SELECTION] / [CONJECTURE] (for the effective $U(1)$ Abelian projection analogy)~~ **[RETRACTED — see banner]**  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
 **Pre-Registration:** [`docs/theory/10_eft_program/PREREG_COLOR_CONFINEMENT_v1.md`](../preregistrations/PREREG_COLOR_CONFINEMENT_v1.md) (FTD-0217)  
 **Companion Documents:** [`docs/theory/03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md`](../03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md).

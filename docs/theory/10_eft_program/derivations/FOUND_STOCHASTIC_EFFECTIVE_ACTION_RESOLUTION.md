@@ -1,6 +1,17 @@
 # Foundational Resolution — Stochastic Effective Action under Langevin Flow (MC-T2.1)
 
-**Tag:** [THEOREM] (for MSRDJ path integral and Parisi-Wu 4D stationary limit), [SELECTION] (for 5D stochastic time and vector potential extension)  
+> ⚠ **RETRACTED (2026-07-12, owner ruling of record — Arc 1 "Honest Mint", FTD-0384; method: FTD-0042 retraction precedent, banner + preserved kernel).**
+> This document's verdicts are **withdrawn**. Grounds: (i) the pre-registration it claims to execute
+> (`PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md`) declared hash-lock tag
+> `preregister-stochastic-effective-action-v1`, which **was never created** — no lock existed at
+> execution time and no content SHA was recorded, so the "locked protocol" framing is void
+> (see `07_assessment/AUDIT_PREREGISTER_CENSUS_2026-07.md` §2); (ii) the provisional id FTD-0218 was
+> never minted as a LEDGER row (reassigned per FTD-0232), so the verdict was never in canon. The MSRDJ /
+> Parisi–Wu material below is standard imported stochastic-quantization machinery and is preserved as
+> provenance; **no sentence of this document may be cited as an FTD result.** Any future stochastic-
+> effective-action claim requires a fresh LOCK-STD pre-registration.
+
+**Tag:** ~~[THEOREM] (for MSRDJ path integral and Parisi-Wu 4D stationary limit), [SELECTION] (for 5D stochastic time and vector potential extension)~~ **[RETRACTED — see banner]**  
 **Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
 **Pre-Registration:** [`docs/theory/10_eft_program/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md`](../preregistrations/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) (FTD-0218)  
 **Companion Documents:** [`docs/theory/10_eft_program/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`](DERIV_FTD_NATIVE_NONLINEAR_FLOW.md).
