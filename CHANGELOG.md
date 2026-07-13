@@ -1,5 +1,47 @@
 # Foundational Ternary Dynamics Changelog
 
+## The Consumption Program: goal amended to "mark, price, and drive"; four fronts chartered (FTD-0383, 2026-07-12)
+
+The owner directed an extension of the project's goals toward a proper theory of
+everything — "consume all of physics in FTD through logic and semantics." A
+21-agent adversarial audit (committed as
+`docs/theory/07_assessment/AUDIT_CONSUMPTION_EXPANSION_2026-07-12.md`)
+established the honest maximal form, and the Number-One Goal was amended
+(owner decision of record; propagated to all 7 goal-statement sites):
+
+- **The drive face added:** every priced import line is a standing work item —
+  its falsifier gets *run*, its retirement path *attacked* under a fresh lock,
+  or its unreachability *proven* at the tag the proof earns; where retirement
+  provably fails, a deliberate ontology-extension search may adopt the next
+  honest type at a minimal, falsifiable, priced cost. An adoption is never a
+  derivation. **Consumption is a direction, not an achievability claim** — the
+  strong "zero-import" reading is unestablished either way (FTD-0339 is an
+  adopted commitment, not an impossibility theorem).
+- **FTD-0383 [SCOPE / PROGRAM CHARTER]** `SCOPE_CONSUMPTION_PROGRAM.md`: Front A
+  retirement campaign (fire at every priced line, ranked); Front B **P6C-\***
+  ontology-extension search (FC-W pipeline; Lemma-0's two doors; FC-1/FC-2
+  routed here — bets stand unless a candidate earns reversal); Front C
+  forcing-proof + semantics ([SELECTION]→[THEOREM] attempts; MFO-1..4); Front D
+  sector-consumption of the ~131 [PARAMETRIC] rows (native functional form,
+  priced no-go, or sharpened falsifier — either direction counts).
+- **δ-IND v2 nonlinear pre-registration AUTHORIZED** (first scheduled
+  deliverable D-1) — the audit's most consequential unattempted inside-ontology
+  surface (the frozen closure is linear-sector only; a Turing-completeness-style
+  embedding is not excluded).
+- Audit headlines: the owner's "half of everything" steelman is quantitatively
+  an *understatement* (~81% of cataloged SM rows [PARAMETRIC]; by functional-form
+  mechanism ~100%); wall grades restated at tags of record (FTD-0242 [SMC no-go],
+  FTD-0244 ℭ-relative, δ∉N conditional on Chudnovsky + open E\*/E1/E2); an
+  11-finding redteam of the amendment itself was resolved same-day (1 HIGH:
+  the FTD-0248 disambiguation banner initially placed on the wrong doc).
+- Same day, earlier: **the Finishing Program arc** (13 commits) — capstone
+  `SPEC_FTD_COMPLETE_FRAMEWORK.md` v2 (FTD-0311) with the consolidated
+  falsifier table; import ledger v1.1 (IMP-S4 minted, 15 imports); **FTD-0143
+  executed [CLOSED NEGATIVE — uniqueness rejected]** (2401/2401 quadruples match
+  α⁻¹ at 1e−5; the FQCR Model-IV ansatz is quadruple-insensitive at t=1);
+  MC-T4.1 closed; Higgs two-route reconciliation propagated; tracker debt
+  cleared. Zero promotions throughout. Next free id FTD-0384.
+
 ## What is an orientation carrier? The bilateral-symmetry criterion (FTD-0382, 2026-07-12)
 
 Answers "what is an orientation carrier" from an empirical anchor — everything

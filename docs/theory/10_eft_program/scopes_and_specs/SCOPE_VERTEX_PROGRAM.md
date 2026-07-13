@@ -9,7 +9,7 @@
 
 ## 0 · Number-One-Goal position
 
-Under the operational test (set a type / build content forward / mark and price a boundary), this charter does the first and third:
+Under the operational test (set a type / build content forward / mark and price a boundary / drive a priced line — the fourth verb added by the 2026-07-12 goal amendment, FTD-0383), this charter does the first and third, and its IMP-S4 line is now Front-A row 1 of the drive face (`01_reference/SCOPE_CONSUMPTION_PROGRAM.md`):
 
 - **It sets a type:** the matter-sector vertex coupling, imposed as a declared, motivated calibration (§2; on the liveness of its falsifiers, see the §2 note).
 - **It marks a boundary:** fermion content is treated as an argument-half import. The Branch-A hypothesis — fermionic structure generated dynamically by the substrate — is closed negative at **every protocol tested** (the pre-registered FTD-0379/0380 campaign, extending the closed-negative family FTD-0061/0071–0075/0126). Scope honesty: the negatives are protocol-scoped measurements plus FTD-0073 (whose non-site-local clause is [CONJECTURE]); accessible-but-unrun variants are named in `ANALYSIS_VERTEX_DK_CLOSURE_v1.md` §0/§1.3/§1.4. The boundary is *supported by measurement at the tested scopes* — a working boundary of the FTD-0336 kind is adopted here as the program's operating assumption, not asserted as established.
