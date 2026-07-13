@@ -287,7 +287,8 @@ StampResult h2_molecule(RenderBridge& rb, Coord center,
 // [SELECTION] These are topological seeds; dynamics must confirm stability.
 
 /// Wilson loop: rectangular closed flux circuit in xy-plane.
-/// Theory: benchmark_wilson_loops.cpp, area-law confinement at x_-.
+/// Theory: area-law confinement at x_- — LEDGER FTD-0025
+/// (the benchmark_wilson_loops.cpp battery was deleted 2026-05-03).
 StampResult wilson_loop(RenderBridge& rb, Coord center,
                         int radius = 4, double flux_strength = K_B);
 
