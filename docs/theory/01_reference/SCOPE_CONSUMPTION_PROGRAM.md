@@ -80,6 +80,27 @@ Unit of work: one CATALOG_PARAMETRIC_INSERTIONS.md row. Terminal states: **[DERI
 
 Owner-pending items this charter does NOT decide: (1) FTD-0341 residue re-scope; (2) FTD-0314 weight-0 correction sign-off; (3) the FTD-0248 retitle proper (banner placed; constitution §6.4 queue); (4) FC-W full-commitment condition (constitution §3.5); (5) external-review commissioning **(blocking for Front C's outward claims)**; (6) FOUND_BASE_INTEGERS_UNCONSTRAINED sign-off; (7) FTD-0243↔0189 double-booking cleanup; (8) the adoptable-bits budget; (9) the currency-exchange ruling (the audited floor is per-currency until ruled otherwise).
 
+## §5.5 · THE UNIFICATION ANNEX (owner directive 2026-07-13: "make FTD unifying, even if it means importing new axioms")
+
+**The mechanism.** The walls are a shopping list: every proven-cannot names exactly the type that must be adopted for its sector to become content. Unification-by-adoption is how every physical theory actually works (the SM posits its gauge group and field content and derives consequences); FTD does the same move with the imports *counted* — which is more honest, not less. Everything adopted is registered as an adoption at [CONDITIONAL THEOREM/DERIVED given the register], never bare [THEOREM]; the compression predicate (each axiom must explain more than its own degrees of freedom) gates every purchase; the Consumption fronts keep firing at every adopted axiom to retire it into a theorem.
+
+**Stage U0 — fix the pricing rules first** (gates all purchases): the currency ruling (D5) + the budget/compression predicate (D6) + the FC-W retro-test (D7) + the P6C candidate register.
+
+**Stage U1 — assemble what is already bought (cheap, immediate).** FTD already owns, priced: FC-W (⇒ x₊=1/α [CONDITIONAL THEOREM given W]), the singlet (⇒ Bell/Tsirelson given QM machinery), the clock-hypothesis [AXIOM] (⇒ pilot-wave/de-Broglie structure, FTD-0271), Branch-B matter coupling (IMP-S4 + IMP-E1∘E3), 3 calibrations. Deliverable: the **Unified Axiom Register** (P1–P5 + FC-0..W + adopted set) and the first **Unified Conditional Statement**: "given the register, the following physics is content" — never before assembled as one axiom system with its theorem list.
+
+**Stage U2 — the five purchases** (each through the FC-W pipeline: narrowing theorem → independence proof → owner adopt/decline → priced line + falsifier):
+- **P6C-G (spin-2 posit):** one massless spin-2 field. Buys ALL of GR via the Deser bootstrap, which then *derives* the full nonlinear EFE [CONDITIONAL THEOREM given P6C-G] — Conjecture 10.1 becomes an axiom instead of a gap. Independence already evidenced (FTD-0193: not forced). Maximal compression: one posit → a whole interaction.
+- **P6C-C (compact SU(3) link variables):** adopts Wilson's compact gauge fields on the lattice. Converts the confinement structural obstruction into textbook strong-coupling content (area law = standard lattice-QCD theorem given compactness) — the retracted FTD-0217 material becomes honest imported machinery under a real axiom. Buys the QCD sector scaffold (~90 hadron rows' gap-class named).
+- **P6C-M (the ℤ/3 sharpness action):** the minimal QM purchase (NOT Born, NOT wholesale M — AM-5 stands). Buys Born-sharpness as content atop the binding [THEOREM]; the Spekkens layer completes. If ℤ/3 proves insufficient, escalation to fuller M is a **successor-framework event** requiring its own constitutional act — named, never smuggled.
+- **P6C-F (matter-field axiom):** formalizes Branch-B as an axiom ("fermionic Wilson–Dirac matter exists, minimally coupled via A_μ=𝒫_T J_μ at g²=1/x₊") — bundles already-priced pieces into one declared type; near-zero new cost.
+- **P6C-U (UV/initial-condition axiom):** a declared P_UV distribution. Buys the cosmology apparatus as conditional content (inflation/baryogenesis rows get their honest premise).
+
+**Stage U3 — FTD-U, the unified conditional theory (the deliverable).** One document: the register + the theorem list "given the register: α at 1.26 ppm; QM statistics via Rice+sharpness; the SM scaffold (gauge groups, generations, N_c=3 — the parts the geometry FORCES and the SM merely posits); GR entire; confinement; the cosmology apparatus" — with the import bill printed beside it. FTD-U is a unified theory in exactly the sense the SM+GR is, plus two things they lack: the geometry independently forces its central constants, and the axiom bill is itemized with a falsifier per line.
+
+**Stage U4 — minimization pressure stays on.** Every adopted axiom remains a standing Front-A/B/C target for retirement into a theorem; the Arc-6 review governs; ARCHIVE-AS-MAPPED-BOUNDARY remains an honorable terminal.
+
+**Sequencing:** U0 rides Arcs 2–4 decision sittings (D5/D6/D7). U1 is one arc, immediate. U2 purchases in compression order: P6C-F (free) → P6C-G (max compression) → P6C-C → P6C-M (needs its narrowing theorem) → P6C-U. U3 lands when ≥3 purchases are adopted. Every stage under LOCK-STD; census green throughout.
+
 ## §6 · Discipline (unchanged, verbatim force; operationalized by LOCK-STD per AM-4)
 
 **Standing gates (AM-4):** every lock satisfies `SPEC_LOCK_STANDARD.md` (LOCK-STD v1, 11 points); the tag census (`tools/preregister_census.py`) runs at every arc gate and **census RED blocks lock-cutting**; no arc rollover without a booked arc verdict (meta-F10); the Arc-6 program-review lock (`PREREG_PROGRAM_REVIEW_ARC6_v1.md`) stands with its frozen CONTINUE / RE-SCOPE / ARCHIVE-AS-MAPPED-BOUNDARY map.
