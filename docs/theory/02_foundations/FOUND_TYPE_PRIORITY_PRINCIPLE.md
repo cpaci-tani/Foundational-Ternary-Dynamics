@@ -94,7 +94,9 @@ A **reference frame is a type-instantiation**: it sets the context relative to w
 
 Type-priority is the **organizing spine of the project**: not *"derive physics,"* not *"exploit G\*,"* but —
 
-> **Set the smallest honest set of types (commitments); build the mathematics and physics forward as the tokens those types make meaningful; and mark and price — rigorously — exactly which types the discrete ontology can set for itself and which it must import.**
+> **Set the smallest honest set of types (commitments); build the mathematics and physics forward, sector by sector, until every physical structure is either forced content or a rigorously marked and priced import; drive every priced line to retirement, to a theorem-grade no-go, or to a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price.**
+>
+> *(Amendment of record 2026-07-12, FTD-0383 — the consumption drive added to the 2026-07-05 "mark and price" form. The drive face does not weaken this document's principle: an adoption remains an adoption, never a derivation; and the strong "zero-import" reading remains unestablished either way — this principle is an adopted commitment, not an impossibility theorem, per §0/§9.)*
 
 G\* / ℚ(G\*) is a *lever* under this principle, not the goal: an acknowledged-but-underexploited mathematical structure that an ontology-first, type-first construction forces into centrality — and whose orphaned status in mainstream math is itself a clue worth pursuing. `[coherent-interpretation]`
 
