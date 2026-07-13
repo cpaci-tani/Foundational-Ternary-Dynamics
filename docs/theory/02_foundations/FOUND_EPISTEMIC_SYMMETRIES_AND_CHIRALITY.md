@@ -1,5 +1,12 @@
 # Epistemic Symmetries and Chiral Trajectories
 
+> **Naming disambiguation (2026-07-12, FTD-0383):** this document's "Postulate Six" is FTD-0248's
+> observer postulate — it has never entered the constitution's register, and it is **distinct** from
+> (i) the generic "6th-postulate-class input" gap classification (`AUDIT_BOUNDARY_MAP.md`) and
+> (ii) the Consumption Program's ontology-extension candidates, which use the fresh namespace
+> **P6C-\*** (`01_reference/SCOPE_CONSUMPTION_PROGRAM.md` Front B) precisely to avoid this collision.
+> The full retitle of this document's postulate remains queued (constitution §6.4).
+
 ## Postulate of Epistemic Symmetries and Chiral Trajectories (Postulate Six / Observer Postulate)
 
 **Status:** [CONJECTURE] — interpretively and structurally motivated, with rigorous disclaimers from the Noether Symmetry Audit  

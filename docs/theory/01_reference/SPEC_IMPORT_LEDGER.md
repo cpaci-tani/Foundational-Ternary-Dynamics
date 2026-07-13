@@ -2,7 +2,7 @@
 
 **Tag:** [SYNTHESIS] (prices existing commitments at their canonical tags; introduces no theorem, promotes nothing) · **LEDGER id:** FTD-0371
 **Data:** `import_ledger.json` (machine-readable, the single source) · **Verifier:** `scripts/proofs/proof_import_ledger.py` (8/8 PASS) · **Date:** 2026-07-05 · **Rev:** v1.1 2026-07-12 (IMP-S4 minted)
-**Serves:** the Number-One Goal's boundary face — *"rigorously mark and price which types the ontology sets for itself and which it must import"* — and, since the 2026-07-12 amendment (FTD-0383), doubles as the **work queue of the goal's third face**: *drive every priced line to retirement, to a theorem-grade no-go, or to a sharper falsifier — never leaving a line merely booked* (program charter: `SCOPE_CONSUMPTION_PROGRAM.md`). The modulus/argument frontier (`FOUND_MODULUS_ARGUMENT_FRONTIER.md`, FTD-0336) states the boundary *qualitatively*; this ledger prices it *quantitatively*, with a falsifier on every line.
+**Serves:** the Number-One Goal's boundary face — *"rigorously mark and price which types the ontology sets for itself and which it must import"* (the 2026-07-05 wording of that face; the amended sentence carries it as "…either forced content or a rigorously marked and priced import") — and, since the 2026-07-12 amendment (FTD-0383), doubles as the **work queue of the goal's third face**: *drive every priced line to retirement, to a theorem-grade no-go, or to a sharper falsifier — never leaving a line merely booked* (program charter: `SCOPE_CONSUMPTION_PROGRAM.md`). The modulus/argument frontier (`FOUND_MODULUS_ARGUMENT_FRONTIER.md`, FTD-0336) states the boundary *qualitatively*; this ledger prices it *quantitatively*, with a falsifier on every line.
 
 ---
 
