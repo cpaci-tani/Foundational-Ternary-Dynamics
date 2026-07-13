@@ -10,7 +10,7 @@
 
 ---
 
-## §0 · What this program is, and the sentence that keeps it honest
+## §0 · Scope and binding interpretation
 
 The owner's directive is to extend FTD toward a proper theory of everything — *"expand and consume all of physics in FTD through logic and semantics."* The audit of record established the honest maximal form, and this charter binds the program to it:
 
@@ -80,13 +80,13 @@ Unit of work: one CATALOG_PARAMETRIC_INSERTIONS.md row. Terminal states: **[DERI
 
 Owner-pending items this charter does NOT decide: (1) FTD-0341 residue re-scope; (2) FTD-0314 weight-0 correction sign-off; (3) the FTD-0248 retitle proper (banner placed; constitution §6.4 queue); (4) FC-W full-commitment condition (constitution §3.5); (5) external-review commissioning **(blocking for Front C's outward claims)**; (6) FOUND_BASE_INTEGERS_UNCONSTRAINED sign-off; (7) FTD-0243↔0189 double-booking cleanup; (8) the adoptable-bits budget; (9) the currency-exchange ruling (the audited floor is per-currency until ruled otherwise).
 
-## §5.5 · THE UNIFICATION ANNEX (owner directive 2026-07-13: "make FTD unifying, even if it means importing new axioms")
+## §5.5 · The Unification Annex (owner directive 2026-07-13: "make FTD unifying, even if it means importing new axioms")
 
-**The mechanism.** The walls are a shopping list: every proven-cannot names exactly the type that must be adopted for its sector to become content. Unification-by-adoption is how every physical theory actually works (the SM posits its gauge group and field content and derives consequences); FTD does the same move with the imports *counted* — which is more honest, not less. Everything adopted is registered as an adoption at [CONDITIONAL THEOREM/DERIVED given the register], never bare [THEOREM]; the compression predicate (each axiom must explain more than its own degrees of freedom) gates every purchase; the Consumption fronts keep firing at every adopted axiom to retire it into a theorem.
+**Mechanism.** Each impossibility result names the type that must be adopted for its sector to become content. Unification-by-adoption follows standard practice in physics — the Standard Model posits its gauge group and field content and derives consequences — with the difference that here the imports are counted. Everything adopted is registered as an adoption at [CONDITIONAL THEOREM/DERIVED given the register], never bare [THEOREM]; the compression predicate (each axiom must explain more than its own degrees of freedom) gates every purchase; the Consumption fronts keep firing at every adopted axiom to retire it into a theorem.
 
-**Stage U0 — fix the pricing rules first** (gates all purchases): the currency ruling (D5) + the budget/compression predicate (D6) + the FC-W retro-test (D7) + the P6C candidate register.
+**Stage U0 — fix the pricing rules** (gates all purchases): the currency ruling (D5) + the budget/compression predicate (D6) + the FC-W retro-test (D7) + the P6C candidate register.
 
-**Stage U1 — assemble what is already bought (cheap, immediate).** FTD already owns, priced: FC-W (⇒ x₊=1/α [CONDITIONAL THEOREM given W]), the singlet (⇒ Bell/Tsirelson given QM machinery), the clock-hypothesis [AXIOM] (⇒ pilot-wave/de-Broglie structure, FTD-0271), Branch-B matter coupling (IMP-S4 + IMP-E1∘E3), 3 calibrations. Deliverable: the **Unified Axiom Register** (P1–P5 + FC-0..W + adopted set) and the first **Unified Conditional Statement**: "given the register, the following physics is content" — never before assembled as one axiom system with its theorem list. *(EXECUTED 2026-07-13: FTD-0386 — `SPEC_UNIFIED_AXIOM_REGISTER.md` + `unified_axiom_register.json` + `proof_unified_register.py` 11/11; pre-commit 3-lane redteam, 7 HIGH-class defects fixed before booking. The register notes its own gaps: unpriced L5 dynamics posits await the D5 currency ruling; FTD-U remains the reserved Stage-U3 name.)*
+**Stage U1 — assemble the already-adopted commitments (immediate; no new adoptions).** FTD already owns, priced: FC-W (⇒ x₊=1/α [CONDITIONAL THEOREM given W]), the singlet (⇒ Bell/Tsirelson given QM machinery), the clock-hypothesis [AXIOM] (⇒ pilot-wave/de-Broglie structure, FTD-0271), Branch-B matter coupling (IMP-S4 + IMP-E1∘E3), 3 calibrations. Deliverable: the **Unified Axiom Register** (P1–P5 + FC-0..W + adopted set) and the first **Unified Conditional Statement**: "given the register, the following physics is content" — never before assembled as one axiom system with its theorem list. *(EXECUTED 2026-07-13: FTD-0386 — `SPEC_UNIFIED_AXIOM_REGISTER.md` + `unified_axiom_register.json` + `proof_unified_register.py` 11/11; pre-commit 3-lane redteam, 7 HIGH-class defects fixed before booking. The register notes its own gaps: unpriced L5 dynamics posits await the D5 currency ruling; FTD-U remains the reserved Stage-U3 name.)*
 
 **Stage U2 — the five purchases** (each through the FC-W pipeline: narrowing theorem → independence proof → owner adopt/decline → priced line + falsifier):
 - **P6C-G (spin-2 posit):** one massless spin-2 field. Buys ALL of GR via the Deser bootstrap, which then *derives* the full nonlinear EFE [CONDITIONAL THEOREM given P6C-G] — Conjecture 10.1 becomes an axiom instead of a gap. Independence already evidenced (FTD-0193: not forced). Maximal compression: one posit → a whole interaction.
