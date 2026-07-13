@@ -90,9 +90,9 @@
       "falsifier": "a substrate derivation of a_phys from Axiom-Zero invariants (retires the import); currently genuinely imported (Mechanism-gamma closed)."
     },
     {
-      "ref": "IMP-K2", "kind": "calibration", "type_imported": "t_phys == sqrt(3) l_P / c (one tick): the TIME scale",
+      "ref": "IMP-K2", "kind": "calibration", "type_imported": "t_phys == l_P / (sqrt(3) c) = t_P/sqrt(3) (one tick): the TIME scale (corrected 2026-07-08 from sqrt(3) l_P/c per DERIV_DIMENSIONAL_GATE.md; JSON reconciled to the correction of record 2026-07-13 -- the rendered spec had been corrected but this data file had not)",
       "price": 1, "unit": "dimensional anchor", "canonical_tag": "[IMPOSED -- calibration]",
-      "provenance": "FTD-0059/0096; C_SPEED = 1/sqrt(3) CFL; A2 grade-0 closure",
+      "provenance": "FTD-0059/0096; C_SPEED = 1/sqrt(3) CFL; A2 grade-0 closure; DERIV_DIMENSIONAL_GATE.md (the 2026-07-08 factor-3 correction)",
       "frontier_face": "grade-carrying import",
       "falsifier": "a substrate derivation of the tick-to-second ratio independent of a_phys."
     },
