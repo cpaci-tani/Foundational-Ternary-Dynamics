@@ -1,5 +1,14 @@
 # EXPLR — The Sixth-Postulate Hole and the Observer Frame
 
+> **Naming disambiguation (2026-07-12, FTD-0383):** the phrase "Postulate Six / sixth postulate" is
+> multiply-loaded in the corpus — (i) this document's exploration of candidate 6th postulates;
+> (ii) FTD-0248's "Postulate Six" (epistemic symmetries / observer postulate, never in the
+> constitution's register); (iii) the generic "6th-postulate-class input" gap classification
+> (`AUDIT_BOUNDARY_MAP.md`). The Consumption Program's ontology-extension search
+> (`01_reference/SCOPE_CONSUMPTION_PROGRAM.md` Front B) therefore uses the fresh namespace
+> **P6C-\*** for its candidates and never the bare phrase. The full FTD-0248 retitle remains
+> queued (constitution §6.4).
+
 **Tag:** `[EXPLORATION]` / `[OPEN]`. **This document promotes no claim, derives nothing, and
 touches no canonical tag.** It records a long foundational exploration of candidate
 6th postulates for FTD, including **two formalization attempts that were adversarially falsified** —
