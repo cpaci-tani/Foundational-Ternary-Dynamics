@@ -121,7 +121,15 @@ A claim may be moved *up* (e.g., from `[CONJECTURE]` to `[DERIVED]`) only by exh
 
 ## §0.4 — The two clauses: roadmap
 
-The program's governing goal has two clauses, and the architecture of this monograph is simply those two clauses made into sections, plus a quarantined bridge to physics.
+> **Vintage note (2026-07-12):** this monograph was architected around the goal's original two-clause
+> form. The Number-One Goal has since been amended twice — 2026-07-05 ("mark **and price**", FTD-0371)
+> and 2026-07-12 (the consumption **drive** + deliberate-extension clause, FTD-0383;
+> `SCOPE_CONSUMPTION_PROGRAM.md`). The two clauses below remain the correct reading of *this
+> document's* architecture (Part I = derive, Part II = boundary); the current canonical goal sentence
+> lives in `CLAUDE.md` and adds the drive face on top. Nothing in the amendment changes any tag
+> stated here.
+
+The program's governing goal was originally stated as two clauses, and the architecture of this monograph is simply those two clauses made into sections, plus a quarantined bridge to physics.
 
 > **Clause 1 — Derive everything the discrete ontology forces.**
 > **Clause 2 — Rigorously establish the boundary of what it cannot force.**
