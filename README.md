@@ -19,9 +19,9 @@ One principle runs through the whole framework ([`FOUND_TYPE_PRIORITY_PRINCIPLE.
 
 So FTD proceeds in one order, and the goal is stated in that order:
 
-> **Set the smallest honest set of types from which a discrete ontology can speak; build the mathematics and physics forward as the content those types make meaningful; and rigorously mark and price which types the substrate sets for itself and which it must import.**
+> **Set the smallest honest set of types from which a discrete ontology can speak; build the mathematics and physics forward, sector by sector, until every physical structure is either forced content or a rigorously marked and priced import; drive every priced line to retirement, to a theorem-grade no-go, or to a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price.**
 
-Marking the boundary — which types are *not* native — is as much a deliverable as any derivation. (Type-priority is an adopted organizing commitment, not a theorem; it is offered for outside critique, not asserted as proven.)
+Marking the boundary — which types are *not* native — is as much a deliverable as any derivation, and every priced line is a standing work item, not a resting state (amendment of record 2026-07-12). (Type-priority is an adopted organizing commitment, not a theorem; it is offered for outside critique, not asserted as proven.)
 
 ## What is load-bearing, and what is not
 
