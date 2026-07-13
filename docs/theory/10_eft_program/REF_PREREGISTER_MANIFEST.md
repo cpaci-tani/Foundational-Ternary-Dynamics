@@ -77,7 +77,14 @@ These campaigns are deliberately split. FTD-0281 verifies live-engine semantics
 before any FFT-spectrum claim. FTD-0282 is a negative-boundary test, not a fit.
 FTD-0283 uses a fixed ion set and dimensionless scaling gates only.
 
-## Alpha dynamical readout discriminator (FTD-0284; locked)
+## Alpha dynamical readout discriminator (locked; ⚠ id collision — booked under FTD-0384)
+
+> **Id-collision note (2026-07-12 census, FTD-0384):** the LEDGER's FTD-0284 row is the **D=3
+> forced-escape** (`preregister-alpha-d3-forced-escape-v1`), not this discriminator — so this
+> discriminator has **no LEDGER row of its own** (the same disease as the known FTD-0243↔0189
+> double-booking). The lock below is genuine (tag `preregister-alpha-dynamical-readout-v1` resolves);
+> the discriminator is tracked under the FTD-0384 reconciliation and receives its own fresh id at
+> next execution. Do not cite "FTD-0284" for this object.
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
@@ -386,7 +393,7 @@ When auditing v3: confirm `git rev-list -n1 preregister-clock-hypothesis-derivat
 
 Pre-reg SHA256: `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`.
 
-When auditing: confirm `git rev-list -n1 preregister-spin2-boundary-theorem-v1` resolves to commit `d8e016b` (the commit that introduced `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/10_eft_program/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`). This pre-registration locks the design of the Arc C2 P4 closure attempt of the Wilsonian-reframe plan v2 (Arc C2: spin-2 boundary theorem, caps the upper end of substrate-derived gravity scaling per the Wilsonian reframe). The substantive proof scaffold is already authored in `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` (4-clause consolidated derivation with dual tag structure) + `DERIV_J_BILINEAR_NO_SPIN2_POLE.md` (load-bearing C2-2 bubble-integral analysis, [THEOREM] free-theory + [SMC] canonical-toggle with FTD-0193 11/12 k-point empirical floor); this pre-reg's function is verdict-discipline lockdown, not new derivation. The pre-reg locks the four-clause theorem statement (§2 Q-SPIN2-BOUNDARY-v1, verbatim D1 from DERIV doc §1), definitions D1-D7 (§3, including D7 Arc B P2 verdict-branch handling that accommodates FOUND / CLOSED-NEGATIVE / pending without blocking C2 closure), the FROZEN admissible search space (§4: 14 inclusions including FTD axioms 1-5 + calibration + §4 frozen catalog + DERIV docs + FTD-0193 + Peskin-Schroeder §10.2 + Montvay-Münster §3 lattice analog; 6 exclusions including h_μν import as derivation input + Deser-bootstrap as substrate-emergence evidence + Lovelock-implies-substrate-GR + Doctrine §12 candidate principles + LIGO-as-evidence + closed-negative routes FTD-0073/FTD-0184/FTD-0050), the benchmark (§5 = four-clause theorem statement at dual-tag scope), the three pre-blessed outcomes (§6 = FOUND / CLOSED-NEGATIVE / UNDERDETERMINED), the falsifier F-a..F-j (§7) with F-h critically distinguishing structural [THEOREM]-grade argument from FTD-0193 empirical floor (catches F9 risk), the banned moves B-1..B-8 (§8) with B-5 enforcing dual-tag preservation in result-doc + B-3/B-4 preventing metaphysical priors and LIGO-as-substrate-spin2-evidence framings, and the locked 11-step method (§9) with mandatory adversarial review checkpoint at step 10 (separate reviewer; executor cannot self-review). **Prior-favoured outcome: FOUND** — the DERIV docs already establish the chain at [THEOREM] free-theory + Gauss-only + [SMC] canonical-toggle level; the closure attempt is mechanical F-/B-checklist verification + adversarial review, not new derivation work. **F9 risk HIGH** ("easy theorem hides assumptions"); the §7/§8/§9 step 10 discipline is calibrated specifically to catch this. §1 honest framing per FTD-0186 v2 §1 precedent: this is scope clarification, not "we proved no graviton." **Sibling to FTD-0186 Stage 1** (structural/dynamical-value discriminator [STAGE 1 CLOSED POSITIVE per v2]): both are boundary theorems on independent axes; methodologically parallel. **No FTD claim is promoted or demoted by this pre-reg** — tag changes happen only at result-doc landing per §6 verdict.
+When auditing: confirm `git rev-list -n1 preregister-spin2-boundary-theorem-v1` resolves to commit `d8e016b` (the commit that introduced `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`), and that the file's SHA256 still matches the value above (`sha256sum docs/theory/10_eft_program/preregistrations/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` — path corrected 2026-07-12; the file lives in `preregistrations/`). **Census note (FTD-0384): executed 2026-05-25, Outcome A FOUND — not standing debt; the §13 L=128 engine deferral is the attached-unrun residue, disposition scheduled Arc 2 (run or retire explicitly).** This pre-registration locks the design of the Arc C2 P4 closure attempt of the Wilsonian-reframe plan v2 (Arc C2: spin-2 boundary theorem, caps the upper end of substrate-derived gravity scaling per the Wilsonian reframe). The substantive proof scaffold is already authored in `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` (4-clause consolidated derivation with dual tag structure) + `DERIV_J_BILINEAR_NO_SPIN2_POLE.md` (load-bearing C2-2 bubble-integral analysis, [THEOREM] free-theory + [SMC] canonical-toggle with FTD-0193 11/12 k-point empirical floor); this pre-reg's function is verdict-discipline lockdown, not new derivation. The pre-reg locks the four-clause theorem statement (§2 Q-SPIN2-BOUNDARY-v1, verbatim D1 from DERIV doc §1), definitions D1-D7 (§3, including D7 Arc B P2 verdict-branch handling that accommodates FOUND / CLOSED-NEGATIVE / pending without blocking C2 closure), the FROZEN admissible search space (§4: 14 inclusions including FTD axioms 1-5 + calibration + §4 frozen catalog + DERIV docs + FTD-0193 + Peskin-Schroeder §10.2 + Montvay-Münster §3 lattice analog; 6 exclusions including h_μν import as derivation input + Deser-bootstrap as substrate-emergence evidence + Lovelock-implies-substrate-GR + Doctrine §12 candidate principles + LIGO-as-evidence + closed-negative routes FTD-0073/FTD-0184/FTD-0050), the benchmark (§5 = four-clause theorem statement at dual-tag scope), the three pre-blessed outcomes (§6 = FOUND / CLOSED-NEGATIVE / UNDERDETERMINED), the falsifier F-a..F-j (§7) with F-h critically distinguishing structural [THEOREM]-grade argument from FTD-0193 empirical floor (catches F9 risk), the banned moves B-1..B-8 (§8) with B-5 enforcing dual-tag preservation in result-doc + B-3/B-4 preventing metaphysical priors and LIGO-as-substrate-spin2-evidence framings, and the locked 11-step method (§9) with mandatory adversarial review checkpoint at step 10 (separate reviewer; executor cannot self-review). **Prior-favoured outcome: FOUND** — the DERIV docs already establish the chain at [THEOREM] free-theory + Gauss-only + [SMC] canonical-toggle level; the closure attempt is mechanical F-/B-checklist verification + adversarial review, not new derivation work. **F9 risk HIGH** ("easy theorem hides assumptions"); the §7/§8/§9 step 10 discipline is calibrated specifically to catch this. §1 honest framing per FTD-0186 v2 §1 precedent: this is scope clarification, not "we proved no graviton." **Sibling to FTD-0186 Stage 1** (structural/dynamical-value discriminator [STAGE 1 CLOSED POSITIVE per v2]): both are boundary theorems on independent axes; methodologically parallel. **No FTD claim is promoted or demoted by this pre-reg** — tag changes happen only at result-doc landing per §6 verdict.
 
 
 ## x_- physical-identification search -- Arc B P1 closure attempt design
@@ -557,3 +564,25 @@ git checkout main
 - [`CHANGELOG.md`](../../../CHANGELOG.md) "Measurement output → pre-
   registration tag mapping" — short summary table mirroring this
   manifest's rows for the 2026-04-27 cycle.
+
+
+---
+
+## Census addendum — closure over the tag namespace (2026-07-12, FTD-0384)
+
+This manifest's per-campaign tables above are **not exhaustive** over the `preregister-*` git-tag
+namespace. As of the Arc-1 "Honest Mint" census (`tools/preregister_census.py`, standing arc gate per
+the Consumption Program charter AM-4), the **authoritative closure** of the namespace is:
+
+- the mechanical census itself (run it: `python tools/preregister_census.py`; exit 0 = GREEN), and
+- the dispositions register `preregister_census_dispositions.json` (same directory) — one entry per
+  tag/citation not fully reconciled by a manifest row, each with status
+  (`executed-verdict-booked` / `anchored-late` / `arc2-disposition-pending` / `historical-superseded`
+  / `retracted`), note, and date.
+
+First-census results (full narrative: `../07_assessment/AUDIT_PREREGISTER_CENSUS_2026-07.md`):
+70 undispositioned failures → GREEN; 2 counterfeit FOUND verdicts **retracted** (color-confinement,
+stochastic-effective-action); 4 tag-claim defects repaired by late anchor after SHA recovery at
+historical commits; 24 late-anchor tags cut at registration commits; 11 items pending Arc-2
+disposition (grandfather clause). Rows for the 24 `executed-verdict-booked` items are owed to the
+tables above; until written, the dispositions JSON is authoritative for them.
