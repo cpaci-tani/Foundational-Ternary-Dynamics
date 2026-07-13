@@ -293,7 +293,8 @@ StampResult wilson_loop(RenderBridge& rb, Coord center,
                         int radius = 4, double flux_strength = K_B);
 
 /// Flux tube: color flux tube between two quarks.
-/// Theory: linear confinement E(r) ~ sigma*r (campaign_gluon_dynamics.cpp).
+/// Theory: linear confinement E(r) ~ sigma*r — LEDGER FTD-0025
+/// (the campaign_gluon_dynamics.cpp battery was deleted 2026-05-03).
 StampResult flux_tube(RenderBridge& rb, Coord end_a, Coord end_b,
                       double strength = K_B);
 

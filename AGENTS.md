@@ -170,7 +170,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **50-test battery**: `scripts/exploration/test_all_physics.py`
 - **Loop derivations**: `scripts/exploration/compute_c2.py`, `derive_all_loops.py`, `gauge_loops.py`
 - **Arrow paper**: `docs/papers/PAPER_RATIO_AND_THE_ARROW.tex`
-- **Engine coupling test**: `engine/tests/test_intervoxel_coupling.cpp`
+- **Engine coupling test (of record)**: `engine/tests/test_native_moore_layer_coupling.cpp` + `test_native_moore_temporal_layers.cpp` (native Moore-layer flux status). The legacy `test_intervoxel_coupling.cpp` was DELETED 2026-05-03 (`e8eb8e82`) — its FCC/SC = sin²θ_W/α and BCC/SC = α_s/α targets used demoted [PARAMETRIC] identifications; Moore-shell flux falloff is geometric, not coupling-ratio
 - **Complete Chain**: `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`
 - **QM as Statistics**: `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md`
 - **Lattice Physics Reference**: `docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md`

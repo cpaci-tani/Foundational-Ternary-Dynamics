@@ -206,4 +206,4 @@ The combinatorial content of the Standard Model — the number of forces, their 
 - `scripts/exploration/test_all_physics.py` — 50-test verification
 - `scripts/exploration/what_we_solve.py` — D-table computation
 - `scripts/exploration/forced_equations_v2.py` — Forced polyhedral structure
-- `engine/tests/test_intervoxel_coupling.cpp` — Engine validation
+- `engine/tests/test_native_moore_layer_coupling.cpp` + `test_native_moore_temporal_layers.cpp` — Engine validation (native Moore-layer flux status; the legacy `test_intervoxel_coupling.cpp` was DELETED 2026-05-03, `e8eb8e82` — its coupling-ratio targets used demoted [PARAMETRIC] identifications)
