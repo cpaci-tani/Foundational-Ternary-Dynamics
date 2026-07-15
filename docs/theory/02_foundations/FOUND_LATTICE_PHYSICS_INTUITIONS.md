@@ -16,16 +16,18 @@ Physics phenomena to recover from empirical observation, paired with their latti
 
 ## Gravity
 
+> **LEDGER reconciliation (2026-07-14; precedence LEDGER > prose).** Several rows in this section and in "Two-Mechanism Gravity" below overstate substrate content. Status of record: **g₀₀ = 1 − r_s/r** is substrate-recovered to **leading order only**, modulo the clock hypothesis (FTD-0131); **g_rr = −1/f is a `[GAP]`** — imported from standard GR, not substrate-derived (FTD-0361); **full Schwarzschild is matched, not derived** (FTD-0184); an emergent spin-2 graviton is **`[CLOSED NEGATIVE]`** in the probed regime (FTD-0193); and **G_N = 1/100 is an engine-internal parameter, falsified as an identification with physical G_N** (FTD-0131). Because the substrate supplies the g₀₀ temporal half but not the g_rr spatial-curvature half, the null-geodesic sector (light deflection, photon sphere, shadow) is at most the **Einstein-1911 half-value** — see the two-mechanism note below.
+
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
 | Gravitational attraction | Masses accelerate toward each other | Each mass creates a flux density halo; the other mass sinks along the gradient (dense knot in lighter medium) | Recovered |
 | Inverse square law | F = GMm/r^2 | Gradient of overlapping 1/r density halos naturally gives 1/r^2 force | Recovered |
-| G_N value | G = 6.67e-11 m^3/kg/s^2 | G_N = 1/(b_3 + N_c)^2 = 0.01 on lattice; physical value via renormalization | Recovered |
+| G_N value | G = 6.67e-11 m^3/kg/s^2 | G_N = 1/(b_3 + N_c)^2 = 0.01 is an **engine-internal parameter**, **falsified as an identification with physical G_N** (off ~20+ orders of magnitude under every natural calibration, FTD-0131); the substrate instead predicts α_G(e,e) = (m_e/m_P)^2 | **Boundary (falsified identification)** |
 | Gravitational time dilation | Clocks tick slower near mass | Reduced availability f = 1 - L^2; fewer ticks processed per universal tick | Recovered |
 | Equivalence principle | Inertial mass = gravitational mass | Same flux wake causes both: push it = inertia, sit in gradient with it = gravity | Recovered |
 | Weightlessness in freefall | Orbiting astronauts float despite 88% surface gravity | No resistance to gradient = no conflict = no felt weight | Recovered |
-| Schwarzschild metric | ds^2 = f dt^2 - dr^2/f - r^2 dOmega^2 | Exact from Born-Infeld proper time: dtau/dt = sqrt(f - v^2/f) | Recovered |
-| Einstein field equations | R_uv - (1/2)g_uv R = 8piG T_uv | Noether stress-energy + Lovelock uniqueness theorem; 8piG from 2pi * N_base | Recovered |
+| Schwarzschild metric | ds^2 = f dt^2 - dr^2/f - r^2 dOmega^2 | g_00 leading-order [DERIVED] from Born-Infeld proper time (FTD-0131, modulo clock hypothesis); **g_rr = -1/f is a [GAP]** (FTD-0361) and the full metric is **imported / matched-not-derived** (FTD-0184) | **Partial (g_00 leading-order only)** |
+| Einstein field equations | R_uv - (1/2)g_uv R = 8piG T_uv | Noether stress-energy + Lovelock completion, but **conditional on a posited spin-2 h_μν** (Conjecture 10.1, FTD-0189); emergent substrate spin-2 is [CLOSED NEGATIVE] in the probed regime (FTD-0193) | **Selection (conditional)** |
 | Frame dragging (Kerr) | Rotating masses drag spacetime | Latency shadow of rotating flux configuration | Partial |
 | Gravitational waves | Ripples in spacetime from accelerating masses | Propagating perturbations in the latency field | Partial |
 
@@ -186,11 +188,13 @@ GR packages gravity into one mechanism (spacetime curvature). FTD decomposes it 
 | A: BI core | -K_B * sqrt((f^2-v^2)/f) | SR: speed limit, E=mc^2, relativistic momentum, time dilation |
 | B: Coupling | -g_c * s * div(J), flux density |J| ~ 1/r | Newtonian 1/r^2 force, light bending (refraction), grav waves |
 
-**Key result: A+B dynamics produce exact Schwarzschild geometry.**
+**Key result (demoted 2026-07-14): A+B dynamics reproduce the g₀₀ / massive-orbit sector of Schwarzschild to leading order; the g_rr spatial-curvature half is a `[GAP]`.**
 
-The Sommerfeld-Schwarzschild identity [THEOREM]: SR momentum (mechanism A) in a Newtonian 1/r^2 potential (mechanism B) gives orbit equations algebraically identical to the Schwarzschild geodesic. Exact at all PN orders for 1/r^2 forces. Specific to D=3 (Laplacian Green's function gives 1/r, gradient gives 1/r^2).
+> **LEDGER reconciliation (FTD-0361 / FTD-0184).** The claim that A+B dynamics produce the *full* Schwarzschild geometry is stale. Mechanism B is a refractive / g₀₀ construction (effective index n = (1 − r_s/r)^(−1/2)) — precisely the **Einstein-1911 half-light-deflection medium**. It supplies the temporal (g₀₀) half of the deflection only; the equal g_rr spatial-curvature half is **not substrate-derived** and remains a `[GAP]` (Gap 10.1/11.1, FTD-0361). The full metric is imported / matched-not-derived (FTD-0184).
 
-This means the effective spacetime seen by test particles IS Schwarzschild. The photon sphere, shadow, ISCO, ringdown — all match GR exactly when computed from A+B dynamics.
+The Sommerfeld-Schwarzschild identity [SELECTION] (demoted from [THEOREM] 2026-07-14, FTD-0361): SR momentum (mechanism A) in a Newtonian 1/r^2 potential (mechanism B) gives orbit equations algebraically identical to the Schwarzschild geodesic **shape** for bound massive orbits — the g₀₀-dominated sector. It does **not** supply the g_rr spatial-curvature contribution that the null-geodesic (light) sector needs. Specific to D=3 (Laplacian Green's function gives 1/r, gradient gives 1/r^2).
+
+This means the effective spacetime seen by *slow massive* test particles matches Schwarzschild in the g₀₀-dominated regime. Strong-field and null-geodesic quantities (photon sphere, shadow, light bending, ISCO, ringdown) inherit the g_rr `[GAP]` and are **not** established as exact GR matches from A+B dynamics alone.
 
 **The latency field L is NOT a separate fundamental field.** In the engine, L is sourced by |s| (manifested particle count) via Poisson solve. It is a diagnostic quantity (measuring local flux saturation), not a dynamical field. The gravitational Lagrangian -(1/8piG)|grad(L)|^2 is scaffolding that helped formalize the action, but the physical content comes from A+B.
 
@@ -200,7 +204,7 @@ This means the effective spacetime seen by test particles IS Schwarzschild. The 
 |---|---|---|---|---|---|
 | Newtonian force | B (flux gradient) | 1/r^2 | 1/r^2 | 1/r^2 | Exact |
 | Mercury precession | A+B (Sommerfeld) | 42.94"/c | 42.94"/c | 42.98"/c | 99.9% |
-| Solar light bending | B (flux refraction) | 1.75" | 1.75" | 1.75" | Exact |
+| Solar light bending | B (flux refraction, g_00 half only) | 0.875" (Einstein-1911 half) | 1.75" | 1.75" | **Half — g_rr spatial-curvature half is a [GAP] (FTD-0361)** |
 | GPS time correction | A (SR) + B (potential) | +38.5 us/day | +38.5 us/day | +38.5 us/day | Exact |
 | Grav wave speed | B (lattice wave eq) | c | c | c (LIGO) | Exact |
 | Grav wave polarizations | B (Gauss removes 1 DOF) | 2 | 2 | 2 (LIGO) | Exact |
@@ -220,9 +224,9 @@ Scripts: `explore_gr_decomposition.py`, `explore_two_mechanism_gravity.py`, `exp
 
 The f = 1-L^2 ~ 1-1/r^2 scaling came from treating L as a fundamental field. Once we recognize L is derived (not dynamical), the effective metric comes from the A+B dynamics, which produce exact Schwarzschild (1-r_s/r) via the Sommerfeld-Schwarzschild identity. The tension was an artifact of the wrong analysis, not a physical prediction. **Status: RESOLVED.**
 
-### Tension 2: Sommerfeld Coincidence -- RESOLVED [THEOREM]
+### Tension 2: Sommerfeld Coincidence -- [SELECTION] (demoted from [THEOREM] 2026-07-14, FTD-0361)
 
-The Sommerfeld equality (SR momentum + Newtonian force = GR geodesic for orbits) is a **mathematical theorem**, not a coincidence:
+The Sommerfeld equality (SR momentum + Newtonian force = GR geodesic *shape* for bound massive orbits) is an algebraic correspondence in the g₀₀-dominated sector, not a coincidence:
 
 - The Binet orbit equations are algebraically identical for 1/r^2 forces
 - Exact to ALL PN orders for orbit shape (not just 1PN)
@@ -230,7 +234,7 @@ The Sommerfeld equality (SR momentum + Newtonian force = GR geodesic for orbits)
 - Traces to D=3: the Laplacian Green's function in 3D is 1/r, giving grad ~ 1/r^2
 - Frame dragging factor of 2 emerges from dual BI contribution (temporal + spatial)
 
-The lattice produces 1/r^2 force because D=3. The Sommerfeld equality then follows necessarily. **Status: [THEOREM].**
+The lattice produces 1/r^2 force because D=3, and the Sommerfeld orbit-shape correspondence follows for the g₀₀-dominated sector. It does **not** supply the g_rr spatial-curvature half, so null-geodesic deflection is only half-recovered (Einstein-1911 value, FTD-0361); the full-Schwarzschild reading is imported / matched-not-derived (FTD-0184). **Status: [SELECTION].**
 
 ### Tension 3: N_crit = G*^3/alpha -- STILL CONJECTURE
 
