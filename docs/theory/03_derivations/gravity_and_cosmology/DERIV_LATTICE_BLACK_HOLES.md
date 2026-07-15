@@ -47,7 +47,15 @@ These derivations **start from** the known GR metrics (Schwarzschild 1916, Kerr 
 
 ## Part A: Schwarzschild Metric
 
-This part derives the complete Schwarzschild metric from FTD lattice computational principles, extending the existing g_00 derivation (Theorem 11.1) to include the spatial component g_rr and the combined velocity-gravity proper time formula. The key insight: **velocity cost is amplified by gravitational saturation** ($v^2/f$, not $v^2$), because traversing information-dense lattice nodes requires more computational budget per displacement.
+> **LEDGER reconciliation (2026-07-14 — status of record; precedence LEDGER > constitution > prose).** Part A presents the Schwarzschild metric by *starting from* the known GR line element (see the Honesty Note above) and supplying a lattice interpretation. Its `[THEOREM]` tags denote **standard-GR algebraic identities imported into the document, not substrate derivations from the FTD axioms.** Specifically:
+> - **g₀₀ = 1 − r_s/r** is recovered from the substrate to **leading order only**, and modulo the clock-hypothesis coordinate axiom (LEDGER **FTD-0131**); beyond-leading-order GR (perihelion, deflection, waves) is not substrate-derived.
+> - **g_rr = −1/f is a `[GAP]`** (Gap 10.1 / 11.1). The velocity-cost-amplification argument of §A.7 and the Birkhoff reciprocity of §A.8.2 are the *"not adjudicated — flagged for its own review pass"* sibling of the wave-speed-contraction g_rr proof **RETRACTED** under **FTD-0361** (`DERIV_RADIAL_METRIC_RESOLUTION.md`, archived). This pass records g_rr as imported / `[GAP]`, not `[THEOREM]`.
+> - **Full Schwarzschild geometry is imported from GR — matched, not derived** (LEDGER **FTD-0184**, `[OPEN]` substrate strong-field gravity). Because the substrate supplies the g₀₀ temporal half but not the g_rr spatial-curvature half, the null-geodesic sector (light deflection, photon sphere, shadow) is at most the Einstein-1911 *half*-value.
+> - The Einstein-chain graviton h_μν is posited, not substrate-constructed; an emergent spin-2 substrate mode is **`[CLOSED NEGATIVE]`** in the probed regime (LEDGER **FTD-0193**, **FTD-0189**).
+>
+> This note promotes nothing; it only demotes the overclaimed `[THEOREM]` g_rr tags below to their status of record.
+
+This part presents the complete Schwarzschild metric, pairing the existing substrate g_00 result (Theorem 11.1, leading order) with a lattice interpretation of the imported spatial component g_rr and the combined velocity-gravity proper time formula. The lattice reading: **velocity cost is amplified by gravitational saturation** ($v^2/f$, not $v^2$), because traversing information-dense lattice nodes requires more computational budget per displacement.
 
 ---
 
@@ -269,15 +277,17 @@ $$ds^2 = \underbrace{f \, c^2 \, dt^2}_{g_{tt}} - \underbrace{\frac{1}{f} \, dr^
 | Component | Value | Origin | Tag |
 |-----------|-------|--------|-----|
 | $g_{tt} = f$ | $1 - r_s/r$ | Flux saturation (Theorem 11.1, existing) | [THEOREM] |
-| $g_{rr} = -1/f$ | $-1/(1 - r_s/r)$ | Velocity cost amplification (A.7, this document) | [THEOREM] + [SELECTION] |
+| $g_{rr} = -1/f$ | $-1/(1 - r_s/r)$ | Imported (Schwarzschild line element / Birkhoff); lattice reading A.7 | **[GAP]** substrate g_rr undetermined (Gap 10.1/11.1, FTD-0361) + [SELECTION] (lattice interp) |
 | $g_{\theta\theta} = -r^2$ | Area-radius definition | Coordinate choice (spherical symmetry) | [DEFINITION] |
 | $g_{\phi\phi} = -r^2 \sin^2\theta$ | Area-radius definition | Coordinate choice (spherical symmetry) | [DEFINITION] |
 
-#### A.8.2 The g_rr = -1/g_tt Relationship [THEOREM]
+#### A.8.2 The g_rr = -1/g_tt Relationship [IMPORTED — standard GR (Birkhoff); NOT a substrate derivation]
 
-**Theorem 8.1** (Metric Inversion): *In vacuum spherically symmetric spacetime, $g_{rr} = -c^2/g_{tt}$ (i.e., the radial and temporal metric components are reciprocally related).*
+**Theorem 8.1** (Metric Inversion — imported standard GR, not FTD-substrate): *In vacuum spherically symmetric spacetime, $g_{rr} = -c^2/g_{tt}$ (i.e., the radial and temporal metric components are reciprocally related).*
 
 This is a standard result from Birkhoff's theorem: vacuum spherical symmetry uniquely determines the Schwarzschild solution, and the product $g_{tt} \cdot g_{rr} = -c^2$ (in our units, $= -1$) follows from the requirement that the metric determinant has the correct form.
+
+> **Status (FTD-0361, 2026-07-14):** Result 8.1 is an *imported* standard-GR theorem (Birkhoff's), not a derivation from the FTD axioms — it is cited here for completeness of the imported metric, and its `[THEOREM]` label was demoted from the section heading because within this project's tag system `[THEOREM]` reserves for results proven *from the FTD postulates*. It does **not** establish a substrate value for g_rr, which remains a `[GAP]` (Gap 10.1 / 11.1). Taking the reciprocity as a substrate derivation of g_rr is exactly the reading FTD-0361 declined to adjudicate; the sibling wave-speed-contraction g_rr proof was RETRACTED under the same row.
 
 **Lattice interpretation [SELECTION]:** The reciprocal relationship $g_{rr} \cdot g_{tt} = -1$ means that gravitational time dilation and spatial cost amplification are **perfectly anti-correlated**. Where time runs slow (small $g_{tt}$), space is expensive to traverse (large $|g_{rr}|$). The total "difficulty" of spacetime is conserved -- gravity cannot create or destroy computational budget, only redistribute it between temporal and spatial degrees of freedom.
 
@@ -430,7 +440,7 @@ This is a **topological** quantity from the algebraic structure of the framework
 | Component | Status | Source |
 |-----------|--------|--------|
 | $g_{tt} = f = 1 - r_s/r$ | **[THEOREM]** | Theorem 11.1 in DERIV_RELATIVITY_DERIVATION.md |
-| $g_{rr} = -1/f$ | **[THEOREM]** (math) + **[SELECTION]** (interpretation) | Theorem 8.1, A.7 (this document) |
+| $g_{rr} = -1/f$ | **[GAP]** substrate g_rr undetermined (Gap 10.1/11.1, FTD-0361) — the "math" is imported standard GR (Birkhoff); **[SELECTION]** (lattice interp) | Theorem 8.1, A.7 (this document) |
 | $g_{\theta\theta} = -r^2$ | **[DEFINITION]** | Area-radius coordinate convention |
 | $g_{\phi\phi} = -r^2\sin^2\theta$ | **[DEFINITION]** | Spherical symmetry |
 | Combined proper time formula | **[THEOREM]** | Theorem 6.1 (this document) |
@@ -438,7 +448,7 @@ This is a **topological** quantity from the algebraic structure of the framework
 | Lattice interpretation | **[SELECTION]** | A.3, A.7 (this document) |
 | PF/holographic connection | **[CONJECTURE]** | A.11 (this document) |
 
-**Overall status:** GAP-1 / GAP-G1 -> **[RESOLVED]** (mathematics complete; lattice interpretation argued)
+**Overall status:** GAP-1 / GAP-G1 — g₀₀ leading-order **[DERIVED]** (FTD-0131, modulo the clock hypothesis); the *imported*-metric algebra is complete, but the **substrate derivation of g_rr remains a `[GAP]`** (Gap 10.1 / 11.1, FTD-0361) and the full Schwarzschild geometry is **imported / matched-not-derived** (FTD-0184). Not `[RESOLVED]` at substrate level.
 
 **Downstream impact:** GAP-4 (strong-field geodesics, which required GAP-1) is now unblocked. The full Schwarzschild metric enables computation of:
 - Precession of perihelion
@@ -451,7 +461,7 @@ This is a **topological** quantity from the algebraic structure of the framework
 
 | Gap | Description | Status |
 |-----|-------------|--------|
-| **GAP-2** | Nonlinear Einstein equations from flux dynamics | **[CLOSED RESOLVED]** -- resolved via Deser iterative bootstrap |
+| **GAP-2** | Nonlinear Einstein equations from flux dynamics | **[CONDITIONAL on Conjecture 10.1, FTD-0189]** -- the Deser bootstrap *completes* a **posited** spin-2 field, it does not derive one; substrate spin-2 emergence is `[CLOSED NEGATIVE]` in the probed regime (FTD-0193). Not an unqualified `[CLOSED RESOLVED]`. |
 | **GAP-3** | $T_{\mu\nu}$ construction from flux field | **[CLOSED RESOLVED]** -- conserved Noether current of Born-Infeld action |
 | **GAP-5** | Background independence | **[CLOSED RESOLVED]** -- dual-layer ontology (emergent geometry) |
 
@@ -1556,7 +1566,7 @@ The horizon conditions reflect the balance between these mechanisms:
 | RN-1 | RN metric $ds^2 = -f\,dt^2 + dr^2/f + r^2 d\Omega^2$ with $f = 1 - r_s/r + r_Q^2/r^2$ | [THEOREM] | Standard GR (Reissner 1916, Nordstrom 1918) | Algebraic identity -- unfalsifiable |
 | RN-2 | EM field energy contributes $+r_Q^2/r^2$ to availability factor (anti-saturation) | [SELECTION] | Consistent with $T^{\text{EM}}_{\mu\nu}$ sign structure; positive energy with negative radial pressure produces repulsive metric contribution | Alternative lattice interpretation of charge |
 | RN-3 | Dual-source budget: mass consumes, charge restores | [SELECTION] | Correct signs, correct limiting behavior, consistent with Schwarzschild and Kerr frameworks | Derivation from FTD axioms contradicting sign structure |
-| RN-4 | Budget conservation: $g_{tt} \cdot g_{rr} = -1$ for RN | [THEOREM] | Direct computation: $(-f) \cdot (1/f) = -1$ | Algebraic identity -- unfalsifiable |
+| RN-4 | Budget conservation: $g_{tt} \cdot g_{rr} = -1$ for RN (reciprocal identity **given the imported metric**; not a substrate g_rr derivation — cf. Part A g_rr `[GAP]`, FTD-0361) | [THEOREM — algebraic identity] | Direct computation: $(-f) \cdot (1/f) = -1$ | Algebraic identity -- unfalsifiable |
 | RN-5 | $Q \to 0$ recovers Schwarzschild | [VERIFIED] | Algebraic: $f \to 1 - r_s/r$ | Algebraic -- unfalsifiable |
 | RN-6 | $r \to \infty$ recovers Minkowski | [VERIFIED] | Algebraic: $f \to 1$ | Algebraic -- unfalsifiable |
 | RN-7 | Extremal RN at $Q = M$: $f = (1 - M/r)^2$, degenerate horizon, zero surface gravity | [VERIFIED] | Algebraic: perfect square, $df/dr|_{r=M} = 0$, $\kappa = 0$ | Algebraic -- unfalsifiable |
