@@ -44,7 +44,7 @@ Near a mass source, the latency field $\mathcal{L}(\mathbf{r})$ modifies the eff
 
 $$d\tau^2 = \frac{f^2 - v^2}{f} \, dt^2 \quad \text{where} \quad f = 1 - \mathcal{L}^2$$
 
-identifies the effective metric components (DERIV_LATTICE_SCHWARZSCHILD.md, §8):
+identifies the effective metric components (DERIV_LATTICE_BLACK_HOLES.md, §A.8; the g_rr identification is imported from standard GR and is a substrate `[GAP]` per FTD-0361 — see §1.3):
 
 $$g_{00} = f = 1 - \mathcal{L}^2, \qquad g_{rr} = -\frac{1}{f} = -\frac{1}{1 - \mathcal{L}^2}$$
 
@@ -62,7 +62,7 @@ In the weak-field regime, $h_{00} = -2\Phi/c^2$ where $\Phi = -GM/r$ is the Newt
 |--------|-----|--------|
 | $\eta_{\mu\nu}$ from wave equation | [THEOREM] | Thm 7.2, DERIV_RELATIVITY |
 | $g_{00} = 1 - r_s/r$ from flux saturation | [THEOREM] | Thm 11.1, DERIV_RELATIVITY |
-| $g_{rr} = -1/f$ from velocity amplification | [THEOREM]+[SELECTION] | §7, DERIV_LATTICE_SCHWARZSCHILD |
+| $g_{rr} = -1/f$ from velocity amplification | **[GAP]** substrate g_rr undetermined (FTD-0361) + [SELECTION] *(retagged 2026-07-14; was [THEOREM] — imported standard GR, not substrate-derived)* | §A.7/§A.8.2, DERIV_LATTICE_BLACK_HOLES |
 | General $g_{\mu\nu} = \eta_{\mu\nu} + h_{\mu\nu}(\mathcal{L})$ | [SELECTION] | Effective metric proposal |
 
 ---
@@ -327,7 +327,7 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 |----|-------|--------|---------------|
 | EFE-1 | Minkowski metric from wave equation | **[THEOREM]** | DERIV_RELATIVITY Thm 7.2 |
 | EFE-2 | $g_{00} = 1 - r_s/r$ from flux saturation | **[THEOREM]** | DERIV_RELATIVITY Thm 11.1 |
-| EFE-3 | $g_{rr} = -1/f$ from velocity amplification | **[THEOREM]** + **[SELECTION]** | DERIV_LATTICE_SCHWARZSCHILD §7 |
+| EFE-3 | $g_{rr} = -1/f$ from velocity amplification | **[GAP]** substrate g_rr undetermined (FTD-0361) + **[SELECTION]** *(retagged 2026-07-14; was [THEOREM] — imported standard GR, not substrate-derived)* | DERIV_LATTICE_BLACK_HOLES §A.7/§A.8.2 |
 | EFE-4 | $T_{\mu\nu}$ via Noether from flux $\mathcal{L}$ | **[THEOREM]** | DERIV_QFT_GRT_BRIDGE Thm 2.1 |
 | EFE-5 | $\nabla_\mu T^{\mu\nu} = 0$ from wave equation | **[THEOREM]** | DERIV_QFT_GRT_BRIDGE Thm 2.2 |
 | EFE-6 | Linearized Einstein: $\Box\bar{h}_{\mu\nu} = -16\pi G T_{\mu\nu}/c^4$ | **[SELECTION — conditional on Conjecture 10.1]** *(retagged per FTD-0189 ripple; was [THEOREM])* | DERIV_RELATIVITY Thm 14.1 ([SELECTION/CONDITIONAL]) |
@@ -335,11 +335,11 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 | EFE-8 | Nonlinear completion via Lovelock | **[SELECTION — conditional on EFE-6]** *(inherits from EFE-6)* | Lovelock (1971) + Premises 1-5 |
 | EFE-9 | Full Einstein equations recovered | **[SELECTION — conditional on Conjecture 10.1]** *(inherits from EFE-6 + EFE-8)* | EFE-1 through EFE-8 |
 | EFE-10 | $\Lambda$: no native source (FTD predicts $\Lambda=0$); form [DERIVED-from-FC-3], value a [BOUNDARY] | **[OPEN]** (source) | FTD-0331 (CC dissolved, not solved) |
-| EFE-11 | Schwarzschild as vacuum solution | **[VERIFIED]** | Birkhoff + DERIV_LATTICE_SCHWARZSCHILD |
+| EFE-11 | Schwarzschild as vacuum solution (imported standard GR) | **[VERIFIED]** | Birkhoff + DERIV_LATTICE_BLACK_HOLES |
 | EFE-12 | Poisson equation in weak-field limit | **[VERIFIED]** | Standard GR + SPEC_FTD_LAGRANGIAN |
 | EFE-13 | GW propagation (2 polarizations, speed $c$) | **[VERIFIED]** | DERIV_RELATIVITY §15 |
 
-**Epistemic breakdown** *(per FTD-0189 ripple; EFE-10 reconciled per FTD-0331; EFE-7 corrected per FTD-0348)*: 5 [THEOREM] (EFE-1, EFE-2, EFE-3, EFE-4, EFE-5) + 1 [STRUCTURALLY MOTIVATED PARAMETRIC] (EFE-7, corrected 2026-07-01 — the dimensional relation is imported, the α²⁰ dressing is a parametric insertion, and the previous Step-4 arithmetic was wrong by 2× under a mismatched m_e² definition) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [OPEN] (EFE-10, the $\Lambda$ source) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 retagged the load-bearing Theorem 14.1 input.
+**Epistemic breakdown** *(per FTD-0189 ripple; EFE-10 reconciled per FTD-0331; EFE-7 corrected per FTD-0348; EFE-3 retagged 2026-07-14 per FTD-0361)*: 4 [THEOREM] (EFE-1, EFE-2, EFE-4, EFE-5) + 1 [GAP] (EFE-3, the substrate g_rr — imported standard GR, not substrate-derived; FTD-0361) + 1 [STRUCTURALLY MOTIVATED PARAMETRIC] (EFE-7, corrected 2026-07-01 — the dimensional relation is imported, the α²⁰ dressing is a parametric insertion, and the previous Step-4 arithmetic was wrong by 2× under a mismatched m_e² definition) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [OPEN] (EFE-10, the $\Lambda$ source) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 retagged the load-bearing Theorem 14.1 input; EFE-3's g_rr was downgraded to [GAP] when FTD-0361 declined to adjudicate the velocity-amplification route and retracted its sibling proof.
 
 ---
 

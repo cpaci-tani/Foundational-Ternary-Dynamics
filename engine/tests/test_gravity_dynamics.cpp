@@ -4,16 +4,26 @@
  * Verifies that the gravity term in phase_forces:
  *   F_grav = G_N · ∇ρ
  *
- * where G_N = 1/(b₃+N_c)² = 1/100 = 0.01:
+ * where G_N = 1/(b₃+N_c)² = 1/100 = 0.01 is an ENGINE-INTERNAL PARAMETER,
+ * NOT physical Newton's G. The "G_N = 1/100" identification with physical G_N
+ * is FALSIFIED (FTD-0131): under every natural calibration it is off by ~20+
+ * orders of magnitude (factors 8e19 / 300 / 6e42). The substrate instead
+ * predicts the gravitational fine-structure ratio α_G(e,e) = (m_e/m_P)²
+ * (see DERIV_NEWTON_FROM_SUBSTRATE.md, FTD-0131). This test exercises the
+ * engine's density-gradient force with its internal parameter; it makes no
+ * claim that 0.01 is physical G_N.
+ *
+ * This test checks:
  *   1. Particles are attracted toward high-density regions
- *   2. G_N matches the derived value 0.01
- *   3. Gravity is much weaker than Coulomb (G_N << α)
+ *   2. ftd::G_N equals the engine-internal parameter value 0.01 (NOT physical G_N)
+ *   3. Physically α_G << α (Section 4), even though the engine parameter G_N > α on the lattice
  *   4. Force scales with density gradient
  *
  * Theory references:
- *   - DERIV_LATTICE_SCHWARZSCHILD.md     (Schwarzschild from lattice)
- *   - DERIV_FORCE_EMERGENCE.md           (gravity from flux gradients)
- *   - FOUND_RELATIVITY_GRAVITY_DISTINCTION.md (gravity vs GR distinction)
+ *   - DERIV_NEWTON_FROM_SUBSTRATE.md           (substrate gravity; G_N=1/100 falsified, FTD-0131)
+ *   - DERIV_LATTICE_BLACK_HOLES.md             (Schwarzschild g_00 leading-order from lattice)
+ *   - DERIV_FORCE_EMERGENCE.md                 (gravity from flux gradients)
+ *   - FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md (SR / gravity / GR distinction)
  */
 
 #include <cmath>
@@ -46,16 +56,20 @@ void check_close(const char* name, double a, double b, double tol) {
 
 int main() {
     std::cout << "================================================================\n";
-    std::cout << "  TEST: Gravity Dynamics — G_N = 1/(b₃+N_c)² = 0.01\n";
+    std::cout << "  TEST: Gravity Dynamics — G_N = 1/(b₃+N_c)² = 0.01 (engine-internal, NOT physical G_N — FTD-0131)\n";
     std::cout << "================================================================\n";
 
     // ================================================================
-    // Section 1: G_N Derivation Check
+    // Section 1: G_N Engine-Internal Parameter Check
+    //   NOTE: 0.01 is the engine's internal gravity parameter, NOT physical
+    //   Newton's G. The "G_N = 1/(b3+N_c)^2 = 1/100 = physical G_N" claim is
+    //   FALSIFIED (FTD-0131). These checks only assert the engine constant is
+    //   what the engine defines it to be.
     // ================================================================
-    std::cout << "\n--- Section 1: G_N Derivation ---\n";
+    std::cout << "\n--- Section 1: G_N Engine-Internal Parameter (NOT physical G_N) ---\n";
     {
-        check_close("G_N = 0.01", ftd::G_N, 0.01, 1e-15);
-        check("(b_3 + N_c)^2 = 100", (ftd::B_3 + ftd::N_C) * (ftd::B_3 + ftd::N_C) == 100);
+        check_close("engine G_N == 0.01 (engine-internal parameter)", ftd::G_N, 0.01, 1e-15);
+        check("(b_3 + N_c)^2 == 100 (arithmetic of the engine parameter)", (ftd::B_3 + ftd::N_C) * (ftd::B_3 + ftd::N_C) == 100);
 
         // On the lattice: G_N (0.01) > alpha (0.00730)
         // Gravity dominates Coulomb at short lattice range.
