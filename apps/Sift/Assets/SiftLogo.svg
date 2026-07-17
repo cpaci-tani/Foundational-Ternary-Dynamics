@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Sift">
+  <defs>
+    <linearGradient id="sift-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1D1A17"/>
+      <stop offset="100%" stop-color="#25211D"/>
+    </linearGradient>
+    <linearGradient id="sift-clay" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8A579"/>
+      <stop offset="100%" stop-color="#D89462"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="228" fill="url(#sift-bg)"/>
+  <rect x="96" y="96" width="832" height="832" rx="196" fill="none" stroke="#413930" stroke-width="8"/>
+  <!-- Sieve layers (sage) -->
+  <rect x="196" y="292" width="632" height="72" rx="36" fill="#A9BB98" opacity="0.32"/>
+  <rect x="236" y="412" width="552" height="72" rx="36" fill="#A9BB98" opacity="0.52"/>
+  <rect x="276" y="532" width="472" height="72" rx="36" fill="#A9BB98" opacity="0.78"/>
+  <!-- Refined stream (clay S-curve) -->
+  <path d="M512 196 C688 196 804 312 804 468 C804 548 760 612 688 656 C760 700 804 764 804 844 C804 980 688 868 512 868 C336 868 220 756 220 600 C220 444 336 332 512 332"
+        fill="none" stroke="url(#sift-clay)" stroke-width="56" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Accent dot — refined output -->
+  <circle cx="688" cy="656" r="34" fill="#D89462"/>
+</svg>

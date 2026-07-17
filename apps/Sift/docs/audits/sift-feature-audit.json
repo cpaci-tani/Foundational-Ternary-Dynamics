@@ -1,0 +1,2819 @@
+{
+  "schemaVersion": 1,
+  "generatedUtc": "2026-07-16T19:00:00.0000000Z",
+  "statusVocabulary": [
+    "wired",
+    "intentionally-internal",
+    "future",
+    "disconnected",
+    "blocked-external",
+    "obsolete"
+  ],
+  "entries": [
+    {
+      "id": "route.Home",
+      "kind": "route",
+      "route": "Home",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Home"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:Home"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/DashboardTelemetryService.cs",
+        "Sift.Core/Services/DashboardPackingEngine.cs"
+      ],
+      "persistence": [
+        "Sift/MainWindow.xaml.cs:OpenWorkspaceAsync LastWorkspace"
+      ],
+      "mutationContract": "read-only",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Home workspace traversal and capture",
+        "Sift.Tests/Program.cs:Home route source assertion"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Optimize",
+      "kind": "route",
+      "route": "Optimize",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Optimize",
+        "Sift/Views/OptimizeWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:OptimizeWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/TweakExecutor.cs",
+        "Sift.Core/Services/ElevationBroker.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/TweakExecutor.cs:backup store"
+      ],
+      "mutationContract": "automatic non-mutating preflight, reviewed confirmation, live revalidation, backup-first execution",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Optimize automatic preflight and confirmation cancellation",
+        "Sift.Tests/Program.cs:Optimize preflight assertions"
+      ],
+      "visualStates": [
+        "normal",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.optimize",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.TaskManager",
+      "kind": "route",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=TaskManager",
+        "Sift/Views/TaskManagerWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:TaskManagerWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ProcessSampler.cs",
+        "Sift.Core/Services/GuardedSystemActions.cs",
+        "Sift.Core/Services/ElevationBroker.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "single selected target, Core policy review, confirmation, live identity revalidation, bounded service elevation",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Task Manager filtering, collapse, process preflight and cancellation",
+        "Sift.Tests/Program.cs:Task Manager guarded action source assertions"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Performance",
+      "kind": "route",
+      "route": "Performance",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Performance",
+        "Sift/Views/PerformanceWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:PerformanceWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ProcessSampler.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:RefreshInterval and ChartHistory"
+      ],
+      "mutationContract": "read-only sampling off the UI thread",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Performance workspace traversal and capture",
+        "Sift.Tests/Program.cs:process telemetry and native chart assertions"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.performance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.HardwareMonitor",
+      "kind": "route",
+      "route": "HardwareMonitor",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=HardwareMonitor",
+        "Sift/Views/HardwareMonitorWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:HardwareMonitorWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/IHardwareMonitorService.cs",
+        "Sift.Core/Services/HardwareMonitorService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only local sensor sampling off the UI thread; provider failures are isolated",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Hardware monitor provider inventory and sampling lifecycle",
+        "Sift.UnitTests/HardwareMonitorServiceTests.cs:provider aggregation, isolation, and cleanup",
+        "Sift.Tests/Program.cs:canonical chart source assertions"
+      ],
+      "visualStates": [
+        "normal",
+        "full-panel layout",
+        "pause-resume"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.hardware-monitor",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Startup",
+      "kind": "route",
+      "route": "Startup",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Startup",
+        "Sift/Views/StartupWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:StartupWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:StartupInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only inventory with Windows Settings handoff",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Startup workspace traversal and capture",
+        "Sift.Tests/Program.cs:startup inventory status assertion"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.startup",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Maintenance",
+      "kind": "route",
+      "route": "Maintenance",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Maintenance",
+        "Sift/Views/MaintenanceWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:MaintenanceWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/MaintenanceScanner.cs",
+        "Sift.Core/Services/MaintenanceCleaner.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:LastMaintenanceScanUtc in-memory only"
+      ],
+      "mutationContract": "automatic non-mutating preflight, reviewed confirmation, allowlisted cleanup",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Maintenance preflight and confirmation cancellation",
+        "Sift.Tests/Program.cs:maintenance path rejection and preflight assertions"
+      ],
+      "visualStates": [
+        "normal",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.maintenance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Scripts",
+      "kind": "route",
+      "route": "Scripts",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Scripts",
+        "Sift/Views/ScriptCenterWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:ScriptCenterWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScriptCommandService.cs",
+        "Sift.Core/Services/ScriptStudioService.cs",
+        "Sift.Core/Models/ScriptStudioModels.cs",
+        "Sift.Core/Services/ScriptRecipeCatalog.cs",
+        "Sift.Core/Services/ScriptRecipeAccessPolicy.cs",
+        "Sift.Core/Services/ScriptRecipeTaxonomy.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "standard/elevated exact-catalog execution remains preflighted and revalidated; authored PowerShell/Python/Bash/CMD/JavaScript/TypeScript documents are analysis-only and cannot cross the execution or elevation boundary",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScriptCommandServiceTests.cs",
+        "Sift.UnitTests/ScriptStudioServiceTests.cs",
+        "Sift/scripts/validate-ui.ps1:Script Studio library guardrails, local Monaco/xterm surface and in-memory analysis"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected",
+        "confirmation",
+        "cancellation",
+        "studio-editor",
+        "studio-analysis"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.command-center",
+      "ownerPlan": "2026-07-14-sift-program-index.md"
+    },
+    {
+      "id": "route.Health",
+      "kind": "route",
+      "route": "Health",
+      "presentation": [
+        "Sift/Views/HealthWorkspaceView.xaml",
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Health"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:HealthWorkspaceModule",
+        "Sift/Composition/HealthWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/HealthWorkspaceOrchestrator.cs",
+        "Sift.Core/Services/HistoryAggregator.cs:HistoryService"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only",
+      "automatedEvidence": [
+        "Sift.UnitTests/HealthWorkspaceOrchestratorTests.cs",
+        "Sift.UnitTests/HistoryServiceTests.cs",
+        "Sift.Tests/Program.cs:Health workspace source assertions",
+        "Sift/scripts/validate-ui.ps1:Health workspace traversal and capture"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.health",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Recovery",
+      "kind": "route",
+      "route": "Recovery",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Recovery",
+        "Sift/Views/RecoveryWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:RecoveryWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/RecoveryManager.cs",
+        "Sift.Core/Services/ElevationBroker.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/TweakExecutor.cs:backup store"
+      ],
+      "mutationContract": "exact backup preflight, reviewed confirmation, protected phase-first restore, live revalidation",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Recovery inventory, preflight and cancellation",
+        "Sift.UnitTests/RecoveryManagerTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "selected",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.recovery",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Storage",
+      "kind": "route",
+      "route": "Storage",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Storage",
+        "Sift/Views/StorageWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:StorageWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/StorageScanner.cs",
+        "Sift.Core/Services/StorageSelectionDeletionManager.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:StorageRoots and LastStorageScanUtc"
+      ],
+      "mutationContract": "exact-child preflight, one-use authorization, confirmation, live revalidation, Recycle Bin only",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Storage scan, treemap, exact-child confirmation cancellation and minimum size",
+        "Sift.UnitTests/StorageSelectionDeletionManagerTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "loaded",
+        "selected",
+        "confirmation",
+        "cancellation",
+        "minimum-width"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Apps",
+      "kind": "route",
+      "route": "Apps",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=Apps",
+        "Sift/Views/InstalledAppsWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:InstalledAppsWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/InstalledAppManager.cs",
+        "Sift.Core/Services/InstalledAppTrustInspector.cs",
+        "Sift.Core/Services/AppLeftoverManager.cs"
+      ],
+      "persistence": [
+        "Windows uninstall registration inventory"
+      ],
+      "mutationContract": "selected-only preflight, confirmation, exact-registration revalidation, tracked handoff, Recycle Bin cleanup",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Installed Apps trust, uninstall verification and leftover confirmation cancellation",
+        "Sift.UnitTests/InstalledAppPolicyTests.cs",
+        "Sift.UnitTests/AppLeftoverManagerTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected",
+        "confirmation",
+        "cancellation",
+        "verified-uninstall",
+        "leftover-review"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.installed-apps",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.SystemInfo",
+      "kind": "route",
+      "route": "SystemInfo",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationViewItem Tag=SystemInfo",
+        "Sift/Views/SystemInformationWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:SystemInformationWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInformationService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only local inventory and clipboard copy",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:System Information filtering, selection and capture",
+        "Sift.UnitTests/SystemInformationServiceTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.system-information",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "route.Settings",
+      "kind": "route",
+      "route": "Settings",
+      "presentation": [
+        "Sift/MainWindow.xaml:NavigationView IsSettingsVisible=True",
+        "Sift/Views/SettingsWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:SettingsWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs",
+        "Sift.Core/Infrastructure/Settings/SettingsPersistenceCoordinator.cs"
+      ],
+      "mutationContract": "local application settings only",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Settings workspace traversal and capture",
+        "Sift.Tests/Program.cs:settings round-trip and Settings route assertions"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.SchemaVersion",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:SettingsStore"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:SchemaVersion"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs:schema validation and corruption quarantine"
+      ],
+      "mutationContract": "internal version marker for bounded local settings migration",
+      "automatedEvidence": [
+        "Sift.UnitTests/SettingsStoreTests.cs:version validation, normalization, and legacy compatibility"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.RefreshInterval",
+      "kind": "setting",
+      "route": "Performance",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:RefreshIntervalBox"
+      ],
+      "composition": [
+        "Sift/Composition/PerformanceWorkspaceModule.cs:ParseInterval"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:RefreshInterval"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "local sampling interval",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateSettings RefreshInterval round-trip",
+        "Sift/Composition/PerformanceWorkspaceModule.cs:timer interval consumption"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.performance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.ChartHistory",
+      "kind": "setting",
+      "route": "Performance",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:HistoryNumberBox"
+      ],
+      "composition": [
+        "Sift/Composition/PerformanceWorkspaceModule.cs:HistoryLimit"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:ChartHistory"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "bounded local rolling-history length",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateSettings ChartHistory round-trip",
+        "Sift/Composition/PerformanceWorkspaceModule.cs:HistoryLimit consumption"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.performance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.ChartSmoothing",
+      "kind": "setting",
+      "route": "Performance",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:SmoothingBox"
+      ],
+      "composition": [
+        "Sift.Core/Models/AppSettings.cs:ChartSmoothing",
+        "Sift/Composition/PerformanceWorkspaceModule.cs:SetSmoothing consumption",
+        "Sift/Views/SettingsWorkspaceView.xaml.cs:SmoothingBox_SelectionChanged"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ChartSmoothingPolicy.cs:ResolveSmoothness"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "line smoothing preference applied to the production performance charts",
+      "automatedEvidence": [
+        "Sift.UnitTests/ChartSmoothingPolicyTests.cs",
+        "Sift.Tests/Program.cs:ValidateSettings ChartSmoothing round-trip",
+        "Sift/Composition/PerformanceWorkspaceModule.cs:SetSmoothing consumption"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.performance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.UiScale",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:UiScaleBox"
+      ],
+      "composition": [
+        "Sift.Core/Models/AppSettings.cs:UiScale",
+        "Sift/MainWindow.xaml.cs:ApplyUiScale",
+        "Sift/Views/SettingsWorkspaceView.xaml.cs:UiScaleBox_SelectionChanged"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/UiScalePolicy.cs:ResolveFactor"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "shell content scale preference applied uniformly without remote or security side effects",
+      "automatedEvidence": [
+        "Sift.UnitTests/UiScalePolicyTests.cs",
+        "Sift.Tests/Program.cs:ValidateSettings UiScale round-trip",
+        "Sift/MainWindow.xaml.cs:ApplyUiScale"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "setting.HomeWidgets",
+      "kind": "setting",
+      "route": "Home",
+      "presentation": [],
+      "composition": [
+        "Sift.Core/Models/AppSettings.cs:HomeWidgets"
+      ],
+      "coreBoundary": [],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "one-release migration input consumed only when the first dashboard profile document is created",
+      "automatedEvidence": [
+        "Sift.UnitTests/DashboardLayoutTests.cs:Store_migrates_legacy_visibility_and_round_trips_profiles"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.Dashboard",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:LIFECYCLE MONITOR"
+      ],
+      "composition": [
+        "Sift/Composition/SettingsWorkspaceModule.cs",
+        "Sift/Composition/HomeDashboardWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/DashboardModels.cs:DashboardPreferences"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "local monitoring, retention, quiet hours, hardware sampling, notifications, and cataloged alert-rule preferences; all opt-in capabilities default off",
+      "automatedEvidence": [
+        "Sift.UnitTests/DashboardAlertTests.cs",
+        "Sift/scripts/validate-ui.ps1:Settings"
+      ],
+      "visualStates": [
+        "normal",
+        "disabled"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.OfferSystemRestorePoint",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:RestorePointToggle"
+      ],
+      "composition": [
+        "Sift/Composition/OptimizeWorkspaceModule.cs:OfferSystemRestorePoint",
+        "Sift/Views/SettingsWorkspaceView.xaml.cs:RestorePointToggle"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemRestorePointService.cs",
+        "Sift.Core/Services/OptimizeMutationWorkflow.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "eligible Optimize batches may request a best-effort restore point before mutation",
+      "automatedEvidence": [
+        "Sift.UnitTests/SystemRestorePointServiceTests.cs",
+        "Sift.UnitTests/OptimizeMutationWorkflowTests.cs",
+        "Sift.Tests/Program.cs:Optimize restore wiring assertions"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.LastWorkspace",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/MainWindow.xaml:ShellNavigation"
+      ],
+      "composition": [
+        "Sift/MainWindow.xaml.cs:RootGrid_Loaded and OpenWorkspaceAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:LastWorkspace"
+      ],
+      "persistence": [
+        "Sift.Core/Infrastructure/Settings/SettingsPersistenceCoordinator.cs"
+      ],
+      "mutationContract": "local navigation preference",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateSettings LastWorkspace round-trip",
+        "Sift/MainWindow.xaml.cs:initial route restore and scheduled save"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.shell-and-navigation",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.LastMaintenanceScanUtc",
+      "kind": "setting",
+      "route": "Maintenance",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/MaintenanceWorkspaceModule.cs:scan completion assignment"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:LastMaintenanceScanUtc"
+      ],
+      "persistence": [
+        "Sift.Core/Infrastructure/Settings/SettingsPersistenceCoordinator.cs:SaveNow"
+      ],
+      "mutationContract": "successful maintenance scan timestamp flushed immediately",
+      "automatedEvidence": [
+        "Sift.UnitTests/InfrastructureTests.cs:SettingsPersistence_SaveNowOverridesPendingSchedule",
+        "Sift.Tests/Program.cs:Maintenance SaveNow source assertion"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.maintenance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.LastStorageScanUtc",
+      "kind": "setting",
+      "route": "Storage",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/StorageWorkspaceModule.cs:ScanAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:LastStorageScanUtc"
+      ],
+      "persistence": [
+        "Sift/Composition/StorageWorkspaceModule.cs:SettingsPersistence.Schedule"
+      ],
+      "mutationContract": "local scan metadata",
+      "automatedEvidence": [
+        "Sift/Composition/StorageWorkspaceModule.cs:assignment followed by Schedule",
+        "Sift/scripts/validate-ui.ps1:Storage scan execution"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.StorageRoots",
+      "kind": "setting",
+      "route": "Storage",
+      "presentation": [
+        "Sift/Views/StorageWorkspaceView.xaml:Storage scan root"
+      ],
+      "composition": [
+        "Sift/Composition/StorageWorkspaceModule.cs:ConfigureRoots and ScanAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:StorageRoots"
+      ],
+      "persistence": [
+        "Sift/Composition/StorageWorkspaceModule.cs:SettingsPersistence.Schedule"
+      ],
+      "mutationContract": "explicit local scan-root preference",
+      "automatedEvidence": [
+        "Sift/Composition/StorageWorkspaceModule.cs:load, assignment and scheduled save",
+        "Sift/scripts/validate-ui.ps1:explicit fixture root scan"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.ConsoleVisible",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:ConsoleVisibleToggle",
+        "Sift/MainWindow.xaml:ConsolePanel"
+      ],
+      "composition": [
+        "Sift/MainWindow.xaml.cs:ApplyConsoleVisibility"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:ConsoleVisible"
+      ],
+      "persistence": [
+        "Sift.Core/Infrastructure/Settings/SettingsPersistenceCoordinator.cs"
+      ],
+      "mutationContract": "local shell presentation preference",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateSettings ConsoleVisible round-trip",
+        "Sift/MainWindow.xaml.cs:toggle, hide and scheduled persistence"
+      ],
+      "visualStates": [
+        "visible",
+        "hidden"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.activity-console",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "setting.ConsoleWidth",
+      "kind": "setting",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml:ConsoleWidthSlider"
+      ],
+      "composition": [
+        "Sift/MainWindow.xaml.cs:ApplyConsoleVisibility"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs:ConsoleWidth"
+      ],
+      "persistence": [
+        "Sift.Core/Infrastructure/Settings/SettingsPersistenceCoordinator.cs"
+      ],
+      "mutationContract": "bounded local shell width preference",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateSettings"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.activity-console",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Tweaks",
+      "kind": "service",
+      "route": "Optimize",
+      "presentation": [
+        "Sift/Views/OptimizeWorkspaceView.xaml",
+        "Sift/Views/RecoveryWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Tweaks",
+        "Sift/MainWindow.xaml.cs:OptimizeWorkspaceModule and RecoveryWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/TweakExecutor.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/TweakExecutor.cs:backup store"
+      ],
+      "mutationContract": "automatic preflight, exact prior-state backup, guarded apply and restore",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:Optimize preflight",
+        "Sift.UnitTests/BackupSafetyTests.cs"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.Processes",
+      "kind": "service",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/Views/TaskManagerWorkspaceView.xaml",
+        "Sift/Views/PerformanceWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Processes",
+        "Sift/MainWindow.xaml.cs:TaskManagerWorkspaceModule and PerformanceWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ProcessSampler.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only sampling",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:process telemetry assertions",
+        "Sift/scripts/validate-ui.ps1:Task Manager and Performance traversal"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.MaintenanceScanner",
+      "kind": "service",
+      "route": "Maintenance",
+      "presentation": [
+        "Sift/Views/MaintenanceWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:MaintenanceScanner",
+        "Sift/MainWindow.xaml.cs:MaintenanceWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/MaintenanceScanner.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only bounded scan",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateMaintenance scan assertions",
+        "Sift/scripts/validate-ui.ps1:Maintenance traversal"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.maintenance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.MaintenanceCleaner",
+      "kind": "service",
+      "route": "Maintenance",
+      "presentation": [
+        "Sift/Views/MaintenanceWorkspaceView.xaml:Review and clean"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:MaintenanceCleaner",
+        "Sift/MainWindow.xaml.cs:MaintenanceWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/MaintenanceCleaner.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "allowlisted automatic preflight and reviewed cleanup",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:caller-path rejection and non-mutating preflight",
+        "Sift/scripts/validate-ui.ps1:Maintenance cancellation"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.maintenance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.StorageScanner",
+      "kind": "service",
+      "route": "Storage",
+      "presentation": [
+        "Sift/Views/StorageWorkspaceView.xaml:Scan storage"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:StorageScanner",
+        "Sift/MainWindow.xaml.cs:StorageWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/StorageScanner.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only explicit-root scan",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:storage fixture totals",
+        "Sift/scripts/validate-ui.ps1:Storage fixture scan"
+      ],
+      "visualStates": [
+        "loaded"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.StorageDeleter",
+      "kind": "service",
+      "route": "Storage",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:shared storageDeleter local instance",
+        "Sift/Composition/WinUiAppServices.cs:StorageDeletion and InstalledAppManager construction"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/StorageDeleter.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "shared internal deletion primitive; public composition property removed",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:StorageDeleter preflight and protected-path assertions",
+        "Sift.Tests/Program.cs:public StorageDeleter property removed assertion"
+      ],
+      "visualStates": [],
+      "status": "intentionally-internal",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.StorageDeletion",
+      "kind": "service",
+      "route": "Storage",
+      "presentation": [
+        "Sift/Views/StorageWorkspaceView.xaml:Review selected storage deletion"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:StorageDeletion",
+        "Sift/MainWindow.xaml.cs:StorageWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/StorageSelectionDeletionManager.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "exact-child preflight, revocable one-use ticket, post-confirmation revalidation, Recycle Bin only",
+      "automatedEvidence": [
+        "Sift.UnitTests/StorageSelectionDeletionManagerTests.cs",
+        "Sift/scripts/validate-ui.ps1:Storage exact-child cancellation"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Health",
+      "kind": "service",
+      "route": "Health",
+      "presentation": [
+        "Sift/MainWindow.xaml:Health route"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Health",
+        "Sift.Core/Services/HealthWorkspaceOrchestrator.cs:health inventory"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:HealthInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only inventory backing Health orchestration",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateHealth",
+        "Sift/scripts/validate-ui.ps1:Health traversal"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "intentionally-internal",
+      "roadmapId": "roadmap.health",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Services",
+      "kind": "service",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/Views/TaskManagerWorkspaceView.xaml:Windows services"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Services",
+        "Sift/MainWindow.xaml.cs:TaskManagerWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:ServiceInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only inventory; mutations delegated to guarded actions and elevation",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:service inventory and protected-service assertions",
+        "Sift/scripts/validate-ui.ps1:service inventory controls"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Tasks",
+      "kind": "service",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/Views/TaskManagerWorkspaceView.xaml:scheduled task inventory"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Tasks",
+        "Sift/MainWindow.xaml.cs:TaskManagerWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:ScheduledTaskInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only inventory; typed task mutations use ScheduledTaskActionService",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScheduledTaskActionServiceTests.cs",
+        "Sift.Tests/Program.cs:protected scheduled-task assertions"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Startup",
+      "kind": "service",
+      "route": "Startup",
+      "presentation": [
+        "Sift/Views/StartupWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Startup",
+        "Sift/MainWindow.xaml.cs:StartupWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:StartupInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only inventory",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:startup status assertion",
+        "Sift/scripts/validate-ui.ps1:Startup traversal"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.startup",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.InstalledApps",
+      "kind": "service",
+      "route": "Apps",
+      "presentation": [
+        "Sift/Views/InstalledAppsWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:InstalledApps",
+        "Sift/MainWindow.xaml.cs:InstalledAppsWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/InstalledAppManager.cs:InstalledAppInventory"
+      ],
+      "persistence": [
+        "Windows uninstall registry"
+      ],
+      "mutationContract": "read-only registered-app inventory",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:installed-app inventory identity assertions",
+        "Sift/scripts/validate-ui.ps1:Installed Apps traversal"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.installed-apps",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.InstalledAppManager",
+      "kind": "service",
+      "route": "Apps",
+      "presentation": [
+        "Sift/Views/InstalledAppsWorkspaceView.xaml:Uninstall or clean selected app"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:InstalledAppManager",
+        "Sift/MainWindow.xaml.cs:InstalledAppsWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/InstalledAppManager.cs"
+      ],
+      "persistence": [
+        "Windows uninstall registry revalidation"
+      ],
+      "mutationContract": "selected-only preflight, confirmation, guarded handoff and exact-removal verification",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:installed-app preflight and stale-command rejection",
+        "Sift/scripts/validate-ui.ps1:tracked uninstall verification"
+      ],
+      "visualStates": [
+        "confirmation",
+        "verified-uninstall"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.installed-apps",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.InstalledAppTrust",
+      "kind": "service",
+      "route": "Apps",
+      "presentation": [
+        "Sift/Views/InstalledAppsWorkspaceView.xaml:UNINSTALLER TRUST"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:InstalledAppTrust",
+        "Sift/MainWindow.xaml.cs:InstalledAppsWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/InstalledAppTrustInspector.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only local Authenticode inspection",
+      "automatedEvidence": [
+        "Sift.UnitTests/InstalledAppTrustInspectorTests.cs",
+        "Sift/scripts/validate-ui.ps1:catalog-signed fixture trust assertion"
+      ],
+      "visualStates": [
+        "selected"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.installed-apps",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.AppLeftovers",
+      "kind": "service",
+      "route": "Apps",
+      "presentation": [
+        "Sift/Views/InstalledAppsWorkspaceView.xaml:Find leftover app registrations"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:AppLeftovers",
+        "Sift/MainWindow.xaml.cs:InstalledAppsWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/AppLeftoverManager.cs"
+      ],
+      "persistence": [
+        "Windows uninstall registry and exact local paths"
+      ],
+      "mutationContract": "two-signal registration cleanup and selected exact-path Recycle Bin review",
+      "automatedEvidence": [
+        "Sift.UnitTests/AppLeftoverManagerTests.cs",
+        "Sift.UnitTests/OrphanRegistrationSafetyTests.cs",
+        "Sift/scripts/validate-ui.ps1:leftover confirmation cancellation"
+      ],
+      "visualStates": [
+        "leftover-review",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.installed-apps",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.SystemInformation",
+      "kind": "service",
+      "route": "SystemInfo",
+      "presentation": [
+        "Sift/Views/SystemInformationWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:SystemInformation",
+        "Sift/MainWindow.xaml.cs:SystemInformationWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInformationService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only local inventory",
+      "automatedEvidence": [
+        "Sift.UnitTests/SystemInformationServiceTests.cs",
+        "Sift.Tests/Program.cs:ValidateSystemInformation",
+        "Sift/scripts/validate-ui.ps1:System Information controls"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.system-information",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.GuardedActions",
+      "kind": "service",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/Views/TaskManagerWorkspaceView.xaml:process and service action bars"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:GuardedActions",
+        "Sift/MainWindow.xaml.cs:TaskManagerWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/GuardedSystemActions.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "single-target plan and live-target validation with protected-target guards",
+      "automatedEvidence": [
+        "Sift.UnitTests/GuardedSystemActionsTests.cs",
+        "Sift.Tests/Program.cs:guarded action source assertions",
+        "Sift/scripts/validate-ui.ps1:process cancellation"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Elevation",
+      "kind": "service",
+      "route": "",
+      "presentation": [
+        "Sift/MainWindow.xaml:standard-user shell elevation status"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Elevation"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs",
+        "Sift.ElevationHost/Program.cs"
+      ],
+      "persistence": [
+        "bounded one-shot request and response files"
+      ],
+      "mutationContract": "allowlisted typed one-shot elevation with independent helper revalidation",
+      "automatedEvidence": [
+        "Sift.UnitTests/ElevationBrokerTests.cs",
+        "Sift.Tests/Program.cs:elevation-host and package assertions"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Recovery",
+      "kind": "service",
+      "route": "Recovery",
+      "presentation": [
+        "Sift/Views/RecoveryWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Recovery",
+        "Sift/MainWindow.xaml.cs:RecoveryWorkspaceModule"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/RecoveryManager.cs"
+      ],
+      "persistence": [
+        "Sift backup store"
+      ],
+      "mutationContract": "exact inspection, preflight, confirmation, protected phase-first restore",
+      "automatedEvidence": [
+        "Sift.UnitTests/RecoveryManagerTests.cs",
+        "Sift/scripts/validate-ui.ps1:Recovery cancellation"
+      ],
+      "visualStates": [
+        "normal",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.recovery",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.SettingsStore",
+      "kind": "service",
+      "route": "Settings",
+      "presentation": [
+        "Sift/Views/SettingsWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:SettingsStore",
+        "Sift/MainWindow.xaml.cs:settings load"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "persistence": [
+        "LocalAppData/Sift/settings.json"
+      ],
+      "mutationContract": "bounded local settings persistence",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateSettings round-trip",
+        "Sift.UnitTests/InfrastructureTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "intentionally-internal",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Clipboard",
+      "kind": "service",
+      "route": "",
+      "presentation": [
+        "Sift/Controls/ActivityConsolePanel.xaml",
+        "Sift/Views/HardwareMonitorWorkspaceView.xaml",
+        "Sift/Views/ScriptCenterWorkspaceView.xaml",
+        "Sift/Views/SystemInformationWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Clipboard",
+        "Sift/Composition/WorkspaceRegistryFactory.cs:Clipboard",
+        "Sift/Composition/WinUiShellServices.cs:Clipboard"
+      ],
+      "coreBoundary": [
+        "Sift/Infrastructure/Interop/IClipboardService.cs",
+        "Sift/Infrastructure/Interop/WinUiClipboardService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "text-only local clipboard copy through one WinUI adapter",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:desktop integration adapter ownership",
+        "Sift/scripts/validate-ui.ps1:System Information copy controls"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.shell-and-navigation",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.ShellLauncher",
+      "kind": "service",
+      "route": "",
+      "presentation": [
+        "Sift/Views/StartupWorkspaceView.xaml",
+        "Sift/Views/RecoveryWorkspaceView.xaml",
+        "Sift/Views/InstalledAppsWorkspaceView.xaml",
+        "Sift/Views/ScriptCenterWorkspaceView.xaml",
+        "Sift/Views/SystemInformationWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:ShellLauncher",
+        "Sift/Composition/WorkspaceRegistryFactory.cs:ShellLauncher"
+      ],
+      "coreBoundary": [
+        "Sift/Infrastructure/Interop/IWindowsShellLauncher.cs",
+        "Sift/Infrastructure/Interop/WindowsShellLauncher.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "named Windows Settings, System Information, and folder handoffs; no arbitrary process or URI API",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:desktop integration adapter ownership",
+        "Sift.Tests/Program.cs:no direct process launch outside the adapter"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.shell-and-navigation",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Activity",
+      "kind": "service",
+      "route": "",
+      "presentation": [
+        "Sift/Controls/ActivityConsolePanel.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Activity",
+        "Sift/MainWindow.xaml.cs:ConsolePanel.Connect"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Infrastructure/Activity/ActivityHub.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/ActivityStore.cs"
+      ],
+      "mutationContract": "bounded observable event publication",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:activity store round-trip",
+        "Sift.Tests/Program.cs:activity console source assertion"
+      ],
+      "visualStates": [
+        "visible",
+        "hidden"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.activity-console",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Operations",
+      "kind": "service",
+      "route": "",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Operations",
+        "Sift/MainWindow.xaml.cs:workspace module construction"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Infrastructure/Operations/OperationCoordinator.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "latest-wins cancellation and observable operation lifecycle",
+      "automatedEvidence": [
+        "Sift.UnitTests/InfrastructureTests.cs:OperationCoordinator coverage",
+        "Sift/MainWindow.xaml.cs:all asynchronous workspace composition"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.SettingsPersistence",
+      "kind": "service",
+      "route": "Settings",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:SettingsPersistence",
+        "Sift/MainWindow.xaml.cs:scheduled shell saves"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Infrastructure/Settings/SettingsPersistenceCoordinator.cs"
+      ],
+      "persistence": [
+        "LocalAppData/Sift/settings.json"
+      ],
+      "mutationContract": "debounced local settings save and disposal flush",
+      "automatedEvidence": [
+        "Sift.UnitTests/InfrastructureTests.cs:settings persistence coverage",
+        "Sift/MainWindow.xaml.cs:Schedule calls and service disposal"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "elevation.ApplyMachineTweaks",
+      "kind": "elevation",
+      "route": "Optimize",
+      "presentation": [
+        "Sift/Views/OptimizeWorkspaceView.xaml:Review and apply"
+      ],
+      "composition": [
+        "Sift/Composition/OptimizeWorkspaceModule.cs:ApplyMachineTweaksAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs:ApplyMachineTweaksAsync",
+        "Sift.ElevationHost/Program.cs:ApplyMachineTweaksAsync"
+      ],
+      "persistence": [
+        "one-shot elevation request and response"
+      ],
+      "mutationContract": "allowlisted machine tweaks only, nonce-bound request, helper revalidation",
+      "automatedEvidence": [
+        "Sift.UnitTests/ElevationBrokerTests.cs:ApplyMachineTweaks",
+        "Sift/scripts/validate-ui.ps1:Optimize confirmation cancellation"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.optimize",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "elevation.RestoreMachineBackup",
+      "kind": "elevation",
+      "route": "Recovery",
+      "presentation": [
+        "Sift/Views/RecoveryWorkspaceView.xaml:Review restore"
+      ],
+      "composition": [
+        "Sift.Core/Services/RecoveryManager.cs:RestoreMachineBackupAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs:RestoreMachineBackupAsync",
+        "Sift.ElevationHost/Program.cs:RestoreMachineBackupAsync"
+      ],
+      "persistence": [
+        "one-shot elevation request and response",
+        "Sift backup file"
+      ],
+      "mutationContract": "exact backup filename, helper inspection, protected phase-first restore",
+      "automatedEvidence": [
+        "Sift.UnitTests/RecoveryManagerTests.cs",
+        "Sift.Tests/Program.cs:Recovery source assertions",
+        "Sift/scripts/validate-ui.ps1:Recovery cancellation"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.recovery",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "elevation.ValidateElevation",
+      "kind": "elevation",
+      "route": "",
+      "presentation": [],
+      "composition": [
+        "Sift.ElevationHost/Program.cs:ValidateElevation branch"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs:ElevatedOperationKind.ValidateElevation"
+      ],
+      "persistence": [
+        "one-shot validation request and response"
+      ],
+      "mutationContract": "non-mutating elevation validation",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:clean-account script ValidateElevation assertion",
+        "Sift/scripts/validate-clean-account.ps1:operation 2"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.packaging",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "elevation.ManageService",
+      "kind": "elevation",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/Views/TaskManagerWorkspaceView.xaml:Start selected service and Restart selected service"
+      ],
+      "composition": [
+        "Sift/Composition/TaskManagerWorkspaceModule.cs:ManageServiceAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs:ManageServiceAsync",
+        "Sift.ElevationHost/Program.cs:ManageService"
+      ],
+      "persistence": [
+        "one-shot elevation request and response"
+      ],
+      "mutationContract": "single exact third-party service, start/restart only, helper revalidation",
+      "automatedEvidence": [
+        "Sift.UnitTests/ElevationBrokerTests.cs:ManageService",
+        "Sift.Tests/Program.cs:ManageService source assertions",
+        "Sift/scripts/validate-ui.ps1:service confirmation when eligible"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "capability.scheduled-task-actions",
+      "kind": "capability",
+      "route": "TaskManager",
+      "presentation": [
+        "Sift/Views/TaskManagerWorkspaceView.xaml:Enable selected task and Disable selected task"
+      ],
+      "composition": [
+        "Sift/Composition/TaskManagerWorkspaceModule.cs:ScheduledTaskWorkflow",
+        "Sift.Core/Services/ScheduledTaskActionService.cs:ScheduledTaskActionWorkflow"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScheduledTaskActionService.cs",
+        "Sift.Core/Services/ScheduledTaskIdentityCatalog.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "single allowlisted Office task enable/disable with preflight, confirmation, and immediate revalidation",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScheduledTaskActionServiceTests.cs",
+        "Sift.Tests/Program.cs:Task Manager source assertions"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "capability.restore-point-helper",
+      "kind": "capability",
+      "route": "Optimize",
+      "presentation": [
+        "Sift/Views/OptimizeWorkspaceView.xaml.cs:System Restore preflight evidence",
+        "Sift/Views/SettingsWorkspaceView.xaml:RestorePointToggle"
+      ],
+      "composition": [
+        "Sift.Core/Services/SystemRestorePointService.cs",
+        "Sift.Core/Services/OptimizeMutationWorkflow.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemRestorePointService.cs:SystemRestorePointController",
+        "Sift.ElevationHost/Program.cs:CreateSystemRestorePoint"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:OfferSystemRestorePoint"
+      ],
+      "mutationContract": "best-effort parameter-free restore point before eligible Optimize batches; continuation dialog on failure",
+      "automatedEvidence": [
+        "Sift.UnitTests/SystemRestorePointServiceTests.cs",
+        "Sift.UnitTests/OptimizeMutationWorkflowTests.cs",
+        "Sift.UnitTests/ElevationBrokerTests.cs:restore point shape"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "capability.history-aggregation",
+      "kind": "capability",
+      "route": "Health",
+      "presentation": [
+        "Sift/Views/HealthWorkspaceView.xaml:Activity / Recovery History"
+      ],
+      "composition": [
+        "Sift.Core/Services/HistoryAggregator.cs:HistoryService",
+        "Sift/Composition/HealthWorkspaceModule.cs:BindHistory"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/TweakExecutor.cs:ListBackups",
+        "Sift.Core/Services/ActivityStore.cs:Load"
+      ],
+      "persistence": [
+        "Sift backup store",
+        "Sift activity store"
+      ],
+      "mutationContract": "bounded read-only merge of activity, optimize backups, and registry backups",
+      "automatedEvidence": [
+        "Sift.UnitTests/HistoryServiceTests.cs",
+        "Sift.Tests/Program.cs:Health history source assertions"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.activity-console",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "capability.workspace-registry-ownership",
+      "kind": "capability",
+      "route": "",
+      "presentation": [
+        "Sift/MainWindow.xaml.cs:IWorkspaceRegistry"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs",
+        "Sift/Composition/WorkspaceRegistry.cs",
+        "Sift/Composition/WinUiShellServices.cs",
+        "Sift/App.xaml.cs:WorkspaceRegistryFactory"
+      ],
+      "coreBoundary": [
+        "Sift/Composition/WinUiAppServices.cs:Shell"
+      ],
+      "persistence": [],
+      "mutationContract": "shell receives narrow services; registry factory constructs modules; registry owns module lifetime and route-key parity",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:workspace registry ownership and disposal source assertions"
+      ],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.shell-and-navigation",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "capability.process-csv-export",
+      "kind": "capability",
+      "route": "TaskManager",
+      "presentation": [],
+      "composition": [
+        "Sift.Core/Services/ProcessCsvExporter.cs:Export"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ProcessCsvExporter.cs"
+      ],
+      "persistence": [
+        "caller-selected CSV path in tests only"
+      ],
+      "mutationContract": "local export; no production UI path",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:ValidateCsv headered file"
+      ],
+      "visualStates": [],
+      "status": "future",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "capability.telemetry-hub",
+      "kind": "capability",
+      "route": "Performance",
+      "presentation": [],
+      "composition": [
+        "resolved removal: Sift.Core/Services/TelemetryHub.cs absent"
+      ],
+      "coreBoundary": [
+        "resolved removal: no production references"
+      ],
+      "persistence": [],
+      "mutationContract": "resolved by removal",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:TelemetryHub.cs absent assertion"
+      ],
+      "visualStates": [],
+      "status": "obsolete",
+      "roadmapId": "roadmap.performance",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "capability.optimize-recovery-navigation",
+      "kind": "capability",
+      "route": "Optimize",
+      "presentation": [
+        "Sift/Views/OptimizeWorkspaceView.xaml:Open Recovery backups"
+      ],
+      "composition": [
+        "Sift/Composition/OptimizeWorkspaceModule.cs:View_OpenBackupsRequested",
+        "Sift/Composition/WorkspaceNavigator.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/RecoveryManager.cs:InspectExact and RestoreAsync"
+      ],
+      "persistence": [],
+      "mutationContract": "navigation only; Recovery owns backup selection, inspection, confirmation, reinspection, and restore",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Optimize Open Recovery backups navigation",
+        "Sift.Tests/Program.cs:Optimize has navigation only and Recovery owns restore"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.optimize",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "capability.trusted-publisher-certificate",
+      "kind": "capability",
+      "route": "",
+      "presentation": [],
+      "composition": [
+        "Sift/build-msix.ps1:CertificateThumbprint and signtool verification",
+        "Sift/scripts/validate-clean-account.ps1"
+      ],
+      "coreBoundary": [
+        "external trusted publisher certificate"
+      ],
+      "persistence": [
+        "external certificate store"
+      ],
+      "mutationContract": "release signing and clean-account trust require a real externally issued certificate",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:packaging requires explicit trusted signing and verification"
+      ],
+      "visualStates": [],
+      "status": "blocked-external",
+      "roadmapId": "roadmap.packaging",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.core-execution-and-safety",
+      "kind": "roadmap",
+      "route": "",
+      "presentation": [
+        "Core execution and permissions"
+      ],
+      "composition": [
+        "Sift/ROADMAP.md:Core execution and permissions"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/TweakExecutor.cs",
+        "Sift.Core/Services/GuardedSystemActions.cs",
+        "Sift.Core/Services/RecoveryManager.cs"
+      ],
+      "persistence": [
+        "typed atomic backup and recovery stores"
+      ],
+      "mutationContract": "guarded mutation and deterministic safety evidence",
+      "automatedEvidence": [
+        "Sift.UnitTests/BackupSafetyTests.cs",
+        "Sift.UnitTests/GuardedSystemActionsTests.cs",
+        "Sift.UnitTests/RecoveryManagerTests.cs"
+      ],
+      "visualStates": [],
+      "status": "future",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "roadmap.shell-and-navigation",
+      "kind": "roadmap",
+      "route": "",
+      "presentation": [
+        "Shell and navigation"
+      ],
+      "composition": [
+        "Sift/MainWindow.xaml",
+        "Sift/MainWindow.xaml.cs"
+      ],
+      "coreBoundary": [
+        "Sift/Composition/IWorkspaceModule.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:LastWorkspace"
+      ],
+      "mutationContract": "shell-only navigation and lifecycle ownership",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:fourteen-route traversal",
+        "Sift.Tests/Program.cs:shell route assertions"
+      ],
+      "visualStates": [
+        "normal",
+        "minimum-width"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.shell-and-navigation",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.activity-console",
+      "kind": "roadmap",
+      "route": "",
+      "presentation": [
+        "Activity console"
+      ],
+      "composition": [
+        "Sift/Controls/ActivityConsolePanel.xaml",
+        "Sift/MainWindow.xaml.cs:ConsolePanel.Connect"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Infrastructure/Activity/ActivityHub.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/ActivityStore.cs",
+        "Sift.Core/Models/AppSettings.cs:ConsoleVisible and ConsoleWidth"
+      ],
+      "mutationContract": "bounded local activity presentation",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:activity round-trip and console source assertions"
+      ],
+      "visualStates": [
+        "visible",
+        "hidden"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.activity-console",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.home",
+      "kind": "roadmap",
+      "route": "Home",
+      "presentation": [
+        "Home"
+      ],
+      "composition": [
+        "Sift/Composition/WorkspaceRegistryFactory.cs:Home"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/DashboardTelemetryService.cs",
+        "Sift.Core/Services/DashboardProfileStore.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Home capture"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.optimize",
+      "kind": "roadmap",
+      "route": "Optimize",
+      "presentation": [
+        "Optimize"
+      ],
+      "composition": [
+        "Sift/Composition/OptimizeWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/TweakExecutor.cs",
+        "Sift.Core/Services/ElevationBroker.cs"
+      ],
+      "persistence": [
+        "Sift backup store"
+      ],
+      "mutationContract": "automatic preflight, confirmation, backup, revalidation and bounded elevation",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Optimize preflight cancellation",
+        "Sift.Tests/Program.cs:Optimize preflight"
+      ],
+      "visualStates": [
+        "normal",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.optimize",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.task-manager",
+      "kind": "roadmap",
+      "route": "TaskManager",
+      "presentation": [
+        "Task Manager"
+      ],
+      "composition": [
+        "Sift/Composition/TaskManagerWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ProcessSampler.cs",
+        "Sift.Core/Services/GuardedSystemActions.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "single-process and single-service guarded actions only",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Task Manager filtering and cancellation",
+        "Sift.UnitTests/GuardedSystemActionsTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.task-manager",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.performance",
+      "kind": "roadmap",
+      "route": "Performance",
+      "presentation": [
+        "Performance"
+      ],
+      "composition": [
+        "Sift/Composition/PerformanceWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ProcessSampler.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:RefreshInterval and ChartHistory"
+      ],
+      "mutationContract": "read-only bounded rolling telemetry",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Performance capture",
+        "Sift.Tests/Program.cs:process telemetry and LiveCharts assertions"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.performance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.hardware-monitor",
+      "kind": "roadmap",
+      "route": "HardwareMonitor",
+      "presentation": [
+        "Hardware Monitor"
+      ],
+      "composition": [
+        "Sift/Composition/HardwareMonitorWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/HardwareMonitorService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only incremental provider-isolated telemetry",
+      "automatedEvidence": [
+        "Sift.UnitTests/HardwareMonitorServiceTests.cs",
+        "Sift/scripts/validate-ui.ps1:Hardware monitor provider inventory and sampling lifecycle"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected sensor",
+        "provider unavailable",
+        "narrow"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.hardware-monitor",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.startup",
+      "kind": "roadmap",
+      "route": "Startup",
+      "presentation": [
+        "Startup"
+      ],
+      "composition": [
+        "Sift/Composition/StartupWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:StartupInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only with Windows Settings handoff",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Startup capture",
+        "Sift.Tests/Program.cs:startup inventory assertion"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.startup",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.maintenance",
+      "kind": "roadmap",
+      "route": "Maintenance",
+      "presentation": [
+        "Maintenance"
+      ],
+      "composition": [
+        "Sift/Composition/MaintenanceWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/MaintenanceScanner.cs",
+        "Sift.Core/Services/MaintenanceCleaner.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:LastMaintenanceScanUtc currently not flushed"
+      ],
+      "mutationContract": "allowlisted preflight and reviewed cleanup",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Maintenance preflight cancellation",
+        "Sift.Tests/Program.cs:maintenance safety assertions"
+      ],
+      "visualStates": [
+        "normal",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.maintenance",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.command-center",
+      "kind": "roadmap",
+      "route": "Scripts",
+      "presentation": [
+        "Script Studio"
+      ],
+      "composition": [
+        "Sift/Composition/ScriptCenterWorkspaceModule.cs",
+        "Sift/Views/ScriptCenterWorkspaceView.xaml"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScriptCommandService.cs",
+        "Sift.Core/Services/ScriptStudioService.cs",
+        "Sift.Core/Models/ScriptStudioModels.cs",
+        "Sift.Core/Services/ScriptRecipeCatalog.cs",
+        "Sift.Core/Services/ScriptRecipeAccessPolicy.cs",
+        "Sift.Core/Services/ScriptRecipeTaxonomy.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "exact catalog execution with automatic Core review and immediate revalidation; read-only recipes run directly, state-changing recipes require confirmation, and administrator recipes remain session-elevated with no recipe or raw-command elevation payload",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScriptCommandServiceTests.cs",
+        "Sift.UnitTests/ScriptStudioServiceTests.cs",
+        "Sift/scripts/validate-ui.ps1:Script Studio read-only direct run, standard-user library, and editor states"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.command-center",
+      "ownerPlan": "2026-07-14-sift-program-index.md"
+    },
+    {
+      "id": "roadmap.health",
+      "kind": "roadmap",
+      "route": "Health",
+      "presentation": [
+        "Health"
+      ],
+      "composition": [
+        "Sift/Composition/HealthWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInventoryServices.cs:HealthInventory"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Health capture",
+        "Sift.Tests/Program.cs:health checks"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.health",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.recovery",
+      "kind": "roadmap",
+      "route": "Recovery",
+      "presentation": [
+        "Recovery"
+      ],
+      "composition": [
+        "Sift/Composition/RecoveryWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/RecoveryManager.cs"
+      ],
+      "persistence": [
+        "Sift backup store"
+      ],
+      "mutationContract": "exact backup preflight, confirmation and protected restore",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Recovery cancellation",
+        "Sift.UnitTests/RecoveryManagerTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "selected",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.recovery",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.storage",
+      "kind": "roadmap",
+      "route": "Storage",
+      "presentation": [
+        "Storage"
+      ],
+      "composition": [
+        "Sift/Composition/StorageWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/StorageScanner.cs",
+        "Sift.Core/Services/StorageSelectionDeletionManager.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Models/AppSettings.cs:StorageRoots and LastStorageScanUtc"
+      ],
+      "mutationContract": "exact-child one-use Recycle Bin authorization",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Storage scan and cancellation",
+        "Sift.UnitTests/StorageSelectionDeletionManagerTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "loaded",
+        "selected",
+        "confirmation",
+        "cancellation",
+        "minimum-width"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.storage",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.installed-apps",
+      "kind": "roadmap",
+      "route": "Apps",
+      "presentation": [
+        "Installed Apps"
+      ],
+      "composition": [
+        "Sift/Composition/InstalledAppsWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/InstalledAppManager.cs",
+        "Sift.Core/Services/InstalledAppTrustInspector.cs",
+        "Sift.Core/Services/AppLeftoverManager.cs"
+      ],
+      "persistence": [
+        "Windows uninstall registry and exact local paths"
+      ],
+      "mutationContract": "selected-only guarded uninstall and leftover cleanup",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Installed Apps trust and mutation cancellation",
+        "Sift.UnitTests/InstalledAppPolicyTests.cs",
+        "Sift.UnitTests/AppLeftoverManagerTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected",
+        "confirmation",
+        "cancellation",
+        "verified-uninstall",
+        "leftover-review"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.installed-apps",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.system-information",
+      "kind": "roadmap",
+      "route": "SystemInfo",
+      "presentation": [
+        "System Information"
+      ],
+      "composition": [
+        "Sift/Composition/SystemInformationWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemInformationService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only local inventory and privacy-aware copy",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:System Information filtering and selection",
+        "Sift.UnitTests/SystemInformationServiceTests.cs"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.system-information",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.settings-and-dialogs",
+      "kind": "roadmap",
+      "route": "Settings",
+      "presentation": [
+        "Settings and dialogs"
+      ],
+      "composition": [
+        "Sift/Composition/SettingsWorkspaceModule.cs",
+        "Sift/Views/SettingsWorkspaceView.xaml"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs"
+      ],
+      "persistence": [
+        "Sift.Core/Services/SettingsStore.cs"
+      ],
+      "mutationContract": "local settings plus automatic-preflight dialogs owned by workspaces",
+      "automatedEvidence": [
+        "Sift/scripts/validate-ui.ps1:Settings capture and mutation dialog cancellation",
+        "Sift.Tests/Program.cs:settings round-trip"
+      ],
+      "visualStates": [
+        "normal",
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "future",
+      "roadmapId": "roadmap.settings-and-dialogs",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "roadmap.packaging",
+      "kind": "roadmap",
+      "route": "",
+      "presentation": [
+        "Packaging"
+      ],
+      "composition": [
+        "Sift/build-release.ps1",
+        "Sift/build-msix.ps1",
+        "Sift/scripts/validate-clean-account.ps1"
+      ],
+      "coreBoundary": [
+        "Sift/Sift.csproj:self-contained publish",
+        "Sift.ElevationHost/Sift.ElevationHost.csproj"
+      ],
+      "persistence": [
+        "generated release output (not checked in)",
+        "MSIX package"
+      ],
+      "mutationContract": "implementation validation remains local; trusted signing is a separate external gate",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:MSIX manifest, signing and clean-account script assertions"
+      ],
+      "visualStates": [],
+      "status": "future",
+      "roadmapId": "roadmap.packaging",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.HardwareMonitor",
+      "kind": "service",
+      "route": "HardwareMonitor",
+      "presentation": [
+        "Sift/Views/HardwareMonitorWorkspaceView.xaml"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:HardwareMonitor",
+        "Sift/Composition/HardwareMonitorWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/IHardwareMonitorService.cs",
+        "Sift.Core/Services/HardwareMonitorService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only provider-isolated local hardware sensor sampling",
+      "automatedEvidence": [
+        "Sift.UnitTests/HardwareMonitorServiceTests.cs",
+        "Sift/scripts/validate-ui.ps1:Hardware monitor provider inventory and sampling lifecycle"
+      ],
+      "visualStates": [
+        "normal",
+        "filtered",
+        "selected sensor",
+        "provider unavailable"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.hardware-monitor",
+      "ownerPlan": "Sift/docs/audits/AUDIT_PRODUCT_LANGUAGE_PERMISSION_ARCHITECTURE.md"
+    },
+    {
+      "id": "service.Scripts",
+      "kind": "service",
+      "route": "Scripts",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Scripts",
+        "Sift/Composition/WinUiAppServices.cs:ScriptStudio",
+        "Sift/Composition/ScriptCenterWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScriptCommandService.cs",
+        "Sift.Core/Services/ScriptStudioService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "canonical recipe metadata and guarded execution remain separate from authored-document analysis; read-only recipes run after Core review, state-changing recipes require confirmation, administrator recipes remain session-elevated, and authored scripts cannot execute or elevate",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScriptCommandServiceTests.cs",
+        "Sift.UnitTests/ScriptStudioServiceTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.command-center",
+      "ownerPlan": "2026-07-14-sift-program-index.md"
+    },
+    {
+      "id": "service.ScriptStudio",
+      "kind": "service",
+      "route": "Scripts",
+      "presentation": [
+        "Sift/Views/ScriptCenterWorkspaceView.xaml:Studio"
+      ],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:ScriptStudio",
+        "Sift/Composition/ScriptCenterWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScriptStudioService.cs",
+        "Sift.Core/Models/ScriptStudioModels.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "finite local runtime discovery and non-executing syntax/policy analysis only; authored documents cannot execute, elevate, download or install packages",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScriptStudioServiceTests.cs",
+        "Sift/scripts/validate-ui.ps1:Script Studio in-memory analysis"
+      ],
+      "visualStates": [
+        "normal",
+        "analysis"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.command-center",
+      "ownerPlan": "2026-07-14-sift-program-index.md"
+    },
+    {
+      "id": "service.Settings",
+      "kind": "service",
+      "route": "Settings",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:Settings",
+        "Sift/MainWindow.xaml.cs:_services.Settings"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Models/AppSettings.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "shared in-memory settings graph",
+      "automatedEvidence": [
+        "Sift.Tests/Program.cs:legacy settings migration assertion"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.TaskActions",
+      "kind": "service",
+      "route": "TaskManager",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:TaskActions"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScheduledTaskActionService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "typed scheduled-task preflight and execution",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScheduledTaskActionServiceTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "intentionally-internal",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.ScheduledTaskWorkflow",
+      "kind": "service",
+      "route": "TaskManager",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:ScheduledTaskWorkflow",
+        "Sift/Composition/TaskManagerWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ScheduledTaskActionService.cs:ScheduledTaskActionWorkflow"
+      ],
+      "persistence": [],
+      "mutationContract": "confirmation orchestration for scheduled-task mutations",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScheduledTaskActionServiceTests.cs:confirmation decline"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.RestorePoints",
+      "kind": "service",
+      "route": "Optimize",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:RestorePoints"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/SystemRestorePointService.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "best-effort restore-point tickets for eligible Optimize batches",
+      "automatedEvidence": [
+        "Sift.UnitTests/SystemRestorePointServiceTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "intentionally-internal",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.OptimizeWorkflow",
+      "kind": "service",
+      "route": "Optimize",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:OptimizeWorkflow",
+        "Sift/Composition/OptimizeWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/OptimizeMutationWorkflow.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "preflight, restore gating, and machine/local phase ordering",
+      "automatedEvidence": [
+        "Sift.UnitTests/OptimizeMutationWorkflowTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.History",
+      "kind": "service",
+      "route": "Health",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:History"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/HistoryAggregator.cs:HistoryService"
+      ],
+      "persistence": [],
+      "mutationContract": "bounded read-only history aggregation",
+      "automatedEvidence": [
+        "Sift.UnitTests/HistoryServiceTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.HealthOrchestrator",
+      "kind": "service",
+      "route": "Health",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:HealthOrchestrator",
+        "Sift/Composition/HealthWorkspaceModule.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/HealthWorkspaceOrchestrator.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "latest-wins checks and history refresh orchestration",
+      "automatedEvidence": [
+        "Sift.UnitTests/HealthWorkspaceOrchestratorTests.cs"
+      ],
+      "visualStates": [
+        "normal"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "service.DashboardProfiles",
+      "kind": "service",
+      "route": "Home",
+      "presentation": ["Sift/Views/HomeDashboardWorkspaceView.xaml"],
+      "composition": ["Sift/Composition/WinUiAppServices.cs:DashboardProfiles"],
+      "coreBoundary": ["Sift.Core/Services/DashboardProfileStore.cs"],
+      "persistence": ["dashboard-profiles.json atomic current-user document"],
+      "mutationContract": "versioned validated profiles; import rejects unknown schema, fields, widgets, and path or executable settings",
+      "automatedEvidence": [
+        "Sift.UnitTests/DashboardLayoutTests.cs",
+        "Sift/scripts/validate-ui.ps1:Home"
+      ],
+      "visualStates": ["normal", "customizing", "empty"],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/ARCHITECTURE.md"
+    },
+    {
+      "id": "service.DashboardTelemetry",
+      "kind": "service",
+      "route": "Home",
+      "presentation": ["Sift/Controls/DashboardWidgetContent.xaml.cs"],
+      "composition": ["Sift/Composition/WinUiAppServices.cs:DashboardTelemetry"],
+      "coreBoundary": [
+        "Sift.Core/Services/DashboardTelemetryService.cs",
+        "Sift.Core/Services/DashboardMonitorProtocol.cs"
+      ],
+      "persistence": [],
+      "mutationContract": "read-only typed snapshots with process paths removed before IPC and presentation",
+      "automatedEvidence": [
+        "Sift.UnitTests/DashboardSamplingTests.cs",
+        "Sift.UnitTests/DashboardMonitorProtocolTests.cs",
+        "Sift/scripts/validate-ui.ps1:Home"
+      ],
+      "visualStates": ["normal", "unavailable"],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/ARCHITECTURE.md"
+    },
+    {
+      "id": "service.DashboardHistory",
+      "kind": "service",
+      "route": "Home",
+      "presentation": ["Sift/Views/SettingsWorkspaceView.xaml:Clear history"],
+      "composition": ["Sift/Composition/WinUiAppServices.cs:DashboardHistory"],
+      "coreBoundary": ["Sift.Core/Services/DashboardHistoryStore.cs"],
+      "persistence": ["dashboard.db SQLite WAL with bounded rollups and pruning"],
+      "mutationContract": "numeric machine aggregates only; process, command, path, executable, and file identities are rejected",
+      "automatedEvidence": ["Sift.UnitTests/DashboardHistoryTests.cs"],
+      "visualStates": [],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/ARCHITECTURE.md"
+    },
+    {
+      "id": "service.DashboardAlerts",
+      "kind": "service",
+      "route": "Home",
+      "presentation": ["Sift/Views/SettingsWorkspaceView.xaml:Manage rules"],
+      "composition": ["Sift/Composition/WinUiAppServices.cs:DashboardAlerts"],
+      "coreBoundary": ["Sift.Core/Services/DashboardAlertEngine.cs"],
+      "persistence": ["dashboard.db alert records"],
+      "mutationContract": "cataloged numeric rules with duration, hysteresis, cooldown, acknowledgement, snooze, quiet hours, and opt-in toast policy",
+      "automatedEvidence": [
+        "Sift.UnitTests/DashboardAlertTests.cs",
+        "Sift/scripts/validate-ui.ps1:Settings"
+      ],
+      "visualStates": ["normal", "active-alert", "all-clear"],
+      "status": "wired",
+      "roadmapId": "roadmap.home",
+      "ownerPlan": "Sift/ARCHITECTURE.md"
+    },
+    {
+      "id": "service.DashboardMonitor",
+      "kind": "service",
+      "route": "Settings",
+      "presentation": ["Sift/Views/SettingsWorkspaceView.xaml:Monitor when Sift is closed"],
+      "composition": [
+        "Sift/Composition/WinUiAppServices.cs:DashboardMonitor",
+        "Sift/Infrastructure/Monitoring/DashboardMonitorController.cs"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/DashboardMonitorProtocol.cs",
+        "Sift.MonitorHost/Program.cs"
+      ],
+      "persistence": ["disabled-by-default packaged startupTask or exact HKCU Run entry"],
+      "mutationContract": "as-invoker current-user telemetry host; protocol has no action, script, path, executable, or elevation message",
+      "automatedEvidence": [
+        "Sift.UnitTests/DashboardMonitorProtocolTests.cs",
+        "Sift/scripts/validate-ui.ps1:Settings"
+      ],
+      "visualStates": ["stopped", "running", "paused"],
+      "status": "wired",
+      "roadmapId": "roadmap.packaging",
+      "ownerPlan": "Sift/ARCHITECTURE.md"
+    },
+    {
+      "id": "elevation.ChangeScheduledTask",
+      "kind": "elevation",
+      "route": "TaskManager",
+      "presentation": [],
+      "composition": [
+        "Sift/Composition/TaskManagerWorkspaceModule.cs:ScheduledTaskWorkflow"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs:ChangeScheduledTaskAsync",
+        "Sift.ElevationHost/Program.cs:ChangeScheduledTask"
+      ],
+      "persistence": [
+        "one-shot elevation request and response"
+      ],
+      "mutationContract": "single allowlisted task identity with expected state and hash",
+      "automatedEvidence": [
+        "Sift.UnitTests/ScheduledTaskActionServiceTests.cs",
+        "Sift.UnitTests/ElevationBrokerTests.cs"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    },
+    {
+      "id": "elevation.CreateSystemRestorePoint",
+      "kind": "elevation",
+      "route": "Optimize",
+      "presentation": [],
+      "composition": [
+        "Sift.Core/Services/SystemRestorePointService.cs:ExecuteAsync"
+      ],
+      "coreBoundary": [
+        "Sift.Core/Services/ElevationBroker.cs:CreateSystemRestorePointAsync",
+        "Sift.ElevationHost/Program.cs:CreateSystemRestorePoint"
+      ],
+      "persistence": [
+        "one-shot elevation request and response"
+      ],
+      "mutationContract": "parameter-free restore-point creation with immediate environment revalidation",
+      "automatedEvidence": [
+        "Sift.UnitTests/SystemRestorePointServiceTests.cs",
+        "Sift.UnitTests/ElevationBrokerTests.cs:restore point shape"
+      ],
+      "visualStates": [
+        "confirmation",
+        "cancellation"
+      ],
+      "status": "wired",
+      "roadmapId": "roadmap.core-execution-and-safety",
+      "ownerPlan": "2026-07-14-sift-disconnected-wiring.md"
+    }
+  ]
+}

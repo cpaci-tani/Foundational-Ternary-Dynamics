@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Sift.ico</ApplicationIcon>
+    <AssemblyName>Sift</AssemblyName>
+    <RootNamespace>Sift.WinUI</RootNamespace>
+    <Version>0.15.0</Version>
+    <Authors>Sift</Authors>
+    <Description>Sift native Windows control center powered by WinUI 3.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
+    <ProjectReference Include="..\Sift.Core\Sift.Core.csproj" />
+    <ProjectReference Include="..\Sift.ElevationHost\Sift.ElevationHost.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Sift.MonitorHost\Sift.MonitorHost.csproj" ReferenceOutputAssembly="false" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2270" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.5" />
+    <PackageReference Include="WinUI.TableView" Version="1.4.1" />
+  </ItemGroup>
+
+  <Target Name="CopyElevationHost" AfterTargets="Build">
+    <ItemGroup>
+      <_ElevationHostFiles Include="$(MSBuildProjectDirectory)\..\Sift.ElevationHost\bin\$(Configuration)\net8.0-windows10.0.19041.0\win-x64\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ElevationHostFiles)" DestinationFiles="@(_ElevationHostFiles->'$(OutDir)ElevationHost\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <!-- The self-contained helper lives only under ElevationHost\; strip any framework-dependent
+         Sift.ElevationHost.* that leaked to the output root, mirroring the MonitorHost cleanup so a
+         plain dev build matches the release invariant. -->
+    <ItemGroup>
+      <_ElevationRootArtifacts Include="$(OutDir)Sift.ElevationHost.*" />
+    </ItemGroup>
+    <Delete Files="@(_ElevationRootArtifacts)" />
+  </Target>
+
+  <Target Name="CopyMonitorHost" AfterTargets="CopyElevationHost">
+    <ItemGroup>
+      <_MonitorHostFiles Include="$(MSBuildProjectDirectory)\..\Sift.MonitorHost\bin\$(Configuration)\net8.0-windows10.0.19041.0\win-x64\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_MonitorHostFiles)" DestinationFiles="@(_MonitorHostFiles->'$(OutDir)MonitorHost\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <_MonitorRootArtifacts Include="$(OutDir)Sift.MonitorHost.*" />
+    </ItemGroup>
+    <Delete Files="@(_MonitorRootArtifacts)" />
+  </Target>
+
+  <Target Name="VerifyScriptStudioAssets" BeforeTargets="BeforeBuild">
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\scripts\verify-script-studio.ps1&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <Content Include="Assets\SiftLogo.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\Sift.ico" Link="Sift.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="THIRD_PARTY_NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="WebAssets\dist\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Import Project="..\Sift.Build.targets" />
+
+</Project>
