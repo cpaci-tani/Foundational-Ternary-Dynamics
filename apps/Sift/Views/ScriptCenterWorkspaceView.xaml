@@ -1,0 +1,210 @@
+<UserControl x:Class="Sift.WinUI.Views.ScriptCenterWorkspaceView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="using:Sift.WinUI.Controls">
+  <UserControl.Resources>
+    <Style x:Key="RecipeListItemStyle" TargetType="ListViewItem">
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ListViewItem">
+            <Grid x:Name="RecipeItemRoot" Background="Transparent">
+              <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                  <VisualState x:Name="Normal"/>
+                  <VisualState x:Name="PointerOver">
+                    <VisualState.Setters><Setter Target="RecipeItemRoot.Background" Value="{StaticResource SiftCardBrush}"/></VisualState.Setters>
+                  </VisualState>
+                  <VisualState x:Name="Pressed">
+                    <VisualState.Setters><Setter Target="RecipeItemRoot.Background" Value="{StaticResource SiftAccentDarkBrush}"/></VisualState.Setters>
+                  </VisualState>
+                  <VisualState x:Name="Selected">
+                    <VisualState.Setters><Setter Target="RecipeItemRoot.Background" Value="{StaticResource SiftAccentDarkBrush}"/></VisualState.Setters>
+                  </VisualState>
+                  <VisualState x:Name="PointerOverSelected">
+                    <VisualState.Setters><Setter Target="RecipeItemRoot.Background" Value="{StaticResource SiftAccentDarkBrush}"/></VisualState.Setters>
+                  </VisualState>
+                  <VisualState x:Name="PressedSelected">
+                    <VisualState.Setters><Setter Target="RecipeItemRoot.Background" Value="{StaticResource SiftAccentDarkBrush}"/></VisualState.Setters>
+                  </VisualState>
+                  <VisualState x:Name="Disabled"/>
+                </VisualStateGroup>
+              </VisualStateManager.VisualStateGroups>
+              <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <DataTemplate x:Key="RecipeTemplate">
+      <Grid Padding="12,10" RowSpacing="6" PointerEntered="RecipeCommandSurface_PointerEntered" PointerExited="RecipeCommandSurface_PointerExited">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Grid ColumnSpacing="8">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <TextBlock Text="{Binding Title}" Style="{StaticResource TypeBodyStyle}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+          <Border Grid.Column="1" Background="{StaticResource SiftCardBrush}" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="1" CornerRadius="5" Padding="6,2">
+            <TextBlock Text="{Binding ShellLabel}" Style="{StaticResource TypeEyebrowStyle}"/>
+          </Border>
+          <Border Grid.Column="2" Background="{StaticResource SiftAccentDarkBrush}" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="1" CornerRadius="5" Padding="6,2">
+            <TextBlock Text="{Binding RiskLabel}" Style="{StaticResource TypeCaptionStyle}"/>
+          </Border>
+          <StackPanel x:Name="RecipeHoverActions" Grid.Column="3" Orientation="Horizontal" Spacing="4" Opacity="0" IsHitTestVisible="False" VerticalAlignment="Center" Margin="2,0,0,0">
+            <controls:SiftIconButton Width="28" Height="28" Icon="Copy" Style="{StaticResource SiftChromeIconButtonStyle}"
+              Click="CopyRecipeButton_Click" IsTabStop="False"
+              AutomationProperties.Name="{Binding CopyAutomationName}"
+              ToolTipService.ToolTip="Copy command" />
+            <controls:SiftIconButton Width="28" Height="28" Icon="Run" Style="{StaticResource SiftChromeIconButtonStyle}"
+              Click="QuickRunRecipeButton_Click" IsTabStop="False"
+              AutomationProperties.Name="{Binding QuickRunAutomationName}"
+              ToolTipService.ToolTip="Insert and run command · changes require confirmation" />
+          </StackPanel>
+        </Grid>
+        <TextBlock Grid.Row="1" Text="{Binding Description}" Style="{StaticResource TypeMetaStyle}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+        <Border Grid.Row="2" Background="#FF111412" CornerRadius="5" Padding="8,4" ToolTipService.ToolTip="{Binding Command}">
+          <Grid>
+            <TextBlock Text="{Binding Command}" FontFamily="Cascadia Mono" FontSize="11" Foreground="{StaticResource SiftAccentBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+          </Grid>
+        </Border>
+      </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="RecipeGroupTemplate">
+      <Expander IsExpanded="{Binding IsExpanded, Mode=TwoWay}" AutomationProperties.Name="{Binding AutomationName}"
+        Background="{StaticResource SiftCardBrush}" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="1" CornerRadius="8" Margin="0,0,0,8">
+        <Expander.Header>
+          <Grid Padding="4,7,10,7" ColumnSpacing="12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Category}" Style="{StaticResource TypePanelTitleStyle}"/>
+              <TextBlock Text="{Binding Detail}" Style="{StaticResource TypeMetaStyle}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+            <Border Grid.Column="1" Background="{StaticResource SiftAccentDarkBrush}" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+              <TextBlock Text="{Binding CountLabel}" Style="{StaticResource TypeMetaStyle}"/>
+            </Border>
+          </Grid>
+        </Expander.Header>
+        <ListView ItemsSource="{Binding Recipes}" ItemTemplate="{StaticResource RecipeTemplate}" SelectionMode="Single"
+          ItemContainerStyle="{StaticResource RecipeListItemStyle}"
+          SelectionChanged="RecipeList_SelectionChanged" AutomationProperties.Name="{Binding RecipeListAutomationName}"
+          ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+          ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+          HorizontalContentAlignment="Stretch" Margin="8,0,8,8"/>
+      </Expander>
+    </DataTemplate>
+    <DataTemplate x:Key="RecipeAccessSectionTemplate">
+      <StackPanel Spacing="8" Margin="0,0,0,10">
+        <Border Background="{StaticResource SiftAccentDarkBrush}" BorderBrush="{StaticResource SiftLineStrongBrush}" BorderThickness="1" CornerRadius="7" Padding="10,7">
+          <Grid ColumnSpacing="10">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding AccessLabel}" Style="{StaticResource TypeEyebrowStyle}" Foreground="{StaticResource SiftAccentBrush}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding CountLabel}" Style="{StaticResource TypeMetaStyle}" VerticalAlignment="Center"/>
+          </Grid>
+        </Border>
+        <ItemsControl ItemsSource="{Binding Groups}" ItemTemplate="{StaticResource RecipeGroupTemplate}"/>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <Grid x:Name="RootGrid" RowSpacing="14" SizeChanged="RootGrid_SizeChanged">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <Grid x:Name="HeaderGrid" ColumnSpacing="16">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <StackPanel Spacing="7">
+        <TextBlock Text="Script studio" Style="{StaticResource WorkspaceTitleStyle}"/>
+        <TextBlock x:Name="SubtitleText" Text="Command library, editor, terminal, and diagnostics."
+          Style="{StaticResource WorkspaceSubtitleStyle}" TextWrapping="Wrap"/>
+      </StackPanel>
+      <StackPanel x:Name="LibraryActions" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+        <ProgressRing x:Name="BusyRing" Width="24" Height="24" IsActive="False"/>
+        <controls:SiftIconButton x:Name="StopButton" Icon="Stop" Label="Stop" Click="StopButton_Click" Style="{StaticResource SecondaryButtonStyle}" IsEnabled="False" AutomationProperties.Name="Stop running command"/>
+        <controls:SiftIconButton x:Name="RunButton" Icon="Run" Label="Run" Click="RunButton_Click" Style="{StaticResource SiftPrimaryIconButtonStyle}" IsEnabled="False" AutomationProperties.Name="Run selected command"/>
+      </StackPanel>
+    </Grid>
+
+    <TabView x:Name="WorkspaceTabs" Grid.Row="1" IsAddTabButtonVisible="False" SelectionChanged="WorkspaceTabs_SelectionChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+      <TabViewItem x:Name="LibraryTab" Header="Command library" IsClosable="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <Grid x:Name="LibraryContentGrid" RowSpacing="14" Padding="0,12,0,0" VerticalAlignment="Stretch">
+          <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <Grid x:Name="LibrarySplitGrid" ColumnSpacing="14" RowSpacing="14">
+            <Grid.ColumnDefinitions><ColumnDefinition x:Name="LibraryListColumn" Width="1.05*"/><ColumnDefinition x:Name="LibraryTerminalColumn" Width="1.35*"/></Grid.ColumnDefinitions>
+            <Grid.RowDefinitions><RowDefinition x:Name="LibraryTopRow" Height="*"/><RowDefinition x:Name="LibraryBottomRow" Height="0"/></Grid.RowDefinitions>
+            <Border x:Name="LibraryListPanel" Background="{StaticResource SiftPanelBrush}" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="1" CornerRadius="12" Padding="16">
+              <Grid RowSpacing="10"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <TextBox x:Name="SearchBox" PlaceholderText="Search recipes, commands, and categories…" TextChanged="Filter_Changed" AutomationProperties.Name="Search command recipes"/>
+                <Grid x:Name="LibraryFilterGrid" Grid.Row="1" ColumnSpacing="8" RowSpacing="8">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition x:Name="LibraryFilterSecondaryRow" Height="0"/></Grid.RowDefinitions>
+                  <ComboBox x:Name="CategoryBox" MinWidth="170" HorizontalAlignment="Stretch" SelectionChanged="Filter_Changed" AutomationProperties.Name="Filter recipe category"/>
+                  <controls:SiftIconButton x:Name="ExpandAllButton" Grid.Column="1" Icon="ExpandAll" Label="Expand all" Click="ExpandAllButton_Click" Style="{StaticResource SecondaryButtonStyle}" Padding="10,6" AutomationProperties.Name="Expand all command categories"/>
+                  <controls:SiftIconButton x:Name="CollapseAllButton" Grid.Column="2" Icon="CollapseAll" Label="Collapse all" Click="CollapseAllButton_Click" Style="{StaticResource SecondaryButtonStyle}" Padding="10,6" AutomationProperties.Name="Collapse all command categories"/>
+                </Grid>
+                <Grid Grid.Row="2">
+                  <ScrollViewer x:Name="CategoryScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="AccessSections" ItemsSource="{Binding}" ItemTemplate="{StaticResource RecipeAccessSectionTemplate}" Margin="0,2,4,0"/>
+                  </ScrollViewer>
+                  <StackPanel x:Name="EmptyState" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5">
+                    <TextBlock Text="No matching commands" Style="{StaticResource TypeSectionTitleStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Try another category or a broader search." Style="{StaticResource TypeMetaStyle}"/>
+                  </StackPanel>
+                </Grid>
+                <TextBlock x:Name="CountText" Grid.Row="3" Style="{StaticResource TypeMetaStyle}"/>
+              </Grid>
+            </Border>
+            <Border x:Name="LibraryTerminalPanel" Grid.Column="1" Background="#FF111412" BorderBrush="{StaticResource SiftLineStrongBrush}" BorderThickness="1" CornerRadius="12" Padding="0">
+              <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Grid Background="{StaticResource SiftCardBrush}" Padding="16,12" ColumnSpacing="10"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center"><Ellipse Width="9" Height="9" Fill="#FFC56B5C"/><Ellipse Width="9" Height="9" Fill="#FFD4A65A"/><Ellipse Width="9" Height="9" Fill="#FF7B9A74"/></StackPanel>
+                  <TextBlock x:Name="TerminalTitle" Grid.Column="1" Text="SIFT TERMINAL" Style="{StaticResource TypeEyebrowStyle}" HorizontalAlignment="Center"/>
+                  <controls:SiftIconButton Grid.Column="2" Icon="Clear" Label="Clear" Click="ClearButton_Click" Style="{StaticResource SecondaryButtonStyle}" Padding="10,4" AutomationProperties.Name="Clear command output"/>
+                </Grid>
+                <Border Grid.Row="1" Background="#FF171B18" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="0,1" Padding="14,8">
+                  <Grid ColumnSpacing="9">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="&gt;" FontFamily="Cascadia Mono" Foreground="{StaticResource SiftAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="TerminalCommandInput" Grid.Column="1" IsReadOnly="True" BorderThickness="0" Background="Transparent" Padding="0"
+                      FontFamily="Cascadia Mono" FontSize="12" PlaceholderText="Select a command…"
+                      AutomationProperties.Name="Inserted command preview"/>
+                  </Grid>
+                </Border>
+                <ScrollViewer Grid.Row="2" x:Name="TerminalScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                  <RichTextBlock x:Name="TerminalOutput" FontFamily="Cascadia Mono" FontSize="12" IsTextSelectionEnabled="True" Padding="18,16" AutomationProperties.Name="Command output terminal">
+                    <Paragraph><Run Text="Select a command to begin." Foreground="#FFB7C4B1"/></Paragraph>
+                  </RichTextBlock>
+                </ScrollViewer>
+                <Border Grid.Row="3" Background="{StaticResource SiftCardBrush}" Padding="14,9"><TextBlock x:Name="TerminalStatus" Text="Ready" Style="{StaticResource TypeMetaStyle}" AutomationProperties.LiveSetting="Polite" AutomationProperties.Name="Command execution status"/></Border>
+              </Grid>
+            </Border>
+          </Grid>
+          <TextBlock x:Name="StatusText" Grid.Row="1" Style="{StaticResource TypeMetaStyle}" Text="Select a command."/>
+        </Grid>
+      </TabViewItem>
+
+      <TabViewItem x:Name="StudioTab" Header="Studio" IsClosable="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <Grid x:Name="StudioContentGrid" RowSpacing="10" Padding="0,12,0,0" VerticalAlignment="Stretch">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <Border Background="{StaticResource SiftPanelBrush}" BorderBrush="{StaticResource SiftLineBrush}" BorderThickness="1" CornerRadius="10" Padding="12">
+            <Grid ColumnSpacing="10"><Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="280"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <ComboBox x:Name="StudioLanguageBox" Header="Language" SelectionChanged="StudioLanguageBox_SelectionChanged" AutomationProperties.Name="Script language"/>
+              <ComboBox x:Name="StudioRuntimeBox" Grid.Column="1" Header="Runtime" DisplayMemberPath="DisplayLabel" AutomationProperties.Name="Script runtime"/>
+              <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Spacing="3">
+                <TextBlock Text="Ctrl+Enter analyzes · Tab completes in Monaco-supported languages" Style="{StaticResource TypeMetaStyle}" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="Ctrl+Enter analyzes · Tab completes in Monaco-supported languages"/>
+                <TextBlock Text="Custom scripts can be analyzed but not run." Foreground="{StaticResource SiftWarningBrush}" Style="{StaticResource TypeMetaStyle}" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="Custom scripts can be analyzed but not run."/>
+              </StackPanel>
+              <controls:SiftIconButton x:Name="AnalyzeButton" Grid.Column="3" Icon="Analyze" Label="Analyze" Click="AnalyzeButton_Click" VerticalAlignment="Bottom" IsEnabled="False" Style="{StaticResource SecondaryButtonStyle}" AutomationProperties.Name="Analyze script without executing it"/>
+            </Grid>
+          </Border>
+          <Border Grid.Row="1" Background="#FF111412" BorderBrush="{StaticResource SiftLineStrongBrush}" BorderThickness="1" CornerRadius="12" Padding="1">
+            <Grid>
+              <WebView2 x:Name="StudioWebView" Visibility="Collapsed" AutomationProperties.Name="Monaco script editor and xterm analysis terminal"/>
+              <StackPanel x:Name="StudioLoadingState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="9">
+                <ProgressRing IsActive="True" Width="28" Height="28"/>
+                <TextBlock x:Name="StudioLoadingText" Text="Loading the script editor…" Style="{StaticResource TypeMetaStyle}"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+          <TextBlock x:Name="StudioStatusText" Grid.Row="2" Text="Editor initialization has not started." Style="{StaticResource TypeMetaStyle}" AutomationProperties.LiveSetting="Polite" AutomationProperties.Name="Script Studio status"/>
+        </Grid>
+      </TabViewItem>
+    </TabView>
+  </Grid>
+</UserControl>

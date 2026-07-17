@@ -1,0 +1,12 @@
+<UserControl
+    x:Class="Sift.WinUI.Controls.SiftIcon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox x:Name="IconViewbox" Stretch="Uniform">
+    <Canvas Width="24" Height="24">
+      <Path x:Name="FillPath" Stretch="Fill" Visibility="Collapsed" />
+      <Path x:Name="StrokePath" Stretch="Fill"
+            StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+    </Canvas>
+  </Viewbox>
+</UserControl>

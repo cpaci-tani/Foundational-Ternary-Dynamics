@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/publish/
+
+# The repository root ignores generic models/ directories for generated physics data.
+# Sift's source-model directories are application code and must remain trackable.
+!Sift/Models/
+!Sift/Models/**
+!Sift.Core/Models/
+!Sift.Core/Models/**

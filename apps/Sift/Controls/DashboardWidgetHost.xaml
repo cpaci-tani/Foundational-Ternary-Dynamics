@@ -1,0 +1,46 @@
+<UserControl
+    x:Class="Sift.WinUI.Controls.DashboardWidgetHost"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Sift.WinUI.Controls">
+  <Border x:Name="CardBorder" Style="{StaticResource CardBorderStyle}" Padding="12"
+          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid x:Name="HostGrid" RowSpacing="6">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <Grid x:Name="HeaderGrid" ColumnSpacing="6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <controls:SiftIconButton x:Name="DragHandle" Icon="Drag" Width="30" Height="30"
+                Style="{StaticResource SiftChromeIconButtonStyle}"
+                Visibility="Collapsed" AutomationProperties.Name="Move dashboard widget"
+                KeyDown="DragHandle_KeyDown"
+                PointerPressed="DragHandle_PointerPressed" PointerMoved="DragHandle_PointerMoved"
+                PointerReleased="DragHandle_PointerReleased" PointerCanceled="DragHandle_PointerCanceled"
+                PointerCaptureLost="InteractionHandle_PointerCaptureLost" />
+        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+          <TextBlock x:Name="TitleText" Style="{StaticResource TypePanelTitleStyle}" FontSize="14" TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="SizeText" Style="{StaticResource TypeMetaStyle}" Visibility="Collapsed" />
+        </StackPanel>
+        <controls:SiftIconButton x:Name="MenuButton" Grid.Column="2" Icon="More" Width="34" Height="30"
+                Style="{StaticResource SiftChromeIconButtonStyle}"
+                Click="MenuButton_Click" AutomationProperties.Name="Dashboard widget options" />
+      </Grid>
+      <Grid Grid.Row="1">
+        <ContentPresenter x:Name="ContentHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <controls:SiftIconButton x:Name="ResizeHandle" Icon="Resize" Width="30" Height="30"
+                Style="{StaticResource SiftChromeIconButtonStyle}"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed"
+                AutomationProperties.Name="Resize dashboard widget"
+                PointerPressed="ResizeHandle_PointerPressed" PointerMoved="ResizeHandle_PointerMoved"
+                PointerReleased="ResizeHandle_PointerReleased" PointerCanceled="ResizeHandle_PointerCanceled"
+                PointerCaptureLost="InteractionHandle_PointerCaptureLost" />
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

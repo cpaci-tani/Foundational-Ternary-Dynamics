@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Shell_Elevation_Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="Shell_Elevation_StandardUser" xml:space="preserve">
+    <value>Standard user</value>
+  </data>
+  <data name="Action_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Reason_ProcessProtected" xml:space="preserve">
+    <value>protected process</value>
+  </data>
+  <data name="Reason_ProcessElevatedRestartDisabled" xml:space="preserve">
+    <value>process restart is disabled while Sift is elevated to prevent an elevated child process</value>
+  </data>
+  <data name="Reason_ProcessSessionMismatch" xml:space="preserve">
+    <value>process actions are limited to the current interactive session</value>
+  </data>
+  <data name="Reason_ProcessPathUnreadable" xml:space="preserve">
+    <value>executable path is unavailable</value>
+  </data>
+  <data name="Reason_ServiceActionStateMismatch" xml:space="preserve">
+    <value>the requested action does not match the confirmed service state</value>
+  </data>
+  <data name="Reason_TargetUnavailable" xml:space="preserve">
+    <value>target unavailable</value>
+  </data>
+  <data name="Reason_ScriptCatalogMismatch" xml:space="preserve">
+    <value>The recipe and all security metadata must exactly match the bundled catalog.</value>
+  </data>
+  <data name="Reason_ElevationRecipeHashMismatch" xml:space="preserve">
+    <value>The catalog recipe no longer matches the reviewed identity.</value>
+  </data>
+</root>

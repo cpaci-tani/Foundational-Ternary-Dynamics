@@ -1,0 +1,87 @@
+<UserControl
+    x:Class="Sift.WinUI.Views.OptimizeWorkspaceView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Sift.WinUI.Controls">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid ColumnSpacing="16">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+      <StackPanel Spacing="7">
+        <TextBlock Text="Optimize" Style="{StaticResource WorkspaceTitleStyle}" />
+        <TextBlock Text="Choose Windows settings, app removals, and repair actions."
+                   Style="{StaticResource WorkspaceSubtitleStyle}" MaxWidth="900" HorizontalAlignment="Left" />
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+        <ProgressRing x:Name="BusyRing" Width="24" Height="24" />
+        <controls:SiftIconButton x:Name="BackupsButton" Icon="OpenFolder" Label="Open backups" Click="BackupsButton_Click"
+                Style="{StaticResource SecondaryButtonStyle}"
+                AutomationProperties.Name="Open Recovery backups" />
+        <controls:SiftIconButton x:Name="RunButton" Icon="Apply" Label="Apply selected" Click="RunButton_Click"
+                AutomationProperties.Name="Apply selected optimizations"
+                Style="{StaticResource SiftPrimaryIconButtonStyle}" />
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,22,0,14" Padding="16">
+      <Grid ColumnSpacing="12">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="190" />
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="SearchBox" PlaceholderText="Filter settings…" TextChanged="SearchBox_TextChanged"
+                 AutomationProperties.Name="Filter optimization settings" />
+        <ComboBox x:Name="RiskBox" Grid.Column="1" SelectionChanged="RiskBox_SelectionChanged"
+                  AutomationProperties.Name="Optimization risk filter">
+          <ComboBoxItem Content="All risks" IsSelected="True" />
+          <ComboBoxItem Content="Standard" />
+          <ComboBoxItem Content="Moderate" />
+          <ComboBoxItem Content="Advanced" />
+        </ComboBox>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="2" Margin="0,0,0,12" ColumnSpacing="9">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="PRESETS" Style="{StaticResource EyebrowStyle}" VerticalAlignment="Center" Margin="0,0,5,0" />
+      <controls:SiftIconButton Grid.Column="1" Icon="Select" Label="Minimal" Click="MinimalButton_Click" Style="{StaticResource SecondaryButtonStyle}"
+              AutomationProperties.Name="Select minimal optimization preset" />
+      <controls:SiftIconButton Grid.Column="2" Icon="Select" Label="Balanced" Click="BalancedButton_Click"
+              AutomationProperties.Name="Select balanced optimization preset"
+              Style="{StaticResource SecondaryButtonStyle}" />
+      <controls:SiftIconButton Grid.Column="4" Icon="Clear" Label="Clear selection" Click="ClearButton_Click" Style="{StaticResource SecondaryButtonStyle}"
+              AutomationProperties.Name="Clear optimization selection" />
+    </Grid>
+
+    <Border Grid.Row="3" Background="{StaticResource SiftPanelBrush}" BorderBrush="{StaticResource SiftLineBrush}"
+            BorderThickness="1" CornerRadius="12" Padding="16,14">
+      <Grid>
+        <ScrollViewer x:Name="CategoryScroller" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+          <StackPanel x:Name="CategoryHost" Spacing="0" />
+        </ScrollViewer>
+        <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="7" Visibility="Collapsed">
+          <TextBlock Text="No matching settings" Style="{StaticResource TypeSectionTitleStyle}" />
+          <TextBlock Text="Try another risk filter or a broader search." Style="{StaticResource TypeMetaStyle}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="4" Margin="2,12,0,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+      <TextBlock x:Name="StatusText" Style="{StaticResource TypeMetaStyle}" TextWrapping="Wrap" />
+      <TextBlock x:Name="SelectionText" Grid.Column="1" Style="{StaticResource TypeMetaStyle}"
+                 Foreground="{StaticResource SiftAccentBrush}" />
+    </Grid>
+  </Grid>
+</UserControl>
