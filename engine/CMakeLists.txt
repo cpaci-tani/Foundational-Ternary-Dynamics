@@ -465,6 +465,12 @@ ftd_add_test(test_render_bridge_golden_l9 tests/test_render_bridge_golden_l9.cpp
 # CUDA (compile-check tier), self-skipping on CPU-only builds.
 ftd_add_test(test_gpu_golden tests/test_gpu_golden.cpp GPU_HEAVY
              CTEST_NAME gpu_golden TIMEOUT 300 LABELS golden)
+# CPU↔GPU stochastic-evaporation parity (BH-F5 completion, 2026-07-16):
+# death-tick equality under the shared SplitMix64 Evaporation draw, locked
+# exemption, Boltzmann suppression. Self-skipping on CPU-only builds (same
+# render_bridge.h-only include pattern as test_gpu_golden above).
+ftd_add_test(test_gpu_evaporation_parity tests/test_gpu_evaporation_parity.cpp GPU_HEAVY
+             CTEST_NAME gpu_evaporation_parity TIMEOUT 300)
 # (C5 test_gpu_delta_upload is registered inside the if(FTD_ENABLE_CUDA) block
 #  below — unlike test_gpu_golden it includes gpu_engine.h/cufft.h, so it must
 #  not be configured on a CPU-only build.)

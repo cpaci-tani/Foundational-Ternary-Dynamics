@@ -23,7 +23,9 @@ RenderBridge::tick()                             [src/render_bridge.cpp:1362]
 │
 ├─ phase_write()                                 [always runs; internal toggles gate sub-effects]
 │   ├─ [selective_damping] near_particle_ mask + near_accel_ accumulation
-│   ├─ per-thread RNG seeding (mt19937)
+│   ├─ stateless per-voxel RNG: voxel_uniform(seed, i, tick, salt) SplitMix64
+│   │   (BH-F5/F8/F9 2026-05-05; the per-thread mt19937 this line originally
+│   │   documented was removed)
 │   └─ foreach voxel:
 │       ├─ wave_vel += delta_j  (leapfrog half-step)
 │       ├─ flux     += wave_vel (leapfrog drift)
@@ -33,7 +35,10 @@ RenderBridge::tick()                             [src/render_bridge.cpp:1362]
 │       │   ├─ state = sign(chi or divJ)
 │       │   ├─ spin from curl(J) dominant axis
 │       │   └─ color from |J| dominant axis
-│       └─ evaporation: 7-site energy < K_B² · 1e-6 → s=0
+│       └─ evaporation (stochastic since 15882e98 2026-04-23; this line
+│           originally documented the retired deterministic threshold):
+│           p = exp(−E_7site/K_MANIFEST²) · K_EVAP_RATE, voxel_uniform
+│           draw → s=0 (locked voxels exempt)
 │
 ├─ gauss_project()                               [gated: gauss_projection]
 │   └─ SOR_ITERATIONS × sor_sweep_18pt(phi_, sor_source_, lattice_, OMEGA)

@@ -67,7 +67,7 @@ engine/
   * `particle_masses.h`: Standard Model mass scale definitions ($K_B = 0.511$ MeV, $K_{genesis} = 3 K_B$) and the Higgs VEV ($V_{Higgs} = 246.09$ GeV, $M_{Higgs} = 124.8$ GeV).
   * `neutrino.h`: Seesaw mechanism equations and PMNS neutrino mixing parameters.
   * `reference frame context.h`: Pedagogical noetic coordinates ($y_{real}$, $K_{noetic}$, $\theta_C$) and softplus fixed points.
-* **`constants.h`**: Re-exports all ontic constants into the `ftd::` namespace and appends engine tuning parameters (`SOR_ITERATIONS = 6`, `SOR_OMEGA = 1.75`, `EVAP_THRESHOLD = 1e-6`, `BANDWIDTH_FLOOR = 1e-6`). Contains the algebraic identity `ALPHA_EFT = G_C * G_C`.
+* **`constants.h`**: Re-exports all ontic constants into the `ftd::` namespace and appends engine tuning parameters (`SOR_ITERATIONS = 6`, `SOR_OMEGA = 1.75`, `K_EVAP_RATE = 0.1`, `BANDWIDTH_FLOOR = 1e-6`). Contains the algebraic identity `ALPHA_EFT = G_C * G_C`.
 * **`constants_gpu.cuh`**: CUDA-side `inline constexpr` mirror of `constants.h` compiling cleanly under both standard MSVC/g++ and NVCC.
 * **`voxel.h` & `lattice.h`**: Voxel struct and coordinates/neighbor geometry helpers.
 * **`render_bridge.h`**: The main Scale 0 execution engine managing the flat voxel grid, 6-phase CPU tick cycle, SOR iterations, self-field injection, and device-host handshakes.
@@ -90,7 +90,7 @@ To eliminate structural bloat, the Scale 0 `tick()` pipeline is decomposed into 
 * **`phase_read.cpp`**: Implements the Wave Equation + state-flux coupling. Computes:
   $$\Delta J = c^2 \nabla^2 J + g_c \nabla s + g_c (\nabla \times (s v))$$
   Includes the dual-substrate split stencils.
-* **`phase_write.cpp`**: Implements leapfrog advances ($v_{wave} \mathrel{+}= \Delta J; J \mathrel{+}= v_{wave}$), Langevin stochastic thermalization, Larmor radiation damping, and probabilistic genesis ($|J| > K_{genesis}$). Asserts mass-gap creation and evaporation ($E_{7\text{-site}} < K_B^2 \times 10^{-6}$).
+* **`phase_write.cpp`**: Implements leapfrog advances ($v_{wave} \mathrel{+}= \Delta J; J \mathrel{+}= v_{wave}$), Langevin stochastic thermalization, Larmor radiation damping, and probabilistic genesis ($|J| > K_{genesis}$). Asserts mass-gap creation and stochastic Boltzmann evaporation ($p_{evap} = e^{-E_{7\text{-site}}/K_B^2} \cdot K_{EVAP\_RATE}$ per tick, RNG-gated).
 * **`phase_forces.cpp`**: Field-mediated forces pipeline. Evaluates electrostatic $F_{EM} = -\alpha s \nabla \phi_C$ (via warm-started SOR Poisson solver), gravitational $F_{grav} = G_N \nabla \rho$ (using tier-2 stencils), and magnetic Lorentz forces $F_{magnetic} = \alpha s (v \times B)$.
 * **`phase_movement.cpp`**: Updates remainder registers, translates particles across voxel bounds, checks periodic wrapping, and executes same-sign bouncing vs opposite-sign annihilation.
 
@@ -265,7 +265,7 @@ Every tick of the Scale 0 engine proceeds through a rigorous pipeline, executing
    $$\text{flux} \leftarrow \text{flux} + \text{wave\_vel}$$
    * Applies damping ($\text{flux} \leftarrow \text{flux} \cdot (1 - \gamma)$ where $\gamma = \alpha$). If Langevin dynamics are active, adds stochastic noise based on target temperature.
    * **Stochastic Genesis:** At void sites ($s=0$), if $|J| > K_{genesis}$, a particle manifests with probability $p = 1 - \exp\left(-\frac{|J| - K_{genesis}}{K_B}\right)$. The newly manifested voxel's state $s \in \{-1, +1\}$ is assigned from the sign of $\nabla \cdot J$, spin is assigned from $\nabla \times J$, and color ($0, 1, 2$) is assigned from the dominant flux axis.
-   * **Evaporation:** Manifested voxels evaporate back to void ($s=0$) if $|J| < K_B$.
+   * **Evaporation:** Manifested, unlocked voxels return to void ($s=0$) stochastically, with per-tick probability $p = \exp(-E_{7\text{-site}}/K_B^2) \cdot K_{EVAP\_RATE}$ — Boltzmann-suppressed in the 7-site field energy.
 4. **Phase 2b: Pair Production (`pair_production_cpu()`):** Allows high-flux void sites ($s=0$) to spontaneously split into correlated $+1$ and $-1$ particle pairs, conserving charge locally.
 5. **Phase 3: U(1) Gauss Constraint Projection (`gauss_project()`):** Enforces the gauge constraint $\nabla \cdot J = s$ at void sites. Runs a Successive Over-Relaxation (SOR) Poisson solver (or exact FFT spectral solver on GPU) to compute the gauge potential $\phi$ from $\nabla^2 \phi = \nabla \cdot J - s$, then projects the longitudinal modes out of the flux field: $J \leftarrow J - \nabla \phi$.
 6. **Phase 3c: Latency Poisson (`solve_latency_poisson()`):** Solves the gravitational Poisson equation $\nabla^2 \phi_L = 4\pi G_N \rho_{mass}$ where $\rho_{mass} = K_B |s|$. The latency field is updated as $L = \sqrt{\text{clamp}(|\phi_L|, 0, 0.998)}$.
