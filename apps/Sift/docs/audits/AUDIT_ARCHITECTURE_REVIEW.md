@@ -145,5 +145,32 @@ down with reasoning preserved in the remediation plan.
 
 ## Remediation status
 
-Tracked in the roadmap of the audit remediation change set (Phase 0–3). The high findings are addressed
-first, then the mediums, then the low tail batched by theme.
+All three highs, all three mediums, and most of the low tail are fixed in the audit remediation change
+set; the solution builds with zero warnings under `TreatWarningsAsErrors`, and the unit suite (296),
+the integration validator (103 canonical checks + inventory/preflight), and the WebAssets
+reproducibility check all pass.
+
+**Fixed:** H1 (reparse create-no-follow + name-based reparse rejection), H2 (guarded dashboard
+async-void handlers and settings-flush timer), H3 (WebView2 suspend/resume on tab switch + retryable
+init); M1 (Recycle-Bin availability guard + `FOF_WANTNUKEWARNING`), M2 (source tree + CI now tracked),
+M3 (reproducible-bundle CI job); and the low items `elevation-ipc-2`, `persistence-integrity-1/2/4`,
+`resources-interop-2`, `policy-guards-3`, `concurrency-lifecycle-3`, `layering-composition-1/2`,
+`build-packaging-hygiene-4/5`, `doc-reality-gap-1/2`, `scriptstudio-analyzer-1`, and
+`scriptstudio-webview-2`. A pre-existing icon-markup test bug and four stale canonical-source checks
+(drift the untracked/un-CI'd tree had accumulated — exactly what M2 addresses) were also reconciled.
+
+**Deferred (with rationale):**
+- `elevation-ipc-4` (response-forgery pre-lease protocol) — the docs were corrected to describe the
+  nonce as correlation, but the response-file pre-lease/HMAC protocol change is held back: it rewrites
+  the elevated read/write path, carries real regression risk to the core elevation feature, and cannot
+  be end-to-end verified here without an interactive UAC elevation. Severity is low (same-integrity UI
+  spoofing, not privilege escalation).
+- `concurrency-lifecycle-2` (move the confirm/preview phase out of the committed region on the dashboard
+  and scheduled-task paths) — a real but low-severity, self-resolving contract deviation; the fix
+  restructures the mutation pipeline and needs interactive verification of each action flow.
+- `layering-composition-3` (optimize wiring duplicated at two call sites) — reviewed and left as-is: the
+  shared wiring is facade-field passing to two different constructors, not extractable pipeline logic;
+  a helper would add indirection without removing real duplication.
+
+Recommended interactive confirmation for H2/H3 (not runnable headlessly here): `scripts/validate-ui.ps1`
+plus a manual Script Studio Studio↔Library tab round-trip and a dashboard background-sampling cycle.
