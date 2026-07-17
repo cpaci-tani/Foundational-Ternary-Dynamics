@@ -302,8 +302,9 @@ internal static class Program
         var performance = File.ReadAllText(Path.Combine(app, "Views", "PerformanceWorkspaceView.xaml"));
         Check(performance.Contains("CartesianChart"), "Performance uses the native chart framework");
         var hardwareMonitor = File.ReadAllText(Path.Combine(app, "Views", "HardwareMonitorWorkspaceView.xaml"));
+        var sensorGraphTile = File.ReadAllText(Path.Combine(app, "Controls", "SensorGraphs", "SensorGraphTileHost.xaml"));
         var hardwareService = File.ReadAllText(Path.Combine(root, "apps", "Sift.Core", "Services", "Inventory", "HardwareMonitorService.cs"));
-        Check(hardwareMonitor.Contains("CartesianChart") && hardwareMonitor.Contains("HardwareDeviceTemplate") &&
+        Check(sensorGraphTile.Contains("CartesianChart") && hardwareMonitor.Contains("HardwareDeviceTemplate") &&
               hardwareService.Contains("IHardwareSensorProvider") && hardwareService.Contains("LibreHardwareSensorProvider"),
             "Hardware Monitor uses provider-isolated sensors and the canonical chart framework");
         var homeDashboard = File.ReadAllText(Path.Combine(app, "Views", "HomeDashboardWorkspaceView.xaml.cs"));
@@ -453,11 +454,15 @@ internal static class Program
         var recoveryTable = File.ReadAllText(Path.Combine(app, "Views", "RecoveryWorkspaceView.xaml"));
         var systemInfoTable = File.ReadAllText(Path.Combine(app, "Views", "SystemInformationWorkspaceView.xaml"));
         var startupTable = File.ReadAllText(Path.Combine(app, "Views", "StartupWorkspaceView.xaml"));
-        static int RowSelections(string xaml) => xaml.Split("SelectionUnit=\"Row\"").Length - 1;
+        var inventoryStyles = File.ReadAllText(Path.Combine(app, "App.xaml"));
+        // Row selection is applied through the shared InventoryTableViewStyle rather than inline on
+        // each table, so assert the style sets SelectionUnit=Row and every dense table adopts it.
+        static int StyledTables(string xaml) => xaml.Split("{StaticResource InventoryTableViewStyle}").Length - 1;
         static int TableViews(string xaml) => xaml.Split("<tv:TableView ").Length - 1;
-        Check(RowSelections(taskManager) == TableViews(taskManager) && RowSelections(recoveryTable) == TableViews(recoveryTable) &&
-              RowSelections(systemInfoTable) == TableViews(systemInfoTable) && RowSelections(startupTable) == TableViews(startupTable) &&
-              RowSelections(installedApps) == TableViews(installedApps),
+        Check(inventoryStyles.Contains("Property=\"SelectionUnit\" Value=\"Row\"") &&
+              StyledTables(taskManager) == TableViews(taskManager) && StyledTables(recoveryTable) == TableViews(recoveryTable) &&
+              StyledTables(systemInfoTable) == TableViews(systemInfoTable) && StyledTables(startupTable) == TableViews(startupTable) &&
+              StyledTables(installedApps) == TableViews(installedApps),
             "every dense inventory table selects whole rows instead of individual cells");
         var appIconExtractor = File.ReadAllText(Path.Combine(root, "apps", "Sift.Core", "Services", "Apps", "AppIconExtractor.cs"));
         var installedAppManager = File.ReadAllText(Path.Combine(root, "apps", "Sift.Core", "Services", "Apps", "InstalledAppManager.cs"));
@@ -561,7 +566,8 @@ internal static class Program
         var uiScalePolicy = File.ReadAllText(Path.Combine(root, "apps", "Sift.Core", "Services", "UiScalePolicy.cs"));
         var mainWindowCode = File.ReadAllText(Path.Combine(app, "MainWindow.xaml.cs"));
         Check(settings.Contains("SmoothingBox") && settings.Contains("Line smoothing") &&
-              performanceModule.Contains("SetSmoothing(_settings.ChartSmoothing)") &&
+              performanceModule.Contains("_view.ApplyChartOptions(_settings)") &&
+              performanceView.Contains("SetSmoothing(settings.ChartSmoothing)") &&
               performanceView.Contains("ChartSmoothingPolicy.ResolveSmoothness") &&
               smoothingPolicy.Contains("ResolveSmoothness"),
             "chart smoothing preference is applied to the production performance charts");
@@ -580,14 +586,15 @@ internal static class Program
               hardwareMonitorModule.IndexOf("await RefreshAsync(cancellationToken)", StringComparison.Ordinal) <
               hardwareMonitorModule.IndexOf("_timer.Start()", StringComparison.Ordinal),
             "periodic workspace sampling is serialized and starts only after the initial sample");
+        var sensorGraphTileCode = File.ReadAllText(Path.Combine(app, "Controls", "SensorGraphs", "SensorGraphTileHost.xaml.cs"));
+        // Sensor graphs moved into the dockable SensorGraph tile host; identity-preserving group
+        // reconciliation is now SyncObservable and the disabled chart animation lives in the tile host.
         Check(hardwareMonitorView.Contains("DeviceGroups.ItemsSource = _groups") &&
-              hardwareMonitorView.Contains("ReconcileCollection(_groups, visibleGroups") &&
-              hardwareMonitorView.Contains("sensor.Update(reading)") &&
+              hardwareMonitorView.Contains("SyncObservable(_groups, filtered, group => group.Id)") &&
+              hardwareMonitorView.Contains("existing.Update(reading)") &&
               hardwareMonitorView.Contains("PropertyChangedEventArgs(nameof(ValueLabel))") &&
-              hardwareMonitorView.Contains("SensorChart.AnimationsSpeed = TimeSpan.Zero") &&
-              hardwareMonitorView.Contains("Dictionary<string, SensorHistory>") &&
-              hardwareMonitorView.Contains("ObservableCollection<double> _selectedChartHistory") &&
-              hardwareMonitorView.Contains("PurgeStaleHistories") &&
+              sensorGraphTileCode.Contains("Chart.AnimationsSpeed = TimeSpan.Zero") &&
+              hardwareMonitorView.Contains("SensorHistoryStore") &&
               !hardwareMonitorView.Contains("_groups.Clear()"),
             "hardware monitor preserves panel and row identity while notifying changed readings without chart animation");
         Check(performanceView.Contains("HistoryChart.AnimationsSpeed = TimeSpan.Zero") &&
