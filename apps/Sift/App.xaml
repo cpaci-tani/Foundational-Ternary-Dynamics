@@ -1,0 +1,216 @@
+<Application
+    x:Class="Sift.WinUI.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tv="using:WinUI.TableView"
+    RequestedTheme="Dark">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+        <ResourceDictionary Source="Themes/SiftIcons.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <Color x:Key="SiftBackgroundColor">#151311</Color>
+      <Color x:Key="SiftPanelColor">#1D1A17</Color>
+      <Color x:Key="SiftCardColor">#25211D</Color>
+      <Color x:Key="SiftElevatedColor">#2C2722</Color>
+      <Color x:Key="SiftInventoryHeaderColor">#171B18</Color>
+      <Color x:Key="SiftLineColor">#413930</Color>
+      <Color x:Key="SiftLineStrongColor">#5B4D41</Color>
+      <Color x:Key="SiftTextColor">#F6F1EA</Color>
+      <Color x:Key="SiftMutedColor">#BDB2A7</Color>
+      <Color x:Key="SiftSubtleColor">#8E8175</Color>
+      <Color x:Key="SiftAccentColor">#D89462</Color>
+      <Color x:Key="SiftAccentHoverColor">#E8A579</Color>
+      <Color x:Key="SiftAccentDarkColor">#493025</Color>
+      <Color x:Key="SiftSuccessColor">#A9BB98</Color>
+      <Color x:Key="SiftSuccessDarkColor">#293326</Color>
+      <Color x:Key="SiftWarningColor">#E0B36F</Color>
+      <Color x:Key="SiftDangerColor">#D27B68</Color>
+
+      <SolidColorBrush x:Key="SiftBackgroundBrush" Color="{StaticResource SiftBackgroundColor}" />
+      <SolidColorBrush x:Key="SiftPanelBrush" Color="{StaticResource SiftPanelColor}" />
+      <SolidColorBrush x:Key="SiftCardBrush" Color="{StaticResource SiftCardColor}" />
+      <SolidColorBrush x:Key="SiftElevatedBrush" Color="{StaticResource SiftElevatedColor}" />
+      <SolidColorBrush x:Key="SiftInventoryHeaderBrush" Color="{StaticResource SiftInventoryHeaderColor}" />
+      <SolidColorBrush x:Key="SiftLineBrush" Color="{StaticResource SiftLineColor}" />
+      <SolidColorBrush x:Key="SiftInventoryDividerBrush" Color="#33413930" />
+      <SolidColorBrush x:Key="SiftLineStrongBrush" Color="{StaticResource SiftLineStrongColor}" />
+      <SolidColorBrush x:Key="SiftTextBrush" Color="{StaticResource SiftTextColor}" />
+      <SolidColorBrush x:Key="SiftMutedBrush" Color="{StaticResource SiftMutedColor}" />
+      <SolidColorBrush x:Key="SiftSubtleBrush" Color="{StaticResource SiftSubtleColor}" />
+      <SolidColorBrush x:Key="SiftAccentBrush" Color="{StaticResource SiftAccentColor}" />
+      <SolidColorBrush x:Key="SiftAccentHoverBrush" Color="{StaticResource SiftAccentHoverColor}" />
+      <SolidColorBrush x:Key="SiftAccentDarkBrush" Color="{StaticResource SiftAccentDarkColor}" />
+      <SolidColorBrush x:Key="SiftSuccessBrush" Color="{StaticResource SiftSuccessColor}" />
+      <SolidColorBrush x:Key="SiftSuccessDarkBrush" Color="{StaticResource SiftSuccessDarkColor}" />
+      <SolidColorBrush x:Key="SiftWarningBrush" Color="{StaticResource SiftWarningColor}" />
+      <SolidColorBrush x:Key="SiftDangerBrush" Color="{StaticResource SiftDangerColor}" />
+
+      <!-- Formal type scale -->
+      <Style x:Key="TypeDisplayStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="34" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+      <Style x:Key="TypeWorkspaceTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CharacterSpacing" Value="20" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+      <Style x:Key="TypeWorkspaceSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource SiftMutedBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineHeight" Value="20" />
+      </Style>
+      <Style x:Key="TypePanelTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+      <Style x:Key="TypeSectionTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+      <Style x:Key="TypeEyebrowStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CharacterSpacing" Value="80" />
+        <Setter Property="Foreground" Value="{StaticResource SiftSubtleBrush}" />
+      </Style>
+      <Style x:Key="TypeBodyStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+      <Style x:Key="TypeMetaStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{StaticResource SiftMutedBrush}" />
+      </Style>
+      <Style x:Key="TypeMetricValueStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+      <Style x:Key="TypeCaptionStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{StaticResource SiftSubtleBrush}" />
+      </Style>
+      <Style x:Key="TypeMonoStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{StaticResource SiftSubtleBrush}" />
+      </Style>
+      <Style x:Key="TypeShellBrandStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+      </Style>
+
+      <!-- Compatibility aliases -->
+      <Style x:Key="WorkspaceTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeWorkspaceTitleStyle}" />
+      <Style x:Key="WorkspaceSubtitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeWorkspaceSubtitleStyle}" />
+      <Style x:Key="SectionTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeSectionTitleStyle}" />
+      <Style x:Key="EyebrowStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeEyebrowStyle}" />
+
+      <Style x:Key="CardBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SiftCardBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftLineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="20" />
+      </Style>
+      <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource SiftElevatedBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftLineStrongBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{StaticResource SiftTextBrush}" />
+        <Setter Property="CornerRadius" Value="7" />
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="MinHeight" Value="36" />
+      </Style>
+      <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource SiftAccentBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftAccentBrush}" />
+        <Setter Property="Foreground" Value="#181512" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+      </Style>
+      <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource SiftDangerBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftDangerBrush}" />
+        <Setter Property="Foreground" Value="#181512" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+      </Style>
+      <Style x:Key="StatusPillStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SiftSuccessDarkBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftLineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="9,5" />
+      </Style>
+
+      <!-- Information-list inventory surfaces (not spreadsheet chrome) -->
+      <Style x:Key="InventoryPanelStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SiftPanelBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftLineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="0" />
+      </Style>
+      <Style x:Key="InventorySectionHeaderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SiftElevatedBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftLineBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="16,11" />
+      </Style>
+      <Style x:Key="InventoryColumnHeaderBarStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SiftInventoryHeaderBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftLineBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="14,9" />
+      </Style>
+      <Style x:Key="InventoryRowBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{StaticResource SiftInventoryDividerBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="MinHeight" Value="48" />
+      </Style>
+      <Style x:Key="InventoryListItemStyle" TargetType="ListViewItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Margin" Value="0" />
+      </Style>
+      <Style x:Key="InventoryColumnHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeEyebrowStyle}">
+        <Setter Property="Foreground" Value="{StaticResource SiftSubtleBrush}" />
+      </Style>
+      <Style x:Key="InventoryMetricTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeMetaStyle}">
+        <Setter Property="FontFamily" Value="Cascadia Mono" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      </Style>
+      <Style x:Key="InventoryPathTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TypeMonoStyle}">
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      </Style>
+      <Style x:Key="InventoryTableViewStyle" TargetType="tv:TableView">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="4,0" />
+        <Setter Property="HeaderRowHeight" Value="40" />
+        <Setter Property="RowHeight" Value="48" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="HeaderGridLinesVisibility" Value="Horizontal" />
+        <Setter Property="HorizontalGridLinesStroke" Value="{StaticResource SiftInventoryDividerBrush}" />
+        <Setter Property="HorizontalGridLinesStrokeThickness" Value="1" />
+        <Setter Property="VerticalGridLinesStrokeThickness" Value="0" />
+        <Setter Property="SelectionUnit" Value="Row" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="AutoGenerateColumns" Value="False" />
+      </Style>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>
