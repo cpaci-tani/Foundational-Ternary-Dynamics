@@ -1,6 +1,6 @@
 # RNG Portability Design — CPUGPU Bit-Exact Stochastic Operations
 
-**Status:** [DESIGN — awaiting implementation choice]
+**Status:** [IMPLEMENTED — Option A]. Genesis, spin fallback, and Langevin landed 2026-05-05 (`c8e03a5d`); the `evaporation_kernel` leg of plan step 4 was overlooked in that commit — the GPU kernel silently kept the pre-2026-04-23 deterministic threshold until the BH-F5 completion of 2026-07-16 (stochastic Boltzmann + shared SplitMix64 `Evaporation` draw; regression guard `engine/tests/test_gpu_evaporation_parity.cpp`).
 **Scope:** bug-hunt deferred items BH-F5 (evaporation Boltzmann probability), BH-F8 (spin fallback), BH-F9 (RNG portability).
 
 ## Problem statement

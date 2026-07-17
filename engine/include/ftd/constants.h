@@ -354,8 +354,10 @@ inline constexpr double EXCHANGE_RANGE_SQ = EXCHANGE_RANGE * EXCHANGE_RANGE;
 inline constexpr int SOR_ITERATIONS = 6;
 inline constexpr double SOR_OMEGA = 1.75;
 
-// Evaporation: particle dies when 7-site neighborhood energy < K_MANIFEST² × this
-inline constexpr double EVAP_THRESHOLD = 1e-6;
+// (EVAP_THRESHOLD removed 2026-07-16, BH-F5 completion: the deterministic
+// evaporation cutoff was retired on CPU 2026-04-23 (15882e98) but fossilized
+// in the GPU evaporation_kernel; both backends now run the stochastic
+// Boltzmann rule scaled by K_EVAP_RATE below.)
 
 // Numerical underflow guards
 inline constexpr double EPSILON_FLUX_SQ = 1e-30; // guard for |J|² divisions

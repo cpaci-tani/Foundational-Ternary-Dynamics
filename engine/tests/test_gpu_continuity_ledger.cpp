@@ -159,6 +159,74 @@ ftd::TermToggles toggles_with_pair_production_only() {
   return toggles;
 }
 
+// GCL-6 (2026-07-16, BH-F5 completion): evaporation is stochastic on both
+// backends — p = exp(-E_7site/K_MANIFEST²)·K_EVAP_RATE with the shared
+// SplitMix64 Evaporation draw — so a zero-flux particle no longer evaporates
+// deterministically on the first tick (the pre-fix GPU threshold rule did).
+// Tick until the draw fires (deterministic for a fixed langevin_seed; bound
+// 200 ⇒ P(no fire) ≈ 1.4e-10 at p = 0.1). Quiet ticks must keep the ledger
+// closed with zero reactions; the firing tick gets the full parity battery.
+void check_evaporation_ledger_stochastic(const std::string& name,
+                                         std::vector<ftd::Voxel> voxels,
+                                         const ftd::TermToggles& toggles) {
+  constexpr int L = 8;
+  constexpr int MAX_TICKS = 200;
+
+  ftd::gpu::GpuEngine gpu(L);
+  gpu.toggles = toggles;
+  gpu.upload_from_host(voxels);
+
+  std::vector<ftd::Voxel> host_before = std::move(voxels);
+  for (int t = 1; t <= MAX_TICKS; ++t) {
+    const auto before = state_snapshot(host_before);
+    gpu.tick();
+    std::vector<ftd::Voxel> host_after;
+    gpu.sync_to_host(host_after);
+    const auto after = state_snapshot(host_after);
+    const auto device = gpu.continuity_step();
+
+    if (before == after) {
+      if (ftd::eft::max_continuity_residual(device) >= 1e-12 ||
+          ftd::eft::total_reaction_l1(device) != 0.0) {
+        check(name + ": quiet-tick ledger clean (tick " + std::to_string(t) +
+              ")", false);
+        return;
+      }
+      host_before = std::move(host_after);
+      continue;
+    }
+
+    std::cout << "    " << name << ": evaporation fired at tick " << t << "\n";
+    ftd::eft::DualCellContinuity inferred;
+    const auto inferred_report =
+        ftd::eft::extract_moore_history_from_snapshots(L, before, after,
+                                                       inferred);
+    check(name + ": inferred extraction valid", inferred_report.valid);
+    check(name + ": expected transport count",
+          inferred_report.transported_events == 0);
+    check(name + ": expected annihilation count",
+          inferred_report.annihilation_pairs == 0);
+    check(name + ": expected reaction-site count",
+          inferred_report.reaction_sites == 1);
+    check(name + ": device continuity closes",
+          ftd::eft::max_continuity_residual(device) < 1e-12);
+    check(name + ": rho_before parity",
+          same_vectors(device.rho_before, inferred.rho_before));
+    check(name + ": rho_after parity",
+          same_vectors(device.rho_after, inferred.rho_after));
+    check(name + ": reaction parity",
+          same_vectors(device.reaction, inferred.reaction));
+    check(name + ": current_x parity",
+          same_vectors(device.current_x, inferred.current_x));
+    check(name + ": current_y parity",
+          same_vectors(device.current_y, inferred.current_y));
+    check(name + ": current_z parity",
+          same_vectors(device.current_z, inferred.current_z));
+    return;
+  }
+  check(name + ": evaporation fired within 200 ticks", false);
+}
+
 ftd::TermToggles toggles_with_weak_transmutation_only() {
   ftd::TermToggles toggles;
   toggles.disable_all();
@@ -236,8 +304,11 @@ int main() {
     // evaporation kernel in isolation without enabling genesis. Pre-flag this
     // used toggles_with_no_state_extensions() and depended on a GPU bug
     // (evaporation ignored its toggle gate); see callstack-audit BH-F6.
-    check_ledger_matches("GCL-6 evaporation", voxels,
-                         toggles_with_evaporation_only(), 0, 0, 1);
+    // Stochastic since the BH-F5 completion (2026-07-16) — see the helper's
+    // comment; the single-tick certain-death form asserted the retired
+    // deterministic GPU threshold rule.
+    check_evaporation_ledger_stochastic("GCL-6 evaporation", voxels,
+                                        toggles_with_evaporation_only());
   }
 
   {
@@ -265,14 +336,24 @@ int main() {
     auto& v = rb.voxel_at(3, 3, 3);
     v.state = +1;
     v.particle_id = index(L, 3, 3, 3);
-    rb.tick();
 
-    const auto device = rb.continuity_step();
+    // Stochastic evaporation (BH-F5 completion, 2026-07-16): tick until the
+    // shared SplitMix64 draw fires (deterministic at the fixed default seed;
+    // bound 200 ⇒ P(no fire) ≈ 1.4e-10), requiring a closed ledger on the way.
+    bool closed_every_tick = true;
+    int fired_tick = -1;
+    ftd::eft::DualCellContinuity device;
+    for (int t = 1; t <= 200; ++t) {
+      rb.tick();
+      device = rb.continuity_step();
+      if (ftd::eft::max_continuity_residual(device) >= 1e-12)
+        closed_every_tick = false;
+      if (ftd::eft::total_reaction_l1(device) == 1) { fired_tick = t; break; }
+    }
+    std::cout << "    GCL-9: evaporation fired at tick " << fired_tick << "\n";
     check("GCL-9 bridge ledger has lattice size", device.L == L);
-    check("GCL-9 bridge ledger closes",
-          ftd::eft::max_continuity_residual(device) < 1e-12);
-    check("GCL-9 bridge ledger reaction",
-          ftd::eft::total_reaction_l1(device) == 1);
+    check("GCL-9 bridge ledger closes on every tick", closed_every_tick);
+    check("GCL-9 bridge ledger reaction", fired_tick > 0);
   }
 
   std::cout << "\n================================================================\n";
