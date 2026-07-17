@@ -51,7 +51,8 @@ __global__ void evaporation_kernel(
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
     int* __restrict__ ledger_reaction,
-    int L
+    int L,
+    unsigned long long rng_seed, int tick
 );
 
 __global__ void compute_near_particle_kernel(
@@ -524,7 +525,10 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
     // this ran unconditionally on the dual path (the F6 single-substrate fix
     // was not propagated here); fixed 2026-05-05 alongside the toggles.evaporation
     // flag introduction. Evaporation uses observable field (same as legacy).
-    // Defined in kernels_stencil_single.cu; forward-declared at the top of this TU.
+    // Defined in kernels_stencil_single.cu; forward-declared at the top of this
+    // TU. Stochastic since the BH-F5 completion (2026-07-16): rng_seed/tick
+    // feed the shared SplitMix64 Evaporation draw (CPU evaporation is shared
+    // single+dual, so one kernel serves both paths here too).
     if (do_genesis || do_evaporation) {
         evaporation_kernel<<<grid, block>>>(
             bufs.d_state,
@@ -532,7 +536,8 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
             bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
             bufs.d_locked,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-            bufs.d_ledger_reaction, L
+            bufs.d_ledger_reaction, L,
+            rng_seed, tick
         );
         CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
     }

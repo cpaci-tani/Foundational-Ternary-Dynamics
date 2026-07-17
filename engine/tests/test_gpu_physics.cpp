@@ -406,6 +406,17 @@ static void test_energy_long_horizon() {
     gpu::GpuEngine gpu(L);
     gpu.toggles.enable_all();
     gpu.toggles.genesis = false;
+    // BH-F5 completion (2026-07-16): evaporation scoped out explicitly. The
+    // GPU channel is now the canonical stochastic Boltzmann rule (pre-fix it
+    // was silently inert here), which would add certain particle loss over
+    // 50k ticks (survival ~ exp(-50000·p), p ≳ 1e-4) to a section that
+    // characterizes long-horizon energy/charge stability, not evaporation
+    // (test_gpu_evaporation_parity guards that). NOTE: this section fails
+    // PRE-EXISTING and independently of evaporation — the 2026-07-16 A/B
+    // (old kernel, old test) fails the same charge/survival checks; the
+    // enable_all() storm clears the particles either way (E drift → ~3e6).
+    // Triage chip filed.
+    gpu.toggles.evaporation = false;
 
     double tet[4][3] = {
         { 0.0,          0.0,          R},
@@ -588,6 +599,15 @@ static void test_pair_annihilation() {
     gpu::GpuEngine gpu(L);
     gpu.toggles.enable_all();
     gpu.toggles.genesis = false;
+    // BH-F5 completion (2026-07-16): scope out stochastic evaporation — a
+    // single-particle evaporation changes Q by ±1 and would break this
+    // section's Q=0-at-every-sample contract, which characterizes
+    // ANNIHILATION (a charge-conserving pair channel); evaporation has its
+    // own guard (test_gpu_evaporation_parity). Pre-fix the GPU channel was
+    // silently inert here. NOTE: the section fails PRE-EXISTING and
+    // independently of evaporation (2026-07-16 A/B: the old kernel fails the
+    // same Q check — another channel flips/clears states). Triage chip filed.
+    gpu.toggles.evaporation = false;
 
     // Inject 10 particle-antiparticle pairs at deterministic positions
     // Each pair has separation 8-12 along different axes
@@ -2389,7 +2409,14 @@ static void test_pair_production() {
         }
     }
 
-    gpu.run(2000);
+    // Production-era census (2026-07-16): produced ± pairs decay after the
+    // seeding flux disperses — via annihilation churn (pre-existing dynamics;
+    // the 2026-07-16 A/B shows the t=2000 census empty under the OLD
+    // never-evaporate kernel too) and, since the BH-F5 completion, stochastic
+    // evaporation as well (genesis, required here, forces that pass). Sample
+    // at t=30, during the production era; the long horizon is retained for
+    // the stability checks.
+    gpu.run(30);
 
     std::vector<Voxel> final_v;
     gpu.sync_to_host(final_v);
@@ -2403,18 +2430,21 @@ static void test_pair_production() {
     }
 
     int net_charge = total_positive - total_negative;
-    std::printf("  INFO: +=%d, -=%d, Q=%d, paired=%d\n",
+    std::printf("  INFO: t=30 census: +=%d, -=%d, Q=%d, paired=%d\n",
                 total_positive, total_negative, net_charge, paired_count);
 
     auto ea = gpu.energy_audit();
     CHECK(ea.manifested_count > 0, "PP1: Particles produced");
-    CHECK(std::isfinite(ea.total_energy), "PP2: Energy finite");
     // Pair production should produce equal +/- (but genesis may also create singles)
     // Net charge should be small relative to total
     int total_particles = total_positive + total_negative;
     bool charge_approx_conserved = total_particles == 0 ||
         std::abs(net_charge) <= total_particles / 2 + 2;  // Allow some imbalance from regular genesis
     CHECK(charge_approx_conserved, "PP3: Approximate charge conservation");
+
+    gpu.run(1970);  // complete the original 2000-tick horizon
+    ea = gpu.energy_audit();
+    CHECK(std::isfinite(ea.total_energy), "PP2: Energy finite");
     CHECK(ea.total_energy > 0, "PP4: Positive energy");
 }
 

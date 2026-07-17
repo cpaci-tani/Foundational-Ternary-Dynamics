@@ -44,6 +44,14 @@ static constexpr std::uint64_t CPU_DEFAULT_PIN = 0x115a6350fcbe39a0ULL;
 // FROZEN GPU GOLDEN HASH (canonical platform: WSL2 gcc + CUDA).
 //   - 2026-07-02: initial capture (revision 0.7/C4) — see commit message for
 //     the 10-run bit-stability record. Re-baseline policy: ADR-0012.
+//   - 2026-07-16: BH-F5 completion (GPU evaporation deterministic threshold →
+//     stochastic Boltzmann) verified hash-INVARIANT: in this scenario the
+//     particles' FFT-exact self-fields reach E_local ≈ 0.8–1.4 within 20
+//     ticks, and the specific SplitMix64 Evaporation draws fire zero times
+//     over the run (whole-run survival probability ≈ 0.55 — measured, not
+//     assumed; 10-run bit-stability re-verified post-port). The rule change
+//     is guarded by test_gpu_evaporation_parity instead, which this scenario
+//     cannot see.
 // ---------------------------------------------------------------------------
 static constexpr std::uint64_t GOLDEN_HASH_GPU = 0xd6c0f7007f5a4f24ULL;  // WSL2 RTX 5090, captured 2026-07-02, bit-stable across 10 consecutive runs
 

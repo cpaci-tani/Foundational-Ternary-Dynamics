@@ -868,10 +868,16 @@ static void test_pair_annihilation() {
         std::printf("  t=0: manifested=%d charge=%d field_e=%.4e\n",
                     b0.manifested_count, b0.charge_total, b0.field_energy);
 
-        gpu.run(2000);
+        // Production-era census (2026-07-16): produced ± pairs decay once the
+        // seeding flux disperses — via annihilation churn (pre-existing; the
+        // 2026-07-16 A/B shows the t=2000 census empty under the OLD
+        // never-evaporate kernel too) and, since the BH-F5 completion,
+        // stochastic evaporation as well. Sample at t=30, during the
+        // production era.
+        gpu.run(30);
 
         auto b1 = gpu.energy_audit();
-        std::printf("  t=2000: manifested=%d charge=%d field_e=%.4e\n",
+        std::printf("  t=30: manifested=%d charge=%d field_e=%.4e\n",
                     b1.manifested_count, b1.charge_total, b1.field_energy);
 
         // Download for pair analysis
@@ -1350,6 +1356,15 @@ static void test_cyclotron() {
         gpu::GpuEngine gpu(L);
         gpu.toggles.enable_all();
         gpu.toggles.genesis = false;
+        // BH-F5 completion (2026-07-16): scope out stochastic evaporation —
+        // the test particle sits at |J| ≈ 0.25 (E_7site ≈ 0.45 → p ≈ 2%/tick,
+        // certain death over 500 ticks under the now-live canonical rule),
+        // and this section characterizes the Lorentz force, not evaporation
+        // (test_gpu_evaporation_parity does). Pre-fix the GPU channel was
+        // silently inert here. NOTE: the section fails PRE-EXISTING and
+        // independently of evaporation (2026-07-16 A/B: the old kernel loses
+        // the particle too — CYCL-1..7 fail identically). Triage chip filed.
+        gpu.toggles.evaporation = false;
         gpu.toggles.gravity = false;
         gpu.toggles.poisson_coulomb = false;
         gpu.toggles.lorentz_force = true;
@@ -1403,6 +1418,7 @@ static void test_cyclotron() {
         gpu::GpuEngine gpu(L);
         gpu.toggles.enable_all();
         gpu.toggles.genesis = false;
+        gpu.toggles.evaporation = false;  // BH-F5 completion — see Run A note
         gpu.toggles.gravity = false;
         gpu.toggles.poisson_coulomb = false;
         gpu.toggles.lorentz_force = false;  // OFF

@@ -62,14 +62,16 @@ A particle appears when flux density exceeds the threshold.
 
 ## 1B. Evaporation (±1 → 0)
 
-A particle disappears when its flux density drops below threshold.
+A particle's survival is Boltzmann-weighted in the local field energy: manifestation persists only while the surrounding flux sustains it. (Engine rule of record since 2026-04-23; the earlier deterministic sub-threshold form is retired.)
 
 | Component | Formula | Value |
 |-----------|---------|-------|
-| **Condition** | ρ(v) < K_B AND s(v) ≠ 0 | Flux too weak to sustain manifestation |
-| **Result** | s(v) → 0, velocity → 0, charge → 0 | Returns to void |
+| **Condition** | s(v) ≠ 0 AND v not lock-bound | Manifested, unbound |
+| **Local energy** | E₇(v) = Σ_{u ∈ {v} ∪ N₆(v)} (\|**J**(u)\|² + \|**v**_wave(u)\|²) | 7-site neighborhood energy |
+| **Probability** | p_evap = exp(−E₇/K_B²) · K_EVAP_RATE | Per-tick stochastic draw |
+| **Result** | s(v) → 0; spin, color, particle id cleared | Returns to void |
 
-**In plain English:** If a particle's energy drops below the minimum needed to exist, it evaporates back into the void. The flux remains but the particle is gone.
+**In plain English:** A particle whose neighborhood energy is too weak to sustain it evaporates back into the void — stochastically, so weakly-supported particles die within a few ticks while well-supported ones persist. The flux remains but the particle is gone.
 
 ## 1C. Annihilation (+1 meets −1)
 
@@ -91,6 +93,7 @@ When matter and antimatter are adjacent, both return to void.
 | Fine structure constant | α | 1/137.036 | Master quadratic from G* |  CONJECTURE (1.26 ppm) |
 | Genesis probability form | 1 − e^(−x) | Exponential | Chosen for smoothness |  SELECTION |
 | Polarity rule | sign(∇·**J**) | ±1 | Symmetry breaking mechanism |  IMPOSED |
+| Evaporation rate scale | K_EVAP_RATE | 0.1 | Engine tuning literal (2026-04 pre-refactor audit extraction); unpriced |  IMPOSED |
 
 ---
 
