@@ -1,5 +1,61 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine: GPU evaporation ported to the canonical stochastic Boltzmann rule (BH-F5 completion, 2026-07-16)
+
+CPU and GPU implemented physically different evaporation rules — a confirmed
+backend-consistency defect. The CPU has run the stochastic Boltzmann rule
+`p_evap = exp(−E_7site/K_MANIFEST²)·K_EVAP_RATE` since `15882e98` (2026-04-23,
+deliberate, "stabilize the thermal vacuum"); the GPU `evaporation_kernel` kept
+the retired deterministic threshold `E_7site < K_MANIFEST²·1e-6`, under which a
+settled particle (E ~ 0.03 ≫ 2.6e-7) **never** evaporated. Isolated-particle
+lifetime was ~8 ticks on CPU vs infinite on GPU — every lifetime/persistence
+measurement was backend-dependent (FTD-0301 proton metastability and FTD-0267
+survival telemetry are CPU-side and unaffected, but any GPU persistence claim
+inherited the fossil rule). The BH-F5 design of record
+(`engine/docs/DESIGN_RNG_PORTABILITY.md`, plan step 4) had already prescribed
+the port; the 2026-05-05 implementation commit covered genesis/spin/Langevin
+and skipped the evaporation kernel.
+
+- **Port:** `evaporation_kernel` (single + dual launchers) now draws the shared
+  SplitMix64 `VoxelRng::Evaporation` stream — bit-exact with the CPU draw at
+  identical (seed, voxel, tick). Dead `EVAP_THRESHOLD` constant retired.
+- **Regression guard:** `engine/tests/test_gpu_evaporation_parity.cpp`
+  (`gpu_evaporation_parity`): death-tick equality CPU↔GPU (tick 6 == tick 6 at
+  the default seed), locked exemption, Boltzmann suppression at high E.
+- **GPU tests re-scoped / triaged** (kernel-swap A/B run for attribution):
+  the only failures actually CAUSED by this port were
+  `test_gpu_continuity_ledger` GCL-6/GCL-9, which asserted the retired
+  certain-death semantics — they now tick until the stochastic draw fires
+  (ledger closed with zero spurious reactions on quiet ticks; verified
+  green). GP-PAIRS (`test_gpu_physics`) and PAIR-B (`test_gpu_experiments`)
+  were failing PRE-EXISTING (produced ± pairs decay via annihilation churn —
+  the t=2000 census is empty under the old kernel too); their census now
+  samples the production era (t=30), which fixes them, and stochastic
+  evaporation is a second decay channel post-port. GP-ENERGY-LONG,
+  GP-ANNIHILATION, and GP-EXP-CYCLOTRON fail PRE-EXISTING and independently
+  of evaporation (A/B: identical failures with the old kernel; the
+  `enable_all()` storm clears their particles either way) — evaporation is
+  scoped out explicitly in those sections for clean future attribution, and a
+  triage chip is filed. Also not from this change: `gpu_parity` GP2
+  (pre-existing FFT-vs-SOR single-tick field-energy gap — the evaporation
+  draws at its site, u = 0.746/0.938, sit far above the 0.1 firing ceiling,
+  so the rule change cannot touch it; chip filed) and `gpu_gauss_law_fidelity`
+  (concurrent session's uncommitted test of its own open finding).
+- **Golden gates:** CPU goldens untouched (merge_gate 6/6). GPU golden
+  `0xd6c0f7007f5a4f24` verified hash-INVARIANT post-port (10-run bit-stable):
+  in that scenario the FFT-exact self-fields reach E ≈ 0.8–1.4 within 20
+  ticks and the specific draws fire zero evaporation events (whole-run
+  survival ≈ 0.55) — the invariance is legitimate, not evidence of a dead path.
+- **Docs synced:** stale deterministic-threshold lines corrected in
+  `AUDIT_ENGINE_CALLSTACK.md` (§1 phase_write, incl. the stale mt19937 line),
+  `SPEC_ENGINE.md` (rule 4, K_B row, design-decision 7),
+  `MAP_ENGINE_ARCHITECTURE.md`, and `SPEC_SIX_ALGORITHMS.md` §1B (which had
+  documented a third, pre-stochastic pedagogical form matching neither
+  backend; K_EVAP_RATE now tabled as [IMPOSED], unpriced).
+- `K_EVAP_RATE = 0.1` itself remains an **unpriced bare literal [IMPOSED]**
+  (extracted from a bare `0.1` during the 2026-04 pre-refactor audit); its
+  value is unchanged by this fix.
+
 ## The Consumption Program: goal amended to "mark, price, and drive"; four fronts chartered (FTD-0383, 2026-07-12)
 
 The owner directed an extension of the project's goals toward a proper theory of

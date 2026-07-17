@@ -9,7 +9,7 @@
  *   - phase_write_kernel            (leapfrog + damping + Langevin OU)
  *   - wave_update_kernel            (fused phase_read + phase_write)
  *   - genesis_kernel                (stochastic manifestation)
- *   - evaporation_kernel            (energy-threshold de-manifestation)
+ *   - evaporation_kernel            (stochastic Boltzmann de-manifestation)
  * plus their host-side launchers (launch_phase_read, launch_phase_write,
  * launch_wave_update).
  *
@@ -504,7 +504,8 @@ __global__ void evaporation_kernel(
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
     int* __restrict__ ledger_reaction,
-    int L
+    int L,
+    unsigned long long rng_seed, int tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -529,8 +530,21 @@ __global__ void evaporation_kernel(
                       + wv_x[j]*wv_x[j] + wv_y[j]*wv_y[j] + wv_z[j]*wv_z[j];
     }
 
-    constexpr double EVAP_THRESHOLD = K_MANIFEST * K_MANIFEST * 1e-6;
-    if (local_energy < EVAP_THRESHOLD) {
+    // Stochastic Boltzmann evaporation — BH-F5 completion (2026-07-16).
+    // Mirrors the canonical CPU rule (phase_write.cpp Loop 2, stochastic since
+    // 15882e98 2026-04-23): evap_prob = exp(-E_local/K_MANIFEST²)·K_EVAP_RATE,
+    // gated by the shared SplitMix64 stream (voxel_rng.h, salt Evaporation) so
+    // the draw is bit-exact with the CPU's at identical (seed, voxel, tick).
+    // Pre-fix this kernel kept the pre-2026-04-23 deterministic threshold
+    // (E_local < K_MANIFEST²·1e-6), under which a settled particle
+    // (E_local ~ 0.03 ≫ 2.6e-7) never evaporated — isolated-particle lifetime
+    // was ~8 ticks on CPU vs infinite on GPU. CUDA exp() vs std::exp can
+    // differ sub-ULP; a CPU↔GPU decision flip needs |u − p·K_EVAP_RATE|
+    // ≲ 1e-16 (same accepted caveat as voxel_normal's transcendentals).
+    double evap_prob = exp(-local_energy / (K_MANIFEST * K_MANIFEST));
+    double u = ::ftd::voxel_uniform(rng_seed, i, tick,
+            static_cast<unsigned long long>(::ftd::VoxelRng::Evaporation));
+    if (u < evap_prob * K_EVAP_RATE) {
         const int8_t old_state = state[i];
         state[i] = 0;
         if (ledger_reaction) {
@@ -621,7 +635,9 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
     // operations on a single threshold, see CPU phase_write.cpp:291). The
     // do_evaporation flag lets tests exercise the evaporation path in
     // isolation without enabling genesis. Pre-F6 this ran every tick
-    // regardless of toggle (audit F6, 2026-05-04).
+    // regardless of toggle (audit F6, 2026-05-04). Stochastic since the
+    // BH-F5 completion (2026-07-16): rng_seed/tick feed the shared
+    // SplitMix64 Evaporation draw, matching CPU phase_write.cpp Loop 2.
     if (do_genesis || do_evaporation) {
         evaporation_kernel<<<grid, block>>>(
             bufs.d_state,
@@ -630,7 +646,8 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
             bufs.d_locked,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
-            L
+            L,
+            rng_seed, tick
         );
         CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
     }

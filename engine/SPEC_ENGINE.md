@@ -81,7 +81,7 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 1. **Flux wave equation**: dJ/dt = c^2 nabla^2 J (only possible local linear dynamics for a vector field)
 2. **State-flux coupling**: source term g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0)
 3. **Gauss projection**: enforce div(J) = s each tick (charge conservation -- logical necessity)
-4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; neighborhood energy < K_B^2 * 1e-6 -> evaporate (7-site check: particle + 6 face-neighbors)
+4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE, where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt)
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
 6. **Movement + Collision**: remainder accumulation, speed limit C_SPEED = C_WAVE = 1/sqrt(3), annihilation on contact
 
@@ -433,7 +433,7 @@ distinctions are tracked in the theory ledgers.
 |----------|-------|---------|
 | `ALPHA` | 0.00729 (1/X_PLUS, tree-level) | Coulomb force, damping, exchange force |
 | `ALPHA_EFT` | `G_C²` (≡ ALPHA by construction) | Same two-vertex force paths; consistency alias |
-| `K_B` | 0.511 | Evaporation threshold, wavepacket amplitude, Larmor scale |
+| `K_B` | 0.511 | Boltzmann evaporation scale (as K_MANIFEST = K_B), wavepacket amplitude, Larmor scale |
 | `G_C` | sqrt(ALPHA) | State-flux coupling (phase_read) |
 | `G_N` | 0.01 (lattice toy — see §5 gravity banner) | Gravitational force |
 | `C_WAVE` | 1/sqrt(3) | Wave propagation speed (Laplacian coefficient) |
@@ -841,7 +841,7 @@ line-by-line target registry.
 
 6. **Tier-2 gravity gradient**: F_grav uses r=2 stencil to avoid self-field contamination.
 
-7. **Neighborhood energy evaporation**: 7-site check (particle + 6 face-neighbors) for monotonically decreasing measure despite leapfrog oscillation.
+7. **Neighborhood energy evaporation**: 7-site energy (particle + 6 face-neighbors) smooths the leapfrog oscillation; the rule is stochastic (since 2026-04-23) — survival is Boltzmann-weighted, p_evap = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE per tick.
 
 8. **Gauss exclusion at particle sites**: Gauss projection skips manifested sites -- physically correct since div(J)(i) doesn't involve J(i).
 
