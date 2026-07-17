@@ -1,0 +1,3 @@
+GetProcessIoCounters
+IsWow64Process
+ExtractIconExW

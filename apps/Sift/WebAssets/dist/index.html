@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self' blob:">
+  <title>Sift Script Studio</title>
+  <link rel="stylesheet" href="./script-studio.css">
+</head>
+<body>
+  <main id="layout">
+    <section id="editor-region" aria-label="Script editor">
+      <div id="editor"></div>
+    </section>
+    <section id="problems-region" aria-label="Script problems">
+      <header>
+        <span>PROBLEMS</span>
+        <span id="problem-count">0 findings</span>
+      </header>
+      <div id="problems-empty">Analyze the document to populate syntax and Sift policy diagnostics.</div>
+      <div id="problems" role="list"></div>
+    </section>
+    <section id="terminal-region" aria-label="Integrated terminal output">
+      <header>
+        <span>LOCAL ANALYSIS TERMINAL</span>
+        <span id="terminal-mode">OUTPUT ONLY · NO AUTHORED SCRIPT EXECUTION</span>
+      </header>
+      <div id="terminal"></div>
+    </section>
+  </main>
+  <div id="terminal-menu" role="menu" aria-label="Terminal actions">
+    <button type="button" data-action="copy">Copy selection</button>
+    <button type="button" data-action="select-all">Select all</button>
+    <button type="button" data-action="clear">Clear</button>
+    <button type="button" data-action="open-working-directory">Open working directory in Explorer</button>
+  </div>
+  <script type="module" src="./script-studio.js"></script>
+</body>
+</html>
+
