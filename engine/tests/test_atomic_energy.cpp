@@ -68,8 +68,10 @@ int main() {
     //
     // Pure-EM Bohr radius:  a0_pure = 1 / (K_B * alpha_EM) = 4*pi / (K_B * ALPHA)
     //
-    // Lattice effective coupling (gravity contributes for opposite charges):
-    //   alpha_eff = alpha/(4*pi) + G_N * K_B^2
+    // Scale-1 effective coupling (gravity contributes for opposite charges).
+    // ParticleEngine gravity uses G_PE = G_DERIVED (FTD-0131 physical alpha_G),
+    // so the gravity term is ~5e-46 * K_B^2 — negligible next to alpha/(4*pi):
+    //   alpha_eff = alpha/(4*pi) + G_PE * K_B^2
     //   a0_lattice = 1 / (K_B * alpha_eff)
     //
     // Physical Bohr radius (natural units, hbar=c=1):
@@ -82,7 +84,7 @@ int main() {
     //   E_n = -alpha_eff^2 * K_B / (2 * n^2)       [PE convention, with gravity]
 
     double alpha_EM = ALPHA / (4.0 * PI);
-    double alpha_eff = alpha_EM + G_N * K_B * K_B;
+    double alpha_eff = alpha_EM + G_PE * K_B * K_B;
     double a0_pure = 1.0 / (K_B * alpha_EM);   // pure-EM Bohr radius (PE convention)
     double a0_lattice = 1.0 / (K_B * alpha_eff); // lattice Bohr radius (EM + gravity)
     double a0_physical = 1.0 / (K_B * ALPHA);    // physical Bohr radius (natural units)
@@ -90,13 +92,13 @@ int main() {
     std::cout << "  Framework constants:\n";
     std::cout << "    ALPHA       = " << std::setprecision(10) << ALPHA << "\n";
     std::cout << "    K_B (m_e)   = " << K_B << " MeV\n";
-    std::cout << "    G_N         = " << G_N << "\n";
+    std::cout << "    G_PE        = " << G_PE << " (FTD-0131 physical alpha_G)\n";
     std::cout << "    PI          = " << PI << "\n";
     std::cout << "    R_BOHR      = " << R_BOHR << " (from ontic.h)\n\n";
 
     std::cout << "  Derived scales:\n";
     std::cout << "    alpha_EM    = alpha/(4pi) = " << alpha_EM << "\n";
-    std::cout << "    alpha_eff   = alpha_EM + G_N*K_B^2 = " << alpha_eff << "\n";
+    std::cout << "    alpha_eff   = alpha_EM + G_PE*K_B^2 = " << alpha_eff << "\n";
     std::cout << "    a0_pure     = " << a0_pure << " lattice units (PE, pure EM)\n";
     std::cout << "    a0_lattice  = " << a0_lattice << " lattice units (PE, EM+grav)\n";
     std::cout << "    a0_physical = " << a0_physical << " Planck lengths\n\n";
@@ -152,15 +154,19 @@ int main() {
         check_close("AE-2b: R_BOHR = 4*pi/(K_B*ALPHA) from ontic.h",
                     R_BOHR, 4.0 * PI / (K_B * ALPHA), 1e-12);
 
-        // Lattice Bohr radius is smaller because gravity adds to attraction
-        check("AE-2c: lattice a0 < pure-EM a0 (gravity assists binding)",
-              a0_lattice < a0_pure);
+        // Gravity assists binding, but at G_PE ~ 5e-46 the assist is ~2e-43
+        // relative — below double resolution, so a0_lattice == a0_pure to
+        // machine precision. Assert <= (never larger), not strict <.
+        check("AE-2c: lattice a0 <= pure-EM a0 (G_PE gravity assist, negligible)",
+              a0_lattice <= a0_pure);
 
-        // Lattice Bohr radius ~ 613 (from project documentation)
-        double a0_lattice_expected = 613.0;
+        // Scale-1 Bohr radius matches the ontic R_BOHR = 4*pi/(K_B*ALPHA)
+        // (the pre-FTD-0131 G_N=0.01 coupling gave ~613; with physical G_PE
+        // the EM term dominates and a0 ~ 3370).
+        double a0_lattice_expected = R_BOHR;
         double a0_lattice_relerr = std::abs(a0_lattice - a0_lattice_expected) / a0_lattice_expected;
         std::cout << "    a0_lattice = " << a0_lattice << " (expected ~" << a0_lattice_expected << ")\n";
-        check("AE-2d: lattice Bohr radius ~ 613 (within 5%)",
+        check("AE-2d: lattice Bohr radius matches ontic R_BOHR (within 5%)",
               a0_lattice_relerr < 0.05);
 
         // Physical a0 is > 200 Planck lengths (not a tiny test grid)
@@ -302,8 +308,8 @@ int main() {
     std::cout << "\n--- AE-6: Scale-1 Hydrogen Proxy ---\n";
     {
         // Use ParticleEngine (Scale 1) with a locked proton and orbiting electron.
-        // The effective coupling includes gravity: alpha_eff = alpha/(4*pi) + G_N*K_B^2
-        // Bohr radius: a0 = 1/(K_B * alpha_eff) ~ 613
+        // The effective coupling includes gravity: alpha_eff = alpha/(4*pi) + G_PE*K_B^2
+        // (G_PE term negligible). Bohr radius: a0 = 1/(K_B * alpha_eff) ~ 3370
 
         // For this proxy test, we use a smaller initial radius to keep things fast.
         // Use a_0_proxy = 100 (well below true a0, but tests binding stability).
