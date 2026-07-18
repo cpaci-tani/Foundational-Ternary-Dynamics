@@ -146,7 +146,8 @@ CPP_EXACT = {
 # Python computes them from first principles, so small differences are expected
 CPP_APPROX = {
     "K_B": 0.511,               # ontic.h: hardcoded (Python derives 0.5100)
-    "K_GENESIS": 0.511 * 3,     # ontic.h: K_B * N_C (uses hardcoded K_B)
+    "K_MANIFEST": 0.5054620197173260,     # ontic.h: := W_SC [SELECTION — ADOPTED, FTD-0388]; kinetics role split off K_B (FTD-0130)
+    "K_GENESIS": 0.5054620197173260 * 3,  # ontic.h: K_MANIFEST * N_C = 3·W_SC (FTD-0388; was K_B*N_C = 1.533 pre-2026-07-17)
     "V_HIGGS": 246.09,          # ontic.h: hardcoded
     "M_HIGGS": 124.8,           # ontic.h: hardcoded
     "M_NU_3": 4.955e-2,         # ontic.h: hardcoded
@@ -669,11 +670,18 @@ class OnticChain:
             experimental=EXPERIMENT["M_ELECTRON"]["value"],
         ))
         self._add(Constant(
+            name="K_MANIFEST", symbol="K_manifest",
+            value=0.5054620197173260,
+            layer="6", depends_on=[],
+            formula="W_SC — Γ-class SC Watson constant (unit-charge Gauss self-energy)",
+            tag="[SELECTION — ADOPTED, FTD-0388]", unit="sim units",
+        ))
+        self._add(Constant(
             name="K_GENESIS", symbol="K_genesis",
-            value=m_e_MeV * N_c,
-            layer="6", depends_on=["K_B", "N_C"],
-            formula="N_c · K_B = 3 × m_e",
-            tag="[THEOREM]", unit="MeV",
+            value=0.5054620197173260 * N_c,
+            layer="6", depends_on=["K_MANIFEST", "N_C"],
+            formula="N_c · K_MANIFEST = 3·W_SC (FTD-0388; pre-2026-07-17: N_c·K_B)",
+            tag="[SELECTION — ADOPTED, FTD-0388]", unit="sim units",
         ))
 
     # ── Layer 6c: Mass Ratios ────────────────────────────────────────────

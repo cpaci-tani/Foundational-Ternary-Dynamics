@@ -403,8 +403,11 @@ print("\n--- 0.14: Layer 6: K_B and Mass Formula ---")
 K_B_CPP = mpmath.mpf("0.511")
 check_val("0.14a", "K_B = 0.511 (electron mass in MeV)", K_B_CPP, mpmath.mpf("0.511"), 1e-15)
 
-K_GENESIS = K_B_CPP * N_C
-check_val("0.14b", "K_GENESIS = N_c * K_B = 1.533", K_GENESIS, mpmath.mpf("1.533"), 1e-15)
+# FTD-0388 (2026-07-17): kinetics role split off K_B — K_MANIFEST := W_SC.
+K_MANIFEST_CPP = mpmath.mpf("0.5054620197173260")
+K_GENESIS = K_MANIFEST_CPP * N_C
+check_val("0.14b", "K_GENESIS = N_c * K_MANIFEST = 3*W_SC = 1.516386...", K_GENESIS,
+          mpmath.mpf("1.5163860591519780"), 1e-15)
 
 # Mass formula: m_e/m_P = sqrt(2*pi) * (16/3) * alpha^11
 alpha_exact = 1 / xp_exact  # using exact G* computation

@@ -38,8 +38,9 @@ G_C = math.sqrt(ALPHA)
 G_N = 1.0 / (B_3 + N_C)**2  # = 1/100
 
 # Layer 6: Mass Scale
-K_B = 0.511
-K_GENESIS = N_C * K_B
+K_B = 0.511                        # electron-mass anchor (M_REST role; FTD-0130 split)
+K_MANIFEST = 0.5054620197173260    # := W_SC, unit-charge Gauss self-energy [SELECTION - ADOPTED, FTD-0388]
+K_GENESIS = N_C * K_MANIFEST       # genesis threshold = 3*W_SC = 1.516386059...
 
 # Layer 7: Precision Formula
 EPSILON = math.exp(math.pi) - math.pi - (B_3 + N_EFF)
@@ -129,7 +130,8 @@ print()
 
 print("--- LAYER 6: MASS SCALE ---")
 print(row("K_B (= m_e in MeV)", K_B))
-print(row("K_GENESIS = N_c * K_B", K_GENESIS))
+print(row("K_MANIFEST (= W_SC, FTD-0388)", K_MANIFEST))
+print(row("K_GENESIS = N_c * K_MANIFEST", K_GENESIS))
 print(row("sqrt(2*pi)", math.sqrt(2.0*math.pi)))
 print(row("16/3 (= N_base^2/N_c)", 16.0/3.0))
 print(row("alpha^11", ALPHA**11, "e"))
