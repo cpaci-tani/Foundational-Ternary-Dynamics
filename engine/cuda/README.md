@@ -50,9 +50,9 @@ auxiliary kernels.
 ## How to run
 
 ```bash
-# Build (with CUDA auto-detected)
-cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=ON
-cmake --build engine/build --target ftd_cuda
+# Build (CUDA ON by default; pins MSVC 14.44 -- VS 18's default 14.51
+# toolset crashes CUDA 13.0's cudafe++)
+engine\build_native.bat build --target ftd_cuda
 
 # Run a GPU benchmark (WSL2 only per CLAUDE.md)
 wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \

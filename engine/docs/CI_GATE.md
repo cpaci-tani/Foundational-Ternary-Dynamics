@@ -6,9 +6,13 @@
 ## The fast gate
 
 ```
-cmake --build engine/build --config Release --parallel 32
+engine\build_native.bat
 cd engine/build && ctest -L merge_gate -j 32 -C Release
 ```
+
+(`build_native.bat` pins MSVC 14.44 via `vcvarsall x64 -vcvars_ver=14.44` — VS 18's
+default 14.51 toolset crashes CUDA 13.0's `cudafe++`; a raw `cmake --build` works
+only inside that vcvars shell.)
 
 Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 "merge_gate" block at the end of the file):
