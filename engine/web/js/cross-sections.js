@@ -93,8 +93,8 @@ export function mottDiffCS(theta, E_kin, Z = 1) {
  * Pair production threshold energy.
  * Minimum photon energy to create e+e- pair: E_thresh = 2 * m_e = 2 * K_B = 1.022 MeV.
  * NOTE: this is NOT the FTD genesis threshold. K_GENESIS = N_c * K_MANIFEST
- * = 1.533 MeV (3 * m_e), which is a different, larger quantity — do not equate
- * the 2*m_e pair threshold with K_GENESIS.
+ * = 1.5164 (3·W_SC since FTD-0388; no longer 3·m_e), which is a different,
+ * larger quantity — do not equate the 2*m_e pair threshold with K_GENESIS.
  */
 export function pairProductionThreshold() {
     return 2.0 * K_B;  // 1.022 MeV

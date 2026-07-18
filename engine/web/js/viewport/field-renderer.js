@@ -1691,7 +1691,7 @@ export class ViewportFieldRenderer {
         const colAttr = this._darkMatterHalo.geometry.getAttribute('particleColor');
         const sizeAttr = this._darkMatterHalo.geometry.getAttribute('size');
         const N = latticeSize;
-        const kGen = K_GENESIS; // 3 * K_B = 1.533 (audit P2-9 fix: import the named constant, 2026-05-27)
+        const kGen = K_GENESIS; // 3 * K_MANIFEST = 1.5164 (W_SC kinetics, FTD-0388; audit P2-9 fix: import the named constant, 2026-05-27)
         let vi = 0;
         const maxPts = 8000;
 

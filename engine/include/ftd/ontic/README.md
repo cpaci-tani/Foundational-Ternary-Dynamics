@@ -25,7 +25,7 @@ Consumers that want a flat `ftd::ALPHA` (etc.) include
 | 4 | `ontic.h` | Framework integers: D=3, N_c=3, N_gen=3, N_f=6, N_base=4, b_3=7, N_eff=13 |
 | 5 | `gauge_couplings.h` | G_C (state-flux coupling), ALPHA runtime coupling, ALPHA_S_MZ, SIN2_WEINBERG, ALPHA_WEAK |
 | 5b | `gauge_couplings.h` | QCD running, B0_NF5, B0_NF6, LAMBDA_QCD, M_Z |
-| 6 | `particle_masses.h` | K_B (electron mass anchor 0.511 MeV), K_GENESIS, mass ratios, R_BOHR |
+| 6 | `particle_masses.h` | K_B (electron mass anchor 0.511 MeV), K_MANIFEST (:= W_SC = 0.505462, FTD-0388), K_GENESIS, mass ratios, R_BOHR |
 | 6b | `particle_masses.h` | LAMBDA_HIGGS, M_HIGGS, V_HIGGS, M_W |
 | 7 | `neutrino.h` | Neutrino mass formula chain |
 | 8 | `reference frame context.h` | Scale 11 / observer formalism constants |
