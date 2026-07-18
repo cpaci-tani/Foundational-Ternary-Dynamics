@@ -380,6 +380,13 @@ __global__ void phase_movement_kernel(
     double* __restrict__ ledger_current_x,
     double* __restrict__ ledger_current_y,
     double* __restrict__ ledger_current_z,
+    bool dual_substrate,
+    double* __restrict__ fL_x,
+    double* __restrict__ fL_y,
+    double* __restrict__ fL_z,
+    double* __restrict__ fR_x,
+    double* __restrict__ fR_y,
+    double* __restrict__ fR_z,
     double dt,
     int L,
     bool reflective_boundary
@@ -430,6 +437,12 @@ __global__ void phase_movement_kernel(
         pair_id[i] = -1;
         accel_mag[i] = 0.0;
         flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
+        // Dual-substrate: zero the registers too (CPU handle_face_crossing
+        // parity; census EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3).
+        if (dual_substrate) {
+            fL_x[i] = 0; fL_y[i] = 0; fL_z[i] = 0;
+            fR_x[i] = 0; fR_y[i] = 0; fR_z[i] = 0;
+        }
         return;
     }
 
@@ -476,6 +489,31 @@ __global__ void phase_movement_kernel(
             atomicAdd(&flux_x[i], -sfx);
             atomicAdd(&flux_y[i], -sfy);
             atomicAdd(&flux_z[i], -sfz);
+
+            // Dual-substrate: carry proportional L/R flux too, with the same
+            // observable-derived ratio (CPU phase_movement parity; without
+            // this the transported observable is erased at the next
+            // obs := L+R sync — census §5.3).
+            if (dual_substrate) {
+                const double sfLx = fL_x[i] * ratio;
+                const double sfLy = fL_y[i] * ratio;
+                const double sfLz = fL_z[i] * ratio;
+                const double sfRx = fR_x[i] * ratio;
+                const double sfRy = fR_y[i] * ratio;
+                const double sfRz = fR_z[i] * ratio;
+                atomicAdd(&fL_x[target], sfLx);
+                atomicAdd(&fL_y[target], sfLy);
+                atomicAdd(&fL_z[target], sfLz);
+                atomicAdd(&fR_x[target], sfRx);
+                atomicAdd(&fR_y[target], sfRy);
+                atomicAdd(&fR_z[target], sfRz);
+                atomicAdd(&fL_x[i], -sfLx);
+                atomicAdd(&fL_y[i], -sfLy);
+                atomicAdd(&fL_z[i], -sfLz);
+                atomicAdd(&fR_x[i], -sfRx);
+                atomicAdd(&fR_y[i], -sfRy);
+                atomicAdd(&fR_z[i], -sfRz);
+            }
         }
 
         // Clear source (use atomic store to avoid races with adjacent CAS ops)
@@ -541,6 +579,37 @@ __global__ void phase_movement_kernel(
             atomicAdd(&flux_x[nbrs_tgt[n]], tgt_fx * sixth);
             atomicAdd(&flux_y[nbrs_tgt[n]], tgt_fy * sixth);
             atomicAdd(&flux_z[nbrs_tgt[n]], tgt_fz * sixth);
+        }
+
+        // Dual-substrate: same snapshot → zero → 6-neighbor scatter for the
+        // L/R registers (CPU annihilation-branch parity; without this the
+        // scattered observable is erased at the next obs := L+R sync —
+        // census §5.3). Same register-snapshot rationale as the observable
+        // above: read before zeroing to avoid torn scatter under concurrent
+        // annihilating threads.
+        if (dual_substrate) {
+            const double sLx = fL_x[i],      sLy = fL_y[i],      sLz = fL_z[i];
+            const double sRx = fR_x[i],      sRy = fR_y[i],      sRz = fR_z[i];
+            const double tLx = fL_x[target], tLy = fL_y[target], tLz = fL_z[target];
+            const double tRx = fR_x[target], tRy = fR_y[target], tRz = fR_z[target];
+            fL_x[i] = 0; fL_y[i] = 0; fL_z[i] = 0;
+            fR_x[i] = 0; fR_y[i] = 0; fR_z[i] = 0;
+            fL_x[target] = 0; fL_y[target] = 0; fL_z[target] = 0;
+            fR_x[target] = 0; fR_y[target] = 0; fR_z[target] = 0;
+            for (int n = 0; n < 6; ++n) {
+                atomicAdd(&fL_x[nbrs_src[n]], sLx * sixth);
+                atomicAdd(&fL_y[nbrs_src[n]], sLy * sixth);
+                atomicAdd(&fL_z[nbrs_src[n]], sLz * sixth);
+                atomicAdd(&fR_x[nbrs_src[n]], sRx * sixth);
+                atomicAdd(&fR_y[nbrs_src[n]], sRy * sixth);
+                atomicAdd(&fR_z[nbrs_src[n]], sRz * sixth);
+                atomicAdd(&fL_x[nbrs_tgt[n]], tLx * sixth);
+                atomicAdd(&fL_y[nbrs_tgt[n]], tLy * sixth);
+                atomicAdd(&fL_z[nbrs_tgt[n]], tLz * sixth);
+                atomicAdd(&fR_x[nbrs_tgt[n]], tRx * sixth);
+                atomicAdd(&fR_y[nbrs_tgt[n]], tRy * sixth);
+                atomicAdd(&fR_z[nbrs_tgt[n]], tRz * sixth);
+            }
         }
     } else {
         // Same-sign collision → elastic bounce: reverse velocity along movement axis
@@ -908,7 +977,8 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary) {
+void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
+                           bool dual_substrate) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -923,6 +993,9 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         bufs.d_pair_id, bufs.d_accel_mag,
         bufs.d_ledger_reaction,
         bufs.d_ledger_current_x, bufs.d_ledger_current_y, bufs.d_ledger_current_z,
+        dual_substrate,
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
         dt, L, reflective_boundary
     );
     CUDA_CHECK(cudaGetLastError());
