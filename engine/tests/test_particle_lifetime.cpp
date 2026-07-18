@@ -162,6 +162,19 @@ int main() {
     {
         const int L = 48;
         ftd::RenderBridge rb(L);
+        // CPU orbital-energy bookkeeping under test (March-era CPU
+        // semantics); force_cpu keeps the section on that backend.
+        rb.force_cpu();
+        // Since 420d933f a particle crossing a face is REMOVED. The old
+        // seeding sqrt(ALPHA/r0) omitted the engine's 4*pi (measured force
+        // convention: F = alpha/(4*pi*r^2) at unit inertial mass — see
+        // campaign_inertial_mass), so the electron launched 3.5x
+        // supercircular, spiralled out (r=8 -> 16 by tick 500), crossed
+        // the face, and vanished; pre-420d933f it merely wrapped
+        // toroidally and read as "surviving". Seed a genuinely bound
+        // orbit and bounce at the walls so the energy budget stays
+        // on-lattice.
+        rb.toggles.reflective_boundary = true;
         int mid = L / 2;
 
         // Proton at center (locked)
@@ -169,9 +182,11 @@ int main() {
         rb.inject_particle(mid, mid, mid, +1, {iso, iso, iso});
         rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
 
-        // Electron at r=8 with circular velocity
+        // Electron at r=8 with circular velocity for the measured lattice
+        // convention F = alpha/(4*pi*r^2), unit inertial mass:
+        // v_circ = sqrt(F*r) = sqrt(alpha/(4*pi*r0))
         int r0 = 8;
-        double v_circ = std::sqrt(ftd::ALPHA / r0);
+        double v_circ = std::sqrt(ftd::ALPHA / (4.0 * ftd::PI * r0));
         rb.inject_particle(mid + r0, mid, mid, -1, {iso, iso, iso});
         rb.voxels()[rb.lattice().index(mid + r0, mid, mid)].locked = true;
         rb.run(500);  // Both settle
