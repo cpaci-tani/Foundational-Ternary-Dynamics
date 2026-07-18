@@ -275,7 +275,7 @@ const AE_CARD_TOOLTIPS = {
     'B/A MeV':      'Binding energy per nucleon B/A. Peaks at \u2248 8.8 MeV around iron \u2014 this curve is what drives fusion (low A) and fission (high A) energetics.',
     'Electron B.E.': 'Total electron binding energy from the Thomas–Fermi atomic-binding prefactor: \\(E_{\\text{atom}} \\approx -20.93 \\cdot Z^{7/3}\\) eV (Lieb–Simon 1977, [IMPOSED — external]). Not a shell-summed Slater-hydrogenic calculation despite earlier tooltip wording. Typical magnitude: tens to hundreds of eV for light atoms; thousands for heavy.',
     // Card title is "Mass (K_B)" with <sub>B</sub>; textContent renders as "Mass (KB)" \u2192 normalized "Mass KB".
-    'Mass KB':      'Composite atomic mass in units of the PDG electron mass \\(m_e = 0.510999\\) MeV (the divisor used in atomic-energy.js), including both nuclear and electron binding corrections. Despite the K_B-labelled key, the value is NOT divided by the FTD anchor K_B = 0.511; the two agree by construction to ~0.2%. This card is display-only — Scale-0 genesis uses K_GENESIS = N_c · K_B directly, not this value (audit P0-11 / P1-19).',
+    'Mass KB':      'Composite atomic mass in units of the PDG electron mass \\(m_e = 0.510999\\) MeV (the divisor used in atomic-energy.js), including both nuclear and electron binding corrections. Despite the K_B-labelled key, the value is NOT divided by the FTD anchor K_B = 0.511; the two agree by construction to ~0.2%. This card is display-only — Scale-0 genesis uses K_GENESIS = N_c · K_MANIFEST (= 3·W_SC since FTD-0388), not this value (audit P0-11 / P1-19).',
 };
 
 function annotateScale0Diagnostics(root) {
