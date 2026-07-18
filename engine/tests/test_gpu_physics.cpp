@@ -411,12 +411,18 @@ static void test_energy_long_horizon() {
     // was silently inert here), which would add certain particle loss over
     // 50k ticks (survival ~ exp(-50000·p), p ≳ 1e-4) to a section that
     // characterizes long-horizon energy/charge stability, not evaporation
-    // (test_gpu_evaporation_parity guards that). NOTE: this section fails
+    // (test_gpu_evaporation_parity guards that). NOTE: this section failed
     // PRE-EXISTING and independently of evaporation — the 2026-07-16 A/B
-    // (old kernel, old test) fails the same charge/survival checks; the
-    // enable_all() storm clears the particles either way (E drift → ~3e6).
-    // Triage chip filed.
+    // (old kernel, old test) fails the same charge/survival checks.
     gpu.toggles.evaporation = false;
+    // Root cause of the pre-existing failure (2026-07-17 triage): the four
+    // same-charge wavepackets REPEL (like signs repel), drift outward from
+    // r=15, and cross the lattice faces within ~5-10k ticks — and since
+    // 420d933f a face-crossing particle is REMOVED (charge destroyed by
+    // design) when reflective_boundary is off (enable_all() restores the
+    // default, which is off). Contain the particles so the 50k-tick charge
+    // and survival contracts test the dynamics, not the boundary rule.
+    gpu.toggles.reflective_boundary = true;
 
     double tet[4][3] = {
         { 0.0,          0.0,          R},
@@ -604,10 +610,18 @@ static void test_pair_annihilation() {
     // section's Q=0-at-every-sample contract, which characterizes
     // ANNIHILATION (a charge-conserving pair channel); evaporation has its
     // own guard (test_gpu_evaporation_parity). Pre-fix the GPU channel was
-    // silently inert here. NOTE: the section fails PRE-EXISTING and
+    // silently inert here. NOTE: the section failed PRE-EXISTING and
     // independently of evaporation (2026-07-16 A/B: the old kernel fails the
-    // same Q check — another channel flips/clears states). Triage chip filed.
+    // same Q check).
     gpu.toggles.evaporation = false;
+    // Root cause of the pre-existing failure (2026-07-17 triage): several
+    // pairs are seeded within 2-3 cells of a lattice face (base_x up to 55,
+    // +sep up to 12 on L=64), and the force churn walks stragglers across
+    // the boundary, where face-crossing REMOVES them (420d933f) — a lone
+    // +1 mid-run makes Q read +1, then 0. Annihilation itself is strictly
+    // pairwise and Q-conserving; bounce at the walls so the Q=0 contract
+    // tests the annihilation channel, not the boundary rule.
+    gpu.toggles.reflective_boundary = true;
 
     // Inject 10 particle-antiparticle pairs at deterministic positions
     // Each pair has separation 8-12 along different axes

@@ -84,6 +84,13 @@ static void test_single_tick_parity() {
     cpu.toggles.enable_all();
     cpu.toggles.genesis = false;       // Disable stochastic processes
     cpu.toggles.movement = false;      // Keep particle stationary
+    // Converge the CPU Gauss/Poisson solve: at the default iteration count
+    // the SOR solution around a freshly injected point charge is still far
+    // from the converged field (GP6 measures the truncation directly), and
+    // the one-tick field energy read ~6% above the FFT-exact GPU value.
+    // With a converged CPU reference the comparison is solver-exact vs
+    // solver-exact and the 2% family tolerance is honest.
+    cpu.set_sor_iterations(500);
     cpu.inject_particle(L/2, L/2, L/2, +1,
                         Vec3(0, 0, K_B), +1, 1);
 
