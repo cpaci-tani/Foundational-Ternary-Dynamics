@@ -3,6 +3,14 @@
 // Verifies that particles carry their flux when they move.
 // Before this fix, particles would leave their flux behind and evaporate.
 //
+// Backend note: this test guards the CPU phase_movement flux-carry
+// mechanics, so every section calls force_cpu(). On the GPU default (CUDA
+// builds) the FFT-exact Gauss fields feed the stochastic evaporation draw
+// differently and a MOVING particle can die inside the 500-tick window —
+// a backend field-profile difference, not the flux-carry regression this
+// test was written to catch (the GPU movement kernel does implement the
+// portable self-field transfer; see kernels_forces.cu).
+//
 // Sections:
 //   1. Moving particle retains density >= K_B
 //   2. Old position loses K_B worth of flux
@@ -48,6 +56,7 @@ int main() {
         const int L = 16;
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
+        engine.force_cpu();  // CPU movement mechanics under test (see header)
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, -1, {iso, iso, iso});
@@ -90,6 +99,7 @@ int main() {
         const int L = 16;
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
+        engine.force_cpu();  // CPU movement mechanics under test (see header)
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, -1, {iso, iso, iso});
@@ -114,6 +124,12 @@ int main() {
         const int L = 32;
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
+        engine.force_cpu();  // CPU movement mechanics under test (see header)
+        // At v_x=0.1 the mover reaches the +x face near tick 155 of 500;
+        // since 420d933f face-crossing REMOVES the particle. Bounce at the
+        // walls so the 500-tick survival window measures flux-carry, not
+        // the boundary rule.
+        engine.toggles.reflective_boundary = true;
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, -1, {iso, iso, iso});
@@ -137,6 +153,7 @@ int main() {
         const int L = 16;
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
+        engine.force_cpu();  // CPU movement mechanics under test (see header)
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, +1, {iso, iso, iso});
