@@ -448,7 +448,7 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         // Discrepancy: None.
         // Zero-Point Energy — the irreducible ground-state floor. Uniform
         // low-amplitude random flux across the WHOLE lattice at 0.3·K_B
-        // (≈ 0.08, ~20× below K_GENESIS = N_c·K_B = 1.533), so nothing can
+        // (≈ 0.08, ~19× below K_GENESIS = N_c·K_MANIFEST = 1.5164, FTD-0388), so nothing can
         // manifest. genesis + damping are OFF via config/toggles.js, so the
         // energy-conserving wave dynamics keep a persistent non-zero floor.
         // Mirrors the JS flux-zero-point body (same amplitude); JS↔C++ parity
