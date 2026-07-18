@@ -80,13 +80,16 @@ void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
 // When field stress |div(J)| + |curl(J)| + |grad(rho)| exceeds WEAK_THRESHOLD,
 // manifested particles may flip polarity (+1 <-> -1).
 //
-// Dual-substrate threshold analysis:
-//   In dual mode, div and curl use J_L only (parity violation), while ∇ρ uses
-//   the observable J (scale-independent). The same K_GENESIS threshold applies
-//   without halving because the L-substrate carries ~98% of the flux at positive
-//   particle sites: (1+δ)/2 ≈ 0.978 where δ = DELTA_APPROX ≈ 0.957.
-//   So div(J_L) ≈ 0.978 × div(J_obs) — the asymmetric splitting means the
-//   dominant substrate is nearly identical to the observable.
+// Dual-substrate convention (reconciled 2026-07-17, census EXPLR_DUAL_
+// SUBSTRATE_STAGGERED_ENCODING §5.3): in dual mode ALL THREE stress terms —
+// div, curl, AND ∇ρ — read J_L, matching the CPU reference
+// (compute_stress_left = stress_field<&Voxel::flux_L>) and the declared
+// L-only weak trigger (campaign_parity_violation.cpp). An earlier revision
+// computed ∇ρ from the observable J; that mixed convention was a CPU/GPU
+// parity gap in the weak firing rate. The K_GENESIS threshold applies
+// unhalved: the L-substrate carries (1+δ)/2 ≈ 0.978 of the flux at +1
+// particle sites (δ = DELTA_APPROX ≈ 0.957), so stress(J_L) stays near
+// stress(J_obs) for the dominant chirality.
 
 __global__ void weak_transmutation_kernel(
     int8_t* __restrict__ state,
@@ -142,9 +145,11 @@ __global__ void weak_transmutation_kernel(
     double curl_z = 0.5 * ((fy[xp] - fy[xm]) - (fx[yp] - fx[ym]));
     double curl_mag = sqrt(curl_x*curl_x + curl_y*curl_y + curl_z*curl_z);
 
-    // Gradient of density: ∇ρ where ρ = |J|
+    // Gradient of density: ∇ρ where ρ = |J_L| in dual mode — fx/fy/fz are
+    // the selected arrays, the same field the div/curl terms read (CPU
+    // parity: stress_field<&Voxel::flux_L> applies all three terms to J_L).
     auto density = [&](int j) -> double {
-        return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
+        return sqrt(fx[j]*fx[j] + fy[j]*fy[j] + fz[j]*fz[j]);
     };
     double gx = 0.5 * (density(xp) - density(xm));
     double gy = 0.5 * (density(yp) - density(ym));
