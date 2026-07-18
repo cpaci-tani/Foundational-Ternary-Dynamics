@@ -612,12 +612,25 @@ void RenderBridge::tick() {
   // D(tick) = (sin(tick_ * 0.01) + 1) / 2 * 0.05, advancing 0.01 rad/tick.
   // Runs before phase_read so the injected flux is processed by the wave
   // equation in the same cycle (matches the JS setInterval(16ms) rate at 60fps).
+  // Dual mode: phase_read consumes flux_L/flux_R only and phase_write rebuilds
+  // flux := L+R, so the drive must enter the registers to enter the dynamics
+  // at all (census EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3, reconciled
+  // 2026-07-17). Symmetric half/half split — a uniform background injects no
+  // chirality — matching the WASM uniform-background injector
+  // (bindings_render_bridge.cpp) and inject_flux_add_cpu.
   if (toggles.ew_background_sweep) {
       const double D = (std::sin(tick_ * 0.01) + 1.0) / 2.0 * 0.05;
       auto& vox = voxels();
       const int L = lattice().size();
-      for (int z = 0; z < L; ++z) for (int y = 0; y < L; ++y) for (int x = 0; x < L; ++x)
-          vox[lattice().index(x, y, z)].flux.x += D;
+      const bool dual = toggles.dual_substrate;
+      for (int z = 0; z < L; ++z) for (int y = 0; y < L; ++y) for (int x = 0; x < L; ++x) {
+          auto& v = vox[lattice().index(x, y, z)];
+          v.flux.x += D;
+          if (dual) {
+              v.flux_L.x += D * 0.5;
+              v.flux_R.x += D * 0.5;
+          }
+      }
   }
 
   if (toggles.db_clock_coulomb)
