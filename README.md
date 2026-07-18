@@ -100,8 +100,8 @@ python scripts/proofs/proof_master_verification.py
 ### C++ engine
 
 ```bash
-cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release --parallel 24
+# Windows native (pins MSVC 14.44 -- VS 18's default toolset crashes CUDA 13's cudafe++)
+engine\build_native.bat
 ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 ```
 

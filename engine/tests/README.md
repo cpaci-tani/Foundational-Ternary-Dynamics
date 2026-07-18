@@ -56,9 +56,9 @@ Three focused lifecycle/callstack tests:
 ## How to run
 
 ```bash
-# Build
-cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release --parallel 24
+# Build (pins MSVC 14.44 -- VS 18's default 14.51 crashes CUDA 13 cudafe++;
+# raw cmake works only inside a vcvarsall x64 -vcvars_ver=14.44 shell)
+engine\build_native.bat
 
 # Full pass
 ctest --test-dir engine/build -j 24 --output-on-failure -C Release
