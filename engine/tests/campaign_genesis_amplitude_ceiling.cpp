@@ -640,9 +640,10 @@ int main(int argc, char** argv) {
     std::string tag = "amp";
     std::string output_dir = "engine/results/genesis_amplitude_ceiling/";
 
-    // Research overrides (Test the K_GENESIS=3·K_B and K_MANIFEST=K_B choices).
-    double kgenesis_override  = -1.0;   // <=0 ⇒ compile-time K_GENESIS (1.533)
-    double kmanifest_override = -1.0;   // <=0 ⇒ compile-time K_MANIFEST (0.511)
+    // Research overrides (Test the K_GENESIS=N_c·K_MANIFEST and K_MANIFEST=W_SC
+    // choices; compile-time values per FTD-0388 since 2026-07-17).
+    double kgenesis_override  = -1.0;   // <=0 ⇒ compile-time K_GENESIS (1.516386)
+    double kmanifest_override = -1.0;   // <=0 ⇒ compile-time K_MANIFEST (W_SC = 0.505462)
     bool   kmanifest_temp     = false;  // ramp scale = temperature instead of mass
     double ramp_temp          = 0.0;    // the "temperature" value when --kmanifest-temp
     bool   ladder_mode        = false;  // FTD-0110 ratio test (single-voxel injection)
@@ -762,7 +763,7 @@ int main(int argc, char** argv) {
         "genesis_total,manifested_final,max_void_J_final,flux_energy_final\n");
 
     std::printf("genesis_amplitude_ceiling\n");
-    std::printf("  K_GENESIS  = %.6f  (= 3*K_B = N_c*K_MANIFEST; the predicted cliff)\n", ftd::K_GENESIS);
+    std::printf("  K_GENESIS  = %.6f  (= N_c*K_MANIFEST = 3*W_SC, FTD-0388; the predicted cliff)\n", ftd::K_GENESIS);
     std::printf("  K_MANIFEST = %.6f  (probability ramp scale above the cliff)\n", ftd::K_MANIFEST);
     std::printf("  K_B        = %.6f\n", ftd::K_B);
     std::printf("  C_SPEED    = %.6f\n", ftd::C_SPEED);

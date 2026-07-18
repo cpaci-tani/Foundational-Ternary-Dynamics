@@ -34,16 +34,25 @@ inline constexpr double K_B = 0.511;
 // ── FTD-0130 role disentanglement (unified-mass Phase 0, 2026-06-06) ──────────
 // K_B conflated four roles. Split here into named constants so the genuinely-
 // independent genesis kinetics can vary without perturbing the rest-mass scale.
-// All numerically equal to K_B today ⇒ no-op / golden-hash-safe; the separation
-// is architectural (the consuming SITES are repointed). The FTD action forces
-// the rest/inertial/gravitational roles to be ONE number (SPEC_FTD_LAGRANGIAN
-// §4.1↔§4.2), so those stay fused as M_REST; only K_MANIFEST is independent.
-inline constexpr double M_REST     = K_B;   // rest = inertial = gravitational mass quantum (= m_e)
-inline constexpr double K_MANIFEST = K_B;   // genesis + evaporation Boltzmann/kinetics scale
+// The FTD action forces the rest/inertial/gravitational roles to be ONE number
+// (SPEC_FTD_LAGRANGIAN §4.1↔§4.2), so those stay fused as M_REST; only
+// K_MANIFEST is independent — and since FTD-0388 it actually differs (below).
+inline constexpr double M_REST     = K_B;   // rest = inertial = gravitational mass quantum (= m_e); UNTOUCHED by FTD-0388
+
+// K_MANIFEST := W_SC, the substrate's unit-charge Gauss self-energy
+// [SELECTION — ADOPTED, FTD-0388, owner ruling 2026-07-17]. The identification
+// is the adopted selection; the value it selects is then forced by lattice
+// geometry (Γ-class SC Watson constant; measured engine realization ≤ 0.00084%
+// at L=17/33/65, prereg selfenergy-pinning v1/v1.1, commits 66a830ac/d8b27995/
+// 19d14df0/67fab0d4). Replaces the MeV-mirroring 0.511 convention for the
+// KINETICS role only (genesis + evaporation Boltzmann scale); the mass anchor
+// stays M_REST = K_B. Falsifiers live: genesis hard gate at |J| = K_GENESIS
+// = 3·W_SC = 1.516386059; evaporation exponent scale K_MANIFEST² = 0.255492.
+inline constexpr double K_MANIFEST = 0.5054620197173260;  // := W_SC (was = K_B pre-FTD-0388)
 
 // Genesis threshold: energy needed to CREATE a new particle.
 // Must fill all N_c color channels: K_GENESIS = N_c · K_MANIFEST (kinetics, not mass)
-inline constexpr double K_GENESIS = K_MANIFEST * N_C;
+inline constexpr double K_GENESIS = K_MANIFEST * N_C;   // = 3·W_SC = 1.5163860591519780 (FTD-0388)
 
 // ============================================================================
 // Layer 6c: Mass Ratios (from framework integers)

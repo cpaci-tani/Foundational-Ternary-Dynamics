@@ -561,7 +561,7 @@ private:
     std::unique_ptr<Backend> backend_;
 
     // RNG for stochastic genesis (Born rule manifestation)
-    // Genesis probability: p = 1 - exp(-(|J| - K_GENESIS) / K_B)
+    // Genesis probability: p = 1 - exp(-(|J| - K_GENESIS) / K_MANIFEST)
     // See CLAUDE.md §4.1 — manifestation is probabilistic, not deterministic.
     // RF-9: PIMPL'd to keep <random> out of the public render_bridge.h
     // include surface. All sampling routes through BridgeRng accessors.
