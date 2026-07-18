@@ -474,7 +474,7 @@ export function setupFluxScenario(name, harness, ctx) {
                     // Uniform LOW-amplitude random flux across the WHOLE lattice
                     // (no envelope, no sphere), at the same 0.3·K_B the "Random
                     // Flux" action uses — magnitude ≈ 0.08, ~20× below
-                    // K_GENESIS (= N_c·K_B = 1.533), so nothing can manifest.
+                    // K_GENESIS (= N_c·K_MANIFEST = 1.5164, FTD-0388), so nothing can manifest.
                     // With genesis + damping both OFF (config/toggles.js), the
                     // energy-conserving wave dynamics keep this jittering
                     // indefinitely: a persistent non-zero energy floor that never

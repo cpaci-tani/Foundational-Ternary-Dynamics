@@ -190,7 +190,7 @@ export function mountScaleContextPanel(host, getBridge) {
         const dvc = Math.pow(GRB_E_GEV / M_PLANCK_GEV, 2) / 8;
         el('energy').innerHTML =
             row('UV cutoff ω_max', `${OMEGA_MAX.toFixed(3)} rad/tick`, false, 'Zone edge 2/√3; physically ≈ Planck-scale (E_P ≈ 1.22×10¹⁹ GeV).') +
-            row('manifestation K_GENESIS', `${K_GENESIS.toFixed(3)} MeV`, false, '= 3·K_B [IMPOSED]; vs QED pair threshold below.') +
+            row('manifestation K_GENESIS', `${K_GENESIS.toFixed(3)} MeV`, false, '= 3·K_MANIFEST = 3·W_SC [SELECTION — ADOPTED, FTD-0388]; vs QED pair threshold below.') +
             row('QED pair threshold 2mₑ', `${PAIR_MEV.toFixed(3)} MeV`, false, '2·mₑ — the factor 3-vs-2 is flagged, not claimed.') +
             row('manifested energy', manifMev != null ? `≈ ${manifMev.toFixed(1)} MeV` : '— (start the sim)', true, 'Σ manifested voxels × K_B — engine-level aggregate; mass = N·K_B is [IMPOSED] (FTD-0250). Not a particle identification.') +
             row('largest cluster',

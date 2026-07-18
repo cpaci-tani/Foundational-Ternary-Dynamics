@@ -420,7 +420,7 @@ distinctions are tracked in the theory ledgers.
 | 3b | `DELTA_SQ`, `DELTA_APPROX` | Dual-substrate splitting: delta^2 = (4G*-1)/(4G*) |
 | 4 | `D_SPATIAL`=3, `N_C`=3, `N_GEN`=3, `N_F`=6, `N_BASE`=4, `B_3`=7, `N_EFF`=13 | Framework integers |
 | 5 | `ALPHA`, `G_C`, `G_N`=0.01, `SIN2_WEINBERG` | Coupling constants |
-| 6 | `K_B`=0.511, `K_GENESIS`=1.533 | Mass scale |
+| 6 | `K_B`=0.511 (mass anchor), `K_MANIFEST`=0.505462 (:= W_SC, FTD-0388), `K_GENESIS`=1.516386 | Mass scale |
 | 7 | Mass ratios, mixing angles, CP violation | Particle physics |
 | 8 | Cosmological parameters, reference frame context | Extended hierarchy |
 | sim | `C_SPEED`=`C_WAVE`=1/sqrt(3), `DAMPING`=alpha | Simulation parameters |
@@ -433,12 +433,13 @@ distinctions are tracked in the theory ledgers.
 |----------|-------|---------|
 | `ALPHA` | 0.00729 (1/X_PLUS, tree-level) | Coulomb force, damping, exchange force |
 | `ALPHA_EFT` | `G_C²` (≡ ALPHA by construction) | Same two-vertex force paths; consistency alias |
-| `K_B` | 0.511 | Boltzmann evaporation scale (as K_MANIFEST = K_B), wavepacket amplitude, Larmor scale |
+| `K_B` | 0.511 | Wavepacket amplitude, Larmor scale (mass anchor; the kinetics role moved to K_MANIFEST per FTD-0388) |
+| `K_MANIFEST` | 0.5054620197 (:= W_SC [SELECTION — ADOPTED, FTD-0388]) | Boltzmann evaporation scale (p = exp(-E/K_MANIFEST²)·K_EVAP_RATE), genesis probability ramp |
 | `G_C` | sqrt(ALPHA) | State-flux coupling (phase_read) |
 | `G_N` | 0.01 (lattice toy — see §5 gravity banner) | Gravitational force |
 | `C_WAVE` | 1/sqrt(3) | Wave propagation speed (Laplacian coefficient) |
 | `C_SPEED` | 1/sqrt(3) | Movement speed limit |
-| `K_GENESIS` | 3 * K_B | Genesis threshold |
+| `K_GENESIS` | 3 * K_MANIFEST = 1.516386 (FTD-0388) | Genesis threshold |
 | `DAMPING` | alpha | Flux dissipation rate |
 | `PHI` | 1.618... | Binding energy (triad detection) |
 | `DELTA_APPROX` | 0.9568 | Dual-substrate splitting |

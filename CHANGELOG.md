@@ -1,5 +1,36 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine: FTD-0388 cutover — K_MANIFEST := W_SC (kinetics role repointed) (2026-07-17)
+
+Executes the adopted LEDGER row FTD-0388 (owner ruling 2026-07-17; prereg
+selfenergy-pinning v1/v1.1, commits `66a830ac`/`d8b27995`/`19d14df0`/`67fab0d4`):
+the manifestation-kinetics scale is pinned at the substrate's unit-charge Gauss
+self-energy, the Γ-class SC Watson constant W_SC = 0.5054620197173260.
+K_GENESIS = N_c·K_MANIFEST follows to 1.5163860591519780 (−1.083% vs the
+retired MeV-mirroring 1.533). M_REST = K_B = 0.511 (electron-mass anchor) and
+the MeV calibration are untouched — the FTD-0130 role split carries the change
+exactly as designed. Gated behind the landed evaporation-parity chip
+(`ff43cf9b`) per the FTD-0388 row.
+
+- **Falsifiers now live:** genesis hard gate at |J| = 1.516386059 (verified at
+  compiled-gate precision: silent at 1.516386058, armed at 1.516386060);
+  evaporation exponent scale K_MANIFEST² = 0.255492.
+- **Golden gate (merge-gate discipline):** all 8 pinned CPU goldens + the GPU
+  golden pass UNCHANGED on Windows (MSVC 14.44 host) and WSL2 — the pinned
+  profiles inject |J| = 1.0 (sub-threshold under both old and new gates) and
+  the ~2×10⁻⁴ evaporation-draw shift flips no seeded draw. Verified non-stale:
+  the built binaries carry 0.5054620197… / 1.5163860591… with the old 1.533
+  pattern absent. No re-pins required — the FTD-0388 row's hash-breaking
+  expectation was conservative.
+- **Mirrors updated:** `engine/web/js/constants.js`, `scripts/constants.py`,
+  `scripts/verification/ontic_chain.py` (new K_MANIFEST node),
+  `engine/tools/print_ontic.py` + `audit_ontic_phase0.py`, SPEC_ENGINE /
+  PHYSICS_STATUS / USER_GUIDE constant tables; WASM triple rebuilt
+  (`get_constants()` exports the new K_GENESIS).
+- **Suites:** WSL2 `gpu_golden` + `gpu_evaporation_parity` green under the new
+  kinetics; pytest 260 passed; `proof_master_verification` 54/54;
+  `ontic_chain` 24/24 exact + 9/9 approx.
+
 ## Engine: GPU evaporation ported to the canonical stochastic Boltzmann rule (BH-F5 completion, 2026-07-16)
 
 CPU and GPU implemented physically different evaporation rules — a confirmed
