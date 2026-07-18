@@ -3012,3 +3012,49 @@ if(NOT EMSCRIPTEN)
                      -P ${CMAKE_SOURCE_DIR}/cmake/FtdSourceLint.cmake)
     set_tests_properties(source_lint PROPERTIES TIMEOUT 60 LABELS "unit;lint")
 endif()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CTest scheduling hygiene (2026-07-17): fix the `ctest -j 32` timeout cascade.
+#
+# Every test binary is OpenMP-parallel and defaults to one thread per logical
+# core (32 on the 9950X3D). Under `ctest -j 32` that meant up to
+# 32 tests × 32 threads ≈ 1024 runnable threads — sub-second tests
+# (determinism 0.23s, conservation_profile 1.2s, gauge_links 1.16s) blew
+# their timeouts purely from scheduler starvation ("timeout cascading",
+# docs/audits/active/ftd_engine_audit_team_review/audit_report.md; all such
+# victims pass at -j1).
+#
+# Policy — keep Σ(active threads) ≤ cores at any ctest -j level:
+#   • GPU tests (ctest name contains "gpu"): exclusive slots (PROCESSORS 32)
+#     — serializes RTX 5090 access (gpu_parity_complete is a documented
+#     contention flake) while accounting their host-side OMP threads.
+#   • long-horizon monsters (declared TIMEOUT ≥ 1200 — the 1800s/3600s
+#     campaigns): exclusive full-machine slots, OMP_NUM_THREADS=32 —
+#     `ctest -j 32` runs each alone at its -j1 speed. Short campaigns stay
+#     in the parallel pool; blanket-serializing all 60+ campaign_* tests
+#     was measured to stretch the sweep into hours.
+#   • everything else: OMP_NUM_THREADS=8 + PROCESSORS 8 → at most 4
+#     concurrent CPU tests × 8 threads = 32 threads machine-wide.
+# Determinism note: the CPU engine is bit-exact across thread counts (the
+# 2026-06-11 golden gate guarantees OMP_NUM_THREADS=1 == full pool), so the
+# 8-thread cap cannot move any golden hash.
+# No test sets OMP_NUM_THREADS itself and none declared PROCESSORS before
+# this block, so these appends are conflict-free.
+get_property(_ftd_all_tests DIRECTORY PROPERTY TESTS)
+foreach(_ftd_t IN LISTS _ftd_all_tests)
+    get_test_property(${_ftd_t} TIMEOUT _ftd_to)
+    if(NOT _ftd_to)
+        set(_ftd_to 0)
+    endif()
+    if(_ftd_t MATCHES "gpu" OR _ftd_to GREATER_EQUAL 1200)
+        set(_ftd_n 32)
+    else()
+        set(_ftd_n 8)
+    endif()
+    set_property(TEST ${_ftd_t} PROPERTY PROCESSORS ${_ftd_n})
+    set_property(TEST ${_ftd_t} APPEND PROPERTY ENVIRONMENT "OMP_NUM_THREADS=${_ftd_n}")
+endforeach()
+unset(_ftd_all_tests)
+unset(_ftd_n)
+unset(_ftd_to)
+unset(_ftd_t)
