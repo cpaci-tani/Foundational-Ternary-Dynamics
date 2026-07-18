@@ -131,8 +131,8 @@ ftd/                                     # Project root
 
 ## C++ Engine
 
-**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release --parallel 24` (Maximize CPU threads on the AMD 9950X3D)
-**Test**: `cd engine/build && ctest -j 24 --output-on-failure -C Release` (Always use parallel execution to avoid sequential runs taking forever)
+**Build**: `engine\build_native.bat` (canonical — enters `vcvarsall.bat x64 -vcvars_ver=14.44`, then `cmake --preset native` → Ninja Multi-Config Release `-j 32`). ⚠ VS 18's default MSVC toolset (14.51+) crashes CUDA 13.0's `cudafe++`; raw `cmake --build engine/build` works ONLY inside a vcvars **14.44** shell (presets: `engine/CMakePresets.json`).
+**Test**: `cd engine/build && ctest -j 24 --output-on-failure -C Release` (any shell — ctest only runs built binaries; always parallel). Golden gate: `engine\build_native.bat golden` (serial, 7 tests).
 **WASM**: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python -m http.server 8080 -d engine/web`
 

@@ -179,8 +179,8 @@ ftd/                                     # Project root
 
 ## C++ Engine
 
-**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release --parallel 32` (Maximize CPU threads on the AMD 9950X3D)
-**Test**: `cd engine/build && ctest -j 32 --output-on-failure -C Release` (Always use parallel execution to avoid sequential runs taking forever)
+**Build**: `engine\build_native.bat` (canonical — vswhere → `vcvarsall.bat x64 -vcvars_ver=14.44` → `cmake --preset native` → Ninja Multi-Config Release `-j 32`). ⚠ **MSVC toolset pin (2026-07-17)**: VS 18's default toolset (14.51.36231+) crashes CUDA 13.0's `cudafe++` (ACCESS_VIOLATION on every `.cu`); `engine/build` must be configured/built with the side-by-side **14.44** toolset. Raw `cmake --build engine/build --config Release --parallel 32` works ONLY inside a `vcvarsall.bat x64 -vcvars_ver=14.44` shell (plain PowerShell → cl/INCLUDE/LIB failures); MSBuild-generator pins (`-T version=…`, `CMAKE_VS_GLOBALS=VCToolsVersion=…`) do NOT work under the VS 18 generator. Presets: `engine/CMakePresets.json` (`native` configure / `native-release` build / `golden` + `native-all` test).
+**Test**: `cd engine/build && ctest -j 32 --output-on-failure -C Release` (ctest only runs already-built binaries — any shell works; always parallel to avoid pathologically slow sequential runs). Golden merge gate: `engine\build_native.bat golden` (serial `ctest -C Release -R "golden|gauge_links"`, 7 tests).
 **WASM**: `engine\build_wasm.bat` (Windows wrapper; runs emcmake/emmake + deploys to `engine/web/wasm/`). Manual: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python engine/web/serve.py 8080` (no-cache dev server — emits `Cache-Control: no-store` on every response so JS edits hit the browser without manual hard-refresh). Plain fallback: `python -m http.server 8080 -d engine/web` (caches aggressively; expect to bounce + hard-refresh after edits).
 
