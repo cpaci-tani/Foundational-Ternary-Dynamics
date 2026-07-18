@@ -1,5 +1,63 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine: Windows CTest triage — 16 pre-existing failures root-caused and fixed (2026-07-17)
+
+Every failure predates FTD-0388 (probe-verified at `adbaf25c`); no engine
+physics or constants were touched — the fixes are test-side alignment with
+deliberate engine changes the tests had never caught up with, plus CTest
+scheduling. Root causes, by family:
+
+- **Stale G_N=0.01 gravity in Scale-1 expectations (6 tests).** `9aba25a8`
+  (2026-06-15) repointed ParticleEngine gravity at G_PE = G_DERIVED =
+  1/(4π·m_P²) ≈ 5.3e-46 (FTD-0131 physical α_G; the G_N=0.01 identification
+  is falsified). Tests still computed `alpha_eff = α/(4π) + G_N·K_B²` — a
+  5.5× stronger coupling than the engine applies — so seeded "circular"
+  orbits were unbound (positive energy, AE-6d/e, H3, HS1-7 legacy).
+  Fixed: `particle_engine` (PE5), `particle_toggles` (§4/§5 now use Planck
+  masses so G_PE gravity is macroscopic), `atomic_energy` (AE-2c/d vs ontic
+  R_BOHR, AE-6), `radiative_decay_scale1`, `campaign_cross_scale` (CS3),
+  `campaign_hydrogen_spectrum` (all three Scale-1 sub-suites; orbits
+  re-seeded at measurable radii, mild eccentricity so the zero-crossing
+  period estimator has a signal).
+- **Face-crossing removal semantics (7 tests).** `420d933f` (2026-06-14)
+  made a particle crossing a lattice face be REMOVED (charge exhausts into
+  the void) when `reflective_boundary` is off — and `enable_all()` restores
+  defaults (off). Movers walked off faces and vanished, reading as
+  charge-loss/evaporation: `symmetric_movement` (|v|=5 chain),
+  `portable_field` §3 (also force_cpu — CPU flux-carry mechanics under
+  test), `triad_confinement` TC-2 (same-color trio deleted → RMS 0 made the
+  compactness comparison vacuous), `campaign_free_dynamics` FD1 (+ genesis
+  scoped off an inertia test), `campaign_structure_stability` (He-like
+  config's repelled +1s), `gpu_physics` GP-ENERGY-LONG (4 same-charge
+  wavepackets repel outward; loss timescale matches α/(4πr²) drift) and
+  GP-ANNIHILATION (pairs seeded 2 cells from a face), `gpu_experiments`
+  GP-EXP-CYCLOTRON (v_y=0.3 exits by tick ~210 of 500 in both runs). All now
+  bounce (`reflective_boundary = true`) so the assertions test dynamics, not
+  the boundary rule.
+- **Inverted sign expectation:** `campaign_inertial_mass` IM2 asserted
+  same-sign attraction; the engine convention is like-signs-repel and the
+  measured accelerations match +α/(4πr²) with unit inertial mass. Assertion
+  flipped to repulsive.
+- **Solver-family tolerance:** `gpu_parity` GP2 compared a 1-tick CPU SOR
+  field energy (truncated near a fresh point charge) against the FFT-exact
+  GPU at 2%; the CPU reference now runs `set_sor_iterations(500)` so the
+  comparison is converged-vs-exact.
+- **`cluster_persistence_quiescent` restructured (B.2):** infrastructure
+  checks now assert on an N_min=1 instrument tracker (cluster ID works, no
+  lattice-filling, formed clusters persist); the pre-registered N_min=4
+  protocol is reported as the science finding. Measured 2026-07-17: the
+  FTD-0110-canonical injection (J_x = 10·K_GENESIS, FTD-0107 baseline,
+  force_cpu) nucleates only ~3 isolated single-voxel manifestations —
+  sub-canonical vs the ~25-voxel cluster of record (FINDING B.2-C, open).
+- **`ctest -j 32` timeout cascade fixed:** every test spawned 32 OMP
+  threads (≈1024 runnable threads at -j32); sub-second tests blew timeouts
+  from starvation. New scheduling block in `engine/CMakeLists.txt`: GPU
+  tests and long-horizon monsters (declared TIMEOUT ≥ 1200) get exclusive
+  32-processor slots (also serializing RTX 5090 access); all other tests
+  run at OMP_NUM_THREADS=8 with PROCESSORS 8, so Σ(threads) ≤ 32 at any
+  -j level. Golden-neutral (bit-exactness across thread counts is the
+  2026-06-11 determinism-gate guarantee).
+
 ## Engine: FTD-0388 cutover — K_MANIFEST := W_SC (kinetics role repointed) (2026-07-17)
 
 Executes the adopted LEDGER row FTD-0388 (owner ruling 2026-07-17; prereg
