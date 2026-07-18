@@ -28,7 +28,7 @@ void relax_su3_links_cpu(RenderBridge& rb, double dt, double beta);
 void accumulate_proper_time(RenderBridge& rb);
 
 // Rule 2b: correlated ±1 pair production from high-|J| void voxels.
-// Probability p = 1 − exp(−(|J|−K_GENESIS)/K_B); partner placed at
+// Probability p = 1 − exp(−(|J|−K_GENESIS)/K_MANIFEST); partner placed at
 // the first empty face-neighbour; pair_id shared so the two can be
 // tracked as a correlated pair.
 void pair_production_cpu(RenderBridge& rb);

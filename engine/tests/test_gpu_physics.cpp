@@ -49,7 +49,7 @@
  *   ALPHA = 1/137.036     (Coulomb strength)
  *   G_N = 0.01            (gravitational coupling)
  *   C_WAVE = 1/sqrt(3)    (speed of light)
- *   K_B = 0.511           (manifestation threshold)
+ *   K_B = 0.511           (electron-mass anchor; kinetics scale = K_MANIFEST := W_SC per FTD-0388)
  *   DAMPING = ALPHA        (dissipation rate)
  */
 
