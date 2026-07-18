@@ -87,8 +87,12 @@ int main() {
     {
         ftd::ParticleEngine pe;
         pe.set_damping_enabled(false);
-        pe.add_particle(0, {0, 0, 0}, {}, 1.0);   // neutral, mass 1
-        pe.add_particle(0, {10, 0, 0}, {}, 1.0);   // neutral, mass 1
+        // Gravity uses G_PE = 1/(4*pi*m_P^2) (FTD-0131 physical alpha_G), so
+        // unit masses give a ~5e-48 force. Use Planck masses so the gravity
+        // term is macroscopic (G_PE*m_P^2 = 1/(4*pi)) and the toggle's effect
+        // is unambiguous against the 1e-10 threshold.
+        pe.add_particle(0, {0, 0, 0}, {}, ftd::M_PLANCK_MEV);   // neutral, Planck mass
+        pe.add_particle(0, {10, 0, 0}, {}, ftd::M_PLANCK_MEV);  // neutral, Planck mass
 
         // Gravity ON
         pe.toggles.coulomb = false;
@@ -112,8 +116,10 @@ int main() {
     {
         ftd::ParticleEngine pe;
         pe.set_damping_enabled(false);
-        pe.add_particle(+1, {0, 0, 0}, {}, ftd::K_B);
-        pe.add_particle(-1, {10, 0, 0}, {}, ftd::K_B);
+        // Planck masses (see Section 4): with G_PE = 1/(4*pi*m_P^2) the
+        // gravity diag is macroscopic; K_B masses would put it at ~1e-48.
+        pe.add_particle(+1, {0, 0, 0}, {}, ftd::M_PLANCK_MEV);
+        pe.add_particle(-1, {10, 0, 0}, {}, ftd::M_PLANCK_MEV);
 
         pe.toggles.coulomb = true;
         pe.toggles.gravity = true;
