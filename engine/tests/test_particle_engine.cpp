@@ -76,9 +76,9 @@ int main() {
     // ---- PE4: Same charges — EM repels (gravity dominates on lattice) ----
     {
         std::cout << "\n--- PE4: EM repulsion component ---\n";
-        // On the lattice, G_N = 0.01 >> alpha/(4*pi) ≈ 0.00058, so gravity
-        // dominates over EM. The NET force for same charges is attractive.
-        // We verify the EM COMPONENT is repulsive by comparing:
+        // ParticleEngine gravity uses G_PE ≈ 5.3e-46 (FTD-0131 physical
+        // alpha_G), so EM dominates and the NET force for same charges is
+        // repulsive. We verify the EM COMPONENT specifically by comparing:
         //   F(charged) vs F(neutral) — the difference is the EM contribution.
         ParticleEngine pe_charged;
         pe_charged.add_particle(+1, {0, 0, 0});
@@ -111,8 +111,9 @@ int main() {
         double f_mag = f.mag();
         // F = alpha * |q1*q2| / (4*pi*r^2) = alpha / (4*pi*100)
         double expected = ALPHA / (4.0 * PI * 100.0);
-        // Gravity component: G_N * m1 * m2 / r^2 (very small compared to EM)
-        double grav = G_N * K_B * K_B / 100.0;
+        // Gravity component: G_PE * m1 * m2 / r^2 (FTD-0131 physical alpha_G,
+        // ~1e-48 — utterly negligible next to EM)
+        double grav = G_PE * K_B * K_B / 100.0;
         double total_expected = expected + grav;  // both point toward +x
         double err = std::abs(f_mag - total_expected) / total_expected;
         std::cout << "    |F| = " << f_mag << ", expected EM = " << expected

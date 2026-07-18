@@ -35,8 +35,11 @@ struct TrajectoryPoint {
 
 static std::vector<TrajectoryPoint> run_hydrogen(bool radiation, int ticks, double dt) {
     double m_e = 0.0015; // Lighter electron to amplify radiation acceleration
-    double alpha_eff = ALPHA / (4.0 * PI) + G_N * K_B * m_e;
-    double a_0 = 1.0 / (K_B * alpha_eff); // Keep the orbit size stable around 613
+    // G_PE (FTD-0131 physical alpha_G) — the gravity term is negligible, so
+    // alpha_eff matches the engine's actual coupling and the control orbit
+    // (radiation OFF) is exactly circular.
+    double alpha_eff = ALPHA / (4.0 * PI) + G_PE * K_B * m_e;
+    double a_0 = 1.0 / (K_B * alpha_eff); // Orbit radius (~3370 lattice units)
     double v_orb = std::sqrt(alpha_eff / (m_e * a_0));
 
     ParticleEngine pe;
