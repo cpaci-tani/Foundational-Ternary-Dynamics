@@ -58,21 +58,33 @@ static void section_hydrogen_scale1() {
     // For a circular orbit: alpha_eff / r^2 = m * v^2 / r
     //  -> v^2 = alpha_eff / (m * r), and virial: E = -alpha_eff / (2*r)
     // Bohr: a_0 = 1 / (m * alpha_eff) = 4*pi / (alpha * K_B)
-    // BUT: on the lattice, gravity also contributes! The effective coupling
-    // for opposite charges is: F = (alpha/(4pi) + G_N*K_B^2) / r^2
-    // So the effective coupling is alpha_eff = alpha/(4pi) + G_N*K_B^2
-    double alpha_eff = ALPHA / (4.0 * PI) + G_N * K_B * K_B;
-    double a_0 = 1.0 / (K_B * alpha_eff);  // Bohr radius (adjusted for gravity)
-    double v_orb = std::sqrt(alpha_eff / (K_B * a_0));  // Orbital velocity
-    double T_orbit = 2.0 * PI * a_0 / v_orb;  // Orbital period
-    double E_ground = -0.5 * K_B * v_orb * v_orb;  // Ground state energy (virial)
+    // Gravity also contributes for opposite charges, but ParticleEngine uses
+    // G_PE = G_DERIVED (FTD-0131 physical alpha_G, ~5e-46), so the gravity
+    // term is negligible: alpha_eff = alpha/(4pi) + G_PE*K_B^2 ~ alpha/(4pi).
+    double alpha_eff = ALPHA / (4.0 * PI) + G_PE * K_B * K_B;
+    double a_0 = 1.0 / (K_B * alpha_eff);  // Bohr radius (EM-scale, ~3370)
+    // The Bohr-radius orbit has period ~3.6e7 — unmeasurable in a campaign
+    // tick budget. This section is a CLASSICAL Kepler check (FTD-0270), so
+    // seed a small test orbit instead: r_0 = 50 at 0.95x circular velocity.
+    // The slight eccentricity gives the radius a real oscillation for the
+    // zero-crossing period estimator (an exact circle would leave only
+    // float noise around r_avg).
+    double mu_orb = alpha_eff / K_B;                    // effective GM (F/m = mu/r^2)
+    double r_seed = 50.0;
+    double v_seed = 0.95 * std::sqrt(mu_orb / r_seed);  // sub-circular -> e ~ 0.1
+    // Vis-viva: 1/a = 2/r - v^2/mu; seeded at apoapsis (v < v_circ)
+    double a_orb = 1.0 / (2.0 / r_seed - v_seed * v_seed / mu_orb);
+    double T_orbit = 2.0 * PI * std::sqrt(a_orb * a_orb * a_orb / mu_orb);
+    double E_ground = -alpha_eff / (2.0 * a_orb);  // Kepler: E = -alpha_eff/(2a)
 
     std::cout << "  Hydrogen parameters:\n";
     std::cout << "    alpha_eff (EM + grav) = " << alpha_eff << "\n";
     std::cout << "    a_0 (Bohr radius)     = " << a_0 << " lattice units\n";
-    std::cout << "    v_orb (orbital v)     = " << v_orb << "\n";
+    std::cout << "    r_seed (test orbit)   = " << r_seed << " lattice units\n";
+    std::cout << "    a_orb (semi-major)    = " << a_orb << " lattice units\n";
+    std::cout << "    v_seed                = " << v_seed << "\n";
     std::cout << "    T (orbital period)    = " << T_orbit << " Planck times\n";
-    std::cout << "    E_ground              = " << E_ground << "\n\n";
+    std::cout << "    E_orbit               = " << E_ground << "\n\n";
 
     // Set up the hydrogen system
     double dt = 100.0;
@@ -86,8 +98,8 @@ static void section_hydrogen_scale1() {
     // Proton: locked at origin
     pe.add_locked_particle(+1, {0, 0, 0});
 
-    // Electron: at (a_0, 0, 0), velocity (0, v_orb, 0)
-    pe.add_particle(-1, {a_0, 0, 0}, {0, v_orb, 0});
+    // Electron: at (r_seed, 0, 0), tangential velocity (0, v_seed, 0)
+    pe.add_particle(-1, {r_seed, 0, 0}, {0, v_seed, 0});
     pe.particles()[1].r_eff = 0.01;  // prevent annihilation
 
     // Record initial state
@@ -135,14 +147,14 @@ static void section_hydrogen_scale1() {
         for (double r : radii) r_avg += r;
         if (!radii.empty()) r_avg /= radii.size();
 
-        std::cout << "    a_0 (expected):  " << a_0 << "\n";
+        std::cout << "    a_orb (expected):  " << a_orb << "\n";
         std::cout << "    r_avg (actual):  " << r_avg << "\n";
         std::cout << "    r_min:           " << r_min << "\n";
         std::cout << "    r_max:           " << r_max << "\n";
 
-        // Within factor 2 of a_0
-        bool in_range = (r_avg > a_0 * 0.5 && r_avg < a_0 * 2.0);
-        ftd::test::check("H2: average radius within factor 2 of a_0", in_range);
+        // Within factor 2 of the seeded orbit's semi-major axis
+        bool in_range = (r_avg > a_orb * 0.5 && r_avg < a_orb * 2.0);
+        ftd::test::check("H2: average radius within factor 2 of a_orb", in_range);
     }
 
     // ---- H3: Total energy ----
@@ -678,8 +690,11 @@ static void section_hydrogen_spectrum_scale1() {
     std::printf("  Hydrogen Spectrum at Scale 1: Energy Levels E_n ~ 1/n^2\n");
     std::printf("============================================================\n\n");
 
-    // Derived hydrogen scales (same as test_hydrogen_scale1.cpp)
-    double alpha_eff = ALPHA / (4.0 * PI) + G_N * K_B * K_B;
+    // Derived hydrogen scales (same convention as section_hydrogen_scale1):
+    // G_PE (FTD-0131 physical alpha_G) — gravity term negligible, so
+    // alpha_eff matches the engine's actual coupling and the seeded orbits
+    // are exactly circular. E_n ratios and Kepler scalings are then exact.
+    double alpha_eff = ALPHA / (4.0 * PI) + G_PE * K_B * K_B;
     double a_0 = 1.0 / (K_B * alpha_eff);
     double v_orb = std::sqrt(alpha_eff / (K_B * a_0));
     double T_1 = 2.0 * PI * a_0 / v_orb;
@@ -716,9 +731,9 @@ static void section_hydrogen_spectrum_scale1() {
     double E4 = levels[3].energy;
 
     // HS-1: Ground state is bound (negative energy)
-    // FTD note: with dt=100, orbits are radial (e~1) rather than circular.
-    // The absolute energy is ~2x Bohr due to virial theorem for radial orbits
-    // (a_radial = a_0/2).  The RATIOS are exact -- that's the physics.
+    // FTD note: seeded circular at r_n = n^2*a_0; energy is constant along
+    // the orbit, so the time-averaged E_n and their RATIOS are exact even
+    // though 5000 ticks covers only a fraction of the (long) orbital period.
     {
         std::printf("  HS-1: E1=%.4e (bound=%s)\n", E1, (E1 < 0) ? "yes" : "no");
         CHECK(E1 < 0, "HS-1: Ground state is bound (E < 0)");
@@ -1070,7 +1085,7 @@ static void section_hydrogen_spectrum_legacy() {
     // ================================================================
     // ParticleEngine uses analytical forces:
     //   F_EM  = -alpha * q1 * q2 * r_hat / (4*pi*r^2)
-    //   F_grav = +G_N * m1 * m2 * r_hat / r^2
+    //   F_grav = +G_PE * m1 * m2 * r_hat / r^2   (FTD-0131 physical alpha_G)
     // With q_proton = +1, q_electron = -1, both mass K_B
 
     ftd::ParticleEngine pe;
@@ -1078,34 +1093,42 @@ static void section_hydrogen_spectrum_legacy() {
     pe.set_damping_enabled(false);  // CRITICAL: damping drains orbital energy
 
     // Predicted Bohr radius in ParticleEngine units
-    // a_0 = 1 / (m_e * alpha_eff) where alpha_eff includes both EM and gravity
+    // a_0 = 1 / (m_e * alpha_eff); the G_PE gravity term is ~5e-46*K_B^2,
+    // so alpha_eff is EM-dominated and a_bohr ~ 3370 lattice units.
     double alpha_em = ftd::ALPHA / (4.0 * M_PI);  // ~0.000581
-    double grav_contrib = ftd::G_N * ftd::K_B * ftd::K_B;  // ~0.00261
+    double grav_contrib = ftd::G_PE * ftd::K_B * ftd::K_B;  // ~1.4e-46 (negligible)
     double alpha_eff = alpha_em + grav_contrib;
     double a_bohr = 1.0 / (ftd::K_B * alpha_eff);
 
     // Predicted binding energy: E_bind = -0.5 * m * alpha_eff^2
     double e_bind_predicted = -0.5 * ftd::K_B * alpha_eff * alpha_eff;
 
-    // Predicted orbital velocity and period
+    // Circular velocity at a_bohr (v_circ = alpha_eff for this system).
+    // Seed at 0.95x circular: the mild eccentricity (e ~ 0.1) gives the
+    // radius a real oscillation so the zero-crossing period estimator has
+    // a signal (an exact circle leaves only float noise around r_avg).
     double v_orbit = alpha_eff;
-    double t_period = 2.0 * M_PI * a_bohr / v_orbit;
+    double r0 = a_bohr;
+    double v0 = 0.95 * v_orbit;
+    // Vis-viva: 1/a = 2/r - v^2/mu with mu = alpha_eff/K_B (seeded at apoapsis)
+    double mu_kepler = alpha_eff / ftd::K_B;
+    double a_orb = 1.0 / (2.0 / r0 - v0 * v0 / mu_kepler);
+    double t_period = 2.0 * M_PI * std::sqrt(a_orb * a_orb * a_orb / mu_kepler);
 
     std::cout << "\n--- Predictions ---\n";
     std::cout << std::setprecision(4);
     std::cout << "  alpha_EM/(4pi) = " << alpha_em << "\n";
-    std::cout << "  G_N * K_B^2    = " << grav_contrib << "\n";
+    std::cout << "  G_PE * K_B^2   = " << grav_contrib << "\n";
     std::cout << "  alpha_eff      = " << alpha_eff << "\n";
     std::cout << "  Bohr radius    = " << a_bohr << "\n";
+    std::cout << "  a_orb (seeded) = " << a_orb << "\n";
     std::cout << "  Binding energy = " << e_bind_predicted << "\n";
     std::cout << "  Orbital period = " << t_period << "\n";
 
     // Inject proton at origin (locked -- infinite mass)
     pe.add_locked_particle(+1, {0.0, 0.0, 0.0}, ftd::K_B);
 
-    // Inject electron at Bohr radius with circular orbital velocity
-    double r0 = a_bohr;
-    double v0 = v_orbit;
+    // Inject electron at Bohr radius, slightly sub-circular (see above)
     pe.add_particle(-1, {r0, 0.0, 0.0}, {0.0, v0, 0.0}, ftd::K_B);
 
     // ================================================================
@@ -1150,7 +1173,7 @@ static void section_hydrogen_spectrum_legacy() {
             ke_samples.push_back(ke);
 
             // PE = -alpha_eff * |q1*q2| / r (EM attractive + gravity attractive for unlike)
-            // For PE: EM part = -alpha/(4pi) * 1/r, Grav part = -G_N * m^2 / r
+            // For PE: EM part = -alpha/(4pi) * 1/r, Grav part = -G_PE * m^2 / r
             double pe_val = -(alpha_em + grav_contrib) / (r > 1e-10 ? r : 1e-10);
             pe_samples.push_back(pe_val);
 

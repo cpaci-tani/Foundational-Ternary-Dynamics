@@ -79,7 +79,8 @@ int main() {
         std::cout << "\n--- CS2: Same charges — EM component ---\n";
 
         // Scale 1: Verify EM component is repulsive
-        // (Net force may be attractive due to lattice G_N dominance)
+        // (Gravity uses G_PE ~ 5e-46, so EM dominates; the neutral-pair
+        // subtraction isolates the EM component either way)
         ParticleEngine pe;
         pe.add_particle(+1, {8, 16, 16});
         pe.add_particle(+1, {16, 16, 16});
@@ -111,10 +112,11 @@ int main() {
         Vec3 f_s1 = pe.compute_force(0);
         double f_s1_mag = f_s1.mag();
 
-        // Expected analytical: F = alpha/(4pi*r^2) + G_N*K_B^2/r^2
+        // Expected analytical: F = alpha/(4pi*r^2) + G_PE*K_B^2/r^2
+        // (G_PE = FTD-0131 physical alpha_G — gravity term negligible)
         // with softening = 1: r^2 + 1 = 65
         double r2_soft = 64.0 + 1.0;
-        double f_expected = ALPHA / (4.0 * PI * r2_soft) + G_N * K_B * K_B / r2_soft;
+        double f_expected = ALPHA / (4.0 * PI * r2_soft) + G_PE * K_B * K_B / r2_soft;
         double err = std::abs(f_s1_mag - f_expected) / f_expected;
 
         std::cout << "    Scale 1 force: " << f_s1_mag << "\n";
