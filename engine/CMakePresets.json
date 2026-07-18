@@ -1,0 +1,36 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "native",
+      "displayName": "Windows native (Ninja Multi-Config, MSVC 14.44 pin, CUDA 13.0)",
+      "description": "MUST be invoked inside 'vcvarsall.bat x64 -vcvars_ver=14.44'. VS 18's default MSVC toolset (14.51.36231+) crashes CUDA 13.0's cudafe++ with an ACCESS_VIOLATION on every .cu file; the side-by-side 14.44.35207 toolset is the CUDA-supported one. MSBuild-generator pin routes (-T version=..., CMAKE_VS_GLOBALS VCToolsVersion) fail under the 'Visual Studio 18 2026' generator (TRK0005 / invalid version spec), so the pin lives in the environment: use engine\\build_native.bat, which locates VS via vswhere, enters vcvars 14.44, verifies VCToolsVersion, and then drives these presets. No cacheVariables are needed: the CMakeLists native defaults (FTD_ENABLE_CUDA=ON, FTD_ENABLE_PCH=ON, FTD_BUILD_EXPERIMENTAL=ON, FTD_BUILD_TEST_RUNNER=AUTO) reproduce the canonical engine/build cache.",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "native-release", "configurePreset": "native", "configuration": "Release", "jobs": 32 },
+    { "name": "native-debug", "configurePreset": "native", "configuration": "Debug", "jobs": 32 }
+  ],
+  "testPresets": [
+    {
+      "name": "golden",
+      "displayName": "Golden merge-gate battery (serial): -R 'golden|gauge_links', 7 tests",
+      "configurePreset": "native",
+      "configuration": "Release",
+      "output": { "outputOnFailure": true },
+      "filter": { "include": { "name": "golden|gauge_links" } }
+    },
+    {
+      "name": "native-all",
+      "displayName": "Full CTest suite, Release, -j 32",
+      "configurePreset": "native",
+      "configuration": "Release",
+      "output": { "outputOnFailure": true },
+      "execution": { "jobs": 32 }
+    }
+  ]
+}

@@ -37,7 +37,7 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 | Find an audit ledger | `docs/audits/` | `docs/audits/INDEX.md` |
 | Find a contract / interface spec | `CONTRACTS.md` (root) | section per contract |
 | Run all tests | `engine/build && ctest` (C++) + `pytest scripts/tests/` (Python) + Playwright (JS) | see `engine/tests/README.md` |
-| Build C++ engine | `cmake -S engine -B engine/build && cmake --build engine/build --config Release` | |
+| Build C++ engine | `engine\build_native.bat` (pins MSVC 14.44 via vcvars — VS 18's default 14.51 crashes CUDA 13 `cudafe++`; presets in `engine/CMakePresets.json`) | |
 | Build WASM | `engine/build_wasm.bat` (Windows) or `emcmake cmake -S engine -B engine/build_wasm` | |
 | Run web dashboard | `python engine/web/serve.py 8080` | no-cache dev server |
 | Run GPU campaign | WSL2 only: `wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && engine/build_wsl/<test>"` | per CLAUDE.md mandate |
@@ -446,7 +446,7 @@ Physics invariants preserved across all 17 commits:
 | Run all Python tests | `python scripts/tests/run_all_tests.py` |
 | Run 7-tier verification | `python scripts/tests/comprehensive/run_ultimate_test.py` |
 | Run proof chain | `python scripts/proofs/proof_master_verification.py` |
-| Build C++ engine | `cmake -S engine -B engine/build && cmake --build engine/build --config Release` |
+| Build C++ engine | `engine\build_native.bat` (MSVC 14.44 pin; raw cmake needs a vcvars 14.44 shell) |
 | Run C++ tests | `cd engine/build && ctest --output-on-failure -C Release` |
 | Run audit regression test | `engine/build/Release/test_audit_regression.exe` |
 | Build whitepaper PDF | `cd dissemination/whitepaper && pdflatex FTD_Whitepaper.tex` |

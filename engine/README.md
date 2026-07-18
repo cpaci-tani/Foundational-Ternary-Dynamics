@@ -20,10 +20,12 @@ Detailed references:
 
 ## Quick Start
 
-### Build CPU
+### Build (Windows native, CPU + CUDA)
+MUST use the MSVC 14.44 toolset — VS 18's default (14.51+) crashes CUDA 13.0's
+`cudafe++`. The wrapper enters `vcvarsall.bat x64 -vcvars_ver=14.44` and drives
+`engine/CMakePresets.json` (Ninja Multi-Config → `engine/build`, CUDA ON by default):
 ```bash
-cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release --parallel 24
+engine\build_native.bat
 ```
 
 ### Test CPU
@@ -32,12 +34,9 @@ ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 ```
 
 ### Build CUDA GPU
-Windows-native CUDA build. Measurement campaigns should use the documented WSL2 path.
-```bash
-cmake -S engine -B engine/build_cuda -DFTD_ENABLE_CUDA=ON -G Ninja \
-      -DCMAKE_CUDA_FLAGS="--allow-unsupported-compiler"
-cmake --build engine/build_cuda --config Release --parallel 24
-```
+CUDA is already ON in the canonical `engine/build` tree (see above); the legacy
+separate `engine/build_cuda` tree is retired. Measurement campaigns use the
+documented WSL2 path (`engine/build_wsl`), not Windows-native CUDA.
 
 ### Build WASM Dashboard
 ```bash

@@ -205,9 +205,9 @@ Read these before making theory-facing edits:
 Use the existing public commands from the repo docs unless you have a reason to verify or replace them.
 
 ```bash
-# Engine build
-cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release
+# Engine build (Windows native -- pins MSVC 14.44 via vcvars; VS 18's default
+# 14.51 toolset crashes CUDA 13.0's cudafe++; presets: engine/CMakePresets.json)
+engine\build_native.bat
 
 # Engine tests
 cd engine/build && ctest --output-on-failure -C Release

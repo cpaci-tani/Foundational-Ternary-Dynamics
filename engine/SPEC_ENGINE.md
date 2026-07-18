@@ -287,8 +287,14 @@ archive/qt_gui/           # Qt6 native GUI (28 files, replaced by web UI)
 ### Tests only
 
 ```bash
-cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release --parallel 24
+# Canonical Windows-native build -- MUST use the MSVC 14.44 toolset:
+# VS 18's default toolset (14.51+) crashes CUDA 13.0's cudafe++ on every .cu.
+# The wrapper locates VS via vswhere, enters vcvarsall x64 -vcvars_ver=14.44,
+# and drives engine/CMakePresets.json (Ninja Multi-Config -> engine/build):
+engine\build_native.bat
+# Raw cmake equivalent (ONLY inside a vcvars 14.44 shell):
+#   cmake --preset native              (run in engine/)
+#   cmake --build --preset native-release
 ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 ```
 
@@ -968,10 +974,13 @@ for this ~10⁻⁴ systematic difference and not treat it as a regression.
 ### Build
 
 ```bash
-cmake -S engine -B engine/build_cuda -DFTD_ENABLE_CUDA=ON -G Ninja \
-      -DCMAKE_CUDA_FLAGS="--allow-unsupported-compiler"
-cmake --build engine/build_cuda --config Release
+# CUDA is ON by default in the canonical engine/build tree (FTD_ENABLE_CUDA
+# native default; --allow-unsupported-compiler + arch 89;120 are set by
+# CMakeLists). MUST use MSVC 14.44 -- the wrapper pins it via vcvars:
+engine\build_native.bat
 ```
+
+The legacy separate `engine/build_cuda` tree is retired (`build_cuda.bat` now delegates to `build_native.bat`).
 
 Requirements: CUDA 13.0+, compute capability >= 8.9. Target architectures: "89;120" (Ada + Blackwell).
 

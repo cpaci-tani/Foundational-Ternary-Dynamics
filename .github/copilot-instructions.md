@@ -50,8 +50,10 @@ python scripts/proofs/proof_master_verification.py
 C++ engine:
 
 ```bash
-cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release --parallel 24
+# Windows native builds MUST use the MSVC 14.44 toolset (VS 18's default
+# 14.51+ crashes CUDA 13.0's cudafe++). The wrapper enters
+# vcvarsall x64 -vcvars_ver=14.44 and drives engine/CMakePresets.json:
+engine\build_native.bat
 ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 ```
 

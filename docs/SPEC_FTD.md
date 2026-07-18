@@ -1493,7 +1493,7 @@ engine/
 └── thirdparty/glad/            # OpenGL loader
 ```
 
-**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release`
+**Build**: `engine\build_native.bat` (pins MSVC 14.44 via `vcvarsall x64 -vcvars_ver=14.44` — VS 18's default toolset crashes CUDA 13.0's `cudafe++`; presets in `engine/CMakePresets.json`)
 **Test**: `cd engine/build && ctest --output-on-failure -C Release` (74 tests)
 **GUI**: Requires Qt6; `cmake -S engine -B engine/build_qt -DFTD_BUILD_QT_GUI=ON`
 
