@@ -52,6 +52,11 @@ SurveyResult run_config(const char* name, int L,
     ftd::RenderBridge rb(L);
     rb.toggles.genesis = false;
     rb.toggles.gravity = false;  // Pure EM
+    // SS4 asserts charge conservation, so keep every charge on-lattice:
+    // since 420d933f a particle crossing a face is REMOVED (charge lost by
+    // design) when reflective_boundary is off, and the He-like config's
+    // adjacent +1/+1 repel hard enough to reach the faces within the run.
+    rb.toggles.reflective_boundary = true;
 
     int init_charge = 0;
     for (auto& [dx, dy, dz, state] : particles) {

@@ -96,6 +96,14 @@ int main() {
         const int L = 32;
         ftd::RenderBridge rb(L);
         int mid = L / 2;
+        // Inertia is the subject here, so scope out the two channels that
+        // can delete the mover: face-crossing removal (420d933f — at
+        // v_z=0.05 the particle reaches the +z face by ~tick 300 of 1000;
+        // bounce instead) and stochastic evaporation (charge-destroying,
+        // guarded by its own tests; on the GPU default backend it fires
+        // well within 1000 ticks for a single mover).
+        rb.toggles.reflective_boundary = true;
+        rb.toggles.genesis = false;
 
         // Inject particle with isotropic flux
         double iso = ftd::K_B / std::sqrt(3.0);

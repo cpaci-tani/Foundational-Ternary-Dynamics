@@ -202,6 +202,12 @@ int main() {
             bridge.toggles.strong_force = true;
             bridge.toggles.movement = true;
             bridge.toggles.gauss_projection = true;
+            // Same-color repulsion drives the trio toward the faces; without
+            // reflective walls the face-crossing rule (420d933f) REMOVES them
+            // and the dispersal RMS reads 0 from an empty lattice, making the
+            // compactness comparison vacuous. Bounce at the walls instead so
+            // "dispersed" stays measurable.
+            bridge.toggles.reflective_boundary = true;
 
             bridge.inject_particle(mid, mid - 2, mid, +1, co1, +1, c1);
             bridge.inject_particle(mid - 2, mid + 1, mid, +1, co2, +1, c2);

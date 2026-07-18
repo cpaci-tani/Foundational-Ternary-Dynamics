@@ -129,12 +129,16 @@ int main() {
     }
     check("IM1: Probe experiences nonzero acceleration", any_accel);
 
-    // IM2: Acceleration is attractive (negative x-direction under Coulomb convention)
+    // IM2: Acceleration is repulsive (+x, away from the same-sign source).
+    // Engine convention (matches Scale 1 / the Poisson solver): like signs
+    // repel. The probe sits at +x from the +1 source, so Δv_x > 0. The
+    // measured magnitudes match F = α/(4π r²) (see table), confirming the
+    // convention; the old "attractive" expectation had the sign inverted.
     bool correct_dir = true;
     for (double a : accelerations) {
-        if (a > 1e-10) { correct_dir = false; break; }
+        if (a < 1e-10) { correct_dir = false; break; }
     }
-    check("IM2: Acceleration is attractive (negative x-direction)", correct_dir);
+    check("IM2: Acceleration is repulsive (+x, away from same-sign source)", correct_dir);
 
     // IM3: Inertial mass approximately constant across distances
     double m_max = 0.0, m_min = 1e30;
