@@ -282,6 +282,44 @@ int main() {
     }
 
     // ================================================================
+    // DS-SWEEP: ew_background_sweep enters the dual registers
+    // (EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3 item 3, reconciled:
+    // the sweep previously wrote the observable only, which dual-mode
+    // phase_read never reads and phase_write overwrites — a no-op)
+    // ================================================================
+    std::cout << "\n=== DS-SWEEP ===\n";
+
+    {
+        RenderBridge bridge(16);
+        bridge.force_cpu();  // the sweep lives on the CPU tick path only
+        bridge.toggles.dual_substrate = true;
+        bridge.toggles.genesis = false;
+        bridge.toggles.ew_background_sweep = true;
+
+        for (int t = 0; t < 5; ++t) bridge.tick();
+
+        double sum_x = 0.0, sum_Lx = 0.0, sum_Rx = 0.0;
+        const int N = bridge.lattice().total_sites();
+        for (int i = 0; i < N; ++i) {
+            sum_x  += bridge.voxels()[i].flux.x;
+            sum_Lx += bridge.voxels()[i].flux_L.x;
+            sum_Rx += bridge.voxels()[i].flux_R.x;
+        }
+        const double mean_x = sum_x / N;
+        std::cout << "    mean flux.x=" << mean_x
+                  << " sum_L.x=" << sum_Lx << " sum_R.x=" << sum_Rx << "\n";
+
+        // Five sweep increments D(t) = (sin(t*0.01)+1)/2*0.05 ≈ 0.025 each;
+        // the accumulated drive must survive the flux := L+R sync.
+        check("sweep drive survives dual sync (mean flux.x > 0.05)", mean_x > 0.05);
+
+        // Symmetric half/half split: a uniform background drive injects no
+        // chirality (D-register stays zero), matching the WASM injector.
+        check("sweep splits symmetrically (sum L.x = sum R.x)",
+              std::abs(sum_Lx - sum_Rx) < 1e-9);
+    }
+
+    // ================================================================
     // Summary
     // ================================================================
     std::cout << "\n=== DUAL SUBSTRATE: " << (failures == 0 ? "ALL PASS" : "FAILURES")
