@@ -574,6 +574,12 @@ git checkout main
 |---|---|---|---|---|---|---|
 | (governance — under FTD-0383/0384) program review at Arc-6 close | `preregister-program-review-arc6-v1` | `5ec5e992` | n/a (desk review; executor = owner + six-chair AI panel) | frozen outcome map RE-SCOPE / ARCHIVE-AS-MAPPED-BOUNDARY / CONTINUE(re-chartered); window = Arc-6 close or 6 months, whichever first; unexecuted-past-window blocks all lock-cutting | n/a | [`PREREG_PROGRAM_REVIEW_ARC6_v1.md`](preregistrations/PREREG_PROGRAM_REVIEW_ARC6_v1.md) (SHA256 `af6ad402095feeb0ab4cc37f9e25a6f22fb8c1e41876f8dd40d9f0e9959a00c7`) |
 
+## Self-energy pinning lock (K_MANIFEST substrate-origin conjecture; locked 2026-07-17)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| (unminted — conjecture adjudication; LEDGER row only on owner adoption per outcome map) | `preregister-selfenergy-pinning-v1` | (tag commit) | `scripts/proofs/prereg_selfenergy_pinning_predictions.py` (predictions, SHA256 `b83eed3d8475e6c024b71c1863301f7d956c1ebcac9b6b21d75c8ddaf50fe02a`); measurement = standalone driver over `engine/src/poisson_solvers.cpp` `gauss_project_cpu` (engine operator of record, no engine-tree edits) | projector-only GF-A: single s=+1 at center, all dynamics off, charge_coupling=1.0, exact_dual_gauss=false (engine default), SOR 6 iters/application, converge max residual < 1e-8 or 10^4 applications; L ∈ {17,33,65}; adjudication = tracker convention E_half within 0.5% of a family's exact finite-L values at ALL three L | (driver output recorded in prereg §9 execution record) | [`PREREG_SELFENERGY_PINNING_v1.md`](preregistrations/PREREG_SELFENERGY_PINNING_v1.md) (SHA256 at lock `a37e739304b9cfcc3da06f64356c05acf2e86922e600a9ad1791c4bf983858fd`; §9 execution record appended post-run by design) |
+
 ## Census addendum — closure over the tag namespace (2026-07-12, FTD-0384)
 
 This manifest's per-campaign tables above are **not exhaustive** over the `preregister-*` git-tag
