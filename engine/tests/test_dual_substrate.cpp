@@ -320,6 +320,62 @@ int main() {
     }
 
     // ================================================================
+    // DS-PAIR: create_entangled_pair writes the dual registers
+    // (EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3 item 2, reconciled:
+    // the pair injector previously wrote the observable only, so in dual
+    // mode the imprint was erased by the next flux := L+R sync)
+    // ================================================================
+    std::cout << "\n=== DS-PAIR ===\n";
+
+    {
+        RenderBridge bridge(16);
+        bridge.force_cpu();
+        bridge.toggles.dual_substrate = true;
+        bridge.toggles.genesis = false;
+
+        const int cx = 8;
+        bridge.create_entangled_pair(cx, cx, cx, Vec3(0, 0, K_B));
+
+        const int center = bridge.lattice().index(cx, cx, cx);
+        auto& v = bridge.voxels()[center];
+
+        const double frac_major = (1.0 + DELTA_APPROX) * 0.5;
+        const double frac_minor = (1.0 - DELTA_APPROX) * 0.5;
+
+        // δ-split identical to inject_particle: the +1 site is L-major …
+        check_close("+1 site flux_L.z = J*(1+δ)/2", v.flux_L.z, K_B * frac_major, 1e-12);
+        check_close("+1 site flux_R.z = J*(1-δ)/2", v.flux_R.z, K_B * frac_minor, 1e-12);
+
+        // … and the −1 partner (flux −J) is R-major.
+        int partner = -1;
+        for (int n : bridge.lattice().neighbors_6(center))
+            if (bridge.voxels()[n].state == -1) { partner = n; break; }
+        check("partner manifested at a 6-neighbor", partner >= 0);
+        if (partner >= 0) {
+            auto& p = bridge.voxels()[partner];
+            check_close("-1 partner flux_L.z = -J*(1-δ)/2", p.flux_L.z, -K_B * frac_minor, 1e-12);
+            check_close("-1 partner flux_R.z = -J*(1+δ)/2", p.flux_R.z, -K_B * frac_major, 1e-12);
+        }
+
+        // The imprint must enter the dual dynamics rather than be erased by
+        // the flux := L+R sync. The wave operator disperses the two-site
+        // spike immediately (site-local values are dispersion-dominated), so
+        // assert on the register-sector energy: pre-reconciliation only the
+        // single-tick coupling contribution survives (≈ (G_C/2·∇s)², ~1e-2);
+        // the injected imprint is ~K_B²-sized.
+        bridge.tick();
+        double E_reg = 0.0;
+        const int N = bridge.lattice().total_sites();
+        for (int i = 0; i < N; ++i) {
+            auto& w = bridge.voxels()[i];
+            E_reg += w.flux_L.mag2() + w.flux_R.mag2()
+                   + w.wave_vel_L.mag2() + w.wave_vel_R.mag2();
+        }
+        std::cout << "    post-tick register energy E_reg=" << E_reg << "\n";
+        check("pair imprint enters the dual dynamics (E_reg > 0.1)", E_reg > 0.1);
+    }
+
+    // ================================================================
     // Summary
     // ================================================================
     std::cout << "\n=== DUAL SUBSTRATE: " << (failures == 0 ? "ALL PASS" : "FAILURES")

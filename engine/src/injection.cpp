@@ -191,11 +191,24 @@ void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3
   const auto& lattice = rb.lattice();
   auto& voxels = rb.voxels();
 
+  // Dual mode: the pair is two manifested ±1 particle injections sharing a
+  // pair_id, so each site takes the same state-signed δ-split as
+  // inject_particle_cpu above. Without the register write the imprint is
+  // erased at the next flux := L+R sync (EXPLR_DUAL_SUBSTRATE_STAGGERED_
+  // ENCODING §5.3 register census, reconciled 2026-07-17).
+  const bool dual = rb.toggles.dual_substrate;
+  const double frac_major = (1.0 + DELTA_APPROX) * 0.5;
+  const double frac_minor = (1.0 - DELTA_APPROX) * 0.5;
+
   int id = rb.injector().next_pair_id();
   int idx = lattice.index(x, y, z);
   auto& v = voxels[idx];
   rb.set_state(idx, 1);
   v.flux = flux_val;
+  if (dual) {
+    v.flux_L = flux_val * frac_major;   // state +1: L-major
+    v.flux_R = flux_val * frac_minor;
+  }
   v.pair_id = id;
   v.particle_id = rb.injector().next_particle_id();
 
@@ -209,6 +222,10 @@ void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3
   auto& partner = voxels[partner_idx];
   rb.set_state(partner_idx, -1);
   partner.flux = flux_val * -1.0;
+  if (dual) {
+    partner.flux_L = (flux_val * -1.0) * frac_minor;   // state -1: R-major
+    partner.flux_R = (flux_val * -1.0) * frac_major;
+  }
   partner.pair_id = id;
   partner.particle_id = rb.injector().next_particle_id();
 }
