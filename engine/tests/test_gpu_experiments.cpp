@@ -1361,10 +1361,17 @@ static void test_cyclotron() {
         // certain death over 500 ticks under the now-live canonical rule),
         // and this section characterizes the Lorentz force, not evaporation
         // (test_gpu_evaporation_parity does). Pre-fix the GPU channel was
-        // silently inert here. NOTE: the section fails PRE-EXISTING and
+        // silently inert here. NOTE: the section failed PRE-EXISTING and
         // independently of evaporation (2026-07-16 A/B: the old kernel loses
-        // the particle too — CYCL-1..7 fail identically). Triage chip filed.
+        // the particle too — CYCL-1..7 fail identically).
         gpu.toggles.evaporation = false;
+        // Root cause of the pre-existing failure (2026-07-17 triage): at
+        // v_y=0.3 the mover reaches the +y face by ~tick 210 of 500 and
+        // face-crossing REMOVES it (420d933f; reflective_boundary defaults
+        // off, and enable_all() restores defaults). Both runs lose the
+        // particle identically. Bounce at the walls so the run measures
+        // Lorentz deflection, not the boundary rule.
+        gpu.toggles.reflective_boundary = true;
         gpu.toggles.gravity = false;
         gpu.toggles.poisson_coulomb = false;
         gpu.toggles.lorentz_force = true;
@@ -1419,6 +1426,7 @@ static void test_cyclotron() {
         gpu.toggles.enable_all();
         gpu.toggles.genesis = false;
         gpu.toggles.evaporation = false;  // BH-F5 completion — see Run A note
+        gpu.toggles.reflective_boundary = true;  // contain the mover — see Run A note
         gpu.toggles.gravity = false;
         gpu.toggles.poisson_coulomb = false;
         gpu.toggles.lorentz_force = false;  // OFF
