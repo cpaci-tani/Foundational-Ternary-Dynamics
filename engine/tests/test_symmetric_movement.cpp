@@ -67,6 +67,12 @@ void test_symmetric_movement_order() {
         rb.toggles.disable_all();
         rb.toggles.movement = true;
         rb.toggles.symmetric_movement_order = sym_enabled;
+        // Since 420d933f (2026-06-14) a particle crossing a lattice face is
+        // REMOVED when reflective_boundary is off. These particles run at
+        // |v|=5 and reach the +x face within the run; bounce them back so
+        // charge stays on-lattice and the order-shuffle comparison stays
+        // meaningful.
+        rb.toggles.reflective_boundary = true;
     };
 
     set_toggles(rb_asym, false);
