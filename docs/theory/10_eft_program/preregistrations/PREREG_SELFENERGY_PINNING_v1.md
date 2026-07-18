@@ -84,6 +84,20 @@ Driver: standalone C++ over the engine's `gauss_project_cpu` (`engine/src/poisso
 
 **Sole change:** the L=65 application cap is raised from 10⁴ to **2.5×10⁴**, justified by the measured L² convergence scaling above (projected convergence ≈1.6×10⁴ applications). **Nothing else changes**: predictions, conventions, tolerances, residual gate, outcome map, and the run-1 booking above are all untouched; L=17 and L=33 are not re-run (they adjudicated validly under v1). The amendment is cut as its own tagged lock BEFORE the L=65 re-run; a stopping-resource extension cannot alter the fixed point the projector converges to, only whether the pre-set gate is reached.
 
-### §10.1 Run 2 (L=65 only, under v1.1)
+### §10.1 Run 2 (L=65 only, under v1.1; amendment commit `d8b27995`, tag `preregister-selfenergy-pinning-v1-1` cut before the re-run)
 
-(appended after the re-run)
+| L | applications | final residual | gate met? | E_half measured | P1 frozen | Δ vs P1 | Δ vs P2 |
+|---|---|---|---|---|---|---|---|
+| 65 | 13,240 | 9.975×10⁻⁹ | **YES** | 0.498510917 | 0.498515103 | **−0.00084%** | +218.0% |
+
+Cross-checks: E_local7 = 0.666661798 (k-space exact prediction 0.666661812 — 8-digit agreement with the c₂ = 2/3 structure); E_term6 = 0.665785371. The convergence projection from run 1 (≈16,000) was confirmed in order of magnitude (13,240).
+
+## §11. Adjudication of record
+
+**OUTCOME-P1 fires.** All three L are VALID under their governing locks (17 and 33 under v1; 65 under the v1.1 procedural amendment) and match the P1 central-difference family at −0.00006% / −0.0002% / −0.00084% — three to four orders of magnitude inside the 0.5% tolerance — while the P2 matched-18-pt family is excluded at +215% to +218% everywhere.
+
+**What is now established, at its earned tag:** the engine's Gauss projector, run as the operator of record, builds around a unit ternary charge exactly the central-difference fixed point, whose tracker-convention self-energy is the simple-cubic Watson constant's finite-L value: **E_self = W_SC(L), [MEASURED — engine operator of record]**, on top of the session's [THEOREM]-grade identity E_half(L) → W_SC = 0.5054620197. The 18-pt/central-difference stencil mismatch affects only the convergence rate (applications ∝ L², the §9 mechanism finding), not the fixed point.
+
+**What this advances, per the frozen map:** the prescriptive conjecture — **K_MANIFEST := the projector-fixed-point self-energy = W_SC** — advances to **owner adjudication as [DERIVED — substrate geometry, CANDIDATE]**. Adoption is NOT automatic and is an adoption, never a derivation of the current 0.511: it would set K_MANIFEST = 0.505462 (−1.1% vs the current MeV-mirroring convention) and K_GENESIS = 3·K_MANIFEST = 1.516386 — an engine-behavioral, golden-hash-breaking change requiring the merge-gate discipline and a priced registered line (the substrate forces the *value of the self-energy*; identifying the kinetics scale *with* it is the declared commitment).
+
+**Standing rails, unchanged by this outcome:** M_REST = m_e untouched; the MeV calibration stays closed (FTD-0059/0096); the value-match numerology (W_SC ≈ 0.511 at 1.1%) remains inadmissible — this adjudication measured *which geometry the engine realizes*, not a coincidence; live-dynamics relevance remains conditional on the Gauss-fidelity investigation (task_92dc33a4), since the live engine's coupling source opposes the projector (measured f = −0.095) — H prices the constraint's own cost, which the projector demonstrably delivers when run alone.
