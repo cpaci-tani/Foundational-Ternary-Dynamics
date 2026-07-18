@@ -313,8 +313,14 @@ inline bool TermToggles::validate(std::string* err) const {
     // no test pins on the wording).
     if (bcc_stencil != BccStencilMode::FULL && !wave_propagation)
         msg += "bcc_stencil != FULL requires wave_propagation=true (sublattice projection requires the wave path)\n";
+    // Census correction (EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3,
+    // AUDIT_EFFECTIVE_TOGGLES_2026-07): triad detection reads states,
+    // positions, and locked flags only — no J_L/J_R — on both backends
+    // (transmutation_phases.cpp triad_binding_cpu; kernels_forces.cu GPU
+    // triad detection). The requirement is retained as declared; only the
+    // old "(operates on J_L/J_R)" rationale was drift.
     if (triad_binding && !dual_substrate)
-        msg += "triad_binding requires dual_substrate (operates on J_L/J_R)\n";
+        msg += "triad_binding requires dual_substrate (requirement of record; triad detection itself is geometric — states + distances, no flux-field read)\n";
     if (db_clock_coulomb && dual_substrate)
         msg += "db_clock_coulomb requires dual_substrate=false (FTD-0281 v1 is a single-substrate spectroscopy diagnostic)\n";
 
