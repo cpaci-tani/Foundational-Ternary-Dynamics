@@ -10,7 +10,8 @@
  *   - within single-substrate, branches on toggles.bcc_stencil:
  *       FULL → interior 18-pt fast path (no modulo) + boundary slow path
  *       SC/FCC/BCC → laplacian_sublattice<> for all sites
- *   - adds state-flux coupling g_c·∇s + g_c·∇×(s·v) (when toggles.coupling on)
+ *   - adds state-flux coupling −g_c·∇s + g_c·∇×(s·v) (when toggles.coupling on;
+ *     electric sign per lagrangian.h Term 2, amended 2026-07-18)
  *
  * The extraction preserves the parallel-for body BYTE-IDENTICAL. The golden
  * tick test (test_render_bridge_golden) hashes 100 ticks to the pinned
@@ -118,12 +119,16 @@ void phase_read_main_loop(RenderBridge& rb) {
             rb.delta_j_R_[i] = lap_R * cw2;
           }
 
-          // Coupling source: split equally between L and R substrates
+          // Coupling source: split equally between L and R substrates.
+          // Electric part is −g_c·∇s (Term 2 sign amendment 2026-07-18): the
+          // drive points OUTWARD at a +1 charge, sourcing div J toward the
+          // Gauss target instead of against it (pre-fix live equilibrium was
+          // f = −0.095 wrong-signed; see test_gauss_law_fidelity.cpp).
           if (do_coupling) {
             Vec3 grad_s = ::ftd::gradient_state_op(state, lat, ix, iy, iz) * (G_C * 0.5);
             Vec3 curl_sv = ::ftd::curl_state_velocity_op(state, rb.voxels_, lat, ix, iy, iz) * (G_C * 0.5);
-            rb.delta_j_L_[i] += grad_s + curl_sv;
-            rb.delta_j_R_[i] += grad_s + curl_sv;
+            rb.delta_j_L_[i] += curl_sv - grad_s;
+            rb.delta_j_R_[i] += curl_sv - grad_s;
           }
 
           // FTD-0271/0281: de Broglie clock. The legacy clock is a matter-site
@@ -186,7 +191,9 @@ void phase_read_main_loop(RenderBridge& rb) {
           }
 
           if (do_coupling) {
-            rb.delta_j_[i] += ::ftd::gradient_state_op(state, lat, ix, iy, iz) * G_C;
+            // Electric source −g_c·∇s (Term 2 sign amendment 2026-07-18; see
+            // the dual-substrate branch above and test_gauss_law_fidelity.cpp).
+            rb.delta_j_[i] -= ::ftd::gradient_state_op(state, lat, ix, iy, iz) * G_C;
             rb.delta_j_[i] += ::ftd::curl_state_velocity_op(state, rb.voxels_, lat, ix, iy, iz) * G_C;
           }
 

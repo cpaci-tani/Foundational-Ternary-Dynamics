@@ -305,7 +305,9 @@ SourceSnapshot capture_source(const ftd::RenderBridge& rb) {
     const int n = static_cast<int>(rb.lattice().total_sites());
     out.source.reserve(n);
     for (int i = 0; i < n; ++i) {
-        const ftd::Vec3 source = (rb.gradient_state(i) + rb.curl_state_velocity(i)) * ftd::G_C;
+        // Electric part −g_c·∇s (Term 2 sign amendment 2026-07-18; must
+        // mirror phase_read.cpp for the recoil accounting to balance).
+        const ftd::Vec3 source = (rb.curl_state_velocity(i) - rb.gradient_state(i)) * ftd::G_C;
         out.source.push_back(source);
         const long double vals[] = {
             static_cast<long double>(source.x),

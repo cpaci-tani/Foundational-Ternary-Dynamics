@@ -4,7 +4,7 @@
   "description": "Every physics toggle across all FTD scales. Single source of truth consumed by C++ (ScaleEngine::get_toggle/set_toggle), WASM bindings, and JS (config/toggles.js). Human coders: add new toggles here when extending physics.",
   "toggles": [
     { "name": "wave_propagation",  "scale": [0],    "category": "core",      "default": true,  "label": "Wave Propagation",    "description": "Laplacian wave equation in phase_read",             "phase": "phase_read",    "group": "dynamics" },
-    { "name": "coupling",          "scale": [0],    "category": "core",      "default": true,  "label": "Coupling",            "description": "g_c * grad(s) source term in phase_read",           "phase": "phase_read",    "group": "dynamics" },
+    { "name": "coupling",          "scale": [0],    "category": "core",      "default": true,  "label": "Coupling",            "description": "-g_c * grad(s) source term in phase_read (Term 2 sign, 2026-07-18)",           "phase": "phase_read",    "group": "dynamics" },
     { "name": "damping",           "scale": [0],    "category": "core",      "default": true,  "label": "Damping",             "description": "Rayleigh dissipation in phase_write",               "phase": "phase_write",   "group": "dynamics" },
     { "name": "genesis",           "scale": [0],    "category": "core",      "default": true,  "label": "Genesis",             "description": "Manifestation + evaporation in phase_write",        "phase": "phase_write",   "group": "matter" },
     { "name": "gauss_projection",  "scale": [0],    "category": "core",      "default": true,  "label": "Gauss Projection",    "description": "div(J) = s constraint enforcement",                "phase": "gauss_project", "group": "constraints" },
