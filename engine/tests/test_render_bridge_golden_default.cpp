@@ -60,7 +60,7 @@ static void inject_initial_state(RenderBridge& rb) {
 // which default/physics changed and why in the commit, (2) update the
 // constant to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_DEFAULT = 0x115a6350fcbe39a0ULL;  // L=17, shipping defaults, ext fold (captured 2026-07-02; 3x runs + OMP=1 identical)
+static constexpr std::uint64_t GOLDEN_HASH_DEFAULT = 0x54fe2f9ab5c0a255ULL;  // L=17, shipping defaults, ext fold (re-pinned 2026-07-18, Term-2 coupling sign amendment — see test_render_bridge_golden.cpp changelog; was 0x115a6350fcbe39a0)
 
 void test_golden_default_profile() {
     section("100-tick byte-hash regression (shipping-default toggles)");

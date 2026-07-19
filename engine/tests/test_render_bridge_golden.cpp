@@ -152,12 +152,25 @@ static void inject_initial_state(RenderBridge& rb) {
 //     default-pool runs and OMP_NUM_THREADS=1 (the accumulation loop is the
 //     existing sequential lexicographic pass in compute_energy_audit, no parallel
 //     reduction). See diagnostics_compute.cpp gauss_violation block.
+//   - 2026-07-18: RE-PINNED to 0x1343f31fc0163a84 — INTENTIONAL ENGINE-DYNAMICS
+//     change: electric state-flux coupling sign amendment (lagrangian.h Term 2,
+//     −g_c·s·(∇·J) → +g_c·s·(∇·J), phase_read source +g_c·∇s → −g_c·∇s). The
+//     previous sign was in internal conflict with the L_GAUSS constraint at
+//     charge sites (the Hamiltonian's coupling energy preferred s·divJ < 0
+//     while Gauss demands div J = ρ ∝ s); the live engine settled the
+//     compromise at f = −0.095 of the Gauss target, WRONG-SIGNED (inward flux
+//     at a +1 charge). Post-fix the live attractor is constraint-aligned,
+//     f = +0.114 (see test_gauss_law_fidelity.cpp; projector fixed point
+//     bit-identical, EXPLR_VOXEL_NEIGHBORHOOD_DYNAMICS.md §9.1 prediction
+//     upheld). The golden profile contains injected particles (s ≠ 0), so the
+//     trajectory legitimately changes. Old: 0xb604d81a3d79366e. Deterministic:
+//     identical across battery + standalone reruns.
 //
 // If this changes WITHOUT a stated config/physics rationale, ENGINE PHYSICS
 // CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
 // the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0xb604d81a3d79366eULL;  // L=17, deterministic (gauss_violation scope fix m1, 2026-06-17)
+static constexpr std::uint64_t GOLDEN_HASH = 0x1343f31fc0163a84ULL;  // L=17, deterministic (Term-2 coupling sign amendment, 2026-07-18)
 
 // ---------------------------------------------------------------------------
 // Test driver

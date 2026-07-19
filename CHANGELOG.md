@@ -1,5 +1,89 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine + spec: Term-2 electric coupling sign amendment — Gauss conflict repaired (2026-07-18)
+
+The action's electric state-flux coupling `−g_c·s·(∇·J)` was in internal sign
+conflict with the Gauss constraint term at charge sites: its Hamiltonian
+contribution is minimized by s-ANTI-correlated divergence while
+`L_gauss = −λ_G(∇·J − ρ)²` demands `div J = ρ ∝ s`. The live engine settled
+the compromise at f = −0.095 of the Gauss target — wrong-signed flux, INWARD
+at a +1 charge (found and mechanism-isolated by `test_gauss_law_fidelity.cpp`,
+2026-07-16: projector alone converges to f = +0.9996; dynamics off → +0.988;
+live defaults → −0.095). Amended to `+g_c·s·(∇·J)` (phase_read source
+`+g_c·∇s` → `−g_c·∇s`), so both interaction terms prefer the same constraint
+manifold.
+
+- **Measured post-fix:** live shipping defaults f = −0.0948 → **+0.1145**
+  (constraint-aligned; J_rad(r=1) = +3.82e-2 outward, was −3.16e-2 inward).
+  GF-A projector isolation BIT-IDENTICAL (+0.9992) — the operator is
+  untouched, so its unit-charge fixed-point self-energy stays at W_SC(L)
+  exactly: the frozen §9.1 W_SC-persistence prediction
+  (EXPLR_VOXEL_NEIGHBORHOOD_DYNAMICS.md, registered 2026-07-17 BEFORE the
+  fix) is **UPHELD**. Residual gap to full enforcement (wave_vel longitudinal
+  reservoir + drive amplitude 3·g_c = 0.256 vs κ = 1) recorded [OPEN];
+  completion would need velocity-sector projection — a substrate-wide scope
+  decision, deliberately not part of this amendment.
+- **Surfaces flipped in lockstep:** `lagrangian.h` (Term 2 + `coupling_force`
+  + EL comment), `phase_read.cpp` (mono + dual), `dag_engine.cpp`,
+  `kernels_stencil_single.cu` + `kernels_stencil_dual.cu` (GPU),
+  `lagrangian.cpp` EL residual, thomson/mass-gap campaign source accounting,
+  `test_variational_coulomb` sign expectations, `test_lagrangian` EL
+  composition; docs (SPEC_FTD_LAGRANGIAN §3.3 amendment note + formulas,
+  SPEC_ENGINE, CALLSTACKS, CHECKLIST_PHYSICS, toggles.json, term_toggles.h).
+  Magnetic term `−g_c·s·(v·J)` and its Lorentz force are untouched. The
+  |J|-magnitude texture of particle-sourced fields is invariant under the
+  flip (global sign of the sourced component), so |J|-readers (genesis,
+  evaporation, emergent forces) are unaffected in pure-particle
+  configurations.
+- **Goldens re-pinned INTENTIONALLY (merge-gate discipline; profiles carry
+  injected particles, so trajectories legitimately change):** L=17
+  0xb604d81a3d79366e → 0x1343f31fc0163a84; defaults 0x115a6350fcbe39a0 →
+  0x54fe2f9ab5c0a255 (+ CPU_DEFAULT_PIN in test_gpu_golden.cpp); L=9
+  0x774ae2ef158a50d6 → 0x3480b40d8b801c93; 4 boundary-mode pins (see
+  test_boundary_modes_golden.cpp changelog). Battery 7/7 green at new pins;
+  EL trio (lagrangian / action_stationarity / variational_coulomb) green.
+  `test_lagrangian` Section 3's stale pre-FTD-0388 assertion
+  (K_GENESIS = N_C·K_B) updated to the role-split form (N_C·K_MANIFEST) in
+  passing.
+
+## Engine: `flux-genesis-between-gates` scenario — FTD-0388 gate discriminator in the catalog (2026-07-17)
+
+Permanent catalog form of the 2026-07-17 browser discriminator that empirically
+verified the FTD-0388 cutover (cohorts of record: 200 voxels × 25 ticks at
+|J| = 1.5160 / 1.5250 / 1.5340 → measured 0 / 63 / 116 vs new-engine
+predictions 0 / 69±7 / 116±7; the retired 3·K_B = 1.533 gate predicts
+0 / 0 / ~10). Three frozen uniform-|J| slabs along x straddle the adopted gate
+(K_GENESIS = 3·W_SC = 1.5163860591519780) and the retired gate: the left slab
+can never manifest, the middle slab manifesting *at all* is the FTD-0388
+signature, and the right slab nucleates ≈ 2× faster. Field-freezing toggles
+(wave/coupling/Gauss/damping/movement off) make genesis the only active
+dynamics, so the band amplitudes are exact.
+
+- **Regression teeth:** a `static_assert(1.5160 < K_GENESIS && K_GENESIS < 1.5250)`
+  in the C++ branch breaks the build if a future adoption moves the gate out of
+  the bands (forcing a conscious re-band); the JS twin `console.warn`s on the
+  same condition.
+- **Substrate pin (hazard of the selective-damping-trap class):** the branch sets
+  `dual_substrate = false` BEFORE injecting. At scenario time the toggle sits at
+  the C++ construction default (true), so injection would split the bands into
+  the L/R buffers — and the dashboard's JS baseline then flips dual off, leaving
+  phase_write reading an empty mono field (silent lattice, found in browser
+  verification). Injection and genesis must agree on the substrate in both the
+  dashboard and CLI environments; the scenario now pins it.
+- **Full-lattice verification (compiled WASM, N=33, exactly 25 ticks):** band
+  populations 9,610 / 8,649 / 9,610 → measured 0 / 3,109 / 5,479 manifested vs
+  rate-law predictions 0 / ~3,001 / ~5,593 (total 8,588 vs 8,594 — 0.1σ; per-band
+  rates within ~4%; the below-gate band is 0 across 240k+ Bernoulli trials — the
+  hard gate is exact). UI-dropdown load verified end-to-end (bands seeded at exact
+  amplitudes, freeze toggles + dual pin applied, matter condensing in bands 1–2
+  only).
+- **Touch points (scenario-parity guard 9/9 green):** `engine/src/scenarios/flux.cpp`
+  (branch + static_assert), `engine/web/js/bridge/scenarios/flux-scenarios.js`
+  (mock twin), `scale0/scenario-registry.js` (UI entry, category 2 Genesis &
+  Emergence, `[SELECTION]`), `config/toggles.js` (ScenarioId typedef +
+  SCALE0_SCENARIO_OVERRIDES freeze block), `engine/config/scenarios/scale0.json`,
+  knowledge-base `data.js`, USER_GUIDE + SPEC_ENGINE counts; WASM triple rebuilt.
+
 ## Engine: residual CTest reds adjudicated — wz_mass, helium_scale1, cluster_interaction_dynamic, FTD-0285 guard (2026-07-18)
 
 Follow-up to the 16-failure triage: the four remaining non-monster reds,

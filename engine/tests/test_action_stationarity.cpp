@@ -71,8 +71,9 @@ int main() {
         std::cout << "    EL max residual: " << std::scientific << res.max_abs << "\n";
         // Note: Gauss projection + coupling source introduce O(h²) corrections
         // that are not part of the pure wave EL equation. With particles present,
-        // the coupling term g_c·∇(s) creates a persistent source that the field-only
-        // EL equation doesn't capture, giving ~1% residual relative to field terms.
+        // the coupling term −g_c·∇(s) (Term 2 sign amendment 2026-07-18) creates
+        // a persistent source that the field-only EL equation doesn't capture,
+        // giving ~1% residual relative to field terms.
         check("EL residual RMS < 0.01", res.rms < 0.01);
         check("EL residual max < 0.15", res.max_abs < 0.15);
     }

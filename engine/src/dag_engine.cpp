@@ -204,7 +204,9 @@ void DagEngine::recursive_read(int x, int y, int z, int current_size) {
             delta_j_[idx] = laplacian_flux(x, y, z) * (C_WAVE * C_WAVE);
         }
         if (toggles_.coupling) {
-            delta_j_[idx] += gradient_state(x, y, z) * G_C;
+            // Electric source −g_c·∇s (lagrangian.h Term 2 amendment
+            // 2026-07-18; mirrors phase_read.cpp).
+            delta_j_[idx] -= gradient_state(x, y, z) * G_C;
             delta_j_[idx] += curl_state_velocity(x, y, z) * G_C;
         }
         return;

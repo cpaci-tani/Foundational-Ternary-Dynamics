@@ -5,7 +5,12 @@
 //
 // Field sector:      L_field = ½|Δ_t J|² - ½c²Σ_μ w_μ|ΔJ_μ|²
 // Particle sector:   L_BI = -K_B √(1 - v²)
-// Interaction:       L_coupling = -g_c·s·(∇·J) - g_c·s·(v·J)
+// Interaction:       L_coupling = +g_c·s·(∇·J) - g_c·s·(v·J)
+//                    (electric sign AMENDED 2026-07-18 — the previous −g_c·s·(∇·J)
+//                     was in internal sign conflict with L_GAUSS at charge sites:
+//                     its EL source +g_c·∇s drove div J anti-correlated with s,
+//                     measured live equilibrium f = −0.095 against the Gauss
+//                     target +1. See test_gauss_law_fidelity.cpp + CHANGELOG.)
 // Constraint:        L_gauss = -λ_G·(∇·J - ρ)²
 // Dissipation:       R = (α/2)|wave_vel|²
 //
@@ -30,9 +35,16 @@ inline double born_infeld_term(const Voxel& v) {
     return v.born_infeld_core();
 }
 
-// Term 2: State-flux coupling (electric)  -g_c * s * div(J)
-// EL equation for J -> g_c * grad(s) source term (phase_read).
-// EL equation for s -> Coulomb force F = -alpha * s * grad(div J).
+// Term 2: State-flux coupling (electric)  +g_c * s * div(J)
+// EL equation for J -> -g_c * grad(s) source term (phase_read): at a +1 charge
+// the drive points OUTWARD, sourcing div J > 0 — cooperating with the Gauss
+// constraint term (div J = ρ ∝ s) instead of fighting it. The pre-2026-07-18
+// sign (−g_c·s·divJ, source +g_c·∇s) made the Hamiltonian's coupling energy
+// (−L) prefer s·divJ < 0 while L_GAUSS demanded s·divJ > 0 — two terms of the
+// same action in conflict at every charge site; the live engine settled the
+// compromise at f = −0.095 of the Gauss target (wrong sign). Measured in
+// test_gauss_law_fidelity.cpp; the flip aligns both terms on one manifold.
+// EL equation for s -> Coulomb force F = +alpha * s * grad(div J).
 inline double coupling_term(const Voxel& v, double divJ) {
     return -G_C * v.state * divJ;
 }
@@ -137,8 +149,9 @@ inline double hamiltonian_density(const Voxel& v, double divJ, double rho_charge
 // Variational Force Functions
 // ============================================================================
 
-// Coulomb force from coupling term EL equation:
-//   F = -alpha * s * grad(div J)
+// Coulomb force from coupling term EL equation (sign follows Term 2's
+// 2026-07-18 amendment):
+//   F = +alpha * s * grad(div J)
 inline Vec3 coupling_force(int8_t state, Vec3 grad_divJ) {
     return grad_divJ * (-ALPHA * state);
 }
@@ -187,7 +200,8 @@ struct LagrangianDiag {
 };
 
 // Euler-Lagrange residual: how well does the tick satisfy δS/δJ = 0?
-// After phase_read(), delta_j_[i] should equal c²∇²J + g_c∇(s) + g_c∇×(s·v).
+// After phase_read(), delta_j_[i] should equal c²∇²J − g_c∇(s) + g_c∇×(s·v)
+// (electric source sign per Term 2's 2026-07-18 amendment).
 // This struct measures the discrepancy (should be machine-epsilon ~1e-15).
 struct ELResidual {
     double rms = 0.0;       // RMS residual over all sites

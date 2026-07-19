@@ -36,7 +36,7 @@ static void inject_initial_state(RenderBridge& rb) {
 //   - 2026-07-02: initial capture (revision 0.7). Verified stable across 3
 //     consecutive runs + OMP_NUM_THREADS=1. Re-baseline policy: ADR-0012.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_L9 = 0x774ae2ef158a50d6ULL;  // captured 2026-07-02; 3x runs + OMP=1 identical
+static constexpr std::uint64_t GOLDEN_HASH_L9 = 0x3480b40d8b801c93ULL;  // re-pinned 2026-07-18, Term-2 coupling sign amendment — see test_render_bridge_golden.cpp changelog; was 0x774ae2ef158a50d6
 
 void test_golden_l9() {
     section("100-tick byte-hash regression (L=9, shipping defaults)");

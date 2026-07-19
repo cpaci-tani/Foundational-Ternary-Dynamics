@@ -367,6 +367,16 @@ endif()  # FTD_BUILD_EXPERIMENTAL (cognitive test)
 ftd_add_test(test_conservation_profile tests/test_conservation_profile.cpp
              CTEST_NAME conservation_profile TIMEOUT 120 LABELS unit conservation)
 
+# Gauss-law fidelity (2026-07-16): measures the realized fraction of
+# div(J) = s AT A MANIFESTED CHARGE SITE — the constraint target the
+# vacuum-only gauss_violation metric never watches — for the projection
+# operator in isolation and under live shipping-default dynamics, with a
+# per-mechanism toggle matrix (stencil mismatch / SOR iterations /
+# exact_dual_gauss / damping / wave erasure / matched-stencil CG).
+# Documentation-of-reality, sibling of test_conservation_profile.
+ftd_add_test(test_gauss_law_fidelity tests/test_gauss_law_fidelity.cpp
+             CTEST_NAME gauss_law_fidelity TIMEOUT 300 LABELS unit gauss conservation)
+
 # Substrate measurement-angle probe (2026-06-07): exploratory Stage-1 probe of
 # which substrate phase carries a native dynamical angle under bare wave+Gauss
 # (transverse spatial = frozen; symplectic {q,p} = winds at omega(k); L/R =
@@ -1064,6 +1074,10 @@ if(FTD_ENABLE_CUDA)
 
     add_executable(test_gpu_physics tests/test_gpu_physics.cpp)
     target_link_libraries(test_gpu_physics ftd_core ftd_cuda)
+
+    # Gauss-law fidelity on the FFT path (GPU sibling of test_gauss_law_fidelity)
+    add_executable(test_gauss_law_fidelity_gpu tests/test_gauss_law_fidelity_gpu.cpp)
+    target_link_libraries(test_gauss_law_fidelity_gpu ftd_core ftd_cuda)
 
     add_executable(test_gpu_experiments tests/test_gpu_experiments.cpp)
     target_link_libraries(test_gpu_experiments ftd_core ftd_cuda)
@@ -2427,11 +2441,14 @@ if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_physics COMMAND test_gpu_physics)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
     set_tests_properties(gpu_parity gpu_parity_complete gpu_eft_parity gpu_benchmark
-                         gpu_continuity_ledger gpu_physics PROPERTIES TIMEOUT 600)
+                         gpu_continuity_ledger gpu_physics gpu_gauss_law_fidelity
+                         PROPERTIES TIMEOUT 600)
+    set_property(TEST gpu_gauss_law_fidelity APPEND PROPERTY LABELS "gpu;gauss")
     set_tests_properties(gpu_continuity_ledger PROPERTIES
                          LABELS "gpu;constructor;ledger;observable;eft_quick")
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
     # gpu_parity_complete runs 22 CPU-vs-GPU domain checks, several under
+    add_test(NAME gpu_gauss_law_fidelity COMMAND test_gauss_law_fidelity_gpu)
     # enable_all() whose CPU side drives iterative SOR Poisson solves (Gauss +
     # Coulomb + latency) every tick — plus GPC-20's 1000-tick sweep. On the
     # canonical WSL2-gcc -O3 platform that CPU path is far slower than MSVC

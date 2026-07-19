@@ -136,9 +136,11 @@ __global__ void phase_read_dual_kernel(
         double gs_y = 0.5 * (static_cast<double>(state[yp]) - static_cast<double>(state[ym]));
         double gs_z = 0.5 * (static_cast<double>(state[zp]) - static_cast<double>(state[zm]));
 
+        // Electric part −g_c·∇s (Term 2 sign amendment 2026-07-18; mirrors
+        // the CPU dual branch in phase_read.cpp). Curl part unchanged below.
         double half_gc = 0.5 * G_C;
-        dLx += half_gc * gs_x;  dLy += half_gc * gs_y;  dLz += half_gc * gs_z;
-        dRx += half_gc * gs_x;  dRy += half_gc * gs_y;  dRz += half_gc * gs_z;
+        dLx -= half_gc * gs_x;  dLy -= half_gc * gs_y;  dLz -= half_gc * gs_z;
+        dRx -= half_gc * gs_x;  dRy -= half_gc * gs_y;  dRz -= half_gc * gs_z;
 
         // Split curl coupling 50/50
         auto sv = [&](int idx_j, int comp) -> double {

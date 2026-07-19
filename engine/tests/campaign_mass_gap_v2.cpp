@@ -187,7 +187,9 @@ double coupling_power(const ftd::RenderBridge& rb, double dt) {
     const auto& vox = rb.voxels();
     double p = 0.0;
     for (int idx : sites) {
-        const ftd::Vec3 gs = rb.gradient_state(idx) * ftd::G_C;
+        // Coupling source is −g_c·∇s (Term 2 sign amendment 2026-07-18);
+        // the injected power is P = v · source.
+        const ftd::Vec3 gs = rb.gradient_state(idx) * (-ftd::G_C);
         p += vox[idx].wave_vel.dot(gs);
     }
     return p * dt;

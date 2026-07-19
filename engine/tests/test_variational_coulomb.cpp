@@ -80,8 +80,9 @@ int main() {
         int idx = rb.lattice().index(cx, cy, cz);
         double divJ = rb.divergence_flux(idx);
 
-        // For +1 particle, flux diverges outward -> div J > 0
-        // Coupling term = -g_c * (+1) * div(J) should be negative
+        // For +1 particle the Gauss target is div J > 0 (outward flux).
+        // Coupling term = +g_c * (+1) * div(J) (Term 2 sign amendment
+        // 2026-07-18) rewards the constraint-aligned configuration.
         double coup = ftd::coupling_term(rb.voxels()[idx], divJ);
         std::cout << "    div(J) at +1 particle: " << divJ << "\n";
         std::cout << "    Coupling term: " << coup << "\n";
@@ -92,16 +93,17 @@ int main() {
     // Section 3: Variational Coulomb force function
     std::cout << "\n--- Section 3: Variational Force Function ---\n";
     {
-        // Test the coupling_force function directly
+        // Test the coupling_force function directly (sign per Term 2's
+        // 2026-07-18 amendment: F = +alpha * s * grad(div J))
         ftd::Vec3 grad_divJ(1.0, 0, 0);
 
-        // +1 particle: F = -alpha * (+1) * grad(div J)
+        // +1 particle: F = +alpha * (+1) * grad(div J)
         ftd::Vec3 f_pos = ftd::coupling_force(+1, grad_divJ);
-        check_close("F_x for +1 = -alpha", f_pos.x, -ftd::ALPHA, 1e-10);
+        check_close("F_x for +1 = +alpha", f_pos.x, ftd::ALPHA, 1e-10);
 
-        // -1 particle: F = -alpha * (-1) * grad(div J) = +alpha
+        // -1 particle: F = +alpha * (-1) * grad(div J) = -alpha
         ftd::Vec3 f_neg = ftd::coupling_force(-1, grad_divJ);
-        check_close("F_x for -1 = +alpha", f_neg.x, ftd::ALPHA, 1e-10);
+        check_close("F_x for -1 = -alpha", f_neg.x, -ftd::ALPHA, 1e-10);
 
         // Opposite forces for opposite charges
         check_close("Opposite forces", f_pos.x + f_neg.x, 0.0, 1e-10);
