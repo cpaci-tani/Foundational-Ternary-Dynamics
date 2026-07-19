@@ -43,26 +43,37 @@ static ScatteringResult run_scattering_sim(int L, int initial_y_offset, int tick
     rb.toggles.poisson_coulomb  = true;
     rb.toggles.movement         = true;
     rb.toggles.gravity          = false; // isolate EM
+    // Belt: at the slow approach speed below, particles remain interior for
+    // the whole run, but bounce (not delete, 420d933f) if drift carries one
+    // to a face.
+    rb.toggles.reflective_boundary = true;
 
     int mid = L / 2;
     int y1 = mid - initial_y_offset / 2;
     int y2 = mid + initial_y_offset / 2 + (initial_y_offset % 2);
 
-    // Highly charged clusters (state = +/- 8) to produce visible, discrete grid jumps in y-deflection
-    int8_t q1 = +8;
-    int8_t q2 = -8;
+    // Ternary-legal unit charges. The original design injected state = +/-8
+    // ("highly charged clusters") for an 64x Coulomb boost, but states are
+    // ternary by axiom and TernaryField::set_state NORMALIZES to {-1,0,+1}
+    // — the realized source was +/-1 and the flyby impulse at vx=0.1 was
+    // sub-cell (measured dy = 0 exactly). Instead of super-charges, slow
+    // the approach: the transverse impulse ~ 2*(alpha/4pi)/(b*v_rel) then
+    // integrates to several grid cells of visible deflection.
+    int8_t q1 = +1;
+    int8_t q2 = -1;
+    const double vx = 0.02;
 
-    // Positive charge starts at x=12, y=y1, moving right (vx = 0.1)
+    // Positive charge starts at x=12, y=y1, moving right
     int start_x1 = 12;
     rb.inject_particle(start_x1, y1, mid, q1, {0, 0, ftd::K_B * q1});
     int idx1 = rb.lattice().index(start_x1, y1, mid);
-    rb.voxels()[idx1].velocity = {0.1, 0.0, 0.0};
+    rb.voxels()[idx1].velocity = {vx, 0.0, 0.0};
 
-    // Negative charge starts at x=36, y=y2, moving left (vx = -0.1)
+    // Negative charge starts at x=36, y=y2, moving left
     int start_x2 = 36;
     rb.inject_particle(start_x2, y2, mid, q2, {0, 0, ftd::K_B * q2});
     int idx2 = rb.lattice().index(start_x2, y2, mid);
-    rb.voxels()[idx2].velocity = {-0.1, 0.0, 0.0};
+    rb.voxels()[idx2].velocity = {-vx, 0.0, 0.0};
 
     // Track coordinates at each tick
     std::vector<double> x1_trajectory = {double(start_x1)};
@@ -143,7 +154,9 @@ int main() {
     ftd::test::section("dynamic_soliton_scattering");
 
     constexpr int L = 48;
-    constexpr int TICKS = 200;
+    // At vx = 0.02 the pair closes 24 cells by tick ~600 and the post-flyby
+    // transverse drift needs ~1000 more ticks to register as grid jumps.
+    constexpr int TICKS = 1600;
 
     std::cout << "Starting Dynamic Soliton Scattering Experiment (L = " << L << ", Ticks = " << TICKS << ")\n";
 
