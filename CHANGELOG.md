@@ -1,5 +1,40 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine: residual CTest reds adjudicated — wz_mass, helium_scale1, cluster_interaction_dynamic, FTD-0285 guard (2026-07-18)
+
+Follow-up to the 16-failure triage: the four remaining non-monster reds,
+each root-caused and resolved test-side against physics of record.
+
+- **`wz_mass` WZ-1**: rewritten to the adjudicated (F,D) register semantics
+  (2026-07-17 dual-substrate ruling — matter never sources D). Injection-time
+  chirality signs (delta-split, chi(+1) > 0 / chi(-1) < 0) are asserted at
+  t=0 where they are valid; after evolution the particle sites are asserted
+  flux-live but chirality-dust (< 1e-10) — the register theorem's signature.
+  The pre-adjudication checks read sign-arbitrary ~1e-17 dust and failed on
+  it since the 2026-06-10 audit first recorded the symptom.
+- **`helium_scale1`**: same stale-G_N family as the Scale-1 batch (alpha_eff
+  was 5.5x the applied coupling; orbits launched unbound) — now G_PE, with
+  orbits exactly circular (r_avg error 0.0%). Boundness checks additionally
+  subtract the measured locked-nucleus self-energy: the Z=2 construction
+  (two locked +1 protons 0.1 apart) carries an inert +5.8e-4 mutual PE that
+  swamps the ~-3.5e-7 electron binding. Post-fix bindings land on Bohr Z^2
+  exactly (He+ = 4.0x H). 8/8.
+- **`cluster_interaction_dynamic`**: the "highly charged clusters"
+  (state = +/-8) premise was never ternary-legal — TernaryField::set_state
+  normalizes to {-1,0,+1}, so the realized source was +/-1 and the flyby
+  impulse at vx=0.1 was sub-cell (dy = 0 exactly). Redesigned ternary-legal:
+  unit charges at vx=0.02 integrate to visible deflection; measured
+  dy = +/-6 cells at b=4 vs +/-3 at b=8 — the 1/b impulse scaling exactly,
+  attractive and momentum-symmetric. 4/4.
+- **`alpha_no_alpha_probe`**: NOT a defect — the FTD-0285 pre-registered
+  probe reproduces its Run of Record digit-for-digit, and the verdict of
+  record (INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT, LEDGER [INVALIDATED
+  PROTOCOL]) is encoded as EXIT_FAILURE, leaving the suite permanently red
+  for agreeing with the record. The locked artifact (SHA unchanged since
+  lock cce615b0) is untouched; a CTest PASS_REGULAR_EXPRESSION now passes
+  iff the recorded verdict class reproduces and fails on any departure —
+  including a future flip to a positive verdict class.
+
 ## Engine: Windows CTest triage — 16 pre-existing failures root-caused and fixed (2026-07-17)
 
 Every failure predates FTD-0388 (probe-verified at `adbaf25c`); no engine
