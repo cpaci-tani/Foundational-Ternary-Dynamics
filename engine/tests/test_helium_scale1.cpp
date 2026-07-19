@@ -32,8 +32,13 @@ int main() {
     std::printf("  Helium at Scale 1: Multi-Electron Atoms\n");
     std::printf("============================================================\n\n");
 
-    double alpha_eff = ALPHA / (4.0 * PI) + G_N * K_B * K_B;
-    double a_0 = 1.0 / (K_B * alpha_eff);  // Hydrogen Bohr radius
+    // G_PE = G_DERIVED (FTD-0131 physical alpha_G, ~5e-46) — the gravity
+    // term is negligible, so alpha_eff matches the engine's actual coupling
+    // and the seeded orbits below are genuinely circular. (The pre-FTD-0131
+    // G_N=0.01 identification made alpha_eff 5.5x the applied coupling and
+    // every orbit here launched unbound.)
+    double alpha_eff = ALPHA / (4.0 * PI) + G_PE * K_B * K_B;
+    double a_0 = 1.0 / (K_B * alpha_eff);  // Hydrogen Bohr radius (~3370)
 
     // He⁺: Z=2 nucleus, 1 electron.
     // Effective coupling doubled: alpha_eff_He = 2 * alpha_eff (Z=2 nucleus)
@@ -50,6 +55,7 @@ int main() {
     // === He⁺: Z=2 nucleus (charge +2 = two locked +1 at same site), 1 electron ===
     std::printf("--- He⁺ (Z=2, 1 electron) ---\n");
     double E_HeP, r_avg_HeP, L_drift_HeP;
+    double E_nuc_HeP = 0.0, E_nuc_He = 0.0;
     bool survived_HeP;
     {
         ParticleEngine pe;
@@ -68,6 +74,13 @@ int main() {
         // so the Z=2 physics is preserved but the octree builds cleanly.
         pe.add_locked_particle(+1, {0, 0, 0});
         pe.add_locked_particle(+1, {0.1, 0, 0});
+
+        // Nucleus self-energy: the two locked protons at 0.1 separation
+        // carry a constant mutual PE of +alpha/(4pi*sqrt(0.01+soft^2))
+        // ~ +5.8e-4 — three orders above the electron binding (~-3.5e-7).
+        // They are locked (immobile), so this is an inert constant of the
+        // Z=2 construction; boundness is judged on E - E_nuc below.
+        E_nuc_HeP = pe.diagnostics().total_energy;
 
         // Electron at (a_He, 0, 0) with tangential velocity
         pe.add_particle(-1, {a_He, 0, 0}, {0, v_He, 0});
@@ -130,6 +143,7 @@ int main() {
         // Z=2 nucleus with 0.1-voxel offset (see He+ block above for rationale)
         pe.add_locked_particle(+1, {0, 0, 0});        // nucleus proton 1
         pe.add_locked_particle(+1, {0.1, 0, 0});      // nucleus proton 2
+        E_nuc_He = pe.diagnostics().total_energy;     // inert nucleus self-energy
         // Electron 1: orbit in xy plane
         pe.add_particle(-1, {a_He, 0, 0}, {0, v_He, 0}, K_B, 0.01, +1);
         // Electron 2: orbit in xz plane (orthogonal to avoid immediate collision)
@@ -174,20 +188,23 @@ int main() {
     }
 
     {
-        // He⁺ has Z=2: two protons contribute 2× the Coulomb coupling.
-        // With gravity, alpha_eff_He = 2*alpha_eff_EM + gravity_term.
-        // The Z² scaling is approximate due to gravity's mass (not charge) dependence.
-        // Just verify He⁺ is significantly more tightly bound than H.
-        std::printf("  HE-3: E_HeP=%.4e, E_H=%.4e, ratio=%.1f\n", E_HeP, E_H, E_HeP/E_H);
-        CHECK(std::abs(E_HeP) > std::abs(E_H) * 2.0,
+        // He⁺ has Z=2: two protons contribute 2× the Coulomb coupling, so
+        // the electron binding (E - E_nuc) is 4× hydrogen's (Bohr Z²).
+        // The inert nucleus self-energy is subtracted on the He⁺ side; the
+        // single-proton H reference has no such term.
+        double E_HeP_rel = E_HeP - E_nuc_HeP;
+        std::printf("  HE-3: E_HeP-E_nuc=%.4e, E_H=%.4e, ratio=%.1f\n",
+                    E_HeP_rel, E_H, E_HeP_rel / E_H);
+        CHECK(std::abs(E_HeP_rel) > std::abs(E_H) * 2.0,
               "HE-3: He⁺ more tightly bound than 2×H");
     }
 
     CHECK(survived_He, "HE-4: He (2 electrons) both survive");
 
     {
-        std::printf("  HE-5: E_He=%.4e (should be negative = bound)\n", E_He_no_ex);
-        CHECK(E_He_no_ex < 0, "HE-5: He binding energy negative (bound)");
+        double E_He_rel = E_He_no_ex - E_nuc_He;
+        std::printf("  HE-5: E_He-E_nuc=%.4e (should be negative = bound)\n", E_He_rel);
+        CHECK(E_He_rel < 0, "HE-5: He binding energy negative (bound)");
     }
 
     {
@@ -195,8 +212,10 @@ int main() {
         // With electrons in orthogonal orbital planes and opposite spins,
         // exchange overlap may be negligible.  Just verify both simulations
         // complete and produce comparable bound energies.
-        std::printf("  HE-6: E_no_ex=%.4e, E_ex=%.4e\n", E_He_no_ex, E_He_ex);
-        CHECK(E_He_ex < 0 && std::isfinite(E_He_ex),
+        double E_He_ex_rel = E_He_ex - E_nuc_He;
+        std::printf("  HE-6: E_no_ex-E_nuc=%.4e, E_ex-E_nuc=%.4e\n",
+                    E_He_no_ex - E_nuc_He, E_He_ex_rel);
+        CHECK(E_He_ex_rel < 0 && std::isfinite(E_He_ex_rel),
               "HE-6: He with exchange force remains bound");
     }
 
@@ -222,8 +241,12 @@ int main() {
     }
 
     // HE-8: He⁺ orbit stays bound (proxy for stability)
-    std::printf("  HE-8: E_HeP=%.4e (bound=%s)\n", E_HeP, (E_HeP < 0) ? "yes" : "no");
-    CHECK(E_HeP < 0, "HE-8: He⁺ orbit remains bound");
+    {
+        double E_HeP_rel = E_HeP - E_nuc_HeP;
+        std::printf("  HE-8: E_HeP-E_nuc=%.4e (bound=%s)\n",
+                    E_HeP_rel, (E_HeP_rel < 0) ? "yes" : "no");
+        CHECK(E_HeP_rel < 0, "HE-8: He⁺ orbit remains bound");
+    }
 
     std::printf("\n============================================================\n");
     std::printf("  Helium Scale 1: %d passed, %d failed\n", g_pass, g_fail);

@@ -2300,6 +2300,18 @@ add_test(NAME thomson_unlocked_recoil COMMAND campaign_thomson_unlocked_recoil)
 set_tests_properties(thomson_unlocked_recoil PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # FTD-0289 - baseline-subtracted Thomson flux-excess discriminator
 add_test(NAME thomson_flux_excess COMMAND campaign_thomson_flux_excess)
+# FTD-0285 run-of-record guard (2026-07-18). The probe's verdict of record is
+# INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT (LEDGER FTD-0285 [INVALIDATED PROTOCOL],
+# ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md quotes the failing run verbatim as
+# the Run of Record; lock tag preregister-alpha-no-alpha-engine-probe-v1,
+# artifact SHA unchanged since lock cce615b0 — the .cpp must NOT be edited).
+# The exe encodes that verdict class as EXIT_FAILURE, which left the suite
+# permanently red for reproducing the record. Pass iff the recorded verdict
+# class reproduces; ANY other verdict — including the positive classes, which
+# exit 0 — fails the test and flags a departure from the FTD-0285 record
+# (a v2 arc mints its own test per the LEDGER row's "next" note).
+set_tests_properties(alpha_no_alpha_probe PROPERTIES
+    PASS_REGULAR_EXPRESSION "verdict,INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT")
 set_tests_properties(thomson_flux_excess PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # FTD-0290 - residual-field radiation shell meter
 add_test(NAME thomson_radiation_shells COMMAND campaign_thomson_radiation_shells)
