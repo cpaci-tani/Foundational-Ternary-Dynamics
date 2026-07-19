@@ -89,11 +89,16 @@ static void configure_reflective_move(RenderBridge& rb) {
 // FROZEN BOUNDARY-MODE HASHES (captured 2026-07-02, revision 0.6; each
 // verified stable across 3 consecutive runs + OMP_NUM_THREADS=1).
 // To change intentionally: state the rationale and update the constant.
+//   - 2026-07-18: all four RE-PINNED — Term-2 electric coupling sign amendment
+//     (lagrangian.h; see test_render_bridge_golden.cpp changelog for the full
+//     rationale). Profiles contain injected particles, so trajectories
+//     legitimately change. Old values: 0xbe736c3006d4fed0 / 0x9778edf520396c54
+//     / 0x208c18ce2f75082c / 0x285566e618111ead.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0xbe736c3006d4fed0ULL;
-static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x9778edf520396c54ULL;
-static constexpr std::uint64_t GOLDEN_ABSORBING        = 0x208c18ce2f75082cULL;
-static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x285566e618111eadULL;
+static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x251df4627c88a705ULL;
+static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x6b13e15becc31a1aULL;
+static constexpr std::uint64_t GOLDEN_ABSORBING        = 0x2bf1ae7920cfc7c5ULL;
+static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x942950ab797ab662ULL;
 
 struct Mode {
     const char* name;

@@ -171,7 +171,7 @@ L_FTD = L_BI + L_coupling + L_velocity + L_Gauss + L_kinetic + L_gradient + R
 
 ### 9.  Term 2: State-Flux Coupling (Electric) [THEOREM]
 
-**L_coupling = -g_c · s · (∇·J)** — Manifested particles source flux divergence. EL equation for J yields g_c·∇(s) source in phase_read. EL equation for s yields Coulomb force F = -α·s·∇(∇·J).
+**L_coupling = +g_c · s · (∇·J)** (electric sign amended 2026-07-18 — the previous −g_c·s·(∇·J) fought the Gauss constraint at charge sites, measured live equilibrium f = −0.095; see test_gauss_law_fidelity.cpp) — Manifested particles source flux divergence toward the Gauss target. EL equation for J yields −g_c·∇(s) source in phase_read. EL equation for s yields Coulomb force F = +α·s·∇(∇·J).
 
 - **Files**: `include/ftd/lagrangian.h:36` (`coupling_term`), `src/render_bridge.cpp` (phase_read)
 - **Tests**: `test_flux_mediated`, `test_variational_coulomb`
