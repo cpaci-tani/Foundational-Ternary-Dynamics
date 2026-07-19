@@ -1395,6 +1395,13 @@ ftd_add_test(campaign_bcc_band_spectrum tests/campaign_bcc_band_spectrum.cpp
 ftd_add_test(campaign_graviton_tt_correlator tests/campaign_graviton_tt_correlator.cpp
              CTEST_NAME graviton_tt_correlator GPU_HEAVY TIMEOUT 1800
              LABELS native eft gravity)
+
+# Gate-2 gravitational-optical channel discriminator (PREREG_LIGHT_DEFLECTION_
+# CHANNEL_v1). CPU-forced, deterministic; emits CSV measurement data only —
+# the outcome verdict is applied against the prereg §5 by the analyst.
+ftd_add_test(campaign_light_deflection tests/campaign_light_deflection.cpp
+             CTEST_NAME light_deflection TIMEOUT 1800
+             LABELS native eft gravity)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
