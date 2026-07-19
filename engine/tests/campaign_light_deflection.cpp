@@ -67,7 +67,7 @@ namespace {
 constexpr int    kL          = 96;
 constexpr int    kSor        = 20;     // solver accuracy (mirrors graviton v2 §8)
 constexpr int    kMassR      = 3;      // locked neutral ball radius
-constexpr int    kEquil      = 60;     // static equilibration ticks
+constexpr int    kEquil      = 200;    // static equilibration ticks (v3: was 60)
 constexpr int    kStaticChk  = 10;     // staticity-verification ticks
 constexpr int    kTransit    = 110;    // packet measurement ticks
 constexpr double kSigma      = 5.0;    // packet envelope
@@ -206,8 +206,10 @@ double max_flux_delta(const ftd::RenderBridge& rb, const std::vector<ftd::Vec3>&
 }
 
 // One packet arm: build, equilibrate, baseline, inject, transit, emit rows.
-// Returns entry/exit fit slopes via SUMMARY row.
-void run_packet_arm(const char* arm, bool with_mass, int b, bool with_damping) {
+// Returns entry/exit fit slopes via SUMMARY row. v3: with_packet=false gives
+// the S-arm (mass only) — the pure baseline-contamination measurement.
+void run_packet_arm(const char* arm, bool with_mass, int b, bool with_damping,
+                    bool with_packet = true) {
     std::fprintf(stderr, "[%s] building L=%d bridge (mass=%d b=%d damping=%d)\n",
                  arm, kL, with_mass ? 1 : 0, b, with_damping ? 1 : 0);
     ftd::RenderBridge rb(kL);
@@ -243,7 +245,8 @@ void run_packet_arm(const char* arm, bool with_mass, int b, bool with_damping) {
         }
     }
 
-    seed_packet(rb, kPackX0, c, c);                 // v2: packet always on the mid-line
+    if (with_packet)
+        seed_packet(rb, kPackX0, c, c);             // v2: packet always on the mid-line
 
     std::vector<double> ft, fy, fz, fx;
     for (int t = 0; t <= kTransit; ++t) {
@@ -345,7 +348,7 @@ void run_particle_arm(const char* arm, int b) {
 
 int main(int argc, char** argv) {
     (void)argc; (void)argv;
-    std::printf("# campaign_light_deflection — PREREG_LIGHT_DEFLECTION_CHANNEL_v2 instrument\n");
+    std::printf("# campaign_light_deflection — PREREG_LIGHT_DEFLECTION_CHANNEL_v3 instrument\n");
     std::printf("# engine state: post Term-2 amendment + FTD-0388; K_GENESIS=%.10f\n",
                 ftd::K_GENESIS);
     std::printf("# columns ROW: arm,tick,xc,yc,zc,energy | PROW: arm,tick,x,y,z,vx,vy,vz\n");
@@ -354,6 +357,8 @@ int main(int argc, char** argv) {
     run_packet_arm("W-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/true);
     run_packet_arm("W-b14", /*with_mass=*/true,  /*b=*/14, /*with_damping=*/true);
     run_packet_arm("D-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/false);
+    run_packet_arm("S-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/true,
+                   /*with_packet=*/false);         // v3: pure contamination arm
     run_particle_arm("P-b20", 20);
 
     std::printf("# done — verdict is applied against PREREG §5 by the analyst, not here\n");
