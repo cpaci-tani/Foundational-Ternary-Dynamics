@@ -66,21 +66,33 @@ for arm in ("C0", "W-b10", "W-b14", "D-b10"):
     print(f"  {arm:7s} theta_y = {ty:+.6e}  theta_z(null) = {tz:+.6e}  "
           f"dy = {d.get('dy', float('nan')):+.6e}  vx_exit = {d.get('exit_vx', float('nan')):.4f}")
 
-print("\n=== FLOOR (prereg 5) ===")
+print("\n=== S-ARM (v3 contamination) + FLOOR ===")
 t_c0 = abs(theta("C0", "vy") or 0.0)
 tz_w = max(abs(theta(a, "vz") or 0.0) for a in ("W-b10", "W-b14"))
-floor = max(3 * t_c0, 3 * tz_w)
+t_s = abs(theta("S-b10", "vy") or 0.0) if "S-b10" in summaries else 0.0
+floor = max(3 * t_c0, 3 * tz_w, 2 * t_s)
+print(f"  theta_S (mass-only) = {theta('S-b10', 'vy') if 'S-b10' in summaries else float('nan'):+.6e}")
 print(f"  3x|theta_C0|   = {3 * t_c0:.6e}")
 print(f"  3x|theta_z(W)| = {3 * tz_w:.6e}")
+print(f"  2x|theta_S|    = {2 * t_s:.6e}")
 print(f"  FLOOR (angle)  = {floor:.6e}")
 
-print("\n=== PARTICLE ARM (V2) ===")
-p = summaries.get("P-b10", {})
-print(f"  theta_p = {p.get('theta_p', float('nan')):+.6e}  "
+print("\n=== THETA_DIFF (v2/v3 primary observable) ===")
+t_c0_signed = theta("C0", "vy") or 0.0
+for a in ("W-b10", "W-b14", "D-b10"):
+    tw = theta(a, "vy")
+    if tw is not None:
+        print(f"  theta_diff({a}) = {tw - t_c0_signed:+.6e}")
+
+print("\n=== PARTICLE ARM (V2 gate) ===")
+parm = next((a for a in summaries if a.startswith("P-")), None)
+p = summaries.get(parm, {}) if parm else {}
+print(f"  arm = {parm}  theta_p = {p.get('theta_p', float('nan')):+.6e}  "
       f"vy {p.get('vy_in', float('nan')):+.4e} -> {p.get('vy_out', float('nan')):+.4e}  "
-      f"survived = {gates.get('P-b10', {}).get('particle_survived', 0):.0f}")
+      f"vx_out = {p.get('vx_out', float('nan')):+.4f}  "
+      f"survived = {gates.get(parm, {}).get('particle_survived', 0):.0f}")
 if floor > 0 and "theta_p" in p:
-    print(f"  |theta_p| / FLOOR = {abs(p['theta_p']) / floor:.2f}  (V2 needs > 10)")
+    print(f"  |theta_p| / FLOOR = {abs(p['theta_p']) / floor:.2f}  (V2 needs > 10 AND vx_out > 0.25)")
 
 print("\n=== theta_gamma0 (frozen 4; fit L(x) ~ A/sqrt((x-xc)^2+b^2)) ===")
 for arm, b in (("W-b10", 10.0), ("W-b14", 14.0)):
