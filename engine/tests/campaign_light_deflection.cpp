@@ -29,9 +29,20 @@
  * a structural null. The measurement exists because code-derived
  * expectations are not measurements.
  *
+ * v2 (PREREG_LIGHT_DEFLECTION_CHANNEL_v2, same day): v1 adjudicated
+ * Indeterminate on instrument validity (boundary-wrap centroid artifact from
+ * the off-center packet; particle captured by the near-horizon well at b=10).
+ * v2 sharpening per the v2 lock: (1) the packet ALWAYS travels the lattice
+ * mid-line (y=z=L/2) and the MASS is offset to (L/2, L/2 - b, L/2) — every
+ * arm shares identical, symmetric boundary geometry; (2) the centroid weight
+ * is bounded to |y-48|<=15, |z-48|<=15 (plus the moving x-window) so the
+ * wrapping dispersion tail never enters; (3) the primary observable is the
+ * differential theta_diff = theta_w(W-b) - theta_w(C0); (4) the particle
+ * validity arm runs at b=20 where transit is feasible.
+ *
  * OUTPUT: CSV to stdout (per-tick centroid rows + SUMMARY rows + LATENCY
  * profile rows + GATE rows). stderr carries progress. NO outcome verdict is
- * computed here; the verdict is applied afterward against prereg §5.
+ * computed here; the verdict is applied afterward against prereg §5 (v2 §2).
  *
  * Deterministic: no RNG beyond the engine's own seeded per-voxel streams;
  * CPU-forced; exactly reproducible.
@@ -106,13 +117,16 @@ void configure_toggles(ftd::RenderBridge& rb, bool with_damping) {
 }
 
 // Charge-neutral locked massive ball (prereg §2): alternating ±1 by parity.
-int seed_mass(ftd::RenderBridge& rb) {
+// v2: ball center is offset in y by -b (the packet keeps the symmetric
+// mid-line; the impact parameter lives on the mass).
+int seed_mass(ftd::RenderBridge& rb, int y_off) {
     const int c = kL / 2;
+    const int cy = c + y_off;
     int nplus = 0, nminus = 0;
     for (int z = c - kMassR; z <= c + kMassR; ++z)
-    for (int y = c - kMassR; y <= c + kMassR; ++y)
+    for (int y = cy - kMassR; y <= cy + kMassR; ++y)
     for (int x = c - kMassR; x <= c + kMassR; ++x) {
-        const int dx = x - c, dy = y - c, dz = z - c;
+        const int dx = x - c, dy = y - cy, dz = z - c;
         if (dx*dx + dy*dy + dz*dz > kMassR * kMassR) continue;
         const int s = ((x + y + z) & 1) ? +1 : -1;
         rb.inject_particle(x, y, z, static_cast<int8_t>(s), ftd::Vec3(0, 0, 0));
@@ -156,10 +170,12 @@ Centroid packet_centroid(const ftd::RenderBridge& rb,
     const auto& vox = rb.voxels();
     const int lo = static_cast<int>(std::floor(x_center)) - kWinHalf;
     const int hi = static_cast<int>(std::ceil(x_center)) + kWinHalf;
+    const int c  = kL / 2;
+    constexpr int kTWin = 15;                        // v2: bounded transverse window
     for (int x = lo; x <= hi; ++x) {
         if (x < 0 || x >= kL) continue;              // window stays interior by design
-        for (int y = 0; y < kL; ++y)
-        for (int z = 0; z < kL; ++z) {
+        for (int y = c - kTWin; y <= c + kTWin; ++y)
+        for (int z = c - kTWin; z <= c + kTWin; ++z) {
             const int i = (x * kL + y) * kL + z;     // lattice().index(x,y,z) layout
             const ftd::Vec3 d = vox[i].flux - base[i];
             const double w = d.mag2();
@@ -198,7 +214,8 @@ void run_packet_arm(const char* arm, bool with_mass, int b, bool with_damping) {
     rb.force_cpu();
     rb.set_sor_iterations(kSor);
     configure_toggles(rb, with_damping);
-    if (with_mass) seed_mass(rb);
+    const int c = kL / 2;
+    if (with_mass) seed_mass(rb, -b);               // v2: mass offset; packet on mid-line
 
     rb.run(kEquil);
     auto base = snapshot_flux(rb);
@@ -207,26 +224,26 @@ void run_packet_arm(const char* arm, bool with_mass, int b, bool with_damping) {
     base = snapshot_flux(rb);                       // baseline of record: post-check field
     std::printf("GATE,%s,static_drift,%.6e\n", arm, drift);
 
-    // V1: the well exists (only meaningful with mass)
+    // V1: the well exists (only meaningful with mass; scan around the ball)
     if (with_mass) {
         double lat_max = 0.0;
-        const int c = kL / 2;
+        const int cy = c - b;
         for (int z = c - 6; z <= c + 6; ++z)
-        for (int y = c - 6; y <= c + 6; ++y)
+        for (int y = cy - 6; y <= cy + 6; ++y)
         for (int x = c - 6; x <= c + 6; ++x) {
             const double l = rb.voxels()[(x * kL + y) * kL + z].latency;
             if (l > lat_max) lat_max = l;
         }
         std::printf("GATE,%s,latency_max,%.6e\n", arm, lat_max);
-        // Latency profile along the ray (for the frozen θ_γ0 formula, prereg §4)
+        // Latency profile along the mid-line ray (transverse distance b to the
+        // mass center — feeds the frozen θ_γ0 formula, prereg §4)
         for (int x = 0; x < kL; ++x) {
-            const double l = rb.voxels()[(x * kL + (c + b)) * kL + c].latency;
+            const double l = rb.voxels()[(x * kL + c) * kL + c].latency;
             std::printf("LATENCY,%s,%d,%.9e\n", arm, x, l);
         }
     }
 
-    const int c = kL / 2;
-    seed_packet(rb, kPackX0, c + b, c);
+    seed_packet(rb, kPackX0, c, c);                 // v2: packet always on the mid-line
 
     std::vector<double> ft, fy, fz, fx;
     for (int t = 0; t <= kTransit; ++t) {
@@ -266,18 +283,19 @@ void run_packet_arm(const char* arm, bool with_mass, int b, bool with_damping) {
                 (ez.intercept + ez.slope * ((kEntryLo + kEntryHi) / 2.0)));
 }
 
-// Particle arm (P-b10): dressed test particle through the well.
+// Particle arm: dressed test particle along the mid-line past the offset well.
+// v2: b = 20 (transit-feasible; the b = 10 well captured the v1 particle).
 void run_particle_arm(const char* arm, int b) {
     std::fprintf(stderr, "[%s] particle arm (b=%d)\n", arm, b);
     ftd::RenderBridge rb(kL);
     rb.force_cpu();
     rb.set_sor_iterations(kSor);
     configure_toggles(rb, /*with_damping=*/true);
-    seed_mass(rb);
+    seed_mass(rb, -b);
     rb.run(kEquil);
 
     const int c = kL / 2;
-    const int px = kPartX0, py = c + b, pz = c;
+    const int px = kPartX0, py = c, pz = c;
     rb.inject_particle(px, py, pz, +1, ftd::Vec3(kPartVx, 0, 0));
     // Survival dressing (prereg §2): z-flux 1.45 at site, 0.55 at face nbrs.
     rb.inject_flux_add(px, py, pz, ftd::Vec3(0, 0, kPartDressSite));
@@ -327,7 +345,7 @@ void run_particle_arm(const char* arm, int b) {
 
 int main(int argc, char** argv) {
     (void)argc; (void)argv;
-    std::printf("# campaign_light_deflection — PREREG_LIGHT_DEFLECTION_CHANNEL_v1 instrument\n");
+    std::printf("# campaign_light_deflection — PREREG_LIGHT_DEFLECTION_CHANNEL_v2 instrument\n");
     std::printf("# engine state: post Term-2 amendment + FTD-0388; K_GENESIS=%.10f\n",
                 ftd::K_GENESIS);
     std::printf("# columns ROW: arm,tick,xc,yc,zc,energy | PROW: arm,tick,x,y,z,vx,vy,vz\n");
@@ -336,7 +354,7 @@ int main(int argc, char** argv) {
     run_packet_arm("W-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/true);
     run_packet_arm("W-b14", /*with_mass=*/true,  /*b=*/14, /*with_damping=*/true);
     run_packet_arm("D-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/false);
-    run_particle_arm("P-b10", 10);
+    run_particle_arm("P-b20", 20);
 
     std::printf("# done — verdict is applied against PREREG §5 by the analyst, not here\n");
     return 0;
