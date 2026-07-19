@@ -359,7 +359,9 @@ int main(int argc, char** argv) {
     run_packet_arm("D-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/false);
     run_packet_arm("S-b10", /*with_mass=*/true,  /*b=*/10, /*with_damping=*/true,
                    /*with_packet=*/false);         // v3: pure contamination arm
-    run_particle_arm("P-b20", 20);
+    run_packet_arm("W-b18", /*with_mass=*/true,  /*b=*/18, /*with_damping=*/true);
+                                                   // v4: fresh verdict-bearing b
+    run_particle_arm("P-b26", 26);                 // v4: V2-bearing arm (transit OR capture)
 
     std::printf("# done — verdict is applied against PREREG §5 by the analyst, not here\n");
     return 0;
