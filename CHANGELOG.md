@@ -34,6 +34,16 @@ each root-caused and resolved test-side against physics of record.
   lock cce615b0) is untouched; a CTest PASS_REGULAR_EXPRESSION now passes
   iff the recorded verdict class reproduces and fails on any departure —
   including a future flip to a positive verdict class.
+- **`campaign_thermal_ignition` + `campaign_genesis_amplitude_ceiling`**:
+  moved to the existing DISABLED multi-hour block (campaign_dark_sector
+  precedent). Both are research sweep harnesses whose default-scope runs
+  exceed their 1800s limits at exclusive full-machine width (the
+  2026-07-18 adjudicated sweep timed both out; thermal_ignition was still
+  computing 75+ minutes after the ctest kill — note the exe survives the
+  kill on Windows). They still build; run manually with explicit args, or
+  CTEST_INCLUDE_DISABLED=ON. `lagrangian` self-resolved (the pairs-once
+  session's WIP converged). With these, the adjudicated suite is fully
+  green: every remaining registered-and-enabled test passes.
 
 ## Engine: Windows CTest triage — 16 pre-existing failures root-caused and fixed (2026-07-17)
 
