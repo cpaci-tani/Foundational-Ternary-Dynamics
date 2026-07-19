@@ -22,6 +22,7 @@
  * 'flux-dual-substrate' |
  * 'flux-cascade' |
  * 'flux-random-genesis' |
+ * 'flux-genesis-between-gates' |
  * 'flux-pair-production' |
  * 'flux-annihilation' |
  * 'flux-vacuum-foam' |
@@ -233,6 +234,28 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     ],
     'flux-zero-point': [
         // Quiescent ground-state floor: NO manifestation (genesis off), no
+    'flux-genesis-between-gates': [
+        // FTD-0388 gate discriminator: freeze the field so the three band
+        // amplitudes (1.5160 / 1.5250 / 1.5340) stay exact — genesis is the
+        // ONLY active dynamics. The middle band manifesting at all is the
+        // FTD-0388 signature (the retired 3·K_B = 1.533 gate kept it silent).
+        // Mirrors the toggle block in the C++ twin (engine/src/scenarios/flux.cpp).
+        ['genesis', true, 't-genesis'],
+        ['wave_propagation', false, 't-wave'],
+        ['coupling', false, 't-coupling'],
+        ['gauss_projection', false, 't-gauss'],
+        // selective_damping BEFORE damping: dependents off first, so the
+        // per-setToggle C++ validate never sees the transient invalid combo
+        // "selective_damping requires damping".
+        ['selective_damping', false, 't-selective'],
+        ['damping', false, 't-damping'],
+        ['movement', false, 't-movement'],
+        ['weak_transmutation', false, 't-weak'],
+        // Explicit (baseline already false): the C++ branch pins dual_substrate
+        // off BEFORE injecting so the bands live on the mono substrate — keep
+        // the checkbox in sync if a prior scenario turned dual on.
+        ['dual_substrate', false, 't-dual'],
+    ],
         // dissipative damping, and no Gauss projection (its non-variational
         // operator is the conservation leak) — so the bare wave update keeps the
         // seeded fluctuation energy. Paired with reflective boundaries
