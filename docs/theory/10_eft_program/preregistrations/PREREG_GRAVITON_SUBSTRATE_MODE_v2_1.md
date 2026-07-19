@@ -43,4 +43,10 @@ Parent §7 applies verbatim. Additionally: this re-run may not be cited as a *ne
 
 ---
 
-*Registered 2026-07-18, before any amended-engine execution of the instrument. Author: session 8294fddb (engine amendment session), following LOCK-STD v1.*
+## OUTCOME (2026-07-18, adjudicated against §4 after the run)
+
+**Outcome B reproduced — bit-equivalent at print precision.** L∈{32, 64}, WSL2 RTX 5090, cuFFT path, canonical parameters (equil 200, window 512, seed `0x4A21B7`): all 36 rows per L match the parent report's values with worst relative difference ≤ 4.8×10⁻⁶ (CSV print-precision rounding; the parent emitted 6 significant digits, this run 7). Spin-1 control recovered identically (E1 ✓); flux-quadrupole still rides the spin-1 frequency (non-separability unchanged); stress channel unchanged. Data: `engine/build_wsl/tt_rerun_v21/` (`tt_correlator_L{32,64}_v21.csv`). Escalation to L=128 not triggered (§2: verdict unchanged at both L).
+
+**Why the amendment cannot move this measurement — and what that closes.** The locked broadband perturbation (per-mode amplitude 0.02) never crosses K_GENESIS at any tick, so no matter manifests: s ≡ 0 for the entire window, and the electric coupling term — under EITHER sign — contributes exactly zero to the measured dynamics. The "Outcome B was measured on an internally inconsistent action" objection is closed in the strongest form: the measured dynamics contained no coupling-term content at all. FTD-0388's kinetics change is equally inert here (nothing manifests, nothing evaporates).
+
+**Honest annex observation (books no verdict, changes no tag):** the same fact means the parent's "interacting substrate" was interacting-in-*configuration* but linear-in-*realization* at the locked amplitudes — the §5 TT probes measured rank-2 bilinears of free spin-0/spin-1 modes, which is exactly what the two-particle-continuum finding says. A TT probe of a genuinely matter-loaded substrate (super-threshold sources present during the window) would be a *new* v3 design with its own lock, not a correction of this verdict; FTD-0193's Outcome B stands at its stated scope ("the probed regime"), now amendment-robust.

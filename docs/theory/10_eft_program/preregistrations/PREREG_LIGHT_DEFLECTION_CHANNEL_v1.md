@@ -71,3 +71,14 @@ Inject a transverse traveling flux packet ("light": the canonical photon-pulse c
 ---
 
 *Registered 2026-07-18, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion lock: `preregister-graviton-substrate-mode-v2-1` (amended-engine TT re-run), registered the same day.*
+
+---
+
+## OUTCOME (2026-07-18, adjudicated against §5 after the run)
+
+**Indeterminate — instrument-validity failure, per §5's own clause ("floor too large relative to θ_γ0").** Data: `engine/build/deflection_v1/deflection_v1.csv`. Two defects identified:
+
+1. **Boundary-wrap centroid artifact (dominates the floor).** The packet sits at y = 58/62 in the periodic L=96 box; its dispersing tail wraps the nearer y-boundary and drags the |J|²-weighted centroid negative. The mass-free control drifts θ_C0 = −0.202 — the same scale as the W-arm readings (−0.194, −0.289; the b=14 arm, closer to the boundary, drifts more, confirming the mechanism). Floor = 3·|θ_C0| ≈ 0.61 ≫ 0.05·θ_γ0 — Outcome N's floor-smallness condition fails by construction.
+2. **Particle reference arm captured, not transited.** latency_max = 0.540 (a near-horizon well: local v_max = C·√(1−L²)); the v = 0.5 particle at b = 10 stalled (exit v_x = −0.001) and fell in. V2 unevaluable as designed — though the capture itself demonstrates the well acts strongly on matter.
+
+V1/V3 passed (well exists; packet integrity). No outcome about the optical channel is licensed from this run. **Disposition: re-registered as v2 (`PREREG_LIGHT_DEFLECTION_CHANNEL_v2.md`, tag `preregister-light-deflection-channel-v2`) with the sharpened instrument** — symmetric geometry (packet at lattice center, mass offset), bounded transverse centroid window, differential W−C0 primary observable, particle gate at transit-feasible b.
