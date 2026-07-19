@@ -170,12 +170,12 @@ Centroid packet_centroid(const ftd::RenderBridge& rb,
     const auto& vox = rb.voxels();
     const int lo = static_cast<int>(std::floor(x_center)) - kWinHalf;
     const int hi = static_cast<int>(std::ceil(x_center)) + kWinHalf;
-    const int c  = kL / 2;
+    const int mid = kL / 2;
     constexpr int kTWin = 15;                        // v2: bounded transverse window
     for (int x = lo; x <= hi; ++x) {
         if (x < 0 || x >= kL) continue;              // window stays interior by design
-        for (int y = c - kTWin; y <= c + kTWin; ++y)
-        for (int z = c - kTWin; z <= c + kTWin; ++z) {
+        for (int y = mid - kTWin; y <= mid + kTWin; ++y)
+        for (int z = mid - kTWin; z <= mid + kTWin; ++z) {
             const int i = (x * kL + y) * kL + z;     // lattice().index(x,y,z) layout
             const ftd::Vec3 d = vox[i].flux - base[i];
             const double w = d.mag2();
