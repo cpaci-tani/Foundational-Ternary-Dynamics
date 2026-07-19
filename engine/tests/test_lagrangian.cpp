@@ -163,9 +163,11 @@ int main() {
         // (value is imported from physical constants, but the formula is derived)
         check("K_B > 0 (mass scale)", ftd::K_B > 0);
 
-        // K_GENESIS = N_C * K_B [DERIVED: color channel count]
-        check_close("K_GENESIS = N_C * K_B",
-                     ftd::K_GENESIS, ftd::N_C * ftd::K_B, 1e-15);
+        // K_GENESIS = N_C * K_MANIFEST [color channel count; kinetics scale
+        // K_MANIFEST := W_SC per FTD-0388 (adopted 2026-07-17) — the FTD-0130
+        // role split detached the kinetics scale from the K_B mass anchor]
+        check_close("K_GENESIS = N_C * K_MANIFEST",
+                     ftd::K_GENESIS, ftd::N_C * ftd::K_MANIFEST, 1e-15);
 
         // C_WAVE = 1/sqrt(3) [DERIVED: CFL limit for 3D cubic lattice]
         check("C_WAVE^2 <= 1/3 (CFL bound)",
@@ -190,7 +192,7 @@ int main() {
         std::cout << "    G_C:           [DERIVED] sqrt(ALPHA)\n";
         std::cout << "    G_N:           [DERIVED] 1/(B_3+N_C)^2\n";
         std::cout << "    K_B:           [DERIVED] m_e = m_P*sqrt(2pi)*(16/3)*alpha^11\n";
-        std::cout << "    K_GENESIS:     [DERIVED] N_C * K_B\n";
+        std::cout << "    K_GENESIS:     [SELECTION-ADOPTED] N_C * K_MANIFEST (= 3*W_SC, FTD-0388)\n";
         std::cout << "    DRAG_PER_AXIS: [DERIVED] 1/N_BASE\n";
         std::cout << "    G_STAR:        [DERIVED] varpi/sqrt(PF)\n";
         std::cout << "    DAMPING:       [IMPOSED] gamma = alpha (ASSUMP.6)\n";
@@ -202,11 +204,12 @@ int main() {
     // ================================================================
     std::cout << "\n--- Section 4: Euler-Lagrange Correspondence ---\n";
     {
-        // The E-L equation delta_L/delta_J = 0 gives:
-        //   d^2J/dt^2 = c^2 * nabla^2(J) + g_c * grad(s)
+        // The E-L equation delta_L/delta_J = 0 gives (Term 2 sign amendment
+        // 2026-07-18):
+        //   d^2J/dt^2 = c^2 * nabla^2(J) - g_c * grad(s)
         //
         // This is EXACTLY what phase_read computes:
-        //   delta_j_[i] = laplacian_flux(i) * C_WAVE^2 + gradient_state(i) * G_C
+        //   delta_j_[i] = laplacian_flux(i) * C_WAVE^2 - gradient_state(i) * G_C
         //
         // Verification: run one tick, compare delta_j to manual computation.
 
@@ -222,16 +225,16 @@ int main() {
 
         // Now manually compute E-L prediction at several test sites
         // and compare to what phase_read would produce.
-        // We compute: c^2 * lap(J) + g_c * grad(s)
+        // We compute: c^2 * lap(J) - g_c * grad(s)
 
         // Test at a vacuum site far from particle
         int test_vac = rb.lattice().index(2, 2, 2);
         ftd::Vec3 lap_vac = rb.laplacian_flux(test_vac);
         ftd::Vec3 grad_s_vac = rb.gradient_state(test_vac);
         ftd::Vec3 el_pred_vac;
-        el_pred_vac.x = lap_vac.x * (ftd::C_WAVE * ftd::C_WAVE) + grad_s_vac.x * ftd::G_C;
-        el_pred_vac.y = lap_vac.y * (ftd::C_WAVE * ftd::C_WAVE) + grad_s_vac.y * ftd::G_C;
-        el_pred_vac.z = lap_vac.z * (ftd::C_WAVE * ftd::C_WAVE) + grad_s_vac.z * ftd::G_C;
+        el_pred_vac.x = lap_vac.x * (ftd::C_WAVE * ftd::C_WAVE) - grad_s_vac.x * ftd::G_C;
+        el_pred_vac.y = lap_vac.y * (ftd::C_WAVE * ftd::C_WAVE) - grad_s_vac.y * ftd::G_C;
+        el_pred_vac.z = lap_vac.z * (ftd::C_WAVE * ftd::C_WAVE) - grad_s_vac.z * ftd::G_C;
 
         // At vacuum site, grad(s) should be zero (no neighbors are manifested)
         double gs_mag = grad_s_vac.mag();
@@ -246,9 +249,9 @@ int main() {
         ftd::Vec3 lap_nbr = rb.laplacian_flux(test_nbr);
         ftd::Vec3 grad_s_nbr = rb.gradient_state(test_nbr);
         ftd::Vec3 el_pred_nbr;
-        el_pred_nbr.x = lap_nbr.x * (ftd::C_WAVE * ftd::C_WAVE) + grad_s_nbr.x * ftd::G_C;
-        el_pred_nbr.y = lap_nbr.y * (ftd::C_WAVE * ftd::C_WAVE) + grad_s_nbr.y * ftd::G_C;
-        el_pred_nbr.z = lap_nbr.z * (ftd::C_WAVE * ftd::C_WAVE) + grad_s_nbr.z * ftd::G_C;
+        el_pred_nbr.x = lap_nbr.x * (ftd::C_WAVE * ftd::C_WAVE) - grad_s_nbr.x * ftd::G_C;
+        el_pred_nbr.y = lap_nbr.y * (ftd::C_WAVE * ftd::C_WAVE) - grad_s_nbr.y * ftd::G_C;
+        el_pred_nbr.z = lap_nbr.z * (ftd::C_WAVE * ftd::C_WAVE) - grad_s_nbr.z * ftd::G_C;
 
         // At particle neighbor, grad(s) should be nonzero
         double gs_nbr_mag = grad_s_nbr.mag();

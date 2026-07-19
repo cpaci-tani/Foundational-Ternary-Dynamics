@@ -79,7 +79,7 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 **Core rules (default Scale 0 substrate):**
 
 1. **Flux wave equation**: dJ/dt = c^2 nabla^2 J (only possible local linear dynamics for a vector field)
-2. **State-flux coupling**: source term g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0)
+2. **State-flux coupling**: source term -g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0; electric sign per lagrangian.h Term 2, amended 2026-07-18 — the pre-amendment +g_c·grad(s) fought the Gauss constraint at charge sites, measured live equilibrium f = −0.095)
 3. **Gauss projection**: enforce div(J) = s each tick (charge conservation -- logical necessity)
 4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE, where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt)
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
@@ -179,7 +179,7 @@ engine/
     atom_engine.cpp           # AtomEngine: ionic + vdW + covalent forces (762L)
     cosmic_engine.cpp         # [v2.12] CosmicEngine: Barnes-Hut + SPH + Friedmann (900L)
     scale_bridge.cpp          # Scale 0<->1<->2<->5 coarsen/refine round-trip (283L)
-    scenarios.cpp             # 83 scenarios from JS ported to C++ (flux-/light-/quantum-/s0-seed-/s0-field-)
+    scenarios.cpp             # 84 scenarios (83 ported from JS + flux-genesis-between-gates) (flux-/light-/quantum-/s0-seed-/s0-field-)
     constructors.cpp          # Shared scenario/state constructor helpers
     dag_engine.cpp            # DagEngine [EXPERIMENTAL] -- see banner in header
     ontic_audit.cpp           # Ontic-chain self-audit (prints derivations and consistency checks)
@@ -194,7 +194,7 @@ engine/
   config/                     # [v2.12] Data-driven configuration
     toggles.json              # Unified toggle registry -- 48 toggles across all scales
     scenarios/                # Scenario manifests per scale (JSON)
-      scale0.json             # 36 lattice scenarios
+      scale0.json             # 126 lattice scenario entries (incl. legacy-only ids)
       scale1.json             # 25 particle scenarios
       scale2.json             # 20 atom scenarios + 118 element entries
       scale3.json             # 27 molecule scenarios

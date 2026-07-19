@@ -102,7 +102,9 @@ $$S[\mathbf{J}, s, \mathcal{L}] = \sum_{\mathbf{v} \in \Lambda}\;\sum_{t=0}^{T-1
 
 with the **matter Lagrangian density**:
 
-$$\boxed{\mathcal{L}_{\text{matter}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}} \;-\; g_c \cdot s \cdot (\nabla_L \cdot \mathbf{J}) \;-\; \lambda_G\,(\nabla_L \cdot \mathbf{J} - \rho)^2}$$
+$$\boxed{\mathcal{L}_{\text{matter}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}} \;+\; g_c \cdot s \cdot (\nabla_L \cdot \mathbf{J}) \;-\; \lambda_G\,(\nabla_L \cdot \mathbf{J} - \rho)^2}$$
+
+**Amendment of record (2026-07-18) — electric coupling sign.** The coupling term's original sign, $-g_c\,s\,(\nabla_L\cdot\mathbf{J})$, was in internal conflict with the Gauss constraint term: its Hamiltonian contribution ($+g_c\,s\,\nabla_L\cdot\mathbf{J}$) is minimized by $s$-*anti*-correlated divergence, while the constraint term demands $\nabla_L\cdot\mathbf{J} = \rho \propto s$. The two terms of the same action preferred opposite signs of $s\,(\nabla_L\cdot\mathbf{J})$ at every charge site; the live engine settled the compromise at $-0.095$ of the Gauss target — wrong-signed flux (inward at a $+1$ charge; measured in `engine/tests/test_gauss_law_fidelity.cpp`, 2026-07-16). With the amended sign the Euler-Lagrange source in `phase_read` becomes $-g_c\nabla_L s$ (outward at a positive charge), both interaction terms prefer the same constraint manifold, and the live equilibrium is constraint-aligned ($f = +0.114$ at shipping defaults, same test, 2026-07-18). The Gauss projector's fixed point is untouched by the amendment (its unit-charge self-energy remains $W_{SC}(L)$ exactly — the frozen §9.1 prediction of `EXPLR_VOXEL_NEIGHBORHOOD_DYNAMICS.md` is upheld). Residual enforcement magnitude (0.114 vs 1.0) is limited by the leapfrog's `wave_vel` longitudinal reservoir, which the flux-only projector does not clean — completing enforcement would require projecting the velocity field's longitudinal sector as well, a separate scope decision recorded as [OPEN]. Downstream formulas in this document carry the amended sign.
 
 and the **gravitational sector**:
 
@@ -124,7 +126,7 @@ $$\boxed{\mathcal{L}_{\text{grav}} = -\frac{1}{8\pi G}\,|\nabla_L \mathcal{L}|^2
 | Term | Expression | Role |
 |------|-----------|------|
 | Born-Infeld core | $-K_B\sqrt{(f^2-v^2)/f}$ | Kinetic + gravitational + rest energy; enforces $v < f$ |
-| State-flux coupling | $-g_c\,s\,(\nabla_L \cdot \mathbf{J})$ | Source/sink for gauge interactions |
+| State-flux coupling | $+g_c\,s\,(\nabla_L \cdot \mathbf{J})$ | Source/sink for gauge interactions (sign amended 2026-07-18, see §3.3) |
 | Gauss constraint | $-\lambda_G(\nabla_L \cdot \mathbf{J} - \rho)^2$ | Enforces charge conservation → U(1) gauge symmetry |
 
 ### 3.6 Engine Decomposition (6 Active Terms + Dissipation)
@@ -132,7 +134,7 @@ $$\boxed{\mathcal{L}_{\text{grav}} = -\frac{1}{8\pi G}\,|\nabla_L \mathcal{L}|^2
 The analytical action (§3.3) is implemented in the simulation engine as six independently tracked terms plus a non-conservative dissipation function. This decomposition separates the **field sector** (wave propagation energy), the **particle sector** (Born-Infeld rest mass), and the **interaction sector** (coupling + constraint):
 
 1. **Born-Infeld core** (Particle sector): $-K_B\sqrt{(f^2-v^2)/f}$ — `born_infeld_term()`
-2. **State-flux coupling — electric** (Interaction): $-g_c\,s\,(\nabla_L \cdot \mathbf{J})$ — `coupling_term()`
+2. **State-flux coupling — electric** (Interaction): $+g_c\,s\,(\nabla_L \cdot \mathbf{J})$ — `coupling_term()` (sign amended 2026-07-18, see §3.3)
 3. **Velocity coupling — magnetic** (Interaction): $-g_c\,s\,(\mathbf{v} \cdot \mathbf{J})$ — `velocity_coupling_term()`
 4. **Gauss constraint** (Constraint): $-\lambda_G\,(\nabla_L \cdot \mathbf{J} - \rho)^2$ — `gauss_term()`
 5. **Field kinetic energy** (Field sector): $\tfrac{1}{2}\lVert\Delta_t\mathbf{J}\rVert^2$ — `field_kinetic_term()`
@@ -192,7 +194,7 @@ $$\gamma_{\text{FTD}} = \frac{\sqrt{f}}{\sqrt{f^2-v^2}}$$
 
 The Euler-Lagrange equation $\Delta_t p_a = -\partial\mathcal{L}/\partial J_a$ yields:
 
-$$\Delta_t\!\left[\gamma_\text{FTD}\,\mathbf{v}\right] = -\frac{1}{K_B}\left[g_c\,s\,\nabla_L(\cdot) + 2\lambda_G(\nabla_L\cdot\mathbf{J}-\rho)\nabla_L(\cdot)\right]$$
+$$\Delta_t\!\left[\gamma_\text{FTD}\,\mathbf{v}\right] = -\frac{1}{K_B}\left[-g_c\,s\,\nabla_L(\cdot) + 2\lambda_G(\nabla_L\cdot\mathbf{J}-\rho)\nabla_L(\cdot)\right]$$
 
 In the weak-field limit ($v \ll 1$, $\mathcal{L} \ll 1$, so $f \approx 1$ and $\gamma \approx 1$):
 
@@ -262,7 +264,7 @@ Exact Schwarzschild for all $f \in (0,1]$.
 
 **Theorem.** *For $v^2 \ll 1$ and $\mathcal{L}^2 \ll 1$:*
 
-$$\mathcal{L}_\text{matter} \approx -K_B + \frac{1}{2}|\Delta_t\mathbf{J}|^2 + \frac{1}{2}|\nabla_L\mathbf{J}|^2 - g_c\,s\,(\nabla_L\cdot\mathbf{J}) - \lambda_G(\ldots)^2$$
+$$\mathcal{L}_\text{matter} \approx -K_B + \frac{1}{2}|\Delta_t\mathbf{J}|^2 + \frac{1}{2}|\nabla_L\mathbf{J}|^2 + g_c\,s\,(\nabla_L\cdot\mathbf{J}) - \lambda_G(\ldots)^2$$
 
 *This is the Klein-Gordon Lagrangian on the lattice.*
 

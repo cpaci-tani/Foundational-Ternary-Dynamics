@@ -43,7 +43,7 @@ namespace ToggleBackend {
 struct TermToggles {
     // ── Boolean toggles (table-managed; see TOGGLE_SPECS[] below) ─────
     bool wave_propagation = true;   // phase_read: Laplacian wave equation
-    bool coupling = true;           // phase_read: g_c * grad(s) source term
+    bool coupling = true;           // phase_read: -g_c * grad(s) source term (Term 2, 2026-07-18)
     bool damping = true;            // phase_write: energy dissipation
     bool genesis = true;            // phase_write: manifestation + evaporation (master)
     bool evaporation = false;       // phase_write: evaporation alone (test isolation; OR'd with genesis)
@@ -185,7 +185,7 @@ struct ToggleSpec {
 inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     // {name, field, default, bulk_managed, requires, conflicts, gpu_only_warning, backends, description}
     {"wave_propagation",   &TermToggles::wave_propagation,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read 18-pt Laplacian wave equation"},
-    {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read state-flux coupling g_c*grad(s)"},
+    {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read state-flux coupling -g_c*grad(s)"},
     {"damping",            &TermToggles::damping,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write exponential flux decay at rate alpha"},
     {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write manifestation + evaporation (master)"},
     {"evaporation",        &TermToggles::evaporation,        false, true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write evaporation alone (OR'd with genesis; test isolation)"},

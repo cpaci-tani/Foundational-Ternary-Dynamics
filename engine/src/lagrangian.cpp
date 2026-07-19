@@ -77,9 +77,10 @@ ELResidual compute_el_residual(const RenderBridge& rb) {
 
     for (int i = 0; i < N; ++i) {
         // Independently recompute what phase_read() should produce:
-        //   delta_j = c²∇²J + g_c·∇(s) + g_c·∇×(s·v)
+        //   delta_j = c²∇²J − g_c·∇(s) + g_c·∇×(s·v)
+        // (electric source sign per lagrangian.h Term 2, amended 2026-07-18)
         Vec3 expected = rb.laplacian_flux(i) * (C_WAVE * C_WAVE);
-        expected += rb.gradient_state(i) * G_C;
+        expected -= rb.gradient_state(i) * G_C;
         expected += rb.curl_state_velocity(i) * G_C;
 
         // Residual = stored - expected

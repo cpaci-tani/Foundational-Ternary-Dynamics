@@ -356,7 +356,7 @@ RenderBridge::tick()
            -> parallel lattice loop
            -> [wave_propagation] 18-point laplacian on Voxel::flux_L / flux_R
               (single neighbor sweep; interior fast path, boundary wrapped path)
-           -> [coupling] add 0.5 * G_C * gradient_state_op(state, lat, ix,iy,iz)
+           -> [coupling] subtract 0.5 * G_C * gradient_state_op(state, lat, ix,iy,iz)   (Term 2 sign, 2026-07-18)
            -> [coupling] add 0.5 * G_C * curl_state_velocity_op(state, voxels, lat, ix,iy,iz)
            -> [db_clock_coulomb] subtract flux_L/R * (omega0^2 - 2*omega0*phi_coulomb_[i])  (all sites)
               else [de_broglie_clock] && state != 0: subtract flux_L/R * omega0^2
@@ -368,7 +368,7 @@ RenderBridge::tick()
                  -> interior fast 18-point laplacian, boundary wrapped path (laplacian_flux)
               -> else:
                  -> laplacian_sublattice<&Voxel::flux>(stencil_mode, ...)
-           -> [coupling] add G_C * gradient_state_op(state, lat, ix,iy,iz)
+           -> [coupling] subtract G_C * gradient_state_op(state, lat, ix,iy,iz)   (Term 2 sign, 2026-07-18)
            -> [coupling] add G_C * curl_state_velocity_op(state, voxels, lat, ix,iy,iz)
            -> [db_clock_coulomb] subtract flux * (omega0^2 - 2*omega0*phi_coulomb_[i])  (all sites)
               else [de_broglie_clock] && state != 0: subtract flux * omega0^2

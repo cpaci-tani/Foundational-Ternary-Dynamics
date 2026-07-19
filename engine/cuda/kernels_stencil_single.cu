@@ -34,8 +34,9 @@ namespace gpu {
 namespace kernels {
 
 // ---------- Phase Read Kernel ----------
-// Computes delta_j = C_WAVE^2 * Laplacian(flux) + G_C * gradient(state)
+// Computes delta_j = C_WAVE^2 * Laplacian(flux) - G_C * gradient(state)
 //                   + G_C * curl(state * velocity)
+// (electric coupling sign per lagrangian.h Term 2, amended 2026-07-18)
 
 __global__ void phase_read_kernel(
     const double* __restrict__ flux_x,
@@ -157,7 +158,9 @@ __global__ void phase_read_kernel(
     }
 
     if (do_coupling) {
-        // Gradient of state: g_c * ∇(s)
+        // Gradient of state: -g_c * ∇(s) — electric sign per lagrangian.h
+        // Term 2 amendment 2026-07-18 (mirror of phase_read.cpp; the drive
+        // points OUTWARD at a +1 charge, cooperating with the Gauss target).
         int xp = idx3d(x+1, y, z, L);
         int xm = idx3d(x-1, y, z, L);
         int yp = idx3d(x, y+1, z, L);
@@ -169,9 +172,9 @@ __global__ void phase_read_kernel(
         double gs_y = 0.5 * (static_cast<double>(state[yp]) - static_cast<double>(state[ym]));
         double gs_z = 0.5 * (static_cast<double>(state[zp]) - static_cast<double>(state[zm]));
 
-        dx += G_C * gs_x;
-        dy += G_C * gs_y;
-        dz += G_C * gs_z;
+        dx -= G_C * gs_x;
+        dy -= G_C * gs_y;
+        dz -= G_C * gs_z;
 
         // Curl of (state * velocity): g_c * ∇×(s·v)
         // (∇×F)_x = dFz/dy - dFy/dz, etc.
