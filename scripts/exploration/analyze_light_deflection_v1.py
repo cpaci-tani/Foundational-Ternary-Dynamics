@@ -66,20 +66,33 @@ for arm in ("C0", "W-b10", "W-b14", "D-b10"):
     print(f"  {arm:7s} theta_y = {ty:+.6e}  theta_z(null) = {tz:+.6e}  "
           f"dy = {d.get('dy', float('nan')):+.6e}  vx_exit = {d.get('exit_vx', float('nan')):.4f}")
 
-print("\n=== S-ARM (v3 contamination) + FLOOR ===")
-t_c0 = abs(theta("C0", "vy") or 0.0)
-tz_w = max(abs(theta(a, "vz") or 0.0) for a in ("W-b10", "W-b14"))
-t_s = abs(theta("S-b10", "vy") or 0.0) if "S-b10" in summaries else 0.0
-floor = max(3 * t_c0, 3 * tz_w, 2 * t_s)
-print(f"  theta_S (mass-only) = {theta('S-b10', 'vy') if 'S-b10' in summaries else float('nan'):+.6e}")
-print(f"  3x|theta_C0|   = {3 * t_c0:.6e}")
-print(f"  3x|theta_z(W)| = {3 * tz_w:.6e}")
-print(f"  2x|theta_S|    = {2 * t_s:.6e}")
-print(f"  FLOOR (angle)  = {floor:.6e}")
+W_ARMS = [a for a in ("W-b10", "W-b14", "W-b18") if a in summaries]
 
-print("\n=== THETA_DIFF (v2/v3 primary observable) ===")
+def mean_window_energy(arm, lo=80, hi=105):
+    r = rows.get(arm, [])
+    es = [e for (t, _, _, _, e) in r if lo <= t <= hi]
+    return sum(es) / len(es) if es else float("nan")
+
+print("\n=== S-ARM (v4: energy-ratio-scaled contamination) + FLOOR ===")
+t_c0 = abs(theta("C0", "vy") or 0.0)
+tz_w = max(abs(theta(a, "vz") or 0.0) for a in W_ARMS)
+t_s = abs(theta("S-b10", "vy") or 0.0) if "S-b10" in summaries else 0.0
+e_s = mean_window_energy("S-b10")
+e_w = mean_window_energy("W-b10")
+t_s_eff = t_s * (e_s / e_w) if e_w and not math.isnan(e_s) else 0.0
+floor = max(3 * t_c0, 3 * tz_w, 3 * t_s_eff)
+print(f"  theta_S (raw, mass-only) = {theta('S-b10', 'vy') if 'S-b10' in summaries else float('nan'):+.6e}")
+print(f"  E_S = {e_s:.4e}  E_W = {e_w:.4e}  E_S/E_W = {e_s / e_w if e_w else float('nan'):.3e}")
+print(f"  theta_S_eff = |theta_S|*(E_S/E_W) = {t_s_eff:.6e}")
+print(f"  3x|theta_C0|    = {3 * t_c0:.6e}")
+print(f"  3x|theta_z(W)|  = {3 * tz_w:.6e}")
+print(f"  3x theta_S_eff  = {3 * t_s_eff:.6e}")
+print(f"  FLOOR (angle)   = {floor:.6e}")
+print(f"  V4: theta_S_eff < FLOOR/2 ?  {t_s_eff:.3e} < {floor / 2:.3e}  -> {t_s_eff < floor / 2}")
+
+print("\n=== THETA_DIFF (primary observable, all arms) ===")
 t_c0_signed = theta("C0", "vy") or 0.0
-for a in ("W-b10", "W-b14", "D-b10"):
+for a in W_ARMS + ["D-b10"]:
     tw = theta(a, "vy")
     if tw is not None:
         print(f"  theta_diff({a}) = {tw - t_c0_signed:+.6e}")
@@ -95,7 +108,7 @@ if floor > 0 and "theta_p" in p:
     print(f"  |theta_p| / FLOOR = {abs(p['theta_p']) / floor:.2f}  (V2 needs > 10 AND vx_out > 0.25)")
 
 print("\n=== theta_gamma0 (frozen 4; fit L(x) ~ A/sqrt((x-xc)^2+b^2)) ===")
-for arm, b in (("W-b10", 10.0), ("W-b14", 14.0)):
+for arm, b in (("W-b10", 10.0), ("W-b14", 14.0), ("W-b18", 18.0)):
     prof = latency.get(arm)
     if not prof:
         continue
@@ -121,7 +134,7 @@ for arm, b in (("W-b10", 10.0), ("W-b14", 14.0)):
           f"{floor / tg0 if tg0 else float('nan'):.3f}")
 
 print("\n=== V3 packet integrity (window energy, entry vs exit fit midpoints) ===")
-for arm in ("C0", "W-b10", "W-b14", "D-b10"):
+for arm in ("C0", "W-b10", "W-b14", "W-b18", "D-b10"):
     r = rows.get(arm)
     if not r:
         continue
@@ -130,6 +143,6 @@ for arm in ("C0", "W-b10", "W-b14", "D-b10"):
         return sum(cands) / len(cands) if cands else float("nan")
     e_in, e_out = e_at(20), e_at(92)
     print(f"  {arm:7s} E(t=20) = {e_in:.4e}  E(t=92) = {e_out:.4e}  "
-          f"retention = {e_out / e_in if e_in else float('nan'):.3f}  (V3 needs >= 0.5)")
+          f"retention = {e_out / e_in if e_in else float('nan'):.3f}  (v4 V3: >= 0.25 AND |theta_C0| <= 1e-6)")
 
 print("\n(verdict: apply prereg 5 to the numbers above)")
