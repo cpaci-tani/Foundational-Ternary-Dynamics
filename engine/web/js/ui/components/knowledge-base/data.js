@@ -1223,6 +1223,14 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
         ],
         notation: ['distribution', 'variance', 'noise floor', 'emergence'],
     },
+    'flux-genesis-between-gates': {
+        summary: 'A three-band gate discriminator: frozen flux amplitudes below, between, and above the two historical genesis thresholds.',
+        body: [
+            'Genesis: Between the Gates displays which manifestation threshold the engine is actually running. Three frozen uniform-flux slabs sit at |J| = 1.5160, 1.5250, and 1.5340 — straddling the adopted gate K_GENESIS = 3·W_SC ≈ 1.5164 (FTD-0388, [SELECTION — ADOPTED]) and the retired 3·K_B = 1.533 gate.',
+            'The left slab can never manifest (hard gate, not slow odds). The middle slab is the signature: under the retired gate it would stay silent forever, while the adopted gate nucleates it at p = 1 − exp(−(|J|−K_GENESIS)/K_MANIFEST) ≈ 0.017 per tick. The right slab nucleates about twice as fast — together the three slabs draw the gate position and the memoryless rate law directly on the lattice.',
+        ],
+        notation: ['K_GENESIS = 3·W_SC', 'hard gate', '1 − e^{−ΔJ/K_MANIFEST}', 'FTD-0388'],
+    },
     'flux-pair-production': { summary: 'A creation event where localized opposite manifestations emerge from a prepared high-flux configuration.', notation: ['pair creation', 'threshold crossing'] },
     'flux-annihilation': { summary: 'The inverse of pair production: opposite localized structures cancel and redistribute energy into the field.', notation: ['annihilation', 'energy redistribution'] },
     'flux-vacuum-foam': {

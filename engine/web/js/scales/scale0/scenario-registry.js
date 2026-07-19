@@ -105,6 +105,14 @@ export const SCALE0_SCENARIOS = [
      */
     makeScenario('2. Genesis & Emergence', 'flux-random-genesis', 'Random Genesis', ['genesis']),
     /*
+     * Scenario: flux-genesis-between-gates (Genesis: Between the Gates)
+     * Physical purpose: Empirical discriminator for the FTD-0388 genesis-gate adoption — three frozen uniform-flux bands at |J| = 1.5160 / 1.5250 / 1.5340 straddle the adopted gate K_GENESIS = 3·W_SC = 1.5164 and the retired 3·K_B = 1.533 gate.
+     * Parameters: Field-freezing toggle overrides (config/toggles.js) keep the band amplitudes exact; genesis is the only active dynamics.
+     * Expected behavior: Left band stays void forever; middle band nucleates matter the pre-FTD-0388 engine could never create; right band nucleates ~2x faster.
+     * Discrepancy: None.
+     */
+    makeScenario('2. Genesis & Emergence', 'flux-genesis-between-gates', 'Genesis: Between the Gates', ['genesis', 'ftd-0388'], '[SELECTION]'),
+    /*
      * Scenario: s0-seed-ew-phase-transition (EW Phase Transition (Hysteresis))
      * Physical purpose: Simulates the Electroweak phase transition showing hysteresis using a uniform flux sweep.
      * Parameters: None.

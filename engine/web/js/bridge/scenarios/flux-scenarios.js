@@ -242,6 +242,33 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
 
+                case 'flux-genesis-between-gates': {
+                    // FTD-0388 gate discriminator — three frozen uniform-|J| bands along x:
+                    // 1.5160 (below K_GENESIS = 3·W_SC = 1.5163860591519780, adopted
+                    // 2026-07-17), 1.5250 (between the new gate and the retired
+                    // 3·K_B = 1.533 gate), 1.5340 (above both). Field-freezing toggles
+                    // live in config/toggles.js SCALE0_SCENARIO_OVERRIDES so genesis is
+                    // the ONLY active dynamics and the band amplitudes stay exact.
+                    // The middle band manifesting AT ALL is the FTD-0388 signature —
+                    // the pre-adoption engine stays silent there forever. Cohorts of
+                    // record (2026-07-17 browser discriminator, 200 voxels × 25 ticks):
+                    // measured 0 / 63 / 116 vs new-engine predictions 0 / 69±7 / 116±7.
+                    const bandAmp = [1.5160, 1.5250, 1.5340];
+                    if (!(bandAmp[0] < K_GENESIS && K_GENESIS < bandAmp[1])) {
+                        console.warn('[flux-genesis-between-gates] bands no longer straddle ' +
+                            `K_GENESIS = ${K_GENESIS} — re-band this scenario (and the C++ twin)`);
+                    }
+                    const x1 = 1 + Math.floor((N - 2) / 3);
+                    const x2 = 1 + Math.floor((2 * (N - 2)) / 3);
+                    for (let x = 1; x < N - 1; x++) {
+                        if (x === x1 || x === x2) continue; // 1-plane visual separators
+                        const b = (x < x1) ? 0 : (x < x2) ? 1 : 2;
+                        for (let z = 1; z < N - 1; z++) for (let y = 1; y < N - 1; y++)
+                            harness.injectFlux(x, y, z, bandAmp[b], 0, 0);
+                    }
+                    break;
+                }
+
                 // ── QCD Scenarios ──
                 case 'flux-meson': {
                     // Quark-antiquark bound state — poles symmetric about midF
