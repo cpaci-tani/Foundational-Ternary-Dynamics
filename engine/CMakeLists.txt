@@ -2286,6 +2286,18 @@ set_tests_properties(eft_phase_h_coupling PROPERTIES LABELS "eft" TIMEOUT 180)
 # FTD-0285 - no-alpha-input alpha discriminator
 add_test(NAME alpha_no_alpha_probe COMMAND campaign_alpha_no_alpha_probe)
 set_tests_properties(alpha_no_alpha_probe PROPERTIES LABELS "eft;alpha;campaign" TIMEOUT 600)
+# FTD-0285 run-of-record guard (2026-07-18). The probe's verdict of record is
+# INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT (LEDGER FTD-0285 [INVALIDATED PROTOCOL],
+# ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md quotes the failing run verbatim as
+# the Run of Record; lock tag preregister-alpha-no-alpha-engine-probe-v1,
+# artifact SHA unchanged since lock cce615b0 — the .cpp must NOT be edited).
+# The exe encodes that verdict class as EXIT_FAILURE, which left the suite
+# permanently red for reproducing the record. Pass iff the recorded verdict
+# class reproduces; ANY other verdict — including the positive classes, which
+# exit 0 — fails the test and flags a departure from the FTD-0285 record
+# (a v2 arc mints its own test per the LEDGER row's "next" note).
+set_tests_properties(alpha_no_alpha_probe PROPERTIES
+    PASS_REGULAR_EXPRESSION "verdict,INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT")
 # FTD-0286 - alpha estimator validation
 add_test(NAME alpha_estimator_validation COMMAND campaign_alpha_estimator_validation)
 set_tests_properties(alpha_estimator_validation PROPERTIES LABELS "eft;alpha;campaign" TIMEOUT 600)
@@ -2300,18 +2312,6 @@ add_test(NAME thomson_unlocked_recoil COMMAND campaign_thomson_unlocked_recoil)
 set_tests_properties(thomson_unlocked_recoil PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # FTD-0289 - baseline-subtracted Thomson flux-excess discriminator
 add_test(NAME thomson_flux_excess COMMAND campaign_thomson_flux_excess)
-# FTD-0285 run-of-record guard (2026-07-18). The probe's verdict of record is
-# INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT (LEDGER FTD-0285 [INVALIDATED PROTOCOL],
-# ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md quotes the failing run verbatim as
-# the Run of Record; lock tag preregister-alpha-no-alpha-engine-probe-v1,
-# artifact SHA unchanged since lock cce615b0 — the .cpp must NOT be edited).
-# The exe encodes that verdict class as EXIT_FAILURE, which left the suite
-# permanently red for reproducing the record. Pass iff the recorded verdict
-# class reproduces; ANY other verdict — including the positive classes, which
-# exit 0 — fails the test and flags a departure from the FTD-0285 record
-# (a v2 arc mints its own test per the LEDGER row's "next" note).
-set_tests_properties(alpha_no_alpha_probe PROPERTIES
-    PASS_REGULAR_EXPRESSION "verdict,INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT")
 set_tests_properties(thomson_flux_excess PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # FTD-0290 - residual-field radiation shell meter
 add_test(NAME thomson_radiation_shells COMMAND campaign_thomson_radiation_shells)
@@ -2955,9 +2955,20 @@ endforeach()
 #   em_energy_conservation       — >1hr at L=128+
 #   eft_lorentz_recovery         — >30min at L=64 T=512
 #   campaign_shell_predictions   — >1hr at L=256
+#   campaign_thermal_ignition    — research sweep (multi-L ignition-threshold
+#                                  scan); measured 2026-07-18 still computing
+#                                  at 75+ min after the 1800s ctest kill (the
+#                                  exe survives the kill and keeps running) —
+#                                  chronic ***Timeout in every adjudicated
+#                                  sweep. Run manually with explicit args.
+#   campaign_genesis_amplitude_ceiling — research sweep (amplitude x nodes x
+#                                  seeds scan); >1800s at exclusive full width
+#                                  in the 2026-07-18 adjudicated sweep. Run
+#                                  manually with explicit --amps/--seeds args.
 foreach(_t benchmark_alpha_convergence benchmark_alpha_scaling
             campaign_dark_sector em_energy_conservation eft_lorentz_recovery
-            campaign_shell_predictions)
+            campaign_shell_predictions
+            campaign_thermal_ignition campaign_genesis_amplitude_ceiling)
     if(TEST ${_t})
         set_tests_properties(${_t} PROPERTIES DISABLED TRUE)
     endif()
