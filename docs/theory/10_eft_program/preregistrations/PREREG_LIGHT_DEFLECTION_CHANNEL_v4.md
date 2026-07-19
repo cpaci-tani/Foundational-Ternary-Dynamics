@@ -22,4 +22,13 @@ This is the final instrument cycle of the v1 chain. If v4's gates fail again, th
 
 ---
 
-*Registered 2026-07-18, before the v4 instrument's first execution. Author: session 8294fddb, following LOCK-STD v1.*
+## OUTCOME (2026-07-18, adjudicated after the run) — VOID on V2; stopping rule fired; campaign CLOSED [INSTRUMENT-LIMITED — Indeterminate]
+
+**Gate results.** V1 ✓ (latency_max 0.540). V3 ✓ (|θ_C0| = 4.9×10⁻¹⁴; retention 0.349–0.351 ≥ 0.25). V4 ✓ (θ_S_eff = 1.29×10⁻⁴ < Floor/2 = 9.04×10⁻⁴; Floor = 1.81×10⁻³ from the z-channels). **V2 ✗ — and the failure identified a four-cycle instrument defect:** the P-b26 PROW trajectory shows the particle at (30, 48, 48) with velocity ≈ 0 for all 72 ticks — `inject_particle`'s velocity argument is not applied as kinematic velocity (the engine's scenario helpers set `voxel.velocity` separately via `SET_VEL` for exactly this reason). Every particle arm in v1–v4 launched a particle AT REST; the v1/v3 "capture" readings (exit v_x ≈ 0) were this defect, not gravitational capture. Neither the transit clause nor the capture clause (which requires toward-mass displacement; the particle is undisplaced) is met. Per §3, no v5: **closed.**
+
+**Characterization of record (instrument-characterization grade; books no outcome-map verdict):**
+- The wave-side instrument is strongly validated: the mass-free control reads machine zero (4.9×10⁻¹⁴); the contamination arm, energy-ratio-scaled, is sub-floor; the floor is 2.6% of θ_γ0 at b=10.
+- Across b ∈ {10, 14, 18}: θ_diff = −0.80 / +1.64 / +1.59 ×10⁻³ — all inside the Floor band, sign-inconsistent (no toward-mass trend), 1.1–7.9% of the shrinking θ_γ0 yardstick. The v4 frozen prediction for the unseen b=18 (< 0.05·θ_γ0) failed narrowly by its letter (0.079·θ_γ0) — the away-signed floor-scale residual does not shrink with b as a gravitational signal would; it tracks the artifact floor.
+- This is *consistent with* the code-derived structural null (the wave operator carries no latency term) at the few-percent-of-θ_γ0 level, but the formal Outcome N is **not booked**: V2's purpose — demonstrating the well dynamically grips matter — was never achieved, so "no optical response" is not yet discriminated from "no dynamical response to this source at all."
+
+**Successor path (new campaign, new name, per the stopping rule):** identical wave-side instrument + a particle arm using the `SET_VEL` idiom (and a verified transit at feasible speed), which would make the V2 gate decidable and, if the present numbers reproduce, book the formal [MEASURED STRUCTURAL NULL] for the gravitational-optical channel.
