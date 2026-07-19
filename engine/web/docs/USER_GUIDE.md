@@ -127,6 +127,7 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 
 - **`flux-pulse`** — 3D Gaussian → spherical wave. The "hello world" of Scale 0.
 - **`flux-cascade`** — Genesis threshold demo. Watch particles spontaneously appear from overdense flux.
+- **`flux-genesis-between-gates`** — FTD-0388 gate discriminator. Three frozen flux slabs at |J| = 1.5160 / 1.5250 / 1.5340 straddle the adopted genesis gate (K_GENESIS = 3·W_SC ≈ 1.5164) and the retired 3·K_B = 1.533 gate: the left slab stays void forever, the middle slab nucleates matter the pre-FTD-0388 engine could never create, the right slab nucleates ~2× faster.
 - **`flux-vortex`** — Helical flux ring → explicit spin / angular momentum visualization.
 - **`flux-annihilation`** — 4 ±1 particles on collision courses. Genesis → annihilation pair production.
 - **`quantum-double-slit`** — Genesis + interference. Shows manifestation statistics following |ψ|².

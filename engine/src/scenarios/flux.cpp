@@ -1,7 +1,7 @@
 // ==========================================================================
 //  engine/src/scenarios/flux.cpp
 //
-//  Group: flux-* (21 scenarios)
+//  Group: flux-* (22 scenarios)
 //  JS source: engine/web/js/bridge/scenarios/flux-scenarios.js
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1). Every scenario body
@@ -236,6 +236,47 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
                     IW(rb, cx + dx, cy + dy, cz + dz, sx, sy, sz);
                 }
             }
+        }
+    }
+    else if (name == "flux-genesis-between-gates") {
+        // Scenario ID: flux-genesis-between-gates
+        // Physical Purpose: Empirical discriminator for the FTD-0388 genesis-gate adoption.
+        //   K_GENESIS = N_c·K_MANIFEST = 3·W_SC = 1.5163860591519780 (adopted 2026-07-17);
+        //   the pre-adoption gate was 3·K_B = 1.533. Three frozen uniform-|J| bands along x
+        //   straddle both gates, so the lattice itself displays which gate is compiled in.
+        // Initial Condition Parameters: band amplitudes |J| = 1.5160 (below both gates),
+        //   1.5250 (between the gates), 1.5340 (above both) — the 2026-07-17 cohorts of
+        //   record (browser discriminator: 200 voxels × 25 ticks measured 0 / 63 / 116
+        //   against new-engine predictions 0 / 69±7 / 116±7; old engine predicts 0 / 0 / ~10).
+        // Expected Behaviour: left band stays void forever (hard gate); middle band
+        //   nucleates matter at p = 1 − exp(−(|J|−K_GENESIS)/K_MANIFEST) ≈ 0.017/tick —
+        //   matter the pre-FTD-0388 engine could never create at any patience; right band
+        //   nucleates ≈ 2× faster. Field-freezing toggles (below + JS twin overrides in
+        //   config/toggles.js) keep the band amplitudes exact: genesis is the ONLY dynamics.
+        static_assert(1.5160 < K_GENESIS && K_GENESIS < 1.5250,
+                      "flux-genesis-between-gates: bands no longer straddle the FTD-0388 "
+                      "genesis gate — re-band this scenario (and its JS twin) consciously");
+        rb.toggles.genesis            = true;
+        rb.toggles.wave_propagation   = false;  // freeze the field: injected |J| stays exact
+        rb.toggles.coupling           = false;
+        rb.toggles.gauss_projection   = false;
+        rb.toggles.damping            = false;
+        rb.toggles.selective_damping  = false;  // requires damping — keep validate() quiet
+        rb.toggles.movement           = false;  // manifested matter stays put (crisp bands)
+        rb.toggles.weak_transmutation = false;  // match the dashboard baseline in CLI runs
+        // Pin the substrate BEFORE injecting: at scenario time dual_substrate sits at
+        // the C++ construction default (true), so IF() would split the bands into the
+        // L/R buffers — and the dashboard's JS baseline then flips dual off, leaving
+        // phase_write reading an empty mono field (silent lattice). Injection and
+        // genesis must agree on the mono substrate in BOTH environments.
+        rb.toggles.dual_substrate     = false;
+        const double bandAmp[3] = { 1.5160, 1.5250, 1.5340 };
+        const int x1 = 1 + (N - 2) / 3, x2 = 1 + 2 * (N - 2) / 3;
+        for (int x = 1; x < N - 1; x++) {
+            if (x == x1 || x == x2) continue;   // 1-plane visual separators between bands
+            const int b = (x < x1) ? 0 : (x < x2) ? 1 : 2;
+            for (int z = 1; z < N - 1; z++) for (int y = 1; y < N - 1; y++)
+                IF(rb, x, y, z, bandAmp[b], 0, 0);
         }
     }
     // ── QCD scenarios ──
