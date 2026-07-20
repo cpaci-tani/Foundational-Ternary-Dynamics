@@ -1447,6 +1447,15 @@ ftd_add_test(campaign_genesis_timing_dependence tests/campaign_genesis_timing_de
 ftd_add_test(campaign_manifestation_seed_diversity tests/campaign_manifestation_seed_diversity.cpp
              CTEST_NAME manifestation_seed_diversity TIMEOUT 1800
              LABELS native eft mass)
+
+# Is the Berg-Luscher hedgehog (topological) charge of the flux field
+# robust across the same birth circumstances that produced a 9.2x energy
+# spread in the seed-diversity campaign above? (PREREG_HEDGEHOG_CHARGE_
+# ROBUSTNESS_v1). CPU-forced, deterministic; reuses the three clean seeds
+# plus a synthetic-charge reference arm.
+ftd_add_test(campaign_hedgehog_charge_robustness tests/campaign_hedgehog_charge_robustness.cpp
+             CTEST_NAME hedgehog_charge_robustness TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
@@ -2491,6 +2500,7 @@ if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_benchmark COMMAND test_gpu_benchmark)
     add_test(NAME gpu_continuity_ledger COMMAND test_gpu_continuity_ledger)
     add_test(NAME gpu_physics COMMAND test_gpu_physics)
+    add_test(NAME gpu_gauss_law_fidelity COMMAND test_gauss_law_fidelity_gpu)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
     set_tests_properties(gpu_parity gpu_parity_complete gpu_eft_parity gpu_benchmark
                          gpu_continuity_ledger gpu_physics gpu_gauss_law_fidelity
@@ -2500,7 +2510,6 @@ if(FTD_ENABLE_CUDA)
                          LABELS "gpu;constructor;ledger;observable;eft_quick")
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
     # gpu_parity_complete runs 22 CPU-vs-GPU domain checks, several under
-    add_test(NAME gpu_gauss_law_fidelity COMMAND test_gauss_law_fidelity_gpu)
     # enable_all() whose CPU side drives iterative SOR Poisson solves (Gauss +
     # Coulomb + latency) every tick — plus GPC-20's 1000-tick sweep. On the
     # canonical WSL2-gcc -O3 platform that CPU path is far slower than MSVC
