@@ -51,13 +51,13 @@ namespace {
 // ── Pre-registered fixed parameters (prereg §2) ────────────────────────────
 constexpr int    kL        = 96;
 constexpr int    kSor      = 20;
-constexpr int    kMassR    = 3;
+constexpr int    kMassR    = 5;     // v1.1: 3 -> 5 so every shell clears V3's floor
 constexpr int    kEquil    = 200;   // latency warm-start, before test voxels
 constexpr int    kSettle   = 3;     // latency re-converge after injection
 constexpr int    kTicks    = 400;   // measurement window
 constexpr double kETarget  = 0.588; // E_local target => p_pred = 1.0e-2 / tick
 constexpr int    kMinSep   = 2;     // test voxels never share an E_local nbhd
-const int        kShells[] = {5, 7, 10, 14, 20, 30};
+const int        kShells[] = {8, 10, 13, 17, 22, 30};   // v1.1: outside the R=5 ball
 constexpr int    kNShells  = 6;
 constexpr int    kFibPerShell = 600;  // candidate points before separation cull
 
@@ -78,12 +78,16 @@ double e_local_at(const ftd::RenderBridge& rb, int i) {
     return e;
 }
 
-void configure_toggles(ftd::RenderBridge& rb) {
+// v1.1: `latency_on=false` gives arm Z — L == 0 EXACTLY. Run 1 showed that a
+// "no mass ball" arm is NOT flat: the manifested test voxels themselves source
+// rho_mass = M_REST*|s|, so a cohort self-sources its own well (L ~ 0.21-0.36).
+// Turning the latency solve off is the only zero-latency control containing matter.
+void configure_toggles(ftd::RenderBridge& rb, bool latency_on) {
     rb.toggles.disable_all();
     rb.toggles.evaporation   = true;   // decay alone (test isolation)
     rb.toggles.forces        = true;
     rb.toggles.gravity       = true;
-    rb.toggles.latency_field = true;   // the gravitational sector of record
+    rb.toggles.latency_field = latency_on;   // the gravitational sector of record
     // genesis / wave_propagation / coupling / gauss_projection / damping /
     // selective_damping / movement stay OFF (frozen field, fixed positions).
 }
@@ -142,13 +146,14 @@ std::vector<TestVoxel> plan_test_voxels() {
 }
 
 // One arm. Returns the cohort with per-voxel decay ticks filled in.
-std::vector<TestVoxel> run_arm(const char* arm, bool with_mass,
+std::vector<TestVoxel> run_arm(const char* arm, bool with_mass, bool latency_on,
                                const std::vector<TestVoxel>& plan) {
-    std::fprintf(stderr, "[%s] building L=%d (mass=%d)\n", arm, kL, with_mass ? 1 : 0);
+    std::fprintf(stderr, "[%s] building L=%d (mass=%d latency=%d)\n",
+                 arm, kL, with_mass ? 1 : 0, latency_on ? 1 : 0);
     ftd::RenderBridge rb(kL);
     rb.force_cpu();
     rb.set_sor_iterations(kSor);
-    configure_toggles(rb);
+    configure_toggles(rb, latency_on);
     if (with_mass) {
         const int n = seed_mass(rb);
         std::fprintf(stderr, "[%s] locked ball: %d voxels\n", arm, n);
@@ -232,33 +237,43 @@ int main() {
     const auto plan = plan_test_voxels();
     std::fprintf(stderr, "[plan] %zu test voxels across %d shells\n", plan.size(), kNShells);
 
-    const auto m = run_arm("M", /*with_mass=*/true,  plan);
-    const auto f = run_arm("F", /*with_mass=*/false, plan);
+    const auto m = run_arm("M", /*with_mass=*/true,  /*latency_on=*/true,  plan);
+    const auto f = run_arm("F", /*with_mass=*/false, /*latency_on=*/true,  plan);
+    const auto z = run_arm("Z", /*with_mass=*/false, /*latency_on=*/false, plan);  // L == 0 exactly
 
     // Bit-level discriminator: per-voxel decay-tick identity between arms.
-    std::map<int, int> n_diff, n_pair;
-    std::map<int, double> lat_sum;
-    size_t im = 0, iff = 0;
-    while (im < m.size() && iff < f.size()) {
-        if (m[im].idx < f[iff].idx) { ++im; continue; }
-        if (f[iff].idx < m[im].idx) { ++iff; continue; }
-        n_pair[m[im].shell]++;
-        lat_sum[m[im].shell] += m[im].latency;
-        if (m[im].decay_tick != f[iff].decay_tick) {
-            n_diff[m[im].shell]++;
-            std::printf("DIFF,%d,%d,%d,%d,%.9e\n",
-                        m[im].shell, m[im].idx, m[im].decay_tick, f[iff].decay_tick,
-                        m[im].latency);
+    // v1.1: index-keyed (an ordered merge assumed a sortedness the shell-wise
+    // plan does not have). M-vs-Z is the primary pairing (maximal contrast).
+    auto pair_arms = [](const char* tag,
+                        const std::vector<TestVoxel>& a,
+                        const std::vector<TestVoxel>& b) {
+        std::map<int, int> decay_b;
+        for (const auto& v : b) decay_b[v.idx] = v.decay_tick;
+        std::map<int, int> n_diff, n_pair;
+        std::map<int, double> lat_sum;
+        for (const auto& va : a) {
+            auto it = decay_b.find(va.idx);
+            if (it == decay_b.end()) continue;
+            n_pair[va.shell]++;
+            lat_sum[va.shell] += va.latency;
+            if (va.decay_tick != it->second) {
+                n_diff[va.shell]++;
+                std::printf("DIFF,%s,%d,%d,%d,%d,%.9e\n",
+                            tag, va.shell, va.idx, va.decay_tick, it->second, va.latency);
+            }
         }
-        ++im; ++iff;
-    }
-    for (int s = 0; s < kNShells; ++s) {
-        const int sh = kShells[s];
-        const int np = n_pair[sh];
-        const double lbar = np ? lat_sum[sh] / np : 0.0;
-        std::printf("PAIRSUM,%d,%d,%d,%.9e,%.9e\n",
-                    sh, np, n_diff[sh], lbar, std::sqrt(std::max(0.0, 1.0 - lbar * lbar)));
-    }
+        for (int s = 0; s < kNShells; ++s) {
+            const int sh = kShells[s];
+            const int np = n_pair[sh];
+            const double lbar = np ? lat_sum[sh] / np : 0.0;
+            std::printf("PAIRSUM,%s,%d,%d,%d,%.9e,%.9e\n",
+                        tag, sh, np, n_diff[sh], lbar,
+                        std::sqrt(std::max(0.0, 1.0 - lbar * lbar)));
+        }
+    };
+    pair_arms("MvZ", m, z);   // primary: L_bar(M) vs L == 0
+    pair_arms("MvF", m, f);   // secondary
+    pair_arms("FvZ", f, z);   // secondary
     std::printf("# done — verdict applied against PREREG §4 by the analyst, not here\n");
     return 0;
 }
