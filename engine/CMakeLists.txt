@@ -1456,6 +1456,14 @@ ftd_add_test(campaign_manifestation_seed_diversity tests/campaign_manifestation_
 ftd_add_test(campaign_hedgehog_charge_robustness tests/campaign_hedgehog_charge_robustness.cpp
              CTEST_NAME hedgehog_charge_robustness TIMEOUT 1800
              LABELS native eft mass)
+
+# Do genuinely different flux configurations manifest to the identical
+# discrete (state, color, spin) readout? Deterministic extension of the
+# already-locked seed-diversity protocol; no new stochastic design choice,
+# so not pre-registered under LOCK-STD v1.
+ftd_add_test(campaign_manifestation_readout_collision tests/campaign_manifestation_readout_collision.cpp
+             CTEST_NAME manifestation_readout_collision TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
