@@ -1425,6 +1425,13 @@ ftd_add_test(campaign_genesis_energy_ledger tests/campaign_genesis_energy_ledger
 ftd_add_test(campaign_kinetic_drain_curl_isolation tests/campaign_kinetic_drain_curl_isolation.cpp
              CTEST_NAME kinetic_drain_curl_isolation TIMEOUT 1800
              LABELS native eft mass)
+
+# Does injected curl scale with the perturbing kick's magnitude, or is it a
+# symmetry-breaking floor set by acting on a single site at all?
+# (PREREG_PERTURBATION_MAGNITUDE_CURL_SWEEP_v1). CPU-forced, deterministic.
+ftd_add_test(campaign_perturbation_magnitude_curl_sweep tests/campaign_perturbation_magnitude_curl_sweep.cpp
+             CTEST_NAME perturbation_magnitude_curl_sweep TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
