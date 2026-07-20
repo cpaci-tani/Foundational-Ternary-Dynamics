@@ -73,4 +73,22 @@ For each shell, with `L̄` the cohort-mean latency in arm M:
 
 ---
 
+## RUN 1 (2026-07-18) — **VOID on V1 + V3**, applied as written
+
+Data: `engine/build/twoclock_v1/twoclock_v1.csv`.
+
+**V2 ✓ / V4 ✓ (both exact):** max |ΔJ| = 0.000e+00 in both arms — the frozen-field construction is exact, not approximate; every cohort voxel's `E_local` deviates from 0.588 by **0** (uniform hazard verified, not assumed). `p_pred = 1.001142501e-02`/tick.
+
+**V1 ✗ — the "flat" arm is not flat.** Arm F carries `L̄` = 0.357 (r=5) … 0.208 (r=30), against the gate's required < 0.02. **Mechanism (design oversight, now understood):** the test voxels are themselves manifested `+1` states, and the latency field is sourced by `ρ_mass = M_REST·|s|` — so the 1,139-voxel cohort **self-sources its own latency well**. There is no such thing as a zero-latency control containing matter while `latency_field` is on.
+
+**V3 ✗ — inner-shell statistics.** Shells r=5 (n=25) and r=7 (n=30) fall below the required 40; the min-separation cull is surface-area-limited at small radii. (Decay fractions 96–100 % pass the second clause everywhere.)
+
+**Characterization carried forward (not a booked outcome).** The run is nonetheless strongly informative, because the two arms *did* differ in latency — by 0.124 at r=5 (0.482 vs 0.357), where a τ-dilated hazard predicts a 6.2 % rate difference — and produced **bit-identical decay: `n_diff = 0` across all 1,139 paired voxels, `rate_M/rate_F = 1.0000` in every shell**. Under the pairing argument (identical RNG streams keyed on voxel index and tick), *any* latency dependence in the hazard would have scrambled decay ticks wholesale. This is consistent with Prediction A at a weaker contrast than designed; it is **not booked** as Outcome A, per §4's own gate clause.
+
+**Disposition: procedural amendment v1.1, cut as its own tagged lock BEFORE the re-run** (same discipline as the selfenergy-pinning v1.1 amendment of 2026-07-17). Changes, all instrument-side; question, hazard target, outcome map, and exclusions unchanged:
+1. **New arm Z** — no mass ball **and `latency_field` OFF** ⇒ `L ≡ 0` exactly. This is the only construction that yields a true zero-latency control containing matter. **M vs Z becomes the primary pairing** (maximal contrast, L̄ ≈ 0.6 vs 0); M vs F and F vs Z are retained as secondary.
+2. **V1 restated:** arm M innermost `L̄` > 0.25 (unchanged) **and** arm Z max `L` = 0 exactly.
+3. **Ball radius 3 → 5, shells → {8, 10, 13, 17, 22, 30}** so every shell clears V3's 40-voxel floor while sitting outside the ball with margin. (V3's threshold itself is NOT relaxed — the geometry is fixed to meet it.)
+4. Pairing made index-robust (map keyed on voxel index rather than an ordered merge).
+
 *Registered 2026-07-18, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1.*
