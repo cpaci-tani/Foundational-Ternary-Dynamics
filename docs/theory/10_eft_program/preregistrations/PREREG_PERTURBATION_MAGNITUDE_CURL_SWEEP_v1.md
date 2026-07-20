@@ -31,4 +31,27 @@ This is a characterization campaign, not a hypothesis test with a binary verdict
 
 ---
 
+## OUTCOME (2026-07-19, first execution — no VOID this time)
+
+Data: `engine/build/perturbation_sweep_v1/run.csv`.
+
+**All gates pass, several exactly.** V1: `F_pre`'s `e_half` and `curl_total` match the parent campaign's disclosed values to the printed digit (bit-identical prefix, as determinism requires). V3: the `s=0.5` and `s=1.0` sweep points reproduce the parent's Test-B drain/no-drain values **exactly** (`12.653278…` and `19.233461…`, identical to all 12 printed digits). A free bonus check: `C_null` (no state flip, wave_vel untouched) is **numerically identical** to `s=1.0` (wave_vel scaled by exactly 1, i.e. also untouched) — direct empirical confirmation that `set_state` truly has zero effect on this measurement, exactly as the source-code verification predicted.
+
+**V2 (the structural check) passes at the limit of the check's own resolution:** a least-squares quadratic fit gives R² = **1.0000000000**, with residuals at 10⁻¹²–10⁻¹¹ — pure floating-point noise, not a fit residual. A cubic fit's cubic coefficient is 3.6×10⁻¹² — indistinguishable from zero. `curl_total(s)` is quadratic in `s` **to the limit of double precision**, exactly as the affine-leapfrog / quadratic-curl-functional argument in §1 required. This is a strong, independent confirmation that the isolation methodology (this campaign's and the parent's) has no hidden cross-site leakage or unaccounted-for confound — a bug of that kind would show up as departure from exact quadratic behavior, and none appears.
+
+**The physics — in the fitted coefficients:**
+
+`curl_total(s) = 7.706578 + 8.259921·s + 3.266963·s²`
+
+- **A = 7.706578** — the floor: curl present even at `s=0` (target's wave_vel forced to zero, nothing added). This is **40.07%** of the full-perturbation value `curl_total(1) = 19.233462`.
+- **B, C > 0**, and the parabola's vertex sits at `s = −B/2C ≈ −1.264` — *outside* the physical range `s ≥ 0`. Consequence: for every physically realizable perturbation magnitude, `curl_total` is **strictly monotonically increasing** in `s`. There is no magnitude at which adding more perturbation reduces curl.
+
+**Reading (per prereg §4 — a characterization, not a binary verdict):** neither pole of the parent's named hypothesis is exactly right. It is **not** a pure floor (60% of the signal scales with magnitude, and does so monotonically and convexly — increasingly steeply — for all `s > 0`) — but it is **not** pure magnitude-scaling either (40% survives at zero added perturbation, from symmetry-breaking alone: merely erasing what one site naturally held). The mechanism is a **mixture, now quantified exactly**: roughly two-fifths structural (breaking symmetry at a single site, independent of what if anything is placed there) and three-fifths proportional (with an accelerating, not merely linear, dependence on magnitude).
+
+**One further fact the exact fit hands us for free:** since the vertex sits at negative `s`, a perturbation applied in the *opposite* direction from what natural dynamics produced (`s ≈ −1.26`, i.e. roughly reversing and slightly overshooting F_pre's own wave_vel there) would minimize curl below even the `s=0` floor. Named as a mathematical consequence of the fit, not measured or claimed as physically meaningful — a natural probe for a future campaign if the sign-dependence of the contamination becomes relevant.
+
+**Consequence for the parent line of inquiry:** `DERIV_REST_MASS_FROM_CONSTRAINT_ENERGY.md`'s [OPEN] "sharper hypothesis" line is updated from a named-but-untested question to a **quantified characterization**: single-site symmetry-breaking accounts for ~40% of the injected transverse content at this test point; the remaining ~60% scales with perturbation magnitude, convexly. The underlying question — what in genesis's *own* mechanics sets the effective magnitude and direction of the site-local perturbation it produces — remains open; this campaign characterizes the *response curve*, not genesis's specific operating point on it (though `s=1.0`, the no-drain point, *is* the closest proxy to genesis's actual undrained mechanics measured so far).
+
+---
+
 *Registered 2026-07-19, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion/parent: `preregister-kinetic-drain-curl-isolation-v1`, `preregister-genesis-energy-ledger-v1`.*
