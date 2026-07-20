@@ -51,16 +51,22 @@ struct SeedSpec {
     const char* name;
     double ox, oy, oz;
     double amp, sigma, cutR;
-    double known_e_half;  // V2 reproducibility target from the seed-diversity campaign
+    double known_e_half;  // V2 reproducibility target -- see v1.1 amendment
 };
 
 // Only the three arms that passed every gate cleanly in
 // PREREG_MANIFESTATION_SEED_DIVERSITY_v1 (B_position VOIDed on no
 // manifestation, D_broad failed its own V1 -- neither is reused here).
+//
+// v1.1 (see PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md amendment): this
+// instrument measures Q at FREEZE time, i.e. before relaxation -- the
+// correct V2 target is therefore the original campaign's
+// `e_half_prerelax` field, not its final (post-relaxation) `e_half`.
+// v1 wrongly used the post-relaxation values; corrected here.
 const SeedSpec kSeeds[] = {
-    {"A_baseline", 0.31, 0.17, 0.07, 3.00, 0.45, 4.0, 1.709171333089},
-    {"C_hot",      0.31, 0.17, 0.07, 5.00, 0.45, 4.0, 7.221033315847},
-    {"E_cold",     0.31, 0.17, 0.07, 2.15, 0.45, 4.0, 0.781682031101},
+    {"A_baseline", 0.31, 0.17, 0.07, 3.00, 0.45, 4.0, 1.368676308503},
+    {"C_hot",      0.31, 0.17, 0.07, 5.00, 0.45, 4.0, 5.828246462835},
+    {"E_cold",     0.31, 0.17, 0.07, 2.15, 0.45, 4.0, 0.540720277788},
 };
 constexpr int kNSeeds = 3;
 
