@@ -1,0 +1,32 @@
+# campaign_manifestation_seed_diversity — PREREG_MANIFESTATION_SEED_DIVERSITY_v1
+# L=17  K_GENESIS=1.5163860592  K_MANIFEST=0.5054620197173260
+GATE,A_baseline,V1_sites_above_threshold_preseed,1
+GATE,A_baseline,fire_tick,2
+GATE,A_baseline,V2_manifested_at_fire,1
+GATE,A_baseline,relax_applications,1214
+GATE,A_baseline,relax_converged,1
+SEED,A_baseline,e_half,1.709171333089,e_half_prerelax,1.368676308503,applications,1214,fire_tick,2,final_manifested,1
+GATE,V4,seedA_matches_known,1
+GATE,B_position,V1_sites_above_threshold_preseed,1
+GATE,B_position,fire_tick,-1
+GATE,B_position,V2_manifested_at_fire,0
+GATE,B_position,VOID_no_manifestation,1
+GATE,C_hot,V1_sites_above_threshold_preseed,1
+GATE,C_hot,fire_tick,2
+GATE,C_hot,V2_manifested_at_fire,1
+GATE,C_hot,relax_applications,1241
+GATE,C_hot,relax_converged,1
+SEED,C_hot,e_half,7.221033315847,e_half_prerelax,5.828246462835,applications,1241,fire_tick,2,final_manifested,1
+GATE,D_broad,V1_sites_above_threshold_preseed,2
+GATE,D_broad,fire_tick,2
+GATE,D_broad,V2_manifested_at_fire,1
+GATE,D_broad,relax_applications,1214
+GATE,D_broad,relax_converged,1
+SEED,D_broad,e_half,3.751512814887,e_half_prerelax,4.904408785990,applications,1214,fire_tick,2,final_manifested,1
+GATE,E_cold,V1_sites_above_threshold_preseed,1
+GATE,E_cold,fire_tick,2
+GATE,E_cold,V2_manifested_at_fire,1
+GATE,E_cold,relax_applications,1209
+GATE,E_cold,relax_converged,1
+SEED,E_cold,e_half,0.781682031101,e_half_prerelax,0.540720277788,applications,1209,fire_tick,2,final_manifested,1
+# done -- CV + interpretation applied against the prereg's frozen bands by the analyst
