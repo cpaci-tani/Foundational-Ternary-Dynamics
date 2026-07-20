@@ -1402,6 +1402,13 @@ ftd_add_test(campaign_graviton_tt_correlator tests/campaign_graviton_tt_correlat
 ftd_add_test(campaign_light_deflection tests/campaign_light_deflection.cpp
              CTEST_NAME light_deflection TIMEOUT 1800
              LABELS native eft gravity)
+
+# Two-clock consistency: does the evaporation (decay) clock dilate in a
+# latency well like the proper-time clock does? (PREREG_TWO_CLOCK_
+# CONSISTENCY_v1). Frozen-field, paired-arm, bit-level discriminator.
+ftd_add_test(campaign_two_clock_consistency tests/campaign_two_clock_consistency.cpp
+             CTEST_NAME two_clock_consistency TIMEOUT 1800
+             LABELS native eft gravity)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
