@@ -33,4 +33,16 @@ Separately, **report** (does not gate the primary verdict): whether Q_S matches 
 
 ---
 
+## AMENDMENT v1.1 (2026-07-20, before any re-run) — V2 target correction
+
+**Run 1 result:** V2 (`e_half` reproducibility) FAILED for all three dynamical arms — measured values (1.368676308503 / 5.828246462835 / 0.540720277788) did not match the `known_e_half` constants baked into the instrument (1.709171333089 / 7.221033315847 / 0.781682031101). Q for Arms A/C/E came back ≈0.000000 with large RMS angular deviation (134–153°); the S_synthetic arm (Q=1.000000, rms_dev=0.000°, V3 converged) was unaffected.
+
+**Root cause, confirmed by re-running the original, already-committed `campaign_manifestation_seed_diversity` binary against the current build:** its own V4 self-check still passes (`seedA_matches_known=1`, e_half=1.709171333089 exactly) — the underlying dynamics have not drifted. But that campaign's SEED rows carry *two* e_half fields: `e_half` (post-relaxation, the headline number this document's V2 gate wrongly used as the target) and `e_half_prerelax` (measured at freeze, before relaxation). This instrument measures Q at freeze time — before relaxation — so the correct V2 target was always `e_half_prerelax`, not `e_half`. Cross-checked directly: the re-run's `e_half_prerelax` values (1.368676308503 / 5.828246462835 / 0.540720277788) are bit-identical to Run 1's "failing" measurements. **The measurement was correct throughout; the V2 reference constant was copied from the wrong column.**
+
+**Fix:** `known_e_half` in the three `SeedSpec` rows corrected to the `e_half_prerelax` values. No other change — §1–§3 (design, gates, frozen reading bands) stand exactly as registered. This is a reference-constant correction to a reproducibility check, not a change to the falsifiable Q-robustness prediction, which was never touched by Run 1's data.
+
+Re-run authorized under v1.1. Run 1's Q/rms_dev numbers for Arms A/C/E remain scientifically valid data (the field state they were computed from was never in question) but are formally VOID under the v1-as-registered gate; the v1.1 re-run is canonical.
+
+---
+
 *Registered 2026-07-20, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion: `DERIV_REST_MASS_FROM_TOPOLOGICAL_CHARGE.md`, `preregister-manifestation-seed-diversity-v1` (source of the three reused seeds).*
