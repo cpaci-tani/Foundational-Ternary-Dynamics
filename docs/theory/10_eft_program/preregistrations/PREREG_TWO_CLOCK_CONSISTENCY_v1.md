@@ -91,4 +91,44 @@ Data: `engine/build/twoclock_v1/twoclock_v1.csv`.
 3. **Ball radius 3 → 5, shells → {8, 10, 13, 17, 22, 30}** so every shell clears V3's 40-voxel floor while sitting outside the ball with margin. (V3's threshold itself is NOT relaxed — the geometry is fixed to meet it.)
 4. Pairing made index-robust (map keyed on voxel index rather than an ordered merge).
 
+## RUN 2 (v1.1, 2026-07-18) — **OUTCOME A: the two clocks disagree**
+
+Data: `engine/build/twoclock_v11/twoclock_v11.csv`. Instrument: `preregister-two-clock-consistency-v1-1`.
+
+**All validity gates pass, several exactly:**
+
+| Gate | Result |
+|---|---|
+| **V1** well exists / control flat | arm M innermost `L̄ = 0.6181` (> 0.25 ✓); arm Z `L = 0.0000` **exactly**, all shells ✓ |
+| **V2** field frozen | max \|ΔJ\| = **0.000e+00** in all three arms ✓ |
+| **V3** statistics | every shell n₀ ≥ 46 (≥ 40 ✓); 97–100 % decayed (≥ 60 % ✓) |
+| **V4** hazard uniformity | every cohort voxel's `E_local` deviates from 0.588 by **0** ✓ |
+
+**Primary pairing M vs Z (latency well vs `L ≡ 0`):**
+
+| shell | n_pair | **n_diff** | L̄(M) | √(1−L̄²) predicted by B | rate_M/rate_Z |
+|---|---|---|---|---|---|
+| 8 | 63 | **0** | 0.6181 | 0.7861 | 1.0000 |
+| 10 | 46 | **0** | 0.5551 | 0.8318 | 1.0000 |
+| 13 | 139 | **0** | 0.4931 | 0.8700 | 1.0000 |
+| 17 | 235 | **0** | 0.4250 | 0.9052 | 1.0000 |
+| 22 | 305 | **0** | 0.3519 | 0.9360 | 1.0000 |
+| 30 | 567 | **0** | 0.2522 | 0.9677 | 1.0000 |
+
+**1,355 paired voxels, 0 with a differing decay tick.** Both secondary pairings (M vs F, F vs Z) are likewise bit-identical, giving three independent latency contrasts — 0.62-vs-0, 0.62-vs-0.36, 0.36-vs-0 — every one of them producing *zero* difference. At the deepest shell proper time runs at 78.6 % of coordinate rate: Prediction B demanded a **21.4 % slowdown in decay rate**, and the design would have resolved it not merely statistically but voxel-by-voxel. It is absolutely absent.
+
+(Per-shell `rate/p_pred` scatters 0.86–1.07 — small-n Poisson noise in the fit, *identical across arms*, confirming it is RNG-stream structure and not physics.)
+
+**Verdict: Outcome A — [MEASURED — internal inconsistency of the time sector].** The substrate's motion/proper-time sector dilates with latency (the 0.004 % match, FTD-0268 blind confirmation), while its matter ages on pure tick-time. In physics these are one clock: muon storage rings and orbiting atomic clocks dilate because that is what proper time *is*. FTD's engine, as implemented, has matter that does not know it is in a gravitational well.
+
+**Scope — what this does and does not invalidate.** `latency_field` is a non-default research control (absent from `SCALE0_TOGGLES`; the gravity campaigns switch it on explicitly). In runs where it is off, `L ≡ 0` everywhere and the two clocks agree trivially, so **prior survival/persistence measurements at L = 0 are unaffected** — including the FTD-0301 proton-metastability line and the FTD-0267 telemetry. The inconsistency bites exactly and only where the gravitational sector is active: any decay, evaporation, or persistence statistic measured inside a latency well is currently tick-native and should not be read as a proper-time result.
+
+**Booked as a decision point, not a fix (per §5).** No tag moves; no engine change in this session. The owner's two options:
+- **(a) Make decay a clock:** `p → p·√(1−L²)` in `phase_write`'s evaporation rule (one multiplication). This makes the chronometric picture self-consistent across the matter sector and sharpens the clock hypothesis from the vague "latency-budget = clock rate" into the testable **"hazard rates integrate proper time, not tick time"** — with this campaign as its standing instrument. Cost: a golden re-pin cycle and its own verification pass.
+- **(b) Declare decay tick-native:** then FTD's matter sector contradicts the muon-lifetime class of evidence, and that must be booked as a boundary/priced import rather than left implicit.
+
+No claim about real-world decay physics follows from this run; it is a statement about FTD's internal consistency only.
+
+---
+
 *Registered 2026-07-18, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1.*
