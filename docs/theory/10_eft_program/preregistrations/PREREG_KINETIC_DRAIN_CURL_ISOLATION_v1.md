@@ -46,4 +46,18 @@ Test A and Test B are independent lines of evidence for the same causal claim. *
 
 ---
 
+## RUN 1 (2026-07-19) — **VOID on V2**, caught cleanly by its own gate
+
+`GATE,V2,manifested_pre_manual_flip,1` — the target site was **already manifested** immediately before the intended no-drain intervention. Per this document's own §3 validity gates, this voids the run; no outcome is read from it.
+
+**Root cause (off-by-one against the parent's own tick convention):** the parent campaign's loop is check-then-tick, breaking when the *check* finds `manifested_count ≥ 1`; its disclosed `fire_tick=2` therefore means manifestation completes **during the second `tick()` call**, not the third (trace: t=0 check false → tick() call 1; t=1 check false → tick() call 2; t=2 check **true** → break, no further call). This document's Run-1 prefix executed *two* normal `tick()` calls before applying the genesis-OFF intervention as a third call — but real genesis (with drain) had already fired during the second of those two calls, so the intervention arrived one tick too late, on an already-manifested, already-drained state. The manual `set_state` call that followed was consequently a no-op (state was already +1), and Test A's measured `e_half`=0.708 does not test the registered hypothesis — it is closer to a (differently-triggered) extra-relaxation variant of the parent's own G-late arm than to a no-drain isolation.
+
+**This is exactly what the pre-declared V2 gate exists to catch**, and it did — on the very first execution, from the data, before any number was misread as a result.
+
+## v1.1 (procedural amendment, instrument-only; cut before re-running)
+
+Fix: run exactly **one** normal `tick()` call in the prefix (matching the parent's confirmed-safe post-call-1 state), then apply the genesis-OFF intervention as call 2 — the call where real genesis would otherwise fire. No change to the question, the outcome bands, Test B, or any other clause; §1's frozen prediction bands stand unchanged and unconsumed (Run 1 produced no reading against them).
+
+---
+
 *Registered 2026-07-19, before either instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion/parent: `preregister-genesis-energy-ledger-v1`.*
