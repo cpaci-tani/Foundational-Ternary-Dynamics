@@ -38,4 +38,18 @@ Compute the coefficient of variation of `e_half_relaxed(T)` across all 6 delays:
 
 ---
 
+## OUTCOME (2026-07-19) — **VOID on V2 for T≥1**, and the violation is itself the finding
+
+Data: `engine/build/timing_dep_v1/run.csv`.
+
+**T=0 is valid** — V1 passes exactly (`curl_undrained_matches_parent=1`), reproducing the parent campaigns bit-identically, as every prior gate has.
+
+**T≥1 all fail V2**: `sites_above_threshold=0` and `target_above_threshold=0` at every one of T∈{1,2,3,5,8}. The design assumed that suppressing genesis would leave the target site *sitting* above threshold, waiting; instead, the field **sloshes** — `fpre_e_half` swings 3.13 (T=0) → 0.48 (T=1) → 2.24 (T=2) → 1.17 (T=3) → 1.78 (T=5) → 0.89 (T=8), non-monotonically, consistent with energy trading between the flux and wave_vel channels under active wave dynamics. The target's own `|J|` drops *below* `K_GENESIS` within a single further tick and does not reliably return. **The T≥1 measurements are therefore not testing "manifestation delayed within its eligible window" — they are testing a counterfactual forced-manifestation of a site the real stochastic hazard would not have fired at all, since it is no longer above threshold.** Per this document's own validity gate, these points are VOID and are not read as an answer to the registered question.
+
+**Why this is not a wasted run.** The violation is a real, informative measurement in its own right: for this seed, the *eligible window* — the span during which a threshold-crossing site remains above `K_GENESIS` before ordinary dynamics carries it back down — appears to be very short, on the order of a single tick. This is consistent with, and helps explain, every prior campaign's own observation that genesis fires at the *earliest* opportunity with high probability (~93%/tick from this seed's margin): if the window is this narrow, there may be little practical "natural" timing variation for a seed built this way to explore at all — the stochastic hazard's high firing rate and the field's short eligible window are two views of the same fact.
+
+**Disposition: no v1.1 patch of this design.** Extending the eligible window artificially (e.g. re-injecting flux each tick to hold the site above threshold) would itself become the confound under test, defeating the purpose. The underlying question — is genesis's operating point on the curl-response curve a stable, circumstance-independent property — is better answered by a design that does not depend on sustaining threshold-eligibility at all: comparing *independently constructed* manifestation events (different seeds, each firing at its own natural earliest opportunity, matching how the real stochastic process actually behaves) rather than forcing one seed to wait past its own field dynamics. See the companion document `PREREG_MANIFESTATION_SEED_DIVERSITY_v1` for that redesign.
+
+---
+
 *Registered 2026-07-19, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion/parent: `preregister-perturbation-magnitude-curl-sweep-v1`, `preregister-kinetic-drain-curl-isolation-v1`, `preregister-genesis-energy-ledger-v1`.*
