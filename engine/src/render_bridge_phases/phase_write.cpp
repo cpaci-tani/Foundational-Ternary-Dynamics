@@ -30,6 +30,7 @@
 #include "ftd/sublattice.h"
 #include "ftd/field_operators.h"
 #include "ftd/bridge_rng.h"
+#include "ftd/proper_time_rate.h"
 #include "ftd/voxel_rng.h"
 #include "ftd/parallel.h"
 #include <algorithm>
@@ -368,8 +369,16 @@ void phase_write_main_loop(RenderBridge& rb) {
           local_energy += rb.voxels_[n].flux.mag2() + rb.voxels_[n].wave_vel.mag2();
       }
       double evap_prob = std::exp(-local_energy / (K_MANIFEST * K_MANIFEST));
+      // Proper-time hazard (2026-07-19 amendment; owner ruling on
+      // PREREG_TWO_CLOCK_CONSISTENCY_v1 Outcome A): the decay clock integrates
+      // the SAME dτ the proper-time accumulator defines (ftd/proper_time_rate.h)
+      // — a metastable population in a latency well decays slower by √(1−L²)
+      // at rest and by the SR factor when moving. At L=0, v=0 the factor is
+      // exactly 1 (bit-identical to the pre-amendment rule). The RNG draw and
+      // stream are unchanged; only the acceptance threshold scales.
+      const double dtau = proper_time_rate(v.latency, v.speed() * v.speed());
       if (voxel_uniform(gseed, i, rb.tick_,
-                        static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
+                        static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE * dtau) {
         ftd::atomic_inc(rb.evaporation_events_this_tick_);  // FTD-0267 telemetry (observation only)
         rb.set_state(i, 0);
         v.particle_id = -1;

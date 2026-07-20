@@ -81,7 +81,7 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 1. **Flux wave equation**: dJ/dt = c^2 nabla^2 J (only possible local linear dynamics for a vector field)
 2. **State-flux coupling**: source term -g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0; electric sign per lagrangian.h Term 2, amended 2026-07-18 — the pre-amendment +g_c·grad(s) fought the Gauss constraint at charge sites, measured live equilibrium f = −0.095)
 3. **Gauss projection**: enforce div(J) = s each tick (charge conservation -- logical necessity)
-4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE, where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt)
+4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE * (dtau/dt), where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt) and dtau/dt = sqrt(f^2-v^2)/sqrt(f), f = 1-L^2, is the shared proper-time rate (ftd/proper_time_rate.h; proper-time-hazard amendment 2026-07-19 — decay statistics are clocks, so metastable matter in a latency well decays slower by sqrt(1-L^2) at rest and by the SR factor when moving; at L=0, v=0 the factor is exactly 1)
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
 6. **Movement + Collision**: remainder accumulation, speed limit C_SPEED = C_WAVE = 1/sqrt(3), annihilation on contact
 
@@ -440,7 +440,7 @@ distinctions are tracked in the theory ledgers.
 | `ALPHA` | 0.00729 (1/X_PLUS, tree-level) | Coulomb force, damping, exchange force |
 | `ALPHA_EFT` | `G_C²` (≡ ALPHA by construction) | Same two-vertex force paths; consistency alias |
 | `K_B` | 0.511 | Wavepacket amplitude, Larmor scale (mass anchor; the kinetics role moved to K_MANIFEST per FTD-0388) |
-| `K_MANIFEST` | 0.5054620197 (:= W_SC [SELECTION — ADOPTED, FTD-0388]) | Boltzmann evaporation scale (p = exp(-E/K_MANIFEST²)·K_EVAP_RATE), genesis probability ramp |
+| `K_MANIFEST` | 0.5054620197 (:= W_SC [SELECTION — ADOPTED, FTD-0388]) | Boltzmann evaporation scale (p = exp(-E/K_MANIFEST²)·K_EVAP_RATE·dτ/dt since 2026-07-19), genesis probability ramp |
 | `G_C` | sqrt(ALPHA) | State-flux coupling (phase_read) |
 | `G_N` | 0.01 (lattice toy — see §5 gravity banner) | Gravitational force |
 | `C_WAVE` | 1/sqrt(3) | Wave propagation speed (Laplacian coefficient) |

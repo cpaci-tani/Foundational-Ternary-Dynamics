@@ -131,4 +131,36 @@ No claim about real-world decay physics follows from this run; it is a statement
 
 ---
 
-*Registered 2026-07-18, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1.*
+## RESOLUTION (2026-07-19) — owner ruling: option (a), the proper-time hazard
+
+The owner ruled on the Outcome-A decision point: **make decay a clock.** Implemented as the proper-time-hazard amendment:
+
+- **One definition of the matter clock rate**, factored into `engine/include/ftd/proper_time_rate.h` (shared `__host__ __device__`, voxel_rng.h idiom): `dτ/dt = √(f²−v²)/√f`, `f = 1−L²`, c=1 flux-velocity normalization — **exactly the τ-accumulator's existing formula** (transmutation_phases.cpp), now consumed by the accumulator AND the evaporation hazard (CPU `phase_write.cpp`; GPU `evaporation_kernel`, single + dual launchers). One clock, everywhere matter ages.
+- **Convention note of record:** the chat-level proposal used the transport-budget form `√(1−v²/C²−L²)` (phase_forces convention). The implementation instead uses the proper-time sector's own c=1 convention, per the standing do-not-couple note in the accumulator — introducing the transport normalization would have created a *third* clock. At rest the two agree exactly (`√(1−L²)`); they differ only in the velocity normalization, where the τ-accumulator is the measured sector of record (FTD-0252).
+- **Genesis deliberately not touched:** nucleation at void sites has no τ to integrate; whether manifestation should dilate in a well is a separate [OPEN] question, recorded in the header, not silently decided.
+- At `L = 0, v = 0` the factor is exactly 1 — the pre-amendment hazard, bit-identical, so all flat-sector survival results (FTD-0301, FTD-0267) are untouched by construction.
+
+**Frozen post-amendment expectation (declared before the verification run):** the identical v1.1 instrument must now produce the **B-pattern** — `n_diff ≫ 0` in all three pairings, `rate_M/rate_Z = √(1−L̄_M²)` and `rate_F/rate_Z = √(1−L̄_F²)` within ±15 % per shell, monotone in depth (all cohorts at rest, so the velocity term is inert and the prediction is pure `√(1−L̄²)`). Gates V1–V4 unchanged. Anything else is booked honestly (including any surprise from the unchanged-RNG-stream construction).
+
+### Verification run (2026-07-19, amended engine) — **B-pattern CONFIRMED**
+
+Data: `engine/build/twoclock_pt/twoclock_pt.csv` (preserved at `docs/theory/10_eft_program/data/two_clock/twoclock_pt_amended.csv`). Gates: V1–V4 pass as before (arm Z `L = 0` exactly; `E_local` deviation 0; every shell ≥ 46 cohort voxels, 96–100 % decayed).
+
+**Primary pairing M vs Z — `rate_M/rate_Z` against the frozen `√(1−L̄_M²)`:**
+
+| shell | L̄(M) | predicted | measured | deviation | n_diff (meas / exp) |
+|---|---|---|---|---|---|
+| 8 | 0.6185 | 0.7858 | 0.7510 | −4.4 % | 14 / 13.5 |
+| 10 | 0.5554 | 0.8316 | 0.9109 | +9.5 % | 3 / 7.7 |
+| 13 | 0.4935 | 0.8698 | 0.9112 | +4.8 % | 12 / 18.1 |
+| 17 | 0.4253 | 0.9051 | 0.9432 | +4.2 % | 19 / 22.3 |
+| 22 | 0.3521 | 0.9360 | 0.9246 | −1.2 % | 20 / 19.5 |
+| 30 | 0.2523 | 0.9676 | 0.9887 | +2.2 % | 17 / 18.4 |
+
+Every shell inside the ±15 % band. Bit-level counting channel: **85 differing decay ticks vs ≈ 100 ± 9 expected** from the exact per-event probability `1−√(1−L̄²)` (−1.6 σ); MvF (42 vs ≈ 47) and FvZ (45 vs ≈ 54) consistent, and the F arm — the self-sourced intermediate well — sits between M and Z exactly as it should. **The deepest shell decays at 75 % of the flat-space rate against a predicted 79 % — the muon-storage-ring behaviour, in-substrate.**
+
+**Stated as-is, not smoothed:** the fitted ratios wobble ±2 % non-monotonically across shells (e.g. r17 → r22: 0.943 → 0.925). This is inside the ±10 % single-fit noise the Z arm itself demonstrates on a known-flat truth (`rate/p_pred` scatter 0.83–1.05 at L ≡ 0), so the monotonicity clause is satisfied only *within demonstrated fit noise*, and the quantitative verdict rests on the band clause + the counting channel, both of which pass cleanly.
+
+**Suite state after the amendment:** golden battery 7/7 at the EXISTING pins — the amendment is *verified* golden-neutral (at `L = 0, v = 0` the factor is exactly 1, bit-identical; no pinned profile's evaporation decisions flip, including the moving-crosser arm). WSL2: `gpu_golden` green at its existing pin; `gpu_evaporation_parity` green (CPU and GPU amended in lockstep, still bit-exact). WASM rebuilt.
+
+**The consistency statement this closes:** FTD's matter sector and motion sector now read ONE clock — `proper_time_rate()` — and the clock hypothesis is sharpened to its testable form: **hazard rates integrate proper time, not tick time**, with this campaign as the standing regression instrument for that statement.

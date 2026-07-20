@@ -389,8 +389,11 @@ inline constexpr double LAPLACIAN_EDGE_WEIGHT = 1.0 / 6.0;
 // (latent heat of mass-gap creation; v.wave_vel *= (1 - this)).
 inline constexpr double K_GENESIS_KINETIC_DRAIN = 0.5;
 // K_EVAP_RATE: per-tick evaporation probability scaling. The Boltzmann
-// decay probability p = exp(-local_energy/K_B²) is multiplied by this
-// to set the actual decay rate.
+// decay probability p = exp(-local_energy/K_MANIFEST²) is multiplied by
+// this AND by the proper-time rate dτ/dt (ftd/proper_time_rate.h; the
+// 2026-07-19 proper-time-hazard amendment — decay statistics are clocks,
+// so the hazard integrates the same dτ the τ-accumulator defines; at
+// L=0, v=0 the factor is exactly 1).
 inline constexpr double K_EVAP_RATE = 0.1;
 // K_GENESIS_FLUX_EPSILON: floor on |J| during the genesis flux drain
 // to prevent division-by-near-zero. Distinct from EPSILON_MAG (which

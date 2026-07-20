@@ -6,6 +6,7 @@
 #include "ftd/transmutation_phases.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/proper_time_rate.h"
 #include "ftd/voxel_rng.h"
 #include <algorithm>
 #include <cmath>
@@ -49,20 +50,16 @@ void accumulate_proper_time(RenderBridge& rb) {
   for (int i : active) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
-    double L = v.latency;
-    double f = 1.0 - L * L;
-    if (f <= 0.0) continue;
-    double v2 = v.speed() * v.speed();
-    // Proper-time sector uses a c=1 flux-velocity normalization: arg = f² − |v|²
-    // freezes the clock (dτ→0) at |v|=1. NOTE the transport/force sector caps
-    // particle |v| at C_SPEED = 1/√3 separately (see phase_forces.cpp), so this
-    // clock can never actually reach its c=1 freeze under transport alone. The
-    // two conventions are intentionally distinct; do NOT couple them here. If a
-    // future change wants the clock to freeze at the causal transport speed,
-    // normalize this arg by C_SPEED² (i.e. arg = f² − v2/C_SPEED²).
-    double arg = f * f - v2;
-    if (arg > 0.0) {
-      const double delta_tau = std::sqrt(arg) / std::sqrt(f);
+    // Clock rate of record: dτ/dt = √(f²−v²)/√f, f = 1−L², c=1 flux-velocity
+    // normalization — SINGLE definition in ftd/proper_time_rate.h since the
+    // 2026-07-19 proper-time-hazard amendment (the evaporation hazard now
+    // integrates the SAME dτ; see the header's consumer list). The c=1
+    // convention is intentionally distinct from the transport cap
+    // |v| ≤ C_SPEED·√(1−L²) in phase_forces.cpp — do NOT couple them here;
+    // a future change wanting the clock to freeze at the causal transport
+    // speed would normalize speed² by C_SPEED² inside the shared helper.
+    const double delta_tau = proper_time_rate(v.latency, v.speed() * v.speed());
+    if (delta_tau > 0.0) {
       v.tau += delta_tau;
       // FTD-0271 (A5): advance the de Broglie clock phase dφ = ω₀·dτ. With
       // L=0 this is dτ=1/tick at rest and √(1−v²) when moving — so the clock

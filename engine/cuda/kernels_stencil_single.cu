@@ -19,6 +19,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/proper_time_rate.h"  // proper-time hazard (2026-07-19): shared dτ/dt
 #include "ftd/sublattice.h"   // N_FACE, N_EDGE, N_CORNER, W_SC_FACE, W_FCC_EDGE, W_BCC_CORNER
 #include "ftd/voxel_rng.h"    // BH-F5/F8/F9 (2026-05-05): shared SplitMix64 RNG
 #include "kernels_stencil_common.cuh"   // wrap, idx3d, effective_damping, scale_field_pair
@@ -502,6 +503,10 @@ __global__ void evaporation_kernel(
     const double* __restrict__ wv_x,
     const double* __restrict__ wv_y,
     const double* __restrict__ wv_z,
+    const double* __restrict__ velocity_x,   // proper-time hazard (2026-07-19)
+    const double* __restrict__ velocity_y,
+    const double* __restrict__ velocity_z,
+    const double* __restrict__ latency,
     const uint8_t* __restrict__ locked,
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
@@ -545,9 +550,18 @@ __global__ void evaporation_kernel(
     // differ sub-ULP; a CPU↔GPU decision flip needs |u − p·K_EVAP_RATE|
     // ≲ 1e-16 (same accepted caveat as voxel_normal's transcendentals).
     double evap_prob = exp(-local_energy / (K_MANIFEST * K_MANIFEST));
+    // Proper-time hazard (2026-07-19 amendment; mirrors CPU phase_write.cpp):
+    // the decay clock integrates the SAME dτ as the proper-time accumulator
+    // (ftd/proper_time_rate.h, shared __host__ __device__ definition). At
+    // L=0, v=0 the factor is exactly 1 — bit-identical to the pre-amendment
+    // rule. The RNG draw and stream are unchanged; only the threshold scales.
+    const double speed2 = velocity_x[i]*velocity_x[i]
+                        + velocity_y[i]*velocity_y[i]
+                        + velocity_z[i]*velocity_z[i];
+    const double dtau = ::ftd::proper_time_rate(latency[i], speed2);
     double u = ::ftd::voxel_uniform(rng_seed, i, tick,
             static_cast<unsigned long long>(::ftd::VoxelRng::Evaporation));
-    if (u < evap_prob * K_EVAP_RATE) {
+    if (u < evap_prob * K_EVAP_RATE * dtau) {
         const int8_t old_state = state[i];
         state[i] = 0;
         if (ledger_reaction) {
@@ -646,6 +660,8 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+            bufs.d_latency,
             bufs.d_locked,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
