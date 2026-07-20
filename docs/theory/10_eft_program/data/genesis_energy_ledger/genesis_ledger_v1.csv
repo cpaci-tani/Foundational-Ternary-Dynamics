@@ -1,0 +1,43 @@
+# campaign_genesis_energy_ledger — PREREG_GENESIS_ENERGY_LEDGER_v1
+# L=17  K_GENESIS=1.5163860592  K_MANIFEST=0.5054620197173260  W_SC(L=17) frozen=0.478917129 (P2 alt=0.151842301)
+ROW,S,0,0.076654845613
+ROW,S,1,0.145710929690
+ROW,S,2,0.198143942552
+ROW,S,3,0.236270175727
+ROW,S,4,0.265936367687
+ROW,S,500,0.478362804798
+ROW,S,1000,0.478910090128
+GATE,S,relax_applications,1211
+GATE,S,relax_converged,1
+SUMMARY,S,e_half,0.478915969616,applications,1211
+GATE,G-early,sites_above_threshold_preseed,1
+GATE,G-early,e_half_raw_seed,2.892386439093
+GATE,G-early,fire_tick,2
+GATE,G-early,manifested_at_fire,1
+ROW,G-early,0,1.360293043978
+ROW,G-early,1,1.381065853882
+ROW,G-early,2,1.409955751683
+ROW,G-early,3,1.438748833910
+ROW,G-early,4,1.465031571050
+ROW,G-early,500,1.708604765412
+ROW,G-early,1000,1.709165286939
+GATE,G-early,relax_applications,1214
+GATE,G-early,relax_converged,1
+SUMMARY,G-early,e_half,1.709171333089,applications,1214,e_half_prerelax,1.368676308503,final_manifested,1
+GATE,G-late,sites_above_threshold_preseed,1
+GATE,G-late,e_half_raw_seed,2.892386439093
+GATE,G-late,fire_tick,2
+GATE,G-late,manifested_at_fire,1
+GATE,G-late,extra_dynamics_ticks,5
+GATE,G-late,manifested_after_extra,1
+ROW,G-late,0,0.867488757236
+ROW,G-late,1,0.939396256395
+ROW,G-late,2,0.992062744190
+ROW,G-late,3,1.031833397206
+ROW,G-late,4,1.062150968316
+ROW,G-late,500,1.281254406603
+ROW,G-late,1000,1.281803260496
+GATE,G-late,relax_applications,1212
+GATE,G-late,relax_converged,1
+SUMMARY,G-late,e_half,1.281809176362,applications,1212,e_half_prerelax,0.799762272695,final_manifested,1
+# done — verdict applied against PREREG §5 by the analyst, not here
