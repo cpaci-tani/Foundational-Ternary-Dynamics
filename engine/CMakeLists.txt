@@ -1439,6 +1439,14 @@ ftd_add_test(campaign_perturbation_magnitude_curl_sweep tests/campaign_perturbat
 ftd_add_test(campaign_genesis_timing_dependence tests/campaign_genesis_timing_dependence.cpp
              CTEST_NAME genesis_timing_dependence TIMEOUT 1800
              LABELS native eft mass)
+
+# Is genesis's locked energy stable across genuinely different birth
+# circumstances (position, amplitude, width), or does it depend on how the
+# particle was made? (PREREG_MANIFESTATION_SEED_DIVERSITY_v1). CPU-forced,
+# deterministic; five independently constructed, naturally-firing seeds.
+ftd_add_test(campaign_manifestation_seed_diversity tests/campaign_manifestation_seed_diversity.cpp
+             CTEST_NAME manifestation_seed_diversity TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
