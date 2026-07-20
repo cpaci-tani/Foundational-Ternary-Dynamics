@@ -1409,6 +1409,15 @@ ftd_add_test(campaign_light_deflection tests/campaign_light_deflection.cpp
 ftd_add_test(campaign_two_clock_consistency tests/campaign_two_clock_consistency.cpp
              CTEST_NAME two_clock_consistency TIMEOUT 1800
              LABELS native eft gravity)
+
+# Genesis energy ledger: does a REAL genesis-born charge lock the same
+# constraint self-energy W_SC(L) a synthetic unit charge does?
+# (PREREG_GENESIS_ENERGY_LEDGER_v1). CPU-forced, deterministic; emits CSV
+# measurement data only — the outcome verdict is applied against the
+# prereg's outcome map by the analyst.
+ftd_add_test(campaign_genesis_energy_ledger tests/campaign_genesis_energy_ledger.cpp
+             CTEST_NAME genesis_energy_ledger TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
