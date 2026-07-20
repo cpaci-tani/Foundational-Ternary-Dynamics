@@ -45,4 +45,25 @@ Re-run authorized under v1.1. Run 1's Q/rms_dev numbers for Arms A/C/E remain sc
 
 ---
 
+## OUTCOME (2026-07-20, v1.1 re-run) — ROBUST, but robustly ZERO, not ±1
+
+All gates pass. Data (identical to the Run-1 measurements, now correctly gated):
+
+| Arm | e_half (freeze) | fire_tick | Q | RMS angular deviation |
+|---|---|---|---|---|
+| A_baseline | 1.368676308503 | 2 | −0.0000000000 | 143.14° |
+| C_hot | 5.828246462835 | 2 | +0.0000000000 | 134.72° |
+| E_cold | 0.540720277788 | 2 | −0.0000000000 | 152.95° |
+| S_synthetic (reference) | 0.478915969616 | — | +1.0000000000 | 0.00° |
+
+**Primary verdict, per the frozen §3 bands as literally written:** spread among Q_A/Q_C/Q_E is ≈1e-10 (< 0.10) and each is within 0.05 of an integer (namely 0) → **ROBUST**. The hedgehog charge is pinned across the same three birth circumstances that produced a 9.2× energy spread — exactly the property energy lacked in the closed constraint-energy arc.
+
+**The reported (non-gating) comparison is the important part:** Q_S = +1 (the synthetic reference, matching the pure-radial injection's own construction) does **not** match Q_A = Q_C = Q_E = 0. The topological charge present at injection (Q=1, by construction of the radial pulse) is not preserved to freeze time under real dynamics — it is driven to *exactly* zero, reproducibly, within 2 ticks, independent of amplitude across a 2.3× range (2.15 to 5.00). The RMS angular deviation (135–153°) confirms this is not "nothing happened": the field's direction on the measurement shell has been substantially reoriented by freeze time, consistent with a genuine topology change (Q: 1 → 0), not measurement noise around an unchanged configuration.
+
+**Reading:** §1's structural argument holds — Q is robust where energy is not, confirmed directly rather than assumed. But the specific hoped-for picture (a nonzero, conserved charge that could anchor a Bogomolny-type mass floor, the way a soliton's winding number does) does not survive: real manifestation dynamics collapses the octahedral-shell charge to the *trivial* topological sector for all three tested seeds. A trivial sector carries no floor above zero in the standard construction, so this specific charge cannot be the rest-mass invariant as originally hoped — that specific route is closed. What is newly established, and was not known before this test: manifestation (or the two ticks of dynamics preceding it) is topology-erasing on this shell, consistently and amplitude-independently. Whether the charge is genuinely destroyed or has migrated to a larger enclosing shell (the k=2 cuboctahedron layer, or further out) is open and would need its own freshly-designed, freshly-pre-registered test — not pursued here.
+
+**Consequence for `DERIV_REST_MASS_FROM_TOPOLOGICAL_CHARGE.md`:** §4's question is answered (ROBUST) but the answer does not support the document's §1 hoped-for conclusion (a nonzero mass-anchoring charge). Status updated accordingly.
+
+---
+
 *Registered 2026-07-20, before the instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion: `DERIV_REST_MASS_FROM_TOPOLOGICAL_CHARGE.md`, `preregister-manifestation-seed-diversity-v1` (source of the three reused seeds).*

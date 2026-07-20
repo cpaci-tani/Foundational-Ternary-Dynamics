@@ -1,6 +1,6 @@
 # Rest Mass as a Topological Invariant of the Manifested State-Field Pattern
 
-**Status:** [HYPOTHESIS — falsifier pre-registered, first test in progress]
+**Status:** [PARTIALLY CLOSED — the octahedral-shell hedgehog charge is confirmed robust across circumstance (unlike every energy-based candidate), but robustly ZERO at freeze time, not the nonzero ±1 needed to anchor a mass floor; this specific construction cannot supply rest mass. Whether the charge migrated to a larger shell rather than being destroyed is OPEN, untested]
 **Supersedes nothing; runs alongside** `DERIV_REST_MASS_FROM_CONSTRAINT_ENERGY.md` (CLOSED — the constraint-locked-*energy* route). This document proposes a structurally different kind of quantity for the same question, motivated directly by why that route closed.
 
 ---
@@ -39,7 +39,9 @@ Every seed in the closed energy-based arc injects flux via a purely radial pulse
 - **If Q is pinned across all seeds and matches the synthetic reference:** genuine support for "topological charge, not energy, is the substrate-invariant quantity" — the excess energy over W_SC would then be reframed as the *cost* of supporting a fixed topological charge, not itself the invariant, and would open the question of a Bogomolny-type lower-bound relation between Q and energy as the next target.
 - **If Q varies with circumstance the same way energy did, or is ill-defined (field vanishes on the shell) for some seeds:** the topological-invariant route closes negative at its first test, on the same footing as the five energy-based closures, and should not be re-attempted with this specific construction without a new, independently-motivated surface or field choice.
 
-See `docs/theory/10_eft_program/preregistrations/PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md` for the locked falsifier and frozen reading bands.
+See `docs/theory/10_eft_program/preregistrations/PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md` for the locked falsifier, frozen reading bands, and full outcome.
+
+**Outcome (2026-07-20):** ROBUST, per the frozen bands as literally written — Q_A = Q_C = Q_E = 0.0000000000 (spread ≈1e-10) across the three seeds despite their 9.2× energy spread. But the pinned value is the *trivial* sector (Q=0), not the ±1 hedgehog value both the initial radial injection and the idealized synthetic-charge reference (Q_S=+1, exact) display. Large RMS angular deviation (135–153°) confirms the field's direction genuinely changed by freeze time — this is a real topology change (1→0) within 2 ticks, not unchanged noise. A trivial topological sector carries no Bogomolny-type energy floor above zero in the standard construction, so it cannot anchor a nonzero rest mass the way this document hoped. **This specific route (octahedral shell, 6 nearest face-neighbors, freeze-time measurement) is closed for supplying a mass-anchoring charge.** Left open: whether the charge that was present at injection migrated outward to a larger enclosing shell rather than being destroyed — untested, would need its own pre-registration.
 
 ## 5 · Claim ledger
 
@@ -48,8 +50,10 @@ See `docs/theory/10_eft_program/preregistrations/PREREG_HEDGEHOG_CHARGE_ROBUSTNE
 | Berg–Lüscher discretization on a closed triangulated surface computes an integer topological degree | [THEOREM — imported, Berg & Lüscher 1981] | Standard result; not an FTD-native derivation, an imported mathematical tool, same status as the Watson/Ewald machinery used for W_SC |
 | FTD's octahedral Moore-shell provides a natural, non-arbitrary closed surface for this construction | [SELECTION — motivated by the pre-existing Moore Layer Theorem, not chosen post-hoc] | The k=1 layer is FTD's own innermost established shell |
 | Q is well-defined and behaves correctly (rotation/magnitude invariant, correct sign) on hand-constructed test fields | [VERIFIED] | 6/6 synthetic checks, this session |
-| Q is robust across circumstance-dependent genesis-born configurations, where energy is not | [HYPOTHESIS — untested until §4's pre-registration executes] | The load-bearing claim of this document |
-| M_REST ≡ (some function of Q) | [OPEN — not yet formulated; contingent on §4's outcome] | No specific formula proposed yet; premature before the robustness question is answered |
+| Q is robust across circumstance-dependent genesis-born configurations, where energy is not | [CONFIRMED — ROBUST, 2026-07-20] | Q pinned at 0.0000000000 (spread ≈1e-10) across a 9.2× e_half spread; the robustness claim holds, just not at the hoped-for nonzero value |
+| The pinned value is nonzero (±1), matching injection and the synthetic reference | [REFUTED — 2026-07-20] | Q_A=Q_C=Q_E=0 exactly; Q_S=+1. Real dynamics drives the shell charge to the trivial sector within 2 ticks, independent of amplitude |
+| M_REST ≡ (some function of Q) on this construction | [CLOSED NEGATIVE] | A trivial (Q=0) topological sector carries no energy floor above zero in the standard construction; this specific shell/timing cannot anchor a nonzero rest mass |
+| Charge migrates to a larger shell rather than being destroyed | [OPEN — untested] | Would need a fresh pre-registration testing the k=2 (cuboctahedron) or larger shell at freeze time |
 
 ---
 
