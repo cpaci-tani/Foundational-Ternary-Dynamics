@@ -1432,6 +1432,13 @@ ftd_add_test(campaign_kinetic_drain_curl_isolation tests/campaign_kinetic_drain_
 ftd_add_test(campaign_perturbation_magnitude_curl_sweep tests/campaign_perturbation_magnitude_curl_sweep.cpp
              CTEST_NAME perturbation_magnitude_curl_sweep TIMEOUT 1800
              LABELS native eft mass)
+
+# Is the mass excess a stable property of manifestation, or does it depend
+# on exactly when genesis happens to fire? (PREREG_GENESIS_TIMING_
+# DEPENDENCE_v1). CPU-forced, deterministic.
+ftd_add_test(campaign_genesis_timing_dependence tests/campaign_genesis_timing_dependence.cpp
+             CTEST_NAME genesis_timing_dependence TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
