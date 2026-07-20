@@ -1418,6 +1418,13 @@ ftd_add_test(campaign_two_clock_consistency tests/campaign_two_clock_consistency
 ftd_add_test(campaign_genesis_energy_ledger tests/campaign_genesis_energy_ledger.cpp
              CTEST_NAME genesis_energy_ledger TIMEOUT 1800
              LABELS native eft mass)
+
+# Isolating the transverse-contamination mechanism found by the genesis
+# energy ledger: is the kinetic-drain operation the source?
+# (PREREG_KINETIC_DRAIN_CURL_ISOLATION_v1). CPU-forced, deterministic.
+ftd_add_test(campaign_kinetic_drain_curl_isolation tests/campaign_kinetic_drain_curl_isolation.cpp
+             CTEST_NAME kinetic_drain_curl_isolation TIMEOUT 1800
+             LABELS native eft mass)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
