@@ -1,5 +1,45 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine: proper-time hazard — the decay clock now dilates (2026-07-19)
+
+Owner ruling on the two-clock consistency decision point
+(PREREG_TWO_CLOCK_CONSISTENCY_v1, Outcome A 2026-07-18: across a latency
+contrast of 0.62-vs-0, 1,355 paired voxels showed ZERO decay-tick
+differences — matter aged on tick-time while the motion sector ran on τ).
+The evaporation hazard now integrates the SAME proper time the τ-accumulator
+defines: p = K_EVAP_RATE·exp(−E_local/K_MANIFEST²)·(dτ/dt).
+
+- **One clock, one definition:** `engine/include/ftd/proper_time_rate.h`
+  (shared `__host__ __device__`, voxel_rng.h idiom) holds the single
+  dτ/dt = √(f²−v²)/√f, f = 1−L², c=1 flux-velocity normalization — exactly
+  the τ-accumulator's existing formula (FTD-0252-measured sector).
+  Consumers: `accumulate_proper_time` (refactored, behaviour identical),
+  CPU evaporation (`phase_write.cpp`), GPU `evaporation_kernel`
+  (single + dual launchers, `d_velocity_*`/`d_latency` now passed).
+  Deliberately NOT the transport-budget convention (`v²/C²`) — that would
+  have minted a third clock against the accumulator's do-not-couple note.
+  Genesis deliberately untouched (nucleation has no τ to integrate;
+  whether it should dilate is a recorded [OPEN] question).
+- **Verification (frozen expectation declared before the run):** the locked
+  v1.1 instrument reproduces the B-pattern — rate_M/rate_Z within ±15 % of
+  √(1−L̄²) at every shell (deepest: 0.751 measured vs 0.786 predicted);
+  bit-level counting channel 85 differing decay ticks vs ≈100±9 expected;
+  all three pairings mutually consistent. Fitted-ratio monotonicity holds
+  only within the ±10 % single-fit noise the flat arm demonstrates —
+  stated as-is in the prereg resolution.
+- **Suite:** golden battery 7/7 at EXISTING pins (verified golden-neutral:
+  at L=0, v=0 the factor is exactly 1, bit-identical; no pinned profile's
+  decisions flip, including the moving crosser); WSL2 gpu_golden green at
+  its existing pin; gpu_evaporation_parity green (both backends amended in
+  lockstep, bit-exact); WASM triple rebuilt. Flat-sector survival results
+  (FTD-0301 proton metastability, FTD-0267 telemetry) untouched by
+  construction.
+- **Physics content:** metastable matter in a latency well now decays
+  slower by √(1−L²) at rest and by the SR factor when moving — the
+  muon-storage-ring behaviour, in-substrate. The clock hypothesis is
+  sharpened to its testable form: hazard rates integrate proper time, not
+  tick time; the two-clock campaign is the standing regression instrument.
+
 ## Engine + spec: Term-2 electric coupling sign amendment — Gauss conflict repaired (2026-07-18)
 
 The action's electric state-flux coupling `−g_c·s·(∇·J)` was in internal sign
