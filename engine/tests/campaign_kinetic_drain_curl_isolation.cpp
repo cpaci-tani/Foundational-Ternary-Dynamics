@@ -229,15 +229,25 @@ int main() {
     std::printf("GATE,prefix,sites_above_threshold_preseed,%d\n", n_above);
     std::printf("GATE,prefix,target_site,%d,%d,%d\n", tx, ty, tz);
 
-    for (int t = 0; t < 2; ++t) {
-        if (manifested_count(rb) >= 1) {
-            std::printf("GATE,prefix,UNEXPECTED_EARLY_FIRE,%d\n", t);
-        }
-        rb.tick();
-    }
-    std::printf("GATE,prefix,manifested_after_tick1,%d\n", manifested_count(rb));
+    // v1.1 fix: the parent's fire_tick=2 (loop convention: check-then-tick,
+    // break when the CHECK finds manifested) means manifestation completes
+    // DURING THE SECOND tick() call, not the third. Tracing the parent's own
+    // loop: t=0 check false, tick() [call 1]; t=1 check false, tick() [call
+    // 2]; t=2 check TRUE, break. So exactly ONE normal tick() call is safe
+    // (confirmed still unmanifested); the SECOND call is where real genesis
+    // fires. Run 1 of this instrument ran TWO normal ticks in this prefix
+    // (an off-by-one against the parent's convention), so real genesis (with
+    // drain) had already fired before the intended intervention — caught
+    // cleanly by this file's own V2 gate (manifested_pre_manual_flip=1, not
+    // the required 0). Fixed: exactly ONE normal tick here; the
+    // would-be-second call is the genesis-OFF intervention below.
+    if (manifested_count(rb) >= 1) std::printf("GATE,prefix,UNEXPECTED_EARLY_FIRE,0\n");
+    rb.tick();  // call 1 — matches the parent's confirmed pre-fire state
+    std::printf("GATE,prefix,manifested_after_call1,%d\n", manifested_count(rb));
 
-    // ── Tick 2 with genesis OFF: every other operation fires normally ──────
+    // ── Call 2 (where real genesis would fire) with genesis OFF: every
+    //    other operation — wave, coupling, gauss, damping — fires normally.
+    if (manifested_count(rb) >= 1) std::printf("GATE,prefix,UNEXPECTED_EARLY_FIRE,1\n");
     rb.toggles.genesis = false;
     rb.tick();
     rb.toggles.genesis = true;  // restored (unused henceforth, but tidy)
