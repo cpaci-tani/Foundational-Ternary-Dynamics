@@ -1,0 +1,16 @@
+# campaign_kinetic_drain_curl_isolation — PREREG_KINETIC_DRAIN_CURL_ISOLATION_v1
+# L=17  K_GENESIS=1.5163860592  K_MANIFEST=0.5054620197173260  drain=0.5000  W_SC(17) frozen=0.478917129
+GATE,prefix,sites_above_threshold_preseed,1
+GATE,prefix,target_site,8,8,8
+GATE,prefix,manifested_after_tick1,1
+GATE,V2,manifested_pre_manual_flip,1
+SUMMARY,F_pre,e_half,0.426467612972,curl_total,4.158899242062e-01
+SUMMARY,G-nodrain,e_half_prerelax,0.426467612972,curl_prerelax,4.158899242062e-01
+GATE,G-nodrain,relax_applications,1215
+GATE,G-nodrain,relax_converged,1
+SUMMARY,G-nodrain,e_half,0.708086648287,applications,1215,final_manifested,1
+GATE,TestB,v3_max_flux_diff_excl_target,0.000000000000e+00
+SUMMARY,TestB-drain,curl_total,2.118297684324e+00,e_half,1.330176991164
+SUMMARY,TestB-nodrain,curl_total,2.347802959767e+00,e_half,1.374002318054
+SUMMARY,TestB-ratio,curl_drain_over_nodrain,0.902247
+# done -- verdict applied against the prereg's outcome map by the analyst, not here
