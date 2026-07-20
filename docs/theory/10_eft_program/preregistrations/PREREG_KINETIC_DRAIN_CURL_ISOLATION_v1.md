@@ -60,4 +60,22 @@ Fix: run exactly **one** normal `tick()` call in the prefix (matching the parent
 
 ---
 
+## RUN 2 (v1.1, 2026-07-19) — **REFUTED**: the kinetic drain is not the mechanism — and Test B shows the opposite sign
+
+Data: `engine/build/kinetic_drain_iso_v11/run.csv`. V2 passes cleanly this time (`manifested_pre_manual_flip=0`).
+
+**Test A:** `e_half`(G-nodrain, relaxed) = **4.482444255605** — far past the REFUTE threshold (≥1.463) in the wrong direction: removing drain made the excess *larger* than G-early's own 1.709, not smaller.
+
+**A confound in Test A, found on inspection, disclosed rather than smoothed over:** suppressing `genesis` for the intervention tick also suppresses `coupling`'s read of the (about-to-become-nonzero) state field for that entire tick, since coupling's source `−g_c·∇s` requires a nonzero state somewhere and state stays 0 throughout the suppressed call. Test A therefore isolates "manifestation with its coupling contribution during the transition tick removed, and drain removed" — two effects bundled, not one. Test A's number is real and reproducible, but its causal attribution to drain *specifically* is weaker than designed.
+
+**Test B does not share this confound and is the cleaner instrument.** Both copies apply `set_state(+1)` identically before the single leapfrog step, and coupling is off for that isolated step in *both* branches — the only difference remaining is the wave_vel scaling itself. Result: `curl_total`(drain) = 12.653, `curl_total`(no-drain) = 19.233, **ratio = 0.6579** — below even the REFUTE band [0.83, 1.2], in the *opposite* direction from the CONFIRM hypothesis. Draining does not inject curl relative to leaving wave_vel undrained; if anything, **halving the localized perturbation before it enters the leapfrog reduces the resulting curl**, which is the more physically intuitive reading in hindsight: a smaller localized kick produces a smaller asymmetric response, all else equal.
+
+**Joint verdict: REFUTED.** Both lines of evidence land outside the CONFIRM band and, on the cleaner instrument (Test B), land on the *opposite* side of even the REFUTE band. The kinetic-drain operation is not the source of the transverse contamination found in `PREREG_GENESIS_ENERGY_LEDGER_v1`; if it has any effect, it is mitigating, not injecting.
+
+**A sharper hypothesis, named but not yet tested:** Test B's no-drain copy — a single localized (undrained) perturbation to wave_vel at one site — *itself* carries substantial curl (19.233), comparable in scale to the drained copy. This points away from "the drain's scaling factor matters" and toward "any single-site asymmetric perturbation to the field, independent of its magnitude, is sufficient to inject curl" — i.e., the culprit may be the mere fact that manifestation singles out one lattice site at all (breaking whatever local symmetry the surrounding dynamics held), not any specific operation performed there. This is a natural next campaign (a clean isolated-perturbation-magnitude sweep, no manifestation semantics involved at all) — named here as the open follow-on, not claimed as measured.
+
+**Consequence for the parent document:** `DERIV_REST_MASS_FROM_CONSTRAINT_ENERGY.md`'s flagged candidate mechanism (kinetic drain) is updated from [OPEN — flagged] to [MEASURED — REFUTED], with the sharper hypothesis recorded as the new [OPEN] line.
+
+---
+
 *Registered 2026-07-19, before either instrument's first execution. Author: session 8294fddb, following LOCK-STD v1. Companion/parent: `preregister-genesis-energy-ledger-v1`.*
