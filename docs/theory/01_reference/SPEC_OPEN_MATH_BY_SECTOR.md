@@ -165,7 +165,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | quark-mass | `FOUND_DISCRETE_NATIVE_MASS_GENERATION.md` (retracted continuous QFT fits; replaced by native discrete mass paradigm — Class A voxel cardinality) | [OPEN] | RP | §10-depths |
 | quark-bridge | `archive_proof_quark_masses_lattice.py` (archived post-hoc quark mass verification script) | [ARCHIVED] | — | — |
 
-**Closed/terminal (sector context):** FTD-0015 `n = 11` ordering route **[CLOSED NEGATIVE; exponent remains SELECTION]** (FTD-0390/0397); FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 unordered-multiset theorem [THEOREM]; FTD-0398 topological-charge transport/destruction **[UNDERDETERMINED — terminal protocol, no mass evidence, no further shell geometry]**.
+**Closed/terminal (sector context):** FTD-0015 `n = 11` ordering route **[CLOSED NEGATIVE; exponent remains SELECTION]** (FTD-0390/0397); FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 unordered-multiset theorem [THEOREM]; FTD-0398 topological-charge transport/destruction **[UNDERDETERMINED — terminal protocol, no mass evidence, no further shell geometry]**; FTD-0399 target-blind particlehood **[INVALID — A/E manifestation portability gate fails at L=33/65; no mass observable opens]**.
 
 **Sources:** SPEC_DOCTRINE_LEDGER.md §10; LEDGER FTD-0015, FTD-0016, FTD-0084; TRACKER_OPEN_ITEMS.md §§4.1, 8.2.
 
