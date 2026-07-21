@@ -4,6 +4,7 @@
 **LEDGER id:** FTD-0368. **Effort class:** RP (research program; Stage S4 carries an FO flag).
 **Closes:** — (this is the rigorous *negative-side* completion of MC-T4.3; it does not close MC-T4.3, whose positive exits remain a new W-class commitment or a fresh ARC-D measurement — see §1).
 **Audience:** project owner + agents working on MC-T4.3, the modulus/argument frontier, the valuation theorem (FTD-0353/0360), or any future formalization of the substrate.
+**Nonlinear successor disposition (FTD-0396, 2026-07-20):** v2 executed under `preregister-nonlinear-delta-ind-v2`. Both `N_bounded` and `N_unrestricted` returned **BLOCKED-ESCAPE**. The exact transition anchors passed, but fixed event count did not supply a uniform effective-transcript characterization and unrestricted universality/non-universality remained undecided. No delta valuation was run; all standing tags remain unchanged.
 
 ---
 
@@ -54,6 +55,7 @@ Everything hard in this program is here. N must be **adequate** (it provably con
 - **S2 — the definition fight.** Propose N (target rung N1), prove adequacy (documented inventory ⊆ N) and defend properness against the §3 falsifiers. Deliverable: a definition + adequacy theorem. Gate: **pre-register the definition before testing δ against it** (the definition must not be tuned post-hoc to exclude δ — that would be the mirror image of the near-miss sin).
 - **S3 — the theorem. EXECUTED 2026-07-05, verdict FTD-0369: PROVEN-CONDITIONAL** (`ANALYSIS_DELTA_IND_CLOSURE_v1.md` + `proof_s3_delta_independence.py`, 11/11): δ ∉ N under E0 (Chudnovsky) + E1/E2 (enumerated open independence assumptions — the price of the class escaping ℚ(G\*, π) through the SC-sector, exactly as prior P2 anticipated); BCC-sector sub-theorem conditional on Chudnovsky alone, retiring the dynamical inventory-[SELECTION] for that sector. The original stage text is preserved below for provenance:
   *Re-run the FTD-0353 valuation argument relative to the defined N (not the documented list): δ ∉ N, [THEOREM — conditional on Chudnovsky 1976]. Deliverable: theorem doc + verifier; the valuation theorem's inventory-[SELECTION] flag retires. LEDGER row minted at verdict time.*
+- **S3b — nonlinear v2. EXECUTED 2026-07-20, verdict FTD-0396: BLOCKED-ESCAPE on both rungs.** `N_bounded`: fixed `B` bounds event-type word length but not the `L`-dependent tick/location-decorated transcript space, so the v1 period upper bound does not follow. `N_unrestricted`: no universal-computation embedding and no structural non-universality obstruction was established. These are explicit underdeterminations, not evidence about delta. A successor needs a fresh lock and a genuine transcript characterization or expressive-power theorem.
 - **S4 — aspirational.** N3 logical independence. Not scheduled; recorded so the ambition has an address.
 
 ## §5 — Guards (binding on every stage)
@@ -78,6 +80,7 @@ Under the Number-One Goal this program is clause 2 pursued to its strongest form
 - `docs/theory/09_mathematical/number_theory/MATH_PERIOD_IMPORT_FRONTIER.md` (FTD-0375) — the period-conjecture *framing* of this program's boundary: δ located relative to the CM motive `h¹(E_lemn)` whose GPC is a Chudnovsky theorem (trdeg=2); it makes explicit that the general δ∉N is Chudnovsky **+ open E1/E2** (not Chudnovsky alone), and that the frame re-describes rather than corroborates δ∉N (shared Chudnovsky input — no double-counting).
 - `docs/theory/09_mathematical/general_math/MATH_REFLECTION_FLOW_PARITY.md` (FTD-0367) — the DA/hypertranscendence instrument; its §4 guard is inherited here as guard 6.
 - `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` — the ε-L limit-policy vocabulary N1 is built from.
+- `PREREG_NONLINEAR_DELTA_IND_v2.md` + `ANALYSIS_NONLINEAR_DELTA_IND_v2.md` — FTD-0396's locked two-rung nonlinear properness test and its double BLOCKED-ESCAPE verdict.
 - Classical: O. Hölder (1887), Math. Ann. 28, 1–13 (see `REF_BIBLIOGRAPHY.md` §1); D.V. & G.V. Chudnovsky (1976) — the standing conditionality of the spine.
 
 ---
