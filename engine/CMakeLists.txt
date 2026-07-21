@@ -451,6 +451,10 @@ target_link_libraries(test_audit_regression ftd_core)
 ftd_add_test(test_volumetric_measure tests/test_volumetric_measure.cpp
              CTEST_NAME volumetric_measure LABELS unit physics)
 
+# FTD-0405: diagnostic-only NCEMC feasibility / obstruction instrument.
+ftd_add_test(test_ncemc_feasibility tests/test_ncemc_feasibility.cpp
+             CTEST_NAME ncemc_feasibility LABELS unit physics)
+
 # Phase 4 PRE-FLIGHT regression gate (2026-04-27)
 # Before any phase extraction is allowed out of render_bridge.cpp, every
 # extraction commit MUST reproduce the byte-hash captured in this test.
