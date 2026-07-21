@@ -1463,6 +1463,12 @@ ftd_add_test(campaign_topological_charge_transport tests/campaign_topological_ch
              CTEST_NAME topological_charge_transport TIMEOUT 1800
              LABELS native eft mass)
 
+# FTD-0399: target-blind particlehood before any further mass observable.
+# A/C/E at L=33/65 under dissipative and undamped protocols; CPU-forced.
+ftd_add_test(campaign_target_blind_particlehood tests/campaign_target_blind_particlehood.cpp
+             CTEST_NAME target_blind_particlehood TIMEOUT 3600
+             LABELS native eft mass)
+
 # Do genuinely different flux configurations manifest to the identical
 # discrete (state, color, spin) readout? Deterministic extension of the
 # already-locked seed-diversity protocol; no new stochastic design choice,
