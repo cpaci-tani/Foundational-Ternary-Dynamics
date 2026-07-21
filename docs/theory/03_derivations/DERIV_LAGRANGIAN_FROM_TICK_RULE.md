@@ -3,6 +3,8 @@
 **Tag:** [DERIVATION] / [OPEN]
 **LEDGER:** FTD-0246 [Mechanism B: Bare Action Construction]
 
+> **FTD-0404 measure amendment:** every discrete spatial action sum below suppresses the production factor `V_cell=a_lat³=1`. Restoring it gives `S=Σ_x L_x V_cell`; it does not change the quadratic local terms. A non-unit lattice edge would also require rescaling the difference operators and couplings and is outside this derivation.
+
 ## 1. The Physics Objective
 
 To execute **Mechanism B (Lattice-to-Continuum Matching)**, we must compute the 1-loop $\beta$-function coefficient (screening self-energy) from the FTD dynamics and compare it to QED. 

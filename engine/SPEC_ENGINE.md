@@ -673,7 +673,7 @@ The 4-term Lagrangian (in `lagrangian.h`) provides the variational foundation:
 | L_GAUSS | -lambda_G (div(J) - rho)^2 | Charge conservation, U(1) gauge |
 | R (dissipation) | (alpha/2) \|wave_vel\|^2 | Vacuum drag |
 
-`compute_lagrangian_diagnostics()` returns `LagrangianDiag` with per-term sums, Gauss violation, conservation checks.
+`compute_lagrangian_diagnostics()` returns `LagrangianDiag` with per-term sums, Gauss violation, conservation checks, and append-only `cell_volume` metadata. FTD-0404 makes the spatial sum explicit as `S=Σ_v L_density(v)·V_cell`, with `V_cell=a_lat³=1` for the production unit lattice. The local densities remain quadratic; the cubic power belongs to the integration measure. This leaves every historical numerical value unchanged and does not support arbitrary non-unit spacing without separately rescaling difference operators and couplings.
 
 ---
 
@@ -870,6 +870,8 @@ line-by-line target registry.
 
 15. **Selected causal budget enforced by shared momentum integration** (FTD-0402 implementation; FTD-0403 targeted closure; TRACKER §1.2): stored velocity `u` is raw nodes/tick and `B=|u|²/C_SPEED²+L²<1`. CPU and GPU accumulate every enabled force contribution before one `P/M_INERTIAL` update; `|u|` asymptotes to `C_SPEED·√(1−L²)`. Movement-entry projection is a counted repair only for externally injected or directly mutated invalid velocities; ordinary force evolution produces zero repairs. `tau` and de Broglie phase advance once in the common host post-pass. Exact, native, CUDA, golden, WASM/web, and compatibility gates close the frozen changed surface. This is exact conformance to the selected engine contract, not a theorem of Lorentz covariance.
 
+16. **Explicit cubic cell measure** (FTD-0404): `VOXEL_EDGE_LENGTH=1`, `VOXEL_FACE_AREA=1`, and `VOXEL_VOLUME=1` are named in a CUDA-safe interface. CPU/GPU volume-density diagnostics integrate with `V_cell`; EnergyAudit also exposes the pre-integration field/wave density sums. Local latency gravity continues to read density, while point-particle and constraint channels are unscaled. The unit measure is numerically neutral; no force or update rule changes.
+
 ---
 
 ## 13. RenderBridge Public API
@@ -880,7 +882,7 @@ line-by-line target registry.
 |--------|-------------|
 | `tick()` | Advance one tick through the current toggle-gated phase ladder |
 | `diagnostics()` | Returns `Diagnostics` struct (counts, flux totals, charge) |
-| `energy_audit()` | Returns `EnergyAudit`: field/wave channels, exact normalized particle KE, particle rest/total energy, vector particle momentum, `dynamic_energy`, explicitly incomplete accounted `total_energy`, and Gauss violation |
+| `energy_audit()` | Returns `EnergyAudit`: volume-integrated field/wave channels, their local-density sums plus `cell_volume`, exact normalized particle KE, particle rest/total energy, vector particle momentum, `dynamic_energy`, explicitly incomplete accounted `total_energy`, and Gauss violation |
 | `energy_ledger()` | Returns `const EnergyLedger&` — per-tick conservation drift (auto-populated on CPU path). Tests assert `abs(.residual) < tol` to refuse energy-drift regressions. GPU: call `update_energy_ledger()` manually after a device→host sync. |
 | `update_energy_ledger()` | Populate the ledger (called automatically by `tick()` on CPU path) |
 | `inject_particle(x,y,z, state)` | Inject single particle at lattice site |

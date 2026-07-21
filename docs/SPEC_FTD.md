@@ -699,7 +699,7 @@ FTD uses **natural units** where fundamental constants are set to unity. This se
 
 ### Lagrangian Density Dimensions
 
-For the action $S = \sum_t \sum_v \mathcal{L}$ to be dimensionless (action in units of ℏ = 1):
+For the action $S = \sum_t \sum_v \mathcal{L}\,V_{\rm cell}$ to be dimensionless (action in units of ℏ = 1, with the unit tick implicit):
 
 $$[\mathcal{L}] = [E]/[L]^3 = \text{energy density}$$
 
@@ -708,6 +708,8 @@ This requires:
 - $[g \cdot s \cdot \nabla \cdot J] = [g] \cdot 1 \cdot [E]/[L]^3$, so $[g] = 1$ (dimensionless)
 
 **Conclusion**: In FTD natural units, the coupling constant g in the Lagrangian is **dimensionless**.
+
+**FTD-0404 spatial-measure reconciliation:** the current raw lattice fixes the voxel edge `a_lat=1`, so `A_face=a_lat²=1` and `V_cell=a_lat³=1`. Local field densities remain quadratic (`rho_field=½|J|²`, `rho_wave=½|wave_vel|²`); volume-integrated diagnostic channels use `E=Σ rho_i V_cell`. The cube belongs to the 3D measure, not to the vector norm. Point-particle energy/momentum and the local latency-Poisson density source are not multiplied by `V_cell`. This is exact current-engine bookkeeping, not a derivation of D=3, a stress–energy tensor, or a mass scale.
 
 ## 7.2 Structural Constants
 
@@ -718,12 +720,15 @@ These define the model's fundamental scales:
 | `C_MOORE` | 1.0 | [L]/[T] | Topological update-support bound (L∞/Moore: one site per axis per tick), not the particle/wave speed | Axiomatic (P1/P4 geometry) |
 | `C_SPEED` | $1/\sqrt3$ | [L]/[T] | Canonical wave and particle transport speed in raw nodes/tick; FTD-0402 uses this value in $\beta^2=|u|^2/C_{\rm SPEED}^2$ | [THEOREM for lattice wave/CFL value; selected clock use is AXIOM] |
 | H | 1.0 | [L] | Lattice spacing (the **edge**) — calibrated `a_phys ≡ ℓ_P` (IMP-K1; [DERIVED ~0.19%] under electron-primary). One tick = t_P/√3, so that c·t_P = ℓ_P holds exactly (FTD-0385 naming theorem) |  Axiomatic unit; Planck naming per calibration register |
+| `VOXEL_VOLUME` | $H^3=1$ | [L]³ | Explicit cubic measure multiplying volume-density sums | **[THEOREM — current engine representation, FTD-0404]** |
 | `K_B` / `M_INERTIAL` | 0.511 | mass unit | Inertial-mass calibration | **[IMPOSED]** (electron-primary anchor; historical $n=11$ relation remains [SELECTION]) |
 | `E_REST` | $K_B/3$ | energy unit | Particle rest energy in raw coordinates, $M_{\rm INERTIAL}C_{\rm SPEED}^2$ | **[IMPOSED role map]** |
 | `M_GRAVITATIONAL` | 0.511 | source unit | Current latency-Poisson gravity charge, separately named | **[IMPOSED]**; equality to `M_INERTIAL` not derived |
 | `K_MANIFEST` | 0.5054620197 | field-energy scale | Manifestation/evaporation kinetics, distinct from mass calibration | **[SELECTION — ADOPTED, FTD-0388]** |
 
 **FTD-0402/0403 status:** the selected raw-lattice causal and mass-role map is implemented and passes exact/targeted CPU, GPU, golden, WASM, and web gates. FTD-0402 retains its frozen `PARTIAL` verdict because its aggregate G9 was not completed. The independently locked FTD-0403 v2 targeted dependency closure passes the exact changed surface and closes `§12-cnorm` without running unrelated CTests. NCEMC is now admissible but remains separately `[OPEN]`. No covariance, equivalence-principle, confinement-energy, or mass-scale theorem is added.
+
+**FTD-0404 status:** the cubic unit-cell measure is explicit and numerically neutral. Energy/action density sums carry `V_cell=H³=1`; local norms remain quadratic; WASM indices are append-only. This closes only the density-versus-integral representation ambiguity. NCEMC remains `[OPEN]`.
 
 ## 7.3 Coupling Parameters
 

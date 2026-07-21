@@ -114,6 +114,7 @@ FTD histories.
 - [x] `K_B` status remains calibration/manifestation scale.
 - [x] FTD-0402 implements the selected raw-lattice causal normalization and separates `M_INERTIAL`, `E_REST`, and `M_GRAVITATIONAL`; targeted CPU/GPU, golden, WASM, and exact gates pass.
 - [x] FTD-0403 v2 supplies an independently locked targeted dependency closure: exact A1–A7/S1–S9, native 14/14, CUDA 6/6, golden 7/7, WASM/web 3/3, and static gates pass; `§12-cnorm` is closed without a full unrelated CTest run. FTD-0402 remains historically `PARTIAL`.
+- [x] FTD-0404 makes the D=3 unit-cell measure explicit: volume-density channels integrate with `V_cell=a_lat³`, local norms remain quadratic, and all production values remain numerically unchanged (`VOLUMETRIC-NEUTRAL`).
 - [ ] NCEMC is now admissible under a separate lock; it remains `[OPEN]` and must add neither a mass readout nor a common-source claim before its own gates close.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
