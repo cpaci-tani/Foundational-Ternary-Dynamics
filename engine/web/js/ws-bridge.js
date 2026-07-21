@@ -356,6 +356,7 @@ export class WebSocketBridge {
             manifested: 0, positive: 0, negative: 0,
             totalFlux: 0, totalEnergy: 0,
             maxBandwidth: 0, avgDrag: 0, entropy: 0,
+            maxCausalBudget: 0, causalProjectionEvents: 0,
             chargeBalance: 0,
             spinUp: 0, spinDown: 0,
             colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
@@ -370,6 +371,13 @@ export class WebSocketBridge {
             this._sendJSON({ cmd: 'get_energy_audit' })
                 .then(d => {
                     this._lastAudit = d;
+                    if (this._lastDiag && Number.isFinite(d?.dynamicEnergy)) {
+                        this._lastDiag.vacuumBaselineEnergy = this._lastDiag.totalEnergy;
+                        this._lastDiag.dynamicEnergy = d.dynamicEnergy;
+                        this._lastDiag.accountedEnergy = d.totalEnergy;
+                        this._lastDiag.restEnergy = d.particleRestEnergy;
+                        this._lastDiag.totalEnergy = d.dynamicEnergy;
+                    }
                     this._energyInFlight = false;
                 })
                 .catch(() => {
@@ -379,6 +387,8 @@ export class WebSocketBridge {
         if (this._lastAudit) return this._lastAudit;
         return {
             fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
+            particleRestEnergy: 0, particleEnergy: 0, dynamicEnergy: 0,
+            particleMomentumX: 0, particleMomentumY: 0, particleMomentumZ: 0,
             gaussViolation: 0, maxGaussError: 0, coulombPE: 0,
             eFieldEnergy: 0, bFieldEnergy: 0, chargeTotal: 0, manifestedCount: 0
         };

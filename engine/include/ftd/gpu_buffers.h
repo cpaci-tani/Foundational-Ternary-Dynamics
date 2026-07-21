@@ -142,6 +142,10 @@ struct GpuBuffers {
     double*   d_fd_exchange_y = nullptr;
     double*   d_fd_exchange_z = nullptr;
 
+    // Per-tick count of movement-entry repairs for externally mutated
+    // out-of-budget velocities (FTD-0402). Normal force evolution leaves zero.
+    unsigned long long* d_causal_projection_events = nullptr;
+
     // --- FFT workspace ---
     // Both precisions are active: float (C2C) is the default 2× faster path;
     // double (Z2Z) is used by high-accuracy callsites in kernels_poisson.cu.
@@ -224,6 +228,7 @@ struct GpuBuffers {
 
     // Zero all force-diag arrays (called once per tick before force kernels).
     void reset_force_diag();
+    unsigned long long download_causal_projection_events() const;
 
     // Native EFT continuity event ledger helpers
     void reset_continuity_ledger();

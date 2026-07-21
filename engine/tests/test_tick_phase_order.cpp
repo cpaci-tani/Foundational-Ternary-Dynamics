@@ -311,23 +311,22 @@ void test_genesis_before_forces() {
 //     if (movement) phase_movement();   // annihilation zeroes KE + bursts flux
 //     ...
 //     ++tick_;
-//     update_energy_ledger();           // E_curr = ½Σ|J|² + ½Σ|wv|² + Σ½|v|²
+//     update_energy_ledger();           // E_curr = dynamic energy
 //
 // update_energy_ledger_cpu (energy_ledger_compute.cpp:14-24) computes E_curr
-// with the SAME formula as compute_energy_audit's total_energy
-// (diagnostics_compute.cpp:98-99,123,134):
-//     E = ½Σ|flux|² + ½Σ|wave_vel|² + Σ_state≠0 ½|v|²
+// with the SAME formula as compute_energy_audit's dynamic_energy:
+//     E = ½Σ|flux|² + ½Σ|wave_vel|² + Σ_state≠0 (gamma0-1)E_REST
 // So after a tick, energy_ledger().E_curr must equal energy_audit()
-// .total_energy to floating-point exactness — BOTH read the same final voxel
+// .dynamic_energy to floating-point exactness — BOTH read the same final voxel
 // state. The diagnostic bite: we force phase_movement to CHANGE the energy
 // (an annihilation removes both particles' KE and redistributes their flux
 // over 6 neighbours each, which lowers ½Σ|J|²). If the ledger had been
 // computed BEFORE movement, its E_curr would reflect the pre-annihilation
 // energy and would NOT match the post-annihilation audit.
 //
-// Movement-only config (everything else OFF): a +1 at C with velocity {1,0,0}
-// performs a single integer jump into a static −1 at C+x on the annihilation
-// tick. genesis OFF ⇒ no evaporation/manifestation perturbs the count.
+// Movement-only config (everything else OFF): a causal +1 at C starts with a
+// preloaded fractional remainder and completes a single integer jump into a
+// static −1 at C+x. genesis OFF ⇒ no evaporation perturbs the count.
 // ===========================================================================
 static void configure_po3(RenderBridge& rb) {
     minimal_toggles(rb);
@@ -358,20 +357,22 @@ void test_energy_ledger_is_last() {
     // the way so the NEXT tick has a meaningful E_prev.
     rb.tick();
 
-    // Arm the +1 particle: exactly one site/tick along +x ⇒ on the next tick
-    // remainder.x reaches 1.0 and it jumps into the −1 ⇒ annihilation.
-    rb.voxel_at(c, c, c).velocity = Vec3{1.0, 0.0, 0.0};
+    // Arm the +1 particle with a causal raw speed. The preloaded remainder is
+    // a legal persistent state and makes this tick complete one lattice jump.
+    const double u = C_SPEED / 2.0;
+    rb.voxel_at(c, c, c).velocity = Vec3{u, 0.0, 0.0};
+    rb.voxel_at(c, c, c).remainder = Vec3{1.0 - u, 0.0, 0.0};
 
     // Energy the system carries going INTO the annihilation tick (now includes
-    // the +1 particle's KE = ½·1² = 0.5). After annihilation this KE is gone
+    // the +1 particle's normalized relativistic KE). After annihilation it is gone
     // and the (zero) particle flux is redistributed ⇒ total energy must drop.
-    const double e_before = compute_energy_audit(rb).total_energy;
+    const double e_before = compute_energy_audit(rb).dynamic_energy;
 
     // The annihilation tick: movement runs, THEN the ledger is taken.
     rb.tick();
 
     const auto& ledger = rb.energy_ledger();
-    const double e_audit_after = compute_energy_audit(rb).total_energy;
+    const double e_audit_after = compute_energy_audit(rb).dynamic_energy;
 
     // Confirm the annihilation actually fired (both particles gone) — otherwise
     // the energy would not have changed and the test would be vacuous.
@@ -394,7 +395,7 @@ void test_energy_ledger_is_last() {
     // mutated the state (i.e. the ledger is the last state-reading phase). If
     // the ledger had run before movement, E_curr would equal the (larger)
     // pre-annihilation energy and this equality would fail.
-    check_close("ledger.E_curr == post-movement audit.total_energy",
+    check_close("ledger.E_curr == post-movement audit.dynamic_energy",
                 ledger.E_curr, e_audit_after, 1e-9);
 
     // And it must NOT equal the pre-movement energy (belt-and-suspenders: makes

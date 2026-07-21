@@ -58,7 +58,11 @@ static Sample run_color_scenario(bool force_cpu_path, int r_sep) {
     bridge.toggles.disable_all();
     bridge.toggles.forces = true;
     bridge.toggles.color_forces = true;
-    bridge.toggles.strong_force = true;
+    // This is a color-force parity fixture. Keep the independent GPU-only
+    // Yukawa path off; FTD-0402 now accumulates that path into f_strong before
+    // the shared integrator, so enabling it would no longer compare like with
+    // like against the CPU color implementation.
+    bridge.toggles.strong_force = false;
     // Also enable Poisson Coulomb so the same kernel populates f_coulomb,
     // exercising the second mirror path (phase_forces_kernel writes
     // f_coulomb / f_gravity / f_magnetic; color_force_kernel writes f_strong).

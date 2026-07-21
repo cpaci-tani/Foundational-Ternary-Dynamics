@@ -905,7 +905,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // Expected Behaviour: Central dense core of locked mass that sources gravity via the Poisson equation.
         // Discrepancy: None.
         // A dense ball of LOCKED rest mass. Gravity is sourced from REAL manifested
-        // mass (rho_mass = M_REST*|state|) by the latency-Poisson solver (enable
+        // gravity charge (rho = M_GRAVITATIONAL*|state|) by latency Poisson (enable
         // latency_field), NOT the |J|^2 field-energy proxy. Locked => static body
         // (skipped by movement + evaporation), so it is a stable gravitational source.
         const double sHalf = (N - 1) / 2.0;
@@ -1036,7 +1036,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // de_broglie_clock toggle is ON (the de-broglie-clock-panel enables it),
         // the Klein-Gordon mass term -omega0^2*J makes the block's flux
         // oscillate at the rest-frame Compton frequency omega0 -- the internal
-        // clock. [CONDITIONAL -- DERIVED-GIVEN-IMPOSED-INPUT]: omega0~M_REST is
+        // clock. [CONDITIONAL -- DERIVED-GIVEN-IMPOSED-INPUT]: omega0~K_B is
         // IMPOSED (A0: FTD's native flux is massless); Schrodinger + de Broglie
         // are textbook Klein-Gordon, not an FTD prediction. The block interior
         // is the k=0 rest mode (uniform => Laplacian 0), so the centre voxel

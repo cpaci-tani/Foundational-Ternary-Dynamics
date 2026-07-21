@@ -145,6 +145,8 @@ std::string json_diagnostics(ftd::RenderBridge& rb) {
     ss << ",\"totalFlux\":"    << d.total_flux;
     ss << ",\"totalEnergy\":"  << d.total_energy;
     ss << ",\"maxBandwidth\":" << d.max_bandwidth;
+    ss << ",\"maxCausalBudget\":" << d.max_causal_budget;
+    ss << ",\"causalProjectionEvents\":" << d.causal_projection_events;
     ss << ",\"avgDrag\":"      << d.avg_drag;
     ss << ",\"entropy\":"      << d.total_entropy;
     ss << ",\"chargeBalance\":" << (d.positive_count - d.negative_count);
@@ -178,6 +180,12 @@ std::string json_energy_audit(ftd::RenderBridge& rb) {
     ss << ",\"BFieldEnergy\":"      << ea.B_field_energy;
     ss << ",\"chargeTotal\":"       << ea.charge_total;
     ss << ",\"manifested\":"        << ea.manifested_count;
+    ss << ",\"particleRestEnergy\":" << ea.particle_rest_energy;
+    ss << ",\"particleEnergy\":"     << ea.particle_energy;
+    ss << ",\"dynamicEnergy\":"      << ea.dynamic_energy;
+    ss << ",\"particleMomentumX\":"  << ea.particle_momentum.x;
+    ss << ",\"particleMomentumY\":"  << ea.particle_momentum.y;
+    ss << ",\"particleMomentumZ\":"  << ea.particle_momentum.z;
     ss << ",\"poyntingX\":"         << ea.total_poynting.x;
     ss << ",\"poyntingY\":"         << ea.total_poynting.y;
     ss << ",\"poyntingZ\":"         << ea.total_poynting.z;

@@ -270,13 +270,13 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   constexpr double OMEGA = SOR_OMEGA;
   constexpr double FOUR_PI_G = 4.0 * PI * G_N;
 
-  // [IMPOSED] Gravitating density = particle rest mass (M_REST·|state|) plus, when
+  // [IMPOSED] Gravitating density = M_GRAVITATIONAL·|state| plus, when
   // include_field_energy is set, the local field-energy density
   // ½(|J|²+|wave_vel|²) — the same ½|·|² convention as the energy audit
   // (diagnostics_compute.cpp). Motivated by GR sourcing gravity from the full
   // stress-energy so a flux-only configuration (e.g. a gravity wave) carries a
   // real potential; the coupling is imposed in the engine, not derived.
-  double rho_sum = M_REST * static_cast<double>(state.manifested_count());
+  double rho_sum = M_GRAVITATIONAL * static_cast<double>(state.manifested_count());
   if (include_field_energy) {
     // Sequential sum — DETERMINISM REQUIREMENT (golden gate); see note in
     // gauss_project_cpu. field_energy_sum sources the latency potential, so a
@@ -291,7 +291,7 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
 
   ftd::parallel_for(0, N, [&](int _lo, int _hi) {
   for (int i = _lo; i < _hi; ++i) {
-    double rho = M_REST * std::abs(state.state_at(i));
+    double rho = M_GRAVITATIONAL * std::abs(state.state_at(i));
     if (include_field_energy)
       rho += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
     sor_source[i] = FOUR_PI_G * (rho - mean_rho);

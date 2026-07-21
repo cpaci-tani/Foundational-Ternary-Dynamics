@@ -7,6 +7,7 @@
  */
 
 #include "constants.h"
+#include "causal_kinematics.h"
 #include <array>
 #include <cmath>
 
@@ -119,17 +120,15 @@ struct Voxel {
   // L ∈ [0, 0.999) — clamped below 1 to prevent horizon singularity.
   double latency = 0.0;
 
-  // Proper time accumulator: dτ/dt = √(f² - v²)/√f where f = 1 - L².
-  // (The /√f form gives the correct √f static-observer limit at v=0; every
-  // implementation uses /√f — see transmutation_phases.cpp accumulate_proper_time.)
+  // Proper time accumulator: dτ/dt = √max(1 - |u|²/C_SPEED² - L², 0).
   // Accumulated each tick for manifested particles when latency_field is ON.
   double tau = 0.0;
 
   // FTD-0271 (A5): de Broglie clock phase φ, advanced as dφ = ω₀·dτ when the
-  // de_broglie_clock toggle is ON. FTD-0401: the phase inherits the legacy
-  // c=1 matter-clock rate, but that rate is not mapped to raw C_SPEED=1/√3
-  // transport and is not licensed by FTD-0252. Read-only diagnostic; NOT
-  // mixed into the golden state hash, so adding it is golden-neutral.
+  // de_broglie_clock toggle is ON. FTD-0402 normalizes raw velocity to
+  // C_SPEED in the selected clock/bandwidth axiom. This is an implementation
+  // contract, not a substrate theorem of physical covariance. Read-only
+  // diagnostic; NOT mixed into the golden state hash.
   double phase = 0.0;
 
   // Is this voxel part of a bound structure?
@@ -189,45 +188,22 @@ struct Voxel {
 
   double speed() const { return velocity.mag(); }
 
-  // Legacy c=1 bandwidth diagnostic. FTD-0401: velocity is raw nodes/tick,
-  // while transport uses v²/C_SPEED²; no conversion is applied here.
+  // Fraction of the latency-selected transport allowance consumed by motion.
+  // It reaches one at |u|=C_SPEED*sqrt(1-L²).
   double bandwidth_used() const {
-    double v2 = speed() * speed();
-    if (latency == 0.0) return v2; // fast path — no gravitational potential
-    double f = 1.0 - latency * latency;
-    return (f > 0.0) ? v2 / f : 1.0;
+    return bandwidth_fraction(latency, velocity.mag2());
   }
 
-  // Legacy c=1 gamma diagnostic. It is not the transport integrator's gamma,
-  // which uses v²/C_SPEED² (FTD-0401 UNMAPPED-DUAL-NORMALIZATION).
+  double causal_budget() const {
+    return ::ftd::causal_budget(latency, velocity.mag2());
+  }
+
   double gamma_ftd() const {
-    if (latency == 0.0) {
-      double bw = speed() * speed();
-      if (bw >= 1.0) return 1e30;
-      return 1.0 / std::sqrt(1.0 - bw);
-    }
-    double f = 1.0 - latency * latency;
-    if (f <= 0.0) return 1e30;
-    double v2 = speed() * speed();
-    double arg = f * f - v2;
-    if (arg <= 0.0) return 1e30;
-    return std::sqrt(f) / std::sqrt(arg);
+    return transport_gamma(latency, velocity.mag2());
   }
 
-  // Legacy c=1 Born-Infeld diagnostic. Physical rest/kinetic interpretation
-  // is suspended by FTD-0401 until raw velocity and M_REST roles are mapped.
   double born_infeld_core() const {
-    if (latency == 0.0) {
-      double bw = speed() * speed();
-      if (bw >= 1.0) return 0.0;
-      return -M_REST * std::sqrt(1.0 - bw);
-    }
-    double f = 1.0 - latency * latency;
-    if (f <= 0.0) return 0.0;
-    double v2 = speed() * speed();
-    double arg = f * f - v2;
-    if (arg <= 0.0) return 0.0;
-    return -M_REST * std::sqrt(arg) / std::sqrt(f);
+    return ::ftd::born_infeld_core(latency, velocity.mag2());
   }
 };
 

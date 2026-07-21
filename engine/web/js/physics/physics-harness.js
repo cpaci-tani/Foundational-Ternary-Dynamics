@@ -123,7 +123,7 @@ export class PhysicsHarness {
         if (!d) return null;
         return {
             tick:    d.tick ?? 0,
-            E:       a?.totalEnergy ?? d?.totalEnergy ?? 0,
+            E:       a?.dynamicEnergy ?? d?.dynamicEnergy ?? d?.totalEnergy ?? 0,
             px:      a?.totalPoynting?.x ?? a?.poyntingX ?? 0,
             py:      a?.totalPoynting?.y ?? a?.poyntingY ?? 0,
             pz:      a?.totalPoynting?.z ?? a?.poyntingZ ?? 0,
@@ -497,4 +497,3 @@ export class PhysicsHarness {
         this.bridge?.aeCreateBond?.(idA, idB, order);
     }
 }
-

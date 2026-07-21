@@ -53,6 +53,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
                              bool emergent_forces,
                              bool gravity, bool lorentz_force, double dt);
+    void launch_integrate_forces(GpuBuffers& bufs, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
                                bool dual_substrate);
     // Dual-substrate launchers
@@ -258,7 +259,11 @@ void GpuEngine::tick() {
         gpu_solve_latency_poisson();
     }
 
-    // Phase 4: Forces (Coulomb Poisson + EM/gravity/Lorentz)
+    const bool any_force = toggles.forces || toggles.color_forces
+                        || toggles.strong_force || toggles.exchange_force;
+    if (any_force) bufs_.reset_force_diag();
+
+    // Phase 4: Force accumulation (Coulomb Poisson + EM/gravity/Lorentz)
     if (toggles.forces) {
         gpu_phase_forces();
     }
@@ -270,6 +275,9 @@ void GpuEngine::tick() {
         gpu_build_particle_list();
         gpu_particle_forces();
     }
+
+    // FTD-0402: every active force channel feeds one momentum update.
+    if (any_force) kernels::launch_integrate_forces(bufs_, dt_);
 
     // Phase 4c: Triad binding detection
     if (toggles.triad_binding) {
@@ -425,12 +433,6 @@ void GpuEngine::gpu_solve_latency_poisson() {
 }
 
 void GpuEngine::gpu_phase_forces() {
-    // Reset force-diag mirror once per tick — matches the per-tick semantics
-    // of CPU RenderBridge::phase_forces, which overwrites force_diag_[i] for
-    // every state≠0 voxel. Voxels with state==0 stay zero, which is the
-    // sensible default (CPU reads of those would return whatever the last
-    // tick wrote — typically also zero).
-    bufs_.reset_force_diag();
     // Solve Coulomb potential first (if Poisson mode and not emergent).
     // emergent_forces and poisson_coulomb are mutually exclusive per
     // toggles.validate(); the explicit && !emergent_forces guard mirrors
@@ -534,6 +536,8 @@ Diagnostics GpuEngine::diagnostics() {
         d.total_energy += std::abs(v.born_infeld_core()); // matches CPU
         double bw = v.bandwidth_used();
         if (bw > d.max_bandwidth) d.max_bandwidth = bw;
+        double budget = v.causal_budget();
+        if (budget > d.max_causal_budget) d.max_causal_budget = budget;
         if (v.state != 0) {
             d.manifested_count++;
             if (v.state > 0) d.positive_count++;
@@ -543,6 +547,9 @@ Diagnostics GpuEngine::diagnostics() {
             if (v.color >= 0 && v.color <= 3) d.color_count[v.color]++;
         }
     }
+    d.causal_projection_events = toggles.movement
+        ? static_cast<long long>(bufs_.download_causal_projection_events())
+        : 0;
     return d;
 }
 
@@ -586,7 +593,11 @@ EnergyAudit GpuEngine::energy_audit() {
         ea.field_energy += 0.5 * v.flux.mag2();
         ea.wave_energy  += 0.5 * v.wave_vel.mag2();
         if (v.state != 0) {
-            ea.particle_ke += 0.5 * v.velocity.mag2();
+            const double speed2 = v.velocity.mag2();
+            const double gamma0 = flat_gamma(speed2);
+            ea.particle_ke += flat_particle_kinetic_energy(speed2);
+            ea.particle_rest_energy += E_REST;
+            ea.particle_momentum += v.velocity * (gamma0 * M_INERTIAL);
             ea.manifested_count++;
             ea.charge_total += v.state;
         }
@@ -607,7 +618,9 @@ EnergyAudit GpuEngine::energy_audit() {
         // Weak field diagnostic
         ea.weak_energy += 0.5 * v.flux_weak.mag2();
     }
-    ea.total_energy = ea.field_energy + ea.wave_energy + ea.particle_ke;
+    ea.particle_energy = ea.particle_rest_energy + ea.particle_ke;
+    ea.dynamic_energy = ea.field_energy + ea.wave_energy + ea.particle_ke;
+    ea.total_energy = ea.field_energy + ea.wave_energy + ea.particle_energy;
     return ea;
 }
 

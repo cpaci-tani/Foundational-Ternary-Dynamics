@@ -1,23 +1,29 @@
-// Pure FTD time-dilation math. No DOM, no Three.js — node-testable + browser ESM.
-// Mirrors gravity-analysis.js conventions: lapse f = 1 - L^2, clock rate dtau/dt = sqrt(f).
-// L is the dimensionless latency / gravity-well depth in [0, 1); v is velocity in units of c.
+// Pure FTD causal-clock math. No DOM, no Three.js — node-testable + browser ESM.
+// FTD-0402: stored velocity is raw nodes/tick and beta^2 = |u|^2/C_SPEED^2.
+// The clock/bandwidth relation is a selected implementation axiom, not a
+// substrate theorem of physical covariance.
+
+import { C_SPEED } from '../../../constants.js';
 
 export const lapse = (L) => 1 - L * L;
-export const clockRate = (L) => Math.sqrt(Math.max(0, lapse(L)));      // dtau/dt (gravitational)
-export const slowdownPct = (L) => (1 - clockRate(L)) * 100;
+export const betaSquared = (rawSpeed) => (rawSpeed * rawSpeed) / (C_SPEED * C_SPEED);
+export const causalBudget = (L, rawSpeed = 0) => betaSquared(rawSpeed) + L * L;
+export const clockRate = (L, rawSpeed = 0) => Math.sqrt(Math.max(0, 1 - causalBudget(L, rawSpeed)));
+export const slowdownPct = (L, rawSpeed = 0) => (1 - clockRate(L, rawSpeed)) * 100;
 
-// FTD generalized Lorentz factor gamma = sqrt(f) / sqrt(f^2 - v^2) (gravity-panel.js:138).
-// Fuses gravitational lapse f and velocity v. Reduces to SR gamma when L=0 (f=1).
-export function ftdGamma(L, v) {
-  const f = lapse(L);
-  const d = f * f - v * v;
-  return d > 0 ? Math.sqrt(f) / Math.sqrt(d) : Infinity;
+// Selected FTD transport factor gamma_FTD = 1/sqrt(1 - beta^2 - L^2).
+export function ftdGamma(L, rawSpeed = 0) {
+  const rate = clockRate(L, rawSpeed);
+  return rate > 0 ? 1 / rate : Infinity;
 }
 
-export const srDilation = (v) => Math.sqrt(Math.max(0, 1 - v * v)); // dtau/dt (kinematic) = sqrt(1-v^2)
-export const srGamma = (v) => (v * v < 1 ? 1 / Math.sqrt(1 - v * v) : Infinity);
+export const srDilation = (rawSpeed) => Math.sqrt(Math.max(0, 1 - betaSquared(rawSpeed)));
+export const srGamma = (rawSpeed) => {
+  const rate = srDilation(rawSpeed);
+  return rate > 0 ? 1 / rate : Infinity;
+};
 
-export const properTimeStep = (L, dt) => clockRate(L) * dt;          // accumulated proper time per tick
+export const properTimeStep = (L, dt, rawSpeed = 0) => clockRate(L, rawSpeed) * dt;
 
 // Bin sparse latency samples by radius from a center; return [{r, L, dtau_dt}] sorted by r.
 // positions: Float32Array [x0,y0,z0, x1,...]; values: Float32Array of L per sample.

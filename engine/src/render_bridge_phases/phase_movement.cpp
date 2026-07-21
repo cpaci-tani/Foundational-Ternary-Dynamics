@@ -38,6 +38,7 @@
 #include "ftd/render_bridge_phases.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/causal_kinematics.h"
 #include "ftd/voxel_rng.h"
 #include <algorithm>
 #include <random>
@@ -49,6 +50,18 @@ namespace ftd {
 namespace {
 
 enum class BoundaryOutcome { Proceed, Handled };
+
+bool project_for_movement(Voxel& v) {
+  const double scale = movement_projection_scale(v.latency, v.velocity.mag2());
+  if (scale >= 1.0) return false;
+  if (scale > 0.0) {
+    v.velocity *= scale;
+  } else {
+    // Literal assignment avoids inf*0 -> NaN for externally corrupted input.
+    v.velocity = {};
+  }
+  return true;
+}
 
 // When reflective_boundary is OFF, a particle that would cross a face is
 // removed (energy exhausts into the void — no toroidal wrap). When ON, it
@@ -106,6 +119,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
     for (int i : indices) {
       auto &v = rb.voxels_[i];
       if (v.state == 0 || v.locked || rb.moved_[i]) continue;
+
+      if (project_for_movement(v)) ++rb.causal_projection_events_this_tick_;
 
       v.remainder += v.velocity * rb.dt_;
 
@@ -238,6 +253,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
     for (int i = 0; i < N; ++i) {
       auto &v = rb.voxels_[i];
       if (v.state == 0 || v.locked || rb.moved_[i]) continue;
+
+      if (project_for_movement(v)) ++rb.causal_projection_events_this_tick_;
 
       v.remainder += v.velocity * rb.dt_;
 

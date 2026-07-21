@@ -10,7 +10,7 @@
  *       [~M]/[M]) vs a dashed [D] prediction curve, with a residual % row.
  *   C — Twin clocks: two fixed probes (deep vs far) accumulate proper time
  *       τ = Σ√f·dt; shows τ_deep, τ_far, Δτ, and a Δτ-vs-tick sparkline.
- *   D — Kinematic (imposed v): √(1−v²) [T] + FTD γ(v) [D] curves vs the baked
+ *   D — Kinematic (imposed β): √(1−β²) [T] + selected FTD γ(β) curves vs the baked
  *       FTD-0252 measured points [M] (offline campaign); imposed-v slider
  *       [IMPOSED]; an IR-convergence mini-chart (resid → L⁻²).
  *
@@ -34,6 +34,7 @@ import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ft
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
+import { C_SPEED } from '../../../../constants.js';
 
 const PANEL_ID = 'time-panel';
 const HZ = 2;
@@ -228,46 +229,46 @@ function renderCardC(container, twin) {
 // Card D — kinematic (imposed v) + baked FTD-0252.
 function renderCardD(container, vImposed) {
     const steps = 40, vCap = 0.95;
-    // Two theory clock-rate (dτ/dt) curves over v∈[0, 0.95]:
-    //   srPts  = √(1−v²)        — SR reference [T]
-    //   ftdPts = 1/ftdGamma(0,v) — FTD generalized γ at L=0 [D]
-    // At L=0 (flat space) FTD's generalized γ reduces to SR γ, so the [D] line
-    // coincides with [T] — the visceral point that FTD reproduces SR kinematics.
+    // Two clock-rate (dτ/dt) curves over imposed β∈[0, 0.95]. The engine
+    // stores raw nodes/tick, so every evaluation converts β to u=β*C_SPEED.
+    // At L=0 the selected FTD-0402 clock axiom coincides algebraically with the
+    // SR reference. This coincidence is not a substrate derivation of covariance.
     const srPts = [], ftdPts = [];
     for (let i = 0; i <= steps; i++) {
         const v = (i / steps) * vCap;
-        srPts.push({ x: v, y: srDilation(v) });
-        ftdPts.push({ x: v, y: 1 / ftdGamma(0, v) });
+        const rawSpeed = v * C_SPEED;
+        srPts.push({ x: v, y: srDilation(rawSpeed) });
+        ftdPts.push({ x: v, y: 1 / ftdGamma(0, rawSpeed) });
     }
     const measPts = DILATION_VS_V.map((d) => ({ x: d.v, y: d.dilation }));
     // Residual of the baked measured points vs √(1−v²).
     let resAcc = 0, resN = 0;
     for (const d of DILATION_VS_V) {
-        const t = srDilation(d.v);
+        const t = srDilation(d.v * C_SPEED);
         if (t > 1e-9) { resAcc += Math.abs(d.dilation - t) / t; resN++; }
     }
     const residPct = resN ? (resAcc / resN) * 100 : NaN;
-    const markY = srDilation(vImposed);
+    const markY = srDilation(vImposed * C_SPEED);
 
     let html = `<div class="time-slider-row">`
         + `<label for="${PANEL_ID}-vslider" title="Imposed boost velocity in units of c. Rigid cluster translation is [BOUNDARY-blocked], so this is an IMPOSED parameter, not an engine-measured boost.">${tagBadge('IMPOSED', 'imposed parameter — rigid translation is [BOUNDARY-blocked]')}v = <span id="${PANEL_ID}-vval" class="time-vval">${vImposed.toFixed(2)}</span> c</label>`
         + `<input type="range" id="${PANEL_ID}-vslider" class="time-vslider" min="0" max="0.95" step="0.01" value="${vImposed}">`
         + `</div>`;
     html += `<div class="time-readout-grid">`
-        + `<span>${tagBadge('T')}√(1−v²)</span><span class="time-rg-v">${formatFixed(srDilation(vImposed), 5)}</span>`
-        + `<span>${tagBadge('D')}FTD γ(v)</span><span class="time-rg-v">${formatFixed(ftdGamma(0, vImposed), 5)}</span>`
+        + `<span>${tagBadge('T')}√(1−β²)</span><span class="time-rg-v">${formatFixed(srDilation(vImposed * C_SPEED), 5)}</span>`
+        + `<span>${tagBadge('AXIOM')}FTD γ(β)</span><span class="time-rg-v">${formatFixed(ftdGamma(0, vImposed * C_SPEED), 5)}</span>`
         + `</div>`;
     html += `<div class="time-legend">`
         + `<span class="time-legend-item"><span class="time-swatch" style="background:var(--negative)"></span>${tagBadge('M')}FTD-0252 measured</span>`
         + `<span class="time-legend-item"><span class="time-swatch time-swatch-dash" style="background:var(--accent)"></span>${tagBadge('T')}√(1−v²)</span>`
-        + `<span class="time-legend-item"><span class="time-swatch" style="background:var(--caution,#fb8c00)"></span>${tagBadge('D')}FTD γ</span>`
+        + `<span class="time-legend-item"><span class="time-swatch" style="background:var(--caution,#fb8c00)"></span>${tagBadge('AXIOM')}FTD-0402 clock</span>`
         + `</div>`;
     html += dualCurveChart([
         { pts: srPts, color: 'var(--accent)', dashed: true },
         { pts: ftdPts, color: 'var(--caution, #fb8c00)' },
         { pts: measPts, color: 'var(--negative)', dots: true },
     ], { w: 240, h: 120, xMin: 0, xMax: vCap, yMin: 0, yMax: 1.0, marker: { x: vImposed, y: markY } });
-    html += `<div class="time-chart-xlabel">velocity v / c →   (dτ/dt vs v)</div>`;
+    html += `<div class="time-chart-xlabel">velocity β = |u| / C_SPEED →   (dτ/dt vs β)</div>`;
     html += row('Mean residual (meas vs √(1−v²))', Number.isFinite(residPct) ? `${formatFixed(residPct, 2)} %` : '—', 'M', undefined, 'Mean |measured − √(1−v²)| / √(1−v²) over the baked FTD-0252 points.');
     html += `<div class="time-provenance" title="${FTD0252_PROVENANCE}">${tagBadge('M')}${FTD0252_PROVENANCE} — campaign, offline (not live)</div>`;
 
@@ -282,30 +283,31 @@ function renderCardD(container, vImposed) {
 
 // Card E — de Broglie internal clock (FTD-0271). The manifested cluster carries
 // a Klein-Gordon rest-mass clock: dφ/dt = ω₀·dτ/dt, so the internal phase φ
-// winds at ω₀ at rest and follows the legacy √(1−v_raw²) rule when moving.
-// FTD-0401: v_raw is nodes/tick while the cone is C_SPEED=1/√3; this is an
-// unmapped implementation clock, not the normalized FTD-0252 wave-clock rate.
+// winds at ω₀ at rest and follows the FTD-0402 causal budget when moving.
+// Raw speed is normalized by C_SPEED and combined with the local latency L.
+// The relation remains a selected clock axiom, not evidence of covariance.
 function renderCardE(container, db) {
     if (!db.hasData) {
         container.innerHTML = `<div class="time-empty">de Broglie clock idle — load the “De Broglie Clock (pilot wave)” scenario (or enable the de_broglie_clock toggle) and press play. The manifested cluster's flux then oscillates at ω₀.</div>`;
         return;
     }
-    const { active, omega0, phase, speed, clockRate } = db;
+    const { active, omega0, phase, speed, latency, clockRate } = db;
     const period = omega0 > 1e-9 ? (2 * Math.PI / omega0) : Infinity;
-    const redshift = omega0 > 1e-9 ? clockRate / omega0 : 1;   // legacy √(1−v_raw²)
+    const redshift = omega0 > 1e-9 ? clockRate / omega0 : 1;
     const TWO_PI = 2 * Math.PI;
     const phaseWrapped = ((phase % TWO_PI) + TWO_PI) % TWO_PI;   // clock-hand angle
     const turns = Math.floor(phase / TWO_PI);                    // completed cycles
     let html = `<div style="${heroStyle()}" title="The manifested cluster's internal de Broglie phase, winding at dφ/dt = ω₀·dτ/dt (the rest-frame Compton clock). Shown wrapped to [0, 2π) — the clock hand.">φ = ${formatFixed(phaseWrapped, 3)} rad</div>`;
     html += `<div style="font-size:11px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge(active ? 'M' : '~M')}internal clock phase (centre voxel) — ${active ? 'running' : 'idle'}</div>`;
-    html += row('ω₀ (Compton freq.)', formatFixed(omega0, 3), 'IMPOSED', undefined, 'de Broglie internal-clock frequency ω₀∝M_REST. IMPOSED — FTD\'s native flux is massless (no restoring term); the substrate fixes the shape, not the absolute scale (no ℏ).');
+    html += row('ω₀ (Compton freq.)', formatFixed(omega0, 3), 'IMPOSED', undefined, 'de Broglie internal-clock frequency ω₀∝K_B. IMPOSED — FTD\'s native flux is massless (no restoring term); the substrate fixes the shape, not the absolute scale (no ℏ).');
     html += row('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
     html += row('cycles ticked', String(turns), 'M', undefined, 'Completed clock cycles = ⌊φ/2π⌋ since the clock started.');
     html += row('Period 2π/ω₀', Number.isFinite(period) ? `${formatFixed(period, 2)} ticks` : '—', 'D', undefined, 'Rest-frame oscillation period of the cluster\'s flux.');
-    html += row('cluster speed v_raw', formatFixed(speed, 4), 'M', undefined, 'Raw manifested-cluster speed in nodes/tick. It is not β=v/C_SPEED (FTD-0401).');
-    html += row('legacy dφ/dt', formatFixed(clockRate, 5), '~M', undefined, 'Implemented ω₀·√(1−v_raw²) clock rate. FTD-0401: this is not normalized to the C_SPEED=1/√3 causal cone.');
-    html += row('legacy clock ratio', formatFixed(redshift, 5), '~M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'Implementation ratio √(1−v_raw²). Physical moving-clock covariance is unestablished until v_raw/C_SPEED is mapped.');
-    html += `<div class="time-provenance" title="FTD-0401: the raw matter clock and derived causal speed use different normalizations. FTD-0252 normalized v_g/C_WAVE and never read voxel.tau.">${tagBadge('IMPOSED')}ω₀ and the moving-clock normalization are IMPOSED. The displayed legacy ratio is implementation telemetry, not a covariant prediction.</div>`;
+    html += row('cluster speed u_raw', formatFixed(speed, 4), 'M', undefined, `Raw manifested-cluster speed in nodes/tick; β=|u|/C_SPEED=${formatFixed(speed / C_SPEED, 4)}.`);
+    html += row('local latency L', formatFixed(latency, 5), 'M', undefined, 'Latency used with β² in the full causal budget B=β²+L².');
+    html += row('dφ/dt', formatFixed(clockRate, 5), '~M', undefined, 'Implemented ω₀·√max(1−β²−L²,0) clock rate under the FTD-0402 contract.');
+    html += row('clock ratio', formatFixed(redshift, 5), '~M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'Selected implementation ratio √max(1−β²−L²,0); it is not a derived covariant prediction.');
+    html += `<div class="time-provenance" title="FTD-0402 maps raw nodes/tick to the C_SPEED=1/√3 transport cone and freezes B=β²+L².">${tagBadge('AXIOM')}The moving-clock normalization is the existing clock/bandwidth axiom. ω₀ remains IMPOSED and tied to K_B.</div>`;
     container.innerHTML = html;
 }
 
@@ -320,7 +322,7 @@ function buildPanel() {
         b: 'Measured proper-time rate dτ/dt as a function of radius from the mass center (solid [~M]) vs a weak-field prediction curve (dashed [D]), with a residual. Clocks slow toward the well.',
         c: 'Two fixed probes — deep (near the mass) and far (near the box edge) — each accumulate proper time τ = Σ√f·dt. The far clock outruns the deep clock; Δτ is the live twin/GPS offset.',
         d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: the departure from exact γ vanishes as L⁻² — γ emerges in the IR.',
-        e: 'The imposed de Broglie internal clock (FTD-0271). Its phase uses the legacy raw-velocity matter-clock rule. FTD-0401 proves that rule is not mapped to C_SPEED=1/√3 transport; FTD-0252 used a separately normalized wave clock. This card is implementation telemetry, not evidence of physical covariance.',
+        e: 'The imposed de Broglie internal clock (FTD-0271). FTD-0402 normalizes raw speed by C_SPEED and advances phase with the full selected budget B=β²+L². This card is implementation telemetry, not evidence of physical covariance.',
     };
     root.innerHTML = `
         <header class="time-header">
@@ -463,11 +465,11 @@ export function mountTimePanel(host, getBridge) {
 
         // Card E — de Broglie internal clock (FTD-0271). Read the toggle + ω₀
         // off the bridge, and sample the centre voxel for the clock phase φ and
-        // cluster speed (clock rate dφ/dt = ω₀·√(1−v²)). Only the WASM engine
+        // cluster speed (clock rate dφ/dt = ω₀·√(1−β²−L²)). Only the WASM engine
         // exposes voxel.phase; the MockBridge has no per-voxel clock phase.
         const dbActive = (typeof b.getToggle === 'function') ? !!b.getToggle('de_broglie_clock') : false;
         const omega0 = (typeof b.getOmega0 === 'function') ? b.getOmega0() : 1.0;
-        let phase = 0, speed = 0, hasPhase = false;
+        let phase = 0, speed = 0, latency = 0, hasPhase = false;
         if (typeof b.inspectVoxel === 'function') {
             const L = caps.latticeSize || diag.latticeSize || 33;
             const mc = Math.round((L - 1) / 2);
@@ -475,13 +477,14 @@ export function mountTimePanel(host, getBridge) {
             if (vox && vox.phase !== undefined) {
                 phase = vox.phase || 0;
                 speed = vox.speed || 0;
+                latency = vox.latency || 0;
                 hasPhase = true;
             }
         }
-        const clockRateNow = omega0 * Math.sqrt(Math.max(0, 1 - speed * speed));
+        const clockRateNow = omega0 * clockRate(latency, speed);
         renderCardE(cardE, {
             hasData: dbActive || (hasPhase && phase !== 0),
-            active: dbActive, omega0, phase, speed, clockRate: clockRateNow,
+            active: dbActive, omega0, phase, speed, latency, clockRate: clockRateNow,
         });
     }
 

@@ -94,11 +94,16 @@ static void configure_reflective_move(RenderBridge& rb) {
 //     rationale). Profiles contain injected particles, so trajectories
 //     legitimately change. Old values: 0xbe736c3006d4fed0 / 0x9778edf520396c54
 //     / 0x208c18ce2f75082c / 0x285566e618111ead.
+//   - 2026-07-21: all four RE-PINNED for FTD-0402. Per-profile field manifests
+//     show only the same causal-trajectory class as the standard goldens:
+//     velocity/remainder direct; flux/wave/dual/accel and audit values
+//     downstream. State, latency, tau, phase, identity labels, and strong/weak
+//     sectors remained bit-identical to a0a443f8 in every boundary profile.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x251df4627c88a705ULL;
-static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x6b13e15becc31a1aULL;
-static constexpr std::uint64_t GOLDEN_ABSORBING        = 0x2bf1ae7920cfc7c5ULL;
-static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x942950ab797ab662ULL;
+static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x14eb33a180b3d319ULL;
+static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x7d6315d321c7ced7ULL;
+static constexpr std::uint64_t GOLDEN_ABSORBING        = 0xb5f1e6b2a1713f35ULL;
+static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x923f310b5af1e2ecULL;
 
 struct Mode {
     const char* name;

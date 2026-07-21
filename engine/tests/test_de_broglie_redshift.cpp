@@ -1,15 +1,14 @@
 // ============================================================================
 // test_de_broglie_redshift.cpp  (FTD-0271 Phase A5, 2026-06-11)
 // ----------------------------------------------------------------------------
-// Verifies implementation wiring for the legacy c=1 de Broglie clock rule.
-// FTD-0401 reclassifies this as a self-consistency test, not evidence of a
-// covariant rate: Voxel::velocity is raw nodes/tick and the causal transport
-// speed is C_SPEED=1/sqrt(3), but the expectation below omits v/C_SPEED.
+// Verifies the FTD-0402 raw-coordinate de Broglie clock wiring. This is a
+// self-consistency test of the selected clock/bandwidth axiom, not evidence
+// that the clock rule is substrate-derived or Schwarzschild-exact.
 //
 // accumulate_proper_time (engine/src/transmutation_phases.cpp) integrates, per
 // manifested voxel,
 //
-//     d(tau) = sqrt(f^2 - v^2) / sqrt(f),   f = 1 - L^2  (latency)
+//     d(tau) = sqrt(1 - L^2 - v^2/C_SPEED^2)
 //
 // and, when de_broglie_clock is ON, advances the clock phase
 //
@@ -17,16 +16,11 @@
 //
 // With the gravity/latency field OFF every particle has L = 0, so f = 1 and
 //
-//     d(tau) = sqrt(1 - v^2),     d(phi) = omega0 * sqrt(1 - v^2).
-//
-// So the IMPLEMENTED clock advances slower by its declared legacy
-// sqrt(1-v_raw^2) rule. FTD-0252 is independent and not a license for this
-// normalization: it used v=v_g/C_WAVE and never read voxel.tau. The physical
-// moving-clock interpretation remains open after FTD-0401.
+//     d(tau) = sqrt(1 - v^2/C_SPEED^2).
 //
 // ── Discriminator ───────────────────────────────────────────────────────────
 //   RS-1  static clock ticks at omega0:  phi_static = omega0 * N  (within ~1%).
-//   RS-2  moving clock red-shifts:        phi_moving / phi_static = sqrt(1-v^2).
+//   RS-2  moving clock red-shifts: phi_moving / phi_static = sqrt(1-beta^2).
 //   RS-3  ordering:                       phi_moving < phi_static (slower clock).
 //
 // Two well-separated manifested particles in one bridge; movement OFF so the
@@ -46,7 +40,7 @@ namespace ftd {
 namespace test {
 
 void test_de_broglie_clock_redshift() {
-    section("RS: legacy c=1 de Broglie clock wiring is self-consistent");
+    section("RS: raw-coordinate de Broglie clock wiring is self-consistent");
 
     const int    L      = 12;
     const double omega0 = 0.3;
@@ -61,7 +55,7 @@ void test_de_broglie_clock_redshift() {
     rb.toggles.wave_propagation = true;   // satisfies the toggle's requires-clause
     rb.toggles.de_broglie_clock = true;
     rb.toggles.omega0           = omega0;
-    rb.toggles.latency_field    = false;  // => L = 0 => f = 1 => d(tau)=sqrt(1-v^2)
+    rb.toggles.latency_field    = false;  // => L=0 => d(tau)=sqrt(1-v^2/C_SPEED^2)
     // movement, forces, genesis, damping, gauss all OFF: velocities stay fixed.
 
     // Static particle at one corner, moving particle (fixed velocity) at another.
@@ -77,12 +71,13 @@ void test_de_broglie_clock_redshift() {
     const double phi_static = rb.voxel_at(sx, sy, sz).phase;
     const double phi_moving = rb.voxel_at(mx, my, mz).phase;
     const double v_read     = rb.voxel_at(mx, my, mz).speed();
-    const double expected_ratio = std::sqrt(1.0 - v_read * v_read);
+    const double beta2 = v_read * v_read / (C_SPEED * C_SPEED);
+    const double expected_ratio = std::sqrt(1.0 - beta2);
 
     std::printf("    [RS] omega0=%.3f  N=%d  v=%.3f\n", omega0, N, v_read);
     std::printf("    [RS] phi_static=%.5f (expect omega0*N=%.5f)  phi_moving=%.5f\n",
                 phi_static, omega0 * N, phi_moving);
-    std::printf("    [RS] ratio phi_moving/phi_static=%.5f   sqrt(1-v^2)=%.5f\n",
+    std::printf("    [RS] ratio phi_moving/phi_static=%.5f   sqrt(1-beta^2)=%.5f\n",
                 (phi_static != 0.0 ? phi_moving / phi_static : 0.0), expected_ratio);
 
     // RS-1: the static clock ticks at omega0 per tick (d(tau)=1 at rest).
@@ -93,13 +88,13 @@ void test_de_broglie_clock_redshift() {
           "phase wiring d(phi)=omega0*d(tau) is wrong, or accumulate_proper_time "
           "did not run with the clock on (latency_field is off).");
 
-    // RS-2: implementation reproduces its frozen legacy c=1 formula.
+    // RS-2: implementation uses raw velocity normalized by C_SPEED.
     const double meas_ratio = (phi_static != 0.0) ? phi_moving / phi_static : 0.0;
     const double rel_ratio  = std::abs(meas_ratio - expected_ratio) / expected_ratio;
-    check("RS-2: phi_moving/phi_static == legacy sqrt(1-v_raw^2) within 1%",
+    check("RS-2: phi_moving/phi_static == sqrt(1-beta^2) within 1%",
           rel_ratio < 0.01,
-          "The moving clock's phase ratio did not match its frozen legacy "
-          "sqrt(1-v_raw^2) implementation rule.");
+          "The moving clock's phase ratio did not match the FTD-0402 raw-"
+          "coordinate rule sqrt(1-v_raw^2/C_SPEED^2).");
 
     // RS-3: the moving clock is genuinely slower (non-vacuous ordering).
     check("RS-3: phi_moving < phi_static (the moving clock runs slow)",

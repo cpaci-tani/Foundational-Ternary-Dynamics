@@ -40,6 +40,8 @@ Diagnostics compute_diagnostics(const RenderBridge& rb) {
     d.total_energy += std::abs(v.born_infeld_core());
     double bw = v.bandwidth_used();
     if (bw > d.max_bandwidth) d.max_bandwidth = bw;
+    double budget = v.causal_budget();
+    if (budget > d.max_causal_budget) d.max_causal_budget = budget;
   }
   d.manifested_count = ternary.manifested_count();
   d.positive_count = ternary.positive_count();
@@ -52,6 +54,7 @@ Diagnostics compute_diagnostics(const RenderBridge& rb) {
   }
 
   d.total_entropy = compute_entropy_cpu(rb);
+  d.causal_projection_events = rb.causal_projection_events_this_tick();
 
   Vec3 r_cm;
   const int n_manifested = static_cast<int>(active.size());
@@ -131,7 +134,12 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
 
     const int8_t s = ternary.state_at(i);
     if (s != 0) {
-      a.particle_ke += 0.5 * v.velocity.mag2();
+      const double speed2 = v.velocity.mag2();
+      const double gamma0 = flat_gamma(speed2);
+      const double kinetic = flat_particle_kinetic_energy(speed2);
+      a.particle_ke += kinetic;
+      a.particle_rest_energy += E_REST;
+      a.particle_momentum += v.velocity * (gamma0 * M_INERTIAL);
       a.charge_total += s;
       a.manifested_count++;
     }
@@ -147,7 +155,9 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     }
   }
 
-  a.total_energy = a.field_energy + a.wave_energy + a.particle_ke;
+  a.particle_energy = a.particle_rest_energy + a.particle_ke;
+  a.dynamic_energy = a.field_energy + a.wave_energy + a.particle_ke;
+  a.total_energy = a.field_energy + a.wave_energy + a.particle_energy;
   // self_field_injection_ is a private member; RenderBridge::energy_audit()
   // wrapper exposes it via the friend relationship below.
 

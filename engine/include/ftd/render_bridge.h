@@ -177,6 +177,9 @@ public:
     // hash is preserved by construction (gated by test_render_bridge_golden).
     long long genesis_events_this_tick() const { return genesis_events_this_tick_; }
     long long evaporation_events_this_tick() const { return evaporation_events_this_tick_; }
+    long long causal_projection_events_this_tick() const {
+        return causal_projection_events_this_tick_;
+    }
     // Observation-only per-knot telemetry (gated by toggles.knot_tracking).
     // Recorded at tick-end from settled state; reads voxels()/lattice()/
     // current_tick() only ⇒ golden-hash neutral (gated by
@@ -463,7 +466,7 @@ private:
     // so they're callable from both the CPU path (inline in tick()) and
     // the GPU path (post-sync fall-through, e.g. proper-time).
     void weak_transmutation_cpu();              // Rule 6: stress-driven polarity flip
-    void accumulate_proper_time();              // Rule 8: dτ/dt = √(f²-v²)/√f with f = 1-L²
+    void accumulate_proper_time();              // Rule 8: dτ/dt = √max(1-u²/C_SPEED²-L²,0)
 
     // CPU ports of GPU-only physics (F2, callstack audit 2026-04-17).
     // Default-OFF toggles that previously ran silently on CPU.
@@ -541,6 +544,7 @@ private:
     // FTD-0267 observation-only telemetry (see accessor docstring above).
     long long genesis_events_this_tick_ = 0;
     long long evaporation_events_this_tick_ = 0;
+    long long causal_projection_events_this_tick_ = 0;
     // Observation-only per-knot telemetry (gated by toggles.knot_tracking).
     // PIMPL: KnotTracker is forward-declared in this header (circular include
     // with knot_telemetry.h); constructed in the ctor, dtor emitted in

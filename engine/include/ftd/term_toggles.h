@@ -83,8 +83,8 @@ struct TermToggles {
     bool absorbing_boundary = false; // tick: graduated sponge layer — outgoing waves disperse into the void at lattice faces (no reflect/wrap)
     bool reflective_boundary = false; // phase_movement: mirror-bounce at faces when on; particles exhaust into the void when off (no periodic wrap)
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
-    bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_REST (a_COM = F_cluster/(N·M_REST)). Unified-mass Phase 2. Additive (per-voxel loop already skips locked); requires forces.
-    bool de_broglie_clock = false;  // [IMPOSED] phase_read: Klein-Gordon rest-mass term −ω₀²·J at manifested (state!=0) voxels, so a static cluster's flux oscillates at the de Broglie internal clock frequency ω₀∝M_REST (FTD-0271). Native flux is massless (A0), so the clock is imposed, not forced. Additive; default OFF ⇒ golden-neutral. GPU-ported 2026-06-20 (CUDA phase_read kernel applies the same KG term, toggle-gated).
+    bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_INERTIAL. Additive; requires forces.
+    bool de_broglie_clock = false;  // [IMPOSED] phase_read: Klein-Gordon term −ω₀²·J with the frequency calibration tied explicitly to K_B (FTD-0271), not to a unified mass role. Native flux is massless (A0). GPU-ported 2026-06-20.
     bool db_clock_coulomb = false;  // [IMPOSED diagnostic] FTD-0281: pre-solve the live Coulomb Poisson field and apply omega_eff^2 = omega0^2 + 2*omega0*V to the clocked flux field at every site, with V=-phi_coulomb in the engine force convention. CPU + GPU (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT, then the kernel applies the all-site KG term); default OFF => golden-neutral.
     bool knot_tracking = false;     // [OBSERVATION-ONLY] tick-end: record per-knot telemetry from settled state. Reads voxels()/lattice()/current_tick() only ⇒ golden-neutral by construction.
 
@@ -144,7 +144,7 @@ struct TermToggles {
 
     // FTD-0271 (2026-06-11): de Broglie internal-clock frequency ω₀ [rad/tick],
     // used only when de_broglie_clock == true. The KG mass term is −ω₀²·J.
-    // ω₀∝M_REST is [IMPOSED] (native flux is massless); M_REST→ω₀ scale is
+    // ω₀∝K_B is [IMPOSED] (native flux is massless); K_B→ω₀ scale is
     // [SELECTION] (no ℏ in the substrate). Stability bound: ω₀·dt < 2.
     double omega0 = 1.0;
 
@@ -216,7 +216,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Sponge boundary: outgoing waves disperse into the void at lattice faces"},
     {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 "", ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 "", ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
-    {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "forces",           "",                 "", ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_REST)"},
+    {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "forces",           "",                 "", ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_INERTIAL)"},
     {"de_broglie_clock",   &TermToggles::de_broglie_clock,   false, false, "",                 "",                 "", ToggleBackend::ANY, "[IMPOSED] de Broglie internal clock: Klein-Gordon mass term -omega0^2*J at manifested voxels (FTD-0271). GPU-ported 2026-06-20: the CUDA phase_read kernel applies the same -omega0^2*J KG term, gated by the toggle (default OFF => golden-neutral). Independent of wave_propagation: with the wave term the full KG dispersion omega^2=c^2 k^2 + omega0^2 acts; alone, each manifested voxel is the k=0 rest-frame clock oscillating at omega0."},
     {"db_clock_coulomb",   &TermToggles::db_clock_coulomb,   false, false, "wave_propagation,de_broglie_clock,poisson_coulomb", "forces", "", ToggleBackend::ANY, "[IMPOSED diagnostic] FTD-0281 live Coulomb clock: pre-read phi_C solve plus all-site KG potential omega_eff^2=omega0^2+2*omega0*V, V=-phi_C. GPU-ported 2026-06-20 (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT then applies the same all-site KG term). forces must stay off to avoid a second same-tick Coulomb solve."},
     {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},

@@ -4,7 +4,7 @@
 // L_FTD = L_KINETIC + L_GRADIENT + L_BI + L_COUPLING + L_VELOCITY + L_GAUSS
 //
 // Field sector:      L_field = ½|Δ_t J|² - ½c²Σ_μ w_μ|ΔJ_μ|²
-// Particle sector:   L_BI = -K_B √(1 - v²)
+// Particle sector:   L_BI = -E_REST √(1 - |u|²/C_SPEED² - L²)
 // Interaction:       L_coupling = +g_c·s·(∇·J) - g_c·s·(v·J)
 //                    (electric sign AMENDED 2026-07-18 — the previous −g_c·s·(∇·J)
 //                     was in internal sign conflict with L_GAUSS at charge sites:
@@ -133,15 +133,10 @@ inline double lagrangian_density_full(const Voxel& v, double divJ, double rho_ch
 // Hamiltonian Density (Legendre transform of Born-Infeld)
 // ============================================================================
 
-// H_BI = K_B / sqrt(1 - v^2)
+// H_BI = E_REST·f / sqrt(1 - B), with f=1-L² and
+// B=|u|²/C_SPEED²+L² (FTD-0402 raw-lattice contract).
 inline double hamiltonian_density(const Voxel& v, double divJ, double rho_charge) {
-    double spd2 = v.speed() * v.speed();
-    double h_bi;
-    if (spd2 >= 1.0) {
-        h_bi = 1e30;
-    } else {
-        h_bi = K_B / std::sqrt(1.0 - spd2);
-    }
+    const double h_bi = born_infeld_hamiltonian(v.latency, v.velocity.mag2());
     return h_bi - coupling_term(v, divJ) - velocity_coupling_term(v) - gauss_term(divJ, rho_charge);
 }
 

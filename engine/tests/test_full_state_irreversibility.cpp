@@ -61,7 +61,11 @@ bool audit_equal(const ftd::EnergyAudit& a, const ftd::EnergyAudit& b) {
          bits(a.E_L_total, b.E_L_total) && bits(a.E_R_total, b.E_R_total) &&
          bits(a.wv_L_total, b.wv_L_total) && bits(a.wv_R_total, b.wv_R_total) &&
          bits(a.chirality_total, b.chirality_total) &&
-         bits(a.strong_energy, b.strong_energy) && bits(a.weak_energy, b.weak_energy);
+         bits(a.strong_energy, b.strong_energy) && bits(a.weak_energy, b.weak_energy) &&
+         bits(a.particle_rest_energy, b.particle_rest_energy) &&
+         bits(a.particle_energy, b.particle_energy) &&
+         vec_equal(a.particle_momentum, b.particle_momentum) &&
+         bits(a.dynamic_energy, b.dynamic_energy);
 }
 
 bool ledger_equal(const ftd::EnergyLedger& a, const ftd::EnergyLedger& b) {

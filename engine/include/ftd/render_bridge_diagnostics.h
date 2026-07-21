@@ -31,11 +31,13 @@ namespace ftd {
 struct Diagnostics {
     int tick = 0;
     double total_flux = 0.0;
-    // Sum of |born_infeld_core| over all sites — NOT the canonical ½·|J|²
-    // budget (see EnergyAudit.total_energy for field+wave+particle_ke).
+    // Sum of |born_infeld_core| over all sites — NOT the accounted energy
+    // budget (see EnergyAudit.dynamic_energy / total_energy).
     double total_energy = 0.0;
     double avg_drag = 0.0;
     double max_bandwidth = 0.0;
+    double max_causal_budget = 0.0;
+    long long causal_projection_events = 0;
     int manifested_count = 0;
     int positive_count = 0;
     int negative_count = 0;
@@ -73,8 +75,8 @@ struct GravityMetricAgg {
 struct EnergyAudit {
     double field_energy = 0.0;     // ½·sum |J|^2 over all sites (canonical ½ convention)
     double wave_energy = 0.0;      // ½·sum |wave_vel|^2 over all sites
-    double particle_ke = 0.0;      // sum ½·|v|^2 for manifested particles
-    double total_energy = 0.0;     // field + wave + particle_ke
+    double particle_ke = 0.0;      // sum (gamma_0-1)·E_REST
+    double total_energy = 0.0;     // accounted total: field + wave + particle energy
     double gauss_violation = 0.0;  // sum |div(J) - state|^2
     double max_gauss_error = 0.0;  // max |div(J) - state|
     double self_field_injection = 0.0;  // Energy injected by self-field floor this tick
@@ -97,6 +99,14 @@ struct EnergyAudit {
 
     // Weak Field
     double weak_energy = 0.0;      // sum |J_weak|^2 (weak field energy)
+
+    // FTD-0402 append-only mass-role / flat energy-momentum diagnostics.
+    // Interaction energies remain incomplete until NCEMC; dynamic_energy is
+    // the rest-offset-free channel used by conservation charts.
+    double particle_rest_energy = 0.0;
+    double particle_energy = 0.0;
+    Vec3 particle_momentum;
+    double dynamic_energy = 0.0;
 };
 
 /**
