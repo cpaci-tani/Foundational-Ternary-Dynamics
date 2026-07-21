@@ -666,7 +666,7 @@ The **Page curve** describes how this works:
 
 4. **Final evaporation**: The last photons carry the remaining information. The frozen crystal is completely unfrozen and radiated away. **All information is returned.**
 
-In FTD, this works because the lattice evolution is invertible. If you had the complete Hawking radiation (every emitted flux quantum with its exact state), you could in principle reconstruct the entire interior configuration. The information was never destroyed -- it was temporarily frozen and then slowly leaked out through boundary effects.
+The current FTD engine does **not** establish this reconstruction: determinism is not invertibility, and FTD-0395 gives an exact non-injectivity witness for the implemented update map. A Hawking-radiation reconstruction or Page curve therefore requires its own mechanism and evidence; it cannot be inferred from P1–P5 or from the retained flux field.
 
 ## The Endgame: The Final Pop [CONJECTURE]
 

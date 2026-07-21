@@ -135,7 +135,7 @@
     {
       "ref": "DEC-2", "type_declined": "global reversibility (and with it the Lorentzian metric as fundamental)",
       "commitment": "FC-2 / FTD-0256", "independence_status": "arrow native [AXIOM-class]; metric emergent-IR sector-scoped",
-      "stance": "FTD DECLINES reversibility as a postulate; the arrow is native (manifestation many-to-one); reversibility survives only as a flux-sector property",
+      "stance": "FTD DECLINES reversibility as a postulate; readout R is lossy (FTD-0394), the current full update F is non-injective via evaporation (FTD-0395), and FC-2 remains the framework-wide arrow declaration",
       "falsifier": "constitution FC-2 kill conditions (a native reversibility requirement, or the metric shown non-emergent)."
     }
   ],
