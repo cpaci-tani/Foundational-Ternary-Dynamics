@@ -8,6 +8,7 @@
 
 #include "ftd/gpu_engine.h"
 #include "ftd/constants.h"
+#include "ftd/volumetric_measure.h"
 #include <cuda_runtime.h>
 #include <cufft.h>
 #include <cstdio>
@@ -590,8 +591,12 @@ EnergyAudit GpuEngine::energy_audit() {
     EnergyAudit ea;
     for (int i = 0; i < N_; ++i) {
         const auto& v = host_voxels_[i];
-        ea.field_energy += 0.5 * v.flux.mag2();
-        ea.wave_energy  += 0.5 * v.wave_vel.mag2();
+        const double field_density = quadratic_field_energy_density(v.flux.mag2());
+        const double wave_density = quadratic_field_energy_density(v.wave_vel.mag2());
+        ea.field_energy_density_sum += field_density;
+        ea.wave_energy_density_sum += wave_density;
+        ea.field_energy += integrate_voxel_density(field_density);
+        ea.wave_energy  += integrate_voxel_density(wave_density);
         if (v.state != 0) {
             const double speed2 = v.velocity.mag2();
             const double gamma0 = flat_gamma(speed2);
@@ -603,20 +608,26 @@ EnergyAudit GpuEngine::energy_audit() {
         }
         // Dual-substrate diagnostics — same 1/2 |·|² convention.
         if (toggles.dual_substrate) {
-            ea.E_L_total += 0.5 * v.flux_L.mag2();
-            ea.E_R_total += 0.5 * v.flux_R.mag2();
-            ea.wv_L_total += 0.5 * v.wave_vel_L.mag2();
-            ea.wv_R_total += 0.5 * v.wave_vel_R.mag2();
-            ea.chirality_total += v.chirality_density();
+            ea.E_L_total += integrate_voxel_density(
+                quadratic_field_energy_density(v.flux_L.mag2()));
+            ea.E_R_total += integrate_voxel_density(
+                quadratic_field_energy_density(v.flux_R.mag2()));
+            ea.wv_L_total += integrate_voxel_density(
+                quadratic_field_energy_density(v.wave_vel_L.mag2()));
+            ea.wv_R_total += integrate_voxel_density(
+                quadratic_field_energy_density(v.wave_vel_R.mag2()));
+            ea.chirality_total += integrate_voxel_density(v.chirality_density());
         }
 
         // Strong field diagnostic
         if (toggles.color_forces || toggles.strong_force) {
-            ea.strong_energy += 0.5 * v.flux_strong.mag2();
+            ea.strong_energy += integrate_voxel_density(
+                quadratic_field_energy_density(v.flux_strong.mag2()));
         }
 
         // Weak field diagnostic
-        ea.weak_energy += 0.5 * v.flux_weak.mag2();
+        ea.weak_energy += integrate_voxel_density(
+            quadratic_field_energy_density(v.flux_weak.mag2()));
     }
     ea.particle_energy = ea.particle_rest_energy + ea.particle_ke;
     ea.dynamic_energy = ea.field_energy + ea.wave_energy + ea.particle_ke;

@@ -28,7 +28,7 @@
  * per-call object allocation.
  */
 
-import { K_B } from '../constants.js';
+import { K_B, VOXEL_VOLUME } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { createParticleEngine } from './mock-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
@@ -489,6 +489,8 @@ export class WasmBridge {
                 fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
                 particleRestEnergy: 0, particleEnergy: 0, dynamicEnergy: 0,
                 particleMomentum: { x: 0, y: 0, z: 0 },
+                cellVolume: VOXEL_VOLUME,
+                fieldEnergyDensitySum: 0, waveEnergyDensitySum: 0,
                 EFieldEnergy: 0, BFieldEnergy: 0,
                 totalPoynting: { x: 0, y: 0, z: 0 },
                 gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
@@ -529,6 +531,9 @@ export class WasmBridge {
                 particleEnergy: arr[20] ?? 0,
                 particleMomentum: { x: arr[21] ?? 0, y: arr[22] ?? 0, z: arr[23] ?? 0 },
                 dynamicEnergy: arr[24] ?? arr[3],
+                cellVolume: arr[25] ?? VOXEL_VOLUME,
+                fieldEnergyDensitySum: arr[26] ?? arr[0],
+                waveEnergyDensitySum: arr[27] ?? arr[1],
             };
         } else {
             audit = this._module.getEnergyAudit(this._bridge);
@@ -549,7 +554,8 @@ export class WasmBridge {
                 fieldKinetic: 0, fieldGradient: 0,
                 bornInfeld: 0, coupling: 0, velocity: 0, gauss: 0, dissipation: 0,
                 total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
-                totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0
+                totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0,
+                cellVolume: VOXEL_VOLUME
             };
         if (typeof this._module.getLagrangianView === 'function') {
             const arr = this._module.getLagrangianView(this._bridge);
@@ -569,7 +575,8 @@ export class WasmBridge {
                 totalFluxMag: arr[12],
                 totalWaveEnergy: arr[13],
                 manifested: arr[14],
-                locked: arr[15]
+                locked: arr[15],
+                cellVolume: arr[16] ?? VOXEL_VOLUME
             };
         }
         return this._module.getLagrangian(this._bridge);

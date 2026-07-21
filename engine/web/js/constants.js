@@ -53,6 +53,12 @@ export const X_MINUS = 3.0239639163;
 
 // ── Layer 4: Framework Integers ─────────────────────────────────────
 export const D_SPATIAL = 3;
+// Explicit 3D measure for the current unit cubic lattice. Local field
+// energy remains a quadratic density; integrated cell energy multiplies
+// that density by VOXEL_VOLUME = a_lat^3.
+export const VOXEL_EDGE_LENGTH = 1.0;
+export const VOXEL_FACE_AREA = VOXEL_EDGE_LENGTH * VOXEL_EDGE_LENGTH;
+export const VOXEL_VOLUME = VOXEL_FACE_AREA * VOXEL_EDGE_LENGTH;
 export const N_C       = 3;
 export const N_GEN     = 3;
 export const N_F       = 6;

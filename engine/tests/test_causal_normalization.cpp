@@ -85,6 +85,14 @@ int main() {
         v.velocity = {C_SPEED / 2.0, 0.0, 0.0};
         const EnergyAudit a = rb.energy_audit();
         const double g = 2.0 / std::sqrt(3.0);
+        ftd::test::check_close("CN-14v cell volume is explicit unit cube",
+                               a.cell_volume, VOXEL_VOLUME, 1e-15);
+        ftd::test::check_close("CN-14d field density integrates neutrally at unit volume",
+                               a.field_energy, a.field_energy_density_sum * a.cell_volume,
+                               1e-15);
+        ftd::test::check_close("CN-14w wave density integrates neutrally at unit volume",
+                               a.wave_energy, a.wave_energy_density_sum * a.cell_volume,
+                               1e-15);
         ftd::test::check_close("CN-14 audit rest energy", a.particle_rest_energy, E_REST, 1e-15);
         ftd::test::check_close("CN-15 audit particle KE", a.particle_ke,
                                (g - 1.0) * E_REST, 1e-15);
@@ -282,7 +290,10 @@ int main() {
                           ca.particle_energy == ga.particle_energy &&
                           ca.particle_momentum.x == ga.particle_momentum.x &&
                           ca.particle_momentum.y == ga.particle_momentum.y &&
-                          ca.particle_momentum.z == ga.particle_momentum.z;
+                          ca.particle_momentum.z == ga.particle_momentum.z &&
+                          ca.cell_volume == ga.cell_volume &&
+                          ca.field_energy_density_sum == ga.field_energy_density_sum &&
+                          ca.wave_energy_density_sum == ga.wave_energy_density_sum;
             if (tick == 1) {
                 count_after_one = ca.manifested_count;
                 gpu_count_after_one = ga.manifested_count;

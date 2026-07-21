@@ -6,6 +6,7 @@
 #include "ftd/diagnostics_compute.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/volumetric_measure.h"
 #include <cmath>
 
 namespace ftd {
@@ -108,28 +109,38 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     // making MockBridge report half the WasmBridge value for the SAME
     // scenario — the Energy Budget chart and Lagrangian readout silently
     // jumped 2× when the user switched bridges.
-    a.field_energy += 0.5 * v.flux.mag2();
-    a.wave_energy  += 0.5 * v.wave_vel.mag2();
+    const double field_density = quadratic_field_energy_density(v.flux.mag2());
+    const double wave_density = quadratic_field_energy_density(v.wave_vel.mag2());
+    a.field_energy_density_sum += field_density;
+    a.wave_energy_density_sum += wave_density;
+    a.field_energy += integrate_voxel_density(field_density);
+    a.wave_energy  += integrate_voxel_density(wave_density);
 
     Vec3 E = v.wave_vel * -1.0;
     Vec3 B = rb.curl_flux(i);
-    a.E_field_energy += 0.5 * E.mag2();
-    a.B_field_energy += 0.5 * B.mag2();
+    a.E_field_energy += integrate_voxel_density(
+        quadratic_field_energy_density(E.mag2()));
+    a.B_field_energy += integrate_voxel_density(
+        quadratic_field_energy_density(B.mag2()));
 
-    a.total_poynting.x += E.y * B.z - E.z * B.y;
-    a.total_poynting.y += E.z * B.x - E.x * B.z;
-    a.total_poynting.z += E.x * B.y - E.y * B.x;
+    a.total_poynting.x += integrate_voxel_density(E.y * B.z - E.z * B.y);
+    a.total_poynting.y += integrate_voxel_density(E.z * B.x - E.x * B.z);
+    a.total_poynting.z += integrate_voxel_density(E.x * B.y - E.y * B.x);
 
     if (rb.toggles.dual_substrate) {
       // Split flux-channel and wave-channel energies separately so
       // the dashboard's Dual Substrate panel can render them as
       // distinct columns (E_L / E_R = flux; Wave L / R = wave_vel).
       // Same ½·|·|² convention as field_energy / wave_energy above.
-      a.E_L_total += 0.5 * v.flux_L.mag2();
-      a.E_R_total += 0.5 * v.flux_R.mag2();
-      a.wv_L_total += 0.5 * v.wave_vel_L.mag2();
-      a.wv_R_total += 0.5 * v.wave_vel_R.mag2();
-      a.chirality_total += v.chirality_density();
+      a.E_L_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.flux_L.mag2()));
+      a.E_R_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.flux_R.mag2()));
+      a.wv_L_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.wave_vel_L.mag2()));
+      a.wv_R_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.wave_vel_R.mag2()));
+      a.chirality_total += integrate_voxel_density(v.chirality_density());
     }
 
     const int8_t s = ternary.state_at(i);

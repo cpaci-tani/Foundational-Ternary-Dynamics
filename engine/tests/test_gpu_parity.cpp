@@ -117,6 +117,14 @@ static void test_single_tick_parity() {
                 cpu_ea.field_energy * tol + 1e-10, "Field energy match");
     CHECK_CLOSE(gpu_ea.wave_energy, cpu_ea.wave_energy,
                 cpu_ea.wave_energy * tol + 1e-10, "Wave energy match");
+    CHECK(gpu_ea.cell_volume == cpu_ea.cell_volume,
+          "Cell-volume metadata match");
+    CHECK_CLOSE(gpu_ea.field_energy_density_sum, cpu_ea.field_energy_density_sum,
+                cpu_ea.field_energy_density_sum * tol + 1e-10,
+                "Field energy-density sum match");
+    CHECK_CLOSE(gpu_ea.wave_energy_density_sum, cpu_ea.wave_energy_density_sum,
+                cpu_ea.wave_energy_density_sum * tol + 1e-10,
+                "Wave energy-density sum match");
     CHECK(gpu_ea.manifested_count == cpu_ea.manifested_count,
           "Particle count match");
     CHECK(gpu_ea.charge_total == cpu_ea.charge_total,

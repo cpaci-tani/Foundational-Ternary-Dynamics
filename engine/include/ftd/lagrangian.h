@@ -14,13 +14,14 @@
 // Constraint:        L_gauss = -λ_G·(∇·J - ρ)²
 // Dissipation:       R = (α/2)|wave_vel|²
 //
-// The discrete action S = Σ_v L(v) is an exact finite sum — not an
-// approximation of an integral. The tick cycle IS the Euler-Lagrange
-// equations of this action.
+// The discrete action S = Σ_v L_density(v)·V_cell is an exact finite
+// volume sum on the unit lattice — not a continuum-limit claim. The tick
+// cycle IS the Euler-Lagrange equations of this action.
 
 #include "voxel.h"
 #include "render_bridge.h"
 #include "constants.h"
+#include "volumetric_measure.h"
 #include <array>
 
 namespace ftd {
@@ -192,6 +193,9 @@ struct LagrangianDiag {
     // Counters
     int manifested_count = 0;
     int locked_count = 0;
+
+    // FTD-0404 append-only spatial-measure metadata.
+    double cell_volume = VOXEL_VOLUME;
 };
 
 // Euler-Lagrange residual: how well does the tick satisfy δS/δJ = 0?
