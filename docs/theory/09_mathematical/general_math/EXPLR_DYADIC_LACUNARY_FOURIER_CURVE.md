@@ -3,7 +3,7 @@
 **Document type:** Exploratory mathematical note
 **Status:** [EXPLORATORY] for FTD; exact claims below are theorems of the explicitly defined curve only
 **Provenance:** incorporated from a user-supplied technical note on the four-mode dyadic Fourier seed curve
-**Related:** [EXPLR_DYADIC_LACUNARY_PHASE_RIBBONS.md](EXPLR_DYADIC_LACUNARY_PHASE_RIBBONS.md), [EXPLR_FOURIER_CURVE_LEVEL_4.md](EXPLR_FOURIER_CURVE_LEVEL_4.md), [REF_QCR_TRILOGY_BRIDGE.md](REF_QCR_TRILOGY_BRIDGE.md), [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](../algebra/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md)
+**Related:** [EXPLR_DYADIC_TRIGONAL_RELAY_FAMILY.md](EXPLR_DYADIC_TRIGONAL_RELAY_FAMILY.md), [EXPLR_DYADIC_LIFT_DESINGULARIZER.md](EXPLR_DYADIC_LIFT_DESINGULARIZER.md), [EXPLR_DYADIC_OCTAVE_BIFURCATION_ATLAS.md](EXPLR_DYADIC_OCTAVE_BIFURCATION_ATLAS.md), [EXPLR_DYADIC_CUBIC_MASTER_QUADRATIC_BOUNDARY.md](EXPLR_DYADIC_CUBIC_MASTER_QUADRATIC_BOUNDARY.md), [EXPLR_DYADIC_GEOMETRIC_BYTE.md](EXPLR_DYADIC_GEOMETRIC_BYTE.md), [EXPLR_DYADIC_LACUNARY_PHASE_RIBBONS.md](EXPLR_DYADIC_LACUNARY_PHASE_RIBBONS.md), [EXPLR_FOURIER_CURVE_LEVEL_4.md](EXPLR_FOURIER_CURVE_LEVEL_4.md), [REF_QCR_TRILOGY_BRIDGE.md](REF_QCR_TRILOGY_BRIDGE.md), [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](../algebra/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md)
 
 ---
 
@@ -494,6 +494,13 @@ Its useful roles are narrower:
 2. It separates finite algebraicity from infinite lacunary roughness.
 3. It records branch overlap as a precise hidden-parameter phenomenon.
 4. It provides a sibling reference to `EXPLR_FOURIER_CURVE_LEVEL_4.md`.
+
+A companion family probe shows that the underlying `+/-2*pi/3` relay is not
+just a `C_3` coefficient accident: finite dyadic curves have an exact
+three-phase barycenter identity, and the alternating-chiral subfamily turns
+`y(t)=0` into equal-x/opposite-y shifted phases. The exact `75+15+15`
+projective singularity budget remains seed-specific until separately proven.
+See `EXPLR_DYADIC_TRIGONAL_RELAY_FAMILY.md`.
 
 This `C_3` seed is not identical to the level-4 curve in
 `EXPLR_FOURIER_CURVE_LEVEL_4.md`: that document uses the curve
@@ -1446,5 +1453,26 @@ This is useful FTD intuition, but not a physics claim:
 ```text
 simple hidden phase -> lossy visible projection -> large hidden algebraic budget.
 ```
+
+---
+
+## 16. Exact one-coordinate lift
+
+The real node network is a property of the planar readout, not an intrinsic
+self-intersection of the hidden phase loop. The companion theorem note
+[EXPLR_DYADIC_LIFT_DESINGULARIZER.md](EXPLR_DYADIC_LIFT_DESINGULARIZER.md)
+proves that the lift
+
+```text
+Gamma_3(t) = (x_3(t), y_3(t), sin(t))
+```
+
+is a regular embedded, unknotted space curve. The decisive fact is that all
+higher `x` modes are even under `t -> pi-t`, while the fundamental `cos(t)`
+changes sign. Thus the retained quadrature `sin(t)` separates every otherwise
+ambiguous phase pair.
+
+This resolves the real planar crossings only. It does not alter the degree-16
+plane image or remove the complex projective singularity budget.
 
 *End of document.*
