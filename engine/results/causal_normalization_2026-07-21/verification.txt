@@ -1,0 +1,38 @@
+FTD-0402 CAUSAL NORMALIZATION / MASS-ROLE VERIFICATION
+date=2026-07-21
+lock_tag=preregister-causal-normalization-mass-roles-v1
+lock_commit=41e06051c08af7e0f1a3d531b08077837ea34312
+implementation_commit=6526fefa637cd0c0d1feb56e421bdc60c19a290e
+outcome=PARTIAL
+
+PASS exact_python_verifier A1-A7 S1-S9
+PASS test_causal_normalization repeated=2
+PASS targeted_native_group tests=11 repeated=2
+PASS targeted_gpu_group tests=6 repeated=2
+PASS golden_gate tests=7 repeated=2
+PASS wasm_release_build
+PASS wasm_energy_browser_contract repeated=2
+PASS scenario_telemetry_contract tests=2
+PASS git_diff_check
+
+AGGREGATE_CTEST incomplete
+PASS halo_forcedness elapsed_s=1446.36
+PASS maxwell elapsed_s=961.47
+PASS proton_stability elapsed_s=198.39
+INTERRUPTED light_deflection reason=outer_terminal_wrapper_detached
+STOPPED remainder reason=owner_direction_no_unrelated_rerun
+
+test_source_sha256=a164eed0406b110cdf62b09985ba64ab6fafd330d82c7e9319809d984d52dbdc
+verifier_sha256=3bb62704d5f77c1ea4f1488129e8cc4bef3e10fb93610e2c5b0bfb849ee7f2ad
+causal_interface_sha256=705501451985333d64128a0896216a137a2d836673aeb02e9ace6de4f2e53aa2
+test_binary_sha256=4ba9b21b32795b403f56ad48e6dd6a6115240b5dd0f1d7a37f9893727648046f
+wasm_sha256=0b9c04210a09b92fb638cfae7884280e870941f57bd9d86b9a115abe317ef011
+
+golden_minimal=450fca908f536e36
+golden_default=ca1aada0203f0229
+golden_L9=ac32d7b46e718b38
+golden_reflective_flux=14eb33a180b3d319
+golden_dispersal=7d6315d321c7ced7
+golden_absorbing=b5f1e6b2a1713f35
+golden_reflective_move=923f310b5af1e2ec
+golden_GPU=26eb5cacd8b49734
