@@ -2,7 +2,7 @@
 
 ## Selected Lattice Action and Its Current Engine Map
 
-**Status:** `[REFERENCE / PARTIAL ENGINE MAP]`. Algebraic identities and individual field-sector results retain their row-level tags; the particle causal budget is `[AXIOM + measured implementation conformance]`, while a complete common stress–energy action remains `[OPEN]` (NCEMC).
+**Status:** `[REFERENCE / PARTIAL ENGINE MAP]`. Algebraic identities and individual field-sector results retain their row-level tags; the particle causal budget is `[AXIOM + measured implementation conformance]`, while a complete common stress–energy action remains `[OPEN]` (NCEMC). FTD-0405 finds the current direct colour-force route doubly obstructed by non-exact tick work and an unfixed strong-energy zero/local stress distribution.
 
 ---
 
@@ -189,7 +189,7 @@ which satisfies $E^2=E_{\rm REST}^2+C_{\rm SPEED}^2|\mathbf P|^2$. CPU and GPU r
 
 The current CPU/GPU latency solvers use the separately named numerical source $M_{\rm GRAVITATIONAL}|s|$, with $M_{\rm GRAVITATIONAL}=K_B$. FTD-0402 makes that role explicit and backend-consistent; it does not derive it by varying the particle Born–Infeld term. The numerical equality $M_{\rm GRAVITATIONAL}=M_{\rm INERTIAL}$ remains imposed.
 
-A common action whose stress–energy both generates the active forces and sources latency is precisely the deferred NCEMC requirement identified by FTD-0400. The historical claim that the live engine's Poisson source already follows from the displayed complete action is therefore not a current-engine theorem. $\square$
+A common action whose stress–energy both generates the active forces and sources latency is precisely the deferred NCEMC requirement identified by FTD-0400. FTD-0405 establishes that the current direct colour pair force has only a potential family `U+kappa`, that the present tick does not exchange exact work with that potential, and that neither `kappa` nor a local stress distribution is selected for gravity. The historical claim that the live engine's Poisson source already follows from the displayed complete action is therefore not a current-engine theorem. $\square$
 
 ### 4.3 Proper Time [AXIOM — selected causal budget]
 
@@ -320,8 +320,8 @@ The following reference values mix mathematical structure, selections, and calib
 
 | L-4 | Gauss constraint ($\lambda_G \to \infty$) generates U(1) gauge symmetry | **[THEOREM]** |
 | L-5 | Lattice Green's function $G_L = 1/\hat{k}^2$ is the Euclidean QFT propagator | **[THEOREM]** |
-| L-6 | Same native stress–energy sources both field dynamics and gravity | **[OPEN]**; not established by the current engine, deferred to NCEMC |
-| L-7 | Current latency Poisson source follows from variation of the particle/interaction action | **[OPEN]**; current `M_GRAVITATIONAL=K_B` source is imposed |
+| L-6 | Same native stress–energy sources both field dynamics and gravity | **[OPEN / DOUBLE-OBSTRUCTION, FTD-0405]**; current colour tick lacks exact work and a selected energy zero/local stress distribution |
+| L-7 | Current latency Poisson source follows from variation of the particle/interaction action | **[OPEN / BLOCKED]**; current `M_GRAVITATIONAL=K_B` source is imposed and strong pair energy is absent |
 | L-8 | $\alpha = 1/x_+$ from master quadratic | **[SELECTION]** |
 | L-9 | $K_B = m_e$ fixes the inertial calibration | **[IMPOSED]**; distinct from `K_MANIFEST` |
 | L-10 | Velocity coupling $-g_c\,s\,(\mathbf{v}\cdot\mathbf{J})$ produces lattice Lorentz force | **[THEOREM]** |

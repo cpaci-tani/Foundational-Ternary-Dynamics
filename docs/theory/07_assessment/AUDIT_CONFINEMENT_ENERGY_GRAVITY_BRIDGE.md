@@ -5,6 +5,8 @@
 **Verdict:** **SPLIT-BOOKKEEPING**
 **Scope:** Static source-contract audit of the current RenderBridge, GPU backend, and ParticleEngine. No numerical target, particle mass, CODATA value, or fitted residual is used. This is not a pre-registered measurement: the evidence is the tracked implementation itself, recomputed by an exact source-contract verifier.
 
+> **Successor disposition (FTD-0405, 2026-07-21):** the NCEMC feasibility lock returned **DOUBLE-OBSTRUCTION**. The current RenderBridge colour force admits a radial potential family and closes isolated two-body manifested momentum, but its force-kick/movement tick fails exact work exchange and the additive strong-energy zero/local stress distribution used by gravity are not selected. NCEMC-2/4 remain blocked; the current-force mass bridge remains closed. See [`RESULT_NCEMC_FEASIBILITY.md`](RESULT_NCEMC_FEASIBILITY.md).
+
 ## 0. Verdict
 
 The physical intuition is sound but the current engine cannot yet instantiate it:
@@ -106,7 +108,7 @@ After FTD-0401's Causal Normalization and Mass-Role gate is resolved, the smalle
 5. **NCEMC-5 — target-blind invariant:** only after 1–4 pass may independently prepared localized excitations be compared through the declared-coordinate invariant `E²-c_lat²P²`, inertial response, and far-field gravitational charge.
 6. **NCEMC-6 — calibration boundary:** success can derive a lattice-unit gap and dimensionless ratios. It cannot derive a value in MeV without the FTD-0096 calibration interface.
 
-Running another mass campaign before FTD-0401's normalization gate and NCEMC-1–4 exist would measure bookkeeping choices, not confinement-generated mass.
+Running another mass campaign before FTD-0401's normalization gate and NCEMC-1–4 exist would measure bookkeeping choices, not confinement-generated mass. FTD-0405 has now executed the feasibility gate and shown that the present direct pair-force path cannot supply NCEMC-2/4 without an energy-conserving architecture plus additional data fixing the gravitational energy zero and stress localization.
 
 ## 7. Epistemic disposition
 

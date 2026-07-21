@@ -115,7 +115,8 @@ FTD histories.
 - [x] FTD-0402 implements the selected raw-lattice causal normalization and separates `M_INERTIAL`, `E_REST`, and `M_GRAVITATIONAL`; targeted CPU/GPU, golden, WASM, and exact gates pass.
 - [x] FTD-0403 v2 supplies an independently locked targeted dependency closure: exact A1–A7/S1–S9, native 14/14, CUDA 6/6, golden 7/7, WASM/web 3/3, and static gates pass; `§12-cnorm` is closed without a full unrelated CTest run. FTD-0402 remains historically `PARTIAL`.
 - [x] FTD-0404 makes the D=3 unit-cell measure explicit: volume-density channels integrate with `V_cell=a_lat³`, local norms remain quadratic, and all production values remain numerically unchanged (`VOLUMETRIC-NEUTRAL`).
-- [ ] NCEMC is now admissible under a separate lock; it remains `[OPEN]` and must add neither a mass readout nor a common-source claim before its own gates close.
+- [x] FTD-0405 executes the NCEMC feasibility gate: radial Hamiltonian-family existence and isolated two-body momentum closure succeed, but exact work and an absolute/local gravitational energy source return `DOUBLE-OBSTRUCTION`.
+- [ ] NCEMC production architecture remains `[OPEN]` and now requires owner-authorized choices for an energy-conserving local strong-field update, vacuum energy zero, and stress localization. NCEMC-5/mass readout remains inadmissible.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
 - [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
