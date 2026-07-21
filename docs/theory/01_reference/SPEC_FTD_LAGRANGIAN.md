@@ -92,7 +92,7 @@ For the current particle implementation, let $u$ be the raw stored velocity in n
 
 $$\beta^2=\frac{|u|^2}{C_{\rm SPEED}^2},\qquad f=1-\mathcal L^2,\qquad B=\beta^2+\mathcal L^2<1.$$
 
-**FTD-0401/0402 reconciliation (2026-07-21):** FTD-0401 proved that the previous engine mixed raw nodes/tick with an implicit `c=1` argument. FTD-0402 implements the explicit map above in one CPU/GPU causal interface and separates `M_INERTIAL`, `E_REST=M_INERTIAL*C_SPEED²`, and `M_GRAVITATIONAL`. Its exact and targeted parity gates pass, but its frozen result is `PARTIAL` because the repository-wide CTest aggregate was not completed. The formulas below describe the selected current-engine contract; they remain conditional on the clock/bandwidth **[AXIOM]** and are not a substrate derivation of covariance. See [`RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md`](../07_assessment/RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md).
+**FTD-0401–0403 reconciliation (2026-07-21):** FTD-0401 proved that the previous engine mixed raw nodes/tick with an implicit `c=1` argument. FTD-0402 implements the explicit map above in one CPU/GPU causal interface and separates `M_INERTIAL`, `E_REST=M_INERTIAL*C_SPEED²`, and `M_GRAVITATIONAL`; its frozen verdict remains `PARTIAL`. FTD-0403 v2 independently closes the exact changed-surface dependency contract with native 14/14, CUDA 6/6, golden 7/7, WASM/web, and static gates, without a full unrelated CTest run. The formulas below describe the selected current-engine contract; they remain conditional on the clock/bandwidth **[AXIOM]** and are not a substrate derivation of covariance. See [`RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md`](../07_assessment/RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md).
 
 ### 3.3 The Action Functional
 
@@ -311,7 +311,7 @@ The following reference values mix mathematical structure, selections, and calib
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Current-engine Born–Infeld/proper-time paths share $B=\beta^2+\mathcal L^2$ | **[MEASURED implementation contract, PARTIAL result]** under FTD-0402; moving-Schwarzschild identity retired |
+| L-1 | Current-engine Born–Infeld/proper-time paths share $B=\beta^2+\mathcal L^2$ | **[THEOREM — current-engine conformance over the frozen changed surface]** under FTD-0403; FTD-0402 remains historically PARTIAL; moving-Schwarzschild identity retired |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}=1/\sqrt{1-B}$ is the shared current-engine transport/clock factor | **[AXIOM + measured implementation conformance]**; not a covariance or GR-unification theorem |
 
@@ -324,7 +324,7 @@ The following reference values mix mathematical structure, selections, and calib
 | L-10 | Velocity coupling $-g_c\,s\,(\mathbf{v}\cdot\mathbf{J})$ produces lattice Lorentz force | **[THEOREM]** |
 | L-11 | Rayleigh dissipation $R = (\alpha/2)\lVert\mathbf{v}_\text{wave}\rVert^2$ with $\gamma = \alpha$ | **[IMPOSED]** |
 
-**FTD-0402 guard:** L-1/L-3 are no longer counted as conditional moving-Schwarzschild/covariance theorems. They record conformance to the selected clock/bandwidth axiom, with the overall FTD-0402 verdict `PARTIAL` because its repository-wide aggregate gate was not completed.
+**FTD-0402/0403 guard:** L-1/L-3 are not conditional moving-Schwarzschild/covariance theorems. They record current-engine conformance to the selected clock/bandwidth axiom. FTD-0402 remains historically `PARTIAL`; FTD-0403 closes the exact targeted dependency surface and does not promote the axiom itself.
 
 ---
 
