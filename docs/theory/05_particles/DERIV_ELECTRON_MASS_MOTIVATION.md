@@ -25,7 +25,7 @@ The lattice has a UV cutoff at the lattice spacing. The natural mass scale of th
 
 ### Factor 2: √(2π)
 
-The partition function Z(x) involves an exact Gaussian integral over the flux field J (see DERIV_MASTER_QUADRATIC_FROM_Z.md, Step 1). The Gaussian integral over a single real variable produces √(2π). This factor is the signature of the exact J-integration. [SELECTION] (not [THEOREM], per FTD-0133; the cited DERIV_MASTER_QUADRATIC_FROM_Z.md derivation route is retracted as FTD-0032, and even that chain produced a *cancelling* 2π rather than a surviving √(2π); the √(2π) factor in m_e is more honestly read as inherited from `v = M_P·√(2π)·α^8` in HIGGS-4, which is itself [SELECTION]; the √(2π) cancels in the cleaner ratio `m_e/v = (16/3)·α³` whose exponent 3 = N_c is [DERIVED] post-MC-T3.2 closure)
+The partition function Z(x) involves an exact Gaussian integral over the flux field J (see DERIV_MASTER_QUADRATIC_FROM_Z.md, Step 1). The Gaussian integral over a single real variable produces √(2π). This factor is the signature of the exact J-integration. [SELECTION] (not [THEOREM], per FTD-0133; the cited DERIV_MASTER_QUADRATIC_FROM_Z.md derivation route is retracted as FTD-0032, and even that chain produced a *cancelling* 2π rather than a surviving √(2π); the √(2π) factor in m_e is more honestly read as inherited from `v = M_P·√(2π)·α^8` in HIGGS-4, which is itself [SELECTION]. The √(2π) cancels in the ratio `m_e/v = (16/3)·α³`, but FTD-0397 shows that this exponent difference also depends on selected order-bearing ladder data.)
 
 In the φ³ EFT (DERIV_PHI3_EXACT_EFT.md), the mass parameter m² = x₊ − x₋ = 134.012. The ratio √(2π)/m ≈ 0.217 sets the natural scale at which loop corrections become significant.
 
@@ -60,6 +60,8 @@ The exponent 11 is the position of the electron on the alpha-power ladder:
 The electron doesn't need the second color factor (neutrino mixing, +3) or all flavors (gravity, +6), so it sits below n = 14 (neutrino) and n = 20 (gravitational scale).
 
 **The ladder rule [THEOREM]:** The total walk 4 + 3 + 3 + 6 = 16 = |Aut(Eᵢ)|². The alpha-power ladder exhausts all particle-counting integers exactly once, and their sum equals the master quadratic coefficient. This is a structural identity (LGR-2 in FOUND_LADDER_GENERATING_RULE.md).
+
+**Order-type limit (FTD-0397):** the 12 orderings of the unordered multiset form one permutation orbit. Every permutation-invariant datum is constant on that orbit and cannot select `n=11`. The physical narrative above is therefore motivation for a [SELECTION], not a derivation; promotion requires independently derived order-bearing dynamics.
 
 ---
 

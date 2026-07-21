@@ -127,7 +127,12 @@ experiment gives ~0.1%.
 is 5.8× above experimental precision; a 1-loop refinement (or a more
 precise derivation) is warranted.
 
-### 3.7 · Electron mass m_e = m_P·√(2π)·(16/3)·α¹¹ — [DERIVED] with caveats
+### 3.7 · Electron mass m_e = m_P·√(2π)·(16/3)·α¹¹ — [SMC] with selected exponent
+
+> **2026-07-20 reconciliation:** FTD-0390 demonstrated that the ordering used to
+> select $n=11$ was reverse-engineered; FTD-0397 proved that the unordered
+> multiset cannot select any one ordering. The historical search evidence below
+> is retained as audit provenance and is not a derivation or a selection rule.
 
 (Separate audit: `scripts/proofs/audit_electron_mass_formula.py`)
 
@@ -157,7 +162,7 @@ dynamically.
 | {N_base, N_eff, b_3} | [THEOREM] | [THEOREM] | Moore integers, structurally proven |
 | G_C = √α | [THEOREM] | [DEFINITION] | Conditional on α; not an independent theorem |
 | **sin²θ_W = 3/13** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **3.5% error, 1700× exp precision; 2/9 fits better (restored-[THEOREM] edit RETRACTED)** |
-| m_e formula | [DERIVED] | [STRONGLY MOTIVATED CONJECTURE] | 0.19% error, structurally tight among peers |
+| m_e formula | historical `[DERIVED]` | [STRONGLY MOTIVATED CONJECTURE] with `[SELECTION]` exponent | 0.19% error; FTD-0390/0397 exclude the claimed ordering derivation |
 | m_μ/m_e | [DERIVED] | (not audited; likely [PARAMETRIC]) | Similar epistemic tier probable |
 | m_p/m_e | [DERIVED] | [STRONGLY MOTIVATED CONJECTURE] | 173 ppm, 5.8× exp precision |
 | **α_s(M_Z) = 7/59** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **59 not structurally forced; 2/17 fits better (restored-[THEOREM] edit RETRACTED)** |

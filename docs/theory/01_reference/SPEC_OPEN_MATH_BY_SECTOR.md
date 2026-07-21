@@ -155,7 +155,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** Charged-lepton + quark mass hierarchy; CKM matrix; flavor structure.
 
-**Status snapshot:** `m_e/m_P = √(2π)·(16/3)·α¹¹` to 0.19% [STRONGLY MOTIVATED CONJECTURE, FTD-0015]. **Exponent `n = 11` [SELECTION]** — stale here since the 2026-05-02 MC-T3.2 "[DERIVED]" closure (multiset theorem FTD-0084 + 2 SM-hierarchy SELECTIONs) was reconciled downward 2026-07-01 (FTD-0015 LEDGER entry) and the ordering-selection route was checked by direct computation and closed negative 2026-07-20 (FTD-0390): under a uniform prior over the 12 orderings the O_h multiset forces, n=11 is exactly tied with n=13 as the modal outcome, and only the pre-existing empirical match — not the two SM-hierarchy SELECTIONs — breaks that tie. `m_p/m_e` to 174 ppm [STRONGLY MOTIVATED CONJECTURE, FTD-0016]. Mass ratios `m_μ/m_e`, `m_τ/m_e` to ~5%. CKM order-of-magnitude only. Doctrine §10 depth matrices [PARAMETRIC candidate scaffold].
+**Status snapshot:** `m_e/m_P = √(2π)·(16/3)·α¹¹` to 0.19% [STRONGLY MOTIVATED CONJECTURE, FTD-0015]. **Exponent `n = 11` [SELECTION].** FTD-0390 rejected the reverse-engineered S1/S2 ordering rule. FTD-0397 proves the stronger target-blind statement: all 12 orderings of the FTD-0084 multiset form one permutation orbit, so invariant data cannot select one cumulative position. Future order-bearing dynamics remains possible. `m_p/m_e` to 174 ppm [STRONGLY MOTIVATED CONJECTURE, FTD-0016]. Mass ratios `m_μ/m_e`, `m_τ/m_e` to ~5%. CKM order-of-magnitude only. Doctrine §10 depth matrices [PARAMETRIC candidate scaffold].
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -165,7 +165,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | quark-mass | `FOUND_DISCRETE_NATIVE_MASS_GENERATION.md` (retracted continuous QFT fits; replaced by native discrete mass paradigm — Class A voxel cardinality) | [OPEN] | RP | §10-depths |
 | quark-bridge | `archive_proof_quark_masses_lattice.py` (archived post-hoc quark mass verification script) | [ARCHIVED] | — | — |
 
-**Closed (sector context):** FTD-0015 `n = 11` exponent [DERIVED]; FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 multiset theorem [DERIVED].
+**Closed (sector context):** FTD-0015 `n = 11` ordering route **[CLOSED NEGATIVE; exponent remains SELECTION]** (FTD-0390/0397); FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 unordered-multiset theorem [THEOREM].
 
 **Sources:** SPEC_DOCTRINE_LEDGER.md §10; LEDGER FTD-0015, FTD-0016, FTD-0084; TRACKER_OPEN_ITEMS.md §§4.1, 8.2.
 
@@ -252,7 +252,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | FTD-0110-NL | Current-stack collective-coordinate proof: derive the engine-emergent N(A) calibration, including the 0.5 kinetic drain and Langevin γ, or prove these are conventions rather than physics. FTD-0277 v1 closes the simple slosh-pass/static-gating counting route negative (pure A², 20–40× high, wrong geometry); successor attempts must be freshly pre-registered. | [OPEN — boundary mapped; v1 counting CLOSED NEGATIVE] | W–M | MC-T3.1 |
 | FTD-0298-SOUND | Condensate compression (acoustic-like) mode: FTD has light but no acoustic Goldstone (the lattice *is* space — no spontaneously broken translation symmetry; FTD-0298 §5). The only candidate sound-analog is a propagating compression mode of the FTD-0272 manifested-condensate phase. First-order genesis argues against a gapless mode, but the bulk condensate is a real medium — instrument the engine for a propagating density/compression wave in the manifested phase | [CLOSED — BOUNDARY (FTD-0299: probe = NULL, no acoustic branch)] | W–M | FTD-0272 |
 
-**Closed (sector context):** MC-T3.2 m_e exponent `n = 11` [SELECTION] — the 2026-05-02 [DERIVED] closure was reconciled downward 2026-07-01 and the ordering-selection route closed negative by direct computation 2026-07-20 (FTD-0390; see §5 status snapshot above and LEDGER FTD-0015/FTD-0084); MC-T3.3 (SC+FCC)/2  BCC bridge — **closed-negative for identity** (no Watson-integral identity), **closed-positive for symmetry** (shared O_h symmetry forces leading-order agreement); 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110 closure); L128-G2 resolved; exact nonlinear `1/4` current-stack scaling closed negative.
+**Closed (sector context):** MC-T3.2 ordering-selection route **CLOSED NEGATIVE** — `n=11` remains [SELECTION]. FTD-0390 rejected the reverse-engineered S1/S2 choice; FTD-0397 proves the target-blind scoped no-go that permutation-invariant data on the unordered multiset cannot select any ordering. Future independently derived symmetry-breaking dynamics remains possible. MC-T3.3 (SC+FCC)/2 BCC bridge — **closed-negative for identity**, **closed-positive for symmetry**; 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110); L128-G2 resolved; exact nonlinear `1/4` current-stack scaling closed negative.
 
 **Sources:** SPEC_DOCTRINE_LEDGER.md §13.5; `../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; `../03_derivations/foundational_mechanics/ANALYSIS_NA_LAW_CURRENT_STACK_v1.md`; `../03_derivations/foundational_mechanics/ANALYSIS_FTD0110_NA_LAW.md`; LEDGER FTD-0107, FTD-0110, FTD-0095; TRACKER_OPEN_ITEMS.md §7.7.
 

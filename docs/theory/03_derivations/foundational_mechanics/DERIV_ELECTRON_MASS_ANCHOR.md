@@ -6,10 +6,12 @@
 > is **RETRACTED** — the "Dimensional Equipartition" step is a substitution identity, not a
 > forcing chain; it fails the FTD-0097/0189 look-elsewhere bar and the standing
 > zero-promotion discipline. **Honest tag: `[STRONGLY MOTIVATED CONJECTURE]`.**
-> **Genuine motivation:** the exponent $n=11$ is `[DERIVED]`, and $16/3$ is the simplest
+> **Genuine motivation:** the exponent $n=11$ is `[SELECTION]`, and $16/3$ is the simplest
 > rational within 0.2% of the empirically-required prefactor at that exponent (1-of-2 within
 > 1% across 6489 combinations) — real structural tightness, but no dynamical derivation of the
-> prefactor. `[THEOREM]` is re-earnable only behind a pre-registered look-elsewhere control.
+> prefactor. FTD-0397 proves that the unordered FTD-0084 multiset and every permutation-invariant
+> function of it cannot select this ordering; promotion requires independently derived order-bearing
+> dynamics under a fresh lock.
 
 ## 1. The Calibration Anchor
 In the FTD dimensional mapping, the absolute rest mass of the electron serves as the calibration anchor bridging the dimensionless discrete lattice to the physical dimensioned continuum:
@@ -20,16 +22,18 @@ The formula reproduces $m_e$ to **0.19%**. Two pieces carry genuine structural w
 ## 2. What is genuinely motivated
 
 ### 2.1 The exponent $n = 11$ — `[SELECTION]` (corrected 2026-07-01 — was `[DERIVED]`, a tag collision now reconciled)
-The $\alpha^{11}$ scaling follows from the multiset/dimensional-emergence argument
-(MC-T3.2 closure; multiset theorem FTD-0084 plus two SM-hierarchy `[SELECTION]`s). A later,
+The $\alpha^{11}$ candidate follows from the multiset/dimensional-emergence argument
+(the historical MC-T3.2 attempt; multiset theorem FTD-0084 plus two SM-hierarchy `[SELECTION]`s). A later,
 more scrutinized audit (`DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS.md`, "promotion blockers
 identified") found the specific ladder-walk ordering $4+4+3$ that produces $n=11$ is not
 uniquely forced from first principles — it is `[SELECTION]` (a bottleneck), not `[DERIVED]`.
 This document previously stated `[DERIVED]` here, contradicting that finding; the later,
 more careful tag governs. This leg remains the *strongest-motivated* part of the formula
 (a real multiset argument constrains the exponent to a small set of candidates), but it is a
-selection among that set, not a forced derivation. See `proof_m_e_exponent_n11.py` for the
-multiset construction (still valid); the uniqueness claim is what is downgraded.
+selection among that set, not a forced derivation. FTD-0397 now proves the sharper scoped no-go:
+the 12 orderings form one permutation orbit, so invariant data cannot choose any one member.
+See `proof_m_e_exponent_n11.py` for the multiset construction (still valid) and
+`proof_n11_order_type_no_go.py` for the order-type theorem.
 
 ### 2.2 The prefactor $16/3$ — simplest-rational tightness, not a derivation
 Among 6489 rational-prefactor + integer-exponent combinations ($p, q \le 50$, $n \in [8, 14]$),
