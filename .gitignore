@@ -142,6 +142,7 @@ Untitled*.ipynb
 
 # Node.js
 node_modules/
+*.tsbuildinfo
 
 # Pytest cache
 .pytest_cache/
@@ -327,11 +328,21 @@ engine/web/docs/*_files/
 # Ignore run_wsl.sh script
 run_wsl.sh
 .gitignore
+
+# ClearWin keeps scoped ignore rules beside its Windows projects. The global
+# dotfile rule must not hide those two tracked policy files.
+!apps/.gitignore
+!apps/ClearWin/.gitignore
 traj_koopman_A14.csv
 traj_temp_64.csv
 traj_temp.csv
 traj_temp_128.csv
 .gitignore
+
+# ClearWin keeps scoped ignore rules beside its Windows projects. This later
+# exception is intentionally after the legacy catch-all above.
+!apps/.gitignore
+!apps/ClearWin/.gitignore
 
 # 18-pt stencil moment intermediate (regenerable via explr_stencil18_moments.py)
 scripts/proofs/_stencil18_moments.txt
