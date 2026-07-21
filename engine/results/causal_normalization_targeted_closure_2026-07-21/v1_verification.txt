@@ -1,0 +1,14 @@
+FTD-0403 TARGETED CAUSAL NORMALIZATION CLOSURE v1
+lock_tag=preregister-causal-normalization-targeted-closure-v1
+lock_commit=39f668e46fb94a4aa4724c90ca2f2cdb3142fa90
+outcome=INVALID
+
+PASS build_wsl
+PASS exact_verifier A1-A7 S1-S9
+T2 native_changed_surface passed=13 failed=1 total=14
+FAIL boundary_movement assertions=2
+  exhaustive_source_void_after_exit=false
+  reflective_velocity_x_flipped=false
+
+diagnosis=fixture sets raw velocity -1 outside C_SPEED boundary; FTD-0402 movement projection makes one-tick remainder magnitude less than 1, so the frozen one-tick crossing premise is invalid
+T3_T6=NOT_RUN_INVALID_PRECEDENCE
