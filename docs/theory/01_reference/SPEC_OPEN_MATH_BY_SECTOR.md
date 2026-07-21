@@ -130,7 +130,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** SU(3)_c sector; confinement; color charge; strong CP.
 
-**Status snapshot:** `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. *(The identification `x_-  N_c` (0.80%, OT-5.2, FTD-0014) is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* `b_3 = (11 N_c − 2 n_f)/3 = 7` [IMPORTED COEFFICIENT, THEOREM once formula imported]. `α_s = 7/59` [PARAMETRIC, FTD-0020]. Confinement substrate-derivation has a **recognised structural obstruction**: no Phase-G analog for area-law behavior because confinement is intrinsically non-classical (lives in `Z = ∫dU exp(−S)`) and FTD substrate is deterministic.
+**Status snapshot:** `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. *(The identification `x_-  N_c` (0.80%, OT-5.2, FTD-0014) is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* `b_3 = (11 N_c − 2 n_f)/3 = 7` [IMPORTED COEFFICIENT, THEOREM once formula imported]. `α_s = 7/59` [PARAMETRIC, FTD-0020]. Confinement substrate-derivation has a **recognised structural obstruction**: no Phase-G analog for area-law behavior because confinement is intrinsically non-classical (lives in `Z = ∫dU exp(−S)`) and FTD substrate is deterministic. FTD-0400 adds an implementation-level obstruction: the active colour force has no common Hamiltonian/energy–momentum object shared with inertia and gravity (`SPLIT-BOOKKEEPING`).
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -138,6 +138,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | §11-thetaQCD | Strong CP `θ_QCD = 0` by finite discrete orientation closure | [CONJECTURE / NEEDS THEOREM PACKAGING] | M | — |
 | SU(3)-gauge | `DERIV_LATTICE_SU3_GAUGE.md` 5 [OPEN] (theoretical counterpart to engine §1.3) | [OPEN] | RP | — |
 | eng-SU3 | Engine `phase_forces()` three-regime piecewise color force still imposed; replace with dynamical SU(3) gauge field whose Wilson-loop expectation produces linear confinement without hand-inserted regime switches | [OPEN] | M–RP | §11-confine |
+| NCEMC | Native Confinement Energy–Momentum Contract (FTD-0400): one backend-common `H_strong` generating the force, exact work accounting, complete momentum, and field-only gravity sourced by the same object. No mass measurement before NCEMC-1–4 | [OPEN — prerequisite contract] | M–RP | eng-SU3 |
 | chiral-anom | `DERIV_LATTICE_CHIRAL_ANOMALY.md` 3 [OPEN] | [OPEN] | M | — |
 | δ_c-color | `δ_c = x_- − 3 ≈ 0.024` closed form (cross-listed from §1; the historical `x_- − N_c` framing is **retired** v1.4 §5) | [CLOSED — scan-negative for a simple closed form, FTD-0224; see §1 row] | W–M (closed) | — |
 
@@ -165,7 +166,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | quark-mass | `FOUND_DISCRETE_NATIVE_MASS_GENERATION.md` (retracted continuous QFT fits; replaced by native discrete mass paradigm — Class A voxel cardinality) | [OPEN] | RP | §10-depths |
 | quark-bridge | `archive_proof_quark_masses_lattice.py` (archived post-hoc quark mass verification script) | [ARCHIVED] | — | — |
 
-**Closed/terminal (sector context):** FTD-0015 `n = 11` ordering route **[CLOSED NEGATIVE; exponent remains SELECTION]** (FTD-0390/0397); FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 unordered-multiset theorem [THEOREM]; FTD-0398 topological-charge transport/destruction **[UNDERDETERMINED — terminal protocol, no mass evidence, no further shell geometry]**; FTD-0399 target-blind particlehood **[INVALID — A/E manifestation portability gate fails at L=33/65; no mass observable opens]**.
+**Closed/terminal (sector context):** FTD-0015 `n = 11` ordering route **[CLOSED NEGATIVE; exponent remains SELECTION]** (FTD-0390/0397); FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 unordered-multiset theorem [THEOREM]; FTD-0398 topological-charge transport/destruction **[UNDERDETERMINED — terminal protocol, no mass evidence, no further shell geometry]**; FTD-0399 target-blind particlehood **[INVALID — A/E manifestation portability gate fails at L=33/65; no mass observable opens]**; FTD-0400 current-engine confinement-energy/mass/gravity bridge **[SCOPED NO-GO — SPLIT-BOOKKEEPING]**, with NCEMC-1–4 now the explicit prerequisite rather than another observable.
 
 **Sources:** SPEC_DOCTRINE_LEDGER.md §10; LEDGER FTD-0015, FTD-0016, FTD-0084; TRACKER_OPEN_ITEMS.md §§4.1, 8.2.
 
@@ -182,7 +183,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | §12-clock-hypothesis | Substrate-derive the **single** flagged interpretive step of the FTD-0131 reconciliation: the clock hypothesis used in SPEC_FTD_LAGRANGIAN.md §4.3. Closed by v3: the Scale-0 substrate supports an L¹ linear ceiling, not the required L²/Pythagorean budget; the clock hypothesis is therefore an independent coordinate-level **[AXIOM]**. | [CLOSED NEGATIVE, AXIOM-LEVEL] | closed | — |
 | §12-beyond-N | Beyond-leading-order GR: Mercury perihelion, light bending, gravitational waves (full nonlinear Einstein equations beyond Deser bootstrap [SELECTION, FTD-0026]) | [OPEN] | RP | clock-hypothesis AXIOM |
 | §12-EP | Equivalence-principle analogue from substrate. No canonical anchor | [OPEN] | RP | — |
-| §12-mgcurv | Mass-gap to curvature source. No canonical anchor | [OPEN] | RP | — |
+| §12-mgcurv | Mass-gap to curvature source. FTD-0400 proves the current implementation is split: confinement work, energy totals, imposed inertia, and latency/force gravity do not share one source object. Closure requires NCEMC-1–4 before any curvature measurement | [OPEN — sharpened by scoped no-go] | RP | NCEMC |
 | BH | `DERIV_LATTICE_BLACK_HOLES.md` — the historical 11-[OPEN] cluster (horizon thermodynamics, Hawking radiation, information paradox, Kerr-Newman) | [CLOSED/reclassified 2026-06-10 per TRACKER §2.1 — zero live in-doc [OPEN]; FTD-0184 guardrail stands: substrate-side strong-field GR (Schwarzschild/Kerr currently imported from GR) is the only sanctioned future route; the information-paradox gap remains a named wall (round-table residue §7.8)] | RP (closed as doc cluster) | — |
 | MC-T4.4 | General-motion lattice Liénard-Wiechert: closed-form for general accelerating motion. Closed at uniform velocity [DERIVED]; sinusoidal Larmor case has Bessel infinite-series form (FTD-0120 Q5); general motion only formal Q5★ frequency-domain expression | [OPEN] | W–M | — |
 

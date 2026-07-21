@@ -42,7 +42,7 @@ FTD-0399 fails before its profile quotient can be formed. At both `L=33` and `L=
 
 The roadmap yields one scoped engine theorem, one scoped group-action theorem, two explicit underdeterminations, and one invalid correctness-gate result. Negative and underdetermined results were not generalized beyond their locks. No mass scale, native particle species, topological mass anchor, nonlinear delta characterization, or new framework commitment was inferred.
 
-The next registry ID remains **FTD-0400**. This capstone allocates no claim ID and opens no automatic successor campaign.
+At capstone close, the next registry ID was **FTD-0400** and this document allocated no successor. **Successor note (2026-07-21):** FTD-0400 was subsequently allocated to the static confinement-energy/gravity bridge audit, not to an automatic continuation of these five campaigns; its verdict is `SPLIT-BOOKKEEPING`. The next free id is FTD-0401.
 
 ## 4. Verification record
 

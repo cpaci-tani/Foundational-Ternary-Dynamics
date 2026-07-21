@@ -254,6 +254,8 @@ FTD's physics layer is a **computational effective field theory**: the IR behavi
 | 14 | **Bell bound** | `[THEOREM + MEASURED]` | substrate S ≤ 2 (FTD-0243 + Bell's theorem); engine S ≈ 1.95–2.00; ternary detection loophole gives S ≈ 3.6 at ~49 % efficiency — a known artifact, not a violation ([`AUDIT_BELL_ANALYSIS.md`](../07_assessment/AUDIT_BELL_ANALYSIS.md)) |
 | 15 | **Detection statistics** | `[CLOSED NEGATIVE for Born]` + `[NUMERICAL FACT]` | threshold-crossing event rates follow Rice's upcrossing law (R² = 0.9923) not Born `|J|²` (R² = 0.7137) in the pre-registered 6-neighbour construction (FTD-0200; companion FTD-0199) |
 
+**Joint-reading guard (FTD-0400, 2026-07-21):** rows 7, 9, and 12 are not currently linked by one conserved engine object. The colour force has no matching strong potential in the canonical energy totals; cluster inertia consumes `M_REST` directly; and the force/latency gravity paths use separate source laws. The exact source-contract verdict is `SPLIT-BOOKKEEPING` ([`AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md`](../07_assessment/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md)). These rows therefore do **not** establish that confinement energy becomes inertial mass or gravitational charge. NCEMC-1–4 is the prerequisite contract; no framework type or row tag changes here.
+
 ### 5.2 FC-2, metric half — emergent relativity, sector-scoped `[AXIOM-class declaration — FTD-0256]`
 
 The relativistic structure decomposes exactly as FTD-0253 proved:
