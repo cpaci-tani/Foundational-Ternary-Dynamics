@@ -12,6 +12,9 @@
  *   4. Hamiltonian conservation with damping OFF over 1000 ticks
  *   5. Energy completeness: field_kinetic_sum matches wave_energy from EnergyAudit
  *   6. Particle EL residual: force_diag matches Lagrangian partial derivatives
+ *   7. Gradient-term pair-counting: field_gradient_sum is the pairs-once action
+ *      (each neighbor link counted once), so dS_grad/dJ is exactly the
+ *      c^2 * 18-point stencil that phase_read() integrates
  */
 
 #include <cmath>
@@ -248,6 +251,90 @@ int main() {
         // change, not a physics improvement.
         check("Particle EL residual RMS < 5e-10", pres.rms < 5e-10);
         check("Particle EL residual max < 5e-10", pres.max_abs < 5e-10);
+    }
+
+    // ================================================================
+    // Section 7: Gradient-Term Pair-Counting Convention (pairs-once)
+    // ================================================================
+    std::cout << "\n--- Section 7: Gradient-Term Pair-Counting (pairs-once) ---\n";
+    {
+        // 7a. Analytic single-spike total.
+        // With J = (1,0,0) at one interior site and zero elsewhere, the
+        // pairs-once gradient action is
+        //   S_grad = -(c^2/2) * Sigma_links w |dJ|^2
+        //          = -(c^2/2) * (6*(1/3) + 12*(1/6)) * 1  =  -2 c^2.
+        // A per-site full-neighbor sum accumulated over all sites counts
+        // every link twice and would report -4 c^2 instead.
+        ftd::RenderBridge rb(16);
+        for (auto& vox : rb.voxels()) vox.flux = {0.0, 0.0, 0.0};
+        rb.voxel_at(8, 8, 8).flux = {1.0, 0.0, 0.0};
+
+        ftd::LagrangianDiag lag = ftd::compute_lagrangian_diagnostics(rb);
+        double expected_spike = -2.0 * ftd::C_WAVE * ftd::C_WAVE;
+        std::cout << "    field_gradient_sum (spike): " << std::setprecision(10)
+                  << lag.field_gradient_sum << "\n";
+        std::cout << "    pairs-once expectation:     " << expected_spike << "\n";
+        check_close("Single-spike gradient action = -2c^2 (pairs-once)",
+                    lag.field_gradient_sum, expected_spike, 1e-12);
+
+        // 7b. Variational identity: dS_grad/dJ_x(v) = c^2 * (Delta_18 J)_x(v).
+        // This is the EL claim in lagrangian.h — it holds only under the
+        // pairs-once normalization (doubled bookkeeping gives 2x the stencil).
+        // S_grad is quadratic in J, so the central difference is analytically
+        // exact; tolerance covers round-off only.
+        ftd::RenderBridge rb2(16);
+        for (int z = 0; z < 16; ++z)
+            for (int y = 0; y < 16; ++y)
+                for (int x = 0; x < 16; ++x) {
+                    auto& vox = rb2.voxel_at(x, y, z);
+                    vox.flux.x = 0.002 * (x * x) - 0.001 * (y * z);
+                    vox.flux.y = 0.0015 * (y * y) + 0.0005 * (x - z);
+                    vox.flux.z = 0.001 * (z * z - x * y);
+                }
+
+        auto total_grad_action = [&rb2]() {
+            double s = 0.0;
+            const int N = static_cast<int>(rb2.lattice().total_sites());
+            const auto& voxels = rb2.voxels();
+            for (int i = 0; i < N; ++i) {
+                s += ftd::field_gradient_term(voxels[i].flux,
+                                              rb2.lattice().neighbors_6(i),
+                                              rb2.lattice().neighbors_12(i),
+                                              voxels);
+            }
+            return s;
+        };
+
+        const double eps = 1e-5;
+        const double c2 = ftd::C_WAVE * ftd::C_WAVE;
+
+        struct Probe { int x, y, z; int comp; const char* name; };
+        Probe probes[] = {
+            {7, 8, 9, 0, "dS/dJx = c^2*(Delta_18 J)x (pairs-once EL)"},
+            {9, 6, 8, 1, "dS/dJy = c^2*(Delta_18 J)y (pairs-once EL)"},
+        };
+        for (const auto& p : probes) {
+            int vidx = rb2.lattice().index(p.x, p.y, p.z);
+            auto& vox = rb2.voxels()[vidx];
+            double* comp = (p.comp == 0) ? &vox.flux.x
+                          : (p.comp == 1) ? &vox.flux.y : &vox.flux.z;
+            double j0 = *comp;
+            *comp = j0 + eps;
+            double s_plus = total_grad_action();
+            *comp = j0 - eps;
+            double s_minus = total_grad_action();
+            *comp = j0;
+
+            double fd = (s_plus - s_minus) / (2.0 * eps);
+            ftd::Vec3 lap = rb2.laplacian_flux(vidx);
+            double lap_c = (p.comp == 0) ? lap.x : (p.comp == 1) ? lap.y : lap.z;
+            double expected = c2 * lap_c;
+
+            std::cout << "    FD dS/dJ:   " << std::setprecision(10) << fd << "\n";
+            std::cout << "    c^2 * lap:  " << expected << "\n";
+            check("FD precondition: |c^2*lap| > 1e-4", std::abs(expected) > 1e-4);
+            check_close(p.name, fd, expected, 1e-6);
+        }
     }
 
     // ================================================================

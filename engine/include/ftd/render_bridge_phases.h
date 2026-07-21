@@ -149,7 +149,8 @@ void phase_forces_integrate_clusters(RenderBridge& rb);
 
 /// The single OMP parallel-for of phase_read: 18-pt isotropic Laplacian
 /// (interior fast path + boundary slow path) plus state-flux coupling
-/// (g_c·∇s + g_c·∇×(s·v)). Branches internally on toggles.dual_substrate
+/// (−g_c·∇s + g_c·∇×(s·v); electric sign per lagrangian.h Term 2, amended
+/// 2026-07-18). Branches internally on toggles.dual_substrate
 /// and toggles.bcc_stencil. Reads rb.voxels_, rb.lattice_, rb.toggles;
 /// writes rb.delta_j_ (single) or rb.delta_j_L_ / rb.delta_j_R_ (dual).
 void phase_read_main_loop(RenderBridge& rb);

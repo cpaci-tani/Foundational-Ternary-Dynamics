@@ -203,10 +203,10 @@ L_FTD = L_BI + L_coupling + L_velocity + L_Gauss + L_kinetic + L_gradient + R
 
 ### 13.  Term 6: Field Gradient (18-pt Stencil) [THEOREM]
 
-**L_gradient = -½c² Σ[w_μ |ΔJ_μ|²]** — Wave potential energy. Face neighbors weighted 1/3, edge neighbors 1/6. Variational derivative δL/δJ reproduces the 18-point Laplacian exactly.
+**L_gradient = -½c² Σ_links[w_l |ΔJ|²]** (pairs-once link sum) — Wave potential energy. Face links weighted 1/3, edge links 1/6; the per-site engine value is the half-share (-¼c² times the full 18-neighbor sum), so the site-summed diagnostic is the pairs-once action. Variational derivative δS/δJ reproduces the 18-point Laplacian exactly, at the same normalization as the kinetic term.
 
-- **Files**: `include/ftd/lagrangian.h:83` (`field_gradient_term`)
-- **Tests**: `test_dispersion_relation`, `campaign_wave_isotropy`
+- **Files**: `include/ftd/lagrangian.h` (`field_gradient_term`)
+- **Tests**: `test_dispersion_relation`, `campaign_wave_isotropy`, `test_action_stationarity` §7 (pair-counting convention)
 - **Done means**: Stencil matches variational derivative; dispersion is isotropic at long wavelengths.
 
 ### 14.  Rayleigh Dissipation [IMPOSED]

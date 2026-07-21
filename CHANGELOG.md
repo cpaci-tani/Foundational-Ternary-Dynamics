@@ -258,6 +258,42 @@ exactly as designed. Gated behind the landed evaporation-parity chip
   kinetics; pytest 260 passed; `proof_master_verification` 54/54;
   `ontic_chain` 24/24 exact + 9/9 approx.
 
+## Engine: Lagrangian gradient diagnostic — pair-counting fixed to pairs-once (2026-07-17)
+
+Found by an adversarial math review. `field_gradient_term()` (lagrangian.h)
+computed the full 18-neighbour sum `-½c²Σ_w w|ΔJ|²` per site, and
+`compute_lagrangian_diagnostics()` summed it over all sites — counting every
+neighbour link twice. The reported `field_gradient_sum` was exactly 2× the
+gradient action of the pairs-once normalization that actually generates
+`phase_read()`'s stencil: with the doubled bookkeeping, the coded action's EL
+equation would be `∂t²J = 2c²∇²J` against the coded kinetic term `½|Δt J|²`,
+while the tick integrates `c²∇²J`. Pairs-once is therefore the unique
+convention consistent with the coded dynamics, not merely the defensible one.
+(For the Gauss-forced unit-charge self-field this halves the reported Term-6
+energy from (8/3)·W_SC to (4/3)·W_SC, W_SC = 0.50546 the SC Watson integral.
+Hazard note of record: the old doubled value 1.3479 sat within 3.3% of the BCC
+Watson constant W₃ = 1.3932 — a bookkeeping coincidence, not a relation.)
+
+- **Fix:** `field_gradient_term()` prefactor `-0.5` → `-0.25`; the per-site
+  value is now the site's half-share of its incident links, so any site-sum
+  (diagnostics, WASM `fieldGradient` telemetry) reports the pairs-once action.
+  Header comment states the convention explicitly.
+- **Guard:** `test_action_stationarity.cpp` §7 — single-spike analytic value
+  (`-2c²`, was `-4c²`) + finite-difference δS/δJ vs `laplacian_flux()` at two
+  sites/components (was exactly 2× the stencil; TDD red→green).
+- **Scope:** diagnostic-only — no dynamics-path consumer (`phase_read` has its
+  own stencil; CUDA has no gradient-term code). Golden
+  `render_bridge_golden` (0xb604d81a3d79366e) verified bit-identical; consumer
+  tests `lagrangian`, `stress_energy`, `wave_collapse`, `logic_engine`,
+  `gauss`, `energy_conservation` all pass. Deployed web WASM binaries still
+  report the doubled telemetry value until the next WASM rebuild.
+- **Docs:** `DERIV_18PT_LAPLACIAN_VARIATIONAL.md` §2 — the "common 2c²
+  absorbed into the canonical kinetic normalisation" step replaced with the
+  honest `1/(2c²)` prefactor + a normalization remark (stationarity is
+  factor-blind, the kinetic-relative normalization is not); §5 code quote
+  updated. `MAP_LAGRANGIAN_TO_ENGINE.md` Term-6 row and
+  `engine/CHECKLIST_PHYSICS.md` §13 state the pairs-once convention.
+
 ## Engine: GPU evaporation ported to the canonical stochastic Boltzmann rule (BH-F5 completion, 2026-07-16)
 
 CPU and GPU implemented physically different evaporation rules — a confirmed

@@ -46,7 +46,7 @@ inline double born_infeld_term(const Voxel& v) {
 // test_gauss_law_fidelity.cpp; the flip aligns both terms on one manifold.
 // EL equation for s -> Coulomb force F = +alpha * s * grad(div J).
 inline double coupling_term(const Voxel& v, double divJ) {
-    return -G_C * v.state * divJ;
+    return G_C * v.state * divJ;
 }
 
 // Term 3: Velocity coupling (magnetic)  -g_c * s * (v . J)
@@ -91,10 +91,22 @@ inline double field_kinetic_term(const Vec3& wave_vel) {
 }
 
 // Term 6: Field gradient energy (18-point isotropic stencil)
-// -½c² [Σ_face (1/3)|ΔJ|² + Σ_edge (1/6)|ΔJ|²]
-// Variational derivative δ/δJ reproduces the 18-point Laplacian:
-//   (1/3)·Σ_face J(n) + (1/6)·Σ_edge J(n) - 4·J(v)
-// which is exactly the stencil used by phase_read().
+//
+// Pair-counting convention: PAIRS-ONCE. The gradient sector of the action is
+//   S_grad = -½c² Σ_links w_l |J(a)-J(b)|²    (each neighbor link counted once,
+//                                              w_face = 1/3, w_edge = 1/6)
+// This function returns site v's HALF-SHARE of its 18 incident links,
+//   L_grad(v) = -¼c² [Σ_face (1/3)|ΔJ|² + Σ_edge (1/6)|ΔJ|²]
+// so that Σ_v L_grad(v) = S_grad exactly (each link split half/half between
+// its two endpoint sites). Under this normalization the total variation
+//   δS_grad/δJ(v) = c² [(1/3)·Σ_face J(n) + (1/6)·Σ_edge J(n) - 4·J(v)]
+// is exactly the 18-point stencil integrated by phase_read(), with the same
+// relative normalization as the kinetic term ½|Δ_t J|² (wave speed c).
+// A per-site FULL-neighbor sum with prefactor -½c², accumulated over sites,
+// would count every link twice: 2× the gradient energy, and an EL equation
+// with 2c²∇² against the coded kinetic term. Verified by
+// test_action_stationarity.cpp Section 7 (single-spike value + finite-
+// difference δS/δJ against laplacian_flux).
 inline double field_gradient_term(const Vec3& flux_here,
                                   const std::array<int, 6>& nbr6,
                                   const std::array<int, 12>& nbr12,
@@ -108,7 +120,7 @@ inline double field_gradient_term(const Vec3& flux_here,
         Vec3 d = voxels[n].flux - flux_here;
         grad_sq += (1.0 / 6.0) * d.mag2();
     }
-    return -0.5 * (C_WAVE * C_WAVE) * grad_sq;
+    return -0.25 * (C_WAVE * C_WAVE) * grad_sq;
 }
 
 // ============================================================================
@@ -153,7 +165,7 @@ inline double hamiltonian_density(const Voxel& v, double divJ, double rho_charge
 // 2026-07-18 amendment):
 //   F = +alpha * s * grad(div J)
 inline Vec3 coupling_force(int8_t state, Vec3 grad_divJ) {
-    return grad_divJ * (-ALPHA * state);
+    return grad_divJ * (ALPHA * state);
 }
 
 // Gravity force from density gradient:
@@ -169,7 +181,7 @@ inline Vec3 bi_gravity_force(Vec3 grad_density) {
 struct LagrangianDiag {
     // Field-sector terms (the wave equation's energy)
     double field_kinetic_sum = 0.0;    // Σ ½|wave_vel|²
-    double field_gradient_sum = 0.0;   // Σ -½c² w_μ|ΔJ|²
+    double field_gradient_sum = 0.0;   // -½c² Σ_links w_l|ΔJ|² (pairs-once; see Term 6)
 
     // Per-term sums (4 interaction + dissipation)
     double born_infeld_sum = 0.0;

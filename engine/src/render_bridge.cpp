@@ -5,7 +5,8 @@
  *
  * Six rules, nothing else:
  *   1. Flux wave equation: d²J/dt² = c²∇²J (local linear dynamics)
- *   2. State-flux coupling: g_c·∇(s) source term (from δS/δJ = 0)
+ *   2. State-flux coupling: −g_c·∇(s) source term (from δS/δJ = 0; electric
+ *      sign per lagrangian.h Term 2, amended 2026-07-18)
  *   3. Gauss projection: enforce ∇·J = s (charge conservation)
  *   4. Manifestation/Evaporation: threshold crossing
  *   5. Field-mediated forces: F = -α·s·∇φ_C + G_N·∇ρ (Poisson Coulomb, Phase 3)
@@ -351,7 +352,8 @@ double RenderBridge::compute_entropy() const { return ::ftd::compute_entropy_cpu
 //
 // From the action principle δS/δJ = 0:
 //   Wave: d²J/dt² = c²∇²J (Laplacian drives flux wave propagation)
-//   Source: g_c·∇(s) (manifested particles source flux in their neighborhood)
+//   Source: −g_c·∇(s) (manifested particles source OUTWARD flux, div J
+//           toward the Gauss target; Term 2 sign amendment 2026-07-18)
 //   Biot-Savart: g_c·∇×(s·v) (moving charges create rotational flux)
 //
 // STENCIL AND INTEGRATION NOTES (2026 audit):
@@ -650,7 +652,7 @@ void RenderBridge::tick() {
   // projection remains a separate constraint map applied between wave steps
   // (operator splitting; same interleaving as the legacy leapfrog). Genesis
   // state changes from phase_write are visible to the re-read via set_state's
-  // synchronous ternary update, so the coupling source g_c·∇s is current.
+  // synchronous ternary update, so the coupling source −g_c·∇s is current.
   // Default OFF ⇒ dead branch ⇒ golden hash 0xb604d81a3d79366e untouched.
   if (toggles.verlet_wave_integrator) {
     phase_read();
