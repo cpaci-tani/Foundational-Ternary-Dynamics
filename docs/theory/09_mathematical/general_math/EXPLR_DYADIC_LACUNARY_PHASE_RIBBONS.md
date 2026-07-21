@@ -3,7 +3,11 @@
 **Document type:** Exploratory mathematical / visualization note
 **Status:** [EXPLORATORY] for FTD; exact claims are curve-local or renderer-local only
 **Primary curve note:** [EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md](EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md)
+**Exact lift companion:** [EXPLR_DYADIC_LIFT_DESINGULARIZER.md](EXPLR_DYADIC_LIFT_DESINGULARIZER.md)
+**Exact amplitude atlas:** [EXPLR_DYADIC_OCTAVE_BIFURCATION_ATLAS.md](EXPLR_DYADIC_OCTAVE_BIFURCATION_ATLAS.md)
 **Interactive workbench:** `dissemination/interactive/dyadic_lacunary_curve_lab.html`
+**Mode-configuration atlas:** `dissemination/interactive/dyadic_mode_configuration_atlas.html`
+**Geometric-byte theorem:** [EXPLR_DYADIC_GEOMETRIC_BYTE.md](EXPLR_DYADIC_GEOMETRIC_BYTE.md)
 
 ---
 
@@ -419,9 +423,10 @@ renderer menu:
 
 When `Lift surface` is enabled, the renderer draws a translucent curtain from
 the lifted curve back down to the `z=0` floor curve. This gives the eye a
-surface to inspect, but it is still renderer-local. Different `Z(t)` choices
-are different visual probes of the same finite phase readout, not different
-theorem-grade embeddings.
+surface to inspect, but it is still renderer-local. The special fundamental
+quadrature lift `Z(t)=sin(t)` is an exact embedded-curve theorem for a
+nonzero fundamental carrier; see the companion lift note. The other mutable
+`Z(t)` choices remain visualization probes, not theorem-grade embeddings.
 
 ---
 

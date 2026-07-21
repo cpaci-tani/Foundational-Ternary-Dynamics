@@ -8,6 +8,33 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 
 ## Simulations
 
+### Dyadic Mode Configuration Atlas (`dyadic_mode_configuration_atlas.html`)
+**Model:** ternary mode words `w_k in {-1,0,+1}` over finite dyadic Fourier clocks
+
+- Standalone responsive atlas for enabling, disabling, and reversing mode chirality in exact patterns
+- Pattern presets for prefixes, bookends, blocks, parity masks, Thue-Morse signs, and sparse supports
+- Continuous one-mode transition ramps with ultra-slow playback and a sampled minimum-speed / exact-area profile
+- Certified `C_3` octave-edge wall overlays for endpoint, tangent, speed-zero, and seed-count events when that exact slice is active
+- Exact live fingerprints for support, trace multiplicity, quotient degree, signed area, cancellation, Fourier energies, symmetry, phase lift, and trigonal-relay eligibility
+- Interactive geometric-byte map of all 256 eight-mode support masks, with exact 6,561-state balanced-ternary signed fingerprints and byte shift/complement operations
+- Clickable `H(m,3)` configuration-phase slices for 2–6 mutable modes (9–729 states), with synchronized curve selection and coloring by signed area, support, quotient scale, pattern class, or sampled minimum speed
+- Transition event ledger combining analytic area/support/quotient walls and certified C3 edge thresholds with explicitly sampled crossing-count and local-tube brackets
+- Exact default `H(8,3)` census of all 52,488 one-trit edges, partitioned into 2,510 invariant fingerprint bins for the current C3-tail coefficients
+- Interactive chamber quotient under selectable exact area, quotient, support, and chirality barriers; independently verified default chamber counts are 5, 8, 256, and 6,561 for key barrier selections
+- Mouse camera with drag-pan and cursor-centered wheel zoom in 2D, plus orbit, right-drag pan, and wheel zoom in 3D
+- Canonical wireframe tube surface around the lifted centerline, with mutable radius and orbit controls
+- Live surface certification panel separating the exact embedded-centerline theorem from sampled curvature, Jacobian, normal-chord clearance, and reach bounds
+- Three.js phase-lift toggle using `z=sin(2^g t)` at the quotient fundamental, with mutable depth, planar projection, and depth fibers
+- Expanded live formula view for the complete current `x(t)`, `y(t)`, and lift `z(t)`, including the quotient domain, normalized one-dimensional phase, and evaluated point
+- Equation Reel storyboard that captures exact formula text together with the full mode and camera state, supports write-on, cross-morph, pulse, and hold effects, and smoothly interpolates captured Fourier coefficients
+- Live 16:9 composite preview with editable scene equations, ordering and timing, plus WebM recording and standalone reel JSON import/export
+- Exact instantaneous mode-vector decomposition showing how the active Fourier vectors and partial sums assemble the planar point
+- Sampled crossing-depth microscope with Newton-refined phase pairs, planar residual, fundamental-lift heights, depth separation, and linked 3D branch markers
+- Sampled node and minimum-speed diagnostics kept explicitly separate from theorem-grade readouts
+- Stable absolute grid, phase/speed/curvature/orientation coloring, JSON import/export, PNG capture, and equation-led presentation recording
+- Mobile and desktop layouts; no server or external dependency is required
+- Configuration-space mathematics only; no FTD physics claim is promoted by a ternary mode word
+
 ### Dyadic Lacunary Curve Lab (`dyadic_lacunary_curve_lab.html`)
 **Model:** finite dyadic Fourier readout `C_K(t)` plus geometric-tail controls
 
@@ -83,6 +110,18 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 - Interactive scenarios: Coulomb potential emergence, relativistic speed capping ($c_{\text{lat}} = 1/\sqrt{2}$ limit), discrete wave interference, and voxel cluster genesis (FTD-0110)
 - Real-time radial cross-section plot showing exact discrete-to-continuum potential curve matching
 - Live adjustable parameter sliders for wave speed, genesis threshold, SOR Poisson damping, and F4 latent-heat drain toggles
+
+### Island of Stability — Computed Nuclide Landscape (`island_of_stability.html`)
+**Model:** SEMF `B(Z,N)` (Wapstra coefficients [IMPOSED]) + Myers–Swiatecki 1966 shell correction + Viola–Seaborg alpha systematics (SPC 1989)
+
+- Standalone canvas (Z,N) heatmap, Z 82–132 by N 110–204, colored by computed log10 alpha half-life; magic-number gridlines, SEMF beta-stability line, measured-nuclide markers
+- The island emerges from the imported shell correction: a 0–100% shell slider makes it appear and vanish; a proton-closure hypothesis selector (114/120/126) moves its proton edge, exposing real model dependence
+- Alpha Q-values from binding differences (B(4He) = 28.2957 MeV, AME2020); Viola–Seaborg half-lives; spontaneous fission as a qualitative barrier-proxy band (no quantitative T_SF); beta channel qualitative only
+- Embedded 14-nuclide measured validation set (212Po … 294Og) with computed-vs-measured rows in the detail panel and a live validation table
+- Ring viewport driven by real quantities: radius from A^(1/3), jitter from computed instability, harmonic amplitude from the shell correction; scan mode sweeps the beta-stability line
+- Toggleable, visually distinct FTD annotation layers at corpus tags: Z=126 9-lobe = N_c^2 [CONJECTURE], SEMF-coefficient fits [PARAMETRIC], 82−50 = 32 = 2·N_base^2 [THEOREM]
+- Claim Boundary panel separating imported parametric physics, computed outputs, presentation effects, and open questions
+- Standard nuclear-physics parametrizations for pedagogy; the island emerges from imported shell corrections, and no FTD physics claim is promoted by this tool
 
 ## How to Use
 

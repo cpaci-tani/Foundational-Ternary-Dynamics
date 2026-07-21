@@ -164,7 +164,7 @@ ftd/
 │   ├── whitepaper/                  # LaTeX academic paper
 │   ├── papers/                      # Additional compiled LaTeX papers
 │   ├── notebooks/                   # Jupyter pedagogy tutorials
-│   ├── interactive/                 # 31 standalone HTML simulations and explainers
+│   ├── interactive/                 # 32 standalone HTML simulations and explainers
 │   └── FTD_Symbol_Cheatsheet.html   # Interactive symbol reference (~130 cards)
 │
 ├── models/                          # Physics derivation package

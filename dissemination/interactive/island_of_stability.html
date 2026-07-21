@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Island of Stability — Computed Nuclide Landscape</title>
+<!--
+  Island of Stability — Computed (Z,N) Nuclear Stability Landscape
+  ================================================================
+  Self-contained (zero external dependencies, canvas 2D only).
+
+  EPISTEMIC STATUS: every physics ingredient here is IMPORTED standard
+  nuclear physics — [PARAMETRIC] insertions in FTD's tag vocabulary —
+  NOT derived from the FTD substrate. The island's location is an OUTPUT
+  of the imported model chain, not an input. FTD annotation layers cite
+  corpus claims at their existing ledger tags only. See the Claim
+  Boundary section at the bottom of the page.
+
+  Model chain (all constants inlined with provenance below):
+    SEMF B(Z,N)  ->  Myers-Swiatecki 1966 shell correction S(Z,N)
+    ->  Q_alpha from binding differences  ->  Viola-Seaborg half-lives
+    ->  fission-barrier proxy (qualitative bands only)  ->  beta-valley mask
+-->
+<style>
+:root{
+  --bg:#050510; --panel:rgba(0,20,30,.92); --line:#333; --cyan:#00ffcc;
+  --gold:#ffd700; --red:#ff3333; --violet:#b47aff; --dim:#888; --ink:#fff;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--cyan);
+  font-family:'Courier New',Courier,monospace;
+  margin:0; padding:0 0 40px 0;
+  display:flex; flex-direction:column; align-items:center;
+}
+h1{
+  margin:14px 0 4px; text-transform:uppercase; font-size:22px;
+  text-shadow:0 0 10px var(--cyan); letter-spacing:1px; text-align:center;
+}
+#subtitle{color:var(--dim); font-size:11px; margin-bottom:10px; text-align:center}
+#main{
+  display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px;
+  width:94vw; max-width:1500px;
+}
+@media (max-width:980px){ #main{grid-template-columns:1fr} }
+#chart-wrap{
+  background:#000; border:2px solid var(--line); border-radius:10px;
+  box-shadow:inset 0 0 50px rgba(0,255,204,.08); padding:8px; position:relative;
+  min-width:0;
+}
+canvas{display:block}
+#chart{width:100%; cursor:crosshair}
+#legend{width:100%; height:44px; margin-top:4px}
+#side{display:flex; flex-direction:column; gap:12px; min-width:0}
+.panel{
+  background:var(--panel); border:1px solid var(--cyan); border-radius:10px;
+  padding:12px 14px;
+}
+#ring-box{background:#000; border:2px solid var(--line); border-radius:10px;
+  position:relative; box-shadow:inset 0 0 40px rgba(0,255,204,.08)}
+#ring{width:100%; height:230px}
+#hud{position:absolute; top:10px; left:12px; pointer-events:none}
+.hud-t{font-size:11px; color:var(--dim)}
+.hud-v{font-size:17px; font-weight:bold; color:var(--ink); text-shadow:0 0 6px rgba(255,255,255,.4)}
+#detail{font-size:12px; line-height:1.55}
+#detail .row{display:flex; justify-content:space-between; border-bottom:1px solid #223;
+  padding:2px 0}
+#detail .lbl{color:var(--dim)}
+#detail .val{color:var(--ink); text-align:right}
+.status-stable{color:var(--cyan); text-shadow:0 0 5px var(--cyan); font-weight:bold}
+.status-decay{color:var(--red); text-shadow:0 0 5px var(--red); font-weight:bold}
+.status-island{color:var(--gold); text-shadow:0 0 10px var(--gold); font-weight:bold}
+.meas{margin-top:8px; border-top:1px dashed #355; padding-top:6px}
+.meas .hdr{color:var(--gold); font-size:11px; letter-spacing:1px}
+#strip-wrap{width:94vw; max-width:1500px; height:120px; background:#111;
+  border:1px solid #444; margin-top:14px; position:relative; border-radius:6px}
+#strip{width:100%; height:100%; cursor:pointer}
+#landmark{position:absolute; right:10px; top:6px; font-size:11px; color:var(--gold);
+  text-shadow:0 0 6px rgba(255,215,0,.5); pointer-events:none}
+#controls{
+  margin-top:12px; width:94vw; max-width:1500px; display:flex; gap:18px;
+  align-items:center; flex-wrap:wrap; font-size:12px;
+}
+button{
+  background:transparent; border:1px solid var(--cyan); color:var(--cyan);
+  padding:9px 24px; font-family:inherit; font-weight:bold; cursor:pointer;
+  text-transform:uppercase; border-radius:4px;
+}
+button:hover{background:var(--cyan); color:#000; box-shadow:0 0 15px var(--cyan)}
+.ctl{display:flex; align-items:center; gap:8px; white-space:nowrap}
+.ctl label{color:var(--dim)}
+input[type=range]{accent-color:var(--cyan); width:180px}
+input[type=checkbox], input[type=radio]{accent-color:var(--cyan)}
+#shell-val{color:var(--ink); min-width:40px; display:inline-block}
+.zmagic label{margin-right:6px}
+#lower{width:94vw; max-width:1500px; display:grid; gap:14px; margin-top:16px;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--panel); border:1px solid #245; border-radius:10px;
+  padding:12px 16px; font-size:12px; line-height:1.55}
+.card h2{margin:0 0 8px; font-size:13px; letter-spacing:1px; color:var(--cyan);
+  text-transform:uppercase}
+.card.ftd{border-color:var(--violet)}
+.card.ftd h2{color:var(--violet)}
+.tag{display:inline-block; border:1px solid var(--cyan); border-radius:3px;
+  padding:0 6px; font-size:10px; color:var(--cyan); margin-left:6px; vertical-align:middle}
+.tag.v{border-color:var(--violet); color:var(--violet)}
+.tag.g{border-color:var(--gold); color:var(--gold)}
+.cite{color:#557; font-size:10px}
+.card p{margin:6px 0; color:#9fe}
+.card .q{color:var(--dim); font-style:italic}
+table{border-collapse:collapse; width:100%; font-size:11px}
+th,td{border-bottom:1px solid #234; padding:3px 6px; text-align:right; color:#bef}
+th{color:var(--dim); font-weight:normal; text-transform:uppercase; font-size:10px}
+td:first-child,th:first-child{text-align:left}
+.dev-ok{color:var(--cyan)} .dev-warn{color:var(--gold)} .dev-bad{color:var(--red)}
+.footer-note{color:#556; font-size:10px; margin-top:10px; width:94vw; max-width:1500px}
+</style>
+</head>
+<body>
+
+<h1>Island of Stability &mdash; Computed Nuclide Landscape</h1>
+<div id="subtitle">SEMF + Myers&ndash;Swiatecki shell correction + Viola&ndash;Seaborg systematics
+  &mdash; all imported standard nuclear physics [PARAMETRIC]; the island emerges, it is not painted on</div>
+
+<div id="main">
+  <div id="chart-wrap">
+    <canvas id="chart"></canvas>
+    <canvas id="legend"></canvas>
+  </div>
+  <div id="side">
+    <div id="ring-box">
+      <canvas id="ring"></canvas>
+      <div id="hud">
+        <div class="hud-t">TARGET IDENTIFIER</div>
+        <div class="hud-v" id="hud-name">&mdash;</div>
+        <div class="hud-t" style="margin-top:6px">Z / N / A</div>
+        <div class="hud-v" id="hud-zna">&mdash;</div>
+      </div>
+    </div>
+    <div class="panel" id="detail">Hover or click a cell&hellip;</div>
+  </div>
+</div>
+
+<div id="strip-wrap"><canvas id="strip"></canvas><div id="landmark"></div></div>
+
+<div id="controls">
+  <button id="btn-scan">Initiate Scan</button>
+  <div class="ctl">
+    <label>SHELL CORRECTION (Myers&ndash;Swiatecki)</label>
+    <input type="range" id="shell" min="0" max="100" value="100">
+    <span id="shell-val">100%</span>
+  </div>
+  <div class="ctl zmagic">
+    <label>PROTON CLOSURE HYPOTHESIS</label>
+    <label><input type="radio" name="zm" value="114" checked> 114</label>
+    <label><input type="radio" name="zm" value="120"> 120</label>
+    <label><input type="radio" name="zm" value="126"> 126</label>
+    <span class="cite">(model-dependent)</span>
+  </div>
+  <div class="ctl"><label><input type="checkbox" id="tg-ftd" checked> FTD annotations</label></div>
+  <div class="ctl"><label><input type="checkbox" id="tg-beta" checked> &beta;-dominance mask</label></div>
+  <div class="ctl"><label><input type="checkbox" id="tg-mark" checked> measured nuclides</label></div>
+</div>
+
+<div id="lower">
+  <div class="card ftd" id="ftd-card-1">
+    <h2>FTD annotation: Z = 126 <span class="tag v">[CONJECTURE]</span></h2>
+    <p>The FTD corpus conjectures a superheavy island at <b>Z&nbsp;=&nbsp;126 (unbihexium)</b>
+      exhibiting 9-lobe shell harmonics, <b>9&nbsp;=&nbsp;N<sub>c</sub>&sup2;&nbsp;=&nbsp;3&sup2;</b>.</p>
+    <p class="q">Corpus claim at its ledger tag; it is NOT an output of this tool. The mainstream
+      landscape here is the N&nbsp;=&nbsp;184 neutron wall with a model-dependent proton closure
+      (114/120/126 selector) &mdash; setting the selector to 126 does not make the coincidence evidence.</p>
+    <div class="cite">docs/theory/04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md &sect;7.1</div>
+  </div>
+  <div class="card ftd" id="ftd-card-2">
+    <h2>FTD annotation: SEMF coefficient fit <span class="tag v">[PARAMETRIC]</span></h2>
+    <p>The corpus expresses the volume coefficient as
+      <b>a<sub>v</sub> = K<sub>B</sub>&middot;G*&sup2;&middot;b&#8323;&middot;N<sub>c</sub>/6
+      = 0.511&middot;2.958675&sup2;&middot;7&middot;3/6 = 15.66&nbsp;MeV</b>
+      vs the Wapstra value 15.67 used here, and claims all five Weizs&auml;cker coefficients land
+      within 1&ndash;7% of experiment.</p>
+    <p class="q">In the manuscript's own words these are &ldquo;numerical fits &hellip; not
+      derivations from first principles.&rdquo;</p>
+    <div class="cite">docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md:89 &middot;
+      manuscript_v2 vol2 &sect;3.4</div>
+  </div>
+  <div class="card ftd" id="ftd-card-3">
+    <h2>FTD annotation: magic gap <span class="tag v">[THEOREM]</span></h2>
+    <p>The gap between the observed proton magic numbers 50 and 82 is
+      <b>82&nbsp;&minus;&nbsp;50&nbsp;=&nbsp;32&nbsp;=&nbsp;2&middot;N<sub>base</sub>&sup2;&nbsp;=&nbsp;2&middot;4&sup2;</b>.</p>
+    <p class="q">Arithmetic identity at its corpus tag &mdash; the tag labels the identity, not a
+      derivation of magic numbers (those come from spin&ndash;orbit-split shell structure).</p>
+    <div class="cite">docs/theory/05_particles/REF_PHYSICS_REFERENCE.md:103 (PHYS-12)</div>
+  </div>
+
+  <div class="card" id="claim-boundary">
+    <h2>Claim Boundary <span class="tag">FTD discipline</span></h2>
+    <p><b>Imported:</b> SEMF coefficients (Wapstra parameterization: a<sub>V</sub> 15.67,
+      a<sub>S</sub> 17.23, a<sub>C</sub> 0.7140, a<sub>A</sub> 23.29 with the (N&minus;Z)&sup2;/A
+      form, a<sub>P</sub> 12.0 MeV) [IMPOSED, Wapstra]; Myers&ndash;Swiatecki 1966 shell
+      correction (C&nbsp;=&nbsp;5.8&nbsp;MeV, c&nbsp;=&nbsp;0.325; magic
+      {2,8,20,28,50,82,126,184}); Viola&ndash;Seaborg systematics
+      (Sobiczewski&ndash;Patyk&ndash;&Cacute;wiok 1989); B(&#8308;He)&nbsp;=&nbsp;28.2957&nbsp;MeV
+      (AME2020); m<sub>n</sub>&minus;m<sub>p</sub> (PDG). Standard nuclear physics, external
+      parametric insertions &mdash; <b>[PARAMETRIC], NOT FTD-derived.</b></p>
+    <p><b>Computed:</b> B, S, Q<sub>&alpha;</sub>, log&#8321;&#8320;T<sub>&alpha;</sub>,
+      fission-barrier proxy, and beta-valley distance are evaluated exactly from those inputs on
+      every cell; <b>the island's location is an output, not an input.</b></p>
+    <p><b>Presentation:</b> ring jitter/harmonics, colormap, scan animation, SF-band rendering,
+      and beta-dominance fading are visual encodings, not additional physics. No quantitative
+      T<sub>SF</sub> or T<sub>&beta;</sub> is computed anywhere.</p>
+    <p><b>Open:</b> island center is model-dependent (proton-closure selector); expected model
+      error &Delta;Q<sub>&alpha;</sub> &asymp; &plusmn;0.5&ndash;2&nbsp;MeV &rarr; T<sub>&alpha;</sub>
+      within ~1&ndash;7 orders of magnitude (see measured rows); spherical shell correction only
+      &mdash; the deformed actinide/transactinide region (Z&nbsp;&asymp;&nbsp;94&ndash;108) is
+      under-stabilized and its SF bands are too pessimistic (real deformed ground states are
+      shell-stabilized). The tool's claim is the landscape's <i>shape</i>, not absolute half-lives.</p>
+  </div>
+
+  <div class="card" id="provenance">
+    <h2>Constants &amp; provenance</h2>
+    <table id="prov-table"></table>
+  </div>
+
+  <div class="card" style="grid-column:1/-1" id="validation">
+    <h2>Validation: computed vs measured (14 nuclides)
+      <span class="tag g">embedded reference data</span></h2>
+    <table id="val-table"></table>
+    <p class="q">Measured Q<sub>&alpha;</sub> and partial &alpha; half-lives: evaluated reference
+      values (NUBASE2020/AME2020 family). &ldquo;VS(Q<sub>meas</sub>)&rdquo; applies
+      Viola&ndash;Seaborg to the <i>measured</i> Q &mdash; isolating the systematics error from the
+      mass-model error. Computed columns update live with the shell slider and closure selector.</p>
+  </div>
+</div>
+
+<div class="footer-note">
+  Island of Stability &mdash; Computed Nuclide Landscape &middot; FTD dissemination/interactive
+  &middot; single-file, no external dependencies &middot; canvas 2D
+</div>
+
+<script>
+'use strict';
+/* ================= CONSTANTS (all inlined, with provenance) ================= */
+// SEMF, Wapstra parameterization — engine/web/js/constants.js:204-214 [IMPOSED, Wapstra].
+// A_ASYM = 23.29 pairs with the (N-Z)^2/A asymmetry form (the equivalent /(4A)
+// form takes ~93.15 MeV) — same pairing as the engine's atomic-energy.js
+// nuclearBindingEnergy(). (An earlier engine revision mispaired 23.29 with
+// /(4A); fixed 2026-07-17 with a U-238 guard in scale2-physics.spec.js.)
+const AV = 15.67, AS_ = 17.23, AC = 0.7140, AA = 23.29, AP = 12.0;
+const DNP = 1.29333184;          // m_n - m_p (MeV), PDG — constants.js:222
+const B_ALPHA = 28.2957;         // B(4He) MeV, AME2020 (Wang et al., Chin.Phys.C 45, 030003)
+// Myers-Swiatecki 1966 shell correction (Nucl. Phys. 81 (1966) 1) — spherical form.
+// Sign flipped from the mass-excess convention so S>0 near closures = extra binding (P2).
+const C_MS = 5.8, c_MS = 0.325;
+const MAGIC_N = [2, 8, 20, 28, 50, 82, 126, 184, 258];
+const Z_TOP = { 114: 164, 120: 172, 126: 184 };   // bracket tops (convention; mild sensitivity)
+// Viola-Seaborg, Sobiczewski-Patyk-Cwiok 1989 constants; hindrance ee/oZ/oN/oo.
+const VS_A = 1.66175, VS_B = -8.5166, VS_C = -0.20228, VS_D = -33.9069;
+// Fissility / liquid-drop barrier (Myers-Swiatecki surface-energy constants).
+const FISS_CRIT = 50.883, FISS_K = 1.7826, ES0_C = 17.9439;
+// Display clamps
+const LOGT_MIN = -9, LOGT_MAX = 21;
+// Grid extents
+const Z_LO = 82, Z_HI = 132, N_LO = 110, N_HI = 204;
+const NZ = Z_HI - Z_LO + 1, NN = N_HI - N_LO + 1;
+
+/* ================= DATA TABLES ================= */
+const ELEMENTS = {
+  82:['Pb','lead'],83:['Bi','bismuth'],84:['Po','polonium'],85:['At','astatine'],
+  86:['Rn','radon'],87:['Fr','francium'],88:['Ra','radium'],89:['Ac','actinium'],
+  90:['Th','thorium'],91:['Pa','protactinium'],92:['U','uranium'],93:['Np','neptunium'],
+  94:['Pu','plutonium'],95:['Am','americium'],96:['Cm','curium'],97:['Bk','berkelium'],
+  98:['Cf','californium'],99:['Es','einsteinium'],100:['Fm','fermium'],101:['Md','mendelevium'],
+  102:['No','nobelium'],103:['Lr','lawrencium'],104:['Rf','rutherfordium'],105:['Db','dubnium'],
+  106:['Sg','seaborgium'],107:['Bh','bohrium'],108:['Hs','hassium'],109:['Mt','meitnerium'],
+  110:['Ds','darmstadtium'],111:['Rg','roentgenium'],112:['Cn','copernicium'],113:['Nh','nihonium'],
+  114:['Fl','flerovium'],115:['Mc','moscovium'],116:['Lv','livermorium'],117:['Ts','tennessine'],
+  118:['Og','oganesson'],119:['Uue','ununennium'],120:['Ubn','unbinilium'],121:['Ubu','unbiunium'],
+  122:['Ubb','unbibium'],123:['Ubt','unbitrium'],124:['Ubq','unbiquadium'],125:['Ubp','unbipentium'],
+  126:['Ubh','unbihexium'],127:['Ubs','unbiseptium'],128:['Ubo','unbioctium'],129:['Ube','unbiennium'],
+  130:['Utn','untrinilium'],131:['Utu','untriunium'],132:['Utb','untribium'],
+};
+// Evaluated reference values (NUBASE2020/AME2020 family) — partial alpha half-lives.
+// Re-verify at any future revision; 270Ds and 290Lv are the least certain rows.
+const VALIDATION = [
+  ['212Po',  84, 128, 8.954, -6.52, 'shell-edge anomaly'],
+  ['222Rn',  86, 136, 5.590,  5.52, ''],
+  ['226Ra',  88, 138, 4.871, 10.70, ''],
+  ['232Th',  90, 142, 4.082, 17.65, ''],
+  ['238U',   92, 146, 4.270, 17.15, ''],
+  ['244Pu',  94, 150, 4.666, 15.40, ''],
+  ['252Cf',  98, 154, 6.217,  7.94, 'SF branch 3.1%'],
+  ['257Fm', 100, 157, 6.864,  6.94, ''],
+  ['270Ds', 110, 160, 11.12, -3.69, 'value uncertain'],
+  ['277Cn', 112, 165, 11.62, -3.07, 'Q from Eα 11.45'],
+  ['286Fl', 114, 172, 10.33, -0.70, 'SF branch ~40%'],
+  ['289Fl', 114, 175, 9.97,   0.28, 'odd-N hindrance'],
+  ['290Lv', 116, 174, 11.00, -2.10, 'value uncertain'],
+  ['294Og', 118, 176, 11.87, -3.16, 'flagship'],
+];
+
+/* ================= PHYSICS MODULE (pure functions) ================= */
+function bindingSEMF(Z, N) {
+  const A = Z + N;
+  if (A <= 1) return 0;
+  const A13 = Math.cbrt(A);
+  let B = AV * A - AS_ * A13 * A13 - AC * Z * (Z - 1) / A13 - AA * (N - Z) * (N - Z) / A;
+  const ze = Z % 2 === 0, ne = N % 2 === 0;
+  if (ze && ne) B += AP / Math.sqrt(A);
+  else if (!ze && !ne) B -= AP / Math.sqrt(A);
+  return Math.max(B, 0);
+}
+function shellF(n, magic) {
+  for (let i = 0; i < magic.length - 1; i++) {
+    if (n >= magic[i] && n <= magic[i + 1]) {
+      const Mi = magic[i], Mj = magic[i + 1];
+      const qbar = (Math.pow(Mj, 5 / 3) - Math.pow(Mi, 5 / 3)) / (Mj - Mi);
+      return 0.6 * (qbar * (n - Mi) - (Math.pow(n, 5 / 3) - Math.pow(Mi, 5 / 3)));
+    }
+  }
+  return 0;
+}
+function zMagicList(zM) { return [2, 8, 20, 28, 50, 82, zM, Z_TOP[zM]]; }
+function shellS(Z, N, zM, scale) {
+  const A = Z + N;
+  const F = shellF(N, MAGIC_N) + shellF(Z, zMagicList(zM));
+  return scale * C_MS * (c_MS * Math.cbrt(A) - F / Math.pow(A / 2, 2 / 3));
+}
+function bindingEff(Z, N, zM, sc) { return bindingSEMF(Z, N) + shellS(Z, N, zM, sc); }
+function qAlpha(Z, N, zM, sc) {
+  return bindingEff(Z - 2, N - 2, zM, sc) + B_ALPHA - bindingEff(Z, N, zM, sc);
+}
+function vsHindrance(Z, N) {
+  const zo = Z % 2, no = N % 2;
+  if (zo && no) return 2.114;
+  if (zo) return 0.772;
+  if (no) return 1.066;
+  return 0;
+}
+function logTalphaFromQ(Z, N, Q) {
+  if (!(Q > 0.2)) return null;   // alpha-forbidden / quasi-stable vs alpha
+  return (VS_A * Z + VS_B) / Math.sqrt(Q) + (VS_C * Z + VS_D) + vsHindrance(Z, N);
+}
+function logTalpha(Z, N, zM, sc) { return logTalphaFromQ(Z, N, qAlpha(Z, N, zM, sc)); }
+function fissilityX(Z, N) {
+  const A = Z + N, I = (N - Z) / A;
+  return (Z * Z / A) / (FISS_CRIT * (1 - FISS_K * I * I));
+}
+function barrierLD(Z, N) {
+  const A = Z + N, I = (N - Z) / A;
+  const x = fissilityX(Z, N);
+  if (x >= 1) return 0;
+  const Es0 = ES0_C * (1 - FISS_K * I * I) * Math.pow(A, 2 / 3);
+  return Math.max(0, 0.83 * Math.pow(1 - x, 3) * Es0);
+}
+function barrierProxy(Z, N, zM, sc) { return Math.max(0, barrierLD(Z, N) + shellS(Z, N, zM, sc)); }
+function sfBand(proxy) { return proxy >= 6 ? 3 : proxy >= 4 ? 2 : proxy >= 2 ? 1 : 0; }
+const SF_LABEL = ['SF cliff', 'SF-limiting', 'SF competitive', 'SF negligible'];
+function zStar(A) {
+  return (4 * AA + DNP + AC * Math.pow(A, -1 / 3)) /
+         (8 * AA / A + 2 * AC * Math.pow(A, -1 / 3));
+}
+function betaDist(Z, N) { return Z - zStar(Z + N); }
+
+function cellSummary(Z, N, o) {
+  const B = bindingSEMF(Z, N), S = shellS(Z, N, o.zMagic, o.scale);
+  const Beff = B + S, A = Z + N;
+  const Q = qAlpha(Z, N, o.zMagic, o.scale);
+  const lt = logTalphaFromQ(Z, N, Q);
+  const proxy = barrierProxy(Z, N, o.zMagic, o.scale);
+  const band = sfBand(proxy);
+  const bd = betaDist(Z, N);
+  const disp = lt === null ? LOGT_MAX : Math.max(LOGT_MIN, Math.min(LOGT_MAX, lt));
+  let channel;
+  if (Math.abs(bd) > 4) channel = 'β-dominant (qualitative)';
+  else if (band <= 1) channel = 'spontaneous fission (band)';
+  else channel = lt === null ? 'α-forbidden (Q≤0.2)' : 'α decay';
+  return { Z, N, A, B, S, Beff, BA: Beff / A, Q, logT: lt, disp, proxy, band, bd, channel };
+}
+
+/* ================= FIELD ================= */
+const state = {
+  scale: 1.0, zMagic: 114, showFTD: true, showBeta: true, showMark: true,
+  pinned: null, hover: null, scanning: false, scanA: 208, landmark: '',
+};
+const field = {
+  disp: new Float32Array(NZ * NN),  // clamped display logT
+  band: new Uint8Array(NZ * NN),
+  beta: new Float32Array(NZ * NN),
+};
+function idx(Z, N) { return (Z - Z_LO) * NN + (N - N_LO); }
+function computeField() {
+  const o = { zMagic: state.zMagic, scale: state.scale };
+  for (let Z = Z_LO; Z <= Z_HI; Z++) {
+    for (let N = N_LO; N <= N_HI; N++) {
+      const Q = qAlpha(Z, N, o.zMagic, o.scale);
+      const lt = logTalphaFromQ(Z, N, Q);
+      const k = idx(Z, N);
+      field.disp[k] = lt === null ? LOGT_MAX : Math.max(LOGT_MIN, Math.min(LOGT_MAX, lt));
+      field.band[k] = sfBand(barrierProxy(Z, N, o.zMagic, o.scale));
+      field.beta[k] = betaDist(Z, N);
+    }
+  }
+}
+
+/* ================= COLORMAP ================= */
+const STOPS = [
+  [-9, 0x2a, 0x0a, 0x3a], [-6, 0x7a, 0x10, 0x30], [-3, 0xcc, 0x22, 0x22],
+  [0, 0xdd, 0x77, 0x22], [3, 0xdd, 0xcc, 0x44], [8, 0x33, 0xdd, 0xbb],
+  [13, 0x00, 0xff, 0xcc], [18, 0xbf, 0xff, 0xee], [21, 0xff, 0xd7, 0x00],
+];
+const LUT = new Uint8Array(256 * 3);
+(function buildLUT() {
+  for (let i = 0; i < 256; i++) {
+    const v = LOGT_MIN + (LOGT_MAX - LOGT_MIN) * i / 255;
+    let j = 0;
+    while (j < STOPS.length - 2 && v > STOPS[j + 1][0]) j++;
+    const [v0, r0, g0, b0] = STOPS[j], [v1, r1, g1, b1] = STOPS[j + 1];
+    const t = Math.max(0, Math.min(1, (v - v0) / (v1 - v0)));
+    LUT[i * 3] = r0 + (r1 - r0) * t;
+    LUT[i * 3 + 1] = g0 + (g1 - g0) * t;
+    LUT[i * 3 + 2] = b0 + (b1 - b0) * t;
+  }
+})();
+function lutColor(v) {
+  const i = Math.max(0, Math.min(255,
+    Math.round((v - LOGT_MIN) / (LOGT_MAX - LOGT_MIN) * 255)));
+  return [LUT[i * 3], LUT[i * 3 + 1], LUT[i * 3 + 2]];
+}
+
+/* ================= CHART GEOMETRY + RENDER ================= */
+const chart = document.getElementById('chart');
+const cctx = chart.getContext('2d');
+const legend = document.getElementById('legend');
+const lctx = legend.getContext('2d');
+const composed = document.createElement('canvas');
+const xctx = composed.getContext('2d');
+const MARGIN = { l: 48, r: 12, t: 12, b: 34 };
+let cell = 12, chartW = 0, chartH = 0, dpr = 1;
+
+function sizeChart() {
+  dpr = window.devicePixelRatio || 1;
+  const availW = chart.parentElement.clientWidth - 16;
+  cell = Math.max(6, Math.floor((availW - MARGIN.l - MARGIN.r) / NN));
+  chartW = MARGIN.l + NN * cell + MARGIN.r;
+  chartH = MARGIN.t + NZ * cell + MARGIN.b;
+  for (const [cv] of [[chart], [composed]]) {
+    cv.width = chartW * dpr; cv.height = chartH * dpr;
+  }
+  chart.style.width = chartW + 'px'; chart.style.height = chartH + 'px';
+  legend.width = chartW * dpr; legend.height = 44 * dpr;
+  legend.style.width = chartW + 'px'; legend.style.height = '44px';
+}
+function cellXY(Z, N) {   // top-left pixel of cell (Z rows from bottom)
+  return [MARGIN.l + (N - N_LO) * cell, MARGIN.t + (Z_HI - Z) * cell];
+}
+function cellAt(px, py) {
+  const N = N_LO + Math.floor((px - MARGIN.l) / cell);
+  const Z = Z_HI - Math.floor((py - MARGIN.t) / cell);
+  if (Z < Z_LO || Z > Z_HI || N < N_LO || N > N_HI) return null;
+  return { Z, N };
+}
+
+function renderComposed() {
+  xctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  xctx.fillStyle = '#000';
+  xctx.fillRect(0, 0, chartW, chartH);
+  // heatmap cells
+  for (let Z = Z_LO; Z <= Z_HI; Z++) {
+    for (let N = N_LO; N <= N_HI; N++) {
+      const k = idx(Z, N);
+      const [r, g, b] = lutColor(field.disp[k]);
+      const [x, y] = cellXY(Z, N);
+      const band = field.band[k];
+      const bd = Math.abs(field.beta[k]);
+      let alpha = 1, dim = 1;
+      if (band === 1) dim = 0.55;
+      if (band === 0) dim = 0.18;
+      if (state.showBeta) {
+        if (bd > 4) alpha = 0.20;
+        else if (bd > 2) alpha = 0.55;
+      }
+      xctx.globalAlpha = alpha;
+      xctx.fillStyle = `rgb(${r * dim | 0},${g * dim | 0},${b * dim | 0})`;
+      xctx.fillRect(x, y, cell - 1, cell - 1);
+    }
+  }
+  xctx.globalAlpha = 1;
+  // hatching for SF cliff / beta-far
+  xctx.strokeStyle = 'rgba(255,255,255,0.10)';
+  xctx.lineWidth = 1;
+  for (let Z = Z_LO; Z <= Z_HI; Z++) {
+    for (let N = N_LO; N <= N_HI; N++) {
+      const k = idx(Z, N);
+      const hatch = field.band[k] === 0 ||
+        (state.showBeta && Math.abs(field.beta[k]) > 4);
+      if (!hatch) continue;
+      const [x, y] = cellXY(Z, N);
+      xctx.beginPath();
+      xctx.moveTo(x, y + cell - 1);
+      xctx.lineTo(x + cell - 1, y);
+      xctx.stroke();
+    }
+  }
+  // magic gridlines
+  function nLine(N, color, width) {
+    const [x] = cellXY(Z_LO, N);
+    xctx.strokeStyle = color; xctx.lineWidth = width;
+    xctx.beginPath();
+    xctx.moveTo(x, MARGIN.t); xctx.lineTo(x, MARGIN.t + NZ * cell);
+    xctx.stroke();
+  }
+  function zLine(Z, color, width, dashed) {
+    const [, y] = cellXY(Z, N_LO);
+    xctx.strokeStyle = color; xctx.lineWidth = width;
+    if (dashed) xctx.setLineDash([5, 4]);
+    xctx.beginPath();
+    xctx.moveTo(MARGIN.l, y); xctx.lineTo(MARGIN.l + NN * cell, y);
+    xctx.stroke();
+    xctx.setLineDash([]);
+  }
+  nLine(126, 'rgba(0,255,204,0.35)', 1);
+  nLine(184, 'rgba(0,255,204,0.55)', 2);
+  zLine(82, 'rgba(0,255,204,0.35)', 1, false);
+  zLine(state.zMagic, 'rgba(0,255,204,0.55)', 2, false);
+  if (state.showFTD) zLine(126, 'rgba(180,122,255,0.8)', 1.5, true);
+  // beta-stability polyline
+  xctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  xctx.setLineDash([3, 4]); xctx.lineWidth = 1.2;
+  xctx.beginPath();
+  let started = false;
+  for (let A = Z_LO + N_LO; A <= Z_HI + N_HI; A++) {
+    const Zs = zStar(A), Ns = A - Zs;
+    if (Zs < Z_LO || Zs > Z_HI + 1 || Ns < N_LO || Ns > N_HI + 1) continue;
+    const x = MARGIN.l + (Ns - N_LO) * cell;
+    const y = MARGIN.t + (Z_HI + 1 - Zs) * cell;
+    if (!started) { xctx.moveTo(x, y); started = true; } else xctx.lineTo(x, y);
+  }
+  xctx.stroke(); xctx.setLineDash([]);
+  // measured markers
+  if (state.showMark) {
+    for (const [, Z, N] of VALIDATION) {
+      const [x, y] = cellXY(Z, N);
+      xctx.strokeStyle = 'rgba(255,215,0,0.95)';
+      xctx.lineWidth = Z >= 104 ? 2 : 1.2;
+      xctx.strokeRect(x + 0.5, y + 0.5, cell - 2, cell - 2);
+    }
+  }
+  // FTD chip at Z=126 line
+  if (state.showFTD) {
+    const [, y] = cellXY(126, N_LO);
+    xctx.fillStyle = 'rgba(180,122,255,0.9)';
+    xctx.font = '10px Courier New';
+    xctx.fillText('FTD [CONJECTURE] Z=126 (9=Nᴄ²)', MARGIN.l + 4, y - 3);
+  }
+  // axes
+  xctx.fillStyle = '#888';
+  xctx.font = '10px Courier New';
+  xctx.textAlign = 'center';
+  for (let N = N_LO; N <= N_HI; N += 10) {
+    const [x] = cellXY(Z_LO, N);
+    xctx.fillText(String(N), x + cell / 2, MARGIN.t + NZ * cell + 14);
+  }
+  xctx.fillText('N (neutrons)', MARGIN.l + NN * cell / 2, MARGIN.t + NZ * cell + 28);
+  xctx.textAlign = 'right';
+  for (let Z = Z_LO; Z <= Z_HI; Z += 5) {
+    const [, y] = cellXY(Z, N_LO);
+    xctx.fillText(String(Z), MARGIN.l - 6, y + cell / 2 + 3);
+  }
+  xctx.save();
+  xctx.translate(12, MARGIN.t + NZ * cell / 2);
+  xctx.rotate(-Math.PI / 2);
+  xctx.textAlign = 'center';
+  xctx.fillText('Z (protons)', 0, 0);
+  xctx.restore();
+  xctx.textAlign = 'left';
+}
+
+function renderLegend() {
+  lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  lctx.clearRect(0, 0, chartW, 44);
+  const x0 = MARGIN.l, w = NN * cell, y0 = 6, h = 12;
+  for (let i = 0; i < w; i++) {
+    const v = LOGT_MIN + (LOGT_MAX - LOGT_MIN) * i / (w - 1);
+    const [r, g, b] = lutColor(v);
+    lctx.fillStyle = `rgb(${r},${g},${b})`;
+    lctx.fillRect(x0 + i, y0, 1, h);
+  }
+  lctx.fillStyle = '#888'; lctx.font = '9px Courier New'; lctx.textAlign = 'center';
+  const ticks = [[-9, 'ns'], [-6, 'μs'], [-3, 'ms'], [0, '1 s'], [2, 'min'],
+    [5, 'day'], [7.5, 'yr'], [13.5, 'Myr'], [17.6, 'age of universe'], [21, 'quasi-stable']];
+  for (const [v, lab] of ticks) {
+    const x = x0 + (v - LOGT_MIN) / (LOGT_MAX - LOGT_MIN) * w;
+    lctx.fillRect(x, y0 + h, 1, 3);
+    lctx.fillText(lab, x, y0 + h + 13);
+  }
+  lctx.textAlign = 'left';
+  lctx.fillText('log₁₀ Tα', 2, y0 + h);
+}
+
+function drawChartFrame() {
+  cctx.setTransform(1, 0, 0, 1, 0, 0);
+  cctx.clearRect(0, 0, chart.width, chart.height);
+  cctx.drawImage(composed, 0, 0);
+  cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const tgt = state.pinned || state.hover;
+  if (tgt) {
+    const [x, y] = cellXY(tgt.Z, tgt.N);
+    cctx.strokeStyle = state.pinned ? '#fff' : 'rgba(255,255,255,0.6)';
+    cctx.lineWidth = 2;
+    cctx.strokeRect(x - 1, y - 1, cell + 1, cell + 1);
+  }
+  if (state.scanning || state.landmark) {
+    const A = Math.round(state.scanA);
+    const Zs = zStar(A);
+    const x = MARGIN.l + (A - Zs - N_LO) * cell + cell / 2;
+    cctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    cctx.beginPath();
+    cctx.moveTo(x, MARGIN.t); cctx.lineTo(x, MARGIN.t + NZ * cell);
+    cctx.stroke();
+  }
+}
+
+/* ================= RING VIEWPORT ================= */
+const ring = document.getElementById('ring');
+const rctx = ring.getContext('2d');
+let rot = 0;
+function shellOrderN(N) { return N < 126 ? 6 : N < 184 ? 7 : 8; }
+function drawRing(sum) {
+  const W = ring.clientWidth, H = ring.clientHeight;
+  ring.width = W * dpr; ring.height = H * dpr;
+  rctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  rctx.fillStyle = '#000'; rctx.fillRect(0, 0, W, H);
+  if (!sum) return;
+  const cx = W / 2, cy = H / 2;
+  const R0 = Math.min(cx, cy) * 0.52 * Math.cbrt(sum.A / 298);
+  const u = Math.max(0, Math.min(1, (sum.disp + 9) / 30));
+  const jitterAmp = 13 * (1 - u) * (1 - u);
+  const shellAmp = 16 * Math.max(0, Math.min(1, sum.S / 12));
+  const k = shellOrderN(sum.N);
+  let color = '#ff3333';
+  if (sum.disp >= 8) color = '#ffd700';
+  else if (sum.disp >= 0) color = '#00ffcc';
+  rctx.beginPath();
+  rctx.strokeStyle = color; rctx.lineWidth = 2.5;
+  rctx.shadowBlur = 18; rctx.shadowColor = color;
+  const P = 420;
+  for (let i = 0; i <= P; i++) {
+    const th = i / P * Math.PI * 2;
+    const r1 = 4 * Math.cos(sum.Z * th);
+    const r2 = shellAmp * Math.sin(k * (th + rot));
+    const r3 = (Math.random() - 0.5) * 2 * jitterAmp;
+    const r = R0 + r1 + r2 + r3;
+    const x = cx + r * Math.cos(th + rot), y = cy + r * Math.sin(th + rot);
+    if (i === 0) rctx.moveTo(x, y); else rctx.lineTo(x, y);
+  }
+  rctx.closePath(); rctx.stroke();
+  rctx.shadowBlur = 0;
+  // FTD 9-lobe ghost on the Z=126 row
+  if (state.showFTD && sum.Z === 126) {
+    rctx.strokeStyle = 'rgba(180,122,255,0.7)';
+    rctx.setLineDash([4, 4]); rctx.lineWidth = 1.4;
+    rctx.beginPath();
+    for (let i = 0; i <= P; i++) {
+      const th = i / P * Math.PI * 2;
+      const r = 0.55 * R0 * (1 + 0.18 * Math.cos(9 * th));
+      const x = cx + r * Math.cos(th), y = cy + r * Math.sin(th);
+      if (i === 0) rctx.moveTo(x, y); else rctx.lineTo(x, y);
+    }
+    rctx.closePath(); rctx.stroke(); rctx.setLineDash([]);
+    rctx.fillStyle = 'rgba(180,122,255,0.85)';
+    rctx.font = '9px Courier New';
+    rctx.fillText('[CONJECTURE] 9 = Nᴄ² — presentation metaphor', 8, H - 8);
+  }
+  // core glow
+  const grd = rctx.createRadialGradient(cx, cy, R0 * 0.15, cx, cy, R0);
+  grd.addColorStop(0, color); grd.addColorStop(1, 'transparent');
+  rctx.globalAlpha = 0.16; rctx.fillStyle = grd;
+  rctx.beginPath(); rctx.arc(cx, cy, R0, 0, Math.PI * 2); rctx.fill();
+  rctx.globalAlpha = 1;
+  rot += 0.004;
+}
+
+/* ================= SCAN STRIP ================= */
+const strip = document.getElementById('strip');
+const sctx = strip.getContext('2d');
+const A_SCAN_LO = 208, A_SCAN_HI = 320;
+function scanCell(A) {
+  const Z = Math.round(zStar(A));
+  return { Z, N: A - Z };
+}
+function drawStrip() {
+  const W = strip.clientWidth, H = strip.clientHeight;
+  strip.width = W * dpr; strip.height = H * dpr;
+  sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  sctx.fillStyle = '#111'; sctx.fillRect(0, 0, W, H);
+  sctx.strokeStyle = '#222';
+  sctx.beginPath();
+  for (let x = 0; x < W; x += 50) { sctx.moveTo(x, 0); sctx.lineTo(x, H); }
+  sctx.stroke();
+  const o = { zMagic: state.zMagic, scale: state.scale };
+  sctx.beginPath();
+  sctx.strokeStyle = '#00ffcc'; sctx.lineWidth = 1.6;
+  sctx.shadowBlur = 6; sctx.shadowColor = '#00ffcc';
+  for (let A = A_SCAN_LO; A <= A_SCAN_HI; A++) {
+    const { Z, N } = scanCell(A);
+    const lt = logTalpha(Z, N, o.zMagic, o.scale);
+    const v = lt === null ? LOGT_MAX : Math.max(LOGT_MIN, Math.min(LOGT_MAX, lt));
+    const x = (A - A_SCAN_LO) / (A_SCAN_HI - A_SCAN_LO) * W;
+    const y = H - 8 - (v - LOGT_MIN) / (LOGT_MAX - LOGT_MIN) * (H - 20);
+    if (A === A_SCAN_LO) sctx.moveTo(x, y); else sctx.lineTo(x, y);
+  }
+  sctx.stroke(); sctx.shadowBlur = 0;
+  // landmarks
+  sctx.fillStyle = '#888'; sctx.font = '9px Courier New'; sctx.textAlign = 'center';
+  for (const [A, lab] of [[208, 'Pb mainland'], [238, 'U'], [252, 'Cf'],
+    [270, 'sea of instability'], [296, 'ISLAND'], [316, 'far slope']]) {
+    const x = (A - A_SCAN_LO) / (A_SCAN_HI - A_SCAN_LO) * W;
+    sctx.fillRect(x, H - 6, 1, 4);
+    sctx.fillText(lab, x, H - 10);
+  }
+  sctx.textAlign = 'left';
+  sctx.fillText('log₁₀ Tα along the β-stability line, A = 208…320', 6, 12);
+  // cursor
+  const x = (state.scanA - A_SCAN_LO) / (A_SCAN_HI - A_SCAN_LO) * W;
+  sctx.strokeStyle = '#fff';
+  sctx.beginPath(); sctx.moveTo(x, 0); sctx.lineTo(x, H); sctx.stroke();
+}
+
+/* ================= DETAIL PANEL / HUD ================= */
+const detail = document.getElementById('detail');
+function fmtTime(logT) {
+  if (logT === null) return 'quasi-stable vs α';
+  const s = Math.pow(10, logT);
+  if (logT >= 17.2) return (s / 3.156e16).toFixed(1) + ' × age of universe';
+  if (s >= 3.156e13) return (s / 3.156e13).toFixed(1) + ' Myr';
+  if (s >= 3.156e7) return (s / 3.156e7).toFixed(1) + ' yr';
+  if (s >= 86400) return (s / 86400).toFixed(1) + ' d';
+  if (s >= 3600) return (s / 3600).toFixed(1) + ' h';
+  if (s >= 60) return (s / 60).toFixed(1) + ' min';
+  if (s >= 1) return s.toFixed(2) + ' s';
+  if (s >= 1e-3) return (s * 1e3).toFixed(2) + ' ms';
+  if (s >= 1e-6) return (s * 1e6).toFixed(2) + ' μs';
+  return (s * 1e9).toFixed(2) + ' ns';
+}
+function nuclideName(Z, A) {
+  const e = ELEMENTS[Z] || ['?', 'element-' + Z];
+  return { sup: '' + A + e[0], full: e[1] };
+}
+function updateDetail() {
+  const tgt = state.pinned || state.hover;
+  if (!tgt) return;
+  const o = { zMagic: state.zMagic, scale: state.scale };
+  const s = cellSummary(tgt.Z, tgt.N, o);
+  const nm = nuclideName(s.Z, s.A);
+  document.getElementById('hud-name').textContent =
+    (nm.full + ' · ' + nm.sup).toUpperCase();
+  document.getElementById('hud-zna').textContent = s.Z + ' / ' + s.N + ' / ' + s.A;
+  let cls = 'status-decay';
+  if (s.disp >= 8) cls = 'status-island';
+  else if (s.disp >= 0) cls = 'status-stable';
+  const rows = [
+    ['B_eff (SEMF+shell)', s.Beff.toFixed(1) + ' MeV'],
+    ['B/A', s.BA.toFixed(3) + ' MeV'],
+    ['shell correction S', (s.S >= 0 ? '+' : '') + s.S.toFixed(2) + ' MeV'],
+    ['Qα', s.Q.toFixed(2) + ' MeV'],
+    ['log₁₀ Tα', s.logT === null ? '— (Q≤0.2)' : s.logT.toFixed(2)],
+    ['Tα', fmtTime(s.logT)],
+    ['SF barrier proxy', s.proxy.toFixed(1) + ' MeV · ' + SF_LABEL[s.band]],
+    ['β-valley distance', (s.bd >= 0 ? '+' : '') + s.bd.toFixed(1) +
+      (s.bd >= 0 ? ' (p-rich/EC side)' : ' (β⁻ side)')],
+  ];
+  let html = '<div class="row"><span class="lbl">STATUS</span><span class="' + cls + '">' +
+    (s.disp >= 8 && s.band >= 2 && Math.abs(s.bd) <= 4 ? 'ISLAND CANDIDATE'
+      : s.channel.toUpperCase()) + '</span></div>';
+  for (const [l, v] of rows) {
+    html += '<div class="row"><span class="lbl">' + l + '</span><span class="val">' + v +
+      '</span></div>';
+  }
+  html += '<div class="row"><span class="lbl">dominant channel</span><span class="val">' +
+    s.channel + '</span></div>';
+  const meas = VALIDATION.find(v => v[1] === s.Z && v[2] === s.N);
+  if (meas) {
+    const [name, Z, N, Qm, Tm, note] = meas;
+    const vsQm = logTalphaFromQ(Z, N, Qm);
+    html += '<div class="meas"><div class="hdr">MEASURED — ' + name +
+      (note ? ' (' + note + ')' : '') + '</div>' +
+      '<div class="row"><span class="lbl">Qα measured</span><span class="val">' +
+      Qm.toFixed(3) + ' MeV (Δ ' + (s.Q - Qm >= 0 ? '+' : '') + (s.Q - Qm).toFixed(2) +
+      ')</span></div>' +
+      '<div class="row"><span class="lbl">log Tα measured</span><span class="val">' +
+      Tm.toFixed(2) + (s.logT !== null ? ' (Δ ' + (s.logT - Tm >= 0 ? '+' : '') +
+      (s.logT - Tm).toFixed(2) + ')' : '') + '</span></div>' +
+      '<div class="row"><span class="lbl">VS from measured Q</span><span class="val">' +
+      vsQm.toFixed(2) + ' (Δ ' + (vsQm - Tm >= 0 ? '+' : '') + (vsQm - Tm).toFixed(2) +
+      ')</span></div></div>';
+  }
+  detail.innerHTML = html;
+}
+
+/* ================= VALIDATION + PROVENANCE TABLES ================= */
+function renderValidation() {
+  const o = { zMagic: state.zMagic, scale: state.scale };
+  let h = '<tr><th>nuclide</th><th>Z</th><th>N</th><th>Qα meas</th>' +
+    '<th>Qα comp</th><th>ΔQ</th><th>logT meas</th><th>logT comp</th>' +
+    '<th>VS(Qₘ)</th><th>Δ dex</th><th>note</th></tr>';
+  for (const [name, Z, N, Qm, Tm, note] of VALIDATION) {
+    const Qc = qAlpha(Z, N, o.zMagic, o.scale);
+    const Tc = logTalphaFromQ(Z, N, Qc);
+    const vsQm = logTalphaFromQ(Z, N, Qm);
+    const d = vsQm - Tm;
+    const cls = Math.abs(d) < 0.5 ? 'dev-ok' : Math.abs(d) < 1.2 ? 'dev-warn' : 'dev-bad';
+    h += '<tr><td>' + name + '</td><td>' + Z + '</td><td>' + N + '</td><td>' +
+      Qm.toFixed(3) + '</td><td>' + Qc.toFixed(2) + '</td><td>' +
+      (Qc - Qm >= 0 ? '+' : '') + (Qc - Qm).toFixed(2) + '</td><td>' + Tm.toFixed(2) +
+      '</td><td>' + (Tc === null ? '—' : Tc.toFixed(2)) + '</td><td>' +
+      vsQm.toFixed(2) + '</td><td class="' + cls + '">' + (d >= 0 ? '+' : '') + d.toFixed(2) +
+      '</td><td style="text-align:left;color:#678">' + note + '</td></tr>';
+  }
+  document.getElementById('val-table').innerHTML = h;
+}
+function renderProvenance() {
+  const rows = [
+    ['SEMF a_V / a_S / a_C / a_A / a_P', '15.67 / 17.23 / 0.7140 / 23.29 / 12.0 MeV',
+      '[IMPOSED, Wapstra]', 'engine/web/js/constants.js:204-214; asymmetry (N−Z)²/A pairing'],
+    ['Shell correction C, c', '5.8 MeV, 0.325', '[PARAMETRIC]',
+      'Myers & Swiatecki, Nucl. Phys. 81 (1966) 1 — spherical form'],
+    ['Neutron magic set', '2, 8, 20, 28, 50, 82, 126, 184', '[PARAMETRIC]',
+      'standard; N=184 is the mainstream island coordinate'],
+    ['Proton closure > 82', '114 | 120 | 126 (selectable)', '[PARAMETRIC]',
+      'model-dependent — exposed as a hypothesis selector'],
+    ['Viola–Seaborg a,b,c,d', '1.66175, −8.5166, −0.20228, −33.9069',
+      '[PARAMETRIC]', 'Sobiczewski–Patyk–Ćwiok, Phys. Lett. B 224 (1989) 1'],
+    ['VS hindrance ee/oZ/oN/oo', '0 / 0.772 / 1.066 / 2.114', '[PARAMETRIC]', 'SPC 1989'],
+    ['B(⁴He)', '28.2957 MeV', '[PARAMETRIC]', 'AME2020'],
+    ['m_n − m_p', '1.29333184 MeV', '[PARAMETRIC]', 'PDG; engine constants.js:222'],
+    ['Fissility / barrier', 'x = (Z²/A)/(50.883(1−1.7826 I²)); 0.83(1−x)³E_s⁰',
+      '[PARAMETRIC]', 'Myers–Swiatecki LD surface energy; qualitative bands only'],
+  ];
+  let h = '<tr><th>constant</th><th>value</th><th>tag</th><th>provenance</th></tr>';
+  for (const [a, b, c, d] of rows) {
+    h += '<tr><td>' + a + '</td><td>' + b + '</td><td>' + c +
+      '</td><td style="text-align:left;color:#678">' + d + '</td></tr>';
+  }
+  document.getElementById('prov-table').innerHTML = h;
+}
+
+/* ================= INTERACTION ================= */
+function recompute() {
+  computeField();
+  renderComposed();
+  renderLegend();
+  renderValidation();
+  updateDetail();
+}
+chart.addEventListener('mousemove', e => {
+  const r = chart.getBoundingClientRect();
+  const c = cellAt(e.clientX - r.left, e.clientY - r.top);
+  state.hover = c;
+  if (!state.pinned) updateDetail();
+});
+chart.addEventListener('mouseleave', () => { state.hover = null; });
+chart.addEventListener('click', e => {
+  const r = chart.getBoundingClientRect();
+  const c = cellAt(e.clientX - r.left, e.clientY - r.top);
+  stopScan();
+  state.pinned = (state.pinned && c && state.pinned.Z === c.Z && state.pinned.N === c.N)
+    ? null : c;
+  updateDetail();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { state.pinned = null; return; }
+  if (e.key === ' ') { e.preventDefault(); toggleScan(); return; }
+  if (!state.pinned) return;
+  const d = { ArrowUp: [1, 0], ArrowDown: [-1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[e.key];
+  if (!d) return;
+  e.preventDefault();
+  const Z = Math.max(Z_LO, Math.min(Z_HI, state.pinned.Z + d[0]));
+  const N = Math.max(N_LO, Math.min(N_HI, state.pinned.N + d[1]));
+  state.pinned = { Z, N };
+  updateDetail();
+});
+document.getElementById('shell').addEventListener('input', e => {
+  state.scale = e.target.value / 100;
+  document.getElementById('shell-val').textContent = e.target.value + '%';
+  recompute();
+});
+for (const rb of document.querySelectorAll('input[name=zm]')) {
+  rb.addEventListener('change', e => { state.zMagic = +e.target.value; recompute(); });
+}
+document.getElementById('tg-ftd').addEventListener('change', e => {
+  state.showFTD = e.target.checked;
+  for (const id of ['ftd-card-1', 'ftd-card-2', 'ftd-card-3']) {
+    document.getElementById(id).style.display = state.showFTD ? '' : 'none';
+  }
+  renderComposed();
+});
+document.getElementById('tg-beta').addEventListener('change', e => {
+  state.showBeta = e.target.checked; renderComposed();
+});
+document.getElementById('tg-mark').addEventListener('change', e => {
+  state.showMark = e.target.checked; renderComposed();
+});
+/* scan */
+const btnScan = document.getElementById('btn-scan');
+function toggleScan() {
+  if (state.scanA >= A_SCAN_HI) state.scanA = A_SCAN_LO;
+  state.scanning = !state.scanning;
+  btnScan.textContent = state.scanning ? 'Pause Scan' : 'Resume Scan';
+}
+function stopScan() {
+  state.scanning = false;
+  btnScan.textContent = 'Initiate Scan';
+}
+btnScan.addEventListener('click', toggleScan);
+strip.addEventListener('click', e => {
+  const r = strip.getBoundingClientRect();
+  state.scanA = A_SCAN_LO + (e.clientX - r.left) / r.width * (A_SCAN_HI - A_SCAN_LO);
+  state.scanning = false;
+  btnScan.textContent = 'Resume Scan';
+  const { Z, N } = scanCell(Math.round(state.scanA));
+  state.pinned = { Z, N };
+  updateDetail();
+});
+function landmarkFor(A) {
+  if (A < 214) return '²⁰⁸Pb mainland — doubly magic anchor';
+  if (A < 244) return 'actinide ridge';
+  if (A < 262) return 'heavy actinides';
+  if (A < 282) return 'sea of instability — fission-limited';
+  if (A < 302) return 'THE ISLAND — N→184 shell wall';
+  return 'far slope — beyond the island';
+}
+/* ================= MAIN LOOP ================= */
+function loop() {
+  if (state.scanning) {
+    state.scanA += 8 / 60;
+    if (state.scanA >= A_SCAN_HI) { state.scanA = A_SCAN_HI; stopScan(); }
+    const { Z, N } = scanCell(Math.round(state.scanA));
+    state.pinned = { Z, N };
+    state.landmark = landmarkFor(Math.round(state.scanA));
+    document.getElementById('landmark').textContent =
+      'A = ' + Math.round(state.scanA) + ' · ' + state.landmark;
+    updateDetail();
+  }
+  drawChartFrame();
+  const tgt = state.pinned || state.hover;
+  drawRing(tgt ? cellSummary(tgt.Z, tgt.N, { zMagic: state.zMagic, scale: state.scale }) : null);
+  drawStrip();
+  requestAnimationFrame(loop);
+}
+/* ================= INIT ================= */
+function init() {
+  sizeChart();
+  recompute();
+  renderProvenance();
+  state.pinned = { Z: 114, N: 184 };
+  updateDetail();
+  loop();
+}
+window.addEventListener('resize', () => { sizeChart(); renderComposed(); renderLegend(); });
+init();
+</script>
+</body>
+</html>
