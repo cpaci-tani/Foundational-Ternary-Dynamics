@@ -4,9 +4,11 @@
 
 **Depends on:**
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) -- Theorem 11.1 (g_00 from flux saturation)
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) -- Historical/interpretive constant atlas; canonical G* status lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Born-Infeld Render-Bridge Lagrangian v2.1
-- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) -- SR / Gravity / GR trichotomy and 7-level hierarchy
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) -- Historical/interpretive constant atlas; canonical G* status lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) -- current selected causal-budget contract
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) -- SR / Gravity / GR trichotomy and 7-level hierarchy
+
+> **FTD-0401/0402 successor qualification (2026-07-21):** formulas below that call the historical Born–Infeld budget "Schwarzschild-exact" are preserved as provenance, not current-engine claims. The live engine now uses the selected budget `B=|u|²/C_SPEED²+L²`; only its static comparison has the familiar Schwarzschild form, and FTD-0402 remains `PARTIAL`. Kerr/RN extensions here therefore remain conditional constructions rather than substrate theorems.
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) -- Linearized GR from flux (Theorem 2.3)
 - [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) -- All 4 forces from a single lattice Green's function
 
@@ -389,7 +391,7 @@ This recovers the naive (linearly additive) formula, confirming that it is corre
 
 > **Epistemic Status:** All claims in this section are **[CONJECTURE]**. The mathematical results of the preceding sections stand independently.
 
-> **Disambiguation:** References to "PF" in this section refer informally to the Planck Frequency context (computational tick rate). The canonical FTD definition is **PF = pi/4** (circle-in-square packing fraction), established in [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md). The relationship G* = varpi/sqrt(PF) and domain-by-domain PF cancellation are developed there.
+> **Disambiguation:** References to "PF" in this section refer informally to the Planck Frequency context (computational tick rate). The canonical FTD definition is **PF = pi/4** (circle-in-square packing fraction), established in [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md). The relationship G* = varpi/sqrt(PF) and domain-by-domain PF cancellation are developed there.
 
 #### A.11.1 G* as Computational Exchange Rate [CONJECTURE]
 
@@ -824,7 +826,7 @@ So the ergosphere extends from $r = M$ (degenerate horizon) to $r = 2M$ (Schwarz
 
 #### B.7.1 Review of Schwarzschild-Exact Form [THEOREM]
 
-From [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md), the v2.1 Born-Infeld core:
+From the historical v2.1 form of [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md), the Born-Infeld core:
 
 $$\mathcal{L}_{\text{RB}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}}$$
 
@@ -875,7 +877,7 @@ $$\mathcal{L}_{\text{Kerr}} \to -K_B \sqrt{f - \frac{r^2}{r^2 f} v_r^2 - r^2 v_\
 
 $$= -K_B \sqrt{f - \frac{v_r^2}{f} - r^2 v_\theta^2 - r^2 \sin^2\theta \, \omega^2}$$
 
-For purely radial motion ($v_\theta = \omega = 0$), this is $-K_B \sqrt{f - v_r^2/f}$ -- exactly the Schwarzschild Born-Infeld core from [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md). **PASS.**
+For purely radial motion ($v_\theta = \omega = 0$), this is $-K_B \sqrt{f - v_r^2/f}$ -- the historical Schwarzschild comparison from [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md). This is not the FTD-0402 current-engine budget. **Historical algebra check: PASS.**
 
 #### B.7.4 Resolution of Open Questions
 
@@ -901,7 +903,7 @@ Using the ADM 3+1 split, the full spacetime metric is reconstructed exactly from
 $$ds^2 = - (\alpha^2 - \gamma_{\phi\phi} (\beta^\phi)^2) dt^2 + 2 \gamma_{\phi\phi} \beta^\phi dt d\phi + \gamma_{rr} dr^2 + \gamma_{\theta\theta} d\theta^2 + \gamma_{\phi\phi} d\phi^2$$
 where the lapse and shift vector are:
 $$\alpha^2 = \frac{\Sigma \Delta}{A}, \qquad \beta^\phi = -\omega_{\text{drag}} = - \frac{a (2Mr - Q^2)}{A}$$
-with $A = (r^2+a^2)^2 - \Delta a^2 \sin^2\theta$. This has been verified symbolically via [proof_black_hole_extensions.py](file:///C:/Users/cpaci/Desktop/ftd/scripts/proofs/proof_black_hole_extensions.py).
+with $A = (r^2+a^2)^2 - \Delta a^2 \sin^2\theta$. This has been verified symbolically via [proof_black_hole_extensions.py](../../../../scripts/proofs/proof_black_hole_extensions.py).
 
 ##### B.7.4.2 Ernst Equation Mapping [THEOREM + SELECTION]
 
@@ -1261,7 +1263,7 @@ This has the **same functional form** as the Schwarzschild proper time formula (
 
 #### C.5.1 The Schwarzschild-Exact Born-Infeld Core [THEOREM]
 
-From [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md), the v2.1 Born-Infeld render-bridge Lagrangian:
+From the historical v2.1 form of [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md), the Born-Infeld render-bridge Lagrangian:
 
 $$\mathcal{L}_{\text{RB}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}}$$
 
@@ -1310,7 +1312,7 @@ where the RN Lorentz factor is:
 
 $$\gamma_{\text{RN}} = \frac{\sqrt{f}}{\sqrt{f^2 - v_r^2}}, \qquad f = 1 - \frac{r_s}{r} + \frac{r_Q^2}{r^2}$$
 
-This has the same form as the Schwarzschild Lorentz factor (Section 5.1 of [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md)), with the charged availability factor. The gravitationally modified speed limit is:
+This has the same historical form as the Schwarzschild Lorentz factor comparison (Section 5.1 of [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md)), with the charged availability factor; it is not the FTD-0402 live budget. The construction's modified speed limit is:
 
 $$v_r < f(r) = 1 - \frac{r_s}{r} + \frac{r_Q^2}{r^2}$$
 
@@ -1653,13 +1655,13 @@ Compare with Schwarzschild at the same radius: $f_{\text{Schw}} = 1 - 2/3 = 0.33
 | [DERIV_BLACK_HOLE_PHYSICS.md](DERIV_BLACK_HOLE_PHYSICS.md) | Black hole thermodynamics (Hawking temperature, Bekenstein-Hawking entropy, information paradox). Complements the metric derivations here with thermodynamic content. |
 | [DERIV_EINSTEIN_FIELD_EQUATIONS.md](DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Full Einstein field equations from FTD. The metrics derived here are exact vacuum (Schwarzschild, Kerr) or electrovacuum (RN) solutions to those equations. |
 | [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) | Theorem 11.1 ($g_{00}$ from flux saturation); foundational result that all three metric derivations build upon. |
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld Lagrangian v2.1 (Schwarzschild-exact). Extended to Kerr (Part B) and RN (Part C) here. |
-| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | SR / Gravity / GR trichotomy and 7-level hierarchy. The lattice metrics sit at Level 4 (metric description); the budget interpretation is Level 2-3. |
-| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas. Not the canonical source for G* status or framework-integer derivation. |
-| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | Dimensional hierarchy, space-time ontological separation. |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | Current selected causal budget and its static comparison. FTD-0401/0402 retire the historical moving-Schwarzschild-exact engine claim; Kerr/RN constructions here inherit that qualification. |
+| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | SR / Gravity / GR trichotomy and 7-level hierarchy. The lattice metrics sit at Level 4 (metric description); the budget interpretation is Level 2-3. |
+| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas. Not the canonical source for G* status or framework-integer derivation. |
+| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | Dimensional hierarchy, space-time ontological separation. |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Linearized GR from flux; graviton propagator. The Kerr metric goes beyond the linearized regime. The RN metric demonstrates electromagnetic back-reaction on gravity. |
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | All 4 forces from a single lattice Green's function. The RN metric provides the gravitational context in which the electromagnetic force operates. |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | GAP-G1 definition and critical path. GAP-1 / GAP-G1 resolved in Part A. |
+| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | GAP-G1 definition and critical path. GAP-1 / GAP-G1 resolved in Part A. |
 
 ---
 

@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-21 — FTD-0401 returned UNMAPPED-DUAL-NORMALIZATION: raw nodes/tick velocity feeds both `C_SPEED=1/√3` transport and legacy `c=1` clock/Born–Infeld paths without conversion; the fused `M_REST` roles and unit-mass kinetic totals inherit the mismatch. Tracker §1.2 is reclassified to partial-closed/normalization-open, ahead of FTD-0400's NCEMC bridge. (Previous: FTD-0400 SPLIT-BOOKKEEPING; FTD-0398 terminal topology UNDERDETERMINED; FTD-0399 particlehood INVALID.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc. **Engine code:** historical closure counts predate FTD-0400/0401's narrowly reopened energy–momentum and normalization contracts; use the per-item statuses below rather than the old aggregate.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-21 — FTD-0402 returned PARTIAL. The engine now uses one raw causal map `B=|u|²/C_SPEED²+L²`, explicit `M_INERTIAL`/`E_REST`/`M_GRAVITATIONAL` roles, common host `tau`, normalized energy–momentum diagnostics, and shared CPU/GPU force integration. Exact and targeted parity gates pass; the frozen full CTest aggregate was not completed, so §1.2/§12-cnorm remains open and NCEMC is still blocked. (Previous: FTD-0401 UNMAPPED-DUAL-NORMALIZATION; FTD-0400 SPLIT-BOOKKEEPING; FTD-0398 terminal topology UNDERDETERMINED; FTD-0399 particlehood INVALID.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -69,21 +69,21 @@ deep, remains one thing critiquing itself.
 
 **Status:** [BLOCKED]. Production path is `RenderBridge`. These stubs exist for a future sparse-cosmology branch; no current scenario benefits from them. **Do not start here unless a sparse use case has appeared.** See `engine/README.md` "Engine files — what's production, what's experimental."
 
-### 1.2 Relativistic velocity dynamics —  [PARTIAL CLOSED / NORMALIZATION OPEN], reclassified 2026-07-21
+### 1.2 Causal velocity, clock, and mass roles — [PARTIAL: IMPLEMENTED/TARGETED-VERIFIED; AGGREGATE OPEN], reclassified by FTD-0402
 
 **Implementation:** `phase_forces()` now integrates momentum instead
 of velocity. Algorithm:
 
 ```
 γ_in  = 1/√(1 − |v|²/C² − L²)       (from stored v + latency)
-p     = γ_in · v                     (reconstruct momentum)
-p_new = p + F·dt                     (Newton's law on momentum)
-|v_new|² = C²(1 − L²)·|p_new|² / (C² + |p_new|²)
-v_new = p_new · C · √((1 − L²)/(C² + |p_new|²))
+q     = γ_in · u                     (specific momentum P/M)
+q_new = q + (F/M_INERTIAL)·dt       (one update after all force paths)
+|u_new|² = C²(1 − L²)·|q_new|² / (C² + |q_new|²)
+u_new = q_new · C · √((1 − L²)/(C² + |q_new|²))
 ```
 
-This respects the FTD bandwidth postulate `v²/C² + L² < 1` by
-construction — no clamp, no energy discard, Lorentz-invariant.
+This respects the selected clock/bandwidth axiom `|u|²/C² + L² < 1` by
+construction. It is an implementation contract, not a Lorentz-covariance theorem.
 
 **Evidence** (`tests/test_gamma_ftd_momentum.cpp`, 8/8 checks pass):
 - Newtonian limit: `v_new ≈ v + F·dt` matches to 0.005%.
@@ -100,18 +100,18 @@ the γ-integration corrects that bug too.
 
 **Regression sweep:** 9 physics tests (constants, energy_conservation, gauss, born_infeld, dissipation, bridge_dynamics, wavepacket, continuity, action_stationarity) pass.
 
-**FTD-0401 correction:** the force-push algorithm above remains correctly closed on its own `v²/C_SPEED²+L²` contract. The cross-sector relativistic claim is not closed. The same raw `Voxel::velocity` enters `proper_time_rate()`, `gamma_ftd()`, and `born_infeld_core()` under a legacy `c=1` convention with no `v/C_SPEED` map. At the exact transport cap, the implemented matter clock has rate squared `2/3`, not zero. `M_REST` is likewise consumed as unconverted rest energy, inertial mass, and gravitational source, while CPU/GPU/ledger particle KE uses unit mass. Verdict: **UNMAPPED-DUAL-NORMALIZATION [SCOPED NO-GO — current engine normalization map]**; canonical audit [`AUDIT_C_SPEED_MASS_NORMALIZATION.md`](../AUDIT_C_SPEED_MASS_NORMALIZATION.md).
+**Historical FTD-0401 correction:** the then-current engine mixed raw velocity with a legacy `c=1` matter clock and fused `M_REST` roles. That source-contract no-go remains provenance in [`AUDIT_C_SPEED_MASS_NORMALIZATION.md`](../AUDIT_C_SPEED_MASS_NORMALIZATION.md).
 
-**[OPEN] Causal Normalization and Mass-Role gate:** explicitly type raw velocity versus `beta=v/C_SPEED`; select one causal budget shared by force, movement, proper time, and latency; map rest energy to inertial/gravitational roles; repair kinetic totals; and restore CPU/GPU parity. The old “secondary bandwidth clamp removed” statement applies only to the CPU path: the GPU latency kernel still clamps to `C_SPEED·f`, advances `tau` on device, and the public GPU tick then invokes the host accumulator again. No production correction is authorized by the audit alone.
+**FTD-0402 PARTIAL result:** the production correction is implemented. Raw `u` maps to `beta=u/C_SPEED`; force, movement, proper time, latency, Born–Infeld, evaporation, and de Broglie phase use one budget. GPU device-side `tau` and its separate cap are removed. Explicit roles are `M_INERTIAL=K_B`, `E_REST=K_B/3`, and `M_GRAVITATIONAL=K_B`; their numerical equality is imposed, not derived. EnergyAudit exposes normalized particle energy/momentum and distinguishes dynamic from incomplete accounted energy. Exact anchors, non-vacuity controls, relevant tests, goldens, WASM, and targeted CPU/GPU parity pass. **[OPEN remainder]:** complete the frozen repository-wide aggregate G9 before closing this gate. Canonical result: [`RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md`](../RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md).
 
 ### 1.3 Dynamical SU(3) colour force —  [OPEN — NCEMC BRIDGE], reclassified 2026-07-21
 **Location:** `engine/src/render_bridge_phases/phase_forces.cpp`, `engine/src/particle_engine.cpp`, energy/latency diagnostics; canonical audit `AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md` (FTD-0400).
 
 **Historical provenance:** FTD-0223 closed the presence/specification task for a colour-force implementation and drafted a native compact-gauge direction. That closure did not establish one canonical strong Hamiltonian shared by force, energy, momentum, and gravity. The live RenderBridge force remains explicitly phenomenological; ParticleEngine uses a different long-range law.
 
-**FTD-0400 exact result:** SPLIT-BOOKKEEPING (12/12 source-contract checks). Colour force acts, but colour potential/strong energy is absent from the CPU energy totals and declared Hamiltonian; cluster inertia consumes `M_REST`; gravitational sources are separate and CPU/GPU-inconsistent for field energy; complete RenderBridge momentum is unavailable.
+**FTD-0400 exact result:** SPLIT-BOOKKEEPING (12/12 source-contract checks). Colour force acts, but colour potential/strong energy is absent from the CPU energy totals and declared Hamiltonian; cluster inertia and gravitational sources are separate, and complete interaction energy is unavailable. FTD-0402 subsequently names `M_INERTIAL` and `M_GRAVITATIONAL` separately and adds particle momentum, but it does not supply the missing common strong stress–energy.
 
-**[OPEN] Native Confinement Energy–Momentum Contract (NCEMC-1–4):** after §1.2's FTD-0401 causal-normalization/mass-role gate, define one backend-common `H_strong` generating the active force; exact work/energy accounting; complete total momentum; and field-only weak gravity using the same energy–momentum object with the independent raw `M_REST·|s|` source disabled. This is an implementation/theory contract, not authorization for another mass measurement. NCEMC-5 particlehood and NCEMC-6 calibration discipline follow only after both prerequisite layers.
+**[BLOCKED] Native Confinement Energy–Momentum Contract (NCEMC-1–4):** after §1.2 closes, define one backend-common `H_strong` generating the active force; exact work/energy accounting; complete total momentum; and field-only weak gravity using the same energy–momentum object with the independent `M_GRAVITATIONAL·|s|` source disabled. FTD-0402's normalization subcontracts pass, but its aggregate gate is incomplete, so NCEMC is not yet admissible. This is not authorization for another mass measurement.
 
 ### 1.4 Symplectic leapfrog integrator —  CLOSED 2026-04-17
 **Location:** `engine/src/render_bridge.cpp` `phase_read` header comment.
