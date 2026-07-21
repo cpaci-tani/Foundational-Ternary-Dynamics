@@ -96,9 +96,11 @@ $$\beta^2=\frac{|u|^2}{C_{\rm SPEED}^2},\qquad f=1-\mathcal L^2,\qquad B=\beta^2
 
 ### 3.3 The Action Functional
 
-The total action is a sum over all lattice sites and time steps:
+The total action is a cubic-volume sum over all lattice sites and time steps:
 
-$$S[\mathbf{J}, s, \mathcal{L}] = \sum_{\mathbf{v} \in \Lambda}\;\sum_{t=0}^{T-1} \mathcal{L}_{\text{matter}}(\mathbf{v}, t) \;+\; \sum_{\mathbf{v} \in \Lambda} \mathcal{L}_{\text{grav}}(\mathbf{v})$$
+$$S[\mathbf{J}, s, \mathcal{L}] = \sum_{\mathbf{v} \in \Lambda}\;\sum_{t=0}^{T-1} \mathcal{L}_{\text{matter}}(\mathbf{v}, t)V_{\rm cell} \;+\; \sum_{\mathbf{v} \in \Lambda} \mathcal{L}_{\text{grav}}(\mathbf{v})V_{\rm cell}$$
+
+where `a_lat=1` and $V_{\rm cell}=a_{\rm lat}^3=1$ in the current raw engine. FTD-0404 makes this previously implicit factor explicit in CPU/GPU Lagrangian and energy diagnostics. The local norms remain quadratic; three-dimensionality enters through the spatial measure, not by cubing field components. Supporting non-unit `a_lat` would also require a separate rescaling contract for discrete derivatives and couplings.
 
 with the **matter Lagrangian density**:
 
@@ -151,6 +153,7 @@ where $\mathbf{v}_\text{wave} = \Delta_t\mathbf{J}$ is the wave velocity (canoni
 **Relationship to the analytical action:**
 
 - Terms 5 and 6 are the independently posited second-order flux-field sector. FTD-0402 does not derive them from the particle Born–Infeld core or add missing interaction energies; `dynamicEnergy` reports these field/wave channels plus normalized particle kinetic energy.
+- FTD-0404 distinguishes local density from its spatial integral: volume-density terms carry `V_cell=a_lat³`, while point-particle energy/momentum, charge, causal norms, and Gauss residuals do not. At the production unit edge this is numerically neutral.
 - Term 3 (velocity coupling) is the magnetic counterpart of Term 2. Its Euler-Lagrange equation produces the lattice Lorentz force $\mathbf{F} = g_c\,q\,(\mathbf{v} \times \nabla_L \times \mathbf{J})$, which maps to $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$ for arbitrarily fine lattice spacing. Term 3 vanishes for stationary particles ($\mathbf{v} = 0$).
 - The Rayleigh dissipation $R$ is not part of the action $S$ but enters through the dissipative Euler-Lagrange equations: $\frac{d}{dt}\frac{\partial L}{\partial \dot{q}} - \frac{\partial L}{\partial q} = -\frac{\partial R}{\partial \dot{q}}$.
 

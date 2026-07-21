@@ -1,5 +1,7 @@
 # Lattice Physics Reference
 
+> **FTD-0404 dimensional reconciliation (2026-07-21):** on the current D=3 unit lattice, a local field energy density remains quadratic, such as `½|J|²`. A volume-integrated total is `Σ rho_i V_cell` with `V_cell=a_lat³=1`. The cubic power belongs to the three-dimensional cell measure, not to each local vector norm. This bookkeeping result does not derive rest mass or a common stress–energy source; the table below is intuition-level correspondence and its mass/gravity rows remain subject to FTD-0096 and FTD-0400.
+
 Physics phenomena to recover from empirical observation, paired with their lattice-based definitions and current status.
 
 ---
