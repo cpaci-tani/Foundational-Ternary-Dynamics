@@ -1,0 +1,109 @@
+FTD-0406 STRONG STRESS-ENERGY CONTRACT v1 — EXECUTION RECORD
+Date: 2026-07-21
+Verdict: CPU-SCOPED-CONTRACT
+Branch: codex/ftd-0406-strong-stress-energy
+Lock commit/tag: 2692405ff189659e106fb3eef6ceb391ec08e9c1 / preregister-strong-stress-energy-contract-v1
+Implementation commit: 808bf27264ed2d0503313d556a31cfb2b60aadd1
+Preregistration SHA256: 10725372b020756d82f823c909384a45cc942f539c5c0a2e329311ee90faf2d7
+
+Platform:
+  Windows 11 host
+  Linux cpaciz 6.6.87.2-microsoft-standard-WSL2 x86_64
+  NVIDIA GeForce RTX 5090, driver 610.47 (not used for CPU-scoped v1 physics)
+  g++ 11.4.0
+  cmake 3.22.1
+  canonical build: engine/build_wsl
+
+Artifact SHA256:
+  engine/include/ftd/strong_stress_energy.h
+    32fa1fef11fee23138e8da41e5b950810ebcdd0e3ec058fb8b8ea9f06b16d5a5
+  engine/src/strong_stress_energy.cpp
+    022614da328b632866650a7efa3665a03183b2c0ab17144f7844d0beb1204760
+  engine/tests/test_strong_stress_energy_contract.cpp
+    37b27312000b4c2ebed2966837b19fbcf1da8e422c9b2f41a8015681779ac57a
+  scripts/proofs/verify_strong_stress_energy_contract.py
+    98750acf07c709fecad7b899678953ee355c0b454e23459ba3509c92f5c74d3e
+  engine/build_wsl/test_strong_stress_energy_contract
+    14030f3ac2c34e349837cfca1d32854ee5d82b316927b884a1b1816630c7fb14
+
+Effective frozen pair toggles:
+  forces=true
+  movement=true
+  color_forces=true
+  strong_stress_energy=true (selected arm; false in legacy control)
+  damping=false
+  genesis=false
+  evaporation=false
+  pair_production=false
+  poisson_coulomb=false
+  emergent_forces=false
+  gravity=false
+  latency_field=false
+  lorentz_force=false
+  strong_force=false
+  exchange_force=false
+  weak_transmutation=false
+  triad_binding=false
+  absorbing_boundary=false
+  reflective_boundary=false
+  backend=CPU (rb.force_cpu)
+
+Exact verifier:
+  command: python scripts/proofs/verify_strong_stress_energy_contract.py
+  A1-A8: PASS
+  S1-S13: PASS
+  total: 21/21 PASS
+  verdict token: STRONG-STRESS-ENERGY-CONTRACT-PASS
+
+Native target, duplicate executions:
+  command: engine/build_wsl/test_strong_stress_energy_contract
+  run A: 35/35 PASS
+  run B: 35/35 PASS
+  observation lines: bit-identical
+  OBS legacy_residual=-0.07641037710505616 projected_residual=0 lambda=1.374382480446247 separation=15.253499324949958 local_energy=2.1284287974850993 gravity_mass=6.3852863924552983 triad_residual=-8.8817841970012523e-16 topology_failures=1 projection_failures=1
+
+Frozen interpretation of observation:
+  - legacy contract-off work remains nonzero;
+  - the selected two-body H_strong residual is zero at printed precision;
+  - the three-body H_strong residual is -8.8817841970012523e-16;
+  - lambda differs from one, so the energy surface projection is non-vacuous;
+  - selected local T00 integrates to the same absolute pair U;
+  - gravitational mass-equivalent is U/C_SPEED^2 = 3U;
+  - topology and invalid mixed-force controls are surfaced explicitly.
+
+Targeted CTest surface (FTD_FORCE_GPU unset):
+  strong_stress_energy_contract PASS
+  ncemc_feasibility PASS
+  confinement_test PASS
+  asymptotic_freedom PASS
+  force_diag_parity PASS
+  genesis_energy_ledger PASS
+  latency_field PASS
+  causal_normalization PASS
+  toggle_matrix PASS
+  strict_validation PASS
+  total: 10/10 PASS
+
+Preregistration name reconciliation:
+  The lock used the shorthand `energy_ledger`; no CTest has that exact name.
+  The existing registered ledger campaign `genesis_energy_ledger` was built and
+  run as the intended ledger neighbor. It passed. No test definition changed.
+
+Golden gate:
+  command: ctest -L golden -j 24 --output-on-failure
+  render_bridge_golden PASS
+  render_bridge_golden_default PASS
+  boundary_modes_golden PASS
+  render_bridge_golden_l9 PASS
+  gpu_golden PASS
+  gauge_links PASS
+  knot_tracking_golden PASS
+  total: 7/7 PASS; no accepted hash changed
+
+Excluded by lock:
+  full CTest suite
+  GPU implementation/parity for strong_stress_energy
+  WASM/web builds
+  collision/annihilation/creation energy closure
+  mixed-force and moving-latency energy closure
+  mass campaign, CODATA comparison, numerical near-miss or substitution search
