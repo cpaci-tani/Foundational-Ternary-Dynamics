@@ -66,7 +66,7 @@ The ontology is **graded monism** ([`docs/SPEC_FTD.md`](../../SPEC_FTD.md) §1.1
 
 FTD's field content is **two orthogonal fields, nested**:
 
-**Primary pair — Flux ⊥ State (dispositional ⊥ actual).** `J ∈ ℝ³` is continuous, reversible-in-isolation (§2.6), and carries the wave dynamics; `s ∈ {−1,0,+1}` is discrete, finite, and irreversible (manifestation is many-to-one). They are *orthogonal* in the precise sense that they inhabit different ontological grades (disposition vs actuality) and **interact through exactly two channels and no others**:
+**Primary pair — Flux ⊥ State (dispositional ⊥ actual).** `J ∈ ℝ³` is continuous, reversible-in-isolation (§2.6), and carries the wave dynamics; `s ∈ {−1,0,+1}` is discrete and finite. The discrete readout `R: J -> (s,color,spin)` is many-to-one while retaining `J` in engine memory (FTD-0394); the complete current update `F` is separately non-injective by an evaporation witness (FTD-0395). They are *orthogonal* in the precise sense that they inhabit different ontological grades (disposition vs actuality) and **interact through exactly two channels and no others**:
 
 1. **Genesis / evaporation (downward, J → s):** at a void site, `|J|` crossing the manifestation threshold projects a state (`s = sign`-rule); falling below the evaporation threshold reverts it. The kinetics scale is `K_MANIFEST`, the trigger `K_GENESIS = N_c·K_MANIFEST` (type-separated from the mass quantum `M_REST` in the unified-mass arc, FTD-0130/FTD-0250 Phase 0).
 2. **Gauss sourcing (upward, s → J):** manifested states source the flux through the lattice Gauss constraint `∇·J = ρ_s` (the projection step of the tick cycle; engine canon in [`MAP_LAGRANGIAN_TO_ENGINE.md`](MAP_LAGRANGIAN_TO_ENGINE.md)).
@@ -135,11 +135,13 @@ What FTD *does* derive about observation ([`AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PAR
 
 ### 2.6 FC-2, arrow half — the arrow is native `[AXIOM-class declaration — FTD-0256]`
 
-FTD-0253 maps the gap: reversibility is **absent from P1–P5**, and the genuinely *finite* sector of the substrate — the ternary state field — is **irreversible** (manifestation is many-to-one, provably unrecoverable), while the reversible part is the continuous flux, on which the finiteness commitment has no purchase. Finiteness therefore *opposes* a global reversibility postulate ([`FOUND_SPACETIME_FORCING_BOUNDARY.md`](../02_foundations/FOUND_SPACETIME_FORCING_BOUNDARY.md) §6).
+FTD-0253 maps the gap: reversibility is **absent from P1–P5**. The genuinely *finite* sector is the ternary state field, while the reversible-in-isolation part is the continuous flux, on which the finiteness commitment has no purchase. The implemented evidence is now split exactly: FTD-0394 proves/measures a lossy discrete readout while `J` remains available; FTD-0395 proves the complete current update map non-injective through evaporation. Finiteness therefore *opposes* a global reversibility postulate ([`FOUND_SPACETIME_FORCING_BOUNDARY.md`](../02_foundations/FOUND_SPACETIME_FORCING_BOUNDARY.md) §6).
 
 > **FC-2 (framework commitment, `[AXIOM]`-class declaration) — arrow half.** *The arrow of time is native: the manifestation/state sector is fundamentally irreversible, and FTD declines global reversibility as a postulate. Reversibility holds only as a sector property of the weakly-coupled flux wave dynamics — and with it everything that rides on reversibility, including the Lorentzian metric (§5.2).*
 
 **This is a declaration, not a derivation** — FTD-0253 proves the postulates do not force reversibility (and FTD's finiteness argues against it); FC-2 commits to the irreversible reading as the framework's official model. The 2nd-order Born-Infeld action term `(Δ_t J)²` keeps its existing `[AXIOM]` tag, now explicitly **scoped to the flux wave sector** rather than read as a global time-reversal symmetry of the world. FTD-0208's `[CLOSED NEGATIVE]` (no exact continuous proper-time budget from the discrete substrate) stands untouched.
+
+**Evidence is not the commitment.** FTD-0395 supplies an existential theorem about the current engine map; it neither derives FC-2 nor establishes irreversibility for every possible dynamics. Genesis itself does not erase `J`: its readout is lossy. The full-map collision witness is evaporation.
 
 ---
 
@@ -212,7 +214,7 @@ FTD's posture toward the existing interpretive and foundational frameworks is **
 | **'t Hooft CA interpretation** | classical cellular automaton | yes | yes | template-basis map onto QM | **imported deliberately** (the CA→QM map) | imported | aims at reversible automata | the QM reproduction target itself; superdeterministic correlations |
 | **Spekkens epistricted** | classical ontic states | yes (toy) | yes (toy) | epistemic restriction (postulated) | reproduced *fragment* | n/a (toy) | n/a | the knowledge-balance principle (postulated, not derived) |
 | **String theory** | strings/branes on a target manifold | quantum | QFT-local | standard QM | **fundamental** | dynamical but presupposes continuum + extra dimensions | thermodynamic | continuum, SUSY, extra dimensions, landscape choices |
-| **FTD** | ternary lattice + flux (P1–P5, FC-0) | **yes** (P5) | **yes** (P4) | frame-relative readout; binding restriction `[THEOREM]`, sharpness `[OPEN]` | **declined** (FC-1; independence is `[THEOREM]`) | cone forced `[THEOREM]`; metric emergent-IR, sector-scoped (FC-2); space ⊥ time fundamental | **native** (FC-2; manifestation many-to-one) | FC-0 (ℤ[i] reading); calibrations; the flux field `[SELECTION]`; per-sector physics imports at their LEDGER tags |
+| **FTD** | ternary lattice + flux (P1–P5, FC-0) | **yes** (P5) | **yes** (P4) | frame-relative readout; binding restriction `[THEOREM]`, sharpness `[OPEN]` | **declined** (FC-1; independence is `[THEOREM]`) | cone forced `[THEOREM]`; metric emergent-IR, sector-scoped (FC-2); space ⊥ time fundamental | **native by FC-2**; `R` lossy (FTD-0394), current `F` non-injective via evaporation (FTD-0395) | FC-0 (ℤ[i] reading); calibrations; the flux field `[SELECTION]`; per-sector physics imports at their LEDGER tags |
 
 Three structural contrasts carry the supersession claim:
 

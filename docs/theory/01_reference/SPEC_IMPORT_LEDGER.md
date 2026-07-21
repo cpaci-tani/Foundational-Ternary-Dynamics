@@ -97,7 +97,7 @@ Not every argument-half type is paid for. Two, FTD **declines** — and stakes t
 | ref | declined import | commitment | independence | the wager |
 |---|---|---|---|---|
 | DEC-1 | the **measurement map M** (non-commutative formalism, Born, operator observables) | FC-1 | [THEOREM] (FTD-0243: substrate cannot generate the formalism) | FTD predicts the substrate where M differs (Born statistics, S>2) — *more falsifiable, not more general* |
-| DEC-2 | **global reversibility** (metric as fundamental) | FC-2 | arrow native; metric emergent-IR | the arrow is native (manifestation many-to-one); reversibility survives only in the flux sector |
+| DEC-2 | **global reversibility** (metric as fundamental) | FC-2 | arrow native; metric emergent-IR | the readout `R` is lossy (FTD-0394); the current full update `F` is non-injective via evaporation (FTD-0395); FC-2 remains the declaration that generalizes the arrow beyond that scoped witness |
 
 ## 5 · The import surface — the "ontology score," done honestly
 

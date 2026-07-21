@@ -103,7 +103,7 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | No singularity | GR predicts infinite density (a failure) | Lattice UV cutoff: max density = one state per voxel; max momentum = pi (Brillouin zone) | Recovered |
 | Hawking radiation | BHs emit thermal radiation at T ~ 1/M | Vacuum pair-splitting at horizon boundary; boundary accounting errors in Gauss constraint | Recovered |
 | Bekenstein-Hawking entropy | S = A / (4 l_P^2) | 1/4 entropy per horizon site from Gauss constraint + coordination number reduction | Recovered |
-| Information paradox | Does BH evaporation destroy information? | No. Lattice evolution is deterministic and invertible; unitarity built in. Page curve follows. | Recovered |
+| Information paradox | Does BH evaporation destroy information? | **Open at physical-model level.** Determinism does not imply invertibility; the current engine update is non-injective (FTD-0395). No Page curve or unitarity result follows from P1–P5 alone. | Not recovered |
 | Trans-Planckian problem | Hawking derivation requires unknown UV physics | Solved: lattice momenta bounded by Brillouin zone |k| <= pi | Recovered |
 | BH interior structure | Unknown in GR | Frozen information crystal: ternary states preserved at max density, zero ticks | Open |
 | BH evaporation endpoint | Unknown in GR | Final pop: last frozen voxels unfreeze in Planck-energy burst | Conjecture |
