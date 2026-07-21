@@ -584,7 +584,7 @@ git checkout main
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0395** full-state irreversibility | `preregister-full-state-irreversibility-v1` | (tag commit) | `engine/tests/test_full_state_irreversibility.cpp` SHA256 `45ec650a3a7ef62b1ba4fa9fd6833b6102ddc81f364d10e0c8f23cbdb9445674` | WSL2 `engine/build_wsl`; CPU-forced; `FTD_FORCE_GPU` unset; only `evaporation` ON; seed `20260422`; duplicate execution; FTD-0394 target as separate gate; window through `2026-07-24T00:39:19Z` | pending execution | [`PREREG_FULL_STATE_IRREVERSIBILITY_v1.md`](preregistrations/PREREG_FULL_STATE_IRREVERSIBILITY_v1.md) SHA256 `cad088896cdc6854ffa6e9fdc70d28b5c5a4bd7424006d5ab4f8d03a64ec82e4`; result pending |
+| **FTD-0395** full-state irreversibility — **FULL-NONINJECTIVE** | `preregister-full-state-irreversibility-v1` | `30bf2216` | `engine/tests/test_full_state_irreversibility.cpp` SHA256 `45ec650a3a7ef62b1ba4fa9fd6833b6102ddc81f364d10e0c8f23cbdb9445674`; binary SHA256 `bf83a1d7c12333b54b03ffda811bd46b54b16cd937c9b578d4988e7a4dc31301` | WSL2 `engine/build_wsl`; CPU-forced; `FTD_FORCE_GPU` unset; only `evaporation` ON; seed `20260422`; duplicate execution; FTD-0394 target as separate gate; all gates PASS | `engine/results/full_state_irreversibility_2026-07-20/` | [`ANALYSIS_FULL_STATE_IRREVERSIBILITY_v1.md`](../02_foundations/ANALYSIS_FULL_STATE_IRREVERSIBILITY_v1.md); prereg SHA256 `cad088896cdc6854ffa6e9fdc70d28b5c5a4bd7424006d5ab4f8d03a64ec82e4` |
 
 ## Census addendum — closure over the tag namespace (2026-07-12, FTD-0384)
 
