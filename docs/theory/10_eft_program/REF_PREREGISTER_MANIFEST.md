@@ -580,6 +580,12 @@ git checkout main
 |---|---|---|---|---|---|---|
 | (unminted — conjecture adjudication; LEDGER row only on owner adoption per outcome map) | `preregister-selfenergy-pinning-v1` + `-v1-1` (procedural amendment, prereg §10; L=65 cap 2.5×10⁴). **EXECUTED 2026-07-17 — OUTCOME-P1** (prereg §11): all three L valid, P1 matched at ≤0.00084%, P2 excluded >215%; K_MANIFEST := W_SC advances to owner adjudication as [DERIVED — substrate geometry, CANDIDATE] | (tag commit) | `scripts/proofs/prereg_selfenergy_pinning_predictions.py` (predictions, SHA256 `b83eed3d8475e6c024b71c1863301f7d956c1ebcac9b6b21d75c8ddaf50fe02a`); measurement = standalone driver over `engine/src/poisson_solvers.cpp` `gauss_project_cpu` (engine operator of record, no engine-tree edits) | projector-only GF-A: single s=+1 at center, all dynamics off, charge_coupling=1.0, exact_dual_gauss=false (engine default), SOR 6 iters/application, converge max residual < 1e-8 or 10^4 applications; L ∈ {17,33,65}; adjudication = tracker convention E_half within 0.5% of a family's exact finite-L values at ALL three L | (driver output recorded in prereg §9 execution record) | [`PREREG_SELFENERGY_PINNING_v1.md`](preregistrations/PREREG_SELFENERGY_PINNING_v1.md) (SHA256 at lock `a37e739304b9cfcc3da06f64356c05acf2e86922e600a9ad1791c4bf983858fd`; §9 execution record appended post-run by design) |
 
+## Invariant/quotient roadmap locks (2026-07-20 onward)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0395** full-state irreversibility | `preregister-full-state-irreversibility-v1` | (tag commit) | `engine/tests/test_full_state_irreversibility.cpp` SHA256 `45ec650a3a7ef62b1ba4fa9fd6833b6102ddc81f364d10e0c8f23cbdb9445674` | WSL2 `engine/build_wsl`; CPU-forced; `FTD_FORCE_GPU` unset; only `evaporation` ON; seed `20260422`; duplicate execution; FTD-0394 target as separate gate; window through `2026-07-24T00:39:19Z` | pending execution | [`PREREG_FULL_STATE_IRREVERSIBILITY_v1.md`](preregistrations/PREREG_FULL_STATE_IRREVERSIBILITY_v1.md) SHA256 `cad088896cdc6854ffa6e9fdc70d28b5c5a4bd7424006d5ab4f8d03a64ec82e4`; result pending |
+
 ## Census addendum — closure over the tag namespace (2026-07-12, FTD-0384)
 
 This manifest's per-campaign tables above are **not exhaustive** over the `preregister-*` git-tag

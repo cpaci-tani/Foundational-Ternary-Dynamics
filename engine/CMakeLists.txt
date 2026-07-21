@@ -1464,6 +1464,12 @@ ftd_add_test(campaign_hedgehog_charge_robustness tests/campaign_hedgehog_charge_
 ftd_add_test(campaign_manifestation_readout_collision tests/campaign_manifestation_readout_collision.cpp
              CTEST_NAME manifestation_readout_collision TIMEOUT 1800
              LABELS native eft mass)
+
+# FTD-0395: exact non-injectivity witness for the complete public tick map.
+# Test-only complete-state comparator; production API and behavior unchanged.
+ftd_add_test(test_full_state_irreversibility tests/test_full_state_irreversibility.cpp
+             CTEST_NAME full_state_irreversibility TIMEOUT 600
+             LABELS native eft arrow)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
