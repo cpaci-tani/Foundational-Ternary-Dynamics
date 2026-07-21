@@ -5,7 +5,7 @@
 **Verdict:** **UNMAPPED-DUAL-NORMALIZATION**
 **Scope:** Static source-contract audit of the current RenderBridge CPU/GPU transport, proper-time, Born–Infeld, energy, inertia, and gravity paths. No physical target, fitted residual, numerical near-miss, or new framework commitment is used.
 
-**Successor note (FTD-0402, 2026-07-21):** this document remains the canonical audit of the pre-FTD-0402 implementation. Commit `6526fefa` implements one raw map `B=|u|²/C_SPEED²+L²`, explicit `M_INERTIAL`/`E_REST`/`M_GRAVITATIONAL` roles, common host `tau`, and normalized particle energy–momentum diagnostics. Exact and targeted parity gates pass. The frozen FTD-0402 verdict is nevertheless `PARTIAL` because its full-suite aggregate gate was not completed, so §12-cnorm remains open. See [`RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md`](RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md). The historical findings below are preserved as provenance rather than rewritten as if they described the new source.
+**Successor note (FTD-0402/0403, 2026-07-21):** this document remains the canonical audit of the pre-FTD-0402 implementation. Commit `6526fefa` implements one raw map `B=|u|²/C_SPEED²+L²`, explicit `M_INERTIAL`/`E_REST`/`M_GRAVITATIONAL` roles, common host `tau`, and normalized particle energy–momentum diagnostics. The frozen FTD-0402 verdict remains `PARTIAL` because its full-suite aggregate gate was not completed. FTD-0403 v2 independently passes the exact targeted dependency surface and closes §12-cnorm without rewriting FTD-0402. See [`RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md`](RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md). The historical findings below are preserved as provenance rather than rewritten as if they described the new source.
 
 ## 0. Verdict
 
