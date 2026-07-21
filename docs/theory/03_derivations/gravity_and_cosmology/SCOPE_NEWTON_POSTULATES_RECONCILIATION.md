@@ -5,11 +5,13 @@
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc B P2 P0 deliverable.
 **Sources read:**
 - [`DERIV_NEWTON_FROM_SUBSTRATE.md`](DERIV_NEWTON_FROM_SUBSTRATE.md) (FTD-0131) — flags Postulate 1 (§1.2) + Postulate 2 (§1.4)
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2) — §4.2 [THEOREM] Poisson; §4.3 [THEOREM] Born-Infeld → Schwarzschild proper time; §8 claims table L-1 through L-11
-- [`../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) §14.1, §14.2 — `[THEOREM]` tick-rate-variation
-- [`../01_reference/SPEC_DOCTRINE_LEDGER.md`](../01_reference/SPEC_DOCTRINE_LEDGER.md) §13.5, §14 — Phase-2 priority 6 (gravity beyond Newtonian); FTD-0189 Step-0 Deser correction context
+- [`SPEC_FTD_LAGRANGIAN.md`](../../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2) — §4.2 [THEOREM] Poisson; §4.3 [THEOREM] Born-Infeld → Schwarzschild proper time; §8 claims table L-1 through L-11
+- [`FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) §14.1, §14.2 — `[THEOREM]` tick-rate-variation
+- [`SPEC_DOCTRINE_LEDGER.md`](../../01_reference/SPEC_DOCTRINE_LEDGER.md) §13.5, §14 — Phase-2 priority 6 (gravity beyond Newtonian); FTD-0189 Step-0 Deser correction context
 
 > **What this memo is NOT.** Not Arc B P1 (theory attempt). Not a pre-registration. Not a tag move. It records the reconciliation question so Arc B P1 starts from the correct gap rather than a premature one.
+
+> **Successor disposition (FTD-0400–0402, 2026-07-21):** this memo's alternative readings are resolved in favor of a substantive distinction. The current engine uses separately named imposed `M_GRAVITATIONAL` and `M_INERTIAL` roles, and its selected budget is not an exact moving-Schwarzschild theorem. FTD-0402 normalizes that implementation but remains `PARTIAL`; NCEMC is still required for a common source/action. Historical quotations below are retained as provenance, not current claims.
 
 ---
 

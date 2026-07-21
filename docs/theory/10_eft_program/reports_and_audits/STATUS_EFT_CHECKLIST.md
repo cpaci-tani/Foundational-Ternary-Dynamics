@@ -112,6 +112,9 @@ FTD histories.
 
 - [x] `a_phys` status resolved by no-go theorem: external calibration.
 - [x] `K_B` status remains calibration/manifestation scale.
+- [x] FTD-0402 implements the selected raw-lattice causal normalization and separates `M_INERTIAL`, `E_REST`, and `M_GRAVITATIONAL`; targeted CPU/GPU, golden, WASM, and exact gates pass.
+- [ ] Complete FTD-0402's interrupted repository-wide aggregate gate (G9) before closing `§12-cnorm`; the frozen campaign verdict is `PARTIAL`.
+- [ ] Keep NCEMC blocked until `§12-cnorm` closes; FTD-0402 adds neither confinement energy nor a common stress-energy source.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
 - [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
