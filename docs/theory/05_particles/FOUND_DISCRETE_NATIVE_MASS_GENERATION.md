@@ -1,23 +1,31 @@
 # foundations: Discrete-Native Mass Generation
 
 **Tag:** [FOUNDATIONAL / OPERATIONAL]  
-**Status:** **ACTIVE**  
+**Status:** **BOUNDARY-HARDENED / PROGRAM STOPPED ON CURRENT ENGINE** (FTD-0399)
 **Replaces:** `DERIV_QUARK_MASSES_FROM_LATTICE.md` (retracted), `DERIV_NEUTRINO_MASS_ABSOLUTE.md` (retracted), `EXPLR_MASS_SCALE_GENERATION.md` (retracted)  
 **Ledger Row:** FTD-0221 (Supersedes FTD-0219 and FTD-0014)  
 **Authoritative Specification:** [`docs/SPEC_FTD.md`](file:///c:/Users/cpaci/Desktop/ftd/docs/SPEC_FTD.md)
 
 ---
 
+> **FTD-0399 prerequisite correction (2026-07-20).** Voxel cardinality is an
+> admissible operational readout *if* the engine first supplies a stable,
+> localized, production-history-independent excitation. The target-blind A/C/E
+> test did not establish that prerequisite: at L=33/65, A and E never manifest
+> while C does, so the registered comparator is INVALID before particlehood.
+> Nothing below derives particlehood or rest mass. The forward program is
+> stopped on the current engine; FTD-0096 remains the mass-scale no-go.
+
 ## §1 · The Philosophical Grounding: Mass as Voxel Cardinality
 
 In standard quantum field theory (QFT), rest mass is defined as the pole of a propagator in a continuous, relativistic spacetime. In a discrete-native ontology such as **Foundational Ternary Dynamics (FTD)**, spacetime does not exist as a primary background, and there are no continuous propagators or action functionals.
 
-We define rest mass **strictly operationally** on the lattice as a **Class A Observable** (see [`SPEC_DISCRETE_NATIVE_DERIVATION.md`](../01_reference/SPEC_DISCRETE_NATIVE_DERIVATION.md)):
+Conditional on a stable localized excitation being independently established, one may define an **operational cardinality observable** on the lattice as a **Class A Observable** (see [`SPEC_DISCRETE_NATIVE_DERIVATION.md`](../01_reference/SPEC_DISCRETE_NATIVE_DERIVATION.md)):
 > **Definition.** The discrete-native rest mass $M$ of a stable, localized excitation (a "particle" or "cluster") is defined as the number of active, non-void voxels $N \in \mathbb{N}$ that constitute the cluster's stable state after equilibration.
 > $$M = N \cdot \mu_0$$
 > where $\mu_0$ is the discrete mass quantum (the single-voxel calibration scale).
 
-By defining mass as **voxel cardinality**, we completely eliminate the ontological incoherence of continuous mass generation. Mass on the lattice is *literally an integer count of active nodes*. 
+This definition makes cardinality an integer count of active nodes. It does not prove that the engine produces a species invariant, that cardinality has inertial or rest-mass semantics, or that the dimensional quantum $\mu_0$ is derivable.
 
 ```mermaid
 graph TD
@@ -32,7 +40,7 @@ graph TD
 
 ## §2 · The Linear-Level Scaling Law (FTD-0110)
 
-Under the local update rules, a stable localized cluster is formed when the excitation amplitude $A$ of the flux field $J$ exceeds the local manifestation threshold $K_{\text{genesis}} = 3 K_B$. 
+Historically, the local update rules were read as forming a stable localized cluster when the excitation amplitude $A$ exceeded the manifestation threshold. FTD-0399 shows that manifestation itself is size-dependent for the registered A/C/E histories, so this sentence is not a general particle-production theorem.
 
 ### §2.1 The Derivation
 At linear order, the relationship between the active cluster size $N$ and the excitation amplitude $A$ is governed by the point-group representation multiplicity $N_{\text{base}} = 4$ of the $A_{1g}$ scalar representation of the octahedral group $O_h$ in a $3\times3\times3$ neighborhood:
@@ -41,7 +49,7 @@ $$N(A) \approx \frac{1}{N_{\text{base}}} \left( \frac{A}{K_{\text{genesis}}} \ri
 *   **Voxel Cardinality:** $N$ is structurally forced to be an integer ($N \in \mathbb{N}$) representing the count of voxels that have transitioned to active states $s \in \{-1, +1\}$.
 *   **The Multiplicity Factor:** The prefactor $1/N_{\text{base}} = 1/4$ counts the independent field axes along which a stable cluster actualizes without violating the local Gauss constraint ($\nabla \cdot J = s$).
 
-This linear-level scaling has been rigorously verified via C++ simulation tests, confirming that the cluster size scales quadratically with field amplitude in the perturbative regime.
+The representation-theoretic linear-level shape is the surviving structural content. Its nonlinear/current-stack realization and its interpretation as particle mass remain boundary-limited; it cannot substitute for the failed target-blind particlehood prerequisite.
 
 ---
 
@@ -74,15 +82,15 @@ is recognized as a **[SELECTION]**-grade parametric scale anchor. The prefactor 
 
 ---
 
-## §5 · The Discrete-Native Program Forward
+## §5 · The Discrete-Native Program Forward — stopped on the current engine
 
-Having purged these continuous scaffolding structures, the program to "drive the discrete masses" proceeds entirely within the operational taxonomy of [`SPEC_DISCRETE_NATIVE_DERIVATION.md`](../01_reference/SPEC_DISCRETE_NATIVE_DERIVATION.md):
+The following list is now a restart dependency map, not an active claim that mass generation proceeds. FTD-0399 licenses none of these stages until a separately authorized protocol establishes target-blind native particlehood without changing the frozen A/C/E result:
 
 1.  **Class A (Cluster Size):** Measure the stable integer sizes $N$ of multi-voxel clusters in the C++ engine under the nonlinear regime.
 2.  **Class B (Cluster Persistence):** Build engine instruments to measure `τ_persist` (stable tick counts before dissolution) under Langevin thermal perturbations, mapping these directly to physical lifetimes and decay rates.
 3.  **Class C (Cluster-Cluster Interactions):** Measure the discrete forces and displacement gradients between two localized clusters as a function of separation $r$, establishing discrete-native coupling constants ($\alpha, \alpha_s, G_N$) directly from relational coordinates, without any intermediate continuous Lagrangians.
 
-By focusing entirely on what the discrete engine *actually measures*, we build an ontologically coherent physics where every physical constant is grounded in a finite, relational coordinate count on the 3D grid.
+These measurements would still require explicit bridges from persistence/cardinality to energy, momentum, inertia, and physical constants. None is supplied by the operational definition alone.
 
 ---
 

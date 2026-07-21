@@ -158,6 +158,7 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_GENESIS_COUNTING_v1.md`](preregistrations/PREREG_GENESIS_COUNTING_v1.md) | [PRE-REGISTRATION -- LOCAL HASH-LOCK/RUN] | FTD-0277: collective-coordinate genesis-counting model v1 for the current-stack N(A) law. Run verdict: `COUNTING_MODEL_V1_CLOSED_NEGATIVE`; see [`ANALYSIS_GENESIS_COUNTING_v1.md`](../03_derivations/archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md). |
 | [`PREREG_NO_4TH_GENERATION_NO_GO_v1.md`](preregistrations/PREREG_NO_4TH_GENERATION_NO_GO_v1.md) | [PRE-REGISTRATION] | FTD-0220: No 4th generation fermions no-go formalization pre-registration locking design and verification parameters. |
 | [`PREREG_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md`](preregistrations/PREREG_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md) | [PRE-REGISTRATION — LOCKED/RUN] | FTD-0398 terminal A/C/E scaled-octahedron transport/destruction test. Verdict UNDERDETERMINED; no mass evidence and no further shell geometry licensed. |
+| [`PREREG_TARGET_BLIND_PARTICLEHOOD_v1.md`](preregistrations/PREREG_TARGET_BLIND_PARTICLEHOOD_v1.md) | [PRE-REGISTRATION — LOCKED/RUN] | FTD-0399 particlehood-before-mass comparator. INVALID at G2: C manifests at tick 2 while A/E do not manifest at L=33/65 in either protocol; profile metrics not evaluated. |
 | [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md`](archive/superseded/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md) | [PRE-REGISTRATION] | FTD-0186 boundary-theorem Stage 1: the structural/dynamical discriminator. |
 
 ---
