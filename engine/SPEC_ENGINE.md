@@ -872,6 +872,8 @@ line-by-line target registry.
 
 16. **Explicit cubic cell measure** (FTD-0404): `VOXEL_EDGE_LENGTH=1`, `VOXEL_FACE_AREA=1`, and `VOXEL_VOLUME=1` are named in a CUDA-safe interface. CPU/GPU volume-density diagnostics integrate with `V_cell`; EnergyAudit also exposes the pre-integration field/wave density sums. Local latency gravity continues to read density, while point-particle and constraint channels are unscaled. The unit measure is numerically neutral; no force or update rule changes.
 
+17. **Current colour-energy contract remains obstructed** (FTD-0405): the CPU/GPU direct colour pair force is central and admits a radial potential family up to an additive constant; an isolated two-body arm has cancelling particle momentum. However, the existing force-kick then movement tick does not exactly exchange normalized particle kinetic energy with that potential, including sub-voxel remainder, and no engine rule fixes the additive energy zero or local stress deposition for latency gravity. `strong_energy` therefore remains diagnostic and excluded from accounted total energy. No production behavior changed in FTD-0405.
+
 ---
 
 ## 13. RenderBridge Public API

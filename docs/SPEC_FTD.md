@@ -726,9 +726,11 @@ These define the model's fundamental scales:
 | `M_GRAVITATIONAL` | 0.511 | source unit | Current latency-Poisson gravity charge, separately named | **[IMPOSED]**; equality to `M_INERTIAL` not derived |
 | `K_MANIFEST` | 0.5054620197 | field-energy scale | Manifestation/evaporation kinetics, distinct from mass calibration | **[SELECTION — ADOPTED, FTD-0388]** |
 
-**FTD-0402/0403 status:** the selected raw-lattice causal and mass-role map is implemented and passes exact/targeted CPU, GPU, golden, WASM, and web gates. FTD-0402 retains its frozen `PARTIAL` verdict because its aggregate G9 was not completed. The independently locked FTD-0403 v2 targeted dependency closure passes the exact changed surface and closes `§12-cnorm` without running unrelated CTests. NCEMC is now admissible but remains separately `[OPEN]`. No covariance, equivalence-principle, confinement-energy, or mass-scale theorem is added.
+**FTD-0402/0403 status:** the selected raw-lattice causal and mass-role map is implemented and passes exact/targeted CPU, GPU, golden, WASM, and web gates. FTD-0402 retains its frozen `PARTIAL` verdict because its aggregate G9 was not completed. The independently locked FTD-0403 v2 targeted dependency closure passes the exact changed surface and closes `§12-cnorm` without running unrelated CTests. That closure made a separately locked NCEMC feasibility audit admissible; FTD-0405 subsequently found the current route blocked by phase-split work nonconservation and an unselected energy zero/local stress distribution. No covariance, equivalence-principle, confinement-energy, or mass-scale theorem is added.
 
 **FTD-0404 status:** the cubic unit-cell measure is explicit and numerically neutral. Energy/action density sums carry `V_cell=H³=1`; local norms remain quadratic; WASM indices are append-only. This closes only the density-versus-integral representation ambiguity. NCEMC remains `[OPEN]`.
+
+**FTD-0405 status:** NCEMC feasibility returns `DOUBLE-OBSTRUCTION` for the present direct RenderBridge colour force. A radial potential family exists and isolated two-body particle momentum closes, but the actual tick has nonzero work residual and the additive strong-energy zero/local stress distribution required by gravity are not selected. No confinement mass or common stress–energy claim is licensed. A different local strong-field architecture requires a fresh lock and explicit owner authorization.
 
 ## 7.3 Coupling Parameters
 
