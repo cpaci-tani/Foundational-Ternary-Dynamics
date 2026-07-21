@@ -100,6 +100,8 @@ n = 20 → gravity scale   (+ N_f = 6)
 
 The ordering is physically motivated (mass needs Higgs first, stable hadrons next, neutrino seesaw requires two colors, gravity sees all flavors), but **no first-principles FTD calculation uniquely forces this specific order**. This is now checked directly, not just asserted: per FTD-0390 (`scripts/proofs/proof_m_e_exponent_lookelsewhere.py`), the electron's ladder position is distributed {10:2/12, 11:4/12, 13:4/12, 14:2/12} across all 12 orderings of the forced multiset — n=11 and n=13 are *exactly tied* as the modal outcome under a uniform prior — and among the 24 simple rule pairs in the same style as (S1, S2), only 4 uniquely select a single ordering, of which S1+S2 is one; the other three land on n=13 or n=14, both empirically excluded. A derivation of the exponent 11 would require:
 
+FTD-0397 now closes the stronger target-blind question. The 12 orderings form one orbit under the full position-permutation action. Every function determined only by the unordered multiset is therefore constant across them and cannot select one ordering or one cumulative position. This is a scoped theorem, not an ordering search: any future derivation of 11 must add genuinely order-bearing data or independently derived symmetry-breaking dynamics.
+
 1. Deriving the walk addends $\{4, 3, 3, 6\}$ as a multiset (already [THEOREM]).
 2. Deriving the specific *ordering* of addends (currently [SELECTION]).
 3. Deriving that the electron sits at exactly step 2 in the walk, i.e., that $n_e = 4 + 4 + 3 = 11$ and not any other cumulative partial sum.

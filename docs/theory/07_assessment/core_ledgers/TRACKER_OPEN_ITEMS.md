@@ -351,6 +351,10 @@ FTD-0394 established only that the discrete readout `R` is non-injective while `
 
 ## §4 Theory — particles + couplings
 
+### 4.0 Electron exponent order type — **0 `[OPEN]`** (closed FTD-0397; not counted open)
+
+The unordered FTD-0084 multiset `{3,3,4,6}` has 12 orderings forming one `S4` orbit. FTD-0397 proves that permutation-invariant data is constant on that orbit and cannot select cumulative position 11. The exponent remains `[SELECTION]`; a future promotion would need a fresh, independently derived order-bearing dynamics, not another invariant reformulation or ordering rule. See `05_particles/THEOREM_N11_ORDER_TYPE_NO_GO.md`.
+
 ### 4.1 Quark masses from lattice —  RETRACTED 2026-05-27
 **File:** `docs/theory/archive/DERIV_QUARK_MASSES_FROM_LATTICE_RETRACTED.md`. **Officially retracted 2026-05-27** per strict epistemic discipline. The continuous post-hoc ratio conjectures are removed. Superseded by the Discrete-Native program (`FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`).
 
