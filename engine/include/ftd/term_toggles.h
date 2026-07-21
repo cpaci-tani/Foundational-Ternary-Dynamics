@@ -57,6 +57,7 @@ struct TermToggles {
     bool larmor_radiation = false;  // phase_write: acceleration-dependent damping at particle sites
     bool dual_substrate = true;     // dual-substrate mode: J_L, J_R independent fields
     bool color_forces = false;      // phase_forces: SU(3)-inspired color-dependent pairwise force
+    bool strong_stress_energy = false; // [OWNER-AUTHORIZED SELECTION, FTD-0406] CPU pair Hamiltonian, energy projection, local string T00/stress, and T00/C_SPEED^2 latency source
     bool weak_transmutation = true; // tick: chirality/stress polarity flip (+1 ↔ -1)
     bool strong_force = false;      // phase_forces: Yukawa short-range nuclear force
     bool triad_binding = false;     // tick: detect 3-particle triads, set locked=true
@@ -199,6 +200,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"larmor_radiation",   &TermToggles::larmor_radiation,   false, true,  "damping",          "langevin",         "", ToggleBackend::ANY, "Acceleration-squared radiation damping"},
     {"dual_substrate",     &TermToggles::dual_substrate,     true,  true,  "",                 "",                 "", ToggleBackend::ANY, "J_L / J_R chirality split"},
     {"color_forces",       &TermToggles::color_forces,       false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3)-inspired color coupling"},
+    {"strong_stress_energy", &TermToggles::strong_stress_energy, false, false, "color_forces", "",                 "", ToggleBackend::CPU, "[FTD-0406 SELECTED] CPU collision-free strong Hamiltonian projection plus local string stress-energy"},
     {"weak_transmutation", &TermToggles::weak_transmutation, true,  true,  "dual_substrate",   "",                 "", ToggleBackend::ANY, "Chirality flip flavor-changing weak"},
     {"strong_force",       &TermToggles::strong_force,       false, true,  "",                 "",                 "strong_force has no CPU implementation — toggle is a no-op on CPU builds\n", ToggleBackend::ANY, "Yukawa short-range nuclear force"},
     {"triad_binding",      &TermToggles::triad_binding,      false, true,  "color_forces",     "",                 "", ToggleBackend::ANY, "Color-singlet triad binding (locked=true)"},
@@ -323,6 +325,21 @@ inline bool TermToggles::validate(std::string* err) const {
         msg += "triad_binding requires dual_substrate (requirement of record; triad detection itself is geometric — states + distances, no flux-field read)\n";
     if (db_clock_coulomb && dual_substrate)
         msg += "db_clock_coulomb requires dual_substrate=false (FTD-0281 v1 is a single-substrate spectroscopy diagnostic)\n";
+
+    // FTD-0406 v1: exact energy projection is intentionally scoped to the
+    // isolated flat colour sector. Static (movement=false) configurations are
+    // allowed to exercise the selected local T00/C_SPEED^2 latency source.
+    if (strong_stress_energy && movement) {
+        if (!forces)
+            msg += "strong_stress_energy with movement requires forces=true\n";
+        if (damping || genesis || evaporation || pair_production
+            || poisson_coulomb || emergent_forces || gravity || latency_field
+            || lorentz_force || strong_force || exchange_force
+            || weak_transmutation || triad_binding || absorbing_boundary
+            || reflective_boundary) {
+            msg += "strong_stress_energy projected movement requires the isolated flat collision-free colour sector\n";
+        }
+    }
 
     if (err) *err = msg;
     return msg.empty();

@@ -266,7 +266,8 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
                                int sor_iters,
-                               bool include_field_energy) {
+                               bool include_field_energy,
+                               const std::vector<StrongStressCell>* strong_cells) {
   const int N = static_cast<int>(lattice.total_sites());
   constexpr double OMEGA = SOR_OMEGA;
   constexpr double FOUR_PI_G = 4.0 * PI * G_N;
@@ -290,6 +291,16 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
     }
     rho_sum += field_energy_sum;
   }
+  // FTD-0406 [OWNER-AUTHORIZED SELECTION]: the selected local strong T00
+  // sources gravitational mass through E=M*C_SPEED^2.  Do not silently use
+  // c=1 here: the raw lattice normalization has C_SPEED^2=1/3.
+  const double inv_c2 = 1.0 / (C_SPEED * C_SPEED);
+  if (strong_cells && strong_cells->size() == static_cast<std::size_t>(N)) {
+    double strong_mass_sum = 0.0;
+    for (int i = 0; i < N; ++i)
+      strong_mass_sum += (*strong_cells)[i].energy_density * inv_c2;
+    rho_sum += strong_mass_sum;
+  }
   const double mean_rho = rho_sum / N;
 
   ftd::parallel_for(0, N, [&](int _lo, int _hi) {
@@ -298,6 +309,8 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
     if (include_field_energy)
       rho += local_field_wave_energy_density(
           voxels[i].flux.mag2(), voxels[i].wave_vel.mag2());
+    if (strong_cells && strong_cells->size() == static_cast<std::size_t>(N))
+      rho += (*strong_cells)[i].energy_density * inv_c2;
     sor_source[i] = FOUR_PI_G * (rho - mean_rho);
   }
   });

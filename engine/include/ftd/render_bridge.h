@@ -32,6 +32,7 @@
 #include "term_toggles.h"
 #include "constants.h"
 #include "ftd/gauge_field.h"
+#include "ftd/strong_stress_energy.h"
 #include "field_operators.h"
 #include "ftd/eft/dual_cell_continuity.h"
 
@@ -97,6 +98,11 @@ class RenderBridge {
     friend void phase_forces_build_color_cache(RenderBridge&);
     friend void phase_forces_main_loop(RenderBridge&);
     friend void phase_forces_integrate_clusters(RenderBridge&);  // unified-mass Phase 2: rigid-body cluster inertia
+    // FTD-0406 selected strong Hamiltonian / local stress-energy contract.
+    friend double compute_strong_potential_energy(const RenderBridge&);
+    friend void compute_strong_stress_cells(const RenderBridge&, std::vector<StrongStressCell>&);
+    friend void begin_strong_energy_step(RenderBridge&);
+    friend void complete_strong_energy_step(RenderBridge&);
     // Test access (test_cluster_inertia.cpp): the cluster-inertia falsifier
     // injects a FIXED total force into force_diag_ and reads V_COM back, both
     // of which are private. A friend keeps the test honest (no public mutator
@@ -337,6 +343,14 @@ public:
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;
 
+    // FTD-0406 selected local strong T00 / Irving-Kirkwood stress allocation.
+    // Recomputed from the current state on every call so direct public voxel
+    // mutation cannot leave a stale gravitational source or diagnostic.
+    const std::vector<StrongStressCell>& strong_stress_cells() const;
+    const StrongEnergyStepDiagnostics& strong_energy_step_diagnostics() const {
+        return strong_energy_step_diag_;
+    }
+
     // Per-tick conservation bookkeeping. `update_energy_ledger()` is
     // called automatically at the end of tick() on BOTH paths:
     //   - CPU: sums are computed directly from voxel state.
@@ -531,13 +545,27 @@ private:
     std::vector<unsigned int> thread_seeds_;        // phase_write: per-thread RNG seeds (PIMPL'd; see BridgeRng)
     std::vector<double>       sor_source_;          // shared scratch for all 3 SOR Poisson solvers (sized N)
     // Phase forces: ColoredSite list reused tick-to-tick (only filled when color_forces ON)
-    struct ColoredSiteCache { int cx, cy, cz; int8_t state, color; };
+    struct ColoredSiteCache {
+        int idx, cx, cy, cz;
+        double px, py, pz;
+        int8_t state, color;
+    };
     std::vector<ColoredSiteCache> colored_sites_cache_;
     // PERF: per-tick scratch buffers for cluster integration and movement order
     std::vector<char> cluster_visited_;
     std::vector<int>  cluster_stack_;
     std::vector<int>  cluster_members_;
     std::vector<int>  movement_indices_;
+
+    // FTD-0406 default-off CPU strong-energy projection and local stress
+    // scratch. These are selected implementation state, not new substrate
+    // degrees of freedom; the local cells are recomputed from each snapshot.
+    mutable std::vector<StrongStressCell> strong_stress_cells_;
+    StrongEnergyStepDiagnostics strong_energy_step_diag_;
+    std::vector<int> strong_step_particle_ids_;
+    double strong_step_h_before_ = 0.0;
+    Vec3 strong_step_momentum_before_;
+    bool strong_step_active_ = false;
 
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;

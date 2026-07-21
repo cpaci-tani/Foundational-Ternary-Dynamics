@@ -36,6 +36,7 @@
 #include "ftd/constants.h"
 #include "ftd/field_operators.h"
 #include "ftd/parallel.h"
+#include "ftd/strong_stress_energy.h"
 #include <cmath>
 
 namespace ftd {
@@ -55,8 +56,13 @@ void phase_forces_build_color_cache(RenderBridge& rb) {
     for (int ii : rb.ordered_active_indices()) {
       if (rb.voxels_[ii].state != 0 && rb.voxels_[ii].color != 0) {
         auto cc = rb.lattice_.coord(ii);
-        rb.colored_sites_cache_.push_back({cc.x, cc.y, cc.z,
-                                           rb.voxels_[ii].state, rb.voxels_[ii].color});
+        const auto& v = rb.voxels_[ii];
+        rb.colored_sites_cache_.push_back({
+            ii, cc.x, cc.y, cc.z,
+            static_cast<double>(cc.x) + v.remainder.x,
+            static_cast<double>(cc.y) + v.remainder.y,
+            static_cast<double>(cc.z) + v.remainder.z,
+            v.state, v.color});
       }
     }
   }
@@ -144,11 +150,14 @@ void phase_forces_main_loop(RenderBridge& rb) {
     if (rb.toggles.color_forces && v.color != 0) {
       auto ci = rb.lattice_.coord(i);
       for (auto& cs : rb.colored_sites_cache_) {
-        // Skip self via coord equality (cheaper than carrying idx)
-        if (cs.cx == ci.x && cs.cy == ci.y && cs.cz == ci.z) continue;
-        double ddx = cs.cx - ci.x;
-        double ddy = cs.cy - ci.y;
-        double ddz = cs.cz - ci.z;
+        if (cs.idx == i) continue;
+        const bool continuous = rb.toggles.strong_stress_energy;
+        const double pix = static_cast<double>(ci.x) + (continuous ? v.remainder.x : 0.0);
+        const double piy = static_cast<double>(ci.y) + (continuous ? v.remainder.y : 0.0);
+        const double piz = static_cast<double>(ci.z) + (continuous ? v.remainder.z : 0.0);
+        double ddx = (continuous ? cs.px : static_cast<double>(cs.cx)) - pix;
+        double ddy = (continuous ? cs.py : static_cast<double>(cs.cy)) - piy;
+        double ddz = (continuous ? cs.pz : static_cast<double>(cs.cz)) - piz;
         if (ddx >  L/2) ddx -= L;
         if (ddx < -L/2) ddx += L;
         if (ddy >  L/2) ddy -= L;
@@ -167,7 +176,9 @@ void phase_forces_main_loop(RenderBridge& rb) {
         //   transition:                  Flux tube stretching
         //   r >= COLOR_TRANSITION_RADIUS: Harmonic confinement (F ∝ r, V ∝ r²)
         double F_mag;
-        if (r < COLOR_COULOMB_RADIUS) {
+        if (continuous) {
+          F_mag = cf * strong_radial_profile(r);
+        } else if (r < COLOR_COULOMB_RADIUS) {
           F_mag = as * cf / r2;
         } else if (r < COLOR_TRANSITION_RADIUS) {
           F_mag = as * cf / (COLOR_TRANSITION_DENOM * r);
