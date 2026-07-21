@@ -2,7 +2,7 @@
 
 ## Selected Lattice Action and Its Current Engine Map
 
-**Status:** `[REFERENCE / PARTIAL ENGINE MAP]`. Algebraic identities and individual field-sector results retain their row-level tags; the particle causal budget is `[AXIOM + measured implementation conformance]`, while a complete common stress–energy action remains `[OPEN]` (NCEMC). FTD-0405 finds the current direct colour-force route doubly obstructed by non-exact tick work and an unfixed strong-energy zero/local stress distribution.
+**Status:** `[REFERENCE / PARTIAL ENGINE MAP]`. Algebraic identities and individual field-sector results retain their row-level tags; the particle causal budget is `[AXIOM + measured implementation conformance]`. FTD-0405 remains the double-obstruction result for the unmodified direct colour tick. After explicit owner authorization, FTD-0406 installs a default-off **selected** CPU v1 pair Hamiltonian, collision-free energy/momentum projection, local string T00/stress and `T00/C_SPEED²` latency source. That closes the common strong-energy contract only on its frozen domain; a complete backend-independent action remains `[OPEN]`.
 
 ---
 
@@ -189,7 +189,7 @@ which satisfies $E^2=E_{\rm REST}^2+C_{\rm SPEED}^2|\mathbf P|^2$. CPU and GPU r
 
 The current CPU/GPU latency solvers use the separately named numerical source $M_{\rm GRAVITATIONAL}|s|$, with $M_{\rm GRAVITATIONAL}=K_B$. FTD-0402 makes that role explicit and backend-consistent; it does not derive it by varying the particle Born–Infeld term. The numerical equality $M_{\rm GRAVITATIONAL}=M_{\rm INERTIAL}$ remains imposed.
 
-A common action whose stress–energy both generates the active forces and sources latency is precisely the deferred NCEMC requirement identified by FTD-0400. FTD-0405 establishes that the current direct colour pair force has only a potential family `U+kappa`, that the present tick does not exchange exact work with that potential, and that neither `kappa` nor a local stress distribution is selected for gravity. The historical claim that the live engine's Poisson source already follows from the displayed complete action is therefore not a current-engine theorem. $\square$
+A common action whose stress–energy both generates the active forces and sources latency is precisely the NCEMC requirement identified by FTD-0400. FTD-0405 establishes that the unmodified direct colour pair force has only a potential family `U+kappa`, that its tick does not exchange exact work with that potential, and that neither `kappa` nor a local stress distribution was selected for gravity. FTD-0406 then records explicit owner choices: `U_ij(r)=-c_f∫_1^r g(s)ds`, a collision-free energy/momentum projection, midpoint-CIC string T00 with central stress, and CPU latency sourcing through `T00/C_SPEED²`. This is a selected implementation contract, not a derivation of those choices by varying the displayed schematic complete action. The historical claim that the whole live Poisson source already follows from that displayed action therefore remains unproven. $\square$
 
 ### 4.3 Proper Time [AXIOM — selected causal budget]
 
@@ -248,7 +248,7 @@ This expansion concerns the imposed particle core only. The engine's second-orde
 
 ## §6. The QM-GR Bridge Claim and Current Boundary
 
-The displayed schematic action places flux, state, and latency terms on the same lattice, but the current engine does **not** yet derive a common stress–energy source joining its quantum-like field sector to gravity. FTD-0400 found split bookkeeping, and FTD-0402 deliberately leaves NCEMC open. The sections below are therefore sector comparisons, not a completed QM–GR unification theorem.
+The displayed schematic action places flux, state, and latency terms on the same lattice, but the current engine does **not** derive a complete common stress–energy source joining its quantum-like field sector to gravity. FTD-0400 found split bookkeeping. FTD-0406 now supplies an owner-selected strong-pair source on an isolated collision-free CPU domain, but GPU, topology-changing, mixed-force and moving-latency dynamics remain outside it. The sections below are therefore sector comparisons plus one scoped selected contract, not a completed QM–GR unification theorem.
 
 ### 6.1 Quantum Mechanics
 
@@ -320,8 +320,8 @@ The following reference values mix mathematical structure, selections, and calib
 
 | L-4 | Gauss constraint ($\lambda_G \to \infty$) generates U(1) gauge symmetry | **[THEOREM]** |
 | L-5 | Lattice Green's function $G_L = 1/\hat{k}^2$ is the Euclidean QFT propagator | **[THEOREM]** |
-| L-6 | Same native stress–energy sources both field dynamics and gravity | **[OPEN / DOUBLE-OBSTRUCTION, FTD-0405]**; current colour tick lacks exact work and a selected energy zero/local stress distribution |
-| L-7 | Current latency Poisson source follows from variation of the particle/interaction action | **[OPEN / BLOCKED]**; current `M_GRAVITATIONAL=K_B` source is imposed and strong pair energy is absent |
+| L-6 | Same native stress–energy sources both field dynamics and gravity | **[SELECTED CPU-SCOPED CONTRACT, FTD-0406]** for isolated flat collision-free colour dynamics; FTD-0405 remains the no-go for the unmodified tick; complete backend/topology/mixed-force closure is `[OPEN]` |
+| L-7 | Current latency Poisson source follows from variation of the particle/interaction action | **[PARTIAL / SELECTED, NOT DERIVED]**; FTD-0406 routes selected strong `T00/C_SPEED²` into CPU latency, while `M_GRAVITATIONAL=K_B` and the broader source remain imposed |
 | L-8 | $\alpha = 1/x_+$ from master quadratic | **[SELECTION]** |
 | L-9 | $K_B = m_e$ fixes the inertial calibration | **[IMPOSED]**; distinct from `K_MANIFEST` |
 | L-10 | Velocity coupling $-g_c\,s\,(\mathbf{v}\cdot\mathbf{J})$ produces lattice Lorentz force | **[THEOREM]** |
