@@ -196,6 +196,7 @@ add_library(ftd_core
     src/transmutation_phases.cpp     # R2: weak/pair-production/triad/proper-time
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
+    src/strong_stress_energy.cpp     # FTD-0406 selected strong Hamiltonian / local T00-stress contract
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
     src/scale_context.cpp            # Scale-context readout admissibility gate (read-only; α-blind)
     # Phase 4a — phase_write decomposition (2026-04-27, ADR-0008)
@@ -454,6 +455,10 @@ ftd_add_test(test_volumetric_measure tests/test_volumetric_measure.cpp
 # FTD-0405: diagnostic-only NCEMC feasibility / obstruction instrument.
 ftd_add_test(test_ncemc_feasibility tests/test_ncemc_feasibility.cpp
              CTEST_NAME ncemc_feasibility LABELS unit physics)
+
+# FTD-0406: owner-authorized CPU strong Hamiltonian / local stress-energy contract.
+ftd_add_test(test_strong_stress_energy_contract tests/test_strong_stress_energy_contract.cpp
+             CTEST_NAME strong_stress_energy_contract LABELS unit physics)
 
 # Phase 4 PRE-FLIGHT regression gate (2026-04-27)
 # Before any phase extraction is allowed out of render_bridge.cpp, every

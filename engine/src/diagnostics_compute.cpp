@@ -169,6 +169,19 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
   a.particle_energy = a.particle_rest_energy + a.particle_ke;
   a.dynamic_energy = a.field_energy + a.wave_energy + a.particle_ke;
   a.total_energy = a.field_energy + a.wave_energy + a.particle_energy;
+  if (rb.toggles.strong_stress_energy) {
+    a.strong_potential_energy = compute_strong_potential_energy(rb);
+    a.strong_gravitational_mass = a.strong_potential_energy
+                                / (C_SPEED * C_SPEED);
+    const auto& step = rb.strong_energy_step_diagnostics();
+    a.strong_projection_residual = step.residual;
+    a.strong_projection_lambda = step.lambda;
+    a.strong_projection_events = step.projection_events;
+    a.strong_projection_failures = step.projection_failures;
+    a.strong_topology_failures = step.topology_failures;
+    a.dynamic_energy += a.strong_potential_energy;
+    a.total_energy += a.strong_potential_energy;
+  }
   // self_field_injection_ is a private member; RenderBridge::energy_audit()
   // wrapper exposes it via the friend relationship below.
 

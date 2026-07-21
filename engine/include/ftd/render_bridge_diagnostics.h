@@ -116,6 +116,15 @@ struct EnergyAudit {
     double cell_volume = VOXEL_VOLUME;
     double field_energy_density_sum = 0.0;
     double wave_energy_density_sum = 0.0;
+
+    // FTD-0406 append-only selected strong Hamiltonian / gravity contract.
+    double strong_potential_energy = 0.0;   // sum_{i<j} U_ij, U_ij(1)=0
+    double strong_gravitational_mass = 0.0; // strong_potential_energy/C_SPEED^2
+    double strong_projection_residual = 0.0;
+    double strong_projection_lambda = 1.0;
+    int strong_projection_events = 0;
+    int strong_projection_failures = 0;
+    int strong_topology_failures = 0;
 };
 
 /**

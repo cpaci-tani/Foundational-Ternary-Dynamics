@@ -19,6 +19,7 @@
 #include "ftd/engine_state.h"
 #include "lattice.h"
 #include "voxel.h"
+#include "ftd/strong_stress_energy.h"
 
 namespace ftd {
 
@@ -69,6 +70,7 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
                                int sor_iters = SOR_ITERATIONS,
-                               bool include_field_energy = false);
+                               bool include_field_energy = false,
+                               const std::vector<StrongStressCell>* strong_cells = nullptr);
 
 }  // namespace ftd
