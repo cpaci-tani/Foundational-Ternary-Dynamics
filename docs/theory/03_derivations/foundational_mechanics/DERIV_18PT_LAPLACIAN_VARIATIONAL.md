@@ -57,15 +57,17 @@ $$
 = c^2 \sum_{\mathbf{u} \in \mathcal{N}(\mathbf{v})} w_{\mathbf{v}\mathbf{u}}\,[\phi(\mathbf{u}) - \phi(\mathbf{v})] + c^2 \sum_{\mathbf{u} \in \mathcal{N}(\mathbf{v})} w_{\mathbf{u}\mathbf{v}}\,[\phi(\mathbf{u}) - \phi(\mathbf{v})]
 $$
 
-By translation- and rotation-equivariance, $w_{\mathbf{v}\mathbf{u}} = w_{\mathbf{u}\mathbf{v}}$ depends only on the link type. The two terms combine and the variational derivative is, after factoring out the common $2c^2$ that is absorbed into the canonical kinetic normalisation:
+By translation- and rotation-equivariance, $w_{\mathbf{v}\mathbf{u}} = w_{\mathbf{u}\mathbf{v}}$ depends only on the link type, so the two contributions are equal and
 
 $$
-\frac{1}{c^2}\,\frac{\partial S_\text{grad}}{\partial \phi(\mathbf{v})} \cdot \frac{1}{\Delta t}
+\frac{1}{2c^2}\,\frac{\partial S_\text{grad}}{\partial \phi(\mathbf{v})} \cdot \frac{1}{\Delta t}
 = \sum_{\mathbf{u} \in \mathcal{N}_\text{face}(\mathbf{v})} w_\text{face}\,[\phi(\mathbf{u}) - \phi(\mathbf{v})]
 + \sum_{\mathbf{u} \in \mathcal{N}_\text{edge}(\mathbf{v})} w_\text{edge}\,[\phi(\mathbf{u}) - \phi(\mathbf{v})]
 $$
 
-This is the discrete Laplacian $\Delta_w \phi$ as claimed. $\square$
+This is the discrete Laplacian $\Delta_w \phi$ as claimed; the stationarity condition $\delta S/\delta\phi = 0$ is insensitive to the overall prefactor. $\square$
+
+**Normalization remark (pair-counting convention).** The per-site density of §1 counts every link twice when summed over sites: $\sum_\mathbf{v} \mathcal{L}_\text{grad}(\mathbf{v}) = -c^2\sum_\text{links} w_l\,|\Delta\phi|^2$. Stationarity is unaffected by the overall factor, but the *relative* normalization against the kinetic term $\tfrac{1}{2}|\Delta_t\phi|^2$ is not: the doubled gradient action yields the equation of motion $\partial_t^2\phi = 2c^2\Delta_w\phi$, whereas `phase_read()` integrates $\partial_t^2\phi = c^2\Delta_w\phi$. The canonical convention is therefore **pairs-once**: $S_\text{grad} = -\tfrac{c^2}{2}\sum_\text{links} w_l\,|\Delta\phi|^2$ (each link counted once), realized per-site as the half-share $\mathcal{L}_\text{grad}(\mathbf{v}) = -\tfrac{c^2}{4}\sum_{\mathbf{u}} w_{\mathbf{v}\mathbf{u}}\,[\phi(\mathbf{u})-\phi(\mathbf{v})]^2$ (each link split half/half between its two endpoint sites). Under this convention $\delta S_\text{grad}/\delta\phi(\mathbf{v}) = c^2\Delta_w\phi(\mathbf{v})\,\Delta t$ exactly — the same normalization as the kinetic term, with wave speed $c$. The engine's `field_gradient_term()` returns the half-share, so the site-summed diagnostic `field_gradient_sum` reports the pairs-once action; the convention is guarded by `test_action_stationarity.cpp` §7 (single-spike value plus finite-difference $\delta S/\delta J$ against `laplacian_flux()`).
 
 ---
 
@@ -157,11 +159,11 @@ inline double field_gradient_term(const Vec3& flux_here,
         Vec3 d = voxels[n].flux - flux_here;
         grad_sq += (1.0 / 6.0) * d.mag2();
     }
-    return -0.5 * (C_WAVE * C_WAVE) * grad_sq;
+    return -0.25 * (C_WAVE * C_WAVE) * grad_sq;
 }
 ```
 
-This implements $\mathcal{L}_\text{grad} = -\tfrac{c^2}{2}\bigl[\sum_\text{face}(1/3)|\Delta J|^2 + \sum_\text{edge}(1/6)|\Delta J|^2\bigr]$ exactly. The `nbr6` / `nbr12` arrays are the face/edge neighbour index lists.
+This returns site $\mathbf{v}$'s half-share $-\tfrac{c^2}{4}\bigl[\sum_\text{face}(1/3)|\Delta J|^2 + \sum_\text{edge}(1/6)|\Delta J|^2\bigr]$; summed over all sites it reproduces the pairs-once gradient action $-\tfrac{c^2}{2}\sum_\text{links} w_l\,|\Delta J|^2$ exactly (§2 normalization remark). The `nbr6` / `nbr12` arrays are the face/edge neighbour index lists.
 
 The Laplacian operator that the variational derivative produces — used in `phase_read.cpp` and the GPU stencil kernels (`engine/cuda/kernels_stencil_*.cu`) — has the form
 
