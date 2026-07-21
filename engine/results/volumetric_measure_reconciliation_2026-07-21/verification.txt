@@ -1,0 +1,50 @@
+FTD-0404 VOLUMETRIC MEASURE RECONCILIATION
+lock_tag=preregister-volumetric-measure-reconciliation-v1
+lock_commit=adb35cdb601f8b49a607176d861fa31693353a6d
+prereg_sha256=270ad712890e90d932e07aa62cf2572353c54867ac60cf4a80902dee25f06b36
+implementation_commit=92535fe76d43541486bc67927849d36a7cc9d066
+execution_git_sha=92535fe76d43541486bc67927849d36a7cc9d066
+outcome=VOLUMETRIC-NEUTRAL
+
+PASS exact_verifier anchors=5 source_contracts=12 verdict=VOLUMETRIC-CONTRACT-PASS
+PASS native_cuda_changed_surface passed=7 failed=0 total=7 FTD_FORCE_GPU=unset
+PASS golden passed=7 failed=0 total=7 accepted_hashes_unchanged=true
+PASS wasm_release_build target=ftd_wasm
+PASS wasm_physical_energy_browser_contract tests=1
+PASS scenario_telemetry_contract tests=2
+PASS runtime_wasm_measure_metadata cell_volume=1 density_integral_equal=true
+PASS git_diff_check
+PASS component_cube_static_scan
+
+full_ctest=NOT_RUN_FORBIDDEN_BY_LOCK
+unrelated_campaigns=NOT_RUN
+numerical_near_miss_searches=NOT_RUN
+
+transient_harness_correction=initial exact C++ checks used zero tolerance, while test_telemetry check_close requires a positive tolerance; every printed difference was zero; tolerance corrected to 1e-15 and the three affected targets passed 3/3
+
+production_voxel_edge=1
+production_voxel_face_area=1
+production_voxel_volume=1
+density_formula=one_half_times_squared_norm
+integrated_formula=sum_density_times_voxel_volume
+gravity_source=local_density_not_integrated_cell_energy
+particle_energy_volume_scaled=false
+
+platform=WSL2 Ubuntu-22.04 Linux-6.6.87.2-microsoft-standard-WSL2
+gpu=NVIDIA GeForce RTX 5090
+driver=610.47
+volumetric_test_source_sha256=f51899ee71622b9c1c5ee31a0143e900e940d6d138d2aaf4f5a6bf33c1254e1c
+volumetric_test_binary_sha256=9d5138c239a2968d7a1abbdf87ff32b7efa72a5c588dcc8b6c1893df100876b7
+verifier_sha256=bc9a674f2bbec63b150f44b47130744f6e9b5f3c6e546a06179c0cd892912de9
+wasm_sha256=4d4e46524616d9da95be43cc66f4a2e9cf17c6c0b6863da2633c548a28615508
+
+commands:
+python scripts/proofs/verify_volumetric_measure_reconciliation.py
+cmake --build engine/build_wsl --target test_volumetric_measure test_audit_regression test_lagrangian test_action_stationarity test_causal_normalization test_gpu_parity test_gpu_parity_complete --parallel 24
+env -u FTD_FORCE_GPU ctest -R ^(volumetric_measure|audit_regression|lagrangian|action_stationarity|causal_normalization|gpu_parity|gpu_parity_complete)$ -j 24 --timeout 1800 --output-on-failure
+ctest -L golden -j 24 --timeout 1800 --output-on-failure
+cmake --build engine/build_wasm --target ftd_wasm --parallel 24
+npx playwright test scale0-conservation-panel.spec.js --grep WASM-vacuum-diagnostics-expose-moving-physical-energy
+npx playwright test scale0-scenario-telemetry-contract.spec.js
+git diff --check
+python tools/preregister_census.py
