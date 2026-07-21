@@ -67,6 +67,11 @@ test.describe('Conservation panel and WASM diagnostics', () => {
                 e20: d20.totalEnergy,
                 audit0: a0.totalEnergy,
                 audit20: a20.totalEnergy,
+                cellVolume: a20.cellVolume,
+                fieldEnergy: a20.fieldEnergy,
+                fieldEnergyDensitySum: a20.fieldEnergyDensitySum,
+                waveEnergy: a20.waveEnergy,
+                waveEnergyDensitySum: a20.waveEnergyDensitySum,
                 baseline0: d0.vacuumBaselineEnergy ?? null,
                 baseline20: d20.vacuumBaselineEnergy ?? null,
             };
@@ -75,6 +80,11 @@ test.describe('Conservation panel and WASM diagnostics', () => {
         expect(snap.owner).toBe('wasm');
         expect(Math.abs(snap.e0 - snap.audit0)).toBeLessThan(1e-9);
         expect(Math.abs(snap.e20 - snap.audit20)).toBeLessThan(1e-9);
+        expect(snap.cellVolume).toBe(1);
+        expect(Number.isFinite(snap.fieldEnergyDensitySum)).toBe(true);
+        expect(Number.isFinite(snap.waveEnergyDensitySum)).toBe(true);
+        expect(Math.abs(snap.fieldEnergy - snap.fieldEnergyDensitySum)).toBeLessThan(1e-12);
+        expect(Math.abs(snap.waveEnergy - snap.waveEnergyDensitySum)).toBeLessThan(1e-12);
         expect(snap.e0).not.toBe(snap.e20);
         expect(snap.baseline0).toBeGreaterThan(1000);
         expect(snap.baseline20).toBe(snap.baseline0);

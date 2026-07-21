@@ -1,4 +1,5 @@
 #include "ftd/lagrangian.h"
+#include "ftd/volumetric_measure.h"
 #include <cmath>
 #include <algorithm>
 
@@ -31,18 +32,19 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
         double dissip   = rayleigh_dissipation(v);
 
         // Accumulate per-term sums
-        d.field_kinetic_sum     += fk;
-        d.field_gradient_sum    += fg;
-        d.born_infeld_sum       += bi;
-        d.coupling_sum          += coup;
-        d.velocity_coupling_sum += vel_coup;
-        d.gauss_sum             += gauss;
-        d.dissipation_sum       += dissip;
+        d.field_kinetic_sum     += integrate_voxel_density(fk);
+        d.field_gradient_sum    += integrate_voxel_density(fg);
+        d.born_infeld_sum       += integrate_voxel_density(bi);
+        d.coupling_sum          += integrate_voxel_density(coup);
+        d.velocity_coupling_sum += integrate_voxel_density(vel_coup);
+        d.gauss_sum             += integrate_voxel_density(gauss);
+        d.dissipation_sum       += integrate_voxel_density(dissip);
 
         // Complete Lagrangian = field sector + interaction sector
         double L_site = fk + fg + bi + coup + vel_coup + gauss;
-        d.total_lagrangian += L_site;
-        d.total_hamiltonian += hamiltonian_density(v, divJ, rho);
+        d.total_lagrangian += integrate_voxel_density(L_site);
+        d.total_hamiltonian += integrate_voxel_density(
+            hamiltonian_density(v, divJ, rho));
 
         // Gauss constraint violation
         double gauss_v = divJ - rho;
@@ -51,7 +53,8 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
 
         // Conservation checks
         d.total_flux_mag += v.density();
-        d.total_wave_energy += v.wave_vel.mag2() * 0.5;
+        d.total_wave_energy += integrate_voxel_density(
+            quadratic_field_energy_density(v.wave_vel.mag2()));
 
         // Counters
         if (v.state != 0) {
@@ -60,7 +63,7 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
         }
     }
 
-    // Discrete action = total Lagrangian (single time-slice contribution)
+    // Discrete action = volume-integrated Lagrangian (one time slice).
     d.total_action = d.total_lagrangian;
 
     return d;

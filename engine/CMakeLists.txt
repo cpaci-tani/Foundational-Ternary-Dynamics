@@ -447,6 +447,10 @@ target_link_libraries(test_constants ftd_core)
 add_executable(test_audit_regression tests/test_audit_regression.cpp)
 target_link_libraries(test_audit_regression ftd_core)
 
+# FTD-0404: explicit D=3 cubic cell measure for volume-integrated diagnostics.
+ftd_add_test(test_volumetric_measure tests/test_volumetric_measure.cpp
+             CTEST_NAME volumetric_measure LABELS unit physics)
+
 # Phase 4 PRE-FLIGHT regression gate (2026-04-27)
 # Before any phase extraction is allowed out of render_bridge.cpp, every
 # extraction commit MUST reproduce the byte-hash captured in this test.

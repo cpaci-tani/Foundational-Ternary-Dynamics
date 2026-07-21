@@ -6,6 +6,7 @@
 #include "ftd/poisson_solvers.h"
 #include "ftd/constants.h"
 #include "ftd/parallel.h"
+#include "ftd/volumetric_measure.h"
 #include <algorithm>
 #include <cmath>
 
@@ -272,8 +273,9 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
 
   // [IMPOSED] Gravitating density = M_GRAVITATIONAL·|state| plus, when
   // include_field_energy is set, the local field-energy density
-  // ½(|J|²+|wave_vel|²) — the same ½|·|² convention as the energy audit
-  // (diagnostics_compute.cpp). Motivated by GR sourcing gravity from the full
+  // ½(|J|²+|wave_vel|²). This is T00 at a site, not its volume-integrated
+  // cell energy; the explicit V_cell factor belongs in spatial totals, not
+  // in this local Poisson source. Motivated by GR sourcing gravity from the full
   // stress-energy so a flux-only configuration (e.g. a gravity wave) carries a
   // real potential; the coupling is imposed in the engine, not derived.
   double rho_sum = M_GRAVITATIONAL * static_cast<double>(state.manifested_count());
@@ -283,7 +285,8 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
     // floated value here is not gauge-cancelled and reaches voxel latency.
     double field_energy_sum = 0.0;
     for (int i = 0; i < N; ++i) {
-      field_energy_sum += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
+      field_energy_sum += local_field_wave_energy_density(
+          voxels[i].flux.mag2(), voxels[i].wave_vel.mag2());
     }
     rho_sum += field_energy_sum;
   }
@@ -293,7 +296,8 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   for (int i = _lo; i < _hi; ++i) {
     double rho = M_GRAVITATIONAL * std::abs(state.state_at(i));
     if (include_field_energy)
-      rho += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
+      rho += local_field_wave_energy_density(
+          voxels[i].flux.mag2(), voxels[i].wave_vel.mag2());
     sor_source[i] = FOUR_PI_G * (rho - mean_rho);
   }
   });

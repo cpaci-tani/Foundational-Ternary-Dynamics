@@ -76,6 +76,14 @@ static void compare_audits(const EnergyAudit& cpu, const EnergyAudit& gpu,
     CHECK_CLOSE(gpu.particle_energy, cpu.particle_energy,
                 std::abs(cpu.particle_energy) * e_tol + 1e-10,
                 (label + " particle energy").c_str());
+    CHECK(gpu.cell_volume == cpu.cell_volume,
+          (label + " cell volume").c_str());
+    CHECK_CLOSE(gpu.field_energy_density_sum, cpu.field_energy_density_sum,
+                std::abs(cpu.field_energy_density_sum) * e_tol + 1e-10,
+                (label + " field energy-density sum").c_str());
+    CHECK_CLOSE(gpu.wave_energy_density_sum, cpu.wave_energy_density_sum,
+                std::abs(cpu.wave_energy_density_sum) * e_tol + 1e-10,
+                (label + " wave energy-density sum").c_str());
     CHECK(gpu.manifested_count == cpu.manifested_count,
           (label + " particle count").c_str());
     CHECK(gpu.charge_total == cpu.charge_total,

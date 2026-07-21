@@ -20,11 +20,13 @@
  * Convention reminder (CONTRACTS.md §6 Energy Convention Contract):
  * field_energy / wave_energy / E_L_total / E_R_total / wv_L_total /
  * wv_R_total / E_field_energy / B_field_energy all carry the canonical
- * ½·|·|² factor. coulomb_pe carries the canonical ½ in the Σ q·φ form.
+ * ½·|·|² local density and the explicit cubic VOXEL_VOLUME measure.
+ * coulomb_pe carries the canonical ½ in the Σ q·φ form.
  */
 
 #include <cstdint>
 #include "voxel.h"  // Vec3 lives here (no separate vec3.h yet)
+#include "volumetric_measure.h"
 
 namespace ftd {
 
@@ -73,8 +75,8 @@ struct GravityMetricAgg {
 };
 
 struct EnergyAudit {
-    double field_energy = 0.0;     // ½·sum |J|^2 over all sites (canonical ½ convention)
-    double wave_energy = 0.0;      // ½·sum |wave_vel|^2 over all sites
+    double field_energy = 0.0;     // sum [½|J|² · V_cell] over all sites
+    double wave_energy = 0.0;      // sum [½|wave_vel|² · V_cell] over all sites
     double particle_ke = 0.0;      // sum (gamma_0-1)·E_REST
     double total_energy = 0.0;     // accounted total: field + wave + particle energy
     double gauss_violation = 0.0;  // sum |div(J) - state|^2
@@ -107,6 +109,13 @@ struct EnergyAudit {
     double particle_energy = 0.0;
     Vec3 particle_momentum;
     double dynamic_energy = 0.0;
+
+    // FTD-0404 append-only density/integral metadata. At the production
+    // unit edge V_cell=1, so the density sums equal their integrated channels
+    // exactly; keeping both names prevents that unit choice becoming ontology.
+    double cell_volume = VOXEL_VOLUME;
+    double field_energy_density_sum = 0.0;
+    double wave_energy_density_sum = 0.0;
 };
 
 /**

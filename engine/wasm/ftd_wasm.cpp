@@ -190,6 +190,9 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     result.set("particleRestEnergy", ea.particle_rest_energy);
     result.set("particleEnergy",     ea.particle_energy);
     result.set("dynamicEnergy",      ea.dynamic_energy);
+    result.set("cellVolume",         ea.cell_volume);
+    result.set("fieldEnergyDensitySum", ea.field_energy_density_sum);
+    result.set("waveEnergyDensitySum",  ea.wave_energy_density_sum);
     val momentum = val::object();
     momentum.set("x", ea.particle_momentum.x);
     momentum.set("y", ea.particle_momentum.y);
@@ -198,7 +201,7 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     return result;
 }
 
-static std::vector<double> s_audit_cache(25);
+static std::vector<double> s_audit_cache(28);
 val get_energy_audit_view(ftd::RenderBridge& rb) {
     auto ea = rb.energy_audit();
     s_audit_cache[0] = ea.field_energy;
@@ -227,7 +230,11 @@ val get_energy_audit_view(ftd::RenderBridge& rb) {
     s_audit_cache[22] = ea.particle_momentum.y;
     s_audit_cache[23] = ea.particle_momentum.z;
     s_audit_cache[24] = ea.dynamic_energy;
-    return val(typed_memory_view(25, s_audit_cache.data()));
+    // Append-only FTD-0404 contract: indices 0..24 retain their meanings.
+    s_audit_cache[25] = ea.cell_volume;
+    s_audit_cache[26] = ea.field_energy_density_sum;
+    s_audit_cache[27] = ea.wave_energy_density_sum;
+    return val(typed_memory_view(28, s_audit_cache.data()));
 }
 
 // ── Lagrangian Extraction (full with constraints) ───────────────────
@@ -256,10 +263,11 @@ val get_lagrangian(ftd::RenderBridge& rb) {
     // Counters
     result.set("manifested",      lag.manifested_count);
     result.set("locked",          lag.locked_count);
+    result.set("cellVolume",      lag.cell_volume);
     return result;
 }
 
-static std::vector<double> s_lag_cache(16);
+static std::vector<double> s_lag_cache(17);
 val get_lagrangian_view(ftd::RenderBridge& rb) {
     auto lag = ftd::compute_lagrangian_diagnostics(rb);
     s_lag_cache[0] = lag.field_kinetic_sum;
@@ -278,7 +286,9 @@ val get_lagrangian_view(ftd::RenderBridge& rb) {
     s_lag_cache[13] = lag.total_wave_energy;
     s_lag_cache[14] = lag.manifested_count;
     s_lag_cache[15] = lag.locked_count;
-    return val(typed_memory_view(16, s_lag_cache.data()));
+    // Append-only FTD-0404 contract: indices 0..15 retain their meanings.
+    s_lag_cache[16] = lag.cell_volume;
+    return val(typed_memory_view(17, s_lag_cache.data()));
 }
 
 // ── Voxel Inspection ────────────────────────────────────────────────
