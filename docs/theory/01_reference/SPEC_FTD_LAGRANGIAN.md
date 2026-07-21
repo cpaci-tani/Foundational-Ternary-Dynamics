@@ -94,6 +94,8 @@ $$v(\mathbf{v}, t) \;=\; \frac{|\Delta_t \mathbf{J}(\mathbf{v}, t)|}{K_B}, \qqua
 
 where $K_B$ is the manifestation threshold (see §3.3), and the velocity $v$ is measured in units of $K_B$ (the rest energy scale). The constraint $v < f$ is the lattice speed limit.
 
+**FTD-0401 normalization amendment (2026-07-21):** the algebra below is a `c=1` algebra only if `v` is a dimensionless velocity such as $\beta=|u|/c_{\rm lat}$. The live `Voxel::velocity` is instead documented and moved as raw $u$ in nodes/tick, with $c_{\rm lat}=C_{\rm SPEED}=1/\sqrt3$. The force integrator divides by `C_SPEED`; `gamma_ftd()`, `born_infeld_core()`, and `proper_time_rate()` do not. No implementation map identifies the raw transport velocity with this section's normalized `v`. Consequently the formulas remain conditional algebra, while their current-engine kinematic and mass-energy identification is **[OPEN — scoped no-go under the present normalization map]**. See [`AUDIT_C_SPEED_MASS_NORMALIZATION.md`](../07_assessment/AUDIT_C_SPEED_MASS_NORMALIZATION.md), FTD-0401.
+
 ### 3.3 The Action Functional
 
 The total action is a sum over all lattice sites and time steps:
@@ -226,17 +228,17 @@ $$\nabla_L^2\,\mathcal{L} = 4\pi G\,\rho_\text{mass}$$
 
 **This is Poisson's equation**, derived from the action — not postulated. For arbitrarily fine lattice spacing, it is the time-time component of the linearized Einstein equations. $\square$
 
-### 4.3 Proper Time [THEOREM]
+### 4.3 Proper Time [CONDITIONAL ALGEBRA — clock axiom + normalized velocity]
 
-The proper time per coordinate tick follows from the Born-Infeld core. The action of a free particle ($s = 0$, no constraint term) is $S = -K_B \sum_t \sqrt{(f^2-v^2)/f}$. By the Clock Hypothesis (which v3 audit [AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) proved is an independent, non-derivable coordinate-level **[AXIOM]** incompatible with Scale 0 substrate primitives), $d\tau \propto \sqrt{(f^2-v^2)/f}\,dt$, giving:
+Given the Clock Hypothesis and a dimensionless $v=\dot r/c$, the proper-time algebra follows from the Born-Infeld core. The action of a free particle ($s = 0$, no constraint term) is $S = -K_B \sum_t \sqrt{(f^2-v^2)/f}$. The v3 audit [AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) proved that hypothesis is an independent, non-derivable coordinate-level **[AXIOM]** incompatible with Scale 0 substrate primitives. Conditional on it and on the normalized-velocity map:
 
 $$\frac{d\tau}{dt} = \frac{1}{\gamma_\text{FTD}} = \frac{\sqrt{f^2-v^2}}{\sqrt{f}} = \sqrt{f - \frac{v^2}{f}}$$
 
-With $f = 1 - r_s/r$ (Schwarzschild identification), this is **exactly** the proper time of the Schwarzschild metric:
+With $f = 1 - r_s/r$ (Schwarzschild identification) and $v=\dot r/c$, this is algebraically the proper time of the Schwarzschild metric:
 
 $$ds^2 = f\,c^2\,dt^2 - \frac{dr^2}{f} - r^2\,d\Omega^2 \implies \frac{d\tau}{dt}\bigg|_\text{radial} = \sqrt{f - \frac{\dot{r}^2}{f\,c^2}}$$
 
-The agreement is exact for all $f \in (0, 1]$ and all $v \in [0, f)$. $\square$
+The agreement is exact for the normalized variable over $f \in (0, 1]$ and $v \in [0, f)$. FTD-0401 proves that the current engine passes raw nodes/tick instead, so this conditional identity is not an implementation theorem. $\square$
 
 ---
 
@@ -244,9 +246,11 @@ The agreement is exact for all $f \in (0, 1]$ and all $v \in [0, f)$. $\square$
 
 ### 5.1 Special Relativity ($\mathcal{L} = 0 \implies f = 1$)
 
-$$\mathcal{L}_\text{matter} \to -K_B\sqrt{1-v^2}, \qquad \gamma_\text{FTD} = \frac{1}{\sqrt{1-v^2}} = \gamma_\text{SR}$$
+In explicitly normalized coordinates $v=\beta=u/c_{\rm lat}$,
 
-All of special relativity follows: time dilation, length contraction, relativistic momentum $\mathbf{p} = m\gamma\mathbf{v}$, energy $E = m\gamma c^2$.
+$$\mathcal{L}_\text{matter} \to -K_B\sqrt{1-\beta^2}, \qquad \gamma_\text{FTD} = \frac{1}{\sqrt{1-\beta^2}} = \gamma_\text{SR}$$
+
+The standard special-relativistic identities then follow conditionally. They do not follow from inserting the raw live-engine `Voxel::velocity` into the same `c=1` expression; that missing map is FTD-0401.
 
 ### 5.2 Gravitational Time Dilation ($v = 0$)
 
@@ -256,7 +260,7 @@ With $\mathcal{L}^2 = r_s/r$: $d\tau/dt = \sqrt{1 - r_s/r}$. This is standard Sc
 
 ### 5.3 Full Schwarzschild (arbitrary $v$, $\mathcal{L}$)
 
-$$\frac{d\tau}{dt} = \sqrt{f - \frac{v^2}{f}}, \qquad f = 1 - \frac{r_s}{r}$$
+$$\frac{d\tau}{dt} = \sqrt{f - \frac{\beta^2}{f}}, \qquad \beta=\frac{\dot r}{c}, \qquad f = 1 - \frac{r_s}{r}$$
 
 Exact Schwarzschild for all $f \in (0,1]$.
 
@@ -357,9 +361,9 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM conditional on clock-hypothesis AXIOM]** *(audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is structurally incompatible with Scale 0 discrete primitives and must be posited as an independent macroscopic **[AXIOM]**; this theorem holds exactly conditional on that axiom; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
+| L-1 | Born-Infeld core reproduces Schwarzschild proper-time algebra when its velocity argument is $\beta=\dot r/c$ | **[CONDITIONAL THEOREM — clock-hypothesis AXIOM + explicit normalized-velocity map]**; FTD-0401 proves the current raw engine interface lacks that map |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
-| L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
+| L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[CONDITIONAL THEOREM in normalized coordinates]**; current-engine `gamma_ftd()` is not the transport gamma (FTD-0401) |
 
 | L-4 | Gauss constraint ($\lambda_G \to \infty$) generates U(1) gauge symmetry | **[THEOREM]** |
 | L-5 | Lattice Green's function $G_L = 1/\hat{k}^2$ is the Euclidean QFT propagator | **[THEOREM]** |
@@ -370,7 +374,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 | L-10 | Velocity coupling $-g_c\,s\,(\mathbf{v}\cdot\mathbf{J})$ produces lattice Lorentz force | **[THEOREM]** |
 | L-11 | Rayleigh dissipation $R = (\alpha/2)\lVert\mathbf{v}_\text{wave}\rVert^2$ with $\gamma = \alpha$ | **[IMPOSED]** |
 
-**Epistemic breakdown: 8 [THEOREM], 2 [SELECTION], 0 [CONJECTURE], 1 [IMPOSED].**
+**Epistemic breakdown after FTD-0401:** 6 unconditional `[THEOREM]`, 2 `[CONDITIONAL THEOREM]` (L-1/L-3), 2 `[SELECTION]`, 0 `[CONJECTURE]`, 1 `[IMPOSED]`.
 
 ---
 

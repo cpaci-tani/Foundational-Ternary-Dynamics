@@ -34,10 +34,12 @@ inline constexpr double K_B = 0.511;
 // ── FTD-0130 role disentanglement (unified-mass Phase 0, 2026-06-06) ──────────
 // K_B conflated four roles. Split here into named constants so the genuinely-
 // independent genesis kinetics can vary without perturbing the rest-mass scale.
-// The FTD action forces the rest/inertial/gravitational roles to be ONE number
-// (SPEC_FTD_LAGRANGIAN §4.1↔§4.2), so those stay fused as M_REST; only
-// K_MANIFEST is independent — and since FTD-0388 it actually differs (below).
-inline constexpr double M_REST     = K_B;   // rest = inertial = gravitational mass quantum (= m_e); UNTOUCHED by FTD-0388
+// The current engine IMPOSes one raw scalar for the rest/inertial/gravitational
+// roles. FTD-0400 shows that no common energy-momentum object derives the
+// fusion; FTD-0401 shows that c_lat²=1/3 requires an explicit mass↔rest-energy
+// conversion in raw tick coordinates. Keep the value behavior-preserving
+// pending that owner decision; do not read the literal equality as derived.
+inline constexpr double M_REST     = K_B;   // imposed fused scalar (= m_e calibration); roles unresolved by FTD-0400/0401
 
 // K_MANIFEST := W_SC, the substrate's unit-charge Gauss self-energy
 // [SELECTION — ADOPTED, FTD-0388, owner ruling 2026-07-17]. The identification

@@ -113,7 +113,7 @@ export const ALPHA_G_APPROX = 5.91e-39;
  * empirical electron mass.
  */
 export const K_B       = 0.511;                       // electron mass in MeV
-export const M_REST     = K_B;                        // rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0 (FTD-0130)
+export const M_REST     = K_B;                        // imposed fused scalar; mass/rest-energy/gravity roles unresolved (FTD-0400/0401)
 export const K_MANIFEST = 0.5054620197173260;         // := W_SC, unit-charge Gauss self-energy [SELECTION — ADOPTED, FTD-0388]; kinetics role only (was = K_B pre-2026-07-17; FTD-0130 role split)
 export const K_GENESIS = N_C * K_MANIFEST;            // genesis threshold = 3·W_SC = 1.5163860591519780 (kinetics, not mass; FTD-0388)
 export const C_SPEED   = 0.57735026918962576451;      // 1/sqrt(3) [DERIVED from CFL]

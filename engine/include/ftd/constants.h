@@ -158,7 +158,7 @@ using ontic::M_Z;
 
 // Layer 6: Mass scale
 using ontic::K_B;
-using ontic::M_REST;     // rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0
+using ontic::M_REST;     // imposed fused scalar (=K_B); role conversion unresolved by FTD-0400/0401
 using ontic::K_MANIFEST; // genesis/evaporation kinetics scale (= K_B); unified-mass Phase 0
 using ontic::K_GENESIS;
 

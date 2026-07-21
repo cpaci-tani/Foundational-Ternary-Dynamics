@@ -12,11 +12,13 @@
 //                                   normalization of the proper-time sector
 //     frozen clock (f ≤ 0 or f² ≤ v²)  ⇒  dτ/dt = 0
 //
-// NOTE the c = 1 normalization is the proper-time sector's own convention,
-// deliberately distinct from the transport cap |v| ≤ C_SPEED·√(1−L²) in
-// phase_forces.cpp — see the do-not-couple note there. This header does not
-// couple them; it makes the EXISTING clock the one clock every consumer
-// reads.
+// FTD-0401 NORMALIZATION GUARD (2026-07-21): speed2 is the raw
+// Voxel::velocity magnitude squared (nodes per tick), not beta². The c=1
+// formula below is therefore an unmapped legacy convention: transport uses
+// speed2/C_SPEED². This helper remains behavior-preserving pending an owner
+// choice of raw-lattice versus explicitly rescaled clock coordinates. Passing
+// one raw scalar to all consumers makes one IMPLEMENTED matter clock; it does
+// not establish covariance with the C_SPEED=1/sqrt(3) causal cone.
 //
 // Consumers (keep this list current):
 //   - accumulate_proper_time (transmutation_phases.cpp): v.tau += dτ, and the
@@ -29,9 +31,10 @@
 //     2026-07-18: 1,355 paired voxels, zero decay-tick differences across a
 //     latency contrast of 0.62 — matter aged on tick time while the motion
 //     sector ran on τ) and the owner's ruling on its decision point. With
-//     this factor, decay statistics ARE proper-time clocks: a metastable
-//     population in a well decays slower by √(1−L²) at rest, and a moving
-//     population by the SR factor — the muon-storage-ring behaviour.
+//     this factor, decay statistics consume this SAME legacy matter-clock
+//     rate. The static √(1−L²) result is unaffected by FTD-0401; the moving
+//     SR interpretation is suspended until C_SPEED normalization is
+//     reconciled.
 //   - Genesis is deliberately NOT a consumer: manifestation is a
 //     field-sector nucleation process at void sites (no τ to integrate);
 //     whether nucleation should dilate in a well is a separate [OPEN]

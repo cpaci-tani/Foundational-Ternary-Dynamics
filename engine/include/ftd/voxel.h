@@ -126,10 +126,10 @@ struct Voxel {
   double tau = 0.0;
 
   // FTD-0271 (A5): de Broglie clock phase φ, advanced as dφ = ω₀·dτ when the
-  // de_broglie_clock toggle is ON. Sources the clock's *covariant rate* from
-  // FTD's own (FTD-0252-measured) proper-time dilation √(1−v²), leaving only
-  // the scalar ω₀∝M_REST imposed. Read-only diagnostic; NOT mixed into the
-  // golden state hash, so adding it is golden-neutral.
+  // de_broglie_clock toggle is ON. FTD-0401: the phase inherits the legacy
+  // c=1 matter-clock rate, but that rate is not mapped to raw C_SPEED=1/√3
+  // transport and is not licensed by FTD-0252. Read-only diagnostic; NOT
+  // mixed into the golden state hash, so adding it is golden-neutral.
   double phase = 0.0;
 
   // Is this voxel part of a bound structure?
@@ -189,9 +189,8 @@ struct Voxel {
 
   double speed() const { return velocity.mag(); }
 
-  // Bandwidth used: v²/f when latency active, else v².
-  // When latency_field is ON, the effective speed limit is f = 1 - L²,
-  // so bandwidth = v²/f measures fraction of available bandwidth consumed.
+  // Legacy c=1 bandwidth diagnostic. FTD-0401: velocity is raw nodes/tick,
+  // while transport uses v²/C_SPEED²; no conversion is applied here.
   double bandwidth_used() const {
     double v2 = speed() * speed();
     if (latency == 0.0) return v2; // fast path — no gravitational potential
@@ -199,8 +198,8 @@ struct Voxel {
     return (f > 0.0) ? v2 / f : 1.0;
   }
 
-  // Generalized Lorentz factor: γ = √f / √(f² - v²) when latency active.
-  // Reduces to standard 1/√(1-v²) when L=0.
+  // Legacy c=1 gamma diagnostic. It is not the transport integrator's gamma,
+  // which uses v²/C_SPEED² (FTD-0401 UNMAPPED-DUAL-NORMALIZATION).
   double gamma_ftd() const {
     if (latency == 0.0) {
       double bw = speed() * speed();
@@ -215,8 +214,8 @@ struct Voxel {
     return std::sqrt(f) / std::sqrt(arg);
   }
 
-  // Born-Infeld core: -M_REST · √(f² - v²)/√f when latency active.
-  // Reduces to standard -M_REST·√(1-v²) when L=0. (M_REST = K_B; rest-mass role.)
+  // Legacy c=1 Born-Infeld diagnostic. Physical rest/kinetic interpretation
+  // is suspended by FTD-0401 until raw velocity and M_REST roles are mapped.
   double born_infeld_core() const {
     if (latency == 0.0) {
       double bw = speed() * speed();
