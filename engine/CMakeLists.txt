@@ -1457,6 +1457,12 @@ ftd_add_test(campaign_hedgehog_charge_robustness tests/campaign_hedgehog_charge_
              CTEST_NAME hedgehog_charge_robustness TIMEOUT 1800
              LABELS native eft mass)
 
+# FTD-0398: terminal transport/destruction test for the same registered
+# octahedral Berg--Luescher convention, on scaled shells R=1..6 and t=0..8.
+ftd_add_test(campaign_topological_charge_transport tests/campaign_topological_charge_transport.cpp
+             CTEST_NAME topological_charge_transport TIMEOUT 1800
+             LABELS native eft mass)
+
 # Do genuinely different flux configurations manifest to the identical
 # discrete (state, color, spin) readout? Deterministic extension of the
 # already-locked seed-diversity protocol; no new stochastic design choice,
