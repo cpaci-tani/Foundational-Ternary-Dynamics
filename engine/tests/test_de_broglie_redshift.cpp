@@ -1,8 +1,10 @@
 // ============================================================================
 // test_de_broglie_redshift.cpp  (FTD-0271 Phase A5, 2026-06-11)
 // ----------------------------------------------------------------------------
-// Verifies the [IMPOSED]->[SELECTION] half of the de Broglie clock: the clock's
-// COVARIANT RATE is sourced by FTD's own proper-time, not imposed by hand.
+// Verifies implementation wiring for the legacy c=1 de Broglie clock rule.
+// FTD-0401 reclassifies this as a self-consistency test, not evidence of a
+// covariant rate: Voxel::velocity is raw nodes/tick and the causal transport
+// speed is C_SPEED=1/sqrt(3), but the expectation below omits v/C_SPEED.
 //
 // accumulate_proper_time (engine/src/transmutation_phases.cpp) integrates, per
 // manifested voxel,
@@ -17,11 +19,10 @@
 //
 //     d(tau) = sqrt(1 - v^2),     d(phi) = omega0 * sqrt(1 - v^2).
 //
-// So a MOVING clock advances SLOWER than a static one by exactly the special-
-// relativistic factor sqrt(1 - v^2) — the de Broglie clock red-shift. FTD-0252
-// independently MEASURED that this proper-time clock dilates as sqrt(1 - v^2);
-// here we confirm the clock phase inherits it, so only the scalar omega0 is
-// imposed (the covariant behaviour is FTD-native).
+// So the IMPLEMENTED clock advances slower by its declared legacy
+// sqrt(1-v_raw^2) rule. FTD-0252 is independent and not a license for this
+// normalization: it used v=v_g/C_WAVE and never read voxel.tau. The physical
+// moving-clock interpretation remains open after FTD-0401.
 //
 // ── Discriminator ───────────────────────────────────────────────────────────
 //   RS-1  static clock ticks at omega0:  phi_static = omega0 * N  (within ~1%).
@@ -45,7 +46,7 @@ namespace ftd {
 namespace test {
 
 void test_de_broglie_clock_redshift() {
-    section("RS: de Broglie clock red-shifts as sqrt(1-v^2) (covariant rate from proper-time)");
+    section("RS: legacy c=1 de Broglie clock wiring is self-consistent");
 
     const int    L      = 12;
     const double omega0 = 0.3;
@@ -92,14 +93,13 @@ void test_de_broglie_clock_redshift() {
           "phase wiring d(phi)=omega0*d(tau) is wrong, or accumulate_proper_time "
           "did not run with the clock on (latency_field is off).");
 
-    // RS-2: the moving clock red-shifts by exactly sqrt(1-v^2).
+    // RS-2: implementation reproduces its frozen legacy c=1 formula.
     const double meas_ratio = (phi_static != 0.0) ? phi_moving / phi_static : 0.0;
     const double rel_ratio  = std::abs(meas_ratio - expected_ratio) / expected_ratio;
-    check("RS-2: phi_moving/phi_static == sqrt(1-v^2) within 1% (covariant clock rate)",
+    check("RS-2: phi_moving/phi_static == legacy sqrt(1-v_raw^2) within 1%",
           rel_ratio < 0.01,
-          "The moving clock's phase ratio did not match the special-relativistic "
-          "sqrt(1-v^2): the clock rate is NOT inheriting FTD's proper-time "
-          "dilation (FTD-0252), so the covariant half is not FTD-sourced.");
+          "The moving clock's phase ratio did not match its frozen legacy "
+          "sqrt(1-v_raw^2) implementation rule.");
 
     // RS-3: the moving clock is genuinely slower (non-vacuous ordering).
     check("RS-3: phi_moving < phi_static (the moving clock runs slow)",

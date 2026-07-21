@@ -282,9 +282,9 @@ function renderCardD(container, vImposed) {
 
 // Card E — de Broglie internal clock (FTD-0271). The manifested cluster carries
 // a Klein-Gordon rest-mass clock: dφ/dt = ω₀·dτ/dt, so the internal phase φ
-// winds at ω₀ at rest and RED-SHIFTS as √(1−v²) when moving — the same dilation
-// Card D shows, now driving a particle's own clock. ω₀∝M_REST is [IMPOSED]
-// (FTD's native flux is massless); the covariant rate is FTD-sourced (FTD-0252).
+// winds at ω₀ at rest and follows the legacy √(1−v_raw²) rule when moving.
+// FTD-0401: v_raw is nodes/tick while the cone is C_SPEED=1/√3; this is an
+// unmapped implementation clock, not the normalized FTD-0252 wave-clock rate.
 function renderCardE(container, db) {
     if (!db.hasData) {
         container.innerHTML = `<div class="time-empty">de Broglie clock idle — load the “De Broglie Clock (pilot wave)” scenario (or enable the de_broglie_clock toggle) and press play. The manifested cluster's flux then oscillates at ω₀.</div>`;
@@ -292,7 +292,7 @@ function renderCardE(container, db) {
     }
     const { active, omega0, phase, speed, clockRate } = db;
     const period = omega0 > 1e-9 ? (2 * Math.PI / omega0) : Infinity;
-    const redshift = omega0 > 1e-9 ? clockRate / omega0 : 1;   // = √(1−v²)
+    const redshift = omega0 > 1e-9 ? clockRate / omega0 : 1;   // legacy √(1−v_raw²)
     const TWO_PI = 2 * Math.PI;
     const phaseWrapped = ((phase % TWO_PI) + TWO_PI) % TWO_PI;   // clock-hand angle
     const turns = Math.floor(phase / TWO_PI);                    // completed cycles
@@ -302,10 +302,10 @@ function renderCardE(container, db) {
     html += row('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
     html += row('cycles ticked', String(turns), 'M', undefined, 'Completed clock cycles = ⌊φ/2π⌋ since the clock started.');
     html += row('Period 2π/ω₀', Number.isFinite(period) ? `${formatFixed(period, 2)} ticks` : '—', 'D', undefined, 'Rest-frame oscillation period of the cluster\'s flux.');
-    html += row('cluster speed v', formatFixed(speed, 4), 'M', undefined, 'Speed of the manifested cluster at the sampled voxel (units of c).');
-    html += row('dφ/dt = ω₀·√(1−v²)', formatFixed(clockRate, 5), 'M', undefined, 'Local clock rate: the internal phase winds slower for a moving cluster. dτ/dt is FTD\'s own measured proper-time (FTD-0252).');
-    html += row('clock red-shift √(1−v²)', formatFixed(redshift, 5), 'M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'The moving clock\'s slowdown vs a rest clock — the de Broglie clock inheriting the Card-D time dilation. =1 at rest.');
-    html += `<div class="time-provenance" title="Schrödinger + de Broglie are textbook Klein-Gordon consequences of the imposed clock; confirming them on the lattice is correctness, not an FTD derivation. The covariant clock RATE is FTD-sourced (FTD-0252 measured dτ/dt∝√(1−v²)).">${tagBadge('CONDITIONAL')}ω₀∝M_REST is IMPOSED; de Broglie λ∝1/v is a Klein-Gordon identity given the clock — not an FTD prediction. The covariant rate is FTD-sourced (FTD-0252).</div>`;
+    html += row('cluster speed v_raw', formatFixed(speed, 4), 'M', undefined, 'Raw manifested-cluster speed in nodes/tick. It is not β=v/C_SPEED (FTD-0401).');
+    html += row('legacy dφ/dt', formatFixed(clockRate, 5), '~M', undefined, 'Implemented ω₀·√(1−v_raw²) clock rate. FTD-0401: this is not normalized to the C_SPEED=1/√3 causal cone.');
+    html += row('legacy clock ratio', formatFixed(redshift, 5), '~M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'Implementation ratio √(1−v_raw²). Physical moving-clock covariance is unestablished until v_raw/C_SPEED is mapped.');
+    html += `<div class="time-provenance" title="FTD-0401: the raw matter clock and derived causal speed use different normalizations. FTD-0252 normalized v_g/C_WAVE and never read voxel.tau.">${tagBadge('IMPOSED')}ω₀ and the moving-clock normalization are IMPOSED. The displayed legacy ratio is implementation telemetry, not a covariant prediction.</div>`;
     container.innerHTML = html;
 }
 
@@ -320,7 +320,7 @@ function buildPanel() {
         b: 'Measured proper-time rate dτ/dt as a function of radius from the mass center (solid [~M]) vs a weak-field prediction curve (dashed [D]), with a residual. Clocks slow toward the well.',
         c: 'Two fixed probes — deep (near the mass) and far (near the box edge) — each accumulate proper time τ = Σ√f·dt. The far clock outruns the deep clock; Δτ is the live twin/GPS offset.',
         d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: the departure from exact γ vanishes as L⁻² — γ emerges in the IR.',
-        e: 'The de Broglie internal clock (FTD-0271). With the de_broglie_clock toggle on, the manifested cluster carries a Klein-Gordon rest-mass clock: its internal phase φ winds at dφ/dt = ω₀·dτ/dt — ω₀ at rest, red-shifting as √(1−v²) when moving (the Card-D dilation now ticking a particle\'s own clock). ω₀∝M_REST is [IMPOSED] (native flux is massless); the covariant rate is FTD-sourced [M] (FTD-0252). [CONDITIONAL] — not an FTD prediction.',
+        e: 'The imposed de Broglie internal clock (FTD-0271). Its phase uses the legacy raw-velocity matter-clock rule. FTD-0401 proves that rule is not mapped to C_SPEED=1/√3 transport; FTD-0252 used a separately normalized wave clock. This card is implementation telemetry, not evidence of physical covariance.',
     };
     root.innerHTML = `
         <header class="time-header">

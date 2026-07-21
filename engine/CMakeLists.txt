@@ -419,8 +419,8 @@ ftd_add_test(test_cluster_inertia tests/test_cluster_inertia.cpp
 # FTD-0271 (2026-06-11): de Broglie internal clock. The de_broglie_clock toggle
 # adds the Klein-Gordon mass term -omega0^2*J at manifested voxels (phase_read).
 # Phase A: a static cluster's flux oscillates at omega0 (k=0 rest mode).
-# Phase A5: the clock phase d(phi)=omega0*d(tau) red-shifts as sqrt(1-v^2),
-# sourcing the covariant clock rate from FTD's own proper-time (FTD-0252).
+# Phase A5: d(phi)=omega0*d(tau) verifies the legacy c=1 clock wiring;
+# physical moving-clock covariance was withdrawn by FTD-0401.
 ftd_add_test(test_de_broglie_clock tests/test_de_broglie_clock.cpp
              CTEST_NAME de_broglie_clock TIMEOUT 120 LABELS unit quantum)
 ftd_add_test(test_de_broglie_redshift tests/test_de_broglie_redshift.cpp

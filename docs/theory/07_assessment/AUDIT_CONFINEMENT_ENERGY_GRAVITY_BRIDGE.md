@@ -19,14 +19,14 @@ This is a no-go for the present dataflow, not for confinement-generated mass in 
 
 ## 1. The bridge that would be required
 
-For an isolated lattice excitation, a target-blind mass definition requires one conserved energy–momentum pair
+For an isolated lattice excitation, a target-blind mass definition requires one conserved energy–momentum pair in a declared coordinate convention. In raw engine lattice units this is
 
 \[
-P^\mu=(E/c,\mathbf P),\qquad
-M^2c^4=E^2-c^2|\mathbf P|^2.
+E^2=(M c_{\rm lat}^2)^2+c_{\rm lat}^2|\mathbf P|^2,
+\qquad c_{\rm lat}=C_{\rm SPEED}=1/\sqrt3.
 \]
 
-In the centre-of-momentum frame, `P=0` and `Mc²=E`. A confining sector creates mass only in the precise sense that its dynamics admits a localized state with a nonzero, history-independent minimum of this same `E`. Gravity then couples to the corresponding stress–energy, not to a separately attached mass label.
+In the centre-of-momentum frame, `P=0` and `M c_lat²=E`. A confining sector creates mass only in the precise sense that its dynamics admits a localized state with a nonzero, history-independent minimum of this same `E`. Gravity then couples to the corresponding stress–energy, not to a separately attached mass label. FTD-0401 subsequently proved that the current engine lacks the explicit raw-velocity and mass/rest-energy normalization needed even to instantiate this equation; its Causal Normalization and Mass-Role gate now precedes NCEMC.
 
 At minimum, one common strong-sector Hamiltonian contribution `H_strong` must satisfy all three interfaces:
 
@@ -51,7 +51,7 @@ If the force acts while `H_strong` is missing from either of the latter interfac
 | GPU latency source | `M_REST·|s|` only in [`kernels_poisson.cu`](../../../engine/cuda/kernels_poisson.cu) | CPU/GPU gravitational source contracts differ when field-energy gravity is requested. |
 | ParticleEngine | Strong force acts, while `total_pe = coulomb_pe + gravity_pe` in [`particle_engine.cpp`](../../../engine/src/particle_engine.cpp) | Its active strong interaction also lacks potential-energy bookkeeping. |
 | Long-range law | RenderBridge uses harmonic `F∝r`; ParticleEngine uses constant `F=σ` | There is no engine-wide canonical confinement Hamiltonian to couple. |
-| Momentum observable | RenderBridge exposes a Poynting proxy but no complete field-plus-particle total momentum | The invariant `E²-c²P²` cannot be formed target-blindly. |
+| Momentum observable | RenderBridge exposes a Poynting proxy but no complete field-plus-particle total momentum | The native invariant `E²-c_lat²P²` cannot be formed target-blindly. |
 
 These are source facts, not interpretations. The verifier [`audit_confinement_energy_gravity_bridge.py`](../../../scripts/proofs/audit_confinement_energy_gravity_bridge.py) recomputes all twelve contracts and returns `SPLIT-BOOKKEEPING`.
 
@@ -63,7 +63,7 @@ Assume a current-engine campaign reports a mass change after enabling colour con
 - If it reads CPU latency, the source contains `M_REST·|s|` and optionally ordinary `J/wave_vel` energy, not the strong interaction energy that generated the colour force.
 - If it reads `EnergyAudit.total_energy` or the `EnergyLedger`, the active colour interaction has no potential term in the reported total.
 - If it uses GPU `strong_energy`, that quantity excludes strong wave energy, is excluded from total energy, and is excluded from the GPU latency source.
-- If it attempts `M²=E²-c²P²`, RenderBridge has no complete total-momentum observable and its `E` omits the strong interaction.
+- If it attempts the native invariant `E²=(M c_lat²)²+c_lat²P²`, RenderBridge has no complete total-momentum observable, its `E` omits the strong interaction, and FTD-0401 shows its `M_REST` roles are not normalized consistently.
 
 Every available route therefore imports at least one of the desired conclusions through a separate path. No arrangement of current toggles closes the triangle.
 
@@ -97,16 +97,16 @@ FTD-0391/0399 found that the tested birth histories do not yet supply that invar
 
 ## 6. Native Confinement Energy–Momentum Contract
 
-The smallest honest prerequisite for reopening a mass measurement is a **Native Confinement Energy–Momentum Contract (NCEMC)**. This is a requirement, not a new framework type or an adopted law.
+After FTD-0401's Causal Normalization and Mass-Role gate is resolved, the smallest honest confinement prerequisite is a **Native Confinement Energy–Momentum Contract (NCEMC)**. This is a requirement, not a new framework type or an adopted law.
 
 1. **NCEMC-1 — one Hamiltonian:** define one backend-independent `H_strong` whose lattice variation reproduces the active colour force. Remove the RenderBridge/ParticleEngine long-range-law mismatch or declare one engine out of scope.
 2. **NCEMC-2 — exact work accounting:** with damping, genesis, evaporation, gravity, and external forcing off, colour-force work must exchange exactly with `H_strong`; it must appear in the canonical energy ledger.
 3. **NCEMC-3 — total momentum:** define a translation-current or exact lattice momentum including ordinary fields, strong fields, interaction momentum, and manifested motion. It must close under internal forces.
 4. **NCEMC-4 — field-only gravity discriminator:** source the weak static gravitational potential from the same complete energy density with the independent `M_REST·|s|` term disabled. Beyond the static regime, include the corresponding momentum and stress components rather than `T00` alone.
-5. **NCEMC-5 — target-blind invariant:** only after 1–4 pass may independently prepared localized excitations be compared through `E²-c²P²`, inertial response, and far-field gravitational charge.
+5. **NCEMC-5 — target-blind invariant:** only after 1–4 pass may independently prepared localized excitations be compared through the declared-coordinate invariant `E²-c_lat²P²`, inertial response, and far-field gravitational charge.
 6. **NCEMC-6 — calibration boundary:** success can derive a lattice-unit gap and dimensionless ratios. It cannot derive a value in MeV without the FTD-0096 calibration interface.
 
-Running another mass campaign before NCEMC-1–4 exist would measure bookkeeping choices, not confinement-generated mass.
+Running another mass campaign before FTD-0401's normalization gate and NCEMC-1–4 exist would measure bookkeeping choices, not confinement-generated mass.
 
 ## 7. Epistemic disposition
 
@@ -117,7 +117,7 @@ Running another mass campaign before NCEMC-1–4 exist would measure bookkeeping
 - No framework commitment, selected type, calibration, constant, or production engine behavior changes.
 - **FTD-0400 closes only this question:** the current engine cannot establish the confinement-energy → inertial-mass → gravitational-source bridge because those roles are not represented by one conserved object.
 
-The next admissible work is contract construction or a proof that NCEMC cannot be satisfied by the present ontology—not another empirical mass readout.
+The next admissible work is FTD-0401 normalization reconciliation followed by contract construction, or a proof that the contracts cannot be satisfied by the present ontology—not another empirical mass readout.
 
 ## 8. Verification
 

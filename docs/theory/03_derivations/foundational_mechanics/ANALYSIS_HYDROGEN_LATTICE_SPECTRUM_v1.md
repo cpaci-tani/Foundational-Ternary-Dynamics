@@ -85,7 +85,7 @@ the lattice/reference ratio. Record grid (frozen): ω₀ = 1.5, q = {1.1170, 0.9
 |---|---|
 | 18-pt Laplacian, c² = 1/3 | engine axiom-level (theorem-grade symbol) |
 | Lattice Coulomb potential φ_G | **`[THEOREM]`** (OT-1.4 / Phase-G — the engine's own Gauss solution) |
-| Clock scalar ω₀ | **`[IMPOSED]`** (FTD-0271; covariant rate FTD-native; no ℏ in the substrate) |
+| Clock scalar ω₀ | **`[IMPOSED]`** (FTD-0271; moving-clock normalization also imposed after FTD-0401; no ℏ in the substrate) |
 | Scalar-potential coupling 2ω₀V | **`[IMPOSED — motivated]`** (the engine's gravity-clock move applied to φ; the flux wave does not natively feel φ — measured engine fact, and Leg 0's no-go is the same structural statement for the particle sector) |
 | q_eff (well depth / a₀ scale) | **`[IMPOSED]`** lattice-scale choice (α = 1/137 puts a₀ off-lattice); cross-checked by the F-B a₀-series |
 | Rydberg ladder, O_h multiplets, Coulombic binding | **derived given the above** (this run of record) |

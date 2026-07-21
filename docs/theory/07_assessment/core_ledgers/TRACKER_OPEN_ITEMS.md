@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-21 — FTD-0400 audited the confinement-energy → rest-mass → gravity bridge and returned SPLIT-BOOKKEEPING: no common current-engine strong Hamiltonian/energy–momentum object reaches colour dynamics, inertia, and gravity. Tracker §1.3 is reopened narrowly as NCEMC-1–4; no further mass readout is admissible before that contract exists. (Previous: 2026-07-20 — FTD-0398 terminal topology UNDERDETERMINED; FTD-0399 particlehood INVALID at manifestation portability.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc. **Engine code:** historical closure counts predate FTD-0400's narrowly reopened energy–momentum bridge contract; use the per-item statuses below rather than the old aggregate.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-21 — FTD-0401 returned UNMAPPED-DUAL-NORMALIZATION: raw nodes/tick velocity feeds both `C_SPEED=1/√3` transport and legacy `c=1` clock/Born–Infeld paths without conversion; the fused `M_REST` roles and unit-mass kinetic totals inherit the mismatch. Tracker §1.2 is reclassified to partial-closed/normalization-open, ahead of FTD-0400's NCEMC bridge. (Previous: FTD-0400 SPLIT-BOOKKEEPING; FTD-0398 terminal topology UNDERDETERMINED; FTD-0399 particlehood INVALID.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc. **Engine code:** historical closure counts predate FTD-0400/0401's narrowly reopened energy–momentum and normalization contracts; use the per-item statuses below rather than the old aggregate.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -69,7 +69,7 @@ deep, remains one thing critiquing itself.
 
 **Status:** [BLOCKED]. Production path is `RenderBridge`. These stubs exist for a future sparse-cosmology branch; no current scenario benefits from them. **Do not start here unless a sparse use case has appeared.** See `engine/README.md` "Engine files — what's production, what's experimental."
 
-### 1.2 Relativistic velocity dynamics —  CLOSED 2026-04-17
+### 1.2 Relativistic velocity dynamics —  [PARTIAL CLOSED / NORMALIZATION OPEN], reclassified 2026-07-21
 
 **Implementation:** `phase_forces()` now integrates momentum instead
 of velocity. Algorithm:
@@ -100,6 +100,10 @@ the γ-integration corrects that bug too.
 
 **Regression sweep:** 9 physics tests (constants, energy_conservation, gauss, born_infeld, dissipation, bridge_dynamics, wavepacket, continuity, action_stationarity) pass.
 
+**FTD-0401 correction:** the force-push algorithm above remains correctly closed on its own `v²/C_SPEED²+L²` contract. The cross-sector relativistic claim is not closed. The same raw `Voxel::velocity` enters `proper_time_rate()`, `gamma_ftd()`, and `born_infeld_core()` under a legacy `c=1` convention with no `v/C_SPEED` map. At the exact transport cap, the implemented matter clock has rate squared `2/3`, not zero. `M_REST` is likewise consumed as unconverted rest energy, inertial mass, and gravitational source, while CPU/GPU/ledger particle KE uses unit mass. Verdict: **UNMAPPED-DUAL-NORMALIZATION [SCOPED NO-GO — current engine normalization map]**; canonical audit [`AUDIT_C_SPEED_MASS_NORMALIZATION.md`](../AUDIT_C_SPEED_MASS_NORMALIZATION.md).
+
+**[OPEN] Causal Normalization and Mass-Role gate:** explicitly type raw velocity versus `beta=v/C_SPEED`; select one causal budget shared by force, movement, proper time, and latency; map rest energy to inertial/gravitational roles; repair kinetic totals; and restore CPU/GPU parity. The old “secondary bandwidth clamp removed” statement applies only to the CPU path: the GPU latency kernel still clamps to `C_SPEED·f`, advances `tau` on device, and the public GPU tick then invokes the host accumulator again. No production correction is authorized by the audit alone.
+
 ### 1.3 Dynamical SU(3) colour force —  [OPEN — NCEMC BRIDGE], reclassified 2026-07-21
 **Location:** `engine/src/render_bridge_phases/phase_forces.cpp`, `engine/src/particle_engine.cpp`, energy/latency diagnostics; canonical audit `AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md` (FTD-0400).
 
@@ -107,7 +111,7 @@ the γ-integration corrects that bug too.
 
 **FTD-0400 exact result:** SPLIT-BOOKKEEPING (12/12 source-contract checks). Colour force acts, but colour potential/strong energy is absent from the CPU energy totals and declared Hamiltonian; cluster inertia consumes `M_REST`; gravitational sources are separate and CPU/GPU-inconsistent for field energy; complete RenderBridge momentum is unavailable.
 
-**[OPEN] Native Confinement Energy–Momentum Contract (NCEMC-1–4):** one backend-common `H_strong` generating the active force; exact work/energy accounting; complete total momentum; and a field-only weak-gravity source using the same energy–momentum object with independent `M_REST·|s|` disabled. This is an implementation/theory contract, not authorization for another mass measurement. NCEMC-5 particlehood and NCEMC-6 calibration discipline follow only after 1–4.
+**[OPEN] Native Confinement Energy–Momentum Contract (NCEMC-1–4):** after §1.2's FTD-0401 causal-normalization/mass-role gate, define one backend-common `H_strong` generating the active force; exact work/energy accounting; complete total momentum; and field-only weak gravity using the same energy–momentum object with the independent raw `M_REST·|s|` source disabled. This is an implementation/theory contract, not authorization for another mass measurement. NCEMC-5 particlehood and NCEMC-6 calibration discipline follow only after both prerequisite layers.
 
 ### 1.4 Symplectic leapfrog integrator —  CLOSED 2026-04-17
 **Location:** `engine/src/render_bridge.cpp` `phase_read` header comment.
@@ -635,6 +639,7 @@ A 2026-07-12 scope-check grep (`floor\(x_-\)|x_- = 3\.0|N_c = x_-`) hits **20+ a
 
 ## Recently closed
 
+- **FTD-0401 — lattice-c/proper-time/mass-role normalization: UNMAPPED-DUAL-NORMALIZATION scoped no-go (2026-07-21).** Nineteen exact source-contract checks prove that one raw velocity and `M_REST` scalar enter incompatible `c_lat` and `c=1` roles without a conversion. The implementation question is closed; the Causal Normalization and Mass-Role gate is open in §1.2. FTD-0252/0268 wave-clock measurements survive; FTD-0271 A5 covariance wording is withdrawn.
 - **FTD-0400 — confinement-energy → rest-mass → gravity bridge: SPLIT-BOOKKEEPING scoped no-go (2026-07-21).** Twelve exact source-contract checks prove that current colour dynamics, energy accounting, imposed inertia, and gravity do not share one energy–momentum object. No current-engine mass campaign can establish the proposed bridge. The implementation question is closed; NCEMC-1–4 is the newly explicit prerequisite tracked in §1.3.
 - **FTD-0399 — target-blind particlehood comparator: INVALID at G2 (2026-07-20).** At L=33/65 in both dissipative and undamped protocols, C manifests at tick 2 while exact A/E histories do not manifest within 200 ticks. The aligned three-history ensemble does not exist, so no distance or particlehood outcome is evaluated and no mass observable opens.
 - **FTD-0398 — larger-shell topological transport/destruction question: TERMINAL UNDERDETERMINATION (2026-07-20).** The unchanged FTD-0392 octahedral convention was measured on scaled shells `R=1..6`, ticks `0..8`, for A/C/E. All gates passed, but transient integer charges satisfied none of COLOCALIZED, TRANSPORTED, or ZERO-CROSSING/DESTROYED. The route supplies no mass evidence; no alternative shell geometry is licensed. Canonical result: `ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md`.

@@ -332,9 +332,10 @@ void test_noop_guard_when_toggle_off() {
 // see the CI-1 header. CI-5 supplies that uniform f directly so latency/gravity
 // can stay OFF and the arithmetic is Newtonian-clean.)
 //
-// EPISTEMIC STATUS — this is a DEMONSTRATION, not a derivation. The EP itself
-// (rest = inertial = gravitational, one M_REST) is the FTD ACTION's [THEOREM]
-// (SPEC_FTD_LAGRANGIAN §4.1↔§4.2). The ENGINE exhibiting it here is CONDITIONAL
+// EPISTEMIC STATUS — this is a DEMONSTRATION, not a derivation. One raw
+// M_REST scalar is [IMPOSED]; its cross-role conversion is unresolved by
+// FTD-0400/0401 and is not an action theorem. The ENGINE exhibiting the EP
+// relation here is CONDITIONAL
 // on the [IMPOSED] cluster-inertia mechanism (FTD-0250): the rigid-body
 // collective-coordinate reduction a_COM = F_cluster/(N·M_REST) is imposed on the
 // engine, not derived from the per-voxel dynamics (that reduction is [OPEN]).
