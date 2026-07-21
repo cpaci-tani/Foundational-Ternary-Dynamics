@@ -221,7 +221,7 @@ The remaining program is **mapping, validation, and external exposure — not α
 1. **External human review** — the standing TRACKER §0 item; circulate `REF_EXPORTED_RESULTS_SPINE.md` + `REF_EXPORTED_PROBLEMS_E1_E2.md` (the items flagged "needs external eyes": FTD-0375 A4, FTD-0377, FTD-0378's no-rank-1 lemma). Nothing internal can substitute.
 2. **Rigidity-audit extension to bucket (iv)** — the FTD-0097-style combinatorial scan over the ~122 unscanned `[PARAMETRIC]` combination families; the §4 map's completion.
 3. **Doctrine-ledger Phase-2 hardening priorities** (all `[OPEN]`): MC-T3.1/FTD-0110-NL nonlinear bridge (with the FTD-0277-v1-negative constraint), MC-T3.6 β-coefficients, χ_H, flavor depth matrices, confinement (structurally obstructed), substrate strong-field gravity (FTD-0184).
-4. **Named engine/theory residues:** PL-4 diagonals; the nonlinear-rung v2 pre-registration (δ-IND); M1-v2 vertex follow-up + the Program-F effective-toggle audit; the E1/E2 walls (progress in either direction re-adjudicates FTD-0369 via the frozen map).
+4. **Named engine/theory residues:** PL-4 diagonals; the nonlinear-rung transcript/properness characterization left by FTD-0396's double BLOCKED-ESCAPE verdict (the scheduled v2 pre-registration is complete); M1-v2 vertex follow-up + the Program-F effective-toggle audit; the E1/E2 walls (progress in either direction re-adjudicates FTD-0369 via the frozen map).
 5. **The queued dissemination refresh** — the public layer (whitepaper, manuscript_v2) still carries the retired x₋↔N_c identification and pre-FTD-0348 Higgs figures; queued as one coherent arc (TRACKER §10), not piecemeal patches.
 
 ---
