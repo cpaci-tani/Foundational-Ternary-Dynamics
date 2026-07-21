@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-20 — FTD-0398 terminal topology returned UNDERDETERMINED with no mass evidence; FTD-0399 target-blind particlehood returned INVALID at its manifestation-portability gate, opening no mass observable. Current-engine first-principles mass generation remains stopped under the roadmap. (Previous: 2026-07-12 — the finishing-arc tracker reconciliation, FTD-0143 scan, MC-T4.1 closure, IMP-S4, and complete-framework capstone.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-21 — FTD-0400 audited the confinement-energy → rest-mass → gravity bridge and returned SPLIT-BOOKKEEPING: no common current-engine strong Hamiltonian/energy–momentum object reaches colour dynamics, inertia, and gravity. Tracker §1.3 is reopened narrowly as NCEMC-1–4; no further mass readout is admissible before that contract exists. (Previous: 2026-07-20 — FTD-0398 terminal topology UNDERDETERMINED; FTD-0399 particlehood INVALID at manifestation portability.) **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc. **Engine code:** historical closure counts predate FTD-0400's narrowly reopened energy–momentum bridge contract; use the per-item statuses below rather than the old aggregate.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -100,12 +100,14 @@ the γ-integration corrects that bug too.
 
 **Regression sweep:** 9 physics tests (constants, energy_conservation, gauss, born_infeld, dissipation, bridge_dynamics, wavepacket, continuity, action_stationarity) pass.
 
-### 1.3 Dynamical SU(3) colour force —  CLOSED 2026-05-27
-**Location:** `engine/src/render_bridge.cpp` `phase_forces()`, `[PHENOMENOLOGICAL FIT]` block (line ~990).
+### 1.3 Dynamical SU(3) colour force —  [OPEN — NCEMC BRIDGE], reclassified 2026-07-21
+**Location:** `engine/src/render_bridge_phases/phase_forces.cpp`, `engine/src/particle_engine.cpp`, energy/latency diagnostics; canonical audit `AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md` (FTD-0400).
 
-**Specification:** Drafted `docs/theory/10_eft_program/SPEC_FTD_DYNAMICAL_SU3_HADRODYNAMICS.md` defining the FTD-native compact lattice gauge field stencils, stochastically updated via Langevin manifold flow, and local voxel-gauge covariant derivative differences (FTD-0223).
+**Historical provenance:** FTD-0223 closed the presence/specification task for a colour-force implementation and drafted a native compact-gauge direction. That closure did not establish one canonical strong Hamiltonian shared by force, energy, momentum, and gravity. The live RenderBridge force remains explicitly phenomenological; ParticleEngine uses a different long-range law.
 
-**Status:**  Closed under active campaign FTD-0223.
+**FTD-0400 exact result:** SPLIT-BOOKKEEPING (12/12 source-contract checks). Colour force acts, but colour potential/strong energy is absent from the CPU energy totals and declared Hamiltonian; cluster inertia consumes `M_REST`; gravitational sources are separate and CPU/GPU-inconsistent for field energy; complete RenderBridge momentum is unavailable.
+
+**[OPEN] Native Confinement Energy–Momentum Contract (NCEMC-1–4):** one backend-common `H_strong` generating the active force; exact work/energy accounting; complete total momentum; and a field-only weak-gravity source using the same energy–momentum object with independent `M_REST·|s|` disabled. This is an implementation/theory contract, not authorization for another mass measurement. NCEMC-5 particlehood and NCEMC-6 calibration discipline follow only after 1–4.
 
 ### 1.4 Symplectic leapfrog integrator —  CLOSED 2026-04-17
 **Location:** `engine/src/render_bridge.cpp` `phase_read` header comment.
@@ -633,6 +635,7 @@ A 2026-07-12 scope-check grep (`floor\(x_-\)|x_- = 3\.0|N_c = x_-`) hits **20+ a
 
 ## Recently closed
 
+- **FTD-0400 — confinement-energy → rest-mass → gravity bridge: SPLIT-BOOKKEEPING scoped no-go (2026-07-21).** Twelve exact source-contract checks prove that current colour dynamics, energy accounting, imposed inertia, and gravity do not share one energy–momentum object. No current-engine mass campaign can establish the proposed bridge. The implementation question is closed; NCEMC-1–4 is the newly explicit prerequisite tracked in §1.3.
 - **FTD-0399 — target-blind particlehood comparator: INVALID at G2 (2026-07-20).** At L=33/65 in both dissipative and undamped protocols, C manifests at tick 2 while exact A/E histories do not manifest within 200 ticks. The aligned three-history ensemble does not exist, so no distance or particlehood outcome is evaluated and no mass observable opens.
 - **FTD-0398 — larger-shell topological transport/destruction question: TERMINAL UNDERDETERMINATION (2026-07-20).** The unchanged FTD-0392 octahedral convention was measured on scaled shells `R=1..6`, ticks `0..8`, for A/C/E. All gates passed, but transient integer charges satisfied none of COLOCALIZED, TRANSPORTED, or ZERO-CROSSING/DESTROYED. The route supplies no mass evidence; no alternative shell geometry is licensed. Canonical result: `ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md`.
 
