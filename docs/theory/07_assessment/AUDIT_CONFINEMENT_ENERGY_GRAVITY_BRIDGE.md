@@ -7,6 +7,8 @@
 
 > **Successor disposition (FTD-0405, 2026-07-21):** the NCEMC feasibility lock returned **DOUBLE-OBSTRUCTION**. The current RenderBridge colour force admits a radial potential family and closes isolated two-body manifested momentum, but its force-kick/movement tick fails exact work exchange and the additive strong-energy zero/local stress distribution used by gravity are not selected. NCEMC-2/4 remain blocked; the current-force mass bridge remains closed. See [`RESULT_NCEMC_FEASIBILITY.md`](RESULT_NCEMC_FEASIBILITY.md).
 
+> **Owner-authorized successor (FTD-0406, 2026-07-21):** the missing choices were then explicitly authorized and booked as `[IMPOSED]/[SELECTION]` architecture. The default-off CPU v1 path shares one selected `U(1)=0` pair energy across collision-free energy/momentum projection, audit/ledger, local string T00/stress and latency gravity using `T00/C_SPEED²`. It returns **CPU-SCOPED-CONTRACT**, closing NCEMC-1–4 only on the isolated flat collision-free CPU domain. FTD-0405 remains valid for the unmodified tick; GPU, topology changes, mixed forces and NCEMC-5 remain open. See [`RESULT_STRONG_STRESS_ENERGY_CONTRACT_v1.md`](RESULT_STRONG_STRESS_ENERGY_CONTRACT_v1.md).
+
 ## 0. Verdict
 
 The physical intuition is sound but the current engine cannot yet instantiate it:
@@ -108,7 +110,7 @@ After FTD-0401's Causal Normalization and Mass-Role gate is resolved, the smalle
 5. **NCEMC-5 — target-blind invariant:** only after 1–4 pass may independently prepared localized excitations be compared through the declared-coordinate invariant `E²-c_lat²P²`, inertial response, and far-field gravitational charge.
 6. **NCEMC-6 — calibration boundary:** success can derive a lattice-unit gap and dimensionless ratios. It cannot derive a value in MeV without the FTD-0096 calibration interface.
 
-Running another mass campaign before FTD-0401's normalization gate and NCEMC-1–4 exist would measure bookkeeping choices, not confinement-generated mass. FTD-0405 has now executed the feasibility gate and shown that the present direct pair-force path cannot supply NCEMC-2/4 without an energy-conserving architecture plus additional data fixing the gravitational energy zero and stress localization.
+Running another mass campaign before FTD-0401's normalization gate and NCEMC-1–4 exist would measure bookkeeping choices, not confinement-generated mass. FTD-0405 executed the feasibility gate and showed that the unmodified direct pair-force path could not supply NCEMC-2/4 without an energy-conserving architecture plus additional data fixing the gravitational energy zero and stress localization. FTD-0406 records those data as explicit owner choices and closes NCEMC-1–4 only on a collision-free CPU subset. Another mass campaign remains premature until the contract survives topology changes, mixed/moving-latency dynamics and its separately locked target-blind gate.
 
 ## 7. Epistemic disposition
 
