@@ -79,6 +79,9 @@ public:
         std::vector<double> exchange_x, exchange_y, exchange_z;
     };
     const ForceDiagHost& force_diag() { ensure_host_synced(); return host_force_diag_; }
+    unsigned long long causal_projection_events() const {
+        return bufs_.download_causal_projection_events();
+    }
 
     // Physics toggles (same as CPU engine)
     TermToggles toggles;

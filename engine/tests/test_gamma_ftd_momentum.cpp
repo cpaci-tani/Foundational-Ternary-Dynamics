@@ -40,7 +40,7 @@ static Vec3 gamma_step(Vec3 v, Vec3 F, double dt, double L = 0.0) {
     double budget = v2 / C2 + L2;
     if (budget > 1.0 - 1e-6) budget = 1.0 - 1e-6;
     const double gamma_in = 1.0 / std::sqrt(1.0 - budget);
-    Vec3 p = v * gamma_in + F * dt;
+    Vec3 p = v * gamma_in + F * (dt / M_INERTIAL);
     double p2 = p.mag2();
     double scale = C * std::sqrt(one_L2 / (C2 + p2));
     return p * scale;
@@ -59,12 +59,12 @@ int main() {
         Vec3 F {0.01 * C, 0, 0};  // tiny force
         double dt = 1.0;
         Vec3 v1 = gamma_step(v0, F, dt, 0.0);
-        double newton_pred = F.x * dt;
+        double newton_pred = F.x * dt / M_INERTIAL;
         std::cout << "  v_newton_pred = " << newton_pred << "\n";
         std::cout << "  v_gamma       = " << v1.x      << "\n";
         double rel = std::abs(v1.x - newton_pred) / std::max(std::abs(newton_pred), 1e-12);
         std::cout << "  relative diff = " << rel << "\n";
-        ftd::test::check("Newtonian limit: v_new ≈ v + F·dt (< 1%)", rel < 1e-2);
+        ftd::test::check("Newtonian limit: v_new ≈ v + F·dt/M_INERTIAL (< 1%)", rel < 1e-2);
     }
 
     // ── Regime 2: Mild relativistic (v ~ ½C, no force, should preserve) ─

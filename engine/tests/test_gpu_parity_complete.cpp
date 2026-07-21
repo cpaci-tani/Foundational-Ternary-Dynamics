@@ -67,6 +67,15 @@ static void compare_audits(const EnergyAudit& cpu, const EnergyAudit& gpu,
     CHECK_CLOSE(gpu.total_energy, cpu.total_energy,
                 std::abs(cpu.total_energy) * e_tol + 1e-10,
                 (label + " total energy").c_str());
+    CHECK_CLOSE(gpu.dynamic_energy, cpu.dynamic_energy,
+                std::abs(cpu.dynamic_energy) * e_tol + 1e-10,
+                (label + " dynamic energy").c_str());
+    CHECK_CLOSE(gpu.particle_rest_energy, cpu.particle_rest_energy,
+                std::abs(cpu.particle_rest_energy) * e_tol + 1e-10,
+                (label + " particle rest energy").c_str());
+    CHECK_CLOSE(gpu.particle_energy, cpu.particle_energy,
+                std::abs(cpu.particle_energy) * e_tol + 1e-10,
+                (label + " particle energy").c_str());
     CHECK(gpu.manifested_count == cpu.manifested_count,
           (label + " particle count").c_str());
     CHECK(gpu.charge_total == cpu.charge_total,

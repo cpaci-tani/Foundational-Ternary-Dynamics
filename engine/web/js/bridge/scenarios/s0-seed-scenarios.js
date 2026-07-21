@@ -742,7 +742,7 @@ export function setupS0SeedScenario(name, harness, ctx) {
                 }
                 case 's0-seed-massive-body': {
                     // A dense ball of LOCKED rest mass. Gravity from REAL manifested
-                    // mass (rho = M_REST*|state|) via the latency-Poisson solver
+                    // gravity charge (rho = M_GRAVITATIONAL*|state|) via latency Poisson
                     // (latency_field on), not the |J|^2 field-energy proxy. Locked => static.
                     const R = vox(2);
                     const R2 = R*R;

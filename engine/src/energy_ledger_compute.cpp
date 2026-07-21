@@ -21,8 +21,11 @@ void update_energy_ledger_cpu(RenderBridge& rb) {
   }
   for (int i : rb.ordered_active_indices()) {
     const auto& v = voxels[i];
-    if (v.state != 0) E_kin += 0.5 * v.velocity.mag2();
+    if (v.state != 0) E_kin += flat_particle_kinetic_energy(v.velocity.mag2());
   }
+  // The drift ledger deliberately tracks the rest-offset-free accounted
+  // channels.  Rest energy is displayed separately and interaction energies
+  // remain incomplete until NCEMC.
   const double E_total = 0.5 * (E_field + E_wave) + E_kin;
   auto& L = rb.energy_ledger_;
 

@@ -50,21 +50,14 @@ void accumulate_proper_time(RenderBridge& rb) {
   for (int i : active) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
-    // Clock implementation of record: dτ/dt = √(f²−v²)/√f, f = 1−L².
-    // FTD-0401 proves this is an unmapped legacy c=1 convention because the
-    // same raw Voxel::velocity is nodes/tick and transport uses v²/C_SPEED².
-    // Keep behavior unchanged until the raw-lattice vs rescaled-clock owner
-    // decision; the shared helper ensures one IMPLEMENTED matter clock, not
-    // that the clock is covariant with the causal cone.
+    // FTD-0402 raw-lattice contract: dτ/dt = √max(1-u²/C_SPEED²-L²,0).
+    // This is the selected clock/bandwidth axiom, not a substrate derivation.
     const double delta_tau = proper_time_rate(v.latency, v.speed() * v.speed());
     if (delta_tau > 0.0) {
       v.tau += delta_tau;
       // FTD-0271 (A5): advance the de Broglie clock phase dφ = ω₀·dτ. With
-      // L=0 this is dτ=1/tick at rest and legacy √(1−v_raw²) when moving.
-      // FTD-0401 withdraws the former SR/covariant interpretation: FTD-0252
-      // normalized its independent wave-clock velocity by C_WAVE and never
-      // read voxel.tau. The scalar ω₀ and moving-clock normalization remain
-      // imposed pending reconciliation.
+      // L=0 this is dτ=1/tick at rest and √(1−u²/C_SPEED²) when moving.
+      // The scalar ω₀ and the clock hypothesis remain imposed.
       if (db_clock)
         v.phase += omega0 * delta_tau;
     }

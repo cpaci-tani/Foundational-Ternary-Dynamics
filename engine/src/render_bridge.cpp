@@ -539,6 +539,7 @@ void RenderBridge::phase_movement() {
 // ============================================================================
 
 void RenderBridge::tick() {
+  causal_projection_events_this_tick_ = 0;
   // F3 (callstack audit 2026-04-17): validate runs on BOTH paths now
   // so toggle-combination warnings surface regardless of CPU/GPU build.
   //
@@ -580,8 +581,13 @@ void RenderBridge::tick() {
     // voxels()/current_tick(), and the voxels() accessor syncs device→host
     // first, so it sees settled state. Golden-neutral (read-only).
     if (toggles.knot_tracking) knot_tracker_->record(*this);
-    if (toggles.latency_field || toggles.de_broglie_clock)
+    if (toggles.latency_field || toggles.de_broglie_clock) {
       accumulate_proper_time();
+      // FTD-0402: tau/phase advance exactly once in this common host pass.
+      // Persist the host result back to the device before the next GPU tick.
+      backend_->mark_host_dirty();
+      backend_->flush_host_mutations();
+    }
     update_energy_ledger();
     return;
   }

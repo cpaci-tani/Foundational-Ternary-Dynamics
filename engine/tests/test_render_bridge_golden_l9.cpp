@@ -35,8 +35,11 @@ static void inject_initial_state(RenderBridge& rb) {
 // FROZEN L=9 GOLDEN HASH.
 //   - 2026-07-02: initial capture (revision 0.7). Verified stable across 3
 //     consecutive runs + OMP_NUM_THREADS=1. Re-baseline policy: ADR-0012.
+//   - 2026-07-21: RE-PINNED for FTD-0402. The L=9 field manifest matches the
+//     L=17 delta classification; no L-dependent state/identity/latency/clock or
+//     strong/weak-sector change was found.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_L9 = 0x3480b40d8b801c93ULL;  // re-pinned 2026-07-18, Term-2 coupling sign amendment — see test_render_bridge_golden.cpp changelog; was 0x774ae2ef158a50d6
+static constexpr std::uint64_t GOLDEN_HASH_L9 = 0xac32d7b46e718b38ULL;  // FTD-0402, 2026-07-21
 
 void test_golden_l9() {
     section("100-tick byte-hash regression (L=9, shipping defaults)");

@@ -10,6 +10,7 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
 #include "ftd/constants_shared.h"
+#include "ftd/causal_kinematics.h"
 #include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d, ftd::decode_xyz, ftd::periodic_delta
 #include <cuda_runtime.h>
 #include <cmath>
@@ -311,47 +312,64 @@ __global__ void phase_forces_kernel(
     // unit mass at the same call site.
     accel_mag[i] = sqrt(fx*fx + fy*fy + fz*fz);
 
-    // --- γ_FTD momentum integration (BH-F2, 2026-05-05) ---
-    // Replaces the previous naive `vel += f*dt` followed by hard speed
-    // clamp `if (|v| > C) v *= C/|v|`. The clamp discarded energy and
-    // ignored the FTD bandwidth postulate v²/C² + L² < 1; this branch
-    // mirrors CPU phase_forces.cpp:204-253 byte-equivalently for the
-    // EM + grav + Lorentz force vector (color is added later by
-    // color_force_kernel and integrates non-relativistically — known
-    // limitation, parity is bit-exact only when color_forces is OFF
-    // or magnitudes are non-relativistic).
-    //
-    // Algebra (TRACKER §1.2):
-    //   γ_in = 1/√(1 − |v|²/C² − L²)
-    //   p    = γ_in · v + F · dt
-    //   v_new = p · C · √((1 − L²) / (C² + |p|²))
-    //
-    // Locked particles still get force_diag + accel_mag populated above
-    // but their velocity is NOT updated (parity with CPU phase_forces.cpp:205).
-    if (locked[i]) return;
+    // FTD-0402: this kernel only accumulates force components. A single
+    // integrate_forces_kernel runs after base, color, Yukawa, and exchange
+    // contributions, so no force path can bypass the causal budget.
+}
 
-    const double C  = C_SPEED;
-    const double C2 = C * C;
-    const double Lt  = latency[i];          // 0 if latency_field off
-    const double L2  = Lt * Lt;
-    const double one_L2 = fmax(1.0 - L2, BANDWIDTH_FLOOR);
+__global__ void integrate_forces_kernel(
+    const int8_t* __restrict__ state,
+    const uint8_t* __restrict__ locked,
+    const double* __restrict__ latency,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    const double* __restrict__ fd_coulomb_x,
+    const double* __restrict__ fd_coulomb_y,
+    const double* __restrict__ fd_coulomb_z,
+    const double* __restrict__ fd_gravity_x,
+    const double* __restrict__ fd_gravity_y,
+    const double* __restrict__ fd_gravity_z,
+    const double* __restrict__ fd_magnetic_x,
+    const double* __restrict__ fd_magnetic_y,
+    const double* __restrict__ fd_magnetic_z,
+    const double* __restrict__ fd_strong_x,
+    const double* __restrict__ fd_strong_y,
+    const double* __restrict__ fd_strong_z,
+    const double* __restrict__ fd_exchange_x,
+    const double* __restrict__ fd_exchange_y,
+    const double* __restrict__ fd_exchange_z,
+    double dt,
+    int N
+) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N || state[i] == 0 || locked[i]) return;
 
-    double vx = vel_x[i], vy = vel_y[i], vz = vel_z[i];
-    double v2 = vx*vx + vy*vy + vz*vz;
-    double budget = v2 / C2 + L2;
-    if (budget > 1.0 - BANDWIDTH_FLOOR) budget = 1.0 - BANDWIDTH_FLOOR;
-    const double gamma_in = 1.0 / sqrt(1.0 - budget);
+    const double fx = fd_coulomb_x[i] + fd_gravity_x[i]
+                    + fd_magnetic_x[i] + fd_strong_x[i] + fd_exchange_x[i];
+    const double fy = fd_coulomb_y[i] + fd_gravity_y[i]
+                    + fd_magnetic_y[i] + fd_strong_y[i] + fd_exchange_y[i];
+    const double fz = fd_coulomb_z[i] + fd_gravity_z[i]
+                    + fd_magnetic_z[i] + fd_strong_z[i] + fd_exchange_z[i];
 
-    // Reconstruct momentum, apply force, extract new velocity
-    double px = vx * gamma_in + fx * dt;
-    double py = vy * gamma_in + fy * dt;
-    double pz = vz * gamma_in + fz * dt;
-    const double p2 = px*px + py*py + pz*pz;
-    const double scale = C * sqrt(one_L2 / (C2 + p2));
-
-    vel_x[i] = px * scale;
-    vel_y[i] = py * scale;
-    vel_z[i] = pz * scale;
+    const double vx = vel_x[i], vy = vel_y[i], vz = vel_z[i];
+    const double gamma_in = ::ftd::momentum_input_gamma(
+        latency[i], vx*vx + vy*vy + vz*vz);
+    const double force_scale = dt / M_INERTIAL;
+    const double qx = vx * gamma_in + fx * force_scale;
+    const double qy = vy * gamma_in + fy * force_scale;
+    const double qz = vz * gamma_in + fz * force_scale;
+    const double scale = ::ftd::specific_momentum_velocity_scale(
+        latency[i], qx*qx + qy*qy + qz*qz);
+    if (scale > 0.0) {
+        vel_x[i] = qx * scale;
+        vel_y[i] = qy * scale;
+        vel_z[i] = qz * scale;
+    } else {
+        vel_x[i] = 0.0;
+        vel_y[i] = 0.0;
+        vel_z[i] = 0.0;
+    }
 }
 
 // ---------- Movement Kernel ----------
@@ -367,6 +385,7 @@ __global__ void phase_movement_kernel(
     double* __restrict__ rem_x,
     double* __restrict__ rem_y,
     double* __restrict__ rem_z,
+    const double* __restrict__ latency,
     double* __restrict__ flux_x,
     double* __restrict__ flux_y,
     double* __restrict__ flux_z,
@@ -380,6 +399,7 @@ __global__ void phase_movement_kernel(
     double* __restrict__ ledger_current_x,
     double* __restrict__ ledger_current_y,
     double* __restrict__ ledger_current_z,
+    unsigned long long* __restrict__ causal_projection_events,
     bool dual_substrate,
     double* __restrict__ fL_x,
     double* __restrict__ fL_y,
@@ -399,6 +419,23 @@ __global__ void phase_movement_kernel(
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
     if (state[i] == 0 || locked[i]) return;
     const int q = static_cast<int>(state[i]);
+
+    // Last-resort repair for a velocity written outside normal force
+    // evolution (public mutable voxel access, injection harnesses, etc.).
+    const double speed2 = vel_x[i]*vel_x[i] + vel_y[i]*vel_y[i] + vel_z[i]*vel_z[i];
+    const double projection = ::ftd::movement_projection_scale(latency[i], speed2);
+    if (projection < 1.0) {
+        if (projection > 0.0) {
+            vel_x[i] *= projection;
+            vel_y[i] *= projection;
+            vel_z[i] *= projection;
+        } else {
+            vel_x[i] = 0.0;
+            vel_y[i] = 0.0;
+            vel_z[i] = 0.0;
+        }
+        atomicAdd(causal_projection_events, 1ULL);
+    }
 
     // Accumulate remainder
     rem_x[i] += vel_x[i] * dt;
@@ -678,14 +715,10 @@ __global__ void color_force_kernel(
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
-    double* __restrict__ vel_x,
-    double* __restrict__ vel_y,
-    double* __restrict__ vel_z,
     // Force-diag mirror (one site per particle, plain stores).
     double* __restrict__ fd_strong_x,
     double* __restrict__ fd_strong_y,
     double* __restrict__ fd_strong_z,
-    double dt,
     int L
 ) {
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
@@ -748,10 +781,6 @@ __global__ void color_force_kernel(
         fz -= f_mag * dz * inv_r;
     }
 
-    atomicAdd(&vel_x[i], fx * dt);
-    atomicAdd(&vel_y[i], fy * dt);
-    atomicAdd(&vel_z[i], fz * dt);
-
     // Mirror per-particle color force into force_diag (parity with CPU
     // RenderBridge::phase_forces: force_diag_[i].f_strong = f_color).
     // Each thread owns a unique particle index, so plain stores are safe.
@@ -771,10 +800,9 @@ __global__ void yukawa_force_kernel(
     const int* __restrict__ plist_idx,
     const int  num_particles,
     const int8_t* __restrict__ state,
-    double* __restrict__ vel_x,
-    double* __restrict__ vel_y,
-    double* __restrict__ vel_z,
-    double dt,
+    double* __restrict__ fd_strong_x,
+    double* __restrict__ fd_strong_y,
+    double* __restrict__ fd_strong_z,
     int L
 ) {
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
@@ -812,9 +840,9 @@ __global__ void yukawa_force_kernel(
         fz += f_mag * dz * inv_r;
     }
 
-    atomicAdd(&vel_x[i], fx * dt);
-    atomicAdd(&vel_y[i], fy * dt);
-    atomicAdd(&vel_z[i], fz * dt);
+    fd_strong_x[i] += fx;
+    fd_strong_y[i] += fy;
+    fd_strong_z[i] += fz;
 }
 
 // ============================================================================
@@ -828,10 +856,9 @@ __global__ void exchange_force_kernel(
     const int  num_particles,
     const int8_t* __restrict__ state,
     const int8_t* __restrict__ spin_arr,
-    double* __restrict__ vel_x,
-    double* __restrict__ vel_y,
-    double* __restrict__ vel_z,
-    double dt,
+    double* __restrict__ fd_exchange_x,
+    double* __restrict__ fd_exchange_y,
+    double* __restrict__ fd_exchange_z,
     int L
 ) {
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
@@ -871,9 +898,9 @@ __global__ void exchange_force_kernel(
         fz -= f_mag * dz * inv_r;
     }
 
-    atomicAdd(&vel_x[i], fx * dt);
-    atomicAdd(&vel_y[i], fy * dt);
-    atomicAdd(&vel_z[i], fz * dt);
+    fd_exchange_x[i] = fx;
+    fd_exchange_y[i] = fy;
+    fd_exchange_z[i] = fz;
 }
 
 // ============================================================================
@@ -977,22 +1004,41 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
     CUDA_CHECK(cudaGetLastError());
 }
 
+void launch_integrate_forces(GpuBuffers& bufs, double dt) {
+    const int block = 256;
+    const int grid = (bufs.N + block - 1) / block;
+    integrate_forces_kernel<<<grid, block>>>(
+        bufs.d_state, bufs.d_locked, bufs.d_latency,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_fd_coulomb_x, bufs.d_fd_coulomb_y, bufs.d_fd_coulomb_z,
+        bufs.d_fd_gravity_x, bufs.d_fd_gravity_y, bufs.d_fd_gravity_z,
+        bufs.d_fd_magnetic_x, bufs.d_fd_magnetic_y, bufs.d_fd_magnetic_z,
+        bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
+        bufs.d_fd_exchange_x, bufs.d_fd_exchange_y, bufs.d_fd_exchange_z,
+        dt, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+}
+
 void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
                            bool dual_substrate) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
+    CUDA_CHECK(cudaMemset(bufs.d_causal_projection_events, 0,
+                          sizeof(unsigned long long)));
     phase_movement_kernel<<<grid, block>>>(
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_latency,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_locked,
         bufs.d_particle_id, bufs.d_spin, bufs.d_color,
         bufs.d_pair_id, bufs.d_accel_mag,
         bufs.d_ledger_reaction,
         bufs.d_ledger_current_x, bufs.d_ledger_current_y, bufs.d_ledger_current_z,
+        bufs.d_causal_projection_events,
         dual_substrate,
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
@@ -1015,6 +1061,7 @@ void launch_build_particle_list(GpuBuffers& bufs) {
 }
 
 void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
+    (void)dt;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
@@ -1022,35 +1069,36 @@ void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
         bufs.d_plist_idx, num_particles,
         bufs.d_state, bufs.d_color,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
-        dt, bufs.L
+        bufs.L
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
 void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt) {
+    (void)dt;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
     yukawa_force_kernel<<<grid, block>>>(
         bufs.d_plist_idx, num_particles,
         bufs.d_state,
-        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
-        dt, bufs.L
+        bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
+        bufs.L
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
 void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt) {
+    (void)dt;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
     exchange_force_kernel<<<grid, block>>>(
         bufs.d_plist_idx, num_particles,
         bufs.d_state, bufs.d_spin,
-        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
-        dt, bufs.L
+        bufs.d_fd_exchange_x, bufs.d_fd_exchange_y, bufs.d_fd_exchange_z,
+        bufs.L
     );
     CUDA_CHECK(cudaGetLastError());
 }

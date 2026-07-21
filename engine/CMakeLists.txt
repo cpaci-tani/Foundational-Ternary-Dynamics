@@ -617,6 +617,11 @@ target_link_libraries(dump_full_physics_amp_scan ftd_core)
 add_executable(dump_full_physics_l256 tests/dump_full_physics_l256.cpp)
 target_link_libraries(dump_full_physics_l256 ftd_core)
 
+# FTD-0402: field-by-field manifest used when reconciling intentional golden
+# changes against the pre-lock engine. Diagnostic executable, not a CTest.
+add_executable(dump_causal_golden_manifest tests/dump_causal_golden_manifest.cpp)
+target_link_libraries(dump_causal_golden_manifest ftd_core)
+
 # Lagrangian verification
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
 target_link_libraries(test_born_infeld ftd_core)
@@ -718,6 +723,9 @@ target_link_libraries(test_vortex ftd_core)
 # Operators and dynamics
 add_executable(test_voxel_properties tests/test_voxel_properties.cpp)
 target_link_libraries(test_voxel_properties ftd_core)
+
+add_executable(test_causal_normalization tests/test_causal_normalization.cpp)
+target_link_libraries(test_causal_normalization ftd_core)
 
 add_executable(test_lattice_operators tests/test_lattice_operators.cpp)
 target_link_libraries(test_lattice_operators ftd_core)
@@ -2324,6 +2332,7 @@ add_test(NAME portable_field COMMAND test_portable_field)
 add_test(NAME particle_lifetime COMMAND test_particle_lifetime)
 add_test(NAME vortex COMMAND test_vortex)
 add_test(NAME voxel_properties COMMAND test_voxel_properties)
+add_test(NAME causal_normalization COMMAND test_causal_normalization)
 add_test(NAME lattice_operators COMMAND test_lattice_operators)
 add_test(NAME discrete_operators COMMAND test_discrete_operators)
 add_test(NAME bridge_dynamics COMMAND test_bridge_dynamics)

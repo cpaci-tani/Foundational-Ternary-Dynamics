@@ -19,10 +19,10 @@ export function readScale0DiagAudit(bridge = null) {
     return { diag, audit };
 }
 
-/** Canonical physical total energy (field + wave + particle KE). */
+/** Rest-offset-free accounted dynamic energy used by conservation charts. */
 export function readScale0TotalEnergy(diag, audit) {
-    if (audit != null && Number.isFinite(audit.totalEnergy)) return audit.totalEnergy;
-    return diag?.totalEnergy ?? 0;
+    if (audit != null && Number.isFinite(audit.dynamicEnergy)) return audit.dynamicEnergy;
+    return diag?.dynamicEnergy ?? diag?.totalEnergy ?? 0;
 }
 
 /** Wave (kinetic) energy — ½Σ|wave_vel|². */

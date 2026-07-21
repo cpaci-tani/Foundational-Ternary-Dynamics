@@ -2,6 +2,7 @@
 // Run: node engine/web/tests/time-analysis.node.test.mjs
 import assert from 'node:assert/strict';
 import * as T from '../js/scales/scale0/analysis/time-analysis.js';
+import { C_SPEED } from '../js/constants.js';
 
 // lapse, clock rate, slowdown
 assert.equal(T.lapse(0), 1);                          // L=0 -> f=1 (flat)
@@ -11,10 +12,14 @@ assert.ok(Math.abs(T.slowdownPct(0) - 0) < 1e-12);
 assert.ok(T.slowdownPct(0.5) > 0);
 
 // SR dilation + FTD generalized gamma
-assert.ok(Math.abs(T.srDilation(0.6) - 0.8) < 1e-12);  // sqrt(1-0.36)=0.8
-assert.ok(Math.abs(T.srGamma(0.6) - 1.25) < 1e-12);
-// ftdGamma(L=0, v) reduces to SR gamma (f=1)
-assert.ok(Math.abs(T.ftdGamma(0, 0.6) - T.srGamma(0.6)) < 1e-12);
+const halfC = 0.5 * C_SPEED;
+assert.ok(Math.abs(T.betaSquared(halfC) - 0.25) < 1e-12);
+assert.ok(Math.abs(T.srDilation(0.6 * C_SPEED) - 0.8) < 1e-12);
+assert.ok(Math.abs(T.srGamma(0.6 * C_SPEED) - 1.25) < 1e-12);
+// ftdGamma(L=0, u_raw) reduces to flat gamma at the same raw speed.
+assert.ok(Math.abs(T.ftdGamma(0, 0.6 * C_SPEED) - T.srGamma(0.6 * C_SPEED)) < 1e-12);
+assert.ok(Math.abs(T.clockRate(0, halfC) ** 2 - 0.75) < 1e-12);
+assert.equal(T.clockRate(0, C_SPEED), 0);
 
 // proper-time accumulation
 assert.ok(Math.abs(T.properTimeStep(0.5, 2.0) - Math.sqrt(0.75) * 2.0) < 1e-12);

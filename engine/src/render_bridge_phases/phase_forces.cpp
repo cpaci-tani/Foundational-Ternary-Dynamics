@@ -214,8 +214,9 @@ void phase_forces_main_loop(RenderBridge& rb) {
       // To respect this constraint exactly, we integrate MOMENTUM, not
       // velocity: p = γ_FTD · v.  Newton's law becomes dp/dt = F, and
       // v is extracted from p at the end of the step.  This guarantees
-      // |v| → C·√(1 − L²) asymptotically as force → ∞; no clamp, no
-      // energy discard, Lorentz-invariant by construction.
+      // |v| → C·√(1 − L²) asymptotically as force → ∞; no clamp and no
+      // energy discard. This preserves the selected causal budget; it is not
+      // a theorem of Lorentz covariance.
       //
       // Algebra (derivation in TRACKER §1.2):
       //   γ²|v|² = |p|²
@@ -223,7 +224,7 @@ void phase_forces_main_loop(RenderBridge& rb) {
       //   ⇒  |v|² = C²(1 − L²) · |p|² / (C² + |p|²)
       //   ⇒  v⃗   = p⃗ · C · √((1 − L²) / (C² + |p|²))
       //
-      // Newtonian limit (|v| << C, L = 0): γ → 1, p ≈ v, v_new ≈ v + F·dt. ✓
+      // Newtonian limit: q=P/M≈u and dq/dt=F/M_INERTIAL.
       // Ultra-relativistic (|p| → ∞):       |v| → C·√(1 − L²).          ✓
       // Horizon (L → 1):                    |v| → 0.                     ✓
       //
@@ -231,28 +232,15 @@ void phase_forces_main_loop(RenderBridge& rb) {
       // `if (|v| > C) v *= C/|v|;` which discarded energy and was also
       // STRICTER than the true bandwidth (clamp allowed |v| ≤ C(1−L²);
       // FTD bandwidth allows |v| ≤ C·√(1−L²)).
-      const double C      = C_SPEED;
-      const double C2     = C * C;
       const double L      = v.latency;                  // 0 if latency_field off
-      const double L2     = L * L;
-      // Budget-safe: clamp 1−L² strictly positive so sqrt() never
-      // underflows at or near the horizon. RF-8 (2026-04-25): use the
-      // shared BANDWIDTH_FLOOR constant from constants.h instead of bare 1e-6.
-      const double one_L2 = std::max(1.0 - L2, BANDWIDTH_FLOOR);
-
-      // Current γ — BANDWIDTH_FLOOR keeps γ finite when the previous tick
-      // left v at the bandwidth edge.
       const double v2 = v.velocity.mag2();
-      double budget  = v2 / C2 + L2;
-      if (budget > 1.0 - BANDWIDTH_FLOOR) budget = 1.0 - BANDWIDTH_FLOOR;
-      const double gamma_in = 1.0 / std::sqrt(1.0 - budget);
+      const double gamma_in = momentum_input_gamma(L, v2);
 
-      // Reconstruct momentum, apply force, extract new velocity.
-      Vec3 p = v.velocity * gamma_in;
-      p = p + f_total * rb.dt_;
-      const double p2 = p.mag2();
-      const double scale = C * std::sqrt(one_L2 / (C2 + p2));
-      v.velocity = p * scale;
+      // Reconstruct specific momentum q=P/M, apply F/M, extract raw u.
+      Vec3 q = v.velocity * gamma_in;
+      q = q + f_total * (rb.dt_ / M_INERTIAL);
+      const double scale = specific_momentum_velocity_scale(L, q.mag2());
+      v.velocity = scale > 0.0 ? q * scale : Vec3{};
     }
   }
   });
@@ -260,9 +248,9 @@ void phase_forces_main_loop(RenderBridge& rb) {
 
 // ── Phase 2 (unified mass): rigid-body cluster inertia ────────────────────
 // A connected cluster of N LOCKED manifested voxels (same state sign, 26-Moore
-// connectivity) carries inertial mass N·M_REST. Its centre of mass integrates
-// a_COM = F_cluster/(N·M_REST) using the SAME γ_FTD momentum scheme as the
-// per-voxel loop, with the per-mass force F_cluster/(N·M_REST) in place of
+// connectivity) carries inertial mass N·M_INERTIAL. Its centre of mass integrates
+// a_COM = F_cluster/(N·M_INERTIAL) using the SAME γ_FTD momentum scheme as the
+// per-voxel loop, with the per-mass force F_cluster/(N·M_INERTIAL) in place of
 // f_total; the resulting V_COM is written to every member (rigid body).
 //
 // The per-voxel loop already skips locked voxels (the `if (!v.locked)` guard
@@ -292,9 +280,6 @@ void phase_forces_integrate_clusters(RenderBridge& rb) {
 
   rb.cluster_members_.clear();
   auto& members = rb.cluster_members_;
-
-  const double C  = C_SPEED;
-  const double C2 = C * C;
 
   for (int seed : active) {
     if (visited[seed]) continue;
@@ -332,21 +317,17 @@ void phase_forces_integrate_clusters(RenderBridge& rb) {
     }
     if (N == 0) continue;
 
-    // γ_FTD integration of the COM at inertial mass m = N·M_REST.
+    // γ_FTD integration of the COM at inertial mass m = N·M_INERTIAL.
     // Identical algebra to the per-voxel loop with v→V_COM, f_total→F_cluster/m.
-    const double m        = static_cast<double>(N) * M_REST;
+    const double m        = static_cast<double>(N) * M_INERTIAL;
     Vec3         V_COM    = sum_vel * (1.0 / N);
     const double L        = sum_lat / N;            // mean member latency
-    const double L2       = L * L;
-    const double one_L2   = std::max(1.0 - L2, BANDWIDTH_FLOOR);
-    double       budget   = V_COM.mag2() / C2 + L2;
-    if (budget > 1.0 - BANDWIDTH_FLOOR) budget = 1.0 - BANDWIDTH_FLOOR;
-    const double gamma_in = 1.0 / std::sqrt(1.0 - budget);
+    const double gamma_in = momentum_input_gamma(L, V_COM.mag2());
     Vec3         q        = V_COM * gamma_in;                 // P/m
     q = q + (F_cluster * (1.0 / m)) * rb.dt_;                 // a = F/m
     const double q2       = q.mag2();
-    const double scale    = C * std::sqrt(one_L2 / (C2 + q2));
-    V_COM = q * scale;
+    const double scale    = specific_momentum_velocity_scale(L, q2);
+    V_COM = scale > 0.0 ? q * scale : Vec3{};
 
     for (int midx : members) rb.voxels_[midx].velocity = V_COM;
   }

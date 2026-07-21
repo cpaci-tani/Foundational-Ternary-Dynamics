@@ -270,63 +270,6 @@ __global__ void latency_to_voxel_kernel(
     voxel_latency[i] = sqrt(clamped);
 }
 
-// ---------- Proper time accumulation + bandwidth speed limit ----------
-//
-// CPU counterpart: render_bridge.cpp:1152-1178 (Rule 8).
-//   For each manifested site (state != 0):
-//     L = latency[i]
-//     f = 1 - L²
-//     if (f > 0):
-//       v2 = velocity.mag²
-//       arg = f² - v²
-//       if (arg > 0): tau[i] += sqrt(arg) / sqrt(f)
-//       v_max = C_SPEED * max(f, 0.001)
-//       if (|v| > v_max): v *= (v_max / |v|)
-//
-// This implements gravitational time dilation AND the bandwidth speed
-// limit (speed < f × C_SPEED near mass, where f shrinks as L grows).
-
-__global__ void latency_tau_bandwidth_kernel(
-    double* __restrict__ tau,
-    double* __restrict__ vel_x,
-    double* __restrict__ vel_y,
-    double* __restrict__ vel_z,
-    const double* __restrict__ latency,
-    const int8_t* __restrict__ state,
-    double c_speed,
-    int N
-) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i >= N) return;
-    if (state[i] == 0) return;  // Only manifested sites
-
-    double L = latency[i];
-    double f = 1.0 - L * L;
-    if (f <= 0.0) return;
-
-    double vx = vel_x[i];
-    double vy = vel_y[i];
-    double vz = vel_z[i];
-    double v2 = vx * vx + vy * vy + vz * vz;
-    double speed = sqrt(v2);
-
-    // Proper time: dτ/dt = √(f² - v²) / √f
-    double arg = f * f - v2;
-    if (arg > 0.0) {
-        tau[i] += sqrt(arg) / sqrt(f);
-    }
-
-    // Bandwidth constraint: effective speed limit is f × C_SPEED
-    double f_clamped = f > 0.001 ? f : 0.001;
-    double v_max = c_speed * f_clamped;
-    if (speed > v_max) {
-        double scale = v_max / speed;
-        vel_x[i] = vx * scale;
-        vel_y[i] = vy * scale;
-        vel_z[i] = vz * scale;
-    }
-}
-
 // ---------- Gauss correction: subtract gradient(phi) from flux at void sites ----------
 
 __global__ void gauss_correction_kernel(
@@ -513,10 +456,10 @@ void launch_solve_latency(GpuBuffers& bufs,
     int threads = 256;
     int blocks = (N + threads - 1) / threads;
 
-    // Step 1: Compute RHS = 4*pi*G * M_REST * |state|
+    // Step 1: Compute RHS = 4*pi*G * M_GRAVITATIONAL * |state|
     // (DC mode is automatically zeroed by Green's function, equivalent
     // to the CPU's mean-subtraction of rho_mass.)
-    const double FOUR_PI_G_K_B = 4.0 * PI * G_N * M_REST;
+    const double FOUR_PI_G_K_B = 4.0 * PI * G_N * M_GRAVITATIONAL;
     compute_latency_rhs<<<blocks, threads>>>(
         bufs.d_state, bufs.d_phi_latency, FOUR_PI_G_K_B, N
     );
@@ -533,15 +476,9 @@ void launch_solve_latency(GpuBuffers& bufs,
     );
     CUDA_CHECK(cudaGetLastError());
 
-    // Step 4: Accumulate proper time tau and apply bandwidth speed limit.
-    // Matches CPU Rule 8 (render_bridge.cpp:1152-1178).
-    latency_tau_bandwidth_kernel<<<blocks, threads>>>(
-        bufs.d_tau,
-        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
-        bufs.d_latency, bufs.d_state,
-        C_SPEED, N
-    );
-    CUDA_CHECK(cudaGetLastError());
+    // Proper time is advanced exactly once by RenderBridge's common host
+    // post-pass after device state is synchronized (FTD-0402). Movement owns
+    // the only external-state causal projection; this solver never clamps u.
 }
 
 }  // namespace kernels
