@@ -1,0 +1,48 @@
+FTD-0403 TARGETED CAUSAL NORMALIZATION CLOSURE v2
+lock_tag=preregister-causal-normalization-targeted-closure-v2
+lock_commit=6ceaa76e1271f6e9e768f4e71d12f9c30a7a59bd
+prereg_sha256=efe5533f7276870ad4a276e317d61933a56535371a8aba45417c063372c37b2a
+execution_git_sha=6ceaa76e1271f6e9e768f4e71d12f9c30a7a59bd
+outcome=TARGETED-CLOSURE
+
+PASS build_target=test_boundary_movement
+PASS exact_verifier A1-A7 S1-S9
+PASS native_changed_surface passed=14 failed=0 total=14
+PASS gpu_changed_surface passed=6 failed=0 total=6 FTD_FORCE_GPU=unset
+PASS golden passed=7 failed=0 total=7
+PASS wasm_release_build target=ftd_wasm
+PASS time_analysis_node tests=1
+PASS wasm_physical_energy_browser_contract tests=1
+PASS scenario_telemetry_contract tests=2
+PASS git_diff_check
+PASS added_link_check
+PASS M_REST_compatibility_only
+PASS preregister_census=GREEN
+
+full_ctest=NOT_RUN_FORBIDDEN_BY_LOCK
+unrelated_campaigns=NOT_RUN
+
+boundary_fixture_velocity_x=-0.5*C_SPEED
+boundary_fixture_remainder_x=-0.75
+boundary_exhaustive_crossing=true
+boundary_reflective_crossing=true
+boundary_projection_events=0
+
+platform=WSL2 Ubuntu-22.04 Linux-6.6.87.2-microsoft-standard-WSL2
+gpu=NVIDIA GeForce RTX 5090
+driver=610.47
+boundary_source_sha256=aa3538c47d048e78f8ddcd6ae753a0924a7cc8679cca6a6ccd802f86ae4d0d06
+boundary_binary_sha256=c2d3387816cbb5b89742ca9a284e4dda8a2a08564ae2ebdf89df8c71ece74c8c
+verifier_sha256=3bb62704d5f77c1ea4f1488129e8cc4bef3e10fb93610e2c5b0bfb849ee7f2ad
+causal_test_source_sha256=a164eed0406b110cdf62b09985ba64ab6fafd330d82c7e9319809d984d52dbdc
+wasm_sha256=0b9c04210a09b92fb638cfae7884280e870941f57bd9d86b9a115abe317ef011
+
+commands:
+python scripts/proofs/verify_causal_normalization_mass_roles.py
+ctest -R ^(causal_normalization|tick_phase_order|voxel_properties|born_infeld|lorentz|lagrangian|gamma_ftd_momentum|de_broglie_redshift|cluster_inertia|energy_conservation|energy_conservation_tight|full_state_irreversibility|boundary_movement|symmetric_movement)$ -j 24 --output-on-failure
+env -u FTD_FORCE_GPU ctest -R ^(gpu_evaporation_parity|gauge_gpu_parity|force_diag_parity|causal_normalization|gpu_parity|gpu_parity_complete)$ -j 24 --output-on-failure
+ctest -L golden -j 24 --output-on-failure
+cmake --build engine/build_wasm --config Release --target ftd_wasm --parallel 24
+node engine/web/tests/time-analysis.node.test.mjs
+npx playwright test scale0-conservation-panel.spec.js -g WASM-vacuum-diagnostics-expose-moving-physical-energy
+npx playwright test scale0-scenario-telemetry-contract.spec.js
