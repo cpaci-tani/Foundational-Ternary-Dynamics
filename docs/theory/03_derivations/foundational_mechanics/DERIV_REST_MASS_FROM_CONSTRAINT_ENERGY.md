@@ -20,7 +20,7 @@
 | Question | Best possible answer class |
 |---|---|
 | Q1: what is M_REST in substrate units? | derivable, if the substrate's own bookkeeping selects a value |
-| Q2: what is m_e/m_P (dimensionless, external)? | currently √(2π)·(16/3)·α¹¹ — [THEOREM]-grade prefactor, n=11 [DERIVED given S1∧S2], α [SMC]; 0.19 % |
+| Q2: what is m_e/m_P (dimensionless, external)? | currently √(2π)·(16/3)·α¹¹ — selected prefactor, `n=11` [SELECTION], α [SMC]; 0.19 % |
 | Q3: what is m_e in MeV? | **never derivable** — dimensional values are calibration-conditional by the framework's own doctrine (SPEC_DIMENSIONAL_MAP) |
 
 This document is about Q1. Its answer, if the conditions hold: **M_REST = W_SC = 0.5054620197173260**, the SC Watson constant — the same geometric object FTD-0388 adopted for the kinetics role.
@@ -59,7 +59,7 @@ Downstream consequences if adopted (flagged, not implemented): ρ_mass = W_SC·|
 
 ## §5. Relation to the external bridge (Q2)
 
-Unchanged and independent: m_e/m_P = √(2π)·(16/3)·α^11 at 0.19 % — prefactor components [THEOREM] (√2π Gaussian; 16 = |Aut(E)|²; D = 3 arithmetic uniqueness), exponent n = 11 [DERIVED given the S1 ∧ S2 hierarchy selections] (proof_m_e_exponent_n11.py, MC-T3.2), α¹¹ [SMC-conditional]. If both Q1 and Q2 hold, their conjunction fixes the substrate-to-Planck unit map with no new content. Attacking S1/S2 or α is a different campaign against a different wall (MC-T4.3).
+Unchanged and independent: m_e/m_P = √(2π)·(16/3)·α^11 at 0.19 %. The combined prefactor is [SELECTION] at its honest tag, the exponent `n=11` is [SELECTION], and α¹¹ is [SMC-conditional]. FTD-0397 proves that the unordered `{3,3,4,6}` multiset cannot select the needed order through permutation-invariant data; a future promotion requires independently derived order-bearing dynamics. If both Q1 and Q2 hold, their conjunction fixes the substrate-to-Planck unit map with no new content.
 
 ## §6. What remains underived, permanently or presently
 

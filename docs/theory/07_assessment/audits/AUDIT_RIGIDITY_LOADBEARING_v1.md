@@ -32,7 +32,7 @@ Targets are the canonical `scripts/constants.py` values (computed at 40-digit pr
 **Honest reading:** **none of the three is RIGID at the 5% level.**
 - **α_s = 7/59 is MDL-dominated** — `2/17` is both simpler and more accurate (0.215% vs 0.631%). The `b₃`-structure is *not* what makes 7/59 fit; the claim is a chance-level rational fit. *Robust.*
 - **sin²θ_W = 3/13 is borderline** — it IS the best simple rational at its complexity (non-dominated, rank-3 overall), but its specialness sits exactly at the chance threshold (p ≈ 0.05). It is not statistically distinguishable from "a simple rational happened to land near 0.231."
-- **m_e prefactor 16/3 is chance-level** — non-dominated but not special (p ≈ 0.08). (This tests only the prefactor; the m_e *exponent* α¹¹, the load-bearing piece, is a separate `[DERIVED]` claim, FTD-0084, NOT tested here.)
+- **m_e prefactor 16/3 is chance-level** — non-dominated but not special (p ≈ 0.08). (This tests only the prefactor. The historical claim that the exponent $\alpha^{11}$ was `[DERIVED]` from FTD-0084 was superseded by FTD-0390 and the scoped order-type theorem FTD-0397; $n=11$ remains `[SELECTION]`.)
 
 ## 3 · Demotions (applied)
 

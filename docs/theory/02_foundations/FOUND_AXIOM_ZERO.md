@@ -715,7 +715,7 @@ emergence failures, α_∞ 3.6× category error, etc.)
   ← Don't add new primitives, just expose structural consequences
 ```
 
-**Every predictive output of FTD reduces to "$i$ exists" via standard mathematical theorems plus two explicit selections (S1, S2).** Close S2 and the chain is fully forced from a single axiom.
+**The displayed chain reduces to "$i$ exists" only after explicit selections are supplied.** FTD-0397 proves that the unordered `{3,3,4,6}` data cannot select its ladder order through permutation-invariant information. Closing one named selection does not make the chain fully forced; an independently derived order-bearing dynamics would still be required, alongside the framework's other declared imports.
 
 ### 7.4 What the axiom does not explain
 
@@ -726,7 +726,7 @@ Fully honest scope:
 | Why is there anything rather than nothing? | **Outside scope.** The axiom is a starting point, not an explanation of why mathematics exists. |
 | Why does $i$ (or any self-referential primitive) exist at all? | **Outside scope.** Same as above. |
 | Why the cogito-algebraic bridge is the right translation | [SELECTION] — but defensible: self-reference + non-triviality + closure define both "I" and $i$ identically. |
-| Why the chain terminates in SM physics and not something else | [THEOREM given D=3]; the chain forces $\alpha$, $N_c$, particle ladder. The match to experimental SM is then an **empirical test** of the chain, not an axiom. |
+| Why the chain terminates in SM physics and not something else | [SELECTION / OPEN]. The arithmetic supplies structural candidates; the physical α identification is [SMC] and the particle-ladder order is not forced by its unordered multiset (FTD-0397). |
 
 The axiom is the minimum. Everything else is consequence or match-to-data.
 

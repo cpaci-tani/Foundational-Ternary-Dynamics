@@ -5910,7 +5910,7 @@ After 2026-05-02 + 2026-05-03 (19 commits across two days), the project has its 
 - **MC-checklist current state** (Tier breakdown):
   - **Tier I: 5/5 closed**
   - **Tier II: 3/3 closed** (T2.3 §4 item 3 also closed today via FTD-0123; structural theorem item 4 remains [OPEN])
-  - **Tier III: 1/5 closed (T3.2 m_e exponent n=11 [DERIVED])**, 3/5 investigated, 1/5 blocked
+  - **Historical 2026-05-02 status (superseded by FTD-0390/0397): Tier III: 1/5 called closed (T3.2 `n=11` then tagged [DERIVED]); the ordering route is now CLOSED NEGATIVE and the exponent remains [SELECTION].** 3/5 investigated, 1/5 blocked
   - **Tier IV: T4.5 Roles 1+3 [DERIVED] + Roles 2+4 [NO-GO]** (FTD-0122 closure); T4.1 reframed (docs-alignment); T4.2, T4.3 (foundational obstruction), T4.4 unchanged
 
 - **α-derivation routes status**: R1/R2/R3/R4, Z-factor, RG-running, algebraic combinations, 1/√d, Langevin-equipart all closed-negative (carried over). The IDENTIFICATION x_+ = 1/α stays [STRONGLY MOTIVATED CONJECTURE]; structural evidence is the strongest the framework has held — Bayes ~4×10⁵:1, Eisenstein-family null, h≥2 null, BCC complex-structure unification of CM Aut count with tower level k=4.
@@ -6100,4 +6100,3 @@ remaining derivation gap; closing it via perturbation theory in the irrep
 mixing would convert FTD-0110 to [THEOREM]-grade.
 
 ---
-
