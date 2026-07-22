@@ -693,7 +693,7 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 ### Phase 2: Tier III pass (commit `e406de8`)
 
 - **NEW**: `scripts/proofs/proof_m_e_exponent_n11.py` — closes MC-T3.2 via route (a). 5/5 PASS.
-- **PROMOTE**: FTD-0015. **n=11 [SELECTION] → [DERIVED]** via [THEOREM × 4] + [SELECTION × 2] (gravity last + spinor before color).
+- **HISTORICAL PROMOTION, SUPERSEDED by FTD-0390/0397:** FTD-0015 `n=11 [SELECTION] → [DERIVED]` was claimed via [THEOREM × 4] + [SELECTION × 2]. The two selections did not force an order; the exponent remains [SELECTION].
 - **NEW**: `scripts/proofs/proof_scfcc_bcc_bridge.py` — MC-T3.3 investigation. Closed-negative for identity bridge.
 - **NEW**: `scripts/proofs/proof_ftd0110_mechanism_gamma.py` — MC-T3.1 investigation. Mechanism γ candidate, slope mismatch unresolved.
 - **NEW**: `scripts/proofs/proof_bridge_functional_arithmetic_mean.py` — MC-T3.4 investigation. Four functionals computed.
@@ -712,7 +712,7 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 - **9 of 18 checklist items concretely advanced** (Tier I 5/5, Tier II 3/3, Tier III T3.2, Tier IV T4.5). 4 honest investigations. 1 blocked. 4 untouched.
 - **9 new proof scripts** under `scripts/proofs/`.
-- **Paper A materially stronger**: FTD-0121 Bayes factor ~4×10⁵ (was ~20,000); n=11 [DERIVED]; Theorem 7 + Theorem 3 honestly restated; pre-registration discipline gap closed.
+- **Historical session report (status corrected later):** Paper A strengthened its FTD-0121 Bayes discussion and preregistration record; its then-current `n=11 [DERIVED]` statement is superseded by FTD-0390/0397 and now reads [SELECTION].
 - **MC-T4.3 unchanged**: the central foundational obstruction (non-action α-injection mechanism) remains untouched. Lead-physicist diagnosis (Phase J ultralocality structurally decouples spine from action) still stands.
 
 ---

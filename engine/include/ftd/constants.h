@@ -158,7 +158,10 @@ using ontic::M_Z;
 
 // Layer 6: Mass scale
 using ontic::K_B;
-using ontic::M_REST;     // rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0
+using ontic::M_INERTIAL;
+using ontic::E_REST;
+using ontic::M_GRAVITATIONAL;
+using ontic::M_REST;     // compatibility alias only; production consumers must name a role
 using ontic::K_MANIFEST; // genesis/evaporation kinetics scale (= K_B); unified-mass Phase 0
 using ontic::K_GENESIS;
 
@@ -278,12 +281,12 @@ inline constexpr double WEAK_THRESHOLD = K_GENESIS;
 inline constexpr double BINDING_ENERGY = K_B * PHI;
 
 // FTD-0271: de Broglie internal-clock frequency ω₀ [rad/tick]. The KG mass
-// term is −ω₀²·J. ω₀∝M_REST is [IMPOSED] (native flux is massless, A0); the
-// proportionality M_REST→ω₀[rad/tick] is [SELECTION] (no ℏ in the substrate —
+// term is −ω₀²·J. ω₀∝K_B is [IMPOSED] (native flux is massless, A0); the
+// proportionality K_B→ω₀[rad/tick] is [SELECTION] (no ℏ in the substrate —
 // the lattice fixes the de Broglie *shape* λ∝1/v, never the absolute scale).
 // This is a reference value only; the engine reads toggles.omega0 at runtime.
 // Stability bound for the leapfrog integrator: ω₀·dt < 2.
-inline constexpr double OMEGA0_COMPTON = M_REST;  // = K_B = 0.511
+inline constexpr double OMEGA0_COMPTON = K_B;  // imposed calibration, not a unified mass role
 
 // Exchange repulsion strength scale (Fermi pressure)
 // From DERIV_SPIN_STATISTICS_BRIDGE: the discriminant trichotomy produces

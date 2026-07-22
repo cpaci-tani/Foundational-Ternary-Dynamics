@@ -55,12 +55,17 @@ static void inject_initial_state(RenderBridge& rb) {
 //     lorentz_force, selective_damping, dual_substrate, weak_transmutation
 //     ON; everything else at its TOGGLE_SPECS default (see term_toggles.h).
 //     Verified stable across 3 consecutive runs.
+//   - 2026-07-21: RE-PINNED for FTD-0402. Field-manifest comparison against
+//     a0a443f8 showed the same bounded delta class as the minimal profile:
+//     velocity/remainder direct; flux/wave/dual/accel and energy diagnostics
+//     downstream; state, latency, tau, phase, identity labels, and strong/weak
+//     sectors unchanged. See test_render_bridge_golden.cpp changelog.
 // If this changes WITHOUT a stated rationale, either engine physics or a
 // TOGGLE DEFAULT changed unexpectedly. To change it intentionally: (1) state
 // which default/physics changed and why in the commit, (2) update the
 // constant to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_DEFAULT = 0x54fe2f9ab5c0a255ULL;  // L=17, shipping defaults, ext fold (re-pinned 2026-07-18, Term-2 coupling sign amendment — see test_render_bridge_golden.cpp changelog; was 0x115a6350fcbe39a0)
+static constexpr std::uint64_t GOLDEN_HASH_DEFAULT = 0xca1aada0203f0229ULL;  // L=17 shipping defaults, FTD-0402, 2026-07-21
 
 void test_golden_default_profile() {
     section("100-tick byte-hash regression (shipping-default toggles)");

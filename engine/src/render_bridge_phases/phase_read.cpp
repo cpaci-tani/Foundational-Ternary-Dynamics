@@ -131,8 +131,8 @@ void phase_read_main_loop(RenderBridge& rb) {
             rb.delta_j_R_[i] += curl_sv - grad_s;
           }
 
-          // FTD-0271/0281: de Broglie clock. The legacy clock is a matter-site
-          // rest term. The FTD-0281 diagnostic is the operator-spectroscopy
+          // FTD-0271/0281: de Broglie clock. This imposed K_B-tied clock is a
+          // matter-site rest term. The FTD-0281 diagnostic is the operator-spectroscopy
           // version: all clocked field sites feel V=-phi_C, matching
           // omega_eff^2 = omega0^2 + 2*omega0*V from FTD-0278.
           if (do_db_clock_coulomb) {

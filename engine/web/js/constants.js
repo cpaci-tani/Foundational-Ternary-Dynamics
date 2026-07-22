@@ -53,6 +53,12 @@ export const X_MINUS = 3.0239639163;
 
 // ── Layer 4: Framework Integers ─────────────────────────────────────
 export const D_SPATIAL = 3;
+// Explicit 3D measure for the current unit cubic lattice. Local field
+// energy remains a quadratic density; integrated cell energy multiplies
+// that density by VOXEL_VOLUME = a_lat^3.
+export const VOXEL_EDGE_LENGTH = 1.0;
+export const VOXEL_FACE_AREA = VOXEL_EDGE_LENGTH * VOXEL_EDGE_LENGTH;
+export const VOXEL_VOLUME = VOXEL_FACE_AREA * VOXEL_EDGE_LENGTH;
 export const N_C       = 3;
 export const N_GEN     = 3;
 export const N_F       = 6;
@@ -113,11 +119,14 @@ export const ALPHA_G_APPROX = 5.91e-39;
  * empirical electron mass.
  */
 export const K_B       = 0.511;                       // electron mass in MeV
-export const M_REST     = K_B;                        // rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0 (FTD-0130)
-export const K_MANIFEST = 0.5054620197173260;         // := W_SC, unit-charge Gauss self-energy [SELECTION — ADOPTED, FTD-0388]; kinetics role only (was = K_B pre-2026-07-17; FTD-0130 role split)
-export const K_GENESIS = N_C * K_MANIFEST;            // genesis threshold = 3·W_SC = 1.5163860591519780 (kinetics, not mass; FTD-0388)
 export const C_SPEED   = 0.57735026918962576451;      // 1/sqrt(3) [DERIVED from CFL]
 export const C_WAVE    = C_SPEED;
+export const M_INERTIAL = K_B;                        // imposed inertial calibration (FTD-0402)
+export const E_REST = M_INERTIAL * C_SPEED * C_SPEED; // raw-lattice rest energy = K_B/3
+export const M_GRAVITATIONAL = K_B;                   // separately named imposed gravity charge
+export const M_REST = M_INERTIAL;                     // compatibility alias only
+export const K_MANIFEST = 0.5054620197173260;         // := W_SC, unit-charge Gauss self-energy [SELECTION — ADOPTED, FTD-0388]; kinetics role only (was = K_B pre-2026-07-17; FTD-0130 role split)
+export const K_GENESIS = N_C * K_MANIFEST;            // genesis threshold = 3·W_SC = 1.5163860591519780 (kinetics, not mass; FTD-0388)
 
 // ── Simulation Parameters ───────────────────────────────────────────
 export const DAMPING = ALPHA;                          // dissipation rate γ = α

@@ -58,10 +58,7 @@ Lorentzian metric rides entirely on the *choice* of a reversible second-order ac
 the missing forcing principle.**
 
 FTD's own substrate is the fingerprint of exactly this: the **wave sector is reversible** (symplectic),
-while **manifestation + the Rayleigh dissipation are irreversible** (`SPEC_FTD_LAGRANGIAN.md` §3.6
-dissipation `[IMPOSED]`, non-variational; `REPORT_DETECTOR_INFORMATION_LOSS.md` — the `ψ→|ψ|²` /
-sign-projection map is many-to-one, "provably unrecoverable"). The substrate is **not globally reversible**;
-its Lorentzian (metric) behaviour is confined to the reversible wave sector.
+while the complete current update is non-injective (`ANALYSIS_FULL_STATE_IRREVERSIBILITY_v1.md`, FTD-0395) and Rayleigh dissipation is irreversible (`SPEC_FTD_LAGRANGIAN.md` §3.6, `[IMPOSED]`, non-variational). FTD-0394 separately shows that the genesis readout is many-to-one while `J` remains stored; the older detector-optics analogy is not evidence of full-state erasure. The substrate is **not globally reversible** in the current implementation; its Lorentzian (metric) behaviour is confined to the reversible wave sector.
 
 ## 3 · FTD's own algebra already encodes the split (π vs G\*)
 
@@ -131,8 +128,8 @@ FTD-0252); not a postulate change (P1–P5 are unchanged — this *maps* what th
   deterministic does **not** force reversibility — the "eventually periodic" theorem permits transients flowing
   into attractors (irreversible, many-to-one); (ii) the 't Hooft argument is a *motivation* (match observed
   unitarity), not a derivation from P1–P5; and (iii) **decisively for FTD**, the genuinely *finite* sector is
-  the ternary **state field** `s∈{−1,0,+1}`, and *that* sector is **irreversible** (manifestation is many-to-one
-  — the arrow lives there), while the *reversible* part is the **continuous flux** `J∈ℝ³`, which is **not
+  the ternary **state field** `s∈{−1,0,+1}`. Its readout is lossy (FTD-0394), and the current full update is
+  non-injective through evaporation (FTD-0395), while the *reversible-in-isolation* part is the **continuous flux** `J∈ℝ³`, which is **not
   finite-state**, so the finiteness argument has no purchase on it. FTD thus applies reversibility *selectively*
   (reversible continuous flux → metric; irreversible finite state → arrow). **Conclusion:** reversibility is a
   6th-postulate-class input the postulates neither force nor internally motivate — its only motivation is

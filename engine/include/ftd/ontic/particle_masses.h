@@ -31,13 +31,17 @@ namespace ontic {
 // We use K_B = 0.511 MeV as the practical simulation value.
 inline constexpr double K_B = 0.511;
 
-// ── FTD-0130 role disentanglement (unified-mass Phase 0, 2026-06-06) ──────────
-// K_B conflated four roles. Split here into named constants so the genuinely-
-// independent genesis kinetics can vary without perturbing the rest-mass scale.
-// The FTD action forces the rest/inertial/gravitational roles to be ONE number
-// (SPEC_FTD_LAGRANGIAN §4.1↔§4.2), so those stay fused as M_REST; only
-// K_MANIFEST is independent — and since FTD-0388 it actually differs (below).
-inline constexpr double M_REST     = K_B;   // rest = inertial = gravitational mass quantum (= m_e); UNTOUCHED by FTD-0388
+// FTD-0402 causal-normalization contract.  K_B remains the imposed numerical
+// calibration; the names below prevent one scalar from silently changing
+// physical role in raw nodes/tick coordinates.  Equality of inertial and
+// gravitational charge is still IMPOSED pending a common stress-energy source.
+inline constexpr double M_INERTIAL      = K_B;
+inline constexpr double E_REST          = M_INERTIAL * C_SPEED * C_SPEED;
+inline constexpr double M_GRAVITATIONAL = K_B;
+
+// Source-compatibility alias only.  Production code must name the role it
+// consumes; tests enforce that no production consumer uses M_REST.
+inline constexpr double M_REST = M_INERTIAL;
 
 // K_MANIFEST := W_SC, the substrate's unit-charge Gauss self-energy
 // [SELECTION — ADOPTED, FTD-0388, owner ruling 2026-07-17]. The identification
@@ -46,7 +50,7 @@ inline constexpr double M_REST     = K_B;   // rest = inertial = gravitational m
 // at L=17/33/65, prereg selfenergy-pinning v1/v1.1, commits 66a830ac/d8b27995/
 // 19d14df0/67fab0d4). Replaces the MeV-mirroring 0.511 convention for the
 // KINETICS role only (genesis + evaporation Boltzmann scale); the mass anchor
-// stays M_REST = K_B. Falsifiers live: genesis hard gate at |J| = K_GENESIS
+// stays M_INERTIAL = K_B. Falsifiers live: genesis hard gate at |J| = K_GENESIS
 // = 3·W_SC = 1.516386059; evaporation exponent scale K_MANIFEST² = 0.255492.
 inline constexpr double K_MANIFEST = 0.5054620197173260;  // := W_SC (was = K_B pre-FTD-0388)
 

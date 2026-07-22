@@ -223,12 +223,12 @@ Time advances in discrete steps called "ticks." The tick counter t ∈ **N** ser
 
 Predictions in lattice units convert to physical units through a minimal set of imported dimensional constants. The framework's **default gauge is electron-primary** (FTD-0137 §4.5; full treatment [`FOUND_ELECTRON_PRIMARY_GAUGE.md`](theory/02_foundations/FOUND_ELECTRON_PRIMARY_GAUGE.md)):
 
-> **Import `{ℏ, c, m_e}`.** Two are the universal unit-fixing constants (`ℏ`, `c`; and `c`'s dimensionless value `1/√3` is native to the lattice). The single *beyond-universal* anchor is the **electron mass** (`K_B = m_e ≈ 0.511 MeV/c²`). Everything else — all masses, all lengths, all times, and the Planck scale + `G` — is **derived**.
+> **Import `{ℏ, c, m_e}`.** Two are the universal unit-fixing constants (`ℏ`, `c`; and the canonical engine transport value `C_SPEED=1/√3` is native to the lattice). The single *beyond-universal* anchor is the **electron mass** (`M_INERTIAL=K_B=m_e≈0.511 MeV/c²`). In raw lattice coordinates FTD-0402 names `E_REST=M_INERTIAL·C_SPEED²=K_B/3` and the separately imposed gravity role `M_GRAVITATIONAL=K_B`. Other dimensional outputs remain conditional on this register and on the epistemic status of their individual relations.
 
 Derived consequences (all conditional on the single imported `m_e`; numerics via the FTD-0015 `m_e/m_P = Kα¹¹` ladder, `K = √(2π)·16/3`):
 - One voxel: `a_phys = ℓ_P = ƛ_C·Kα¹¹` — the *predicted* Planck length, `≈ 1.616 × 10⁻³⁵ m` (agrees with the exact ℓ_P to 0.19%). **[DERIVED ~0.19%]**, no longer a bare declaration.
 - One tick: `t_phys = ℓ_P / (√3 · c) = t_P/√3 ≈ 3.11 × 10⁻⁴⁴ s` (from `c_lat = 1/√3` lattice CFL Courant speed combined with `c_phys = 2.998 × 10⁸ m/s`: physical `c = c_lat · a_phys/t_phys`). *Corrected 2026-07-08* from `√3·ℓ_P/c` (√3 was misplaced to the numerator — a factor-3 inconsistency with `c_lat = 1/√3`); see [`DERIV_DIMENSIONAL_GATE.md`](theory/03_derivations/foundational_mechanics/DERIV_DIMENSIONAL_GATE.md).
-- Mass unit: the anchor `m_e` itself (`K_B = m_e`; `M_unit = m_e/K_B = 1 MeV/c² ≈ 1.783 × 10⁻³⁰ kg`); every other mass follows as a predicted ratio (`m_μ/m_e = 207`, …).
+- Mass unit: the anchor `m_e` itself (`M_INERTIAL=K_B=m_e`; `M_unit = m_e/K_B = 1 MeV/c² ≈ 1.783 × 10⁻³⁰ kg`). Other mass relations retain their individual LEDGER tags; the calibration does not turn selections or parametric formulas into derivations.
 - Newton's `G = ℏc·(Kα¹¹)²/m_e²`, i.e. `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` — **[SMC]**, 0.38% vs measured (FTD-0015; the `G_N = 1/100` identification is separately falsified, FTD-0131). Under electron-primary `G` is an **output, not an import**.
 
 **Rationale.** The no-go theorems `THEOREM_A_PHYS_NO_GO` (FTD-0059) and `THEOREM_MU_NO_GO` (FTD-0096) prove no length or mass is derivable from Axiom Zero alone, so *some* dimensional anchor must be imported (grade-0 closure, FTD-0368). Electron-primary spends that single freedom on the **measurable** `m_e` and derives the rest — importing one beyond-universal scale instead of the legacy **Planck-primary** default's two (`a_phys ≡ ℓ_P` redundantly fixed both `ℓ_P ≡ G` and `m_e`, since `m_e/m_P` is a predicted ratio), and it borrows **no** gravitational constant (`G` is an output). **Tradeoff (honest):** under electron-primary `a_phys` and `G` are *derived-conditional* on the `[SMC]`-grade α-ladder rather than exact declarations — the switch buys non-circularity and minimality at the cost of the length/gravity scales inheriting the ladder's `[SMC]`/`[SELECTION]` tags. Per FTD-0137 the lattice spacing is a gauge degree of freedom; the alternative gauges — **legacy Planck-primary** (`a_phys ≡ ℓ_P` declared exactly), cluster-primary (FTD-0130 path-(b)), hadronic-primary (`a_phys ≡ 1` fm), and dimensionless-only — remain valid choices (`FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §4). Dimensionless predictions (the falsifiable spine) are *gauge-invariant* under all choices, so **no prediction changes** — this is a re-anchoring, not a re-derivation.
@@ -699,7 +699,7 @@ FTD uses **natural units** where fundamental constants are set to unity. This se
 
 ### Lagrangian Density Dimensions
 
-For the action $S = \sum_t \sum_v \mathcal{L}$ to be dimensionless (action in units of ℏ = 1):
+For the action $S = \sum_t \sum_v \mathcal{L}\,V_{\rm cell}$ to be dimensionless (action in units of ℏ = 1, with the unit tick implicit):
 
 $$[\mathcal{L}] = [E]/[L]^3 = \text{energy density}$$
 
@@ -709,15 +709,30 @@ This requires:
 
 **Conclusion**: In FTD natural units, the coupling constant g in the Lagrangian is **dimensionless**.
 
+**FTD-0404 spatial-measure reconciliation:** the current raw lattice fixes the voxel edge `a_lat=1`, so `A_face=a_lat²=1` and `V_cell=a_lat³=1`. Local field densities remain quadratic (`rho_field=½|J|²`, `rho_wave=½|wave_vel|²`); volume-integrated diagnostic channels use `E=Σ rho_i V_cell`. The cube belongs to the 3D measure, not to the vector norm. Point-particle energy/momentum and the local latency-Poisson density source are not multiplied by `V_cell`. This is exact current-engine bookkeeping, not a derivation of D=3, a stress–energy tensor, or a mass scale.
+
 ## 7.2 Structural Constants
 
 These define the model's fundamental scales:
 
 | Parameter | Value | Dimensions | Role | Status |
 |-----------|-------|------------|------|--------|
-| C | 1.0 | [L]/[T] | The **causal bound** (L∞/Moore: one site per axis per tick) — NOT the light speed; emergent light propagates at the CFL wave speed 1/√3 voxel/tick ([THEOREM]; see FOUND_PLANCK_CALIBRATION_SEMANTICS.md) |  Axiomatic (P1/P4 geometry) |
+| `C_MOORE` | 1.0 | [L]/[T] | Topological update-support bound (L∞/Moore: one site per axis per tick), not the particle/wave speed | Axiomatic (P1/P4 geometry) |
+| `C_SPEED` | $1/\sqrt3$ | [L]/[T] | Canonical wave and particle transport speed in raw nodes/tick; FTD-0402 uses this value in $\beta^2=|u|^2/C_{\rm SPEED}^2$ | [THEOREM for lattice wave/CFL value; selected clock use is AXIOM] |
 | H | 1.0 | [L] | Lattice spacing (the **edge**) — calibrated `a_phys ≡ ℓ_P` (IMP-K1; [DERIVED ~0.19%] under electron-primary). One tick = t_P/√3, so that c·t_P = ℓ_P holds exactly (FTD-0385 naming theorem) |  Axiomatic unit; Planck naming per calibration register |
-| KB | 0.511 | dimensionless | Manifestation threshold | **[IMPOSED — calibration]** (K_B ≡ m_e anchor, IMP-K3/FTD-0130 role-conflation flagged; the m_e ladder itself is [SMC] FTD-0015) |
+| `VOXEL_VOLUME` | $H^3=1$ | [L]³ | Explicit cubic measure multiplying volume-density sums | **[THEOREM — current engine representation, FTD-0404]** |
+| `K_B` / `M_INERTIAL` | 0.511 | mass unit | Inertial-mass calibration | **[IMPOSED]** (electron-primary anchor; historical $n=11$ relation remains [SELECTION]) |
+| `E_REST` | $K_B/3$ | energy unit | Particle rest energy in raw coordinates, $M_{\rm INERTIAL}C_{\rm SPEED}^2$ | **[IMPOSED role map]** |
+| `M_GRAVITATIONAL` | 0.511 | source unit | Current latency-Poisson gravity charge, separately named | **[IMPOSED]**; equality to `M_INERTIAL` not derived |
+| `K_MANIFEST` | 0.5054620197 | field-energy scale | Manifestation/evaporation kinetics, distinct from mass calibration | **[SELECTION — ADOPTED, FTD-0388]** |
+
+**FTD-0402/0403 status:** the selected raw-lattice causal and mass-role map is implemented and passes exact/targeted CPU, GPU, golden, WASM, and web gates. FTD-0402 retains its frozen `PARTIAL` verdict because its aggregate G9 was not completed. The independently locked FTD-0403 v2 targeted dependency closure passes the exact changed surface and closes `§12-cnorm` without running unrelated CTests. That closure made a separately locked NCEMC feasibility audit admissible; FTD-0405 subsequently found the current route blocked by phase-split work nonconservation and an unselected energy zero/local stress distribution. No covariance, equivalence-principle, confinement-energy, or mass-scale theorem is added.
+
+**FTD-0404 status:** the cubic unit-cell measure is explicit and numerically neutral. Energy/action density sums carry `V_cell=H³=1`; local norms remain quadratic; WASM indices are append-only. This closes only the density-versus-integral representation ambiguity; its then-open NCEMC successor status is superseded by the scoped FTD-0406 entry below.
+
+**FTD-0405 status:** NCEMC feasibility returns `DOUBLE-OBSTRUCTION` for the present direct RenderBridge colour force. A radial potential family exists and isolated two-body particle momentum closes, but the actual tick has nonzero work residual and the additive strong-energy zero/local stress distribution required by gravity are not selected. No confinement mass or common stress–energy claim is licensed. A different local strong-field architecture requires a fresh lock and explicit owner authorization.
+
+**FTD-0406 status:** that authorization was subsequently supplied and is recorded as selected/imposed architecture, not as a derivation. The default-off CPU `strong_stress_energy` path adopts `U_ij(r)=-c_f∫_1^r g(s)ds`, projects collision-free relative momenta so the same `K+U` is conserved, deposits local midpoint-CIC string `T00` plus central stress, and sources CPU latency with `T00/C_SPEED²`. Exact 21/21, native 35/35 twice, targeted neighbors 10/10, and goldens 7/7 pass. This closes NCEMC-1–4 only on the isolated flat collision-free CPU domain. GPU, topology changes, moving latency, mixed forces and NCEMC-5 remain open; no mass scale or equivalence principle is derived.
 
 ## 7.3 Coupling Parameters
 

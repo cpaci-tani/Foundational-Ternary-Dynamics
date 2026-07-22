@@ -98,6 +98,8 @@ val get_diagnostics(ftd::RenderBridge& rb) {
     result.set("totalFlux",     d.total_flux);
     result.set("totalEnergy",   d.total_energy);
     result.set("maxBandwidth",  d.max_bandwidth);
+    result.set("maxCausalBudget", d.max_causal_budget);
+    result.set("causalProjectionEvents", d.causal_projection_events);
     result.set("avgDrag",       d.avg_drag);
     result.set("entropy",       d.total_entropy);
     result.set("chargeBalance", d.positive_count - d.negative_count);
@@ -116,7 +118,7 @@ val get_diagnostics(ftd::RenderBridge& rb) {
     return result;
 }
 
-static std::vector<double> s_diag_cache(21);
+static std::vector<double> s_diag_cache(23);
 val get_diagnostics_view(ftd::RenderBridge& rb) {
     auto d = rb.diagnostics();
     s_diag_cache[0] = d.tick;
@@ -140,7 +142,9 @@ val get_diagnostics_view(ftd::RenderBridge& rb) {
     s_diag_cache[18] = d.total_angular_momentum.x;
     s_diag_cache[19] = d.total_angular_momentum.y;
     s_diag_cache[20] = d.total_angular_momentum.z;
-    return val(typed_memory_view(21, s_diag_cache.data()));
+    s_diag_cache[21] = d.max_causal_budget;
+    s_diag_cache[22] = static_cast<double>(d.causal_projection_events);
+    return val(typed_memory_view(23, s_diag_cache.data()));
 }
 
 // ── Energy Audit ────────────────────────────────────────────────────
@@ -183,10 +187,21 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     // Strong / weak field energies (sub-channel sums).
     result.set("strongEnergy",      ea.strong_energy);
     result.set("weakEnergy",        ea.weak_energy);
+    result.set("particleRestEnergy", ea.particle_rest_energy);
+    result.set("particleEnergy",     ea.particle_energy);
+    result.set("dynamicEnergy",      ea.dynamic_energy);
+    result.set("cellVolume",         ea.cell_volume);
+    result.set("fieldEnergyDensitySum", ea.field_energy_density_sum);
+    result.set("waveEnergyDensitySum",  ea.wave_energy_density_sum);
+    val momentum = val::object();
+    momentum.set("x", ea.particle_momentum.x);
+    momentum.set("y", ea.particle_momentum.y);
+    momentum.set("z", ea.particle_momentum.z);
+    result.set("particleMomentum", momentum);
     return result;
 }
 
-static std::vector<double> s_audit_cache(19);
+static std::vector<double> s_audit_cache(28);
 val get_energy_audit_view(ftd::RenderBridge& rb) {
     auto ea = rb.energy_audit();
     s_audit_cache[0] = ea.field_energy;
@@ -208,7 +223,18 @@ val get_energy_audit_view(ftd::RenderBridge& rb) {
     s_audit_cache[16] = ea.wv_L_total;
     s_audit_cache[17] = ea.wv_R_total;
     s_audit_cache[18] = ea.charge_total;
-    return val(typed_memory_view(19, s_audit_cache.data()));
+    // Append-only FTD-0402 contract: indices 0..18 retain their meanings.
+    s_audit_cache[19] = ea.particle_rest_energy;
+    s_audit_cache[20] = ea.particle_energy;
+    s_audit_cache[21] = ea.particle_momentum.x;
+    s_audit_cache[22] = ea.particle_momentum.y;
+    s_audit_cache[23] = ea.particle_momentum.z;
+    s_audit_cache[24] = ea.dynamic_energy;
+    // Append-only FTD-0404 contract: indices 0..24 retain their meanings.
+    s_audit_cache[25] = ea.cell_volume;
+    s_audit_cache[26] = ea.field_energy_density_sum;
+    s_audit_cache[27] = ea.wave_energy_density_sum;
+    return val(typed_memory_view(28, s_audit_cache.data()));
 }
 
 // ── Lagrangian Extraction (full with constraints) ───────────────────
@@ -237,10 +263,11 @@ val get_lagrangian(ftd::RenderBridge& rb) {
     // Counters
     result.set("manifested",      lag.manifested_count);
     result.set("locked",          lag.locked_count);
+    result.set("cellVolume",      lag.cell_volume);
     return result;
 }
 
-static std::vector<double> s_lag_cache(16);
+static std::vector<double> s_lag_cache(17);
 val get_lagrangian_view(ftd::RenderBridge& rb) {
     auto lag = ftd::compute_lagrangian_diagnostics(rb);
     s_lag_cache[0] = lag.field_kinetic_sum;
@@ -259,7 +286,9 @@ val get_lagrangian_view(ftd::RenderBridge& rb) {
     s_lag_cache[13] = lag.total_wave_energy;
     s_lag_cache[14] = lag.manifested_count;
     s_lag_cache[15] = lag.locked_count;
-    return val(typed_memory_view(16, s_lag_cache.data()));
+    // Append-only FTD-0404 contract: indices 0..15 retain their meanings.
+    s_lag_cache[16] = lag.cell_volume;
+    return val(typed_memory_view(17, s_lag_cache.data()));
 }
 
 // ── Voxel Inspection ────────────────────────────────────────────────
@@ -284,6 +313,7 @@ val inspect_voxel(ftd::RenderBridge& rb, int x, int y, int z) {
     // FTD-0271: de Broglie clock phase (advanced as omega0*d(tau) when on).
     result.set("phase",      v.phase);
     result.set("tau",        v.tau);
+    result.set("latency",    v.latency);
     // Wave velocity
     result.set("waveVelX",   v.wave_vel.x);
     result.set("waveVelY",   v.wave_vel.y);

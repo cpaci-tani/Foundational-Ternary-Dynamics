@@ -1,0 +1,17 @@
+COMMAND: python scripts/proofs/proof_nonlinear_delta_ind_v2.py
+EXECUTION_HEAD: 8b6003d324f01da0a71f1f7a001abf26837a38fd
+LOCK_TAG: preregister-nonlinear-delta-ind-v2
+PLATFORM: Windows-11-10.0.26200-SP0; Python 3.13.12
+INSTRUMENT_SHA256: f4624e066131fe43f775b8d334d06893d7af0d978e5e07b8b0673215c08c94f5
+EXIT_A=0
+EXIT_B=0
+DUPLICATE_IDENTICAL=True
+FTD-0396 nonlinear delta-IND v2 exact verifier
+ANCHOR genesis: PASS (exact Fraction arithmetic)
+ANCHOR annihilation: PASS (exact Fraction arithmetic)
+N_bounded: BLOCKED-ESCAPE
+  reason: B bounds event-type word length but not the space-time-decorated transcript class; the v1 period/valuation upper bound does not follow from the stated bounded-activity hypotheses
+N_unrestricted: BLOCKED-ESCAPE
+  reason: no universal-computation embedding and no structural non-universality obstruction has been established
+DELTA_VALUATION: NOT RUN (properness gate did not succeed)
+STANDING TAGS: x+=1/alpha [SMC]; MC-T4.3 [FOUNDATIONAL OBSTRUCTION]; FC-W [AXIOM]

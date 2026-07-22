@@ -49,8 +49,7 @@ int main() {
 
     // ---- Weak-field reduction ----
     // For small v, L:
-    //   -K_B * sqrt(1 - v^2 - L^2) ≈ -K_B + K_B*v^2/2 + K_B*L^2/2
-    // The Klein-Gordon kinetic term is (1/2)|dJ/dt|^2 ≈ K_B*v^2/2
+    //   -E0*sqrt(1-u²/C²-L²) ≈ -E0 + E0*u²/(2C²) + E0*L²/2
 
     std::cout << "--- Weak-field reduction ---\n";
     {
@@ -59,8 +58,11 @@ int main() {
 
         for (double v : v_vals) {
             for (double L : L_vals) {
-                double exact = -ftd::K_B * std::sqrt(1.0 - v*v - L*L);
-                double approx = -ftd::K_B + ftd::K_B * v*v / 2.0 + ftd::K_B * L*L / 2.0;
+                double exact = -ftd::E_REST * std::sqrt(
+                    1.0 - v*v/(ftd::C_SPEED*ftd::C_SPEED) - L*L);
+                double approx = -ftd::E_REST
+                    + ftd::E_REST * v*v / (2.0*ftd::C_SPEED*ftd::C_SPEED)
+                    + ftd::E_REST * L*L / 2.0;
                 double rel_err = std::abs(exact - approx) / std::abs(exact);
 
                 char buf[128];
@@ -76,7 +78,7 @@ int main() {
     std::cout << "\n--- Strong-field behavior ---\n";
     {
         ftd::Voxel v;
-        v.velocity = {0.99, 0, 0};
+        v.velocity = {0.99 * ftd::C_SPEED, 0, 0};
         v.latency = 0.0;
         double g = v.gamma_ftd();
         check("gamma at v=0.99 > 7", g > 7.0);
@@ -122,22 +124,22 @@ int main() {
     {
         ftd::Voxel v;
         v.state = 0;
-        v.velocity = {0.3, 0.4, 0.0};  // |v| = 0.5
+        v.velocity = {ftd::C_SPEED / 2.0, 0.0, 0.0};
         v.latency = 0.0;
 
         double divJ = 0.0;
         double rho = 0.0;
 
         double H = ftd::hamiltonian_density(v, divJ, rho);
-        double expected_H = ftd::K_B / std::sqrt(1.0 - 0.25);
+        double expected_H = ftd::E_REST / std::sqrt(1.0 - 0.25);
         // For vacuum (s=0, divJ=0), coupling and gauss terms vanish
-        check_close("H_BI = K_B * gamma at v=0.5", H, expected_H, 1e-10);
+        check_close("H_BI = E_REST * gamma at u=C/2", H, expected_H, 1e-10);
 
-        // At rest: H = K_B (rest mass energy)
+        // At rest: H = E_REST
         ftd::Voxel v_rest;
         v_rest.latency = 0.0;
         double H_rest = ftd::hamiltonian_density(v_rest, 0, 0);
-        check_close("H at rest = K_B (rest mass)", H_rest, ftd::K_B, 1e-10);
+        check_close("H at rest = E_REST", H_rest, ftd::E_REST, 1e-10);
     }
 
     // ---- Bandwidth enforcement in simulation ----
@@ -167,15 +169,14 @@ int main() {
     // ---- BI energy-momentum relation ----
     std::cout << "\n--- Energy-momentum relation ---\n";
     {
-        // E^2 = p^2 + m^2 (in BI language: H^2 = K_B^2 * v^2 * gamma^2 + K_B^2)
-        // Actually: H = K_B * gamma, p = K_B * v * gamma
-        // So H^2 - p^2 = K_B^2 * gamma^2 * (1 - v^2) = K_B^2
-        double v = 0.6;
-        double gamma = 1.0 / std::sqrt(1.0 - v*v);
-        double E = ftd::K_B * gamma;
-        double p = ftd::K_B * v * gamma;
-        double mass_shell = E*E - p*p;
-        check_close("E^2 - p^2 = K_B^2 (mass shell)", mass_shell, ftd::K_B * ftd::K_B, 1e-10);
+        const double beta = 0.6;
+        const double u = beta * ftd::C_SPEED;
+        const double gamma = 1.0 / std::sqrt(1.0 - beta*beta);
+        const double E = ftd::E_REST * gamma;
+        const double p = ftd::M_INERTIAL * u * gamma;
+        const double mass_shell = E*E - ftd::C_SPEED*ftd::C_SPEED*p*p;
+        check_close("E^2-C^2p^2 = E_REST^2", mass_shell,
+                    ftd::E_REST * ftd::E_REST, 1e-10);
     }
 
     std::cout << "\n================================================================\n";

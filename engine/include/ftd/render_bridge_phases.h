@@ -113,8 +113,8 @@ void phase_forces_main_loop(RenderBridge& rb);
 /// Unified-mass Phase 2 — rigid-body cluster inertia. Flood-fills each
 /// connected (26-Moore) cluster of LOCKED, same-sign manifested voxels,
 /// reconstructs F_cluster from rb.force_diag_ (f_coulomb+f_gravity+f_strong+
-/// f_magnetic), and integrates the COM at inertial mass N·M_REST
-/// (a_COM = F_cluster/(N·M_REST)), writing the resulting V_COM to every
+/// f_magnetic), and integrates the COM at inertial mass N·M_INERTIAL
+/// (a_COM = F_cluster/(N·M_INERTIAL)), writing the resulting V_COM to every
 /// member. Reads rb.voxels_.{state,locked,velocity,latency}, rb.force_diag_,
 /// rb.lattice_, rb.dt_; writes member velocities only. Gated by
 /// toggles.cluster_inertia at the call site (default OFF ⇒ additive / golden-

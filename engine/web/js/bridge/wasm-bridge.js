@@ -28,7 +28,7 @@
  * per-call object allocation.
  */
 
-import { K_B } from '../constants.js';
+import { K_B, VOXEL_VOLUME } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { createParticleEngine } from './mock-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
@@ -435,6 +435,7 @@ export class WasmBridge {
             return {
                 tick: 0, manifested: 0, positive: 0, negative: 0, totalFlux: 0, totalEnergy: 0,
                 maxBandwidth: 0, avgDrag: 0, entropy: 0, chargeBalance: 0,
+                maxCausalBudget: 0, causalProjectionEvents: 0,
                 spinUp: 0, spinDown: 0, colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
                 angMomX: 0, angMomY: 0, angMomZ: 0
             };
@@ -462,21 +463,22 @@ export class WasmBridge {
                 colorBlue: arr[17],
                 angMomX: arr[18],
                 angMomY: arr[19],
-                angMomZ: arr[20]
+                angMomZ: arr[20],
+                maxCausalBudget: arr[21] ?? 0,
+                causalProjectionEvents: arr[22] ?? 0
             };
         } else {
             d = this._module.getDiagnostics(this._bridge);
         }
         const audit = this._getScale0AuditForTick(d?.tick ?? this.currentTick());
-        if (audit && Number.isFinite(audit.totalEnergy)) {
-            // Native Diagnostics::total_energy is the Born-Infeld vacuum
-            // baseline summed over every voxel, so for Scale-0 WASM scenarios
-            // it reads as a large constant (e.g. 33^3 * M_REST) even while the
-            // flux/wave Hamiltonian evolves. The dashboard's energy rows and
-            // status bar use MockBridge's convention: field + wave + particle
-            // kinetic energy. Normalize the WASM adapter to that same channel.
+        if (audit && Number.isFinite(audit.dynamicEnergy)) {
+            // Conservation charts use the rest-offset-free accounted channel.
+            // Keep rest and total accounted energy visible as separate fields.
             d.vacuumBaselineEnergy = d.totalEnergy;
-            d.totalEnergy = audit.totalEnergy;
+            d.dynamicEnergy = audit.dynamicEnergy;
+            d.accountedEnergy = audit.totalEnergy;
+            d.restEnergy = audit.particleRestEnergy;
+            d.totalEnergy = audit.dynamicEnergy;
         }
         return d;
     }
@@ -485,6 +487,10 @@ export class WasmBridge {
         if (!this._module || !this._bridge)
             return {
                 fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
+                particleRestEnergy: 0, particleEnergy: 0, dynamicEnergy: 0,
+                particleMomentum: { x: 0, y: 0, z: 0 },
+                cellVolume: VOXEL_VOLUME,
+                fieldEnergyDensitySum: 0, waveEnergyDensitySum: 0,
                 EFieldEnergy: 0, BFieldEnergy: 0,
                 totalPoynting: { x: 0, y: 0, z: 0 },
                 gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
@@ -521,6 +527,13 @@ export class WasmBridge {
                 wvLTotal: arr[16],
                 wvRTotal: arr[17],
                 chargeTotal: arr[18],
+                particleRestEnergy: arr[19] ?? 0,
+                particleEnergy: arr[20] ?? 0,
+                particleMomentum: { x: arr[21] ?? 0, y: arr[22] ?? 0, z: arr[23] ?? 0 },
+                dynamicEnergy: arr[24] ?? arr[3],
+                cellVolume: arr[25] ?? VOXEL_VOLUME,
+                fieldEnergyDensitySum: arr[26] ?? arr[0],
+                waveEnergyDensitySum: arr[27] ?? arr[1],
             };
         } else {
             audit = this._module.getEnergyAudit(this._bridge);
@@ -541,7 +554,8 @@ export class WasmBridge {
                 fieldKinetic: 0, fieldGradient: 0,
                 bornInfeld: 0, coupling: 0, velocity: 0, gauss: 0, dissipation: 0,
                 total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
-                totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0
+                totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0,
+                cellVolume: VOXEL_VOLUME
             };
         if (typeof this._module.getLagrangianView === 'function') {
             const arr = this._module.getLagrangianView(this._bridge);
@@ -561,7 +575,8 @@ export class WasmBridge {
                 totalFluxMag: arr[12],
                 totalWaveEnergy: arr[13],
                 manifested: arr[14],
-                locked: arr[15]
+                locked: arr[15],
+                cellVolume: arr[16] ?? VOXEL_VOLUME
             };
         }
         return this._module.getLagrangian(this._bridge);

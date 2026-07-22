@@ -318,5 +318,85 @@
   "status": "historical-superseded",
   "note": "prose mention of a never-registered candidate in SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY; no prereg doc exists",
   "date": "2026-07-12"
+ },
+ "preregister-genesis-energy-ledger-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; executed verdict is booked in the locked preregistration, companion rest-mass analysis, and repository history; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-genesis-timing-dependence-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; V2 invalidation and disposition are booked in the preregistration and repository history; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-graviton-substrate-mode-v2-1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; amended-engine rerun Outcome B is booked in PREREG_GRAVITON_SUBSTRATE_MODE_v2_1.md and commit 20325948; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-hedgehog-charge-robustness-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; FTD-0392 mixed confirmed/closed-negative verdict is booked in the LEDGER and topological-charge derivation; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-hedgehog-charge-robustness-v1-1": {
+  "status": "executed-verdict-booked",
+  "note": "procedural reference-constant amendment tag exists; the amended FTD-0392 execution is booked in the LEDGER and preregistration",
+  "date": "2026-07-20"
+ },
+ "preregister-kinetic-drain-curl-isolation-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; run-1 invalidation and v1.1 rerun provenance are booked in the preregistration and repository history; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-kinetic-drain-curl-isolation-v1-1": {
+  "status": "executed-verdict-booked",
+  "note": "procedural amendment tag exists; the refuted kinetic-drain verdict is booked in the companion rest-mass analysis and repository history",
+  "date": "2026-07-20"
+ },
+ "preregister-light-deflection-channel-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; indeterminate v1 execution and v2 disposition are booked in PREREG_LIGHT_DEFLECTION_CHANNEL_v1.md",
+  "date": "2026-07-20"
+ },
+ "preregister-light-deflection-channel-v2": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; invalid v2 execution and v3 disposition are booked in PREREG_LIGHT_DEFLECTION_CHANNEL_v2.md and repository history",
+  "date": "2026-07-20"
+ },
+ "preregister-light-deflection-channel-v3": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; indeterminate v3 execution and v4 disposition are booked in PREREG_LIGHT_DEFLECTION_CHANNEL_v3.md and repository history",
+  "date": "2026-07-20"
+ },
+ "preregister-light-deflection-channel-v4": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; VOID/INSTRUMENT-LIMITED stopping-rule verdict is booked in PREREG_LIGHT_DEFLECTION_CHANNEL_v4.md and commit b85ec6c6",
+  "date": "2026-07-20"
+ },
+ "preregister-manifestation-seed-diversity-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; closed-negative circumstance-dependence verdict is booked in the rest-mass analysis and commit 4db2b45a; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-perturbation-magnitude-curl-sweep-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; exact-quadratic circumstance-dependent verdict is booked in the companion rest-mass analysis and repository history; manifest row remains owed via the census addendum",
+  "date": "2026-07-20"
+ },
+ "preregister-selfenergy-pinning-v1-1": {
+  "status": "executed-verdict-booked",
+  "note": "procedural amendment tag exists; run-2 and the final FTD-0388 verdict are booked in PREREG_SELFENERGY_PINNING_v1.md and the LEDGER",
+  "date": "2026-07-20"
+ },
+ "preregister-two-clock-consistency-v1": {
+  "status": "executed-verdict-booked",
+  "note": "tag exists; run-1 invalidation and v1.1 disposition are booked in PREREG_TWO_CLOCK_CONSISTENCY_v1.md",
+  "date": "2026-07-20"
+ },
+ "preregister-two-clock-consistency-v1-1": {
+  "status": "executed-verdict-booked",
+  "note": "procedural amendment tag exists; Outcome A and the subsequent owner-ruling implementation are booked in PREREG_TWO_CLOCK_CONSISTENCY_v1.md and repository history",
+  "date": "2026-07-20"
  }
 }

@@ -1,7 +1,8 @@
 /**
  * test_boundary_movement.cpp
  *
- * Verifies phase_movement face handling:
+ * Verifies phase_movement face handling with an in-budget raw velocity and
+ * accumulated movement remainder:
  *   reflective_boundary OFF → particle exhausts into the void (no toroidal wrap)
  *   reflective_boundary ON  → mirror bounce at the face
  */
@@ -48,11 +49,14 @@ int main() {
         rb.force_cpu();
 
         rb.inject_particle(0, 8, 8, +1, ftd::Vec3{0.0, 0.0, 0.0});
-        rb.voxel_at(0, 8, 8).velocity = ftd::Vec3{-1.0, 0.0, 0.0};
+        auto& source = rb.voxel_at(0, 8, 8);
+        source.velocity = ftd::Vec3{-0.5 * ftd::C_SPEED, 0.0, 0.0};
+        source.remainder = ftd::Vec3{-0.75, 0.0, 0.0};
         rb.tick();
 
         check("exhaustive: source voxel void after exit attempt", rb.voxel_at(0, 8, 8).state == 0);
         check("exhaustive: opposite face stays void", rb.voxel_at(far_x, 8, 8).state == 0);
+        check("exhaustive: causal projection is not invoked", rb.causal_projection_events_this_tick() == 0);
     }
 
     // --- Reflective boundary: mirror bounce, still no wrap ---
@@ -63,12 +67,15 @@ int main() {
         rb.force_cpu();
 
         rb.inject_particle(0, 8, 8, +1, ftd::Vec3{0.0, 0.0, 0.0});
-        rb.voxel_at(0, 8, 8).velocity = ftd::Vec3{-1.0, 0.0, 0.0};
+        auto& source = rb.voxel_at(0, 8, 8);
+        source.velocity = ftd::Vec3{-0.5 * ftd::C_SPEED, 0.0, 0.0};
+        source.remainder = ftd::Vec3{-0.75, 0.0, 0.0};
         rb.tick();
 
         check("reflective: particle remains at source voxel", rb.voxel_at(0, 8, 8).state == 1);
         check("reflective: velocity x flipped", rb.voxel_at(0, 8, 8).velocity.x > 0.0);
         check("reflective: opposite face stays void", rb.voxel_at(far_x, 8, 8).state == 0);
+        check("reflective: causal projection is not invoked", rb.causal_projection_events_this_tick() == 0);
     }
 
     std::cout << "=== " << (failures == 0 ? "ALL PASS" : "FAILURES")

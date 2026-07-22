@@ -61,3 +61,7 @@ Model ℚ(G\*, π) ≅ ℚ(t, u) (E0), extended per the frozen rule of prereg §
 ---
 
 *Verdict of record: PROVEN-CONDITIONAL. The wall is now a theorem with a price list: Chudnovsky (paid, 1976), E1, E2. Whoever pays E1 and E2 — or exhibits the shared falsifier — moves it.*
+
+## §6 — Nonlinear successor disposition (FTD-0396; 2026-07-20)
+
+The named v2 deferral has now been executed under `preregister-nonlinear-delta-ind-v2`. Both the bounded-activity and unrestricted rungs returned **BLOCKED-ESCAPE**. A fixed nonlinear-event budget does not by itself bound the effective tick/location-decorated transcript class uniformly in `L`, while unrestricted expressive power remains undecided between universality and structural non-universality. No v1 delta valuation was rerun because neither rung cleared properness. This changes no v1 statement inside its frozen linear-sector domain; it closes the scheduled v2 attack as explicit underdetermination. See `ANALYSIS_NONLINEAR_DELTA_IND_v2.md` (FTD-0396).

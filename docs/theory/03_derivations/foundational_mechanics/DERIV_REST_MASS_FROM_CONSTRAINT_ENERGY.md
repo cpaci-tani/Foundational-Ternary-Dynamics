@@ -9,6 +9,8 @@
 **Third amendment (2026-07-19, same day, PREREG_PERTURBATION_MAGNITUDE_CURL_SWEEP_v1):** the sharper hypothesis is now quantified exactly, not just named. An 8-point sweep of the perturbation magnitude `s` (reusing the identical F_pre snapshot, bit-identically reproduced — V1) fits `curl_total(s) = A + B·s + C·s²` to R²=1.0000000000, a fit so exact (residuals at float-precision noise) that it doubles as an independent confirmation the isolation methodology has no hidden leakage. Result: **~40% of the injected curl is a symmetry-breaking floor present even at zero added perturbation; ~60% scales with magnitude, convexly**, strictly increasing for every physically realizable `s`. Neither "pure floor" nor "pure magnitude-scaling" — a measured mixture.
 
 **Fourth amendment (2026-07-19, same day; two campaigns, one redesign):** does genesis's *own* mechanics land at a stable point on this now-known curve? A forced-delay design (`PREREG_GENESIS_TIMING_DEPENDENCE_v1`) VOIDED itself on its own gate — the field sloshes, dropping a threshold-crossing site back below `K_GENESIS` within a single further tick, so "waiting longer" tests a counterfactual the real stochastic hazard would never produce. Redesigned as a comparison of independently-constructed, naturally-firing births instead (`PREREG_MANIFESTATION_SEED_DIVERSITY_v1`): three cleanly-valid seeds spanning cold/baseline/hot injection energy give `e_half` = 0.782 / 1.709 / 7.221 — **CV=0.878, a 9.2× spread, monotonic in birth energy, not noise.** **There is no single operating point.** The locked energy — and with it, any notion of "the" mass excess along this route — depends materially on how the particle was made. See §7's claim ledger; this is the closing finding of the constraint-locked-energy line of inquiry as currently posed.
+
+**Particlehood prerequisite (FTD-0399, 2026-07-20):** before another mass observable could be licensed, the exact A/C/E histories were tested for convergence to one target-blind localized species at L=33/65. The campaign returned INVALID at its correctness gate: C manifests at tick 2 while A/E do not manifest within 200 ticks in either dissipative or undamped protocol. No aligned three-history ensemble exists, so no particlehood or mass metric is evaluated. This does not reopen any energy mechanism; it stops the current-engine mass program before the next observable.
 **What this does:** derives the substrate-unit *value* of the rest-mass quantum from lattice geometry, conditional on one enforcement premise and one priced identification. **What this does not do:** derive 0.511 MeV (a calibration, permanently — §6), touch m_e/m_P (the α¹¹ external bridge is unchanged at its tags), or promote any existing claim. The FTD-0130 role split and FTD-0388 are presupposed at their tags of record.
 
 ---
@@ -20,7 +22,7 @@
 | Question | Best possible answer class |
 |---|---|
 | Q1: what is M_REST in substrate units? | derivable, if the substrate's own bookkeeping selects a value |
-| Q2: what is m_e/m_P (dimensionless, external)? | currently √(2π)·(16/3)·α¹¹ — [THEOREM]-grade prefactor, n=11 [DERIVED given S1∧S2], α [SMC]; 0.19 % |
+| Q2: what is m_e/m_P (dimensionless, external)? | currently √(2π)·(16/3)·α¹¹ — selected prefactor, `n=11` [SELECTION], α [SMC]; 0.19 % |
 | Q3: what is m_e in MeV? | **never derivable** — dimensional values are calibration-conditional by the framework's own doctrine (SPEC_DIMENSIONAL_MAP) |
 
 This document is about Q1. Its answer, if the conditions hold: **M_REST = W_SC = 0.5054620197173260**, the SC Watson constant — the same geometric object FTD-0388 adopted for the kinetics role.
@@ -59,7 +61,7 @@ Downstream consequences if adopted (flagged, not implemented): ρ_mass = W_SC·|
 
 ## §5. Relation to the external bridge (Q2)
 
-Unchanged and independent: m_e/m_P = √(2π)·(16/3)·α^11 at 0.19 % — prefactor components [THEOREM] (√2π Gaussian; 16 = |Aut(E)|²; D = 3 arithmetic uniqueness), exponent n = 11 [DERIVED given the S1 ∧ S2 hierarchy selections] (proof_m_e_exponent_n11.py, MC-T3.2), α¹¹ [SMC-conditional]. If both Q1 and Q2 hold, their conjunction fixes the substrate-to-Planck unit map with no new content. Attacking S1/S2 or α is a different campaign against a different wall (MC-T4.3).
+Unchanged and independent: m_e/m_P = √(2π)·(16/3)·α^11 at 0.19 %. The combined prefactor is [SELECTION] at its honest tag, the exponent `n=11` is [SELECTION], and α¹¹ is [SMC-conditional]. FTD-0397 proves that the unordered `{3,3,4,6}` multiset cannot select the needed order through permutation-invariant data; a future promotion requires independently derived order-bearing dynamics. If both Q1 and Q2 hold, their conjunction fixes the substrate-to-Planck unit map with no new content.
 
 ## §6. What remains underived, permanently or presently
 

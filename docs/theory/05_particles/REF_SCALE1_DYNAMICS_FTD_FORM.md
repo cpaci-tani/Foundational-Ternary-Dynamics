@@ -17,7 +17,7 @@ After substitution, the **only** FTD-native quantities driving Scale 1 are: `G_C
 | Textbook symbol | FTD-native form | Engine source | Epistemic status |
 |---|---|---|---|
 | α (fine structure) | **G_C²** (`ALPHA_EFT = G_C·G_C`) = **1/x₊**, x₊ = 8G\*² + 4G\*^{3/2}√(4G\*−1) ≈ 137.036 (master-quadratic root) | `constants.js:71,77` | physical ID `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) |
-| electron mass m_e | **K_B** = 0.511 (mass anchor); dimensional origin m_P·√(2π)·(16/3)·α¹¹ | `constants.js` | `[DERIVED]` anchor (FTD-0015) |
+| electron mass m_e | **K_B** = 0.511 (mass anchor); selected dimensional relation m_P·√(2π)·(16/3)·α¹¹ | `constants.js` | engine anchor `[IMPOSED]`; physical relation `[STRONGLY MOTIVATED CONJECTURE]` with selected exponent/order (FTD-0015, FTD-0390, FTD-0397) |
 | speed of light c | **1/√3** (`C_SPEED`, CFL stability on the cubic lattice) | `constants.js:117` | `[DERIVED]` |
 | Newton G_N | **1/(b₃+N_c)² = 1/100 = 0.01** | `constants.js:80–87` | `[IMPOSED]`; physical ID **falsified** (FTD-0131) |
 | Coulomb prefactor | **G_C²/(4π)** (`COULOMB_K_FORCE`) — used for both force and potential energy (the PE is the exact integral of the force; force-consistent) | `mock-particle-engine.js:133,146` | — |

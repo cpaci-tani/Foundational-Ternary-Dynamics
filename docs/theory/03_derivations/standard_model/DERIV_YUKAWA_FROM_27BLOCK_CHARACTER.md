@@ -1,6 +1,6 @@
 # DERIV — The electron Yukawa prefactor `16√2/3` from O_h character theory + Z[i]-norm structure
 
-**Tag:** [STRUCTURALLY MOTIVATED PARAMETRIC] — each factor in the decomposition is independently [THEOREM]; the *combination as the Yukawa coupling* is [SELECTION] justified by 0.14% empirical match. Honest upgrade from FTD-0133's [SELECTION].
+**Tag:** [STRUCTURALLY MOTIVATED PARAMETRIC] — the multiplicity/norm factors are [THEOREM], the α³ ladder exponent is [SELECTION] (FTD-0397), and the *combination as the Yukawa coupling* is [SELECTION] justified by the empirical match.
 **LEDGER:** FTD-0134 (partial closure of FTD-0133's open question).
 **Verification script:** `scripts/proofs/proof_yukawa_from_27block_character.py` (ALL STEPS PASS, 0.14% precision).
 **Depends on:**
@@ -9,7 +9,7 @@
 - FTD-0015 mass formula being decomposed
 - FTD-0017 m_H formula (parallel structure)
 - HIGGS-4 v formula (where the √(2π) factor lives)
-- MC-T3.2 closure (the α³ = α^N_c exponent is [DERIVED])
+- FTD-0397 order-type no-go (the `n_e-n_v=3` ladder difference is [SELECTION], not forced by the unordered multiset)
 - FTD-0133 (the audit that surfaced the prefactor question)
 **Closes (partial):** FTD-0133's open question "where does 16/3 come from structurally?" — answer here is "from the 27-block O_h character decomposition's mult ratio."
 **Does NOT close:** The substrate-level Yukawa coupling derivation; this remains MC-T4.3-class work.
@@ -31,11 +31,11 @@ where the multiplicities are computed in the natural 27-dimensional permutation 
 | 16 | `mult(A_{1g})² = 4²` in 27-block O_h decomposition | **[THEOREM]** (character formula) |
 | 1/3 | `1/mult(T_{1u})` in 27-block O_h decomposition | **[THEOREM]** (character formula) |
 | √2 | `|1+i|` = norm of the prime above 2 in `Z[i]` | **[THEOREM]** (algebraic number theory) |
-| α³ | `α^{N_c}` = cumulative ladder step for color, `n_e − n_v = 11 − 8 = 3` | **[DERIVED]** post-MC-T3.2 |
+| α³ | `α^{N_c}` = selected cumulative ladder difference, `n_e − n_v = 11 − 8 = 3` | **[SELECTION]** (FTD-0397) |
 
 **The combination as the Yukawa coupling itself is [SELECTION]** — we identify this product with `y_e` because the empirical match is 0.14%. Promoting to [DERIVED] requires deriving the Yukawa formula from FTD substrate dynamics (MC-T4.3-class).
 
-**This is a structural-identification upgrade, not a derivation.** Tag class: [STRUCTURALLY MOTIVATED PARAMETRIC] (better than the previous [SELECTION] tag because each factor is now identified with a [THEOREM]-grade structural object, not just labeled).
+**This is a structural-identification proposal, not a derivation.** Tag class: [STRUCTURALLY MOTIVATED PARAMETRIC]. The theorem-grade multiplicities and norm do not promote the selected α³ exponent or the selected combination.
 
 ---
 
@@ -117,11 +117,9 @@ This factor identifies the √2 in the Yukawa formula as the **first (1+i)-tower
 
 **This identification supersedes the previous "√(2π) inherited from HIGGS-4 v formula" reading (which FTD-0133 honestly downgraded to [SELECTION]).** The `√2 = |1+i|` reading is a [THEOREM]-grade algebraic identification; the `√(2π) = √(2π)` reading is `(√2)·(√π)` where `√π` does need to come from elsewhere (e.g., the v formula's normalization). So the `√(2π)` factor is `|1+i| × √π`, with `|1+i|` identified algebraically and `√π` still inherited from the v formula's [SELECTION].
 
-**Factor 4: α³ = `α^{N_c}`**
+**Factor 4: α³ as the selected `α^{N_c}` ladder difference**
 
-The exponent 3 = N_c is the second cumulative step of the alpha-power ladder. Per the MC-T3.2 closure (multiset theorem + S1 spinor-before-color + S2 gravity-last, all [DERIVED]), the cumulative position of the electron on the ladder is `n_e = 11 = 4 + 4 + 3` and the position of the Higgs VEV is `n_v = 8 = 4 + 4`. The difference `n_e − n_v = 3 = N_c` is the final color step.
-
-This factor is **[DERIVED]** post-MC-T3.2 closure, the strongest tag of the four factors.
+The exponent 3 equals `N_c` for the selected ladder assignment `n_e=11`, `n_v=8`. FTD-0397 proves that the unordered FTD-0084 multiset and every permutation-invariant function of it cannot select the electron ordering. Therefore the difference `n_e-n_v=3` is **[SELECTION]** unless independently derived order-bearing dynamics supplies those positions. The numerical equality to `N_c` is structural motivation, not a forced exponent.
 
 ### 2.2 The combined formula
 
@@ -133,9 +131,9 @@ Numerically: `(16·1.4142/3)·(1/137.036)³ = 7.542 × 3.892×10⁻⁷ = 2.935×
 
 ## 3 · Honest scope and tag
 
-### 3.1 Each factor is [THEOREM] or [DERIVED]
+### 3.1 Structural factors and the selected exponent
 
-The four factors above are each independently [THEOREM] (multiplicities, norm in Z[i]) or [DERIVED] (α³ exponent). This is a real strengthening: the previous FTD-0015 prefactor decomposition (per the now-corrected `DERIV_ELECTRON_MASS_MOTIVATION.md`) had `√(2π)` tagged as [THEOREM] via a retracted derivation chain (FTD-0032), and the 16/3 tagged via interpretive labels ("gauge DOF per axis") that didn't bottom out in clean structural identifications.
+The multiplicities and the norm in `Z[i]` are theorem-grade structural objects. The α³ exponent is not: it inherits the selected ladder ordering and remains [SELECTION] under FTD-0397. This still sharpens the prefactor's structural vocabulary, but it does not derive the Yukawa power.
 
 ### 3.2 The combination as the Yukawa is [SELECTION]
 
@@ -171,7 +169,7 @@ Until such derivation lands, the COMBINATION is [SELECTION]. The tag for the ove
 - **Not a closure of FTD-0131's gravitational hierarchy to [DERIVED].** Same reason.
 - **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention).
 - **Not a derivation of `√π`.** That factor is inherited from HIGGS-4's v formula and remains the load-bearing [SELECTION] piece in dimensional predictions.
-- **Not a substrate explanation of why `y_e ∝ α^{N_c}` rather than `α^{N_base}` or `α^{D}`.** The exponent 3 is [DERIVED] via MC-T3.2's ladder structure, but *why the ladder takes the values it does* is itself the MC-T3.2 derivation (which is [DERIVED] via the multiset theorem + 2 SELECTION steps).
+- **Not a substrate explanation of why `y_e ∝ α^{N_c}` rather than `α^{N_base}` or `α^{D}`.** The exponent 3 is [SELECTION]: FTD-0397 shows the unordered multiset cannot select the required ladder difference without order-bearing dynamics.
 
 ---
 
@@ -186,7 +184,7 @@ Specifically: write down the manifestation rule + Born-Infeld-action expansion a
 - `mult(A_{1g})²` from the A_{1g}-pure projection of both incoming and outgoing scalar legs (one on matter side, one on Higgs side; squared because two legs)
 - `1/mult(T_{1u})` from averaging over the vector polarization states (3 channels)
 - `|1+i|` from the (1+i)-tower normalization step that defines the Yukawa-vertex amplitude
-- `α^{N_c}` from the cumulative loop suppression for the color sector (per MC-T3.2)
+- `α^{N_c}` from a separately derived order-bearing color-sector mechanism (not currently supplied; FTD-0397)
 
 Each of these would be a substrate-level computation, not a structural assertion. Closing this would resolve the SM "fermion mass hierarchy puzzle" for the electron specifically and would constitute MC-T4.3-class progress.
 
@@ -198,7 +196,7 @@ This is the natural P1 follow-up: take the structural decomposition filed here a
 
 ## 6 · Single-line summary
 
-**The electron Yukawa coupling `y_e = (16√2/3)·α³` factorizes as `(mult(A_{1g})²/mult(T_{1u}))·|1+i|·α^{N_c}` where the multiplicities are computed in the 27-block O_h permutation representation (both [THEOREM]), `|1+i|` is the norm of the prime above 2 in Z[i] (Theorem 8 generator, [THEOREM]), and α^{N_c} is the cumulative ladder step ([DERIVED] post-MC-T3.2). Each factor has a clean [THEOREM]/[DERIVED] structural identification; the COMBINATION as the Yukawa coupling is [SELECTION] justified by 0.14% empirical match. Net tag: [STRUCTURALLY MOTIVATED PARAMETRIC] — partial closure of FTD-0133 at the prefactor's structural-decomposition level. Promoting the COMBINATION to [DERIVED] requires substrate-level Yukawa-vertex computation (MC-T4.3-class).**
+**The proposed factorization `y_e = (mult(A_{1g})²/mult(T_{1u}))·|1+i|·α^{N_c}` uses theorem-grade multiplicities and Gaussian norm, but the α³ ladder difference and the identification of the product with the electron Yukawa are [SELECTION]. FTD-0397 proves that the unordered FTD-0084 multiset cannot select that difference through invariant data. Net tag: [STRUCTURALLY MOTIVATED PARAMETRIC]. Promotion requires a substrate-level vertex computation that independently supplies order-bearing dynamics.**
 
 ---
 
@@ -206,4 +204,4 @@ This is the natural P1 follow-up: take the structural decomposition filed here a
 
 This work addresses the FTD-0015 prefactor question (P1 = "Close FTD-0015 prefactor"). The decomposition draws on the reformulation `m_e/v = (16/3)·α³` (Route E), following the seed observation that the prefactor admits an O_h character-theory treatment analogous to FTD-0110; the analysis verifies `mult(T_{1u}) = 3` independently from the standard character table. Each structural identification is honest at the per-factor level; the [SMP] tag for the combination is the calibrated honest position per CLAUDE.md F1/F9 discipline.
 
-The [SMP] tag rather than [DERIVED] reflects that this is a **structural sharpening**, not a derivation. The cleaner [STRUCTURALLY MOTIVATED PARAMETRIC] tag (over [DERIVED at SELECTION level for combination]) honestly reflects the epistemic status: the factors are theorems, the combination is a structurally-evidenced selection.
+The [SMP] tag rather than [DERIVED] reflects that this is a **structural sharpening**, not a derivation. The multiplicity/norm factors are theorems; the α³ exponent and the combination are structurally evidenced selections.

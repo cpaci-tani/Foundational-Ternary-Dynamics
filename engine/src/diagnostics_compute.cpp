@@ -6,6 +6,7 @@
 #include "ftd/diagnostics_compute.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/volumetric_measure.h"
 #include <cmath>
 
 namespace ftd {
@@ -40,6 +41,8 @@ Diagnostics compute_diagnostics(const RenderBridge& rb) {
     d.total_energy += std::abs(v.born_infeld_core());
     double bw = v.bandwidth_used();
     if (bw > d.max_bandwidth) d.max_bandwidth = bw;
+    double budget = v.causal_budget();
+    if (budget > d.max_causal_budget) d.max_causal_budget = budget;
   }
   d.manifested_count = ternary.manifested_count();
   d.positive_count = ternary.positive_count();
@@ -52,6 +55,7 @@ Diagnostics compute_diagnostics(const RenderBridge& rb) {
   }
 
   d.total_entropy = compute_entropy_cpu(rb);
+  d.causal_projection_events = rb.causal_projection_events_this_tick();
 
   Vec3 r_cm;
   const int n_manifested = static_cast<int>(active.size());
@@ -105,33 +109,48 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     // making MockBridge report half the WasmBridge value for the SAME
     // scenario — the Energy Budget chart and Lagrangian readout silently
     // jumped 2× when the user switched bridges.
-    a.field_energy += 0.5 * v.flux.mag2();
-    a.wave_energy  += 0.5 * v.wave_vel.mag2();
+    const double field_density = quadratic_field_energy_density(v.flux.mag2());
+    const double wave_density = quadratic_field_energy_density(v.wave_vel.mag2());
+    a.field_energy_density_sum += field_density;
+    a.wave_energy_density_sum += wave_density;
+    a.field_energy += integrate_voxel_density(field_density);
+    a.wave_energy  += integrate_voxel_density(wave_density);
 
     Vec3 E = v.wave_vel * -1.0;
     Vec3 B = rb.curl_flux(i);
-    a.E_field_energy += 0.5 * E.mag2();
-    a.B_field_energy += 0.5 * B.mag2();
+    a.E_field_energy += integrate_voxel_density(
+        quadratic_field_energy_density(E.mag2()));
+    a.B_field_energy += integrate_voxel_density(
+        quadratic_field_energy_density(B.mag2()));
 
-    a.total_poynting.x += E.y * B.z - E.z * B.y;
-    a.total_poynting.y += E.z * B.x - E.x * B.z;
-    a.total_poynting.z += E.x * B.y - E.y * B.x;
+    a.total_poynting.x += integrate_voxel_density(E.y * B.z - E.z * B.y);
+    a.total_poynting.y += integrate_voxel_density(E.z * B.x - E.x * B.z);
+    a.total_poynting.z += integrate_voxel_density(E.x * B.y - E.y * B.x);
 
     if (rb.toggles.dual_substrate) {
       // Split flux-channel and wave-channel energies separately so
       // the dashboard's Dual Substrate panel can render them as
       // distinct columns (E_L / E_R = flux; Wave L / R = wave_vel).
       // Same ½·|·|² convention as field_energy / wave_energy above.
-      a.E_L_total += 0.5 * v.flux_L.mag2();
-      a.E_R_total += 0.5 * v.flux_R.mag2();
-      a.wv_L_total += 0.5 * v.wave_vel_L.mag2();
-      a.wv_R_total += 0.5 * v.wave_vel_R.mag2();
-      a.chirality_total += v.chirality_density();
+      a.E_L_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.flux_L.mag2()));
+      a.E_R_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.flux_R.mag2()));
+      a.wv_L_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.wave_vel_L.mag2()));
+      a.wv_R_total += integrate_voxel_density(
+          quadratic_field_energy_density(v.wave_vel_R.mag2()));
+      a.chirality_total += integrate_voxel_density(v.chirality_density());
     }
 
     const int8_t s = ternary.state_at(i);
     if (s != 0) {
-      a.particle_ke += 0.5 * v.velocity.mag2();
+      const double speed2 = v.velocity.mag2();
+      const double gamma0 = flat_gamma(speed2);
+      const double kinetic = flat_particle_kinetic_energy(speed2);
+      a.particle_ke += kinetic;
+      a.particle_rest_energy += E_REST;
+      a.particle_momentum += v.velocity * (gamma0 * M_INERTIAL);
       a.charge_total += s;
       a.manifested_count++;
     }
@@ -147,7 +166,22 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     }
   }
 
-  a.total_energy = a.field_energy + a.wave_energy + a.particle_ke;
+  a.particle_energy = a.particle_rest_energy + a.particle_ke;
+  a.dynamic_energy = a.field_energy + a.wave_energy + a.particle_ke;
+  a.total_energy = a.field_energy + a.wave_energy + a.particle_energy;
+  if (rb.toggles.strong_stress_energy) {
+    a.strong_potential_energy = compute_strong_potential_energy(rb);
+    a.strong_gravitational_mass = a.strong_potential_energy
+                                / (C_SPEED * C_SPEED);
+    const auto& step = rb.strong_energy_step_diagnostics();
+    a.strong_projection_residual = step.residual;
+    a.strong_projection_lambda = step.lambda;
+    a.strong_projection_events = step.projection_events;
+    a.strong_projection_failures = step.projection_failures;
+    a.strong_topology_failures = step.topology_failures;
+    a.dynamic_energy += a.strong_potential_energy;
+    a.total_energy += a.strong_potential_energy;
+  }
   // self_field_injection_ is a private member; RenderBridge::energy_audit()
   // wrapper exposes it via the friend relationship below.
 

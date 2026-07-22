@@ -351,7 +351,7 @@ export class TelemetryHub {
             const pMag = Math.sqrt(px * px + py * py + pz * pz);
 
             // Energy drift calculation
-            const currentH = audit.totalEnergy || 0;
+            const currentH = audit.dynamicEnergy ?? audit.totalEnergy ?? 0;
             if (this._initialEnergy === undefined || this._initialEnergy === null) {
                 if (currentH > 1e-12) this._initialEnergy = currentH;
             }

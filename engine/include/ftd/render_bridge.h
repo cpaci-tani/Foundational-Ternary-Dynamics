@@ -32,6 +32,7 @@
 #include "term_toggles.h"
 #include "constants.h"
 #include "ftd/gauge_field.h"
+#include "ftd/strong_stress_energy.h"
 #include "field_operators.h"
 #include "ftd/eft/dual_cell_continuity.h"
 
@@ -97,6 +98,11 @@ class RenderBridge {
     friend void phase_forces_build_color_cache(RenderBridge&);
     friend void phase_forces_main_loop(RenderBridge&);
     friend void phase_forces_integrate_clusters(RenderBridge&);  // unified-mass Phase 2: rigid-body cluster inertia
+    // FTD-0406 selected strong Hamiltonian / local stress-energy contract.
+    friend double compute_strong_potential_energy(const RenderBridge&);
+    friend void compute_strong_stress_cells(const RenderBridge&, std::vector<StrongStressCell>&);
+    friend void begin_strong_energy_step(RenderBridge&);
+    friend void complete_strong_energy_step(RenderBridge&);
     // Test access (test_cluster_inertia.cpp): the cluster-inertia falsifier
     // injects a FIXED total force into force_diag_ and reads V_COM back, both
     // of which are private. A friend keeps the test honest (no public mutator
@@ -177,6 +183,9 @@ public:
     // hash is preserved by construction (gated by test_render_bridge_golden).
     long long genesis_events_this_tick() const { return genesis_events_this_tick_; }
     long long evaporation_events_this_tick() const { return evaporation_events_this_tick_; }
+    long long causal_projection_events_this_tick() const {
+        return causal_projection_events_this_tick_;
+    }
     // Observation-only per-knot telemetry (gated by toggles.knot_tracking).
     // Recorded at tick-end from settled state; reads voxels()/lattice()/
     // current_tick() only ⇒ golden-hash neutral (gated by
@@ -334,6 +343,14 @@ public:
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;
 
+    // FTD-0406 selected local strong T00 / Irving-Kirkwood stress allocation.
+    // Recomputed from the current state on every call so direct public voxel
+    // mutation cannot leave a stale gravitational source or diagnostic.
+    const std::vector<StrongStressCell>& strong_stress_cells() const;
+    const StrongEnergyStepDiagnostics& strong_energy_step_diagnostics() const {
+        return strong_energy_step_diag_;
+    }
+
     // Per-tick conservation bookkeeping. `update_energy_ledger()` is
     // called automatically at the end of tick() on BOTH paths:
     //   - CPU: sums are computed directly from voxel state.
@@ -463,7 +480,7 @@ private:
     // so they're callable from both the CPU path (inline in tick()) and
     // the GPU path (post-sync fall-through, e.g. proper-time).
     void weak_transmutation_cpu();              // Rule 6: stress-driven polarity flip
-    void accumulate_proper_time();              // Rule 8: dτ/dt = √(f²-v²)/√f with f = 1-L²
+    void accumulate_proper_time();              // Rule 8: dτ/dt = √max(1-u²/C_SPEED²-L²,0)
 
     // CPU ports of GPU-only physics (F2, callstack audit 2026-04-17).
     // Default-OFF toggles that previously ran silently on CPU.
@@ -528,7 +545,11 @@ private:
     std::vector<unsigned int> thread_seeds_;        // phase_write: per-thread RNG seeds (PIMPL'd; see BridgeRng)
     std::vector<double>       sor_source_;          // shared scratch for all 3 SOR Poisson solvers (sized N)
     // Phase forces: ColoredSite list reused tick-to-tick (only filled when color_forces ON)
-    struct ColoredSiteCache { int cx, cy, cz; int8_t state, color; };
+    struct ColoredSiteCache {
+        int idx, cx, cy, cz;
+        double px, py, pz;
+        int8_t state, color;
+    };
     std::vector<ColoredSiteCache> colored_sites_cache_;
     // PERF: per-tick scratch buffers for cluster integration and movement order
     std::vector<char> cluster_visited_;
@@ -536,11 +557,22 @@ private:
     std::vector<int>  cluster_members_;
     std::vector<int>  movement_indices_;
 
+    // FTD-0406 default-off CPU strong-energy projection and local stress
+    // scratch. These are selected implementation state, not new substrate
+    // degrees of freedom; the local cells are recomputed from each snapshot.
+    mutable std::vector<StrongStressCell> strong_stress_cells_;
+    StrongEnergyStepDiagnostics strong_energy_step_diag_;
+    std::vector<int> strong_step_particle_ids_;
+    double strong_step_h_before_ = 0.0;
+    Vec3 strong_step_momentum_before_;
+    bool strong_step_active_ = false;
+
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;
     // FTD-0267 observation-only telemetry (see accessor docstring above).
     long long genesis_events_this_tick_ = 0;
     long long evaporation_events_this_tick_ = 0;
+    long long causal_projection_events_this_tick_ = 0;
     // Observation-only per-knot telemetry (gated by toggles.knot_tracking).
     // PIMPL: KnotTracker is forward-declared in this header (circular include
     // with knot_telemetry.h); constructed in the ctor, dtor emitted in

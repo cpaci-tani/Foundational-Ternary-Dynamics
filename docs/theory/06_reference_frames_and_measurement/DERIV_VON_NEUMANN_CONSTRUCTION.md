@@ -164,7 +164,7 @@ $$H(S) \leq \ln 3$$
 
 *Proof.* $H(S) \leq \ln 3$ since $S$ takes at most 3 values. The sign function is a many-to-one map: its preimage classes are uncountably infinite (except for $\{0\}$, which has measure zero for any continuous distribution). Therefore $H(X|S) > 0$, and by the data processing inequality $I(X; S) = h(X) - H(X|S) < h(X)$. $\square$
 
-This entropy increase under the sign projection is the algebraic content of irreversibility in FTD's manifestation process. Information about the continuous flux $\mathbf{J}$ is destroyed when the discrete state $s$ is formed.
+This entropy increase under the sign projection is the algebraic content of **readout** irreversibility. Information about the continuous flux $\mathbf{J}$ is unavailable from the discrete state $s$ alone; the engine retains $\mathbf{J}$ after genesis (FTD-0394). Full-map non-injectivity is a separate fact, witnessed by evaporation in FTD-0395.
 
 ---
 
@@ -242,7 +242,7 @@ These are precisely the properties one would expect for the dispositional layer:
 
 $$\underbrace{\text{Type III}_1}_{\text{flux field } \mathbf{J} \text{ in scaffold}} \;\xrightarrow{\;\mathrm{sign}(\mathbf{J} \cdot \hat{n})\;}\; \underbrace{\text{Type I}}_{\text{state field } s}$$
 
-The sign function would act as a conditional expectation (coarse-graining map) from the continuous algebra to the discrete algebra. By Theorem 6, this map is information-destroying: the continuous flux information is irreversibly lost when the discrete state is formed.
+The sign function would act as a conditional expectation (coarse-graining map) from the continuous algebra to the discrete algebra. By Theorem 6, this **readout** is information-destroying: the continuous flux cannot be reconstructed from the discrete value alone. It is not erased from engine memory at genesis (FTD-0394); FTD-0395 supplies the distinct full-update collision.
 
 If the scaffold-as-idealisation is appropriate, this transition is the algebraic content of quantum measurement in FTD. It does not require an external observer, a reference frame context postulate, or an ad hoc projection rule. The lattice's own manifestation rule provides the "cut" that von Neumann sought. Whether the scaffold *is* the appropriate idealisation is the open question that elevates this from [THEOREM] to [HYPOTHESIS].
 
