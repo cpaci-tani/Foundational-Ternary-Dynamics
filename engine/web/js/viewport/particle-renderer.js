@@ -27,6 +27,20 @@ import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
 // Custom particle shaders — centralized in viewport/shaders.js (D-1).
 import { PARTICLE_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
 
+// SU(3)-labeled color-charge palette, keyed off the real genesis-assigned
+// Voxel::color field (0=colorless, 1=red, 2=green, 3=blue). Deliberately
+// distinct from particle-catalog.js's display_color (a fixed per-species
+// branding color) — this is a per-instance physical label, not a species
+// identity. FTD 'color' is a C3-symmetric discrete axis label, not SU(3)
+// gauge charge (LEDGER FTD-0077); the toggle name says "color charge" to
+// match the physics term while the tooltip carries that caveat.
+const COLOR_CHARGE_PALETTE = [
+    [0.55, 0.55, 0.55], // 0: colorless
+    [0.90, 0.25, 0.25], // 1: red
+    [0.25, 0.85, 0.35], // 2: green
+    [0.30, 0.45, 0.95], // 3: blue
+];
+
 
 export class ViewportParticleRenderer {
     constructor({
@@ -536,6 +550,7 @@ export class ViewportParticleRenderer {
         const phaseAttr = geo.getAttribute('manifestPhase');
         const rateAttr = geo.getAttribute('manifestRate');
         const hasManifest = !!(data.phases && data.rates);
+        const colorByColorCharge = this.visualSettings.colorByColorCharge && !!data.colorCharge;
 
         const rawCount = Math.min(data.count, MAX_PARTICLES);
 
@@ -567,9 +582,17 @@ export class ViewportParticleRenderer {
             posAttr.array[count * 3] = px;
             posAttr.array[count * 3 + 1] = py;
             posAttr.array[count * 3 + 2] = pz;
-            colAttr.array[count * 3] = data.colors[i * 3];
-            colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
-            colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
+            if (colorByColorCharge) {
+                const label = data.colorCharge[i] | 0;
+                const [cr, cg, cb] = COLOR_CHARGE_PALETTE[label] ?? COLOR_CHARGE_PALETTE[0];
+                colAttr.array[count * 3] = cr;
+                colAttr.array[count * 3 + 1] = cg;
+                colAttr.array[count * 3 + 2] = cb;
+            } else {
+                colAttr.array[count * 3] = data.colors[i * 3];
+                colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
+                colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
+            }
             sizeAttr.array[count] = (data.sizes[i] ?? 3.0) * this.visualSettings.globalScale;
             if (hasManifest) {
                 phaseAttr.array[count] = data.phases[i];

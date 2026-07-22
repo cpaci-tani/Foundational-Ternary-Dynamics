@@ -215,6 +215,8 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'flux-baryon': [
         ['gravity', true, 't-gravity'],
         ['confinement', true, 't-confinement'],
+        ['color_forces', true, 't-color-forces'],
+        ['strong_force', true, 't-strong-force'],
         ['genesis', false, 't-genesis'],
     ],
     'flux-cyclotron': [
@@ -222,10 +224,14 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     ],
     'flux-meson': [
         ['confinement', true, 't-confinement'],
+        ['color_forces', true, 't-color-forces'],
+        ['strong_force', true, 't-strong-force'],
         ['genesis', false, 't-genesis'],
     ],
     'flux-string-breaking': [
         ['confinement', true, 't-confinement'],
+        ['color_forces', true, 't-color-forces'],
+        ['strong_force', true, 't-strong-force'],
         ['genesis', true, 't-genesis'],
     ],
     'flux-vacuum-foam': [

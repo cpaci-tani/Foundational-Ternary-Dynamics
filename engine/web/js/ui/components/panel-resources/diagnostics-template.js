@@ -121,6 +121,10 @@ export function getDiagnosticsPanelTemplate() {
                         <div class="stat-value" id="ae-diag-mass-kb">--</div>
                     </div>
                 </div>
+                <div class="card ae-diag-nuclear" style="margin-top:8px">
+                    <div class="card-title" title="Binding energy per nucleon (B/A) vs. mass number (A), all 118 elements — the classic curve peaking at Fe-56 that explains why fusion releases energy for light nuclei and fission for heavy ones.">B/A vs. mass number (all 118 elements)</div>
+                    <canvas id="ae-diag-ba-chart" width="276" height="140" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
+                </div>
             </details>
         </div>
     `;

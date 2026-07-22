@@ -147,9 +147,11 @@ function postFrame() {
   try {
     const p = mod.getParticleData(bridge);    // heap VIEWS — copy before posting
     if (p) parts = {
-      positions: p.positions ? new Float32Array(p.positions) : new Float32Array(0),
-      colors:    p.colors    ? new Float32Array(p.colors)    : new Float32Array(0),
-      sizes:     p.sizes     ? new Float32Array(p.sizes)     : new Float32Array(0),
+      positions:   p.positions   ? new Float32Array(p.positions)   : new Float32Array(0),
+      colors:      p.colors      ? new Float32Array(p.colors)      : new Float32Array(0),
+      sizes:       p.sizes       ? new Float32Array(p.sizes)       : new Float32Array(0),
+      spin:        p.spin        ? new Float32Array(p.spin)        : new Float32Array(0),
+      colorCharge: p.colorCharge ? new Float32Array(p.colorCharge) : new Float32Array(0),
       count: p.count | 0,
     };
   } catch (e) { /* ignore */ }

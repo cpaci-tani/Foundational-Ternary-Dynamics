@@ -154,6 +154,11 @@ export class Viewport {
             opacity: 0.95,
             particleOpacity: 0.9,
             glowIntensity: 0.15,
+            // Color particles by their real genesis-assigned color charge
+            // (Voxel::color in {0,1,2,3} = colorless/red/green/blue) instead
+            // of the default charge-sign coloring. Off by default so every
+            // existing scenario keeps its established charge-sign look.
+            colorByColorCharge: false,
         };
 
         // Particle system extracted to ViewportParticleRenderer (Phase 3d).
@@ -725,6 +730,12 @@ export class Viewport {
     _buildGenesisIsosurface() { this._fieldRenderer._buildGenesisIsosurface(); }
     updateGenesisIsosurface(fluxMag, latticeSize, kGenesis) { this._fieldRenderer.updateGenesisIsosurface(fluxMag, latticeSize, kGenesis); }
     toggleGenesisIsosurface(on) { this._fieldRenderer.toggleGenesisIsosurface(on); }
+
+    // -- Color-charge particle rendering (real genesis Voxel::color field) --
+    // visualSettings is shared by reference with ViewportParticleRenderer,
+    // so flipping this flag takes effect on the next updateParticles() call
+    // with no extra invalidation needed.
+    toggleColorChargeRender(on) { this.visualSettings.colorByColorCharge = !!on; }
 
     // -- Confinement Strings --
     _buildConfinementStrings() { this._fieldRenderer._buildConfinementStrings(); }

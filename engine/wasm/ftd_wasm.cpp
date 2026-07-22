@@ -38,19 +38,31 @@ namespace ftd_wasm_internal {
 
 // ── Particle Data Extraction ─────────────────────────────────────────
 // Returns a JS object with Float32Array views for direct BufferAttribute upload.
-// Format: { positions: Float32Array, colors: Float32Array, sizes: Float32Array, count: int }
+// Format: { positions, colors, sizes, spin, colorCharge: Float32Array, count: int }
+//
+// `colors` (RGB triple) is the decorative charge-sign color (green/red for
+// +1/-1) used by the base particle renderer. `spin` and `colorCharge` are
+// the REAL per-voxel genesis-assigned fields (Voxel::spin in {-1,0,+1},
+// Voxel::color in {0,1,2,3} = colorless/red/green/blue) — added 2026-07-14
+// so the JS layer can finally render true color-charge and real spin
+// instead of the hardcoded `color: 0, spin: 1` that getScale0ParticleList()
+// previously synthesized (those fields were computed correctly in the
+// genesis kernel but never crossed the WASM boundary).
 val get_particle_data(ftd::RenderBridge& rb) {
     // PERF: zero-copy via typed_memory_view. Skip void density voxels entirely
     // and return only manifested particles (state != 0).
-    static std::vector<float> pos_cache, col_cache, size_cache;
+    static std::vector<float> pos_cache, col_cache, size_cache, spin_cache, color_charge_cache;
     const int N = rb.lattice().size();
     const auto& active = rb.ordered_active_indices();
     const int count = static_cast<int>(active.size());
+    const auto& voxels = rb.voxels();
 
     if (static_cast<int>(pos_cache.size()) < count * 3) {
         pos_cache.resize(count * 3);
         col_cache.resize(count * 3);
         size_cache.resize(count);
+        spin_cache.resize(count);
+        color_charge_cache.resize(count);
     }
 
     int idx = 0;
@@ -74,13 +86,17 @@ val get_particle_data(ftd::RenderBridge& rb) {
         }
 
         size_cache[idx] = 6.0f;
+        spin_cache[idx] = static_cast<float>(voxels[i].spin);
+        color_charge_cache[idx] = static_cast<float>(voxels[i].color);
         idx++;
     }
 
     val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("colors",    val(typed_memory_view(count * 3, col_cache.data())));
-    result.set("sizes",     val(typed_memory_view(count,     size_cache.data())));
+    result.set("positions",   val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("colors",      val(typed_memory_view(count * 3, col_cache.data())));
+    result.set("sizes",       val(typed_memory_view(count,     size_cache.data())));
+    result.set("spin",        val(typed_memory_view(count,     spin_cache.data())));
+    result.set("colorCharge", val(typed_memory_view(count,     color_charge_cache.data())));
     result.set("count", count);
     return result;
 }

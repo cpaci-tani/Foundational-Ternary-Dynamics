@@ -25,6 +25,7 @@ import * as Scale3Controller from './scales/scale3/controller.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
 import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
+import * as Scale6Controller from './scales/scale6/controller.js';
 import { applyScaleGridAxesDefaults } from './scales/scale-utils.js';
 import { OnticObservatory } from './ontic-observatory.js';
 import { K_B } from './constants.js';
@@ -723,6 +724,11 @@ function animate(now) {
     } else if (engineMode === 'planetary') {
         // Handled via the rafCoordinator 'scale4-planetary-loop'
         // subscription created in Scale4Controller.loadScenario.
+    } else if (engineMode === 'meta') {
+        // Handled via the rafCoordinator 'scale6-meta-loop' subscription
+        // created in Scale6Controller.loadScenario (same pattern as
+        // planetary above — MetaUnit has no physics tick, only auto-rotate
+        // + label repositioning, so it self-drives at its own cadence).
     } else {
         Scale0Controller.animateLattice(_makeCtx());
     }
@@ -870,6 +876,8 @@ function wireToolbar() {
         } else if (engineMode === 'planetary') {
             // Step the planetary bridge one tick via Scale4Controller
             Scale4Controller.step();
+        } else if (engineMode === 'meta') {
+            // No-op: MetaUnit has no tick-based physics to step.
         } else {
             Scale0Controller.step(_makeCtx());
         }
@@ -887,6 +895,8 @@ function wireToolbar() {
             loadAEScenario(document.getElementById('ae-scenario-select').value);
         } else if (engineMode === 'particles') {
             loadPEScenario(document.getElementById('pe-scenario-select').value);
+        } else if (engineMode === 'meta') {
+            Scale6Controller.loadScenario(_makeCtx());
         } else {
             Scale0Controller.reset(_makeCtx());
         }
@@ -1543,7 +1553,8 @@ const CONTROLLERS = {
     atoms: Scale2Controller,
     molecules: Scale3Controller,
     planetary: Scale4Controller,
-    cosmic: Scale5Controller
+    cosmic: Scale5Controller,
+    meta: Scale6Controller
 };
 
 function switchEngineMode(mode) {
@@ -1568,9 +1579,10 @@ function switchEngineMode(mode) {
     app.classList.toggle('mode-molecules', mode === 'molecules');
     app.classList.toggle('mode-planetary', mode === 'planetary');
     app.classList.toggle('mode-cosmic', mode === 'cosmic');
+    app.classList.toggle('mode-meta', mode === 'meta');
 
     // If the active tab is hidden for this scale, fall back to Controls
-    const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5' }[mode];
+    const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5', meta: '6' }[mode];
     if (appShell) appShell.setActiveScale(scaleIndex);
     else app.setAttribute('data-active-scale', scaleIndex);
 
@@ -1625,6 +1637,8 @@ function switchEngineMode(mode) {
         Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
     } else if (mode === 'cosmic') {
         Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
+    } else if (mode === 'meta') {
+        Scale6Controller.loadScenario(_makeCtx());
     }
 
     Scale0Controller.setLatticeNeedsUpload();

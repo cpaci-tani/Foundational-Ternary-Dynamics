@@ -213,6 +213,9 @@ export const DUAL_DELTA    = Math.sqrt(DELTA_SQUARED);  // = 0.9568... from onti
 // ── Bethe-Weizsacker SEMF Coefficients (MeV) [IMPOSED, Wapstra] ─────
 // Standard Wapstra parameterization for nuclear binding-energy fits.
 // External parametric insertions — not derived from the ontic chain.
+// SEMF_A_ASYM = 23.29 pairs with the (N−Z)²/A asymmetry form (the
+// equivalent (N−Z)²/(4A) form takes ~93.15 MeV); atomic-energy.js
+// divides by A accordingly.
 export const SEMF_A_VOL  = 15.67;
 export const SEMF_A_SURF = 17.23;
 export const SEMF_A_COUL = 0.7140;

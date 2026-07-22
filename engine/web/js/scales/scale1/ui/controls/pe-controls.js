@@ -31,18 +31,26 @@ export function createPeControlsCard() {
     </div>
 
     <!--
-      "Advanced Forces (Phase 2)" toggles HIDDEN per audit §B/§E (2026-05-27).
-      The 7 toggles (pe-lorentz-p, pe-exchange, pe-strong, pe-magnetic-dipole,
-      pe-spin-orbit, pe-radiation, pe-relativistic) ARE wired: app.js:1081-1087
-      adds change-listeners → mock-bridge.js → mock-particle-engine.js setters
-      store the flags on state._pe (e.g. state._pe.lorentz). HOWEVER the mock
-      particle-engine force step (_computeForces / Velocity-Verlet integrator)
-      reads ONLY state._pe.coulomb, state._pe.gravity and state._pe.damping —
-      the 7 advanced flags are written but never consumed, so the toggles are
-      no-ops in the shipped JS engine. The WASM bridge forwards them to real
-      ParticleEngine toggles, so the markup is preserved (commented, not
-      deleted) for re-enable behind backend capability checks.
+      "Advanced Forces (Phase 2)" toggles HIDDEN per audit §B/§E (2026-05-27),
+      EXCEPT pe-exchange (re-enabled 2026-07-14): the audit's "written but
+      never consumed" finding does not hold for exchange — pe-force-kernel.js
+      (created 2026-06-15, after the audit) fully consumes toggles.exchange
+      in the pairwise repulsion term (fires only when spin AND charge match,
+      i.e. genuine Pauli-exclusion behavior), feeding the real Velocity-Verlet
+      integrator. The remaining 6 toggles (pe-lorentz-p, pe-strong,
+      pe-magnetic-dipole, pe-spin-orbit, pe-radiation, pe-relativistic) are
+      wired the same way at the DOM/app.js level but have NOT been
+      individually re-verified against the current force kernel — stay
+      hidden until each is checked the same way exchange was.
     -->
+    <details class="toggle-details">
+      <summary class="ctrl-details-summary">Advanced Forces</summary>
+      <div class="toggle-row">
+        <input type="checkbox" id="pe-exchange">
+        <label for="pe-exchange"
+          title="Exchange / Pauli exclusion: short-range repulsion between particles sharing both spin and charge (fMag = ALPHA_EXCHANGE * exp(-r^2/EXCHANGE_RANGE_SQ) / r^2)">Exchange</label>
+      </div>
+    </details>
     <!--
     <details class="toggle-details">
       <summary class="ctrl-details-summary">Advanced Forces (Phase 2)</summary>
@@ -50,11 +58,6 @@ export function createPeControlsCard() {
         <input type="checkbox" id="pe-lorentz-p">
         <label for="pe-lorentz-p"
           title="Lorentz force: v × B from magnetic dipoles">Lorentz</label>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="pe-exchange">
-        <label for="pe-exchange"
-          title="Exchange / Pauli exclusion (same spin + charge)">Exchange</label>
       </div>
       <div class="toggle-row">
         <input type="checkbox" id="pe-strong">
