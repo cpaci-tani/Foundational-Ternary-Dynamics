@@ -186,7 +186,7 @@ From strongest to weakest:
 |-------|-------|-------|
 | α = 1/137.036 | [DERIVED] (from G* via CM) | Once CM selection accepted |
 | N_c = 3 | [SELECTION] | From x₋ ≈ 3.024 |
-| m_e formula | [DERIVED] | m_P √(2π) (16/3) α¹¹ |
+| m_e formula | [STRONGLY MOTIVATED CONJECTURE] / [SELECTION] | Dimensional identification is [SMC]; prefactor and exponent require selections (FTD-0015, FTD-0390, FTD-0397) |
 | Lepton ratios | [DERIVED] | Pure integer arithmetic |
 | Quark masses | [SELECTION] | Formulas not unique |
 | CKM angles | [NUMEROLOGY] | 5-20% errors |

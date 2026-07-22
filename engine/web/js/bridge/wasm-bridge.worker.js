@@ -136,13 +136,12 @@ function postFrame() {
   try { audit = mod.getEnergyAudit(bridge); } catch (e) { /* ignore */ }
   try { lag = mod.getLagrangian(bridge); } catch (e) { /* ignore */ }
 
-  if (diag && audit && Number.isFinite(audit.totalEnergy)) {
-    // Native Diagnostics::total_energy is the Born-Infeld vacuum
-    // baseline summed over every voxel. Replace it with the scenario
-    // budget (field + wave + particle KE) from EnergyAudit so the UI
-    // matches the MockBridge convention.
+  if (diag && audit && Number.isFinite(audit.dynamicEnergy)) {
     diag.vacuumBaselineEnergy = diag.totalEnergy;
-    diag.totalEnergy = audit.totalEnergy;
+    diag.dynamicEnergy = audit.dynamicEnergy;
+    diag.accountedEnergy = audit.totalEnergy;
+    diag.restEnergy = audit.particleRestEnergy;
+    diag.totalEnergy = audit.dynamicEnergy;
   }
 
   try {

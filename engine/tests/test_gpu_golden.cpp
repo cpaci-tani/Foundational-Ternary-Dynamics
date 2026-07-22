@@ -38,7 +38,7 @@ static void inject_initial_state(RenderBridge& rb) {
 
 // CPU default-profile pin (test_render_bridge_golden_default.cpp) — used
 // only to detect that this build has no GPU backend at runtime.
-static constexpr std::uint64_t CPU_DEFAULT_PIN = 0x54fe2f9ab5c0a255ULL;  // re-pinned 2026-07-18 in sync with GOLDEN_HASH_DEFAULT (Term-2 coupling sign amendment)
+static constexpr std::uint64_t CPU_DEFAULT_PIN = 0xca1aada0203f0229ULL;  // FTD-0402; synchronized with CPU default golden
 
 // ---------------------------------------------------------------------------
 // FROZEN GPU GOLDEN HASH (canonical platform: WSL2 gcc + CUDA).
@@ -52,8 +52,13 @@ static constexpr std::uint64_t CPU_DEFAULT_PIN = 0x54fe2f9ab5c0a255ULL;  // re-p
 //     assumed; 10-run bit-stability re-verified post-port). The rule change
 //     is guarded by test_gpu_evaporation_parity instead, which this scenario
 //     cannot see.
+//   - 2026-07-21: RE-PINNED for FTD-0402. The WSL2 GPU field manifest against
+//     a0a443f8 reproduced the CPU delta classification exactly: only causal
+//     trajectory fields and downstream field/audit values changed; discrete
+//     state, latency, tau, phase, identity labels, and strong/weak sectors were
+//     bit-identical. Three repeated runs produced the pin below.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_GPU = 0xf4c90122f1a37d00ULL;  // WSL2 RTX 5090; re-pinned 2026-07-18, Term-2 coupling sign amendment (see test_render_bridge_golden.cpp changelog; was 0xd6c0f7007f5a4f24, captured 2026-07-02); bit-stable across 3 runs
+static constexpr std::uint64_t GOLDEN_HASH_GPU = 0x26eb5cacd8b49734ULL;  // WSL2 RTX 5090; FTD-0402, 2026-07-21
 
 void test_gpu_golden() {
     section("100-tick byte-hash characterization (GPU backend, shipping defaults)");

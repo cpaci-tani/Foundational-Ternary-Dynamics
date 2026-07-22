@@ -20,22 +20,26 @@
  * Convention reminder (CONTRACTS.md §6 Energy Convention Contract):
  * field_energy / wave_energy / E_L_total / E_R_total / wv_L_total /
  * wv_R_total / E_field_energy / B_field_energy all carry the canonical
- * ½·|·|² factor. coulomb_pe carries the canonical ½ in the Σ q·φ form.
+ * ½·|·|² local density and the explicit cubic VOXEL_VOLUME measure.
+ * coulomb_pe carries the canonical ½ in the Σ q·φ form.
  */
 
 #include <cstdint>
 #include "voxel.h"  // Vec3 lives here (no separate vec3.h yet)
+#include "volumetric_measure.h"
 
 namespace ftd {
 
 struct Diagnostics {
     int tick = 0;
     double total_flux = 0.0;
-    // Sum of |born_infeld_core| over all sites — NOT the canonical ½·|J|²
-    // budget (see EnergyAudit.total_energy for field+wave+particle_ke).
+    // Sum of |born_infeld_core| over all sites — NOT the accounted energy
+    // budget (see EnergyAudit.dynamic_energy / total_energy).
     double total_energy = 0.0;
     double avg_drag = 0.0;
     double max_bandwidth = 0.0;
+    double max_causal_budget = 0.0;
+    long long causal_projection_events = 0;
     int manifested_count = 0;
     int positive_count = 0;
     int negative_count = 0;
@@ -71,10 +75,10 @@ struct GravityMetricAgg {
 };
 
 struct EnergyAudit {
-    double field_energy = 0.0;     // ½·sum |J|^2 over all sites (canonical ½ convention)
-    double wave_energy = 0.0;      // ½·sum |wave_vel|^2 over all sites
-    double particle_ke = 0.0;      // sum ½·|v|^2 for manifested particles
-    double total_energy = 0.0;     // field + wave + particle_ke
+    double field_energy = 0.0;     // sum [½|J|² · V_cell] over all sites
+    double wave_energy = 0.0;      // sum [½|wave_vel|² · V_cell] over all sites
+    double particle_ke = 0.0;      // sum (gamma_0-1)·E_REST
+    double total_energy = 0.0;     // accounted total: field + wave + particle energy
     double gauss_violation = 0.0;  // sum |div(J) - state|^2
     double max_gauss_error = 0.0;  // max |div(J) - state|
     double self_field_injection = 0.0;  // Energy injected by self-field floor this tick
@@ -97,6 +101,30 @@ struct EnergyAudit {
 
     // Weak Field
     double weak_energy = 0.0;      // sum |J_weak|^2 (weak field energy)
+
+    // FTD-0402 append-only mass-role / flat energy-momentum diagnostics.
+    // Interaction energies remain incomplete until NCEMC; dynamic_energy is
+    // the rest-offset-free channel used by conservation charts.
+    double particle_rest_energy = 0.0;
+    double particle_energy = 0.0;
+    Vec3 particle_momentum;
+    double dynamic_energy = 0.0;
+
+    // FTD-0404 append-only density/integral metadata. At the production
+    // unit edge V_cell=1, so the density sums equal their integrated channels
+    // exactly; keeping both names prevents that unit choice becoming ontology.
+    double cell_volume = VOXEL_VOLUME;
+    double field_energy_density_sum = 0.0;
+    double wave_energy_density_sum = 0.0;
+
+    // FTD-0406 append-only selected strong Hamiltonian / gravity contract.
+    double strong_potential_energy = 0.0;   // sum_{i<j} U_ij, U_ij(1)=0
+    double strong_gravitational_mass = 0.0; // strong_potential_energy/C_SPEED^2
+    double strong_projection_residual = 0.0;
+    double strong_projection_lambda = 1.0;
+    int strong_projection_events = 0;
+    int strong_projection_failures = 0;
+    int strong_topology_failures = 0;
 };
 
 /**

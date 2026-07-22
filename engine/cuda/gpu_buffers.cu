@@ -131,6 +131,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_fd_exchange_x, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_fd_exchange_y, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_fd_exchange_z, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_causal_projection_events, sizeof(unsigned long long)));
 
     // FFT workspace
     CUDA_CHECK(cudaMalloc(&d_fft_buf, N * sizeof(cufftDoubleComplex)));
@@ -227,6 +228,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_fd_exchange_x, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_fd_exchange_y, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_causal_projection_events, 0, sizeof(unsigned long long)));
 
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
@@ -314,6 +316,10 @@ void GpuBuffers::free() {
     if (d_fd_exchange_x) { cudaFree(d_fd_exchange_x); d_fd_exchange_x = nullptr; }
     if (d_fd_exchange_y) { cudaFree(d_fd_exchange_y); d_fd_exchange_y = nullptr; }
     if (d_fd_exchange_z) { cudaFree(d_fd_exchange_z); d_fd_exchange_z = nullptr; }
+    if (d_causal_projection_events) {
+        cudaFree(d_causal_projection_events);
+        d_causal_projection_events = nullptr;
+    }
     if (d_fft_buf)       { cudaFree(d_fft_buf); d_fft_buf = nullptr; }
     if (d_fft_buf_f)     { cudaFree(d_fft_buf_f); d_fft_buf_f = nullptr; }
     if (d_green)         { cudaFree(d_green); d_green = nullptr; }
@@ -828,6 +834,13 @@ void GpuBuffers::reset_force_diag() {
     CUDA_CHECK(cudaMemset(d_fd_exchange_x, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_fd_exchange_y, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
+}
+
+unsigned long long GpuBuffers::download_causal_projection_events() const {
+    unsigned long long value = 0;
+    CUDA_CHECK(cudaMemcpy(&value, d_causal_projection_events,
+                          sizeof(value), cudaMemcpyDeviceToHost));
+    return value;
 }
 
 void GpuBuffers::download_force_diag(

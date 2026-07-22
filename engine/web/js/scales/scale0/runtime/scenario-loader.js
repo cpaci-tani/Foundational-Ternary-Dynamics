@@ -452,7 +452,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     //   • latency_field — run the REAL latency Poisson so the gravity panel shows
     //     the genuine C++ potential, not only the |J|² proxy. Source is the
     //     [IMPOSED] field-energy density (field_energy_gravity) for the FLUX
-    //     scenarios, OR real manifested rest mass M_REST·|state| for the
+    //     scenarios, OR imposed manifested gravity charge M_GRAVITATIONAL·|state| for the
     //     MASS-gravity scenarios (SCALE0_MASS_GRAVITY_SCENARIOS, e.g. massive-body).
     applyGravityAbsorbingToggles(
         scenario.id,

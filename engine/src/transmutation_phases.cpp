@@ -50,22 +50,14 @@ void accumulate_proper_time(RenderBridge& rb) {
   for (int i : active) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
-    // Clock rate of record: dτ/dt = √(f²−v²)/√f, f = 1−L², c=1 flux-velocity
-    // normalization — SINGLE definition in ftd/proper_time_rate.h since the
-    // 2026-07-19 proper-time-hazard amendment (the evaporation hazard now
-    // integrates the SAME dτ; see the header's consumer list). The c=1
-    // convention is intentionally distinct from the transport cap
-    // |v| ≤ C_SPEED·√(1−L²) in phase_forces.cpp — do NOT couple them here;
-    // a future change wanting the clock to freeze at the causal transport
-    // speed would normalize speed² by C_SPEED² inside the shared helper.
+    // FTD-0402 raw-lattice contract: dτ/dt = √max(1-u²/C_SPEED²-L²,0).
+    // This is the selected clock/bandwidth axiom, not a substrate derivation.
     const double delta_tau = proper_time_rate(v.latency, v.speed() * v.speed());
     if (delta_tau > 0.0) {
       v.tau += delta_tau;
       // FTD-0271 (A5): advance the de Broglie clock phase dφ = ω₀·dτ. With
-      // L=0 this is dτ=1/tick at rest and √(1−v²) when moving — so the clock
-      // automatically red-shifts by the SR factor. The covariant clock *rate*
-      // is sourced by FTD's own proper-time (FTD-0252 measured dτ/dt∝√(1−v²)),
-      // leaving only the scalar ω₀∝M_REST imposed → [IMPOSED]→[SELECTION].
+      // L=0 this is dτ=1/tick at rest and √(1−u²/C_SPEED²) when moving.
+      // The scalar ω₀ and the clock hypothesis remain imposed.
       if (db_clock)
         v.phase += omega0 * delta_tau;
     }

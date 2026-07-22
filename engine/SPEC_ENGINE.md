@@ -81,7 +81,7 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 1. **Flux wave equation**: dJ/dt = c^2 nabla^2 J (only possible local linear dynamics for a vector field)
 2. **State-flux coupling**: source term -g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0; electric sign per lagrangian.h Term 2, amended 2026-07-18 — the pre-amendment +g_c·grad(s) fought the Gauss constraint at charge sites, measured live equilibrium f = −0.095)
 3. **Gauss projection**: enforce div(J) = s each tick (charge conservation -- logical necessity)
-4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE * (dtau/dt), where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt) and dtau/dt = sqrt(f^2-v^2)/sqrt(f), f = 1-L^2, is the shared proper-time rate (ftd/proper_time_rate.h; proper-time-hazard amendment 2026-07-19 — decay statistics are clocks, so metastable matter in a latency well decays slower by sqrt(1-L^2) at rest and by the SR factor when moving; at L=0, v=0 the factor is exactly 1)
+4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE * (dtau/dt), where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt) and dtau/dt = sqrt(max(1-B,0)), B=|u|^2/C_SPEED^2+L^2, is the shared selected proper-time rate (`ftd/causal_kinematics.h`; FTD-0402). Stored `u` is raw nodes/tick. This implements the clock/bandwidth axiom; it is not a covariance theorem.
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
 6. **Movement + Collision**: remainder accumulation, speed limit C_SPEED = C_WAVE = 1/sqrt(3), annihilation on contact
 
@@ -426,7 +426,7 @@ distinctions are tracked in the theory ledgers.
 | 3b | `DELTA_SQ`, `DELTA_APPROX` | Dual-substrate splitting: delta^2 = (4G*-1)/(4G*) |
 | 4 | `D_SPATIAL`=3, `N_C`=3, `N_GEN`=3, `N_F`=6, `N_BASE`=4, `B_3`=7, `N_EFF`=13 | Framework integers |
 | 5 | `ALPHA`, `G_C`, `G_N`=0.01, `SIN2_WEINBERG` | Coupling constants |
-| 6 | `K_B`=0.511 (mass anchor), `K_MANIFEST`=0.505462 (:= W_SC, FTD-0388), `K_GENESIS`=1.516386 | Mass scale |
+| 6 | `K_B`=0.511 (imposed mass calibration), `M_INERTIAL=K_B`, `E_REST=K_B/3`, `M_GRAVITATIONAL=K_B`; `K_MANIFEST`=0.505462 (:= W_SC, FTD-0388), `K_GENESIS`=1.516386 | Explicit mass roles and manifestation scale |
 | 7 | Mass ratios, mixing angles, CP violation | Particle physics |
 | 8 | Cosmological parameters, reference frame context | Extended hierarchy |
 | sim | `C_SPEED`=`C_WAVE`=1/sqrt(3), `DAMPING`=alpha | Simulation parameters |
@@ -439,7 +439,10 @@ distinctions are tracked in the theory ledgers.
 |----------|-------|---------|
 | `ALPHA` | 0.00729 (1/X_PLUS, tree-level) | Coulomb force, damping, exchange force |
 | `ALPHA_EFT` | `G_C²` (≡ ALPHA by construction) | Same two-vertex force paths; consistency alias |
-| `K_B` | 0.511 | Wavepacket amplitude, Larmor scale (mass anchor; the kinetics role moved to K_MANIFEST per FTD-0388) |
+| `K_B` | 0.511 | Imposed calibration used by wavepacket amplitude, Larmor scale, and de Broglie frequency |
+| `M_INERTIAL` | `K_B` | Particle and cluster momentum integration |
+| `E_REST` | `M_INERTIAL*C_SPEED² = K_B/3` | Born–Infeld rest term and particle energy audit |
+| `M_GRAVITATIONAL` | `K_B` | Latency Poisson source; numerical equality to `M_INERTIAL` remains imposed |
 | `K_MANIFEST` | 0.5054620197 (:= W_SC [SELECTION — ADOPTED, FTD-0388]) | Boltzmann evaporation scale (p = exp(-E/K_MANIFEST²)·K_EVAP_RATE·dτ/dt since 2026-07-19), genesis probability ramp |
 | `G_C` | sqrt(ALPHA) | State-flux coupling (phase_read) |
 | `G_N` | 0.01 (lattice toy — see §5 gravity banner) | Gravitational force |
@@ -518,9 +521,10 @@ part of the current `Voxel` runtime surface.
 |--------|---------|
 | `density()` | `|flux|` |
 | `speed()` | `|velocity|` |
-| `bandwidth_used()` | `v^2` when `latency == 0`; otherwise `v^2 / f`, where `f = 1 - latency^2` |
-| `gamma_ftd()` | `1/sqrt(1 - v^2)` when `latency == 0`; otherwise `sqrt(f) / sqrt(f^2 - v^2)` |
-| `born_infeld_core()` | `-M_REST * sqrt(1 - v^2)` when `latency == 0`; otherwise `-M_REST * sqrt(f^2 - v^2) / sqrt(f)` |
+| `causal_budget()` | `B = |u|^2/C_SPEED^2 + latency^2`, with stored `u` in raw nodes/tick |
+| `bandwidth_used()` | `(|u|^2/C_SPEED^2) / f`, where `f = 1 - latency^2`; reaches one at the selected local boundary |
+| `gamma_ftd()` | `1/sqrt(1-B)` on `B<1` |
+| `born_infeld_core()` | `-E_REST * sqrt(max(1-B,0))`, where `E_REST=M_INERTIAL*C_SPEED^2=K_B/3` |
 
 ### ForceDiag struct
 
@@ -669,7 +673,7 @@ The 4-term Lagrangian (in `lagrangian.h`) provides the variational foundation:
 | L_GAUSS | -lambda_G (div(J) - rho)^2 | Charge conservation, U(1) gauge |
 | R (dissipation) | (alpha/2) \|wave_vel\|^2 | Vacuum drag |
 
-`compute_lagrangian_diagnostics()` returns `LagrangianDiag` with per-term sums, Gauss violation, conservation checks.
+`compute_lagrangian_diagnostics()` returns `LagrangianDiag` with per-term sums, Gauss violation, conservation checks, and append-only `cell_volume` metadata. FTD-0404 makes the spatial sum explicit as `S=Σ_v L_density(v)·V_cell`, with `V_cell=a_lat³=1` for the production unit lattice. The local densities remain quadratic; the cubic power belongs to the integration measure. This leaves every historical numerical value unchanged and does not support arbitrary non-unit spacing without separately rescaling difference operators and couplings.
 
 ---
 
@@ -864,7 +868,11 @@ line-by-line target registry.
 
 14. **Double damping is intentional (Rayleigh dissipation)**: Both `flux` and `wave_vel` are damped by `(1-ALPHA)` each tick in `phase_write`. This is deliberate Rayleigh dissipation -- it damps both the position-like degree of freedom (flux) and the velocity-like degree of freedom (wave_vel). Damping only one would leave undamped oscillatory modes. The dual damping ensures monotonic energy decay in the field, which is required for stable self-field buildup and physically correct radiation loss.
 
-15. **Speed limit enforced by γ_FTD momentum integration in phase_forces()** (TRACKER §1.2): the velocity update in `phase_forces` uses `p = γmv` dynamics. Momentum reconstructs from `v + latency`, Newton's law updates `p`, and the new `v` extracts from `p` via `v = p · C · √((1−L²)/(C²+|p|²))`. This respects the FTD bandwidth `v²/C² + L² < 1` by construction — `|v|` asymptotes to `C·√(1−L²)`, never crosses. No clamp needed anywhere downstream; `phase_movement` receives an already-bounded velocity. A non-relativistic clamp would discard energy and be Lorentz-violating; the γ-integration avoids that.
+15. **Selected causal budget enforced by shared momentum integration** (FTD-0402 implementation; FTD-0403 targeted closure; TRACKER §1.2): stored velocity `u` is raw nodes/tick and `B=|u|²/C_SPEED²+L²<1`. CPU and GPU accumulate every enabled force contribution before one `P/M_INERTIAL` update; `|u|` asymptotes to `C_SPEED·√(1−L²)`. Movement-entry projection is a counted repair only for externally injected or directly mutated invalid velocities; ordinary force evolution produces zero repairs. `tau` and de Broglie phase advance once in the common host post-pass. Exact, native, CUDA, golden, WASM/web, and compatibility gates close the frozen changed surface. This is exact conformance to the selected engine contract, not a theorem of Lorentz covariance.
+
+16. **Explicit cubic cell measure** (FTD-0404): `VOXEL_EDGE_LENGTH=1`, `VOXEL_FACE_AREA=1`, and `VOXEL_VOLUME=1` are named in a CUDA-safe interface. CPU/GPU volume-density diagnostics integrate with `V_cell`; EnergyAudit also exposes the pre-integration field/wave density sums. Local latency gravity continues to read density, while point-particle and constraint channels are unscaled. The unit measure is numerically neutral; no force or update rule changes.
+
+17. **Colour-energy contract is selected only on a default-off CPU v1 domain** (FTD-0405/0406): FTD-0405 remains the scoped no-go for the unmodified CPU/GPU direct-force tick and for any claim that its additive zero/localization were already derived. After explicit owner authorization, `strong_stress_energy` adopts `U_ij(r)=-c_f∫_1^r g(s)ds`, retains the existing force/movement position proposal, and deterministically projects only relative physical momenta so `K+U` and total momentum close on an unchanged coloured-particle topology. The same U enters EnergyAudit/EnergyLedger, midpoint-CIC string T00 plus Irving–Kirkwood central stress, and the CPU latency source as gravitational mass density `T00/C_SPEED²`. The toggle defaults off and explicitly falls back from CUDA to CPU. Collision/state-transition, moving-latency, mixed-force and native GPU contracts remain open. The selected zero, localization and projection are not substrate theorems and derive no mass scale.
 
 ---
 
@@ -876,7 +884,7 @@ line-by-line target registry.
 |--------|-------------|
 | `tick()` | Advance one tick through the current toggle-gated phase ladder |
 | `diagnostics()` | Returns `Diagnostics` struct (counts, flux totals, charge) |
-| `energy_audit()` | Returns `EnergyAudit` (field/wave/KE/PE breakdown, Gauss violation) — one-shot snapshot |
+| `energy_audit()` | Returns `EnergyAudit`: volume-integrated field/wave channels, their local-density sums plus `cell_volume`, exact normalized particle KE, particle rest/total energy, vector particle momentum, `dynamic_energy`, explicitly incomplete accounted `total_energy`, and Gauss violation |
 | `energy_ledger()` | Returns `const EnergyLedger&` — per-tick conservation drift (auto-populated on CPU path). Tests assert `abs(.residual) < tol` to refuse energy-drift regressions. GPU: call `update_energy_ledger()` manually after a device→host sync. |
 | `update_energy_ledger()` | Populate the ledger (called automatically by `tick()` on CPU path) |
 | `inject_particle(x,y,z, state)` | Inject single particle at lattice site |

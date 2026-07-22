@@ -368,15 +368,15 @@ int main() {
 
         double L = v.latency;
         double bw = v.bandwidth_used();
-        double L_BI = v.born_infeld_core();        // -K_B * sqrt(1 - v^2 - L^2)
-        double gamma = v.gamma_ftd();               // 1 / sqrt(1 - v^2 - L^2)
-        double H_BI = ftd::K_B * gamma;             // K_B * gamma_FTD
+        double L_BI = v.born_infeld_core();
+        double gamma = v.gamma_ftd();
+        double H_BI = ftd::born_infeld_hamiltonian(v.latency, v.velocity.mag2());
 
         std::cout << "    v = " << v.speed() << "\n";
         std::cout << "    L (latency) = " << L << "\n";
         std::cout << "    bandwidth = " << bw << "\n";
         std::cout << "    L_BI = " << L_BI << "\n";
-        std::cout << "    H_BI = K_B * gamma = " << H_BI << "\n";
+        std::cout << "    H_BI = E_REST*f/rate = " << H_BI << "\n";
         std::cout << "    gamma_FTD = " << gamma << "\n";
 
         // For stationary particle (v~0): H_BI + L_BI should = 0
@@ -395,7 +395,7 @@ int main() {
         }
 
         // Verify H_BI > K_B (gamma >= 1)
-        check("H_BI >= K_B (gamma >= 1)", H_BI >= ftd::K_B - 1e-10);
+        check("H_BI >= E_REST (gamma >= 1)", H_BI >= ftd::E_REST - 1e-10);
 
         // Verify Hamiltonian from lagrangian.h matches
         double divJ = rb.divergence_flux(idx);

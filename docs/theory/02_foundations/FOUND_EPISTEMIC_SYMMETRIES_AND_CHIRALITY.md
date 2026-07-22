@@ -56,7 +56,7 @@ In FTD, this asymmetry is mathematically rooted in the **Ratio and the Product**
 ### Physical Time-Reversal Violation
 While the $G^*$ ratio is an interpretive metaphor, the actual physical $T$-violation in the FTD simulation is driven by:
 1. **Langevin Thermostat:** The stochastic thermalization phase introduces noise that cannot be reversed.
-2. **Genesis/Evaporation Thresholds:** Leading-edge Genesis events (manifestation of state $s \in \{-1, +1\}$ from flux $J$ crossing the threshold $K_{\text{genesis}}$) and trailing-edge Evaporation events ($s \to 0$ as flux drains) are irreversible projections. The Genesis rule is threshold-gated, meaning information is lost upon projection, creating a physical "forward" (distinction drawing) and "back" (residual vacuum flux).
+2. **Genesis/Evaporation Thresholds:** Leading-edge Genesis events (manifestation of state $s \in \{-1, +1\}$ from flux $J$ crossing the threshold $K_{\text{genesis}}$) have a lossy discrete readout while retaining $J$ (FTD-0394). Trailing-edge Evaporation can erase label distinctions from the complete persistent state; FTD-0395 gives an exact full-map collision. These are distinct mechanisms and jointly support the current engine's irreversible sector without deriving FC-2.
 
 ---
 

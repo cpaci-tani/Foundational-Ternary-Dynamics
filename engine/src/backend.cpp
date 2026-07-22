@@ -73,6 +73,9 @@ void GpuBackend::tick() {
     // Download device buffers so RenderBridge::accumulate_proper_time() and
     // update_energy_ledger() see fresh state.
     sync_to_host();
+    bridge_.causal_projection_events_this_tick_ = bridge_.toggles.movement
+        ? static_cast<long long>(engine_->causal_projection_events())
+        : 0;
 
     // ── Unified-mass Phase 2: rigid-body cluster inertia (GPU mirror) ───────
     // The cluster pass has NO GPU kernel; it is a HOST-SIDE reduction by design.

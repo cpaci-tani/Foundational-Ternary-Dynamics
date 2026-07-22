@@ -165,12 +165,22 @@ static void inject_initial_state(RenderBridge& rb) {
 //     upheld). The golden profile contains injected particles (s ≠ 0), so the
 //     trajectory legitimately changes. Old: 0xb604d81a3d79366e. Deterministic:
 //     identical across battery + standalone reruns.
+//   - 2026-07-21: RE-PINNED to 0x450fca908f536e36 for FTD-0402 causal
+//     normalization and mass-role separation. The pre-lock/current manifest
+//     comparison (`dump_causal_golden_manifest`) found unchanged hashes for
+//     state, latency, tau, phase, identity/lock/spin/color/flavor, and the
+//     strong/weak sectors. Raw velocity and remainder changed directly because
+//     force integration now uses M_INERTIAL and the C_SPEED-normalized causal
+//     map; flux/wave fields and their audit scalars changed secondarily through
+//     that deterministic trajectory. particle_ke now uses (gamma0-1)E_REST,
+//     and total_energy includes accounted particle energy. No toggle, source,
+//     boundary, or discrete-state change was observed. Reproduced twice.
 //
 // If this changes WITHOUT a stated config/physics rationale, ENGINE PHYSICS
 // CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
 // the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0x1343f31fc0163a84ULL;  // L=17, deterministic (Term-2 coupling sign amendment, 2026-07-18)
+static constexpr std::uint64_t GOLDEN_HASH = 0x450fca908f536e36ULL;  // L=17, FTD-0402 raw causal/mass roles, 2026-07-21
 
 // ---------------------------------------------------------------------------
 // Test driver

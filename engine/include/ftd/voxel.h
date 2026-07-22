@@ -7,6 +7,7 @@
  */
 
 #include "constants.h"
+#include "causal_kinematics.h"
 #include <array>
 #include <cmath>
 
@@ -119,17 +120,15 @@ struct Voxel {
   // L ∈ [0, 0.999) — clamped below 1 to prevent horizon singularity.
   double latency = 0.0;
 
-  // Proper time accumulator: dτ/dt = √(f² - v²)/√f where f = 1 - L².
-  // (The /√f form gives the correct √f static-observer limit at v=0; every
-  // implementation uses /√f — see transmutation_phases.cpp accumulate_proper_time.)
+  // Proper time accumulator: dτ/dt = √max(1 - |u|²/C_SPEED² - L², 0).
   // Accumulated each tick for manifested particles when latency_field is ON.
   double tau = 0.0;
 
   // FTD-0271 (A5): de Broglie clock phase φ, advanced as dφ = ω₀·dτ when the
-  // de_broglie_clock toggle is ON. Sources the clock's *covariant rate* from
-  // FTD's own (FTD-0252-measured) proper-time dilation √(1−v²), leaving only
-  // the scalar ω₀∝M_REST imposed. Read-only diagnostic; NOT mixed into the
-  // golden state hash, so adding it is golden-neutral.
+  // de_broglie_clock toggle is ON. FTD-0402 normalizes raw velocity to
+  // C_SPEED in the selected clock/bandwidth axiom. This is an implementation
+  // contract, not a substrate theorem of physical covariance. Read-only
+  // diagnostic; NOT mixed into the golden state hash.
   double phase = 0.0;
 
   // Is this voxel part of a bound structure?
@@ -189,46 +188,22 @@ struct Voxel {
 
   double speed() const { return velocity.mag(); }
 
-  // Bandwidth used: v²/f when latency active, else v².
-  // When latency_field is ON, the effective speed limit is f = 1 - L²,
-  // so bandwidth = v²/f measures fraction of available bandwidth consumed.
+  // Fraction of the latency-selected transport allowance consumed by motion.
+  // It reaches one at |u|=C_SPEED*sqrt(1-L²).
   double bandwidth_used() const {
-    double v2 = speed() * speed();
-    if (latency == 0.0) return v2; // fast path — no gravitational potential
-    double f = 1.0 - latency * latency;
-    return (f > 0.0) ? v2 / f : 1.0;
+    return bandwidth_fraction(latency, velocity.mag2());
   }
 
-  // Generalized Lorentz factor: γ = √f / √(f² - v²) when latency active.
-  // Reduces to standard 1/√(1-v²) when L=0.
+  double causal_budget() const {
+    return ::ftd::causal_budget(latency, velocity.mag2());
+  }
+
   double gamma_ftd() const {
-    if (latency == 0.0) {
-      double bw = speed() * speed();
-      if (bw >= 1.0) return 1e30;
-      return 1.0 / std::sqrt(1.0 - bw);
-    }
-    double f = 1.0 - latency * latency;
-    if (f <= 0.0) return 1e30;
-    double v2 = speed() * speed();
-    double arg = f * f - v2;
-    if (arg <= 0.0) return 1e30;
-    return std::sqrt(f) / std::sqrt(arg);
+    return transport_gamma(latency, velocity.mag2());
   }
 
-  // Born-Infeld core: -M_REST · √(f² - v²)/√f when latency active.
-  // Reduces to standard -M_REST·√(1-v²) when L=0. (M_REST = K_B; rest-mass role.)
   double born_infeld_core() const {
-    if (latency == 0.0) {
-      double bw = speed() * speed();
-      if (bw >= 1.0) return 0.0;
-      return -M_REST * std::sqrt(1.0 - bw);
-    }
-    double f = 1.0 - latency * latency;
-    if (f <= 0.0) return 0.0;
-    double v2 = speed() * speed();
-    double arg = f * f - v2;
-    if (arg <= 0.0) return 0.0;
-    return -M_REST * std::sqrt(arg) / std::sqrt(f);
+    return ::ftd::born_infeld_core(latency, velocity.mag2());
   }
 };
 

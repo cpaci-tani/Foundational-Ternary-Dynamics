@@ -234,6 +234,15 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     ],
     'flux-zero-point': [
         // Quiescent ground-state floor: NO manifestation (genesis off), no
+        // dissipative damping, and no Gauss projection (its non-variational
+        // operator is the conservation leak) — so the bare wave update keeps the
+        // seeded fluctuation energy. Paired with reflective boundaries
+        // (SCALE0_SCENARIO_BOUNDARY) so nothing leaks out the edges, the floor
+        // persists. The inverse of vacuum-foam (near-threshold + genesis on).
+        ['genesis', false, 't-genesis'],
+        ['damping', false, 't-damping'],
+        ['gauss_projection', false, 't-gauss'],
+    ],
     'flux-genesis-between-gates': [
         // FTD-0388 gate discriminator: freeze the field so the three band
         // amplitudes (1.5160 / 1.5250 / 1.5340) stay exact — genesis is the
@@ -255,15 +264,6 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         // off BEFORE injecting so the bands live on the mono substrate — keep
         // the checkbox in sync if a prior scenario turned dual on.
         ['dual_substrate', false, 't-dual'],
-    ],
-        // dissipative damping, and no Gauss projection (its non-variational
-        // operator is the conservation leak) — so the bare wave update keeps the
-        // seeded fluctuation energy. Paired with reflective boundaries
-        // (SCALE0_SCENARIO_BOUNDARY) so nothing leaks out the edges, the floor
-        // persists. The inverse of vacuum-foam (near-threshold + genesis on).
-        ['genesis', false, 't-genesis'],
-        ['damping', false, 't-damping'],
-        ['gauss_projection', false, 't-gauss'],
     ],
     'quantum-born-rule': [
         ['genesis', true, 't-genesis'],
@@ -470,7 +470,7 @@ export const SCALE0_ABSORBING_SCENARIOS = new Set([
     's0-seed-time-horizon',
 ]);
 
-// Scenarios whose gravity comes from REAL manifested rest mass (rho = M_REST·|state|)
+// Scenarios whose gravity uses imposed manifested charge (rho = M_GRAVITATIONAL·|state|)
 // via the latency-Poisson solver — the faithful gravity source (SPEC_FTD_LAGRANGIAN
 // §4.2), distinct from the |J|² field-energy proxy above. The scenario-loader enables
 // latency_field for these WITHOUT field_energy_gravity (the mass is the source).

@@ -13,15 +13,15 @@
 //     F_cluster = Σ_members (f_coulomb + f_gravity + f_strong + f_magnetic)
 //
 // from force_diag_, and integrates the centre-of-mass at INERTIAL MASS
-// m = N·M_REST (N = member count, M_REST = K_B = 0.511, the rest/inertial/
-// gravitational mass quantum, ontic/particle_masses.h:41) via the same γ_FTD
+// m = N·M_INERTIAL (N = member count, M_INERTIAL = K_B = 0.511, the
+// separately named imposed inertial calibration) via the same γ_FTD
 // momentum scheme as the per-voxel loop, with the per-mass acceleration
-// a_COM = F_cluster/(N·M_REST). The resulting V_COM is written to every member
+// a_COM = F_cluster/(N·M_INERTIAL). The resulting V_COM is written to every member
 // (rigid body).
 //
 // ── THE FALSIFIER: a ∝ 1/N ─────────────────────────────────────────────────
 // The mechanism's whole content is that a heavier cluster (more voxels)
-// resists a GIVEN force proportionally: a = F/(N·M_REST). So if F is held
+// resists a GIVEN force proportionally: a = F/(N·M_INERTIAL). So if F is held
 // FIXED while N varies, then a·N is constant.
 //
 // CRITICAL — why a∝1/N is NOT field-testable (do not "fix" this by driving the
@@ -41,7 +41,7 @@
 //                                      γ_FTD momentum correction is < 6 ppm
 //                                      (negligible against the 1% tolerance).
 //
-// At F = 1e-3, M_REST = 0.511, dt = 1 the predicted numbers are:
+// At F = 1e-3, M_INERTIAL = 0.511, dt = 1 the predicted numbers are:
 //   N= 1: a_COM = 1.95694e-3,  a·N = 1.95694e-3
 //   N= 8: a_COM = 2.44618e-4,  a·N = 1.95695e-3
 //   N=27: a_COM = 7.24795e-5,  a·N = 1.95695e-3
@@ -159,34 +159,34 @@ static Sample run_sample(int edge, const Vec3& F) {
 }
 
 // ===========================================================================
-// CI-1: a_COM = F/(N·M_REST) per cluster, and a_COM·N is constant (a ∝ 1/N).
+// CI-1: a_COM = F/(N·M_INERTIAL) per cluster, and a_COM·N is constant (a ∝ 1/N).
 // ===========================================================================
 void test_inertia_scales_as_inverse_N() {
-    section("CI-1: a_COM = F/(N*M_REST); a_COM*N constant across N (a proportional to 1/N)");
+    section("CI-1: a_COM = F/(N*M_INERTIAL); a_COM*N constant across N (a proportional to 1/N)");
 
     const Vec3 F{1e-3, 0.0, 0.0};
     const Sample s1  = run_sample(1, F);   // single voxel
     const Sample s8  = run_sample(2, F);   // 2x2x2 cube
     const Sample s27 = run_sample(3, F);   // 3x3x3 cube
 
-    std::printf("    [CI-1] F.x=%.3e  M_REST=%.3f  dt=1\n", F.x, M_REST);
-    std::printf("    [CI-1]   N    a_COM            F/(N*M_REST)     a_COM*N\n");
+    std::printf("    [CI-1] F.x=%.3e  M_INERTIAL=%.3f  dt=1\n", F.x, M_INERTIAL);
+    std::printf("    [CI-1]   N    a_COM            F/(N*M_INERTIAL) a_COM*N\n");
     auto row = [&](const Sample& s) {
         std::printf("    [CI-1]  %3d   %.10e   %.10e   %.10e\n",
-                    s.N, s.a_com, F.x / (s.N * M_REST), s.a_times_N);
+                    s.N, s.a_com, F.x / (s.N * M_INERTIAL), s.a_times_N);
     };
     row(s1); row(s8); row(s27);
 
-    // (a) Per-cluster Newtonian law: a_COM ≈ F.x/(N·M_REST) within ~1%.
+    // (a) Per-cluster Newtonian law: a_COM ≈ F.x/(N·M_INERTIAL) within ~1%.
     auto check_newton = [&](const Sample& s) {
-        const double predicted = F.x / (s.N * M_REST);
+        const double predicted = F.x / (s.N * M_INERTIAL);
         const double rel = std::abs(s.a_com - predicted) / predicted;
         char name[96];
         std::snprintf(name, sizeof(name),
-                      "CI-1a: N=%d  a_COM == F/(N*M_REST) within 1%% (rel=%.2e)",
+                      "CI-1a: N=%d  a_COM == F/(N*M_INERTIAL) within 1%% (rel=%.2e)",
                       s.N, rel);
         check(name, rel < 0.01,
-              "a_COM departed from the imposed Newtonian law a = F/(N*M_REST) by "
+              "a_COM departed from the imposed Newtonian law a = F/(N*M_INERTIAL) by "
               ">1%. At L=0 (gravity/latency OFF) and F=1e-3 the gamma_FTD "
               "correction is <6 ppm, so this is a real deviation in the cluster "
               "integrator, not relativistic curvature.");
@@ -204,11 +204,11 @@ void test_inertia_scales_as_inverse_N() {
     check("CI-1b: a_COM*N constant N=1 vs N=8 within 1% (a proportional to 1/N)",
           spread_8 < 0.01,
           "a_COM*N changed by >1% from N=1 to N=8: the cluster inertial mass is "
-          "NOT scaling as N*M_REST, so acceleration is not proportional to 1/N.");
+          "NOT scaling as N*M_INERTIAL, so acceleration is not proportional to 1/N.");
     check("CI-1b: a_COM*N constant N=1 vs N=27 within 1% (a proportional to 1/N)",
           spread_27 < 0.01,
           "a_COM*N changed by >1% from N=1 to N=27: the cluster inertial mass is "
-          "NOT scaling as N*M_REST, so acceleration is not proportional to 1/N.");
+          "NOT scaling as N*M_INERTIAL, so acceleration is not proportional to 1/N.");
 
     // Non-vacuity: there must actually be acceleration.
     check("CI-1: acceleration is non-trivial (test is non-vacuous)",
@@ -314,15 +314,15 @@ void test_noop_guard_when_toggle_off() {
 // CI-5: THE EQUIVALENCE PRINCIPLE — universal free-fall, a INDEPENDENT of N.
 // ---------------------------------------------------------------------------
 // CI-1 (above) held the TOTAL force F fixed as N grew, isolating the inertial
-// 1/N signature: a = F/(N·M_REST) ⇒ a ∝ 1/N. CI-5 is the exact COMPLEMENT and
+// 1/N signature: a = F/(N·M_INERTIAL) ⇒ a ∝ 1/N. CI-5 is the exact COMPLEMENT and
 // the textbook EP discriminator: hold the PER-VOXEL force f fixed instead. Then
 // the cluster force scales with the cluster's own mass,
 //
 //     F_cluster = Σ_members f = N·f         (f = per-voxel force, same for all)
 //
-// and the unified inertial mass N·M_REST CANCELS it exactly:
+// and the inertial calibration N·M_INERTIAL CANCELS it exactly:
 //
-//     a_COM = F_cluster/(N·M_REST) = (N·f)/(N·M_REST) = f/M_REST.
+//     a_COM = F_cluster/(N·M_INERTIAL) = (N·f)/(N·M_INERTIAL) = f/M_INERTIAL.
 //
 // The N's cancel ⇒ a_COM is the SAME for every cluster regardless of how many
 // voxels it contains. Two clusters of DIFFERENT N released in the SAME uniform
@@ -332,11 +332,13 @@ void test_noop_guard_when_toggle_off() {
 // see the CI-1 header. CI-5 supplies that uniform f directly so latency/gravity
 // can stay OFF and the arithmetic is Newtonian-clean.)
 //
-// EPISTEMIC STATUS — this is a DEMONSTRATION, not a derivation. The EP itself
-// (rest = inertial = gravitational, one M_REST) is the FTD ACTION's [THEOREM]
-// (SPEC_FTD_LAGRANGIAN §4.1↔§4.2). The ENGINE exhibiting it here is CONDITIONAL
+// EPISTEMIC STATUS — this is a DEMONSTRATION, not a derivation. One raw
+// M_INERTIAL scalar is [IMPOSED]. M_GRAVITATIONAL currently has the same
+// numerical value but a separate role; their equality is not an action theorem.
+// The ENGINE exhibiting the EP
+// relation here is CONDITIONAL
 // on the [IMPOSED] cluster-inertia mechanism (FTD-0250): the rigid-body
-// collective-coordinate reduction a_COM = F_cluster/(N·M_REST) is imposed on the
+// collective-coordinate reduction a_COM = F_cluster/(N·M_INERTIAL) is imposed on the
 // engine, not derived from the per-voxel dynamics (that reduction is [OPEN]).
 // So CI-5 shows the imposed mechanism is internally EP-consistent; it does not
 // derive the EP from the substrate.
@@ -377,12 +379,12 @@ void test_equivalence_principle_universal_freefall() {
     // so a = V_COM.x/dt is the clean Newtonian acceleration).
     const double aA = rb.voxel_at(1, 1, 1).velocity.x   / rb.dt();
     const double aB = rb.voxel_at(11, 11, 11).velocity.x / rb.dt();
-    const double a_predicted = f.x / M_REST;                 // f/M_REST, N-independent
+    const double a_predicted = f.x / M_INERTIAL;             // f/M_INERTIAL, N-independent
     const double Fclus_A = NA * f.x;                         // source/gravitational side
     const double Fclus_B = NB * f.x;
 
-    std::printf("    [CI-5] uniform per-voxel f.x=%.3e   M_REST=%.3f   dt=1\n", f.x, M_REST);
-    std::printf("    [CI-5]   cluster   N    F_cluster=N*f    a_COM            f/M_REST\n");
+    std::printf("    [CI-5] uniform per-voxel f.x=%.3e   M_INERTIAL=%.3f   dt=1\n", f.x, M_INERTIAL);
+    std::printf("    [CI-5]   cluster   N    F_cluster=N*f    a_COM            f/M_INERTIAL\n");
     std::printf("    [CI-5]      A     %3d   %.10e   %.10e   %.10e\n", NA, Fclus_A, aA, a_predicted);
     std::printf("    [CI-5]      B     %3d   %.10e   %.10e   %.10e\n", NB, Fclus_B, aB, a_predicted);
 
@@ -392,19 +394,19 @@ void test_equivalence_principle_universal_freefall() {
     check("CI-5a: EP — a_COM(N=8) == a_COM(N=27) within 1% (universal free-fall, a independent of N)",
           rel_AB < 0.01,
           "Two locked clusters of different N in the SAME uniform per-voxel field "
-          "accelerated by DIFFERENT amounts: the unified inertial mass N*M_REST is "
+          "accelerated by DIFFERENT amounts: the inertial calibration N*M_INERTIAL is "
           "NOT cancelling the N-scaling of F_cluster=N*f, so the imposed "
           "cluster-inertia mechanism violates the equivalence principle.");
 
-    // (b) Each cluster's a_COM equals the N-independent value f.x/M_REST (≤1%).
+    // (b) Each cluster's a_COM equals the N-independent value f.x/M_INERTIAL (≤1%).
     auto check_universal = [&](const char* tag, int N, double a) {
         const double rel = std::abs(a - a_predicted) / a_predicted;
         char name[112];
         std::snprintf(name, sizeof(name),
-                      "CI-5b: %s (N=%d) a_COM == f/M_REST within 1%% (rel=%.2e)", tag, N, rel);
+                      "CI-5b: %s (N=%d) a_COM == f/M_INERTIAL within 1%% (rel=%.2e)", tag, N, rel);
         check(name, rel < 0.01,
               "Cluster a_COM departed from the N-independent free-fall value "
-              "f/M_REST by >1%. At L=0 and f=1e-3 the gamma_FTD correction is "
+              "f/M_INERTIAL by >1%. At L=0 and f=1e-3 the gamma_FTD correction is "
               "<6 ppm, so this is a real deviation in the cluster integrator.");
     };
     check_universal("cube A", NA, aA);
@@ -419,7 +421,7 @@ void test_equivalence_principle_universal_freefall() {
     check("CI-5c: F_cluster proportional to N (NB/NA = 27/8) while a_COM is N-independent",
           std::abs(ratio_F - ratio_N) < 1e-9,
           "F_cluster did not scale as N: the source/gravitational side is not "
-          "growing with cluster mass, so the EP cancellation a=f/M_REST is "
+          "growing with cluster mass, so the EP cancellation a=f/M_INERTIAL is "
           "coincidental rather than the N's genuinely cancelling.");
 
     // Non-vacuity: there must actually be acceleration, and the two cubes must

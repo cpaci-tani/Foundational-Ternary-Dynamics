@@ -18,6 +18,7 @@
 #include "ftd/voxel.h"
 #include "ftd/constants.h"
 #include "ftd/test_telemetry.h"
+#include "ftd/volumetric_measure.h"
 
 #include <cmath>
 #include <cstring>
@@ -35,8 +36,9 @@ namespace ftd { namespace test {
 // the user switched bridges.
 //
 // This test guards against any future "drop the ½" regression by injecting
-// a known flux pattern at one voxel and asserting field_energy = ½·|J|² and
-// wave_energy = 0 (wave_vel was not set).
+// a known flux pattern at one voxel and asserting the local density is
+// ½·|J|² while integrated field_energy = ½·|J|²·V_cell. The current unit
+// lattice has V_cell=1, so the historical numerical value is unchanged.
 // ---------------------------------------------------------------------------
 void test_energy_audit_half_factor() {
     section("G-6: Energy audit ½ factor regression");
@@ -57,7 +59,11 @@ void test_energy_audit_half_factor() {
     auto audit = compute_energy_audit(rb);
 
     // |J|² = 1.0 at one site; with the ½ factor, field_energy = 0.5.
-    check_close("field_energy = ½·|J|²",     audit.field_energy, 0.5, 1e-9);
+    check_close("cell volume = a_lat^3", audit.cell_volume, VOXEL_VOLUME, 1e-15);
+    check_close("field density sum = ½·|J|²",
+                audit.field_energy_density_sum, 0.5, 1e-9);
+    check_close("field_energy = ½·|J|²·V_cell",
+                audit.field_energy, 0.5 * VOXEL_VOLUME, 1e-9);
     check_close("wave_energy = 0 (no wv)",   audit.wave_energy,  0.0, 1e-9);
 
     // Anisotropic check: same magnitude, different axis — must give same E.
@@ -65,7 +71,10 @@ void test_energy_audit_half_factor() {
     const int idx2 = rb.lattice().index(5, 5, 5);
     voxels[idx2].flux = Vec3{0.0, std::sqrt(2.0), 0.0};  // |J|² = 2
     auto audit2 = compute_energy_audit(rb);
-    check_close("field_energy = ½·|J|² (|J|²=2)", audit2.field_energy, 1.0, 1e-9);
+    check_close("field density sum = ½·|J|² (|J|²=2)",
+                audit2.field_energy_density_sum, 1.0, 1e-9);
+    check_close("field_energy = ½·|J|²·V_cell (|J|²=2)",
+                audit2.field_energy, VOXEL_VOLUME, 1e-9);
 }
 
 // ---------------------------------------------------------------------------

@@ -196,6 +196,7 @@ add_library(ftd_core
     src/transmutation_phases.cpp     # R2: weak/pair-production/triad/proper-time
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
+    src/strong_stress_energy.cpp     # FTD-0406 selected strong Hamiltonian / local T00-stress contract
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
     src/scale_context.cpp            # Scale-context readout admissibility gate (read-only; α-blind)
     # Phase 4a — phase_write decomposition (2026-04-27, ADR-0008)
@@ -419,8 +420,8 @@ ftd_add_test(test_cluster_inertia tests/test_cluster_inertia.cpp
 # FTD-0271 (2026-06-11): de Broglie internal clock. The de_broglie_clock toggle
 # adds the Klein-Gordon mass term -omega0^2*J at manifested voxels (phase_read).
 # Phase A: a static cluster's flux oscillates at omega0 (k=0 rest mode).
-# Phase A5: the clock phase d(phi)=omega0*d(tau) red-shifts as sqrt(1-v^2),
-# sourcing the covariant clock rate from FTD's own proper-time (FTD-0252).
+# Phase A5: d(phi)=omega0*d(tau) verifies the legacy c=1 clock wiring;
+# physical moving-clock covariance was withdrawn by FTD-0401.
 ftd_add_test(test_de_broglie_clock tests/test_de_broglie_clock.cpp
              CTEST_NAME de_broglie_clock TIMEOUT 120 LABELS unit quantum)
 ftd_add_test(test_de_broglie_redshift tests/test_de_broglie_redshift.cpp
@@ -446,6 +447,18 @@ target_link_libraries(test_constants ftd_core)
 #   - coulomb_pe = ½·Σ α·q·φ pair-PE convention
 add_executable(test_audit_regression tests/test_audit_regression.cpp)
 target_link_libraries(test_audit_regression ftd_core)
+
+# FTD-0404: explicit D=3 cubic cell measure for volume-integrated diagnostics.
+ftd_add_test(test_volumetric_measure tests/test_volumetric_measure.cpp
+             CTEST_NAME volumetric_measure LABELS unit physics)
+
+# FTD-0405: diagnostic-only NCEMC feasibility / obstruction instrument.
+ftd_add_test(test_ncemc_feasibility tests/test_ncemc_feasibility.cpp
+             CTEST_NAME ncemc_feasibility LABELS unit physics)
+
+# FTD-0406: owner-authorized CPU strong Hamiltonian / local stress-energy contract.
+ftd_add_test(test_strong_stress_energy_contract tests/test_strong_stress_energy_contract.cpp
+             CTEST_NAME strong_stress_energy_contract LABELS unit physics)
 
 # Phase 4 PRE-FLIGHT regression gate (2026-04-27)
 # Before any phase extraction is allowed out of render_bridge.cpp, every
@@ -617,6 +630,11 @@ target_link_libraries(dump_full_physics_amp_scan ftd_core)
 add_executable(dump_full_physics_l256 tests/dump_full_physics_l256.cpp)
 target_link_libraries(dump_full_physics_l256 ftd_core)
 
+# FTD-0402: field-by-field manifest used when reconciling intentional golden
+# changes against the pre-lock engine. Diagnostic executable, not a CTest.
+add_executable(dump_causal_golden_manifest tests/dump_causal_golden_manifest.cpp)
+target_link_libraries(dump_causal_golden_manifest ftd_core)
+
 # Lagrangian verification
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
 target_link_libraries(test_born_infeld ftd_core)
@@ -718,6 +736,9 @@ target_link_libraries(test_vortex ftd_core)
 # Operators and dynamics
 add_executable(test_voxel_properties tests/test_voxel_properties.cpp)
 target_link_libraries(test_voxel_properties ftd_core)
+
+add_executable(test_causal_normalization tests/test_causal_normalization.cpp)
+target_link_libraries(test_causal_normalization ftd_core)
 
 add_executable(test_lattice_operators tests/test_lattice_operators.cpp)
 target_link_libraries(test_lattice_operators ftd_core)
@@ -1457,6 +1478,22 @@ ftd_add_test(campaign_hedgehog_charge_robustness tests/campaign_hedgehog_charge_
              CTEST_NAME hedgehog_charge_robustness TIMEOUT 1800
              LABELS native eft mass)
 
+# FTD-0398: terminal transport/destruction test for the same registered
+# octahedral Berg--Luescher convention, on scaled shells R=1..6 and t=0..8.
+ftd_add_test(campaign_topological_charge_transport tests/campaign_topological_charge_transport.cpp
+             CTEST_NAME topological_charge_transport TIMEOUT 1800
+             LABELS native eft mass)
+
+# FTD-0399: target-blind particlehood before any further mass observable.
+# A/C/E at L=33/65 under dissipative and undamped protocols; CPU-forced.
+ftd_add_test(campaign_target_blind_particlehood tests/campaign_target_blind_particlehood.cpp
+             CTEST_NAME target_blind_particlehood TIMEOUT 3600
+             LABELS native eft mass)
+# The locked FTD-0399 campaign books INVALID by returning 2 when the G2
+# correctness gate fails. Preserve that scientific verdict as the expected
+# regression behavior; an unexpected future exit 0 is drift and fails CTest.
+set_tests_properties(target_blind_particlehood PROPERTIES WILL_FAIL TRUE)
+
 # Do genuinely different flux configurations manifest to the identical
 # discrete (state, color, spin) readout? Deterministic extension of the
 # already-locked seed-diversity protocol; no new stochastic design choice,
@@ -1464,6 +1501,12 @@ ftd_add_test(campaign_hedgehog_charge_robustness tests/campaign_hedgehog_charge_
 ftd_add_test(campaign_manifestation_readout_collision tests/campaign_manifestation_readout_collision.cpp
              CTEST_NAME manifestation_readout_collision TIMEOUT 1800
              LABELS native eft mass)
+
+# FTD-0395: exact non-injectivity witness for the complete public tick map.
+# Test-only complete-state comparator; production API and behavior unchanged.
+ftd_add_test(test_full_state_irreversibility tests/test_full_state_irreversibility.cpp
+             CTEST_NAME full_state_irreversibility TIMEOUT 600
+             LABELS native eft arrow)
 if(FTD_ENABLE_CUDA)
     target_sources(campaign_graviton_tt_correlator
                    PRIVATE tests/graviton_fft_cuda.cu)
@@ -2302,6 +2345,7 @@ add_test(NAME portable_field COMMAND test_portable_field)
 add_test(NAME particle_lifetime COMMAND test_particle_lifetime)
 add_test(NAME vortex COMMAND test_vortex)
 add_test(NAME voxel_properties COMMAND test_voxel_properties)
+add_test(NAME causal_normalization COMMAND test_causal_normalization)
 add_test(NAME lattice_operators COMMAND test_lattice_operators)
 add_test(NAME discrete_operators COMMAND test_discrete_operators)
 add_test(NAME bridge_dynamics COMMAND test_bridge_dynamics)

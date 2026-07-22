@@ -472,8 +472,13 @@ void RenderBridge::solve_coulomb_poisson() {
 }
 
 void RenderBridge::solve_latency_poisson() {
+  const std::vector<StrongStressCell>* strong_cells = nullptr;
+  if (toggles.strong_stress_energy) {
+    compute_strong_stress_cells(*this, strong_stress_cells_);
+    strong_cells = &strong_stress_cells_;
+  }
   solve_latency_poisson_cpu(voxels_, ternary_field(), phi_latency_, sor_source_, lattice_, sor_iterations_,
-                            toggles.field_energy_gravity);
+                            toggles.field_energy_gravity, strong_cells);
 }
 
 // ============================================================================
@@ -541,6 +546,7 @@ void RenderBridge::phase_movement() {
 // ============================================================================
 
 void RenderBridge::tick() {
+  causal_projection_events_this_tick_ = 0;
   // F3 (callstack audit 2026-04-17): validate runs on BOTH paths now
   // so toggle-combination warnings surface regardless of CPU/GPU build.
   //
@@ -573,6 +579,15 @@ void RenderBridge::tick() {
 
   sync_ternary_from_voxels_if_needed();
 
+  // FTD-0406 v1 is a CPU-scoped selected architecture. A CUDA-backed bridge
+  // falls back explicitly before the tick so the contract is never silently
+  // executed without its host energy projection and T00/C_SPEED^2 source.
+  if (toggles.strong_stress_energy && backend_
+      && backend_->kind() == Backend::Kind::Gpu) {
+    std::cerr << "[FTD-0406] strong_stress_energy is CPU-scoped; forcing CPU backend\n";
+    force_cpu();
+  }
+
   // ARCH-2-D: GPU dispatch via Backend. CpuBackend::tick() falls through to
   // the CPU phase ladder below; GpuBackend::tick() owns the full flush →
   // engine->tick → sync_to_host sequence.
@@ -582,8 +597,13 @@ void RenderBridge::tick() {
     // voxels()/current_tick(), and the voxels() accessor syncs device→host
     // first, so it sees settled state. Golden-neutral (read-only).
     if (toggles.knot_tracking) knot_tracker_->record(*this);
-    if (toggles.latency_field || toggles.de_broglie_clock)
+    if (toggles.latency_field || toggles.de_broglie_clock) {
       accumulate_proper_time();
+      // FTD-0402: tau/phase advance exactly once in this common host pass.
+      // Persist the host result back to the device before the next GPU tick.
+      backend_->mark_host_dirty();
+      backend_->flush_host_mutations();
+    }
     update_energy_ledger();
     return;
   }
@@ -687,6 +707,12 @@ void RenderBridge::tick() {
   // member is default-initialised 0 and nothing else writes to it now that
   // the floor is gone. (F1 from callstack audit 2026-04-17.)
 
+  // FTD-0406: snapshot the selected strong Hamiltonian immediately before
+  // latency/forces. Static movement-off configurations only build local T00;
+  // the collision-free projection activates when movement is enabled.
+  if (toggles.strong_stress_energy)
+    begin_strong_energy_step(*this);
+
   // Rule 3c: Latency field (gravitational potential) — Poisson solver
   // ∇²φ_L = 4πG·ρ_mass, then L = √(clamp(φ_L, 0, 0.998))
   // Must run after Gauss (which modifies flux) and before forces (which use L).
@@ -700,6 +726,12 @@ void RenderBridge::tick() {
   // Rule 5: Movement + collisions + annihilation
   if (toggles.movement)
     phase_movement();
+
+  // FTD-0406: preserve the proposal positions and project only relative
+  // physical momenta onto H_strong(t+dt)=H_strong(t). Topology changes are
+  // surfaced through explicit diagnostics rather than hidden by bookkeeping.
+  if (toggles.strong_stress_energy && toggles.movement)
+    complete_strong_energy_step(*this);
 
   // Rule 5b: Absorbing-boundary sponge — disperse outgoing waves into the void
   // at the lattice faces. Runs AFTER gauss/forces/movement (the last flux
@@ -821,6 +853,11 @@ EnergyAudit RenderBridge::energy_audit() const {
   EnergyAudit a = ::ftd::compute_energy_audit(*this);
   a.self_field_injection = self_field_injection_;  // private, stitched in here
   return a;
+}
+
+const std::vector<StrongStressCell>& RenderBridge::strong_stress_cells() const {
+  compute_strong_stress_cells(*this, strong_stress_cells_);
+  return strong_stress_cells_;
 }
 
 EMFieldDiag RenderBridge::em_field_at(int idx) const { return ::ftd::compute_em_field_at(*this, idx); }

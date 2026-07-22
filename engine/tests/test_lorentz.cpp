@@ -75,29 +75,25 @@ static void section_lorentz_factor() {
     ftd::test::check("v=0.8 L=0.7 budget > 1 (forbidden)", budget_over > 1.0);
 
     ftd::Voxel vox;
-    vox.velocity = {0.3, 0.4, 0.0};
+    vox.velocity = {0.3 * ftd::C_SPEED, 0.4 * ftd::C_SPEED, 0.0};
     vox.latency = 0.3;
     {
-        double f = 1.0 - 0.3 * 0.3;
-        double v2 = 0.25;
         double g_vox = vox.gamma_ftd();
-        double g_expected = std::sqrt(f) / std::sqrt(f * f - v2);
-        ftd::test::check_close("Voxel gamma_ftd v=0.5 L=0.3", g_vox, g_expected, 1e-12);
+        double g_expected = 1.0 / std::sqrt(1.0 - 0.25 - 0.09);
+        ftd::test::check_close("Voxel gamma_ftd beta=0.5 L=0.3", g_vox, g_expected, 1e-12);
     }
     {
-        double f = 1.0 - 0.3 * 0.3;
-        double v2 = 0.25;
         double bi = vox.born_infeld_core();
-        double bi_expected = -ftd::K_B * std::sqrt(f * f - v2) / std::sqrt(f);
+        double bi_expected = -ftd::E_REST * std::sqrt(1.0 - 0.25 - 0.09);
         ftd::test::check_close("Voxel Born-Infeld core", bi, bi_expected, 1e-12);
     }
     {
         ftd::Voxel v0;
-        v0.velocity = {0.5, 0.0, 0.0};
+        v0.velocity = {0.5 * ftd::C_SPEED, 0.0, 0.0};
         v0.latency = 0.0;
         double g_vox = v0.gamma_ftd();
         double g_sr = 1.0 / std::sqrt(1.0 - 0.25);
-        ftd::test::check_close("Voxel gamma_ftd v=0.5 L=0 matches SR", g_vox, g_sr, 1e-12);
+        ftd::test::check_close("Voxel gamma_ftd beta=0.5 L=0 matches SR", g_vox, g_sr, 1e-12);
     }
 }
 
@@ -520,11 +516,11 @@ static void section_lorentz_invariance() {
         v_rest.latency = 0;
 
         ftd::Voxel v_slow;
-        v_slow.velocity = {0.3, 0, 0};
+        v_slow.velocity = {0.3 * ftd::C_SPEED, 0, 0};
         v_slow.latency = 0;
 
         ftd::Voxel v_fast;
-        v_fast.velocity = {0.5, 0, 0};
+        v_fast.velocity = {0.5 * ftd::C_SPEED, 0, 0};
         v_fast.latency = 0;
 
         double gamma_rest = v_rest.gamma_ftd();

@@ -231,7 +231,7 @@ The mass parameter m in the Yukawa propagator corresponds to the lightest exchan
 - m = m_pi (pion mass) for the nuclear force between nucleons
 - The pion mass itself derives from the quark masses and confinement scale Lambda_QCD
 
-The manifestation threshold K_B provides the natural mass scale: modes with |J| > K_B couple to the state field (s != 0) and acquire effective mass through the coupling g_c. This is analogous to mass generation via spontaneous symmetry breaking: the state field's non-zero value creates a potential well that confines flux modes.
+The manifestation threshold provides a kinetics scale: modes above threshold can couple to the state field. The historical analogy to spontaneous-symmetry-breaking mass generation is not a particlehood or mass derivation. FTD-0399 fails before that prerequisite at L=33/65 (A/E do not manifest under the registered histories), while FTD-0096 forbids deriving a dimensional mass scale from the substrate alone.
 
 ### 5.5 Massless Limit Recovery [THEOREM]
 

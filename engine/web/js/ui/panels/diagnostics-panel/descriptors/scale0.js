@@ -72,7 +72,9 @@ export const sections = [
         id: 'energy-budget',
         title: 'Energy Budget',
         rows: [
-            { id: 'energy',       label: 'Total Energy',      unit: 'E*', source: 's0.diag.totalEnergy',  trend: 'energy' },
+            { id: 'energy',       label: 'Dynamic Energy',    unit: 'E*', source: 's0.audit.dynamicEnergy', trend: 'energy' },
+            { id: 'accounted',    label: 'Accounted Energy',  unit: 'E*', source: 's0.audit.totalEnergy' },
+            { id: 'rest-energy',  label: 'Particle Rest E',   unit: 'E*', source: 's0.audit.particleRestEnergy' },
             { id: 'energy-drift', label: 'Energy Drift',      unit: '%',  source: 's0.audit.energyDrift', trend: 'aud.energyDrift' },
             { id: 'field-energy', label: 'Field |J|\u00B2',   unit: 'E*', source: 's0.audit.fieldEnergy', trend: 'aud.fieldEnergy' },
             { id: 'wave-energy',  label: 'Wave |w|\u00B2',    unit: 'E*', source: 's0.audit.waveEnergy',  trend: 'aud.waveEnergy' },

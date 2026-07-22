@@ -4,12 +4,12 @@
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc B P0 → P1 deliverable per `SCOPE_NEWTON_POSTULATES_RECONCILIATION.md` §5.
 **Sources read in full or in load-bearing sections:**
 - [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) (FTD-0131) — §0 through §8
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2) — §1, §2, §3.1–§3.7, §4.1–§4.3, §5.1–§5.5, §6.1–§6.3, §7, §8 claims table L-1..L-11
-- [`../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — §14.1–§14.9 (gravity-as-tick-rate-variation)
+- [`SPEC_FTD_LAGRANGIAN.md`](../../01_reference/SPEC_FTD_LAGRANGIAN.md) (v3.2) — §1, §2, §3.1–§3.7, §4.1–§4.3, §5.1–§5.5, §6.1–§6.3, §7, §8 claims table L-1..L-11
+- [`FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — §14.1–§14.9 (gravity-as-tick-rate-variation)
 - [`DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Step 1 through Step 5 + Verification Checks + Claims Table EFE-1..EFE-13
-- [`../../../scripts/proofs/proof_newton_from_substrate.py`](../../../scripts/proofs/proof_newton_from_substrate.py) (239 lines)
-- [`../../../engine/include/ftd/ontic.h`](../../../engine/include/ftd/ontic.h) (umbrella header)
-- [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0131, FTD-0189, FTD-0026 rows (sampled)
+- [`proof_newton_from_substrate.py`](../../../../scripts/proofs/proof_newton_from_substrate.py) (239 lines)
+- [`ontic.h`](../../../../engine/include/ftd/ontic.h) (umbrella header)
+- [`LEDGER.md`](../core_ledgers/LEDGER.md) — FTD-0131, FTD-0189, FTD-0026 rows (sampled)
 
 ---
 
@@ -150,13 +150,13 @@ Either outcome is honest progress on Arc B and serves the Wilsonian-reframe succ
 | SPEC content | Uses h_μν correspondence? | FTD-0189 impact |
 |---|---|---|
 | §4.1 [THEOREM] — Newton's 2nd law from EL equation on Born-Infeld | No (Lagrangian variation; no metric tensor decomposition) | **Survives unchanged** |
-| §4.2 [THEOREM] — Poisson from ℒ variation | No (scalar latency ℒ; no h_μν) | **Survives unchanged** |
-| §4.3 [THEOREM] — Born-Infeld → Schwarzschild proper time | No (uses scalar f only; clock hypothesis) | **Survives unchanged modulo clock hypothesis** |
+| Historical §4.2 theorem claim — Poisson from ℒ variation | No (scalar latency ℒ; no h_μν) | **Superseded by FTD-0400/0402:** current `M_GRAVITATIONAL` source is imposed; common action/source remains NCEMC `[OPEN]` |
+| Historical §4.3 theorem claim — Born-Infeld → Schwarzschild proper time | No (uses scalar f only; clock hypothesis) | **Superseded by FTD-0401/0402:** selected budget implemented consistently, but moving-Schwarzschild exactness is retired |
 | §6.2 row "Linearized Einstein eqs (DERIV_EINSTEIN_FIELD_EQUATIONS.md / DERIV_QFT_GRT_BRIDGE.md) [THEOREM]" | YES (cites the Theorem 14.1 chain) | **Should be retagged** `[SELECTION/CONDITIONAL]` per FTD-0189 |
 | §6.2 row "Nonlinear completion via Lovelock [THEOREM]" | YES (depends on linearized form as input premise) | **Inherited retag** `[SELECTION/CONDITIONAL]` per FTD-0189 |
-| §6.2 row "Exact Schwarzschild via Born-Infeld §4.3 [THEOREM]" | No (cites §4.3 chain) | **Survives unchanged modulo clock hypothesis** |
+| §6.2 row "Exact Schwarzschild via Born-Infeld §4.3 [THEOREM]" | No (cites §4.3 chain) | **Superseded:** historical wording only; not a current-engine theorem after FTD-0401/0402 |
 
-So SPEC §4.1 + §4.2 + §4.3 + §6.2 Schwarzschild row survive. SPEC §6.2 linearized-Einstein and Lovelock-completion rows should be retagged per FTD-0189 (separate housekeeping item; not blocking Arc B P2).
+Thus §4.1 remains a separate variational claim, while the historical §4.2 source identification and §4.3/§6.2 moving-Schwarzschild claims no longer survive as current-engine theorems after FTD-0400–0402. The linearized-Einstein and Lovelock-completion rows retain their independent FTD-0189 qualification.
 
 **For Arc C2 (boundary theorem)**: the load-bearing finding is that `DERIV_EINSTEIN_FIELD_EQUATIONS.md` tags EFE-6, EFE-8, EFE-9 as `[THEOREM]` but is **STALE** relative to FTD-0189. Specifically:
 - EFE-6 [THEOREM] "Linearized Einstein: □ h̄_μν = -(16πG/c⁴) T_μν" cites DERIV_RELATIVITY Thm 14.1 → retag `[SELECTION/CONDITIONAL]`

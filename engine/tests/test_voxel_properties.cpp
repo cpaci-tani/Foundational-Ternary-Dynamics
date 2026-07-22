@@ -58,75 +58,72 @@ int main() {
         check_close("speed (0.3,0,0) = 0.3", v.speed(), 0.3, 1e-12);
     }
 
-    // bandwidth_used() = v²/f when latency active (f = 1 - L²), else v²
+    // bandwidth_used() = beta²/f with raw beta²=u²/C_SPEED²
     {
         ftd::Voxel v;
         v.velocity = {0.5, 0.0, 0.0};
         v.latency = 0.3;
         // speed = 0.5, v² = 0.25, f = 1 - 0.09 = 0.91
         // bandwidth = v²/f = 0.25/0.91 ≈ 0.27473
-        double expected_bw = 0.25 / (1.0 - 0.09);
-        check_close("bandwidth (v=0.5, L=0.3) = v²/f", v.bandwidth_used(), expected_bw, 1e-12);
+        double expected_bw = 0.25 / (ftd::C_SPEED * ftd::C_SPEED * (1.0 - 0.09));
+        check_close("bandwidth (u=0.5, L=0.3) = beta²/f", v.bandwidth_used(), expected_bw, 1e-12);
 
         v.velocity = {0.0, 0.0, 0.0};
         v.latency = 0.0;
         check_close("bandwidth (0,0) = 0", v.bandwidth_used(), 0.0, 1e-15);
 
-        // L=0 fast path: bandwidth = v² only
-        v.velocity = {0.5, 0.0, 0.0};
+        v.velocity = {ftd::C_SPEED / 2.0, 0.0, 0.0};
         v.latency = 0.0;
-        check_close("bandwidth (v=0.5, L=0) = v²", v.bandwidth_used(), 0.25, 1e-12);
+        check_close("bandwidth (u=C/2, L=0) = 1/4", v.bandwidth_used(), 0.25, 1e-12);
     }
 
-    // gamma_ftd() = 1/sqrt(1 - v²) when L=0, √f/√(f²-v²) when L>0
+    // gamma_ftd() = 1/sqrt(1 - u²/C² - L²)
     {
         ftd::Voxel v;
         v.velocity = {0.0, 0.0, 0.0};
         v.latency = 0.0;
         check_close("gamma at rest = 1.0", v.gamma_ftd(), 1.0, 1e-12);
 
-        v.velocity = {0.5, 0.0, 0.0};
+        v.velocity = {ftd::C_SPEED / 2.0, 0.0, 0.0};
         v.latency = 0.0;
         // v² = 0.25, gamma = 1/sqrt(0.75) = 2/sqrt(3)
-        check_close("gamma (v=0.5, L=0) = 2/sqrt(3)", v.gamma_ftd(), 2.0/std::sqrt(3.0), 1e-12);
+        check_close("gamma (u=C/2, L=0) = 2/sqrt(3)", v.gamma_ftd(), 2.0/std::sqrt(3.0), 1e-12);
 
-        // With latency: gamma = sqrt(f) / sqrt(f² - v²)
+        // With latency: B = u²/C² + L².
         v.velocity = {0.3, 0.0, 0.0};
         v.latency = 0.5;
         // f = 1 - 0.25 = 0.75, v² = 0.09
         // gamma = sqrt(0.75) / sqrt(0.5625 - 0.09) = sqrt(0.75)/sqrt(0.4725)
-        double f = 0.75;
-        double gamma_expected = std::sqrt(f) / std::sqrt(f * f - 0.09);
-        check_close("gamma (v=0.3, L=0.5)", v.gamma_ftd(), gamma_expected, 1e-12);
+        double gamma_expected = 1.0 / std::sqrt(1.0 - 0.09 / (ftd::C_SPEED * ftd::C_SPEED) - 0.25);
+        check_close("gamma (u=0.3, L=0.5)", v.gamma_ftd(), gamma_expected, 1e-12);
 
         // Bandwidth overflow
-        v.velocity = {1.0, 0.0, 0.0};
+        v.velocity = {ftd::C_SPEED, 0.0, 0.0};
         v.latency = 0.0;
         check("gamma at bw=1 is very large", v.gamma_ftd() > 1e20);
     }
 
-    // born_infeld_core() = -K_B·√(1-v²) when L=0, -K_B·√(f²-v²)/√f when L>0
+    // born_infeld_core() = -E_REST·sqrt(1-u²/C²-L²)
     {
         ftd::Voxel v;
         v.velocity = {0.0, 0.0, 0.0};
         v.latency = 0.0;
-        check_close("BI core at rest = -K_B", v.born_infeld_core(), -ftd::K_B, 1e-12);
+        check_close("BI core at rest = -E_REST", v.born_infeld_core(), -ftd::E_REST, 1e-12);
 
-        v.velocity = {0.5, 0.0, 0.0};
+        v.velocity = {ftd::C_SPEED / 2.0, 0.0, 0.0};
         v.latency = 0.0;
         // v² = 0.25, core = -K_B * sqrt(0.75)
-        check_close("BI core (v=0.5, L=0)", v.born_infeld_core(), -ftd::K_B * std::sqrt(0.75), 1e-12);
+        check_close("BI core (u=C/2, L=0)", v.born_infeld_core(), -ftd::E_REST * std::sqrt(0.75), 1e-12);
 
-        // With latency: core = -K_B * sqrt(f² - v²) / sqrt(f)
+        // With latency: core = -E_REST*sqrt(1-u²/C²-L²)
         v.velocity = {0.3, 0.0, 0.0};
         v.latency = 0.5;
         // f = 0.75, v² = 0.09, core = -K_B * sqrt(0.5625-0.09)/sqrt(0.75)
-        double f = 0.75;
-        double core_expected = -ftd::K_B * std::sqrt(f * f - 0.09) / std::sqrt(f);
-        check_close("BI core (v=0.3, L=0.5)", v.born_infeld_core(), core_expected, 1e-12);
+        double core_expected = -ftd::E_REST * std::sqrt(1.0 - 0.09 / (ftd::C_SPEED * ftd::C_SPEED) - 0.25);
+        check_close("BI core (u=0.3, L=0.5)", v.born_infeld_core(), core_expected, 1e-12);
 
         // Bandwidth overflow
-        v.velocity = {1.0, 0.0, 0.0};
+        v.velocity = {ftd::C_SPEED, 0.0, 0.0};
         v.latency = 0.0;
         check_close("BI core at bw=1 = 0", v.born_infeld_core(), 0.0, 1e-12);
     }
