@@ -229,6 +229,10 @@ export function getScale0OverlayTemplate() {
           title="Isosurface at |J| = K_GENESIS — particles crystallize along this shell">
         <span class="field-swatch field-swatch-genesis"></span>Genesis
       </button>
+      <button class="view-toggle field-toggle" id="toggle-color-charge"
+          title="Color particles by their real genesis-assigned color charge (argmax|J_axis| in {red,green,blue}) instead of charge sign. FTD 'color' is a C3-symmetric discrete axis label, NOT SU(3) gauge charge (LEDGER FTD-0077).">
+        <span class="field-swatch field-swatch-color-charge"></span>Color charge
+      </button>
       <button class="view-toggle field-toggle" id="toggle-damping-zones"
           title="Selective damping zones — 1-hop radii around particles where energy dissipates">
         <span class="field-swatch field-swatch-damping"></span>Damping

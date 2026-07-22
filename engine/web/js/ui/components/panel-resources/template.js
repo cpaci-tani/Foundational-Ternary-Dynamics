@@ -77,6 +77,10 @@ export function getZooPanelTemplate() {
                         <option value="baryons">Baryons</option>
                         <option value="mesons">Mesons</option>
                     </select>
+                    <select class="tb-select panel-resource-select" id="zoo-group-by" title="Group particles by category (default) or by fermion generation (Moore-layer 3-generation structure)">
+                        <option value="category">Group: Category</option>
+                        <option value="generation">Group: Generation</option>
+                    </select>
                 </div>
                 <div id="zoo-table-container" class="panel-resource-table-wrap"></div>
             </div>

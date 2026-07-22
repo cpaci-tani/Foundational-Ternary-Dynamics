@@ -471,6 +471,7 @@
 .field-swatch-damping      { background: #ef4444; }
 .field-swatch-genesis      { background: #22c55e; }
 .field-swatch-confinement  { background: #ec407a; }
+.field-swatch-color-charge { background: linear-gradient(90deg, #ef4444 0%, #22c55e 50%, #3b82f6 100%); }
 
 /* ── Tier 1 quantum overlay swatches ─────────────────── */
 /* Distinct colormap previews for each derived field. Not themed — these

@@ -14,6 +14,7 @@ const NON_FORCE_OVERLAYS = {
     showKnotZones: 'toggleKnotZones',
     showGenesisIsosurface: 'toggleGenesisIsosurface',
     showConfinement: 'toggleConfinement',
+    showColorCharge: 'toggleColorChargeRender',
     // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
     showPsiSquared:        'togglePsiSquaredField',
     showPhase:             'togglePhaseField',

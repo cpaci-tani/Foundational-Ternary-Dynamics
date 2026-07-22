@@ -38,6 +38,7 @@ import {
     atomicEnergy,
     formatEnergy as formatEnergyAE
 } from '../../atomic-energy.js';
+import { drawBindingEnergyCurve } from './ui/binding-energy-chart.js';
 import { formatEnergy, formatTemperature } from '../../units.js';
 import { M_E_PHYS } from '../../constants.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js';
@@ -115,8 +116,20 @@ let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' }
  * Update atomic energy display cards (nuclear binding, B/A, electron
  * binding, FTD mass) for single-element or multi-element views.
  */
+let _baChartDrawn = false;
+
 function updateAtomicEnergyDisplay(dom, atomData) {
     if (!dom.aeDiagMass || !atomData || atomData.count === 0) return;
+
+    // The B/A-vs-mass-number curve is a pure function of Z=1..118 (SEMF),
+    // not a live simulation quantity — draw it exactly once, not per-frame.
+    if (!_baChartDrawn) {
+        const chartCanvas = document.getElementById('ae-diag-ba-chart');
+        if (chartCanvas) {
+            drawBindingEnergyCurve(chartCanvas);
+            _baChartDrawn = true;
+        }
+    }
 
     if (atomData.count === 1 && atomData.atomicNums) {
         // -- Single element --

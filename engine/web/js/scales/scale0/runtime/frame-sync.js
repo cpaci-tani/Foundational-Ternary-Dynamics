@@ -1,6 +1,8 @@
 import { getActiveScale0Bridge, getActiveScale0Capability, getActiveLatticeSize } from '../state/store.js';
+import { computeManifestationBlink } from './manifestation-flash.js';
 
 const _fluxSlicePlanes = [];
+const MANIFEST_FILL = 0.40; // matches scale1/pe-cloud-expander.js's MANIFEST_FILL
 
 export function syncRenderableData(ctx, state, viewportAdapter) {
     const latticeSize = getActiveLatticeSize(ctx, state);
@@ -11,6 +13,19 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
     const activeScale0 = getActiveScale0Capability(ctx, state) ?? ctx.bridge.capabilities.scale0;
 
     let particleData = activeScale0.getScale0ParticleFrame();
+
+    // Manifestation spawn-flash (added 2026-07-14): a real "this voxel just
+    // manifested" visual, reusing the shader blink pipeline Scale-1 already
+    // drives. See manifestation-flash.js for the position-diffing approach
+    // and its stated imprecision (option (b) of the engine-visualization
+    // checklist — a JS-side diff, not yet a WASM-exposed per-voxel age).
+    const frameSec = performance.now() / 1000;
+    if (particleData && particleData.count > 0) {
+        const { phases, rates } = computeManifestationBlink(particleData, frameSec);
+        particleData = { ...particleData, phases, rates };
+        viewportAdapter.raw?.setPEManifestation?.(true, frameSec, MANIFEST_FILL);
+    }
+
     viewportAdapter.applyParticleFrame(particleData);
 
     if (state.fieldFlags.showConfinement) {

@@ -48,6 +48,17 @@ export class G2Component extends BaseComponent {
             const tracked = particles.find((p) => p.id === this.trackingState.trackedId);
             if (tracked) {
                 this.trackingState.position = { x: tracked.x, y: tracked.y, z: tracked.z };
+                // omegaMeasured is genuinely 0, not a stub: the engine has no
+                // spin-precession dynamics (no torque-from-B update rule) —
+                // particle.spin is assigned once at genesis (curl-sign, or a
+                // random +-1 fallback) and never evolves thereafter. There is
+                // no per-tick precession to measure. Building a real ω_measured
+                // requires new physics (a spin-torque term in the CUDA/CPU
+                // update kernels), not a wiring fix — investigated 2026-07-14,
+                // scoped out of the engine-visualization checklist as a
+                // separate physics initiative. The [~M] tag on this field is
+                // the honest tag until that physics exists (see the footer
+                // text below, which already states this).
                 this.trackingState.omegaMeasured = 0;
                 this.trackingState.omegaHistory.push(this.trackingState.omegaMeasured);
                 while (this.trackingState.omegaHistory.length > OMEGA_HISTORY_LEN) {
@@ -106,7 +117,18 @@ export class G2Component extends BaseComponent {
                     const p = ps.find((pp) => pp.id === trackedId);
                     return p ? { x: p.x + 0.5, y: p.y + 0.5, z: p.z + 0.5 } : null;
                 },
-                getSpin: () => ({ sx: 0, sy: 0, sz: 1, omega_z: omegaPredicted }),
+                // Real genesis-assigned spin (Voxel::spin, added to the WASM
+                // boundary 2026-07-14) flips the arrow between +z/-z. This is
+                // still not a true 3D spin axis — the engine only tracks a
+                // scalar +-1 per voxel, assigned once at manifestation and
+                // never evolved (see the omegaMeasured comment above) — but it
+                // is the REAL value instead of the previous hardcoded {sz:1}.
+                getSpin: () => {
+                    const ps = bridge?.getScale0ParticleList?.() || [];
+                    const p = ps.find((pp) => pp.id === trackedId);
+                    const sReal = p && Number.isFinite(p.spin) ? p.spin : 1;
+                    return { sx: 0, sy: 0, sz: sReal >= 0 ? 1 : -1, omega_z: omegaPredicted };
+                },
                 omegaDefault: omegaPredicted,
             });
         }

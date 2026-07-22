@@ -26,6 +26,18 @@ const _cloudParticleMap = new Int32Array(MAX_CLOUD_TOTAL);
 const _trailHistory = new Map();
 const _activeIdsSet = new Set();
 
+// Manifestation spawn-flash: the first-seen-id diffing this module already
+// performs for trail history (the `!_trailHistory.has(id)` check), reused
+// here to drive a real "just spawned" visual instead of only tracking
+// position trails. New particles get an elevated blink rate for
+// SPAWN_FLASH_DURATION seconds after their first appearance, then settle
+// into their normal force/velocity-driven rate — reusing the existing
+// manifestPhase/manifestRate shader pipeline (viewport/shaders.js,
+// particle-renderer.js setManifestation()), not a new render path.
+const _spawnTimes = new Map(); // id -> frameSec first seen
+const SPAWN_FLASH_DURATION = 0.6; // seconds
+const SPAWN_FLASH_RATE_BOOST = 3.5; // additive rate boost at age=0, decaying to 0
+
 let _unitTemplate = null;
 
 function getUnitTemplate() {
@@ -169,8 +181,35 @@ function writeCloudPoint(out, cx, cy, cz, cr, cg, cb, size, phase, rate, pid) {
     _cloudParticleMap[out] = pid;
 }
 
-export function buildPEManifestBlinkRate(peData, forceData) {
+/**
+ * @param {number} [frameSec] — current animation clock, seconds. Drives the
+ *   spawn-flash window; omit to disable spawn tracking for this call
+ *   (e.g. a caller with no clock available falls back to the pre-existing
+ *   force/velocity-only blink rate, unchanged from before 2026-07-14).
+ */
+export function buildPEManifestBlinkRate(peData, forceData, frameSec) {
     const n = peData.count;
+    const hasIds = !!peData.ids;
+    const trackSpawns = hasIds && Number.isFinite(frameSec);
+
+    // Spawn-tracking (build seen-set + prune stale ids) runs even when n=0 —
+    // otherwise a scenario that goes fully empty (e.g. "Clear & Reload")
+    // never prunes _spawnTimes, and a subsequently reused id would be
+    // treated as "already seen" and silently skip its spawn flash.
+    if (trackSpawns) {
+        const seenThisFrame = new Set();
+        for (let i = 0; i < n; i++) {
+            const id = peData.ids[i];
+            seenThisFrame.add(id);
+            if (!_spawnTimes.has(id)) _spawnTimes.set(id, frameSec);
+        }
+        // Prune ids no longer present (particle removed/annihilated) so the
+        // map doesn't grow unboundedly across a long-running session.
+        for (const id of _spawnTimes.keys()) {
+            if (!seenThisFrame.has(id)) _spawnTimes.delete(id);
+        }
+    }
+
     const out = new Float32Array(n);
     if (!n) return out;
 
@@ -207,6 +246,15 @@ export function buildPEManifestBlinkRate(peData, forceData) {
 
         let rate = 1.6 + Math.min(drive, 1) * 2.8;
         if (hasSpins && peData.spins[i]) rate *= 1.08;
+
+        if (trackSpawns) {
+            const age = frameSec - _spawnTimes.get(peData.ids[i]);
+            if (age >= 0 && age < SPAWN_FLASH_DURATION) {
+                const t = 1 - age / SPAWN_FLASH_DURATION;
+                rate += SPAWN_FLASH_RATE_BOOST * t * t; // eased decay
+            }
+        }
+
         out[i] = rate;
     }
     return out;
@@ -348,4 +396,5 @@ export function getTrailHistory() { return _trailHistory; }
 export function clearCloudAndTrails() {
     _unitTemplate = null;
     _trailHistory.clear();
+    _spawnTimes.clear();
 }

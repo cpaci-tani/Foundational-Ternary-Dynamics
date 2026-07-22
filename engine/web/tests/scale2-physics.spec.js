@@ -213,6 +213,12 @@ test.describe('Scale 2 physics invariants', () => {
         expect(ba.fe56).toBeGreaterThan(ba.he4);
         expect(ba.fe56).toBeGreaterThan(ba.u238);
 
+        // U-238 (N−Z = 54) discriminates the asymmetry-term pairing: with
+        // A_ASYM = 23.29 on (N−Z)²/A, B/A ≈ 7.64 (measured 7.57); the
+        // mispaired /(4A) form inflates it to ≈ 8.54.
+        expect(ba.u238).toBeGreaterThan(7.3);
+        expect(ba.u238).toBeLessThan(7.9);
+
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 });

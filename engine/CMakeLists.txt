@@ -596,6 +596,9 @@ ftd_add_test(test_coupling_readout_sweeps tests/test_coupling_readout_sweeps.cpp
 
 # Class B Track 2: C++/CUDA-based cluster persistence and stable soliton sweeps in C++ engine
 ftd_add_test(test_soliton_sweeps tests/test_soliton_sweeps.cpp)
+ftd_add_test(test_dyadic_recurrence_probe tests/test_dyadic_recurrence_probe.cpp
+             CTEST_NAME dyadic_recurrence_probe TIMEOUT 120
+             LABELS exploratory geometry recurrence)
 
 # NOTE (2026-05-04 cleanup): the Phase B exploratory diagnostic-arc tests
 # (~26 files: test_cluster_gamma_t_exploratory, test_cluster_cooling_evap,

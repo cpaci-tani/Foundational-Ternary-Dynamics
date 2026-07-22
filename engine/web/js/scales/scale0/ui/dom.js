@@ -14,6 +14,7 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-damping-zones', 'showDampingZones'],
     ['toggle-genesis-iso', 'showGenesisIsosurface'],
     ['toggle-confinement', 'showConfinement'],
+    ['toggle-color-charge', 'showColorCharge'],
     // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
     ['toggle-psi-squared',        'showPsiSquared'],
     ['toggle-phase',              'showPhase'],

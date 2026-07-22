@@ -378,8 +378,11 @@ export function animatePE(ctx) {
     const peData  = bridge.peGetParticleData();
     const typeMap = bridge.peGetParticleTypes();
     const forceData = bridge.peGetForces?.() ?? null;
-    const blinkRate = buildPEManifestBlinkRate(peData, forceData);
     const frameSec = typeof now === 'number' ? now * 0.001 : performance.now() * 0.001;
+    // frameSec drives the spawn-flash window inside buildPEManifestBlinkRate
+    // (a newly-manifested particle id blinks fast for ~0.6s, then settles
+    // into its normal force/velocity-driven rate) — added 2026-07-14.
+    const blinkRate = buildPEManifestBlinkRate(peData, forceData, frameSec);
     const cloud = expandPEToCloud(peData, typeMap, { blinkRate, frameSec });
     viewport.updateParticles(cloud);
 

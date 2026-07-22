@@ -407,6 +407,49 @@ export class MetaUnit {
             this._labelContainer.appendChild(el);
             this._labelElements.push({ el, worldPos: lbl.worldPos });
         }
+
+        // SM-correspondence labels ([SELECTION]-grade, added 2026-07-14).
+        // These are the physical READINGS of the shells above — theorem-shaped
+        // combinatorial argument, physical identification is a [SELECTION]
+        // (LEDGER FTD-0028: "theorem-shaped argument; physical reading is
+        // selection"). Deliberately a distinct color (--warning amber, the
+        // same token faq.css's .faq-tag--selection uses) from the bare
+        // theorem-grade integers above (gold). Tooltips quote the FAQ
+        // (ui/components/faq/data.js) verbatim — do not paraphrase; the
+        // wording carries the epistemic caveat.
+        const smLabels = [
+            {
+                text: 'U(1)xSU(2)xSU(3) [SELECTION]',
+                worldPos: new THREE.Vector3(1.0 * SCALE, 1.0 * SCALE, 0),
+                desc: 'The Moore Layer decomposition motivates gauge-group structure, generation count, and a dark-state count from the neighborhood geometry. The argument is consistency-based, not a uniqueness theorem. (LEDGER FTD-0028)',
+            },
+            {
+                text: '3 generations [SELECTION]',
+                worldPos: new THREE.Vector3(0, -1.2 * SCALE, 0.6 * SCALE),
+                desc: 'Specific integer ratios (3 generations, N_c = 3 colors, 17/27 structural dark-state fraction, 3 spatial dimensions) are read off the Moore Layer decomposition. The decomposition itself is structural; whether the framework uniquely selects each ratio (vs admits other decompositions) is a [SELECTION] argument. (LEDGER FTD-0028)',
+            },
+            {
+                text: '17 dark states [SELECTION]',
+                worldPos: new THREE.Vector3(-1.2 * SCALE, 0, -0.8 * SCALE),
+                desc: "The Moore Layer decomposition of the 27-site neighborhood identifies 17 states that, on the proposed identification, do not participate in the electromagnetic sector. Under uniform voxel-counting the structural ratio is 17/10 ~ 1.70 (DM:baryon); under uniform fraction it is 17/27 ~ 63%. Neither matches Planck 2018's Omega_DM/Omega_b ~ 5.37 — the cosmological identification is REJECTED by Planck 2018.",
+            },
+        ];
+
+        for (const lbl of smLabels) {
+            const el = document.createElement('div');
+            el.style.position = 'absolute';
+            el.style.color = 'var(--warning, #d8a24a)';
+            el.style.fontFamily = 'monospace';
+            el.style.fontSize = '12px';
+            el.style.fontWeight = 'bold';
+            el.style.fontStyle = 'italic';
+            el.style.textShadow = '0 0 4px rgba(0,0,0,0.8)';
+            el.style.whiteSpace = 'nowrap';
+            el.textContent = lbl.text;
+            el.title = lbl.desc;
+            this._labelContainer.appendChild(el);
+            this._labelElements.push({ el, worldPos: lbl.worldPos });
+        }
     }
 
     _updateLabelPositions() {

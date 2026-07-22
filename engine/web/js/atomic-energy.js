@@ -62,8 +62,9 @@ export function nuclearBindingEnergy(Z, N) {
     // Coulomb: proton-proton electrostatic repulsion
     const coul = A_COUL * Z * (Z - 1) / A13;
 
-    // Asymmetry: preference for N ≈ Z
-    const asym = A_ASYM * (N - Z) * (N - Z) / (4 * A);
+    // Asymmetry: preference for N ≈ Z. A_ASYM = 23.29 MeV pairs with the
+    // (N−Z)²/A form; the (N−Z)²/(4A) variant takes ~93.15 MeV instead.
+    const asym = A_ASYM * (N - Z) * (N - Z) / A;
 
     // Pairing: even-even nuclei are more stable
     let delta = 0;

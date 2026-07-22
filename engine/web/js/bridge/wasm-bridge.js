@@ -75,6 +75,8 @@ const EMPTY_PARTICLE_DATA = Object.freeze({
     positions: new Float32Array(0),
     colors: new Float32Array(0),
     sizes: new Float32Array(0),
+    spin: new Float32Array(0),
+    colorCharge: new Float32Array(0),
     count: 0,
 });
 const EMPTY_KNOT_TELEMETRY = Object.freeze({ ids: new Int32Array(0), signs: new Int32Array(0), birth: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0), peak: new Int32Array(0), fields: new Float32Array(0), stride: 11, count: 0 });
@@ -376,6 +378,8 @@ export class WasmBridge {
             positions: raw.positions,
             colors: raw.colors,
             sizes: raw.sizes,
+            spin: raw.spin,
+            colorCharge: raw.colorCharge,
             count: raw.count
         };
     }
@@ -399,6 +403,12 @@ export class WasmBridge {
     getScale0ParticleList() {
         const pd = this.getParticleData();
         if (!pd || pd.count === 0) return [];
+        // Real per-voxel spin/colorCharge now cross the WASM boundary (added
+        // 2026-07-14, engine/wasm/ftd_wasm.cpp get_particle_data) — read them
+        // directly instead of the historical hardcoded color:0/spin:1. These
+        // arrays are always present at length pd.count once pd.count > 0
+        // (see EMPTY_PARTICLE_DATA / get_particle_data for the empty case).
+        const hasRealFields = !!(pd.spin && pd.colorCharge);
         const list = [];
         for (let i = 0; i < pd.count; i++) {
             const x = Math.floor(pd.positions[i * 3]);
@@ -412,7 +422,7 @@ export class WasmBridge {
 
             // ARC-PERF (2026-06-10): Calling `this.inspectVoxel` inside this loop
             // for 35,000 particles caused 35,000 C++ embind calls per frame,
-            // tanking the browser to single digits. We assume locked=false here 
+            // tanking the browser to single digits. We assume locked=false here
             // since true particle tracking happens at Scale 1.
             const isLocked = false;
 
@@ -422,8 +432,8 @@ export class WasmBridge {
                 state,
                 charge: state,
                 q: state,
-                color: 0,
-                spin: 1,
+                color: hasRealFields ? pd.colorCharge[i] : 0,
+                spin: hasRealFields ? pd.spin[i] : 1,
                 locked: isLocked
             });
         }

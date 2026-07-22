@@ -142,7 +142,7 @@ export function applyScaleGridAxesDefaults(viewport, mode) {
         syncUniversalGridAxes(viewport, true, { syncWireframe: true });
     } else if (
         mode === 'particles' || mode === 'atoms' || mode === 'molecules'
-        || mode === 'planetary' || mode === 'cosmic'
+        || mode === 'planetary' || mode === 'cosmic' || mode === 'meta'
     ) {
         syncUniversalGridAxes(viewport, false);
     }
