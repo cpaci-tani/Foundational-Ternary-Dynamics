@@ -1,5 +1,22 @@
 # Foundational Ternary Dynamics Changelog
 
+## Web: Scale-0 status-bar energy — honest sim-unit display (2026-07-23)
+
+The status bar labeled the whole-box dynamic energy (Σ½|J|² + Σ½|wave_vel|²
++ particle KE, rest mass excluded) as "MeV" with no unit conversion — a
+display facet of the FTD-0130 K_B role conflation.
+
+- `units.js`: new `SIM_ENERGY_TO_MEV = 1/C_SPEED² = 3` (electron-primary
+  calibration: E_REST = K_B·C² sim ≡ 0.511 MeV per FTD-0137/FTD-0402) and
+  `formatEnergySim()` — status bar now reads "N sim ≈ M MeV (cal)".
+- Scale-0 HUD (`scales/scale0/runtime/diagnostics.js`): sim units primary;
+  live hover tooltip decomposes the field/wave/KE/rest channels; keeps the
+  "Current total energy" prefix asserted by `scales.spec.js`.
+- Both WASM bridge paths attach `fieldEnergy/waveEnergy/particleKE` to the
+  diagnostics object (the audit is already computed per tick — no new cost).
+- Static tooltip definitions state the whole-box / sim-unit / rest-excluded
+  semantics. Display-only; no C++/WASM rebuild; Scale 1/2 paths untouched.
+
 ## Engine: proper-time hazard — the decay clock now dilates (2026-07-19)
 
 Owner ruling on the two-clock consistency decision point

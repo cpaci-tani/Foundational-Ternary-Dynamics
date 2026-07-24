@@ -142,6 +142,11 @@ function postFrame() {
     diag.accountedEnergy = audit.totalEnergy;
     diag.restEnergy = audit.particleRestEnergy;
     diag.totalEnergy = audit.dynamicEnergy;
+    // Status-bar decomposition (whole-box channels, sim units): lets the UI
+    // show field/wave/KE without a second audit fetch.
+    diag.fieldEnergy = audit.fieldEnergy;
+    diag.waveEnergy = audit.waveEnergy;
+    diag.particleKE = audit.particleKE;
   }
 
   try {
