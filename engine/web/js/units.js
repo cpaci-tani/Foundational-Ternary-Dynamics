@@ -152,6 +152,38 @@ export function formatEnergy(value, scale = 0) {
 }
 
 
+// ── Scale-0 lattice (sim-unit) energy display ───────────────────────
+// The Scale-0 lattice energy sums (½|J|², ½|wave_vel|², particle KE) are in
+// ENGINE NATURAL UNITS ("sim"), not MeV — labeling them "MeV" raw conflated
+// two conventions (FTD-0130 K_B role conflation). The engine's single
+// anchored energy statement is the electron-primary calibration (FTD-0137):
+// one manifested voxel at rest carries E_REST = K_B·C_SPEED² sim units
+// (FTD-0402 causal normalization, engine/include/ftd/ontic/particle_masses.h)
+// and is DECLARED to equal m_e·c² = K_B MeV. The sim→MeV factor is therefore
+// K_B / (K_B·C_SPEED²) = 1/C_SPEED² = 3 exactly. This is a [CALIBRATION]
+// (imposed gauge), not a derived result — calibrated values are labeled
+// "(cal)" wherever displayed.
+export const SIM_ENERGY_TO_MEV = 1 / (C_SPEED * C_SPEED); // = 3 (exact)
+
+/**
+ * Format a Scale-0 lattice energy: primary value in sim units, secondary
+ * calibrated MeV via the electron-primary gauge.
+ * Returns { text, value, unit, mev }.
+ */
+export function formatEnergySim(simValue) {
+    if (typeof simValue !== 'number' || !isFinite(simValue))
+        return { text: '--', value: 0, unit: 'sim', mev: 0 };
+    const mev = simValue * SIM_ENERGY_TO_MEV;
+    const cal = _autoScaleEnergy_MeV(mev);
+    return {
+        text: _fmtNum(simValue) + ' sim ≈ ' + cal.text + ' (cal)',
+        value: simValue,
+        unit: 'sim',
+        mev,
+    };
+}
+
+
 // ── Mass ────────────────────────────────────────────────────────────
 
 /**

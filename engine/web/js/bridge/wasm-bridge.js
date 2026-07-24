@@ -489,6 +489,11 @@ export class WasmBridge {
             d.accountedEnergy = audit.totalEnergy;
             d.restEnergy = audit.particleRestEnergy;
             d.totalEnergy = audit.dynamicEnergy;
+            // Status-bar decomposition (whole-box channels, sim units) —
+            // mirrors wasm-bridge.worker.js postFrame().
+            d.fieldEnergy = audit.fieldEnergy;
+            d.waveEnergy = audit.waveEnergy;
+            d.particleKE = audit.particleKE;
         }
         return d;
     }
