@@ -115,8 +115,17 @@ for %%F in (ftd_core.js ftd_core.wasm ftd_core64.js ftd_core64.wasm ftd_core_mt.
 
 REM Stamp the deployed generation so committed-binary vs source drift is
 REM auditable (deploy-pages publishes engine/web/** verbatim).
+REM
+REM DIRTY MARKER (2026-07-27, physics-audit M3/W9 fix): a clean sha with no
+REM dirty check is indistinguishable from a dirty build that happens to
+REM report a clean sha -- the failure is silent by construction. Appending
+REM -dirty when the tree has uncommitted changes to the sources this build
+REM actually compiled makes that distinction visible instead of assumed.
 set "GIT_SHA=unknown"
 for /f %%H in ('git -C "%ENGINE_DIR%" rev-parse HEAD 2^>nul') do set "GIT_SHA=%%H"
+set "GIT_DIRTY="
+for /f %%D in ('git -C "%ENGINE_DIR%" status --porcelain 2^>nul') do set "GIT_DIRTY=1"
+if defined GIT_DIRTY set "GIT_SHA=%GIT_SHA%-dirty"
 > "%STAGE_DIR%\build_info.txt" echo sha=%GIT_SHA%
 >> "%STAGE_DIR%\build_info.txt" echo built=%DATE% %TIME%
 >> "%STAGE_DIR%\build_info.txt" echo variants=wasm32,wasm64,wasm32-threads

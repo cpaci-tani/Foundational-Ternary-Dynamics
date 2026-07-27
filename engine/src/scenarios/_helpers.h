@@ -258,11 +258,32 @@ inline void configure_uniform_genesis_drive_terms(RenderBridge& rb) {
 // Prepared weak-transmutation cohort. All products are initial data; only the
 // selected stress-triggered polarity-flip rule can change a state. This profile
 // can test that rule, but it cannot by itself create a beta-decay final state.
+//
+// B1 (2026-07-27 pre-commit audit): this is the ONLY configure_*_terms in the
+// file that turns on dual_substrate while leaving damping off. Every sibling
+// profile either damps or stays single-substrate. The neutrino packet below
+// seeds a nonzero wave_vel; with wave_propagation false, delta_j_L/R_ is never
+// written (phase_read.cpp), so the dual-substrate leapfrog in phase_write.cpp
+// integrates that seeded velocity as an UNDAMPED, UNBOUNDED ballistic drift:
+// |wave_vel| stays exactly constant forever (measured: 0.502574, bit-identical
+// at every probed tick from 8 to 300) while |flux| grows linearly and |flux|^2
+// grows quadratically with no ceiling (measured: 145 -> 45534 from t=16 to
+// t=300, no saturation). Because weak_transmutation_cpu gates its probability
+// on stress = |flux_L| exceeding WEAK_THRESHOLD via p = 1-exp(-(stress-W)/K),
+// this unbounded growth does not merely look wrong on a chart -- it drives p
+// toward 1, and a manifested site re-triggers every tick once stress is far
+// past threshold (measured: 383 events by t=300, vs. the 7 events the previous
+// 64-tick-only test window observed; final signed_state oscillates instead of
+// settling, -2 at t=100, -4 at t=200 and t=300). The 64-tick window the
+// original test asserted exact values against was not a stable endpoint, only
+// where the test stopped clocking. Damping restores the "prepared, bounded
+// stress probe" reading consistent with every other profile in this file.
 inline void configure_weak_transmutation_probe_terms(RenderBridge& rb) {
     auto& t = rb.toggles;
     for (const auto& spec : TOGGLE_SPECS) t.*(spec.field) = false;
     t.dual_substrate = true;
     t.weak_transmutation = true;
+    t.damping = true;
     t.langevin_seed = 1;
 }
 
@@ -584,10 +605,33 @@ inline void remove_wave_mean(RenderBridge& rb) {
 }
 
 // ── Common scenario injection harnesses ─────────────────────────────
-inline void dp(RenderBridge& rb, int cx, int cy, int cz,
-               int st, int sp, int co, double sig, double amp, bool lock) {
+//
+// B4 (2026-07-27 pre-commit audit): dp() interleaves a destructive marker
+// placement (IPF, which unconditionally sets flux to (0,0,0) at its own
+// center) with an accumulative dressing halo (IF) around that marker. Calling
+// dp() twice in a row for two nearby markers means the SECOND marker's IPF
+// can land inside the FIRST marker's already-deposited dressing halo and wipe
+// it back to (0,0,0) -- an order-dependent, silently asymmetric result
+// presented as a symmetric configuration. Confirmed to 5 significant figures
+// for s0-vacuum-pion-charged at N=17: the marker placed first ends with real
+// dressing-contributed flux, the marker placed second ends with flux exactly
+// (0,0,0), reflecting nothing but its own IPF.
+//
+// Fix: split placement from dressing so every caller with more than one
+// marker can PLACE ALL markers first, then DRESS ALL markers second. Once
+// every IPF has already run, no dressing pass can ever be overwritten by a
+// later placement. dp()/tri() are kept as convenience wrappers for genuinely
+// isolated single-marker use (nothing else in the scenario body can be
+// overwritten when there is only one marker); every current composite-marker
+// caller in this codebase has been rewritten to call the split forms instead.
+inline void dp_place(RenderBridge& rb, int cx, int cy, int cz,
+                     int st, int sp, int co, bool lock) {
     IPF(rb, cx, cy, cz, st, sp, (co >= 0) ? co : 0);
     if (lock) LOCK(rb, cx, cy, cz);
+}
+
+inline void dp_dress(RenderBridge& rb, int cx, int cy, int cz,
+                     int st, double sig, double amp) {
     int sn = (st > 0) ? 1 : -1;
     int eR = CEL(3.0 * sig);
     for (int dz2 = -eR; dz2 <= eR; dz2++) for (int dy2 = -eR; dy2 <= eR; dy2++) for (int dx2 = -eR; dx2 <= eR; dx2++) {
@@ -601,14 +645,41 @@ inline void dp(RenderBridge& rb, int cx, int cy, int cz,
     }
 }
 
-inline void tri(RenderBridge& rb, int cx, int cy, int cz,
-                const int charges[3], const int colors[3], int rad, bool lock) {
+inline void dp(RenderBridge& rb, int cx, int cy, int cz,
+               int st, int sp, int co, double sig, double amp, bool lock) {
+    dp_place(rb, cx, cy, cz, st, sp, co, lock);
+    dp_dress(rb, cx, cy, cz, st, sig, amp);
+}
+
+// Three (x,y) positions computed by tri_place, passed to tri_dress so the
+// dressing pass places at exactly the same voxels the placement pass used.
+struct TriPositions { int x[3]; int y[3]; };
+
+inline TriPositions tri_place(RenderBridge& rb, int cx, int cy, int cz,
+                              const int charges[3], const int colors[3],
+                              int rad, bool lock) {
+    TriPositions p;
     for (int k = 0; k < 3; k++) {
         double ang = (2.0 * PI * k) / 3.0;
-        int qx = RND(cx + rad * std::cos(ang));
-        int qy = RND(cy + rad * std::sin(ang));
-        dp(rb, qx, qy, cz, charges[k], (k % 2 == 0) ? 1 : -1, colors[k], 2, 0.511 * 0.5, lock);
+        p.x[k] = RND(cx + rad * std::cos(ang));
+        p.y[k] = RND(cy + rad * std::sin(ang));
+        dp_place(rb, p.x[k], p.y[k], cz, charges[k], (k % 2 == 0) ? 1 : -1,
+                 colors[k], lock);
     }
+    return p;
+}
+
+inline void tri_dress(RenderBridge& rb, const TriPositions& p, int cz,
+                      const int charges[3]) {
+    for (int k = 0; k < 3; k++) {
+        dp_dress(rb, p.x[k], p.y[k], cz, charges[k], 2, 0.511 * 0.5);
+    }
+}
+
+inline void tri(RenderBridge& rb, int cx, int cy, int cz,
+                const int charges[3], const int colors[3], int rad, bool lock) {
+    const TriPositions p = tri_place(rb, cx, cy, cz, charges, colors, rad, lock);
+    tri_dress(rb, p, cz, charges);
 }
 // π lives in ftd:: via `using ontic::PI;` in ftd/constants.h — every
 // scenario .cpp already includes constants.h, so call sites use `PI`

@@ -416,6 +416,33 @@ void test_unlocked_composite_candidate_outcomes() {
     neutral.force_cpu();
     ftd::dispatch_scenario(charged, "s0-vacuum-pion-charged");
     ftd::dispatch_scenario(neutral, "s0-vacuum-pion-neutral");
+    // B4 (2026-07-27) regression lock: the two markers are placed at
+    // mc+hf/mc-hf, mirror positions about the lattice center, with dp_place()
+    // now running for BOTH before dp_dress() runs for either. If a future
+    // change reintroduced the old interleaved dp() (place-then-dress per
+    // marker, in sequence), the second marker's placement would silently
+    // zero the first marker's mutual dressing contribution and this pair
+    // would stop being a mirror image of itself -- confirmed pre-fix on
+    // 2026-07-27: marker A ended with flux=(-0.15496,0,0), marker B with
+    // flux=(0,0,0) exactly, not a mirror pair at all.
+    {
+        const int L = 24, mc = L / 2;
+        const int sp = std::max(3, L / 8), hf = sp / 2;
+        const auto& voxels = charged.voxels();
+        const auto& lat = charged.lattice();
+        const auto& va = voxels[static_cast<std::size_t>(lat.index(mc + hf, mc, mc))];
+        const auto& vb = voxels[static_cast<std::size_t>(lat.index(mc - hf, mc, mc))];
+        std::cout << "    pion markers flux A=(" << va.flux.x << "," << va.flux.y
+                  << "," << va.flux.z << ") B=(" << vb.flux.x << "," << vb.flux.y
+                  << "," << vb.flux.z << ")\n";
+        // Measured post-fix: A=(-0.154969,0,0), B=(-0.154969,0,0) -- EQUAL, not
+        // merely both-nonzero. Pre-fix (audit finding): A=(-0.15496,0,0),
+        // B=(0,0,0) exactly -- the destructive IPF of whichever marker placed
+        // second discarded the other's dressing contribution entirely.
+        check("pion markers carry equal, order-independent mutual dressing flux",
+              va.flux.x == vb.flux.x && va.flux.y == vb.flux.y && va.flux.z == vb.flux.z
+              && va.flux.mag2() > 0.0);
+    }
     check("charged- and neutral-pion labels initialize bit-identical candidates",
           exact_research_setup_replay(charged, neutral));
     tick_n(charged, 16);
@@ -595,8 +622,8 @@ void test_prepared_weak_transmutation_cohort() {
     check("prepared weak-transmutation cohort dispatched twice",
           ftd::dispatch_scenario(rb, "s0-seed-beta-decay")
           && ftd::dispatch_scenario(replay, "s0-seed-beta-decay"));
-    check("prepared weak cohort isolates dual substrate and weak flip",
-          only_terms_enabled(rb, {"dual_substrate", "weak_transmutation"}));
+    check("prepared weak cohort isolates dual substrate, weak flip, and damping",
+          only_terms_enabled(rb, {"dual_substrate", "weak_transmutation", "damping"}));
     const auto initial = research_setup_stats(rb);
     check("alleged beta-decay products are already present at tick zero",
           initial.manifested == 4 && initial.signed_state == -2
@@ -604,7 +631,18 @@ void test_prepared_weak_transmutation_cohort() {
     check("weak event journal enables", rb.enable_history_journal());
     int weak_events = 0;
     int first_event_tick = 0;
-    for (int t = 1; t <= 64; ++t) {
+    // B1 (2026-07-27): the window was extended from 64 to 300 ticks and a
+    // mid-run peak is captured explicitly. Before the damping fix in
+    // configure_weak_transmutation_probe_terms, |flux|^2 grew quadratically
+    // with NO ceiling (measured 145 at t=16 -> 45534 at t=300, still climbing,
+    // with the event count still growing at 383 and no sign of the settling
+    // this check now requires) — "remains finite" alone could not catch that,
+    // since quadratic growth in tick count does not approach double overflow
+    // within any tick count this suite would ever run. The real regression
+    // lock is the DECAY assertion below: peak then fall, not indefinite climb.
+    double peak_field_norm = 0.0;
+    int events_at_settling_checkpoint = 0;
+    for (int t = 1; t <= 300; ++t) {
         rb.tick();
         replay.tick();
         for (const auto& event : rb.history_events()) {
@@ -613,19 +651,31 @@ void test_prepared_weak_transmutation_cohort() {
                 if (first_event_tick == 0) first_event_tick = t;
             }
         }
+        // Field energy peaks near t=150 (measured 1273.23) then decays; event
+        // activity stops slightly later, stable at 23 from t=200 onward
+        // (measured 15 at t=150, 23 at t=200 and unchanged through t=300) --
+        // two distinct checkpoints because the two quantities settle at
+        // different times.
+        if (t == 150) peak_field_norm = research_setup_stats(rb).field_norm;
+        if (t == 200) events_at_settling_checkpoint = weak_events;
     }
     const auto final = research_setup_stats(rb);
     std::cout << "    prepared weak cohort events=" << weak_events
               << " first=" << first_event_tick
               << " N=" << initial.manifested << "->" << final.manifested
               << " Q=" << initial.signed_state << "->" << final.signed_state
-              << " |J|2=" << initial.field_norm << "->" << final.field_norm
+              << " |J|2=" << initial.field_norm << "->peak(t150)="
+              << peak_field_norm << "->" << final.field_norm
               << '\n';
     check("prepared weak cohort remains finite", initial.finite && final.finite);
+    check("prepared weak cohort field energy peaks then decays (bounded, not runaway)",
+          peak_field_norm > initial.field_norm
+          && final.field_norm < peak_field_norm);
+    check("prepared weak cohort transmutation activity settles (event count stops growing)",
+          weak_events == events_at_settling_checkpoint);
     check("prepared weak cohort matches the selected stress-ramp response",
-          weak_events == 7 && first_event_tick == 54
-          && final.manifested == 4 && final.signed_state == 0
-          && final.field_norm > initial.field_norm);
+          weak_events == 23 && first_event_tick == 97
+          && final.manifested == 4 && final.signed_state == 0);
     check("prepared weak cohort state evolution replays exactly",
           exact_research_setup_replay(rb, replay));
 }
@@ -2225,6 +2275,60 @@ void test_prepared_polarity_geometry_seeds() {
     }
 }
 
+// B2 regression lock (2026-07-27 pre-commit audit). On the periodic lattice
+// the 18-point stencil weights sum to zero and every shift is a bijection, so
+// Sum(wave_vel) over the whole lattice is EXACTLY conserved once ticking
+// begins. A hand-written seed that leaves it nonzero therefore pins a
+// PERMANENT uniform E ramp -- J_x(t) = W_x(0)*t forever -- that no existing
+// energy/Hamiltonian check can see, because the k=0 mode contributes a
+// constant and exactly zero gradient energy. `remove_wave_mean()`
+// (_helpers.h) is the fix; this test is the guard against a future author
+// dropping the call, adding a new hand-written seed without it, or a refactor
+// silently reordering the projection before the seed's own injection loop.
+//
+// Seven scenarios currently carry the call (three original fixes:
+// flux-interference, flux-dual-substrate, s0-seed-gluon; four added in this
+// same audit pass: flux-thermalization, flux-vacuum-foam, flux-zero-point,
+// flux-string-breaking). Three more candidates from the same audit
+// (flux-cascade, quantum-born-rule, quantum-zeno) were deliberately NOT
+// fixed -- they are one-tick genesis-threshold probes where the drift this
+// guard checks for cannot accumulate within a single tick, and projecting
+// anyway measurably perturbed their exact deterministic outcome for no
+// corresponding benefit; see the SCOPED OUT comments at their dispatch sites.
+// Helper-built packets (inject_transverse_packet_x and friends) get
+// Sum(wave_vel)=0 for free by construction and are not re-checked here.
+void test_seeded_wave_momentum_is_projected_out() {
+    struct Case { const char* id; int L; };
+    const Case cases[] = {
+        {"flux-interference", 33}, {"flux-dual-substrate", 33},
+        {"flux-thermalization", 32}, {"flux-vacuum-foam", 24},
+        {"flux-zero-point", 24}, {"flux-string-breaking", 33},
+        {"s0-seed-gluon", 33},
+        // NOT flux-cascade / quantum-born-rule / quantum-zeno: those are
+        // deliberately left unprojected (see the SCOPED OUT comments at their
+        // dispatch sites) -- one-tick genesis-threshold probes where the
+        // long-run drift this guard checks for cannot accumulate, and where
+        // projecting anyway measurably perturbs their exact one-tick outcome.
+    };
+    for (const auto& c : cases) {
+        ftd::RenderBridge rb(c.L);
+        rb.force_cpu();
+        check(std::string("wave-momentum guard: ") + c.id + " dispatched",
+              ftd::dispatch_scenario(rb, c.id));
+        ftd::Vec3 sum(0.0, 0.0, 0.0);
+        for (const auto& v : rb.voxels()) sum = sum + v.wave_vel;
+        const double residual = sum.mag();
+        std::cout << "    wave-momentum guard " << c.id
+                  << " |Sum(wave_vel)|=" << residual << '\n';
+        // A dropped remove_wave_mean() call leaves an O(1)-O(1e3) residual on
+        // these seeds (measured pre-fix: 432.67 to 1162.76); 1e-6 is generous
+        // against float summation noise while remaining far below that floor.
+        check(std::string("wave-momentum guard: ") + c.id
+              + " leaves Sum(wave_vel) approximately zero",
+              residual < 1e-6);
+    }
+}
+
 void test_deterministic_random_wave_profiles() {
     auto field_equal = [](const ftd::RenderBridge& a, const ftd::RenderBridge& b) {
         if (a.voxels().size() != b.voxels().size()) return false;
@@ -2269,8 +2373,19 @@ void test_deterministic_random_wave_profiles() {
               rb.toggles.flux_boundary == ftd::FluxBoundaryMode::Periodic);
         const auto e0 = outside_energy(rb, corner, corner, corner, 6);
         const double h0 = periodic_modified_hamiltonian(rb);
+        // B2 (2026-07-27): flux-thermalization now carries remove_wave_mean(),
+        // which subtracts a small uniform vector from EVERY voxel (necessarily
+        // -- the k=0 mode is global) to remove the permanent secular ramp a raw
+        // random seed leaves behind. That correction gives voxels outside the
+        // declared support a tiny nonzero residual where they were previously
+        // exactly zero, so exact e0.first==0.0 is no longer physically
+        // achievable. Measured: e0.first/e0.second ~ 7.5e-6 -- a fixed,
+        // one-time, effectively negligible cost for eliminating a defect that
+        // otherwise grows without bound. 1e-4 is a generous ceiling above the
+        // measured value while still meaningfully asserting localization.
         check("localized random-wave profile starts inside its declared support",
-              e0.first == 0.0 && e0.second > 0.0 && manifested_count(rb) == 0);
+              (e0.first / std::max(1e-30, e0.second)) < 1e-4
+              && e0.second > 0.0 && manifested_count(rb) == 0);
         tick_n(rb, 12);
         const auto e12 = outside_energy(rb, corner, corner, corner, 6);
         const double h12 = periodic_modified_hamiltonian(rb);
@@ -3045,6 +3160,7 @@ int main() {
     test_multilobe_wave_symmetries();
     test_imposed_uniform_b_native_curvature();
     test_prepared_polarity_geometry_seeds();
+    test_seeded_wave_momentum_is_projected_out();
     test_deterministic_random_wave_profiles();
     test_fixed_seed_genesis_response_profiles();
     test_multistate_free_transport_controls();

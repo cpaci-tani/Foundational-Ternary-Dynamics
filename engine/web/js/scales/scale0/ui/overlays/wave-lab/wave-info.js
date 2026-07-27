@@ -5,6 +5,7 @@
 
 import { BaseComponent } from '../../../../../core/component.js';
 import {
+    getSpectrumComparatorMetrics,
     getWaveScenarioSettings,
     isSingleWaveScenario,
     LIGHT_LATTICE_WAVE_SCENARIO_ID,
@@ -176,7 +177,7 @@ function infoCenter(m, lane) {
                 ${lane.proxy ? compactTag(`seed W ratio=${fmtRatio(lane.seedSpeedRatioToLight ?? 0, 3)}`) : ''}
             </div>
             <div style="color:var(--text-muted);font-size:12px;line-height:1.35;">
-                ${frequencyNote} The sliders reseed the lattice immediately; measured energy, peaks, and samples below come from the buffers after that seed.
+                ${frequencyNote} The sliders reset the scenario immediately, but the reseed re-applies this scenario's fixed built-in lane (mode n, amplitude, beam radius, pulse width, phase are not yet threaded into the engine seed) -- the theoretical readouts above track the slider values, while measured energy, peaks, and samples below always come from that fixed seed.
             </div>
         </div>
     `;
@@ -331,7 +332,7 @@ export class WaveInfoComponent extends BaseComponent {
             </div>
         `;
 
-        const m = bridge.getSpectrumComparatorMetrics?.(scenarioId);
+        const m = getSpectrumComparatorMetrics(bridge, scenarioId);
         if (!m || !m.active) {
             this.synth.update(null);
             this._updateTrendlines(null, null);
@@ -448,7 +449,7 @@ export class WaveInfoComponent extends BaseComponent {
                 ${sliderRow('phase', 'phase offset', settings.phase.toFixed(3), 0, (Math.PI * 2).toFixed(3), 0.01, formatControlValue('phase', settings.phase))}
                 ${speedControl}
                 <div style="margin-top:6px;color:var(--text-muted);font-size:11px;line-height:1.35;">
-                    ${tagBadge('T')}Frequency is the native kick-drift dispersion readout from mode n. For the sound negative control, the speed slider changes only the seeded W amplitude; it does not change the engine pole. Pulse width gates the x-envelope.
+                    ${tagBadge('T')}Frequency is the native kick-drift dispersion readout from mode n. These controls drive the theoretical readouts above (frequency, wavelength, group velocity); the seeded lattice content itself is this scenario's fixed built-in lane and does not yet change with them.
                 </div>
             </div>
         `;
