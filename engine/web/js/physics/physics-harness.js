@@ -445,6 +445,14 @@ export class PhysicsHarness {
 
     /** Advance one Scale-0 physics tick on the underlying bridge. */
     tickScale0() {
+        // WasmBridgeProxy deliberately exposes bridge.tick() as a no-op because
+        // its normal run mode self-ticks in the worker. Interactive observatory
+        // panels, however, request exact discrete steps while paused; route
+        // those through the proxy's explicit tickOnce command.
+        if (this.bridge?.isWorker && typeof this.bridge.tickOnce === 'function') {
+            this.bridge.tickOnce();
+            return;
+        }
         this.bridge?.capabilities?.scale0?.tickScale0?.();
     }
 

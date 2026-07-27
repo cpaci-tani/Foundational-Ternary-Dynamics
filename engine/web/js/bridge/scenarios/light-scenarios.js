@@ -14,7 +14,12 @@
  */
 
 import { C_SPEED } from '../../constants.js';
-import { injectCoherentSlitPair } from './_helpers.js';
+import {
+    configureFreeWaveTerms,
+    injectCoherentSlitPair,
+    injectSheetPacketX,
+    injectTransversePacketX,
+} from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -27,24 +32,31 @@ export function setupLightScenario(name, harness, ctx) {
     const { N, mid, midF, vox, sigma, band } = ctx;
     const sig = sigma;
     const mc = mid;
+    const configureFreeWave = () => configureFreeWaveTerms(harness, true);
             const pi = Math.PI;
             const amp = 0.15;
             switch (name) {
                 case 'light-rainbow': {
-                    // Three traveling waves: red (n=1,y), green (n=3,z), blue (n=6,x)
+                    configureFreeWave();
+                    // Three transverse harmonics. Propagation is along x, so
+                    // x-polarization would be longitudinal and would be
+                    // removed/distorted by the Gauss projection.
                     const waves = [
                         { n: 1, pol: 1 },  // red → y-polarized
                         { n: 3, pol: 2 },  // green → z-polarized
-                        { n: 6, pol: 0 },  // blue → x-polarized
+                        { n: 6, pol: 1 },  // blue → y-polarized
                     ];
                     for (const w of waves) {
                         const k = 2 * pi * w.n / N;
-                        const omega = 2 * C_SPEED * Math.sin(k / 2);
                         for (let x = 0; x < N; x++)
                         for (let y = 0; y < N; y++)
                         for (let z = 0; z < N; z++) {
                             const J_val = amp * Math.sin(k * x);
-                            const wv_val = -omega * amp * Math.cos(k * x);
+                            // Match the engine's kick-drift phase:
+                            // W = -c D_x J - c^2 Lap(J)/2.
+                            const halfSin = Math.sin(k / 2);
+                            const wv_val = -C_SPEED * Math.sin(k) * amp * Math.cos(k * x)
+                                + 2 * C_SPEED * C_SPEED * halfSin * halfSin * J_val;
                             const fv = [0, 0, 0], wv = [0, 0, 0];
                             fv[w.pol] = J_val;
                             wv[w.pol] = wv_val;
@@ -55,55 +67,43 @@ export function setupLightScenario(name, harness, ctx) {
                     break;
                 }
                 case 'light-dipole': {
-                    // Gaussian z-directed pulse → sin²θ radiation.
-                    // genesis=false (audit-2 2026-04-28): classical EM
-                    // dipole radiation is not a pair-producer; the
-                    // wave evolution would otherwise manifest ~29k
-                    // particles by t=200.
-                    harness.setToggle('genesis', false);
-                    const dSigma = sigma(3);
-                    const dAmp = 0.5;
-                    for (let x = 0; x < N; x++)
-                    for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++) {
-                        const dx = x - mid, dy = y - mid, dz = z - mid;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const g = dAmp * Math.exp(-r2 / (2 * dSigma * dSigma));
-                        if (g < 1e-6) continue;
-                        harness.injectFlux(x, y, z, 0, 0, g);
-                        harness.injectWaveVel(x, y, z, 0, 0, g);
-                    }
+                    configureFreeWave();
+                    injectTransversePacketX(harness, ctx, {
+                        x0: midF - 2, y0: midF, z0: midF,
+                        sigmaX: sig(2.5), sigmaT: sig(3), amp: 0.5, direction: -1,
+                    });
+                    injectTransversePacketX(harness, ctx, {
+                        x0: midF + 2, y0: midF, z0: midF,
+                        sigmaX: sig(2.5), sigmaT: sig(3), amp: 0.5, direction: +1,
+                    });
                     break;
                 }
                 case 'light-two-slit': {
-                    // Two coherent line sources offset in y, propagating in +x.
-                    // genesis=false (audit-2 2026-04-28): classical
-                    // double-slit interference; should NOT manifest
-                    // particles. Without this, ~31k particles by t=200.
-                    harness.setToggle('genesis', false);
+                    // Two coherent classical sources offset in y and
+                    // propagating +x. There is no barrier/slit boundary and no
+                    // single-particle quantum-interference claim.
+                    configureFreeWave();
                     injectCoherentSlitPair(harness, ctx);
                     break;
                 }
                 case 'light-photon-race': {
                     // Dim vs bright Gaussian pulses — same speed (linearity)
+                    configureFreeWave();
                     const raceSigma = sigma(3);
                     const raceHw = vox(2);
                     const x_start = vox(8);
                     const pAmps = [0.05, 0.5];
-                    const y_offsets = [mid - vox(5), mid + vox(5)];
-                    for (let p = 0; p < 2; p++) {
-                        for (let x = 0; x < N; x++) {
-                            const dx = x - x_start;
-                            const g = pAmps[p] * Math.exp(-dx * dx / (2 * raceSigma * raceSigma));
-                            if (g < 1e-8) continue;
-                            for (let y = y_offsets[p] - raceHw; y <= y_offsets[p] + raceHw; y++)
-                            for (let z = mid - raceHw; z <= mid + raceHw; z++) {
-                                if (y < 0 || y >= N || z < 0 || z >= N) continue;
-                                harness.injectFlux(x, y, z, 0, 0, g);
-                                harness.injectWaveVel(x, y, z, 0, 0, g); // outgoing +x
-                            }
-                        }
-                    }
+                    const transverseOffsets = [mid - vox(5), mid + vox(5)];
+                    injectSheetPacketX(harness, ctx, {
+                        x0: x_start, y0: transverseOffsets[0], sigmaX: raceSigma,
+                        sigmaY: Math.max(1, raceHw), amp: pAmps[0], direction: +1,
+                        polarizationAxis: 1,
+                    });
+                    injectSheetPacketX(harness, ctx, {
+                        x0: x_start, y0: transverseOffsets[1], sigmaX: raceSigma,
+                        sigmaY: Math.max(1, raceHw), amp: pAmps[1], direction: +1,
+                        polarizationAxis: 2,
+                    });
                     break;
                 }
             }

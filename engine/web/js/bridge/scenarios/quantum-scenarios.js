@@ -19,6 +19,10 @@ import {
     injectLockedBarrierWall,
     injectLockedYZPlane,
     injectParticleFull,
+    injectTransversePacketX,
+    configureGenesisGateTerms,
+    configureFreeWaveTerms,
+    injectPlaneHarmonicX,
 } from './_helpers.js';
 
 /**
@@ -32,13 +36,26 @@ export function setupQuantumScenario(name, harness, ctx) {
     const { N, mid, midF, vox, sigma, band } = ctx;
     const sig = sigma;
     const mc = mid;
+    const configureFreeWave = () => {
+        for (const [key, value] of [
+            ['wave_propagation', true], ['coupling', false], ['damping', false],
+            ['selective_damping', false], ['genesis', false],
+            ['gauss_projection', true], ['forces', false], ['movement', false],
+            ['gravity', false], ['poisson_coulomb', false], ['lorentz_force', false],
+            ['dual_substrate', false], ['weak_transmutation', false],
+            ['color_forces', false], ['strong_force', false], ['confinement', false],
+            ['exchange_force', false], ['larmor_radiation', false], ['evaporation', false],
+        ]) harness.setToggle(key, value);
+    };
 
             switch (name) {
                 case 'quantum-born-rule': {
-                    // Random-phase Gaussian flux pulse → Born rule P = |ψ|² statistics
+                    // Fixed-orientation Gaussian J/W pulse -> isolated native
+                    // threshold/excess genesis response. No Born-law claim.
+                    configureGenesisGateTerms(harness);
                     const bornSigma = sigma(4.125);
                     const amp = K_B * 2;
-                    const theta = Math.random() * 2 * Math.PI;
+                    const theta = Math.PI / 7;
                     const pulseR = Math.min(Math.ceil(bornSigma * 3), mid - 1);
                     for (let dz = -pulseR; dz <= pulseR; dz++)
                     for (let dy = -pulseR; dy <= pulseR; dy++)
@@ -46,72 +63,47 @@ export function setupQuantumScenario(name, harness, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * bornSigma * bornSigma));
                         if (val > 0.001) {
-                            harness.injectFlux(mid + dx, mid + dy, mid + dz,
-                                val * Math.cos(theta), val * Math.sin(theta), 0);
+                            const jx = val * Math.cos(theta);
+                            const jy = val * Math.sin(theta);
+                            harness.injectFlux(mid + dx, mid + dy, mid + dz, jx, jy, 0);
+                            harness.injectWaveVel(mid + dx, mid + dy, mid + dz, jx, jy, 0);
                         }
                     }
-                    harness.setToggle('genesis', true);
                     break;
                 }
                 case 'quantum-double-slit': {
+                    configureFreeWave();
                     injectCoherentSlitPair(harness, ctx);
-                    harness.setToggle('genesis', true);
-                    harness.setToggle('coupling', false);
                     break;
                 }
                 case 'quantum-eraser': {
-                    injectCoherentSlitPair(harness, ctx, {
-                        slitYs: [mid - vox(5)],
-                        emit: (px, py, z, g) => {
-                            harness.injectFlux(px, py, z, 0, g, 0);
-                            harness.injectWaveVel(px, py, z, g, 0, 0);
-                        },
-                    });
-                    injectCoherentSlitPair(harness, ctx, {
-                        slitYs: [mid + vox(5)],
-                        emit: (px, py, z, g) => {
-                            harness.injectFlux(px, py, z, 0, 0, g);
-                            harness.injectWaveVel(px, py, z, g, 0, 0);
-                        },
-                    });
+                    configureFreeWave();
+                    injectCoherentSlitPair(harness, ctx);
                     injectLockedYZPlane(harness, Math.floor(N / 2), N, { parity: 'even' });
-                    harness.setToggle('genesis', true);
-                    harness.setToggle('coupling', false);
+                    harness.setToggle('coupling', true);
                     break;
                 }
                 case 'quantum-tunnel': {
-                    // Gaussian flux packet → barrier of locked particles → tunneling.
-                    // genesis=false (audit-2 2026-04-28): the flux packet
-                    // should TUNNEL through the barrier, not pair-produce.
-                    // The 3072 initial particles are the locked barrier
-                    // (32×32×W=3 wall) and stay constant; the wave was
-                    // otherwise manifesting ~28k by t=200.
-                    harness.setToggle('genesis', false);
+                    // Native state-wall transmission/null test (not a Schrödinger barrier).
+                    configureFreeWave();
+                    harness.setToggle('coupling', true);
                     const tunnelSigma = sigma(2.75);
-                    const amp = K_B * 2;
                     const packetX = vox(8);
-                    const pulseR = Math.min(Math.ceil(tunnelSigma * 3), mid - 1);
-                    // Gaussian flux packet propagating +x
-                    for (let dz = -pulseR; dz <= pulseR; dz++)
-                    for (let dy = -pulseR; dy <= pulseR; dy++)
-                    for (let dx = -pulseR; dx <= pulseR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * tunnelSigma * tunnelSigma));
-                        if (val > 0.001) {
-                            const x = packetX + dx, y = mid + dy, z = mid + dz;
-                            if (x >= 0 && x < N && y >= 0 && y < N && z >= 0 && z < N) {
-                                harness.injectFlux(x, y, z, val, 0, 0);
-                                harness.injectWaveVel(x, y, z, val, 0, 0); // +x propagation
-                            }
-                        }
-                    }
+                    injectTransversePacketX(harness, ctx, {
+                        x0: packetX, y0: mid, z0: mid,
+                        sigmaX: tunnelSigma, sigmaT: tunnelSigma,
+                        amp: K_B * 0.5, direction: +1,
+                    });
                     // Barrier: locked +1 particles across y-z plane
                     const W = harness.bridge._quantumBarrierWidth || vox(3);
                     injectLockedBarrierWall(harness, mid, N, W, 1);
                     break;
                 }
                 case 'quantum-well': {
-                    // Reflective walls + broadband standing waves → energy quantization
+                    // Marker planes are not Gauss charge sheets or wave
+                    // boundaries; isolate the unprojected native wave map.
+                    configureFreeWaveTerms(harness, false);
+                    // Imposed broadband standing basis between marker walls.
                     const wallA = Math.floor(N / 4);
                     const wallB = Math.floor(3 * N / 4);
                     const boxLength = wallB - wallA;
@@ -129,26 +121,14 @@ export function setupQuantumScenario(name, harness, ctx) {
                             }
                         }
                     }
-                    harness.setToggle('genesis', false);
-                    harness.setToggle('damping', false);
                     break;
                 }
                 case 'quantum-entangle': {
-                    // Super-threshold flux burst → pair genesis + correlation tracking
-                    const bigAmp = K_GENESIS * 5;
-                    const burstHw = vox(4);
-                    const burstSig = sigma(Math.sqrt(6));
-                    for (let dz = -burstHw; dz <= burstHw; dz++)
-                    for (let dy = -burstHw; dy <= burstHw; dy++)
-                    for (let dx = -burstHw; dx <= burstHw; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = bigAmp * Math.exp(-r2 / (2 * burstSig * burstSig));
-                        if (val > 0.001) {
-                            harness.injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
-                        }
-                    }
-                    harness.setToggle('genesis', true);
-                    harness.bridge._quantumExperimentMode = 'entangle';
+                    // Native tagged anti-correlated pair; classical correlation, not Bell entanglement.
+                    harness.createEntangledPair(mid, mid, mid, 0, 0, K_B);
+                    harness.setToggle('genesis', false);
+                    harness.setToggle('evaporation', false);
+                    harness.setToggle('movement', false);
                     break;
                 }
                 case 'quantum-aharonov-bohm': {
@@ -157,7 +137,7 @@ export function setupQuantumScenario(name, harness, ctx) {
                     // *gauge-phase* phenomenon — the packets should NOT
                     // pair-produce while traversing the solenoid. Without
                     // this, ~31k particles by t=200.
-                    harness.setToggle('genesis', false);
+                    configureFreeWave();
                     const R = vox(4);
                     // Confined flux tube along z at center (solenoid)
                     for (let z = 0; z < N; z++)
@@ -168,53 +148,36 @@ export function setupQuantumScenario(name, harness, ctx) {
                     }
                     // Packet A: above solenoid, propagating +x
                     const pSigma = sigma(3);
-                    const pHalf = Math.ceil(pSigma);
                     const pGap = vox(2);
-                    const pAmp = K_B * 2;
                     const pStartX = vox(8);
-                    for (let dz = -pHalf; dz <= pHalf; dz++)
-                    for (let dy = -pHalf; dy <= pHalf; dy++)
-                    for (let dx = -pHalf; dx <= pHalf; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = pAmp * Math.exp(-r2 / (2 * pSigma * pSigma));
-                        if (val > 0.001) {
-                            // Packet A: y = mid + R + gap
-                            const ayPos = mid + R + pGap + dy;
-                            if (pStartX + dx >= 0 && pStartX + dx < N && ayPos >= 0 && ayPos < N && mid + dz >= 0 && mid + dz < N) {
-                                harness.injectFlux(pStartX + dx, ayPos, mid + dz, val, 0, 0);
-                                harness.injectWaveVel(pStartX + dx, ayPos, mid + dz, val, 0, 0);
-                            }
-                            // Packet B: y = mid - R - gap
-                            const byPos = mid - R - pGap + dy;
-                            if (pStartX + dx >= 0 && pStartX + dx < N && byPos >= 0 && byPos < N && mid + dz >= 0 && mid + dz < N) {
-                                harness.injectFlux(pStartX + dx, byPos, mid + dz, val, 0, 0);
-                                harness.injectWaveVel(pStartX + dx, byPos, mid + dz, val, 0, 0);
-                            }
-                        }
-                    }
+                    injectTransversePacketX(harness, ctx, {
+                        x0: pStartX, y0: mid + R + pGap, z0: mid,
+                        sigmaX: pSigma, sigmaT: pSigma, amp: K_B * 0.5, direction: +1,
+                    });
+                    injectTransversePacketX(harness, ctx, {
+                        x0: pStartX, y0: mid - R - pGap, z0: mid,
+                        sigmaX: pSigma, sigmaT: pSigma, amp: K_B * 0.5, direction: +1,
+                    });
                     break;
                 }
                 case 'quantum-casimir': {
-                    // Two parallel plates + vacuum fluctuation noise → Casimir effect
+                    // Two inert marker planes plus a reproducible transverse
+                    // eigenmode. This is a plate-transparency null, not vacuum
+                    // fluctuations or a Casimir-force calculation.
+                    configureFreeWaveTerms(harness, false);
                     const d = harness.bridge._quantumCasimirSep || vox(6);
                     const plateA = mid - Math.floor(d / 2);
                     const plateB = mid + Math.floor(d / 2);
                     injectLockedYZPlane(harness, plateA, N);
                     injectLockedYZPlane(harness, plateB, N);
-                    // Fill entire lattice with low-amplitude random flux (vacuum foam)
-                    for (let z = 0; z < N; z++)
-                    for (let y = 0; y < N; y++)
-                    for (let x = 0; x < N; x++) {
-                        harness.injectFlux(x, y, z,
-                            (Math.random() - 0.5) * K_B * 0.3,
-                            (Math.random() - 0.5) * K_B * 0.3,
-                            (Math.random() - 0.5) * K_B * 0.3);
-                    }
-                    harness.setToggle('genesis', false);
+                    injectPlaneHarmonicX(harness, ctx, {
+                        modeN: 4, amp: 0.05, direction: +1,
+                    });
                     break;
                 }
                 case 'quantum-zeno': {
-                    // Near-threshold flux → genesis + frequent measurement suppresses decay
+                    // Unobserved near-threshold control; no measurement operator is present.
+                    configureGenesisGateTerms(harness);
                     const zenoSigma = sigma(3.3);
                     const amp = K_GENESIS * 1.2;
                     const pulseR = Math.min(Math.ceil(zenoSigma * 3), mid - 1);
@@ -225,11 +188,9 @@ export function setupQuantumScenario(name, harness, ctx) {
                         const val = amp * Math.exp(-r2 / (2 * zenoSigma * zenoSigma));
                         if (val > 0.001) {
                             harness.injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
+                            harness.injectWaveVel(mid + dx, mid + dy, mid + dz, val, val, val);
                         }
                     }
-                    harness.setToggle('genesis', true);
-                    harness.bridge._quantumZenoInterval = harness.bridge._quantumZenoInterval || 10;
-                    harness.bridge._quantumZenoMode = true;
                     break;
                 }
             }

@@ -4,7 +4,7 @@
  */
 
 import { BaseComponent } from '../../../../../core/component.js';
-import { cardStyle, titleStyle } from '../_card-helpers.js';
+import { cardStyle, titleStyle, tagBadge } from '../_card-helpers.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
 
 
@@ -12,7 +12,7 @@ const TWO_PI = 2.0 * Math.PI;
 
 const TEMPLATE = `
     <section data-section="gravity" style="${cardStyle(140)}">
-        <div style="${titleStyle()}">Gravitational time dilation</div>
+        <div style="${titleStyle()}">${tagBadge('M', 'engine latency field; the g_rr half of the FTD-0361 proof was RETRACTED')}Gravitational time dilation</div>
         <div ref="body" class="p1-empty-state">
             Load <code>s0-seed-schwarzschild</code> to see proper-time ratio.
         </div>

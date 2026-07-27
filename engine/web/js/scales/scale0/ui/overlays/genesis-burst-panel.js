@@ -1,11 +1,12 @@
-// Genesis-Burst N(A) Law — interactive fire panel + live N(A) plot (FTD-0269).
+// Selected genesis response N(A) — interactive fire panel (FTD-0269 provenance).
 //
 // Mounts a floating panel over the Scale-0 viewport for the `s0-seed-cluster-law`
 // scenario. The user picks an injection amplitude A, "fires" a one-shot genesis
 // burst at the lattice center (A·K_GENESIS, canonical ic1 stack), and the panel
 // reads the resulting steady cluster size N (diag.manifested) and plots the
-// point on a live N(A) curve — tracing out the broken-power law and crossing the
-// knee at A≈16 (the FTD-0269 structure).
+// point on a live N(A) curve. Historical campaign points and a quadratic curve
+// are shown only as labeled comparisons; this panel does not establish either
+// a universal broken-power law or a geometrically forced knee.
 //
 // The fire panel drives the active physics owner (flux mock for cluster-law):
 // pauses the main tick loop (ctx.running), resets the lattice, injects, ticks
@@ -14,13 +15,13 @@
 
 import { BaseComponent } from '../../../../core/component.js';
 import { K_GENESIS } from '../../../../constants.js';
+import { configureGenesisClusterTerms } from '../../../../bridge/scenarios/_helpers.js';
 
 const PANEL_ID = 'genesis-burst-panel';
 const SCENARIO_ID = 's0-seed-cluster-law';
 const SETTLE_TICKS = 220;
 
-// FTD-0261 GPU campaign reference (the "answer key" ghost points) + the solved
-// super-knee energy budget N = k_eff·A² and the knee location.
+// Historical FTD-0261 GPU campaign points plus a selected quadratic comparison.
 const FTD0261 = [[10, 4.0], [12, 8.4], [14, 16.4], [16, 21.6], [20, 27.4],
                  [25, 32.6], [30, 45.0], [40, 91.8], [50, 130.2], [70, 260.2], [90, 383.3]];
 const K_EFF = 0.052;
@@ -29,7 +30,7 @@ const SWEEP_GRID = [10, 12, 14, 16, 20, 25, 30, 40, 50, 70, 90];
 
 const TEMPLATE = `
     <div id="genesis-burst-panel" style="position:absolute; top:12px; right:12px; z-index:40; width:300px; padding:12px 14px; border-radius:12px; font-family:var(--font-sans,sans-serif); font-size:12px; background:var(--color-background-primary,rgba(20,20,24,0.92)); border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3)">
-        <div style="font-weight:500;margin-bottom:8px">Genesis-burst N(A) law &mdash; FTD-0269</div>
+        <div style="font-weight:500;margin-bottom:8px">Selected genesis response N(A)</div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <span>A</span>
             <input ref="slider" type="range" min="5" max="90" step="1" value="16" style="flex:1">
@@ -44,8 +45,8 @@ const TEMPLATE = `
         <canvas ref="plot" width="276" height="200" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
         <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary,#888);line-height:1.4">
             <span style="color:#378ADD">&#9679;</span> live (active owner) &nbsp;
-            <span style="color:#BA7517">&#9675;</span> GPU campaign &nbsp;
-            <span style="color:#639922">&#8211;</span> N=k&middot;A&sup2;
+            <span style="color:#BA7517">&#9675;</span> historical GPU run &nbsp;
+            <span style="color:#639922">&#8211;</span> selected quadratic comparison
         </div>
     </div>
 `;
@@ -79,12 +80,7 @@ export function mountGenesisBurstPanel(harness) {
     function resetAndInject(A) {
         try { harness.setupScenario('empty'); } catch (e) { /* noop */ }
         try {
-            harness.setToggle('wave_propagation', true);
-            harness.setToggle('gauss_projection', true);
-            harness.setToggle('genesis', true);
-            harness.setToggle('langevin', true);
-            harness.setToggle('dual_substrate', false);
-            harness.setLangevinParams?.(0.005, 0.02);
+            configureGenesisClusterTerms(harness, 0.005, 0.02);
         } catch (e) { /* noop */ }
         const L = harness.getLatticeSize?.() ?? 32;
         const mc = Math.round((L - 1) / 2);
@@ -104,6 +100,19 @@ export function mountGenesisBurstPanel(harness) {
                 if (t % 20 === 0) {
                     status.textContent = `firing A=${A}… (tick ${t}/${SETTLE_TICKS})`;
                     await new Promise((r) => setTimeout(r, 0));
+                }
+            }
+            // Worker-backed steps are asynchronous. setupScenario('empty')
+            // resets the worker tick to zero and PhysicsHarness routes each
+            // step through tickOnce(); wait for the posted diagnostics instead
+            // of reading the stale pre-batch frame as N=0.
+            if (harness.bridge?.isWorker) {
+                const deadline = performance.now() + 30_000;
+                while (harness.getTick() < SETTLE_TICKS) {
+                    if (performance.now() > deadline) {
+                        throw new Error(`genesis response worker stopped at tick ${harness.getTick()}/${SETTLE_TICKS}`);
+                    }
+                    await new Promise((r) => setTimeout(r, 10));
                 }
             }
             const N = harness.getDiagnostics?.()?.manifested ?? 0;

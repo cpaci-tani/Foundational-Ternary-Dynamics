@@ -5,7 +5,7 @@
 
 import { BaseComponent } from '../../../../../core/component.js';
 import { TSIRELSON_BOUND } from '../../../../../constants.js';
-import { cardStyle, titleStyle } from '../_card-helpers.js';
+import { cardStyle, titleStyle, tagBadge } from '../_card-helpers.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
 
 
@@ -13,7 +13,7 @@ const PANEL_ID = 'p1-observables-panel';
 
 const TEMPLATE = `
     <section data-section="bell" style="${cardStyle(170)}">
-        <div style="${titleStyle()}">Bell CHSH</div>
+        <div style="${titleStyle()}">${tagBadge('T', 'analytic closed form E(a,b)=cos(a-b); no lattice quantity is read')}Bell CHSH</div>
         <div ref="body" class="p1-empty-state">
             Load <code>quantum-entangle</code> to interact with the CHSH correlator.
         </div>
@@ -102,7 +102,7 @@ export class BellComponent extends BaseComponent {
                 <span class="p1-bell-desc">(|S| = ${sAbs.toFixed(4)}, ${sLabel}; classical ≤ 2; Tsirelson = 2√2 ≈ 2.8284)</span>
             </div>
             <div class="p1-bell-footer">
-                Singlet correlation E(a,b)=cos(a-b) per FTD's QM emergence (DERIV_QM_FROM_LATTICE / DERIV_SINGLET_FROM_VOID_EVENT). Lattice produces this when the entangled flux pair is measured at given angles; the analytic prediction is shown live. test_bell_aggregate.cpp validates S = 2√2 to 1e-12 via the same formula. <b>Lattice-statistical aggregation across many shots is follow-up.</b>
+                <b>This panel is analytic, not a measurement.</b> It evaluates the closed form E(a,b)=cos(a−b) in JavaScript; no bridge, WASM or engine call is made anywhere in this file, and no lattice quantity is read. The substrate is local/classical and native CHSH satisfies S ≤ 2 — a native S &gt; 2 would be an FC-1 <i>falsifier</i>, not a prediction. Reaching 2√2 additionally requires the [SELECTION] J→ψ complexification and the measurement map M that FC-1 explicitly <i>declines</i>. test_bell_aggregate.cpp validates the same closed form, not a lattice ensemble. <b>Lattice-statistical aggregation across many shots is follow-up.</b>
             </div>
         `;
 

@@ -13,8 +13,19 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { K_B, K_GENESIS } from '../../constants.js';
-import { TRIAD_ANGLES, injectParticleFull } from './_helpers.js';
+import { C_SPEED, K_B, K_GENESIS, K_MANIFEST } from '../../constants.js';
+import {
+    TRIAD_ANGLES,
+    configureFreeWaveTerms,
+    configureStaticSeedTerms,
+    configureFreeMovementTerms,
+    configureGenesisGateTerms,
+    configurePairProductionTerms,
+    configureAnnihilationTerms,
+    configureLorentzOrbitTerms,
+    injectParticleFull,
+    injectTransversePacketX,
+} from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -32,19 +43,20 @@ export function setupFluxScenario(name, harness, ctx) {
 
             switch (name) {
                 case 'flux-pulse': {
-                    // Gaussian pulse — loop anchored at midF so visual centroid = N/2 exactly
-                    const pulseR = Math.min(Math.ceil(pulseSigma * 3), Math.floor(midF));
-                    const pLo = Math.floor(midF) - pulseR, pHi = Math.ceil(midF) + pulseR;
-                    for (let z = pLo; z <= pHi; z++) for (let y = pLo; y <= pHi; y++) for (let x = pLo; x <= pHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * pulseSigma * pulseSigma));
-                        if (val > 0.001) harness.injectFlux(x, y, z, val, 0, 0);
-                    }
+                    // Isolated divergence-free packet used to characterize the
+                    // finite-box boundary operators. No particle or EM identity.
+                    configureFreeWaveTerms(harness, false);
+                    const sx = Math.max(3, N / 16);
+                    injectTransversePacketX(harness, ctx, {
+                        x0: N / 3, y0: midF, z0: midF,
+                        sigmaX: sx, sigmaT: sx, amp: K_B * 0.5,
+                        direction: +1, carrierK: 2 * Math.PI / (4 * sx),
+                    });
                     break;
                 }
                 case 'flux-dipole': {
-                    // Two opposite flux injections — poles symmetric about midF
+                    // Antisymmetric pair of Gaussian vector-wave blobs.
+                    configureFreeWaveTerms(harness, false);
                     const off = vox(8);
                     const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
                     const poleHw = vox(4);
@@ -56,13 +68,16 @@ export function setupFluxScenario(name, harness, ctx) {
                         const val = amp * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(pLx + dx, y, z, val, val * 0.5, 0);
+                            harness.injectWaveVel(pLx + dx, y, z, val, val * 0.5, 0);
                             harness.injectFlux(pRx + dx, y, z, -val, -val * 0.5, 0);
+                            harness.injectWaveVel(pRx + dx, y, z, -val, -val * 0.5, 0);
                         }
                     }
                     break;
                 }
                 case 'flux-standing': {
-                    // Counter-propagating pulses along X — poles symmetric about midF
+                    // Reflection-even, zero-initial-momentum broadband wave pair.
+                    configureFreeWaveTerms(harness, false);
                     const off = vox(11);
                     const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
                     const poleHw = vox(4);
@@ -80,24 +95,22 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
                 case 'flux-soliton': {
-                    // Large amplitude nonlinear pulse — centered at midF.
-                    // genesis=false (audit-2 2026-04-28): a soliton is a
-                    // *non-dispersive localized wave*, not a pair-producer;
-                    // the high amp * 10 exceeded K_GENESIS as the wave
-                    // evolved, manifesting ~28k particles by t=200.
-                    harness.setToggle('genesis', false);
-                    const coreSig = sigma(2);
-                    const { lo: sLo, hi: sHi } = band(midF, 3);
-                    for (let z = sLo; z <= sHi; z++) for (let y = sLo; y <= sHi; y++) for (let x = sLo; x <= sHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 10 * Math.exp(-r2 / (2 * coreSig * coreSig));
-                        if (val > 0.001) harness.injectFlux(x, y, z, val, val, 0);
-                    }
+                    // High-amplitude packet dispersion diagnostic; no soliton term exists.
+                    for (const [key, value] of [
+                        ['wave_propagation', true], ['coupling', false], ['damping', false],
+                        ['selective_damping', false], ['genesis', false],
+                        ['gauss_projection', true], ['forces', false], ['movement', false],
+                    ]) harness.setToggle(key, value);
+                    injectTransversePacketX(harness, ctx, {
+                        x0: midF, y0: midF, z0: midF,
+                        sigmaX: sigma(2), sigmaT: sigma(2), amp: amp * 2, direction: +1,
+                    });
                     break;
                 }
                 case 'flux-cascade': {
-                    // Above genesis threshold — centered at midF
+                    configureGenesisGateTerms(harness);
+                    // Legacy supercritical Gaussian seed. Branching, outward
+                    // recruitment, and pair production are not qualified.
                     const bigAmp = K_GENESIS * 3;
                     const coreSig = sigma(2);
                     const { lo: cLo, hi: cHi } = band(midF, 3);
@@ -110,57 +123,29 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
                 case 'flux-annihilation': {
-                    // Two matter-antimatter pairs on collision courses — symmetric about midF
-                    const off = vox(11);
-                    const pL = Math.floor(midF) - off, pR = Math.ceil(midF) + off;
-                    const mc = Math.round(midF); // nearest integer to true center
-                    // X-axis pair
-                    harness.injectParticle(pL, mc, mc, 1);
-                    harness.injectParticle(pR, mc, mc, -1);
-                    // Z-axis pair
-                    harness.injectParticle(mc, mc, pL, -1);
-                    harness.injectParticle(mc, mc, pR, 1);
-                    // Strong flux kicks toward center for dramatic head-on collisions
-                    const pushAmp = amp * 2;
-                    const kickSig = sigma(2);
-                    const { lo: kLo, hi: kHi } = band(midF, 3);
-                    for (let z = kLo; z <= kHi; z++) for (let y = kLo; y <= kHi; y++) for (let x = kLo; x <= kHi; x++) {
-                        const dy = y - midF, dz = z - midF;
-                        // X-axis pair kicks
-                        const dxL = x - pL, dxR = x - pR;
-                        const r2L = dxL*dxL + dy*dy + dz*dz;
-                        const r2R = dxR*dxR + dy*dy + dz*dz;
-                        const valL = pushAmp * Math.exp(-r2L / (2 * kickSig * kickSig));
-                        const valR = pushAmp * Math.exp(-r2R / (2 * kickSig * kickSig));
-                        if (valL > 0.001) harness.injectFlux(x, y, z, valL, 0, 0);
-                        if (valR > 0.001) harness.injectFlux(x, y, z, -valR, 0, 0);
-                        // Z-axis pair kicks
-                        const dzL = z - pL, dzR = z - pR;
-                        const dx0 = x - mc;
-                        const r2ZL = dx0*dx0 + dy*dy + dzL*dzL;
-                        const r2ZR = dx0*dx0 + dy*dy + dzR*dzR;
-                        const valZL = pushAmp * Math.exp(-r2ZL / (2 * kickSig * kickSig));
-                        const valZR = pushAmp * Math.exp(-r2ZR / (2 * kickSig * kickSig));
-                        if (valZL > 0.001) harness.injectFlux(x, y, z, 0, 0, valZL);
-                        if (valZR > 0.001) harness.injectFlux(x, y, z, 0, 0, -valZR);
-                    }
+                    // Exact native collision-removal probe. No wave propagation:
+                    // only pre-existing flux is redistributed to face neighbours.
+                    configureAnnihilationTerms(harness);
+                    const mc = Math.floor(N / 2);
+                    injectParticleFull(harness, mc - 1, mc, mc, +1, { vx: C_SPEED });
+                    injectParticleFull(harness, mc, mc, mc, -1);
+                    harness.injectFlux(mc - 1, mc, mc, 0, +K_B, 0);
+                    harness.injectFlux(mc, mc, mc, 0, -K_B, 0);
                     break;
                 }
                 case 'flux-pair-production': {
-                    // Super-threshold flux burst — centered at midF
-                    const bigAmp = K_GENESIS * 5;
-                    const burstSig = sigma(Math.sqrt(6));
-                    const { lo: ppLo, hi: ppHi } = band(midF, 4);
-                    for (let z = ppLo; z <= ppHi; z++) for (let y = ppLo; y <= ppHi; y++) for (let x = ppLo; x <= ppHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = bigAmp * Math.exp(-r2 / (2 * burstSig * burstSig));
-                        if (val > 0.001) harness.injectFlux(x, y, z, val, val * 0.7, val * 0.3);
-                    }
+                    // Isolated p=1/2 cohort for the selected native pair rule.
+                    configurePairProductionTerms(harness);
+                    const pairAmp = K_GENESIS + K_MANIFEST * Math.log(2);
+                    for (let z = 2; z < N - 2; z += 3)
+                    for (let y = 2; y < N - 2; y += 3)
+                    for (let x = 2; x + 1 < N - 2; x += 3)
+                        harness.injectFlux(x, y, z, pairAmp, 0, 0);
                     break;
                 }
                 case 'flux-interference': {
-                    // 4 coherent sources — symmetric about midF in X and Z
+                    // Four-lobe reflection-symmetric broadband wave field.
+                    configureFreeWaveTerms(harness, false);
                     const q = vox(8);
                     const qL = Math.floor(midF) - q, qR = Math.ceil(midF) + q;
                     const mc = Math.round(midF);
@@ -180,7 +165,8 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
                 case 'flux-vortex': {
-                    // Circular-polarized flux ring — centered at midF
+                    // Exact discrete helical ring; no spin identification.
+                    configureStaticSeedTerms(harness);
                     const vRadius = vox(6);
                     const nV = 24;
                     const mc = Math.round(midF);
@@ -198,7 +184,9 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
                 case 'flux-dual-substrate': {
-                    // L/R chirality demo — poles symmetric about midF
+                    // Mirror-polarized pair. The dual_substrate operator is not
+                    // engaged, so this is a vector-wave parity probe only.
+                    configureFreeWaveTerms(harness, false);
                     const off = vox(8);
                     const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
                     const poleHw = vox(5);
@@ -210,13 +198,17 @@ export function setupFluxScenario(name, harness, ctx) {
                         const val = amp * 1.5 * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(pLx + dx, y, z, val, val * 0.5, -val * 0.3);
+                            harness.injectWaveVel(pLx + dx, y, z, val, val * 0.5, -val * 0.3);
                             harness.injectFlux(pRx + dx, y, z, val, -val * 0.5, val * 0.3);
+                            harness.injectWaveVel(pRx + dx, y, z, val, -val * 0.5, val * 0.3);
                         }
                     }
                     break;
                 }
                 case 'flux-random-genesis': {
-                    // Random super-threshold flux patches → stochastic particle creation
+                    configureGenesisGateTerms(harness);
+                    // Unqualified random super-threshold genesis setup. Native
+                    // genesis creates individual states, not correlated pairs.
                     const nPatches = 8;
                     const threshold = K_GENESIS * 2.5;
                     const margin = vox(4);
@@ -243,16 +235,16 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
 
                 case 'flux-genesis-between-gates': {
-                    // FTD-0388 gate discriminator — three frozen uniform-|J| bands along x:
+                    // FTD-0388 one-tick gate discriminator — three exact initial
+                    // uniform-|J| cohorts along x:
                     // 1.5160 (below K_GENESIS = 3·W_SC = 1.5163860591519780, adopted
                     // 2026-07-17), 1.5250 (between the new gate and the retired
-                    // 3·K_B = 1.533 gate), 1.5340 (above both). Field-freezing toggles
-                    // live in config/toggles.js SCALE0_SCENARIO_OVERRIDES so genesis is
-                    // the ONLY active dynamics and the band amplitudes stay exact.
-                    // The middle band manifesting AT ALL is the FTD-0388 signature —
-                    // the pre-adoption engine stays silent there forever. Cohorts of
-                    // record (2026-07-17 browser discriminator, 200 voxels × 25 ticks):
-                    // measured 0 / 63 / 116 vs new-engine predictions 0 / 69±7 / 116±7.
+                    // 3·K_B = 1.533 gate), 1.5340 (above both). Only the initial
+                    // decision sees the exact amplitudes: accepted genesis drains
+                    // flux and the master rule also contains evaporation.
+                    // The compiled first-tick hazards are 0 / 0.0168973 / 0.034247.
+                    // No later frozen-cohort or independent-trial claim is made.
+                    configureGenesisGateTerms(harness);
                     const bandAmp = [1.5160, 1.5250, 1.5340];
                     if (!(bandAmp[0] < K_GENESIS && K_GENESIS < bandAmp[1])) {
                         console.warn('[flux-genesis-between-gates] bands no longer straddle ' +
@@ -271,7 +263,9 @@ export function setupFluxScenario(name, harness, ctx) {
 
                 // ── QCD Scenarios ──
                 case 'flux-meson': {
-                    // Quark-antiquark bound state — poles symmetric about midF
+                    // Counter-moving opposite-state transport probe. No color
+                    // labels, confinement operator, or meson identity.
+                    configureFreeMovementTerms(harness);
                     const mOff = vox(4);
                     const mDress = vox(3);
                     const mL = Math.floor(midF) - mOff, mR = Math.ceil(midF) + mOff;
@@ -293,6 +287,7 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
                 case 'flux-string-breaking': {
+                    configureFreeMovementTerms(harness);
                     // Confinement string snap — poles symmetric about midF
                     const sbOff = vox(3);
                     const sbDress = vox(4);
@@ -312,6 +307,7 @@ export function setupFluxScenario(name, harness, ctx) {
                     break;
                 }
                 case 'flux-baryon': {
+                    configureFreeMovementTerms(harness);
                     // Three-quark equilateral triangle — centered at midF
                     const bR = vox(5);
                     const mc = Math.round(midF);
@@ -339,7 +335,8 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
 
                 case 'flux-nested-standing': {
-                    // Two orthogonal standing wave pairs — all poles symmetric about midF
+                    // Orthogonal reflection-even broadband wave pairs.
+                    configureFreeWaveTerms(harness, false);
                     const offX = vox(11);
                     const offZ = vox(8);
                     const xL = Math.floor(midF) - offX, xR = Math.ceil(midF) + offX;
@@ -371,34 +368,28 @@ export function setupFluxScenario(name, harness, ctx) {
                 // ── Experiment scenarios (from test suite) ──
 
                 case 'flux-cyclotron': {
-                    // Cyclotron motion: uniform B-field (curl of J) + charged particle
-                    // (from test_gpu_experiments GP-EXP-CYCLOTRON)
-                    // Create background B-field along z by injecting circular flux in xy-plane
-                    const bAmp = amp * 0.15;
+                    // Imposed uniform-curl vector potential plus the selected
+                    // native Lorentz response. No EM-emergence claim.
+                    configureLorentzOrbitTerms(harness);
+                    // alpha*B*dt < 0.01 keeps the unit-tick orbit resolved.
+                    const imposedBz = 1.0;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
-                        // J = B × r / 2 for uniform B_z → J_x = -B*y/2, J_y = +B*x/2
-                        const cx = x - mid, cy = y - mid;
-                        harness.injectFlux(x, y, z, -bAmp * cy * 0.05, bAmp * cx * 0.05, 0);
+                        const cx = x - midF, cy = y - midF;
+                        harness.injectFlux(x, y, z,
+                            -0.5 * imposedBz * cy,
+                             0.5 * imposedBz * cx, 0);
                     }
-                    // Charged particle with velocity in +x
-                    harness.injectParticle(mid, mid, mid, 1);
-                    const dressHw = vox(3);
-                    const dressSig = sigma(2);
-                    for (let d = -dressHw; d <= dressHw; d++) for (let dy = -dressHw; dy <= dressHw; dy++) for (let dx = -dressHw; dx <= dressHw; dx++) {
-                        const r2 = dx * dx + dy * dy + d * d;
-                        const val = amp * Math.exp(-r2 / (2 * dressSig * dressSig));
-                        if (val > 0.001) {
-                            harness.injectFlux(mid + dx, mid + dy, mid + d, val * 0.5, 0, 0);
-                        }
-                    }
+                    harness.injectParticle(mid, mid, mid, +1, {
+                        vx: 0.12, vy: 0, vz: 0,
+                    });
                     break;
                 }
 
                 case 'flux-screening': {
-                    // Charge screening: central +1 surrounded by 6 opposite charges
-                    // (from test_gpu_experiments GP-EXP-SCREENING / Debye-Hückel)
+                    // Prepared non-neutral octahedral polarity shell.
+                    configureStaticSeedTerms(harness);
                     const shellR = vox(6);
                     harness.injectParticle(mid, mid, mid, 1);
                     // 6 screening charges on face-axes
@@ -424,14 +415,14 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
 
                 case 'flux-triad': {
-                    // Triad formation: 3 same-sign particles in equilateral triangle
-                    // (from campaign_triad_binding / campaign_baryon_formation)
+                    // Prepared threefold polarity seed with imposed inward flux.
+                    configureStaticSeedTerms(harness);
                     const tR = vox(5);
                     for (const angle of TRIAD_ANGLES) {
                         const px = mid + Math.round(tR * Math.cos(angle));
                         const pz = mid + Math.round(tR * Math.sin(angle));
                         harness.injectParticle(px, mid, pz, 1);
-                        // Flux kick toward center (binding)
+                        // Inward flux dressing (initial data only).
                         const bindHw = vox(3);
                         const bindSig = sigma(2);
                         for (let dx = -bindHw; dx <= bindHw; dx++) for (let dy = -bindHw; dy <= bindHw; dy++) for (let dz = -bindHw; dz <= bindHw; dz++) {
@@ -450,8 +441,8 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
 
                 case 'flux-thermalization': {
-                    // Thermalization: concentrated energy in one corner → watch it spread
-                    // (from test_thermodynamics — entropy increase demo)
+                    // Localized random-wave mixing; no thermostat or entropy claim.
+                    configureFreeWaveTerms(harness, false);
                     const corner = Math.floor(N / 4);
                     const thermAmp = amp * 3;
                     const thermSig = sigma(Math.sqrt(6));
@@ -474,7 +465,8 @@ export function setupFluxScenario(name, harness, ctx) {
 
 
                 case 'flux-vacuum-foam': {
-                    // Near-threshold flux everywhere → spontaneous pair creation/annihilation
+                    // Finite random-wave ball; no ongoing quantum/noise source.
+                    configureFreeWaveTerms(harness, false);
                     const foamR = vox(11);
                     const foamBase = K_B * 0.9;
                     const foamVar = K_B * 0.4;
@@ -497,26 +489,19 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
 
                 case 'flux-zero-point': {
-                    // Zero-Point Energy — the irreducible ground-state floor.
-                    // Uniform LOW-amplitude random flux across the WHOLE lattice
-                    // (no envelope, no sphere), at the same 0.3·K_B the "Random
-                    // Flux" action uses — magnitude ≈ 0.08, ~20× below
-                    // K_GENESIS (= N_c·K_MANIFEST = 1.5164, FTD-0388), so nothing can manifest.
-                    // With genesis + damping both OFF (config/toggles.js), the
-                    // energy-conserving wave dynamics keep this jittering
-                    // indefinitely: a persistent non-zero energy floor that never
-                    // relaxes to exactly zero (watch the energy-audit / Lagrangian
-                    // overlays) and — unlike flux-vacuum-foam — never produces a
-                    // particle. Pedagogical lattice illustration, NOT a derivation
-                    // of the QFT ½ℏω vacuum energy. Amplitude is a [SELECTION].
+                    // Selected finite periodic random-wave bath. It tests the
+                    // source-free kick-drift invariant, not quantum zero-point
+                    // energy, a ground state, or the QFT 1/2 hbar omega term.
+                    configureFreeWaveTerms(harness, false);
                     const zpeAmp = K_B * 0.3;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
-                        harness.injectFlux(x, y, z,
-                            (Math.random() - 0.5) * zpeAmp,
-                            (Math.random() - 0.5) * zpeAmp,
-                            (Math.random() - 0.5) * zpeAmp);
+                        const jx = (Math.random() - 0.5) * zpeAmp;
+                        const jy = (Math.random() - 0.5) * zpeAmp;
+                        const jz = (Math.random() - 0.5) * zpeAmp;
+                        harness.injectFlux(x, y, z, jx, jy, jz);
+                        harness.injectWaveVel(x, y, z, jx, jy, jz);
                     }
                     break;
                 }

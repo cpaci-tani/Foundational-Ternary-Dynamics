@@ -15,7 +15,7 @@
 // threading once on-demand nested pthread_create is resolved.
 
 import { createScale0Capabilities } from './capabilities/scale0.js';
-import { samplerOr } from './bridge-contract.js';
+import { samplerOr, particleDataToList } from './bridge-contract.js';
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), count: 0 });
@@ -71,9 +71,18 @@ export class WasmBridgeProxy {
         this._terminated = false;
         this._onInitFailure = (opts && typeof opts.onInitFailure === 'function') ? opts.onInitFailure : null;
         this._initFailed = false;       // latched — fallback fires once
+        // `opts.onEngineToggles()` (optional) fires whenever the worker publishes a
+        // fresh engine-truth toggle readback — i.e. after the C++ scenario body has
+        // replaced the profile the main thread sent. The UI uses it to repaint the
+        // physics-toggles card and recompute overlay applicability from what the
+        // engine is ACTUALLY running rather than from the JS model of it.
+        this._onEngineToggles = (opts && typeof opts.onEngineToggles === 'function') ? opts.onEngineToggles : null;
         this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
         this._scenarioId = 'flux-pulse';
         this._toggles = {};
+        this._engineToggles = null;     // null until the worker's first readback
+        this._wantAudit = true;         // telemetry demand mask (mirrors worker)
+        this._wantLag = true;
         this._ready = false;
         this._running = null;
         this._readyAt = 0;              // performance.now() when 'ready' arrived
@@ -214,6 +223,10 @@ export class WasmBridgeProxy {
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
             if (m.lag)   this._lastLag   = m.lag;
+            if (m.engineToggles) {
+                this._engineToggles = m.engineToggles;
+                try { this._onEngineToggles?.(m.engineToggles); } catch (e) { /* UI callback must not kill the frame */ }
+            }
             if (m.knot) this._lastKnot = m.knot;
             if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
             if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
@@ -245,7 +258,16 @@ export class WasmBridgeProxy {
     get frameCounter() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.FRAME) : 0; }
     get ready() { return this._ready; }
     currentTick() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.TICK) : 0; }
-    getToggle(name) { return this._toggles[name] ?? true; }          // local cache mirrors worker state
+    /** True once the worker has published a real engine-state readback. */
+    get hasEngineToggles() { return this._engineToggles !== null; }
+
+    // Engine truth first; the local write-cache is only a pre-first-frame stand-in.
+    // (The trailing `?? true` is the legacy default for names this build does not
+    // know — it reports an unknown toggle as ON and is tracked separately.)
+    getToggle(name) {
+        if (this._engineToggles && name in this._engineToggles) return !!this._engineToggles[name];
+        return this._toggles[name] ?? true;
+    }
 
     _buildCaps() {
         // The capability factory just delegates to bridge methods, so wrap `this`.
@@ -266,6 +288,23 @@ export class WasmBridgeProxy {
     // ── Bridge reads the capability factory calls ───────────────────────────
     tick() {}                                                        // no-op; worker self-ticks
     getParticleData() { return this._lastParts ?? EMPTY_PARTS(); }
+
+    // --- SCALE0_DIRECT_READS members that were missing from this class ---
+    //
+    // The proxy implemented 23 of the 26 canonical direct reads. Because
+    // wasmWorkerEligible() ignores its scenarioId argument and serve.py sends
+    // COOP/COEP unconditionally, this proxy owns EVERY scenario on the dev
+    // server -- so these three were absent on the default path. The particle
+    // list has live consumers (p1-observables -> coulomb.js / g2.js /
+    // anisotropy.js), which read an empty lattice and rendered "no engine field
+    // samples" while the worker frame payload carried the particles.
+    getScale0ParticleList() { return particleDataToList(this._lastParts); }
+
+    // Contract members with no production consumer today, implemented so the
+    // anti-drift gate in scale0-worker.spec.js is satisfied by real forwarding
+    // rather than by shrinking the contract.
+    getForceFieldSampled(stride = 2) { return samplerOr(this, 'em', stride, EMPTY_VEC()); }
+    getGravityFieldSampled(stride = 2) { return samplerOr(this, 'gravity', stride, EMPTY_VEC()); }
     getFluxVolume() { return (this._ready && this._fluxView) ? this._fluxView : new Float64Array(0); }
     getFluxSlice() { return new Float64Array(0); }                   // Phase 2: slice from heap
     getDiagnostics() { return this._lastDiag ?? null; }
@@ -338,6 +377,11 @@ export class WasmBridgeProxy {
     setupScenario(name) {
         this._scenarioId = name || this._scenarioId;
         this._ready = false;
+        // Diagnostics belong to the old worker-hosted RenderBridge until the
+        // new `create` completes. Clear them so exact-step observatories do not
+        // mistake an old high tick count for completion of a newly reset run.
+        this._lastDiag = null;
+        this._lastTick = -1;
         this._clearFrameWatchdog();   // old-scenario watchdog is stale; re-arms on next 'ready'/setRunning
         this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
         this._pendingCommands = []; // discard any commands queued for the previous scenario
@@ -362,7 +406,23 @@ export class WasmBridgeProxy {
         if (this._ctrl) Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(v * 1000));
     }
     tickOnce() { this._cmd('tickScale0'); }
-    setTelemetryMask() {}                                            // Phase 2: gate worker audit
+    /**
+     * Forward the telemetry demand mask to the worker.
+     *
+     * This was an empty stub with no matching worker message case, so the
+     * gate in telemetry/demand.js was inert on the worker path: postFrame
+     * recomputed the energy audit and Lagrangian every frame regardless of
+     * whether any panel consumed them. Sent only on change to avoid a
+     * postMessage per frame.
+     */
+    setTelemetryMask(wantAudit = true, wantLag = true) {
+        const a = !!wantAudit, l = !!wantLag;
+        if (a === this._wantAudit && l === this._wantLag) return;
+        this._wantAudit = a; this._wantLag = l;
+        if (this._worker && !this._terminated) {
+            this._worker.postMessage({ type: 'setTelemetryMask', wantAudit: a, wantLag: l });
+        }
+    }
 
     // ── Mutators (the inject UI / param sliders call these on the bridge) ────
     setToggle(k, v) { this._toggles[k] = v; this._cmd('setToggle', k, v); }

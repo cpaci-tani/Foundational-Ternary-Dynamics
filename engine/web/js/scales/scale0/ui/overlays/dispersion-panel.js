@@ -150,7 +150,7 @@ export function mountDispersionPanel(host, getBridge) {
         const svg = el('plot');
         if (svg) renderPlot(svg, livePts);
         el('rows').innerHTML =
-            rowHTML('c (IR phase speed)', `${C.toFixed(5)} = 1/√3`, 'CFL ceiling c=1/√D [DERIVED]; SI value is calibration-dependent.') +
+            rowHTML('c (IR phase speed)', `${C.toFixed(5)} = 1/√3`, 'Selected lattice speed [SELECTION, FTD-0407]. The production 18-point stencil has an actual stability ceiling of c ≤ √3/2 ≈ 0.866, so 1/√3 is conservative, not forced. SI value is calibration-dependent.') +
             rowHTML('ω_max (zone edge)', `${OMEGA_MAX.toFixed(4)} = 2/√3`, 'Per-axis Nyquist; physically ≈ the Planck frequency (~2×10⁴² Hz).') +
             rowHTML('visible k/k_zone', kOverKzone(5e14).toExponential(1), 'A 5×10¹⁴ Hz wave on a voxel≡ℓ_P lattice — deep IR.') +
             rowHTML('FM radio k/k_zone', kOverKzone(1e8).toExponential(1), 'A 10⁸ Hz wave — even deeper IR; co-propagates with light at c.') +

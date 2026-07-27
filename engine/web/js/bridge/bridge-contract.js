@@ -149,6 +149,47 @@ export function samplerOr(bridge, kind, stride = 2, fallback) {
     return fallback ?? emptySampleResult();
 }
 
+/**
+ * Derive the Scale-0 particle LIST from a raw particle-data payload.
+ *
+ * Shared by WasmBridge (which reads `getParticleData()` straight from the WASM
+ * heap) and WasmBridgeProxy (whose worker posts the identical shape each frame).
+ * It lives here rather than being written twice because `getScale0ParticleList`
+ * is a member of SCALE0_DIRECT_READS below: the proxy simply did not implement
+ * it, so every consumer silently saw an empty lattice on the default
+ * cross-origin-isolated worker path while the worker's frame payload was
+ * carrying the particles all along.
+ *
+ * @param {{positions?:Float32Array,colors?:Float32Array,spin?:Float32Array,
+ *          colorCharge?:Float32Array,count?:number}|null} pd
+ * @returns {Array<object>} one record per particle (empty array when none)
+ */
+export function particleDataToList(pd) {
+    if (!pd || !pd.count) return [];
+    const hasRealFields = !!(pd.spin && pd.colorCharge);
+    const list = [];
+    for (let i = 0; i < pd.count; i++) {
+        const x = Math.floor(pd.positions[i * 3]);
+        const y = Math.floor(pd.positions[i * 3 + 1]);
+        const z = Math.floor(pd.positions[i * 3 + 2]);
+        const r = pd.colors[i * 3];
+        const g = pd.colors[i * 3 + 1];
+        let state = 0;
+        if (g > 0.7) state = 1;
+        else if (r > 0.8) state = -1;
+        // locked=false: per-particle tracking is a Scale-1 concern, and calling
+        // inspectVoxel per particle here cost 35k embind calls/frame (ARC-PERF).
+        list.push({
+            id: i, x, y, z,
+            state, charge: state, q: state,
+            color: hasRealFields ? pd.colorCharge[i] : 0,
+            spin: hasRealFields ? pd.spin[i] : 1,
+            locked: false,
+        });
+    }
+    return list;
+}
+
 export const SCALE0_DIRECT_READS = [
     // Tier 1 — field/flux/state-derived: the proxy's shadow computes these live
     // from the worker's shared field buffers, so a plain forward returns real data.

@@ -63,17 +63,57 @@ export function initOverlayPanelShell() {
     }
 
     // ── 2. Active-overlays strip (derived from button .active state) ─────────
-    const refresh = () => rebuildActiveStrip(strip);
+    const refresh = () => refreshOverlayPanelShell();
     refresh();
     // Toggle buttons live inside `body`; watch their class changes so the strip
     // (a sibling of body, so its own edits don't re-trigger us) stays in sync.
-    new MutationObserver(refresh).observe(body, {
-        subtree: true, attributes: true, attributeFilter: ['class'],
+    new MutationObserver((mutations) => {
+        const activeChanged = mutations.some((mutation) => {
+            if (!mutation.target.classList?.contains('view-toggle')) return false;
+            const oldClasses = new Set((mutation.oldValue || '').split(/\s+/).filter(Boolean));
+            return oldClasses.has('active') !== mutation.target.classList.contains('active');
+        });
+        if (activeChanged) refresh();
+    }).observe(body, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class'],
+        attributeOldValue: true,
     });
 
     // ── 3. Filter ────────────────────────────────────────────────────────────
     if (search) {
         search.addEventListener('input', () => applyFilter(body, search.value));
+    }
+}
+
+/**
+ * Rebuild all shell state after a scenario changes overlay applicability.
+ * Kept public so the scenario loader can update the panel synchronously rather
+ * than waiting for the MutationObserver microtask.
+ */
+export function refreshOverlayPanelShell() {
+    const panel = document.getElementById('viewport-overlay');
+    const body = panel?.querySelector('.s0-overlay-body');
+    if (!body) return;
+
+    rebuildActiveStrip(document.getElementById('s0-overlay-active'));
+    refreshColumnCounts(body);
+    const search = document.getElementById('s0-overlay-search');
+    applyFilter(body, search?.value || '');
+}
+
+function refreshColumnCounts(body) {
+    for (const [colName, toggles] of Object.entries(COL_TO_TOGGLES)) {
+        const badge = body.querySelector(`[data-count-for="${colName}"]`);
+        if (!badge) continue;
+        let count = 0;
+        for (const id of toggles) {
+            const btn = document.getElementById(id);
+            if (btn?.classList.contains('active') && !btn.classList.contains('is-inapplicable')) count++;
+        }
+        badge.textContent = String(count);
+        badge.classList.toggle('is-zero', count === 0);
     }
 }
 
@@ -84,7 +124,7 @@ function rebuildActiveStrip(strip) {
     for (const toggles of Object.values(COL_TO_TOGGLES)) {
         for (const id of toggles) {
             const btn = document.getElementById(id);
-            if (!btn || !btn.classList.contains('active')) continue;
+            if (!btn || !btn.classList.contains('active') || btn.classList.contains('is-inapplicable')) continue;
             strip.appendChild(makeChip(btn));
             n++;
         }
@@ -142,7 +182,8 @@ function applyFilter(body, query) {
     for (const col of body.querySelectorAll('.s0-overlay-col')) {
         let colMatch = false;
         for (const btn of col.querySelectorAll('.view-toggle')) {
-            const match = btn.textContent.trim().toLowerCase().includes(q);
+            const match = !btn.classList.contains('is-inapplicable')
+                && btn.textContent.trim().toLowerCase().includes(q);
             btn.classList.toggle('is-filtered-out', !match);
             if (match) colMatch = true;
         }

@@ -13,10 +13,377 @@
  * `s0-seed-scenarios.js`.
  */
 
-import { K_B } from '../../constants.js';
+import { C_SPEED, K_B } from '../../constants.js';
 
 /** Equilateral-triangle vertex angles in the xy plane (N_c = 3). */
 export const TRIAD_ANGLES = Object.freeze([0, 2 * Math.PI / 3, 4 * Math.PI / 3]);
+const FACE_OFFSETS = Object.freeze([[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]);
+const EDGE_OFFSETS = Object.freeze([
+    [1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],
+    [1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],
+    [0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1],
+]);
+
+// JS mirror of C++ configure_free_wave_terms().  This list intentionally
+// includes research-only tick extensions that the dashboard's ordinary reset
+// preserves. A scenario claiming an isolated native wave map must not inherit
+// any of them from a prior research run.
+export const FREE_WAVE_DISABLED_TERMS = Object.freeze([
+    'coupling', 'damping', 'genesis', 'evaporation', 'forces', 'gravity',
+    'poisson_coulomb', 'movement', 'lorentz_force', 'selective_damping',
+    'larmor_radiation', 'dual_substrate', 'color_forces',
+    'strong_stress_energy', 'weak_transmutation', 'strong_force',
+    'triad_binding', 'pair_production', 'exchange_force', 'latency_field',
+    'exact_dual_gauss', 'matched_gauss_dynamics', 'emergent_forces',
+    'langevin', 'symplectic_leapfrog', 'verlet_wave_integrator',
+    'lorentz_period2_floquet', 'lorentz_bcc_time_floquet', 'su2_gauge',
+    'su3_gauge', 'symmetric_movement_order', 'absorbing_boundary',
+    'reflective_boundary', 'field_energy_gravity', 'cluster_inertia',
+    'de_broglie_clock', 'db_clock_coulomb', 'knot_tracking', 'confinement',
+    'strict_validation', 'ew_background_sweep',
+]);
+
+export function configureFreeWaveTerms(harness, gauss = true) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('gauss_projection', !!gauss);
+}
+
+export function configureGenesisGateTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('genesis', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+export function configurePairProductionTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('pair_production', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Isolated remainder/integer transport with every force and reaction off. */
+export function configureFreeMovementTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('movement', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+export function configureAnnihilationTerms(harness) {
+    configureFreeMovementTerms(harness);
+}
+
+/** Static dressing + selected legacy field/color forces + native movement. */
+export function configureUnlockedCompositeTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('forces', true);
+    harness.setToggle('movement', true);
+    harness.setToggle('color_forces', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Locked nuclear markers + Poisson-Coulomb force + mobile outer markers. */
+export function configurePreparedCoulombCandidateTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('forces', true);
+    harness.setToggle('poisson_coulomb', true);
+    harness.setToggle('movement', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Additive nonnegative uniform drive + selected wave/Gauss/genesis stack. */
+export function configureUniformGenesisDriveTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('gauss_projection', true);
+    harness.setToggle('genesis', true);
+    harness.setToggle('ew_background_sweep', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Prepared cohort observed only through the selected weak polarity flip. */
+export function configureWeakTransmutationProbeTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('dual_substrate', true);
+    harness.setToggle('weak_transmutation', true);
+}
+
+/** Fixed-seed Langevin vector bath plus free marker transport. */
+export function configureThermalTransportTerms(harness, temperature, gamma) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('gauss_projection', true);
+    harness.setToggle('movement', true);
+    harness.setToggle('langevin', true);
+    harness.setToggle('dual_substrate', false);
+    harness.setLangevinParams?.(temperature, gamma);
+}
+
+/** Prepared geometry under the selected coupled/damped genesis response. */
+export function configurePatternedGenesisResponseTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic field boundary
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('coupling', true);
+    harness.setToggle('damping', true);
+    harness.setToggle('genesis', true);
+    harness.setToggle('gauss_projection', true);
+    harness.setToggle('forces', true);
+    harness.setToggle('movement', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Exact ternary geometry only: no production dynamics may mutate the seed. */
+export function configureStaticSeedTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Isolated wave + Gauss + selected genesis response with an optional bath. */
+export function configureGenesisClusterTerms(harness, temperature, gamma = 0.02) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('gauss_projection', true);
+    harness.setToggle('genesis', true);
+    harness.setToggle('langevin', true);
+    harness.setToggle('dual_substrate', false);
+    harness.setLangevinParams?.(temperature, gamma);
+}
+
+/** Locked rest-mass source observed only through the native latency solver. */
+export function configureMassLatencyTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('gravity', true); // latency dependency; force master remains off
+    harness.setToggle('latency_field', true);
+    harness.setToggle('field_energy_gravity', false);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Locked source plus linear coupled-wave sector; no recoil or force path. */
+export function configureLockedCoupledFieldTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('coupling', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Linear field plus native flux-gradient force and production movement. */
+export function configureEmergentRecoilTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
+    harness.bridge?.setDt?.(1.0);
+    harness.setToggle('wave_propagation', true);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('coupling', true);
+    harness.setToggle('forces', true);
+    harness.setToggle('movement', true);
+    harness.setToggle('emergent_forces', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/** Fixed imposed-B field plus native Lorentz force and movement only. */
+export function configureLorentzOrbitTerms(harness) {
+    for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
+    harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
+    harness.bridge?.setDt?.(1.0);
+    harness.setToggle('wave_propagation', false);
+    harness.setToggle('gauss_projection', false);
+    harness.setToggle('forces', true);
+    harness.setToggle('poisson_coulomb', true);
+    harness.setToggle('movement', true);
+    harness.setToggle('lorentz_force', true);
+    harness.setToggle('dual_substrate', false);
+}
+
+/**
+ * Divergence-free localized packet traveling along ±x.
+ * J is the centered-difference curl of psi*e_x and wave_vel satisfies the
+ * one-way relation W = -direction*C_SPEED*D_x J.
+ */
+export function injectTransversePacketX(harness, ctx, opts = {}) {
+    const { N, mid } = ctx;
+    const x0 = opts.x0 ?? mid;
+    const y0 = opts.y0 ?? mid;
+    const z0 = opts.z0 ?? mid;
+    const sx = Math.max(1, opts.sigmaX ?? 3);
+    const st = Math.max(1, opts.sigmaT ?? 3);
+    const amp = opts.amp ?? K_B;
+    const direction = (opts.direction ?? 1) >= 0 ? 1 : -1;
+    const k = opts.carrierK ?? 0;
+    const phase = opts.carrierPhase ?? 0;
+    const psiAmp = amp * st;
+    const periodicDelta = (a, b) => {
+        let d = a - b;
+        while (d > N / 2) d -= N;
+        while (d < -N / 2) d += N;
+        return d;
+    };
+    const psi = (x, y, z) => {
+        const dx = periodicDelta(x, x0);
+        const dy = periodicDelta(y, y0);
+        const dz = periodicDelta(z, z0);
+        const r2 = dx*dx/(sx*sx) + (dy*dy + dz*dz)/(st*st);
+        if (r2 > 18) return 0;
+        return psiAmp * Math.exp(-0.5 * r2) * Math.cos(k * dx + phase);
+    };
+    const field = (x, y, z) => [
+        0,
+        0.5 * (psi(x, y, z + 1) - psi(x, y, z - 1)),
+       -0.5 * (psi(x, y + 1, z) - psi(x, y - 1, z)),
+    ];
+    for (let z = 0; z < N; z++)
+    for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++) {
+        const j = field(x, y, z);
+        const jp = field(x + 1, y, z);
+        const jm = field(x - 1, y, z);
+        const fs = [0, 0, 0], es = [0, 0, 0];
+        for (const o of FACE_OFFSETS) { const v = field(x+o[0], y+o[1], z+o[2]); fs[1] += v[1]; fs[2] += v[2]; }
+        for (const o of EDGE_OFFSETS) { const v = field(x+o[0], y+o[1], z+o[2]); es[1] += v[1]; es[2] += v[2]; }
+        const lap = [0, fs[1]/3 + es[1]/6 - 4*j[1], fs[2]/3 + es[2]/6 - 4*j[2]];
+        const w = [0,
+            -0.5 * direction * C_SPEED * (jp[1] - jm[1]) - 0.5*C_SPEED*C_SPEED*lap[1],
+            -0.5 * direction * C_SPEED * (jp[2] - jm[2]) - 0.5*C_SPEED*C_SPEED*lap[2]];
+        if (j[1]*j[1] + j[2]*j[2] > 1e-20) harness.injectFlux(x, y, z, 0, j[1], j[2]);
+        if (w[1]*w[1] + w[2]*w[2] > 1e-20) harness.injectWaveVel(x, y, z, 0, w[1], w[2]);
+    }
+}
+
+/** J_z sheet packet, finite in x/y and uniform in z, traveling along ±x. */
+export function injectSheetPacketX(harness, ctx, opts = {}) {
+    const { N, mid } = ctx;
+    const x0 = opts.x0 ?? mid;
+    const y0 = opts.y0 ?? mid;
+    const sx = Math.max(1, opts.sigmaX ?? 3);
+    const sy = Math.max(1, opts.sigmaY ?? 3);
+    const amp = opts.amp ?? K_B;
+    const direction = (opts.direction ?? 1) >= 0 ? 1 : -1;
+    const polarizationAxis = opts.polarizationAxis === 1 ? 1 : 2;
+    const carrierK = opts.carrierK ?? 0;
+    const carrierPhase = opts.carrierPhase ?? 0;
+    const scalar = (x, u) => {
+        const dx = x - x0, dy = u - y0;
+        const r2 = dx*dx/(sx*sx) + dy*dy/(sy*sy);
+        return r2 <= 18
+            ? amp * Math.exp(-0.5 * r2) * Math.cos(carrierK * dx + carrierPhase)
+            : 0;
+    };
+    const xlo = Math.max(0, Math.floor(x0 - 4.5 * sx));
+    const xhi = Math.min(N - 1, Math.ceil(x0 + 4.5 * sx));
+    const ulo = Math.max(0, Math.floor(y0 - 4.5 * sy));
+    const uhi = Math.min(N - 1, Math.ceil(y0 + 4.5 * sy));
+    for (let v = 0; v < N; v++)
+    for (let u = ulo; u <= uhi; u++)
+    for (let x = xlo; x <= xhi; x++) {
+        const j = scalar(x, u);
+        const faceSum = scalar(x+1,u) + scalar(x-1,u) + scalar(x,u+1) + scalar(x,u-1) + 2*j;
+        const edgeSum = scalar(x+1,u+1) + scalar(x+1,u-1) + scalar(x-1,u+1) + scalar(x-1,u-1)
+            + 2*(scalar(x+1,u) + scalar(x-1,u) + scalar(x,u+1) + scalar(x,u-1));
+        const lap = faceSum/3 + edgeSum/6 - 4*j;
+        const w = -0.5 * direction * C_SPEED * (scalar(x + 1, u) - scalar(x - 1, u))
+            - 0.5*C_SPEED*C_SPEED*lap;
+        const y = polarizationAxis === 1 ? v : u;
+        const z = polarizationAxis === 1 ? u : v;
+        if (Math.abs(j) > 1e-12) {
+            if (polarizationAxis === 1) harness.injectFlux(x, y, z, 0, j, 0);
+            else                        harness.injectFlux(x, y, z, 0, 0, j);
+        }
+        if (Math.abs(w) > 1e-12) {
+            if (polarizationAxis === 1) harness.injectWaveVel(x, y, z, 0, w, 0);
+            else                        harness.injectWaveVel(x, y, z, 0, 0, w);
+        }
+    }
+}
+
+/** Exactly transverse 1D J_z=f(x) pulse, uniform on every yz plane. */
+export function injectPlanePacketX(harness, ctx, opts = {}) {
+    const { N, mid } = ctx;
+    const x0 = opts.x0 ?? mid;
+    const sx = Math.max(1, opts.sigmaX ?? 3);
+    const amp = opts.amp ?? K_B;
+    const direction = (opts.direction ?? 1) >= 0 ? 1 : -1;
+    const k = opts.carrierK ?? 0;
+    const scalar = (x) => {
+        const dx = x - x0;
+        if (Math.abs(dx) > 4.5*sx) return 0;
+        return amp * Math.exp(-0.5*dx*dx/(sx*sx)) * Math.cos(k*dx);
+    };
+    for (let x = 0; x < N; x++) {
+        const jz = scalar(x);
+        const lap = scalar(x+1) + scalar(x-1) - 2*jz;
+        const wz = -0.5*direction*C_SPEED*(scalar(x+1)-scalar(x-1))
+            - 0.5*C_SPEED*C_SPEED*lap;
+        for (let y = 0; y < N; y++)
+        for (let z = 0; z < N; z++) {
+            if (Math.abs(jz) > 1e-12) harness.injectFlux(x,y,z,0,0,jz);
+            if (Math.abs(wz) > 1e-12) harness.injectWaveVel(x,y,z,0,0,wz);
+        }
+    }
+}
+
+/** Exact pole of the production kick-drift map for a yz-uniform x harmonic. */
+export function latticeHarmonicOmega(k) {
+    return 2 * Math.asin(C_SPEED * Math.abs(Math.sin(k / 2)));
+}
+
+/** Exact traveling Jz harmonic: Jz(x,t)=A sin(kx-direction*omega*t). */
+export function injectPlaneHarmonicX(harness, ctx, opts = {}) {
+    const { N } = ctx;
+    const modeN = opts.modeN ?? 4;
+    const amp = opts.amp ?? K_B * 2;
+    const direction = (opts.direction ?? 1) >= 0 ? 1 : -1;
+    const k = 2 * Math.PI * modeN / N;
+    const omega = latticeHarmonicOmega(k);
+    for (let x = 0; x < N; x++) {
+        const phase = k * x;
+        const jz = amp * Math.sin(phase);
+        const wz = amp * ((1 - Math.cos(omega)) * Math.sin(phase)
+                        - direction * Math.sin(omega) * Math.cos(phase));
+        for (let y = 0; y < N; y++)
+        for (let z = 0; z < N; z++) {
+            if (Math.abs(jz) > 1e-12) harness.injectFlux(x, y, z, 0, 0, jz);
+            if (Math.abs(wz) > 1e-12) harness.injectWaveVel(x, y, z, 0, 0, wz);
+        }
+    }
+}
+
+/** Exact standing Jz harmonic: Jz(x,t)=A sin(kx) cos(omega*t). */
+export function injectStandingHarmonicX(harness, ctx, opts = {}) {
+    const { N } = ctx;
+    const modeN = opts.modeN ?? 4;
+    const amp = opts.amp ?? K_B * 2;
+    const k = 2 * Math.PI * modeN / N;
+    const omega = latticeHarmonicOmega(k);
+    for (let x = 0; x < N; x++) {
+        const jz = amp * Math.sin(k * x);
+        const wz = (1 - Math.cos(omega)) * jz;
+        for (let y = 0; y < N; y++)
+        for (let z = 0; z < N; z++) {
+            if (Math.abs(jz) > 1e-12) harness.injectFlux(x, y, z, 0, 0, jz);
+            if (Math.abs(wz) > 1e-12) harness.injectWaveVel(x, y, z, 0, 0, wz);
+        }
+    }
+}
 
 /**
  * Minimal harness surface for scenario setup when no PhysicsHarness is
@@ -150,10 +517,18 @@ export function injectCoherentSlitPair(harness, ctx, opts = {}) {
     const slitSep = opts.slitSep ?? vox(5);
     const slitX = opts.slitX ?? vox(8);
     const slitYs = opts.slitYs ?? [mid - slitSep, mid + slitSep];
-    const emit = opts.emit ?? ((px, py, z, g) => {
-        harness.injectFlux(px, py, z, 0, 0, g);
-        harness.injectWaveVel(px, py, z, g, 0, 0);
-    });
+    const carrierK = opts.carrierK ?? 2 * Math.PI / 8;
+    const carrierPhase = opts.carrierPhase ?? 0;
+    const emit = opts.emit;
+    if (!emit) {
+        for (const sy of slitYs) {
+            injectSheetPacketX(harness, ctx, {
+                x0: slitX, y0: sy, sigmaX: Math.max(4, slitSigma), sigmaY: slitSigma,
+                amp: sAmp, direction: +1, carrierK, carrierPhase,
+            });
+        }
+        return;
+    }
     for (const sy of slitYs) {
         for (let z = 0; z < N; z++)
         for (let dy = -slitHw; dy <= slitHw; dy++)

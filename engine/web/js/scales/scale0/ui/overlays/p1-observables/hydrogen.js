@@ -6,14 +6,14 @@
 import { BaseComponent } from '../../../../../core/component.js';
 import { renderEnergyLevels, hydrogenEnergyLevel, ionizationEnergy } from '../../../../../spectroscopy.js';
 import { RYDBERG_EV_CODATA } from '../../../../../constants.js';
-import { cardStyle, titleStyle } from '../_card-helpers.js';
+import { cardStyle, titleStyle, tagBadge } from '../_card-helpers.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
 
 
 
 const TEMPLATE = `
     <section data-section="hydrogen" style="${cardStyle(120)}">
-        <div style="${titleStyle()}">Hydrogen Spectrum</div>
+        <div style="${titleStyle()}">${tagBadge('T', 'analytic Rydberg formula E_n = -K_B Z^2 alpha^2/(2n^2); NOT a lattice eigenvalue')}Hydrogen Spectrum</div>
         <div ref="body" class="p1-empty-state">
             Load <code>s0-seed-hydrogen</code> to see the predicted level diagram.
         </div>

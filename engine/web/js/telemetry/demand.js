@@ -8,7 +8,14 @@
  * @returns {{ wantAudit: boolean, wantLag: boolean }}
  */
 export function getScale0TelemetryDemand(ctx) {
-    const wantsConservationAudit = typeof window !== 'undefined' && !!window.__ftdConservationPanel;
+    // Keyed on the panel being RENDERED, not merely constructed.
+    // mountConservationMicropanel() assigns window.__ftdConservationPanel
+    // unconditionally, so testing the reference alone pinned wantAudit true for
+    // the entire Scale-0 session on behalf of a consumer that consumed nothing.
+    const consPanel = typeof window !== 'undefined' ? window.__ftdConservationPanel : null;
+    const consEl = (typeof document !== 'undefined')
+        ? document.getElementById('conservation-micropanel') : null;
+    const wantsConservationAudit = !!consPanel && !!consEl && consEl.getClientRects().length > 0;
     const wantAudit = ctx.isPanelVisible('diagnostics') || ctx.isPanelVisible('charts')
         || ctx.isPanelVisible('lagrangian') || ctx.isPanelVisible('telemetry-grid')
         || wantsConservationAudit;
