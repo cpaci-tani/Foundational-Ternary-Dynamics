@@ -1,0 +1,35 @@
+{
+  "identifier": "FTD-0533",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_multicell_worldline_variation",
+  "checks_passed": 9,
+  "checks_total": 9,
+  "verdict": "GLOBAL_DEPOSITED_ACTION_HAS_UNIQUE_INTERNAL_KNOT_VARIATION",
+  "metrics": {
+    "interior_gradient_residual": 4.721689619152647e-14,
+    "worst_internal_knot_centered_convergence": 6.017771170263586e-9,
+    "worst_internal_knot_directional_linearity": 4.0457888220157834e-9,
+    "corner_one_sided_gap_h0": 9.560565672472876e-10,
+    "corner_one_sided_gap_h1": 2.6118840423805523e-10,
+    "corner_one_sided_gap_h2": 6.834000032540644e-11,
+    "corner_one_sided_gap_h3": 1.7394086171407253e-11,
+    "gauge_gradient_residual": 1.184239338536397e-13,
+    "pure_gauge_gradient": 4.500103993147301e-14,
+    "zero_geometry_arms": 240,
+    "worst_zero_connection_gradient": 0.0,
+    "worst_zero_connection_convergence": 0.0,
+    "endpoint_threshold_gap": 0.028867513459481284
+  },
+  "sha256": {
+    "test": "79935CA2DDA1CCD7CB20EBF879415EA46C95F03DD6C130CC65BC0FA206575D58",
+    "header": "D41FBB57BEBB286818811CCA6726DA64961626929103D87A05DEEF91DF2B946B",
+    "implementation": "A06C65F9C3587ACDAD96A9003331F9EE8D23C72029D54BB03402FAB819EBB93C",
+    "locked_preregistration": "3A9AB2FBE62921DB3D847843C12F9A731B9A5B6EE05DD28EBA63FBA915E8CF3F"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

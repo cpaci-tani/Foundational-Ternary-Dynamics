@@ -1,0 +1,12 @@
+source_verdict=NO_QUALIFIED_SOURCE_BUILT_DRESSING
+movement_verdict=NO_QUALIFIED_ATTACHMENT_OR_WAKE
+release_verdict=NO_QUALIFIED_RELEASED_OUTGOING_FIELD
+structural_valid=1
+observer_neutral=1
+rows=250
+worst_mirror_residual=0
+minimum_tick12_activity=0.013801985075358328
+minimum_tick12_radial_alignment=0.73759522663791344
+minimum_release_radius_growth=1.8644358454954197
+minimum_release_near_fraction_drop=0.1937433992713723
+worst_release_energy_drift=1.3502284983150281e-13

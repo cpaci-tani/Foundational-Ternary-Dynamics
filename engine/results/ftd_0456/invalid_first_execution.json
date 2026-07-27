@@ -1,0 +1,17 @@
+{
+  "identifier": "FTD-0456",
+  "status": "PROTOCOL_INVALID",
+  "executed_local_date": "2026-07-24",
+  "campaign_source_sha256": "B01E6016F72C6D1929FCC55FA73ECFDA9B58CC35F695B909C0AC027E0D7A0D9A",
+  "solver_source_sha256": "5103AA5CD427CF57C983606AFDF4CE1A2B49108263324A84D46FBBA11D0CA94B",
+  "arm_count": 24,
+  "r1_bracketed": 6,
+  "r2_bracketed": 6,
+  "r3_bracketed": 6,
+  "global_bracketed": 6,
+  "worst_direct_energy_residual": 9.9307736112612125e-05,
+  "worst_momentum_residual": 1.18655085892043e-15,
+  "worst_outside_support": 0.0,
+  "defect": "The solver evaluated the lattice K stencil while control_j and control_w were only partly populated.",
+  "correction": "Copy the complete control fields before evaluating any K stencil. Protocol and campaign source unchanged."
+}

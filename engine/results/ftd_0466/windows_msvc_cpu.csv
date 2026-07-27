@@ -1,0 +1,5 @@
+record,key,value,details
+arm,dressing,off,attempts,42,kinematic_valid,42,momentum_pass,0,required_work_rms,0.00049812390433865295,max_required_abs,0.00084718841941877968,momentum_residual_rms,0.003535283372624,min_momentum_residual,0.0025235952480598695,max_momentum_residual,0.0060382494550806493,worst_energy_residual,0,worst_inverse_residual,0,worst_outside_support,0,valid,true
+arm,dressing,on,attempts,42,kinematic_valid,42,momentum_pass,0,required_work_rms,0.00049878306013181363,max_required_abs,0.00086923085487708093,momentum_residual_rms,0.0035345175722540528,min_momentum_residual,0.002519894694439652,max_momentum_residual,0.006155129462967447,worst_energy_residual,0,worst_inverse_residual,0,worst_outside_support,0,valid,true
+summary,support_sites,36,fixture_inverse_residual,0,valid,true
+verdict,INJECTIVE_LOCAL_PERMUTATION_MOMENTUM_MISMATCH

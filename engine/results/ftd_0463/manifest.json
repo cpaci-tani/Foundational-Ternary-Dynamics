@@ -1,0 +1,25 @@
+{
+  "identifier": "FTD-0463",
+  "protocol": "guide cross-energy decomposition v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 33,
+  "ticks": 48,
+  "attempts": 42,
+  "packet_cross_rms": 1.2775930643866692e-5,
+  "dressing_cross_rms": 2.3856515736440676e-4,
+  "external_cross_rms": 2.3718551007826405e-4,
+  "dressing_to_packet_rms_ratio": 18.67301600286427,
+  "worst_cross_additivity": 3.5908775952719907e-16,
+  "worst_work_additivity": 2.7105054312137611e-20,
+  "ftd_0462_replay_max_abs_residual": 1.1291965626436529e-16,
+  "valid": true,
+  "verdict": "DRESSING_SOURCE_CROSS_DOMINATES",
+  "sha256": {
+    "campaign_source_locked": "27F9A81D045C3A6E7F4BFDE838A195BDBD8A0C1AF212B34E1A279448F2FF022C",
+    "run_csv": "C6369DCD33BC14C980CF74327166804AC9243DA0586D900D5832AB238F1A7B24",
+    "preregistration_post_execution": "3135398978DEB10817F120E12E83590F50D345C9298A4285859225FF52C5B399",
+    "audit": "6D810B5C9C0B36CEF932833EF65044F6B0A9C9631EEE99804DF13EA45DF95D3D"
+  }
+}

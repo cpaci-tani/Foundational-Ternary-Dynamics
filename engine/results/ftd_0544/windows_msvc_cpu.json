@@ -1,0 +1,26 @@
+{
+  "identifier": "FTD-0544",
+  "verdict": "MATCHED_MIDPOINT_POYNTING_EXACT",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "arms": 15,
+  "failures": 0,
+  "tolerance": 1e-12,
+  "metrics": {
+    "worst_midpoint_residual": 4.3368086899420177e-18,
+    "worst_update_residual": 2.7755575615628914e-17,
+    "worst_adjoint_residual": 4.4892746204477918e-18,
+    "worst_poynting_residual": 1.042048392019268e-14,
+    "worst_gauss_transport_residual": 8.3266726846886741e-17,
+    "polarity_residual": 1.865174681370263e-14,
+    "reversal_residual": 1.865174681370263e-14
+  },
+  "sha256": {
+    "preregistration": "D431E624B0D9AB476F4F56BBDB2F64134DD394C497F0ADC3EDCC6114CE343D88",
+    "test": "62973DEBB509B2B92F95527D3F373E0365056215BCEC89367DF6FEA3CA35E4DD",
+    "header": "1F9C85C03155349B2F6A67E6BB121B9E395FA82CC09FF3B246C31C3E490C6212",
+    "source": "4489C987C44318959821533208170AD8FDF066DC5F1F0CA608989672AEA8807C"
+  },
+  "production_changed": false
+}

@@ -1,0 +1,34 @@
+{
+  "identifier": "FTD-0552",
+  "verdict": "UNSUBTRACTED_QUADRATIC_SELF_FORCE_PRESENT",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 12,
+  "ticks_per_arm": 64,
+  "static_arms": 8,
+  "failures": 0,
+  "tolerance": 1e-12,
+  "metrics": {
+    "worst_poisson_residual": 9.42084995034653e-14,
+    "worst_curl_residual": 1.0408340855860843e-17,
+    "worst_identity_residual": 9.421802598633296e-14,
+    "worst_accumulated_energy_residual": 2.7755575615628914e-17,
+    "largest_displacement": 0.8464862214540756,
+    "largest_momentum": 0.010170940522624974,
+    "polarity_residual": 0.0
+  },
+  "scope": {
+    "one_step_transaction_survives": true,
+    "multitick_algebra_survives": true,
+    "generic_static_control_passes": false,
+    "unsubtracted_isolated_mobile_law_closed": true,
+    "self_field_subtraction_authorized": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "B428FE2D3895F468EDEC2A77B8DF6724202293357213543B7C2F45C19D759C93",
+    "test": "7666DC3289C57A6A32ADD1EE4CFBA07D85B57DEA144BE7D59B811BA2BACED9C7"
+  },
+  "production_changed": false
+}

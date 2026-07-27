@@ -1,0 +1,32 @@
+{
+  "identifier": "FTD-0462",
+  "protocol": "rigid source-history translation v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 33,
+  "ticks": 48,
+  "attempts": 42,
+  "partial_valid_count": 12,
+  "rigid_valid_count": 42,
+  "rigid_required_work_rms": 0.00023156579861414742,
+  "partial_required_work_rms": 0.008462839477058743,
+  "required_work_reduction_factor": 36.5461546036,
+  "minimum_outside_r1_fraction": 0.12232886950877267,
+  "maximum_outside_r1_fraction": 0.70616963120792897,
+  "external_work_rms": 8.97637731327757e-5,
+  "cross_energy_change_rms": 0.000237185510078264,
+  "worst_component_closure": 5.3894600990038564e-17,
+  "worst_self_translation": 1.1796119636642288e-16,
+  "worst_cross_identity": 1.163891032163189e-16,
+  "worst_translation_map": 0.0,
+  "ftd_0459_work_series_max_abs_residual": 0.0,
+  "valid": true,
+  "verdict": "RIGID_SOURCE_HISTORY_TRANSLATION_FULL_RECOVERY_NONLOCAL_EVENT_SUPPORT",
+  "sha256": {
+    "campaign_source_locked": "34E168B10A4E3227BC0BC089372A4F7D5B1ADFA5A373ECF7BA75BF980A0FB04C",
+    "run_csv": "9922A5743BA083E6F0A275C34C6A1CDE338AD41A15F5057332A7EB2FF2FAC40C",
+    "preregistration_post_execution": "54392F1B5148039602C89A297BAB00F11DFF967A0497B91A650E9D6E33627F16",
+    "audit": "6ECFFC26911236086B0FED950276249F8909B7C83906090279D64A3687D20A20"
+  }
+}

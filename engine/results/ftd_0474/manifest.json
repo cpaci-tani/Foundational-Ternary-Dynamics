@@ -1,0 +1,62 @@
+{
+  "identifier": "FTD-0474",
+  "protocol": "emergent boundary mechanism discriminator v1",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU required by immutable history journal",
+  "ontology_scope": "uncontained undefined-boundary substrate; finite windows are probes",
+  "production_tick_modified": false,
+  "volumes": [24, 32],
+  "amplitudes_in_K_GENESIS": [12, 20, 40],
+  "seeds": [3759153152, 3759153153, 3759153154, 3759153155],
+  "ticks": 300,
+  "tail_sample_ticks": [150, 180, 210, 240, 270, 300],
+  "run_rows": 96,
+  "sample_rows": 576,
+  "observer_neutral": true,
+  "structural_valid": true,
+  "verdict": "REACTION_FRONT_ONLY",
+  "stable_dynamic_fraction": {
+    "reaction_periodic": 0.8333333333333334,
+    "reaction_dispersal": 0.8333333333333334,
+    "thermal_dispersal": 1.0,
+    "mobile_dispersal": 0.0
+  },
+  "mobile_tail": {
+    "movement_events": 977,
+    "genesis_events": 0,
+    "evaporation_events": 15,
+    "annihilation_events": 28,
+    "largest_component_min": 1,
+    "largest_component_max": 7,
+    "mechanically_eligible_runs": 0,
+    "maximum_interior_sites": 0
+  },
+  "mean_interface_gradient_fraction": {
+    "reaction_periodic": 0.02405360322789048,
+    "reaction_dispersal": 0.023538458075533692,
+    "thermal_dispersal": 0.008378856525745762,
+    "mobile_dispersal": 0.0031237714168135373
+  },
+  "maximum_interface_gradient_fraction": 0.07902444572203514,
+  "membrane_gates": {
+    "mobile_cells": false,
+    "reaction_cells": false,
+    "area_gate": true,
+    "area_gate_probative": false,
+    "laplace_gate": false,
+    "interface_localization_gate": false,
+    "volume_gate": true
+  },
+  "execution_note": "first locked execution displayed the same provisional verdict but wrote to a build-relative path; an I/O-only __FILE__ path repair was documented, re-locked, and reproduced exactly",
+  "sha256": {
+    "campaign_source_relocked": "04F4D0D72879427EFC6BB1354B3D904C8F2214BE4B9F70912E5362F22F66135F",
+    "observer_header_locked": "913789453A934EF8765414B9F523078E1BFA6E542BB67C0CA8D608EA7B651FC2",
+    "run_summary_csv": "7A119015AE6399B164E9D8F794E48FD2EBA8F69BE4548F3F499F4DB22FA699BB",
+    "sample_csv": "61DA228B7074FE6403733319720A7FACC1C2818840CD1FB975164EF37A29D0DF",
+    "verdict_txt": "CDF05D50EF9392EAD4DDCCEDFA3395E8964D3B0292F11904DC3A8FFDA1520EAF",
+    "preregistration_post_execution": "50684140697A855CB329AA9157ACBD2EB4CA34E2D7B08E1B2BDD66C6120DEB22",
+    "audit": "27184AEED4CB19632217ACAD9C301F86B7A52829ED57874506B70085B41363F0"
+  }
+}

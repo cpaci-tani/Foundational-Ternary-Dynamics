@@ -1,0 +1,44 @@
+{
+  "identifier": "FTD-0507",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer and production continuation",
+  "test": "test_boundary_chart_capacity",
+  "checks_passed": 6,
+  "checks_total": 6,
+  "verdict": "BOUNDARY_CAPACITY_DEPENDS_ON_CHART_MULTIPLICITY",
+  "metrics": {
+    "formula_arms": 80,
+    "collision_arms": 156,
+    "production_arms": 156,
+    "worst_chart_position_residual": 0.0,
+    "worst_shape_residual": 0.0,
+    "worst_first_moment_residual": 0.0,
+    "worst_current_residual": 0.0,
+    "worst_continuity_residual": 4.163336342344337e-17,
+    "face_current_l1_min": 0.0,
+    "face_current_l1_max": 0.0,
+    "edge_current_l1_min": 0.12499999999999956,
+    "edge_current_l1_max": 0.12499999999999956,
+    "corner_current_l1_min": 0.12499999999999864,
+    "corner_current_l1_max": 0.12500000000000022,
+    "worst_production_drift_residual": 0.0,
+    "worst_production_separation_residual": 2.7200464103316335e-15,
+    "worst_production_inverse_residual": 0.0,
+    "maximum_production_journal_events": 0,
+    "production_state_mismatches": 0,
+    "production_journal_enable_failures": 0,
+    "worst_production_field_residual": 0.0,
+    "worst_seed_output_residual": 0.0
+  },
+  "sha256": {
+    "test": "81530A5A596C140DA1F522DB6877F7C4D2E92D2A78EB931BE9A5334E4F1A2638",
+    "header": "97E8E322383AF793196CB6A7548FF9137D42A705AAE4FBBFE7352690FF15E658",
+    "implementation": "DE9B13E38423BE3251F7F497314588A01FA91AA4E9AB69DA3BCD9506AF6BD378",
+    "locked_preregistration_body": "1FE273915B5C760AF3BEEC23532DF6980F5CB6C1CFEFB937E90A6D2877446007"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

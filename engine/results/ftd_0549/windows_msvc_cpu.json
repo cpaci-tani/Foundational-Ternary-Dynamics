@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0549",
+  "verdict": "ENDPOINT_DATA_DO_NOT_DETERMINE_SPACETIME_CURRENT",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 96,
+  "failures": 0,
+  "tolerances": {
+    "exact_identity": 1e-14,
+    "nonidentity": 1e-8
+  },
+  "metrics": {
+    "worst_endpoint_residual": 0.0,
+    "worst_derivative_residual": 0.0,
+    "worst_total_current_residual": 2.2204460492503138e-17,
+    "worst_recombination_residual": 3.3480163086352378e-17,
+    "worst_analytic_moment_residual": 1.713039432527097e-17,
+    "worst_reversal_residual": 1.713039432527097e-17,
+    "smallest_monotonicity_margin": 0.90377495513506234,
+    "largest_split_difference": 0.003333333333333334
+  },
+  "scope": {
+    "same_endpoint_positions": true,
+    "same_endpoint_velocities": true,
+    "same_midpoint_velocity": true,
+    "same_total_face_current": true,
+    "different_spacetime_split": true,
+    "self_consistent_atomic_solve_closed": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "4D766E9DD345B02221F8D3C00D3649F4BA42E55C6C5D7F6AF9A1E6515784AE3A",
+    "header": "E79E3C58D43F159868E0AA9EB7BC16ECABBA75C9BA2E03DE67D80D922D8D91F4",
+    "source": "97276011AB2DC1264CB360697016CBEA58C5831DAF45AD8F6C207212DFC0BF3B",
+    "test": "14E4FC27DEA960E965C9F63A5A3ED6E9AB6FAA52D03AB6166E19F453D3D81490"
+  },
+  "production_changed": false
+}

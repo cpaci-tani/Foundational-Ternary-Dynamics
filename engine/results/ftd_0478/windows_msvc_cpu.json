@@ -1,0 +1,31 @@
+{
+  "identifier": "FTD-0478",
+  "date": "2026-07-25",
+  "backend": "MSVC 14.44.35207 Release CPU",
+  "lattice_size": 16,
+  "tolerance": 1e-12,
+  "subcell_shape": {
+    "worst_partition_residual": 0.0,
+    "worst_first_moment_residual": 0.0,
+    "failures": 0
+  },
+  "face_current": {
+    "worst_continuity_residual": 6.661338147750939e-16,
+    "worst_partition_residual": 2.220446049250313e-16,
+    "worst_first_moment_residual": 1.7763568394002505e-15,
+    "translation_residual": 0.0,
+    "rotation_residual": 5.551115123125783e-17,
+    "inversion_residual": 0.0,
+    "worst_locality_residual": 0.0,
+    "failures": 0
+  },
+  "normalization": {
+    "field_scale": 0.25627362930856312,
+    "native_susceptibility": 0.25627362930856312,
+    "action_work_coefficient": 0.021892057692994273,
+    "mapped_work_coefficient": 0.021892057692994273,
+    "susceptibility_residual": 0.0,
+    "work_residual": 0.0
+  },
+  "verdict": "SUBCELL_FACE_CURRENT_EXACT_SELECTED_REPRESENTATION"
+}

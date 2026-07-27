@@ -1,0 +1,43 @@
+{
+  "identifier": "FTD-0547",
+  "verdict": "UNIFORM_ACCELERATED_WORLDLINE_REPAIRS_WORK_EXACTLY",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 144,
+  "failures": 0,
+  "parameters": {
+    "rest_energy": 0.511,
+    "temporal_scale": 0.57735026918962576451,
+    "c_speed": 0.57735026918962576451
+  },
+  "tolerances": {
+    "exact_identity": 1e-14,
+    "schedule_discriminator": 1e-8
+  },
+  "metrics": {
+    "worst_exact_work_residual": 2.7105054312137611e-20,
+    "worst_defect_identity_residual": 1.2468324983583301e-18,
+    "worst_endpoint_residual": 1.5959455978986625e-15,
+    "worst_derivative_residual": 1.3877787807814457e-17,
+    "worst_causal_excess": 0.0,
+    "worst_reversal_residual": 1.3877787807814457e-17,
+    "worst_cubic_residual": 0.0,
+    "largest_midpoint_defect": 4.1017724139693484e-5,
+    "largest_schedule_deviation": 0.0055368684341502161,
+    "leading_relative_residual": 1.310085334865809e-6
+  },
+  "scope": {
+    "uniform_force": true,
+    "collinear": true,
+    "self_consistent_field": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "2F9550EC2D30440D21E872D9BC9A83C1FAD5FC76A16D78615760372D855B99C0",
+    "header": "EDE784E8F20A82FFE8E7597523AE48960A865C4623834D3BA47D050F25528C54",
+    "source": "A07713EBCC05B9E8CB34A2BA15D599252C40945AFD7AFD8E1C3C4A99F3CC5FC0",
+    "test": "46673DDEFAE379BFA6F8C77788D439ACB07098A96200C76E8D89DB0E3B0C678B"
+  },
+  "production_changed": false
+}

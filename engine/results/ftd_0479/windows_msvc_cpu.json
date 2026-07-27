@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0479",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "normalization": {
+    "field_scale_z": 0.25627362930856312,
+    "interaction_scale": 0.021892057692994273
+  },
+  "volumes": [11, 12],
+  "arms": 24,
+  "converged_arms": 24,
+  "gate_tolerance": 1e-12,
+  "worst_identity_residual": 1.0047518372857667e-14,
+  "worst_continuity_residual": 5.828670879282072e-16,
+  "worst_gauss_residual": 5.551115123125783e-16,
+  "worst_work_residual": 2.233456475320139e-17,
+  "worst_energy_residual": 1.0047518372857667e-14,
+  "worst_covariance_residual": 4.440892098500626e-16,
+  "worst_causal_speed_excess": 0.0,
+  "worst_explicit_inverse_residual": 3.582203977892107e-16,
+  "worst_inferred_inverse_residual": 8.881784197001252e-16,
+  "largest_magnetic_impulse": 0.00024075260193318659,
+  "forced_nonconvergence_exposed": true,
+  "electric_components_work_fixed_in_test_arms": true,
+  "magnetic_gather_action_derived": false,
+  "verdict": "IDENTITIES_CLOSE_MAGNETIC_GATHER_REMAINS_UNDERDERIVED"
+}

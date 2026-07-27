@@ -1,0 +1,30 @@
+{
+  "identifier": "FTD-0504",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_ternary_collision_vertex",
+  "checks_passed": 10,
+  "checks_total": 10,
+  "verdict": "IDENTICAL_INTERIOR_CROSSING_IS_PERMUTATION_GAUGE",
+  "metrics": {
+    "capacity_arms": 14,
+    "transformed_crossing_arms": 144,
+    "worst_phase_residual": 0.0,
+    "worst_current_residual": 2.4286128663675299e-16,
+    "worst_conservation_residual": 0.0,
+    "worst_continuity_residual": 4.8572257327350599e-17,
+    "worst_reversal_residual": 1.7763568394002505e-15,
+    "boundary_charge_defect": 1.0,
+    "elastic_output_count": 5,
+    "minimum_direction_separation": 0.6058108930553725
+  },
+  "sha256": {
+    "test": "649ECBC66A1FAAD9ED01F71F953965BE9D1668040D41722712DC4A066F55DE1F",
+    "header": "E46C42E89D61A9C897E7246E83AA95CD511BC831411C31BA736E1F53E6CE4D97",
+    "implementation": "6CA470A788FA209839B0C2A4DB8AFE7350A57FCC2DE54B9FAAB55B87C345DB4A"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

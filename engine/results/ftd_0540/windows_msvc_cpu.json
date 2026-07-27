@@ -1,0 +1,34 @@
+{
+  "identifier": "FTD-0540",
+  "date": "2026-07-26",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_local_polarity_regularity",
+  "checks_passed": 7,
+  "checks_total": 7,
+  "verdict": "LOCAL_POLARITY_REGULARITY_TRILEMMA_PROVED",
+  "metrics": {
+    "hat_left_derivative": 1.0,
+    "hat_right_derivative": -1.0,
+    "hat_derivative_jump": 2.0,
+    "worst_tensor_basis_residual": 0.0,
+    "quadratic_center_weight": 0.75,
+    "quadratic_neighbor_weight": 0.125,
+    "quadratic_cardinality_defect": 0.25,
+    "catmull_negative_lobe_position": 1.3333333333333333,
+    "catmull_negative_lobe": -0.07407407407407407,
+    "worst_quadratic_partition_residual": 0.0,
+    "worst_quadratic_first_moment_residual": 0.0,
+    "worst_catmull_partition_residual": 0.0,
+    "worst_catmull_first_moment_residual": 0.0
+  },
+  "sha256": {
+    "test": "2A4C0A60B6F5457170052C0EF697882A0A374A19A3E0AEFFAFDA98E929798E5D",
+    "observer_header": "7430D9092D510D867E2D4D492E49F365CC2DF0465F688C35243C46CD9B74B682",
+    "observer_implementation": "409FE0F0E8786CD1120C8C44D99950A4EB57FFD6D4EC5D96CFAB7117DA31456E",
+    "locked_preregistration": "55EEC9AE9B3C29407BA0F67205351DCCEBA51FFE7BB0F087BDFEC0D5BD11A0BF"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

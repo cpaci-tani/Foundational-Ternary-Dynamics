@@ -1,0 +1,8 @@
+FTD-0451 half-tick link exchange v1
+protocol,tick,17,twice_time,35,directions,26,group_size,48,work,0.0001,closure_gate,9.9999999999999998e-13
+channels,failures,0,reverse_failures,0,covariance_reconstruction_failures,0,pass,true
+local_closure,worst_momentum_residual,0,worst_energy_residual,1.1018204577883939e-17,pass,true
+reverse,worst_particle_round_trip_residual,2.943923360032078e-17,worst_link_momentum_cancel_residual,2.943923360032078e-17,worst_link_energy_cancel_residual,0,pass,true
+covariance,tests,1248,worst_residual,0,pass,true
+gates,exchanges_valid,true,channel_pass,true,local_closure_pass,true,reverse_pass,true,covariance_pass,true
+verdict,REVERSIBLE_HALF_TICK_LINK_LEDGER_CONSTRUCTED_NOT_DYNAMICS

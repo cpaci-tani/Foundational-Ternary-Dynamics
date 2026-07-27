@@ -1,0 +1,68 @@
+{
+  "identifier": "FTD-0432",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_EVAPORATION_HAZARD_v1.md",
+  "source_lock": "scripts/proofs/native_dressed_evaporation_hazard_lock.json",
+  "valid_records": {
+    "windows_msvc_cpu_L32.csv": {
+      "backend": "windows_msvc_cpu",
+      "actual_backend": "cpu",
+      "L": 32,
+      "rows": 1632,
+      "sha256": "3560b4e79fe448bb22e7435fb4992377ff7c52aff05d5b2705443888d6d10ef9"
+    },
+    "wsl2_cuda_L32.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 32,
+      "rows": 1632,
+      "sha256": "d04ec096706723466bc346e40d7972f0ef14cb886b5149948064f450a2a93e98"
+    }
+  },
+  "conditional_expectation": {
+    "source_z_max": 2.6997260669985903,
+    "source_z_rms": 1.0427724782985628,
+    "occupancy_z_max": 2.5326818036419887,
+    "occupancy_z_rms": 1.09860198022961,
+    "locked_source_z_max": 6.0,
+    "locked_source_z_rms": 2.5,
+    "locked_occupancy_z_max": 6.0,
+    "locked_occupancy_z_rms": 2.5
+  },
+  "coupled_feedback": {
+    "100_n1": {
+      "hazard_min": 0.0012247816374005337,
+      "hazard_max": 0.09912646960344597,
+      "hazard_range": 0.09790168796604544,
+      "mean_site_probability_min": 0.0006538988984651456,
+      "mean_local_energy_max": 15.549630271111766
+    },
+    "110_n2": {
+      "hazard_min": 0.0019991694981157625,
+      "hazard_max": 0.09225940145833017,
+      "hazard_range": 0.0902602319602144,
+      "mean_site_probability_min": 0.001236050976590775,
+      "mean_local_energy_max": 3.5721967399702454
+    },
+    "111_n3": {
+      "hazard_min": 0.002485957747047763,
+      "hazard_max": 0.07359838199163808,
+      "hazard_range": 0.07111242424459031,
+      "mean_site_probability_min": 0.0017306576368541998,
+      "mean_local_energy_max": 1.354126597999398
+    }
+  },
+  "backend_max_abs_differences": {
+    "source_before": 1.1102230246251565e-16,
+    "expected_loss": 2.42861286636753e-17,
+    "predicted_next": 1.1102230246251565e-16,
+    "source_after": 1.734723475976807e-18,
+    "source_hazard": 6.245004513516506e-17,
+    "expected_removals": 6.821210263296962e-13
+  },
+  "outcome": "A",
+  "status": "DRESSED_HAZARD_EXPLAINS_NONEXPONENTIALITY",
+  "scope": "MECHANISM_VALIDATION_ONLY",
+  "conservation_inference": "NONE",
+  "infrared_inference": "NONE",
+  "next_identifier": "FTD-0433"
+}

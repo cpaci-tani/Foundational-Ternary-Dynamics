@@ -1,0 +1,38 @@
+{
+  "schema": "ftd.hop_source_multipole_hierarchy.v1",
+  "record": "FTD-0561",
+  "date": "2026-07-26",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer",
+  "production_changes": false,
+  "locked_preregistration_sha256": "166E917FED9DE4F568E06F7DC8F8601C2BE93C9FC244F6A797CA912A3F3AB13F",
+  "source_sha256": {
+    "engine/include/ftd/eft/hop_source_multipole_hierarchy.h": "BF729863F478C160D2F132ADF7F4EA4B26D55D122367963031B7F45034A07FCE",
+    "engine/src/eft/hop_source_multipole_hierarchy.cpp": "8EF369C78090D0C1EC8CD6A4C990836696A57CCE176921BB295109305F858F84",
+    "engine/tests/test_hop_source_multipole_hierarchy.cpp": "ED0EF8BD251FAB6B15A6F8BBE34C6E2A2C37BD3BAB11759C84AAF2849D7A4F57",
+    "scripts/proofs/proof_hop_source_multipole_hierarchy.py": "37AC3DB81B7C0965B6850EB844FC66C1C15E65922F9AD503D10FB09DF658D80E"
+  },
+  "cardinalities": {
+    "profiles": 4,
+    "periods": 4,
+    "axes": 3,
+    "polarities": 2,
+    "arms": 96
+  },
+  "results": {
+    "maximum_denominator_residual": 1.5265566588595902e-16,
+    "maximum_form_factor_residual": 1.1102230246251565e-16,
+    "minimum_normalized_forcing": 1.526758807239605e-6,
+    "maximum_polarity_mirror_residual": 0.0,
+    "maximum_cubic_covariance_residual": 0.0,
+    "point_t256_error": 0.0069666637800803732,
+    "pair_t256_error": 0.0071879959676699468,
+    "dipole_t256_error": 0.013664953916422751,
+    "quadrupole_t256_error": 0.020900280935522653,
+    "same_plane_oblique_amplitude": 0.14148028914513019,
+    "test_failures": 0
+  },
+  "verdict": "HOP_SOURCE_MULTIPOLE_HIERARCHY_DERIVED",
+  "scope_boundary": "Rigid finite profiles in the frozen linear native coupling sector; neutral nonlinear and emergent-charge carriers remain open."
+}

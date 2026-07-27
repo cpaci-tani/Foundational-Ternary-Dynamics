@@ -1,0 +1,27 @@
+{
+  "identifier": "FTD-0465",
+  "protocol": "local-coat injectivity and momentum v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 33,
+  "attempts_per_dressing_arm": 42,
+  "r1_nullity_lower_bound": 54,
+  "r2_nullity_lower_bound": 150,
+  "r3_nullity_lower_bound": 294,
+  "worst_kernel_image_norm": 0.0,
+  "global_reverse_residual": 0.0,
+  "dressing_off_momentum_pass": 0,
+  "dressing_on_momentum_pass": 0,
+  "dressing_off_momentum_residual_rms": 0.002034039610675943,
+  "dressing_on_momentum_residual_rms": 0.0022571636594904865,
+  "worst_energy_residual": 0.0,
+  "valid": true,
+  "verdict": "LOCAL_TRANSLATION_NONINJECTIVE_MOMENTUM_MISMATCH",
+  "sha256": {
+    "campaign_source_locked": "F6CDCDEC4BE9B7F7D09246B512F8736D1C032D844C5047D4FD3F3BC98F34F326",
+    "run_csv": "863FF65B4CB8B24F3CAA6C8100B0769C949EE74ECD726AD070E5AAEFC2CA1D09",
+    "preregistration_post_execution": "57D30A18541F459BFB4BBE363F7B77703E50ECFB4443F8BF1786C7A6E504829F",
+    "audit": "D2AB9051048B36D21D190D7106EDD6821CCC71A9A17EDB713AE7AD802A45772B"
+  }
+}

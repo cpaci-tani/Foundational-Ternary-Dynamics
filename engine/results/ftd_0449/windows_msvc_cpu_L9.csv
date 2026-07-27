@@ -1,0 +1,8 @@
+FTD-0449 mechanical history and hop work v1
+protocol,L,9,seed,4490,gate,1e-14,nonzero_work_gate,0.001
+snapshot,complete,true,fixture_hash,6030272945638338050,captured_hash,6030272945638338050
+observer,state_rng_neutral,true,events,1
+movement,one_event,true,mechanics_complete,true,velocity_transfer_residual,0,remainder_transfer_residual,0
+hop_work,divergence_source,0,divergence_target,1,endpoint_work,0.085424543102854369,particle_energy_before,0.18896786684739469,particle_energy_after,0.18896786684739469,particle_energy_change,0,work_mismatch,-0.085424543102854369,field_fixed,true
+gates,complete_snapshot,true,observer_neutral,true,event_mechanics_complete,true,registered_work_nonzero,true,kinematic_hop,true
+verdict,MECHANICAL_HISTORY_SUFFICIENT_HOP_WORK_NOT_APPLIED

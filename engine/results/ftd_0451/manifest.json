@@ -1,0 +1,22 @@
+{
+  "identifier": "FTD-0451",
+  "campaign": "half-tick link exchange v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "algebraic observer; no production tick execution",
+  "campaign_source_sha256": "efa7f7e897765e039e518da439d0013c85ecce1e7a24c5dcca107f6a904a5d51",
+  "helper_source_sha256": "eeebe9622acb6a23a87e78ecf68884a58fc3b655000615da5e531c07fef5baf8",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "6c980f334b50ad7606470713b34ae434682b56809701ae0d93dffdc19f9ffd00",
+  "verdict": "REVERSIBLE_HALF_TICK_LINK_LEDGER_CONSTRUCTED_NOT_DYNAMICS",
+  "moore_direction_count": 26,
+  "cubic_covariance_tests": 1248,
+  "channel_failures": 0,
+  "worst_local_momentum_residual": 0.0,
+  "worst_local_energy_residual": 1.1018204577883939e-17,
+  "worst_particle_round_trip_residual": 2.943923360032078e-17,
+  "worst_link_momentum_cancel_residual": 2.943923360032078e-17,
+  "worst_covariance_residual": 0.0
+}

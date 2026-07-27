@@ -1,0 +1,40 @@
+{
+  "identifier": "FTD-0526",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_contact_quotient_horizon",
+  "checks_passed": 6,
+  "checks_total": 6,
+  "verdict": "CONTACT_IS_GAUGE_LATE_RESET_BREAKS_QUOTIENT_ONLY_BY_OVERSHOOT",
+  "metrics": {
+    "base_arms": 312,
+    "order_arms": 624,
+    "commensurate_arms": 144,
+    "overshoot_arms": 480,
+    "worst_pre_horizon_phase_residual": 1.7763568394002505e-15,
+    "worst_pre_horizon_density_residual": 8.8817841970012523e-16,
+    "worst_pre_horizon_current_residual": 4.6629367034256575e-15,
+    "minimum_raw_label_residual": 0.14433756729740649,
+    "worst_horizon_prediction_residual": 7.7368667028565596e-16,
+    "minimum_positive_horizon_residual": 0.0051814855409233473,
+    "maximum_positive_horizon_residual": 0.077350269189626175,
+    "worst_site_state_residual": 0.0,
+    "worst_invariant_residual": 0.0,
+    "worst_crossing_reset_residual": 0.0,
+    "worst_bounce_overshoot_residual": 3.1225022567582528e-17,
+    "worst_commensurate_extra_tick_residual": 0.0,
+    "worst_order_residual": 0.0,
+    "maximum_journal_events": 0,
+    "worst_field_residual": 0.0
+  },
+  "sha256": {
+    "test": "F2E8947A73A096EBF6CAF9AE90BD5EE3FED9EA05D47821A3858A52BB10C73FC8",
+    "header": "5ABBE4FB4265D803E2E357992841DF5776B5594DA989A6F3016496C5094BD224",
+    "implementation": "FF59601BB9392B2E6B42BFB977DD0B230F3B7739C806FE86F0918D4754DAAB9F",
+    "locked_preregistration": "28EFC586766D76EBE40D96E3252B9B4A311986FFD4514476C72ED37CD622B4B9"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

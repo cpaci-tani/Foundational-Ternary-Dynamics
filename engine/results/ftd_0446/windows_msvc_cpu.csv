@@ -1,0 +1,8 @@
+FTD-0446 Moore-channel projection kernel v1
+protocol,channels,13,vector_dimension,3,expected_rank,3,expected_nullity,10,cubic_signed_permutations,48
+linear_map,rank,3,nullity,10,rank_pass,true
+kernel,basis_vectors,10,zero_failures,0,pivot_failures,0,independent,true
+projection_degeneracy,nonface_channels,10,projection_failures,0,minimum_channel_energy_gap,1,maximum_channel_energy_gap,2,degenerate,true
+cubic_closure,transforms,48,direction_tests,624,failures,0,covariant,true
+gates,rank_pass,true,kernel_pass,true,projection_degenerate,true,cubic_covariant,true
+verdict,VECTOR_PROJECTION_HAS_TEN_HIDDEN_CHANNEL_MODES

@@ -1,0 +1,36 @@
+{
+  "identifier": "FTD-0534",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_single_slab_connection_compatibility",
+  "checks_passed": 7,
+  "checks_total": 7,
+  "verdict": "MIDPOINT_WORK_AND_STAGGERED_MAGNETIC_HISTORY_REQUIRE_MULTISTAGE_CONNECTION",
+  "metrics": {
+    "arms": 312,
+    "axial_arms": 72,
+    "diagonal_arms": 240,
+    "minimum_diagonal_current_curl_norm_squared": 0.05543427669378428,
+    "maximum_diagonal_current_curl_norm_squared": 0.22913232901251784,
+    "minimum_diagonal_faraday_mismatch_norm": 0.06796707333566275,
+    "maximum_diagonal_faraday_mismatch_norm": 0.1381823460180176,
+    "worst_component_identity_residual": 2.7755575615628914e-17,
+    "worst_norm_identity_residual": 1.734723475976807e-17,
+    "worst_continuity_residual": 6.938893903907228e-15,
+    "worst_inherited_endpoint_residual": 6.253350701840299e-13,
+    "worst_translation_residual": 1.0061396160665481e-16,
+    "worst_polarity_mirror_residual": 0.0,
+    "worst_signed_cubic_residual": 1.0061396160665481e-16
+  },
+  "sha256": {
+    "test": "4B1A9B7B85F0F3B99B1054307E5957A84FA559214F8AE0821649B4A59186CED3",
+    "header": "376ACA63AC322DC0000F44FBF977FF675C2D0515A5C56AE5BB0E96663B1CA1D7",
+    "implementation": "1FED7D9C22FA0048F7FA864E4104B07236541EE41E5A51B902BB1FDDC8DEEFAE",
+    "locked_preregistration": "D5E822A46CEFE602113BADC6FF417E56348EF3E27856BAABC8B05BF86EE65B06"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

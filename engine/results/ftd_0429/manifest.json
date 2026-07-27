@@ -1,0 +1,65 @@
+{
+  "identifier": "FTD-0429",
+  "protocol_revision": 2,
+  "status": "OUTCOME_A_RESTRICTED_NATIVE_LINEAR_SECTOR",
+  "valid_records": {
+    "windows_msvc_L32.csv": {
+      "sha256": "3e21bd17602eaeadee4f204956faadc7a364165b93193d2cc40f12aa42f659ce",
+      "backend": "windows-msvc-14.44/cpu",
+      "L": 32,
+      "profile": "full",
+      "rows": 24
+    },
+    "wsl2_cuda_L32.csv": {
+      "sha256": "2c52a37a55127556747a11d8b862fd19960865e030745f0a4fabb0e826a24531",
+      "backend": "wsl2-cuda-gcc/gpu",
+      "L": 32,
+      "profile": "full",
+      "rows": 24
+    },
+    "wsl2_cuda_L64.csv": {
+      "sha256": "c0ae84ee7347ab851a52802b29abf485e7249cc235ede5dbe99a7337e663c3d3",
+      "backend": "wsl2-cuda-gcc/gpu",
+      "L": 64,
+      "profile": "infrared",
+      "rows": 9
+    }
+  },
+  "invalid_run_provenance": {
+    "invalid_v1_v2_overlapping_writers.csv": {
+      "sha256": "6331f7f3dc6588dfe652053d01d4e9dca30537099459521c2c09ea8b357b85d7",
+      "reason": "Timed-out Windows wrappers left WSL writers alive; the path contains overlapping deterministic v1/v2 rows and is excluded from every fit and verdict."
+    }
+  },
+  "infrared_fit": {
+    "records": "positive-orientation duty-2 primary WSL2 rows at L=32,64",
+    "n": 18,
+    "constant_model": {
+      "coefficients": [
+        0.25624762295586195,
+        0.020433650935912883,
+        -0.08295688856208656,
+        -0.00011254388487593903
+      ],
+      "rss": 6.282701372430169e-08,
+      "rms": 5.907951972849893e-05,
+      "bic": -338.9570572306481
+    },
+    "zero_model": {
+      "coefficients": [
+        1.4597258749540416,
+        -0.1652901020276596,
+        -1.2052326631633141
+      ],
+      "rss": 0.4007430895817891,
+      "rms": 0.14920960081967266,
+      "bic": -59.815401532827316
+    },
+    "delta_bic": 279.1416556978208,
+    "z0": 0.25624762295586195,
+    "three_g_c": 0.2562736293085631,
+    "relative_intercept_error": 0.00010147885068431044
+  },
+  "outcome": "A",
+  "interpretation": "Primitive polarity dynamically sources a finite infrared Gauss-like susceptibility in the frozen reaction-free native wave/coupling sector. This is not a microscopic U(1), reaction-level conservation theorem, gauge redundancy, photon quantization, force law, or empirical charge normalization."
+}

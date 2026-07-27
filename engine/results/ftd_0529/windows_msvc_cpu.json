@@ -1,0 +1,42 @@
+{
+  "identifier": "FTD-0529",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_matched_contact_energy_obstruction",
+  "checks_passed": 9,
+  "checks_total": 9,
+  "verdict": "ELASTIC_CONTACT_CANNOT_COUPLE_RECIPROCALLY_WITHOUT_FIELD_DEPENDENT_MATTER_OR_DRESSING",
+  "metrics": {
+    "arms": 312,
+    "obstructed_edge_corner_arms": 240,
+    "curl_free_axial_arms": 72,
+    "worst_history_residual": 0.0,
+    "worst_continuity_residual": 2.9143354396410359e-15,
+    "worst_absolute_gauss_residual": 6.170920979070571e-14,
+    "worst_challenge_divergence_residual": 2.220446049250313e-16,
+    "worst_adjoint_identity_residual": 1.3877787807814457e-16,
+    "worst_staggered_embedding_residual": 0.0,
+    "worst_field_energy_identity_residual": 7.66053886991358e-15,
+    "worst_energy_split_formula_residual": 2.389039487071809e-15,
+    "worst_matter_energy_change": 0.0,
+    "minimum_positive_transverse_norm_squared": 0.05492587969391369,
+    "maximum_transverse_norm_squared": 0.2280793627201165,
+    "minimum_predicted_energy_split": 0.00015030506588720264,
+    "maximum_predicted_energy_split": 0.0006241408209062697,
+    "minimum_elastic_incompatibility_margin": 1.887379141862766e-15,
+    "worst_translation_magnitude_residual": 2.220446049250313e-15,
+    "worst_polarity_mirror_magnitude_residual": 0.0,
+    "worst_cubic_orbit_magnitude_residual": 2.609024107869118e-15
+  },
+  "sha256": {
+    "test": "FE334128B422958BD3AD4B32165FA26B6270F1E3074DDE4559421692F5446287",
+    "header": "A9CDB6F8E3728A897CF5E12587679B7FDAF34E4EC181EB2F31530B41205D18ED",
+    "implementation": "E104B1685F7CB866A7411D9B02D7B1BC039DC8DD3735281E16C328216A86E176",
+    "locked_preregistration": "6821AE535D777495621145CE9D8E5D33E34B0AB07C005B59F23F5F5AE2A24AFD"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

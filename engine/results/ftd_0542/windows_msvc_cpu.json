@@ -1,0 +1,30 @@
+{
+  "identifier": "FTD-0542",
+  "verdict": "QUADRATIC_COAT_SPACETIME_ACTION_CONSTRUCTIVE",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "arms": 24,
+  "failures": 0,
+  "tolerance": 1e-12,
+  "metrics": {
+    "worst_spatial_split_residual": 1.1102230246251565e-16,
+    "worst_temporal_partition_residual": 2.2204460492503131e-16,
+    "worst_split_continuity_residual": 1.6653345369377348e-16,
+    "worst_source_variation_residual": 3.4369208867790491e-17,
+    "worst_gauge_endpoint_residual": 2.0816681711721685e-17,
+    "worst_electric_invariance_residual": 5.5511151231257827e-17,
+    "worst_magnetic_invariance_residual": 1.0408340855860843e-17,
+    "worst_curl_gradient_residual": 1.7347234759768071e-18,
+    "translation_residual": 0.0,
+    "rotation_residual": 1.3877787807814457e-17,
+    "reversal_residual": 2.0816681711721685e-17
+  },
+  "sha256": {
+    "preregistration": "44840289D112095600C05F415EBED7FCA6F297D371AF3E7A164BCE390831D195",
+    "test": "C75F032F3B35A27FBFF9C95BA7B177EDF327EEE7FB92C2B04F509C766112BAE5",
+    "header": "9366AAF012BFF7E546DB6424E78099A914CF98213215F3A15840E209769BAFA2",
+    "source": "9DC23CAAD86D3DC0C0C4375AB4291C293BEE4F66F38BDE47AE271A1AA4251D3A"
+  },
+  "production_changed": false
+}

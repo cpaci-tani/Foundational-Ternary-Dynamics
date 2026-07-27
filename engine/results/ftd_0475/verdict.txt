@@ -1,0 +1,15 @@
+morphology_verdict=MIXED_OR_UNRESOLVED_MORPHOLOGY
+response_verdict=NO_QUALIFIED_LEADING_RESPONSE
+structural_valid=1
+observer_neutral=1
+morphology_rows=90
+probe_rows=512
+localized_bound_runs=0
+localized_wake_runs=0
+localized_symmetric_dispersion_runs=0
+scenario_bound_runs=2
+scenario_wake_runs=0
+worst_relative_exact_energy_drift=9.3013946661210587e-13
+minimum_leading_force=5.2458198450257268e-20
+worst_polarity_odd_residual=0
+no_field_control_force=0

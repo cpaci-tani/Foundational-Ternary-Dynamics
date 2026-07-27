@@ -1,0 +1,113 @@
+{
+  "identifier": "FTD-0433",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v1.md",
+  "source_lock": "scripts/proofs/native_dressed_hazard_ir_scaling_lock.json",
+  "recorded_on": "2026-07-23",
+  "valid_records": {
+    "windows_msvc_cpu_L32.csv": {
+      "backend": "windows_msvc_cpu",
+      "actual_backend": "cpu",
+      "L": 32,
+      "rows": 224,
+      "sha256": "a2e980e61546352b60408eae49b60f9ddabe3dc91d11f7b3e0931e99e235a16f"
+    },
+    "wsl2_cuda_L12.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 12,
+      "rows": 80,
+      "sha256": "64486dee4a8f421640ecbc89913de1f4736f011020c9a174624307ec70b61850"
+    },
+    "wsl2_cuda_L16.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 16,
+      "rows": 112,
+      "sha256": "c561a7adf4e63763d372a51e38e74b02b1aa3618fffc26e90ef70d513218817a"
+    },
+    "wsl2_cuda_L20.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 20,
+      "rows": 136,
+      "sha256": "e90e09dd166d0670f4cd955b6ddadfc9dc116d700560f2b85641cbd0ec240a5c"
+    },
+    "wsl2_cuda_L24.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 24,
+      "rows": 168,
+      "sha256": "f48eb87b708e990773c80a93e2fd62a128a6589f7d94a87d98e786cd785f7c8c"
+    },
+    "wsl2_cuda_L32.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 32,
+      "rows": 224,
+      "sha256": "2c0106f19e2b3a5c2de95be724a772c456b1f9d16efc68d15a159202624b404b"
+    },
+    "wsl2_cuda_L40.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 40,
+      "rows": 280,
+      "sha256": "099243c5f30aec99ee72e80ebbaec9c49f299eb5989630078dc2f3b68b73b9ac"
+    },
+    "wsl2_cuda_L48.csv": {
+      "backend": "wsl2_cuda",
+      "actual_backend": "gpu",
+      "L": 48,
+      "rows": 336,
+      "sha256": "f1a587c099a8dc3a43b7ff73a4d9ea619ebb2054e9c4a0d80f9816039a170acd"
+    }
+  },
+  "conditional_expectation": {
+    "source_z_max": 3.459223958300126,
+    "source_z_rms": 1.0313162587065026,
+    "occupancy_z_max": 3.6675176738599036,
+    "occupancy_z_rms": 1.0302313924341135
+  },
+  "target_metrics": {
+    "12": {"target_transition": 9, "hazard": 0.004300447717706922, "jackknife_se": 0.00010626079221358678, "survival": 0.7440210117914166},
+    "16": {"target_transition": 13, "hazard": 0.0053130541609900045, "jackknife_se": 0.00010686492038390325, "survival": 0.660552638149414},
+    "20": {"target_transition": 16, "hazard": 0.004369081728084068, "jackknife_se": 0.00005228310951629177, "survival": 0.601786220283506},
+    "24": {"target_transition": 20, "hazard": 0.004601165458975497, "jackknife_se": 0.00003182440891860657, "survival": 0.5454464863163498},
+    "32": {"target_transition": 27, "hazard": 0.004386948903775636, "jackknife_se": 0.00003991253333879098, "survival": 0.45545026936778066},
+    "40": {"target_transition": 34, "hazard": 0.0038651135842032703, "jackknife_se": 0.0000164066448914369, "survival": 0.3853215010021559},
+    "48": {"target_transition": 41, "hazard": 0.003513250866879199, "jackknife_se": 0.000018889855362992006, "survival": 0.3299017407503495}
+  },
+  "effective_exponents": {
+    "12_16": -0.7350047988353827,
+    "16_20": 0.8766284490925867,
+    "20_24": -0.28387633809147866,
+    "24_32": 0.16572342071704607,
+    "32_40": 0.5675400641435294,
+    "40_48": 0.523521680232623
+  },
+  "largest_volume": {
+    "hazard_ratio_48_12": 0.816950024159933,
+    "hazard_95_lower": 0.0034762267503677348,
+    "hazard_95_upper": 0.003550274983390663
+  },
+  "backend_agreement": {
+    "complex_field_max_abs": 5.551115123125783e-17,
+    "scalar_field_max_abs": 4.547473508864641e-13,
+    "actual_removal_max_abs": 0.0,
+    "tolerance": 1e-10
+  },
+  "outcome": "C",
+  "status": "UNRESOLVED_SCALING",
+  "scope": "FINITE_VOLUME_FIRST_ANTINODE_ONLY",
+  "infrared_inference": "NONE",
+  "conservation_inference": "NONE",
+  "outcome_reasons": {
+    "outcome_a_failed": [
+      "hazard sequence is not strictly decreasing",
+      "hazard ratio h48/h12 exceeds 0.25"
+    ],
+    "outcome_b_failed": [
+      "h48 95% lower bound is below 0.01",
+      "last two effective exponents are not both flat"
+    ]
+  }
+}

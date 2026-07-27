@@ -1,0 +1,40 @@
+{
+  "identifier": "FTD-0528",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release actual CPU coupling plus observer-only matched history",
+  "test": "test_contact_quotient_coupling_scope",
+  "classification_checks_passed": 9,
+  "classification_checks_total": 9,
+  "locked_verdict": "CONTACT_QUOTIENT_COUPLING_SCOPE_UNRESOLVED",
+  "mechanistic_result": "NATIVE_COUPLING_BREAKS_CONTACT_QUOTIENT_ALL_DIRECTIONS_MATCHED_HISTORY_FACTORS",
+  "preregistered_axial_factorization_gate_passed": false,
+  "metrics": {
+    "arms": 312,
+    "axial_arms": 72,
+    "diagonal_arms": 240,
+    "worst_formula_residual": 0.0,
+    "worst_gradient_difference": 0.0,
+    "worst_curl_explanation_residual": 0.0,
+    "minimum_axial_response_difference": 0.010678067887856796,
+    "worst_axial_response_difference": 0.021356135775713592,
+    "minimum_diagonal_response_difference": 0.0061649853694792211,
+    "maximum_diagonal_response_difference": 0.015101068426947709,
+    "worst_matched_current_residual": 0.0,
+    "worst_matched_field_response_residual": 0.0,
+    "worst_continuity_residual": 2.9143354396410359e-15,
+    "worst_common_output_native_residual": 0.0,
+    "worst_translation_magnitude_residual": 0.0,
+    "worst_polarity_mirror_magnitude_residual": 0.0,
+    "worst_cubic_orbit_magnitude_residual": 0.0
+  },
+  "sha256": {
+    "test": "32F2850C32689B1504682E9B44FF8867C3620508CE879883014C6D8BD3E63E23",
+    "header": "220C553065A7B3EA979537D57DBA45E6E001554DD0F7B53A4413E393A191BCFC",
+    "implementation": "F62C7FF9F49A77C1B0535FF33FE284D27842FE4EA054F88FFD1D4D0399BDCD5E",
+    "locked_preregistration": "5492DCA256393375B5C60FA3D7CD994455BE5EC04F69C84AC8B64B41998DA531"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

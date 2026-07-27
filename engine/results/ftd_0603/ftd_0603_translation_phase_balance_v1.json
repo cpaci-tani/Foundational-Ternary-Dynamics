@@ -1,0 +1,26 @@
+{
+  "ftd_id": "FTD-0603",
+  "protocol_sha256": "9C88B2B593C2E31EA08999010E71EF85204ECB3F8C63AA248B7A86A937E16595",
+  "verdict": "TRANSLATION_PHASE_ATTRACTION_NOT_ROBUST",
+  "production_changed": false,
+  "phase_arms": 168,
+  "periodic_arms": 3,
+  "initializer_pass": true,
+  "common_pass": true,
+  "attraction_robust": false,
+  "integer_periodicity_pass": true,
+  "matter_classification": "UNRESOLVED",
+  "pseudomomentum_classification": "UNRESOLVED",
+  "worst_initializer_gate": 7.6455172488137935e-14,
+  "worst_common_gate": 7.6455172488137935e-14,
+  "worst_integer_periodicity": 1.7763568394002505e-15,
+  "minimum_inward_impulse": -0.00041592951053705555,
+  "minimum_separation_decrease": -0.0002713468247312889,
+  "maximum_instantaneous_matter_impulse": 0.00058566896228073883,
+  "maximum_instantaneous_pseudomomentum_defect": 0.00058566896228073883,
+  "resolutions": [
+    {"N": 8, "mean_matter": [1.8010876137565328e-07, -7.9204145335847506e-07, -3.1244721972887766e-06], "mean_pseudomomentum": [1.8010876137565328e-07, -7.9204145335847506e-07, -3.1244721972887766e-06], "maximum_mean_matter": 3.1244721972887766e-06, "maximum_mean_pseudomomentum": 3.1244721972887766e-06},
+    {"N": 16, "mean_matter": [2.4714360310875355e-07, -7.8944652114695016e-08, -9.9387992826876012e-08], "mean_pseudomomentum": [2.4714360310875355e-07, -7.8944652114695016e-08, -9.9387992826876012e-08], "maximum_mean_matter": 2.4714360310875355e-07, "maximum_mean_pseudomomentum": 2.4714360310875355e-07},
+    {"N": 32, "mean_matter": [2.3871516670703036e-08, -2.574247958066656e-08, -1.4087193108910673e-08], "mean_pseudomomentum": [2.3871516670703036e-08, -2.574247958066656e-08, -1.4087193108910673e-08], "maximum_mean_matter": 2.574247958066656e-08, "maximum_mean_pseudomomentum": 2.574247958066656e-08}
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "identifier": "FTD-0545",
+  "verdict": "COAT_FIXED_STEP_MATTER_WORK_NOT_IDENTITY",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 72,
+  "failures": 0,
+  "tolerances": {
+    "action": 1e-12,
+    "analytic": 1e-11,
+    "gauge": 1e-10,
+    "nonidentity": 1e-8
+  },
+  "metrics": {
+    "worst_action_residual": 3.4694469519536142e-18,
+    "worst_analytic_residual": 1.3322676295501878e-15,
+    "worst_gauge_residual": 1.1934897514720433e-15,
+    "largest_nonzero_defect": 4.1017724139665729e-5
+  },
+  "scope": {
+    "uniform_harmonic_external_mode": true,
+    "self_consistent_periodic_single_charge": false,
+    "neutral_coupled_pair_required_next": true
+  },
+  "sha256": {
+    "preregistration": "F26250FBB79F4DFA4470CFFAA14A1290F677510DDFAEFED88FC47170AB1CCCC8",
+    "test": "09C2CB89F21854B9C36554FAE952E23755FE602D7D1FA1CCFAC1E6A65D6F7617",
+    "header": "348F0DBBF0BDF9E2BDA4169A96B52A6E214E998A5C3AC6683B16A39E47A97F69",
+    "source": "9CC5E6B2078D80FB5C65FF92EBA452B4E7AEEF6F098AC0CF9572E214C178CDF3"
+  },
+  "production_changed": false
+}

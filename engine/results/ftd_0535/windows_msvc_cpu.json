@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0535",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_staggered_current_split_compatibility",
+  "checks_passed": 7,
+  "checks_total": 7,
+  "verdict": "EXACT_WORLDLINE_SPLIT_REQUIRES_IMPLICIT_ATOMIC_FIELD_TRANSACTION",
+  "metrics": {
+    "arms": 312,
+    "axial_arms": 72,
+    "diagonal_arms": 240,
+    "minimum_diagonal_start_current_l1": 0.16706899520788174,
+    "maximum_diagonal_start_current_l1": 0.4116980400073736,
+    "minimum_diagonal_start_curl_norm_squared": 0.013176357149608421,
+    "maximum_diagonal_start_curl_norm_squared": 0.061162166931290174,
+    "minimum_diagonal_faraday_mismatch_norm": 0.06627306428609947,
+    "maximum_diagonal_faraday_mismatch_norm": 0.14278441433537731,
+    "worst_split_recombination_residual": 2.7755575615628914e-17,
+    "worst_split_continuity_residual": 6.439293542825908e-15,
+    "worst_component_identity_residual": 2.7755575615628914e-17,
+    "worst_norm_identity_residual": 3.122502256758253e-17,
+    "worst_inherited_endpoint_residual": 6.253350701840299e-13,
+    "worst_translation_residual": 3.9551695252271202e-16,
+    "worst_polarity_mirror_residual": 0.0,
+    "worst_signed_cubic_residual": 3.9551695252271202e-16
+  },
+  "sha256": {
+    "test": "54AAD8402C3BCF44C11BB3A2E9E3CF44258F266F46041BFB29B6A92E36BB6CA8",
+    "header": "E02B0F513011191BC58ED96748257A2414364D8347704B712F28B8ECE1EA59D4",
+    "implementation": "76F0D795B0AE98291394F020FB6F7C4B08A9749FBD71A463C0235DF8E4890506",
+    "locked_preregistration": "26DC878B0284D60FE7F8CBC79CEF00204D47DC1F1E201F7ACD23DF1DCFF49E0F"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

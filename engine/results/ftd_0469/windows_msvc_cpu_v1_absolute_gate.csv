@@ -1,0 +1,63 @@
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+FTD-0469 symmetric half-tick transaction energy gate v1
+static,fixture,single_quadratic,axis,0,orientation,-1,ticks,256,worst_shadow,3.1918911957973251e-15,worst_naive_identity,3.1970953662252555e-15,worst_total_momentum,2.2205858135597366e-16,impulse,0.0015576047460305466,particle_energy_delta,2.3738900575276389e-06,field_ledger_delta,-1.4155343563970746e-15,reversal_residual,9.6885014696144183e-16
+static,fixture,pair_cubic,axis,0,orientation,-1,ticks,256,worst_shadow,5.6843418860808015e-13,worst_naive_identity,5.684307191611282e-13,worst_total_momentum,1.1732282573618197e-13,impulse,0.058902180658578808,particle_energy_delta,0.0016944405300174659,field_ledger_delta,-2.8421709430404007e-14,reversal_residual,3.8858249114718792e-15
+static,fixture,single_quadratic,axis,0,orientation,1,ticks,256,worst_shadow,3.3306690738754696e-15,worst_naive_identity,3.3245975417095508e-15,worst_total_momentum,1.9177897120230337e-16,impulse,0.001557604746030544,particle_energy_delta,2.3738900575276389e-06,field_ledger_delta,-1.3183898417423734e-15,reversal_residual,6.142345486476234e-16
+static,fixture,pair_cubic,axis,0,orientation,1,ticks,256,worst_shadow,5.5422333389287814e-13,worst_naive_identity,5.5238626173181871e-13,worst_total_momentum,1.7707016947910906e-13,impulse,0.058902180658578794,particle_energy_delta,0.0016944744632699515,field_ledger_delta,6.3948846218409017e-14,reversal_residual,2.747848272913415e-15
+static,fixture,single_quadratic,axis,1,orientation,-1,ticks,256,worst_shadow,2.3453461395206432e-15,worst_naive_identity,2.3505503099485736e-15,worst_total_momentum,1.9924980964141104e-16,impulse,0.0015742941578318665,particle_energy_delta,2.4250337113673748e-06,field_ledger_delta,-1.0130785099704553e-15,reversal_residual,6.254281104699935e-16
+static,fixture,pair_cubic,axis,1,orientation,-1,ticks,256,worst_shadow,1.9468870959826745e-12,worst_naive_identity,1.9442390405965959e-12,worst_total_momentum,2.1656349758162604e-14,impulse,0.058799539907639281,particle_energy_delta,0.0016885196537472502,field_ledger_delta,1.6484591469634324e-12,reversal_residual,2.2760213261701012e-15
+static,fixture,single_quadratic,axis,1,orientation,1,ticks,256,worst_shadow,2.4286128663675299e-15,worst_naive_identity,2.4303475898435067e-15,worst_total_momentum,2.2360266881870272e-16,impulse,0.0015742941578318636,particle_energy_delta,2.4250337113673748e-06,field_ledger_delta,-1.0685896612017132e-15,reversal_residual,1.1102962905576083e-15
+static,fixture,pair_cubic,axis,1,orientation,1,ticks,256,worst_shadow,2.0534685063466895e-12,worst_naive_identity,2.0527381877633033e-12,worst_total_momentum,2.0898213731827639e-14,impulse,0.058799539907639281,particle_energy_delta,0.0016886361665208183,field_ledger_delta,1.5987211554602254e-12,reversal_residual,2.6646099430883208e-15
+static,fixture,single_quadratic,axis,2,orientation,-1,ticks,256,worst_shadow,1.8735013540549517e-15,worst_naive_identity,1.878488684048385e-15,worst_total_momentum,1.2424973600812799e-16,impulse,0.0015757738569099095,particle_energy_delta,2.4295944611729681e-06,field_ledger_delta,-2.3592239273284576e-16,reversal_residual,6.4725079013750336e-16
+static,fixture,pair_cubic,axis,2,orientation,-1,ticks,256,worst_shadow,2.0818902157770935e-12,worst_naive_identity,2.083423711329857e-12,worst_total_momentum,8.5341054588857815e-15,impulse,0.059262123661046454,particle_energy_delta,0.0017151399878741203,field_ledger_delta,1.8616219676914625e-12,reversal_residual,2.4149119656627647e-15
+static,fixture,single_quadratic,axis,2,orientation,1,ticks,256,worst_shadow,1.915134717478395e-15,worst_naive_identity,1.9092800257469733e-15,worst_total_momentum,8.0890079108478923e-17,impulse,0.0015757738569099125,particle_energy_delta,2.4295944611729681e-06,field_ledger_delta,-4.3021142204224816e-16,reversal_residual,8.1367651016169664e-16
+static,fixture,pair_cubic,axis,2,orientation,1,ticks,256,worst_shadow,2.1103119252074976e-12,worst_naive_identity,2.1108063213981509e-12,worst_total_momentum,1.4821504515637253e-14,impulse,0.059262123661046481,particle_energy_delta,0.0017151844065509125,field_ledger_delta,1.74082[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=33)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+[RenderBridge] GPU backend active (CUDA, L=17)
+97026122455e-12,reversal_residual,2.8600983368034413e-15
+dynamic,axis,0,orientation,-1,ticks,64,worst_shadow,7.4773520708504293e-14,worst_naive_identity,7.474229568593671e-14,worst_total_momentum,1.7516717243373787e-13,impulse,0.0024299496335124381,particle_energy_delta,2.8914572390292825e-06,field_ledger_delta,-6.1450844413002415e-14,reversal_residual,1.4571792428618832e-16
+dynamic,axis,0,orientation,1,ticks,64,worst_shadow,7.5273121069585613e-14,worst_naive_identity,7.5285264133917451e-14,worst_total_momentum,1.8276916438646971e-13,impulse,0.0024299496335124376,particle_energy_delta,2.8908837235164242e-06,field_ledger_delta,-5.8897331456364554e-14,reversal_residual,1.3530987172435071e-16
+dynamic,axis,1,orientation,-1,ticks,64,worst_shadow,5.6510351953420468e-14,worst_naive_identity,5.6489535271708746e-14,worst_total_momentum,1.0660808173772303e-13,impulse,0.0024299496335124376,particle_energy_delta,2.8914572390292825e-06,field_ledger_delta,-2.6367796834847468e-14,reversal_residual,1.0625251806576888e-16
+dynamic,axis,1,orientation,1,ticks,64,worst_shadow,5.645484080218921e-14,worst_naive_identity,5.6486065824756793e-14,worst_total_momentum,1.0755350603306148e-13,impulse,0.0024299496335124389,particle_energy_delta,2.8908837235164242e-06,field_ledger_delta,-2.6034729927459921e-14,reversal_residual,1.1709532519740073e-16
+dynamic,axis,2,orientation,-1,ticks,64,worst_shadow,5.4900528567713991e-14,worst_naive_identity,5.4881446609478246e-14,worst_total_momentum,1.0372301975693842e-13,impulse,0.0024299496335124381,particle_energy_delta,2.8914572390292825e-06,field_ledger_delta,-2.6589841439772499e-14,reversal_residual,1.3531367182128654e-16
+dynamic,axis,2,orientation,1,ticks,64,worst_shadow,5.390132784555135e-14,worst_naive_identity,5.3932552868118933e-14,worst_total_momentum,1.0588708729279776e-13,impulse,0.0024299496335124402,particle_energy_delta,2.8908837235164242e-06,field_ledger_delta,-2.581268532253489e-14,reversal_residual,1.4224904433245798e-16
+production_control,axis,0,worst_invariant,6.1817218011128716e-13,naive_excursion,0.010946028846049671
+production_control,axis,1,worst_invariant,2.0179413695586845e-12,naive_excursion,0.010946028844955435
+production_control,axis,2,worst_invariant,2.1103119252074976e-12,naive_excursion,0.01094602884469964
+summary,static_records,3072,dynamic_records,384,worst_shadow,2.1103119252074976e-12,worst_naive_identity,2.1108063213981509e-12,worst_total_momentum,1.8276916438646971e-13,worst_reversal,3.8858249114718792e-15,worst_production_invariant,2.1103119252074976e-12,valid,true
+verdict,SYMMETRIC_HALF_TICK_ENERGY_FAILS

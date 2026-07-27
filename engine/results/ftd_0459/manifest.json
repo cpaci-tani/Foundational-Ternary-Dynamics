@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0459",
+  "protocol": "sequential no-reset local transactions v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer with RenderBridge CUDA allocation active",
+  "lattice_size": 33,
+  "ticks": 48,
+  "attempts": 42,
+  "executed_events": 0,
+  "vetoes": 42,
+  "minimum_eligible_neighbors": 0,
+  "maximum_eligible_neighbors": 0,
+  "valid": true,
+  "verdict": "FIRST_TRANSACTION_UNAVAILABLE",
+  "maximum_coupled_wave_energy_step": 0.0092437880077365833,
+  "full_reverse_state_residual": 1.4838095610461252e-17,
+  "state_mismatches": 0,
+  "reverse_momentum_residual": 0.0,
+  "reverse_remainder_residual": 0.0,
+  "sha256": {
+    "campaign_source_locked": "0ADA40BA4F1723C5F96A4EDE475549C3EAFAB476ED302C099900C7313EC36708",
+    "coupled_tick_observer_locked": "E743457083D8A0296458E00D2783002862DD3E9C1C932A593788BED0561DA697",
+    "run_csv": "801D36B153DE0B630C498988455FAC324D8A48FA13B5A23C5CFE629ECBF6C955",
+    "preregistration_post_execution": "CDC0405A8F0721A519279DF05F0971E2DB48CDB8BE261A66804D557F806A57E0",
+    "audit": "7961F5F2814638B89D94464A4650D181DBA0A3FF7DDEA474BF3F8FC75ACADC25"
+  }
+}

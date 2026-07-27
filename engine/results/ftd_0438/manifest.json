@@ -1,0 +1,25 @@
+{
+  "identifier": "FTD-0438",
+  "campaign": "central-generator field-momentum recoil v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "forced CPU after RenderBridge construction",
+  "lattice": 33,
+  "ticks": 200,
+  "source_sha256": "5102a88534fa07c4a4f2b8e838e1094b5aaa649fd4058cbec5d5dd0459800780",
+  "record": "windows_msvc_cpu_L33.csv",
+  "record_sha256": "9f6451f082f02e7f458fc1c3855966ca07ae4cc7198662901e712616f5c967f6",
+  "verdict": "NO_COMPENSATING_FIELD_RECOIL",
+  "worst_source_free_absolute_drift": 7.991829420461727e-12,
+  "worst_source_free_relative_drift": 6.150542112336248e-13,
+  "worst_pair_total_residual": 0.006405037769942507,
+  "worst_pair_closure_ratio": 0.9999999999999996,
+  "maximum_pair_field_momentum": 4.904889227178486e-18,
+  "notes": [
+    "The full native build was independently blocked by pre-existing dirty-worktree failures in test_scenario_behavior.cpp and a locked hazard-campaign executable.",
+    "The isolated campaign target compiled and linked successfully under the canonical pinned toolchain.",
+    "The source-free controls validate the central-generator candidate before its application to pair recoil."
+  ]
+}

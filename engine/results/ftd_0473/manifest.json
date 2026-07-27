@@ -1,0 +1,33 @@
+{
+  "identifier": "FTD-0473",
+  "protocol": "matched-face momentum transaction v1",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "topology": "periodic computational quotient only",
+  "ontology_scope": "uncontained undefined-boundary ontology not represented by Z_L",
+  "volumes": [16, 17],
+  "wave_controls": 6,
+  "wave_ticks": 256,
+  "transaction_rows": 624,
+  "route_groups": 208,
+  "transverse_route_dependent_groups": 78,
+  "worst_wave_absolute_drift": 5.190292640122607e-14,
+  "worst_wave_relative_drift": 1.1707043793831656e-13,
+  "worst_source_free_transaction_residual": 6.333463774564649e-17,
+  "worst_current_exchange_formula_residual": 8.176465954856441e-17,
+  "maximum_electrostatic_recoil": 3.6989359704178365e-17,
+  "minimum_electrostatic_work": 0.33315514064197616,
+  "maximum_transverse_route_impulse_span": 0.0010231822585963525,
+  "valid": true,
+  "verdict": "LOCAL_PSEUDOMOMENTUM_EXACT_ELECTROSTATIC_HOP_RECOIL_ABSENT",
+  "scope_correction": "Hom(Z_L,R)=0 applies only to periodic test windows; no finite-container inference applies to FTD's uncontained ontology",
+  "production_tick_modified": false,
+  "sha256": {
+    "campaign_source_locked": "D8128170B305D8BFFD5923040C5EE12DE69D4EF81ADB648DBD7F7EC95BD37723",
+    "helper_source_locked": "BA7B0CA7895D4DC5259527CCDCB06EC9B08DF7C4CB38AC8CDEDC31EFCD3FA62B",
+    "run_csv": "51749C3064C07B932CE49E6A2C8AC321337F9A651C2F38812F4FEA1BB4129FB0",
+    "preregistration_post_execution": "A5D58BAF0D540EEE05F59B191F465043A09A52AE88C5EC79909C4C8634E6A947",
+    "audit": "D52D75987DC593E5BAEB88ECA68517C36FBB0B6CE0F81115F2EEAFD1B6F56882"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "identifier": "FTD-0495",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_dressing_fiber_ledger",
+  "checks_passed": 12,
+  "checks_total": 12,
+  "verdict": "SCALAR_LEDGER_CLOSES_BOOKKEEPING_NOT_COMMON_ACTION",
+  "metrics": {
+    "field_work": -0.0087600000000000022,
+    "centered_work": 0.0,
+    "dressing_change": -0.0087600000000000022,
+    "path_holonomy": 0.43800000000000017,
+    "closed_loop_shift": 0.43800000000000017,
+    "worst_energy_residual": 0.0,
+    "worst_reverse_residual": 0.0,
+    "multiplier_stationarity_residual": 0.0,
+    "action_gradient_residual": 0.0,
+    "constraint_finite_difference_residual": 1.3877787807814457e-17,
+    "worst_symmetry_residual": 3.4694469519536142e-18
+  },
+  "sha256": {
+    "test": "8FD6A19353F0820ADB426B935D8F216C1BBE17E0D66F283702AA80F3F747F282",
+    "header": "AA8AB2F1195259A58893EBA8C0799F83105E433F5B6C659024E5C0B8FB886867",
+    "implementation": "91D55FC7268860F15923E886F1C5736644B87529D14F1DD41A7C08DE60779612"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

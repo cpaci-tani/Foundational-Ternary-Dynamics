@@ -1,0 +1,28 @@
+{
+  "identifier": "FTD-0466",
+  "protocol": "injective local permutation event v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 33,
+  "attempts_per_dressing_arm": 42,
+  "support_sites": 36,
+  "fixture_inverse_residual": 0.0,
+  "worst_actual_inverse_residual": 0.0,
+  "worst_outside_support_fraction": 0.0,
+  "dressing_off_kinematic_valid": 42,
+  "dressing_on_kinematic_valid": 42,
+  "dressing_off_momentum_pass": 0,
+  "dressing_on_momentum_pass": 0,
+  "dressing_off_momentum_residual_rms": 0.003535283372624,
+  "dressing_on_momentum_residual_rms": 0.0035345175722540528,
+  "worst_energy_residual": 0.0,
+  "valid": true,
+  "verdict": "INJECTIVE_LOCAL_PERMUTATION_MOMENTUM_MISMATCH",
+  "sha256": {
+    "campaign_source_locked": "BD8155674364B23F57E359CBD2E70DA271BFB2B95DA8826DD7CC6C7F13CA92DB",
+    "run_csv": "F980E2E7D82783B793A9ABAA625EBC90396CCF2D726F2FE26B091FD5EAFF8C1D",
+    "preregistration_post_execution": "B75B40D7B677F04C03B27B10FF05A275A2E877199605812A5B4F17DB7FA2E308",
+    "audit": "726432732EC199978FC78C2B0CBDB93DE2B097F189ADCF3A83B4C110CD017899"
+  }
+}

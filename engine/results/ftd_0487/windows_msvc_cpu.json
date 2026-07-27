@@ -1,0 +1,22 @@
+{
+  "identifier": "FTD-0487",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "configuration": "Release CPU algebraic observer",
+  "volume": 17,
+  "checks": 10,
+  "passed_checks": 10,
+  "gate_tolerance": 1e-12,
+  "positive_gauss_residual": 0.0,
+  "pointwise_bound_violation": 0.0,
+  "minimum_nonzero_source_ratio": 3.0,
+  "maximum_source_component_jump": 1.0,
+  "normalized_impulse_lower_bound": 0.0072973525643314245,
+  "transverse_source_residual": 5.421010862427522e-20,
+  "transverse_component_jump": 0.00013505554119128826,
+  "test_source_sha256": "E6811E8AFA9AD8E568A5B1689F8652B942D13296B09DA1613AB0877FECBFF84C",
+  "observer_source_sha256": "02E7B7AAB3F4E369B9F31AB0D727C8DA035A17720C75DE1D85AAC1579CBEB920",
+  "production_mutation": false,
+  "verdict": "NONZERO_GAUSS_SOURCE_FORCES_THRESHOLD_MULTIVALUEDNESS"
+}

@@ -1,0 +1,7 @@
+FTD-0443 discrete interaction-work contract v1
+protocol,L,17,site_x,4,site_y,5,site_z,6,seed,4430,algebra_gate,1e-14,remainder_gate,1.0000000000000001e-15,production_match_gate,9.9999999999999998e-13
+hop_algebra,count,52,valid,true,worst_action_residual,1.7347234759768071e-18,worst_reverse_residual,0,loop_work,2.1684043449710089e-19,central_residual,0
+remainder,coupling_before,-0.0054447082902121871,coupling_after,-0.0054447082902121871,action_change,0,invariant,true
+production,gradient_x,-0.04028104982890357,gradient_y,-0.023944416184638509,gradient_z,-0.023232613045282013,force_x,0.00029394502226291134,force_y,0.00017473084684639068,force_z,0.00016953656838210841,action_force_x,-0.0034409902773373975,action_force_y,-0.0020454408124373361,action_force_z,-0.0019846353544786303,copied_formula_residual,0,action_relative_error,1.0854245431028546,action_cosine,-1.0000000000000002,magnitude_ratio,0.085424543102854383,expected_ratio,0.085424543102854369,ratio_residual,1.3877787807814457e-17
+gates,finite,true,config_valid,true,algebra_pass,true,remainder_invariant,true,production_matches_copy,true,production_matches_action,false,locked_mismatch_signature,true
+verdict,EXACT_HOP_WORK_PRODUCTION_MISMATCH

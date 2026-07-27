@@ -1,0 +1,37 @@
+{
+  "identifier": "FTD-0551",
+  "verdict": "QUADRATIC_COAT_DG_TRANSACTION_CONSTRUCTIVE",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 72,
+  "converged_roots": 72,
+  "moved_arms": 72,
+  "failures": 0,
+  "tolerance": 1e-12,
+  "metrics": {
+    "worst_identity_residual": 9.224148138017863e-15,
+    "worst_solve_residual": 5.637851296924623e-18,
+    "worst_continuity_residual": 1.0755285551056204e-16,
+    "worst_gauss_residual": 4.440892098500626e-16,
+    "worst_work_residual": 9.224148138017863e-15,
+    "worst_total_energy_residual": 9.214851104388799e-15,
+    "worst_inverse_residual": 2.220446049250313e-16,
+    "translation_residual": 0.0,
+    "rotation_residual": 1.3552527156068805e-20
+  },
+  "scope": {
+    "one_step_reciprocity": true,
+    "selected_discrete_gradient_dynamics": true,
+    "schedule_resolved_spacetime_action": false,
+    "multitick_qualified": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "570B9FB5533203F3635BBB237A004DAF36D16A57DF555A80FEC16432F49D67BB",
+    "header": "BCB070B318190D6AB17895C95003D2F1A53CD649184004ABA42254851E7C1871",
+    "source": "03BC386F3AFC2819AFE2816A762029D56FFBCCB5C052AD7720749F37124BEE2F",
+    "test": "C7FBC171D975ABFBBA75CB071A700A9DD702F580BE61593E76BC4F36688966DB"
+  },
+  "production_changed": false
+}

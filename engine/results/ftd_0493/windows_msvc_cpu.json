@@ -1,0 +1,40 @@
+{
+  "identifier": "FTD-0493",
+  "date": "2026-07-25",
+  "verdict": "CENTERED_TRACE_LEAVES_EXACT_CUSP_WORK_LEDGER",
+  "toolchain": {
+    "compiler": "MSVC 14.44.35207",
+    "configuration": "Release",
+    "backend": "CPU observer"
+  },
+  "fixture": {
+    "L": 17,
+    "knot": [8, 8, 8],
+    "c_speed": 0.5773502691896258,
+    "rest_energy": 0.511,
+    "coupling": 0.73,
+    "external_bias": [0.4, 0.5, 0.6],
+    "source_free_jump": [0.3, -0.3, 0.0],
+    "tolerance": 1e-12
+  },
+  "checks": {
+    "passed": 8,
+    "failed": 0
+  },
+  "measurements": {
+    "largest_omitted_work": 0.024557002089434718,
+    "source_free_omitted_work": -0.0014734201253664564,
+    "worst_cusp_formula_residual": 3.9898639947466563e-16,
+    "worst_field_energy_residual": 3.304301277040622e-13,
+    "worst_relative_gauss_residual": 3.122502256758253e-16,
+    "worst_continuity_residual": 6.661338147750939e-16,
+    "worst_reverse_residual": 0.0,
+    "polarity_mirror_residual": 5.134781488891349e-16
+  },
+  "hashes": {
+    "test_sha256": "6A0757328BF6B95C8691E117F0B3C96DFC1FE109EE2CABC0A3528796AC4E4875",
+    "header_sha256": "30129256FC2108DF72DE09C1228CA3575AF17BC816D73B6F51F0903037EBC6D2",
+    "implementation_sha256": "5E967A2E52711B496A5F1B07644F3B72CC99ED5CFD10580352A6B354D54AE10D"
+  },
+  "production_defaults_changed": false
+}

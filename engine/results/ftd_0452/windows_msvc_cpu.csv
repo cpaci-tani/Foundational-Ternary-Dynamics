@@ -1,0 +1,8 @@
+FTD-0452 native energy-contract reconciliation v1
+protocol,diagnostic_L,9,wave_L,17,wave_ticks,64,mode,2,amplitude,0.125,work,0.0001,gate,9.9999999999999998e-13,tick_gate,1e-10
+hamiltonian_diagnostic,vacuum,124.17299999999911,kinetic_native,7.47509765625,kinetic_sensitivity,0,gradient_native,1.5687772877104338,gradient_sensitivity,0
+amplitude_diagnostic,uniform,2.8476562499999996,patterned,2.8476562499999911,residual,8.4376949871511897e-15,uniform_gradient,0,patterned_gradient,1.5687772877104338,separation,1.5687772877104338
+hop_contract,particle_delta,9.9999999999988987e-05,interaction_h_delta,-0.0001,old_named_field_delta,-0.0001,particle_work_residual,-1.1018204577883939e-17,interaction_work_residual,0,particle_interaction_residual,-1.1018204577883939e-17,double_counted_residual,-0.00010000000000001102
+tick_invariant,initial,1.0685409914124289,max_abs_drift,8.2156503822261584e-14,max_rel_drift,7.6886618746993234e-14
+gates,finite,true,hop_contract,true,hamiltonian_diagnostic_incomplete,true,amplitude_diagnostic_degenerate,true,tick_invariant,true
+verdict,ENERGY_CONTRACT_RECONCILED_DIAGNOSTICS_INCOMPLETE

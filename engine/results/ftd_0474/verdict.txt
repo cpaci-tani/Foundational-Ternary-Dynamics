@@ -1,0 +1,15 @@
+verdict=REACTION_FRONT_ONLY
+structural_valid=1
+observer_neutral=1
+run_rows=96
+sample_rows=576
+periodic_stable_dynamic_fraction=0.83333333333333337
+dispersal_stable_dynamic_fraction=0.83333333333333337
+thermal_stable_dynamic_fraction=1
+mobile_stable_dynamic_fraction=0
+mobile_cells=0
+reaction_cells=0
+area_gate=1
+laplace_gate=0
+interface_gate=0
+volume_gate=1

@@ -1,0 +1,59 @@
+{
+  "identifier": "FTD-0431",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_REACTION_POLARITY_SLOW_MODE_v1.md",
+  "source_lock": "scripts/proofs/native_reaction_polarity_slow_mode_lock.json",
+  "valid_records": {
+    "windows_msvc_cpu_L32_full.csv": {
+      "backend": "windows_msvc_cpu",
+      "L": 32,
+      "profile": "full",
+      "rows": 2601,
+      "sha256": "f26fc65608d6018202095ca98855c80f912ca7de7f8871931bfee60c2350e010",
+      "max_field_recurrence_residual": 2.405962923866974e-13
+    },
+    "wsl2_cuda_L32_full.csv": {
+      "backend": "wsl2_cuda",
+      "L": 32,
+      "profile": "full",
+      "rows": 2601,
+      "sha256": "b42edf981534f12dd604d82f24b627c8df2df1be28d4fefb84a076f04178a434",
+      "max_field_recurrence_residual": 2.4059649200680617e-13
+    }
+  },
+  "invalid_run_provenance": {
+    "invalid_wsl2_cuda_L64_infrared_partial.csv": {
+      "reason": "The source-locked per-arm GPU/host observer path had completed only 13 full arms plus 12 ticks of the next arm after 34 minutes. The process was stopped after the L=32 analysis gate had already forced outcome D; this partial record is excluded from every estimator.",
+      "rows": 233,
+      "sha256": "d934652dae7355832d9e8f2aaecaa5ff9068646dab7b62a9cb46ba23191fc06c"
+    }
+  },
+  "execution_incidents": [
+    "The first Windows CPU attempt hit a 120-second wrapper timeout; the identical sealed rerun completed and overwrote it.",
+    "The first WSL2 L=64 wrapper timeout left an orphan child. A second attempt briefly overlapped it before process inspection detected the collision; both processes were stopped and their shared partial output was excluded.",
+    "A clean single-process L=64 attempt was stopped after 34 minutes because the already-failed L=32 exponential gate made FTD-0431 outcome D and the source-locked per-arm host observer was pathologically slow. Its partial CSV is retained only as invalid provenance."
+  ],
+  "isolated_calibration": {
+    "exact_gamma": 0.10536051565782628,
+    "ensemble_gamma_min": 0.10568461255374026,
+    "ensemble_gamma_max": 0.10611325346853677,
+    "relative_error_max": 0.007144401353872589
+  },
+  "analysis_validity": {
+    "locked_max_normalized_rms": 0.02,
+    "observed_coupled_normalized_rms_min": 0.042880723441839255,
+    "max_coupled_normalized_rms": 0.22273271549382329,
+    "coupled_exponential_gate_pass": false,
+    "L64_execution_complete": false
+  },
+  "descriptive_only": {
+    "coupled_early_gamma_min_L32": 0.019284941984155982,
+    "coupled_early_gamma_max_L32": 0.08460368001802133,
+    "A16_L32_100_n1": 0.4735611775487418,
+    "interpretation": "The coupled source slows non-exponentially as its generated field raises the native evaporation energy. These quantities motivate a new hazard test but do not satisfy the FTD-0431 infrared estimator."
+  },
+  "infrared_fit_admissible": false,
+  "physics_inference": "NONE",
+  "outcome": "D",
+  "status": "INVALID_ANALYSIS_MODEL",
+  "next_identifier": "FTD-0432"
+}

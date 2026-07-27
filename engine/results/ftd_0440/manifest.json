@@ -1,0 +1,23 @@
+{
+  "identifier": "FTD-0440",
+  "campaign": "Poisson reciprocity convergence v2",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "forced CPU after RenderBridge construction",
+  "lattice": 33,
+  "source_sha256": "77885372f09ec86b679689f316f25f418331d5126f168c0510451365b9351fab",
+  "record": "windows_msvc_cpu_L33.csv",
+  "record_sha256": "a69ffc246bf9aef5de92b998877da113ab7bf199f0e69389f826200a9227ca31",
+  "locked_verdict": "NO_SOR_DEPENDENCE",
+  "cold_default_net_force": 1.1330803652226706e-19,
+  "cold_96_net_force": 1.662297447690955e-13,
+  "max_pre_relaxed_net_force": 1.429154572311394e-13,
+  "pre_relaxed_gate_passed": true,
+  "notes": [
+    "Revision 1 failed compilation before execution because it called private RenderBridge subphases; revision 2 uses only public ticks.",
+    "The binary banner retained the cosmetic v1 string, but the run is bound to revision 2 by the exact source hash.",
+    "The locked verdict name does not imply literal iteration independence; the cold sequence is strongly nonmonotonic while every pre-relaxed arm passes the reciprocity gate."
+  ]
+}

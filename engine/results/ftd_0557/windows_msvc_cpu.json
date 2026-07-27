@@ -1,0 +1,61 @@
+{
+  "record_id": "FTD-0557",
+  "campaign": "free_flux_localization_obstruction",
+  "date": "2026-07-26",
+  "platform": "windows_msvc_14.44_release",
+  "backend": "cpu_explicitly_forced",
+  "protocol": {
+    "lattice_size": 65,
+    "directions": ["<100>", "<110>", "<111>"],
+    "mode_range": [1, 24],
+    "center_mode": 8.0,
+    "width_modes": 3.0,
+    "packet_phase_coordinate": 32,
+    "ticks_per_arm": 16,
+    "production_terms": ["wave_propagation"],
+    "stencil": "FULL",
+    "boundary": "Periodic",
+    "unit_tick": true
+  },
+  "gates": {
+    "identity": 1e-12,
+    "engine_replay": 1e-10,
+    "minimum_group_velocity_variance": 1e-8,
+    "minimum_variance_increase": 1e-4,
+    "minimum_seam_margin_initial_rms": 4.0
+  },
+  "cardinalities": {
+    "registered_packet_arms": 3,
+    "registered_arm_tick_replays": 48,
+    "cpu_backend_checks": 3,
+    "manifested_sites_observed": 0
+  },
+  "measurements": {
+    "minimum_group_velocity_variance": 0.00027168028537805089,
+    "worst_engine_replay_residual": 1.6012399789238215e-16,
+    "worst_density_moment_residual": 1.8189894035458565e-12,
+    "worst_spectral_norm_residual": 6.9388939039072284e-18,
+    "maximum_variance_increase": 1.9157054836437055,
+    "minimum_seam_margin_in_initial_rms": 7.615692133454667
+  },
+  "analytic_claims": {
+    "finite_range_symbol_real_analytic": true,
+    "transfer_trace_nonconstant": true,
+    "native_band_nonflat": true,
+    "no_nonzero_l2_point_spectrum": true,
+    "no_nonzero_finite_time_rigid_l2_translate": true,
+    "exact_branch_second_moment_identity": true,
+    "nonlinear_carrier_excluded": false
+  },
+  "hashes_sha256": {
+    "engine/include/ftd/eft/free_flux_localization.h": "a8c21c538e1ff7e232d7421d610506c5223d92f825cec2d016a973fcbcc3ca7d",
+    "engine/src/eft/free_flux_localization.cpp": "eaae60c69e4ed80a512c33a77debc57aef12d1a3e4bcfd3799af595fe61e7bf3",
+    "engine/tests/test_free_flux_localization.cpp": "88b6431037ad2ac370ec97a99c3754d9d3b936424b13f56fe38ee2d72b4d6eae",
+    "docs/theory/10_eft_program/preregistrations/PREREG_FREE_FLUX_LOCALIZATION_OBSTRUCTION_v1.md": "6bb2d5f4cde9ec58dfc015c4e19377e8fa2b7e8c08246aa1dbeaea2386327741",
+    "docs/theory/10_eft_program/derivations/THEOREM_FREE_FLUX_LOCALIZATION_OBSTRUCTION.md": "23845e5ecc6f004832282642babf9b68d005384283628b835151e7841b5d0a6e",
+    "docs/theory/07_assessment/AUDIT_FREE_FLUX_LOCALIZATION_OBSTRUCTION.md": "e0193789d1b6c113f0d45a0a5553398c95620fbba161007312ac85ad134d8113",
+    "engine/build/Release/test_free_flux_localization.exe": "e1ec705d23b389be82dbc4fe530ff5632c1711d1244215cc612b9f229652ec22"
+  },
+  "verdict": "FREE_FLUX_TRANSPORT_HAS_NO_LOCALIZED_RIGID_CARRIER",
+  "passed": true
+}

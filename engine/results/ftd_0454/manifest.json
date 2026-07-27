@@ -1,0 +1,23 @@
+{
+  "identifier": "FTD-0454",
+  "campaign": "paired J/W recoil capacity v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "CPU observer; global constrained paired impulse over production J/W state",
+  "campaign_source_sha256": "4801c383d6f8193c5ef355b16ffc309fb4c0291e294ffbf40066a1d249de85c7",
+  "helper_source_sha256": "c1ac49fb0ee222e3192b89d6b64f4e382e7b18c3edfd64327275beb5ed30aec5",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "5221b51933a3ce5e109249fb687e299dbf8acb91b56bd02062d156dec3c63494",
+  "verdict": "PAIRED_JW_ZERO_ENERGY_RECOIL_IMPOSSIBLE_MINIMAL_WORK_FIELD",
+  "direction_count": 26,
+  "worst_work_residual": 4.0657581468206416e-20,
+  "worst_momentum_residual": 1.3167589633121446e-18,
+  "worst_energy_formula_residual": 3.4694469519536142e-17,
+  "minimum_face_energy_cost": 0.010562417576577767,
+  "minimum_edge_energy_cost": 0.019028735820376237,
+  "minimum_corner_energy_cost": 0.021540825946699614,
+  "worst_reverse_state_residual": 9.974659986866641e-18,
+  "worst_reverse_energy_residual": 4.472333961502706e-19
+}

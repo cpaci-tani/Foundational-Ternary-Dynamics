@@ -1,0 +1,22 @@
+{
+  "identifier": "FTD-0447",
+  "campaign": "cubic hop work response v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "exact-integer algebraic observer; no production tick execution",
+  "campaign_source_sha256": "d0f0331ebe6231ba4bbb68a4dc3b430441cd1996be7174e9b6e4850f46906b28",
+  "helper_source_sha256": "25b149f168872f18373e8a77fd771367151fbe7df6940ca9a72d74aa97cad5a1",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "662d7e08280b9bf93a30917a8eb26b80b06987d85755011cc041ef20069f9c8b",
+  "verdict": "CUBIC_STABILIZER_FIXES_LONGITUDINAL_WORK_RESPONSE",
+  "cubic_group_size": 48,
+  "moore_direction_count": 26,
+  "minimum_stabilizer_size": 4,
+  "maximum_stabilizer_size": 8,
+  "constraint_rank_failures": 0,
+  "fixed_dimension": 1,
+  "covariance_tests": 1248,
+  "covariance_failures": 0
+}

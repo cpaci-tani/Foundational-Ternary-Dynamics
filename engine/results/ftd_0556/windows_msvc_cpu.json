@@ -1,0 +1,67 @@
+{
+  "identifier": "FTD-0556",
+  "date": "2026-07-26",
+  "status": [
+    "THEOREM — SCALAR FINITE-RANGE TYPE BOUNDARY",
+    "THEOREM — ISOLATED NATIVE FREE-FLUX BLOCH MAP",
+    "NUMERICAL FACT — LOCKED CPU PRODUCTION REPLAY",
+    "OPEN — STABLE MANIFESTED MATTER CARRIER"
+  ],
+  "verdict": "INTEGER_TRANSLATION_SUPPORTS_CONTINUOUS_BLOCH_CENTROID_FLUX_ONLY",
+  "backend": "windows-msvc-cpu-observer",
+  "toolchain": "MSVC 14.44.35207 Release",
+  "production_changes": false,
+  "invalid_pre_run": {
+    "occurred": true,
+    "reason": "RenderBridge constructor auto-selected CUDA before the fixture explicitly forced CPU",
+    "status": "PROTOCOL_IMPLEMENTATION_INVALID",
+    "evidential_weight": "none",
+    "correction": "added force_cpu() and 13 backend assertions; formulas, samples, thresholds, and verdict rule unchanged"
+  },
+  "cpu_backend_checks": 13,
+  "registered_mode_arms": 9,
+  "registered_mode_tick_replays": 576,
+  "registered_support_arms": 6,
+  "registered_translation_arms": 1,
+  "registered_centroid_ticks": 8,
+  "maximum_mode_identity_residual": 2.4825341532472731e-16,
+  "maximum_group_speed": 0.57074060838700724,
+  "maximum_ir_sixth_order_residual": 0.013853575325670331,
+  "worst_cubic_orbit_residual": 0.0,
+  "worst_engine_mode_residual": 2.2526632156327171e-17,
+  "worst_outside_support": 0.0,
+  "worst_translation_residual": 2.7755575615628914e-17,
+  "worst_packet_replay_residual": 1.5147821535802122e-16,
+  "worst_centroid_complex_residual": 7.4476024597418194e-16,
+  "worst_centroid_displacement_residual": 9.3258734068513149e-15,
+  "worst_spectral_norm_residual": 2.4424906541753444e-15,
+  "one_tick_centroid_displacement": 0.56542636321612816,
+  "one_tick_distance_to_integer": 0.43457363678387184,
+  "focused_ctest": {
+    "passed": 1,
+    "failed": 0,
+    "real_seconds": 0.48
+  },
+  "selected_extension_suite": {
+    "passed": 67,
+    "failed": 0,
+    "real_seconds": 380.51
+  },
+  "golden_suite": {
+    "passed": 7,
+    "failed": 0,
+    "real_seconds": 1.99
+  },
+  "documentation_links": {
+    "meta_index_checked": 620,
+    "eft_index_checked": 375,
+    "broken": 0
+  },
+  "sha256": {
+    "preregistration": "79286B0507A028B8EABC605130A69AD3B8496A1576463CB9F6A62C80B03A2971",
+    "header": "AC535306938C34789AC90EAA539266DA1976A954E0A19CAE71BF4798921ED615",
+    "source": "47067AC64746032763449EBFE17A923D0CE75DDB45AFE085FC3B28F9250F7FD9",
+    "campaign": "CC791657EBF2C55E2D6F0D2C57CF3BA75A556FA8D1D86CFCDE7B4CB3498D5AE5",
+    "theorem": "F472E65AFD9EB1B97B2EA4A8CC5C613960006928752F5A87F50302974DC2E6FD"
+  }
+}

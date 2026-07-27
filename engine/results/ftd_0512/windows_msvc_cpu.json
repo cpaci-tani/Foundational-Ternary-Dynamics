@@ -1,0 +1,43 @@
+{
+  "identifier": "FTD-0512",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_constituent_relative_collision",
+  "checks_passed": 5,
+  "checks_total": 5,
+  "verdict": "SELECTED_REFLECTION_EXISTS_FACE_ACTION_CANNOT_DERIVE_IT",
+  "metrics": {
+    "registered_arms": 312,
+    "face_arms": 72,
+    "edge_arms": 144,
+    "corner_arms": 96,
+    "worst_chart_residual": 0.0,
+    "worst_conservation_residual": 2.2204460492503131e-16,
+    "worst_collision_solution_residual": 1.9428902930940239e-16,
+    "worst_reversal_residual": 3.8857805861880479e-16,
+    "worst_causal_residual": 0.0,
+    "worst_continuity_residual": 4.163336342344337e-17,
+    "worst_translation_residual": 1.7763568394002505e-15,
+    "worst_polarity_mirror_residual": 0.0,
+    "minimum_face_constituent_current_l1": 0.5,
+    "maximum_face_aggregate_current_l1": 0.0,
+    "maximum_face_signature_residual": 0.0,
+    "minimum_face_kinetic_energy_gap": 0.024829530331357486,
+    "edge_current_l1_min": 0.12499999999999956,
+    "edge_current_l1_max": 0.12499999999999956,
+    "corner_current_l1_min": 0.12499999999999864,
+    "corner_current_l1_max": 0.12500000000000022
+  },
+  "sha256": {
+    "test": "F973E0389807ABD92E8517F5041458AD606C78D9672CE1861ABD0E07984459F5",
+    "header": "5CB254B04DA58BC330D049556433C2F78C2E62EC35A665D8908ABD38B313E15A",
+    "implementation": "9B97E2F7DB5FF27D3D336B915796650851D1851ECCAC6A3209C1FD0BC549D8B7",
+    "locked_preregistration_body": "2DA607D150683A082F98730BABECEDC11B4B1F713996007AE6EDA7DFD44179E0"
+  },
+  "selected_contact_premise": true,
+  "derived_from_aggregate_face_action": false,
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

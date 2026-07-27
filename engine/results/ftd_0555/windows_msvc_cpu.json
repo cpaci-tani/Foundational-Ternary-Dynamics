@@ -1,0 +1,90 @@
+{
+  "identifier": "FTD-0555",
+  "date": "2026-07-26",
+  "status": [
+    "THEOREM — EXACT SPECTRAL INDEX CONDITIONAL ON FTD-0541",
+    "ASYMPTOTIC THEOREM — LOCALLY GENERATED SOURCE FAMILY",
+    "NUMERICAL FACT — LOCKED QUALIFICATION FAILED"
+  ],
+  "verdict": "SCALING_THEOREM_NUMERICAL_CONTROL_FAILED",
+  "backend": "windows-msvc-cpu-observer",
+  "toolchain": "MSVC 14.44.35207 Release",
+  "v1_executed": false,
+  "main_volume": 257,
+  "replication_volume": 129,
+  "rotation_volume": 65,
+  "orders": [8, 16, 32, 64, 128],
+  "fit_orders": [16, 32, 64, 128],
+  "registered_main_samples": 20,
+  "registered_replication_samples": 16,
+  "registered_rotation_samples": 12,
+  "beta": 0.021892057692994273,
+  "worst_envelope_identity_residual": 1.4210854715202004e-14,
+  "worst_spectral_identity_residual": 1.4210854715202004e-14,
+  "worst_slope_residual": 0.13579580962701732,
+  "worst_constant_relative_error": 0.11413876630323899,
+  "worst_volume_relative_difference": 0.09206602677513148,
+  "worst_convergence_direction_excess": 0.0011571629818133561,
+  "worst_rotation_relative_residual": 1.0058868654288013e-13,
+  "largest_m128_relative_barrier": 2.4036737939517426e-05,
+  "minimum_improvement_factor": 184.8578702876057,
+  "profiles": [
+    {
+      "name": "monopole_background",
+      "energy_slope": -0.5247864410372862,
+      "barrier_slope": -2.442377794802417,
+      "relative_slope": -1.9175913537651303,
+      "m128_scaled_relative": 0.04157774626197525,
+      "expected_scaled_relative": 0.0375
+    },
+    {
+      "name": "dipole_parallel",
+      "energy_slope": -1.4543689229555077,
+      "barrier_slope": -3.3890665124903245,
+      "relative_slope": -1.9346975895348286,
+      "m128_scaled_relative": 0.3938179144010535,
+      "expected_scaled_relative": 0.4017857142857143
+    },
+    {
+      "name": "dipole_transverse",
+      "energy_slope": -1.4543689229555667,
+      "barrier_slope": -3.4011169385488267,
+      "relative_slope": -1.946748015593248,
+      "m128_scaled_relative": 0.07906652541357269,
+      "expected_scaled_relative": 0.08035714285714286
+    },
+    {
+      "name": "dipole_diagonal",
+      "energy_slope": -1.4403394485881003,
+      "barrier_slope": -3.3642041903729827,
+      "relative_slope": -1.923864741784894,
+      "m128_scaled_relative": 0.18310453877773888,
+      "expected_scaled_relative": 0.1875
+    }
+  ],
+  "registered_failures": 9,
+  "focused_ctest": {
+    "expected_negative_verdict_observed": true,
+    "passed": 1,
+    "failed": 0,
+    "real_seconds": 2.02
+  },
+  "selected_extension_suite": {
+    "passed": 66,
+    "failed": 0,
+    "real_seconds": 343.10
+  },
+  "golden_suite": {
+    "passed": 7,
+    "failed": 0,
+    "real_seconds": 1.85
+  },
+  "sha256": {
+    "preregistration_v1": "B860E3F51A65EF712E220357C970C7BFBF0C6CEDBC65C71D51A2106CC2042FF4",
+    "preregistration_v2": "C3BFA9DACE7A7831C9E88BD150310D0CFD9AE74A20BCAFF0AE9F1E5AE57B9A38",
+    "header": "8168FFD9E7867A4300612D3428A1289991B93D19963989FB97272B40246BDDB0",
+    "source": "250072F42BD414DB5ABEEC038DD755B835FE7E59CEF9B835661F0FD983B2D49D",
+    "campaign": "45B12B6B63624B21759E9F1E56662B8AFD85CC04D821F2C6A76C40FD232B1295"
+  },
+  "production_changes": false
+}

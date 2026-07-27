@@ -1,0 +1,40 @@
+{
+  "identifier": "FTD-0427",
+  "run_date": "2026-07-23",
+  "lock": "scripts/proofs/matched_gauss_transport_lock.json",
+  "verdict": "A_SELECTED_LOCAL_PROJECTION_FREE_TRANSPORT",
+  "runs": [
+    {
+      "backend": "windows_msvc_cpu",
+      "platform": "Windows 11 / MSVC 14.44",
+      "L": 32,
+      "command": "engine/build/Release/campaign_matched_gauss_transport.exe --L 32 --backend-label windows_msvc_cpu --output engine/results/ftd_0427/windows_msvc_cpu_L32.csv",
+      "output": "engine/results/ftd_0427/windows_msvc_cpu_L32.csv",
+      "sha256": "cbd4a3066557727b9f22686115f3ab2716d4d475d98a2f09309b30bdb97283b6"
+    },
+    {
+      "backend": "windows_msvc_cpu",
+      "platform": "Windows 11 / MSVC 14.44",
+      "L": 64,
+      "command": "engine/build/Release/campaign_matched_gauss_transport.exe --L 64 --backend-label windows_msvc_cpu --output engine/results/ftd_0427/windows_msvc_cpu_L64.csv",
+      "output": "engine/results/ftd_0427/windows_msvc_cpu_L64.csv",
+      "sha256": "0c19191d4de6f83674fab89c733191755beaac807d97eab033933738ebd0de07"
+    },
+    {
+      "backend": "wsl2_gcc_cpu",
+      "platform": "WSL2 Ubuntu-22.04 / GCC",
+      "L": 32,
+      "command": "engine/build_wsl/campaign_matched_gauss_transport --L 32 --backend-label wsl2_gcc_cpu --output engine/results/ftd_0427/wsl2_gcc_cpu_L32.csv",
+      "output": "engine/results/ftd_0427/wsl2_gcc_cpu_L32.csv",
+      "sha256": "aa11a0d498e8cd89d24b6fa9292faf74ebab2506e73f62984e816beee4cc5a5e"
+    },
+    {
+      "backend": "wsl2_gcc_cpu",
+      "platform": "WSL2 Ubuntu-22.04 / GCC",
+      "L": 64,
+      "command": "engine/build_wsl/campaign_matched_gauss_transport --L 64 --backend-label wsl2_gcc_cpu --output engine/results/ftd_0427/wsl2_gcc_cpu_L64.csv",
+      "output": "engine/results/ftd_0427/wsl2_gcc_cpu_L64.csv",
+      "sha256": "473db341bccd588ae7f45172a69128273c83648330956d3b93097217dc8bc2c6"
+    }
+  ]
+}

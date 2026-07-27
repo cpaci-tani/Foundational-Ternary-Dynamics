@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0503",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_momentum_selected_worldline_matching",
+  "checks_passed": 6,
+  "checks_total": 6,
+  "verdict": "PHASE_SPACE_SELECTS_FREE_WORLDLINE_CHAIN",
+  "metrics": {
+    "base_permutations_evaluated": 24,
+    "base_valid_permutations": 9,
+    "transformed_matching_arms": 432,
+    "worst_best_residual": 0.0,
+    "minimum_residual_gap": 1.5330000000000001,
+    "worst_selected_current_residual": 0.0,
+    "worst_selected_continuity_residual": 0.0,
+    "worst_causal_residual": 0.0,
+    "collision_target_residual": 0.0
+  },
+  "sha256": {
+    "test": "52D5A79FC4F8ED13716D1791C7ABFB7BC7ECABAD959467D7B224837D299EF507",
+    "header": "09EAF99234FFE723897C283B8BDEA75ABA4523C8B1DDE760F43A29CC65C67CC0",
+    "implementation": "B802879D40E818AD7040281569C57F505C8DF09B30B9836FC3DFA2022560D90B"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

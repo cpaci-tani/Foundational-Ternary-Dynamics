@@ -1,0 +1,34 @@
+{
+  "identifier": "FTD-0497",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_axial_face_hop_reciprocity",
+  "checks_passed": 13,
+  "checks_total": 13,
+  "verdict": "AXIAL_HOP_PHYSICAL_QUOTIENT_ONLY",
+  "metrics": {
+    "contraction_bound": 0.17380952380952377,
+    "largest_hop_displacement": 0.25133299377250545,
+    "maximum_iterations": 15,
+    "worst_fixed_point_residual": 6.6613381477509392e-16,
+    "worst_energy_residual": 2.2204460492503131e-16,
+    "worst_gauss_residual": 9.7144514654701197e-17,
+    "worst_continuity_residual": 3.3306690738754696e-16,
+    "worst_physical_inverse_residual": 0.0,
+    "worst_shape_inverse_residual": 1.1102230246251565e-16,
+    "worst_field_inverse_residual": 0.0,
+    "worst_momentum_inverse_residual": 6.6613381477509392e-16,
+    "worst_preimage_residual": 5.5511151231257827e-17,
+    "smallest_raw_anchor_inverse_mismatch": 1,
+    "smallest_raw_remainder_inverse_defect": 1.0
+  },
+  "sha256": {
+    "test": "33DB9450D23F35C6D9D76670997E6EA3DA674CC2601E4E5CA3C60447B6EC83A0",
+    "header": "A68DD03779B72B77A1C43077F80B9AB5A71946F44396836E904C1803F623792E",
+    "implementation": "33392108DB3DFA8CD83864B44A346E85CBDF0F85C75FD4ACC1DE2F3072E49644"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

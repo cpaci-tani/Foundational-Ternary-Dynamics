@@ -1,0 +1,44 @@
+{
+  "identifier": "FTD-0531",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_symmetric_diagonal_coupled_endpoint",
+  "checks_passed": 6,
+  "checks_total": 6,
+  "verdict": "SYMMETRIC_DIAGONAL_ENERGY_COUPLED_ENDPOINT_CONSTRUCTIVE",
+  "metrics": {
+    "arms": 240,
+    "maximum_iterations": 38,
+    "minimum_monotonic_increment": 0.0035459419001128132,
+    "worst_root_residual": 6.253350701840299e-13,
+    "worst_continuity_residual": 6.938893903907228e-15,
+    "worst_absolute_gauss_residual": 6.938893903907228e-15,
+    "worst_staggered_embedding_residual": 0.0,
+    "worst_field_work_residual": 1.4094628242311558e-18,
+    "worst_matter_work_residual": 6.253343112425092e-13,
+    "worst_total_energy_residual": 6.253350701840299e-13,
+    "worst_displacement_residual": 7.771561172376096e-16,
+    "worst_causal_excess": 0.0,
+    "worst_inverse_residual": 8.881784197001252e-16,
+    "minimum_momentum_change": 0.0006009185423793556,
+    "maximum_momentum_change": 0.0012450839865014163,
+    "minimum_endpoint_change": 0.0005468927379653765,
+    "maximum_endpoint_change": 0.000890772385804206,
+    "minimum_reference_transverse_norm_squared": 0.05492587969391281,
+    "maximum_reference_transverse_norm_squared": 0.22807936272011378,
+    "worst_translation_magnitude_residual": 0.0,
+    "worst_polarity_mirror_magnitude_residual": 0.0,
+    "worst_cubic_orbit_magnitude_residual": 0.0
+  },
+  "sha256": {
+    "test": "EB402CD63EB34CF2AFF40C27AAB6BE0C2EB46F10158BC32239A01F1A3450787E",
+    "header": "EE829FAF001A9A4D591D13223D202B6E989CDE6C5ADC26C2061115A9E856D815",
+    "implementation": "FEFFBE03117F1E1E30999EFC80DEC1F025026DC2383E34A8DAB08A6B40CEEF2E",
+    "locked_preregistration": "BC1A8905A01759D0BFFF6D9371E7F4CE77108FCDCF57D766B1752A74A307DC2F"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

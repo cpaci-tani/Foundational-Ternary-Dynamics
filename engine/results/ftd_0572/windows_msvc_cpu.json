@@ -1,0 +1,49 @@
+{
+  "ftd_id": "FTD-0572",
+  "verdict": "MINIMAL_FEEDBACK_DILATION_REQUIRES_RESET_OR_ACTIVE_ENERGY_RESERVOIR",
+  "platform": "Windows-11-10.0.26200",
+  "field_representation": "accepted genesis derivative plus minimum canonical bath pairs",
+  "tolerance": 1e-12,
+  "matrix_arms": 120,
+  "pair_arms": 360,
+  "defective_pair_arms": 330,
+  "rank_four_arms": 30,
+  "rank_six_arms": 90,
+  "minimum_bath_pairs_zero_drain": 2,
+  "minimum_bath_pairs_positive_drain": 3,
+  "maximum_pair_symplectic_residual": 2.220446049250313e-16,
+  "maximum_prepared_projection_residual": 0.0,
+  "maximum_two_step_formula_residual": 1.7763568394002505e-15,
+  "minimum_nonzero_two_step_deviation": 0.3583225665910466,
+  "minimum_passive_commutator": 0.20370370370370372,
+  "maximum_primal_dual_defect_rank_gap": 0,
+  "symbolic_checks": {
+    "positive_a_pair_symplectic": true,
+    "zero_a_pair_symplectic": true,
+    "two_step_q_formula": true,
+    "two_step_p_formula": true,
+    "passive_commutator_requires_equal_scales": true
+  },
+  "rank_lower_bound_proved": true,
+  "feedback_and_record_ranks_saturate": true,
+  "minimum_dilation_constructed": true,
+  "fixed_zero_bath_section_cannot_repeat": true,
+  "passive_equal_weight_energy_obstructed": true,
+  "native_environment_derived": false,
+  "production_changed": false,
+  "passes": true,
+  "source_hashes_sha256": {
+    "ftd0571_theorem": "B7BD5590D5DDD2B5A23DC4E5DF0B6BD3DDC7ED124FD93A4C66C8BA3FE80B45B6",
+    "ftd0571_header": "2F8B7A7610E06E49957B35ED795A3A9DCF43BF0FE2288B4296D7B2214FCC76AB",
+    "ftd0571_source": "4DE62DC51CF6C660020D8FC8DEE9D38BE11C5FF2A774C08CE0E3707346B28CCB",
+    "phase_write": "2C519C4EF52614E383C4494CBE1F26A7CE33036A0924EBEFF80778021FCB57A4",
+    "voxel": "8621F0A7ADB70F24FC63F99071C8CD63396ADB4B04461A3ABD775D13D2D1E1A3",
+    "preregistration": "26C87DB4BFF2800D07C687031A606728F2982933ABBAD55A73E0BF010DEB4B1C"
+  },
+  "implementation_hashes_sha256": {
+    "header": "CCD7B09967D194498B50A7AFA449E04ED21FF06746F6B3E98651A18FD4AA1B42",
+    "source": "47664A3A83BDC7125DF8C5C84FB23B09EA1F159EC2F471AD368D9697BFA83223",
+    "test": "203AB4ACC71B1E9DA0C872A7981A5283EB4307CFBAC82143FE4273F4D8EE9891",
+    "independent_proof": "2D10C82E50873065924F15D0E3B0BD6AE3D76BDFE2478F74560FFA6FB56ED3D9"
+  }
+}

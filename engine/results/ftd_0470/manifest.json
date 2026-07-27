@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0470",
+  "protocol": "link-action work compatibility v1",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU forced after bridge construction",
+  "polynomial_records": 36,
+  "fourier_records": 72,
+  "dynamic_records": 1536,
+  "worst_affine_quadratic_control_defect": 0.0,
+  "worst_cubic_formula_residual": 2.710505431213761e-20,
+  "worst_fourier_formula_residual": 1.8380614955418317e-18,
+  "worst_exact_link_residual": 0.0,
+  "maximum_fourier_relative_defect": 0.9903926402016146,
+  "minimum_dynamic_exact_work_rms": 0.00854928683873045,
+  "minimum_dynamic_centered_defect_rms": 0.005886555562758451,
+  "maximum_dynamic_relative_defect": 0.7514523768944952,
+  "valid": true,
+  "verdict": "SITE_GRADIENT_IS_IR_APPROXIMATION_LINK_DIFFERENCE_IS_EXACT",
+  "production_tick_modified": false,
+  "sha256": {
+    "campaign_source_locked": "CDCD31B8EC37B6D997C8655945A7AC2F69E63CC6C2396A902E7590AE3FFC76A5",
+    "helper_source_locked": "47D10DDFD14AF34BCDD5EF02C11DCE96713818717A0430E49712787058643069",
+    "run_csv": "A5C38C954E971EB5F937CC44097AD6EFA8C3E65387F6939FD9749AE155AB2689",
+    "preregistration_post_execution": "938BEB52E944A9BE4436EB97AE0A3753A88CA9A7FDC695F0E9C48430E1723578",
+    "audit": "277344707CFF401D6EC8B86B9AC91078F6A11A19102972C6156CB26037F64069"
+  }
+}

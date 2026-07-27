@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0492",
+  "date": "2026-07-25",
+  "verdict": "CENTERED_TRACE_UNIQUE_LOCAL_BUT_NOT_BRANCH_ACTION_DERIVATIVE",
+  "toolchain": {
+    "compiler": "MSVC 14.44.35207",
+    "configuration": "Release",
+    "backend": "CPU observer"
+  },
+  "fixture": {
+    "L": 17,
+    "knot": [8, 8, 8],
+    "temporal_scale": 0.5773502691896258,
+    "c_speed": 0.5773502691896258,
+    "rest_energy": 0.511,
+    "coupling": 0.73,
+    "external_bias": [0.4, 0.5, 0.6],
+    "tolerance": 1e-12
+  },
+  "checks": {
+    "passed": 10,
+    "failed": 0
+  },
+  "measurements": {
+    "worst_trace_residual": 0.0,
+    "worst_covariance_residual": 0.0,
+    "worst_gauss_residual": 2.220446049250313e-16,
+    "measured_branch_mismatch": 0.03512214137570327,
+    "expected_branch_mismatch": 0.03512214137570223,
+    "worst_branch_formula_residual": 1.0408340855860843e-15,
+    "worst_gauge_residual": 4.163336342344337e-17
+  },
+  "hashes": {
+    "test_sha256": "2302E4A48E7755173DC172477E7AF10DB7326AD2EA89CB9F45D8FB66D1BBEEF3",
+    "header_sha256": "39397FC93665218DB42A36B627C4FD363B71B9CD065E3D3ED4B9702D5A5283E9",
+    "implementation_sha256": "49F922E9778F96B33041D2A46DD93F4D3AEB722D2E1CCA96676A32179EFA1976"
+  },
+  "production_defaults_changed": false
+}

@@ -1,0 +1,8 @@
+record,key,value,details
+kernel,radius,R1,independent_witnesses,54,nullity_lower_bound,54,worst_image_norm,0
+kernel,radius,R2,independent_witnesses,150,nullity_lower_bound,150,worst_image_norm,0
+kernel,radius,R3,independent_witnesses,294,nullity_lower_bound,294,worst_image_norm,0
+momentum,dressing,off,attempts,42,kinematic_valid,42,momentum_pass,0,momentum_residual_rms,0.002034039610675943,min_momentum_residual,5.0218284180892081e-05,max_momentum_residual,0.0040852101349378193,worst_energy_residual,0,valid,true
+momentum,dressing,on,attempts,42,kinematic_valid,42,momentum_pass,0,momentum_residual_rms,0.0022571636594904865,min_momentum_residual,0.00059947143782567564,max_momentum_residual,0.0043816131559637631,worst_energy_residual,0,valid,true
+summary,r1_nullity_lower_bound,54,r2_nullity_lower_bound,150,r3_nullity_lower_bound,294,global_reverse_residual,0,valid,true
+verdict,LOCAL_TRANSLATION_NONINJECTIVE_MOMENTUM_MISMATCH

@@ -1,0 +1,43 @@
+{
+  "identifier": "FTD-0527",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_overshoot_preserving_contact_rebase",
+  "checks_passed": 7,
+  "checks_total": 7,
+  "verdict": "OVERSHOOT_REPAIR_CLOSES_PHYSICS_RAW_INVERSE_NEEDS_BRANCH_RECORD",
+  "metrics": {
+    "arms": 312,
+    "commensurate_arms": 72,
+    "overshoot_arms": 240,
+    "minimum_raw_preimage_residual": 0.5,
+    "worst_quotient_phase_residual": 0.0,
+    "worst_density_residual": 0.0,
+    "worst_current_residual": 0.0,
+    "worst_continuity_residual": 2.9143354396410359e-15,
+    "worst_common_output_residual": 6.9388939039072284e-17,
+    "minimum_identity_output_residual": 1.0,
+    "worst_overshoot_residual": 6.9388939039072284e-17,
+    "minimum_positive_overshoot": 0.0089745962155614034,
+    "maximum_positive_overshoot": 0.1339745962155614,
+    "worst_invariant_residual": 0.0,
+    "worst_causal_residual": 0.0,
+    "worst_reversal_residual": 0.0,
+    "worst_history_recovery_residual": 0.0,
+    "worst_translation_covariance_residual": 0.0,
+    "worst_polarity_mirror_residual": 0.0,
+    "worst_cubic_covariance_residual": 0.0,
+    "preimage_multiplicity": 2,
+    "minimum_history_bits_per_merge": 1
+  },
+  "sha256": {
+    "test": "645A49860B974642F59E4A17C09C801823E3468F00008F1576FF4782EE44F794",
+    "header": "E0FF019D960DA483571980D82935CF7630B4302CCF5E8B7949C8BBE00F67975E",
+    "implementation": "F19F725A5956B64BCE20A6200F2AC0620653BBAC0097C5A61BEF6DBE9D7F79C5",
+    "locked_preregistration": "F04A9832F68E57D3389A85C69F2133E769E281EF6C0DF51FFFAD6AD89183FD4D"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

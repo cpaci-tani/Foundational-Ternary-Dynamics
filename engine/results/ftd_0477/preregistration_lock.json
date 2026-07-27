@@ -1,0 +1,9 @@
+{
+  "identifier": "FTD-0477",
+  "protocol": "selected-force moving-source reciprocity discriminator v1",
+  "locked_before_execution": true,
+  "date": "2026-07-25",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_RECIPROCAL_MOVING_SOURCE_DISCRIMINATOR_v1.md",
+  "sha256": "88835A61876F023F3FE76D841863D8FDBF087E201B35BAAEE22C999ACE5D2573",
+  "production_tick_modified": false
+}

@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0460",
+  "protocol": "blocked-hop work decomposition v2",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 33,
+  "ticks": 48,
+  "attempts": 42,
+  "full_kinematic_valid_count": 12,
+  "source_free_kinematic_valid_count": 42,
+  "static_source_invalid_updates_rescued": 30,
+  "worst_work_closure": 5.204170427930421e-18,
+  "worst_component_closure": 5.389475569412524e-17,
+  "reverse_residual": 7.67335666250811e-17,
+  "ftd_0459_work_series_max_abs_residual": 0.0,
+  "valid": true,
+  "verdict": "STATIC_POLARITY_SOURCE_DOMINATES_BLOCKED_HOP_WORK",
+  "rms_work": {
+    "packet": 8.244751688246903e-20,
+    "dressing": 8.976377313277575e-5,
+    "static_polarity_source": 0.008488229634971121,
+    "velocity_curl_source": 1.703464636817277e-18
+  },
+  "invalid_v1_execution": {
+    "timeout_seconds": 600,
+    "physical_verdict_admitted": false,
+    "cause": "observer mutable-handout ternary cache rebuild inside site loop"
+  },
+  "sha256": {
+    "inherited_v1_campaign_body": "216E799FF8424129D2C1F3D6FAE2767E20CC1F6E0403D466819DE1282C290172",
+    "v2_wrapper": "6D03B377870D179E7D94C1AB4A7089DE83AAD08C14FF49D9D8DAD247260F3A15",
+    "snapshot_observer": "4EDF02D09A24D2B1E97279970524D87FF6D4F3CE105AB5E1A533D83737D7AA3B",
+    "run_csv": "8B48C8978E0A61E6CDF39DE8B6654A695E858A79862E3EB9929F5A0A97C17F68",
+    "preregistration_v1_post_execution": "2757183A734578E65A54947085037ACCC84749B57F427B9D19C29354E0708EAA",
+    "preregistration_v2_post_execution": "399549888FA5C91DFECD98DF9A321EF850031B88527DEE33DC952F2AAA81B575",
+    "audit": "9A2B21E0085C217C45FE338ABA96E2FD9008CF5D3378FCB6B2B3CEDBF3551D3F"
+  }
+}

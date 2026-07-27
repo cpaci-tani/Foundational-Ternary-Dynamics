@@ -1,0 +1,23 @@
+{
+  "identifier": "FTD-0439",
+  "campaign": "existing-force-branch reciprocity v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "forced CPU after RenderBridge construction",
+  "lattice": 33,
+  "ticks": 200,
+  "source_sha256": "31fdf537f1318f8771e515bde29f07b15e7652a28d0471d8bb08b2124595ec68",
+  "record": "windows_msvc_cpu_L33.csv",
+  "record_sha256": "5208ce64a627e128ecd86a208bcaa665c0bfae4b2be8f1390a2be8295f17c70e",
+  "verdict": "MOVEMENT_OR_PHASE_ORDER_DEFECT",
+  "magnitude_gradient_max_total_residual": 0.006405037769942507,
+  "divergence_gradient_max_total_residual": 3.502336825774897e-18,
+  "poisson_max_total_residual": 8.110111743115127e-9,
+  "notes": [
+    "The locked outcome name is triggered because Poisson also misses the balance gates; it does not by itself identify movement as the unique cause.",
+    "The Poisson leakage is polarity-even and six orders of magnitude below the magnitude-gradient defect.",
+    "The legacy divergence-gradient branch passes both registered balance gates."
+  ]
+}

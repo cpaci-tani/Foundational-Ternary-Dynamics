@@ -1,0 +1,92 @@
+{
+  "identifier": "FTD-0430",
+  "protocol_revision": 2,
+  "status": "OUTCOME_A_RETARDED_NATIVE_COARSE_POLARITY_RESPONSE",
+  "valid_records": {
+    "windows_msvc_L48.csv": {
+      "sha256": "0c5c3090b50a715829581932823b7a20f1d3fea2046626a91475868a89246109",
+      "backend": "windows-msvc-14.44/cpu",
+      "L": 48,
+      "profile": "full",
+      "rows": 18
+    },
+    "wsl2_cuda_L48.csv": {
+      "sha256": "d03b9331cf029b0dee52e9e46d3e31b8b465011e2ff26b5b198f168b69977a81",
+      "backend": "wsl2-cuda-gcc/gpu",
+      "L": 48,
+      "profile": "full",
+      "rows": 18
+    },
+    "wsl2_cuda_L96.csv": {
+      "sha256": "6af4bff20fc989f4d6494dc71fbdcb5ca07e06c8955ffc7dd5d45c055b79f6a2",
+      "backend": "wsl2-cuda-gcc/gpu",
+      "L": 96,
+      "profile": "infrared",
+      "rows": 9
+    }
+  },
+  "invalid_v1_analysis_provenance": {
+    "windows_msvc_L32.csv": {
+      "sha256": "58b8b4b6c3f5ed57ef61aa4353e62ba3084584a46f2a3915d0f8f1e9c6e1e6f4",
+      "reason": "Valid execution, excluded because the v1 infrared feature definition contradicted the inherited FTD-0429 model."
+    },
+    "wsl2_cuda_L32.csv": {
+      "sha256": "785e59b8e9d2bf5d6b9864b31fad090e6ac43a925444e343c9577b2cd330aee5",
+      "reason": "Valid execution, excluded from every v2 fit and verdict."
+    },
+    "wsl2_cuda_L64.csv": {
+      "sha256": "c0e343f6eefa0697330cd0748be90454490ef58b749647e103e204d3a9282f24",
+      "reason": "Valid execution, excluded from every v2 fit and verdict."
+    }
+  },
+  "v1_literal_invalid_fit": {
+    "feature": "h4=sum(k_a^4)",
+    "n": 18,
+    "constant_model": {
+      "coefficients": [
+        0.25459826553159526,
+        -0.0045664206021842554,
+        -0.18530246070631168,
+        0.06221828533769189
+      ],
+      "rss": 7.526316010989609e-05,
+      "rms": 0.0020448194719270463,
+      "bic": -211.36656073054868
+    },
+    "verdict": "D_INVALID_ANALYSIS_SPECIFICATION"
+  },
+  "infrared_fit": {
+    "records": "positive-orientation WSL2 v2 rows at L=48,96",
+    "feature": "h4=sum(k_a^4)/q2",
+    "n": 18,
+    "constant_model": {
+      "coefficients": [
+        0.2562685475706605,
+        0.0209421543982351,
+        -0.08432292236316272,
+        -0.00010776348827626314
+      ],
+      "rss": 2.542367067041254e-09,
+      "rms": 1.18845536237431e-05,
+      "bic": -396.68826953754706
+    },
+    "zero_model": {
+      "coefficients": [
+        3.2596140996416527,
+        -0.2695877797444388,
+        -6.101526555033986
+      ],
+      "rss": 0.4008084795498129,
+      "rms": 0.14922177372209253,
+      "bic": -59.81246468017212
+    },
+    "delta_bic": 336.87580485737493,
+    "z0": 0.2562685475706605,
+    "three_g_c": 0.2562736293085631,
+    "relative_to_three_g_c": 1.982973701150192e-05,
+    "ftd_0429_z0": 0.25624762295586195,
+    "relative_to_ftd_0429": 8.165112338943442e-05
+  },
+  "outcome": "A",
+  "interpretation": "An actual reaction-free production movement event transports the source of the same finite infrared polarity susceptibility measured in FTD-0429. The difference response stays inside the native dependency cone and has the exact unmodified discrete wave pole and step residue. This remains a restricted coarse response, not microscopic U(1), reaction-sector conservation, gauge redundancy, photons, Maxwell theory, a force law, Lorentz invariance, or empirical signal-speed normalization."
+}

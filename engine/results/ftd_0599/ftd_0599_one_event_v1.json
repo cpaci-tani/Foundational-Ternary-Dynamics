@@ -1,0 +1,49 @@
+{
+  "ftd_id": "FTD-0599",
+  "protocol_sha256": "DDD146E19C06E488C584AFBAB4092FB802E72F4DFC13F12407A5A914704E8886",
+  "date": "2026-07-26",
+  "status": "closed_negative",
+  "verdict": "SITE_ONTIC_NATIVE_RECOIL_MAP_FAILS_ATOMIC_COMPATIBILITY",
+  "production_changed": false,
+  "repeated_campaign_run": false,
+  "repeated_campaign_reason": "The preregistered one-event conjunctive gate failed; repeated execution was forbidden.",
+  "arms_attempted_in_locked_order": 2,
+  "arms_passed_before_counterexample": 1,
+  "stationary_control": {
+    "arm": "L17_q-1_stationary",
+    "verdict": "pass"
+  },
+  "decisive_arm": {
+    "name": "L17_q-1_body_negative_ballistic",
+    "L": 17,
+    "polarity": -1,
+    "initial_remainder": [0.05, 0.05, 0.05],
+    "initial_velocity": [-0.08660254037844387, -0.08660254037844387, -0.08660254037844387],
+    "site_shift": [-1, -1, -1],
+    "failure_gate": "total_energy",
+    "forward_root_count": 1,
+    "newton_converged_starts": 28,
+    "newton_root_residual": 8.178844937195475e-14,
+    "newton_jacobian_condition": 1.0000309442401785,
+    "independent_root": [-0.04581326207064533, -0.04581326207064533, -0.04581326207064533],
+    "independent_root_radius_inf": 5.000274022818124e-14,
+    "arb_contraction_bound_inf": 0.0015735045854659699,
+    "unique_root_certified": true,
+    "continuity_residual": 7.806255641895632e-18,
+    "recoil_residual": 8.178843073722991e-14,
+    "kinematic_residual": 0.0,
+    "total_energy_before": 0.1759811457231967,
+    "total_energy_after": 0.17597479531146126,
+    "energy_relative_residual": 6.350411735439598e-6,
+    "work_relative_residual": 6.350411735443838e-6,
+    "energy_relative_residual_lower_bound": 6.350311714151072e-6,
+    "work_relative_residual_lower_bound": 6.350311714149165e-6,
+    "gate_tolerance": 1e-12,
+    "minimum_failure_factor": 6350311.714149165
+  },
+  "production_provenance_verified": true,
+  "artifacts": {
+    "engine_test": "engine/tests/test_site_ontic_atomic_reciprocal_hop.cpp",
+    "independent_proof": "scripts/proofs/proof_site_ontic_atomic_reciprocal_hop.py"
+  }
+}

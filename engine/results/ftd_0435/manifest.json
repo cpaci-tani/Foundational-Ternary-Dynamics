@@ -1,0 +1,58 @@
+{
+  "identifier": "FTD-0435",
+  "revision": 1,
+  "date": "2026-07-24",
+  "execution_status": "VALID",
+  "outcome": "MIXED_POLARITY_RESPONSE",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_FLUX_SELF_INTERFERENCE_RESPONSE_v1.md",
+  "source": {
+    "path": "engine/tests/campaign_flux_self_interference_response.cpp",
+    "sha256": "246cf58c01008cce02420a7938990d874624890095051b11d8601a7918dec67d"
+  },
+  "toolchain": {
+    "platform": "Windows 11 x64",
+    "compiler": "MSVC 14.44.35207",
+    "backend": "forced CPU",
+    "git_head_at_run": "89ae1149489c13571dfd8b48a8de0bc63c960820"
+  },
+  "record": {
+    "path": "engine/results/ftd_0435/windows_msvc_cpu_L33.csv",
+    "sha256": "677d52b29463edbb05dcb9c59f715ab4d569a83d13ce0d7583351df1d33b7a09",
+    "bytes": 11927,
+    "rows": 40
+  },
+  "locked_outcomes": {
+    "primary": {
+      "verdict": "MIXED_POLARITY_RESPONSE",
+      "force_odd_residual": 1.3771045871333862,
+      "force_even_residual": 0.32184306128327095,
+      "displacement_odd_residual": 1.3895601818947307,
+      "displacement_even_residual": 0.26291158379326501
+    },
+    "amplitude": {
+      "class": "NONPOWER_OR_MIXED_AMPLITUDE",
+      "exponent_plus": 0.10770940773376383,
+      "exponent_minus": 0.10770940773376511
+    },
+    "polarization": {
+      "rotation_class": "CUBIC_ROTATION_PASS",
+      "rotation_residual_plus": 6.587173654904998e-15,
+      "rotation_residual_minus": 8.094809393930331e-15,
+      "circular_to_linear_rms_plus": 0.9967578349959416,
+      "circular_to_linear_rms_minus": 0.9967578349968289,
+      "transverse_fraction_plus": 0.9825674274845739,
+      "transverse_fraction_minus": 0.9825674274845789
+    },
+    "energy": {
+      "class": "ACCOUNTED_ENERGY_OPEN",
+      "maximum_normalized_inclusion_exclusion_closure": 0.00005391398205526826
+    },
+    "validity": {
+      "finite": true,
+      "detected": true,
+      "deterministic": true,
+      "repeat_residual_plus": 0.0,
+      "repeat_residual_minus": 0.0
+    }
+  }
+}

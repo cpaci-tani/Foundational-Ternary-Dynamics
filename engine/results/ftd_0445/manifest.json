@@ -1,0 +1,23 @@
+{
+  "identifier": "FTD-0445",
+  "campaign": "Moore-hop route ambiguity v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "CPU algebraic observer using production continuity extractor",
+  "lattice": 9,
+  "campaign_source_sha256": "4191f761dfc971bb415e9ddbc7fb1ba47f8bd2b70c82f66be46e5d2414446594",
+  "helper_source_sha256": "fb62681746b69ee232af559a7b9c39a4b65c73de6eb19bbe4b7b5c3bdcee0aec",
+  "record": "windows_msvc_cpu_L9.csv",
+  "record_sha256": "3506bd2bf1031be47fdb993e60452e61b58401b504f94f0a42b2e47ddec4c9a0",
+  "verdict": "FACE_ROUTING_UNDERDETERMINED",
+  "face_cases": 6,
+  "edge_cases": 12,
+  "corner_cases": 8,
+  "route_count_mismatches": 0,
+  "worst_continuity_residual": 0.0,
+  "canonical_swap_distance": 2.0,
+  "symmetric_average_swap_residual": 0.0,
+  "route_energy_split": 1.0
+}
