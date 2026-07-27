@@ -154,6 +154,12 @@ At D=3, k=3: t_BCC = sqrt(3) * sqrt(3) = 3 = D ticks.
 
 The confinement shell (SU(D)) is exactly D ticks away from center. A signal cannot reach the SU(D) layer and return within 2D ticks.
 
+**Scope note (FTD-0411):** this is the geometric travel-time consequence of
+the selected `c=1/sqrt(D)` reading. It is not used by the alternative selected
+BCC-time kernel, which assigns the BCC product character to temporal return
+rather than treating the BCC shell only as a spatial destination. The two
+readings are competing architectures until one is dynamically selected.
+
 ---
 
 ## 11. Engine Validation

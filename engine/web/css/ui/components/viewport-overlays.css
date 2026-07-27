@@ -195,9 +195,17 @@
     overflow-x: hidden;
     padding-right: 2px;
 }
-/* 'No matches' hint when the filter excludes every overlay. */
-.s0-overlay-body.is-empty::after {
+/* Empty-state hints distinguish an incompatible scenario from a search miss. */
+.s0-overlay-body.is-empty:not(.is-applicability-empty)::after {
     content: "No matching overlays";
+    display: block;
+    padding: 10px 6px;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    text-align: center;
+}
+.s0-overlay-body.is-applicability-empty::after {
+    content: "No overlays apply to this scenario";
     display: block;
     padding: 10px 6px;
     font-size: var(--fs-xs);
@@ -268,7 +276,8 @@
 .s0-overlay-col.is-collapsed > :not(.s0-overlay-col-head) {
     display: none !important;
 }
-/* Search: hide a whole category when none of its overlays match. */
+/* Scenario applicability and search independently hide categories. */
+.s0-overlay-col.is-inapplicable { display: none !important; }
 .s0-overlay-col.is-filtered-out { display: none; }
 .s0-overlay-col-label { flex: 1 1 auto; }
 
@@ -490,6 +499,11 @@
     border-color: #ff5a5a;
     color: #fff;
 }
+
+/* Scenario applicability is stronger than search filtering. */
+.s0-overlay-col .view-toggle.is-inapplicable,
+.s0-overlay-col .flux-slice-axis-row.is-inapplicable,
+.s0-overlay-col .force-style-row.is-inapplicable { display: none !important; }
 
 /* Search: hide individual overlay buttons that don't match the filter. */
 .s0-overlay-col .view-toggle.is-filtered-out { display: none !important; }

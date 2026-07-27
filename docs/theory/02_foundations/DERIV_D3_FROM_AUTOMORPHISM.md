@@ -58,17 +58,30 @@ Combined with the explicit checks $f(1) = 2$ and $f(2) = 4$, we conclude $D = 3$
 
 ## $\S 3$. Interpretation of the RHS
 
-**Claim D3A-3.** The quantity $2^D \cdot (D-1)!$ admits three equivalent group-theoretic interpretations when $D = 3$. **[THEOREM]**
+**Claim D3A-3.** The quantity $2^D \cdot (D-1)!$ is the order of an
+axis stabilizer in the hyperoctahedral group; at $D=3$ this is the
+corresponding octahedral axis stabilizer. The quotient by the central overall
+sign is a different group and does not supply a third equivalent
+interpretation. **[THEOREM]**
 
-*Proof.* The expression $2^D \cdot (D-1)!$ equals:
+*Proof.* The relevant group orders are:
 
-1. **Signed permutation matrices modulo sign:** The group of $D \times D$ matrices with exactly one nonzero entry ($\pm 1$) in each row and column has order $2^D \cdot D!$ (the hyperoctahedral group $B_D$). Quotienting by the overall sign gives a group of order $2^D \cdot D! / (2D) = 2^{D-1} \cdot (D-1)!$. However, $2^D \cdot (D-1)!$ is instead the order of the index-$D$ subgroup fixing one coordinate axis as a set.
+1. **Signed permutation matrices modulo overall sign (corrected
+   non-example):** The group of $D \times D$ signed permutation matrices has
+   order $2^D D!$ (the hyperoctahedral group $B_D$). Quotienting by the
+   central subgroup $\{\pm I\}$ divides by $2$, giving
+   $|B_D/\{\pm I\}|=2^{D-1}D!$. At $D=3$ this order is $24$, not $16$;
+   this quotient is not an interpretation of $2^D(D-1)!$.
 
-2. **Half the hyperoctahedral group:** $|B_D| = 2^D \cdot D!$, so $2^D \cdot (D-1)! = |B_D| / D$. This is the stabilizer of one axis under the natural $B_D$-action on the $D$ coordinate axes.
+2. **Coordinate-axis stabilizer:** $|B_D| = 2^D \cdot D!$, so
+   $2^D \cdot (D-1)! = |B_D| / D$. This is the stabilizer of one unoriented
+   coordinate axis under the natural $B_D$-action on the $D$ coordinate
+   axes.
 
 3. **Octahedral stabilizer:** When $D = 3$, the full octahedral group $O_h$ has $|O_h| = 48 = 2 \cdot 24 = 2 \cdot 4!$. The stabilizer of one axis has order $48/3 = 16 = 2^3 \cdot 2!$, confirming $2^D \cdot (D-1)! = |O_h|/D$.
 
-All three characterizations give $16$ when $D = 3$.
+Items 2 and 3 are the same stabilizer count and give $16$ when $D=3$.
+Item 1 records why the formerly cited sign quotient is not equivalent.
 
 ---
 
@@ -160,7 +173,8 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 **[THEOREM] (automorphism approach, $\S\S 1$–$4$):**
 1. $|\text{Aut}(E_i)| = 4$ (standard result in the theory of elliptic curves)
 2. $D = 3$ is the unique positive integer with $2^D \cdot (D-1)! = 16$ (exhaustive check + monotonicity) — this is the **arithmetic** uniqueness only
-3. The three group-theoretic interpretations are equivalent (standard finite group theory)
+3. The hyperoctahedral and octahedral axis-stabilizer counts agree at $D=3$;
+   the central-sign quotient is distinct
 4. Independence from the Watson integral approach (no shared premises)
 
 **[SELECTION — declared] (automorphism approach — the dimension-forcing; PERMANENT classification, 2026-07-01, FTD-0355):**

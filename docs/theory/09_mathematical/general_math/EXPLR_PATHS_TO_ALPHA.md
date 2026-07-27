@@ -33,8 +33,8 @@ This document records an exhaustive search. The honest verdict is **no new path 
 - **Watson identity** (Theorem 5): W₃ = G\*²/(2π).
 - **Q(G\*) field structure** (Theorem 9, FTD-0112): Q(G\*) is a π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky 1976).
 - **Retarded Phase G** (FTD-0113): time-resolved coupling on light cone has universal amplitude 1/(2π).
-- **Lattice Liénard-Wiechert** (FTD-0115): closed form via `(c|k̂|)² − (k·v)²` substitution.
-- **Hodge duality preserved** (FTD-0114): Bianchi identities exact at the lattice level.
+- **Corrected moving-source response** (FTD-0115/0558): exact selected-drive production resolvent and positive wrapped-BZ phase-speed floor; native source/recoil/power remain open.
+- **Bianchi identities exact** (FTD-0114, scope corrected by FTD-0415): `d²=0` at lattice level; no electric-magnetic action-duality theorem.
 - **FTD-0110 multi-block** (Phase A): universal slow mode λ = −1.585786 across all 6 symmetry types.
 
 ### 1.3 · Empirical engine measurements

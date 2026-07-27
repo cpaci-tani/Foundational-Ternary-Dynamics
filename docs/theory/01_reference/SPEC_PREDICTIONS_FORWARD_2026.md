@@ -39,11 +39,11 @@ Each row: what FTD predicts, what the SM/QM expectation is, the experiment that 
 - **Prediction (computed):** `λ_FTD = 3/23 = 0.130435`; against `λ_SM = m_H²/(2v²) = 0.129281` (PDG 2024 inputs): **κ_λ = 1.0089**, trilinear `3m_H²/v ≈ 191.1 GeV`. I.e. FTD predicts the Higgs self-coupling **0.9% above** the SM inference — indistinguishable at HL-LHC (~±50%), at the edge of FCC reach (~±5%).
 - **Kill condition:** any measured `κ_λ` deviating from ≈1.01 by more than the joint uncertainty (in practice: |κ_λ − 1| > 0.1 established at FCC precision) kills the λ = 3/23 reading outright.
 
-### FP-3 — Lorentz violation: nulls at dimensions 5 and 6, pattern-locked anisotropy beyond
+### FP-3 — Free-flux Lorentz violation: dimension-5 null, dimension-6 boost term, dimension-8 anisotropy
 
-- **Source:** PL-4/PL-5 (FTD-0251/0252 `[MEASURED]`): the wave-sector dispersion's k² correction is **isotropic**; rotation-breaking first enters with the **k⁴ phase-speed anisotropy** (dimension-7-class, strongly irrelevant), prefactor 6.95×10⁻⁴, exponent p = 4.0008 ± 0.0006.
-- **Prediction:** **continued null results** in all dimension-5 and dimension-6 photon-sector Lorentz-violation searches (GRB time-of-flight dispersion, vacuum birefringence) — under `a_phys ≡ ℓ_P` the first FTD-native anisotropy is (k·ℓ_P)⁴-suppressed, ~10⁻⁴ × (E/E_P)⁴, unobservably far below any foreseeable bound.
-- **Kill condition (two-sided):** (a) a **confirmed detection** of linear- or quadratic-Planck-suppressed LV contradicts the FTD wave sector (which forbids anything stronger than quartic); (b) engine-side, the k⁴ decay reversing or plateauing at larger L kills PL-5 directly (see EP-3).
+- **Source:** FTD-0407 plus PL-4/PL-5: the fully discrete free-flux pole has no linear correction, has an isotropic quadratic group-velocity correction `delta v/c = -(E/E_P)^2/12 + O(E^4/E_P^4)`, and has the measured cubic-direction spread only at quartic order, prefactor 6.95×10⁻⁴ and exponent p = 4.0008 ± 0.0006.
+- **Scope:** this is a tree-level free-flux result, not yet a photon-sector prediction. CPT-even dimension six does not prevent radiative mixing into allowed dimension-four preferred-frame kinetic terms, and no common matter/flux/gravity cone has been shown.
+- **Kill condition:** failure of the exact pole or spatial `k^4` scaling kills the free-flux calculation. Physical Lorentz recovery additionally requires the FTD-0407 LR-0..LR-6 gates; current bounds cannot be claimed to test only the tiny tree-level term until those gates close.
 
 ### FP-4 — Structural nulls, sharpened (cross-ref PL-6: three `[THEOREM]` + the proton `[SELECTION]/[BOUNDARY]` — not duplicated here)
 

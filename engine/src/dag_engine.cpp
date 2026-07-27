@@ -46,8 +46,12 @@
 // wave_vel = v(t + h/2) and flux = J(t). Verified empirically in
 // RenderBridge by tests/test_leapfrog_integrator_audit.cpp (TRACKER §1.4
 // closed 2026-04-17): 0.1% cumulative injection/dissipation balance over
-// 5000 ticks with damping off. C_SPEED = 1/√D = 1/√3 is the correct
-// leapfrog CFL limit.
+// 5000 ticks with damping off.
+// C_SPEED = 1/√3 is a [SELECTION], NOT a forced CFL limit (FTD-0407).
+// The production normalised 18-point stencil has exact max symbol 16/3 at
+// (π,π,0), so stability allows c² ≤ 4/(16/3) = 3/4, i.e. c ≤ 0.866.
+// 1/√3 is the CFL limit of the UNNORMALISED 6-point stencil, which is not
+// what the engine runs; it is conservative but unforced.
 //
 // ══════════════════════════════════════════════════════════════════════
 // LAPLACIAN ISOTROPY NOTE (verified 2026-04-17, TRACKER §1.8 CLOSED)

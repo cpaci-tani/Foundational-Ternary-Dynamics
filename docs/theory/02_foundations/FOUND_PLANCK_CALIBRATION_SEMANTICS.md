@@ -10,7 +10,7 @@ On the cubic lattice with edge `a` and Moore (26-neighbour) causality, a single 
 
 | Rung | Length | What it is | Grade |
 |---|---|---|---|
-| bottom | `a/√3` | the **light** displacement per tick — the CFL/leapfrog wave speed `c_lat = 1/√3` voxel/tick | [THEOREM] (leapfrog wave equation; `DERIV_DIMENSIONAL_GATE.md` §; `C_SPEED` in the engine) |
+| bottom | `a/√3` | the selected **light/transport** displacement per tick, `c_lat = 1/√3` voxel/tick | [SELECTION] (`DERIV_DIMENSIONAL_GATE.md`; FTD-0407; `C_SPEED` in the engine) |
 | middle | `a` | the **edge** — the axis-aligned causal reach per tick (the L∞/Chebyshev bound: one site per axis per tick, P4) | [AXIOM] (P1/P4 geometry) |
 | top | `a·√3` | the **body-diagonal causal reach** per tick (a diagonal Moore neighbour is one tick away) | [AXIOM] geometry; its *emergent-isotropy* status is the live PL-4 diagonals question |
 
@@ -31,7 +31,7 @@ The edge gauge is selected twice over, independently:
 1. **Operationally** (§2): it is the only rung of the ladder for which c·t_P = ℓ_P holds — naming either other rung "ℓ_P" breaks the defining identity of Planck units.
 2. **Empirically:** under the electron-primary default (FTD-0137), the calibration chain *derives* the **edge** ≈ ℓ_P to **0.19%** (`a_phys = ℓ_P` [DERIVED ~0.19%]). A tick-carrier re-gauge (ℓ_P := a/√3, making tick = t_P) would relocate the derived object to √3·ℓ_P — a 73% mismatch with its own name — while also breaking selector 1.
 
-**Verdict of this exploration: the current naming is coherent and doubly selected — [SELECTION with operational + empirical backing], not an arbitrary convention.** The re-gauge alternatives are honestly mapped and rejected: the tick-carrier gauge fails both selectors; "redefining" `C_SPEED = 1/√3` is not a naming act at all (it is the CFL stability theorem — dynamics, untouchable semantically); the full Planck-primary restructuring remains the separate standing owner decision FTD-0130 path-(b), untouched here.
+**Verdict of this exploration: the current naming is coherent and doubly selected — [SELECTION with operational + empirical backing], not an arbitrary convention.** The re-gauge alternatives are honestly mapped and rejected. FTD-0407 corrects one premise: `C_SPEED = 1/√3` is an implemented transport selection inside the exact stable interval, not the production stencil's CFL saturation theorem. The full Planck-primary restructuring remains the separate standing owner decision FTD-0130 path-(b), untouched here.
 
 ## §4 · What no gauge can do (the walls, restated)
 

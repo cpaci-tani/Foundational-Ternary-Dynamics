@@ -50,9 +50,27 @@ theorem N_eff_is_13 : N_eff_emergent N_c = 13 := by rfl
 theorem N_eff_identity (n : Nat) : b_3_emergent n + 2 * n = N_eff_emergent n := by
   rfl
 
--- THEOREM: The relation N_base + N_c = b_3 holds ONLY for n = 3.
--- First we prove it holds for N_c = 3:
+-- THEOREM: The relation N_base + N_c = b_3 holds at n = 3.
 theorem Nc_plus_Nbase_eq_b3 : N_base_emergent N_c + N_c = b_3_emergent N_c := by rfl
+
+/-  CORRECTION (audit finding, 2026-07-24). An earlier comment here asserted
+    that `N_base + N_c = b_3` holds "ONLY for n = 3". That is FALSE: the
+    relation is an unconditional identity for every n ≥ 2, since
+    `n(n-1) - 2 + n = n² - 2` identically. It therefore selects nothing, and
+    must not be cited as evidence that N_c = 3 is forced. The general
+    statement is proven below so the non-uniqueness is on the record. -/
+
+/-- The relation `N_base + n = b_3` holds for EVERY n ≥ 2 — it is an algebraic
+    identity, not a selection principle. There is no uniqueness at n = 3. -/
+theorem Nbase_plus_n_eq_b3_forall (n : Nat) (h : 2 ≤ n) :
+    N_base_emergent n + n = b_3_emergent n := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 2 := ⟨n - 2, by omega⟩
+  show (m + 2) * (m + 2 - 1) - 2 + (m + 2) = (m + 2) * (m + 2) - 2
+  have h1 : m + 2 - 1 = m + 1 := rfl
+  have k1 : (m + 2) * (m + 1) = (m + 2) * m + (m + 2) := Nat.mul_succ (m + 2) m
+  have k2 : (m + 2) * (m + 2) = (m + 2) * (m + 1) + (m + 2) := Nat.mul_succ (m + 2) (m + 1)
+  rw [h1]
+  omega
 
 /-! ## Emergent Dimensions -/
 

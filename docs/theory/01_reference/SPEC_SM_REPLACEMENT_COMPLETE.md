@@ -612,7 +612,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) | All 4 forces from lattice Green's functions |
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Propagator, vertex, stress-energy tensor, Moller scattering |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ derivation |
-| [DERIV_VARIATIONAL_PROOF.md](../03_derivations/DERIV_VARIATIONAL_PROOF.md) | $\delta S = 0$ reproduces all update rules (59 checks) |
+| [DERIV_VARIATIONAL_PROOF.md](../03_derivations/foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | Scoped field/source variation only; all-update generator claim retracted by FTD-0467/0565 |
 
 ## Wave 3: Non-Abelian Gauge Sectors + Higgs
 

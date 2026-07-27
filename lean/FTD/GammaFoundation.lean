@@ -7,6 +7,12 @@
   The key insight: pi = gamma_2^2 is DERIVED, not assumed.
   G* = gamma_1^2 / (sqrt(2) * gamma_2^2) is pi-free.
 
+  ⚠ NUMERIC ILLUSTRATION, NOT MACHINE-CHECKED (labelled 2026-07-24). The
+  `#eval` block below computes these identities in 64-bit `Float` and prints
+  PASS/FAIL — a FAIL would still build green. For the genuine machine-checked
+  ℝ theorems (reflection Γ(1/4)Γ(3/4)=π√2, the pi-free form, the triad), see
+  `FTD/GammaProof.lean`. Cite that file, not this `#eval`, as verification.
+
   Reference: MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md, PAPER_MISSING_RATIO.tex
 -/
 

@@ -1,7 +1,7 @@
 # DERIV — The record-state dichotomy: traciality, the necklace shelf, and the symmetric-fiber sharpening
 
 **Tag:** `[THEOREM]` (Theorems A–C, elementary and machine-verified) + `[SYNTHESIS]` (the six-instance sharpening roll-up) + `[CONJECTURE]` (the universal symmetric-fiber reading and the loop-observable identification).
-**LEDGER id:** FTD-0513 · **Date:** 2026-07-25
+**LEDGER id:** FTD-0515 · **Date:** 2026-07-25
 **Deepens:** [`DERIV_FOUR_WALLS_SECTION_SCHEMA.md`](DERIV_FOUR_WALLS_SECTION_SCHEMA.md) (FTD-0508), whose proven edge was algebra-level; this document proves the state-level form and sharpens the schema. Inputs at tags of record: FTD-0499, FTD-0243, FTD-0494, FTD-0336, FTD-0244/0314.
 **Verification:** `scripts/proofs/proof_record_state_dichotomy.py` (5/5 PASS, 2026-07-25).
 
@@ -49,6 +49,8 @@ Theorems A–C suggest a sharper form of the schema: what the substrate owns of 
 | I6 δ wall | `x₊+x₋ = 16G*²`, `x₊x₋ = 16G*³` — the elementary symmetric functions, in `ℚ(G*)` `[THEOREM, machine check E5]` | the root order: `x₊−x₋ = 8G*δ`, the antisymmetric function, carrying the surd (transcendental over `ℚ(G*)` conditional on Chudnovsky, per FTD-0314) |
 
 The I6 row is the exact Galois prototype: a base field always owns the symmetric functions of a polynomial's roots; selecting a root is the extension. The universal reading — *every FTD wall is a Galois-type extension problem: owned symmetric algebra, imported ordering* — is registered as `[CONJECTURE]`, the sharpened form of the FTD-0336 §3 meta-conjecture. Its value is that it is more falsifiable than the original: **exhibit one wall whose owned half exceeds the symmetric algebra of its fiber, or whose import is not an ordering datum, and the sharpening dies** while the original frontier conjecture may survive. The L² wall (I5) is again the natural attack point, since "choice of complement" is an ordering datum only under a reading (an ordered direct-sum decomposition) that a skeptic may reject.
+
+**Correction of record (2026-07-25, FTD-0518):** the attack was run the same day and the literal form of this section's conjecture **died at I5** — Sym(fiber)-invariants on an affine fiber are constants, so "owned = symmetric functions" mispredicts the owned algebra there. The corrected form (owned = invariants of the fiber's *structure-group* action on its torsor; imported = a point/section) survives all six instances and supersedes this section's universal reading. See [`DERIV_SECTION_SCHEMA_TORSOR_CORRECTION.md`](DERIV_SECTION_SCHEMA_TORSOR_CORRECTION.md). The I6 arithmetic content above (`e₁, e₂ ∈ ℚ(G*)`; `x₊−x₋ = 8G*δ`) is untouched.
 
 ## 5 · Status line
 

@@ -209,15 +209,17 @@ These are discrete, qualitative claims about the structure of particle physics. 
 
 ### 2.4 No Magnetic Monopoles
 
-**FTD claim:** Magnetic monopoles do not exist. The lattice topology does not support the requisite non-trivial $\pi_2(\text{U}(1)) = 0$ bundle structure needed for Dirac monopoles.
+**FTD claim, corrected by FTD-0564:** In the regular global-potential sector where $B=\nabla\times J$ with a single-valued nonsingular $J$, the matched lattice identity gives $\nabla\cdot B=0$. This excludes a magnetic source *inside that representation*. It does not prove that magnetic monopoles cannot exist in every extension of the ontology.
+
+The former argument from $\pi_2(\mathrm{U}(1))=0$ was mathematically incorrect: a Dirac monopole is characterized by the first Chern class of a U(1) bundle over $S^2$, equivalently $H^2(S^2,\mathbb Z)$, not by $\pi_2(\mathrm{U}(1))$. Patched/singular potentials, compact U(1) links, environmental boundaries, or a symmetry-breaking coset can evade the regular-global-$J$ hypothesis. None is presently derived by the native engine.
 
 **Current status:** No monopoles detected. MoEDAL at LHC has null results.
 
-**Falsification:** Detection of any isolated magnetic charge.
+**Falsification:** A nonzero magnetic divergence produced while all regular, global, single-valued-$J$ hypotheses remain satisfied would falsify the scoped lattice identity. Detection of a physical monopole would falsify a universal no-monopole claim, but FTD no longer has such a theorem.
 
-**Pre-diction or post-diction?** **WEAK PRE-DICTION.** No monopole has been found, but most GUTs predict them. FTD's prediction that they are structurally impossible is more definitive than the SM (which is agnostic on monopoles).
+**Pre-diction or post-diction?** **NOT CURRENTLY A PHYSICAL PREDICTION.** The native regular-potential representation contains no magnetic source, but the ontology has not excluded all bundle, defect, singular, or boundary realizations.
 
-**Epistemic status:** **[THEOREM]** (lattice topology argument).
+**Epistemic status:** **[CONDITIONAL THEOREM — regular global-potential sector]** for $\nabla\cdot(\nabla\times J)=0$; **[OPEN]** for the universal absence of physical magnetic monopoles. FTD-0564.
 
 ### 2.5 No Proton Decay
 
@@ -251,23 +253,23 @@ These are discrete, qualitative claims about the structure of particle physics. 
 
 These predictions are unique to discrete spacetime models. The SM, formulated on continuous spacetime, makes none of these claims. Most are currently untestable.
 
-### 3.1 Planck-Scale Photon Dispersion
+### 3.1 Planck-Scale Free-Flux Dispersion
 
-**FTD formula:**
+**Production free-flux formula (edge calibration, leading order):**
 
-$$v(E) = c\left[1 - \frac{E^2}{24 E_P^2}\right]$$
+$$v_g(E) = c\left[1 - \frac{E^2}{12 E_P^2} + O(E^4/E_P^4)\right]$$
 
 where $E_P = 1.22 \times 10^{19}$ GeV is the Planck energy.
 
-**Coefficient derivation:** The factor 1/24 comes from the second-order Taylor expansion of the lattice dispersion relation $\omega(k) = 2\sin(k/2)$ around $k = 0$. Specifically, $\sin^2(k/2) \approx k^2/4 - k^4/48$, yielding the $E^2/(24E_P^2)$ correction.
+**Coefficient derivation:** the actual production axis pole is `theta(q)=2 asin(c_lat sin(q/2))` with `c_lat²=1/3`, not `omega=2 sin(k/2)`. Differentiation gives `v_g/c = cos(q/2)/sqrt(1-c_lat² sin²(q/2)) = 1-q²/12+O(q⁴)`, and the edge calibration gives `q=E/E_P` at leading order (FTD-0407).
 
 **Expected magnitude:** At $E = 100$ GeV: $\Delta v / c \sim 10^{-36}$. At $E = 10$ TeV: $\Delta v / c \sim 10^{-32}$. Both are many orders of magnitude below detectability.
 
 **Current bounds:** Fermi-LAT GRB observations constrain $E_{\text{QG}} > 10^{18}$ GeV (linear dispersion). FTD predicts quadratic dispersion, which is less constrained.
 
-**Falsification:** Detection of photon dispersion with the wrong sign (superluminal at high energy) or wrong power law (linear instead of quadratic).
+**Falsification:** the exact free-flux pole is falsified if the source-matched engine dispersion disagrees with it. Applying the pole to photons requires a photon identification, radiative-stability analysis, and common-cone result not yet established.
 
-**Epistemic status:** **[THEOREM]** (follows from any cubic lattice discretization). **Not unique to FTD**---any discrete spacetime model predicts similar dispersion.
+**Epistemic status:** **[DERIVED — production free-flux sector]**. It does not follow from every cubic discretization and is not yet a physical photon prediction.
 
 ### 3.2 Cubic Lattice Anisotropy
 
@@ -403,7 +405,7 @@ FTD predicts that certain entities and phenomena will never be observed. These a
 
 ### 5.3 No Magnetic Monopoles
 
-**Prediction:** Isolated magnetic charges cannot exist in the lattice topology.
+**Prediction:** Retracted as a universal prediction by FTD-0564. The regular global-potential sector has no magnetic sources because $B=\nabla\times J$ implies $\nabla\cdot B=0$; broader compact, patched, singular, defect, and boundary sectors remain open.
 
 **Falsification:** Confirmed magnetic monopole detection.
 
@@ -439,7 +441,7 @@ FTD predicts that certain entities and phenomena will never be observed. These a
 |-----------|-----------|------------|-----------------|
 | No WIMPs | SM is agnostic | **Predicted null** | Null (consistent) |
 | No proton decay | SM allows it; GUTs predict it | **Absolute stability** | Null (consistent) |
-| No monopoles | SM is agnostic; GUTs predict them | **Structurally impossible** | Null (consistent) |
+| No monopoles | SM is agnostic; GUTs predict them | **Only absent in the regular global-potential sector; universal claim open (FTD-0564)** | Null (not discriminating) |
 | No extra dimensions | SM is agnostic | **No extra spatial D ($D = 3$ [SELECTION — declared], FTD-0355)** | Null (consistent) |
 | No SUSY | SM is agnostic | **Incompatible with lattice** | Null (consistent) |
 | No Landau pole | SM predicts one (irrelevantly far) | **Compact BZ prevents it** | Untestable |
@@ -541,7 +543,7 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 | NP-12 | $N_{\text{gen}} = 3$ exactly | [THEOREM] | Now (consistent) | Post |
 | NP-13 | $N_c = 3$ exactly | [STRONGLY MOTIVATED CONJECTURE] | Now (consistent) | Post |
 | NP-14 | Gauge group = $\text{U}(1) \times \text{SU}(2) \times \text{SU}(3)$ | [THEOREM] + [SELECTION] | Now (consistent) | Post |
-| NP-15 | No magnetic monopoles | [THEOREM] | Now (null searches consistent) | Weak pre |
+| NP-15 | No magnetic sources in the regular global-potential sector; universal no-monopole claim open | [CONDITIONAL THEOREM] / [OPEN] (FTD-0564) | Representation theorem only | Not a physical prediction |
 | NP-16 | No proton decay ($\tau_p = \infty$) | [SELECTION] / [BOUNDARY] (FTD-0301) | Now/near-term (null consistent) | Weak pre |
 | NP-17 | No SUSY particles | [THEOREM] | Now (null LHC consistent) | Weak pre |
 | NP-18 | No extra spatial dimensions | [THEOREM] | Now (null searches consistent) | Weak pre |
@@ -551,7 +553,7 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 | NP-22 | $n_s = 0.9645$ (spectral index) | [SELECTION] | Now ($0.1\sigma$ from Planck) | Post |
 | NP-23 | $\eta \sim 10^{-10}$ (baryon asymmetry) | [SELECTION] | Now (order of magnitude) | Post |
 | NP-24 | Dark matter = sub-threshold flux | [CONJECTURE] | Near-term (continued WIMP nulls) | Weak pre |
-| NP-25 | Photon dispersion $v(E) = c[1 - E^2/(24E_P^2)]$ | [THEOREM] | Far-term (Planck-scale effect) | Pre (generic) |
+| NP-25 | Free-flux dispersion $v_g/c = 1 - E^2/(12E_P^2)+O(E^4/E_P^4)$; photon identification open | [DERIVED — production free flux] | Far-term (Planck-scale effect) | Pre (sector-scoped) |
 | NP-26 | Cubic lattice anisotropy $\sim (E/E_P)^4$ | [THEOREM] | Far-term ($\sim 10^{-80}$) | Pre (generic) |
 | NP-27 | No Landau pole in QED | [THEOREM] | Possibly never | Pre (generic) |
 | NP-28 | UV finiteness of all loops | [THEOREM] | Possibly never (formal result) | Pre (generic) |

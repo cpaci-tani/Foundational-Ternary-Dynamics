@@ -21,16 +21,16 @@ open FTD
 /-! ## Integer-Level Theorems -/
 
 /-- Lattice spacing numerator: D-1 = 2 -/
-theorem spacing_numerator : 3 - 1 = 2 := by native_decide
+theorem spacing_numerator : 3 - 1 = 2 := by decide
 
 /-- g = V''' = 2, so g^2 = 4 -/
-theorem g_squared : 2 * 2 = 4 := by native_decide
+theorem g_squared : 2 * 2 = 4 := by decide
 
 /-- The lattice spacing 2/D = 2/3 also equals:
     - Boundary-to-bulk ratio in D=3
     - Up quark electric charge Q_u = 2/3
     - Hypercharge Y_{u_R} = (D-1)/D -/
-theorem spacing_cross : 2 * 3 = 3 * 2 := by native_decide  -- 2/3 well-defined
+theorem spacing_cross : 2 * 3 = 3 * 2 := by decide  -- 2/3 well-defined
 
 /-! ## Numerical Verification -/
 

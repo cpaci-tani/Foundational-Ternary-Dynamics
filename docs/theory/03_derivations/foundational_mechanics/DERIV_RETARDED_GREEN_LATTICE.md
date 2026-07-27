@@ -1,13 +1,29 @@
 # DERIV — Retarded Lattice Green's Function Identity (Subsidiary of Phase G)
 
 **Document type:** Derivation (subsidiary of Theorem 6 / FTD-0004)
-**Status:** [DERIVED] — clean three-line lattice Fourier argument; the underlying d'Alembert relation is standard, the FTD-stencil-specific statement is new
+**Status:** [THEOREM — AUXILIARY CONTINUOUS-TIME SEVEN-POINT MODEL] + [THEOREM — NATIVE DISCRETE STATIC RESOLVENT]; corrected by FTD-0558
 **Role:** the radiation-zone extension of Phase G's static Coulomb identity, in the "exploit Maxwell's wave equation" research thread
 **Related:** `SPEC_ALGEBRAIC_SPINE.md §6` (Phase G static identity);
 `DERIV_HEAT_EQUATION_FROM_RATIO.md` (heat-equation-side analog, where G* is the half-derivative eigenvalue);
 `scripts/proofs/proof_retarded_green_identity.py` (numerical sanity check at L = 8)
 
 ---
+
+> **FTD-0558 correction (2026-07-26).** Sections 0–4 below derive the
+> standard continuous-time seven-point identity.  They are not the exact
+> production engine propagator: production uses discrete ticks, kick-drift
+> time integration, and the 18-point `FULL` symbol `M(k)`.  For the production
+> map the correct statement is the Abel/static-resolvent identity
+>
+> `G_static(k) = 1 / (C_WAVE^2 M(k))` for every nonzero mode.
+>
+> It follows by evaluating the exact driven resolvent
+> `1/[C_WAVE^2 M(k)-4 sin^2(Omega/2)]` at `Omega=0`.  The undamped impulse
+> response has unit-modulus poles, so an ordinary convergent infinite time sum
+> is not claimed.  Also, `L -> infinity` at fixed lattice spacing is a
+> thermodynamic/infinite-volume limit, not a continuum limit; continuum
+> recovery separately requires `a -> 0`.  Every use of the older formula as a
+> native moving-source propagator is superseded by FTD-0558.
 
 ## 0 · Statement
 
@@ -147,16 +163,17 @@ feature, not a defect.
   is `2r · G^ret_L(r, t)` — no fine-structure constant appears anywhere.
 
 - **NOT new mathematics in the d'Alembert sense.** The relation
-  `∫G^ret = G_static` is standard. What's new is its application to
-  FTD's specific lattice stencil with the Phase G prefactor, and the
-  observation of the universal `1/(2π)` continuum amplitude.
+  `∫G^ret = G_static` is standard. The historical calculation applies it to
+  an auxiliary seven-point lattice with the Phase G prefactor. FTD-0558 gives
+  the separate production `FULL`-stencil discrete-time resolvent.
 
-- **NOT a Liénard-Wiechert formula derivation.** Liénard-Wiechert
+- **NOT a native Liénard-Wiechert formula derivation.** Liénard-Wiechert
   describes the fields of a moving point charge in continuum
   electrodynamics; identity (★) is the lattice retarded Green's
   function for the wave operator with a stationary source. Extending
-  to moving sources (and verifying the lattice Liénard-Wiechert form)
-  is a separate [OPEN] follow-up.
+  to moving sources requires a conserved current and reciprocal matter
+  dynamics. FTD-0558 closes only the selected-drive field pole and leaves that
+  physical source problem [OPEN].
 
 - **NOT a resolution of the FTD-0096 mass-unit no-go or the FTD-0059
   length-unit no-go.** Identity (★) lives in dimensionless lattice
@@ -180,19 +197,18 @@ feature, not a defect.
    structural mechanism is a Koide-style fishing exercise. A fishing
    answer is forbidden by CLAUDE.md.
 
-2. **Lattice Liénard-Wiechert.** Replace the stationary delta source
-   in identity (★) with a moving point source on the lattice; ask
-   whether the radiation-zone field is captured by a Liénard-Wiechert
-   analog. Extension to moving charges is the natural radiation-physics
-   continuation.
+2. **Native moving-source electrodynamics.** FTD-0558 derives the exact
+   production pole for a selected smooth drive and the Floquet spectrum for a
+   prescribed integer-hop history. The remaining task is to derive the native
+   conserved current, energy flux, and reciprocal recoil from one interaction.
 
-3. **Engine cross-check.** Implement an engine measurement of
-   `G^ret_L(r, t)` from a delta-pulse source; verify identity (★)
-   numerically end-to-end at L ∈ {16, 32, 64}. This is a one-day engine
-   campaign that bridges the static and wave-propagation toggles.
+3. **Retarded engine cross-check.** Measure the production impulse response
+   with an explicit Abel regulator and verify its zero-frequency resolvent at
+   `L ∈ {16,32,64}`. Do not compare the unregulated undamped time sum to an
+   ordinarily convergent integral.
 
 4. **Hodge duality on the lattice.** Independent of (★), the question
-   "does FTD's stencil preserve the Hodge duality `F  ⋆F` of Maxwell?"
+   "does FTD's stencil preserve the exact Bianchi complex `d²=0`?"
    — and if it doesn't, what is the lattice-scale duality-breaking
    parameter? — is a separate open direction in the same Maxwell-exploit
    thread.

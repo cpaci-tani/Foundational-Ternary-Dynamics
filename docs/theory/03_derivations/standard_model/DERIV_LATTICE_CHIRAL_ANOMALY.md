@@ -245,7 +245,7 @@ In FTD, the lattice is fundamental as a *structural* commitment — the substrat
 
 - **Chiral symmetry is broken at the substrate scale.** This is not an approximation artifact but a prediction: at energies probing the substrate scale, chiral symmetry is not a good symmetry. Under the Planck-primary calibration the substrate scale is $E_P \approx 1.22 \times 10^{19}$ GeV; under a different gauge declaration (e.g., hadronic-primary $a \equiv 1$ fm) the substrate scale shifts but the *qualitative* prediction stands.
 - **Chiral symmetry emerges at low energies.** At $E \ll 1/a$ (accessible scales for any reasonable gauge), chiral symmetry is restored to arbitrary precision. Under Planck-primary, the Wilson mass corrections are of order $(E/E_P)^2 \sim 10^{-38}$ — utterly undetectable.
-- **Analogy with Lorentz symmetry.** Just as Lorentz invariance is broken at the lattice scale but recovered in the continuum (CLAUDE.md, Section 14.2), chiral symmetry is broken at the lattice scale but recovered for all practical physics.
+- **Analogy with Lorentz symmetry.** Lattice artifacts can become irrelevant in an infrared expansion, but that fact alone proves neither chiral nor Lorentz recovery. For the production flux update, FTD-0407 finds a dimension-six preferred-frame pole term and leaves interacting/common-cone recovery open.
 
 ## 4.5 Alternative: Ginsparg-Wilson Fermions & The Overlap Dirac Operator [THEOREM]
 

@@ -13,8 +13,9 @@ not a structural failure.
 **Supersedes (on the L ≥ 4 point):** the AMBIGUOUS/OPEN reading in
 `scripts/proofs/proof_phase_j_general_L.py` and spine §7's
 "[AMBIGUOUS / OPEN for L ≥ 4]" clause.
-**Does not modify:** `SPEC_ALGEBRAIC_SPINE.md`, `LEDGER.md`, or any tracker —
-tag changes are the controller's decision after review (see §8).
+**Reconciliation note (2026-07-22):** `SPEC_ALGEBRAIC_SPINE.md` §7 now
+incorporates this all-`L` scope and removes the contradictory pre-FTD-0350
+`L≥4 [OPEN]` prose. The LEDGER tag/count and trackers are unchanged.
 
 ---
 

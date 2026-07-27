@@ -106,7 +106,9 @@ with the **matter Lagrangian density**:
 
 $$\boxed{\mathcal{L}_{\text{matter}} = -E_{\rm REST}\sqrt{\max(1-B,0)} \;+\; g_c \cdot s \cdot (\nabla_L \cdot \mathbf{J}) \;-\; \lambda_G\,(\nabla_L \cdot \mathbf{J} - \rho)^2}$$
 
-Here $E_{\rm REST}=M_{\rm INERTIAL}C_{\rm SPEED}^2=K_B/3$ in raw lattice coordinates. This first term is the selected particle Born–Infeld core implemented by the engine; it does not turn the displayed schematic density into a derived complete native action or supply the interaction energies deferred to NCEMC.
+Here $E_{\rm REST}=M_{\rm INERTIAL}C_{\rm SPEED}^2=K_B/3$ in raw lattice coordinates. This first term is the selected Born–Infeld kinematic core implemented by the engine. In the current diagnostic it is evaluated at every voxel without a factor of `s`; it therefore cancels in a candidate-state variation and does not supply a manifestation energy (FTD-0567). It does not turn the displayed schematic density into a derived complete native action or supply the interaction energies deferred to NCEMC.
+
+**FTD-0567 genesis scope correction (2026-07-26).** The displayed action contains no genesis magnitude threshold, exponential acceptance probability, field/wave drain, evaporation erasure, or manifestation/Higgs potential. A uniform-field counterexample proves its candidate-state values cannot generate the production `|J|>K_GENESIS` predicate. Genesis and evaporation are selected stochastic update rules outside this action, not consequences of `delta S/delta s=0`.
 
 **Amendment of record (2026-07-18) — electric coupling sign.** The coupling term's original sign, $-g_c\,s\,(\nabla_L\cdot\mathbf{J})$, was in internal conflict with the Gauss constraint term: its Hamiltonian contribution ($+g_c\,s\,\nabla_L\cdot\mathbf{J}$) is minimized by $s$-*anti*-correlated divergence, while the constraint term demands $\nabla_L\cdot\mathbf{J} = \rho \propto s$. The two terms of the same action preferred opposite signs of $s\,(\nabla_L\cdot\mathbf{J})$ at every charge site; the live engine settled the compromise at $-0.095$ of the Gauss target — wrong-signed flux (inward at a $+1$ charge; measured in `engine/tests/test_gauss_law_fidelity.cpp`, 2026-07-16). With the amended sign the Euler-Lagrange source in `phase_read` becomes $-g_c\nabla_L s$ (outward at a positive charge), both interaction terms prefer the same constraint manifold, and the live equilibrium is constraint-aligned ($f = +0.114$ at shipping defaults, same test, 2026-07-18). The Gauss projector's fixed point is untouched by the amendment (its unit-charge self-energy remains $W_{SC}(L)$ exactly — the frozen §9.1 prediction of `EXPLR_VOXEL_NEIGHBORHOOD_DYNAMICS.md` is upheld). Residual enforcement magnitude (0.114 vs 1.0) is limited by the leapfrog's `wave_vel` longitudinal reservoir, which the flux-only projector does not clean — completing enforcement would require projecting the velocity field's longitudinal sector as well, a separate scope decision recorded as [OPEN]. Downstream formulas in this document carry the amended sign.
 
@@ -131,7 +133,7 @@ $$\boxed{\mathcal{L}_{\text{grav}} = -\frac{1}{8\pi G}\,|\nabla_L \mathcal{L}|^2
 |------|-----------|------|
 | Born-Infeld core | $-E_{\rm REST}\sqrt{\max(1-B,0)}$ | Selected particle rest/kinetic core; enforces $B<1$ |
 | State-flux coupling | $+g_c\,s\,(\nabla_L \cdot \mathbf{J})$ | Source/sink for gauge interactions (sign amended 2026-07-18, see §3.3) |
-| Gauss constraint | $-\lambda_G(\nabla_L \cdot \mathbf{J} - \rho)^2$ | Enforces charge conservation → U(1) gauge symmetry |
+| Gauss penalty | $-\lambda_G(\nabla_L \cdot \mathbf{J} - \rho)^2$ | Selected `div J=rho` constraint realization; does not derive full-event conservation or U(1) redundancy |
 
 ### 3.6 Engine Decomposition (6 Active Terms + Dissipation)
 
@@ -153,6 +155,7 @@ where $\mathbf{v}_\text{wave} = \Delta_t\mathbf{J}$ is the wave velocity (canoni
 **Relationship to the analytical action:**
 
 - Terms 5 and 6 are the independently posited second-order flux-field sector. FTD-0402 does not derive them from the particle Born–Infeld core or add missing interaction energies; `dynamicEnergy` reports these field/wave channels plus normalized particle kinetic energy.
+- No active term generates genesis or evaporation. FTD-0567 proves the current production transaction is not the conservative amplitude-locking completion of this schematic action.
 - FTD-0404 distinguishes local density from its spatial integral: volume-density terms carry `V_cell=a_lat³`, while point-particle energy/momentum, charge, causal norms, and Gauss residuals do not. At the production unit edge this is numerically neutral.
 - Term 3 (velocity coupling) is the magnetic counterpart of Term 2. Its Euler-Lagrange equation produces the lattice Lorentz force $\mathbf{F} = g_c\,q\,(\mathbf{v} \times \nabla_L \times \mathbf{J})$, which maps to $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$ for arbitrarily fine lattice spacing. Term 3 vanishes for stationary particles ($\mathbf{v} = 0$).
 - The Rayleigh dissipation $R$ is not part of the action $S$ but enters through the dissipative Euler-Lagrange equations: $\frac{d}{dt}\frac{\partial L}{\partial \dot{q}} - \frac{\partial L}{\partial q} = -\frac{\partial R}{\partial \dot{q}}$.
@@ -318,7 +321,7 @@ The following reference values mix mathematical structure, selections, and calib
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}=1/\sqrt{1-B}$ is the shared current-engine transport/clock factor | **[AXIOM + measured implementation conformance]**; not a covariance or GR-unification theorem |
 
-| L-4 | Gauss constraint ($\lambda_G \to \infty$) generates U(1) gauge symmetry | **[THEOREM]** |
+| L-4 | Selected Gauss penalty realizes `div J=rho` in its scoped solver sector | **[SELECTION + IMPLEMENTATION RESULT]**; full-event conservation and U(1) emergence remain open/negative under FTD-0421 |
 | L-5 | Lattice Green's function $G_L = 1/\hat{k}^2$ is the Euclidean QFT propagator | **[THEOREM]** |
 | L-6 | Same native stress–energy sources both field dynamics and gravity | **[SELECTED CPU-SCOPED CONTRACT, FTD-0406]** for isolated flat collision-free colour dynamics; FTD-0405 remains the no-go for the unmodified tick; complete backend/topology/mixed-force closure is `[OPEN]` |
 | L-7 | Current latency Poisson source follows from variation of the particle/interaction action | **[PARTIAL / SELECTED, NOT DERIVED]**; FTD-0406 routes selected strong `T00/C_SPEED²` into CPU latency, while `M_GRAVITATIONAL=K_B` and the broader source remain imposed |

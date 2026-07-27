@@ -28,22 +28,22 @@ open FTD
 -/
 
 /-- 9 = 3² -/
-theorem nine_is_3sq : N_c * N_c = 9 := by native_decide
+theorem nine_is_3sq : N_c * N_c = 9 := by decide
 
 /-- 47 = D_constraint -/
 theorem fortyseven : D_constraint = 47 := rfl
 
 /-- 64 = 4³ = N_base³ -/
-theorem sixtyfour_is_Nbase_cubed : N_base * N_base * N_base = 64 := by native_decide
+theorem sixtyfour_is_Nbase_cubed : N_base * N_base * N_base = 64 := by decide
 
 /-- 141 = 3 × 47 = N_c × D_constraint -/
-theorem onefouryone : N_c * D_constraint = 141 := by native_decide
+theorem onefouryone : N_c * D_constraint = 141 := by decide
 
 /-- 11 = N_c + N_base + N_base = 3 + 4 + 4 -/
-theorem eleven_from_framework : N_c + N_base + N_base = 11 := by native_decide
+theorem eleven_from_framework : N_c + N_base + N_base = 11 := by decide
 
 /-- Alternative: 11 = β₀ = 11*N_c/N_c -/
-theorem eleven_is_beta0 : 11 * N_c / N_c = 11 := by native_decide
+theorem eleven_is_beta0 : 11 * N_c / N_c = 11 := by decide
 
 /-- c₁ numerator: 9 = N_c² -/
 theorem c1_num : N_c * N_c = 9 := nine_is_3sq
@@ -52,7 +52,7 @@ theorem c1_num : N_c * N_c = 9 := nine_is_3sq
 theorem c1_den : D_constraint = 47 := fortyseven
 
 /-- c₂ numerator: 5 = N_c + CM_field_degree = 3 + 2 -/
-theorem c2_num : N_c + CM_field_degree = 5 := by native_decide
+theorem c2_num : N_c + CM_field_degree = 5 := by decide
 
 /-- c₂ denominator: 64 = N_base³ -/
 theorem c2_den : N_base * N_base * N_base = 64 := sixtyfour_is_Nbase_cubed

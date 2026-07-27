@@ -48,11 +48,11 @@
       "falsifier": "a canonically forced generating set for C (retires the [SELECTION]); or a generator outside the documented set changing N_calc."
     },
     {
-      "ref": "IMP-S4", "kind": "selected-type", "type_imported": "the gauge-connection identification A_mu = P_T J_mu (the substrate's transverse flux projection IS the U(1) connection the imported Wilson-Dirac fermion minimally couples to)",
+      "ref": "IMP-S4", "kind": "selected-type", "type_imported": "the gauge-connection carrier choice for imported charged matter: either the global projected identification A_mu = P_T J_mu or an independently adopted local link connection A_mu with its own plaquette dynamics",
       "price": 1, "unit": "selected type", "canonical_tag": "[SELECTION]",
-      "provenance": "SPEC_WILSON_DIRAC_FTD.md Sec 6 ('Gauge field A_mu from flux projection' [SELECTION], via DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md); flagged unpriced 2026-07-10 (SCOPE_VERTEX_PROGRAM.md Sec 2, FTD-0380 redteam finding); priced 2026-07-12 (FTD-0371 rev). NOTE: the vertex coupling g^2 = 1/x+ itself is NOT this row -- it stays priced as the composition IMP-E1 o IMP-E3 (a separate line would double-count).",
+      "provenance": "SPEC_WILSON_DIRAC_FTD.md Sec 6 and DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md price the projected branch; FTD-0416 proves that branch nonlocal as a microscopic vertex; AUDIT_LORENTZ_LOCAL_LINK_FLUX.md (FTD-0417) supplies the mutually exclusive independent-link branch as a selected ontology extension. Flagged unpriced 2026-07-10 (FTD-0380), minted 2026-07-12, broadened 2026-07-22 without changing the selected-type count. NOTE: the vertex coupling g^2 = 1/x+ itself is NOT this row -- it stays priced as IMP-E1 o IMP-E3.",
       "frontier_face": "chosen section (argument half): which flux functional carries the connection",
-      "falsifier": "an alternative flux-to-connection map with inequivalent vertex phenomenology at matched protocol (the drafted falsifier of record); until tested, vertex-program results carry this selection as an explicit conditional."
+      "falsifier": "a forcing theorem uniquely derives the connection carrier from P1-P5 (retires the row to self-set), or matched projected-link versus independent-link protocols show inequivalent vertex phenomenology (falsifying at least one branch); until tested, every vertex result carries its chosen carrier branch as an explicit conditional."
     },
     {
       "ref": "IMP-C1", "kind": "named-result", "status_flag": "proven-external", "type_imported": "Chudnovsky 1976 algebraic independence -> the model Q(G*, pi) ~ Q(t, u)",
@@ -81,6 +81,15 @@
       "provenance": "FTD-0369 (E*, amended package E0+E*); FTD-0370 R2 (E**, uniform); the delta-independence sharp assumption",
       "frontier_face": "the ramification-locus condition (the substrate ramifies only where it lives)",
       "falsifier": "the FTD-0353 Sec 8 shared falsifier: a forced native output with odd (4t-1)-valuation -> REFUTED."
+    },
+    {
+      "ref": "IMP-C5", "kind": "named-result", "status_flag": "proven-external",
+      "type_imported": "the tensor B-spline de Rham complex / compatible-discretization framework (Buffa-Sangalli-Vazquez, CMAME 199:1143-1152, 2010; Buffa-Rivas-Sangalli-Vazquez, SIAM J. Numer. Anal. 49(2):818-844, 2011; FEEC commuting-diagram framework: Arnold-Falk-Winther, Acta Numerica 15:1-155, 2006; charge-conserving spline deposition: Villasenor-Buneman 1992 / Esirkepov 2001; coefficient-level assembly: GEMPIC, Kraus-Kormann-Morrison-Sonnendrucker, J. Plasma Phys. 83, 2017): the quadratic-coat representation layer (FTD-0541-0551) is its p=2 uniform-periodic-knot instance, independently re-derived",
+      "price": 1, "unit": "external framework (proven; reconciliation anchor)",
+      "canonical_tag": "[EXTERNAL -- proven; anchor for the FTD-0541/0550 [SELECTION] rows]",
+      "provenance": "FTD-0568 reconciliation (AUDIT_QUADRATIC_COAT_EXTERNAL_ANCHOR.md; proof_coat_external_anchor.py 4/4): FTD-0550 interp(C^T A)=curl(interp(A)) = the complex's coefficient-level curl / commuting-diagram property; FTD-0541 B2'=B1_left-B1_right = the B-spline derivative recurrence; FTD-0544 curl-adjoint cancellation + div C = 0 transport = the compatible primal/dual transpose pair; the exact worldline deposit = charge-conserving spline deposition. The in-house theorems stand on their own proofs -- this row prices the machinery's PROVENANCE (a selected standard framework), not a conditionality",
+      "frontier_face": "imported mathematical technology (argument half: a chosen representation framework, external and standard)",
+      "falsifier": "a coat identity exhibited with no counterpart in the cited complex, or a structural mismatch beyond relabeling in the space/degree correspondence (either retracts the anchor; the coat rows' own tags are unaffected)."
     },
     {
       "ref": "IMP-K1", "kind": "calibration", "type_imported": "a_phys == l_P (one voxel = one Planck length): the LENGTH scale",
@@ -143,14 +152,14 @@
     "self_set_entries": 6,
     "adopted_bits": 1,
     "selected_types": 4,
-    "named_results": 4,
+    "named_results": 5,
     "named_results_open": 3,
     "calibrations": 3,
     "empirical_identification_rows_paradigm": 1,
     "empirical_parametric_category_count_approx": 131,
     "declined": 2,
     "reconciliation_flags": ["RF-1 RESOLVED 2026-07-05: SPEC_FTD_FRAMEWORK_V1.md Sec 1.4 + Sec 3.2 D=3 rows reconciled to [SELECTION -- declared] (FTD-0355); corpus-wide D=3-forced residue swept the same pass. (Original flag misattributed the location as 'Sec 3.3'.)"],
-    "revision_log": ["v1.1 2026-07-12: IMP-S4 minted -- the FTD-0380-flagged unpriced selection A_mu = P_T J_mu priced as the 4th selected type; totals 14 -> 15 imports; no other line moved; promotes nothing."]
+    "revision_log": ["v1.1 2026-07-12: IMP-S4 minted -- the FTD-0380-flagged unpriced selection A_mu = P_T J_mu priced as the 4th selected type; totals 14 -> 15 imports; no other line moved; promotes nothing.", "v1.2 2026-07-22: FTD-0417 broadens IMP-S4 from the projected-map choice to the mutually exclusive gauge-connection carrier choice (global P_T J or independent local link A). Count remains four selected types; adding IMP-S5 would double-count the same carrier decision. No tag promoted.", "v1.3 2026-07-26: IMP-C5 minted -- the quadratic-coat arc (FTD-0541-0551) reconciled as the p=2 instance of the external B-spline de Rham complex (FTD-0568); named results 4 -> 5 (2 proven, 3 open); a reconciliation ANCHOR (the coat's in-house proofs stand alone), not a new conditionality; no tag moved."]
   },
   "standing_invariants": "x+ = 1/alpha stays [SMC]; MC-T4.3 stays [FOUNDATIONAL OBSTRUCTION]; FC-W stays [AXIOM]; D=3 stays [SELECTION -- declared] (FTD-0355); no tag moves; this ledger prices existing commitments and introduces none."
 }

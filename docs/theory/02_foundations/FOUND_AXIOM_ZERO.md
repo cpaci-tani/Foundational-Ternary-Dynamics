@@ -2,7 +2,7 @@
 
 ## Everything from State and Position
 
-**Status:** Foundational axiom — proposed replacement for the five postulates. §7 absorbs the cogito-algebraic bridge and full reverse-engineering trace ([FOUNDATION], FTD-0080).
+**Status:** Foundational reduction proposal for P1/P3 and candidate reductions of P2/P4. P5 remains an independent canonical axiom; finite-window determinism is theorem-grade. §7 absorbs the cogito-algebraic bridge and full reverse-engineering trace ([FOUNDATION], FTD-0080).
 **Consolidates:** also absorbs `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md`
 **Dependencies:** SPEC_FTD.md, FOUND_SELF_REFERENTIAL_CLOSURE.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, DERIV_WATSON_GSTAR_IDENTITY.md, AUDIT_INFINITY_REFRAME.md, FOUND_THE_FIRST_DISTINCTION.md, FOUND_BLIND_DERIVATION_CHAIN.md, FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md.
 
@@ -10,14 +10,14 @@
 
 ## Abstract
 
-FTD rests on five postulates: discrete space, discrete time, ternary states, Moore locality, and determinism. This document argues that all five reduce to a single axiom with two clauses:
+FTD rests on five postulates: discrete space, discrete time, ternary states, Moore locality, and determinism. This document proposes a two-clause Axiom Zero as a reduction of P1/P3 and as a basis for candidate reductions of P2/P4. It does **not** reduce P5 globally:
 
 > **Axiom Zero.** Reality consists of voxels. Each voxel has exactly two irreducible properties:
 >
 > 1. **State:** s in {-1, 0, +1}
 > 2. **Position:** x is an integer-coordinate site of the cubic lattice with no defined boundary; at every specified x, the six axis-adjacent (and 26-Moore-adjacent) sites exist. No claim is made that the lattice is a completed totality.
 
-Everything else -- G\*, the fine structure constant, time, gravity, the Standard Model -- is a consequence of arranging ternary integers on a cubic lattice. There are no hidden parameters, no additional structure, no external inputs. The two properties exhaust the ontology.
+The document investigates which later structures can be built from ternary states and cubic adjacency. Its stronger physical identifications retain their individual epistemic tags and imported inputs; this reduction proposal does not turn them into consequences of Axiom Zero.
 
 This document traces how each layer of physics emerges from state alone, from position alone, and from state and position together. Every claim is tagged with its epistemic status. The reviewer's objections are addressed directly. The remaining open problems are stated without evasion.
 
@@ -34,7 +34,7 @@ A voxel is an entity with two properties and no others:
 | **State** | s ∈ {−1, 0, +1} | What the voxel IS (its ternary identity) |
 | **Position** | x is an integer-coordinate site of the cubic lattice; at every specified x the six axis-adjacent sites x ± e_i exist | Where the voxel IS, relative to its neighbors and to other specified voxels |
 
-The position clause defines an **undefined-boundary cubic graph**: at every specified position, axis-adjacent (and by composition, 26-Moore-adjacent) sites exist. The lattice has no defined edge and no completed-totality. Arbitrarily large finite regions are admissible; "the whole lattice" as a single object is not. Algebraic objects defined in closed form (e.g., G\*, the Watson integrals) are admissible; load-bearing appeals to an L → ∞ limit are not.
+The position clause defines an **uncontained, undefined-boundary cubic graph**: at every specified position, axis-adjacent (and by composition, 26-Moore-adjacent) sites exist. The substrate has no enclosing edge and is not asserted as a completed totality. Finitude belongs to specified or realized configurations — finite in extent or support as a cloud, star, or galaxy is finite — and to computational windows, not to a container around the substrate. "The whole lattice" as a single completed object is not used. Algebraic objects defined in closed form (e.g., G\*, the Watson integrals) are admissible; load-bearing appeals to an L → ∞ limit are not.
 
 The word "irreducible" means: neither property can be derived from the other or from anything more fundamental. State is not a function of position. Position is not a function of state. Both are primitive.
 
@@ -50,15 +50,16 @@ The five postulates of SPEC_FTD.md reduce to Axiom Zero as follows:
 | P2: Discrete time (ticks) | A global clock advances in integer steps | **Emergent.** See Section 3.1. |
 | P3: Ternary states | s in {-1, 0, +1} | **The state property.** |
 | P4: 26-neighbor Moore | Updates depend on 26 nearest neighbors | **Consequence of Z^3 geometry.** See Section 2.3. |
-| P5: Determinism | Evolution is deterministic given initial conditions | **Consequence of the Lagrangian being well-defined.** See Section 3.3. |
+| P5: Determinism | Evolution is deterministic given initial conditions | **Independent axiom globally; finite-window implementation theorem.** See Section 3.3. |
 
-Postulates 1 and 3 are the two clauses of Axiom Zero. Postulates 2, 4, and 5 are derived.
+Postulates 1 and 3 are the two clauses of Axiom Zero. This document argues for reductions of P2 and P4. **P5 is not derived from P1:** on the uncontained substrate, discreteness alone does not imply a finite-dimensional evolution problem. P5 remains an independent axiom in the canonical P1–P5 framework.
 
 ### 1.3 What this does NOT claim
 
 Axiom Zero is a structural claim about the minimal ontology. It does NOT claim:
 
-- That the derivations of P2, P4, P5 from Axiom Zero are complete at the [THEOREM] level (they are not; see honest status below)
+- That the candidate reductions of P2 and P4 from Axiom Zero are complete at the `[THEOREM]` level (they are not; see honest status below)
+- That P5 follows from discreteness (it does not; P5 remains an independent global axiom)
 - That Axiom Zero is the correct description of physical reality (that is an empirical question)
 - That Axiom Zero is unique (other axiom systems might produce equivalent physics)
 - That state and position are "really" two properties rather than one (this is a question about the axiom's reducibility, discussed in Section 5.3)
@@ -283,11 +284,11 @@ The roots are:
 
 The master quadratic does not just produce coupling constants. It produces the entire particle content: bosons (real roots), fermions (complex roots), and measurement (degenerate root) from ONE equation.
 
-### 3.3 Determinism is a consequence [THEOREM given the Lagrangian]
+### 3.3 Determinism [AXIOM globally; THEOREM on a specified finite window]
 
-If the Lagrangian L[s, J] is well-defined and the Euler-Lagrange equations have unique solutions for given initial data (s(t=0), J(t=0)), then the evolution is deterministic. This is a standard theorem about well-posed initial value problems. The lattice discretization ensures finite-dimensionality, so existence and uniqueness follow from the Picard-Lindelof theorem applied to the ODE system.
+On a specified finite computational window, an explicit single-valued update map gives a unique next state by construction. For a continuous-time finite-window Lagrangian system, Picard–Lindelöf supplies local existence and uniqueness only when its regularity hypotheses are also established.
 
-Postulate 5 (determinism) is not an independent axiom. It is a consequence of the Lagrangian being well-defined on a finite lattice.
+That finite-window statement does **not** derive global determinism for the uncontained ontology. A discrete substrate need not be finite-dimensional, and a well-written Lagrangian does not by itself establish existence or uniqueness on an uncontained graph. A global theorem would additionally require an explicitly defined configuration space together with support or decay conditions and a well-posedness proof. Therefore P5 remains an independent `[AXIOM]`; only the determinism of each specified engine update/window is theorem-grade.
 
 ### 3.4 The tick cycle [THEOREM given the Lagrangian]
 
@@ -379,6 +380,16 @@ with both sides expressible in closed form via Γ(1/4) (Chowla–Selberg). The Z
 G\* characterizes the lattice's **algebraic-geometric structure**. The 18-point dynamical stencil determines HOW information propagates; the Z_4 symmetry and G_BCC(0) are properties of the cubic graph that hold regardless of which stencil is used for dynamics and at every finite extent at which the dynamics are run.
 
 The BCC corners do not need to participate in the wave equation for G\* to govern the physics, just as π does not need to appear in the equation of motion for it to set the geometry. G\* is the lattice's structural constant; the stencil is its dynamical implementation. [SELECTION — the structural/dynamical distinction is argued, not proven]
+
+**FTD-0411 constructive update.** A sharper alternative now exists but remains
+selected: use the BCC product character as a normalized temporal return kernel
+and retain SC+FCC `M18` for physical-space propagation. That conditional
+construction forces `c²=1/7` when the q4 pole term is cancelled. It does not
+yet close this objection because irreducibility excludes exact finite-state
+positive-norm linear/unitary localization rational in `M18`; the engine
+implements only a default-off two-tick IR surrogate. Nonlinear/constrained or
+interacting realization remains open. See
+[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../07_assessment/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md).
 
 ### 4.4 "Circularity is unfalsifiable"
 

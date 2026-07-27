@@ -1,6 +1,6 @@
 # FOUND — Structural Decoupling of the Algebraic Spine from the Engine Action
 
-**Status:** [SYNTHESIS] — consolidates four independent empirical results into a single externally-defensible finding. Not a new theorem; a coherent re-statement of existing claims at their canonical tags.
+**Status:** [SYNTHESIS — DEGRADED BY FTD-0412] — three valid diagnostic legs remain; the former Wilson-Dirac fourth leg is retracted because it evolved the wrong real-time operator. Not a new theorem.
 **LEDGER row:** FTD-0129.
 **Predecessors:** FTD-0121 (physics-bridge crystallisation) consolidates the *positive* empirical content; this document consolidates the *negative* dynamical content.
 
@@ -15,13 +15,18 @@ A natural follow-up question: **does the master-quadratic value `α = 1/x_+` pla
 If yes, the identification would gain a dynamical-mechanism warrant beyond the structural-uniqueness scan evidence.
 If no, the identification stays formally a polynomial-root coincidence with structural-uniqueness backing — defensible empirical match, but not a derivation.
 
-This document records the answer that four independent engine tests have now produced.
+This document originally claimed four independent engine tests. FTD-0412
+invalidated the Wilson-Dirac leg as a physical measurement. The surviving
+statement is a three-leg, channel-limited diagnostic; it is not a foundational
+obstruction and it no longer supports the claim that the matter vertex was
+empirically tested.
 
 ---
 
-## 2 · The four-leg empirical convergence
+## 2 · Three valid legs plus one invalidated historical leg
 
-Each of the following tests attacks the same coupling-injection question from a structurally different angle. All four return the same answer.
+The first three tests remain evidence about their stated channels. The fourth
+is preserved only to document the retired implementation.
 
 ### 2.1 — FTD-0004 (Phase G geometric Coulomb) [THEOREM]
 
@@ -37,7 +42,7 @@ This is a [THEOREM]: at every finite L, the measured `V(r)` matches the geometri
 
 The FTD partition function at L=2 satisfies an **ultralocality** identity: each lattice cell's contribution depends only on its on-site state, with no neighbour coupling at the action level. This is structurally a statement that the algebraic spine (which lives in polynomial-root / number-theoretic territory) **decouples** from action-level dynamics at the smallest non-trivial lattice.
 
-[THEOREM at L=2 — mode-degeneracy origin]; [DISCONFIRMED for general L] (the audit closes the general-L conjecture per `scripts/proofs/proof_phase_j_general_L.py`; SPEC_ALGEBRAIC_SPINE.md §7 retagged accordingly). The L=2 result is a mode-counting accident at the Nyquist mode (the centered first-derivative ∂_i has eigenvalue i·sin(k_i) which vanishes at k_i ∈ {0, π}, the only available momenta on a 2³ lattice); at L ≥ 3 the spectrum is non-degenerate and the kinetic term picks up explicit spatial-distribution dependence, contradicting the conjectured ultralocality. The L=2 leg remains the cleanest small-lattice statement that the algebraic spine and the action-level dynamics communicate weakly *at L=2*; the lead-physicist diagnosis extended this — "the action is structurally blind to the spine" — by aggregating with the other three diagnostic legs (FTD-0004 / FTD-0125 / FTD-0126) which test different scales and channels. The structural-decoupling synthesis (§3) does not depend on the general-L extension of FTD-0005.
+[THEOREM at L=2 — mode-degeneracy origin]; [DISCONFIRMED for general L] (the audit closes the general-L conjecture per `scripts/proofs/proof_phase_j_general_L.py`; SPEC_ALGEBRAIC_SPINE.md §7 retagged accordingly). The L=2 result is a mode-counting accident at the Nyquist mode (the centered first-derivative ∂_i has eigenvalue i·sin(k_i) which vanishes at k_i ∈ {0, π}, the only available momenta on a 2³ lattice); at L ≥ 3 the spectrum is non-degenerate and the kinetic term picks up explicit spatial-distribution dependence, contradicting the conjectured ultralocality. Its scope is L=2 only; it cannot establish general action blindness.
 
 **What this leg shows:** the algebraic spine and the engine action live in non-communicating sectors at the partition-function level. Any α-injection mechanism cannot operate through the action alone.
 
@@ -51,15 +56,23 @@ The Phase I pre-registered campaign (tag `preregister-phase-i-native-coupling-v1
 
 **What this leg shows:** static V(r) measurement does not carry the coupling because the coupling channel that could carry it is being erased at every tick by the projection step. Phase G's "no fine-structure content" reading is empirically reinforced from a second angle.
 
-### 2.4 — FTD-0126 (Phase II Wilson-Dirac fixed B) [CLOSED OUTCOME C]
+### 2.4 — FTD-0126 (Phase II Wilson-Dirac fixed B) [RETRACTED AS PHYSICAL RESULT]
 
-The Phase II pre-registered campaign (tag `preregister-phase-ii-wilson-dirac-g2-v1`) tested whether classical Wilson-Dirac matter coupled to a fixed uniform B-field reproduces the QED tree-level Schwinger anomaly `a_e = α/(2π)` with `α = 1/x_+`. The pre-registered outcome A required relative error < 5%.
+The historical Phase II campaign evolved the spatial operator `D_W` directly
+as a Hamiltonian. FTD-0412 proved that its special-spinor norm oracle was not
+the generic energy spectrum and replaced real-time evolution with the
+Hermitian Wilson Hamiltonian `H_W`.
 
-**Result — outcome C:** measured `a_e_lattice = ω_s/ω_c − 1 = 0.7955` vs `a_e_Schwinger = α_FTD/(2π) = 1.16×10⁻³`. **Relative error: 683.95.** The measured `g_lattice/2 = 1.7955` is nowhere near `g = 2 + α/π ≈ 2.0023` (continuum QED) or `g = 2` (continuum Dirac); the deviation is ~80% of g, three orders of magnitude larger than physical Schwinger.
+**Historical output, not a physical result:** the retired implementation gave
+`a_e_lattice=0.7955` and relative error `683.95`. Those numbers characterize
+the wrong operator and cannot be used as Wilson-Dirac evidence.
 
-**Diagnosis:** the Schwinger anomaly is a **one-loop QED effect** requiring a dynamical photon. Our setup is tree-level with a classical (non-dynamical) gauge field. There is no physical mechanism in this configuration to produce α/(2π); the only g − 2 source at tree level is the well-known O(qB·m·a²) Wilson-r lattice artefact, which sits in the O(1) regime at engine-realistic parameters and dominates the measurement. We measured Wilson-r artefact, not physical Schwinger.
+The conceptual diagnosis that the Schwinger anomaly requires a photon loop and
+cannot be produced by a fixed classical background remains valid. It does not
+convert the retired numerical run into a valid measurement.
 
-**What this leg shows:** even the matter-sector vertex — the place where dynamical α SHOULD appear if it appears anywhere — does not carry the master-quadratic value at the engine-realistic parameters tested under classical-gauge-field protocols.
+**What this leg shows:** nothing empirical about the corrected matter-sector
+vertex. A corrected-Hamiltonian campaign remains open.
 
 ---
 
@@ -72,11 +85,14 @@ Each test attacks coupling injection at a different layer of the engine:
 | **Static observable** | FTD-0004 | V(r) prefactor | Geometric Green's function exact; no α slot |
 | **Action** | FTD-0005 | Partition function | Ultralocal at L=2; algebraic spine decoupled |
 | **Dynamical observable** | FTD-0125 | Wave-prop + gauss-proj V(r) | Gauss-projection erases longitudinal G_C every tick |
-| **Matter-sector vertex** | FTD-0126 | Wilson-Dirac in fixed B | Tree-level Wilson-r artefact dominates; no Schwinger |
+| **Matter-sector vertex** | FTD-0126 | Retired `D_W` real-time evolution | **INVALIDATED by FTD-0412; no corrected result** |
 
-The four tests are **independent** in their physical content (different observables, different protocols, different layers of the engine), but **convergent** in their diagnosis: the master-quadratic value α = 1/x_+ does NOT flow into engine matter-sector dynamical observables under any classical-gauge-field protocol tested.
+The three surviving tests concern static/action/longitudinal-potential
+channels. They do not establish decoupling in a matter vertex. The stronger
+four-channel convergence claim is retracted.
 
-This is the structural-decoupling finding. It is now load-bearing empirical evidence, not just theoretical conjecture.
+The surviving structural-decoupling finding is channel-limited evidence, not a
+load-bearing no-go.
 
 ---
 
@@ -84,9 +100,13 @@ This is the structural-decoupling finding. It is now load-bearing empirical evid
 
 ### 4.1 — What is sharpened
 
-**MC-T4.3** (the central foundational obstruction in `CHECKLIST_MATH_COMPLETE.md`) is now empirically reinforced. The lead-physicist diagnosis — that any α-injection mechanism must be **non-action** (boundary conditions, observable selection, or quantization choice) — has gained four independent empirical legs. The structural-blockage claim is no longer "we haven't found a mechanism yet" but "we have explicitly tested four candidate dynamical channels and all four have empirically returned outcome-C-class verdicts under pre-registration discipline."
+**MC-T4.3** is an unfinished search constrained by three surviving diagnostics,
+not a foundational obstruction. FTD-0412 removes the claimed matter-vertex
+leg, so an action-based or dynamical route not covered by those diagnostics
+remains open.
 
-This sharpens MC-T4.3 from "open research program" to "open research program with explicit four-test boundary on what cannot work."
+The correct scope is “open research program with three tested channel
+boundaries.”
 
 ### 4.2 — What is *not* falsified
 
@@ -102,44 +122,46 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 
 What was tested and ruled out is a **specific dynamical interpretation** of the `x_+  1/α` identification: that `α = 1/x_+` plays the role of QED's coupling at the matter-sector vertex via classical gauge fields. The polynomial algebra and the empirical match remain at their established tags.
 
-### 4.3 — Strengthening rather than weakening
+### 4.3 — Corrected external statement
 
-A naive reading would treat four outcome-C verdicts as "the framework is in trouble." The correct reading is the opposite: **knowing what does not work and why is structural progress**. The framework's external position is now:
-
-> The master quadratic is a [THEOREM]. The dual-prediction at 1.26 ppm + 0.80% is empirically real and structurally unique within the natural FTD polynomial family (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×; the "~4×10⁵:1 Bayes" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; per the spine audit). The interpretation of `α = 1/x_+` as a classical-gauge-field coupling has been pre-registered against and empirically falsified at four independent layers of the engine. Therefore: any future framework derivation of α from FTD must operate through a **non-action** mechanism (boundary conditions, observable selection, quantization choice). This is the explicit foundational obstruction; it is the central open research question the framework acknowledges.
-
-This is a more defensible position than "we conjecture the master-quadratic coupling is the QED coupling" — because it tells a hostile reviewer exactly where the framework is conjectural, exactly what has been ruled out, and exactly what closure would require.
+The master quadratic remains a mathematical theorem and `x_+ ↔ 1/alpha`
+remains an empirical identification. Three diagnostics constrain the static,
+L=2 action, and longitudinal-potential channels. They do not exclude a
+corrected matter vertex, a larger action, a dynamical gauge sector, or another
+interacting mechanism. The broad mechanism question is unfinished.
 
 ### 4.4 — The Paper C alignment
 
-The Paper C revision (`PAPER_FTD_AS_WILSONIAN_EFT.tex`, 15pp, commit `9291b4d`) already wraps the old "160× QED β" framing in `\sout` with retraction notes and aligns the conclusion to Branch-A complete + Branch-B structurally decoupled. This synthesis doc provides the cross-leg empirical foundation Paper C draws on; FTD-0125 + FTD-0126 are the load-bearing Branch-B-decoupling results. The two outcome-C verdicts vindicate Paper C's reframe; they are not ad-hoc post-hoc interpretation.
+Any Paper C conclusion relying on FTD-0126 as a load-bearing Branch-B
+measurement must be narrowed. FTD-0125 survives; FTD-0126 does not.
 
 ---
 
 ## 5 · What would change this verdict
 
-The four-leg convergence is empirical, not a no-go theorem. A future result that would update the structural-decoupling diagnosis:
+The three surviving diagnostics are empirical, not a no-go theorem. A future result that would update the structural-decoupling diagnosis:
 
 1. **A non-action mechanism that produces the master-quadratic value in a measured observable.** For example: a finite-L boundary-condition mechanism in which the master quadratic emerges as a constraint on allowed boundary configurations (MC-T4.3 candidate class 1). This is research-program territory, not session-scale work.
 2. **A dynamical gauge-field implementation** that makes the photon a quantum degree of freedom rather than a fixed classical configuration. In the matter-sector test (FTD-0126), one-loop diagrams with a dynamical gauge field would change the Schwinger prediction from "no mechanism at tree level" to "α/(2π) at one loop with a coupling = 1/x_+ if the spine plays that role." Effort: multi-week implementation; falsifiable in principle.
-3. **A different observable that carries the master-quadratic value.** The four tests covered static V, partition function, dynamical V, and Wilson-Dirac vertex. Other observables remain untested: transverse-wave radiation rate (FTD-0120 territory), Ampère-Maxwell coupling, scattering cross-sections in scenarios where loop corrections dominate. If any of these reproduces the master-quadratic value, the structural-decoupling reading would need to be narrowed to "the spine is decoupled from THESE four channels but not from THAT one."
+3. **A different observable that carries the master-quadratic value.** The surviving tests cover static V, the L=2 partition function, and dynamical longitudinal V. Matter vertices, transverse-wave radiation, Ampère-Maxwell coupling, and loop-dominated scattering remain untested by a valid protocol.
 
-Until such a result lands, the four-leg convergence is the framework's honest state.
+Until a corrected matter-sector result lands, only the three channel-limited
+diagnostics survive.
 
 ---
 
-## 6 · Methodology — why the four tests stack
+## 6 · Methodology after the FTD-0412 correction
 
-It would be reasonable to ask: are these four tests really independent, or are they all measuring the same thing in different forms? The honest answer is that they cover four structurally distinct properties of the engine:
+The surviving diagnostics cover three distinct but limited properties:
 
 - **FTD-0004** is about a *static observable* (V(r) at fixed time). No dynamics involved.
 - **FTD-0005** is about the *action structure* (the integrand of the partition function). No measurement involved.
 - **FTD-0125** is about a *dynamical observable* through the actual tick cycle (V(r) measured after wave-prop + gauss-proj steps).
-- **FTD-0126** is about a *matter-sector vertex* (the place where, in QED, the coupling first appears in the perturbation expansion).
+- **FTD-0126** attempted a *matter-sector vertex* test but is invalidated and contributes no evidentiary leg.
 
-These four are not "the same thing." If all four returned outcome A, the framework would have a strong dynamical injection mechanism; if some returned A and some returned C, we'd have a layered diagnostic of *which* channels carry α and which don't. The fact that all four return outcome C is what makes the convergence load-bearing.
-
-It is also worth noting that FTD-0125 and FTD-0126 were **pre-registered** before measurement (tags `preregister-phase-i-native-coupling-v1` and `preregister-phase-ii-wilson-dirac-g2-v1`), with explicit outcomes A/B/C/D and numerical criteria committed before any data was collected. Two outcome-C verdicts under pre-registration discipline are not artefacts of post-hoc interpretation; the framework set the falsification criteria and then met them honestly.
+Pre-registration does not cure an invalid instrument. FTD-0125 retains its
+own status; FTD-0126's pre-registration provenance remains useful, but its
+outcome does not survive the operator error.
 
 ---
 
@@ -149,11 +171,11 @@ It is also worth noting that FTD-0125 and FTD-0126 were **pre-registered** befor
 - **LEDGER FTD-0004** — Phase G geometric Coulomb [THEOREM].
 - **LEDGER FTD-0005** — Phase J ultralocality [THEOREM at L=2].
 - **LEDGER FTD-0125** — Phase I native-coupling derivation [DERIVED] + outcome C engine cross-check.
-- **LEDGER FTD-0126** — Phase II Wilson-Dirac campaign [CLOSED — OUTCOME C].
+- **LEDGER FTD-0126** — historical Phase II campaign [RETRACTED AS PHYSICAL RESULT by FTD-0412].
 - **LEDGER FTD-0121** — physics-bridge crystallisation [SYNTHESIS] (positive content; companion to this doc).
-- **CHECKLIST_MATH_COMPLETE.md MC-T4.3** — the central foundational obstruction; this synthesis is empirical reinforcement of the obstruction's scope.
+- **SPEC_OPEN_MATH_BY_SECTOR.md MC-T4.3** — the open native-readout search; this synthesis supplies three scoped diagnostics, not a universal obstruction.
 - **Paper C** (`PAPER_FTD_AS_WILSONIAN_EFT.tex`) — Branch-A complete + Branch-B decoupled; this synthesis is the cross-leg foundation Paper C draws on.
-- **`PREREG_PHASE_I_NATIVE_COUPLING.md`** + **`PREREG_PHASE_II_WILSON_DIRAC_G2.md`** — the two pre-registrations whose outcome-C verdicts contribute legs 3 and 4.
+- **`PREREG_PHASE_I_NATIVE_COUPLING.md`** — the pre-registration behind the surviving Phase-I outcome-C leg. **`PREREG_PHASE_II_WILSON_DIRAC_G2.md`** is retained as protocol provenance, but its result is invalidated by FTD-0412 and contributes no leg.
 - **`AUDIT_ALPHA_EXTRACTION.md`** + **`DERIV_EMERGENT_COULOMB_GEOMETRIC.md`** — the Phase G theory record (leg 1).
 - **`SPEC_ALGEBRAIC_SPINE.md`** — Theorem 7 (Phase J ultralocality at L=2; leg 2).
 
@@ -163,11 +185,12 @@ It is also worth noting that FTD-0125 and FTD-0126 were **pre-registered** befor
 
 This document does **not** claim:
 
-- That the algebraic spine and the engine action are *necessarily* decoupled. The four tests are empirical; a non-action mechanism remains possible.
-- That α cannot be derived from FTD axioms. It claims that the four tested classical-gauge-field channels do not constitute a derivation; other channels remain open.
-- That the `x_+  1/α` identification is downgraded. FTD-0013 stays at [STRONGLY MOTIVATED CONJECTURE] with the same structural-uniqueness weight as before; this synthesis affects only the *interpretation* (no dynamical-mechanism warrant from these four channels), not the *strength* (the structural-uniqueness scans remain valid). *(FTD-0014 is **retired** per v1.4 §5 — a separate, independent change unrelated to this synthesis.)*
+- That the algebraic spine and the engine action are *necessarily* decoupled. The three surviving diagnostics are empirical and scoped.
+- That α cannot be derived from FTD axioms. Other action, matter, boundary, quantization, and interacting channels remain open.
+- That the `x_+ ↔ 1/α` identification is downgraded. FTD-0013 stays at [STRONGLY MOTIVATED CONJECTURE].
 - That the framework's epistemic ceiling has been determined. MC-T4.3 closure remains an open research program. What this synthesis does is **bound the scope of acceptable closure mechanisms** to non-action channels.
 
 ---
 
-**Authoring note:** this is a [SYNTHESIS] doc per CLAUDE.md tag definitions: "cross-document integration of multiple lower-level claims into a single externally-defensible package; not a new theorem but a coherent re-statement of existing claims at their canonical tags." It does not promote or demote any LEDGER claim. Its value is consolidating a finding that emerged across four independent investigations into a single citable artifact.
+**Authoring note:** this remains a [SYNTHESIS] document, now explicitly
+degraded to the three surviving scoped diagnostics by FTD-0412.

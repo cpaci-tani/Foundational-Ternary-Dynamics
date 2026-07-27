@@ -32,11 +32,25 @@ void weak_transmutation_cpu(RenderBridge& rb) {
       double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_MANIFEST);
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::WeakTransmutation)) < p) {
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        const auto history_before = eft::capture_history_site(i, v);
+        // FTD-HISTORY-END
         rb.set_state(i, static_cast<int8_t>(-v.state));
         if (rb.toggles.dual_substrate) {
           std::swap(v.flux_L, v.flux_R);
           std::swap(v.wave_vel_L, v.wave_vel_R);
         }
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        if (rb.history_journal_enabled()) {
+          eft::HistoryEvent event;
+          event.kind = eft::HistoryEventKind::WeakTransmutation;
+          event.tick = rb.tick_;
+          event.site_count = 1;
+          event.before[0] = history_before;
+          event.after[0] = eft::capture_history_site(i, v);
+          rb.record_history_event(event);
+        }
+        // FTD-HISTORY-END
       }
     }
   }
@@ -99,7 +113,14 @@ void pair_production_cpu(RenderBridge& rb) {
     int partner = lattice.index(nx, ny, nz);
     if (voxels[partner].state != 0) continue; // Partner space must be empty
 
-    // Latent Heat of Manifestation: consume wave energy
+    // FTD-HISTORY-BEGIN: observation-only native event journal.
+    const auto history_before_i = eft::capture_history_site(i, v);
+    const auto history_before_partner =
+        eft::capture_history_site(partner, voxels[partner]);
+    // FTD-HISTORY-END
+
+    // Selected pair-manifestation drain; no common-action energy identity is
+    // implied (FTD-0567 scopes the production genesis transaction).
     v.wave_vel *= 0.5;
     voxels[partner].wave_vel *= 0.5;
     v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
@@ -120,6 +141,19 @@ void pair_production_cpu(RenderBridge& rb) {
     p2.pair_id = pid;
 
     p2.flux = v.flux * -1.0;
+    // FTD-HISTORY-BEGIN: observation-only native event journal.
+    if (rb.history_journal_enabled()) {
+      eft::HistoryEvent event;
+      event.kind = eft::HistoryEventKind::PairProduction;
+      event.tick = rb.tick_;
+      event.site_count = 2;
+      event.before[0] = history_before_i;
+      event.before[1] = history_before_partner;
+      event.after[0] = eft::capture_history_site(i, v);
+      event.after[1] = eft::capture_history_site(partner, p2);
+      rb.record_history_event(event);
+    }
+    // FTD-HISTORY-END
   }
 }
 

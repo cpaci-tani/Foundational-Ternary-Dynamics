@@ -19,26 +19,26 @@ open FTD
 
 /-- j(E) = 1728 for E: y^2 = x^3 - x.
     Formula: j = -1728(4a^3)/(4a^3+27b^2) = -1728(-4)/(-4) = 1728 -/
-theorem j_invariant : 12 * 12 * 12 = 1728 := by native_decide
+theorem j_invariant : 12 * 12 * 12 = 1728 := by decide
 
 /-- 1728 = (N_c * N_base)^3 -/
-theorem j_from_framework : (N_c * N_base) * (N_c * N_base) * (N_c * N_base) = 1728 := by native_decide
+theorem j_from_framework : (N_c * N_base) * (N_c * N_base) * (N_c * N_base) = 1728 := by decide
 
 /-! ## Discriminant -/
 
 /-- |Discriminant| = 64 = 2^6 for E: y^2 = x^3 - x -/
-theorem disc_abs : 2 * 2 * 2 * 2 * 2 * 2 = 64 := by native_decide
+theorem disc_abs : 2 * 2 * 2 * 2 * 2 * 2 = 64 := by decide
 
 /-- 64 = N_base^3 -/
-theorem disc_from_framework : N_base * N_base * N_base = 64 := by native_decide
+theorem disc_from_framework : N_base * N_base * N_base = 64 := by decide
 
 /-! ## Conductor -/
 
 /-- Conductor N(E) = 32 -/
-theorem conductor : 2 * 2 * 2 * 2 * 2 = 32 := by native_decide
+theorem conductor : 2 * 2 * 2 * 2 * 2 = 32 := by decide
 
 /-- 32 = 2^5, exponent = N_c + CM_field_degree = 5 -/
-theorem conductor_exponent : N_c + CM_field_degree = 5 := by native_decide
+theorem conductor_exponent : N_c + CM_field_degree = 5 := by decide
 
 /-! ## Automorphism Group -/
 
@@ -46,10 +46,10 @@ theorem conductor_exponent : N_c + CM_field_degree = 5 := by native_decide
 theorem aut_order_is_4 : Aut_E_order = 4 := rfl
 
 /-- |Aut| = N_base -/
-theorem aut_eq_nbase : Aut_E_order = N_base := by native_decide
+theorem aut_eq_nbase : Aut_E_order = N_base := by decide
 
 /-- |Aut|^2 = 16 = coefficient in master quadratic -/
-theorem aut_sq_16 : Aut_E_order * Aut_E_order = 16 := by native_decide
+theorem aut_sq_16 : Aut_E_order * Aut_E_order = 16 := by decide
 
 /-! ## Torsion Subgroup -/
 
@@ -57,11 +57,11 @@ theorem aut_sq_16 : Aut_E_order * Aut_E_order = 16 := by native_decide
 theorem tors_order_is_4 : FTD.torsion_order = 4 := rfl
 
 /-- |E(Q)_tors|^2 = 16 -/
-theorem tors_sq_16 : FTD.torsion_order * FTD.torsion_order = 16 := by native_decide
+theorem tors_sq_16 : FTD.torsion_order * FTD.torsion_order = 16 := by decide
 
 /-- The coincidence: |Aut|^2 = |Tors|^2 = 16 -/
 theorem aut_sq_eq_tors_sq :
-    Aut_E_order * Aut_E_order = FTD.torsion_order * FTD.torsion_order := by native_decide
+    Aut_E_order * Aut_E_order = FTD.torsion_order * FTD.torsion_order := by decide
 
 /-! ## BSD Formula Components -/
 
@@ -84,11 +84,11 @@ def sha_order : Nat := 1
 theorem bsd_denominator : FTD.torsion_order * FTD.torsion_order = 16 := tors_sq_16
 
 /-- BSD numerator (integer part): |Sha| * c_2 = 1 * 4 = 4 -/
-theorem bsd_numerator : sha_order * tamagawa_2 = 4 := by native_decide
+theorem bsd_numerator : sha_order * tamagawa_2 = 4 := by decide
 
 /-- Integer factor: Sha * c_2 * 4 = |tors|^2 (verifying varpi/4 reduction) -/
 theorem bsd_integer_factor : sha_order * tamagawa_2 * 4 = FTD.torsion_order * FTD.torsion_order := by
-  native_decide
+  decide
 
 /-! ## The 16-Coefficient Connection -/
 
@@ -98,21 +98,21 @@ theorem bsd_integer_factor : sha_order * tamagawa_2 * 4 = FTD.torsion_order * FT
 /-- Multiple routes to 16 -/
 theorem sixteen_aut : Aut_E_order * Aut_E_order = 16 := aut_sq_16
 theorem sixteen_tors : FTD.torsion_order * FTD.torsion_order = 16 := tors_sq_16
-theorem sixteen_nbase : N_base * N_base = 16 := by native_decide
-theorem sixteen_power : 2 * 2 * 2 * 2 = 16 := by native_decide
+theorem sixteen_nbase : N_base * N_base = 16 := by decide
+theorem sixteen_power : 2 * 2 * 2 * 2 = 16 := by decide
 
 /-! ## Octahedral Group Connection (April 2026) -/
 
 /-- |O_h| = 48 (octahedral group = symmetry of the cube) -/
-theorem Oh_order : 48 = 3 * 16 := by native_decide
+theorem Oh_order : 48 = 3 * 16 := by decide
 
 /-- 16 = |O_h|/3 (stabilizer of one axis) -/
-theorem sixteen_Oh_div_3 : 48 / 3 = 16 := by native_decide
+theorem sixteen_Oh_div_3 : 48 / 3 = 16 := by decide
 
 /-- Stabilizer decomposition: |Stab| = |D_4| * |Z/2Z| = 8 * 2 = 16 -/
-theorem stabilizer_decomp : 8 * 2 = 16 := by native_decide
+theorem stabilizer_decomp : 8 * 2 = 16 := by decide
 
 /-- D_4 contains Z/4Z = Aut(E_i) as rotation subgroup: |D_4| = 2 * |Aut| -/
-theorem D4_from_aut : 2 * Aut_E_order = 8 := by native_decide
+theorem D4_from_aut : 2 * Aut_E_order = 8 := by decide
 
 end FTD.EllipticCurve

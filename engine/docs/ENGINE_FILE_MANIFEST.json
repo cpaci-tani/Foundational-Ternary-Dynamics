@@ -3,53 +3,53 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 969,
-    "loc": 235999
+    "files": 1038,
+    "loc": 314600
   },
   "subsystems": {
     "tests": {
-      "files": 346,
-      "loc": 96524
-    },
-    "include": {
-      "files": 99,
-      "loc": 17424
+      "files": 390,
+      "loc": 109696
     },
     "web/js-toplevel": {
-      "files": 40,
-      "loc": 14673
+      "files": 53,
+      "loc": 73423
+    },
+    "include": {
+      "files": 103,
+      "loc": 18428
     },
     "web/scale0": {
-      "files": 57,
-      "loc": 13928
+      "files": 58,
+      "loc": 14965
+    },
+    "src/core": {
+      "files": 41,
+      "loc": 12008
     },
     "web/tests": {
-      "files": 69,
-      "loc": 11069
+      "files": 71,
+      "loc": 11797
     },
     "web/ui": {
       "files": 83,
-      "loc": 10839
-    },
-    "src/core": {
-      "files": 40,
-      "loc": 10818
+      "loc": 10953
     },
     "web/bridge": {
       "files": 31,
-      "loc": 9960
+      "loc": 10531
     },
     "web/viewport": {
       "files": 13,
-      "loc": 8045
+      "loc": 8079
     },
     "cuda": {
-      "files": 17,
-      "loc": 6951
+      "files": 18,
+      "loc": 7518
     },
     "tools": {
-      "files": 29,
-      "loc": 6578
+      "files": 30,
+      "loc": 6913
     },
     "archive": {
       "files": 12,
@@ -57,15 +57,15 @@
     },
     "src/scenarios": {
       "files": 7,
-      "loc": 2813
+      "loc": 3002
     },
     "wasm": {
       "files": 5,
-      "loc": 2755
+      "loc": 2802
     },
     "web/scale2": {
-      "files": 11,
-      "loc": 1998
+      "files": 12,
+      "loc": 2087
     },
     "sim": {
       "files": 16,
@@ -73,15 +73,19 @@
     },
     "web/scale1": {
       "files": 10,
-      "loc": 1844
+      "loc": 1899
+    },
+    "src/phases": {
+      "files": 4,
+      "loc": 1565
+    },
+    "web/config": {
+      "files": 4,
+      "loc": 1442
     },
     "web/atlas": {
       "files": 9,
       "loc": 1386
-    },
-    "src/phases": {
-      "files": 4,
-      "loc": 1366
     },
     "vendor": {
       "files": 9,
@@ -91,17 +95,13 @@
       "files": 9,
       "loc": 1172
     },
-    "web/config": {
-      "files": 4,
-      "loc": 1131
-    },
     "src/cli_demos": {
       "files": 1,
-      "loc": 981
+      "loc": 984
     },
     "src/atom": {
       "files": 3,
-      "loc": 847
+      "loc": 838
     },
     "src/cognition": {
       "files": 1,
@@ -117,7 +117,7 @@
     },
     "web/scale5": {
       "files": 5,
-      "loc": 403
+      "loc": 405
     },
     "web/core": {
       "files": 6,
@@ -134,6 +134,10 @@
     "other": {
       "files": 1,
       "loc": 261
+    },
+    "web/scale6": {
+      "files": 1,
+      "loc": 213
     },
     "web/scales-shared": {
       "files": 1,
@@ -366,16 +370,25 @@
     {
       "path": "engine/cuda/atom_engine_gpu.cu",
       "lang": "cuda",
-      "loc": 361,
+      "loc": 354,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "GPU AtomEngine backend (Wave 5.3 Phase 1).",
       "symbols": []
     },
     {
+      "path": "engine/cuda/cuda_error.cuh",
+      "lang": "cuda-header",
+      "loc": 38,
+      "subsystem": "cuda",
+      "primary": true,
+      "purpose": "@file cuda_error.cuh \u2014 shared CUDA / cuFFT error-check macros (revision C1).",
+      "symbols": []
+    },
+    {
       "path": "engine/cuda/cuda_index.cuh",
       "lang": "cuda-header",
-      "loc": 49,
+      "loc": 78,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "Shared device-side index helpers for CUDA kernels.",
@@ -402,7 +415,7 @@
     {
       "path": "engine/cuda/experimental_discrete_universe.cu",
       "lang": "cuda",
-      "loc": 459,
+      "loc": 452,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file experimental_discrete_universe.cu @brief Standalone, hyper-optimized GPU Discrete Universe simulation engine prototype.",
@@ -411,7 +424,7 @@
     {
       "path": "engine/cuda/gpu_buffers.cu",
       "lang": "cuda",
-      "loc": 770,
+      "loc": 884,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "SoA device buffer management for FTD GPU engine.",
@@ -420,7 +433,7 @@
     {
       "path": "engine/cuda/gpu_engine.cu",
       "lang": "cuda",
-      "loc": 666,
+      "loc": 901,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file gpu_engine.cu @brief GPU-accelerated FTD tick engine.",
@@ -429,7 +442,7 @@
     {
       "path": "engine/cuda/kernels_aux.cu",
       "lang": "cuda",
-      "loc": 293,
+      "loc": 312,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_aux.cu @brief Auxiliary physics kernels (weak transmutation, pair production).",
@@ -438,7 +451,7 @@
     {
       "path": "engine/cuda/kernels_eft.cu",
       "lang": "cuda",
-      "loc": 391,
+      "loc": 384,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_eft.cu @brief GPU-native EFT calculations: face-flux conversion, blocking, operator evaluation, and parallel reductions.",
@@ -447,7 +460,7 @@
     {
       "path": "engine/cuda/kernels_forces.cu",
       "lang": "cuda",
-      "loc": 1027,
+      "loc": 1119,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_forces.cu @brief GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).",
@@ -456,7 +469,7 @@
     {
       "path": "engine/cuda/kernels_gauge.cu",
       "lang": "cuda",
-      "loc": 459,
+      "loc": 480,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_gauge.cu @brief GPU kernels for Scale 0 Gauge Field non-Abelian plaquette relaxation.",
@@ -469,7 +482,7 @@
     {
       "path": "engine/cuda/kernels_poisson.cu",
       "lang": "cuda",
-      "loc": 525,
+      "loc": 486,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "FFT-based Poisson solver for FTD GPU engine.",
@@ -487,7 +500,7 @@
     {
       "path": "engine/cuda/kernels_stencil_dual.cu",
       "lang": "cuda",
-      "loc": 599,
+      "loc": 626,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_stencil_dual.cu @brief Dual-substrate Phase Read / Phase Write kernels (FTD tick cycle).",
@@ -496,7 +509,7 @@
     {
       "path": "engine/cuda/kernels_stencil_single.cu",
       "lang": "cuda",
-      "loc": 621,
+      "loc": 678,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_stencil_single.cu @brief Single-substrate Phase Read / Phase Write kernels (FTD tick cycle).",
@@ -505,7 +518,7 @@
     {
       "path": "engine/cuda/particle_engine_gpu.cu",
       "lang": "cuda",
-      "loc": 322,
+      "loc": 315,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "GPU ParticleEngine backend (Wave 5.4 Phase 1).",
@@ -514,7 +527,7 @@
     {
       "path": "engine/cuda/wilson_dirac_gpu.cu",
       "lang": "cuda",
-      "loc": 183,
+      "loc": 185,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "Wilson-Dirac GPU kernel (Phase II.2-E).",
@@ -535,12 +548,13 @@
     {
       "path": "engine/include/ftd/atom_engine.h",
       "lang": "c-header",
-      "loc": 419,
+      "loc": 508,
       "subsystem": "include",
       "primary": true,
       "purpose": "AtomEngine: Scale 2 simulation Atoms as composite objects with inter-atomic forces: Ionic: F = -ALPHA * Q_i * Q_j / (4*pi * r\u00b2_soft) * r_hat Van der Waals: Lennard-Jones 12-6 with eps/sigma from on...",
       "symbols": [
         "AtomToggles",
+        "AtomToggleSpec",
         "AtomForceDiag",
         "AtomicProperties",
         "Bond",
@@ -566,7 +580,7 @@
     {
       "path": "engine/include/ftd/backend.h",
       "lang": "c-header",
-      "loc": 120,
+      "loc": 145,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file backend.h @brief Backend abstraction \u2014 collapses #ifdef FTD_ENABLE_CUDA proliferation.",
@@ -604,7 +618,7 @@
     {
       "path": "engine/include/ftd/bridge_rng.h",
       "lang": "c-header",
-      "loc": 62,
+      "loc": 66,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file bridge_rng.h @brief PIMPL'd RNG state for RenderBridge.",
@@ -612,6 +626,15 @@
         "BridgeRng",
         "Impl"
       ]
+    },
+    {
+      "path": "engine/include/ftd/causal_kinematics.h",
+      "lang": "c-header",
+      "loc": 162,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Raw-lattice causal kinematics \u2014 FTD-0402 source of truth.",
+      "symbols": []
     },
     {
       "path": "engine/include/ftd/cli_demos.h",
@@ -696,7 +719,7 @@
     {
       "path": "engine/include/ftd/constants.h",
       "lang": "c-header",
-      "loc": 423,
+      "loc": 458,
       "subsystem": "include",
       "primary": true,
       "purpose": "FTD Render-Bridge Constants Engine-facing interface to the ontic derivation chain.",
@@ -704,8 +727,8 @@
     },
     {
       "path": "engine/include/ftd/constants_shared.h",
-      "lang": "cuda-header",
-      "loc": 44,
+      "lang": "c-header",
+      "loc": 47,
       "subsystem": "include",
       "primary": true,
       "purpose": "Shared physics constants \u2014 included by both constants.h and CUDA kernels.",
@@ -714,7 +737,7 @@
     {
       "path": "engine/include/ftd/constructors.h",
       "lang": "c-header",
-      "loc": 336,
+      "loc": 338,
       "subsystem": "include",
       "primary": true,
       "purpose": "ftd/constructors.h \u2014 lattice constructor library Named factory functions that stamp FTD theoretical entities onto a RenderBridge's voxel grid.",
@@ -737,13 +760,14 @@
     {
       "path": "engine/include/ftd/cosmic_engine.h",
       "lang": "c-header",
-      "loc": 482,
+      "loc": 530,
       "subsystem": "include",
       "primary": true,
       "purpose": "CosmicEngine: Scale 5 simulation N-body + SPH cosmic simulation with Barnes-Hut octree gravity.",
       "symbols": [
         "CosmicBody",
         "CosmicToggles",
+        "CosmicToggleSpec",
         "CosmicForceDiag",
         "CosmicDiagnostics",
         "GravWaveEvent",
@@ -916,10 +940,10 @@
     {
       "path": "engine/include/ftd/eft/lorentz_recovery.h",
       "lang": "c-header",
-      "loc": 210,
+      "loc": 216,
       "subsystem": "include",
       "primary": true,
-      "purpose": "@file ftd/eft/lorentz_recovery.h @brief Lorentz-covariance recovery diagnostic (EFT Recovery Program, Phase 1B).",
+      "purpose": "@file ftd/eft/lorentz_recovery.h @brief Free-flux correlator-collapse diagnostic (EFT Recovery Program, Phase 1B).",
       "symbols": [
         "LorentzCollapse"
       ]
@@ -1080,7 +1104,7 @@
     {
       "path": "engine/include/ftd/gpu_buffers.h",
       "lang": "c-header",
-      "loc": 205,
+      "loc": 247,
       "subsystem": "include",
       "primary": true,
       "purpose": "SoA (Structure-of-Arrays) device buffers for GPU-accelerated FTD engine.",
@@ -1091,7 +1115,7 @@
     {
       "path": "engine/include/ftd/gpu_engine.h",
       "lang": "c-header",
-      "loc": 145,
+      "loc": 207,
       "subsystem": "include",
       "primary": true,
       "purpose": "GPU-Accelerated FTD Engine Drop-in alternative to RenderBridge that executes the tick cycle on NVIDIA GPU via CUDA.",
@@ -1118,7 +1142,7 @@
     {
       "path": "engine/include/ftd/hilbert.h",
       "lang": "c-header",
-      "loc": 209,
+      "loc": 211,
       "subsystem": "include",
       "primary": true,
       "purpose": "Hilbert Space Construction from Complexified Flux H_FTD = L^2(Lattice, C) where psi(v) = J_x(v) + i*J_y(v) The complexified transverse flux components form a wave function.",
@@ -1167,10 +1191,10 @@
     {
       "path": "engine/include/ftd/lagrangian.h",
       "lang": "c-header",
-      "loc": 222,
+      "loc": 278,
       "subsystem": "include",
       "primary": true,
-      "purpose": "Complete Discrete FTD Lagrangian (6 active terms + Rayleigh dissipation) L_FTD = L_KINETIC + L_GRADIENT + L_BI + L_COUPLING + L_VELOCITY + L_GAUSS Field sector: L_field = \u00bd|\u0394_t J|\u00b2 - \u00bdc\u00b2\u03a3_\u03bc w_\u03bc|\u0394J_...",
+      "purpose": "Partial discrete field/kinematic action diagnostic (6 active terms + Rayleigh dissipation; not the complete production tick) L_FTD = L_KINETIC + L_GRADIENT + L_BI + L_COUPLING + L_VELOCITY + L_GAUS...",
       "symbols": [
         "LagrangianDiag",
         "ELResidual",
@@ -1221,7 +1245,7 @@
     {
       "path": "engine/include/ftd/ontic/gauge_couplings.h",
       "lang": "c-header",
-      "loc": 265,
+      "loc": 276,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/gauge_couplings.h \u2014 Layers 5, 5b, 7 and simulation parameters.",
@@ -1239,7 +1263,7 @@
     {
       "path": "engine/include/ftd/ontic/master_quadratic.h",
       "lang": "c-header",
-      "loc": 249,
+      "loc": 255,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/master_quadratic.h \u2014 Layers 3, 3b, 3c, 4, 4b of the ontic chain.",
@@ -1257,7 +1281,7 @@
     {
       "path": "engine/include/ftd/ontic/particle_masses.h",
       "lang": "c-header",
-      "loc": 110,
+      "loc": 123,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/particle_masses.h \u2014 Layers 6, 6b, 6c of the ontic chain.",
@@ -1266,7 +1290,7 @@
     {
       "path": "engine/include/ftd/parallel.h",
       "lang": "c-header",
-      "loc": 267,
+      "loc": 268,
       "subsystem": "include",
       "primary": true,
       "purpose": "============================================================================ ftd/parallel.h \u2014 unified parallel primitives with THREE compile-time backends ==========================================...",
@@ -1277,12 +1301,13 @@
     {
       "path": "engine/include/ftd/particle_engine.h",
       "lang": "c-header",
-      "loc": 340,
+      "loc": 393,
       "subsystem": "include",
       "primary": true,
       "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Lattice-free engine with continuous positions and analytical forces.",
       "symbols": [
         "ParticleToggles",
+        "ParticleToggleSpec",
         "ParticleForceDiag",
         "Particle",
         "ParticleDiagnostics",
@@ -1294,16 +1319,25 @@
     {
       "path": "engine/include/ftd/poisson_solvers.h",
       "lang": "c-header",
-      "loc": 69,
+      "loc": 76,
       "subsystem": "include",
       "primary": true,
       "purpose": "Poisson solvers \u2014 SOR sweep + top-level solvers.",
       "symbols": []
     },
     {
+      "path": "engine/include/ftd/proper_time_rate.h",
+      "lang": "c-header",
+      "loc": 6,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Compatibility include.",
+      "symbols": []
+    },
+    {
       "path": "engine/include/ftd/render_bridge.h",
       "lang": "c-header",
-      "loc": 556,
+      "loc": 659,
       "subsystem": "include",
       "primary": true,
       "purpose": "Render-Bridge Tick Engine Implements the Scale-0 lattice tick dynamics with staged read/write loops and toggle-gated extension phases.",
@@ -1316,7 +1350,7 @@
     {
       "path": "engine/include/ftd/render_bridge_diagnostics.h",
       "lang": "c-header",
-      "loc": 233,
+      "loc": 263,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file engine/include/ftd/render_bridge_diagnostics.h @purpose POD diagnostic structs returned by RenderBridge inspection methods.",
@@ -1333,7 +1367,7 @@
     {
       "path": "engine/include/ftd/render_bridge_phases.h",
       "lang": "c-header",
-      "loc": 165,
+      "loc": 167,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file engine/include/ftd/render_bridge_phases.h @purpose Free-function declarations for the decomposed phase methods.",
@@ -1400,7 +1434,7 @@
     {
       "path": "engine/include/ftd/scenarios.h",
       "lang": "c-header",
-      "loc": 70,
+      "loc": 68,
       "subsystem": "include",
       "primary": true,
       "purpose": "========================================================================== engine/include/ftd/scenarios.h C++ port of the Scale-0 scenario library that was previously JS-only on the MockBridge (eng...",
@@ -1431,6 +1465,19 @@
       ]
     },
     {
+      "path": "engine/include/ftd/strong_stress_energy.h",
+      "lang": "c-header",
+      "loc": 57,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "RenderBridge",
+        "StrongStressCell",
+        "StrongEnergyStepDiagnostics"
+      ]
+    },
+    {
       "path": "engine/include/ftd/sublattice.h",
       "lang": "c-header",
       "loc": 193,
@@ -1442,7 +1489,7 @@
     {
       "path": "engine/include/ftd/term_toggles.h",
       "lang": "c-header",
-      "loc": 342,
+      "loc": 436,
       "subsystem": "include",
       "primary": true,
       "purpose": "Runtime toggles for the logic-first engine.",
@@ -1497,9 +1544,18 @@
       ]
     },
     {
+      "path": "engine/include/ftd/volumetric_measure.h",
+      "lang": "c-header",
+      "loc": 63,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file volumetric_measure.h @brief Explicit spatial measure for the three-dimensional unit lattice.",
+      "symbols": []
+    },
+    {
       "path": "engine/include/ftd/voxel.h",
       "lang": "c-header",
-      "loc": 225,
+      "loc": 210,
       "subsystem": "include",
       "primary": true,
       "purpose": "Per-node state for the FTD render-bridge simulation.",
@@ -1534,7 +1590,7 @@
     {
       "path": "engine/include/ftd/wilson_dirac.h",
       "lang": "c-header",
-      "loc": 206,
+      "loc": 245,
       "subsystem": "include",
       "primary": true,
       "purpose": "Wilson-Dirac Matter Sector for FTD (Phase II.2 of the campaign) Pre-registration: docs/theory/10_eft_program/PREREG_PHASE_II_WILSON_DIRAC_G2.md (tag: preregister-phase-ii-wilson-dirac-g2-v1) Specif...",
@@ -1891,7 +1947,7 @@
     {
       "path": "engine/src/atom/atom_forces.cpp",
       "lang": "cpp",
-      "loc": 632,
+      "loc": 623,
       "subsystem": "src/atom",
       "primary": true,
       "purpose": "AtomEngine force computation.",
@@ -1920,7 +1976,7 @@
     {
       "path": "engine/src/backend.cpp",
       "lang": "cpp",
-      "loc": 175,
+      "loc": 238,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file backend.cpp @brief Backend implementations \u2014 CpuBackend + GpuBackend.",
@@ -1929,7 +1985,7 @@
     {
       "path": "engine/src/bridge_rng.cpp",
       "lang": "cpp",
-      "loc": 61,
+      "loc": 76,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file bridge_rng.cpp @brief PIMPL'd RNG state implementation.",
@@ -1940,7 +1996,7 @@
     {
       "path": "engine/src/cli_demos/cli_demo_scenarios.cpp",
       "lang": "cpp",
-      "loc": 981,
+      "loc": 984,
       "subsystem": "src/cli_demos",
       "primary": true,
       "purpose": "Implementations of the ftd_sim CLI demo scenarios.",
@@ -2077,7 +2133,7 @@
     {
       "path": "engine/src/dag_engine.cpp",
       "lang": "cpp",
-      "loc": 316,
+      "loc": 319,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 STATUS BANNER \u2014 DAG Engine is a DEPRECATED SKELETON (ticket W6), NOT the production physics path.",
@@ -2086,7 +2142,7 @@
     {
       "path": "engine/src/diagnostics_compute.cpp",
       "lang": "cpp",
-      "loc": 189,
+      "loc": 223,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Diagnostics \u2014 implementation.",
@@ -2140,7 +2196,7 @@
     {
       "path": "engine/src/energy_ledger_compute.cpp",
       "lang": "cpp",
-      "loc": 62,
+      "loc": 68,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Energy ledger computation \u2014 implementation.",
@@ -2149,7 +2205,7 @@
     {
       "path": "engine/src/injection.cpp",
       "lang": "cpp",
-      "loc": 314,
+      "loc": 331,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Injection \u2014 implementation.",
@@ -2158,7 +2214,7 @@
     {
       "path": "engine/src/lagrangian.cpp",
       "lang": "cpp",
-      "loc": 166,
+      "loc": 177,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -2167,7 +2223,7 @@
     {
       "path": "engine/src/main.cpp",
       "lang": "cpp",
-      "loc": 81,
+      "loc": 88,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "FTD Render-Bridge Simulation Engine \u2014 CLI entry point.",
@@ -2185,7 +2241,7 @@
     {
       "path": "engine/src/particle_engine.cpp",
       "lang": "cpp",
-      "loc": 669,
+      "loc": 676,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Lattice-free engine with continuous positions and analytical forces.",
@@ -2196,7 +2252,7 @@
     {
       "path": "engine/src/poisson_solvers.cpp",
       "lang": "cpp",
-      "loc": 319,
+      "loc": 341,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Poisson solvers \u2014 implementation.",
@@ -2205,7 +2261,7 @@
     {
       "path": "engine/src/render_bridge.cpp",
       "lang": "cpp",
-      "loc": 795,
+      "loc": 1110,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Logic-First FTD Engine (v2.0) Built from axioms: {3D lattice, ternary states, flux field, local causality} Six rules, nothing else: 1.",
@@ -2214,7 +2270,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_forces.cpp",
       "lang": "cpp",
-      "loc": 355,
+      "loc": 349,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_forces.cpp @purpose Implementation of phase_forces decomposition (Phase 4b, 2026-04-27).",
@@ -2223,7 +2279,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_movement.cpp",
       "lang": "cpp",
-      "loc": 350,
+      "loc": 435,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_movement.cpp @purpose Implementation of phase_movement decomposition (Phase 4c, 2026-04-27).",
@@ -2232,7 +2288,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_read.cpp",
       "lang": "cpp",
-      "loc": 208,
+      "loc": 230,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_read.cpp @purpose Implementation of phase_read decomposition (Phase 4c, 2026-04-27).",
@@ -2241,7 +2297,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_write.cpp",
       "lang": "cpp",
-      "loc": 453,
+      "loc": 551,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_write.cpp @purpose Implementation of phase_write decomposition (Phase 4a, 2026-04-27).",
@@ -2277,7 +2333,7 @@
     {
       "path": "engine/src/scenarios/_helpers.h",
       "lang": "c-header",
-      "loc": 110,
+      "loc": 585,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/_helpers.h Private (non-installed) helper header shared by the split scenario group files (flux.cpp,...",
@@ -2286,16 +2342,16 @@
     {
       "path": "engine/src/scenarios/flux.cpp",
       "lang": "cpp",
-      "loc": 468,
+      "loc": 492,
       "subsystem": "src/scenarios",
       "primary": true,
-      "purpose": "========================================================================== engine/src/scenarios/flux.cpp Group: flux-* (21 scenarios) JS source: engine/web/js/bridge/scenarios/flux-scenarios.js Spl...",
+      "purpose": "========================================================================== engine/src/scenarios/flux.cpp Group: flux-* (22 scenarios) JS source: engine/web/js/bridge/scenarios/flux-scenarios.js Spl...",
       "symbols": []
     },
     {
       "path": "engine/src/scenarios/light.cpp",
       "lang": "cpp",
-      "loc": 115,
+      "loc": 113,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/light.cpp Group: light-* (4 scenarios) JS source: engine/web/js/bridge/scenarios/light-scenarios.js S...",
@@ -2304,7 +2360,7 @@
     {
       "path": "engine/src/scenarios/quantum.cpp",
       "lang": "cpp",
-      "loc": 252,
+      "loc": 210,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/quantum.cpp Group: quantum-* (8 scenarios) JS source: engine/web/js/bridge/scenarios/quantum-scenario...",
@@ -2313,7 +2369,7 @@
     {
       "path": "engine/src/scenarios/s0_field.cpp",
       "lang": "cpp",
-      "loc": 462,
+      "loc": 375,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/s0_field.cpp Group: s0-field-* (9 scenarios) JS source: engine/web/js/bridge/scenarios/s0-field-scena...",
@@ -2324,25 +2380,37 @@
     {
       "path": "engine/src/scenarios/s0_seed.cpp",
       "lang": "cpp",
-      "loc": 1109,
+      "loc": 961,
       "subsystem": "src/scenarios",
       "primary": true,
-      "purpose": "========================================================================== engine/src/scenarios/s0_seed.cpp Group: s0-seed-* (49 scenarios) JS source: engine/web/js/bridge/scenarios/s0-seed-scenari...",
+      "purpose": "========================================================================== engine/src/scenarios/s0_seed.cpp Group: s0-seed-* (50 scenarios) JS source: engine/web/js/bridge/scenarios/s0-seed-scenari...",
       "symbols": []
     },
     {
       "path": "engine/src/scenarios/vacuum.cpp",
       "lang": "cpp",
-      "loc": 297,
+      "loc": 266,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/vacuum.cpp Group: s0-vacuum-* (15 scenarios) JS source: engine/web/js/bridge/scenarios/vacuum-scenari...",
       "symbols": []
     },
     {
+      "path": "engine/src/strong_stress_energy.cpp",
+      "lang": "cpp",
+      "loc": 434,
+      "subsystem": "src/core",
+      "primary": true,
+      "purpose": "FTD-0406 owner-authorized strong stress-energy contract.",
+      "symbols": [
+        "StrongParticle",
+        "WeightedIndex"
+      ]
+    },
+    {
       "path": "engine/src/transmutation_phases.cpp",
       "lang": "cpp",
-      "loc": 459,
+      "loc": 523,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Transmutation phases \u2014 implementation.",
@@ -2360,11 +2428,13 @@
     {
       "path": "engine/src/wilson_dirac.cpp",
       "lang": "cpp",
-      "loc": 389,
+      "loc": 544,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Wilson-Dirac CPU implementation -- Phase II.2-A.",
-      "symbols": []
+      "symbols": [
+        "Coord3"
+      ]
     },
     {
       "path": "engine/src/ws_protocol.cpp",
@@ -2378,7 +2448,7 @@
     {
       "path": "engine/src/ws_server.cpp",
       "lang": "cpp",
-      "loc": 571,
+      "loc": 608,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "FTD WebSocket Server Standalone executable that bridges the FTD engine to the web dashboard via WebSocket on port 9100.",
@@ -2487,7 +2557,7 @@
     {
       "path": "engine/tests/benchmark_dirac_electron_in_B.cpp",
       "lang": "cpp",
-      "loc": 322,
+      "loc": 330,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Single-electron stable orbit in uniform B (Phase II.3 milestone).",
@@ -2520,7 +2590,7 @@
     {
       "path": "engine/tests/benchmark_engine_theory.cpp",
       "lang": "cpp",
-      "loc": 1145,
+      "loc": 1158,
       "subsystem": "tests",
       "primary": false,
       "purpose": "ENGINE-THEORY BRIDGE BENCHMARK \u2014 COMPREHENSIVE Quantitative comparison of C++ engine output to FTD theory.",
@@ -2591,10 +2661,10 @@
     {
       "path": "engine/tests/benchmark_lorentz_recovery.cpp",
       "lang": "cpp",
-      "loc": 222,
+      "loc": 232,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "@file benchmark_lorentz_recovery.cpp @brief EFT Phase 1B \u2014 Lorentz-covariance recovery benchmark.",
+      "purpose": "@file benchmark_lorentz_recovery.cpp @brief EFT Phase 1B \u2014 free-flux correlator-collapse benchmark.",
       "symbols": []
     },
     {
@@ -2724,6 +2794,18 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/campaign_atomic_spectroscopy.cpp",
+      "lang": "cpp",
+      "loc": 451,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Campaign: Atomic Spectroscopy \u2014 hydrogen-1s on the engine (FTD-0281 rung 1) FIRST RUNG of engine-native atomic spectroscopy: does the engine's OWN Coulomb-clocked flux field ring at the bound 1s fr...",
+      "symbols": [
+        "Args",
+        "Peak"
+      ]
+    },
+    {
       "path": "engine/tests/campaign_bcc_band_spectrum.cpp",
       "lang": "cpp",
       "loc": 402,
@@ -2830,7 +2912,7 @@
     {
       "path": "engine/tests/campaign_cross_scale.cpp",
       "lang": "cpp",
-      "loc": 232,
+      "loc": 234,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Phase 7 \u2014 Stage 4: Cross-Scale Validation (6 checks) Run the SAME two-body scenario at both Scale 0 (voxels) and Scale 1 (ParticleEngine).",
@@ -2874,7 +2956,7 @@
     {
       "path": "engine/tests/campaign_dispersion.cpp",
       "lang": "cpp",
-      "loc": 643,
+      "loc": 646,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Dispersion Relation (consolidated suite) Merges 3 legacy dispersion test/campaign files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_dispersion...",
@@ -2885,7 +2967,7 @@
     {
       "path": "engine/tests/campaign_drain_scan.cpp",
       "lang": "cpp",
-      "loc": 136,
+      "loc": 137,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file campaign_drain_scan.cpp @brief FTD-0276 Leg A: does the cluster-efficiency k_eff scale as drain\u00b2?",
@@ -2910,6 +2992,15 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/campaign_flux_equation_of_state.cpp",
+      "lang": "cpp",
+      "loc": 114,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0312 Leg B \u2014 flux equation-of-state engine measurement.",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/campaign_flux_slice_propagation.cpp",
       "lang": "cpp",
       "loc": 286,
@@ -2923,7 +3014,7 @@
     {
       "path": "engine/tests/campaign_free_dynamics.cpp",
       "lang": "cpp",
-      "loc": 680,
+      "loc": 688,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Free Particle Dynamics \u2014 Hierarchical Exploration Probes the engine's behavior with FREE (unlocked) particles, building from simplest to most complex: FD1: Single free particle \u2014 inertia...",
@@ -2935,12 +3026,35 @@
       ]
     },
     {
+      "path": "engine/tests/campaign_genesis_amplitude_ceiling.cpp",
+      "lang": "cpp",
+      "loc": 844,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_genesis_amplitude_ceiling.cpp @brief Is there a maximum amplitude for coherent light in FTD?",
+      "symbols": [
+        "LatticeStats",
+        "Lcg",
+        "Arm",
+        "Out"
+      ]
+    },
+    {
       "path": "engine/tests/campaign_genesis_criticality.cpp",
       "lang": "cpp",
       "loc": 147,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file campaign_genesis_criticality.cpp @brief Order of the FTD genesis/manifestation transition (RG-spectrum probe).",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/campaign_genesis_energy_ledger.cpp",
+      "lang": "cpp",
+      "loc": 280,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_genesis_energy_ledger.cpp @brief Does a REAL (genesis-created) manifested charge lock the SAME constraint self-energy W_SC(L) that a SYNTHETIC unit charge does?",
       "symbols": []
     },
     {
@@ -2971,6 +3085,15 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/campaign_genesis_timing_dependence.cpp",
+      "lang": "cpp",
+      "loc": 273,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_genesis_timing_dependence.cpp @brief Is the mass excess a stable property of manifestation, or does it depend on exactly when (within the stochastic hazard's eligible window) genesis...",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/campaign_genesis_trajectory.cpp",
       "lang": "cpp",
       "loc": 235,
@@ -2978,6 +3101,18 @@
       "primary": false,
       "purpose": "@file campaign_genesis_trajectory.cpp @brief FTD-0267: genesis-vs-survival per-tick trajectory in the canonical engine.",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/campaign_gnc_qij.cpp",
+      "lang": "cpp",
+      "loc": 553,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_gnc_qij.cpp @brief FTD-0349 \u00a79 / FTD-0354 \u2014 the GNC-w discriminator: the member-site gradient quadratic form Q_ij measured on constructed, locked, Gauss-dressed engine clusters.",
+      "symbols": [
+        "Sym3",
+        "RunResult"
+      ]
     },
     {
       "path": "engine/tests/campaign_gravitational_wave.cpp",
@@ -3046,6 +3181,18 @@
       ]
     },
     {
+      "path": "engine/tests/campaign_hedgehog_charge_robustness.cpp",
+      "lang": "cpp",
+      "loc": 320,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_hedgehog_charge_robustness.cpp @brief Is the hedgehog topological charge of the flux field robust across birth circumstances that produced a 9.2x energy spread?",
+      "symbols": [
+        "SeedSpec",
+        "HedgehogResult"
+      ]
+    },
+    {
       "path": "engine/tests/campaign_higgs_bi_pair_production.cpp",
       "lang": "cpp",
       "loc": 79,
@@ -3075,7 +3222,7 @@
     {
       "path": "engine/tests/campaign_hydrogen_spectrum.cpp",
       "lang": "cpp",
-      "loc": 1281,
+      "loc": 1304,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Hydrogen Spectrum (consolidated suite) Merges 5 legacy hydrogen test files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_hydrogen_scale1 -> sect...",
@@ -3087,7 +3234,7 @@
     {
       "path": "engine/tests/campaign_inertial_mass.cpp",
       "lang": "cpp",
-      "loc": 177,
+      "loc": 181,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Inertial Mass Measurement (Phase 4 \u2014 Emergent Mass Spectrum) Measures effective inertial mass of manifested particles via F = ma.",
@@ -3105,6 +3252,27 @@
       ]
     },
     {
+      "path": "engine/tests/campaign_kinetic_drain_curl_isolation.cpp",
+      "lang": "cpp",
+      "loc": 323,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_kinetic_drain_curl_isolation.cpp @brief Isolating the transverse-contamination mechanism: is it the genesis kinetic-drain operation?",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/campaign_light_deflection.cpp",
+      "lang": "cpp",
+      "loc": 368,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_light_deflection.cpp @brief Gate 2 \u2014 the gravitational-optical channel: does the substrate bend light?",
+      "symbols": [
+        "Fit",
+        "Centroid"
+      ]
+    },
+    {
       "path": "engine/tests/campaign_lorentz_measure.cpp",
       "lang": "cpp",
       "loc": 234,
@@ -3113,6 +3281,54 @@
       "purpose": "Campaign: Lorentz Invariance Quantitative Measurement Runs wave packets along all 13 distinct lattice directions on the cubic lattice and measures the effective wave speed in each direction.",
       "symbols": [
         "Direction"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_manifestation_readout_collision.cpp",
+      "lang": "cpp",
+      "loc": 216,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_manifestation_readout_collision.cpp @brief Do genuinely different flux configurations manifest to the identical discrete (state, color, spin) readout?",
+      "symbols": [
+        "SeedSpec"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_manifestation_seed_diversity.cpp",
+      "lang": "cpp",
+      "loc": 189,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_manifestation_seed_diversity.cpp @brief Is genesis's locked energy stable across genuinely different birth circumstances, or does it depend on how the particle was made?",
+      "symbols": [
+        "SeedSpec"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_mass_gap.cpp",
+      "lang": "cpp",
+      "loc": 432,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_mass_gap.cpp @brief FTD-0270 closure swing (P2): the nonlinear-loop native mass gap.",
+      "symbols": [
+        "WindowResult",
+        "RunOutput"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_mass_gap_v2.cpp",
+      "lang": "cpp",
+      "loc": 509,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_mass_gap_v2.cpp @brief FTD-0270 closure swing (P2), v2 instrument \u2014 the nonlinear-loop native mass gap, rebuilt per the FTD-0333 postmortem and the FTD-0337 mechanism correction.",
+      "symbols": [
+        "LatticeScalars",
+        "SeriesPeak",
+        "WindowResult",
+        "RunOutput"
       ]
     },
     {
@@ -3169,6 +3385,15 @@
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: PE Fine Structure Tests multiple Phase 2 forces working together: spin-orbit + relativistic corrections produce fine structure splitting.",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/campaign_perturbation_magnitude_curl_sweep.cpp",
+      "lang": "cpp",
+      "loc": 224,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_perturbation_magnitude_curl_sweep.cpp @brief Does injected curl scale with perturbation size, or is it a symmetry-breaking floor set by acting on a single site at all?",
       "symbols": []
     },
     {
@@ -3261,12 +3486,25 @@
     {
       "path": "engine/tests/campaign_structure_stability.cpp",
       "lang": "cpp",
-      "loc": 178,
+      "loc": 183,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Structure Stability Survey (Phase 4 \u2014 Emergent Mass Spectrum) Tests which particle configurations survive long evolution (5000 ticks) under EM + gravity dynamics.",
       "symbols": [
         "SurveyResult"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_target_blind_particlehood.cpp",
+      "lang": "cpp",
+      "loc": 514,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_target_blind_particlehood.cpp @brief FTD-0399 target-blind particlehood campaign.",
+      "symbols": [
+        "SeedSpec",
+        "Snapshot",
+        "History"
       ]
     },
     {
@@ -3294,7 +3532,7 @@
     {
       "path": "engine/tests/campaign_thomson_coupled_source_work.cpp",
       "lang": "cpp",
-      "loc": 501,
+      "loc": 503,
       "subsystem": "tests",
       "primary": false,
       "purpose": "FTD-0296: Fixed-charge coupled tick source/work continuity.",
@@ -3324,7 +3562,7 @@
     {
       "path": "engine/tests/campaign_thomson_moving_recoil_accounting.cpp",
       "lang": "cpp",
-      "loc": 821,
+      "loc": 823,
       "subsystem": "tests",
       "primary": false,
       "purpose": "FTD-0297: Thomson moving-recoil source/work accounting.",
@@ -3375,7 +3613,7 @@
     {
       "path": "engine/tests/campaign_thomson_recoil_observatory.cpp",
       "lang": "cpp",
-      "loc": 332,
+      "loc": 334,
       "subsystem": "tests",
       "primary": false,
       "purpose": "FTD-0287: Thomson recoil observatory.",
@@ -3447,10 +3685,10 @@
     {
       "path": "engine/tests/campaign_thomson_unlocked_recoil.cpp",
       "lang": "cpp",
-      "loc": 512,
+      "loc": 543,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "FTD-0288: Thomson unlocked recoil campaign.",
+      "purpose": "FTD-0288 provenance: native mobile-source recoil campaign.",
       "symbols": [
         "Track",
         "Metrics",
@@ -3467,6 +3705,18 @@
       "symbols": [
         "IVec3",
         "Dir"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_topological_charge_transport.cpp",
+      "lang": "cpp",
+      "loc": 259,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file campaign_topological_charge_transport.cpp @brief FTD-0398 terminal transport test for the existing octahedral Berg--Luescher charge convention.",
+      "symbols": [
+        "SeedSpec",
+        "ChargeResult"
       ]
     },
     {
@@ -3488,18 +3738,29 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/campaign_vacuum_energy.cpp",
+      "path": "engine/tests/campaign_two_clock_consistency.cpp",
       "lang": "cpp",
-      "loc": 136,
+      "loc": 279,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "",
+      "purpose": "@file campaign_two_clock_consistency.cpp @brief Does the substrate's DECAY clock dilate like its PROPER-TIME clock?",
+      "symbols": [
+        "TestVoxel"
+      ]
+    },
+    {
+      "path": "engine/tests/campaign_vacuum_energy.cpp",
+      "lang": "cpp",
+      "loc": 153,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================= SUPERSEDED (2026-07-03, FTD-0364) \u2014 DO NOT USE FOR THE \u039b SOURCE-GAP CHECK.",
       "symbols": []
     },
     {
       "path": "engine/tests/campaign_wave_dynamics.cpp",
       "lang": "cpp",
-      "loc": 504,
+      "loc": 510,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Wave dynamics (consolidated suite) Merges 4 legacy tests into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_wave_speed -> section \"wave_speed\" test_i...",
@@ -3546,6 +3807,15 @@
       "symbols": [
         "Probe"
       ]
+    },
+    {
+      "path": "engine/tests/dump_causal_golden_manifest.cpp",
+      "lang": "cpp",
+      "loc": 198,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0402 golden reconciliation instrument.",
+      "symbols": []
     },
     {
       "path": "engine/tests/dump_full_physics.cpp",
@@ -3644,6 +3914,24 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/support/gauge_test_utils.h",
+      "lang": "c-header",
+      "loc": 78,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ gauge_test_utils.h \u2014 shared helpers for the SU(2)/SU(3) gauge-sector tests (test_gauge_links.cpp, test_gauge_gpu_parity....",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/support/golden_hash.h",
+      "lang": "c-header",
+      "loc": 173,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ golden_hash.h \u2014 shared golden-gate state-hash harness (revision 0.5).",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/support/test_telemetry.cpp",
       "lang": "cpp",
       "loc": 312,
@@ -3686,11 +3974,13 @@
     {
       "path": "engine/tests/test_action_stationarity.cpp",
       "lang": "cpp",
-      "loc": 263,
+      "loc": 355,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Test: Discrete Action Stationarity Verifies that the FTD tick cycle IS the Euler-Lagrange equation of the complete discrete Lagrangian S = Sigma_v L(v).",
-      "symbols": []
+      "purpose": "Test: Field Action Stationarity and Production-Force Replay Verifies the field-sector action identities and independently replays the selected production-force formulas.",
+      "symbols": [
+        "Probe"
+      ]
     },
     {
       "path": "engine/tests/test_annihilation.cpp",
@@ -3767,9 +4057,18 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_atom_toggles_table.cpp",
+      "lang": "cpp",
+      "loc": 136,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: AtomToggles characterization (ticket 3.3) Pins the EXACT post-construction toggle state, enable_all()/minimal() profiles, validate() verdicts, and the string get_toggle/set_toggle round-trip...",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_atomic_energy.cpp",
       "lang": "cpp",
-      "loc": 454,
+      "loc": 460,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Physics Checklist #69: Atomic Energy Levels from Scale 0 Lattice Full lattice-scale hydrogen is computationally prohibitive: a_0 ~ 613 lattice units (with gravity) or ~3374 (pure EM) -> need L > 20...",
@@ -3778,7 +4077,7 @@
     {
       "path": "engine/tests/test_audit_regression.cpp",
       "lang": "cpp",
-      "loc": 292,
+      "loc": 301,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_audit_regression.cpp ---------------------------------------------------------------------------- Focused regressio...",
@@ -3832,6 +4131,21 @@
       ]
     },
     {
+      "path": "engine/tests/test_bivector_closure_v2.cpp",
+      "lang": "cpp",
+      "loc": 392,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file test_bivector_closure_v2.cpp @brief M2 (FTD-0380) \u2014 noise-controlled bivector closure re-test.",
+      "symbols": [
+        "Snapshots",
+        "ClosureTest",
+        "TripleStat",
+        "Seq",
+        "ClosedCell"
+      ]
+    },
+    {
       "path": "engine/tests/test_blume_capel_glass.cpp",
       "lang": "cpp",
       "loc": 72,
@@ -3843,7 +4157,7 @@
     {
       "path": "engine/tests/test_born_infeld.cpp",
       "lang": "cpp",
-      "loc": 190,
+      "loc": 191,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Born-Infeld Lagrangian Predictions Verifies: 1.",
@@ -3859,12 +4173,23 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/test_boundary_movement.cpp",
+      "path": "engine/tests/test_boundary_modes_golden.cpp",
       "lang": "cpp",
-      "loc": 77,
+      "loc": 178,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "test_boundary_movement.cpp Verifies phase_movement face handling: reflective_boundary OFF \u2192 particle exhausts into the void (no toroidal wrap) reflective_boundary ON \u2192 mirror bounce at the face",
+      "purpose": "============================================================================ test_boundary_modes_golden.cpp \u2014 boundary-mode characterization goldens (revision 0.6; ADR-0012 amendment / multi-profil...",
+      "symbols": [
+        "Mode"
+      ]
+    },
+    {
+      "path": "engine/tests/test_boundary_movement.cpp",
+      "lang": "cpp",
+      "loc": 84,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "test_boundary_movement.cpp Verifies phase_movement face handling with an in-budget raw velocity and accumulated movement remainder: reflective_boundary OFF \u2192 particle exhausts into the void (no tor...",
       "symbols": []
     },
     {
@@ -3893,6 +4218,17 @@
       "primary": false,
       "purpose": "test_callstack_audit_fixes.cpp \u2014 verifies the 2026-04-17 callstack audit fixes (findings F1\u2013F8).",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_causal_normalization.cpp",
+      "lang": "cpp",
+      "loc": 314,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0402 exact causal-normalization and mass-role contract.",
+      "symbols": [
+        "ForcePathResult"
+      ]
     },
     {
       "path": "engine/tests/test_clifford_multigrade.cpp",
@@ -3928,7 +4264,7 @@
     {
       "path": "engine/tests/test_cluster_inertia.cpp",
       "lang": "cpp",
-      "loc": 446,
+      "loc": 448,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_cluster_inertia.cpp (unified-mass Phase 2, 2026-06-06) ------------------------------------------------------------...",
@@ -3939,7 +4275,7 @@
     {
       "path": "engine/tests/test_cluster_interaction_dynamic.cpp",
       "lang": "cpp",
-      "loc": 176,
+      "loc": 189,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Dynamic Cluster-Cluster Interaction (Class C Phase C.2) Implements the Dynamical Scattering Protocol of the Class C Infrastructure Specification (FTD-0222).",
@@ -3981,7 +4317,7 @@
     {
       "path": "engine/tests/test_cluster_persistence_quiescent.cpp",
       "lang": "cpp",
-      "loc": 202,
+      "loc": 262,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Cluster Persistence Under Quiescent Dynamics (Class B Phase B.2) Per SPEC_CLASS_B_CLUSTER_PERSISTENCE.md \u00a76.2: \"Verify deterministic engine produces tau -> infty for all single clusters under...",
@@ -4111,6 +4447,15 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_cosmic_toggles_table.cpp",
+      "lang": "cpp",
+      "loc": 129,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: CosmicToggles characterization (ticket 3.3) Pins the EXACT post-construction toggle state, enable_all()/minimal() profiles, and the string get_toggle/set_toggle round-trip for CosmicEngine \u2014...",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_cosmological_constant.cpp",
       "lang": "cpp",
       "loc": 175,
@@ -4196,7 +4541,7 @@
     {
       "path": "engine/tests/test_de_broglie_redshift.cpp",
       "lang": "cpp",
-      "loc": 118,
+      "loc": 113,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_de_broglie_redshift.cpp (FTD-0271 Phase A5, 2026-06-11) -----------------------------------------------------------...",
@@ -4241,6 +4586,38 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_dk_evolution.cpp",
+      "lang": "cpp",
+      "loc": 617,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file test_dk_evolution.cpp @brief M1 (FTD-0379) \u2014 Dirac-K\u00e4hler evolution test.",
+      "symbols": [
+        "Lat",
+        "Grades",
+        "DKRhs",
+        "DKAccum",
+        "KGAccum",
+        "ConfigResult"
+      ]
+    },
+    {
+      "path": "engine/tests/test_dk_evolution_v11.cpp",
+      "lang": "cpp",
+      "loc": 566,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file test_dk_evolution_v11.cpp @brief M1 v1.1 (FTD-0379 scope extension) \u2014 corrected-operator, free-scale Dirac-K\u00e4hler evolution re-test.",
+      "symbols": [
+        "Lat",
+        "MG",
+        "Grades",
+        "DKAccum2",
+        "KGAccum",
+        "CfgRes"
+      ]
+    },
+    {
       "path": "engine/tests/test_dual_cell_adapter.cpp",
       "lang": "cpp",
       "loc": 104,
@@ -4252,11 +4629,25 @@
     {
       "path": "engine/tests/test_dual_substrate.cpp",
       "lang": "cpp",
-      "loc": 290,
+      "loc": 384,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Dual-Substrate Engine Verifies the dual-substrate implementation from \"The Algebraic Identity of Two Substrates\" (Montanez & Claude, 2026).",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_dyadic_recurrence_probe.cpp",
+      "lang": "cpp",
+      "loc": 416,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file test_dyadic_recurrence_probe.cpp @brief [EXPLORATORY] Target-blind C3 geometry -> engine recurrence probe.",
+      "symbols": [
+        "CurveSample",
+        "Metrics",
+        "RunResult",
+        "SeedData"
+      ]
     },
     {
       "path": "engine/tests/test_eft_anisotropy.cpp",
@@ -4488,7 +4879,7 @@
     {
       "path": "engine/tests/test_force_diag_parity.cpp",
       "lang": "cpp",
-      "loc": 134,
+      "loc": 138,
       "subsystem": "tests",
       "primary": false,
       "purpose": "test_force_diag_parity.cpp CPU-vs-GPU parity test for the force_diag mirror added 2026-04-25.",
@@ -4528,6 +4919,15 @@
       ]
     },
     {
+      "path": "engine/tests/test_full_state_irreversibility.cpp",
+      "lang": "cpp",
+      "loc": 204,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0395 lock instrument: exact full-state collision under evaporation.",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_gamma_ftd_momentum.cpp",
       "lang": "cpp",
       "loc": 161,
@@ -4546,6 +4946,26 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_gauge_gpu_parity.cpp",
+      "lang": "cpp",
+      "loc": 139,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gauge_gpu_parity.cpp \u2014 SU(2)/SU(3) gauge-link relaxation: CPU/GPU parity + GPU determinism (revision 0.9 option a;...",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_gauge_links.cpp",
+      "lang": "cpp",
+      "loc": 250,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gauge_links.cpp \u2014 SU(2)/SU(3) gauge-link sector: golden profile + invariants (revision 0.9, option a \u2014 WIRED).",
+      "symbols": [
+        "GaugeRun"
+      ]
+    },
+    {
       "path": "engine/tests/test_gauss.cpp",
       "lang": "cpp",
       "loc": 346,
@@ -4553,6 +4973,30 @@
       "primary": false,
       "purpose": "Test: Gauss constraint (consolidated suite) Merges 2 legacy tests into test_gauss.cpp (self-ref target): test_gauss -> section \"gauss_structure\" (16 checks) test_gauss_convergence -> section \"gauss...",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_gauss_law_fidelity.cpp",
+      "lang": "cpp",
+      "loc": 547,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gauss_law_fidelity.cpp (engine-fidelity investigation, 2026-07-16) ------------------------------------------------...",
+      "symbols": [
+        "SiteProbe",
+        "RunCfg",
+        "RunResult"
+      ]
+    },
+    {
+      "path": "engine/tests/test_gauss_law_fidelity_gpu.cpp",
+      "lang": "cpp",
+      "loc": 242,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gauss_law_fidelity_gpu.cpp (engine-fidelity investigation, 2026-07-16) --------------------------------------------...",
+      "symbols": [
+        "SiteProbe"
+      ]
     },
     {
       "path": "engine/tests/test_generation_graph.cpp",
@@ -4595,10 +5039,19 @@
     {
       "path": "engine/tests/test_gpu_continuity_ledger.cpp",
       "lang": "cpp",
-      "loc": 286,
+      "loc": 367,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU-native continuity ledger parity.",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_gpu_delta_upload.cpp",
+      "lang": "cpp",
+      "loc": 258,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gpu_delta_upload.cpp \u2014 C5 (CUDA ticket): host\u2192device delta upload.",
       "symbols": []
     },
     {
@@ -4622,9 +5075,20 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_gpu_evaporation_parity.cpp",
+      "lang": "cpp",
+      "loc": 129,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gpu_evaporation_parity.cpp \u2014 CPU\u2194GPU stochastic-evaporation parity (BH-F5 completion, 2026-07-16).",
+      "symbols": [
+        "LifeResult"
+      ]
+    },
+    {
       "path": "engine/tests/test_gpu_experiments.cpp",
       "lang": "cpp",
-      "loc": 1679,
+      "loc": 1703,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU Particle Physics Experiment Suite Simulations of real scientific experiments on the FTD GPU engine, using ALL available telemetry (EnergyAudit, sync_to_host, phi_coulomb) with quantitative pred...",
@@ -4634,9 +5098,18 @@
       ]
     },
     {
+      "path": "engine/tests/test_gpu_golden.cpp",
+      "lang": "cpp",
+      "loc": 109,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_gpu_golden.cpp \u2014 GPU-backend golden characterization (revision 0.7 GPU half / CUDA audit ticket C4; ADR-0012 amendm...",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_gpu_parity.cpp",
       "lang": "cpp",
-      "loc": 299,
+      "loc": 314,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU vs CPU parity tests for the FTD CUDA engine.",
@@ -4645,7 +5118,7 @@
     {
       "path": "engine/tests/test_gpu_parity_complete.cpp",
       "lang": "cpp",
-      "loc": 655,
+      "loc": 786,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU Parity Complete: Every physics domain tested on GPU vs CPU.",
@@ -4654,7 +5127,7 @@
     {
       "path": "engine/tests/test_gpu_physics.cpp",
       "lang": "cpp",
-      "loc": 2618,
+      "loc": 2662,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU Physics Test Suite \u2014 Testing Ontic Predictions at Scale Leverages the CUDA GpuEngine ( speedup) to run physics campaigns at lattice sizes and tick counts impractical on CPU.",
@@ -4698,16 +5171,16 @@
     {
       "path": "engine/tests/test_gravity_dynamics.cpp",
       "lang": "cpp",
-      "loc": 192,
+      "loc": 206,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Test: Gravity Dynamics \u2014 Gravitational Attraction from Density Gradient Verifies that the gravity term in phase_forces: F_grav = G_N \u00b7 \u2207\u03c1 where G_N = 1/(b\u2083+N_c)\u00b2 = 1/100 = 0.01: 1.",
+      "purpose": "Test: Gravity Dynamics \u2014 Gravitational Attraction from Density Gradient Verifies that the gravity term in phase_forces: F_grav = G_N \u00b7 \u2207\u03c1 where G_N = 1/(b\u2083+N_c)\u00b2 = 1/100 = 0.01 is an ENGINE-INTERNA...",
       "symbols": []
     },
     {
       "path": "engine/tests/test_helium_scale1.cpp",
       "lang": "cpp",
-      "loc": 233,
+      "loc": 256,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Helium at Scale 1: Multi-Electron Atoms He\u207a (Z=2, 1 electron): Bohr model predicts a\u2080/2 radius, 4\u00d7 binding He (Z=2, 2 electrons): exchange force creates e\u207b-e\u207b repulsion HE-1: He\u207a electron survives...",
@@ -4772,7 +5245,7 @@
     {
       "path": "engine/tests/test_lagrangian.cpp",
       "lang": "cpp",
-      "loc": 429,
+      "loc": 432,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Lagrangian 2.0 \u2014 Zero Free Parameters via Master Quadratic Verifies that the engine dynamics are fully determined by G* and the master quadratic.",
@@ -4883,7 +5356,7 @@
     {
       "path": "engine/tests/test_lorentz.cpp",
       "lang": "cpp",
-      "loc": 789,
+      "loc": 785,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Lorentz + Magnetic family (consolidated suite) Merges 5 legacy tests into test_lorentz.cpp (self-ref target) using the Phase 2a ftd::test NDJSON telemetry API: test_lorentz -> section \"lorent...",
@@ -5079,7 +5552,7 @@
     {
       "path": "engine/tests/test_native_engine_transport_flow.cpp",
       "lang": "cpp",
-      "loc": 330,
+      "loc": 353,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Native engine transport-history flow audit.",
@@ -5199,6 +5672,17 @@
       ]
     },
     {
+      "path": "engine/tests/test_ncemc_feasibility.cpp",
+      "lang": "cpp",
+      "loc": 198,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0405: Native Confinement Energy-Momentum Contract feasibility.",
+      "symbols": [
+        "Observation"
+      ]
+    },
+    {
       "path": "engine/tests/test_nonlinear_flow_multiscale.cpp",
       "lang": "cpp",
       "loc": 270,
@@ -5222,7 +5706,7 @@
     {
       "path": "engine/tests/test_ontic_chain.cpp",
       "lang": "cpp",
-      "loc": 103,
+      "loc": 109,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Ontic Derivation Chain \u2014 \u03b3 \u2192 \u0393(1/4) \u2192 \u03d6 \u2192 G* \u2192 \u03b1 \u2192 all physics Pure mathematics.",
@@ -5240,7 +5724,7 @@
     {
       "path": "engine/tests/test_particle_engine.cpp",
       "lang": "cpp",
-      "loc": 269,
+      "loc": 270,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Phase 7 \u2014 Stage 2: ParticleEngine unit tests (12 checks) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (f...",
@@ -5249,7 +5733,7 @@
     {
       "path": "engine/tests/test_particle_lifetime.cpp",
       "lang": "cpp",
-      "loc": 334,
+      "loc": 349,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Diagnostic: Particle Lifetime & Energy Loss Probes three issues: PL1: Slow particle survival (v=0.01, 0.02 \u2014 were evaporating) PL2: Energy loss rate vs velocity (quantify radiation) PL3: Orbital en...",
@@ -5260,10 +5744,19 @@
     {
       "path": "engine/tests/test_particle_toggles.cpp",
       "lang": "cpp",
-      "loc": 197,
+      "loc": 203,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: ParticleToggles \u2014 Per-force toggle control for ParticleEngine Verifies that each toggle in ParticleToggles enables/disables its force, and that force_diag_ correctly decomposes forces by type.",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_particle_toggles_table.cpp",
+      "lang": "cpp",
+      "loc": 129,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: ParticleToggles characterization (ticket 3.3) Pins the EXACT post-construction toggle state, enable_all()/minimal() profiles, validate() verdicts, and the string get_toggle/set_toggle round-t...",
       "symbols": []
     },
     {
@@ -5316,7 +5809,7 @@
     {
       "path": "engine/tests/test_portable_field.cpp",
       "lang": "cpp",
-      "loc": 167,
+      "loc": 184,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Portable Self-Field Verifies that particles carry their flux when they move.",
@@ -5343,7 +5836,7 @@
     {
       "path": "engine/tests/test_radiative_decay_scale1.cpp",
       "lang": "cpp",
-      "loc": 176,
+      "loc": 179,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Radiative Decay at Scale 1: Orbit Shrinkage from Larmor Radiation FTD note: radiation reaction is [IMPOSED] physics \u2014 the Larmor formula P = (2\u03b1/3) q\u00b2a\u00b2/(mc\u00b3) is adopted from SM, with the coefficie...",
@@ -5381,10 +5874,28 @@
     {
       "path": "engine/tests/test_render_bridge_golden.cpp",
       "lang": "cpp",
-      "loc": 293,
+      "loc": 229,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_render_bridge_golden.cpp ---------------------------------------------------------------------------- Phase 4 PRE-F...",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_render_bridge_golden_default.cpp",
+      "lang": "cpp",
+      "loc": 104,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_render_bridge_golden_default.cpp \u2014 DEFAULT-PROFILE golden gate (revision 0.5b; ADR-0012 amendment).",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_render_bridge_golden_l9.cpp",
+      "lang": "cpp",
+      "loc": 77,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_render_bridge_golden_l9.cpp \u2014 secondary lattice-size golden (L=9) (revision 0.7 CPU half; ADR-0012 amendment / mult...",
       "symbols": []
     },
     {
@@ -5417,7 +5928,7 @@
     {
       "path": "engine/tests/test_scenario_velocity_wiring.cpp",
       "lang": "cpp",
-      "loc": 133,
+      "loc": 143,
       "subsystem": "tests",
       "primary": false,
       "purpose": "test_scenario_velocity_wiring.cpp Audit item (physics-orchestrator, 2026-04-18): after porting the JS flux-meson / flux-string-breaking / flux-baryon scenarios to engine/src/scenarios.cpp, verify t...",
@@ -5529,6 +6040,18 @@
       ]
     },
     {
+      "path": "engine/tests/test_strong_stress_energy_contract.cpp",
+      "lang": "cpp",
+      "loc": 310,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0406 frozen owner-authorized strong stress-energy CPU contract.",
+      "symbols": [
+        "PairObservation",
+        "StressTotals"
+      ]
+    },
+    {
       "path": "engine/tests/test_sublattice_helpers.cpp",
       "lang": "cpp",
       "loc": 108,
@@ -5558,7 +6081,7 @@
     {
       "path": "engine/tests/test_symmetric_movement.cpp",
       "lang": "cpp",
-      "loc": 135,
+      "loc": 141,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Symmetric Movement and Coordinate-Independent Chirality Density Verifies that: 1.",
@@ -5616,7 +6139,7 @@
     {
       "path": "engine/tests/test_tick_phase_order.cpp",
       "lang": "cpp",
-      "loc": 426,
+      "loc": 427,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_tick_phase_order.cpp (ticket W4-2) ---------------------------------------------------------------------------- Reg...",
@@ -5645,7 +6168,7 @@
     {
       "path": "engine/tests/test_triad_confinement.cpp",
       "lang": "cpp",
-      "loc": 482,
+      "loc": 488,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Triad Binding from Confinement (Checklist #38) Verifies that three same-sign particles with different color orientations form a bound state via the color confinement force, rather than relyin...",
@@ -5672,10 +6195,19 @@
     {
       "path": "engine/tests/test_variational_coulomb.cpp",
       "lang": "cpp",
-      "loc": 143,
+      "loc": 147,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Test: Variational Coulomb -- Field-Mediated Electrostatics Verifies that the coupling term L_COUPLING = -g_c * s * div(J) produces the correct Coulomb force via its Euler-Lagrange equation: F = -al...",
+      "purpose": "Test: Coupling helper conventions -- Field-Mediated Electrostatics Legacy regression coverage for the standalone coupling_term and coupling_force helpers.",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_volumetric_measure.cpp",
+      "lang": "cpp",
+      "loc": 75,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "FTD-0404: cubic cell measure and density/integral separation.",
       "symbols": []
     },
     {
@@ -5688,9 +6220,18 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_voxel_layout.cpp",
+      "lang": "cpp",
+      "loc": 93,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "@file test_voxel_layout.cpp @brief Voxel memory-layout characterization guard (revision 0.8).",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_voxel_properties.cpp",
       "lang": "cpp",
-      "loc": 156,
+      "loc": 153,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Voxel derived quantities Verifies density(), speed(), bandwidth_used(), gamma_ftd(), and born_infeld_core() for known inputs.",
@@ -5755,7 +6296,7 @@
     {
       "path": "engine/tests/test_wilson_dirac_bz_spectrum.cpp",
       "lang": "cpp",
-      "loc": 152,
+      "loc": 156,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Wilson-Dirac full-BZ spectrum sweep (Phase II.2-B milestone).",
@@ -5775,7 +6316,7 @@
     {
       "path": "engine/tests/test_wilson_dirac_gauge.cpp",
       "lang": "cpp",
-      "loc": 282,
+      "loc": 340,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Wilson-Dirac gauge-link verification (Phase II.2-C milestone).",
@@ -5793,7 +6334,7 @@
     {
       "path": "engine/tests/test_wilson_dirac_smoke.cpp",
       "lang": "cpp",
-      "loc": 186,
+      "loc": 182,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Wilson-Dirac smoke test (Phase II.2-A milestone).",
@@ -5809,9 +6350,18 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_ws_protocol.cpp",
+      "lang": "cpp",
+      "loc": 109,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_ws_protocol.cpp \u2014 WebSocket remote-control protocol unit tests (revision 1.4).",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_wz_mass.cpp",
       "lang": "cpp",
-      "loc": 369,
+      "loc": 383,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: W/Z Mass Generation from Chirality Gap in Dual Substrate Physics Checklist Item #36 In dual-substrate mode, flux splits into left-handed (J_L) and right-handed (J_R) components.",
@@ -5829,7 +6379,7 @@
     {
       "path": "engine/tools/audit_ontic_phase0.py",
       "lang": "python",
-      "loc": 627,
+      "loc": 630,
       "subsystem": "tools",
       "primary": true,
       "purpose": "Phase 0 Ontic Derivation Chain Audit ===================================== Independent verification of every constant in engine/include/ftd/ontic.h using mpmath high-precision arithmetic.",
@@ -5849,9 +6399,28 @@
       "symbols": []
     },
     {
+      "path": "engine/tools/build_file_manifest.py",
+      "lang": "python",
+      "loc": 330,
+      "subsystem": "tools",
+      "primary": true,
+      "purpose": "Build a machine-readable manifest of every tracked code file in engine/.",
+      "symbols": [
+        "run()",
+        "_read_text()",
+        "tracked_engine_files()",
+        "classify()",
+        "extract_purpose()",
+        "_first_sentence()",
+        "extract_symbols()",
+        "main()",
+        "_rel()"
+      ]
+    },
+    {
       "path": "engine/tools/print_ontic.py",
       "lang": "python",
-      "loc": 187,
+      "loc": 189,
       "subsystem": "tools",
       "primary": true,
       "purpose": "Print the complete ontic derivation chain to 12 decimal places.",
@@ -6185,7 +6754,7 @@
     {
       "path": "engine/wasm/bindings_atom.cpp",
       "lang": "cpp",
-      "loc": 351,
+      "loc": 344,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_atom.cpp @brief Embind bindings for AtomEngine (Scale 2).",
@@ -6203,7 +6772,7 @@
     {
       "path": "engine/wasm/bindings_particle.cpp",
       "lang": "cpp",
-      "loc": 446,
+      "loc": 440,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_particle.cpp @brief Embind bindings for ParticleEngine (Scale 1).",
@@ -6223,7 +6792,7 @@
     {
       "path": "engine/wasm/ftd_wasm.cpp",
       "lang": "cpp",
-      "loc": 1500,
+      "loc": 1560,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine \u2014 shared helpers.",
@@ -6272,7 +6841,7 @@
     {
       "path": "engine/web/js/app.js",
       "lang": "js",
-      "loc": 1732,
+      "loc": 1755,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file app.js @brief FTD Web Dashboard \u2014 Main Application Controller [EXTENDED] Initializes all subsystems, manages the frame loop, and wires up UI controls to the simulation bridge.",
@@ -6385,7 +6954,7 @@
     {
       "path": "engine/web/js/atomic-energy.js",
       "lang": "js",
-      "loc": 201,
+      "loc": 202,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Atomic Energy Calculator Computes physical atomic energies for all 118 elements: - Nuclear binding energy (Bethe-Weizs\u00e4cker semi-empirical mass formula) - Total rest mass energy (protons + neutrons...",
@@ -6552,12 +7121,14 @@
     {
       "path": "engine/web/js/bridge/bridge-contract.js",
       "lang": "js",
-      "loc": 118,
+      "loc": 190,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Bridge contract \u2014 the surface every Scale-0 bridge must implement.",
       "symbols": [
         "emptySampleResult()",
+        "samplerOr()",
+        "SCALE0_SAMPLER_METHODS",
         "SCALE0_DIRECT_READS"
       ]
     },
@@ -6586,7 +7157,7 @@
     {
       "path": "engine/web/js/bridge/capabilities/scale0.js",
       "lang": "js",
-      "loc": 70,
+      "loc": 60,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/capabilities/scale0.js @purpose Scale-0 (lattice/substrate) capability factory.",
@@ -6762,27 +7333,29 @@
     {
       "path": "engine/web/js/bridge/scenarios/_helpers.js",
       "lang": "js",
-      "loc": 218,
+      "loc": 593,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Shared scenario primitives \u2014 JS mirror of `engine/src/scenarios/_helpers.h`.",
       "symbols": [
-        "createScenarioHarness()",
-        "injectRadialEnvelope()",
-        "injectParticleFull()",
-        "injectLockedYZPlane()",
-        "injectLockedBarrierWall()",
-        "injectCoherentSlitPair()",
-        "injectDressedParticle()",
-        "injectTriad()",
-        "applyVacuumEnvironment()",
-        "TRIAD_ANGLES"
+        "configureFreeWaveTerms()",
+        "configureGenesisGateTerms()",
+        "configurePairProductionTerms()",
+        "configureFreeMovementTerms()",
+        "configureAnnihilationTerms()",
+        "configureUnlockedCompositeTerms()",
+        "configurePreparedCoulombCandidateTerms()",
+        "configureUniformGenesisDriveTerms()",
+        "configureWeakTransmutationProbeTerms()",
+        "configureThermalTransportTerms()",
+        "configurePatternedGenesisResponseTerms()",
+        "configureStaticSeedTerms()"
       ]
     },
     {
       "path": "engine/web/js/bridge/scenarios/flux-scenarios.js",
       "lang": "js",
-      "loc": 498,
+      "loc": 510,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Flux scenarios \u2014 flux-* group.",
@@ -6830,7 +7403,7 @@
     {
       "path": "engine/web/js/bridge/scenarios/quantum-scenarios.js",
       "lang": "js",
-      "loc": 237,
+      "loc": 198,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Quantum scenarios \u2014 quantum-* group.",
@@ -6841,7 +7414,7 @@
     {
       "path": "engine/web/js/bridge/scenarios/s0-field-scenarios.js",
       "lang": "js",
-      "loc": 291,
+      "loc": 259,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "S0Field scenarios \u2014 s0-field-* group.",
@@ -6852,7 +7425,7 @@
     {
       "path": "engine/web/js/bridge/scenarios/s0-seed-scenarios.js",
       "lang": "js",
-      "loc": 829,
+      "loc": 839,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "S0Seed scenarios \u2014 s0-seed-* group.",
@@ -6863,7 +7436,7 @@
     {
       "path": "engine/web/js/bridge/scenarios/spectrum-comparator.js",
       "lang": "js",
-      "loc": 423,
+      "loc": 434,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "",
@@ -6885,7 +7458,7 @@
     {
       "path": "engine/web/js/bridge/scenarios/vacuum-scenarios.js",
       "lang": "js",
-      "loc": 214,
+      "loc": 196,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Vacuum Particle Scenarios \u2014 s0-vacuum-* group.",
@@ -6896,7 +7469,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
       "lang": "js",
-      "loc": 391,
+      "loc": 419,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Main-thread proxy for the Scale-0 WASM physics Web Worker.",
@@ -6907,7 +7480,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.js",
       "lang": "js",
-      "loc": 920,
+      "loc": 1011,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp).",
@@ -6918,7 +7491,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.worker.js",
       "lang": "js",
-      "loc": 251,
+      "loc": 322,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-0 WASM physics Web Worker.",
@@ -6961,7 +7534,7 @@
     {
       "path": "engine/web/js/config/scenarios.js",
       "lang": "js",
-      "loc": 343,
+      "loc": 369,
       "subsystem": "web/config",
       "primary": true,
       "purpose": "Scenario Descriptions \u2014 Metadata for scenario dropdowns and info panels.",
@@ -6974,11 +7547,12 @@
     {
       "path": "engine/web/js/config/toggles.js",
       "lang": "js",
-      "loc": 467,
+      "loc": 752,
       "subsystem": "web/config",
       "primary": true,
       "purpose": "Toggle Configuration \u2014 Single source of truth for all scale toggles.",
       "symbols": [
+        "getScale0ScenarioToggleProfile()",
         "SCALE0_TOGGLES",
         "SCALE2_TOGGLES",
         "SCALE0_SCENARIO_OVERRIDES",
@@ -6991,7 +7565,7 @@
     {
       "path": "engine/web/js/constants.js",
       "lang": "js",
-      "loc": 569,
+      "loc": 582,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file constants.js @brief FTD Constants \u2014 single source of truth for the web dashboard.",
@@ -7431,7 +8005,7 @@
     {
       "path": "engine/web/js/meta-unit.js",
       "lang": "js",
-      "loc": 635,
+      "loc": 678,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "\u2500\u2500 meta-unit.js \u2500\u2500 3x3x3 existential unit lattice visualization \u2500\u2500 Renders the 27-site Moore neighborhood as togglable geometric layers: shells (center, octahedron, cuboctahedron, cube), wireframe...",
@@ -7559,7 +8133,7 @@
     {
       "path": "engine/web/js/physics/physics-harness.js",
       "lang": "js",
-      "loc": 500,
+      "loc": 507,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "PhysicsHarness \u2014 single canonical surface for reading and writing Scale-0 lattice physics state.",
@@ -7676,15 +8250,17 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/time-analysis.js",
       "lang": "js",
-      "loc": 48,
+      "loc": 54,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Pure FTD time-dilation math.",
+      "purpose": "Pure FTD causal-clock math.",
       "symbols": [
         "ftdGamma()",
         "radialProfile()",
         "radialBins()",
         "lapse",
+        "betaSquared",
+        "causalBudget",
         "clockRate",
         "slowdownPct",
         "srDilation",
@@ -7695,7 +8271,7 @@
     {
       "path": "engine/web/js/scales/scale0/controller.js",
       "lang": "js",
-      "loc": 362,
+      "loc": 359,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 (Lattice) Controller Refactored into a package-style module with explicit runtime phases, a viewport adapter, scenario registry, and UI bindings owned by Scale 0.",
@@ -7730,10 +8306,10 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/diagnostics.js",
       "lang": "js",
-      "loc": 54,
+      "loc": 93,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "",
+      "purpose": "Live decomposition tooltip for the status-bar energy readout (whole-box audit channels, sim units).",
       "symbols": [
         "updateDiagnosticsAndPanels()"
       ]
@@ -7786,7 +8362,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/frame-sync.js",
       "lang": "js",
-      "loc": 40,
+      "loc": 55,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -7803,6 +8379,18 @@
       "purpose": "engine/web/js/scales/scale0/runtime/knot-line-attribution.js Attribute field-line streamline segments to the nearest knot centroid.",
       "symbols": [
         "attributeSegmentsToKnots()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/runtime/manifestation-flash.js",
+      "lang": "js",
+      "loc": 93,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Scale-0 manifestation spawn-flash \u2014 a REAL \"just manifested this tick\" visual, distinct from the pre-existing genesis isosurface (which shows the |J|~K_GENESIS precondition band, not the discrete e...",
+      "symbols": [
+        "computeManifestationBlink()",
+        "clearManifestationTracking()"
       ]
     },
     {
@@ -7830,11 +8418,12 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/scenario-loader.js",
       "lang": "js",
-      "loc": 610,
+      "loc": 707,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": ".js` and // `engine/src/scenarios/*.cpp` MUST only mutate toggle keys that // appear in `SCALE0_TOGGLES`.",
       "symbols": [
+        "syncScale0ToggleUiFromEngine()",
         "captureOverlayPreferences()",
         "restoreOverlayPreferences()",
         "resetScale0VisualState()",
@@ -7872,14 +8461,16 @@
     {
       "path": "engine/web/js/scales/scale0/scenario-registry.js",
       "lang": "js",
-      "loc": 1006,
+      "loc": 1663,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Scenario: empty (Empty Lattice) Physical purpose: Serves as the baseline state of the lattice with no initial particles or fields.",
+      "purpose": "Hard admission gate for the normal Scale-0 menu.",
       "symbols": [
         "getScale0Scenario()",
         "populateScale0ScenarioSelect()",
         "validateScale0ScenarioRegistry()",
+        "SCALE0_SCENARIO_VALIDATION",
+        "SCALE0_SCENARIO_CATALOG",
         "SCALE0_SCENARIOS",
         "SCALE0_SCENARIO_MAP"
       ]
@@ -7909,11 +8500,12 @@
     {
       "path": "engine/web/js/scales/scale0/ui/bindings.js",
       "lang": "js",
-      "loc": 217,
+      "loc": 235,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "v=2: Tier 1 quantum overlay bindings added \u2014 see SPEC_S0_QUANTUM_OVERLAYS.md",
       "symbols": [
+        "updateScenarioMetadata()",
         "bindScale0UI()",
         "handleScale0ShortcutKey()"
       ]
@@ -7945,7 +8537,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/physics-toggles.js",
       "lang": "js",
-      "loc": 47,
+      "loc": 50,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Physics Toggles Card",
@@ -7967,7 +8559,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/wire.js",
       "lang": "js",
-      "loc": 482,
+      "loc": 505,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Controls Panel Wiring Binds event listeners for every control card mounted by Scale0ControlsComponent: - Physics toggles card (all 18 toggles from SCALE0_TOGGLES) - Substrate controls card...",
@@ -7978,7 +8570,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/dom.js",
       "lang": "js",
-      "loc": 119,
+      "loc": 120,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -8057,10 +8649,10 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/genesis-burst-panel.js",
       "lang": "js",
-      "loc": 190,
+      "loc": 199,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Genesis-Burst N(A) Law \u2014 interactive fire panel + live N(A) plot (FTD-0269).",
+      "purpose": "Selected genesis response N(A) \u2014 interactive fire panel (FTD-0269 provenance).",
       "symbols": [
         "GenesisBurstPanelComponent",
         "mountGenesisBurstPanel()"
@@ -8138,7 +8730,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/fine-structure.js",
       "lang": "js",
-      "loc": 140,
+      "loc": 143,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/fine-structure.js @purpose Fine-structure constant instrument panel for flux-recoil scenarios.",
@@ -8149,7 +8741,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js",
       "lang": "js",
-      "loc": 223,
+      "loc": 245,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js @purpose Lepton g-2 (Schwinger) and live precession component.",
@@ -8182,10 +8774,10 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js",
       "lang": "js",
-      "loc": 158,
+      "loc": 162,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js @purpose Live readout for the Thomson scattering observatory scenario.",
+      "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js @purpose Live readout for the locked-source null and native recoil probes.",
       "symbols": [
         "ThomsonComponent"
       ]
@@ -8193,12 +8785,13 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/panel-shell.js",
       "lang": "js",
-      "loc": 154,
+      "loc": 195,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale-0 Visualization panel shell \u2014 accordion + active strip + filter.",
       "symbols": [
-        "initOverlayPanelShell()"
+        "initOverlayPanelShell()",
+        "refreshOverlayPanelShell()"
       ]
     },
     {
@@ -8265,7 +8858,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/template.js",
       "lang": "js",
-      "loc": 248,
+      "loc": 252,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Viewport Overlay \u2014 Field visualization controls A compact accordion: a filter box + an active-overlays strip on top, then the toggles grouped into collapsible semantic categories (the colla...",
@@ -8288,7 +8881,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
       "lang": "js",
-      "loc": 524,
+      "loc": 527,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Time Observatory \u2014 Scale-0 time-dilation instrument.",
@@ -8312,7 +8905,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
       "lang": "js",
-      "loc": 546,
+      "loc": 547,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js @purpose Live telemetry and controls for standalone RF/light/sound lattice waves.",
@@ -8359,7 +8952,7 @@
     {
       "path": "engine/web/js/scales/scale0/viewport-adapter.js",
       "lang": "js",
-      "loc": 259,
+      "loc": 260,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -8370,7 +8963,7 @@
     {
       "path": "engine/web/js/scales/scale1/controller.js",
       "lang": "js",
-      "loc": 593,
+      "loc": 596,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 (Particles) Controller Extracted from app.js to isolate the Particle Engine (PE) frame loop, scenario loader, cloud rendering, trail history, and field overlay logic.",
@@ -8392,7 +8985,7 @@
     {
       "path": "engine/web/js/scales/scale1/pe-cloud-expander.js",
       "lang": "js",
-      "loc": 351,
+      "loc": 400,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 \u2014 PE Cloud Expander \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Fixed-boundary point cloud per particle.",
@@ -8455,7 +9048,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/controls/pe-controls.js",
       "lang": "js",
-      "loc": 104,
+      "loc": 107,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 \u2014 Particle Engine Controls Card Factory function that returns the \"Particle Engine Controls\" card DOM element.",
@@ -8510,7 +9103,7 @@
     {
       "path": "engine/web/js/scales/scale2/controller.js",
       "lang": "js",
-      "loc": 772,
+      "loc": 785,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 (Atoms) Controller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Owns the Atom Engine (AE) frame loop, force decomposition rendering, element legend building, orbital...",
@@ -8564,6 +9157,17 @@
         "aeSetPhase3()",
         "bindScale2ControlsUI()",
         "AE_DEFAULT_TOGGLES"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale2/ui/binding-energy-chart.js",
+      "lang": "js",
+      "loc": 76,
+      "subsystem": "web/scale2",
+      "primary": true,
+      "purpose": "Nuclear binding-energy-per-nucleon curve \u2014 the classic B/A vs mass-number plot, peaking at Fe-56.",
+      "symbols": [
+        "drawBindingEnergyCurve()"
       ]
     },
     {
@@ -8815,7 +9419,7 @@
     {
       "path": "engine/web/js/scales/scale5/controller.js",
       "lang": "js",
-      "loc": 305,
+      "loc": 307,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "Scale 5 \u2014 Cosmic Controller Manages the cosmic scale: N-body gravitational simulation with Hubble expansion, dark matter, and cosmological diagnostics.",
@@ -8874,6 +9478,20 @@
       "symbols": [
         "getScale5ScenarioToolbarTemplate()",
         "getScale5TelemetryToolbarTemplate()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale6/controller.js",
+      "lang": "js",
+      "loc": 213,
+      "subsystem": "web/scale6",
+      "primary": true,
+      "purpose": "Scale 6 (Meta / Existential Unit) Controller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Reconnects the previously-orphaned MetaUnit module (the 27-site Moore neighborhood...",
+      "symbols": [
+        "Scale6LifecycleController",
+        "mount()",
+        "destroy()",
+        "loadScenario()"
       ]
     },
     {
@@ -9072,7 +9690,7 @@
     {
       "path": "engine/web/js/ui/components/faq/data.js",
       "lang": "js",
-      "loc": 441,
+      "loc": 443,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "FAQ sidebar data \u2014 16 canonical hard problems framed through the FTD lens.",
@@ -9131,7 +9749,7 @@
     {
       "path": "engine/web/js/ui/components/knowledge-base/data.js",
       "lang": "js",
-      "loc": 1807,
+      "loc": 1910,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -9225,7 +9843,7 @@
     {
       "path": "engine/web/js/ui/components/panel-resources/diagnostics-template.js",
       "lang": "js",
-      "loc": 127,
+      "loc": 131,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -9236,7 +9854,7 @@
     {
       "path": "engine/web/js/ui/components/panel-resources/template.js",
       "lang": "js",
-      "loc": 599,
+      "loc": 603,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -9535,7 +10153,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js",
       "lang": "js",
-      "loc": 136,
+      "loc": 138,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 0 diagnostics table descriptor.",
@@ -9775,7 +10393,7 @@
     {
       "path": "engine/web/js/ui/scale-registry/panel-registry.js",
       "lang": "js",
-      "loc": 79,
+      "loc": 78,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared shell panel registry.",
@@ -9926,12 +10544,13 @@
     {
       "path": "engine/web/js/units.js",
       "lang": "js",
-      "loc": 386,
+      "loc": 418,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "FTD Unit Conversion Layer Central module for converting raw simulation values to human-readable strings with proper physical unit labels.",
       "symbols": [
         "formatEnergy()",
+        "formatEnergySim()",
         "formatMass()",
         "formatLength()",
         "formatVelocity()",
@@ -9941,14 +10560,170 @@
         "formatDensity()",
         "formatEntropy()",
         "formatDivergence()",
-        "formatField_E()",
-        "formatField_B()"
+        "formatField_E()"
       ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/build/three.module.js",
+      "lang": "js",
+      "loc": 54155,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "EventDispatcher",
+        "Vector2",
+        "Matrix3",
+        "ImageUtils",
+        "Source",
+        "Texture",
+        "Vector4",
+        "RenderTarget",
+        "WebGLRenderTarget",
+        "DataArrayTexture",
+        "WebGLArrayRenderTarget",
+        "Data3DTexture"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/controls/OrbitControls.js",
+      "lang": "js",
+      "loc": 1523,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "OrbitControls"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/geometries/ConvexGeometry.js",
+      "lang": "js",
+      "loc": 53,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "ConvexGeometry"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/loaders/RGBELoader.js",
+      "lang": "js",
+      "loc": 450,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "default error routine.",
+      "symbols": [
+        "RGBELoader"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/math/ConvexHull.js",
+      "lang": "js",
+      "loc": 1271,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Ported from: https://github.com/maurizzzio/quickhull3d/ by Mauricio Poppe (https://github.com/maurizzzio)",
+      "symbols": [
+        "ConvexHull",
+        "Face",
+        "HalfEdge",
+        "VertexNode",
+        "VertexList"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+      "lang": "js",
+      "loc": 231,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "EffectComposer"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/postprocessing/MaskPass.js",
+      "lang": "js",
+      "loc": 104,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": ", deltaTime, maskActive",
+      "symbols": [
+        "MaskPass",
+        "ClearMaskPass"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/postprocessing/Pass.js",
+      "lang": "js",
+      "loc": 95,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "width, height",
+      "symbols": [
+        "Pass",
+        "FullscreenTriangleGeometry",
+        "FullScreenQuad"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/postprocessing/RenderPass.js",
+      "lang": "js",
+      "loc": 99,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": ", deltaTime, maskActive",
+      "symbols": [
+        "RenderPass"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+      "lang": "js",
+      "loc": 77,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": ", deltaTime, maskActive",
+      "symbols": [
+        "ShaderPass"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "lang": "js",
+      "loc": 415,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "UnrealBloomPass is inspired by the bloom pass of Unreal Engine.",
+      "symbols": [
+        "UnrealBloomPass"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/shaders/CopyShader.js",
+      "lang": "js",
+      "loc": 45,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Full-screen textured quad shader",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+      "lang": "js",
+      "loc": 64,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Luminosity http://en.wikipedia.org/wiki/Luminosity",
+      "symbols": []
     },
     {
       "path": "engine/web/js/viewport.js",
       "lang": "js",
-      "loc": 1257,
+      "loc": 1268,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file viewport.js @brief Three.js 3D Viewport \u2014 renders particles and fields from the simulation bridge.",
@@ -10051,7 +10826,7 @@
     {
       "path": "engine/web/js/viewport/particle-renderer.js",
       "lang": "js",
-      "loc": 713,
+      "loc": 736,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/particle-renderer.js @purpose Owns particle positions, trails, velocity vectors, per-particle force vectors for the Scale-0 lattice dashboard.",
@@ -10109,7 +10884,7 @@
     {
       "path": "engine/web/js/ws-bridge.js",
       "lang": "js",
-      "loc": 642,
+      "loc": 657,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "WebSocket Bridge \u2014 connects web dashboard to native GPU engine.",
@@ -10121,7 +10896,7 @@
     {
       "path": "engine/web/js/zoo.js",
       "lang": "js",
-      "loc": 129,
+      "loc": 163,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Particle Zoo \u2014 interactive table of all SM particles with FTD data.",
@@ -10145,13 +10920,14 @@
     {
       "path": "engine/web/tests/_helpers.js",
       "lang": "js",
-      "loc": 194,
+      "loc": 237,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
       "symbols": [
         "gotoAndReady()",
         "switchMode()",
+        "selectScale0Scenario()",
         "attachConsoleWatcher()",
         "attachNetworkWatcher()",
         "isNoise()",
@@ -10202,7 +10978,7 @@
     {
       "path": "engine/web/tests/audit-regression.spec.js",
       "lang": "js",
-      "loc": 279,
+      "loc": 297,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10301,7 +11077,7 @@
     {
       "path": "engine/web/tests/genesis-burst.spec.js",
       "lang": "js",
-      "loc": 131,
+      "loc": 123,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10490,7 +11266,7 @@
     {
       "path": "engine/web/tests/scale0-conservation-panel.spec.js",
       "lang": "js",
-      "loc": 82,
+      "loc": 92,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10517,7 +11293,7 @@
     {
       "path": "engine/web/tests/scale0-massbody.spec.js",
       "lang": "js",
-      "loc": 63,
+      "loc": 70,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10551,6 +11327,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-sampler-lifetime.spec.js",
+      "lang": "js",
+      "loc": 84,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-scalecontext.spec.js",
       "lang": "js",
       "loc": 58,
@@ -10562,7 +11347,7 @@
     {
       "path": "engine/web/tests/scale0-scenario-health.spec.js",
       "lang": "js",
-      "loc": 163,
+      "loc": 237,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10623,6 +11408,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-toggle-trap.spec.js",
+      "lang": "js",
+      "loc": 94,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-worker-teardown.spec.js",
       "lang": "js",
       "loc": 123,
@@ -10643,7 +11437,7 @@
     {
       "path": "engine/web/tests/scale0-zero-point.spec.js",
       "lang": "js",
-      "loc": 95,
+      "loc": 91,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10679,7 +11473,7 @@
     {
       "path": "engine/web/tests/scale2-physics.spec.js",
       "lang": "js",
-      "loc": 218,
+      "loc": 224,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10715,7 +11509,7 @@
     {
       "path": "engine/web/tests/scenario-parity.spec.js",
       "lang": "js",
-      "loc": 270,
+      "loc": 636,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -10742,7 +11536,7 @@
     {
       "path": "engine/web/tests/time-analysis.node.test.mjs",
       "lang": "js",
-      "loc": 31,
+      "loc": 36,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "Node unit test for the pure time-dilation math.",
@@ -10769,7 +11563,7 @@
     {
       "path": "engine/web/tests/wasm-scenario-coverage.spec.js",
       "lang": "js",
-      "loc": 120,
+      "loc": 153,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

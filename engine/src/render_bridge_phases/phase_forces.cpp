@@ -132,10 +132,12 @@ void phase_forces_main_loop(RenderBridge& rb) {
       f_grav = grad_rho * G_N;
     }
 
-    // Lorentz (magnetic) force: F = α·s·(v × B) where B = curl(J)
-    // From the Lagrangian velocity-coupling term L_vc = -g_c·s·(v·J),
-    // the E-L equation yields F = g_c·q·(v × curl(J)).
-    // With coupling g_c² = α, this gives F = α·s·(v × B).
+    // Selected Lorentz-shaped matter force: F = α·s·(v × B), B=curl(J).
+    // The onsite point coupling -g_c*s*(v·J) supplies this operator shape,
+    // while α=g_c² is the selected effective normalization used here.
+    // FTD-0574 proves this is NOT the common-action partner of phase_read's
+    // +g_c*curl(s*v) field source: that source requires +g_c<curl J,s*v> and
+    // its reciprocal path variation contains induction and curl-curl terms.
     Vec3 f_lorentz;
     if (rb.toggles.lorentz_force && v.speed() > EPSILON_MAG) {
       Vec3 B = rb.curl_flux(i);

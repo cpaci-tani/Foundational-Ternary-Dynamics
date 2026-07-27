@@ -63,7 +63,7 @@ Path integral, Feynman rules, loop corrections, anomalies — the lattice field-
 |---|---|---|
 | [DERIV_QFT_GRT_BRIDGE.md](foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | [THEOREM] + [SELECTION] | Lattice Green's function = Euclidean propagator; T_μν via Noether. Shared foundation. |
 | [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](quantum_mechanics/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | [THEOREM] + [SELECTION] + [CONJECTURE] | Partition function, generating functional, effective action built natively on the lattice. |
-| [DERIV_VARIATIONAL_PROOF.md](foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | [THEOREM] | δS = 0 reproduces every engine update rule to machine precision. |
+| [DERIV_VARIATIONAL_PROOF.md](foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | [PARTIAL THEOREM] + [RETRACTED ALL-UPDATE CLAIM] | Scoped free-field/stationary-source variation plus selected-rule replay; FTD-0467/0565 close the common-action reading for current production forces and genesis/evaporation. |
 | [DERIV_FORCE_EMERGENCE.md](foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | [THEOREM] + [SELECTION] | Coulomb/Yukawa/Lorentz forces as regimes of one lattice Green's function. |
 | [DERIV_COULOMB_SCATTERING_AMPLITUDE.md](electromagnetism/DERIV_COULOMB_SCATTERING_AMPLITUDE.md) | [THEOREM] | Tree-level Coulomb scattering amplitude from the FTD Lagrangian. |
 | [DERIV_LATTICE_QED_COMPLETE.md](electromagnetism/DERIV_LATTICE_QED_COMPLETE.md) | [THEOREM] + [SELECTION] + [CONJECTURE] | Consolidated one- and two-loop lattice QED renormalization. |
@@ -82,9 +82,9 @@ The lattice-ED program: the Maxwell-exploit thread (FTD-0113…0120) and EM-regi
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_RETARDED_GREEN_LATTICE.md](foundational_mechanics/DERIV_RETARDED_GREEN_LATTICE.md) | [DERIVED] | Retarded lattice Green's-function identity; radiation-zone extension of Phase G. |
-| [DERIV_LATTICE_LIENARD_WIECHERT.md](electromagnetism/DERIV_LATTICE_LIENARD_WIECHERT.md) | [DERIVED] | Lattice boosted Coulomb at uniform velocity + lattice Cherenkov pole. |
-| [DERIV_LATTICE_LW_EXTENSIONS.md](electromagnetism/DERIV_LATTICE_LW_EXTENSIONS.md) | [DERIVED] / [PARTIAL DERIVED] (Q5) | Q5–Q8 closure: Larmor, Cherenkov rate, extended sources, source-half audit. |
+| [DERIV_RETARDED_GREEN_LATTICE.md](foundational_mechanics/DERIV_RETARDED_GREEN_LATTICE.md) | [THEOREM — AUXILIARY 7-POINT] + [THEOREM — NATIVE STATIC RESOLVENT] | FTD-0558 separates the historical continuous-time identity from the production discrete-time `FULL` resolvent. |
+| [DERIV_LATTICE_LIENARD_WIECHERT.md](electromagnetism/DERIV_LATTICE_LIENARD_WIECHERT.md) | [DERIVED — SELECTED DRIVE] + [THEOREM — SPEED FLOOR/EXTERNAL WORK/HOP/GAUSS/TOPOLOGY-MAGNITUDE OBSTRUCTIONS] | Corrected pole and field energy; FTD-0560–0563 close fixed finite rigid linear dressing and finite-neutral monopoles; FTD-0564 proves orientation degree alone cannot quantize Gauss magnitude. Protected defect plus nonlinear common action/recoil/power remain open. |
+| [DERIV_LATTICE_LW_EXTENSIONS.md](electromagnetism/DERIV_LATTICE_LW_EXTENSIONS.md) | [THEOREM — EXTERNAL-DRIVE ENERGY/MULTIPOLE/FULL-SURFACE OBSTRUCTIONS] + [OPEN — PHYSICAL POWER] | FTD-0558–0562 replace the aliased physical-power claim with exact field-side response and the finite-rigid-source no-go hierarchy. |
 | [DERIV_LATTICE_HODGE_DUALITY.md](electromagnetism/DERIV_LATTICE_HODGE_DUALITY.md) | [DERIVED] | Lattice Bianchi identities (`d² = 0`) on the vertex-centered stencil. |
 | [DERIV_EM_REGIMES_UNIFIED.md](electromagnetism/DERIV_EM_REGIMES_UNIFIED.md) | [PARTIAL — DERIVED / SELECTION] | The three engine EM-force modes: PoissonLegacy equivalent, Emergent distinct. |
 | [ANALYSIS_LATTICE_WAVE_SECTORS_v1.md](foundational_mechanics/ANALYSIS_LATTICE_WAVE_SECTORS_v1.md) | [SYNTHESIS] + [BOUNDARY] | Sound/light/radio on one dispersion `ω(k)`; light = radio (one flux-wave sector); the no-acoustic-sector boundary (FTD-0298). |

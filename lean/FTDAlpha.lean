@@ -16,10 +16,10 @@ theorem FTD.sum_eq_prod_of_vieta (S r1 r2 : Float)
     r1 + r2 = r1 * r2 := by rw [h_sum, h_prod]
 
 /-- |Aut(E)|^2 = 16 -/
-theorem FTD.aut_squared : (4 : Nat) * 4 = 16 := by native_decide
+theorem FTD.aut_squared : (4 : Nat) * 4 = 16 := by decide
 
 /-- |E(Q)_tors|^2 = 16 -/
-theorem FTD.torsion_squared : (4 : Nat) * 4 = 16 := by native_decide
+theorem FTD.torsion_squared : (4 : Nat) * 4 = 16 := by decide
 
 /-- Both squared orders match -/
 theorem FTD.coeff_match : (4 : Nat) * 4 = (4 : Nat) * 4 := rfl

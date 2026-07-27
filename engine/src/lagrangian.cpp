@@ -24,7 +24,9 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
                         rb.lattice().neighbors_12(i),
                         voxels);
 
-        // --- Interaction-sector terms (4 terms) ---
+        // --- Kinematic/interaction diagnostic terms (4 terms) ---
+        // The Born core is currently state-independent and evaluated at every
+        // voxel; this is not a genesis energy payment (FTD-0567).
         double bi       = born_infeld_term(v);
         double coup     = coupling_term(v, divJ);
         double vel_coup = velocity_coupling_term(v);
@@ -79,7 +81,10 @@ ELResidual compute_el_residual(const RenderBridge& rb) {
     if (static_cast<int>(stored.size()) != N) return res;
 
     for (int i = 0; i < N; ++i) {
-        // Independently recompute what phase_read() should produce:
+        // Independently replay what phase_read() should produce. FTD-0574
+        // derives this from the free discrete action plus the prescribed-
+        // source functional +G_C<s,div J>+G_C<curl J,s v>. It is not the
+        // J-variation of lagrangian_density()'s onsite velocity term.
         //   delta_j = c²∇²J − g_c·∇(s) + g_c·∇×(s·v)
         // (electric source sign per lagrangian.h Term 2, amended 2026-07-18)
         Vec3 expected = rb.laplacian_flux(i) * (C_WAVE * C_WAVE);
@@ -114,9 +119,9 @@ ParticleELResidual compute_particle_el_residual(const RenderBridge& rb) {
 
         res.particle_count++;
 
-        // ── Independently recompute EM force from Lagrangian ──
-        // L_coupling = -g_c·s·(∇·J) → F_EM = -α·s·∇(φ_C) [Poisson]
-        //                              or   = -α·s·∇(∇·J)  [legacy]
+        // Independently replay the selected production EM formula. FTD-0467
+        // proves that neither branch below is the matter-side variation of the
+        // written +G_C*s*div(J) interaction.
         Vec3 expected_em;
         if (rb.toggles.poisson_coulomb) {
             Vec3 grad_phi = rb.gradient_scalar(i, rb.phi_coulomb());
@@ -143,7 +148,9 @@ ParticleELResidual compute_particle_el_residual(const RenderBridge& rb) {
         }
 
         // ── Independently recompute Lorentz force ──
-        // L_velocity = -g_c·s·(v·J) → F_mag = α·s·(v × ∇×J)
+        // Selected matter-side onsite velocity interaction replay. FTD-0574
+        // proves this is not the common-action partner of phase_read's
+        // +G_C*curl(s*v) source; the α normalization is selected separately.
         Vec3 expected_lorentz;
         if (rb.toggles.lorentz_force && v.speed() > EPSILON_MAG) {
             Vec3 B = rb.curl_flux(i);

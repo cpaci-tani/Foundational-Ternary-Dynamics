@@ -86,7 +86,309 @@ Key achievements within the framework (with several items representing proposed 
 - **D = 3 status** [SELECTION — declared] (FTD-0355): the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] — the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). Atomic stability + gauge requirements stand as motivation, not a forcing proof.
 - **Reference frame structure layer** [CONJECTURE]: an exploratory interpretive reading via the same G* geometry (complex roots y = 2.19 ± 2.86i) — a proposed correspondence, **not a derivation**; see the reference frame structure-vocabulary reframe [REF_REFERENCE_FRAME_VOCABULARY.md](theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md)
 
-The framework demonstrates that U(1) gauge symmetry emerges naturally from the constraint structure (Gauss law), SU(2) from the ternary state structure, SU(3) from the three spatial dimensions, and Lorentz invariance emerges at scales >> lattice spacing.
+The framework proposes gauge-sector identifications from its constraint and ternary structures. For Lorentz symmetry, the default production free-flux update has a nonzero isotropic dimension-six preferred-frame term (FTD-0407). A default-off CPU period-two prototype cancels that term while preserving one-Moore-shell-per-tick locality, but changes the leading flux speed to `1/sqrt(13)` (FTD-0408). Retaining the live `1/sqrt(3)` cone is impossible for scalar periods two and three and for the minimal positive-gap Hermitian auxiliary; a stable degree-four target exists but is not yet realized by a local state update (FTD-0409). The Gauss AGM does not presently derive this cone: its reciprocal magnitude belongs to the distinct BCC return period, while a self-dual equal-period bridge conditionally yields a unit cone. Markov's bound excludes that cone for every full-band-stable finite scalar kick period; a bounded unit-cone spectral target exists only outside one-shell locality pending multi-state localization (FTD-0410). A selected two-domain branch instead assigns normalized BCC return structure to time and SC+FCC propagation to physical space; quartic cancellation then uniquely gives `c²=1/7`. Irreducibility excludes an exact finite-state positive-norm linear/unitary realization rational in `M18`, so the default-off engine path is only a stable two-tick IR surrogate and differs at sixth order (FTD-0411). FTD-0412 corrects the Wilson real-time operator: selecting `c_s²=1/7` aligns only its leading massless slope, while incompatible axis/face-diagonal conditions exclude q4 matching for every scalar Wilson `r`. The live matter budget remains `1/3`; gauge and native gravity have no propagating poles. Interacting and common-cone Lorentz recovery remain open.
+
+FTD-0413 escapes the FTD-0412 axial-kinetic hypothesis by adding a
+face-diagonal SC+FCC average to the standalone Hermitian Wilson Hamiltonian.
+Within the normalized ansatz, complete q4 cancellation uniquely gives
+`a=b=1/3` and `r²=4/3`; with selected `c_s²=1/7`, free flux and Wilson matter
+share a cone through q4 and all seven doublers remain gapped. The construction
+is reverse-solved, default off, and differs from the flux pole at q6. It is not
+a live multi-sector Lorentz result.
+
+FTD-0414 replaces exact all-orders matching as the practical acceptance gate
+with an empirical infrared envelope. After correcting a sixth-order invariant-
+basis naming collision, the selected free flux/matter speeds have conservative
+leading spread `Δv/c_s = 11(ka)^4/540 + O((ka)^6)`. Under the documented
+`a=ell_P` calibrations its direct free-tree magnitude is tiny, but this is not
+yet an experimental pass: carrier identification, finite-q remainder,
+interactions, gauge/gravity poles, and radiative mixing remain open.
+
+FTD-0415 sharpens the radiative gate. Exact enumeration under translations,
+spatial `O_h`, parity, CPT, and gauge symmetry still permits independent
+dimension-four temporal/spatial kinetic ratios; a native spatial vector also
+admits a cubic-only marginal gradient invariant. The q4 free-tree suppression
+is therefore not technically protected by the declared symmetries. No FTD
+loop coefficient has been calculated.
+
+FTD-0416 tests the strongest standard perturbative escape without promoting
+it to FTD content. The anisotropic-QED common cone is IR attractive, but the
+simultaneous charge flow gives only
+`delta_IR/delta_UV=(alpha_IR/alpha_UV)^((N_f+2)/N_f)`. For perturbative
+`alpha_UV<=1`, `alpha_IR=1/137`, and integer `N_f>=1`, the strongest possible
+suppression is `1/137^3=3.89e-7`. The selected `A=P_T J` bridge is spatially
+nonlocal. FTD-0419 later calculates one off-shell full-Brillouin-zone
+threshold coefficient; a native local interacting action and physical on-shell
+coefficient remain open.
+
+FTD-0417 supplies a deliberately minimal local alternative by adopting an
+independent real connection on oriented spacetime links. The noncompact unit-
+plaquette action is exactly gauge invariant, nearest-cell local, and full-band
+stable at inherited selected `c_A²=1/7`. This is a priced ontology extension,
+not a derivation of `A` from `J`. It also abandons the earlier q4-improved
+photon pole: against the FTD-0413 matter prototype the leading maximum group-
+speed gap is `3(ka)²/28`. At the FTD-0417 stage, the conserved ternary-history
+current, compatible discrete-time matter action, and full-zone threshold were
+open.
+
+FTD-0418 supplies the compatible one-tick nearest-neighbour Euclidean Wilson
+regulator. Its selected action has one massless corner and 15 positive doubler
+gaps; exact link differentiation fixes the one-photon vertex, two-photon
+seagull, and both Ward identities. This closes the local regulator/vertex
+definition stage only. The pair differs at q4. At this stage the ternary
+current, real-time unitarity, and physical on-shell threshold were open;
+FTD-0421 later closes the frozen additive-current route negative, while the
+manifested unitarity and on-shell threshold gates remain open.
+
+FTD-0419 evaluates the complete one-loop terms in one frozen `xi=1` QED_L-like
+step scheme. Deterministic sums through `N=320` give
+`delta_match/g²=-0.32696906(5)`. The bare common cone is therefore not
+automatically one-loop closed and requires a dimension-four anisotropy
+counterterm in that scheme. The coefficient is off-shell and scheme-specific;
+it is not an on-shell experimental prediction.
+
+FTD-0420–0425 execute the frozen native-first successor. An immutable event
+journal leaves selected state and RNG hashes unchanged. Exact rational
+stoichiometry over the preregistered additive basis gives transition rank four
+and nullity zero once genesis, evaporation, pair production, annihilation, and
+weak transmutation are included (FTD-0421). Thus reaction-aware continuity is
+valid bookkeeping, but no source-free native gauge charge or link current
+exists in that frozen domain. The dependent native charged-pole/common-cone
+and dimension-four-flow campaigns were consequently not executed
+(FTD-0422/0423). The auxiliary one-calibration counterterm contract is
+implemented; existing off-shell data fail universality at the first flavour-
+multiplicity threshold, while the gauge-independent on-shell calculation
+remains open (FTD-0424). The source-free linear tick is reversible and has an
+exact quadratic invariant, but the full production tick is demonstrably
+many-to-one; manifested low-energy spectral unitarity remains open (FTD-0425).
+
+FTD-0426 tests the narrower proposal that ternary signs are primitive polarity
+while electric charge is the extended closed-surface flux produced after
+polarity separation. Production movement transfers one member of an initially
+neutral pair between two bodies. With Gauss projection alone, CPU `L=32` and
+WSL2 CUDA `L=64` both produce equal/opposite radius-stable flux near `+1/-1`.
+This is a `[SELECTED CONSTRAINT REALIZATION]`: the projector explicitly sources
+`div(J)` from signed state. Under the frozen live wave/coupling/Gauss profile,
+the dressing fails radius independence (37–55% spread) and leaves a Gauss
+residual near `0.338`. Therefore primitive polarity can source an effective
+reaction-free Gauss charge, but a native conserved `U(1)` and an autonomous
+electromagnetic dressing remain absent.
+
+FTD-0427 tests a selected local repair outside the frozen FTD-0420 cycle. Put
+the experimental flux on oriented faces, route the signed face current from
+actual production movement, and update `J_next=J-current+curl(B)` with one
+matched backward-difference complex. The exact identity `div(curl(B))=0`
+propagates `div(J)=s` from the initial data without repeated Gauss projection.
+All sign/direction arms pass at `L=32,64` under MSVC and WSL2 GCC, with maximum
+Gauss residual `1.89e-15`. Status is `[THEOREM — selected discrete complex] +
+[MEASURED — production movement compatibility] + [SELECTED MECHANISM]`.
+The sidecar neither changes production `Voxel::flux` nor supplies a Coulomb
+profile, photon dynamics, forces, reactions, `U(1)`, or full-production charge
+conservation; FTD-0421 remains controlling outside the reaction-free movement
+sector.
+
+FTD-0428 integrates that selected complex behind the default-off CPU
+`matched_gauss_dynamics` toggle. A one-time zero-mean CG solve constructs the
+minimum-energy periodic field satisfying `D E=s`; the live isolated tick then
+updates staggered face-electric/edge-magnetic fields with the exact
+curl/transpose-curl pair and production movement current. It mirrors centered
+`E` into `Voxel::flux` without per-tick projection. MSVC/GCC campaigns at
+`L=32,64` pass static surface, movement, finite-support wave, and modified
+energy gates (worst Gauss residual `9.15e-13`). Status is `[THEOREM — selected
+finite-lattice complex/minimum] + [MEASURED — integrated engine compatibility]
++ [SELECTED ENGINE EXTENSION]`. The initialization and Maxwell-like update are
+adopted mechanisms; forces, matter poles, reactions, gauge redundancy,
+quantization, common-cone recovery, and radiative stability remain open or
+absent. FTD-0421 is not superseded.
+
+FTD-0429 corrects the scope of that last sentence. FTD-0421 controls only an
+exact microscopic additive generator over its frozen event/basis package; it
+does not close dynamical low-energy charge. With both Gauss mechanisms off and
+the field initialized to zero, the native production wave/coupling sector
+dynamically gives
+`(div_c J)_k/s_k = (G_C/C_WAVE^2) sum sin^2(k_a)/M_18(k)`, whose infrared limit
+is `3G_C`. Locked `L=32,64` campaigns fit
+`Z0=0.256247622955862` versus `3G_C=0.256273629308563` and reject a
+zero-intercept model by `Delta BIC=279.14`. Status is `[DERIVED + MEASURED —
+RESTRICTED NATIVE LINEAR SECTOR]`: coarse-scale emergent polarity charge is
+licensed in that reaction-free sector. Reaction-complete conservation,
+microscopic `U(1)`, gauge redundancy, moving-source retardation, photons,
+forces, empirical normalization, and a common cone were not established by
+FTD-0429; FTD-0430 closes only the moving-source item below.
+
+FTD-0430 closes the moving-source successor at the same restricted native
+scope. A sparse neutral pair moves one cell through the actual production
+movement phase while an identical pair remains locked. With both Gauss
+mechanisms and every reaction/force path off, the difference field appears one
+field tick after movement, remains exactly inside the local dependency cone,
+and obeys both the native pole and the exact step-residue identity. Fresh
+`L=48,96` data give `Z0=0.256268547570661`, within `8.17e-5` relative of the
+FTD-0429 intercept, and reject a zero intercept by `Delta BIC=336.88`. Status
+is `[DERIVED + MEASURED — REACTION-FREE MOVING-SOURCE SECTOR]`. This is a
+retarded transported coarse polarity response, not microscopic `U(1)`,
+reaction-sector conservation, photons, radiation, a force law, Lorentz
+recovery, or empirical light-speed normalization.
+
+FTD-0431 activates native evaporation and shows why the reaction-aware problem
+cannot be reduced to the isolated decay constant. The isolated arm reproduces
+`gamma=-log(0.9)` within `0.715%`, while the coupled source/field history fails
+the preregistered single-exponential gate: normalized RMS is
+`0.04288...0.22273` against a maximum of `0.02`. CPU and CUDA agree, CPU event
+journals equal occupancy loss, and the exact field recurrence closes to
+`2.41e-13`. Status is `[MEASUREMENT — OUTCOME D: INVALID ANALYSIS MODEL]`.
+The generated field raises the local energy entering the evaporation rule and
+suppresses later reactions, but the finite-time retention is descriptive only.
+No infrared decay intercept, conservation verdict, microscopic `U(1)`, or
+common-cone consequence follows. A direct dressed-hazard successor is required.
+
+FTD-0432 supplies that successor at mechanism scope. A read-only observer
+reproduces the next production wave write in scratch memory and evaluates each
+occupied site's exact pre-RNG evaporation probability. Its conditional
+expectations predict the realized Fourier-source and occupancy changes on CPU
+and CUDA: maximum/RMS standardized residuals are `2.70/1.04` for source and
+`2.53/1.10` for occupancy, inside the locked `6/2.5` gates. Generated field
+energy drives the low representative projected hazard from `0.09913` down to
+`0.001225`, with oscillatory recovery. Status is `[DERIVED — exact conditional
+observer] + [MEASURED — mechanism validation]`. This validates native dynamic
+self-dressing as the cause of FTD-0431 curvature; it does not establish exact
+or infrared conservation, a pole, `U(1)`, or a common cone.
+
+FTD-0433 then holds the axial fundamental family fixed and varies only
+`k=2 pi/L` over `L=12...48`, sampling the hazard at the first field antinode
+selected from the exact native pole. All CPU/CUDA and conditional-expectation
+gates pass, but the hazard sequence is nonmonotonic. The large-volume tail has
+positive effective exponents `0.568,0.524`, while `h48/h12=0.81695` and the
+locked fourfold-suppression gate fails. Status is `[MEASURED — OUTCOME C:
+UNRESOLVED SCALING]`. Neither a zero infrared hazard nor a finite nonzero floor
+is established; conservation, `U(1)`, and common-cone claims remain unchanged.
+
+FTD-0478--0539 complete the frozen-variable face-current mobile-matter cycle.
+The ternary site state plus existing subcell remainder has an exact trilinear
+polarity shape and analytic straight-segment oriented-face current; partition,
+first moment, continuity, locality, and cubic covariance close. This is a
+selected coupling representation, not fractional primitive state. A normalized
+24-arm implicit bookkeeping transaction is constructive, but its force origin
+is not an action result. The derived minimal endpoint-split action closes exact
+current, field, and Gauss equations. It nevertheless fails the locked mobile
+law gates: all smooth corner roots miss both ordinary and staggered-modified
+energy, while every edge root lies on a reflection-plane cusp and needs a
+set-valued subgradient selection; edge energy also fails. Status is
+`[CONSTRUCTIVE — EXACT FACE-CURRENT OBSERVER] + [CLOSED NEGATIVE — FROZEN
+MINIMAL COMMON-ACTION EXACT ENERGY/ALGEBRAIC INVERSION]`. No
+`common_action_face_dynamics` toggle, reciprocal dressing scenario, pole/IR
+campaign, photon/pilot-wave/wake label, or Lorentz claim is licensed.
+
+FTD-0540 proves the edge cusp is not a coefficient-tuning problem inside that
+compact representation. Nearest-cell support, partition, and first moment
+uniquely force the cardinal hat, while no locally finite nonnegative `C1`
+cardinal weight family can reproduce position. FTD-0541 then constructs the
+explicit positive smooth exit: primitive manifestation remains one ternary
+site, but its deterministic coupling sidecar is a non-cardinal tensor
+quadratic B-spline coat with 27 positive weights at an integer position. The
+matched `B2/B1` straight-segment face current satisfies exact continuity and
+removes the inactive integer-plane cusp. Status is `[THEOREM —
+REPRESENTATION TRILEMMA] + [SELECTION — SMOOTH POSITIVE NON-CARDINAL COAT] +
+[THEOREM — EXACT COAT CURRENT]`. FTD-0542 completes that coat into an exact
+spacetime current and common gauge interaction; the endpoint-weighted face
+sources and temporal coat are derivatives of one functional and obey the
+open-worldline gauge endpoint identity. FTD-0543 proves that fixed-step
+configuration stationarity alone does not imply endpoint-energy conservation:
+an exact quartic witness has energy defect `1/8`, while a simple exact-energy
+discrete gradient pays phase-area determinant `9/11`. A special invariant of
+the full coat-Maxwell map, a variable lapse, or an explicitly selected
+non-variational energy mechanism is still required. FTD-0544 proves the field
+half of that ledger exactly: the matched midpoint Maxwell update obeys
+`Delta U_field=-<Ebar,K>` while propagating Gauss without projection. The live
+unknown was whether the action-derived matter impulse changes the production
+dispersion energy by `+<Ebar,K>`. FTD-0545 closes that universal fixed-step
+identity negative: its gauge-covariant endpoint map matches the exact uniform
+formula below `1.34e-15`, but the energy defect reaches `4.10e-5`. Because the
+witness is an external harmonic mode, FTD-0546 performs the required neutral
+self-consistent follow-up. Its periodic Gauss/source algebra closes below
+`9.98e-14` and exact field work below `2.90e-18`, but pair energy still misses
+by `9.68e-9`. The frozen minimal quadratic-coat common action is therefore
+closed negative as the FTD-0479 exact-energy mobile law. The mobile toggle and
+all downstream campaigns remain unlicensed. FTD-0547 then isolates the defect
+more narrowly: under constant collinear force, integrating the production
+dispersion through the tick gives a nonuniform accelerated worldline whose
+matter work is exact to `2.72e-20`. FTD-0548 derives the corresponding
+spacetime current. Total oriented face current is unchanged by temporal
+reparameterization, but `K0`, `K1`, and `T` differ from the endpoint-linear
+split by up to `1.65e-3` while continuity and gauge identities close below
+`2.19e-14`. This reopens only a selected constant-force observer branch. A
+general self-consistent force history and atomic matter-field solve remain
+open; no production toggle or scenario is licensed. FTD-0549 proves that the
+history cannot be reconstructed from endpoint and midpoint kinematics: two
+strictly monotone schedules with the same endpoint positions, endpoint and
+midpoint velocities, duration, energy endpoints, and total face current have
+`K0,K1,T` differences exactly `q d epsilon/30`. The next candidate must
+therefore solve internal path stages together with field and matter. This is
+an algorithmic requirement, not a new ontological postulate. FTD-0550 then
+constructs the compatible quadratic face/edge orbit gather. Its electric
+force is exactly adjoint to the FTD-0541 current, including transverse force
+on axial paths, and its edge interpolation commutes with the matched curl by
+the exact spline derivative identity. The representation layer is therefore
+closed constructive. FTD-0551 then solves endpoint momentum, quadratic
+current, matter displacement, and matched field update atomically with the
+production-dispersion discrete gradient. All 72 neutral periodic arms close
+total energy below `9.22e-15` and Gauss below `4.45e-16`. This is a selected
+reciprocal integrator, not yet a schedule-resolved spacetime action or a
+multi-tick mobile law.
+FTD-0552 closes that unmodified multi-tick route negative: a generic subcell
+coat accelerates in its own neutral periodic dressing, reaching `0.8465` cell
+displacement in 64 ticks even though accumulated energy error is
+`2.78e-17`. Integer and half-cell positions are only symmetry-pinned extrema.
+FTD-0553 proves that simply replacing the bare polarity by a rigid localized
+neutral composite does not remove the mechanism. For any distinct
+integer-offset constituent source, the compact quadratic coat gives the exact
+subcell energy `U(f)=U(0)+C_i(f^4-f^2/2)`, where `C_i` is a nonnegative spectral
+sum and vanishes only for a source extended invariantly along the translation
+axis. All 96 locked dipole/quadrupole arms have positive barriers, with minimum
+`7.36e-5`. Neutrality removes the zero mode, not the lattice aliases. No mobile
+toggle or scenario is licensed. FTD-0554 then proves the general representation
+boundary: a continuous homogeneous unitary translation group cannot be both
+finite-range and interpolate from the identity to the one-site lattice shift.
+The exact band-limited escape removes the Peierls energy but gives every
+noninteger density change and continuity current global lattice support plus
+signed weights. Therefore a higher-order compact interpolation cannot repair
+the point-carrier branch. The remaining native target is an extended or
+hopping excitation whose Peierls barrier scales away in the infrared, not an
+exactly sliding microscopic point. FTD-0555 makes that target quantitative for
+the selected quadratic-coat branch. For any real extended source, the relative
+half-cell barrier is exactly
+`Pi_i=<((1-cos k_i)/(3+cos k_i))^2>_field-energy`; it is therefore a weighted
+ultraviolet-content measure, not merely a geometric-radius measure. A locally
+generated tensor-binomial source has `Pi_i~const/m^2`, or `R^-4` in its RMS
+width. The locked finite-volume qualification did not pass all controls (9
+failures; worst constant miss `11.4%`), so it supplies no numerical or native
+carrier promotion. The exact spectral identity and analytic asymptotics are
+theorem-grade conditional on the already selected coat; production of a
+stable native source with decreasing `Pi_i` remains open.
+
+FTD-0556 closes the alternative integer-hopping kinematics for the isolated
+free-flux sector. A scalar finite-range first-order norm-preserving lattice
+update is only an integer shift times a phase, but the native
+`(flux,wave_vel)` pair is a two-component symplectic fiber with exact pole
+`theta(k)=2 asin(C_WAVE sqrt(M(k))/2)` and a positive conserved mode metric.
+The explicitly forced CPU tick matches that transfer map through 576 registered
+mode-ticks, and an extended analytic packet moves `0.565426` cells in one tick
+without fractional primitive sites or support outside the causal shell. This
+is field-wave Bloch transport, not manifested matter: a stable localized
+`(s,J,W)` carrier and common matter/field cone remain open.
+
+FTD-0557 closes the free-flux localization interpretation exactly on the
+infinite lattice. For every complex `lambda`, the eigenstate condition is
+supported on the zero set of the nonzero real-analytic determinant
+`det(U(k)-lambda I)`, hence on a measure-zero set; the only square-summable
+eigenstate is zero. The same argument applied to
+`U(k)^T-exp(i phi-i k dot d)I` excludes every nonzero square-summable packet
+that returns after finite time as a rigid integer translate. A one-band packet
+instead obeys the exact ballistic second-moment law
+`Var X_i(t)=Var X_i(0)+2t Cov_sym(X_i,v_i)+t^2 Var(v_i)`. The locked CPU replay
+matches three finite-volume packet histories to `1.60e-16`, records a maximum
+variance increase of `1.916`, and manifests zero ternary sites. This closes the
+isolated free-wave packet as a soliton/particle, not the nonlinear carrier
+question. A native bound `(s,J,W)` composite remains open.
 
 **Keywords:** discrete spacetime, cellular automata, emergent physics, computational ontology, universe simulation
 
@@ -189,7 +491,7 @@ The following tags indicate the epistemic status of claims throughout this docum
 
 > **Note**: Part G theoretical foundations are summarized below. See docs/theory/ for detailed derivations.
 
-- Part I: The Action Principle — Derives all update rules from S[s,J]
+- Part I: The Action Principle — supplies a scoped field/source variation; it does not derive all production rules (FTD-0467/0565)
 - Part II: Hilbert Space Construction — Quantum mechanics from flux
 - Part III: Continuum Limit — Recovery of Maxwell and Schrödinger
 - Part IV: Statistical Mechanics — Thermodynamics from microstates
@@ -210,9 +512,9 @@ The following tags indicate the epistemic status of claims throughout this docum
 The simulation is built on the following axiomatic postulates. These are **not derived**; they define the model.
 
 ### POSTULATE 1: Discrete Space (Undefined-Boundary Cubic Lattice)
-Space is represented as a 3D cubic lattice **L** with **no defined boundary**: at every specified position, the six axis-adjacent (and 26-Moore-adjacent) sites exist. The lattice is finitely specified (each computation runs on a finite region of arbitrarily large extent), but no commitment is made to a completed-totality lattice. Each lattice point is called a "voxel."
+Space is represented as a 3D cubic lattice **L** that is **uncontained and has no defined boundary**: at every specified position, the six axis-adjacent (and 26-Moore-adjacent) sites exist. This is neither a bounded container nor a claim that the substrate is a completed-infinity totality. Finitude belongs to specified or realized configurations and computations — finite in extent or support as a cloud, star, or galaxy is finite — while the substrate itself has no enclosing wall. Each lattice point is called a "voxel."
 
-*Motivation*: Discreteness avoids infinities and enables finite computation. The undefined-boundary stance avoids the further commitment to a completed-infinity lattice (no ℤ³ as a single completed object, no load-bearing L → ∞ limits). Algebraic identities (e.g. G\* via Γ(1/4)) are computable to arbitrary finite precision and remain admissible; appeals to "the whole lattice as one object" are not.
+*Motivation*: Discreteness enables finite computation. The uncontained, undefined-boundary stance avoids both an enclosing boundary and the further commitment to a completed-infinity lattice (no ℤ³ as a single completed object, no load-bearing L → ∞ limits). Algebraic identities (e.g. G\* via Γ(1/4)) are computable to arbitrary finite precision and remain admissible; appeals to "the whole lattice as one object" are not.
 
 ### POSTULATE 2: Discrete Time
 Time advances in discrete steps called "ticks." The tick counter t ∈ **N** serves as a global clock.
@@ -223,11 +525,11 @@ Time advances in discrete steps called "ticks." The tick counter t ∈ **N** ser
 
 Predictions in lattice units convert to physical units through a minimal set of imported dimensional constants. The framework's **default gauge is electron-primary** (FTD-0137 §4.5; full treatment [`FOUND_ELECTRON_PRIMARY_GAUGE.md`](theory/02_foundations/FOUND_ELECTRON_PRIMARY_GAUGE.md)):
 
-> **Import `{ℏ, c, m_e}`.** Two are the universal unit-fixing constants (`ℏ`, `c`; and the canonical engine transport value `C_SPEED=1/√3` is native to the lattice). The single *beyond-universal* anchor is the **electron mass** (`M_INERTIAL=K_B=m_e≈0.511 MeV/c²`). In raw lattice coordinates FTD-0402 names `E_REST=M_INERTIAL·C_SPEED²=K_B/3` and the separately imposed gravity role `M_GRAVITATIONAL=K_B`. Other dimensional outputs remain conditional on this register and on the epistemic status of their individual relations.
+> **Import `{ℏ, c, m_e}`.** Two are the universal unit-fixing constants (`ℏ`, `c`; the engine selects `C_SPEED=1/√3` as its canonical raw transport value). The single *beyond-universal* anchor is the **electron mass** (`M_INERTIAL=K_B=m_e≈0.511 MeV/c²`). In raw lattice coordinates FTD-0402 names `E_REST=M_INERTIAL·C_SPEED²=K_B/3` and the separately imposed gravity role `M_GRAVITATIONAL=K_B`. Other dimensional outputs remain conditional on this register and on the epistemic status of their individual relations.
 
 Derived consequences (all conditional on the single imported `m_e`; numerics via the FTD-0015 `m_e/m_P = Kα¹¹` ladder, `K = √(2π)·16/3`):
 - One voxel: `a_phys = ℓ_P = ƛ_C·Kα¹¹` — the *predicted* Planck length, `≈ 1.616 × 10⁻³⁵ m` (agrees with the exact ℓ_P to 0.19%). **[DERIVED ~0.19%]**, no longer a bare declaration.
-- One tick: `t_phys = ℓ_P / (√3 · c) = t_P/√3 ≈ 3.11 × 10⁻⁴⁴ s` (from `c_lat = 1/√3` lattice CFL Courant speed combined with `c_phys = 2.998 × 10⁸ m/s`: physical `c = c_lat · a_phys/t_phys`). *Corrected 2026-07-08* from `√3·ℓ_P/c` (√3 was misplaced to the numerator — a factor-3 inconsistency with `c_lat = 1/√3`); see [`DERIV_DIMENSIONAL_GATE.md`](theory/03_derivations/foundational_mechanics/DERIV_DIMENSIONAL_GATE.md).
+- One tick: `t_phys = ℓ_P / (√3 · c) = t_P/√3 ≈ 3.11 × 10⁻⁴⁴ s` (from the **selected**, linearly stable `c_lat = 1/√3` transport value combined with `c_phys = 2.998 × 10⁸ m/s`: physical `c = c_lat · a_phys/t_phys`). This is not CFL saturation: the exact production-stencil ceiling is `c_lat² ≤ 3/4` at `dt=a=1` (FTD-0407). *Corrected 2026-07-08* from `√3·ℓ_P/c` (√3 was misplaced to the numerator — a factor-3 inconsistency with `c_lat = 1/√3`); see [`DERIV_DIMENSIONAL_GATE.md`](theory/03_derivations/foundational_mechanics/DERIV_DIMENSIONAL_GATE.md).
 - Mass unit: the anchor `m_e` itself (`M_INERTIAL=K_B=m_e`; `M_unit = m_e/K_B = 1 MeV/c² ≈ 1.783 × 10⁻³⁰ kg`). Other mass relations retain their individual LEDGER tags; the calibration does not turn selections or parametric formulas into derivations.
 - Newton's `G = ℏc·(Kα¹¹)²/m_e²`, i.e. `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` — **[SMC]**, 0.38% vs measured (FTD-0015; the `G_N = 1/100` identification is separately falsified, FTD-0131). Under electron-primary `G` is an **output, not an import**.
 
@@ -618,8 +920,31 @@ if stress(v) > WEAK_THRESHOLD:
 -  U(1) gauge symmetry **emerges** from Gauss constraint (verified in simulation; see §14.3)
 -  SU(2) gauge symmetry not addressed
 -  SU(3) color structure **simulated** via flux axis interpretation (see APPENDIX_A)
-- Lorentz covariance is approximate (emerges at scales >> lattice spacing; see §14.2)
-- Renormalization is not addressed
+- The default free-flux pole is Lorentz-like only at leading order. FTD-0408's
+  default-off P4-local period-two prototype removes the dimension-six bare-pole
+  term but creates a `1/sqrt(13)` versus `1/sqrt(3)` common-cone mismatch;
+  FTD-0409 closes the minimal scalar fixed-cone repairs but leaves general
+  period-four/multi-state realization open. FTD-0411 supplies a selected
+  BCC-time/SC+FCC-space branch with derived `c²=1/7`, but its irreducible
+  cube-root branch excludes exact finite-state positive-norm linear
+  localization over `Q(M18)` and the stable local surrogate agrees only through q4.
+  FTD-0413 gives a selected SC+FCC-local Wilson matter stencil sharing that
+  free cone through q4, but not q6. FTD-0414 turns the residual into an
+  explicit `11(ka)^4/540` infrared speed-spread falsifier for that free branch. FTD-0415 proves
+  that the declared exact symmetries still permit marginal preferred-frame
+  kinetic operators. FTD-0417 freezes a different exactly local photon action
+  at the same leading speed, paying an added link type and a larger
+  `3(ka)²/28` leading matter/photon mismatch. FTD-0418 freezes its one-tick
+  axial Wilson partner and exact one-/two-photon Ward hierarchy, but the pair
+  already differs at q4. FTD-0419's complete `xi=1` step-scheme match finds
+  `delta_match/g²=-0.32696906(5)`, requiring a dimension-four counterterm in
+  that scheme. FTD-0421 closes the frozen native additive-current route
+  negative, so its dependent native pole/RG campaigns are not executed.
+  Interacting/live multi-sector recovery, on-shell matching, physical
+  counterterm universality, and manifested low-energy unitarity remain open
+  (FTD-0407–0425; see §14.2)
+- Physical on-shell renormalization is not yet calculated; one off-shell step
+  scheme and its first fixed-counterterm multiplicity threshold are evaluated
 - Coupling constants are parameters, not predictions (but see G* observation in §7.4)
 
 ## 6.7 Emergent vs Imposed: The Honest Distinction
@@ -718,7 +1043,7 @@ These define the model's fundamental scales:
 | Parameter | Value | Dimensions | Role | Status |
 |-----------|-------|------------|------|--------|
 | `C_MOORE` | 1.0 | [L]/[T] | Topological update-support bound (L∞/Moore: one site per axis per tick), not the particle/wave speed | Axiomatic (P1/P4 geometry) |
-| `C_SPEED` | $1/\sqrt3$ | [L]/[T] | Canonical wave and particle transport speed in raw nodes/tick; FTD-0402 uses this value in $\beta^2=|u|^2/C_{\rm SPEED}^2$ | [THEOREM for lattice wave/CFL value; selected clock use is AXIOM] |
+| `C_SPEED` | $1/\sqrt3$ | [L]/[T] | Selected wave and particle transport speed in raw nodes/tick; FTD-0402 uses this value in $\beta^2=|u|^2/C_{\rm SPEED}^2$. It is stable but does not saturate the exact production-stencil CFL ceiling $C^2\le 3/4$. | **[SELECTED]**; implemented value, not a Lorentz-recovery or CFL-uniqueness theorem (FTD-0407) |
 | H | 1.0 | [L] | Lattice spacing (the **edge**) — calibrated `a_phys ≡ ℓ_P` (IMP-K1; [DERIVED ~0.19%] under electron-primary). One tick = t_P/√3, so that c·t_P = ℓ_P holds exactly (FTD-0385 naming theorem) |  Axiomatic unit; Planck naming per calibration register |
 | `VOXEL_VOLUME` | $H^3=1$ | [L]³ | Explicit cubic measure multiplying volume-density sums | **[THEOREM — current engine representation, FTD-0404]** |
 | `K_B` / `M_INERTIAL` | 0.511 | mass unit | Inertial-mass calibration | **[IMPOSED]** (electron-primary anchor; historical $n=11$ relation remains [SELECTION]) |
@@ -1226,27 +1551,72 @@ The following aspects of known physics are **not** present in the current model:
 - Rotation symmetry is approximate at best
 - Lorentz invariance is fundamentally broken at the substrate level
 
-### Lorentz Invariance: A Relational Reinterpretation
+### Lorentz Invariance: Relational Proposal and Hard Recovery Gate
 
-We propose that **Lorentz invariance is not a property of the substrate—it is a property of the relationship between observers.**
+FTD proposes that **Lorentz invariance is not a property of the substrate but could be a property of relationships between observers.** This is an interpretive conjecture, not a covariance result.
 
 The cubic lattice fundamentally has a preferred frame. However, Lorentz invariance describes how **two observers** relate their measurements when in relative motion. It is a property of the **transformation between reference frames**, not of space itself.
 
-**Key Insight**: A single observer cannot detect Lorentz violation because there is nothing to compare to. Lorentz invariance only has meaning when:
+The proposal concerns operational comparisons among observers. It does not imply that a single laboratory cannot detect a preferred frame: direction-, boost-, clock-, threshold-, or polarization-dependent observables can compare the laboratory against its own motion and orientation. A relational recovery would still have to prove that all such observables transform covariantly. Its intended ingredients are:
 1. Two observers exist (two manifested structures)
 2. They are in the same "observational space" (can exchange flux)
 3. They compare measurements (interact)
 
-The lattice structure does not break Lorentz invariance for the same reason that graph paper does not break the rotational invariance of a circle drawn on it—the lattice is scaffolding, not physics.
+The lattice is physical in the current update laws: its preferred foliation, stencil, and discrete clock enter the propagator. Calling it scaffolding does not remove the resulting preferred-frame operators.
 
-**Emergence at the wavelength scale**: at any spatial wavelength λ much larger than the chosen lattice spacing `a` (i.e., for momenta `|p| ≪ π/a`), the lattice's effective dynamics approach rotational symmetry with controlled error `O((a/λ)²)`. Specifically:
-- Anisotropy effects average out across regions of arbitrarily large finite extent containing many wavelengths
-- The effective dynamics for long-wavelength modes are rotationally symmetric to leading order in `(a/λ)`
-- Boost invariance is a property of the long-wavelength effective theory observed by aggregate measurements, not of the substrate's per-voxel update rules
+**Established long-wavelength statement (free flux only)**: for `q_i=ak_i`, the production 18-point spatial symbol is rotationally invariant through `O(|q|^4)`, and directional anisotropy first occurs at `O(|q|^6)` in `omega^2` (`O(|q|^4)` in directional phase-speed spread). Combining that symbol with the actual discrete-time update gives, at `C_SPEED²=1/3`,
 
-This is analogous to how fluid dynamics is Galilean-invariant despite being implemented by discrete molecules — Galilean invariance is a statement about the fluid's effective theory at length scales much larger than the molecular spacing, not a property of any individual molecule. Under undefined-boundary ontology, this is a finitary statement: at every finite spacing `a` and every wavelength `λ ≫ a`, the rotational/boost invariance of the long-wavelength theory is recovered to error `O((a/λ)²)`.
+`theta² = S₂/3 - S₂²/54 - 11S₂³/9720 + S₂Q₄/216 - Q₆/270 + O(|q|⁸)`,
+where `Q₄=sum(q_i⁴)` and `Q₆=sum(q_i⁶)`.
 
-> **Open Question**: Whether this relational interpretation fully recovers Lorentz covariance in all experimental regimes remains to be demonstrated quantitatively. See OPEN.7 in the Assumption Ledger.
+The isotropic `-S₂²/54` term is a dimension-six boost violation that a comparison among spatial directions cannot detect. It does not average away. No common renormalized cone has yet been shown for flux, manifested matter, Wilson matter, and gravity.
+
+FTD-0407 further proves a scoped obstruction: within the current centered-time, nearest-Moore stencil class, quartic spatial isotropy and normalization force a spatial-symbol value `16/3` at `(pi,pi,0)`. Cancelling the dimension-six boost term requires Courant number `r²=1`, while linear stability requires `r²≤3/4`. Retuning the current coefficients therefore cannot supply the missing recovery; the update architecture must change.
+
+FTD-0411 tests a different architecture suggested by the Moore decomposition:
+the BCC product character becomes a selected synchronized temporal kernel
+`T_B=(2/3)(1-cos³theta)`, while the existing SC+FCC `M18` remains physical
+space. The conditional pole `T_B=c²M18` cancels its complete q4 term only at
+`c²=1/7`. The principal phase is real across the full band, but its irreducible
+cubic minimal polynomial has two complex conjugates. This excludes every exact
+finite-state positive-norm linear/unitary auxiliary realization rational in
+`M18`; direct use of the real cube root is nonlocal. The default-off CPU implementation is a stable
+period-two IR localization with kicks `(1+sqrt(2))/7,(1-sqrt(2))/7`; it matches
+the selected BCC pole through q4 and differs at isotropic q6. This opens a
+nonlinear/constrained or interacting clock target; it does not establish
+covariance or a common observable cone.
+
+FTD-0412 corrects the matter comparison itself. The historical standalone
+module evolved spatial `D_W` as a real-time Hamiltonian and mistook a
+special-spinor norm for its energy spectrum; FTD-0126's orbit and `g-2`
+numbers are therefore retracted as physical Wilson-Dirac results. Real-time
+evolution now uses a Hermitian Wilson Hamiltonian. Its massless leading slope
+can be selected to `c_s²=1/7`, but its q4 tensor
+`c_s²[(r²/4)S2²-Q4/3]` cannot match the q4-free flux pole: an axis requires
+`r²=4/3`, while a face diagonal requires `r²=2/3`. Manifested matter remains
+an imposed `C_SPEED²=1/3` kinematic budget rather than a measured pole; gauge
+and native latency gravity still provide no propagating poles.
+
+FTD-0413 enlarges the standalone matter kinetic symbol to
+`K_i=sin(q_i)[a+b(cos(q_j)+cos(q_k))]`, using only axial and face-diagonal
+SC+FCC neighbours. Infrared normalization plus cancellation of both quartic
+tensors uniquely fixes `a=b=1/3` and `r²=4/3` within this ansatz. Selecting
+`c_s²=1/7` then produces a free Wilson-matter pole sharing the selected flux
+cone through q4 while keeping all seven Brillouin-corner doublers gapped. The
+gauge-covariant implementation averages the two shortest oriented paths to
+each face diagonal and defaults off. Its first mismatch with the BCC-time flux
+pole occurs at q6; the RK4 clock cannot remove the surviving mixed tensor.
+
+FTD-0414 does not require exact q6 equality. For `q=ka`, it derives the
+selected free-sector leading envelope
+`Δv_max/c_s = 11q^4/540 + O(q^6)` and the inverse adequacy condition
+`ka < (540 epsilon/11)^(1/4)`. This Lorentz-sector construction does not derive
+`a`; adopting electron-primary or legacy Planck-primary gives `a=ell_P`
+conditionally and makes the direct free-tree term tiny. This remains a
+falsifier rather than a whole-theory compatibility result because the carrier,
+finite-q, interacting, and radiative gates remain open.
+
+> **Open hard gate:** FTD-0421 closes a conserved native additive current for the frozen ontology/basis, so that route cannot support a native charged common-cone claim and its dependent FTD-0422/0423 campaigns are not executed. Physical Lorentz adequacy now requires either an explicitly selected auxiliary carrier or a separately preregistered ontology revision, plus declared physical calibration, exact finite-q remainder control, production/manifested-matter integration, a gauge-independent on-shell successor to FTD-0419's nonzero off-shell coefficient, one fixed counterterm trajectory across thresholds, propagating gravity/composite sectors, positive low-energy spectral weight despite the non-injective production tick, and interacting Ward/dispersion tests. Exact all-orders Lorentz symmetry is not mandatory; compliance with every applicable empirical bound is. See FTD-0407–0425 and OPEN.2/OPEN.7.
 
 ### Finite Size Effects
 - Boundary conditions (toroidal, absorbing, reflective) affect results
@@ -1439,9 +1809,9 @@ These are rigorous mathematical consequences of the axioms. They do not predict 
 These are generic predictions of discrete spacetime models or require substantial future development.
 
 ### Discrete Spacetime Signatures
-- **Photon dispersion**: $v(E) = c[1 - E^2/(24 E_{\text{Planck}}^2)]$ — generic to any lattice model
-- **Lorentz violation**: Cubic lattice anisotropy at $\epsilon \sim (E/E_{\text{Planck}})^4 \sim 10^{-80}$ — undetectable
-- **Graviton dispersion**: Same functional form as photon — no FTD-specific signature
+- **Free-flux group velocity**: $v_g(E)=c[1-E^2/(12E_{\text{Planck}}^2)+O(E^4/E_{\text{Planck}}^4)]$ in the edge calibration. This is the production update's isotropic dimension-six preferred-frame term, not a universal photon prediction.
+- **Cubic directional anisotropy**: the spatial direction-dependent spread begins at $O((E/E_{\text{Planck}})^4)$, but this is subleading to the isotropic boost violation and does not establish experimental safety.
+- **Photon/graviton dispersion**: no identification with the free-flux pole, common-cone theorem, or radiatively stable interacting result has been established.
 
 **Status**: These are generic predictions of discrete spacetime, not specific to FTD.
 
@@ -1496,7 +1866,7 @@ engine/
 │   ├── lattice.h               # 3D cubic lattice with periodic boundaries
 │   ├── render_bridge.h         # RenderBridge — main engine API, tick(), diagnostics()
 │   ├── lagrangian.h            # 9-term Lagrangian + Rayleigh dissipation
-│   ├── term_toggles.h          # 12 runtime booleans for pedagogy system
+│   ├── term_toggles.h          # Table-driven registry (41 runtime booleans)
 │   └── csv_export.h            # CSV export utility (flux field, slices, timeseries)
 ├── src/
 │   ├── render_bridge.cpp       # Core engine — all tick phases (~1300 lines)
@@ -1674,7 +2044,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | CLAIM.8 | QM statistics emerge from substrate aggregation |  **[SELECTION]** — Three-level observer hierarchy: substrate S=2, independent complex S=√2, sLoop/entangled S=2√2. Complexification + sLoop joint coupling. See DERIV_OBSERVER_BELL_MECHANISM.md |
 | CLAIM.9 | U(1) gauge symmetry emerges |  **VERIFIED** (OPEN.3 simulation) |
 | CLAIM.10 | SU(3) emerges from geometry |  **VERIFIED** (OPEN.4 simulation) |
-| CLAIM.11 | Lorentz invariance is relational |  **VERIFIED** (OPEN.2 simulation) |
+| CLAIM.11 | Lorentz invariance is relational | **[CONJECTURE]**; simulations of spatial isotropy do not test boost covariance (FTD-0407) |
 | CLAIM.12 | Void is dispositional substrate | **Proposed** (Section 1.1) |
 | CLAIM.13 | Update rules derived from action |  **VERIFIED** (v4.0: S[s,J] → Euler-Lagrange) |
 | CLAIM.14 | Continuum limit → Maxwell |  **VERIFIED** (v4.0: lattice → field theory) |
@@ -1689,12 +2059,12 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | ID | Question | Status | Reference |
 |----|----------|--------|-----------|
 | OPEN.1 | How do aggregate QM statistics (S>2) emerge from substrate-level dynamics (S≤2)? |  **[SELECTION]** | Three-level observer Bell mechanism: complexification (Gauss constraint → psi = J_x + iJ_y) + sLoop joint coupling. Net: S_substrate × √2 = S_observer. Verified 4/4 checks. See DERIV_OBSERVER_BELL_MECHANISM.md |
-| OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? |  **VERIFIED** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed |
+| OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | **OPEN — HARD GATE; FROZEN NATIVE CHARGE ROUTE CLOSED** | FTD-0414 derives the selected free-sector envelope `11(ka)^4/540`; FTD-0415 permits marginal time-space kinetic ratios; FTD-0416 limits imported IR attraction to at best `1/137^3`; and FTD-0419 finds `delta_match/g²=-0.32696906(5)` in one off-shell step scheme. FTD-0421 proves the frozen native additive charge nullspace is trivial, dependency-closing the native charged-pole and dimension-four-flow campaigns. FTD-0424's one-calibration contract shows the existing off-shell surrogate fails its first multiplicity threshold. Adequacy still requires a gauge-independent on-shell auxiliary calculation, one fixed physical threshold trajectory, finite-q/production integration, and manifested low-energy spectral unitarity (FTD-0407–0425). |
 | OPEN.3 | Can U(1) gauge emergence be verified in simulation? |  **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
 | OPEN.4 | Can SU(3) color interpretation be made rigorous? |  **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
 | OPEN.5 | Can coupling constants be derived within FTD assumptions? |  **[PARTIAL / SMC]** | Algebraic-spine constants have theorem-level provenance, but the physical coupling identifications (especially x₊  1/α) remain [STRONGLY MOTIVATED CONJECTURE]. See SPEC_ALGEBRAIC_SPINE.md, SPEC_FQCR.md, TRACKER_ONTIC_TRUTH.md, and LEDGER.md. |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? |  **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
-| OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? |  **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
+| OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | **OPEN** | FTD-0421 closes the frozen native additive-current route negative; FTD-0422/0423 are not executed by dependency. FTD-0424 closes one fixed counterterm across the first available off-shell multiplicity threshold but leaves the physical on-shell coefficient open. FTD-0425 proves the linear sector reversible and the full production tick non-injective, leaving manifested low-energy spectral unitarity unmeasured. No gauge-independent on-shell coefficient, universal physical counterterm trajectory, dynamical gravity/composite poles, live interacting common cone, operational clock/rod result, or bounds comparison exists; see FTD-0407–0425 LR-0..LR-6. |
 | OPEN.8 | Can particle masses be derived from FTD? |  **[SMC] / [PARAMETRIC]** (retagged 2026-07-12 to canon) | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) is [SMC] FTD-0015 (exponent n=11 [SELECTION]); other masses per CATALOG_PARAMETRIC_INSERTIONS |
 | OPEN.9 | What determines the complexity functional C(g)? |  **OPEN** | Candidates: MDL, departure from unification, parameter counting |
 | OPEN.10 | Can spinor behavior emerge from framed flux? |  **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
@@ -1952,7 +2322,7 @@ See [FTD_REFERENCE.md](theory/01_reference/SPEC_FTD_REFERENCE.md) and [CHANGELOG
 
 ## B.5 Version 4.0 Additions (Theoretical Foundations)
 
-1. **Action Principle**: All update rules now derived from S[s,J] via Euler-Lagrange equations
+1. **Partial action principle**: the written `S[s,J]` supports the free field equations, stationary-source variation, and replay of selected force formulas. It does not generate the production genesis/evaporation state transitions; the former all-update claim is retracted by FTD-0567.
 2. **Hilbert Space**: Quantum mechanics constructed from complexified flux ψ = J_x + iJ_y (Part II)
 3. **Continuum Limit**: Rigorous recovery of Maxwell electrodynamics (§3.4) and Schrödinger equation (§3.5)
 4. **Born Rule**: Derived from manifestation statistics, not postulated (§2.3)

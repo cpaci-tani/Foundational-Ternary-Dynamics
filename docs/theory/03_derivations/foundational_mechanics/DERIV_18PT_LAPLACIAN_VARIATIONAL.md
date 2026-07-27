@@ -209,8 +209,8 @@ The stencil derivation does not affect any physics-bearing tag elsewhere in the 
 To keep the doc focused:
 
 - **The physical scale** of the Laplacian operator (i.e. its overall coefficient $c^2$ and how it couples to time-evolution): determined by the leapfrog step + bandwidth constraint, not by this variational derivation.
-- **Stability of the discrete time evolution** under the 18-pt Laplacian: governed by CFL ($c_\text{max} = 1/\sqrt{3}$) — an independent constraint, treated in `SPEC_ENGINE.md`.
-- **Renormalization of $c^2$** under blocking (the $b=2$ Wilsonian map): governed by $K_T^\text{FTD}$ and the response-flow tuple — see `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`.
+- **Stability of the discrete time evolution** under the 18-pt Laplacian: exact centered-update condition $c^2\le3/4$ at unit spacing/tick (FTD-0407); the live `c^2=1/3` is selected, not the CFL saturation.
+- **Renormalization or derivation of $c^2$** under blocking: the current scalar temporal trace map is `x -> 4x-x²`, not a Gauss-AGM map (FTD-0410). The existing native response-flow tuple preserves a chosen Gaussian normalization but does not derive the speed.
 - **Sublattice variants** (BCC, FCC, mixed): [OPEN] per §6.
 
 The derivation establishes only that the 18-point face+edge Laplacian with weights {1/3, 1/6} is the canonical leading-order isotropic kinetic operator on the cubic lattice, derivable by direct variation of the 18-point kinetic Lagrangian density.

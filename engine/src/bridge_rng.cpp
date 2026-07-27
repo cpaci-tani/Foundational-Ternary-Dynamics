@@ -9,6 +9,8 @@
 #include "ftd/bridge_rng.h"
 
 #include <random>
+#include <sstream>
+#include <string>
 #include <vector>
 
 namespace ftd {
@@ -56,6 +58,19 @@ double BridgeRng::thread_uniform(std::size_t tid) {
 double BridgeRng::thread_normal(std::size_t tid) {
     std::normal_distribution<double> g(0.0, 1.0);
     return g(impl_->thread_rngs[tid]);
+}
+
+std::uint64_t BridgeRng::state_hash() const {
+    std::ostringstream stream;
+    stream << impl_->rng;
+    for (const auto& rng : impl_->thread_rngs) stream << '|' << rng;
+    const std::string state = stream.str();
+    std::uint64_t hash = 1469598103934665603ull;
+    for (const unsigned char byte : state) {
+        hash ^= static_cast<std::uint64_t>(byte);
+        hash *= 1099511628211ull;
+    }
+    return hash;
 }
 
 }  // namespace ftd

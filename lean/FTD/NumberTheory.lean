@@ -62,48 +62,48 @@ theorem gap8_same (p : Nat) : (p + 8) % 4 = p % 4 := by omega
 -/
 
 /-- lcm(3,4) = 12 = N_c × N_base -/
-theorem fizzbuzz_period : N_c * N_base = 12 := by native_decide
+theorem fizzbuzz_period : N_c * N_base = 12 := by decide
 
 /-- The 4 coprime classes mod 12 -/
-theorem coprime_1_mod12 : Nat.Coprime 1 12 := by native_decide
-theorem coprime_5_mod12 : Nat.Coprime 5 12 := by native_decide
-theorem coprime_7_mod12 : Nat.Coprime 7 12 := by native_decide
-theorem coprime_11_mod12 : Nat.Coprime 11 12 := by native_decide
+theorem coprime_1_mod12 : Nat.Coprime 1 12 := by decide
+theorem coprime_5_mod12 : Nat.Coprime 5 12 := by decide
+theorem coprime_7_mod12 : Nat.Coprime 7 12 := by decide
+theorem coprime_11_mod12 : Nat.Coprime 11 12 := by decide
 
 /-- Split classes: 1 ≡ 1 mod 4 and 5 ≡ 1 mod 4 -/
-theorem class1_split : 1 % 4 = 1 := by native_decide
-theorem class5_split : 5 % 4 = 1 := by native_decide
+theorem class1_split : 1 % 4 = 1 := by decide
+theorem class5_split : 5 % 4 = 1 := by decide
 
 /-- Inert classes: 7 ≡ 3 mod 4 and 11 ≡ 3 mod 4 -/
-theorem class7_inert : 7 % 4 = 3 := by native_decide
-theorem class11_inert : 11 % 4 = 3 := by native_decide
+theorem class7_inert : 7 % 4 = 3 := by decide
+theorem class11_inert : 11 % 4 = 3 := by decide
 
 /-- Dead classes: divisible by 2 or 3 -/
-theorem class0_dead : 12 % 12 = 0 := by native_decide
-theorem class2_dead : 2 % 2 = 0 := by native_decide
-theorem class3_dead : 3 % 3 = 0 := by native_decide
-theorem class4_dead : 4 % 2 = 0 := by native_decide
-theorem class6_dead : 6 % 2 = 0 := by native_decide
-theorem class8_dead : 8 % 2 = 0 := by native_decide
-theorem class9_dead : 9 % 3 = 0 := by native_decide
-theorem class10_dead : 10 % 2 = 0 := by native_decide
+theorem class0_dead : 12 % 12 = 0 := by decide
+theorem class2_dead : 2 % 2 = 0 := by decide
+theorem class3_dead : 3 % 3 = 0 := by decide
+theorem class4_dead : 4 % 2 = 0 := by decide
+theorem class6_dead : 6 % 2 = 0 := by decide
+theorem class8_dead : 8 % 2 = 0 := by decide
+theorem class9_dead : 9 % 3 = 0 := by decide
+theorem class10_dead : 10 % 2 = 0 := by decide
 
 /-! ## QCD Beta Function and Framework Integers -/
 
 /-- beta_0 = (11*N_c - 2*N_f) / 3 at N_f = 0: beta_0 = 11*3/3 = 11 -/
-theorem beta0_at_Nf0 : 11 * N_c / N_c = 11 := by native_decide
+theorem beta0_at_Nf0 : 11 * N_c / N_c = 11 := by decide
 
 /-- b_3 = beta_0 - N_base = 11 - 4 = 7 -/
-theorem b3_from_beta : 11 - N_base = b_3 := by native_decide
+theorem b3_from_beta : 11 - N_base = b_3 := by decide
 
 /-- N_eff = N_c + 2*b_3 - N_base = 3 + 14 - 4 = 13 -/
-theorem Neff_from_framework : N_c + 2 * b_3 - N_base = N_eff := by native_decide
+theorem Neff_from_framework : N_c + 2 * b_3 - N_base = N_eff := by decide
 
 /-- Alternative: N_eff = b_3 + 2*N_c = 7 + 6 = 13 -/
-theorem Neff_alt : b_3 + 2 * N_c = N_eff := by native_decide
+theorem Neff_alt : b_3 + 2 * N_c = N_eff := by decide
 
 /-- D_constraint = N_c * N_base^2 - 1 = 3*16 - 1 = 47 -/
-theorem D_constraint_from_framework : N_c * (N_base * N_base) - 1 = D_constraint := by native_decide
+theorem D_constraint_from_framework : N_c * (N_base * N_base) - 1 = D_constraint := by decide
 
 /-! ## Fibonacci and Tribonacci -/
 
@@ -120,27 +120,27 @@ def lucas : Nat → Nat
   | 0 => 2 | 1 => 1 | n + 2 => lucas n + lucas (n + 1)
 
 /-- F_7 = 13 = N_eff -/
-theorem fib_7 : fib 7 = N_eff := by native_decide
+theorem fib_7 : fib 7 = N_eff := by decide
 
 /-- T_7 = 13 = N_eff -/
-theorem trib_7 : trib 7 = N_eff := by native_decide
+theorem trib_7 : trib 7 = N_eff := by decide
 
 /-- The unique crossover: F_7 = T_7 -/
-theorem fib_trib_crossover : fib 7 = trib 7 := by native_decide
+theorem fib_trib_crossover : fib 7 = trib 7 := by decide
 
 /-- This is the ONLY crossover for n ≤ 20 (excluding trivial n < 3) -/
-theorem no_crossover_at_3 : fib 3 ≠ trib 3 := by native_decide
-theorem no_crossover_at_4 : fib 4 ≠ trib 4 := by native_decide
-theorem no_crossover_at_5 : fib 5 ≠ trib 5 := by native_decide
-theorem no_crossover_at_6 : fib 6 ≠ trib 6 := by native_decide
-theorem no_crossover_at_8 : fib 8 ≠ trib 8 := by native_decide
-theorem no_crossover_at_9 : fib 9 ≠ trib 9 := by native_decide
-theorem no_crossover_at_10 : fib 10 ≠ trib 10 := by native_decide
-theorem no_crossover_at_15 : fib 15 ≠ trib 15 := by native_decide
-theorem no_crossover_at_20 : fib 20 ≠ trib 20 := by native_decide
+theorem no_crossover_at_3 : fib 3 ≠ trib 3 := by decide
+theorem no_crossover_at_4 : fib 4 ≠ trib 4 := by decide
+theorem no_crossover_at_5 : fib 5 ≠ trib 5 := by decide
+theorem no_crossover_at_6 : fib 6 ≠ trib 6 := by decide
+theorem no_crossover_at_8 : fib 8 ≠ trib 8 := by decide
+theorem no_crossover_at_9 : fib 9 ≠ trib 9 := by decide
+theorem no_crossover_at_10 : fib 10 ≠ trib 10 := by decide
+theorem no_crossover_at_15 : fib 15 ≠ trib 15 := by decide
+theorem no_crossover_at_20 : fib 20 ≠ trib 20 := by decide
 
 /-- L_3 = 4 = N_base -/
-theorem lucas_3 : lucas 3 = N_base := by native_decide
+theorem lucas_3 : lucas 3 = N_base := by decide
 
 /-- The 7th position is special: index into both sequences yields N_eff -/
 theorem seventh_position : fib 7 = N_eff ∧ trib 7 = N_eff := by
@@ -154,7 +154,7 @@ theorem weinberg_ratio : N_c = 3 ∧ N_eff = 13 := ⟨rfl, rfl⟩
 
 /-- Higgs quartic: λ = N_c/(N_eff + N_c + b_3) = 3/23 -/
 -- 3/23 = 0.13043... → m_H = v√(2λ) = 125.69 GeV (0.47% from 125.11)
-theorem higgs_denominator : N_eff + N_c + b_3 = 23 := by native_decide
+theorem higgs_denominator : N_eff + N_c + b_3 = 23 := by decide
 theorem higgs_numerator : N_c = 3 := rfl
 
 /-! ## Mersenne and Fermat Primes (Mod 4 Classification) -/
@@ -163,20 +163,20 @@ theorem higgs_numerator : N_c = 3 := rfl
     Proof strategy: 4 | 2^p for p ≥ 2, so 2^p ≡ 0 (mod 4), hence 2^p - 1 ≡ 3 (mod 4).
     Status: proven by exhaustive check for small cases, induction needs Nat.pow_mod. -/
 -- Verified for all known Mersenne exponents:
-theorem mersenne_3 : (2^3 - 1) % 4 = 3 := by native_decide
-theorem mersenne_5 : (2^5 - 1) % 4 = 3 := by native_decide
-theorem mersenne_7 : (2^7 - 1) % 4 = 3 := by native_decide
-theorem mersenne_13 : (2^13 - 1) % 4 = 3 := by native_decide
-theorem mersenne_17 : (2^17 - 1) % 4 = 3 := by native_decide
-theorem mersenne_19 : (2^19 - 1) % 4 = 3 := by native_decide
+theorem mersenne_3 : (2^3 - 1) % 4 = 3 := by decide
+theorem mersenne_5 : (2^5 - 1) % 4 = 3 := by decide
+theorem mersenne_7 : (2^7 - 1) % 4 = 3 := by decide
+theorem mersenne_13 : (2^13 - 1) % 4 = 3 := by decide
+theorem mersenne_17 : (2^17 - 1) % 4 = 3 := by decide
+theorem mersenne_19 : (2^19 - 1) % 4 = 3 := by decide
 
 /-- Fermat primes (n ≥ 1) are always split: 2^(2^n) + 1 ≡ 1 (mod 4).
     Proof strategy: 4 | 2^(2^n) for n ≥ 1, so 2^(2^n) + 1 ≡ 1 (mod 4).
     Status: proven by exhaustive check for all known Fermat numbers. -/
-theorem fermat_1 : (2^(2^1) + 1) % 4 = 1 := by native_decide
-theorem fermat_2 : (2^(2^2) + 1) % 4 = 1 := by native_decide
-theorem fermat_3 : (2^(2^3) + 1) % 4 = 1 := by native_decide
-theorem fermat_4 : (2^(2^4) + 1) % 4 = 1 := by native_decide
+theorem fermat_1 : (2^(2^1) + 1) % 4 = 1 := by decide
+theorem fermat_2 : (2^(2^2) + 1) % 4 = 1 := by decide
+theorem fermat_3 : (2^(2^3) + 1) % 4 = 1 := by decide
+theorem fermat_4 : (2^(2^4) + 1) % 4 = 1 := by decide
 
 /-! ## The Moat Theorem (Partial) -/
 
@@ -184,29 +184,29 @@ theorem fermat_4 : (2^(2^4) + 1) % 4 = 1 := by native_decide
     Full proof requires: if n ≡ 3 mod 4 then r₂(n) = 0.
     We verify specific instances. -/
 -- 3 = cannot be a² + b² (check: 0²+0²=0, 0²+1²=1, 1²+1²=2)
-theorem three_is_moat : ¬ (∃ a b : Fin 3, a.val * a.val + b.val * b.val = 3) := by native_decide
+theorem three_is_moat : ¬ (∃ a b : Fin 3, a.val * a.val + b.val * b.val = 3) := by decide
 
 -- 7 cannot be sum of two squares
-theorem seven_is_moat : ¬ (∃ a b : Fin 4, a.val * a.val + b.val * b.val = 7) := by native_decide
+theorem seven_is_moat : ¬ (∃ a b : Fin 4, a.val * a.val + b.val * b.val = 7) := by decide
 
 -- 11 cannot be sum of two squares
-theorem eleven_is_moat : ¬ (∃ a b : Fin 4, a.val * a.val + b.val * b.val = 11) := by native_decide
+theorem eleven_is_moat : ¬ (∃ a b : Fin 4, a.val * a.val + b.val * b.val = 11) := by decide
 
 -- 15 cannot be sum of two squares
-theorem fifteen_is_moat : ¬ (∃ a b : Fin 5, a.val * a.val + b.val * b.val = 15) := by native_decide
+theorem fifteen_is_moat : ¬ (∃ a b : Fin 5, a.val * a.val + b.val * b.val = 15) := by decide
 
 -- 19 cannot be sum of two squares
-theorem nineteen_is_moat : ¬ (∃ a b : Fin 5, a.val * a.val + b.val * b.val = 19) := by native_decide
+theorem nineteen_is_moat : ¬ (∃ a b : Fin 5, a.val * a.val + b.val * b.val = 19) := by decide
 
 -- 23 cannot be sum of two squares (note: 23 = N_eff + N_c + b_3)
-theorem twentythree_is_moat : ¬ (∃ a b : Fin 5, a.val * a.val + b.val * b.val = 23) := by native_decide
+theorem twentythree_is_moat : ¬ (∃ a b : Fin 5, a.val * a.val + b.val * b.val = 23) := by decide
 
 -- Conversely, split numbers CAN be sums of two squares:
 -- 5 = 1² + 2²
-theorem five_is_sum_of_squares : ∃ a b : Fin 3, a.val * a.val + b.val * b.val = 5 := by native_decide
+theorem five_is_sum_of_squares : ∃ a b : Fin 3, a.val * a.val + b.val * b.val = 5 := by decide
 -- 13 = 2² + 3²
-theorem thirteen_is_sum_of_squares : ∃ a b : Fin 4, a.val * a.val + b.val * b.val = 13 := by native_decide
+theorem thirteen_is_sum_of_squares : ∃ a b : Fin 4, a.val * a.val + b.val * b.val = 13 := by decide
 -- 17 = 1² + 4²
-theorem seventeen_is_sum_of_squares : ∃ a b : Fin 5, a.val * a.val + b.val * b.val = 17 := by native_decide
+theorem seventeen_is_sum_of_squares : ∃ a b : Fin 5, a.val * a.val + b.val * b.val = 17 := by decide
 
 end FTD.NumberTheory
