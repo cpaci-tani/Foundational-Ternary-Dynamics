@@ -1,8 +1,9 @@
-// Test: Variational Coulomb -- Field-Mediated Electrostatics
+// Test: Coupling helper conventions -- Field-Mediated Electrostatics
 //
-// Verifies that the coupling term L_COUPLING = -g_c * s * div(J)
-// produces the correct Coulomb force via its Euler-Lagrange equation:
-//   F = -alpha * s * grad(div J)
+// Legacy regression coverage for the standalone coupling_term and
+// coupling_force helpers. This does NOT establish that the production force
+// loop is the matter-side variation of the written action. FTD-0467 tests the
+// actual branches and closes that common-action claim negative.
 //
 // Sections:
 //   1. grad(div J) points from positive to negative charge
@@ -90,11 +91,12 @@ int main() {
         check("Coupling term is finite", std::isfinite(coup));
     }
 
-    // Section 3: Variational Coulomb force function
-    std::cout << "\n--- Section 3: Variational Force Function ---\n";
+    // Section 3: selected effective-normalization helper
+    std::cout << "\n--- Section 3: Coupling Force Helper ---\n";
     {
-        // Test the coupling_force function directly (sign per Term 2's
-        // 2026-07-18 amendment: F = +alpha * s * grad(div J))
+        // Test the helper definition directly. Its +ALPHA normalization is a
+        // selected effective convention, not the bare variation coefficient
+        // +G_C of the written interaction (FTD-0467).
         ftd::Vec3 grad_divJ(1.0, 0, 0);
 
         // +1 particle: F = +alpha * (+1) * grad(div J)

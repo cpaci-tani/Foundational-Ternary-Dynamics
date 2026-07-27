@@ -1,27 +1,29 @@
 /**
- * Test: Discrete Action Stationarity
+ * Test: Field Action Stationarity and Production-Force Replay
  *
- * Verifies that the FTD tick cycle IS the Euler-Lagrange equation of the
- * complete discrete Lagrangian S = Sigma_v L(v). The action is an exact finite
- * sum -- not an approximation of an integral.
+ * Verifies the field-sector action identities and independently replays the
+ * selected production-force formulas. FTD-0467 proves that the latter are not
+ * all matter-side variations of the written state-flux interaction.
  *
  * Tests:
  *   1. EL residual < 1% after prepare_delta_j() (coupling source creates O(1%) correction)
  *   2. Action S is finite (not NaN/Inf)
  *   3. Field kinetic/gradient terms have correct signs and are non-zero
- *   4. Hamiltonian conservation with damping OFF over 1000 ticks
+ *   4. Exact modified tick-energy conservation with damping OFF over 1000 ticks
  *   5. Energy completeness: field_kinetic_sum matches wave_energy from EnergyAudit
- *   6. Particle EL residual: force_diag matches Lagrangian partial derivatives
+ *   6. Production-force replay residual: force_diag matches coded formulas
  *   7. Gradient-term pair-counting: field_gradient_sum is the pairs-once action
  *      (each neighbor link counted once), so dS_grad/dJ is exactly the
  *      c^2 * 18-point stencil that phase_read() integrates
  */
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <iomanip>
 #include "ftd/render_bridge.h"
 #include "ftd/lagrangian.h"
+#include "ftd/eft/native_energy_contract.h"
 
 int failures = 0;
 
@@ -51,7 +53,7 @@ int main() {
     std::cout << "================================================================\n\n";
 
     // ================================================================
-    // Section 1: EL Residual (tick IS the variational equation)
+    // Section 1: field-equation residual
     // ================================================================
     std::cout << "--- Section 1: EL Residual ---\n";
     {
@@ -139,9 +141,9 @@ int main() {
     }
 
     // ================================================================
-    // Section 4: Hamiltonian conservation (damping OFF)
+    // Section 4: Exact modified tick energy (damping OFF)
     // ================================================================
-    std::cout << "\n--- Section 4: Hamiltonian Conservation (undamped) ---\n";
+    std::cout << "\n--- Section 4: Modified Tick-Energy Conservation (undamped) ---\n";
     {
         ftd::RenderBridge rb(16);
         rb.toggles.damping = false;
@@ -155,19 +157,21 @@ int main() {
 
         // Let transients settle
         rb.run(10);
-        ftd::LagrangianDiag lag0 = ftd::compute_lagrangian_diagnostics(rb);
-        double H0 = lag0.total_hamiltonian;
+        const auto energy0 = ftd::eft::measure_native_wave_energy(rb);
+        const long double H0 = energy0.tick_invariant;
 
         // Run 1000 ticks
         rb.run(1000);
-        ftd::LagrangianDiag lag1 = ftd::compute_lagrangian_diagnostics(rb);
-        double H1 = lag1.total_hamiltonian;
+        const auto energy1 = ftd::eft::measure_native_wave_energy(rb);
+        const long double H1 = energy1.tick_invariant;
 
-        double drift_pct = (H0 != 0.0) ? std::abs(H1 - H0) / std::abs(H0) * 100.0 : 0.0;
-        std::cout << "    H(t=10):   " << H0 << "\n";
-        std::cout << "    H(t=1010): " << H1 << "\n";
-        std::cout << "    Drift:     " << drift_pct << "%\n";
-        check("Hamiltonian drift < 1% over 1000 ticks", drift_pct < 1.0);
+        const long double drift = std::abs(H1 - H0);
+        const long double drift_rel = drift / std::max(std::abs(H0), 1e-30L);
+        std::cout << "    E_tick(t=10):   " << static_cast<double>(H0) << "\n";
+        std::cout << "    E_tick(t=1010): " << static_cast<double>(H1) << "\n";
+        std::cout << "    Relative drift: " << static_cast<double>(drift_rel) << "\n";
+        check("Modified tick-energy relative drift < 1e-10 over 1000 ticks",
+              energy0.finite && energy1.finite && drift_rel < 1e-10L);
     }
 
     // ================================================================
@@ -208,9 +212,9 @@ int main() {
     }
 
     // ================================================================
-    // Section 6: Particle EL Residual (forces match Lagrangian derivatives)
+    // Section 6: production-force formula replay
     // ================================================================
-    std::cout << "\n--- Section 6: Particle EL Residual ---\n";
+    std::cout << "\n--- Section 6: Production Force Replay Residual ---\n";
     {
         // Set up two locked opposite-sign particles at separation ~8.
         // Locked particles don't move, so forces are purely field-mediated
@@ -230,8 +234,8 @@ int main() {
         // Run 200 ticks to let self-fields establish and Poisson solver converge
         rb.run(200);
 
-        // Now compute particle EL residual: independently recompute forces
-        // from Lagrangian partial derivatives and compare to force_diag_
+        // Independently recompute the selected production formulas and compare
+        // to force_diag_. This is a code-path replay, not an action variation.
         ftd::ParticleELResidual pres = ftd::compute_particle_el_residual(rb);
         std::cout << "    Particle EL RMS residual: " << std::scientific << pres.rms << "\n";
         std::cout << "    Particle EL max residual: " << std::scientific << pres.max_abs << "\n";

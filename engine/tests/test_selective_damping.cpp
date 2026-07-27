@@ -37,9 +37,9 @@ int main() {
 
     // SD1: Legacy mode — energy decays with uniform damping
     // Disable wave_propagation and Gauss to isolate pure damping.
-    // At C_WAVE = CFL limit (1/√3), a point-injection δ-function excites
+    // At the selected C_WAVE = 1/√3, a point-injection δ-function excites
     // Nyquist modes that transiently amplify before damping kills them.
-    // Testing damping alone avoids this CFL-boundary artifact.
+    // Testing damping alone avoids this high-frequency wave artifact.
     {
         ftd::RenderBridge rb(32);
         rb.toggles.selective_damping = false;  // Legacy (default)
@@ -115,7 +115,7 @@ int main() {
                   << " E500=" << E_after << " growth/tick=" << growth_rate << "\n";
         // With selective damping, coupling source injects energy at particle site.
         // Near-particle flux is damped, but far-field flux (escaping the mask) is
-        // NOT damped, causing continuous energy growth. At C_WAVE = CFL limit,
+        // NOT damped, causing continuous energy growth. At the selected C_WAVE,
         // flux escapes faster. Test that growth rate is bounded, not zero.
         check("SD3: Energy growth rate bounded near particle (< 1% per tick)",
               growth_rate < 0.01);

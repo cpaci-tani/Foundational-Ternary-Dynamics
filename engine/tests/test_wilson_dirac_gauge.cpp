@@ -35,6 +35,7 @@
  */
 
 #define _USE_MATH_DEFINES
+#include <algorithm>
 #include <cmath>
 #include <complex>
 #include <cstdio>
@@ -106,7 +107,7 @@ SpinorField gauge_transform_spinor(const SpinorField& psi,
     return out;
 }
 
-bool check_gauge_covariance(int L) {
+bool check_gauge_covariance(int L, double transverse_weight) {
     Lattice lattice(L);
     std::mt19937 rng(0xfeedface);
     std::uniform_real_distribution<double> phase_dist(-M_PI, M_PI);
@@ -138,6 +139,7 @@ bool check_gauge_covariance(int L) {
     params.m = 0.5;
     params.r = 1.0;
     params.a = 1.0;
+    params.kinetic_transverse_weight = transverse_weight;
 
     // Compute D_W psi.
     SpinorField Dpsi(L);
@@ -173,11 +175,66 @@ bool check_gauge_covariance(int L) {
         }
     }
 
-    std::cout << "  gauge cov  L=" << L
+    // The corrected real-time Hamiltonian must carry the same link covariance.
+    SpinorField Hpsi(L);
+    apply_wilson_hamiltonian(Hpsi, psi, links, lattice, params);
+    SpinorField Hpsi_g(L);
+    apply_wilson_hamiltonian(Hpsi_g, psi_g, links_g, lattice, params);
+    double worst_h = 0.0;
+    int worst_h_idx = 0;
+    for (std::size_t i = 0; i < N; ++i) {
+        const cdouble phase = std::exp(cdouble{0, chi[i]});
+        const auto& A = Hpsi_g.data[i];
+        const auto& B = Hpsi.data[i];
+        const Spinor predicted = {phase * B[0], phase * B[1], phase * B[2], phase * B[3]};
+        double diff_norm_sq = 0.0;
+        double pred_norm_sq = 0.0;
+        for (int k = 0; k < 4; ++k) {
+            diff_norm_sq += std::norm(A[k] - predicted[k]);
+            pred_norm_sq += std::norm(predicted[k]);
+        }
+        const double rel = std::sqrt(diff_norm_sq) / std::max(std::sqrt(pred_norm_sq), 1e-300);
+        if (rel > worst_h) {
+            worst_h = rel;
+            worst_h_idx = static_cast<int>(i);
+        }
+    }
+
+    // Independent Hermiticity check on the same nontrivial random links.
+    SpinorField phi(L);
+    for (std::size_t i = 0; i < N; ++i) {
+        phi.data[i] = {cdouble{spinor_dist(rng), spinor_dist(rng)},
+                       cdouble{spinor_dist(rng), spinor_dist(rng)},
+                       cdouble{spinor_dist(rng), spinor_dist(rng)},
+                       cdouble{spinor_dist(rng), spinor_dist(rng)}};
+    }
+    SpinorField Hphi(L);
+    apply_wilson_hamiltonian(Hphi, phi, links, lattice, params);
+    cdouble phi_Hpsi{0.0, 0.0};
+    cdouble Hphi_psi{0.0, 0.0};
+    for (std::size_t i = 0; i < N; ++i) {
+        phi_Hpsi += spinor_dot(phi.data[i], Hpsi.data[i]);
+        Hphi_psi += spinor_dot(Hphi.data[i], psi.data[i]);
+    }
+    const double hermitian_scale = std::max({std::abs(phi_Hpsi), std::abs(Hphi_psi), 1.0});
+    const double hermitian_rel = std::abs(phi_Hpsi - Hphi_psi) / hermitian_scale;
+
+    std::cout << "  D_W gauge cov  L=" << L
+              << "  b=" << transverse_weight
               << "  worst rel_err = " << std::scientific << std::setprecision(6) << worst
               << "  (site idx " << worst_idx << ")"
               << "  " << (worst < TOL_GAUGE ? "PASS" : "FAIL") << "\n";
-    return worst < TOL_GAUGE;
+    std::cout << "  H_W gauge cov  L=" << L
+              << "  b=" << transverse_weight
+              << "  worst rel_err = " << std::scientific << std::setprecision(6) << worst_h
+              << "  (site idx " << worst_h_idx << ")"
+              << "  " << (worst_h < TOL_GAUGE ? "PASS" : "FAIL") << "\n";
+    std::cout << "  H_W Hermitian  L=" << L
+              << "  b=" << transverse_weight
+              << "  rel_err = " << std::scientific << std::setprecision(6) << hermitian_rel
+              << "  " << (hermitian_rel < TOL_GAUGE ? "PASS" : "FAIL") << "\n";
+    return worst < TOL_GAUGE && worst_h < TOL_GAUGE
+        && hermitian_rel < TOL_GAUGE;
 }
 
 bool check_plaquette_flux(int L, int n_flux) {
@@ -261,9 +318,10 @@ int main() {
     int passed = 0;
     int failed = 0;
 
-    std::cout << "Check 1: gauge covariance D_W' psi' = exp(i chi) D_W psi\n";
-    if (check_gauge_covariance(8)) ++passed; else ++failed;
-    if (check_gauge_covariance(12)) ++passed; else ++failed;
+    std::cout << "Check 1: gauge covariance and H_W Hermiticity (b=0 and b=1/3)\n";
+    if (check_gauge_covariance(8, 0.0)) ++passed; else ++failed;
+    if (check_gauge_covariance(8, 1.0 / 3.0)) ++passed; else ++failed;
+    if (check_gauge_covariance(12, 1.0 / 3.0)) ++passed; else ++failed;
 
     std::cout << "\nCheck 2: plaquette-flux for twisted Landau-gauge uniform B in z\n";
     if (check_plaquette_flux(8, 1)) ++passed; else ++failed;

@@ -7,11 +7,11 @@
  *   Initialise a Gaussian wave packet centred at (x0, y0, z0) with definite
  *   momentum p = (0, p_y, 0) and spin +z. Apply uniform B in z via twisted
  *   Landau gauge (n_flux flux quanta through the xy plane). Evolve the
- *   Wilson-Dirac Schrodinger equation i d/dt psi = D_W psi via RK4.
+ *   Wilson-Dirac Schrodinger equation i d/dt psi = H_W psi via RK4.
  *
  *   Track time series:
  *     - centroid <x>, <y>, <z> (periodic-aware via complex-exponential trick)
- *     - energy <H> = <psi | D_W | psi>
+ *     - energy <H> = <psi | H_W | psi>
  *     - norm  <psi | psi>
  *     - spin  <S_x>, <S_y>, <S_z>  with Sigma^i = diag(sigma^i, sigma^i)
  *
@@ -54,7 +54,7 @@ namespace {
 struct Observables {
     double t;
     double norm;
-    double E;             // Re <psi | D_W | psi>
+    double E;             // Re <psi | H_W | psi>
     double cx, cy, cz;    // periodic-aware centroid
     double sx, sy, sz;    // <Sigma^i>
 };
@@ -89,11 +89,11 @@ double energy(const SpinorField& psi,
               const GaugeLinks& links,
               const Lattice& lattice,
               const WilsonDiracParams& params) {
-    SpinorField Dpsi(lattice.size());
-    apply_wilson_dirac(Dpsi, psi, links, lattice, params);
+    SpinorField Hpsi(lattice.size());
+    apply_wilson_hamiltonian(Hpsi, psi, links, lattice, params);
     cdouble E{0, 0};
     for (std::size_t i = 0; i < psi.data.size(); ++i) {
-        E += spinor_dot(psi.data[i], Dpsi.data[i]);
+        E += spinor_dot(psi.data[i], Hpsi.data[i]);
     }
     return E.real();
 }
@@ -192,9 +192,13 @@ int main(int argc, char** argv) {
     // momentum (0, p_y, 0). For a Wilson-Dirac g-2 measurement we need:
     //   (a) Spin transverse to B (i.e. in xy-plane) so precession is visible.
     //       Use chi = (1, 1)/sqrt(2), i.e. spin +x.
-    //   (b) Lower components set to the positive-energy continuum form
-    //       u_lower = (sigma . p / (E + m)) chi, with E = sqrt(p^2 + m^2).
-    //       This suppresses Zitterbewegung (mixing with negative-energy modes).
+    //   (b) Construct the positive-energy continuum spinor first in the Dirac
+    //       basis, eta=(sigma.p/(E+m))chi, then transform it to the chiral
+    //       basis used by wilson_dirac.cpp:
+    //           psi_chiral = ((chi+eta)/sqrt(2), (chi-eta)/sqrt(2)).
+    //       The retired implementation inserted (chi,eta) directly despite
+    //       declaring a chiral basis; at p=0 that state has <beta>=0 and is an
+    //       equal positive/negative-energy mixture.
     //   For p = (0, p_y, 0), sigma . p = p_y sigma_y; sigma_y (1, 1)/sqrt(2)
     //       = (1/sqrt(2)) (-i, i). So u_lower = (p_y/(E+m)) * (-i, i) / sqrt(2).
     const double x0 = L * 0.5;
@@ -204,10 +208,14 @@ int main(int argc, char** argv) {
     const double E_plane = std::sqrt(p_y * p_y + m * m);
     const double xi = p_y / (E_plane + m);
     const double inv_root2 = 1.0 / std::sqrt(2.0);
-    const cdouble u0 = cdouble{ inv_root2, 0.0};                  // chi_+x[0]
-    const cdouble u1 = cdouble{ inv_root2, 0.0};                  // chi_+x[1]
-    const cdouble u2 = cdouble{0.0, -xi * inv_root2};             // -i xi / sqrt(2)
-    const cdouble u3 = cdouble{0.0,  xi * inv_root2};             // +i xi / sqrt(2)
+    const cdouble chi0{inv_root2, 0.0};
+    const cdouble chi1{inv_root2, 0.0};
+    const cdouble eta0{0.0, -xi * inv_root2};
+    const cdouble eta1{0.0,  xi * inv_root2};
+    const cdouble u0 = (chi0 + eta0) * inv_root2;
+    const cdouble u1 = (chi1 + eta1) * inv_root2;
+    const cdouble u2 = (chi0 - eta0) * inv_root2;
+    const cdouble u3 = (chi1 - eta1) * inv_root2;
 
     SpinorField psi(L);
     for (int x = 0; x < L; ++x) {

@@ -46,6 +46,14 @@ static void check_close(const char* name, double a, double b, double tol) {
     if (!ok) ++failures;
 }
 
+static bool only_movement_enabled(const ftd::RenderBridge& rb) {
+    for (const auto& spec : ftd::TOGGLE_SPECS) {
+        const bool want = std::string(spec.name) == "movement";
+        if ((rb.toggles.*(spec.field)) != want) return false;
+    }
+    return true;
+}
+
 int main() {
     std::cout << "=== test_scenario_velocity_wiring ===\n";
 
@@ -75,6 +83,8 @@ int main() {
     // Run the exact setup the physics-orchestrator flagged.
     bool handled = ftd::setup_flux_scenario(rb, "flux-meson");
     check("flux-meson scenario dispatched", handled);
+    check("scenario selects movement as its only production term",
+          only_movement_enabled(rb));
 
     // Compute the same particle coordinates the scenario code uses.
     const int    N    = rb.lattice().size();

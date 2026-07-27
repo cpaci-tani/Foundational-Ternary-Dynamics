@@ -1,9 +1,10 @@
 /**
- * FTD-0288: Thomson unlocked recoil campaign.
+ * FTD-0288 provenance: native mobile-source recoil campaign.
+ * Scenario under qualification: "s0-field-thomson-unlocked-recoil".
  *
- * Follow-up to FTD-0287. The locked dashboard observatory showed field-level
- * linear superposition, not mechanical recoil. This campaign unlocks the
- * electron-like charge and asks what the production force paths do.
+ * Follow-up to the locked-source null. This campaign unlocks one negative
+ * polarity marker and asks what the production force paths do. It retains the
+ * historical filename for run-of-record continuity; it is not a Thomson test.
  *
  * Scope:
  *   [MEASUREMENT] Native engine force/movement response of one negative charge
@@ -107,8 +108,12 @@ const char* mode_name(Mode mode) {
 void configure(ftd::RenderBridge& rb, Mode mode) {
     rb.force_cpu();
     rb.seed_rng(2808);
-    rb.toggles.disable_all();
-    rb.toggles.strict_validation = true;
+    for (const auto& spec : ftd::TOGGLE_SPECS) {
+        rb.toggles.*(spec.field) = false;
+    }
+    rb.toggles.flux_boundary = ftd::FluxBoundaryMode::Periodic;
+    rb.toggles.bcc_stencil = ftd::BccStencilMode::FULL;
+    rb.set_dt(1.0);
     rb.toggles.wave_propagation = true;
     rb.toggles.coupling = true;
     rb.toggles.damping = false;
@@ -149,11 +154,12 @@ void inject_electron(ftd::RenderBridge& rb, bool locked) {
 
 void inject_plane_wave(ftd::RenderBridge& rb) {
     const double k = 2.0 * PI * static_cast<double>(MODE_N) / static_cast<double>(L);
-    const double omega = 2.0 * ftd::C_SPEED * std::abs(std::sin(k * 0.5));
+    const double omega = 2.0 * std::asin(ftd::C_SPEED * std::abs(std::sin(k * 0.5)));
     auto& voxels = rb.voxels();
     for (int x = 0; x < L; ++x) {
         const double jy = AMP * std::sin(k * static_cast<double>(x));
-        const double wy = -omega * AMP * std::cos(k * static_cast<double>(x));
+        const double wy = AMP * ((1.0 - std::cos(omega)) * std::sin(k*x)
+                                 - std::sin(omega) * std::cos(k*x));
         for (int y = 0; y < L; ++y) {
             for (int z = 0; z < L; ++z) {
                 auto& v = voxels[rb.lattice().index(x, y, z)];
@@ -408,15 +414,37 @@ bool diagnostic_transverse_detected(const Delta& d) {
     return detected(d) && std::abs(d.disp_y) > 10.0 * std::max(lateral_competition, RECOIL_GATE);
 }
 
+bool native_emergent_profile_is_exact() {
+    ftd::RenderBridge rb(L);
+    for (const auto& spec : ftd::TOGGLE_SPECS) {
+        rb.toggles.*(spec.field) = true;
+    }
+    rb.toggles.flux_boundary = ftd::FluxBoundaryMode::Reflective;
+    rb.toggles.bcc_stencil = ftd::BccStencilMode::BCC;
+    rb.set_dt(0.25);
+    configure(rb, Mode::NativeEmergent);
+    for (const auto& spec : ftd::TOGGLE_SPECS) {
+        const std::string name(spec.name);
+        const bool expected = name == "wave_propagation" || name == "coupling" ||
+                              name == "forces" || name == "movement" ||
+                              name == "emergent_forces";
+        if ((rb.toggles.*(spec.field)) != expected) return false;
+    }
+    return rb.toggles.flux_boundary == ftd::FluxBoundaryMode::Periodic &&
+           rb.toggles.bcc_stencil == ftd::BccStencilMode::FULL;
+}
+
 }  // namespace
 
 int main() {
-    std::printf("FTD-0288 Thomson unlocked recoil campaign v1\n");
+    std::printf("FTD-0288 native mobile-source recoil campaign v2\n");
     std::printf("protocol,L,%d,ticks,%d,mode_n,%d,amp,%.17g,c_speed,%.17g,alpha,%.17g,machine_gate,%.17g,recoil_gate,%.17g\n",
                 L, TICKS, MODE_N, AMP, ftd::C_SPEED, ftd::ALPHA,
                 MACHINE_GATE, RECOIL_GATE);
     std::printf("scope,native_recoil_measurement_not_alpha_derivation\n");
-    std::printf("ingredients,wave_propagation,true,coupling,true,damping,false,genesis,false,gauss_projection,false,gravity,false,poisson_coulomb,false,lorentz_force,false,diagnostic_qE,imposed_not_native\n");
+    std::printf("ingredients,wave_propagation,true,coupling,true,forces,true,movement,true,emergent_forces,true,all_other_boolean_terms,false,diagnostic_qE,imposed_not_native\n");
+
+    const bool exact_profile = native_emergent_profile_is_exact();
 
     const Metrics locked_beam = run_arm(Mode::LockedLinear, "beam_only", false, true);
     const Metrics locked_electron = run_arm(Mode::LockedLinear, "electron_only", true, false);
@@ -496,17 +524,20 @@ int main() {
         verdict = "NO_RECOIL_NATIVE_OR_DIAGNOSTIC";
     }
 
-    std::printf("gates,finite,%s,deterministic,%s,legacy_recoil,%s,emergent_recoil,%s,diagnostic_qE_transverse_recoil,%s\n",
-                finite ? "true" : "false", deterministic ? "true" : "false",
+    std::printf("gates,exact_profile,%s,finite,%s,deterministic,%s,legacy_recoil,%s,emergent_recoil,%s,diagnostic_qE_transverse_recoil,%s\n",
+                exact_profile ? "true" : "false", finite ? "true" : "false",
+                deterministic ? "true" : "false",
                 legacy_recoil ? "true" : "false",
                 emergent_recoil ? "true" : "false",
                 diagnostic_recoil ? "true" : "false");
     std::printf("verdict,%s\n", verdict);
     std::printf("interpretation,native_force_paths_measured_diagnostic_qE_is_imposed_not_a_derivation\n");
 
-    return std::string(verdict) == "UNCLASSIFIED" ||
-                   std::string(verdict) == "NONFINITE_PROTOCOL" ||
-                   std::string(verdict) == "NONDETERMINISTIC_PROTOCOL"
-               ? EXIT_FAILURE
-               : EXIT_SUCCESS;
+    // This executable is the behavioral acceptance gate for the admitted
+    // scenario, not merely a classifier. Drift that activates another term,
+    // creates a legacy-path response, removes the selected native response, or
+    // breaks replay determinism must fail CTest and revoke admission.
+    return exact_profile && finite && deterministic && !legacy_recoil && emergent_recoil
+               ? EXIT_SUCCESS
+               : EXIT_FAILURE;
 }

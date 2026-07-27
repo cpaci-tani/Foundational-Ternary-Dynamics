@@ -6,11 +6,11 @@
  *
  * VALIDATION (committed pre-measurement):
  *   For every momentum p_mu = 2 pi k_mu / L with k_mu in {0,...,L-1}, mu in {0,1,2},
- *   and for both spins s in {0, 1}, applying D_W to the plane wave
+ *   and for both spins s in {0, 1}, applying the Hermitian H_W to the plane wave
  *       psi_p(n) = u(p, s) exp(i p . n)
- *   must yield norm^2(D_W psi_p) = (M_eff^2 + K^2) * norm^2(psi_p) where
- *       M_eff(p) = m + (r/a) sum_mu (1 - cos p_mu)
- *       K^2(p)   = (1/a^2) sum_mu sin^2(p_mu)
+ *   must yield norm^2(H_W psi_p) = (M_eff^2 + K^2) * norm^2(psi_p) where
+ *       M_eff(p) = m + (c_s r/a) sum_mu (1 - cos p_mu)
+ *       K^2(p)   = (c_s^2/a^2) sum_mu sin^2(p_mu)
  *
  *   Also check doubler-lifting at the BZ corner p = (pi, pi, pi):
  *   M_eff_corner = m + 6 r/a, which is >> m for r ~ 1, a ~ 1.
@@ -94,12 +94,13 @@ int main() {
                         continue;
                     }
 
-                    apply_wilson_dirac(out, psi, links, lattice, params);
+                    apply_wilson_hamiltonian(out, psi, links, lattice, params);
                     const double norm_out = out.total_norm_squared();
 
-                    const double M_eff = params.m + (params.r / params.a) *
+                    const double M_eff = params.m + (params.spatial_speed * params.r / params.a) *
                         ((1.0 - std::cos(p[0])) + (1.0 - std::cos(p[1])) + (1.0 - std::cos(p[2])));
-                    const double K_sq = (1.0 / (params.a * params.a)) *
+                    const double K_sq = (params.spatial_speed * params.spatial_speed
+                                         / (params.a * params.a)) *
                         (std::sin(p[0]) * std::sin(p[0]) +
                          std::sin(p[1]) * std::sin(p[1]) +
                          std::sin(p[2]) * std::sin(p[2]));
@@ -136,8 +137,11 @@ int main() {
 
     std::cout << "BZ-corner mode p = (pi, pi, pi):\n";
     std::cout << "  M_eff^2 = " << std::fixed << std::setprecision(6) << corner_record.M_eff_squared
-              << "  (predicted m + 6r/a = " << params.m + 6.0 * params.r / params.a
-              << "; squared = " << (params.m + 6.0 * params.r / params.a) * (params.m + 6.0 * params.r / params.a)
+              << "  (predicted m + 6c_s*r/a = "
+              << params.m + 6.0 * params.spatial_speed * params.r / params.a
+              << "; squared = "
+              << (params.m + 6.0 * params.spatial_speed * params.r / params.a)
+                 * (params.m + 6.0 * params.spatial_speed * params.r / params.a)
               << ")\n";
     std::cout << "  K^2     = " << corner_record.K_squared << "  (predicted 0)\n";
     std::cout << "  rel_err = " << std::scientific << std::setprecision(6) << corner_record.rel_err << "\n\n";

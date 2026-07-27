@@ -16,7 +16,7 @@
  *
  * Tests:
  *   M1: Field identification sanity (B from curl, E sign, static E=0)
- *   M2: div(B) = 0 (no magnetic monopoles — algebraic identity)
+ *   M2: div(B) = 0 (no magnetic source in the regular global-J sector)
  *   M3: Faraday's law dB/dt = -curl(E) (numerical verification)
  *   M4: Transversality div(E) ~ 0 for vacuum waves
  *   M5: EM wave structure (|E|/|B| = c_wave, E perp B perp k)
@@ -198,7 +198,7 @@ int main() {
     }
 
     // ================================================================
-    // Section 2: div(B) = 0  (Maxwell 1 — no magnetic monopoles)
+    // Section 2: div(B) = 0  (Maxwell 1 in the regular global-J sector)
     // ================================================================
     std::cout << "\n-- M2: div(B) = 0 --\n";
 

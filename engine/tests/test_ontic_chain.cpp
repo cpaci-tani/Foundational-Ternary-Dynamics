@@ -87,9 +87,15 @@ int main() {
     std::cout << "    DAMPING = " << std::setprecision(10) << ftd::ontic::DAMPING
               << " = alpha (vacuum drag / geometric friction)\n";
 
-    // 7. CFL bound check — C_WAVE = 1/sqrt(3) saturates the bound exactly
-    check("C_WAVE^2 <= 1/3 (CFL stability)", ftd::ontic::C_WAVE * ftd::ontic::C_WAVE <= 1.0 / 3.0 + 1e-15);
-    check("C_WAVE^2 * 12 <= 4 (eigenvalue bound)", ftd::ontic::C_WAVE * ftd::ontic::C_WAVE * 12.0 <= 4.0 + 1e-12);
+    // 7. Production 18-point CFL check. Its positive symbol has M_max=16/3,
+    // so centered-leapfrog stability requires C_WAVE^2 <= 3/4. The selected
+    // value 1/3 is conservative; it does not saturate this bound.
+    check("C_WAVE^2 = selected 1/3 value",
+          std::abs(ftd::ontic::C_WAVE * ftd::ontic::C_WAVE - 1.0 / 3.0) < 1e-15);
+    check("C_WAVE^2 * (16/3) <= 4 (production eigenvalue bound)",
+          ftd::ontic::C_WAVE * ftd::ontic::C_WAVE * (16.0 / 3.0) <= 4.0 + 1e-12);
+    check("selected C_WAVE lies below production CFL saturation",
+          ftd::ontic::C_WAVE * ftd::ontic::C_WAVE < 3.0 / 4.0);
 
     std::cout << "\n================================================================\n";
     if (failures == 0) {
