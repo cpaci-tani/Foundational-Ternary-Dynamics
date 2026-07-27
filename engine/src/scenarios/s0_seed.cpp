@@ -362,8 +362,14 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         const int bR = std::max(2, N / 12);
         const int charges[3] = {+1, +1, -1};
         const int colors[3]  = {1, 2, 3};
-        tri(rb, mc, mc, mc, charges, colors, bR, true);
-        dp(rb, mc, mc, mc + oR, -1, -1, 0, 2, K_B, false);
+        // B4 (2026-07-27): place the triad + electron before dressing either
+        // -- IPF always zeroes flux at its own center, so dressing the triad
+        // after placing the electron (or vice versa) could silently discard
+        // whichever one's dressing landed on the other's voxel.
+        const TriPositions nucleus = tri_place(rb, mc, mc, mc, charges, colors, bR, true);
+        dp_place(rb, mc, mc, mc + oR, -1, -1, 0, false);
+        tri_dress(rb, nucleus, mc, charges);
+        dp_dress(rb, mc, mc, mc + oR, -1, 2, K_B);
     }
     else if (name == "s0-seed-helium") {
         // Scenario ID: s0-seed-helium
@@ -386,13 +392,25 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         const int pCharges[3] = { +1, +1, -1 };
         const int nCharges[3] = { +1, -1, -1 };
         const int colors[3]   = { 1, 2, 3 };
+        // B4 (2026-07-27): place all 4 nucleon triads + both electrons before
+        // dressing any of them -- see s0-seed-hydrogen above for why.
+        TriPositions nucleons[4];
+        int nucleonCz[4];
+        const int* nucleonCharges[4];
         for (int i = 0; i < 4; ++i) {
             const int* charges = (i < 2) ? pCharges : nCharges;
-            tri(rb, mc + tet[i][0], mc + tet[i][1], mc + tet[i][2],
-                charges, colors, bR, true);
+            nucleonCharges[i] = charges;
+            nucleonCz[i] = mc + tet[i][2];
+            nucleons[i] = tri_place(rb, mc + tet[i][0], mc + tet[i][1], mc + tet[i][2],
+                                    charges, colors, bR, true);
         }
-        dp(rb, mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8, false);
-        dp(rb, mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8, false);
+        dp_place(rb, mc, mc, mc + oR, -1, +1, 0, false);
+        dp_place(rb, mc, mc, mc - oR, -1, -1, 0, false);
+        for (int i = 0; i < 4; ++i) {
+            tri_dress(rb, nucleons[i], nucleonCz[i], nucleonCharges[i]);
+        }
+        dp_dress(rb, mc, mc, mc + oR, -1, 2, K_B * 0.8);
+        dp_dress(rb, mc, mc, mc - oR, -1, 2, K_B * 0.8);
     }
     else if (name == "s0-seed-h2-bond-formation") {
         // Scenario ID: s0-seed-h2-bond-formation
@@ -406,10 +424,16 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         const int bR = std::max(1, N / 16);
         const int charges[3] = {+1, +1, -1};
         const int colors[3]  = {1, 2, 3};
-        tri(rb, mc - RND(hf * 0.7), mc, mc, charges, colors, bR, true);
-        tri(rb, mc + RND(hf * 0.7), mc, mc, charges, colors, bR, true);
-        dp(rb, mc, mc, mc + 1, -1, -1, 0, 2, K_B * 0.8, false);
-        dp(rb, mc, mc, mc - 1, -1, +1, 0, 2, K_B * 0.8, false);
+        // B4 (2026-07-27): place both nuclei + both mobile markers before
+        // dressing any of them -- see s0-seed-hydrogen above for why.
+        const TriPositions nucleusL = tri_place(rb, mc - RND(hf * 0.7), mc, mc, charges, colors, bR, true);
+        const TriPositions nucleusR = tri_place(rb, mc + RND(hf * 0.7), mc, mc, charges, colors, bR, true);
+        dp_place(rb, mc, mc, mc + 1, -1, -1, 0, false);
+        dp_place(rb, mc, mc, mc - 1, -1, +1, 0, false);
+        tri_dress(rb, nucleusL, mc, charges);
+        tri_dress(rb, nucleusR, mc, charges);
+        dp_dress(rb, mc, mc, mc + 1, -1, 2, K_B * 0.8);
+        dp_dress(rb, mc, mc, mc - 1, -1, 2, K_B * 0.8);
     }
     else if (name == "s0-seed-spark-of-life") {
         // Scenario ID: s0-seed-spark-of-life

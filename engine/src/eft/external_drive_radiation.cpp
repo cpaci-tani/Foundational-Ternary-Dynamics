@@ -18,7 +18,10 @@ std::complex<double> geometric_sum(int count, double angle) {
   std::complex<long double> sum{};
   for (int index = 1; index <= count; ++index) {
     const long double phase = static_cast<long double>(angle)*index;
-    sum += {std::cos(phase), std::sin(phase)};
+    // Explicit constructor, not a braced-init-list: MSVC accepts the implicit
+    // conversion of {cos,sin} to std::complex<long double> here, but
+    // Emscripten's libc++ does not (WASM build, 2026-07-27).
+    sum += std::complex<long double>(std::cos(phase), std::sin(phase));
   }
   return {static_cast<double>(sum.real()),
           static_cast<double>(sum.imag())};

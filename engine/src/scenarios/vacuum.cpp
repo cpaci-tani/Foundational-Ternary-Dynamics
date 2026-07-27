@@ -204,8 +204,13 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         configure_unlocked_composite_terms(rb);
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
-        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, false);
-        dp(rb, mc - hf, mc, mc, -1, -1, 2, 2.0, K_B * 0.5, false);
+        // B4 (2026-07-27): place both markers before dressing either -- IPF
+        // always zeroes flux at its own center, so dressing second-first would
+        // silently discard whichever marker's dressing landed on the other.
+        dp_place(rb, mc + hf, mc, mc, +1, +1, 1, false);
+        dp_place(rb, mc - hf, mc, mc, -1, -1, 2, false);
+        dp_dress(rb, mc + hf, mc, mc, +1, 2.0, K_B * 0.5);
+        dp_dress(rb, mc - hf, mc, mc, -1, 2.0, K_B * 0.5);
         return true;
     }
 
@@ -240,8 +245,13 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         configure_unlocked_composite_terms(rb);
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
-        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, false);
-        dp(rb, mc - hf, mc, mc, -1, -1, 2, 2.0, K_B * 0.5, false);
+        // B4 (2026-07-27): place both markers before dressing either -- IPF
+        // always zeroes flux at its own center, so dressing second-first would
+        // silently discard whichever marker's dressing landed on the other.
+        dp_place(rb, mc + hf, mc, mc, +1, +1, 1, false);
+        dp_place(rb, mc - hf, mc, mc, -1, -1, 2, false);
+        dp_dress(rb, mc + hf, mc, mc, +1, 2.0, K_B * 0.5);
+        dp_dress(rb, mc - hf, mc, mc, -1, 2.0, K_B * 0.5);
         return true;
     }
 
@@ -254,8 +264,13 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
         const double kBoost = 1.88;
-        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5 * kBoost, false);
-        dp(rb, mc - hf, mc, mc, -1, -1, 2, 2.0, K_B * 0.5 * kBoost, false);
+        // B4 (2026-07-27): place both markers before dressing either -- IPF
+        // always zeroes flux at its own center, so dressing second-first would
+        // silently discard whichever marker's dressing landed on the other.
+        dp_place(rb, mc + hf, mc, mc, +1, +1, 1, false);
+        dp_place(rb, mc - hf, mc, mc, -1, -1, 2, false);
+        dp_dress(rb, mc + hf, mc, mc, +1, 2.0, K_B * 0.5 * kBoost);
+        dp_dress(rb, mc - hf, mc, mc, -1, 2.0, K_B * 0.5 * kBoost);
         return true;
     }
 

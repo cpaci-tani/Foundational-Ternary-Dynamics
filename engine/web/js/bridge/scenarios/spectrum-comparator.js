@@ -283,8 +283,35 @@ export function seedSpectrumComparator(harness, ctx, scenarioId = RF_LATTICE_WAV
     }
 }
 
+// Keyed lookup for the sparse {positions, vectors, count} samples returned by
+// the live bridge's bulk field samplers (getFluxVectorSampled/getEFieldSampled).
+// Both samplers skip voxels below a 1e-15 magnitude/density threshold at the
+// WASM layer -- an omitted voxel contributes ~0 to every energy/peak sum below,
+// so treating a missing key as the zero vector reproduces the dense-loop math.
+function voxelKey(x, y, z, N) {
+    return (x * N + y) * N + z;
+}
+
+function sampledVectorsToMap(sample, N, negate = false) {
+    const map = new Map();
+    if (!sample) return map;
+    const { positions, vectors, count } = sample;
+    const sign = negate ? -1 : 1;
+    for (let i = 0; i < count; i++) {
+        const x = Math.floor(positions[i * 3]);
+        const y = Math.floor(positions[i * 3 + 1]);
+        const z = Math.floor(positions[i * 3 + 2]);
+        map.set(voxelKey(x, y, z, N), [
+            sign * vectors[i * 3],
+            sign * vectors[i * 3 + 1],
+            sign * vectors[i * 3 + 2],
+        ]);
+    }
+    return map;
+}
+
 export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAVE_SCENARIO_ID) {
-    if (!bridge?._fluxJ || !bridge?._fluxWV) {
+    if (typeof bridge?.getFluxVectorSampled !== 'function' || typeof bridge?.getEFieldSampled !== 'function') {
         return { active: false, reason: 'no field buffers' };
     }
     const N = bridge.latticeSize || 33;
@@ -292,9 +319,11 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
     if (lanes.length === 0) {
         return { active: false, reason: 'not a wave-family scenario' };
     }
-    const J = bridge._fluxJ;
-    const WV = bridge._fluxWV;
-    const idxOf = (x, y, z) => bridge._fluxIdx(x, y, z) * 3;
+    // J = flux (live sample); W = wave_vel = -E (established convention, see
+    // diagnostics_compute.cpp) since there is no direct wave_vel sampler.
+    const J = sampledVectorsToMap(bridge.getFluxVectorSampled(1), N, false);
+    const WV = sampledVectorsToMap(bridge.getEFieldSampled(1), N, true);
+    const idxOf = (x, y, z) => voxelKey(x, y, z, N);
     let totalLaneEnergy = 0;
 
     const laneRows = lanes.map((lane) => {
@@ -310,13 +339,11 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
         for (let z = Math.max(0, lane.z - band); z <= Math.min(N - 1, lane.z + band); z++)
         for (let y = Math.max(0, lane.y - band); y <= Math.min(N - 1, lane.y + band); y++)
         for (let x = 0; x < N; x++) {
-            const base = idxOf(x, y, z);
-            const jx = J[base] || 0;
-            const jy = J[base + 1] || 0;
-            const jz = J[base + 2] || 0;
-            const wx = WV[base] || 0;
-            const wy = WV[base + 1] || 0;
-            const wz = WV[base + 2] || 0;
+            const key = idxOf(x, y, z);
+            const jv = J.get(key);
+            const wv = WV.get(key);
+            const jx = jv ? jv[0] : 0, jy = jv ? jv[1] : 0, jz = jv ? jv[2] : 0;
+            const wx = wv ? wv[0] : 0, wy = wv ? wv[1] : 0, wz = wv ? wv[2] : 0;
             const fE = 0.5 * (jx * jx + jy * jy + jz * jz);
             const wE = 0.5 * (wx * wx + wy * wy + wz * wz);
             const e = fE + wE;
@@ -324,15 +351,16 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
             waveEnergy += wE;
             energy += e;
             sx += x * e;
-            const dirJ = J[base + lane.componentIndex] || 0;
-            const dirW = WV[base + lane.componentIndex] || 0;
+            const dirJ = jv ? jv[lane.componentIndex] : 0;
+            const dirW = wv ? wv[lane.componentIndex] : 0;
             peakFlux = Math.max(peakFlux, Math.sqrt(jx * jx + jy * jy + jz * jz));
             peakDirectionalFlux = Math.max(peakDirectionalFlux, Math.abs(dirJ));
             peakWaveVel = Math.max(peakWaveVel, Math.sqrt(wx * wx + wy * wy + wz * wz));
             peakDirectionalWaveVel = Math.max(peakDirectionalWaveVel, Math.abs(dirW));
         }
         totalLaneEnergy += energy;
-        const probe = idxOf(Math.round((N - 1) / 2), lane.y, lane.z);
+        const probeVec = J.get(idxOf(Math.round((N - 1) / 2), lane.y, lane.z));
+        const probeWVec = WV.get(idxOf(Math.round((N - 1) / 2), lane.y, lane.z));
 
         // 1D Spatial DFT for Additive Synthesis
         const harmonics = [];
@@ -341,8 +369,8 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
             let re = 0, im = 0;
             const kMode = 2 * Math.PI * m / N;
             for (let x = 0; x < N; x++) {
-                const base = idxOf(x, lane.y, lane.z);
-                const val = J[base + lane.componentIndex] || 0;
+                const jv = J.get(idxOf(x, lane.y, lane.z));
+                const val = jv ? jv[lane.componentIndex] : 0;
                 re += val * Math.cos(kMode * x);
                 im -= val * Math.sin(kMode * x);
             }
@@ -380,10 +408,10 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
             peakDirectionalFlux,
             peakWaveVel,
             peakDirectionalWaveVel,
-            sampleFlux: J[probe + lane.componentIndex] || 0,
-            sampleWaveVel: WV[probe + lane.componentIndex] || 0,
-            sampleJy: J[probe + 1] || 0,
-            sampleWy: WV[probe + 1] || 0,
+            sampleFlux: probeVec ? probeVec[lane.componentIndex] : 0,
+            sampleWaveVel: probeWVec ? probeWVec[lane.componentIndex] : 0,
+            sampleJy: probeVec ? probeVec[1] : 0,
+            sampleWy: probeWVec ? probeWVec[1] : 0,
             harmonics,
         };
     });
@@ -414,7 +442,7 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
 
     return {
         active: true,
-        tick: bridge._tick ?? bridge.currentTick?.() ?? 0,
+        tick: bridge.currentTick?.() ?? 0,
         latticeSize: N,
         cSpeed: C_SPEED,
         scenarioId,
@@ -426,9 +454,9 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
         sets: setRows,
         ratios: {},
         toggles: {
-            wave_propagation: !!bridge._toggles?.wave_propagation,
-            damping: !!bridge._toggles?.damping,
-            genesis: !!bridge._toggles?.genesis,
+            wave_propagation: !!bridge.getToggle?.('wave_propagation'),
+            damping: !!bridge.getToggle?.('damping'),
+            genesis: !!bridge.getToggle?.('genesis'),
         },
     };
 }

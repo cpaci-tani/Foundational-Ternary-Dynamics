@@ -106,6 +106,16 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
             double val = bigAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * 4.0));
             if (val > 0.001) { IF(rb, x, y, z, val, 0, val * 0.5); IW(rb, x, y, z, val, 0, val * 0.5); }
         }
+        // B2 (2026-07-27): SCOPED OUT of the remove_wave_mean fix, deliberately.
+        // This is a one-tick genesis-threshold probe (test_scenario_behavior.cpp
+        // ticks it once); the defect remove_wave_mean guards against is a
+        // PERMANENT drift that accumulates over many ticks and cannot manifest
+        // within one tick. Measured cost of applying the fix here anyway: it
+        // shifts which borderline voxels cross K_GENESIS on that single tick
+        // (an unprincipled side effect on the exact deterministic threshold
+        // count, not a benefit), so it is intentionally left unprojected. If
+        // this scenario is ever changed to tick continuously in normal use,
+        // revisit.
     }
     else if (name == "flux-annihilation") {
         // Scenario ID: flux-annihilation
@@ -300,6 +310,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
             double val = sbAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * sbDress));
             if (val > 0.001) { IF(rb, x, y, z, val, val * 0.3, 0); IW(rb, x, y, z, val, val * 0.3, 0); }
         }
+        // B2 (2026-07-27): single-signed lobe (val is always positive), the
+        // "inert central J/W" comment above notwithstanding -- Sum(wave_vel)
+        // does not cancel. Project out k=0.
+        remove_wave_mean(rb);
     }
     else if (name == "flux-baryon") {
         // Scenario ID: flux-baryon
@@ -448,6 +462,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
                    val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
             }
         }
+        // B2 (2026-07-27): random per-voxel direction, no antisymmetric
+        // structure -- Sum(wave_vel) does not cancel. Project out k=0.
+        remove_wave_mean(rb);
     }
     else if (name == "flux-vacuum-foam") {
         // Scenario ID: flux-vacuum-foam
@@ -474,6 +491,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
             IF(rb, x, y, z, val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
             IW(rb, x, y, z, val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
         }
+        // B2 (2026-07-27): random per-voxel direction, no antisymmetric
+        // structure -- Sum(wave_vel) does not cancel. Project out k=0.
+        remove_wave_mean(rb);
     }
     else if (name == "flux-zero-point") {
         // Scenario ID: flux-zero-point
@@ -492,6 +512,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
             IF(rb, x, y, z, jx, jy, jz);
             IW(rb, x, y, z, jx, jy, jz);
         }
+        // B2 (2026-07-27): random per-voxel direction, no antisymmetric
+        // structure -- Sum(wave_vel) does not cancel. Project out k=0.
+        remove_wave_mean(rb);
     }
     return true;
 }

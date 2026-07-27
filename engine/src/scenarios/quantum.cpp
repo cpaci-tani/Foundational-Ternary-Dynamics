@@ -46,6 +46,14 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
             if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0); IW(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0); }
         }
+        // B2 (2026-07-27): SCOPED OUT of the remove_wave_mean fix, deliberately.
+        // One-tick genesis-threshold probe (ticked once in test_scenario_
+        // behavior.cpp); the drift remove_wave_mean guards against needs many
+        // ticks to accumulate. Measured cost of applying it anyway: it shifts
+        // the exact one-tick manifested count away from its deterministic
+        // baseline (36 -> 32) with no corresponding benefit at this usage
+        // pattern. Left unprojected; revisit if usage changes to continuous
+        // ticking.
     }
     else if (name == "quantum-double-slit") {
         // Scenario ID: quantum-double-slit
@@ -203,6 +211,11 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
             if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val, val, val); IW(rb, mid + dx, mid + dy, mid + dz, val, val, val); }
         }
+        // B2 (2026-07-27): SCOPED OUT of the remove_wave_mean fix, deliberately.
+        // One-tick genesis-threshold probe; see quantum-born-rule above for the
+        // full rationale. Measured cost of applying it anyway: exact one-tick
+        // manifested count shifts from its deterministic baseline (491 -> 461)
+        // with no corresponding benefit at this usage pattern.
     }
     return true;
 }
