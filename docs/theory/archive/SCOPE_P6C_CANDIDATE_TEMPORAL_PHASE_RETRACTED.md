@@ -1,9 +1,13 @@
-# SCOPE — P6C-T candidate dossier: collision-vertex temporal phase
+# RETRACTED SCOPE — P6C-T candidate dossier: collision-vertex temporal phase
 
-**Tag:** `[SCOPE / CANDIDATE REGISTER ENTRY — DRAFT]`. Registers a Front-B ontology-extension candidate for the P6C register. **Adopts nothing.** No purchase may proceed until the owner ratifies the D5/D6/D7 pricing rules (FTD-0387, awaiting sittings) and the candidate passes the FC-W pipeline stages (§4). An adoption, if it ever occurs, is registered as an adoption — never presented as a derivation.
+**Tag:** `[WITHDRAWN — MOTIVATING TRILEMMA RETRACTED BY FTD-0507]`.
 **LEDGER id:** FTD-0511 · **Date:** 2026-07-25
-**Charter home:** [`SCOPE_CONSUMPTION_PROGRAM.md`](SCOPE_CONSUMPTION_PROGRAM.md) §2 (Front B), Stage U2 candidate list (joins P6C-G/C/M/F/U).
-**Motivating results (tags of record):** FTD-0505 (boundary-collision trilemma `[THEOREM]`), FTD-0508 (event data as the only unclosed δ-transfer carrier class, `[DERIVED — conditional]`), FTD-0509 (intensive/extensive purchase split, `[NUMERICAL FACT]` + `[CONJECTURE — recorded]`), FTD-0323 (native cyclotomic half-step `[THEOREM]`), FTD-0365 (genesis-cokernel probe `UNDERDETERMINED`).
+**Charter home:** [`SCOPE_CONSUMPTION_PROGRAM.md`](../01_reference/SCOPE_CONSUMPTION_PROGRAM.md) §2 (Front B).
+**Retraction basis:** FTD-0507 proves that a non-knot boundary point has `M=2^(3-k)` stable `(site,remainder)` charts. Face, edge, and corner points therefore have `2`, `4`, and `8` anchors, respectively, so two same-sign carriers need neither a five-symbol site alphabet nor an added sub-tick phase merely to survive the boundary write-back. This retracts the unconditional FTD-0505 capacity/range/phase trilemma on which P6C-T was registered.
+
+**Disposition:** `WITHDRAWN_NOT_ADOPTED`. P6C-T adopts nothing, licenses no Stage-1 narrowing work, and is not an active P6C candidate. The unresolved problem is the derivation of a reciprocal collision impulse and its constituent-relative current/energy account; FTD-0507 does not turn a temporal phase into that law.
+
+The remainder of this file is the frozen historical dossier. Its active-language statements are superseded by the disposition above and are retained only as cleanup provenance.
 
 ---
 
@@ -51,4 +55,4 @@ The trilemma itself establishes non-forcedness: three repair classes exist, so n
 
 ## 7 · Status line
 
-`[SCOPE — CANDIDATE REGISTER ENTRY, DRAFT]`. Registers P6C-T (T-rule form only); adopts nothing; prices nothing bindingly; promotes nothing. Stage-1 narrowing work is the only licensed next step and requires its own pre-registration before any engine measurement. Consumption remains a direction, not an achievability claim.
+`[WITHDRAWN — MOTIVATING TRILEMMA RETRACTED BY FTD-0507]`, verdict `WITHDRAWN_NOT_ADOPTED`. This historical candidate adopts nothing, licenses no Stage-1 work, and supplies no collision law. The live boundary-collision question is the missing reciprocal impulse/relative-mode account under the chart-aware representation.
