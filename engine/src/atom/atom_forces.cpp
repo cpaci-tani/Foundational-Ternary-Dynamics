@@ -483,14 +483,20 @@ void AtomEngine::compute_all_forces() {
                                   + mu_j_dot_r * mu_i.z
                                   - 5.0 * mu_i_dot_r * mu_j_dot_r * r_hat.z);
 
-                // Newton's 3rd law: force on i from j is +f_ij; on j from i is -f_ij
-                forces_[i] += f_ij;
-                forces_[j].x -= f_ij.x;
-                forces_[j].y -= f_ij.y;
-                forces_[j].z -= f_ij.z;
-                force_diag_[i].f_dipole += f_ij;
+                // P1 (2026-07-26): f_ij as computed above is -grad_R U with
+                // R = r_j - r_i, i.e. the force on **j**, not on i. Assigning it
+                // to i (and its negation to j) inverted the interaction, so
+                // head-to-tail dipoles repelled at every separation. Verified by
+                // finite-differencing U at a generic off-axis geometry: the old
+                // assignment returned exactly the negative of -grad U.
+                forces_[i].x -= f_ij.x;
+                forces_[i].y -= f_ij.y;
+                forces_[i].z -= f_ij.z;
+                forces_[j] += f_ij;
+                // Diagnostics follow the corrected assignment above.
                 Vec3 neg_f_ij = {-f_ij.x, -f_ij.y, -f_ij.z};
-                force_diag_[j].f_dipole += neg_f_ij;
+                force_diag_[i].f_dipole += neg_f_ij;
+                force_diag_[j].f_dipole += f_ij;
             }
         }
     }

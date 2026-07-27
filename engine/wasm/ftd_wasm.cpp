@@ -71,9 +71,18 @@ val get_particle_data(ftd::RenderBridge& rb) {
 
         auto c = rb.lattice().coord(i);
         const int o3 = idx * 3;
-        pos_cache[o3]     = static_cast<float>(c.x) + 0.5f;
-        pos_cache[o3 + 1] = static_cast<float>(c.y) + 0.5f;
-        pos_cache[o3 + 2] = static_cast<float>(c.z) + 0.5f;
+        // Render the production mechanical position, not only the owning
+        // lattice cell.  Integer hops update `c`; the bounded remainder is
+        // the resolved sub-voxel displacement accumulated before a hop.
+        // Omitting it made FTD-0477's real 0.203598-cell response invisible
+        // and visually held every particle at its cell centre until hopping.
+        const auto& voxel = voxels[static_cast<std::size_t>(i)];
+        pos_cache[o3] = static_cast<float>(
+            static_cast<double>(c.x) + 0.5 + voxel.remainder.x);
+        pos_cache[o3 + 1] = static_cast<float>(
+            static_cast<double>(c.y) + 0.5 + voxel.remainder.y);
+        pos_cache[o3 + 2] = static_cast<float>(
+            static_cast<double>(c.z) + 0.5 + voxel.remainder.z);
 
         if (s == 1) {
             col_cache[o3]     = 0.29f;
@@ -86,8 +95,8 @@ val get_particle_data(ftd::RenderBridge& rb) {
         }
 
         size_cache[idx] = 6.0f;
-        spin_cache[idx] = static_cast<float>(voxels[i].spin);
-        color_charge_cache[idx] = static_cast<float>(voxels[i].color);
+        spin_cache[idx] = static_cast<float>(voxel.spin);
+        color_charge_cache[idx] = static_cast<float>(voxel.color);
         idx++;
     }
 
@@ -950,7 +959,20 @@ val get_em_force_field(ftd::RenderBridge& rb, int stride) {
 //   3 ≤ r < 8   → F = α_s(r) / (3r)   (transition)
 //   r ≥ 8       → F = α_s(r) · r / 64 (Harmonic confinement: F∝r, V∝r²)
 //
-// where α_s(r) = 1 / (1 + 0.1·ln(1 + r)) encodes running asymptotic freedom.
+// where α_s(r) = 1 / (1 + 0.1·ln(1 + r)).
+//
+// P10 (2026-07-26) — CORRECTION. That expression DECREASES with separation,
+// which is the opposite of asymptotic freedom (the coupling must GROW with r).
+// The comment previously claimed it "encodes running asymptotic freedom"; it
+// does not. The engine's own alpha_s_lattice rises 0.367 → 1.0 over the same
+// range, so the two disagree by 2.545x at r=1 and 3.43x at r=0.5.
+//
+// Severity is bounded and the visual is retained deliberately: the overlay is
+// tagged [SELECTION] in its tooltip, the coupling moves only ~17% across
+// r ∈ [1,16] so it acts as a near-constant prefactor, and constants.js already
+// discloses that the large-r regime here is harmonic, not QCD-linear. What is
+// fixed is the false claim; replacing the profile with alpha_s_lattice is a
+// visual-behaviour change left for the owner.
 // The tube envelope (Gaussian perpendicular to the pair axis) localizes the
 // force to the confinement string connecting each quark pair.
 val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
