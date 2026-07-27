@@ -24,80 +24,61 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
     if (name.rfind("quantum-", 0) != 0) return false;
     const int N = rb.lattice().size();
     const int mid = N / 2;
+    const auto configure_free_wave = [&]() {
+        configure_free_wave_terms(rb);
+    };
 
     if (name == "quantum-born-rule") {
         // Scenario ID: quantum-born-rule
-        // Physical Purpose: Tests the quantum Born rule / wave-function collapse.
+        // Physical Purpose: Measures the native one-tick genesis response to a fixed graded envelope.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Localized wave packet collapses stochastically into particles with Born-rule probability.
-        // Discrepancy: None.
+        // Expected Behaviour: Sites manifest with the engine's threshold/excess probability law.
+        // Verification: exact selected genesis-response cohort; not a Born-rule or collapse test.
+        configure_genesis_gate_terms(rb);
         const double sigma = N / 8.0;
         const double amp = K_B * 2.0;
-        const double theta = urand() * 2.0 * PI;
+        // Fixed orientation makes the native C++ and browser fallback profiles
+        // exactly reproducible. Genesis depends on magnitude, so random phase
+        // added no information to this single-envelope response probe.
+        const double theta = PI / 7.0;
         const int pulseR = std::min(CEL(sigma * 3), mid - 1);
         for (int dz = -pulseR; dz <= pulseR; dz++) for (int dy = -pulseR; dy <= pulseR; dy++) for (int dx = -pulseR; dx <= pulseR; dx++) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
             if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0); IW(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0); }
         }
-        rb.toggles.genesis = true;
     }
     else if (name == "quantum-double-slit") {
         // Scenario ID: quantum-double-slit
-        // Physical Purpose: Quantitatively simulates double-slit quantum particle interference.
+        // Physical Purpose: Simulates classical coherent two-source interference on the lattice.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Emergence of interference pattern from accumulated single particle impacts.
-        // Discrepancy: None.
+        // Expected Behaviour: exact classical two-source superposition. At the
+        // qualified L=48, t=20 screen the cross term is constructive but has no
+        // destructive band, closing the double-slit-fringe interpretation for
+        // this seed. There is no single-particle impact accumulator.
+        configure_free_wave();
         const int sigma = 2;
         const double sAmp = 0.3;
         const int slit_sep = N / 6;
         const int slit_x = N / 4;
-        const int slit_ys[2] = { mid - slit_sep, mid + slit_sep };
-        for (int i = 0; i < 2; i++) {
-            int sy = slit_ys[i];
-            for (int z = 0; z < N; z++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
-                double g = sAmp * std::exp(-(dx*dx + dy*dy) / (2.0 * sigma * sigma));
-                if (g < 1e-6) continue;
-                int px = slit_x + dx, py = sy + dy;
-                if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                IF(rb, px, py, z, 0, 0, g);
-                IW(rb, px, py, z, g, 0, 0);
-            }
-        }
-        rb.toggles.genesis = true;
-        rb.toggles.coupling = false;
+        inject_sheet_packet_x(rb, slit_x, mid - slit_sep, sigma, sigma, sAmp, +1);
+        inject_sheet_packet_x(rb, slit_x, mid + slit_sep, sigma, sigma, sAmp, +1);
     }
     else if (name == "quantum-eraser") {
         // Scenario ID: quantum-eraser
-        // Physical Purpose: Simulates the quantum eraser experiment with path polarization markers.
+        // Physical Purpose: Tests classical transmission of two coherent paths through a state-field grid.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Restoring interference pattern when path information is erased by polarizer grid.
-        // Discrepancy: None.
+        // Expected Behaviour: The checkerboard states strongly source the
+        // native coupling response. Verification closes the eraser framing;
+        // there is no measurement or polarization projection operator.
+        configure_free_wave();
+        rb.toggles.coupling = true;
         const int sigma = 2;
         const double sAmp = 0.3;
         const int slit_sep = N / 6;
         const int slit_x = N / 4;
 
-        // Slit 1: y-polarized
-        const int sy1 = mid - slit_sep;
-        for (int z = 0; z < N; z++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
-            double g = sAmp * std::exp(-(dx*dx + dy*dy) / (2.0 * sigma * sigma));
-            if (g < 1e-6) continue;
-            int px = slit_x + dx, py = sy1 + dy;
-            if (px < 0 || px >= N || py < 0 || py >= N) continue;
-            IF(rb, px, py, z, 0, g, 0);
-            IW(rb, px, py, z, g, 0, 0);
-        }
-
-        // Slit 2: z-polarized
-        const int sy2 = mid + slit_sep;
-        for (int z = 0; z < N; z++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
-            double g = sAmp * std::exp(-(dx*dx + dy*dy) / (2.0 * sigma * sigma));
-            if (g < 1e-6) continue;
-            int px = slit_x + dx, py = sy2 + dy;
-            if (px < 0 || px >= N || py < 0 || py >= N) continue;
-            IF(rb, px, py, z, 0, 0, g);
-            IW(rb, px, py, z, g, 0, 0);
-        }
+        inject_sheet_packet_x(rb, slit_x, mid - slit_sep, sigma, sigma, sAmp, +1);
+        inject_sheet_packet_x(rb, slit_x, mid + slit_sep, sigma, sigma, sAmp, +1);
 
         // Diagonal eraser (y=z polarizer) at x = N/2
         const int eraserX = N / 2;
@@ -110,33 +91,21 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
             }
         }
 
-        rb.toggles.genesis = true;
-        rb.toggles.coupling = false;
+        rb.toggles.genesis = false;
     }
     else if (name == "quantum-tunnel") {
         // Scenario ID: quantum-tunnel
-        // Physical Purpose: Demonstrates quantum tunneling of a wave packet through a potential barrier.
+        // Physical Purpose: Measures native wave transmission through a locked state wall.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Partial transmission of a wave packet through a thin potential barrier.
-        // Discrepancy: None.
-        // genesis=false (audit-2 2026-04-28): the wave packet should TUNNEL,
-        // not pair-produce. The 3072 initial particles are the locked
-        // barrier (32×32×W=3 wall). Mirrors JS quantum-tunnel.
-        rb.toggles.genesis = false;
+        // Expected Behaviour: The locked state sheets drive the native
+        // coupling term and strongly amplify the field. Verification closes
+        // the tunneling-barrier interpretation; this is not a Schrodinger potential.
+        configure_free_wave();
+        rb.toggles.coupling = true;
         const double sigma = N / 12.0;
-        const double amp = K_B * 2.0;
         const int packetX = N / 4;
-        const int pulseR = std::min(CEL(sigma * 3), mid - 1);
-        for (int dz = -pulseR; dz <= pulseR; dz++) for (int dy = -pulseR; dy <= pulseR; dy++) for (int dx = -pulseR; dx <= pulseR; dx++) {
-            double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
-            if (val > 0.001) {
-                int x = packetX + dx, y = mid + dy, z = mid + dz;
-                if (x >= 0 && x < N && y >= 0 && y < N && z >= 0 && z < N) {
-                    IF(rb, x, y, z, val, 0, 0);
-                    IW(rb, x, y, z, val, 0, 0);
-                }
-            }
-        }
+        inject_transverse_packet_x(rb, packetX, mid, mid, sigma, sigma,
+                                   K_B * 0.5, +1);
         const int W = 3;
         for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) for (int dx = 0; dx < W; dx++) {
             IP(rb, mid + dx, y, z, 1);
@@ -145,10 +114,15 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "quantum-well") {
         // Scenario ID: quantum-well
-        // Physical Purpose: Simulates a particle in a 1D potential well (infinite square well).
+        // Physical Purpose: Visualizes an imposed basis of standing-wave harmonics between marker planes.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Discrete standing wave harmonics bound by potential walls.
-        // Discrepancy: None.
+        // Expected Behaviour: The explicitly seeded n=1..8 sine basis evolves
+        // exactly as it does with the marker planes removed and propagates
+        // beyond them. Verification closes the confinement interpretation.
+        // The planes are inert markers, not Gauss charge sheets or material
+        // boundaries. Isolate the unprojected wave map so the scenario tests
+        // that distinction directly.
+        configure_free_wave_terms(rb, false);
         const int wallA = N / 4;
         const int wallB = 3 * N / 4;
         const int boxLength = wallB - wallA;
@@ -169,75 +143,59 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "quantum-entangle") {
         // Scenario ID: quantum-entangle
-        // Physical Purpose: Tests entanglement correlation between two separated particles.
+        // Physical Purpose: Seeds the engine's native tagged, anti-correlated pair object.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Correlated behavior of two particles originating from a single high-energy flux burst.
-        // Discrepancy: None.
-        const double bigAmp = K_GENESIS * 5.0;
-        for (int dz = -4; dz <= 4; dz++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
-            double val = bigAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * 6.0));
-            if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val, val, val); IW(rb, mid + dx, mid + dy, mid + dz, val, val, val); }
-        }
-        rb.toggles.genesis = true;
+        // Expected Behaviour: Two complementary states share one pair_id and opposite flux.
+        // Verification: classical tagged-pair correlation; not Bell entanglement.
+        rb.toggles.genesis = false;
+        rb.toggles.evaporation = false;
+        rb.toggles.movement = false;
+        rb.create_entangled_pair(mid, mid, mid, Vec3(0.0, 0.0, K_B));
     }
     else if (name == "quantum-aharonov-bohm") {
         // Scenario ID: quantum-aharonov-bohm
-        // Physical Purpose: Simulates the Aharonov-Bohm effect where a vector potential shifts phase.
+        // Physical Purpose: Provides a solenoid-plus-two-path topology for testing a future gauge-phase observable.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Phase shift in the interference pattern of two paths wrapping a solenoid.
-        // Discrepancy: None.
+        // Expected Behaviour: tube and paths evolve as exact linear
+        // superposition. Verification closes the interaction claim; no link
+        // holonomy or phase-shift observable exists.
+        configure_free_wave();
         // genesis=false (audit-2 2026-04-28): A-B effect is gauge-phase,
         // packets shouldn't pair-produce while traversing the solenoid.
-        rb.toggles.genesis = false;
         const int R = N / 8;
         for (int z = 0; z < N; z++) for (int dy = -R; dy <= R; dy++) for (int dx = -R; dx <= R; dx++) {
             if (dx * dx + dy * dy > R * R) continue;
             IF(rb, mid + dx, mid + dy, z, 0, 0, K_B * 0.5);
         }
         const int pSigma = 3;
-        const double pAmp = K_B * 2.0;
         const int pStartX = N / 4;
-        for (int dz = -pSigma; dz <= pSigma; dz++) for (int dy = -pSigma; dy <= pSigma; dy++) for (int dx = -pSigma; dx <= pSigma; dx++) {
-            double val = pAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * pSigma * pSigma));
-            if (val > 0.001) {
-                int px = pStartX + dx;
-                int ayPos = mid + R + 2 + dy;
-                int byPos = mid - R - 2 + dy;
-                int pz = mid + dz;
-                if (px >= 0 && px < N && pz >= 0 && pz < N) {
-                    if (ayPos >= 0 && ayPos < N) { IF(rb, px, ayPos, pz, val, 0, 0); IW(rb, px, ayPos, pz, val, 0, 0); }
-                    if (byPos >= 0 && byPos < N) { IF(rb, px, byPos, pz, val, 0, 0); IW(rb, px, byPos, pz, val, 0, 0); }
-                }
-            }
-        }
+        inject_transverse_packet_x(rb, pStartX, mid + R + 2, mid,
+                                   pSigma, pSigma, K_B * 0.5, +1);
+        inject_transverse_packet_x(rb, pStartX, mid - R - 2, mid,
+                                   pSigma, pSigma, K_B * 0.5, +1);
     }
     else if (name == "quantum-casimir") {
         // Scenario ID: quantum-casimir
-        // Physical Purpose: Models the Casimir attraction force between parallel plates.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Modification of vacuum fluctuations between plates leading to net attractive force.
-        // Discrepancy: None.
+        // Physical Purpose: Tests whether two locked marker planes affect a
+        // reproducible transverse lattice eigenmode.
+        // Verification: plate/no-plate null control; no vacuum ensemble,
+        // force estimator, or Casimir mechanism is present.
+        configure_free_wave_terms(rb, false);
         const int d = 6;
         const int plateA = mid - d / 2, plateB = mid + d / 2;
         for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) {
             IP(rb, plateA, y, z, 1); LOCK(rb, plateA, y, z);
             IP(rb, plateB, y, z, 1); LOCK(rb, plateB, y, z);
         }
-        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double jx = (urand() - 0.5) * K_B * 0.3;
-            double jy = (urand() - 0.5) * K_B * 0.3;
-            double jz = (urand() - 0.5) * K_B * 0.3;
-            IF(rb, x, y, z, jx, jy, jz);
-            IW(rb, x, y, z, jx, jy, jz);
-        }
-        rb.toggles.genesis = false;
+        inject_plane_harmonic_x(rb, 4, 0.05, +1);
     }
     else if (name == "quantum-zeno") {
         // Scenario ID: quantum-zeno
-        // Physical Purpose: Simulates the Quantum Zeno effect (frequent observation slows evolution).
+        // Physical Purpose: Measures a supercritical one-tick genesis cohort.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Continuous measurement/interaction freezes quantum state transition.
-        // Discrepancy: None.
+        // Expected Behaviour: Natural genesis/decay proceeds without a measurement intervention.
+        // Verification: genesis-response control only; no measurement operator exists in the frozen engine.
+        configure_genesis_gate_terms(rb);
         const double sigma = N / 10.0;
         const double amp = K_GENESIS * 1.2;
         const int pulseR = std::min(CEL(sigma * 3), mid - 1);
@@ -245,7 +203,6 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
             if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val, val, val); IW(rb, mid + dx, mid + dy, mid + dz, val, val, val); }
         }
-        rb.toggles.genesis = true;
     }
     return true;
 }

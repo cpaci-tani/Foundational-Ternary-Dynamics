@@ -34,32 +34,23 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
 
     if (name == "flux-pulse") {
         // Scenario ID: flux-pulse
-        // Physical Purpose: Demonstrates single wave/flux pulse propagation through the discrete lattice.
-        // Initial Condition Parameters: Gaussian envelope of flux at the center,
-        //   RELEASED FROM REST (wave_vel = 0, i.e. ∂J/∂t = 0), with scale
-        //   sigma = N / 10.0 and amplitude amp = K_B * 2.0.
-        // Expected Behaviour: Symmetric spherical expansion outward from center —
-        //   the energy centroid stays at N/2 at every lattice size L.
-        // PHYSICS NOTE: inject FLUX ONLY. Do NOT also inject a uniform wave_vel
-        //   (∂J/∂t) here — a non-zero, co-aligned wave_vel is a +x momentum kick
-        //   that advects the packet directionally (d'Alembert split f(x−ct)+g(x+ct)
-        //   biased to one branch), which on a large lattice piles the field against
-        //   one face instead of expanding spherically. Zero initial velocity gives
-        //   the symmetric f=g split this scenario documents, and matches the JS
-        //   MockBridge twin (engine/web/js/bridge/scenarios/flux-scenarios.js).
-        const int pulseR = std::min(CEL(sigma * 3), FLR(midF));
-        const int pLo = FLR(midF) - pulseR, pHi = CEL(midF) + pulseR;
-        for (int z = pLo; z <= pHi; z++) for (int y = pLo; y <= pHi; y++) for (int x = pLo; x <= pHi; x++) {
-            double dx = x - midF, dy = y - midF, dz = z - midF;
-            double val = amp * std::exp(-(dx*dx+dy*dy+dz*dz) / (2 * sigma * sigma));
-            if (val > 0.001) IF(rb, x, y, z, val, 0, 0);
-        }
+        // Physical Purpose: Boundary-response probe for the frozen native wave
+        // map. This is a transverse field packet, not a particle or EM claim.
+        // Initial Condition: finite discrete-curl packet traveling +x from L/3.
+        // Expected Behaviour: periodic propagation or Neumann-shell reflection.
+        // The selected one-shell loss mode is only an imposed attenuation law;
+        // it failed the 75%-removal qualification and is not an absorber claim.
+        configure_free_wave_terms(rb, false);
+        const double sx = std::max(3.0, N / 16.0);
+        inject_transverse_packet_x(rb, N / 3.0, midF, midF,
+                                   sx, sx, K_B * 0.5, +1,
+                                   2.0 * PI / (4.0 * sx));
     }
     else if (name == "flux-dipole") {
         // Scenario ID: flux-dipole
-        // Physical Purpose: Simulates a positive and negative flux dipole pair.
-        // Initial Condition Parameters: Two Gaussian flux centers located at N/4 and 3N/4, with positive and negative amplitudes respectively.
-        // Expected Behaviour: Dipole field configuration that propagates and interacts.
+        // Physical Purpose: Antisymmetric pair of Gaussian vector-wave blobs.
+        // This tests native parity preservation, not an electric/magnetic dipole.
+        configure_free_wave_terms(rb, false);
         const int off = N / 4;
         const int pLx = FLR(midF) - off, pRx = CEL(midF) + off;
         const int yzLo = FLR(midF) - 4, yzHi = CEL(midF) + 4;
@@ -76,9 +67,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-standing") {
         // Scenario ID: flux-standing
-        // Physical Purpose: Establishes a standing wave pattern in the lattice.
-        // Initial Condition Parameters: Two in-phase Gaussian flux sources spaced apart at N/3 and 2N/3.
-        // Expected Behaviour: Constructive and destructive interference forming stable standing wave peaks and troughs.
+        // Physical Purpose: Reflection-even, zero-initial-momentum broadband
+        // wave pair. It is a standing-wave proxy, not a pure eigenmode.
+        configure_free_wave_terms(rb, false);
         const int off = N / 3;
         const int pLx = FLR(midF) - off, pRx = CEL(midF) + off;
         const int yzLo = FLR(midF) - 4, yzHi = CEL(midF) + 4;
@@ -93,24 +84,21 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-soliton") {
         // Scenario ID: flux-soliton
-        // Physical Purpose: Simulates non-dispersive soliton wave propagation.
-        // Initial Condition Parameters: Dense Gaussian flux envelope at the center; genesis toggle is explicitly set to false to prevent pair production.
-        // Expected Behaviour: Soliton maintains shape during propagation without dispersing or producing particle pairs.
-        // genesis=false (audit-2 2026-04-28): solitons are non-dispersive,
-        // not pair-producers. Mirrors JS flux-soliton fix.
-        rb.toggles.genesis = false;
-        const int sLo = FLR(midF) - 3, sHi = CEL(midF) + 3;
-        for (int z = sLo; z <= sHi; z++) for (int y = sLo; y <= sHi; y++) for (int x = sLo; x <= sHi; x++) {
-            double dx = x - midF, dy = y - midF, dz = z - midF;
-            double val = amp * 10.0 * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * 4.0));
-            if (val > 0.001) { IF(rb, x, y, z, val, val, 0); IW(rb, x, y, z, val, val, 0); }
-        }
+        // Physical Purpose: Measures dispersion of a high-amplitude localized packet.
+        // Initial Condition Parameters: Divergence-free Gaussian packet; genesis disabled.
+        // Expected Behaviour: Packet centroid propagates while its width records lattice dispersion.
+        // Verification: dispersion diagnostic; the frozen wave sector has no soliton nonlinearity.
+        configure_free_wave_terms(rb);
+        inject_transverse_packet_x(rb, midF, midF, midF, 2.0, 2.0,
+                                   amp * 2.0, +1);
     }
     else if (name == "flux-cascade") {
         // Scenario ID: flux-cascade
-        // Physical Purpose: Models cascading genesis events where high energy triggers a chain reaction of particle creation.
+        // Physical Purpose: One-tick supercritical Gaussian genesis response.
         // Initial Condition Parameters: Highly concentrated flux pulse at the center (amplitude = K_GENESIS * 3.0).
-        // Expected Behaviour: Rapid series of pair-production events cascading outward.
+        // Expected Behaviour: Deterministic fixed-seed cohort of independent
+        // single-site genesis events. No branching, cascade, or pair process.
+        configure_genesis_gate_terms(rb);
         const double bigAmp = K_GENESIS * 3.0;
         const int cLo = FLR(midF) - 3, cHi = CEL(midF) + 3;
         for (int z = cLo; z <= cHi; z++) for (int y = cLo; y <= cHi; y++) for (int x = cLo; x <= cHi; x++) {
@@ -121,50 +109,38 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-annihilation") {
         // Scenario ID: flux-annihilation
-        // Physical Purpose: Simulates particle-antiparticle pair annihilation.
-        // Initial Condition Parameters: A positive particle (+1) and a negative particle (-1) initialized on the x-axis, and another negative/positive pair on the z-axis, accompanied by initial flux pulses pushing them together.
-        // Expected Behaviour: Particles move together, collide, and annihilate, releasing their mass energy as outgoing flux waves.
-        const int off = N / 3;
-        const int pL = FLR(midF) - off, pR = CEL(midF) + off;
-        const int mc = RND(midF);
-        IP(rb, pL, mc, mc,  1);
-        IP(rb, pR, mc, mc, -1);
-        IP(rb, mc, mc, pL, -1);
-        IP(rb, mc, mc, pR,  1);
-        const double pushAmp = amp * 2.0;
-        const int kLo = FLR(midF) - 3, kHi = CEL(midF) + 3;
-        for (int z = kLo; z <= kHi; z++) for (int y = kLo; y <= kHi; y++) for (int x = kLo; x <= kHi; x++) {
-            double dy = y - midF, dz = z - midF;
-            double dxL = x - pL, dxR = x - pR;
-            double valL = pushAmp * std::exp(-(dxL*dxL + dy*dy + dz*dz) / (2.0 * 4.0));
-            double valR = pushAmp * std::exp(-(dxR*dxR + dy*dy + dz*dz) / (2.0 * 4.0));
-            if (valL > 0.001) { IF(rb, x, y, z,  valL, 0, 0); IW(rb, x, y, z,  valL, 0, 0); }
-            if (valR > 0.001) { IF(rb, x, y, z, -valR, 0, 0); IW(rb, x, y, z, -valR, 0, 0); }
-            double dzL = z - pL, dzR = z - pR, dx0 = x - mc;
-            double valZL = pushAmp * std::exp(-(dx0*dx0 + dy*dy + dzL*dzL) / (2.0 * 4.0));
-            double valZR = pushAmp * std::exp(-(dx0*dx0 + dy*dy + dzR*dzR) / (2.0 * 4.0));
-            if (valZL > 0.001) { IF(rb, x, y, z, 0, 0,  valZL); IW(rb, x, y, z, 0, 0,  valZL); }
-            if (valZR > 0.001) { IF(rb, x, y, z, 0, 0, -valZR); IW(rb, x, y, z, 0, 0, -valZR); }
-        }
+        // Exact probe of the native opposite-state collision rule. A + state
+        // crosses one face into an adjacent stationary - state after two ticks.
+        // The rule removes both states and spreads only their PRE-EXISTING flux
+        // over their respective six face neighbours. It contains no
+        // rest-mass-to-flux or outgoing-wave mechanism.
+        configure_annihilation_terms(rb);
+        const int mc = N / 2;
+        IP(rb, mc - 1, mc, mc, +1);
+        IP(rb, mc,     mc, mc, -1);
+        IF(rb, mc - 1, mc, mc, 0.0, +K_B, 0.0);
+        IF(rb, mc,     mc, mc, 0.0, -K_B, 0.0);
+        SET_VEL(rb, mc - 1, mc, mc, C_SPEED, 0.0, 0.0);
     }
     else if (name == "flux-pair-production") {
         // Scenario ID: flux-pair-production
-        // Physical Purpose: Demonstrates particle-antiparticle pair creation from a high-energy field.
-        // Initial Condition Parameters: High-amplitude Gaussian flux envelope at the center exceeding the genesis threshold (amplitude = K_GENESIS * 5.0).
-        // Expected Behaviour: Local flux exceeds threshold and collapses into stable discrete particle-antiparticle pairs.
-        const double bigAmp = K_GENESIS * 5.0;
-        const int ppLo = FLR(midF) - 4, ppHi = CEL(midF) + 4;
-        for (int z = ppLo; z <= ppHi; z++) for (int y = ppLo; y <= ppHi; y++) for (int x = ppLo; x <= ppHi; x++) {
-            double dx = x - midF, dy = y - midF, dz = z - midF;
-            double val = bigAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * 6.0));
-            if (val > 0.001) { IF(rb, x, y, z, val, val * 0.7, val * 0.3); IW(rb, x, y, z, val, val * 0.7, val * 0.3); }
-        }
+        // One-tick cohort probe of the separate selected polarity-pair
+        // transition. Each isolated source has p=1/2 exactly under the compiled
+        // hazard. Accepted events place -1 upstream and +1 downstream, assign a
+        // shared pair id, and leave pairwise state and vector-flux sums zero.
+        // This qualifies the engine rule, not physical Schwinger production.
+        configure_pair_production_terms(rb);
+        const double pair_amp = K_GENESIS + K_MANIFEST * std::log(2.0);
+        for (int z = 2; z < N - 2; z += 3)
+        for (int y = 2; y < N - 2; y += 3)
+        for (int x = 2; x + 1 < N - 2; x += 3)
+            IF(rb, x, y, z, pair_amp, 0.0, 0.0);
     }
     else if (name == "flux-interference") {
         // Scenario ID: flux-interference
-        // Physical Purpose: Demonstrates interference patterns using four point-like flux sources.
-        // Initial Condition Parameters: Four symmetrically positioned Gaussian sources at the corners of a square on the mid-plane.
-        // Expected Behaviour: Multi-source constructive and destructive wave interference patterns.
+        // Physical Purpose: Four-lobe reflection-symmetric broadband wave field.
+        // This qualifies native parity preservation, not a detector fringe law.
+        configure_free_wave_terms(rb, false);
         const int q = N / 4;
         const int qL = FLR(midF) - q, qR = CEL(midF) + q;
         const int mc = RND(midF);
@@ -176,12 +152,15 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
                 if (val > 0.001) { IF(rb, sx + dx, sy + dy, sz + dz, val, 0, 0); IW(rb, sx + dx, sy + dy, sz + dz, val, 0, 0); }
             }
         }
+        // P5: W = J with a strictly single-signed lobe left Sum W_x = 1162.76,
+        // a permanent uniform E ramp. Project out the conserved k=0 mode.
+        remove_wave_mean(rb);
     }
     else if (name == "flux-vortex") {
         // Scenario ID: flux-vortex
-        // Physical Purpose: Models a rotating flux vortex to demonstrate spin.
-        // Initial Condition Parameters: 24 tangential flux pulses positioned in a ring around the center of the lattice on the mid-plane.
-        // Expected Behaviour: Coherent angular momentum/spin rotation of the flux field.
+        // Physical Purpose: Exact discrete helical-ring vector ansatz.
+        // It does not demonstrate spin, quantization, or persistent rotation.
+        configure_static_seed_terms(rb);
         const int vRadius = N / 5;
         const int nV = 24;
         const int mc = RND(midF);
@@ -192,16 +171,17 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
             double tX = -std::sin(angle) * amp * 2.0;
             double tZ =  std::cos(angle) * amp * 2.0;
             double tY =  amp * 0.5;
-            IF(rb, rx, mc,     rz, tX,        tY,        tZ);        IW(rb, rx, mc,     rz, tX,        tY,        tZ);
-            IF(rb, rx, mc + 1, rz, tX * 0.5,  tY * 0.5,  tZ * 0.5); IW(rb, rx, mc + 1, rz, tX * 0.5,  tY * 0.5,  tZ * 0.5);
-            IF(rb, rx, mc - 1, rz, tX * 0.5, -tY * 0.5,  tZ * 0.5); IW(rb, rx, mc - 1, rz, tX * 0.5, -tY * 0.5,  tZ * 0.5);
+            IF(rb, rx, mc,     rz, tX,        tY,        tZ);
+            IF(rb, rx, mc + 1, rz, tX * 0.5,  tY * 0.5,  tZ * 0.5);
+            IF(rb, rx, mc - 1, rz, tX * 0.5, -tY * 0.5,  tZ * 0.5);
         }
     }
     else if (name == "flux-dual-substrate") {
         // Scenario ID: flux-dual-substrate
-        // Physical Purpose: Explores wave propagation under a dual-substrate (two independent vacuum states) configuration.
-        // Initial Condition Parameters: Symmetrical Gaussian flux dipoles on the left and right with opposite polarizations.
-        // Expected Behaviour: Distinct propagation characteristics and interference patterns on the dual substrate.
+        // Physical Purpose: Mirror-polarized Gaussian wave pair.
+        // The dual_substrate term is deliberately OFF: this legacy setup never
+        // represented two fields and provides no evidence for a dual ontology.
+        configure_free_wave_terms(rb, false);
         const int off = N / 4;
         const int pLx = FLR(midF) - off, pRx = CEL(midF) + off;
         const int yzLo = FLR(midF) - 5, yzHi = CEL(midF) + 5;
@@ -213,12 +193,18 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
                 IF(rb, pRx + dx, y, z, val, -val * 0.5,  val * 0.3); IW(rb, pRx + dx, y, z, val, -val * 0.5,  val * 0.3);
             }
         }
+        // P5: W_x is single-signed across both lobes, leaving Sum W_x ~ 935-970
+        // and a uniform ramp that overtook the seeded peak by ~6.5 ticks at
+        // L=17. Project out the conserved k=0 mode.
+        remove_wave_mean(rb);
     }
     else if (name == "flux-random-genesis") {
         // Scenario ID: flux-random-genesis
-        // Physical Purpose: Demonstrates spontaneous particle creation from random vacuum fluctuations.
+        // Physical Purpose: One-tick fixed-seed random-patch genesis response.
         // Initial Condition Parameters: 8 randomly distributed high-amplitude flux patches exceeding the genesis threshold.
-        // Expected Behaviour: Stochastic nucleation of particle-antiparticle pairs across the lattice.
+        // Expected Behaviour: Exact replay of single-site genesis outcomes;
+        // pair production, wave propagation, and later reactions are disabled.
+        configure_genesis_gate_terms(rb);
         const int nPatches = 8;
         const double threshold = K_GENESIS * 2.5;
         for (int p = 0; p < nPatches; p++) {
@@ -242,34 +228,20 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         // Scenario ID: flux-genesis-between-gates
         // Physical Purpose: Empirical discriminator for the FTD-0388 genesis-gate adoption.
         //   K_GENESIS = N_c·K_MANIFEST = 3·W_SC = 1.5163860591519780 (adopted 2026-07-17);
-        //   the pre-adoption gate was 3·K_B = 1.533. Three frozen uniform-|J| bands along x
-        //   straddle both gates, so the lattice itself displays which gate is compiled in.
+        //   the pre-adoption gate was 3·K_B = 1.533. Three uniform-|J| initial
+        //   cohorts straddle both gates for the first production decision.
         // Initial Condition Parameters: band amplitudes |J| = 1.5160 (below both gates),
-        //   1.5250 (between the gates), 1.5340 (above both) — the 2026-07-17 cohorts of
-        //   record (browser discriminator: 200 voxels × 25 ticks measured 0 / 63 / 116
-        //   against new-engine predictions 0 / 69±7 / 116±7; old engine predicts 0 / 0 / ~10).
-        // Expected Behaviour: left band stays void forever (hard gate); middle band
-        //   nucleates matter at p = 1 − exp(−(|J|−K_GENESIS)/K_MANIFEST) ≈ 0.017/tick —
-        //   matter the pre-FTD-0388 engine could never create at any patience; right band
-        //   nucleates ≈ 2× faster. Field-freezing toggles (below + JS twin overrides in
-        //   config/toggles.js) keep the band amplitudes exact: genesis is the ONLY dynamics.
+        //   1.5250 (between the gates), 1.5340 (above both).
+        // Expected Behaviour: on tick one the hazards are 0 / 0.0168973 /
+        //   0.034247 per site; the upper/lower nonzero hazard ratio is 2.0268.
+        //   The field is exact only at the
+        //   initial decision: accepted genesis drains local flux and the same
+        //   master rule also permits evaporation, so this is not a sustained
+        //   frozen-field or branching-cascade claim.
         static_assert(1.5160 < K_GENESIS && K_GENESIS < 1.5250,
                       "flux-genesis-between-gates: bands no longer straddle the FTD-0388 "
                       "genesis gate — re-band this scenario (and its JS twin) consciously");
-        rb.toggles.genesis            = true;
-        rb.toggles.wave_propagation   = false;  // freeze the field: injected |J| stays exact
-        rb.toggles.coupling           = false;
-        rb.toggles.gauss_projection   = false;
-        rb.toggles.damping            = false;
-        rb.toggles.selective_damping  = false;  // requires damping — keep validate() quiet
-        rb.toggles.movement           = false;  // manifested matter stays put (crisp bands)
-        rb.toggles.weak_transmutation = false;  // match the dashboard baseline in CLI runs
-        // Pin the substrate BEFORE injecting: at scenario time dual_substrate sits at
-        // the C++ construction default (true), so IF() would split the bands into the
-        // L/R buffers — and the dashboard's JS baseline then flips dual off, leaving
-        // phase_write reading an empty mono field (silent lattice). Injection and
-        // genesis must agree on the mono substrate in BOTH environments.
-        rb.toggles.dual_substrate     = false;
+        configure_genesis_gate_terms(rb);
         const double bandAmp[3] = { 1.5160, 1.5250, 1.5340 };
         const int x1 = 1 + (N - 2) / 3, x2 = 1 + 2 * (N - 2) / 3;
         for (int x = 1; x < N - 1; x++) {
@@ -282,9 +254,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     // ── QCD scenarios ──
     else if (name == "flux-meson") {
         // Scenario ID: flux-meson
-        // Physical Purpose: Demonstrates color confinement in a quark-antiquark meson system.
-        // Initial Condition Parameters: A positive and a negative particle acting as valence quarks, dressed with an initial flux string/tube connecting them.
-        // Expected Behaviour: The flux remains confined to a string-like region between the quarks, preventing them from separating freely.
+        // Physical Purpose: Exact free-transport wiring probe for two opposite
+        // ternary states with counter-directed y velocities. The Gaussian field
+        // blobs are inert dressing; no color, confinement, or meson identity.
+        configure_free_movement_terms(rb);
         const int mOff = std::max(2, N / 8);
         const int mDress = std::max(2, N / 10);
         const int mL = FLR(midF) - mOff, mR = CEL(midF) + mOff;
@@ -307,9 +280,11 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-string-breaking") {
         // Scenario ID: flux-string-breaking
-        // Physical Purpose: Models QCD string breaking when quarks are pulled apart with high energy.
-        // Initial Condition Parameters: Quark-antiquark pair with high outward velocities, dressed with a dense central flux envelope.
-        // Expected Behaviour: As the quarks separate, the tension in the connecting string increases until it snaps, producing a new quark-antiquark pair from the vacuum.
+        // Physical Purpose: Outward opposite-polarity free-transport control.
+        // Initial Condition: +/- states with vx=-/+0.3 plus inert central J/W.
+        // Expected Behaviour: Separation increases with exactly two states.
+        // No string, color, confinement, or pair-production term is active.
+        configure_free_movement_terms(rb);
         const int sbOff = std::max(2, N / 10);
         const int sbDress = std::max(2, N / 8);
         const int sbL = FLR(midF) - sbOff, sbR = CEL(midF) + sbOff;
@@ -328,9 +303,11 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-baryon") {
         // Scenario ID: flux-baryon
-        // Physical Purpose: Models a 3-quark baryon bound state.
-        // Initial Condition Parameters: Three positive valence quarks placed in an equilateral triangle, with a central negative sea quark and central flux.
-        // Expected Behaviour: Stable 3-quark configuration bound by the central flux structure.
+        // Physical Purpose: Threefold tangential free-transport control with
+        // one stationary opposite-polarity marker and inert field dressing.
+        // Expected Behaviour: Seeded remainders produce deterministic lattice
+        // translations. No binding, color, quark, or baryon identity is active.
+        configure_free_movement_terms(rb);
         const int bR = N / 6;
         const int mc = RND(midF);
         for (int k = 0; k < 3; k++) {
@@ -351,9 +328,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-nested-standing") {
         // Scenario ID: flux-nested-standing
-        // Physical Purpose: Establishes a nested standing wave pattern across orthogonal dimensions.
-        // Initial Condition Parameters: In-phase Gaussian flux sources along both x-axis (at N/3 and 2N/3) and z-axis (at N/4 and 3N/4).
-        // Expected Behaviour: Orthogonally overlapping standing waves creating a grid-like interference pattern.
+        // Physical Purpose: Orthogonal reflection-even broadband wave pairs.
+        // These are not pure standing eigenmodes.
+        configure_free_wave_terms(rb, false);
         const int offX = N / 3, offZ = N / 4;
         const int xL = FLR(midF) - offX, xR = CEL(midF) + offX;
         const int zL = FLR(midF) - offZ, zR = CEL(midF) + offZ;
@@ -378,25 +355,31 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     // ── Experiment scenarios (from test suite) ──
     else if (name == "flux-cyclotron") {
         // Scenario ID: flux-cyclotron
-        // Physical Purpose: Simulates cyclotron motion of a charged particle in a magnetic field.
-        // Initial Condition Parameters: A positive particle at the center, surrounded by a background vector potential/rotational flux field representing a uniform magnetic field.
-        // Expected Behaviour: The particle undergoes circular orbital motion due to the Lorentz-like force.
-        const double bAmp = amp * 0.15;
+        // Physical Purpose: Native magnetic-curvature test in an imposed,
+        // uniform-curl vector potential. This qualifies the engine's selected
+        // F=alpha*s*(v x curl J) rule, not emergence of electromagnetism.
+        // Initial Condition: B_z=1 in the central periodic patch, chosen so
+        // alpha*B*dt < 0.01; one + state at the centre with v=(0.12,0,0).
+        // Expected Behaviour: Velocity bends toward -y. Finite-tick speed
+        // drift is measured rather than presumed absent.
+        configure_lorentz_orbit_terms(rb);
+        const double imposed_bz = 1.0;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double cx = x - mid, cy = y - mid;
-            IF(rb, x, y, z, -bAmp * cy * 0.05, bAmp * cx * 0.05, 0);
+            const double cx = x - midF, cy = y - midF;
+            IF(rb, x, y, z, -0.5 * imposed_bz * cy,
+                                  0.5 * imposed_bz * cx, 0.0);
         }
-        IP(rb, mid, mid, mid, 1);
-        for (int d = -3; d <= 3; d++) for (int dy = -3; dy <= 3; dy++) for (int dx = -3; dx <= 3; dx++) {
-            double val = amp * std::exp(-(dx*dx + dy*dy + d*d) / (2.0 * 4.0));
-            if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + d, val * 0.5, 0, 0); IW(rb, mid + dx, mid + dy, mid + d, val * 0.5, 0, 0); }
-        }
+        IP(rb, mid, mid, mid, +1);
+        SET_VEL(rb, mid, mid, mid, 0.12, 0.0, 0.0);
     }
     else if (name == "flux-screening") {
         // Scenario ID: flux-screening
-        // Physical Purpose: Demonstrates electric charge screening in a dielectric or plasma-like medium.
-        // Initial Condition Parameters: A positive central test charge surrounded by six symmetrically placed negative screening charges, with radial dressing flux.
-        // Expected Behaviour: The net electric field at large distances is reduced (screened) by the surrounding opposite charges.
+        // Physical Purpose: Exact prepared octahedral polarity-shell geometry.
+        // Initial Condition: one central + state, six face-orbit - states, and
+        // a separately imposed compact radial 1/r dressing.
+        // Expected Behaviour: Inert initial data. The net ternary polarity is
+        // -5, so this does not demonstrate neutralization or screening.
+        configure_static_seed_terms(rb);
         const int shellR = N / 5;
         IP(rb, mid, mid, mid, 1);
         const int scOff[6][3] = {
@@ -415,9 +398,12 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-triad") {
         // Scenario ID: flux-triad
-        // Physical Purpose: Simulates the formation of a stable three-body triad structure.
-        // Initial Condition Parameters: Three positive particles arranged in a triangle, with inward-directed dressing flux towards the center.
-        // Expected Behaviour: Particles and fields bind together into a stable triad structure.
+        // Physical Purpose: Exact prepared threefold polarity/flux seed.
+        // Initial Condition: three + states at rounded 120-degree positions,
+        // with independently imposed inward-directed local flux dressing.
+        // Expected Behaviour: Inert initial data. No binding or stability
+        // mechanism is active, and no baryon/gauge identity is inferred.
+        configure_static_seed_terms(rb);
         const int tR = N / 6;
         const double triAng[3] = { 0, 2 * PI / 3, 4 * PI / 3 };
         for (int t = 0; t < 3; t++) {
@@ -439,9 +425,13 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-thermalization") {
         // Scenario ID: flux-thermalization
-        // Physical Purpose: Simulates a system of random waves relaxing towards thermal equilibrium.
-        // Initial Condition Parameters: Concentrated high-amplitude patch in one corner with randomized vector directions.
-        // Expected Behaviour: Energy diffuses and thermalizes, distributing evenly across the lattice modes over time.
+        // Physical Purpose: Deterministic localized random-wave mixing probe.
+        // Initial Condition: fixed-seed compact random J/W patch at L/4.
+        // Expected Behaviour: Native linear propagation moves energy outside
+        // the initial support while preserving the exact modified Hamiltonian.
+        // This is dephasing/spreading, not thermodynamic thermalization.
+        configure_free_wave_terms(rb, false);
+        rb.toggles.flux_boundary = FluxBoundaryMode::Periodic;
         const int corner = N / 4;
         const double thermAmp = amp * 3.0;
         for (int dz = -4; dz <= 4; dz++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
@@ -461,9 +451,13 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-vacuum-foam") {
         // Scenario ID: flux-vacuum-foam
-        // Physical Purpose: Models quantum vacuum fluctuations (spacetime foam) at the Planck scale.
-        // Initial Condition Parameters: Envelope of randomized, low-amplitude flux fluctuations across the central region.
-        // Expected Behaviour: Continuous, stochastic boiling and fluctuation of the background flux field.
+        // Physical Purpose: Finite deterministic random-wave-ball probe.
+        // Initial Condition: fixed-seed random J/W vectors in a central ball.
+        // Expected Behaviour: Source-free native wave evolution with exact
+        // replay and modified-H conservation. There is no ongoing noise,
+        // quantum-vacuum mechanism, or spacetime-foam interpretation.
+        configure_free_wave_terms(rb, false);
+        rb.toggles.flux_boundary = FluxBoundaryMode::Periodic;
         const int foamR = N / 3;
         const double foamBase = K_B * 0.9, foamVar = K_B * 0.4;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -483,17 +477,13 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-zero-point") {
         // Scenario ID: flux-zero-point
-        // Physical Purpose: Models the irreducible quantum ground-state vacuum energy.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Persistent low-amplitude random background flux that does not trigger genesis.
-        // Discrepancy: None.
-        // Zero-Point Energy — the irreducible ground-state floor. Uniform
-        // low-amplitude random flux across the WHOLE lattice at 0.3·K_B
-        // (≈ 0.08, ~19× below K_GENESIS = N_c·K_MANIFEST = 1.5164, FTD-0388), so nothing can
-        // manifest. genesis + damping are OFF via config/toggles.js, so the
-        // energy-conserving wave dynamics keep a persistent non-zero floor.
-        // Mirrors the JS flux-zero-point body (same amplitude); JS↔C++ parity
-        // is statistical (both stochastic). Pedagogical, not a ½ℏω derivation.
+        // Physical Purpose: Finite periodic random-wave-bath invariant probe.
+        // Initial Condition: deterministic low-amplitude random J and W.
+        // Expected Behaviour: exact conservation of the kick-drift modified
+        // Hamiltonian with zero manifested sites. This is not quantum vacuum
+        // energy, a ground state, or a derivation of 1/2 hbar omega.
+        configure_free_wave_terms(rb, false);
+        rb.toggles.flux_boundary = FluxBoundaryMode::Periodic;
         const double zpeAmp = K_B * 0.3;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double jx = (urand() - 0.5) * zpeAmp;

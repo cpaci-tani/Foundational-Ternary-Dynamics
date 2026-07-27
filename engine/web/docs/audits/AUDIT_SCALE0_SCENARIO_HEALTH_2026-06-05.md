@@ -1,6 +1,12 @@
 # AUDIT — Scale-0 Scenario Health & Physics-Sense (2026-06-05)
 
-**Status:** complete. Two dimensions: **(A) mechanical health** — does every
+> **Historical baseline.** The current 117-scenario behavioral qualification
+> and promotion plan is
+> [`AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md`](AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md).
+> In particular, its native tests supersede this audit's former claim that the
+> tunneling, mode-quantization, and Born-effect interpretations were genuine.
+
+**Status:** superseded point-in-time audit. Two dimensions: **(A) mechanical health** — does every
 scenario mount and do its telemetries work? — and **(B) physics-sense** — do the
 scenarios actually represent their named physics *on the lattice substrate*?
 
@@ -88,12 +94,17 @@ scenario-responsive on WASM; only energy is baseline-dominated.
 **Recommendation:** reconcile the energy convention (separate rest baseline from
 field energy, or apply it on both bridges). Cross-ref `CONTRACTS.md` (energy).
 
-### A.3 `flux-annihilation`'s flux kicks are dead · **[OPEN, secondary]**
+### A.3 `flux-annihilation`'s flux kicks were dead · **[CLOSED — REBUILT AND BEHAVIORALLY QUALIFIED 2026-07-24]**
 
-Same centre-vs-particle mismatch (A1): the "dramatic head-on collision" kicks
-(`flux-scenarios.js:115`) never fire on **any** backend — it's 4 static particles.
-The worker fix makes it *mount*; it does not make the kicks work. Fix = position
-the kick loop around the particles.
+Same centre-vs-particle mismatch (A1): the former "dramatic head-on collision"
+kicks never fired on **any** backend, leaving four static particles. The scenario
+has now been replaced by an isolated two-site production-rule probe: a + state
+moving at `C_SPEED` crosses into an adjacent - state on tick two. The exact
+event-journal test confirms both states vanish, vector flux remains zero, and
+six-face redistribution gives field-norm ratio 1/6. It also confirms the
+important limitation: the rule creates no wave momentum and contains no
+rest-mass-to-flux conversion. Evidence: `test_reaction_scenario_physics.cpp` /
+CTest `reaction_scenario_physics`.
 
 ### A.4 `vacuum-scenarios.js` references an undefined `harness` · **[FIXED 2026-06-05]**
 
@@ -222,7 +233,8 @@ geometry is already correct.
 6. **[hygiene, open]** `observer-cell` retire-as-duplicate or relabel (B.2); strip
    `spark-of-life`'s `autocatalytic`/`abiogenesis` tags; relabel
    `monopole`/`instanton` as "field ansatz".
-7. **[scenario quality, open]** Fix `flux-annihilation`'s dead kicks (A3); the kept
+7. **[DONE 2026-07-24]** Rebuild and behaviorally qualify `flux-annihilation`
+   as the native opposite-state collision rule (A3); the kept
    `gravitational-wave` carries a `[VISUALISATION]` label caveat (not a literal GW).
 
 The substrate-native categories need **no retraction**; the cosmology scenario was

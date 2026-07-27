@@ -189,8 +189,8 @@ applies boundary/reflective/scenario via `applyInit` (`:75-86`), then calls `pub
 (`:28-35`: reads `getSharedField()` for the SAB set, posts `ready` with the SABs), and starts a
 self-ticking `setTimeout` loop (~60 Hz, tick-time-limited at large L).
 **SAB-ensure invariant (health audit §A.1):** `_useSAB` `_initFluxGrid` only runs
-when the scenario actually injects flux, so a **particle-only / no-flux** scenario (e.g.
-`flux-annihilation`, whose kicks all fell below the injection threshold) left `_sharedField` null and
+when the scenario actually injects flux, so the former **particle-only / no-flux**
+`flux-annihilation` seed (its kicks all fell below the injection threshold) left `_sharedField` null and
 `publishShared` crashed on `getSharedField().ctrl`. `applyInit` now force-calls `_initFluxGrid()` if
 `getSharedField()` is still null after `setupScenario`, so every scenario mounts on the worker path
 (the state grid is SAB-backed too).

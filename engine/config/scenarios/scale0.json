@@ -127,26 +127,26 @@
     },
     {
       "id": "flux-annihilation",
-      "name": "Pair Annihilation",
+      "name": "Native Opposite-State Collision Rule",
       "group": "Particle Physics",
-      "description": "Particle-antiparticle annihilation.",
+      "description": "Two-tick native opposite-state collision-removal probe.",
       "comment": {
-        "physical_purpose": "Simulates particle-antiparticle pair annihilation.",
-        "parameters": "A positive particle (+1) and a negative particle (-1) initialized on the x-axis, and another negative/positive pair on the z-axis, accompanied by initial flux pulses pushing them together.",
-        "expected_behavior": "Particles move together, collide, and annihilate, releasing their mass energy as outgoing flux waves.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Tests the production movement branch that removes colliding opposite states.",
+        "parameters": "Adjacent +/- states; the + state moves at C_SPEED; cancelling +/-K_B transverse flux; movement is the only active physics term.",
+        "expected_behavior": "On tick two both states vanish and only their pre-existing flux is redistributed over their respective six-face neighbor shells.",
+        "discrepancy": "No rest-mass-to-flux conversion or outgoing-wave mechanism exists; this does not establish physical particle-antiparticle annihilation radiation."
       }
     },
     {
       "id": "flux-pair-production",
-      "name": "Pair Production",
+      "name": "Native Polarity-Pair Rule — One-Tick Cohort",
       "group": "Particle Physics",
-      "description": "Particle-antiparticle pair production.",
+      "description": "One-tick cohort test of the selected native adjacent-polarity transition.",
       "comment": {
-        "physical_purpose": "Demonstrates particle-antiparticle pair creation from a high-energy field.",
-        "parameters": "High-amplitude Gaussian flux envelope at the center exceeding the genesis threshold (amplitude = K_GENESIS * 5.0).",
-        "expected_behavior": "Local flux exceeds threshold and collapses into stable discrete particle-antiparticle pairs.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Tests the separate selected pair_production transition without genesis or other dynamics.",
+        "parameters": "343 isolated +x flux sources at K_GENESIS + K_MANIFEST ln(2), giving exact one-tick hazard p=1/2; seed 1.",
+        "expected_behavior": "Accepted sources produce adjacent upstream -1/downstream +1 states with a shared pair ID and exact pairwise signed-state and vector-flux cancellation.",
+        "discrepancy": "This qualifies the implemented stochastic rule, not Schwinger production, physical particle identity, pair stability, or later-time behavior."
       }
     },
     {
@@ -163,14 +163,14 @@
     },
     {
       "id": "flux-random-genesis",
-      "name": "Random Genesis",
-      "group": "Particle Physics",
-      "description": "Random particle genesis from vacuum.",
+      "name": "Fixed-Seed Random-Patch Genesis Cohort",
+      "group": "Validated Native Dynamics",
+      "description": "One-tick selected-law genesis response to eight fixed-seed supercritical random patches.",
       "comment": {
-        "physical_purpose": "Demonstrates spontaneous particle creation from random vacuum fluctuations.",
-        "parameters": "8 randomly distributed high-amplitude flux patches exceeding the genesis threshold.",
-        "expected_behavior": "Stochastic nucleation of particle-antiparticle pairs across the lattice.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Measures the deterministic first-tick response of the selected local genesis hazard to random-patch initial data.",
+        "parameters": "Eight fixed-seed supercritical flux patches; genesis is the only active production term.",
+        "expected_behavior": "Exact replay of a nonempty single-site +/- cohort with no pair IDs.",
+        "discrepancy": "This is not vacuum pair production, an ongoing stochastic bath, or evidence of self-organization."
       }
     },
     {
@@ -199,26 +199,26 @@
     },
     {
       "id": "flux-string-breaking",
-      "name": "String Breaking",
-      "group": "Particle Physics",
-      "description": "QCD string breaking between quarks.",
+      "name": "Outward Opposite-Polarity Transport — String Absent",
+      "group": "Validated State Dynamics",
+      "description": "Movement-only outward separation control for two opposite ternary states.",
       "comment": {
-        "physical_purpose": "Models QCD string breaking when quarks are pulled apart with high energy.",
-        "parameters": "Quark-antiquark pair with high outward velocities, dressed with a dense central flux envelope.",
-        "expected_behavior": "As the quarks separate, the tension in the connecting string increases until it snaps, producing a new quark-antiquark pair from the vacuum.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Measures exact outward free transport of a +/- state pair.",
+        "parameters": "Two opposite states with vx=-/+0.3 and inert central field dressing; movement only.",
+        "expected_behavior": "Both states translate outward with exact remainder bookkeeping and no new state.",
+        "discrepancy": "No string, tension, confinement, color, or pair-production mechanism is active."
       }
     },
     {
       "id": "flux-baryon",
-      "name": "Baryon (3-Quark)",
-      "group": "Particle Physics",
-      "description": "Three-quark baryon system.",
+      "name": "Threefold Tangential Free Transport",
+      "group": "Validated State Dynamics",
+      "description": "Movement-only threefold tangential transport with one stationary opposite-polarity marker.",
       "comment": {
-        "physical_purpose": "Models a 3-quark baryon bound state.",
-        "parameters": "Three positive valence quarks placed in an equilateral triangle, with a central negative sea quark and central flux.",
-        "expected_behavior": "Stable 3-quark configuration bound by the central flux structure.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Measures exact movement bookkeeping for a threefold velocity seed.",
+        "parameters": "Three unlocked + markers with tangential velocities, one stationary - marker, and inert field dressing; movement only.",
+        "expected_behavior": "Deterministic face translations while all four markers remain unlocked.",
+        "discrepancy": "No binding, color, quark, sea-quark, confinement, or baryon identity is active."
       }
     },
     {
@@ -295,26 +295,26 @@
     },
     {
       "id": "flux-cyclotron",
-      "name": "Cyclotron Motion",
-      "group": "Experiments",
-      "description": "Charged particle cyclotron motion.",
+      "name": "Imposed-B Native Curvature Test",
+      "group": "Validated Native Dynamics",
+      "description": "Controlled response of a mobile polarity to the selected native velocity-cross-curl force in an imposed Bz=1 field.",
       "comment": {
-        "physical_purpose": "Simulates cyclotron motion of a charged particle in a magnetic field.",
-        "parameters": "A positive particle at the center, surrounded by a background vector potential/rotational flux field representing a uniform magnetic field.",
-        "expected_behavior": "The particle undergoes circular orbital motion due to the Lorentz-like force.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Measures magnetic curvature against an otherwise identical no-Lorentz control.",
+        "parameters": "Bz=1 imposed through J=(-B*y/2,B*x/2,0); one positive polarity at v=(0.12,0,0). The stated alpha*B*dt<0.01 bound holds in the INTERIOR ONLY: a single-valued linear vector potential cannot carry a uniform B on a periodic lattice, so compensating return flux appears at the seam. Recomputing the engine curl with periodic neighbours gives interior Bz=+1.0 but face slabs Bz=1-N/4 and corner columns 1-N/2 (per-plane sum exactly 0). At the shipped browser default L=33 that is -7.25 / -15.50 over ~11.8% of the volume, i.e. wrong-signed and up to 15.5x oversized, with alpha*max|B|*dt ~ 0.113 there. The certifying test probes a single interior site.",
+        "expected_behavior": "The Lorentz-enabled branch curves toward -y while the matched no-Lorentz control remains straight.",
+        "discrepancy": "The vector potential and force law are selected inputs. The result does not establish EM emergence, a physical charge calibration, or a continuum cyclotron orbit. The imposed field is NOT uniform over the whole lattice (see parameters): the B-field overlay displays a wrong-signed sheet on the boundary slabs. The sibling s0-field-uniform-b already books this finite-face limitation explicitly; this card did not until 2026-07-26."
       }
     },
     {
       "id": "flux-screening",
-      "name": "Charge Screening",
-      "group": "Experiments",
-      "description": "Electric charge screening effect.",
+      "name": "Octahedral Polarity-Shell Seed",
+      "group": "Validated Initial Data",
+      "description": "Exact inert 1+6 polarity geometry with an imposed compact radial dressing.",
       "comment": {
-        "physical_purpose": "Demonstrates electric charge screening in a dielectric or plasma-like medium.",
-        "parameters": "A positive central test charge surrounded by six symmetrically placed negative screening charges, with radial dressing flux.",
-        "expected_behavior": "The net electric field at large distances is reduced (screened) by the surrounding opposite charges.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Displays one central positive state and the six-site negative face orbit.",
+        "parameters": "One + state at the center, six - states at radius L/5 on the coordinate axes, and a separately imposed compact radial 1/r dressing.",
+        "expected_behavior": "Bit-exact inert initial data with net ternary state -5.",
+        "discrepancy": "No neutralization, dielectric response, or far-field screening observable is present."
       }
     },
     {
@@ -331,26 +331,26 @@
     },
     {
       "id": "flux-triad",
-      "name": "Triad Formation",
-      "group": "Experiments",
-      "description": "Triad structure formation.",
+      "name": "Threefold Inward-Flux Seed",
+      "group": "Validated Initial Data",
+      "description": "Exact inert threefold polarity geometry with imposed inward flux dressing.",
       "comment": {
-        "physical_purpose": "Simulates the formation of a stable three-body triad structure.",
-        "parameters": "Three positive particles arranged in a triangle, with inward-directed dressing flux towards the center.",
-        "expected_behavior": "Particles and fields bind together into a stable triad structure.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Displays a prepared threefold polarity/flux initial condition.",
+        "parameters": "Three unlocked + states at rounded 120-degree positions with independently imposed inward local flux.",
+        "expected_behavior": "Bit-exact inert persistence with all production terms disabled.",
+        "discrepancy": "No binding, stability, color, or baryon claim is supported."
       }
     },
     {
       "id": "flux-thermalization",
-      "name": "Thermalization",
-      "group": "Experiments",
-      "description": "System thermalization process.",
+      "name": "Localized Random-Wave Mixing",
+      "group": "Validated Native Dynamics",
+      "description": "Fixed-seed compact random-wave spreading under the isolated linear wave map.",
       "comment": {
-        "physical_purpose": "Simulates a system of random waves relaxing towards thermal equilibrium.",
-        "parameters": "Concentrated high-amplitude patch in one corner with randomized vector directions.",
-        "expected_behavior": "Energy diffuses and thermalizes, distributing evenly across the lattice modes over time.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Measures spatial spreading and invariant preservation for a localized random wave patch.",
+        "parameters": "Fixed-seed random J/W directions in the compact L/4 patch; all non-wave terms disabled.",
+        "expected_behavior": "Linear native propagation moves energy outside the initial support while preserving the periodic modified Hamiltonian.",
+        "discrepancy": "No thermostat, temperature, entropy observable, or thermal-equilibrium criterion is present."
       }
     },
     {
@@ -379,14 +379,14 @@
     },
     {
       "id": "flux-vacuum-foam",
-      "name": "Vacuum Fluctuations",
-      "group": "Cosmology",
-      "description": "Quantum vacuum fluctuations.",
+      "name": "Finite Deterministic Random-Wave Ball",
+      "group": "Validated Native Dynamics",
+      "description": "Fixed-seed random wave ball under source-free native propagation.",
       "comment": {
-        "physical_purpose": "Models quantum vacuum fluctuations (spacetime foam) at the Planck scale.",
-        "parameters": "Envelope of randomized, low-amplitude flux fluctuations across the central region.",
-        "expected_behavior": "Continuous, stochastic boiling and fluctuation of the background flux field.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Tests deterministic replay and invariant preservation for a finite random wave seed.",
+        "parameters": "Fixed-seed random J/W vectors inside a central ball; no source or reaction term.",
+        "expected_behavior": "Exact replay under source-free native wave evolution with no manifested states.",
+        "discrepancy": "There is no ongoing stochastic source, quantum-vacuum mechanism, virtual-particle process, or spacetime foam."
       }
     },
     {
@@ -415,14 +415,14 @@
     },
     {
       "id": "flux-cascade",
-      "name": "Genesis Cascade",
-      "group": "Advanced",
-      "description": "Cascading genesis events.",
+      "name": "Supercritical Gaussian Genesis Cohort",
+      "group": "Validated Native Dynamics",
+      "description": "One-tick selected-law genesis response to a supercritical Gaussian field.",
       "comment": {
-        "physical_purpose": "Models cascading genesis events where high energy triggers a chain reaction of particle creation.",
-        "parameters": "Highly concentrated flux pulse at the center (amplitude = K_GENESIS * 3.0).",
-        "expected_behavior": "Rapid series of pair-production events cascading outward.",
-        "discrepancy": "None (runs as expected in C++)."
+        "physical_purpose": "Measures the deterministic first-tick response of the selected local genesis hazard to a supercritical Gaussian.",
+        "parameters": "Central Gaussian with peak amplitude 3*K_GENESIS; genesis is the only active production term.",
+        "expected_behavior": "Exact replay of a nonempty single-site +/- cohort with no pair IDs.",
+        "discrepancy": "No cascade, branching, outward recruitment, or pair-production process is present."
       }
     },
     {
@@ -967,14 +967,14 @@
     },
     {
       "id": "s0-field-photon-pulse",
-      "name": "Photon pulse",
-      "group": "Foundational Dynamics & Substrate",
-      "description": "Seeds a propagating photon pulse packet.",
+      "name": "Broad Transverse Packet — Photon Gate Failed",
+      "group": "Validated Native Dynamics",
+      "description": "Closed-negative photon-candidate test for a broad transverse native wave packet.",
       "comment": {
-        "physical_purpose": "Seeds a propagating photon pulse packet.",
+        "physical_purpose": "Tests exact transversality, centroid speed, and coherence of a broad native wave packet.",
         "parameters": "None.",
-        "expected_behavior": "Coherent localized wave packet propagating at light speed along the x-axis.",
-        "discrepancy": "None."
+        "expected_behavior": "Exact transversality and unmanifested +x propagation under the isolated wave map.",
+        "discrepancy": "At L=48 and t=20, centroid speed is 0.461588 rather than C_SPEED=0.577350 and width ratio is 1.64584; both photon-candidate gates fail."
       }
     },
     {
@@ -1039,9 +1039,9 @@
     },
     {
       "id": "s0-field-thomson-unlocked-recoil",
-      "name": "Flux recoil unlocked",
-      "group": "Foundational Dynamics & Substrate",
-      "description": "Simulates Thomson scattering with an unlocked recoiling charge.",
+      "name": "Native Flux-Gradient Recoil Probe",
+      "group": "Validated Native Dynamics",
+      "description": "Measures deterministic native flux-gradient recoil of a mobile negative-polarity site; no Thomson or electron identity is claimed.",
       "comment": {
         "physical_purpose": "Simulates Thomson scattering with an unlocked recoiling charge.",
         "parameters": "None.",
@@ -1065,9 +1065,9 @@
       "id": "s0-field-electric-dipole",
       "name": "Electric dipole",
       "group": "Foundational Dynamics & Substrate",
-      "description": "Establishes a static electric dipole field.",
+      "description": "Writes a Coulomb-shaped +/- profile into the flux field J. NOT an electric dipole field as displayed: the shipped readout defines E = -wave_vel (diagnostics_compute.cpp:206-207) and this seed never touches wave_vel, so the E overlay renders identically zero and the B overlay renders pure discretization residual.",
       "comment": {
-        "physical_purpose": "Establishes a static electric dipole field.",
+        "physical_purpose": "Prepared two-pole Coulomb-shaped J profile (initial data). The dipole-field identification is NOT certified: E = -wave_vel is zero for this seed.",
         "parameters": "None.",
         "expected_behavior": "Dipole field lines connecting a positive and negative charge.",
         "discrepancy": "None."
@@ -1095,6 +1095,30 @@
         "parameters": "None.",
         "expected_behavior": "Tangential rotational flux line about the z-axis.",
         "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-dynamical-flux-dressing",
+      "name": "Dynamical Flux Dressing — Native Source Probe",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "A locked positive ternary source generates flux dynamically from an exactly zero-field initial state.",
+      "comment": {
+        "physical_purpose": "Visualizes the native -G_C grad(s) source response and its causal growth.",
+        "parameters": "One locked central s=+1 site; J=W=0 initially; periodic wave+coupling sector only.",
+        "expected_behavior": "An outward six-face response appears on tick one and expands causally while the source remains fixed.",
+        "discrepancy": "The scenario does not establish electromagnetism, an attached aura, a pilot wave, a photon, or radiation. Flux lines are integral curves of J."
+      }
+    },
+    {
+      "id": "s0-seed-moving-source-reciprocity",
+      "name": "Driven Polarity — Sub-voxel Response",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "A separate finite transverse packet produces a qualified sub-voxel response of an initially resting polarity through the selected flux-gradient force extension.",
+      "comment": {
+        "physical_purpose": "Visualizes FTD-0477's qualified force response while keeping state, field-change, flow, and streamline diagnostics distinct.",
+        "parameters": "One unlocked s=+1 source at rest; separate A=0.5 transverse packet; periodic wave/coupling/forces/movement/emergent-forces profile.",
+        "expected_behavior": "The selected force produces a deterministic sub-voxel response; J streamlines, -wave_vel, and Poynting-like flow expose distinct instantaneous diagnostics.",
+        "discrepancy": "FTD-0477 observed 0.203598 cells of response but no integer hop. Dressing, wake, detached-field, and registered reciprocity gates failed. The selected force is not ordinary qE."
       }
     },
     {

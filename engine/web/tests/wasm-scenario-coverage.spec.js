@@ -25,6 +25,8 @@ import { gotoAndReady } from './_helpers.js';
 const NEWLY_PORTED_SCENARIOS = [
     // flux-* — previously WASM-supported subset (baseline)
     ['flux-pulse',            'baseline (pre-port)',  'flux'],
+    ['flux-genesis-between-gates', 'validated one-tick gate', 'flux'],
+    ['flux-pair-production',  'validated pair-rule cohort', 'flux'],
     // flux-* — newly ported
     ['flux-meson',            'newly ported',  'flux'],
     ['flux-baryon',           'newly ported',  'flux'],
@@ -33,7 +35,7 @@ const NEWLY_PORTED_SCENARIOS = [
     ['flux-triad',            'newly ported',  'flux'],
     ['flux-vacuum-foam',      'newly ported',  'flux'],
     ['flux-zero-point',       'newly added',   'flux'],
-    ['flux-annihilation',     'newly ported',  'flux'],
+    ['flux-annihilation',     'validated collision rule',  'flux'],
     ['flux-nested-standing',  'newly ported',  'flux'],
     // light-* — mostly baseline (already supported) but light-prism was dropped
     ['light-rainbow',         'baseline',      'light'],
@@ -47,6 +49,7 @@ const NEWLY_PORTED_SCENARIOS = [
     ['quantum-casimir',       'newly ported',  'quantum'],
     // s0-field-* — ALL newly ported
     ['s0-field-plane-wave',   'newly ported',  's0-field'],
+    ['s0-field-standing-wave','newly ported',  's0-field'],
     ['s0-field-uniform-e',    'newly ported',  's0-field'],
     ['s0-field-uniform-b',    'newly ported',  's0-field'],
     ['s0-field-electric-dipole', 'newly ported', 's0-field'],
@@ -117,4 +120,34 @@ test.describe('WASM Scale-0 scenario coverage', () => {
                 .toBe(true);
         });
     }
+
+    test('qualified reaction scenarios retain isolated native toggle profiles', async ({ page }) => {
+        const result = await page.evaluate(() => {
+            const b = window._ftdBridge;
+            const names = [
+                'wave_propagation', 'coupling', 'damping', 'genesis',
+                'evaporation', 'gauss_projection', 'forces', 'gravity',
+                'poisson_coulomb', 'movement', 'lorentz_force',
+                'selective_damping', 'larmor_radiation', 'dual_substrate',
+                'color_forces', 'weak_transmutation', 'strong_force',
+                'triad_binding', 'pair_production', 'exchange_force',
+                'latency_field', 'langevin', 'de_broglie_clock',
+            ];
+            const read = () => Object.fromEntries(
+                names.map((name) => [name, b.getToggle(name)]),
+            );
+            b.setupScenario('flux-pair-production');
+            const pair = read();
+            b.setupScenario('flux-annihilation');
+            const collision = read();
+            return { pair, collision };
+        });
+
+        const pairEnabled = Object.entries(result.pair)
+            .filter(([, enabled]) => enabled).map(([name]) => name);
+        const collisionEnabled = Object.entries(result.collision)
+            .filter(([, enabled]) => enabled).map(([name]) => name);
+        expect(pairEnabled).toEqual(['pair_production']);
+        expect(collisionEnabled).toEqual(['movement']);
+    });
 });

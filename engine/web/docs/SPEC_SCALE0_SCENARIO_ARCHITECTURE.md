@@ -3,7 +3,9 @@
 **Status:** foundation reference (descriptive — documents the system as built).
 **Companion docs:** the gap/drift findings live in
 [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md);
-the per-scenario mount/telemetry + physics-sense audit in
+    the current per-scenario qualification and promotion plan in
+[`audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md`](audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md),
+with the historical mount/telemetry baseline retained in
 [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md);
 the remediation roadmap in [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md).
 Active-owner + harness routing —

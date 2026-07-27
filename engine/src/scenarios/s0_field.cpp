@@ -26,47 +26,31 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
 
     if (name == "s0-field-plane-wave") {
         // Scenario ID: s0-field-plane-wave
-        // Physical Purpose: Establishes a planar electromagnetic wave.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Plane wave propagating along the x-axis with transverse oscillations.
-        // Discrepancy: None.
-        const double wl  = N / 4.0;
-        const double amp = K_B * 2.0;
-        const double k   = 2.0 * PI / wl;
-        // Traveling wave: wave_vel = dJ/dt is along the POLARIZATION axis (z, same
-        // as flux), magnitude omega*amp with omega = 2c*sin(k/2) (lattice dispersion),
-        // sign wave_vel_z = -omega*amp*cos(kx). Matches s0-field-light-lattice-wave.
-        const double omega = 2.0 * C_SPEED * std::sin(k / 2.0);
-        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double phase = k * x;
-            double jz = amp * std::sin(phase);
-            double wz = -omega * amp * std::cos(phase);
-            if (std::fabs(jz) > 1e-12 || std::fabs(wz) > 1e-12) {
-                IF(rb, x, y, z, 0, 0, jz);
-                IW(rb, x, y, z, 0, 0, wz);
-            }
-        }
+        // Physical Purpose: Exact traveling eigenmode of the native linear
+        // kick-drift wave operator; no electromagnetic identity is assumed.
+        // Initial Condition: mode n=4, z polarization, +x propagation.
+        // Expected Behaviour: J_z=A sin(kx-omega*t) at the exact lattice pole.
+        configure_free_wave_terms(rb, false);
+        inject_plane_harmonic_x(rb, 4, K_B * 2.0, +1);
     }
     else if (name == "s0-field-standing-wave") {
         // Scenario ID: s0-field-standing-wave
-        // Physical Purpose: Establishes a planar electromagnetic standing wave.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Stationary sinusoidal node-antinode pattern in the transverse flux.
-        // Discrepancy: None.
-        const double wl  = N / 4.0;
-        const double amp = K_B * 2.0;
-        const double k   = 2.0 * PI / wl;
-        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double jz = amp * std::sin(k * x);
-            if (std::fabs(jz) > 1e-12) IF(rb, x, y, z, 0, 0, jz);
-        }
+        // Physical Purpose: Exact standing eigenmode of the native linear
+        // kick-drift wave operator; no cavity or material boundary is implied.
+        // Initial Condition: mode n=4, z polarization, exact pre-kick phase.
+        // Expected Behaviour: J_z=A sin(kx) cos(omega*t), with fixed nodes.
+        configure_free_wave_terms(rb, false);
+        inject_standing_harmonic_x(rb, 4, K_B * 2.0);
     }
     else if (name == "s0-field-uniform-e") {
+        configure_static_seed_terms(rb);
         // Scenario ID: s0-field-uniform-e
         // Physical Purpose: Establishes a uniform electric field.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Spatially uniform vector potential flux background pointing along x-axis.
-        // Discrepancy: None.
+        // Expected Behaviour: Spatially uniform vector potential background along x.
+        // Discrepancy: the phrase "flux background" is misleading - the behaviour
+        // test asserts flux.mag2() == 0.0 for this scenario. What is seeded is the
+        // potential, not a nonzero J.
         // genesis=false (audit-2 2026-04-28): static uniform E shouldn't
         // fill the lattice with manifested particles. Mirrors JS.
         rb.toggles.genesis = false;
@@ -76,6 +60,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-uniform-b") {
+        configure_static_seed_terms(rb);
         // Scenario ID: s0-field-uniform-b
         // Physical Purpose: Establishes a uniform magnetic field.
         // Initial Condition Parameters: None.
@@ -91,51 +76,24 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-field-photon-pulse") {
         // Scenario ID: s0-field-photon-pulse
-        // Physical Purpose: Seeds a propagating photon pulse packet.
+        // Physical Purpose: Tests a broad transverse packet as a photon candidate.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Coherent localized wave packet propagating at light speed along the x-axis.
-        // Discrepancy: None.
+        // Qualification: closed negative for the current seed. At L=48 over
+        // 20 ticks its energy centroid speed is 0.462 (not C_SPEED=0.577) and
+        // its width grows by 1.646, failing the preregistered speed/coherence
+        // gates. The initial field remains exactly transverse and unmanifested.
+        configure_free_wave_terms(rb);
         const int sigma = std::max(3, N / 8);
-        const double amp = K_B * 2.0;
-        const double lambdaEff = 4.0 * sigma;
-        const double k = 2.0 * PI / lambdaEff;
-        // Traveling packet: wave_vel along the POLARIZATION axis (z, same as flux),
-        // omega = 2c*sin(k/2), wave_vel_z = -omega*amp*g*cos(phase). Same fix as plane-wave.
-        const double omega = 2.0 * C_SPEED * std::sin(k / 2.0);
-        const double cutR = 3.0 * sigma;
-        const double cutR2 = cutR * cutR;
-        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double dx = x - mc, dy = y - mc, dz = z - mc;
-            double r2 = dx * dx + dy * dy + dz * dz;
-            if (r2 > cutR2) continue;
-            double g = std::exp(-r2 / (2.0 * sigma * sigma));
-            if (g < 1e-6) continue;
-            double phase = k * dx;
-            double jz = amp * g * std::sin(phase);
-            double wz = -omega * amp * g * std::cos(phase);
-            IF(rb, x, y, z, 0, 0, jz);
-            IW(rb, x, y, z, 0, 0, wz);
-        }
+        inject_transverse_packet_x(rb, mc, mc, mc, sigma, std::max(6.0, N / 4.0),
+                                   K_B * 2.0, +1,
+                                   2.0 * PI / (4.0 * sigma));
     }
     else if (name == "s0-field-thomson-scattering") {
         // Scenario ID: s0-field-thomson-scattering
-        // Physical Purpose: Simulates classical electromagnetic Thomson scattering off a locked charge.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Plane wave scattering off a stationary central electron.
-        // Discrepancy: None.
-        // Fixed electron-like scattering observatory:
-        // one locked negative charge at the center plus a y-polarized plane
-        // wave propagating along +x. This is a visualization/instrument setup,
-        // not a derivation of alpha.
-        rb.toggles.wave_propagation = true;
-        rb.toggles.coupling = true;
-        rb.toggles.damping = false;
-        rb.toggles.selective_damping = false;
-        rb.toggles.genesis = false;
-        rb.toggles.gauss_projection = false;
-        rb.toggles.forces = false;
-        rb.toggles.movement = false;
-        rb.toggles.poisson_coulomb = false;
+        // Physical Purpose: Locked-source linear-superposition null test.
+        // The four-arm observatory finds no interaction residual or recoil, so
+        // the Thomson-scattering interpretation is closed for this profile.
+        configure_locked_coupled_field_terms(rb);
 
         IP(rb, mc, mc, mc, -1);
         rb.voxels()[rb.lattice().index(mc, mc, mc)].locked = true;
@@ -143,33 +101,26 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const int mode_n = 4;
         const double amp = 0.05;
         const double k = 2.0 * PI * static_cast<double>(mode_n) / static_cast<double>(N);
-        const double omega = 2.0 * C_SPEED * std::fabs(std::sin(k * 0.5));
+        const double omega = lattice_harmonic_omega(k);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             const double jy = amp * std::sin(k * x);
-            const double wy = -omega * amp * std::cos(k * x);
+            const double wy = amp * ((1.0 - std::cos(omega)) * std::sin(k*x)
+                                     - std::sin(omega) * std::cos(k*x));
             if (std::fabs(jy) > 1e-12) IF(rb, x, y, z, 0, jy, 0);
             if (std::fabs(wy) > 1e-12) IW(rb, x, y, z, 0, wy, 0);
         }
     }
     else if (name == "s0-field-thomson-unlocked-recoil") {
         // Scenario ID: s0-field-thomson-unlocked-recoil
-        // Physical Purpose: Simulates Thomson scattering with an unlocked recoiling charge.
+        // Physical Purpose: Native flux-gradient recoil probe with one mobile
+        // negative-polarity manifested site in a transverse lattice wave.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Plane wave scattering off a mobile central electron which recoils under emergent forces.
-        // Discrepancy: None.
-        // FTD-0288 visual companion: one unlocked negative charge plus the
-        // same plane wave, with the native emergent flux-gradient force path.
-        rb.toggles.wave_propagation = true;
-        rb.toggles.coupling = true;
-        rb.toggles.damping = false;
-        rb.toggles.selective_damping = false;
-        rb.toggles.genesis = false;
-        rb.toggles.gauss_projection = false;
-        rb.toggles.forces = true;
-        rb.toggles.movement = true;
-        rb.toggles.poisson_coulomb = false;
-        rb.toggles.lorentz_force = false;
-        rb.toggles.emergent_forces = true;
+        // Expected Behaviour: The native emergent-force path produces a
+        // deterministic beam-minus-no-beam displacement.  This is not a
+        // Thomson cross-section or QED-scattering claim.
+        // Discrepancy: The legacy native force path has no resolved recoil;
+        // the response depends on the selected emergent-forces extension.
+        configure_emergent_recoil_terms(rb);
 
         IP(rb, mc, mc, mc, -1);
         rb.voxels()[rb.lattice().index(mc, mc, mc)].locked = false;
@@ -177,32 +128,29 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const int mode_n = 4;
         const double amp = 0.05;
         const double k = 2.0 * PI * static_cast<double>(mode_n) / static_cast<double>(N);
-        const double omega = 2.0 * C_SPEED * std::fabs(std::sin(k * 0.5));
+        const double omega = 2.0 * std::asin(C_SPEED * std::fabs(std::sin(k * 0.5)));
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             const double jy = amp * std::sin(k * x);
-            const double wy = -omega * amp * std::cos(k * x);
+            const double wy = amp * ((1.0 - std::cos(omega)) * std::sin(k*x)
+                                     - std::sin(omega) * std::cos(k*x));
             if (std::fabs(jy) > 1e-12) IF(rb, x, y, z, 0, jy, 0);
             if (std::fabs(wy) > 1e-12) IW(rb, x, y, z, 0, wy, 0);
         }
     }
     else if (name == "s0-field-spacetime-forcing-boundary") {
         // Scenario ID: s0-field-spacetime-forcing-boundary
-        // Physical Purpose: Models spacetime forcing boundary conditions (FTD-0253).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Forcing of localized flux at the center.
-        // Discrepancy: None.
-        // FTD-0253 visible seed: the wave half of
-        // test_spacetime_forcing_demo.cpp. The diffusion half is a
-        // counterfactual shown in engine/web/demos/spacetime-forcing-boundary.html.
+        // Physical Purpose: Native point-response locality-cone probe.
+        // This is only the production wave map. The diffusion comparison in
+        // the legacy demo is a counterfactual and is not an engine scenario.
+        configure_free_wave_terms(rb, false);
         IF(rb, mc, mc, mc, 0.0, 0.0, 1.0);
         IW(rb, mc, mc, mc, 0.0, 0.0, 1.0);
     }
     else if (name == "s0-field-electric-dipole") {
         // Scenario ID: s0-field-electric-dipole
-        // Physical Purpose: Establishes a static electric dipole field.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Dipole field lines connecting a positive and negative charge.
-        // Discrepancy: None.
+        // Physical Purpose: Imposed softened opposite-source Coulomb-shaped
+        // flux profile. This is imported initial data, not emergent EM.
+        configure_static_seed_terms(rb);
         const int sep  = std::max(2, N / 8);
         const int half = sep / 2;
         const int px = mc + half, nx = mc - half;
@@ -213,11 +161,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             double jx = 0, jy = 0, jz = 0;
             double dx1 = x - px, dy1 = y - mc, dz1 = z - mc;
             double r2_1 = dx1*dx1 + dy1*dy1 + dz1*dz1 + 1.0;
-            double f1 = alpha_amp / r2_1;
+            double f1 = alpha_amp / std::pow(r2_1, 1.5);
             jx += f1 * dx1; jy += f1 * dy1; jz += f1 * dz1;
             double dx2 = x - nx, dy2 = y - mc, dz2 = z - mc;
             double r2_2 = dx2*dx2 + dy2*dy2 + dz2*dz2 + 1.0;
-            double f2 = -alpha_amp / r2_2;
+            double f2 = -alpha_amp / std::pow(r2_2, 1.5);
             jx += f2 * dx2; jy += f2 * dy2; jz += f2 * dz2;
             double mag = std::sqrt(jx*jx + jy*jy + jz*jz);
             if (mag > 1e-6) IF(rb, x, y, z, jx, jy, jz);
@@ -225,28 +173,25 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-field-magnetic-dipole") {
         // Scenario ID: s0-field-magnetic-dipole
-        // Physical Purpose: Establishes a static magnetic dipole field.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Circulating loop flux representing a magnetic dipole.
-        // Discrepancy: None.
-        const int loopR = std::max(3, N / 8);
-        const double amp = K_B;
-        const int nAngles = std::max(36, loopR * 8);
-        for (int i = 0; i < nAngles; i++) {
-            double theta = 2.0 * PI * i / nAngles;
-            int lx = RND(mc + loopR * std::cos(theta));
-            int ly = RND(mc + loopR * std::sin(theta));
-            double tx = -std::sin(theta) * amp;
-            double ty =  std::cos(theta) * amp;
-            for (int z = 0; z < N; z++) IF(rb, lx, ly, z, tx, ty, 0);
+        // Physical Purpose: Imposed softened dipole vector-potential ansatz
+        // A = mu x r / (r^2 + a^2)^(3/2), with mu parallel to +z.
+        // It is not a native derivation of magnetism or a material current loop.
+        configure_static_seed_terms(rb);
+        const double half = (N - 1) / 2.0;
+        const double mu_amp = K_B / (4.0 * PI);
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            const double rx = x - half, ry = y - half, rz = z - half;
+            const double denom = std::pow(rx*rx + ry*ry + rz*rz + 1.0, 1.5);
+            const double ax = -mu_amp * ry / denom;
+            const double ay =  mu_amp * rx / denom;
+            if (std::hypot(ax, ay) > 1e-8) IF(rb, x, y, z, ax, ay, 0.0);
         }
     }
     else if (name == "s0-field-vortex-line") {
         // Scenario ID: s0-field-vortex-line
-        // Physical Purpose: Models an electromagnetic or fluid vortex line.
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Tangential rotational flux line about the z-axis.
-        // Discrepancy: None.
+        // Physical Purpose: Imposed azimuthal 1/r vector profile about the
+        // z-axis. No electromagnetic, fluid, or quantized-vortex identity.
+        configure_static_seed_terms(rb);
         const double gamma = K_B * 4.0;
         const double half = (N - 1) / 2.0;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -261,28 +206,19 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
 
     else if (name == "s0-field-rf-lattice-wave") {
         // Scenario ID: s0-field-rf-lattice-wave
-        // Physical Purpose: Long-wavelength RF wave demonstration.
+        // Physical Purpose: Selected n=1 transverse lattice harmonic.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Large scale wave propagating across lattice.
-        // Discrepancy: None.
+        // Expected Behaviour: exact n=1 plane-average kick-drift pole.
+        // Discrepancy: no mapping to SI radio frequency.
         // Ported from JS seedSpectrumComparator (RF lane): modeN=1, sigmaFrac=0.12,
         // amp=0.034, phase=0, y-component, waveSpeed=C_SPEED.
-        rb.toggles.wave_propagation  = true;
-        rb.toggles.coupling          = false;
-        rb.toggles.damping           = false;
-        rb.toggles.selective_damping = false;
-        rb.toggles.genesis           = false;
-        rb.toggles.gauss_projection  = false;
-        rb.toggles.forces            = false;
-        rb.toggles.movement          = false;
-        rb.toggles.poisson_coulomb   = false;
-        rb.toggles.lorentz_force     = false;
+        configure_free_wave_terms(rb, false);
         {
             const double sigmaFrac = 0.12, amp_w = 0.034, ph0 = 0.0;
             const double sigma  = std::max(1.15, N * sigmaFrac);
             const int    modeN  = std::max(1, std::min(N / 2 - 1, 1));
             const double k      = 2.0 * PI * modeN / N;
-            const double omega  = 2.0 * C_SPEED * std::abs(std::sin(k / 2.0));
+            const double omega  = 2.0 * std::asin(C_SPEED * std::abs(std::sin(k / 2.0)));
             const double cut    = sigma * 2.4, cut2 = cut * cut;
             const int zlo = std::max(0,   (int)std::floor(mc - cut));
             const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
@@ -298,7 +234,8 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
                 if (g < 1e-4) continue;
                 const double ph = k * x + ph0;
                 const double j  = amp_w * g * std::sin(ph);
-                const double w  = -omega * amp_w * g * std::cos(ph);
+                const double w  = amp_w * g * ((1.0 - std::cos(omega)) * std::sin(ph)
+                                                - std::sin(omega) * std::cos(ph));
                 if (std::fabs(j) > 1e-12) IF(rb, x, y, z, 0, j, 0);
                 if (std::fabs(w) > 1e-12) IW(rb, x, y, z, 0, w, 0);
             }
@@ -306,28 +243,19 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-field-light-lattice-wave") {
         // Scenario ID: s0-field-light-lattice-wave
-        // Physical Purpose: Optical wavelength lattice wave demonstration.
+        // Physical Purpose: Selected n=6 transverse lattice harmonic.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Optical frequency waves.
-        // Discrepancy: None.
+        // Expected Behaviour: exact n=6 plane-average kick-drift pole.
+        // Discrepancy: no mapping to SI light, color, or photon identity.
         // Ported from JS seedSpectrumComparator (light lane): modeN=6, sigmaFrac=0.10,
         // amp=0.032, phase=PI*0.15, y-component, waveSpeed=C_SPEED.
-        rb.toggles.wave_propagation  = true;
-        rb.toggles.coupling          = false;
-        rb.toggles.damping           = false;
-        rb.toggles.selective_damping = false;
-        rb.toggles.genesis           = false;
-        rb.toggles.gauss_projection  = false;
-        rb.toggles.forces            = false;
-        rb.toggles.movement          = false;
-        rb.toggles.poisson_coulomb   = false;
-        rb.toggles.lorentz_force     = false;
+        configure_free_wave_terms(rb, false);
         {
             const double sigmaFrac = 0.10, amp_w = 0.032, ph0 = PI * 0.15;
             const double sigma  = std::max(1.15, N * sigmaFrac);
             const int    modeN  = std::max(1, std::min(N / 2 - 1, 6));
             const double k      = 2.0 * PI * modeN / N;
-            const double omega  = 2.0 * C_SPEED * std::abs(std::sin(k / 2.0));
+            const double omega  = 2.0 * std::asin(C_SPEED * std::abs(std::sin(k / 2.0)));
             const double cut    = sigma * 2.4, cut2 = cut * cut;
             const int zlo = std::max(0,   (int)std::floor(mc - cut));
             const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
@@ -343,7 +271,8 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
                 if (g < 1e-4) continue;
                 const double ph = k * x + ph0;
                 const double j  = amp_w * g * std::sin(ph);
-                const double w  = -omega * amp_w * g * std::cos(ph);
+                const double w  = amp_w * g * ((1.0 - std::cos(omega)) * std::sin(ph)
+                                                - std::sin(omega) * std::cos(ph));
                 if (std::fabs(j) > 1e-12) IF(rb, x, y, z, 0, j, 0);
                 if (std::fabs(w) > 1e-12) IW(rb, x, y, z, 0, w, 0);
             }
@@ -351,22 +280,13 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-field-sound-lattice-wave") {
         // Scenario ID: s0-field-sound-lattice-wave
-        // Physical Purpose: Acoustic wavelength wave demonstration.
+        // Physical Purpose: Closed-negative test of a selected c/8 longitudinal seed.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Very low frequency wave behavior.
-        // Discrepancy: None.
+        // Expected Behaviour: native C_SPEED pole despite the slow seed momentum.
+        // Discrepancy: no acoustic medium exists in the frozen vector-wave sector.
         // Ported from JS seedSpectrumComparator (sound lane): modeN=4, sigmaFrac=0.11,
         // amp=0.030, phase=PI*0.10, x-component (longitudinal), waveSpeed=C_SPEED/8.
-        rb.toggles.wave_propagation  = true;
-        rb.toggles.coupling          = false;
-        rb.toggles.damping           = false;
-        rb.toggles.selective_damping = false;
-        rb.toggles.genesis           = false;
-        rb.toggles.gauss_projection  = false;
-        rb.toggles.forces            = false;
-        rb.toggles.movement          = false;
-        rb.toggles.poisson_coulomb   = false;
-        rb.toggles.lorentz_force     = false;
+        configure_free_wave_terms(rb, false);
         {
             // SOUND_PROXY_SPEED: c/8 is a pedagogical PROXY, not a real acoustic
             // eigenmode. FTD has no sound — the single flux sector re-propagates
@@ -377,7 +297,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             const double sigma  = std::max(1.15, N * sigmaFrac);
             const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
             const double k      = 2.0 * PI * modeN / N;
-            const double omega  = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
+            const double seedOmega = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
             const double cut    = sigma * 2.4, cut2 = cut * cut;
             const int zlo = std::max(0,   (int)std::floor(mc - cut));
             const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
@@ -393,7 +313,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
                 if (g < 1e-4) continue;
                 const double ph = k * x + ph0;
                 const double j  = amp_w * g * std::sin(ph);
-                const double w  = -omega * amp_w * g * std::cos(ph);
+                const double w  = -seedOmega * amp_w * g * std::cos(ph);
                 if (std::fabs(j) > 1e-12) IF(rb, x, y, z, j, 0, 0);
                 if (std::fabs(w) > 1e-12) IW(rb, x, y, z, w, 0, 0);
             }
@@ -401,23 +321,16 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-field-sound-collision") {
         // Scenario ID: s0-field-sound-collision
-        // Physical Purpose: Collision of two sound wave pulses.
+        // Physical Purpose: Collision setup for two longitudinal proxy packets.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Interference and beat frequencies of sound waves.
-        // Discrepancy: None.
+        // Expected Behaviour: substantial overlap with exact linear
+        // superposition and no collision residual.
+        // Discrepancy: no acoustic medium, physical sound identity, or
+        // nonlinear collision interaction.
         // Ported from JS seedSpectrumComparator (sound-collision: 2 lanes).
         // Left pulse: pulseCenterOffsetFrac=-0.25, right-going (speedMult=+1).
         // Right pulse: pulseCenterOffsetFrac=+0.25, left-going (speedMult=-1).
-        rb.toggles.wave_propagation  = true;
-        rb.toggles.coupling          = false;
-        rb.toggles.damping           = false;
-        rb.toggles.selective_damping = false;
-        rb.toggles.genesis           = false;
-        rb.toggles.gauss_projection  = false;
-        rb.toggles.forces            = false;
-        rb.toggles.movement          = false;
-        rb.toggles.poisson_coulomb   = false;
-        rb.toggles.lorentz_force     = false;
+        configure_free_wave_terms(rb, false);
         {
             // SOUND_PROXY_SPEED: c/8 is a pedagogical PROXY, not a real acoustic
             // eigenmode. FTD has no sound — the single flux sector re-propagates
@@ -429,7 +342,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             const double pulseSigma = std::max(1.5, N * pulseFrac * 0.5);
             const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
             const double k      = 2.0 * PI * modeN / N;
-            const double omega  = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
+            const double seedOmega = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
             const double cut    = sigma * 2.4, cut2 = cut * cut;
             struct Lane { double offsetFrac; double speedMult; };
             const Lane lanes[2] = {{-0.25, +1.0}, {+0.25, -1.0}};
@@ -451,7 +364,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
                     if (g < 1e-4) continue;
                     const double ph = k * x;
                     const double j  = amp_w * g * std::sin(ph);
-                    const double w  = lane.speedMult * (-omega * amp_w * g * std::cos(ph));
+                    const double w  = lane.speedMult * (-seedOmega * amp_w * g * std::cos(ph));
                     if (std::fabs(j) > 1e-12) IF(rb, x, y, z, j, 0, 0);
                     if (std::fabs(w) > 1e-12) IW(rb, x, y, z, w, 0, 0);
                 }

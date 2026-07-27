@@ -23,20 +23,34 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
     const int    N     = rb.lattice().size();
     const int    mid   = N / 2;
     const double amp   = 0.15;
+    const auto configure_free_wave = [&]() {
+        configure_free_wave_terms(rb);
+    };
 
     if (name == "light-rainbow") {
         // Scenario ID: light-rainbow
-        // Physical Purpose: Demonstrates dispersion of light waves of three different wavelengths/colors.
+        // Physical Purpose: Compares native lattice dispersion for three
+        // transverse harmonics with different wavelengths.
         // Initial Condition Parameters: Superimposed sinusoidal flux waves of three different frequencies (n=1, 3, 6) across the lattice.
-        // Expected Behaviour: Dispersion and spatial separation of the wave frequencies.
+        // Expected Behaviour: The higher-k harmonics accumulate a larger
+        // lattice-dispersion phase lag.  "Colour" is only a display label.
+        configure_free_wave();
         struct W { int n; int pol; };
-        const W waves[3] = { {1,1}, {3,2}, {6,0} };
+        // Propagation is along x, so every polarization must be y or z.
+        const W waves[3] = { {1,1}, {3,2}, {6,1} };
         for (int w = 0; w < 3; w++) {
             double k = 2.0 * PI * waves[w].n / N;
             int pol = waves[w].pol;
             for (int x = 0; x < N; x++) for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) {
                 double J_val  = amp * std::sin(k * x);
-                double wv_val = -2.0 * C_WAVE * std::sin(k / 2.0) * amp * std::cos(k * x);
+                // phase_read kicks W before phase_write drifts J. Match the
+                // same kick-drift time phase used by the packet helper:
+                // W = -c D_x J - c^2 Lap(J)/2.  For a uniform-yz harmonic,
+                // D_x sin(kx)=sin(k)cos(kx) and
+                // Lap_18 sin(kx)=-4 sin^2(k/2)sin(kx).
+                double wv_val = -C_WAVE * std::sin(k) * amp * std::cos(k * x)
+                              + 2.0 * C_WAVE * C_WAVE
+                                * std::sin(k / 2.0) * std::sin(k / 2.0) * J_val;
                 double fv[3] = {0,0,0}, wvv[3] = {0,0,0};
                 fv[pol] = J_val;
                 wvv[pol] = wv_val;
@@ -47,67 +61,51 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "light-dipole") {
         // Scenario ID: light-dipole
-        // Physical Purpose: Simulates classical electromagnetic dipole radiation.
-        // Initial Condition Parameters: Central Gaussian dipole field with amplitude dAmp = 0.5; genesis is disabled to avoid pair production.
-        // Expected Behaviour: Spherically propagating radiation fields representing dipole emissions.
-        // genesis=false (audit-2 2026-04-28): classical EM dipole — not a pair-producer.
-        rb.toggles.genesis = false;
-        const int sigma = 3;
-        const double dAmp = 0.5;
-        for (int x = 0; x < N; x++) for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) {
-            double dx = x - mid, dy = y - mid, dz = z - mid;
-            double g = dAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * sigma * sigma));
-            if (g < 1e-6) continue;
-            IF(rb, x, y, z, 0, 0, g);
-            IW(rb, x, y, z, 0, 0, g);
-        }
+        // Physical Purpose: Visualizes two oppositely directed transverse radiation lobes.
+        // Initial Condition Parameters: Divergence-free Gaussian packets, amplitude 0.5.
+        // Expected Behaviour: The two lobes separate along +/-x under the native wave map.
+        // Verification: dipole-like radiation proxy; not a full Maxwell dipole solution.
+        configure_free_wave();
+        inject_transverse_packet_x(rb, mid - 2.0, mid, mid, 2.5, 3.0, 0.5, -1);
+        inject_transverse_packet_x(rb, mid + 2.0, mid, mid, 2.5, 3.0, 0.5, +1);
     }
     else if (name == "light-two-slit") {
         // Scenario ID: light-two-slit
-        // Physical Purpose: Simulates the classic double-slit wave interference experiment.
-        // Initial Condition Parameters: Two Gaussian source slit apertures on a transverse plane (spaced slit_sep apart); genesis is disabled.
-        // Expected Behaviour: Interference fringes propagating downstream of the double slits.
-        // genesis=false (audit-2 2026-04-28): classical interference — should not pair-produce.
-        rb.toggles.genesis = false;
-        const int sigma = 2;
+        // Physical Purpose: Tests interference from two coherent classical
+        // transverse sources. There is no material barrier or slit boundary.
+        // Initial Condition: Two equal Gaussian sheet packets separated in y.
+        // Qualification status: pointwise superposition and both cross-term
+        // signs are present, but the fixed L=48 screen gate remains failed
+        // because constructive contrast is below the preregistered 5% floor.
+        configure_free_wave();
+        const int sigma_x = 4;
+        const int sigma_y = 2;
         const double sAmp = 0.3;
         const int slit_sep = N / 6;
         const int slit_x   = N / 4;
-        const int slit_ys[2] = { mid - slit_sep, mid + slit_sep };
-        for (int i = 0; i < 2; i++) {
-            int sy = slit_ys[i];
-            for (int z = 0; z < N; z++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
-                double g = sAmp * std::exp(-(dx*dx + dy*dy) / (2.0 * sigma * sigma));
-                if (g < 1e-6) continue;
-                int px = slit_x + dx, py = sy + dy;
-                if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                IF(rb, px, py, z, 0, 0, g);
-                IW(rb, px, py, z, g, 0, 0);
-            }
-        }
+        const double carrier_k = 2.0 * PI / 8.0;
+        inject_sheet_packet_x(rb, slit_x, mid - slit_sep, sigma_x, sigma_y,
+                              sAmp, +1, 2, carrier_k);
+        inject_sheet_packet_x(rb, slit_x, mid + slit_sep, sigma_x, sigma_y,
+                              sAmp, +1, 2, carrier_k);
     }
     else if (name == "light-photon-race") {
         // Scenario ID: light-photon-race
         // Physical Purpose: Compares propagation characteristics of photons/wave packets of different amplitudes.
         // Initial Condition Parameters: Two parallel photon wave packets starting at x_start, one with low amplitude (0.05) and one with high amplitude (0.5).
-        // Expected Behaviour: Propagation of the two wave packets across the lattice, demonstrating non-linear or linear wave speeds.
+        // Expected Behaviour: Both packets translate at the same limiting speed despite their amplitude ratio.
+        // Verification: common-speed classical-wave comparison.
+        configure_free_wave();
         const int sigma = 3;
         const int x_start = N / 4;
         const double pAmps[2] = { 0.05, 0.5 };
-        const int y_off[2] = { mid - N / 6, mid + N / 6 };
-        for (int p = 0; p < 2; p++) {
-            for (int x = 0; x < N; x++) {
-                double dx = x - x_start;
-                double g = pAmps[p] * std::exp(-dx * dx / (2.0 * sigma * sigma));
-                if (g < 1e-8) continue;
-                for (int y = y_off[p] - 2; y <= y_off[p] + 2; y++)
-                for (int z = mid - 2; z <= mid + 2; z++) {
-                    if (y < 0 || y >= N || z < 0 || z >= N) continue;
-                    IF(rb, x, y, z, 0, 0, g);
-                    IW(rb, x, y, z, 0, 0, g);
-                }
-            }
-        }
+        const int transverse_off[2] = { mid - N / 6, mid + N / 6 };
+        // Orthogonal polarizations let diagnostics separate the two
+        // superposed linear solutions without amplitude leakage.
+        inject_sheet_packet_x(rb, x_start, transverse_off[0], sigma, 2.0,
+                              pAmps[0], +1, 1);
+        inject_sheet_packet_x(rb, x_start, transverse_off[1], sigma, 2.0,
+                              pAmps[1], +1, 2);
     }
     return true;
 }
