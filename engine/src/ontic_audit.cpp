@@ -258,14 +258,19 @@ int ontic_audit() {
     // --- Layer 6b: Electroweak Scale (Higgs) ---
     std::cout << "\n--- Layer 6b: Electroweak Scale (Higgs) ---\n";
     std::cout << "    V_HIGGS (VEV)          = " << V_HIGGS << " GeV (exp: 246.22)\n";
-    std::cout << "    M_HIGGS                = " << M_HIGGS << " GeV (exp: 125.1)\n";
+    std::cout << "    M_HIGGS                = " << M_HIGGS
+              << " GeV (exp: 125.20 +/- 0.11, PDG 2024; exact formula 124.748"
+                 " = -4.1 sigma, EXCLUDED as an exact relation)\n";
     std::cout << "    lambda_H               = " << LAMBDA_HIGGS << "\n";
     double vh_err = std::abs(V_HIGGS - 246.22) / 246.22;
-    double mh_err = std::abs(M_HIGGS - 125.1) / 125.1;
+    // Canonical edition: PDG 2024, 125.20 +/- 0.11 GeV (REF_EXTERNAL_CONSTANTS.md).
+    // The 0.5% window is ~5.7 sigma wide and so cannot register the -4.1 sigma
+    // exclusion FTD-0348 recorded; it is a smoke gate on the stored literal only.
+    double mh_err = std::abs(M_HIGGS - 125.20) / 125.20;
     std::cout << "    VEV error              = " << vh_err * 100.0 << "%\n";
     std::cout << "    Higgs mass error       = " << mh_err * 100.0 << "%\n";
     check("V_HIGGS within 0.1% of 246.22", vh_err < 0.001);
-    check("M_HIGGS within 0.5% of 125.1", mh_err < 0.005);
+    check("M_HIGGS within 0.5% of 125.20 (PDG 2024) -- smoke gate, not an agreement claim", mh_err < 0.005);
     // Verify self-coupling consistency
     double lambda_check = M_HIGGS * M_HIGGS / (2.0 * V_HIGGS * V_HIGGS);
     check_close("lambda_H = m_H^2/(2v^2)", LAMBDA_HIGGS, lambda_check, 1e-6);

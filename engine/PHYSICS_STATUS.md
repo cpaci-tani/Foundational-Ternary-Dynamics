@@ -222,7 +222,7 @@ defined by the project ledgers, not by this runtime table.
 | Fine structure | ALPHA | 0.00729735... | Engine input using the `x_+` master-quadratic structural match; physical identification remains `[STRONGLY MOTIVATED CONJECTURE]` |
 | Boltzmann/mass | K_B | 0.511 | Electron-mass anchor (Boltzmann/kinetics scale split to K_MANIFEST := W_SC = 0.505462, FTD-0388) |
 | Gravity | G_N | 0.01 | Lattice-scaled simulation gravity parameter |
-| Speed of light | C_SPEED | 1/sqrt(3) | CFL stability on cubic lattice |
+| Speed of light | C_SPEED | 1/sqrt(3) | **[SELECTION]** (FTD-0407) — not CFL-forced; the production 18-point stencil permits c <= sqrt(3)/2 ~ 0.866 |
 | Bohr radius | R_BOHR | 1/(K_B * ALPHA) | Standard definition |
 | Damping | DAMPING | ALPHA | Dissipation = fine structure constant |
 | Exchange coupling | ALPHA_EXCHANGE | ALPHA^2 | Pauli repulsion strength |

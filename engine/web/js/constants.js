@@ -119,7 +119,11 @@ export const ALPHA_G_APPROX = 5.91e-39;
  * empirical electron mass.
  */
 export const K_B       = 0.511;                       // electron mass in MeV
-export const C_SPEED   = 0.57735026918962576451;      // 1/sqrt(3) [DERIVED from CFL]
+// [SELECTION] (FTD-0407) — NOT derived from CFL. The production normalised
+// 18-point stencil has exact max symbol 16/3 at (π,π,0), so stability permits
+// c ≤ √(3)/2 ≈ 0.866; 1/√3 is the CFL limit of the unnormalised 6-point
+// stencil the engine does not run. Conservative, but a selected value.
+export const C_SPEED   = 0.57735026918962576451;      // 1/sqrt(3) [SELECTION]
 export const C_WAVE    = C_SPEED;
 export const M_INERTIAL = K_B;                        // imposed inertial calibration (FTD-0402)
 export const E_REST = M_INERTIAL * C_SPEED * C_SPEED; // raw-lattice rest energy = K_B/3
@@ -341,8 +345,10 @@ export const LATTICE_TO_SOLAR_MASS = 50.0;
 // the Keplerian G in heliocentric units. mock-scale4.js: use this
 // when running orbital-period-faithful demos.
 export const G_HELIOCENTRIC = 4.0 * Math.PI * Math.PI;
-// FTD tick in seconds: 1 tick = ℓ_P/(√3·c) = t_P/√3. From the CFL Courant
-// speed c_lat = 1/√3 and a_phys ≡ ℓ_P: physical c = c_lat·(a_phys/t_phys)
+// FTD tick in seconds: 1 tick = ℓ_P/(√3·c) = t_P/√3. From the [SELECTION]
+// lattice speed c_lat = 1/√3 (FTD-0407 — not CFL-forced; the production
+// stencil's true ceiling is c ≤ √3/2) and a_phys ≡ ℓ_P: physical
+// c = c_lat·(a_phys/t_phys)
 // forces t_phys = ℓ_P/(√3·c). Distinct from PLANCK_TIME_S = ℓ_P/c = t_P.
 // Use this when converting tick counts to physical seconds.
 export const FTD_TICK_S = 5.391247e-44 / Math.sqrt(3.0);

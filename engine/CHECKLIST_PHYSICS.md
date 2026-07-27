@@ -129,7 +129,7 @@ Global clock t ∈ N advancing by 1 each tick. Phases execute in fixed order.
 
 ### 5.  Local Causality [AXIOM → THEOREM]
 
-Information propagates at most 1 lattice unit per tick. Speed limit C = 1/√3 derived from CFL stability on 3D cubic lattice with leapfrog integration.
+Information propagates at most 1 lattice unit per tick. Speed limit C = 1/√3 is a **[SELECTION]** (FTD-0407), not a CFL derivation: the production normalised 18-point stencil has exact max symbol 16/3 at (π,π,0), so leapfrog stability permits c² ≤ 4/(16/3) = 3/4, i.e. c ≤ √3/2 ≈ 0.866. 1/√3 is the CFL limit of the *unnormalised 6-point* stencil, which the engine does not run — conservative, but selected.
 
 - **Files**: `include/ftd/constants.h` (`C_SPEED`, `C_WAVE`)
 - **Tests**: `test_wave_speed`, `test_light`, `campaign_dispersion`

@@ -147,7 +147,14 @@ def generate_plots():
     labels = ['B1\nCoulomb', 'B2\nalpha', 'B4\nGauss', 'B6\nCharge', 'B7\nH spec',
               'B9\nColor', 'B13\nLarmor', 'B14\nWeak', 'B15\nHiggs', 'B16\nBell',
               'B17\nBorn', 'B18\nSO']
-    grades = ['B+', 'A-', 'A', 'A+', 'A+', 'A+', 'A', 'B+', 'A+', 'A+', 'A-', 'B+']
+    # B16 (index 9, Bell) is N/A as a QM grade -- S=2.000 is the CLASSICAL
+    # local-hidden-variable bound, measured by a standalone toy that never
+    # touches the lattice engine. It confirms the substrate is local/classical,
+    # the opposite of a QM confirmation. The text scorecard already re-grades it
+    # (see :47); this plotting path used to still colour it green 'A+', so a run
+    # emitted a PNG contradicting the report emitted beside it. Graded 'C' here
+    # purely so the bar renders un-green; read the text report for the verdict.
+    grades = ['B+', 'A-', 'A', 'A+', 'A+', 'A+', 'A', 'B+', 'A+', 'C', 'A-', 'B+']
     values = [grades_map[g] for g in grades]
     colors = ['#2ca02c' if v >= 8 else '#ff7f0e' if v >= 5 else '#d62728' for v in values]
 

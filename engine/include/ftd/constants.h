@@ -131,10 +131,18 @@ using ontic::SIN2_WEINBERG;
 //   not a derivation. The static_assert below catches drift between
 //   the two definitions, it does NOT prove new physics.
 //
-//   The actual derivation of α is the master quadratic x² − 16G*²x + 16G*³ = 0
-//   whose tree root is X_PLUS. The 4-term corrected root
-//   X_PLUS_PRECISION matches CODATA 2022 to < 0.001 ppt; the engine's
-//   ALPHA has used that precision value since 2026-04-17 (TRACKER §1.5).
+//   α is NOT derived here or anywhere in FTD. The split (stated canonically
+//   at ontic/gauge_couplings.h:32-35) is:
+//     • the master quadratic x² − 16G*²x + 16G*³ = 0 and its root
+//       X_PLUS = 137.036… are pure algebra — [THEOREM];
+//     • the *identification* x₊ ≡ 1/α is [STRONGLY MOTIVATED CONJECTURE]
+//       (LEDGER FTD-0013). No derivation chain reaches it.
+//   The 4-term corrected root X_PLUS_PRECISION agrees with CODATA 2022 to
+//   ~3e-4 ppt, but that is a post-hoc four-coefficient fit quoted ~500×
+//   finer than CODATA 2022's own 153 ppt uncertainty — a [CONJECTURE], not a
+//   precision derivation (see gauge_couplings.h:40-43, "Do NOT re-tag this
+//   line [THEOREM]"). The engine's ALPHA has used that precision value since
+//   2026-04-17 (TRACKER §1.5); α is an INPUT to the engine, never an output.
 //
 // WHAT THIS MEANS FOR THE ENGINE:
 //   Force code may use either ALPHA or ALPHA_EFT — they are equal by
@@ -162,7 +170,11 @@ using ontic::M_INERTIAL;
 using ontic::E_REST;
 using ontic::M_GRAVITATIONAL;
 using ontic::M_REST;     // compatibility alias only; production consumers must name a role
-using ontic::K_MANIFEST; // genesis/evaporation kinetics scale (= K_B); unified-mass Phase 0
+using ontic::K_MANIFEST; // genesis/evaporation kinetics scale; unified-mass Phase 0
+                         // NOT equal to K_B: since FTD-0388 K_MANIFEST := W_SC =
+                         // 0.50546..., which is -1.084% from K_B = 0.511. The old
+                         // "(= K_B)" asserted the exact role conflation FTD-0130/0388
+                         // split apart (mass anchor vs kinetics scale).
 using ontic::K_GENESIS;
 
 // Layer 6c: Mass ratios
@@ -238,6 +250,13 @@ inline constexpr double R_EFF_DEFAULT = 2.48;
 // Strong coupling at lattice (Planck) scale [IMPOSED]
 // At the Planck scale, QCD is strongly coupled: α_s ~ O(1).
 // F_strong(r) = ALPHA_S * exp(-M_YUKAWA*r) / r² * (1 + M_YUKAWA*r)
+// NAMING HAZARD: this ALPHA_S is NOT the QCD coupling at M_Z. It is an
+// [IMPOSED] Planck-scale strong-force prefactor = 1.0, while ALPHA_S_MZ
+// (Layer 5b above) is the running coupling 7/59 = 0.1186 — the two differ by
+// 8.43x. scripts/constants.py:350 uses the name ALPHA_S for the *M_Z* object,
+// so the same identifier means different things across languages; the JS
+// mirror already disambiguates (STRONG_ALPHA_S / ALPHA_S_MZ). Renaming this
+// symbol requires a consumer sweep and is deliberately NOT done here.
 inline constexpr double ALPHA_S = 1.0;
 
 // Yukawa range parameter (inverse meson mass in lattice units) [IMPOSED]
@@ -389,7 +408,7 @@ inline constexpr double LAPLACIAN_EDGE_WEIGHT = 1.0 / 6.0;
 
 // Genesis/evaporation tuning (formerly bare literals in render_bridge.cpp)
 // K_GENESIS_KINETIC_DRAIN: fraction of wave_vel consumed at manifestation
-// (latent heat of mass-gap creation; v.wave_vel *= (1 - this)).
+// (selected genesis drain; not an exact latent-heat identity per FTD-0567).
 inline constexpr double K_GENESIS_KINETIC_DRAIN = 0.5;
 // K_EVAP_RATE: per-tick evaporation probability scaling. The Boltzmann
 // decay probability p = exp(-local_energy/K_MANIFEST²) is multiplied by

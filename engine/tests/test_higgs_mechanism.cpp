@@ -11,7 +11,10 @@
  *   HIG-1: Mexican-hat potential shape (genesis above K_GENESIS, void below)
  *   HIG-2: Goldstone mode = massless flux propagation at C_SPEED (dual-substrate)
  *   HIG-3: Higgs as flux-density oscillation around K_B
- *   HIG-4: Higgs mass M_HIGGS = 124.8 GeV (within 0.5% of 125.1 GeV)
+ *   HIG-4: Higgs mass M_HIGGS = 124.8 GeV (within 0.5% of 125.20 GeV, PDG 2024).
+ *          NOTE: the exact formula value 124.748 GeV is -4.1 sigma from
+ *          125.20 +/- 0.11 and is EXCLUDED as an exact relation (FTD-0348).
+ *          This 0.5% check is a smoke gate on the stored constant.
  *   HIG-5: Higgs VEV V_HIGGS = 246.09 GeV (within 0.1% of 246.22 GeV)
  *   HIG-6: Higgs self-coupling lambda_H = m_H^2 / (2 * v^2)
  *   HIG-7: SSB occurs dynamically (uniform high-flux void spontaneously manifests)
@@ -270,12 +273,12 @@ int main() {
     // ================================================================
     // M_HIGGS = N_eff * (1/alpha)^2 * m_e [SELECTION]
     //         = 13 * 137.036^2 * 0.511 MeV = 124.8 GeV
-    // Experimental: 125.1 +/- 0.14 GeV
+    // Experimental: 125.20 +/- 0.11 GeV (PDG 2024; canonical per REF_EXTERNAL_CONSTANTS.md)
     // Required: within 0.5%
     std::cout << "\n-- HIG-4: Higgs Mass Constant --\n";
     {
         double m_h_ftd = ftd::M_HIGGS;           // 124.8 GeV
-        double m_h_exp = 125.1;                    // GeV (ATLAS+CMS combined)
+        double m_h_exp = 125.20;                   // GeV (PDG 2024 combined)
 
         double err_pct = std::abs(m_h_ftd - m_h_exp) / m_h_exp * 100.0;
         std::cout << "    M_HIGGS (FTD)  = " << m_h_ftd << " GeV\n";
@@ -291,7 +294,7 @@ int main() {
         std::cout << "    M_HIGGS (formula N_eff*X_PLUS^2*K_B/1000) = "
                   << m_h_derived_GeV << " GeV\n";
 
-        check_close("HIG-4a: M_HIGGS within 0.5% of 125.1 GeV",
+        check_close("HIG-4a: M_HIGGS within 0.5% of 125.20 GeV (PDG 2024)",
                     m_h_ftd, m_h_exp, 0.005);
         check_close("HIG-4b: M_HIGGS consistent with N_eff*(1/alpha)^2*m_e formula",
                     m_h_ftd, m_h_derived_GeV, 0.005);

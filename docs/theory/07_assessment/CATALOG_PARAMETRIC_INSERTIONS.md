@@ -27,8 +27,8 @@
 
 | Category | Count | [DERIVED]/[THEOREM] | [PARAMETRIC] | [IMPOSED]/[SELECTION] |
 |---|---|---|---|---|
-| Foundational constants (α, N_c, G*) | 7 | 7 | 0 | 0 |
-| Lepton-mass ratios | 3 | 3 | 0 | 0 |
+| Foundational constants (α, N_c, G*) | 7 | 5 | 1 | 1 |
+| Lepton-mass ratios | 3 | 0 | 3 | 0 |
 | Quark masses (6 quarks) | 6 | 0 | 6 | 0 |
 | Meson masses | ~42 | 0 | ~42 | 0 |
 | Baryon masses | ~48 | 0 | ~48 | 0 |
@@ -42,7 +42,31 @@
 | Cosmological parameters | 4 | 0 | 0 | 4 |
 | Cross-sections | 3 | 3 | 0 | 0 |
 | Structural null-predictions | 4 | 4 | 0 | 0 |
-| **TOTAL** | **~162** | **~21** | **~131** | **~10** |
+| **TOTAL** | **162** | **18** | **133** | **11** |
+
+> **Arithmetic reconciled 2026-07-26.** The category rows now sum to the TOTAL
+> row: 18 + 133 + 11 = 162. Two category rows were corrected and the TOTAL
+> recomputed from them:
+>
+> - `Foundational constants` was `7 | 7 | 0 | 0`, counting α — the framework's
+>   flagship [SMC] — and sin²θ_W ([PARAMETRIC], FTD-0310) inside the
+>   [DERIVED]/[THEOREM] column, the exact miscount this table exists to prevent.
+>   Now `7 | 5 | 1 | 1`.
+> - `Lepton-mass ratios` was `3 | 3 | 0 | 0`; FTD-0348's demotion of the μ/τ
+>   ratios had reached the TOTAL row and the §4 detail rows but never this one.
+>   Now `3 | 0 | 3 | 0`.
+>
+> The previous TOTAL `~162 | ~21 | ~131 | ~10` matched neither the old rows
+> (which summed to 23/129/10) nor the corrected ones. Derived-grade count is
+> therefore **18**, not the ~21/~23 previously quoted in two places.
+>
+> ⚠ **Open, not fixed here:** the `Mixing angles (PMNS/CKM)` row still books 3 of
+> 7 as [DERIVED]/[THEOREM]. LEDGER FTD-0320 demoted all four PMNS angles to
+> [PARAMETRIC] (look-elsewhere nulls p = 0.48 / 0.96 / 1.00, with the 1/41
+> control MDL-dominated), and the C++ header and `proof_09_all_constants.py`
+> were retagged accordingly on 2026-07-26. Whether the 3 refers to CKM entries
+> that survive, or is residual PMNS over-count, needs a §7 read before the row
+> is moved — so the arithmetic above may tighten further toward [PARAMETRIC].
 
 **Headline finding.** Of the ~162 quantities FTD reports for the Standard Model, **~21 are genuine derivations** (corrected 2026-07-01, FTD-0348 — the μ/τ lepton-mass-ratio rows were carried at [DERIVED] here after their demotion of record to [STRUCTURALLY MOTIVATED PARAMETRIC] elsewhere; two rows moved columns), **~131 are parametric insertions** (standard formulas with FTD-supplied inputs), and **~10 are imposed or selected** (no formal derivation). This is consistent with the "~50 parametric insertions" claim in `AUDIT_EPISTEMIC_AUDIT.md` when mass/decay/CKM sub-tables are not expanded, and with ~150 when they are.
 
@@ -62,7 +86,7 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 | {N_base, N_eff, b_3} | {4, 13, 7} | Moore-neighborhood integer invariants | [THEOREM] | `AUDIT_SELF_CONSISTENCY.md` |
 | G_C (state-flux coupling) | √α | Lattice-QED bare coupling; g_c = √α at Thomson scale | [THEOREM] | `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` |
 | sin²θ_W | 3/13 | N_c / N_eff from SU(2)×U(1) Moore-layer decomposition | **[PARAMETRIC]** (FTD-0310 rigidity audit dropped the [STRUCTURALLY MOTIVATED] qualifier: not statistically special, null p≈0.05 borderline — though non-dominated, the match is not distinguishable from a simple-rational fit. CORRECTION: [THEOREM] of `24b31016` RETRACTED.) | **0.195%** vs the framework's canonical *effective* target 0.23122 (`constants.py Experimental`); the *on-shell* 0.2229 gives 3.53% — the definition choice is itself a look-elsewhere DOF, and the conservative (framework-favorable) effective target still yields not-rigid. 3/13 IS the best simple rational at its complexity (rank-3, NOT dominated by 2/9 against the effective target), but FTD-0310 null p≈0.05. `proof_complete_sm.py` §electroweak; `AUDIT_RIGIDITY_LOADBEARING_v1.md` |
-| C_SPEED | 1/√D = 1/√3 | CFL stability on cubic lattice | [THEOREM] | `SPEC_FTD.md` §dynamics |
+| C_SPEED | 1/√D = 1/√3 | selected lattice speed; the production 18-point stencil's stability ceiling is c ≤ √3/2 (FTD-0407), so 1/√3 is conservative, not forced | [SELECTION] | `SPEC_FTD.md` §dynamics |
 
 ---
 

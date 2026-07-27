@@ -25,7 +25,12 @@ namespace ontic {
 // Manifestation threshold = electron mass (in simulation energy units):
 //   m_e = m_P · √(2π) · (N_base²/N_c) · α¹¹
 //       = m_P · √(2π) · (16/3) · α¹¹
-//       ≈ 0.5096 MeV  (0.27% from experimental 0.5110 MeV)
+//       ≈ 0.51002 MeV  (−0.19% from experimental 0.51099895 MeV, CODATA 2022)
+//   The formula on the line above evaluates to 0.51002, not the 0.5096/0.27%
+//   this comment carried before 2026-07-25.  The relation itself is
+//   [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0015); its exponent n=11 is
+//   NOT forced (FTD-0390 closed the ordering-selection argument as
+//   reverse-engineered — n=13 ties under a uniform prior).
 //
 // In simulation units where m_P = 1, this is ~4.18e-23.
 // We use K_B = 0.511 MeV as the practical simulation value.
@@ -95,17 +100,33 @@ inline constexpr double R_BOHR   = 4.0 * PI / (K_B * ALPHA);  // FTD Bohr radius
 // ============================================================================
 // Layer 6b: Electroweak Scale (Higgs sector)
 // ============================================================================
-// Higgs VEV: v = M_P · √(2π) · α⁸ [THEOREM]
+// Higgs VEV: v = M_P · √(2π) · α⁸ [STRUCTURALLY MOTIVATED PARAMETRIC]
+//   Graded [SMP] by SPEC_NOVEL_PREDICTIONS NP-7 for this exact formula.  It is
+//   a rung of the same α-ladder as m_e, whose anchor is [SMC] (FTD-0015) — a
+//   rung cannot be [THEOREM] while α itself is [SMC].  Neither
+//   SPEC_ALGEBRAIC_SPINE.md nor LEDGER.md carries a "Higgs VEV" row; the
+//   *number* 246.09 is booked [IMPOSED] in CATALOG:216 as an SM reference
+//   input, which is a different object from the formula.
 // In simulation units (M_P = 1): V_HIGGS_SIM = √(2π) · α⁸
 // Physical: 246.09 GeV (0.05% from experimental 246.22 GeV)
 inline constexpr double V_HIGGS = 246.09;  // GeV (physical units for reference)
 
 // Higgs mass: m_H = (N_eff / α²) · m_e [SELECTION]
-// = 13 / (1/137.036)² × 0.511 MeV = 124.8 GeV (0.24% from 125.1 GeV)
+// = 13 / (1/137.036)² × 0.511 MeV = 124.8 GeV.
+//   Against the canonical edition (PDG 2024, 125.20 ± 0.11 GeV — see
+//   docs/reference/REF_EXTERNAL_CONSTANTS.md) the exact formula value
+//   124.748 GeV is −0.36%, i.e. **−4.1σ: experimentally EXCLUDED as an exact
+//   relation** (FTD-0348).  The retired "0.24% from 125.1" compared a rounded
+//   literal against the superseded PDG-2020 value; report σ, not %.
 inline constexpr double M_HIGGS = 124.8;   // GeV
 
-// Higgs self-coupling: λ_H = m_H² / (2·v²) [DERIVED]
-inline constexpr double LAMBDA_HIGGS = (124.8 * 124.8) / (2.0 * 246.09 * 246.09);
+// Higgs self-coupling: λ_H = m_H² / (2·v²) [PARAMETRIC — inherits M_HIGGS/V_HIGGS]
+//   Derived from the two constants above rather than re-hardcoding their
+//   literals, so a correction to either propagates instead of silently
+//   desynchronising.  Bit-identical to the previous literal expression.
+inline constexpr double LAMBDA_HIGGS = (M_HIGGS * M_HIGGS) / (2.0 * V_HIGGS * V_HIGGS);
+static_assert(LAMBDA_HIGGS == (124.8 * 124.8) / (2.0 * 246.09 * 246.09),
+              "LAMBDA_HIGGS must stay bit-identical to its historical literal form");
 
 // ============================================================================
 // FTD-0131 derived gravity (Scale-1 ParticleEngine only)
