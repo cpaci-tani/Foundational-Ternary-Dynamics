@@ -100,10 +100,18 @@ static void configure_reflective_move(RenderBridge& rb) {
 //     downstream. State, latency, tau, phase, identity labels, and strong/weak
 //     sectors remained bit-identical to a0a443f8 in every boundary profile.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x14eb33a180b3d319ULL;
-static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x7d6315d321c7ced7ULL;
-static constexpr std::uint64_t GOLDEN_ABSORBING        = 0xb5f1e6b2a1713f35ULL;
-static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x923f310b5af1e2ecULL;
+// RE-PINNED 2026-07-27 -- EM-diagnostic c^2 restoration (readout, not physics).
+// B_field_energy and total_poynting were missing the factor c^2 carried by the
+// engine's own Lagrangian (lagrangian.h:145) and test_em_energy_conservation.
+// These folds include the energy audit, so the corrected scalars move them.
+// MEASURED in test_render_bridge_golden: reverting only those four factors
+// returns its combined hash to the previous pin exactly, and its state-only
+// fold is byte-identical either way -- the TRAJECTORY did not move. See the
+// pin history in test_render_bridge_golden.cpp for the full decomposition.
+static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x9fc68a69b18104bbULL;
+static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x5211360fca612ebdULL;
+static constexpr std::uint64_t GOLDEN_ABSORBING        = 0xe43c4afbf65dc949ULL;
+static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x6762d0e814750b99ULL;
 
 struct Mode {
     const char* name;
