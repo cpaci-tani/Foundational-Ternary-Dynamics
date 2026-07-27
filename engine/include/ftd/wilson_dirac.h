@@ -6,18 +6,19 @@
  *                   (tag: preregister-phase-ii-wilson-dirac-g2-v1)
  * Specification:    docs/theory/10_eft_program/SPEC_WILSON_DIRAC_FTD.md
  *
- * SCOPE OF THIS HEADER (Phase II.2-A, today's commit):
+ * SCOPE OF THIS HEADER:
  *   - 4-component complex spinor field on the L^3 lattice
  *   - U(1) gauge link variables on lattice edges (3 spatial directions)
  *   - Spatial Wilson-Dirac operator D_W: applies to a spinor field
- *   - 4th-order Runge-Kutta time evolution: i d/dt psi = D_W psi
+ *   - Hermitian Wilson Hamiltonian H_W for real-time evolution
+ *   - 4th-order Runge-Kutta time evolution: i d/dt psi = H_W psi
  *   - Plane-wave initial-state helpers (smoke-test fixtures)
  *
- * NOT IN THIS HEADER (deferred to later Phase II.2 milestones):
- *   - CUDA implementation (Phase II.2-CUDA)
- *   - Toggle integration with RenderBridge::tick() (Phase II.2-integration)
- *   - Magnetic-field gauge-link initialization (Phase II.3)
- *   - Cyclotron + spin-precession measurement (Phase II.4)
+ * OUTSIDE THIS MODULE:
+ *   - CUDA mirrors the retained spatial D_W diagnostic, not H_W evolution
+ *   - No toggle integration with RenderBridge::tick()
+ *   - No dynamical gauge-field or photon-loop sector
+ *   - The historical cyclotron/g-2 campaign is invalidated by FTD-0412
  *
  * CONVENTIONS (committed pre-measurement per SPEC_WILSON_DIRAC_FTD.md):
  *   - Lattice spacing a = 1 (engine-internal units; physical = ell_P per FTD calibration)
@@ -145,18 +146,30 @@ struct GaugeLinks {
 };
 
 // =============================================================================
-// Wilson-Dirac operator D_W applied to a spinor field.
+// Spatial Wilson-Dirac operator D_W applied to a spinor field.
 //
-//   (D_W psi)(n) = (m + 4r/a) psi(n)
-//                  - (1/2a) sum_{mu=0,1,2} [ (r - gamma^mu) U_mu(n) psi(n + mu)
-//                                             + (r + gamma^mu) U_mu^dag(n - mu) psi(n - mu) ]
+//   (D_W psi)(n) = (m + 3 c_s r/a) psi(n)
+//                  - (c_s/2a) sum_{mu=0,1,2} [ (r - gamma^mu) U_mu(n) psi(n + mu)
+//                                                 + (r + gamma^mu) U_mu^dag(n - mu) psi(n - mu) ]
 //
 // where mu in {0, 1, 2} indexes the 3 spatial directions.
+//
+// IMPORTANT (FTD-0412): this spatial operator is retained for the Euclidean
+// and gauge-covariance campaign tests.  It is not itself the real-time
+// relativistic Hamiltonian, and ||D_W psi|| is not an energy eigenvalue for a
+// generic spinor.  Real-time evolution uses apply_wilson_hamiltonian below.
 // =============================================================================
 struct WilsonDiracParams {
     double m = 0.51099895069e-3;  // electron mass in lattice units (placeholder; calibration TBD)
     double r = 1.0;              // Wilson parameter
     double a = 1.0;              // lattice spacing (engine-internal units)
+    double spatial_speed = 1.0;  // [SELECTION] spatial normalization c_s; legacy default preserved
+    // H_W-only transverse averaging weight b.  The free kinetic symbol is
+    //   K_i = sin(q_i)/a * [(1-2b) + b(cos(q_j)+cos(q_k))].
+    // b=0 preserves the axial Wilson Hamiltonian.  FTD-0413 selects b=1/3
+    // together with r^2=4/3 for a nearest-Moore q^4-free matter pole.
+    // The retained spatial D_W diagnostic and its CUDA mirror ignore b.
+    double kinetic_transverse_weight = 0.0;
 };
 
 // Apply D_W to `psi` and write result to `out`.
@@ -176,8 +189,34 @@ void apply_wilson_dirac_dagger(SpinorField& out,
                                const Lattice& lattice,
                                const WilsonDiracParams& params);
 
+// Apply the Hermitian spatial Wilson Hamiltonian
+//
+//   H_W(q) = sum_i c_s alpha_i K_i(q)
+//          + beta [m + c_s r sum_i(1-cos(q_i))/a].
+//
+//   K_i(q) = sin(q_i)/a * [(1-2b) + b(cos(q_j)+cos(q_k))],
+//
+// where b=params.kinetic_transverse_weight and {i,j,k}={x,y,z}.  In position
+// space the b terms use the 12 face-diagonal Moore neighbours.  With gauge
+// links, each diagonal transporter is the equal average of its two shortest
+// oriented paths, which preserves U(1) covariance and Hermiticity.
+//
+// For identity links its exact free spectrum is
+//
+//   E^2 = c_s^2 sum_i K_i(q)^2
+//       + [m + c_s r sum_i(1-cos(q_i))/a]^2.
+//
+// This is the operator used by evolve_rk4_step.  The optional c_s parameter
+// permits an explicitly selected leading-cone diagnostic; c_s=1 preserves the
+// pre-FTD-0412 normalization.
+void apply_wilson_hamiltonian(SpinorField& out,
+                              const SpinorField& psi,
+                              const GaugeLinks& links,
+                              const Lattice& lattice,
+                              const WilsonDiracParams& params);
+
 // =============================================================================
-// Time evolution: i d/dt psi = D_W psi.
+// Time evolution: i d/dt psi = H_W psi.
 // One RK4 step of length dt. Updates `psi` in-place.
 // Two scratch buffers required (k1, k_temp).
 // =============================================================================

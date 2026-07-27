@@ -207,21 +207,32 @@ inline constexpr double C4 = 141.0 / 11.0;   // (N_c·D)/(b₃+N_base)
 // Simulation Parameters (discretization + imposed)
 // ============================================================================
 
-// Speed limit: nothing outruns light [DERIVED]
-// Previously C_SPEED = 1.0 (axiomatic). Now unified with C_WAVE:
-// particles and waves share the same causal speed limit c = 1/√3.
+// Selected production speed [SELECTION; exact stability audit FTD-0407].
+// Previously C_SPEED = 1.0 (axiomatic). It is now numerically unified with
+// C_WAVE so the normalized matter budget and the default flux wave use the
+// same named speed. This equality is an implementation contract; it is not a
+// theorem that every engine sector has one renormalized Lorentz cone.
 inline constexpr double C_SPEED = 0.57735026918962576451;  // = C_WAVE = 1/sqrt(3)
 
-// Speed of light: maximum stable wave propagation speed on the 3D cubic lattice.
-// DERIVED from CFL stability for d²J/dt² = c²∇²J with 6-neighbor Laplacian:
+// Default flux-wave coefficient [SELECTION within an exact stability interval].
+// The historical 1/sqrt(D) argument used the unnormalised 6-neighbor symbol:
 //
 //   c² · (2D/h²) ≤ 2/dt²   (von Neumann stability)
 //   c² ≤ 1/D                (with h = dt = 1)
 //   c = 1/√D = 1/√3         (for D = 3 spatial dimensions)
 //
-// Not a free parameter: uniquely determined by {D=3, cubic lattice, leapfrog}.
-// This is the CFL limit — the same constraint as in FDTD electromagnetics.
-inline constexpr double C_WAVE = 0.57735026918962576451;  // 1/sqrt(3) [DERIVED]
+// That is NOT the CFL saturation of the production FULL stencil. The engine
+// actually uses the normalised 18-point face=1/3, edge=1/6 Laplacian, whose
+// exact maximum positive symbol is 16/3 at (pi,pi,0). For the default centered
+// kick-drift recurrence the exact condition is
+//
+//   r² = (c*dt/a)² <= 4/(16/3) = 3/4.
+//
+// Thus c²=1/3 is conservative, not uniquely forced by stability. Moreover the
+// fully discrete low-q pole contains r²(r²-1)|q|⁴/12; at r²=1/3 this is a
+// nonzero dimension-six preferred-frame term. See FTD-0407 and
+// scripts/proofs/proof_lorentz_recovery_hard.py.
+inline constexpr double C_WAVE = 0.57735026918962576451;  // 1/sqrt(3) [SELECTED]
 
 // Damping rate: γ = α [IMPOSED — identification γ = α is a parameter choice (ASSUMP.6)]
 //

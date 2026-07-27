@@ -1,6 +1,6 @@
 #pragma once
 // Runtime toggles for the logic-first engine.
-// 34 boolean toggles + 6 non-bool config fields.
+// 43 boolean toggles plus typed non-bool configuration fields.
 //
 // Phase 6 (2026-04-27): redesign as a TABLE-DRIVEN registry. Adding a new
 // boolean toggle now requires ONE edit (a row in TOGGLE_SPECS[]) instead
@@ -23,10 +23,10 @@ namespace ftd {
 // TOGGLE_SPECS[]). Default Periodic preserves the toroidal wrap that every
 // existing test + the golden-tick hash were written against — so adding this
 // field is golden-neutral. The web dashboard defaults its selector to Dispersal.
-//   Periodic   — toroidal wrap (current behaviour; energy conserved + trapped)
-//   Reflective — Neumann mirror at each face (perfect cavity; energy conserved)
-//   Dispersal  — first-order radiating (Mur) outflow; outgoing flux leaves the
-//                box and is removed (no graduated sponge layer)
+//   Periodic   — toroidal wrap (closed, translation-invariant finite lattice)
+//   Reflective — one copied ghost shell imposing a discrete Neumann condition
+//   Dispersal  — outer-shell multiplier keep=1-C_SPEED (an imposed lossy shell,
+//                not a Mur/Sommerfeld radiation condition)
 enum class FluxBoundaryMode : int { Periodic = 0, Reflective = 1, Dispersal = 2 };
 
 // Backend bitmask used by ToggleSpec::backends. CPU = 0b001, GPU = 0b010,
@@ -65,6 +65,7 @@ struct TermToggles {
     bool exchange_force = false;    // phase_forces: Pauli exclusion repulsion (same-spin)
     bool latency_field = false;     // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
     bool exact_dual_gauss = false;  // gauss_project: exact dual-cell face-flux projection
+    bool matched_gauss_dynamics = false; // [SELECTED ENGINE EXTENSION, FTD-0428] CPU-only oriented-face Maxwell/Gauss evolution; isolated from legacy flux writers and reactions
     bool emergent_forces = false;   // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
     bool langevin = false;          // Stochastic thermalization: OU process on wave_vel with (gamma, T)
     bool symplectic_leapfrog = false; // Scale 0: Symplectic Leapfrog wave propagation
@@ -78,10 +79,24 @@ struct TermToggles {
                                     // is honored (see set_dt). CPU path only; conflicts with
                                     // symplectic_leapfrog (both own the wave update). Default OFF ⇒
                                     // dead branch ⇒ golden hash 0xb604d81a3d79366e untouched.
+    bool lorentz_period2_floquet = false; // [SELECTED PROTOTYPE, FTD-0408] P4-preserving
+                                    // free-wave kick sequence +3/13, -1/13 on
+                                    // even/odd ticks. Its exact two-tick pole
+                                    // cancels the q^4 preferred-frame term and
+                                    // is stable over the complete 18-point band.
+                                    // CPU-only; requires the unit-step default
+                                    // kick-drift integrator. Default OFF.
+    bool lorentz_bcc_time_floquet = false; // [SELECTED IR PROTOTYPE, FTD-0411]
+                                    // SC+FCC spatial propagation with a stable
+                                    // two-tick localization of the selected
+                                    // BCC temporal kernel. Kicks are
+                                    // (1+sqrt(2))/7, (1-sqrt(2))/7; c^2=1/7.
+                                    // Matches through q^4, not exact at q^6.
+                                    // CPU-only, unit-step, default OFF.
     bool su2_gauge = false;         // tick Rule 7b: per-tick SU(2) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool su3_gauge = false;         // tick Rule 7b: per-tick SU(3) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool symmetric_movement_order = false; // phase_movement: coordinate-independent update traversal & axis ordering
-    bool absorbing_boundary = false; // tick: graduated sponge layer — outgoing waves disperse into the void at lattice faces (no reflect/wrap)
+    bool absorbing_boundary = false; // tick: imposed D-deep quadratic damping sponge; reflection performance is not guaranteed by the operator definition
     bool reflective_boundary = false; // phase_movement: mirror-bounce at faces when on; particles exhaust into the void when off (no periodic wrap)
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
     bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_INERTIAL. Additive; requires forces.
@@ -150,8 +165,9 @@ struct TermToggles {
     double omega0 = 1.0;
 
     // FTD-0276 (2026-06-12): runtime kinetic-drain knob. Fraction of wave_vel
-    // consumed at a genesis manifestation event (latent heat of mass-gap
-    // creation; v.wave_vel *= (1 − kinetic_drain)). Default 0.5 reproduces the
+    // consumed at a genesis manifestation event (selected drain;
+    // v.wave_vel *= (1 − kinetic_drain)). FTD-0567 proves it is not an exact
+    // common-action latent-heat identity. Default 0.5 reproduces the
     // legacy constexpr K_GENESIS_KINETIC_DRAIN exactly (golden-neutral). Honored
     // on both CPU and GPU single-substrate paths. Exposed to test whether the
     // cluster-efficiency k_eff scales as drain² (Leg A of FTD-0276).
@@ -208,14 +224,17 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"exchange_force",     &TermToggles::exchange_force,     false, true,  "poisson_coulomb",  "",                 "exchange_force has no CPU implementation — toggle is a no-op on CPU builds\n", ToggleBackend::ANY, "Pauli exclusion repulsion (same-spin)"},
     {"latency_field",      &TermToggles::latency_field,      false, true,  "gravity",          "",                 "", ToggleBackend::ANY, "Poisson-based latency field (gravity proxy)"},
     {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 "", ToggleBackend::ANY, "Exact dual-cell face-flux Gauss projection"},
+    {"matched_gauss_dynamics", &TermToggles::matched_gauss_dynamics, false, false, "",          "",                 "", ToggleBackend::CPU, "[FTD-0428 SELECTED ENGINE EXTENSION] Projection-free oriented-face Maxwell/Gauss evolution with event-routed conservative current; isolated CPU branch"},
     {"emergent_forces",    &TermToggles::emergent_forces,    false, false, "",                 "poisson_coulomb",  "", ToggleBackend::ANY, "EFT mode: force from flux gradient (no Poisson)"},
     {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", "", ToggleBackend::ANY, "Stochastic OU thermostat (CPU only at runtime)"},
     {"symplectic_leapfrog", &TermToggles::symplectic_leapfrog, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Symplectic leapfrog wave integration"},
     {"verlet_wave_integrator", &TermToggles::verlet_wave_integrator, false, false, "wave_propagation", "symplectic_leapfrog", "", ToggleBackend::CPU, "[E1/FTD-0337] Velocity-Verlet (KDK) bare-wave integrator: half-kick + drift in phase_write, second half-kick after a post-drift phase_read. CPU-only; honors dt<1. Default OFF => golden-neutral"},
+    {"lorentz_period2_floquet", &TermToggles::lorentz_period2_floquet, false, false, "wave_propagation", "verlet_wave_integrator", "", ToggleBackend::CPU, "[FTD-0408 SELECTED PROTOTYPE] P4-preserving period-two free-wave kicks +3/13 and -1/13. Cancels the q^4 Floquet-pole term; CPU-only, unit-step, default OFF"},
+    {"lorentz_bcc_time_floquet", &TermToggles::lorentz_bcc_time_floquet, false, false, "wave_propagation", "lorentz_period2_floquet", "", ToggleBackend::CPU, "[FTD-0411 SELECTED IR PROTOTYPE] Stable P4-local period-two surrogate for the BCC temporal kernel, with c^2=1/7 and exact q^4 cancellation; differs from literal BCC time at q^6; CPU-only, unit-step, default OFF"},
     {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
     {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
     {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 "", ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering"},
-    {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Sponge boundary: outgoing waves disperse into the void at lattice faces"},
+    {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Imposed D-deep quadratic damping sponge at lattice faces"},
     {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 "", ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 "", ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
     {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "forces",           "",                 "", ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_INERTIAL)"},
@@ -325,6 +344,35 @@ inline bool TermToggles::validate(std::string* err) const {
         msg += "triad_binding requires dual_substrate (requirement of record; triad detection itself is geometric — states + distances, no flux-field read)\n";
     if (db_clock_coulomb && dual_substrate)
         msg += "db_clock_coulomb requires dual_substrate=false (FTD-0281 v1 is a single-substrate spectroscopy diagnostic)\n";
+    if (lorentz_period2_floquet && symplectic_leapfrog)
+        msg += "lorentz_period2_floquet and symplectic_leapfrog are mutually exclusive (FTD-0408 requires the unit-step default kick-drift map)\n";
+    if (lorentz_bcc_time_floquet && verlet_wave_integrator)
+        msg += "lorentz_bcc_time_floquet and verlet_wave_integrator are mutually exclusive (FTD-0411 requires the unit-step default kick-drift map)\n";
+    if (lorentz_bcc_time_floquet && symplectic_leapfrog)
+        msg += "lorentz_bcc_time_floquet and symplectic_leapfrog are mutually exclusive (FTD-0411 requires the unit-step default kick-drift map)\n";
+
+    // FTD-0428: the matched face/edge complex owns all field evolution in its
+    // selected branch.  Only conservative particle movement and read-only
+    // observers may coexist.  This prevents an apparent Gauss failure from
+    // actually being an unjournaled legacy writer or reaction.
+    if (matched_gauss_dynamics) {
+        if (flux_boundary != FluxBoundaryMode::Periodic)
+            msg += "matched_gauss_dynamics requires flux_boundary=Periodic\n";
+        if (wave_propagation || coupling || damping || genesis || evaporation
+            || gauss_projection || forces || gravity || poisson_coulomb
+            || lorentz_force || selective_damping || larmor_radiation
+            || dual_substrate || color_forces || strong_stress_energy
+            || weak_transmutation || strong_force || triad_binding
+            || pair_production || exchange_force || latency_field
+            || exact_dual_gauss || emergent_forces || langevin
+            || symplectic_leapfrog || verlet_wave_integrator
+            || lorentz_period2_floquet || lorentz_bcc_time_floquet
+            || su2_gauge || su3_gauge || absorbing_boundary
+            || reflective_boundary || field_energy_gravity || cluster_inertia
+            || de_broglie_clock || db_clock_coulomb || ew_background_sweep) {
+            msg += "matched_gauss_dynamics requires the isolated conservative movement sector\n";
+        }
+    }
 
     // FTD-0406 v1: exact energy projection is intentionally scoped to the
     // isolated flat colour sector. Static (movement=false) configurations are

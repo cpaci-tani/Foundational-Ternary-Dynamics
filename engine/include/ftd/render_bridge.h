@@ -25,6 +25,7 @@
 #include "ftd/injector.h"
 #include "ftd/backend.h"
 #include "ftd/bridge_rng.h"
+#include "ftd/eft/history_event_journal.h"
 #include "ftd/engine_state.h"
 #include "lattice.h"
 #include "voxel.h"
@@ -35,6 +36,7 @@
 #include "ftd/strong_stress_energy.h"
 #include "field_operators.h"
 #include "ftd/eft/dual_cell_continuity.h"
+#include "ftd/eft/matched_gauss_transport.h"
 
 // Phase 1 of refactor sweep (2026-04-27): the 5 POD diagnostic structs
 // (Diagnostics, AggregateProfile, EnergyAudit, EnergyLedger, EMFieldDiag)
@@ -217,6 +219,26 @@ public:
     //
     // Body in src/render_bridge.cpp (GpuEngine is forward-declared here).
     void seed_rng(unsigned int seed);
+
+    // FTD native-charge gate: optional read-only event instrumentation.
+    // Enabling is accepted only on the CPU backend; the observer consumes no
+    // RNG values and does not alter the tick map.
+    bool enable_history_journal(bool enabled = true);
+    bool history_journal_enabled() const;
+    void clear_history_events();
+    std::vector<eft::HistoryEvent> history_events() const;
+    std::uint64_t rng_state_hash() const;
+
+    // FTD-0428 default-off selected engine extension. Initialization performs
+    // the sole global solve (minimum-energy longitudinal dressing). Each tick
+    // thereafter is local and projection-free on the matched face/edge complex.
+    eft::MatchedMinimumEnergyResult initialize_matched_gauss_dynamics(
+        double tolerance = 1e-12, int max_iterations = 0);
+    bool matched_gauss_initialized() const;
+    const eft::MatchedGaussDynamics& matched_gauss_state() const;
+    bool inject_matched_transverse_edge_potential(
+        int x, int y, int z, int axis, double amplitude);
+    double matched_gauss_voxel_sync_residual() const;
 
     // Injector accessor (ARCH-1 Phase C): owns next_particle_id_ / next_pair_id_.
     // Available to inject_*_cpu free functions (and tests) so they don't need
@@ -578,6 +600,8 @@ private:
     // with knot_telemetry.h); constructed in the ctor, dtor emitted in
     // render_bridge.cpp where the type is complete. Recorded at tick-end.
     std::unique_ptr<KnotTracker> knot_tracker_;
+    std::unique_ptr<eft::HistoryEventJournal> history_event_journal_;
+    std::unique_ptr<eft::MatchedGaussDynamics> matched_gauss_dynamics_;
     int sor_iterations_ = SOR_ITERATIONS;  // Configurable SOR iterations (default 6)
     double dt_ = 1.0;             // Time step multiplier (≥1.0). Scales damping, forces, movement.
     double physical_time_ = 0.0;  // Accumulated physical time (sum of dt_ per tick)
@@ -627,6 +651,9 @@ private:
     void sync_fields_from_voxels_if_needed() const;
     void mark_fields_dirty_from_voxels() const;
     int8_t set_state_unlocked(int idx, int8_t state);
+    void record_history_event(const eft::HistoryEvent& event);
+    std::vector<int> matched_state_snapshot() const;
+    void sync_matched_gauss_to_voxels();
 };
 
 }  // namespace ftd

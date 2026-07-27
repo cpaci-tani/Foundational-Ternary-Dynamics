@@ -54,6 +54,10 @@ class BridgeRng {
     /// Sample N(0, 1) from the per-thread RNG at index `tid`.
     double thread_normal(std::size_t tid);
 
+    /// Stable diagnostic hash of the parent and per-thread generator states.
+    /// Observation only: serializing mt19937 does not advance it.
+    std::uint64_t state_hash() const;
+
   private:
     struct Impl;
     Impl* impl_;

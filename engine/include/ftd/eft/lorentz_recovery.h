@@ -1,7 +1,7 @@
 #pragma once
 /**
  * @file ftd/eft/lorentz_recovery.h
- * @brief Lorentz-covariance recovery diagnostic (EFT Recovery Program, Phase 1B).
+ * @brief Free-flux correlator-collapse diagnostic (EFT Recovery Program, Phase 1B).
  *
  * Physics motivation
  * ------------------
@@ -11,25 +11,30 @@
  *     C_t(τ) = ⟨J(τ, 0) · J(0, 0)⟩
  *     C_s(r) = ⟨J(0, r) · J(0, 0)⟩
  *
- * Under the substitution τ → c · τ (with c the speed limit; c = 1/√D on a
- * D-dimensional cubic lattice via CFL stability), Lorentz covariance requires
- * C_t(cτ) ≈ C_s(τ) in the IR.
+ * Under the substitution τ = r/c (with c the selected leading flux speed), a
+ * single free mode should give compatible temporal and spatial phases at long
+ * wavelength. This is necessary for Lorentz recovery, but is not sufficient:
+ * it does not test boosts, interactions, common limiting speeds across matter
+ * sectors, or radiative generation of lower-dimensional preferred-frame terms.
  *
  * This module:
  *   1. Samples a *vector* time series of flux at a fixed voxel (the existing
  *      `temporal_autocorrelation` works on scalars only).
  *   2. Computes the temporal flux-flux correlator C_t(τ).
  *   3. Rescales τ → c·τ and compares to a spatial correlator C_s(r).
- *   4. Fits the residual |C_t(cτ) − C_s(τ)| / |C_s(τ)| to a power law
- *      residual ∝ (a/r)^q, extracting the Lorentz-recovery exponent q.
+ *   4. Optionally fits the residual to a power law. This fit is descriptive
+ *      within one run; a recovery exponent requires a locked cross-lattice
+ *      scaling study at successively smaller dimensionless momentum.
  *
  * Pre-registered expectations live in SPEC_EFT_RECOVERY_PROGRAM.md §4.2.
  *
  * Epistemic status
  * ----------------
- * Pure measurement. The rescaling constant c is imported from the CFL-stability
- * theorem (C_SPEED = 1/√3 in ftd/constants.h) and is [DERIVED] from the lattice
- * update rule. The residual exponent q is [MEASURED].
+ * Pure free-sector measurement. C_SPEED = 1/√3 is the selected production
+ * value. FTD-0407 proves that the production 18-point stencil instead has the
+ * exact stability interval (c*dt/a)^2 <= 3/4, so 1/√3 is not its unique CFL
+ * saturation. The fully discrete pole has a nonzero dimension-six correction
+ * at the selected value. See AUDIT_LORENTZ_RECOVERY_HARD.md.
  *
  * Design
  * ------
@@ -89,7 +94,7 @@ inline std::vector<double> temporal_flux_correlation(
     return Ct;
 }
 
-/// Result of comparing temporal C_t(cτ) against spatial C_s(r):
+/// Result of comparing temporal C_t(r/c) against spatial C_s(r):
 /// the rescaled residual at each r and, optionally, a power-law fit of
 /// residual decay.
 struct LorentzCollapse {
@@ -100,8 +105,9 @@ struct LorentzCollapse {
     std::vector<double> C_s;
     /// residual[r] = |C_t(cr) − C_s(r)| / max(|C_s(r)|, eps)
     std::vector<double> residual;
-    /// Fit of residual(r) = B · r^(−q) over [r_min, r_max). Only valid if
-    /// residuals are strictly positive and decay monotonically.
+    /// Descriptive fit of residual(r) = B · r^(−q) over [r_min, r_max).
+    /// This is not by itself a Lorentz-recovery exponent; that requires a
+    /// cross-lattice fixed-protocol scaling study.
     double q = 0.0;
     double r2 = 0.0;
     bool   fit_valid = false;
@@ -112,11 +118,11 @@ struct LorentzCollapse {
 ///
 /// @param C_t        temporal correlator (indexed by tick τ)
 /// @param C_s        spatial correlator  (indexed by lattice distance r)
-/// @param c          rescaling speed (default 1/√3, the CFL lattice speed limit)
+/// @param c          rescaling speed (default 1/√3, selected leading flux speed)
 /// @param r_min,r_max range over which to fit residual power law
 /// @param normalize  if true, divide each correlator by its own C(0) before
 ///                   comparing. This isolates the *shape* of the correlator
-///                   (the Lorentz-covariance test proper) from the overall
+///                   (the free-mode shape test) from the overall
 ///                   amplitude, which for a standing-wave plane-wave
 ///                   initial condition oscillates with time while the
 ///                   temporal correlator averages over it. Defaults to true.

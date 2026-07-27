@@ -60,24 +60,25 @@ void phase_write_assign_pending_ids(RenderBridge& rb);
 
 /// Absorbing-boundary sponge: a graduated quadratic-ramp damping shell at the
 /// lattice faces (width D = min(6, max(2, N/4)), f(d) = (d/D)²) applied to the
-/// observable flux/wave_vel AND the dual L/R substrates, so outgoing waves
-/// disperse into the void at the edges instead of wrapping/reflecting. Mirrors
+/// observable flux/wave_vel AND the dual L/R substrates. This is an imposed
+/// damping profile, not a derived reflection-free radiation condition. Mirrors
 /// the MockBridge JS sponge. Invoked from tick() ONLY when
 /// toggles.absorbing_boundary is on (default off → golden-tick hash +
 /// conservation tests unchanged).
 void apply_absorbing_boundary(RenderBridge& rb);
 
 /// Reflective flux boundary (FluxBoundaryMode::Reflective): Neumann mirror —
-/// copies the first interior layer into the boundary shell each tick so
-/// ∂_n J = 0 (a perfect free reflector / closed cavity). Energy is conserved
-/// inside the box; it does NOT drain an injection-driven runaway (by design).
+/// copies the first interior layer into the boundary shell each tick. On the
+/// frozen linear wave map this is a discrete Neumann ghost shell; the associated
+/// interior modified Hamiltonian is conserved by the certification test. This
+/// does not establish a physical wall or conservation under other tick writers.
 /// Invoked from tick() only when toggles.flux_boundary == Reflective.
 void apply_reflective_flux_boundary(RenderBridge& rb);
 
-/// Dispersal flux boundary (FluxBoundaryMode::Dispersal): single-cell radiating
-/// sink — the outer layer's field propagates into the void at ~wave speed c and
-/// is removed (NOT a graduated sponge). The open boundary that drains an
-/// injection-driven runaway toward a bounded steady state. Invoked from tick()
+/// Dispersal flux boundary (FluxBoundaryMode::Dispersal): single-cell lossy
+/// shell. Every tick it multiplies all six outer-shell flux fields by
+/// keep=1-C_SPEED. It is NOT a Mur/Sommerfeld condition and has no derived
+/// outgoing-wave or reflection-efficiency guarantee. Invoked from tick()
 /// only when toggles.flux_boundary == Dispersal.
 void apply_dispersal_flux_boundary(RenderBridge& rb);
 
