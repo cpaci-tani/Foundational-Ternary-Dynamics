@@ -25,19 +25,19 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 | ID | Theorem | Formula | Value | LEDGER |
 |---|---|---|---:|---|
-| `g_star_identity` | G* algebraic identity | G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) | 2.958675119 | [FTD-0002](../07_assessment/LEDGER.md#ftd-0002) |
-| `master_quadratic` | Master quadratic polynomial + roots | P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³) | x_plus = 137.03617145815542, x_minus = 3.023963916339028 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/LEDGER.md#ftd-0081) |
-| `cm_curve_uniqueness` | CM curve uniqueness among class-number-1 fields | Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. (Historical formulation referenced the pair (1/α, N_c); the x_- ↔ N_c identification is RETIRED per v1.4 §5 — LEDGER FTD-0014 removed in commit ca7eb61. The CM uniqueness fact stands independently.) | unique_discriminant = -4, class_number = 1 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001) |
-| `coefficient_16_aut_e_squared` | Coefficient 16 = |Aut(E)|² | For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient) | 16 | [FTD-0006](../07_assessment/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/LEDGER.md#ftd-0007) |
-| `watson_identity` | Watson identity W₃ = G*²/(2π) | W₃ := ∫_0^π dx ∫_0^π dy ∫_0^π dz [3 − cos x − cos y − cos z]⁻¹ / π³ = G*²/(2π) | 1.39320393 | [FTD-0002](../07_assessment/LEDGER.md#ftd-0002) |
-| `phase_g_geometric_coulomb` | Phase G geometric Coulomb identity | α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters. | — | [FTD-0004](../07_assessment/LEDGER.md#ftd-0004) |
-| `phase_j_ultralocality` | Phase J partition-function ultralocality at L=2 | At L=2, the partition function Z factorizes site-locally: Z = ∏_v Z_v(s_v, J_v). No connected correlators between voxels. | — | [FTD-0005](../07_assessment/LEDGER.md#ftd-0005) |
+| `g_star_identity` | G* algebraic identity | G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) | 2.958675119 | [FTD-0002](../07_assessment/core_ledgers/LEDGER.md#ftd-0002) |
+| `master_quadratic` | Master quadratic polynomial + roots | P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³) | x_plus = 137.03617145815542, x_minus = 3.023963916339028 | [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/core_ledgers/LEDGER.md#ftd-0081) |
+| `cm_curve_uniqueness` | CM curve uniqueness among class-number-1 fields | Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. (Historical formulation referenced the pair (1/α, N_c); the x_- ↔ N_c identification is RETIRED per v1.4 §5 — LEDGER FTD-0014 removed in commit ca7eb61. The CM uniqueness fact stands independently.) | unique_discriminant = -4, class_number = 1 | [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001) |
+| `coefficient_16_aut_e_squared` | Coefficient 16 = |Aut(E)|² | For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient) | 16 | [FTD-0006](../07_assessment/core_ledgers/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/core_ledgers/LEDGER.md#ftd-0007) |
+| `watson_identity` | Watson identity W₃ = G*²/(2π) | W₃ := ∫_0^π dx ∫_0^π dy ∫_0^π dz [3 − cos x − cos y − cos z]⁻¹ / π³ = G*²/(2π) | 1.39320393 | [FTD-0002](../07_assessment/core_ledgers/LEDGER.md#ftd-0002) |
+| `phase_g_geometric_coulomb` | Phase G geometric Coulomb identity | α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters. | — | [FTD-0004](../07_assessment/core_ledgers/LEDGER.md#ftd-0004) |
+| `phase_j_ultralocality` | Phase J partition-function ultralocality at L=2 | At L=2, the partition function Z factorizes site-locally: Z = ∏_v Z_v(s_v, J_v). No connected correlators between voxels. | — | [FTD-0005](../07_assessment/core_ledgers/LEDGER.md#ftd-0005) |
 
 ### G* algebraic identity (`g_star_identity`)
 
 - **Formula:** G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π)
 - **Value:** 2.958675119
-- **LEDGER:** [FTD-0002](../07_assessment/LEDGER.md#ftd-0002)
+- **LEDGER:** [FTD-0002](../07_assessment/core_ledgers/LEDGER.md#ftd-0002)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`
 - **Notes:** Direct Chowla–Selberg evaluation of L(s, χ_{-4}) at s=1 on the lemniscatic curve y² = x³ − x. Four independent derivations enumerated in MONOGRAPH_GSTAR_BRIDGE_CONSTANT (Γ-ratio, Watson period integral, lemniscate arc length, modular-form value).
 
@@ -46,7 +46,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Formula:** P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³)
 - **Value:** x_plus = 137.03617145815542, x_minus = 3.023963916339028
 - **Depends on:** `g_star_identity`
-- **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/LEDGER.md#ftd-0081)
+- **LEDGER:** [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/core_ledgers/LEDGER.md#ftd-0081)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md`; `scripts/proofs/proof_motivic_master_quadratic.py`
 - **Notes:** Two independent derivations (FTD-0081): Route A (physics — Gaussian J-integration of S_E) and Route B (arithmetic — Damerell–Shimura at CM curve E_i). Both produce the identical polynomial to 100 digits.
 
@@ -55,7 +55,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Formula:** Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. (Historical formulation referenced the pair (1/α, N_c); the x_- ↔ N_c identification is RETIRED per v1.4 §5 — LEDGER FTD-0014 removed in commit ca7eb61. The CM uniqueness fact stands independently.)
 - **Value:** unique_discriminant = -4, class_number = 1
 - **Depends on:** `g_star_identity`, `master_quadratic`
-- **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001)
+- **LEDGER:** [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`; `scripts/proofs/scan_cm_curves.py`
 - **Notes:** Numerical verification across all 9 class-number-1 discriminants. Uniqueness extends only within the class-number-1 family; class-number ≥ 2 is [OPEN]. (Prior ledger reference FTD-0014 removed — that row, which carried the now-retired x_- ↔ N_c identification, was removed in commit ca7eb61 per v1.4 §5.)
 
@@ -63,7 +63,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 - **Formula:** For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient)
 - **Value:** 16
-- **LEDGER:** [FTD-0006](../07_assessment/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/LEDGER.md#ftd-0007)
+- **LEDGER:** [FTD-0006](../07_assessment/core_ledgers/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/core_ledgers/LEDGER.md#ftd-0007)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`
 - **Notes:** Three independent routes converge on 16: direct |Aut(E)|² (Route A, FTD-0006); z_BCC × 2 (Route B, FTD-0007); j-invariant + modular form (additional).
 
@@ -72,21 +72,21 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Formula:** W₃ := ∫_0^π dx ∫_0^π dy ∫_0^π dz [3 − cos x − cos y − cos z]⁻¹ / π³ = G*²/(2π)
 - **Value:** 1.39320393
 - **Depends on:** `g_star_identity`
-- **LEDGER:** [FTD-0002](../07_assessment/LEDGER.md#ftd-0002)
+- **LEDGER:** [FTD-0002](../07_assessment/core_ledgers/LEDGER.md#ftd-0002)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`
 - **Notes:** Watson's third triple integral. Bundled with G* under FTD-0002 because it is one of the four independent derivations of G*; here it is also recorded as a structural identity in its own right (the BCC eigenvalue triple-cosine product).
 
 ### Phase G geometric Coulomb identity (`phase_g_geometric_coulomb`)
 
 - **Formula:** α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters.
-- **LEDGER:** [FTD-0004](../07_assessment/LEDGER.md#ftd-0004)
+- **LEDGER:** [FTD-0004](../07_assessment/core_ledgers/LEDGER.md#ftd-0004)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
 - **Notes:** Reframed away from the QED-deviation reading: the lattice α plateau at ≈1.8× α_ref is the Poisson Green's function shape, not a fine-structure correction. Zero free parameters.
 
 ### Phase J partition-function ultralocality at L=2 (`phase_j_ultralocality`)
 
 - **Formula:** At L=2, the partition function Z factorizes site-locally: Z = ∏_v Z_v(s_v, J_v). No connected correlators between voxels.
-- **LEDGER:** [FTD-0005](../07_assessment/LEDGER.md#ftd-0005)
+- **LEDGER:** [FTD-0005](../07_assessment/core_ledgers/LEDGER.md#ftd-0005)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`
 - **Notes:** Direct algebraic statement about the L=2 partition function. Empirical engine support: FTD-0075 (flux propagator on Langevin ensemble shows essentially constant correlator at distance, consistent with ultralocality).
 
@@ -96,10 +96,10 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 
 | ID | Quantity | FTD value | Lab measurement | Comparison | Tag | LEDGER |
 |---|---|---:|---|---|---|---|
-| `alpha_inverse` | 1/α (fine-structure constant) ↔ master-quadratic root x₊ | 137.0359992 | 137.0359992 ± 2.1e-08 (CODATA 2022) | Δ = -0.21 ppb; tier: hard | STRONGLY MOTIVATED CONJECTURE | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0013](../07_assessment/LEDGER.md#ftd-0013) |
+| `alpha_inverse` | 1/α (fine-structure constant) ↔ master-quadratic root x₊ | 137.0359992 | 137.0359992 ± 2.1e-08 (CODATA 2022) | Δ = -0.21 ppb; tier: hard | STRONGLY MOTIVATED CONJECTURE | [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001), [FTD-0013](../07_assessment/core_ledgers/LEDGER.md#ftd-0013) |
 | `n_color` | N_c (number of colors) — independently sourced; the historical x_- ↔ N_c identification is RETIRED | 3 | 3 (Standard Model (exact integer, not a measurement)) | — | SELECTION | — |
-| `mu_over_e_mass_ratio` | m_μ / m_e (muon/electron mass ratio) | 207 | 206.768283 ± 4.6e-07 (CODATA 2022) | Δ = 1.12e+06 ppb; tier: parametric | STRONGLY MOTIVATED CONJECTURE | [FTD-0008](../07_assessment/LEDGER.md#ftd-0008) |
-| `tau_over_e_mass_ratio` | m_τ / m_e (tau/electron mass ratio) | 3477 | 3477.23 ± 0.23 (PDG 2024) | Δ = -6.61e+04 ppb; tier: parametric | STRONGLY MOTIVATED CONJECTURE | [FTD-0008](../07_assessment/LEDGER.md#ftd-0008) |
+| `mu_over_e_mass_ratio` | m_μ / m_e (muon/electron mass ratio) | 207 | 206.768283 ± 4.6e-07 (CODATA 2022) | Δ = 1.12e+06 ppb; tier: parametric | STRONGLY MOTIVATED CONJECTURE | [FTD-0008](../07_assessment/core_ledgers/LEDGER.md#ftd-0008) |
+| `tau_over_e_mass_ratio` | m_τ / m_e (tau/electron mass ratio) | 3477 | 3477.23 ± 0.23 (PDG 2024) | Δ = -6.61e+04 ppb; tier: parametric | STRONGLY MOTIVATED CONJECTURE | [FTD-0008](../07_assessment/core_ledgers/LEDGER.md#ftd-0008) |
 
 ### 1/α (fine-structure constant) ↔ master-quadratic root x₊ (`alpha_inverse`)
 
@@ -109,7 +109,7 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 - **Comparison:** Δ = -0.21 ppb; tier: hard
 - **Tag:** `STRONGLY MOTIVATED CONJECTURE`
 - **Depends on:** `master_quadratic`
-- **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0013](../07_assessment/LEDGER.md#ftd-0013)
+- **LEDGER:** [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001), [FTD-0013](../07_assessment/core_ledgers/LEDGER.md#ftd-0013)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`
 - **Notes:** Polynomial-level theorem (x₊ is a root of a number-theoretic polynomial); the physical identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE] (downgraded from THEOREM) because it depends on polynomial-template uniqueness (FTD-0319 adversarial scan, formerly cited as FTD-0189: 0 non-G* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket; treat as [NUMERICAL FACT] — the historical '~4×10^5 Bayes' figure is retracted per the spine audit, runner yields only ~19x scan-size) + CM-curve uniqueness rather than a derivation chain to QED. (Historical formulation referenced 'dual-match' with x_- ↔ N_c; the x_- ↔ N_c identification is RETIRED per v1.4 §5 and the polynomial-template-uniqueness fact is independent of the historical target.) FTD-0097 look-elsewhere scan confirms the master quadratic's polynomial-root layer lives outside the monomial scan space and is unaffected by the over-richness verdict.
 
@@ -131,7 +131,7 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 - **Lab:** 206.768283 ± 4.6e-07 (CODATA 2022)
 - **Comparison:** Δ = 1.12e+06 ppb; tier: parametric
 - **Tag:** `STRONGLY MOTIVATED CONJECTURE`
-- **LEDGER:** [FTD-0008](../07_assessment/LEDGER.md#ftd-0008)
+- **LEDGER:** [FTD-0008](../07_assessment/core_ledgers/LEDGER.md#ftd-0008)
 - **Sources:** `docs/theory/05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md`; `docs/theory/05_particles/PRED_ELECTROWEAK_MASSES.md`; `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`
 - **Notes:** Derived from framework integers {b₃=7, N_c=3} with no free parameters. The formula is integer arithmetic; the 0.11% gap to CODATA is the radiative correction not yet computed in FTD.
 
@@ -143,39 +143,39 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 - **Comparison:** Δ = -6.61e+04 ppb; tier: parametric
 - **Tag:** `STRONGLY MOTIVATED CONJECTURE`
 - **Depends on:** `mu_over_e_mass_ratio`
-- **LEDGER:** [FTD-0008](../07_assessment/LEDGER.md#ftd-0008)
+- **LEDGER:** [FTD-0008](../07_assessment/core_ledgers/LEDGER.md#ftd-0008)
 - **Sources:** `docs/theory/05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md`; `docs/theory/05_particles/PRED_ELECTROWEAK_MASSES.md`; `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`
 - **Notes:** Derived from framework integers {N_eff=13, N_base=4, N_c=3, b₃=7} with no free parameters. 0.01% match to PDG.
 
 ## §4 · Calibration declarations
 
-Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum (`FTD-0059` for length, `FTD-0096` for mass; calibration-interface theorem in the latter). Time follows from length + the cubic-lattice CFL constraint.
+Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum (`FTD-0059` for length, `FTD-0096` for mass; calibration-interface theorem in the latter). Time follows from length plus the selected raw transport/clock convention.
 
 | ID | Anchor | Formula | Value | Tag | LEDGER |
 |---|---|---|---|---|---|
-| `a_phys_planck` | a_phys ≡ ℓ_P (length anchor) | DECLARED: 1 voxel ≡ 1 Planck length ℓ_P | 1.616255e-35 m | CALIBRATION | [FTD-0030](../07_assessment/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/LEDGER.md#ftd-0059) |
-| `t_phys_lattice_tick` | t_phys (one tick in seconds) | t_phys = ℓ_P / (√3 · c) = t_P/√3 (from CFL Courant speed c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys) | 3.11e-44 s | CALIBRATION | [FTD-0041](../07_assessment/LEDGER.md#ftd-0041) |
-| `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989507 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/LEDGER.md#ftd-0096) |
+| `a_phys_planck` | a_phys ≡ ℓ_P (length anchor) | DECLARED: 1 voxel ≡ 1 Planck length ℓ_P | 1.616255e-35 m | CALIBRATION | [FTD-0030](../07_assessment/core_ledgers/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/core_ledgers/LEDGER.md#ftd-0059) |
+| `t_phys_lattice_tick` | t_phys (one tick in seconds) | t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys) | 3.11e-44 s | CALIBRATION | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041) |
+| `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989507 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096) |
 
 ### a_phys ≡ ℓ_P (length anchor) (`a_phys_planck`)
 
 - **Formula:** DECLARED: 1 voxel ≡ 1 Planck length ℓ_P
 - **Value:** 1.616255e-35 m
 - **Tag:** `CALIBRATION`
-- **LEDGER:** [FTD-0030](../07_assessment/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/LEDGER.md#ftd-0059)
+- **LEDGER:** [FTD-0030](../07_assessment/core_ledgers/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/core_ledgers/LEDGER.md#ftd-0059)
 - **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
 - **Calibration note:** Under the DEFAULT electron-primary gauge (FTD-0137 §4.5, FOUND_ELECTRON_PRIMARY_GAUGE.md), a_phys = ℓ_P is DERIVED: ℓ_P = ƛ_C·Kα¹¹ via the FTD-0015 m_e/m_P ladder, ≈1.616255×10⁻³⁵ m to 0.19% ([DERIVED ~0.19%]). Legacy Planck-primary instead declares it exactly. FTD-0059 forbids deriving a length from Axiom-Zero invariants ALONE (Mechanisms α/β/γ/δ all closed negative); electron-primary derives it from the imported {ℏ,c,m_e}, not Axiom Zero. ℓ_P reference value from CODATA 2022.
 - **Notes:** First of two SI-dimensional calibrations theorem-enforced by FTD-0096.
 
 ### t_phys (one tick in seconds) (`t_phys_lattice_tick`)
 
-- **Formula:** t_phys = ℓ_P / (√3 · c) = t_P/√3 (from CFL Courant speed c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys)
+- **Formula:** t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys)
 - **Value:** 3.11e-44 s
 - **Tag:** `CALIBRATION`
 - **Depends on:** `a_phys_planck`
-- **LEDGER:** [FTD-0041](../07_assessment/LEDGER.md#ftd-0041)
+- **LEDGER:** [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041)
 - **Sources:** `docs/SPEC_FTD.md`
-- **Calibration note:** Derived (not declared) from a_phys ≡ ℓ_P and the CFL stability constraint c_lat = 1/√3 (which is itself a [THEOREM] from the cubic-lattice wave equation): physical c = c_lat·(a_phys/t_phys) forces t_phys = ℓ_P/(√3·c). Numerically t_phys ≈ 3.11 × 10⁻⁴⁴ s. Corrected 2026-07-08 from √3·ℓ_P/c ≈ 9.34e-44, which placed √3 in the numerator and was inconsistent with c_lat=1/√3 by a factor of 3; see DERIV_DIMENSIONAL_GATE.md.
+- **Calibration note:** Derived (not declared) from a_phys ≡ ℓ_P and the selected c_lat = 1/√3: physical c = c_lat·(a_phys/t_phys) forces t_phys = ℓ_P/(√3·c). The exact production-stencil CFL ceiling is instead c_lat²≤3/4 (FTD-0407). Numerically t_phys ≈ 3.11 × 10⁻⁴⁴ s. Corrected 2026-07-08 from √3·ℓ_P/c ≈ 9.34e-44, which placed √3 in the numerator and was inconsistent with the selected c_lat=1/√3 by a factor of 3; see DERIV_DIMENSIONAL_GATE.md.
 - **Notes:** Once a_phys is fixed, t_phys is fully determined. No additional calibration freedom.
 
 ### K_B = m_e (mass-unit anchor) (`mass_unit_anchor`)
@@ -183,7 +183,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 - **Formula:** DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c².
 - **Value:** 0.5109989507 MeV/c²
 - **Tag:** `IMPOSED`
-- **LEDGER:** [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/LEDGER.md#ftd-0096)
+- **LEDGER:** [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096)
 - **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/THEOREM_MU_NO_GO_FTD0096.md`
 - **Calibration note:** FTD-0096 (calibration-interface theorem): mass-unit μ_FTD is calibration, not derivation, on equal footing with a_phys. Three independent closures of FTD-0094 confirm this from methodological (FTD-0097 look-elsewhere null-rejected upward), structural-mechanism (FTD-0093 Mechanism C closed negative), and dimensional (this no-go) sides. Exactly two SI-dimensional calibrations (a_phys ≡ ℓ_P and K_B = m_e) are theorem-enforced as the irreducible minimum.
 - **Notes:** Second of two SI-dimensional calibrations. Together with a_phys, completes the calibration interface.
@@ -200,7 +200,7 @@ How a dimensional FTD prediction is reached by composing a dimensionless ratio w
 - **Comparison:** Δ = 2.05e+03 ppb; tier: imposed
 - **Tag:** `IMPOSED`
 - **Depends on:** `mass_unit_anchor`
-- **LEDGER:** [FTD-0041](../07_assessment/LEDGER.md#ftd-0041)
+- **LEDGER:** [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041)
 - **Sources:** `docs/SPEC_FTD.md`; `scripts/constants.py`
 - **Calibration note:** This is the bridge mechanism: every dimensional FTD prediction reduces to (a) a dimensionless ratio (e.g. m_μ/m_e = 207) times (b) the mass-unit anchor (1 MeV/c² ≡ m_e/K_B). The same pattern applies to lengths (multiply dimensionless ratio by a_phys = ℓ_P) and times (multiply by t_phys = ℓ_P/(√3·c)).
 - **Notes:** Single worked example. Other dimensional consequences (m_μ in MeV via 207 × m_e, m_p in MeV via m_p/m_e × m_e, etc.) follow the same pattern and are catalogued individually in CATALOG_PARAMETRIC_INSERTIONS.md.

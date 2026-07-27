@@ -174,7 +174,9 @@ def fmt_comparison(entry: dict) -> str:
 def fmt_ledger(ids: list[str]) -> str:
     if not ids:
         return "—"
-    return ", ".join(f"[{i}](../07_assessment/LEDGER.md#{i.lower()})" for i in ids)
+    # LEDGER.md lives under 07_assessment/core_ledgers/, not 07_assessment/ --
+    # every emitted link (27 of them) was 404 before this was corrected.
+    return ", ".join(f"[{i}](../07_assessment/core_ledgers/LEDGER.md#{i.lower()})" for i in ids)
 
 
 def fmt_sources(paths: list[str]) -> str:
@@ -309,8 +311,8 @@ def render(data: dict) -> str:
     lines.append(
         "Two SI-dimensional calibrations are theorem-enforced as the irreducible "
         "minimum (`FTD-0059` for length, `FTD-0096` for mass; calibration-interface "
-        "theorem in the latter). Time follows from length + the cubic-lattice CFL "
-        "constraint."
+        "theorem in the latter). Time follows from length plus the selected raw "
+        "transport/clock convention."
     )
     lines.append("")
     lines.append("| ID | Anchor | Formula | Value | Tag | LEDGER |")
