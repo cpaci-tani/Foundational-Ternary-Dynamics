@@ -5,13 +5,21 @@
 **Depends on:** FTD-0152 (Alpha Readout Contract), FTD-0153 (Math-First Ontology)
 **Status:** [AUDIT] complete; establishes the mathematical and methodological boundary separating QED imports from native FTD observables.
 
+> **FTD-0584 correction (2026-07-26):** the earlier claim that ternary
+> discreteness or the module `V_complex ~= Z[i]^2` by itself establishes
+> topological electric-charge quantization is false. A discrete site label is
+> not a loop, bundle class, or invariant of the production transition graph.
+> The `C4` representation decomposition survives; the charge/winding
+> interpretation below is corrected to a selected candidate requiring an
+> explicit history-to-loop map and dynamical conservation.
+
 ---
 
 ## 0 · Executive summary
 
-To prevent circularity or post-hoc parameter tuning in the fine-structure constant ($\alpha$) derivation, this audit establishes a rigorous, "no-cheat" boundary between imported QED quantities and FTD-native variables. We analyze the discrete, topological nature of charge quantization in Foundational Ternary Dynamics (FTD), formalize the canonical normalization of native coupling constants, and supply a strict, non-circular checklist for any future physical readout proposal. 
+To prevent circularity or post-hoc parameter tuning in a proposed fine-structure constant ($\alpha$) readout, this audit establishes a "no-cheat" boundary between imported QED quantities and FTD-native variables. It distinguishes the primitive ternary polarity label from a conserved electric charge and supplies a non-circular checklist for any future physical readout proposal.
 
-Furthermore, we explore the arithmetic origin of the lemniscatic ratio $G^* = \Gamma(1/4)/\Gamma(3/4)$ as a regularized period on the Gaussian integers $\mathbb{Z}[i]$, mapping it to a potential discrete topological winding index on the Body-Centered Cubic (BCC) lattice structure.
+Furthermore, we explore the arithmetic origin of the lemniscatic ratio $G^* = \Gamma(1/4)/\Gamma(3/4)$ and a **candidate** winding construction on the Body-Centered Cubic (BCC) representation. No native map from a production history to that winding is derived here.
 
 ---
 
@@ -19,17 +27,17 @@ Furthermore, we explore the arithmetic origin of the lemniscatic ratio $G^* = \G
 
 In standard Quantum Electrodynamics (QED), the electric charge $e$ is a continuous parameter that runs with energy scale under the Renormalization Group (RG). Its low-energy value $e_{\text{phys}} = \sqrt{4\pi\alpha_{\text{QED}}}$ is an empirical input.
 
-In FTD, the microscopic ontology is strictly discrete, which naturally induces a discrete, topological charge quantization at the voxel level without continuous tuning:
+In FTD, the microscopic ontology contains a discrete polarity alphabet. That fact does not by itself induce a conserved or topological electric charge:
 
 ### 1.1 Microscopic state alphabet
 Voxel states are ternary: $s(x, t) \in \{-1, 0, +1\}$ ([AXIOM] 3). The signed source density is defined as:
 $$\rho_{\text{lattice}}(x, t) = s(x, t)$$
-which represents the actual manifestation of positive, void, or negative charge. Thus, the minimum unit of charge on the lattice is exactly $1$ in natural units. There are no fractional charges, and no continuous knobs.
+which represents positive, void, or negative **polarity** in the primitive ontology. Thus `s` has unit-spaced labels and no continuous value. Calling this label electric charge requires an additional conserved-current/readout derivation. Genesis and weak transmutation change the registered additive signed-state feature, and FTD-0421 finds nullity zero in the registered four-feature additive basis.
 
 ### 1.2 The projected U(1) gauge field
-The longitudinal flux $J_L$ satisfies the discrete Gauss constraint:
+In the selected matched-face sidecar, one may impose the discrete Gauss constraint:
 $$\nabla \cdot J_L = \rho_{\text{lattice}}$$
-while the transverse modes satisfy $\nabla \cdot J_T = 0$, yielding two propagating degrees of freedom ([THEOREM]). The auxiliary projected gauge field $A$ is represented via the transverse projector:
+while transverse modes satisfy $\nabla \cdot J_T = 0$. This is a field decomposition/selected coupling, not a proof that `s` is a conserved U(1) charge. The auxiliary projected gauge field $A$ is represented via the transverse projector:
 $$J_T = P_T A, \quad A \sim A + \nabla \chi$$
 where $A$ is an effective, non-primitive description.
 
@@ -66,9 +74,14 @@ $G^*$ is closely related to the L-function of the Kronecker character $\chi_{-4}
 $$L(\chi_{-4}, 1) = \sum_{n=0}^{\infty} \frac{(-1)^n}{2n+1} = \frac{\pi}{4}$$
 The ratio represents the regularized period mismatch between inert primes (congruent to $3 \pmod 4$) and split primes (congruent to $1 \pmod 4$) in $\mathbb{Z}[i]$.
 
-### 3.2 Discrete winding number on BCC
+### 3.2 Candidate winding number on BCC
 On the BCC Unit-Cube corners, the permutation group action induces a $\mathbb{Z}[i]$-module structure $V_{\text{complex}} \cong \mathbb{Z}[i]^2$. Let $y$ represent a state in $V_{\text{complex}}$. A discrete topological index can be defined via the cyclic rotation $J$:
 $$\text{Ind}(y) = \frac{1}{4} \sum_{k=0}^{3} \text{Im} \left( \frac{\langle y, J^k y \rangle}{\|y\|^2} \right)$$
-Because the complex subspace is arithmetically isomorphic to the Gaussian integers, the projection of any lattice configuration onto $V_{\text{complex}}$ naturally maps to topological winding numbers on the unit circle in $\mathbb{Z}[i]$. 
 
-By formulating charge not as a continuous field amplitude, but as the index of this modular projection, the coupling to the transverse field is structurally bound to the arithmetic invariants of $\mathbb{Z}[i]$. This establishes the Candidate C track as a mathematically clean, non-circular path to bridging the algebraic spine to QED.
+That expression is a scalar of one projected state, not the winding number of a closed loop. The module isomorphism alone supplies no canonical map
+
+$$\gamma:S^1\longrightarrow V_{\text{complex}}\setminus\{0\}$$
+
+from an engine history, and it supplies no proof that such a loop is preserved by production transitions. Only after an explicit nonvanishing closed loop is constructed does the standard integral $(2\pi)^{-1}\oint_\gamma d\theta$ define an integer winding.
+
+Therefore Candidate C is an underdetermined selected readout proposal. It does not yet bind primitive polarity, a conserved field current, or the arithmetic period into one native mechanism.

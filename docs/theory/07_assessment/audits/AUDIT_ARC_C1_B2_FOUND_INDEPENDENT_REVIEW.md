@@ -8,6 +8,14 @@
 **Audited against:** the locked pre-regs `PREREG_ALPHA_READOUT_QUANTIZATION_v1.md` (FTD-0231) §4–§5 and `PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md` (FTD-0230); the project's own no-cheat audit `AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` (FTD-0231); the honest companion `DERIV_BCC_ALGEBRAIC_READOUT.md` (FTD-0212); the contract `SPEC_ALPHA_READOUT_CONTRACT.md` §7.
 **Verdict of this review:** the **"FOUND" label is an overclaim**. By the verdicts' *own locked pre-registration criteria*, the honest status of both ARC-C1 and ARC-B2 (infinite-aperture) is **UNDERDETERMINED**. The genuine, defensible advance is real and should be preserved at its honest grade.
 
+> **FTD-0584 correction (2026-07-26):** this review correctly downgraded the
+> alpha readout but incorrectly preserved "charge quantization to
+> {-1,0,+1}" as theorem content. The `C4` decomposition and
+> `V_complex ~= Z[i]^2` are exact. A ternary configuration is not a closed
+> loop, however, and no production-history-to-loop map or conservation law was
+> derived. Every occurrence below of "topological charge quantization" must be
+> read as a selected candidate winding/charge identification, not a theorem.
+
 ---
 
 ## 0 · Executive summary
@@ -16,7 +24,7 @@ Both "FOUND" docs derive a genuine partial result and then take one unjustified 
 
 **Genuinely established (`[THEOREM]`-grade, preserve):**
 1. A localized charge breaks `O_h → C₄`; the 8 BCC corners give `V_complex ≅ Z[i]²` (FTD-0122 bedrock, OT-1.x).
-2. Charge quantizes to `{−1, 0, +1}` as the topological winding index on `V_complex` — a clean, novel match to the ternary alphabet (FTD-0231 Thm 1).
+2. An explicitly supplied nonvanishing closed loop in `V_complex` has integer winding. Identifying a ternary polarity with that winding is `[SELECTION + OPEN DYNAMICAL MAP]` (corrected by FTD-0584).
 3. `16 = |μ₄|² = |Z[i]^×|² = |Aut(E)|²` — the master-quadratic coefficient **16** derived as the squared Gaussian-unit-group order (FTD-0212, honestly tagged `[DERIVED]`).
 4. The BCC self-energy is the Watson integral `G_BCC(0) = G*²/(2π)` (Spine Theorem; FTD-0230 Thm 3).
 5. On any **finite block**, the readout **CLOSED-NEGATIVE** — a finite transfer operator has algebraic eigenvalues, not the transcendental `G*` (FTD-0230 Thm 2, correct and honest).
@@ -34,7 +42,7 @@ This review is adversarial but fair. The following are real and should be preser
 | Result | Grade | Source |
 |---|---|---|
 | `V_complex ≅ Z[i]²` from the BCC `C₄` decomposition | `[THEOREM]` | FTD-0122 / OT-1.x bedrock |
-| Charge quantization to `{−1,0,+1}` via winding index on `V_complex` | `[THEOREM]` | FTD-0231 Thm 1 |
+| Integer winding of an explicitly supplied nonvanishing loop on `V_complex`; ternary electric-charge identification not derived | `[THEOREM]` for loop winding; `[SELECTION + OPEN DYNAMICAL MAP]` for charge | FTD-0231 corrected by FTD-0584 |
 | `16 = |μ₄|² = |Aut(E)|²` (coefficient 16, derived) | `[DERIVED]` | FTD-0212 §3 (honest) |
 | BCC self-energy `G_BCC(0) = G*²/(2π)` (Watson) | `[THEOREM]` | FTD-0230 Thm 3 / Spine Thm 5 |
 | Finite-block readout closes negative | `[CLOSED NEGATIVE]` | FTD-0230 Thm 2 |
@@ -79,7 +87,7 @@ MC-T4.3 (the operational α-readout mechanism) is **NOT resolved.** Honest progr
 
 - **ARC-A** (boundary-condition): `[CLOSED NEGATIVE]` (stands).
 - **ARC-B1** (observable-selection, items 4/6/7): `[CLOSED NEGATIVE]` (stands; FTD-0204/0205).
-- **ARC-B2 / ARC-C1** (BCC bridge / quantization): **`[UNDERDETERMINED]`** — a genuine partial result (topological charge quantization on `V_complex ≅ Z[i]²` + coefficient `16` + Watson self-energy + finite-block no-go), with the bridge to the master quadratic / `x₊` an open `[SELECTION]`.
+- **ARC-B2 / ARC-C1** (BCC bridge / quantization): **`[UNDERDETERMINED]`** — a genuine partial result (`C4`/`V_complex ≅ Z[i]²` representation, candidate loop winding, coefficient `16`, Watson self-energy, and finite-block no-go), with both the ternary-charge map and the bridge to the master quadratic / `x₊` un-derived.
 - **ARC-D** (discrete-native measurement): unattempted.
 
 The open mathematical gap is now **sharply localized**: *derive the determinant's third power of G\** — i.e., show forward, from `V_complex`/Watson structure and **without inserting the master quadratic**, that the readout operator's determinant is `16G*³` (equivalently, that the coefficient grading is `(G*², G*³)` rather than `(G*², G*²)`). This is the precise object a future ARC-B2-v2 / ARC-C-v2 must produce. The `DERIV_BCC_COMPLEX_STRUCTURE.md` Z[i]-module (FTD-0122) is the natural place to look, but operationalizing it without firing F-j is exactly what remains open (as `SCOPE_ALPHA_READOUT_NEXT_STEPS.md` §1 Route 3 itself flags: "the open gap is designing an *operational* measurement protocol … without violating … F-j").
