@@ -1,11 +1,16 @@
 #pragma once
-// Complete Discrete FTD Lagrangian (6 active terms + Rayleigh dissipation)
+// Partial discrete field/kinematic action diagnostic
+// (6 active terms + Rayleigh dissipation; not the complete production tick)
 //
 // L_FTD = L_KINETIC + L_GRADIENT + L_BI + L_COUPLING + L_VELOCITY + L_GAUSS
 //
 // Field sector:      L_field = ½|Δ_t J|² - ½c²Σ_μ w_μ|ΔJ_μ|²
-// Particle sector:   L_BI = -E_REST √(1 - |u|²/C_SPEED² - L²)
-// Interaction:       L_coupling = +g_c·s·(∇·J) - g_c·s·(v·J)
+// Kinematic core:    L_BI = -E_REST √(1 - |u|²/C_SPEED² - L²)
+//                    (currently evaluated at every voxel and independent of s)
+// Diagnostic interaction:
+//                    L_coupling = +g_c·s·(∇·J) - g_c·s·(v·J)
+// Prescribed field-source interaction actually integrated by phase_read:
+//                    I_source = +g_c<s,div J> + g_c<curl J,s v>
 //                    (electric sign AMENDED 2026-07-18 — the previous −g_c·s·(∇·J)
 //                     was in internal sign conflict with L_GAUSS at charge sites:
 //                     its EL source +g_c·∇s drove div J anti-correlated with s,
@@ -14,9 +19,15 @@
 // Constraint:        L_gauss = -λ_G·(∇·J - ρ)²
 // Dissipation:       R = (α/2)|wave_vel|²
 //
-// The discrete action S = Σ_v L_density(v)·V_cell is an exact finite
-// volume sum on the unit lattice — not a continuum-limit claim. The tick
-// cycle IS the Euler-Lagrange equations of this action.
+// The per-slice diagnostic S = Σ_v L_density(v)·V_cell is an exact finite
+// volume sum on the unit lattice — not a continuum-limit claim. FTD-0574
+// derives the free production field tick from a separate nearest-time-slice
+// discrete action and proves that wave_vel is its Legendre momentum. The
+// stationary electric term has the correct J-variation. The onsite velocity
+// term does NOT generate phase_read's +g_c curl(s v): its J-gradient is
+// -g_c s v. That coded source instead follows from +g_c<curl J,s v>.
+// Optional matter-force branches remain selected update rules, not variations
+// of one common action (FTD-0467/0574).
 
 #include "voxel.h"
 #include "render_bridge.h"
@@ -31,7 +42,9 @@ namespace ftd {
 // ============================================================================
 
 // Term 1: Born-Infeld core  -K_B * sqrt(1 - v^2)
-// Encodes rest mass and speed limit.
+// Encodes the selected causal kinematic core. The diagnostic currently
+// evaluates it at every voxel without a state factor, so it cancels from a
+// candidate-state variation and cannot generate genesis (FTD-0567).
 inline double born_infeld_term(const Voxel& v) {
     return v.born_infeld_core();
 }
@@ -45,14 +58,23 @@ inline double born_infeld_term(const Voxel& v) {
 // same action in conflict at every charge site; the live engine settled the
 // compromise at f = −0.095 of the Gauss target (wrong sign). Measured in
 // test_gauss_law_fidelity.cpp; the flip aligns both terms on one manifold.
-// EL equation for s -> Coulomb force F = +alpha * s * grad(div J).
+// The central point-probe variation of the written interaction has operator,
+// sign, and bare coefficient F = +G_C * s * grad(div J). The standalone
+// coupling_force helper below retains the selected effective ALPHA
+// normalization; the production legacy branch uses the opposite sign, and
+// the production emergent branch uses grad|J|. See FTD-0467.
 inline double coupling_term(const Voxel& v, double divJ) {
     return G_C * v.state * divJ;
 }
 
-// Term 3: Velocity coupling (magnetic)  -g_c * s * (v . J)
-// EL equation -> Lorentz force F = g_c * q * v x curl(J).
-// Zero for stationary particles (v=0).
+// Term 3: selected onsite matter-side velocity coupling
+//         -g_c * s * (v . J)
+// Its point-worldline variation has the usual v x curl(J) structure, but its
+// FIELD variation is -g_c*s*v, not phase_read's +g_c*curl(s*v). FTD-0574
+// proves the exact coded source instead comes from +g_c<curl J,s*v>, whose
+// path variation contains induction and curl-curl terms. This diagnostic term
+// and the coded moving source are therefore not one common action. Zero for
+// stationary particles (v=0).
 inline double velocity_coupling_term(const Voxel& v) {
     double v_dot_J = v.velocity.x * v.flux.x
                    + v.velocity.y * v.flux.y
@@ -60,11 +82,10 @@ inline double velocity_coupling_term(const Voxel& v) {
     return -G_C * v.state * v_dot_J;
 }
 
-// Term 4: Gauss constraint  -lambda_G * (div J - rho_charge)^2
-// Enforces charge conservation. For arbitrarily large lambda_G the constraint
-// is enforced to arbitrary precision; LAMBDA_G = 100.0 is the chosen finite
-// value at which the residual constraint violation per voxel is below the
-// engine's working tolerance (verified in tests).
+// Term 4: selected Gauss penalty  -lambda_G * (div J - rho_charge)^2
+// Penalizes violation of the selected div(J)=rho identification. This local
+// diagnostic does not prove full-event charge conservation or U(1) gauge
+// redundancy; reactions are separately scoped by FTD-0421.
 inline constexpr double LAMBDA_G = 100.0;
 
 inline double gauss_term(double divJ, double rho_charge) {
@@ -157,9 +178,12 @@ inline double hamiltonian_density(const Voxel& v, double divJ, double rho_charge
 // Variational Force Functions
 // ============================================================================
 
-// Coulomb force from coupling term EL equation (sign follows Term 2's
-// 2026-07-18 amendment):
-//   F = +alpha * s * grad(div J)
+// Selected effective-normalization helper with the operator/sign of the
+// coupling-term point-probe variation:
+//   F_helper = +alpha * s * grad(div J)
+// The exact bare variation of the written +G_C*s*div(J) interaction carries
+// G_C, not ALPHA. This helper is not called by phase_forces_main_loop; retain
+// the distinction established by FTD-0467.
 inline Vec3 coupling_force(int8_t state, Vec3 grad_divJ) {
     return grad_divJ * (ALPHA * state);
 }
@@ -188,6 +212,10 @@ struct LagrangianDiag {
 
     // Totals
     double total_lagrangian = 0.0;     // Complete 6-term Lagrangian
+    // Legacy particle-plus-interaction diagnostic. Despite the retained API
+    // name, this excludes field kinetic, gradient, and exact tick cross terms.
+    // It must not be used as a total wave-energy conservation observable.
+    // See FTD-0452 and eft/native_energy_contract.h.
     double total_hamiltonian = 0.0;
 
     // Discrete action: S = Σ_v L(v)
@@ -210,10 +238,12 @@ struct LagrangianDiag {
     double cell_volume = VOXEL_VOLUME;
 };
 
-// Euler-Lagrange residual: how well does the tick satisfy δS/δJ = 0?
-// After phase_read(), delta_j_[i] should equal c²∇²J − g_c∇(s) + g_c∇×(s·v)
-// (electric source sign per Term 2's 2026-07-18 amendment).
-// This struct measures the discrepancy (should be machine-epsilon ~1e-15).
+// Legacy-named production field-equation replay residual. After phase_read(),
+// delta_j_[i] should equal c²∇²J − g_c∇(s) + g_c∇×(s·v). FTD-0574 proves
+// this is the EL equation of the nearest-time-slice free-field action plus
+// prescribed interaction +g_c<s,div J>+g_c<curl J,s v>. In the moving-source
+// sector it is NOT the EL residual of lagrangian_density(), whose onsite
+// velocity term has a different J-variation. The retained API name is legacy.
 struct ELResidual {
     double rms = 0.0;       // RMS residual over all sites
     double max_abs = 0.0;   // Maximum absolute residual
@@ -222,12 +252,12 @@ struct ELResidual {
 // Compute Lagrangian diagnostics from a RenderBridge snapshot
 LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb);
 
-// Compute EL residual: independently recomputes the field EOM and compares
-// against the stored delta_j_ buffer. Call after phase_read() for meaningful results.
+// Independently recompute the production field EOM and compare against the
+// stored delta_j_ buffer. Call after phase_read() for meaningful results.
 ELResidual compute_el_residual(const RenderBridge& rb);
 
-// Particle EL residual: verifies that force_diag_[i] matches the Lagrangian
-// partial derivatives δL/δx for manifested particles.
+// Legacy-named production-force replay residual: verifies that force_diag_[i]
+// matches an independent evaluation of the selected force formulas.
 // For each manifested voxel, independently recomputes:
 //   - EM:      F_EM = -α·s·∇(φ_C)       (Poisson) or -α·s·∇(∇·J) (legacy)
 //   - Gravity: F_grav = G_N·∇ρ(tier-2)   (tier-2 stencil, r=2)
@@ -239,8 +269,9 @@ struct ParticleELResidual {
     int particle_count = 0;
 };
 
-// Compute particle EL residual: independently recomputes all forces on manifested
-// particles from Lagrangian partial derivatives and compares to force_diag_ buffer.
+// Independently recompute selected production forces on manifested particles
+// and compare them to force_diag_. Despite the retained API name, this is not
+// a proof of a common action; see FTD-0467.
 // Call after tick() for meaningful results (force_diag_ is populated by phase_forces).
 ParticleELResidual compute_particle_el_residual(const RenderBridge& rb);
 
