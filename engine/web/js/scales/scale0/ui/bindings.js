@@ -13,12 +13,39 @@ import {
     setForceStyleButtons,
 } from './dom.js';
 import { COL_TO_TOGGLES } from './overlays/presets.js';
-import { initOverlayPanelShell } from './overlays/panel-shell.js';
+import { applyScale0OverlayApplicability } from './overlays/applicability.js';
+import { initOverlayPanelShell, refreshOverlayPanelShell } from './overlays/panel-shell.js';
 
 let _bound = false;
 
-function updateScenarioMetadata(scenarioId) {
-    renderScenarioDescription(scenarioId, formatS0SeedMetadata(scenarioId));
+export function updateScenarioMetadata(scenarioId, { profileModified = false } = {}) {
+    const scenario = getScale0Scenario(scenarioId);
+    const sections = [];
+    if (profileModified) {
+        sections.push(
+            'MODIFIED PHYSICS PROFILE — QUALIFICATION SUSPENDED',
+            'The visible scenario no longer matches its registered term set.',
+            'Restore the scenario profile or reload the scenario before citing its validation.',
+            '',
+        );
+    }
+    if (scenario?.validation) {
+        sections.push(
+            'AUTOMATED BEHAVIORAL VALIDATION',
+            `Qualification: ${scenario.validation.qualification}`,
+            scenario.validation.assertion,
+            `Test target: ${scenario.validation.target}`,
+        );
+    } else if (scenario?.admissionStatus === 'hidden-research') {
+        sections.push(
+            'HIDDEN RESEARCH SCENARIO',
+            `Qualification: ${scenario.qualification}`,
+            `Mechanical test only: ${scenario.mechanicalTest}`,
+        );
+    }
+    const seedMetadata = formatS0SeedMetadata(scenarioId);
+    if (seedMetadata) sections.push('', seedMetadata);
+    renderScenarioDescription(scenarioId, sections.join('\n'));
 }
 
 export function bindScale0UI(ctx, api) {
@@ -62,6 +89,7 @@ export function bindScale0UI(ctx, api) {
     const fluxVolBtn = getEl('toggle-flux-volume');
     if (fluxVolBtn) {
         fluxVolBtn.addEventListener('click', () => {
+            if (fluxVolBtn.classList.contains('is-inapplicable')) return;
             const on = !readButtonActive('toggle-flux-volume');
             setButtonActive('toggle-flux-volume', on);
             api.viewportAdapter(ctx).setFluxVolumeVisible(on);
@@ -72,6 +100,7 @@ export function bindScale0UI(ctx, api) {
     const fluxSliceBtn = getEl('toggle-flux-slice');
     if (fluxSliceBtn) {
         fluxSliceBtn.addEventListener('click', () => {
+            if (fluxSliceBtn.classList.contains('is-inapplicable')) return;
             const on = !readButtonActive('toggle-flux-slice');
             setButtonActive('toggle-flux-slice', on);
             api.viewportAdapter(ctx).setFluxSliceVisible(on);
@@ -132,19 +161,6 @@ export function bindScale0UI(ctx, api) {
         if (!silent) api.setLatticeNeedsUpload();
     };
 
-    const updateOverlayBadges = () => {
-        for (const [colName, toggles] of Object.entries(COL_TO_TOGGLES)) {
-            const badge = document.querySelector(`[data-count-for="${colName}"]`);
-            if (!badge) continue;
-            let count = 0;
-            for (const buttonId of toggles) {
-                if (readButtonActive(buttonId)) count++;
-            }
-            badge.textContent = String(count);
-            badge.classList.toggle('is-zero', count === 0);
-        }
-    };
-
     // Map from buttonId → fieldKey so clear-column can look up the
     // state-store key for any managed toggle.
     const buttonIdToFieldKey = new Map(FIELD_TOGGLE_BINDINGS);
@@ -153,9 +169,10 @@ export function bindScale0UI(ctx, api) {
         const btn = getEl(buttonId);
         if (!btn) continue;
         btn.addEventListener('click', () => {
+            if (btn.classList.contains('is-inapplicable')) return;
             const on = !readButtonActive(buttonId);
             setToggleState(buttonId, fieldKey, on);
-            updateOverlayBadges();
+            refreshOverlayPanelShell();
         });
     }
 
@@ -166,13 +183,14 @@ export function bindScale0UI(ctx, api) {
         if (!toggles) continue;
         clearBtn.addEventListener('click', () => {
             for (const buttonId of toggles) {
+                if (getEl(buttonId)?.classList.contains('is-inapplicable')) continue;
                 if (!readButtonActive(buttonId)) continue;
                 const fieldKey = buttonIdToFieldKey.get(buttonId);
                 if (!fieldKey) continue;
                 setToggleState(buttonId, fieldKey, false, { silent: true });
             }
             api.setLatticeNeedsUpload();
-            updateOverlayBadges();
+            refreshOverlayPanelShell();
         });
     }
 
@@ -190,13 +208,13 @@ export function bindScale0UI(ctx, api) {
         }
     }
 
-    // Initial badge sync on first bind so counts reflect whatever toggles
-    // the scenario loader set up during boot.
-    updateOverlayBadges();
-
     // Wire the panel shell: per-category accordion collapse, the active-overlays
     // strip, and the filter. Self-contained + idempotent (overlays/panel-shell.js).
     initOverlayPanelShell();
+    applyScale0OverlayApplicability(
+        getSelectedScenarioId('flux-pulse'),
+        api.viewportAdapter(ctx),
+    );
 }
 
 export function handleScale0ShortcutKey(key) {

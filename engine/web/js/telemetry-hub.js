@@ -294,10 +294,18 @@ export class TelemetryHub {
         if (!mainCaps) return null;
 
         const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
-        const wasmDiag = mainCaps.getScale0Diagnostics();
+        // Lazy: getScale0Diagnostics() is an uncached O(N^3) sweep on the render
+        // thread (render_bridge.cpp -> diagnostics_compute.cpp, plus two more
+        // passes inside compute_entropy_cpu). It was evaluated unconditionally
+        // and then discarded whenever the worker owned the scenario.
+        let _wasmDiag; let _wasmDiagRead = false;
+        const wasmDiag = () => {
+            if (!_wasmDiagRead) { _wasmDiag = mainCaps.getScale0Diagnostics(); _wasmDiagRead = true; }
+            return _wasmDiag;
+        };
         const mockDiag = mockCaps ? mockCaps.getScale0Diagnostics() : null;
 
-        const diag = mockDiag || wasmDiag;
+        const diag = mockDiag || wasmDiag();
 
         this.s0.diag = diag;
 

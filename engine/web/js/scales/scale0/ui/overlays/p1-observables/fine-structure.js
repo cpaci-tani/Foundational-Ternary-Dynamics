@@ -20,14 +20,9 @@ const SCENARIO_IDS = new Set([
     's0-field-thomson-unlocked-recoil',
 ]);
 
-const FTD0289_CANONICAL = {
-    relL2: 5.4899329705502643e-5,
-    maxAbs: 6.3648580289611865e-5,
-};
-
 const TEMPLATE = `
     <section data-section="fine-structure" ref="root" style="${cardStyle(300)};display:none;">
-        <div style="${titleStyle()}">Fine structure instrument</div>
+        <div style="${titleStyle()}">Configured coupling audit</div>
         <div ref="body"></div>
     </section>
 `;
@@ -78,6 +73,10 @@ export class FineStructureComponent extends BaseComponent {
         this.bridgeRef = bridge;
 
         const m = bridge.getThomsonScatteringMetrics?.() || null;
+        // A missing metrics source is not a zero measurement. Mirrors the guard
+        // in the sibling thomson.js: without `active` metrics the card renders
+        // its configured constants only, and emits no [M]/[E] badged row.
+        const live = !!(m && m.active);
         const constants = bridge.getConstants?.() || {};
         const alpha = constants.ALPHA ?? ALPHA;
         const gC = constants.G_C ?? G_C;
@@ -107,6 +106,7 @@ export class FineStructureComponent extends BaseComponent {
             ${row('G_C', gC.toExponential(12))}
             ${row('α/(4π) force K', forceK.toExponential(12))}
             ${row('damping γ', damping.toExponential(12))}
+            ${live ? `
             ${row('|flux Δ|', formatExp(fd.mag ?? 0), 'E')}
             ${row('flux Δy', formatExp(fd.y ?? 0), 'E')}
             ${row('|P|', formatExp(p.mag ?? 0), 'M')}
@@ -116,10 +116,13 @@ export class FineStructureComponent extends BaseComponent {
             ${row('live residual rel', formatExp(xr.relL2 ?? 0), 'E')}
             ${row('live comp x/y/z', `${formatExp(xr.compX ?? 0)} / ${formatExp(xr.compY ?? 0)} / ${formatExp(xr.compZ ?? 0)}`, 'E')}
             ${row('live local centroid', `${formatExp(xc.x ?? 0)}, ${formatExp(xc.y ?? 0)}, ${formatExp(xc.z ?? 0)}`, 'E')}
-            ${row('FTD-0289 C++ rel R', formatExp(FTD0289_CANONICAL.relL2), 'M')}
-            ${row('FTD-0289 C++ max R', formatExp(FTD0289_CANONICAL.maxAbs), 'M')}
+            ` : `
+            <div style="margin:6px 0;color:var(--text-muted);font-style:italic;">
+                ${tagBadge('~M')} waiting for field buffers
+            </div>
+            `}
             <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
-                ${tagBadge('T')}α is the dashboard's configured coupling constant. ${tagBadge('E')}Live residual is visual-bridge telemetry. ${tagBadge('M')}FTD-0289 is the C++ run of record, not an α derivation.
+                ${tagBadge('T')}α and the force coefficient are configured constants shown for audit only; the recoil scenario neither extracts nor validates them.${live ? ` ${tagBadge('E')}Live residual is visual-bridge telemetry, not a scattering cross section.` : ''}
             </div>
         `;
     }

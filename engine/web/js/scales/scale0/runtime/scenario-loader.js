@@ -5,6 +5,7 @@ import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY, SCALE0_ABSORBING_SCENARIOS, SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
+import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js';
 import {
     clearFluxMock,
     markFieldDirty,
@@ -16,7 +17,7 @@ import {
     setFluxMock,
     setForceStyle,
     getActiveScale0Bridge,
-    getActiveLatticeSize,
+    getScale0State,
 } from '../state/store.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -30,20 +31,25 @@ import {
     setInputValue,
     setSelectedScenarioId,
 } from '../ui/dom.js';
+import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js';
 
 // ── Per-scenario boundary resolution ────────────────────────────────
 // A scenario may declare a boundary preference in SCALE0_SCENARIO_BOUNDARY
 // (config/toggles.js); when it does, that wins over the live DOM controls.
-// Otherwise fall back to the user's #boundary-select / #toggle-reflective.
+// Otherwise fall back to the user's #boundary-select / #flux-boundary-mode.
 // (Keeps a scenario's boundary need out of raw DOM reads — the UI↔bridge
 // coupling noted in SPEC_SCALE0_SCENARIO_ARCHITECTURE.md §6.6.)
 function boundaryShapeFor(id) {
     const b = SCALE0_SCENARIO_BOUNDARY[id];
     return (b && b.shape) ? b.shape : readInputValue('boundary-select', 'cube');
 }
-function reflectiveFor(id) {
+function boundaryModeFor(id) {
     const b = SCALE0_SCENARIO_BOUNDARY[id];
-    return (b && typeof b.reflective === 'boolean') ? b.reflective : readButtonActive('toggle-reflective');
+    if (b && Number.isInteger(b.mode)) return b.mode;
+    // Backward compatibility for the one historical Boolean declaration.
+    if (b && typeof b.reflective === 'boolean') return b.reflective ? 1 : 2;
+    const raw = Number(readInputValue('flux-boundary-mode', 2));
+    return Number.isInteger(raw) && raw >= 0 && raw <= 2 ? raw : 2;
 }
 
 // Toggle-reset whitelist used by `applyToggleDefaults`.
@@ -55,9 +61,10 @@ function reflectiveFor(id) {
 // are intentionally NOT reset between scenarios — they are long-term
 // research controls owned by the user, not scenario state.
 //
-// As of 2026-04-27 the actual mutated set is {genesis, coupling,
-// damping, weak_transmutation, dual_substrate}, all whitelisted. If
-// you add a scenario that needs to flip a non-whitelisted toggle,
+// The scenario implementations now exercise the full production-facing
+// whitelist (wave, coupling, damping, genesis/evaporation, projection,
+// forces, movement, and selected interaction terms). If you add a scenario
+// that needs to flip a non-whitelisted toggle,
 // either (a) add the key to SCALE0_TOGGLES with its default value, or
 // (b) restore the previous value at scenario-end. Don't leave the
 // mutation hanging — that's the toggle-leak vector ARC-1 audited.
@@ -71,6 +78,33 @@ const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 const FIELD_BUTTON_IDS = FIELD_TOGGLE_BINDINGS.map(([id]) => id);
 const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 const SCALE0_SCENARIO_VISUAL_PROFILES = {
+    's0-seed-dynamical-flux-dressing': {
+        // Show the manifested source, generated divergence, and integral
+        // curves together. The curves visualize J; they are not extra strings.
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.8,
+        fluxThreshold: 0.0002,
+        fluxOpacity: 0.9,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-state-field', 'toggle-div-field'],
+    },
+    's0-seed-moving-source-reciprocity': {
+        // Separate what the eye otherwise conflates: J geometry, the ternary
+        // source, -wave_vel field change, and Poynting-like flow. FTD-0477
+        // found only a sub-voxel response, so the lattice marker does not hop.
+        // None of these overlays is a stored trajectory or radiation proof.
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.5,
+        fluxThreshold: 0.0005,
+        fluxOpacity: 0.72,
+        fieldOverlays: [
+            'toggle-flux-lines',
+            'toggle-state-field',
+            'toggle-e-field',
+            'toggle-poynting',
+        ],
+    },
     'flux-vortex': {
         // E Field streamlines make the vortex ring's curl structure immediately visible.
         fieldOverlays: ['toggle-e-field'],
@@ -227,8 +261,12 @@ function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId) {
     // (it runs after the flux-mock boundary is set). flux-zero-point relies on
     // this to keep its energy trapped → persistent floor.
     const bnd = SCALE0_SCENARIO_BOUNDARY[scenarioId] || {};
+    const mode = bnd.mode ?? (bnd.reflective === true ? 1 : 2);
     ctx.applyBoundaryShape(bnd.shape ?? 'cube');
-    ctx.applyReflectiveBoundary(bnd.reflective ?? false);
+    ctx.applyFluxBoundaryMode(mode);
+    // Particle rendering still consumes the legacy reflective flag. It must
+    // describe only mode 1; periodic flux is not a reflective particle wall.
+    ctx.viewport?.setReflectiveBoundary?.(mode === 1);
     viewportAdapter.setFluxVolumeVisible(true);
     viewportAdapter.setFluxSliceVisible(false);
     setButtonActive('toggle-flux-volume', true);
@@ -250,7 +288,8 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
         // every tick:
         //   weak_transmutation   requires dual_substrate
         //   triad_binding        requires dual_substrate
-        //   pair_production      requires genesis
+        //   pair_production      is independent of genesis (both apply their
+        //                        own state==0 and K_GENESIS gate)
         //   strong_force / color_forces  amplify forces
         //   selective_damping    is a damping mode
         //
@@ -282,6 +321,37 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
             mockScale0?.setToggle(key, val);
         }
     }
+}
+
+/**
+ * Repaint the physics-toggles card and overlay applicability from ENGINE state.
+ *
+ * `scenario.load` → `setupScenario` → `reset()` reconstructs the RenderBridge at
+ * C++ defaults, and each `configure_*_terms` helper then zeroes every
+ * TOGGLE_SPECS entry before setting its own profile. Everything applied before
+ * that point — `applyToggleDefaults`, `SCALE0_SCENARIO_OVERRIDES` — therefore
+ * describes what the dashboard REQUESTED, not what the engine is running. Left
+ * unreconciled, the checkbox card asserts engine state the engine does not have
+ * and `applicability.js` offers overlay channels the profile cannot populate.
+ *
+ * Returns false when the active bridge cannot answer authoritatively yet: the
+ * worker publishes its readback asynchronously, so the proxy re-invokes this
+ * from its `onEngineToggles` callback once the first real frame lands.
+ */
+export function syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenarioId) {
+    const bridge = (ctx.useFluxMock && ctx.fluxMock) ? ctx.fluxMock : ctx.bridge;
+    if (!bridge || typeof bridge.getToggle !== 'function') return false;
+    if (bridge.isWorker && !bridge.hasEngineToggles) return false;
+
+    const terms = {};
+    for (const [key, , elId] of DEFAULT_TOGGLES) {
+        const value = !!bridge.getToggle(key);
+        terms[key] = value;
+        setCheckboxValue(elId, value);
+    }
+    markScenarioOverrideRows(DEFAULT_TOGGLES);
+    applyScale0OverlayApplicability(scenarioId, viewportAdapter, terms);
+    return true;
 }
 
 /**
@@ -405,6 +475,14 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         // dead worker means NOTHING ticks).
         fluxMock = new WasmBridgeProxy(latticeSize, {
             onInitFailure: () => fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params),
+            // The worker owns the truth about which terms the C++ body left live.
+            // Reconcile the UI to it whenever it republishes, against the CURRENT
+            // scenario id — a late frame from a superseded load must not repaint
+            // the card for a scenario the user already switched away from.
+            onEngineToggles: () => {
+                const activeId = getScale0State().currentScenarioId;
+                if (activeId) syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId);
+            },
         });
         useFluxMock = true;
     }
@@ -434,6 +512,18 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // ordering documented there is preserved).
     scenario.load(harness, params);
 
+    // Scenario-owned observatory panels are mounted from the same canonical
+    // load path as their physics. The genesis panel used to be orphaned: its
+    // module existed and tests expected it, but no production code mounted it.
+    // Dispose eagerly on every switch so hidden research scenarios cannot
+    // leave stale controls attached to a different active bridge.
+    if (typeof window !== 'undefined' && window.__ftdGenesisBurstPanel) {
+        window.__ftdGenesisBurstPanel.dispose?.();
+    }
+    if (scenario.id === 's0-seed-cluster-law') {
+        mountGenesisBurstPanel(harness);
+    }
+
     // applyAuxiliaryDefaults runs AFTER scenario.load so that the flux boundary
     // mode command isn't discarded. On the worker path, scenario.load calls
     // setupScenario which sends { type:'create' } to the worker AND clears
@@ -446,8 +536,9 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after
     // scenario.load (which resets the engine toggles under the dual-bridge
     // routing) so these actually reach the running bridge. Two things:
-    //   • absorbing_boundary — outgoing waves disperse into the void at the
-    //     faces (render_bridge.cpp Rule 5b). Scoped here so other scenarios keep
+    //   • absorbing_boundary — imposed D-deep quadratic damping at the faces
+    //     (render_bridge.cpp Rule 5b). It is not a derived radiation condition.
+    //     Scoped here so other scenarios keep
     //     their full flux volume (enabling it broadly collapsed volumes to slabs).
     //   • latency_field — run the REAL latency Poisson so the gravity panel shows
     //     the genuine C++ potential, not only the |J|² proxy. Source is the
@@ -470,6 +561,12 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // defaults applied by applyAuxiliaryDefaults or resetScale0VisualState.
     restoreOverlayPreferences(overlayPrefs, state, viewportAdapter);
     applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario.id, overlayPrefs);
+    // Prefer engine truth. The in-thread bridge answers synchronously here; the
+    // worker path cannot yet, so it falls back to the JS model for this frame and
+    // the proxy's onEngineToggles callback corrects both card and mask on arrival.
+    if (!syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenario.id)) {
+        applyScale0OverlayApplicability(scenario.id, viewportAdapter);
+    }
 
     // Keep viewport world coords (wireframe, clip, streamlines) aligned with
     // the bridge that owns physics — resize already does this; load must too.
@@ -582,7 +679,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
 
     if (bridge?.capabilities?.scale0) {
         bridge.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
-        bridge.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
+        bridge.capabilities.scale0.setFluxBoundaryMode(boundaryModeFor(scenarioId));
     }
 
     ctx.viewport.setLatticeSize(newSize);

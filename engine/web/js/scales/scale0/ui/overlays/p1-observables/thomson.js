@@ -1,6 +1,6 @@
 /**
  * @file engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js
- * @purpose Live readout for the Thomson scattering observatory scenario.
+ * @purpose Live readout for the locked-source null and native recoil probes.
  */
 
 import { BaseComponent } from '../../../../../core/component.js';
@@ -13,11 +13,12 @@ const SCENARIO_IDS = new Set([
     's0-field-thomson-unlocked-recoil',
 ]);
 
-const FTD0289_CANONICAL = {
-    l2: 4.2546065759857619e-4,
-    relL2: 5.4899329705502643e-5,
-    maxAbs: 6.3648580289611865e-5,
-    localEnergy: 3.2674008350733898e-8,
+const NATIVE_RECOIL_CANONICAL = {
+    displacement: 0.16970273204471858,
+    terminalSpeed: 0.000515388555018052,
+    maxSpeed: 0.0037037454614928297,
+    legacyDisplacement: 1.4800942760846331e-16,
+    repeatResidual: 0,
 };
 
 const TEMPLATE = `
@@ -55,14 +56,16 @@ export class ThomsonComponent extends BaseComponent {
 
     update(bridge, scenarioId) {
         const scenario = getScale0Scenario(scenarioId);
-        if (!scenario?.tags?.includes('thomson')) {
+        if (!SCENARIO_IDS.has(scenarioId)) {
             this.refs.root.style.display = 'none';
             return;
         }
         this.refs.root.style.display = '';
         this.bridgeRef = bridge;
         const unlocked = scenarioId === 's0-field-thomson-unlocked-recoil';
-        this.refs.title.textContent = unlocked ? 'Flux recoil unlocked' : 'Flux recoil locked';
+        this.refs.title.textContent = unlocked
+            ? 'Native flux-gradient recoil probe'
+            : 'Locked-source superposition null';
         const m = bridge.getThomsonScatteringMetrics?.();
         const fluxUnlocked = m?.toggles?.wave_propagation ?? bridge.getToggle?.('wave_propagation') ?? true;
         if (!m || !m.active) {
@@ -112,15 +115,16 @@ export class ThomsonComponent extends BaseComponent {
             ${row('live excess local E', formatExp(xr.localEnergy ?? 0), 'E')}
             ${row('live excess centroid', `${formatExp(xc.x ?? 0)}, ${formatExp(xc.y ?? 0)}, ${formatExp(xc.z ?? 0)}`, 'E')}
             ${unlocked ? `
-                ${row('FTD-0289 C++ |R|', formatExp(FTD0289_CANONICAL.l2), 'M')}
-                ${row('FTD-0289 C++ rel', formatExp(FTD0289_CANONICAL.relL2), 'M')}
-                ${row('FTD-0289 C++ max', formatExp(FTD0289_CANONICAL.maxAbs), 'M')}
-                ${row('FTD-0289 local E', formatExp(FTD0289_CANONICAL.localEnergy), 'M')}
+                ${row('C++ beam-induced |Δx|', formatExp(NATIVE_RECOIL_CANONICAL.displacement), 'M')}
+                ${row('C++ terminal |v|', formatExp(NATIVE_RECOIL_CANONICAL.terminalSpeed), 'M')}
+                ${row('C++ maximum |v|', formatExp(NATIVE_RECOIL_CANONICAL.maxSpeed), 'M')}
+                ${row('legacy-force |Δx|', formatExp(NATIVE_RECOIL_CANONICAL.legacyDisplacement), 'M')}
+                ${row('repeat residual', formatExp(NATIVE_RECOIL_CANONICAL.repeatResidual), 'M')}
             ` : ''}
             <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
                 ${tagBadge(unlocked ? 'M' : '~M')}${unlocked
-                    ? 'Live JS residual uses plus minus beam minus charge inside the visual bridge. Exact C++ FTD-0289 run above is canonical; no alpha or cross-section claim.'
-                    : 'Locked field observatory: FTD-0287 measured linear superposition with no unlocked flux-gradient recoil.'}
+                    ? 'C++ campaign uses beam/no-beam subtraction and exact replay. It validates the selected native flux-gradient response only; no electron, Thomson, alpha, or cross-section claim.'
+                    : 'Locked-source campaign measures linear superposition and zero recoil; Thomson scattering is closed negative for this profile.'}
             </div>
         `;
     }
@@ -134,7 +138,7 @@ export class ThomsonComponent extends BaseComponent {
                 </label>
                 <label style="display:flex;align-items:center;gap:8px;color:var(--text-muted);">
                     <input data-thomson-mode type="checkbox" ${unlocked ? 'checked' : ''} style="accent-color:var(--accent);">
-                    <span>Recoil branch unlocked</span>
+                    <span>Native recoil profile</span>
                 </label>
             </div>
         `;

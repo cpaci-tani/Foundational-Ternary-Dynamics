@@ -7,15 +7,15 @@
  */
 
 export const QUANTUM_SCENARIO_DESCRIPTIONS = {
-    'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability tracks \\(|J|^2\\). Runs N trials with random-phase Gaussian flux, accumulates positions, compares against the Born-rule prediction. [SELECTION] — convergence is observed but a ~10× lattice bias is currently unaccounted for; see FAQ "born-rule-emergence". Was mis-tagged [THEOREM] pre-2026-05-27 (audit P0-16).',
-    'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility \\(V = (I_{\\max}-I_{\\min})/(I_{\\max}+I_{\\min})\\) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',
-    'quantum-eraser': 'Quantum Eraser: Coherent slits are marked orthogonally (y-polarised vs z-polarised), representing which-way information, which erases interference fringes in the $|J|^2$ point cloud. A diagonal eraser (y=z polariser) placed at $x=N/2$ erases this which-way markers, dynamically restoring the interference fringes. Demonstrates physical topological phase eraser.',
-    'quantum-tunnel': 'Quantum Tunneling: Flux packet encounters a potential barrier (locked charge wall). Measures transmission T vs barrier width W. Expected: \\(T \\propto \\exp(-2\\kappa W)\\), demonstrating evanescent wave penetration.',
-    'quantum-well': 'Particle in a Box: Broadband flux confined between reflective walls. FFT of time series reveals discrete frequency peaks at \\(f_n \\propto n^2\\), demonstrating energy quantization from boundary conditions.',
-    'quantum-entangle': 'Entanglement Correlation: Pair production creates correlated +1/-1 particles. Measures spin-charge correlation C(d) vs separation distance. Tests decoherence length and correlation decay.',
-    'quantum-aharonov-bohm': 'Aharonov-Bohm Effect: Two flux packets traverse paths around a confined solenoid. Phase shift at convergence point is proportional to enclosed flux, even though B=0 outside. Tests topological phase.',
-    'quantum-casimir': 'Casimir Effect: Two parallel reflective plates in a vacuum foam background. Energy density between plates differs from outside, creating boundary-modified vacuum pressure. Expected: \\(F \\propto 1/d^4\\).',
-    'quantum-zeno': 'Quantum Zeno Effect: Near-threshold flux with periodic \u201cmeasurement\u201d (flux sampling). Frequent measurement suppresses decay (manifestation). Tests the measurement-inhibition prediction.',
+    'quantum-born-rule': 'Native Genesis Response: samples the engine’s thresholded genesis events against a seeded flux profile. This is a genesis diagnostic; it does not implement wave-function collapse or prove a Born distribution.',
+    'quantum-double-slit': 'Classical Two-Source Interference: two coherent transverse flux sources form a native wave-interference pattern with genesis disabled. It does not measure accumulated single-particle impacts.',
+    'quantum-eraser': 'State-Grid Transmission Prototype: evolves flux around a selected locked-state grid. No which-way observable, polarization measurement, or erasure operation is implemented.',
+    'quantum-tunnel': 'State-Wall Transmission: measures native flux reflection and transmission at a wall of locked manifested sites. The wall is not a calibrated Schrödinger potential.',
+    'quantum-well': 'Imposed Standing Harmonics: visualizes selected harmonics between marker walls. The walls do not impose a wave boundary condition or derive an n² spectrum.',
+    'quantum-entangle': 'Tagged Pair Correlation: initializes opposite states and opposite flux with one shared pair ID. This is exact classical pair bookkeeping, not a Bell-entanglement demonstration.',
+    'quantum-aharonov-bohm': 'Solenoid Two-Path Topology: provides the geometry for a future holonomy test. No gauge-invariant phase observable is presently extracted.',
+    'quantum-casimir': 'Parallel-Plate Vacuum Null Setup: provides plates and a seeded noise field. No vacuum-ensemble subtraction or plate-force estimator is presently implemented.',
+    'quantum-zeno': 'Unobserved Decay Control: supplies a near-threshold baseline for a future intervention test. The engine has no measurement operator, so no Zeno effect is currently tested.',
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -55,6 +55,32 @@ export const QUANTUM_SCENARIO_DESCRIPTIONS = {
 // LEDGER.md); when in doubt, align to LEDGER, do not re-decide status.
 // ─────────────────────────────────────────────────────────────────────
 export const S0_SEED_SCENARIO_METADATA = {
+    's0-seed-dynamical-flux-dressing': {
+        title: 'Dynamical flux dressing — native source response',
+        desc: 'A single locked positive ternary site starts with exactly zero flux and zero wave momentum. On each tick the existing state–flux coupling drives -G_C grad(s), so the surrounding field is produced by the engine rather than painted into the initializer. “Aura” is only informal shorthand for this source-conditioned dynamical field.',
+        epistemic: [
+            ['Source term', '[DERIVED]', 'The first-tick six-face response is the direct discrete variation of the written +G_C s div(J) coupling.'],
+            ['Dynamical field', '[EMERGENT]', 'Nonzero J and wave momentum arise from the frozen production tick starting from zero field.'],
+            ['Radial dressing', '[CLOSED NEGATIVE]', 'FTD-0476 measured radial alignment 0.73760 against the locked 0.75 gate.'],
+            ['Attached dressing / wake / released field', '[CLOSED NEGATIVE]', 'The prescribed-motion and source-off histories miss the locked attachment, wake, and outgoing-field gates.'],
+            ['Reciprocal aura / radiation mechanism', '[OPEN]', 'A future dynamically caused source history must close matter work, field energy, momentum, and any detached component.'],
+            ['Electromagnetic or photon identity', '[OPEN]', 'No gauge redundancy, Ward identity, detector response, quantization, or empirical normalization is supplied by this scenario.'],
+            ['Flux lines', '[CONJECTURE]', 'Rendered lines are integral curves of the sampled vector field, not literal substrate filaments.'],
+        ],
+    },
+    's0-seed-moving-source-reciprocity': {
+        title: 'Driven polarity — qualified sub-voxel response',
+        desc: 'An initially resting unlocked polarity is spatially separated from a finite transverse packet. The existing selected G_C s grad|J| extension produces a deterministic 0.203598-cell response at L=65 through 72 ticks, but no integer hop. The display is therefore a qualified force-response discriminator, not a moving-source, wake, photon, or radiation scenario.',
+        epistemic: [
+            ['Sub-voxel response', '[EMERGENT WITHIN SELECTED EXTENSION]', 'The mobile arms respond by 0.203598 cells with no scripted velocity; source-only and locked controls remain at rest and the exact repeat residual is zero.'],
+            ['Manifested motion', '[CLOSED NEGATIVE]', 'Neither polarity reaches the preregistered half-cell threshold or produces an integer movement event in 72 ticks.'],
+            ['Accelerating force', '[SELECTION]', 'FTD-0435 rejects this G_C s grad|J| channel as ordinary electric qE and finds a mixed-polarity self-field/interference response.'],
+            ['Dressing / wake / detached field', '[CLOSED NEGATIVE]', 'Near-field fractions are 0.438–0.465, the trailing/leading ratio is 1.0, and mean-radius growth is 1.102 rather than the locked 2.0 gate.'],
+            ['Energy-momentum reciprocity', '[CLOSED NEGATIVE FOR REGISTERED AUDIT]', 'Normalized residuals reach 1.961e-6 in energy and 2.417e-3 in selected momentum, above the locked 1e-6 gates.'],
+            ['Flux lines', '[CONJECTURE]', 'Lines are instantaneous integral curves of J, not paths, strings, or histories.'],
+            ['-wave_vel and Poynting overlays', '[DIAGNOSTIC]', 'These are field-change and energy-flow proxies in the selected lattice dictionary, not detector-calibrated electromagnetic observables.'],
+        ],
+    },
     // Audit-3 + Audit-4 2026-04-28 metadata removals: s0-seed-{electron,
     // muon, tau, photon, w-boson, z-boson, higgs-boson, positron, pion,
     // proton-l4, neutron, electron-l3, neutrino, quark, antiquark,
@@ -72,9 +98,9 @@ export const S0_SEED_SCENARIO_METADATA = {
     },
     's0-seed-photon': {
         title: 'Photon seed (transverse massless flux wave at \\(c = 1/\\sqrt{3}\\))',
-        desc: 'State-0 everywhere (no matter) with a \\(J_z\\)-polarized Gaussian flux pulse launched at \\(x \\approx N/4\\), propagating in +x. The wave speed \\(c = 1/\\sqrt{3}\\) emerges from CFL stability on the cubic lattice.',
+        desc: 'State-0 everywhere (no matter) with a \\(J_z\\)-polarized Gaussian flux pulse launched at \\(x \\approx N/4\\), propagating in +x. The wave speed \\(c = 1/\\sqrt{3}\\) is a [SELECTION] (FTD-0407): the production 18-point stencil permits c up to sqrt(3)/2, so 1/sqrt(3) is conservative rather than forced.',
         epistemic: [
-            ['Wave propagation', '[THEOREM]', 'Massless transverse flux wave at \\(c = 1/\\sqrt{3}\\) follows from the cubic-lattice wave equation + CFL stability.'],
+            ['Wave propagation', '[SELECTION]', 'Massless transverse flux wave at \\(c = 1/\\sqrt{3}\\) is the selected lattice speed (FTD-0407); the stencil stability ceiling is sqrt(3)/2, so the value is conservative, not forced.'],
             ['Polarization (2 modes)', '[THEOREM]', 'Two transverse modes enforced by the Gauss constraint \\(\\nabla \\cdot J = 0\\).'],
             ['Name "photon"', '[SELECTION]', 'Identifying the transverse flux wave with the SM photon is structurally consistent but not uniquely forced.'],
         ],
@@ -153,7 +179,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         title: 'Gluon seed (massless colored gauge wave)',
         desc: 'Transverse flux wave similar to the photon seed, but amplitude is dominated by one Cartesian axis to suggest color charge (the lattice\'s dominant-flux-axis \u2194 color labelling). In FTD the BCC multiplicative structure unifies Watson\'s identity \\(W_3\\) and SU(3); the "gluon" is an excitation of that sector. Propagation at \\(c = 1/\\sqrt{3}\\), massless.',
         epistemic: [
-            ['Propagation', '[THEOREM]', 'Massless transverse wave at \\(c = 1/\\sqrt{3}\\) (CFL on cubic lattice).'],
+            ['Propagation', '[SELECTION]', 'Massless transverse wave at \\(c = 1/\\sqrt{3}\\) (selected lattice speed, FTD-0407).'],
             ['Color', '[EMERGENT]', '\\(\\mathbb{Z}_3\\) color labelling from dominant flux axis; seed biases one axis to make the label visible.'],
             ['SU(3) gauge content', '[SELECTION]', 'Identification of this excitation with the SM gluon is structurally consistent, not uniquely forced.'],
         ],
@@ -309,11 +335,11 @@ export const S0_SEED_SCENARIO_METADATA = {
         ],
     },
     's0-seed-gravitational-lensing': {
-        title: 'Gravitational lensing (dynamic bending)',
-        desc: 'Places a massive central particle Schwarzschild well at the center, and launches an off-axis z-polarized flux wave packet in +x. Bends the propagating flux wave path dynamically toward the center core.',
+        title: 'Gravitational optical-channel null test',
+        desc: 'Places a mass-like central seed beside an off-axis transverse flux packet. The scenario is an observatory for comparing its trajectory with a no-mass control; the frozen engine does not yet establish a native gravity-to-wave optical coupling.',
         epistemic: [
             ['Schwarzschild well', '[SELECTION]', 'Lattice-scale Schwarzschild well represented by central inflow flux.'],
-            ['Wave propagation bending', '[EMERGENT]', 'Path curvature of the photon pulse passing the gravity well is a dynamic, non-scripted effect.'],
+            ['Wave propagation bending', '[OPEN]', 'A nonzero controlled trajectory deflection must be measured against the matched no-mass run.'],
         ],
     },
     's0-seed-quark-gluon-plasma': {

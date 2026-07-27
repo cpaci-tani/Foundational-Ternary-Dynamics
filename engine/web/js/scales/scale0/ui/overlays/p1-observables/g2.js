@@ -157,13 +157,14 @@ export class G2Component extends BaseComponent {
                     Schwinger first-order: a = α/(2π) = <span class="p1-g2-val">${a_e_first.toExponential(5)}</span>
                 </div>
                 <div>plus 2nd-order: ${SCHWINGER_C2.toFixed(4)}·(α/π)² = <span class="p1-g2-val-warning">${a_e_two.toExponential(2)}</span></div>
-                <div>FTD prediction (1+2 loop) = <span class="p1-g2-val">${a_e_predicted.toExponential(6)}</span></div>
+                <div>[PARAMETRIC] value (1+2 loop) = <span class="p1-g2-val">${a_e_predicted.toExponential(6)}</span>
+                    <span class="p1-g2-desc">— standard multi-loop QED with FTD's α inserted. The loop functional form is imported; only α is FTD's, so this is evidence about α's <i>value</i>, not a substrate derivation of g−2.</span></div>
                 <div class="p1-g2-border">
                     CODATA a_e = <span class="p1-g2-val">${A_E_CODATA.toExponential(6)}</span>
                     <span class="p1-g2-desc">(electron, measured to 0.13 ppt)</span>
                 </div>
                 <div>CODATA a_μ = <span class="p1-g2-val">${A_MU_CODATA.toExponential(6)}</span>
-                    <span class="p1-g2-desc">(muon — same Schwinger formula; mass-independent at QED order)</span>
+                    <span class="p1-g2-desc">(muon — shown for reference. The leading Schwinger term α/2π is mass-independent, but a_μ is NOT: hadronic and electroweak contributions scale with m² and dominate the a_μ−a_e difference. Do not read this row as an FTD prediction for the muon.)</span>
                 </div>
                 <div style="margin-top:3px;">
                     rel err (1-loop only): <span class="p1-g2-val-warning">${relErrFirst.toFixed(3)}%</span>;

@@ -16,6 +16,6 @@ export const COL_TO_TOGGLES = {
                       'toggle-latency', 'toggle-gauss-residual'],
     'stress-energy': ['toggle-e-pressure', 'toggle-b-pressure'],
     'phenomena':     ['toggle-dual-substrate', 'toggle-chirality', 'toggle-dark-halo',
-                      'toggle-genesis-iso', 'toggle-damping-zones', 'toggle-confinement',
-                      'toggle-horizon'],
+                      'toggle-genesis-iso', 'toggle-color-charge', 'toggle-damping-zones',
+                      'toggle-confinement', 'toggle-horizon'],
 };

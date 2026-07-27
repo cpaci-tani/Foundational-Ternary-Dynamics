@@ -13,10 +13,14 @@
  * doesn't leave stale references behind.
  */
 
-import { SCALE0_TOGGLES } from '../../../../config/toggles.js';
+import {
+    SCALE0_TOGGLES,
+    getScale0ScenarioToggleProfile,
+} from '../../../../config/toggles.js';
 import { K_B } from '../../../../constants.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
-import { getEl } from '../dom.js';
+import { getEl, markScenarioOverrideRows } from '../dom.js';
+import { updateScenarioMetadata } from '../bindings.js';
 import { getFluxMock } from '../../controller.js';
 import { getScale0State, getActiveLatticeSize, getActiveScale0Bridge } from '../../state/store.js';
 
@@ -44,6 +48,18 @@ function dualHarness(ctx, fn) {
 }
 
 function wirePhysicsToggles(ctx) {
+    const currentScenarioId = () => getScale0State().currentScenarioId || 'flux-pulse';
+    const profileIsModified = () => getScale0ScenarioToggleProfile(currentScenarioId())
+        .some(([, expected, elId]) => {
+            const el = getEl(elId);
+            return !!el && el.checked !== expected;
+        });
+    const renderProfileStatus = (modified = profileIsModified()) => {
+        const warning = getEl('physics-profile-warning');
+        if (warning) warning.hidden = !modified;
+        updateScenarioMetadata(currentScenarioId(), { profileModified: modified });
+    };
+
     for (const [toggleKey, , elId] of SCALE0_TOGGLES) {
         const el = getEl(elId);
         if (!el) continue;
@@ -52,29 +68,36 @@ function wirePhysicsToggles(ctx) {
             getFluxMock()?.capabilities?.scale0?.setToggle(toggleKey, el.checked);
             const row = el.closest('.toggle-row');
             if (row) row.classList.remove('scenario-override');
+            renderProfileStatus();
         });
     }
 
-    // "Reset to defaults" — restores every physics toggle in this card to
-    // its canonical SCALE0_TOGGLES default. Syncs both the bridge state
-    // and the DOM checkbox, and clears any scenario-override styling so
-    // users see the card return to a known baseline. Leaves the lattice
-    // contents, particles, and overlays alone — this only reverts the
-    // physics-term switches.
+    // Restore the current scenario's full registered physics profile without
+    // clearing its field. This is deliberately scenario-aware: restoring the
+    // broad engine defaults would silently invalidate isolated qualification
+    // runs such as the two-term dynamical dressing probe.
     const resetBtn = getEl('btn-reset-physics-toggles');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
             const mock = getFluxMock()?.capabilities?.scale0;
-            for (const [toggleKey, defaultValue, elId] of SCALE0_TOGGLES) {
-                ctx.bridge.setToggle(toggleKey, defaultValue);
-                mock?.setToggle(toggleKey, defaultValue);
+            const prerequisites = ['dual_substrate', 'genesis', 'forces', 'damping'];
+            const profile = [...getScale0ScenarioToggleProfile(currentScenarioId())]
+                .sort((a, b) => {
+                    const ia = prerequisites.indexOf(a[0]);
+                    const ib = prerequisites.indexOf(b[0]);
+                    if (ia !== -1 && ib === -1) return -1;
+                    if (ib !== -1 && ia === -1) return 1;
+                    if (ia !== -1 && ib !== -1) return ia - ib;
+                    return 0;
+                });
+            for (const [toggleKey, profileValue, elId] of profile) {
+                ctx.bridge.setToggle(toggleKey, profileValue);
+                mock?.setToggle(toggleKey, profileValue);
                 const el = getEl(elId);
-                if (el) {
-                    el.checked = !!defaultValue;
-                    const row = el.closest('.toggle-row');
-                    if (row) row.classList.remove('scenario-override');
-                }
+                if (el) el.checked = !!profileValue;
             }
+            markScenarioOverrideRows(SCALE0_TOGGLES);
+            renderProfileStatus(false);
             // Brief visual confirmation: flash the button.
             resetBtn.classList.add('ctrl-reset-flash');
             setTimeout(() => resetBtn.classList.remove('ctrl-reset-flash'), 320);

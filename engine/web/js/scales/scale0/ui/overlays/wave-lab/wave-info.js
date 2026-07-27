@@ -148,7 +148,7 @@ function infoCenter(m, lane) {
                     ${tagBadge('T')} Wave information center
                 </div>
                 <div style="color:var(--text-muted);font-size:12px;line-height:1.35;">
-                    Select RF lattice wave, Light lattice wave, or Sound lattice proxy under Field Configurations. This panel then becomes the live wave recipe, controls, and machine-measured telemetry center.
+                    Select an admitted transverse lattice mode or the longitudinal sound-speed negative control. This panel then becomes the live wave recipe, controls, and telemetry center.
                 </div>
             </div>
         `;
@@ -157,10 +157,10 @@ function infoCenter(m, lane) {
     const component = lane.component || 'y';
     const family = setName(lane.set);
     const frequencyNote = lane.set === 'rf'
-        ? 'RF is represented by the lowest transverse spatial mode, so the whole box becomes the wave ruler.'
+        ? 'The legacy RF label denotes only the lowest selected transverse spatial mode; there is no SI radio calibration.'
         : lane.set === 'light'
-            ? 'Light is represented by a higher transverse spatial mode so wavelength visibly shortens against RF.'
-            : 'Sound is a slower longitudinal medium proxy; it is not a material acoustics derivation.';
+            ? 'The legacy light label denotes only a higher transverse lattice mode; it has no optical or color calibration.'
+            : 'The c/8 value changes the seed momentum only. The native engine has no medium and re-propagates this longitudinal component at its ordinary lattice pole.';
     return `
         <div style="margin:8px 0 10px;padding:9px;border:1px solid var(--border);border-radius:7px;background:rgba(255,255,255,0.035);">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
@@ -172,7 +172,8 @@ function infoCenter(m, lane) {
                 ${compactTag(`J${component}/W${component}`)}
                 ${compactTag(`n=${lane.modeN}`)}
                 ${compactTag(`lambda=${fmtRatio(lane.lambda, 2)}`)}
-                ${compactTag(`v/c=${fmtRatio(lane.speedRatioToLight ?? 0, 3)}`)}
+                ${compactTag(`native vg/c=${fmtRatio(lane.speedRatioToLight ?? 0, 3)}`)}
+                ${lane.proxy ? compactTag(`seed W ratio=${fmtRatio(lane.seedSpeedRatioToLight ?? 0, 3)}`) : ''}
             </div>
             <div style="color:var(--text-muted);font-size:12px;line-height:1.35;">
                 ${frequencyNote} The sliders reseed the lattice immediately; measured energy, peaks, and samples below come from the buffers after that seed.
@@ -427,10 +428,10 @@ export class WaveInfoComponent extends BaseComponent {
         this.controlKey = key;
         const isSoundScenario = this.scenarioId === SOUND_LATTICE_WAVE_SCENARIO_ID || this.scenarioId === SOUND_COLLISION_SCENARIO_ID;
         const speedControl = isSoundScenario
-            ? sliderRow('speedRatio', 'sound proxy speed v/c', settings.speedRatio.toFixed(3), 0.04, 0.50, 0.005, formatControlValue('speedRatio', settings.speedRatio))
+            ? sliderRow('speedRatio', 'seed W coefficient / c', settings.speedRatio.toFixed(3), 0.04, 0.50, 0.005, formatControlValue('speedRatio', settings.speedRatio))
             : `
                 <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:12px;">
-                    <span>phase speed v/c</span>
+                    <span>native wave coefficient / c</span>
                     ${controlValue('speedRatio', '1.000')}
                 </div>
             `;
@@ -447,7 +448,7 @@ export class WaveInfoComponent extends BaseComponent {
                 ${sliderRow('phase', 'phase offset', settings.phase.toFixed(3), 0, (Math.PI * 2).toFixed(3), 0.01, formatControlValue('phase', settings.phase))}
                 ${speedControl}
                 <div style="margin-top:6px;color:var(--text-muted);font-size:11px;line-height:1.35;">
-                    ${tagBadge('T')}Frequency is the lattice dispersion readout from mode n and v/c. Pulse width gates the x-envelope; full means a continuous periodic wave.
+                    ${tagBadge('T')}Frequency is the native kick-drift dispersion readout from mode n. For the sound negative control, the speed slider changes only the seeded W amplitude; it does not change the engine pole. Pulse width gates the x-envelope.
                 </div>
             </div>
         `;

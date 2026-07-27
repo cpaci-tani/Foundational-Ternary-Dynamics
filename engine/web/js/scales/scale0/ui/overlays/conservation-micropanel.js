@@ -162,8 +162,30 @@ export function mountConservationMicropanel(host, getBridge) {
         if (fs) renderHistorySparklines();
     }
 
+    /**
+     * Is this micropanel actually rendered right now?
+     *
+     * It is an inline `.chart-card` mounted into `#app`, NOT a dock tab and not
+     * (normally) a floating window, so `isPanelLive(host)` could never return
+     * true: `#app` carries neither `.active` nor a `.floating-window` ancestor,
+     * and the shared predicate requires one of those. The guard therefore closed
+     * permanently and the DeltaE/Deltap/DeltaL/DeltaQ grid was never populated —
+     * the status element kept its literal template string and the fullscreen view
+     * showed "Collecting history..." forever.
+     *
+     * Visibility here is CSS-driven by the `scale0-only` class, so the honest
+     * test is "does the panel's OWN root render". If it has been floated, defer
+     * to the shared predicate so a collapsed window still stops the work.
+     */
+    function panelIsLive() {
+        const el = document.getElementById(PANEL_ID);
+        if (!el) return false;
+        if (el.closest('.floating-window')) return isPanelLive(el);
+        return el.getClientRects().length > 0;
+    }
+
     function update() {
-        if (!isPanelLive(host)) return;
+        if (!panelIsLive()) return;
         const bridge = getBridge?.();
         if (!bridge) return;
         const totals = sampleTotals(bridge);

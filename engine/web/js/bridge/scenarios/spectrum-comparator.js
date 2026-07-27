@@ -27,9 +27,9 @@ export const SINGLE_WAVE_LANES = Object.freeze({
     [RF_LATTICE_WAVE_SCENARIO_ID]: [
         {
             id: 'rf',
-            label: 'RF lattice wave',
+            label: 'n=1 transverse lattice mode',
             set: 'rf',
-            carrier: 'EM transverse',
+            carrier: 'transverse vector',
             modeN: 1,
             laneFrac: 0,
             sigmaFrac: 0.12,
@@ -43,9 +43,9 @@ export const SINGLE_WAVE_LANES = Object.freeze({
     [LIGHT_LATTICE_WAVE_SCENARIO_ID]: [
         {
             id: 'light_visible',
-            label: 'Light lattice wave',
+            label: 'n=6 transverse lattice mode',
             set: 'light',
-            carrier: 'EM transverse',
+            carrier: 'transverse vector',
             modeN: 6,
             laneFrac: 0,
             sigmaFrac: 0.10,
@@ -59,9 +59,9 @@ export const SINGLE_WAVE_LANES = Object.freeze({
     [SOUND_LATTICE_WAVE_SCENARIO_ID]: [
         {
             id: 'sound_air_proxy',
-            label: 'Sound lattice proxy',
+            label: 'n=4 longitudinal seed (sound gate)',
             set: 'sound',
-            carrier: 'longitudinal medium',
+            carrier: 'longitudinal vector; no medium',
             modeN: 4,
             laneFrac: 0,
             sigmaFrac: 0.11,
@@ -76,9 +76,9 @@ export const SINGLE_WAVE_LANES = Object.freeze({
     [SOUND_COLLISION_SCENARIO_ID]: [
         {
             id: 'sound_left',
-            label: 'Sound proxy L',
+            label: 'Longitudinal packet L',
             set: 'sound',
-            carrier: 'longitudinal medium',
+            carrier: 'longitudinal vector; no medium',
             modeN: 4,
             laneFrac: 0,
             sigmaFrac: 0.11,
@@ -93,9 +93,9 @@ export const SINGLE_WAVE_LANES = Object.freeze({
         },
         {
             id: 'sound_right',
-            label: 'Sound proxy R',
+            label: 'Longitudinal packet R',
             set: 'sound',
-            carrier: 'longitudinal medium',
+            carrier: 'longitudinal vector; no medium',
             modeN: 4,
             laneFrac: 0,
             sigmaFrac: 0.11,
@@ -199,9 +199,13 @@ export function spectrumComparatorLaneParams(N, midF = (N - 1) / 2, scenarioId =
         const sigma = Math.max(1.15, N * (lane.sigmaFrac ?? 0.045));
         const modeN = Math.max(1, Math.min(Math.floor(N / 2) - 1, lane.modeN));
         const k = 2 * Math.PI * modeN / N;
-        const waveSpeed = lane.waveSpeed ?? C_SPEED;
-        const omega = 2 * waveSpeed * Math.abs(Math.sin(k / 2));
-        const frequency = omega / (2 * Math.PI);
+        const seedWaveSpeed = lane.waveSpeed ?? C_SPEED;
+        const sinHalfK = Math.abs(Math.sin(k / 2));
+        const seedOmega = 2 * seedWaveSpeed * sinHalfK;
+        const nativeOmega = 2 * Math.asin(C_SPEED * sinHalfK);
+        const frequency = nativeOmega / (2 * Math.PI);
+        const nativeGroupVelocity = C_SPEED * Math.cos(k / 2)
+            / Math.sqrt(1 - C_SPEED * C_SPEED * sinHalfK * sinHalfK);
         const componentIndex = COMPONENT_INDEX[lane.component] ?? 1;
         return {
             ...lane,
@@ -217,11 +221,14 @@ export function spectrumComparatorLaneParams(N, midF = (N - 1) / 2, scenarioId =
             amplitude: lane.amp,
             lambda: N / modeN,
             k,
-            omega,
+            omega: nativeOmega,
+            nativeOmega,
+            seedOmega,
             frequency,
-            phaseVelocity: k > 0 ? omega / k : 0,
-            groupVelocity: waveSpeed * Math.cos(k / 2),
-            speedRatioToLight: waveSpeed / C_SPEED,
+            phaseVelocity: k > 0 ? nativeOmega / k : 0,
+            groupVelocity: nativeGroupVelocity,
+            speedRatioToLight: nativeGroupVelocity / C_SPEED,
+            seedSpeedRatioToLight: seedWaveSpeed / C_SPEED,
         };
     });
 }
@@ -261,7 +268,11 @@ export function seedSpectrumComparator(harness, ctx, scenarioId = RF_LATTICE_WAV
             if (g < 1e-4) continue;
             const phase = lane.k * x + lane.phase;
             const j = lane.amp * g * Math.sin(phase);
-            const w = -lane.omega * lane.amp * g * Math.cos(phase);
+            const direction = lane.speedMultiplier ?? 1;
+            const w = lane.proxy
+                ? direction * (-lane.seedOmega * lane.amp * g * Math.cos(phase))
+                : lane.amp * g * ((1 - Math.cos(lane.nativeOmega)) * Math.sin(phase)
+                    - direction * Math.sin(lane.nativeOmega) * Math.cos(phase));
             const jf = [0, 0, 0];
             const wv = [0, 0, 0];
             jf[lane.componentIndex] = j;

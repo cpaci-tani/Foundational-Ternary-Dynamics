@@ -16,11 +16,23 @@
 // fall back to the in-thread WASM engine instead of leaving the engine dead.
 // (Without this, importScripts throws uncaught — which surfaces only via the
 // worker's onerror, and not reliably in every browser.)
+const FTD_WASM_BASE_URL = new URL('../../wasm/', self.location.href).href;
 try {
-    importScripts('../../wasm/ftd_core_mt.js');
+    // Resolve to an absolute HTTP URL before entering importScripts. Relative
+    // paths become ambiguous when this worker is itself re-entered by
+    // Emscripten as an em-pthread bootstrap.
+    importScripts(FTD_WASM_BASE_URL + 'ftd_core_mt.js');
 } catch (e) {
-    try { self.postMessage({ type: 'error', where: 'init', msg: 'importScripts failed: ' + String((e && e.message) || e) }); } catch (_) { /* ignore */ }
-    throw e;   // still abort the worker; the proxy fallback is already signalled
+    try {
+        self.postMessage({
+            type: 'error',
+            where: 'init',
+            msg: `importScripts failed [${e?.name || 'Error'}]: ${String(e?.message || e)}`,
+        });
+    } catch (_) { /* ignore */ }
+    // Do not rethrow: a synchronous throw can overtake the diagnostic
+    // postMessage and reduce the browser report to an opaque NetworkError.
+    // The proxy tears this worker down immediately on the init-error message.
 }
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
@@ -78,7 +90,7 @@ function copyKnotEvents(r) {
 }
 
 function initModule(cb) {
-  createFTDModuleMT({ locateFile: (p) => '../../wasm/' + p }).then((m) => {
+  createFTDModuleMT({ locateFile: (p) => FTD_WASM_BASE_URL + p }).then((m) => {
     mod = m;
     // Must set the pool BEFORE the first parallel_for (first tick) constructs it.
     if (typeof mod.ftdSetPoolThreads === 'function') mod.ftdSetPoolThreads(poolThreads);
@@ -110,6 +122,36 @@ function enforceToggleInvariants() {
   }
 }
 
+// Engine-truth toggle readback.
+//
+// `mod.setupScenario` rebuilds the RenderBridge at C++ defaults and the C++
+// scenario body then sets its own profile, so the toggles the main thread SENT
+// are not the toggles the engine is RUNNING. Without publishing the readback,
+// the proxy's getToggle can only echo the JS model back at the dashboard, and
+// the physics-toggles card asserts engine state the engine does not have.
+// Recomputed only when something could have changed (build/resize/command),
+// not per frame — it is one Embind crossing per key.
+let engineToggles = {};
+let engineTogglesDirty = true;
+
+// Telemetry demand mask (see telemetry/demand.js). Default ON so an un-masked
+// proxy behaves exactly as before this gate existed. NOTE: wantAudit is
+// accepted and recorded but deliberately NOT used to skip getEnergyAudit --
+// see the comment in postFrame(). Only wantLag actually gates work today.
+let wantAudit = true;
+let wantLag = true;
+
+function readEngineToggles() {
+  if (!mod || !bridge || typeof mod.getToggle !== 'function') return null;
+  const out = {};
+  for (const k in toggles) {
+    try { out[k] = !!mod.getToggle(bridge, k); } catch (e) { /* not in this build */ }
+  }
+  engineToggles = out;
+  engineTogglesDirty = false;
+  return out;
+}
+
 function buildBridge(n, scen) {
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
@@ -117,6 +159,7 @@ function buildBridge(n, scen) {
   for (const k in toggles) { try { mod.setToggle(bridge, k, toggles[k]); } catch (e) { /* ignore */ } }
   try { mod.setupScenario(bridge, scen); } catch (e) { /* ignore */ }
   enforceToggleInvariants();
+  engineTogglesDirty = true;   // the C++ body just replaced the whole profile
   scenarioId = scen;
   // Flux-volume cache pointer is stable for a fixed N; publish the heap + offset.
   const vol = mod.getFluxVolume(bridge);
@@ -133,8 +176,22 @@ function postFrame() {
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
   let diag = null, parts = null, audit = null, lag = null;
   try { diag = mod.getDiagnostics(bridge); } catch (e) { /* ignore */ }
+  // getEnergyAudit is NOT demand-gateable and must run every frame.
+  //
+  // It is not merely a panel feed: the block immediately below rewrites
+  // diag.totalEnergy / fieldEnergy / waveEnergy / particleKE / dynamicEnergy /
+  // restEnergy / accountedEnergy from it. Skipping it leaves diag.totalEnergy
+  // as the raw K_B*N^3 vacuum baseline (~18363.8 at L=33) that swamps the
+  // scenario energy -- the defect recorded in the 2026-06-05 health audit A.2.
+  // Gating it here was tried on 2026-07-26 and broke four specs, including
+  // "all vacuum scenarios report moving physical energy, not the fixed vacuum
+  // baseline". Consequently scale0-telemetry-gating's "audit freezes when no
+  // consumer is visible" cannot hold on the worker path as long as the energy
+  // decomposition is derived from the audit -- that is a contract question for
+  // the owner, not something to force here.
   try { audit = mod.getEnergyAudit(bridge); } catch (e) { /* ignore */ }
-  try { lag = mod.getLagrangian(bridge); } catch (e) { /* ignore */ }
+  // The Lagrangian genuinely has no consumer beyond its panels, so it IS gated.
+  if (wantLag) { try { lag = mod.getLagrangian(bridge); } catch (e) { /* ignore */ } }
 
   if (diag && audit && Number.isFinite(audit.dynamicEnergy)) {
     diag.vacuumBaselineEnergy = diag.totalEnergy;
@@ -202,7 +259,9 @@ function postFrame() {
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
-  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg });
+  const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
+  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg,
+                     ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
 }
 
 function loop() {
@@ -242,6 +301,7 @@ self.onmessage = (e) => {
         if (method === 'tickScale0') { bridge.tick(); postFrame(); break; }
         if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { /* ignore */ } }
         else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { /* ignore */ } }
+        engineTogglesDirty = true;   // a setToggle may have landed
         postFrame();          // reflect the effect immediately (even while paused)
         break;
       }
@@ -256,6 +316,7 @@ self.onmessage = (e) => {
           if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { /* ignore */ } }
           else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { /* ignore */ } }
         }
+        engineTogglesDirty = true;   // a setToggle may have landed
         postFrame();
         break;
       }
@@ -266,6 +327,10 @@ self.onmessage = (e) => {
         // stays empty and the overlay never appears. Push a frame immediately so
         // the newly registered sampler is delivered to the proxy right away.
         if (bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) postFrame();
+        break;
+      case 'setTelemetryMask':
+        wantAudit = msg.wantAudit !== false;
+        wantLag   = msg.wantLag   !== false;
         break;
       case 'setRunning':
         if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, msg.value ? 1 : 0);

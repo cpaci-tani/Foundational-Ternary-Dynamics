@@ -25,6 +25,10 @@ import {
     injectParticleFull,
     injectDressedParticle,
     injectTriad,
+    injectPlanePacketX,
+    injectTransversePacketX,
+    configureFreeWaveTerms,
+    configureUnlockedCompositeTerms,
 } from './_helpers.js';
 
 /**
@@ -42,8 +46,10 @@ export function setupVacuumScenario(name, harness, ctx) {
 
     switch (name) {
         case 's0-vacuum-electron': {
-            // Mirror of s0-seed-electron — unit negative charge + radial-inward
-            // flux envelope at scale K_B. Vacuum: nothing else in the lattice.
+            // One inert negative marker plus a selected inward radial vector
+            // template. No charge coupling, mass pole, spinor, or electron
+            // observable is present.
+            configureFreeWaveTerms(harness, false);
             harness.injectParticle(mc, mc, mc, -1);
             const envR = vox(5);
             injectRadialEnvelope(harness, midF, midF, midF, -1, sig(2.5), K_B * 1.5,
@@ -53,9 +59,9 @@ export function setupVacuumScenario(name, harness, ctx) {
 
         case 's0-vacuum-muon':
         case 's0-vacuum-tau': {
-            // Mirror of s0-seed-{muon,tau} — same topology as electron, larger
-            // Mass ratios μ/e=207 and τ/e=3477 are [STRONGLY MOTIVATED CONJECTURE]
-            // (framework-integer matches; spatial envelope is [SELECTION] only).
+            // Exact 1.2x/1.5x amplitude copies of the electron-labelled vector
+            // template. No generation or mass distinction is encoded.
+            configureFreeWaveTerms(harness, false);
             const boost = (name === 's0-vacuum-tau') ? 2.25 : 1.80;
             harness.injectParticle(mc, mc, mc, -1);
             const envR = vox(5);
@@ -69,29 +75,21 @@ export function setupVacuumScenario(name, harness, ctx) {
             // propagating +x. c = 1/√3 [THEOREM] from cubic-lattice CFL.
             // genesis=false (audit 2026-04-28): a free EM wave should not
             // spontaneously pair-produce.
-            harness.setToggle('genesis', false);
-            const pSigma = sig(3);
-            const pAmp = K_B * 2;
-            const pStartX = vox(8);
-            const halfR = vox(8);
-            for (let z = 0; z < N; z++)
-            for (let y = 0; y < N; y++)
-            for (let dx = -halfR; dx <= halfR; dx++) {
-                const x = pStartX + dx;
-                if (x < 0 || x >= N) continue;
-                const dy = y - midF, dz = z - midF;
-                const r2 = dx * dx + dy * dy + dz * dz;
-                const g = pAmp * Math.exp(-r2 / (2 * pSigma * pSigma));
-                if (g < 1e-6) continue;
-                harness.injectFlux(x, y, z, 0, 0, g);
-                harness.injectWaveVel(x, y, z, g, 0, 0);
-            }
+            for (const [key, value] of [
+                ['wave_propagation', true], ['coupling', false], ['damping', false],
+                ['selective_damping', false], ['genesis', false],
+                ['gauss_projection', true], ['forces', false], ['movement', false],
+            ]) harness.setToggle(key, value);
+            injectPlanePacketX(harness, ctx, {
+                x0: vox(8), sigmaX: sig(3), amp: K_B * 0.5, direction: +1,
+            });
             return true;
         }
 
         case 's0-vacuum-w-boson': {
-            // Mirror of s0-seed-w-boson — charged (s=+1) localized lump
-            // with chirality bias on Jx (left-handed coupling).
+            // One inert positive marker and an anisotropic vector template;
+            // there is no weak charge, chirality coupling, or W observable.
+            configureFreeWaveTerms(harness, false);
             injectParticleFull(harness, mc, mc, mc, +1, { spin: +1 });
             injectRadialEnvelope(harness, mc, mc, mc, +1, sig(1.8), K_B * 1.6,
                 { radius: vox(5), axisBias: [1.3, 1, 1] });
@@ -99,14 +97,17 @@ export function setupVacuumScenario(name, harness, ctx) {
         }
 
         case 's0-vacuum-z-boson': {
-            // Mirror of s0-seed-z-boson — neutral, balanced inward envelope.
+            // Unmanifested inward radial vector template; no neutral current,
+            // mass pole, polarization representation, or Z observable.
+            configureFreeWaveTerms(harness, false);
             injectRadialEnvelope(harness, mc, mc, mc, -1, sig(2.0), K_B * 1.8, { radius: vox(6) });
             return true;
         }
 
         case 's0-vacuum-higgs': {
-            // Mirror of s0-seed-higgs-boson — scalar isotropic flux lump,
-            // no manifested core (Higgs is a field, not a state-particle).
+            // Equal-component three-vector blob. It is not a scalar and has
+            // no Higgs potential, mass pole, symmetry breaking, or decay.
+            configureFreeWaveTerms(harness, false);
             const hSig = sig(2.0), hR = vox(6), hAmp = K_B * 1.2;
             for (let dz = -hR; dz <= hR; dz++)
             for (let dy = -hR; dy <= hR; dy++)
@@ -122,89 +123,70 @@ export function setupVacuumScenario(name, harness, ctx) {
         }
 
         case 's0-vacuum-proton': {
-            // Mirror of s0-seed-proton-l4 — 3 vertices on equilateral
-            // triangle, charges [+1,+1,-1], colors [1,2,3].
+            configureUnlockedCompositeTerms(harness);
+            // Unlocked 3-site selected-color candidate. Stability is measured;
+            // proton identity is not encoded by this initialization.
             const bR = vox(4);
-            injectTriad(harness, mc, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
+            injectTriad(harness, mc, mc, mc, [+1, +1, -1], [1, 2, 3], bR, false);
             return true;
         }
 
         case 's0-vacuum-neutron': {
-            // Mirror of s0-seed-neutron — same triad geometry as proton,
-            // charges [+1,-1,-1] (net 0).
+            configureUnlockedCompositeTerms(harness);
+            // Same geometry with a different imposed polarity pattern.
             const bR = vox(4);
-            injectTriad(harness, mc, mc, mc, [+1, -1, -1], [1, 2, 3], bR);
+            injectTriad(harness, mc, mc, mc, [+1, -1, -1], [1, 2, 3], bR, false);
             return true;
         }
 
         case 's0-vacuum-pion-charged': {
-            // Mirror of s0-seed-pion — quark-antiquark dipole on x-axis.
+            configureUnlockedCompositeTerms(harness);
+            // Unlocked opposite-polarity selected-color pair.
             const sp = vox(4);
             const hf = Math.floor(sp / 2);
-            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, true);
-            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, false);
+            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 2, 2, K_B * 0.5, false);
             return true;
         }
 
         case 's0-vacuum-electron-neutrino':
         case 's0-vacuum-muon-neutrino':
         case 's0-vacuum-tau-neutrino': {
-            // Soft chirality-biased flux blob (no manifested core), with
-            // per-flavor amplitude reflecting (m_ν / m_e) hierarchy. Masses
-            // themselves are [OPEN] in FTD; amplitudes are [SELECTION].
-            //
-            //   ν_e : 1.0× baseline   (lightest; m_νe upper bound ≪ m_νμ)
-            //   ν_μ : 1.3×            (suggests slight mass excess)
-            //   ν_τ : 1.6×            (heaviest of the three)
-            //
-            // All three remain well below K_GENESIS so no spurious genesis.
+            // One neutral native packet at imposed amplitude multipliers
+            // 1.0/1.3/1.6.  There is no flavor label, mass term, oscillation,
+            // weak interaction, or neutrino-identifying observable here.
             const boost =
                 name === 's0-vacuum-tau-neutrino'  ? 1.6 :
                 name === 's0-vacuum-muon-neutrino' ? 1.3 : 1.0;
-            const nuSig = sig(2), nuR = vox(6);
-            for (let dz2 = -nuR; dz2 <= nuR; dz2++)
-            for (let dy2 = -nuR; dy2 <= nuR; dy2++)
-            for (let dx2 = -nuR; dx2 <= nuR; dx2++) {
-                const r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-                if (r22 > nuR*nuR) continue;
-                const gg = K_B * 0.3 * boost * Math.exp(-r22 / (2 * nuSig * nuSig));
-                if (gg < 0.001) continue;
-                harness.injectFlux(mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0);
-            }
+            configureFreeWaveTerms(harness, true);
+            injectTransversePacketX(harness, ctx, {
+                x0: vox(8), y0: midF, z0: midF, sigmaX: sig(2.5), sigmaT: Math.max(5, N / 5),
+                amp: K_B * 0.3 * boost, direction: +1,
+                carrierK: 2 * Math.PI / Math.max(8, N / 3),
+            });
             return true;
         }
 
         case 's0-vacuum-pion-neutral': {
-            // π⁰: neutral meson, decays predominantly to 2γ (BR ≈ 98.8%).
-            // Topology: charged-pion-style quark-antiquark dipole on x-axis,
-            // BUT both vertices carry s=0 (void core). Flux dressing remains
-            // ±-paired so the meson has zero net charge but nontrivial flux
-            // structure that couples to the EM channel via Gauss constraint.
-            //
-            // Mass m_π0 = 135.0 MeV (vs m_π± = 139.6 MeV); the small splitting
-            // is [OPEN] in FTD; here we use the charged-pion amplitude.
+            configureUnlockedCompositeTerms(harness);
+            // This is currently bit-identical to the charged-pion-labelled
+            // setup; there is no neutral-pion-specific degree of freedom.
             const sp = vox(4);
             const hf = Math.floor(sp / 2);
-            // Use injectDressedParticle with state=0 — this gives a void core
-            // at each vertex with the radial flux envelope still applied.
-            injectDressedParticle(harness, mc + hf, mc, mc, 0, +1, 1, 2, K_B * 0.5, true);
-            injectDressedParticle(harness, mc - hf, mc, mc, 0, -1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, false);
+            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 2, 2, K_B * 0.5, false);
             return true;
         }
 
         case 's0-vacuum-kaon-charged': {
-            // K±: charged meson, m_K± = 493.7 MeV ≈ 3.54 × m_π±.
-            // Topology: charged-pion-style dipole with elevated amplitude.
-            // The amplitude scaling here is [PARAMETRIC] — it reproduces the
-            // K-mass via the FTD-0110 cluster-size↔mass map (A = 2·√(m/m_e))
-            // rather than deriving it. Mass itself is [OPEN] in FTD.
-            //
-            //   K-amp / π-amp ≈ √(m_K / m_π) ≈ 1.88
+            configureUnlockedCompositeTerms(harness);
+            // Same selected pair geometry with an imposed 1.88 dressing boost;
+            // no kaon mass or flavor mechanism is inferred.
             const sp = vox(4);
             const hf = Math.floor(sp / 2);
             const kBoost = 1.88;
-            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5 * kBoost, true);
-            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5 * kBoost, true);
+            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5 * kBoost, false);
+            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 2, 2, K_B * 0.5 * kBoost, false);
             return true;
         }
 

@@ -33,7 +33,7 @@ import { debugLog } from '../core/log.js';
 import { createParticleEngine } from './mock-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
-import { samplerOr } from './bridge-contract.js';
+import { samplerOr, particleDataToList } from './bridge-contract.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
@@ -401,43 +401,9 @@ export class WasmBridge {
     }
 
     getScale0ParticleList() {
-        const pd = this.getParticleData();
-        if (!pd || pd.count === 0) return [];
-        // Real per-voxel spin/colorCharge now cross the WASM boundary (added
-        // 2026-07-14, engine/wasm/ftd_wasm.cpp get_particle_data) — read them
-        // directly instead of the historical hardcoded color:0/spin:1. These
-        // arrays are always present at length pd.count once pd.count > 0
-        // (see EMPTY_PARTICLE_DATA / get_particle_data for the empty case).
-        const hasRealFields = !!(pd.spin && pd.colorCharge);
-        const list = [];
-        for (let i = 0; i < pd.count; i++) {
-            const x = Math.floor(pd.positions[i * 3]);
-            const y = Math.floor(pd.positions[i * 3 + 1]);
-            const z = Math.floor(pd.positions[i * 3 + 2]);
-            const r = pd.colors[i * 3];
-            const g = pd.colors[i * 3 + 1];
-            let state = 0;
-            if (g > 0.7) state = 1;
-            else if (r > 0.8) state = -1;
-
-            // ARC-PERF (2026-06-10): Calling `this.inspectVoxel` inside this loop
-            // for 35,000 particles caused 35,000 C++ embind calls per frame,
-            // tanking the browser to single digits. We assume locked=false here
-            // since true particle tracking happens at Scale 1.
-            const isLocked = false;
-
-            list.push({
-                id: i,
-                x, y, z,
-                state,
-                charge: state,
-                q: state,
-                color: hasRealFields ? pd.colorCharge[i] : 0,
-                spin: hasRealFields ? pd.spin[i] : 1,
-                locked: isLocked
-            });
-        }
-        return list;
+        // Shared derivation (bridge-contract.js) so this and WasmBridgeProxy
+        // cannot drift apart.
+        return particleDataToList(this.getParticleData());
     }
 
     getDiagnostics() {

@@ -7,6 +7,9 @@ export function createPhysicsTogglesCard() {
   card.className = 'card scale0-only';
   card.innerHTML = `
     <div class="card-title">Physics Toggles</div>
+    <div id="physics-profile-warning" class="physics-profile-warning" hidden>
+      Modified physics profile — scenario qualification suspended.
+    </div>
     <div class="combo-section-label">Wave & Field</div>
     <div class="toggle-row"><input type="checkbox" id="t-wave" checked><label for="t-wave" title="Flux wave equation: J evolves via discrete Laplacian (c^2 nabla^2 J)">Wave Propagation</label></div>
     <div class="toggle-row"><input type="checkbox" id="t-coupling" checked><label for="t-coupling" title="Manifested particles source flux via coupling term g_c * grad(s)">State-Flux Coupling</label></div>
@@ -37,8 +40,8 @@ export function createPhysicsTogglesCard() {
 
     <div class="ctrl-footnote">
       <button class="ctrl-reset-btn" id="btn-reset-physics-toggles" type="button"
-          title="Restore every physics toggle in this card to its canonical default from config/toggles.js — won't reload the scenario or clear the field.">
-        &#8634; Reset to defaults
+          title="Restore every physics toggle to the active scenario's registered profile without clearing the field.">
+        &#8634; Restore scenario profile
       </button>
       <span class="ctrl-footnote-text">Field visualization: viewport buttons (top-right) &#8593;</span>
     </div>
