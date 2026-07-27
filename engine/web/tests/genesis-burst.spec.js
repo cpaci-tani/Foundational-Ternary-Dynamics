@@ -1,14 +1,13 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { gotoAndReady } from './_helpers.js';
+import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
 
 /**
- * Genesis-burst N(A) cluster-size law scenario (FTD-0269).
+ * Selected genesis amplitude-response scenarios (FTD-0269 provenance).
  *
  * Verifies the new Scale-0 scenario family runs on the REAL WASM engine and
- * exhibits the two-regime structure: the three fixed-A "answer-key" variants
- * (subknee A=12 / knee A=16 / superknee A=40) must manifest clusters in
- * increasing size (geometry-limited → energy-limited), and the interactive
+ * exhibits a reproducible finite-box ordering: the three fixed-A variants
+ * A=12 / A=16 / A=40 must manifest clusters in increasing size, and the interactive
  * panel must record an (A,N) point on its live plot.
  *
  * Ticks are driven deterministically via bridge.tick() in page.evaluate (the
@@ -26,32 +25,32 @@ async function loadAndSettle(page, id, ticks) {
             window.__ftdCtx.running = false;
         }
     });
-    // 2. Select the scenario
-    await page.evaluate((sid) => {
-        const sel = document.getElementById('scenario-select');
-        if (!sel) throw new Error('scenario-select not found');
-        sel.value = sid;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-    }, id);
-    // 3. Wait for scenario load logic to complete
-    await page.waitForTimeout(500); // let the registry load() run (toggles + inject)
+    // 2. Load the hidden research scenario through the production UI path.
+    await selectScale0Scenario(page, id);
     // 4. Tick exactly `n` times from the initial scenario state
-    const result = await page.evaluate((n) => {
-        const b = window.__ftdCtx?.bridge;
+    const result = await page.evaluate(async (n) => {
+        const { getScale0State, resolveActiveScale0BridgeFromWindow } =
+            await import('/js/scales/scale0/state/store.js');
+        const { runScale0PhysicsTicks } = await import('/js/scales/scale0/runtime/tick.js');
+        const state = getScale0State();
+        const b = resolveActiveScale0BridgeFromWindow();
         if (!b) return { manifested: -1, peak: -1, history: [] };
         window.__ftdCtx.running = false;
         let peak = 0;
         const history = [];
         for (let i = 0; i < n; i++) {
-            if (typeof b.tick === 'function') b.tick();
-            const current = Number(b.getDiagnostics?.().manifested ?? 0);
+            runScale0PhysicsTicks(window.__ftdCtx, state, 1);
+            const sc = b.capabilities?.scale0;
+            const current = Number(sc?.getScale0Diagnostics?.()?.manifested
+                ?? sc?.getScale0EnergyAudit?.()?.manifested ?? 0);
             if (current > peak) peak = current;
             if (i % 20 === 0 || i === n - 1) {
                 history.push(`t=${i}:${current}`);
             }
         }
         return {
-            manifested: Number(b.getDiagnostics?.().manifested ?? 0),
+            manifested: Number(b.capabilities?.scale0?.getScale0Diagnostics?.()?.manifested
+                ?? b.capabilities?.scale0?.getScale0EnergyAudit?.()?.manifested ?? 0),
             peak,
             history
         };
@@ -60,7 +59,7 @@ async function loadAndSettle(page, id, ticks) {
     return result.peak;
 }
 
-test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
+test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () => {
     /** @type {import('@playwright/test').Page} */
     let page;
 
@@ -76,7 +75,7 @@ test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
         await page.close();
     });
 
-    test('three regimes: N(subknee) < N(knee) < N(superknee)', async () => {
+    test('fixed amplitudes give N(12) < N(16) < N(40)', async () => {
         const sub = await loadAndSettle(page, 's0-seed-cluster-law-subknee', SETTLE);
         const knee = await loadAndSettle(page, 's0-seed-cluster-law-knee', SETTLE);
         const sup = await loadAndSettle(page, 's0-seed-cluster-law-superknee', SETTLE);
@@ -87,20 +86,20 @@ test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
     });
 
     test('canonical scenario runs on the real WASM engine and the panel records a point', async () => {
-        await page.evaluate(() => {
-            const sel = document.getElementById('scenario-select');
-            sel.value = 's0-seed-cluster-law';
-            sel.dispatchEvent(new Event('change', { bubbles: true }));
-        });
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
         // panel mounts on load
         await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 10_000 }).toBe(true);
 
-        // real engine, not the JS flux-mock
-        const useMock = await page.evaluate(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-            return !!getScale0State().useFluxMock;
+        // The active owner must be the real C++ WASM engine. In a COI browser
+        // it is normally hosted by WasmBridgeProxy; `useFluxMock` names the
+        // historical owner slot and does not mean a JS MockBridge.
+        const owner = await page.evaluate(async () => {
+            const { resolveActiveScale0BridgeFromWindow } = await import('/js/scales/scale0/state/store.js');
+            const b = resolveActiveScale0BridgeFromWindow();
+            return { isWasm: !!b?.isWasm, isWorker: !!b?.isWorker, name: b?.constructor?.name ?? '' };
         });
-        expect(useMock, 'genesis-burst must run on the real WASM engine').toBe(false);
+        expect(owner.isWasm || owner.isWorker,
+            `genesis-burst must run on a real WASM owner, got ${owner.name}`).toBe(true);
 
         // drive the panel's fire() and confirm a live (A,N) point is recorded
         const pts = await page.evaluate(async () => {
@@ -110,20 +109,13 @@ test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
         expect(pts.length).toBe(1);
         expect(pts[0].A).toBe(16);
         expect(Number.isFinite(pts[0].N)).toBe(true);
+        expect(pts[0].N, 'interactive A=16 firing should produce a nonzero native response').toBeGreaterThan(0);
     });
 
     test('panel is disposed when switching away from the scenario', async () => {
-        await page.evaluate(() => {
-            const sel = document.getElementById('scenario-select');
-            sel.value = 's0-seed-cluster-law';
-            sel.dispatchEvent(new Event('change', { bubbles: true }));
-        });
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
         await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 10_000 }).toBe(true);
-        await page.evaluate(() => {
-            const sel = document.getElementById('scenario-select');
-            sel.value = 's0-seed-emergent-ic1';
-            sel.dispatchEvent(new Event('change', { bubbles: true }));
-        });
+        await selectScale0Scenario(page, 's0-seed-emergent-ic1', { settleMs: 0 });
         // the 500ms disposal guard removes the panel
         await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 5_000 }).toBe(false);
         expect(await page.evaluate(() => !!document.getElementById('genesis-burst-panel'))).toBe(false);

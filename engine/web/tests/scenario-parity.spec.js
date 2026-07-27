@@ -23,13 +23,14 @@
  * Why node: no WASM load needed; we just parse source text. Fast.
  */
 import { test, expect } from '@playwright/test';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEB_ROOT = resolve(__dirname, '..');
 const ENGINE_ROOT = resolve(WEB_ROOT, '..');
+const PROJECT_ROOT = resolve(ENGINE_ROOT, '..');
 
 // Names that live only in the C++ legacy switch (ftd_wasm.cpp) — kept for
 // backward compat with older tests/saved dashboards. Not in the JS UI.
@@ -139,6 +140,22 @@ function extractUiRegistryScenarios() {
         join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js'),
         'utf8'
     );
+    const block = src.match(
+        /export const SCALE0_SCENARIO_VALIDATION = Object\.freeze\(\{([\s\S]*?)\n\}\);/
+    );
+    const names = new Set();
+    if (!block) return names;
+    const re = /^\s*'([^']+)':\s*Object\.freeze\(/gm;
+    let m;
+    while ((m = re.exec(block[1]))) names.add(m[1]);
+    return names;
+}
+
+function extractCatalogScenarios() {
+    const src = readFileSync(
+        join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js'),
+        'utf8'
+    );
     const names = new Set();
     // Matches `makeScenario('category', 'name', ...)` (factory form)
     const re = /makeScenario\('[^']+',\s*'([^']+)'/g;
@@ -204,6 +221,19 @@ function extractCppToggleSpecs() {
     return entries;
 }
 
+function extractFreeWaveDisabledTerms() {
+    const src = readFileSync(
+        join(WEB_ROOT, 'js', 'bridge', 'scenarios', '_helpers.js'), 'utf8');
+    const blockMatch = src.match(
+        /export const FREE_WAVE_DISABLED_TERMS = Object\.freeze\(\[([\s\S]*?)\]\);/);
+    if (!blockMatch) return new Set();
+    const entries = new Set();
+    const re = /'([a-z0-9_]+)'/g;
+    let m;
+    while ((m = re.exec(blockMatch[1]))) entries.add(m[1]);
+    return entries;
+}
+
 // SCALE0_TOGGLES defaults are the dashboard's SCENARIO-RESET baseline, not the
 // C++ construction default — four toggles intentionally diverge (the dashboard
 // baseline profile starts them off; the C++ TermToggles constructor starts
@@ -260,6 +290,20 @@ test.describe('Toggle parity (JS whitelist ⊆ C++ TOGGLE_SPECS)', () => {
             }
         }
         expect(problems, problems.join('\n')).toEqual([]);
+    });
+
+    test('isolated JS wave profile disables every non-wave C++ toggle', () => {
+        const cpp = extractCppToggleSpecs();
+        const disabled = extractFreeWaveDisabledTerms();
+        const expected = new Set([...cpp.keys()].filter(
+            (name) => name !== 'wave_propagation' && name !== 'gauss_projection'));
+        const missing = [...expected].filter((name) => !disabled.has(name));
+        const unknown = [...disabled].filter((name) => !cpp.has(name));
+        expect(disabled.size, 'FREE_WAVE_DISABLED_TERMS extraction failed').toBeGreaterThan(30);
+        expect(missing, `non-wave C++ toggles omitted from the isolated JS profile: ${missing.join(', ')}`)
+            .toEqual([]);
+        expect(unknown, `isolated JS profile contains unknown toggles: ${unknown.join(', ')}`)
+            .toEqual([]);
     });
 });
 
@@ -330,20 +374,103 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
         ).toEqual([]);
     });
 
-    test('ScenarioId JSDoc typedef in toggles.js matches UI registry scenarios exactly', () => {
+    test('ScenarioId JSDoc typedef covers the validated UI and contains only catalogued IDs', () => {
         const ui = extractUiRegistryScenarios();
+        const catalog = extractCatalogScenarios();
         const typedefScenarios = extractTogglesTypedefScenarios();
 
         const missingInTypedef = [...ui].filter(name => !typedefScenarios.has(name));
-        const extraInTypedef = [...typedefScenarios].filter(name => !ui.has(name));
+        const unknownInTypedef = [...typedefScenarios].filter(name => !catalog.has(name));
 
         expect(missingInTypedef,
             `The JSDoc @typedef ScenarioId in toggles.js is missing these scenarios:\n  - ${missingInTypedef.join('\n  - ')}`
         ).toEqual([]);
 
-        expect(extraInTypedef,
-            `The JSDoc @typedef ScenarioId in toggles.js contains these unregistered/unknown scenarios:\n  - ${extraInTypedef.join('\n  - ')}`
+        expect(unknownInTypedef,
+            `The JSDoc @typedef ScenarioId in toggles.js contains these uncatalogued scenarios:\n  - ${unknownInTypedef.join('\n  - ')}`
         ).toEqual([]);
+    });
+
+    test('every UI scenario has behavioral evidence in a real automated test', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js');
+        const registry = await import(pathToFileURL(modulePath).href);
+        const visible = registry.SCALE0_SCENARIOS;
+        const catalog = registry.SCALE0_SCENARIO_CATALOG;
+        const evidence = registry.SCALE0_SCENARIO_VALIDATION;
+
+        expect(visible.length, 'validated menu must not be empty').toBeGreaterThan(0);
+        expect(catalog.length, 'every catalogued implementation should now be admitted')
+            .toBe(visible.length);
+        expect(visible.map((s) => s.id).sort(), 'menu and evidence manifest must match exactly')
+            .toEqual(Object.keys(evidence).sort());
+
+        const defects = [];
+        for (const scenario of visible) {
+            const proof = scenario.validation;
+            if (!proof || proof.level !== 'behavioral') {
+                defects.push(`${scenario.id}: missing behavioral validation level`);
+                continue;
+            }
+            const testPath = resolve(PROJECT_ROOT, proof.test || '');
+            if (!existsSync(testPath)) {
+                defects.push(`${scenario.id}: missing test file ${proof.test}`);
+                continue;
+            }
+            const testSource = readFileSync(testPath, 'utf8');
+            if (!testSource.includes(`"${scenario.id}"`)
+                && !testSource.includes(`'${scenario.id}'`)) {
+                defects.push(`${scenario.id}: evidence file does not name the scenario ID`);
+            }
+            if (typeof proof.assertion !== 'string' || proof.assertion.length < 24) {
+                defects.push(`${scenario.id}: validation assertion is absent or non-specific`);
+            }
+            if (typeof proof.qualification !== 'string' || proof.qualification.length < 24) {
+                defects.push(`${scenario.id}: qualification is absent or non-specific`);
+            }
+        }
+        expect(defects, defects.join('\n')).toEqual([]);
+    });
+
+    test('every catalog scenario has a consistent admission state', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js');
+        const registry = await import(pathToFileURL(modulePath).href);
+        const visibleIds = new Set(registry.SCALE0_SCENARIOS.map((s) => s.id));
+        const defects = [];
+        let hiddenCount = 0;
+
+        for (const scenario of registry.SCALE0_SCENARIO_CATALOG) {
+            const admitted = visibleIds.has(scenario.id);
+            if (typeof scenario.sourceTitle !== 'string' || !scenario.sourceTitle) {
+                defects.push(`${scenario.id}: source title missing`);
+            }
+            if (typeof scenario.qualification !== 'string' || scenario.qualification.length < 24) {
+                defects.push(`${scenario.id}: qualification missing or non-specific`);
+            }
+            if (admitted) {
+                if (scenario.admissionStatus !== 'admitted-behavioral'
+                    || scenario.evidenceLevel !== 'behavioral'
+                    || !scenario.validation) {
+                    defects.push(`${scenario.id}: admitted scenario lacks behavioral evidence state`);
+                }
+            } else {
+                hiddenCount += 1;
+                if (scenario.admissionStatus !== 'hidden-research'
+                    || scenario.evidenceLevel !== 'mechanical-smoke-only'
+                    || scenario.validation !== null) {
+                    defects.push(`${scenario.id}: hidden scenario has an invalid admission/evidence state`);
+                }
+                if (!scenario.title.includes('Research Setup (Behavior Unvalidated)')) {
+                    defects.push(`${scenario.id}: hidden title is not explicitly qualified`);
+                }
+                if (scenario.mechanicalTest !== 'engine/web/tests/scale0-scenario-health.spec.js') {
+                    defects.push(`${scenario.id}: mechanical smoke-test provenance missing`);
+                }
+            }
+        }
+
+        expect(hiddenCount, 'hidden count must equal the catalog/menu difference')
+            .toBe(registry.SCALE0_SCENARIO_CATALOG.length - visibleIds.size);
+        expect(defects, defects.join('\n')).toEqual([]);
     });
 
     test('every metadata entry maps to a real scenario (no orphan docs)', () => {
@@ -359,12 +486,14 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
 
     test('inventory summary (informational — no assertion)', () => {
         const ui = extractUiRegistryScenarios();
+        const catalog = extractCatalogScenarios();
         const js = extractJsScenarios();
         const cpp = extractCppScenarios();
         const legacy = extractCppLegacyScenarios();
 
         console.log('\n=== Scenario inventory ===');
         console.log(`  UI registry (dropdown):     ${ui.size}`);
+        console.log(`  Internal research catalog:  ${catalog.size}`);
         console.log(`  JS group files (cases):     ${js.size}`);
         console.log(`  C++ scenarios.cpp:          ${cpp.size}`);
         console.log(`  C++ legacy (ftd_wasm.cpp):  ${legacy.size}`);
@@ -373,5 +502,135 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
 
         // No assertion; this is for visibility only.
         expect(shared.size).toBeGreaterThan(0);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Catalog-count guard.
+//
+// The scenario total is derivable from the registry; every prose statement of
+// it is hand-written. When the catalog last grew, the five definition layers
+// stayed consistent with each other and the documents did not — and nothing
+// detected it, because the inventory test above prints the counts without
+// asserting one. These tests make the registry the sole source: the layers are
+// pinned to one absolute number, and every documented restatement of it must
+// equal that number.
+// ---------------------------------------------------------------------------
+const QUALIFICATION_DOC = 'docs/audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md';
+const HEALTH_DOC = 'docs/audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md';
+
+/** Every prose restatement of a derived catalog number, and what it must equal. */
+function documentedCountClaims({ total, behavioral, remainder }) {
+    const tuple = Array(5).fill(total).join('/');
+    return [
+        // `\s+` rather than a literal space throughout: these are prose claims in
+        // wrapped markdown, and a guard that breaks when a paragraph is rewrapped
+        // would be reported as drift when nothing drifted.
+        { file: QUALIFICATION_DOC, label: 'scope line',
+          re: /\ball\s+(\d{2,4})\s+Scale-0\s+scenario\s+IDs\b/g, want: String(total) },
+        { file: QUALIFICATION_DOC, label: 'class-table total',
+          re: /\|\s*\*\*Total\*\*\s*\|\s*\*\*(\d{2,4})\*\*\s*\|/g, want: String(total) },
+        { file: QUALIFICATION_DOC, label: 'five-layer tuple',
+          re: /\bexactly\s+((?:\d{2,4}\/){4}\d{2,4})\b/g, want: tuple },
+        { file: QUALIFICATION_DOC, label: 'browser campaign',
+          re: /\bloaded\s+all\s+(\d{2,4})\s+production\s+WASM\s+scenarios\b/g, want: String(total) },
+        { file: QUALIFICATION_DOC, label: 'campaign artifact row count',
+          re: /\bthe\s+(\d{2,4})-row\s+mechanical\s+campaign\b/g, want: String(total) },
+        { file: QUALIFICATION_DOC, label: 'primary evidence-file citation count',
+          re: /\b(\d{2,4})\s+scenarios\s+cite\s+`engine\/tests\/test_scenario_behavior\.cpp`/g,
+          want: String(behavioral) },
+        { file: QUALIFICATION_DOC, label: 'remaining evidence-file citation count',
+          re: /\bthe\s+remaining\s+(\d{1,3})\s+cite\b/g, want: String(remainder) },
+        { file: 'docs/INDEX.md', label: 'INDEX pointer',
+          re: /current\s+(\d{2,4})-scenario\s+behavioral\s+closure/g, want: String(total) },
+        { file: HEALTH_DOC, label: 'health-audit supersession pointer',
+          re: /current\s+(\d{2,4})-scenario\s+behavioral\s+qualification/g, want: String(total) },
+    ];
+}
+
+test.describe('Catalog counts (derived, never hand-written)', () => {
+    test('every definition layer agrees on one absolute count', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js');
+        const registry = await import(pathToFileURL(modulePath).href);
+        const total = registry.SCALE0_SCENARIO_CATALOG.length;
+
+        expect(total, 'catalog must not be empty').toBeGreaterThan(0);
+        const layers = {
+            'UI registry (module)': registry.SCALE0_SCENARIOS.length,
+            'catalog (module)': total,
+            'scenario map (module)': registry.SCALE0_SCENARIO_MAP.size,
+            'evidence manifest (module)': Object.keys(registry.SCALE0_SCENARIO_VALIDATION).length,
+            'UI registry (source text)': extractUiRegistryScenarios().size,
+            'JS group files (source text)': extractJsScenarios().size,
+            'C++ scenarios.cpp (source text)': extractCppScenarios().size,
+        };
+        const divergent = Object.entries(layers).filter(([, n]) => n !== total);
+        expect(divergent,
+            `every definition layer must hold exactly ${total} scenarios.\n` +
+            divergent.map(([name, n]) => `  ${name}: ${n}`).join('\n')
+        ).toEqual([]);
+    });
+
+    test('every documented scenario count matches the registry', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js');
+        const registry = await import(pathToFileURL(modulePath).href);
+        const total = registry.SCALE0_SCENARIO_CATALOG.length;
+        const evidence = Object.values(registry.SCALE0_SCENARIO_VALIDATION);
+        const behavioral = evidence.filter(
+            (e) => (e.test || '').endsWith('test_scenario_behavior.cpp')).length;
+
+        const drift = [];
+        for (const claim of documentedCountClaims(
+            { total, behavioral, remainder: total - behavioral })) {
+            const path = join(WEB_ROOT, claim.file);
+            if (!existsSync(path)) {
+                drift.push(`${claim.file}: missing (claim "${claim.label}" cannot be checked)`);
+                continue;
+            }
+            const source = readFileSync(path, 'utf8');
+            const found = [...source.matchAll(claim.re)].map((m) => m[1]);
+            if (found.length === 0) {
+                drift.push(`${claim.file}: claim "${claim.label}" no longer present — ` +
+                    `update the pattern or the document`);
+                continue;
+            }
+            for (const value of found) {
+                if (value !== claim.want) {
+                    drift.push(`${claim.file}: "${claim.label}" states ${value}, registry says ${claim.want}`);
+                }
+            }
+        }
+        expect(drift, `documented counts have drifted from the registry:\n  ${drift.join('\n  ')}`)
+            .toEqual([]);
+    });
+
+    test('the qualification class table matches the registry categories', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js');
+        const registry = await import(pathToFileURL(modulePath).href);
+
+        const actual = new Map();
+        for (const s of registry.SCALE0_SCENARIO_CATALOG) {
+            const name = String(s.category || '').replace(/^\d+\.\s*/, '').trim();
+            actual.set(name, (actual.get(name) || 0) + 1);
+        }
+
+        const source = readFileSync(join(WEB_ROOT, QUALIFICATION_DOC), 'utf8');
+        const documented = new Map();
+        for (const m of source.matchAll(/^\|\s*([A-Z][^|*]+?)\s*\|\s*(\d{1,4})\s*\|/gm)) {
+            documented.set(m[1].trim(), Number(m[2]));
+        }
+        expect(documented.size, 'the class table should be parseable').toBeGreaterThan(0);
+
+        const drift = [];
+        for (const [name, count] of actual) {
+            if (!documented.has(name)) drift.push(`registry class "${name}" (${count}) is undocumented`);
+            else if (documented.get(name) !== count) {
+                drift.push(`class "${name}": doc says ${documented.get(name)}, registry has ${count}`);
+            }
+        }
+        for (const name of documented.keys()) {
+            if (!actual.has(name)) drift.push(`documented class "${name}" has no registry members`);
+        }
+        expect(drift, `class table has drifted:\n  ${drift.join('\n  ')}`).toEqual([]);
     });
 });

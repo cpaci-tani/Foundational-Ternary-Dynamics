@@ -33,12 +33,15 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
 
     apply_vacuum_environment(rb);
 
+    const auto configure_free_wave = [&](bool gauss = true) {
+        configure_free_wave_terms(rb, gauss);
+    };
     if (name == "s0-vacuum-electron") {
         // Scenario ID: s0-vacuum-electron
-        // Physical Purpose: Seeds a physical electron in vacuum (e-).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Central -1 charge surrounded by inward-pointing Coulomb dressing flux.
-        // Discrepancy: None.
+        // Qualification: one inert negative marker plus a selected inward
+        // radial vector template under the source-free wave map. No charge
+        // coupling, mass pole, spinor, or electron observable is present.
+        configure_free_wave(false);
         IP(rb, mc, mc, mc, -1);
         const int envR = std::max(3, N / 6);
         const double envSigma = envR / 2.0;
@@ -60,16 +63,11 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-muon" || name == "s0-vacuum-tau") {
-        // Scenario ID: s0-vacuum-tau
-        // Physical Purpose: Seeds a physical tau lepton in vacuum (tau-).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Central -1 charge with heavily boosted Coulomb dressing flux.
-        // Discrepancy: None.
-        // Scenario ID: s0-vacuum-muon
-        // Physical Purpose: Seeds a physical muon in vacuum (mu-).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Central -1 charge with boosted Coulomb dressing flux.
-        // Discrepancy: None.
+        // Qualification: exact 1.2x/1.5x amplitude copies of the electron-
+        // labelled vector template, with the same inert negative marker.
+        // Their linear trajectories coincide after amplitude normalization;
+        // no lepton generation or mass distinction is encoded.
+        configure_free_wave(false);
         const double boost = (name == "s0-vacuum-tau") ? 2.25 : 1.80;
         IP(rb, mc, mc, mc, -1);
         const int envR = std::max(3, N / 6);
@@ -93,37 +91,21 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
 
     if (name == "s0-vacuum-photon") {
         // Scenario ID: s0-vacuum-photon
-        // Physical Purpose: Seeds a physical photon in vacuum.
+        // Physical Purpose: Seeds a divergence-free transverse photon-candidate packet.
         // Initial Condition Parameters: None.
         // Expected Behaviour: Propagating electromagnetic wave packet with genesis disabled to avoid pair production.
-        // Discrepancy: None.
-        // genesis=false (audit 2026-04-28): a free EM wave should not pair-produce.
-        rb.toggles.genesis = false;
-        const double sigma = 3.0;
-        const double pAmp = K_B * 2.0;
-        const int pStartX = std::max(4, N / 4);
-        const int halfR = 8;
-        for (int z = 0; z < N; ++z)
-        for (int y = 0; y < N; ++y)
-        for (int dx = -halfR; dx <= halfR; ++dx) {
-            int x = pStartX + dx;
-            if (x < 0 || x >= N) continue;
-            double dy = y - midF, dz = z - midF;
-            double r2 = dx*dx + dy*dy + dz*dz;
-            double g = pAmp * std::exp(-r2 / (2.0 * sigma * sigma));
-            if (g < 1e-6) continue;
-            IF(rb, x, y, z, 0.0, 0.0, g);
-            IW(rb, x, y, z, g, 0.0, 0.0);
-        }
+        // Verification: shared one-way packet construction; photon identity remains [OPEN].
+        configure_free_wave();
+        inject_plane_packet_x(rb, std::max(5.0, N / 4.0), 3.0, K_B * 0.5, +1);
         return true;
     }
 
     if (name == "s0-vacuum-w-boson") {
         // Scenario ID: s0-vacuum-w-boson
-        // Physical Purpose: Seeds a charged W boson in vacuum (W+/-).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Localized +1 charge with a short-range heavy dressing field.
-        // Discrepancy: None.
+        // Qualification: one inert positive marker and an anisotropic radial
+        // vector template. No weak charge, mass pole, polarization
+        // representation, or W-boson observable is present.
+        configure_free_wave(false);
         IPF(rb, mc, mc, mc, +1, +1, 0);
         const double sigma = 1.8;
         const double amp = K_B * 1.6;
@@ -144,10 +126,10 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
 
     if (name == "s0-vacuum-z-boson") {
         // Scenario ID: s0-vacuum-z-boson
-        // Physical Purpose: Seeds a neutral Z boson in vacuum (Z0).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Localized neutral heavy dressing field without central charge.
-        // Discrepancy: None.
+        // Qualification: an unmanifested inward radial vector template. No
+        // neutral current, mass pole, polarization representation, or Z-boson
+        // observable is present.
+        configure_free_wave(false);
         const double sigma = 2.0;
         const double amp = K_B * 1.8;
         const int eR = 6;
@@ -167,10 +149,10 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
 
     if (name == "s0-vacuum-higgs") {
         // Scenario ID: s0-vacuum-higgs
-        // Physical Purpose: Seeds a physical Higgs boson in vacuum (H).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Localized isotropic scalar dressing flux.
-        // Discrepancy: None.
+        // Qualification: an unmanifested equal-component three-vector blob.
+        // It is not a scalar field and contains no Higgs potential, mass pole,
+        // symmetry breaking, or decay observable.
+        configure_free_wave(false);
         const double hSig = 2.0, hAmp = K_B * 1.2;
         const int hR = 6;
         const double hR2 = hR * hR;
@@ -189,104 +171,91 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
 
     if (name == "s0-vacuum-proton") {
         // Scenario ID: s0-vacuum-proton
-        // Physical Purpose: Seeds a physical proton in vacuum (p).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: A three-quark triad (+1, +1, -1) forming a stable bound baryon.
-        // Discrepancy: None.
+        // Qualification: unlocked selected-color triad under only the static-
+        // dressing force, color force, and movement phases. At L=24 it has
+        // 3 sites at tick 8, 1 at tick 16, and none by tick 32.
+        // The proton/bound-state identity is closed negative for this setup.
+        configure_unlocked_composite_terms(rb);
         const int charges[3] = {+1, +1, -1};
         const int colors[3]  = {1, 2, 3};
         const int bR = std::max(2, N / 8);
-        tri(rb, mc, mc, mc, charges, colors, bR, true);
+        tri(rb, mc, mc, mc, charges, colors, bR, false);
         return true;
     }
 
     if (name == "s0-vacuum-neutron") {
         // Scenario ID: s0-vacuum-neutron
-        // Physical Purpose: Seeds a physical neutron in vacuum (n).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: A three-quark triad (+1, -1, -1) forming a stable bound baryon.
-        // Discrepancy: None.
+        // Qualification: alternate-polarity version of the unlocked selected-
+        // color triad. At L=24 it has one surviving site at ticks 8/16/32 and
+        // none by tick 64. The neutron/bound-state identity is closed negative.
+        configure_unlocked_composite_terms(rb);
         const int charges[3] = {+1, -1, -1};
         const int colors[3]  = {1, 2, 3};
         const int bR = std::max(2, N / 8);
-        tri(rb, mc, mc, mc, charges, colors, bR, true);
+        tri(rb, mc, mc, mc, charges, colors, bR, false);
         return true;
     }
 
     if (name == "s0-vacuum-pion-charged") {
         // Scenario ID: s0-vacuum-pion-charged
-        // Physical Purpose: Seeds a physical charged pion in vacuum (pi+/-).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: A bound quark-antiquark meson pair with charges (+1, -1).
-        // Discrepancy: None.
+        // Qualification: unlocked opposite-polarity selected-color pair. Both
+        // sites are removed by the movement collision rule by tick 8 at L=24;
+        // no bound charged-pion mode survives.
+        configure_unlocked_composite_terms(rb);
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
-        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, true);
-        dp(rb, mc - hf, mc, mc, -1, -1, 1, 2.0, K_B * 0.5, true);
+        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, false);
+        dp(rb, mc - hf, mc, mc, -1, -1, 2, 2.0, K_B * 0.5, false);
         return true;
     }
 
     if (name == "s0-vacuum-electron-neutrino"
         || name == "s0-vacuum-muon-neutrino"
         || name == "s0-vacuum-tau-neutrino") {
-        // Scenario ID: s0-vacuum-tau-neutrino
-        // Physical Purpose: Seeds a tau neutrino in vacuum (nu_tau).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Large-amplitude localized propagating neutral wave packet.
-        // Discrepancy: None.
-        // Scenario ID: s0-vacuum-muon-neutrino
-        // Physical Purpose: Seeds a muon neutrino in vacuum (nu_mu).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: Intermediate-amplitude localized propagating neutral wave packet.
-        // Discrepancy: None.
+        // Scenario IDs: s0-vacuum-{electron,muon,tau}-neutrino.
+        // Qualification target: amplitude independence of one neutral native
+        // packet.  The three cases differ only by imposed multipliers
+        // 1.0/1.3/1.6; they contain no flavor label, mass term, oscillation,
+        // weak interaction, or neutrino-identifying observable.
         // Scenario ID: s0-vacuum-electron-neutrino
         // Physical Purpose: Seeds an electron neutrino in vacuum (nu_e).
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Small-amplitude localized propagating neutral wave packet.
-        // Discrepancy: None.
+        // Expected Behaviour: Small-amplitude localized propagating neutral candidate packet.
+        // Verification: amplitude-coded candidate only; neutrino identity remains [OPEN].
         const double boost =
             name == "s0-vacuum-tau-neutrino"  ? 1.6 :
             name == "s0-vacuum-muon-neutrino" ? 1.3 : 1.0;
-        const double sig = 2.0;
-        const int eR = 6;
-        const double eR2 = eR * eR;
-        for (int dz2 = -eR; dz2 <= eR; ++dz2)
-        for (int dy2 = -eR; dy2 <= eR; ++dy2)
-        for (int dx2 = -eR; dx2 <= eR; ++dx2) {
-            double r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-            if (r22 > eR2) continue;
-            double gg = K_B * 0.3 * boost * std::exp(-r22 / (2.0 * sig * sig));
-            if (gg < 0.001) continue;
-            IF(rb, mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0.0);
-            IW(rb, mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0.0);
-        }
+        configure_free_wave();
+        inject_transverse_packet_x(rb, std::max(5.0, N / 4.0), midF, midF,
+                                   2.5, std::max(5.0, N / 5.0), K_B * 0.3 * boost, +1,
+                                   2.0 * PI / std::max(8.0, N / 3.0));
         return true;
     }
 
     if (name == "s0-vacuum-pion-neutral") {
         // Scenario ID: s0-vacuum-pion-neutral
-        // Physical Purpose: Seeds a physical neutral pion in vacuum (pi0).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: A bound quark-antiquark meson pair with neutral charges.
-        // Discrepancy: None.
+        // Qualification: bit-identical alias of s0-vacuum-pion-charged. Both
+        // sites are gone by tick 8; no neutral-specific degree of freedom or
+        // bound pion mode is present.
+        configure_unlocked_composite_terms(rb);
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
-        dp(rb, mc + hf, mc, mc, 0, +1, 1, 2.0, K_B * 0.5, true);
-        dp(rb, mc - hf, mc, mc, 0, -1, 1, 2.0, K_B * 0.5, true);
+        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, false);
+        dp(rb, mc - hf, mc, mc, -1, -1, 2, 2.0, K_B * 0.5, false);
         return true;
     }
 
     if (name == "s0-vacuum-kaon-charged") {
         // Scenario ID: s0-vacuum-kaon-charged
-        // Physical Purpose: Seeds a physical charged kaon in vacuum (K+/-).
-        // Initial Condition Parameters: None.
-        // Expected Behaviour: A bound quark-antiquark meson pair with boosted mass energy.
-        // Discrepancy: None.
+        // Qualification: the same unlocked pair with an imposed 1.88 dressing
+        // boost. Both sites are gone by tick 8 at L=24; the boost does not
+        // produce binding and no kaon flavor or mass mechanism is present.
+        configure_unlocked_composite_terms(rb);
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
         const double kBoost = 1.88;
-        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5 * kBoost, true);
-        dp(rb, mc - hf, mc, mc, -1, -1, 1, 2.0, K_B * 0.5 * kBoost, true);
+        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5 * kBoost, false);
+        dp(rb, mc - hf, mc, mc, -1, -1, 2, 2.0, K_B * 0.5 * kBoost, false);
         return true;
     }
 

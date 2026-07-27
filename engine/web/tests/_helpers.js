@@ -38,6 +38,49 @@ export async function switchMode(page, mode) {
 }
 
 /**
+ * Load any Scale-0 scenario through the production <select> change path.
+ *
+ * Research scenarios are deliberately absent from the public evidence-gated
+ * menu. Assigning one of those ids directly to HTMLSelectElement.value makes
+ * the value collapse to an empty string, so the change handler can silently
+ * leave the previous scenario active. Tests must use this helper: it installs
+ * a temporary option, dispatches the real UI event, and verifies the runtime
+ * store recorded the requested id.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} scenarioId
+ * @param {{ settleMs?: number }} [opts]
+ */
+export async function selectScale0Scenario(page, scenarioId, opts = {}) {
+    const settleMs = opts.settleMs ?? 500;
+    await page.evaluate((id) => {
+        const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('scenario-select'));
+        if (!sel) throw new Error('scenario-select not found');
+        if (![...sel.options].some((option) => option.value === id)) {
+            const option = new Option(`${id} (research test)`, id);
+            option.dataset.researchTestOnly = 'true';
+            sel.add(option);
+        }
+        sel.value = id;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }, scenarioId);
+
+    await page.waitForFunction(
+        (id) => document.getElementById('scenario-select')?.value === id,
+        scenarioId,
+    );
+    if (settleMs > 0) await page.waitForTimeout(settleMs);
+
+    const loadedId = await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        return getScale0State().currentScenarioId;
+    });
+    if (loadedId !== scenarioId) {
+        throw new Error(`Scale-0 scenario load mismatch: requested ${scenarioId}, active ${loadedId}`);
+    }
+}
+
+/**
  * Collect console errors + page errors into an array.
  * Usage: `const errors = attachConsoleWatcher(page); /* ...run...*\/; expect(errors).toHaveLength(0);`
  * @param {import('@playwright/test').Page} page

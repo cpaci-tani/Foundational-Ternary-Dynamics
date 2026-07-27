@@ -125,11 +125,12 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 
 ### Notable scenarios worth trying first
 
-- **`flux-pulse`** — 3D Gaussian → spherical wave. The "hello world" of Scale 0.
+- **`flux-pulse`** — Isolated divergence-free transverse packet for finite-box boundary tests. Periodic and copied-Neumann behavior are quantitatively certified; the one-cell loss mode is not a physical radiation boundary.
 - **`flux-cascade`** — Genesis threshold demo. Watch particles spontaneously appear from overdense flux.
-- **`flux-genesis-between-gates`** — FTD-0388 gate discriminator. Three frozen flux slabs at |J| = 1.5160 / 1.5250 / 1.5340 straddle the adopted genesis gate (K_GENESIS = 3·W_SC ≈ 1.5164) and the retired 3·K_B = 1.533 gate: the left slab stays void forever, the middle slab nucleates matter the pre-FTD-0388 engine could never create, the right slab nucleates ~2× faster.
+- **`flux-genesis-between-gates`** — One-tick test of the selected genesis law. Exact cohorts at |J| = 1.5160 / 1.5250 / 1.5340 have compiled local hazards 0 / 0.0168973 / 0.034247; the L=24 seed-1 run records 0 / 49 / 120 genesis events. Later evolution is not a frozen-cohort experiment because genesis drains flux and also enables evaporation.
+- **`flux-pair-production`** — One-tick test of the separate selected polarity-pair rule. At L=24, 343 isolated p=1/2 sources produce 170 adjacent −/+ pairs for seed 1; each pair cancels signed polarity and vector flux exactly. This does not establish Schwinger production, physical particle identity, stability, or later-time dynamics.
+- **`flux-annihilation`** — Exact native opposite-state collision test. On tick two the states vanish and only their pre-existing flux is spread over six-face shells, giving field-norm ratio 1/6. The engine rule creates no outgoing wave and contains no rest-mass-to-field conversion, so it is not evidence for physical annihilation radiation.
 - **`flux-vortex`** — Helical flux ring → explicit spin / angular momentum visualization.
-- **`flux-annihilation`** — 4 ±1 particles on collision courses. Genesis → annihilation pair production.
 - **`quantum-double-slit`** — Genesis + interference. Shows manifestation statistics following |ψ|².
 - **`quantum-casimir`** — Two reflective plates + vacuum noise. Energy eigenstates between plates.
 - **`s0-seed-hydrogen`** — Proton triad + electron orbital seed.

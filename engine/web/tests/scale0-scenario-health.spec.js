@@ -1,7 +1,8 @@
 // @ts-check
 /**
- * All-scenario health sweep — loads EVERY Scale-0 registry scenario in one
- * session and records, per scenario:
+ * Scale-0 admission and catalog-health suite. It separately verifies the
+ * evidence-gated production menu and mechanically loads the complete catalog,
+ * recording per scenario:
  *   - mounted:     did it seed a non-trivial lattice state (flux energy or
  *                  particles)? Known-empty scenarios are allowlisted.
  *   - telemetryOK: does the active bridge return finite diagnostics
@@ -11,9 +12,8 @@
  *
  * This is the mechanical half of the 2026-06-05 all-scenario audit (the
  * physics-sense half lives in docs/audits/AUDIT_SCALE0_SCENARIO_HEALTH.md).
- * It runs each scenario on its NATURAL owner — flux- and s0- on the WASM worker
- * (WasmBridgeProxy), empty/light/quantum on the main-thread WASM engine — so it
- * reflects what a user actually gets. The full table is logged for the audit;
+ * It runs each scenario through the dashboard's selected bridge owner, so it
+ * reflects the real loader/worker path. The full table is logged for the audit;
  * the test fails only if a scenario is genuinely broken (no mount AND not
  * known-empty, or NaN/absent telemetry, or a real console error).
  */
@@ -26,6 +26,7 @@ const KNOWN_EMPTY = new Set([
     'empty',
     's0-seed-emergent-ic4-subthreshold',     // FTD-0107 sub-threshold negative control (0 voxels)
     's0-seed-emergent-ic2-thermal-runaway',  // Langevin-driven runaway — empty at load, develops over time
+    's0-seed-thermal-ignition',               // interactive subcritical bath — panel raises T across T_up
 ]);
 
 async function waitForCtx(page) {
@@ -35,20 +36,58 @@ async function waitForCtx(page) {
     ).toBe(true);
 }
 
-test.describe('Scale-0 all-scenario health sweep', () => {
-    test('every registry scenario mounts + has working telemetry', async ({ page }) => {
-        test.setTimeout(360_000); // ~97 scenarios × load+settle+read
+async function waitForActiveTelemetry(page, timeoutMs = 8_000) {
+    const started = Date.now();
+    while (Date.now() - started < timeoutMs) {
+        const ready = await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const st = getScale0State();
+            const bridge = (st.useFluxMock && st.fluxMock) ? st.fluxMock : window.__ftdCtx.bridge;
+            const d = bridge?.capabilities?.scale0?.getScale0Diagnostics?.() || {};
+            return Number.isFinite(d.totalEnergy) && typeof d.tick === 'number';
+        });
+        if (ready) return Date.now() - started;
+        await page.waitForTimeout(100);
+    }
+    return Date.now() - started;
+}
+
+test.describe('Scale-0 scenario admission and catalog health', () => {
+    test('dropdown contains only evidence-gated scenarios', async ({ page }) => {
+        await gotoAndReady(page);
+        const result = await page.evaluate(async () => {
+            const registry = await import('/js/scales/scale0/scenario-registry.js');
+            const visible = [...document.querySelectorAll('#scenario-select option')]
+                .map((option) => option.value)
+                .filter(Boolean)
+                .sort();
+            return {
+                visible,
+                expected: registry.SCALE0_SCENARIOS.map((s) => s.id).sort(),
+                validationCount: Object.keys(registry.SCALE0_SCENARIO_VALIDATION).length,
+                catalogCount: registry.SCALE0_SCENARIO_CATALOG.length,
+            };
+        });
+        expect(result.visible).toEqual(result.expected);
+        expect(result.visible).toHaveLength(result.validationCount);
+        expect(result.catalogCount).toBe(result.visible.length);
+    });
+
+    test('complete admitted catalog remains mechanically healthy', async ({ page }) => {
+        test.setTimeout(420_000); // 115 scenarios × load+first-frame+read
         const consoleErrors = attachConsoleWatcher(page);
 
         await gotoAndReady(page);
         await waitForCtx(page);
 
-        // Pull the authoritative scenario list straight from the registry.
+        // Pull the complete internal catalog. This remains a mechanical
+        // mount/telemetry audit separate from each entry's behavioral test.
         const scenarios = await page.evaluate(async () => {
             const m = await import('/js/scales/scale0/scenario-registry.js');
-            return m.SCALE0_SCENARIOS.map((s) => ({ id: s.id, category: s.category }));
+            return m.SCALE0_SCENARIO_CATALOG.map((s) => ({ id: s.id, category: s.category }));
         });
-        expect(scenarios.length, 'registry should expose scenarios').toBeGreaterThan(80);
+        expect(scenarios.length, 'research catalog should retain the full scenario inventory')
+            .toBeGreaterThan(100);
 
         // Start running so worker-backed mocks self-tick and post diagnostics.
         await page.evaluate(() => {
@@ -56,7 +95,7 @@ test.describe('Scale-0 all-scenario health sweep', () => {
             if (btn && btn.getAttribute('data-paused') === 'true') btn.click();
         });
 
-        /** @type {Array<{id:string,category:string,owner:string,tick:any,totalEnergy:any,manifested:any,particles:any,mounted:boolean,telemetryOK:boolean,errors:string[]}>} */
+        /** @type {Array<{id:string,category:string,owner:string,tick:any,totalEnergy:any,manifested:any,particles:any,readyMs:number,mounted:boolean,telemetryOK:boolean,errors:string[]}>} */
         const rows = [];
 
         for (const { id, category } of scenarios) {
@@ -70,7 +109,10 @@ test.describe('Scale-0 all-scenario health sweep', () => {
                 sel.value = scenarioId;
                 sel.dispatchEvent(new Event('change', { bubbles: true }));
             }, id);
-            await page.waitForTimeout(650); // sync load + a few worker frames
+            // A fixed sleep produced a false failure for quantum-tunnel: its
+            // three full locked sheets take longer to construct than most
+            // scenarios. Wait on the real readiness contract instead.
+            const readyMs = await waitForActiveTelemetry(page);
 
             const snap = await page.evaluate(async () => {
                 const { getScale0State } = await import('/js/scales/scale0/state/store.js');
@@ -114,14 +156,14 @@ test.describe('Scale-0 all-scenario health sweep', () => {
                 (snap.particles > 0) ||
                 (snap.fieldSamples > 0);
 
-            rows.push({ id, category, ...snap, mounted, telemetryOK, errors: newErrors });
+            rows.push({ id, category, ...snap, readyMs, mounted, telemetryOK, errors: newErrors });
         }
 
         // Emit the full table for the audit.
         const fmt = (r) => `${r.mounted ? 'M' : '·'}${r.telemetryOK ? 'T' : '·'}${r.errors.length ? 'E' : '·'} ` +
-            `${r.owner.padEnd(4)} ${String(r.id).padEnd(34)} f=${Number(r.maxFlux).toFixed(3)} p=${r.particles} m=${r.manifested} E=${r.totalEnergy}` +
+            `${r.owner.padEnd(4)} ${String(r.id).padEnd(34)} ready=${String(r.readyMs).padStart(4)}ms f=${Number(r.maxFlux).toFixed(3)} p=${r.particles} m=${r.manifested} E=${r.totalEnergy}` +
             (r.errors.length ? `  ERR:${r.errors[0]}` : '');
-        console.log('\n=== Scale-0 scenario health (M=mounted T=telemetry E=errors) ===\n' +
+        console.log('\n=== Scale-0 research-catalog mechanical health (NOT physics validation) ===\n' +
             rows.map(fmt).join('\n') + `\n\nTotal: ${rows.length} scenarios`);
 
         // Failures = genuinely unhealthy scenarios.
@@ -134,10 +176,10 @@ test.describe('Scale-0 all-scenario health sweep', () => {
         expect(notMounted.map((r) => r.id), 'scenarios that mounted nothing (and are not known-empty)').toEqual([]);
     });
 
-    // Classify the flux-annihilation failure seen in the sweep: is it the
-    // scenario, or a worker create/dispose race only triggered by rapid
-    // switching? Load it FIRST on a fresh page (no prior worker to race).
-    test('flux-annihilation mounts cleanly in isolation (race vs scenario bug)', async ({ page }) => {
+    // Permanent regression for the historical worker create/dispose failure.
+    // The qualified scenario now intentionally removes both states on tick two,
+    // so manifested count is not a valid post-run mount assertion.
+    test('flux-annihilation mounts cleanly in isolation', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await waitForCtx(page);
@@ -157,7 +199,39 @@ test.describe('Scale-0 all-scenario health sweep', () => {
         const errs = realErrors(consoleErrors);
         console.log(`[flux-annihilation isolation] manifested=${snap.manifested} particles=${snap.particles} errors=${JSON.stringify(errs)}`);
         expect(errs, 'flux-annihilation should not log a worker error in isolation').toEqual([]);
-        expect(snap.manifested + snap.particles, 'flux-annihilation should mount its 4 particles').toBeGreaterThan(0);
+        expect(Number.isFinite(snap.manifested + snap.particles), 'collision telemetry should remain finite').toBe(true);
+    });
+
+    test('quantum-tunnel reaches a finite mounted worker frame in isolation', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await waitForCtx(page);
+        await page.evaluate(() => {
+            const sel = document.getElementById('scenario-select');
+            sel.value = 'quantum-tunnel';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        const readyMs = await waitForActiveTelemetry(page);
+        const snap = await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const st = getScale0State();
+            const bridge = (st.useFluxMock && st.fluxMock) ? st.fluxMock : window.__ftdCtx.bridge;
+            const caps = bridge.capabilities.scale0;
+            const d = caps.getScale0Diagnostics?.() || {};
+            return {
+                tick: d.tick ?? null,
+                totalEnergy: d.totalEnergy ?? null,
+                manifested: d.manifested ?? null,
+                particles: (caps.getScale0ParticleFrame?.() || {}).count ?? 0,
+            };
+        });
+        const errs = realErrors(consoleErrors);
+        console.log(`[quantum-tunnel isolation] ready=${readyMs}ms tick=${snap.tick} E=${snap.totalEnergy} manifested=${snap.manifested} particles=${snap.particles}`);
+        expect(errs, 'quantum-tunnel should not log a worker error in isolation').toEqual([]);
+        expect(Number.isFinite(snap.totalEnergy) && typeof snap.tick === 'number',
+            'quantum-tunnel must publish finite diagnostics').toBe(true);
+        expect(Math.max(snap.manifested ?? 0, snap.particles),
+            'the three locked source sheets must be mounted').toBeGreaterThan(0);
     });
 
 });

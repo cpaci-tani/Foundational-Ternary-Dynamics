@@ -14,8 +14,8 @@
  * dependent ON while its prerequisite is OFF. This spec pins that: it loads each
  * damping-OFF scenario through the real controller path (dropdown change) and
  * asserts (a) no scenario leaves an invalid selective_damping/damping combo and
- * (b) zero TermToggles console errors. It also asserts the flux-pulse default is
- * physics-unchanged (damping + selective_damping both ON).
+ * (b) zero TermToggles console errors. It also asserts that flux-pulse selects
+ * the isolated undamped native-wave profile.
  */
 
 import { test, expect } from '@playwright/test';
@@ -24,6 +24,7 @@ import { gotoAndReady } from './_helpers.js';
 // Scale-0 scenario presets that set damping=false (config/toggles.js). Each is a
 // regression case: the loader must clamp selective_damping OFF for all of them.
 const DAMPING_OFF_SCENARIOS = [
+    'flux-pulse', 'flux-genesis-between-gates',
     'light-rainbow', 'light-dipole', 'light-two-slit', 'light-photon-race',
     'quantum-well', 'flux-zero-point',
     's0-field-rf-lattice-wave', 's0-field-light-lattice-wave', 's0-field-sound-lattice-wave',
@@ -81,13 +82,13 @@ test.describe('Scale-0 toggle-trap: selective_damping requires damping', () => {
         expect(ttErrors, `TermToggles errors emitted: ${JSON.stringify(ttErrors)}`).toHaveLength(0);
     });
 
-    test('flux-pulse default keeps damping + selective_damping ON (physics unchanged)', async ({ page }) => {
+    test('flux-pulse selects the isolated undamped native-wave profile', async ({ page }) => {
         await gotoAndReady(page, { timeout: 90_000 });
         const state = await page.evaluate(() => {
             const b = window._ftdBridge;
             return { damping: b.getToggle('damping'), selective_damping: b.getToggle('selective_damping') };
         });
-        expect(state.damping).toBe(true);
-        expect(state.selective_damping).toBe(true);
+        expect(state.damping).toBe(false);
+        expect(state.selective_damping).toBe(false);
     });
 });

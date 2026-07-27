@@ -56,8 +56,8 @@ async function readZpe(page) {
     });
 }
 
-test.describe('Scale-0 zero-point energy (flux-zero-point)', () => {
-    test('holds a persistent fluctuation floor with no manifested particles', async ({ page }) => {
+test.describe('Scale-0 periodic random-wave bath (flux-zero-point)', () => {
+    test('remains a finite unmanifested source-free wave bath', async ({ page }) => {
         test.setTimeout(60_000);
         await gotoAndReady(page);
         await waitForCtx(page);
@@ -76,20 +76,16 @@ test.describe('Scale-0 zero-point energy (flux-zero-point)', () => {
         expect(t0.totalEnergy, 'energy floor should be seeded non-zero').toBeGreaterThan(0);
         expect(t0.manifested, 'no particles at load (genesis off + sub-threshold)').toBe(0);
 
-        // Sample the floor over ~8s of real time. With reflective boundaries
-        // (SCALE0_SCENARIO_BOUNDARY) the energy is trapped, so the floor must
-        // hold rather than bleed away — and nothing ever manifests.
+        // The UI totalEnergy is not the exact kick-drift invariant and may
+        // oscillate. The native scenario_behavior test certifies the modified
+        // Hamiltonian; this browser gate checks liveness and no manifestation.
         const traj = [t0];
         for (let i = 0; i < 4; i++) { await page.waitForTimeout(2000); traj.push(await readZpe(page)); }
-        console.log(`[zero-point] ${traj.map((s) => `t${s.tick}:E=${s.totalEnergy},m=${s.manifested}`).join('  ')}`);
+        console.log(`[random-wave-bath] ${traj.map((s) => `t${s.tick}:E=${s.totalEnergy},m=${s.manifested}`).join('  ')}`);
         const tN = traj[traj.length - 1];
 
         expect(tN.tick, `field should be live / sim advancing (t0=${t0.tick}, tN=${tN.tick})`).toBeGreaterThan(t0.tick);
         for (const s of traj) expect(s.manifested, 'no particles should ever manifest').toBe(0);
-        // Persistent floor: still ≥ 70% of the seeded value after running (a
-        // "held, did not bleed away" check — reflective boundaries trap it).
-        expect(tN.totalEnergy,
-            `floor did not persist (t0=${t0.totalEnergy} → tN=${tN.totalEnergy}); reflective boundary should trap the energy`)
-            .toBeGreaterThan(t0.totalEnergy * 0.7);
+        expect(tN.totalEnergy, 'finite source-free bath remains nonzero').toBeGreaterThan(0);
     });
 });
