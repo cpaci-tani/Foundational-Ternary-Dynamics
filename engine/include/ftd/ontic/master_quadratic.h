@@ -230,22 +230,35 @@ inline constexpr int LADDER_GRAVITY      = LADDER_NEUTRINO + N_F;       // n=20 
 // Layer 4b: Neutrino Mixing (PMNS angles from framework integers)
 // ============================================================================
 // All mixing angles are ratios of framework integers {N_c, b_3, N_eff, N_base}.
-// These are genuine derivations [THEOREM], not parametric insertions.
+//
+// [PARAMETRIC] — all four rows. LEDGER FTD-0320 demoted them from the
+// "[THEOREM], not parametric insertions" claim this block carried before
+// 2026-07-25: the look-elsewhere nulls are sin²θ₁₂ CHANCE_LEVEL (p=0.48),
+// sin²θ₂₃ MDL_DOMINATED (p=0.96), Δm² MDL_DOMINATED (p=1.00), with sin²θ₁₃
+// MDL_DOMINATED by 1/41 as a control. An integer ratio matched to a measured
+// value is a parametric insertion, not a derivation.
+//
+// The error percentages below were also wrong (they understated three of the
+// four); recomputed against the experimental values quoted on each line, and
+// cross-checked against CATALOG_PARAMETRIC_INSERTIONS §7.1.
 
 // sin²(θ₁₂) = N_c / (N_c + b₃) = 3/10 = 0.300
-//   (0.69% from experimental 0.307)
+//   (2.28% from experimental 0.307)   [was mis-stated as 0.69%]
 inline constexpr double SIN2_THETA12 = static_cast<double>(N_C) / (N_C + B_3);
 
 // sin²(θ₂₃) = (N_eff + N_c) / (2·N_eff + N_c) = 16/29 = 0.5517
-//   (2.5% from experimental 0.546)
+//   (1.05% from experimental 0.546)   [was mis-stated as 2.5%]
 inline constexpr double SIN2_THETA23 = static_cast<double>(N_EFF + N_C) / (2.0 * N_EFF + N_C);
 
 // sin²(θ₁₃) = 1 / (N_base · N_eff) = 1/52 = 0.01923
-//   (7.0% from experimental 0.02203)
+//   (12.71% from experimental 0.02203)  [was mis-stated as 7.0%]
+//   CATALOG §7.1 calls this row "essentially a mis-prediction"; the 15%
+//   tolerance gate in ontic_audit.cpp exists because of this 12.7%, which the
+//   old "7.0%" concealed.
 inline constexpr double SIN2_THETA13 = 1.0 / (N_BASE * N_EFF);
 
 // Mass-squared ratio: Δm²₃₁ / Δm²₂₁ = (b₃ + N_c)² / N_c = 100/3 = 33.33
-//   (1.47% from experimental 32.85)
+//   (1.47% from experimental 32.85)   [the one figure that was correct]
 inline constexpr double DM2_RATIO = static_cast<double>((B_3 + N_C) * (B_3 + N_C)) / N_C;
 
 // Normal hierarchy (Δm²₃₁ > 0) [THEOREM]

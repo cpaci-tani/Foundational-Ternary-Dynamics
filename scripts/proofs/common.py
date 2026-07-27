@@ -79,6 +79,11 @@ D_CONSTRAINT = N_C * N_BASE**2 - 1  # = 47
 ALPHA = 1.0 / X_PLUS
 G_C = math.sqrt(ALPHA)
 SIN2_WEINBERG = N_C / N_EFF
+# FTD-0131 FALSIFIED the identification of this integer expression with the
+# physical Newton constant G_N. It is retained as a framework-integer
+# quantity only; the '1/100' agreement has no substrate justification under
+# any natural reading. The surviving substrate route to gravity is
+# alpha_G(e,e) = (m_e/m_P)^2 [SMC, one flagged interpretive step].
 G_N = 1.0 / (B_3 + N_C)**2
 ALPHA_S_MZ = B_3 / (B_3 + 4.0 * N_EFF)
 
@@ -117,7 +122,15 @@ EXP_ALPHA_G = 5.906e-39
 # =============================================================================
 
 TAGS = ("[AXIOM]", "[THEOREM]", "[SELECTION]", "[CONJECTURE]", "[IMPOSED]",
-        "[CONDITIONAL]", "[EXTERNAL]")
+        "[CONDITIONAL]", "[EXTERNAL]",
+        # Added 2026-07-26: the canonical tags below were in use in the LEDGER
+        # but absent from this tuple, so any row carrying one was silently
+        # dropped from the per-tag tally while still counting in the total
+        # (the breakdown summed to less than Total). Retagging the empirical
+        # comparison rows off [THEOREM] made the gap visible.
+        "[PARAMETRIC]", "[STRUCTURALLY MOTIVATED PARAMETRIC]",
+        "[STRONGLY MOTIVATED CONJECTURE]", "[DERIVED]", "[EMERGENT]",
+        "[SYNTHESIS]", "[CLOSED NEGATIVE]", "[OPEN]")
 
 
 @dataclass

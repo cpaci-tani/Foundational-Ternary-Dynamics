@@ -48,8 +48,9 @@ import {
 // Note: PLANCK_TIME_S (≈ 5.391247e-44 s) is the SI Planck time t_P, used
 // for naive lattice-tick→seconds conversion when one tick is taken as
 // one Planck time. FTD_TICK_S (= t_P/√3) is the project-canonical tick
-// duration: physical c = c_lattice·(a_phys/t_phys) with the CFL Courant
-// number c_lattice = 1/√3 and a_phys ≡ ℓ_P forces t_phys = ℓ_P/(√3·c).
+// duration: physical c = c_lattice·(a_phys/t_phys) with the [SELECTION]
+// lattice speed c_lattice = 1/√3 (FTD-0407 — not CFL-forced) and
+// a_phys ≡ ℓ_P forces t_phys = ℓ_P/(√3·c).
 // Use FTD_TICK_S for any FTD-internal time conversion;
 // PLANCK_TIME_S is exposed only for SI-Planck reporting.
 export const PLANCK_LENGTH_M   = _PLANCK_LENGTH_M;

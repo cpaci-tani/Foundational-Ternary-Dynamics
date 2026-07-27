@@ -79,8 +79,175 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 **Core rules (default Scale 0 substrate):**
 
 1. **Flux wave equation**: dJ/dt = c^2 nabla^2 J (only possible local linear dynamics for a vector field)
-2. **State-flux coupling**: source term -g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0; electric sign per lagrangian.h Term 2, amended 2026-07-18 — the pre-amendment +g_c·grad(s) fought the Gauss constraint at charge sites, measured live equilibrium f = −0.095)
-3. **Gauss projection**: enforce div(J) = s each tick (charge conservation -- logical necessity)
+2. **State-flux coupling**: source term `-g_c*grad(s)+g_c*curl(s*v)`.
+   FTD-0574 derives it for a prescribed source from
+   `I_source=g_c<s,div J>+g_c<curl J,s*v>`. The second term is not the
+   J-variation of the diagnostic onsite interaction `-g_c<s*v,J>` and does
+   not establish a common dynamic matter/field action. Electric sign per
+   `lagrangian.h` Term 2, amended 2026-07-18 — the pre-amendment
+   `+g_c*grad(s)` fought the Gauss constraint at charge sites, measured live
+   equilibrium `f=-0.095`.
+   FTD-0575 derives the source action's reciprocal Hodge force using
+   `Phi_J=-g_c*div(J)` and `A_J=g_c*curl(J)`. Its Lorentz-form algebra is exact,
+   but its static kernel is bounded (`0<=R(k)<=3`): the massless pole cancels,
+   equal polarities attract, and the soft residue vanishes as `O(k^2)`. This
+   channel is therefore not native Coulomb electromagnetism. Gauss projection
+   and Poisson Coulomb remain separately selected mechanisms.
+   FTD-0576 further derives the exact driven-tick work coordinate
+   `R=J-wave_vel/2` and a conditional continuity-based total-energy identity.
+   A cardinal one-site hop cannot supply its required central current locally:
+   the symbol is `-2z/(z+1)`. The exact face current cannot be mapped into the
+   native site current by a finite-range commuting projection either. Mobile
+   closure therefore requires a separate matched face dynamics, a staggered
+   primitive, nonlocality, or a different nonlinear carrier.
+   FTD-0577 constructs the minimal separable nonlinear-carrier sidecar: the
+   normalized symmetric coat `B=(T^-1+2+T)/4` on each axis. Its tensor product
+   is a positive 27-site Moore coupling representation, and
+   `Q_i=((1+T_i^-1)/2) product_(j!=i) B_j K_i` maps the exact face current to
+   exact local central continuity. Primitive `s` remains one ternary site, but
+   coupling is explicitly non-cardinal. This observer result does not select
+   a production force or repair the FTD-0575 static pole/sign obstruction.
+   FTD-0578 gives this coat an exact temporal split and one common action in
+   the native work coordinate `R=J-wave_vel/2`; source deposition and the
+   orbit-side gather are adjoints of that action. The unmodified compact
+   carrier nevertheless fails as free mobile matter: edge/body diagonal
+   time averages disagree with the FTD-0576 energy-centered source by exact
+   squared norms `1/1536` and `5/3072`, and its reciprocal self-field produces
+   a positive, polarity-even Peierls potential `C_i r(1-r)`. No production
+   action, force, or movement phase implements this observer.
+   FTD-0579 closes finite rigid smearing as an exact repair. For a nonzero
+   finite carrier symbol `A`, the diagonal defect factorizes as `B_M A M_d`
+   and cannot vanish in the Laurent integral domain. Its Peierls coefficient
+   is also strictly positive. Smooth binomial envelopes suppress both defects
+   only as `O(R_rms^-2)` relative to the carrier scale; the observer does not
+   derive such an envelope from production.
+   FTD-0580 resolves the diagonal-centering branch by replacing the trilinear
+   diagonal coupling sidecar with the positive endpoint chord
+   `p_t=(1-t)delta_0+t delta_d`. A democratic average over all shortest face
+   routes gives exact local and central continuity without choosing an axis
+   order, and its time-exact action is endpoint-energy-centered. The same
+   finite chord still has a positive Peierls barrier, so it is not a gapless
+   production particle.
+   FTD-0581 derives the corresponding production-dispersion depinning
+   threshold and closes stable passive dressing as its cure. The Hodge field
+   plus source completes to the relaxed Peierls curve plus a nonnegative
+   quadratic deformation energy, while any locally Lipschitz response of a
+   stable dressing begins at `O(r^2)` and cannot cancel the curve's linear
+   integer-site cusp. A zero-momentum active traversal candidate must carry
+   at least `C_d/4` finite internal excitation and derive a recurrent
+   phase-resolved exchange from the frozen action; that dynamics is open and
+   is not implemented here.
+   FTD-0582 then audits that remaining possibility against the actual tick.
+   With selected forces disabled, `phase_read`/`phase_write` evolve `(J,W)`
+   but never write manifested `velocity` or `remainder`; ordinary movement
+   only integrates the velocity it was already given. In 144 energetic
+   phase/direction/polarity/volume arms every field evolved while matter
+   response stayed bit-exact zero. The current flux dressing may follow and
+   trail prescribed motion, but it is not a reciprocal mover in production.
+   A future common-action branch would be new selected dynamics, not an
+   observer-only promotion of the frozen tick.
+   FTD-0583 then classifies the existing matched real face/edge sidecar before
+   treating topology as an escape. The periodic complex has
+   `H^2(T_L^3;R)=R^3`, represented only by three global continuously-valued
+   plane fluxes. Every localized divergence-free zero-harmonic face field
+   contracts continuously to vacuum with quadratic energy, and real periodic
+   Gauss dipoles scale continuously. Thus the current noncompact fields do
+   not supply a localized protected bundle/defect carrier or compact-`U(1)`
+   charge quantization. A nonlinear deforming core or a genuinely new
+   compact/singular variable remains a separate ontology choice. Production
+   is unchanged and no FTD-0481 toggle/scenario is licensed.
+   FTD-0584 strengthens that result after the source is fixed: Gauss and
+   harmonic constraints define an affine fibre of the ordinary real field
+   arrays, so every nonempty fibre contracts explicitly to a base solution.
+   The same holds for finite-support and finite-energy fields on an uncontained
+   lattice. The ternary alphabet labels disconnected snapshots, but production
+   events connect those labels and the registered additive transition basis has
+   rank four/nullity zero. The free vacuum is the point `s=0,J=W=0`, so it has
+   no wall, vortex, hedgehog, or texture homotopy. A static same-variable core
+   with only onsite and two-derivative energy shrinks by Derrick scaling; a
+   time-periodic active core or an explicit compact/constrained order parameter
+   remains open and would be selected new dynamics/ontology. Production and
+   scenarios remain unchanged.
+   FTD-0585 then separates moving support from transported matter. The exact
+   history identity is `Delta M=sum_faces I+sum_x x S`: the same endpoint
+   snapshots can be produced by a face current or by balanced local death and
+   rebirth. Reaction-free rest arms remain exactly static, while initialized
+   ballistic controls hop. The source audit and live CPU replay also expose a
+   production confound: evaporation clears `s` and visible labels but preserves
+   `velocity`/`remainder`; genesis can remanifest those hidden values exactly.
+   Reaction-front research must sanitize this memory and carry an explicit
+   source/reservoir ledger. No production fix, toggle, scenario, or particle
+   promotion is made by the observer.
+   FTD-0586 performs the first sanitized causal-source gate. For the
+   single-substrate wave/coupling/genesis sector with zero initial field and
+   kinematics, the exact modal step response has a finite pointwise envelope;
+   a source removed once by evaporation costs at most twice that envelope.
+   On `L={9,17,33,65}`, any arrangement/signs of at most three sources obeys
+   `|J|<=1.1598848941400712<K_GENESIS`. A first-event induction therefore
+   forbids endogenous genesis in that class. Ninety-six live arms conform,
+   while four external supercritical controls fire. In FTD-0586 alone, `N=4`
+   was unresolved rather than sufficient; FTD-0588/0589 supersede that count
+   boundary below. Gauss projection, dual genesis, and external packets remain
+   outside the theorem. Production and scenarios are unchanged.
+   FTD-0587 then replays the externally ignited FTD-0474 dispersal tail and
+   separates inherited field, native causal coupling, and selected Gauss
+   support. Every continuation without repeated Gauss projection passes
+   `0/24`; cleared Gauss passes `18/24` but only four of six registered cells;
+   intact field plus repeated Gauss alone reproduces `20/24` and five cells.
+   The qualified tail records zero genesis and 204 evaporations. It is an
+   externally prepared Gauss-stabilized evaporative remnant, not a native
+   self-sustaining reaction front. The projector remains selected and no
+   movement, common action, toggle, or scenario is promoted.
+   FTD-0588 removes the apparent four-source opening left by FTD-0586's
+   sourcewise triangle bound. The exact production symbols satisfy
+   `sum_a sin(k_a)^2 < M(k)` off the zero mode, and distinct source characters
+   satisfy `sum_k |S(k)|^2=L^3 N`. Common source histories therefore obey a
+   `sqrt(N)` pointwise envelope. On `L={9,17,33,65}`, all common histories
+   through `N=5` and all independently removed histories through `N=4` are
+   theorem-subcritical. For asynchronous `N=5`, genesis is excluded until the
+   final original source disappears; FTD-0588 itself left the all-off residual
+   field open. All 128 registered live arms record zero genesis, and all 64
+   unlocked arms reach complete source removal.
+   FTD-0589 closes that residual tail exactly. For a removal at tick `T`, the
+   finite-pulse response is `2 sec(theta/2) sin(T theta/2)
+   sin((n-(T-1)/2)theta)`, so the constant step pieces cancel. The combined
+   history envelope `C_L sqrt(N-r)+rP_L` is subcritical for every arbitrary
+   one-time-removal history through `N=6` on the registered volumes. Its 96
+   observer arms/12,288 ticks record zero genesis and 176 native evaporations.
+   FTD-0590 then closes the former `N=7` boundary without selecting a source
+   geometry or removal schedule. The normalized pulse factor is constant on
+   signed-permutation mode orbits, giving the exact relaxation
+   `C_L sqrt(N-r)+Q_L sqrt(r+mu_L r(r-1))`. Exhaustive mode/displacement-orbit
+   norms give `mu_L=0.3610...0.36274` and worst seven-source bound
+   `1.2142763824<K_GENESIS`. FTD-0591 and FTD-0592 evaluate the unchanged
+   bound at `N=8` and `N=9`: all 40 nine-source removal partitions are
+   subcritical, with worst value `1.4801131738` at `L=65,r=8`. FTD-0593
+   evaluates `N=10`; its unchanged orbit bound is inconclusive on every
+   volume, with worst upper bound `1.6127738812` at `L=65,r=9`. This is not a
+   witness history. FTD-0594 performs exact shared-`M` grouping with integer
+   cyclotomic keys; at `L=65` all 6,544 cubic orbits are singleton shells, so
+   the decisive bound is unchanged. FTD-0595 then enforces the exact axial-pair
+   capacity obtained from all connected cubic animals through size nine.
+   Although at most 13 of the 36 `r=9` pairs can be axial, the complementary
+   shell coherence is nearly as large; all four refined bounds remain above
+   threshold, with worst value `1.6115888534` at `L=65`. This is inconclusive,
+   not a witness history. FTD-0596 retains the complete cubic-orbit distance
+   distribution and imposes every autocorrelation Fourier-positivity
+   constraint. Its 32 padded dual certificates shift the worst partition to
+   `r=8` and lower the four maxima to `1.5218539833...1.5932999259`; every
+   value remains above threshold. The Delsarte relaxation is therefore also
+   inconclusive and supplies no configuration or history. FTD-0597 then uses
+   the exact same-time identity `-1/4<=u_i u_j<=1` to retain signed exact-shell
+   cancellation before applying the same Delsarte polytope. All four maxima
+   occur at `r=8` and are subcritical; the worst is `1.4577559408` at `L=65`,
+   margin `0.0586301184`. First-event induction therefore closes arbitrary
+   one-time-removal histories through `N=10` in this frozen sector. These remain
+   observer theorems/numerically certified facts; production, toggles, and
+   scenarios are unchanged.
+3. **Gauss projection**: selected constraint step targeting `div(J) = s` each
+   tick. It realizes a polarity-to-Gauss-charge map; it is not a proof of
+   charge conservation or a logical consequence of the five postulates
+   (FTD-0421/0426).
 4. **Manifestation/Evaporation**: |J| > K_GENESIS -> manifest; stochastic evaporation with per-tick probability p = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE * (dtau/dt), where E_local is the 7-site energy (particle + 6 face-neighbors; locked voxels exempt) and dtau/dt = sqrt(max(1-B,0)), B=|u|^2/C_SPEED^2+L^2, is the shared selected proper-time rate (`ftd/causal_kinematics.h`; FTD-0402). Stored `u` is raw nodes/tick. This implements the clock/bandwidth axiom; it is not a covariance theorem.
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
 6. **Movement + Collision**: remainder accumulation, speed limit C_SPEED = C_WAVE = 1/sqrt(3), annihilation on contact
@@ -339,6 +506,8 @@ RenderBridge::tick()
   4.  phase_forces()               [forces]
   5.  phase_movement()             [movement]
   5b. apply_absorbing_boundary()   [absorbing_boundary]
+  5c. apply_reflective_flux_boundary() or
+      apply_dispersal_flux_boundary() [flux_boundary]
   6.  weak_transmutation_cpu()     [weak_transmutation]
   7.  triad_binding_cpu()          [triad_binding]
   7b. relax_su2/su3_links_cpu()    [su2_gauge / su3_gauge]  (links only — no substrate writes)
@@ -351,14 +520,15 @@ RenderBridge::tick()
 
 | Phase | Main toggles | What it does |
 |-------|--------------|-------------|
-| `phase_read` | `wave_propagation`, `coupling` | Parallel read-only voxel loop. Computes `delta_J` from the 18-point Moore Laplacian, `G_C * grad(state)`, and `G_C * curl(state * velocity)`. Dual-substrate mode computes separate L/R deltas and recombines observables after write. |
+| `phase_read` | `wave_propagation`, `coupling` | Parallel read-only voxel loop. Computes `delta_J` from the 18-point Moore Laplacian, `-G_C * grad(state)`, and `+G_C * curl(state * velocity)`. Dual-substrate mode computes separate L/R deltas and recombines observables after write. |
 | `phase_write` | `damping`, `genesis`, `evaporation`, `selective_damping`, `larmor_radiation`, `langevin`, `symplectic_leapfrog` | Parallel commit loop. Advances the staggered wave pair (`wave_vel += delta_J`, `flux += wave_vel`; explicit `dt` factors when `symplectic_leapfrog` is enabled), applies damping/noise, performs genesis and evaporation, snapshots pre-write fields for deterministic labels, and resolves pending manifestation IDs after the parallel section. |
 | `pair_production_cpu` | `pair_production` | Creates neighboring correlated `-1/+1` pairs from high-flux voids, consumes local wave/flux energy, assigns shared pair IDs, and conserves charge locally. |
 | `gauss_project` | `gauss_projection`, `exact_dual_gauss` | Builds `source = div(J) - coulomb_charge_coupling * state`, solves a warm-started SOR Poisson problem, then subtracts `grad(phi)` from flux. Ordinary mode skips manifested sites during correction; exact dual mode synchronizes the split L/R fields. |
 | `solve_latency_poisson` | `latency_field`, `field_energy_gravity` | Builds a mass/field-energy source, solves a latency potential, and stores bounded `latency` values for time dilation and bandwidth accounting. |
 | `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `strong_force`, `exchange_force`, `cluster_inertia` | Iterates manifested sites. Default EM path solves Coulomb potential and applies `-ALPHA * state * grad(phi_C)`; emergent-force mode uses direct flux gradients instead. Adds gravity, Lorentz, and optional particle-sector forces, writes `ForceDiag`, and integrates velocity using the `gamma_FTD` bandwidth budget. |
 | `phase_movement` | `movement`, `symmetric_movement_order` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. |
-| `apply_absorbing_boundary` | `absorbing_boundary` | Damps the outer shell after movement to reduce periodic wraparound artifacts in selected runs. |
+| `apply_absorbing_boundary` | `absorbing_boundary` | Applies an imposed D-deep quadratic damping sponge after movement. It is not a derived reflection-free radiation condition. |
+| flux-boundary pass | `flux_boundary` | `Periodic` leaves the toroidal wave map unchanged; `Reflective` copies an interior Neumann ghost shell; `Dispersal` multiplies the outer shell by `1-C_SPEED`. These are computational finite-box laws, not ontological boundaries. |
 | `weak_transmutation_cpu` | `weak_transmutation` | Stress-threshold stochastic polarity flips. In dual-substrate mode the L/R fluxes are swapped with the flip. |
 | `triad_binding_cpu` | `triad_binding` | Detects compact same-sign triples and locks them as bound structures. |
 | `relax_su2/su3_links_cpu` | `su2_gauge`, `su3_gauge` | One Jacobi double-buffered Wilson staple sweep per tick over the SU(2)/SU(3) edge links ([IMPOSED] lattice-gauge import; see §8.1). Write-only w.r.t. the substrate — links feed nothing downstream. Buffers lazily allocated on first use. |
@@ -581,8 +751,8 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 ## 8. TermToggles
 
 The `TermToggles` struct is a table-driven Scale 0 runtime registry. It contains
-**33 boolean toggles** in `TOGGLE_SPECS[]` plus **6 typed configuration fields**
-that are intentionally kept outside the boolean table.
+**42 boolean toggles** in `TOGGLE_SPECS[]` plus typed configuration fields that
+are intentionally kept outside the boolean table.
 
 Adding a new boolean toggle requires a struct field and one registry row; the
 helper methods (`validate`, `enable_all`, `disable_all`,
@@ -594,7 +764,7 @@ helper methods (`validate`, `enable_all`, `disable_all`,
 |---|---|---|
 | Core field/state | `wave_propagation`, `coupling`, `damping`, `genesis`, `evaporation`, `gauss_projection` | Wave propagation, state coupling, dissipation, manifestation/evaporation, Gauss projection |
 | Forces and motion | `forces`, `gravity`, `poisson_coulomb`, `emergent_forces`, `lorentz_force`, `movement` | Field-mediated force modes and kinematic update |
-| Field extensions | `dual_substrate`, `exact_dual_gauss`, `latency_field`, `field_energy_gravity`, `symplectic_leapfrog` | Split substrate, latency/proper-time sector, explicit-`dt` wave integration |
+| Field extensions | `dual_substrate`, `exact_dual_gauss`, `latency_field`, `field_energy_gravity`, `symplectic_leapfrog`, `verlet_wave_integrator`, `lorentz_period2_floquet`, `lorentz_bcc_time_floquet` | Split substrate, latency/proper-time sector, and alternate wave integration |
 | Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, boundary sponge, traversal artifact control |
 | Particle-sector extensions | `color_forces`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
 | Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Per-tick SU(2)/SU(3) link staple relaxation (tick Rule 7b) and strict validation behavior |
@@ -624,13 +794,356 @@ WSL2-canonical).
 
 ### 8.2 Defaults and validation
 
+`lorentz_period2_floquet` is the FTD-0408 default-off CPU prototype. It retains
+the existing 18-point nearest-Moore read but replaces the constant wave kick by
+`+3/13` on even ticks and `-1/13` on odd ticks. Its exact bare two-tick pole is
+`sin²(theta)=M18/13+3M18²/676`; it is full-band stable and has no q4 term in
+`theta²`. The period-two clock and anti-kick are selected architecture. The
+prototype's leading speed is `1/sqrt(13)`, so it does not share the production
+matter-budget speed `C_SPEED=1/sqrt(3)`. It conflicts with both alternate wave
+integrators and is not implemented on GPU/WASM.
+
+`lorentz_bcc_time_floquet` is the FTD-0411 default-off CPU IR prototype for a
+selected two-domain hypothesis: BCC supplies normalized temporal return
+structure while SC+FCC supplies production physical-space propagation. The
+exact kernel forces `c²=1/7` under q4 cancellation, but its irreducible
+cube-root branch excludes finite-state positive-norm linear/unitary
+localization rational in `M18`. The live path therefore uses stable kicks
+`(1+sqrt(2))/7,(1-sqrt(2))/7`, with exact pole
+`sin²(theta)=M18/7+M18²/196` and endpoint `400/441<1`. It matches the BCC clock
+through q4, differs at isotropic q6, conflicts with every other alternate wave
+integrator, and is not implemented on GPU/WASM.
+
+`lorentz_common_cone` is the FTD-0412 native diagnostic, not a runtime toggle.
+It verifies the corrected Hermitian Wilson Hamiltonian, exposes the retired
+spatial-`D_W` energy oracle with an explicit counterexample, tests selected
+leading-slope alignment at `c_s²=1/7`, and enforces the remaining q4 mismatch:
+axis cancellation requires `r²=4/3`, while a face diagonal requires `r²=2/3`.
+The production `C_SPEED=C_WAVE=1/sqrt(3)` defaults are unchanged. Wilson matter
+remains standalone; gauge and native latency gravity still have no measured
+propagating poles.
+
+`lorentz_common_cone_improved` is the FTD-0413 native diagnostic. It enlarges
+only the standalone Hermitian Wilson kinetic term to the existing SC+FCC Moore
+shell, with free symbol
+`K_i=sin(q_i)[(1-2b)+b(cos(q_j)+cos(q_k))]`. Exact q4 cancellation uniquely
+fixes `b=1/3` and `r²=4/3` in this normalized ansatz. Together with selected
+`c_s²=1/7`, the free Wilson-matter and BCC-time flux poles share a cone through
+q4, while all seven Wilson doublers remain gapped. Face-diagonal gauge
+transport averages the two shortest oriented paths; random-link covariance
+and Hermiticity are tested. The parameter defaults to `b=0`, the prototype is
+not RenderBridge-integrated, and the flux/matter poles differ at q6.
+
+`lorentz_ir_envelope` is the FTD-0414 analytic/native diagnostic. It corrects
+the sixth-order invariant basis to
+`M18=S2-S2²/12+S2 Q4/72-Q6/90+O(q8)` and compares the exact live period-two
+flux phase with the selected unit-step RK4 Wilson-matter phase. The resulting
+leading all-sector speed spread is `11 q^4/540`; the largest same-direction
+matter/flux gap is `65 q^4/3969`. `lorentz_ir_q_limit(epsilon)` in
+`lorentz_ir_envelope.h` inverts the first expression. These are asymptotic
+free-sector diagnostics. The documented `a=ell_P` calibrations allow a
+conditional `q=E/E_P` estimate, but do not establish carrier identification,
+finite-q control, interactions, or radiative protection.
+
+FTD-0415 is a theory-side radiative gate, not an engine toggle. Exact `O_h`
+enumeration shows that the engine's declared spatial/CPT/gauge symmetries allow
+independent dimension-four temporal/spatial kinetic coefficients and a
+cubic-only native-vector gradient invariant. No interacting 1PI or blocking
+coefficient matrix is implemented or measured.
+
+FTD-0416 is also theory-side. It imports the one-loop anisotropic-continuum-QED
+velocity flow as an optimistic IR surrogate and proves that its attraction is
+only power-law in the endpoint coupling ratio. It neither implements an engine
+interaction nor calculates the full-Brillouin-zone threshold. In particular,
+the selected `A=P_T J` bridge remains a spatially nonlocal projection rather
+than a local RenderBridge action. FTD-0419 later calculates one off-shell
+full-zone threshold for the separate local-link branch.
+
+FTD-0417 is likewise theory-side and changes no engine behavior. It freezes a
+separate candidate with an independent real link connection and noncompact
+unit-plaquette gauge action. The free photon pole is exactly local and stable
+at inherited selected `c_A²=1/7`, but the new field is not present in
+`RenderBridge`, and its
+nearest-link dispersion loses the FTD-0413/0414 q4 improvement. Against that
+matter prototype the leading maximum group-speed gap is `3(ka)²/28`.
+FTD-0421 later closes the preregistered additive native-current basis negative;
+the reaction ledger is bookkeeping, not a link current.
+
+FTD-0418 is also theory-side and changes no engine behavior. It freezes a
+nearest-neighbour four-dimensional Euclidean Wilson regulator for the
+FTD-0417 links, with `r_0=nu_0=1` and
+`r_i=nu_i=1/sqrt(7)`. The selected action has one massless spacetime corner,
+15 positive doubler gaps, and exact one-/two-photon Ward vertices. It is not
+the live continuous-time/RK4 Wilson module, is not wired into `RenderBridge`,
+and does not itself calculate the full-Brillouin-zone matching coefficient;
+FTD-0419 supplies the separate off-shell step-scheme integral.
+
+FTD-0419 remains theory-side and changes no engine behavior. A separate CUDA
+quadrature integrates the complete exchange, Wilson seagull, fermion bubble,
+and two-photon contact terms in a frozen `xi=1` QED_L-like step scheme. It
+finds `delta_match/g²=-0.32696906(5)`, so the FTD-0417/0418 bare cone requires
+a dimension-four counterterm in that scheme. The coefficient is off-shell and
+scheme-specific; no `RenderBridge` coefficient, toggle, or physical on-shell
+renormalization is added.
+
+FTD-0420–0425 add observer/test infrastructure without changing production
+dynamics. `HistoryEventJournal` records accepted movement, genesis,
+evaporation, pair, annihilation, and weak events; enabling it leaves selected
+state and `BridgeRng::state_hash()` unchanged. `ConservedChargeBasis` performs
+exact rational transition algebra over the frozen discrete basis and finds
+rank four, nullity zero (FTD-0421), so native charged-pole and native
+dimension-four-flow campaigns are dependency-closed without execution.
+`PoleMatchResult` and `CountertermTrajectory` carry scheme metadata and enforce
+one on-shell calibration only; no physical on-shell calculation is claimed.
+The free source-free transfer is determinant-one and energy-preserving, while
+evaporation and annihilation provide exact non-injectivity witnesses for the
+full production tick (FTD-0425). All of these APIs are instrumentation-layer
+observers/contracts; none changes event ordering, RNG calls, `RenderBridge`
+dynamics, or defaults.
+
+FTD-0426 adds a second read-only charge observer and a target-blind engine
+campaign. Production movement separates initially neutral polarity pairs, and
+the selected Gauss projection produces equal/opposite closed-surface flux:
+`Q_A=+0.9993`, `Q_B=-0.9991` on CPU `L=32` and `+0.9972/-0.9968` on WSL2 CUDA
+`L=64`. This is a selected constraint realization, not native `U(1)`
+emergence. Under the frozen live wave/coupling/Gauss profile the field loses
+radius independence (37–55% spread; Gauss residual about 0.338), so autonomous
+static electromagnetic dressing is closed negative at that scope. Production
+rules and defaults remain unchanged.
+
+FTD-0427 adds `MatchedFaceFlux` as a default-disconnected experimental
+sidecar. Its positive-face divergence and backward-difference curl form an
+exact discrete complex, and one-tick production movement histories supply the
+signed face current in `J_next=J-current+curl(B)`. With Gauss projection off,
+the sidecar preserves `div(J)=s` below `1.9e-15` for both signs and all axial
+directions at `L=32,64` under MSVC and WSL2 GCC. This is a selected mechanism
+test: it does not write `Voxel::flux`, enter the force or energy phases, relax
+a Coulomb field, or support reaction events. Production rules and defaults
+remain unchanged.
+
+FTD-0428 promotes that mechanism only to a **default-off selected engine
+branch**, not to the shipping profile. `MatchedGaussDynamics` stores electric
+flux on oriented faces and magnetic flux on oriented edges. Explicit
+initialization solves `(D D^T)phi=s`, sets `E=D^T phi`, and mirrors the centered
+face field into `Voxel::flux`. With `matched_gauss_dynamics=true`, the CPU tick
+skips legacy field writers, snapshots signed state around production movement,
+extracts its oriented current, advances
+
+```
+B_half -= C_SPEED * dt * C^T E
+E      += C_SPEED * dt * C B_half - current
+```
+
+and mirrors centered `E` back to the voxel field. Validation requires the
+isolated periodic single-substrate conservative-movement sector; reactions and
+all competing writers/projectors are rejected. The branch fails closed before
+explicit initialization and forces a synchronized CPU fallback from a GPU
+backend. Its isolation errors are fatal even when general toggle validation is
+advisory, and a process override that prevents CPU fallback rejects the branch.
+The selected branch also requires the locked unit tick (`dt=1`). Default-off
+golden behavior is unchanged.
+
+The source-free staggered map preserves its discrete modified quadratic energy,
+and the one-time initialization is the minimum-norm face field for neutral
+source data. FTD-0428 campaigns pass at `L=32,64` under MSVC/GCC (worst Gauss
+residual `9.15e-13`, voxel mirror residual zero). These are selected finite-
+lattice and implementation results. No production force reads this field; no
+reaction-complete charge, photon quantization, common cone, or radiative
+protection is claimed.
+
+FTD-0429 adds only a read-only Fourier observer and campaign. In the existing
+single-substrate linear sector with `wave_propagation=true`, `coupling=true`,
+zero initial field, and every Gauss/damping/movement/reaction/force path off,
+the production tick generates a longitudinal mode response
+
+```
+Z(k) = (div_c J)_k / s_k
+     = (G_C / C_WAVE^2) * sum_a sin(k_a)^2 / M_18(k)
+Z(k -> 0) = 3 * G_C
+```
+
+The time-domain campaign fits the oscillatory response rather than projecting
+or solving the offset. MSVC/WSL2-CUDA `L=32` controls and WSL2-CUDA `L=64`
+infrared points give `Z0=0.256247622955862`, within `1.01e-4` relative of
+`3G_C`, and reject a zero intercept by `Delta BIC=279.14`. This establishes a
+finite native dynamical polarity susceptibility in the reaction-free linear
+sector. It does not add a microscopic charge register or change defaults.
+
+FTD-0430 adds a second read-only observer/campaign around the same unchanged
+tick. A sparse neutral pair is primed to execute exactly one normal movement
+hop while a locked copy supplies the counterfactual source history. With only
+wave, coupling, and movement active, the moving-minus-stationary divergence is
+zero immediately after the hop, appears on the next field tick, stays within
+`r_infinity <= tau+1`, and fits
+
+```
+R_k(tau) = Z_k + B_k cos(omega_k tau) + C_k sin(omega_k tau)
+Z_k       = (G_C / C_WAVE^2) * sum_a sin(k_a)^2 / M_18(k)
+sqrt(|B_k|^2 + |C_k|^2) / |Z_k| = 1 / cos(omega_k / 2)
+```
+
+Fresh MSVC/WSL2-CUDA `L=48,96` records pass the exact hop, causal support,
+pole, residue, mirror, and backend gates. The v2 infrared intercept is
+`0.256268547570661`; `Delta BIC=336.88` against zero. This is a measured
+reaction-free moving-source property of the production tick. It adds no charge
+register, projector, field state, force, or default-on behavior.
+
+FTD-0431 adds a read-only reaction-mode observer and a disabled campaign
+target. With `evaporation=true`, the isolated source reproduces the exact
+per-tick survival law. With production wave/coupling also enabled, `S_k(t)` is
+not a single exponential: the locked normalized-RMS gate fails by factors of
+about 2.1 to 11.1. The generated flux contributes to `local_energy` in
+`phase_write`, thereby lowering later evaporation probabilities. The admitted
+`L=32` MSVC/WSL2-CUDA records agree and satisfy the exact field recurrence to
+`2.41e-13`. FTD-0431 is outcome D at the analysis-model layer; it changes no
+tick rule or default and licenses neither conservation nor an infrared decay
+rate. Its per-arm `L=64` path is also too slow for reuse; the next observer must
+batch modes and measure the dressed reaction hazard directly.
+
+FTD-0432 implements that hazard observer without changing the production
+phase. `prepare_delta_j()` supplies the diagnostic acceleration buffer; scratch
+arrays reconstruct the standard unit-tick flux/velocity write, after which the
+observer evaluates the exact six-neighbor-plus-site energy, proper-time factor,
+and `K_EVAP_RATE*exp(-E/K_MANIFEST^2)` probability. The observer consumes no
+RNG and is state/RNG neutral over 32 ticks. Full `L=32` MSVC/WSL2-CUDA records
+pass conditional source and occupancy expectation gates. The low-mode hazard
+is suppressed to `0.001225` during field dressing. This is a measured
+production-feedback mechanism, not a new field, reaction rule, conservation
+law, infrared limit, or default-on behavior.
+
+FTD-0433 reuses the same observer without modification in the disabled
+`campaign_native_dressed_hazard_ir_scaling` target. It initializes one neutral
+full-occupancy `<100>,n=1` square source and chooses the last recorded
+transition from the exact `M18` pole, not from measured hazard data. WSL2 CUDA
+runs `L={12,16,20,24,32,40,48}` with eight seeds; Windows CPU reproduces the
+full `L=32` journal. All execution gates pass, but the first-antinode hazards
+are nonmonotonic and the locked endpoint suppression fails. FTD-0433 is
+outcome C (`UNRESOLVED_SCALING`) and changes no production phase, toggle
+default, constant, or RNG behavior.
+
+FTD-0478--0539 add observer-only exact subcell/face-current instrumentation and
+close its frozen mobile-matter candidate. `SubcellPolarityShape` maps ternary
+state plus the existing remainder to trilinear site weights;
+`FaceCurrentSegment` analytically deposits the straight worldline on oriented
+faces. The centered cell field remains a rendering/compatibility projection.
+The implicit-action observers reconstruct endpoint-split connection equations,
+solve corner and edge Legendre sectors, and evaluate both registered energies.
+All non-derivative current/field/Gauss identities remain at roughly `1e-14` or
+better, but the action is not a production law: smooth corner roots fail
+energy, and edge roots have a converged reflection-plane cusp with no unique
+algebraic force; edge energy also fails. `common_action_face_dynamics` was not
+added. These APIs do not enter `RenderBridge`, change phase ordering, or alter
+defaults, scenarios, forces, RNG, CPU/GPU routing, or golden hashes.
+
+FTD-0540--0549 add ten further observer-only APIs. `LocalPolarityRegularity`
+proves that the compact cardinal hat/trilinear representation necessarily has
+an integer-plane cusp and prices the smooth alternatives.
+`QuadraticPolarityCoat` and `QuadraticCoatFaceCurrent` implement the selected
+positive non-cardinal alternative: a tensor quadratic B-spline coat and its
+polynomial-exact straight-segment `B2/B1` oriented-face current. Continuity,
+current moment, polarity, reversal, translations, cubic covariance, periodic
+crossing, and the locked inactive-plane C1 gate pass.
+`QuadraticCoatSpacetimeCurrent` adds the derived endpoint currents and temporal
+coat, while `QuadraticCoatGaugeActionResult` verifies their common interaction
+and exact open-worldline gauge endpoint identity. `FixedStepEnergyScopeResult`
+proves that this common interaction is not yet an energy-preserving mobile
+law: fixed-step configuration stationarity lacks the time-node equation, and
+the exact registered counterexample changes endpoint energy by `1/8`.
+`MatchedMidpointPoyntingResult` proves the auxiliary field update nevertheless
+has exact work exchange `Delta U_field=-<Ebar,K>` and exact Gauss transport.
+`QuadraticCoatMatterWorkResult` analytically varies the same coat action and
+maps its canonical endpoints to the production kinetic dispersion. The locked
+uniform harmonic witness is gauge covariant but has nonzero matter-work defect
+up to `4.10e-5`, closing the universal fixed-step identity negative.
+`QuadraticCoatNeutralPairWorkResult` performs the required periodic,
+Gauss-realizable two-worldline follow-up. Exact source/field algebra survives,
+but total energy misses by up to `9.68e-9`; the frozen minimal common action is
+closed negative as an exact-energy mobile law.
+`AcceleratedWorldlineEnergyResult` integrates the production dispersion under
+a constant collinear force and replaces the frozen midpoint displacement by
+the exact energy secant. Its work identity closes to `2.72e-20` in 144 arms.
+`AcceleratedCoatSpacetimeCurrent` deposits that nonuniform trajectory into the
+same quadratic coat. Total face current remains endpoint-only, while the
+endpoint-weighted currents and temporal occupation change with the schedule;
+continuity, gauge, and reversal residuals stay below `2.19e-14`.
+`EndpointScheduleUnderdeterminationResult` then supplies an exact polynomial
+witness that endpoint and midpoint kinematics do not determine those deposits:
+two monotone schedules with identical listed kinematics and total current
+differ by `q*d*epsilon/30` in their source moments. All 96 arms pass below
+`3.35e-17`.
+These APIs remain in `ftd_eft`; they are not a `RenderBridge` state path and
+supply no production force, completed self-consistent matter-energy
+transaction, toggle, scenario, or default change.
+
+FTD-0599 adds the final locked observer for the no-new-persistent-variable R0
+site hop. `SiteOnticAtomicState` uses only the existing site, half-open
+remainder, velocity, polarity, `J`, and `W`. The observer deposits the exact
+FTD-0577 Moore current, applies the native source kick and drift, and sets
+matter impulse equal to native translation-momentum recoil. The first
+ballistic arm has one independently Arb-certified root and closes continuity
+and recoil, but misses both independent native energy gates by `6.3504e-6`
+against `1e-12`. Verdict:
+`SITE_ONTIC_NATIVE_RECOIL_MAP_FAILS_ATOMIC_COMPATIBILITY`. The inverse and
+repeated campaign are not run after this conjunctive failure. The observer is
+not a toggle or production movement law and does not adopt a new primitive.
+
+FTD-0600 adds the observer-only R2 escalation in
+`constituent_complete_charged_trimer.{h,cpp}`. `ChargedTrimerState` retains
+three explicit `(charge, anchor+remainder, momentum)` constituent records and
+matched face-electric/edge-magnetic fields; aggregate quadratic coats and
+face currents are derived only inside the coupling evaluation. A local
+nine-component implicit solve advances constituent endpoints, exact currents,
+the matched field, field impulses, and selected quartic binding impulses in
+one transaction. Its reverse API accepts the final state rather than a stored
+forward record. All locked common-action and repeated-motion gates pass,
+including 24 legitimate site hops and energy drift `1.67e-15`; the independent
+matched pseudomomentum defect is `5.69e-3`, so isolated recoil is not licensed.
+This module is not wired to `RenderBridge`, a toggle, a scenario, CUDA, or
+WASM, and it does not define physical particle composition or binding.
+
+FTD-0601 extends that observer to six dynamical constituents arranged as two
+charge-conjugate trimers with no fixed compensator. Common-action identities,
+state-only inversion, repeated bound motion, and nine site hops remain
+constructive, while the isolated matched pseudomomentum defect is `1.03e-2`.
+FTD-0602 replaces only the initial Gauss representative with the unique
+zero-mean minimum-energy longitudinal field. It restores an inward impulse at
+the registered placement and preserves 16-step reversal, but leaves a
+`1.91e-4` pseudomomentum defect. FTD-0603 then replays the same transaction at
+168 fractional placements. Fourteen of 32 principal-axis phases are
+non-attractive, so compact rigid force robustness closes negative; the phase-
+mean momentum classification remains unresolved at `2.57e-8`. These are
+observer-only diagnostics and introduce no production path.
+
+FTD-0604 adds the observer-only symmetric breathing discriminator in
+`test_symmetric_breathing_matter_core.cpp`. It minimizes the unchanged
+minimum-field plus binding energy over one scale coordinate already contained
+in constituent positions. Exact algebra gives `V_bind=6(lambda^2-1)^2` and
+curvature `48`; the optimized scale changes by about `4.5e-5`, lowers the
+static barrier only `0.00507%`, and leaves 14/32 phases non-attractive. The
+locked static branch closes negative because its finite-difference
+stationarity gate also misses. This is not wired to production, a toggle, a
+scenario, RenderBridge, CUDA, or WASM.
+
+FTD-0605 adds `test_full_mirrored_internal_shape_core.cpp`, an observer-only
+six-coordinate zero-centroid shape relaxation. A zero-mean periodic Green
+kernel accelerates static energy evaluation, but every returned minimum is
+independently rebuilt by the direct Gauss solver. The exact selected binding
+Hessian has rank three, leaving three rigid-rotation zero modes. Twenty-nine
+of 32 optimizations exhaust the locked 900 evaluations; the other three hit
+the `0.20` local chart boundary with nonzero downhill gradients while their
+pair distances stay near `sqrt(2)`. Fast/direct energies agree to `2.22e-17`,
+and executed common/inverse arms close near `1e-15`. The registered local
+static branch is closed negative; global `SO(3)` orientation remains open.
+Nothing is wired to production, a toggle, scenario, RenderBridge, CUDA, or
+WASM.
+
 Defaults are specified per row in `TOGGLE_SPECS[]`. Core substrate behavior
 defaults on (`wave_propagation`, `coupling`, `damping`, `genesis`,
 `gauss_projection`, `forces`, `gravity`, `poisson_coulomb`, `movement`,
 `lorentz_force`). Some promoted extension toggles also default on
 (`selective_damping`, `dual_substrate`, `weak_transmutation`). Exploration
 toggles such as `pair_production`, `latency_field`, `langevin`, color/strong
-extensions, and exact dual Gauss are default off.
+extensions, exact dual Gauss, and `matched_gauss_dynamics` are default off.
 
 `validate()` enforces dependencies and conflicts. Important examples:
 
@@ -642,6 +1155,10 @@ extensions, and exact dual Gauss are default off.
 | `weak_transmutation` requires `dual_substrate` | Current CPU/GPU implementation uses chirality/split-substrate state |
 | `triad_binding` requires `color_forces` | Triad detection depends on color labels/interaction context |
 | `field_energy_gravity` requires `latency_field` | Field energy enters through the latency Poisson source |
+| `lorentz_period2_floquet` requires `wave_propagation` | The prototype replaces only the free-wave kick coefficient |
+| `lorentz_period2_floquet` conflicts with `verlet_wave_integrator` and `symplectic_leapfrog` | The proof assumes the unit-step default kick-drift map |
+| `lorentz_bcc_time_floquet` requires `wave_propagation` and conflicts with every alternate wave integrator | The FTD-0411 surrogate owns the unit-step free-wave kick sequence |
+| `matched_gauss_dynamics` requires the isolated periodic conservative-movement sector | The FTD-0428 face/edge state owns all field evolution and rejects unjournaled writers, projectors, forces, and reactions |
 
 `enable_all()` applies each table row's default value for bulk-managed toggles;
 it does not blindly turn every experimental flag on. `disable_all()` turns
@@ -848,13 +1365,22 @@ line-by-line target registry.
 
 4. **K_GENESIS = 3 * K_B**: Genesis threshold at 3x evaporation, derived from N_c = 3.
 
-5. **CFL-derived wave speed**: C_WAVE = 1/sqrt(3), the CFL stability limit for 6-neighbor Laplacian on 3D cubic lattice. DERIVED from D=3, not a free parameter.
+5. **Selected production wave speed**: `C_WAVE=1/sqrt(3)` is linearly stable but
+   does not saturate the production 18-point stencil's exact CFL ceiling
+   `C_WAVE²<=3/4` (FTD-0407). It is `[SELECTED]`, not derived from the live
+   stencil. The FTD-0408 default-off period-two prototype has a different bare
+   leading speed, `1/sqrt(13)`. The FTD-0411 selected BCC-time branch instead
+   derives `1/sqrt(7)` from its chosen temporal kernel and q4 cancellation, but
+   its live stable localization is not exact at q6.
 
 6. **Tier-2 gravity gradient**: F_grav uses r=2 stencil to avoid self-field contamination.
 
 7. **Neighborhood energy evaporation**: 7-site energy (particle + 6 face-neighbors) smooths the leapfrog oscillation; the rule is stochastic (since 2026-04-23) — survival is Boltzmann-weighted, p_evap = exp(-E_local/K_MANIFEST^2) * K_EVAP_RATE per tick.
 
-8. **Gauss exclusion at particle sites**: Gauss projection skips manifested sites -- physically correct since div(J)(i) doesn't involve J(i).
+8. **Gauss exclusion at particle sites**: ordinary projection skips manifested
+   sites because centered `div(J)(i)` does not read `J(i)`. This is an
+   implementation convention, not a physical theorem; the FTD-0426 live
+   campaign measures the resulting operator-split fidelity directly.
 
 9. **Poisson-based Coulomb**: SOR warm-started solver gives 1/r^2 force (exponent -2.25, isotropy 1.0). Replaces legacy double-gradient (exponent -3.8, isotropy 0.40).
 
@@ -910,7 +1436,7 @@ line-by-line target registry.
 | `physical_time()` | Current tick * dt |
 | `dt()` / `set_dt(val)` | Get/set timestep |
 | `seed_rng(seed)` | Set RNG seed for reproducibility |
-| `toggles` | Public `TermToggles` struct (33 boolean toggles + typed config fields) |
+| `toggles` | Public `TermToggles` struct (42 boolean toggles + typed config fields) |
 
 ### Scenario library
 
@@ -963,9 +1489,38 @@ sync_to_host()                        2. phase_write
 ### FFT Poisson Solver
 
 Replaces CPU's iterative SOR with spectral method via cuFFT:
-- **Exact**: Gauss violation = 0.0 (vs CPU SOR ~ 1.14)
+- **Not exact — a structural floor, not a precision limit.** The GPU Green's
+  function is the 18-point Laplacian symbol (`gpu_buffers.cu:800-812`) while the
+  correction applied is a 6-point central difference (`kernels_poisson.cu:296-298`)
+  and the residual is measured with the matching 6-point divergence. Over the
+  L=24 Brillouin zone the surviving per-mode factor |1 - S_DG/S_18| has median
+  ~0.62 (min 0.006, p90 0.84, max 1.0): the projection leaves most of each mode's
+  residual standing, and this is iteration- and precision-independent. The engine
+  already documents this same stencil-mismatch floor honestly for the CPU at
+  `constants.h:331-347` and `eft/matched_poisson.h:7-19`.
+- The ~1e-8 constraint figure belongs to the `[TOOLING]`-tagged matched-stencil CG
+  solver, which is explicitly NOT the production Gauss path; it does not describe
+  the cuFFT solver.
 - **Single-pass**: No iteration count to tune
 - Precomputed Green's function reused every tick
+
+### Backend divergences that are NOT numerical (2026-07-26)
+
+`SPEC_ENGINE` previously described CPU/GPU differences as "numerical plumbing".
+The following are **discrete-outcome or missing-term divergences**, not rounding:
+
+| Term / rule | CPU | CUDA | Consequence |
+|---|---|---|---|
+| `field_energy_gravity` | sources latency from rest mass **and** local field-energy density | **no read site at all** | flux-only configs: GPU `phi_latency` identically zero where CPU returns a real potential |
+| `exact_dual_gauss` | projects manifested sites when ON | unconditional `if (state[i] != 0) return;` | a genuine physics divergence, not precision |
+| `absorbing_boundary`, `flux_boundary` | Reflective / Dispersal honoured | both degrade to Periodic | the GPU lattice is always toroidal |
+| `symmetric_movement_order`, `ew_background_sweep` | honoured | no read site | silently inert |
+| **Particle movement conflict rule (P11)** | deterministic: lowest traversal index wins a contended void site, re-entry blocked (`phase_movement.cpp:106,121,209`) | contended sites awarded by `atomicCAS` **arrival order**; no device visited mask (`grep -c moved engine/cuda/kernels_forces.cu` → 0) | **different physics**, by that file's own header definition. Not yet fixed: implementing a device visited mask + deterministic priority is an architecture change, so it is DECLARED here rather than silently carried. `test_gpu_golden.cpp`'s 10-run bit-stability capture argues against gross run-to-run instability in the tested scenario, but does not establish CPU/GPU agreement on contended sites. |
+
+The toggle bitmask is **not** the drift: `term_toggles.h:32-35` declares it
+informational, and `strong_force` is `ANY` with no CPU implementation at all, so
+`ANY` has never meant "implemented on both backends" here. The codebase already
+has `cpu_runtime_warnings()` for the mirror-image case; there is no GPU twin.
 
 **Numerical parity note:** CPU and GPU
 solve the SAME Poisson equation but with different numerical methods

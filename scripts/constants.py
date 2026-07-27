@@ -377,7 +377,11 @@ K_B = 0.511           # MeV — electron mass / manifestation threshold
 M_REST = K_B          # rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0 (FTD-0130)
 K_MANIFEST = 0.5054620197173260  # := W_SC, unit-charge Gauss self-energy [SELECTION - ADOPTED, FTD-0388]; kinetics role only (was = K_B pre-2026-07-17; FTD-0130 role split)
 K_GENESIS = K_MANIFEST * N_c # 1.5163860591... = 3*W_SC — genesis threshold (fill all N_c color channels; kinetics; FTD-0388)
-C_SPEED = 1.0 / np.sqrt(3.0)  # CFL speed limit on cubic lattice
+# [SELECTION] (FTD-0407): NOT the CFL limit of the production stencil. The
+# normalised 18-point stencil has max symbol 16/3, permitting c <= sqrt(3)/2
+# ~ 0.866. 1/sqrt(3) is the unnormalised 6-point CFL limit -- conservative,
+# selected, and inherited by t_phys.
+C_SPEED = 1.0 / np.sqrt(3.0)  # lattice information speed [SELECTION]
 C_WAVE = C_SPEED      # Wave propagation speed = speed limit
 DAMPING = ALPHA        # Dissipation rate gamma = alpha
 
@@ -388,7 +392,12 @@ TAU_RATIO = (N_eff + N_base) * MU_RATIO - 2 * N_c * b_3  # 3477 (tau/electron)
 # Higgs sector
 V_HIGGS = 246.09       # GeV (Higgs VEV)
 M_HIGGS = 124.8        # GeV = (N_eff/alpha^2)*m_e
-G_N = 1.0 / (b_3 + N_c)**2  # 0.01 — gravitational coupling on lattice
+# FTD-0131 FALSIFIED the identification of this integer expression with the
+# physical Newton constant G_N. Retained as a framework-integer quantity
+# only; the '1/100' agreement has no substrate justification under any
+# natural reading. Surviving substrate route: alpha_G(e,e) = (m_e/m_P)^2
+# [SMC, one flagged interpretive step -- the clock hypothesis].
+G_N = 1.0 / (b_3 + N_c)**2  # 0.01 - framework-integer value; NOT physical G_N
 
 # =============================================================================
 # LAYER 8: CONSCIOUSNESS CONSTANTS
@@ -542,7 +551,11 @@ def print_framework_summary():
     print()
     print("MASTER QUADRATIC ROOTS:")
     print(f"  x_+ (tree level)  = {X_PLUS:.10f}")
-    print(f"  x_- ~ N_c         = {X_MINUS:.10f}")
+    # The x_- ~ N_c identification is RETIRED (Cleanup Taxonomy v1.4 sec.5;
+    # FTD-0014 removed from the LEDGER in ca7eb61; OT-5.2 struck). x_- is a
+    # mathematical artifact of the quadratic. N_c = 3 comes from independent
+    # structural sources (Moore Layer Theorem, DERIV_NC_FROM_TOPOLOGY).
+    print(f"  x_- (artifact; NOT N_c, FTD-0014 retired) = {X_MINUS:.10f}")
     print()
     print("4-TERM PRECISION FORMULA:")
     print("  1/alpha = x_+ - c1|eps| + c2|eps|^2 - c3|eps|^3 - c4|eps|^4")

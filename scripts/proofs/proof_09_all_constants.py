@@ -367,22 +367,34 @@ def run() -> ProofSuite:
     s.assert_close(
         f"L4b: sin²(θ₁₂) vs exp 0.307 ({abs(sin2_12-EXP_SIN2_12)/EXP_SIN2_12*100:.1f}%)",
         sin2_12, EXP_SIN2_12, PERCENT_5,
-        tag="[THEOREM]"
+        # [PARAMETRIC] per LEDGER FTD-0320 (look-elsewhere nulls: p=0.48 / 0.96 /
+        # 1.00; the 1/41 control is MDL-dominated). Integer ratio matched to a
+        # measured value = parametric insertion, not a derivation.
+        tag="[PARAMETRIC]"
     )
     s.assert_close(
         f"L4b: sin²(θ₂₃) vs exp 0.546 ({abs(sin2_23-EXP_SIN2_23)/EXP_SIN2_23*100:.1f}%)",
         sin2_23, EXP_SIN2_23, PERCENT_5,
-        tag="[THEOREM]"
+        # [PARAMETRIC] per LEDGER FTD-0320 (look-elsewhere nulls: p=0.48 / 0.96 /
+        # 1.00; the 1/41 control is MDL-dominated). Integer ratio matched to a
+        # measured value = parametric insertion, not a derivation.
+        tag="[PARAMETRIC]"
     )
     s.assert_close(
         f"L4b: sin²(θ₁₃) vs exp 0.02203 ({abs(sin2_13-EXP_SIN2_13)/EXP_SIN2_13*100:.1f}%)",
         sin2_13, EXP_SIN2_13, PERCENT_15,
-        tag="[THEOREM]"
+        # [PARAMETRIC] per LEDGER FTD-0320 (look-elsewhere nulls: p=0.48 / 0.96 /
+        # 1.00; the 1/41 control is MDL-dominated). Integer ratio matched to a
+        # measured value = parametric insertion, not a derivation.
+        tag="[PARAMETRIC]"
     )
     s.assert_close(
         f"L4b: Δm² ratio vs exp 32.85 ({abs(dm2_ratio-EXP_DM2_RATIO)/EXP_DM2_RATIO*100:.1f}%)",
         dm2_ratio, EXP_DM2_RATIO, PERCENT_5,
-        tag="[THEOREM]"
+        # [PARAMETRIC] per LEDGER FTD-0320 (look-elsewhere nulls: p=0.48 / 0.96 /
+        # 1.00; the 1/41 control is MDL-dominated). Integer ratio matched to a
+        # measured value = parametric insertion, not a derivation.
+        tag="[PARAMETRIC]"
     )
 
     # =========================================================================
@@ -407,10 +419,17 @@ def run() -> ProofSuite:
     s.assert_close(
         f"L5: sin²θ_W vs exp 0.23122 ({sw_err*100:.2f}%)",
         sin2_w, CODATA_SIN2_W, PERCENT_1,
-        tag="[THEOREM]"
+        # [PARAMETRIC]: the [THEOREM] of 24b31016 was RETRACTED (LEDGER FTD-0310).
+        tag="[PARAMETRIC]"
     )
 
-    s.assert_close("L5: G_N = 1/(b₃+N_c)² = 0.01", g_n, 0.01, MACHINE_EPS, tag="[THEOREM]")
+    # FTD-0131 FALSIFIED the identification of this expression with the physical
+    # Newton constant. The row now checks only that the integer expression equals
+    # 0.01 -- an arithmetic identity about framework integers, carrying NO claim
+    # about gravity. The surviving substrate route is alpha_G(e,e) = (m_e/m_P)^2,
+    # which is [SMC] with one flagged interpretive step (clock hypothesis).
+    s.assert_close("L5: 1/(b₃+N_c)² = 0.01 (integer identity; NOT G_N -- FTD-0131 falsified)",
+                   g_n, 0.01, MACHINE_EPS, tag="[THEOREM]")
     s.assert_close("L5: α_W = α/sin²θ_W", alpha_w, alpha / sin2_w, MACHINE_EPS, tag="[THEOREM]")
 
     # α_G = 2π·(16/3)²·(N_eff+3/b₃)²·α²⁰
@@ -421,7 +440,8 @@ def run() -> ProofSuite:
     s.assert_close(
         f"L5: α_G ≈ {alpha_G:.3e} (exp: 5.906e-39)",
         alpha_G, EXP_ALPHA_G, PERCENT_1,
-        tag="[THEOREM]"
+        # [SMP] per CATALOG 13b; the headline agreement is spelling-dependent.
+        tag="[STRUCTURALLY MOTIVATED PARAMETRIC]"
     )
 
     s.assert_true(
@@ -453,7 +473,8 @@ def run() -> ProofSuite:
     s.assert_close(
         f"L5b: α_s(M_Z) vs exp 0.1179 ({as_err*100:.2f}%)",
         alpha_s, CODATA_ALPHA_S, PERCENT_1,
-        tag="[THEOREM]"
+        # LEDGER FTD-0020.
+        tag="[STRUCTURALLY MOTIVATED PARAMETRIC]"
     )
 
     s.assert_close("L5b: b₀(n_f=5) = 23/3", b0_nf5, 23.0 / 3.0, MACHINE_EPS, tag="[THEOREM]")
@@ -469,7 +490,9 @@ def run() -> ProofSuite:
     s.assert_close(
         "L6: m_e/m_P = √(2π)·(16/3)·α¹¹",
         me_mp_ratio, me_mp_exp, PERCENT_1,
-        tag="[THEOREM]"
+        # [SMC] (LEDGER FTD-0015). The [THEOREM] of fdc483d0 was RETRACTED as a
+        # substitution identity; the exponent n=11 is unforced (FTD-0390).
+        tag="[STRONGLY MOTIVATED CONJECTURE]"
     )
 
     s.assert_close(
@@ -504,12 +527,14 @@ def run() -> ProofSuite:
     s.assert_close(
         f"L6c: m_μ = K_B·207 = {m_mu_pred:.1f} MeV ({mu_err*100:.2f}%)",
         m_mu_pred, EXP_M_MU, PERCENT_1,
-        tag="[THEOREM]"
+        # Demoted by FTD-0348.
+        tag="[STRUCTURALLY MOTIVATED PARAMETRIC]"
     )
     s.assert_close(
         f"L6c: m_τ = K_B·3477 = {m_tau_pred:.1f} MeV ({tau_err*100:.3f}%)",
         m_tau_pred, EXP_M_TAU, PERCENT_1,
-        tag="[THEOREM]"
+        # Demoted by FTD-0348.
+        tag="[STRUCTURALLY MOTIVATED PARAMETRIC]"
     )
 
     # Proton mass: m_p/m_e = N_eff·x₊ + T(b₃+N_c)
@@ -524,7 +549,11 @@ def run() -> ProofSuite:
     s.assert_close(
         f"L6c: m_p = {m_proton_pred:.1f} MeV ({p_err*100:.3f}%)",
         m_proton_pred, EXP_M_P, PERCENT_1,
-        tag="[THEOREM]"
+        # [SMC] -- an integer-ratio match to a measured mass, not a derivation.
+        # Note this spelling (N_eff*x+ + T_10, T_10=55) and the CLAUDE.md/CATALOG
+        # spelling (N_eff/alpha + N_base*N_eff + N_c) agree only because
+        # 55 = 4*13 + 3; they are one fit re-spelled, not independent support.
+        tag="[STRONGLY MOTIVATED CONJECTURE]"
     )
 
     # =========================================================================
