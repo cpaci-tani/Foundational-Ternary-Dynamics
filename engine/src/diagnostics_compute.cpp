@@ -118,14 +118,26 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
 
     Vec3 E = v.wave_vel * -1.0;
     Vec3 B = rb.curl_flux(i);
+    // P2 (2026-07-26): the magnetic channel carries c^2.
+    //
+    // With J acting as the vector potential and the engine's own wave equation
+    // d^2J/dt^2 = c^2 grad^2 J, the energy consistent with the engine's
+    // Hamiltonian is  1/2|E|^2 + (c^2/2)|B|^2,  and the flux is c^2 (E x B).
+    // The c^2 was dropped here while lagrangian.h:145 and
+    // test_em_energy_conservation.cpp both carry it, so for a pure transverse
+    // wave this reported a FIXED B/E ratio of 1/c^2 = 3 (measured 2.997 /
+    // 3.050 / 3.079 for n = 1,2,4 at L=32) and rendered it in the browser as
+    // two bars in the same unit. Diagnostic-only: nothing in the tick cycle
+    // reads these fields.
+    constexpr double C2 = C_SPEED * C_SPEED;
     a.E_field_energy += integrate_voxel_density(
         quadratic_field_energy_density(E.mag2()));
     a.B_field_energy += integrate_voxel_density(
-        quadratic_field_energy_density(B.mag2()));
+        C2 * quadratic_field_energy_density(B.mag2()));
 
-    a.total_poynting.x += integrate_voxel_density(E.y * B.z - E.z * B.y);
-    a.total_poynting.y += integrate_voxel_density(E.z * B.x - E.x * B.z);
-    a.total_poynting.z += integrate_voxel_density(E.x * B.y - E.y * B.x);
+    a.total_poynting.x += integrate_voxel_density(C2 * (E.y * B.z - E.z * B.y));
+    a.total_poynting.y += integrate_voxel_density(C2 * (E.z * B.x - E.x * B.z));
+    a.total_poynting.z += integrate_voxel_density(C2 * (E.x * B.y - E.y * B.x));
 
     if (rb.toggles.dual_substrate) {
       // Split flux-channel and wave-channel energies separately so

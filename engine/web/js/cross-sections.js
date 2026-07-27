@@ -117,9 +117,21 @@ export function pairProductionThreshold() {
 export function pairProductionCS(E_photon, Z = 1) {
     if (E_photon < 2.0 * K_B) return 0.0;
     const r_e = classicalElectronRadiusFm();
-    const logTerm = 28.0 / 3.0 * Math.log(2.0 * E_photon / K_B) - 218.0 / 27.0;
+    // P9 (2026-07-26): the coefficients were mutually inconsistent.
+    //
+    // Standard no-screening Born (Bethe-Heitler) is
+    //     sigma = 4 alpha r_e^2 Z^2 [ (7/9) ln(2k/m_e) - 109/54 ]
+    // The old code used a log coefficient of 28/3 with the constant 218/27 and
+    // then applied an OUTER 7/9 as well. 218/27 pairs uniquely with 28/9, never
+    // 28/3, so the 7/9 was double-applied: the log coefficient came out 7/3 too
+    // large and the constant 7/9 too small, and no single rescaling repairs it.
+    // The old bracket also crossed zero at k = 0.607 MeV -- BELOW the 1.022 MeV
+    // threshold -- instead of at 3.42 MeV, and gave Pb at 10 MeV as 79.25 b
+    // against a standard 12.99 b (6.1x), which is 1.89x above the physical
+    // complete-screening ceiling of 42.01 b.
+    const logTerm = (7.0 / 9.0) * Math.log(2.0 * E_photon / K_B) - 109.0 / 54.0;
     if (logTerm <= 0) return 0.0;
-    return 7.0 / 9.0 * ALPHA * r_e * r_e * Z * Z * logTerm;
+    return 4.0 * ALPHA * r_e * r_e * Z * Z * logTerm;
 }
 
 // ── Compton Scattering ───────────────────────────────────────────────

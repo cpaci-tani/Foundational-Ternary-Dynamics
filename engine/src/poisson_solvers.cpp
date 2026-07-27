@@ -330,10 +330,23 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
     phi_latency[i] -= phi_mean;
   });
 
+  // P6 (2026-07-26): map the WELL, not |phi|.
+  //
+  // The periodic Poisson solve requires a zero-mean source, so phi necessarily
+  // takes BOTH signs and the mean is subtracted just above. Taking |phi| then
+  // mapped the under-dense ~73% of the box (measured frac(phi>0) = 0.7275 /
+  // 0.7313 / 0.7309 at L = 17/33/65) to a POSITIVE latency identical in form to
+  // a gravity well, and made the axial profile non-monotone -- at L=65 latency
+  // fell to 0.00099 at r=28 and then ROSE to 0.00274 at the box edge. sqrt()
+  // makes even a tiny positive phi first-order, so the artefact is not small.
+  //
+  // Sign convention read from the solver itself (sor_sweep_18pt): the sweep
+  // solves grad^2 phi = +4 pi G (rho - rho_bar), so an overdensity gives phi<0
+  // and the physical well is -phi. Clamping at 0 leaves under-dense regions at
+  // zero latency, which is what "no well here" should mean.
   for (int i = 0; i < N; ++i) {
-    double phi_val = phi_latency[i];
-    double abs_phi = std::abs(phi_val);
-    double clamped = std::min(abs_phi, LATENCY_HORIZON_CLAMP);
+    double well = -phi_latency[i];                 // physical well depth (>=0 inside a mass)
+    double clamped = std::min(std::max(well, 0.0), LATENCY_HORIZON_CLAMP);
     voxels[i].latency = std::sqrt(clamped);
   }
 }

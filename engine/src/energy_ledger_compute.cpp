@@ -30,6 +30,21 @@ void update_energy_ledger_cpu(RenderBridge& rb) {
   const double E_strong = rb.toggles.strong_stress_energy
       ? compute_strong_potential_energy(rb) : 0.0;
   const double E_total = 0.5 * (E_field + E_wave) + E_kin + E_strong;
+  // P3 (2026-07-26): damping decays a QUADRATIC measure at (1-g)^2 - 1.
+  //
+  // phase_write multiplies AMPLITUDES by (1-DAMPING) once per tick, so an
+  // energy-like (quadratic) functional decays by (1-g)^2 - 1 = -2g + g^2, not
+  // by -g. The old `-DAMPING` made the declared contract at
+  // render_bridge_diagnostics.h ( |dE/E + g| < eps ) false by construction.
+  //
+  // NOTE (still open, see audit W2): `selective_damping` -- ON by default --
+  // damps only manifested sites plus their 6 face neighbours, so no single
+  // global scalar can express the expected rate for that regime. This
+  // correction fixes the uniform-damping case only; when selective_damping is
+  // on, `expected_rate` remains an approximation and `residual` should not be
+  // read as a conservation violation.
+  const double g = DAMPING;
+  const double quadratic_damping_rate = -2.0 * g + g * g;
   auto& L = rb.energy_ledger_;
 
   if (L.tick_prev < 0) {
@@ -39,7 +54,7 @@ void update_energy_ledger_cpu(RenderBridge& rb) {
     L.dE_dt      = 0.0;
     L.drift_frac = 0.0;
     L.residual   = 0.0;
-    L.expected_rate = rb.toggles.damping ? -DAMPING : 0.0;
+    L.expected_rate = rb.toggles.damping ? quadratic_damping_rate : 0.0;
     return;
   }
 
@@ -51,7 +66,7 @@ void update_energy_ledger_cpu(RenderBridge& rb) {
 
   const double denom = std::max(std::abs(E_prev), 1e-12);
   L.drift_frac = (E_total - E_prev) / denom;
-  L.expected_rate = rb.toggles.damping ? -DAMPING : 0.0;
+  L.expected_rate = rb.toggles.damping ? quadratic_damping_rate : 0.0;
   L.residual   = L.drift_frac - L.expected_rate;
 
   if (L.residual > 0.0) {

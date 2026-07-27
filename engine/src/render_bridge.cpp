@@ -42,6 +42,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 
 #ifdef _OPENMP
@@ -104,6 +105,11 @@ RenderBridge::RenderBridge(int lattice_size)
     ClusterTrackerParams kt_params;
     kt_params.min_cluster_size = 1;
     knot_tracker_ = std::make_unique<KnotTracker>(kt_params);
+    // FTD-HISTORY-BEGIN: observation-only native event journal.
+    history_event_journal_ = std::make_unique<eft::HistoryEventJournal>();
+    matched_gauss_dynamics_ =
+        std::make_unique<eft::MatchedGaussDynamics>(lattice_size);
+    // FTD-HISTORY-END
     colored_sites_cache_.reserve(256);
     // ARCH-2-M: backend_ is the single source of truth for backend selection.
     // Revision 3.1: the selection POLICY (GPU-default when CUDA is compiled
@@ -121,6 +127,116 @@ RenderBridge::~RenderBridge() = default;
 // (and the gated record() call in tick()) are golden-hash neutral.
 const KnotTracker& RenderBridge::knot_tracker() const { return *knot_tracker_; }
 void RenderBridge::reset_knot_tracker() { knot_tracker_->clear(); }
+
+// FTD-HISTORY-BEGIN: observation-only native event journal.
+bool RenderBridge::enable_history_journal(bool enabled) {
+    if (enabled && backend_ && backend_->kind() != Backend::Kind::Cpu) return false;
+    history_event_journal_->set_enabled(enabled);
+    return true;
+}
+
+bool RenderBridge::history_journal_enabled() const {
+    return history_event_journal_->enabled();
+}
+
+void RenderBridge::clear_history_events() { history_event_journal_->clear(); }
+
+std::vector<eft::HistoryEvent> RenderBridge::history_events() const {
+    return history_event_journal_->snapshot();
+}
+
+std::uint64_t RenderBridge::rng_state_hash() const {
+    return rng_state_->state_hash();
+}
+
+void RenderBridge::record_history_event(const eft::HistoryEvent& event) {
+    history_event_journal_->record(event);
+}
+
+std::vector<int> RenderBridge::matched_state_snapshot() const {
+    std::vector<int> state(voxels_.size(), 0);
+    for (std::size_t i = 0; i < voxels_.size(); ++i)
+        state[i] = static_cast<int>(voxels_[i].state);
+    return state;
+}
+
+void RenderBridge::sync_matched_gauss_to_voxels() {
+    if (!matched_gauss_dynamics_->initialized()) return;
+    const int L = lattice_.size();
+    for (int x = 0; x < L; ++x) {
+        for (int y = 0; y < L; ++y) {
+            for (int z = 0; z < L; ++z) {
+                const int i = lattice_.index(x, y, z);
+                Voxel& voxel = voxels_[static_cast<std::size_t>(i)];
+                voxel.flux = matched_gauss_dynamics_->centered_electric_at(x, y, z);
+                voxel.flux_L = {};
+                voxel.flux_R = {};
+                voxel.wave_vel = {};
+                voxel.wave_vel_L = {};
+                voxel.wave_vel_R = {};
+                delta_j_[static_cast<std::size_t>(i)] = {};
+                delta_j_L_[static_cast<std::size_t>(i)] = {};
+                delta_j_R_[static_cast<std::size_t>(i)] = {};
+                dJ_[static_cast<std::size_t>(i)] = {};
+            }
+        }
+    }
+    mark_fields_dirty_from_voxels();
+}
+
+eft::MatchedMinimumEnergyResult
+RenderBridge::initialize_matched_gauss_dynamics(double tolerance,
+                                                 int max_iterations) {
+    if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
+        backend_->sync_to_host();
+        force_cpu();
+        if (backend_->kind() == Backend::Kind::Gpu) {
+            std::cerr << "[FTD-0428] initialization rejected: CPU fallback is disabled\n";
+            return {};
+        }
+    }
+    sync_ternary_from_voxels_if_needed();
+    const auto result = matched_gauss_dynamics_->initialize_minimum_energy(
+        matched_state_snapshot(), tolerance, max_iterations);
+    if (result.valid) sync_matched_gauss_to_voxels();
+    return result;
+}
+
+bool RenderBridge::matched_gauss_initialized() const {
+    return matched_gauss_dynamics_->initialized();
+}
+
+const eft::MatchedGaussDynamics& RenderBridge::matched_gauss_state() const {
+    return *matched_gauss_dynamics_;
+}
+
+bool RenderBridge::inject_matched_transverse_edge_potential(
+    int x, int y, int z, int axis, double amplitude) {
+    const bool applied = matched_gauss_dynamics_->inject_transverse_edge_potential(
+        x, y, z, axis, amplitude);
+    if (applied) sync_matched_gauss_to_voxels();
+    return applied;
+}
+
+double RenderBridge::matched_gauss_voxel_sync_residual() const {
+    if (!matched_gauss_dynamics_->initialized())
+        return std::numeric_limits<double>::infinity();
+    double residual = 0.0;
+    const int L = lattice_.size();
+    for (int x = 0; x < L; ++x)
+        for (int y = 0; y < L; ++y)
+            for (int z = 0; z < L; ++z) {
+                const int i = lattice_.index(x, y, z);
+                const Vec3 expected =
+                    matched_gauss_dynamics_->centered_electric_at(x, y, z);
+                const Vec3 actual = voxels_[static_cast<std::size_t>(i)].flux;
+                residual = std::max(residual, std::abs(actual.x - expected.x));
+                residual = std::max(residual, std::abs(actual.y - expected.y));
+                residual = std::max(residual, std::abs(actual.z - expected.z));
+            }
+    return residual;
+}
+// FTD-HISTORY-END
 
 void RenderBridge::sync_ternary_from_voxels() const {
     engine_state_.ternary.rebuild_from_voxels(voxels_);
@@ -279,7 +395,15 @@ GravityMetricAgg RenderBridge::gravity_metric_agg() const {
         a.f_min = 1.0 - a.latency_max * a.latency_max;
         a.dilation_max_pct = (1.0 - std::sqrt(std::max(0.0, a.f_min))) * 100.0;
     }
-    a.active = (toggles.latency_field || toggles.field_energy_gravity) && count > 0;
+    // P4 (2026-07-26): `active` conflates "term off" with "term requested but
+    // not implemented on this backend". field_energy_gravity has ZERO read
+    // sites in engine/cuda, so on a CUDA build the GPU sources latency gravity
+    // from rest mass only while the CPU also sources it from local field-energy
+    // density -- for a flux-only configuration the GPU returns phi_latency
+    // identically zero where the CPU returns a real potential. Reporting that
+    // as "gravity not active" hid a backend divergence behind a toggle readout.
+    a.requested = (toggles.latency_field || toggles.field_energy_gravity);
+    a.active = a.requested && count > 0;
     return a;
 }
 
@@ -298,7 +422,17 @@ void RenderBridge::set_dt(double dt) {
     // the symplectic-leapfrog path (the FTD-0337 recon showed the default
     // non-symplectic leapfrog silently clamps dt to 1 — the "dt-invariance"
     // artifact). Both toggles default OFF ⇒ default behavior unchanged.
-    dt_ = (toggles.symplectic_leapfrog || toggles.verlet_wave_integrator || dt >= 1.0) ? dt : 1.0;
+    if (toggles.lorentz_period2_floquet
+        || toggles.lorentz_bcc_time_floquet) {
+        // FTD-0408/0411 exact monodromies use the unit-step default kick-drift map.
+        // Do not let physical_time() advertise a different tick duration from
+        // the update whose pole was proved.
+        dt_ = 1.0;
+    } else {
+        dt_ = (toggles.symplectic_leapfrog
+               || toggles.verlet_wave_integrator
+               || dt >= 1.0) ? dt : 1.0;
+    }
     // ARCH-2: backend dispatch replaces the explicit ifdef. CpuBackend is a
     // no-op (RenderBridge::dt_ is the source of truth); GpuBackend forwards
     // to GpuEngine.
@@ -378,8 +512,12 @@ double RenderBridge::compute_entropy() const { return ::ftd::compute_entropy_cpu
 //   Empirically verified by tests/test_leapfrog_integrator_audit.cpp
 //   (see TRACKER_OPEN_ITEMS §1.4 — closed 2026-04-17): over 5000 ticks
 //   with damping off, cumulative injection/dissipation balance to 0.1%,
-//   the hallmark of a symplectic scheme. C_SPEED = 1/√D = 1/√3 is the
-//   leapfrog CFL limit, correctly identified.
+//   the hallmark of a symplectic scheme.
+//   C_SPEED = 1/√3 is a [SELECTION], NOT a forced CFL limit (FTD-0407).
+//   The production normalised 18-point stencil has exact max symbol 16/3 at
+//   (π,π,0), so stability allows c² ≤ 4/(16/3) = 3/4, i.e. c ≤ 0.866.
+//   1/√3 is the CFL limit of the UNNORMALISED 6-point stencil, which is not
+//   what the engine runs; it is conservative but unforced.
 // ============================================================================
 
 // Phase 4c (2026-04-27): phase_read decomposed into a single free function
@@ -547,6 +685,19 @@ void RenderBridge::phase_movement() {
 
 void RenderBridge::tick() {
   causal_projection_events_this_tick_ = 0;
+  // FTD-HISTORY-BEGIN: observation-only native event journal.
+  if (history_event_journal_->enabled()) history_event_journal_->clear();
+  // FTD-HISTORY-END
+
+  // A caller can leave dt_<1 behind by enabling an alternate integrator,
+  // calling set_dt(), then switching toggles. FTD-0408/0411 are defined only
+  // for the unit-step default map, so normalize stale state before validation
+  // and before physical_time_ advances.
+  if ((toggles.lorentz_period2_floquet
+       || toggles.lorentz_bcc_time_floquet) && dt_ != 1.0) {
+    dt_ = 1.0;
+    if (backend_) backend_->set_dt(dt_);
+  }
   // F3 (callstack audit 2026-04-17): validate runs on BOTH paths now
   // so toggle-combination warnings surface regardless of CPU/GPU build.
   //
@@ -556,7 +707,7 @@ void RenderBridge::tick() {
   {
       std::string validErr;
       if (!toggles.validate(&validErr)) {
-          if (toggles.strict_validation) {
+          if (toggles.strict_validation || toggles.matched_gauss_dynamics) {
 #ifdef __EMSCRIPTEN__
               // WASM build compiles with -fno-exceptions; downgrade to
               // stderr + abort so strict_validation still surfaces
@@ -577,6 +728,35 @@ void RenderBridge::tick() {
       }
   }
 
+  if (toggles.matched_gauss_dynamics && dt_ != 1.0) {
+#ifdef __EMSCRIPTEN__
+    std::cerr << "[FTD-0428] FATAL: matched_gauss_dynamics requires dt=1\n";
+    std::abort();
+#else
+    throw std::logic_error(
+        "[FTD-0428] matched_gauss_dynamics requires the locked unit tick");
+#endif
+  }
+
+  // FTD-0428 is deliberately CPU-scoped. Preserve the last device state
+  // before replacing the backend so initialization/current extraction always
+  // sees the actual production snapshot.
+  if (toggles.matched_gauss_dynamics && backend_
+      && backend_->kind() == Backend::Kind::Gpu) {
+    backend_->sync_to_host();
+    std::cerr << "[FTD-0428] matched_gauss_dynamics is CPU-scoped; forcing CPU backend\n";
+    force_cpu();
+    if (backend_->kind() == Backend::Kind::Gpu) {
+#ifdef __EMSCRIPTEN__
+      std::cerr << "[FTD-0428] FATAL: CPU fallback is disabled\n";
+      std::abort();
+#else
+      throw std::logic_error(
+          "[FTD-0428] matched_gauss_dynamics cannot run on the GPU backend");
+#endif
+    }
+  }
+
   sync_ternary_from_voxels_if_needed();
 
   // FTD-0406 v1 is a CPU-scoped selected architecture. A CUDA-backed bridge
@@ -585,6 +765,16 @@ void RenderBridge::tick() {
   if (toggles.strong_stress_energy && backend_
       && backend_->kind() == Backend::Kind::Gpu) {
     std::cerr << "[FTD-0406] strong_stress_energy is CPU-scoped; forcing CPU backend\n";
+    force_cpu();
+  }
+  if (toggles.lorentz_period2_floquet && backend_
+      && backend_->kind() == Backend::Kind::Gpu) {
+    std::cerr << "[FTD-0408] lorentz_period2_floquet is CPU-scoped; forcing CPU backend\n";
+    force_cpu();
+  }
+  if (toggles.lorentz_bcc_time_floquet && backend_
+      && backend_->kind() == Backend::Kind::Gpu) {
+    std::cerr << "[FTD-0411] lorentz_bcc_time_floquet is CPU-scoped; forcing CPU backend\n";
     force_cpu();
   }
 
@@ -662,7 +852,12 @@ void RenderBridge::tick() {
     phase_read();
 
   // Rule 2: Commit flux, damping, manifestation/evaporation
-  phase_write();
+  if (!toggles.matched_gauss_dynamics) {
+    phase_write();
+  } else {
+    genesis_events_this_tick_ = 0;
+    evaporation_events_this_tick_ = 0;
+  }
 
   // Rule 2a (E1, FTD-0333 §5.1 / FTD-0337): velocity-Verlet (KDK) completion.
   // phase_write applied half-kick + drift; here we recompute the acceleration
@@ -723,9 +918,46 @@ void RenderBridge::tick() {
   if (toggles.forces)
     phase_forces();
 
+  // FTD-0428: snapshot the exact ternary source immediately before the only
+  // permitted state-changing phase. The post-movement difference is routed
+  // into oriented face current; reaction-bearing histories fail closed.
+  std::vector<int> matched_before;
+  if (toggles.matched_gauss_dynamics) {
+    if (!matched_gauss_dynamics_->initialized()) {
+#ifdef __EMSCRIPTEN__
+      std::cerr << "[FTD-0428] FATAL: matched_gauss_dynamics requires explicit initialization\n";
+      std::abort();
+#else
+      throw std::logic_error(
+          "[FTD-0428] matched_gauss_dynamics requires explicit initialization");
+#endif
+    }
+    matched_before = matched_state_snapshot();
+  }
+
   // Rule 5: Movement + collisions + annihilation
   if (toggles.movement)
     phase_movement();
+
+  if (toggles.matched_gauss_dynamics) {
+    const auto matched_after = matched_state_snapshot();
+    eft::DualCellContinuity history;
+    const auto extraction = eft::extract_moore_history_from_snapshots(
+        lattice_.size(), matched_before, matched_after, history);
+    const auto step = extraction.valid
+        ? matched_gauss_dynamics_->advance(history, C_SPEED, dt_, 1e-12)
+        : eft::MatchedWaveStep{};
+    if (!extraction.valid || !step.valid) {
+#ifdef __EMSCRIPTEN__
+      std::cerr << "[FTD-0428] FATAL: movement history is not conservative and routable\n";
+      std::abort();
+#else
+      throw std::logic_error(
+          "[FTD-0428] movement history is not conservative and routable");
+#endif
+    }
+    sync_matched_gauss_to_voxels();
+  }
 
   // FTD-0406: preserve the proposal positions and project only relative
   // physical momenta onto H_strong(t+dt)=H_strong(t). Topology changes are

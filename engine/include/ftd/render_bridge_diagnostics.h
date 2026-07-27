@@ -71,10 +71,19 @@ struct GravityMetricAgg {
     double gamma_max = 1.0;        // max gamma_ftd()
     double dilation_max_pct = 0.0; // (1 - sqrt(f_min))·100
     int voxel_count = 0;           // voxels with latency > 0
+    bool requested = false;        // the toggles asking for gravity are ON
     bool active = false;           // latency machinery on AND a non-trivial field
+                                   // requested && !active distinguishes "term
+                                   // off" from "term on but produced nothing" --
+                                   // the latter is how a backend that does not
+                                   // implement the term (field_energy_gravity
+                                   // has no CUDA read site) used to read as
+                                   // simply inactive. P4, 2026-07-26.
 };
 
 struct EnergyAudit {
+    // Field-amplitude norm, not the gradient-plus-cross Hamiltonian of the
+    // production wave tick. See FTD-0293 and FTD-0452.
     double field_energy = 0.0;     // sum [½|J|² · V_cell] over all sites
     double wave_energy = 0.0;      // sum [½|wave_vel|² · V_cell] over all sites
     double particle_ke = 0.0;      // sum (gamma_0-1)·E_REST

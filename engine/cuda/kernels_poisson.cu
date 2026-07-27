@@ -264,9 +264,13 @@ __global__ void latency_to_voxel_kernel(
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
-    double phi_val = phi_latency[i];
-    double abs_phi = phi_val < 0.0 ? -phi_val : phi_val;
-    double clamped = abs_phi > LATENCY_HORIZON_CLAMP ? LATENCY_HORIZON_CLAMP : abs_phi;
+    // P6 (2026-07-26): mirror the CPU fix -- map the WELL (-phi), not |phi|.
+    // The mean-subtracted periodic potential is signed; |phi| turned the
+    // under-dense majority of the box into a positive, non-monotone
+    // pseudo-well. See poisson_solvers.cpp for the full note and measurements.
+    double well = -phi_latency[i];
+    double clamped = well < 0.0 ? 0.0
+                   : (well > LATENCY_HORIZON_CLAMP ? LATENCY_HORIZON_CLAMP : well);
     voxel_latency[i] = sqrt(clamped);
 }
 

@@ -340,11 +340,27 @@ export function createAtomEngine(state) {
                     const mi_dot_r = mi_x*rx + mi_y*ry + mi_z*rz;
                     const mj_dot_r = mj_x*rx + mj_y*ry + mj_z*rz;
                     const mi_dot_mj = mi_x*mj_x + mi_y*mj_y + mi_z*mj_z;
-                    const coeff = 3.0 * AE_K_COULOMB / (r2 * r2 * r);
-                    const t1 = 5.0 * mi_dot_r * mj_dot_r / r2;
-                    fx += coeff * (t1*rx - mj_x*mi_dot_r - mi_x*mj_dot_r - rx*mi_dot_mj);
-                    fy += coeff * (t1*ry - mj_y*mi_dot_r - mi_y*mj_dot_r - ry*mi_dot_mj);
-                    fz += coeff * (t1*rz - mj_z*mi_dot_r - mi_z*mj_dot_r - rz*mi_dot_mj);
+                    // P1 (2026-07-26). Two defects, both fixed here:
+                    //   1. rx,ry,rz are ALREADY unit vectors (divided by r above),
+                    //      so the extra /r2 inside t1 made the bracket
+                    //      dimensionally inhomogeneous, and coeff carried one
+                    //      power of r too many (3k/r^5 instead of 3k/r^4).
+                    //   2. Every bracket term had the wrong sign -- the old
+                    //      expression was exactly the NEGATIVE of the standard
+                    //      dipole-dipole force.
+                    // Net effect: head-to-tail dipoles were correct only at r=1
+                    // by coincidence, ZERO at r = sqrt(5/3) = 1.291, and
+                    // repulsive beyond, with a spurious r^-5 tail.
+                    //
+                    // Canonical form (identical to atom_forces.cpp and to the
+                    // already-correct pe-force-kernel.js):
+                    //   F = (3k/r^4) [ (mi.mj) rhat + (mi.rhat) mj
+                    //                  + (mj.rhat) mi - 5 (mi.rhat)(mj.rhat) rhat ]
+                    const coeff = 3.0 * AE_K_COULOMB / (r2 * r2);
+                    const t5 = 5.0 * mi_dot_r * mj_dot_r;
+                    fx += coeff * (mi_dot_mj*rx + mi_dot_r*mj_x + mj_dot_r*mi_x - t5*rx);
+                    fy += coeff * (mi_dot_mj*ry + mi_dot_r*mj_y + mj_dot_r*mi_y - t5*ry);
+                    fz += coeff * (mi_dot_mj*rz + mi_dot_r*mj_z + mj_dot_r*mi_z - t5*rz);
                 }
             }
         }
