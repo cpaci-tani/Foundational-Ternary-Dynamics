@@ -1,0 +1,22 @@
+{
+  "identifier": "FTD-0434",
+  "revision": 1,
+  "locked_before_diagnostic_execution": true,
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v1.md",
+  "preregistration_sha256": "c0a503ed1cb5917edb4c2af369f7ffe8a3d6a4516980380e9b2d58281c64a184",
+  "sources": {
+    "engine/tests/campaign_vacuum_photon_scenario_diagnostic.cpp": "96ee7842a61e33ac1f0a138ce6807efb5811e7137785d88b86b8433793a20b21",
+    "engine/src/scenarios/vacuum.cpp": "9644f5b3630163c2c05a24be2f4633e4e4c923a9d52ebfe8f46d1d4ba6c0d6f9",
+    "engine/src/scenarios.cpp": "c1e946de95e5b2f1bb237bd04e24c19b2ae8d9b751b9f80d7f63f52d9ec665f2",
+    "engine/src/scenarios/_helpers.h": "8db41c7f5994e061ee465b4072a626b7b81bd146202e8bd2e8a5c08a948decbf",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/CMakeLists.txt": "2a105534c177f3f66fb05001ac64f5f7d3209bc490d45f2d39a2a8828aeb9c83"
+  },
+  "result": "engine/results/ftd_0434/invalid_v1_native_defaults_L33.csv",
+  "state": "SUPERSEDED_DASHBOARD_ARM_INVALID_WAVE_ONLY_ARM_VALID"
+}

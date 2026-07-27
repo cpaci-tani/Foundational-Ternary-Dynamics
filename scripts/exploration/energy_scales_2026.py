@@ -10,13 +10,15 @@ CODATA-2022 / PDG source per docs/reference/REF_EXTERNAL_CONSTANTS.md.
 
 Sections:
   0. Scale hierarchy - voxel/lattice physical extents, Planck energy, the CERN gap.
-  1. Dispersion -> Lorentz violation - k = E/E_P; isotropic dim-6 dv/c = (E/E_P)^2/8
-     (from v_g/c = cos(k/2)); dim-7 anisotropy delta = 6.95e-4*(E/E_P)^4; GRB ToF.
+  1. Free-flux dispersion -> Lorentz violation - q = E/E_P at leading order;
+     fully discrete dim-6 dv/c = (E/E_P)^2/12; dimension-8 cubic anisotropy
+     delta = 6.95e-4*(E/E_P)^4; GRB ToF. Whole-theory radiative/common-cone
+     matching remains open under FTD-0407.
   2. Manifestation / pair threshold - K_GENESIS = 3*K_B vs the QED 2*m_e.
   3. Emergent mass/energy ladder - N(A)*K_B at L=32 (FTD-0261 run of record).
   4. Structural nulls - the [THEOREM]-grade forbiddens (listed; no free numbers).
 
-Calibration register (a_phys = l_P, t_phys = sqrt(3)*l_P/c, K_B = m_e):
+Calibration register (a_phys = l_P, t_phys = l_P/(sqrt(3)*c), K_B = m_e):
 SPEC_DIMENSIONAL_MAP.md s4. Dispersion symbol: ANALYSIS_WAVE_SECTORS_v1.md (FTD-0299)
 + AUDIT_LORENTZ_ANISOTROPY.md s2.4 (FTD-0092 / PL-5, FTD-0258). Ladder: ANALYSIS_NA_LAW_CURRENT_STACK_v1.md
 (FTD-0261). Structural nulls: SPEC_PREDICTION_LEDGER_DEVIATIONS.md PL-6 + proof_complete_sm.py.
@@ -63,11 +65,11 @@ banner("0. SCALE HIERARCHY - the lattice is a Planck-scale instrument")
 # ==========================================================================
 print(f"a_phys = l_P              = {L_PLANCK_M:.6e} m   (1 voxel = 1 Planck length) [CALIBRATION]")
 t_planck_s = L_PLANCK_M / C_LIGHT
-t_phys_s   = math.sqrt(3.0) * L_PLANCK_M / C_LIGHT   # canonical: t_phys = sqrt(3)*l_P/c (SPEC_DIMENSIONAL_MAP s4)
+t_phys_s   = L_PLANCK_M / (math.sqrt(3.0) * C_LIGHT)  # canonical edge gauge (FTD-0385)
 print(f"t_Planck = l_P/c          = {t_planck_s:.6e} s")
-print(f"t_phys = sqrt(3)*l_P/c    = {t_phys_s:.6e} s   (one tick) [CALIBRATION]")
+print(f"t_phys = l_P/(sqrt(3)*c)  = {t_phys_s:.6e} s   (one tick) [CALIBRATION]")
 print(f"K_B = m_e                 = {KB_MEV:.3f} MeV   (mass unit = 1 MeV/c^2) [IMPOSED]")
-print(f"c_lat (CFL)               = 1/sqrt(3) = {C_WAVE:.6f} voxels/tick")
+print(f"c_lat (selected; stable)   = 1/sqrt(3) = {C_WAVE:.6f} voxels/tick")
 print()
 
 # Planck energy, cross-checked two independent ways.
@@ -100,30 +102,30 @@ print(f"E_LHC / E_Planck                        = {E_LHC_GEV / E_PLANCK_GEV:.3e}
 print()
 
 # ==========================================================================
-banner("1. DISPERSION -> LORENTZ VIOLATION  (lab-facing; FTD-0299 / PL-5)")
+banner("1. FREE-FLUX DISPERSION -> LORENTZ VIOLATION  (FTD-0299 / FTD-0407)")
 # ==========================================================================
-print("Lattice dispersion:  omega(k) = 2c|sin(k/2)|,  c = 1/sqrt(3)   [LIGHT-CONFIRMED, FTD-0299]")
-print("Isotropic continuum: omega^2 = c^2 k^2 - (c^2/12) k^4 + O(k^6)  (AUDIT_LORENTZ_ANISOTROPY s2.4)")
-print("Group velocity:      v_g/c = cos(k/2) ~ 1 - k^2/8   ->   dv/c ~ (E/E_P)^2 / 8")
-print("Photon energy -> lattice wavenumber:  k = E/E_P  (from a_phys=l_P + E_P=hbar*c/l_P; tick-convention-independent)")
+print("Exact axis pole:      theta(q) = 2 asin(c_lat sin(q/2)),  c_lat = 1/sqrt(3)")
+print("Fully discrete:       theta^2 = q^2/3 - q^4/54 - q^6/4860 + O(q^8)  (FTD-0407)")
+print("Group velocity:       v_g/c = cos(q/2)/sqrt(1-c_lat^2 sin^2(q/2)) = 1-q^2/12+O(q^4)")
+print("Photon energy -> q:   q = E/E_P at leading order (a_phys=l_P, edge-gauge tick calibration)")
 print()
-print("  -> LINEAR (dim-5) LV coefficient = 0  [STRUCTURAL: FTD forbids linear LV]")
-print("  -> leading term is QUADRATIC (dim-6) ISOTROPIC; first ROTATION-BREAKING is QUARTIC (dim-7)")
+print("  -> direct free-pole LINEAR (dim-5) coefficient = 0 [tree-level, sector-scoped]")
+print("  -> leading term is QUADRATIC (dim-6) boost violation; first cubic rotation breaking is dimension 8")
+print("  -> lower-dimensional radiative mixing and common matter/flux speed remain OPEN (FTD-0407)")
 print()
 ANISO_PREFACTOR = 6.95e-4    # delta = prefactor * k^4 (AUDIT_LORENTZ_ANISOTROPY: p=4.0008, L=64 -> 6.5e-8)
 D_COSMO_S = 13.0 * GYR_S     # ~13 Gly light-travel (cosmological GRB baseline), order-of-magnitude
 print(f"GRB time-of-flight baseline (order): D/c ~ 13 Gly = {D_COSMO_S:.2e} s")
-print(f"{'E (photon)':>16} | {'k = E/E_P':>12} | {'dv/c (dim-6)':>14} | {'delta_aniso (dim-7)':>20} | {'GRB ToF delay':>14}")
+print(f"{'E (photon)':>16} | {'q = E/E_P':>12} | {'dv/c (dim-6)':>14} | {'delta_aniso (dim-8)':>20} | {'GRB ToF delay':>14}")
 for label, E_GeV in (("1 GeV", 1.0), ("10 GeV (GRB)", 10.0), ("1 TeV", 1.0e3),
                      ("13.6 TeV (LHC)", 1.36e4), ("E_Planck", E_PLANCK_GEV)):
     k = E_GeV / E_PLANCK_GEV
-    dv_c = (1.0 - math.cos(k / 2.0)) if k < 1e-3 else (1.0 - math.cos(min(k, math.pi) / 2.0))
-    dv_c_lead = k * k / 8.0
+    dv_c_lead = k * k / 12.0
     delta = ANISO_PREFACTOR * k ** 4
     tof = dv_c_lead * D_COSMO_S
     print(f"{label:>16} | {k:>12.3e} | {dv_c_lead:>14.3e} | {delta:>20.3e} | {tof:>11.3e} s")
-print("  (dv/c column uses the leading k^2/8; GRB ToF delay is dv/c * D/c.)")
-print("  Even at 10 GeV the ToF delay is ~1e-19 s vs GRB timing resolution ~ms -> NULL at all foreseeable sensitivity.")
+print("  (dv/c column uses the fully discrete leading q^2/12; GRB ToF delay is dv/c * D/c.)")
+print("  At 10 GeV the free-pole ToF estimate is ~2e-20 s; this does not address radiative or common-cone effects.")
 print()
 
 # ==========================================================================
@@ -132,7 +134,7 @@ banner("2. MANIFESTATION / PAIR-PRODUCTION THRESHOLD")
 pair_thresh = 2.0 * ME_MEV
 print(f"K_GENESIS = N_c * K_B            = {KGEN_MEV:.3f} MeV   (engine matter-creation threshold) [IMPOSED]")
 print(f"QED pair-production threshold 2*m_e = {pair_thresh:.3f} MeV")
-print(f"ratio K_GENESIS / (2 m_e)       = {KGEN_MEV / pair_thresh:.4f}   (= 3/2; the factor 3 vs 2 is flagged, not claimed)")
+print(f"ratio K_GENESIS / (2 m_e)       = {KGEN_MEV / pair_thresh:.4f}   (not 3/2 after K_MANIFEST/M_REST split)")
 print(f"Genesis-event budget at A=10: ~5 one-shot events (FTD-0267 SURVIVAL-NULL) - cited, not recomputed.")
 print(f"Physical identification of K_GENESIS with a pair threshold: [CONJECTURE] / calibration-dependent.")
 print()

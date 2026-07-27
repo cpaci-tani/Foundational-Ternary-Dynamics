@@ -1,0 +1,53 @@
+{
+  "identifier": "FTD-0436",
+  "revision": 2,
+  "state": "V2R2_AMENDMENT_A1_SEALED_BEFORE_ANY_L128_L192_DATA",
+  "locked_before_campaign_execution": true,
+  "date_locked": "2026-07-23",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v2.md",
+  "preregistration_sha256": "8f40da99728b297f12b9bcc8cde50c88ba02da823178f6057e93b8bf0dd73b65",
+  "sources": {
+    "engine/tests/campaign_native_dressed_hazard_ir_scaling_v2.cpp": "a37a9fe86eaa8789aa6df8ae9821f72f1ff1d7d8bfe0cc8733390ef0f0cbbdc9",
+    "engine/include/ftd/eft/native_evaporation_hazard_observer.h": "5140ee444814e1037337b9bc1656833bf0c67b8646c3b13fb2fde44e3d4ed510",
+    "engine/include/ftd/eft/native_reaction_polarity_slow_mode.h": "bc068764ddcadcbb23a0c997fe8cf1bc5b74fcf165761bbbb2aeafe9580e6209",
+    "engine/include/ftd/eft/native_dynamic_polarity_response.h": "a44638cd05b634d40e764217ed483582310b362eb737f748975a3c6db4fb601c",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "c36690b9217ca9d05774f6c23525d1d89e86c1ede22dcf9b282b4c39d35d7504",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b0dee6aa5ce6474a55f09e68ecbc18d9db968f5d9acba09ec991146b0d1c3f3e",
+    "engine/include/ftd/proper_time_rate.h": "4436a832dab09e7d96f8a71f3eec690d1dc892cf94b1bbe0e588e10f0ac571f5",
+    "engine/include/ftd/causal_kinematics.h": "705501451985333d64128a0896216a137a2d836673aeb02e9ace6de4f2e53aa2",
+    "engine/include/ftd/eft/history_event_journal.h": "5d8edbf823405b1ccce0dcf591e88684b06e9957dc4f90fc1a5d3fe94b5c222e",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/CMakeLists.txt": "6ca4a37cee97574110a8f5b971f1025b261fff106af43c73f57b927bb7ae45b6",
+    "scripts/proofs/proof_native_dressed_hazard_ir_scaling_v2_results.py": "1aaf6ec7a415141b750b77518d3dbcfceca2d145ec8bf909eaca8b3c28670c32"
+  },
+  "qualified_successors": {},
+  "note": "Sealed after compile + non-registered CPU smoke validation (scratch outputs discarded); before any registered arm was written to engine/results/ftd_0436.",
+  "amendment_A1": {
+    "date": "2026-07-24",
+    "scope": "Execution backend for L in {128,192} -> windows_msvc_cpu; estimators/gates/thresholds unchanged; sealed with zero L>=128 records in existence (deleted files carried the empty-string sha256).",
+    "campaign_source_provenance": {
+      "collection_hash_H1": "227b617b85550e6807e53f179a23db6e5d6247927e0b7e36303c00f7dcc2d74d",
+      "sealed_hash_H2": "a37a9fe86eaa8789aa6df8ae9821f72f1ff1d7d8bfe0cc8733390ef0f0cbbdc9",
+      "gpu_arms_collected_at": "H1 (L=48,64,96 WSL2 CUDA + original L=48 CPU)",
+      "diff_H1_to_H2": "volume-registration matrix only: kGpuVolumes -> {48,64,96}, added kCpuVolumes {48,128,192}, registered_volume() CPU branch loops kCpuVolumes. Symbols referenced ONLY at definitions + CLI arg gate (lines 42-44, 51, 118, 122); zero references in run_arm/observer/plane_loss_decomposition. Physics-inert; verified by byte-identical H1==H2 CPU L=48 reproduction and the 1e-10 CPU/CUDA L=48 gate."
+    }
+  },
+  "dependency_drift_2026_07_24": {
+    "cause": "Concurrent sessions edited these dependency files between the revision-1 seal (~00:10, GPU-build era) and ~10:19. mtimes 10:05-10:19.",
+    "predrift_hashes_gpu_build": {
+      "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+      "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+      "engine/CMakeLists.txt": "0ebdf0c37c79add65c47e81e42660f0d174c04c17cd2c394de6f9157ee3c0af5"
+    },
+    "current_hashes_cpu_build": {
+      "engine/src/render_bridge_phases/phase_write.cpp": "c36690b9217ca9d05774f6c23525d1d89e86c1ede22dcf9b282b4c39d35d7504",
+      "engine/include/ftd/term_toggles.h": "b0dee6aa5ce6474a55f09e68ecbc18d9db968f5d9acba09ec991146b0d1c3f3e",
+      "engine/CMakeLists.txt": "6ca4a37cee97574110a8f5b971f1025b261fff106af43c73f57b927bb7ae45b6"
+    },
+    "physics_inert_justification": "Diff inspection: evaporation & genesis ACCEPTANCE logic (p=..., RNG compare, manifest_at, set_state(i,0), evap_prob*K_EVAP_RATE*dtau) are byte-unchanged context. Additions are (a) if(history_journal_enabled()) observation-only journal blocks already part of the validated FTD-0432/0433 design, (b) boundary comment rewordings, (c) three new default-OFF toggles (matched_gauss_dynamics, lorentz_period2_floquet, lorentz_bcc_time_floquet) all excluded by the campaign toggle_contract. CMakeLists drift = concurrent campaign registrations; not a runtime-physics input.",
+    "empirical_validation": "The locked 1e-10 CPU/CUDA L=48 gate compares GPU-L48 (pre-drift 00:07 build) against CPU-L48 (post-drift 10:19 build); agreement proves version- AND backend-independence of the evaporation measurement in a single test."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "date": "2026-07-22",
+  "scope": "frozen CPU production tick",
+  "phases": [
+    {"phase": "free wave kick-drift", "injectivity": "yes", "reason": "2x2 mode transfer determinant equals one"},
+    {"phase": "damping/Langevin with known RNG stream", "injectivity": "conditional", "reason": "affine inverse exists only for nonzero damping factor and retained RNG state"},
+    {"phase": "genesis", "injectivity": "no", "reason": "threshold manifestation overwrites void labels and drains field information"},
+    {"phase": "evaporation", "injectivity": "no", "reason": "both signed manifested states can map to the same void state"},
+    {"phase": "pair production", "injectivity": "no", "reason": "threshold creation does not retain a reversible event register"},
+    {"phase": "Gauss projection", "injectivity": "no", "reason": "longitudinal components in the projection kernel share an image"},
+    {"phase": "force kick", "injectivity": "conditional", "reason": "invertible only with the source configuration and unclamped velocity retained"},
+    {"phase": "void-target movement", "injectivity": "conditional", "reason": "requires origin and pre-projection remainder history"},
+    {"phase": "annihilation", "injectivity": "no", "reason": "particle spin/color/identity are erased"},
+    {"phase": "speed projection", "injectivity": "no", "reason": "all superluminal magnitudes on one ray project to the same speed"},
+    {"phase": "nonperiodic boundary handling", "injectivity": "no", "reason": "absorbing/dispersal rules erase outgoing state"},
+    {"phase": "weak flip plus L/R swap", "injectivity": "yes-event-map", "reason": "the accepted local event is an involution; its stochastic acceptance history is external"},
+    {"phase": "triad locking", "injectivity": "no", "reason": "setting locked=true erases whether the site was already locked"},
+    {"phase": "proper-time accumulation", "injectivity": "conditional", "reason": "invertible only with latency, velocity, and unwrapped phase retained"}
+  ]
+}

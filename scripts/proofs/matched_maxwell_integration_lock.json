@@ -1,0 +1,28 @@
+{
+  "lock_date": "2026-07-23",
+  "identifier": "FTD-0428",
+  "protocol": {
+    "sizes": [32, 64],
+    "orientations": [1, -1],
+    "directions": ["+x", "+y", "+z"],
+    "moving_ticks": 12,
+    "stationary_ticks": 8,
+    "static_ticks": 32,
+    "wave_ticks": 32,
+    "radii": [2, 3, 4, 5],
+    "solver_tolerance": 1e-12,
+    "solver_iteration_factor": 12,
+    "transverse_amplitude": 0.001,
+    "wave_speed": "C_SPEED=1/sqrt(3)"
+  },
+  "files": {
+    "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md": "59a0fdbb04596852fe8a5cea042ba66f732eb9ca25e350cbff3a84ef07a91414",
+    "engine/include/ftd/eft/matched_gauss_transport.h": "1e07f87a0ebd0d1830d0632b82c2bd65497ebeae7bb152ea02c5aae19328b033",
+    "engine/src/eft/matched_gauss_transport.cpp": "12bf98040bb45ad6cd9a409a93c842101c400ceee6242e9b9352158a33a9d028",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/include/ftd/render_bridge.h": "560cb59e2fcd6e174640ca6bf048fd16aec36ad2b13ee97fa31e301cf373d91c",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/tests/test_matched_maxwell_integration.cpp": "587c66f7d17214b8365bcc46660474a65f2a9da3006654bc735414b345423728",
+    "engine/tests/campaign_matched_maxwell_integration.cpp": "f3dc07ac51320a9b0e5458e916ecb7da192ac60b756af7867d1a9b52560bf38c"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "identifier": "FTD-0429",
+  "revision": 2,
+  "locked_before_implementation_run": true,
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v2.md",
+  "preregistration_sha256": "1a365aea3294e1debdac88e6a8e73f965e5bcbfc63ce235543c42f77ccc76859",
+  "sources": {
+    "engine/include/ftd/eft/native_dynamic_polarity_response.h": "a44638cd05b634d40e764217ed483582310b362eb737f748975a3c6db4fb601c",
+    "engine/tests/test_native_dynamic_polarity_response.cpp": "9cec50e815d959242c12f8a7f675c81bb2e78b21c537754d1ea75fd0766f7b0c",
+    "engine/tests/campaign_native_dynamic_polarity_response.cpp": "171ddc012371120c886212f7310d204528d91e7929481bb4bd0309421ece0925",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/CMakeLists.txt": "631a85a72f78eb36c9746422ed735e8efddfa0c7b2b6e28d0e4a9fe12a5e2f52"
+  },
+  "qualified_successors": {
+    "engine/CMakeLists.txt": {
+      "identifier": "FTD-0436",
+      "scope": "Registers the FTD-0436 disabled dressed-hazard IR-scaling v2 campaign target after the FTD-0433/0434 records were closed; no prior-campaign observer, estimator, or admitted execution path changes.",
+      "sha256": "0ebdf0c37c79add65c47e81e42660f0d174c04c17cd2c394de6f9157ee3c0af5",
+      "prior": [
+        {
+          "identifier": "FTD-0430",
+          "sha256": "90acc4781380fc6f6d5d49dabda7d4316bce36d19ae1a180cab5650a3bff5b98"
+        },
+        {
+          "identifier": "FTD-0431",
+          "sha256": "cdb1a872544865b2170987dd42f3cfa80c0d6d68efc4adaae17228fcc18bd2ec"
+        },
+        {
+          "identifier": "FTD-0432",
+          "sha256": "c147e1ba65d06e235e24740a46227c131f1cbefcf8271dcb485ab75c4e7d3cde"
+        },
+        {
+          "identifier": "FTD-0433",
+          "sha256": "dd04bff74789c1b9eaa701d10ad36d36d9c83873b9c6e7cdc9536d857929e1b1"
+        },
+        {
+          "identifier": "FTD-0434",
+          "sha256": "2a105534c177f3f66fb05001ac64f5f7d3209bc490d45f2d39a2a8828aeb9c83"
+        }
+      ]
+    }
+  },
+  "result_manifest": "engine/results/ftd_0429/manifest.json",
+  "state": "V2_SOURCE_LOCKED_BEFORE_FIRST_L64_RERUN"
+}

@@ -1,0 +1,32 @@
+{
+  "identifier": "FTD-0434",
+  "revision": 2,
+  "locked_before_diagnostic_execution": true,
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md",
+  "preregistration_sha256": "e08a13a76bc6bddf1f2da1c36666993817e2842e1ab0c4981536776bd4c64f95",
+  "sources": {
+    "engine/tests/campaign_vacuum_photon_scenario_diagnostic.cpp": "57a9ac504a3b2d8c4240fd7870be03418d5e09681f1aefcb07483ff446e5402d",
+    "engine/src/scenarios/vacuum.cpp": "9644f5b3630163c2c05a24be2f4633e4e4c923a9d52ebfe8f46d1d4ba6c0d6f9",
+    "engine/src/scenarios.cpp": "c1e946de95e5b2f1bb237bd04e24c19b2ae8d9b751b9f80d7f63f52d9ec665f2",
+    "engine/src/scenarios/_helpers.h": "8db41c7f5994e061ee465b4072a626b7b81bd146202e8bd2e8a5c08a948decbf",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/web/js/config/toggles.js": "84698ca649ccf77b377029e9324fbede7bc8184eb4fea42aed642eb4d99304d9",
+    "engine/web/js/scales/scale0/runtime/scenario-loader.js": "3b06cdefa85dec481d2a44d98a807623b98f895d756d5cf04119f50c2d407b92",
+    "engine/CMakeLists.txt": "2a105534c177f3f66fb05001ac64f5f7d3209bc490d45f2d39a2a8828aeb9c83"
+  },
+  "superseded_result": "engine/results/ftd_0434/invalid_v1_native_defaults_L33.csv",
+  "result_manifest": "engine/results/ftd_0434/manifest.json",
+  "state": "V2_SOURCE_LOCKED_BEFORE_CORRECTED_DASHBOARD_RUN",
+  "qualified_successors": {
+    "engine/CMakeLists.txt": {
+      "identifier": "FTD-0436",
+      "scope": "Registers the FTD-0436 disabled dressed-hazard IR-scaling v2 campaign target after the FTD-0433/0434 records were closed; no prior-campaign observer, estimator, or admitted execution path changes.",
+      "sha256": "0ebdf0c37c79add65c47e81e42660f0d174c04c17cd2c394de6f9157ee3c0af5"
+    }
+  }
+}
