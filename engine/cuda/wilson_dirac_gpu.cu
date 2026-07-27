@@ -58,7 +58,8 @@ __global__ void wilson_dirac_kernel(c2* __restrict__ out,
                                      const c2* __restrict__ psi,
                                      const c2* __restrict__ U,
                                      int L,
-                                     double m, double r, double a) {
+                                     double m, double r, double a,
+                                     double spatial_speed) {
     const int N = L * L * L;
     const int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= N) return;
@@ -66,8 +67,8 @@ __global__ void wilson_dirac_kernel(c2* __restrict__ out,
     int x, y, z;
     decode_xyz(idx, L, x, y, z);
 
-    const double diag = m + 3.0 * r / a;
-    const double off = 1.0 / (2.0 * a);
+    const double diag = m + 3.0 * spatial_speed * r / a;
+    const double off = spatial_speed / (2.0 * a);
 
     c2 result[4];
     for (int k = 0; k < 4; ++k) result[k] = cscalar(diag, psi[idx * 4 + k]);
@@ -167,7 +168,8 @@ void apply_wilson_dirac_gpu(SpinorField& out,
 
     const int block = 128;
     const int grid = (N + block - 1) / block;
-    wilson_dirac_kernel<<<grid, block>>>(d_out, d_psi, d_U, L, params.m, params.r, params.a);
+    wilson_dirac_kernel<<<grid, block>>>(d_out, d_psi, d_U, L, params.m, params.r,
+                                         params.a, params.spatial_speed);
     check_cuda(cudaGetLastError(), "wilson_dirac_kernel launch");
     check_cuda(cudaDeviceSynchronize(), "wilson_dirac_kernel sync");
 

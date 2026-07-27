@@ -27,7 +27,7 @@ Three interpretive constraints govern the document. First, every §2 row whose p
 | FC-3 | scale-ratio covariance (only internal ratios are physical) | [AXIOM]-class (FTD-0304) | — (⚠ no falsification criterion in the constitution; recorded gap) |
 | FC-W | the adopted α-binding law: an external ℤ/2 twist realizing √(G\*(4G\*−1)); consequence: x₊ = 1/α becomes **[CONDITIONAL THEOREM given W]**, never bare [DERIVED]. Declared-but-conditional: full commitment requires W's carrier to force independent structural content ([OPEN], constitution §3.5; owner-pending) | [AXIOM-class — FTD-0315] | IMP-B1 (the single adopted bit) |
 
-**L2 — The four selected types** `[SELECTION]` (prices and falsifiers at their import-ledger lines): IMP-S1 D=3 `[SELECTION — declared]` · IMP-S2 the singlet · IMP-S3 the ℭ generator set · IMP-S4 A_μ = 𝒫_T J_μ.
+**L2 — The four selected types** `[SELECTION]` (prices and falsifiers at their import-ledger lines): IMP-S1 D=3 `[SELECTION — declared]` · IMP-S2 the singlet · IMP-S3 the ℭ generator set · IMP-S4 the gauge-connection carrier choice (global projected `A_μ=𝒫_TJ_μ` or the FTD-0417 independent local-link branch).
 
 **L3 — The three calibrations** `[IMPOSED — calibration]`: IMP-K1 a_phys ≡ ℓ_P (under the electron-primary gauge, [DERIVED ~0.19%] — FTD-0137/0385) · IMP-K2 t_phys = ℓ_P/(√3·c) = t_P/√3 · IMP-K3 K_B = m_e.
 

@@ -1,7 +1,7 @@
 # The Priced-Import Ledger — What FTD Must Borrow, Counted in a Common Currency
 
 **Tag:** [SYNTHESIS] (prices existing commitments at their canonical tags; introduces no theorem, promotes nothing) · **LEDGER id:** FTD-0371
-**Data:** `import_ledger.json` (machine-readable, the single source) · **Verifier:** `scripts/proofs/proof_import_ledger.py` (8/8 PASS) · **Date:** 2026-07-05 · **Rev:** v1.1 2026-07-12 (IMP-S4 minted)
+**Data:** `import_ledger.json` (machine-readable, the single source) · **Verifier:** `scripts/proofs/proof_import_ledger.py` (8/8 PASS) · **Date:** 2026-07-05 · **Rev:** v1.3 2026-07-26 (IMP-C5 quadratic-coat anchor; prior v1.2 2026-07-22, IMP-S4 carrier branches reconciled)
 **Serves:** the Number-One Goal's boundary face — *"rigorously mark and price which types the ontology sets for itself and which it must import"* (the 2026-07-05 wording of that face; the amended sentence carries it as "…either forced content or a rigorously marked and priced import") — and, since the 2026-07-12 amendment (FTD-0383), doubles as the **work queue of the goal's third face**: *drive every priced line to retirement, to a theorem-grade no-go, or to a sharper falsifier — never leaving a line merely booked* (program charter: `SCOPE_CONSUMPTION_PROGRAM.md`). The modulus/argument frontier (`FOUND_MODULUS_ARGUMENT_FRONTIER.md`, FTD-0336) states the boundary *qualitatively*; this ledger prices it *quantitatively*, with a falsifier on every line.
 
 ---
@@ -56,9 +56,9 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | IMP-S1 | spatial dimension **D = 3** | [SELECTION — declared] (FTD-0355) | a forcing proof (→ self-set); or an equally-consistent alternate D (confirms free choice). **✓ constitution reconciled 2026-07-05** (§1.4 + §3.2 now read [SELECTION — declared]; the RF-1 drift is closed — see §6) |
 | IMP-S2 | the **singlet** (J→ψ complexification for Bell/Tsirelson) | [SELECTION] | a native forced singlet; or a native S>2 on the engine (an FC-1 falsifier) |
 | IMP-S3 | the **ℭ generator-set** representativeness (N_calc) | [SELECTION] (FTD-0347 flag) | a canonically forced generating set retires the flag |
-| IMP-S4 | the **gauge-connection identification A_μ = 𝒫_T J_μ** (the transverse flux projection IS the U(1) connection the imported Wilson–Dirac fermion minimally couples to) | [SELECTION] (`SPEC_WILSON_DIRAC_FTD.md` §6; minted 2026-07-12 from the FTD-0380-flagged known gap) | an alternative flux-to-connection map with inequivalent vertex phenomenology at matched protocol; until tested, vertex-program results carry this selection as an explicit conditional |
+| IMP-S4 | the **gauge-connection carrier choice** for imported charged matter: global projected `A_μ=𝒫_TJ_μ` or an independently adopted local link `A_μ` with plaquette dynamics | [SELECTION] (`SPEC_WILSON_DIRAC_FTD.md` §6; FTD-0416 locality ceiling; FTD-0417 local branch; minted 2026-07-12, broadened 2026-07-22) | a forcing theorem uniquely derives the carrier from P1–P5 (retires the row), or matched projected-link versus independent-link protocols show inequivalent vertex phenomenology (falsifies at least one branch); every vertex result carries its branch conditional |
 
-### 3.3 Named results (ℂ) — total: **4** (1 proven-external, 3 open)
+### 3.3 Named results (ℂ) — total: **5** (2 proven-external, 3 open)
 
 | ref | imported result | status | tag | falsifier |
 |---|---|---|---|---|
@@ -66,6 +66,7 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | IMP-C2 | **CM class-number h=1** uniqueness | open beyond h=1 | [NUMERICAL FACT, h=1 only] | an h≥2 curve reproducing the identity; or a structural all-h proof |
 | IMP-C3 | **E1** (SC/FCC Watson-class independence) | open — **a case of multi-curve Chudnovsky** (strictly weaker than Rohrlich–Lang; priced FTD-0376, sharpened FTD-0377: per-constant floor CLOSED — {π, W} independent for each Watson constant individually via the disc −24 reduction; only the cross-disc joint independence is open; canonical marker Bertrand 1997) | [OPEN — exported P1] | a proof either way re-adjudicates FTD-0369 |
 | IMP-C4 | **E\*/E\*\*** (no admissible period has (4G*−1) in its square class; subsumes E2) | open — E2 leg **a case of the exponential period conjecture** (Fresán–Jossen 8.2.6; priced FTD-0376; sharpened FTD-0378: individual transcendence of H_σ(τ) CLOSED unconditionally for SC/BCC symbols via Siegel–Shidlovskii — only independence-from-{π,Γ(1/4)} remains, behind the (e,π) wall) | [OPEN] | FTD-0353 §8 shared falsifier (forced native output, odd (4t−1)-valuation → REFUTED) |
+| IMP-C5 | **the B-spline de Rham complex** (isogeometric compatible discretization: Buffa–Sangalli–Vázquez 2010, Buffa–Rivas–Sangalli–Vázquez 2011; FEEC framework: Arnold–Falk–Winther 2006; charge-conserving spline deposition: Villasenor–Buneman 1992 / Esirkepov 2001; coefficient-level assembly: GEMPIC 2017) — the quadratic-coat representation layer (FTD-0541–0551) is its `p=2` uniform-periodic instance, independently re-derived (FTD-0568) | proven (external) — **reconciliation anchor**: the coat's in-house identities keep their own proofs; the row prices the machinery's *provenance* (a selected standard framework), not a conditionality | [EXTERNAL — proven; anchors the FTD-0541/0550 [SELECTION] rows] | a coat identity with no counterpart in the cited complex, or a structural mismatch beyond relabeling in the space/degree correspondence (retracts the anchor; coat tags unaffected) |
 
 > **Period-conjecture frame (FTD-0375).** The transcendence content of IMP-C1 — and the general δ∉N that IMP-C3/C4 leave open — is restated period-conjecture-relative in [`MATH_PERIOD_IMPORT_FRONTIER.md`](../09_mathematical/number_theory/MATH_PERIOD_IMPORT_FRONTIER.md): IMP-C1's Chudnovsky input *is* the Grothendieck period conjecture proven for the single CM motive `h¹(E_lemn)` (trdeg = dim = 2); IMP-C3/C4 are exactly the open assumptions (E1/E2) above which δ∉N carries beyond Chudnovsky. That node **re-prices nothing here** — it imports nothing new, so this table is unchanged.
 
@@ -74,7 +75,7 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 | ref | imported anchor | tag | falsifier |
 |---|---|---|---|
 | IMP-K1 | `a_phys ≡ ℓ_P` (length) | [IMPOSED — calibration] | a substrate derivation of `a_phys` (Mechanism-γ **closed negative** — currently genuinely imported) |
-| IMP-K2 | `t_phys = ℓ_P/(√3·c)` (time) | [DERIVED from IMP-K1 + c_lat] | not an independent import: fixed by `a_phys` (IMP-K1) + the CFL Courant speed `c_lat = 1/√3` ([THEOREM]) + physical `c`. Corrected 2026-07-08 from `√3·ℓ_P/c` (factor-3 inconsistency with `c_lat=1/√3`); see `DERIV_DIMENSIONAL_GATE.md` |
+| IMP-K2 | `t_phys = ℓ_P/(√3·c)` (time) | [DERIVED-CONDITIONAL from IMP-K1 + selected c_lat] | not an independent dimensional import: fixed by `a_phys` (IMP-K1) + the selected transport value `c_lat = 1/√3` + physical `c`. The exact production-stencil CFL ceiling is `c_lat²≤3/4`, so CFL does not force this selection (FTD-0407). Corrected 2026-07-08 from `√3·ℓ_P/c`; see `DERIV_DIMENSIONAL_GATE.md` |
 | IMP-K3 | `K_B = m_e` (mass) | [IMPOSED — calibration] | disentangling the FTD-0130 role-conflation so the anchor is forced |
 
 > **Gauge note.** The three rows above price the **legacy Planck-primary** gauge (FTD-0041). Under the **default electron-primary** gauge (`FOUND_ELECTRON_PRIMARY_GAUGE.md`, FTD-0137 §4.5; adopted 2026-07-08), IMP-K1 (length) is also **derived** — `ℓ_P` follows from `{ℏ, c, m_e}` via the predicted `m_e/m_P = Kα¹¹` ladder — so the beyond-universal import surface collapses to the **single** anchor `m_e` (IMP-K3), and `G` becomes a 0.38% *output* rather than a hidden import. Under the default, IMP-K1 reads `[DERIVED ~0.19%]` and IMP-K2 stays derived; only IMP-K3 (`m_e`) is a genuine import. Same falsifiable spine either way (gauge-invariant, FTD-0137).
@@ -89,6 +90,13 @@ This is the single most important line in the ledger: FTD's one *adopted* struct
 
 > **Pointer (2026-07-10, no new line):** the vertex program's imposed coupling — g²_vertex ≡ 1/x₊ wired into Branch-B Wilson–Dirac matter (`../10_eft_program/scopes_and_specs/SCOPE_VERTEX_PROGRAM.md` §2) — is the **composition IMP-E1 ∘ IMP-E3**, already priced above; a separate line would double-count. Its δ-branch content is inherited from IMP-B1 (no new ramification act). Retirement path: an ARC-3 closure of `SPEC_ALPHA_READOUT_CONTRACT.md` moves the coupling to the self-set column. The Branch-A alternative (native fermion emergence, which would have made the vertex partially self-set) is CLOSED NEGATIVE at the protocols tested per FTD-0379/0380.
 > **Priced 2026-07-12 as IMP-S4 (§3.2):** the vertex's gauge-connection identification **A_μ = 𝒫_T J_μ** ([SELECTION], `SPEC_WILSON_DIRAC_FTD.md` §6) had been flagged 2026-07-10 (redteam finding) as a selected type with no priced row; it is now the ledger's 4th selected type with the drafted falsifier of record. The charter-§2 conditional-carry note is retired by the pricing — vertex-program results now cite IMP-S4 directly.
+>
+> **FTD-0417 reconciliation (2026-07-22):** the independent local-link
+> candidate is the mutually exclusive second value of the same connection-
+> carrier selection. IMP-S4 is broadened to cover both branches; no IMP-S5 is
+> minted because that would double-count one carrier decision. The local branch
+> adds a continuous link field and plaquette action, but does not add another
+> simultaneously consumed connection type.
 
 ## 4 · Declined — the bets (imports FTD refuses, at falsification risk)
 
@@ -103,7 +111,7 @@ Not every argument-half type is paid for. Two, FTD **declines** — and stakes t
 
 There is **no single headline number**, and building one would be the abuse §0 warns against. The honest score is the *shape* of the ledger, and it has two clean readings:
 
-**Reading 1 — the import surface is exactly the argument half.** Every debt above is an argument-half type of FTD-0336; the self-set column (§2) is the modulus half in full. The framework grounds the even/forced/tracial half of its mathematics and imports the odd/chosen/branch-selecting half — and of that half it **adopts exactly one bit** (FC-W), **declines two** structures (M, reversibility) at falsification risk, **calibrates three** dimensional scales, **leans on four** external results (one proven, three open), and **identifies its empirical physics** at [SMC]/[PARAMETRIC] tags. That distribution *is* the boundary.
+**Reading 1 — the import surface is exactly the argument half.** Every debt above is an argument-half type of FTD-0336; the self-set column (§2) is the modulus half in full. The framework grounds the even/forced/tracial half of its mathematics and imports the odd/chosen/branch-selecting half — and of that half it **adopts exactly one bit** (FC-W), **declines two** structures (M, reversibility) at falsification risk, **calibrates three** dimensional scales, **leans on five** external results (two proven, three open — one of the proven, IMP-C5, a reconciliation *anchor* rather than a load-bearing conditionality), and **identifies its empirical physics** at [SMC]/[PARAMETRIC] tags. That distribution *is* the boundary.
 
 **Reading 2 — the cost is stratified, and cheapest where the framework is strongest.** The import bill depends on how far into physics you go:
 
@@ -124,7 +132,7 @@ Building the ledger against the canonical sources surfaced live drift. These are
 
 ## 7 · Falsifiers, invariants, cross-references
 
-Every import row above carries its own falsifier (verifier C2 enforces non-empty falsifiers on all 15 imports + 2 declined items) — that is what makes the boundary a *deliverable* and not a disclaimer. The sharpest single falsifier of the whole α-sector import stack is the FC-W one: **a forward-derived substrate object realizing `√(G*(4G*−1))` with a forced ℤ/2** would convert IMP-B1 from an adopted bit into a derivation, retire the largest line in the ledger, and upgrade `x₊ = 1/α` toward [SELECTED/DERIVED]. It is, in the constitution's words, "the one refutation FTD would welcome."
+Every import row above carries its own falsifier (verifier C2 enforces non-empty falsifiers on all 16 imports + 2 declined items) — that is what makes the boundary a *deliverable* and not a disclaimer. The sharpest single falsifier of the whole α-sector import stack is the FC-W one: **a forward-derived substrate object realizing `√(G*(4G*−1))` with a forced ℤ/2** would convert IMP-B1 from an adopted bit into a derivation, retire the largest line in the ledger, and upgrade `x₊ = 1/α` toward [SELECTED/DERIVED]. It is, in the constitution's words, "the one refutation FTD would welcome."
 
 **Standing invariants:** x₊ = 1/α [SMC]; MC-T4.3 [FOUNDATIONAL OBSTRUCTION]; FC-W [AXIOM]; D=3 [SELECTION — declared]; no tag moves — this ledger prices existing commitments and introduces none.
 

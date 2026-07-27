@@ -95,8 +95,9 @@
 | [FOUND_BORN_RULE_NULL_CONE.md](FOUND_BORN_RULE_NULL_CONE.md) | foundational derivation | The Born rule P = \|ψ\|² as null-cone geometry from i² = −1. |
 | [FOUND_FOURCIER_ONTIC_TOOL.md](FOUND_FOURCIER_ONTIC_TOOL.md) | theoretical synthesis | The Fourcier curve as the generalized distinction-drawing instrument. |
 | [FOUND_LATTICE_PHYSICS_INTUITIONS.md](FOUND_LATTICE_PHYSICS_INTUITIONS.md) | living document | Physics phenomena paired with lattice definitions and recovery status (reference table). |
+| [FOUND_MATTER_AS_DYNAMICAL_PATTERN_v1.md](FOUND_MATTER_AS_DYNAMICAL_PATTERN_v1.md) | [FOUNDATIONAL SYNTHESIS — SELECTED RESEARCH ONTOLOGY] | Evidence-bounded matter ontology after FTD-0600–0605: a material object is a self-maintaining constituent/field pattern, not one voxel; relational distance binding leaves three exact orientation zero modes, sharpening the stability and infrared gates. |
 | [FOUND_INHERITED_ASSUMPTIONS_AUDIT.md](FOUND_INHERITED_ASSUMPTIONS_AUDIT.md) | [SYNTHESIS] methodology + status-map | The Inherited-Assumptions Audit: FTD as the realist reconstruction of physics from a discrete logical core; per-assumption rebuild status (7 rebuilt / 4 partial / 3 declined / constants=boundary / joint-Bell=floor) with anti-crankery discipline constraints. (FTD-0329) |
 
 ---
 
-36 active docs in this cluster (+ 0 archived).
+37 active docs in this cluster (+ 0 archived).

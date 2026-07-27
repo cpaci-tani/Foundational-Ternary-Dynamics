@@ -584,7 +584,7 @@ The KMS connection (Section 6) is [THEOREM] for the standard results (Gibbs stat
 | Document | What it provides | How this document uses it |
 |----------|-----------------|---------------------------|
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | The complete FTD Lagrangian | Starting point for Euclidean action $S_E$ |
-| [DERIV_VARIATIONAL_PROOF.md](../foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | $\delta S = 0$ reproduces all update rules | Ensures $S_E$ is the correct action for the simulation |
+| [DERIV_VARIATIONAL_PROOF.md](../foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | Scoped free-field/stationary-source variation; all-update claim retracted by FTD-0467/0565 | Supports the field-sector Euclidean action only; it does not make $S_E$ the generating action for genesis/evaporation or every production branch |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Lattice propagator, vertex, Ward identity | Recovered as functional derivatives of $Z$ (Section 4) |
 | [DERIV_HIGGS_FROM_MANIFESTATION.md](../standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md) | Phase transition at $K_B$, Higgs as order parameter | Phase transition in $Z(\beta)$ (Section 5.4) |
 | [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | KMS verification at $\beta = \pi$, modular flow program | KMS confirmation (Section 6.2), modular Hamiltonian (Section 6.3) |

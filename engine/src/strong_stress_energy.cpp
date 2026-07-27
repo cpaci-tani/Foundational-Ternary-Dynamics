@@ -14,12 +14,27 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include <utility>
 
 namespace ftd {
 namespace {
+
+[[noreturn]] void strong_validation_failure(const char* message) {
+#if defined(__EMSCRIPTEN__)
+    // ftd_core is intentionally compiled with -fno-exceptions for WASM.
+    // strict_validation is fail-fast semantics, so abort is the equivalent
+    // available contract on that target.
+    std::fputs(message, stderr);
+    std::fputc('\n', stderr);
+    std::abort();
+#else
+    throw std::runtime_error(message);
+#endif
+}
 
 struct StrongParticle {
     int idx = -1;
@@ -252,7 +267,7 @@ void surface_failure(StrongEnergyStepDiagnostics& d,
     else ++d.projection_failures;
     active = false;
     if (toggles.strict_validation) {
-        throw std::runtime_error(topology
+        strong_validation_failure(topology
             ? "strong_stress_energy topology changed during projected tick"
             : "strong_stress_energy could not reach the frozen energy surface");
     }
@@ -411,7 +426,7 @@ void complete_strong_energy_step(RenderBridge& rb) {
     if (!std::isfinite(d.residual) || std::abs(d.residual) > 1e-12) {
         ++d.projection_failures;
         if (rb.toggles.strict_validation)
-            throw std::runtime_error("strong_stress_energy projection residual exceeds 1e-12");
+            strong_validation_failure("strong_stress_energy projection residual exceeds 1e-12");
     }
     rb.strong_step_active_ = false;
 }

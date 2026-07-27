@@ -16,6 +16,26 @@ theorem observable_commutator_zero (A B : Observable) :
     commutator A B = 0 :=
   commutator_eq_zero_of_comm A B
 
+/-! ### Exactly how much of the postulate encoding this uses: none.
+
+    Stated once, in Lean rather than in prose, so the scope cannot drift.
+    The proof above goes through for an ARBITRARY index type — no lattice,
+    no ternary states, no Moore locality, no determinism. See the modeling-
+    bridge note at the top of `Postulates.lean`. -/
+
+/-- Real-valued functions on *any* type commute. This is the entire
+    mathematical content of Claim A + C. -/
+theorem commutator_zero_of_any_index (X : Type) (A B : X → ℝ) :
+    commutator A B = 0 :=
+  commutator_eq_zero_of_comm A B
+
+/-- The FTD-specific statement is a direct instance of the generic one, with
+    `X := Config`. Nothing about `Voxel`, `Fields`, `moore` or `Update` is
+    consumed. Cite accordingly. -/
+theorem observable_commutator_zero_is_generic_instance (A B : Observable) :
+    observable_commutator_zero A B = commutator_zero_of_any_index Config A B :=
+  rfl
+
 /-- Full generator coverage (pre-reg falsifier F-e): even the manifestation
     field `s` (Postulate 3, a function of `J`) commutes with the flux
     generators. -/

@@ -16,3 +16,9 @@ import FtdNoGo.Closure
 import FtdNoGo.Poisson
 import FtdNoGo.Independence
 import FtdNoGo.Main
+-- J-primary model: the formal substrate for the commutativity-derivation prereg
+-- (Claim A′/B′ as real theorems; honest UNDERDETERMINED verdict in the header).
+import FtdNoGo.FluxPrimary
+-- Build-time guard: fails if any citable theorem's axiom footprint drifts
+-- (custom axiom, `sorry`/`sorryAx`, or a `native_decide` compiler-trust axiom).
+import FtdNoGo.AxiomAudit

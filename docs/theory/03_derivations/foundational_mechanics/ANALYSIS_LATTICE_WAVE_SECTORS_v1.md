@@ -10,9 +10,9 @@
 
 Three statements, at their honest tags:
 
-1. **One dispersion curve organizes sound, light, and radio.** The flux field obeys a second-order wave equation `∂²J/∂t² = c²∇²J + sources` `[DERIVED]` with `c = C_SPEED = 1/√3` `[DERIVED]` (the CFL stability ceiling). Its dispersion `ω(k) = 2c·|sin(k/2)|` (per axis) is the single object behind all wave phenomena on the lattice: linear in the deep IR, flattening to a hard cutoff at the Brillouin-zone edge.
+1. **One dispersion curve organizes the free flux-wave sector.** The default engine implements a second-order finite-difference wave recurrence `[DERIVED]` with the selected coefficient `c = C_SPEED = 1/√3` `[SELECTION within the exact stability interval]`. For an axis mode its exact fully discrete dispersion is `theta(k)=2 asin[c sin(k/2)]`; in three dimensions it uses the 18-point symbol in §1. FTD-0407 proves that `1/√3` is not the production stencil's CFL ceiling.
 
-2. **Light and radio are the same thing** — both are excitations of the **flux wave sector**, differing only in wavenumber `k` `[DERIVED]` (Maxwell-exploit chain FTD-0113/0114/0115/0120; FC-2 makes this sector the carrier of the emergent Lorentzian metric). Because every laboratory frequency sits at `k/k_zone ≲ 10⁻²⁸`, FTD structurally predicts **no vacuum dispersion** at any observable scale: radio and light co-propagate at `c` to a precision (`~10⁻⁵⁷`) far beyond what astrophysical timing tests can probe `[DERIVED on the FTD side; the agreement with GRB/FRB null-dispersion bounds is an [OBSERVATION]]`.
+2. **Light and radio are assigned to the same free flux sector** — they differ only in wavenumber `[SELECTION + DERIVED within that selected carrier]`. Under the Planck-spacing calibration, the **direct tree-level free-flux** dispersion between laboratory bands is suppressed by about `10^-57`. This is not yet a complete prediction of physical vacuum propagation: common-cone matching to matter and radiative stability of lower-dimensional preferred-frame operators remain `[OPEN]` under FTD-0407.
 
 3. **FTD has light but no sound.** There is **no acoustic / phonon sector** on the lattice, and the reason is structural: acoustic phonons are the Goldstone modes of *spontaneously broken continuous translation symmetry*, and FTD's lattice **is** space — there is no continuum for it to be a pattern *within*, so there is no such symmetry to break `[SELECTION]` + `[BOUNDARY]`. Three independent corpus facts close the gap (no displacement degree of freedom in the voxel model; the Gauss constraint projects out the longitudinal flux; FTD-0272's first-order genesis admits no Goldstone). One door stays open: a **condensate compression mode** in the manifested phase `[OPEN]`.
 
@@ -30,28 +30,28 @@ The substrate carries one propagating wave: the flux `J`. From `render_bridge.cp
 
 a genuine **second-order** (d'Alembertian) wave equation, integrated by leapfrog over the 18-point isotropic Laplacian. Two structural facts fix its character:
 
-**The speed `c = 1/√3` is derived, not chosen.** It is the Courant–Friedrichs–Lewy stability ceiling for this equation (`engine/include/ftd/ontic/gauge_couplings.h`):
+**The speed `c = 1/√3` is selected inside the stable interval, not fixed by the production CFL ceiling.** The historical argument in `engine/include/ftd/ontic/gauge_couplings.h` used the unnormalised six-neighbor Laplacian:
 
 ```
 c²·(2D/h²) ≤ 2/dt²   (von Neumann)  ⇒  c² ≤ 1/D  ⇒  c = 1/√D = 1/√3   (D=3, h=dt=1)
 ```
 
-This is `[DERIVED]` — uniquely forced by {D = 3, cubic lattice, leapfrog}; it is the same constraint as `c` in FDTD electromagnetics. **Scope:** the *dimensionless* value `1/√3` (voxels/tick) is derived; its SI value `2.998×10⁸ m/s` is calibration-dependent (`a_phys ≡ ℓ_P`, `t_phys`), which is `[DECLARED]`, not derived (§4).
+The production FULL path instead uses the normalized 18-point symbol with exact maximum `M_max=16/3`, so centered explicit stability requires `(c dt/a)^2 <= 3/4`. The selected value `c^2=1/3` is conservative. Its SI value remains calibration-dependent (`a_phys ≡ ell_P`, `t_phys`) and is `[DECLARED]`, not derived (§4). See FTD-0407 for the exact vertex proof.
 
 **The dispersion is linear in the IR and flat at the zone edge.** Plane waves `J ∝ e^{i(kx − ωt)}` give, per axis,
 
 ```
-ω(k) = 2c·|sin(k/2)|         (spatial-symbol form, used by the engine light scenarios)
-ω(k) = 2·arcsin[c·sin(k/2)]  (the exact fully-discrete leapfrog form — same IR/UV behavior)
+omega_semi(k) = 2c·|sin(k/2)|       (spatial-only, axis mode)
+theta(k) = 2·arcsin[c·sin(k/2)]     (exact fully-discrete default update, axis mode)
 ```
 
 with the 3D engine using the 18-point isotropic symbol `M(k)` (validated to `1.33×10⁻¹⁵` against the closed form, FTD-0270, `[MEASURED]`). Three regimes follow:
 
 | Regime | `k` | Behavior | Physical meaning |
 |---|---|---|---|
-| **IR** | `k → 0` | `ω ≈ c·k`; group velocity `v_g = c·cos(k/2) → c`; phase velocity `→ c` | dispersionless light/radio — all frequencies travel at `c` |
-| **the bend** | `0 < k < π` | `ω` falls below `c·k`; `v_g = c·cos(k/2)` decreasing | where the PL-4/PL-5 deviations live (§3) |
-| **zone edge** | `k → π` | `v_g → 0`; `ω_max = 2c = 2/√3 ≈ 1.15` rad/tick (leapfrog: `2·arcsin(1/√3) ≈ 1.23`) | the UV cutoff: 2-voxel standing waves carry no energy (Nyquist) |
+| **IR** | small nonzero `k` | `theta ≈ c·k`; exact axis group velocity `v_g = c cos(k/2)/sqrt(1-c²sin²(k/2)) → c` | leading-speed free flux |
+| **the bend** | `0 < k < π` | phase and group speeds depart from the leading cone according to the exact arcsin pole | where the finite-spacing deviations live (§3) |
+| **zone edge** | `k → π` | `v_g → 0`; `theta_max = 2·arcsin(1/√3) ≈ 1.23` rad/tick | Nyquist standing mode |
 
 The IR linearity is exactly why the lattice reproduces a sharp, frequency-independent speed of light; the zone-edge flattening is the substrate's intrinsic ultraviolet cutoff. The linear IR exponent is itself a measured FTD result: `ω₁ ∝ L^−0.944` (`s ≈ 1`, cavity/EM-like) — FTD-0270, [`ANALYSIS_QUANTIZATION_LATTICE_MODES_v1.md`](ANALYSIS_QUANTIZATION_LATTICE_MODES_v1.md).
 
@@ -63,8 +63,13 @@ In FTD there is **no intrinsic distinction** between light and radio. Both are e
 
 - retarded lattice Green's function → static geometric Coulomb (FTD-0113, [`DERIV_RETARDED_GREEN_LATTICE.md`](DERIV_RETARDED_GREEN_LATTICE.md); Phase G, FTD-0004) `[DERIVED]`;
 - lattice Hodge duality / Bianchi identities (FTD-0114, [`DERIV_LATTICE_HODGE_DUALITY.md`](../electromagnetism/DERIV_LATTICE_HODGE_DUALITY.md)) `[DERIVED]`;
-- lattice Liénard–Wiechert for uniform motion, including a genuine **lattice Cherenkov pole** (FTD-0115, [`DERIV_LATTICE_LIENARD_WIECHERT.md`](../electromagnetism/DERIV_LATTICE_LIENARD_WIECHERT.md)) `[DERIVED]`;
-- Cherenkov power + sinusoidal Larmor (FTD-0120, [`DERIV_LATTICE_LW_EXTENSIONS.md`](../electromagnetism/DERIV_LATTICE_LW_EXTENSIONS.md)) `[DERIVED / PARTIAL]`;
+- corrected selected-drive production pole, positive wrapped-BZ speed floor, and integer-hop Floquet spectrum (FTD-0115/0558, [`DERIV_LATTICE_LIENARD_WIECHERT.md`](../electromagnetism/DERIV_LATTICE_LIENARD_WIECHERT.md)) `[DERIVED / THEOREM]`;
+- exact external-drive field work and the continuum resonance functional are derived by FTD-0559; physical Cherenkov/Larmor matter power remains open because native current normalization and reciprocal recoil are absent (FTD-0120, [`DERIV_LATTICE_LW_EXTENSIONS.md`](../electromagnetism/DERIV_LATTICE_LW_EXTENSIONS.md)) `[THEOREM — FIELD SIDE] / [OPEN — MATTER POWER]`;
+- every finite periodic one-site point hop has nonzero on-shell native forcing and no square-summable exactly co-moving linear dressing; the forcing falls as `T^-2`, while extended/nonlinear carriers remain open (FTD-0560) `[THEOREM / CLOSED NEGATIVE — POINT BRANCH]`;
+- finite rigid extension with nonzero net polarity retains a universal leading `T^-2` resonant term; neutral dipole, quadrupole, and higher first nonzero moments give `T^-3`, `T^-4`, and `T^-(m+2)` respectively, while full oblique cancellation and nonlinear carriers remain open (FTD-0561) `[THEOREM / CLOSED NEGATIVE — CHARGED RIGID-EXTENSION CURE]`;
+- every fixed nonzero finite rigid form factor, including neutral profiles, has a first homogeneous moment that leaves some regular full-surface slow-hop witness; only deforming/nonlinear, period-growing, defect/topological, or self-consistent carriers remain open (FTD-0562) `[THEOREM / CLOSED NEGATIVE — FIXED FINITE RIGID LINEAR BRANCH]`;
+- a finite neutral source has no true selected-face or restricted-native linear Gauss monopole, while a nonzero monopole requires net source polarity and therefore enters the rigid-source obstruction above; nonlinear/topological effective charge must exhibit a new Gauss source (FTD-0563) `[THEOREM — SCOPED GAUSS SECTORS / CLOSED NEGATIVE — FIXED FINITE RIGID LINEAR MONOPOLE CARRIER]`;
+- normalized-flux direction degree and affine Gauss flux are independent: topology can label a defect sector but cannot by itself set electric-charge magnitude; the open route requires a protected class plus a nonlinear common action (FTD-0564) `[THEOREM — SCOPED ORIENTATION/GAUSS INDEPENDENCE / CLOSED NEGATIVE — TOPOLOGY-ALONE MAGNITUDE]`;
 - the regime map across these (radiation / retardation / static) — [`DERIV_EM_REGIMES_UNIFIED.md`](../electromagnetism/DERIV_EM_REGIMES_UNIFIED.md).
 
 That this sector carries the relativistic structure is a framework commitment: **FC-2** declares the Lorentzian metric an *emergent IR property of the weakly-coupled flux wave dynamics only* (`[AXIOM]`-class declaration, FTD-0256; the two-field reading FTD-0257 makes the flux the primary wave pair). "Light = the flux wave sector" is the `[SELECTION]` that names this carrier.
@@ -76,7 +81,7 @@ That this sector carries the relativistic structure is a framework commitment: *
 | visible | `5×10¹⁴ Hz` | `5.4×10⁻²⁹` | `2.9×10⁻⁵⁷` | `8×10⁻¹¹⁴` |
 | FM radio | `1×10⁸ Hz` | `1.1×10⁻³⁵` | `1.2×10⁻⁷⁰` | `1.4×10⁻¹⁴⁰` |
 
-So FTD **structurally predicts no vacuum dispersion** between radio and light: the dispersive and anisotropic corrections (§3) at observable frequencies are suppressed by factors of `~10⁻⁵⁷` (PL-4) and `~10⁻¹¹⁴` (PL-5) `[DERIVED from the dispersion + calibration]`. This is consistent with — and far below — the strongest astrophysical null-dispersion bounds from gamma-ray-burst and fast-radio-burst arrival-time spreads `[OBSERVATION]`. The experimental differences between radio and light (antennas vs. eyes) are entirely matter-coupling differences, not substrate propagation differences.
+Thus the **direct tree-level free-flux** dispersive and anisotropic corrections at observable frequencies are suppressed by factors of `~10^-57` and `~10^-114` `[DERIVED from the free pole + calibration]`. That statement does not include loop-induced dimension-four coefficients or unequal limiting speeds in matter sectors. FTD-0407 makes those explicit recovery gates; until they close, “no observable vacuum dispersion” is not licensed as a whole-theory conclusion.
 
 ---
 
@@ -85,7 +90,7 @@ So FTD **structurally predicts no vacuum dispersion** between radio and light: t
 The bend between IR and zone edge is where FTD's two measured structural deviations live (both registered in [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](../../01_reference/SPEC_PREDICTION_LEDGER_DEVIATIONS.md), FTD-0258):
 
 - **PL-4 — moving-clock dilation has a calculable UV bend.** A moving flux wave-clock departs from exact `γ` by a residual `R ∝ L⁻¹·⁹⁸ ≈ L⁻²` (∝ `k²`) on the ⟨100⟩ axis at moderate `v` `[MEASURED, scoped]` (FTD-0252, [`ANALYSIS_DYNAMICAL_TIME_DILATION.md`](ANALYSIS_DYNAMICAL_TIME_DILATION.md)). At fixed `L` the clock over-dilates (bends below `γ`); ultra-relativistic diagonals are `[OBSERVATION/OPEN]`.
-- **PL-5 — native UV anisotropy dying as `k⁴`.** The substrate is anisotropic at UV and isotropizes in the IR with exponent `p = 4.0008 ± 0.0006` (`R² = 1.000000`), a dimension-`(D+4)=7` rotation-breaking operator, *strongly irrelevant* by Wilsonian counting `[MEASURED]`.
+- **PL-5 — native UV anisotropy dying as `k⁴`.** The spatial directional spread has exponent `p = 4.0008 ± 0.0006` (`R² = 1.000000`) `[MEASURED]`. In a 3+1-dimensional quadratic action it comes from a six-derivative, dimension-eight cubic operator. It does not constrain the earlier four-derivative, dimension-six boost-violating term, which is rotationally invariant and therefore cancels from the directional comparison (FTD-0407).
 
 Both are the same dispersion's fingerprints: the `cos(k/2)` curvature of `v_g` (PL-4, the `k²` bend) and the `O_h` (not rotational) symmetry of the 18-point operator (PL-5, the `k⁴` anisotropy). Under `a_phys ≡ ℓ_P` both are Planck-suppressed (§2 table); their *engine-native* versions are testable now, their physical versions are bounded by Lorentz-violation searches.
 
@@ -129,11 +134,11 @@ The only scalar propagating mode FTD does carry is the Higgs (an oscillation in 
 | Claim | Tag | Canonical source |
 |---|---|---|
 | Flux wave equation `∂²J/∂t² = c²∇²J + sources` | `[DERIVED]` | `render_bridge.cpp` |
-| `c = C_SPEED = 1/√3` (CFL ceiling); SI value calibration-dependent | `[DERIVED]` / SI `[DECLARED]` | `ontic/gauge_couplings.h` |
+| `c = C_SPEED = 1/√3`; stable but not the production CFL ceiling; SI value calibration-dependent | `[SELECTION]` / stability interval `[THEOREM]` / SI `[DECLARED]` | `ontic/gauge_couplings.h`; FTD-0407 |
 | Dispersion `ω(k)=2c|sin(k/2)|`; 18-pt isotropic symbol `M(k)` validated `1.3e-15` | `[DERIVED]` / `[MEASURED]` | FTD-0270 |
 | Light and radio = one flux wave sector (only `k` differs) | `[DERIVED]` | FTD-0113/0114/0115/0120 |
 | Lorentzian metric = emergent IR property of the flux wave sector | `[AXIOM]`-class declaration | FC-2 (FTD-0256) |
-| No vacuum dispersion at observable scales (`k/k_zone ≲ 10⁻²⁸`) | `[DERIVED]`; match to GRB/FRB bounds `[OBSERVATION]` | this doc §2 |
+| Direct tree-level free-flux dispersion at observable scales (`k/k_zone ≲ 10⁻²⁸`) | `[DERIVED + CALIBRATION]`; whole-theory inference `[OPEN]` | this doc §2; FTD-0407 |
 | PL-4 moving-clock UV bend (`∝ k²`, measured `L⁻²`) | `[MEASURED, scoped]` | FTD-0252 / PL-4 |
 | PL-5 UV anisotropy (`∝ k⁴`, `p=4.0008`) | `[MEASURED]` | FTD-0258 / PL-5 |
 | Frequency→Hz via `t_phys=√3ℓ_P/c`; zone edge ≈ Planck frequency | `[CALIBRATION]` | `dimensional_map.json` |

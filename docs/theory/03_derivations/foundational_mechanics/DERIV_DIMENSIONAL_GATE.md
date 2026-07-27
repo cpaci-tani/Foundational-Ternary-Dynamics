@@ -35,7 +35,7 @@ a **dimensionless native number `q̂`** times a **calibration monomial**. The ex
 |---|---|---|---|
 | **Length** | `λ = a_phys ≡ ℓ_P` | **DEFINED** (imported) | `THEOREM_A_PHYS_NO_GO` (FTD-0059): *no length is derivable from Axiom Zero* — proven, not merely untried. |
 | **Mass** | `μ = m_e/K_B = 1 MeV/c²` | **DEFINED** (imported) | `THEOREM_MU_NO_GO_FTD0096` (FTD-0096): *no mass is derivable*, including from the `K_GENESIS` thresholds. |
-| **Time** | `τ = t_phys` | **DERIVED** | fixed by `λ` + the dimensionless CFL Courant speed `c_lat = 1/√3` ([THEOREM]) + measured `c`. Not an independent import. |
+| **Time** | `τ = t_phys` | **DERIVED-CONDITIONAL** | fixed by `λ` + the **selected** raw transport speed `c_lat = 1/√3` + measured `c`. Not an independent dimensional import, but conditional on the selected clock/transport convention. |
 
 The intuitive picture: **length and mass are *defined* because the substrate provably cannot set any absolute scale (grade-0 closure); time is *derived* because once the length scale and the lattice's own dimensionless speed are fixed, the tick follows.** Two imports, one derivation.
 
@@ -45,7 +45,7 @@ The intuitive picture: **length and mass are *defined* because the substrate pro
 
 ## §3 — Deriving the time slot (and correcting its value)
 
-The CFL Courant number on the cubic lattice is `c_lat = 1/√3` — the dimensionless number of voxels a signal advances per tick, a [THEOREM] from the leapfrog wave equation (`C_SPEED = 0.57735…` in `engine/.../gauge_couplings.h`). Converting to SI, the physical speed of light is
+The engine selects `c_lat = 1/√3` as its dimensionless wave/particle transport speed (`C_SPEED = 0.57735…` in `engine/.../gauge_couplings.h`). It is not forced by CFL saturation. For the production 18-point stencil, the exact positive spatial symbol has maximum `M_max=16/3`, so centered-leapfrog stability requires `c_lat²≤3/4` at `dt=a=1`; the selected value `1/3` lies strictly inside that interval (FTD-0407). Conditional on the selection and on identifying its leading free-flux cone with physical light speed,
 
 $$c = c_{\text{lat}}\cdot\frac{a_{\text{phys}}}{t_{\text{phys}}} = \frac{1}{\sqrt3}\cdot\frac{\ell_P}{t_{\text{phys}}}
 \;\;\Longrightarrow\;\;
@@ -53,11 +53,11 @@ $$c = c_{\text{lat}}\cdot\frac{a_{\text{phys}}}{t_{\text{phys}}} = \frac{1}{\sqr
 
 where `t_P = ℓ_P/c = 5.391×10⁻⁴⁴ s` is the SI Planck time.
 
-**Three independent derivations all give `t_P/√3`:** (i) the Courant-number relation above; (ii) a signal at the CFL max advances `1/√3` voxel per tick, so crossing one voxel takes `√3` ticks, i.e. `t_phys = t_P/√3`; (iii) von-Neumann stability `c·dt/dx ≤ 1/√D` at the boundary gives `dt = dx/(√3\,c)`.
+This is one calibration consequence, not three independent derivations: substituting the selected `c_lat=1/√3` into `c=c_lat a_phys/t_phys` gives `t_P/√3`. Neither the Moore dependency hull nor the exact production-stencil stability ceiling singles out that value.
 
 ### §3.1 — Correction of record (2026-07-08)
 
-Prior to this note the corpus quoted `t_phys = √3·ℓ_P/c = √3·t_P ≈ 9.34×10⁻⁴⁴ s` — the reciprocal factor. Substituting it back gives a physical light speed of `c/3`, contradicting FTD's own headline result `c = c_lat = 1/√3`. The `√3·t_P` value corresponds to a *different, unstated* convention (tick ≡ body-diagonal light-crossing time, under which the per-axis speed is `c/√3`, not `c_lat = 1/√3`); it is inconsistent with how `C_SPEED = 1/√3` is used as the Courant number in the engine leapfrog. Resolution adopted: **match the engine and the Courant derivation-of-record**, giving `t_phys = t_P/√3`.
+Prior to this note the corpus quoted `t_phys = √3·ℓ_P/c = √3·t_P ≈ 9.34×10⁻⁴⁴ s` — the reciprocal factor. Substituting it back gives a physical light speed of `c/3`, contradicting the selected engine mapping `c_lat=1/√3`. The `√3·t_P` value corresponds to a *different, unstated* convention. Resolution adopted: **match the selected engine transport value**, giving `t_phys = t_P/√3`. FTD-0407 corrects the former claim that this selection is the exact CFL boundary.
 
 Corrected in: `engine/web/js/constants.js` (`FTD_TICK_S`), `units.js`, `dimensional_map.json` (+ rendered map), `SPEC_FTD.md`, the constitution `SPEC_FTD_FRAMEWORK_V1.md`, `LEDGER.md` (FTD-0041), `SPEC_IMPORT_LEDGER.md` (IMP-K2), `CLAUDE.md`, `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`, and the active secondary specs. **Historical/archived/changelog records (e.g. `CHANGELOG_REFRAME.md`, clock-hypothesis audits, superseded pre-registrations) are left intact as provenance** — they correctly record what was believed at their date. **No dimensionless prediction changes** (the falsifiable spine is gauge-invariant); only absolute tick↔second conversions, and any tick-count derived from them (e.g. the Class-B muon-lifetime tick count, `τ_μ/t_phys`, triples).
 

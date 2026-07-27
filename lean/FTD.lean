@@ -27,10 +27,12 @@ import FTD.Constants
 import FTD.Algebra
 import FTD.NumberTheory
 import FTD.MasterQuadratic
+import FTD.MasterQuadraticProof
 import FTD.Precision
 import FTD.GaussianIntegers
 import FTD.EllipticCurve
 import FTD.GammaFoundation
+import FTD.GammaProof
 import FTD.FineStructure
 import FTD.LFunction
 import FTD.SelfDuality
@@ -43,6 +45,10 @@ import FTD.Emergence
 -- Keeping the import for backward compatibility:
 import FTD.Axioms
 
+-- Build-time guard: fails if a swept theorem regresses to a native_decide
+-- compiler-trust axiom, or if a `sorry` enters the pinned legacy theorems.
+import FTD.AxiomAudit
+
 /-! ## Verification Report
 
   Run `lake build FTD` to compile this legacy tree.
@@ -50,17 +56,19 @@ import FTD.Axioms
 
   ### Theorem Count
 
-  **Tier 1 (Pure Algebra, native_decide/omega):**
+  **Tier 1 (Pure Algebra, decide/omega):**
   - Constants.lean:      11 theorems
   - Algebra.lean:         7 theorems
   - NumberTheory.lean:   ~50 theorems
-  - MasterQuadratic.lean: 1 #eval (5 numerical checks)
+  - MasterQuadratic.lean: 1 #eval (Float illustration only — NOT checked)
+  - MasterQuadraticProof.lean: real ℝ theorems (Vieta, harmonic-mean=2) [Mathlib]
   - Precision.lean:      13 theorems + 1 #eval
 
   **Tier 2 (Integer-level, no Mathlib):**
   - GaussianIntegers.lean:       12 theorems
   - EllipticCurve.lean:          24 theorems (incl. O_h stabilizer)
-  - GammaFoundation.lean:        1 #eval (6 numerical checks)
+  - GammaFoundation.lean:        1 #eval (Float illustration only — NOT checked)
+  - GammaProof.lean:             real ℝ theorems (reflection, pi-free, triad) [Mathlib]
   - DimensionalUniqueness.lean:  12 theorems + 1 #eval (D=3 from |Aut|^2)
   - Phi3EFT.lean:                5 theorems + 1 #eval (exact cubic EFT)
   - OneLoopAlpha.lean:           3 theorems + 1 #eval (9.6 ppb correction)
@@ -72,11 +80,23 @@ import FTD.Axioms
 
   **Total: ~133 checked Lean declarations + 23 custom axioms + 6 #eval blocks**
 
-  ### Sorry Count
+  ### Sorry / Axiom Count
   - Tier 1-2: 0 sorry (all proofs complete)
-  - Tier 3: all axioms are explicitly labeled with citations
+  - Tier 1-2: 0 custom axioms as of 2026-07-24. Previously every one of the
+    141 `native_decide` proofs carried a per-theorem compiler-trust axiom
+    (`…._native.native_decide.ax_1_1`); the audit converted them all to
+    `decide`, so these theorems are now kernel-checked and depend on nothing
+    beyond `[propext, Quot.sound]` (most on no axioms at all).
+  - Tier 3: all axioms are explicitly labeled with citations. Note that every
+    axiom in `Axioms.lean` / `LFunction.lean` has body `True` and asserts
+    nothing — see the disclosure header in `Axioms.lean`.
 
-  ### Numerical Verifications (#eval)
+  ### Numerical "Verifications" (#eval) — NOT machine-checked
+
+  The blocks below print `PASS`/`FAIL` strings during compilation. They are
+  `#eval` output, not propositions: a `FAIL` still builds green, and the
+  arithmetic runs in 64-bit `Float` with no error control. Cite them as
+  numerical illustration, never as verification.
   - Master quadratic roots: x+ = 137.036, x- = 3.024
   - Sum = Product: PASS
   - Harmonic mean = 2: PASS

@@ -22,10 +22,10 @@ So the honest statement is **not** "the engine sees what CERN sees, only smaller
 | Anchor | Formula | Value | Tag |
 |---|---|---|---|
 | a_phys | 1 voxel ≡ ℓ_P | 1.616255×10⁻³⁵ m | `[CALIBRATION]` |
-| t_phys | ℓ_P/(√3·c) (CFL, c_lat=1/√3) | 3.113×10⁻⁴⁴ s | `[CALIBRATION]` |
+| t_phys | ℓ_P/(√3·c) (edge gauge, selected c_lat=1/√3) | 3.113×10⁻⁴⁴ s | `[CALIBRATION]` |
 | mass unit | K_B = m_e | 1 MeV/c² per K_B | `[IMPOSED]` |
 
-> **Conversion note (load-bearing).** The energy-scale predictions in §1–§3 route through `E_P = ℏc/ℓ_P` (= `M_PLANCK` = 1.220890×10¹⁹ GeV, cross-checked two independent ways to 1.2×10⁻⁷) and the mass-unit `K_B` — **both independent of the tick↔second convention**. So the dimensionless map `k = E/E_P` is unambiguous regardless of the `√3`/`t_phys` factor. (Note the naive grid speed `a_phys/t_phys = c/√3` does *not* reproduce `c` — a known subtlety of the canonical time calibration, FTD-0041 / `SPEC_DIMENSIONAL_MAP.md` §4; the §1–§3 predictions are immune precisely because they route through `E_P`, not `t_phys`.) Absolute *time* conversions (Hz, seconds) use the canonical `t_phys` and inherit its convention.
+> **Conversion note (load-bearing).** The energy-scale predictions in §1–§3 route through `E_P = ℏc/ℓ_P` (= `M_PLANCK` = 1.220890×10¹⁹ GeV, cross-checked two independent ways to 1.2×10⁻⁷) and the mass-unit `K_B`. With the current edge-gauge calibration, `a_phys/t_phys = √3 c` and the selected lattice wave speed gives `c_lat a_phys/t_phys = (1/√3)(√3c)=c`. The map `q = E/E_P` is the leading low-q relation; finite-q energy uses the exact arcsin pole below.
 
 ### What the engine CAN vs CANNOT detect
 
@@ -33,7 +33,7 @@ So the honest statement is **not** "the engine sees what CERN sees, only smaller
 |---|---|---|
 | Dimensionless ratios (mass ratios, couplings, mixing angles) | `[various]` | A CERN collision's dynamics (≈10¹⁵ voxels — infeasible) |
 | The one wave-sector dispersion + UV cutoff | `[MEASURED]` (FTD-0299) | CERN-scale resolution at feasible L |
-| UV-suppressed Lorentz-violation structure (k⁴ anisotropy, no linear term) | `[MEASURED]` (PL-5) | Absolute dimensional scales without the calibration register |
+| Direct free-flux Lorentz-violation structure (`q²` boost term, `q⁴` directional spread) | `[DERIVED/MEASURED, sector-scoped]` (FTD-0407/PL-5) | Interacting/common-cone Lorentz recovery (open) |
 | The emergent cluster mass/energy ladder (in MeV via K_B) | `[SMC]` (FTD-0110/0261) | Specific SM particle masses as *derivations* (IDENT-NULL; `[PARAMETRIC]`/`[SELECTION]`) |
 | Structural nulls (no monopole / SUSY / extra dimensions) | `[THEOREM]` (PL-6) | The Born rule (PL-1 is Rice), lab Bell S>2, α (MC-T4.3 obstruction) |
 
@@ -43,31 +43,61 @@ So the honest statement is **not** "the engine sees what CERN sees, only smaller
 
 ---
 
-## §1 · Dispersion → Lorentz violation (lab-facing; FTD-0299 / PL-5)
+## §1 · Free-flux dispersion → Lorentz violation (FTD-0299 / FTD-0407 / PL-5)
 
-The substrate carries **one** wave sector — light and radio are the same flux wave, differing only in `k` — with dispersion, exact to the engine's own 18-point stencil eigenvalue (FTD-0299 `[LIGHT-CONFIRMED]`):
-
-```
-ω(k) = 2c·|sin(k/2)|,   c = 1/√3,   zone-edge cutoff ω_max = 2/√3 (v_g → 0 at k = π)
-```
-
-The isotropic continuum expansion (`AUDIT_LORENTZ_ANISOTROPY.md` §2.4) is `ω² = c²k² − (c²/12)k⁴ + O(k⁶)`, so the group velocity is `v_g/c = cos(k/2) ≈ 1 − k²/8`. A photon of energy `E` maps to `k = E/E_P` directly from `a_phys = ℓ_P` and the zone-scale quantum `E_P = ℏc/ℓ_P` (independent of the tick convention — see the §0 note), giving the **energy-dependent light speed**:
+FTD assigns light and radio to the same free flux-wave carrier. For an axis mode, the default engine's **fully discrete** pole is:
 
 ```
-Δv/c ≈ (E/E_P)² / 8        (isotropic, dimension-6)
-linear (dim-5) coefficient = 0   ←  the structural prediction: FTD FORBIDS linear Lorentz violation
-first rotation-breaking:  δ(k) ≈ 6.95×10⁻⁴ · (E/E_P)⁴   (dimension-7, p = 4.0008 ± 0.0006)
+theta(q) = 2 asin[c_lat sin(q/2)],   c_lat = 1/√3,
+theta_max = 2 asin(1/√3),   v_g → 0 at q = π
 ```
 
-| Photon E | k = E/E_P | Δv/c (dim-6) | δ_aniso (dim-7) | ToF delay over ~13 Gly |
+FTD-0407 combines the temporal and spatial symbols and obtains `theta²=q²/3-q⁴/54-q⁶/4860+O(q⁸)` on an axis. Hence
+`v_g/c = cos(q/2)/sqrt(1-c_lat² sin²(q/2)) = 1-q²/12+O(q⁴)`.
+At leading order `q = E/E_P` under the calibration above, giving the direct free-pole energy dependence:
+
+```
+Delta v/c ≈ (E/E_P)² / 12       (isotropic boost violation, dimension 6)
+direct free-pole dim-5 coefficient = 0  (tree-level and sector-scoped)
+first cubic rotation breaking: delta(q) ≈ 6.95×10^-4 (E/E_P)^4
+                                      (dimension 8, p = 4.0008 ± 0.0006)
+```
+
+| Photon E | q = E/E_P | Δv/c (dim-6) | δ_aniso (dim-8) | ToF delay over ~13 Gly |
 |---|---|---|---|---|
-| 1 GeV | 8.19×10⁻²⁰ | 8.39×10⁻⁴⁰ | 3.13×10⁻⁸⁰ | 3.4×10⁻²² s |
-| 10 GeV (GRB) | 8.19×10⁻¹⁹ | 8.39×10⁻³⁸ | 3.13×10⁻⁷⁶ | 3.4×10⁻²⁰ s |
-| 1 TeV | 8.19×10⁻¹⁷ | 8.39×10⁻³⁴ | 3.13×10⁻⁶⁸ | 3.4×10⁻¹⁶ s |
-| 13.6 TeV (LHC) | 1.11×10⁻¹⁵ | 1.55×10⁻³¹ | 1.07×10⁻⁶³ | 6.4×10⁻¹⁴ s |
-| E_Planck | 1.0 | 0.125 | 6.95×10⁻⁴ | — |
+| 1 GeV | 8.19×10⁻²⁰ | 5.59×10⁻⁴⁰ | 3.13×10⁻⁸⁰ | 2.29×10⁻²² s |
+| 10 GeV (GRB) | 8.19×10⁻¹⁹ | 5.59×10⁻³⁸ | 3.13×10⁻⁷⁶ | 2.29×10⁻²⁰ s |
+| 1 TeV | 8.19×10⁻¹⁷ | 5.59×10⁻³⁴ | 3.13×10⁻⁶⁸ | 2.29×10⁻¹⁶ s |
+| 13.6 TeV (LHC) | 1.11×10⁻¹⁵ | 1.03×10⁻³¹ | 1.07×10⁻⁶³ | 4.24×10⁻¹⁴ s |
+| E_Planck | 1.0 | 0.0833 (leading expansion only) | 6.95×10⁻⁴ | — |
 
-**The prediction** (cross-ref FP-3): continued **null results** in all dimension-5 and dimension-6 photon-sector Lorentz-violation searches (GRB time-of-flight, vacuum birefringence). A 10 GeV GRB photon's arrival delay is ~10⁻²⁰ s against timing resolutions of ~ms — unobservable by ~17 orders of magnitude. The *content* is the structure, not the (tiny) numbers — and the two nulls have **different origins**: the dimension-5 (linear) term is **structurally absent** (coefficient exactly 0 — FTD forbids it), while the dimension-6 isotropic term **exists** (coefficient 1/8) but is **Planck-suppressed** to ~10⁻⁴⁰ at lab energies; rotation-breaking is deferred to quartic (dim-7) order. **Falsifier:** a confirmed detection of *linear* (or quadratic-Planck) photon-sector LV contradicts the FTD wave sector (which forbids anything stronger than quartic anisotropy); engine-side, the k⁴ law reversing or plateauing at larger L kills PL-5 (see EP-3, already verified to L=768). Tag: dispersion `[MEASURED]` (FTD-0299); anisotropy PL-5 `[MEASURED]` (the closed-form continuum expansion and k⁴ law it rests on are exact stencil-eigenvalue algebra); the lab-facing null `[PREDICTION]` (FP-3).
+**Scoped prediction:** if physical photons are exactly the uncoupled production flux mode and the Planck-spacing calibration holds, their direct tree-level time-of-flight correction is quadratic with coefficient `1/12`, while cubic directional spread starts at fourth order in `E/E_P`. The 10 GeV direct delay is about `2.3×10^-20 s`. This is **not yet a whole-theory null prediction**.
+
+FTD-0411/0413 define a separate, default-off selected free flux/matter branch
+whose q2 speed correction is cancelled through q4 in the pole. FTD-0414 gives
+its leading all-direction/all-sector spread as
+
+```
+Delta v_max/c_s = (11/540) (E/E_P)^4 + O((E/E_P)^6)
+```
+
+under the same `a=ell_P` calibration. The leading term is `3.1×10^-62` at
+13.6 TeV, `9.2×10^-55` at 1 PeV, and `9.2×10^-35` at `10^20 eV`. This is a
+conditional free-tree estimate, not a replacement for the default flux pole
+and not a protected phenomenological pass. Physical photons are not yet
+identified with the selected surrogate, manifested matter is not the Wilson
+spinor, and no interacting operator-mixing calculation exists. FTD-0407 shows
+that CPT-even dimension-four preferred-frame operators are symmetry-allowed.
+Linear absence and q4 suppression are therefore sector-scoped tree facts, not
+radiatively stable whole-theory results. LR-2 through LR-5 must close before
+comparison with photon-sector SME bounds can be claimed as a protected FTD
+prediction.
+
+FTD-0415 makes the last sentence exact at the symmetry level: independent
+dimension-four gauge, matter, and scalar time-space kinetic ratios are allowed,
+and the native vector sector admits a cubic-only marginal gradient invariant.
+The missing quantity is no longer an operator inventory; it is the generated
+coefficient/mixing matrix of a frozen interacting FTD action.
 
 ---
 

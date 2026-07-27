@@ -1,8 +1,17 @@
 /-
   FTD.MasterQuadratic — The Master Quadratic and its Properties
   ==============================================================
-  Numerical verification of the master quadratic x² - 16G*²x + 16G*³ = 0.
-  Pure algebra theorems + Float computation for root values.
+  Numerical illustration of the master quadratic x² - 16G*²x + 16G*³ = 0
+  via Float computation of the root values.
+
+  ⚠ NUMERIC ILLUSTRATION, NOT MACHINE-CHECKED (labelled 2026-07-24). The
+  `#eval` block below runs in 64-bit `Float` and prints PASS/FAIL; a FAIL
+  would still build green, so this is NOT verification. The value-independent
+  content — the discriminant factorisation, both Vieta relations, and the
+  harmonic-mean = 2 identity — is proven as genuine ℝ theorems in
+  `FTD/MasterQuadraticProof.lean`. The numeric root values (x₊ = 137.036…,
+  x₋ = 3.024…) are the part that CANNOT be machine-checked here: Mathlib has no
+  closed form for Γ(1/4), so G*'s decimal value is unavailable to the kernel.
 
   Reference: PROOF_ALPHA_FROM_SELF_DUALITY.md, PAPER_GSTAR_BRIDGE_CONSTANT.tex
 -/

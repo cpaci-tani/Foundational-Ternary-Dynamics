@@ -19,12 +19,24 @@
   SelfDuality.lean. This file is therefore CITATION BOOKKEEPING wearing
   Lean syntax, not machine-checked formalization. Do NOT cite it as
   Lean verification of the listed results. The genuinely rigorous,
-  axiom-clean machine-checked artifacts in this repository are
+  machine-checked artifacts in this repository are
   lean/Standalone.lean (namespace FtdStandalone; compiles on bare
   Lean 4, #print axioms = [propext, Quot.sound]) and the
-  lean/FtdNoGo/ Mathlib rendering (core theorems [propext] only).
+  lean/FtdNoGo/ Mathlib rendering.
   (Pathname corrected 2026-07-01 — an earlier version of this note
   cited a non-existent "FtdNoGo/Standalone.lean".)
+
+  FOOTPRINT CORRECTION (2026-07-24, Lean-validation audit): this note
+  previously said the FtdNoGo/ core theorems depend on "[propext] only".
+  Measured, they depend on [propext, Classical.choice, Quot.sound] —
+  Lean's three standard axioms, sound and assumed throughout Mathlib,
+  but not the narrower set claimed. Only the two ring-generic lemmas
+  (commutator_eq_zero_of_comm, noncomm_of_commutator_ne_zero) are
+  [propext]-only; anything mentioning R picks up the other two from
+  Mathlib's construction of the reals. The footprints are now pinned
+  at build time by lean/FtdNoGo/AxiomAudit.lean, so this class of drift
+  fails the build rather than living in a comment.
+
   The mathematical claims themselves stand or fall on their prose
   proofs and cited literature, unaffected by this note.
 

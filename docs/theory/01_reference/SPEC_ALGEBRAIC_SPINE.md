@@ -340,59 +340,49 @@ configurations) — proof + verification:
 the 7+2 count convention (S0) is NOT changed by this retag — whether the all-L
 theorem moves Theorem 7 into the theorem-grade bucket is an owner decision
 pending, since the result is conditional on the stencil-consistency
-[SELECTION]; until then Theorem 7 stays counted as honestly-tiered. The L = 2 case is proven by explicit
-construction. `scripts/proofs/proof_phase_j_general_L.py`
-shows L = 3 charge-neutral configurations are **also ultralocal to machine
-precision** (action spread 8.9e-16), because the matched-stencil Laplacian
-λ(k) is non-degenerate on every nonzero k at L = 3. At L ≥ 4 the Laplacian
-acquires zero modes (e.g. k = (0,0,π) at L = 4) that lie in the Gauss-excluded
-kernel; the naive scan then shows placement-dependent S_E (≈3–28% spread), but
-this is plausibly a setup/masking artifact, not a structural failure — so
-L ≥ 4 is **ambiguous**, neither confirmed nor cleanly disconfirmed. Honest
-reading: ultralocality is PROVEN at L = 2, holds numerically at L = 3, and is
-OPEN at L ≥ 4. Spine count is unchanged at seven theorem-grade + two
-honestly-tiered — Theorem 7 sits in the tiered bucket precisely because
-of this L ≥ 4 openness (count convention: see the Subsidiary note
-above §0).
+[SELECTION]; until then Theorem 7 stays counted as honestly-tiered.
 
-**Statement (L = 2, [THEOREM]).** The classical FTD partition function
-on a 2³ lattice has Euclidean action S_E that depends on the state
-field s ∈ {−1, 0, +1}^{8} only through Σ_i s_i² (the count of
-manifested sites). The action is invariant under arbitrary spatial
-permutations of charge placement at fixed charge count.
+**Statement (general L, conditional [THEOREM]).** Let `D` be a
+real-coefficient translation-invariant first-difference stencil used in both
+the divergence constraint and the kinetic norm. For every
+`s ∈ S_phys(D)` and every `L ≥ 2`, minimizing over fluxes satisfying the
+exact matched constraint gives
 
-**Statement (general L, [NUMERICAL EVIDENCE / OPEN]).** With the matched
-centered first-derivative stencil, charge-neutral configurations at fixed
-Σ_i s_i² remain **ultralocal at L = 3** (action spread ~9e-16, machine
-precision). At L ≥ 4 the scan shows placement-dependent S_E (≈3–28% spread),
-but those configurations have support on Gauss-excluded zero modes of λ(k),
-so the result is **ambiguous** — it may reflect a setup issue rather than a
-structural failure of ultralocality. See
-`scripts/proofs/proof_phase_j_general_L.py` (Test 2 + the `main()` note) for
-the L ∈ {3, 4, 6, 8} scan. The earlier "DISCONFIRMED at L ≥ 3" claim is
-**retracted** (L = 3 is ultralocal).
+$$
+\min_{D\cdot J=s}\frac{1}{L^3}\sum_k |D(k)|^2 |J(k)|^2
+= \frac{1}{L^3}\sum_k |\hat s(k)|^2
+= \sum_x s(x)^2.
+$$
 
-**Origin of the L=2 phenomenon.** On a 2³ lattice with centered
-first-derivative ∂_i (eigenvalue i·sin(k_i)), the only available
-momenta are k_i ∈ {0, π}, giving sin(k_i) = 0 for all non-zero modes.
-The kinetic term Σ |∇J|² is therefore identically zero for every
-configuration — trivially ultralocal. The continuum Parseval identity
-Σ |∇J|² = Σ s² holds cleanly at L = 2 (all nonzero modes have sin(k_i) = 0)
-**and also at L = 3** (λ(k) non-degenerate on every nonzero k). It becomes
-ambiguous only at L ≥ 4, where Gauss-excluded zero modes of λ(k) require
-special treatment (L = 3 is ultralocal).
+At each Fourier mode outside `Ker(D)`, this is the minimum-norm solution of
+one linear constraint; on `Ker(D)`, Gauss realizability requires
+`\hat s(k)=0`. This is the all-`L` content. The forward stencil is nonvacuous
+at every `L`; the centered stencil has the parity-kernel restrictions stated
+above and is vacuous at `L=2`.
 
-**Proof (L = 2 only).** Explicit construction of the L=2 partition
-function in `docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`.
+**Historical-engine scope.** The engine's former mismatched divergence and
+kinetic stencils do not satisfy the theorem's hypothesis. Placement-dependent
+results obtained by feeding constraint-unsolvable configurations to that
+mismatched setup are not counterexamples to the matched-stencil theorem and
+are not evidence for an `L ≥ 4` failure.
 
-**LEDGER.** FTD-0005 (Phase J partition-function ultralocality at L=2)
-tag UNAFFECTED — the LEDGER row never claimed general-L ultralocality,
-so the L=2-only scope of the spine §7 entry is consistent with the
-canonical LEDGER scope. The methodological clarification is recorded as a
-`[METHODOLOGICAL CLARIFICATION]` LEDGER row; no claim promotion or demotion.
+**Proof.** Fourier-mode proof and zero-mode classification in
+`docs/theory/09_mathematical/ANALYSIS_PHASE_J_ZERO_MODES_v1.md`; executable
+verification in `scripts/proofs/proof_phase_j_zero_modes.py` (44/44). The
+explicit `L=2` construction in
+`docs/theory/10_eft_program/derivations/DERIV_PARTITION_FUNCTION_L2.md` is a
+historical special-case computation. FTD-0350 Test 7 recovers its numerical
+identity on the matched forward stencil for all 1107 neutral configurations;
+the old document's unstated stencil/domain interpretation is superseded by
+that analysis.
 
-**Dependencies:** None beyond the FTD axioms (5 postulates per
-SPEC_FTD.md).
+**LEDGER.** FTD-0005 preserves the historical `L=2` result. FTD-0350 carries
+the all-`L`, matched-stencil, Gauss-realizable scope correction. No claim is
+made for the historical mismatched engine pairing.
+
+**Dependencies:** the declared matched-stencil [SELECTION], the exact
+Gauss-constraint limit, translation invariance, and restriction to
+`S_phys(D)`.
 
 **Consequence (NOT promoted to theorem in this document).**
 Ultralocality of the classical action at L=2 means classical
@@ -409,10 +399,10 @@ extension (Mechanism B per FTD-0031) was attempted as the remaining
 first-principles route for g_c and closed NEGATIVE (circular in the
 boundary of the projection). g_c remains [PARAMETRIC].
 
-**What it does NOT claim.** That the L=2 ultralocality has any
-particular physical content beyond its information structure at L=2.
-The proven scope is L = 2; L = 3 holds numerically; L ≥ 4 is OPEN/ambiguous
-(not "DISCONFIRMED").
+**What it does NOT claim.** It does not establish ultralocality for the
+historical mismatched engine stencil, remove the centered-stencil parity
+kernel, or make constraint-unsolvable configurations physical. It is an exact
+identity on the matched-stencil Gauss-realizable domain.
 
 ---
 

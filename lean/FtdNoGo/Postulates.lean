@@ -10,6 +10,33 @@
   (pre-reg §3). Everything proven downstream ("the observable algebra is
   commutative") holds *of this model*. A green `lake build` certifies the
   mathematics, not the physical faithfulness of the encoding.
+
+  ── AND, SHARPER (audit finding, 2026-07-24) ─────────────────────────────
+  The encoding is not merely unproven-faithful; it is **not consumed by any
+  proof in this development**. `observable_commutator_zero` and every
+  carrier/closure theorem downstream reduce to `Pi.commRing` on `Config → ℝ`,
+  which holds for an ARBITRARY index type. `ObservableAlgebra.lean` now
+  records this explicitly as `commutator_zero_of_any_index`, of which the
+  FTD-specific statement is a direct instance. Consequences a reader must
+  hold onto:
+
+    * No theorem here distinguishes FTD's lattice from any other
+      configuration space. Replacing `moore` with the empty or the total
+      neighbourhood changes nothing.
+    * `IsLocal` (below) is stated for documentation and is deliberately
+      never used as a hypothesis anywhere.
+    * Therefore this development must NOT be cited as machine-checking
+      anything that "quantifies over the five postulates". It quantifies
+      over an abstract configuration space. The physics content lives in the
+      prose argument that `Config → ℝ` is the right carrier — which is
+      exactly the [DEFINITION] bridge, and exactly what
+      PREREG_COMMUTATIVITY_DERIVATION_v1 targets.
+
+  What the development DOES establish is the right shape for an independence
+  result: a commutative carrier (Claim A/C) plus a consistent
+  non-commutative witness (Claim B), on a NON-DEGENERATE ring — see
+  `observable_nontrivial` below, which rules out the vacuous reading in
+  which commutators vanish only because the ring is trivial.
   ─────────────────────────────────────────────────────────────────────────
 -/
 -- Catch-all import: immune to Mathlib module-path renames across versions
@@ -78,6 +105,23 @@ abbrev Observable : Type := Config → ℝ
     (pointwise operations on real-valued functions). This single instance is
     what makes every commutator vanish. -/
 example : CommRing Observable := inferInstance
+
+/-! ### Non-degeneracy: the observable ring is not the zero ring.
+
+    Without this, "every commutator vanishes" would admit a vacuous reading:
+    in the trivial ring every equation holds. `Config` is inhabited (a voxel
+    field can be identically zero), so `Observable = Config → ℝ` inherits
+    `ℝ`'s nontriviality and the commutativity result has real content. -/
+
+instance : Inhabited Fields := ⟨{ J := fun _ => 0, vel := 0, lat := 0 }⟩
+instance : Inhabited Config := ⟨fun _ => default⟩
+
+/-- **The observable algebra is nontrivial** (`0 ≠ 1`), so the vanishing of
+    every commutator is not an artifact of a degenerate carrier. -/
+theorem observable_nontrivial : (0 : Observable) ≠ 1 := by
+  intro h
+  have := congrFun h (default : Config)
+  simp at this
 
 /-! ### Generators of A₅ (the substrate fields, Postulate 3). -/
 def fluxObs (a : Fin 3) (v : Voxel) : Observable := fun c => (c v).J a

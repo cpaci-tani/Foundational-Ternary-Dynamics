@@ -332,9 +332,23 @@ void phase_write_main_loop(RenderBridge& rb) {
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
+          // FTD-HISTORY-BEGIN: observation-only native event journal.
+          const auto history_before = eft::capture_history_site(i, v);
+          // FTD-HISTORY-END
           ftd::atomic_inc(rb.genesis_events_this_tick_);  // FTD-0267 telemetry (observation only)
           double chi = v.chirality_density();
           manifest_at(rb, v, chi, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/true);
+          // FTD-HISTORY-BEGIN: observation-only native event journal.
+          if (rb.history_journal_enabled()) {
+            eft::HistoryEvent event;
+            event.kind = eft::HistoryEventKind::Genesis;
+            event.tick = rb.tick_;
+            event.site_count = 1;
+            event.before[0] = history_before;
+            event.after[0] = eft::capture_history_site(i, v);
+            rb.record_history_event(event);
+          }
+          // FTD-HISTORY-END
         }
       }
     } else {
@@ -345,9 +359,14 @@ void phase_write_main_loop(RenderBridge& rb) {
         double p = 1.0 - std::exp(-excess / km);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
+          // FTD-HISTORY-BEGIN: observation-only native event journal.
+          const auto history_before = eft::capture_history_site(i, v);
+          // FTD-HISTORY-END
           ftd::atomic_inc(rb.genesis_events_this_tick_);  // FTD-0267 telemetry (observation only)
-          // Latent Heat of Manifestation: consume wave energy. FTD-0276: the
-          // drain fraction is a runtime toggle (default 0.5 = legacy constant).
+          // Selected manifestation drain. FTD-0276: the drain fraction is a
+          // runtime toggle (default 0.5 = legacy constant). FTD-0567 proves
+          // this is not an exact common-action latent-heat identity: the flux
+          // drain preserves overshoot and the dual path has no matching drain.
           v.wave_vel *= (1.0 - rb.toggles.kinetic_drain);
           double jmag = dens;
           if (jmag > K_GENESIS_FLUX_EPSILON)
@@ -356,6 +375,17 @@ void phase_write_main_loop(RenderBridge& rb) {
           // divergence from the post-write snapshot (race-free).
           double div = ::ftd::divergence_from_flux_array(rb.flux_pre_write_, rb.lattice_, i);
           manifest_at(rb, v, div, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/false);
+          // FTD-HISTORY-BEGIN: observation-only native event journal.
+          if (rb.history_journal_enabled()) {
+            eft::HistoryEvent event;
+            event.kind = eft::HistoryEventKind::Genesis;
+            event.tick = rb.tick_;
+            event.site_count = 1;
+            event.before[0] = history_before;
+            event.after[0] = eft::capture_history_site(i, v);
+            rb.record_history_event(event);
+          }
+          // FTD-HISTORY-END
         }
       }
     }
@@ -379,11 +409,25 @@ void phase_write_main_loop(RenderBridge& rb) {
       const double dtau = proper_time_rate(v.latency, v.speed() * v.speed());
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE * dtau) {
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        const auto history_before = eft::capture_history_site(i, v);
+        // FTD-HISTORY-END
         ftd::atomic_inc(rb.evaporation_events_this_tick_);  // FTD-0267 telemetry (observation only)
         rb.set_state(i, 0);
         v.particle_id = -1;
         v.spin = 0;
         v.color = 0;
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        if (rb.history_journal_enabled()) {
+          eft::HistoryEvent event;
+          event.kind = eft::HistoryEventKind::Evaporation;
+          event.tick = rb.tick_;
+          event.site_count = 1;
+          event.before[0] = history_before;
+          event.after[0] = eft::capture_history_site(i, v);
+          rb.record_history_event(event);
+        }
+        // FTD-HISTORY-END
       }
     }
 
@@ -403,8 +447,8 @@ void phase_write_assign_pending_ids(RenderBridge& rb) {
 
 // Absorbing-boundary sponge — see render_bridge_phases.h. Quadratic ramp
 // f(d) = (d/D)² over a shell of width D at every lattice face: f(0)=0 (Dirichlet
-// wall), grading to 1 at d=D so the impedance change is gradual and reflects
-// very little (~99.97% round-trip absorption at D=6). Damps the observable
+// wall), grading to 1 at d=D. This defines an imposed damping sponge; it does
+// not by itself prove a reflection coefficient or a radiation condition. Damps the observable
 // flux/wave_vel AND the dual L/R substrates (the observable is recomputed from
 // them each tick, so damping only the observable would be overwritten). Byte-
 // identical intent with the MockBridge JS sponge. O(N³) walk, but interior
@@ -473,10 +517,10 @@ void apply_absorbing_boundary(RenderBridge& rb) {
 }
 
 // Reflective flux boundary (FluxBoundaryMode::Reflective) — Neumann mirror.
-// Copy the first interior layer into the boundary shell each tick so ∂_n J = 0
-// at every face: a perfect free reflector (a closed cavity). Energy is conserved
-// inside the box. NOTE: a closed cavity does NOT drain an injection-driven
-// runaway — that is by design (the "secondary" mode). One-layer overwrite,
+// Copy the first interior layer into the boundary shell each tick. For the
+// frozen linear wave map this is a discrete Neumann ghost shell whose interior
+// modified Hamiltonian is conserved (test_boundary_scenario_physics). This is
+// not a claim about a material wall or runs with other tick writers. One-layer overwrite,
 // applied AFTER the last flux writers like the sponge. Gated → golden-neutral.
 void apply_reflective_flux_boundary(RenderBridge& rb) {
   const Lattice& lat = rb.lattice_;
@@ -490,16 +534,14 @@ void apply_reflective_flux_boundary(RenderBridge& rb) {
   });
 }
 
-// Dispersal flux boundary (FluxBoundaryMode::Dispersal) — single-cell radiating
-// sink. The outermost layer is the interface to the void: the field that reaches
-// it propagates out at ~wave speed c and is removed from the box ("disappears
-// into the void and is removed from memory"). This is ONE sharp cell, NOT the
-// graduated quadratic sponge. It is the open boundary that drains an injection-
-// driven runaway toward a bounded steady state. Applied AFTER the last flux
-// writers. Gated → golden-neutral.
+// Dispersal flux boundary (FluxBoundaryMode::Dispersal) — single-cell lossy
+// shell. The outermost layer is multiplied by keep=1-C_SPEED each tick. This is
+// ONE sharp cell, NOT the graduated quadratic sponge and NOT a derived
+// Mur/Sommerfeld outgoing-wave condition. Applied AFTER the last flux writers.
+// Gated → golden-neutral.
 void apply_dispersal_flux_boundary(RenderBridge& rb) {
   const Lattice& lat = rb.lattice_;
-  // Fraction of the outer layer that propagates into the void this tick (c·dt).
+  // Selected per-tick attenuation of the outer layer.
   const double keep = 1.0 - C_SPEED;
   for_each_shell_voxel(rb, [&](int x, int y, int z, int) {
     scale_flux_fields(rb.voxels_[lat.index(x, y, z)], keep);

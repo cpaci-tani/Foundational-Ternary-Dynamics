@@ -29,13 +29,13 @@ theorem sum_eq_prod (S r1 r2 : Float) (h1 : r1 + r2 = S) (h2 : r1 * r2 = S) :
 /-! ## Integer Arithmetic Verified by Kernel -/
 
 /-- 4^2 = 16 (the master coefficient) -/
-theorem four_sq : (4 : Nat) * 4 = 16 := by native_decide
+theorem four_sq : (4 : Nat) * 4 = 16 := by decide
 
 /-- 12^3 = 1728 (the j-invariant) -/
-theorem twelve_cubed : (12 : Nat) * 12 * 12 = 1728 := by native_decide
+theorem twelve_cubed : (12 : Nat) * 12 * 12 = 1728 := by decide
 
 /-- 3 x 4 = 12 (N_c x N_base = the FizzBuzz period) -/
-theorem nc_times_nbase : N_c * N_base = 12 := by native_decide
+theorem nc_times_nbase : N_c * N_base = 12 := by decide
 
 -- The discriminant formula: for u^2 - Su + S = 0,
 -- discriminant = S^2 - 4S = S(S - 4).
@@ -43,12 +43,12 @@ theorem nc_times_nbase : N_c * N_base = 12 := by native_decide
 
 /-- S = 4 is the critical value (cloud boundary) where discriminant = 0.
     Verified: 4*4 = 4*4 (i.e., S^2 = 4S when S = 4). -/
-theorem cloud_boundary_disc : (4 : Nat) * 4 = 4 * 4 := by native_decide
+theorem cloud_boundary_disc : (4 : Nat) * 4 = 4 * 4 := by decide
 
 /-- At S = 4 (cloud boundary): both roots equal 2.
     The polynomial u^2 - 4u + 4 = (u-2)^2 factors perfectly.
     Verified: 2^2 + 4 = 4*2 (i.e., u^2 + S = Su when u = 2, S = 4). -/
-theorem unification_root : (2 : Nat) * 2 + 4 = 4 * 2 := by native_decide
+theorem unification_root : (2 : Nat) * 2 + 4 = 4 * 2 := by decide
 
 /-- At unification: root = H = [Q(i):Q] = 2 -/
 theorem unification_is_field_degree : CM_field_degree = 2 := rfl

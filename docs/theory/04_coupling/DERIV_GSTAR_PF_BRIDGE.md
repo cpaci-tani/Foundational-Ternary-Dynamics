@@ -339,15 +339,24 @@ From these eight primitives, all FTD physical constants are assembled:
 | D_Σ | 1 + 2 + 4 + 8 = 2⁰ + 2¹ + 2² + 2³ | 15 |
 | σ (Stefan-Boltzmann) | (N_base · PF)² / (N_base · D_Σ) | π²/60 |
 
-### 7.3 Independence [SELECTION]
+### 7.3 Known dependence and open independence questions
 
-The four constants are functionally independent:
-- **ϖ** is not a rational function of π (both are transcendental, but algebraically independent — a consequence of Nesterenko's theorem on Γ(1/4))
-- **PF = π/4** is a rational multiple of π (but π is not independent of ϖ; rather, π = M · ϖ where M = AGM(1,√2))
-- **ln(2)** is transcendental and algebraically independent of ϖ and π (no known algebraic relation)
-- **√2** is algebraic (irrational but a root of x² - 2 = 0)
+The four constants are not known to form an algebraically independent set:
+- **ϖ and π:** algebraic independence follows from the Chudnovsky-1976
+  algebraic independence of `π` and `Γ(1/4)`, using
+  `ϖ = Γ(1/4)²/(2√(2π))`. This is a dependency on that external
+  theorem, not on a Nesterenko result.
+- **PF = π/4:** PF and π are algebraically dependent by definition. The
+  identity `π = M·ϖ`, with `M = AGM(1,√2)`, does not make π algebraically
+  dependent on ϖ alone; it introduces the additional transcendental
+  constant `M`.
+- **ln(2):** `ln(2)` is transcendental, but its joint algebraic independence
+  from `π` and `ϖ` is not established here and must be treated as open.
+- **√2:** algebraic, satisfying `x²-2=0`.
 
-The minimal irreducible set is arguably {ϖ, ln(2), √2}, since π = M · ϖ and PF = π/4 = Mϖ/4. However, PF is retained as a separate entry because it encodes a distinct physical concept (discrete packing) even though it is mathematically derivable from ϖ.
+Consequently, no minimal algebraically irreducible set is proved in this
+section. PF may still be retained as a distinct conceptual entry, but its
+mathematical dependence on π must remain explicit.
 
 ---
 

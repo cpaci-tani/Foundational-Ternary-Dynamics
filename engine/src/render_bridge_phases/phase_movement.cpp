@@ -164,6 +164,10 @@ void phase_movement_main_loop(RenderBridge& rb) {
       auto &t = rb.voxels_[target];
 
       if (t.state == 0) {
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        const auto history_before_i = eft::capture_history_site(i, v);
+        const auto history_before_target = eft::capture_history_site(target, t);
+        // FTD-HISTORY-END
         // Move: transfer particle to target
         const int8_t moving_state = v.state;
         rb.set_state(target, moving_state);
@@ -203,6 +207,19 @@ void phase_movement_main_loop(RenderBridge& rb) {
         v.spin = 0;
         v.color = 0;
         rb.moved_[target] = 1;  // Prevent re-processing this tick
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        if (rb.history_journal_enabled()) {
+          eft::HistoryEvent event;
+          event.kind = eft::HistoryEventKind::Movement;
+          event.tick = rb.tick_;
+          event.site_count = 2;
+          event.before[0] = history_before_i;
+          event.before[1] = history_before_target;
+          event.after[0] = eft::capture_history_site(i, v);
+          event.after[1] = eft::capture_history_site(target, t);
+          rb.record_history_event(event);
+        }
+        // FTD-HISTORY-END
       } else if (t.state == v.state) {
         // Same sign: elastic bounce
         if (dx != 0) v.velocity.x *= -1.0;
@@ -210,6 +227,10 @@ void phase_movement_main_loop(RenderBridge& rb) {
         if (dz != 0) v.velocity.z *= -1.0;
         v.remainder = {};
       } else {
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        const auto history_before_i = eft::capture_history_site(i, v);
+        const auto history_before_target = eft::capture_history_site(target, t);
+        // FTD-HISTORY-END
         // Opposite sign: annihilation — both particles return to void.
         Vec3 flux_v = v.flux;
         Vec3 flux_t = t.flux;
@@ -247,6 +268,19 @@ void phase_movement_main_loop(RenderBridge& rb) {
             rb.voxels_[n].flux_R += flux_t_R * (1.0 / 6.0);
           }
         }
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        if (rb.history_journal_enabled()) {
+          eft::HistoryEvent event;
+          event.kind = eft::HistoryEventKind::Annihilation;
+          event.tick = rb.tick_;
+          event.site_count = 2;
+          event.before[0] = history_before_i;
+          event.before[1] = history_before_target;
+          event.after[0] = eft::capture_history_site(i, v);
+          event.after[1] = eft::capture_history_site(target, t);
+          rb.record_history_event(event);
+        }
+        // FTD-HISTORY-END
       }
     }
   } else {
@@ -276,6 +310,10 @@ void phase_movement_main_loop(RenderBridge& rb) {
       auto &t = rb.voxels_[target];
 
       if (t.state == 0) {
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        const auto history_before_i = eft::capture_history_site(i, v);
+        const auto history_before_target = eft::capture_history_site(target, t);
+        // FTD-HISTORY-END
         // Move: transfer particle to target
         const int8_t moving_state = v.state;
         rb.set_state(target, moving_state);
@@ -315,6 +353,19 @@ void phase_movement_main_loop(RenderBridge& rb) {
         v.spin = 0;
         v.color = 0;
         rb.moved_[target] = 1;  // Prevent re-processing this tick
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        if (rb.history_journal_enabled()) {
+          eft::HistoryEvent event;
+          event.kind = eft::HistoryEventKind::Movement;
+          event.tick = rb.tick_;
+          event.site_count = 2;
+          event.before[0] = history_before_i;
+          event.before[1] = history_before_target;
+          event.after[0] = eft::capture_history_site(i, v);
+          event.after[1] = eft::capture_history_site(target, t);
+          rb.record_history_event(event);
+        }
+        // FTD-HISTORY-END
       } else if (t.state == v.state) {
         // Same sign: elastic bounce
         if (dx != 0) v.velocity.x *= -1.0;
@@ -322,6 +373,10 @@ void phase_movement_main_loop(RenderBridge& rb) {
         if (dz != 0) v.velocity.z *= -1.0;
         v.remainder = {};
       } else {
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        const auto history_before_i = eft::capture_history_site(i, v);
+        const auto history_before_target = eft::capture_history_site(target, t);
+        // FTD-HISTORY-END
         // Opposite sign: annihilation — both particles return to void.
         Vec3 flux_v = v.flux;
         Vec3 flux_t = t.flux;
@@ -359,6 +414,19 @@ void phase_movement_main_loop(RenderBridge& rb) {
             rb.voxels_[n].flux_R += flux_t_R * (1.0 / 6.0);
           }
         }
+        // FTD-HISTORY-BEGIN: observation-only native event journal.
+        if (rb.history_journal_enabled()) {
+          eft::HistoryEvent event;
+          event.kind = eft::HistoryEventKind::Annihilation;
+          event.tick = rb.tick_;
+          event.site_count = 2;
+          event.before[0] = history_before_i;
+          event.before[1] = history_before_target;
+          event.after[0] = eft::capture_history_site(i, v);
+          event.after[1] = eft::capture_history_site(target, t);
+          rb.record_history_event(event);
+        }
+        // FTD-HISTORY-END
       }
     }
   }

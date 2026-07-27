@@ -1,16 +1,17 @@
-# Analysis — Is there a maximum amplitude for coherent light in FTD? The genesis amplitude ceiling (FTD-0316)
+# Analysis — Genesis ignition threshold and dynamical crest regulation (FTD-0316; corrected by FTD-0567)
 
-**Tag:** `[EMERGENT / MEASURED — DERIVED-FROM-RULE]` for the phenomenon; the *numeric* ceiling is `[IMPOSED]`-calibration-conditional. **NOT** a `[THEOREM]`, **NOT** a new physics derivation.
+**Tag:** `[EMERGENT / MEASURED — DERIVED-FROM-RULE]` for the registered ignition threshold and dynamical crest regulation; the *numeric* threshold is `[IMPOSED]`-calibration-conditional. The former exact-amplitude-ceiling interpretation is `[RETRACTED — FTD-0567]`. **NOT** a `[THEOREM]`, **NOT** a new physics derivation.
 **Lock (in-source pre-registration):** the three outcomes + the two numeric predictions were registered in the campaign header *before* running — `engine/tests/campaign_genesis_amplitude_ceiling.cpp:27-34` (outcomes 1/2/3), `:20` ("threshold: exactly A = K_GENESIS"), `:23` ("wavelength-invariance: NO"). Golden gate **certified green** — the three runtime override knobs (`genesis_threshold_override` / `manifest_scale_override` / `manifest_use_temperature`) are golden-neutral by construction (defaults reproduce compile-time `K_GENESIS`/`K_MANIFEST` byte-for-byte); `test_render_bridge_golden` **rebuilt from source + PASS** (`0xb604d81a3d79366e`). Read-only on physics phases.
-**Precedence:** LEDGER > this doc.
+**Controlling correction (2026-07-26):** FTD-0567 proves from the exact accepted-event map that `|J|'=|J|-K_GENESIS`. The rule subtracts one threshold unit; it does not set the residual to the threshold. For `|J|>2K_GENESIS`, one accepted event leaves a supercritical field. This document's measured ignition cliff survives, while every statement calling the local map an exact amplitude ceiling is superseded.
+**Precedence:** LEDGER > FTD-0567 > this historical run report.
 
 ---
 
 ## 0 · Verdict
 
-> **OUTCOME (1) — CONFIRMED.** A coherent flux wave has a **sharp, wavelength-invariant amplitude ceiling at exactly `|J| = K_GENESIS`**: genesis is *identically zero* for antinode amplitude `A ≤ K_GENESIS` and ignites for `A > K_GENESIS`, with the same cliff at every wavelength tested. Above it the wave "breaks" — the void-field peak pins near `K_GENESIS` while manifested matter accumulates. This is the **lattice analogue of the QED Schwinger limit** (field too strong ⇒ the vacuum sheds it into matter).
+> **CORRECTED OUTCOME.** The registered arms establish a **sharp, wavelength-invariant genesis ignition threshold at `|J| = K_GENESIS`**: genesis is *identically zero* for antinode amplitude `A ≤ K_GENESIS` and ignites for `A > K_GENESIS`, with the same cliff at every wavelength tested. Above it, the tested dynamical waves show crest regulation and matter accumulation. FTD-0567 proves that this is not an exact local amplitude cap; “breaking” is a descriptive analogy for the measured collective behavior, not a derived Schwinger-limit equivalence.
 
-**The honest reading (mandatory, not buried):** the ceiling is the engine's own genesis rule (`|J| > K_GENESIS ⇒ manifestation drain`) **made visible** under a coherent drive — it is `[DERIVED-FROM-RULE]`/`[EMERGENT]`, **not an independent dynamical surprise and not a theorem.** And the *number* 1.533 is **`[IMPOSED]`-conditional**: `K_GENESIS = N_c·K_MANIFEST = 3·0.511`, and the override control shows the cliff simply **tracks whatever `K_GENESIS` is set to** (drop `N_c` → `kg=0.511` → cliff at 0.511). So the **structure** (a sharp, wavelength-invariant ceiling at exactly the genesis threshold) is the forward content; the **value** inherits the genesis calibration.
+**The honest reading (mandatory, not buried):** the ignition cliff is the engine's own genesis predicate (`|J| > K_GENESIS`) **made visible** under a coherent drive — it is `[DERIVED-FROM-RULE]`/`[EMERGENT]`, **not an independent dynamical surprise and not a theorem.** The historical run's number 1.533 was **`[IMPOSED]`-conditional**, and the override control showed that the cliff tracks whatever `K_GENESIS` is set to. The forward content is the sharp, wavelength-invariant **eligibility threshold** in those arms. No universal post-event amplitude follows.
 
 **Nothing promoted.** `x₊ = 1/α` stays `[SMC]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; golden gate green.
 
@@ -18,7 +19,7 @@
 
 ## 1 · The experiment + pre-registration
 
-Light in FTD is a wave in the **continuous** flux field `J` (FTD-0298), which carries no axiom-level amplitude cap. But genesis fires when a void site reaches `|J| > K_GENESIS`, and manifestation **drains** the flux back to threshold (`flux *= max(0, 1 − K_GENESIS/|J|)`). So a coherent flux wave should be capped at `|J| = K_GENESIS`. The campaign drives a **coherent transverse plane wave** `J = (0, A·sin(kx), 0)` (divergence-free ⇒ survives Gauss projection; antinodes reach `|J| = A`), Langevin OFF, dual-substrate OFF, stack = wave-propagation + Gauss + genesis. **Three pre-stated outcomes** (`:27-34`): (1) sharp `K_GENESIS`-locked, wavelength-invariant threshold → a forward prediction; (2) smeared/unlocked crossover → a boundary; (3) no triggering at all → a sharper boundary.
+Light in FTD is assigned to a wave in the **continuous** flux field `J` (FTD-0298), which carries no axiom-level amplitude cap. Genesis fires when a void site reaches `|J| > K_GENESIS`, and an accepted single-substrate event applies `flux *= 1-K_GENESIS/|J|`. The correct consequence is `|J|'=|J|-K_GENESIS`: subtraction by one threshold unit, not reset to or below the threshold. The campaign drives a **coherent transverse plane wave** `J = (0, A·sin(kx), 0)` (divergence-free ⇒ survives Gauss projection; antinodes reach `|J| = A`), Langevin OFF, dual-substrate OFF, stack = wave-propagation + Gauss + genesis. Its historical pre-stated outcomes are preserved as run provenance; FTD-0567 narrows Outcome 1 from “ceiling” to “ignition threshold plus measured dynamical regulation.”
 
 The **`--static`** mode (wave-propagation OFF, the field held at amplitude `A`) isolates the **clean gate**: onset is then exactly at `|J| = K_GENESIS`, with no propagation softening.
 
@@ -46,7 +47,7 @@ The cliff sits at **exactly `K_GENESIS = N_c·K_MANIFEST = 3·0.511 = 1.533`** (
 
 ## 3 · Why this is `[EMERGENT]`, not a theorem (the discipline)
 
-- **Rule-made-visible.** The cliff is exactly the manifestation rule `|J| > K_GENESIS ⇒ drain`. The campaign *demonstrates* that this local rule implies a coherent-light amplitude ceiling and breaking-wave dynamics — a real, clean `[EMERGENT]` consequence — but it is **not** an independent dynamical law and **not** a `[THEOREM]`. Calling it a derivation of a new constant would be the overclaim to avoid.
+- **Rule-made-visible.** The cliff is exactly the manifestation eligibility rule `|J| > K_GENESIS`. The campaign demonstrates that the registered coherent drive activates at that local threshold and then exhibits dynamical crest regulation. It does **not** establish a hard amplitude cap, an independent light law, or a QED-equivalent Schwinger mechanism.
 - **The number is `[IMPOSED]`.** `K_GENESIS = N_c·K_MANIFEST` is an engine calibration; the kg-override run proves the cliff tracks it. The *dimensionless structural* statement (a sharp ceiling exactly at the genesis threshold, wavelength-invariant) is what the framework forward-predicts; `1.533` is conditional on the `M_REST = m_e` / `K_GENESIS = N_c·K_MANIFEST` register.
 - **The wave onset is softer than the static gate** (propagation transient) — the static mode is the clean measurement; the wave mode is the dynamical "breaking."
 - **Scope.** This is the genesis/manifestation sector (FTD-0274/0298 lineage), not the α or QM sectors. The secondary campaign modes (`--ladder` FTD-0110 convention test; `--thermal` EWSB `m(T)`; `--info` information-creation = FTD-0317; `--stamp`) are separate sub-questions.
@@ -55,4 +56,4 @@ The cliff sits at **exactly `K_GENESIS = N_c·K_MANIFEST = 3·0.511 = 1.533`** (
 
 ## 4 · Non-promotion
 
-`[EMERGENT / MEASURED — DERIVED-FROM-RULE]`. The deliverable is a clean, honestly-scoped forward prediction of the **genesis sector**: FTD's manifestation rule implies a sharp, wavelength-invariant coherent-light amplitude ceiling at `K_GENESIS` (the lattice Schwinger-limit analogue), with the numeric value calibration-conditional. **No new theorem, no α, no promotion.** FTD-0013 `[SMC]`, MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`, the algebraic spine — all unchanged. Golden gate certified green (`0xb604d81a3d79366e`).
+`[EMERGENT / MEASURED — DERIVED-FROM-RULE]`. The surviving deliverable is a sharp, wavelength-invariant **genesis ignition threshold** in the registered coherent-wave arms, followed by measured collective crest regulation; the numeric threshold is calibration-conditional. The exact-amplitude-ceiling and Schwinger-equivalence readings are withdrawn. **No new theorem, no α, no promotion.** FTD-0013 `[SMC]`, MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`, and the algebraic spine are unchanged.

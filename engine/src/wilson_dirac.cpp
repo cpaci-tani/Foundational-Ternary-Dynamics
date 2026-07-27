@@ -9,7 +9,7 @@
  *   - 3 spatial dimensions; periodic BC inherited from Lattice
  *   - Lattice spacing a = 1 (engine-internal)
  *   - Wilson parameter r = 1
- *   - Time evolution: i d/dt psi = D_W psi (Schrodinger-like)
+ *   - Time evolution: i d/dt psi = H_W psi (Schrodinger-like)
  */
 
 #include "ftd/wilson_dirac.h"
@@ -46,6 +46,19 @@ inline std::array<cdouble, 2> upper(const Spinor& psi) { return {psi[0], psi[1]}
 inline std::array<cdouble, 2> lower(const Spinor& psi) { return {psi[2], psi[3]}; }
 inline Spinor pack(const std::array<cdouble, 2>& u, const std::array<cdouble, 2>& l) {
     return {u[0], u[1], l[0], l[1]};
+}
+
+// beta = gamma^0 = ((0,I),(I,0)) in the chiral basis.
+inline Spinor apply_beta(const Spinor& psi) {
+    return {psi[2], psi[3], psi[0], psi[1]};
+}
+
+// alpha^i = gamma^0 gamma^i = diag(sigma^i,-sigma^i) for the spatial-gamma
+// convention used in this module.
+inline Spinor apply_alpha_spatial(int i, const Spinor& psi) {
+    const auto su = apply_pauli(i, upper(psi));
+    const auto sl = apply_pauli(i, lower(psi));
+    return {su[0], su[1], -sl[0], -sl[1]};
 }
 
 }  // namespace
@@ -140,11 +153,65 @@ void GaugeLinks::set_uniform_B_z(double g_a_B0_a) {
 // -------------------------------------------------------------
 namespace {
 
-// Periodic-coordinate shift along axis mu.
-inline int shift_plus(int n, int L, int mu, int delta) {
-    int v = (mu == 0) ? n : 0;
-    (void)mu; (void)delta;
-    return (n + delta + L) % L;
+struct Coord3 {
+    int x;
+    int y;
+    int z;
+};
+
+inline int wrap(int n, int L) {
+    return (n % L + L) % L;
+}
+
+inline Coord3 shifted(Coord3 n, int mu, int sign, int L) {
+    if (mu == 0) n.x = wrap(n.x + sign, L);
+    if (mu == 1) n.y = wrap(n.y + sign, L);
+    if (mu == 2) n.z = wrap(n.z + sign, L);
+    return n;
+}
+
+inline int coord_index(const Lattice& lattice, Coord3 n) {
+    return lattice.index(n.x, n.y, n.z);
+}
+
+// Link transporting a field from n+sign*mu back to n in the operator
+// convention U_path(n->end) psi(end).  Negative directions use the adjoint
+// of the positive link based at n-mu.
+inline cdouble oriented_link(const GaugeLinks& links,
+                             const Lattice& lattice,
+                             Coord3 n,
+                             int mu,
+                             int sign) {
+    if (sign > 0) {
+        return links.U[mu][static_cast<std::size_t>(coord_index(lattice, n))];
+    }
+    const Coord3 previous = shifted(n, mu, -1, lattice.size());
+    return std::conj(
+        links.U[mu][static_cast<std::size_t>(coord_index(lattice, previous))]);
+}
+
+// Gauge-covariant equal average of the two shortest paths from n to the
+// face-diagonal endpoint n+s_mu*mu+s_nu*nu.  Both path products transform
+// with the same endpoint phases, so their average remains covariant.
+inline Spinor transport_face_diagonal(const SpinorField& psi,
+                                      const GaugeLinks& links,
+                                      const Lattice& lattice,
+                                      Coord3 n,
+                                      int mu,
+                                      int s_mu,
+                                      int nu,
+                                      int s_nu) {
+    const int L = lattice.size();
+    const Coord3 after_mu = shifted(n, mu, s_mu, L);
+    const Coord3 after_nu = shifted(n, nu, s_nu, L);
+    const Coord3 endpoint = shifted(after_mu, nu, s_nu, L);
+
+    const cdouble path_mu_nu = oriented_link(links, lattice, n, mu, s_mu)
+                              * oriented_link(links, lattice, after_mu, nu, s_nu);
+    const cdouble path_nu_mu = oriented_link(links, lattice, n, nu, s_nu)
+                              * oriented_link(links, lattice, after_nu, mu, s_mu);
+    const cdouble transporter = 0.5 * (path_mu_nu + path_nu_mu);
+    return scale(transporter, psi.at(coord_index(lattice, endpoint)));
 }
 
 }  // namespace
@@ -158,8 +225,9 @@ void apply_wilson_dirac(SpinorField& out,
     // 3D spatial Wilson-Dirac: dimension-consistent mass shift = D_spatial * r / a = 3r/a.
     // (For full 4D Euclidean Wilson-Dirac, this would be 4r/a; we evolve continuous time
     //  via Schrödinger-like i d/dt psi = D_W psi, so the spatial operator is what's needed.)
-    const double diag = params.m + 3.0 * params.r / params.a;
-    const double off = 1.0 / (2.0 * params.a);
+    const double diag = params.m
+                      + 3.0 * params.spatial_speed * params.r / params.a;
+    const double off = params.spatial_speed / (2.0 * params.a);
 
     for (int z = 0; z < L; ++z) {
         for (int y = 0; y < L; ++y) {
@@ -224,8 +292,9 @@ void apply_wilson_dirac_dagger(SpinorField& out,
     // D_W^dag in chiral basis: same as D_W with U <-> U^dag and gamma^mu sign flipped.
     // For gauge-invariance verification only; not on the critical path for II.2-A.
     const int L = lattice.size();
-    const double diag = params.m + 3.0 * params.r / params.a;  // 3D spatial dimension shift
-    const double off = 1.0 / (2.0 * params.a);
+    const double diag = params.m
+                      + 3.0 * params.spatial_speed * params.r / params.a;
+    const double off = params.spatial_speed / (2.0 * params.a);
 
     for (int z = 0; z < L; ++z) {
         for (int y = 0; y < L; ++y) {
@@ -261,8 +330,94 @@ void apply_wilson_dirac_dagger(SpinorField& out,
 }
 
 // -------------------------------------------------------------
-// RK4 step for i d/dt psi = D_W psi
-// -> d/dt psi = -i D_W psi
+// Hermitian Wilson Hamiltonian for real-time evolution.
+//
+// H_W = c_s alpha.p_lat + beta (m + c_s r W_lat).
+// The former implementation evolved the spatial D_W directly.  Its special-
+// spinor norm oracle equals M_eff^2+K^2, but its actual eigenvalues are
+// M_eff +/- |K|; it therefore did not establish a relativistic matter pole.
+// -------------------------------------------------------------
+void apply_wilson_hamiltonian(SpinorField& out,
+                              const SpinorField& psi,
+                              const GaugeLinks& links,
+                              const Lattice& lattice,
+                              const WilsonDiracParams& params) {
+    const int L = lattice.size();
+    const double c_s = params.spatial_speed;
+    const double diag = params.m + 3.0 * c_s * params.r / params.a;
+    const double wilson_off = c_s * params.r / (2.0 * params.a);
+    const double kinetic_off = c_s / (2.0 * params.a);
+    const cdouble minus_i_kinetic{0.0, -kinetic_off};
+    const double transverse_weight = params.kinetic_transverse_weight;
+    const double axial_weight = 1.0 - 2.0 * transverse_weight;
+
+    for (int z = 0; z < L; ++z) {
+        for (int y = 0; y < L; ++y) {
+            for (int x = 0; x < L; ++x) {
+                const int idx = lattice.index(x, y, z);
+                Spinor result = scale(cdouble{diag, 0.0}, apply_beta(psi.at(idx)));
+                const Coord3 n{x, y, z};
+
+                for (int mu = 0; mu < 3; ++mu) {
+                    const int dx = (mu == 0) ? 1 : 0;
+                    const int dy = (mu == 1) ? 1 : 0;
+                    const int dz = (mu == 2) ? 1 : 0;
+                    const int idx_p = lattice.index((x + dx + L) % L,
+                                                    (y + dy + L) % L,
+                                                    (z + dz + L) % L);
+                    const int idx_m = lattice.index((x - dx + L) % L,
+                                                    (y - dy + L) % L,
+                                                    (z - dz + L) % L);
+                    const cdouble U_n = links.U[mu][static_cast<std::size_t>(idx)];
+                    const cdouble U_nminus = links.U[mu][static_cast<std::size_t>(idx_m)];
+                    const Spinor psi_p = scale(U_n, psi.at(idx_p));
+                    const Spinor psi_m = scale(std::conj(U_nminus), psi.at(idx_m));
+                    const Spinor neighbor_sum = add(psi_p, psi_m);
+                    const Spinor neighbor_diff = add(psi_p, scale(cdouble{-1.0, 0.0}, psi_m));
+                    Spinor kinetic_diff = scale(cdouble{axial_weight, 0.0}, neighbor_diff);
+
+                    // Moore-local transverse average.  For each nu != mu,
+                    // (b/2) sum_{s_nu=+/-1}(T_{+mu,s_nu*nu}-T_{-mu,s_nu*nu})
+                    // has free symbol 2i b sin(q_mu) cos(q_nu).  Combined
+                    // with the axial term it gives the header's K_i(q).
+                    if (transverse_weight != 0.0) {
+                        for (int nu = 0; nu < 3; ++nu) {
+                            if (nu == mu) continue;
+                            Spinor corner_diff = zero_spinor();
+                            for (int s_nu : {-1, 1}) {
+                                const Spinor corner_p = transport_face_diagonal(
+                                    psi, links, lattice, n, mu, +1, nu, s_nu);
+                                const Spinor corner_m = transport_face_diagonal(
+                                    psi, links, lattice, n, mu, -1, nu, s_nu);
+                                corner_diff = add(corner_diff, corner_p);
+                                corner_diff = add(
+                                    corner_diff,
+                                    scale(cdouble{-1.0, 0.0}, corner_m));
+                            }
+                            kinetic_diff = add(
+                                kinetic_diff,
+                                scale(cdouble{0.5 * transverse_weight, 0.0},
+                                      corner_diff));
+                        }
+                    }
+
+                    result = add(result,
+                                 scale(cdouble{-wilson_off, 0.0},
+                                       apply_beta(neighbor_sum)));
+                    result = add(result,
+                                 scale(minus_i_kinetic,
+                                       apply_alpha_spatial(mu, kinetic_diff)));
+                }
+
+                out.at(idx) = result;
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------
+// RK4 step for i d/dt psi = H_W psi
+// -> d/dt psi = -i H_W psi
 // -------------------------------------------------------------
 namespace {
 
@@ -276,13 +431,13 @@ void axpy(SpinorField& out, const SpinorField& psi, double c, const SpinorField&
     }
 }
 
-// k <- -i * D_W * psi (the right-hand side of the Schrodinger equation).
+// k <- -i * H_W * psi (the right-hand side of the Schrodinger equation).
 void rhs(SpinorField& k,
          const SpinorField& psi,
          const GaugeLinks& links,
          const Lattice& lattice,
          const WilsonDiracParams& params) {
-    apply_wilson_dirac(k, psi, links, lattice, params);
+    apply_wilson_hamiltonian(k, psi, links, lattice, params);
     const cdouble minus_i{0, -1};
     for (auto& s : k.data) {
         s = scale(minus_i, s);

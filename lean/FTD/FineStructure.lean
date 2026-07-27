@@ -52,31 +52,31 @@ def codata_uncertainty : Float := 0.000000021
 -/
 
 /-- The "20" in epsilon = e^pi - pi - 20 is b_3 + N_eff -/
-theorem twenty_from_framework : b_3 + N_eff = 20 := by native_decide
+theorem twenty_from_framework : b_3 + N_eff = 20 := by decide
 
 /-- c1 numerator: N_c^2 = 9 -/
-theorem c1_num_9 : N_c * N_c = 9 := by native_decide
+theorem c1_num_9 : N_c * N_c = 9 := by decide
 
 /-- c1 denominator: D = N_c * N_base^2 - 1 = 47 -/
-theorem c1_den_47 : N_c * (N_base * N_base) - 1 = 47 := by native_decide
+theorem c1_den_47 : N_c * (N_base * N_base) - 1 = 47 := by decide
 
 /-- c2 numerator: N_eff - 2*N_base = 5 -/
-theorem c2_num_5 : N_eff - 2 * N_base = 5 := by native_decide
+theorem c2_num_5 : N_eff - 2 * N_base = 5 := by decide
 
 /-- c2 denominator: N_base^3 = 64 -/
-theorem c2_den_64 : N_base * N_base * N_base = 64 := by native_decide
+theorem c2_den_64 : N_base * N_base * N_base = 64 := by decide
 
 /-- c3 numerator: N_base = 4 -/
 theorem c3_num_4 : N_base = 4 := rfl
 
 /-- c3 denominator: N_c * D = 3 * 47 = 141 -/
-theorem c3_den_141 : N_c * (N_c * (N_base * N_base) - 1) = 141 := by native_decide
+theorem c3_den_141 : N_c * (N_c * (N_base * N_base) - 1) = 141 := by decide
 
 /-- c4 numerator: N_c * D = 141 -/
-theorem c4_num_141 : N_c * (N_c * (N_base * N_base) - 1) = 141 := by native_decide
+theorem c4_num_141 : N_c * (N_c * (N_base * N_base) - 1) = 141 := by decide
 
 /-- c4 denominator: b_3 + N_base = 11 -/
-theorem c4_den_11 : b_3 + N_base = 11 := by native_decide
+theorem c4_den_11 : b_3 + N_base = 11 := by decide
 
 /-- All precision denominators come from framework integers -/
 theorem all_framework_integers :
@@ -86,18 +86,18 @@ theorem all_framework_integers :
 /-! ## Coefficient Cross-Checks -/
 
 /-- c1 * c3 denominator: 47 * 141 = 6627 = 3 * 47^2... check: 47 * 141 -/
-theorem c1c3_cross : D_constraint * (N_c * D_constraint) = 6627 := by native_decide
+theorem c1c3_cross : D_constraint * (N_c * D_constraint) = 6627 := by decide
 
 /-- c4/c1 = 141/11 * 47/9 = 141*47/(11*9) -- checks coefficient ratios -/
 -- The ratio c4/c1 = (141/11)/(9/47) = 141*47/(11*9) = 6627/99
-theorem c4_c1_ratio_num : N_c * D_constraint * D_constraint = 6627 := by native_decide
-theorem c4_c1_ratio_den : (b_3 + N_base) * (N_c * N_c) = 99 := by native_decide
+theorem c4_c1_ratio_num : N_c * D_constraint * D_constraint = 6627 := by decide
+theorem c4_c1_ratio_den : (b_3 + N_base) * (N_c * N_c) = 99 := by decide
 
 /-! ## The Strong Coupling alpha_s -/
 
 /-- alpha_s(M_Z) = b_3/(b_3 + 4*N_eff) = 7/59 -/
 -- 7/59 = 0.11864... vs PDG 0.1179(9) — within 1 sigma
-theorem alpha_s_denominator : b_3 + 4 * N_eff = 59 := by native_decide
+theorem alpha_s_denominator : b_3 + 4 * N_eff = 59 := by decide
 theorem alpha_s_numerator : b_3 = 7 := rfl
 
 /-! ## The Weinberg Angle -/
@@ -112,10 +112,10 @@ theorem weinberg_den : N_eff = 13 := rfl
 /-- lambda = N_c/(N_eff + N_c + b_3) = 3/23 -/
 -- m_H = v*sqrt(2*lambda) = 246.22*sqrt(6/23) = 125.69 GeV
 -- vs measured 125.11(6) GeV — 0.47% agreement
-theorem higgs_denom : N_eff + N_c + b_3 = 23 := by native_decide
+theorem higgs_denom : N_eff + N_c + b_3 = 23 := by decide
 
 /-- The Higgs VEV connection: 6 = 2*N_c -/
-theorem higgs_numerator_doubled : 2 * N_c = 6 := by native_decide
+theorem higgs_numerator_doubled : 2 * N_c = 6 := by decide
 
 /-! ## Complete Numerical Verification -/
 

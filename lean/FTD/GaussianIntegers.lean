@@ -26,7 +26,7 @@ open FTD
 theorem unit_count : N_base = 4 := rfl
 
 /-- Units² = |Aut(E)|² for E: y²=x³-x -/
-theorem units_sq_eq_aut_sq : N_base * N_base = Aut_E_order * Aut_E_order := by native_decide
+theorem units_sq_eq_aut_sq : N_base * N_base = Aut_E_order * Aut_E_order := by decide
 
 /-- The CM field Q(i) has degree 2 over Q -/
 theorem cm_field_degree : CM_field_degree = 2 := rfl
@@ -44,32 +44,32 @@ theorem disc_zi_abs : N_base = 4 := rfl
 -/
 
 /-- Norm of 1+i is 2 -/
-theorem norm_1_plus_i : 1 * 1 + 1 * 1 = 2 := by native_decide
+theorem norm_1_plus_i : 1 * 1 + 1 * 1 = 2 := by decide
 
 /-- 2 ramifies in Z[i]: 2 = -i(1+i)² -/
 -- N(-i) = 1, N(1+i) = 2, so N(-i(1+i)²) = 1 × 2² = 4... wait
 -- Actually: (1+i)² = 2i, so -i(1+i)² = -i·2i = -2i² = 2
 -- Verification: norm check
-theorem ramification_norm : 1 * 1 + 1 * 1 = 2 := by native_decide
+theorem ramification_norm : 1 * 1 + 1 * 1 = 2 := by decide
 
 /-- The first few split primes and their Gaussian factorizations (norm check):
     5 = (2+i)(2-i): N(2+i) = 4+1 = 5 -/
-theorem split_5_norm : 2 * 2 + 1 * 1 = 5 := by native_decide
+theorem split_5_norm : 2 * 2 + 1 * 1 = 5 := by decide
 
 /-- 13 = (3+2i)(3-2i): N(3+2i) = 9+4 = 13 -/
-theorem split_13_norm : 3 * 3 + 2 * 2 = 13 := by native_decide
+theorem split_13_norm : 3 * 3 + 2 * 2 = 13 := by decide
 
 /-- 17 = (4+i)(4-i): N(4+i) = 16+1 = 17 -/
-theorem split_17_norm : 4 * 4 + 1 * 1 = 17 := by native_decide
+theorem split_17_norm : 4 * 4 + 1 * 1 = 17 := by decide
 
 /-- 29 = (5+2i)(5-2i): N(5+2i) = 25+4 = 29 -/
-theorem split_29_norm : 5 * 5 + 2 * 2 = 29 := by native_decide
+theorem split_29_norm : 5 * 5 + 2 * 2 = 29 := by decide
 
 /-- 37 = (6+i)(6-i): N(6+i) = 36+1 = 37 -/
-theorem split_37_norm : 6 * 6 + 1 * 1 = 37 := by native_decide
+theorem split_37_norm : 6 * 6 + 1 * 1 = 37 := by decide
 
 /-- 41 = (5+4i)(5-4i): N(5+4i) = 25+16 = 41 -/
-theorem split_41_norm : 5 * 5 + 4 * 4 = 41 := by native_decide
+theorem split_41_norm : 5 * 5 + 4 * 4 = 41 := by decide
 
 /-! ## The Parallel Combination Identity
 
@@ -87,12 +87,12 @@ theorem split_41_norm : 5 * 5 + 4 * 4 = 41 := by native_decide
 /-! ## Conductor and Level Structure -/
 
 /-- Conductor N(E) = 32 = 2⁵ for E: y²=x³-x -/
-theorem conductor_32 : 2 * 2 * 2 * 2 * 2 = 32 := by native_decide
+theorem conductor_32 : 2 * 2 * 2 * 2 * 2 = 32 := by decide
 
 /-- 32 = N_base * N_base * CM_field_degree = 4 × 4 × 2 -/
-theorem conductor_from_framework : N_base * N_base * CM_field_degree = 32 := by native_decide
+theorem conductor_from_framework : N_base * N_base * CM_field_degree = 32 := by decide
 
 /-- Alternative: 32 = 2^5, and 5 = N_c + CM_field_degree -/
-theorem conductor_exponent : N_c + CM_field_degree = 5 := by native_decide
+theorem conductor_exponent : N_c + CM_field_degree = 5 := by decide
 
 end FTD.GaussianIntegers

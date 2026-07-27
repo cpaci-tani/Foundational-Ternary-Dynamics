@@ -11,7 +11,7 @@
 
 > Engine-native `[MEASURED]` results are statements about the FTD substrate at the stated lattice size, stencil, and protocol. Their **physical** readings are conditional on: **(i)** the calibration register (`a_phys ≡ ℓ_P`, `M_REST = m_e`, `t_phys = ℓ_P/(√3·c)` — constitution §3.3; gauge choices per FTD-0137); **(ii)** the manifestation  detection mapping at its LEDGER tag (`[CONJECTURE]`-grade where used); **(iii)** FC-1/FC-2 as **declared commitments** (constitution §2.4/§2.6/§5.2 — declarations, not derivations). Dimensionless deviation *structure* (which law, which exponent) is calibration-invariant; absolute physical scales are not.
 
-**Physical-scale honesty for PL-4/PL-5:** under `a_phys ≡ ℓ_P` the UV corrections are Planck-suppressed; laboratory reach is bounded by existing Lorentz-violation searches. The engine-native versions are testable now; the physical versions are long-horizon. Both readings are stated per row.
+**Physical-scale honesty for PL-4/PL-5:** under `a_phys ≡ ℓ_P` the direct free-flux UV corrections are Planck-suppressed. FTD-0407 shows this does not by itself protect the interacting theory: symmetry-allowed dimension-four preferred-frame terms, radiative mixing, and unequal sector speeds remain open. The engine-native spatial results are testable now; physical Lorentz recovery requires LR-0..LR-6.
 
 ---
 
@@ -59,10 +59,10 @@
 
 | Field | Content |
 |---|---|
-| **FTD result** | The substrate is anisotropic at UV and isotropizes in the IR with a **measured power law**: rotation-breaking residual exponent **p = 4.0008 ± 0.0006 (R² = 1.000000)** — `δ ∝ k⁴` in the phase speed, the rotation-breaking operator entering at dimension (D+4) = 7, **strongly irrelevant** under Wilsonian counting. `[MEASURED]` ([`AUDIT_LORENTZ_ANISOTROPY.md`](../10_eft_program/archive/campaign_complete/AUDIT_LORENTZ_ANISOTROPY.md); fit exact to four decimals across a factor-8 range in L, factor-16 in k). |
+| **FTD result** | The production **spatial** symbol has a measured directional phase-speed spread **p = 4.0008 ± 0.0006 (R² = 1.000000)**. In a 3+1-dimensional quadratic action the cubic rotation-breaking term is dimension eight. FTD-0407 independently derives an earlier rotationally invariant dimension-six boost-violating term, so this row establishes spatial isotropization only, not Lorentz recovery. `[MEASURED + DERIVED, scoped]` ([`AUDIT_LORENTZ_ANISOTROPY.md`](../10_eft_program/archive/campaign_complete/AUDIT_LORENTZ_ANISOTROPY.md); [`AUDIT_LORENTZ_RECOVERY_HARD.md`](../07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md)). |
 | **SR expectation** | Exact rotational invariance at every scale. |
 | **Discriminating protocol** | Engine-native: the closed-form anisotropy measurement (already canonical). Physical: direction-dependent dispersion at high energy — `k⁴`-suppressed, hence Planck-suppressed under the calibration; cubic-anisotropy signatures (an O_h fingerprint, cf. the mild ⟨111⟩ excess in FTD-0252 T3) distinguish a lattice from rotationally-invariant Lorentz violation. Cross-reference: [`SPEC_NOVEL_PREDICTIONS.md`](SPEC_NOVEL_PREDICTIONS.md) lattice-specific section for the numeric-value side. |
-| **Scope + caveats** | The measured exponent is the substrate's; physical accessibility per §0 honesty note. |
+| **Scope + caveats** | Directional comparison cancels the isotropic `S2²` boost term and is therefore blind to the leading Lorentz violation. Physical accessibility and radiative/common-cone status per §0 and FTD-0407. |
 | **Falsification (of the FTD side)** | The k⁴ decay reversing or plateauing at larger L (isotropization stalling — kills FC-2's "emergent" reading); physically, *confirmed* isotropic-exact dispersion at scales where the calibrated lattice predicts measurable cubic anisotropy. |
 
 ## PL-6 · Structural nulls — three `[THEOREM]` + one `[SELECTION]/[BOUNDARY]`

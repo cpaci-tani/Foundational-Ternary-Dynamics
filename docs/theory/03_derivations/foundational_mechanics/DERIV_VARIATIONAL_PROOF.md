@@ -1,32 +1,35 @@
-# Variational Proof: δS = 0 Reproduces All Update Rules
+# Variational scope: field-sector stationarity and production-rule replay
 
-## Computational Verification that Every Simulation Force Derives from the FTD Lagrangian
+## Corrected status after FTD-0467 and FTD-0567
 
-**Status:** [THEOREM] — verified by `engine/tests/test_variational_proof.cpp` (60 checks, 0 failures)
-**Epistemic Tag:** Each Lagrangian term's Euler-Lagrange equation is verified against the simulation's update rule to machine precision (~10⁻⁹ relative error). This is a mathematical identity check, not an empirical claim.
+**Status:** `[PARTIAL THEOREM — FREE FIELD/J-SOURCE VARIATION] + [INTEGRATION REPLAY — SELECTED FORCE RULES] + [RETRACTED — ALL-UPDATE / STATE-TRANSITION GENERATOR]`
+**Current verifier:** `engine/tests/test_action_stationarity.cpp`. The historical `test_variational_proof.cpp` and its “60 checks” tally are no longer present in the active test tree.
+**Controlling results:** FTD-0467 proves the production matter-force branches are not the matter-side variations of the written state-flux interaction. FTD-0567 proves the written action cannot generate the production genesis magnitude threshold, drain, stochastic acceptance, or evaporation erasure.
 
 **Depends on:**
 
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Full Lagrangian specification (10 terms)
-- `engine/include/ftd/lagrangian.h` — C++ implementation of all Lagrangian terms
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) — selected field/kinematic action specification
+- `engine/include/ftd/lagrangian.h` — C++ implementation of the six active diagnostic terms
 - `engine/src/render_bridge.cpp` — Simulation update rules (phase_read, phase_write, phase_forces, etc.)
 
 ---
 
 ## Overview
 
-The FTD action principle states that all simulation dynamics derive from a single action functional:
+The implemented diagnostic evaluates a discrete field/kinematic functional:
 
 $$S[s, J] = \sum_t \sum_v \mathcal{L}(s, J, \partial J, \nabla J)$$
 
-This document records the computational proof that **δS = 0 applied to each Lagrangian term reproduces exactly the corresponding update rule in the simulation**. The proof has two parts:
+The active evidence has two distinct epistemic classes that must not be conflated:
 
-1. **Part 1 (δS/δJ):** Continuous field variations — forces on the flux field J
-2. **Part 2 (δS/δs):** Discrete state variations — manifestation, evaporation, transmutation
+1. **Variational:** the free-field stencil and stationary electric source match the written `J`-variation in their scoped sector.
+2. **Integration replay:** selected production force formulas can be recomputed from the same snapshots. Replaying a coded formula is not proof that it is the variation of the written action.
+
+The former Part 2 claim, `delta S/delta s` generates manifestation, evaporation, and transmutation, is retracted. Those update rules are threshold/stochastic transactions not present in the active action implementation.
 
 ### Test Architecture (v2)
 
-Every section tests **simulation output** against **independent analytical computation**. No section tests a formula against itself. No hardcoded passes.
+The current test independently recomputes the field equation and selected force formulas. Its own header explicitly states that the selected force formulas are not all matter-side variations of the written interaction.
 
 Two verification patterns are used:
 - **Variational pattern:** Perturb the field variable by ±ε, recompute the action, compare -δS/δφ to the simulation's EOM output (Section A).
@@ -34,7 +37,9 @@ Two verification patterns are used:
 
 ---
 
-## Part 1: Forces from δS/δJ = 0
+## Part 1: Field variation plus selected production-formula replay
+
+**Scope guard:** Section A is the variational core. Sections B–J below preserve the historical replay record, but their agreement establishes implementation consistency of selected formulas, not derivation from one common action. FTD-0467 controls wherever the older prose says otherwise.
 
 ### Section A: Wave Equation (Laplacian) — Variational
 
@@ -145,52 +150,32 @@ For each case, compare the simulation's `f_coulomb + f_strong` to the analytical
 
 **Result:** Sum(forces) = velocity change (relative error < 10⁻⁶). All force channels verified as active or correctly zero (10 checks).
 
-| Lagrangian Term | Update Rule | Force/Phase |
-|-----------------|-------------|-------------|
-| L_BI | Bandwidth limit + gravity | enforce_bandwidth, phase_forces |
-| L_COUPLING | Coulomb force | phase_forces (f_coulomb) |
-| L_VELOCITY | Lorentz force | phase_forces (f_magnetic) |
-| L_GAUSS | Charge conservation | Gauss constraint in phase_read |
-| L_STRONG | Yukawa force | phase_forces (f_strong) |
-| L_WEAK | Polarity transmutation | phase_weak |
-| L_BINDING | Triad locking | phase_binding |
-| L_NOETIC | Self-coherence | phase_noetic |
-| L_HIGGS | Manifestation potential | phase_write (genesis/evaporation) |
-| R_DISSIP | Vacuum damping | phase_write (damping) |
+| Implemented object | Licensed relation | Scope |
+|--------------------|-------------------|-------|
+| field kinetic + gradient terms | free `J`-variation matches the production stencil | variational, scoped |
+| state-flux coupling | written `J`-side source matches the stationary source term | variational, scoped |
+| selected Coulomb/gravity/Lorentz formulas | diagnostic replay matches coded formulas | integration replay, not common-action proof |
+| Gauss penalty/projector | selected `div J=rho` constraint realization | does not prove full-event conservation or U(1) |
+| Rayleigh term | selected non-conservative damping description | not conservative action |
+| genesis/evaporation | absent from the written action | common-action claim closed negative by FTD-0567 |
 
 ---
 
-## Part 2: State Transitions from δS/δs
+## Part 2: State-transition claim — retracted
 
-### Method
+The active action code contains no `L_HIGGS`, `K_GENESIS`, exponential manifestation probability, kinetic drain, or evaporation rule. Its Born–Infeld term is evaluated without a factor of `s`, so it cancels in a candidate-state comparison.
 
-For discrete state variables s in {-1, 0, +1}, the action principle selects the state that minimizes the local Lagrangian density. This is tested by computing L(s) for each candidate state and verifying the simulation selects the minimum.
+### Section K: Genesis (0 -> +/-1) — historical integration test, not a variation
 
-### Section K: Genesis (0 -> +/-1) — Simulation
+The formerly cited `L_HIGGS = K_B rho(1-s^2)` is not present in `lagrangian.h` or `lagrangian.cpp`. Production eligibility depends on `|J|>K_GENESIS`, while the written candidate-state terms depend on `div J` and `s`.
 
-**Relevant terms:**
-- $\mathcal{L}_{\text{Higgs}} = K_B \rho (1 - s^2)$: barrier for void, zero for manifested
-- $\mathcal{L}_{\text{coupling}} = -g_c s (\nabla \cdot J)$: energy gain from coupling to flux divergence
+FTD-0567 supplies an exact counterexample: two uniform fields with amplitudes `K_GENESIS/2` and `2K_GENESIS` have identical candidate-state action values because both have `div J=0` and `grad J=0`, yet only the second is production-eligible. No minimization or maximization of the implemented values reproduces that threshold.
 
-**Method:** Run the actual simulation with genesis enabled:
-- Test 1: Set center flux at 2 K_B (below K_GENESIS = 3 K_B). Verify void stays void.
-- Test 2: Set center flux at 2 K_GENESIS (above threshold), neighbors below K_GENESIS. Run one tick. Verify particle manifests and its polarity minimizes coupling energy.
-- Test 3: Verify analytically that s = +1 has lowest L when div(J) > 0.
+### Section L: Claimed self-field restoration — retracted as an action result
 
-**Result:** Below threshold: no manifestation. Above threshold: correct polarity selected (4 checks).
+The active genesis code drains superthreshold flux; it does not contain a rule that scales a manifested site's flux up to `K_B`. An annihilation or persistence integration test does not derive either update from the written action.
 
-### Section L: Self-Field Stabilization — Simulation
-
-**Mechanism:** Once manifested, the self-field maintenance rule scales flux up to K_B when it drops below threshold.
-
-**Method:**
-- Test 1: Place a manifested particle with flux at 0.3 K_B. Run one tick with genesis enabled. Verify flux is restored to K_B and particle persists.
-- Test 2: Verify analytically that at ρ = K_B, manifested state has lower action than void.
-- Test 3: Place a +1/-1 pair with high velocity toward each other. Run 5 ticks. Verify particle count decreases (annihilation works).
-
-**Result:** Self-field restoration confirmed. Annihilation functional (4 checks).
-
-### Section M: Weak Transmutation — Simulation
+### Section M: Weak transmutation — integration replay only
 
 **Lagrangian term:** $\mathcal{L}_{\text{weak}} = -\alpha_W |s| \cdot \sigma(k(\text{stress} - \theta))$
 
@@ -204,7 +189,7 @@ where σ is a sigmoid function and stress = |div J| + |curl J| + |∇ρ|.
 
 **Note:** `phase_weak` implements transmutation as `s → -s` when stress exceeds threshold. The L_weak term determines WHEN transmutation activates (via the sigmoid), not which direction the flip goes. The direction is determined by the coupling energy term L_coupling = -g_c s div(J).
 
-**Result:** High stress: polarity flipped. Low stress: no flip. Sigmoid properties confirmed (7 checks).
+**Correct status:** high/low-stress behavior may be replayed as an implemented threshold rule. This document does not establish it as a discrete action variation.
 
 ---
 
@@ -222,26 +207,25 @@ where σ is a sigmoid function and stress = |div J| + |curl J| + |∇ρ|.
 | H | Full force: F_sim = F_analytical | Integration (4 configs) | 0 | PASS |
 | I | Gauss: ∫div(J) = 0 on periodic lattice | Simulation | < 10⁻¹⁰ | PASS |
 | J | Sum(forces) = Δv (force completeness) | Integration (real check) | < 10⁻⁶ | PASS |
-| K | Genesis: polarity = argmin L(s) | Simulation | verified | PASS |
-| L | Self-field: manifested is action minimum | Simulation | verified | PASS |
-| M | Weak: flip when stress > threshold | Simulation | verified | PASS |
+| K | Genesis from candidate-state action | Exact uniform-field counterexample | exact | **RETRACTED / FAIL** |
+| L | Self-field restoration from action | active source audit | absent | **RETRACTED** |
+| M | Weak threshold behavior | Integration replay | implementation match | **NOT VARIATIONAL** |
 
-**Total: 60 individual checks, 0 failures.**
+The historical “60 checks, 0 failures” tally is provenance for a removed test and cannot support the active all-update claim. The current `test_action_stationarity.cpp` verifies seven scoped field/replay categories and explicitly excludes the common matter-side-action interpretation.
 
 ---
 
 ## Significance
 
-This proof establishes **Level 1** of the FTD proof hierarchy:
+The surviving theorem is narrower: the free field and stationary source possess a checked discrete `J`-variation in their declared sector. Several selected force formulas have consistent diagnostic replays. The production engine as a whole is **not** currently derived from one action.
 
-> **Level 1 [THEOREM]:** The FTD Lagrangian is not merely a post-hoc description of the simulation — it is the *generating function* from which every update rule can be derived via standard variational calculus. δS = 0 reproduces all forces, all state transitions, and all constraints.
-
-This means the simulation is not a collection of ad hoc rules; it is a single action principle unfolded into dynamics. Any physicist can inspect the 10-term Lagrangian and derive every line of simulation code from it.
+Genesis/evaporation supplies the clearest counterexample: its magnitude threshold, exponential random acceptance, branch-dependent drains, and label-erasing evaporation have no corresponding terms in the written action. FTD-0567 closes the current frozen-variable conservative common-action reading.
 
 ### What this does NOT prove
 
 - That the Lagrangian is unique (other actions could produce the same dynamics)
 - That the Lagrangian describes physical reality (that requires experimental tests)
+- That the written action generates genesis, evaporation, annihilation, weak transmutation, or every selected force branch
 - That fine-spacing convergence recovers known physics (that is a separate claim, addressed in DERIV_QFT_GRT_BRIDGE.md)
 - That the constants are correctly derived or physically identified. The current canonical status is split across `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, and `TRACKER_ONTIC_TRUTH.md`: G* and the master quadratic are theorem-level algebra; `x_+ = 1/α` remains [STRONGLY MOTIVATED CONJECTURE].
 
@@ -249,7 +233,8 @@ This means the simulation is not a collection of ad hoc rules; it is a single ac
 
 | Level | Statement | Status |
 |-------|-----------|--------|
-| 1 | δS = 0 → all update rules | **PROVEN** (this document) |
+| 1 | δS = 0 → scoped free-field/stationary-source rules | **PARTIAL THEOREM** (this document) |
+| 1b | one conservative action → all production updates | **CLOSED NEGATIVE for the current frozen genesis/evaporation map** (FTD-0567) |
 | 2 | Long-wavelength behavior → Maxwell + Schrodinger (error O(a^p) at fine spacing) | [THEOREM] (see DERIV_QFT_GRT_BRIDGE.md) |
 | 3 | Algebraic constants from G*; physical identifications with α, masses, mixing | Algebraic spine [THEOREM]; physical identifications [STRONGLY MOTIVATED CONJECTURE] / [SELECTION] / [PARAMETRIC] per LEDGER |
 | 4 | Substrate → aggregate QM statistics | [OPEN] |
@@ -259,10 +244,10 @@ This means the simulation is not a collection of ad hoc rules; it is a single ac
 
 ## Test Location
 
-`engine/tests/test_variational_proof.cpp`
+`engine/tests/test_action_stationarity.cpp`
 
 Build and run:
 ```bash
-cmake --build build --config Release --target test_variational_proof
-./build/Release/test_variational_proof.exe
+cmake --build build --config Release --target test_action_stationarity
+./build/Release/test_action_stationarity.exe
 ```

@@ -32,6 +32,8 @@
 #include "ftd/constants.h"
 #include "ftd/sublattice.h"
 #include "ftd/field_operators.h"
+#include "ftd/lorentz_bcc_time.h"
+#include "ftd/lorentz_period2.h"
 #include "ftd/parallel.h"
 
 #ifdef _OPENMP
@@ -48,7 +50,20 @@ void phase_read_main_loop(RenderBridge& rb) {
   const bool do_wave = rb.toggles.wave_propagation;
   const bool do_coupling = rb.toggles.coupling;
   const bool dual = rb.toggles.dual_substrate;
-  const double cw2 = C_WAVE * C_WAVE;
+  // FTD-0408 selected prototype: retain P4's one-Moore-shell dependency but
+  // alternate the wave kick coefficient over the microscopic two-tick cell.
+  // The exact Floquet pole is sin^2(theta)=M/13+3M^2/676; it is stable on
+  // 0<=M<=16/3 and has no q^4 term in theta^2.  The negative odd-tick kick
+  // and period-two clock are selected inputs.  Default OFF is bit-neutral.
+  // FTD-0411 selected two-domain prototype.  The literal normalized BCC
+  // clock has unwanted scalar cube-root branches, so this path uses its
+  // stable period-two IR localization.  It matches c^2=1/7 and cancels q^4,
+  // but deliberately does not claim exact BCC temporal dynamics at q^6.
+  const double cw2 = rb.toggles.lorentz_bcc_time_floquet
+      ? lorentz_bcc_time_kappa(rb.tick_)
+      : (rb.toggles.lorentz_period2_floquet
+          ? lorentz_period2_kappa(rb.tick_)
+          : C_WAVE * C_WAVE);
 
   // FTD-0271: de Broglie internal clock — Klein-Gordon rest-mass term −ω₀²·J
   // applied at manifested (state≠0) voxels. delta_j is acceleration (∂²J/∂t²),

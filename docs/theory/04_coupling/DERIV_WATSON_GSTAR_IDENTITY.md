@@ -105,19 +105,18 @@ $$x_+ \cdot x_- = 16\,G^* \cdot 2\pi\,W_3 = 32\pi\,G^*\,W_3 \tag{3.4}$$
 
 The sum and product of the master quadratic roots are **proportional to the Watson integral**. The master quadratic is not an external mathematical object imposed on the lattice — its coefficients are built from the lattice's own self-energy.
 
-### 3.2 The Fine Structure Constant and the BCC Return Integral $W_3 = G_{\rm BCC}(0)$ [THEOREM]
+### 3.2 Historical physical reading [RETIRED]
 
-From (3.3):
+The exact statement from (3.3) is
 
-$$\frac{1}{\alpha} + N_c = x_+ + x_- = 32\pi\,W_3 \tag{3.5}$$
+$$x_+ + x_- = 32\pi\,W_3. \tag{3.5}$$
 
-Therefore:
-
-$$\frac{1}{\alpha} = 32\pi\,W_3 - N_c \tag{3.6}$$
-
-The inverse fine structure constant equals $32\pi$ times the Watson integral of the 3D cubic lattice, minus the number of colors.
-
-**Numerical check:** $32\pi \times 1.39320 = 140.06$, and $140.06 - 3.024 = 137.036$. ✓
+An earlier version replaced $x_+$ by $1/\alpha$ and $x_-$ by $N_c$ and
+therefore wrote $1/\alpha + N_c = 32\pi W_3$. That is not a live theorem:
+$x_+ \leftrightarrow 1/\alpha$ is a physical conjecture, while the historical
+$x_- \leftrightarrow N_c$ identification is retired. In particular, the old
+numerical line subtracted $x_- \simeq 3.024$, not the exact color count
+$N_c=3$. Equation (3.5) is retained only in its root-sum form.
 
 ### 3.3 Rewriting the Master Quadratic in Lattice Language [THEOREM]
 
@@ -147,41 +146,47 @@ The FTD master constant is the **geometric mean** of $2\pi$ and the Watson integ
 
 ## Part IV: Finite-Size Scaling
 
-### 4.1 The Watson Integral on Finite Tori [THEOREM]
+### 4.1 The BCC Green pseudoinverse on finite tori [THEOREM]
 
 On the $L \times L \times L$ periodic torus, the finite-volume Green's function at the origin is:
 
-$$G_L(0) = \frac{1}{L^3}\sum_{\mathbf{k} \neq 0} \frac{1}{\sigma(\mathbf{k})}$$
+$$G_L^+(0) = \frac{1}{L^3}\sum_{\sigma(\mathbf{k}) \neq 0} \frac{1}{\sigma(\mathbf{k})}$$
 
-where $k_\mu = 2\pi n_\mu/L$, $n_\mu = 0, 1, \ldots, L-1$.
+where $k_\mu = 2\pi n_\mu/L$, $n_\mu = 0, 1, \ldots, L-1$, and
+$\sigma(\mathbf k)=1-\cos k_x\cos k_y\cos k_z$. The superscript `+`
+denotes the Moore–Penrose pseudoinverse: **every** zero mode is removed, not
+only $\mathbf k=0$. For even $L$, the kernel has four modes, namely the
+points with $k_i\in\{0,\pi\}$ and an even number of $\pi$ components; for
+odd $L$, only the constant mode is in the kernel.
 
-| $L$ | $G_L(0)$ | $G_L/W_3$ | $16\,G_L$ |
+| $L$ | $G_L^+(0)$ | $G_L^+/W_3$ | $16\,G_L^+$ |
 |-----|----------|-----------|-----------|
-| 2 | 29/32 = 0.9063 | 0.650 | 14.50 |
-| 4 | 1.1852 | 0.851 | 18.96 |
-| 8 | 1.3476 | 0.967 | 21.56 |
-| 16 | 1.4318 | 1.028 | 22.91 |
-| 32 | 1.4741 | 1.058 | 23.58 |
+| 2 | 1/4 = 0.250000 | 0.179443 | 4.0000 |
+| 4 | 29/32 = 0.906250 | 0.650479 | 14.5000 |
+| 8 | 1.162388 | 0.834328 | 18.5982 |
+| 16 | 1.279663 | 0.918503 | 20.4746 |
+| 32 | 1.336676 | 0.959426 | 21.3868 |
+| 64 | 1.364971 | 0.979735 | 21.8395 |
 | $\infty$ | $W_3$ = 1.3932 | 1.000 | 22.29 |
 
-The convergence is from below for small $L$, with overshoot beginning around $L = 12$. This is standard lattice Green's function behavior — the oscillating finite-size corrections arise from the discrete momentum sums.
+The displayed even-$L$ sequence converges from below. At $L=2$, excluding
+only $\mathbf k=0$ would leave three additional zero denominators and make
+the original sum divergent; removing the full kernel gives
+$G_2^+=(1/8)\,4\,(1/2)=1/4$ exactly. The former table's $L=2$ value
+$29/32$ is the corrected $L=4$ value.
 
-### 4.2 The 2×2×2 Case: Temporal vs Coulomb Gauge [THEOREM]
+### 4.2 The 2×2×2 degree-of-freedom count [CORRECTED]
 
-On the minimal $2 \times 2 \times 2$ periodic torus, the DOF count depends on the gauge:
+The historical route $24-7-1=16$ is retracted. Setting $A_0=0$ does not
+remove the residual time-independent spatial gauge transformations or the
+harmonic torus modes. Proper transverse gauge fixing removes the seven
+independent Gauss directions and three harmonic modes:
 
-| Gauge | Subtracted | Physical DOF |
-|-------|-----------|-------------|
-| Coulomb (full transverse) | 7 Gauss + 3 harmonic zero modes | **14** |
-| Temporal ($A_0 = 0$) | 7 Gauss + 1 pure gauge | **16** |
+$$n_{\rm physical}=24-7-3=14.$$
 
-**FTD operates in temporal gauge by construction** [THEOREM]: The flux field $\mathbf{J}$ is a spatial 3-vector with no temporal component (Postulate 2: discrete time with global clock). This is exactly the condition $A_0 = 0$. In temporal gauge, only 1 pure gauge mode (the global constant) is removed, not all 3 harmonic 1-cycles of $T^3$.
-
-The physical DOF in FTD's ontological gauge is therefore **16** — matching the master quadratic coefficient and the orbit-stabilizer result $|O_h|/3 = 48/3 = 16$.
-
-The physical DOF count is **14, not 16**. The FTD counting "24 − 7 − 1 = 16" subtracts only 1 zero mode instead of the 3 harmonic 1-cycles of $T^3$. The coefficient 16 in the master quadratic is correct (via $|{\rm Aut}(E)|^2$ and other routes) but its interpretation as a DOF count on the minimal torus requires revision.
-
-**Note:** $16 \times G_{L=2}(0) = 16 \times 29/32 = 29/2 = 14.5$, which is close to $n_{\rm physical} = 14$ but not exact.
+Thus the minimal-torus DOF count does not derive the master-quadratic
+coefficient 16. The finite-volume pseudoinverse value is independently
+$G_2^+=1/4$; no near-equality between $16G_2^+$ and 14 exists.
 
 ---
 
@@ -190,9 +195,9 @@ The physical DOF count is **14, not 16**. The FTD counting "24 − 7 − 1 = 16"
 ### Established [THEOREM]
 
 1. $W_3 = G^{*2}/(2\pi)$ — exact algebraic identity
-2. $1/\alpha + N_c = 32\pi\,W_3$ — the master quadratic sum in lattice language
+2. $x_+ + x_- = 32\pi\,W_3$ — the master-quadratic root sum in BCC-integral language
 3. $G^* = \sqrt{2\pi\,W_3}$ — the master constant as geometric mean of $2\pi$ and $W_3$
-4. The master quadratic coefficients are built from the lattice self-energy
+4. The master quadratic coefficients can be rewritten using the BCC self-energy
 5. The 2×2×2 torus has 14 physical transverse DOF (not 16)
 
 ### Physical Interpretation [SELECTION]

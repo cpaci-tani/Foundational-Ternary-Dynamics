@@ -25,20 +25,20 @@ open FTD
 
 /-- The third derivative of any cubic is constant (= 6 * leading coefficient).
     For V(x) = x^3/3 - ..., the leading coefficient is 1/3, so V''' = 6*(1/3) = 2. -/
-theorem cubic_third_deriv_is_2 : 2 * 1 = 2 := by native_decide
+theorem cubic_third_deriv_is_2 : 2 * 1 = 2 := by decide
 
 /-- The fourth derivative of any cubic vanishes — no higher operators. -/
 theorem cubic_fourth_deriv_is_0 : True := trivial  -- V'''' = 0 by degree
 
 /-- Self-coupling: V'''/3! = 2/6. In natural numbers: 2 and 6, ratio = 1/3 = 1/D.
     Since Lean Nat division truncates, we verify the cross-multiplication: 2 * 3 = 6 * 1 -/
-theorem coupling_cross_mult : 2 * 3 = 6 * 1 := by native_decide
+theorem coupling_cross_mult : 2 * 3 = 6 * 1 := by decide
 
 /-- The coupling 1/3 equals 1/D where D = 3 spatial dimensions -/
 theorem coupling_is_inv_D : 3 = N_c := rfl  -- D_spatial = N_c = 3
 
 /-- V''' = 2 comes from the coefficient of x^3/3: the 3 cancels, leaving 2*1 = 2 -/
-theorem v_triple_prime : 3 * 2 = 6 := by native_decide
+theorem v_triple_prime : 3 * 2 = 6 := by decide
 
 /-! ## Numerical Verification -/
 

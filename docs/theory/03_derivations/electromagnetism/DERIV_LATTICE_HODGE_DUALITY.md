@@ -1,4 +1,4 @@
-# DERIV — Lattice Hodge Duality on FTD's Vertex-Centered Stencil
+# DERIV — Exact Lattice Bianchi Identities on FTD's Vertex-Centered Stencil
 
 **Document type:** Derivation
 **Status:** [DERIVED] — kinematic identity; standard math applied to FTD's specific stencil family
@@ -14,7 +14,7 @@ wave-equation side);
 ## 0 · Statement
 
 **Theorem (lattice Bianchi identities).** On the vertex-centered cubic
-lattice with centered-difference operator
+lattice with the FTD centered-difference operator
 
 ```
 (∂_i f)(x) := [f(x + e_i) − f(x − e_i)] / 2,
@@ -25,20 +25,21 @@ Equivalently, for any vector field `A` and scalar field `φ` on the
 lattice:
 
 ```
-∇·(∇×A) = 0       (Bianchi I — no magnetic monopoles)        (★)
+∇·(∇×A) = 0       (Bianchi I — no magnetic source in the regular global-A sector) (★)
 ∇×(∇φ) = 0        (Bianchi II — gauge invariance compatible) (★★)
 ```
 
 both hold **exactly at every lattice site**, with no `O(a²)`
-discretization error.
+discretization error. More generally, the result needs commuting difference
+operators; centered differences are FTD's instance, not the unique instance.
 
 **Stencil-independence corollary.** Identities (★)/(★★) depend only on
 the difference operator being centered. They are **independent of the
 choice of Laplacian stencil** — G6, G18, G26, or any element of the
 isotropic family `(a, b, c)` with `a + 4b + 4c = 1` and `6b + 12c = 1`
-preserves them. Therefore Hodge duality `F  ⋆F` is preserved on FTD's
-lattice for the entire G18-family of canonical stencils, including the
-production engine choice `c = 0`.
+preserves them. This proves a stencil-independent differential complex
+`d²=0`. It does **not** define a discrete Hodge star, prove invariance of the
+action under `F -> *F`, or relate electric and magnetic kinetic coefficients.
 
 ---
 
@@ -85,7 +86,7 @@ Maxwell's equations decompose into two halves:
 The Bianchi half is **automatic** as soon as the field strength is
 written `F = dA` and `d² = 0`. The lattice version of this is identity
 (★)/(★★) above. So FTD's lattice has the algebraic structure needed
-for the "no magnetic monopoles" / "gauge invariance" half of Maxwell
+for the regular-global-potential magnetic-source-free / gauge-invariance half of Maxwell
 to hold without any additional dynamics.
 
 The source half is engine-dynamics-specific: it depends on which
@@ -97,7 +98,7 @@ recovery program (Phase F/G/H), not this document.
 
 A non-obvious consequence: FTD's choice of canonical stencil G18
 (c = 0) versus any other element of the isotropic family
-(c ∈ [0, 1/12]) **does not affect** Hodge duality. The choice affects
+(c ∈ [0, 1/12]) **does not affect** the Bianchi identities. The choice affects
 the dispersion relation and finite-k isotropy of the Laplacian, but
 the exterior calculus is preserved across the entire family.
 
@@ -117,15 +118,16 @@ This is the algebraic reason FTD's native ED (`SPEC_FTD_NATIVE_ELECTRODYNAMICS.m
 §3) can use `J = J_L + J_T` without introducing lattice-scale
 correction terms.
 
-### 2.4 · No hidden duality-breaking parameter
+### 2.4 · No Bianchi-breaking parameter; dynamical duality remains open
 
-A potential worry was that FTD's stencil might break `F  ⋆F` at
-lattice scale, introducing a duality-breaking constant analogous to
-the way some lattice gauge theories break chiral symmetry at lattice
-scale. **There is no such parameter for FTD.** The Bianchi identities
-are exact, so the duality is unbroken. This is recorded as a
-*negative result* worth knowing — no anomalous lattice-scale
-duality-breaking constant exists for the engine to measure.
+The centered stencil introduces no parameter into `d²=0`; the two displayed
+Bianchi identities are exact. The former inference that this also made
+electric-magnetic duality unbroken was too strong. A Hodge star depends on the
+metric/inner product, and invariance under `F -> *F` additionally depends on
+the source content and on equality of electric and magnetic action
+coefficients. FTD-0415 proves that the declared spatial/CPT/gauge symmetries
+permit independent `E²` and `B²` coefficients. This document supplies no
+symmetry that equates them.
 
 ---
 
@@ -139,7 +141,8 @@ The standard Yee scheme (1966) for lattice Maxwell places:
 
 This gives a clean discrete differential complex with `d² = 0`
 automatic by geometric placement (the boundary of a boundary is
-empty). Yee preserves Hodge duality by construction.
+empty). Yee preserves the discrete differential complex by construction; a
+constitutive Hodge star is an additional structure.
 
 FTD differs: `J` lives at vertices (collocated with `ρ`), not at
 edges. The natural lattice exterior derivative is the centered
@@ -149,8 +152,8 @@ convention differs.
 
 **Implication:** FTD's vertex-centered formulation is mathematically
 equivalent to Yee's at the level of the Bianchi identities, even
-though the geometric placement of fields differs. Either formulation
-preserves Hodge duality. FTD's choice is a convention motivated by
+though the geometric placement of fields differs. This equivalence does not
+establish electric-magnetic interchange symmetry. FTD's choice is a convention motivated by
 the flux-field ontology (`J` is fundamental, not derived from `A`),
 not a structural compromise.
 
@@ -163,21 +166,23 @@ not a structural compromise.
   source half (`∇·E = ρ`, etc.) requires engine-dynamics-specific
   derivations that are not addressed here.
 
-- **NOT a uniqueness claim.** Other lattice prescriptions (forward
-  differences, backward differences, asymmetric stencils) would break
-  `∂_i ∂_j` symmetry and hence break `d² = 0`. The result holds for
-  centered differences specifically. FTD uses centered differences;
-  the result applies to FTD.
+- **NOT a uniqueness claim.** Consistently defined forward, backward, and
+  centered translation-invariant differences along independent axes commute
+  and also give `d²=0`. A mismatch of primal/dual complexes or noncommuting
+  position-dependent difference rules can spoil the identity. FTD uses the
+  centered commuting instance verified here.
 
 - **NOT new mathematics.** The fact that `d² = 0` follows from
   symmetry of mixed centered differences is well-known in
   computational electromagnetics (e.g., Bossavit's lattice exterior
   calculus literature). What's new is the explicit statement for
-  FTD's G18-family stencil and the observation that Hodge duality
-  is independent of the Laplacian stencil choice within the family.
+  FTD's G18-family stencil and the observation that the Bianchi identities
+  are independent of the Laplacian stencil choice within the family.
 
-- **NOT a result about Lorentz invariance.** Hodge duality `F  ⋆F`
-  is a discrete-differential-geometry property; Lorentz invariance is
+- **NOT a result about Lorentz invariance or electric-magnetic duality.**
+  The differential identity `d²=0` is metric independent; a Hodge-star
+  interchange and Lorentz invariance require additional metric/action data.
+  Lorentz invariance is
   a separate question about the relationship between space and time
   derivatives. Lorentz anisotropy at lattice scale is being audited
   separately (`AUDIT_LORENTZ_ANISOTROPY.md`).
