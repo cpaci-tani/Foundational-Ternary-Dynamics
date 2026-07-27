@@ -1364,8 +1364,12 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     's0-seed-flux-tube': { summary: 'An imposed Gaussian axial vector profile between two opposite ternary endpoint markers; confinement is not tested.', notation: ['Gaussian tube ansatz', 'neutral endpoints', 'no confinement law'] },
     's0-seed-monopole': { summary: 'An exact radial inverse-square vector profile. It is monopole-shaped initial data, not evidence for magnetic charge.', notation: ['radial J', 'r²|J| = 1/(4π)', 'imposed ansatz'] },
     's0-seed-instanton': { summary: 'A localized radial 3-vector profile whose instanton interpretation is rejected: it has no Euclidean time, non-Abelian connection, or topological charge.', notation: ['radial 3-vector', 'not an instanton', 'closed negative'] },
-    's0-seed-schwarzschild': { summary: 'A gravity-facing well configuration for central-potential and horizon intuition.', notation: ['Φ(r)', '\\(r_s\\)'] },
-    's0-seed-gravitational-wave': { summary: 'A wave-like spacetime-analogue configuration for strain and propagation intuition.', notation: ['h_μν', 'wave strain'] },
+    // 's0-seed-schwarzschild' and 's0-seed-gravitational-wave' are defined
+    // further below, post-qualification (2026-07-27). This was a duplicate,
+    // pre-qualification pair that JS object-literal last-key-wins silently
+    // shadowed -- reordering the keys would have reinstated the unqualified
+    // "gravity-facing well" / "spacetime-analogue" claims the qualification
+    // campaign rejected. Removed rather than left as a landmine.
     's0-seed-sloop': { summary: 'An exact inert 12-site tangential ring with zero net vector flux; no self-reference or consciousness behavior is tested.', notation: ['12-site ring', '|J| = K_B', 'zero vector sum'] },
     's0-seed-observer-cell': { summary: 'An exact inert 1+6+12+8 Moore-shell pattern with imposed alternating ternary labels; it is not an observer model.', notation: ['3³ Moore cell', 'imposed labels', 'no observer claim'] },
     's0-field-plane-wave': { summary: 'A canonical plane-wave initial condition for reading wavelength, phase, and travel direction.', notation: ['A exp(i(kx-ωt))', 'k', 'ω'] },
