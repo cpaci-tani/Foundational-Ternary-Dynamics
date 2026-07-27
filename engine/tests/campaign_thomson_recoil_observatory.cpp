@@ -2,7 +2,7 @@
  * FTD-0287: Thomson recoil observatory.
  *
  * A machine-precision companion to the scale-0 dashboard scenario
- * `s0-field-thomson-scattering`.
+ * "s0-field-thomson-scattering".
  *
  * Scope:
  *   [INSTRUMENT] Fixed protocol for observing a y-polarized plane wave
@@ -124,11 +124,13 @@ void inject_locked_electron(ftd::RenderBridge& rb) {
 
 void inject_plane_wave(ftd::RenderBridge& rb) {
     const double k = 2.0 * PI * static_cast<double>(MODE_N) / static_cast<double>(L);
-    const double omega = 2.0 * ftd::C_SPEED * std::abs(std::sin(k * 0.5));
+    const double omega = 2.0 * std::asin(ftd::C_SPEED * std::abs(std::sin(k * 0.5)));
     auto& voxels = rb.voxels();
     for (int x = 0; x < L; ++x) {
         const double jy = AMP * std::sin(k * static_cast<double>(x));
-        const double wy = -omega * AMP * std::cos(k * static_cast<double>(x));
+        const double phase = k * static_cast<double>(x);
+        const double wy = AMP * ((1.0 - std::cos(omega)) * std::sin(phase)
+                                 - std::sin(omega) * std::cos(phase));
         for (int y = 0; y < L; ++y) {
             for (int z = 0; z < L; ++z) {
                 auto& v = voxels[rb.lattice().index(x, y, z)];

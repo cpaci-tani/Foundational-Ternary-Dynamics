@@ -1,6 +1,6 @@
 /**
  * @file benchmark_lorentz_recovery.cpp
- * @brief EFT Phase 1B — Lorentz-covariance recovery benchmark.
+ * @brief EFT Phase 1B — free-flux correlator-collapse benchmark.
  *
  * Pre-registered expectations: SPEC_EFT_RECOVERY_PROGRAM.md §4.2.
  *
@@ -8,17 +8,26 @@
  * ---------
  *   1. Initialize a plane-wave flux J_x(z) = A · cos(k_z · z) with k_z = 2π/L
  *      on an L³ lattice. This is an exact solution of the linearized wave
- *      equation on the cubic lattice; time-evolution gives J_x(z, t) =
- *      A · cos(k_z·z − ω·t) with ω = 2·c·sin(k_z/2) ≈ c·k_z for small k.
+ *      equation on the cubic lattice. The default fully discrete update gives
+ *      J_x(z,t) = A·cos(k_z·z − theta·t), with the exact axis relation
+ *      theta = 2·asin[c·sin(k_z/2)] ≈ c·k_z for small k.
  *   2. Sample J at the origin voxel over T = 256 ticks → temporal correlator
  *      C_t(τ) = (A²/2) · cos(ω τ).
  *   3. At tick T/2, measure the spatial correlator C_s(r) along the z axis
  *      → (A²/2) · cos(k_z r).
- *   4. Rescale τ → r / c with c = 1/√3 (CFL stability). After rescaling the
- *      two correlators should match: C_t(r/c) = (A²/2)·cos(ω·r/c) =
- *      (A²/2)·cos(k_z·r) = C_s(r), up to lattice-dispersion corrections.
+ *   4. Rescale τ → r / c with the selected leading speed c = 1/√3. The two
+ *      correlators approach one another at small dimensionless k; their finite-k
+ *      mismatch is fixed by the exact arcsin relation above.
  *   5. Fit residual(r) = |C_t(r/c) − C_s(r)| / |C_s(r)| to B·r^(−q); assert
- *      the absolute residual is bounded and q > 0 (residual decays).
+ *      the absolute residual is bounded. The within-run q fit is descriptive,
+ *      not a Lorentz-recovery exponent; see FTD-0407.
+ *
+ * Scope
+ * -----
+ * This benchmark tests one free axis mode against the engine's leading-speed
+ * rescaling. It does not test boosts, interactions, common matter/flux limiting
+ * speeds, or radiative operator mixing. Passing it is necessary but not
+ * sufficient for Lorentz recovery (AUDIT_LORENTZ_RECOVERY_HARD.md).
  *
  * Checks (4)
  * ----------
@@ -92,10 +101,10 @@ int main() {
     const int T = 512;
     const double amp = 1.0;
     const double kz = 2.0 * PI / static_cast<double>(L);
-    const double c_lattice = 1.0 / std::sqrt(3.0);  // CFL limit (C_SPEED)
+    const double c_lattice = ftd::C_SPEED;  // selected leading flux speed
 
     std::puts("================================================================");
-    std::puts("  EFT Phase 1B — Lorentz Recovery Benchmark");
+    std::puts("  EFT Phase 1B — Free-Flux Correlator Diagnostic");
     std::printf("  L = %d, T = %d, k_z = 2π/L, c_lattice = %.6f\n",
                 L, T, c_lattice);
     std::puts("================================================================");
@@ -166,8 +175,9 @@ int main() {
     auto comp = ftd::eft::compare_correlators(C_t, C_s, c_lattice, 4, L / 4);
 
     // L2: mean residual over [4, L/4) bounded. At L=32 with mode k_z = 2π/L
-    // the lattice dispersion correction ω/|k| = 2·sin(π/L)·L/(2π) ≈ 1 − (π/L)²/6
-    // gives a fractional mismatch of about 0.005 — so 5% is a safe envelope.
+    // the exact lattice phase is theta = 2 asin(c sin(k/2)), not the
+    // semi-discrete 2c sin(k/2). The resulting finite-k mismatch is why this
+    // engineering envelope is looser than the historical pre-registration.
     {
         double sum = 0.0; int n = 0;
         for (int r = 4; r < L / 4; ++r) { sum += comp.residual[r]; ++n; }
@@ -214,7 +224,7 @@ int main() {
 
     std::puts("\n----------------------------------------------------------------");
     if (g_failures == 0) {
-        std::puts("  All EFT-Phase-1B benchmark checks PASS");
+        std::puts("  All free-flux correlator checks PASS (not a full Lorentz verdict)");
         return 0;
     }
     std::printf("  %d EFT-Phase-1B check(s) FAILED\n", g_failures);

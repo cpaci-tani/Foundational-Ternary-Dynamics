@@ -6,20 +6,16 @@
  *
  * VALIDATION CHECKS (committed pre-measurement):
  *   1. Free-fermion plane-wave: with B = 0 and identity gauge links,
- *      apply D_W to a plane wave psi_p(n) = u(p,s) exp(i p . n).
- *      The result should be lambda(p) * psi_p(n) where
- *           lambda(p) = (m + 4r/a) - (1/a) sum_mu [ r cos(p_mu) - i sin(p_mu) gamma^mu ]
- *      Specifically, for low momentum p << pi/a:
- *           lambda(p) approx m + sum_mu (r/2) p_mu^2 - i sum_mu sin(p_mu) gamma^mu
- *      The dispersion is the standard lattice Wilson-Dirac one.
+ *      apply the Hermitian H_W to a plane wave psi_p(n)=u(p,s) exp(i p.n).
+ *      H_W^2 is scalar on a free momentum mode and gives
+ *           E^2 = [m + (c_s r/a) sum_mu(1-cos p_mu)]^2
+ *               + (c_s^2/a^2) sum_mu sin^2 p_mu.
  *
  *      Assertion: norm of D_W psi_p (which is |lambda(p)| * norm of psi_p) matches
  *      the analytical prediction within 1e-10 relative error.
  *
- *   2. Norm conservation under RK4 evolution: i d/dt psi = D_W psi is unitary
- *      (D_W is hermitian for r=0; with Wilson term r != 0, the effective
- *      Hamiltonian is still hermitian because Wilson term is real-symmetric in
- *      position basis). Total norm should be conserved over time.
+ *   2. Norm conservation under RK4 evolution: i d/dt psi = H_W psi is unitary
+ *      because H_W is Hermitian. Total norm should be conserved over time.
  *
  *      Assertion: after 100 RK4 steps with dt = 0.01, total spinor norm is
  *      conserved to within 1e-6 relative error.
@@ -69,23 +65,23 @@ bool check_plane_wave_dispersion(int L, const std::array<double, 3>& momentum, i
     params.m = 0.5;   // moderate mass for clear signal in test
     params.r = 1.0;
     params.a = 1.0;
-    apply_wilson_dirac(out, psi, links, lattice, params);
+    apply_wilson_hamiltonian(out, psi, links, lattice, params);
 
     const double norm_out = out.total_norm_squared();
 
-    // Analytical eigenvalue magnitude for plane wave on free Wilson-Dirac:
-    //   D_W u_p exp(i p.n) = E(p) u_p exp(i p.n)
+    // Analytical free Wilson-Hamiltonian energy:
+    //   H_W^2 u_p exp(i p.n) = E(p)^2 u_p exp(i p.n)
     //   where E(p)^2 = (m + (r/a) sum_mu (1 - cos p_mu))^2 + (1/a^2) sum_mu sin^2(p_mu)
     // (this is the Wilson-Dirac dispersion in the spinor norm; see Montvay-Munster eq 4.2)
-    const double M_eff = params.m + (params.r / params.a) * ((1.0 - std::cos(momentum[0]))
+    const double M_eff = params.m + (params.spatial_speed * params.r / params.a) * ((1.0 - std::cos(momentum[0]))
                                                               + (1.0 - std::cos(momentum[1]))
                                                               + (1.0 - std::cos(momentum[2])));
-    const double K_sq = (1.0 / (params.a * params.a)) * (std::sin(momentum[0]) * std::sin(momentum[0])
+    const double K_sq = (params.spatial_speed * params.spatial_speed / (params.a * params.a)) * (std::sin(momentum[0]) * std::sin(momentum[0])
                                                           + std::sin(momentum[1]) * std::sin(momentum[1])
                                                           + std::sin(momentum[2]) * std::sin(momentum[2]));
     const double E_pred_sq = M_eff * M_eff + K_sq;
 
-    // Predicted norm of D_W psi = E(p) * norm(psi)
+    // Predicted norm of H_W psi = E(p) * norm(psi)
     const double norm_out_predicted = E_pred_sq * norm_psi;
     const double rel_err = std::abs(norm_out - norm_out_predicted) / norm_out_predicted;
 
@@ -93,7 +89,7 @@ bool check_plane_wave_dispersion(int L, const std::array<double, 3>& momentum, i
               << "  p=(" << std::fixed << std::setprecision(4) << momentum[0] << ","
               << momentum[1] << "," << momentum[2] << ")"
               << "  norm(psi)=" << std::scientific << std::setprecision(6) << norm_psi
-              << "  norm(D psi)=" << norm_out
+              << "  norm(H psi)=" << norm_out
               << "  predicted=" << norm_out_predicted
               << "  rel_err=" << rel_err
               << "  " << (rel_err < TOL_DISPERSION ? "PASS" : "FAIL")

@@ -164,7 +164,7 @@ int main() {
         if (y_total > 1e-10) {
             double mixing = z_leaked / y_total;
             std::cout << "    z-component leakage: " << mixing << "\n";
-            // At CFL limit (C_WAVE = 1/√3), dispersive effects and Gauss
+            // At the selected C_WAVE = 1/√3, dispersive effects and Gauss
             // projection introduce slightly more cross-polarization leakage.
             check("Polarization mixing < 20%", mixing < 0.20);
         }

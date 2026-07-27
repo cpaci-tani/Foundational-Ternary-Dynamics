@@ -4,13 +4,12 @@
  *
  * MOTIVATION. Light in FTD is a wave in the CONTINUOUS flux field J (FTD-0298).
  * The flux field carries no axiom-level amplitude cap (unlike the ternary state
- * field s in {-1,0,+1}). But the genesis rule fires when a void site reaches
- * |J| > K_GENESIS, and the manifestation step DRAINS the flux back to the
- * threshold (flux *= max(0, 1 - K_GENESIS/|J|)). So a coherent flux wave should
- * have an effective amplitude ceiling at |J| = K_GENESIS: push past it and the
- * crests stop growing and start shedding into matter (state flips). This is the
- * lattice analogue of a water wave reaching its breaking steepness, or of the
- * QED Schwinger limit (field too strong -> vacuum makes pairs).
+ * field s in {-1,0,+1}). The genesis rule fires when a void site reaches
+ * |J| > K_GENESIS and subtracts one threshold magnitude along J. FTD-0567
+ * corrects the original interpretation: the accepted-event residual is
+ * |J|'=|J|-K_GENESIS, not K_GENESIS, so the rule supplies a sharp ignition
+ * threshold but not an algebraic hard amplitude ceiling. The observed crest
+ * regulation in this campaign is a collective stochastic/dissipative result.
  *
  * This campaign drives genesis with a COHERENT TRANSVERSE PLANE WAVE (not the
  * thermal Langevin drive of campaign_genesis_criticality, and not a localized
@@ -26,7 +25,8 @@
  *
  * Three pre-stated outcomes (registered in conversation before running):
  *   (1) sharp K_GENESIS-locked, wavelength-invariant threshold -> a forward
- *       prediction of the framework (the coherent-light amplitude ceiling).
+ *       prediction of the configured genesis gate (sharp ignition threshold;
+ *       the later FTD-0567 correction withdraws the exact-ceiling reading).
  *   (2) smeared crossover not locked to K_GENESIS -> a boundary (soft/dynamical
  *       ceiling).
  *   (3) no triggering by a coherent wave at all -> a sharper boundary

@@ -208,8 +208,10 @@ void benchmark_wave_speed(int L) {
     double measured_front = (furthest > 0) ? static_cast<double>(furthest) / total_ticks : 0.0;
 
     // Theory: C_WAVE = 1/sqrt(3) ≈ 0.577 for the isotropic propagation speed.
-    // The axial wavefront can only advance 1 lattice site per tick at most
-    // (the lattice CFL limit). The actual wavefront speed measured this way
+    // The dependency hull can advance 1 lattice site per axis per tick.  That
+    // topological bound is distinct from the production stencil's exact
+    // von Neumann ceiling sqrt(3)/2 and from the selected C_WAVE=1/sqrt(3).
+    // The actual wavefront speed measured this way
     // approaches C_WAVE as L and tick count grow. At L=32, 35 ticks, expect
     // a wavefront at ~20 sites → v ≈ 0.57.
     double theory = ftd::C_WAVE;

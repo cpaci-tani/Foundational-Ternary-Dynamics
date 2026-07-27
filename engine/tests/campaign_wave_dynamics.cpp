@@ -69,13 +69,19 @@ static void section_wave_speed() {
         ftd::test::check("C_WAVE == C_SPEED (unified causal speed)",
               std::abs(ftd::C_WAVE - ftd::C_SPEED) < 1e-15);
 
-        double cfl_limit = std::sqrt(1.0 / 3.0);
-        std::cout << "    CFL limit = 1/sqrt(3) = " << cfl_limit << "\n";
-        std::cout << "    C_WAVE                = " << ftd::C_WAVE << "\n";
-        ftd::test::check_close("C_WAVE = 1/sqrt(3) (derived from CFL)",
-                    ftd::C_WAVE, cfl_limit, 1e-12);
-        ftd::test::check("C_WAVE at CFL limit (maximal stable speed)",
-              std::abs(ftd::C_WAVE - cfl_limit) < 1e-10);
+        // For the production 18-point symbol, M_max = 16/3 at
+        // (pi,pi,0) and permutations.  Centered leapfrog stability therefore
+        // requires C_WAVE^2 M_max <= 4, or C_WAVE <= sqrt(3)/2.
+        const double selected_speed = std::sqrt(1.0 / 3.0);
+        const double exact_cfl_limit = std::sqrt(3.0) / 2.0;
+        std::cout << "    selected C_WAVE = 1/sqrt(3) = " << selected_speed << "\n";
+        std::cout << "    exact CFL ceiling = sqrt(3)/2 = " << exact_cfl_limit << "\n";
+        ftd::test::check_close("C_WAVE equals the selected 1/sqrt(3) value",
+                    ftd::C_WAVE, selected_speed, 1e-12);
+        ftd::test::check("C_WAVE lies strictly below the exact CFL ceiling",
+              ftd::C_WAVE < exact_cfl_limit);
+        ftd::test::check("production-stencil von Neumann stability bound",
+              ftd::C_WAVE * ftd::C_WAVE * (16.0 / 3.0) <= 4.0 + 1e-12);
     }
 
     // Section 3: Dispersion — discrete lattice modifies omega(k)

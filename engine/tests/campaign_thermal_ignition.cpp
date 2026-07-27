@@ -12,8 +12,8 @@
  *       T_up   — heating condensation onset (the void's metastability limit / spinodal)
  *       T_down — cooling onset (hysteresis ⇒ first-order; FTD-0272: self-sustaining
  *                condensate pinned to T=0)
- *       T_max  — where T_kin stops tracking T_set / the leapfrog destabilizes: the
- *                CFL/causality ceiling (thermal velocity → max signal speed c=1/√3).
+ *       T_max  — where T_kin stops tracking T_set / the configured dynamics destabilize;
+ *                thermal velocity is clamped to the selected transport speed c=1/√3.
  *                The discreteness-imposed MAXIMUM temperature (a continuum has none).
  *
  *   IGNITION mode (langevin OFF, deterministic): at each L, sweep the injection

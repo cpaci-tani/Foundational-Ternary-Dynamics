@@ -48,9 +48,26 @@ std::vector<int> state_snapshot(const ftd::RenderBridge& rb) {
 }
 
 void configure_movement_only(ftd::RenderBridge& rb) {
+  // This audit extracts CPU movement histories from before/after host
+  // snapshots. CUDA has a separate continuity adapter and must not be selected
+  // implicitly on CUDA-enabled hosts.
+  rb.force_cpu();
   rb.toggles.disable_all();
   rb.toggles.movement = true;
   rb.toggles.dual_substrate = false;
+}
+
+void prime_next_step(ftd::RenderBridge& rb, int x, int y, int z,
+                     const ftd::Vec3& velocity) {
+  auto& voxel = rb.voxel_at(x, y, z);
+  voxel.velocity = velocity;
+  const auto primed = [](double component) {
+    if (component > 0.0) return 1.0 - component;
+    if (component < 0.0) return -1.0 - component;
+    return 0.0;
+  };
+  voxel.remainder = {primed(velocity.x), primed(velocity.y),
+                     primed(velocity.z)};
 }
 
 void check_transport_history(const std::string& name,
@@ -175,7 +192,7 @@ int main() {
       "movement-only RenderBridge ticks",
       "continuity_residual, current_l1, reaction_l1, blocked_operator_moments",
       "periodic L=8 lattice and b=2 blocked cells",
-      "backend-default; CPU snapshot extractor is the observable adapter",
+      "CPU-forced; the observable is the CPU movement-history adapter",
       "fine and blocked continuity ledgers close across one tick and intervals",
       "failure means transport identity, blocking, or continuity accounting is inconsistent"});
 
@@ -188,7 +205,7 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(3, 1, 1, +1, {0, 0, ftd::K_B});
-    rb.voxel_at(3, 1, 1).velocity = {1, 0, 0};
+    prime_next_step(rb, 3, 1, 1, {0.99 * ftd::C_SPEED, 0, 0});
     check_transport_history("NET-1 + transport", rb, 1, 0, 0);
   }
 
@@ -197,7 +214,7 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(3, 2, 1, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(3, 2, 1).velocity = {1, 0, 0};
+    prime_next_step(rb, 3, 2, 1, {0.99 * ftd::C_SPEED, 0, 0});
     check_transport_history("NET-2 - transport", rb, 1, 0, 0);
   }
 
@@ -206,7 +223,7 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(1, 1, 1, +1, {0, 0, ftd::K_B});
-    rb.voxel_at(1, 1, 1).velocity = {1, 0, 0};
+    prime_next_step(rb, 1, 1, 1, {0.99 * ftd::C_SPEED, 0, 0});
     check_transport_history("NET-3 internal + transport", rb, 1, 0, 0);
   }
 
@@ -215,7 +232,7 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(1, 3, 1, +1, {0, ftd::K_B, 0});
-    rb.voxel_at(1, 3, 1).velocity = {0, 1, 0};
+    prime_next_step(rb, 1, 3, 1, {0, 0.99 * ftd::C_SPEED, 0});
     check_transport_history("NET-4 y transport", rb, 1, 0, 0);
   }
 
@@ -224,7 +241,7 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(1, 1, 3, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(1, 1, 3).velocity = {0, 0, 1};
+    prime_next_step(rb, 1, 1, 3, {0, 0, 0.99 * ftd::C_SPEED});
     check_transport_history("NET-5 z negative transport", rb, 1, 0, 0);
   }
 
@@ -233,7 +250,8 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(3, 3, 1, +1, {ftd::K_B, ftd::K_B, 0});
-    rb.voxel_at(3, 3, 1).velocity = {1, 1, 0};
+    const double component = 0.99 * ftd::C_SPEED / std::sqrt(2.0);
+    prime_next_step(rb, 3, 3, 1, {component, component, 0});
     check_transport_history("NET-6 diagonal transport", rb, 1, 0, 0);
   }
 
@@ -243,7 +261,7 @@ int main() {
     configure_movement_only(rb);
     rb.inject_particle(3, 1, 1, +1, {0, 0, ftd::K_B});
     rb.inject_particle(4, 1, 1, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(3, 1, 1).velocity = {1, 0, 0};
+    prime_next_step(rb, 3, 1, 1, {0.99 * ftd::C_SPEED, 0, 0});
     check_transport_history("NET-7 annihilation reaction", rb, 0, 1, 0);
   }
 
@@ -253,7 +271,7 @@ int main() {
     configure_movement_only(rb);
     rb.inject_particle(3, 1, 1, +1, {0, 0, ftd::K_B});
     rb.inject_particle(4, 1, 1, +1, {0, 0, ftd::K_B});
-    rb.voxel_at(3, 1, 1).velocity = {1, 0, 0};
+    prime_next_step(rb, 3, 1, 1, {0.99 * ftd::C_SPEED, 0, 0});
     check_transport_history("NET-8 bounce no-op", rb, 0, 0, 0);
   }
 
@@ -262,8 +280,8 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(1, 1, 1, +1, {0, 0, ftd::K_B});
-    rb.voxel_at(1, 1, 1).velocity = {1, 0, 0};
-    check_interval_history("NET-9 interval transport", rb, 3, 3, 0, 0);
+    prime_next_step(rb, 1, 1, 1, {0.99 * ftd::C_SPEED, 0, 0});
+    check_interval_history("NET-9 interval transport", rb, 3, 2, 0, 0);
   }
 
   {
@@ -271,9 +289,9 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(1, 1, 1, +1, {0, 0, ftd::K_B});
-    rb.inject_particle(4, 1, 1, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(1, 1, 1).velocity = {1, 0, 0};
-    check_interval_history("NET-10 interval mixed", rb, 3, 2, 1, 0);
+    rb.inject_particle(3, 1, 1, -1, {0, 0, -ftd::K_B});
+    prime_next_step(rb, 1, 1, 1, {0.99 * ftd::C_SPEED, 0, 0});
+    check_interval_history("NET-10 interval mixed", rb, 3, 1, 1, 0);
   }
 
   // --- P1.2 (Gate 4) closure: corner Moore routes (8-direction coverage) ---
@@ -286,7 +304,8 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(2, 2, 2, +1, {ftd::K_B, ftd::K_B, ftd::K_B});
-    rb.voxel_at(2, 2, 2).velocity = {1, 1, 1};
+    const double component = 0.99 * ftd::C_SPEED / std::sqrt(3.0);
+    prime_next_step(rb, 2, 2, 2, {component, component, component});
     check_transport_history("NET-11 corner +++", rb, 1, 0, 0);
   }
 
@@ -295,7 +314,8 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(5, 5, 5, -1, {-ftd::K_B, -ftd::K_B, -ftd::K_B});
-    rb.voxel_at(5, 5, 5).velocity = {-1, -1, -1};
+    const double component = 0.99 * ftd::C_SPEED / std::sqrt(3.0);
+    prime_next_step(rb, 5, 5, 5, {-component, -component, -component});
     check_transport_history("NET-12 corner ---", rb, 1, 0, 0);
   }
 
@@ -304,7 +324,8 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(2, 2, 5, +1, {ftd::K_B, ftd::K_B, -ftd::K_B});
-    rb.voxel_at(2, 2, 5).velocity = {1, 1, -1};
+    const double component = 0.99 * ftd::C_SPEED / std::sqrt(3.0);
+    prime_next_step(rb, 2, 2, 5, {component, component, -component});
     check_transport_history("NET-13 corner ++-", rb, 1, 0, 0);
   }
 
@@ -313,9 +334,11 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(1, 1, 1, +1, {ftd::K_B, ftd::K_B, ftd::K_B});
-    rb.voxel_at(1, 1, 1).velocity = {1, 1, 1};
-    // 3 ticks of pure corner transport — no annihilation, full Moore-26 coverage.
-    check_interval_history("NET-14 corner interval", rb, 3, 3, 0, 0);
+    const double component = 0.99 * ftd::C_SPEED / std::sqrt(3.0);
+    prime_next_step(rb, 1, 1, 1, {component, component, component});
+    // Three in-budget ticks include one primed corner hop and retained
+    // subvoxel accumulation; no annihilation.
+    check_interval_history("NET-14 corner interval", rb, 3, 1, 0, 0);
   }
 
   std::cout << "\n================================================================\n";
