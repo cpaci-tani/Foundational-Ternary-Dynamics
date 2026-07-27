@@ -1,0 +1,36 @@
+{
+  "lock_date": "2026-07-23",
+  "identifier": "FTD-0427",
+  "protocol": {
+    "sizes": [32, 64],
+    "orientations": [1, -1],
+    "directions": ["+x", "-x", "+y", "-y", "+z", "-z"],
+    "moving_ticks": 12,
+    "stationary_ticks": 8,
+    "radii": [2, 3, 4],
+    "tolerance": 1e-12,
+    "transverse_amplitude": 0.001,
+    "seed": "0x0427"
+  },
+  "qualified_successor": {
+    "identifier": "FTD-0428",
+    "basis": "additive integrated dynamics extension; FTD-0427 result records reproduced unchanged",
+    "files": {
+      "engine/include/ftd/eft/matched_gauss_transport.h": "1e07f87a0ebd0d1830d0632b82c2bd65497ebeae7bb152ea02c5aae19328b033",
+      "engine/src/eft/matched_gauss_transport.cpp": "12bf98040bb45ad6cd9a409a93c842101c400ceee6242e9b9352158a33a9d028",
+      "engine/tests/test_matched_gauss_transport.cpp": "4da1c0c5f2b8197627d028a4093de9e8a80a06c74ca88f8d516a7dad3616a522",
+      "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214"
+    }
+  },
+  "files": {
+    "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_GAUSS_TRANSPORT_v1.md": "dccf777e74a907322454c1895800e808884d701cd13d1ba10e56085f1690f2a1",
+    "engine/include/ftd/eft/matched_gauss_transport.h": "c85545c733bd40e26fdefd0ef76da17b599667430d47c465d8a979c269e8111d",
+    "engine/src/eft/matched_gauss_transport.cpp": "e58c0c8ff5bbf9e372b94798bd3f7179afa034241e58fb349a5b84ddef30ce45",
+    "engine/tests/test_matched_gauss_transport.cpp": "db826125b4b6b8cda769534693d0b048b19c3d04145bd15f480968be8b4ede2c",
+    "engine/tests/campaign_matched_gauss_transport.cpp": "1532fbc591c39746f33180be0df45b6cbc4de25e641e77752b3f631158b83408",
+    "engine/src/eft/dual_cell_continuity.cpp": "90559ddffe622991d958e6d04a034c470cb4ad8491f83a3bd33771ad0d7be6d1",
+    "engine/src/render_bridge_phases/phase_movement.cpp": "6149b37c5a28b8ee9b8544caec24006d0964d1c8f344ca63c68dc6536a47e8fb",
+    "engine/include/ftd/term_toggles.h": "0bb7b918e1120e956c85542e3bf9bab974c5a7c989581d3a8703991275f51a91",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada"
+  }
+}

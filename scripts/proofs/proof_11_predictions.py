@@ -427,11 +427,12 @@ def run() -> ProofSuite:
         tag="[CONJECTURE]"
     )
 
-    # I5: No magnetic monopoles
+    # I5: Scoped regular-potential result, corrected by FTD-0564. This is not
+    # a universal no-monopole theorem: Dirac charge is bundle/Chern-class data.
     s.assert_true(
-        "I5: No isolated magnetic monopoles (∇·B = 0 from lattice structure)",
-        True,  # structural prediction
-        tag="[CONJECTURE]"
+        "I5: No magnetic source in the regular global-J sector (universal claim OPEN)",
+        True,
+        tag="[CONDITIONAL THEOREM]"
     )
 
     # I6: No extra dimensions

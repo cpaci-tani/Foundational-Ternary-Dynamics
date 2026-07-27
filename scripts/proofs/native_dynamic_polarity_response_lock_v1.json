@@ -1,0 +1,18 @@
+{
+  "identifier": "FTD-0429",
+  "revision": 1,
+  "outcome": "INVALID_INSTRUMENTATION_TIMEOUT_NO_L64_RECORD",
+  "preregistration_sha256": "aa0ea6a78d680478ff7eab85d6e651bb8e668190ba412318f17f7bc934d9fee7",
+  "sources": {
+    "engine/include/ftd/eft/native_dynamic_polarity_response.h": "a44638cd05b634d40e764217ed483582310b362eb737f748975a3c6db4fb601c",
+    "engine/tests/test_native_dynamic_polarity_response.cpp": "9cec50e815d959242c12f8a7f675c81bb2e78b21c537754d1ea75fd0766f7b0c",
+    "engine/tests/campaign_native_dynamic_polarity_response.cpp": "5eb399d65b8169177e144eb8ed600c63a2c7ccd9a090a33a0aaf15f750f0932a",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/CMakeLists.txt": "631a85a72f78eb36c9746422ed735e8efddfa0c7b2b6e28d0e4a9fe12a5e2f52"
+  }
+}

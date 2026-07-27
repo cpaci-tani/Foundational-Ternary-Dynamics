@@ -1,0 +1,33 @@
+{
+  "lock_date": "2026-07-22",
+  "identifier": "FTD-0426",
+  "protocol": {
+    "radii": [3, 4, 5, 6],
+    "neutral_ticks": 128,
+    "projected_ticks": 256,
+    "live_ticks": 128,
+    "sor_iterations": 30,
+    "cpu_L": 32,
+    "cuda_L": 64
+  },
+  "qualified_successor": {
+    "identifier": "FTD-0428",
+    "basis": "default-off selected extension requalified by unchanged golden gates",
+    "files": {
+      "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+      "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214"
+    }
+  },
+  "files": {
+    "docs/theory/10_eft_program/preregistrations/PREREG_EMERGENT_STATIC_CHARGE_v1.md": "263c96ea399bb9824a68c022f3ffea5bb23c9a1e70171d814e913bd4adb1e657",
+    "engine/include/ftd/eft/emergent_charge_surface.h": "7924eeb5e50c28806c239894f6bc76ed54ea443750d87a2c11946bd864485670",
+    "engine/tests/campaign_emergent_static_charge.cpp": "b8db2a3244995b31a71db5881fe11336ff8c262841d0bac108568c311e60796c",
+    "engine/src/render_bridge.cpp": "fd34c5f0213492ba075b6628574456ebb97e98a1dc9f1304ab29fcec55fe1f1e",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/src/render_bridge_phases/phase_movement.cpp": "6149b37c5a28b8ee9b8544caec24006d0964d1c8f344ca63c68dc6536a47e8fb",
+    "engine/src/poisson_solvers.cpp": "af43dc1dde2ddf4a47c87b6d552db053d7d25038ff801d5cb929401e681b4264",
+    "engine/include/ftd/term_toggles.h": "0bb7b918e1120e956c85542e3bf9bab974c5a7c989581d3a8703991275f51a91",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada"
+  }
+}

@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
-"""
-CLOSING THE THREE OPEN PROBLEMS
-================================
+"""Historical three-problem calculation with the Lorentz leg corrected.
 
-Problem 1: Lorentz invariance — O(k^4) anisotropy vanishes as (a/L)^4
-Problem 2: Coefficient 16 — temporal gauge is FORCED by discrete time axiom
-Problem 3: Bell S > 2 — Gauss constraint complexification IS the mechanism
-
-Each problem is addressed with the minimal necessary argument.
-Not over-derived. Not under-claimed. Exactly what's needed.
-
-Author: FTD Session (April 5, 2026)
+The April 2026 version confused suppression of *spatial directional spread*
+with Lorentz recovery. FTD-0407 derives the fully discrete pole and retracts
+that closure. The other two historical sections remain as provenance; this
+script is not a certificate that any open problem is closed.
 """
 
 import numpy as np
@@ -18,76 +12,49 @@ from mpmath import mp, mpf, pi as mp_pi, gamma as mp_gamma, sqrt as mp_sqrt, fab
 mp.dps = 30
 
 print("=" * 72)
-print("  CLOSING THE THREE OPEN PROBLEMS")
+print("  THREE HISTORICAL OPEN-PROBLEM CALCULATIONS — CORRECTED")
 print("=" * 72)
 
 # ===========================================================================
-# PROBLEM 1: LORENTZ INVARIANCE
+# PROBLEM 1: LORENTZ INVARIANCE — NOT CLOSED
 #
-# Einstein's concern: cubic lattice has O_h symmetry, not SO(3,1).
-# Does continuum Lorentz invariance emerge?
-#
-# ANSWER: YES. The 18-point isotropic Laplacian cancels O(k^2) anisotropy.
-# The residual O(k^4) term is suppressed by (a*k)^4 where a = lattice spacing.
-# At any physical scale L >> a, the anisotropy is (a/L)^4.
-# For a = l_Planck = 1.6e-35 m and L = 1 fm = 1e-15 m:
-#   (a/L)^4 = (1.6e-35 / 1e-15)^4 = (1.6e-20)^4 = 6.6e-80
-#
-# Current experimental bounds on Lorentz violation: ~10^-18 (photon dispersion).
-# FTD prediction: ~10^-80. Safe by 62 orders of magnitude.
-#
-# The KEY insight: O_h -> SO(3) is not a symmetry enhancement.
-# It's a RESOLUTION LIMIT. At wavelengths >> a, you cannot detect the lattice.
-# This is identical to how a crystal lattice appears isotropic to X-rays
-# when the wavelength >> lattice spacing.
+# The production spatial symbol is
+#   M18 = S2 - S2^2/12 + S2*Q4/72 - Q6/90 + O(q^8),
+# where Q4=sum(q_i^4) and Q6=sum(q_i^6).
+# Its quartic term is rotationally invariant, so directional phase-speed
+# differences begin at O(q^4). But the actual centered-time update obeys
+#   4 sin^2(theta/2) = r^2 M18,
+# giving
+#   theta^2 = r^2 S2 + r^2(r^2-1)S2^2/12 + O(q^6).
+# At the selected r^2=1/3 the boost-violating coefficient is -1/54. A test
+# comparing spatial directions cancels this isotropic term and cannot certify
+# boosts. See proof_lorentz_recovery_hard.py for the exact 27-check verifier.
 # ===========================================================================
 
 print("\n" + "-" * 72)
 print("  PROBLEM 1: Lorentz Invariance")
 print("-" * 72)
 
-# 18-point isotropic Laplacian dispersion relation:
-# omega^2 = (2/3)(cos kx + cos ky + cos kz - 3)
-#         + (2/3)(cos kx cos ky + cos ky cos kz + cos kz cos kx - 3)
-#
-# Expand to 4th order in k:
-# omega^2 = k^2 - (1/12)(kx^4 + ky^4 + kz^4) + O(k^6)
-#
-# The isotropic part: k^2 = kx^2 + ky^2 + kz^2 (exact Lorentz)
-# The anisotropic part: -(1/12)(kx^4 + ky^4 + kz^4)
-#
-# For a wave with |k| = k at angle theta from z-axis:
-# kx^4 + ky^4 + kz^4 = k^4 * (sin^4(theta)*cos^4(phi) + sin^4(theta)*sin^4(phi) + cos^4(theta))
-# Max anisotropy: along axis (theta=0) vs diagonal (theta = arctan(sqrt(2)))
-# Ratio: 1.0 vs 1/3 => max fractional anisotropy ~ (2/3) * (ak)^4 / 12
+r2 = 1.0 / 3.0
+dimension_six_coefficient = r2 * (r2 - 1.0) / 12.0
+symbol_max = 16.0 / 3.0
+stability_r2_max = 4.0 / symbol_max
 
-a_planck = 1.616e-35  # Planck length (m)
-L_fm = 1e-15           # 1 femtometer
-L_atom = 1e-10         # 1 angstrom
-L_lab = 1.0            # 1 meter
+assert abs(dimension_six_coefficient + 1.0 / 54.0) < 1e-15
+assert abs(stability_r2_max - 3.0 / 4.0) < 1e-15
 
-for name, L in [("Nuclear (1 fm)", L_fm), ("Atomic (1 A)", L_atom), ("Lab (1 m)", L_lab)]:
-    k = 2 * np.pi / L
-    ak = a_planck * k
-    aniso = (2/3) * ak**4 / 12
-    print(f"  {name:20s}: (a*k)^4/12 = {aniso:.2e}")
-
-print(f"\n  Experimental Lorentz violation bound: ~1e-18")
-print(f"  FTD anisotropy at nuclear scale:      ~{(2/3)*(a_planck * 2*np.pi/L_fm)**4/12:.0e}")
-print(f"  Safety margin: {int(np.log10(1e-18 / ((2/3)*(a_planck * 2*np.pi/L_fm)**4/12)))} orders of magnitude")
+print(f"  selected r^2:                         {r2:.12f}")
+print(f"  isotropic dimension-six coefficient:  {dimension_six_coefficient:.12f} = -1/54")
+print(f"  exact production-symbol maximum:      {symbol_max:.12f} = 16/3")
+print(f"  exact stability ceiling r^2:          {stability_r2_max:.12f} = 3/4")
 
 print(f"""
-  RESOLUTION: Lorentz invariance emerges because:
-  1. The 18-point stencil cancels O(k^2) anisotropy [THEOREM]
-  2. Residual O(k^4) scales as (a/L)^4 [THEOREM — Taylor expansion]
-  3. At any physical scale, (l_Planck/L)^4 < 10^-70 [ARITHMETIC]
-  4. O_h -> SO(3) is a resolution limit, not a symmetry enhancement
+  CORRECTED RESULT:
+  1. Quartic spatial isotropy is exact for the production stencil [THEOREM].
+  2. The fully discrete pole has a nonzero dimension-six boost term [THEOREM].
+  3. Cancelling it needs r^2=1, but this stencil is stable only for r^2<=3/4.
 
-  This is NOT an approximation. It is the statement that cubic lattice
-  anisotropy is undetectable at all accessible scales, by 62+ orders
-  of magnitude. The lattice IS isotropic for all practical physics.
-
-  Status: [THEOREM] — Lorentz invariance emerges to all measurable precision.
+  Status: [OPEN — HARD GATE]. Spatial isotropy is not Lorentz recovery.
 """)
 
 # ===========================================================================
@@ -255,11 +222,11 @@ print(f"""
 # ===========================================================================
 
 print("=" * 72)
-print("  ALL THREE PROBLEMS RESOLVED")
+print("  HISTORICAL SUMMARY — LORENTZ CLOSURE RETRACTED")
 print("=" * 72)
 print(f"""
-  Problem 1 (Lorentz):     [THEOREM] — O(k^4) anisotropy < 10^-70 at all
-                           physical scales. 62 orders below experimental bounds.
+  Problem 1 (Lorentz):     [OPEN — HARD GATE] — the current default update has
+                           an isotropic dimension-six preferred-frame term.
 
   Problem 2 (Coefficient): [THEOREM] — 16 = 24 - 7 - 1 in temporal gauge,
                            which is FORCED by Postulate 2 (discrete time = A_0 = 0).
@@ -270,8 +237,7 @@ print(f"""
                            substrate-level measurements. Aggregate Bell violation
                            emerges from Born-rule ensemble statistics.
 
-  ZERO open problems remain.
-  The Five Minds' concerns are addressed.
-  The framework is self-consistent.
+  This historical script does not close the three problems. For Lorentz status,
+  FTD-0407 and proof_lorentz_recovery_hard.py are controlling.
 """)
 print("=" * 72)

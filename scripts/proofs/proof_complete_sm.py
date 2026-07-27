@@ -540,8 +540,10 @@ report("N_c (colors)", mpf(N_C), mpf('3'), "[THEOREM]")
 # SC(6) -> 1 J-component -> U(1), FCC(12) -> 2 -> SU(2), BCC(8) -> 3 -> SU(3)
 print(f"  {'[THEOREM]':14s} {'Gauge group':30s} = U(1) x SU(2) x SU(3)        (from Moore 6+12+8 decomposition)")
 
-# NP-15: No magnetic monopoles [THEOREM — div(B) = div(curl(J)) = 0 identically]
-print(f"  {'[THEOREM]':14s} {'Magnetic monopoles':30s} = 0                             (div(curl) = 0 on any lattice)")
+# NP-15 corrected by FTD-0564: div(curl(J))=0 is conditional on the regular
+# global-potential representation. It does not exclude patched/singular or
+# compact-bundle monopole sectors.
+print(f"  {'[COND. THM]':14s} {'Magnetic source (regular J)':30s} = 0                             (div(curl J) = 0; universal monopole claim OPEN)")
 
 # NP-16: Proton absolutely stable — already reported above
 
@@ -561,7 +563,7 @@ report("n_s (spectral index)", N_S_FTD, mpf('0.9649'), "[SELECTION]")
 # NP-25: Photon dispersion on lattice [THEOREM — from discrete dispersion relation]
 # v(E) = c * [1 - E^2 / (24 * E_Planck^2)]
 # Effect is ~10^-80 at accessible energies — unobservable but structurally predicted
-print(f"  {'[THEOREM]':14s} {'Photon dispersion':30s} = v(E) = c[1 - E^2/(24*E_P^2)] (Planck-suppressed)")
+print(f"  {'[DERIVED]':14s} {'Free-flux dispersion':30s} = v_g/c = 1 - E^2/(12*E_P^2) + O(E^4/E_P^4) (photon ID OPEN)")
 
 # NP-27: No Landau pole [THEOREM — lattice compactness prevents divergence]
 print(f"  {'[THEOREM]':14s} {'Landau pole':30s} = None                          (compact lattice = finite coupling)")

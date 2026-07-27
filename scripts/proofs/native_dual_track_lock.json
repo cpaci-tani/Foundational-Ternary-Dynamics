@@ -1,0 +1,24 @@
+{
+  "lock_date": "2026-07-22",
+  "identifier_reservation": ["FTD-0420", "FTD-0421", "FTD-0422", "FTD-0423", "FTD-0424", "FTD-0425"],
+  "observer_strip_begin": "// FTD-HISTORY-BEGIN",
+  "observer_strip_end": "// FTD-HISTORY-END",
+  "qualified_successor": {
+    "identifier": "FTD-0428",
+    "basis": "default-off selected extension requalified by unchanged golden gates",
+    "files": {
+      "engine/src/render_bridge.cpp": "ab6d789c8c7cabd1e56250b3a7cb89dbc388d687d1ac612959ab88997286f2c5",
+      "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214"
+    }
+  },
+  "files": {
+    "engine/src/render_bridge.cpp": "e1d1f4c948693f82e9514f2b0fa21920df03343f5ac5dd079c810edec6a8b8d4",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "44e0be2e8b48c5c9c185177d2875cb43e0a51e253a901da65b957e8fb8685907",
+    "engine/src/render_bridge_phases/phase_movement.cpp": "9daa9efdee63c27d86f19dc21e6e052454981489f1932798c21549175c11c54a",
+    "engine/src/transmutation_phases.cpp": "78c69eeb66f76625bce45a7f1700d98c3b979b2ae7bfbf90842a29276267bede",
+    "engine/include/ftd/term_toggles.h": "0bb7b918e1120e956c85542e3bf9bab974c5a7c989581d3a8703991275f51a91",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/eft/dual_cell_continuity.h": "91c82a6c256ed10e0d8647e80142c8c186b2100b85c21a0bb5d22e9ccaafabb5"
+  }
+}

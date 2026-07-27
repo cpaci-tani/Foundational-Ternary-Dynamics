@@ -1,0 +1,38 @@
+{
+  "identifier": "FTD-0433",
+  "revision": 1,
+  "locked_before_campaign_execution": true,
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v1.md",
+  "preregistration_sha256": "cd57a913320f6b3462b1003625224b9015c51cc7462c6bc5dd87f172089eff95",
+  "sources": {
+    "engine/tests/campaign_native_dressed_hazard_ir_scaling.cpp": "301aeca2a8334dea2f264190ba7b28b5ad47685160f0c77d5ceb58ed7c658285",
+    "engine/include/ftd/eft/native_evaporation_hazard_observer.h": "5140ee444814e1037337b9bc1656833bf0c67b8646c3b13fb2fde44e3d4ed510",
+    "engine/include/ftd/eft/native_reaction_polarity_slow_mode.h": "bc068764ddcadcbb23a0c997fe8cf1bc5b74fcf165761bbbb2aeafe9580e6209",
+    "engine/include/ftd/eft/native_dynamic_polarity_response.h": "a44638cd05b634d40e764217ed483582310b362eb737f748975a3c6db4fb601c",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/include/ftd/proper_time_rate.h": "4436a832dab09e7d96f8a71f3eec690d1dc892cf94b1bbe0e588e10f0ac571f5",
+    "engine/include/ftd/eft/history_event_journal.h": "5d8edbf823405b1ccce0dcf591e88684b06e9957dc4f90fc1a5d3fe94b5c222e",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/CMakeLists.txt": "dd04bff74789c1b9eaa701d10ad36d36d9c83873b9c6e7cdc9536d857929e1b1"
+  },
+  "qualified_successors": {
+    "engine/CMakeLists.txt": {
+      "identifier": "FTD-0436",
+      "scope": "Registers the FTD-0436 disabled dressed-hazard IR-scaling v2 campaign target after the FTD-0433/0434 records were closed; no prior-campaign observer, estimator, or admitted execution path changes.",
+      "sha256": "0ebdf0c37c79add65c47e81e42660f0d174c04c17cd2c394de6f9157ee3c0af5",
+      "prior": [
+        {
+          "identifier": "FTD-0434",
+          "scope": "Registers the FTD-0434 disabled exact photon-scenario diagnostic after the FTD-0433 records were closed; no FTD-0433 observer, estimator, or admitted execution path changes.",
+          "sha256": "2a105534c177f3f66fb05001ac64f5f7d3209bc490d45f2d39a2a8828aeb9c83"
+        }
+      ]
+    }
+  },
+  "result_manifest": "engine/results/ftd_0433/manifest.json",
+  "state": "V1_SOURCE_LOCKED_BEFORE_FIRST_CAMPAIGN_RUN"
+}

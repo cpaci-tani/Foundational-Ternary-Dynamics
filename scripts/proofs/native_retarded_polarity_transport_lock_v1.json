@@ -1,0 +1,24 @@
+{
+  "identifier": "FTD-0430",
+  "revision": 1,
+  "locked_before_campaign_execution": true,
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v1.md",
+  "preregistration_sha256": "e072c1807bd9935ee4e7a1b07831ceeba00a5d04e7bdc41551b3c7fe07cd5a41",
+  "sources": {
+    "engine/include/ftd/eft/native_retarded_polarity_response.h": "47c3acec45f415bee64d4eb945ef1a6dfa41457329ee2fc538801819a9413f90",
+    "engine/include/ftd/eft/native_dynamic_polarity_response.h": "a44638cd05b634d40e764217ed483582310b362eb737f748975a3c6db4fb601c",
+    "engine/tests/test_native_retarded_polarity_response.cpp": "1074408a8ab6f64d6fca3fcb44799d09cdf2fa0b1f97f03baac3a22adeba960b",
+    "engine/tests/campaign_native_retarded_polarity_transport.cpp": "a381bf4accf5f5120da37486694c2495800fd6b249da102208d2b5710ae994b3",
+    "engine/src/render_bridge_phases/phase_read.cpp": "d9b521c1de6503987e5db3d91a8b4f2dfe52289e527352a8011c4146c71fb8a8",
+    "engine/src/render_bridge_phases/phase_write.cpp": "05ed6613d1702535328d053925936a6de09cbd1fe692a5d30fafb5ddcac7d83a",
+    "engine/src/render_bridge_phases/phase_movement.cpp": "6149b37c5a28b8ee9b8544caec24006d0964d1c8f344ca63c68dc6536a47e8fb",
+    "engine/include/ftd/field_operators.h": "25866efc8474a2aef7443c5da67cbf79beb352de3e342a97d1ef0c3c16439e48",
+    "engine/include/ftd/constants.h": "0aa9a04a2278aaaa5ab11cd363bb0191bd325cacae70a8b09018c4fcc4e33ada",
+    "engine/include/ftd/term_toggles.h": "b3cb4790564c5d004d4273206efc3fd06f3589afb987f3836f7fc3f765cf8214",
+    "engine/include/ftd/eft/history_event_journal.h": "5d8edbf823405b1ccce0dcf591e88684b06e9957dc4f90fc1a5d3fe94b5c222e",
+    "engine/src/render_bridge.cpp": "a822e0fafaf71fe5458b2a7450868a8414b1c8564089bf6c6484fc34b7559359",
+    "engine/CMakeLists.txt": "90acc4781380fc6f6d5d49dabda7d4316bce36d19ae1a180cab5650a3bff5b98"
+  },
+  "result_manifest": "engine/results/ftd_0430/manifest.json",
+  "state": "V1_SOURCE_LOCKED_BEFORE_FIRST_CAMPAIGN_RUN"
+}

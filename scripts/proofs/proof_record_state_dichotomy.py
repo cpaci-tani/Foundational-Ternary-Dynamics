@@ -1,4 +1,4 @@
-"""FTD-0513 -- Record-state dichotomy and the symmetric-fiber sharpening.
+"""FTD-0515 -- Record-state dichotomy and the symmetric-fiber sharpening.
 
 Verifies the exact content of DERIV_RECORD_STATE_DICHOTOMY.md:
 
@@ -138,7 +138,7 @@ def e5_symmetric_fiber_split():
 
 
 def main():
-    print("FTD-0513 record-state dichotomy verification")
+    print("FTD-0515 record-state dichotomy verification")
     e1_trace_iff_cyclic()
     e2_quotient_tracial()
     e3_separation_nontracial()
