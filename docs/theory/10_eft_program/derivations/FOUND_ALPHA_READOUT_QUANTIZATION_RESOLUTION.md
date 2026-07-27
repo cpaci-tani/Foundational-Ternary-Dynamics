@@ -14,13 +14,20 @@
 > that selection. (The coefficients `16=|μ₄|²`, `G*²=2π·G_BCC(0)`, `G*`=det_ζ ratio are
 > forward-derived **scalars**, so this is an unforced assembly, not a hard no-go;
 > honest status UNDERDETERMINED.) The genuine `[THEOREM]` content
-> below — C₄ decomposition, `V_complex ≅ Z[i]²`, charge quantization to {−1,0,+1},
+> below — C₄ decomposition and `V_complex ≅ Z[i]²`
 > `16 = |μ₄|²`, Watson `G_BCC(0)=G*²/(2π)` — **stands**; the FOUND-at-ARC-2
 > *verdict* does **not**. Honest status: **UNDERDETERMINED**. MC-T4.3 remains a
 > `[FOUNDATIONAL OBSTRUCTION]`; `x₊=1/α` (FTD-0013) stays `[STRONGLY MOTIVATED
 > CONJECTURE]`. The original FOUND-framed text is preserved below.
+>
+> **FTD-0584 correction:** the formerly listed "charge quantization to
+> {-1,0,+1}" is not theorem content. A ternary configuration is a point in a
+> discrete alphabet, not a closed nonvanishing loop in `V_complex`, and the
+> production transition graph changes the signed-state feature. The exact
+> `C4`/Gaussian-module decomposition stands; its electric-charge interpretation
+> is a `[SELECTION + OPEN DYNAMICAL MAP]`.
 
-**Tag:** [THEOREM] (for the cyclic subgroup $C_4$ representation decomposition of the BCC unit cell and the winding number index), [SELECTION] (for the transfer matrix trace/determinant mapping, readout prefactor, and observable projection)  
+**Tag:** [THEOREM] (for the cyclic subgroup $C_4$ representation decomposition of the BCC unit cell and integer winding of an explicitly supplied nonvanishing closed loop), [SELECTION + OPEN DYNAMICAL MAP] (for identifying that loop with ternary electric charge), [SELECTION] (for the transfer matrix trace/determinant mapping, readout prefactor, and observable projection)
 **Authoritative Reference:** [`docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`](../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)  
 **Pre-Registration:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) (FTD-0231)  
 **Companion Documents:** [`docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`](../../07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md) (FTD-0231), [`docs/theory/10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) (FTD-0230).
@@ -32,7 +39,7 @@
 This document executes the locked pre-registration protocol **PREREG_ALPHA_READOUT_QUANTIZATION_v1** to evaluate the **Quantization / Readout Rule (Candidate C)** as a candidate for the FTD-native electric charge readout rule ($ARC$).
 
 We resolve the technical program and ~~establish a **FOUND** verdict at the **ARC-2** level~~ **[CORRECTED → UNDERDETERMINED; see top banner]** (operational physical readout):
-1. **Topological Quantization:** We define the topological winding index $\text{Ind}(\gamma)$ of projected flux fields on the complex subspace $V_{\text{complex}} \cong \mathbb{Z}[i]^2$ of the BCC unit cell. By showing that a localized charge/dipole preparation breaks the full cubic symmetry to the cyclic rotation subgroup $C_4 \subset O_h$, the 8 corners of the BCC unit cell decompose rigorously as two copies of the regular representation of $C_4$, yielding the complex subspace $V_{\text{complex}} \cong \mathbb{Z}[i]^2$ with no group-theoretic fabrication.
+1. **Representation and candidate winding:** The 8 corners of the BCC unit cell decompose rigorously as two copies of the regular representation of $C_4$, yielding the complex subspace $V_{\text{complex}} \cong \mathbb{Z}[i]^2$. An explicitly supplied nonvanishing closed loop in this space has integer winding. No native map from a ternary engine history to such a loop, and no conservation of that loop under production events, is derived.
 2. **Infinite-Aperture Self-Energy:** We show that the self-energy of the unit topological source projects directly to the BCC Watson integral $W_3 = \frac{G^{*2}}{2\pi}$ at infinite aperture.
 3. **Master Quadratic Decoupling:** By combining the topological index with the $\mathbb{Z}[i]$-module automorphism group size $|\mu_4|^2 = 16$, the inverse coupling $\alpha_{\text{read}}^{-1}$ emerges as the dominant root $x_+$ of the master quadratic:
    $$ x^2 - 16 G^{*2} x + 16 G^{*3} = 0 $$
@@ -81,10 +88,16 @@ $$ V_{\text{complex}} \cong \mathbb{Z}[i]^2 $$
 This mathematical decomposition is exact, resolving the group representation error. Let $\gamma: S^1 \to V_{\text{complex}} \setminus \{0\}$ be a closed loop of projected states on the BCC unit cell. The topological winding index is:
 $$ \text{Ind}(\gamma) = \frac{1}{2\pi} \oint_\gamma d \theta = w \in \mathbb{Z} $$
 
-### Theorem 1: Discrete Charge Quantization
-Because $V_{\text{complex}}$ is arithmetically isomorphic to the Gaussian integers $\mathbb{Z}[i]^2$, any ternary configuration projects directly to winding numbers on the unit circle in $\mathbb{Z}[i]^2$. Thus, the electric charge is topologically quantized:
-$$ \text{Ind}(\gamma) = s_0 \in \{-1, \, 0, \, +1\} $$
-which matches the microscopic ternary state alphabet of FTD.
+### Theorem 1: Winding of a supplied loop; charge identification open
+
+For an explicitly supplied continuous closed loop
+
+$$\gamma:S^1\to V_{\text{complex}}\setminus\{0\},$$
+
+the standard winding integral is integer-valued. The `C4` decomposition does
+not map an arbitrary ternary configuration, which is a point, directly to such
+a loop. The former equation `Ind(gamma)=s_0` was an asserted identification,
+not a theorem. Its honest status is `[SELECTION + OPEN DYNAMICAL MAP]`.
 
 ---
 
@@ -134,4 +147,4 @@ We verify the derivation against all 10 F-rules:
 
 We reach a **genuine partial result** via **Candidate C (Quantization / Readout Rule)**:
 * **Verdict:** ~~**FOUND (ARC-2 Level)**~~ **UNDERDETERMINED [CORRECTED].**
-* By formulating charge as a topological winding index on the complex projection $V_{\text{complex}} \cong \mathbb{Z}[i]^2$, we genuinely contact the modular-period structure (ARC-1): the $C_4$ decomposition, charge quantization to $\{-1,0,+1\}$, $16 = |\mu_4|^2$, and the Watson self-energy $G^{*2}/(2\pi)$ are all `[THEOREM]`/`[DERIVED]`. **However**, the bridge to the *full* master quadratic — the determinant $16 G^{*3}$ (the odd third power of $G^*$) — is an **asserted** Vieta target (§3 Selection 1), not a forward derivation; it is not a $\zeta$-regularized determinant of any operator, and a 2×2's trace and determinant are independent (FTD-0233/0234/0235). So $\alpha^{-1} = x_+$ is **not** derived "from first principles" here. MC-T4.3 stays open; surviving routes are ARC-D (engine-native measurement) or a new postulate.
+* The $C_4$ decomposition, `V_complex ~= Z[i]^2`, $16 = |\mu_4|^2$, and the Watson self-energy $G^{*2}/(2\pi)$ remain `[THEOREM]`/`[DERIVED]`. The identification of a ternary polarity with a winding is `[SELECTION + OPEN DYNAMICAL MAP]`. Independently, the bridge to the *full* master quadratic — the determinant $16 G^{*3}$ (the odd third power of $G^*$) — is an **asserted** Vieta target (§3 Selection 1), not a forward derivation; it is not a $\zeta$-regularized determinant of any operator, and a 2×2's trace and determinant are independent (FTD-0233/0234/0235). So $\alpha^{-1} = x_+$ is **not** derived "from first principles" here. MC-T4.3 stays open; surviving routes are ARC-D (engine-native measurement) or a new postulate.

@@ -2,7 +2,7 @@
 
 **Tag:** [SCOPE / PROGRAM CHARTER] — sets one type (an imposed calibration), marks one boundary; introduces no theorem, promotes no claim
 **Date:** 2026-07-10
-**LEDGER anchors:** FTD-0379 / FTD-0380 (the campaign that settled the program's branch), FTD-0013 [SMC] (the motivation), MC-T4.3 [FOUNDATIONAL OBSTRUCTION] (the boundary this program does *not* attempt to cross)
+**LEDGER anchors:** FTD-0379 / FTD-0380 (the campaign that settled the program's branch), FTD-0013 [SMC] (the motivation), MC-T4.3 [OPEN — SCOPED NO-GO PACKAGES] (the unresolved native-readout problem this program does *not* attempt to solve)
 **Companions:** [`SPEC_WILSON_DIRAC_FTD.md`](SPEC_WILSON_DIRAC_FTD.md) (the matter-sector specification this program completes), [`ANALYSIS_VERTEX_DK_CLOSURE_v1.md`](../../09_mathematical/algebra/ANALYSIS_VERTEX_DK_CLOSURE_v1.md) (the settling measurements), [`SPEC_ALPHA_READOUT_CONTRACT.md`](../../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md) (the contract any *native* coupling claim must still pass), [`SPEC_IMPORT_LEDGER.md`](../../01_reference/SPEC_IMPORT_LEDGER.md) (where the price is already booked)
 
 ---
@@ -18,13 +18,13 @@ The "build content forward" face belongs to the program's stages (§4), each of 
 
 ## 1 · What the program is
 
-Complete FTD's EFT matter sector honestly. A Wilsonian EFT does not derive its couplings — it takes them as inputs measured at a scale and earns its keep on structure: the interaction term, its symmetries, its RG behavior, its phenomenology. FTD's EFT program stalled on exactly the pillar the substrate **has not supplied** (MC-T4.3 [FOUNDATIONAL OBSTRUCTION] — all *natural* action-level/operator injection routes closed negative through FTD-0244, with two named exits still open: a new W-class framework commitment, or a fresh ARC-D engine-native measurement; an obstruction, not a no-go theorem). This program routes around the obstruction rather than through it:
+Complete FTD's EFT matter sector honestly. A Wilsonian EFT does not derive its couplings — it takes them as inputs measured at a scale and earns its keep on structure: the interaction term, its symmetries, its RG behavior, its phenomenology. FTD's EFT program stalled on exactly the pillar the substrate **has not supplied** (MC-T4.3 [OPEN — SCOPED NO-GO PACKAGES] — the axiomatized operator calculus is theorem-negative through FTD-0244 and several natural action/readout routes are closed negative, but the result does not quantify over every non-action observable, enlarged local algebra, boundary rule, or dynamical mechanism). This program routes around that unresolved search rather than solving it:
 
 - **Matter:** imported Wilson–Dirac fermions per `SPEC_WILSON_DIRAC_FTD.md` (Branch-B; the import is priced in the ledger's IMP-E3 category).
 - **Coupling:** imposed calibration g²_vertex ≡ 1/x₊ (§2; the identification is priced at IMP-E1).
 - **Substrate:** supplies the gauge connection (transverse flux projection), the constraint set (§3), and the falsifiers.
 
-MC-T4.3 stays open as a marked [FOUNDATIONAL OBSTRUCTION]. Its closure would *retire* §2's calibration to the self-set column — the program is structured so that outcome would be a free upgrade, not a rewrite.
+MC-T4.3 stays open as an unfinished native-mechanism search with explicit scoped exclusions. Its closure would *retire* §2's calibration to the self-set column — the program is structured so that outcome would be a free upgrade, not a rewrite.
 
 ## 2 · The imposed input (the type this charter sets)
 
@@ -55,13 +55,13 @@ Any Branch-B matter selection must respect all of:
 | NO closed native su(2) on plaquette bivectors at protocols tested | FTD-0380 | [CLOSED NEGATIVE — tested scope] |
 | NO Clifford from site-local 0-form readout (mode-erasure theorem) | FTD-0073 | [THEOREM] |
 | Spontaneous matter is colored single-voxel states, not electrons | FTD-0076 | [MEASURED] |
-| Fixed-field Wilson-Dirac g−2 measures the Wilson-r artifact unless controlled | FTD-0126 | [CLOSED NEGATIVE — protocol] |
+| Historical fixed-field Wilson-Dirac orbit and g−2 measurement used the wrong real-time operator and a basis-inconsistent initial spinor | FTD-0126 / FTD-0412 | [INVALIDATED IMPLEMENTATION RESULT — provenance only] |
 
 The first two are positive structural fingerprints an *honest* selection should echo (e.g. the SU(2) doublet structure riding on the bivector plane); the rest are walls.
 
 ## 4 · Staged roadmap (each stage pre-registered before running)
 
-- **V1 — Free Wilson–Dirac bring-up + tree-level g = 2.** Implement `SPEC_WILSON_DIRAC_FTD.md` §2.1/§2.4 (free sector, EOM evolution), measure cyclotron vs spin-precession frequencies in a fixed Landau-gauge background. **The FTD-0126 lesson is the gate, and FTD-0126 had *two* failure modes — both must be gated:** (1) the Wilson-r artifact (O(1) at m·a ~ 1): the V1 prereg must define "controlled" numerically *before* locking — an r-scan with r→0 extrapolation recovering ω_s/ω_c = 1 within tolerance, in an m·a ≪ 1 regime, with the residual artifact contribution bounded below a stated fraction of the tolerance; (2) spectral-proxy contamination (FTD-0126's extracted ω_s was an FFT peak of a multi-mode wave packet, not an eigenstate): the V1 prereg must mandate eigenstate-based or matched-filter frequency extraction with a stated mode-purity criterion. Success criterion is tree-level only: ω_s/ω_c = 1 to pre-registered tolerance (g = 2 is Dirac structure, not a loop effect). A run failing either gate is INVALID, not negative. Effort M.
+- **V1 — Corrected free Wilson–Dirac bring-up + tree-level g = 2.** Use the Hermitian Wilson Hamiltonian specified by FTD-0412, then measure cyclotron and spin-precession frequencies in a fixed Landau-gauge background. The pre-registration must gate four distinct failure modes before target comparison: (1) operator correctness, verified against the exact full-BZ Hamiltonian spectrum; (2) representation consistency, with the initial positive-energy spinor transformed into the implemented chiral basis; (3) localization, requiring a predeclared bound on torus wrap/spatial spread before any orbit frequency is called physical; and (4) spectral and Wilson-artifact control, using eigenstate-based or mode-purity-qualified extraction plus an `r`, `m a`, lattice-spacing, and step-size convergence study. Success is tree-level only: `ω_s/ω_c = 1` to pre-registered tolerance. A run failing any gate is INVALID, not negative. FTD-0126 supplies no valid physical datum. Effort M.
 - **V2 — The vertex proper.** Couple the imported fermion to the substrate's transverse flux projection (A_μ = 𝒫_T J_μ) at the §2 imposed coupling. Measure fermion–fermion scattering / bound-state normalization against the Coulomb expectation *given* g². This is a consistency measurement of the imported-vertex EFT, never a derivation of the coupling. Effort M–RP.
 - **V3 — The surviving native track.** Quantify the bivector algebra's closure deviation (FTD-0087 Path 2) as a function of protocol — the deviation is now known to be structural (FTD-0380), so it is a *property* of the substrate worth one honest characterization, and the tightest structural constraint available to any future selection argument. Effort W–M.
 - **V4 (conditional).** If V1+V2 stand, the one-loop question (§7-loop) remains gated by MC-T4.3 exactly as before — a_e^(1) = α/(2π) with imposed α is [PARAMETRIC] by definition and will be labeled as such if computed.

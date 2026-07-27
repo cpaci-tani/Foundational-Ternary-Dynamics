@@ -71,6 +71,13 @@ so the native long-wavelength wave speed is:
 c_FTD = 1/sqrt(3).
 ```
 
+**FTD-0407/0410 correction of scope.** This is the speed of the selected bare
+engine coefficient, not a coefficient derived by the blocking result. Exact
+temporal mode decimation acts on `x=C_SPEED² sigma_18` as `x -> 4x-x²`, not as
+the two-coordinate Gauss AGM. The AGM-bearing BCC Watson period belongs to a
+different product-cosine kernel. Native blocking preserves the chosen Gaussian
+normalization; it does not explain the value `1/sqrt(3)`.
+
 ---
 
 ## 2. Probe results
@@ -1893,6 +1900,25 @@ G18 = one-tick direct elliptic response.
 BCC/stella = delayed layer and confinement/matter-parity channel.
 ```
 
+**FTD-0411 alternative temporal-kernel branch.** The geometric `t_BCC=3`
+reading above assumes the selected live `c=1/sqrt(3)` and treats BCC as a
+spatial destination. It is not the same construction as assigning the BCC
+product character to the clock itself. Under the latter selected assignment,
+
+```text
+T_B(theta) = (2/3)(1-cos^3(theta))
+T_B(theta) = c^2 M18(q)
+q4 cancellation => c^2 = 1/7
+```
+
+The desired cube-root phase has an irreducible cubic minimal polynomial over
+`Q(M18)` with two non-real conjugates. Consequently no exact finite-state
+positive-norm linear/unitary auxiliary system rational in `M18` can isolate it; the direct real cube root is
+nonlocal. The default-off `lorentz_bcc_time_floquet` path is therefore only a
+stable local IR surrogate through q4, not evidence that production dynamics
+already contain an exact BCC time domain. Canonical analysis:
+[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../../07_assessment/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md).
+
 ### 18.2 Do we need U(1) gauge structure?
 
 Not as primitive ontology.
@@ -1945,7 +1971,7 @@ response matrix whose normal modes are physically meaningful.
 The bare engine produces:
 
 1. A massless static Green sector with `1/k^2` long-distance response.
-2. Photon-like transverse wave modes with speed `1/sqrt(3)`.
+2. Photon-like transverse wave modes with the selected speed `1/sqrt(3)`.
 3. An isotropic fourth-order-improved lattice symbol from the 18-point Moore
    operator.
 4. A definite local geometry scalar `W_18`, distinct from the BCC Watson

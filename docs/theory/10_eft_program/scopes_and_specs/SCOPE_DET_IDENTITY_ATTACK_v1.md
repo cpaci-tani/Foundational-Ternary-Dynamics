@@ -5,6 +5,13 @@
 **Scopes:** the determinant-grading hinge first localized by `AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md` (FTD-0234) and ruled **UNDERDETERMINED** by `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` (FTD-0235). This memo does **not** supersede those audits; it lays out the work that would be needed to move FTD-0235's verdict in either direction.
 **Builds on (all `[THEOREM]`/`[UNDERDETERMINED]`, none re-derived here):** FTD-0233 (parity scoping), FTD-0234 (J-twisted det_ζ ratio = G\* is a clean odd scalar), FTD-0235 (detdet_ζ identity UNDERDETERMINED), FTD-0122 (BCC complex structure $V_{\text{complex}}\cong\mathbb{Z}[i]^2$), Watson identity (`THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md`), FTD-0237 (Gaussian/Eisenstein dichotomy — why no Eisenstein forcing can supply the odd term).
 
+> **FTD-0584 scope correction:** references below to the FTD-0231
+> "winding-index charge quantization" denote a selected candidate preparation,
+> not theorem content. The `C4`/Gaussian-module representation survives; no
+> native map from ternary histories to a conserved nonvanishing loop has been
+> derived. This correction only weakens Obligation C's input and does not alter
+> the independent trace/determinant obstruction.
+
 > **GTCA discipline note.** This is a P5/P4 scoping memo, run wide-aperture. The central FOUND-vs-UNDERDETERMINED tension is held open deliberately (Tension Register), not collapsed. Every forward-looking statement is tagged. The prior-favoured outcome (UNDERDETERMINED) is stated as a prior, not a result. Engineering any step toward FOUND inside this memo would invalidate the next real attempt — so no construction is performed here.
 
 ---
