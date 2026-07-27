@@ -4,7 +4,814 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-21 — after explicit owner authorization, FTD-0406 returned CPU-SCOPED-CONTRACT. The default-off CPU colour path now shares one selected `U(1)=0` pair Hamiltonian across collision-free energy/momentum projection, audit/ledger, local string T00/stress and latency gravity through `T00/C_SPEED²`. This removes both FTD-0405 obstructions only on the isolated flat collision-free CPU domain; GPU, topology-changing events, moving latency, mixed forces and NCEMC-5 remain open. The choices are `[IMPOSED]/[SELECTION]`, not a mass derivation. FTD-0405 remains the no-go for the unmodified tick and for any claim that the zero/localization were already forced. **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-26 — FTD-0540 proves the compact cardinal hat cusp is representation-forced and FTD-0541 constructs the positive non-cardinal quadratic coat with exact current. FTD-0542 derives the coat's exact spacetime current and common gauge interaction. FTD-0543 proves that fixed-step configuration stationarity does not itself supply exact endpoint energy and prices the simplest discrete-gradient alternative by its non-unit phase-area determinant. FTD-0544 proves the matched field sector exactly exchanges `-<Ebar,K>` while propagating Gauss. FTD-0545 closes the universal coat fixed-step matter-work identity negative; FTD-0546 completes its required neutral self-consistent follow-up and closes the frozen minimal quadratic-coat common action negative as an exact-energy mobile law. FTD-0547 restores exact matter work in the constant-force accelerated subsector, FTD-0548 derives its schedule-dependent exact spacetime current, and FTD-0549 proves endpoint/midpoint data cannot reconstruct that split. FTD-0550 constructs the exact quadratic face-electric adjoint and curl-compatible edge-magnetic orbit gather. FTD-0551 closes the simultaneous one-step discrete-gradient matter/current/field transaction constructively. FTD-0552 then closes its unmodified isolated multi-tick use negative: generic coats accelerate in their own conserved lattice self-energy while symmetry positions pin. FTD-0553 proves a rigid localized neutral composite cannot cancel that compact-coat Peierls force: its exact coefficient is a positive spectral sum unless the source is translation-invariant and nonlocal. FTD-0554 proves the general boundary: exact homogeneous unitary fractional translation requires nonlocal signed coupling/current. FTD-0555 derives the remaining local spectral criterion `Pi_i=<((1-cos k_i)/(3+cos k_i))^2>_energy` and the analytic `R^-4` suppression law, but its locked finite-volume qualification fails 9 conjunctive controls and licenses no native carrier claim. FTD-0556 closes the integer-hopping kinematics for the isolated free-flux `(J,W)` pair: the exact Bloch map permits a noninteger extended-packet centroid inside a strict local causal front. FTD-0557 proves that this free band has no nonzero infinite-lattice `l2` point state or finite-time rigid `l2` translate; locked packets broaden and never manifest `s`. FTD-0558 corrects the moving-source pole, and FTD-0559 closes prescribed-source field energy. FTD-0560 proves every finite point-hop period has nonzero on-shell forcing. FTD-0561 derives the finite-source multipole hierarchy, FTD-0562 closes every fixed nonzero finite rigid linear source, FTD-0563 closes finite neutrality as a true linear-monopole escape, and FTD-0564 closes normalized-flux topology as a standalone charge-magnitude mechanism. FTD-0578 derives the reciprocal Moore action but finds diagonal centering and point Peierls defects; FTD-0579 proves no nonzero finite rigid carrier eliminates either defect and that smooth envelopes suppress them only as `O(R_rms^-2)`. Native reciprocal recoil, physical power, and nonlinear/deforming effective-charge carriers remain open. The live manifested-matter gate now requires a protected defect/bundle class or a genuinely deforming nonlinear `(s,J,W)` core together with one common action that supplies and locks closed flux, energy, recoil, and mobility; rigid finite-profile tuning, neutrality alone, topology alone, and finite rigid smearing are no longer live escapes. No toggle/scenario/IR claim was added and production defaults remain unchanged. FTD-0406 remains the selected CPU strong-sector contract described in §1.3. **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc.
+
+**FTD-0563 incremental addendum:** finite microscopic neutrality is no longer
+an admissible linear route to long-range charge. The selected face-Gauss
+identity fixes the open/infinite monopole coefficient to `z|Q|`, periodic
+Gauss requires global neutrality, and the restricted native FTD-0429 response
+has finite infrared susceptibility. Combined conditionally with FTD-0561/0562,
+a fixed finite rigid linear carrier cannot possess both a true Gauss monopole
+and exact square-summable co-motion. The live carrier must now exhibit an
+explicit nonlinear, singular/defect, topological, boundary-supported, nonlocal,
+or deforming contribution to closed Gauss flux and derive it together with
+reciprocal motion from a common native transaction. Microscopic neutrality by
+itself is insufficient. Production remains unchanged.
+
+**FTD-0564 incremental addendum:** normalized-flux topology alone is no longer
+an admissible route to electric-charge magnitude. On the same octahedral
+surface a degree-one hedgehog and a degree-zero hemisphere map carry identical
+nonzero affine Gauss flux, while positive amplitude rescaling leaves degree
+fixed and changes flux continuously. The open topological carrier route must
+therefore contain two independently closed ingredients: a protected defect or
+bundle class supplying a sign/sector, and a native nonlinear common action
+supplying the flux unit, energy, recoil, mobility, and protection against
+crossing `J=0`. On a periodic three-torus the net regular defect index is zero,
+so isolated sectors require a compensating defect, puncture, or environmental
+boundary. Production remains unchanged.
+
+**FTD-0567 incremental addendum:** current production genesis does not provide
+the missing conservative amplitude lock. An accepted single event maps
+`|J|=K_GENESIS+x` to `|J|'=x`, preserving the overshoot and withdrawing an
+input-dependent quadratic energy. The dual path changes `s` without a `J/W`
+drain; evaporation collapses signed preimages; and the written action cannot
+distinguish uniform fields below and above the magnitude threshold. The live
+route must now derive a different nonlinear bound-state action or explicitly
+add an event/environment reservoir and accept an open-system description.
+FTD-0316 survives only as a measured ignition threshold plus collective crest
+regulation, not an exact algebraic amplitude ceiling. Production is unchanged.
+
+**FTD-0569 incremental addendum:** the reservoir fork is no longer generic.
+For `DISSIPATION < 1`, the accepted canonical genesis drain is conditionally
+invertible, and one Bernoulli acceptance draw has an exact inverse-CDF phase
+dilation when its branch bit is retained. The complete production cycle is not
+a finite local reversible lift: erased branch histories require one exported
+bit per trial, production evaporation is not inverse genesis, and the energy
+withdrawal is continuous and branch-dependent. The surviving interpretation is
+therefore an explicitly open environmental channel, or a newly derived
+nonlinear bound-state action with its own conservative reservoir. Production is
+unchanged; no toggle, scenario, or particle/unitarity claim was added.
+
+**FTD-0570 incremental addendum:** finite dimensionality is not the remaining
+reservoir obstruction. A generalized baker map on two exact real phase
+coordinates stores unlimited branch history and preserves area, but binary64
+histories collide by the registered 64-event control. More decisively, the raw
+accepted `(J,W)` genesis map is not symplectic: its tangential canonical defect
+is strictly nonzero and its six-volume Jacobian is below one. A branchwise
+symplectic energy lift exists only after reclassifying `(J,W)` as six
+configuration variables and adding six conjugates, a phase pair, and a
+time-energy pair. The environment route therefore remains selected and
+infinite-information; the frozen production common action remains closed. The
+live fork is a native derivation of those environmental variables and their
+transport, or a genuinely new nonlinear bound-state action. Production is
+unchanged.
+
+**FTD-0571 incremental addendum:** unchanged native spectators cannot supply
+the missing action closure. For a symplectic enlarged derivative, an
+environment-independent projected update forces the projected system
+derivative itself to be symplectic. Accepted genesis instead has symplectic
+defect rank four at zero drain and rank six at positive drain. The accepted
+event leaves 34 other continuous `Voxel` components unchanged and reads only a
+stateless random function, so relabelling those fields as a bath does not close
+the transaction. The environmental route must now derive explicit
+bath-to-`(J,W)` feedback plus a reset/export/transport mechanism, or accept a
+prepared open system. The alternative remains a different nonlinear
+bound-state action. Production is unchanged.
+
+**FTD-0572 incremental addendum:** under the FTD-0570 `(J,W)` canonical
+pairing, the environmental fork now has a sharp minimum architecture. The
+accepted-genesis defect requires two canonical bath
+pairs at zero kinetic drain and three at every positive drain; both the
+bath-to-system feedback and system-to-bath record blocks must attain the same
+rank. An explicit direct-sum dilation saturates the bound and reproduces one
+production step on a zero-bath slice. It cannot repeat there: the first event
+loads the bath and the second feeds the record back by a nonzero analytic
+amount. An equal-weight quadratic bath also cannot be passive, because an
+orthogonal-symplectic completion would require the unequal genesis
+radial/tangential scales to coincide. The live environmental route must now
+derive these bath pairs, their active or cross-coupled energy, and their
+reset/export/transport law. The alternative remains a new nonlinear
+bound-state action. A separately derived nonstandard symplectic structure can
+change the minimum bath count (the zero-drain defect can fall from rank four to
+two), but cannot eliminate enlargement because the raw determinant is below
+one.
+Production is unchanged.
+
+**FTD-0573 incremental addendum:** the standard FTD-0570 `(J,W)` pairing is
+no longer arbitrary inside the constant onsite equivalent-vector cubic class.
+Exact cubic invariance leaves a one-dimensional skew-form space spanned by
+`[[0,I],[-I,0]]`. Direction- and parameter-dependent alternatives can reduce
+the genesis defect rank to two at zero drain and four at generic positive
+drain, while the `a=t` fivefold degeneracy forces rank six for every form.
+Cubic covariance therefore costs exactly one additional bath pair on all 120
+registered production arms. FTD-0574 resolves the canonical-pairing question
+for the frozen source-free field tick: `wave_vel` is the exact discrete
+Legendre momentum of `J`. The remaining environmental gap is the bath's active
+energy and local record export/transport; genesis itself remains
+noncanonical. Polar/axial, nonlocal, field-dependent, nonlinear, and
+presymplectic alternatives remain outside the FTD-0573 classification.
+Production is unchanged.
+
+**FTD-0574 incremental addendum:** the source-free production field map now has
+an exact nearest-time-slice discrete action. Its two Legendre transforms both
+give the stored `wave_vel`, and its uniquely onsite-kinetic-normalized
+quadratic invariant is the existing gradient-plus-cross tick energy. The
+exact prescribed-source interaction is
+`G_C <s,div J> + G_C <curl J,s v>`. The formerly documented onsite term
+`-G_C <s v,J>` does not generate the coded curl source; a uniform moving-source
+counterexample gives coded source zero and documented gradient magnitude
+`G_C`. The next common-action gate is therefore not the free-field pairing.
+It is a dynamic source/worldline action whose matter variation and field
+variation close together without repeating the energy-uniqueness failures of
+FTD-0479 and FTD-0539. Independently, the genesis branch still requires a
+native active-bath energy and local record export/transport. Production is
+unchanged.
+
+**FTD-0575 incremental addendum:** the FTD-0574 source interaction does have a
+reciprocal point-path variation. Defining `Phi_J=-G_C div J` and
+`A_J=G_C curl J` gives an exact Lorentz-form Hodge force, zero magnetic scalar
+work, and the homogeneous divergence/Faraday identities. This does not recover
+electromagnetism. The derivative source and derivative probe vertices combine
+to the bounded static kernel `R(k)=3 sum_i sin(k_i)^2/M(k)`, with the exact
+sum-of-squares bound `0<=R<=3`; the static massless pole cancels. The effective
+static energy makes equal polarities attract and opposite polarities repel,
+and the soft radiative residue vanishes as `O(k^2)`. The minimal native Hodge
+channel is therefore closed as Coulomb electromagnetism. The live common-action
+gate is an exact finite-step energy and stable mobile carrier for this force,
+or a genuinely different nonlinear/enlarged charge mechanism. Selected
+Gauss/Poisson Coulomb behavior remains independent evidence, not a derivation
+from the source action. Production is unchanged.
+
+**FTD-0576 incremental addendum:** exact finite-step Hodge energy is now
+constructive, but the frozen native/cardinal/local conjunction is closed. The
+driven field tick selects the unique work coordinate `R=J-W/2`, and any
+endpoint density/current pair satisfying `delta rho+D Q=0` under the native
+central divergence closes field, scalar-interaction, and matter energy
+exactly. A cardinal unit hop cannot supply that `Q` locally: its symbol is
+`-2z/(z+1)`. Even periodic boxes have no solution at the checkerboard mode;
+odd boxes require a box-spanning alternating current. The exact FTD-0478 face
+current also cannot be converted by a finite-range commuting projection,
+because that map is uniquely `2/(z+1)`. The live carrier routes are now a
+separate matched face/link dynamics, a staggered current/connection primitive,
+a nonlocal current, or a derived non-cardinal/nonlinear carrier that cancels
+the checkerboard factor without abandoning ternary manifestation. Production
+is unchanged.
+
+**FTD-0577 incremental addendum:** the non-cardinal carrier route now has one
+minimal separable local witness. Symmetry, radius-one support, unit
+normalization, and checkerboard cancellation uniquely fix the axial coat
+`(1/4,1/2,1/4)` in the registered class. Its tensor product is a positive
+27-site Moore coupling representation, while primitive `s` remains exactly
+ternary at one site. Applied to the exact FTD-0478 face current, the local map
+`Q_i=((1+T_i^-1)/2) product_(j!=i) B_j K_i` satisfies native central
+continuity exactly and supplies a local witness for the conditional FTD-0576
+energy ledger. The coat is explicitly non-cardinal and does not repair the
+FTD-0575 static pole/sign defect. The live gates are now derivation of the
+coupling from one common action, reciprocal matched gather, self-force
+cancellation, an invertible implicit matter/field step, and an actually stable
+mobile manifested solution. Production is unchanged.
+
+**FTD-0578 closure addendum:** the common-action and reciprocal-gather gates
+for the FTD-0577 coat are now constructive, but the compact point-carrier
+mobility gate is closed negative. Exact temporal hats give local split
+continuity, and independent deposit/orbit evaluations agree below `4.32e-18`.
+However, the time-exact scalar source differs from the FTD-0576
+endpoint-energy-centered source on edge/body diagonals by exact squared norms
+`1/1536` and `5/3072`. Eliminating the static field from that same action also
+gives the positive polarity-even Peierls law `V_self=V_0+C_i r(1-r)`, with a
+registered half-cell barrier above `6.74e-5`. Thus self-force cancellation, an
+unmodified point action, and direct FTD-0481 promotion are no longer open.
+The live routes are a preregistered energy-centered multistage action, integer
+hopping, or an extended native excitation whose relative pinning scales away.
+Production is unchanged.
+
+**FTD-0579 closure addendum:** finite rigid extension is no longer a live
+exact-cure route. For any nonzero finite base source `A`, the diagonal
+centering mismatch factorizes as `B_M A M_d`; the Laurent integral-domain
+property prevents exact cancellation on every edge/body path. The reciprocal
+Peierls coefficient is likewise strictly positive because its spectral
+integrand is nonnegative and a nonzero Laurent polynomial cannot vanish on an
+open set. A smooth binomial control does reduce both relative defects, but
+only as `O(R_rms^-2)` and never to zero at finite support. The remaining live
+classes are deforming/nonlinear or noncompact/band-limited carriers,
+integer-only hopping, and a separately selected energy-centered multistage
+action. Production is unchanged.
+
+**FTD-0580 constructive/closure addendum:** the FTD-0578 diagonal-centering
+defect is now resolved at the coupling-sidecar level. Positivity and exact
+endpoint-energy centering select the chord
+`p_t=(1-t)delta_0+t delta_d`; uniformly averaging all shortest monotone face
+paths removes any arbitrary axis ordering and closes raw/central continuity.
+The resulting time-exact common action is energy-centered on all Moore paths.
+However, every registered chord displacement retains a positive Hodge
+Peierls coefficient and finite depinning barrier. The live gate is therefore
+narrower: existing nonlinear `(s,J,W)` dynamics must supply a genuinely
+deforming internal mode that traverses or cancels that barrier, or the carrier
+must be noncompact/band-limited; the static finite chord itself is closed as a
+gapless mobile law. Production is unchanged.
+
+**FTD-0581 obstruction addendum:** stable passive dressing is no longer a
+live cure for the FTD-0580 chord barrier. Completing the native Hodge field
+square shows that the Peierls curve is already the relaxed minimum; every
+passive deformation adds nonnegative energy. The periodic curve also has a
+linear integer-site cusp, while a Lipschitz deformation of a stable quadratic
+equilibrium begins at `O(r^2)`. The exact production threshold is
+`v_dep/C_SPEED=0.0281..0.0411` on the registered arms. The surviving native
+route is specifically an active, phase-resolved `(J,W)` configuration carrying
+at least `C_d/4` excitation at zero external momentum and returning that
+energy over repeated hops. Its coupling, recurrence, localization, and inverse
+closure remain open. Production is unchanged.
+
+**FTD-0582 closure addendum:** the frozen active-mode route is also closed.
+The production source graph is one-way when selected forces are disabled:
+state/velocity source `(J,W)`, but `phase_read` and `phase_write` never write
+manifested velocity or remainder. In 144 registered active-mode arms the
+fields evolved for 18,432 ticks at 2--32 times the largest chord barrier while
+matter kinematics and anchor remained exact zero. Ballistic, source-coupling,
+and selected-force controls all responded. A reciprocal common-action branch
+would therefore be new selected dynamics, not latent behavior in the frozen
+tick. Under the plan's failure rule, FTD-0481 toggle/scenario promotion is not
+licensed. The open work is now a deliberate ontology/dynamics fork, not a
+further observer search. Production is unchanged.
+
+**FTD-0583 topology addendum:** the current real matched face/edge variables
+also do not contain the retained localized protected carrier. Fourier
+classification gives `H^2(T_L^3;R)=R^3`; its three classes are delocalized,
+continuously valued plane fluxes. Every localized divergence-free field with
+zero plane flux is a curl and contracts to vacuum as `E_t=tE`, while periodic
+Gauss dipoles and their charges scale continuously. The noncompact/bundle
+wording is therefore narrowed: the live routes are a genuinely nonlinear
+deforming `(s,J,W)` core or an explicitly new compact/singular variable with
+additional structure. Neither is licensed by this theorem. Production is
+unchanged and FTD-0481 remains gated off.
+
+**FTD-0584 fixed-source/vacuum addendum:** fixing ternary source, Gauss law,
+and global plane flux does not create a protected field sector. Every nonempty
+ordinary-real field fibre is affine and contractible, including finite-support
+and finite-energy fields on the uncontained lattice. The frozen free vacuum is
+the point `s=0,J=W=0`, so it supplies no wall, vortex, hedgehog, or texture
+homotopy. Ternary snapshot disconnectedness is not dynamical conservation; the
+registered four-feature additive transition matrix remains rank four/nullity
+zero, without excluding every possible non-additive graph invariant. A static
+same-variable core with only onsite and two-derivative energy is also closed by
+`E(R)=R E_2+R^3 E_0`. The remaining open work is now explicit: derive a
+time-periodic deforming reciprocal core from existing variables, or preregister
+one compact/constrained order-parameter enlargement with its admissibility and
+common action. Neither is licensed yet; production and scenarios are unchanged.
+
+**FTD-0585 motion/reaction addendum:** the active same-variable escape is now
+split into transport and reaction-pattern programs. Identical moving-support
+snapshots can have `I!=0,S=0` or `I=0,S!=0`; even a globally balanced reaction
+source does not define a local particle worldline. Twelve reaction-free rest
+arms remained exact while ballistic controls hopped. A live production defect
+also confounds reaction motion: evaporation preserves voxel `velocity` and
+`remainder`, and genesis reuses them bit-exactly. The remaining open work is a
+sanitized reaction-pattern campaign requiring zero pre-event void kinematics,
+an explicit reservoir/source ledger, a persistence discriminator, and a stable
+pole. It must be called a dissipative excitation unless its infrared source
+flows to zero and a conserved current survives. Production is unchanged.
+
+**FTD-0586 endogenous-reaction addendum:** the first sanitized causal-source
+gate is now closed negative for one, two, and three initial ternary sites. The
+exact kick-drift step envelope and its arbitrary one-off evaporation pulse
+extension give `3 B_L <= 1.1598848941400712 < K_GENESIS` on the four locked
+volumes. All 96 live arms recorded zero genesis, zero inherited kinematics,
+and support confined to the initial seed; external supercritical controls
+fired. Four sources were only the first count that sourcewise bound could not
+exclude; FTD-0588 and FTD-0589 supersede that boundary. The remaining
+reaction-pattern work must therefore begin from the exact seven-source
+collective/history boundary below or
+an externally incident drive, then
+separate ignition from post-drive persistence and record the energy reservoir.
+Shape/amplitude searching is not licensed, and no particle or scenario claim
+is promoted.
+
+**FTD-0587 ignition-cut addendum:** the registered external-persistence fork
+is now complete. All six continuations begin from bit-identical FTD-0474
+tick-150 states. Retained field alone, retained field plus native causal
+coupling, cleared state alone, and cleared state plus causal coupling each pass
+`0/24`. Cleared Gauss retains `18/24` but only four of six cells; only intact
+field plus repeated selected Gauss reproduces the locked `20/24`, five-cell
+qualification. The qualified dispersal tail records zero genesis and 204
+evaporations. It is therefore an externally prepared, Gauss-stabilized,
+evaporative remnant, not an autonomous reaction front or transported particle.
+The external-drive/persistence branch is closed as a native-matter route.
+FTD-0588/0589 now narrow the remaining endogenous option below; alternatively
+the project must declare a new reciprocal nonlinear action/carrier. Production
+and scenarios remain unchanged.
+
+**FTD-0588 collective-history addendum:** the apparent `N=4` opening was an
+artifact of linear sourcewise triangle counting. Exact production-stencil
+domination and finite-group Parseval yield a geometry/sign-independent common
+history bound `|J|<=2 C_L sqrt(N)`. All common histories through `N=5` are
+subcritical on `L={9,17,33,65}`. Decomposing arbitrary one-time removals into
+the common initial step plus delayed off-steps closes every asynchronous
+history through `N=4`; at `N=5`, a first descendant is impossible while any
+original source remains. All 128 registered arms recorded zero genesis, and
+all 64 unlocked arms reached complete source removal. The sole exact causal
+opening is now (i) common `N>=6`, or (ii) the all-originals-removed tail of an
+asynchronous five-source history. The registered five-source tails were
+negative but did not exhaust removal schedules. FTD-0589 now supersedes this
+last open clause while preserving the spatial `sqrt(N)` theorem.
+
+**FTD-0589 removal-time addendum:** the exact finite rectangular pulse cancels
+the constant pieces retained by the FTD-0586/0588 doubled-step envelope:
+`p_(n,T)=2 sec(theta/2) sin(T theta/2)
+sin((n-(T-1)/2)theta)`. Combining its one-source coefficient `P_L` with the
+common-history term gives the schedule/geometry/sign-independent bound
+`|J|<=C_L sqrt(N-r)+rP_L`. The worst registered six-source value is
+`1.3663808891042910<K_GENESIS`, so a first-event induction closes every
+arbitrary one-time-removal history through `N=6`. Seven is the first count
+not excluded (`1.5770084779741087` at `L=65`), not a predicted mechanism.
+All 96 fixed conformance arms/12,288 ticks recorded zero genesis, and all four
+native `(L,N)` cells exercised complete removal. The remaining endogenous
+work was an exact `N=7` removal-time Gram/coherence norm. FTD-0590 now closes
+that count as recorded below. Geometry, schedule, and amplitude search remain
+unlicensed; no particle, scenario, pole, or reciprocal action is promoted.
+
+**FTD-0590 cubic-orbit addendum:** the normalized pulse factor depends on a
+mode only through the production stencil eigenvalue, so it is constant on
+every signed-permutation momentum orbit. The exact orbit-character relaxation
+gives `|J|<=C_L sqrt(N-r)+Q_L sqrt(r+mu_L r(r-1))`. Exhaustive mode and
+nonzero-displacement orbit enumeration on `L={9,17,33,65}` gives
+`mu_L=0.3610...0.36274`; the worst seven-source partition is `r=6`, with
+maximum bound `1.2142763824256086<K_GENESIS` and minimum margin
+`0.30210967672636913`. A first-event induction therefore closes arbitrary
+one-time-removal histories through `N=7`. FTD-0591 separately locks and closes
+the next count as recorded below. This does not reopen reciprocal mobile
+matter or license a positive genesis mechanism.
+
+**FTD-0591/0592 orbit-coherence addendum:** the unchanged FTD-0590 bound was
+separately locked and evaluated at `N=8` and `N=9` without introducing a
+stronger relaxation. The nine-source maximum occurs at `r=8` on every volume;
+the largest value is `1.4801131737725799` at `L=65`, with strict margin
+`0.036272885379397879`. First-event induction now closes arbitrary
+one-time-removal histories through `N=9`. FTD-0593 evaluates `N=10`, but its
+ordinary orbit upper bound exceeds threshold on every volume and is therefore
+inconclusive, not positive evidence. FTD-0594 performs the exact shared-`M`
+eigenshell refinement; `L=65` has no eigenvalue degeneracies between cubic
+orbits, so the decisive bound is unchanged. FTD-0595 then enforces the exact
+capacity of axial nearest-neighbor pairs by enumerating every connected cubic
+animal through size nine. At most 13 of the 36 `r=9` pairs are axial, but the
+complementary kernel is nearly as large and all four bounds remain above
+threshold. FTD-0596 then enforces the complete cubic-orbit distance spectrum,
+the inherited axial cap, and every autocorrelation Fourier-positivity
+constraint. Its 32 padded dual certificates shift the maximum to `r=8` and
+lower every bound, but all four remain super-threshold. The two-class and
+registered Delsarte-LP branches are closed as deciders. The live `N=10`
+uniform question was then closed by FTD-0597: at a common observation time the
+exact pairwise pulse product lies in `[-1/4,1]`, and the signed-shell/Delsarte
+bound is strictly subcritical on all four volumes. The frozen first-event
+closure is now `N<=10`; the next separately priced count is `N=11`. No positive
+genesis mechanism follows.
+
+**FTD-0598/0605 reciprocal-matter decision addendum:** FTD-0599 closes the
+named no-new-variable native-recoil transaction at energy. FTD-0600 then makes
+the R2 escalation constructive at selected-dynamics scope: explicit
+constituent-complete phase space, a selected quartic binding action, and the
+matched face/edge field yield repeated bound site-crossing motion with
+state-only inversion and exact energy exchange. This is a research-state
+construction, not a production primitive or physical-particle derivation.
+FTD-0601 removes the fixed compensator without repairing pseudomomentum;
+FTD-0602 removes the arbitrary-dressing sign artifact; FTD-0603 then finds
+14/32 non-attractive phases along the pair axis. FTD-0604 activates the
+totally symmetric breathing coordinate but its exact stiffness `48` limits
+the response to about `4.5e-5`; the same 14 phases remain non-attractive. The
+FTD-0605 full local shape chart then escapes along three exact rotational zero
+modes instead of finding an interior stationary core. The live R2 gate is
+therefore a global `SO(3) x strain` factorization of those same coordinates,
+then a spectrally smooth extended carrier if the compact orientation gate
+fails. Microscopic local `U(1)` still needs a link
+connection/holonomy type under `IMP-S4`, but connection data alone is not a
+pinning cure. A gapless pole and freely translating localized particle remain
+open; persistent finite history is not an admissible shortcut.
+
+**FTD-0599 closed-negative addendum (not counted as open):** the locked
+site-ontic native-recoil map closes on its second arm. The body-diagonal hop has
+one independently Arb-certified root, exact coated continuity, and exact
+field-plus-matter recoil, but both frozen energy residuals are `6.3504e-6`
+against `1e-12`. State-only inversion and the repeated campaign were not run
+because the preregistered conjunction had already failed. This closes only the
+registered R0 map. The live escalation is constituent-complete phase space;
+connection/holonomy remains a later electromagnetic ontology boundary.
+
+**FTD-0600 constructive/negative addendum:** the selected charged trimer
+passes 32 forward and 32 state-only inverse arms, then 64 forward/reverse
+steps with 24 site hops, state recovery `2.57e-12`, and energy drift
+`1.67e-15`. This closes the immediate constituent common-action existence
+question. It does not close isolated recoil: matched pseudomomentum misses by
+`5.69e-3` against `1e-12`, and the registered fixed opposite coat is an
+external momentum reservoir. FTD-0601 has now completed the fully dynamical
+neutral-pair follow-up and shows that the compensator is not the sole defect;
+FTD-0602/0603 further isolate minimum-field and translation-phase effects.
+The original FTD-0600 follow-up is resolved into the next addendum and is not
+separately counted as open.
+
+**FTD-0601–0605 closed-neutral/deformation addendum:** a second dynamical conjugate
+trimer preserves reversible common-action mobility but leaves a `1.03e-2`
+pseudomomentum defect, ruling out the fixed compensator as its sole cause. The
+minimum-energy Gauss representative restores inward response at the original
+placement and reduces the defect to `1.91e-4`. That sign is not robust: across
+the locked phase sweep, 14/32 principal-axis placements are non-attractive.
+The phase-mean momentum diagnostic decreases to `2.57e-8` but remains
+unresolved under its `1e-8` gate. Compact rigid attraction is closed negative;
+the single symmetric breathing repair is also closed negative, reducing the
+barrier only `0.00507%` and retaining 14/32 non-attractive phases. Full local
+shape release then exposes three exact rotational zero modes: 29 searches
+exhaust and three hit the chart boundary, so no interior local dressed core is
+licensed. Global `SO(3) x strain` orientation is the next compact gate; native
+low-momentum extension follows if it fails.
+This item is counted as open.
+
+**FTD-0497/0498 incremental addendum:** the exact axial face-work transaction now
+crosses a real anchor threshold, but proves the existing ±1
+`(site,remainder)` map non-injective. Physical position, charge shape, field,
+and momentum reverse; the manifested anchor does not. FTD-0498 proves this is
+an exact quotient for trilinear shape and face current, but not for production:
+native source and collision phases distinguish adjacent charts. The frozen
+reciprocal mobile-matter candidate is closed pending an explicit representation
+change. No toggle, scenario, or infrared claim was added.
+
+**FTD-0499 incremental addendum:** no fixed finite chart label can repair that
+many-to-one threshold map while preserving its raw projection. For an
+`m`-preimage collision and finite hidden fiber `H`, the exact cardinality
+deficit is `(m-1)|H|`. The current shape, face current, field, momentum, work,
+and dressing records all erase the explicit branch. An exact history lift
+exists only with capacity growing by `log2(m)` bits per merge. The admissible
+research fork is therefore quotient production, change the raw transition, or
+retain/export indefinitely growing history; finite local chart memory is
+closed. No production change was made.
+
+**FTD-0500 incremental addendum:** a unique centered chart is constructive
+away from ties and preserves the exact shape/current quotient, but it is not a
+drop-in production repair. Translation plus inversion at `x=1/2` requires the
+impossible integer equation `2a=1`; the locked finite-precision reversal gate
+also fails on 91 tie arms. The canonical boundary moves manifested hopping by
+half a site and changes native source and collision outcomes. Canonicalization
+therefore requires a new production ontology/rule set. No toggle, scenario, or
+default was changed.
+
+**FTD-0501 incremental addendum:** the remaining summed-shape ontology is not
+complete for composite matter. CIC deposition on a cell axis factors exactly
+through total charge and signed first moment. Distinct same-sign pairs have
+identical `rho/J` histories with squared-separation difference `3/16`; rigidly
+moving neutral pairs centered `0.1` apart also have identical histories and
+zero aggregate current despite nonzero constituent currents. The exact kernels
+survive 288 cubic/translated copies. A shape rewrite must retain constituent
+worldlines, sufficient multipoles, or impose a new single-carrier exclusion
+law. No production change was made.
+
+**FTD-0502 incremental addendum:** endpoint matter still does not determine
+transport. On a periodic `L^3` face complex, continuity leaves an exact
+`2L^3+1` dimensional divergence-free current kernel (`9827` dimensions at
+`L=17`). Causal static, clockwise, and counterclockwise square histories have
+the same manifested endpoints but source zero or opposite nonzero face fields.
+Transport must therefore be an oriented event 1-chain selected atomically with
+motion; it cannot be inferred from snapshot differences. No production change
+was made.
+
+**FTD-0503 incremental addendum:** existing phase space selects the free
+1-chain before information loss. Exact Legendre matching across all 24
+four-carrier endpoint permutations uniquely recovers stationary, CW, and CCW
+currents in 432 cubic/translated arms, with zero best/current/continuity
+residual and minimum alternative gap `1.533`. No particle ID is needed.
+Coincident predicted targets are detected exactly and fail into an explicit
+collision gate. Free transport is therefore constructive; collision and
+manifested write-back are the next missing laws. No production change was made.
+
+**FTD-0504 incremental addendum:** collision is narrower than the endpoint
+matcher suggested. A physically identical equal-mass crossing strictly inside
+a tick has the same unlabeled phase space and exact oriented face current
+whether called pass-through or bounce; 144 cubic/translated arms close below
+`2.43e-16` current residual. The quotient ends at transported attribute
+differences and at tick-boundary same-sign multiplicity, where one ternary site
+has exact charge defect `m-1` **when forced into one anchor**. Conservation
+also leaves a continuum of 3D elastic angles. Identical crossings are closed
+as permutation gauge; the distinguishable collision vertex remains open.
+FTD-0507 later retracts the inference from this one-site formula to every
+stored non-knot boundary point. No production change was made.
+
+**FTD-0505 incremental addendum (scope-corrected by FTD-0507):** because
+contact occurs at `tau=dt`, any positive post-contact separation needs
+additional time `b/u`; the smallest registered defect is `0.0270633` ticks.
+A canonical single-anchor write-back needs a five-symbol charge alphabet.
+Finite-radius exclusion is conservative and reversible in 864 arms, but three
+allowed radii produce distinct currents; moving contact off the tick changes
+pair energy. The unconditional capacity/range/phase trilemma is retracted:
+non-knot raw charts supply existing capacity. The zero-posttime and unforced
+range results remain. No production change was made.
+
+**FTD-0506 incremental addendum:** the existing production occupied-target
+branch does not supply the finite-range reciprocal escape. In 156 actual CPU
+arms it reflects only the mover, erases its subcell remainder, leaves the
+target and field unchanged, emits no journal current, and fails unchanged-tick
+inversion. It preserves mover energy but has minimum pair-momentum defect
+`0.283452`, minimum exact-current mismatch `0.95`, and minimum missing-current
+continuity residual `0.8`. The branch is qualified as fixed-target reflection,
+not a reciprocal elastic collision. No production change was made.
+
+**FTD-0507 incremental addendum:** stable chart count is `2^(3-k)` for a
+point with `k` integer coordinates, so face/edge/corner collision slices have
+`2/4/8` distinct raw anchors. All 156 boundary pairs fit the ternary state,
+and actual movement carries and reverses a manually selected outgoing phase
+with worst position residual `2.72e-15`. This retracts FTD-0505's universal
+capacity horn. It also exposes the sharper obstruction: axial symmetric
+separation has exactly zero aggregate trilinear face current, so the field
+cannot see the constituent relative mode. No production change was made.
+
+**FTD-0512 incremental addendum:** the existing chart normal and constituent
+momenta support an exact selected Householder reflection for the restricted
+equal-mass, zero-COM-normal collision class. All 312 arms conserve momentum
+and relativistic matter energy and reverse below `3.89e-16`. This is not a
+native force derivation: in all 72 face-normal arms, a static coincident pair
+and a symmetrically separating pair have exactly identical aggregate
+trilinear density/current, while constituent current norm is at least `0.5`
+and the matter-energy gap is at least `0.0248295`. Aggregate face action as the
+collision origin is closed negative; a constituent contact term or a retained
+higher moment remains open. No production change was made.
+
+**FTD-0513 incremental addendum:** the first scoped cubic-covariant polynomial
+moment that retains both counterflow magnitude and axis is the symmetric
+kinetic stress `Sigma=sum p tensor v`. It reconstructs all 312 registered
+rank-one pairs with worst inverse residual `2.22e-16` and exact signed-cubic
+covariance. It is not a complete matter state: distinct axial and diagonal
+four-stream multisets have identical count, energy, momentum, and rank-2
+stress while their fourth moments differ. Local stress balance, a conjugate
+field/contact functional, and closure beyond rank one remain open. No
+production change was made.
+
+**FTD-0514 incremental addendum:** exact scalar face continuity lifts
+componentwise to `Delta g_i+div Pi_i=0` with `g_i=p_i rho` and
+`Pi_ij=p_i J_j`. The integrated tensor face flux equals `Delta t` times the
+FTD-0513 kinetic stress. All 312 free and 312 selected-contact arms close below
+`2.22e-16`; the two internal impulse sources cancel sitewise while each is
+nonzero. This proves exact bookkeeping compatibility, not an origin for the
+selected collision impulse. A conjugate interaction variable/common action
+remains open. No production change was made.
+
+**FTD-0516 incremental addendum:** one explicitly selected unilateral
+hard-contact matter action now generates the restricted FTD-0512 impulse.
+Constrained corner variation gives equal/opposite normal impulse and energy
+continuity; KKT plus outgoing admissibility selects `lambda=2q_n`. All 312
+collision and 144 signed-cubic arms match the prior observer and FTD-0514 face
+balance below `6.67e-16`. This closes the selected contact-action construction,
+but FTD-0526 later shows that its identical-carrier impulse only exchanges raw
+labels between the same physical worldlines. Distinguishable contact and
+reciprocal E/B force remain open. No production change was made.
+
+**FTD-0525 incremental addendum:** the native remainder state can evaluate the
+FTD-0516 contact gap, but frozen production does not use that surface as an
+active set. All 312 actual two-body arms reach and cross `phi=0` with unchanged
+anchors/velocities, zero journal/field event, and exact two-tick reversal. All
+312 static-target arms activate only at the later site-hop threshold after the
+predicted `2..7` ticks. FTD-0526 corrects the inference: this closes explicit
+raw dispatch at contact, not physical hard contact in the identical-carrier
+quotient. No production change was made.
+
+**FTD-0526 incremental addendum:** pass-through and bounce agree in unlabeled
+phase space, compact density, and exact current before the chart horizon in all
+624 order arms. All 144 commensurate face arms rejoin exactly at the late raw
+collision. The 480 edge/corner arms differ only because unconditional reset
+deletes a predicted `0.0051815..0.0773503` subcell overshoot. Site state,
+polarity, total momentum/energy, field, and journal remain identical. The next
+repair target is overshoot-preserving chart resolution, not a new identical-
+carrier contact force. Distinguishable collisions and field reciprocity remain
+open. No production change was made.
+
+**FTD-0527 incremental addendum:** an exact paired occupied-chart transaction
+now preserves the full FTD-0526 remainder overshoot and the physical quotient.
+All 312 registered arms close density, exact face current, continuity,
+relativistic invariants, reversal, translation, polarity mirror, and cubic
+covariance below `2.92e-15`. The repair is two-to-one on raw chart histories:
+one bit reconstructs either preimage for one merger, and repeated exact raw
+reversal requires a growing event record. Quotient production, distinguishable
+collision, and field-derived reciprocity remain open. No production change was
+made.
+
+**FTD-0528 incremental addendum:** the preregistered native axial-factorization
+hypothesis failed. All 72 axial and 240 diagonal contact arms are distinguished
+by the actual pre-movement coupling source, entirely through `G_C curl(sv)`;
+the gradient source agrees exactly. The complete compact density, exact face
+current, and matched field response still factor through the contact quotient.
+The FTD-0527 repair therefore composes only with complete matched-history
+ordering, not with unchanged native coupling earlier in the tick. Reciprocal
+matched field-to-matter dynamics remains open. No production change was made.
+
+**FTD-0529 incremental addendum:** the unchanged FTD-0527 elastic output cannot
+be composed reciprocally with arbitrary matched fields on edge/corner contact.
+For `F=C C^T K`, `D F=0` but exact field work shifts by
+`beta a||C^T K||^2`; all 240 edge/corner arms have positive norm. FTD-0530
+subsequently proves that all 72 axial aggregate currents vanish exactly. This
+closes only field-blind diagonal composition, not reciprocal contact with
+field-dependent outgoing momenta. No production change was made.
+
+**FTD-0530 incremental addendum:** the preregistered prediction of nonzero
+Gauss-fixed axial work failed. For all 72 symmetric identical axial arms, the
+two oriented currents cancel pointwise and the endpoint density is unchanged;
+the exact aggregate matched source is zero. Fixed-path axial reciprocity is
+therefore already closed without a contact impulse. This does not extend to
+asymmetric or distinguishable contact. No production change was made.
+
+**FTD-0531 incremental addendum:** all 240 symmetric edge/corner arms admit a
+self-consistent scalar endpoint solve on the locked matched-field family.
+Existing momentum absorbs exact field work, moving the endpoint and current;
+continuity, Gauss, energy, causality, cubic covariance, and reversal close.
+This is an energy-coupled symmetry reduction, not a derived vector force or
+arbitrary-field collision law. No production change was made.
+
+**FTD-0532 incremental addendum:** every constructive FTD-0531 edge/corner
+endpoint crosses all two/three active coordinate planes simultaneously. The
+frozen one-cell FTD-0485 variational evaluator accepts all previous-segment
+controls and rejects all 480 coupled next segments even on a zero connection.
+The scalar energy transaction survives; the compact common-action composition
+is closed negative, and a multi-cell simultaneous-knot variation is now the
+precise missing force derivation. No production change was made.
+
+**FTD-0533 incremental addendum:** the complete FTD-0484 deposited action was
+already multi-cell. Its newly exposed shared-point gradient reproduces compact
+interior AD, converges through nonzero-field face/edge/corner internal knots,
+is gauge invariant, and admits all 240 FTD-0532 geometries. The charged
+endpoint side gap remains. The open gate is now stationarity of the FTD-0531
+scalar endpoint under a reconstructed dynamical connection, not path-domain
+coverage. No production change was made.
+
+**FTD-0534 incremental addendum:** a single connection slab cannot carry both
+the FTD-0531 midpoint work field and its staggered magnetic endpoints on any
+diagonal arm. The exact Faraday mismatch is `-(lambda/2)C^T K`, nonzero with
+norm `0.06797..0.13818`; all axial null-current controls close. The remaining
+common-action route must be multistage or phase-space, not a one-slab
+interpolation choice. No production change was made.
+
+**FTD-0535 incremental addendum:** exact FTD-0484 variation exposes distinct
+start/end current deposits. They recombine to `K`, but every diagonal start
+deposit has nonzero curl and therefore changes the canonical Faraday relation;
+all axial splits vanish. The common-action route must solve both deposits,
+fields, and particle endpoint implicitly as one atomic transaction. Frozen
+sequential phase reuse is closed negative. No production change was made.
+
+**FTD-0536 incremental addendum:** the minimal atomic action is now explicit.
+Its exact current split, both connection equations, Ampere update, and Gauss
+evolution close on every diagonal arm. None of the 240 FTD-0531 scalar roots is
+a particle-Legendre stationary point, and all miss ordinary quadratic energy.
+The action candidate survives; the independently energy-tuned root family is
+closed negative. The remaining gate is a fresh simultaneous nonlinear root,
+followed by exact energy and reversal. No production change was made.
+
+**FTD-0537 incremental addendum:** the fresh six-coordinate solve reaches
+fine-stencil residuals below `1.31e-9` in all 240 covariance arms while all
+non-derivative transaction identities close below `7.00e-15`. It does not pass
+the locked derivative gate: 144 shell-2 arms lie between `h/2` and `h` from an
+integer face, so the coarse five-point stencil crosses a current chart and the
+coarse/fine disagreement is `5.40e-5`. Ordinary and modified energy are both
+nonclosing at those provisional roots, but the locked verdict order makes that
+diagnostic conditional. The live gate is now a chart-contained or analytic
+derivative of the unchanged action, then the same energy and reversal tests.
+No production change was made.
+
+**FTD-0538 incremental addendum:** chart containment exposes an exact
+reflection-plane boundary, not merely a poor finite-difference scale. Every
+shell-2 free endpoint has zero inactive-coordinate clearance, closing 144 arms
+out of centered chart differentiation. The 96 shell-3 arms converge with
+`6.40e-14` derivative agreement but fail both registered energies. The live
+edge gate is now the left/right normal derivative and in-plane stationary
+solve on the exact plane. No smoothing or transverse displacement is licensed.
+No production change was made.
+
+**FTD-0539 closure addendum:** the four in-plane edge equations converge on all
+144 arms, but the normal derivative is a resolved cusp. Every left/right
+residual interval contains zero, while its jump is `2.83e-4..1.01e-3` with
+`1.37e-14` same-side convergence. A unique map therefore requires a new
+subgradient selection. Both edge energies fail, matching the smooth corner
+energy failure. The frozen FTD-0536 action is closed negative as FTD-0479's
+exact reciprocal mobile law. No toggle, scenario, reversal, morphology, or IR
+campaign is licensed. No production change was made.
+
+**FTD-0540 theorem addendum:** nearest-cell partition plus first-moment
+reproduction uniquely forces the hat kernel and its derivative jump two. The
+stronger locally finite theorem rules out any nonnegative `C1` cardinal
+first-moment representation. The edge cusp is therefore not tunable inside
+the FTD-0478 shape. The explicit exits are priced: a positive quadratic
+B-spline is non-cardinal, while cardinal Catmull-Rom has a `-2/27` lobe. No
+production change was made.
+
+**FTD-0541 constructive addendum:** the selected positive non-cardinal exit is
+now an exact observer. A tensor quadratic B-spline coat gives 27 positive
+coupling weights at integer manifestation, and its `B2/B1` straight-segment
+face current closes continuity/current moment below `2.22e-16`. The inactive
+integer-plane action derivative jump is `7.58e-14`, so the representation cusp
+is removed on this new branch. The old FTD-0536 action cannot be reused by
+substitution. No production change was made.
+
+**FTD-0542/0543 constructive addendum:** the fresh coat-derived common
+interaction now exists. Endpoint currents `K0,K1` and temporal coat `T` obey
+both spacetime split identities and are source derivatives of one exact
+gauge-covariant functional. The remaining obstacle is specifically energy,
+not current origin or the old cusp. Fixed-step stationarity omits the time-node
+equation; the registered quartic witness changes endpoint energy by `1/8`.
+The simplest exact-energy discrete gradient instead loses phase area
+(`det=9/11`). The next live gate is to test a special exact invariant of the
+actual coat-Maxwell transaction. No production change was made.
+
+**FTD-0544 field-energy addendum:** the special-invariant search is now split
+cleanly. For the matched midpoint Maxwell equations, curl-adjoint cancellation
+proves `Delta U_field=-<Ebar,K>` and divergence proves exact Gauss transport.
+The unresolved equality is exclusively on the matter side:
+`Delta H_matter=<Ebar,K>` for the production dispersion and the FTD-0542
+action-derived impulse. No production change was made.
+
+**FTD-0545 matter-work addendum:** the universal matter-side identity is now
+closed negative. Exact coat endpoint variation is gauge covariant, but in the
+uniform harmonic sector its massive dispersion produces a cubic work defect,
+reaching `4.10e-5` in the locked campaign. Since that field is external rather
+than a self-consistent periodic field of one charge, it required the neutral
+self-consistent successor now completed by FTD-0546. No production change was
+made.
+
+**FTD-0546 self-consistent closure addendum:** the required neutral periodic
+pair has now run. The exact temporal source and endpoint-current split produce
+Gauss-realizable endpoint fields; field work closes to `2.90e-18`, but total
+pair energy misses by `9.68e-9`. The frozen minimal quadratic-coat common
+action is closed negative as an exact-energy mobile law. Any lapse,
+self-field subtraction, changed kinetic action, or discrete-gradient repair is
+new selected dynamics and requires a new preregistration. No production change
+was made.
+
+**FTD-0547/0548 accelerated-worldline addendum:** the FTD-0545 defect is the
+relativistic secant-minus-midpoint-tangent error caused by holding velocity
+fixed while momentum changes. Constant-force integration restores matter work
+exactly, and the corresponding nonuniform coat current preserves continuity,
+gauge covariance, and reversal. Total face current is endpoint-geometric, but
+the endpoint split and temporal occupation differ from the linear schedule by
+`1.65e-3`. The open gate is now a self-consistent atomic solution for the
+within-tick force history, trajectory, deposits, and fields. No production
+change was made.
+
+**FTD-0549 history-underdetermination addendum:** two strictly monotone
+histories with identical endpoint position, endpoint velocity, midpoint
+velocity, duration, displacement, endpoint energy, and total face current
+have distinct temporal and endpoint-weighted deposits. The difference is
+exactly `q d epsilon/30`. Endpoint post-processing is therefore closed; the
+live constructive route is an atomic internal-stage path/field solve. Internal
+stages need not be new ontology. No production change was made.
+
+**FTD-0550 orbit-gather addendum:** the quadratic face reconstruction is
+exactly adjoint to the coat current, including determined transverse electric
+force on axial motion. The dual edge reconstruction commutes with matched
+`C^T` curl and magnetic impulse performs zero scalar work. All 72 registered
+arms pass below `1.70e-17`. The representation/gather defect is closed; the
+atomic nonlinear path/field transaction remains open. No production change
+was made.
+
+**FTD-0551 reciprocal-transaction addendum:** endpoint momentum, quadratic
+current, matter displacement, and matched field update now solve as one
+discrete-gradient root. All 72 roots converge; total energy is below
+`9.22e-15`, Gauss below `4.45e-16`, and recorded inversion below `2.23e-16`.
+The one-step algebraic gate is constructive. Static self-force, ballistic,
+packet-caused hop, multi-tick energy, and history-free reversal gates remain
+open. No production change was made.
+
+**FTD-0552 self-force closure addendum:** the isolated static gate fails at
+generic subcell position even though energy and Gauss remain exact. Eight
+symmetry-position arms pin; four generic arms move by up to `0.8465` cells in
+64 ticks. The cause is the gradient of lattice-periodic electrostatic
+self-energy. The unmodified isolated mobile branch, FTD-0481 toggle, and its
+downstream packet/scenario/IR campaigns are closed negative. A neutral
+composite carrier was left as separate future research at that gate; FTD-0553
+now closes its rigid integer-offset realization negative. No production change
+was made.
+
+**FTD-0553 rigid-composite closure addendum:** the separate neutral carrier
+test also closes negative for every rigid localized integer-offset composite.
+The compact quadratic coat gives the exact energy
+`U(f)=U(0)+C_i(f^4-f^2/2)` with `C_i` a nonnegative Fourier sum. It vanishes
+only for a source invariant along the translation axis, not for a localized
+particle. All 96 registered dipole/quadrupole arms have positive barriers; the
+smallest is `7.36e-5`. An internally deforming carrier or a noncompact
+band-limited coat is a distinct open model branch, not an automatic repair.
+No production change was made.
+
+**FTD-0554 locality-translation addendum:** the compact-coat obstruction is
+not removable by increasing interpolation order. A homogeneous finite-range
+unitary has a Laurent symbol that is only a phase times an integer monomial;
+continuity cannot change its shift degree from zero to one. The exact periodic
+band-limited escape removes Peierls energy below `6.94e-17`, but its signed
+density change and exact continuity current occupy all `L` sites. The open
+native target is therefore an extended or integer-hopping excitation whose
+Peierls barrier becomes irrelevant under infrared scaling. Exact microscopic
+continuous point sliding is closed under strict locality. No production change
+was made.
+
+**FTD-0555 spectral-scaling addendum:** the remaining local escape now has an
+exact order parameter. For any real source in the selected quadratic-coat
+branch, `Pi_i=Delta U_i/U_0` is the field-energy average of
+`((1-cos k_i)/(3+cos k_i))^2`; a narrowing spectrum gives `Pi_i=O(R^-4)`, while
+geometric extension with ultraviolet lattice content need not help. The v2
+finite-volume binomial qualification returned 9 locked failures (worst
+constant miss `11.4%`) despite exact identities at `1.42e-14` and every fitted
+slope inside its preregistered window. The analytic conditional theorem stands;
+the numerical control does not qualify a carrier. The live gate is a stable,
+independently prepared production `(s,J)` family with decreasing `Pi_i`, or an
+independently derived integer-hopping band. No production change was made.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -33,6 +840,8 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 ## §0 Process — external review status
 
 **[OPEN] — standing item, not resolvable by any documentation pass.**
+
+*(2026-07-25: a dispatch-ready package now exists — [`REF_EXTERNAL_REVIEW_PACKAGE.md`](../REF_EXTERNAL_REVIEW_PACKAGE.md): minimal claim set (the seven spine results), mandatory AI-self-critique disclosure, runnable verification table, and owner dispatch instructions. The package does NOT close this item; only a completed, dated external human review does.)*
 
 **External human review status (2026-07-01): zero items in this corpus have been reviewed by
 a human outside the project.** Every adversarial / referee / critic / red-team pass performed
@@ -207,7 +1016,177 @@ The 2:1 face-to-edge weight ratio is precisely what *produces* the O(h⁴) isotr
 - **L=64 / σ=4 / 30 ticks: 11%** — lower k·h content shows the O(h²) isotropic limit more cleanly.
 - Delta-seed comparison: 56% diff — expected lattice-dispersion artefact at `k·h ~ 1`, present in every cubic-lattice FD scheme.
 
-**Takeaway:** the Laplacian is isotropic where it matters (smooth-field limit relevant to all FTD continuum claims). Residual high-k dispersion is a known artefact that papers citing "emergent Lorentz invariance" must acknowledge — the isotropy bound scales as O((k·h)²). **No stencil change needed.**
+**Takeaway (scope-corrected by FTD-0407):** the *spatial* Laplacian has an
+isotropic quartic term. This does not close Lorentz recovery: the fully discrete
+time-plus-space pole contains an earlier rotationally invariant boost-violating
+term. No spatial-weight change was needed for the old rotation test; a spacetime
+update change or an explicit Lorentz-violating EFT matching is required for the
+hard recovery problem.
+
+### 1.9 Lorentz recovery hard gates — PARTIAL 2026-07-22 (FTD-0407–0425)
+
+**Canonical audit:**
+[`AUDIT_LORENTZ_RECOVERY_HARD.md`](../AUDIT_LORENTZ_RECOVERY_HARD.md) and
+[`AUDIT_LORENTZ_P4_PERIOD2.md`](../AUDIT_LORENTZ_P4_PERIOD2.md), followed by
+[`AUDIT_LORENTZ_FIXED_CONE_GATE.md`](../AUDIT_LORENTZ_FIXED_CONE_GATE.md),
+[`AUDIT_LORENTZ_AGM_CONE.md`](../AUDIT_LORENTZ_AGM_CONE.md), and
+[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md),
+[`AUDIT_LORENTZ_COMMON_CONE_GATE.md`](../AUDIT_LORENTZ_COMMON_CONE_GATE.md), and
+[`AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md`](../AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md), and
+[`AUDIT_LORENTZ_IR_ENVELOPE.md`](../AUDIT_LORENTZ_IR_ENVELOPE.md), and
+[`AUDIT_LORENTZ_RADIATIVE_CLOSURE.md`](../AUDIT_LORENTZ_RADIATIVE_CLOSURE.md),
+[`AUDIT_LORENTZ_RG_ATTRACTION.md`](../AUDIT_LORENTZ_RG_ATTRACTION.md), and
+[`AUDIT_LORENTZ_LOCAL_LINK_FLUX.md`](../AUDIT_LORENTZ_LOCAL_LINK_FLUX.md).
+
+The exact default pole is
+`theta²=S2/3-S2²/54-11S2³/9720+S2 Q4/216-Q6/270+O(q^8)`, with
+`Q4=sum(q_i^4)` and `Q6=sum(q_i^6)`. The `S2²` term is a
+dimension-six boost violation hidden from directional anisotropy. The exact
+production stability interval is `r²<=3/4`, while cancellation requires
+`r²=1`. Every normalized quartic-isotropic nearest-Moore stencil has
+`M(pi,pi,0)=16/3`, so face/edge/corner weight retuning cannot close the gap.
+An exact radius-two witness does close the free-pole/stability gap at `r=1`,
+but its `(2,1,0)` one-tick support violates P4 and is not a production change.
+
+FTD-0408 implements a default-off CPU period-two escape with the unchanged
+nearest-Moore read: kicks `+3/13,-1/13` give
+`sin²(theta)=M18/13+3M18²/676`, `Xmax=272/507<1`, and
+`theta²=S2/13+O(q^6)`. LR-1 therefore passes in the free linear prototype.
+The cost is a selected `Z2` clock/anti-kick and a new leading flux speed
+`1/sqrt(13)` that disagrees with the live `C_SPEED=1/sqrt(3)` matter budget.
+
+- [CLOSED — PROTOTYPE SCOPE] **LR-1 stable tree improvement:** FTD-0408 is
+  P4-local, full-band stable, and dimension-six-free in the bare flux pole.
+  Interacting stability is tracked under LR-3, not silently included here.
+- [OPEN — AUXILIARY/LIVE SECTORS; NATIVE DYNAMICAL CHARGE PARTIAL] **LR-2 common cone:**
+  FTD-0421 proves that the frozen production event algebra has no nontrivial
+  exact additive charge over the preregistered discrete basis (rank `4`,
+  nullity `0`). Per the FTD-0420 dependency lock, FTD-0422/0423 were correctly
+  not executed; no pole or intercept follows from that nullspace result.
+  FTD-0429 now closes a different dynamical subquestion positively. Starting
+  from zero field with both Gauss mechanisms off, the unchanged native
+  wave/coupling sector produces
+  `Z(k)=(div J)_k/s_k -> 3G_C`; locked `L=32,64` fits give
+  `Z0=0.2562476` and reject a zero intercept by `Delta BIC=279.14`. Native
+  coarse-scale charge is therefore **partial positive** in the reaction-free
+  linear sector. FTD-0430 closes the sparse moving-source successor positive:
+  an actual production hop carries the same `Z0` inside the native dependency
+  cone with the exact wave pole and step residue (`L=48,96`,
+  `Delta BIC=336.88`). Reaction-complete conservation and microscopic `U(1)`
+  remain absent/open at their exact scopes. FTD-0426 remains a selected static
+  projector realization. FTD-0427/0428 remain selected projection-free
+  transport/Maxwell sufficiency mechanisms. The next native charge task is a
+  direct dressed-hazard campaign. FTD-0431 activated evaporation first: the
+  isolated rate passes, but wave/coupling feedback makes the source strongly
+  non-exponential (`RMS=0.04288...0.22273 > 0.02`), so its locked infrared
+  estimator is outcome D and yields no conservation verdict. The apparent
+  finite-time retention is descriptive only. FTD-0432 must measure the native
+  expected evaporation/source-mode hazard after field dressing, with
+  late-time and censoring controls; genesis, annihilation, and weak
+  transmutation remain later separate event classes. FTD-0432 now validates
+  the exact pre-RNG hazard mechanism: conditional source/occupancy predictions
+  pass on CPU/CUDA, and field dressing suppresses representative hazards by
+  roughly two orders of magnitude. That is mechanism validation only. The
+  FTD-0433 executes that same-mode gate over `L=12...48` at the exact-pole
+  first antinode. All observer and execution gates pass. The `L=32...48` tail
+  decreases (`p=0.568,0.524`), but the full hazard sequence is nonmonotonic
+  and `h48/h12=0.81695`; the preregistered result is outcome C, unresolved
+  scaling. Neither a zero infrared hazard nor a finite nonzero floor is
+  established. A new campaign must be separately preregistered; no post-hoc
+  polynomial intercept is licensed. The selected FTD-0428 branch
+  separately needs an on-shell response/pole campaign, with no force feedback
+  or reaction repair inferred. The
+  canonical photon visualization is now separately closed negative at its
+  current initializer by FTD-0434: `J_z=g, W_x=g` stays centered and spreads
+  in the wave-only production arm, while the browser-equivalent arm also
+  fails the translation gate. A replacement photon claim requires a new,
+  separately preregistered construction beginning with a transverse
+  divergence-free profile and the matching right-moving time derivative; the
+  current streamlines cannot be reused as evidence. The
+  remaining auxiliary/common-cone task is to extract one
+  renormalized limiting-speed matrix
+  across flux, Wilson/projected matter, manifested bound states/clocks, gauge
+  modes, and gravity. The standalone massless Wilson module has raw speed `1`,
+  the default flux has `1/sqrt(3)`, and the improved prototype has
+  `1/sqrt(13)`. FTD-0409 closes fixed-`1/sqrt(3)` scalar periods two and three,
+  the minimal positive-gap Hermitian auxiliary, and scalar positive-link
+  averaging. A stable degree-four target trace exists, but its natural `c3=0`
+  witness has no four-real-kick factorization. FTD-0410 further proves that the
+  live scalar blocking map is `x -> 4x-x²`, not a Gauss-AGM iteration, and that
+  the reciprocal AGM magnitude belongs to the distinct BCC return kernel rather
+  than the live SC+FCC cone. A self-dual equal-period bridge would conditionally
+  select a unit cone and cancel the complete q4 pole term (not the corrected
+  q6 tensor), but Markov's
+  bound excludes that cone for every full-band-stable finite scalar kick
+  period. An exact bounded effective target exists but violates P4 if applied
+  directly. FTD-0411 opens a second constructive branch: selected normalized
+  BCC time plus SC+FCC space uniquely gives `c²=1/7` under q4 cancellation.
+  Its irreducible cube-root branch excludes every exact finite-state
+  positive-norm linear/unitary localization rational in `M18`; the stable local two-tick
+  surrogate matches through q4 but differs at isotropic q6.
+  FTD-0412 corrects the Wilson real-time operator and retracts FTD-0126 as a
+  physical measurement. The corrected massless Hamiltonian can be assigned
+  `c_s²=1/7` at leading order, but no scalar Wilson `r` matches the q4-free
+  flux pole: axis and face-diagonal cancellation require incompatible
+  `r²=4/3` and `2/3`. Manifested matter remains `1/3`; gauge and native
+  gravity poles are absent. FTD-0413 supplies the missing improved matter
+  stencil inside the SC+FCC shell: `b=1/3`, `r²=4/3`, and selected
+  `c_s²=1/7` match the free flux cone through q4 while retaining all seven
+  Wilson doubler gaps. The construction is default off, reverse-solved, and
+  mismatches the flux pole at q6. FTD-0414 shows exact q6 equality is not a
+  mandatory acceptance condition: the selected free-sector leading speed
+  spread is `11(ka)^4/540`. Under the documented Planck calibration the direct
+  free-tree term is tiny. **Next:** bound the finite-q remainder and establish
+  carrier identification, then test nonlinear/interacting modes and dynamical
+  gauge/gravity poles, or derive both
+  interacting slopes `Sigma_t,Sigma_s` from one action and prove their ratio is
+  AGM-controlled. The fixed-`1/sqrt(3)` general period-four problem remains a
+  secondary compatibility branch. FTD-0417 adds a separate local gauge branch:
+  its unit-plaquette photon has the same selected leading `c_A²=1/7` and is
+  full-band stable, but it loses q4 improvement, producing a leading maximum
+  matter/photon gap `3(ka)²/28`. This is a selected link ontology, not a live
+  common cone. FTD-0418 freezes a compatible nearest-neighbour spacetime Wilson
+  regulator with the same leading speed, but its exact quartic tensor also
+  differs from the photon. The pair is a regulator-level leading cone, not a
+  universal limiting-speed result for manifested matter, gravity, or clocks.
+- [PARTIAL] **LR-3 radiative closure:** FTD-0415 completes the minimum exact
+  symmetry inventory: independent gauge/matter/scalar time-space ratios and
+  four native-vector gradient quadratics are allowed at dimension four,
+  including a cubic-only marginal invariant. FTD-0416 tests the optimistic
+  imported anisotropic-QED flow: its common cone is IR attractive, but charge
+  running limits suppression to
+  `(alpha_IR/alpha_UV)^((N_f+2)/N_f)`, no better than `1/137^3` under
+  `alpha_IR=1/137`, perturbative `alpha_UV<=1`, and integer `N_f>=1`. The
+  selected `A=P_T J` map is spatially nonlocal. FTD-0417 freezes an exactly
+  local alternative by adopting an independent link connection and
+  unit-plaquette gauge action. FTD-0418 freezes its compatible one-tick axial
+  Wilson regulator, lifts all 15 spacetime doublers, derives its exact one- and
+  two-photon vertices, and proves both Ward identities. FTD-0419 evaluates one
+  complete `xi=1` QED_L-like step scheme and finds
+  `delta_match/g²=-0.32696906(5)`: automatic cancellation is closed negative
+  and a dimension-four counterterm is required in that scheme. FTD-0421 closes
+  the preregistered native additive-current route negative; reaction-source
+  bookkeeping cannot be relabeled as a conserved gauge current. FTD-0423's
+  native dimension-four flow campaign was consequently not executed. FTD-0424
+  implements a one-calibration-only counterterm contract and shows that the
+  existing off-shell surrogate fails at its first multiplicity threshold:
+  calibrating at `N_f=1` leaves `-0.014712242365 g²` at `N_f=2`. **Still open:**
+  obtain a gauge-independent on-shell pole match at `xi={0.5,1,2}` in both
+  declared IR prescriptions, establish whether one fixed counterterm controls
+  physical masses/charges/thresholds, and prove or falsify nonlinear stability
+  of the alternating anti-kick.
+  CPT-even `d=6` does not forbid CPT-even `d=4` mixing.
+- [OPEN] **LR-4/5 phenomenology:** match the resulting coefficients to the SME
+  basis and current bounds; do not infer physical safety from Planck suppression
+  until the lower-dimensional rows close.
+- [OPEN] **LR-6 operational boosts and low-energy unitarity:** FTD-0425 proves
+  that the source-free linear transfer has unit-modulus eigenvalues and an exact
+  positive quadratic invariant away from the zero mode, while evaporation and
+  annihilation make the full production tick exactly non-injective. The missing
+  gate is the manifested low-amplitude spectral limit: positive-semidefinite
+  spectral weight and information-loss rate per oscillation below `1e-6`, plus
+  two composite clocks/rods and a no-faster-manifestation-signal test under one
+  predeclared finite-lattice error law.
 
 ### 1.10 CPU-only no-op toggles —  CLOSED 2026-04-17 (callstack audit fixes)
 
@@ -269,6 +1248,723 @@ All kept safely below `K_GENESIS = 3·K_B` so no spurious genesis fires.
 - `docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md` documents the structural argument.
 
 **Location:** any attempt would be a new toggle `TermToggles::s_metropolis` + update code in `phase_write` or a new phase.
+
+### 1.12 Event-native matter mechanics — FTD-0443 through FTD-0555 — **[OPEN, BLOCKING; IDENTICAL CONTACT/OVERSHOOT PHYSICS CONSTRUCTIVE, NATIVE SOURCE NONCONGRUENT, SYMMETRIC AXIAL FIXED-PATH RECIPROCAL, FROZEN MINIMAL ATOMIC MOBILE LAW CLOSED NEGATIVE, SMOOTH-COAT SPACETIME ACTION CONSTRUCTIVE, FIELD WORK EXACT, FROZEN MINIMAL QUADRATIC-COAT COMMON ACTION CLOSED NEGATIVE, CONSTANT-FORCE ACCELERATED ESCAPE CONSTRUCTIVE, ENDPOINT-ONLY SPACETIME RECONSTRUCTION CLOSED NEGATIVE, QUADRATIC ORBIT GATHER AND ONE-STEP DG TRANSACTION CONSTRUCTIVE, BARE AND RIGID-NEUTRAL MULTI-TICK LAWS CLOSED NEGATIVE BY COMPACT-COAT PEIERLS FORCE, EXACT CONTINUOUS POINT SLIDING CLOSED UNDER STRICT LOCALITY, SPECTRAL IR PINNING INDEX DERIVED BUT LOCKED CONTROL FAILED; NATIVE EXTENDED/HOPPING CARRIER OPEN]**
+
+**Measured prerequisite:** FTD-0443 proves exact finite-site hop work and closes
+the production legacy variational claim negative. The current action is exactly
+remainder-blind, while production continuously accelerates the remainder.
+
+**Successor boundary:** FTD-0444 proves that scalar work cannot uniquely choose
+the force vector, outgoing momentum direction, or spatial support of field
+recoil. A selected longitudinal map reverses to `1.92e-16`, but its preserved
+transverse momentum, branch rule, and global-only recoil are additional choices.
+
+FTD-0445 further proves that a primitive edge/corner Moore hop has `2/6`
+distinct shortest SC-face current routes with identical endpoint continuity.
+The current extractor selects x/y/z; the corner route fails its x/y stabilizer,
+while symmetric averaging restores it only through fractional virtual paths.
+
+FTD-0446 proves that lifting transport to all 13 signed unoriented Moore
+channels and then projecting to `J in R^3` has a ten-dimensional kernel. The
+three-vector cannot reconstruct channel traffic or channel-level quadratic
+energy.
+
+**Positive narrowing:** FTD-0447 proves that for an isolated polar-vector hop
+with no other directional datum, cubic stabilizer invariance removes the
+transverse ambiguity and uniquely fixes `F=W d/|d|^2`. This closes force
+direction only; finite momentum branch and local recoil support remain open.
+
+**Remaining support obstruction:** FTD-0448 proves source-only, target-only,
+and midpoint recoil are all globally cubic covariant. The first two are
+distinct with equal total and quadratic norm. Endpoint exchange/time-centering
+or a variational minimum can prefer the midpoint, but is additional structure.
+
+**Production measurement:** FTD-0449 upgrades the journal to complete local
+voxel snapshots and proves it remains state/RNG neutral. In a fixed-field hop
+with exact endpoint work `0.0854245`, production transfers velocity/remainder
+unchanged and particle energy changes by zero. The movement event is kinematic;
+event-native work would be new dynamics.
+
+**Kinematics correction:** FTD-0450 retracts the claim that FTD-0444's selected
+map used production flat energy. The old energy is exactly `3x` production.
+The corrected dispersion is now available and closes a selected reversible map
+to `2.94e-17`; finite branch choice remains selected.
+
+**Constructive ledger:** FTD-0451 places exchange on an oriented Moore link at
+the half tick. The selected record closes/reverses momentum and energy and is
+exactly cubic covariant. It does not store or propagate those exchanges in a
+physical field, so it is bookkeeping rather than completed dynamics.
+
+**Energy correction:** FTD-0452 proves that the selected particle `+W` is
+already balanced by interaction Hamiltonian `-W` for fixed `J`. FTD-0451's
+second `-W` field-energy label double-counted the exchange. It also proves the
+named `total_hamiltonian` omits wave-field terms and the amplitude energy audit
+is not the exact tick invariant. The remaining physical deficit is recoil
+momentum, not a mandatory second energy deposit.
+
+**Fixed-J recoil obstruction:** FTD-0453 solves the recoil problem globally
+over every site-centred `wave_vel` component, rather than testing a guessed
+support. Momentum is realizable, but the least added tick energy remains
+positive in every Moore orbit (`0.08045/0.16091/0.24136`). Therefore no
+fixed-J, initially quiet recoil update can close the registered minimal work
+family, even with whole-lattice support.
+
+**Paired native obstruction:** FTD-0454 lifts the fixed-J restriction using the
+production-ordered paired impulse `Delta J=Delta wave_vel=S`, includes the
+post-hop interaction Hamiltonian, and again optimizes over the whole lattice.
+The pairing lowers minimum recoil cost by `86.9–91.1%`, but every face/edge/
+corner minimum remains positive. Thus an initially quiet minimal field cannot
+close the selected event even when both conjugate variables participate.
+
+**Conditional travelling-wave opening:** FTD-0455 adds an exact source-free
+transverse mode. Every registered volume/phase/propagation arm then admits a
+zero-energy paired recoil above a finite threshold. Co-propagation lowers the
+threshold by ~7%; phase is inert. Threshold mode energy is volume-stable, but
+the constructed impulse has ~18-site participation and ~58% of its norm near
+the hop. The result is conditional existence, not a selected production rule;
+the finite tails had not yet passed a causal-support gate.
+
+**Local-support closure and infrared obstruction:** FTD-0456 re-solves the
+quadratic inside fixed nested masks and closes all registered arms already in
+the 36-site `R=1` union. Thus instantaneous whole-box recoil is not required for
+the registered face event. However, the enabling `n=1` mode changes character:
+its local threshold amplitude and total energy rise strongly with box size,
+consistent with fixed local gradient and extensive background energy. The
+mechanism is local response in a macroscopic field, not yet a finite-energy
+isolated pilot packet.
+
+**Localized-packet recovery:** FTD-0457 replaces the box mode with the canonical
+finite discrete-curl packet. All 18 sampled arms cross locally; selected packet
+threshold energy is box-stable through `L=65`. The event disturbance propagates
+outside `R=1` and the complete field transaction reverses. This closes the
+extensive-background defect for the registered packet family. It remains a
+counterfactual optimizer construction, not production behavior.
+
+**Unique selected transaction:** FTD-0458 proves that the existing covariant-
+null construction is the unique minimum-Euclidean-norm point on the local
+zero-energy/fixed-momentum shell whenever the registered nondegeneracy
+conditions hold. The native event passes all 48 cubic transforms and independent
+reversal. This removes the 104-dimensional continuous ambiguity conditional on
+one explicit `[SELECTION]`: the substrate minimizes impulse norm.
+
+**Sequential no-reset closure negative:** FTD-0459 evolves the localized packet,
+one-time dressing, manifested-state gradient/curl sources, production movement
+remainder, and selected local recoil without resetting any field. Forty-two
+scheduled attempts execute zero events; all 26 candidate neighbours are
+ineligible every time. At most phases the requested negative work exceeds the
+particle kinetic budget. At admissible phases the constrained R1 recoil
+minimum remains positive. The reversible field history closes to `1.48e-17`,
+so this is a physical compatibility failure of the frozen construction, not a
+numerical or information-loss failure.
+
+**Static self-source diagnosis:** FTD-0460 exactly decomposes scalar hop work.
+The transverse packet and velocity-curl source contribute zero to numerical
+precision; the one-time dressing is small; the accumulated stationary-polarity
+source is `94.56x` larger in RMS than the dressing and causes every one of the
+30 kinematic failures. Packet+dressing kinematics alone is valid at all 42
+attempts. Thus the packet is a recoil-capacity background, not the longitudinal
+pilot force in this construction. The v1 observer timeout exposed and v2 fixed
+an `O(L^6)` dirty-cache path without changing equations; v2 reproduces all
+FTD-0459 work values exactly.
+
+**Production carry correction:** FTD-0461 inserts the actual `phase_movement`
+source-site `J` carry into the same counterfactual hop. The carry is reversible
+but not energy-neutral under the FTD-0452 observer. It adds RMS correction
+`1.82e-5` and maximum `6.04e-5`; exact work becomes
+`W_required=W_endpoint-C_carry`. Production applies zero particle work, so its
+observer residual remains as large as `0.01444`. The correction changes none
+of the 42 particle-kinematic classifications and cannot rescue FTD-0459.
+
+**Rigid-history upper bound:** FTD-0462 translates the entire polarity-generated
+`J/W` history with the polarity. Isolated self-energy is translation invariant;
+the full work becomes exactly `Delta X_wave-W_external`. Required-work RMS falls
+`36.55x`, and all 42 hops become admissible. However, `12.23–70.62%` of the
+instantaneous event-difference norm lies outside R1. The construction therefore
+diagnoses the origin of the barrier but fails the local-event requirement. It
+also moves radiative transient content together with any bound near field.
+
+**Guide-channel closure negative:** FTD-0463 exactly decomposes that cross
+energy. The selected longitudinal initial dressing-source term has RMS
+`2.386e-4`, while the transverse packet-source term has RMS `1.278e-5`.
+The `18.67x` dominance closes the registered packet as the primary guide
+channel. It remains a counterfactual recoil-capacity reservoir. FTD-0464 later
+shows that the dressing is not necessary for either local or global
+translated-history kinematic recovery.
+
+**Local constructive opening:** FTD-0464 translates fixed source-history cubes
+at `R=1,2,3` and global, with the initial dressing off/on. Every arm passes
+42/42. `R=1` moves 27 field sites inside the exact 36-site union of the old and
+new Moore cubes, with zero field change outside. The dressing-off arm remains
+fully admissible. This disproves the hypothesis that almost the whole history
+or the selected dressing is necessary for a single virtual hop.
+
+**Injectivity and momentum closure negative:** FTD-0465 proves the FTD-0464
+partial-additive map has at least `54/150/294` kernel dimensions at
+`R1/R2/R3`. Moved and unmoved boundary fields are irreversibly merged. It also
+measures 0/84 momentum closures; RMS mismatch is `0.002034` dressing-off and
+`0.002257` dressing-on. Energy and kinematic closure do not rescue the event.
+
+**Injective control closure negative:** FTD-0466 cyclically permutes all six
+field components across the complete 36-site support. Fixture and all 84 event
+inverses are exact; locality, energy, and kinematics pass. Momentum still closes
+in 0/84, with RMS residual `0.003535` almost independent of initial dressing.
+Information preservation therefore does not supply reciprocal exchange.
+
+**Single-action closure negative:** FTD-0467 proves the stationary native field
+source `-G_C grad(s)` is the exact field variation of the written interaction,
+but no production electric-force branch is its matter-side variation. The
+legacy branch has the same operator with opposite sign and an extra factor
+`G_C`; `grad|J|` is operator-independent of `grad(div J)` on exact quadratic
+and affine fixtures; the Poisson branch is exactly independent of prescribed
+`J`. Formula, polarity, and direct-branch cubic controls close exactly.
+
+**Native recoil opening:** FTD-0468 proves exactly that the existing source kick
+already carries the negative of the common-action matter impulse. All 12 static
+and 384 evolving records close below `4.09e-15`; the update is supported on
+exactly 6/12 face sites, changes nothing outside, and reverses below `6.94e-18`.
+The current `J/W` ontology therefore has sufficient instantaneous electric
+momentum capacity. The earlier recoil failure belongs to the split force law,
+not to missing field dimensions.
+
+**Source-centered energy boundary:** FTD-0469 derives the affine shadow
+invariant `E_tick+H_int+(1/4)g^T A J` without fitting. The locked MSVC run
+passes momentum (`1.83e-13`) and explicit inversion (`3.89e-15`) but misses
+the absolute `1e-12` energy gate on the large cubic fixtures (`2.11e-12`), so
+the registered measurement verdict is negative. The unrun draft also exposed
+two corrected defects: source-centering around symplectic Euler is not a
+self-adjoint/time-symmetric integrator, and multiparticle energy must use one
+momentum per site rather than the global net impulse. With that correction,
+the frozen-source observer gives the particles up to `1.72e-3` kinetic energy
+while the field shadow ledger stays fixed to roundoff. Reciprocal momentum is
+therefore not yet a complete matter-field transaction.
+
+**Exact link derivative:** FTD-0470 proves that trapezoidally centering the
+site force at hop endpoints does not recover exact event work. For a Fourier
+mode the work ratio is `cos^2(k/2)`: the error is `O((ka)^2)` in the IR but
+reaches `99.04%` in the registered UV mode. The cubic control overpays by
+`5/2`; all 1536 evolving records have nonzero mismatch. The oriented face-link
+impulse `I_link=G_C q[divJ(b)-divJ(a)]d` closes work identically. This selects
+the exact longitudinal scalar response for a face event, not a complete hop.
+
+**Central-field transport obstruction:** FTD-0471 identifies the representation
+boundary. Central divergence is a step-two graph. On even periodic volumes an
+adjacent source delta violates an exact checkerboard left-null certificate, so
+no solution exists. On odd volumes the shortest exact support is
+`(L-1)/2=8/16/32` at `L=17/33/65`. The matched face complex transports the
+same hop with exact continuity/Gauss on one face for every tested volume. Thus
+cell-centered `J` may carry smooth propagation, but it cannot be the sole exact
+local event-transport field.
+
+**Matched-face energy result:** FTD-0472 places an exact energy currency on the
+selected face transport. Across 624 transactions,
+`Delta H~+<K,(E_before+E_after)/2>=0`, with exact explicit inverse and Gauss
+closure. The pre-current field is not the correct finite-step work rule; it
+misses the registered self/magnetic centering term by as much as `1.50287`.
+Face hops are unique. Electrostatic diagonal routes are work-equivalent, but
+78/80 transverse multi-route groups differ, with maximum span `0.01229` and
+different divergence-free same-endpoint field states. The primitive Moore hop
+therefore lacks the route type needed to choose its face-layer microhistory.
+
+**Matched-face momentum result:** FTD-0473 derives the minimal local candidate
+`P_i=<E,D_i C B>`. It is exactly conserved by the source-free staggered map and
+has exact current exchange `Delta P_i=-<K,D_i C B>`. The electrostatic arm
+nevertheless exchanges at least `0.333` energy while field recoil stays below
+`3.70e-17`; no delayed source-free recoil is possible because the candidate is
+then conserved. Transverse recoil exists but remains route-dependent. The
+`Hom(Z_L,R)=0` statement belongs only to the periodic computational quotient.
+The ontology is uncontained and has no `T^L=1`; its real translation generator
+remains open pending a finite-support/decay derivation. This candidate is local
+and natural on the probes but selected rather than ontologically unique.
+
+**Emergent-boundary discriminator:** FTD-0474 separates finite support from a
+finite container. Reaction-only manifested components persist comparably under
+periodic and dispersal flux boundaries (20/24 each), and the selected thermal
+bath is not necessary. But enabling the current production movement/force path
+leaves only 1–7-site tail fragments: 977 movements occur, yet 0/24 histories
+are stable or mechanically eligible and no mobile sample has a one-cell
+interior. The selected free-wave stress places only `0.31–2.41%` of gradient
+energy at the interface on average (maximum `7.90%`), and its Laplace gate
+fails. FTD-0587 further shows that the qualified dispersal tail has zero
+genesis, that every non-Gauss continuation passes `0/24`, and that cleared
+Gauss alone misses the whole-grid gate. The current engine therefore
+demonstrates an externally ignited, Gauss-stabilized evaporative remnant, not a
+self-sustaining reaction front, membrane, droplet, soliton, or
+environmental-pressure equilibrium.
+
+**Packet/wake discriminator:** FTD-0475 shows that the corrected current
+vacuum scenario is a co-moving plane packet rather than a detached wake. Its
+two volume arms pass the locked bound clause with at most `1.07e-5` trailing
+excess. The finite 3D packet reshapes enough to fail the strict translated-
+profile gate but retains at least `94.85%` core activity, preserves exact tick
+energy below `1.87e-13` relative drift, and develops only `2.31%` trailing
+excess. The selected one-way magnitude-gradient force produces no qualified
+leading probe response even off the discrete-curl axis (`1.04e-18` maximum).
+Thus “wake” is reserved for future interaction-generated detached radiation,
+while pilot guidance still requires reciprocal common-action transport.
+
+**Dynamical dressing discriminator:** FTD-0476 begins from one manifested
+polarity and exactly zero `J,W`. The native source term produces a finite exact
+odd-mirror field with positive sign-corrected divergence. It misses the locked
+radial label at `0.73760 < 0.75`. Six production hops are exactly journaled and
+produce a `483x` trailing/leading ratio, but the near-field alignment is only
+`0.43119` and the trailing fraction `0.1499769` remains below `0.15`. Removing
+the source leaves exact-energy-conserving outward redistribution, but radius
+growth `1.86444` and near-fraction drop `0.193743` miss the outgoing gates. The
+survivor is a polarity-generated retarded source field, not a qualified aura,
+wake, or radiation field.
+
+**Caused-motion discriminator:** FTD-0477 removes the prescribed-trajectory
+defect. A separate finite packet causes equal `0.20359848`-cell selected-force
+responses for both polarities while the locked and source-only controls remain
+fixed and the repeat residual is zero. Neither response reaches one integer
+movement event. The broad matter-conditioned field also fails dressing, wake,
+detached-field, and registered reciprocity gates. Thus the selected extension
+has a real continuous response but does not supply the required manifested
+reciprocal moving-source history in the locked protocol.
+
+**Face-flux common-action attempt:** FTD-0478 supplies the exact subcell shape,
+straight face current, and fixed native normalization. FTD-0479 constructs a
+normalized local implicit transaction that closes 24/24 diagonal arms, but its
+magnetic gather is selected. FTD-0480 then passes only 58/70 broad arms. The
+static controls and both polarities of the `+z` axis arm fail at `~10^-3`:
+when `Delta x_i=0`, exact current work contains no information about the
+transverse electric force component. Continuity and energy therefore do not
+derive a three-vector impulse from E/B alone. The frozen candidate is closed;
+FTD-0481–0483 were not executed.
+
+**Selected-action resolution and closure:** FTD-0484 proves that the exact face
+current is `q integral W^1` for the Cartesian cubical Whitney/Nedelec basis and
+adds the temporal deposits needed for an exact gauge-endpoint identity. This
+does supply a common action, but only after adding an independent spatial/
+temporal connection and either one previous slab of position history or a
+canonical momentum. FTD-0485 differentiates that action directly. Stationary
+transverse electric and affine magnetic impulses close below `1e-12` without
+an E/B gather, so the FTD-0480 origin defect is solved in cell interiors. The
+compact representation nevertheless fails exactly at the hop surface: a
+generic allowed connection gives a `0.0288675` left/right force jump. FTD-0486
+adds an independent coefficient obstruction: exact matched Gauss and current
+normalization force `F=kappa q(E+v cross B/C_SPEED)`, whereas FTD-0479 used
+equal coefficients. The compact face-action production candidate is closed
+for the frozen variables. A one-sided threshold rule, smoother shape,
+non-minimal action, or `B_phys=B/C_SPEED` would each be a new selected cycle,
+not a repair authorized by this one.
+
+**Gauss strengthening:** FTD-0487 proves the threshold jump is unavoidable at
+nonzero source sites, not merely generic. The axial right-minus-left field
+jumps are the three summands of the matched divergence. Their sum is `rho`, so
+at least one magnitude is `>=|rho|/3`; the minimal-action unit-source impulse
+lower bound is `0.0072973525643314245`. Even `rho=0` is not sufficient for
+continuity because divergence-free curls can retain cancelling component
+jumps. Point-force continuity and nonzero compact Gauss charge therefore
+cannot coexist in this representation.
+
+**Self-field escape closed locally:** FTD-0488 proves that isolating and
+subtracting each particle's own Gauss field cannot be done from local frozen
+state. A nonzero individual charge has no periodic or finite-support
+uncontained Gauss field; it needs a neutralizing convention or an infinite
+tail. The neutral minimum-norm Hodge field exists but is global (all `14,739`
+face components active on `L=17`), and per-source attribution remains
+underdetermined up to divergence-free transfers unless provenance history or a
+global minimum-norm/partner rule is added.
+
+**Open action is not a hop selector:** FTD-0489 proves that bare finite
+open-worldline actions cannot be ordered across different charged endpoints.
+For a common start their difference shifts by
+`g<rho_d-rho_e,chi_end>`; arbitrary endpoint gauge reverses the ordering while
+leaving the physical fields fixed. The existing velocity/remainder threshold
+map remains a cubic-covariant kinematic selector, but then the common action
+has assigned current to an already-selected history rather than generated the
+motion. A classical completion still needs gauge-covariant endpoint momentum
+and an explicit nonsmooth threshold rule.
+
+**Proper classical map survives in cell interiors:** FTD-0490 replaces bare
+action comparison with the discrete Legendre equations. Canonical endpoint
+momenta transform with the cubical connection, leaving kinetic momenta gauge
+invariant to `1.39e-17`; the existing production dispersion supplies the exact
+free matter action/inverse. This is a constructive reopening only inside one
+cell. The next blocking test is whether one canonical input selects a unique
+incident-cell branch at a manifestation knot.
+
+**Knot inversion is nonunique:** FTD-0491 supplies an exact allowed
+counterexample. A reflection-symmetric `D E=q` knot field and zero input
+momentum have eight distinct gauge-invariant outgoing Legendre endpoints, all
+closing below `1e-12`; a generic uniform bias selects one. Thus the interior
+map is sound, but unconditional algebraic inversion is closed for the frozen
+knot variables. A centered weak trace is the remaining local deterministic
+cubic-covariant selection; it must be audited as a new rule, including its
+finite-work and reversal consequences.
+
+**Unique weak trace is not the old action:** FTD-0492 proves that the only
+field-independent local linear cubic-invariant incident-cell trace is the
+equal `1/8` average, equivalently the centered incoming/outgoing face value.
+It cancels symmetric self trace and retains external bias without provenance,
+but its endpoint misses the ordinary branch-action Legendre equation by the
+exact finite amount `g C_SPEED/12`. It is a new generalized derivative rule;
+its omitted field work and reversal ledger remain blocking.
+
+**Centered work leaves a cusp ledger:** FTD-0493 proves
+`W_field-W_center=(gq/2) sum_a J_a |d_a|` exactly. The field-energy,
+continuity, Gauss-transport, symmetry, and reverse-current controls all close;
+the largest omission is `0.0245570`. A divergence-free jump retains nonzero
+omission, so `rho` alone cannot label it particle self-energy. Absorbing it
+requires a new dressing/energy coordinate, modified dispersion/field action,
+or provenance rule. The centered weak trace does not reopen FTD-0481.
+
+**The cusp ledger is locally exact but globally nonintegrable:** FTD-0494
+derives the unique cellwise primitive
+`U_n(r)=(gq/2) sum_a J_a(n)|r_a|`. Production hop equivalence would require
+site-offset increments `(gq/2)J_a`; an exactly Gauss-free checker field gives
+two plaquette path sums `+0.219` and `-0.219`, hence holonomy `0.438`. No
+single-valued local dressing energy exists on the allowed frozen field space.
+Varying the primitive restores the ordinary one-sided branch derivative and
+therefore the FTD-0491 eightfold knot ambiguity; not varying it abandons the
+common action. A cumulative ledger is possible only as a new history variable
+and does not itself select motion.
+
+**One scalar closes bookkeeping, not the common action:** FTD-0495 carries
+the cusp work in a real history coordinate `D`. The extended field + matter +
+`D` energy and reverse update close exactly, proving one scalar is sufficient
+and, by FTD-0494, minimal for scalar bookkeeping. The same Gauss-free loop
+shifts the fiber by `0.438`. An ordinary constraint action needs a conserved
+multiplier; at the required unit normalization its position variation restores
+the cusp/one-sided branch force exactly. Thus the minimal memory extension
+either remains a nonholonomic procedural ledger or returns the FTD-0491 branch
+ambiguity. It does not license FTD-0481.
+
+**The expanded ontology has one unique knot step:** FTD-0496 combines the
+explicit `D` fiber with the existing momentum and the centered knot trace.
+Exact current feedback reduces the midpoint equation to a contraction with
+bound `0.137079`; three starts converge to one root, symmetric self field stays
+at rest, and external bias or existing momentum selects one signed octant.
+Extended energy, Gauss, continuity, causality, 48 cubic maps, and the
+constructed inverse all close. This is a real constructive reopening, but the
+largest displacement is only `0.08947`: arbitrary-remainder evolution,
+anchor-changing hops, ballistic dressing, and a production branch remain open.
+
+**A physical hop exposes raw-state non-injectivity:** FTD-0497 restricts the
+matched transaction to one principal axis, where current work fixes the sole
+impulse component. A uniform pre-field gives a contraction bound `0.173810`
+and causes a real `0.251333` anchor-changing hop. Energy, Gauss, continuity,
+causality, position, polarity shape, face field, and momentum all reverse.
+The frozen threshold encoding does not: for `1-d<r<1`,
+`M_-d M_d(n,r)=(n+1,r-1)`, and `(n,r)` and `(n+1,r-1)` are explicit distinct
+raw preimages of the same output. Since manifestation/collisions live on the
+anchor, these are not gauge copies in the production ontology. Exact raw
+reciprocity therefore requires a canonical coordinate, a quotient rewrite of
+site-local matter, or a hop-history variable. None is authorized in this cycle.
+
+**The quotient is exact only for face physics:** FTD-0498 proves a generic
+subcell point has eight stable `(site,remainder)` charts, with multiplicity
+`2^(3-k)` when `k` coordinates are integers. Both polarities and all 128
+start/end chart pairs give identical trilinear charge and exact face current;
+quotient reversal is exact. Actual production states do not factor: adjacent
+equivalent charts have ternary L1 distance `2`, native `-G_C grad(s)` response
+difference `0.0427123`, and collision velocity-outcome difference `0.4`.
+The engine therefore cannot call the anchor a gauge label while source,
+collision, reaction, and ordering rules consume it as physical.
+
+**Finite local memory cannot restore the frozen projection:** FTD-0499 proves
+that any finite hidden fiber over an `m>=2` raw collision has `m|H|` inputs but
+only `|H|` allowed outputs, so no projection-preserving lift is injective. The
+registered shape/current/field/momentum/work/dressing state retains zero chart
+branch information. A reversible radix-stack control works only by consuming
+one bit per binary merge or three bits per eight-way merge; its capacity must
+grow without bound with trajectory length.
+
+**A canonical chart is a dynamics rewrite:** FTD-0500 constructs the centered
+nearest-site section. It is translation covariant and exactly cubic away from
+ties, but exact inversion at a half-cell would require `2a=1` for integer
+anchor `a`. The locked raw reversal grid fails in 91 tie arms, though physical
+position returns within `1.11e-16`. More importantly, the hop boundary shifts
+from remainder magnitude `1` to `1/2`, changing the primitive source and
+collision outcomes. It cannot preserve frozen production behavior.
+
+**Aggregate shape/current is not a complete composite state:** FTD-0501 proves
+that cellwise trilinear deposition retains only low signed moments. Exact
+same-sign and neutral configurations share complete charge/current histories
+while their internal separation or unsigned center differs. Neutral common
+motion can cancel entirely from the aggregate face current. The quotient route
+therefore needs a constituent-worldline decomposition, a sufficient multipole
+state, or a new exclusion law before multibody matter can be defined.
+
+**Endpoints do not determine the transport 1-chain:** FTD-0502 proves the
+periodic divergence kernel has dimension `2L^3+1` and constructs a local causal
+square cycle independent of boundary choice. Static/CW/CCW histories share
+exact endpoint matter but generate zero/opposite nonzero face fields. An action
+or event rule must select the cycle component together with motion; continuity
+and endpoint matching alone cannot do so.
+
+**Existing phase space selects the free 1-chain:** FTD-0503 uses the exact
+production-dispersion Legendre relation to match associated start
+position/momentum records to distinct unordered endpoints. Stationary/CW/CCW
+and all 432 transformed arms have one exact permutation and reproduce the
+registered current. Duplicate predicted endpoints fail explicitly into
+collision semantics. No new persistent identity state is required in this
+restricted isolated sector.
+
+**Identical collision is permutation gauge:** FTD-0504 decomposes a
+head-on crossing into exact piecewise face currents. For physically identical
+carriers, pass-through and equal-mass momentum exchange have the same unlabeled
+endpoint position-momentum set and the same aggregate current 1-chain. The
+equivalence survives all signed cubic maps and registered translations and is
+fully reversible. It is not a collision force or a new particle ontology.
+The single-anchor multiplicity bound remains exact, but FTD-0507 removes its
+unconditional tick-boundary inference. Any transported attribute difference
+defeats the quotient, and conservation alone does not choose a
+three-dimensional scattering direction.
+
+**Boundary collision trilemma is scope-corrected:** FTD-0505 proves that a
+collision on the next slice has no remaining time for positive post-contact
+separation. Canonical single-anchor storage exceeds ternary capacity, and
+pre-contact hard-core reflection adds an unforced radius. FTD-0507 proves the
+frozen non-knot atlas already has multiple raw anchors, so capacity/range/phase
+is not an exhaustive requirement. The stored event still needs an explicit
+impulse law.
+
+**Production bounce is not that escape:** FTD-0506 measures the actual
+same-sign occupied-target branch. It is an infinite-wall-style rule applied to
+the mover: flip the blocked velocity axes and reset the mover remainder. The
+target and field do not recoil, the exact transport current is absent from the
+journal, pair momentum is not conserved, and an unchanged reverse tick does
+not recover the incoming phase space. It therefore remains qualified-negative
+evidence and cannot be reused as the collision solution.
+
+**Existing charts store the event but face flux loses its axial internal
+mode:** FTD-0507 gives exact raw capacity `max(0,m-2^(3-k))`. All face, edge,
+and corner pairs fit without an alphabet extension, and actual production
+drift carries a selected outgoing phase reversibly. For axial separation,
+however, the two trilinear shapes remain exactly equal to twice the coincident
+shape and their face currents cancel. The aggregate field therefore has no
+variable conjugate to that relative motion.
+
+**Existing phase space supports a selected restricted reflection, but the
+aggregate face action cannot derive it:** FTD-0512 uses the chart normal and
+constituent momenta to construct the unique nontrivial central-elastic
+Householder reflection selected by an outgoing condition. It is local,
+conservative, cubic-covariant, and reversible in all 312 registered arms. The
+central-contact, elasticity, and nonpenetration premises remain selected. An
+exact face-normal counterexample gives the same full aggregate
+`(rho_before,rho_after,J_face)` for static and separating pairs while their
+matter energies differ. No deterministic aggregate face functional can select
+or energize the relative mode.
+
+**Rank-2 stress is the minimal scoped two-stream lift, not a complete state:**
+FTD-0513 derives `Sigma=sum p tensor v`. Its trace and normalized rank-one
+projector recover the two-stream energy and unoriented collision axis. The
+full cubic group acts by `Sigma -> R Sigma R^T`. A four-stream axial/diagonal
+counterexample has the same total momentum, energy, and stress but a different
+fourth moment, so no rank-2 closure may be called exact for general matter.
+
+**Exact local balance now closes:** FTD-0514 lifts scalar face continuity to
+componentwise constituent momentum balance and proves that its integrated
+tensor flux is exactly the FTD-0513 kinetic stress. The selected FTD-0512
+contact composes with equal-and-opposite sitewise impulse sources. This is
+bookkeeping compatibility after the impulse has been selected, not a force
+derivation.
+
+**Selected contact action now closes in the restricted class:** FTD-0516 uses
+one unilateral chart-normal gap and the existing relativistic matter action.
+Its corner/KKT conditions uniquely select the nontrivial FTD-0512 impulse and
+compose with FTD-0514 balance. The gap inequality is selected architecture,
+not a consequence of ternary occupancy or face E/B. FTD-0526 limits its
+physical content: for the registered identical carriers the impulse only
+exchanges raw labels between the same outgoing physical worldlines.
+
+**Frozen production does not supply that active set:** FTD-0525 separates
+state observability from dynamics. Ternary anchors alone admit separated,
+contact, and crossed phase configurations; existing remainders determine the
+gap sign exactly. Actual production nevertheless crosses `phi=0` silently and
+reversibly, then dispatches its mover-only occupied-target branch only at the
+later `+/-1` chart-hop threshold. The measured delay is exactly
+`ceil(|d|/(2v))`, between two and seven ticks in all registered arms. The
+measurement establishes a raw-dispatch fact, not a physical no-contact
+theorem.
+
+**Identical contact is already a permutation quotient; diagonal reset is the
+defect:** FTD-0526 compares actual pass-through and already-bounced raw
+representatives. Before the hop they have the same physical phase multiset,
+density, and exact face current. At the late response, commensurate face arms
+rejoin exactly. Edge/corner arms diverge only by `delta n`, where
+`delta=ceil(|d|/(2v))*v-|d|/2` is the subcell overshoot erased by
+`remainder=0`. The immediate contact impulse is therefore not missing physical
+content for identical carriers. Frozen movement instead fails to preserve
+continuous position on noncommensurate occupied-target resolutions.
+
+**Overshoot-preserving identical-contact rebase is constructive:** FTD-0527
+atomically exchanges complete carrier records across the two occupied charts
+and retains `+/-delta n`. The crossing and already-bounced representatives then
+land on the same compact density, exact face current, and physical phase state
+for every registered Moore direction. This removes the FTD-0526 physical
+overshoot defect without a new force or primitive field. It merges two raw
+histories, so exact raw reversal costs one retained branch bit per merger; a
+fixed finite hidden state cannot absorb an indefinite sequence.
+
+**Native source ordering does not respect that quotient:** FTD-0528 executes
+the actual `-G_C grad(s)+G_C curl(sv)` coupling on both representatives. The
+gradient term factors, but the site-supported velocity curl distinguishes all
+312 arms before movement. Complete exact face current and matched field
+response remain identical. Consequently the rebase can compose with the
+isolated matched-history branch, where legacy coupling is forbidden, but not
+with unchanged native source evaluation earlier in the production tick.
+
+**Unchanged elastic contact is not a reciprocal matched-field law:** FTD-0529
+constructs two full staggered field inputs with the same Gauss source. Their
+difference is `F=C C^T K`, so exact contact field work differs by
+`beta a||C^T K||^2`. This norm is positive on every registered edge/corner arm
+and zero on every axial arm. A field-blind elastic diagonal rebase therefore
+cannot conserve total energy for both admissible fields. Axial longitudinal
+work and a simultaneous field-dependent collision solve remain open.
+
+**The symmetric axial exception is exactly current-null:** FTD-0530 rejects its
+registered nonzero-longitudinal-work prediction. Equal and opposite axial
+histories cancel face current and endpoint density pointwise, so the matched
+field performs no work and the unchanged elastic quotient is reciprocal on
+that fixed path. No axial force is licensed by this null event. The result does
+not cover unequal speed, nonzero COM, distinguishable, or field-deflected paths.
+
+**Diagonal endpoint/current/energy coupling is constructively feasible:**
+FTD-0531 releases the outgoing equal-and-opposite momentum magnitude and solves
+it together with the production-dispersion endpoint, exact straight current,
+and matched field update. Every locked edge/corner arm has a monotone scalar
+root and exact reverse. The construction proves capacity of existing momentum,
+not the origin of the full vector impulse; its field and stationary compensator
+are selected test inputs.
+
+**The compact action does not reach that endpoint:** FTD-0532 proves every
+FTD-0531 edge/corner path crosses its two/three active coordinate planes
+simultaneously at the chart-horizon hop. FTD-0485 accepts the nonzero causal
+previous segment but rejects the coupled next segment on a zero connection,
+purely because its action is defined only inside one closed cell. A multi-cell
+cellwise action with a unique simultaneous-knot derivative is required; an
+arbitrary incident-cell choice is excluded by the FTD-0485/0487 jump result.
+
+**The global deposited action does reach the internal knot:** FTD-0533 exposes
+the derivative of the already-global FTD-0484 action. It converges through
+internal face/edge/corner knots and admits all FTD-0532 paths. This resolves the
+path-domain issue without resolving the endpoint-threshold no-go. The remaining
+question is whether the FTD-0531 energy root satisfies the complete vector
+Euler--Lagrange equations for a non-arbitrarily reconstructed connection.
+
+**One connection slab cannot represent the locked field history:** FTD-0534
+combines one-slab Faraday with the FTD-0531 midpoint work field and obtains the
+exact mismatch `-(lambda/2)C^T K`. It is nonzero on every diagonal root and
+zero on every axial null current. A multistage or phase-space action is now a
+necessary gate, not an optional refinement.
+
+**Exact temporal current splitting also rejects frozen phase reuse:** FTD-0535
+shows `K^(0)+K^(1)=K`, with nonzero transverse `K^(0)` on every diagonal arm.
+The start deposit necessarily participates in the canonical field relation,
+whereas frozen ordering leaves Faraday current-free. An implicit atomic
+matter-field solve is required.
+
+**The atomic action exists but the old scalar root is not its solution:**
+FTD-0536 derives the minimal one-slab action coefficients from the locked
+normalization and exact endpoint split. Its field equations close, but all 240
+FTD-0531 roots miss the gauge-invariant particle Legendre equations and
+ordinary quadratic energy by resolved margins. A new simultaneous nonlinear
+root must be solved; the scalar energy equation may not be retuned and called
+the same action.
+
+**The simultaneous endpoint solve is provisionally rooted but not yet
+differentiably verified:** FTD-0537 finds all four canonical roots and their
+240-arm covariance orbit under the registered fine stencil. The shell-2 roots
+sit between the locked coarse and fine derivative distances from a face,
+causing 144 coarse stencils to cross a current chart and fail convergence.
+Both energy ledgers miss closure, but that cannot yet close the action because
+the derivative gate has priority. The next solve must differentiate within the
+actual endpoint chart without altering the action or fitting energy.
+
+**Chart containment isolates the edge boundary:** FTD-0538 shows that the
+shell-2 free endpoint lies exactly on the inactive-coordinate integer plane in
+all 144 edge arms. Centered differentiation inside one chart is impossible
+there. The 96 shell-3 roots differentiate cleanly and fail both energies. The
+edge candidate now requires explicit one-sided normal derivatives and an
+in-plane solve; the off-plane FTD-0537 displacement is not a verified root.
+
+**The edge boundary is resolved and the frozen action branch is closed:**
+FTD-0539 constructs all in-plane roots, then finds a converged normal cusp in
+every edge arm. Zero is contained only in a set-valued subgradient interval.
+The action supplies no algebraic selector, and both edge energy ledgers fail;
+the smooth corner roots already fail energy. This closes the FTD-0536 action
+as the requested FTD-0479 mobile law and preserves it only as a selected
+variational model.
+
+**What remains open:** the current frozen-variable cycle has no licensed mobile
+matter transaction or toggle. Reopening it requires a new preregistered action
+with a derived conserved energy and a unique edge selector, or an explicitly
+new primitive variable; neither is an incremental repair to FTD-0536. The
+broader ontology still requires either quotient-state semantics or an explicit
+growing history lift. Retaining native coupling would additionally require a
+source or phase-ordering rewrite. A genuine
+collision action is required only when transported attributes distinguish the
+carriers, masses differ, or nontrivial scattering occurs. The rank-2 channel
+retains the restricted relative mode and has an exact local balance law, but
+the field origin of its conjugate interaction is unproved. Raw chart capacity and restricted
+phase-space support are no longer missing at non-knot events; derivation from
+the aggregate face action is closed. A
+canonical raw transition remains a new production dynamics with an explicit
+tie symmetry policy; fixed finite chart memory is not live. Particle inertia,
+hop acceptance, distinguishable collision vertices, reaction vertices,
+three-dimensional scattering selection, and the coupling between any new
+connection and production cell-centered `J` remain open. FTD-0474 adds
+a new acceptance prerequisite: the resulting mobile dynamics must support a
+stable interior-bearing finite object under a dispersal/open-window protocol
+before membrane or pressure-balance language is admissible. An appended
+magnetic kick or fitted momentum normalization is not a common action and is
+not an admissible repair. FTD-0475 additionally requires any claimed guide to
+move a manifested history and backreact on the field; a co-moving vacuum packet
+or a one-way force readout cannot close that gate. FTD-0476 additionally
+requires any claimed aura/wake to be tested under dynamically caused reciprocal
+motion with matter-field work and field-growth accounting; externally prescribed
+motion is only a source-response probe. FTD-0477 satisfies the dynamically
+caused-response prerequisite only below the hop threshold; it still fails the
+manifested-motion and common-action reciprocity requirements.
+
+**Failure consequence:** energy-admissible local field support exists, but the
+additive map destroys information, the injective map leaks momentum, and the
+current source/force split omits an available common-action recoil. If no
+single variational hop transaction can use the FTD-0468 identity without the
+FTD-0469 kinetic surplus, the frozen `s,J,W` ontology lacks a viable
+event-native mechanism for moving a dressed manifestation despite having
+instantaneous momentum capacity.
+
+**Canonical result:**
+[`AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md`](../AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md),
+[`AUDIT_SUBCELL_FACE_CURRENT.md`](../AUDIT_SUBCELL_FACE_CURRENT.md),
+[`AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md`](../AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md),
+[`AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md`](../AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md),
+[`AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md`](../AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md),
+[`AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md`](../AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md),
+[`AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md`](../AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md),
+[`AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md`](../AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md),
+[`AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md`](../AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md),
+[`AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md`](../AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md),
+[`AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md`](../AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md),
+[`AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md`](../AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md),
+[`AUDIT_CUBIC_HOP_WORK_RESPONSE.md`](../AUDIT_CUBIC_HOP_WORK_RESPONSE.md),
+[`AUDIT_ENDPOINT_RECOIL_SUPPORT.md`](../AUDIT_ENDPOINT_RECOIL_SUPPORT.md),
+[`AUDIT_MECHANICAL_HISTORY_HOP_WORK.md`](../AUDIT_MECHANICAL_HISTORY_HOP_WORK.md),
+[`AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md`](../AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md),
+[`AUDIT_HALF_TICK_LINK_EXCHANGE.md`](../AUDIT_HALF_TICK_LINK_EXCHANGE.md),
+[`AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md`](../AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md),
+[`AUDIT_FIXED_J_RECOIL_CAPACITY.md`](../AUDIT_FIXED_J_RECOIL_CAPACITY.md),
+[`AUDIT_PAIRED_JW_RECOIL_CAPACITY.md`](../AUDIT_PAIRED_JW_RECOIL_CAPACITY.md),
+[`AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md`](../AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md),
+[`AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md`](../AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md),
+[`AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md`](../AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md),
+[`AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md`](../AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md),
+[`AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md`](../AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md),
+[`AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md`](../AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md),
+[`AUDIT_SINGLE_ACTION_RECIPROCITY.md`](../AUDIT_SINGLE_ACTION_RECIPROCITY.md),
+[`AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md`](../AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md),
+[`AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md`](../AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md),
+[`AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md`](../AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md),
+[`AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md`](../AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md),
+[`AUDIT_EMERGENT_BOUNDARY_MECHANISM.md`](../AUDIT_EMERGENT_BOUNDARY_MECHANISM.md),
+[`AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md`](../AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md),
+[`AUDIT_DYNAMICAL_FLUX_DRESSING.md`](../AUDIT_DYNAMICAL_FLUX_DRESSING.md),
+and [`AUDIT_RECIPROCAL_MOVING_SOURCE.md`](../AUDIT_RECIPROCAL_MOVING_SOURCE.md).
 
 ---
 
@@ -393,7 +2089,16 @@ Still open:
 - BCC algebraic readout: `docs/theory/10_eft_program/DERIV_BCC_ALGEBRAIC_READOUT.md` [DERIVED]/[PARTIAL] (ARC-B2) operationalizes $V_{\text{complex}} \cong \mathbb{Z}[i]^2$ module projection and cyclic $J$ action to define an operational BCC complex observable $O_{\text{BCC}}$.
 -  Boundary readout pre-registration: `docs/theory/10_eft_program/archive/closed_negative/PREREG_ALPHA_READOUT_BOUNDARY_v1.md` [CLOSED NEGATIVE] (ARC-A1). Closed negative by `docs/theory/10_eft_program/archive/closed_negative/AUDIT_ALPHA_READOUT_BOUNDARY_CLOSED_NEGATIVE.md` (FTD-0214); the boundary spectral ratio flows to 0 as $L \to \infty$.
 -  **MC-T4.3 — K-BIND universal negative closed as theorem** — **CLOSED 2026-06-10**. The substrate-native operator construction calculus $\mathfrak{C}$ is formally axiomatized in [FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md](file:///C:/Users/cpaci/Desktop/ftd/docs/theory/10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md). Since trace and determinant of any operator in $\mathfrak{C}$ lie in the field $\mathbb{Q}(G^*)$, and the splitting field of the master quadratic is a quadratic extension of degree 2, no native operator can force the master-quadratic assembly without the external selection $W$. Thus, K-BIND is closed negative as a theorem, and the coupling $\alpha$ is dynamically selected rather than structural. Verified by [proof_k_bind_axiomatization.py](file:///C:/Users/cpaci/Desktop/ftd/scripts/proofs/proof_k_bind_axiomatization.py).
-- Charge quantization audit: `docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` [AUDIT] (ARC-C1) details exact QED-vs-native normalization boundary and strict non-circularity checklist.
+- [OPEN — FTD-0412 SCOPE CORRECTION] **MC-T4.3 broader mechanism search.**
+  The preceding K-BIND entry closes only the explicitly axiomatized operator
+  calculus `C`; it does not prove that every possible action, enlarged field
+  content, boundary condition, quantization, or interacting coarse-grained
+  mechanism lies in that calculus. FTD-0412 also retracts the former
+  Wilson-matter empirical leg. The phrase “FOUNDATIONAL OBSTRUCTION” is
+  therefore withdrawn for the broad claim: the correct status is an unfinished
+  search with one scoped theorem-negative class and three surviving
+  channel-limited diagnostics.
+- Polarity/winding/readout audit: `docs/theory/07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` [AUDIT + FTD-0584 CORRECTION] details the QED-vs-native boundary and strict non-circularity checklist; ternary polarity is not yet a conserved topological electric charge.
 - Nonlinear bridge coordinated sweeps pre-registration: `docs/theory/10_eft_program/PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md` [PRE-REGISTRATION] (F-D3) locks coordinated parameter sweeps to isolate the dominant nonlinear cluster-mass mechanism (Mechanisms $\alpha$, $\beta$, $\gamma$) and verify active partitioning aggregation.
 -  **FTD-0110 nonlinear bridge — exit (ii) "is the N(A) calibration convention?" — CLOSED NEGATIVE 2026-06-19 (FTD-0307).** The Convention Audit (`ANALYSIS_FTD0110_CONVENTION_AUDIT_v1.md`, pre-reg tag `preregister-ftd0110-convention-audit-v1`) found **both engine knobs PHYSICAL** — the clean super-knee exponent moves monotonically 1.91→1.59 across drain (~6σ; a pure affine rescaling would hold it constant), and γ moves the exponents 39–65%. The calibration is **irreducibly engine-emergent**, not removable as convention; the FTD-0269 boundary is HARDENED. The bridge stays **[OPEN]** but its boundary is now mapped on both exits — exit (i) derive-the-calibration (simplest forms closed-negative, FTD-0276) and exit (ii) prove-it's-convention (closed-negative here). Remaining clean-derivation routes: derive `drain=0.5` + `γ=0.02` from the action (hard [OPEN], MC-T4.3-class), or land the shape `[CONDITIONAL — DERIVED-GIVEN-IMPOSED]` via a v2 counting model (Design C / FTD-0277 follow-up). The linear k=¼ O_h theorem is untouched.
 -  **FTD-0110 nonlinear bridge — the COLLECTIVE-COORDINATE reduction axis (v2 counting model) — BOUNDARY 2026-06-21 (FTD-0309).** The v2 genesis-counting model (`ANALYSIS_GENESIS_COUNTING_V2.md`; adds the two FTD-0277-mandated fixes: flux consumption + energy-budget cap) lands a boundary: a faithful **scalar** (O_h-radial) collective-coordinate reduction is **structurally obstructed** — the super-knee energy-budget exponent **p_hi=2 DERIVES**, but the A=14 Moore-shell **geometry fails in both boost modes** (monopole runs away / under-fills FCC,SC2; local fires only SC) because the intermediate-shell filling is carried by the **irreducibly-angular dipole Gauss field** (the fired set is an x-dipole, net charge ≈0). **This SHARPENS FTD-0250** (the cluster collective-coordinate reduction `[OPEN]`): **no scalar reduction exists — an angular DOF is mandatory**; the minimal faithful carrier is the angular-resolved FTD-0269 forward model. Open next step (if pursued): an angular-resolved (2-stream / C4v) reduction — but the prior-favoured outcome stays PARTIAL_BOUNDARY (the calibration is engine-emergent per FTD-0307). The FTD-0110 bridge boundary is now mapped on **three axes**: exit-i simplest forms (FTD-0276), exit-ii convention (FTD-0307), and the reduction axis (FTD-0309). **Canonical consolidation (2026-06-22):** [`SPEC_FTD0110_BRIDGE_BOUNDARY.md`](../../03_derivations/foundational_mechanics/SPEC_FTD0110_BRIDGE_BOUNDARY.md) — the single status map of the bridge boundary `[BOUNDARY HARDENED]` (shape DERIVED given register; calibration engine-emergent; no scalar reduction). The bridge stays `[OPEN]` only on the angular-DOF next-step; the linear k=¼ O_h theorem is untouched.
