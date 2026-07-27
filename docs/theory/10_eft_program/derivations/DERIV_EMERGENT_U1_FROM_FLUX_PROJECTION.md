@@ -114,6 +114,47 @@ Status:
 - Gauss constraint fixing longitudinal flux: **[THEOREM]** given the constraint
 - interpretation of transverse modes as photon-like DoF: **[SELECTION]**
 
+### Locality ceiling (FTD-0416)
+
+The Helmholtz projector is exact but global. Its nonzero-mode multiplier
+
+```text
+P_T,ij(k) = delta_ij - khat_i khat_j / khat^2
+```
+
+has no direction-independent limit at `k=0`: for example `P_T,xx` tends to
+zero along the x-axis and to one along the y-axis. A finite-support
+translation-invariant lattice map has a continuous Laurent-polynomial Fourier
+symbol, so it cannot equal this projector. Equivalently, position-space
+evaluation requires the inverse lattice Laplacian/Poisson Green function.
+
+Therefore:
+
+- `J_T=P_T J` remains a valid global decomposition **[THEOREM]**;
+- the projected U(1)-like redundancy remains a valid effective
+  representation **[SELECTION]**;
+- `A=P_T J` is **not** a local microscopic flux-to-link interaction law;
+- a local interacting completion must add independent link/auxiliary fields
+  with local dynamics or derive a different local map.
+
+This locality ceiling does not refute the transverse-mode count. It prevents
+the projection alone from closing the local interacting-action and radiative-
+matching gates.
+
+### Selected local alternative (FTD-0417)
+
+`AUDIT_LORENTZ_LOCAL_LINK_FLUX.md` takes the first option in the last bullet
+above. It adopts an independent real connection on oriented spacetime links
+and a noncompact unit-plaquette action. The resulting electric and magnetic
+fluxes are local plaquette variables, and photons are its two transverse normal
+modes. This removes `P_T` from the microscopic interaction law.
+
+That construction is **not** an upgrade of the projection result and is not a
+derivation of the link connection from `J`. It is a priced
+`[SELECTED ONTOLOGY EXTENSION]`. A local site-centred display average of the
+link electric flux is non-invertible; the ternary-history current and the
+complete matter-time/loop bridge remain open.
+
 ---
 
 ## Emergent equivalence relation

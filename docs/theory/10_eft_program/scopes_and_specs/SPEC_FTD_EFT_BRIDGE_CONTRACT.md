@@ -42,7 +42,9 @@ regulators, counterterms, or normalizations.
 | Native decomposition | `J = J_L[rho] + J_T` | [THEOREM] after projection |
 | Longitudinal constraint | `div J_L = rho` | [THEOREM] for the chosen Gauss operator |
 | Transverse modes | `div J_T = 0`, two propagating DoF | [THEOREM] after constraint |
-| Auxiliary U(1)-like variable | `J_T = P_T A`, `A ~ A + grad chi` | [SELECTION] representation |
+| Auxiliary U(1)-like variable | `J_T = P_T A`, `A ~ A + grad chi` | [SELECTION] global representation; `P_T` is spatially nonlocal (FTD-0416) |
+| Independent local link connection | `A_mu in R`, `F=dA` on unit plaquettes | [SELECTED ONTOLOGY EXTENSION] candidate (FTD-0417); not derived from `J` |
+| Local-link Branch-B matter regulator | one-tick nearest-neighbour spacetime Wilson action | [SELECTED BRANCH-B REGULATOR] (FTD-0418); imported spinor, not derived from `s` |
 | Native static response | `C_L^FTD = 1` in bare engine units | [THEOREM] for `sigma_18(k) ~ k^2` |
 | Native transverse stiffness | `K_T^FTD = 1` canonical normalization | [DEFINITION] |
 | Native current normalization | `Z_j^FTD = 1` for signed transport | [MEASURED] movement current |
@@ -71,8 +73,17 @@ The following moves are outside the bridge contract:
 1. Choosing an operator, regulator, finite counterterm, source normalization, or observable because it improves the residual against CODATA alpha.
 2. Calling a standard QED or Standard Model formula an FTD derivation after inserting FTD-selected numbers.
 3. Reclassifying the arithmetic root `x_+` as physical `1/alpha` without a new normalization theorem.
-4. Treating the auxiliary projected variable `A` as a primitive microscopic gauge field.
+4. Treating the auxiliary projected variable `A` as a primitive microscopic
+   gauge field **without** registering and pricing an ontology extension.
 5. Using bubble-only or zero-momentum loop diagnostics as physical alpha observables without Ward-compatible contact terms and renormalization conditions.
+6. Treating `A=P_T J` as a finite-support local vertex; the Helmholtz
+   projector contains the inverse lattice Laplacian and is global.
+
+FTD-0417 is the declared exception to item 4's unpriced move, not an exception
+to epistemic discipline: it explicitly adopts and prices an independent link
+connection under existing carrier-choice line `IMP-S4`. It does not claim that
+the native projection derived that field; the projected and independent-link
+branches are mutually exclusive values of the same selected carrier type.
 
 Allowed language:
 
@@ -370,6 +381,23 @@ Acceptance criterion:
 derive or explicitly ledger every extra QED-facing selection:
 matter, regulator, counterterms, charge normalization, and alpha observable.
 ```
+
+**FTD-0417 local candidate.** Branch B may replace the projected connection by
+the explicitly adopted independent-link action in
+`AUDIT_LORENTZ_LOCAL_LINK_FLUX.md`. That route is local and gauge invariant,
+but it adds a type. FTD-0418 supplies a compatible one-tick axial
+Wilson regulator, its exact one-/two-photon vertices, and the Ward hierarchy.
+It consumes existing `IMP-E3` and `IMP-S4`; it does not derive the matter field
+or a native current. FTD-0419 evaluates the complete one-loop terms in one
+declared `xi=1` QED_L-like step scheme and finds
+`delta_match/g²=-0.32696906(5)`. Automatic cancellation is closed negative and
+a dimension-four counterterm is required in that scheme. FTD-0421 then closes
+the preregistered native additive-current basis negative: the exact transition
+matrix has nullity zero once all production events are included. Reaction-aware
+continuity remains bookkeeping, not a gauge current. FTD-0424 installs the
+one-calibration counterterm record contract and closes universality at the
+first available off-shell multiplicity threshold; the gauge-independent
+on-shell physical match remains open.
 
 ### Branch C: Standard Model EFT
 

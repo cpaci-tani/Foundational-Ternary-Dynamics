@@ -204,7 +204,15 @@ Status:
 - `rho_a = s/a^3` in native source units: **[DEFINITION]**
 - `j_a = j/(a^2 tau)` in native source units: **[DEFINITION]**
 - physical electric charge normalization: **[OPEN]**
-- reaction-aware continuity for all toggles: **[OPEN]**
+- reaction-aware continuity for all production toggle classes:
+  **[MEASURED/CLOSED BOOKKEEPING]** through the event/transport ledgers
+- source-free additive native gauge charge over the frozen basis
+  `(occupancy, signed state, chirality sign, signed×chirality)`:
+  **[CLOSED NEGATIVE]** by FTD-0421 (exact transition rank `4`, nullity `0`)
+
+These are different statements. `Delta s+div j=S_reaction` remains a valid
+accounting identity. It does not become a conserved Wilson/link current by
+moving the unexplained change into `S_reaction`.
 
 ### Flux scaling
 
@@ -321,7 +329,7 @@ Axiom-Zero invariants alone. The project therefore fixes once and for all:
 ```text
 a_phys        ≡ ℓ_P                         (one voxel = one Planck length)
 τ_phys        ≡ ℓ_P / (√3 · c) = t_P/√3      (from physical c = c_lat·a_phys/τ_phys)
-c_lat         = 1/√3  (lattice units, CFL Courant number)
+c_lat         = 1/√3  (selected lattice transport value; below exact CFL ceiling √3/2)
 ```
 
 All dimensional claims below are conditional on this calibration. Dimensionless

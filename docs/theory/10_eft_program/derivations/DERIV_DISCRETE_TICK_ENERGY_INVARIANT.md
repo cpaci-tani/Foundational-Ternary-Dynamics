@@ -219,11 +219,15 @@ where the boundary current is the source-free current evaluated with `W*`, and:
 Work_i = W*_i dot S_i + 0.5 |S_i|^2 + 0.5 J_i dot (K S)_i
 ```
 
-For the engine's state-flux source:
+For the engine's state-flux source (electric sign corrected 2026-07-18):
 
 ```text
-S = G_C (grad_state + curl_state_velocity)
+S = G_C (-grad_state + curl_state_velocity)
 ```
+
+FTD-0574 derives this prescribed source from
+`G_C<s,div J>+G_C<curl J,s v>` and proves that the second term is not the
+J-variation of the separately documented onsite `-G_C<s v,J>` interaction.
 
 FTD-0296 confirmed the fixed-charge case:
 

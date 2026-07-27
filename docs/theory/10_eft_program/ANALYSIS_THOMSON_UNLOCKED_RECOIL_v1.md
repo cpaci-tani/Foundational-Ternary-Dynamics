@@ -150,3 +150,15 @@ loop. FTD-0288 now shows:
 That gives the next honest target: separate intensity/flux-gradient recoil from
 true electric Thomson recoil, and only then consider any radiation or alpha
 observable. No alpha claim is promoted.
+
+## 7. Successor mechanism audit — FTD-0435
+
+FTD-0435 executed that separation without changing the production force. The
+dominant transverse response is polarity-even, not the polarity-odd symmetry
+required by `qE`; smaller longitudinal and orthogonal components are odd. An
+equal-energy circular wave with spatially constant external `|J|` retains
+`0.996758` of the linear-wave RMS response. The supported description is
+therefore **self-field-mediated flux interference**, not external intensity
+descent and not ordinary electric coupling. See
+`AUDIT_FLUX_SELF_INTERFERENCE_RESPONSE.md`. The FTD-0288 historical record and
+its original numerical values remain unchanged.

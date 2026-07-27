@@ -4,6 +4,107 @@
 **Pre-reg root:** `PREREG_PHASE_II_WILSON_DIRAC_G2.md` (tag `preregister-phase-ii-wilson-dirac-g2-v1`).
 **Branch:** Branch-B matter sector per `SPEC_FTD_EFT_BRIDGE_CONTRACT.md`.
 
+> **FTD-0412 correction (2026-07-22).** The original implementation evolved
+> the three-dimensional spatial operator `D_W` directly as a real-time
+> Hamiltonian. Its plane-wave tests used upper-only spinors for which a cross
+> term vanishes accidentally; the reported `M_eff^2+K^2` norm was not the
+> generic spectrum of that operator. Real-time evolution now uses the
+> Hermitian Wilson Hamiltonian `H_W` specified in §2.4. The historical
+> FTD-0126 orbit and `g-2` numbers are **retracted as physical Wilson-Dirac
+> measurements** and retained below only as provenance for the retired
+> implementation. A corrected-Hamiltonian replacement campaign is open.
+> The first corrected run conserves energy and norm at approximately `2.25e-7`
+> and `1.39e-7` relative drift but spans the torus, failing the locked bounded-
+> orbit criterion. The benchmark is disabled in the default CTest suite and
+> remains available as a manual retuning instrument.
+
+> **FTD-0413 selected free-sector extension (2026-07-22).** The Hermitian
+> Hamiltonian now accepts a default-off face-diagonal kinetic weight `b`.
+> Inside the normalized SC+FCC ansatz, q4 cancellation uniquely fixes
+> `b=1/3`, axial weight `a=1/3`, and `r²=4/3`. With selected `c_s²=1/7`, the
+> free matter and FTD-0411 flux poles agree through q4 and all seven Wilson
+> doublers remain gapped. Gauge links use the equal average of both shortest
+> face-diagonal paths. This is a reverse-solved prototype, not the default;
+> matter and flux disagree at q6 and no interacting common cone is claimed.
+
+> **FTD-0414 infrared adequacy diagnostic (2026-07-22).** Exact q6 equality
+> is not required as a model-definition condition. With the live FTD-0411
+> flux clock and unit-step RK4 matter clock, the selected free-sector leading
+> speed spread is `11(ka)^4/540`. This becomes an empirical test only after
+> a calibration is declared and the finite-q remainder, carrier map,
+> interactions, and radiative mixing are bounded. Under either documented
+> `a=ell_P` calibration the direct free-tree term is tiny.
+
+> **FTD-0415 radiative gate (2026-07-22).** Spatial `O_h`, parity, CPT, and
+> gauge symmetry permit independent Wilson temporal/spatial kinetic
+> coefficients. Matching the free coefficients through q4 is not a custodial
+> symmetry and does not protect their ratio under interactions. A complete
+> 1PI or nonperturbative blocking coefficient matrix remains open.
+
+> **FTD-0416 optimistic RG surrogate (2026-07-22).** Standard anisotropic
+> continuum QED makes the common cone IR attractive, but the running charge
+> limits the suppression to
+> `delta_IR/delta_UV=(alpha_IR/alpha_UV)^((N_f+2)/N_f)` at one loop. Even the
+> strongest perturbative one-species case with `alpha_IR=1/137` and
+> `alpha_UV<=1` suppresses by only `1/137^3`. This is an external continuum
+> surrogate, not the missing full-Brillouin-zone Wilson/FTD threshold
+> calculation. The selected `A=P_T J` connection map is also spatially
+> nonlocal and therefore does not supply a native local interacting action.
+
+> **FTD-0417 local link-flux candidate (2026-07-22).** A separate selected
+> branch now adopts an independent real link connection with noncompact unit-
+> plaquette dynamics. It is exactly local, gauge invariant, and full-band
+> stable at inherited `c_A²=1/7`, so the existing axial and equal-shortest-path
+> face-diagonal transporters can consume it without `P_T`. The price is one new
+> link type and loss of the q4-improved free comparison: against the FTD-0413
+> matter pole, the leading maximum group-speed gap is `3(ka)²/28`. This file's
+> live matter evolution remains continuous-time/RK4, so it is not yet the
+> spacetime matter regulator needed for a full-Brillouin-zone loop calculation.
+
+> **FTD-0418 one-tick spacetime regulator (2026-07-22).** The separate local-
+> link branch now has a frozen four-dimensional Euclidean Wilson action with
+> `r_0=nu_0=1` and `r_i=nu_i=1/sqrt(7)`. It is nearest-neighbour in time and
+> space, has one massless Brillouin corner and 15 positive Wilson gaps, and its
+> action derivatives give the exact one-photon vertex, two-photon seagull, and
+> both lattice Ward identities. A local anisotropic Feynman gauge also freezes
+> the photon propagator. This closes the regulator/vertex definition stage,
+> not the full-zone integral, ternary-current bridge, real-time unitarity, or
+> live-engine migration. See `AUDIT_LORENTZ_SPACETIME_WILSON.md`.
+
+> **FTD-0419 full-zone step-scheme match (2026-07-22).** The complete
+> one-flavour exchange, Wilson seagull, fermion bubble, and two-photon contact
+> terms have now been integrated in the frozen `xi=1` QED_L-like finite-volume
+> step scheme. Deterministic sums through `N=320` give
+> `delta_match/g²=-0.32696906(5)` with longitudinal Ward residuals at
+> `1e-15`–`1e-17`. The bare leading common cone is therefore not automatically
+> one-loop closed and requires a dimension-four anisotropy counterterm in that
+> scheme. This is an off-shell scheme coefficient, not an on-shell observable;
+> gauge-independent pole matching and the counterterm trajectory remain open.
+
+> **FTD-0420–0425 native-first successor (2026-07-22).** The production tick
+> and estimators are hash-locked. Exact event stoichiometry gives rank four and
+> nullity zero over the preregistered additive native charge basis (FTD-0421),
+> so reaction bookkeeping is not a gauge current and native charged-pole/RG
+> campaigns are dependency-closed without execution. The auxiliary
+> `PoleMatchResult`/`CountertermTrajectory` contract enforces one on-shell
+> calibration; existing FTD-0419 off-shell data fail universality at the first
+> multiplicity threshold, while the gauge-independent on-shell calculation
+> remains open (FTD-0424). The free linear tick is reversible but production
+> evaporation/annihilation are exactly non-injective (FTD-0425).
+>
+> **FTD-0429 scope correction (2026-07-23).** Nullity zero closes the exact
+> additive microscopic gauge-current route, not every form of dynamical
+> charge. The unchanged reaction-free native wave/coupling sector has a finite
+> infrared polarity susceptibility `(div J)_k/s_k -> 3G_C`. This does not
+> provide Wilson-Dirac matter, a Ward identity, or a microscopic `U(1)`, so the
+> dependency closure above remains correct at its stated scope.
+>
+> **FTD-0430 successor (2026-07-23).** Actual production movement transports
+> that same native response with local causal support and the exact native
+> pole/residue in the reaction-free sector. It still supplies no Wilson-link
+> current, microscopic generator, charged matter pole, Ward identity, or
+> reaction-complete conservation.
+
 ---
 
 ## 1 · Why Wilson-Dirac (not native FTD fermions)
@@ -14,7 +115,7 @@ Wilson's 1974 lattice-QED prescription is the standard, well-validated method fo
 
 ## 2 · Action
 
-On a 4D Euclidean lattice (or 3+1 Minkowski; both versions specified below) with sites `n ∈ Z⁴`, lattice spacing `a` ≡ `ℓ_P`, and 4-component spinor field `ψ(n)`:
+On a 4D Euclidean lattice (or 3+1 Minkowski; both versions specified below) with sites `n ∈ Z⁴`, lattice spacing `a`, and 4-component spinor field `ψ(n)`. Identifying `a` with `ℓ_P` is an imposed physical calibration, not a result of the dimensionless lattice axioms (FTD-0059/0414):
 
 ### 2.1 Free Wilson-Dirac (no FTD coupling yet)
 
@@ -66,17 +167,78 @@ This is held fixed during the dynamics; the fermion evolves in this background. 
 
 ### 2.4 Time evolution
 
-For the g − 2 measurement, we use the equation-of-motion approach:
+For real-time measurements, use the Hermitian spatial Wilson Hamiltonian
 
 $$
-i \partial_t \psi(n) = D_W \psi(n)
+i \partial_t \psi(n) = H_W \psi(n),
 $$
 
-evolved via the leapfrog or RK4 time-integrator at time-step `τ ≪ a/c`. The lattice CFL bound on `τ` is the standard `τ ≤ a / (c \sqrt{D})` = `a / (c \sqrt{3})`. We choose `τ = a √3 / c` (the FTD canonical time-step, matching `t_phys` calibration in `SPEC_FTD.md`).
+with free momentum-space form
+
+$$
+H_W(\mathbf q)=c_s\sum_i\alpha^i K_i(\mathbf q)
++\beta\left[m+\frac{c_s r}{a}\sum_i(1-\cos q_i)\right],
+$$
+
+where the implemented kinetic family is
+
+$$
+K_i(\mathbf q)=\frac{\sin q_i}{a}
+\left[(1-2b)+b(\cos q_j+\cos q_k)\right],
+\qquad \{i,j,k\}=\{x,y,z\}.
+$$
+
+Here `alpha^i = gamma^0 gamma^i`, `beta = gamma^0`, and `c_s` is an
+explicit spatial normalization. The exact free spectrum is
+
+$$
+E_W^2(\mathbf q)=c_s^2\sum_iK_i(\mathbf q)^2
++\left[m+\frac{c_s r}{a}\sum_i(1-\cos q_i)\right]^2.
+$$
+
+The engine defaults are `c_s=1`, `b=0`, and `r=1`. FTD-0412 tests selected
+leading-slope alignment at `c_s²=1/7`. FTD-0413 selects
+`(c_s²,b,r²)=(1/7,1/3,4/3)` for the q4 common-cone diagnostic; none of these
+selections changes the default or integrates Wilson matter into RenderBridge.
+Evolution uses RK4 with a convergence-tested substep. The former choice
+`tau=a sqrt(3)/c` is retracted: it exceeds the bound quoted in the same
+paragraph, `tau<=a/(c sqrt(3))`, by a factor of three. No canonical physical
+time-step follows until the temporal unit map and common cone are established.
+
+### 2.5 FTD-0418 Euclidean spacetime regulator
+
+The local-link radiative branch does **not** use the continuous-time operator
+in §2.4. It freezes the nearest-neighbour Euclidean action
+
+$$
+(D_W\psi)_n=(m+1+3c)\psi_n-rac12\sum_{\mu=0}^3
+\left[(r_\mu-\nu_\mu\gamma_\mu)U_\mu(n)\psi_{n+\hat\mu}
++(r_\mu+\nu_\mu\gamma_\mu)U_\mu^\dagger(n-\hat\mu)
+\psi_{n-\hat\mu}\right],
+$$
+
+with `r_0=nu_0=1`, `r_i=nu_i=c=1/sqrt(7)`. Its momentum-space form is
+
+$$
+D_W(p)=m+(1-\cos p_0)+c\sum_i(1-\cos q_i)
++i\gamma_0\sin p_0+ic\sum_i\gamma_i\sin q_i.
+$$
+
+The complete vertex and Ward formulas, gauge fixing, quartic mismatch, and
+status boundary are canonical in `AUDIT_LORENTZ_SPACETIME_WILSON.md`. This
+action is a loop regulator; it does not replace the live RK4 implementation.
 
 ## 3 · Doubler handling
 
-The Wilson term `(4r/a) ψ` in `D_W` lifts the 15 fermion doublers to mass `4r/a = 4/ℓ_P` (with `r = 1`), pushing them to the lattice cutoff scale where they are effectively decoupled from low-energy dynamics. This is the standard Wilson trick.
+In the selected FTD-0418 four-dimensional Euclidean action the Wilson scalar
+at a corner is `m+2n_0+2n_s/sqrt(7)`. At `m=0`, exactly one of the 16 corners
+is massless and the other 15 are lifted; the smallest shift is `2/sqrt(7)`.
+The
+implemented continuous-time, three-spatial-dimensional Hamiltonian has seven
+spatial doublers; at the Brillouin-zone corner its Wilson mass shift is
+`6 c_s r/a`. The regulator still pushes the extra spatial modes to the cutoff,
+but the former code-specific statement “15 doublers at 4r/a” mixed the 4D
+action with the 3D implementation and is retracted.
 
 For the g − 2 measurement at electron mass `m_e ≪ 1/a`, doubler contamination is suppressed by `(m_e a)² ~ (m_e ℓ_P)² ~ 10⁻⁴⁴`. Negligible.
 
@@ -115,14 +277,16 @@ $$
 |---|---|---|
 | Wilson-Dirac action `D_W` | Branch-B INSERTED | Wilson 1974; standard lattice QED |
 | Wilson parameter `r = 1` | [SELECTION] | Canonical choice |
+| FTD-0413 `b=1/3`, `r=2/sqrt(3)`, `c_s=1/sqrt(7)` | [SELECTED PROTOTYPE] | Uniquely solves q4 cancellation inside the normalized face-diagonal ansatz; not a P1–P5 derivation |
+| FTD-0418 `r_0=nu_0=1`, `r_i=nu_i=1/sqrt(7)` | [SELECTED BRANCH-B REGULATOR] | Minimal one-tick axial action for the FTD-0417 link branch; exact Ward hierarchy, not native fermion emergence |
 | Bare mass `m = m_e` | Calibration-conditional | FTD-0096 K_B = m_e |
 | γ-matrices, chiral basis | Standard | Convention |
 | Gauge field `A_μ` from flux projection | [SELECTION] | `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` |
 | Vertex coupling `g_FTD = √(1/x_+)` | [IMPOSED — calibration] (value = master-quadratic algebra [THEOREM]; identification g² = α = FTD-0013 [SMC]; row corrected 2026-07-10 — the former "[DERIVED] + FTD-0125" citation was wrong on both counts, FTD-0125 being a closed-negative diagnostic) | `SCOPE_VERTEX_PROGRAM.md` §2 |
 | Magnetic field `B = B_0 ẑ` | Initial condition | Lab-style setup |
-| Time-step `τ = √3 ℓ_P / c` | Calibration | FTD canonical (matches `t_phys`) |
+| RK4 substep `dt` | Numerical calibration | Must pass convergence/stability; no common-cone physical time calibration yet |
 | Tree-level `g = 2` | Standard Dirac | Will verify in Phase II.4 |
-| Schwinger anomaly `a_e = α/(2π)` at α = 1/x_+ | TEST PREDICTION | Phase II.5 verdict per pre-reg |
+| Schwinger anomaly `a_e = α/(2π)` at α = 1/x_+ | Imported one-loop QED target | Requires a dynamical photon loop; fixed-background FTD-0126 result retracted |
 
 ## 7 · Engine implementation outline (Phase II.2)
 
@@ -134,12 +298,16 @@ $$
 - `void initialize_uniform_B_field(GaugeLinks&, double B0, char axis)` — Landau gauge
 - `void apply_wilson_dirac_step(WilsonDiracField&, const GaugeLinks&, double dt)` — one time-step
 
-### 7.2 Toggle integration
+### 7.2 Proposed toggle integration — not implemented
 
 - New `TermToggles::wilson_dirac` (default false)
 - New `TermToggles::wilson_r = 1.0`
 - New `TermToggles::dirac_mass = K_B` (= m_e per FTD calibration)
 - Integration into `phase_write` cascade: when toggle on, after substrate update, call `apply_wilson_dirac_step` using gauge links derived from current `J` field
+
+The standalone module was never integrated into the RenderBridge tick. These
+three bullets remain a historical implementation outline, not live engine
+wiring.
 
 ### 7.3 CUDA implementation
 
@@ -149,8 +317,8 @@ Standard lattice-QED CUDA pattern: one thread per lattice site, applies the Wils
 
 Before Phase II.3 starts, the implementation must pass:
 
-1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `D_W` to plane-wave initial states at multiple momenta; verify the eigenvalue magnitude matches the analytical Wilson-Dirac dispersion `|λ(p)|² = M_eff(p)² + K(p)²` where `M_eff(p) = m + (r/a)·∑_μ(1−cos p_μ)` and `K²(p) = (1/a²)·∑_μ sin²(p_μ)`. Also verify RK4 evolution preserves total spinor norm (Schrödinger evolution is unitary). **STATUS: CLOSED.**
-2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled). **STATUS: CLOSED.**
+1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `H_W` to plane-wave initial states and verify `||H_W psi||²=E_W²||psi||²` with the exact spectrum in §2.4. Also verify RK4 evolution preserves total spinor norm. **STATUS: CLOSED after FTD-0412 correction.**
+2. **Wilson term verification (II.2-B):** the spectrum of `H_W` at `B = 0` matches the exact Wilson Hamiltonian dispersion across the full Brillouin zone; spatial doublers are lifted at zone corners. **STATUS: CLOSED after FTD-0412 correction.**
 3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field. **STATUS: CLOSED** (via plaquette-flux + gauge-covariance tests; full Landau-level diagonalisation deferred to II.3 since per-state energies are the orbit observable, not a smoke-test).
 4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1). **STATUS: CLOSED.**
 5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation. **STATUS: CLOSED.**
@@ -162,11 +330,13 @@ Each validation gets its own internal pre-registration milestone before declarin
 Implemented `engine/include/ftd/wilson_dirac.h`, `engine/src/wilson_dirac.cpp`, `engine/tests/test_wilson_dirac_smoke.cpp`. Built and ran on both Windows-native (`engine/build/Release/test_wilson_dirac_smoke.exe`) and WSL2 (`engine/build_wsl/test_wilson_dirac_smoke`).
 
 **5/5 checks PASS at both targets:**
-- 4 plane-wave dispersion checks at momenta {(0,0,0), (k₀,0,0), (2k₀,k₀,0), (3k₀,2k₀,k₀)} with `k₀ = 2π/L`, L=16: relative error `~10⁻¹⁴` (machine precision; predicted `|λ(p)|²` matches measured `‖D_W ψ‖²` exactly modulo IEEE-754 round-off).
+- 4 corrected-Hamiltonian plane-wave dispersion checks at momenta {(0,0,0), (k₀,0,0), (2k₀,k₀,0), (3k₀,2k₀,k₀)} with `k₀ = 2π/L`, L=16: relative error at machine precision for `‖H_W ψ‖²=E_W²‖ψ‖²`.
 - RK4 norm-conservation check: `Δ‖ψ‖²/‖ψ‖² = 1.5×10⁻¹²` after 100 RK4 steps with `dt = 0.01` (well below the 1×10⁻⁶ tolerance).
 - CPU/WSL2 results bit-identical at every check.
 
-The free Wilson-Dirac operator and RK4 evolution are validated. **Phase II.2-A CLOSED.** Phase II.2-B (Wilson term verification across full BZ) is the next milestone.
+The corrected Hermitian Wilson Hamiltonian and RK4 evolution are validated.
+The numerical values below describe the original run; the FTD-0412 gates
+replace its operator interpretation. **Phase II.2-A CLOSED after correction.**
 
 ### II.2-B milestone result
 
@@ -177,17 +347,20 @@ Implemented `engine/tests/test_wilson_dirac_bz_spectrum.cpp`. Exhaustive sweep o
 - BZ-corner mode `p = (π, π, π)` (`k = (4, 4, 4)`): measured `M_eff² = 42.250000`, exactly matching prediction `(m + 6r/a)² = 6.5² = 42.25`. `K² = 0` confirmed. **Doubler lifted from bare mass `m = 0.5` to effective mass `6.5` (factor 13×, ≫ electron-scale).** This is the load-bearing Wilson-term property: the spurious fermion partners at BZ corners are pushed out of the low-energy physical spectrum.
 - Off-corner modes (`K² > 0`) and the origin (`M_eff² = m²`) all match the analytical dispersion at machine precision; the Wilson term `(r/a)·∑(1−cos p_μ)` and kinetic term `(1/a²)·∑sin²(p_μ)` separately validate.
 
-The full Wilson-Dirac spectrum is verified across the entire Brillouin zone. **Phase II.2-B CLOSED.** Next milestone: II.2-C (gauge-link verification — uniform B field reproduces Landau-level spectrum).
+The corrected Wilson-Hamiltonian spectrum is verified across the entire
+Brillouin zone. **Phase II.2-B CLOSED after correction.**
 
 ### II.2-C milestone result
 
 Implemented `engine/tests/test_wilson_dirac_gauge.cpp`. Two checks:
 
-1. **Gauge covariance** — for arbitrary lattice scalar `χ(n)`, verify
-   `D_W' ψ' = exp(i χ) D_W ψ` where `ψ' = exp(i χ)ψ` and
+1. **Gauge covariance and Hamiltonian Hermiticity** — for arbitrary lattice scalar `χ(n)`, verify
+   `D_W' ψ' = exp(i χ) D_W ψ` and `H_W' ψ' = exp(iχ)H_Wψ`, where `ψ' = exp(i χ)ψ` and
    `U'_μ(n) = exp(i χ(n)) U_μ(n) exp(-i χ(n+μ̂))`. Random gauge field
    (uniform `[-π, π]` per link) and random complex spinor field. Worst
-   per-site relative error: `5.7×10⁻¹⁶` at L=8, `5.4×10⁻¹⁶` at L=12.
+   per-site relative error is below `6.2×10⁻¹⁶`. FTD-0413 adds `H_W`
+   checks at `b=1/3` on L=8 and L=12; the worst Hermiticity relative error is
+   `4.6×10⁻¹⁵`.
 
 2. **Plaquette flux** — for properly-quantised uniform B in z (twisted
    Landau gauge), verify all 3·L³ plaquettes carry the predicted flux:
@@ -195,7 +368,8 @@ Implemented `engine/tests/test_wilson_dirac_gauge.cpp`. Two checks:
    `(L, n_flux) ∈ {(8, 1), (8, 2), (12, 3)}`. Worst |P − target|:
    `2.6×10⁻¹⁵` (xy at L=12, n_flux=3); xz, yz exact at machine precision.
 
-**5/5 PASS, both Windows and WSL2.** Bug caught and fixed during this
+**FTD-0413 extended gate: 6/6 PASS on the current Windows-native run.** The
+historical default-stencil 5/5 gate also passed Windows and WSL2. Bug caught and fixed during this
 milestone: `GaugeLinks::set_uniform_B_z` in `wilson_dirac.cpp` had used
 linear index `z·L² + y·L + x`, but `Lattice::index(x, y, z) = x·L² + y·L + z`.
 The smoke tests passed because they only exercised `set_identity()`.
@@ -249,7 +423,33 @@ covariance, plaquette flux for uniform B, ε → 0 limit consistency, and
 CPU/GPU bit-exact parity. **Phase II.2 CLOSED.** Phase II.3 (single-electron
 stable orbit in B-field) can begin.
 
-### II.3 milestone result (infrastructure CLOSED; physics tuning DEFERRED)
+### FTD-0413 post-campaign common-cone extension
+
+The optional `kinetic_transverse_weight` parameter extends only the Hermitian
+real-time Hamiltonian. For `b=1/3`, `r=2/sqrt(3)`, and `c_s=1/sqrt(7)`, the
+native `lorentz_common_cone_improved` gate verifies the exact spectrum over all
+`8³` Brillouin-zone modes, one massless corner plus seven positive doubler
+gaps, and SC+FCC-only support. The random-link Hamiltonian gate verifies gauge
+covariance and Hermiticity at `b=1/3`. The retained spatial `D_W` and its CUDA
+parity contract are unchanged and ignore this H-only parameter.
+
+This extension was not part of the historical Phase-II pre-registration. It
+is a selected Lorentz-recovery prototype whose exact derivation and scope are
+recorded in `AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md` (FTD-0413).
+
+### FTD-0414 infrared adequacy envelope
+
+The analytic/native `lorentz_ir_envelope` gate evaluates the exact live flux
+Floquet phase and the selected matter RK4 phase. In the common pure-power
+sixth-order basis it derives
+
+`max Delta v/c_s = 11(ka)^4/540 + O((ka)^6)`.
+
+The inverse helper `lorentz_ir_q_limit(epsilon)` returns the leading admissible
+`ka`. It is not a production matter path and does not license the historical
+`a=l_P` calibration as a theorem. See `AUDIT_LORENTZ_IR_ENVELOPE.md`.
+
+### II.3 historical milestone result — physical interpretation invalidated by FTD-0412
 
 Implemented `engine/tests/benchmark_dirac_electron_in_B.cpp`. The benchmark
 initialises a Gaussian wave packet centred at `(L/4, L/2, L/2)` with
@@ -258,7 +458,7 @@ and definite momentum `p = (0, p_y, 0)`, sets uniform B in z via twisted
 Landau gauge, evolves with RK4, and records time-series of:
 
 - centroid `⟨x⟩, ⟨y⟩, ⟨z⟩` (periodic-aware via complex-exponential mean)
-- energy `⟨H⟩ = ⟨ψ | D_W | ψ⟩`
+- energy `⟨H⟩ = ⟨ψ | H_W | ψ⟩` in the corrected instrument; historical numbers below used the retired operator
 - norm `⟨ψ | ψ⟩`
 - spin `⟨Σ_x⟩, ⟨Σ_y⟩, ⟨Σ_z⟩`
 
@@ -316,12 +516,14 @@ default parameters, but **no outcome A/B/C verdict is declared** — the
 parameters and analysis pipeline are not yet in the regime where a
 verdict would be meaningful.
 
-This is the honest state recorded in LEDGER FTD-0126 (NOT a closure of
-the pre-registered campaign — a registered intermediate observation).
+This was the state originally recorded in LEDGER FTD-0126. FTD-0412 now
+retracts its physical interpretation; the numbers remain provenance only.
 
-### II.4 + II.5 milestone result
+### II.4 + II.5 historical milestone result — RETRACTED by FTD-0412
 
-**Outcome verdict: C — SCHWINGER MISS.** Pre-registered campaign CLOSED.
+**Historical outcome C is not a valid Wilson-Dirac verdict.** The campaign ran
+to its pre-registered endpoint, but the real-time operator was wrong. The
+numbers below are retained only as provenance.
 
 Implemented `scripts/proofs/proof_phase_ii_g_minus_2.py` per pre-reg §2
 (Phase II.5 deliverable). The script reads the orbit CSV produced by
@@ -370,17 +572,12 @@ the master-quadratic-derived coupling.
    (continuum Dirac). The departure is roughly 80% of `g` itself, three
    orders of magnitude larger than physical Schwinger. This is a
    discretization signal, not a physical-anomaly signal.
-3. **FTD-native coupling does NOT play the role of QED α at the matter
-   sector** (pre-reg §4 outcome-C interpretation (iii)). The
-   master-quadratic value `α_FTD = 1/x_+` does not enter the lattice
-   QED matter sector at tree level in any way that reproduces the
-   one-loop Schwinger structure — consistent with the broader
-   structural-decoupling theme: Phase J ultralocality (FTD-0005),
-   Phase G geometric Coulomb (FTD-0004), Phase I gauss-projection
-   erasure (FTD-0125), and now Phase II Wilson-Dirac in fixed B all
-   show FTD's algebraic-spine values not flowing into the dynamical
-   sector measurements at coarse lattice. Each independent test
-   reaffirms the same diagnosis.
+3. **The historical matter-sector inference is invalid.** A fixed classical
+   field contains no one-loop Schwinger mechanism, so inserting
+   `α_FTD = 1/x_+` cannot by itself create that effect. But the FTD-0126
+   measurement cannot be used to infer structural decoupling: its evolved
+   operator and initial spinor representation were wrong. Phase G, Phase J,
+   and Phase I retain their scoped results; Phase II supplies no fourth leg.
 
 **Top FFT modes** (for transparency; sx, ranked by power):
 
@@ -396,43 +593,41 @@ The presence of multiple comparable-power modes confirms the wave-packet
 state is not a single eigenstate; the "ω_s" extracted is a spectral
 proxy, not a clean precession frequency.
 
-**What this DOES NOT mean.** The outcome-C verdict is not a falsification
-of FTD's algebraic spine: the master quadratic [THEOREM] FTD-0001, G\*
-identity FTD-0002, and the dual-prediction empirical match FTD-0013/0014
-remain at their established tags. What is falsified is the specific
-hypothesis that **classical Wilson-Dirac in a fixed B-field with α = 1/x_+
-reproduces the Schwinger one-loop anomaly to better than 50%**. This was
-the pre-reg's central conjecture. It is now empirically null.
+**FTD-0412 correction.** No outcome-C physics verdict survives this run.
+The wrong real-time operator and basis-inconsistent initial spinor invalidate
+the orbit and spectral observables before any comparison to Schwinger can be
+made. The fixed-classical-field fact remains: without a dynamical photon loop,
+this setup contains no mechanism for the Schwinger anomaly. That is a statement
+about the model content, not an empirical result extracted from FTD-0126. The
+algebraic spine and FTD-0013 retain their existing tags. FTD-0125 remains a
+valid scoped Phase-I diagnostic; FTD-0126 is not a second independent
+matter-sector confirmation and supplies no evidence for universal structural
+decoupling.
 
-**What this DOES mean.** Combined with the prior Phase I outcome C
-(FTD-0125: V(r) does not carry G_C² under wave-prop+gauss-proj
-configuration), Phase II outcome C records the second independent
-empirical confirmation that the master-quadratic coupling does not
-flow into the engine's matter-sector dynamical observables in the
-direct way the dual-prediction conjecture would naively suggest.
-Both results are consistent with the broader Phase J ultralocality
-diagnosis: the algebraic spine is structurally **decoupled** from the
-engine's action-level dynamics.
-
-**Where to go from here** (research-program territory): (a) full one-loop lattice EFT with dynamical gauge field,
-(b) sparse-matrix diagonalization of `D_W(B)` to extract clean Landau
+**Where to go from here** (research-program territory): (a) gauge-independent
+on-shell pole matching and the anisotropy-counterterm trajectory beyond the
+completed FTD-0419 `xi=1` step scheme,
+(b) sparse-matrix diagonalization of `H_W(B)` to extract clean Landau
 levels and avoid wave-packet contamination, (c) reframe the matter
-sector to test a different observable (FTD-0120 transverse waves,
-FTD-0125 follow-up Ampère-Maxwell coupling). Each of these is a
+sector to test a different observable (the FTD-0558-corrected transverse-wave
+response, with source/recoil/power still open; FTD-0125 follow-up
+Ampère-Maxwell coupling). Each of these is a
 multi-week investigation in its own right.
 
-**Phase II campaign status: CLOSED with outcome C** at hash-locked
-default parameters. PREREG_PHASE_II_WILSON_DIRAC_G2.md tag retired
-to "campaign-completed" status (not retracted, not failed-incomplete —
-the pre-registration met all four §7 closure criteria: all five
-sub-phases ran, an outcome A/B/C/D was named with explicit numerics,
-LEDGER FTD-0126 was extended with the verdict, and the git tag
-precedes the verdict commit in history).
+**Phase II physical campaign status: RETRACTED; corrected-Hamiltonian rerun
+OPEN.** The hash lock and historical completion remain provenance, but
+pre-registration cannot validate a measurement made with the wrong operator.
 
 ## 9 · Open questions (acknowledged before implementation)
 
-1. **Flux projection convention `P_T J → A_μ`** — `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` gives a sketch; details (including units and gauge-fixing convention) need to be tightened before II.2.
-2. **Time-step stability** — Wilson-Dirac at FTD's `τ = √3 ℓ_P / c` may need sub-stepping for numerical stability at single-electron precision.
+1. **Connection convention** — the historical `P_T J → A_μ` route remains a
+   nonlocal effective representation. FTD-0417 supplies a local alternative by
+   explicitly adopting an independent link field, but the live engine has not
+   migrated to it. FTD-0421 closes the frozen preregistered additive native-
+   current route negative; FTD-0418's Ward-complete regulator does not alter
+   that result. Any future native current requires a separately preregistered
+   ontology/basis revision, not relabeling `S_reaction`.
+2. **Time-step stability** — the corrected Hermitian-Hamiltonian RK4 evolution needs an explicit step-convergence and unitarity-error study for each single-electron protocol. The historical `τ = √3 ℓ_P/c` statement is withdrawn: it used the factor-of-three-inconsistent dimensional convention corrected by FTD-0407/0412.
 3. **Boundary conditions** — periodic BC in 3+1 standard, but for cyclotron orbits we may need anti-periodic BC in time direction or open BC in y/z.
 4. **Image-charge artifacts** — on a torus, the electron sees its own images. For B-field measurement we need L large enough that orbit radius ≪ L.
 

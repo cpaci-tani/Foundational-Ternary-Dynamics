@@ -37,7 +37,7 @@ An effective field theory in the Wilsonian sense requires:
 |---|---|---|---|
 | **β-function** | Does the lattice coupling flow under coarse-graining, and does β(g) match any known continuum theory? | 2 | Measured β(g) curve with 3-scale blocking, error bars |
 | **Ward identities** | Is ⟨∂_μ J^μ⟩ = ⟨ρ⟩ satisfied for composite operators, not just Gauss's law by construction? | 1 | 12 Ward-identity CTest entries at permille |
-| **Lorentz covariance** | After rescaling by c = 1/√3, do temporal and spatial correlators collapse? At what scale? | 1 | Anisotropy exponent p > 0 with error |
+| **Lorentz covariance** | Does the full temporal-plus-spatial pole recover boosts, do all observable sectors share one cone, and are lower-dimensional preferred-frame operators radiatively controlled? | 1 + hard successor | Full pole coefficients + common-cone matrix + interacting operator-mixing bounds |
 | **Operator expansion** | Do lattice operators classify as relevant / marginal / irrelevant under blocking? | 3 | 12 operators × 3 blocking stages, Wilson coefficients measured |
 | **Continuum matching** | Do α, σ, m_p/m_e approach a finite value as L grows, with controlled error O(1/L^p)? | 4 | a → 0 extrapolation + residual error bar |
 
@@ -111,6 +111,183 @@ toggles_on:         [wave_propagation, coupling, gauss_projection, forces]
 
 **[PASS]** if residual < 1% for 4a ≤ r ≤ L/4 and dispersion match < 2%.
 **[FAIL]** if residual > 5% anywhere in the fit window.
+
+#### FTD-0407 hard-recovery successor (scope correction; original pre-registration preserved)
+
+The criteria above remain the historical Phase-1B lock, but they are no longer
+sufficient for a Lorentz-covariance verdict. They test one free flux mode after
+leading-speed rescaling. The exact fully discrete audit in
+[`AUDIT_LORENTZ_RECOVERY_HARD.md`](../../07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md)
+establishes:
+
+```text
+4 sin²(theta/2) = r² M18(q)
+theta² = r² S2 + r²(r²-1) S2²/12 + O(|q|⁶)
+M18,max = 16/3  =>  stability r² <= 3/4
+dimension-six cancellation => r² = 1
+```
+
+Therefore the current nearest-time/nearest-Moore explicit architecture cannot
+be both full-band stable and free of the dimension-six preferred-frame pole
+term. The historical correlator result is now classified as a **free-flux
+dispersion diagnostic**, not a Lorentz pass.
+
+FTD-0407 also supplies an exact constructive radius-two escape outside P4.
+FTD-0408 then closes the narrower LR-1 implementation problem without changing
+P4: the existing nearest-Moore kick alternates `+3/13,-1/13`, producing
+`sin²theta=M18/13+3M18²/676`, bounded by `272/507<1`, with
+`theta²=S2/13+O(q^6)`. This is a default-off CPU `[SELECTED IMPLEMENTATION
+PROTOTYPE]`; the anti-kick and period-two clock are new selected structure.
+Because its leading speed is `1/sqrt(13)` rather than the live matter-budget
+speed `1/sqrt(3)`, it passes LR-1 only and sharpens the LR-2 common-cone defect.
+
+FTD-0409 freezes the latter speed rather than recalibrating it away. Exact
+transfer-polynomial analysis excludes scalar period-two and period-three
+P4-local kick cells, scalar positive-link averaging, and the minimal
+positive-gap Hermitian auxiliary stiffness pencil. A stable degree-four trace
+with the required germ exists, but its natural zero-cubic endpoint witness has
+no four-real-kick factorization. The next fixed-cone branch is therefore the
+general period-four semialgebraic realizability problem or a branchwise
+paraunitary multi-state transfer; no engine path implements either yet.
+
+FTD-0410 tests whether the existing lemniscatic AGM can derive the cone instead
+of preserving the selected `1/sqrt(3)` value. It cannot do so under the current
+bare action: the cone is the local ratio `Z_s/Z_t`, exact scalar time blocking
+is `x -> 4x-x²`, and the AGM-bearing `W3` is a global BCC return period for an
+operator distinct from production `M18`. The reciprocal AGM magnitude is
+therefore only a candidate insertion. A stronger conditional branch exists:
+if spatial and temporal kinetic forms are proved to be equally normalized
+conjugate lemniscatic periods, `K'=K` gives a unit cone and cancels the complete
+q4 pole term, but the corrected q6 tensor survives. Markov's endpoint inequality strengthens the current-update
+failure to a no-go for every full-band-stable finite-period scalar kick cell:
+all obey `c²<=3/4`. The exact bounded target
+`F*(M)=M-27M⁴/16384` preserves the unit-cone germ but directly violates P4 by
+spanning four shells. The new primary constructive target is therefore a
+multi-state unit-cone paraunitary localization or an interacting derivation of
+both self-energy slopes. The general
+fixed-`1/sqrt(3)` period-four problem remains a compatibility branch.
+
+FTD-0411 tests a separate two-domain interpretation of the Moore shell. The
+selected synchronized BCC return character gives the canonically normalized
+temporal kernel `T_B=(2/3)(1-cos³theta)`, while production SC+FCC `M18` remains
+the physical-space symbol. Conditional on that assignment, exact q4
+cancellation uniquely fixes `c²=1/7`. The real principal branch spans the
+complete band, but its cubic minimal polynomial is irreducible over `Q(M18)`
+and has two non-real conjugates. This excludes any exact finite-state
+positive-norm linear/unitary localization rational in `M18`; the
+direct real cube root is nonlocal. A default-off CPU two-tick surrogate is exactly stable with
+`sin²theta=M18/7+M18²/196`, but matches the BCC pole only through q4. The hard
+successor is a nonlinear/constrained or interacting BCC clock followed by the
+same common-cone, radiative, Ward, SME, and operational gates.
+
+FTD-0412 audits the common-cone gate sector by sector and corrects the Wilson
+real-time operator. The historical code evolved spatial `D_W` as a Hamiltonian
+and inferred its energy from a special-spinor norm identity; FTD-0126 is
+therefore retracted as a physical Wilson-Dirac result. The corrected Hermitian
+Hamiltonian can be assigned `c_s²=1/7` to align the massless leading slope, but
+its q4 term `c_s²[(r²/4)S2²-Q4/3]` cannot match the q4-free flux pole for any
+scalar `r`: axis and face-diagonal rays require `r²=4/3` and `2/3`
+respectively. Manifested matter remains an imposed `1/3` kinematic budget;
+gauge and native latency gravity still lack propagating poles. LR-2 remains
+open after a leading-only diagnostic alignment.
+
+FTD-0413 closes the next free-sector sub-gate by enlarging the Wilson kinetic
+symbol within the SC+FCC Moore shell. For
+`K_i=sin(q_i)[(1-2b)+b(cos(q_j)+cos(q_k))]`, cancelling both q4 tensors
+uniquely fixes `b=1/3`, `r²=4/3`; selecting `c_s²=1/7` then matches the
+selected BCC-time flux cone through q4 and preserves all seven doubler gaps.
+The two-path face-diagonal transporter is gauge covariant and the parameter is
+default off. Matter and flux disagree at q6, the matter clock remains RK4, and
+no production or interacting multi-sector cone is established.
+
+FTD-0414 changes the successor criterion without hiding that mismatch. Exact
+all-orders Lorentz symmetry is not mandatory for a discrete ontology; empirical
+infrared adequacy is. After correcting a q6 invariant-basis naming collision,
+the selected live flux and unit-step RK4 matter clocks obey the leading bound
+`Delta v_max/c_s = 11(ka)^4/540 + O((ka)^6)`. The inverse gate is
+`ka < (540 epsilon/11)^(1/4)`. Under either documented `a=ell_P` calibration,
+the direct free-tree term is tiny throughout observed energies. This is not a
+whole-theory pass because carrier identification, the finite-q remainder,
+interacting modes, and radiative mixing remain unbounded.
+
+FTD-0415 closes the symmetry-inventory half of LR-3 negatively: the declared
+exact translations, spatial `O_h`, parity, CPT, and gauge symmetries permit
+independent marginal time-space kinetic ratios and a cubic-only native-vector
+gradient invariant. It does not calculate an FTD loop coefficient. The
+remaining LR-3 deliverable is the complete generated coefficient/mixing matrix
+from one frozen interacting action or an equivalent nonperturbative blocking
+measurement.
+
+FTD-0416 tests the most optimistic standard IR mechanism without presenting it
+as native closure. In the selected anisotropic-QED continuum surrogate, the
+linearized velocity matrix has a common-cone zero mode and relative eigenvalue
+`-4(N_f+2)alpha/3`. Including the same one-loop charge flow gives
+`delta_IR/delta_UV=(alpha_IR/alpha_UV)^((N_f+2)/N_f)`. For perturbative
+`alpha_UV<=1`, `alpha_IR=1/137`, and integer `N_f>=1`, the strongest
+suppression is only `1/137^3`. The continuum common cone is therefore
+IR-attractive but cannot replace the full-lattice threshold calculation. The
+selected connection map `A=P_T J` is spatially nonlocal, so no native local
+interacting action is frozen by this surrogate.
+
+FTD-0417 freezes a separate minimal local candidate by adopting an independent
+real connection on oriented spacetime links and the noncompact unit-plaquette
+action. At inherited selected `c_A²=1/7`, the exact photon pole is full-band
+stable and uses no inverse Laplacian. This is a priced ontology extension, not
+a derivation from the site flux `J`. It also sacrifices the earlier q4-
+improved cone: the selected comparison to FTD-0413 matter has leading maximum
+group-speed gap `3(ka)²/28`.
+
+FTD-0418 freezes the compatible one-tick nearest-neighbour Euclidean Wilson
+regulator. Exactly one spacetime corner remains massless, all 15 doublers are
+lifted, and differentiating the frozen links gives the exact one-photon vertex,
+two-photon seagull, and both Ward identities. The axial matter/photon pair
+shares only its leading cone; its quartic tensors differ.
+
+FTD-0419 evaluates the complete one-loop terms in one frozen `xi=1` QED_L-like
+step scheme. It finds `delta_match/g²=-0.32696906(5)`, so automatic one-loop
+cancellation is closed negative and a dimension-four counterterm is required
+in that scheme. The coefficient is off-shell and scheme-specific.
+
+FTD-0420 freezes the native-first successor before measurement. FTD-0421 then
+finds exact rank four and nullity zero for the complete production-event
+transition matrix over the preregistered additive discrete basis. The
+reaction-aware ledger remains a valid identity with `S_reaction`; it is not a
+source-free gauge current. The dependent native charged-pole/common-cone and
+native dimension-four-flow campaigns are therefore not executed
+(FTD-0422/0423). FTD-0424 implements scheme-carrying pole records and exactly
+one counterterm calibration; the existing off-shell data fail universality at
+the first flavour-multiplicity threshold, while a gauge-independent physical
+on-shell match remains open. FTD-0425 proves the source-free linear tick
+reversible and the full production tick non-injective; the manifested
+low-energy spectral limit remains open.
+
+FTD-0429 later tests a proposition not contained in the FTD-0421 nullspace
+gate: dynamical infrared charge response. With zero initial field and both
+Gauss mechanisms off, the native wave/coupling sector derives and measures
+`(div J)_k/s_k -> 3G_C`; the fitted finite intercept rejects a zero-intercept
+model by `Delta BIC=279.14`. This is a restricted reaction-free linear-sector
+result. It does not retroactively execute FTD-0422/0423 or supply their
+microscopic gauge current, charged matter pole, Ward identity, or RG flow.
+
+FTD-0430 executes the moving-source successor without reopening those failed
+dependencies. A real one-cell production hop transports the same native
+susceptibility inside the exact local dependency cone and with the unmodified
+wave pole/step residue. Fresh `L=48,96` data give `Z0=0.25626855` and
+`Delta BIC=336.88` against zero. The result is restricted to reaction-free
+movement and does not supply a microscopic generator, charged matter pole,
+Ward identity, or RG flow.
+
+The successor recovery verdict requires the surviving LR-0 through LR-6 gates
+in FTD-0407–0425: full spacetime symbols, an empirically admissible
+limiting-speed matrix across selected auxiliary/live sectors,
+interacting dimension-3/4 operator
+matching, Ward/unitarity closure, SME phenomenology, and composite operational
+boost tests. The exact reaction-complete native gauge-charge route is closed,
+not pending; the broader dynamical coarse-charge route is positive for static
+and one-hop retarded response per FTD-0429/0430. Its next unresolved gate is a
+reaction-aware infrared slow mode under genesis, evaporation, annihilation,
+and weak transmutation. Spatial anisotropy `p>0` is evidence for rotations
+only.
 
 ### 4.3 Ward identities (§1C)
 

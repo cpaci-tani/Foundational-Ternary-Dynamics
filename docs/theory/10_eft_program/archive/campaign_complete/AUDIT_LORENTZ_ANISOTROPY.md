@@ -5,6 +5,15 @@
 **Pillar:** EFT-Recovery-Program Pillar 3 (Lorentz covariance) and Pillar 1 (UV completion / cutoff matching) — Wilsonian-irrelevance check on the rotational-symmetry-breaking operator.
 **Trigger:** Pre-registered SPEC §4.1 expects δ(L/4) < 0.02 with anisotropy exponent p > 0 (preferred ≥ 0.5). After `test_lorentz`, `benchmark_lorentz_recovery`, and `test_eft_anisotropy` were all reported PASS on WSL2, the residual exponent had to be quantified to determine *how* irrelevant the rotation-breaking operator is.
 
+> **Scope correction (FTD-0407, 2026-07-22):** this archived campaign
+> establishes spatial rotational improvement only. Its historical statements
+> that “Pillar 3 (Lorentz covariance) passes” are superseded by
+> [`AUDIT_LORENTZ_RECOVERY_HARD.md`](../../../07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md).
+> The fully discrete update has a rotationally invariant dimension-six
+> preferred-frame term before the measured cubic anisotropy appears, and the
+> interacting/common-cone/radiative gates remain open. The `p≈4` measurement
+> and its finite-lattice arithmetic remain valid at their narrower scope.
+
 ---
 
 ## 1 · Summary
