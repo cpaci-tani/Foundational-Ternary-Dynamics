@@ -1,0 +1,47 @@
+{
+  "identifier": "FTD-0437",
+  "revision": 1,
+  "date": "2026-07-24",
+  "execution_status": "VALID",
+  "outcome": "DIPOLE_ORIENTED_SELF_PROPULSION",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_ISOLATED_PAIR_ACTION_REACTION_v1.md",
+  "source": {
+    "path": "engine/tests/campaign_isolated_pair_action_reaction.cpp",
+    "sha256": "783f186187b33e07ad467b4f4a54ce8ef78010e1d752099a7245d2035a674c6a"
+  },
+  "toolchain": {
+    "platform": "Windows 11 x64",
+    "compiler": "MSVC 14.44.35207",
+    "backend": "forced CPU",
+    "git_head_at_run": "89ae1149489c13571dfd8b48a8de0bc63c960820"
+  },
+  "record": {
+    "path": "engine/results/ftd_0437/windows_msvc_cpu_L33.csv",
+    "sha256": "19cd05a8210e55f6bd01eae33db41f7eba68a26853f770834ab8a9888be2f94e",
+    "bytes": 7203,
+    "rows": 21
+  },
+  "locked_outcomes": {
+    "primary": {
+      "verdict": "DIPOLE_ORIENTED_SELF_PROPULSION",
+      "minimum_common_displacement": 0.6283812544690912,
+      "maximum_common_displacement": 0.6283812544690919,
+      "net_force_rms": 0.0000465291140822978,
+      "net_impulse_magnitude": 0.00639091754491897
+    },
+    "symmetry": {
+      "maximum_polarity_odd_residual": 3.5335968943350004e-16,
+      "polarity_even_residual": 1.0,
+      "injection_order_residual": 0.0,
+      "minimum_separation": 7.999999999999998
+    },
+    "validity": {
+      "finite": true,
+      "pair_lost": false,
+      "injection_invariant": true,
+      "deterministic": true,
+      "repeat_residual": 0.0
+    }
+  },
+  "scope_warning": "The particle subsystem has nonzero net force and center-of-mass motion. Total particle-plus-field momentum was not measured; equal opposite field recoil remains an open successor gate."
+}

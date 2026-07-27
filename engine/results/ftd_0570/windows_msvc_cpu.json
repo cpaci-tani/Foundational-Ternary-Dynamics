@@ -1,0 +1,40 @@
+{
+  "ftd_id": "FTD-0570",
+  "verdict": "EXACT_REAL_NATURAL_EXTENSION_ADDITIONAL_PRIMITIVES_REQUIRED",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "field_representation": "frozen canonical genesis trial plus observer-only exact-real environment",
+  "tolerance": 1e-12,
+  "exact_fraction_depth": 100,
+  "exact_fraction_depth_100_inverts": true,
+  "exact_64_branch_histories_distinct": true,
+  "binary64_64_branch_histories_collide": true,
+  "symbolic_phase_generators_close": true,
+  "symbolic_extended_energy_closes": true,
+  "projected_log_forward_reverse_ratio": "infinity",
+  "projected_kernel_absolutely_irreversible": true,
+  "lift_arms": 4320,
+  "accepted_lift_arms": 2160,
+  "maximum_lift_inverse_residual": 1.6375789613221059e-15,
+  "maximum_energy_residual": 8.881784197001252e-16,
+  "maximum_generator_residual": 1.6375789613221059e-15,
+  "minimum_raw_tangential_defect_magnitude": 0.4444444444444444,
+  "maximum_raw_volume_jacobian": 0.308641975308642,
+  "passes": true,
+  "raw_genesis_canonical": false,
+  "production_common_action_recovered": false,
+  "additional_primitives_required": true,
+  "source_hashes_sha256": {
+    "phase_write": "2C519C4EF52614E383C4494CBE1F26A7CE33036A0924EBEFF80778021FCB57A4",
+    "voxel_rng": "15EA4843331471E0B75488BAB9D87072E1CD7FD41FBC485A2BDD81EBC8841093",
+    "reservoir_header": "377472A157BBC17C9EAE1C8A646E0B8FD06076C36F139AF2C897F3C06E1D4C67",
+    "reservoir_source": "DE56A0EE1E74F588B2E66AF19B82E1AB48877DC18A3BAD8A6C50CCAC6F27A176",
+    "ftd0569_theorem": "565BCD17963322349D5D136E40DE11BF2268677A1CF8D1EED062818EA0E6BFBC",
+    "preregistration": "1C5EB97350D49AC03F63CD5BF995BDB31E9D300CFF71E4180339AE4D5CD3E0D8"
+  },
+  "implementation_hashes_sha256": {
+    "header": "07FE4D2FDA22DB221BB1F22683F402FD7E8AAA8E6B075472C9DA1CE6179D21F1",
+    "source": "9572106322C83383AD087DCBD7EA5EFBBE5F5E3B10A5B49923A89BEDDEFA24BD",
+    "test": "F1B7381F9A8CB7D299234E2E50BFF5DD28A61E148009656008F0F03CC093D155",
+    "independent_proof": "01E6208C6B8D01AFCF43DC52FE76578A26AECCABCC15881AFB15B280483B87EB"
+  }
+}

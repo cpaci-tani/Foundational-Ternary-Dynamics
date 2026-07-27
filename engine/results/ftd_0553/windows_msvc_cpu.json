@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0553",
+  "date": "2026-07-26",
+  "status": [
+    "THEOREM — RIGID INTEGER-OFFSET COMPOSITE PEIERLS LAW",
+    "NUMERICAL FACT — LOCKED FINITE-VOLUME VERIFICATION",
+    "CLOSED NEGATIVE — RIGID NEUTRAL-COMPOSITE SELF-FORCE CURE"
+  ],
+  "verdict": "RIGID_NEUTRAL_COMPOSITE_PEIERLS_OBSTRUCTION",
+  "backend": "windows-msvc-cpu-observer",
+  "toolchain": "MSVC 14.44.35207 Release",
+  "volumes": [17, 33],
+  "fractions": [0.0, 0.125, 0.25, 0.375, 0.5],
+  "work_intervals": [[0.0, 0.0625], [0.125, 0.1875], [0.25, 0.3125], [0.375, 0.4375]],
+  "registered_arms": 96,
+  "beta": 0.021892057692994273,
+  "minimum_positive_spectral_terms": 4284,
+  "maximum_poisson_iterations": 119,
+  "worst_identity_residual": 9.999508606405955e-14,
+  "worst_polarity_residual": 0.0,
+  "worst_translation_residual": 2.667137344314341e-17,
+  "worst_rotation_residual": 1.233822072288504e-16,
+  "smallest_peierls_coefficient": 0.0011781204382135288,
+  "smallest_barrier": 7.363252738834555e-05,
+  "largest_barrier": 0.0004306550975791104,
+  "failures": 0,
+  "focused_ctest": {
+    "passed": 1,
+    "failed": 0,
+    "real_seconds": 12.40
+  },
+  "sha256": {
+    "preregistration": "250FF3639823DE3218B4F5B024A6976531B606F526BD2FA708E9B1B875D1AFC8",
+    "header": "2ED6831AC6575DD6D8A3F7B158A49EADE514492A8E8BBD793E9CF7942CD98274",
+    "source": "99CEDEB7A02EFCBC92DFA617F8A34958A3187BAC5BCC3C16C00ED35931D4BB99",
+    "test": "1D24C2C39133BE8EAE14FA268689F2533985C2F4A29B7BD5035DF7F2FFA4C74D"
+  },
+  "production_changes": false
+}

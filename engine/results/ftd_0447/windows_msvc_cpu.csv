@@ -1,0 +1,7 @@
+FTD-0447 cubic hop work response v1
+protocol,group_size,48,moore_directions,26,registered_work,6,expected_fixed_dimension,1
+combinatorics,directions,26,face,6,edge,12,corner,8,pass,true
+stabilizers,minimum_size,4,maximum_size,8,size_failures,0,rank_failures,0,displacement_fixed_failures,0,fixed_dimension,1,pass,true
+work_response,work_failures,0,covariance_tests,1248,covariance_failures,0,pass,true
+gates,combinatorics_pass,true,stabilizer_pass,true,unique_response_pass,true
+verdict,CUBIC_STABILIZER_FIXES_LONGITUDINAL_WORK_RESPONSE

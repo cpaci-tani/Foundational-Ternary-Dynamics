@@ -1,0 +1,55 @@
+{
+  "identifier": "FTD-0434",
+  "revision": 2,
+  "date": "2026-07-23",
+  "execution_status": "VALID",
+  "outcome": "CLOSED_NEGATIVE_FOR_PROPAGATING_PHOTON_SCENARIO_CLAIM",
+  "source_lock": "scripts/proofs/vacuum_photon_scenario_diagnostic_lock.json",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md",
+  "toolchain": {
+    "platform": "Windows 11 x64",
+    "compiler": "MSVC 14.44.35207",
+    "backend": "forced CPU",
+    "git_head_at_run": "494b74bef669b446039b0a2165480c5eefc2f3cc"
+  },
+  "record": {
+    "path": "engine/results/ftd_0434/windows_msvc_cpu_L33.csv",
+    "sha256": "05692341e9af62329f4cd37197b1dbd9c439a94482732539054c0173a78a055d",
+    "bytes": 13754,
+    "rows": 50
+  },
+  "excluded_provenance": {
+    "path": "engine/results/ftd_0434/invalid_v1_native_defaults_L33.csv",
+    "sha256": "4c21df8f30072d42bd0542311bf374784b7dd46fe405aeb0143a85dca1319678",
+    "bytes": 13862,
+    "reason": "Revision-1 dashboard arm used fresh native defaults rather than the browser Scale-0 reset profile. The wave-only arm was valid but the whole file is excluded from the revision-2 verdict."
+  },
+  "locked_outcomes": {
+    "dashboard": {
+      "execution_valid": true,
+      "translating_packet": false,
+      "nontranslating_splitting_clause": false,
+      "projection_dominated_clause": false,
+      "tick20_displacement_x": 2.637754371144796,
+      "tick20_width_ratio": 3.575766929797706,
+      "tick20_best_shift": 2,
+      "tick20_overlap": 0.7025122800755986
+    },
+    "wave_only": {
+      "execution_valid": true,
+      "translating_packet": false,
+      "nontranslating_splitting_clause": true,
+      "projection_dominated_clause": false,
+      "tick20_displacement_x": 1.7763568394002505e-15,
+      "tick20_width_ratio": 3.1947654191695003,
+      "tick20_best_shift": 0,
+      "tick20_overlap": 0.6232263999981456
+    },
+    "shared_initial_condition": {
+      "right_moving_residual": 1.0,
+      "wave_fraction_x": 1.0,
+      "wave_fraction_y": 0.0,
+      "wave_fraction_z": 0.0
+    }
+  }
+}

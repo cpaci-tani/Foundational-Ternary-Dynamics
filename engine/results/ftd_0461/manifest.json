@@ -1,0 +1,34 @@
+{
+  "identifier": "FTD-0461",
+  "protocol": "production local flux-carry work v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 33,
+  "ticks": 48,
+  "attempts": 42,
+  "minimum_carried_magnitude": 9.010659412412682e-5,
+  "maximum_carried_magnitude": 0.007004529023102515,
+  "rms_carry_correction": 1.81999100843571e-5,
+  "maximum_production_residual": 0.014441489747420258,
+  "maximum_endpoint_residual": 6.04366710726422e-5,
+  "worst_fixed_closure": 1.734723475976807e-18,
+  "worst_identity_residual": 1.734723475976807e-18,
+  "worst_reverse_residual": 8.673617379884036e-19,
+  "ftd_0459_work_series_max_abs_residual": 0.0,
+  "endpoint_kinematic_valid_count": 12,
+  "corrected_kinematic_valid_count": 12,
+  "valid": true,
+  "verdict": "PRODUCTION_LOCAL_CARRY_REQUIRES_EXPLICIT_WORK_CORRECTION",
+  "pre_execution_build_failure": {
+    "physical_verdict_admitted": false,
+    "cause": "missing descriptive forwarding-header name"
+  },
+  "sha256": {
+    "campaign_source_locked": "475E614D7F18D7928F16AA7B25AE98A697DF4C62B9BD5453B1D480E165E7EFFE",
+    "forwarding_header": "E763073C3D45ABAE9D047D3DE827817382FDF607850A8A90FC38017488C2570A",
+    "run_csv": "BAC66E893C1294149AAB0A8CE6C85B56A35832A2F97EC5BDFC6B570D46662B7D",
+    "preregistration_post_execution": "117A0310B09494BEDD7BCF054A192E558E4A17EEB50625FAC2DA4F85BD3ACA7D",
+    "audit": "978F87420C3F6C317737D4DE6A954B6FDD25058966D41D6C610E136F88AE946E"
+  }
+}

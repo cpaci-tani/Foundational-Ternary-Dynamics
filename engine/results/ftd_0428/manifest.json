@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0428",
+  "date": "2026-07-23",
+  "verdict": "A_SELECTED_INTEGRATED_PROJECTION_FREE_MAXWELL",
+  "epistemic_status": "selected_engine_extension_measured_compatible",
+  "runs": [
+    {
+      "backend": "windows-msvc-14.44",
+      "L": 32,
+      "output": "engine/results/ftd_0428/windows_msvc_L32.csv",
+      "sha256": "042ac181e7eb8def6316069bb3a2567dedd364dc0002cd18d7ae8d8479224a6d"
+    },
+    {
+      "backend": "windows-msvc-14.44",
+      "L": 64,
+      "output": "engine/results/ftd_0428/windows_msvc_L64.csv",
+      "sha256": "e7ad73b4d7c5ac49f61b5493b620034bd288ce72b3cc1647f2f159ab3a48fb48"
+    },
+    {
+      "backend": "wsl2-gcc",
+      "L": 32,
+      "output": "engine/results/ftd_0428/wsl2_gcc_L32.csv",
+      "sha256": "8d0a00e1750ccf74da05becd3637ada6147930362647cf020fbfb9b418dc9fa6"
+    },
+    {
+      "backend": "wsl2-gcc",
+      "L": 64,
+      "output": "engine/results/ftd_0428/wsl2_gcc_L64.csv",
+      "sha256": "e4cf1ec9027d627b348de8d76f98b0ddd20168b81edfc12ecbff9d795b0dc043"
+    }
+  ],
+  "non_claims": [
+    "native U(1) emergence",
+    "reaction-complete charge conservation",
+    "Lorentz recovery",
+    "photon quantization",
+    "radiative stability"
+  ]
+}

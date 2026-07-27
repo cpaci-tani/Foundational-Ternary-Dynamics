@@ -1,0 +1,7 @@
+FTD-0448 endpoint recoil support v1
+protocol,group_size,48,moore_directions,26,total_scale,12,candidate_rules,source_only_target_only_midpoint
+support_family,directions,26,total_failures,0,equal_norm_failures,0,distinct_failures,0,minimum_configuration_distance_squared,96
+covariance,tests,3744,failures,0,all_rules_covariant,true
+endpoint_exchange,midpoint_failures,0,asymmetric_pair_failures,0,midpoint_energy_order_failures,0,extra_principle_required,true
+gates,totals_pass,true,two_equal_norm_rules,true,all_rules_covariant,true,midpoint_requires_exchange,true
+verdict,CUBIC_SYMMETRY_LEAVES_ENDPOINT_RECOIL_AMBIGUITY

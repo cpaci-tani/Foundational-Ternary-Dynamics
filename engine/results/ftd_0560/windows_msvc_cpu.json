@@ -1,0 +1,40 @@
+{
+  "schema": "ftd.native_hop_dressing_obstruction.v1",
+  "record": "FTD-0560",
+  "date": "2026-07-26",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer",
+  "production_changes": false,
+  "locked_preregistration_sha256": "4056580CFEDFC2E0A638FE9DE0B3D8D5B609B2CBECFB294033BE67A571047477",
+  "source_sha256": {
+    "engine/include/ftd/eft/native_hop_dressing_obstruction.h": "875D5B3ABDE071A2733AE24AE73FFC3B99ED44815C4A2FEFF445C7008E128894",
+    "engine/src/eft/native_hop_dressing_obstruction.cpp": "8E905962C121A9D2029E3865942D39EEC9F296A913E533AAC4CFD294CC3DEA6E",
+    "engine/tests/test_native_hop_dressing_obstruction.cpp": "94B7BA6EB62E07D6CCBA5AE48A72AC2414B091B54DFA70EBA21537E1C7D056F4",
+    "scripts/proofs/proof_native_hop_dressing_obstruction.py": "F12F098005F5E09CBE14FA33D116E1B7C9C89765B326B5FE5DCA023AF234D216"
+  },
+  "tolerances": {
+    "root_and_identities": 1e-12,
+    "minimum_normalized_effective_forcing": 0.05,
+    "response_ticks": 128
+  },
+  "cardinalities": {
+    "periods": 16,
+    "axes": 3,
+    "polarities": 2,
+    "arms": 96
+  },
+  "results": {
+    "maximum_root_residual": 4.4408920985006262e-16,
+    "minimum_regularity_derivative": 0.093927223861393877,
+    "maximum_source_orthogonality_residual": 8.6736173798840355e-19,
+    "maximum_coefficient_identity_residual": 2.2204460492503131e-16,
+    "minimum_normalized_effective_forcing": 0.062877713133272423,
+    "maximum_polarity_mirror_residual": 0.0,
+    "maximum_cubic_covariance_residual": 7.7715611723760958e-16,
+    "maximum_resonant_coefficient_excess": 0.0,
+    "test_failures": 0
+  },
+  "verdict": "POINT_HOP_DRESSING_OBSTRUCTED",
+  "scope_boundary": "Single periodic point polarity in the frozen linear native coupling sector only; extended and nonlinear manifested carriers remain open."
+}

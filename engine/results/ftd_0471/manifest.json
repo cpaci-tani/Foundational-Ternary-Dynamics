@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0471",
+  "protocol": "central-Gauss hop realizability v1",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "even_central_rows": 24,
+  "odd_central_rows": 36,
+  "matched_face_rows": 60,
+  "worst_even_arbitrary_field_null_pairing": 3.642919299551295e-16,
+  "worst_odd_gauss_residual": 0.0,
+  "odd_support_L17": 8,
+  "odd_support_L33": 16,
+  "odd_support_L65": 32,
+  "worst_matched_face_continuity_residual": 0.0,
+  "worst_matched_face_gauss_residual": 0.0,
+  "matched_face_current_support": 1,
+  "matched_face_field_support": 1,
+  "valid": true,
+  "verdict": "CENTRAL_GAUSS_HOP_EVEN_IMPOSSIBLE_ODD_NONLOCAL_FACE_LOCAL",
+  "production_tick_modified": false,
+  "sha256": {
+    "campaign_source_locked": "D6B917E3110AA9C5295BEC30261D465D364CD6258375E443345D38D5A40D88CC",
+    "helper_source_locked": "971C601EE7355670F519D0499FDEB37D1D980FE76F7D2C0F920E3E2C7A071DE2",
+    "run_csv": "0DE3B85042282766F1EA556FB73BFDB5217DD13FE1726EE874D49A4AC518D774",
+    "preregistration_post_execution": "98DC51B6722DF85A5F9F74F47DA7121D137867362DF81817981FF52CB7749A38",
+    "audit": "A204770BB2D5791C88F2AE56A7E7728116AE58F620A9E2EB1CB20056EA9ED2E1"
+  }
+}

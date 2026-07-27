@@ -1,0 +1,43 @@
+{
+  "ftd_id": "FTD-0571",
+  "verdict": "ENVIRONMENT_FEEDBACK_OR_RESET_REQUIRED",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "field_representation": "accepted single-genesis event derivative plus existing Voxel spectator audit",
+  "tolerance": 1e-12,
+  "block_triangular_symplectic_theorem": true,
+  "matrix_arms": 90,
+  "rank_four_arms": 30,
+  "rank_six_arms": 60,
+  "maximum_defect_formula_residual": 0.0,
+  "maximum_determinant_formula_residual": 5.551115123125783e-17,
+  "minimum_nonzero_symplectic_defect": 0.4444444444444444,
+  "maximum_raw_volume_jacobian": 0.308641975308642,
+  "passes": true,
+  "source_continuous_spectator_components": 34,
+  "source_missing_spectator_declarations": [],
+  "source_spectator_writes_in_event": [],
+  "source_continuous_event_writes": [
+    "flux",
+    "wave_vel"
+  ],
+  "source_manifest_discrete_writes_present": true,
+  "source_stateless_rng_read_present": true,
+  "source_passes": true,
+  "environment_independent_projection_requires_native_symplecticity": true,
+  "prepared_bath_requires_feedback_or_reset": true,
+  "existing_spectators_close_native_action": false,
+  "source_hashes_sha256": {
+    "phase_write": "2C519C4EF52614E383C4494CBE1F26A7CE33036A0924EBEFF80778021FCB57A4",
+    "voxel": "8621F0A7ADB70F24FC63F99071C8CD63396ADB4B04461A3ABD775D13D2D1E1A3",
+    "natural_extension_header": "07FE4D2FDA22DB221BB1F22683F402FD7E8AAA8E6B075472C9DA1CE6179D21F1",
+    "natural_extension_source": "9572106322C83383AD087DCBD7EA5EFBBE5F5E3B10A5B49923A89BEDDEFA24BD",
+    "ftd0570_theorem": "2611A6DE2D2318DFC4EC97FDF148D91D952BE3775421BE4DDAC441EA2F534076",
+    "preregistration": "BC31C67CF64B70D742525B2D07DB3E387A7A18955EA5F16B5EDC65464A1EBEE4"
+  },
+  "implementation_hashes_sha256": {
+    "header": "2F8B7A7610E06E49957B35ED795A3A9DCF43BF0FE2288B4296D7B2214FCC76AB",
+    "source": "4DE62DC51CF6C660020D8FC8DEE9D38BE11C5FF2A774C08CE0E3707346B28CCB",
+    "test": "FF95D99D35F09B3F973336DE0C14842E24590378ABA96499B3A8C659FB87299C",
+    "independent_proof": "EFA4E19906D026C5B840A1F9BDC4684404CFF4AC313205A11FC7225793EBAAF6"
+  }
+}

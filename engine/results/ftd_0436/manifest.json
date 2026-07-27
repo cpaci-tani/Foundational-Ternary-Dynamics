@@ -1,0 +1,58 @@
+{
+  "identifier": "FTD-0436",
+  "revision": 1,
+  "date": "2026-07-24",
+  "execution_status": "VALID",
+  "outcome": "COMMON_MODE_NEUTRAL_TRANSLATION",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_NEUTRAL_PAIR_WAVE_RESPONSE_v1.md",
+  "source": {
+    "path": "engine/tests/campaign_neutral_pair_wave_response.cpp",
+    "sha256": "a546e5ec38fd4cc0df9f13b0f367e83f35c278ed0d1f8f569b9b8d65fdf1654a"
+  },
+  "toolchain": {
+    "platform": "Windows 11 x64",
+    "compiler": "MSVC 14.44.35207",
+    "backend": "forced CPU",
+    "git_head_at_run": "89ae1149489c13571dfd8b48a8de0bc63c960820"
+  },
+  "record": {
+    "path": "engine/results/ftd_0436/windows_msvc_cpu_L33.csv",
+    "sha256": "b0c7bbc5347e858ba007d7ac5702e6c7b4fb8c37b3155222e160343d9460e9fa",
+    "bytes": 3524,
+    "rows": 14
+  },
+  "locked_outcomes": {
+    "primary": {
+      "verdict": "COMMON_MODE_NEUTRAL_TRANSLATION",
+      "transverse_common_fraction_y_axis": 0.9999999999999974,
+      "transverse_common_fraction_z_axis": 0.9999880324631901,
+      "global_common_fraction_y_axis": 0.808853421592277,
+      "global_common_fraction_z_axis": 0.8090943437251226
+    },
+    "trajectory": {
+      "class": "COM_TRANSLATION_DOMINANT",
+      "wave_induced_common_y_y_axis": -0.5720218209608967,
+      "wave_induced_common_y_z_axis": -0.13704892155312257,
+      "pair_only_common_axis_displacement": 0.6283812544690917,
+      "minimum_separation_y_axis": 7.999999999999998,
+      "minimum_separation_z_axis": 7.999999999999998
+    },
+    "energy": {
+      "class": "ACCOUNTED_ENERGY_CLOSED",
+      "normalized_closure_y_axis": 7.325801620128922e-7,
+      "normalized_closure_z_axis": 6.974666586708753e-7
+    },
+    "validity": {
+      "finite": true,
+      "pair_lost": false,
+      "detected": true,
+      "deterministic": true,
+      "repeat_residual_y": 0.0,
+      "repeat_residual_z": 0.0
+    }
+  },
+  "unregistered_followup_observation": {
+    "status": "MEASURED_IN_REGISTERED_PAIR_ONLY_CONTROL",
+    "finding": "Both signs in each wave-free pair translate together by 0.6283812544690917 sites along the oriented pair axis while separation remains 8. This is not part of the primary wave-minus-control verdict and requires a polarity-order mirror campaign."
+  }
+}

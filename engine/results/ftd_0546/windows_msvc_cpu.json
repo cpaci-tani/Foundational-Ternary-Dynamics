@@ -1,0 +1,44 @@
+{
+  "identifier": "FTD-0546",
+  "verdict": "SELF_CONSISTENT_COAT_PAIR_ENERGY_CLOSES_NEGATIVE",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 128,
+  "failures": 0,
+  "normalization": {
+    "beta": 0.021892057692994273,
+    "temporal_scale": 0.57735026918962576451,
+    "rest_energy": 0.511
+  },
+  "tolerances": {
+    "poisson": 1e-13,
+    "algebra": 1e-12,
+    "action": 1e-12,
+    "gauge": 1e-10,
+    "nonidentity": 1e-10
+  },
+  "metrics": {
+    "worst_poisson_residual": 9.9746831116148649e-14,
+    "worst_algebra_residual": 9.9747358810187148e-14,
+    "worst_action_residual": 8.6736173798840355e-19,
+    "worst_field_work_residual": 2.8968526796097072e-18,
+    "worst_gauge_residual": 6.9388939039072284e-18,
+    "largest_temporal_midpoint_mismatch": 2.2842481537704851e-4,
+    "largest_pair_defect": 9.6808436326516136e-9
+  },
+  "scope": {
+    "neutral": true,
+    "periodic": true,
+    "gauss_realizable": true,
+    "external_harmonic_field": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "C014A07639406963ED5343ADFF69F2B968105850D9B23D0C32B7C77728AADBDB",
+    "test": "BEA6AC3D1AEEBDA8B02C7B3D27C8080925A49479C3F8204A350EBB3AFAF025D3",
+    "header": "733AC99446E308DC91297D8B6F78CEFC6C946BDFF45A8B8C81E0C92C54C478C1",
+    "source": "CF27301A153E47519F85B9DA33DC22E29ED2E9019D211ECFA90335738B7CBA35"
+  },
+  "production_changed": false
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "ftd.external_drive_radiation.v1",
+  "record": "FTD-0559",
+  "date": "2026-07-26",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer",
+  "production_changes": false,
+  "locked_preregistration_sha256": "26D23CDEC4BD5B723C7834AB95FE98A6219068C7689CF130D9B105105F2D054F",
+  "source_sha256": {
+    "engine/include/ftd/eft/external_drive_radiation.h": "3E50B49242E730B2AC7ECB68886C8ED26861A1C26B1F5A983FBF036ECD22704B",
+    "engine/src/eft/external_drive_radiation.cpp": "D4F800E283390BDB861D3BBAFF4B817AFA9654F15F321558A2FEE2E893BCDC47",
+    "engine/tests/test_external_drive_radiation.cpp": "9B7A1AD43CAE00EDDA6E37C966CAFD6D9701A7DEEBF3A19055293297C104D129"
+  },
+  "tolerances": {
+    "work_identity": 1e-12,
+    "response_and_cumulative_work": 1e-10,
+    "fejer_normalization": 1e-12
+  },
+  "cardinalities": {
+    "work_arms": 12,
+    "harmonic_response_arms": 24,
+    "fejer_normalization_arms": 4
+  },
+  "results": {
+    "maximum_work_identity_residual": 7.2858385991025898e-17,
+    "maximum_response_residual": 5.123796534383003e-13,
+    "maximum_cumulative_work_residual": 1.8189894035458565e-12,
+    "maximum_fejer_residual": 1.5543122344752192e-15,
+    "maximum_resonant_coefficient_error": 0.0018910711480122355,
+    "minimum_resonant_bound_margin": 0.05206302692209782,
+    "minimum_off_resonant_bound_margin": 110.87368470136741,
+    "test_failures": 0
+  },
+  "verdict": "EXTERNAL_DRIVE_RADIATION_FUNCTIONAL_DERIVED",
+  "scope_boundary": "Exact energy delivered by a prescribed external drive to the production field operator; native particle energy loss, reciprocal recoil, and phenomenology remain open."
+}

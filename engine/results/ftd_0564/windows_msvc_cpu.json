@@ -1,0 +1,68 @@
+{
+  "ftd_id": "FTD-0564",
+  "verdict": "ORIENTATION_GAUSS_INDEPENDENT",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "field_representation": "regular noncompact real Vec3 vertex field",
+  "surface": "unit octahedral Moore shell with piecewise-affine face interpolation",
+  "orientation_normalization": "J/|J| at each nonzero shell vertex",
+  "gauss_normalization": "exact geometric affine surface flux; expected 4*p*A",
+  "amplitudes": [
+    1.0,
+    0.5,
+    0.25,
+    0.125,
+    0.0625
+  ],
+  "polarities": [
+    1,
+    -1
+  ],
+  "cyclic_rotations": [
+    0,
+    1,
+    2
+  ],
+  "tolerance": 1e-12,
+  "periodic_rank_volumes": [
+    3,
+    5
+  ],
+  "arms": 60,
+  "rank_witnesses": 2,
+  "maximum_degree_residual": 0.0,
+  "maximum_flux_residual": 8.881784197001252e-16,
+  "maximum_equal_flux_residual": 8.881784197001252e-16,
+  "maximum_tree_routing_residual": 0,
+  "degree_does_not_determine_flux": true,
+  "flux_does_not_determine_degree": true,
+  "topology_alone_charge_magnitude_closed": true,
+  "topological_core_with_action_remains_open": true,
+  "periodic_net_defect_index": 0,
+  "periodic_index_basis": "Poincare-Hopf on T^3, chi(T^3)=0 (imported theorem)",
+  "source_hashes_sha256": {
+    "voxel": "8621F0A7ADB70F24FC63F99071C8CD63396ADB4B04461A3ABD775D13D2D1E1A3",
+    "gauge_field": "1231FCBB0619D842A7BDAEBE2F5A3E76218502B7B56F33B2954C4CB2DF921FE1",
+    "render_bridge": "A822E0FAFAF71FE5458B2A7450868A8414B1C8564089BF6C6484FC34B7559359",
+    "gauge_test": "F99C813E1D10E83B315A689C3F7A3C04A53FD0D2B5B682D3DF7FA7EA597314C0",
+    "phase_read": "D9B521C1DE6503987E5DB3D91A8B4F2DFE52289E527352A8011C4146C71FB8A8",
+    "preregistration": "25DB8EA8343E165FE4EFC3FB2D83C4520BEC76CC97A05F907412A7E029C58663"
+  },
+  "implementation_hashes_sha256": {
+    "header": "908E86166C5AE9CA2273AEB175B251F8ABB0FADA84A7AC252A591D6B2098D116",
+    "source": "727D0A2F9C31CC01F0C478D3B3B0F95B11DFE69EBD5407ED73E7E35872012EE8",
+    "test": "829EAD13CAC587C7E1EC526B0A6525E4B270B4323AF659D0B33F2B241FC6D46B",
+    "independent_proof": "6E1DCCF4A5BBF685E235AA30432F49D80013A0BDAB18C90FEE40B2E73309222A"
+  },
+  "gauge_link_reference_files": [
+    "engine/include/ftd/constants.h",
+    "engine/include/ftd/gpu_engine.h",
+    "engine/include/ftd/render_bridge.h",
+    "engine/include/ftd/transmutation_phases.h",
+    "engine/src/backend.cpp",
+    "engine/src/render_bridge.cpp",
+    "engine/src/transmutation_phases.cpp",
+    "engine/tests/support/gauge_test_utils.h",
+    "engine/tests/test_gauge_gpu_parity.cpp",
+    "engine/tests/test_gauge_links.cpp"
+  ]
+}

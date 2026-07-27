@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0514",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_momentum_face_balance",
+  "checks_passed": 5,
+  "checks_total": 5,
+  "verdict": "EXACT_MOMENTUM_FACE_BALANCE_CLOSES_SELECTED_CONTACT_COMPATIBILITY_ONLY",
+  "metrics": {
+    "free_arms": 312,
+    "collision_arms": 312,
+    "worst_free_local_residual": 2.7755575615628914e-17,
+    "worst_free_global_residual": 1.6653345369377348e-16,
+    "worst_free_first_moment_residual": 6.9388939039072284e-18,
+    "worst_free_stress_bridge_residual": 2.0816681711721685e-16,
+    "worst_free_causal_residual": 0.0,
+    "worst_collision_segment_residual": 1.3877787807814457e-17,
+    "worst_constituent_impulse_residual": 0.0,
+    "worst_aggregate_impulse_l1": 0.0,
+    "minimum_individual_impulse_l1": 0.78512214774851818,
+    "worst_collision_local_residual": 5.5511151231257827e-17,
+    "worst_collision_global_residual": 1.7347234759768071e-17,
+    "worst_collision_energy_residual": 2.2204460492503131e-16,
+    "worst_collision_tensor_moment_residual": 2.7755575615628914e-17,
+    "worst_reversal_endpoint_residual": 0.0,
+    "worst_reversal_flux_residual": 6.9388939039072284e-18,
+    "worst_reversal_source_residual": 0.0
+  },
+  "sha256": {
+    "test": "7716F71E15EEE6D2A89EA2F419F3E9D9BF1B691F8A72DB7D53360843369EF0B1",
+    "header": "B9F435FF75E7EE133A9393294E45B1C316E026472A0C93FCF457077BDE6A6567",
+    "implementation": "2F5BE00608D85CAF02D57E5813362BA4484EC6196154BFB8C88EF5D776B2AB86",
+    "locked_preregistration_body": "05C02C5075CD2DA1359094C13CBF40A2D101E18FE5651B7F17A19A71BF5A9419"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

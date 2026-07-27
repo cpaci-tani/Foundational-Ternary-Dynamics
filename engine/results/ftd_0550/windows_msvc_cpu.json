@@ -1,0 +1,35 @@
+{
+  "identifier": "FTD-0550",
+  "verdict": "QUADRATIC_COAT_ORBIT_GATHER_CONSTRUCTIVE",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 72,
+  "failures": 0,
+  "tolerances": {"identity": 5e-13, "nonzero_transverse": 1e-8},
+  "metrics": {
+    "worst_electric_adjoint_residual": 3.469446951953614e-18,
+    "curl_commutation_residual": 1.691355389077387e-17,
+    "worst_magnetic_work_residual": 2.710505431213761e-20,
+    "worst_kinematic_residual": 8.049116928532385e-16,
+    "maximum_axial_transverse_force": 0.0470346,
+    "worst_polarity_residual": 0.0,
+    "worst_reversal_residual": 1.387778780781446e-17,
+    "translation_residual": 2.168404344971009e-17,
+    "rotation_residual": 1.734723475976807e-18
+  },
+  "scope": {
+    "electric_gather_adjoint": true,
+    "magnetic_interpolation_action_origin": true,
+    "axial_transverse_force_determined": true,
+    "self_consistent_transaction_solved": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "0E085F240318D93D54F2D1AC7CA820298B1C3551386E170C1713D5EFE136714A",
+    "header": "0B2F9CDADC5DA390A86FBE5FE37BC23B3178B0EBCD7E67C3302CDD3CAA87BBB3",
+    "source": "45CE7C88B1BFBCE58F95DD9590275A9985E6A6DA887D5E6BDFEDF9728C0A277C",
+    "test": "F2F1E2EE9E1FB00A054E297F14FF392DCBD4F10367ECB5579BECFEEA74B5E292"
+  },
+  "production_changed": false
+}

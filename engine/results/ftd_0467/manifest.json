@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0467",
+  "protocol": "single-action reciprocity v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "lattice_size": 17,
+  "force_rows": 24,
+  "source_residual": 0.0,
+  "adjoint_residual": 2.168404344971009e-19,
+  "worst_formula_residual": 0.0,
+  "worst_direct_branch_covariance_residual": 0.0,
+  "worst_polarity_oddness_residual": 0.0,
+  "helper_action_residual": 0.00015625438107704588,
+  "poisson_j_independence_residual": 0.0,
+  "minimum_poisson_action_residual": 9.683948612947744e-06,
+  "legacy_action_partner": false,
+  "emergent_action_partner": false,
+  "poisson_action_partner": false,
+  "valid": true,
+  "verdict": "NO_PRODUCTION_FORCE_BRANCH_IS_NATIVE_SINGLE_ACTION_PARTNER",
+  "production_tick_modified": false,
+  "sha256": {
+    "campaign_source_locked": "2EB51724924C07631FBDBE2C218E1D3B02144DB0398B1E5BFA5FB251AE94A6AF",
+    "run_csv": "105C99892EACDEB6693B793354DFF51688D7B2E05773E915FECD0D793F3FF32B",
+    "preregistration_post_execution": "DADDF946C13CF36C37D4CADDB1ABFCF0ED68FF2ADFFB7671A3D97013CDAC3D0D",
+    "audit": "05ADB1AE0A5F22C600A0AB8C5416B0CAEFA81459C44187B2C96AB102AD0E03EE"
+  }
+}

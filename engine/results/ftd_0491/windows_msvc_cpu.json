@@ -1,0 +1,42 @@
+{
+  "identifier": "FTD-0491",
+  "date": "2026-07-25",
+  "verdict": "SYMMETRIC_KNOT_HAS_EIGHT_LEGENDRE_BRANCHES",
+  "toolchain": {
+    "compiler": "MSVC 14.44.35207",
+    "configuration": "Release",
+    "backend": "CPU observer"
+  },
+  "fixture": {
+    "L": 17,
+    "knot": [8, 8, 8],
+    "temporal_scale": 0.5773502691896258,
+    "c_speed": 0.5773502691896258,
+    "rest_energy": 0.511,
+    "coupling": 0.73,
+    "epsilons": [0.0001, 0.000001, 0.00000001],
+    "external_bias": [0.4, 0.5, 0.6],
+    "tolerance": 1e-12
+  },
+  "checks": {
+    "passed": 11,
+    "failed": 0
+  },
+  "measurements": {
+    "worst_gauss_residual": 2.220446049250313e-16,
+    "worst_initial_kinetic_residual": 8.465450562766819e-16,
+    "worst_analytic_momentum_residual": 8.326672684688674e-16,
+    "worst_gauge_kinetic_residual": 1.1102230246251565e-16,
+    "worst_cubic_orbit_residual": 0.0,
+    "epsilon_endpoint_residual": 0.0,
+    "polarity_mirror_residual": 0.0,
+    "symmetric_solved_branch_count": 8,
+    "biased_solved_branch_count": 1
+  },
+  "hashes": {
+    "test_sha256": "5662BA3AA3308B447ED9E6C2BC78C1D382599391EBDFAA1F00C9D3302F95ACAE",
+    "header_sha256": "386AA9E110CE967483B69297A325B02167819A2F0A1EA8A6EE98FC40AE5B78CC",
+    "implementation_sha256": "39BF37D57179093B7B22560417EB9772D3CEA88D8452D0EA7ED6610EA244547E"
+  },
+  "production_defaults_changed": false
+}

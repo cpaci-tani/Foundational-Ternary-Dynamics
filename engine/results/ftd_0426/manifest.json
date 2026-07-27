@@ -1,0 +1,24 @@
+{
+  "identifier": "FTD-0426",
+  "run_date": "2026-07-22",
+  "lock": "scripts/proofs/emergent_static_charge_lock.json",
+  "verdict": "B_SELECTED_GAUSS_CONSTRAINT_REALIZATION",
+  "runs": [
+    {
+      "backend": "cpu",
+      "platform": "Windows 11",
+      "L": 32,
+      "command": "engine/build/Release/campaign_emergent_static_charge.exe --backend cpu --L 32 --output engine/results/ftd_0426/emergent_static_charge_cpu_L32.csv",
+      "output": "engine/results/ftd_0426/emergent_static_charge_cpu_L32.csv",
+      "sha256": "330d64f7d8e2f38bf0acbd973df3a7aad621902088434df75e094636d5650072"
+    },
+    {
+      "backend": "gpu",
+      "platform": "WSL2 Ubuntu-22.04 / RTX 5090",
+      "L": 64,
+      "command": "engine/build_wsl/campaign_emergent_static_charge --backend gpu --L 64 --output engine/results/ftd_0426/emergent_static_charge_cuda_L64.csv",
+      "output": "engine/results/ftd_0426/emergent_static_charge_cuda_L64.csv",
+      "sha256": "8dfe1c15065c1d64c63f0ae54d5e64032aed6686d65c26ad1caccc835fec863b"
+    }
+  ]
+}

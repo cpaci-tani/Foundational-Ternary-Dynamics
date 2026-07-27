@@ -1,0 +1,32 @@
+{
+  "identifier": "FTD-0496",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_centered_fiber_knot_transaction",
+  "checks_passed": 13,
+  "checks_total": 13,
+  "verdict": "UNIQUE_CENTERED_FIBER_KNOT_STEP",
+  "metrics": {
+    "contraction_bound": 0.13707924958433651,
+    "largest_driven_displacement": 0.089472455266425346,
+    "largest_dressing_change": 0.01637445250631649,
+    "maximum_iterations": 12,
+    "worst_trace_residual": 3.4694469519536142e-16,
+    "worst_fixed_point_residual": 2.7755575615628914e-17,
+    "worst_energy_residual": 1.7161619347838553e-14,
+    "worst_gauss_residual": 2.3276338335606085e-16,
+    "worst_continuity_residual": 5.2735593669694936e-16,
+    "worst_inverse_residual": 7.6327832942979512e-17,
+    "worst_causal_excess": 0.0,
+    "worst_symmetry_residual": 0.0
+  },
+  "sha256": {
+    "test": "634F5357403709C84587AC767828AB797673AE9565395C9003A6BF79E51B6A63",
+    "header": "C656647420FAACC06E65AC275D2E3A8A5A0C9DE320ABF2A16EBA8F888669A073",
+    "implementation": "0E2BEF9427E9DB131D2DB86988DEC3CC91E863BBD9B468A27D36885564884835"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "ftd.native_gauss_monopole_dichotomy.v1",
+  "record": "FTD-0563",
+  "date": "2026-07-26",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer",
+  "production_changes": false,
+  "locked_preregistration_sha256": "7629151DEA58E98F44A7FF37271BA591054D67C158C6600C2581523F4E6CFC6C",
+  "source_sha256": {
+    "engine/include/ftd/eft/native_gauss_monopole_dichotomy.h": "40F31DA05FE320CF02AFF49B0AC7ED4DFC1DE99296F0A3D10ABC700135568D66",
+    "engine/src/eft/native_gauss_monopole_dichotomy.cpp": "ADA07C2BC8F972B4D7830F90ABAF6360A1E3032E6E56FE2BBF9A27FC636C9018",
+    "engine/tests/test_native_gauss_monopole_dichotomy.cpp": "AFAED106D98D8E6B3218F50F4AE8A87E26A6FB1EBD6DC96F0451EEA017CBE70C",
+    "scripts/proofs/proof_native_gauss_monopole_dichotomy.py": "2E90A590C14289E5A09B199A05C0CAB70430F8FB7EE07DB9A435F1587D7EDA18"
+  },
+  "cardinalities": {
+    "profiles": 4,
+    "volumes": 4,
+    "directions": 4,
+    "axes": 3,
+    "polarities": 2,
+    "arms": 384,
+    "witness_groups": 96,
+    "monotone_neutral_witnesses": 54
+  },
+  "results": {
+    "maximum_zero_mode_numerator_sum": 0,
+    "periodic_telescope_residual": 0.0,
+    "matched_neutral_gauss_residual": 9.7144514654701197e-17,
+    "maximum_curl_divergence": 4.3368086899420177e-19,
+    "maximum_closed_surface_flux_change": 2.7647155398380363e-18,
+    "maximum_face_gauss_identity_residual": 2.2204460492503131e-16,
+    "maximum_point_monopole_error": 2.2204460492503131e-16,
+    "maximum_l256_neutral_monopole_estimator": 0.024543076571439858,
+    "maximum_l256_asymptotic_error": 0.00035134643955669898,
+    "maximum_polarity_mirror_residual": 0.0,
+    "maximum_cyclic_covariance_residual": 8.8991145241087413e-16,
+    "test_failures": 0
+  },
+  "verdict": "GAUSS_MONOPOLE_MOBILE_DRESSING_DICHOTOMY_PROVED",
+  "scope_boundary": "Selected matched-face Gauss plus restricted native linear-response corollary and FTD-0561/0562 production linear moving-source obstruction. Nonlinear, defect/topological, boundary-supported, nonlocal, deforming, and common-action carriers remain open."
+}

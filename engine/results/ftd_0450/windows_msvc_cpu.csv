@@ -1,0 +1,7 @@
+FTD-0450 production hop kinematics correction v1
+protocol,directions,26,work,0.0001,identity_gate,1e-13,round_trip_gate,9.9999999999999998e-13,old_relative_mismatch_gate,1
+dispersion_identity,worst_energy_residual,2.7755575615628914e-17,worst_velocity_round_trip_residual,2.7755575615628914e-17,worst_reconstructed_energy_residual,0
+old_convention,minimum_relative_mismatch,2.0000000000000004,maximum_relative_mismatch,2.0000000000000004,misidentified,true
+corrected_map,updates_valid,true,worst_forward_work_residual,1.1018204577883939e-17,worst_reverse_work_residual,1.1018204577883939e-17,worst_momentum_round_trip_residual,2.943923360032078e-17,worst_recoil_balance_residual,0
+gates,finite,true,production_identity_pass,true,old_convention_misidentified,true,corrected_map_reversible,true
+verdict,PRODUCTION_KINEMATICS_CORRECTS_SELECTED_MAP

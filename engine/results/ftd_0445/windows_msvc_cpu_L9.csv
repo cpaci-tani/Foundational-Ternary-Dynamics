@@ -1,0 +1,9 @@
+FTD-0445 Moore-hop route ambiguity v1
+protocol,L,9,algebra_gate,1e-14,distinct_gate,1,energy_split_gate,0.5,background_scale,0.25
+route_counts,face_cases,6,edge_cases,12,corner_cases,8,count_mismatches,0,minimum_distinct_separation,2
+continuity,worst_residual,0,pass,true
+engine_extractor,valid,true,transported_events,1,canonical_xyz_residual,0,selected,true
+corner_stabilizer,canonical_swap_distance,2,symmetric_average_swap_residual,0,average_continuity_residual,0,average_fractional,true
+route_energy,background_divergence,0,xyz_energy,1.125,yxz_energy,2.125,split,1,ambiguous,true
+gates,finite,true,combinatorics_pass,true,continuity_pass,true,engine_route_selected,true,stabilizer_breaks,true,symmetric_average_pass,true,energy_ambiguous,true
+verdict,FACE_ROUTING_UNDERDETERMINED

@@ -1,0 +1,41 @@
+{
+  "schema": "ftd.native_moving_source_pole.v1",
+  "record": "FTD-0558",
+  "date": "2026-07-26",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer",
+  "production_changes": false,
+  "locked_preregistration_sha256": "9B58BF017AC1648C5081267933E39C3F4494B97A0883FC81578E65773BAFBC37",
+  "source_sha256": {
+    "engine/include/ftd/eft/native_moving_source_pole.h": "C7664E06CDEAADCC55AD73B00012BD451CBEDDA414147E3A77F48AE2C2654F45",
+    "engine/src/eft/native_moving_source_pole.cpp": "18002CF7EE4D1A94E385F5B0D0CB660AFFF06E15AFF94699218B8057072EB22A",
+    "engine/tests/test_native_moving_source_pole.cpp": "0A4ED0F30212D36D50DA072502BD2FD2AB1FFD1E0D277D5CE3F2BA90043253FE"
+  },
+  "tolerances": {
+    "identity": 1e-12,
+    "registered_pole_exclusion": 1e-6,
+    "nonfundamental_amplitude_floor": 1e-6
+  },
+  "cardinalities": {
+    "driven_mode_arms": 12,
+    "wrapped_threshold_arms": 9,
+    "floquet_schedule_arms": 12
+  },
+  "results": {
+    "seven_point_ratio_floor": 0.63661977236758138,
+    "universal_production_speed_floor": 0.21220659078919379,
+    "minimum_enumerated_phase_speed": 0.226221165290514,
+    "alias_symbol_residual": 2.2204460492503131e-16,
+    "alias_phase_residual": 1.6653345369377348e-16,
+    "wrapped_to_old_alias_ratio": 14.999999999999989,
+    "maximum_nonfundamental_amplitude": 0.21838778054654331,
+    "maximum_cpp_identity_residual": 7.1054273576010019e-14,
+    "maximum_python_response_residual": 1.4720007036982309e-13,
+    "maximum_python_floquet_reconstruction_residual": 5.4219364318596328e-15,
+    "maximum_python_parseval_residual": 4.4408920985006262e-16,
+    "test_failures": 0
+  },
+  "verdict": "NATIVE_MOVING_SOURCE_POLE_CORRECTED",
+  "scope_boundary": "Corrects the selected moving-source field response and integer-hop spectrum only; radiation power, native mobile matter, reciprocal recoil, and Lorentz recovery remain open."
+}

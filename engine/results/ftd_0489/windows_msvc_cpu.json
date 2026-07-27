@@ -1,0 +1,39 @@
+{
+  "identifier": "FTD-0489",
+  "date": "2026-07-25",
+  "verdict": "OPEN_WORLDLINE_ACTION_NOT_A_HOP_SELECTOR",
+  "toolchain": {
+    "compiler": "MSVC 14.44.35207",
+    "configuration": "Release",
+    "backend": "CPU observer"
+  },
+  "fixture": {
+    "L": 17,
+    "temporal_scale": 0.5773502691896258,
+    "coupling": 0.73,
+    "tolerance": 1e-12
+  },
+  "checks": {
+    "passed": 10,
+    "failed": 0
+  },
+  "measurements": {
+    "equal_gauge_plus_difference": 2.92,
+    "equal_gauge_minus_difference": -2.92,
+    "unequal_gauge_plus_difference": 5.04,
+    "unequal_gauge_minus_difference": -6.64,
+    "worst_endpoint_identity_residual": 0.0,
+    "worst_field_invariance_residual": 0.0,
+    "translation_residual": 0.0,
+    "face_orbit_count": 6,
+    "edge_orbit_count": 12,
+    "corner_orbit_count": 8,
+    "nonzero_reflection_fixed_count": 0
+  },
+  "hashes": {
+    "test_sha256": "15A91695BE3785E7DD8B85BE06442C0CDBEC5DCE3F4C340230410F2C3EF5C53A",
+    "header_sha256": "D73C7AC6408565A4230580617FD1764FF3D124900E7C9AE4CC677A88814F9B3A",
+    "implementation_sha256": "C5AD99C0930887B21995C30DD9E4DA18ECD53FEDCEEA731BE8A45348DD7A5963"
+  },
+  "production_defaults_changed": false
+}

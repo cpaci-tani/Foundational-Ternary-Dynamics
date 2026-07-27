@@ -1,0 +1,22 @@
+{
+  "identifier": "FTD-0453",
+  "campaign": "fixed-J recoil capacity v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "CPU observer; global constrained variation over production J/W state",
+  "campaign_source_sha256": "2c06ffbdf76bb90bc694d21e4a3a6156238100c64e639902ed3bfbdb37b81470",
+  "helper_source_sha256": "ed8b3b25d316da627077bd3e64ccdceeb01ae1dd5b3937ad7ed082e271061c92",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "48338c4809b94849d0c86442a0695d020c42f06f4755cfcba8d8fd5429fac556",
+  "verdict": "FIXED_J_ZERO_ENERGY_RECOIL_IMPOSSIBLE_MINIMAL_WORK_FIELD",
+  "direction_count": 26,
+  "worst_work_residual": 1.3552527156068805e-20,
+  "worst_momentum_residual": 1.5332934166833742e-19,
+  "worst_energy_formula_residual": 8.326672684688674e-17,
+  "minimum_face_energy_cost": 0.08045187494089995,
+  "minimum_edge_energy_cost": 0.1609056912251261,
+  "minimum_corner_energy_cost": 0.2413590760996969,
+  "worst_reverse_residual": 0.0
+}

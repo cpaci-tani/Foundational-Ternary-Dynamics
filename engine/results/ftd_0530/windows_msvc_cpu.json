@@ -1,0 +1,45 @@
+{
+  "identifier": "FTD-0530",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_axial_contact_longitudinal_work",
+  "checks_passed": 7,
+  "checks_total": 7,
+  "preregistered_nonzero_work_hypothesis": "REJECTED",
+  "verdict": "AXIAL_ELASTIC_CONTACT_IS_RECIPROCAL_ON_FIXED_PATH",
+  "metrics": {
+    "arms": 72,
+    "worst_history_residual": 0.0,
+    "worst_continuity_residual": 0.0,
+    "worst_absolute_gauss_residual": 6.148705676556343e-14,
+    "worst_curl_adjoint_norm_squared": 0.0,
+    "worst_harmonic_current_residual": 0.0,
+    "worst_current_norm_squared": 0.0,
+    "worst_endpoint_density_change_residual": 0.0,
+    "worst_transverse_work_difference": 0.0,
+    "worst_harmonic_work_difference": 0.0,
+    "worst_staggered_embedding_residual": 0.0,
+    "worst_field_energy_identity_residual": 6.161737786669619e-14,
+    "minimum_apparent_elastic_energy_defect": 1.887379141862766e-15,
+    "maximum_apparent_elastic_energy_defect": 7.66053886991358e-15,
+    "minimum_inferred_impulse_magnitude": 3.747002708109903e-15,
+    "maximum_inferred_impulse_magnitude": 3.062827769184651e-14,
+    "minimum_inferred_speed": 0.12499999999994424,
+    "maximum_inferred_speed": 0.25000000000001027,
+    "worst_frozen_path_correction_residual": 0.0,
+    "worst_translation_magnitude_residual": 3.3306690738754696e-15,
+    "worst_polarity_mirror_magnitude_residual": 0.0,
+    "worst_axis_orbit_magnitude_residual": 5.773159728050814e-15
+  },
+  "sha256": {
+    "test": "8252913BAD3803427AEBDD05BECCA62E209FC8EB90FAFCD3651BBADDE5297EAC",
+    "header": "34A4E5CAE8828F22DFA55FAAE67E7AE611FDB0DE953AEB47EDEEEF3C4C3E6E06",
+    "implementation": "77E3C4B659EDF859EB0019EF99580DBCFA97BD4E91172F69FCE84DCF1F6A4554",
+    "locked_preregistration": "2B61DD31DF9E020488DEA6087C3036DB122646FB3E1D61147FD514FD0266AE77"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

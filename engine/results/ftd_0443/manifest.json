@@ -1,0 +1,21 @@
+{
+  "identifier": "FTD-0443",
+  "campaign": "discrete interaction-work contract v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "forced CPU after RenderBridge construction",
+  "lattice": 17,
+  "campaign_source_sha256": "9417064ff0ebe2de2a98e1125350bae22ab04621f1d7c3fe095f1e52a620e827",
+  "helper_source_sha256": "4ce99516be120486af2bd28cff98dfd6f5e24edb4f27b16d56c1c99b6dd143a1",
+  "record": "windows_msvc_cpu_L17.csv",
+  "record_sha256": "aa7877f6b8bb157d8668336b6258367b3baf05d1c4aac01323322b2fce2128f8",
+  "verdict": "EXACT_HOP_WORK_PRODUCTION_MISMATCH",
+  "hop_cases": 52,
+  "worst_action_identity_residual": 1.734723475976807e-18,
+  "closed_loop_work": 2.168404344971009e-19,
+  "remainder_action_change": 0.0,
+  "production_action_cosine": -1.0000000000000002,
+  "production_action_magnitude_ratio": 0.08542454310285438
+}

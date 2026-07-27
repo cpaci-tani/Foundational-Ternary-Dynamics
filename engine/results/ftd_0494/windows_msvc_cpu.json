@@ -1,0 +1,33 @@
+{
+  "identifier": "FTD-0494",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_cusp_dressing_integrability",
+  "checks_passed": 12,
+  "checks_total": 12,
+  "verdict": "CELLWISE_PRIMITIVE_GLOBAL_MEMORY_OBSTRUCTION",
+  "metrics": {
+    "local_energy": -0.008759999999999997,
+    "threshold_representation_mismatch": 0.1095,
+    "path_xy": 0.219,
+    "path_yx": -0.219,
+    "source_free_holonomy": 0.438,
+    "field_euler_derivative_l2": 0.21771875206329844,
+    "finite_difference_euler_residual": 0.0,
+    "branch_trace_gradient_residual": 0.0,
+    "worst_local_primitive_residual": 5.2041704279304213e-18,
+    "worst_reverse_residual": 0.0,
+    "worst_holonomy_residual": 0.0,
+    "worst_divergence": 0.0,
+    "worst_symmetry_residual": 0.0
+  },
+  "sha256": {
+    "test": "8D46BF13B48B7DE86595DA3A530FD653B9415322B30B929A82C1AFF8F0462BBE",
+    "header": "A70EC9EB4308266E32F1E3C4BDB3BE79523811CC2E6A8FFCB4CCF15261C1ABF9",
+    "implementation": "DA1402C5952B8CFCAB02C54A4AD9142A98373352C53CA94F0E92253BC99B0562"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

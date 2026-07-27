@@ -1,0 +1,61 @@
+{
+  "ftd_id": "FTD-0567",
+  "verdict": "GENESIS_ACTION_OBSTRUCTION",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "field_representation": "frozen production (s,J,W) variables",
+  "normalized_parameters": {
+    "kg": 1.0,
+    "km": 1.0
+  },
+  "excesses": [
+    0.125,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "wave_magnitude_squared": [
+    0.0,
+    0.25
+  ],
+  "kinetic_drains": [
+    0.0,
+    0.5
+  ],
+  "polarities": [
+    1,
+    -1
+  ],
+  "tolerance": 1e-12,
+  "arms": 48,
+  "distinct_single_post_amplitudes": 4,
+  "maximum_amplitude_residual": 0.0,
+  "maximum_flux_energy_residual": 0.0,
+  "maximum_wave_energy_residual": 0.0,
+  "maximum_action_threshold_residual": 0.0,
+  "fixed_quantum_energy_spread": 0.875,
+  "single_map_preserves_overshoot": true,
+  "no_post_genesis_amplitude_lock": true,
+  "no_fixed_ternary_energy_quantum": true,
+  "acceptance_conditioning_does_not_lock": true,
+  "dual_branch_has_no_latent_heat_payment": true,
+  "evaporation_signed_preimages_collapse": true,
+  "written_action_cannot_generate_magnitude_gate": true,
+  "written_action_zero_divergence_polarity_degenerate": true,
+  "frozen_common_action_route_closed": true,
+  "extended_reservoir_or_open_system_remains_open": true,
+  "source_hashes_sha256": {
+    "phase_write": "2C519C4EF52614E383C4494CBE1F26A7CE33036A0924EBEFF80778021FCB57A4",
+    "lagrangian_header": "0C0149DBE0D5FC0B9970539B0028A8E0B20E86181E7EB284E3D7DF07FCB80A59",
+    "lagrangian_source": "090D4B8E1C17C2CF443D674AC94ABEA13490831DD88223FB9B9562F7F5859911",
+    "energy_ledger": "6486AB4C9EF95782C5C8BA6A49D0AD94E53180FE858295C0FDD52DB6C6C8E17A",
+    "action_test": "D6D1F4D307A007CD15D711C79260C599A9E350E209A9EB189851E99BA9BAA305",
+    "injectivity_test": "D828049BEC55BBCB7C163E2E79E1737E52804ABD2D15E3A67CB71497D364B4CC",
+    "preregistration": "C8DC397572217AF20CD69E01BB398CBB66C3E58A49C309A07A5B8F8F974925C8"
+  },
+  "implementation_hashes_sha256": {
+    "header": "07DF98C80CB535C3533D8286A8FB7F4B5C8D5480822F0E1883CC0F63AB53814B",
+    "source": "5524C4E461907A41AD0F3F31EE2396B44AE48CD84E9E2202373F05D54D41292A",
+    "test": "1F1F5F8BE3BDB9CA8A1C920274A47E9083325B5E3A98EB4434325C2E4A0A81EA",
+    "independent_proof": "9206B8E6A46E9861B6383FB2C0F4B074796723FEC3046EAE5D21D716C0BC6818"
+  }
+}

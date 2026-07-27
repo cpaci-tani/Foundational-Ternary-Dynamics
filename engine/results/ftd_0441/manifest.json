@@ -1,0 +1,22 @@
+{
+  "identifier": "FTD-0441",
+  "campaign": "Poisson cold-start memory v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "forced CPU after RenderBridge construction",
+  "lattice": 33,
+  "ticks": 200,
+  "source_sha256": "2d0ddcf0a87ae895241573711e91dc21c8df6b7c4d8187fe244c797dfc62cd1b",
+  "record": "windows_msvc_cpu_L33.csv",
+  "record_sha256": "03c116807fb42511243d6208f5f70bedfc950494409f2660995a82a2c7d2930e",
+  "verdict": "COLD_START_TRANSIENT_EXPLAINS_POISSON_LEAK",
+  "max_cold_particle_momentum": 8.110110206815722e-9,
+  "max_pre_relaxed_particle_momentum": 1.123168132600666e-13,
+  "momentum_suppression_ratio": 1.3848987300527156e-5,
+  "max_cold_common_motion": 1.5600681800372645e-6,
+  "max_pre_relaxed_common_motion": 2.190523764538234e-11,
+  "motion_suppression_ratio": 1.4041205330435687e-5,
+  "voxel_hops": 0
+}

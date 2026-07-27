@@ -1,0 +1,70 @@
+{
+  "identifier": "FTD-0477",
+  "protocol": "selected-force moving-source reciprocity discriminator v1",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU production tick, read-only observer",
+  "production_tick_modified": false,
+  "lattice_size": 65,
+  "ticks": 72,
+  "matched_arms": 7,
+  "structural_valid": true,
+  "verdict": "NO_DYNAMICAL_MOVING_SOURCE_IN_REGISTERED_PROTOCOL",
+  "surviving_claim": "deterministic selected-force sub-voxel response",
+  "closed_claims": [
+    "dynamic manifested source motion in the registered protocol",
+    "co-moving dressing",
+    "wake",
+    "detached outgoing field",
+    "registered selected-extension energy-momentum reciprocity"
+  ],
+  "measurements": {
+    "positive_caused_displacement": 0.20359848011794163,
+    "negative_caused_displacement": 0.20359848011794177,
+    "positive_movement_events": 0,
+    "negative_movement_events": 0,
+    "locked_displacement": 0.0,
+    "source_only_displacement_max": 1.6406343573300297e-17,
+    "repeat_residual": 0.0,
+    "near_fraction_min": 0.43773025258883391,
+    "trailing_to_leading_tick72": 1.0000000000000171,
+    "mean_radius_growth": 1.1016940201699796,
+    "normalized_energy_residual_max": 1.9606222274336764e-6,
+    "normalized_momentum_residual_max": 0.0024168493704676019
+  },
+  "verification": {
+    "focused_ctest": "3/3 pass",
+    "golden_gate": "7/7 pass",
+    "new_browser_and_overlay_contracts": "5/5 pass",
+    "scenario_parity_after_reconciliation": "15/15 pass",
+    "wasm_build": "wasm32, wasm64, and wasm32-threads built and deployed",
+    "scenario_inventory": "117/117 JS/C++/UI/evidence parity"
+  },
+  "visualization_correction": {
+    "file": "engine/wasm/ftd_wasm.cpp",
+    "change": "particle positions now include the production sub-voxel remainder",
+    "tick_changed": false
+  },
+  "sha256": {
+    "preregistration_locked": "88835A61876F023F3FE76D841863D8FDBF087E201B35BAAEE22C999ACE5D2573",
+    "preregistration_lock": "17F67D1C3E1CF55F5F04C5F87B1E523E7372758E6E4E7270AD97F4847BF47CE1",
+    "campaign_source": "2BBE46D12AB16FA6BF4C96C0829130780CE7D61394CAA785B47BDFB0875F1A42",
+    "observer_header": "93E07DFA9C1E963A32021A31707075EFB09BF97572CC1E64661FEF4E8E3CFECA",
+    "scenario_admission_test": "9422DBFF7EB947271484C4A2BA8F1D874D1DBA42C6D2840D33429397A10DF640",
+    "cpp_scenario": "0CF135A58766A5806D71EAEA0010E28BEE02169E78EE63F8607BB803C75A7E23",
+    "js_scenario": "F6C4C88B1B24812A349251152F195AA4E1E5ADF1155F83DE02EE341ABF454A77",
+    "wasm_particle_sampler": "6A2AE232C015461C16C9C335751760226C944343EDF77A091F7BEEDD29E8124C",
+    "browser_test": "23C1C11832F7E8A0D014BC0EDC026296F522C08DDA22AC33E2FF1A6EABEBC527",
+    "csv": "F965DA09F14DCA54B5FF3EDC6BCF32BD9AC7C60F29A56C307E4FCE776C029729",
+    "verdict": "A9A708A18D9A1883428F1C737C9B89E7977349347CE31A967760B960F100FCBD",
+    "audit": "40539E9982D4E84C0B80F5C9316EC682DCF966179AD4D42CA4CC16D9B7DBDF6E",
+    "deployed_wasm32_js": "5FD9A3D7DB3B291AE2FF0139FD8142E0A03956CE8543CA4210517D6FF58BAF42",
+    "deployed_wasm32_binary": "645247C30D24AAEFD00A379A5FAE95389248ABFD85C370DFA5D7984130A302FF",
+    "deployed_wasm64_js": "FD6B490FB8D45E281630C3DF6074E662C3B6F7D5DFE1E66B9668F949AAA572DE",
+    "deployed_wasm64_binary": "038F0E6AB7EAA3F5EE7FBAEFF1B3B376E732F251B49E58602FA8644E036A7EFD",
+    "deployed_wasm_mt_js": "7C8445882AF2E22D9811763A20451F6263EB45F46F5D8642A98A689B1CD4E0EF",
+    "deployed_wasm_mt_binary": "73DA35F35A1C0DDB9A89E6486D8BA931F1DA6DE8E2946C711E358CF7615F4F42",
+    "deployed_wasm_build_info": "42B888AAFAFFA98CFC310010560B3E60A1704B6CA5B7515F56D7AAB42415B175"
+  }
+}

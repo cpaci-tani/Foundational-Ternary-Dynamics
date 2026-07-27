@@ -1,0 +1,20 @@
+{
+  "identifier": "FTD-0452",
+  "campaign": "native energy-contract reconciliation v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "CPU observer over production RenderBridge fixtures",
+  "campaign_source_sha256": "38118dea47e93b2082da0c865990f00dd39644b8fe3fd4bf7d2a93d59cc2983c",
+  "helper_source_sha256": "3db8f2dc573e7f4a87e17409878915e7b5a52ce1673713998c544516e0175621",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "0ecce64c78fb4672f1f0538fe56a72df8898a41c4cb6fee1bbee24de673d58fe",
+  "verdict": "ENERGY_CONTRACT_RECONCILED_DIAGNOSTICS_INCOMPLETE",
+  "particle_interaction_closure_residual": -1.1018204577883939e-17,
+  "double_counted_residual": -0.00010000000000001102,
+  "kinetic_energy_omitted_by_total_hamiltonian": 7.47509765625,
+  "gradient_energy_omitted_by_total_hamiltonian": 1.5687772877104338,
+  "equal_amplitude_audit_residual": 8.43769498715119e-15,
+  "modified_tick_energy_max_abs_drift": 8.215650382226158e-14
+}

@@ -1,0 +1,47 @@
+{
+  "identifier": "FTD-0539",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_edge_plane_one_sided_variation",
+  "checks_passed": 6,
+  "checks_total": 6,
+  "verdict": "EDGE_PLANE_NONSMOOTH_STATIONARY_REQUIRES_SUBGRADIENT_SELECTION",
+  "metrics": {
+    "arms": 144,
+    "differentiable_arms": 0,
+    "interval_stationary_arms": 144,
+    "nonstationary_arms": 0,
+    "worst_active_root_residual": 4.6854187196743169e-13,
+    "worst_active_derivative_convergence": 4.5102810375396984e-15,
+    "worst_one_sided_derivative_convergence": 1.3692714496971181e-14,
+    "minimum_normal_residual": -7.2268155687915832e-04,
+    "maximum_normal_residual": 2.8377422287935731e-04,
+    "minimum_normal_residual_jump": 2.8329665230971324e-04,
+    "maximum_normal_residual_jump": 1.0064557797585156e-03,
+    "worst_current_split_residual": 1.2212453270876722e-15,
+    "worst_continuity_residual": 1.7208456881689926e-15,
+    "worst_field_equation_residual": 4.163336342344337e-17,
+    "worst_gauss_evolution_residual": 1.7763568394002505e-15,
+    "worst_causal_excess": 0.0,
+    "minimum_ordinary_total_energy_defect": 1.0879958865110949e-04,
+    "maximum_ordinary_total_energy_defect": 5.5660942742694845e-04,
+    "minimum_modified_total_energy_defect": 8.5883766580983334e-05,
+    "maximum_modified_total_energy_defect": 3.3079479371198170e-04,
+    "worst_translation_residual": 1.5691007521079214e-14,
+    "worst_polarity_mirror_residual": 0.0,
+    "worst_signed_cubic_residual": 2.3240740928964776e-14
+  },
+  "sha256": {
+    "test": "81004771EB86A538BA175FB0D8AE90B2872BA0575C27F8898EE5ECD5393BE1F5",
+    "observer_header": "754429169221B32EA900F28F77ECACA70BC2C02E2AF81FABE32D44BF676C8572",
+    "observer_implementation": "63CF547F9D9975B5AA3E4AFBAD9C79F2247A8798FE0D50EEFB44642CD88F3894",
+    "shared_face_action_header": "22418FA05A339D52872F871A19A8BF3E27DB7183D8A18EABB132E6A926176D5D",
+    "shared_face_action_implementation": "366BECAE202CCC6E78710FA42F83B83809D57EEE2EA517FBBCAF3E7CEAE945AC",
+    "locked_preregistration": "F8637E0D4474BAF0C985FAF5D16A441A065620003B86E5E4133A1D270702F564"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}
+

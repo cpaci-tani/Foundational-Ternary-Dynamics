@@ -1,0 +1,31 @@
+{
+  "identifier": "FTD-0498",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_subcell_representation_quotient",
+  "checks_passed": 13,
+  "checks_total": 13,
+  "verdict": "FACE_PHYSICS_FACTORS_PRODUCTION_DOES_NOT",
+  "metrics": {
+    "generic_chart_count": 8,
+    "current_chart_pairs": 128,
+    "worst_chart_position_residual": 0.0,
+    "worst_shape_residual": 0.0,
+    "worst_current_residual": 0.0,
+    "worst_continuity_residual": 2.7755575615628914e-17,
+    "worst_quotient_inverse_residual": 0.0,
+    "raw_state_l1_difference": 2.0,
+    "source_formula_residual": 0.0,
+    "source_response_difference": 0.042712271551427185,
+    "collision_outcome_difference": 0.40000000000000002
+  },
+  "sha256": {
+    "test": "B70C2C810C6535F1807F59F3CFC021EC1CE4CD12D3E02073DD47D27669B56C25",
+    "header": "C86499B196461E040BC714A1B9EDD36CC142B41E2DF5BFA0F8CA83DA553972EB",
+    "implementation": "8CD5AEFAC60E984D1324F1C594A9154D5FA937CF918AD0D2083CC7EB2EA8E36C"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

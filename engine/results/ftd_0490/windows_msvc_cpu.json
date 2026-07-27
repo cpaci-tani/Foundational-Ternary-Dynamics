@@ -1,0 +1,36 @@
+{
+  "identifier": "FTD-0490",
+  "date": "2026-07-25",
+  "verdict": "INTERIOR_DISCRETE_LEGENDRE_GAUGE_COVARIANT",
+  "toolchain": {
+    "compiler": "MSVC 14.44.35207",
+    "configuration": "Release",
+    "backend": "CPU observer"
+  },
+  "fixture": {
+    "L": 17,
+    "temporal_scale": 0.5773502691896258,
+    "c_speed": 0.5773502691896258,
+    "rest_energy": 0.511,
+    "coupling": 0.73,
+    "tolerance": 1e-12
+  },
+  "checks": {
+    "passed": 12,
+    "failed": 0
+  },
+  "measurements": {
+    "worst_deposited_action_residual": 4.336808689942018e-19,
+    "worst_dispersion_residual": 3.9898639947466563e-17,
+    "worst_canonical_covariance_residual": 6.938893903907228e-18,
+    "worst_kinetic_invariance_residual": 1.3877787807814457e-17,
+    "worst_pure_gauge_residual": 0.0,
+    "worst_symmetry_residual": 1.4710455076283324e-15
+  },
+  "hashes": {
+    "test_sha256": "057C63E6794F5AD274A3027BDE3F126223B7F9E6C6EB79A488816EA0D22936F5",
+    "header_sha256": "AE670F2E06C442FE0AEF652E916F22D2F424EB523AE1DF6D67941F4EAEDD8C43",
+    "implementation_sha256": "FFCDAE3F6D99655E1FD607E0354A7FCFA4FFB0460B45737BFB588511142BE9C3"
+  },
+  "production_defaults_changed": false
+}

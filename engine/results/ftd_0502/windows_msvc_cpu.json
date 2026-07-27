@@ -1,0 +1,38 @@
+{
+  "identifier": "FTD-0502",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_worldline_current_kernel",
+  "checks_passed": 9,
+  "checks_total": 9,
+  "verdict": "WORLDLINE_PATH_IS_REQUIRED_STATE",
+  "metrics": {
+    "L17_site_dimension": 4913,
+    "L17_face_current_dimension": 14739,
+    "L17_divergence_rank": 4912,
+    "L17_current_kernel_dimension": 9827,
+    "worst_tree_routing_residual": 0.0,
+    "endpoint_density_difference": 0.0,
+    "static_current_l1": 0.0,
+    "clockwise_current_l1": 1.0,
+    "current_opposition_residual": 0.0,
+    "loop_divergence_residual": 0.0,
+    "maximum_segment_length": 0.5,
+    "static_field_energy": 0.0,
+    "clockwise_field_energy": 0.066612499999999991,
+    "counterclockwise_field_energy": 0.066612499999999991,
+    "field_opposition_residual": 0.0,
+    "field_gauss_residual": 0.0,
+    "transformed_history_triples": 144,
+    "worst_transformed_residual": 0.0
+  },
+  "sha256": {
+    "test": "D283CFB2CF83502A413D922BD750C54DFEC629C2DCE7609FE0C1BEDA10C3841A",
+    "header": "8CF8674D2EE3D81E3B5DE74E1DCE3C02A53FBA952AF94F45541D2D807BF755A4",
+    "implementation": "20F9A43AF89A7FA3E5C01C719F1408BBBA33C7571AEA4E2570F0FC3D1811F36D"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

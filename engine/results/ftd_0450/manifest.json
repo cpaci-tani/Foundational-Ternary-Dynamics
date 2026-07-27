@@ -1,0 +1,19 @@
+{
+  "identifier": "FTD-0450",
+  "campaign": "production hop kinematics correction v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "algebraic observer; no production tick execution",
+  "campaign_source_sha256": "1923d6cad6f913d9b99fd9a9110b4250b32c5d8bf7cb1bdbc5388aa9e9dabd8e",
+  "helper_source_sha256": "4fce830b79cd4590108b7fea28063b489b33cf3ca69925e5405043b78d1c2ebd",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "33824de8daf6d7a0aeb56eed1bef938d9048845340b08602cf13bf35ca7c71d9",
+  "verdict": "PRODUCTION_KINEMATICS_CORRECTS_SELECTED_MAP",
+  "moore_direction_count": 26,
+  "old_relative_energy_mismatch": 2.0000000000000004,
+  "worst_production_energy_identity_residual": 2.7755575615628914e-17,
+  "worst_corrected_momentum_round_trip_residual": 2.943923360032078e-17,
+  "worst_recoil_balance_residual": 0.0
+}

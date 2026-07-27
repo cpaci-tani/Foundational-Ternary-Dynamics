@@ -1,0 +1,31 @@
+{
+  "identifier": "FTD-0499",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_finite_memory_reversible_lift",
+  "checks_passed": 11,
+  "checks_total": 11,
+  "verdict": "UNBOUNDED_HISTORY_REQUIRED_FOR_FROZEN_PROJECTION",
+  "metrics": {
+    "largest_hidden_capacity_tested": 1048576,
+    "binary_history_merges": 63,
+    "binary_history_bits": 63,
+    "octant_history_merges": 21,
+    "octant_history_bits": 63,
+    "shape_branch_difference": 0.0,
+    "current_branch_difference": 5.5511151231257827e-17,
+    "field_branch_difference": 0.0,
+    "momentum_branch_difference": 0.0,
+    "work_branch_difference": 0.0,
+    "dressing_branch_difference": 0.0
+  },
+  "sha256": {
+    "test": "57B2D6321F51D94D94040477CBB0465A2EFC7BEA1E85BC0148463A072B06ED32",
+    "header": "D593C991597A69DEF1BE389CB69DEE3168F44B1B774FBBBE7D6B30C59D92B092",
+    "implementation": "13E2C4E8F4777C38C9AA01260E44A0D823DC89E89E92DA58C3BC5704ED9E5265"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

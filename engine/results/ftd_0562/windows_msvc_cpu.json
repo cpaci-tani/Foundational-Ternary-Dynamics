@@ -1,0 +1,37 @@
+{
+  "schema": "ftd.full_surface_source_obstruction.v1",
+  "record": "FTD-0562",
+  "date": "2026-07-26",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU observer",
+  "production_changes": false,
+  "locked_preregistration_sha256": "D9F9B23232AB1A67A1829090C216207BAF58873E3EC9CE75CC809E395E0531D5",
+  "source_sha256": {
+    "engine/include/ftd/eft/full_surface_source_obstruction.h": "0DA5E527D8CEA8FE2931A5B9D4A7D9A5310BD418BBAB6DE46D9679AF1F9C3994",
+    "engine/src/eft/full_surface_source_obstruction.cpp": "44F1B7267D1DE3C61971E7E3198442A5BD98AD84FF9D6F305CDD77FE0B91FA1E",
+    "engine/tests/test_full_surface_source_obstruction.cpp": "9F0B948318CA79850C5BDDAFED9D2554DAAB87679CB4FFA016EF8EF4AAEF4043",
+    "scripts/proofs/proof_full_surface_source_obstruction.py": "FB6CBCA172C6FA2FDB2932E8D91F26A536B591B20E90B80764E9DFE832DB72E8"
+  },
+  "cardinalities": {
+    "profiles": 4,
+    "periods": 4,
+    "directions": 8,
+    "axes": 3,
+    "polarities": 2,
+    "arms": 768,
+    "witness_groups": 96
+  },
+  "results": {
+    "maximum_denominator_residual": 2.8552464212405759e-16,
+    "minimum_scaled_radial_derivative": 7.224481330653771,
+    "maximum_polarity_mirror_residual": 0.0,
+    "maximum_cyclic_covariance_residual": 3.4816594052244909e-13,
+    "maximum_t512_radius_correction_residual": 0.13254411344298234,
+    "maximum_t512_asymptotic_error": 0.010924707775298748,
+    "minimum_witness_scaled_forcing": 9.9253853415076261,
+    "test_failures": 0
+  },
+  "verdict": "FINITE_RIGID_FULL_SURFACE_CANCELLATION_OBSTRUCTED",
+  "scope_boundary": "Any fixed nonzero finite-support rigid profile on the production linear slow-hop branch; nonlinear, deforming, defect/topological, period-growing, and reciprocal matter-field carriers remain open."
+}

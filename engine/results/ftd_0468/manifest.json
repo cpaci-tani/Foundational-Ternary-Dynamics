@@ -1,0 +1,28 @@
+{
+  "identifier": "FTD-0468",
+  "protocol": "common-action kick reciprocity v1",
+  "date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "static_lattice_size": 17,
+  "dynamic_lattice_size": 33,
+  "static_records": 12,
+  "dynamic_records": 384,
+  "worst_momentum_closure_residual": 4.082780133884847e-15,
+  "worst_formula_residual": 4.082780126686968e-15,
+  "worst_inverse_residual": 6.938893903907228e-18,
+  "worst_outside_face_support": 0.0,
+  "worst_polarity_oddness_residual": 0.0,
+  "worst_axis_covariance_residual": 0.0,
+  "single_source_support_sites": 6,
+  "pair_support_sites": 12,
+  "valid": true,
+  "verdict": "COMMON_ACTION_KICK_MOMENTUM_RECIPROCITY_EXACT",
+  "production_tick_modified": false,
+  "sha256": {
+    "campaign_source_locked": "5FAF98C9D0C1183C0DA6D9482DF39F6A5A0B77F886664B501467221A85AE502C",
+    "run_csv": "FF9AE8486A0812AB25AFF2D9C18A45BA0AD9808A901A2128F33752E1868268ED",
+    "preregistration_post_execution": "7C14E8AC2E53F7986253F6900D33F8DF42E3FCF4F340452DE22FE1EFFFBCD269",
+    "audit": "468679D3E580C346760E6A5D96556764121EEFDD182D7FC32C5577391DCAA997"
+  }
+}

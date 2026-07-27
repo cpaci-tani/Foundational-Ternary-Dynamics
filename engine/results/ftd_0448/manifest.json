@@ -1,0 +1,20 @@
+{
+  "identifier": "FTD-0448",
+  "campaign": "endpoint recoil support v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "exact-integer algebraic observer; no production tick execution",
+  "campaign_source_sha256": "1d99da7e96c574f60a92d160515d6f00f120b4c444d043bee1c5486b99f5b20e",
+  "helper_source_sha256": "481b677799a2598cb92e80443f5f15034427330206acc8729e793d9c1bd34093",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "31f0376839c18ea8329bbe2e8ffbca0bdd5a46b26ea3985ba1fb5c8d86460837",
+  "verdict": "CUBIC_SYMMETRY_LEAVES_ENDPOINT_RECOIL_AMBIGUITY",
+  "moore_direction_count": 26,
+  "candidate_rules": 3,
+  "covariance_tests": 3744,
+  "covariance_failures": 0,
+  "minimum_configuration_distance_squared": 96,
+  "midpoint_exchange_failures": 0
+}

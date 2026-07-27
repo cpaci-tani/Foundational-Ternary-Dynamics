@@ -1,0 +1,30 @@
+{
+  "identifier": "FTD-0469",
+  "protocol": "source-centered half-tick transaction energy gate v1",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "backend": "CPU forced after bridge construction",
+  "static_lattice_size": 17,
+  "dynamic_lattice_size": 33,
+  "static_records": 3072,
+  "dynamic_records": 384,
+  "worst_shadow_energy_residual": 2.1103119252074976e-12,
+  "worst_naive_total_difference_residual": 2.110806321398151e-12,
+  "worst_total_momentum_residual": 1.8276916438646971e-13,
+  "worst_explicit_inverse_residual": 3.8858249114718792e-15,
+  "worst_production_ordering_invariant_residual": 2.1103119252074976e-12,
+  "registered_absolute_gate": 1e-12,
+  "valid": true,
+  "verdict": "SYMMETRIC_HALF_TICK_ENERGY_FAILS",
+  "self_adjoint_time_integrator": false,
+  "per_site_matter_energy_used": true,
+  "production_tick_modified": false,
+  "sha256": {
+    "campaign_source_locked": "08D79B1D345D33AC0CDC638947365193D4AFADC753B06576849F290330ECACD8",
+    "helper_source_locked": "E72D74499736DF6D922EDD00728E81DA343DAECA566CB91D8CB998D0F7676B3E",
+    "run_csv": "B60C226644D8106F165CC045D0173129076C0D561D2C192360630D1FDCF86CB1",
+    "preregistration_post_execution": "42E224D8019077D0F559DB4188BDD743A40729FB90D8BB4DF87B1CFD9B9BC8B9",
+    "audit": "BDE2D454C59DA51564A90ACBA804EEF0799CD788E405F40548562211F225C00A"
+  }
+}

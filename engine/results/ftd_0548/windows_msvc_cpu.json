@@ -1,0 +1,43 @@
+{
+  "identifier": "FTD-0548",
+  "verdict": "ACCELERATED_COAT_CURRENT_EXACT_LINEAR_SPLIT_REJECTED",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "registered_arms": 144,
+  "failures": 0,
+  "parameters": {
+    "volume": 17,
+    "rest_energy": 0.511,
+    "temporal_scale": 0.57735026918962576451,
+    "quadrature_order": 16
+  },
+  "tolerances": {
+    "identity": 5e-12,
+    "schedule_discriminator": 1e-8
+  },
+  "metrics": {
+    "worst_total_current_residual": 2.1885271372923398e-14,
+    "worst_recombination_residual": 2.0816681711721685e-17,
+    "worst_temporal_partition_residual": 4.4408920985006262e-16,
+    "worst_split_continuity_residual": 1.3988810110276972e-14,
+    "worst_gauge_endpoint_residual": 1.915134717478395e-15,
+    "worst_reversal_residual": 4.163336342344337e-15,
+    "largest_linear_split_difference": 0.0016542884780729739
+  },
+  "scope": {
+    "uniform_force_schedule": true,
+    "monotone_segment_only": true,
+    "total_current_endpoint_only": true,
+    "temporal_split_schedule_dependent": true,
+    "self_consistent_field": false,
+    "production_toggle_licensed": false
+  },
+  "sha256": {
+    "preregistration": "B77EF420ED42CD82C1269F34D9D3C6299106C0C63FA1B805AFFEFA7A0A0DBBBC",
+    "header": "0D1DFA5863322245C003A06622650E96B63EC4D4EBEF585C8E894654D99E9F4B",
+    "source": "2F457E5E13B2F682D7D3B266536A073143AD4598AAB48DA76889C57C2DBDFD8F",
+    "test": "579D40B37080B49FFBE5694F7BED6A97179DAB8F1B1F4229624A08D31AF89824"
+  },
+  "production_changed": false
+}

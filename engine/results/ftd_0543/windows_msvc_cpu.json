@@ -1,0 +1,26 @@
+{
+  "identifier": "FTD-0543",
+  "verdict": "FIXED_STEP_ACTION_ENERGY_NOT_AUTOMATIC",
+  "platform": "windows_msvc_cpu",
+  "toolset": "14.44.35207",
+  "configuration": "Release",
+  "failures": 0,
+  "tolerance": 1e-14,
+  "metrics": {
+    "midpoint_p0": 1.0625,
+    "midpoint_p1": 0.9375,
+    "midpoint_energy_defect": 0.125,
+    "discrete_lagrangian_energy": 0.515625,
+    "worst_midpoint_identity_residual": 5.6898930012039273e-16,
+    "worst_gradient_energy_defect": 4.4408920985006262e-16,
+    "gradient_area_determinant": 0.81818181818181823,
+    "gradient_area_defect": -0.18181818181818177
+  },
+  "sha256": {
+    "preregistration": "3842AF60024B1D9E749FF5EDB203BFC35772F40604CA568BCAE481DDF51B5450",
+    "test": "79D3840599C891D82A7472CB282B6F11A3C6028F5DBF7B9DE9C99C3ED46FEE9A",
+    "header": "4C47A80ED17E29DDFF970C449ADF230A8AC1860BB6977E74A32A7AB8604E5200",
+    "source": "D897A27DEC7D0DD9AE3AD05E72EBAA230B859F372CE1362BB211D0C38E1B4D38"
+  },
+  "production_changed": false
+}

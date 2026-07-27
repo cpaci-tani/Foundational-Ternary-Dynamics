@@ -1,0 +1,23 @@
+{
+  "identifier": "FTD-0446",
+  "campaign": "Moore-channel projection kernel v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "exact-integer algebraic observer; no production tick execution",
+  "campaign_source_sha256": "2cf327a30c2ad8ca087aee58c28b41f65be6b022092253584f3a8ee8b704b717",
+  "helper_source_sha256": "55c7da0d7ebd1ab814f32093947317e19318211acd89252e40cd115f79ca311a",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "d82e64da5543b0fc7b86e583e1f06064bcc21b82af6b680bb1020622c4382a2e",
+  "verdict": "VECTOR_PROJECTION_HAS_TEN_HIDDEN_CHANNEL_MODES",
+  "channel_count": 13,
+  "vector_dimension": 3,
+  "rank": 3,
+  "nullity": 10,
+  "kernel_failures": 0,
+  "cubic_transform_tests": 624,
+  "cubic_closure_failures": 0,
+  "minimum_channel_energy_gap": 1,
+  "maximum_channel_energy_gap": 2
+}

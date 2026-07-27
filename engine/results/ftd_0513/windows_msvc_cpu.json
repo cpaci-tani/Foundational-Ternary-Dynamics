@@ -1,0 +1,38 @@
+{
+  "identifier": "FTD-0513",
+  "date": "2026-07-25",
+  "platform": "Windows 11 x64",
+  "toolchain": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "test": "test_constituent_stress_moment",
+  "checks_passed": 5,
+  "checks_total": 5,
+  "verdict": "RANK2_STRESS_IS_MINIMAL_FOR_TWO_STREAM_KERNEL_NOT_COMPLETE",
+  "metrics": {
+    "two_stream_arms": 312,
+    "covariance_arms": 144,
+    "multistream_arms": 3,
+    "worst_psd_residual": 1.0842021724855044e-19,
+    "worst_rank_one_residual": 6.9388939039072284e-18,
+    "worst_axis_projector_residual": 1.1102230246251565e-16,
+    "worst_energy_recovery_residual": 1.1102230246251565e-16,
+    "worst_momentum_recovery_residual": 2.2204460492503131e-16,
+    "worst_kinetic_recovery_residual": 2.2204460492503131e-16,
+    "worst_translation_residual": 0.0,
+    "worst_polarity_residual": 0.0,
+    "worst_cubic_covariance_residual": 0.0,
+    "minimum_stress_trace": 0.04907013423428238,
+    "minimum_multistream_separation": 0.076536686473017951,
+    "worst_multistream_conserved_residual": 0.0,
+    "worst_multistream_stress_residual": 5.5511151231257827e-17,
+    "minimum_fourth_moment_difference": 0.00010000000000000007
+  },
+  "sha256": {
+    "test": "2BBD1815A4E777EED1B0A50BFD1E4CE84012019F77AF17A378AAC7789838B159",
+    "header": "9858353D918D4780B1DD05DFD1907E79FE548DBE1F5D09EE8763EB5F3E6605D3",
+    "implementation": "1318BED3CB44B718CE5B4707BB0ACC94342D95EBDBF0A283200B09727CE8C226",
+    "locked_preregistration_body": "F57B4BBDF7DED9B656E159142BE32D3D79657D6896FDF064342DAC5FEEE56379"
+  },
+  "production_state_changed": false,
+  "production_defaults_changed": false
+}

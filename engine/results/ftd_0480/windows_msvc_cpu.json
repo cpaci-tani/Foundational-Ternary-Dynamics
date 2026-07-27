@@ -1,0 +1,29 @@
+{
+  "identifier": "FTD-0480",
+  "date": "2026-07-25",
+  "platform": "Windows 11",
+  "compiler": "MSVC 14.44.35207",
+  "configuration": "Release CPU observer",
+  "families": [
+    "affine",
+    "quadratic",
+    "cubic",
+    "wave_packet",
+    "static_dressing",
+    "movement_history"
+  ],
+  "polarities": [-1, 1],
+  "axis_directions": 6,
+  "diagonal_paths": 4,
+  "rows": 70,
+  "passed_rows": 58,
+  "failed_rows": 12,
+  "gate_tolerance": 1e-12,
+  "worst_failed_solve_residual": 0.0011946096937240113,
+  "rotation_residual": 0.0,
+  "translation_residual": 3.0531133177191805e-16,
+  "electric_zero_displacement_components_action_derived": false,
+  "magnetic_gather_action_derived": false,
+  "toggle_gate": false,
+  "verdict": "OBSERVER_QUALIFICATION_IDENTITIES_FAIL"
+}

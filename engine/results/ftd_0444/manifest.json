@@ -1,0 +1,21 @@
+{
+  "identifier": "FTD-0444",
+  "campaign": "hop-mechanics underdetermination v1",
+  "executed_local_date": "2026-07-24",
+  "platform": "Windows 11",
+  "compiler_environment": "MSVC 14.44.35207",
+  "configuration": "Release",
+  "backend": "algebraic observer; no production tick execution",
+  "campaign_source_sha256": "1f3dfc3874939404eeb805c6a08c8f34b30244b99fb465badbf61ec32da347ba",
+  "helper_source_sha256": "c966e6c9963774b941363e03788fadec7f71d17ceaffd24f0fd65307fbe2f045",
+  "record": "windows_msvc_cpu.csv",
+  "record_sha256": "99742d965b3b931f0500bc61d6216c1c830f66b37c266ad30ba927f9cda2452d",
+  "verdict": "REVERSIBLE_SELECTED_MAP_BUT_LOCAL_DYNAMICS_UNDERDETERMINED",
+  "moore_directions": 26,
+  "worst_force_work_residual": 1.1018204577883939e-17,
+  "minimum_transverse_force_separation": 0.2,
+  "momentum_shell_states": 6,
+  "worst_shell_energy_residual": 0.0,
+  "field_recoil_configuration_separation": 0.0433358973600409,
+  "worst_selected_map_round_trip_residual": 1.9229626863835638e-16
+}

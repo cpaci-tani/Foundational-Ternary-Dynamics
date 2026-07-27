@@ -1,0 +1,33 @@
+{
+  "identifier": "FTD-0554",
+  "date": "2026-07-26",
+  "status": [
+    "THEOREM — HOMOGENEOUS UNITARY FINITE-RANGE TRANSLATION NO-GO",
+    "CONSTRUCTIVE — NONLOCAL BAND-LIMITED ESCAPE"
+  ],
+  "verdict": "EXACT_TRANSLATION_REQUIRES_NONLOCAL_COUPLING",
+  "backend": "windows-msvc-cpu-observer",
+  "toolchain": "MSVC 14.44.35207 Release",
+  "volumes": [17, 33],
+  "registered_shift_samples": 10,
+  "registered_continuity_samples": 12,
+  "minimum_noninteger_support_per_volume": "L",
+  "minimum_density_change_support_per_volume": "L",
+  "minimum_current_support_per_volume": "L",
+  "most_negative_weight": -0.21619535286678662,
+  "worst_cardinal_residual": 1.4432899320127035e-15,
+  "worst_group_residual": 1.0130785099704553e-15,
+  "worst_energy_residual": 6.938893903907228e-17,
+  "worst_identity_residual": 6.552736555329879e-15,
+  "smallest_local_peierls_coefficient": 0.0034321130744224032,
+  "smallest_local_barrier": 0.0002145070671514002,
+  "failures": 0,
+  "focused_ctest": {"passed": 1, "failed": 0, "real_seconds": 0.08},
+  "sha256": {
+    "preregistration": "15BAA804B8018187C72B03BE14886F4FE653FC48A18A6D5E643F548A9D56C114",
+    "header": "41BB544B0113B701C5EBD42E1035720BAEEDF8E8542E7467E951C81F0D796D73",
+    "source": "F1AD507701793B728E551F65705B44A59564F7B0C143645E8B370AE52783B7F3",
+    "test": "36BF16448D6EA1CD639E3320C37F57DD117A089A4943F4E173A0EFB1E0B90653"
+  },
+  "production_changes": false
+}
