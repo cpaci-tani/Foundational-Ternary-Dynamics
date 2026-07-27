@@ -65,7 +65,15 @@ static void inject_initial_state(RenderBridge& rb) {
 // which default/physics changed and why in the commit, (2) update the
 // constant to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_DEFAULT = 0xca1aada0203f0229ULL;  // L=17 shipping defaults, FTD-0402, 2026-07-21
+// RE-PINNED 2026-07-27 -- EM-diagnostic c^2 restoration (readout, not physics).
+// B_field_energy and total_poynting were missing the factor c^2 carried by the
+// engine's own Lagrangian (lagrangian.h:145) and test_em_energy_conservation.
+// These folds include the energy audit, so the corrected scalars move them.
+// MEASURED in test_render_bridge_golden: reverting only those four factors
+// returns its combined hash to the previous pin exactly, and its state-only
+// fold is byte-identical either way -- the TRAJECTORY did not move. See the
+// pin history in test_render_bridge_golden.cpp for the full decomposition.
+static constexpr std::uint64_t GOLDEN_HASH_DEFAULT = 0x0133455d3c7d5d05ULL;  // L=17 shipping defaults, FTD-0402, 2026-07-21
 
 void test_golden_default_profile() {
     section("100-tick byte-hash regression (shipping-default toggles)");

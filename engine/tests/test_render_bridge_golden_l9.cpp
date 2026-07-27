@@ -39,7 +39,15 @@ static void inject_initial_state(RenderBridge& rb) {
 //     L=17 delta classification; no L-dependent state/identity/latency/clock or
 //     strong/weak-sector change was found.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_L9 = 0xac32d7b46e718b38ULL;  // FTD-0402, 2026-07-21
+// RE-PINNED 2026-07-27 -- EM-diagnostic c^2 restoration (readout, not physics).
+// B_field_energy and total_poynting were missing the factor c^2 carried by the
+// engine's own Lagrangian (lagrangian.h:145) and test_em_energy_conservation.
+// These folds include the energy audit, so the corrected scalars move them.
+// MEASURED in test_render_bridge_golden: reverting only those four factors
+// returns its combined hash to the previous pin exactly, and its state-only
+// fold is byte-identical either way -- the TRAJECTORY did not move. See the
+// pin history in test_render_bridge_golden.cpp for the full decomposition.
+static constexpr std::uint64_t GOLDEN_HASH_L9 = 0xf40e65d993b23787ULL;  // FTD-0402, 2026-07-21
 
 void test_golden_l9() {
     section("100-tick byte-hash regression (L=9, shipping defaults)");

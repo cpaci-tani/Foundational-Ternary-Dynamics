@@ -72,11 +72,14 @@ inline std::uint64_t mix_i64(std::uint64_t h, std::int64_t i) {
 
 namespace golden_detail {
 
-// Shared audit + manifested-list fold (identical in both public functions).
-inline std::uint64_t mix_audit_and_manifested(std::uint64_t h, const RenderBridge& rb) {
-    const auto& voxels = rb.voxels();
-    const int N = static_cast<int>(voxels.size());
-
+// Energy-audit fold — the REPORTED DIAGNOSTIC SCALARS.
+//
+// Split out from mix_audit_and_manifested on 2026-07-27 so a change to a
+// reported number can be distinguished from a change to the simulation
+// trajectory. Folding both into one constant meant a diagnostic correction and
+// a physics regression produced the same failure, which is how a gate stops
+// being informative. The combined fold below is unchanged bit-for-bit.
+inline std::uint64_t mix_audit(std::uint64_t h, const RenderBridge& rb) {
     // 2. Energy audit — 22 doubles + 2 ints + Vec3 poynting.
     auto a = rb.energy_audit();
     h = mix_double(h, a.field_energy);
@@ -100,6 +103,14 @@ inline std::uint64_t mix_audit_and_manifested(std::uint64_t h, const RenderBridg
     h = mix_double(h, a.strong_energy);
     h = mix_double(h, a.weak_energy);
 
+    return h;
+}
+
+// Manifested-particle-list fold — part of the TRAJECTORY, not the diagnostics.
+inline std::uint64_t mix_manifested(std::uint64_t h, const RenderBridge& rb) {
+    const auto& voxels = rb.voxels();
+    const int N = static_cast<int>(voxels.size());
+
     // 3. Manifested-particle list — (idx, state, velocity) per manifested site.
     int n_manifested = 0;
     for (int idx = 0; idx < N; ++idx) {
@@ -112,6 +123,29 @@ inline std::uint64_t mix_audit_and_manifested(std::uint64_t h, const RenderBridg
     }
     h = mix_i64(h, n_manifested);
 
+    return h;
+}
+
+// Combined fold, preserved BIT-FOR-BIT (audit then manifested, same order as
+// before the split) so every historical pinned constant keeps its meaning.
+inline std::uint64_t mix_audit_and_manifested(std::uint64_t h, const RenderBridge& rb) {
+    h = mix_audit(h, rb);
+    h = mix_manifested(h, rb);
+    return h;
+}
+
+// Per-voxel trajectory fold (original field set).
+inline std::uint64_t mix_voxels(std::uint64_t h, const RenderBridge& rb) {
+    const auto& voxels = rb.voxels();
+    const int N = static_cast<int>(voxels.size());
+    h = mix_i64(h, N);
+    for (int idx = 0; idx < N; ++idx) {
+        const auto& v = voxels[idx];
+        h = mix_i64(h, static_cast<std::int64_t>(v.state));
+        h = mix_vec3(h, v.flux);
+        h = mix_vec3(h, v.wave_vel);
+        h = mix_vec3(h, v.velocity);
+    }
     return h;
 }
 
@@ -168,6 +202,38 @@ inline std::uint64_t compute_state_hash_ext(const RenderBridge& rb) {
     }
 
     return golden_detail::mix_audit_and_manifested(h, rb);
+}
+
+// ---------------------------------------------------------------------------
+// SPLIT GATE (2026-07-27).
+//
+// `compute_state_hash` above folds the simulation trajectory AND the reported
+// diagnostic scalars into one number, so it cannot distinguish
+//   "the physics changed"            (serious)
+// from
+//   "a reported number was corrected" (often intended).
+// On 2026-07-27 a correction that restored the missing c^2 to the magnetic
+// energy and Poynting flux moved four golden constants while provably not
+// touching a single voxel field -- and the gate reported it identically to a
+// physics regression. A detector that fires the same way for both teaches you
+// to ignore it.
+//
+// These two folds let a test report WHICH half moved. Use them together; their
+// concatenation covers exactly the same fields as compute_state_hash.
+// ---------------------------------------------------------------------------
+
+/** Trajectory only: per-voxel fields + the manifested-particle list. */
+inline std::uint64_t compute_state_only_hash(const RenderBridge& rb) {
+    std::uint64_t h = GOLDEN_FNV_OFFSET;
+    h = golden_detail::mix_voxels(h, rb);
+    h = golden_detail::mix_manifested(h, rb);
+    return h;
+}
+
+/** Reported diagnostics only: the energy-audit scalars. */
+inline std::uint64_t compute_audit_only_hash(const RenderBridge& rb) {
+    std::uint64_t h = GOLDEN_FNV_OFFSET;
+    return golden_detail::mix_audit(h, rb);
 }
 
 }}  // namespace ftd::test

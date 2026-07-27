@@ -176,11 +176,38 @@ static void inject_initial_state(RenderBridge& rb) {
 //     and total_energy includes accounted particle energy. No toggle, source,
 //     boundary, or discrete-state change was observed. Reproduced twice.
 //
+//   - 2026-07-27: RE-PINNED to 0xc54ffbeda5a3ea63 for the EM-diagnostic c^2
+//     restoration. B_field_energy and total_poynting were missing the factor
+//     c^2 that the engine's own Lagrangian (lagrangian.h:145) and
+//     test_em_energy_conservation.cpp both carry; with J as vector potential
+//     and d^2J/dt^2 = c^2 grad^2 J the consistent energy is
+//     1/2|E|^2 + (c^2/2)|B|^2 with flux c^2 (E x B). Uncorrected, a pure
+//     transverse wave reported a FIXED B/E ratio of 1/c^2 = 3 and the browser
+//     drew it as two bars in the same unit.
+//     MEASURED, not inferred: reverting ONLY these four factors returns the
+//     combined hash to the previous pin 0x450fca908f536e36 exactly, and the
+//     state-only fold is byte-identical either way (0xe9633be07656e741).
+//     The trajectory therefore did NOT move -- this is a readout correction.
+//     That also proves the other 2026-07-27 engine edits (dipole sign in
+//     atom_forces.cpp, energy-ledger expected_rate, remove_wave_mean in three
+//     scenarios, latency clamp(-phi), gravity requested/active split) are all
+//     inert for this golden. Old: 0x450fca908f536e36.
+//
 // If this changes WITHOUT a stated config/physics rationale, ENGINE PHYSICS
 // CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
 // the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0x450fca908f536e36ULL;  // L=17, FTD-0402 raw causal/mass roles, 2026-07-21
+static constexpr std::uint64_t GOLDEN_HASH = 0xc54ffbeda5a3ea63ULL;  // L=17, EM-diagnostic c^2 restoration, 2026-07-27
+
+// SPLIT GATE (2026-07-27). The combined GOLDEN_HASH above cannot distinguish a
+// trajectory change from a corrected diagnostic. These two halves can:
+//   GOLDEN_STATE_HASH -- per-voxel fields + manifested list. A mismatch here is
+//                        a REAL physics change and should block.
+//   GOLDEN_AUDIT_HASH -- the reported energy-audit scalars. A mismatch here on
+//                        its own means a readout changed while the simulation
+//                        did not, which is frequently intended.
+static constexpr std::uint64_t GOLDEN_STATE_HASH = 0xe9633be07656e741ULL;
+static constexpr std::uint64_t GOLDEN_AUDIT_HASH = 0x48bd8b3fc2efdba3ULL;
 
 // ---------------------------------------------------------------------------
 // Test driver
@@ -204,20 +231,39 @@ void test_golden_tick_hash() {
         rb.tick();
     }
 
-    const std::uint64_t hash = compute_state_hash(rb);
+    const std::uint64_t hash       = compute_state_hash(rb);
+    const std::uint64_t state_hash = compute_state_only_hash(rb);
+    const std::uint64_t audit_hash = compute_audit_only_hash(rb);
 
-    // Always print the hash — useful when the test fails for diff'ing,
-    // and useful when initially capturing the golden.
-    std::printf("[golden] computed hash = 0x%016llx\n",
-                static_cast<unsigned long long>(hash));
-    std::printf("[golden] expected hash = 0x%016llx\n",
+    std::printf("[golden] combined     = 0x%016llx  (expected 0x%016llx)\n",
+                static_cast<unsigned long long>(hash),
                 static_cast<unsigned long long>(GOLDEN_HASH));
+    std::printf("[golden]   state fold = 0x%016llx  (expected 0x%016llx)\n",
+                static_cast<unsigned long long>(state_hash),
+                static_cast<unsigned long long>(GOLDEN_STATE_HASH));
+    std::printf("[golden]   audit fold = 0x%016llx  (expected 0x%016llx)\n",
+                static_cast<unsigned long long>(audit_hash),
+                static_cast<unsigned long long>(GOLDEN_AUDIT_HASH));
 
-    check("hash matches frozen GOLDEN_HASH",
+    // The trajectory gate -- this is the one that means "the physics moved".
+    check("TRAJECTORY unchanged (state-only fold: voxels + manifested list)",
+          state_hash == GOLDEN_STATE_HASH,
+          "Per-voxel state/flux/wave_vel/velocity or the manifested-particle "
+          "list changed. This is a REAL engine-physics change -- do not re-pin "
+          "without a stated rationale.");
+
+    // The readout gate -- a mismatch here ALONE means a reported number moved
+    // while the simulation did not.
+    check("reported diagnostics unchanged (audit-only fold)",
+          audit_hash == GOLDEN_AUDIT_HASH,
+          "The energy-audit scalars changed. If the state fold above still "
+          "passes, the trajectory is intact and only a REPORTED quantity moved "
+          "(e.g. a corrected unit or a restored factor). Re-pin with a rationale.");
+
+    check("combined hash matches frozen GOLDEN_HASH",
           hash == GOLDEN_HASH,
-          "Engine physics has changed since the Phase 4 pre-flight golden "
-          "was captured. If this is intentional (not a phase extraction), "
-          "update GOLDEN_HASH and document the change.");
+          "Combined fold moved. Read the two sub-folds above to see which half "
+          "-- trajectory or reported diagnostics -- is responsible.");
 }
 
 }}  // namespace ftd::test
