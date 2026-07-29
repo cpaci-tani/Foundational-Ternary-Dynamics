@@ -321,12 +321,6 @@ function _resetAllVisualState() {
         viewport.toggleTrails(false);
     }
 
-    // PE dynamics buttons (gravity/damping are OFF by default)
-    for (const id of ['toggle-pe-gravity', 'toggle-pe-damping']) {
-        const btn = document.getElementById(id);
-        if (btn) btn.classList.remove('active');
-    }
-
     // ── Scale 2/3: delegated to Scale2Controller ──
     Scale2Controller.resetScale2({ viewport });
 
@@ -1109,21 +1103,7 @@ function wireControls() {
         const el = document.getElementById(elId);
         if (el) {
             el.addEventListener('change', () => {
-                const checked = el.checked;
-                setter(checked);
-                if (elId === 'pe-gravity') {
-                    const btn = document.getElementById('toggle-pe-gravity');
-                    if (btn) {
-                        if (checked) btn.classList.add('active');
-                        else btn.classList.remove('active');
-                    }
-                } else if (elId === 'pe-damping') {
-                    const btn = document.getElementById('toggle-pe-damping');
-                    if (btn) {
-                        if (checked) btn.classList.add('active');
-                        else btn.classList.remove('active');
-                    }
-                }
+                setter(el.checked);
             });
         }
     }
@@ -1280,31 +1260,6 @@ function wireViewportToggles() {
                 handler(btn.classList.contains('active'));
             });
         }
-    }
-
-    // PE dynamics toggles (affect simulation behavior)
-    const peGravBtn = document.getElementById('toggle-pe-gravity');
-    if (peGravBtn) {
-        peGravBtn.addEventListener('click', () => {
-            peGravBtn.classList.toggle('active');
-            const on = peGravBtn.classList.contains('active');
-            bridge.peSetGravity(on);
-            // Sync sidebar checkbox if it exists
-            const cb = document.getElementById('pe-gravity');
-            if (cb) cb.checked = on;
-        });
-    }
-
-    const peDampBtn = document.getElementById('toggle-pe-damping');
-    if (peDampBtn) {
-        peDampBtn.addEventListener('click', () => {
-            peDampBtn.classList.toggle('active');
-            const on = peDampBtn.classList.contains('active');
-            bridge.peSetDamping(on);
-            // Sync sidebar checkbox if it exists
-            const cb = document.getElementById('pe-damping');
-            if (cb) cb.checked = on;
-        });
     }
 
     // AE field overlay toggle

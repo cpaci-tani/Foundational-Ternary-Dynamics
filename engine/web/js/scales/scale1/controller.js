@@ -139,8 +139,6 @@ function applyPEPhysicsPreset(bridge, preset) {
     setCheckbox('pe-radiation', p.radiation);
     setCheckbox('pe-relativistic', p.relativistic);
     setCheckbox('pe-relativistic-verlet', p.relativistic_verlet);
-    setButtonActive('toggle-pe-gravity', p.gravity);
-    setButtonActive('toggle-pe-damping', p.damping);
 }
 
 function applyPEOverlayPreset(viewport, preset) {
