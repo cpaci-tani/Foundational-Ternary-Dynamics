@@ -169,4 +169,23 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
+
+    test('integrator-only toggle buttons are removed from the overlay toolbar (folded into telemetry)', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await switchMode(page, 'particles');
+
+        const present = await page.evaluate(() => ({
+            gravityBtn: !!document.getElementById('toggle-pe-gravity'),
+            dampingBtn: !!document.getElementById('toggle-pe-damping'),
+            gravityCheckbox: !!document.getElementById('pe-gravity'),
+            dampingCheckbox: !!document.getElementById('pe-damping'),
+        }));
+        expect(present.gravityBtn).toBe(false);
+        expect(present.dampingBtn).toBe(false);
+        expect(present.gravityCheckbox).toBe(true);
+        expect(present.dampingCheckbox).toBe(true);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
 });

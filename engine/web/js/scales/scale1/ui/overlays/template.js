@@ -81,19 +81,6 @@ export function getScale1OverlayTemplate() {
         </button>
       `),
     ),
-    overlaySection(
-      'Integrator toggles',
-      'Affect dynamics, not overlay arrows alone',
-      overlayRow('', `
-        <button class="view-toggle dynamics-toggle" id="toggle-pe-gravity"
-          title="Toggle gravitational force in the integrator. G_PE ≈ 1.75e-45 — negligible vs Coulomb.">
-          Gravity dyn.
-        </button>
-        <button class="view-toggle dynamics-toggle" id="toggle-pe-damping" title="Toggle velocity damping">
-          Damping
-        </button>
-      `),
-    ),
   ].join('');
 
   return createScaleOverlayPanel({
