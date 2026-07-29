@@ -71,6 +71,10 @@ export function getScale1OverlayTemplate() {
           title="Admissibility ring around each promoted particle: solid green = passes the scale-separation heuristic (N ≳ 113), dashed amber = marginal.">
           <span class="field-swatch field-swatch-pe-admissibility"></span>Admissibility
         </button>
+        <button class="view-toggle field-toggle" id="toggle-pe-provenance"
+          title="Floating #clusterId N=<size> label above each promoted particle, from the ⤴ Scale up capture.">
+          <span class="field-swatch field-swatch-pe-provenance"></span>Provenance
+        </button>
       `),
     ),
     overlaySection(

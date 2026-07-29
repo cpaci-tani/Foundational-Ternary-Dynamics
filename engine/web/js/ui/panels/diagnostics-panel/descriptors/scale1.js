@@ -5,6 +5,12 @@
  */
 
 import { G_PE, ALPHA_G_ELECTRON, GRAVITY_VIS_GAIN } from '../../../../constants.js';
+import { scale1State } from '../../../../scales/scale1/state/store.js';
+
+function scale1LastPromotionField(key) {
+    const p = scale1State.lastPromotion;
+    return p ? String(p[key] ?? '—') : '—';
+}
 
 export const sections = [
     {
@@ -191,6 +197,19 @@ export const sections = [
               compute: (hub) => hub.s1._overlaySystemL ?? 0 },
             { id: 'l-origin-xref', label: 'cf. L (about origin, Conservation table)', unit: 'sim',
               compute: (hub) => hub.peAngMom.last() },
+        ],
+    },
+    {
+        id: 'pe-provenance',
+        title: 'Provenance Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayProvenanceOn,
+        rows: [
+            { id: 'source-scenario', label: 'Source scenario', unit: '', format: 'text',
+              compute: () => scale1LastPromotionField('sourceScenario') },
+            { id: 'source-tick', label: 'Source tick', unit: '', format: 'text',
+              compute: () => scale1LastPromotionField('sourceTick') },
+            { id: 'cluster-source', label: 'Cluster source', unit: '', format: 'text',
+              compute: () => scale1LastPromotionField('clusterSource') },
         ],
     },
 ];

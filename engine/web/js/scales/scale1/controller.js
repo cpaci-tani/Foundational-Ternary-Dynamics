@@ -65,6 +65,7 @@ export function setPESystem(on)       { scale1State.overlays.system = on; }
 export function setVelocities(on)     { scale1State.overlays.velocities = on; }
 export function setTrails(on)         { scale1State.overlays.trails = on; }
 export function setAdmissibilityRing(on) { scale1State.overlays.admissibilityRing = on; }
+export function setProvenanceLabel(on) { scale1State.overlays.provenanceLabel = on; }
 
 /** Promotion-source ghost layer toggle (controls panel). */
 export function setVoxelDebug(on, viewport) {
@@ -156,6 +157,7 @@ function applyPEOverlayPreset(viewport, preset) {
     ov.system = !!o.system;
     ov.voxelDebug = !!o.voxelDebug;
     ov.admissibilityRing = !!o.admissibilityRing;
+    ov.provenanceLabel = !!o.provenanceLabel;
 
     setButtonActive('toggle-velocities', ov.velocities);
     setButtonActive('toggle-trails', ov.trails);
@@ -169,6 +171,7 @@ function applyPEOverlayPreset(viewport, preset) {
     setButtonActive('toggle-pe-system', ov.system);
     setCheckbox('pe-voxel-debug', ov.voxelDebug);
     setButtonActive('toggle-pe-admissibility', ov.admissibilityRing);
+    setButtonActive('toggle-pe-provenance', ov.provenanceLabel);
 
     if (!viewport) return;
     viewport.toggleVelocityVectors(ov.velocities);
@@ -184,6 +187,7 @@ function applyPEOverlayPreset(viewport, preset) {
     viewport.togglePESystem(ov.system);
     setVoxelDebug(ov.voxelDebug, viewport);
     viewport.toggleAdmissibilityRings(ov.admissibilityRing);
+    viewport.toggleProvenanceLabels(ov.provenanceLabel);
 }
 
 
@@ -234,6 +238,7 @@ function _resetScale1Internal(ctx) {
         viewport.toggleSpinVectors?.(false);
         viewport.toggleVoxelDebugLayer?.(false);
         viewport.toggleAdmissibilityRings?.(false);
+        viewport.toggleProvenanceLabels?.(false);
         if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
@@ -458,6 +463,11 @@ export function animatePE(ctx) {
     if (ov.admissibilityRing && peData.count > 0) {
         viewport.updateAdmissibilityRings(peData, scale1State.promotedSeedById, peData.ids);
     }
+
+    if (ov.provenanceLabel && peData.count > 0) {
+        viewport.updateProvenanceLabels(peData, scale1State.promotedSeedById, peData.ids);
+    }
+    telemetryHub.s1._overlayProvenanceOn = ov.provenanceLabel;
 
     // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();
