@@ -141,4 +141,32 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
+
+    test('F_S force arrows use a dashed material (visible confirmation of the color-wheel fix)', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await switchMode(page, 'particles');
+        await selectPEScenario(page, 's1-empty-zoo');
+        await expect.poll(() => page.evaluate(() => !!window._ftdBridge)).toBe(true);
+
+        await page.evaluate(() => {
+            const b = window._ftdBridge;
+            // Two same-color quarks so the native strong term (pairwise, requires
+            // both colors nonzero) is nonzero.
+            b.peAddParticle('up-quark', 2, 3, 0, 0, 0, 0, 0, 2.2, 0.3);
+            b.peAddParticle('down-quark', -1, -3, 0, 0, 0, 0, 0, 4.7, 0.3);
+            b.peSetStrong(true);
+            document.getElementById('toggle-pe-force-strong')?.click();
+        });
+        await page.waitForTimeout(500);
+
+        const isDashed = await page.evaluate(() => {
+            const vp = window.__FTD_DEV__?.viewport;
+            const mat = vp?._particleRenderer?._peForceStrong?.material;
+            return mat?.isLineDashedMaterial === true;
+        });
+        expect(isDashed).toBe(true);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
 });

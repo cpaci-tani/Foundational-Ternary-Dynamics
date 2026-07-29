@@ -456,14 +456,18 @@ export class ViewportParticleRenderer {
     // ── Per-Particle Force Arrows (decomposed: Coulomb / gravity / strong / net) ──
     _buildPEForceArrows() {
         const MAX = 200;
-        const makeSet = (color) => {
+        const makeSet = (color, dashed = false) => {
             const vertices = new Float32Array(MAX * 6);
             const geo = new THREE.BufferGeometry();
             geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
             geo.setDrawRange(0, 0);
-            const mat = new THREE.LineBasicMaterial({
-                color, transparent: true, opacity: 0.85,
-            });
+            const mat = dashed
+                ? new THREE.LineDashedMaterial({
+                    color, transparent: true, opacity: 0.9, dashSize: 1.5, gapSize: 1.0,
+                  })
+                : new THREE.LineBasicMaterial({
+                    color, transparent: true, opacity: 0.85,
+                  });
             const lines = new THREE.LineSegments(geo, mat);
             lines.frustumCulled = false;
             lines.visible = false;
@@ -472,7 +476,7 @@ export class ViewportParticleRenderer {
         };
         this._peForceCoulomb = makeSet(0xff4444);
         this._peForceGravity = makeSet(0x94a3b8);
-        this._peForceStrong = makeSet(0xff1744);
+        this._peForceStrong = makeSet(0xff1744, /* dashed */ true);
         this._peForceNet = makeSet(0x44cc66);
         // Legacy alias — net force layer
         this._particleForces = this._peForceNet;
@@ -498,6 +502,7 @@ export class ViewportParticleRenderer {
             posAttr.array[i * 6 + 5] = pz + (mag > 1e-20 ? fz / mag * scale : 0);
         }
         posAttr.needsUpdate = true;
+        if (lines.material.isLineDashedMaterial) lines.computeLineDistances();
         lines.geometry.setDrawRange(0, n * 2);
     }
 
