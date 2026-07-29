@@ -45,6 +45,7 @@ import {
 } from './scenario-registry.js';
 import { scale1State, resetScale1State } from './state/store.js';
 import { telemetryHub } from '../../telemetry-hub.js';
+import { estimateOrbitPeriod } from './telemetry/orbit-period.js';
 
 
 // =====================================================================
@@ -324,12 +325,37 @@ export function animatePE(ctx) {
     if (ov.velocities && peData.count > 0) {
         viewport.updateVelocityVectors(peData.positions, peData.velocities, peData.count);
     }
+    telemetryHub.s1._overlayVelocitiesOn = ov.velocities;
 
     if (running && peData.count > 0) {
         updateTrailHistory(peData);
     }
     if (ov.trails) {
         viewport.updateTrails(getTrailHistory(), typeMap);
+    }
+    telemetryHub.s1._overlayTrailsOn = ov.trails;
+    // Orbit-period estimate (2-body proxy): built from the hub's own
+    // tick-gated peSeparation channel (collectScale1Extended), NOT from the
+    // visual trail cache (pe-cloud-expander.js getTrailHistory()) — that
+    // cache stores per-particle ring buffers of raw positions with no tick
+    // stamps, sampled once per rendered frame rather than once per engine
+    // tick, so it cannot supply the {tick, separation} series
+    // estimateOrbitPeriod expects. telemetryHub.s1.diag.tick / peSeparation
+    // are real engine-tick-aligned values already computed elsewhere in the
+    // hub; only new-tick samples are appended here (deduped against the
+    // last recorded tick) so the history stays real and doesn't repeat a
+    // stale sample across the ~3 unthrottled frames between hub collections.
+    if (ov.trails && peData.count === 2) {
+        const tick = telemetryHub.s1.diag?.tick ?? null;
+        const sep = telemetryHub.peSeparation.last();
+        const hist = telemetryHub._s1SepHistory;
+        if (tick !== null && sep > 0 && (hist.length === 0 || hist[hist.length - 1].tick !== tick)) {
+            hist.push({ tick, separation: sep });
+            if (hist.length > 200) hist.shift();
+        }
+        telemetryHub.s1._orbitPeriod = estimateOrbitPeriod(hist);
+    } else {
+        telemetryHub.s1._orbitPeriod = null;
     }
 
     if (ov.potential && peData.count > 0) {
@@ -341,7 +367,19 @@ export function animatePE(ctx) {
             grid.positions, field.potentials, grid.count, field.maxPotential);
         viewport.updateFieldVectors(
             grid.positions, field.forces, grid.count, field.maxForce, 8.0);
+        // samplePECoulombOnly returns maxPotential (peak |V|) but no min —
+        // scan the grid once for the true signed min/max for the telemetry
+        // legend (Task 6's tooltip points here).
+        let potMin = Infinity, potMax = -Infinity;
+        for (let i = 0; i < grid.count; i++) {
+            const v = field.potentials[i];
+            if (v < potMin) potMin = v;
+            if (v > potMax) potMax = v;
+        }
+        telemetryHub.s1._potentialMin = grid.count > 0 ? potMin : 0;
+        telemetryHub.s1._potentialMax = grid.count > 0 ? potMax : 0;
     }
+    telemetryHub.s1._overlayPotentialOn = ov.potential;
 
     // Coulomb E-field streamlines (3D, throttled)
     const refreshStreamlines = running ? frameCount % 5 === 0 : (frameCount % 30 === 0);
@@ -362,6 +400,7 @@ export function animatePE(ctx) {
         });
         viewport.updatePEStreamlines(lines);
     }
+    telemetryHub.s1._overlayEfieldOn = ov.efield;
 
     if (ov.gravityField && peData.count > 0) {
         if (!scale1State.fieldGrid) scale1State.fieldGrid = generateGridXZ(25, 20);
@@ -371,6 +410,7 @@ export function animatePE(ctx) {
         viewport.updateGravityVectors(
             grid.positions, field.forces, grid.count, field.maxForce);
     }
+    telemetryHub.s1._overlayGravityFieldOn = ov.gravityField;
 
     // Per-particle decomposed force arrows (native Float64 decomposition —
     // `net` is the TRUE integrator force incl. every enabled term)
@@ -381,6 +421,7 @@ export function animatePE(ctx) {
             viewport.updatePEForceDecomposition(decomp, GRAVITY_VIS_GAIN);
         }
     }
+    telemetryHub.s1._overlayForceOn = anyPEForce;
 
     if (ov.system && peData.count > 0) {
         const sys = computeSystemVectors(peData);
