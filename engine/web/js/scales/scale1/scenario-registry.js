@@ -51,6 +51,9 @@ const BASE_OVERLAYS = Object.freeze({
     forceNet: false,
     system: false,
     voxelDebug: false,
+    admissibilityRing: false,
+    provenanceLabel: false,
+    massComparison: false,
 });
 
 /** Contact radius for a promoted cluster's equivalent sphere (display units). */
@@ -61,10 +64,11 @@ function clusterContactRadius(size, displayScale) {
 /** Seed the engine from a promotion payload. Returns the seed count. */
 function seedPromotionPayload(bridge, payload) {
     for (const s of payload.seeds) {
-        bridge.peAddParticle(null, s.charge,
+        const id = bridge.peAddParticle(null, s.charge,
             s.position[0], s.position[1], s.position[2],
             s.velocity[0], s.velocity[1], s.velocity[2],
             s.mass, clusterContactRadius(s.size, payload.displayScale));
+        scale1State.promotedSeedById.set(id, s);
     }
     return payload.seeds.length;
 }
@@ -94,7 +98,7 @@ export const SCALE1_SCENARIOS = [
             + 'charge = sign·N [DERIVED from telemetry]; centroid position/velocity '
             + '[DERIVED from telemetry]; Verlet integration [IMPOSED].',
         physics: { gravity: true },
-        overlays: { velocities: true },
+        overlays: { velocities: true, admissibilityRing: true, provenanceLabel: true },
         setup({ bridge }) {
             const payload = resolvePromotion();
             if (!payload || !payload.seeds?.length) {
@@ -119,7 +123,8 @@ export const SCALE1_SCENARIOS = [
             + 'max(ρ, K_B) [IMPOSED, display only]; the dynamic particles use '
             + 'N·K_B. Requires a prior "⤴ Scale up" capture.',
         physics: { gravity: true },
-        overlays: { velocities: true, voxelDebug: true },
+        overlays: { velocities: true, voxelDebug: true, admissibilityRing: true,
+                    provenanceLabel: true, massComparison: true },
         setup({ bridge }) {
             const payload = resolvePromotion();
             if (!payload || !payload.seeds?.length) {
