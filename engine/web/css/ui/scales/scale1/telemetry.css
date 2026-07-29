@@ -85,6 +85,8 @@
 .field-swatch-pe-force-net     { background: var(--chart-pe-force, #44cc66); }
 .field-swatch-pe-forces     { background: var(--chart-pe-force); }
 .field-swatch-pe-system     { background: linear-gradient(90deg, #46c6ff, #d77bf0); }
+.field-swatch-pe-admissibility { background: #4ade80; }
+.field-swatch-pe-provenance    { background: #38bdf8; }
 
 /* ── Responsive: compact phones ─────────────────────────────────────────── */
 /* The conservation row reserves 150px across three fixed columns (label /
