@@ -13,7 +13,9 @@ import { PE_VIS_BOUNDARY_R } from '../../viewport/constants.js';
 
 export const MAX_CLOUD_TOTAL = 100000;
 export const TRAIL_MAX_LENGTH = 200;
-export const MANIFEST_FILL = 0.40;
+// Canonical value lives in viewport/constants.js; re-exported here so the
+// controller's existing import surface keeps working.
+export { MANIFEST_FILL } from '../../viewport/constants.js';
 export { PE_VIS_BOUNDARY_R };
 
 const _cloudPos = new Float32Array(MAX_CLOUD_TOTAL * 3);

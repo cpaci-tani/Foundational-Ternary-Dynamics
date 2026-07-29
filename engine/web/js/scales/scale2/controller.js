@@ -360,7 +360,6 @@ export function syncAEParams(ctx) {
 export function animateAE(ctx) {
     const {
         bridge, viewport, running, ticksPerFrame, inspector,
-        fluxEnergyChart, particleChart,
         activeTab, frameCount, dom, now,
         updatePlayButton,
         setRunning, engineMode
@@ -668,26 +667,14 @@ export function animateAE(ctx) {
 
             updateAtomicEnergyDisplay(dom, atomData);
 
-            const diagAdapted = {
-                tick: diag.tick,
-                manifested: diag.atomCount,
-                positive: 0, negative: 0,
-                totalFlux: 0, totalEnergy: diag.totalEnergy,
-                fieldEnergy: diag.totalPEIonic + diag.totalPEVdw + diag.totalPEBond,
-                kineticEnergy: diag.totalKE,
-                peFlux: diag.totalPEIonic,
-            };
-            fluxEnergyChart.push(diagAdapted);
-            particleChart.push(diagAdapted);
+            // NOTE (2026-07-29): the legacy null-canvas FluxEnergyChart /
+            // ParticleChart pushes were removed here, same as Scale 1's.
+            // They were wired to telemetryHub RingBufferViews (no push
+            // method), so every call threw a swallowed page error; the hub's
+            // _s2_ae ring is the AE history the charts panel reads.
         }
 
-
-
         switch (activeTab) {
-            case 'charts':
-                fluxEnergyChart.draw();
-                particleChart.draw();
-                break;
             case 'inspector':
                 inspector.update();
                 break;

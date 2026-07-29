@@ -38,7 +38,6 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { PETelemetryPanel } from './pe-telemetry.js';
 import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js';
@@ -75,7 +74,6 @@ let lagrangianPanel = null;
 // Legacy chart instances (scale1/scale2 still push into these ring buffers).
 let fluxEnergyChart = null;
 let particleChart = null;
-let peTelemetry = null;
 
 // Two-tier pause system:
 //   `running`         — GLOBAL pause. When false, the entire RAF body is skipped:
@@ -177,7 +175,6 @@ function _makeCtx() {
         get lagrangianPanel() { return lagrangianPanel; },
         get fluxEnergyChart() { return fluxEnergyChart; },
         get particleChart() { return particleChart; },
-        get peTelemetry() { return peTelemetry; },
         get telemetryHub() { return telemetryHub; },
         get running() { return running; },
         set running(v) { running = v; },
@@ -273,8 +270,7 @@ function applyReflectiveBoundary(on) {
 // Reset simulation data caches (always on scenario change) but PRESERVE visual toggles
 function _resetSimCaches() {
     clearCharts();
-    if (peTelemetry) peTelemetry.clear();
-    Scale1Controller.resetScale1({ viewport }); // clears trail history + cloud caches
+    Scale1Controller.resetScale1(_makeCtx()); // clears trail history + cloud caches
     if (viewport) {
         viewport.clearTrails();
         viewport.clearElementLabels();
@@ -299,7 +295,7 @@ function _resetAllVisualState() {
     }
 
     // ── Scale 1: PE overlay buttons (delegated to Scale1Controller) ──
-    Scale1Controller.resetScale1({ viewport });
+    Scale1Controller.resetScale1(_makeCtx());
     for (const id of [
         'toggle-pe-efield', 'toggle-pe-potential',
         'toggle-pe-gravity-field',
@@ -432,6 +428,9 @@ function showToast(msg, severity = 'info') {
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentElement) toast.remove(); }, 8000);
 }
+// Leaf modules (scenario-loader, scale0 toolbar) reach the toast system via
+// this window hook — they must not import app.js (CONTRACTS §3 Rule 1).
+window.showToast = showToast;
 
 // ── Loading Progress ─────────────────────────────────────────────────
 function _loadProgress(pct, msg) {
@@ -582,7 +581,6 @@ async function init() {
     });
     inspectorRuntime = createInspectorAppRuntime({ viewport, bridge, setZooMode });
     inspector = inspectorRuntime.inspector;
-    peTelemetry = new PETelemetryPanel();
 
     // Build ontic-panel provider with live-state getters (Wave 2 ticket 7).
     // observatory/aggregateDetector/emergenceMonitor are created below; the
@@ -794,8 +792,10 @@ function _shouldAppUpdatePanel(panelId) {
 const _scale1Ctx = {
     bridge: null, viewport: null, running: false,
     ticksPerFrame: 1, inspector: null,
-    fluxEnergyChart: null, particleChart: null, peTelemetry: null,
+    fluxEnergyChart: null, particleChart: null,
     activeTab: null, frameCount: 0, dom: _dom, now: 0,
+    telemetryHub: null, engineMode: null,
+    isPanelVisible: null, resetAllVisualState: null,
     updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
 };
 
@@ -808,13 +808,24 @@ function _buildScale1Ctx(now) {
     c.inspector = inspector;
     c.fluxEnergyChart = fluxEnergyChart;
     c.particleChart = particleChart;
-    c.peTelemetry = peTelemetry;
     c.activeTab = activeTab;
     c.frameCount = frameCount;
     c.dom = _dom;
     c.now = now;
+    // Ctx-shape consolidation (2026-07-29 revision): the per-frame ctx now
+    // carries the same load-bearing members the full _makeCtx() has, so the
+    // controller sees ONE shape everywhere (CONTRACTS §3).
+    c.telemetryHub = telemetryHub;
+    c.engineMode = engineMode;
+    c.isPanelVisible = _isPanelVisibleFn;
+    c.resetAllVisualState = _resetAllVisualState;
     return c;
 }
+
+// Same predicate _makeCtx() exposes, hoisted so the per-frame ctx builder
+// doesn't allocate a closure every frame.
+const _isPanelVisibleFn = (panelId) =>
+    activeTab === panelId || floatingWindowManager.has(panelId);
 
 const _scale2Ctx = {
     bridge: null, viewport: null, running: false,
@@ -1061,7 +1072,6 @@ function wireTabs() {
             lagrangianPanel?.update();
         } else if (target === 'diagnostics') {
             diagnosticsPanel?.update();
-            if (peTelemetry) peTelemetry.drawCharts();
         } else if (target === 'physics') {
             onticPanel?.refreshPhysicsPanel();
         }
@@ -1091,6 +1101,8 @@ function wireControls() {
         'pe-spin-orbit': (v) => bridge.peSetSpinOrbit(v),
         'pe-radiation': (v) => bridge.peSetRadiation(v),
         'pe-relativistic': (v) => bridge.peSetRelativistic(v),
+        'pe-relativistic-verlet': (v) => bridge.peSetRelativisticVerlet(v),
+        'pe-voxel-debug': (v) => Scale1Controller.setVoxelDebug(v, viewport),
     };
     for (const [elId, setter] of Object.entries(peToggleMap)) {
         const el = document.getElementById(elId);
@@ -1133,6 +1145,7 @@ function wireControls() {
             const s = parseFloat(softSlider.value);
             softValue.textContent = s.toFixed(2);
             bridge.peSetSoftening(s);
+            telemetryHub.setScale1Runtime({ softening: s });
         });
     }
 
@@ -1628,7 +1641,7 @@ function switchEngineMode(mode) {
         const scenario = document.getElementById('scenario-select')?.value || 'flux-pulse';
         Scale0Controller.loadScenario(_makeCtx(), scenario);
     } else if (mode === 'particles') {
-        loadPEScenario(document.getElementById('pe-scenario-select')?.value || 'pe-hydrogen');
+        loadPEScenario(document.getElementById('pe-scenario-select')?.value || 's1-coulomb-orbit');
     } else if (mode === 'atoms') {
         loadAEScenario(document.getElementById('ae-scenario-select')?.value || 'ae-hydrogen-atom');
     } else if (mode === 'molecules') {
@@ -1647,7 +1660,7 @@ function switchEngineMode(mode) {
 
 
 function loadPEScenario(name) {
-    Scale1Controller.loadPEScenario({ bridge, viewport, resetAllVisualState: _resetAllVisualState, inspector }, name);
+    Scale1Controller.loadPEScenario(_makeCtx(), name);
 }
 
 

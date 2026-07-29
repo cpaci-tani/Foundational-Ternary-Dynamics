@@ -360,7 +360,9 @@ export class WebSocketBridge {
             chargeBalance: 0,
             spinUp: 0, spinDown: 0,
             colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
-            angMomX: 0, angMomY: 0, angMomZ: 0
+            angMomX: 0, angMomY: 0, angMomZ: 0,
+            fieldSpinX: 0, fieldSpinY: 0, fieldSpinZ: 0, fieldHelicity: 0,
+            centerClockPhase: 0, centerClockSpeed: 0, centerClockLatency: 0
         };
     }
 
@@ -440,6 +442,15 @@ export class WebSocketBridge {
     _ensureFallback() {
         if (!this._fallback) {
             this._fallback = new WasmBridge();
+            // Scale 1 runs on the in-page WASM module (native ParticleEngine),
+            // independent of the native-server socket. Kick off the module
+            // load; until it resolves, pe* calls return contract-empty shapes
+            // and peGetBackendCapabilities().backend === 'unavailable'.
+            this._fallbackInit = this._fallback.init(this.latticeSize)
+                .catch(err => {
+                    console.warn('[WSBridge] Scale-1 WASM fallback failed to load;',
+                                 'particle engine unavailable in this session:', err);
+                });
         }
         return this._fallback;
     }
@@ -558,6 +569,19 @@ export class WebSocketBridge {
     peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff) {
         return this._ensureFallback().peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff);
     }
+    peApplyEquilibriumOrbit(particleId, options = {}) {
+        return this._ensureFallback().peApplyEquilibriumOrbit(particleId, options);
+    }
+    peApplyEquilibriumOrbitBatch(entries) {
+        return this._ensureFallback().peApplyEquilibriumOrbitBatch?.(entries);
+    }
+    peScaleVelocity(particleId, scale) {
+        return this._ensureFallback().peScaleVelocity(particleId, scale);
+    }
+    peSetSpinAxis(id, ax, ay, az) {
+        return this._ensureFallback().peSetSpinAxis(id, ax, ay, az);
+    }
+    peGetForceDecomposition() { return this._ensureFallback().peGetForceDecomposition(); }
     peTick() { this._ensureFallback().peTick(); }
     peGetParticleData() { return this._ensureFallback().peGetParticleData(); }
     peGetDiagnostics() { return this._ensureFallback().peGetDiagnostics(); }

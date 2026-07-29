@@ -151,7 +151,21 @@ export class RingBufferView {
         const idx = (this.parent.head - 1 + pSize) % pSize;
         return this.parent.data[this.offset + idx];
     }
-    
+
+    // Patches this channel's value into the row the parent MultiRingBuffer
+    // most recently pushed, WITHOUT advancing head. For producers that split
+    // one logical sample across two collector calls (core fields pushed via
+    // parent.push({...}), a second pass refining a subset of the same row) —
+    // calling push() a second time would double-advance the shared ring and
+    // desynchronize that row's columns from the rest. No-op before the first
+    // push (nothing to patch yet).
+    setLast(value) {
+        if (this.parent.count === 0) return;
+        const pSize = this.parent.size;
+        const idx = (this.parent.head - 1 + pSize) % pSize;
+        this.parent.data[this.offset + idx] = Number.isFinite(value) ? value : 0;
+    }
+
     max() {
         let m = -Infinity;
         for (let i = 0; i < this.parent.count; i++) { const v = this.get(i); if (v > m) m = v; }
@@ -227,7 +241,7 @@ export class TelemetryHub {
 
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
-                this._s0_core = new MultiRingBuffer(500, ['flux', 'energy', 'manifested', 'entropy', 'charges', 'positive', 'negative']);
+                this._s0_core = new MultiRingBuffer(500, ['flux', 'energy', 'manifested', 'entropy', 'charges', 'positive', 'negative', 'fieldSpin', 'fieldHelicity']);
         this.flux = this._s0_core.views['flux'];
         this.energy = this._s0_core.views['energy'];
         this.manifested = this._s0_core.views['manifested'];
@@ -235,6 +249,10 @@ export class TelemetryHub {
         this.charges = this._s0_core.views['charges'];
         this.positive = this._s0_core.views['positive'];
         this.negative = this._s0_core.views['negative'];
+        // Field circulation ledger (2026-07-28): |S| = |Σ J×W| (conserved by
+        // the free wave sector) and H = Σ J·curl J (static twist, not conserved).
+        this.fieldSpin = this._s0_core.views['fieldSpin'];
+        this.fieldHelicity = this._s0_core.views['fieldHelicity'];
         // ebDiff and gauss are pushed from the audit path (separate cadence),
         // so they must be standalone RingBuffers, not views into _s0_core.
         this.ebDiff = new RingBuffer(500);
@@ -253,10 +271,15 @@ export class TelemetryHub {
         this.lag = this._s0_lag.views;
 
         // ── Scale 1 — Particle Engine (200-sample) ─────
-                this._s1_pe = new MultiRingBuffer(200, ['peKE', 'pePE', 'peCoulombPE', 'peGravityPE', 'peTotal', 'peEnergyDrift', 'peCount', 'peLockedCount', 'peMobileCount', 'peMomentum', 'peAngMom', 'peVirial', 'peTemperature', 'peRmsVelocity', 'peSystemRadius', 'peMaxForce', 'peMeanForce', 'peSeparation', 'peRadialVelocity', 'peMaxBeta', 'peCapCount', 'peNetCharge', 'pePosCount', 'peZeroCount', 'peNegCount', 'peAnnihilations']);
+                // peAnnihilations RETIRED (2026-07 revision): the native engine
+                // exposes no annihilation counter and deriving one from count
+                // drops would conflate removal causes (audit failure mode).
+                this._s1_pe = new MultiRingBuffer(200, ['peKE', 'pePE', 'peCoulombPE', 'peGravityPE', 'peTotal', 'peEnergyDrift', 'peCount', 'peLockedCount', 'peMobileCount', 'peMomentum', 'peAngMom', 'peVirial', 'peTemperature', 'peRmsVelocity', 'peSystemRadius', 'peMaxForce', 'peMeanForce', 'peSeparation', 'peRadialVelocity', 'peMaxBeta', 'peCapCount', 'peNetCharge', 'pePosCount', 'peZeroCount', 'peNegCount']);
         const peViews = this._s1_pe.views;
-        this.peKE = peViews.peKE; this.pePE = peViews.pePE; this.peCoulombPE = peViews.peCoulombPE; this.peGravityPE = peViews.peGravityPE; this.peTotal = peViews.peTotal; this.peEnergyDrift = peViews.peEnergyDrift; this.peCount = peViews.peCount; this.peLockedCount = peViews.peLockedCount; this.peMobileCount = peViews.peMobileCount; this.peMomentum = peViews.peMomentum; this.peAngMom = peViews.peAngMom; this.peVirial = peViews.peVirial; this.peTemperature = peViews.peTemperature; this.peRmsVelocity = peViews.peRmsVelocity; this.peSystemRadius = peViews.peSystemRadius; this.peMaxForce = peViews.peMaxForce; this.peMeanForce = peViews.peMeanForce; this.peSeparation = peViews.peSeparation; this.peRadialVelocity = peViews.peRadialVelocity; this.peMaxBeta = peViews.peMaxBeta; this.peCapCount = peViews.peCapCount; this.peNetCharge = peViews.peNetCharge; this.pePosCount = peViews.pePosCount; this.peZeroCount = peViews.peZeroCount; this.peNegCount = peViews.peNegCount; this.peAnnihilations = peViews.peAnnihilations;
+        this.peKE = peViews.peKE; this.pePE = peViews.pePE; this.peCoulombPE = peViews.peCoulombPE; this.peGravityPE = peViews.peGravityPE; this.peTotal = peViews.peTotal; this.peEnergyDrift = peViews.peEnergyDrift; this.peCount = peViews.peCount; this.peLockedCount = peViews.peLockedCount; this.peMobileCount = peViews.peMobileCount; this.peMomentum = peViews.peMomentum; this.peAngMom = peViews.peAngMom; this.peVirial = peViews.peVirial; this.peTemperature = peViews.peTemperature; this.peRmsVelocity = peViews.peRmsVelocity; this.peSystemRadius = peViews.peSystemRadius; this.peMaxForce = peViews.peMaxForce; this.peMeanForce = peViews.peMeanForce; this.peSeparation = peViews.peSeparation; this.peRadialVelocity = peViews.peRadialVelocity; this.peMaxBeta = peViews.peMaxBeta; this.peCapCount = peViews.peCapCount; this.peNetCharge = peViews.peNetCharge; this.pePosCount = peViews.pePosCount; this.peZeroCount = peViews.peZeroCount; this.peNegCount = peViews.peNegCount;
         this._peInitialEnergy = null;
+        this._peBaselineFp = null;
+        this._s1Runtime = { scenario: '', softening: 0 };
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
         // All values are SIM UNITS (implicit k_B = 1; audit P0-10) — panels
@@ -322,6 +345,8 @@ export class TelemetryHub {
                 positive: diag.positive || 0,
                 negative: diag.negative || 0,
                 charges: (diag.positive || 0) - (diag.negative || 0),
+                fieldSpin: Math.hypot(diag.fieldSpinX || 0, diag.fieldSpinY || 0, diag.fieldSpinZ || 0),
+                fieldHelicity: diag.fieldHelicity || 0,
             });
 
             // 80-sample sparkline buffers
@@ -436,6 +461,16 @@ export class TelemetryHub {
 
     // ── Scale 1 collection ──────────────────────────────────────────────────
 
+    /**
+     * Runtime metadata push (scenario label, softening) from the Scale-1
+     * controller/UI. Replaces the hub's former direct DOM reads of
+     * #pe-scenario-select / #pe-soft-slider (2026-07 audit fix — the hub
+     * must not be coupled to specific element ids).
+     */
+    setScale1Runtime(patch) {
+        Object.assign(this._s1Runtime, patch);
+    }
+
     collectScale1(bridge) {
         const diag = bridge.peGetDiagnostics?.();
         if (!diag) return null;
@@ -452,12 +487,6 @@ export class TelemetryHub {
         const lMag = diag.totalAngMom ?? diag.angularMomentum ??
             Math.sqrt((diag.angMomX || 0) ** 2 + (diag.angMomY || 0) ** 2 + (diag.angMomZ || 0) ** 2);
         const virial = diag.virialRatio ?? (pe !== 0 ? (2 * ke / Math.abs(pe)) : 0);
-        if (this._peInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
-            this._peInitialEnergy = totalEnergy;
-        }
-        const energyDrift = this._peInitialEnergy
-            ? ((totalEnergy - this._peInitialEnergy) / Math.abs(this._peInitialEnergy)) * 100
-            : 0;
         const temperature = cnt > 0 ? (2 / 3) * ke / cnt : 0;
         const toggleNames = [
             'coulomb', 'gravity', 'damping', 'lorentz', 'exchange',
@@ -466,17 +495,28 @@ export class TelemetryHub {
         ];
         const toggles = {};
         for (const name of toggleNames) toggles[name] = !!bridge.peGetToggle?.(name);
-        let scenario = '';
-        let softening = 0;
-        if (typeof document !== 'undefined') {
-            const scenarioSelect = document.getElementById('pe-scenario-select');
-            scenario = scenarioSelect?.selectedOptions?.[0]?.textContent || scenarioSelect?.value || '';
-            softening = Number.parseFloat(document.getElementById('pe-soft-slider')?.value || '0') || 0;
+
+        // Energy-drift baseline with structural re-latch (2026-07 audit fix:
+        // "baseline never re-latches"): any change to the particle count or
+        // the active toggle set changes the Hamiltonian being conserved, so
+        // the old baseline is meaningless — re-latch instead of reporting a
+        // fake integrator drift.
+        const baselineFp = cnt + '|' + toggleNames.map(n => (toggles[n] ? 1 : 0)).join('');
+        if ((this._peInitialEnergy === null || this._peBaselineFp !== baselineFp)
+            && Math.abs(totalEnergy) > 1e-12) {
+            this._peInitialEnergy = totalEnergy;
+            this._peBaselineFp = baselineFp;
         }
+        const energyDrift = this._peInitialEnergy
+            ? ((totalEnergy - this._peInitialEnergy) / Math.abs(this._peInitialEnergy)) * 100
+            : 0;
+
+        // Runtime metadata is pushed by the controller (setScale1Runtime) —
+        // the hub no longer reads the DOM (2026-07 audit fix).
         this.s1.runtime = {
-            scenario,
+            scenario: this._s1Runtime.scenario,
             dt: bridge.peGetDt?.() ?? 0,
-            softening,
+            softening: this._s1Runtime.softening,
             toggles,
             capabilities: bridge.peGetBackendCapabilities?.() ?? null,
         };
@@ -497,7 +537,6 @@ export class TelemetryHub {
                 peAngMom: lMag,
                 peVirial: virial,
                 peTemperature: temperature,
-                peAnnihilations: diag.annihilations || 0,
                 peLockedCount: this.peLockedCount.last(),
                 peMobileCount: this.peMobileCount.last(),
                 peRmsVelocity: this.peRmsVelocity.last(),
@@ -593,20 +632,26 @@ export class TelemetryHub {
             if (currentTick !== this._lastTick1Ext) {
                 this._lastTick1Ext = currentTick;
 
-                this.peLockedCount.push(locked);
-                this.peMobileCount.push(Math.max(0, n - locked));
-                this.peRmsVelocity.push(n > 0 ? Math.sqrt(v2sum / n) / C_SPEED : 0);
-                this.peSystemRadius.push(systemRadius);
-                this.peMaxForce.push(maxForce);
-                this.peMeanForce.push(n > 0 ? sumForce / n : 0);
-                this.peSeparation.push(separation);
-                this.peRadialVelocity.push(radialVelocity / C_SPEED);
-                this.peMaxBeta.push(maxV2 > 0 ? Math.sqrt(maxV2) / C_SPEED : 0);
-                this.peCapCount.push(capCount);
-                this.peNetCharge.push(netCharge);
-                this.pePosCount.push(nPos);
-                this.peZeroCount.push(nZero);
-                this.peNegCount.push(nNeg);
+                // setLast(), not push(): collectScale1() already advanced
+                // _s1_pe's shared ring this tick (with stale .last() values
+                // for these same channels, per its own push({...}) call
+                // above) — these calls patch this tick's row with the fresh
+                // values just computed, rather than pushing a second,
+                // desynchronized row into the shared ring.
+                this.peLockedCount.setLast(locked);
+                this.peMobileCount.setLast(Math.max(0, n - locked));
+                this.peRmsVelocity.setLast(n > 0 ? Math.sqrt(v2sum / n) / C_SPEED : 0);
+                this.peSystemRadius.setLast(systemRadius);
+                this.peMaxForce.setLast(maxForce);
+                this.peMeanForce.setLast(n > 0 ? sumForce / n : 0);
+                this.peSeparation.setLast(separation);
+                this.peRadialVelocity.setLast(radialVelocity / C_SPEED);
+                this.peMaxBeta.setLast(maxV2 > 0 ? Math.sqrt(maxV2) / C_SPEED : 0);
+                this.peCapCount.setLast(capCount);
+                this.peNetCharge.setLast(netCharge);
+                this.pePosCount.setLast(nPos);
+                this.peZeroCount.setLast(nZero);
+                this.peNegCount.setLast(nNeg);
             }
         }
         return ext;
@@ -752,14 +797,20 @@ export class TelemetryHub {
                 ? ((totalEnergy - this._plInitialEnergy) / Math.abs(this._plInitialEnergy)) * 100
                 : 0;
 
-            this.plKE.push(ke);
-            this.plPE.push(pe);
-            this.plTotal.push(totalEnergy);
-            this.plEnergyDrift.push(drift);
-            this.plCount.push(N);
-            this.plMomentum.push(momentum);
-            this.plVirial.push(virial);
-            this.plSystemRadius.push(systemRadius);
+            // Single push({...}) into the owning MultiRingBuffer — plKE etc.
+            // are RingBufferViews (this._s4_pl.views.plKE); RingBufferView
+            // has no push() of its own (an individual-channel .push() call
+            // here threw every tick, TypeError, confirmed by execution).
+            this._s4_pl.push({
+                plKE: ke,
+                plPE: pe,
+                plTotal: totalEnergy,
+                plEnergyDrift: drift,
+                plCount: N,
+                plMomentum: momentum,
+                plVirial: virial,
+                plSystemRadius: systemRadius,
+            });
         }
         return diag;
     }
@@ -776,13 +827,16 @@ export class TelemetryHub {
         if (currentTick !== this._lastTick5) {
             this._lastTick5 = currentTick;
 
-            this.csBodies.push(diag.bodyCount  || diag.count || 0);
-            this.csHubble.push(diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0);
-
             const counts = diag.countsByType || [];
             const total = diag.bodyCount || 1;
             const dmFraction = ((counts[3] || 0) / total) * 100;
-            this.csDM.push(dmFraction);
+            // Single push({...}) — see the collectScale4 comment above for
+            // why per-channel .push() on a RingBufferView throws.
+            this._s5_cs.push({
+                csBodies: diag.bodyCount || diag.count || 0,
+                csHubble: diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0,
+                csDM: dmFraction,
+            });
         }
         return diag;
     }
@@ -901,6 +955,7 @@ export class TelemetryHub {
                 this._s1_pe.clear();
                 this.s1 = { diag: null, extended: null, runtime: null };
                 this._peInitialEnergy = null;
+                this._peBaselineFp = null;
                 this._lastTick1 = -1;
                 this._lastTick1Ext = -1;
                 break;

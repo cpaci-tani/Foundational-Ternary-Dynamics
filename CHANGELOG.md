@@ -1,5 +1,1376 @@
 # Foundational Ternary Dynamics Changelog
 
+# FTD-0746 locked — causal-horizon environmental persistence (2026-07-29)
+
+- Frozen a fresh `L=321`, 312-tick face/edge/body test of the unchanged
+  selected reciprocal `(s,C,F)` action. The radius-48 arrival deadline
+  (`tick <= 300`) comes from an OLS construction fixed from FTD-0745's
+  radius-8/12/16/24 first-passage record; the `1e-8` threshold is unchanged.
+- The protocol also locks exact FTD-0745 causal-prefix reproduction, a
+  160-tick terminal negative core, late radius-eight stability, and a 12-tick
+  post-arrival outward floor. No inverse or long-horizon reversibility claim is
+  included.
+- Protocol `B98DB9B…A9A0`; runner `2D98C02E…76DD`; WSL2 Release executable
+  `AE754283…3B7`; static conformance `64/64`. The no-argument smoke path emits
+  no result. The three live arms run serially within the WSL2 memory budget.
+- This entry contains no physics result. Production is unchanged.
+
+# FTD-0745 run — M2 shell-arrival conjunction closed negative (2026-07-29)
+
+- Frozen the FTD-0739 `L=145` CSV as discovery/prefix data and locked one
+  fresh `L=193`, 184-tick five-history validation. The unchanged action is
+  observed at radii 8/12/16/24/32/48 through the already qualified batched
+  regional-energy ledger.
+- Registered exact prefix embedding, 64-tick negative-core persistence, a
+  disclosed prior-data-derived late near-field floor, ordered source-free shell
+  arrival, no inward return, control/polarity, exact transaction, and inverse
+  gates. Protocol `D5FB9923…456888`; corrected static conformance `63/63`;
+  observer unit `1/1`; runner `7F2205D6…28776E`; Release executable
+  `B140CE30…A6688`.
+- One initial process was stopped before serialization after source review
+  found an incorrect failure-route implementation; no CSV/JSON or physics
+  verdict was produced. The corrected held-out run then completed all five
+  forward/reverse histories and 925 forward rows.
+- E0 exactness, E1 prefix, E2 control/polarity, E3 core, and E4 near-field
+  gates pass. E5 fails because no unbound arm exceeds `1e-8` at radius 32 or
+  48 by tick 184. Verdict: `ENVIRONMENTAL_CLOSURE_ARRIVAL_LAW_FAIL`.
+- The independent record certificate passes `131/131`; CSV
+  `58D85CB5…6C41C`, raw summary `B6325EFB…1DC2A`, proof
+  `C1256E51…F35B`. The raw summary contains one disclosed non-standard `inf`
+  sentinel in an unused bound-only near-field slot; the proof quarantines that
+  exact token in memory without rewriting the raw artifact.
+- All four cores and stable late near fields survive; source-free outward
+  transport crosses radius 24 with no registered return. The registered
+  six-shell M2 candidate closes negative, broader M2 remains unresolved, and
+  M3 does not advance. Production is unchanged.
+
+# FTD-0739 resumed — finite-support M1 constructive (2026-07-29)
+
+- The exactly once-run locked `L=145`, 136-tick five-history campaign is
+  constructive: all four unbound symmetry-ray histories form durable negative
+  relational cores and source-free outgoing field tails across radius 12
+  before periodic contact; the bound control remains bound and polarity
+  histories agree exactly.
+- Exact ledgers and state-only inversion remain within their registered gates
+  (`max common residual 5.15e-14`, `max energy residual 3.12e-15`, `max inverse
+  residual 2.64e-11`). The independent CSV/JSON certificate passes `147/147`
+  checks over 1,365 serialized rows.
+- This closes only FTD-0740 M1 for the selected reciprocal `(s,C,F)` action.
+  Environmental closure, metastable-family identity, autonomous motion,
+  composability, reaction-complete charge, and a physical pole remain open;
+  M2 growing-buffer/horizon testing is the next gate. Production is unchanged.
+
+# web: Scale 1 revision — continuous particle system promoted from the lattice (2026-07-29)
+
+- Scale 1 now runs on the native C++/WASM ParticleEngine: `wasm-bridge.js`
+  forwards every `pe*` call through the new `bridge/native-particle-engine.js`
+  embind adapter (G_PE = G_DERIVED, FTD-0131). The pure-JS engine
+  (`mock-particle-engine.js`, `pe-force-kernel.js`, `pe-spin-dynamics.js`) is
+  deleted — a 99-agent audit (`docs/audits/AUDIT_2026-07_scale1-particle-engine.md`)
+  confirmed 76 defects in it, including a structurally unreachable strong force
+  and a force-decomposition readout that disagreed with the integrator.
+- New "⤴ Scale up" promotion pipeline (`scales/scale1/promotion.js`): captures
+  the live Scale-0 lattice's clusters (KnotTracker telemetry, with a Moore-26
+  connected-components fallback over the new `coarsenToParticles` WASM export
+  for clusters under the tracker's min size) and promotes each to one
+  continuous particle — position/velocity = centroid values, mass = N·K_B
+  ([DERIVED-linear]/[SMC], FTD-0110), charge = sign·N (int8-clamped). Works on
+  the default worker path (new proxy `stepScale0` capability + one-shot
+  coarsen message; engine-truth-only toggle readback added to the proxy).
+- New WASM bindings (additive, goldens untouched): `peAddParticleEx`,
+  `peAddLockedParticleEx`, `peSetSpinAxis`, `peSetVelocity`,
+  `getPEForceDecomposition` (Float64 — fixes the G_PE Float32-underflow that
+  blanked gravity overlays), `coarsenToParticles`; `getPEParticleData` gains
+  `spinAxes`; `getPEForces` upgraded to Float64.
+- Scenario library replaced: 26 legacy pe-* scenarios → 6 registry-driven
+  scenarios (`scale1/scenario-registry.js`) with per-scenario epistemic
+  descriptions surfaced in the toolbar. Controller rewritten around
+  `scale1/state/store.js` (no module-level state); voxel-level debug ghost
+  layer added to the particle renderer; the Particle Zoo stays as an
+  explicitly-[PARAMETRIC] catalog-injection extra (color-wheel fix makes
+  quark color labels — and thus the native strong force — reachable).
+- Telemetry honesty pass: energy-drift baseline re-latches on particle-count/
+  toggle changes; hub no longer reads the DOM; chart pushes gate on tick
+  progress (paused sims no longer wipe history); `peAnnihilations` retired
+  (no native counter — refusing to fabricate one); momentum/angular-momentum/
+  force readouts relabeled to sim units (no fake MeV/c / ħ / Planck units,
+  FTD-0401); angular momentum labeled "about origin" vs the overlay's CoM.
+- Retired alongside the sandbox: `cross-sections.js`, `decay-rates.js`, the
+  legacy PE telemetry canvas panel (`pe-telemetry.js`), the physics-panel
+  energy-levels/cross-sections/decay-rates cards, and the Hawking micro-BH
+  toy. `spectroscopy.js` survives for the Scale-0 hydrogen p1-observable.
+
+# FTD-0744: matter ontology branch decision matrix (2026-07-29)
+
+- Added an exact representation-sufficiency discriminator. A forgotten
+  variable is a derived chart when reconstructible, redundant when its fibers
+  are behaviorally congruent, and genuinely missing state only when equal
+  reduced states produce different reduced futures or observables.
+- Froze the branch ladder from native `(s,J)`, through reconstructed charts and
+  explicit constituent phase space, to noncompact connection and compact /
+  protected extensions. Each escalation now has a named evidence trigger and
+  a corresponding banned inference.
+- Added common-action integrability, cross-resolution commutation,
+  connection/holonomy, charge, failure-routing, and adoption gates. No branch,
+  primitive, campaign, or production state is promoted. Next free id:
+  FTD-0745.
+
+# FTD-0743: metastable matter-object predicate contract (2026-07-29)
+
+- Formalized the future M3 target as a state-only, symmetry-covariant open
+  family in complete `(s,C,F)` state rather than a favorable trajectory or a
+  retrospectively recognized history.
+- Defined the instantaneous observer, strict membership margins, quotient
+  family, exit-time function, finite-time/open-neighborhood hierarchy,
+  volume-causal compatibility, mandatory negative controls, and the exact
+  anti-circularity rules a later M3 preregistration must satisfy.
+- Separated autonomous metastability, throughput-maintained patterns,
+  constraint-maintained patterns, and transient localization. Environmental
+  support does not disqualify matter, but it must be explicit in the ledger and
+  cannot by itself establish an isolated particle ontology.
+- Intentionally left the bound-field separator, metric weights, radii,
+  tolerances, perturbation measure, and volume/horizon ladder unresolved until
+  M1/M2 identify the finite-support core and environmental dressing. No engine
+  campaign or existence claim is added. Next free id: FTD-0744.
+
+# FTD-0742: matter ontology evidence baseline (2026-07-29)
+
+- Audited every FTD-0740 gate against the current record without running a new
+  campaign. At that baseline snapshot, only M0 (charter, vocabulary, evidence
+  boundary, and repair policy) was complete and M1 was paused; the later
+  FTD-0739 entry above supersedes that state.
+- Fixed the critical path as M1 finite-support existence -> M2 environmental
+  closure -> M3 metastable-family identity, with M7 native reduction allowed as
+  parallel paper/algebra work. Motion, composability, reactions, charge, and
+  infrared particle interpretation remain downstream.
+- Recorded the exact resumption sequence and failure consequences for FTD-0739.
+  No engine campaign, production change, primitive, or physics claim is added.
+  Next free id: FTD-0743.
+
+# FTD-0741: relational matter ontology lower bound (2026-07-29)
+
+- Assembled four existing theorems plus the mobile-identity premise into a
+  scoped lower bound on any adequate current-branch ontology. It must carry
+  relational rather than permanent-site identity, select the current cycle,
+  retain reciprocal field memory or an injective equivalent, use dynamical
+  rather than presently topological stabilization, and distinguish contact
+  from formation.
+- Added an exact source-hash/algebra certificate (`34/34 PASS`, SHA-256
+  `5DAF7CCB…963FB`). This forces no labeled constituents, compact well,
+  internal-phase primitive, compact connection, charge, mass, spin, species,
+  statistics, or particle pole. Production remains unchanged. Next free id:
+  FTD-0742.
+
+# FTD-0739/0740: finite-support campaign paused; matter ontology chartered — historical checkpoint, later resumed above (2026-07-29)
+
+- Locked FTD-0739's exact compact-support neutral-Gauss/outgoing-tail protocol
+  under `9AA9B806…A7868E`. The finite-support preparation and regional-energy
+  observer focused tests pass, but the full five-history campaign was stopped
+  before completion and produced no CSV/JSON. No partial result is evidence.
+- Added the FTD-0740 Matter Ontology Charter. The provisional object is a
+  localized, metastable, state-identifiable manifestation--constituent--field
+  process, not a voxel. The charter distinguishes Track-A selected sufficiency
+  from Track-B native reduction and orders gates M0--M9 from uncontained
+  existence through physical infrared interpretation.
+- Reconciled “history-level identity” with state-only completeness: a ternary
+  snapshot is insufficient, while a single-valued invertible common action may
+  derive the transaction and two-sided orbit from one complete state. Negative
+  pair energy is a selected-branch formation witness, not the definition of
+  matter, and the constituent record remains fundamental/chart/resolution-cell
+  underdetermined pending native reduction.
+- Constructive suggestions and ontic/dynamical repairs remain welcome only as
+  fresh versioned candidates. State-completeness failure prices internal phase;
+  gauge/holonomy failure prices connection state; failure of a robust localized
+  family closes the candidate. No production, primitive, or particle claim is
+  promoted. Next free id: FTD-0741.
+
+# FTD-0736--0738: precontact formation is delayed field-mediated capture (2026-07-29)
+
+- Ran the locked `L=129` causal-buffer discriminator through tick 112. All
+  face/edge/body graph re-entries occur before the earliest possible return of
+  newly emitted disturbance, but pair energy remains positive at re-entry, so
+  FTD-0736 correctly returns
+  `PRECONTACT_REENTRY_WITHOUT_PERSISTENT_CORE` (`7951/7951 PASS`).
+- Locked the observed 15-tick energetic delay in a fresh FTD-0737 protocol and
+  extended through tick 122, the last tick before possible periodic
+  self-contact under the measured support bound. All three rays reproduce the
+  exact delay, remain graph-inside and negative, and transfer positive energy
+  to the field (`9271/9271 PASS`).
+- Proved for the selected compact potential that generic moving graph entry
+  must precede energetic binding because `U=U'=0` at the cutoff while kinetic
+  energy is positive (`48/48 PASS`). The graph is therefore an interaction-
+  support relation, not an object predicate.
+- Added a formation-sequence ontology: encounter, interaction activation,
+  field-mediated relaxation, then negative-core formation. The compact action,
+  constituent phase space, tick-zero quotient dress, and 15-tick value remain
+  selected or measured rather than postulate-derived. Next free id: FTD-0739.
+
+# FTD-0735: captured histories have regular finite-time neighborhoods (2026-07-29)
+
+- Locked 18 FTD-0734 center/minimum-energy/minimum-graph histories before the
+  new run; no fresh perturbation amplitude or favorable selector was added.
+- Added a default-off final-root observer that measures the unchanged residual
+  Jacobian at `h` and `h/2` without feeding it back to the solve; endpoint
+  difference with the observer disabled is zero.
+- Passed all 9,216 forward/reverse roots: minimum singular value `0.93862`,
+  maximum condition number `1.08796`, maximum two-scale discrepancy
+  `6.36e-8`, and maximum inverse recovery `4.16e-11`.
+- Combined strict FTD-0734 capture margins with the implicit-function theorem
+  to support open finite-time neighborhoods on the admissible selected-
+  dynamics state manifold. This is not an invariant basin, attractor, native
+  particle, or asymptotic stability result. Independent certificate:
+  `92236/92236 PASS`.
+- Added a controlled matter-dynamics extrapolation separating evidence from
+  conjectures about boundary, motion, mass, charge, spin, wake, decay,
+  collision, and species. Next free id: FTD-0736.
+
+# FTD-0734: all energy-adapted mixed capture corners survive (2026-07-29)
+
+- Preregistered 216 histories crossing simultaneous radial and two transverse
+  momentum components, radial position, and dynamic-field amplitude.
+- Fixed every radial perturbation at half of its corner-specific exact
+  FTD-0733 boundary margin; no failed percentage was shrunk post hoc.
+- Passed all 198 `L=33` histories, all 18 deterministic hostile `L=65`
+  confirmations, and all 12 center controls through parent tick 384 with
+  state-only reversal. Polarity and volume mismatches are zero; independent
+  certificate `6299/6299 PASS`.
+- Corrected an infrastructure fail-open in which an unconverged sparse scratch
+  candidate reached physical finalization and a stale acceleration cache could
+  suppress a canonical solve. The corrected path fails closed and falls back
+  once to the unchanged uncached equation; action, state, tolerance, and gates
+  are unchanged.
+- Qualified finite relational phase-space robustness without promoting an open
+  basin, asymptotic stability, native binding law, or particle. Next free id:
+  FTD-0735.
+
+# FTD-0733: exact kinetic-dependent capture-energy domain (2026-07-29)
+
+- Proved for the selected compact potential that every fixed `0<K<D` has one
+  connected negative-energy radial interval between unique monotone roots, and
+  that the interval contracts to `d=1` as `K` rises to the well depth.
+- Reconstructed every persisted FTD-0732 kinetic level and certified all 84
+  initialization classes; independent certificate `654/654 PASS`.
+- Found that the maximum registered radial impulse leaves the body-diagonal
+  parent only a `~7.5e-4` inward multiplicative-radius margin. The failed raw
+  5% cross was not adapted to the constrained state domain.
+- Kept the result explicitly scoped to the selected potential. No dynamical
+  basin, particle size, native force law, or new primitive is inferred. Next
+  protocol FTD-0734 now locks the energy-adapted mixed-corner replay; next free
+  id: FTD-0735.
+
+# FTD-0732: admissible captured perturbations persist; locked cross unresolved (2026-07-29)
+
+- Executed the locked 84-history captured-state perturbation campaign through
+  parent tick 384 with 256-step state-only reversal.
+- Returned `CAPTURE_PERTURBATION_TRANSACTION_UNRESOLVED` because all six fixed
+  5% inward-compression arms start with positive pair internal energy; the
+  registered gate forbids replacing them after the fact.
+- Retained the subordinate result that all 78 initially admissible histories
+  remain graph-inside and negative, exactly reverse, and match under polarity
+  and held-out `L=65` replication. Independent certificate: `1469/1469 PASS`.
+- Exposed an inner energetic boundary of the selected compact interaction well
+  without promoting it to a derived particle size or an open basin. Next free
+  id: FTD-0733; next gate is the exact negative-energy radial interval.
+
+# FTD-0731: multi-pass radiative capture persists on two volumes (2026-07-29)
+
+- Executed the locked 48-history `L=33/65`, 192-forward/192-reverse campaign
+  with all per-tick energy histories persisted for independent replay.
+- Passed every action, energy, recoil, inverse, parent-persistence, and
+  pre-bound-control gate; independent certificate `583/583 PASS`.
+- Found durable multi-pass capture in all 12 registered `p=0.0120` histories:
+  entry/exit/re-entry `7/26/{63,79,96}`, followed by a continuously negative,
+  graph-inside tail over ticks `129--192`.
+- Measured positive field-energy gain `1.476e-3--2.009e-3`, extended dynamic
+  field radii, and zero matched transition/class shift across volumes.
+- Qualified a finite-horizon selected-dynamics formation witness without
+  promoting a stable basin, particle, production toggle, or new primitive.
+  FTD-0732 now locks the local perturbation-survival gate; next free id:
+  FTD-0733.
+
+# FTD-0730: re-entry is two-volume local dynamics, not an L=33 recurrence (2026-07-29)
+
+- Executed 88 `L=33/65`, 96-forward/96-reverse histories at the
+  FTD-0729-qualified root realization.
+- Passed every action, energy, recoil, inverse, and bound-control gate.
+- Reproduced lower-energy persistence in 12/12 matched representative arms
+  with zero tick-96 radius-class difference.
+- Found `p=0.0120` re-entry in 26/26 arms on both volumes with zero matched
+  third-transition-tick difference.
+- Resolved a cubic timing hierarchy: common entry/exit `7/26`, then face
+  re-entry `63`, edge `79`, body diagonal `96`.
+- Opened a multi-pass formation candidate without altering the historical
+  single-pass classifier or production dynamics. Next free id: FTD-0731.
+
+# FTD-0729: worst late-reentry covariance defect converges (2026-07-29)
+
+- Replayed the exact FTD-0728 worst translated history at root tolerances
+  `2e-12`, `2e-13`, and `2e-14` for both polarity orders.
+- Reproduced the FTD-0728 scalar maximum exactly at `2e-13`.
+- Reduced scalar/complete covariance to `6.2501e-12`/`2.9612e-12` at
+  `2e-14`, ratios `0.0110`/`0.0131`; all field and matter components converge.
+- Preserved all graph and final-sign classes. The localized defect is root
+  conditioning, but FTD-0728's failed global fivefold gate is not waived.
+- Licensed the volume discriminator at the selected `2e-14` realization.
+  Next free id: FTD-0730.
+
+# FTD-0728: absolute persistence covariance passes; convergence rate does not (2026-07-29)
+
+- Replayed the complete 208-history FTD-0727 matrix with only the exact-root
+  termination tightened from `2e-12` to `2e-13`.
+- Reduced scalar-history covariance from `1.10653e-9` to `5.67981e-10`, below
+  the `1e-9` absolute gate, but failed the preregistered fivefold convergence
+  requirement with ratio `0.5133`.
+- Preserved every physical class exactly: lower-energy persistence `104/104`,
+  localized dressing `0/104`, escape control `0/52`, escape final-negative
+  `12/52`, and bound control `52/52`.
+- Localized the maximum tight-root difference to constituent separation at
+  `p=0.0120`, direction `0_1_-1`, tick 92, during the late re-entry family.
+- No production or ontology promotion. Next free id: FTD-0729; next gate is a
+  targeted additional-decade convergence diagnostic before volume scaling.
+
+# FTD-0727: raw 96-tick trapping persists, but covariance and escape control fail (2026-07-29)
+
+- Locked and executed 208 complete `L=33`, 96-forward/96-reverse histories
+  spanning deep/shallow trapped parents, an escaping parent control, all Moore
+  rays, both polarities, translations, and bound controls.
+- Passed every rowwise action, energy, recoil, inverse, and bound-control gate,
+  but failed the global scalar covariance gate narrowly:
+  `1.10653e-9 > 1e-9`. Verdict:
+  `BOUND_DRESSING_PERSISTENCE_TRANSACTION_UNRESOLVED`.
+- Recorded raw persistence in all 104 lower-energy arms while their dynamic
+  field expands from radius three to radius five or six; compact localized
+  dressing is not observed.
+- Found universal re-entry of the `p=0.0120` escape control: three graph
+  transitions per arm and 12/52 negative final states.
+- Explicitly rejected the “pre-wrap” label for this periodic `L=33` run. Next
+  gates are covariance conditioning and volume dependence. Next free id:
+  FTD-0728.
+
+# FTD-0726: covariant energetic trapping qualified; stability remains open (2026-07-29)
+
+- Replayed the full FTD-0724 formation matrix with the independently qualified
+  FTD-0725 tight exact-root termination and no change to the action or physical
+  initial states.
+- Passed all 312 histories, with scalar-history covariance `8.904e-10`, energy
+  balance `9.713e-13`, recoil `6.397e-14`, and state-only inverse `1.769e-10`.
+- Qualified energetic trapping in all 208 arms at `p=0.0060--0.0095`; all 52
+  `p=0.0120` arms escape and all 52 pre-bound controls remain bound.
+- Kept detached-field capture closed negative: every trapped family retains a
+  radius-three dynamic field, so qualified capture remains `0/260`.
+- Reframed the live discriminator as bound-dressing persistence versus
+  temporary near-field storage. No particle, stable-matter, new-primitive, or
+  production claim is made. Next free id: FTD-0727.
+
+# FTD-0725: long-interaction covariance defect is numerical conditioning (2026-07-29)
+
+- Reproduced the exact FTD-0724 scalar translation defect in a fresh baseline
+  matrix and localized it to separation/matter phase space near the raw
+  `p=0.0095` boundary.
+- Tightened only the exact nonlinear residual termination from `2e-11` to
+  `2e-12`, increasing the iteration budget from 48 to 96.
+- Reduced scalar covariance from `1.0681e-8` to `8.9040e-10` and complete-state
+  covariance from `3.4504e-9` to `3.5992e-10`; electric, magnetic, and matter
+  components all pass `1e-9`.
+- Preserved every translation class, the raw `104/130` negative count per
+  condition, and all bound controls. FTD-0724 remains unresolved; a fresh full
+  tighter-root formation rerun is now licensed. Next free id: FTD-0726.
+
+# FTD-0724: raw lower-energy trapping observed but covariance gate fails (2026-07-29)
+
+- Locked a five-momentum lower-energy extrapolation before execution, with a
+  doubled 48-tick horizon and unchanged matter/current/field action.
+- Executed 312/312 complete forward/reverse histories. Every rowwise identity,
+  energy, recoil, inverse, and bound-control gate passes.
+- Recorded a raw energy-sign transition: all 208 arms at
+  `p=0.0060--0.0095` remain inside and negative, while all 52 `p=0.0120` arms
+  leave positive. This pattern is not promoted.
+- Marked the campaign unresolved because translation/polarity scalar-history
+  spread `1.068e-8` exceeds the locked `1e-9` gate. The held-out `p=0.0095`
+  prediction also fails, shifting the raw transition above the fitted bracket.
+- Qualified capture remains `0/260`: raw trapped arms retain radius-three
+  near-field morphology rather than the locked detached-field radius four.
+  Next free id: FTD-0725; next gate is numerical conditioning/covariance, not
+  threshold refinement.
+
+# FTD-0723: constant-export capture window falsified (2026-07-29)
+
+- Derived and preregistered the incident-momentum threshold bracket
+  `0.0247978--0.0265320` from the FTD-0722 export before inspecting any new
+  histories.
+- Ran 312 locked matter/current/field histories at five unbound momenta plus
+  the existing bound controls. All atomic, inverse, covariance, and recoil
+  gates pass; all 52 bound controls survive.
+- Closed the registered `p=0.0200--0.0300` capture window negative. All 260
+  unbound arms enter and leave the graph, zero reach negative pair energy, and
+  zero capture.
+- Falsified the constant-export model: export declines to
+  `0.0003102--0.0005417` across the lower-momentum campaign. A post-run
+  descriptive fit is approximately linear in `p` and predicts a fresh
+  lower-energy crossover near `0.00838`; this is an open extrapolation, not a
+  result.
+- Kept the action, production tick, defaults, toggles, scenarios, potential,
+  and all acceptance gates unchanged. Next free id: FTD-0724.
+
+# FTD-0722: matched field receives encounter energy but v1 capture fails (2026-07-28)
+
+- Added a default-preserving derived compact-pair branch to the established
+  connected face/edge common action. It stores no bond edge and uses the
+  FTD-0721 potential, exact quadratic-coat currents, and the canonical field
+  normalization.
+- Locked the `L=33`, 24-forward/24-reverse, 104-arm protocol before the first
+  validation output. All common-action, inverse, translation/polarity, and
+  symmetric-recoil gates pass.
+- Measured exact encounter-to-field energy transfer: the unbound pair loses
+  `0.00120127--0.00137481` (`12.70%--14.54%`) while pair-plus-field balance
+  stays below `5.19e-12` and a nonzero magnetic remainder forms.
+- Closed the registered capture candidate negative: all 52 unbound arms enter
+  and leave the derived graph with positive final internal energy; all 52
+  already-bound controls remain negative and connected.
+- Did not label the dynamic field as detached radiation because its median
+  doubled radius is three, below the locked threshold four. Production tick,
+  defaults, toggles, and scenarios remain unchanged. Next free id: FTD-0723.
+
+# FTD-0721: relational topology is derived; closed capture needs a receiver (2026-07-28)
+
+- Replaced the fixed-edge assumption in a selected two-constituent prototype
+  with an interaction graph derived instantaneously from constituent position.
+- Added a compact `C1` pair well and exact discrete-gradient transaction using
+  the production dispersion. No persistent bond bit, graph-edit history,
+  production rule, default, toggle, or scenario was added.
+- Passed 104/104 preregistered histories spanning two energy sectors, all 13
+  unoriented Moore rays, both polarity orders, translation, and state-only
+  inversion. Worst energy and inverse residuals were `5.00e-16` and
+  `1.38e-13`.
+- Observed reversible graph entry/exit in every scattering arm while every
+  negative-energy control remained bound. Connectivity can therefore be a
+  derived relation rather than a matter primitive in this registered sector.
+- Proved the sharp formation boundary: an outside-support closed pair has
+  nonnegative internal energy and cannot enter the negative-energy bound
+  sector without transferring energy to a field, third constituent, or open
+  environment. The next gate is one field-assisted capture transaction. Next
+  free id: FTD-0722.
+
+# FTD-0720: interacting common action has one registered root basin (2026-07-28)
+
+- Reconciled FTD-0719 with the earlier FTD-0503 theorem: bare snapshots do not
+  determine current, while existing position--momentum association already
+  selects the free distinct-endpoint current uniquely.
+- Added an observer-only root seed to the connected action; an empty seed
+  preserves all established behavior and production defaults.
+- Ran three interacting width-one neutral states from 13 fixed momentum seeds
+  each. All 39 roots and inverses pass and converge to the same complete state
+  and deposited current within `3.31e-14` and `1.58e-14`.
+- Verified constituent-record relabeling covariance in all three arms.
+- Classified the result as one numerically witnessed local basin, not global
+  uniqueness. The sharp next ontology gate is a coincident-target collision
+  transaction and graph topology change. Next free id: FTD-0721.
+
+# FTD-0719: matter snapshots do not determine current (2026-07-28)
+
+- Proved in the selected face-current complex that exact endpoint densities
+  determine only `div(I)`. Two charge-preserving correspondences differ by a
+  divergence-free cycle current.
+- Constructed a neutral, causal four-constituent witness. Direct and crossed
+  histories have identical start/end density, continuity residual `1.39e-17`,
+  and zero difference divergence and transport moment, but current norm
+  `0.0657`, curl norm `0.1350`, and positive connection witness `0.004318`.
+- Verified exact reversal, integer translation, and all 24 proper cubic
+  rotations.
+- Formulated matter as a localized recurrent event–current–field history. A
+  deterministic theory now requires a unique common-action correspondence,
+  explicit current history, or equivalent connection state. This trilemma does
+  not yet license a new primitive.
+- Added the next decisive gate: pre-register a finite causal matching family
+  and test whether the complete atomic action selects one correspondence with
+  a nonzero gap. Production remains unchanged. Next free id: FTD-0720.
+
+# FTD-0715--0718: period-three matter phase, field, and action boundary (2026-07-28)
+
+- Lifted the FTD-0713 causal deformation to the first odd temporal cycle. All
+  48 segments satisfy the unchanged discrete-gradient velocity with periodic
+  constituent momenta, exact work, maximum speed `0.3885`, and complete cubic
+  and mirror covariance.
+- Identified the algebraic distinction: the cyclic endpoint-sum matrix `I+S_q`
+  has determinant zero for even `q` and determinant two for odd `q`; period
+  three is the first locally regular non-rigid momentum-return family.
+- Deposited the three-phase trajectory as 48 exact oriented face currents and
+  solved the complete `L=33`, 215,622-degree translated field equation.
+  Real-space residual is `4.53e-16`, the left-null projection is `4.24e-17`,
+  and there are zero incompatible modes.
+- Advanced the ontology candidate from a rigid site object to a localized
+  recurrent constituent-plus-field orbit.
+- Replayed the independently selected minimum-norm field against the exact
+  matter momenta. Absolute Gauss (`1.89e-15`) and translated return
+  (`8.88e-16`) pass; per-tick kinetic-plus-field energy (`0.0973`) and local/
+  spline momentum (`0.0875`/`0.0790`) fail. Binding energy and the 2182
+  homogeneous field directions now require one fresh coupled solve.
+- Exhausted that strict co-moving repair without hand-picking modes. The
+  complete divergence-free translated-return family contains 1,094 real basis
+  directions but has force-response rank only 35/144 for the locked orbit.
+  Its best fit leaves residual `0.3409` and requires field norm `8.34e9`.
+- Redirected the existing-variable branch to a simultaneous orbit–field root,
+  polarity-preserving constituent permutation, or finite-energy outgoing-tail
+  condition. Exact translated dressing may be too restrictive for dynamical
+  matter; this does not yet license a new primitive.
+- This is not yet emergent mobile matter. Production remains unchanged. Next
+  free id: FTD-0719.
+
+# FTD-0710--0714: rigid-motion nullspace and internal-phase requirement (2026-07-28)
+
+- Replaced static boosting by a full 215,622-variable co-moving field shooting
+  equation. The locked iterative solve reduced its residual `86x` but did not
+  close.
+- Diagonalized the field map exactly in Fourier space. The rigid `v=1/2`
+  source is incompatible only at the eight modes
+  `(±2pi/3,±2pi/3,±2pi/3)`.
+- Solved a center-preserving internal midpoint gait. Under causal speed and
+  10% edge-deformation bounds it cancels the null projection to `2.38e-12`
+  using the existing 16 constituents.
+- Proved that this unequal gait cannot be a two-tick labeled relative orbit:
+  symmetric endpoint-momentum velocity plus `p_2=p_0` forces both tick
+  displacements equal.
+- Redirected the native matter branch to a period-`q>=3` internal cycle or a
+  constituent-permuting orbit. No production dynamics or new primitive was
+  adopted. Superseded next-step pointer: FTD-0715/0716 execute the period-three
+  branch.
+
+# FTD-0707--0709: rest repair and static-boost falsification (2026-07-28)
+
+- Showed that four symmetry-preserving static coordinates miss an internal
+  zero-net force pattern at `L=33`; reduced gradient zero did not imply a full
+  common-action fixed point.
+- Solved the full 48-coordinate one-tick impulse residual. One Newton step of
+  size `9.47e-6` reduced maximum impulse from `1.06e-5` to `3.26e-11` and
+  produced an eight-tick zero-hop rest fixed point with `2.51e-14` recovery.
+- Repeated the exact `F^2(X)=T_1X` test from the corrected state. All controls
+  pass, the core nearly translates, and the field does not: electric residual
+  `0.298`, magnetic residual `0.144`.
+- Closed instantaneous static boosting as a complete moving-state preparation.
+  The next candidate is a co-moving field solve or causal formation history;
+  no new primitive or production change was adopted. Next free id: FTD-0710.
+
+# FTD-0706: complete moving-dressing relative orbit (2026-07-28)
+
+- Defined uniform discrete matter motion as the complete-state relation
+  `F^2(X)=T_1X`, including constituents, momenta, face electric field, and edge
+  magnetic field.
+- Preserved the first locked run as execution-invalid: common action, energy,
+  inverse, and translation covariance pass, but the remapped `L=33` rest
+  control changes by `1.88e-5`, above its `1e-9` gate.
+- Recorded diagnostic-only residuals: position `8.65e-4`, momentum `3.56e-3`,
+  electric `0.298`, and magnetic `0.144`. They localize the preparation defect
+  but do not establish a moving-dressing no-go.
+- Ordered the next repair: qualify a true finite-volume rest fixed point, then
+  solve a fresh complete relative orbit without post-hoc field replacement.
+  Production remains unchanged. Next free id: FTD-0707.
+
+# FTD-0702--0705: deposited current and moving-field threshold test (2026-07-28)
+
+- Qualified an exact carrier-aware oriented face-current spectrum observer;
+  sparse/dense, phase, translation, sign, cubic, and projection gates pass.
+- Replaced the ideal point factor by the selected object's actual deposited
+  quadratic-coat current. Edge power remains only `2.71e-9`, but registered
+  interior transverse power reaches `4.93e-3`; screening is partial, not
+  global.
+- Qualified the complete dressed 16-constituent object as a coherent moving
+  source across target speeds `0.35,0.45,0.50`. All six sign/speed histories
+  reverse within `1.92e-11`; shape and strain remain below `8.35e-4` and
+  `2.52e-3`.
+- Ran a fresh `L=65`, 24-tick moving-field discriminator. The `v=0.50`
+  registered transverse mode grows `2.52x` with `R²=0.986`, and collinear
+  controls vanish. Its current-normalized response is only `2.48x` the
+  below-threshold control, below the locked `5x`; the `v=0.45` mode also fails.
+- Recorded the mixed conclusion: coherent relational matter dynamically
+  excites a transverse field, but these data do not isolate a sharp radiation
+  threshold. A self-consistent moving dressing or multi-ramp/multi-horizon
+  launch subtraction is next. No production, photon, wake, particle-pole, or
+  new-primitive claim was promoted. Next free id: FTD-0706.
+
+# FTD-0697--0701: resonant transfer and axial radiation exposure (2026-07-28)
+
+- Qualified the batched carrier-aware symmetry-ray spectrum observer against
+  direct Fourier evaluation; complex coefficients agree within `7.72e-19`.
+- Preserved FTD-0698 as execution-invalid because it used the wrong temporal
+  coordinate and applied a sign gate to modes below its measurement domain.
+- Completed the corrected held-out FTD-0699 campaign at a fresh amplitude.
+  Both polarities peak within one native phase bin on `<100>`, `<110>`, and
+  `<111>`, with current-normalized contrasts `87.4`--`182.6`; all common-action,
+  causality, sign, projection, and inverse gates pass.
+- Proved FTD-0700: axial field phase speed decreases from `1/sqrt(3)` to
+  the threshold infimum `0.39182655...`. The exact transverse witness
+  `v=1/2`, `k=(pi,pi/2,0)`, `v_g=(0,1/3,0)` leaves one third of an axial
+  current's power transverse, showing that sub-cone mobile matter is
+  kinematically exposed to trailing/sideways lattice radiation if its
+  structure factor and nonlinear dressing do not cancel the channel.
+- Derived the selected ideal connected bipole's rigid point structure factor.
+  It has a double amplitude zero at the exact zone-edge witness; the refined
+  FTD-0638 geometry leaves only `2.62e-9` normalized point power there. The
+  zero is not global: a fixed off-edge point on the same `v=1/2` resonant
+  curve retains `0.001681` normalized point power.
+- Kept all claims scoped to selected finite-volume classical dynamics. No
+  particle pole, photon, wake, quantum decay width, production toggle, or
+  universal matter speed limit is asserted. The deposited quadratic-coat
+  current and nonlinear moving dressing remain to be measured together.
+
+# FTD-0695--0696: resonant velocity surface and spectrum observer (2026-07-28)
+
+- Derived the exact native group-velocity surface at the first connected
+  internal-mode frequency. Symmetry-direction speeds are `0.29608357` on
+  `<100>`, `0.52145601` on `<110>`, and `1/sqrt(3)` on `<111>`.
+- Qualified a carrier-aware face/edge Fourier observer using the lattice
+  wavevector `2 sin(k/2)`. Translation phase, cubic covariance, amplitude,
+  sign, superposition, matched-curl transversality, and fail-closed gates pass.
+- Kept the claim boundary explicit: the FTD-0694 radial slopes are only
+  post-hoc compatible with the allowed velocity range; a fresh spectral matter
+  campaign is still required. Fourier morphology power is not exact modified
+  energy or photon number. Production defaults remain unchanged.
+
+# FTD-0683--0694: causal internal-excitation separation (2026-07-28)
+
+- Added exact component-aware radial field profiles at the actual face/edge
+  carrier positions and exact batched/prefix-sum regional-energy observers.
+- Preserved FTD-0684/0685/0687/0689--0691 as execution-invalid attempts; each
+  isolates an instrumentation or resource boundary and emits no promoted
+  physics result.
+- Qualified a default-off local residual evaluator against the complete
+  common-action transaction: forward state is bit-identical, reverse-state
+  difference is `1.78e-15`, and materialized residual difference is zero.
+- Removed accidental global field validation at every orbit quadrature node
+  and indexed ordered sparse face-current contributions once per nonlinear
+  probe. Accepted states are still fully materialized and rechecked.
+- Completed the locked FTD-0694 `L=113`, 96-tick forward/reverse campaign in
+  292 seconds. Radius-3 source support produces outward threshold arrivals
+  `20,40,60,80,96,-1` at radii `8,16,24,32,40,48`; the fitted threshold speed
+  is `0.425532` with `R^2=0.99729`.
+- Positive profile mean/RMS/50%/90%/99% radii all grow linearly with
+  `R^2>0.996`; the canonical target retains `0.538712` at tick 96 and the
+  complete state reverses below `5.05e-13`.
+- Recorded the scoped verdict
+  `DISTRIBUTED_FIELD_MIXED + CONTINUING_EXCITATION_TRANSFER`. This supports a
+  localized constituent core coupled to a propagating field continuum; it is
+  not a photon, wake, pilot wave, universal cone, particle pole, or irreversible
+  decay result. Production defaults remain unchanged.
+
+# FTD-0677--0682: localized-basin observer, corrections, and bounded result (2026-07-28)
+
+- Added an observer-only translation/boost-quotiented internal phase metric
+  and exact near/intermediate/far difference-field partition.
+- Corrected an x/z flat-index reversal in the first implementation and added
+  an asymmetric-origin regression; the focused CTest passes 27/27 and the
+  exact certificate checks all 48 signed cubic maps.
+- Preserved three invalid campaigns without promotion: FTD-0678 stopped before
+  dynamics on a false cross-quotient identity; FTD-0679 mislabeled target
+  output; FTD-0681 imposed a false near-zero replication gate after correcting
+  the decoder.
+- Independently certified the corrected FTD-0681 data with 690 checks. The
+  core phase declines `31.23%` over ticks 8--64 at
+  `Gamma_core~=0.00653712`; at tick 80 the field norm is `24.83%` near,
+  `62.24%` intermediate, and `12.93%` far.
+- This is post-hoc finite-window evidence for internal relaxation plus outward
+  field spreading, not a registered localized basin, bound dressing,
+  radiation, or particle pole. Production remains unchanged.
+
+# FTD-0676: canonical pre-contact mode transfer (2026-07-28)
+
+- Preregistered and ran a fresh half-amplitude (`5e-7`) `L=97` validation of
+  the FTD-0675-corrected mode-6/7 target energy.
+- Both polarities reproduce `Gamma_E~=0.00653712` per tick over ticks 8--64,
+  with `R^2~=0.999332`, `Delta BIC~=412.7`, and `~31.23%` target decline.
+  Parent-rate mismatch stays below `4.8e-7` relatively.
+- Complete energy remains exact to `1.07e-14`; forward/reverse state recovery
+  is below `6.2e-13`. Independent certification recomputes the fits from all
+  162 result rows.
+- The bare matter doublet is therefore an embedded non-autonomous coordinate
+  in the selected common-action branch. The result is not an irreversible or
+  quantum decay width and does not establish a localized complete-system pole.
+  Production remains unchanged.
+
+# FTD-0673–0675: exact reservoir ledger and modal-metric retraction (2026-07-28)
+
+- FTD-0673 derives the exact nonoverlapping excited-minus-control ledger:
+  target modes, other modes, nonlinear matter remainder, dynamic-field self
+  energy, and control/dynamic field interference. CTest and exact-rational
+  certification pass.
+- FTD-0674 runs the locked `L=97`, `1e-6` donor campaign. The solver, observer,
+  polarity, action, and inverse execute, but the canonical target mode falls
+  from `~0.63108` at tick 72 to `~0.60590` at tick 78 and `~0.60157` at tick
+  80. The required recovery does not occur; the donor verdict is invalid.
+- FTD-0675 proves the cause of the discrepancy. The legacy paired-mode helper
+  used `v^T delta x` with eigenvectors normalized by `v^T M v=1`; the canonical
+  coordinate is `v^T M delta x`. The old potential diagnostic is overweighted
+  by `1/M_INERTIAL^2=3.829642...` and generates false trough/recovery behavior
+  even for a constant-energy harmonic mode.
+- FTD-0666, FTD-0668's modal recurrence component, and FTD-0670 are retracted.
+  FTD-0672's exact no-inward-flow/current-work/outward-transport result
+  survives, but its simultaneous doublet-recovery/donor interpretation is
+  retracted. FTD-0665's pre-return outward-field result also survives.
+- The observer helper is corrected prospectively. Production dynamics,
+  defaults, forces, toggles, and scenarios remain unchanged.
+
+# FTD-0672: exact tick-68--80 field flow (recovery interpretation retracted) (2026-07-28)
+
+- Applied the exact FTD-0671 regional ledger to fresh `2e-6` sign-paired
+  histories on `L=97` at fixed radii 8, 16, and 24.
+- The locked verdict is mixed because pre-tick-68 outward transfer at radius 24
+  is `~0.00966`, below the `0.05` constructive threshold.
+- The mechanism is nevertheless exact: ticks 68--80 contain no inward transfer
+  at any registered radius. The current gives `~0.04835635` to the dynamic
+  field while `~0.04710315` crosses outward through radius 24.
+- FTD-0675 later retracts the simultaneous doublet-recovery interpretation.
+  The exact field result remains: no inward transfer occurs during ticks
+  68--80 while current-to-field exchange and outward transport continue.
+  Production remains unchanged.
+
+# FTD-0671: exact regional field-energy transport (2026-07-28)
+
+- Derived a symmetric regionalization of the matched leapfrog modified energy.
+  It exactly separates source-free transfer across a chosen region boundary
+  from energy exchange caused by the deposited matter current.
+- Proved that the selected region plus its complement reconstructs the global
+  invariant and that their source-free transport terms cancel exactly.
+- The C++ qualification passes nested radii, full-volume, translation, proper
+  cubic rotation, source-free, and fail-closed controls. Worst identity residual
+  is `1.78e-14`; exact-rational certification passes all 256 witness masks.
+- This is a measurement theorem, not evidence that the transported field is a
+  photon, wake, or radiation. Fresh nested-radius histories are the next gate.
+  Production remains unchanged.
+
+# FTD-0670: held-out causal envelope turning (RETRACTED by FTD-0675) (2026-07-28)
+
+- Replaced FTD-0668's failed absolute-amplitude return threshold with a
+  preregistered local-trough classifier and a fresh half-amplitude launch.
+- On `L=97`, both signs produce strict late troughs at ticks
+  `{60,63,66,69,72,75,78}`. The envelope descends through tick 72 and then
+  rises; tick-78 recovery is `~0.0796856`, above the locked `0.05` gate.
+- The horizon ends at tick 80 before conservative source-to-source periodic
+  contact at tick 81. Current support stays inside radius four, field
+  morphology remains distributed, energy/action gates pass, and state-only
+  inverse recovery stays below `5.7e-13`.
+- A descriptive parent/held-out comparison agrees to normalized-history RMS
+  below `4.7e-8`, supporting a linear-response classical hybrid beat. This is
+  not yet a bound-state, pole, particle, photon, or asymptotic claim.
+- Added the locked record, focused engine test, independent certificate,
+  analysis/audit, and canonical ontology reconciliation. Production remains
+  unchanged.
+
+# FTD-0668–0669: causal-buffer recurrence and relational matter ontology (2026-07-28)
+
+- FTD-0668 runs the excited connected composite on `L=97` through tick 80,
+  one tick before the conservative periodic self-contact bound. Initial
+  excited/control fields are bitwise equal, the actual current source remains
+  inside radius four, energy and common-action residuals remain below
+  `1.1e-14` and `5.4e-13`, and the full state reverses below `1.2e-12`.
+- The locked amplitude-threshold recurrence verdict is mixed: both signs reach
+  their late minimum at tick 72, but `~0.63128` does not cross the required
+  `0.60`. Their later rise to `~1.32374` at tick 80 is retained as descriptive
+  turning-point evidence only. Periodic self-return cannot explain the
+  pre-contact history, but no pole, bound state, or asymptotic decay follows.
+- Added a default-off sparse representation of the unchanged local quadratic-
+  coat face current. Locked `L=17` dense/sparse evolution agrees exactly; the
+  existing dense current, gather, and complete common-action tests pass.
+- FTD-0669 records the minimal selected research ontology: matter is a
+  localized, state-identifiable, dynamically persistent relational pattern in
+  the complete manifestation--constituent--field state, not one occupied site.
+  It prices constituents, relations, and face/edge connections as selected
+  types and keeps formation, reaction-complete charge, separability, physical
+  poles, and infrared recovery open. Production remains unchanged.
+
+# FTD-0664–0667: causal field transfer, revival, and exact memory (2026-07-28)
+
+- FTD-0664's first three-volume run completed but remains execution-invalid:
+  inverse recovery exceeded its locked bound and tick-zero modal normalization
+  was not unity. Its favorable raw morphology was not promoted.
+- FTD-0665 corrected those observers prospectively and reran all six histories.
+  Before causal wraparound, `L={17,25,33}` agree to RMS `1.95e-4`; dynamic
+  field energy is positive and its radial second moment grows from `~4.33` to
+  `~17.11`. Internal matter therefore launches a real local field disturbance.
+- FTD-0666 tested the larger-volume tick-76 return prediction out of sample.
+  FTD-0675 later retracted its reported return: the paired modal displacement
+  omitted the inertial-mass metric, so the `{73,76,76}` timing has no canonical
+  recurrence interpretation.
+- The next discriminator is a canonical outgoing/reflection-controlled pole
+  test: determine whether a localized narrow resonance survives when emitted
+  field energy cannot return. No photon, lifetime, resonance pole, or
+  production claim follows from the historical run.
+- FTD-0667 proves the exact discrete reduction behind the observed behavior:
+  eliminating field coordinates from a block-linear complete tick gives the
+  projected matter memory kernel `K_j=B D^j C`. Reversible complete evolution
+  can therefore appear damped and later revive without information loss.
+  The next research identifier remains unassigned.
+
+# FTD-0660–0663: internal action transfer and field-band embedding (2026-07-28)
+
+- Built a direct instantaneous-dressing ledger for the first internal matter
+  doublet. V1 found outward field transfer but failed two observer controls;
+  v2 fixed those controls and exposed an unequal-modal-energy normalization
+  defect; neither mixed result was regraded.
+- FTD-0662 corrected only that normalization and ran 34 fresh histories. The
+  doublet falls to `0.424255` of its initial action while binding energy and a
+  dynamic face/edge field residual carry the exchange. More than `85%` of the
+  residual norm reaches the far shell by tick 128. Energy, decomposition,
+  symmetry, zero, and inverse gates all pass.
+- FTD-0663 proves the internal phase lies inside the exact propagating field
+  band and matches an axial field wave at `k=2.2339983`. The excitation has no
+  spectral-gap protection; resonance is now the leading hypothesis, not an
+  established pole or decay law.
+- This establishes reversible radiation-like dispersion from excited extended
+  matter. It does not establish photons, irreversible lifetimes, quantum
+  decay, production adoption, or a physical particle. Next free id: FTD-0664.
+
+# FTD-0657–0659: classical pole boundary and internal-phase test (2026-07-28)
+
+- Proved that additive rest energy cannot create a nonzero rest-frequency pole
+  in the present classical tangent map; translation is a zero mode, moving
+  structure factors are convective, and binding/fields supply internal modes.
+- Defined a state-functional intrinsic matter-phase criterion. The exact
+  dressed rest fixed point cannot advance a nonzero clock, so the current
+  registered intrinsic-rest candidate census closes negative.
+- Tested the first non-rigid cubic doublet over 74 locked exact reversible
+  histories. Phase, amplitude, quadrature, polarization, cyclic, energy,
+  inversion, and exact-zero controls pass, but matter-doublet action changes by
+  `0.898691` against `0.02`. Verdict:
+  `NATIVE_EXCITED_MATTER_CLOCK_MIXED`.
+- The next gate is a direct action-transfer ledger and complete coupled
+  matter--field eigenmode/resonance test. No production, particle, quantum,
+  rest-mass, or Lorentz claim follows. Next free id: FTD-0660.
+
+# FTD-0648: cell-measure fixed-mass static depinning (2026-07-27)
+
+- Selected the cross-resolution cell law `r_m=r_q=r_kappa=(2/w)^3` and
+  `r_beta=w/2`, anchored to the constructive width-two composite.
+- All 54 arms keep rest energy, inertia, and integrated polarity fixed. Scaled
+  field-energy slope is `0.08223`; absolute Peierls-barrier slopes are
+  `-2.645..-2.526`, and every barrier sequence decreases monotonically.
+- Verdict `CELL_MEASURE_FIXED_MASS_STATIC_DEPINNING_CONSTRUCTIVE`. This is
+  static selected-action evidence. FTD-0649 must install the same factors in
+  the reciprocal common action before dynamical or pole claims. Next free id:
+  FTD-0649.
+
+# FTD-0647: frozen-coefficient fixed-mass refinement closes (2026-07-27)
+
+- Proved from the selected connected-block action that a width-`w` bipole has
+  rest-energy floor `2w^3 E_REST` and collective inertial-mass floor
+  `2w^3 M_INERTIAL`. Nonnegative binding and matched field sectors cannot
+  cancel the floor.
+- A locked 12-arm engine certificate over `w={1,2,3,4}` and all cubic
+  orientations passes exact count, neutrality, Gauss, positivity, lower-bound,
+  covariance, and scaling gates. Verdict:
+  `FROZEN_ADDITIVE_CONSTITUENT_FIXED_MASS_REFINEMENT_CLOSED`.
+- Extended matter remains open, but widening the object with unchanged
+  per-site coefficients is no longer a valid fixed-mass route. The next
+  candidate must preregister a cell-measure normalization, collective graph
+  mass, background contribution, or finite-carrier depinning mechanism. Next
+  free id: FTD-0648.
+
+# FTD-0646: long-horizon transport exposes collective pinning (2026-07-27)
+
+- Extended the four lowest momenta over three direction families to 256
+  forward plus 256 state-only reverse ticks, with rest, sign, and whole-state
+  cubic controls: 23 arms total.
+- Every arm remains coherent and reversible, but only `<100>,p=0.015` and
+  `<110>,p=0.015` pass the secular-transport gates. Four lower arms explicitly
+  reverse and the rest stall or remain mixed. Verdict:
+  `ANALYTIC_CENTER_LONG_HORIZON_MIXED`.
+- The fixed object therefore has a direction-dependent Peierls depinning
+  boundary. A controlled fixed-mass size/refinement limit is now required
+  before any matter-pole or infrared Lorentz campaign. Next free id: FTD-0647.
+
+# FTD-0643–0645: coherent collective boost from the analytic center (2026-07-27)
+
+- Retained FTD-0643 as execution-invalid: its listed arms total 32 while its
+  coverage prose and runner stated 29. Retained FTD-0644 as locked-negative:
+  all dynamics passed, but an unrotated modal observer made soft-fraction
+  covariance miss by `5.1404e-6`.
+- FTD-0645 rotates the analytic modal basis with the whole state. All 32 rest,
+  seven-momentum, direction, sign, and cubic arms pass. Every nonzero arm is
+  mobile at 16-tick resolution; high boosts travel `3.4127..3.4317` cells and
+  retain soft fraction above `0.9999995`.
+- Worst common residual is `1.9758e-11`, energy drift `1.8133e-12`, recovery
+  `9.8084e-11`, shape RMS `0.007904`, dressing residual `0.29122`, and cubic
+  residual `8.4302e-12`. No long-time, zero-threshold, mass, pole, Lorentz, or
+  production claim follows. Next free id: FTD-0646.
+
+# FTD-0642: reversible weak-hybrid matter-field response (2026-07-27)
+
+- Locked and ran 18 coupled common-action arms at the FTD-0638 center: three
+  transverse wavevector families, two polarizations, and full/half/sign
+  controls, each for 256 forward plus 256 state-only reverse ticks.
+- Every arm remains bounded and reversible and shows nonzero linear matter
+  response. Maximum coupled/bare phase shift is `5.8011e-4`, field distortion
+  `1.8409e-2`, leakage `3.7645e-2`, energy drift `3.1087e-15`, and inverse
+  recovery `1.2105e-13`.
+- A post-result, non-gating projection places `99.9831%` of induced matter
+  power in the six soft collective modes. No pole, photon, boost, Lorentz, or
+  production claim follows. Next free id: FTD-0643.
+
+# FTD-0641: independent transverse face/edge field spectrum (2026-07-27)
+
+- Derived the exact finite-volume matched-field dispersion
+  `Omega=2 asin(C_SPEED sigma/2)` with
+  `sigma^2=4 sum_a sin^2(pi n_a/L)`.
+- Ran 42 primary Fourier/cubic/polarization arms and 12 amplitude/sign controls
+  on top of the FTD-0638 dressed background for 256 forward plus 256 reverse
+  field ticks each. All gates pass; worst primary phase error is `1.430e-13`,
+  divergence `3.432e-15`, energy drift `9.170e-14`, and recovery `6.661e-16`.
+- Added focused CTest, run-of-record, independent certificate, analysis/audit,
+  and canonical reconciliation. Production remains unchanged. Matter was held
+  fixed, so coupled modes, photons, a common cone, and physical poles remain
+  open. Next free id: FTD-0642.
+
+# FTD-0640: complete reversible classical matter-coordinate spectrum (2026-07-27)
+
+- Recomputed the complete analytic 48-coordinate Hessian at the FTD-0638
+  center and used the unchanged constituent inertia to preregister all
+  implicit-midpoint mode phases.
+- Ran all 48 primary modes plus 39 half-amplitude, sign-mirror, and cyclic
+  controls for 256 forward and 256 state-only reverse ticks each. All 44,544
+  common-action steps pass; worst phase error is `1.1267%`, leakage `1.5226%`,
+  energy drift `1.9585e-13`, and inverse recovery `5.1017e-11`.
+- Added an observer-only repeated-Jacobian cache with exact residual checks,
+  stale-cache fallback, and a cached/direct equivalence CTest. Default calls
+  retain the original root-solver path.
+- Added eigenvector records and a clearly non-gating post-result projection:
+  the six soft modes approximate three translations plus three rotations with
+  squared-subspace defect `4.3862e-7`; 42 internal deformations follow after a
+  `221.67476x` stiffness gap.
+- Added the independent certificate, analysis/audit, versioned run-of-record,
+  and synchronized ledger/index/tracker/spec records. Production remains
+  unchanged. This is a selected classical composite spectrum, not quantum
+  levels, particle masses, field poles, or physical-particle promotion. Next
+  free id: FTD-0641.
+
+# FTD-0637–0639: analytic 48D matter basin and reversible dynamical rest (2026-07-27)
+
+- Derived the fixed-sector Poisson-envelope gradient and Hessian for the full
+  48-coordinate selected connected-matter action. The analytic matrix agrees
+  with the knot-local finite-difference matrix to `5.25e-7` and has minimum
+  eigenvalue `0.00190846`.
+- Preserved the negative stationarity result: the FTD-0633 state has analytic
+  residual force `1.1204e-8`, above the locked gate.
+- Applied one unprojected full-space Newton step. Maximum coordinate change is
+  `4.704e-10`; the same action decreases, the coat sector is unchanged, the
+  final gradient is below `1.35e-14`, and the positive spectrum survives.
+- Rebuilt the longitudinal dressing and ran two cyclic arms for 128 forward
+  plus 128 state-only reverse ticks. Across 512 records, worst impulse is
+  `1.94e-14`, state excursion `3.05e-16`, energy drift `4.44e-16`, common
+  residual `4.07e-14`, and recovery `2.78e-16`; no hops occur.
+- Added focused CTests, versioned results, three independent certificates, the
+  analytic analysis/audit, and canonical ledger/index/tracker reconciliation.
+  Production remains unchanged. The result is a selected local classical
+  dressed rest state, not a particle, mass, pole, quantum level, EM derivation,
+  or production adoption. Next free id: FTD-0640.
+
+# FTD-0630–0636: cubic matter fibre qualifies; full Hessian exposes C1 knot boundary (2026-07-27)
+
+- FTD-0630 records the FTD-0628 body-half state as a three-axis translation
+  saddle candidate, but preserves an execution-invalid verdict because cyclic
+  curvature covariance missed its locked gate (`2.74e-8 > 1e-8`).
+- FTD-0631 closes the fully shifted refinement under the provisional cap-two
+  chart: its Hessian neighbourhood requires more than two records at one
+  nearest-site anchor.
+- FTD-0632 derives the locked-family bound `N_fibre=2^3=8` and tests 66/66
+  Hessian geometries. Cap-two/cap-four/cap-eight failure counts are
+  `26/14/0`; effective same-anchor points remain at least `0.9985` apart.
+- FTD-0633 uses only that derived finite cap and qualifies a lower-energy
+  reduced static basin, positive finite-amplitude translations, 64-tick rest,
+  and state-only inverse recovery (`3.47e-14`). Production is unchanged.
+- FTD-0634/0635 complete positive 48 by 48 spectra but remain
+  execution-invalid on locked gradient/translation gates. FTD-0636 identifies
+  the cause: the quadratic coat is `C1`, not `C2`, and coarse Hessian stencils
+  cross half-integer knots. A knot-local spectrum remains positive
+  (`lambda_min=0.0019086`) and closes the Rayleigh/direct-translation identity,
+  but its gradient `1.116e-8` narrowly misses the locked `1e-8` gate.
+- Corrected the interpretation of FTD-0629: its registered oscillations are
+  finite-amplitude reversible modal responses, not yet a globally defined
+  infinitesimal normal-mode spectrum. The next gate is analytic knot-local
+  differentiation, not another finite-difference tolerance repair.
+
+## FTD-0629: four dressed-matter linear modes qualify (2026-07-27)
+
+- Derived four generalized shape modes from the FTD-0628 Hessian and unchanged
+  production inertia, including the implicit-midpoint phase prediction.
+- Ran 16 hash-locked mode-selective arms covering four modes, two amplitudes,
+  signed mirrors, and cyclic copies; every 64-forward/64-inverse arm passes.
+- Measured phase errors are `0.1722%`, `0.00437%`, `0.00204%`, and
+  `0.000429%`; maximum cross-mode leakage is `0.1866%`.
+- Quadratic energy scaling, amplitude independence, sign symmetry, and cubic
+  covariance pass. Worst energy drift is `8.44e-15` and recovery `5.13e-13`.
+- Recorded `CONNECTED_BLOCK_ADIABATIC_LINEAR_MODES_CONSTRUCTIVE`; the 167/167
+  independent eigensystem/trajectory certificate passes. These are classical
+  symmetry-preserving model modes, not particle masses or quantum levels.
+
+## FTD-0628: a static dressed connected-matter fixed point closes (2026-07-27)
+
+- Hash-locked a four-coordinate symmetry refinement before implementation and
+  minimized the unchanged binding-plus-minimum-Gauss-field energy from the sole
+  rigid `4x2x2` start.
+- Both cyclic arms converge in two accepted Newton steps to the same nearby
+  geometry. Static energy falls by `1.37788e-5`; the minimum independently
+  recomputed Hessian eigenvalue is `21.0199`.
+- The unchanged full 48-coordinate step has maximum constituent impulse
+  `6.36e-10` against the locked `1e-9` gate. Sixty-four forward/inverse ticks
+  keep complete-state motion below `1.58e-9`, energy drift below `1.78e-15`,
+  and recovery below `3.17e-14`.
+- Complete rotated matter-plus-field covariance closes to `6.54e-14`; the
+  independent Hessian/record proof passes 64/64 checks.
+- Recorded `CONNECTED_BLOCK_STATIC_DRESSED_FIXED_POINT_CONSTRUCTIVE`. This is
+  an engine-resolution selected-action fixed point, not an exact theorem,
+  global minimum, particle, mass, or production adoption.
+
+## FTD-0627: connected matter has bounded reversible dynamical rest (2026-07-27)
+
+- Ran two cyclic 256-tick forward plus 256-tick state-only reverse exact-half
+  fibre-enabled centre-rest histories (1,024 implicit transactions).
+- Both arms remain centre-stationary, multiplicity-two, separated, bounded,
+  energy preserving, cubic, and reversible. Worst centre displacement is
+  `3.92e-12`, energy drift `1.70e-13`, and recovery `9.39e-12`.
+- No complete-state period passes the locked `P` and `2P` recurrence test.
+  The interface spectrum passes `C_8>=0.90`, while the three bond-shell
+  spectra reach only `0.8636...0.8787`; the unchanged conjunction fails.
+- Recorded `CONNECTED_BLOCK_BOUNDED_IRREGULAR_REST_OPEN`. “Irregular” is the
+  preregistered residual class, not a chaos or instability claim.
+- Added a 61/61 independent record/DFT certificate. Production is unchanged.
+
+## FTD-0626: shared-anchor fibre removes the apparent reaction surface (2026-07-27)
+
+- Applied the already selected FTD-0609 multiplicity-two chart fibre to the
+  connected Moore block without changing its action, currents, fields,
+  energies, graph, tolerances, or production defaults.
+- All nine registered 16-step forward/state-only-reverse histories complete.
+  Shared opposite-polarity records remain at least `0.9980` cell apart; worst
+  common-action residual is `1.91e-11`, energy drift `1.31e-13`, and recovery
+  `5.11e-12`.
+- Preserved the strict default-false regressions at ticks one and two, proving
+  that FTD-0624/0625 measured one-record-per-anchor chart insufficiency rather
+  than a physical collision or annihilation event.
+- Closed internally fixed exact-half rest negative: the centre is stationary
+  to `2.52e-15`, but the constituents execute a reversible `1.26e-3` breathing
+  response. Reversible dynamical rest and its recurrence spectrum are next.
+- Added a 44/44 independent record certificate. No reaction law, production
+  toggle, scenario, physical-particle claim, or postulate was added.
+
+## FTD-0625: rigid circulation accelerates the reaction surface (2026-07-27)
+
+- Ran the seven locked zero-total-momentum circulation arms at model-internal
+  excess energies `B_x` and `4B_x`.
+- The zero control completes 16 forward/reverse ticks with no conflict and
+  `4.62e-14` state recovery.
+- Every circulating root converges near `1e-14` but fails unique site
+  projection. The `B_x` arms fail at tick two; `4B_x` arms fail at tick one.
+  Every failure contains exactly two opposite-polarity conflicts and zero
+  same-polarity conflicts.
+- Sign symmetry closes at `3.67e-15`; cyclic covariance at `6.25e-13`. The
+  independent certificate passes 37/37 checks.
+- Verdict: `RIGID_CIRCULATION_DYNAMIC_STABILIZATION_CLOSED_NEGATIVE`.
+  Production remains unchanged; the next native-first branch is an atomic
+  reaction transaction.
+
+## FTD-0624: half-cell stability exposes an ontic collision surface (2026-07-27)
+
+- Ran 14 locked eight-step forward/state-only-reverse translation-stability
+  arms for the unchanged connected `w=2` common action.
+- The exact quartic Peierls law closes on both registered axes to `3.87e-16`.
+  Every signed integer perturbation accelerates away from `f=0`, and every
+  signed near-half perturbation accelerates toward `f=+/-1/2`.
+- Twelve non-boundary arms remain coherent and reversible. Worst accepted
+  energy drift is `7.73e-14`; worst recovery is `3.41e-14`.
+- Exact half-cell rest closes negative. The body-axis solve converges at
+  `8.70e-12` but maps four opposite-polarity interface pairs onto four common
+  ternary anchors. The transverse exact-half arm advances but lacks a state-
+  only inverse. The locked verdict is
+  `CONNECTED_TRANSLATION_STABILITY_EXECUTION_INVALID`.
+- Corrected the selected common-action Newton implementation so chart-invalid
+  derivative probes may be evaluated while accepted endpoints retain the
+  unchanged unique-site gate. This localizes the defect to the endpoint rather
+  than the Jacobian probe. Production remains unchanged.
+- Added an independent 29/29 record certificate. Static normal modes are now
+  blocked pending an atomic exclusion, reaction, or dynamic-stabilization law.
+## FTD-0623: repeated mobility of a connected integer object (2026-07-27)
+
+- Ran five locked 16-step forward/16-step state-only-reverse trajectories for
+  the exact `w=2` 16-constituent, 72-bond FTD-0622 object.
+- The exact integer-phase control remains centred below `2.2e-15`. This is
+  stationarity, not translational stability: FTD-0553 proves integer centering
+  is a Peierls maximum. Every boosted arm moves more
+  than 3.41 cells and records 48 legitimate constituent hops while maximum
+  shape RMS remains below `0.00156` cell.
+- Positive/negative mirror closes at `4.44e-15`; cyclic covariance closes at
+  `7.12e-12`; worst energy drift is `9.46e-14`; worst state-only recovery is
+  `4.64e-12`.
+- The focused CTest passes in `414.53 s`; the independent certificate passes
+  75/75 checks. Production remains unchanged.
+- Continuous translation remains open: cumulative normalized spline reaction
+  is `0.08015` parallel and `0.16646` transverse. The finite launch does not
+  establish a gapless mode, fixed mass, or native bond formation.
+
+## FTD-0622: connected integer-matter common action (2026-07-27)
+
+- Generalized the exact reversible constituent/field transaction to runtime-
+  size exact-ternary block bipoles with `2,16,54` constituents and
+  `1,72,365` reference-local Moore binding edges.
+- All 13 registered forward/state-only-reverse arms pass continuity, Gauss,
+  work, energy, locality, no-hop, rest, inversion, and cubic-covariance gates.
+  Worst common residual is `8.71e-12`; worst recovery is `1.97e-14`.
+- The normalized spline reaction defect decreases with width in both locked
+  classes: parallel `0.5551 -> 0.07054 -> 0.02387`, transverse
+  `0.1744 -> 0.03284 -> 0.01265`. The Peierls index also decreases strictly.
+- The focused CTest passes in `193.77 s`; the independent certificate passes
+  32/32 checks. Production remains unchanged.
+- Status is one-step selected-action feasibility and a preliminary three-width
+  trend. Stability, fixed mass, coherent transport, native graph formation,
+  and a particle interpretation remain open for FTD-0623.
+
+## FTD-0621: exact ternary extended-pattern Peierls scaling (2026-07-27)
+
+- Added the observer-only `ternary_block_bipole_peierls` helper and focused
+  CTest for two adjacent equal `w^3` primitive `+1/-1` domains. No fractional
+  site state, fitted envelope, production toggle, or dynamics was added.
+- Ran 90 held-out volume/orientation/translation arms under protocol SHA-256
+  `905819BD...8CB31`. Exact transform, spectral identity, cubic covariance,
+  volume, monotonicity, slope, and endpoint gates all pass.
+- Measured at least `220.231x` relative pinning suppression from `w=5` to
+  `w=35`; the registered `E~w^5`, absolute `B~w^2`, and `B/E~w^-3` classes
+  pass. Every finite barrier remains positive.
+- Preserved two invalid numerical executions before compensated accumulation
+  closed the unchanged algebraic gates. The independent certificate passes
+  29/29.
+- Status is exact integer representability only. Absolute barrier, constituent
+  count, and energy grow with width; binding, coherent motion, fixed physical
+  normalization, and joint translation-defect suppression remain FTD-0622.
+
+## FTD-0620: balanced-gait internal phase return (2026-07-27)
+
+- Replayed the exact FTD-0618 rest and signed balanced-gait states for 128/512
+  ticks and tested return of all six centre-subtracted constituent positions
+  and momenta under a preregistered metric.
+- Observed no registered return: the closest normalized distance is `5.22037`
+  against the `0.05` return threshold.
+- Measured intermittent axial transport. The four fixed-window increments are
+  `1.0917, 0.9641, 0.2108, 1.1021` cells, reaching `+/-3.36880` total; motion
+  weakens and then resumes.
+- Excluded the locked one-time-relaxation verdict: final internal-momentum norm
+  remains `63.03%` of launch. A single gait angle is not a sufficient reduced
+  state at this energy.
+- All 2,304 forward/reverse transactions pass; signs mirror below `1.91e-9`;
+  the independent certificate passes 29/29. No production behavior changed.
+
+## FTD-0619: spline-Poynting / Noether-defect discriminator (2026-07-27)
+
+- Derived a local field-momentum candidate from the already locked FTD-0550
+  quadratic face/edge spline reconstruction, including the integer-time
+  magnetic centering and the pre-fixed long-wave `P=U/c` normalization.
+- Verified the exact overlap implementation against direct piecewise
+  quadrature to `1.44e-17`; the candidate is conserved on all 12 locked
+  source-free directed-wave arms with worst relative drift `1.40e-13`.
+- Closed the candidate negative for the coupled balanced gait: maximum
+  cumulative matter-plus-spline-field defect is `0.05117145`, slightly larger
+  than the prior selected-pseudomomentum defect `0.05109954`.
+- Decomposed the active matter impulse as `99.8137%` electric and `0.1863%`
+  magnetic, with binding-centre recoil below `4.34e-19`; 23/23 independent
+  certificate checks pass.
+- Recorded `CONTINUOUS_TRANSLATION_DEFECT_MEASURED`. No residual was renamed
+  substrate momentum, and no production state, force, toggle, or scenario
+  changed.
+
+## FTD-0618: closed symmetry-balanced gait (2026-07-27)
+
+- Built one net-neutral charge-conjugate pair of the FTD-0612 compact cores,
+  related by the FTD-0617-predicted proper half-turn, in one shared field with
+  no stationary neutralizer.
+- All 768 common-action transactions pass. The rest pair stays within
+  `3.03e-11` cell; active signs translate the pair axially by
+  `+/-1.09170740072` cells while transverse drift remains below `4.25e-15`.
+- Closed the strongest verdict negative: cumulative declared field-plus-matter
+  pseudomomentum changes by `0.05110` against `1e-10`, despite exact energy and
+  state-only inversion.
+- Recorded `SYMMETRY_BALANCED_GAIT_KINEMATIC_MOMENTUM_OPEN`. The fixed lattice
+  is an unaccounted impulse reservoir until a substrate-stress or
+  quasimomentum ledger is derived. Independent certificate passes 20/20.
+- Corrected a protocol-prefix hashing convention error, reran the unchanged
+  campaign with SHA `C8D6D255...7A73`, and retained the correction provenance.
+
+## FTD-0617: internal-gait angular response (2026-07-27)
+
+- Ran the complete preregistered eight-angle circle in the two-dimensional
+  rotational tangent plane plus four whole-state cyclic controls: 12 arms and
+  6,144 forward/inverse common-action transactions.
+- Resolved both antipodal parity sectors (`R_even=0.85960`,
+  `R_odd=1.51580`) with planar-even and axial-odd geometry across the full
+  sampled circle; DFT reconstruction passes at `3.85e-15` and covariance at
+  `1.14e-13`.
+- Found strong discrete angular selection: axis samples translate `2.456`
+  cells while diagonal samples translate only `0.101...0.271` cell, and the
+  sampled third odd harmonic slightly exceeds the first.
+- Recorded `MIXED_PARITY_INTERNAL_GAIT_RESPONSE_RESOLVED`. This is a nonlinear
+  finite-angle gait map, not a continuum velocity tensor. The next locked
+  candidate is one coupled symmetry-paired composite, not post-hoc addition
+  of independent trajectories.
+
+## FTD-0616: internal-walker direction and persistence (2026-07-27)
+
+- Ran 12 locked 512-tick forward/reverse arms over the two constructive
+  rotational modes, both internal signs, and three whole-state cyclic
+  orientations: 12,288 exact common-action transactions.
+- Every fixed 128-tick window moves at least `0.916` cell and each base arm
+  reaches `3.311` cells, but successive directions turn to cosine `0.360`.
+  Recorded `INTERNAL_WALKER_TRANSIENT_OR_UNCONTROLLED` as curved uncontrolled
+  transport, not a stopped transient.
+- Resolved the sign response into a sign-even in-plane drift of magnitude at
+  least `1.6436` and a sign-odd axial component `2.87437`; whole-history
+  proper-cubic covariance passes at `9.62e-12`.
+- Corrected a PowerShell/backtick protocol-hash metadata error, reran the
+  unchanged campaign, and passed the independent certificate 20/20.
+
+## FTD-0615: zero-momentum internal-mode mobility (2026-07-27)
+
+- Excited all six registered rotation/strain tangent modes of the exact
+  FTD-0612 compact rest state with zero total centre momentum, both signs, and
+  two locked energies: 24 arms and 6,144 forward/inverse transactions.
+- Four high-energy rotational arms translated the intact centre by `1.45360`
+  cells and passed every common-action, energy, chart, and inverse gate. All
+  strain arms remained below `1.97e-4` cell centre excursion.
+- Recorded `ZERO_MOMENTUM_INTERNAL_WALKER_CONSTRUCTIVE`: existing constituent
+  phase space can couple internal rotational excitation to translation without
+  a new primitive.
+- Did not promote self-propulsion or a physical particle. Direction, phase
+  recurrence, long-time mobility, isolated momentum, and removal of the
+  external uniform neutralizer remain open.
+
+## FTD-0614: compact-core Peierls landscape and proper covariance (2026-07-27)
+
+- Reconstructed ten signed/rotated integer-cell energy paths from the exact
+  FTD-0612 rest state, with rigid and six-coordinate locally relaxed curves.
+- Measured positive selected-path barriers `1.13027e-4...1.57932e-4`, but
+  closed the locked unique-landscape gate: four transverse paths settle into
+  distinct forward/backward internal branches with `1.34316e-4` hysteresis.
+- Replaced FTD-0613's invalid fixed-body axis comparison with rotated whole-
+  state comparisons. Energy curves agree within `1.98e-17`, and twelve
+  common-action/inverse covariance arms agree within `1.78e-15`.
+- Established that centre position and total polarity do not suffice to
+  predict compact-core motion; internal constituent configuration controls
+  the available translation branch. No new primitive or production behavior
+  was added.
+
+## FTD-0613: refined compact-core directional boosts (2026-07-27)
+
+- Ran 18 signed-axis boosts from the verified FTD-0612 rest state: three
+  speeds, six directions, and 5,376 total forward/reverse transactions.
+- Every common-action, energy, inverse, geometry, and fibre gate passes. Every
+  `1/32` arm crosses; every `1/64` and `1/128` arm fails displacement.
+- Measured strong body-axis dependence at `1/64`: fixed-body `x/y` remain near
+  `-0.09` while `z` reaches `1.476` cells. Recorded a finite,
+  orientation-dependent compact-carrier depinning threshold.
+- Closed the locked directional conjunction because its axis-equality gate
+  fails. Documented that cubic covariance must rotate the state and launch
+  together; equal response along one oriented body's laboratory axes was an
+  invalid comparator.
+
+## FTD-0612: stationary compact-core refinement (2026-07-27)
+
+- Reproduced the FTD-0611 basin and applied its sole registered numerical
+  repair: one undamped Newton step in the unchanged nine coordinates.
+- Reduced gradient to `3.94e-14` while retaining nine positive modes and all
+  18 increasing signed perturbations.
+- Completed 64 rest ticks and 64 state-only inverses with zero displacement,
+  zero centre-momentum change, zero energy drift, and `3.20e-17` recovery.
+- Recorded `REFINED_UNIFORM_SINGLE_CORE_STATIC_CONSTRUCTIVE` at selected,
+  externally neutralized observer scope.
+
+## FTD-0611: uniformly neutralized compact static search (2026-07-27)
+
+- Searched the full nine translation/orientation/strain coordinates from 16
+  locked starts. All starts terminate; the best basin has nine positive modes
+  and all 18 signed perturbations raise energy.
+- The locked result is narrowly negative because a `1e-7` simplex stop leaves
+  gradient `4.40e-8` and rest drift `1.49e-8`, above downstream `1e-8` gates.
+- Recorded the search-versus-gate precision mismatch and deferred only a
+  deterministic same-basin refinement to FTD-0612.
+
+## FTD-0610: single-core neutralizer control (2026-07-27)
+
+- Separated the phase-15 shared-fibre trimer from its dynamical neutralizing
+  partner using uniform and frozen-partner stationary-density controls.
+- Completed all 832 registered forward/reverse ticks. Worst common-action
+  residual is `2.35e-14`, energy drift `2.34e-15`, and state recovery
+  `2.17e-13`; both integer-translation controls pass.
+- Found that the extracted core is not a rest solution in either environment.
+  Under the uniform neutralizer, zero launch drifts `0.06473` cells and changes
+  centre momentum by `0.01220` in 16 ticks.
+- The slow uniform arm moves `0.80715/2` cells and fails, while the frozen
+  partner reverses it to `-0.22442`. Both fast arms pass.
+- Recorded `SINGLE_CORE_STATIC_REFERENCE_NOT_ISOLATED`. The next compact-core
+  test must first minimize the one-core uniform-neutralizer action; no
+  production, scenario, particle, or isolated-momentum claim was promoted.
+
+## FTD-0609: shared-anchor constituent fibre (2026-07-27)
+
+- Added one default-false observer option that lets two distinct constituent
+  records share an integer coordinate anchor. Ternary `s`, current, field,
+  action, force, energy, solver tolerances, and production remain unchanged.
+- Reproduced the strict FTD-0608 failures, then completed both shared-fibre
+  forward/reverse histories. Common-action residuals stay below `1.21e-14`,
+  energy drift below `1.12e-15`, and recovery below `5.11e-13`.
+- All shared anchors are internal to one trimer, with multiplicity two and
+  effective constituent separation above `1.4139`; the option is genuinely
+  exercised without constituent coincidence.
+- The `v=1/32` arm passes with 15 hops and `1.8784` cells displacement. The
+  `v=1/64` arm fails the locked pair-transport gates: displacement `0.2833`
+  and neutral-pair separation change `1.0626`.
+- Recorded `SHARED_ANCHOR_FIBRE_TRANSPORT_CLOSED_NEGATIVE` for the two-arm
+  conjunction while preserving the constructive representation result.
+
+## FTD-0608: qualified-interior compact transport (2026-07-27)
+
+- Reproduced the FTD-0607 phase-15 static core exactly and launched the two
+  unchanged autonomous-motion arms.
+- Completed four clean ticks at `v=1/64` and two at `v=1/32`; energy and every
+  common-action gate pass near machine precision before the boundary event.
+- At the next solve, the free predictor creates exactly one duplicate anchor
+  in both arms at common nominal displacement `1/16` cell. The strict solver
+  rejects its initial candidate before iteration zero.
+- Preserved `QUALIFIED_INTERIOR_COMPACT_MATTER_NUMERICALLY_UNRESOLVED` because
+  complete solver coverage is absent; this is a chart-capacity diagnosis, not
+  a physical dynamics no-go.
+
+## FTD-0607: site-admissible compact matter search (2026-07-27)
+
+- Enforced unique ternary-site anchors as a hard domain constraint in the
+  global `SO(3) x strain` search; no multi-occupancy penalty or new primitive
+  was introduced.
+- Found five repeatable, six-mode-stable, field-clean site-interior cores at
+  phase indices `14,15,16,17,26`. Their minimum chart margin is `5.81e-3`
+  and minimum tangent eigenvalue is `6.31e-4`.
+- The preregistered campaign-wide repeatability gate fails at 22/32 phases,
+  and phase zero lies on a site-chart face. The locked phase-zero seed was
+  therefore unavailable and both autonomous-motion arms were withheld.
+- Preserved the locked verdict
+  `SITE_ADMISSIBLE_COMPACT_MATTER_NUMERICALLY_UNRESOLVED`. This is positive
+  static existence evidence at five phases, not a mobility result or a
+  compact-matter no-go.
+
+## FTD-0606: global orientation × strain core (2026-07-27)
+
+- Reparameterized the unchanged six internal constituent coordinates as
+  `SO(3) × Sym(2)`, separating global orientation from three relational
+  strains without adding an ontic variable.
+- Proved the exact strain binding Hessian
+  `[[18,0,6],[0,24,0],[6,0,18]]`, with spectrum `{12,24,24}`.
+- All 32 phases have well-covered interior continuous static minima; every
+  full tangent Hessian has six positive modes and the smallest eigenvalue is
+  `2.02e-4`. This shows that FTD-0605's boundary escape was a local-chart
+  artifact.
+- Twenty-four of those minima project two or more constituent records onto
+  the same ternary site anchor. The unchanged transaction therefore accepts
+  only eight phases; their common-action and inverse residuals remain near
+  `1e-15`, with four attractive and four repulsive force signs.
+- Preserved the locked verdict `GLOBAL_ORIENTATION_STRAIN_NUMERICALLY_UNRESOLVED`.
+  The next discriminator is a preregistered site-admissible constrained global
+  search; neither compact matter nor the site-ontic branch is declared closed.
+- Recorded a locked-protocol wording defect: coordinate congruence preserves
+  Hessian inertia, not numerical eigenvalues. The exact spectra are retained
+  separately and the literal gate is marked failed.
+
 ## FTD-0605: full local internal-shape core (2026-07-27)
 
 - Released all six local zero-centroid coordinates of the mirrored constituent
