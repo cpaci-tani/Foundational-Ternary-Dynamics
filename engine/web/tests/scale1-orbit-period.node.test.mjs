@@ -3,10 +3,19 @@
 import assert from 'node:assert/strict';
 import { estimateOrbitPeriod } from '../js/scales/scale1/telemetry/orbit-period.js';
 
-// A clean circular 2-body orbit: separation returns to ~start every 10 ticks.
+// A clean bound orbit as a period-10 triangle wave (separation rises
+// linearly from 10 to 20 over the first 5 ticks of each period, then falls
+// back to 10 over the next 5): this departs tolerance immediately (avoiding
+// a false match near tick 1, which a smooth sinusoid starting at an
+// extremum would give — its curvature is ~0 there) and returns to within
+// tolerance of the start value ONLY at the true period (a sinusoid
+// starting at its extremum OR at its zero-crossing both spuriously
+// re-match at the HALF period too, since either point recurs twice per
+// cycle) — a triangle wave anchored at its minimum has no such ambiguity.
 const history = [];
 for (let tick = 0; tick <= 25; tick++) {
-    const sep = 10 + Math.sin((tick / 10) * 2 * Math.PI) * 0.01; // returns near 10 every 10 ticks
+    const phase = tick % 10;
+    const sep = phase <= 5 ? 10 + phase * 2 : 10 + (10 - phase) * 2;
     history.push({ tick, separation: sep });
 }
 const est = estimateOrbitPeriod(history);
