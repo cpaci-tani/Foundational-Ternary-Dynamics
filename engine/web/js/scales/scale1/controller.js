@@ -346,6 +346,17 @@ export function animatePE(ctx) {
     // last recorded tick) so the history stays real and doesn't repeat a
     // stale sample across the ~3 unthrottled frames between hub collections.
     if (ov.trails && peData.count === 2) {
+        // A pair identity key (not just count===2) guards against annihilation
+        // + re-injection silently swapping in a different pair while count
+        // holds at 2 — without this, a stale sample from the old pairing
+        // would anchor estimateOrbitPeriod's "start" reference and produce a
+        // numerically plausible but physically meaningless period.
+        const id0 = peData.ids[0], id1 = peData.ids[1];
+        const pairKey = id0 < id1 ? `${id0}:${id1}` : `${id1}:${id0}`;
+        if (telemetryHub._s1SepPairKey !== pairKey) {
+            telemetryHub._s1SepHistory.length = 0;
+            telemetryHub._s1SepPairKey = pairKey;
+        }
         const tick = telemetryHub.s1.diag?.tick ?? null;
         const sep = telemetryHub.peSeparation.last();
         const hist = telemetryHub._s1SepHistory;
@@ -356,6 +367,10 @@ export function animatePE(ctx) {
         telemetryHub.s1._orbitPeriod = estimateOrbitPeriod(hist);
     } else {
         telemetryHub.s1._orbitPeriod = null;
+        if (peData.count !== 2) {
+            telemetryHub._s1SepHistory.length = 0;
+            telemetryHub._s1SepPairKey = null;
+        }
     }
 
     if (ov.potential && peData.count > 0) {
@@ -426,6 +441,12 @@ export function animatePE(ctx) {
     if (ov.system && peData.count > 0) {
         const sys = computeSystemVectors(peData);
         viewport.updatePESystem(sys.com, sys.p, sys.l);
+        // hub.peAngMom is the origin-frame L the native engine reports
+        // (particle_engine.cpp sums r x mv from raw, non-shifted positions).
+        // sys.l above is the true CoM-relative L computed here in JS; surface
+        // its magnitude so the "about CoM" telemetry row doesn't silently
+        // read the origin-frame channel under a false label.
+        telemetryHub.s1._overlaySystemL = Math.hypot(sys.l[0], sys.l[1], sys.l[2]);
     }
     telemetryHub.s1._overlaySystemOn = ov.system;
 

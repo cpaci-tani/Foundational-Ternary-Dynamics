@@ -212,7 +212,7 @@ export class TelemetryHub {
             _overlaySystemOn: false, _overlayVelocitiesOn: false, _overlayTrailsOn: false,
             _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
             _overlayForceOn: false, _orbitPeriod: null,
-            _potentialMin: 0, _potentialMax: 0,
+            _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
         };
         this.s2  = { diag: null, runtime: null };  // also used for scale3
         this.s4  = { diag: null };
@@ -295,6 +295,12 @@ export class TelemetryHub {
         // isn't an array (no .map), and whose sample cadence is per-render-
         // frame, not per-engine-tick.
         this._s1SepHistory = [];
+        // Identity key ("lowerId:higherId") for the pair _s1SepHistory was
+        // built from — cleared/reset whenever a different pair (or a
+        // non-2-body count) is observed, so annihilation+re-injection
+        // silently swapping in a new pair can't mix its samples with a
+        // stale prior pairing's history.
+        this._s1SepPairKey = null;
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
         // All values are SIM UNITS (implicit k_B = 1; audit P0-10) — panels
@@ -973,9 +979,10 @@ export class TelemetryHub {
                     _overlaySystemOn: false, _overlayVelocitiesOn: false, _overlayTrailsOn: false,
                     _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
                     _overlayForceOn: false, _orbitPeriod: null,
-                    _potentialMin: 0, _potentialMax: 0,
+                    _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
                 };
                 this._s1SepHistory = [];
+                this._s1SepPairKey = null;
                 this._peInitialEnergy = null;
                 this._peBaselineFp = null;
                 this._lastTick1 = -1;

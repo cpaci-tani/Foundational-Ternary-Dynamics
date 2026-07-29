@@ -187,8 +187,8 @@ export const sections = [
         title: 'System Overlay (CoM / p / L)',
         visibleWhen: (hub) => !!hub.s1?._overlaySystemOn,
         rows: [
-            { id: 'l-com-note', label: 'L (about CoM, this overlay)', unit: '', format: 'text',
-              compute: (hub) => hub.peAngMom.last() },
+            { id: 'l-com-note', label: 'L (about CoM, this overlay)', unit: 'sim',
+              compute: (hub) => hub.s1._overlaySystemL ?? 0 },
             { id: 'l-origin-xref', label: 'cf. L (about origin, Conservation table)', unit: 'sim',
               compute: (hub) => hub.peAngMom.last() },
         ],
