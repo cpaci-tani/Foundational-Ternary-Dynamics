@@ -21,6 +21,7 @@ import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
 import { makeRingTexture, makeTextTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
+import { compareClusterToVoxelMass } from '../scales/scale1/telemetry/mass-comparison.js';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
@@ -82,6 +83,7 @@ export class ViewportParticleRenderer {
         this._voxelDebugWarned = false;
         this._admissibilityRings = null;  // Scale-1 promotion admissibility halo overlay
         this._provenanceLabels = null;    // Scale-1 promotion cluster-id/N label overlay
+        this._massComparison = null;      // Scale-1 promotion voxel<->cluster mass-delta overlay
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -283,6 +285,71 @@ export class ViewportParticleRenderer {
     toggleProvenanceLabels(on) {
         if (!this._provenanceLabels) this._buildProvenanceLabels();
         this._provenanceLabels.visible = on;
+    }
+
+    // ── Voxel<->cluster mass-comparison overlay (lattice-promotion) ──────
+    _buildMassComparison() {
+        this._massComparison = new THREE.Group();
+        this._massComparison.visible = false;
+        this._scene.add(this._massComparison);
+    }
+
+    /**
+     * @param {{positions:Float32Array|Float64Array, count:number, ids:Int32Array}} peData
+     * @param {Map<number, object>} seedById
+     * @param {{positions:Float64Array, masses:Float64Array}|null} voxelDebug - the
+     *   coarsenToParticles snapshot (scale1State.lastPromotion.voxelDebug)
+     * @param {number} latticeSize
+     * @param {number} displayScale
+     */
+    updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale) {
+        if (!this._massComparison) this._buildMassComparison();
+        const group = this._massComparison;
+        while (group.children.length) {
+            const child = group.children[0];
+            if (child.material.map) child.material.map.dispose();
+            child.material.dispose();
+            child.geometry?.dispose?.();
+            group.remove(child);
+        }
+        if (!seedById || !voxelDebug || voxelDebug.count === 0) return;
+        const center = (latticeSize - 1) / 2;
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x999999, transparent: true, opacity: 0.5 });
+
+        for (let i = 0; i < peData.count; i++) {
+            const seed = seedById.get(peData.ids[i]);
+            if (!seed || !seed.voxelMembers || seed.voxelMembers.length === 0) continue;
+
+            let vcx = 0, vcy = 0, vcz = 0;
+            const voxelMasses = [];
+            for (const vi of seed.voxelMembers) {
+                vcx += voxelDebug.positions[vi * 3];
+                vcy += voxelDebug.positions[vi * 3 + 1];
+                vcz += voxelDebug.positions[vi * 3 + 2];
+                voxelMasses.push(voxelDebug.masses[vi]);
+            }
+            const n = seed.voxelMembers.length;
+            vcx = (vcx / n - center) * displayScale;
+            vcy = (vcy / n - center) * displayScale;
+            vcz = (vcz / n - center) * displayScale;
+
+            const px = peData.positions[i * 3], py = peData.positions[i * 3 + 1], pz = peData.positions[i * 3 + 2];
+            const geo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(px, py, pz), new THREE.Vector3(vcx, vcy, vcz),
+            ]);
+            group.add(new THREE.Line(geo, lineMat));
+
+            const { delta } = compareClusterToVoxelMass(seed, voxelMasses);
+            const badgeTex = makeTextTexture(`Δm=${delta.toFixed(3)}`, { color: '#f472b6' });
+            const badge = makeBillboardSprite(badgeTex, 2.5);
+            badge.position.set((px + vcx) / 2, (py + vcy) / 2, (pz + vcz) / 2);
+            group.add(badge);
+        }
+    }
+
+    toggleMassComparison(on) {
+        if (!this._massComparison) this._buildMassComparison();
+        this._massComparison.visible = on;
     }
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
@@ -903,6 +970,13 @@ export class ViewportParticleRenderer {
                 disposeMesh(this._provenanceLabels.children.pop());
             }
             this._scene.remove(this._provenanceLabels);
+        }
+
+        if (this._massComparison) {
+            while (this._massComparison.children.length) {
+                disposeMesh(this._massComparison.children.pop());
+            }
+            this._scene.remove(this._massComparison);
         }
 
         this.particles = null;

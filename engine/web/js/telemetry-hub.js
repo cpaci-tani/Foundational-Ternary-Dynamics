@@ -213,7 +213,7 @@ export class TelemetryHub {
             _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
             _overlayForceOn: false, _orbitPeriod: null,
             _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
-            _overlayProvenanceOn: false,
+            _overlayProvenanceOn: false, _overlayMassComparisonOn: false,
         };
         this.s2  = { diag: null, runtime: null };  // also used for scale3
         this.s4  = { diag: null };
@@ -981,7 +981,7 @@ export class TelemetryHub {
                     _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
                     _overlayForceOn: false, _orbitPeriod: null,
                     _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
-                    _overlayProvenanceOn: false,
+                    _overlayProvenanceOn: false, _overlayMassComparisonOn: false,
                 };
                 this._s1SepHistory = [];
                 this._s1SepPairKey = null;

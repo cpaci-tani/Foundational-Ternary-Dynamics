@@ -66,6 +66,7 @@ export function setVelocities(on)     { scale1State.overlays.velocities = on; }
 export function setTrails(on)         { scale1State.overlays.trails = on; }
 export function setAdmissibilityRing(on) { scale1State.overlays.admissibilityRing = on; }
 export function setProvenanceLabel(on) { scale1State.overlays.provenanceLabel = on; }
+export function setMassComparison(on) { scale1State.overlays.massComparison = on; }
 
 /** Promotion-source ghost layer toggle (controls panel). */
 export function setVoxelDebug(on, viewport) {
@@ -158,6 +159,7 @@ function applyPEOverlayPreset(viewport, preset) {
     ov.voxelDebug = !!o.voxelDebug;
     ov.admissibilityRing = !!o.admissibilityRing;
     ov.provenanceLabel = !!o.provenanceLabel;
+    ov.massComparison = !!o.massComparison;
 
     setButtonActive('toggle-velocities', ov.velocities);
     setButtonActive('toggle-trails', ov.trails);
@@ -172,6 +174,7 @@ function applyPEOverlayPreset(viewport, preset) {
     setCheckbox('pe-voxel-debug', ov.voxelDebug);
     setButtonActive('toggle-pe-admissibility', ov.admissibilityRing);
     setButtonActive('toggle-pe-provenance', ov.provenanceLabel);
+    setButtonActive('toggle-pe-mass-comparison', ov.massComparison);
 
     if (!viewport) return;
     viewport.toggleVelocityVectors(ov.velocities);
@@ -188,6 +191,7 @@ function applyPEOverlayPreset(viewport, preset) {
     setVoxelDebug(ov.voxelDebug, viewport);
     viewport.toggleAdmissibilityRings(ov.admissibilityRing);
     viewport.toggleProvenanceLabels(ov.provenanceLabel);
+    viewport.toggleMassComparison(ov.massComparison);
 }
 
 
@@ -239,6 +243,7 @@ function _resetScale1Internal(ctx) {
         viewport.toggleVoxelDebugLayer?.(false);
         viewport.toggleAdmissibilityRings?.(false);
         viewport.toggleProvenanceLabels?.(false);
+        viewport.toggleMassComparison?.(false);
         if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
@@ -474,6 +479,20 @@ export function animatePE(ctx) {
         viewport.updateProvenanceLabels(peData, scale1State.promotedSeedById, peData.ids);
     }
     telemetryHub.s1._overlayProvenanceOn = ov.provenanceLabel;
+
+    // Mass-comparison badges rebuild a unique CanvasTexture per connector
+    // every call (same cost profile as the provenance labels above), so
+    // this overlay is throttled to the same refreshStreamlines cadence from
+    // the start rather than needing a follow-up fix.
+    if (ov.massComparison && peData.count > 0 && refreshStreamlines
+        && scale1State.lastPromotion?.voxelDebug) {
+        viewport.updateMassComparison(
+            peData, scale1State.promotedSeedById,
+            scale1State.lastPromotion.voxelDebug,
+            scale1State.lastPromotion.latticeSize,
+            scale1State.lastPromotion.displayScale);
+    }
+    telemetryHub.s1._overlayMassComparisonOn = ov.massComparison;
 
     // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();

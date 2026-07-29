@@ -75,6 +75,10 @@ export function getScale1OverlayTemplate() {
           title="Floating #clusterId N=<size> label above each promoted particle, from the ⤴ Scale up capture.">
           <span class="field-swatch field-swatch-pe-provenance"></span>Provenance
         </button>
+        <button class="view-toggle field-toggle" id="toggle-pe-mass-comparison"
+          title="Connects each promoted cluster particle to its constituent voxel-cloud centroid, with the mass delta between the N·K_B cluster convention [DERIVED-linear]/[SMC] and the per-voxel max(ρ,K_B) convention [IMPOSED]. Requires the source-voxels layer.">
+          <span class="field-swatch field-swatch-pe-mass-comparison"></span>Mass Δ
+        </button>
       `),
     ),
     overlaySection(
