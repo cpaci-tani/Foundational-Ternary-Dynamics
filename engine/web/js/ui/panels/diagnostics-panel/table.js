@@ -98,6 +98,9 @@ export class DiagnosticsTable {
         this.el      = document.createElement('section');
         this.el.className = 'diag-section';
         this.el.dataset.section = section.id;
+        // Start hidden, not visible-by-default, so a visibleWhen section never
+        // flashes visible for a frame before the first update() call judges it.
+        if (this.visibleWhen) this.el.style.display = 'none';
 
         const isStatic = section.variant === 'static';
 
