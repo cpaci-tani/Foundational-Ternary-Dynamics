@@ -14,8 +14,8 @@ export function estimateOrbitPeriod(history, tolerancePct = 0.05) {
     if (!Array.isArray(history) || history.length < 2) return null;
     const start = history[0];
     const tol = Math.abs(start.separation) * tolerancePct;
-    // Skip an initial dead-zone so the starting sample doesn't immediately
-    // "return to itself" at delta 0.
+    // Start at i=1 (not 0) so the start sample is never compared to itself;
+    // dTick<=0 guards any out-of-order/duplicate-tick entries.
     for (let i = 1; i < history.length; i++) {
         const dTick = history[i].tick - start.tick;
         if (dTick <= 0) continue;
