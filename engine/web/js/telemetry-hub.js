@@ -207,7 +207,7 @@ export class TelemetryHub {
     constructor() {
         // ── Latest snapshots per scale ──────────────────
         this.s0  = { diag: null, audit: null, lagrangian: null };
-        this.s1  = { diag: null, extended: null, runtime: null };
+        this.s1  = { diag: null, extended: null, runtime: null, _overlaySystemOn: false };
         this.s2  = { diag: null, runtime: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
@@ -953,7 +953,7 @@ export class TelemetryHub {
                 break;
                         case 1:
                 this._s1_pe.clear();
-                this.s1 = { diag: null, extended: null, runtime: null };
+                this.s1 = { diag: null, extended: null, runtime: null, _overlaySystemOn: false };
                 this._peInitialEnergy = null;
                 this._peBaselineFp = null;
                 this._lastTick1 = -1;

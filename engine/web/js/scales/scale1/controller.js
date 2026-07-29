@@ -386,6 +386,7 @@ export function animatePE(ctx) {
         const sys = computeSystemVectors(peData);
         viewport.updatePESystem(sys.com, sys.p, sys.l);
     }
+    telemetryHub.s1._overlaySystemOn = ov.system;
 
     // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();

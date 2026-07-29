@@ -109,4 +109,13 @@ export const sections = [
               compute: (hub) => hub.peRadialVelocity.last(), trend: 'peRadialVelocity' },
         ],
     },
+    {
+        id: 'pe-system',
+        title: 'System Overlay (CoM / p / L)',
+        visibleWhen: (hub) => !!hub.s1?._overlaySystemOn,
+        rows: [
+            { id: 'l-com-note', label: 'L shown here', unit: '', format: 'text',
+              compute: () => 'about CoM (overlay) — see Conservation: |L| (origin)' },
+        ],
+    },
 ];
