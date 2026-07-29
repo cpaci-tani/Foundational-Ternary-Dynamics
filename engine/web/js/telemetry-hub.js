@@ -207,7 +207,13 @@ export class TelemetryHub {
     constructor() {
         // ── Latest snapshots per scale ──────────────────
         this.s0  = { diag: null, audit: null, lagrangian: null };
-        this.s1  = { diag: null, extended: null, runtime: null, _overlaySystemOn: false };
+        this.s1  = {
+            diag: null, extended: null, runtime: null,
+            _overlaySystemOn: false, _overlayVelocitiesOn: false, _overlayTrailsOn: false,
+            _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
+            _overlayForceOn: false, _orbitPeriod: null,
+            _potentialMin: 0, _potentialMax: 0,
+        };
         this.s2  = { diag: null, runtime: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
@@ -280,6 +286,15 @@ export class TelemetryHub {
         this._peInitialEnergy = null;
         this._peBaselineFp = null;
         this._s1Runtime = { scenario: '', softening: 0 };
+        // 2-body separation-vs-tick history for the Trails overlay's orbit-
+        // period estimate (estimateOrbitPeriod, telemetry/orbit-period.js).
+        // Populated by the controller (only while ov.trails is on, n===2)
+        // from this hub's own tick-gated peSeparation channel below — NOT
+        // from the visual trail cache (pe-cloud-expander.js _trailHistory),
+        // whose ring-buffer-of-positions shape carries no tick stamps and
+        // isn't an array (no .map), and whose sample cadence is per-render-
+        // frame, not per-engine-tick.
+        this._s1SepHistory = [];
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
         // All values are SIM UNITS (implicit k_B = 1; audit P0-10) — panels
@@ -953,7 +968,14 @@ export class TelemetryHub {
                 break;
                         case 1:
                 this._s1_pe.clear();
-                this.s1 = { diag: null, extended: null, runtime: null, _overlaySystemOn: false };
+                this.s1 = {
+                    diag: null, extended: null, runtime: null,
+                    _overlaySystemOn: false, _overlayVelocitiesOn: false, _overlayTrailsOn: false,
+                    _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
+                    _overlayForceOn: false, _orbitPeriod: null,
+                    _potentialMin: 0, _potentialMax: 0,
+                };
+                this._s1SepHistory = [];
                 this._peInitialEnergy = null;
                 this._peBaselineFp = null;
                 this._lastTick1 = -1;
