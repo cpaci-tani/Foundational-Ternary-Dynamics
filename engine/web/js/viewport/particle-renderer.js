@@ -20,7 +20,7 @@
 import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
-import { makeRingTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
+import { makeRingTexture, makeTextTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
@@ -81,6 +81,7 @@ export class ViewportParticleRenderer {
         this._voxelDebug = null;      // Scale-1 promotion-source ghost layer
         this._voxelDebugWarned = false;
         this._admissibilityRings = null;  // Scale-1 promotion admissibility halo overlay
+        this._provenanceLabels = null;    // Scale-1 promotion cluster-id/N label overlay
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -239,6 +240,49 @@ export class ViewportParticleRenderer {
     toggleAdmissibilityRings(on) {
         if (!this._admissibilityRings) this._buildAdmissibilityRings();
         this._admissibilityRings.visible = on;
+    }
+
+    // ── Provenance label overlay (lattice-promotion) ─────────────────────
+    // Unlike the admissibility rings (2 cached ring textures), provenance
+    // labels are per-particle unique text — each sprite's texture is built
+    // and disposed on every rebuild rather than cached/reused.
+    _buildProvenanceLabels() {
+        this._provenanceLabels = new THREE.Group();
+        this._provenanceLabels.visible = false;
+        this._scene.add(this._provenanceLabels);
+    }
+
+    /**
+     * @param {{positions:Float32Array|Float64Array, count:number}} peData
+     * @param {Map<number, object>} seedById - scale1State.promotedSeedById
+     * @param {Int32Array|number[]} ids - peData-aligned native particle ids
+     */
+    updateProvenanceLabels(peData, seedById, ids) {
+        if (!this._provenanceLabels) this._buildProvenanceLabels();
+        const group = this._provenanceLabels;
+        while (group.children.length) {
+            const child = group.children[0];
+            child.material.map?.dispose();
+            child.material.dispose();
+            group.remove(child);
+        }
+        if (!seedById || seedById.size === 0) return;
+        for (let i = 0; i < peData.count; i++) {
+            const seed = seedById.get(ids[i]);
+            if (!seed) continue;
+            const tex = makeTextTexture(`#${seed.clusterId} N=${seed.size}`);
+            const sprite = makeBillboardSprite(tex, 3.0);
+            sprite.position.set(
+                peData.positions[i * 3],
+                peData.positions[i * 3 + 1] + 2.0, // offset above the particle
+                peData.positions[i * 3 + 2]);
+            group.add(sprite);
+        }
+    }
+
+    toggleProvenanceLabels(on) {
+        if (!this._provenanceLabels) this._buildProvenanceLabels();
+        this._provenanceLabels.visible = on;
     }
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
@@ -853,6 +897,13 @@ export class ViewportParticleRenderer {
         }
         if (this._ringTexAdmissible) this._ringTexAdmissible.dispose();
         if (this._ringTexMarginal) this._ringTexMarginal.dispose();
+
+        if (this._provenanceLabels) {
+            while (this._provenanceLabels.children.length) {
+                disposeMesh(this._provenanceLabels.children.pop());
+            }
+            this._scene.remove(this._provenanceLabels);
+        }
 
         this.particles = null;
         this.velocityVectors = null;

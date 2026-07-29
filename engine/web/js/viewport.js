@@ -555,6 +555,12 @@ export class Viewport {
     }
     toggleAdmissibilityRings(on) { this._particleRenderer.toggleAdmissibilityRings(on); }
 
+    // ── Provenance label overlay (Scale-1 promotion) ─────────────────────
+    updateProvenanceLabels(peData, seedById, ids) {
+        this._particleRenderer.updateProvenanceLabels(peData, seedById, ids);
+    }
+    toggleProvenanceLabels(on) { this._particleRenderer.toggleProvenanceLabels(on); }
+
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
     // This class keeps thin delegators for backward compatibility.
