@@ -561,6 +561,12 @@ export class Viewport {
     }
     toggleProvenanceLabels(on) { this._particleRenderer.toggleProvenanceLabels(on); }
 
+    // ── Voxel<->cluster mass-comparison overlay (Scale-1 promotion) ─────
+    updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale) {
+        this._particleRenderer.updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale);
+    }
+    toggleMassComparison(on) { this._particleRenderer.toggleMassComparison(on); }
+
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
     // This class keeps thin delegators for backward compatibility.

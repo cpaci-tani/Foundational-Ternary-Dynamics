@@ -212,4 +212,13 @@ export const sections = [
               compute: () => scale1LastPromotionField('clusterSource') },
         ],
     },
+    {
+        id: 'pe-mass-comparison',
+        title: 'Mass Comparison Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayMassComparisonOn,
+        rows: [
+            { id: 'mass-note', label: 'Convention', unit: '', format: 'text',
+              compute: () => 'cluster N·K_B [DERIVED-linear]/[SMC] vs. Σ voxel max(ρ,K_B) [IMPOSED] — per-particle Δm shown in the 3D badge' },
+        ],
+    },
 ];
