@@ -301,6 +301,7 @@ function _resetAllVisualState() {
         'toggle-pe-gravity-field',
         'toggle-pe-force-coulomb', 'toggle-pe-force-gravity', 'toggle-pe-force-strong', 'toggle-pe-force-net',
         'toggle-pe-system',
+        'toggle-pe-admissibility', 'toggle-pe-provenance',
         'toggle-velocities', 'toggle-trails',
     ]) {
         const btn = document.getElementById(id);
@@ -1267,6 +1268,8 @@ function wireViewportToggles() {
         ['toggle-pe-force-strong', (on) => { Scale1Controller.setPEForceStrong(on); viewport.togglePEForceStrong(on); }],
         ['toggle-pe-force-net', (on) => { Scale1Controller.setPEForceNet(on); viewport.togglePEForceNet(on); }],
         ['toggle-pe-system', (on) => { Scale1Controller.setPESystem(on); viewport.togglePESystem(on); }],
+        ['toggle-pe-admissibility', (on) => { Scale1Controller.setAdmissibilityRing(on); viewport.toggleAdmissibilityRings(on); }],
+        ['toggle-pe-provenance', (on) => { Scale1Controller.setProvenanceLabel(on); viewport.toggleProvenanceLabels(on); }],
     ];
     for (const [id, handler] of peFieldToggles) {
         const btn = document.getElementById(id);

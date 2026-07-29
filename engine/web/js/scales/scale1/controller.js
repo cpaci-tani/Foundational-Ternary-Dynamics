@@ -464,7 +464,13 @@ export function animatePE(ctx) {
         viewport.updateAdmissibilityRings(peData, scale1State.promotedSeedById, peData.ids);
     }
 
-    if (ov.provenanceLabel && peData.count > 0) {
+    // Provenance labels rebuild a unique CanvasTexture (a GPU upload) per
+    // promoted particle every call — clusterId/size never change after
+    // capture, only position does, so refreshing at the same cadence as the
+    // E-field streamlines above (not every rAF frame) avoids needless
+    // per-frame texture churn; a few-frame lag in label position is
+    // imperceptible for slow-moving promoted clusters.
+    if (ov.provenanceLabel && peData.count > 0 && refreshStreamlines) {
         viewport.updateProvenanceLabels(peData, scale1State.promotedSeedById, peData.ids);
     }
     telemetryHub.s1._overlayProvenanceOn = ov.provenanceLabel;
