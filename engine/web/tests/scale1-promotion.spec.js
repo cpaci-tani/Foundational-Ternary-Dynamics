@@ -100,4 +100,28 @@ test.describe('Scale 0 → Scale 1 promotion', () => {
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
+
+    test('admissibility rings render on promoted particles', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await page.evaluate(() => {
+            const sel = document.getElementById('scenario-select');
+            sel.value = 's0-seed-hydrogen';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await page.waitForTimeout(1500);
+        await page.evaluate(() => document.getElementById('btn-scale-up')?.click());
+        await expect.poll(
+            () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
+            { timeout: 15_000 },
+        ).toBeGreaterThan(0);
+
+        const ringCount = await page.evaluate(() => {
+            const vp = window.__FTD_DEV__?.viewport;
+            return vp?._particleRenderer?._admissibilityRings?.children?.length ?? -1;
+        });
+        expect(ringCount).toBeGreaterThan(0);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
 });

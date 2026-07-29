@@ -64,6 +64,16 @@ export function getScale1OverlayTemplate() {
       `),
     ),
     overlaySection(
+      'Lattice promotion',
+      'Cluster-provenance overlays (only meaningful after ⤴ Scale up)',
+      overlayRow('', `
+        <button class="view-toggle field-toggle" id="toggle-pe-admissibility"
+          title="Admissibility ring around each promoted particle: solid green = passes the scale-separation heuristic (N ≳ 113), dashed amber = marginal.">
+          <span class="field-swatch field-swatch-pe-admissibility"></span>Admissibility
+        </button>
+      `),
+    ),
+    overlaySection(
       'Integrator toggles',
       'Affect dynamics, not overlay arrows alone',
       overlayRow('', `

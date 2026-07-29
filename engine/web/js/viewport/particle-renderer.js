@@ -20,6 +20,7 @@
 import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
+import { makeRingTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
@@ -79,6 +80,7 @@ export class ViewportParticleRenderer {
         this._peSystem = null;
         this._voxelDebug = null;      // Scale-1 promotion-source ghost layer
         this._voxelDebugWarned = false;
+        this._admissibilityRings = null;  // Scale-1 promotion admissibility halo overlay
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -198,6 +200,45 @@ export class ViewportParticleRenderer {
             this._buildVoxelDebugLayer();
         }
         this._voxelDebug.visible = !!on;
+    }
+
+    // ── Admissibility ring overlay (lattice-promotion) ──────────────────
+    // A THREE.Group of billboard sprites, one ring per live promoted
+    // particle found in scale1State.promotedSeedById. Rebuilt each call
+    // (promoted-particle counts are small — tens, not thousands — so a
+    // full rebuild is simpler and cheap next to per-particle pooling).
+    _buildAdmissibilityRings() {
+        this._admissibilityRings = new THREE.Group();
+        this._admissibilityRings.visible = false;
+        this._ringTexAdmissible = makeRingTexture({ color: '#4ade80', dashed: false });
+        this._ringTexMarginal = makeRingTexture({ color: '#fbbf24', dashed: true });
+        this._scene.add(this._admissibilityRings);
+    }
+
+    /**
+     * @param {{positions:Float32Array|Float64Array, count:number}} peData
+     * @param {Map<number, object>} seedById - scale1State.promotedSeedById
+     * @param {Int32Array|number[]} ids - peData-aligned native particle ids
+     */
+    updateAdmissibilityRings(peData, seedById, ids) {
+        if (!this._admissibilityRings) this._buildAdmissibilityRings();
+        const group = this._admissibilityRings;
+        while (group.children.length) group.remove(group.children[0]);
+        if (!seedById || seedById.size === 0) return;
+        for (let i = 0; i < peData.count; i++) {
+            const seed = seedById.get(ids[i]);
+            if (!seed) continue;
+            const tex = seed.admissible ? this._ringTexAdmissible : this._ringTexMarginal;
+            const sprite = makeBillboardSprite(tex, 2.5);
+            sprite.position.set(
+                peData.positions[i * 3], peData.positions[i * 3 + 1], peData.positions[i * 3 + 2]);
+            group.add(sprite);
+        }
+    }
+
+    toggleAdmissibilityRings(on) {
+        if (!this._admissibilityRings) this._buildAdmissibilityRings();
+        this._admissibilityRings.visible = on;
     }
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
@@ -803,6 +844,15 @@ export class ViewportParticleRenderer {
         disposeMesh(this._particleForces);
         disposeMesh(this._peSystem);
         disposeMesh(this._voxelDebug);
+
+        if (this._admissibilityRings) {
+            while (this._admissibilityRings.children.length) {
+                disposeMesh(this._admissibilityRings.children.pop());
+            }
+            this._scene.remove(this._admissibilityRings);
+        }
+        if (this._ringTexAdmissible) this._ringTexAdmissible.dispose();
+        if (this._ringTexMarginal) this._ringTexMarginal.dispose();
 
         this.particles = null;
         this.velocityVectors = null;

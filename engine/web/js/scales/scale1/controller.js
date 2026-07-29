@@ -64,6 +64,7 @@ export function setPEForces(on)       { setPEForceNet(on); }
 export function setPESystem(on)       { scale1State.overlays.system = on; }
 export function setVelocities(on)     { scale1State.overlays.velocities = on; }
 export function setTrails(on)         { scale1State.overlays.trails = on; }
+export function setAdmissibilityRing(on) { scale1State.overlays.admissibilityRing = on; }
 
 /** Promotion-source ghost layer toggle (controls panel). */
 export function setVoxelDebug(on, viewport) {
@@ -154,6 +155,7 @@ function applyPEOverlayPreset(viewport, preset) {
     ov.forceNet = !!(o.forceNet ?? o.forces);
     ov.system = !!o.system;
     ov.voxelDebug = !!o.voxelDebug;
+    ov.admissibilityRing = !!o.admissibilityRing;
 
     setButtonActive('toggle-velocities', ov.velocities);
     setButtonActive('toggle-trails', ov.trails);
@@ -166,6 +168,7 @@ function applyPEOverlayPreset(viewport, preset) {
     setButtonActive('toggle-pe-force-net', ov.forceNet);
     setButtonActive('toggle-pe-system', ov.system);
     setCheckbox('pe-voxel-debug', ov.voxelDebug);
+    setButtonActive('toggle-pe-admissibility', ov.admissibilityRing);
 
     if (!viewport) return;
     viewport.toggleVelocityVectors(ov.velocities);
@@ -180,6 +183,7 @@ function applyPEOverlayPreset(viewport, preset) {
     viewport.togglePEForceNet(ov.forceNet);
     viewport.togglePESystem(ov.system);
     setVoxelDebug(ov.voxelDebug, viewport);
+    viewport.toggleAdmissibilityRings(ov.admissibilityRing);
 }
 
 
@@ -229,6 +233,7 @@ function _resetScale1Internal(ctx) {
         viewport.toggleTrails(false);
         viewport.toggleSpinVectors?.(false);
         viewport.toggleVoxelDebugLayer?.(false);
+        viewport.toggleAdmissibilityRings?.(false);
         if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
@@ -449,6 +454,10 @@ export function animatePE(ctx) {
         telemetryHub.s1._overlaySystemL = Math.hypot(sys.l[0], sys.l[1], sys.l[2]);
     }
     telemetryHub.s1._overlaySystemOn = ov.system;
+
+    if (ov.admissibilityRing && peData.count > 0) {
+        viewport.updateAdmissibilityRings(peData, scale1State.promotedSeedById, peData.ids);
+    }
 
     // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();
