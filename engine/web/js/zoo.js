@@ -125,6 +125,10 @@ function renderZoo() {
 
     html += '</div>';
     html += `<p class="zoo-note" style="font-size:11px;color:var(--text-muted);margin:6px 4px 0;line-height:1.4;">
+        <strong>Catalog injection is a [PARAMETRIC] extra</strong>: these are PDG-mass
+        catalog particles dropped into the continuous engine, NOT lattice-derived
+        objects — lattice genesis produces hybrid colored objects, not SM particles;
+        lattice-derived matter enters via "⤴ Scale up" (mass = N·K_B).
         <strong>Mass</strong> is the measured (PDG) value (electron = FTD anchor m_e).
         <strong>FTD Formula</strong> + <strong>Acc.</strong> are FTD's <em>prediction</em> and its deviation —
         motivating matches, not derivations. Colour: <span style="color:var(--warning)">yellow</span> = [SELECTION]/strongly-motivated conjecture,

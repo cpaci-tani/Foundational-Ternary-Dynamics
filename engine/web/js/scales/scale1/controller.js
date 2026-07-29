@@ -1,23 +1,26 @@
 /**
- * Scale 1 (Particles) Controller
+ * Scale 1 (Particles) Controller — native-engine edition.
  *
- * Extracted from app.js to isolate the Particle Engine (PE) frame loop,
- * scenario loader, cloud rendering, trail history, and field overlay logic.
+ * Scale 1 is a continuous particle system promoted from the discrete
+ * lattice: the native C++/WASM ParticleEngine integrates (via the
+ * bridge's pe* adapter surface), and particles arrive either from the
+ * "⤴ Scale up" promotion pipeline (./promotion.js — one particle per
+ * lattice cluster, mass = N·K_B) or from the declarative scenario
+ * registry (./scenario-registry.js). The [PARAMETRIC] Zoo can inject
+ * catalog particles on top.
  *
- * Owns all PE-specific state internally:
- *   - Field toggle flags (E-field, potential, gravity, forces)
- *   - Velocity/trail display flags
- *   - Black hole scenario state (Hawking tick counter)
- *   - Field grid cache and source particle buffer
+ * State lives in ./state/store.js (scale1State) — no module-level lets.
+ * Rendering goes through the shared viewport facade; the promotion
+ * source voxels render on a separate ghost layer (never multiplexed
+ * onto the main particle mesh).
  *
- * Delegates to sibling modules:
- *   ./pe-cloud-expander.js — cloud buffers, templates, trail history
- *   ./scenarios.js         — pe-* scenario setup (big switch)
- *
- * Exports:
- *   animatePE(ctx)             — per-frame update
- *   loadPEScenario(ctx, name)  — scenario setup
- *   resetScale1(ctx)           — clear PE-specific state for mode switch
+ * app.js contract (duck-typed; do not rename):
+ *   mount(ctx) / destroy(ctx)      — mode switch lifecycle
+ *   animatePE(ctx)                 — per-frame update (calls viewport.render)
+ *   loadPEScenario(ctx, name)      — scenario setup
+ *   resetScale1(ctx)               — clear Scale-1 state for cache resets
+ *   bindScale1ControlsUI()         — one-time controls panel init
+ *   setPE… / setVelocities / setTrails — overlay toggle setters (app.js bindings)
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
@@ -29,75 +32,50 @@ import {
 import {
     computeStreamlines, generateEFieldSeeds
 } from '../../fieldlines.js';
-import {
-    C_SPEED, G_PE, K_B, GRAVITY_VIS_GAIN,
-    M_P_PHYS, M_MU_PHYS, M_N_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
-    M_TAU_PHYS, M_W_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_DELTA_PHYS
-} from '../../constants.js';
-import { createTickAccumulator, formatSI } from '../scale-utils.js';
+import { GRAVITY_VIS_GAIN } from '../../constants.js';
+import { formatSI } from '../scale-utils.js';
 import { Scale1ControlsComponent } from './ui/controls/component.js';
+import { refreshPromotionCard } from './ui/controls/pe-controls.js';
 import {
     expandPEToCloud, buildPEManifestBlinkRate, updateTrailHistory,
     getCloudParticleMap, getTrailHistory, clearCloudAndTrails, MANIFEST_FILL
 } from './pe-cloud-expander.js';
-import { setupPEScenario, getPEScenarioPreset } from './scenarios.js';
+import {
+    getScale1Scenario, getScale1ScenarioPreset, DEFAULT_SCALE1_SCENARIO,
+} from './scenario-registry.js';
+import { scale1State, resetScale1State } from './state/store.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 
 // =====================================================================
-// PE-Specific Module State
+// Exported: overlay toggle setters + cloud/trail accessors
 // =====================================================================
 
-// -- Field overlay toggle flags ---------------------------------------
-let _showPEEField    = false;   // E-field streamlines
-let _showPEPotential = false;   // Coulomb potential heatmap
-let _showPEGravField = false;   // Gravity field vectors (grid)
-let _showPEForceCoulomb = false;
-let _showPEForceGravity = false;
-let _showPEForceStrong  = false;
-let _showPEForceNet     = false;   // Net per-particle force arrows
-let _showPESystem    = false;   // System observables: CoM + momentum + ang. mom.
-let _showVelocities  = false;   // Velocity vectors overlay
-let _showTrails      = false;   // Orbit trail lines
-
-// -- Field computation cache ------------------------------------------
-let _fieldGrid       = null;    // cached grid from generateGridXZ
-const _srcParticlesBuf = [];    // reusable {x,y,z} array for field seed generation
-
-// -- Black hole scenario state ----------------------------------------
-let _bhActive       = false;
-let _bhHawkingTick  = 0;
-// [IMPOSED] pedagogical toy values — the micro-BH demo is Newtonian
-// gravity + a visual horizon/emission cadence, NOT a GR solver (see
-// USER_GUIDE §Scale 1). Mass/horizon/interval chosen for legibility.
-const _BH_HAWKING_INTERVAL = 300;
-const _BH_HORIZON_R = 3.0;
-const _BH_MASS      = 5000;
-const _BH_TEST_MASS = K_B;   // electron mass (MeV) — Hawking test particle
-
-// -- Tick accumulator (sub-1 speed fractional ticks, shared helper) ----
-const _tickAcc = createTickAccumulator();
-
-// -- Paused-state dedup (avoid redundant work when simulation idle) ----
-let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
-
-
-// =====================================================================
-// Exported: Field Toggle Setters + cloud/trail accessors
-// =====================================================================
-
-export function setPEEField(on)    { _showPEEField    = on; }
-export function setPEPotential(on) { _showPEPotential = on; }
-export function setPEGravField(on)    { _showPEGravField = on; }
-export function setPEForceCoulomb(on)  { _showPEForceCoulomb = on; }
-export function setPEForceGravity(on)  { _showPEForceGravity = on; }
-export function setPEForceStrong(on)   { _showPEForceStrong = on; }
-export function setPEForceNet(on)      { _showPEForceNet = on; }
+export function setPEEField(on)       { scale1State.overlays.efield = on; }
+export function setPEPotential(on)    { scale1State.overlays.potential = on; }
+export function setPEGravField(on)    { scale1State.overlays.gravityField = on; }
+export function setPEForceCoulomb(on) { scale1State.overlays.forceCoulomb = on; }
+export function setPEForceGravity(on) { scale1State.overlays.forceGravity = on; }
+export function setPEForceStrong(on)  { scale1State.overlays.forceStrong = on; }
+export function setPEForceNet(on)     { scale1State.overlays.forceNet = on; }
 /** @deprecated Use setPEForceNet — kept for callers that still say "forces". */
-export function setPEForces(on)        { setPEForceNet(on); }
-export function setPESystem(on)    { _showPESystem    = on; }
-export function setVelocities(on)  { _showVelocities  = on; }
-export function setTrails(on)      { _showTrails      = on; }
+export function setPEForces(on)       { setPEForceNet(on); }
+export function setPESystem(on)       { scale1State.overlays.system = on; }
+export function setVelocities(on)     { scale1State.overlays.velocities = on; }
+export function setTrails(on)         { scale1State.overlays.trails = on; }
+
+/** Promotion-source ghost layer toggle (controls panel). */
+export function setVoxelDebug(on, viewport) {
+    scale1State.overlays.voxelDebug = !!on;
+    if (!viewport) return;
+    if (on && scale1State.lastPromotion?.voxelDebug) {
+        viewport.updateVoxelDebugLayer(
+            scale1State.lastPromotion.voxelDebug,
+            scale1State.lastPromotion.latticeSize,
+            scale1State.lastPromotion.displayScale);
+    }
+    viewport.toggleVoxelDebugLayer(!!on && !!scale1State.lastPromotion?.voxelDebug);
+}
 
 // Re-export cloud/trail accessors so external consumers have a single
 // import surface (controller.js) and need not know about the split file.
@@ -156,65 +134,59 @@ function applyPEPhysicsPreset(bridge, preset) {
     setCheckbox('pe-spin-orbit', p.spin_orbit);
     setCheckbox('pe-radiation', p.radiation);
     setCheckbox('pe-relativistic', p.relativistic);
+    setCheckbox('pe-relativistic-verlet', p.relativistic_verlet);
     setButtonActive('toggle-pe-gravity', p.gravity);
     setButtonActive('toggle-pe-damping', p.damping);
 }
 
 function applyPEOverlayPreset(viewport, preset) {
     const o = preset.overlays || {};
-    _showVelocities = !!o.velocities;
-    _showTrails = !!o.trails;
-    _showPEEField = !!o.efield;
-    _showPEPotential = !!o.potential;
-    _showPEGravField = !!o.gravityField;
-    _showPEForceCoulomb = !!(o.forceCoulomb ?? o.forces);
-    _showPEForceGravity = !!o.forceGravity;
-    _showPEForceStrong  = !!o.forceStrong;
-    _showPEForceNet     = !!(o.forceNet ?? o.forces);
-    _showPESystem = !!o.system;
+    const ov = scale1State.overlays;
+    ov.velocities = !!o.velocities;
+    ov.trails = !!o.trails;
+    ov.efield = !!o.efield;
+    ov.potential = !!o.potential;
+    ov.gravityField = !!o.gravityField;
+    ov.forceCoulomb = !!(o.forceCoulomb ?? o.forces);
+    ov.forceGravity = !!o.forceGravity;
+    ov.forceStrong = !!o.forceStrong;
+    ov.forceNet = !!(o.forceNet ?? o.forces);
+    ov.system = !!o.system;
+    ov.voxelDebug = !!o.voxelDebug;
 
-    setButtonActive('toggle-velocities', _showVelocities);
-    setButtonActive('toggle-trails', _showTrails);
-    setButtonActive('toggle-pe-efield', _showPEEField);
-    setButtonActive('toggle-pe-potential', _showPEPotential);
-    setButtonActive('toggle-pe-gravity-field', _showPEGravField);
-    setButtonActive('toggle-pe-force-coulomb', _showPEForceCoulomb);
-    setButtonActive('toggle-pe-force-gravity', _showPEForceGravity);
-    setButtonActive('toggle-pe-force-strong', _showPEForceStrong);
-    setButtonActive('toggle-pe-force-net', _showPEForceNet);
-    setButtonActive('toggle-pe-system', _showPESystem);
+    setButtonActive('toggle-velocities', ov.velocities);
+    setButtonActive('toggle-trails', ov.trails);
+    setButtonActive('toggle-pe-efield', ov.efield);
+    setButtonActive('toggle-pe-potential', ov.potential);
+    setButtonActive('toggle-pe-gravity-field', ov.gravityField);
+    setButtonActive('toggle-pe-force-coulomb', ov.forceCoulomb);
+    setButtonActive('toggle-pe-force-gravity', ov.forceGravity);
+    setButtonActive('toggle-pe-force-strong', ov.forceStrong);
+    setButtonActive('toggle-pe-force-net', ov.forceNet);
+    setButtonActive('toggle-pe-system', ov.system);
+    setCheckbox('pe-voxel-debug', ov.voxelDebug);
 
     if (!viewport) return;
-    viewport.toggleVelocityVectors(_showVelocities);
-    viewport.toggleTrails(_showTrails);
-    viewport.togglePEStreamlines(_showPEEField);
-    viewport.toggleFieldHeatmap(_showPEPotential);
-    viewport.toggleFieldVectors(_showPEPotential);
-    viewport.toggleGravityVectors(_showPEGravField);
-    viewport.togglePEForceCoulomb(_showPEForceCoulomb);
-    viewport.togglePEForceGravity(_showPEForceGravity);
-    viewport.togglePEForceStrong(_showPEForceStrong);
-    viewport.togglePEForceNet(_showPEForceNet);
-    viewport.togglePESystem(_showPESystem);
+    viewport.toggleVelocityVectors(ov.velocities);
+    viewport.toggleTrails(ov.trails);
+    viewport.togglePEStreamlines(ov.efield);
+    viewport.toggleFieldHeatmap(ov.potential);
+    viewport.toggleFieldVectors(ov.potential);
+    viewport.toggleGravityVectors(ov.gravityField);
+    viewport.togglePEForceCoulomb(ov.forceCoulomb);
+    viewport.togglePEForceGravity(ov.forceGravity);
+    viewport.togglePEForceStrong(ov.forceStrong);
+    viewport.togglePEForceNet(ov.forceNet);
+    viewport.togglePESystem(ov.system);
+    setVoxelDebug(ov.voxelDebug, viewport);
 }
 
 
 // =====================================================================
-// Exported: resetScale1(ctx)
+// Lifecycle
 // =====================================================================
 
-/**
- * Reset PE-internal state for a clean mode switch.
- */
 class Scale1LifecycleController extends BaseLifecycleController {
-    constructor() {
-        super();
-    }
-
-    mount(ctx) {
-        // Standard setup placeholder
-    }
-
     destroy(ctx) {
         super.destroy(ctx);
         _resetScale1Internal(ctx);
@@ -238,46 +210,24 @@ export function resetScale1(ctx) {
 function _resetScale1Internal(ctx) {
     const { viewport } = ctx;
 
-    // Clear cloud templates and trail history (owned by pe-cloud-expander)
     clearCloudAndTrails();
+    resetScale1State();
 
-    // Reset field overlays
-    _showPEEField    = false;
-    _showPEPotential = false;
-    _showPEGravField = false;
-    _showPEForceCoulomb = false;
-    _showPEForceGravity = false;
-    _showPEForceStrong  = false;
-    _showPEForceNet     = false;
-    _showPESystem    = false;
-    _showVelocities  = false;
-    _showTrails      = false;
-
-    // Reset field computation cache
-    _fieldGrid = null;
-    _srcParticlesBuf.length = 0;
-
-    // Reset black hole state
-    _bhActive      = false;
-    _bhHawkingTick = 0;
-
-    // Reset tick accumulator
-    _tickAcc.reset();
-
-    // Clear paused-state caches
-    _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
-
-    // Clear viewport overlays if available
     if (viewport) {
         viewport.togglePEStreamlines(false);
         viewport.toggleFieldHeatmap(false);
         viewport.toggleFieldVectors(false);
         viewport.toggleGravityVectors(false);
         viewport.toggleParticleForces(false);
+        viewport.togglePEForceCoulomb?.(false);
+        viewport.togglePEForceGravity?.(false);
+        viewport.togglePEForceStrong?.(false);
+        viewport.togglePEForceNet?.(false);
         viewport.togglePESystem(false);
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
         viewport.toggleSpinVectors?.(false);
+        viewport.toggleVoxelDebugLayer?.(false);
         if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
@@ -288,18 +238,10 @@ function _resetScale1Internal(ctx) {
 // =====================================================================
 
 /**
- * Compute system-level observables from a PE particle frame.
- *
- * Returns the mass-weighted center of mass, the total momentum
- * p = Σ mᵢ vᵢ, and the angular momentum about the center of mass
- * L = Σ mᵢ (rᵢ − r_cm) × (vᵢ − v_cm). Using velocities relative to the
- * CoM makes L the intrinsic orbital-plane normal, independent of any
- * bulk drift of the system. Computed from the particle frame directly so
- * it is backend-robust (WASM diagnostics may not populate momentum
- * components).
- *
- * @param {{positions:Float32Array, velocities:Float32Array, masses:Float64Array, count:number}} peData
- * @returns {{com:number[], p:number[], l:number[]}}
+ * Mass-weighted center of mass, total momentum p = Σ mᵢvᵢ, and angular
+ * momentum about the CoM: L = Σ mᵢ (rᵢ−r_cm) × (vᵢ−v_cm). NOTE: the
+ * diagnostics panel's L is about the ORIGIN (native engine convention);
+ * this overlay's L is about the CoM and is labeled "L (CoM)".
  */
 function computeSystemVectors(peData) {
     const { positions, velocities, masses, count } = peData;
@@ -341,47 +283,23 @@ function computeSystemVectors(peData) {
 export function animatePE(ctx) {
     const {
         bridge, viewport, running, ticksPerFrame, inspector,
-        fluxEnergyChart, particleChart, peTelemetry,
-        activeTab, frameCount, dom, now
+        activeTab, frameCount, dom, now, isPanelVisible,
     } = ctx;
+    const ov = scale1State.overlays;
 
-    // ── 1. Tick PE simulation while running ──────────────────────────
+    // ── 1. Tick the native engine while running ──────────────────────
     if (running) {
-        const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
+        const wholeTicks = scale1State.tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             bridge.peTick();
         }
-
-        // ── 2. Hawking-analogue pair emission for micro black hole ──
-        if (_bhActive) {
-            _bhHawkingTick += wholeTicks;
-            if (_bhHawkingTick >= _BH_HAWKING_INTERVAL) {
-                _bhHawkingTick = 0;
-                const phi = Math.random() * 2 * Math.PI;
-                const r_emit = _BH_HORIZON_R + 0.5;
-                const px = r_emit * Math.cos(phi);
-                const pz = r_emit * Math.sin(phi);
-                const v_out = C_SPEED * 0.60;
-                // Escaping particle (red, e-) -- radially outward
-                bridge.peAddParticle('electron', -1, px, 0, pz,
-                    v_out * Math.cos(phi), 0, v_out * Math.sin(phi),
-                    _BH_TEST_MASS, 0.1);
-                // In-falling partner (green, e+) -- antipodal, slow
-                bridge.peAddParticle('positron', 1, -px, 0, -pz,
-                    v_out * 0.3 * Math.cos(phi), 0, v_out * 0.3 * Math.sin(phi),
-                    _BH_TEST_MASS, 0.1);
-            }
-        }
     }
 
-    // ── 3. Cloud expansion: fixed boundary + balanced manifestation blink ─
+    // ── 2. Cloud expansion + manifestation blink ─────────────────────
     const peData  = bridge.peGetParticleData();
     const typeMap = bridge.peGetParticleTypes();
     const forceData = bridge.peGetForces?.() ?? null;
     const frameSec = typeof now === 'number' ? now * 0.001 : performance.now() * 0.001;
-    // frameSec drives the spawn-flash window inside buildPEManifestBlinkRate
-    // (a newly-manifested particle id blinks fast for ~0.6s, then settles
-    // into its normal force/velocity-driven rate) — added 2026-07-14.
     const blinkRate = buildPEManifestBlinkRate(peData, forceData, frameSec);
     const cloud = expandPEToCloud(peData, typeMap, { blinkRate, frameSec });
     viewport.updateParticles(cloud);
@@ -398,65 +316,65 @@ export function animatePE(ctx) {
         viewport.toggleSpinVectors?.(false);
     }
 
-    // Update inspector with cloud-to-particle mapping
     if (inspector) {
         inspector.setPEContext(getCloudParticleMap(), cloud.count, typeMap);
     }
 
-    // ── 4. Velocity vectors overlay ─────────────────────────────────
-    if (_showVelocities && peData.count > 0) {
+    // ── 3. Overlays ──────────────────────────────────────────────────
+    if (ov.velocities && peData.count > 0) {
         viewport.updateVelocityVectors(peData.positions, peData.velocities, peData.count);
     }
 
-    // ── 4b. Orbit trails ────────────────────────────────────────────
     if (running && peData.count > 0) {
         updateTrailHistory(peData);
     }
-    if (_showTrails) {
+    if (ov.trails) {
         viewport.updateTrails(getTrailHistory(), typeMap);
     }
 
-    // ── 5. PE Field Overlays (individual force decomposition) ───────
-    if (_showPEPotential && peData.count > 0) {
-        if (!_fieldGrid) _fieldGrid = generateGridXZ(25, 20);
+    if (ov.potential && peData.count > 0) {
+        if (!scale1State.fieldGrid) scale1State.fieldGrid = generateGridXZ(25, 20);
+        const grid = scale1State.fieldGrid;
         const src   = bridge.peGetFieldSources();
-        const field = samplePECoulombOnly(src, _fieldGrid.positions, _fieldGrid.count);
+        const field = samplePECoulombOnly(src, grid.positions, grid.count);
         viewport.updateFieldHeatmap(
-            _fieldGrid.positions, field.potentials, _fieldGrid.count, field.maxPotential);
+            grid.positions, field.potentials, grid.count, field.maxPotential);
         viewport.updateFieldVectors(
-            _fieldGrid.positions, field.forces, _fieldGrid.count, field.maxForce, 8.0);
+            grid.positions, field.forces, grid.count, field.maxForce, 8.0);
     }
 
-    // Coulomb E-field streamlines (3D, throttled every 5 frames)
+    // Coulomb E-field streamlines (3D, throttled)
     const refreshStreamlines = running ? frameCount % 5 === 0 : (frameCount % 30 === 0);
-    if (_showPEEField && peData.count > 0 && refreshStreamlines) {
+    if (ov.efield && peData.count > 0 && refreshStreamlines) {
         const src     = bridge.peGetFieldSources();
         const fieldFn = makePECoulombFieldFn(src, 0.5);
-        while (_srcParticlesBuf.length < src.count) _srcParticlesBuf.push({ x: 0, y: 0, z: 0 });
-        _srcParticlesBuf.length = src.count;
+        const buf = scale1State.srcParticlesBuf;
+        while (buf.length < src.count) buf.push({ x: 0, y: 0, z: 0 });
+        buf.length = src.count;
         for (let i = 0; i < src.count; i++) {
-            _srcParticlesBuf[i].x = src.positions[i * 3];
-            _srcParticlesBuf[i].y = src.positions[i * 3 + 1];
-            _srcParticlesBuf[i].z = src.positions[i * 3 + 2];
+            buf[i].x = src.positions[i * 3];
+            buf[i].y = src.positions[i * 3 + 1];
+            buf[i].z = src.positions[i * 3 + 2];
         }
-        const seeds = generateEFieldSeeds(_srcParticlesBuf, 3, 100);
+        const seeds = generateEFieldSeeds(buf, 3, 100);
         const lines = computeStreamlines({ fieldFn }, seeds, {
             maxSteps: 80, stepSize: 0.5, bounds: 30
         });
         viewport.updatePEStreamlines(lines);
     }
 
-    // Gravity field vectors (XZ plane)
-    if (_showPEGravField && peData.count > 0) {
-        if (!_fieldGrid) _fieldGrid = generateGridXZ(25, 20);
+    if (ov.gravityField && peData.count > 0) {
+        if (!scale1State.fieldGrid) scale1State.fieldGrid = generateGridXZ(25, 20);
+        const grid = scale1State.fieldGrid;
         const src   = bridge.peGetFieldSources();
-        const field = samplePEGravityField(src, _fieldGrid.positions, _fieldGrid.count);
+        const field = samplePEGravityField(src, grid.positions, grid.count);
         viewport.updateGravityVectors(
-            _fieldGrid.positions, field.forces, _fieldGrid.count, field.maxForce);
+            grid.positions, field.forces, grid.count, field.maxForce);
     }
 
-    // Per-particle decomposed force arrows (F_C / F_g / F_S / F_net)
-    const anyPEForce = _showPEForceCoulomb || _showPEForceGravity || _showPEForceStrong || _showPEForceNet;
+    // Per-particle decomposed force arrows (native Float64 decomposition —
+    // `net` is the TRUE integrator force incl. every enabled term)
+    const anyPEForce = ov.forceCoulomb || ov.forceGravity || ov.forceStrong || ov.forceNet;
     if (anyPEForce && peData.count > 0) {
         const decomp = bridge.peGetForceDecomposition?.() ?? null;
         if (decomp) {
@@ -464,65 +382,50 @@ export function animatePE(ctx) {
         }
     }
 
-    // System observables: center of mass + total momentum p + ang.-mom. axis L
-    if (_showPESystem && peData.count > 0) {
+    if (ov.system && peData.count > 0) {
         const sys = computeSystemVectors(peData);
         viewport.updatePESystem(sys.com, sys.p, sys.l);
     }
 
-    // ── 6. Render ───────────────────────────────────────────────────
+    // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();
 
-    // ── 7. PE diagnostics (throttled to every 3rd frame) ────────────
+    // ── 5. Telemetry + panels (throttled to every 3rd frame) ─────────
     if (frameCount % 3 === 0) {
         const diag = telemetryHub.collectScale1(bridge);
         const ext = telemetryHub.collectScale1Extended(bridge);
 
         if (diag) {
+            const cache = scale1State.statusCache;
             const sTick = formatSI(diag.tick);
             const sParticles = String(diag.particleCount);
             const sEnergy = formatEnergy(diag.totalEnergy, 1).text;
             const sState = running ? 'Running' : 'Idle';
 
-            if (_statusCache.tick !== sTick) { dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
-            if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
-            if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
-            if (_statusCache.state !== sState) {
+            if (cache.tick !== sTick) { dom.statusPtime.textContent = sTick; cache.tick = sTick; }
+            if (cache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; cache.particles = sParticles; }
+            if (cache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; cache.energy = sEnergy; }
+            if (cache.state !== sState) {
                 dom.statusState.textContent = sState;
-                _statusCache.state = sState;
+                cache.state = sState;
                 if (running) dom.statusDot.classList.remove('idle');
                 else dom.statusDot.classList.add('idle');
             }
 
-            if (peTelemetry) peTelemetry.update(diag, ext);
-
-            const diagAdapted = {
-                tick:          diag.tick,
-                manifested:    diag.particleCount,
-                positive: 0,  negative: 0,
-                totalFlux: 0, totalEnergy: diag.totalEnergy,
-                fieldEnergy:   diag.totalPE,
-                kineticEnergy: diag.totalKE,
-                peFlux:        diag.totalPE,
-            };
-            fluxEnergyChart.push(diagAdapted);
-            particleChart.push(diagAdapted);
+            // NOTE: Scale 1 no longer pushes into the legacy null-canvas
+            // FluxEnergyChart/ParticleChart. Those were wired to hub VIEWS
+            // (no push method — every call threw a swallowed page error) and
+            // the adapted row fabricated Scale-0 fields with zeros. The hub's
+            // _s1_pe ring is the single Scale-1 history; the charts panel
+            // reads it via descriptors.
+            scale1State.lastPushedTick = diag.tick;
         }
 
-
-
-        switch (activeTab) {
-            case 'diagnostics':
-                if (peTelemetry) peTelemetry.drawCharts();
-                break;
-            case 'charts':
-                fluxEnergyChart.draw();
-                particleChart.draw();
-                break;
-            case 'inspector':
-                inspector.update();
-                break;
-        }
+        // Panel redraws honor floated panels too (audit defect: switching on
+        // activeTab alone froze floated Scale-1 panels).
+        const visible = (id) => (typeof isPanelVisible === 'function'
+            ? isPanelVisible(id) : activeTab === id);
+        if (visible('inspector')) inspector.update();
     }
 }
 
@@ -535,7 +438,8 @@ export function loadPEScenario(ctx, name) {
     const { bridge, viewport } = ctx;
 
     if (!bridge.initPE) return;
-    const preset = getPEScenarioPreset(name);
+    const scenarioId = getScale1Scenario(name) ? name : DEFAULT_SCALE1_SCENARIO;
+    const preset = getScale1ScenarioPreset(scenarioId);
 
     // Delegate to app.js master reset (clears charts, trails, field cache,
     // and resets all toggle buttons across all scales)
@@ -545,44 +449,37 @@ export function loadPEScenario(ctx, name) {
 
     // Re-baseline hub telemetry (pe* ring buffers + _peInitialEnergy drift
     // reference) so the new scenario doesn't inherit the previous one's
-    // energy baseline (mirrors loadAEScenario's resetScale(2) wiring).
+    // energy baseline.
     telemetryHub.resetScale(1);
-
-    // Reset black hole state from any prior scenario
-    _bhActive      = false;
-    _bhHawkingTick = 0;
-    if (viewport && viewport.setEventHorizon) {
-        viewport.setEventHorizon(false, 0);
-    }
+    scale1State.lastPushedTick = -1;
+    scale1State.currentScenarioId = scenarioId;
 
     applyPEPhysicsPreset(bridge, preset);
 
-    // ── Particle masses (MeV) ───────────────────────────────────────
-    const constants = {
-        me:   K_B,           mp:   M_P_PHYS,
-        mmu:  M_MU_PHYS,     mn:   M_N_PHYS,
-        mpi:  M_PI_CH_PHYS,  mK:   M_K_CH_PHYS,
-        mtau: M_TAU_PHYS,    mW:   M_W_PHYS,
-        mSig: M_SIGMA_PHYS,  mOmg: M_OMEGA_PHYS,
-        mDel: M_DELTA_PHYS,  RE:   0.1,
-        BH_MASS: _BH_MASS, BH_TEST_MASS: _BH_TEST_MASS,
-        BH_HORIZON_R: _BH_HORIZON_R,
-        G_PE, C_SPEED,
-    };
+    const scenario = getScale1Scenario(scenarioId);
+    scenario?.setup?.({ bridge, viewport });
 
-    const result = setupPEScenario(name, { bridge, viewport, constants });
+    // Runtime metadata for the diagnostics panel (hub no longer reads DOM).
+    telemetryHub.setScale1Runtime({
+        scenario: scenario?.label ?? scenarioId,
+        softening: preset.physics.softening ?? 0.1,
+    });
+
     applyPEOverlayPreset(viewport, preset);
+
+    // Epistemic status readout in the toolbar (matches Scale 0's pattern).
+    const descEl = document.getElementById('s1-scenario-desc-text');
+    if (descEl) descEl.textContent = preset.description;
+    const descWrap = document.getElementById('s1-scenario-desc');
+    if (descWrap) descWrap.style.display = '';
+
+    // Promotion provenance card reflects any capture the scenario consumed.
+    refreshPromotionCard();
 
     // Soft circles + shader manifestation (void slots stay as faint ghosts)
     if (viewport?.setParticleShape) viewport.setParticleShape(0);
     if (viewport?.setParticleGlow) viewport.setParticleGlow(0.28);
     if (viewport?.setPEManifestation) viewport.setPEManifestation(true, 0, MANIFEST_FILL);
-
-    // Apply BH state hint from scenario (only pe-micro-bh sets bhActive=true)
-    if (result && result.bhActive) {
-        _bhActive      = true;
-        _bhHawkingTick = 0;
-    }
 }
 
 

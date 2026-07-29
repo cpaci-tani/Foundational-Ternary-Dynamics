@@ -127,8 +127,16 @@ The bridge is the physics boundary. Current implementations:
 |---|---|---|
 | `WebSocketBridge` | `js/ws-bridge.js` | native server bridge when available |
 | `WasmBridge` | `js/bridge/wasm-bridge.js` | canonical in-browser C++ bridge |
-| `MockBridge` | `js/bridge/mock-bridge.js` | JS fallback/reference bridge |
-| `MockBridgeProxy` | `js/bridge/mock-bridge-proxy.js` | worker-backed JS bridge for Scale 0 flux/mock scenarios |
+| `WasmBridgeProxy` | `js/bridge/wasm-bridge-proxy.js` | worker-backed WASM bridge — the DEFAULT Scale-0 physics owner (SharedArrayBuffer path) |
+
+Scale 1 runs on the **native C++/WASM `ParticleEngine`** via the embind
+adapter `js/bridge/native-particle-engine.js`, always on the main-thread
+`WasmBridge` (small N). The "⤴ Scale up" promotion pipeline
+(`js/scales/scale1/promotion.js`) coarse-grains the live Scale-0 lattice —
+one continuous particle per manifested cluster, mass = N·K_B — reading
+cluster telemetry from the active Scale-0 owner (worker or main). The former
+pure-JS particle engine (`mock-particle-engine.js`) was deleted in the
+2026-07-29 revision.
 
 All bridge consumers should prefer `bridge.capabilities.scaleN.*` surfaces.
 Direct bridge reads are allowed only when listed by the bridge contract or when a
@@ -211,7 +219,7 @@ the current code.
 2. Scenario definitions still span registry, metadata, JS seed bodies, C++
    seed bodies, and toggle profiles. ADR `docs/adr/0002-scenario-architecture.md`
    remains the decision point.
-3. Large modules remain: `viewport/field-renderer.js`, `bridge/mock-bridge.js`,
+3. Large modules remain: `viewport/field-renderer.js`,
    `scales/scale0/ui/overlays/p1-observables-panel.js`, and
    `bridge/wasm-bridge.js`.
 4. Dependency-boundary tooling is still incomplete. ESLint, Stylelint,

@@ -1,129 +1,91 @@
-# REF — Scale-1 Particle-Engine Dynamics, in FTD-Native Form
+# REF — Scale-1 Particle Dynamics, in FTD-Native Form
 
 **Tag:** `[REFERENCE]`
-**Status:** `[REFERENCE]` — a code-grounded cross-walk of every dynamic the web dashboard's **Scale 1 (Particle Engine)** computes, with each formula re-expressed in FTD's own constants where one genuinely exists.
-**Scope:** `engine/web/js/` Scale-1 modules (the particle engine) only. Scale 0 (lattice/substrate), Scale 2/3 (atoms/molecules), and the C++ engine are out of scope.
+**Status:** `[REFERENCE]` — a code-grounded cross-walk of every dynamic the web dashboard's **Scale 1** computes after the 2026-07-29 revision (continuous particle system promoted from the lattice, native C++/WASM engine), with each formula re-expressed in FTD's own constants where one genuinely exists.
+**Scope:** the native `ParticleEngine` (`engine/src/particle_engine.cpp`, reached from `engine/web/js/` via the embind adapter `bridge/native-particle-engine.js`) plus the Scale-1 web modules. Scale 0 (lattice/substrate) and Scale 2/3 (atoms/molecules) are out of scope.
+**Supersedes:** the pre-revision edition of this document, which described the retired pure-JS engine (`mock-particle-engine.js`), the 26-scenario `pe-*` library, and the cross-sections/decay-rates/spectroscopy analysis panels — all deleted 2026-07-29 (see `docs/audits/AUDIT_2026-07_scale1-particle-engine.md` for why).
 
-> **Epistemic banner (read first).** Re-expressing a textbook formula in FTD constants (`α → G_C²`, `m_e → K_B`, `c → 1/√3`, …) is **notation, not derivation.** The Scale-1 *dynamical laws* are imported physics (Coulomb, Newton, Velocity-Verlet, Fermi, Bohr/Dirac, Klein–Nishina, Gamow); only the **constants plugged into them** are FTD quantities. The epistemic tags below (`[PARAMETRIC]`, `[IMPOSED]`, `[SELECTION]`, `[DERIVED]`) describe the *law*, and are **unchanged** by the FTD-form rewrite. Constants with no FTD derivation (ħc, V_ud, g_A, f_π, f_n, branching ratios, PDG quark/hadron/boson masses, amu) are left as external inputs — this doc does **not** manufacture FTD forms for them (per the project's epistemic discipline against substitution identities). Conflict precedence: LEDGER > this doc.
+> **Epistemic banner (read first).** Re-expressing a textbook formula in FTD constants (`α → G_C²`, `m_e → K_B`, `c → 1/√3`, …) is **notation, not derivation.** The Scale-1 *dynamical laws* are imported physics (Coulomb, Newton, Velocity-Verlet); only the **constants plugged into them** are FTD quantities, and only the cluster promotion *mapping* carries FTD-derived content at its recorded tags. The epistemic tags below describe the *law*, and are **unchanged** by the FTD-form rewrite. Conflict precedence: LEDGER > this doc.
 
 ---
 
 ## §0 · One-line summary
 
-After substitution, the **only** FTD-native quantities driving Scale 1 are: `G_C²` (α), `K_B` (m_e), `1/√3` (c), the framework integers `{N_c=3, N_base=4, b₃=7, N_eff=13}` (mass ratios), `1/(b₃+N_c)²` (G_N, `[IMPOSED]`; physical identification falsified per FTD-0131), and `sin²θ_W = 3/13`. Everything else is an external input, and every dynamical *law* is imported textbook physics.
+Scale 1 is a continuous-coordinate N-body system whose particles arrive by **coarse-graining the live Scale-0 lattice** (one particle per manifested cluster, mass = N·K_B) or from the `[PARAMETRIC]` catalog Zoo; the dynamics are imported classical mechanics (native Velocity-Verlet) parameterized by `G_C²` (α), `K_B` (m_e), `1/√3` (c, `[SELECTION]`), and `G_PE = 1/(4π·m_P²)` (FTD-0131).
 
 ## §1 · FTD constant substitution key (engine-defined)
 
 | Textbook symbol | FTD-native form | Engine source | Epistemic status |
 |---|---|---|---|
-| α (fine structure) | **G_C²** (`ALPHA_EFT = G_C·G_C`) = **1/x₊**, x₊ = 8G\*² + 4G\*^{3/2}√(4G\*−1) ≈ 137.036 (master-quadratic root) | `constants.js:71,77` | physical ID `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) |
-| electron mass m_e | **K_B** = 0.511 (mass anchor); selected dimensional relation m_P·√(2π)·(16/3)·α¹¹ | `constants.js` | engine anchor `[IMPOSED]`; physical relation `[STRONGLY MOTIVATED CONJECTURE]` with selected exponent/order (FTD-0015, FTD-0390, FTD-0397) |
-| speed of light c | **1/√3** (`C_SPEED`, selected lattice speed; the production 18-point stencil permits c ≤ √3/2, FTD-0407) | `constants.js:122` | `[SELECTION]` |
-| Newton G_N | **1/(b₃+N_c)² = 1/100 = 0.01** | `constants.js:80–87` | `[IMPOSED]`; physical ID **falsified** (FTD-0131) |
-| Coulomb prefactor | **G_C²/(4π)** (`COULOMB_K_FORCE`) — used for both force and potential energy (the PE is the exact integral of the force; force-consistent) | `mock-particle-engine.js:133,146` | — |
-| m_μ | **K_B·[3·b₃(b₃+N_c) − N_c] = 207·K_B** | `constants.js:125` | `[DERIVED]` (0.11%) |
-| m_τ | **K_B·[(N_eff+N_base)·207 − 2·N_c·b₃] = 3477·K_B** | `constants.js:126` | `[DERIVED]` (0.007%) |
-| m_p | **K_B·[N_eff/α + N_base·N_eff + N_c] = K_B·(N_eff·x₊ + 55) ≈ 1836.47·K_B** | `constants.js:130` | `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0016) |
-| pair / genesis threshold | **2·K_B** (1.022 MeV); genesis scale K_GENESIS = **N_c·K_B** | `cross-sections.js:94`; `constants.js` | — |
-| weak mixing | **sin²θ_W = 3/13** | `constants.js:322` | `[PARAMETRIC]` (FTD-0018) |
-| velocity damping γ | **G_C²** (= α; convention, default OFF) | `constants.js:121` | `[IMPOSED]` |
+| α (fine structure) | **G_C²** (`ALPHA_EFT = G_C·G_C`) = **1/x₊** ≈ 1/137.036 (master-quadratic root) | `constants.js` / `ftd/constants.h` | physical ID `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) |
+| electron mass m_e | **K_B** = 0.511 (mass anchor) | `constants.js` | engine anchor `[IMPOSED]`; physical relation `[SMC]` (FTD-0015) |
+| speed of light c | **1/√3** (`C_SPEED`; the production 18-point stencil permits c ≤ √3/2, FTD-0407) | `constants.js` | `[SELECTION]` |
+| gravity coupling | **G_PE = G_DERIVED = 1/(4π·m_P²)** ≈ 5.34×10⁻⁴⁶ MeV⁻² | `particle_engine.cpp:148`; `constants.js` | `[SMC]`-floored magnitude (FTD-0131). The legacy `1/(b₃+N_c)² = 1/100` identification is **FALSIFIED** (FTD-0131) and appears nowhere in Scale 1 |
+| Coulomb prefactor | **G_C²/(4π)** | `particle_engine.cpp:136` | 1/r² **form** `[THEOREM]`-grade lattice geometry for r ≳ 8 (Phase G, `DERIV_EMERGENT_COULOMB_GEOMETRIC.md`); the α **coupling** `[PARAMETRIC]` |
+| cluster mass | **N·K_B** (N = cluster voxel count) | promotion pipeline; matches `phase_forces_integrate_clusters` (`phase_forces.cpp:335`) | `[DERIVED-linear]`/`[SMC]` (FTD-0110) |
 | framework integers | N_c=3, N_base=4, b₃=7, N_eff=13 | `constants.js` | `[THEOREM]`/`[SELECTION]` |
 
-## §2 · Core live N-body dynamics (the actual simulation)
+## §2 · The engine (native C++/WASM)
 
-The default Scale-1 backend is the JS N-body integrator in `bridge/mock-particle-engine.js` (a native WASM integrator is used when present).
+The sole Scale-1 backend is the native `ParticleEngine` (`engine/src/particle_engine.cpp`, CTest-covered: `test_particle_engine`, `test_pe_forces`, `test_particle_toggles`, `test_particle_lifetime`), reached through embind bindings (`engine/wasm/bindings_particle.cpp`) and the JS adapter `bridge/native-particle-engine.js`. The former pure-JS engine is deleted; there is no second implementation of the force law anywhere in the web tree — overlays and telemetry read the same native kernel the integrator runs.
 
-| Process | FTD-native law | Status | Source |
+| Process | Law | Status | Source |
 |---|---|---|---|
-| Coulomb force | `F = −(G_C²/4π)·q₁q₂/r²` (softened `r²+soft²`) | `[PARAMETRIC]` | `mock-particle-engine.js:133,146` |
-| Gravity | `F = (1/(b₃+N_c)²)·m₁m₂/r² = (1/100)·m₁m₂/r²` | `[IMPOSED]` | `mock-particle-engine.js:147` |
-| Integrator | Velocity-Verlet (half-kick / drift / half-kick) | `[IMPOSED]` (numerics) | `mock-particle-engine.js:161–212` |
-| Light-speed cap | clamp `\|v\| ≤ 1/√3` | `[DERIVED]` | `mock-particle-engine.js:223` |
-| Velocity damping | `v *= 1 − G_C²·dt` (default OFF) | `[IMPOSED]` | `mock-particle-engine.js:215` |
-| Pair annihilation | geometric contact (opposite charge, radii touch) → remove | `[SELECTION]` (not a QED cross-section) | `mock-particle-engine.js:233–252` |
-| Boundary reflection | reflect mobile particles into sphere r=35 | `[IMPOSED]` | `mock-particle-engine.js:191` |
-| Locked particles | infinite-mass nucleus surrogate (no integration) | `[IMPOSED]` | `mock-particle-engine.js:93–103` |
+| Coulomb force | `F = −(G_C²/4π)·q₁q₂/r²` (softened) | form `[THEOREM]` (r ≳ 8), coupling `[PARAMETRIC]` | `particle_engine.cpp:136` |
+| Gravity | `F = +G_PE·m₁m₂/r²` | `[SMC]`-floored magnitude (FTD-0131) | `particle_engine.cpp:148` |
+| Integrator | Velocity-Verlet KDK (relativistic-momentum variant toggle) | `[IMPOSED]` (numerics) | `particle_engine.cpp:582+` |
+| Light-speed cap | clamp `\|v\| ≤ 1/√3` | `[SELECTION]` (FTD-0407) | native speed-limit pass |
+| Exchange / strong / Lorentz / magnetic-dipole / spin-orbit / radiation / relativistic | toggle-gated advanced terms | `[IMPOSED]` toys; relativistic rescale explicitly non-covariant (no covariant EOM exists, FTD-0401) | `particle_engine.cpp:158–318` |
+| Pair annihilation | geometric contact → remove | `[SELECTION]` (not a QED cross-section) | native annihilation pass |
+| Boundary | **none** — the engine is unbounded; the r=35 sphere is a visual reference shell only | — | (deliberate revision change) |
 
-> **Scope note.** The JS `_peComputeForces` computes **only Coulomb + gravity**. The UI toggles `lorentz, strong, exchange, magnetic_dipole, spin_orbit, radiation, relativistic` are forwarded to a possible native `peSetToggle` but have **no JS dynamics behind them** (`wasm-bridge.js:944–958`). The 3-regime strong-force constants (`STRONG_*`, `constants.js:355–367`) are consumed by the **C++** engine (`render_bridge.cpp::phase_forces`), not by any JS Scale-1 path.
+## §3 · The promotion pipeline ("⤴ Scale up") — the FTD-bearing content
 
-## §3 · Scenario seeding & black-hole / Hawking demo
+`engine/web/js/scales/scale1/promotion.js`. Captures the live Scale-0 lattice's clusters and promotes each to one continuous particle. Cluster source: KnotTracker telemetry (`getKnotTelemetry`, production-wired observation) when it reports anything; else Moore-26 connected components over the `coarsenToParticles` voxel snapshot (covers clusters below the tracker's `min_cluster_size = 4`).
 
-| Process | FTD-native law | Status | Source |
-|---|---|---|---|
-| Circular-orbit velocity (1 center) | `v = √(G_C²·Q·r² / (4π·m·(r²+soft²)^{3/2}))` | `[PARAMETRIC]` | `controller.js:466` |
-| Two-body mutual orbit | same family with `G_C²` (sep = 2r) | `[PARAMETRIC]` | `scenarios.js:166…` |
-| BH orbital velocity | `v = √((1/100)·M_BH·r² / (r²+soft²)^{3/2})` | `[PARAMETRIC]` | `scenarios.js:386` |
-| 25 `pe-*` scenarios | atoms, exotic atoms, leptonia, hadron pairs, scatterings, 3-body, micro-BH | `[SELECTION]` (pedagogical ICs) | `scenarios.js:138–432` |
-| BH accretion | Newtonian gravity, M_BH = 5000 MeV; inspiral emerges from the `1/√3` cap | `[SELECTION]`/`[EMERGENT]` | `scenarios.js:380–423` |
-| Hawking-analogue emission | every 300 ticks spawn test mass **K_B**: e⁻ (out, `0.6·(1/√3)`) + e⁺ (in) at r=3.5 | `[SELECTION]` toy — no temperature/spectrum/greybody | `controller.js:69,280–298` |
-
-## §4 · Cross-sections (`cross-sections.js`) — analysis cards, not in the integrator
-
-All `[PARAMETRIC]` (textbook QED with FTD α, K_B; ħc external). Engine *displays* with PDG m_e; the FTD-native form below uses K_B.
-
-| Process | FTD-native law |
-|---|---|
-| Classical electron radius | `r_e = G_C²·ħc/K_B` |
-| Thomson | `σ_T = (8π/3)·r_e²` |
-| Rutherford | `dσ/dΩ = (Z₁Z₂·G_C²·ħc/4E)² / sin⁴(θ/2)` |
-| Mott | Rutherford·`(1 − β²sin²(θ/2))` |
-| Pair-production threshold | `E = 2·K_B` |
-| Bethe–Heitler | `σ = (7/9)·G_C²·r_e²·Z²·(28/3·ln(2E/K_B) − 218/27)` |
-| Klein–Nishina | `dσ/dΩ = ½r_e²·P²(P + 1/P − 1 + cos²θ)`, `x = E/K_B` |
-
-(Source: `cross-sections.js:16–153`.)
-
-## §5 · Masses & decays (`particle-catalog.js`, `decay-rates.js`)
-
-| Process | FTD-native law | Status / external input |
+| Promoted quantity | Mapping | Status |
 |---|---|---|
-| Lepton masses | `m_μ = 207·K_B`, `m_τ = 3477·K_B` (framework integers) | `[DERIVED]` |
-| Proton mass | `m_p = K_B·(N_eff·x₊ + N_base·N_eff + N_c)` | `[SMC]` (FTD-0016) |
-| Muon lifetime | `τ = 192π³ħ / (G_F²·(207·K_B)⁵)`, G_F from FTD α & sin²θ_W=3/13 | `[PARAMETRIC]` |
-| Tau lifetime | `τ_μ·(207/3477)⁵·BR` | `[PARAMETRIC]`; BR external |
-| Neutron β-decay | `τ = 2π³ħ / (G_F²·K_B⁵·\|V_ud\|²·f_n·(1+3g_A²))` | `[PARAMETRIC]`; V_ud, g_A, f_n external |
-| Charged-pion decay | `Γ = G_F²·f_π²·(207·K_B)²·m_π(1−(207·K_B)²/m_π²)²/8π` | `[PARAMETRIC]`; f_π, m_π external |
-| α-decay (Gamow) | `T = exp(−2π·Z·2·G_C²·√(m_red/2Q))` | `[PARAMETRIC]`; amu external |
-| 80+ SM catalog | per-entry mass/charge/spin/formula | leptons `[DERIVED]`; quarks/Higgs/proton `[SELECTION]`; W/Z/hadrons `[PARAMETRIC PDG]`; γ/gluon `[AXIOM]` |
-| Decay channels / BR | tabulated SM channels (display strings) | `[SELECTION]` — particles never actually decay in-sim |
+| position | cluster centroid, re-centered to the PE origin frame; uniform display scale for L ≥ 65 | `[DERIVED from telemetry]` + `[IMPOSED display mapping]` |
+| velocity | cluster centroid velocity | `[DERIVED from telemetry]` |
+| mass | **N·K_B** (N = voxel count) | `[DERIVED-linear]`/`[SMC]` (FTD-0110) — the engine's own cluster-inertia convention |
+| charge | sign·N, clamped to int8 ±127 (clamps surfaced in the UI) | `[DERIVED from telemetry]` |
+| spin / color | 0 (cluster telemetry carries neither) | — |
+| admissibility | annotated (never gating): r_eff/a ≥ 3 ⇒ N ≳ 113 + sub-relativistic centroid speed, a JS heuristic of the ScaleContextTracker criteria | `[REFERENCE]` heuristic |
 
-(Source: `particle-catalog.js:38–595`, `decay-rates.js:21–202`.)
+**Voxel-mass convention tension (recorded, not hidden):** the native scale bridge (`scale_bridge.cpp:37`) stamps per-voxel `mass = max(density, K_B)` — a flux-density convention — while the physics phases and this promotion path use **N·K_B**. The voxel debug ghost layer displays the scale-bridge value verbatim, labeled `[IMPOSED, display only]`; it never feeds dynamics. Reconciling the two conventions is an engine-side `[OPEN]` item.
 
-## §6 · Spectroscopy (`spectroscopy.js`) — display cards
+**No SM identification.** Promoted objects are lattice clusters, not electrons or protons — lattice genesis produces hybrid colored objects (`DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md`), and no UI copy claims otherwise. SM catalog particles enter only via the Zoo, explicitly labeled `[PARAMETRIC]`.
 
-All `[PARAMETRIC]` (Bohr/Dirac with FTD α; ħc external; engine uses PDG m_e — FTD form uses K_B).
+## §4 · Scenarios (registry-driven, 6)
 
-| Process | FTD-native law |
-|---|---|
-| Hydrogenic energy levels | `E_n = −K_B·Z²·G_C⁴ / (2n²)` |
-| Fine-structure correction | `ΔE = E_n·G_C⁴/n·(1/(j+½) − 3/4n)` |
-| Bohr radius | `a₀ = ħc/(K_B·G_C²)` |
-| Compton wavelength | `λ_C = 2π·ħc/K_B` |
-| Spectral series | `λ = 2π·ħc/\|E_i − E_f\|` (Lyman…Pfund) |
-| Rydberg | `R_∞ = K_B·G_C⁴/2` |
+`engine/web/js/scales/scale1/scenario-registry.js` — each carries its epistemic description into the toolbar's status readout.
 
-(Source: `spectroscopy.js:18–87`.)
+| id | content | key tags |
+|---|---|---|
+| `s1-promoted-lattice` | consumes the ⤴ Scale-up capture | §3 table |
+| `s1-voxel-debug` | same + per-voxel ghost layer | §3 + `[IMPOSED display]` |
+| `s1-coulomb-orbit` | −1 orbiting +1 at r=12, native force-balance IC | 1/r² form `[THEOREM]` window demo; α `[PARAMETRIC]`; IC `[IMPOSED]` |
+| `s1-cluster-pair` | synthetic ±N clusters (N=20), mutual orbit | mass law `[DERIVED-linear]`/`[SMC]` |
+| `s1-three-body` | three dynamic bodies, chaotic | ICs `[IMPOSED]` |
+| `s1-empty-zoo` | empty; Zoo injects catalog particles | `[PARAMETRIC]` extras |
 
-## §7 · Field overlays & telemetry
+Orbit ICs come from a native force-balance probe at t=0 (zero the velocity, read the kernel force, solve m·v²/r = |F_inward|) — the same "ICs derived from the live kernel, not closed-form" contract as before, now against the kernel that actually integrates.
 
-**Fields** (`fields.js`, 25×25 grid, visualization): Coulomb `φ = Σ(G_C²/4π)·q/r`; gravity `φ = −Σ(1/100)·m/r`; RK4 E-field streamlines. `[PARAMETRIC]`/`[IMPOSED]`.
+## §5 · Telemetry honesty rules (2026-07 revision)
 
-**Telemetry** (`pe-telemetry.js`, `mock-particle-engine.js`) — measured each tick (conservation laws are *measured*, not imposed, validating the integrator): KE `= Σ½mv²`; Coulomb PE `= Σ (G_C²/4π)·q_iq_j/r` (force-consistent — the exact integral of the Coulomb force, *not* a separate "bare G_C²" convention); gravity PE `= −Σ(1/100)·m_im_j/r`; total energy + drift%; linear & angular momentum; virial `2K/|U|`; temperature `T = (2/3)·KE/N`; RMS velocity / CoM / radius; per-particle force table; full two-body Kepler analysis (μ, e, a, period, vis-viva); radial-velocity phase-space plot. (Source: `pe-telemetry.js:355–611`.)
+- Energy-drift baseline **re-latches** whenever the particle count or toggle set changes (a changed Hamiltonian invalidates the old baseline); drift is integrator error, never unaccounted physics.
+- Native diagnostics `totalPE` sums **active potential terms only** — labeled as such in every panel.
+- Momentum, angular momentum, and force readouts are **sim units** (no MeV/c, ħ, or Planck-unit labels — no β=v/C_SPEED-style conversion exists in the engine, FTD-0401); velocity readouts labeled `c` are genuine β = v/C_SPEED ratios computed in the hub.
+- Angular momentum in the diagnostics table is **about the origin** (native convention); the viewport System overlay's L is about the CoM and labeled "L (CoM)".
+- No fabricated channels: the annihilation counter was retired rather than derived from count drops (which would conflate removal causes).
+- Chart pushes advance on engine-tick progress only — paused sims do not overwrite history.
 
-## §8 · External inputs with no FTD form (left as-is)
+## §6 · Retired with the 2026-07-29 revision (do not cite as live)
 
-ħc (= 197.327 MeV·fm, unit bridge), V_ud, g_A, f_n, f_π, leptonic branching ratios (e.g. 0.1785), PDG masses for quarks / hadrons / W / Z / neutron, amu. FTD provides no derivation for these; they are calibration/PDG inputs.
+`mock-particle-engine.js`, `pe-force-kernel.js`, `pe-spin-dynamics.js` (the JS engine); `scales/scale1/scenarios.js` + `pe-dynamics.js` (26 pe-* scenarios incl. the Hawking micro-BH toy); `cross-sections.js`, `decay-rates.js` (parametric analysis panels); `pe-telemetry.js` (legacy canvas panel). `spectroscopy.js` survives solely for the Scale-0 hydrogen p1-observable. `particle-catalog.js` survives solely for the Zoo (`[PARAMETRIC]`; its `ftd_status` column copies LEDGER tags, never promotes them).
 
-## §9 · What Scale 1 does **not** compute (so the table isn't over-read)
+## §7 · Source modules & cross-references
 
-- No relativistic equations of motion (only the kinematic `|v| ≤ 1/√3` clamp); no Lorentz/magnetic force, spin-orbit, or radiation reaction in JS.
-- **No actual decay events** — `decay-rates.js` is display tables; sim particles only annihilate by contact.
-- **No actual scattering events** — `cross-sections.js` is analysis cards; scattering scenarios just launch particles under the Coulomb force.
-- Hawking emission has no temperature/spectrum/greybody — fixed 300-tick cadence.
-- Genesis / cluster-mass / lattice-wave dynamics are **Scale 0**, not Scale 1.
-
-## §10 · Source modules & cross-references
-
-**Scale-1 modules** (under `engine/web/js/`): `scales/scale1/{controller,scenarios,pe-cloud-expander}.js`, `bridge/{mock-particle-engine,wasm-bridge}.js`, `cross-sections.js`, `decay-rates.js`, `spectroscopy.js`, `particle-catalog.js`, `pe-telemetry.js`, `fields.js`, `constants.js`.
-
-**Canonical FTD references:** `scripts/constants.py` + `engine/include/ftd/ontic.h` + `engine/web/js/constants.js` (the canonical constant triple); [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) (per-claim status: FTD-0013 α, FTD-0015 m_e, FTD-0016 m_p, FTD-0018 sin²θ_W, FTD-0131 G_N falsification); [`../07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md`](../07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md) (why hydrogen/Lamb-shift are `[PARAMETRIC]`, not substrate derivations); [`REF_PHYSICS_REFERENCE.md`](REF_PHYSICS_REFERENCE.md) (integer-encoding catalog).
+**Engine:** `engine/src/particle_engine.cpp` + `engine/include/ftd/particle_engine.h` (kernel), `engine/wasm/bindings_particle.cpp` (bindings incl. `peAddParticleEx`, `getPEForceDecomposition` (Float64), `coarsenToParticles`), `engine/src/scale_bridge.cpp` (voxel-level map).
+**Web:** `engine/web/js/bridge/native-particle-engine.js` (adapter), `scales/scale1/{controller,promotion,scenario-registry}.js`, `scales/scale1/state/store.js`, `bridge/pe-catalog-map.js`, `zoo.js`.
+**Canonical FTD references:** LEDGER rows FTD-0013 (α), FTD-0015 (m_e), FTD-0110 (N·K_B mass law), FTD-0131 (G_PE; 1/100 falsified), FTD-0401 (dual velocity normalization no-go), FTD-0407 (C_SPEED selection); `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` (Phase G geometric Coulomb); `DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md` (genesis produces hybrid objects); `docs/audits/AUDIT_2026-07_scale1-particle-engine.md` (the audit that drove the revision).

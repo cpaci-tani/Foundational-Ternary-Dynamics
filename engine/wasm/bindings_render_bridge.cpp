@@ -26,6 +26,8 @@
 #include "ftd/constants.h"
 #include "ftd/scenarios.h"  // ftd::dispatch_scenario — ported JS scenario library
 #include "ftd/parallel.h"   // ftd::set_pool_threads (threaded build pool sizing)
+#include "ftd/scale.h"           // ftd::coarsen_to_particles (Scale 0 → 1 bridge)
+#include "ftd/particle_engine.h" // ftd::Particle definition for the export
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -184,6 +186,12 @@ static double get_omega0(ftd::RenderBridge& rb) { return rb.toggles.omega0; }
 // is a safety valve absorbing arbitrary heat).
 static void set_langevin_temp(ftd::RenderBridge& rb, double t) { rb.toggles.langevin_T = t; }
 static double get_langevin_temp(ftd::RenderBridge& rb) { return rb.toggles.langevin_T; }
+// langevin_gamma (OU damping rate) existed as a real, settable TermToggles
+// field with no WASM binding at all — genesis-burst-panel's intended
+// setLangevinParams(T, gamma) call had no real gamma setter to reach on
+// either bridge. Mirrors the temp setter/getter pair exactly.
+static void set_langevin_gamma(ftd::RenderBridge& rb, double g) { rb.toggles.langevin_gamma = g; }
+static double get_langevin_gamma(ftd::RenderBridge& rb) { return rb.toggles.langevin_gamma; }
 static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 
 // Flux boundary mode: 0=Periodic (toroidal wrap), 1=Reflective (Neumann
@@ -265,6 +273,58 @@ static void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     // primary dispatcher already returned false above).
 }
 
+// ── Scale 0 → Scale 1 coarse-graining export ─────────────────────────
+// Binds the existing (tested, CTest-covered) ftd::coarsen_to_particles
+// verbatim: one manifested voxel → one Particle record. Observer-only —
+// reads lattice state, mutates nothing. Used by the Scale-1 voxel debug
+// view. NOTE the mass convention here is the scale-bridge's
+// max(density, K_B) ([IMPOSED] bridge convention, display only); the
+// physics-bearing cluster promotion path uses N·K_B instead.
+static val coarsen_to_particles_js(ftd::RenderBridge& rb) {
+    const auto ps = ftd::coarsen_to_particles(rb);
+    const int count = static_cast<int>(ps.size());
+
+    val ids        = val::global("Int32Array").new_(count);
+    val charges    = val::global("Int8Array").new_(count);
+    val masses     = val::global("Float64Array").new_(count);
+    val positions  = val::global("Float64Array").new_(count * 3);
+    val velocities = val::global("Float64Array").new_(count * 3);
+    val spins      = val::global("Int8Array").new_(count);
+    val colors     = val::global("Int8Array").new_(count);
+    val pair_ids   = val::global("Int32Array").new_(count);
+    val locked     = val::global("Uint8Array").new_(count);
+
+    for (int i = 0; i < count; ++i) {
+        const auto& p = ps[i];
+        ids.set(i, p.id);
+        charges.set(i, static_cast<int>(p.charge));
+        masses.set(i, p.mass);
+        positions.set(i * 3,     p.position.x);
+        positions.set(i * 3 + 1, p.position.y);
+        positions.set(i * 3 + 2, p.position.z);
+        velocities.set(i * 3,     p.velocity.x);
+        velocities.set(i * 3 + 1, p.velocity.y);
+        velocities.set(i * 3 + 2, p.velocity.z);
+        spins.set(i, static_cast<int>(p.spin));
+        colors.set(i, static_cast<int>(p.color));
+        pair_ids.set(i, p.pair_id);
+        locked.set(i, p.locked ? 1 : 0);
+    }
+
+    val result = val::object();
+    result.set("ids", ids);
+    result.set("charges", charges);
+    result.set("masses", masses);
+    result.set("positions", positions);
+    result.set("velocities", velocities);
+    result.set("spins", spins);
+    result.set("colors", colors);
+    result.set("pairIds", pair_ids);
+    result.set("locked", locked);
+    result.set("count", count);
+    return result;
+}
+
 // ── Embind Registration ──────────────────────────────────────────────
 // All RB-related helpers (data extraction, inspection, scenario setup,
 // toggles, injection, time step) register here. The RenderBridge class_<>
@@ -289,6 +349,9 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getKnotTelemetry", &get_knot_telemetry);
     function("getKnotEvents",    &get_knot_events);
     function("getKnotAggregate", &get_knot_aggregate);
+
+    // Scale 0 → Scale 1 coarse-graining (observation-only, voxel debug view)
+    function("coarsenToParticles", &coarsen_to_particles_js);
 
     // Voxel inspection
     function("inspectVoxel",       &inspect_voxel);
@@ -351,6 +414,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getDt",              &get_dt);
     function("setLangevinTemp",    &set_langevin_temp);
     function("getLangevinTemp",    &get_langevin_temp);
+    function("setLangevinGamma",   &set_langevin_gamma);
+    function("getLangevinGamma",   &get_langevin_gamma);
     function("setFluxBoundary",   &set_flux_boundary);
     function("getFluxBoundary",   &get_flux_boundary);
     function("setOmega0",          &set_omega0);

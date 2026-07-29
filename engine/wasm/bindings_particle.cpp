@@ -13,6 +13,7 @@
 
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <unordered_map>
@@ -164,6 +165,7 @@ static val get_pe_particle_data(ftd::ParticleEngine& pe) {
     val locked    = val::global("Uint8Array").new_(count);
     val spins     = val::global("Int8Array").new_(count);
     val color_ids = val::global("Int8Array").new_(count);
+    val spin_axes = val::global("Float32Array").new_(count * 3);
 
     for (int i = 0; i < count; ++i) {
         const auto& p = particles[i];
@@ -174,6 +176,9 @@ static val get_pe_particle_data(ftd::ParticleEngine& pe) {
         velocities.set(i * 3,     static_cast<float>(p.velocity.x));
         velocities.set(i * 3 + 1, static_cast<float>(p.velocity.y));
         velocities.set(i * 3 + 2, static_cast<float>(p.velocity.z));
+        spin_axes.set(i * 3,     static_cast<float>(p.spin_axis.x));
+        spin_axes.set(i * 3 + 1, static_cast<float>(p.spin_axis.y));
+        spin_axes.set(i * 3 + 2, static_cast<float>(p.spin_axis.z));
 
         // Default colors by charge (overridden by JS catalog lookup)
         if (p.charge > 0) {
@@ -216,6 +221,7 @@ static val get_pe_particle_data(ftd::ParticleEngine& pe) {
     result.set("locked", locked);
     result.set("spins", spins);
     result.set("colorIds", color_ids);
+    result.set("spinAxes", spin_axes);
     result.set("count", count);
     return result;
 }
@@ -259,6 +265,60 @@ static int pe_add_locked_particle(ftd::ParticleEngine& pe, int charge,
     // Override default r_eff (C++ default is 2.48, too large for atomic orbits)
     pe.particles().back().r_eff = r_eff;
     return id;
+}
+
+// Full-fidelity injection: catalog spin/color and spin axis in one call.
+// Needed by the Zoo ([PARAMETRIC] catalog particles) and the lattice
+// promotion pipeline (cluster seeds).
+static int pe_add_particle_ex(ftd::ParticleEngine& pe, int charge,
+                              double x, double y, double z,
+                              double vx, double vy, double vz,
+                              double mass, double r_eff,
+                              int spin, int color,
+                              double sax, double say, double saz) {
+    int id = pe.add_particle(static_cast<int8_t>(charge),
+                             ftd::Vec3(x, y, z),
+                             ftd::Vec3(vx, vy, vz),
+                             mass, r_eff,
+                             static_cast<int8_t>(spin),
+                             static_cast<int8_t>(color));
+    pe.particles().back().spin_axis = ftd::Vec3(sax, say, saz);
+    return id;
+}
+
+static int pe_add_locked_particle_ex(ftd::ParticleEngine& pe, int charge,
+                                     double x, double y, double z,
+                                     double mass, double r_eff,
+                                     int spin, int color,
+                                     double sax, double say, double saz) {
+    int id = pe.add_locked_particle(static_cast<int8_t>(charge),
+                                    ftd::Vec3(x, y, z), mass,
+                                    static_cast<int8_t>(spin),
+                                    static_cast<int8_t>(color));
+    auto& p = pe.particles().back();
+    p.r_eff = r_eff;
+    p.spin_axis = ftd::Vec3(sax, say, saz);
+    return id;
+}
+
+static ftd::Particle* pe_find_by_id(ftd::ParticleEngine& pe, int id) {
+    for (auto& p : pe.particles()) {
+        if (p.id == id) return &p;
+    }
+    return nullptr;
+}
+
+static void pe_set_spin_axis(ftd::ParticleEngine& pe, int id,
+                             double ax, double ay, double az) {
+    if (auto* p = pe_find_by_id(pe, id)) p->spin_axis = ftd::Vec3(ax, ay, az);
+}
+
+// Injection-time velocity write (equilibrium-orbit seeding from the JS
+// adapter: probe the native force, compute circular-orbit speed, write it
+// back). Not a dynamics feature — scenario setup only.
+static void pe_set_velocity(ftd::ParticleEngine& pe, int id,
+                            double vx, double vy, double vz) {
+    if (auto* p = pe_find_by_id(pe, id)) p->velocity = ftd::Vec3(vx, vy, vz);
 }
 
 // ── PE Controls ────────────────────────────────────────────────────
@@ -322,7 +382,9 @@ static val get_pe_forces(ftd::ParticleEngine& pe) {
     const auto& particles = pe.particles();
     int count = static_cast<int>(particles.size());
     val positions = val::global("Float32Array").new_(count * 3);
-    val forces = val::global("Float32Array").new_(count * 3);
+    // Float64: G_PE-only forces (~5e-46) underflow Float32 subnormals to
+    // exactly 0, blanking the gravity overlay for every lepton scenario.
+    val forces = val::global("Float64Array").new_(count * 3);
     double max_force = 0.0;
 
     for (int i = 0; i < count; ++i) {
@@ -332,9 +394,9 @@ static val get_pe_forces(ftd::ParticleEngine& pe) {
         positions.set(i * 3,     static_cast<float>(p.position.x));
         positions.set(i * 3 + 1, static_cast<float>(p.position.y));
         positions.set(i * 3 + 2, static_cast<float>(p.position.z));
-        forces.set(i * 3,     static_cast<float>(f.x));
-        forces.set(i * 3 + 1, static_cast<float>(f.y));
-        forces.set(i * 3 + 2, static_cast<float>(f.z));
+        forces.set(i * 3,     f.x);
+        forces.set(i * 3 + 1, f.y);
+        forces.set(i * 3 + 2, f.z);
         double mag = f.mag();
         if (mag > max_force) max_force = mag;
     }
@@ -344,6 +406,76 @@ static val get_pe_forces(ftd::ParticleEngine& pe) {
     result.set("forces", forces);
     result.set("count", count);
     result.set("maxForce", max_force);
+    return result;
+}
+
+// Batched per-term force arrays for the F_C / F_G / F_S / F_net overlays.
+// One embind crossing instead of N peGetForceDiag calls. `net` is the TRUE
+// total of every enabled term (incl. exchange, Lorentz, radiation,
+// relativistic) — the force the integrator actually applies, unlike the
+// retired JS re-implementation which summed only five terms.
+static val get_pe_force_decomposition(ftd::ParticleEngine& pe) {
+    const auto& particles = pe.particles();
+    int count = static_cast<int>(particles.size());
+
+    val positions       = val::global("Float32Array").new_(count * 3);
+    val coulomb         = val::global("Float64Array").new_(count * 3);
+    val gravity         = val::global("Float64Array").new_(count * 3);
+    val strong          = val::global("Float64Array").new_(count * 3);
+    val magnetic_dipole = val::global("Float64Array").new_(count * 3);
+    val spin_orbit      = val::global("Float64Array").new_(count * 3);
+    val net             = val::global("Float64Array").new_(count * 3);
+    double max_coulomb = 0.0, max_gravity = 0.0, max_strong = 0.0;
+    double max_magnetic = 0.0, max_spin_orbit = 0.0, max_net = 0.0;
+
+    for (int i = 0; i < count; ++i) {
+        const auto& p = particles[i];
+        auto fd = compute_pe_force_diag_snapshot(pe, i);
+        auto f = fd.total();
+        positions.set(i * 3,     static_cast<float>(p.position.x));
+        positions.set(i * 3 + 1, static_cast<float>(p.position.y));
+        positions.set(i * 3 + 2, static_cast<float>(p.position.z));
+        coulomb.set(i * 3,     fd.f_coulomb.x);
+        coulomb.set(i * 3 + 1, fd.f_coulomb.y);
+        coulomb.set(i * 3 + 2, fd.f_coulomb.z);
+        gravity.set(i * 3,     fd.f_gravity.x);
+        gravity.set(i * 3 + 1, fd.f_gravity.y);
+        gravity.set(i * 3 + 2, fd.f_gravity.z);
+        strong.set(i * 3,     fd.f_strong.x);
+        strong.set(i * 3 + 1, fd.f_strong.y);
+        strong.set(i * 3 + 2, fd.f_strong.z);
+        magnetic_dipole.set(i * 3,     fd.f_magnetic_dipole.x);
+        magnetic_dipole.set(i * 3 + 1, fd.f_magnetic_dipole.y);
+        magnetic_dipole.set(i * 3 + 2, fd.f_magnetic_dipole.z);
+        spin_orbit.set(i * 3,     fd.f_spin_orbit.x);
+        spin_orbit.set(i * 3 + 1, fd.f_spin_orbit.y);
+        spin_orbit.set(i * 3 + 2, fd.f_spin_orbit.z);
+        net.set(i * 3,     f.x);
+        net.set(i * 3 + 1, f.y);
+        net.set(i * 3 + 2, f.z);
+        max_coulomb    = std::max(max_coulomb,    fd.f_coulomb.mag());
+        max_gravity    = std::max(max_gravity,    fd.f_gravity.mag());
+        max_strong     = std::max(max_strong,     fd.f_strong.mag());
+        max_magnetic   = std::max(max_magnetic,   fd.f_magnetic_dipole.mag());
+        max_spin_orbit = std::max(max_spin_orbit, fd.f_spin_orbit.mag());
+        max_net        = std::max(max_net,        f.mag());
+    }
+
+    val result = val::object();
+    result.set("positions", positions);
+    result.set("coulomb", coulomb);
+    result.set("gravity", gravity);
+    result.set("strong", strong);
+    result.set("magnetic_dipole", magnetic_dipole);
+    result.set("spin_orbit", spin_orbit);
+    result.set("net", net);
+    result.set("maxCoulomb", max_coulomb);
+    result.set("maxGravity", max_gravity);
+    result.set("maxStrong", max_strong);
+    result.set("maxMagneticDipole", max_magnetic);
+    result.set("maxSpinOrbit", max_spin_orbit);
+    result.set("maxNet", max_net);
+    result.set("count", count);
     return result;
 }
 
@@ -425,8 +557,13 @@ EMSCRIPTEN_BINDINGS(ftd_module_particle) {
     function("getPEDiagnostics",    &get_pe_diagnostics);
     function("getPEExtendedData",   &get_pe_extended_data);
     function("getPEForces",         &get_pe_forces);
+    function("getPEForceDecomposition", &get_pe_force_decomposition);
     function("peAddParticle",       &pe_add_particle);
     function("peAddLockedParticle", &pe_add_locked_particle);
+    function("peAddParticleEx",       &pe_add_particle_ex);
+    function("peAddLockedParticleEx", &pe_add_locked_particle_ex);
+    function("peSetSpinAxis",       &pe_set_spin_axis);
+    function("peSetVelocity",       &pe_set_velocity);
     function("peSetDt",             &pe_set_dt);
     function("peGetDt",             &pe_get_dt);
     function("peSetSoftening",      &pe_set_softening);

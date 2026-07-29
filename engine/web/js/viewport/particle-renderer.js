@@ -77,6 +77,8 @@ export class ViewportParticleRenderer {
         this.trails = null;
         this._particleForces = null;
         this._peSystem = null;
+        this._voxelDebug = null;      // Scale-1 promotion-source ghost layer
+        this._voxelDebugWarned = false;
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -126,6 +128,76 @@ export class ViewportParticleRenderer {
         this.particles = new THREE.Points(geometry, material);
         this.particles.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
         this._scene.add(this.particles);
+    }
+
+    // ── Voxel debug ghost layer (Scale-1 promotion source view) ─────────
+    // A SEPARATE small Points mesh — never multiplexed onto the shared
+    // particle mesh, whose attributes updateParticles() owns. Shows the
+    // per-voxel coarsenToParticles snapshot behind the promoted cluster
+    // particles ([IMPOSED] display layer; static snapshot, no per-frame cost).
+    _buildVoxelDebugLayer() {
+        const MAX_VOXEL_GHOSTS = 50000;
+        const geo = new THREE.BufferGeometry();
+        const pos = new THREE.BufferAttribute(new Float32Array(MAX_VOXEL_GHOSTS * 3), 3);
+        const col = new THREE.BufferAttribute(new Float32Array(MAX_VOXEL_GHOSTS * 3), 3);
+        pos.setUsage(THREE.DynamicDrawUsage);
+        col.setUsage(THREE.DynamicDrawUsage);
+        geo.setAttribute('position', pos);
+        geo.setAttribute('color', col);
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.PointsMaterial({
+            size: 1.4, vertexColors: true, transparent: true, opacity: 0.35,
+            depthWrite: false, sizeAttenuation: true,
+        });
+        this._voxelDebug = new THREE.Points(geo, mat);
+        this._voxelDebug.visible = false;
+        this._voxelDebug.frustumCulled = false;
+        this._scene.add(this._voxelDebug);
+        this._voxelDebugMax = MAX_VOXEL_GHOSTS;
+    }
+
+    /**
+     * Fill the ghost layer from a coarsenToParticles snapshot.
+     * Positions are lattice coords; mapped to the PE origin frame with the
+     * same center/scale the promotion mapping used.
+     */
+    updateVoxelDebugLayer(coarsen, latticeSize, displayScale = 1) {
+        if (!coarsen || !coarsen.count) { this.toggleVoxelDebugLayer(false); return; }
+        if (!this._voxelDebug) this._buildVoxelDebugLayer();
+        const geo = this._voxelDebug.geometry;
+        const pos = geo.getAttribute('position');
+        const col = geo.getAttribute('color');
+        const center = (latticeSize - 1) / 2;
+        let n = coarsen.count;
+        if (n > this._voxelDebugMax) {
+            if (!this._voxelDebugWarned) {
+                console.warn(`[Viewport] voxel debug layer clamped to ${this._voxelDebugMax}`
+                    + ` of ${n} voxel records`);
+                this._voxelDebugWarned = true;
+            }
+            n = this._voxelDebugMax;
+        }
+        for (let i = 0; i < n; i++) {
+            pos.array[i * 3] = (coarsen.positions[i * 3] - center) * displayScale;
+            pos.array[i * 3 + 1] = (coarsen.positions[i * 3 + 1] - center) * displayScale;
+            pos.array[i * 3 + 2] = (coarsen.positions[i * 3 + 2] - center) * displayScale;
+            if (coarsen.charges[i] > 0) {
+                col.array[i * 3] = 0.22; col.array[i * 3 + 1] = 0.55; col.array[i * 3 + 2] = 0.33;
+            } else {
+                col.array[i * 3] = 0.58; col.array[i * 3 + 1] = 0.28; col.array[i * 3 + 2] = 0.28;
+            }
+        }
+        pos.needsUpdate = true;
+        col.needsUpdate = true;
+        geo.setDrawRange(0, n);
+    }
+
+    toggleVoxelDebugLayer(on) {
+        if (!this._voxelDebug) {
+            if (!on) return;
+            this._buildVoxelDebugLayer();
+        }
+        this._voxelDebug.visible = !!on;
     }
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
@@ -725,6 +797,7 @@ export class ViewportParticleRenderer {
         disposeMesh(this.trails);
         disposeMesh(this._particleForces);
         disposeMesh(this._peSystem);
+        disposeMesh(this._voxelDebug);
 
         this.particles = null;
         this.velocityVectors = null;

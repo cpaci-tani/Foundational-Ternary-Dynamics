@@ -500,31 +500,18 @@ export function getInspectorPanelTemplate() {
 }
 
 export function getPhysicsPanelTemplate() {
+    // Energy-levels / cross-sections / decay-rates cards RETIRED (2026-07
+    // revision): they belonged to the retired parametric SM sandbox
+    // (cross-sections.js / decay-rates.js deleted; spectroscopy.js survives
+    // for the Scale-0 hydrogen p1-observable only).
     return `
         <div class="panel" id="panel-physics">
             <div class="panel-resource-shell panel-resource-shell-padded">
                 <div class="panel-resource-grid panel-resource-grid-2">
-                    <div class="card panel-resource-card" id="physics-energy-levels">
-                        <div class="card-title">Energy Levels</div>
-                        <div class="panel-resource-empty">Loading spectroscopy...</div>
-                    </div>
-                    <div class="card panel-resource-card" id="physics-cross-sections">
-                        <div class="card-title">Cross-Sections</div>
-                        <div class="panel-resource-empty">Loading...</div>
-                    </div>
-                    <div class="card panel-resource-card" id="physics-decay-rates">
-                        <div class="card-title">Decay Rates</div>
-                        <div class="panel-resource-empty">Loading...</div>
-                    </div>
                     <div class="card panel-resource-card" id="physics-constants">
                         <div class="card-title">Ontic Chain Constants</div>
                         <div class="panel-resource-empty">Loading...</div>
                     </div>
-                </div>
-                <div class="panel-resource-slider-row">
-                    <label class="panel-resource-slider-label" for="physics-z-slider">Z (atomic number)</label>
-                    <input class="panel-resource-slider" type="range" id="physics-z-slider" min="1" max="92" step="1" value="1">
-                    <span id="physics-z-value" class="panel-resource-slider-value">Z=1</span>
                 </div>
             </div>
         </div>

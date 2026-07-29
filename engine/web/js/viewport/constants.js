@@ -26,5 +26,16 @@ export const MAX_PARTICLES = 100000;
 // Field-grid buffer: up to 128×128 grid points (must cover lattice²).
 export const MAX_FIELD_GRID = 16384;
 
-/** Scale-1 PE spherical containment (matches mock-particle-engine peTick). */
+/**
+ * Scale-1 visual reference shell radius. Display only — the native
+ * ParticleEngine is unbounded (no containment wall); scenarios use bound
+ * initial conditions instead.
+ */
 export const PE_VIS_BOUNDARY_R = 35;
+
+/**
+ * Manifestation-blink shader fill fraction, shared by Scale 0 (frame-sync)
+ * and Scale 1 (pe-cloud-expander / controller). Single source of truth —
+ * the two scales previously carried duplicate literals.
+ */
+export const MANIFEST_FILL = 0.40;
