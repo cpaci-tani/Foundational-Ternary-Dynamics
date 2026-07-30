@@ -111,6 +111,9 @@
  * 's0-vacuum-electron-neutrino' |
  * 's0-vacuum-muon-neutrino' |
  * 's0-vacuum-tau-neutrino' |
+ * 's0-vacuum-electron-antineutrino' |
+ * 's0-vacuum-muon-antineutrino' |
+ * 's0-vacuum-tau-antineutrino' |
  * 's0-vacuum-photon' |
  * 's0-vacuum-w-boson' |
  * 's0-vacuum-z-boson' |
@@ -617,6 +620,27 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         ['forces', false, 't-forces'], ['movement', false, 't-movement'],
         ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
     ],
+    's0-vacuum-electron-antineutrino': [
+        ['wave_propagation', true, 't-wave'], ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'], ['selective_damping', false, 't-selective'],
+        ['genesis', false, 't-genesis'], ['gauss_projection', true, 't-gauss'],
+        ['forces', false, 't-forces'], ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
+    ],
+    's0-vacuum-muon-antineutrino': [
+        ['wave_propagation', true, 't-wave'], ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'], ['selective_damping', false, 't-selective'],
+        ['genesis', false, 't-genesis'], ['gauss_projection', true, 't-gauss'],
+        ['forces', false, 't-forces'], ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
+    ],
+    's0-vacuum-tau-antineutrino': [
+        ['wave_propagation', true, 't-wave'], ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'], ['selective_damping', false, 't-selective'],
+        ['genesis', false, 't-genesis'], ['gauss_projection', true, 't-gauss'],
+        ['forces', false, 't-forces'], ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
+    ],
 };
 
 // ── Per-scenario BOUNDARY preference ────────────────────────────────
@@ -688,6 +712,9 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-vacuum-electron-neutrino': { mode: 0 },
     's0-vacuum-muon-neutrino': { mode: 0 },
     's0-vacuum-tau-neutrino': { mode: 0 },
+    's0-vacuum-electron-antineutrino': { mode: 0 },
+    's0-vacuum-muon-antineutrino': { mode: 0 },
+    's0-vacuum-tau-antineutrino': { mode: 0 },
     's0-seed-up-quark': { mode: 0 },
     's0-seed-down-quark': { mode: 0 },
     's0-seed-strange-quark': { mode: 0 },

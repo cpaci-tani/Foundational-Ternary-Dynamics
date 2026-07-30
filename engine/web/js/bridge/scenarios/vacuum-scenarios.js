@@ -192,6 +192,25 @@ export function setupVacuumScenario(name, harness, ctx) {
             return true;
         }
 
+        case 's0-vacuum-electron-antineutrino':
+        case 's0-vacuum-muon-antineutrino':
+        case 's0-vacuum-tau-antineutrino': {
+            // Direction-mirror of s0-vacuum-{electron,muon,tau}-neutrino
+            // (same 1.0/1.3/1.6 amplitude code, opposite propagation
+            // direction). No flavor label, mass term, oscillation, weak
+            // interaction, or antineutrino-identifying observable here.
+            const boost =
+                name === 's0-vacuum-tau-antineutrino'  ? 1.6 :
+                name === 's0-vacuum-muon-antineutrino' ? 1.3 : 1.0;
+            configureFreeWaveTerms(harness, true);
+            injectTransversePacketX(harness, ctx, {
+                x0: vox(8), y0: midF, z0: midF, sigmaX: sig(2.5), sigmaT: Math.max(5, N / 5),
+                amp: K_B * 0.3 * boost, direction: -1,
+                carrierK: 2 * Math.PI / Math.max(8, N / 3),
+            });
+            return true;
+        }
+
         case 's0-vacuum-pion-neutral': {
             configureUnlockedCompositeTerms(harness);
             // This is currently bit-identical to the charged-pion-labelled

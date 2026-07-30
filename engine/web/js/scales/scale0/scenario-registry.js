@@ -99,6 +99,27 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         target: 'scenario_behavior',
         assertion: 'The packet is exactly 1.6 times the base neutral packet initially and after 12 ticks, with identical centroid motion and no manifestation; amplitude coding supplies no flavor physics.',
     }),
+    's0-vacuum-electron-antineutrino': Object.freeze({
+        level: 'behavioral',
+        qualification: 'NEUTRAL WAVE-PACKET CANDIDATE, OPPOSITE-DIRECTION MIRROR — not an antineutrino identification',
+        test: 'engine/tests/test_scenario_behavior.cpp',
+        target: 'scenario_behavior',
+        assertion: 'The neutral packet is divergence-free, translates dynamically in the direction opposite the electron-neutrino packet, and remains unmanifested.',
+    }),
+    's0-vacuum-muon-antineutrino': Object.freeze({
+        level: 'behavioral',
+        qualification: 'IMPOSED 1.3x NEUTRAL WAVE-PACKET COPY, OPPOSITE-DIRECTION MIRROR — CLOSED NEGATIVE for a distinct muon-antineutrino mode',
+        test: 'engine/tests/test_scenario_behavior.cpp',
+        target: 'scenario_behavior',
+        assertion: 'The packet is exactly 1.3 times the base antineutrino packet initially and after 12 ticks, with identical centroid motion and no manifestation; amplitude coding supplies no flavor physics.',
+    }),
+    's0-vacuum-tau-antineutrino': Object.freeze({
+        level: 'behavioral',
+        qualification: 'IMPOSED 1.6x NEUTRAL WAVE-PACKET COPY, OPPOSITE-DIRECTION MIRROR — CLOSED NEGATIVE for a distinct tau-antineutrino mode',
+        test: 'engine/tests/test_scenario_behavior.cpp',
+        target: 'scenario_behavior',
+        assertion: 'The packet is exactly 1.6 times the base antineutrino packet initially and after 12 ticks, with identical centroid motion and no manifestation; amplitude coding supplies no flavor physics.',
+    }),
     's0-vacuum-photon': Object.freeze({
         level: 'behavioral',
         qualification: 'PHOTON CANDIDATE — propagation tested; physical identity open',
@@ -1566,6 +1587,30 @@ export const SCALE0_SCENARIO_CATALOG = [
      * Discrepancy: No flavor label, mass term, oscillation, or neutrino identity exists.
      */
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-tau-neutrino', 'Neutral Packet — Imposed 1.6x Amplitude', ['vacuum', 'wave', 'null-test'], '[EMERGENT] linear propagation; [CLOSED NEGATIVE] flavor interpretation'),
+    /*
+     * Scenario: s0-vacuum-electron-antineutrino (Neutral Packet Candidate, Opposite Direction — Native Wave Test)
+     * Physical purpose: Direction-mirror of s0-vacuum-electron-neutrino.
+     * Parameters: None.
+     * Expected behavior: Divergence-free packet, translates opposite the electron-neutrino packet.
+     * Discrepancy: No flavor label, mass term, oscillation, weak interaction, or antineutrino identity exists.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-electron-antineutrino', 'Neutral Packet Candidate, Opposite Direction — Native Wave Test', ['vacuum', 'wave'], '[CONJECTURE] — neutral propagation is [EMERGENT]; antineutrino identity is not claimed'),
+    /*
+     * Scenario: s0-vacuum-muon-antineutrino (Neutral Packet, Opposite Direction — imposed 1.3x copy)
+     * Physical purpose: Tests amplitude independence of the direction-mirrored neutral packet.
+     * Parameters: Exact 1.3 amplitude multiplier relative to the base antineutrino packet.
+     * Expected behavior: Identical propagation after factoring out 1.3.
+     * Discrepancy: No flavor label, mass term, oscillation, or antineutrino identity exists.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-muon-antineutrino', 'Neutral Packet, Opposite Direction — Imposed 1.3x Amplitude', ['vacuum', 'wave', 'null-test'], '[EMERGENT] linear propagation; [CLOSED NEGATIVE] flavor interpretation'),
+    /*
+     * Scenario: s0-vacuum-tau-antineutrino (Neutral Packet, Opposite Direction — imposed 1.6x copy)
+     * Physical purpose: Tests amplitude independence of the direction-mirrored neutral packet.
+     * Parameters: Exact 1.6 amplitude multiplier relative to the base antineutrino packet.
+     * Expected behavior: Identical propagation after factoring out 1.6.
+     * Discrepancy: No flavor label, mass term, oscillation, or antineutrino identity exists.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-tau-antineutrino', 'Neutral Packet, Opposite Direction — Imposed 1.6x Amplitude', ['vacuum', 'wave', 'null-test'], '[EMERGENT] linear propagation; [CLOSED NEGATIVE] flavor interpretation'),
     /*
      * Scenario: s0-vacuum-photon (Photon Candidate — Native Transverse Packet)
      * Physical purpose: Seeds the cleanest native transverse propagating flux mode.
