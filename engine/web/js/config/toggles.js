@@ -116,6 +116,7 @@
  * 's0-vacuum-tau-antineutrino' |
  * 's0-vacuum-photon' |
  * 's0-vacuum-w-boson' |
+ * 's0-vacuum-w-minus-boson' |
  * 's0-vacuum-z-boson' |
  * 's0-vacuum-higgs' |
  * 's0-vacuum-proton' |
@@ -413,6 +414,7 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-vacuum-antimuon':     isolatedScale0Profile('wave_propagation'),
     's0-vacuum-antitau':      isolatedScale0Profile('wave_propagation'),
     's0-vacuum-w-boson':      isolatedScale0Profile('wave_propagation'),
+    's0-vacuum-w-minus-boson': isolatedScale0Profile('wave_propagation'),
     's0-vacuum-z-boson':      isolatedScale0Profile('wave_propagation'),
     's0-vacuum-higgs':        isolatedScale0Profile('wave_propagation'),
     // Prepared locked-nucleus Coulomb candidates. No gravity, wave, color,
@@ -736,6 +738,7 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-vacuum-antimuon': { mode: 0 },
     's0-vacuum-antitau': { mode: 0 },
     's0-vacuum-w-boson': { mode: 0 },
+    's0-vacuum-w-minus-boson': { mode: 0 },
     's0-vacuum-z-boson': { mode: 0 },
     's0-vacuum-higgs': { mode: 0 },
     's0-vacuum-proton': { mode: 0 },

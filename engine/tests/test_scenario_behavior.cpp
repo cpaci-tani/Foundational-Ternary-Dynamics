@@ -1530,6 +1530,7 @@ void test_particle_named_wave_template_cohorts() {
             {"s0-seed-higgs-field", 0},
             {"s0-seed-gluon", 0},
             {"s0-vacuum-w-boson", 1},
+            {"s0-vacuum-w-minus-boson", 1},
             {"s0-vacuum-z-boson", 0},
             {"s0-vacuum-higgs", 0},
         };
@@ -1554,6 +1555,19 @@ void test_particle_named_wave_template_cohorts() {
                   drift < 1e-12 && s1.finite
                   && s1.manifested == c.expected_states);
         }
+
+        ftd::RenderBridge wplus(24), wminus(24);
+        wplus.force_cpu(); wminus.force_cpu();
+        check("W+ and W- reference templates dispatch for the mirror check",
+              ftd::dispatch_scenario(wplus, "s0-vacuum-w-boson")
+              && ftd::dispatch_scenario(wminus, "s0-vacuum-w-minus-boson"));
+        double wmirror_r2 = 0.0, wmirror_n2 = 0.0;
+        for (std::size_t i = 0; i < wplus.voxels().size(); ++i) {
+            wmirror_r2 += (wminus.voxels()[i].flux + wplus.voxels()[i].flux).mag2();
+            wmirror_n2 += wplus.voxels()[i].flux.mag2();
+        }
+        check("W-minus template is the exact charge-sign mirror of the W-boson template",
+              std::sqrt(wmirror_r2 / std::max(1e-30, wmirror_n2)) < 1e-12);
     }
 }
 
