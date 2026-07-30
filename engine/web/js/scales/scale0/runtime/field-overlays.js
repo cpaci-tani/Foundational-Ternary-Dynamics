@@ -4,6 +4,8 @@ import {
     generateBFieldSeeds,
     generateImportanceSeeds,
     generateBImportanceSeeds,
+    buildFieldIndex,
+    lookupField,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
 import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
@@ -168,7 +170,38 @@ function buildFluxStreamlines(state, sampled, latticeSize, stride, p) {
         const mag = Math.sqrt(x * x + y * y + z * z);
         if (mag > maxFlux) maxFlux = mag;
     }
-    return { lines, maxFlux };
+
+    // Per-vertex LOCAL |J| magnitude, sampled from the same field buffer used
+    // to integrate the lines above (nearest-sample lookup, same mechanism
+    // computeStreamlines uses internally). This lets the renderer color each
+    // point along a streamline by the field strength actually AT that point,
+    // instead of by the point's arc-length position along the line (audit fix:
+    // the old coloring made the Flux Lines ramp mean something different from
+    // the identical-looking ramp on Flux Volume). One scratch buffer reused
+    // across frames, sized to the pooled streamline buffer's vertex count.
+    const vertCount = lines.buffer.length / 3;
+    let mags = state.fluxLineMagScratch;
+    if (!mags || mags.length < vertCount) {
+        mags = state.fluxLineMagScratch = new Float32Array(vertCount);
+    }
+    if (lines.count > 0) {
+        const fieldIndex = buildFieldIndex(
+            sampled.fluxVector.positions, sampled.fluxVector.vectors, sampled.fluxVector.count,
+            latticeSize, stride);
+        for (let li = 0; li < lines.count; li++) {
+            const base = lines.offsets[li];
+            const nPts = lines.lengths[li] / 3;
+            const vBase = base / 3;
+            for (let i = 0; i < nPts; i++) {
+                const vx = lines.buffer[base + i * 3];
+                const vy = lines.buffer[base + i * 3 + 1];
+                const vz = lines.buffer[base + i * 3 + 2];
+                const [fx, fy, fz] = lookupField(fieldIndex, vx, vy, vz);
+                mags[vBase + i] = Math.sqrt(fx * fx + fy * fy + fz * fz);
+            }
+        }
+    }
+    return { lines, maxFlux, mags };
 }
 
 export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}) {
@@ -418,7 +451,8 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, opt
     if (overlayFrame.poynting) viewportAdapter.applyPoynting(overlayFrame.poynting);
     if (overlayFrame.divergence) viewportAdapter.applyDivergence(overlayFrame.divergence);
     if (overlayFrame.fluxStreamlines) {
-        viewportAdapter.applyFluxStreamlines(overlayFrame.fluxStreamlines.lines, overlayFrame.fluxStreamlines.maxFlux);
+        viewportAdapter.applyFluxStreamlines(
+            overlayFrame.fluxStreamlines.lines, overlayFrame.fluxStreamlines.maxFlux, overlayFrame.fluxStreamlines.mags);
     }
 
     if (forceFrame.anyForceOn) {
@@ -765,7 +799,7 @@ function runJob(sched, slot) {
             sampleCache.ensureSample('fluxVector');
             if (!sampled.fluxVector?.count) break;
             const fs = buildFluxStreamlines(state, sampled, latticeSize, stride, params);
-            viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux);
+            viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux, fs.mags);
             break;
         }
         case JOB_PASS: {

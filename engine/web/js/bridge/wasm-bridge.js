@@ -376,7 +376,9 @@ export class WasmBridge {
     getToggle(name) {
         if (this._module && this._bridge)
             return this._module.getToggle(this._bridge, name);
-        return true;
+        // Unknown / unbound: OFF. Never default true — that lies to UI sync
+        // and overlay applicability about terms the engine is not running.
+        return false;
     }
 
     getParticleData() {
@@ -616,12 +618,20 @@ export class WasmBridge {
         return this._module.getForceAt(this._bridge, x, y, z);
     }
 
+    /**
+     * Seed a Scale-0 scenario. Returns false if the WASM module reports the
+     * name was not handled (unknown id). Older WASM builds that return
+     * undefined are treated as success only when no exception is thrown.
+     */
     setupScenario(name, _harness) {
         this.reset();
         if (this._module && this._bridge) {
-            this._module.setupScenario(this._bridge, name);
+            const result = this._module.setupScenario(this._bridge, name);
             this._enforceToggleInvariants();
+            if (result === false) return false;
+            return true;
         }
+        return false;
     }
 
     // After a C++ setupScenario, clamp any TermToggles `requires` dependent that

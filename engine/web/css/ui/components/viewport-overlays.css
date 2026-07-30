@@ -129,15 +129,15 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 8px 12px 10px;
+    padding: 8px 10px 8px;
     background: var(--bg-surface);
-    backdrop-filter: blur(24px) saturate(1.4); /* Premium glass blur */
+    backdrop-filter: blur(14px) saturate(1.2); /* Lighter glass blur — see chrome-reduction pass */
     border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.12));
-    border-top: 1px solid rgba(255, 255, 255, 0.25); /* Light reflection edge */
+    border-top: 1px solid rgba(255, 255, 255, 0.16); /* Light reflection edge */
     border-radius: var(--radius-lg);
-    box-shadow: var(--glass-shadow), var(--shadow-xl);
+    box-shadow: var(--glass-shadow);
     max-width: calc(100vw - 24px);
-    width: 264px;
+    width: 296px;
 }
 
 .s0-overlay-header {
@@ -146,7 +146,7 @@
     justify-content: space-between;
     gap: 16px;
     padding-bottom: 6px;
-    border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+    border-bottom: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
 }
 
 .s0-overlay-title {
@@ -161,6 +161,11 @@
     width: 22px;
     height: 22px;
     padding: 0;
+    /* min-*: 0 + .u-no-baseline on the element (template.js) together defeat the
+       global 44px control-baseline (tokens.css) that would otherwise inflate this
+       into a 44px-tall control and bloat the whole header row. */
+    min-width: 0;
+    min-height: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -235,19 +240,29 @@
 }
 
 .s0-overlay-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 6px;
+    row-gap: 4px;
+    min-width: 0;
+}
+
+/* A button plus its own full-width sub-row (style/plane selector), sharing one
+   grid cell instead of the sub-row leaving an empty half-row beside its trigger. */
+.s0-overlay-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     min-width: 0;
 }
 
 .s0-overlay-col-head {
     font-size: var(--fs-xs);
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-muted);
-    padding: 5px 6px;
+    padding: 4px 6px;
     border-radius: var(--radius, 6px);
     display: flex;
     align-items: center;
@@ -260,12 +275,24 @@
     background: color-mix(in oklch, var(--accent) 9%, transparent);
     color: var(--text-primary);
 }
+/* Header and the force-style selector span both grid columns. */
+.s0-overlay-col-head,
+.s0-overlay-col > .force-style-row {
+    grid-column: 1 / -1;
+}
+/* Volume (5 items) and Fields (3 items) have an odd count of top-level grid
+   units, so their trailing item would otherwise sit alone with a visibly
+   empty cell beside it — span it across both columns instead. */
+#toggle-state-field,
+#toggle-poynting {
+    grid-column: 1 / -1;
+}
 /* Accordion chevron — points down when open, right when collapsed. */
 .s0-overlay-col-head::before {
     content: "\25BE"; /* ▾ */
     font-size: 10px;
     line-height: 1;
-    opacity: 0.55;
+    opacity: 0.4;
     flex: 0 0 auto;
     transition: transform 160ms var(--ease-out, ease);
 }
@@ -288,14 +315,14 @@
     font-size: var(--fs-xs);
     letter-spacing: 0;
     font-weight: 600;
-    min-width: 14px;
-    height: 14px;
-    padding: 0 4px;
+    min-width: 12px;
+    height: 12px;
+    padding: 0 3px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    background: color-mix(in oklch, var(--accent) 30%, transparent);
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
     color: var(--text-primary, #d0d8f0);
     font-variant-numeric: tabular-nums;
     transition: opacity 120ms;
@@ -305,11 +332,18 @@
     background: color-mix(in oklch, var(--border) 40%, transparent);
 }
 
-/* × button to clear every overlay in this column at once. */
+/* × button to clear every overlay in this column at once. Hidden at rest —
+   reveals on header hover/focus, mirroring the active-strip chip's × pattern. */
 .s0-overlay-col-clear {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     padding: 0;
+    /* min-*: 0 + .u-no-baseline on the element (template.js) together defeat the
+       global 44px control-baseline (tokens.css) — same pattern as .s0-overlay-chip-x
+       below — that would otherwise inflate this into a 44px-tall control and bloat
+       every column header row. */
+    min-width: 0;
+    min-height: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -320,11 +354,15 @@
     font-size: var(--fs-xs);
     line-height: 1;
     cursor: pointer;
-    opacity: 0.4;
+    opacity: 0;
     transition: opacity 120ms, color 120ms, border-color 120ms, background 120ms;
 }
-.s0-overlay-col-clear:hover {
+.s0-overlay-col-head:hover .s0-overlay-col-clear,
+.s0-overlay-col-clear:hover,
+.s0-overlay-col-clear:focus-visible {
     opacity: 1;
+}
+.s0-overlay-col-clear:hover {
     color: rgba(255, 150, 150, 0.95);
     border-color: color-mix(in oklch, rgba(255, 100, 100, 0.8) 60%, transparent);
     background: color-mix(in oklch, rgba(255, 100, 100, 0.7) 10%, transparent);
@@ -336,17 +374,46 @@
     align-items: center;
     gap: 10px;
 }
-/* Buttons within an overlay column take the full column width so the
-   panel looks tidy even when labels vary in length. */
-.s0-overlay-col .view-toggle {
+/* Toggle buttons: direct children of a column, or of a .s0-overlay-group
+   (a button + its own full-width sub-row sharing one grid cell). Dense
+   2-up chip layout; wraps instead of truncating so nothing is ever cut off. */
+.s0-overlay-col > .view-toggle,
+.s0-overlay-group > .view-toggle {
     width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
     text-align: left;
-    padding: 4px 8px;
+    padding: 4px 6px;
     font-size: var(--fs-xs);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: break-word;
+    overflow: visible;
+    text-overflow: clip;
+    min-height: 24px;
+}
+/* backdrop-filter and hover lift/glow are set by toggle.css's ID-scoped rules
+   (#viewport-overlay .view-toggle / #viewport-overlay .view-toggle:hover,
+   specificity 1,1,0 / 1,2,0) — a bare class selector cannot beat an ID, so
+   these two overrides MUST carry the #viewport-overlay prefix or they will
+   silently no-op. */
+#viewport-overlay .s0-overlay-col > .view-toggle,
+#viewport-overlay .s0-overlay-group > .view-toggle {
+    backdrop-filter: none;
+}
+#viewport-overlay .s0-overlay-col > .view-toggle:hover,
+#viewport-overlay .s0-overlay-group > .view-toggle:hover {
+    transform: none;
+}
+/* :not(.active) guard — an active toggle's persistent accent glow
+   (.view-toggle.active, toggle.css) must survive hover, not just vanish
+   for as long as the pointer is over it. */
+#viewport-overlay .s0-overlay-col > .view-toggle:not(.active):hover,
+#viewport-overlay .s0-overlay-group > .view-toggle:not(.active):hover {
+    box-shadow: none;
 }
 
 .s0-overlay-col .force-style-row {
@@ -507,25 +574,25 @@
 
 /* Search: hide individual overlay buttons that don't match the filter. */
 .s0-overlay-col .view-toggle.is-filtered-out { display: none !important; }
+/* A trigger + its flux-slice-axis-mini sub-row are filtered as one unit
+   (panel-shell.js applyFilter); when the whole unit is filtered out, collapse
+   the wrapper itself so it doesn't sit stretched-and-blank in the grid
+   (.s0-overlay-col uses the default `align-items: stretch`). */
+.s0-overlay-col .s0-overlay-group.is-filtered-out { display: none !important; }
 
-/* Responsive: the accordion is single-column, so just narrow the panel on phones. */
-@media (max-width: 767px) {
-    .s0-overlay-panel {
-        width: calc(100vw - 16px);
-        max-width: calc(100vw - 16px);
-        padding: 8px;
-    }
-}
+/* NOTE: .s0-overlay-panel IS #viewport-overlay (template.js sets both on the same
+   element), and #viewport-overlay is unconditionally display:none'd below at this
+   same breakpoint — so a `.s0-overlay-panel` width/padding rule here would be dead
+   code. If phone-specific Scale-0 overlay layout is ever wanted, that's a product
+   decision (un-hiding #viewport-overlay below), not a rule to add here silently. */
 
 /* ── Touch targets (coarse pointers / small viewports) ──────────────────────
-   The overlay collapse chevrons are 22px squares on desktop; the camera
-   select is 28px tall. Grow them to a finger-sized hit area on mobile. */
+   The camera select is 28px tall; grow it to a finger-sized hit area on mobile.
+   (The overlay collapse chevrons — .viewport-overlay-collapse / .s0-overlay-collapse —
+   have no touch-target rule here: both live inside elements unconditionally
+   display:none'd below at this same breakpoint, so a size rule for them would
+   never take visible effect.) */
 @media (max-width: 767px) {
-    .viewport-overlay-collapse,
-    .s0-overlay-collapse {
-        width: 32px;
-        height: 32px;
-    }
     /* Full-bleed canvas: no padding so the WebGL canvas fills the entire viewport
        cell (full width, and full height below the toolbar) and runs edge-to-edge
        behind the floating bottom sheet. The old `12px 12px 140px` inset existed to

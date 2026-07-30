@@ -1,0 +1,178 @@
+/** Knowledge-base section `dimensions-units` */
+export const SECTION_DIMENSIONS_UNITS = Object.freeze({
+        id: 'dimensions-units',
+        title: 'Dimensions & Units',
+        description: 'How FTD and physics talk about dimension, scale, and measurement.',
+        entries: [
+            {
+                id: 'dimension',
+                title: 'Dimension',
+                shortTitle: 'Dimension',
+                summary: 'A count of independent directions or degrees of freedom needed to specify something.',
+                body: [
+                    'In geometry, a dimension counts independent directions such as x, y, and z. In physics, the word can also refer to dimensionality in state spaces, effective models, or scaling arguments.',
+                    'Because this project uses phrases like base dimension, effective dimension, and scale, it helps to separate literal spatial dimensions from bookkeeping dimensions and from presentation scales in the UI.',
+                ],
+                bullets: [
+                    'Spatial dimensions describe geometry.',
+                    'Effective dimensions can describe a model or counting scheme.',
+                    'UI scales are presentation layers, not extra spatial axes.',
+                ],
+                notation: ['D', 'dim'],
+                tags: ['dimension', 'units', 'geometry'],
+            },
+            {
+                id: 'd-equals-3',
+                title: 'D = 3',
+                shortTitle: 'D = 3',
+                summary: 'The project’s physical space is three-dimensional.',
+                body: [
+                    'In the FTD engine, the substrate is a 3D cubic lattice. That means every voxel position lives in three spatial coordinates.',
+                    'This does not mean every other quantity in the project has three components. Some are scalars, some are vectors, some are matrices, and some are abstract counts like \\(n_\\mathrm{eff}\\).',
+                ],
+                bullets: [
+                    'Three spatial dimensions for the lattice.',
+                    'Matches the cubic-grid visualization used in the engine.',
+                    'Distinct from model-specific integer counts like \\(N_\\mathrm{base}\\) and \\(n_\\mathrm{eff}\\)',
+                ],
+                notation: ['D = 3', '\\(L \\subset \\mathbb{Z}^3\\)'],
+                tags: ['dimension', 'space', 'geometry'],
+            },
+            {
+                id: 'natural-units',
+                title: 'Natural Units',
+                shortTitle: 'Natural Units',
+                summary: 'A unit convention where key constants are set to 1 so equations focus on relationships instead of conversion factors.',
+                body: [
+                    'The project glossary states that FTD uses natural units with c = 1, ℏ = 1, and \\(k_B\\) = 1. This is a standard physics move that simplifies formulas by absorbing conversion factors into the unit definitions.',
+                    'When you see a formula in natural units, it does not mean those constants disappeared physically. It means the chosen unit system measures everything relative to them.',
+                ],
+                bullets: [
+                    'Speed of light: c = 1.',
+                    'Reduced Planck constant: ℏ = 1.',
+                    'Boltzmann constant: \\(k_B\\) = 1.',
+                ],
+                notation: ['c = 1', 'ℏ = 1', '\\(k_B = 1\\)'],
+                tags: ['units', 'natural-units', 'conventions'],
+            },
+            {
+                id: 'planck-units',
+                title: 'Planck Units',
+                shortTitle: 'Planck Units',
+                summary: 'The natural-unit scale built from c, ℏ, and \\(G_N\\)',
+                body: [
+                    'Planck units are the characteristic scales built from the speed of light, reduced Planck constant, and Newton’s constant. They provide a compact unit language for quantum gravity and lattice-scale reasoning.',
+                    'The project glossary explicitly maps Planck length, time, and mass into the FTD unit story, which makes them especially useful as bridge concepts between theory documents and the engine.',
+                ],
+                bullets: [
+                    'Length, time, and mass can all be expressed in Planck units.',
+                    'Planck units are built from c, ℏ, and \\(G_N\\)',
+                    'Helpful when comparing discrete engine units to theory-facing notation.',
+                ],
+                notation: ['\\(\\ell_P = \\sqrt{\\hbar G/c^3}\\)', '\\(t_P = \\sqrt{\\hbar G/c^5}\\)', '\\(m_P = \\sqrt{\\hbar c/G}\\)'],
+                tags: ['units', 'planck', 'gravity'],
+            },
+            {
+                id: 'voxel-length-unit',
+                title: 'Voxel as Length Unit',
+                shortTitle: 'Voxel Length',
+                summary: 'One voxel is the engine’s basic spatial step in the lattice.',
+                body: [
+                    'Inside the web engine, positions advance in lattice-site increments. That makes the voxel the practical local length unit for direct substrate reasoning.',
+                    'The glossary’s Planck-unit convention identifies one Planck-length-like step with one voxel, which is a useful learner shorthand when connecting symbolic formulas to the live lattice.',
+                ],
+                bullets: [
+                    'Smallest explicit spatial step in the simulation.',
+                    'Most direct length unit in Scale 0.',
+                    'Useful for interpreting local neighborhoods and propagation limits.',
+                ],
+                notation: ['1 voxel', 'Δx'],
+                tags: ['units', 'length', 'lattice'],
+            },
+            {
+                id: 'tick-time-unit',
+                title: 'Tick as Time Unit',
+                shortTitle: 'Tick Time',
+                summary: 'One tick is the engine’s basic discrete time step.',
+                body: [
+                    'Time in the engine advances in ticks, not in continuous fractions of a second. Playback can make ticks arrive faster or slower on screen, but the simulation’s intrinsic temporal unit is still the tick.',
+                    'The glossary aligns one Planck-time-like step with one tick, which makes the tick the natural time unit for reading call stacks, dynamics, and propagation limits.',
+                ],
+                bullets: [
+                    'The engine’s native time unit.',
+                    'Independent from frame rate or browser refresh cadence.',
+                    'Useful for reading logs, telemetry, and runtime stepping behavior.',
+                ],
+                notation: ['1 tick', 'Δt'],
+                tags: ['units', 'time', 'runtime'],
+            },
+            {
+                id: 'mass-energy',
+                title: 'Mass and Energy',
+                shortTitle: 'Mass / Energy',
+                summary: 'Two closely related physical quantities that often share units in natural-unit systems.',
+                body: [
+                    'In ordinary SI language, mass and energy are measured differently. In natural units, they are often expressed in the same unit family because c is set to 1.',
+                    'That is why physics texts often speak loosely about mass scales, energy scales, and mass-energy units in a nearly interchangeable way. In the engine UI, energy telemetry is live while many mass concepts appear in the explanatory layer.',
+                ],
+                bullets: [
+                    'Natural units blur the practical difference between mass and energy units.',
+                    'Mass stories in the docs often connect to energy scales in the UI.',
+                    'A quantity can be conceptually different even if it shares a unit convention.',
+                ],
+                notation: ['E', 'm', '\\(E = mc^2\\)', 'c = 1'],
+                tags: ['units', 'mass', 'energy'],
+            },
+            {
+                id: 'density',
+                title: 'Density',
+                shortTitle: 'Density',
+                summary: 'How much of something is present per unit volume, area, or state description.',
+                body: [
+                    'Density is a broad word in physics. It can mean mass density, charge density, probability density, energy density, or in the project glossary, flux density.',
+                    'Whenever you see density in the KB or UI, ask what is being counted and with respect to what measure. That keeps scalar field magnitudes from being confused with matrix objects or population counts.',
+                ],
+                bullets: [
+                    'Always ask: density of what?',
+                    'Can be spatial, probabilistic, energetic, or informational.',
+                    'In the glossary, ρ(v,t) is the flux density |J|.',
+                ],
+                notation: ['ρ', 'ρ(v,t)', '|J|'],
+                tags: ['units', 'density', 'disambiguation'],
+            },
+            {
+                id: 'coupling-constant',
+                title: 'Coupling Constant',
+                shortTitle: 'Coupling',
+                summary: 'A parameter that tells you how strongly one field, force, or sector interacts with another.',
+                body: [
+                    'A coupling constant measures interaction strength. Fine structure \\(\\alpha\\), strong coupling \\(\\alpha_s\\), and state-flux couplings all belong to this family.',
+                    'For learners, the main intuition is simple: a larger coupling usually means a stronger interaction, though the exact physical meaning depends on the theory and scale.',
+                ],
+                bullets: [
+                    'Couplings measure interaction strength.',
+                    'Can be dimensionless or unit-bearing depending on the theory.',
+                    'Several project formulas are organized around specific coupling values.',
+                ],
+                notation: ['\\(\\alpha\\)', '\\(\\alpha_s\\)', '\\(g_c\\)'],
+                tags: ['units', 'coupling', 'interactions'],
+            },
+            {
+                id: 'speed-and-velocity',
+                title: 'Speed and Velocity',
+                shortTitle: 'Speed / Velocity',
+                summary: 'Speed measures how fast; velocity measures both how fast and in which direction.',
+                body: [
+                    'Speed is a scalar magnitude. Velocity is a vector quantity that includes direction. This matters in a field-based engine because scalar magnitudes like |J| and vector quantities like J play different roles.',
+                    'When the project talks about propagation speed limits or local directional flux, it is moving between these scalar and vector viewpoints.',
+                ],
+                bullets: [
+                    'Speed is scalar; velocity is vector.',
+                    'Propagation limits are about how fast information can move.',
+                    'Vector fields encode direction as well as size.',
+                ],
+                notation: ['|v|', 'v⃗', 'J'],
+                tags: ['units', 'kinematics', 'vectors'],
+            },
+        ],
+    });

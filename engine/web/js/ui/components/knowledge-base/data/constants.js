@@ -1,0 +1,161 @@
+/** Knowledge-base section `constants` */
+export const SECTION_CONSTANTS = Object.freeze({
+        id: 'constants',
+        title: 'Constants',
+        description: 'Frequently referenced constants and framework integers.',
+        entries: [
+            {
+                id: 'g-star',
+                title: 'G* (Lemniscatic Constant)',
+                shortTitle: 'G*',
+                summary: 'A central constant in the project’s theoretical numerology and coupling discussions.',
+                body: [
+                    'G* is the lemniscatic constant highlighted throughout the project documents. It appears as one of the central constants in the reference glossary and is tied to several selection and coupling stories in the wider FTD theory corpus.',
+                    'In the web UI, you will mostly encounter it as a named theoretical constant rather than as a directly manipulated runtime variable.',
+                ],
+                bullets: [
+                    'Named in the reference glossary.',
+                    'Used across theoretical documents as a distinguished constant.',
+                    'Important conceptually even when not shown in every live panel.',
+                ],
+                notation: ['G*'],
+                tags: ['constants', 'theory'],
+            },
+            {
+                id: 'alpha',
+                title: 'α (Fine Structure Constant)',
+                shortTitle: 'α',
+                summary: 'The electromagnetic coupling constant used as a benchmark throughout the project.',
+                body: [
+                    'Alpha is the fine structure constant. In the project references it is one of the most frequently cited values because many theoretical comparisons are organized around it.',
+                    'In the engine UI, \\(\\alpha\\) is more likely to appear in educational descriptions, derived constants, or explanatory material than as a live control.',
+                ],
+                bullets: [
+                    'Electromagnetic coupling constant.',
+                    'Central to many FTD theory references.',
+                    'Often used as a comparison or scaling benchmark.',
+                ],
+                notation: ['α'],
+                tags: ['constants', 'electromagnetism'],
+            },
+            {
+                id: 'nc',
+                title: '\\(N_c\\) (Color Charges)',
+                shortTitle: 'N_c',
+                summary: 'Framework integer associated with color structure in project references.',
+                body: [
+                    '\\(N_c\\) is the project’s symbol for the color-charge count and is listed as 3 in the reference glossary.',
+                    'For learners moving between the engine and the theory notes, this is one of the key framework integers that keeps recurring in coupling, particle, and structural discussions.',
+                ],
+                bullets: [
+                    'Framework integer.',
+                    'Listed as 3 in the reference glossary.',
+                    'Shows up in coupling and particle discussions.',
+                ],
+                notation: ['\\(N_c\\)'],
+                tags: ['constants', 'particle-physics'],
+            },
+            {
+                id: 'n-base',
+                title: '\\(N_\\mathrm{base}\\) (Base Dimension)',
+                shortTitle: 'N_base',
+                summary: 'A framework integer used in the project’s structural and coupling arguments.',
+                body: [
+                    'The symbol \\(N_\\mathrm{base}\\) is listed in the symbol glossary as the base dimension integer with value 4.',
+                    'You will usually see it in theory-facing expressions rather than in runtime telemetry, but it matters because it helps tie together several framework counts and derived integer combinations.',
+                ],
+                bullets: [
+                    'Framework integer with value 4 in the glossary.',
+                    'Often appears alongside \\(N_c\\) and b₃.',
+                    'More structural than operational in the live UI.',
+                ],
+                notation: ['\\(N_\\mathrm{base} = 4\\)'],
+                tags: ['constants', 'framework-integers'],
+            },
+            {
+                id: 'b3',
+                title: 'b₃ (QCD Beta Coefficient)',
+                shortTitle: 'b₃',
+                summary: 'The framework \\(\\beta\\) coefficient used in strong-coupling discussions.',
+                body: [
+                    'The reference glossary lists b₃ as the QCD \\(\\beta\\) coefficient with value 7. In the broader theory writing it participates in coupling formulas and angle selections.',
+                    'For learners, the practical point is that b₃ is one of the named integer ingredients that connects structural counting to effective coupling stories.',
+                ],
+                bullets: [
+                    'Listed as 7 in the glossary.',
+                    'Shows up in strong-coupling and CKM-style expressions.',
+                    'Often grouped with \\(N_c\\), \\(N_\\mathrm{base}\\), and \\(n_\\mathrm{eff}\\)',
+                ],
+                notation: ['b₃ = 7'],
+                tags: ['constants', 'qcd', 'framework-integers'],
+            },
+            {
+                id: 'n-eff',
+                title: '\\(n_\\mathrm{eff}\\) (Effective Dimension)',
+                shortTitle: 'n_eff',
+                summary: 'The effective-dimension count used in several FTD coupling formulas.',
+                body: [
+                    'The glossary gives \\(n_\\mathrm{eff}\\) as 13. It is one of the recurring bookkeeping counts used in electroweak and strong-coupling expressions.',
+                    'When the project refers to an effective dimension in a formula, it is usually talking about a model-specific counting quantity rather than a literal spatial dimension you can navigate inside the viewport.',
+                ],
+                bullets: [
+                    'Listed as 13 in the glossary.',
+                    'Appears in coupling formulas like \\(\\sin^2\\theta_W\\) and \\(\\alpha_s\\)',
+                    'A framework count, not a camera-space coordinate axis.',
+                ],
+                notation: ['\\(n_\\mathrm{eff} = 13\\)'],
+                tags: ['constants', 'dimension', 'framework-integers'],
+            },
+            {
+                id: 'g-newton',
+                title: '\\(G_N\\) (Newton’s Constant)',
+                shortTitle: 'G_N',
+                summary: 'The gravitational coupling constant in natural-unit notation.',
+                body: [
+                    '\\(G_N\\) is the usual symbol for Newton’s gravitational constant. In natural-unit conventions it is often written without SI dimensions, but conceptually it is still the coupling that sets gravitational strength.',
+                    'This is a good example of why context matters: uppercase G* and \\(G_N\\) are very different objects even though both start with the same letter.',
+                ],
+                bullets: [
+                    'Gravitational coupling constant.',
+                    'Distinct from G*.',
+                    'Important for Planck-unit definitions.',
+                ],
+                notation: ['\\(G_N\\)'],
+                tags: ['constants', 'gravity', 'disambiguation'],
+            },
+            {
+                id: 'manifestation-kb',
+                title: '\\(K_B\\) (Manifestation Constant)',
+                shortTitle: 'K_B',
+                summary: 'Engine-side named constant currently exported as 0.511.',
+                body: [
+                    'In the web engine tests, \\(K_B\\) is verified as a named export with value 0.511. The project instructions describe this as the manifestation constant derived from the model’s mass story.',
+                    'This is not the same thing as the lowercase \\(k_B\\) used for the Boltzmann constant in natural-units notation. The near-identical names make this one worth learning explicitly.',
+                ],
+                bullets: [
+                    'Named export in the JS constants module.',
+                    'Tested in the web suite as 0.511.',
+                    'Different from the lowercase \\(k_B\\) of thermodynamics.',
+                ],
+                notation: ['\\(K_B = 0.511\\)', '\\(k_B = 1\\)'],
+                tags: ['constants', 'engine', 'disambiguation'],
+            },
+            {
+                id: 'c-speed',
+                title: '\\(C_\\mathrm{SPEED}\\)',
+                shortTitle: 'C_SPEED',
+                summary: 'The engine’s named propagation-speed constant.',
+                body: [
+                    'The engine documentation lists \\(C_\\mathrm{SPEED}\\) as the propagation-speed constant used for cubic-lattice stability conventions.',
+                    'Even when it is not surfaced directly in controls, it helps explain why the engine talks about local propagation limits, CFL-like stability, and discrete-time update pacing.',
+                ],
+                bullets: [
+                    'Named engine constant.',
+                    'Used in discrete propagation and stability explanations.',
+                    'Connects runtime behavior to the lattice update model.',
+                ],
+                notation: ['\\(C_\\mathrm{SPEED}\\)'],
+                tags: ['constants', 'runtime'],
+            },
+        ],
+    });

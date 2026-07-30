@@ -906,6 +906,26 @@ val get_em_force_field(ftd::RenderBridge& rb, int stride) {
         return result;
     }
 
+    // O(sample_points × particles) — linear, not quadratic like the strong-
+    // force sampler below, but still run synchronously inside the worker's
+    // tick loop (postFrame()). A dense manifested region (thousands of
+    // locked marker-plane voxels) can still push this into tens of millions
+    // of iterations per call; bail to empty rather than truncate once the
+    // estimated cost exceeds a generous budget (defense in depth — this is
+    // a much less severe multiplier than the strong-force pair count, so the
+    // budget here is correspondingly higher).
+    {
+        const long long S3 = static_cast<long long>(maxPts);
+        const long long particleCount = static_cast<long long>(particles.size());
+        constexpr long long kMaxInnerIterations = 200'000'000;
+        if (S3 * particleCount > kMaxInnerIterations) {
+            result.set("positions", val(typed_memory_view(0, pos_cache.data())));
+            result.set("vectors",   val(typed_memory_view(0, vec_cache.data())));
+            result.set("count", 0);
+            return result;
+        }
+    }
+
     const double halfN = N / 2.0;
     const double alpha4pi = ftd::ALPHA / (4.0 * 3.14159265358979323846);
     const double soft = 1.0;  // softening² — matches MockBridge
@@ -1005,6 +1025,32 @@ val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
         result.set("vectors",   val(typed_memory_view(0, vec_cache.data())));
         result.set("count", 0);
         return result;
+    }
+
+    // This sampler is O(sample_points × pairs), pairs = P·(P-1)/2, because
+    // every sample point tests every particle PAIR's flux-tube geometry. It
+    // is a diagnostic overlay meant to visualize a handful of quark-pair
+    // confinement strings, not a bulk force calculation over dense manifested
+    // regions. A scenario with a few thousand manifested voxels (e.g. two
+    // locked marker planes) turns this into tens of BILLIONS of inner
+    // iterations per call — run synchronously inside the worker's own tick
+    // loop (wasm-bridge.worker.js's postFrame()), starving physics ticking
+    // and stalling scenario playback whenever this sampler was requested.
+    // Bail out to an empty result (not a truncated/arbitrary subset — that
+    // would misrepresent which pairs are shown) once the estimated cost
+    // exceeds a fixed per-call budget, rather than trying to scale the
+    // visualization down.
+    {
+        const long long S3 = static_cast<long long>(maxPts);
+        const long long pairCountEstimate =
+            static_cast<long long>(particles.size()) * (static_cast<long long>(particles.size()) - 1) / 2;
+        constexpr long long kMaxInnerIterations = 20'000'000; // keeps this sub-millisecond-to-low-ms per call
+        if (S3 * pairCountEstimate > kMaxInnerIterations) {
+            result.set("positions", val(typed_memory_view(0, pos_cache.data())));
+            result.set("vectors",   val(typed_memory_view(0, vec_cache.data())));
+            result.set("count", 0);
+            return result;
+        }
     }
 
     const double halfN = N / 2.0;

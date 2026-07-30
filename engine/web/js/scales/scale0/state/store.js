@@ -94,6 +94,8 @@ const state = {
     fieldDataVersion: 0,
     anyFieldActive: false,
     forceStyle: 'arrows',
+    // Off-thread WASM Scale-0 owner (WasmBridgeProxy). Legacy names from the
+    // MockBridge era — prefer getWasmWorker() / isUsingWasmWorker() accessors.
     fluxMock: null,
     useFluxMock: false,
     primeTickOnLoad: readPrimeTickOnLoadPref(),
@@ -180,16 +182,27 @@ export function setPrimeTickOnLoad(on) {
 }
 
 export function setFluxMock(mock, useMock = false) {
-    // Dispose the prior mock before overwriting. Prior to this, scenario
-    // churn leaked every previous MockBridge for the page lifetime —
-    // ~21 MB of typed arrays each at L=96. dispose() is idempotent and
-    // a no-op for non-MockBridge values.
+    // Dispose the prior worker/proxy before overwriting. Scenario churn used
+    // to leak every previous owner for the page lifetime.
     const prev = state.fluxMock;
     if (prev && prev !== mock && typeof prev.dispose === 'function') {
         try { prev.dispose(); } catch { /* defensive: never block scenario load on cleanup */ }
     }
     state.fluxMock = mock;
     state.useFluxMock = !!useMock;
+}
+
+/** Canonical alias: off-thread WASM Scale-0 owner (WasmBridgeProxy). */
+export function setWasmWorker(worker, enabled = false) {
+    setFluxMock(worker, enabled);
+}
+
+export function getWasmWorker() {
+    return state.fluxMock;
+}
+
+export function isUsingWasmWorker() {
+    return !!state.useFluxMock;
 }
 
 export function clearFluxMock() {
@@ -225,7 +238,7 @@ export function setCurrentScenarioId(id) {
     state.currentScenarioId = id || 'flux-pulse';
 }
 
-/** Bridge that owns live Scale-0 physics (mock when useFluxMock). */
+/** Bridge that owns live Scale-0 physics (WASM worker when useFluxMock). */
 export function getActiveScale0Bridge(ctx, st = state) {
     if (st?.useFluxMock && st?.fluxMock) return st.fluxMock;
     return ctx?.bridge ?? null;

@@ -35,9 +35,8 @@ const PROJECT_ROOT = resolve(ENGINE_ROOT, '..');
 // Names that live only in the C++ legacy switch (ftd_wasm.cpp) — kept for
 // backward compat with older tests/saved dashboards. Not in the JS UI.
 const KNOWN_LEGACY_ONLY = new Set([
-    // 'empty' is handled by the dispatcher's early-return in JS (index.js) and
-    // by the C++ legacy switch's explicit branch; it has no body in scenarios.cpp.
-    'empty',
+    // Short legacy aliases resolved in bindings_render_bridge.cpp (not catalog IDs).
+    // 'empty' is a first-class dispatcher id in scenarios.cpp + JS index.js — not legacy-only.
     'annihilation', 'cluster', 'dipole', 'entangled', 'flux-collision',
     'flux-damping', 'flux-dispersion', 'flux-gravity-cluster', 'flux-hydrogen',
     'flux-ring', 'force', 'hydrogen', 'interference', 'light-prism', 'pair',
@@ -601,6 +600,60 @@ test.describe('Catalog counts (derived, never hand-written)', () => {
             }
         }
         expect(drift, `documented counts have drifted from the registry:\n  ${drift.join('\n  ')}`)
+            .toEqual([]);
+    });
+
+    test('SCALE0_SCENARIO_RESEARCH_TERMS keys are outside SCALE0_TOGGLES', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'config', 'toggles.js');
+        const toggles = await import(pathToFileURL(modulePath).href);
+        const uiKeys = new Set(toggles.SCALE0_TOGGLES.map(([k]) => k));
+        const research = toggles.SCALE0_SCENARIO_RESEARCH_TERMS || {};
+        for (const [scenarioId, terms] of Object.entries(research)) {
+            for (const key of Object.keys(terms)) {
+                expect(
+                    uiKeys.has(key),
+                    `${scenarioId} research term '${key}' must stay outside SCALE0_TOGGLES`,
+                ).toBe(false);
+            }
+        }
+    });
+
+    test('JS helpers that pin Periodic have SCALE0_SCENARIO_BOUNDARY entries for callers', async () => {
+        const helpersPath = join(WEB_ROOT, 'js', 'bridge', 'scenarios', '_helpers.js');
+        const helpersSrc = readFileSync(helpersPath, 'utf8');
+        const helperRe = /export function (\w+)\([^)]*\)\s*\{/g;
+        const helpers = [];
+        let hm;
+        while ((hm = helperRe.exec(helpersSrc))) helpers.push({ name: hm[1], idx: hm.index });
+        const periodicHelpers = [];
+        for (let i = 0; i < helpers.length; i++) {
+            const body = helpersSrc.slice(helpers[i].idx, i + 1 < helpers.length ? helpers[i + 1].idx : helpersSrc.length);
+            if (/setFluxBoundaryMode\?\.\(\s*0\s*\)/.test(body)) periodicHelpers.push(helpers[i].name);
+        }
+        expect(periodicHelpers.length).toBeGreaterThan(0);
+
+        const groupDir = join(WEB_ROOT, 'js', 'bridge', 'scenarios');
+        const files = readdirSync(groupDir).filter((f) => f.endsWith('-scenarios.js'));
+        const needsPin = new Set();
+        for (const f of files) {
+            const text = readFileSync(join(groupDir, f), 'utf8');
+            const caseRe = /case\s+['"]([^'"]+)['"]\s*:/g;
+            const cases = [];
+            let m;
+            while ((m = caseRe.exec(text))) cases.push({ id: m[1], idx: m.index });
+            for (let i = 0; i < cases.length; i++) {
+                const body = text.slice(cases[i].idx, i + 1 < cases.length ? cases[i + 1].idx : text.length);
+                const uses =
+                    /setFluxBoundaryMode\?\.\(\s*0\s*\)/.test(body) ||
+                    periodicHelpers.some((h) => new RegExp(`\\b${h}\\s*\\(`).test(body));
+                if (uses) needsPin.add(cases[i].id);
+            }
+        }
+
+        const togglesPath = join(WEB_ROOT, 'js', 'config', 'toggles.js');
+        const toggles = await import(pathToFileURL(togglesPath).href);
+        const missing = [...needsPin].filter((id) => !(id in toggles.SCALE0_SCENARIO_BOUNDARY)).sort();
+        expect(missing, `Periodic-pinning scenarios missing SCALE0_SCENARIO_BOUNDARY:\n  ${missing.join('\n  ')}`)
             .toEqual([]);
     });
 

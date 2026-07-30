@@ -156,8 +156,30 @@ function buildBridge(n, scen) {
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
   bridge = new mod.RenderBridge(N);
-  for (const k in toggles) { try { mod.setToggle(bridge, k, toggles[k]); } catch (e) { /* ignore */ } }
-  try { mod.setupScenario(bridge, scen); } catch (e) { /* ignore */ }
+  const toggleErrors = [];
+  for (const k in toggles) {
+    try { mod.setToggle(bridge, k, toggles[k]); }
+    catch (e) { toggleErrors.push(k + ': ' + (e && e.message || e)); }
+  }
+  if (toggleErrors.length) {
+    self.postMessage({ type: 'error', where: 'setToggle', msg: toggleErrors.slice(0, 5).join('; ') });
+  }
+  let setupOk = true;
+  let setupError = null;
+  try {
+    const result = mod.setupScenario(bridge, scen);
+    // Older WASM builds return undefined; only an explicit false is failure.
+    if (result === false) {
+      setupOk = false;
+      setupError = 'Unknown or unhandled scenario: ' + scen;
+      // Surface via ready.setupOk — avoid a duplicate onSetupFailure from a
+      // parallel type:'error' message for the same failure.
+    }
+  } catch (e) {
+    setupOk = false;
+    setupError = String(e && e.message || e);
+    self.postMessage({ type: 'error', where: 'setupScenario', msg: setupError });
+  }
   enforceToggleInvariants();
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
   scenarioId = scen;
@@ -166,7 +188,10 @@ function buildBridge(n, scen) {
   if (!ctrlSab) { ctrlSab = new SharedArrayBuffer(CTRL.LEN * 4); ctrl = new Int32Array(ctrlSab); }
   Atomics.store(ctrl, CTRL.N, N);
   Atomics.store(ctrl, CTRL.RUNNING, 0);
-  self.postMessage({ type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length });
+  self.postMessage({
+    type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
+    setupOk, setupError,
+  });
   postFrame();
 }
 
@@ -339,6 +364,13 @@ self.onmessage = (e) => {
         // stays empty and the overlay never appears. Push a frame immediately so
         // the newly registered sampler is delivered to the proxy right away.
         if (bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) postFrame();
+        break;
+      case 'unwantSampler':
+        // Counterpart to 'wantSampler' — a caller no longer needs this
+        // kind+stride computed every frame (e.g. a UI overlay row was
+        // hidden). Without this, wantedSamplers only ever grows for the
+        // life of the worker.
+        wantedSamplers.delete(`${msg.kind}@${msg.stride}`);
         break;
       case 'setTelemetryMask':
         wantAudit = msg.wantAudit !== false;

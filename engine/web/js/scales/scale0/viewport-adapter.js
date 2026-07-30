@@ -178,8 +178,8 @@ export function createScale0ViewportAdapter(viewport) {
         applyDivergence(data) {
             viewport?.updateDivergenceField?.(data);
         },
-        applyFluxStreamlines(lines, maxFlux) {
-            viewport?.updateFluxStreamlines?.(lines, maxFlux);
+        applyFluxStreamlines(lines, maxFlux, mags) {
+            viewport?.updateFluxStreamlines?.(lines, maxFlux, mags);
         },
         applyForceArrowField(type, data) {
             if (!viewport) return;

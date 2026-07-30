@@ -307,7 +307,23 @@
 .flux-slice-panel.dock-mode {
     padding: 12px 12px;
     max-width: 100%;
-    overflow: hidden;
+    /* Do NOT cap height / hide vertical overflow here: the base
+       `.flux-slice-panel` rule sets `max-height: 80vh; overflow-y: auto;`
+       for the floating overlay-mode panel, which needs its own scroll
+       since it floats freely over the viewport. In dock mode this panel
+       is embedded inside #panel-area, which already IS the correct,
+       properly-configured scroll container for the whole side-panel
+       (max-height: calc(85vh - 120px); overflow-y: auto; — see
+       panel-dock.css). Capping height + overflow:hidden HERE as well
+       created a second, nested region that clipped content with no way
+       to reach it — invisible with 5 rows, but with all 27 rows visible
+       by default the vast majority of the panel was simply cut off.
+       overflow-x stays hidden so the tile grid can't bleed sideways past
+       the narrow side-panel column; vertical growth is unconstrained and
+       #panel-area's own scroll reaches it naturally. */
+    overflow-x: hidden;
+    overflow-y: visible;
+    max-height: none;
     position: relative;
     width: 100%;
     background: transparent;

@@ -6,11 +6,10 @@
  * application, triad placement, and the canonical `[0, 2π/3, 4π/3]`
  * angle set live in exactly one place.
  *
- * Bridge contract: callers pass a `MockBridge` instance. The helpers use
- * the additive `_injectFlux` channel and the existing `injectParticle`
- * + `_particles[last]` post-mutation pattern; semantics match the
- * historical inline `_dp` / `_tri` definitions previously embedded in
- * `s0-seed-scenarios.js`.
+ * Bridge contract: callers pass a scenario harness (createScenarioHarness /
+ * PhysicsHarness) over the JS parity mirror. Live dashboard seeds go through
+ * C++ WASM; this mirror is for parity CI and reference. Helpers use the
+ * additive `_injectFlux` channel and `injectParticle` + post-mutation pattern.
  */
 
 import { C_SPEED, K_B } from '../../constants.js';
@@ -120,6 +119,9 @@ export function configureWeakTransmutationProbeTerms(harness) {
     harness.setToggle('gauss_projection', false);
     harness.setToggle('dual_substrate', true);
     harness.setToggle('weak_transmutation', true);
+    // Mirror C++ B1: damping bounds the dual-substrate stress probe so the
+    // seeded neutrino packet cannot ballistic-grow |flux| without a ceiling.
+    harness.setToggle('damping', true);
 }
 
 /** Fixed-seed Langevin vector bath plus free marker transport. */
