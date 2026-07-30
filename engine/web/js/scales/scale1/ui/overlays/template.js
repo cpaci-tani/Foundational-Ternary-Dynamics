@@ -23,15 +23,16 @@ export function getScale1OverlayTemplate() {
       'Electrostatic landscape',
       'Sampled fields on the XZ plane',
       overlayRow('', `
-        <button class="view-toggle field-toggle" id="toggle-pe-efield" title="Coulomb E-field streamlines">
+        <button class="view-toggle field-toggle" id="toggle-pe-efield"
+          title="Coulomb E-field streamlines. Line density ∝ |E| — denser lines mark stronger field regions.">
           <span class="field-swatch field-swatch-pe-efield"></span>E field
         </button>
         <button class="view-toggle field-toggle" id="toggle-pe-potential"
-          title="Coulomb potential heatmap + E-field arrows (XZ plane)">
+          title="Coulomb potential heatmap + E-field arrows (XZ plane). Min/max potential this frame are in the Potential Heatmap Overlay telemetry block.">
           <span class="field-swatch field-swatch-pe-potential"></span>Potential
         </button>
         <button class="view-toggle field-toggle" id="toggle-pe-gravity-field"
-          title="Gravity force vectors (XZ plane). G_PE = α_G(e,e) ≈ 1.75e-45 (FTD-0131). Arrows may be invisible at particle scale.">
+          title="Gravity force vectors (XZ plane). G_PE = α_G(e,e) ≈ 1.75e-45 (FTD-0131), displayed at a fixed visual gain for legibility — see the Gravity Vectors Overlay telemetry block for the applied gain and true G_PE value.">
           <span class="field-swatch field-swatch-pe-gravity"></span>Gravity F
         </button>
       `),
@@ -63,15 +64,20 @@ export function getScale1OverlayTemplate() {
       `),
     ),
     overlaySection(
-      'Integrator toggles',
-      'Affect dynamics, not overlay arrows alone',
+      'Lattice promotion',
+      'Cluster-provenance overlays (only meaningful after ⤴ Scale up)',
       overlayRow('', `
-        <button class="view-toggle dynamics-toggle" id="toggle-pe-gravity"
-          title="Toggle gravitational force in the integrator. G_PE ≈ 1.75e-45 — negligible vs Coulomb.">
-          Gravity dyn.
+        <button class="view-toggle field-toggle" id="toggle-pe-admissibility"
+          title="Admissibility ring around each promoted particle: solid green = passes the scale-separation heuristic (N ≳ 113), dashed amber = marginal.">
+          <span class="field-swatch field-swatch-pe-admissibility"></span>Admissibility
         </button>
-        <button class="view-toggle dynamics-toggle" id="toggle-pe-damping" title="Toggle velocity damping">
-          Damping
+        <button class="view-toggle field-toggle" id="toggle-pe-provenance"
+          title="Floating #clusterId N=<size> label above each promoted particle, from the ⤴ Scale up capture.">
+          <span class="field-swatch field-swatch-pe-provenance"></span>Provenance
+        </button>
+        <button class="view-toggle field-toggle" id="toggle-pe-mass-comparison"
+          title="Connects each promoted cluster particle to its constituent voxel-cloud centroid, with the mass delta between the N·K_B cluster convention [DERIVED-linear]/[SMC] and the per-voxel max(ρ,K_B) convention [IMPOSED]. Requires the source-voxels layer.">
+          <span class="field-swatch field-swatch-pe-mass-comparison"></span>Mass Δ
         </button>
       `),
     ),

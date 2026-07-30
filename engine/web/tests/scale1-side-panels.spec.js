@@ -173,4 +173,25 @@ test.describe('Scale 1 side panels', () => {
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
+
+    test('diagnostics sections track active overlay toggles (contextual telemetry)', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await runScale1(page, 's1-coulomb-orbit');
+        await openPanel(page, 'diagnostics');
+
+        const before = await page.evaluate(() => !!document
+            .querySelector('#panel-diagnostics [data-section="pe-system"]')
+            ?.checkVisibility?.());
+        expect(before).toBe(false); // System overlay starts off
+
+        await page.evaluate(() => document.getElementById('toggle-pe-system')?.click());
+        await page.waitForTimeout(500);
+
+        const after = await page.evaluate(() => !!document
+            .querySelector('#panel-diagnostics [data-section="pe-system"]')
+            ?.checkVisibility?.());
+        expect(after).toBe(true);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
 });

@@ -45,6 +45,7 @@ import {
 } from './scenario-registry.js';
 import { scale1State, resetScale1State } from './state/store.js';
 import { telemetryHub } from '../../telemetry-hub.js';
+import { estimateOrbitPeriod } from './telemetry/orbit-period.js';
 
 
 // =====================================================================
@@ -63,6 +64,9 @@ export function setPEForces(on)       { setPEForceNet(on); }
 export function setPESystem(on)       { scale1State.overlays.system = on; }
 export function setVelocities(on)     { scale1State.overlays.velocities = on; }
 export function setTrails(on)         { scale1State.overlays.trails = on; }
+export function setAdmissibilityRing(on) { scale1State.overlays.admissibilityRing = on; }
+export function setProvenanceLabel(on) { scale1State.overlays.provenanceLabel = on; }
+export function setMassComparison(on) { scale1State.overlays.massComparison = on; }
 
 /** Promotion-source ghost layer toggle (controls panel). */
 export function setVoxelDebug(on, viewport) {
@@ -135,8 +139,6 @@ function applyPEPhysicsPreset(bridge, preset) {
     setCheckbox('pe-radiation', p.radiation);
     setCheckbox('pe-relativistic', p.relativistic);
     setCheckbox('pe-relativistic-verlet', p.relativistic_verlet);
-    setButtonActive('toggle-pe-gravity', p.gravity);
-    setButtonActive('toggle-pe-damping', p.damping);
 }
 
 function applyPEOverlayPreset(viewport, preset) {
@@ -153,6 +155,9 @@ function applyPEOverlayPreset(viewport, preset) {
     ov.forceNet = !!(o.forceNet ?? o.forces);
     ov.system = !!o.system;
     ov.voxelDebug = !!o.voxelDebug;
+    ov.admissibilityRing = !!o.admissibilityRing;
+    ov.provenanceLabel = !!o.provenanceLabel;
+    ov.massComparison = !!o.massComparison;
 
     setButtonActive('toggle-velocities', ov.velocities);
     setButtonActive('toggle-trails', ov.trails);
@@ -165,6 +170,9 @@ function applyPEOverlayPreset(viewport, preset) {
     setButtonActive('toggle-pe-force-net', ov.forceNet);
     setButtonActive('toggle-pe-system', ov.system);
     setCheckbox('pe-voxel-debug', ov.voxelDebug);
+    setButtonActive('toggle-pe-admissibility', ov.admissibilityRing);
+    setButtonActive('toggle-pe-provenance', ov.provenanceLabel);
+    setButtonActive('toggle-pe-mass-comparison', ov.massComparison);
 
     if (!viewport) return;
     viewport.toggleVelocityVectors(ov.velocities);
@@ -179,6 +187,9 @@ function applyPEOverlayPreset(viewport, preset) {
     viewport.togglePEForceNet(ov.forceNet);
     viewport.togglePESystem(ov.system);
     setVoxelDebug(ov.voxelDebug, viewport);
+    viewport.toggleAdmissibilityRings(ov.admissibilityRing);
+    viewport.toggleProvenanceLabels(ov.provenanceLabel);
+    viewport.toggleMassComparison(ov.massComparison);
 }
 
 
@@ -228,6 +239,9 @@ function _resetScale1Internal(ctx) {
         viewport.toggleTrails(false);
         viewport.toggleSpinVectors?.(false);
         viewport.toggleVoxelDebugLayer?.(false);
+        viewport.toggleAdmissibilityRings?.(false);
+        viewport.toggleProvenanceLabels?.(false);
+        viewport.toggleMassComparison?.(false);
         if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
@@ -324,12 +338,52 @@ export function animatePE(ctx) {
     if (ov.velocities && peData.count > 0) {
         viewport.updateVelocityVectors(peData.positions, peData.velocities, peData.count);
     }
+    telemetryHub.s1._overlayVelocitiesOn = ov.velocities;
 
     if (running && peData.count > 0) {
         updateTrailHistory(peData);
     }
     if (ov.trails) {
         viewport.updateTrails(getTrailHistory(), typeMap);
+    }
+    telemetryHub.s1._overlayTrailsOn = ov.trails;
+    // Orbit-period estimate (2-body proxy): built from the hub's own
+    // tick-gated peSeparation channel (collectScale1Extended), NOT from the
+    // visual trail cache (pe-cloud-expander.js getTrailHistory()) — that
+    // cache stores per-particle ring buffers of raw positions with no tick
+    // stamps, sampled once per rendered frame rather than once per engine
+    // tick, so it cannot supply the {tick, separation} series
+    // estimateOrbitPeriod expects. telemetryHub.s1.diag.tick / peSeparation
+    // are real engine-tick-aligned values already computed elsewhere in the
+    // hub; only new-tick samples are appended here (deduped against the
+    // last recorded tick) so the history stays real and doesn't repeat a
+    // stale sample across the ~3 unthrottled frames between hub collections.
+    if (ov.trails && peData.count === 2) {
+        // A pair identity key (not just count===2) guards against annihilation
+        // + re-injection silently swapping in a different pair while count
+        // holds at 2 — without this, a stale sample from the old pairing
+        // would anchor estimateOrbitPeriod's "start" reference and produce a
+        // numerically plausible but physically meaningless period.
+        const id0 = peData.ids[0], id1 = peData.ids[1];
+        const pairKey = id0 < id1 ? `${id0}:${id1}` : `${id1}:${id0}`;
+        if (telemetryHub._s1SepPairKey !== pairKey) {
+            telemetryHub._s1SepHistory.length = 0;
+            telemetryHub._s1SepPairKey = pairKey;
+        }
+        const tick = telemetryHub.s1.diag?.tick ?? null;
+        const sep = telemetryHub.peSeparation.last();
+        const hist = telemetryHub._s1SepHistory;
+        if (tick !== null && sep > 0 && (hist.length === 0 || hist[hist.length - 1].tick !== tick)) {
+            hist.push({ tick, separation: sep });
+            if (hist.length > 200) hist.shift();
+        }
+        telemetryHub.s1._orbitPeriod = estimateOrbitPeriod(hist);
+    } else {
+        telemetryHub.s1._orbitPeriod = null;
+        if (peData.count !== 2) {
+            telemetryHub._s1SepHistory.length = 0;
+            telemetryHub._s1SepPairKey = null;
+        }
     }
 
     if (ov.potential && peData.count > 0) {
@@ -341,7 +395,19 @@ export function animatePE(ctx) {
             grid.positions, field.potentials, grid.count, field.maxPotential);
         viewport.updateFieldVectors(
             grid.positions, field.forces, grid.count, field.maxForce, 8.0);
+        // samplePECoulombOnly returns maxPotential (peak |V|) but no min —
+        // scan the grid once for the true signed min/max for the telemetry
+        // legend (Task 6's tooltip points here).
+        let potMin = Infinity, potMax = -Infinity;
+        for (let i = 0; i < grid.count; i++) {
+            const v = field.potentials[i];
+            if (v < potMin) potMin = v;
+            if (v > potMax) potMax = v;
+        }
+        telemetryHub.s1._potentialMin = grid.count > 0 ? potMin : 0;
+        telemetryHub.s1._potentialMax = grid.count > 0 ? potMax : 0;
     }
+    telemetryHub.s1._overlayPotentialOn = ov.potential;
 
     // Coulomb E-field streamlines (3D, throttled)
     const refreshStreamlines = running ? frameCount % 5 === 0 : (frameCount % 30 === 0);
@@ -362,6 +428,7 @@ export function animatePE(ctx) {
         });
         viewport.updatePEStreamlines(lines);
     }
+    telemetryHub.s1._overlayEfieldOn = ov.efield;
 
     if (ov.gravityField && peData.count > 0) {
         if (!scale1State.fieldGrid) scale1State.fieldGrid = generateGridXZ(25, 20);
@@ -371,6 +438,7 @@ export function animatePE(ctx) {
         viewport.updateGravityVectors(
             grid.positions, field.forces, grid.count, field.maxForce);
     }
+    telemetryHub.s1._overlayGravityFieldOn = ov.gravityField;
 
     // Per-particle decomposed force arrows (native Float64 decomposition —
     // `net` is the TRUE integrator force incl. every enabled term)
@@ -381,11 +449,48 @@ export function animatePE(ctx) {
             viewport.updatePEForceDecomposition(decomp, GRAVITY_VIS_GAIN);
         }
     }
+    telemetryHub.s1._overlayForceOn = anyPEForce;
 
     if (ov.system && peData.count > 0) {
         const sys = computeSystemVectors(peData);
         viewport.updatePESystem(sys.com, sys.p, sys.l);
+        // hub.peAngMom is the origin-frame L the native engine reports
+        // (particle_engine.cpp sums r x mv from raw, non-shifted positions).
+        // sys.l above is the true CoM-relative L computed here in JS; surface
+        // its magnitude so the "about CoM" telemetry row doesn't silently
+        // read the origin-frame channel under a false label.
+        telemetryHub.s1._overlaySystemL = Math.hypot(sys.l[0], sys.l[1], sys.l[2]);
     }
+    telemetryHub.s1._overlaySystemOn = ov.system;
+
+    if (ov.admissibilityRing && peData.count > 0) {
+        viewport.updateAdmissibilityRings(peData, scale1State.promotedSeedById, peData.ids);
+    }
+
+    // Provenance labels rebuild a unique CanvasTexture (a GPU upload) per
+    // promoted particle every call — clusterId/size never change after
+    // capture, only position does, so refreshing at the same cadence as the
+    // E-field streamlines above (not every rAF frame) avoids needless
+    // per-frame texture churn; a few-frame lag in label position is
+    // imperceptible for slow-moving promoted clusters.
+    if (ov.provenanceLabel && peData.count > 0 && refreshStreamlines) {
+        viewport.updateProvenanceLabels(peData, scale1State.promotedSeedById, peData.ids);
+    }
+    telemetryHub.s1._overlayProvenanceOn = ov.provenanceLabel;
+
+    // Mass-comparison badges rebuild a unique CanvasTexture per connector
+    // every call (same cost profile as the provenance labels above), so
+    // this overlay is throttled to the same refreshStreamlines cadence from
+    // the start rather than needing a follow-up fix.
+    if (ov.massComparison && peData.count > 0 && refreshStreamlines
+        && scale1State.lastPromotion?.voxelDebug) {
+        viewport.updateMassComparison(
+            peData, scale1State.promotedSeedById,
+            scale1State.lastPromotion.voxelDebug,
+            scale1State.lastPromotion.latticeSize,
+            scale1State.lastPromotion.displayScale);
+    }
+    telemetryHub.s1._overlayMassComparisonOn = ov.massComparison;
 
     // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();

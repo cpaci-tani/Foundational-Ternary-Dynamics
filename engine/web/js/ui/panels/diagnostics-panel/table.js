@@ -94,9 +94,13 @@ export class DiagnosticsTable {
         this.hub     = hub;
         this.resetScope = resetScope;
         this.resetVersion = resetVersion(hub, resetScope);
+        this.visibleWhen = typeof section.visibleWhen === 'function' ? section.visibleWhen : null;
         this.el      = document.createElement('section');
         this.el.className = 'diag-section';
         this.el.dataset.section = section.id;
+        // Start hidden, not visible-by-default, so a visibleWhen section never
+        // flashes visible for a frame before the first update() call judges it.
+        if (this.visibleWhen) this.el.style.display = 'none';
 
         const isStatic = section.variant === 'static';
 
@@ -220,6 +224,13 @@ export class DiagnosticsTable {
     }
 
     update() {
+        if (this.visibleWhen) {
+            const visible = !!this.visibleWhen(this.hub);
+            if (this.el.style.display !== (visible ? '' : 'none')) {
+                this.el.style.display = visible ? '' : 'none';
+            }
+            if (!visible) return;
+        }
         const nextResetVersion = resetVersion(this.hub, this.resetScope);
         if (nextResetVersion !== this.resetVersion) {
             this.resetVersion = nextResetVersion;

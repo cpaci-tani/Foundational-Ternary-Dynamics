@@ -301,6 +301,7 @@ function _resetAllVisualState() {
         'toggle-pe-gravity-field',
         'toggle-pe-force-coulomb', 'toggle-pe-force-gravity', 'toggle-pe-force-strong', 'toggle-pe-force-net',
         'toggle-pe-system',
+        'toggle-pe-admissibility', 'toggle-pe-provenance', 'toggle-pe-mass-comparison',
         'toggle-velocities', 'toggle-trails',
     ]) {
         const btn = document.getElementById(id);
@@ -318,12 +319,6 @@ function _resetAllVisualState() {
         viewport.togglePESystem(false);
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
-    }
-
-    // PE dynamics buttons (gravity/damping are OFF by default)
-    for (const id of ['toggle-pe-gravity', 'toggle-pe-damping']) {
-        const btn = document.getElementById(id);
-        if (btn) btn.classList.remove('active');
     }
 
     // ── Scale 2/3: delegated to Scale2Controller ──
@@ -1114,21 +1109,7 @@ function wireControls() {
         const el = document.getElementById(elId);
         if (el) {
             el.addEventListener('change', () => {
-                const checked = el.checked;
-                setter(checked);
-                if (elId === 'pe-gravity') {
-                    const btn = document.getElementById('toggle-pe-gravity');
-                    if (btn) {
-                        if (checked) btn.classList.add('active');
-                        else btn.classList.remove('active');
-                    }
-                } else if (elId === 'pe-damping') {
-                    const btn = document.getElementById('toggle-pe-damping');
-                    if (btn) {
-                        if (checked) btn.classList.add('active');
-                        else btn.classList.remove('active');
-                    }
-                }
+                setter(el.checked);
             });
         }
     }
@@ -1273,6 +1254,9 @@ function wireViewportToggles() {
         ['toggle-pe-force-strong', (on) => { Scale1Controller.setPEForceStrong(on); viewport.togglePEForceStrong(on); }],
         ['toggle-pe-force-net', (on) => { Scale1Controller.setPEForceNet(on); viewport.togglePEForceNet(on); }],
         ['toggle-pe-system', (on) => { Scale1Controller.setPESystem(on); viewport.togglePESystem(on); }],
+        ['toggle-pe-admissibility', (on) => { Scale1Controller.setAdmissibilityRing(on); viewport.toggleAdmissibilityRings(on); }],
+        ['toggle-pe-provenance', (on) => { Scale1Controller.setProvenanceLabel(on); viewport.toggleProvenanceLabels(on); }],
+        ['toggle-pe-mass-comparison', (on) => { Scale1Controller.setMassComparison(on); viewport.toggleMassComparison(on); }],
     ];
     for (const [id, handler] of peFieldToggles) {
         const btn = document.getElementById(id);
@@ -1282,31 +1266,6 @@ function wireViewportToggles() {
                 handler(btn.classList.contains('active'));
             });
         }
-    }
-
-    // PE dynamics toggles (affect simulation behavior)
-    const peGravBtn = document.getElementById('toggle-pe-gravity');
-    if (peGravBtn) {
-        peGravBtn.addEventListener('click', () => {
-            peGravBtn.classList.toggle('active');
-            const on = peGravBtn.classList.contains('active');
-            bridge.peSetGravity(on);
-            // Sync sidebar checkbox if it exists
-            const cb = document.getElementById('pe-gravity');
-            if (cb) cb.checked = on;
-        });
-    }
-
-    const peDampBtn = document.getElementById('toggle-pe-damping');
-    if (peDampBtn) {
-        peDampBtn.addEventListener('click', () => {
-            peDampBtn.classList.toggle('active');
-            const on = peDampBtn.classList.contains('active');
-            bridge.peSetDamping(on);
-            // Sync sidebar checkbox if it exists
-            const cb = document.getElementById('pe-damping');
-            if (cb) cb.checked = on;
-        });
     }
 
     // AE field overlay toggle

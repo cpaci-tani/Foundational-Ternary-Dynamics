@@ -4,7 +4,13 @@
  * descriptor-driven diagnostics surface as Scale 0.
  */
 
-import { G_PE, ALPHA_G_ELECTRON } from '../../../../constants.js';
+import { G_PE, ALPHA_G_ELECTRON, GRAVITY_VIS_GAIN } from '../../../../constants.js';
+import { scale1State } from '../../../../scales/scale1/state/store.js';
+
+function scale1LastPromotionField(key) {
+    const p = scale1State.lastPromotion;
+    return p ? String(p[key] ?? '—') : '—';
+}
 
 export const sections = [
     {
@@ -107,6 +113,112 @@ export const sections = [
               compute: (hub) => hub.peSeparation.last(), trend: 'peSeparation' },
             { id: 'radial-velocity', label: 'Radial Velocity', unit: 'c',
               compute: (hub) => hub.peRadialVelocity.last(), trend: 'peRadialVelocity' },
+        ],
+    },
+    {
+        id: 'pe-velocities',
+        title: 'Velocities Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayVelocitiesOn,
+        rows: [
+            { id: 'vrms2', label: 'RMS Velocity', unit: 'c',
+              compute: (hub) => hub.peRmsVelocity.last() },
+            { id: 'max-beta2', label: 'Max |v|/c', unit: 'c',
+              compute: (hub) => hub.peMaxBeta.last() },
+            { id: 'cap-count2', label: 'At Causal Cap', unit: 'ct',
+              compute: (hub) => hub.peCapCount.last() },
+            { id: 'legend', label: 'Color legend', unit: '', format: 'text',
+              compute: () => 'green→yellow <0.5c · yellow→orange 0.5-0.85c · orange→red 0.85-0.985c · red→white >0.985c (cap)' },
+        ],
+    },
+    {
+        id: 'pe-trails',
+        title: 'Trails Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayTrailsOn,
+        rows: [
+            { id: 'orbit-period', label: 'Orbit period (2-body proxy)', unit: 'tick',
+              format: 'text',
+              compute: (hub) => hub.s1._orbitPeriod === null ? '—' : String(hub.s1._orbitPeriod) },
+        ],
+    },
+    {
+        id: 'pe-efield',
+        title: 'E-Field Streamlines Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayEfieldOn,
+        rows: [
+            { id: 'coulomb-pe2', label: 'Coulomb PE', unit: 'MeV',
+              compute: (hub) => hub.s1.diag?.coulombPE ?? 0 },
+            { id: 'grid-res', label: 'Sample grid', unit: '', format: 'text',
+              compute: () => '25×20 (XZ plane, fixed)' },
+        ],
+    },
+    {
+        id: 'pe-potential',
+        title: 'Potential Heatmap Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayPotentialOn,
+        rows: [
+            { id: 'coulomb-pe3', label: 'Coulomb PE', unit: 'MeV',
+              compute: (hub) => hub.s1.diag?.coulombPE ?? 0 },
+            { id: 'potential-min', label: 'Min potential (this frame)', unit: '',
+              compute: (hub) => hub.s1._potentialMin ?? 0 },
+            { id: 'potential-max', label: 'Max potential (this frame)', unit: '',
+              compute: (hub) => hub.s1._potentialMax ?? 0 },
+        ],
+    },
+    {
+        id: 'pe-gravity-field',
+        title: 'Gravity Vectors Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayGravityFieldOn,
+        rows: [
+            { id: 'gravity-pe2', label: 'Gravity PE', unit: 'MeV',
+              compute: (hub) => hub.s1.diag?.gravityPE ?? 0 },
+            { id: 'g-pe2', label: 'G_PE constant', unit: 'MeV⁻²', compute: () => G_PE },
+            { id: 'vis-gain', label: 'Visual gain applied', unit: '×',
+              compute: () => GRAVITY_VIS_GAIN,
+              format: 'text' },
+        ],
+    },
+    {
+        id: 'pe-force-decomp',
+        title: 'Force Decomposition Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayForceOn,
+        rows: [
+            { id: 'max-force2', label: 'Max Net Force', unit: 'sim',
+              compute: (hub) => hub.peMaxForce.last() },
+            { id: 'mean-force2', label: 'Mean Net Force', unit: 'sim',
+              compute: (hub) => hub.peMeanForce.last() },
+        ],
+    },
+    {
+        id: 'pe-system',
+        title: 'System Overlay (CoM / p / L)',
+        visibleWhen: (hub) => !!hub.s1?._overlaySystemOn,
+        rows: [
+            { id: 'l-com-note', label: 'L (about CoM, this overlay)', unit: 'sim',
+              compute: (hub) => hub.s1._overlaySystemL ?? 0 },
+            { id: 'l-origin-xref', label: 'cf. L (about origin, Conservation table)', unit: 'sim',
+              compute: (hub) => hub.peAngMom.last() },
+        ],
+    },
+    {
+        id: 'pe-provenance',
+        title: 'Provenance Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayProvenanceOn,
+        rows: [
+            { id: 'source-scenario', label: 'Source scenario', unit: '', format: 'text',
+              compute: () => scale1LastPromotionField('sourceScenario') },
+            { id: 'source-tick', label: 'Source tick', unit: '', format: 'text',
+              compute: () => scale1LastPromotionField('sourceTick') },
+            { id: 'cluster-source', label: 'Cluster source', unit: '', format: 'text',
+              compute: () => scale1LastPromotionField('clusterSource') },
+        ],
+    },
+    {
+        id: 'pe-mass-comparison',
+        title: 'Mass Comparison Overlay',
+        visibleWhen: (hub) => !!hub.s1?._overlayMassComparisonOn,
+        rows: [
+            { id: 'mass-note', label: 'Convention', unit: '', format: 'text',
+              compute: () => 'cluster N·K_B [DERIVED-linear]/[SMC] vs. Σ voxel max(ρ,K_B) [IMPOSED] — per-particle Δm shown in the 3D badge' },
         ],
     },
 ];
