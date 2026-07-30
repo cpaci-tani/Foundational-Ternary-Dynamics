@@ -108,6 +108,9 @@ export class WasmBridgeProxy {
         // kinds have been registered with the worker (idempotent per key).
         this._samplerCache = {};
         this._samplerWant = new Map();
+        // One-shot coarsen (Scale-0 → Scale-1) request/response bookkeeping.
+        this._coarsenPending = new Map();
+        this._coarsenReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
         this._worker = new Worker(new URL('./wasm-bridge.worker.js', import.meta.url));
@@ -184,6 +187,11 @@ export class WasmBridgeProxy {
     }
 
     _onMessage(m) {
+        // Ignore in-flight messages after terminate()/dispose(). Scenario churn
+        // tears down the prior proxy while a 'ready'/'frame' may already be
+        // queued on the main-thread event loop; without this guard those would
+        // still mutate UI / postFrame callbacks for a dead owner.
+        if (this._terminated || this._initFailed) return;
         if (m.type === 'ready') {
             this.latticeSize = m.N;
             this._ctrl = new Int32Array(m.ctrl);
@@ -236,6 +244,12 @@ export class WasmBridgeProxy {
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
                 window.__ftdCtx.onBridgePostFrame(hadSamplers);
             }
+        } else if (m.type === 'coarsenResult') {
+            const resolve = this._coarsenPending.get(m.reqId);
+            if (resolve) {
+                this._coarsenPending.delete(m.reqId);
+                resolve(m.data ?? null);
+            }
         } else if (m.type === 'error') {
             console.error('[WasmWorker]', m.where, m.msg);
             // A module-init failure inside the worker (createFTDModuleMT().catch
@@ -269,6 +283,18 @@ export class WasmBridgeProxy {
         return this._toggles[name] ?? true;
     }
 
+    /**
+     * Engine-truth-only toggle readback: true/false when the worker has
+     * published a real engine-state readback covering `name`, else null.
+     * Unlike getToggle there is NO optimistic default — callers that must
+     * not act on a guess (e.g. the promotion pipeline deciding whether to
+     * enable/restore knot_tracking) use this.
+     */
+    getEngineTruthToggle(name) {
+        if (this._engineToggles && name in this._engineToggles) return !!this._engineToggles[name];
+        return null;
+    }
+
     _buildCaps() {
         // The capability factory just delegates to bridge methods, so wrap `this`.
         const caps = createScale0Capabilities(this);
@@ -282,7 +308,32 @@ export class WasmBridgeProxy {
         caps.getScale0KnotTelemetry = () => this._lastKnot ?? null;
         caps.getScale0KnotEvents = () => this._lastKnotEvents ?? null;
         caps.getScale0KnotAggregate = () => this._lastKnotAgg ?? null;
+        // Real single-step for the promotion pipeline: unlike tickScale0
+        // (deliberate no-op — the worker self-ticks), this forwards one
+        // explicit tick command; the worker ticks once and posts a frame,
+        // refreshing the knot-telemetry snapshot even while paused.
+        caps.stepScale0 = () => this._cmd('tickScale0');
         return caps;
+    }
+
+    /**
+     * One-shot Scale-0 → Scale-1 coarse-graining snapshot from the worker
+     * engine. Resolves with the coarsenToParticles typed-array bundle, or
+     * null if the worker/module can't serve it within the timeout.
+     */
+    coarsenToParticles(timeoutMs = 2000) {
+        if (!this._ready) return Promise.resolve(null);
+        const reqId = ++this._coarsenReq;
+        return new Promise((resolve) => {
+            this._coarsenPending.set(reqId, resolve);
+            this._worker.postMessage({ type: 'coarsen', reqId });
+            setTimeout(() => {
+                if (this._coarsenPending.has(reqId)) {
+                    this._coarsenPending.delete(reqId);
+                    resolve(null);
+                }
+            }, timeoutMs);
+        });
     }
 
     // ── Bridge reads the capability factory calls ───────────────────────────
@@ -427,8 +478,23 @@ export class WasmBridgeProxy {
     // ── Mutators (the inject UI / param sliders call these on the bridge) ────
     setToggle(k, v) { this._toggles[k] = v; this._cmd('setToggle', k, v); }
     setDt(...a) { this._cmd('setDt', ...a); }
-    setOmega0(...a) { this._cmd('setOmega0', ...a); }
-    setLangevinTemp(...a) { this._cmd('setLangevinTemp', ...a); }
+    // setOmega0/setLangevinTemp are fire-and-forget commands to the worker's
+    // RenderBridge (no synchronous round trip is possible). getOmega0/
+    // getLangevinTemp are real methods on the direct WasmBridge but were
+    // simply absent here, so panels reading them silently substituted a
+    // literal default or their own UI slider value as if it were engine
+    // truth — wrong the moment either was actually changed, since the
+    // display never learned about it. Mirroring the last value THIS proxy
+    // told the worker to set is not a fabrication: barring a failed
+    // command, it IS what the worker's RenderBridge now holds. Defaults
+    // match term_toggles.h (omega0=1.0, langevin_T=0.0) so an unset read
+    // before the first setter call matches the engine's own default.
+    setOmega0(w) { this._omega0 = w; this._cmd('setOmega0', w); }
+    getOmega0() { return this._omega0 ?? 1.0; }
+    setLangevinTemp(t) { this._langevinTemp = t; this._cmd('setLangevinTemp', t); }
+    getLangevinTemp() { return this._langevinTemp ?? 0.0; }
+    setLangevinGamma(g) { this._langevinGamma = g; this._cmd('setLangevinGamma', g); }
+    getLangevinGamma() { return this._langevinGamma ?? 0.01; }
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
@@ -447,6 +513,12 @@ export class WasmBridgeProxy {
         if (!this._terminated) { this._terminated = true; _live--; _terminated++; }
         if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
         this._clearFrameWatchdog();
+        // Drop callbacks so a late queued message cannot reach the dashboard
+        // even if _onMessage's terminated guard is somehow bypassed.
+        this._onEngineToggles = null;
+        this._onInitFailure = null;
+        try { this._worker.onmessage = null; } catch (e) { /* ignore */ }
+        try { this._worker.onerror = null; } catch (e) { /* ignore */ }
         try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }
         try { this._worker.terminate(); } catch (e) { /* ignore */ }
     }

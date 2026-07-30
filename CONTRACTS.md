@@ -71,6 +71,20 @@ Rules:
 Scale 0 is forward-only. Snapshot/timeline methods formerly documented here
 are no longer part of the active surface.
 
+Scale-1 rule-4 clarification (2026-07-29 revision): the Scale-1 particle
+engine always runs on the **main-thread `WasmBridge`** (native C++/WASM
+`ParticleEngine` via `bridge/native-particle-engine.js`). `WasmBridgeProxy`
+claims **scale0 only** and is exempt from carrying a `scale1` surface; the
+promotion pipeline (`scales/scale1/promotion.js`) reads Scale-0 cluster data
+from the ACTIVE Scale-0 owner via `capabilities.scale0` — including the
+worker-path additions `stepScale0` (real single-step; `tickScale0` on the
+proxy stays a no-op because the worker self-ticks) and the bridge-level
+one-shot `coarsenToParticles()` (synchronous data on `WasmBridge`, a Promise
+on the proxy). `WebSocketBridge` satisfies the Scale-1 surface by delegating
+to an in-page `WasmBridge` fallback whose module load is kicked off on first
+use; until (or unless) it loads, every `pe*` read returns a contract-empty
+shape and `peGetBackendCapabilities().backend === 'unavailable'`.
+
 ---
 
 ## 3. Scale Controller Context Contract
@@ -113,6 +127,13 @@ Rules:
    `state.useFluxMock && state.fluxMock`.
 4. UI code should prefer registry/shell services over direct global DOM lookups
    when a service exists.
+5. Scale-1 ctx consolidation (2026-07-29): the per-frame `_scale1Ctx` carries
+   the same load-bearing members as the full `_makeCtx()` shape —
+   `telemetryHub`, `engineMode`, `isPanelVisible`, `resetAllVisualState` —
+   and the former stub call sites (`resetScale1`, scenario-load shim) pass
+   `_makeCtx()`. Scale-1 controllers therefore see ONE ctx shape everywhere;
+   `resetScale1` additionally tolerates a minimal `{ viewport }` object for
+   defensive robustness.
 
 ---
 

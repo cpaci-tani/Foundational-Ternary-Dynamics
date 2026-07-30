@@ -176,8 +176,10 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 planetaryPanel: !!document.getElementById('panel-planetary'),
                 planetaryLayerList: !!document.getElementById('planetary-layer-list'),
                 physicsPanel: !!document.getElementById('panel-physics'),
-                physicsEnergyLevels: !!document.getElementById('physics-energy-levels'),
-                physicsZSlider: !!document.getElementById('physics-z-slider'),
+                physicsConstants: !!document.getElementById('physics-constants'),
+                // Parametric sandbox cards retired 2026-07-29 (Scale-1 revision)
+                physicsEnergyLevelsRemoved: !document.getElementById('physics-energy-levels'),
+                physicsZSliderRemoved: !document.getElementById('physics-z-slider'),
                 inspectorPanel: !!document.getElementById('panel-inspector'),
                 inspectorModeLabel: !!document.getElementById('insp-mode-label'),
                 inspectorSummary: !!document.getElementById('insp-selection-summary'),
@@ -230,8 +232,9 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.planetaryPanel).toBe(true);
     expect(shell.ui.planetaryLayerList).toBe(true);
     expect(shell.ui.physicsPanel).toBe(true);
-    expect(shell.ui.physicsEnergyLevels).toBe(true);
-    expect(shell.ui.physicsZSlider).toBe(true);
+    expect(shell.ui.physicsConstants).toBe(true);
+    expect(shell.ui.physicsEnergyLevelsRemoved).toBe(true);
+    expect(shell.ui.physicsZSliderRemoved).toBe(true);
     expect(shell.ui.inspectorPanel).toBe(true);
     expect(shell.ui.inspectorModeLabel).toBe(true);
     expect(shell.ui.inspectorSummary).toBe(true);

@@ -193,54 +193,6 @@ const SCALE1_SECTION_TOOLTIPS = {
     'Forces & Geometry':  'Causal saturation (|v|/c against the 1/sqrt(3) cap), net-force magnitudes, RMS velocity, system size, temperature proxy, and two-body geometry.',
 };
 
-// Scale 1 Particle Engine — conservation-summary rows. Each corresponds to
-// a class .pe-conservation-row block at the top of PE telemetry.
-const PE_ROW_TOOLTIPS = {
-    'Energy': 'Total particle-engine energy KE + PE_coulomb + PE_gravity. In well-behaved closed scenarios this should be constant \u2014 watch it in combination with Drift below.',
-    '|p|':    'Magnitude of the total linear momentum \u03a3 m\u1d62 v\u1d62. Conserved under translation invariance; drift here flags a broken Newton\'s-third-law pairing in the force calculation.',
-    '|L|':    'Magnitude of the total angular momentum \u03a3 r\u1d62 \u00d7 m\u1d62 v\u1d62. Conserved under rotational invariance; useful for verifying orbit integrators.',
-    'Drift':  'Relative energy drift (E \u2212 E\u2080)/|E\u2080| since the baseline tick. Under 0.01 % = excellent, 0.1 % = acceptable, \u226b 1 % = integrator needs shorter step.',
-};
-
-// Scale 1 PE card titles. Keys match the card title after normalizeLabel
-// (strips parens, collapses whitespace).
-const PE_CARD_TOOLTIPS = {
-    'Particles':          'Active Scale 1 particles in the simulation (excludes locked particles that don\'t integrate).',
-    'Virial 2K/|U|':      'Virial-theorem ratio 2\u27e8K\u27e9 / |\u27e8U\u27e9|. Equals 1 for a steady bound system, > 1 if the system is unbound, < 1 if the KE hasn\'t ramped up to equilibrium yet.',
-    'Temperature MeV':    'Mean kinetic energy per particle scaled by 2/3: \\(T_{\\text{sim}} = (2/3)\\langle K\\rangle / N\\). Reported in MeV (sim units, k_B = 1). Meaningful only for statistical-ensemble-sized N; for N=2 this is just 2/3 of the mean KE — not an SI temperature.',
-    'RMS Velocity c':     'Root-mean-square particle speed \u221a\u27e8|v|\u00b2\u27e9 expressed in units of c (so 0.5 = half the speed of light on the lattice).',
-    'System Radius lu':   'Characteristic radius \\(\\langle|r - R_\\mathrm{CoM}|\\rangle\\) \u2014 average distance of particles from the centre of mass. Grows as the system expands, shrinks as it contracts.',
-    'Tick':               'Particle-engine tick counter. PE is integrated in its own loop; may run at a different rate than the Scale-0 lattice tick.',
-    'KE MeV':             'Total kinetic energy \u03a3 \u00bd m\u1d62 v\u1d62\u00b2 in MeV.',
-    'PE MeV':             'Total potential energy across all enabled force terms (Coulomb + gravity at minimum), in MeV.',
-    'CoM':                'Centre-of-mass position vector \u03a3 m\u1d62 r\u1d62 / \u03a3 m\u1d62, in lattice units.',
-    'PE Coulomb MeV':     'Electrostatic \\(\\sum \\alpha q_i q_j / (4\\pi r_{ij})\\) summed over all pairs. Negative for unlike-sign bound systems, positive for like-sign.',
-    'PE Gravity MeV':     'Gravitational \\(-\\sum G_{PE} m_i m_j / r_{ij}\\) summed over pairs. Always negative. \\(G_{PE}=1/(4\\pi m_P^2)\\) is the FTD-0131 coupling; \\(\\alpha_G(e,e)=(m_e/m_P)^2\\approx 1.75\\times10^{-45}\\). Values are float64-tiny next to Coulomb — read the dedicated Gravity PE chart.',
-    // Two-body specific cards ("Orbital Analytics" section).
-    'Separation r lu':    'Instantaneous two-body separation |r\u2081 \u2212 r\u2082| in lattice units. Oscillates between perihelion and aphelion for bound orbits.',
-    'Reduced Mass μ MeV': 'Reduced mass \u03bc = m\u2081 m\u2082 / (m\u2081 + m\u2082). The effective mass in the equivalent one-body Kepler problem.',
-    'Spec. Ang. Mom h':   'Specific angular momentum h = |r \u00d7 v|. Conserved along Kepler orbits \u2014 useful for detecting integrator drift.',
-    'Semi-major a lu':    'Semi-major axis a of the osculating Kepler ellipse, computed from energy and angular momentum. For a bound orbit: E = \u2212G M \u03bc / 2a.',
-    'Eccentricity e':     'Eccentricity e = \u221a(1 \u2212 b\u00b2/a\u00b2). 0 = perfect circle, 1 = parabolic escape, > 1 = hyperbolic flyby.',
-    'Period T':           'Estimated orbital period T = 2\u03c0\u221a(a\u00b3/GM) via Kepler\'s third law. Compare against the tick-counted actual period.',
-    'Vis-viva Check':     'Residual of the vis-viva equation v\u00b2 = GM(2/r \u2212 1/a). Should read \u2248 0 \u2014 non-zero means the integrator has drifted off the Kepler surface.',
-    'Phase Space r, v_r': 'Canvas plot of radial position \\(r\\) vs radial velocity \\(v_r\\). Bound orbits trace closed loops here; escaping trajectories spiral outward.',
-};
-
-// Scale 1 PE particle table column headers. Keys match <th> textContent
-// after normalizeLabel.
-const PE_TABLE_HEADER_TOOLTIPS = {
-    'ID':     'Stable particle identifier, preserved across ticks. Use this to track a specific particle over time in the time-series panel.',
-    'q':      'Particle charge in lattice units. Signed; +1, \u22121, 0 are the common values.',
-    'm MeV':  'Particle rest mass in MeV — the measured (PDG) value; the electron uses the FTD anchor m_e = 0.511 MeV. FTD-predicted mass formulae and their accuracy are shown in the Particle Zoo, not here.',
-    '|r| lu': 'Particle distance from the world origin in lattice units.',
-    '|v| c':  'Particle speed as a fraction of the lattice light-speed c = 1/\u221a3.',
-    '|a|':    'Acceleration magnitude (change in velocity per tick).',
-    '|F| Pl': 'Net force magnitude in lattice-native Planck-like units. Includes every enabled force term combined.',
-    'KE MeV': 'Per-particle kinetic energy \u00bd m |v|\u00b2 in MeV.',
-    'Lk':     'Lock status: locked particles don\'t integrate motion (useful for pinning test charges at fixed positions).',
-};
-
 // Scale 2/3 Atom-Engine diagnostics. Shown in .scale-ae panel-grid rows
 // adjacent to but NOT inside #pe-telemetry. Keys match card-title text
 // after normalizeLabel (so "Kinetic Energy (sim)" \u2192 "Kinetic Energy sim",
@@ -346,36 +298,6 @@ function annotateAEDiagnostics(root) {
         setTooltip(card, text);
         if (titleEl) setTooltip(titleEl, text);
         if (valueEl) setTooltip(valueEl, text);
-    });
-}
-
-function annotatePETelemetry(root) {
-    root.querySelectorAll('#pe-telemetry .pe-conservation-row').forEach((row) => {
-        const labelEl = row.querySelector('.pe-cons-label');
-        const valueEl = row.querySelector('.pe-cons-value');
-        const key = normalizeLabel(labelEl?.textContent);
-        const text = PE_ROW_TOOLTIPS[key];
-        if (!text) return;
-        setTooltip(row, text);
-        setTooltip(labelEl, text);
-        setTooltip(valueEl, text);
-    });
-
-    root.querySelectorAll('#pe-telemetry .card').forEach((card) => {
-        const titleEl = card.querySelector('.card-title');
-        const valueEl = card.querySelector('.stat-value');
-        const key = normalizeLabel(titleEl?.textContent);
-        const text = PE_CARD_TOOLTIPS[key];
-        if (!text) return;
-        setTooltip(card, text);
-        setTooltip(titleEl, text);
-        if (valueEl) setTooltip(valueEl, text);
-    });
-
-    root.querySelectorAll('#pe-telemetry th').forEach((th) => {
-        const key = normalizeLabel(th.textContent);
-        const text = PE_TABLE_HEADER_TOOLTIPS[key];
-        if (text) setTooltip(th, text);
     });
 }
 
@@ -508,6 +430,5 @@ export function applyUiTooltipDefinitions(root = document) {
     annotateScale1Charts(root);
     annotateScale1ChartChips(root);
     annotateScale1TelemetryGrid(root);
-    annotatePETelemetry(root);
     annotateAEDiagnostics(root);
 }

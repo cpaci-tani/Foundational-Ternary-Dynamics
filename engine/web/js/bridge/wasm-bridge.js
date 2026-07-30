@@ -30,7 +30,7 @@
 
 import { K_B, VOXEL_VOLUME } from '../constants.js';
 import { debugLog } from '../core/log.js';
-import { createParticleEngine } from './mock-particle-engine.js';
+import { createNativeParticleEngine } from './native-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
 import { samplerOr, particleDataToList } from './bridge-contract.js';
@@ -104,10 +104,11 @@ export class WasmBridge {
         this.isWasm64 = false;   // set true in init() when the Memory64 build loads
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
-        // Scale-1 PE: JS Velocity-Verlet with G_PE (FTD-0131 physical coupling).
-        // Native WASM ParticleEngine used G_N until rebuild; JS path is canonical
-        // for the web dashboard so gravity matches the derived α_G.
-        this._peEngine = createParticleEngine(this);
+        // Scale-1 PE: native C++/WASM ParticleEngine via embind adapter.
+        // The native kernel uses G_PE = G_DERIVED (FTD-0131) — the old
+        // "stale G_N binary" concern that once justified a JS engine no
+        // longer holds (particle_engine.cpp:148 uses G_PE).
+        this._peEngine = createNativeParticleEngine(this);
     }
 
     async init(latticeSize = 33) {
@@ -208,6 +209,14 @@ export class WasmBridge {
     getLangevinTemp() {
         if (this._module && this._bridge && typeof this._module.getLangevinTemp === 'function')
             return this._module.getLangevinTemp(this._bridge);
+    }
+    setLangevinGamma(g) {
+        if (this._module && this._bridge && typeof this._module.setLangevinGamma === 'function')
+            this._module.setLangevinGamma(this._bridge, g);
+    }
+    getLangevinGamma() {
+        if (this._module && this._bridge && typeof this._module.getLangevinGamma === 'function')
+            return this._module.getLangevinGamma(this._bridge);
         return 0.0;
     }
 
@@ -222,13 +231,13 @@ export class WasmBridge {
         this.latticeSize = size;
         debugLog('[WasmBridge] reset() called. latticeSize =', this.latticeSize);
         if (this._module) {
-            // Bridge-H2 (audit 2026-04-27): the C++ ParticleEngine and
-            // AtomEngine handles cached on `this._pe`/`this._ae` are
-            // bound to the OLD RenderBridge; once we destroy the old
-            // bridge they're invalid. Drop them so the next access
-            // path re-acquires fresh handles via the new RenderBridge.
-            // Same logic for the JS-side AE engine stub and the lazy-attached physics harness.
-            if (this._pe) { this._pe = null; }
+            // Drop sub-engine state on lattice reset. The native PE embind
+            // instance is standalone (not bound to the RenderBridge) but a
+            // reset wipes Scale-1 state by contract — dispose() frees the
+            // embind heap object and the adapter lazily reconstructs.
+            // Same logic for the AtomEngine handle, the JS-side AE engine
+            // stub, and the lazy-attached physics harness.
+            this._peEngine.dispose();
             if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
             this._lastScale0Audit = null;
             this._lastScale0AuditTick = -1;
@@ -268,7 +277,7 @@ export class WasmBridge {
      * MockBridge.dispose() (Bridge-H1 audit fix, 2026-04-27).
      */
     dispose() {
-        if (this._pe) { try { this._pe.delete?.(); } catch {} this._pe = null; }
+        this._peEngine.dispose();
         if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
@@ -400,6 +409,24 @@ export class WasmBridge {
         return r || EMPTY_KNOT_AGG;
     }
 
+    /**
+     * One-shot Scale-0 → Scale-1 coarse-graining snapshot (voxel debug view /
+     * promotion pipeline): one manifested voxel → one particle record.
+     * Observer-only. Synchronous on this in-thread bridge; WasmBridgeProxy
+     * exposes the same name returning a Promise — call sites should
+     * `await Promise.resolve(bridge.coarsenToParticles?.())`.
+     */
+    coarsenToParticles() {
+        if (!(this._module && this._bridge)) return null;
+        if (typeof this._module.coarsenToParticles !== 'function') return null;
+        try {
+            return this._module.coarsenToParticles(this._bridge);
+        } catch (err) {
+            console.warn('[WasmBridge] coarsenToParticles failed:', err);
+            return null;
+        }
+    }
+
     getScale0ParticleList() {
         // Shared derivation (bridge-contract.js) so this and WasmBridgeProxy
         // cannot drift apart.
@@ -413,7 +440,9 @@ export class WasmBridge {
                 maxBandwidth: 0, avgDrag: 0, entropy: 0, chargeBalance: 0,
                 maxCausalBudget: 0, causalProjectionEvents: 0,
                 spinUp: 0, spinDown: 0, colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
-                angMomX: 0, angMomY: 0, angMomZ: 0
+                angMomX: 0, angMomY: 0, angMomZ: 0,
+                fieldSpinX: 0, fieldSpinY: 0, fieldSpinZ: 0, fieldHelicity: 0,
+                centerClockPhase: 0, centerClockSpeed: 0, centerClockLatency: 0
             };
         let d;
         if (typeof this._module.getDiagnosticsView === 'function') {
@@ -441,7 +470,16 @@ export class WasmBridge {
                 angMomY: arr[19],
                 angMomZ: arr[20],
                 maxCausalBudget: arr[21] ?? 0,
-                causalProjectionEvents: arr[22] ?? 0
+                causalProjectionEvents: arr[22] ?? 0,
+                // Field circulation ledger (2026-07-28): S = Σ J×W (conserved
+                // by the free wave sector), H = Σ J·curl J (static twist).
+                fieldSpinX: arr[23] ?? 0,
+                fieldSpinY: arr[24] ?? 0,
+                fieldSpinZ: arr[25] ?? 0,
+                fieldHelicity: arr[26] ?? 0,
+                centerClockPhase: arr[27] ?? 0,
+                centerClockSpeed: arr[28] ?? 0,
+                centerClockLatency: arr[29] ?? 0
             };
         } else {
             d = this._module.getDiagnostics(this._bridge);
@@ -753,10 +791,10 @@ export class WasmBridge {
             (m, b) => m.getStrongForceField(b, stride));
     }
 
-    // ── ParticleEngine (Scale 1) — JS backend (G_PE) ─────────────────
-    // Scale 0 lattice stays native WASM; pairwise PE uses the same JS engine
-    // as MockBridge so G_PE = G_DERIVED (FTD-0131) is enforced without a
-    // stale WASM binary still running lattice-toy G_N = 0.01.
+    // ── ParticleEngine (Scale 1) — native C++/WASM backend ───────────
+    // Every pe* call forwards to the embind adapter over the native
+    // ParticleEngine (G_PE = G_DERIVED, FTD-0131). See
+    // ./native-particle-engine.js for the adapter contract.
     initPE()                                                         { return this._peEngine.initPE(); }
     resetPE()                                                        { return this._peEngine.resetPE(); }
     peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) { return this._peEngine.peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff); }
@@ -764,7 +802,6 @@ export class WasmBridge {
     peApplyEquilibriumOrbit(particleId, options = {}) { return this._peEngine.peApplyEquilibriumOrbit(particleId, options); }
     peApplyEquilibriumOrbitBatch(entries) { return this._peEngine.peApplyEquilibriumOrbitBatch?.(entries); }
     peScaleVelocity(particleId, scale) { return this._peEngine.peScaleVelocity(particleId, scale); }
-    _peComputeForces()                                               { return this._peEngine._peComputeForces(); }
     peTick()                                                         { return this._peEngine.peTick(); }
     peGetParticleData()                                              { return this._peEngine.peGetParticleData(); }
     peGetFieldSources()                                              { return this._peEngine.peGetFieldSources(); }

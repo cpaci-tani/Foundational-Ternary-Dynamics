@@ -2,7 +2,7 @@ import { getActiveScale0Bridge, getActiveScale0Capability, getActiveLatticeSize 
 import { computeManifestationBlink } from './manifestation-flash.js';
 
 const _fluxSlicePlanes = [];
-const MANIFEST_FILL = 0.40; // matches scale1/pe-cloud-expander.js's MANIFEST_FILL
+import { MANIFEST_FILL } from '../../../viewport/constants.js';
 
 export function syncRenderableData(ctx, state, viewportAdapter) {
     const latticeSize = getActiveLatticeSize(ctx, state);

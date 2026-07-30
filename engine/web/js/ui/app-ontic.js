@@ -20,9 +20,9 @@
  *   }
  */
 
-import { renderEnergyLevels } from '../spectroscopy.js';
-import { renderCrossSections } from '../cross-sections.js';
-import { renderDecayRates } from '../decay-rates.js';
+// Energy-levels / cross-sections / decay-rates physics-panel mounts RETIRED
+// (2026-07 revision, parametric SM sandbox retirement). spectroscopy.js
+// itself survives for the Scale-0 hydrogen p1-observable.
 import {
     renderFcCard, renderObserverCard, renderHierarchyTower as renderOnticHierarchy,
     renderInfoDynamics
@@ -47,6 +47,12 @@ export function createOnticPanel(deps) {
 
     // ── Constants Table ─────────────────────────────────────────────────
     function populateConstants() {
+        // The ontic-panel DOM host was deliberately removed; without this
+        // guard populateConstants() still ran a real bridge.getConstants()
+        // call plus 8 no-op DOM writes every time it's invoked, for a panel
+        // that can never render. updateOnticPanel() below already guards
+        // this way (its 4-card check at the top); this mirrors it.
+        if (!document.getElementById('const-gstar')) return;
         const bridge = getBridge();
         const c = bridge?.getConstants?.();
         if (!c) return;
@@ -68,31 +74,10 @@ export function createOnticPanel(deps) {
 
     // ── Phase 1-3: Ontic / Physics / Hierarchy Initialization ────────
     function initOnticPhysicsHierarchy() {
-        // Phase 2: Render static physics content
-        const energyEl = document.getElementById('physics-energy-levels');
-        if (energyEl) renderEnergyLevels(getPhysicsZ(), energyEl);
-
-        const csEl = document.getElementById('physics-cross-sections');
-        if (csEl) renderCrossSections(csEl);
-
-        const drEl = document.getElementById('physics-decay-rates');
-        if (drEl) renderDecayRates(drEl);
-
-        // Ontic chain constants summary card
+        // Ontic chain constants summary card (the retired parametric cards —
+        // energy levels / cross-sections / decay rates — no longer mount).
         const constEl = document.getElementById('physics-constants');
         if (constEl) renderOnticChainSummary(constEl);
-
-        // Physics Z slider
-        const zSlider = document.getElementById('physics-z-slider');
-        const zValue = document.getElementById('physics-z-value');
-        if (zSlider) {
-            zSlider.addEventListener('input', () => {
-                const z = parseInt(zSlider.value);
-                setPhysicsZ(z);
-                if (zValue) zValue.textContent = `Z=${z}`;
-                if (energyEl) renderEnergyLevels(z, energyEl);
-            });
-        }
 
         // Initial render of ontic panels
         updateOnticPanel();
@@ -226,15 +211,11 @@ export function createOnticPanel(deps) {
     }
 
     /**
-     * Re-render the physics energy-levels card (called on tab activation to
-     * refresh for the current Z selection). The other physics cards
-     * (cross sections, decay rates, ontic chain summary) are static after
-     * initial render so they're not re-computed here.
+     * Physics-panel refresh hook (tab activation). The energy-levels card
+     * this used to re-render is retired; the remaining ontic-chain card is
+     * static after initial render.
      */
-    function refreshPhysicsPanel() {
-        const energyEl = document.getElementById('physics-energy-levels');
-        if (energyEl) renderEnergyLevels(getPhysicsZ(), energyEl);
-    }
+    function refreshPhysicsPanel() {}
 
     return {
         populateConstants,

@@ -6,7 +6,7 @@
 export const charts = [
     {
         id: 'pe-energy',
-        title: 'Particle Energy',
+        title: 'Particle Energy (active potential terms)',
         xLabel: 'sample',
         yLabel: 'MeV',
         defaultActive: true,
@@ -19,13 +19,15 @@ export const charts = [
     },
     {
         id: 'pe-momentum',
+        // Sim units (mass·lattice-velocity): no MeV/c or ħ conversion exists
+        // in the engine (FTD-0401) — never label these with physical units.
         title: 'Momentum & Angular Momentum',
         xLabel: 'sample',
-        yLabel: 'magnitude',
+        yLabel: 'sim units',
         defaultActive: true,
         series: [
-            { key: 'p', label: '|p|', color: 'var(--chart-pe-momentum, #a78bfa)', buffer: 'peMomentum', unit: 'MeV/c' },
-            { key: 'l', label: '|L|', color: 'var(--chart-pe-angmom, #60a5fa)',   buffer: 'peAngMom', unit: 'hbar' },
+            { key: 'p', label: '|p|', color: 'var(--chart-pe-momentum, #a78bfa)', buffer: 'peMomentum', unit: 'sim' },
+            { key: 'l', label: '|L| (origin)', color: 'var(--chart-pe-angmom, #60a5fa)',   buffer: 'peAngMom', unit: 'sim' },
         ],
     },
     {
