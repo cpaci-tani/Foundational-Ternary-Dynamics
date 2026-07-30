@@ -689,6 +689,21 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
         assertion: 'After factoring out 1.5, the field is identical to the base negative-marker template initially and after 12 ticks; no tau mass, lifetime, or flavor operator exists.',
     }),
+    's0-vacuum-positron': Object.freeze({
+        level: 'behavioral', qualification: 'POSITIVE MARKER PLUS SELECTED RADIAL FREE-WAVE TEMPLATE — no positron identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'One inert positive marker accompanies the base radial vector wave; no mass, spinor, Coulomb response, charge measurement, or matter pole is established.',
+    }),
+    's0-vacuum-antimuon': Object.freeze({
+        level: 'behavioral', qualification: 'EXACT 1.2x COPY OF THE POSITIVE-MARKER RADIAL WAVE — CLOSED NEGATIVE for a distinct antimuon mode',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'After factoring out 1.2, the field is identical to the base positive-marker template initially and after 12 ticks; no antimuon mass, lifetime, or flavor operator exists.',
+    }),
+    's0-vacuum-antitau': Object.freeze({
+        level: 'behavioral', qualification: 'EXACT 1.5x COPY OF THE POSITIVE-MARKER RADIAL WAVE — CLOSED NEGATIVE for a distinct antitau mode',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'After factoring out 1.5, the field is identical to the base positive-marker template initially and after 12 ticks; no antitau mass, lifetime, or flavor operator exists.',
+    }),
     's0-seed-higgs-field': Object.freeze({
         level: 'behavioral', qualification: 'IMPOSED VOLUME-FILLING VECTOR BACKGROUND — no scalar Higgs field or VEV mechanism',
         test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
@@ -1524,6 +1539,9 @@ export const SCALE0_SCENARIO_CATALOG = [
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-electron', 'Negative Marker + Radial Wave — Electron Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] electron identity'),
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-muon', '1.2x Negative-Marker Wave Copy — Muon Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] amplitude copy; [CLOSED NEGATIVE] generation identity'),
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-tau', '1.5x Negative-Marker Wave Copy — Tau Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] amplitude copy; [CLOSED NEGATIVE] generation identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-positron', 'Positive Marker + Radial Wave — Positron Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] positron identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-antimuon', '1.2x Positive-Marker Wave Copy — Antimuon Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] amplitude copy; [CLOSED NEGATIVE] generation identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-antitau', '1.5x Positive-Marker Wave Copy — Antitau Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] amplitude copy; [CLOSED NEGATIVE] generation identity'),
     /*
      * Scenario: s0-vacuum-electron-neutrino (Neutral Transverse Packet)
      * Physical purpose: Seeds a neutral divergence-free packet for native propagation tests.

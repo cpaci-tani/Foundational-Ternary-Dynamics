@@ -89,6 +89,60 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         return true;
     }
 
+    if (name == "s0-vacuum-positron") {
+        // Scenario ID: s0-vacuum-positron
+        // Qualification: one inert positive marker plus a selected outward
+        // radial vector template under the source-free wave map (charge-sign
+        // mirror of s0-vacuum-electron). No charge coupling, mass pole,
+        // spinor, or positron observable is present.
+        configure_free_wave(false);
+        IP(rb, mc, mc, mc, +1);
+        const int envR = std::max(3, N / 6);
+        const double envSigma = envR / 2.0;
+        const double envAmp = K_B * 1.5;
+        const double envR2 = envR * envR;
+        const int eLo = FLR(midF) - envR, eHi = CEL(midF) + envR;
+        for (int z = eLo; z <= eHi; ++z)
+        for (int y = eLo; y <= eHi; ++y)
+        for (int x = eLo; x <= eHi; ++x) {
+            double dx = x - midF, dy = y - midF, dz = z - midF;
+            double r2 = dx*dx + dy*dy + dz*dz;
+            if (r2 < 0.25 || r2 > envR2) continue;
+            double r = std::sqrt(r2);
+            double v = envAmp * std::exp(-r2 / (2.0 * envSigma * envSigma));
+            if (v < 0.001) continue;
+            IF(rb, x, y, z, v*dx/r, v*dy/r, v*dz/r);
+        }
+        return true;
+    }
+
+    if (name == "s0-vacuum-antimuon" || name == "s0-vacuum-antitau") {
+        // Qualification: exact 1.2x/1.5x amplitude copies of the positron-
+        // labelled vector template, with the same inert positive marker
+        // (generation-boost mirror of s0-vacuum-{muon,tau}). No lepton
+        // generation or mass distinction is encoded.
+        configure_free_wave(false);
+        const double boost = (name == "s0-vacuum-antitau") ? 2.25 : 1.80;
+        IP(rb, mc, mc, mc, +1);
+        const int envR = std::max(3, N / 6);
+        const double envSigma = envR / 2.0;
+        const double envAmp = K_B * boost;
+        const double envR2 = envR * envR;
+        const int eLo = FLR(midF) - envR, eHi = CEL(midF) + envR;
+        for (int z = eLo; z <= eHi; ++z)
+        for (int y = eLo; y <= eHi; ++y)
+        for (int x = eLo; x <= eHi; ++x) {
+            double dx = x - midF, dy = y - midF, dz = z - midF;
+            double r2 = dx*dx + dy*dy + dz*dz;
+            if (r2 < 0.25 || r2 > envR2) continue;
+            double r = std::sqrt(r2);
+            double v = envAmp * std::exp(-r2 / (2.0 * envSigma * envSigma));
+            if (v < 0.001) continue;
+            IF(rb, x, y, z, v*dx/r, v*dy/r, v*dz/r);
+        }
+        return true;
+    }
+
     if (name == "s0-vacuum-photon") {
         // Scenario ID: s0-vacuum-photon
         // Physical Purpose: Seeds a divergence-free transverse photon-candidate packet.

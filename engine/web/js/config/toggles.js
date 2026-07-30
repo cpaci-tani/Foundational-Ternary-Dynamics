@@ -105,6 +105,9 @@
  * 's0-vacuum-electron' |
  * 's0-vacuum-muon' |
  * 's0-vacuum-tau' |
+ * 's0-vacuum-positron' |
+ * 's0-vacuum-antimuon' |
+ * 's0-vacuum-antitau' |
  * 's0-vacuum-electron-neutrino' |
  * 's0-vacuum-muon-neutrino' |
  * 's0-vacuum-tau-neutrino' |
@@ -403,6 +406,9 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-vacuum-electron':     isolatedScale0Profile('wave_propagation'),
     's0-vacuum-muon':         isolatedScale0Profile('wave_propagation'),
     's0-vacuum-tau':          isolatedScale0Profile('wave_propagation'),
+    's0-vacuum-positron':     isolatedScale0Profile('wave_propagation'),
+    's0-vacuum-antimuon':     isolatedScale0Profile('wave_propagation'),
+    's0-vacuum-antitau':      isolatedScale0Profile('wave_propagation'),
     's0-vacuum-w-boson':      isolatedScale0Profile('wave_propagation'),
     's0-vacuum-z-boson':      isolatedScale0Profile('wave_propagation'),
     's0-vacuum-higgs':        isolatedScale0Profile('wave_propagation'),
@@ -699,6 +705,9 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-vacuum-electron': { mode: 0 },
     's0-vacuum-muon': { mode: 0 },
     's0-vacuum-tau': { mode: 0 },
+    's0-vacuum-positron': { mode: 0 },
+    's0-vacuum-antimuon': { mode: 0 },
+    's0-vacuum-antitau': { mode: 0 },
     's0-vacuum-w-boson': { mode: 0 },
     's0-vacuum-z-boson': { mode: 0 },
     's0-vacuum-higgs': { mode: 0 },

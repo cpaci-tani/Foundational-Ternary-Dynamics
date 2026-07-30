@@ -1420,6 +1420,62 @@ void test_particle_named_wave_template_cohorts() {
     }
 
     {
+        constexpr int L = 24;
+        ftd::RenderBridge base(L), medium(L), high(L);
+        base.force_cpu(); medium.force_cpu(); high.force_cpu();
+        check("three positive radial-dressing templates dispatch",
+              ftd::dispatch_scenario(base, "s0-vacuum-positron")
+              && ftd::dispatch_scenario(medium, "s0-vacuum-antimuon")
+              && ftd::dispatch_scenario(high, "s0-vacuum-antitau"));
+        const auto scaled_error2 = [](const ftd::RenderBridge& a,
+                                      const ftd::RenderBridge& b,
+                                      double scale) {
+            double r2 = 0.0, n2 = 0.0;
+            for (std::size_t i = 0; i < a.voxels().size(); ++i) {
+                r2 += (b.voxels()[i].flux - a.voxels()[i].flux * scale).mag2()
+                    + (b.voxels()[i].wave_vel
+                       - a.voxels()[i].wave_vel * scale).mag2();
+                n2 += b.voxels()[i].flux.mag2() + b.voxels()[i].wave_vel.mag2();
+            }
+            return std::sqrt(r2 / std::max(1e-30, n2));
+        };
+        check("positive templates differ only by imposed 1.2x/1.5x field amplitude",
+              scaled_error2(base, medium, 1.2) < 1e-12
+              && scaled_error2(base, high, 1.5) < 1e-12);
+        check("positive templates contain one inert positive marker each",
+              manifested_count(base) == 1 && manifested_count(medium) == 1
+              && manifested_count(high) == 1
+              && only_terms_enabled(base, {"wave_propagation"})
+              && only_terms_enabled(medium, {"wave_propagation"})
+              && only_terms_enabled(high, {"wave_propagation"}));
+        tick_n(base, 12); tick_n(medium, 12); tick_n(high, 12);
+        check("amplitude copies remain exact under the linear wave map",
+              scaled_error2(base, medium, 1.2) < 1e-12
+              && scaled_error2(base, high, 1.5) < 1e-12
+              && manifested_count(base) == 1 && manifested_count(medium) == 1
+              && manifested_count(high) == 1);
+
+        ftd::RenderBridge electron_ref(L);
+        electron_ref.force_cpu();
+        check("electron reference dispatches for the mirror check",
+              ftd::dispatch_scenario(electron_ref, "s0-vacuum-electron"));
+        // base was advanced 12 ticks above; electron_ref must be advanced the
+        // same 12 ticks under the identical source-free linear wave map so
+        // the mirror comparison below is taken at matching evolution points
+        // (L^12(-J0) = -L^12(J0) only when both sides share the same tick
+        // count — comparing a ticked base against an unticked reference
+        // would spuriously fail even for an exact charge-sign mirror).
+        tick_n(electron_ref, 12);
+        double mirror_r2 = 0.0, mirror_n2 = 0.0;
+        for (std::size_t i = 0; i < electron_ref.voxels().size(); ++i) {
+            mirror_r2 += (base.voxels()[i].flux + electron_ref.voxels()[i].flux).mag2();
+            mirror_n2 += electron_ref.voxels()[i].flux.mag2();
+        }
+        check("positron template is the exact charge-sign mirror of the electron template",
+              std::sqrt(mirror_r2 / std::max(1e-30, mirror_n2)) < 1e-12);
+    }
+
+    {
         struct Case { const char* id; int expected_states; };
         const Case cases[] = {
             {"s0-seed-higgs-field", 0},
