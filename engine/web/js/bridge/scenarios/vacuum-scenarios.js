@@ -70,6 +70,31 @@ export function setupVacuumScenario(name, harness, ctx) {
             return true;
         }
 
+        case 's0-vacuum-positron': {
+            // One inert positive marker plus a selected outward radial vector
+            // template (charge-sign mirror of s0-vacuum-electron). No charge
+            // coupling, mass pole, spinor, or positron observable is present.
+            configureFreeWaveTerms(harness, false);
+            harness.injectParticle(mc, mc, mc, +1);
+            const envR = vox(5);
+            injectRadialEnvelope(harness, midF, midF, midF, +1, sig(2.5), K_B * 1.5,
+                { radius: envR, minR2: 0.25 });
+            return true;
+        }
+
+        case 's0-vacuum-antimuon':
+        case 's0-vacuum-antitau': {
+            // Exact 1.2x/1.5x amplitude copies of the positron-labelled
+            // vector template. No generation or mass distinction is encoded.
+            configureFreeWaveTerms(harness, false);
+            const boost = (name === 's0-vacuum-antitau') ? 2.25 : 1.80;
+            harness.injectParticle(mc, mc, mc, +1);
+            const envR = vox(5);
+            injectRadialEnvelope(harness, midF, midF, midF, +1, sig(2.5), K_B * boost,
+                { radius: envR, minR2: 0.25 });
+            return true;
+        }
+
         case 's0-vacuum-photon': {
             // Mirror of s0-seed-photon — J_z-polarized Gaussian pulse
             // propagating +x. c = 1/√3 [THEOREM] from cubic-lattice CFL.
