@@ -644,6 +644,36 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
         assertion: 'The field norm follows only the imposed A-squared amplitude code and conserves the source-free wave invariant; the marker remains stable rather than exhibiting a top decay and no mass pole exists.',
     }),
+    's0-seed-anti-up-quark': Object.freeze({
+        level: 'behavioral', qualification: 'SELECTED - MARKER, COLOR-1 LABEL, AND A=0.5 AXIS-BIASED WAVE TEMPLATE — no anti-up-quark identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'One inert - marker and imposed color label 1 accompany a source-free vector wave whose exact modified Hamiltonian is conserved; no fractional charge, antiquark mass, color gauge field, or confinement is present.',
+    }),
+    's0-seed-anti-down-quark': Object.freeze({
+        level: 'behavioral', qualification: 'SELECTED + MARKER, COLOR-2 LABEL, AND A=0.5 AXIS-BIASED WAVE TEMPLATE — no anti-down-quark identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'One inert + marker and imposed color label 2 accompany a source-free vector wave with the same norm as the A=0.5 negative control; no fractional charge, mass, gauge field, or confinement is present.',
+    }),
+    's0-seed-anti-strange-quark': Object.freeze({
+        level: 'behavioral', qualification: 'SELECTED + MARKER, COLOR-3 LABEL, AND A=0.7 WAVE TEMPLATE — no anti-strange-quark identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'The field norm follows only the imposed A-squared amplitude code and conserves the source-free wave invariant; no strangeness, flavor-changing channel, mass pole, or confinement exists.',
+    }),
+    's0-seed-anti-charm-quark': Object.freeze({
+        level: 'behavioral', qualification: 'SELECTED - MARKER, COLOR-1 LABEL, AND A=1.0 WAVE TEMPLATE — no anti-charm-quark identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'The field norm follows only the imposed A-squared amplitude code and conserves the source-free wave invariant; no charm flavor, mass pole, decay, or confinement exists.',
+    }),
+    's0-seed-anti-bottom-quark': Object.freeze({
+        level: 'behavioral', qualification: 'SELECTED + MARKER, COLOR-2 LABEL, AND A=1.4 WAVE TEMPLATE — no anti-bottom-quark identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'The field norm follows only the imposed A-squared amplitude code and conserves the source-free wave invariant; no bottom flavor, mass pole, decay, or confinement exists.',
+    }),
+    's0-seed-anti-top-quark': Object.freeze({
+        level: 'behavioral', qualification: 'SELECTED - MARKER, COLOR-3 LABEL, AND A=2.5 WAVE TEMPLATE — no anti-top-quark identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'The field norm follows only the imposed A-squared amplitude code and conserves the source-free wave invariant; the marker remains stable rather than exhibiting a top decay and no mass pole exists.',
+    }),
     's0-vacuum-electron': Object.freeze({
         level: 'behavioral', qualification: 'NEGATIVE MARKER PLUS SELECTED RADIAL FREE-WAVE TEMPLATE — no electron identity',
         test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
@@ -1096,6 +1126,12 @@ export const SCALE0_SCENARIO_CATALOG = [
     makeScenario('1. Validated Native Dynamics', 's0-seed-charm-quark', 'A=1.0 Positive/Red-Labeled Wave Template — Charm Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] quark identity'),
     makeScenario('1. Validated Native Dynamics', 's0-seed-bottom-quark', 'A=1.4 Negative/Green-Labeled Wave Template — Bottom Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] quark identity'),
     makeScenario('1. Validated Native Dynamics', 's0-seed-top-quark', 'A=2.5 Positive/Blue-Labeled Wave Template — Top Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] quark identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-seed-anti-up-quark', 'A=0.5 Negative/Red-Labeled Wave Template — Anti-Up Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] antiquark identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-seed-anti-down-quark', 'A=0.5 Positive/Green-Labeled Wave Template — Anti-Down Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] antiquark identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-seed-anti-strange-quark', 'A=0.7 Positive/Blue-Labeled Wave Template — Anti-Strange Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] antiquark identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-seed-anti-charm-quark', 'A=1.0 Negative/Red-Labeled Wave Template — Anti-Charm Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] antiquark identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-seed-anti-bottom-quark', 'A=1.4 Positive/Green-Labeled Wave Template — Anti-Bottom Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] antiquark identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-seed-anti-top-quark', 'A=2.5 Negative/Blue-Labeled Wave Template — Anti-Top Identity Rejected', ['wave', 'template', 'null-test'], '[IMPOSED] template; [CLOSED NEGATIVE] antiquark identity'),
     makeScenario('1. Validated Native Dynamics', 's0-seed-higgs-field', 'Volume-Filling Vector Background — Higgs/VEV Identity Rejected', ['wave', 'background', 'null-test'], '[IMPOSED] vector background; [CLOSED NEGATIVE] scalar/VEV identity'),
     makeScenario('1. Validated Native Dynamics', 's0-seed-gluon', 'Mixed-Polarization Vector Packet — Gluon Identity Rejected', ['wave', 'packet', 'null-test'], '[IMPOSED] vector packet; [CLOSED NEGATIVE] gluon identity'),
 

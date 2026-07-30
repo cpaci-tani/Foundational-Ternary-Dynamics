@@ -524,21 +524,35 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // ── Legacy quark-labelled wave-template cohort ──
     else if (name == "s0-seed-up-quark" || name == "s0-seed-down-quark" ||
              name == "s0-seed-strange-quark" || name == "s0-seed-charm-quark" ||
-             name == "s0-seed-bottom-quark" || name == "s0-seed-top-quark") {
+             name == "s0-seed-bottom-quark" || name == "s0-seed-top-quark" ||
+             name == "s0-seed-anti-up-quark" || name == "s0-seed-anti-down-quark" ||
+             name == "s0-seed-anti-strange-quark" || name == "s0-seed-anti-charm-quark" ||
+             name == "s0-seed-anti-bottom-quark" || name == "s0-seed-anti-top-quark") {
         // Six selected polarity/color labels and amplitude multipliers share
         // one geometry. The selected metadata do not couple to the isolated
         // wave map, so no flavor, fractional charge, mass, or quark identity
         // is represented. The cohort qualifies only amplitude scaling and
-        // source-free wave-invariant conservation.
+        // source-free wave-invariant conservation. The 6 "anti-*" ids are the
+        // charge-sign mirror of their particle counterpart (same color,
+        // same ampBoost, flipped charge) — reusing the same color label is
+        // consistent with FTD's color field being a non-dynamical display
+        // label that does not couple to any operator, not a claim about
+        // anticolor physics.
         configure_free_wave_terms(rb, false);
         int charge, color;
         double ampBoost;
-        if      (name == "s0-seed-up-quark")      { charge = +1; color = 1; ampBoost = 0.5; }
-        else if (name == "s0-seed-down-quark")    { charge = -1; color = 2; ampBoost = 0.5; }
-        else if (name == "s0-seed-strange-quark") { charge = -1; color = 3; ampBoost = 0.7; }
-        else if (name == "s0-seed-charm-quark")   { charge = +1; color = 1; ampBoost = 1.0; }
-        else if (name == "s0-seed-bottom-quark")  { charge = -1; color = 2; ampBoost = 1.4; }
-        else                                        { charge = +1; color = 3; ampBoost = 2.5; }
+        if      (name == "s0-seed-up-quark")           { charge = +1; color = 1; ampBoost = 0.5; }
+        else if (name == "s0-seed-down-quark")         { charge = -1; color = 2; ampBoost = 0.5; }
+        else if (name == "s0-seed-strange-quark")      { charge = -1; color = 3; ampBoost = 0.7; }
+        else if (name == "s0-seed-charm-quark")        { charge = +1; color = 1; ampBoost = 1.0; }
+        else if (name == "s0-seed-bottom-quark")       { charge = -1; color = 2; ampBoost = 1.4; }
+        else if (name == "s0-seed-top-quark")          { charge = +1; color = 3; ampBoost = 2.5; }
+        else if (name == "s0-seed-anti-up-quark")      { charge = -1; color = 1; ampBoost = 0.5; }
+        else if (name == "s0-seed-anti-down-quark")    { charge = +1; color = 2; ampBoost = 0.5; }
+        else if (name == "s0-seed-anti-strange-quark") { charge = +1; color = 3; ampBoost = 0.7; }
+        else if (name == "s0-seed-anti-charm-quark")   { charge = -1; color = 1; ampBoost = 1.0; }
+        else if (name == "s0-seed-anti-bottom-quark")  { charge = +1; color = 2; ampBoost = 1.4; }
+        else                                            { charge = -1; color = 3; ampBoost = 2.5; }
         IPF(rb, mc, mc, mc, charge, (charge > 0) ? +1 : -1, color);
         const double qSig = 1.5;
         const int qR = 4;

@@ -53,6 +53,12 @@
  * 's0-seed-charm-quark' |
  * 's0-seed-bottom-quark' |
  * 's0-seed-top-quark' |
+ * 's0-seed-anti-up-quark' |
+ * 's0-seed-anti-down-quark' |
+ * 's0-seed-anti-strange-quark' |
+ * 's0-seed-anti-charm-quark' |
+ * 's0-seed-anti-bottom-quark' |
+ * 's0-seed-anti-top-quark' |
  * 's0-seed-higgs-field' |
  * 's0-seed-gluon' |
  * 's0-seed-beta-decay' |
@@ -386,6 +392,12 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-charm-quark':    isolatedScale0Profile('wave_propagation'),
     's0-seed-bottom-quark':   isolatedScale0Profile('wave_propagation'),
     's0-seed-top-quark':      isolatedScale0Profile('wave_propagation'),
+    's0-seed-anti-up-quark':       isolatedScale0Profile('wave_propagation'),
+    's0-seed-anti-down-quark':     isolatedScale0Profile('wave_propagation'),
+    's0-seed-anti-strange-quark':  isolatedScale0Profile('wave_propagation'),
+    's0-seed-anti-charm-quark':    isolatedScale0Profile('wave_propagation'),
+    's0-seed-anti-bottom-quark':   isolatedScale0Profile('wave_propagation'),
+    's0-seed-anti-top-quark':      isolatedScale0Profile('wave_propagation'),
     's0-seed-higgs-field':    isolatedScale0Profile('wave_propagation'),
     's0-seed-gluon':          isolatedScale0Profile('wave_propagation'),
     's0-vacuum-electron':     isolatedScale0Profile('wave_propagation'),
@@ -676,6 +688,12 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-seed-charm-quark': { mode: 0 },
     's0-seed-bottom-quark': { mode: 0 },
     's0-seed-top-quark': { mode: 0 },
+    's0-seed-anti-up-quark': { mode: 0 },
+    's0-seed-anti-down-quark': { mode: 0 },
+    's0-seed-anti-strange-quark': { mode: 0 },
+    's0-seed-anti-charm-quark': { mode: 0 },
+    's0-seed-anti-bottom-quark': { mode: 0 },
+    's0-seed-anti-top-quark': { mode: 0 },
     's0-seed-higgs-field': { mode: 0 },
     's0-seed-gluon': { mode: 0 },
     's0-vacuum-electron': { mode: 0 },

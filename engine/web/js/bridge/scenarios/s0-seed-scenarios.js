@@ -449,17 +449,31 @@ export function setupS0SeedScenario(name, harness, ctx) {
                 case 's0-seed-strange-quark':
                 case 's0-seed-charm-quark':
                 case 's0-seed-bottom-quark':
-                case 's0-seed-top-quark': {
+                case 's0-seed-top-quark':
+                case 's0-seed-anti-up-quark':
+                case 's0-seed-anti-down-quark':
+                case 's0-seed-anti-strange-quark':
+                case 's0-seed-anti-charm-quark':
+                case 's0-seed-anti-bottom-quark':
+                case 's0-seed-anti-top-quark': {
                     configureFreeWaveTerms(harness, false);
-                    // Color/polarity metadata are visual labels only.
+                    // Color/polarity metadata are visual labels only. The
+                    // "anti-*" ids are the charge-sign mirror of their
+                    // particle counterpart (same color, same ampBoost).
                     let charge, color, ampBoost;
                     switch (name) {
-                        case 's0-seed-up-quark':      charge=+1; color=1; ampBoost=0.5;  break;
-                        case 's0-seed-down-quark':    charge=-1; color=2; ampBoost=0.5;  break;
-                        case 's0-seed-strange-quark': charge=-1; color=3; ampBoost=0.7;  break;
-                        case 's0-seed-charm-quark':   charge=+1; color=1; ampBoost=1.0;  break;
-                        case 's0-seed-bottom-quark':  charge=-1; color=2; ampBoost=1.4;  break;
-                        case 's0-seed-top-quark':     charge=+1; color=3; ampBoost=2.5;  break;
+                        case 's0-seed-up-quark':           charge=+1; color=1; ampBoost=0.5;  break;
+                        case 's0-seed-down-quark':         charge=-1; color=2; ampBoost=0.5;  break;
+                        case 's0-seed-strange-quark':      charge=-1; color=3; ampBoost=0.7;  break;
+                        case 's0-seed-charm-quark':        charge=+1; color=1; ampBoost=1.0;  break;
+                        case 's0-seed-bottom-quark':       charge=-1; color=2; ampBoost=1.4;  break;
+                        case 's0-seed-top-quark':          charge=+1; color=3; ampBoost=2.5;  break;
+                        case 's0-seed-anti-up-quark':      charge=-1; color=1; ampBoost=0.5;  break;
+                        case 's0-seed-anti-down-quark':    charge=+1; color=2; ampBoost=0.5;  break;
+                        case 's0-seed-anti-strange-quark': charge=+1; color=3; ampBoost=0.7;  break;
+                        case 's0-seed-anti-charm-quark':   charge=-1; color=1; ampBoost=1.0;  break;
+                        case 's0-seed-anti-bottom-quark':  charge=+1; color=2; ampBoost=1.4;  break;
+                        case 's0-seed-anti-top-quark':     charge=-1; color=3; ampBoost=2.5;  break;
                     }
                     harness.injectParticle(mc, mc, mc, charge, {
                         color,

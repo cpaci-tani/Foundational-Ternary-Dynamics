@@ -1347,6 +1347,12 @@ void test_particle_named_wave_template_cohorts() {
             {"s0-seed-charm-quark", +1, 1, 1.0},
             {"s0-seed-bottom-quark", -1, 2, 1.4},
             {"s0-seed-top-quark", +1, 3, 2.5},
+            {"s0-seed-anti-up-quark", -1, 1, 0.5},
+            {"s0-seed-anti-down-quark", +1, 2, 0.5},
+            {"s0-seed-anti-strange-quark", +1, 3, 0.7},
+            {"s0-seed-anti-charm-quark", -1, 1, 1.0},
+            {"s0-seed-anti-bottom-quark", +1, 2, 1.4},
+            {"s0-seed-anti-top-quark", -1, 3, 2.5},
         };
         double base_norm = 0.0;
         for (const auto& c : cases) {
