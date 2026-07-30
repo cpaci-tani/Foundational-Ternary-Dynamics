@@ -2,7 +2,7 @@
 
 **Status:** complete for the frozen scenario catalog and production tick.
 
-**Scope:** all 117 Scale-0 scenario IDs in
+**Scope:** all 130 Scale-0 scenario IDs in
 `engine/web/js/scales/scale0/scenario-registry.js`, their C++ production
 implementations, JS fallback mirrors, browser mounting path, and evidence
 records. This supersedes the physics-sense conclusions of the 2026-06-05
@@ -30,12 +30,12 @@ This produces five honest menu classes:
 
 | Class | Count | Meaning |
 |---|---:|---|
-| Validated Native Dynamics | 79 | A measured property of the frozen native field/update map, including exact ansätze and null controls |
+| Validated Native Dynamics | 92 | A measured property of the frozen native field/update map, including exact ansätze and null controls |
 | Validated State Dynamics | 34 | A measured manifested-state or selected reaction response |
 | Qualified Selected Extensions | 1 | A measured toggle-gated extension whose surviving behavior and failed physical interpretation are both explicit |
 | Validated Initial Data | 2 | A prepared geometry whose construction, not physical identity, is certified |
 | Macroscopic Physics & Measurement | 1 | A bounded prepared-response probe with its macroscopic interpretation explicitly rejected where unsupported |
-| **Total** | **117** | **All catalog entries admitted with behavioral evidence** |
+| **Total** | **130** | **All catalog entries admitted with behavioral evidence** |
 
 The registry is the complete per-scenario run-of-record manifest. It contains
 one qualification, one test location, and one concrete assertion for every ID.
@@ -43,13 +43,13 @@ one qualification, one test location, and one concrete assertion for every ID.
 ## 2. Closure result
 
 - Menu, internal catalog, JS implementations, C++ implementations, and evidence
-  records are exactly 117/117/117/117/117.
+  records are exactly 130/130/130/130/130.
 - There are no hidden or mechanically smoke-only scenarios.
-- 108 scenarios cite `engine/tests/test_scenario_behavior.cpp`; the remaining
+- 121 scenarios cite `engine/tests/test_scenario_behavior.cpp`; the remaining
   9 cite the focused boundary, genesis, reaction, dynamic-flux-dressing,
   reciprocal-moving-source, velocity, and Thomson tests recorded in the
   registry (8 distinct files).
-- Cumulative browser evidence has loaded all 117 production WASM scenarios.
+- Cumulative browser evidence has loaded all 130 production WASM scenarios.
   The all-catalog campaign was rerun 2026-07-25 when the catalog reached 116
   (`npx playwright test scale0-scenario-health.spec.js`, 4/4, all entries on
   the `wasm-worker` owner); FTD-0477 then adds a focused production-WASM test
@@ -163,7 +163,7 @@ qualification unchanged.
 
 1. Add state-hash parity tests between C++ CPU, deployed WASM, and JS fallback
    for the deterministic subset; ID parity alone is not trajectory parity.
-2. Store the 117-row mechanical campaign as a versioned JSON artifact, including
+2. Store the 130-row mechanical campaign as a versioned JSON artifact, including
    source revision, lattice size, owner, first-frame latency, tick, energy, field
    peak, particle count, and errors.
 3. Add multi-volume and multi-seed campaigns only to scenarios whose claim
