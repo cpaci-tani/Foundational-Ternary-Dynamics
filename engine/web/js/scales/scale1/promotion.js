@@ -209,7 +209,12 @@ export function voxelsToClusters(coarsen, latticeSize) {
         // fluxMag/fdir/org unavailable from the voxel snapshot → 0.
     });
 
-    return clustersToSeeds({ count: clusters.length, ids, signs, size, fields }, latticeSize);
+    const { seeds, displayScale } = clustersToSeeds({ count: clusters.length, ids, signs, size, fields }, latticeSize);
+    // Attach each seed's constituent voxel indices (into the ORIGINAL
+    // `coarsen` arrays) so the mass-comparison overlay can sum exactly the
+    // voxels that produced this cluster, without re-running Moore-26.
+    seeds.forEach((seed, k) => { seed.voxelMembers = clusters[k]?.members ?? []; });
+    return { seeds, displayScale };
 }
 
 /**

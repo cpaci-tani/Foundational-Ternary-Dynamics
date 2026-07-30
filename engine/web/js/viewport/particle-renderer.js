@@ -20,6 +20,8 @@
 import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
+import { makeRingTexture, makeTextTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
+import { compareClusterToVoxelMass } from '../scales/scale1/telemetry/mass-comparison.js';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
@@ -79,6 +81,9 @@ export class ViewportParticleRenderer {
         this._peSystem = null;
         this._voxelDebug = null;      // Scale-1 promotion-source ghost layer
         this._voxelDebugWarned = false;
+        this._admissibilityRings = null;  // Scale-1 promotion admissibility halo overlay
+        this._provenanceLabels = null;    // Scale-1 promotion cluster-id/N label overlay
+        this._massComparison = null;      // Scale-1 promotion voxel<->cluster mass-delta overlay
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -198,6 +203,153 @@ export class ViewportParticleRenderer {
             this._buildVoxelDebugLayer();
         }
         this._voxelDebug.visible = !!on;
+    }
+
+    // ── Admissibility ring overlay (lattice-promotion) ──────────────────
+    // A THREE.Group of billboard sprites, one ring per live promoted
+    // particle found in scale1State.promotedSeedById. Rebuilt each call
+    // (promoted-particle counts are small — tens, not thousands — so a
+    // full rebuild is simpler and cheap next to per-particle pooling).
+    _buildAdmissibilityRings() {
+        this._admissibilityRings = new THREE.Group();
+        this._admissibilityRings.visible = false;
+        this._ringTexAdmissible = makeRingTexture({ color: '#4ade80', dashed: false });
+        this._ringTexMarginal = makeRingTexture({ color: '#fbbf24', dashed: true });
+        this._scene.add(this._admissibilityRings);
+    }
+
+    /**
+     * @param {{positions:Float32Array|Float64Array, count:number}} peData
+     * @param {Map<number, object>} seedById - scale1State.promotedSeedById
+     * @param {Int32Array|number[]} ids - peData-aligned native particle ids
+     */
+    updateAdmissibilityRings(peData, seedById, ids) {
+        if (!this._admissibilityRings) this._buildAdmissibilityRings();
+        const group = this._admissibilityRings;
+        while (group.children.length) group.remove(group.children[0]);
+        if (!seedById || seedById.size === 0) return;
+        for (let i = 0; i < peData.count; i++) {
+            const seed = seedById.get(ids[i]);
+            if (!seed) continue;
+            const tex = seed.admissible ? this._ringTexAdmissible : this._ringTexMarginal;
+            const sprite = makeBillboardSprite(tex, 2.5);
+            sprite.position.set(
+                peData.positions[i * 3], peData.positions[i * 3 + 1], peData.positions[i * 3 + 2]);
+            group.add(sprite);
+        }
+    }
+
+    toggleAdmissibilityRings(on) {
+        if (!this._admissibilityRings) this._buildAdmissibilityRings();
+        this._admissibilityRings.visible = on;
+    }
+
+    // ── Provenance label overlay (lattice-promotion) ─────────────────────
+    // Unlike the admissibility rings (2 cached ring textures), provenance
+    // labels are per-particle unique text — each sprite's texture is built
+    // and disposed on every rebuild rather than cached/reused.
+    _buildProvenanceLabels() {
+        this._provenanceLabels = new THREE.Group();
+        this._provenanceLabels.visible = false;
+        this._scene.add(this._provenanceLabels);
+    }
+
+    /**
+     * @param {{positions:Float32Array|Float64Array, count:number}} peData
+     * @param {Map<number, object>} seedById - scale1State.promotedSeedById
+     * @param {Int32Array|number[]} ids - peData-aligned native particle ids
+     */
+    updateProvenanceLabels(peData, seedById, ids) {
+        if (!this._provenanceLabels) this._buildProvenanceLabels();
+        const group = this._provenanceLabels;
+        while (group.children.length) {
+            const child = group.children[0];
+            child.material.map?.dispose();
+            child.material.dispose();
+            group.remove(child);
+        }
+        if (!seedById || seedById.size === 0) return;
+        for (let i = 0; i < peData.count; i++) {
+            const seed = seedById.get(ids[i]);
+            if (!seed) continue;
+            const tex = makeTextTexture(`#${seed.clusterId} N=${seed.size}`);
+            const sprite = makeBillboardSprite(tex, 3.0);
+            sprite.position.set(
+                peData.positions[i * 3],
+                peData.positions[i * 3 + 1] + 2.0, // offset above the particle
+                peData.positions[i * 3 + 2]);
+            group.add(sprite);
+        }
+    }
+
+    toggleProvenanceLabels(on) {
+        if (!this._provenanceLabels) this._buildProvenanceLabels();
+        this._provenanceLabels.visible = on;
+    }
+
+    // ── Voxel<->cluster mass-comparison overlay (lattice-promotion) ──────
+    _buildMassComparison() {
+        this._massComparison = new THREE.Group();
+        this._massComparison.visible = false;
+        this._scene.add(this._massComparison);
+    }
+
+    /**
+     * @param {{positions:Float32Array|Float64Array, count:number, ids:Int32Array}} peData
+     * @param {Map<number, object>} seedById
+     * @param {{positions:Float64Array, masses:Float64Array}|null} voxelDebug - the
+     *   coarsenToParticles snapshot (scale1State.lastPromotion.voxelDebug)
+     * @param {number} latticeSize
+     * @param {number} displayScale
+     */
+    updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale) {
+        if (!this._massComparison) this._buildMassComparison();
+        const group = this._massComparison;
+        while (group.children.length) {
+            const child = group.children[0];
+            if (child.material.map) child.material.map.dispose();
+            child.material.dispose();
+            child.geometry?.dispose?.();
+            group.remove(child);
+        }
+        if (!seedById || !voxelDebug || voxelDebug.count === 0) return;
+        const center = (latticeSize - 1) / 2;
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x999999, transparent: true, opacity: 0.5 });
+
+        for (let i = 0; i < peData.count; i++) {
+            const seed = seedById.get(peData.ids[i]);
+            if (!seed || !seed.voxelMembers || seed.voxelMembers.length === 0) continue;
+
+            let vcx = 0, vcy = 0, vcz = 0;
+            const voxelMasses = [];
+            for (const vi of seed.voxelMembers) {
+                vcx += voxelDebug.positions[vi * 3];
+                vcy += voxelDebug.positions[vi * 3 + 1];
+                vcz += voxelDebug.positions[vi * 3 + 2];
+                voxelMasses.push(voxelDebug.masses[vi]);
+            }
+            const n = seed.voxelMembers.length;
+            vcx = (vcx / n - center) * displayScale;
+            vcy = (vcy / n - center) * displayScale;
+            vcz = (vcz / n - center) * displayScale;
+
+            const px = peData.positions[i * 3], py = peData.positions[i * 3 + 1], pz = peData.positions[i * 3 + 2];
+            const geo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(px, py, pz), new THREE.Vector3(vcx, vcy, vcz),
+            ]);
+            group.add(new THREE.Line(geo, lineMat));
+
+            const { delta } = compareClusterToVoxelMass(seed, voxelMasses);
+            const badgeTex = makeTextTexture(`Δm=${delta.toFixed(3)}`, { color: '#f472b6' });
+            const badge = makeBillboardSprite(badgeTex, 2.5);
+            badge.position.set((px + vcx) / 2, (py + vcy) / 2, (pz + vcz) / 2);
+            group.add(badge);
+        }
+    }
+
+    toggleMassComparison(on) {
+        if (!this._massComparison) this._buildMassComparison();
+        this._massComparison.visible = on;
     }
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
@@ -456,14 +608,18 @@ export class ViewportParticleRenderer {
     // ── Per-Particle Force Arrows (decomposed: Coulomb / gravity / strong / net) ──
     _buildPEForceArrows() {
         const MAX = 200;
-        const makeSet = (color) => {
+        const makeSet = (color, dashed = false) => {
             const vertices = new Float32Array(MAX * 6);
             const geo = new THREE.BufferGeometry();
             geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
             geo.setDrawRange(0, 0);
-            const mat = new THREE.LineBasicMaterial({
-                color, transparent: true, opacity: 0.85,
-            });
+            const mat = dashed
+                ? new THREE.LineDashedMaterial({
+                    color, transparent: true, opacity: 0.9, dashSize: 1.5, gapSize: 1.0,
+                  })
+                : new THREE.LineBasicMaterial({
+                    color, transparent: true, opacity: 0.85,
+                  });
             const lines = new THREE.LineSegments(geo, mat);
             lines.frustumCulled = false;
             lines.visible = false;
@@ -472,7 +628,7 @@ export class ViewportParticleRenderer {
         };
         this._peForceCoulomb = makeSet(0xff4444);
         this._peForceGravity = makeSet(0x94a3b8);
-        this._peForceStrong = makeSet(0xff1744);
+        this._peForceStrong = makeSet(0xff1744, /* dashed */ true);
         this._peForceNet = makeSet(0x44cc66);
         // Legacy alias — net force layer
         this._particleForces = this._peForceNet;
@@ -498,6 +654,7 @@ export class ViewportParticleRenderer {
             posAttr.array[i * 6 + 5] = pz + (mag > 1e-20 ? fz / mag * scale : 0);
         }
         posAttr.needsUpdate = true;
+        if (lines.material.isLineDashedMaterial) lines.computeLineDistances();
         lines.geometry.setDrawRange(0, n * 2);
     }
 
@@ -798,6 +955,29 @@ export class ViewportParticleRenderer {
         disposeMesh(this._particleForces);
         disposeMesh(this._peSystem);
         disposeMesh(this._voxelDebug);
+
+        if (this._admissibilityRings) {
+            while (this._admissibilityRings.children.length) {
+                disposeMesh(this._admissibilityRings.children.pop());
+            }
+            this._scene.remove(this._admissibilityRings);
+        }
+        if (this._ringTexAdmissible) this._ringTexAdmissible.dispose();
+        if (this._ringTexMarginal) this._ringTexMarginal.dispose();
+
+        if (this._provenanceLabels) {
+            while (this._provenanceLabels.children.length) {
+                disposeMesh(this._provenanceLabels.children.pop());
+            }
+            this._scene.remove(this._provenanceLabels);
+        }
+
+        if (this._massComparison) {
+            while (this._massComparison.children.length) {
+                disposeMesh(this._massComparison.children.pop());
+            }
+            this._scene.remove(this._massComparison);
+        }
 
         this.particles = null;
         this.velocityVectors = null;

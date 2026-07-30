@@ -22,6 +22,9 @@ function defaultOverlays() {
         velocities: false,
         trails: false,
         voxelDebug: false,    // promotion-source ghost layer
+        admissibilityRing: false,  // lattice-promotion admissibility halo
+        provenanceLabel: false,    // lattice-promotion cluster-id/N label
+        massComparison: false,     // voxel<->cluster mass-delta connector
     };
 }
 
@@ -42,6 +45,14 @@ export const scale1State = {
     // take so s1-voxel-debug and the promotion info card can re-read it).
     lastPromotion: null,
 
+    // Maps native engine particle id -> the promotion.js seed it came from,
+    // so per-frame rendering can look up admissible/clusterId/size/mass for
+    // a live particle without the engine tracking any of that itself.
+    // Populated by scenario-registry.js's seedPromotionPayload; cleared on
+    // every scenario load (see resetScale1State below) and left stale-safe
+    // otherwise (a live id missing from the map just isn't drawn).
+    promotedSeedById: new Map(),
+
     currentScenarioId: null,
 
     // Chart-push gating: last engine tick pushed to the hub ring buffers
@@ -57,6 +68,7 @@ export function resetScale1State() {
     scale1State.statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
     scale1State.tickAcc.reset();
     scale1State.lastPushedTick = -1;
+    scale1State.promotedSeedById.clear();
     // lastPromotion and currentScenarioId survive a visual reset on purpose:
     // the promotion payload is consumed/replaced by scenario loads, not by
     // mode-switch cache resets.

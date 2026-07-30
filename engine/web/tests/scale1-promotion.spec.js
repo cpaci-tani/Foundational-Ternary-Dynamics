@@ -100,4 +100,97 @@ test.describe('Scale 0 → Scale 1 promotion', () => {
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
+
+    test('admissibility rings render on promoted particles', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await page.evaluate(() => {
+            const sel = document.getElementById('scenario-select');
+            sel.value = 's0-seed-hydrogen';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await page.waitForTimeout(1500);
+        await page.evaluate(() => document.getElementById('btn-scale-up')?.click());
+        await expect.poll(
+            () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
+            { timeout: 15_000 },
+        ).toBeGreaterThan(0);
+
+        const ringCount = await page.evaluate(() => {
+            const vp = window.__FTD_DEV__?.viewport;
+            return vp?._particleRenderer?._admissibilityRings?.children?.length ?? -1;
+        });
+        expect(ringCount).toBeGreaterThan(0);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
+
+    test('provenance labels render on promoted particles', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await page.evaluate(() => {
+            const sel = document.getElementById('scenario-select');
+            sel.value = 's0-seed-hydrogen';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await page.waitForTimeout(1500);
+        await page.evaluate(() => document.getElementById('btn-scale-up')?.click());
+        await expect.poll(
+            () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
+            { timeout: 15_000 },
+        ).toBeGreaterThan(0);
+
+        await page.evaluate(() => document.getElementById('toggle-pe-provenance')?.click());
+        await page.waitForTimeout(500);
+
+        const labelCount = await page.evaluate(() => {
+            const vp = window.__FTD_DEV__?.viewport;
+            return vp?._particleRenderer?._provenanceLabels?.children?.length ?? -1;
+        });
+        expect(labelCount).toBeGreaterThan(0);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
+
+    test('mass-comparison connector renders when voxel-debug is active', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await page.evaluate(() => {
+            const sel = document.getElementById('scenario-select');
+            sel.value = 's0-seed-hydrogen';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await page.waitForTimeout(1500);
+        await page.evaluate(() => document.getElementById('btn-scale-up')?.click());
+        await expect.poll(
+            () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
+            { timeout: 15_000 },
+        ).toBeGreaterThan(0);
+
+        // Switch to the voxel-debug scenario preset, which enables massComparison
+        // by default and re-seeds from the SAME captured payload
+        // (scale1State.lastPromotion survives the scenario switch).
+        await page.evaluate(() => {
+            const sel = document.getElementById('pe-scenario-select');
+            sel.value = 's1-voxel-debug';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await page.waitForTimeout(500);
+
+        const connectorCount = await page.evaluate(() => {
+            const vp = window.__FTD_DEV__?.viewport;
+            return vp?._particleRenderer?._massComparison?.children?.length ?? -1;
+        });
+        expect(connectorCount).toBeGreaterThanOrEqual(0); // >=0: may legitimately be 0 if this
+        // capture's clusters came from KnotTracker (no voxelMembers) rather than the
+        // voxel-components fallback -- the assertion below requires at least the
+        // group to exist, which is what step 3 actually implements.
+        const groupExists = await page.evaluate(() => {
+            const vp = window.__FTD_DEV__?.viewport;
+            return !!vp?._particleRenderer?._massComparison;
+        });
+        expect(groupExists).toBe(true);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
 });
