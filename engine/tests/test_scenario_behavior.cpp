@@ -1332,6 +1332,8 @@ void test_neutral_candidate_is_dynamic() {
           adx[0] < -4.0 && adx[1] < -4.0 && adx[2] < -4.0);
     check("antineutrino translation direction is opposite the neutrino translation direction",
           (dx[0] > 0.0) != (adx[0] > 0.0));
+    check("antineutrino displacement is the exact magnitude-matched mirror of the neutrino displacement",
+          std::fabs(dx[0] + adx[0]) < 1e-9);
     check("antineutrino amplitude coding creates no flavor-dependent propagation",
           std::fabs(adx[0] - adx[1]) < 1e-12
           && std::fabs(adx[0] - adx[2]) < 1e-12
