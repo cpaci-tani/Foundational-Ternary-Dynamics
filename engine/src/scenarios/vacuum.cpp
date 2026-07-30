@@ -291,6 +291,24 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         return true;
     }
 
+    if (name == "s0-vacuum-electron-antineutrino"
+        || name == "s0-vacuum-muon-antineutrino"
+        || name == "s0-vacuum-tau-antineutrino") {
+        // Scenario IDs: s0-vacuum-{electron,muon,tau}-antineutrino.
+        // Qualification: direction-mirror of s0-vacuum-{electron,muon,tau}-
+        // neutrino (same 1.0/1.3/1.6 amplitude code, opposite propagation
+        // direction). No flavor label, mass term, oscillation, weak
+        // interaction, or antineutrino-identifying observable is present.
+        const double boost =
+            name == "s0-vacuum-tau-antineutrino"  ? 1.6 :
+            name == "s0-vacuum-muon-antineutrino" ? 1.3 : 1.0;
+        configure_free_wave();
+        inject_transverse_packet_x(rb, std::max(5.0, N / 4.0), midF, midF,
+                                   2.5, std::max(5.0, N / 5.0), K_B * 0.3 * boost, -1,
+                                   2.0 * PI / std::max(8.0, N / 3.0));
+        return true;
+    }
+
     if (name == "s0-vacuum-pion-neutral") {
         // Scenario ID: s0-vacuum-pion-neutral
         // Qualification: bit-identical alias of s0-vacuum-pion-charged. Both

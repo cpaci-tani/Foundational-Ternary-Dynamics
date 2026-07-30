@@ -1295,6 +1295,51 @@ void test_neutral_candidate_is_dynamic() {
     check("all neutral candidates remain unmanifested",
           manifested_count(base) == 0 && manifested_count(medium) == 0
           && manifested_count(high) == 0);
+
+    constexpr int L2 = 48;
+    ftd::RenderBridge abase(L2), amedium(L2), ahigh(L2);
+    abase.force_cpu(); amedium.force_cpu(); ahigh.force_cpu();
+    check("three amplitude-coded antineutrino candidates dispatch",
+          ftd::dispatch_scenario(abase, "s0-vacuum-electron-antineutrino")
+          && ftd::dispatch_scenario(amedium, "s0-vacuum-muon-antineutrino")
+          && ftd::dispatch_scenario(ahigh, "s0-vacuum-tau-antineutrino"));
+    for (auto* rb : {&abase, &amedium, &ahigh}) {
+        rb->toggles.flux_boundary = ftd::FluxBoundaryMode::Periodic;
+    }
+
+    const Profile ainitial[3] = {
+        x_profile(abase), x_profile(amedium), x_profile(ahigh),
+    };
+    check("antineutrino candidate packets are divergence-free",
+          std::max({normalized_divergence(abase), normalized_divergence(amedium),
+                    normalized_divergence(ahigh)}) < 1e-12);
+    check("antineutrino medium/high packets are only imposed 1.3x/1.6x amplitude copies",
+          scaled_residual(abase, amedium, 1.3) < 1e-12
+          && scaled_residual(abase, ahigh, 1.6) < 1e-12);
+
+    tick_n(abase, 12); tick_n(amedium, 12); tick_n(ahigh, 12);
+    const Profile afinal[3] = {
+        x_profile(abase), x_profile(amedium), x_profile(ahigh),
+    };
+    const double adx[3] = {
+        forward_delta(afinal[0].centroid, ainitial[0].centroid, L2),
+        forward_delta(afinal[1].centroid, ainitial[1].centroid, L2),
+        forward_delta(afinal[2].centroid, ainitial[2].centroid, L2),
+    };
+    std::cout << "    antineutrino-candidate dx base/1.3x/1.6x="
+              << adx[0] << '/' << adx[1] << '/' << adx[2] << '\n';
+    check("all antineutrino candidates translate rather than remaining static icons",
+          adx[0] < -4.0 && adx[1] < -4.0 && adx[2] < -4.0);
+    check("antineutrino translation direction is opposite the neutrino translation direction",
+          (dx[0] > 0.0) != (adx[0] > 0.0));
+    check("antineutrino amplitude coding creates no flavor-dependent propagation",
+          std::fabs(adx[0] - adx[1]) < 1e-12
+          && std::fabs(adx[0] - adx[2]) < 1e-12
+          && scaled_residual(abase, amedium, 1.3) < 1e-12
+          && scaled_residual(abase, ahigh, 1.6) < 1e-12);
+    check("all antineutrino candidates remain unmanifested",
+          manifested_count(abase) == 0 && manifested_count(amedium) == 0
+          && manifested_count(ahigh) == 0);
 }
 
 void test_imposed_kg_block_clock_integration() {
