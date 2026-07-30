@@ -20,7 +20,7 @@ import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from '../_car
 import { LatticeSynth } from '../../../../../audio/lattice-synth.js';
 import { Sparkline } from '../../../../../ui/charts/sparkline.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
-
+import { getPhysicsHarness } from '../../../../../physics/index.js';
 
 class RingBuffer {
     constructor(size) {
@@ -540,7 +540,14 @@ export class WaveInfoComponent extends BaseComponent {
         const bridge = this.bridgeRef;
         const scenarioId = this.scenarioId;
         if (!bridge || !isSingleWaveScenario(scenarioId)) return;
-        if (typeof bridge.setupScenario === 'function') bridge.setupScenario(scenarioId);
+        // Harness-only reseed of the active owner (same setupScenario → reset
+        // contract as the catalog loader). Deliberately does NOT call
+        // loadScale0Scenario — that would tear down/rebuild the worker and
+        // wipe Wave Lab UI state; this only re-seeds the lattice for the
+        // current scenario id after slider changes.
+        const harness = getPhysicsHarness(bridge);
+        if (typeof harness.setupScenario === 'function') harness.setupScenario(scenarioId);
+        else if (typeof bridge.setupScenario === 'function') bridge.setupScenario(scenarioId);
         else bridge.capabilities?.scale0?.setupScenario?.(scenarioId);
         setLatticeNeedsUpload(true);
         markFieldDirty();

@@ -187,6 +187,11 @@ export class WasmBridgeProxy {
     }
 
     _onMessage(m) {
+        // Ignore in-flight messages after terminate()/dispose(). Scenario churn
+        // tears down the prior proxy while a 'ready'/'frame' may already be
+        // queued on the main-thread event loop; without this guard those would
+        // still mutate UI / postFrame callbacks for a dead owner.
+        if (this._terminated || this._initFailed) return;
         if (m.type === 'ready') {
             this.latticeSize = m.N;
             this._ctrl = new Int32Array(m.ctrl);
@@ -508,6 +513,12 @@ export class WasmBridgeProxy {
         if (!this._terminated) { this._terminated = true; _live--; _terminated++; }
         if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
         this._clearFrameWatchdog();
+        // Drop callbacks so a late queued message cannot reach the dashboard
+        // even if _onMessage's terminated guard is somehow bypassed.
+        this._onEngineToggles = null;
+        this._onInitFailure = null;
+        try { this._worker.onmessage = null; } catch (e) { /* ignore */ }
+        try { this._worker.onerror = null; } catch (e) { /* ignore */ }
         try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }
         try { this._worker.terminate(); } catch (e) { /* ignore */ }
     }

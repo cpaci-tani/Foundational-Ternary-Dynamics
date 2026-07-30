@@ -625,6 +625,12 @@ async function init() {
     wireViewportToggles();
     wireKeyboard();
 
+    // Cold-boot lifecycle mount (pagehide → exitScale0, overlay panel
+    // idempotent init, prime-tick button). switchEngineMode already mounts
+    // on every scale re-entry; without this, the first lattice session never
+    // registered pagehide cleanup until the user left and returned.
+    Scale0Controller.mount(_makeCtx());
+
     // ── Wire Immersive Mode (UI Toggle) ──
     const btnToggleUI = document.getElementById('btn-toggle-ui');
     if (btnToggleUI) {
