@@ -2,11 +2,9 @@
  * app-wire/keyboard.js — keyboard-shortcut handler for the FTD dashboard.
  *
  * Extracted from `app.js::wireKeyboard()` as refactoring-analyst ticket
- * RF-9 (partial). The rest of the wire* functions (wireToolbar,
- * wireControls, wireViewportToggles) are too deeply entangled with
- * app module-scope state to extract cleanly without a larger
- * state-plumbing pass; deferred until the scale-controller interface
- * unification lands.
+ * RF-9 (partial). Companion extracts: `status.js`, `bridge-boot.js`.
+ * Remaining wire* functions (wireToolbar, wireControls, wireViewportToggles)
+ * stay in app.js until a larger state-plumbing pass.
  *
  * Shortcut contract (matches pre-refactor behavior 1:1):
  *   Space            → play/pause

@@ -473,8 +473,10 @@ export class PhysicsHarness {
     setupScenario(name) {
         const bridge = this.bridge;
         if (typeof bridge?.setupScenario !== 'function') return false;
-        bridge.setupScenario(name, this);
-        return true;
+        const result = bridge.setupScenario(name, this);
+        // Worker path is async: proxy returns true when create is posted;
+        // setup failures arrive via onSetupFailure. In-thread returns bool.
+        return result !== false;
     }
     // ── Setters: Scale 1 (Particle Engine) ─────────────────────────
 

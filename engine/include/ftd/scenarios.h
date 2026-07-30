@@ -46,13 +46,18 @@ class RenderBridge;
 // The caller is responsible for rb.reset() BEFORE calling this (matches
 // the JS runSetupScenario contract).
 //
-// Toggle contract: scenarios MAY mutate keys in
-// engine/web/js/config/toggles.js SCALE0_TOGGLES; the JS loader resets those
-// keys between dispatches. Toggles outside that whitelist (pair_production,
-// langevin, latency_field, emergent_forces, …) are user-owned and persist
-// across scenario loads; do NOT mutate them from a scenario body. See
-// engine/web/js/scales/scale0/runtime/scenario-loader.js for the
-// matching JS-side documentation.
+// Toggle contract:
+//   • Isolation profiles (configure_*_terms / FREE_WAVE_DISABLED_TERMS) MAY
+//     zero the full TermToggles / TOGGLE_SPECS registry, including research
+//     keys (pair_production, langevin, latency_field, emergent_forces, …).
+//     That is intentional: an IC that promises an isolated map must not inherit
+//     a prior research run.
+//   • The dashboard whitelist SCALE0_TOGGLES is only the UI-visible subset.
+//     The JS loader resets those keys between loads; research keys outside the
+//     whitelist persist across ordinary loads unless a configure_* helper
+//     clears them. Scenario-specific research pins live in
+//     SCALE0_SCENARIO_RESEARCH_TERMS (toggles.js).
+//   • See engine/web/js/scales/scale0/runtime/scenario-loader.js.
 bool dispatch_scenario(RenderBridge& rb, const std::string& name);
 
 // ── Group functions ────────────────────────────────────────────────────

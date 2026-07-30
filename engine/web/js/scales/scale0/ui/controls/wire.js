@@ -27,27 +27,22 @@ import { getScale0State, getActiveLatticeSize, getActiveScale0Bridge } from '../
 let _wired = false;
 
 /**
- * For flux-* / s0-seed-* / s0-field-* / quantum-* scenarios the active
- * physics engine is the parallel JS MockBridge ("fluxMock"), not the
- * WasmBridge — see runtime/tick.js + runtime/frame-sync.js. The
- * scenario-loader mirrors toggles + boundary state to both bridges at
- * load time (scenario-loader.js:344-348). User-driven controls that
- * fire AFTER load must do the same, otherwise the toggle change only
- * updates the DOM + WasmBridge while the fluxMock keeps running with
- * its load-time state. This helper resolves the live mock per call.
+ * When a WASM worker owns Scale-0 (state.fluxMock / useFluxMock — legacy names
+ * for the off-thread WasmBridgeProxy), user-driven controls must mirror writes
+ * to both the in-thread bridge and the worker proxy.
  */
 function latticeN(ctx) {
     return getActiveLatticeSize(ctx, getScale0State());
 }
 
-/** Mirror a harness write across WASM + fluxMock (load-time parity contract). */
+/** Mirror a harness write across in-thread WASM + worker proxy. */
 function dualHarness(ctx, fn) {
     fn(getPhysicsHarness(ctx.bridge));
-    const mock = getFluxMock();
-    if (mock) fn(getPhysicsHarness(mock));
+    const worker = getFluxMock();
+    if (worker) fn(getPhysicsHarness(worker));
 }
 
-function wirePhysicsToggles(ctx) {
+function wirePhysicsToggles(ctx, api) {
     const currentScenarioId = () => getScale0State().currentScenarioId || 'flux-pulse';
     const profileIsModified = () => getScale0ScenarioToggleProfile(currentScenarioId())
         .some(([, expected, elId]) => {
@@ -72,33 +67,19 @@ function wirePhysicsToggles(ctx) {
         });
     }
 
-    // Restore the current scenario's full registered physics profile without
-    // clearing its field. This is deliberately scenario-aware: restoring the
-    // broad engine defaults would silently invalidate isolated qualification
-    // runs such as the two-term dynamical dressing probe.
+    // Re-run the canonical scenario load so C++ configure_* isolation wins.
+    // Toggle-only restore from partial tables previously re-armed disabled terms.
     const resetBtn = getEl('btn-reset-physics-toggles');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            const mock = getFluxMock()?.capabilities?.scale0;
-            const prerequisites = ['dual_substrate', 'genesis', 'forces', 'damping'];
-            const profile = [...getScale0ScenarioToggleProfile(currentScenarioId())]
-                .sort((a, b) => {
-                    const ia = prerequisites.indexOf(a[0]);
-                    const ib = prerequisites.indexOf(b[0]);
-                    if (ia !== -1 && ib === -1) return -1;
-                    if (ib !== -1 && ia === -1) return 1;
-                    if (ia !== -1 && ib !== -1) return ia - ib;
-                    return 0;
-                });
-            for (const [toggleKey, profileValue, elId] of profile) {
-                ctx.bridge.setToggle(toggleKey, profileValue);
-                mock?.setToggle(toggleKey, profileValue);
-                const el = getEl(elId);
-                if (el) el.checked = !!profileValue;
+            const id = currentScenarioId();
+            if (typeof api?.loadScenario === 'function') {
+                api.loadScenario(ctx, id);
+            } else {
+                console.error('[Scale0] restore profile: api.loadScenario missing');
             }
             markScenarioOverrideRows(SCALE0_TOGGLES);
             renderProfileStatus(false);
-            // Brief visual confirmation: flash the button.
             resetBtn.classList.add('ctrl-reset-flash');
             setTimeout(() => resetBtn.classList.remove('ctrl-reset-flash'), 320);
         });
@@ -495,7 +476,7 @@ function wireParticleDisplay(ctx) {
 export function wireScale0Controls(ctx, api) {
     if (_wired) return;
     _wired = true;
-    wirePhysicsToggles(ctx);
+    wirePhysicsToggles(ctx, api);
     wireInjection(ctx, api);
     wireParameterSliders(ctx);
     wireFieldActions(ctx, api);

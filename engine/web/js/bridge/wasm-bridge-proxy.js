@@ -71,6 +71,10 @@ export class WasmBridgeProxy {
         this._terminated = false;
         this._onInitFailure = (opts && typeof opts.onInitFailure === 'function') ? opts.onInitFailure : null;
         this._initFailed = false;       // latched — fallback fires once
+        // `opts.onSetupFailure(msg)` fires when the worker reports setupScenario
+        // returned false or threw (unknown id / embind error). Distinct from
+        // onInitFailure (module/worker load dead → in-thread fallback).
+        this._onSetupFailure = (opts && typeof opts.onSetupFailure === 'function') ? opts.onSetupFailure : null;
         // `opts.onEngineToggles()` (optional) fires whenever the worker publishes a
         // fresh engine-truth toggle readback — i.e. after the C++ scenario body has
         // replaced the profile the main thread sent. The UI uses it to repaint the
@@ -150,9 +154,10 @@ export class WasmBridgeProxy {
         if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
         this._clearFrameWatchdog();
         console.error('[WasmWorker] off-thread engine failed (' + reason + '); falling back to in-thread WASM engine.');
-        try { this.terminate(); } catch { /* ignore */ }
+        // Capture before terminate() nulls callbacks.
         const cb = this._onInitFailure;
         this._onInitFailure = null;
+        try { this.terminate(); } catch { /* ignore */ }
         if (cb) { try { cb(reason); } catch (e) { console.error('[WasmWorker] onInitFailure handler threw:', e); } }
     }
 
@@ -214,6 +219,13 @@ export class WasmBridgeProxy {
                 this._worker.postMessage({ type: 'batchCommand', commands: this._pendingCommands });
                 this._pendingCommands = [];
             }
+            if (m.setupOk === false) {
+                const msg = m.setupError || (`Unknown or unhandled scenario: ${this._scenarioId}`);
+                console.error('[WasmWorker] setupScenario failed:', msg);
+                try { this._onSetupFailure?.(msg); } catch (e) {
+                    console.error('[WasmWorker] onSetupFailure handler threw:', e);
+                }
+            }
         } else if (m.type === 'frame') {
             // Reset the dead-worker watchdog only on TICK PROGRESS. A worker can
             // post frames (e.g. the initial scenario frame) while its tick stays
@@ -256,6 +268,11 @@ export class WasmBridgeProxy {
             // posts where:'init') means the engine never built — fall back if we
             // haven't yet become ready.
             if (m.where === 'init' && !this._ready) this._triggerFallback('worker init error: ' + (m.msg || ''));
+            if (m.where === 'setupScenario') {
+                try { this._onSetupFailure?.(m.msg || 'setupScenario failed'); } catch (e) {
+                    console.error('[WasmWorker] onSetupFailure handler threw:', e);
+                }
+            }
         }
     }
 
@@ -276,11 +293,11 @@ export class WasmBridgeProxy {
     get hasEngineToggles() { return this._engineToggles !== null; }
 
     // Engine truth first; the local write-cache is only a pre-first-frame stand-in.
-    // (The trailing `?? true` is the legacy default for names this build does not
-    // know — it reports an unknown toggle as ON and is tracked separately.)
+    // Unknown names default OFF — never ON. Prefer getEngineTruthToggle when
+    // the caller must distinguish "engine said false" from "no readback yet".
     getToggle(name) {
         if (this._engineToggles && name in this._engineToggles) return !!this._engineToggles[name];
-        return this._toggles[name] ?? true;
+        return this._toggles[name] ?? false;
     }
 
     /**
@@ -357,7 +374,62 @@ export class WasmBridgeProxy {
     getForceFieldSampled(stride = 2) { return samplerOr(this, 'em', stride, EMPTY_VEC()); }
     getGravityFieldSampled(stride = 2) { return samplerOr(this, 'gravity', stride, EMPTY_VEC()); }
     getFluxVolume() { return (this._ready && this._fluxView) ? this._fluxView : new Float64Array(0); }
-    getFluxSlice() { return new Float64Array(0); }                   // Phase 2: slice from heap
+    /**
+     * Slice the already-resident flux volume (this._fluxView, a zero-copy
+     * view over the worker's shared WASM heap — see getFluxVolume) into a
+     * single 2D plane, client-side. Was a permanent `return new
+     * Float64Array(0)` stub ("Phase 2: slice from heap") — the data was
+     * already resident (getFluxVolume works today), it just was never
+     * sliced.
+     *
+     * Output layout is byte-for-byte identical to the direct WasmBridge's
+     * C++ binding (ftd_wasm.cpp get_flux_slice: `cache[a*N+b]` with
+     * axis0: a=y,b=z (x=index fixed); axis1: a=x,b=z (y=index fixed);
+     * axis2: a=x,b=y (z=index fixed)), substituting get_flux_volume's own
+     * documented layout (`view[z*N*N + y*N + x] = density(x,y,z)`) — so
+     * downstream consumers (transposeAndFlipNN in this file, frame-sync.js's
+     * getScale0FluxSlice) need no changes.
+     */
+    getFluxSlice(axis, index) {
+        if (!this._ready || !this._fluxView) return new Float64Array(0);
+        const N = this.latticeSize | 0;
+        if (!(N > 0)) return new Float64Array(0);
+        const NN = N * N;
+        // Guards the transient window during a scenario swap where _ready
+        // is about to flip false / _fluxView may still reference the OLD
+        // RenderBridge's stale/wrong-length buffer — mirrors the same
+        // "empty until ready" contract every other proxy read already has.
+        if (this._fluxView.length !== NN * N) return new Float64Array(0);
+        const idx = Math.min(Math.max(index | 0, 0), N - 1);
+        const view = this._fluxView;
+        const out = new Float64Array(NN);
+        if (axis === 0) {
+            // YZ plane, X fixed at `idx`: out[y*N+z] = density(idx, y, z)
+            for (let y = 0; y < N; y++) {
+                const base = y * N;
+                for (let z = 0; z < N; z++) {
+                    out[base + z] = view[z * NN + y * N + idx];
+                }
+            }
+        } else if (axis === 1) {
+            // XZ plane, Y fixed at `idx`: out[x*N+z] = density(x, idx, z)
+            for (let x = 0; x < N; x++) {
+                const base = x * N;
+                for (let z = 0; z < N; z++) {
+                    out[base + z] = view[z * NN + idx * N + x];
+                }
+            }
+        } else {
+            // XY plane, Z fixed at `idx`: out[x*N+y] = density(x, y, idx)
+            for (let x = 0; x < N; x++) {
+                const base = x * N;
+                for (let y = 0; y < N; y++) {
+                    out[base + y] = view[idx * NN + y * N + x];
+                }
+            }
+        }
+        return out;
+    }
     getDiagnostics() { return this._lastDiag ?? null; }
     getEnergyAudit() { return this._lastAudit ?? null; }
     getLagrangian() { return this._lastLag ?? null; }
@@ -376,6 +448,23 @@ export class WasmBridgeProxy {
             this._worker.postMessage({ type: 'wantSampler', kind, stride });
         }
         return this._samplerCache[key] ?? emptyFn();
+    }
+    /**
+     * Release a previously-wanted kind+stride. _wantSampler's registration
+     * is otherwise permanently sticky for the life of the worker (matching
+     * `wantedSamplers`'s own "persists across scenario changes" design in
+     * wasm-bridge.worker.js) — a caller like flux-slice-panel.js that only
+     * needs a kind while a UI row is visible must explicitly un-want it when
+     * that row is hidden, or the worker keeps recomputing it on every
+     * postFrame() forever, for the rest of the session. No-op if the kind
+     * was never wanted (or was already released).
+     */
+    unwantSampler(kind, stride) {
+        const key = `${kind}@${stride}`;
+        if (!this._samplerWant.has(key)) return;
+        this._samplerWant.delete(key);
+        delete this._samplerCache[key];
+        this._worker.postMessage({ type: 'unwantSampler', kind, stride });
     }
     getEFieldSampled(stride = 2)        { return this._wantSampler('e',            stride, EMPTY_VEC); }
     getBFieldSampled(stride = 2)        { return this._wantSampler('b',            stride, EMPTY_VEC); }
@@ -425,6 +514,11 @@ export class WasmBridgeProxy {
     getConstants() { return null; }
 
     // ── Scenario / run control ──────────────────────────────────────────────
+    /**
+     * Post an async worker create. Returns true when the create was posted
+     * (not when C++ finished). Setup failure is reported via onSetupFailure
+     * once the worker replies (ready.setupOk === false or error).
+     */
     setupScenario(name) {
         this._scenarioId = name || this._scenarioId;
         this._ready = false;
@@ -440,6 +534,7 @@ export class WasmBridgeProxy {
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
             toggles: this._toggles, pool: workerPoolSize(),
         });
+        return true;
     }
     setRunning(v) {
         v = !!v;
@@ -517,6 +612,7 @@ export class WasmBridgeProxy {
         // even if _onMessage's terminated guard is somehow bypassed.
         this._onEngineToggles = null;
         this._onInitFailure = null;
+        this._onSetupFailure = null;
         try { this._worker.onmessage = null; } catch (e) { /* ignore */ }
         try { this._worker.onerror = null; } catch (e) { /* ignore */ }
         try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }

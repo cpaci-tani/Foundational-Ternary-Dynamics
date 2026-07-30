@@ -40,7 +40,7 @@ export function createPhysicsTogglesCard() {
 
     <div class="ctrl-footnote">
       <button class="ctrl-reset-btn" id="btn-reset-physics-toggles" type="button"
-          title="Restore every physics toggle to the active scenario's registered profile without clearing the field.">
+          title="Reload the active scenario so its C++ isolation profile and seed are restored.">
         &#8634; Restore scenario profile
       </button>
       <span class="ctrl-footnote-text">Field visualization: viewport buttons (top-right) &#8593;</span>

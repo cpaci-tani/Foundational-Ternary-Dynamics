@@ -181,12 +181,11 @@ export const SCALE0_TOGGLES = [
 //   - `strict_validation`     — process-level guard, not physics.
 //
 // These are normally LONG-TERM RESEARCH CONTROLS owned by the user across
-// scenario loads. Isolated certification scenarios may explicitly override
-// them inside setupScenario(). Putting them in SCALE0_TOGGLES would cause the
-// scenario-loader's whitelist-reset to clobber them on every scenario
-// load, breaking research workflow. See the toggle-reset contract
-// documented in `engine/web/js/scales/scale0/runtime/scenario-loader.js`
-// and mirrored in `engine/include/ftd/scenarios.h`.
+// ordinary scenario loads. Isolation helpers (configure_*_terms) MAY clear
+// them when an IC promises an isolated map. Per-scenario pins for the JS
+// loader / restore path live in SCALE0_SCENARIO_RESEARCH_TERMS. Putting them
+// in SCALE0_TOGGLES would cause the whitelist-reset to clobber them on every
+// load. See scenario-loader.js and engine/include/ftd/scenarios.h.
 
 // Scale 2/3 (Atoms/Molecules) — matching AtomToggles in atom_engine.h
 export const SCALE2_TOGGLES = [
@@ -209,83 +208,31 @@ export const SCALE2_TOGGLES = [
 // When a scenario loads, these overrides are applied AFTER defaults reset.
 //
 // @type {Partial<Record<ScenarioId, Array<[string, boolean, string]>>>}
+const SCALE0_TOGGLE_KEYS = new Set(SCALE0_TOGGLES.map(([key]) => key));
+
 const isolatedScale0Profile = (...enabledTerms) => {
-    const enabled = new Set(enabledTerms);
+    const enabled = new Set();
+    for (const term of enabledTerms) {
+        if (!SCALE0_TOGGLE_KEYS.has(term)) {
+            console.warn(
+                '[toggles] isolatedScale0Profile: \'' + term + '\' is not in SCALE0_TOGGLES — use SCALE0_SCENARIO_RESEARCH_TERMS',
+            );
+            continue;
+        }
+        enabled.add(term);
+    }
     return SCALE0_TOGGLES.map(([key, _defaultValue, elementId]) =>
         [key, enabled.has(key), elementId]);
 };
 
 export const SCALE0_SCENARIO_OVERRIDES = {
-    'flux-pulse': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['evaporation', false, 't-evaporation'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['gravity', false, 't-gravity'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-        ['dual_substrate', false, 't-dual'],
-        ['color_forces', false, 't-color-forces'],
-        ['strong_force', false, 't-strong-force'],
-        ['exchange_force', false, 't-exchange'],
-        ['weak_transmutation', false, 't-weak'],
-    ],
-    'flux-pair-production': [
-        // Visible mirror of the isolated native pair-rule profile. The hidden
-        // pair_production toggle is enabled inside setupScenario itself so it
-        // cannot leak onto an inactive main bridge when a worker owns Scale 0.
-        ['wave_propagation', false, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['evaporation', false, 't-evaporation'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['gravity', false, 't-gravity'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-        ['larmor_radiation', false, 't-larmor'],
-        ['dual_substrate', false, 't-dual'],
-        ['confinement', false, 't-confinement'],
-        ['color_forces', false, 't-color-forces'],
-        ['strong_force', false, 't-strong-force'],
-        ['exchange_force', false, 't-exchange'],
-        ['weak_transmutation', false, 't-weak'],
-        ['de_broglie_clock', false, 't-de-broglie'],
-    ],
-    'flux-annihilation': [
-        // Visible mirror of the isolated movement-only collision profile.
-        ['wave_propagation', false, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['evaporation', false, 't-evaporation'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['gravity', false, 't-gravity'],
-        ['movement', true, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-        ['larmor_radiation', false, 't-larmor'],
-        ['dual_substrate', false, 't-dual'],
-        ['confinement', false, 't-confinement'],
-        ['color_forces', false, 't-color-forces'],
-        ['strong_force', false, 't-strong-force'],
-        ['exchange_force', false, 't-exchange'],
-        ['weak_transmutation', false, 't-weak'],
-        ['de_broglie_clock', false, 't-de-broglie'],
-    ],
-    'flux-dual-substrate': [
-        ['dual_substrate', true, 't-dual'],
-    ],
+    'flux-pulse': isolatedScale0Profile('wave_propagation'),
+    // Visible mirror of the isolated native pair-rule profile. Hidden
+    // pair_production is pinned via SCALE0_SCENARIO_RESEARCH_TERMS.
+    'flux-pair-production': isolatedScale0Profile(),
+    // Visible mirror of the isolated movement-only collision profile.
+    'flux-annihilation': isolatedScale0Profile('movement'),
+    'flux-dual-substrate': isolatedScale0Profile('wave_propagation'),
     // Evidence-gated profiles mirror the exact isolated native term sets used
     // by their C++ and JS scenario bodies.  The loader applies these after its
     // broad defaults, so partial overrides would silently re-enable unrelated
@@ -299,36 +246,14 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         'forces', 'movement', 'poisson_coulomb', 'lorentz_force'),
     'flux-thermalization': isolatedScale0Profile('wave_propagation'),
     'flux-vacuum-foam': isolatedScale0Profile('wave_propagation'),
+    'flux-dipole': isolatedScale0Profile('wave_propagation'),
+    'flux-soliton': isolatedScale0Profile('wave_propagation'),
     'flux-cascade': isolatedScale0Profile('genesis'),
     'flux-random-genesis': isolatedScale0Profile('genesis'),
-    'flux-zero-point': [
-        // Finite periodic random-wave invariant probe: only the bare wave map.
-        ['genesis', false, 't-genesis'],
-        ['damping', false, 't-damping'],
-        ['gauss_projection', false, 't-gauss'],
-    ],
-    'flux-genesis-between-gates': [
-        // FTD-0388 one-tick gate discriminator. The three band amplitudes
-        // (1.5160 / 1.5250 / 1.5340) are exact at the initial decision. The
-        // middle band manifesting at all is the
-        // FTD-0388 signature (the retired 3·K_B = 1.533 gate kept it silent).
-        // The C++/JS scenario bodies additionally clear every research toggle.
-        ['genesis', true, 't-genesis'],
-        ['wave_propagation', false, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['gauss_projection', false, 't-gauss'],
-        // selective_damping BEFORE damping: dependents off first, so the
-        // per-setToggle C++ validate never sees the transient invalid combo
-        // "selective_damping requires damping".
-        ['selective_damping', false, 't-selective'],
-        ['damping', false, 't-damping'],
-        ['movement', false, 't-movement'],
-        ['weak_transmutation', false, 't-weak'],
-        // Explicit (baseline already false): the C++ branch pins dual_substrate
-        // off BEFORE injecting so the bands live on the mono substrate — keep
-        // the checkbox in sync if a prior scenario turned dual on.
-        ['dual_substrate', false, 't-dual'],
-    ],
+    // Finite periodic random-wave invariant probe: only the bare wave map.
+    'flux-zero-point': isolatedScale0Profile('wave_propagation'),
+    // FTD-0388 one-tick gate discriminator (bands at 1.5160 / 1.5250 / 1.5340).
+    'flux-genesis-between-gates': isolatedScale0Profile('genesis'),
     'quantum-born-rule': isolatedScale0Profile('genesis'),
     'quantum-double-slit': isolatedScale0Profile(
         'wave_propagation', 'gauss_projection'),
@@ -337,12 +262,7 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'quantum-tunnel': isolatedScale0Profile(
         'wave_propagation', 'gauss_projection', 'coupling'),
     'quantum-well': isolatedScale0Profile('wave_propagation'),
-    'quantum-entangle': [
-        ['genesis', false, 't-genesis'],
-        ['evaporation', false, 't-evaporation'],
-        ['coupling', false, 't-coupling'],
-        ['movement', false, 't-movement'],
-    ],
+    'quantum-entangle': isolatedScale0Profile(),
     'quantum-aharonov-bohm': isolatedScale0Profile(
         'wave_propagation', 'gauss_projection'),
     'quantum-casimir': isolatedScale0Profile('wave_propagation'),
@@ -353,26 +273,27 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-dynamical-flux-dressing': isolatedScale0Profile('wave_propagation', 'coupling'),
     's0-seed-moving-source-reciprocity': isolatedScale0Profile(
         'wave_propagation', 'coupling', 'forces', 'movement'),
-    's0-seed-wilson-loop':         [['genesis', false, 't-genesis']],
-    's0-seed-flux-tube':           [['genesis', false, 't-genesis'], ['color_forces', true, 't-color-forces']],
-    's0-seed-monopole':            [['genesis', false, 't-genesis']],
-    's0-seed-instanton':           [['genesis', false, 't-genesis']],
+    's0-seed-wilson-loop':         isolatedScale0Profile(),
+    's0-seed-flux-tube':           isolatedScale0Profile(),
+    's0-seed-monopole':            isolatedScale0Profile(),
+    's0-seed-instanton':           isolatedScale0Profile(),
     // Gravity-shaped research setups.
     's0-seed-schwarzschild':       isolatedScale0Profile(),
     // These legacy gravity/time names are exact aliases of one plain native
     // transverse harmonic. Keep only its actual wave operator enabled.
     's0-seed-gravitational-wave':  isolatedScale0Profile('wave_propagation'),
     's0-seed-gravitational-lensing': isolatedScale0Profile('wave_propagation'),
-    's0-seed-massive-body':        [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
-    // Time-dilation scenarios. gravity-well + twin-clocks reuse the real-mass
-    // body (latency_field is enabled by SCALE0_MASS_GRAVITY_SCENARIOS below);
-    // horizon reuses the seed-bias Schwarzschild well (gravity toggle proxy).
+    's0-seed-massive-body':        isolatedScale0Profile('gravity'),
+    // Time-dilation labels are CLOSED NEGATIVE aliases of the plain wave /
+    // schwarzschild seeds — NOT members of SCALE0_MASS_GRAVITY_SCENARIOS.
+    // Do not enable latency_field here; that would contradict their qualifications.
     's0-seed-time-gravity-well':   isolatedScale0Profile('wave_propagation'),
     's0-seed-time-twin-clocks':    isolatedScale0Profile('wave_propagation'),
     's0-seed-time-horizon':        isolatedScale0Profile(),
     // Self-reference / observation pedagogy seeds (Scale 0)
-    's0-seed-sloop':               [['genesis', false, 't-genesis']],
-    's0-seed-observer-cell':       [['genesis', false, 't-genesis']],
+    's0-seed-sloop':               isolatedScale0Profile(),
+    's0-seed-observer-cell':       isolatedScale0Profile(),
+    'empty':                       isolatedScale0Profile(),
 
     // Particles + composites — toggle profiles for s0-seed-{electron-l3, muon,
     // tau, photon, w-boson, z-boson, higgs-boson, positron, pion, proton-l4,
@@ -409,135 +330,41 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-vacuum-pion-neutral': isolatedScale0Profile('forces', 'movement', 'color_forces'),
     's0-vacuum-kaon-charged': isolatedScale0Profile('forces', 'movement', 'color_forces'),
     's0-seed-ee-annihilation': isolatedScale0Profile('movement'),
-    's0-seed-ew-phase-transition': isolatedScale0Profile('wave_propagation', 'gauss_projection', 'genesis', 'ew_background_sweep'),
-    's0-seed-quark-gluon-plasma': isolatedScale0Profile('wave_propagation', 'gauss_projection', 'movement', 'langevin'),
+    's0-seed-ew-phase-transition': isolatedScale0Profile('wave_propagation', 'gauss_projection', 'genesis'),
+    's0-seed-quark-gluon-plasma': isolatedScale0Profile('wave_propagation', 'gauss_projection', 'movement'),
 
     // Exact harmonic eigenmodes: isolate the production kick-drift wave map.
-    's0-field-plane-wave': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['evaporation', false, 't-evaporation'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['gravity', false, 't-gravity'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-        ['dual_substrate', false, 't-dual'],
-        ['color_forces', false, 't-color-forces'],
-        ['strong_force', false, 't-strong-force'],
-        ['exchange_force', false, 't-exchange'],
-        ['weak_transmutation', false, 't-weak'],
-    ],
-    's0-field-standing-wave': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['evaporation', false, 't-evaporation'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['gravity', false, 't-gravity'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-        ['dual_substrate', false, 't-dual'],
-        ['color_forces', false, 't-color-forces'],
-        ['strong_force', false, 't-strong-force'],
-        ['exchange_force', false, 't-exchange'],
-        ['weak_transmutation', false, 't-weak'],
-    ],
-    // Other field configurations — genesis off so the field pattern stays clean.
-    's0-field-uniform-e':        [['genesis', false, 't-genesis']],
-    's0-field-uniform-b':        [['genesis', false, 't-genesis']],
-    's0-field-photon-pulse':     isolatedScale0Profile('wave_propagation', 'gauss_projection'),
-    's0-field-rf-lattice-wave': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-    ],
-    's0-field-light-lattice-wave': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-    ],
-    's0-field-sound-lattice-wave': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-    ],
+    's0-field-plane-wave': isolatedScale0Profile('wave_propagation'),
+    's0-field-standing-wave': isolatedScale0Profile('wave_propagation'),
+    // Static uniform fields — every production phase off so the pattern stays clean.
+    's0-field-uniform-e': isolatedScale0Profile(),
+    's0-field-uniform-b': isolatedScale0Profile(),
+    's0-field-photon-pulse': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    's0-field-rf-lattice-wave': isolatedScale0Profile('wave_propagation'),
+    's0-field-light-lattice-wave': isolatedScale0Profile('wave_propagation'),
+    's0-field-sound-lattice-wave': isolatedScale0Profile('wave_propagation'),
     's0-field-sound-collision': isolatedScale0Profile('wave_propagation'),
-    's0-field-thomson-scattering': [
-        ['coupling', true, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-    ],
-    's0-field-thomson-unlocked-recoil': [
-        ['coupling', true, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', true, 't-forces'],
-        ['movement', true, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-    ],
-    's0-field-spacetime-forcing-boundary': [
-        // Pure wave-equation half of FTD-0253: keep the center pulse below
-        // genesis and remove non-wave phases so the dashboard seed matches
-        // the controlled WAVE branch. The DIFF branch is not an engine phase;
-        // it lives only in the linked counterfactual demo page.
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', false, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-    ],
-    's0-field-electric-dipole':  [['genesis', false, 't-genesis']],
-    's0-field-magnetic-dipole':  [['genesis', false, 't-genesis']],
-    's0-field-vortex-line':      [['genesis', false, 't-genesis']],
+    's0-field-thomson-scattering': isolatedScale0Profile('wave_propagation', 'coupling'),
+    's0-field-thomson-unlocked-recoil': isolatedScale0Profile(
+        'wave_propagation', 'coupling', 'forces', 'movement'),
+    // Pure wave-equation half of FTD-0253: keep the center pulse below genesis.
+    's0-field-spacetime-forcing-boundary': isolatedScale0Profile('wave_propagation'),
+    's0-field-electric-dipole':  isolatedScale0Profile(),
+    's0-field-magnetic-dipole':  isolatedScale0Profile(),
+    's0-field-vortex-line':      isolatedScale0Profile(),
 
     // Beta-decay — leptonic output of weak transmutation needs both
     // dual_substrate (chiral L/R substrates) and weak_transmutation on.
     // Prepared cohort; only the selected weak polarity-flip rule is active.
-    's0-seed-beta-decay': isolatedScale0Profile('dual_substrate', 'weak_transmutation'),
+    // damping mirrors C++ B1 (bounds dual-substrate stress growth).
+    's0-seed-beta-decay': isolatedScale0Profile('dual_substrate', 'weak_transmutation', 'damping'),
 
-    // Moore Seeds — genesis off so the geometric pattern stays clean
-    's0-seed-octahedron':          [['genesis', false, 't-genesis']],
-    's0-seed-cuboctahedron':       [['genesis', false, 't-genesis']],
-    's0-seed-stella-octangula':    [['genesis', false, 't-genesis']],
-    's0-seed-moore-cell':          [['genesis', false, 't-genesis']],
-    's0-seed-moore-decomposition': [['genesis', false, 't-genesis']],
+    // Moore Seeds — inert geometry inspection; every production phase off
+    's0-seed-octahedron':          isolatedScale0Profile(),
+    's0-seed-cuboctahedron':       isolatedScale0Profile(),
+    's0-seed-stella-octangula':    isolatedScale0Profile(),
+    's0-seed-moore-cell':          isolatedScale0Profile(),
+    's0-seed-moore-decomposition': isolatedScale0Profile(),
     's0-seed-thermal-ignition': isolatedScale0Profile(
         'wave_propagation', 'genesis', 'gauss_projection'),
     's0-seed-emergent-ic1': isolatedScale0Profile(
@@ -560,56 +387,49 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         'wave_propagation', 'genesis', 'gauss_projection'),
     's0-seed-cluster-law': isolatedScale0Profile(
         'wave_propagation', 'genesis', 'gauss_projection'),
+    's0-seed-cluster-law-subknee': isolatedScale0Profile(
+        'wave_propagation', 'genesis', 'gauss_projection'),
+    's0-seed-cluster-law-knee': isolatedScale0Profile(
+        'wave_propagation', 'genesis', 'gauss_projection'),
+    's0-seed-cluster-law-superknee': isolatedScale0Profile(
+        'wave_propagation', 'genesis', 'gauss_projection'),
     's0-seed-de-broglie-clock': isolatedScale0Profile(
         'wave_propagation', 'de_broglie_clock'),
 
     // Native neutral wave candidates. These are propagation experiments, so
     // every non-wave production phase is disabled explicitly in both the
     // WASM and JS fallback paths.
-    's0-vacuum-photon': [
-        ['wave_propagation', true, 't-wave'],
-        ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'],
-        ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'],
-        ['gauss_projection', true, 't-gauss'],
-        ['forces', false, 't-forces'],
-        ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'],
-        ['lorentz_force', false, 't-lorentz'],
-    ],
-    's0-vacuum-electron-neutrino': [
-        ['wave_propagation', true, 't-wave'], ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'], ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'], ['gauss_projection', true, 't-gauss'],
-        ['forces', false, 't-forces'], ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
-    ],
-    's0-vacuum-muon-neutrino': [
-        ['wave_propagation', true, 't-wave'], ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'], ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'], ['gauss_projection', true, 't-gauss'],
-        ['forces', false, 't-forces'], ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
-    ],
-    's0-vacuum-tau-neutrino': [
-        ['wave_propagation', true, 't-wave'], ['coupling', false, 't-coupling'],
-        ['damping', false, 't-damping'], ['selective_damping', false, 't-selective'],
-        ['genesis', false, 't-genesis'], ['gauss_projection', true, 't-gauss'],
-        ['forces', false, 't-forces'], ['movement', false, 't-movement'],
-        ['poisson_coulomb', false, 't-poisson'], ['lorentz_force', false, 't-lorentz'],
-    ],
+    's0-vacuum-photon': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    's0-vacuum-electron-neutrino': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    's0-vacuum-muon-neutrino': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    's0-vacuum-tau-neutrino': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+
+    // Light family — same isolated wave+Gauss profile (also used by getScale0ScenarioToggleProfile).
+    'light-rainbow': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    'light-dipole': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    'light-two-slit': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    'light-photon-race': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+};
+
+// Research / non-UI terms pinned per scenario. Keys here are NOT in
+// SCALE0_TOGGLES (no checkbox). The loader applies them after the whitelist
+// reset; C++ configure_* helpers remain authoritative for the engine body.
+//
+// @type {Partial<Record<ScenarioId, Record<string, boolean>>>}
+export const SCALE0_SCENARIO_RESEARCH_TERMS = {
+    'flux-pair-production': { pair_production: true },
+    's0-seed-ew-phase-transition': { ew_background_sweep: true },
+    's0-seed-quark-gluon-plasma': { langevin: true },
+    's0-field-thomson-unlocked-recoil': { emergent_forces: true },
 };
 
 // ── Per-scenario BOUNDARY preference ────────────────────────────────
 // Mirrors SCALE0_SCENARIO_OVERRIDES (toggle defaults), but for the lattice
-// boundary — which the loader otherwise reads from the live DOM controls
-// (#boundary-select / #toggle-reflective). A scenario declares an entry here
-// when its physics needs a specific boundary regardless of the user's current
-// DOM selection; the loader applies these at load AND on resize, and falls
-// back to the DOM controls for any scenario without an entry. (This also
-// decouples a scenario's boundary need from raw DOM reads — the UI↔bridge
-// coupling noted in SPEC_SCALE0_SCENARIO_ARCHITECTURE.md §6.6.)
+// boundary. A scenario declares an entry here when its physics needs a
+// specific boundary. The loader applies these at load AND on resize.
+// Missing entry → dispersal (mode 2), NOT the live DOM boundary controls.
+// Any configure_* / body that sets Periodic MUST register mode: 0 here or
+// applyAuxiliaryDefaults will sponge the seed after load.
 //
 //   mode:       number  → 0 periodic, 1 reflective, 2 dispersal.
 //   reflective: boolean → legacy alias for mode 1/2.
@@ -625,6 +445,9 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     // face or are defined as periodic harmonics. A dispersal sponge edits the
     // seed at tick one and injects a false longitudinal/transverse distortion.
     'flux-standing': { mode: 0 },
+    'flux-dipole': { mode: 0 },
+    'flux-soliton': { mode: 0 },
+    'flux-dual-substrate': { mode: 0 },
     'flux-cyclotron': { mode: 0 },
     'flux-thermalization': { mode: 0 },
     'flux-vacuum-foam': { mode: 0 },
@@ -647,6 +470,11 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-field-light-lattice-wave': { mode: 0 },
     's0-field-sound-lattice-wave': { mode: 0 },
     's0-field-sound-collision': { mode: 0 },
+    // configure_emergent_recoil_terms pins Periodic; without this entry
+    // applyAuxiliaryDefaults would clobber it back to dispersal (mode 2).
+    's0-field-thomson-unlocked-recoil': { mode: 0 },
+    's0-field-thomson-scattering': { mode: 0 },
+    's0-field-spacetime-forcing-boundary': { mode: 0 },
     's0-seed-thermal-ignition': { mode: 0 },
     // The genesis-response qualification matrix uses the engine's periodic
     // default.  Pin the dashboard to the same boundary so its auxiliary
@@ -661,7 +489,14 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-seed-emergent-ic1-diagonal-viz': { mode: 0 },
     's0-seed-emergent-ic1-isotropic-viz': { mode: 0 },
     's0-seed-cluster-law': { mode: 0 },
+    's0-seed-cluster-law-subknee': { mode: 0 },
+    's0-seed-cluster-law-knee': { mode: 0 },
+    's0-seed-cluster-law-superknee': { mode: 0 },
     's0-seed-de-broglie-clock': { mode: 0 },
+    // Weak probe leaves flux_boundary at TermToggles default (Periodic);
+    // pin so applyAuxiliaryDefaults cannot sponge the stress packet.
+    's0-seed-beta-decay': { mode: 0 },
+    'empty': { mode: 0 },
     's0-seed-gravitational-wave': { mode: 0 },
     's0-seed-time-gravity-well': { mode: 0 },
     's0-seed-time-twin-clocks': { mode: 0 },
@@ -731,22 +566,22 @@ export const LIGHT_SCENARIO_OVERRIDES = [
 /**
  * Resolve the complete visible Scale-0 physics profile for a scenario.
  *
- * This is intentionally shared by scenario loading and the controls card's
- * "restore profile" action.  A partial override is not a scenario profile:
- * start from the canonical dashboard defaults, then apply every registered
- * scenario and light-family override.
+ * Shared by load-time UI sync and the "profile modified?" check. Prefer full
+ * isolatedScale0Profile rows in SCALE0_SCENARIO_OVERRIDES. When no override is
+ * registered, return an all-off isolation profile (never silent dashboard
+ * defaults that can re-arm disabled terms).
  *
  * @param {ScenarioId|string} scenarioId
  * @returns {Array<[string, boolean, string]>}
  */
 export function getScale0ScenarioToggleProfile(scenarioId) {
-    const values = new Map(SCALE0_TOGGLES.map(([key, value]) => [key, value]));
-    for (const [key, value] of SCALE0_SCENARIO_OVERRIDES[scenarioId] ?? []) {
-        values.set(key, value);
-    }
+    const ov = SCALE0_SCENARIO_OVERRIDES[scenarioId];
+    if (ov) return ov.map(([key, value, elementId]) => [key, !!value, elementId]);
     if (String(scenarioId).startsWith('light-')) {
-        for (const [key, value] of LIGHT_SCENARIO_OVERRIDES) values.set(key, value);
+        return isolatedScale0Profile('wave_propagation', 'gauss_projection');
     }
-    return SCALE0_TOGGLES.map(([key, defaultValue, elementId]) =>
-        [key, values.has(key) ? !!values.get(key) : !!defaultValue, elementId]);
+    console.warn(
+        '[toggles] no SCALE0_SCENARIO_OVERRIDES for ' + scenarioId + '; using isolated-off profile',
+    );
+    return isolatedScale0Profile();
 }

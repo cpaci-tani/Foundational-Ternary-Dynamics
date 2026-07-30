@@ -104,6 +104,28 @@ export class ViewportFluxRenderer {
         this._fluxGlow = true;     // additive glow bloom (weakened) vs flat translucent dots
         this._fluxOpacity = null;  // user opacity override (null = use the glow-mode default)
         this._fluxShape = 0;       // point shape (0 = circle)
+
+        // Peak-hold-with-decay normalizer state for Flux Volume (audit fix —
+        // dynamical accuracy). Colour/size normalization used to divide by THIS
+        // FRAME's own instant max |J|, which stretches a trivial field and an
+        // extreme field into the identical color range and hides whether the
+        // field is growing or decaying. This tracks a VU-meter-style running
+        // peak instead: fast attack (jumps immediately to a new instant max),
+        // slow release (decays geometrically when the instant max isn't
+        // re-hit), so a decaying field visibly fades over ~seconds instead of
+        // snapping back to full saturation every frame.
+        this._fluxMaxDecay = 0;
+    }
+
+    // Peak-hold-with-decay update, instance-local (see the constructor
+    // comment). Not shared with overlay-frames.js's updateDecayingMax helper —
+    // this is a different module (the Three.js renderer, not the JS field
+    // sampler).
+    _updatePeakHoldDecay(fieldName, instantMax, decay = 0.985) {
+        const prev = this[fieldName] || 0;
+        const next = Math.max(instantMax, prev * decay);
+        this[fieldName] = next;
+        return next;
     }
 
     setBoundaryShape(shape) {
@@ -254,23 +276,30 @@ export class ViewportFluxRenderer {
         }
 
         // Find max for normalization over the sampled grid.
-        let maxFlux = 0;
+        let instantMaxFlux = 0;
         for (let iz = 0; iz < samples; iz++) {
             const zNN = vox[iz] * N * N;
             for (let iy = 0; iy < samples; iy++) {
                 const zNNyN = zNN + vox[iy] * N;
                 for (let ix = 0; ix < samples; ix++) {
                     const m = volumeData[zNNyN + vox[ix]];
-                    if (m > maxFlux) maxFlux = m;
+                    if (m > instantMaxFlux) instantMaxFlux = m;
                 }
             }
         }
 
-        // Skip the write loop if the field is essentially zero.
-        if (maxFlux < 1e-20) {
+        // Skip the write loop if the field is essentially zero THIS FRAME (an
+        // elevated held peak from earlier should not force an empty field to
+        // keep drawing dots — nothing would pass FLUX_THRESHOLD below anyway).
+        if (instantMaxFlux < 1e-20) {
             this._fluxVolume.geometry.setDrawRange(0, 0);
             return;
         }
+
+        // Peak-hold-with-decay: color/size normalize against the held running
+        // peak, not this instant's own max, so a decaying field visibly fades
+        // instead of being re-stretched to fill the ramp every frame.
+        const maxFlux = this._updatePeakHoldDecay('_fluxMaxDecay', instantMaxFlux);
 
         // Render every voxel — base dots + flux-driven glow
         // Clip to boundary shape (normalized coords -1..1 from lattice center)
@@ -450,12 +479,27 @@ export class ViewportFluxRenderer {
         this._fluxStreamlines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
     }
 
-    updateFluxStreamlines(streamlines, maxFluxMag) {
+    // `mags` (optional) is a flat per-vertex |J| magnitude array parallel to
+    // `streamlines.buffer` (one scalar per vertex, i.e. index = offsets[li]/3 + i)
+    // — built by buildFluxStreamlines in scale0/runtime/field-overlays.js by
+    // sampling the same field buffer used to integrate the lines. Coloring by
+    // this LOCAL magnitude (rather than by i/(nPts-1), the vertex's arc-length
+    // position along its own line) makes the ramp mean the same thing here as
+    // it does on Flux Volume: blue=weak, red=strong AT THAT POINT (audit fix —
+    // the old position-based coloring was a real mismatch, not a stylistic
+    // choice). Falls back to the old position-based fade if `mags` is absent.
+    updateFluxStreamlines(streamlines, maxFluxMag, mags) {
         if (!this._fluxStreamlines) this._buildFluxStreamlines();
         const maxMag = maxFluxMag || 1;
-        this._writeStreamlinesIntoMesh(this._fluxStreamlines, streamlines, (i, nPts, rgb) => {
-            const t = i / (nPts - 1);
-            const [r, g, b] = fluxToColor(t * maxMag, maxMag);
+        const offsets = streamlines.offsets;
+        this._writeStreamlinesIntoMesh(this._fluxStreamlines, streamlines, (i, nPts, rgb, li) => {
+            let mag;
+            if (mags) {
+                mag = mags[(offsets[li] / 3) + i];
+            } else {
+                mag = (i / (nPts - 1)) * maxMag;
+            }
+            const [r, g, b] = fluxToColor(mag, maxMag);
             rgb[0] = r; rgb[1] = g; rgb[2] = b;
         });
     }
