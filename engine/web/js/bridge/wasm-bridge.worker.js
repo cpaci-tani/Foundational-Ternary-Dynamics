@@ -320,6 +320,18 @@ self.onmessage = (e) => {
         postFrame();
         break;
       }
+      case 'coarsen': {
+        // One-shot Scale-0 → Scale-1 coarse-graining snapshot (voxel debug
+        // view / promotion pipeline). The embind export builds plain typed
+        // arrays in this worker's JS context, so the result is structured-
+        // cloneable as-is.
+        let data = null;
+        if (mod && bridge && typeof mod.coarsenToParticles === 'function') {
+          try { data = mod.coarsenToParticles(bridge); } catch (e) { data = null; }
+        }
+        self.postMessage({ type: 'coarsenResult', reqId: msg.reqId, data });
+        break;
+      }
       case 'wantSampler':
         // Proxy registers a sampler kind+stride it wants computed each frame.
         wantedSamplers.set(`${msg.kind}@${msg.stride}`, { kind: msg.kind, stride: msg.stride });

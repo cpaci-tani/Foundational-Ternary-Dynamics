@@ -11,73 +11,69 @@ async function selectPEScenario(page, id) {
     }, id);
 }
 
-test.describe('Scale 1 particle scenarios and overlays', () => {
+test.describe('Scale 1 native-engine scenarios and overlays', () => {
     test.beforeEach(async ({ page }) => {
         page.setDefaultTimeout(20_000);
     });
 
-    test('hydrogen loads with rich particle data and default overlays active', async ({ page }) => {
+    test('default Coulomb orbit loads on the native engine with live data', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await switchMode(page, 'particles');
 
         await expect.poll(
             () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
-            { timeout: 10_000, message: 'hydrogen did not seed Scale 1 particles' },
-        ).toBeGreaterThan(1);
+            { timeout: 10_000, message: 'default scenario did not seed Scale 1 particles' },
+        ).toBeGreaterThanOrEqual(2);
 
         const state = await page.evaluate(async () => {
-            const presets = await import('./js/scales/scale1/scenarios.js');
+            const reg = await import('./js/scales/scale1/scenario-registry.js');
             const b = window._ftdBridge;
             const data = b.peGetParticleData();
             const ext = b.peGetExtendedData();
             const forces = b.peGetForces();
-            const src = b.peGetFieldSources();
             const diag = b.peGetDiagnostics();
-            const maxMass = data.masses ? Math.max(...Array.from(data.masses)) : 0;
+            const caps = b.peGetBackendCapabilities();
             let maxSpeed = 0;
             for (let i = 0; i < data.count; i++) {
-                const vx = data.velocities[i * 3] || 0;
-                const vy = data.velocities[i * 3 + 1] || 0;
-                const vz = data.velocities[i * 3 + 2] || 0;
-                maxSpeed = Math.max(maxSpeed, Math.hypot(vx, vy, vz));
+                maxSpeed = Math.max(maxSpeed, Math.hypot(
+                    data.velocities[i * 3] || 0,
+                    data.velocities[i * 3 + 1] || 0,
+                    data.velocities[i * 3 + 2] || 0));
             }
             return {
-                preset: presets.getPEScenarioPreset('pe-hydrogen'),
+                preset: reg.getScale1ScenarioPreset(reg.DEFAULT_SCALE1_SCENARIO),
+                backend: caps.backend,
+                nativeForces: caps.nativeForces,
                 count: data.count,
                 velocityLength: data.velocities?.length || 0,
                 massLength: data.masses?.length || 0,
-                lockedLength: data.locked?.length || 0,
-                maxMass,
+                spinAxesLength: data.spinAxes?.length || 0,
                 maxSpeed,
                 extCount: ext?.count || 0,
                 forceCount: forces.count,
                 maxForce: forces.maxForce,
-                sourceMassMax: src.masses?.length ? Math.max(...Array.from(src.masses)) : 0,
                 coulombPE: diag.coulombPE,
-                gravityPE: diag.gravityPE,
-                buttons: {
-                    velocities: document.getElementById('toggle-velocities')?.classList.contains('active') || false,
-                    trails: document.getElementById('toggle-trails')?.classList.contains('active') || false,
-                    potential: document.getElementById('toggle-pe-potential')?.classList.contains('active') || false,
-                    forceNet: document.getElementById('toggle-pe-force-net')?.classList.contains('active') || false,
-                    gravity: document.getElementById('toggle-pe-gravity')?.classList.contains('active') || false,
-                    damping: document.getElementById('toggle-pe-damping')?.classList.contains('active') || false,
-                },
+                totalEnergy: diag.totalEnergy,
+                descShown: !!document.getElementById('s1-scenario-desc-text')?.textContent?.length,
             };
         });
 
+        expect(state.backend).toBe('wasm');
+        expect(state.nativeForces).toBe(true);
         expect(state.preset.physics.coulomb).toBe(true);
-        expect(state.preset.physics.gravity).toBe(false);
         expect(state.count).toBeGreaterThanOrEqual(2);
         expect(state.velocityLength).toBe(state.count * 3);
         expect(state.massLength).toBe(state.count);
-        expect(state.lockedLength).toBe(state.count);
-        expect(state.maxMass).toBeGreaterThan(100);
-        expect(state.maxSpeed).toBeGreaterThan(0);
+        expect(state.spinAxesLength).toBe(state.count * 3);
+        expect(state.maxSpeed).toBeGreaterThan(0);          // orbit IC applied
         expect(state.extCount).toBe(state.count);
         expect(state.forceCount).toBe(state.count);
         expect(state.maxForce).toBeGreaterThan(0);
+        expect(Math.abs(state.coulombPE)).toBeGreaterThan(0);
+        expect(state.totalEnergy).toBeLessThan(0);          // bound orbit
+        expect(state.descShown).toBe(true);                 // epistemic status rendered
+
         const decomp = await page.evaluate(() => {
             const d = window._ftdBridge?.peGetForceDecomposition?.();
             return d ? { count: d.count, maxCoulomb: d.maxCoulomb, maxNet: d.maxNet } : null;
@@ -85,84 +81,63 @@ test.describe('Scale 1 particle scenarios and overlays', () => {
         expect(decomp?.count).toBe(state.count);
         expect(decomp?.maxCoulomb).toBeGreaterThan(0);
         expect(decomp?.maxNet).toBeGreaterThan(0);
-        expect(state.sourceMassMax).toBeGreaterThan(100);
-        expect(Math.abs(state.coulombPE)).toBeGreaterThan(0);
-        expect(Math.abs(state.gravityPE || 0)).toBe(0);
-        expect(state.buttons).toMatchObject({
-            velocities: true,
-            trails: true,
-            potential: true,
-            forceNet: true,
-            gravity: false,
-            damping: false,
-        });
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 
-    test('micro black hole preset switches to gravity-only overlays and masses', async ({ page }) => {
+    test('cluster pair carries the N·K_B mass law and ±N charges', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await switchMode(page, 'particles');
-        await selectPEScenario(page, 'pe-micro-bh');
+        await selectPEScenario(page, 's1-cluster-pair');
 
         await expect.poll(
             () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
-            { timeout: 10_000, message: 'micro-BH did not seed Scale 1 particles' },
-        ).toBeGreaterThan(4);
+            { timeout: 10_000, message: 'cluster pair did not seed' },
+        ).toBe(2);
 
-        const state = await page.evaluate(async () => {
-            const presets = await import('./js/scales/scale1/scenarios.js');
+        const state = await page.evaluate(() => {
             const b = window._ftdBridge;
             const data = b.peGetParticleData();
-            const forces = b.peGetForces();
-            const src = b.peGetFieldSources();
+            for (let i = 0; i < 30; i++) b.peTick();
             const diag = b.peGetDiagnostics();
             return {
-                preset: presets.getPEScenarioPreset('pe-micro-bh'),
-                count: data.count,
-                maxMass: data.masses?.length ? Math.max(...Array.from(data.masses)) : 0,
-                sourceMassMax: src.masses?.length ? Math.max(...Array.from(src.masses)) : 0,
-                maxForce: forces.maxForce,
-                coulombPE: diag.coulombPE,
-                gravityPE: diag.gravityPE,
-                controls: {
-                    coulomb: document.getElementById('pe-coulomb')?.checked || false,
-                    gravity: document.getElementById('pe-gravity')?.checked || false,
-                    damping: document.getElementById('pe-damping')?.checked || false,
-                    softening: document.getElementById('pe-soft-slider')?.value || '',
-                },
-                buttons: {
-                    gravityDynamics: document.getElementById('toggle-pe-gravity')?.classList.contains('active') || false,
-                    gravityField: document.getElementById('toggle-pe-gravity-field')?.classList.contains('active') || false,
-                    potential: document.getElementById('toggle-pe-potential')?.classList.contains('active') || false,
-                    forceGravity: document.getElementById('toggle-pe-force-gravity')?.classList.contains('active') || false,
-                    forceNet: document.getElementById('toggle-pe-force-net')?.classList.contains('active') || false,
-                },
+                masses: Array.from(data.masses),
+                charges: Array.from(data.charges),
+                totalEnergy: diag.totalEnergy,
+                tick: diag.tick,
             };
         });
 
-        expect(state.preset.physics.coulomb).toBe(false);
-        expect(state.preset.physics.gravity).toBe(true);
-        expect(state.count).toBeGreaterThan(4);
-        expect(state.maxMass).toBeGreaterThanOrEqual(5000);
-        expect(state.sourceMassMax).toBeGreaterThanOrEqual(5000);
-        expect(state.maxForce).toBeGreaterThan(0);
-        expect(Math.abs(state.coulombPE || 0)).toBe(0);
-        expect(state.gravityPE).toBeLessThan(0);
-        expect(state.controls).toMatchObject({
-            coulomb: false,
-            gravity: true,
-            damping: false,
-            softening: '1',
+        const K_B = 0.511;
+        expect(state.masses[0]).toBeCloseTo(20 * K_B, 6);
+        expect(state.masses[1]).toBeCloseTo(20 * K_B, 6);
+        expect(state.charges.slice().sort((a, b) => a - b)).toEqual([-20, 20]);
+        expect(state.totalEnergy).toBeLessThan(0);   // bound binary
+        expect(state.tick).toBe(30);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
+
+    test('empty-zoo scenario is genuinely empty and Zoo injection works', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await switchMode(page, 'particles');
+        await selectPEScenario(page, 's1-empty-zoo');
+
+        const result = await page.evaluate(() => {
+            const b = window._ftdBridge;
+            const before = b.peGetParticleData().count;
+            const id = b.peAddParticle('electron', -1, 5, 0, 0, 0, 0, 0, 0.511, 0.1);
+            const after = b.peGetParticleData().count;
+            const types = b.peGetParticleTypes();
+            return { before, after, id, taggedElectron: types.get(id) === 'electron' };
         });
-        expect(state.buttons).toMatchObject({
-            gravityDynamics: true,
-            gravityField: true,
-            potential: false,
-            forceGravity: true,
-            forceNet: true,
-        });
+
+        expect(result.before).toBe(0);
+        expect(result.after).toBe(1);
+        expect(result.id).toBeGreaterThanOrEqual(0);
+        expect(result.taggedElectron).toBe(true);
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });

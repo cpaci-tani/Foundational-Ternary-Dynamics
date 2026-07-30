@@ -33,25 +33,6 @@ import {
 } from '../ui/dom.js';
 import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js';
 
-// ── Per-scenario boundary resolution ────────────────────────────────
-// A scenario may declare a boundary preference in SCALE0_SCENARIO_BOUNDARY
-// (config/toggles.js); when it does, that wins over the live DOM controls.
-// Otherwise fall back to the user's #boundary-select / #flux-boundary-mode.
-// (Keeps a scenario's boundary need out of raw DOM reads — the UI↔bridge
-// coupling noted in SPEC_SCALE0_SCENARIO_ARCHITECTURE.md §6.6.)
-function boundaryShapeFor(id) {
-    const b = SCALE0_SCENARIO_BOUNDARY[id];
-    return (b && b.shape) ? b.shape : readInputValue('boundary-select', 'cube');
-}
-function boundaryModeFor(id) {
-    const b = SCALE0_SCENARIO_BOUNDARY[id];
-    if (b && Number.isInteger(b.mode)) return b.mode;
-    // Backward compatibility for the one historical Boolean declaration.
-    if (b && typeof b.reflective === 'boolean') return b.reflective ? 1 : 2;
-    const raw = Number(readInputValue('flux-boundary-mode', 2));
-    return Number.isInteger(raw) && raw >= 0 && raw <= 2 ? raw : 2;
-}
-
 // Toggle-reset whitelist used by `applyToggleDefaults`.
 //
 // Contract: every scenario in `bridge/scenarios/*.js` and
@@ -253,8 +234,11 @@ function applyGravityAbsorbingToggles(scenarioId, mainScale0, mockScale0) {
     }
 }
 
-function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId) {
-    ctx.applyTicksPerFrameFromSlider(50);
+function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed = true } = {}) {
+    // Scenario loads snap the transport to 1× (slider=50). Lattice resize
+    // keeps the user's current speed — only boundary / flux-volume defaults
+    // need re-applying there.
+    if (resetSpeed) ctx.applyTicksPerFrameFromSlider(50);
     // Boundary: a scenario may pin its own (SCALE0_SCENARIO_BOUNDARY); otherwise
     // reset to the default cube + non-reflective. Without honoring the config
     // here, this step would clobber the reflective boundary the scenario needs
@@ -453,7 +437,8 @@ function fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, param
     }
 }
 
-export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}) {
+export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}, opts = {}) {
+    const { resetSpeed = true, resetTickAccumulator = false } = opts;
     const scenario = getScale0Scenario(scenarioId);
     telemetryHub.resetScale(0);
 
@@ -531,7 +516,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // worker's 'ready' reply can replay it. By running here, the setFluxBoundary
     // command lands in _pendingCommands after the clear and is replayed correctly.
     // If scenario load is deferred, we still apply defaults now to ready the UI.
-    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id);
+    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id, { resetSpeed });
 
     // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after
     // scenario.load (which resets the engine toggles under the dual-bridge
@@ -608,6 +593,8 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         }
         markFieldDirty();
     }
+
+    if (resetTickAccumulator) state.tickAccumulator.reset();
 }
 
 export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
@@ -632,7 +619,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     }
 
     // Skip the in-thread WASM realloc when the off-thread worker owns physics
-    // (the WasmBridgeProxy rebuilds the engine at newSize inside the worker).
+    // (loadScale0Scenario builds a fresh WasmBridgeProxy at the new size).
     if (!useWasmWorker && bridge && typeof bridge.resize === 'function') {
         try {
             await bridge.resize(newSize);
@@ -645,50 +632,18 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
             return;
         }
     }
+    // Point the app-level bridge at the new N so the canonical load path
+    // constructs the worker / reset() at this size. Do NOT fork a second
+    // install path here — the old resize body skipped onInitFailure,
+    // onEngineToggles, applyAuxiliaryDefaults (dual-bridge boundary), and
+    // toggle UI reconciliation.
     bridge.latticeSize = newSize;
 
-    telemetryHub.resetScale(0);
-
-    let useFluxMock = false;
-    let fluxMock = null;
-    if (useWasmWorker) {
-        fluxMock = new WasmBridgeProxy(newSize);   // off-thread WASM at the new size
-        useFluxMock = true;
-    }
-
-    applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenarioId);
-    if (fluxMock) {
-        for (const [key, , elId] of DEFAULT_TOGGLES) {
-            fluxMock.capabilities.scale0.setToggle(key, readCheckboxValue(elId));
-        }
-    }
-
-    setFluxMock(fluxMock, useFluxMock);
-    ctx.useFluxMock = useFluxMock;
-    ctx.fluxMock = fluxMock;
-
-    const activeBridge = (useFluxMock && fluxMock) ? fluxMock : bridge;
-    const harness = getPhysicsHarness(activeBridge);
-    getScale0Scenario(scenarioId).load(harness, { id: scenarioId });
-
-    applyGravityAbsorbingToggles(
-        scenarioId,
-        bridge.capabilities.scale0,
-        fluxMock?.capabilities?.scale0 ?? null,
-    );
-
-    if (bridge?.capabilities?.scale0) {
-        bridge.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
-        bridge.capabilities.scale0.setFluxBoundaryMode(boundaryModeFor(scenarioId));
-    }
-
-    ctx.viewport.setLatticeSize(newSize);
-    viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);
-    setInputValue('lattice-size', activeBridge.latticeSize || newSize);
-    state.latticeNeedsUpload = true;
-    markFieldDirty();
-    state.tickAccumulator.reset();
-    if (ctx) ctx._samplersPending = true;
+    loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, { id: scenarioId }, {
+        resetSpeed: false,
+        resetTickAccumulator: true,
+    });
+    setInputValue('lattice-size', getActiveScale0Bridge(ctx, state)?.latticeSize || newSize);
 }
 
 export function stepScale0(ctx, state) {

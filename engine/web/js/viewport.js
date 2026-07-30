@@ -543,6 +543,12 @@ export class Viewport {
     updatePESystem(com, p, l) { this._particleRenderer.updatePESystem(com, p, l); }
     togglePESystem(on) { this._particleRenderer.togglePESystem(on); }
 
+    // ── Voxel debug ghost layer (Scale-1 promotion source view) ─────────
+    updateVoxelDebugLayer(coarsen, latticeSize, displayScale) {
+        this._particleRenderer.updateVoxelDebugLayer(coarsen, latticeSize, displayScale);
+    }
+    toggleVoxelDebugLayer(on) { this._particleRenderer.toggleVoxelDebugLayer(on); }
+
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
     // This class keeps thin delegators for backward compatibility.

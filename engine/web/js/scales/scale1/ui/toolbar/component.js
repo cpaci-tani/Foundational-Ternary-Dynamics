@@ -1,4 +1,7 @@
 import { getScale1ScenarioToolbarTemplate } from './template.js';
+import {
+    populateScale1ScenarioSelect, DEFAULT_SCALE1_SCENARIO,
+} from '../../scenario-registry.js';
 
 function htmlToElement(markup) {
     const template = document.createElement('template');
@@ -7,5 +10,8 @@ function htmlToElement(markup) {
 }
 
 export function createScale1ScenarioToolbarGroup() {
-    return htmlToElement(getScale1ScenarioToolbarTemplate());
+    const element = htmlToElement(getScale1ScenarioToolbarTemplate());
+    populateScale1ScenarioSelect(
+        element.querySelector('#pe-scenario-select'), DEFAULT_SCALE1_SCENARIO);
+    return element;
 }

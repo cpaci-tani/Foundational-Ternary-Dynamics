@@ -25,6 +25,7 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 | 2026-04-27 | [pre-refactor sweep](AUDIT_2026-04_pre-refactor.md) | 122 | 78 | 40 | 4 |
 | 2026-04-27 | [refactor sweep (8-phase)](AUDIT_2026-04_refactor-sweep.md) | 8 phases · 17 commits | 17 | 1 (WSL2 GPU parity) | 0 |
 | 2026-07-02 | engine revision program (plan `i-want-you-to-clever-frost` + `engine/CHECKLIST_ENGINE.md` revision sections) | 38-agent audit → phased execution on `engine/revision-program-p0` | Phases 0–3 + 2.10/4.2/6.1 | 4.1, 5.1–5.6, 6.2 | 7 refuted + 5 stale claims (recorded) |
+| 2026-07-29 | [Scale 1 particle engine](AUDIT_2026-07_scale1-particle-engine.md) | 76 confirmed (94 raised, 18 refuted) | 0 (superseded by full redesign, not fixed in place) | all — subsystem being retired | 18 refuted, recorded |
 
 ---
 

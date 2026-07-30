@@ -20,7 +20,7 @@ async function selectPEScenario(page, id) {
     }, id);
 }
 
-async function runScale1(page, scenario = 'pe-hydrogen') {
+async function runScale1(page, scenario = 's1-coulomb-orbit') {
     await gotoAndReady(page);
     await switchMode(page, 'particles');
     await selectPEScenario(page, scenario);
@@ -42,7 +42,7 @@ test.describe('Scale 1 side panels', () => {
 
     test('charts and telemetry grid switch to particle dynamics', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
-        await runScale1(page, 'pe-hydrogen');
+        await runScale1(page, 's1-coulomb-orbit');
 
         await openPanel(page, 'telemetry-grid');
         const grid = await page.evaluate(() => ({
@@ -79,7 +79,7 @@ test.describe('Scale 1 side panels', () => {
 
         expect(charts.activeScale).toBe('1');
         expect(charts.chips).toEqual(expect.arrayContaining([
-            'Particle Energy',
+            'Particle Energy (active potential terms)',
             'Momentum & Angular Momentum',
             'Net Forces',
             'Virial & RMS Velocity',
@@ -95,9 +95,9 @@ test.describe('Scale 1 side panels', () => {
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 
-    test('diagnostics summarize active Scale 1 scenario dynamics', async ({ page }) => {
+    test('diagnostics summarize the active Scale 1 scenario dynamics', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
-        await runScale1(page, 'pe-micro-bh');
+        await runScale1(page, 's1-cluster-pair');
         await openPanel(page, 'diagnostics');
 
         const diag = await page.evaluate(() => {
@@ -112,12 +112,8 @@ test.describe('Scale 1 side panels', () => {
                 gravity: value('gravity-on'),
                 damping: value('damping-on'),
                 softening: value('softening'),
-                gravityPE: value('gravity-pe'),
                 maxForce: value('max-force'),
-                legacyVisible: (() => {
-                    const el = document.getElementById('pe-telemetry');
-                    return !!el && getComputedStyle(el).display !== 'none';
-                })(),
+                legacyPanelGone: !document.getElementById('pe-telemetry'),
             };
         });
 
@@ -127,39 +123,35 @@ test.describe('Scale 1 side panels', () => {
             'Conservation',
             'Forces & Geometry',
         ]));
-        expect(diag.scenario).toContain('Micro Black Hole');
-        expect(diag.coulomb).toBe('off');
+        expect(diag.scenario).toContain('Cluster Pair');
+        expect(diag.coulomb).toBe('on');
         expect(diag.gravity).toBe('on');
         expect(diag.damping).toBe('off');
-        expect(Number(diag.softening)).toBeCloseTo(1, 5);
-        expect(diag.gravityPE).not.toBe('0');
+        expect(Number(diag.softening)).toBeCloseTo(0.1, 5);
         expect(diag.maxForce).not.toBe('0');
-        expect(diag.legacyVisible).toBe(true);
+        // Legacy PE telemetry canvas panel is retired — the descriptor tables
+        // are the single Scale-1 diagnostics surface.
+        expect(diag.legacyPanelGone).toBe(true);
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 
     test('energy drift re-baselines on scenario switch', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
-        // First scenario establishes a drift baseline (hydrogen total energy
-        // ~ -5.8e-5 sim units)...
-        await runScale1(page, 'pe-hydrogen');
+        await runScale1(page, 's1-coulomb-orbit');
 
         // Telemetry collection is demand-gated: open diagnostics NOW so
-        // collectScale1 runs and _peInitialEnergy is set to hydrogen's energy
-        // (without this the stale-baseline bug never arms).
+        // collectScale1 runs and _peInitialEnergy latches to this scenario.
         await openPanel(page, 'diagnostics');
         await page.waitForTimeout(800);
 
-        // ...then switching scenarios must reset telemetryHub scale-1 state
-        // (peEnergyDrift buffer + _peInitialEnergy), so drift is measured
-        // against the NEW scenario's initial energy, not hydrogen's. W-pair
-        // seeds at a very different total energy (~ -9.7e-5), so a stale
-        // hydrogen baseline reads as ~25% drift immediately.
-        await selectPEScenario(page, 'pe-w-pair');
+        // Switching scenarios must reset telemetryHub Scale-1 state so drift
+        // is measured against the NEW scenario's initial energy. (The hub
+        // additionally re-latches on any particle-count/toggle change.)
+        await selectPEScenario(page, 's1-cluster-pair');
         await expect.poll(
             () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
-            { timeout: 10_000, message: 'pe-w-pair did not seed particles' },
+            { timeout: 10_000, message: 's1-cluster-pair did not seed particles' },
         ).toBeGreaterThan(1);
         await page.evaluate(() => {
             const btn = document.getElementById('btn-play');
@@ -175,8 +167,8 @@ test.describe('Scale 1 side panels', () => {
         expect(driftText).toBeTruthy();
         const drift = Number(driftText);
         expect(Number.isFinite(drift)).toBe(true);
-        // With a stale hydrogen baseline this reads ~25%; re-baselined it
-        // stays small (w-pair conserves energy well over a short run).
+        // A stale cross-scenario baseline would read as tens of percent;
+        // re-baselined it stays small over a short run.
         expect(Math.abs(drift)).toBeLessThan(10);
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
