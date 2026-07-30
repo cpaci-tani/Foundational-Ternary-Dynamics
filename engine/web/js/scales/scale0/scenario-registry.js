@@ -740,6 +740,11 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
         assertion: 'One inert positive marker accompanies a source-free anisotropic vector template; no weak charge, mass pole, polarization representation, or decay channel exists.',
     }),
+    's0-vacuum-w-minus-boson': Object.freeze({
+        level: 'behavioral', qualification: 'NEGATIVE MARKER PLUS SELECTED ANISOTROPIC VECTOR WAVE — no W-boson identity',
+        test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
+        assertion: 'One inert negative marker accompanies a sign-mirrored source-free anisotropic vector template; no weak charge, mass pole, polarization representation, or decay channel exists.',
+    }),
     's0-vacuum-z-boson': Object.freeze({
         level: 'behavioral', qualification: 'SELECTED INWARD RADIAL VECTOR WAVE — no Z-boson identity',
         test: 'engine/tests/test_scenario_behavior.cpp', target: 'scenario_behavior',
@@ -1620,6 +1625,7 @@ export const SCALE0_SCENARIO_CATALOG = [
      */
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-photon',                 'Photon Candidate — Native Wave Test', ['vacuum', 'wave'], '[CONJECTURE] — native propagation is [EMERGENT]; photon identity is [OPEN]'),
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-w-boson', 'Positive Marker + Anisotropic Vector Wave — W Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] vector template; [CLOSED NEGATIVE] W identity'),
+    makeScenario('1. Validated Native Dynamics', 's0-vacuum-w-minus-boson', 'Negative Marker + Anisotropic Vector Wave — W Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] vector template; [CLOSED NEGATIVE] W identity'),
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-z-boson', 'Inward Radial Vector Wave — Z Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] vector template; [CLOSED NEGATIVE] Z identity'),
     makeScenario('1. Validated Native Dynamics', 's0-vacuum-higgs', 'Equal-Component Vector Blob — Scalar Higgs Identity Rejected', ['vacuum', 'wave', 'null-test'], '[IMPOSED] vector template; [CLOSED NEGATIVE] scalar Higgs identity'),
     /*

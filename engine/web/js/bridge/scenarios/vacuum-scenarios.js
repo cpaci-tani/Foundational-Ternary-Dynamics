@@ -121,6 +121,17 @@ export function setupVacuumScenario(name, harness, ctx) {
             return true;
         }
 
+        case 's0-vacuum-w-minus-boson': {
+            // Charge-sign mirror of s0-vacuum-w-boson: negative marker, every
+            // field term sign-flipped. No weak charge, mass pole,
+            // polarization representation, or W-boson observable is present.
+            configureFreeWaveTerms(harness, false);
+            injectParticleFull(harness, mc, mc, mc, -1, { spin: -1 });
+            injectRadialEnvelope(harness, mc, mc, mc, -1, sig(1.8), K_B * 1.6,
+                { radius: vox(5), axisBias: [1.3, 1, 1] });
+            return true;
+        }
+
         case 's0-vacuum-z-boson': {
             // Unmanifested inward radial vector template; no neutral current,
             // mass pole, polarization representation, or Z observable.

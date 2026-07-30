@@ -178,6 +178,30 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         return true;
     }
 
+    if (name == "s0-vacuum-w-minus-boson") {
+        // Scenario ID: s0-vacuum-w-minus-boson
+        // Qualification: charge-sign mirror of s0-vacuum-w-boson (negative
+        // marker, every field term sign-flipped). No weak charge, mass pole,
+        // polarization representation, or W-boson observable is present.
+        configure_free_wave(false);
+        IPF(rb, mc, mc, mc, -1, -1, 0);
+        const double sigma = 1.8;
+        const double amp = K_B * 1.6;
+        const int eR = 5;
+        const double eR2 = eR * eR;
+        for (int dz = -eR; dz <= eR; ++dz)
+        for (int dy = -eR; dy <= eR; ++dy)
+        for (int dx = -eR; dx <= eR; ++dx) {
+            double r2 = dx*dx + dy*dy + dz*dz;
+            if (r2 == 0 || r2 > eR2) continue;
+            double r = std::sqrt(r2);
+            double v = amp * std::exp(-r2 / (2.0 * sigma * sigma));
+            if (v < 0.001) continue;
+            IF(rb, mc+dx, mc+dy, mc+dz, -v*1.3*dx/r, -v*dy/r, -v*dz/r);
+        }
+        return true;
+    }
+
     if (name == "s0-vacuum-z-boson") {
         // Scenario ID: s0-vacuum-z-boson
         // Qualification: an unmanifested inward radial vector template. No
