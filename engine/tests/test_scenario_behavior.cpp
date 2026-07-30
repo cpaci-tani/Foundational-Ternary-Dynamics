@@ -1468,8 +1468,10 @@ void test_particle_named_wave_template_cohorts() {
         tick_n(electron_ref, 12);
         double mirror_r2 = 0.0, mirror_n2 = 0.0;
         for (std::size_t i = 0; i < electron_ref.voxels().size(); ++i) {
-            mirror_r2 += (base.voxels()[i].flux + electron_ref.voxels()[i].flux).mag2();
-            mirror_n2 += electron_ref.voxels()[i].flux.mag2();
+            mirror_r2 += (base.voxels()[i].flux + electron_ref.voxels()[i].flux).mag2()
+                       + (base.voxels()[i].wave_vel + electron_ref.voxels()[i].wave_vel).mag2();
+            mirror_n2 += electron_ref.voxels()[i].flux.mag2()
+                       + electron_ref.voxels()[i].wave_vel.mag2();
         }
         check("positron template is the exact charge-sign mirror of the electron template",
               std::sqrt(mirror_r2 / std::max(1e-30, mirror_n2)) < 1e-12);
