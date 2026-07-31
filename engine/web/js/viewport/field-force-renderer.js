@@ -1,3 +1,11 @@
+/** fieldForceMethods — ViewportFieldRenderer mixin (EM/gravity/strong/weak force viz). */
+import * as THREE from 'three';
+import { FORCE_PALETTES, lerpPalette } from './color-ramps.js';
+import {
+    VOXEL_CENTER_OFFSET,
+    _softSpriteTexture,
+} from './field-renderer-shared.js';
+
 export const fieldForceMethods = {
     _buildForceVolume() {
         this._forceVolume = this._buildArrowFieldMesh(32768, 0.6);

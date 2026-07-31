@@ -1,3 +1,6 @@
+/** fieldCoreMethods — ViewportFieldRenderer mixin (clip / center sync). */
+import { setVoxelCenterOffset } from './field-renderer-shared.js';
+
 export const fieldCoreMethods = {
     _ensureActiveIdx(len) {
         if (!this._activeIdx || this._activeIdx.length < len) {
