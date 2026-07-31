@@ -249,6 +249,15 @@ add_library(ftd_eft STATIC
     src/eft/collective_source_history_bound.cpp
     src/eft/removal_time_pulse_bound.cpp
     src/eft/removal_time_orbit_coherence.cpp
+    src/eft/derived_interaction_graph.cpp
+    src/eft/spline_poynting_momentum.cpp
+    src/eft/connected_moore_block_action.cpp
+    src/eft/state_only_matter_field_observer.cpp
+    src/eft/transported_chart_morphology.cpp
+    src/eft/support_invariant_matter_predicate.cpp
+    src/eft/matched_regional_energy_transport.cpp
+    src/eft/batched_regional_energy_profile.cpp
+    src/eft/component_aware_radial_field_profile.cpp
     src/eft/eight_source_orbit_coherence.cpp
     src/eft/nine_source_orbit_coherence.cpp
     src/eft/ten_source_orbit_coherence.cpp
@@ -260,6 +269,13 @@ add_library(ftd_eft STATIC
     src/eft/pole_matching.cpp
 )
 target_include_directories(ftd_eft PUBLIC ${CMAKE_SOURCE_DIR}/include)
+if(OpenMP_CXX_FOUND)
+    # Observer-only state reconstruction scans O(L^3) centered samples.  The
+    # pragma lives in ftd_eft, so linking OpenMP only through ftd_core leaves
+    # CUDA-only research executables silently serial.  No dynamics uses this
+    # pragma; this enables the declared deterministic x-slab reduction only.
+    target_link_libraries(ftd_eft PUBLIC OpenMP::OpenMP_CXX)
+endif()
 
 # Core library
 add_library(ftd_core

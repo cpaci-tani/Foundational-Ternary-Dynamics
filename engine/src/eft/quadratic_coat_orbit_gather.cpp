@@ -203,17 +203,178 @@ Vec3 integrate_orbit(const Vec3& start,
 double current_pairing(const QuadraticCoatFaceCurrent& segment,
                        const MatchedFaceFlux& field) {
   const std::size_t expected = volume(segment.L);
-  if (field.L != segment.L || segment.current_x.size() != expected
+  if (field.L != segment.L || field.x.size() != expected
+      || field.y.size() != expected || field.z.size() != expected)
+    return std::numeric_limits<double>::infinity();
+  long double result = 0.0L;
+  if (!segment.dense_materialized) {
+    for (const auto& entry : segment.sparse_current) {
+      if (entry.axis < 0 || entry.axis > 2 || !std::isfinite(entry.value))
+        return std::numeric_limits<double>::infinity();
+      const auto& coefficients = face_component(field, entry.axis);
+      result += static_cast<long double>(entry.value)
+          *coefficients[static_cast<std::size_t>(segment.index(
+              entry.face.x, entry.face.y, entry.face.z))];
+    }
+    return static_cast<double>(result);
+  }
+  if (segment.current_x.size() != expected
       || segment.current_y.size() != expected
       || segment.current_z.size() != expected)
     return std::numeric_limits<double>::infinity();
-  long double result = 0.0L;
   for (std::size_t i = 0; i < expected; ++i) {
     result += static_cast<long double>(segment.current_x[i])*field.x[i]
         +static_cast<long double>(segment.current_y[i])*field.y[i]
         +static_cast<long double>(segment.current_z[i])*field.z[i];
   }
   return static_cast<double>(result);
+}
+
+bool field_shape_valid(const MatchedFaceFlux& field, int L) {
+  const std::size_t expected = volume(L);
+  return L > 0 && field.L == L && field.x.size() == expected
+      && field.y.size() == expected && field.z.size() == expected;
+}
+
+bool field_shape_valid(const MatchedEdgeField& field, int L) {
+  const std::size_t expected = volume(L);
+  return L > 0 && field.L == L && field.x.size() == expected
+      && field.y.size() == expected && field.z.size() == expected;
+}
+
+double sparse_coefficient(const std::vector<QuadraticCoatFaceCurrent>& segments,
+                          int axis, int wrapped_index) {
+  long double result = 0.0L;
+  for (const auto& segment : segments) {
+    for (const auto& entry : segment.sparse_current) {
+      if (entry.axis == axis
+          && segment.index(entry.face.x, entry.face.y, entry.face.z)
+              == wrapped_index)
+        result += static_cast<long double>(entry.value);
+    }
+  }
+  return static_cast<double>(result);
+}
+
+double sparse_component_at(
+    const std::vector<QuadraticCoatFaceCurrent>& segments,
+    int L, int axis, const Vec3& position) {
+  const int lower_x = static_cast<int>(std::floor(position.x))-2;
+  const int lower_y = static_cast<int>(std::floor(position.y))-2;
+  const int lower_z = static_cast<int>(std::floor(position.z))-2;
+  long double result = 0.0L;
+  for (int x = lower_x; x <= lower_x+4; ++x) {
+    const double wx = axis == 0 ? b1(position.x-x-0.5)
+                                : b2(position.x-x);
+    if (wx == 0.0) continue;
+    for (int y = lower_y; y <= lower_y+4; ++y) {
+      const double wy = axis == 1 ? b1(position.y-y-0.5)
+                                  : b2(position.y-y);
+      if (wy == 0.0) continue;
+      for (int z = lower_z; z <= lower_z+4; ++z) {
+        const double wz = axis == 2 ? b1(position.z-z-0.5)
+                                    : b2(position.z-z);
+        if (wz == 0.0) continue;
+        const int wrapped_index = static_cast<int>(
+            (static_cast<std::size_t>((x%L+L)%L)*L
+             +static_cast<std::size_t>((y%L+L)%L))*L
+             +static_cast<std::size_t>((z%L+L)%L));
+        result += static_cast<long double>(wx)*wy*wz
+            *sparse_coefficient(segments, axis, wrapped_index);
+      }
+    }
+  }
+  return static_cast<double>(result);
+}
+
+Vec3 sparse_field_at(const std::vector<QuadraticCoatFaceCurrent>& segments,
+                     int L, const Vec3& position) {
+  return {sparse_component_at(segments, L, 0, position),
+          sparse_component_at(segments, L, 1, position),
+          sparse_component_at(segments, L, 2, position)};
+}
+
+double sparse_midpoint_coefficient(
+    const std::vector<QuadraticCoatFaceCurrent>& segments,
+    const MatchedFaceFlux& fixed_electric,
+    const MatchedFaceFlux& electric_pre_current,
+    double current_scale, int axis, int wrapped_index) {
+  const auto& fixed = face_component(fixed_electric, axis);
+  const auto& prepared = face_component(electric_pre_current, axis);
+  return 0.5*(fixed[static_cast<std::size_t>(wrapped_index)]
+      +prepared[static_cast<std::size_t>(wrapped_index)]
+      +current_scale*sparse_coefficient(segments, axis, wrapped_index));
+}
+
+QuadraticCoatOrbitGatherResult evaluate_prevalidated(
+    const QuadraticCoatFaceCurrent& segment,
+    const MatchedFaceFlux& electric,
+    const MatchedEdgeField& magnetic,
+    const Vec3& discrete_gradient_velocity,
+    double temporal_scale,
+    double beta,
+    double polarity_scale) {
+  QuadraticCoatOrbitGatherResult result;
+  result.L = segment.L;
+  result.charge = segment.charge;
+  result.start_effective_position = segment.start_effective_position;
+  result.end_effective_position = segment.end_effective_position;
+  result.displacement = result.end_effective_position
+      -result.start_effective_position;
+  result.discrete_gradient_velocity = discrete_gradient_velocity;
+  result.temporal_scale = temporal_scale;
+  result.beta = beta;
+  if (!segment.valid || (segment.charge != -1 && segment.charge != 1)
+      || !field_shape_valid(electric, segment.L)
+      || !field_shape_valid(magnetic, segment.L)
+      || !finite(discrete_gradient_velocity)
+      || !(temporal_scale > 0.0) || !std::isfinite(temporal_scale)
+      || !std::isfinite(beta) || !(polarity_scale > 0.0)
+      || !std::isfinite(polarity_scale))
+    return result;
+
+  const std::vector<double> breaks = half_integer_breaks(
+      result.start_effective_position, result.end_effective_position);
+  result.quadrature_pieces = static_cast<int>(breaks.size())-1;
+  const Vec3 electric_average = integrate_orbit(
+      result.start_effective_position, result.end_effective_position, breaks,
+      [&electric](const Vec3& position) {
+        return Vec3{face_component_at(electric, 0, position),
+                    face_component_at(electric, 1, position),
+                    face_component_at(electric, 2, position)};
+      });
+  result.magnetic_average = integrate_orbit(
+      result.start_effective_position, result.end_effective_position, breaks,
+      [&magnetic](const Vec3& position) {
+        return Vec3{edge_component_at(magnetic, 0, position),
+                    edge_component_at(magnetic, 1, position),
+                    edge_component_at(magnetic, 2, position)};
+      });
+  const double effective_charge = polarity_scale*segment.charge;
+  result.electric_force = electric_average*effective_charge;
+  result.current_work = polarity_scale*current_pairing(segment, electric);
+  result.electric_work = result.displacement.dot(result.electric_force);
+  result.electric_adjoint_residual = std::abs(
+      result.current_work-result.electric_work);
+  result.magnetic_impulse = Vec3::cross(
+      discrete_gradient_velocity, result.magnetic_average)
+      *(temporal_scale*beta*effective_charge);
+  result.magnetic_work_residual = std::abs(
+      discrete_gradient_velocity.dot(result.magnetic_impulse));
+  const Vec3 kinematic = result.displacement
+      -discrete_gradient_velocity*temporal_scale;
+  result.kinematic_residual = std::max({std::abs(kinematic.x),
+      std::abs(kinematic.y), std::abs(kinematic.z)});
+  result.causal_excess = std::max(0.0,
+      discrete_gradient_velocity.mag()-C_SPEED);
+  result.valid = finite(result.electric_force)
+      && finite(result.magnetic_average) && finite(result.magnetic_impulse)
+      && std::isfinite(result.current_work)
+      && result.electric_adjoint_residual <= 5e-13
+      && result.magnetic_work_residual <= 5e-13
+      && result.kinematic_residual <= 5e-13
+      && result.causal_excess <= 5e-13;
+  return result;
 }
 
 }  // namespace
@@ -298,61 +459,129 @@ QuadraticCoatOrbitGatherResult evaluate_quadratic_coat_orbit_gather(
     const MatchedEdgeField& magnetic,
     const Vec3& discrete_gradient_velocity,
     double temporal_scale,
-    double beta) {
-  QuadraticCoatOrbitGatherResult result;
-  result.L = segment.L;
-  result.charge = segment.charge;
-  result.start_effective_position = segment.start_effective_position;
-  result.end_effective_position = segment.end_effective_position;
-  result.displacement = result.end_effective_position
-      -result.start_effective_position;
-  result.discrete_gradient_velocity = discrete_gradient_velocity;
-  result.temporal_scale = temporal_scale;
-  result.beta = beta;
+    double beta,
+    double polarity_scale) {
   if (!segment.valid || (segment.charge != -1 && segment.charge != 1)
       || electric.L != segment.L || magnetic.L != segment.L
       || !finite(electric) || !finite(magnetic)
       || !finite(discrete_gradient_velocity)
-      || !(temporal_scale > 0.0) || !std::isfinite(beta))
-    return result;
+      || !(temporal_scale > 0.0) || !std::isfinite(beta)
+      || !(polarity_scale > 0.0) || !std::isfinite(polarity_scale))
+    return {};
+  return evaluate_prevalidated(segment, electric, magnetic,
+      discrete_gradient_velocity, temporal_scale, beta, polarity_scale);
+}
 
-  const std::vector<double> breaks = half_integer_breaks(
-      result.start_effective_position, result.end_effective_position);
-  result.quadrature_pieces = static_cast<int>(breaks.size())-1;
-  const Vec3 electric_average = integrate_orbit(
-      result.start_effective_position, result.end_effective_position, breaks,
-      [&electric](const Vec3& position) {
-        return interpolate_quadratic_face_field(electric, position);
-      });
-  result.magnetic_average = integrate_orbit(
-      result.start_effective_position, result.end_effective_position, breaks,
-      [&magnetic](const Vec3& position) {
-        return interpolate_quadratic_edge_field(magnetic, position);
-      });
-  result.electric_force = electric_average*static_cast<double>(segment.charge);
-  result.current_work = current_pairing(segment, electric);
-  result.electric_work = result.displacement.dot(result.electric_force);
-  result.electric_adjoint_residual = std::abs(
-      result.current_work-result.electric_work);
-  result.magnetic_impulse = Vec3::cross(
-      discrete_gradient_velocity, result.magnetic_average)
-      *(temporal_scale*beta*segment.charge);
-  result.magnetic_work_residual = std::abs(
-      discrete_gradient_velocity.dot(result.magnetic_impulse));
-  const Vec3 kinematic = result.displacement
-      -discrete_gradient_velocity*temporal_scale;
-  result.kinematic_residual = std::max({std::abs(kinematic.x),
-      std::abs(kinematic.y), std::abs(kinematic.z)});
-  result.causal_excess = std::max(0.0,
-      discrete_gradient_velocity.mag()-C_SPEED);
-  result.valid = finite(result.electric_force)
-      && finite(result.magnetic_average) && finite(result.magnetic_impulse)
-      && std::isfinite(result.current_work)
-      && result.electric_adjoint_residual <= 5e-13
-      && result.magnetic_work_residual <= 5e-13
-      && result.kinematic_residual <= 5e-13
-      && result.causal_excess <= 5e-13;
-  return result;
+QuadraticCoatOrbitGatherResult
+evaluate_quadratic_coat_orbit_gather_prevalidated_fields(
+    const QuadraticCoatFaceCurrent& segment,
+    const MatchedFaceFlux& electric,
+    const MatchedEdgeField& magnetic,
+    const Vec3& discrete_gradient_velocity,
+    double temporal_scale,
+    double beta,
+    double polarity_scale) {
+  return evaluate_prevalidated(segment, electric, magnetic,
+      discrete_gradient_velocity, temporal_scale, beta, polarity_scale);
+}
+
+std::vector<QuadraticCoatOrbitGatherResult>
+evaluate_quadratic_coat_orbit_gather_sparse_midpoint_batch_prevalidated_fields(
+    const std::vector<QuadraticCoatFaceCurrent>& segments,
+    const MatchedFaceFlux& fixed_electric,
+    const MatchedFaceFlux& electric_pre_current,
+    double current_scale,
+    const MatchedEdgeField& magnetic,
+    const std::vector<Vec3>& discrete_gradient_velocities,
+    double temporal_scale,
+    double beta,
+    double polarity_scale) {
+  std::vector<QuadraticCoatOrbitGatherResult> results;
+  if (segments.empty() || segments.size() != discrete_gradient_velocities.size()
+      || !std::isfinite(current_scale) || !(temporal_scale > 0.0)
+      || !std::isfinite(temporal_scale) || !std::isfinite(beta)
+      || !(polarity_scale > 0.0) || !std::isfinite(polarity_scale))
+    return results;
+  const int L = segments.front().L;
+  if (!field_shape_valid(fixed_electric, L)
+      || !field_shape_valid(electric_pre_current, L)
+      || !field_shape_valid(magnetic, L)) return results;
+  for (const auto& segment : segments)
+    if (!segment.valid || segment.L != L || segment.dense_materialized)
+      return results;
+
+  results.reserve(segments.size());
+  for (std::size_t item = 0; item < segments.size(); ++item) {
+    const auto& segment = segments[item];
+    QuadraticCoatOrbitGatherResult result;
+    result.L = L;
+    result.charge = segment.charge;
+    result.start_effective_position = segment.start_effective_position;
+    result.end_effective_position = segment.end_effective_position;
+    result.displacement = result.end_effective_position
+        -result.start_effective_position;
+    result.discrete_gradient_velocity = discrete_gradient_velocities[item];
+    result.temporal_scale = temporal_scale;
+    result.beta = beta;
+    if (!finite(result.discrete_gradient_velocity)) return {};
+    const auto breaks = half_integer_breaks(
+        result.start_effective_position, result.end_effective_position);
+    result.quadrature_pieces = static_cast<int>(breaks.size())-1;
+    const Vec3 electric_average = integrate_orbit(
+        result.start_effective_position, result.end_effective_position, breaks,
+        [&](const Vec3& position) {
+          const Vec3 fixed{face_component_at(fixed_electric, 0, position),
+                           face_component_at(fixed_electric, 1, position),
+                           face_component_at(fixed_electric, 2, position)};
+          const Vec3 prepared{
+              face_component_at(electric_pre_current, 0, position),
+              face_component_at(electric_pre_current, 1, position),
+              face_component_at(electric_pre_current, 2, position)};
+          return (fixed+prepared
+              +sparse_field_at(segments, L, position)*current_scale)*0.5;
+        });
+    result.magnetic_average = integrate_orbit(
+        result.start_effective_position, result.end_effective_position, breaks,
+        [&magnetic](const Vec3& position) {
+          return Vec3{edge_component_at(magnetic, 0, position),
+                      edge_component_at(magnetic, 1, position),
+                      edge_component_at(magnetic, 2, position)};
+        });
+    const double effective_charge = polarity_scale*segment.charge;
+    result.electric_force = electric_average*effective_charge;
+    long double current_work = 0.0L;
+    for (const auto& entry : segment.sparse_current) {
+      const int wrapped_index = segment.index(
+          entry.face.x, entry.face.y, entry.face.z);
+      current_work += static_cast<long double>(entry.value)
+          *sparse_midpoint_coefficient(segments, fixed_electric,
+              electric_pre_current, current_scale, entry.axis, wrapped_index);
+    }
+    result.current_work = polarity_scale*static_cast<double>(current_work);
+    result.electric_work = result.displacement.dot(result.electric_force);
+    result.electric_adjoint_residual = std::abs(
+        result.current_work-result.electric_work);
+    result.magnetic_impulse = Vec3::cross(
+        result.discrete_gradient_velocity, result.magnetic_average)
+        *(temporal_scale*beta*effective_charge);
+    result.magnetic_work_residual = std::abs(
+        result.discrete_gradient_velocity.dot(result.magnetic_impulse));
+    const Vec3 kinematic = result.displacement
+        -result.discrete_gradient_velocity*temporal_scale;
+    result.kinematic_residual = std::max({std::abs(kinematic.x),
+        std::abs(kinematic.y), std::abs(kinematic.z)});
+    result.causal_excess = std::max(0.0,
+        result.discrete_gradient_velocity.mag()-C_SPEED);
+    result.valid = finite(result.electric_force)
+        && finite(result.magnetic_average) && finite(result.magnetic_impulse)
+        && std::isfinite(result.current_work)
+        && result.electric_adjoint_residual <= 5e-13
+        && result.magnetic_work_residual <= 5e-13
+        && result.kinematic_residual <= 5e-13
+        && result.causal_excess <= 5e-13;
+    results.push_back(result);
+  }
+  return results;
 }
 
 }  // namespace ftd::eft

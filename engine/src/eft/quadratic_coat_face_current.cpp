@@ -6,6 +6,7 @@
 #include <array>
 #include <cmath>
 #include <limits>
+#include <map>
 
 namespace ftd::eft {
 namespace {
@@ -213,7 +214,28 @@ int QuadraticCoatFaceCurrent::index(int x, int y, int z) const {
 
 double quadratic_coat_current_divergence_at(
     const QuadraticCoatFaceCurrent& segment, int x, int y, int z) {
-  if (segment.L <= 0 || segment.current_x.empty()) return NAN;
+  if (segment.L <= 0) return NAN;
+  if (!segment.dense_materialized) {
+    long double value = 0.0L;
+    for (const auto& entry : segment.sparse_current) {
+      const int ex = wrap(entry.face.x,segment.L);
+      const int ey = wrap(entry.face.y,segment.L);
+      const int ez = wrap(entry.face.z,segment.L);
+      const int tx = wrap(x,segment.L), ty=wrap(y,segment.L), tz=wrap(z,segment.L);
+      if (entry.axis == 0 && ey == ty && ez == tz) {
+        if (ex == tx) value += entry.value;
+        if (wrap(ex+1,segment.L) == tx) value -= entry.value;
+      } else if (entry.axis == 1 && ex == tx && ez == tz) {
+        if (ey == ty) value += entry.value;
+        if (wrap(ey+1,segment.L) == ty) value -= entry.value;
+      } else if (entry.axis == 2 && ex == tx && ey == ty) {
+        if (ez == tz) value += entry.value;
+        if (wrap(ez+1,segment.L) == tz) value -= entry.value;
+      }
+    }
+    return static_cast<double>(value);
+  }
+  if (segment.current_x.empty()) return NAN;
   const auto at = [&segment](const std::vector<double>& field,
                              int sx, int sy, int sz) {
     return field[flat_index(segment.L, sx, sy, sz)];
@@ -228,7 +250,24 @@ double quadratic_coat_current_divergence_at(
 
 double quadratic_coat_continuity_at(
     const QuadraticCoatFaceCurrent& segment, int x, int y, int z) {
-  if (segment.L <= 0 || segment.rho_before.empty()) return NAN;
+  if (segment.L <= 0) return NAN;
+  if (!segment.dense_materialized) {
+    const auto target=flat_index(segment.L,x,y,z);
+    long double before=0.0L,after=0.0L;
+    for(std::size_t i=0;i<segment.start_coat.weight_count;++i) {
+      const auto& entry=segment.start_coat.weights[i];
+      if(flat_index(segment.L,entry.site.x,entry.site.y,entry.site.z)==target)
+        before+=entry.weight;
+    }
+    for(std::size_t i=0;i<segment.end_coat.weight_count;++i) {
+      const auto& entry=segment.end_coat.weights[i];
+      if(flat_index(segment.L,entry.site.x,entry.site.y,entry.site.z)==target)
+        after+=entry.weight;
+    }
+    return static_cast<double>(after-before)
+        +quadratic_coat_current_divergence_at(segment,x,y,z);
+  }
+  if (segment.rho_before.empty()) return NAN;
   const auto index = flat_index(segment.L, x, y, z);
   return segment.rho_after[index]-segment.rho_before[index]
       +quadratic_coat_current_divergence_at(segment, x, y, z);
@@ -238,10 +277,12 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
     int L,
     const Vec3& start_effective_position,
     const Vec3& raw_end_effective_position,
-    int charge) {
+    int charge,
+    bool materialize_dense) {
   QuadraticCoatFaceCurrent result;
   result.L = L;
   result.charge = charge;
+  result.dense_materialized = materialize_dense;
   result.start_effective_position = start_effective_position;
   if (L < 5 || !finite(start_effective_position)
       || !finite(raw_end_effective_position)
@@ -270,13 +311,15 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
       || side*side > std::numeric_limits<std::size_t>::max()/side)
     return result;
   const std::size_t volume = side*side*side;
-  result.rho_before.assign(volume, 0.0);
-  result.rho_after.assign(volume, 0.0);
-  result.current_x.assign(volume, 0.0);
-  result.current_y.assign(volume, 0.0);
-  result.current_z.assign(volume, 0.0);
-  deposit_coat(result.start_coat, L, result.rho_before);
-  deposit_coat(result.end_coat, L, result.rho_after);
+  if (materialize_dense) {
+    result.rho_before.assign(volume, 0.0);
+    result.rho_after.assign(volume, 0.0);
+    result.current_x.assign(volume, 0.0);
+    result.current_y.assign(volume, 0.0);
+    result.current_z.assign(volume, 0.0);
+    deposit_coat(result.start_coat, L, result.rho_before);
+    deposit_coat(result.end_coat, L, result.rho_after);
+  }
 
   const auto breaks = half_integer_breaks(
       result.start_effective_position, result.end_effective_position);
@@ -304,8 +347,10 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
   for (int axis = 0; axis < 3; ++axis) {
     const double axis_delta = component(delta, axis);
     if (axis_delta == 0.0) continue;
-    std::vector<double>* field = axis == 0 ? &result.current_x
-        : (axis == 1 ? &result.current_y : &result.current_z);
+    std::vector<double>* field = materialize_dense
+        ? (axis == 0 ? &result.current_x
+          : (axis == 1 ? &result.current_y : &result.current_z))
+        : nullptr;
     for (int i = lower[0]; i <= upper[0]; ++i) {
       for (int j = lower[1]; j <= upper[1]; ++j) {
         for (int k = lower[2]; k <= upper[2]; ++k) {
@@ -314,7 +359,8 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
               axis, face, result.start_effective_position, delta, breaks);
           const double deposited = charge*axis_delta*basis_integral;
           if (deposited == 0.0) continue;
-          (*field)[flat_index(L, i, j, k)] += deposited;
+          result.sparse_current.push_back({face,axis,deposited});
+          if (field != nullptr) (*field)[flat_index(L, i, j, k)] += deposited;
           for (int d = 0; d < 3; ++d) {
             const int coordinate = d == 0 ? i : (d == 1 ? j : k);
             const double center = static_cast<double>(coordinate)
@@ -336,13 +382,18 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
     }
   }
 
-  result.rho_support = support_count(result.rho_before)
-      +support_count(result.rho_after);
-  result.current_support = support_count(result.current_x)
-      +support_count(result.current_y)+support_count(result.current_z);
-  result.partition_residual = std::max(
-      std::abs(sum(result.rho_before)-charge),
-      std::abs(sum(result.rho_after)-charge));
+  result.rho_support = materialize_dense
+      ? support_count(result.rho_before)+support_count(result.rho_after)
+      : static_cast<int>(result.start_coat.weight_count+result.end_coat.weight_count);
+  result.current_support = materialize_dense
+      ? support_count(result.current_x)+support_count(result.current_y)
+          +support_count(result.current_z)
+      : static_cast<int>(result.sparse_current.size());
+  result.partition_residual = materialize_dense
+      ? std::max(std::abs(sum(result.rho_before)-charge),
+                 std::abs(sum(result.rho_after)-charge))
+      : std::max(std::abs(result.start_coat.partition_residual),
+                 std::abs(result.end_coat.partition_residual));
   result.first_moment_residual = std::max({
       std::abs(result.start_coat.first_moment_residual.x),
       std::abs(result.start_coat.first_moment_residual.y),
@@ -350,16 +401,38 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
       std::abs(result.end_coat.first_moment_residual.x),
       std::abs(result.end_coat.first_moment_residual.y),
       std::abs(result.end_coat.first_moment_residual.z)});
+  std::array<long double,3> current_sum{};
+  for(const auto& entry:result.sparse_current) current_sum[entry.axis]+=entry.value;
   result.current_moment_residual = std::max({
-      std::abs(sum(result.current_x)-charge*delta.x),
-      std::abs(sum(result.current_y)-charge*delta.y),
-      std::abs(sum(result.current_z)-charge*delta.z)});
-  for (int x = 0; x < L; ++x)
-    for (int y = 0; y < L; ++y)
-      for (int z = 0; z < L; ++z)
-        result.continuity_residual = std::max(
-            result.continuity_residual,
-            std::abs(quadratic_coat_continuity_at(result, x, y, z)));
+      std::abs(static_cast<double>(current_sum[0])-charge*delta.x),
+      std::abs(static_cast<double>(current_sum[1])-charge*delta.y),
+      std::abs(static_cast<double>(current_sum[2])-charge*delta.z)});
+  if (materialize_dense) {
+    for (int x = 0; x < L; ++x)
+      for (int y = 0; y < L; ++y)
+        for (int z = 0; z < L; ++z)
+          result.continuity_residual = std::max(
+              result.continuity_residual,
+              std::abs(quadratic_coat_continuity_at(result, x, y, z)));
+  } else {
+    std::map<std::size_t,long double> residual;
+    for(std::size_t i=0;i<result.start_coat.weight_count;++i) {
+      const auto& entry=result.start_coat.weights[i];
+      residual[flat_index(L,entry.site.x,entry.site.y,entry.site.z)]-=entry.weight;
+    }
+    for(std::size_t i=0;i<result.end_coat.weight_count;++i) {
+      const auto& entry=result.end_coat.weights[i];
+      residual[flat_index(L,entry.site.x,entry.site.y,entry.site.z)]+=entry.weight;
+    }
+    for(const auto& entry:result.sparse_current) {
+      residual[flat_index(L,entry.face.x,entry.face.y,entry.face.z)]+=entry.value;
+      Coord next=entry.face;
+      if(entry.axis==0)++next.x; else if(entry.axis==1)++next.y; else ++next.z;
+      residual[flat_index(L,next.x,next.y,next.z)]-=entry.value;
+    }
+    for(const auto& item:residual) result.continuity_residual=std::max(
+        result.continuity_residual,std::abs(static_cast<double>(item.second)));
+  }
   result.locality_residual = std::max({result.locality_residual,
       result.start_coat.locality_residual, result.end_coat.locality_residual});
   result.valid = result.partition_residual <= 1e-12
@@ -371,15 +444,74 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
   return result;
 }
 
+QuadraticCoatAggregatedCurrent aggregate_quadratic_coat_face_current(
+    const std::vector<QuadraticCoatFaceCurrent>& segments,
+    double scale,double zero_tolerance) {
+  QuadraticCoatAggregatedCurrent result;
+  if(segments.empty()||!std::isfinite(scale)
+      ||!std::isfinite(zero_tolerance)||zero_tolerance<0.0) return result;
+  result.L=segments.front().L;
+  if(result.L<1) return result;
+
+  using Key=std::array<int,4>;
+  std::map<Key,long double> coefficients;
+  std::array<long double,3> raw_moment{},net_moment{};
+  for(const auto& segment:segments) {
+    if(!segment.valid||segment.L!=result.L) return result;
+    for(const auto& entry:segment.sparse_current) {
+      if(entry.axis<0||entry.axis>2||!std::isfinite(entry.value)) return result;
+      const double scaled=scale*entry.value;
+      if(!std::isfinite(scaled)) return result;
+      if(scaled==0.0) continue;
+      ++result.raw_contributions;
+      result.raw_l1+=std::abs(scaled);
+      raw_moment[static_cast<std::size_t>(entry.axis)]+=scaled;
+      coefficients[{entry.axis,wrap(entry.face.x,result.L),
+          wrap(entry.face.y,result.L),wrap(entry.face.z,result.L)}]+=scaled;
+    }
+  }
+
+  result.entries.reserve(coefficients.size());
+  for(const auto& [key,value_ld]:coefficients) {
+    const double value=static_cast<double>(value_ld);
+    const double magnitude=std::abs(value);
+    result.net_l1+=magnitude;
+    net_moment[static_cast<std::size_t>(key[0])]+=value;
+    if(magnitude<=zero_tolerance) {
+      result.discarded_l1+=magnitude;
+      continue;
+    }
+    result.entries.push_back({{key[1],key[2],key[3]},key[0],value});
+  }
+  result.cancelled_l1=std::max(0.0,result.raw_l1-result.net_l1);
+  for(std::size_t axis=0;axis<3;++axis)
+    result.aggregation_moment_residual=std::max(
+        result.aggregation_moment_residual,
+        std::abs(static_cast<double>(raw_moment[axis]-net_moment[axis])));
+  result.valid=std::isfinite(result.raw_l1)&&std::isfinite(result.net_l1)
+      &&std::isfinite(result.cancelled_l1)
+      &&std::isfinite(result.discarded_l1)
+      &&std::isfinite(result.aggregation_moment_residual);
+  return result;
+}
+
 double quadratic_coat_connection_coupling(
     const QuadraticCoatFaceCurrent& segment,
     const std::vector<double>& potential_x,
     const std::vector<double>& potential_y,
     const std::vector<double>& potential_z) {
-  if (!segment.valid || potential_x.size() != segment.current_x.size()
-      || potential_y.size() != segment.current_y.size()
-      || potential_z.size() != segment.current_z.size()) return NAN;
+  const std::size_t expected=static_cast<std::size_t>(segment.L)*segment.L*segment.L;
+  if (!segment.valid || potential_x.size() != expected
+      || potential_y.size() != expected || potential_z.size() != expected) return NAN;
   long double result = 0.0L;
+  if(!segment.dense_materialized) {
+    for(const auto& entry:segment.sparse_current) {
+      const auto i=flat_index(segment.L,entry.face.x,entry.face.y,entry.face.z);
+      const auto& field=entry.axis==0?potential_x:(entry.axis==1?potential_y:potential_z);
+      result+=static_cast<long double>(field[i])*entry.value;
+    }
+    return static_cast<double>(result);
+  }
   for (std::size_t i = 0; i < segment.current_x.size(); ++i) {
     result += static_cast<long double>(potential_x[i])*segment.current_x[i]
         +static_cast<long double>(potential_y[i])*segment.current_y[i]

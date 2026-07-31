@@ -18,6 +18,7 @@ add_library(ftd_cuda STATIC
     wilson_dirac_gpu.cu     # Phase II.2-E: Wilson-Dirac CPU/GPU parity kernel
     cuda_invariants.cu      # ADR-0014: __constant__ pattern for invariant matrices
     kernels_eft.cu          # [NEW] Pure GPU-native EFT snapshot & operator calculations
+    cuda_matched_field_pipeline.cu # FTD-0746 successor: matched field/observer accelerator
     kernels_gauge.cu        # [NEW] GPU kernels for non-Abelian link variable relaxation
 )
 
@@ -60,6 +61,71 @@ set_target_properties(ftd_cuda PROPERTIES
     COMPILE_PDB_NAME ""
     COMPILE_PDB_OUTPUT_DIRECTORY ""
 )
+
+# FTD-0752 research-only arithmetic-equivalence library.  It compiles only the
+# matched-field pipeline from the unchanged source with contraction disabled,
+# matching the host target's explicitly separate binary64 multiply/add map.
+# The established ftd_cuda library and all production callers are unchanged.
+add_library(ftd_cuda_explicit_rounding STATIC
+    cuda_matched_field_pipeline.cu
+)
+target_include_directories(ftd_cuda_explicit_rounding PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+)
+target_link_libraries(ftd_cuda_explicit_rounding PUBLIC
+    ftd_eft
+    CUDA::cudart
+)
+target_compile_options(ftd_cuda_explicit_rounding PRIVATE
+    $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+    $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
+    $<$<COMPILE_LANGUAGE:CUDA>:--fmad=false>
+)
+set_target_properties(ftd_cuda_explicit_rounding PROPERTIES
+    CUDA_SEPARABLE_COMPILATION ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
+    POSITION_INDEPENDENT_CODE ON
+    COMPILE_PDB_NAME ""
+    COMPILE_PDB_OUTPUT_DIRECTORY ""
+)
+if(MSVC)
+    target_compile_options(ftd_cuda_explicit_rounding PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Z7>
+    )
+endif()
+
+# FTD-0759 research-only device reduction for the state-only support ladder.
+# Kept separate from ftd_cuda and the FTD-0758 explicit-rounding binary so the
+# already-registered held-out executable remains byte-for-byte unchanged.
+add_library(ftd_cuda_m3_observer STATIC
+    cuda_state_only_support_ladder.cu
+    cuda_quadratic_coat_orbit_gather.cu
+    cuda_transported_chart_morphology.cu
+)
+target_include_directories(ftd_cuda_m3_observer PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+)
+target_link_libraries(ftd_cuda_m3_observer PUBLIC
+    ftd_eft
+    CUDA::cudart
+)
+target_compile_options(ftd_cuda_m3_observer PRIVATE
+    $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+    $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
+    $<$<COMPILE_LANGUAGE:CUDA>:--fmad=false>
+)
+set_target_properties(ftd_cuda_m3_observer PROPERTIES
+    CUDA_SEPARABLE_COMPILATION ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
+    POSITION_INDEPENDENT_CODE ON
+    COMPILE_PDB_NAME ""
+    COMPILE_PDB_OUTPUT_DIRECTORY ""
+)
+if(MSVC)
+    target_compile_options(ftd_cuda_m3_observer PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Z7>
+    )
+endif()
 
 # Belt-and-braces: explicitly strip the Windows /Fd flag from CUDA
 # compile commands. CMake may still try to inject it via generator
