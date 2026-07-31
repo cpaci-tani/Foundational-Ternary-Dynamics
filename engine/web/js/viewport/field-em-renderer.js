@@ -1,3 +1,16 @@
+/** fieldEmMethods — ViewportFieldRenderer mixin (heatmap / EM / phase / state). */
+import * as THREE from 'three';
+import { fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
+import { buildStreamlineMesh, buildArrowFieldMesh } from './mesh-factory.js';
+import { rampCyclicHSL } from './color-ramps.js';
+import { knotHue } from '../scales/scale0/runtime/field-line-knots.js';
+import { MAX_FIELD_GRID } from './constants.js';
+import {
+    VOXEL_CENTER_OFFSET,
+    _makeParticleFragMaterial,
+    _ensureManifestAttrs,
+} from './field-renderer-shared.js';
+
 export const fieldEmMethods = {
     _buildFieldHeatmap() {
         const positions = new Float32Array(MAX_FIELD_GRID * 3);

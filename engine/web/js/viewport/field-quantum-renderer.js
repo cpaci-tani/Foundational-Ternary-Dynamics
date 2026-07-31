@@ -1,3 +1,12 @@
+/** fieldQuantumMethods — ViewportFieldRenderer mixin (dual / chirality / quantum / entropy). */
+import * as THREE from 'three';
+import { rampViridis, rampDivergingRdBu, rampGrayscale } from './color-ramps.js';
+import {
+    VOXEL_CENTER_OFFSET,
+    _makeParticleFragMaterial,
+    _ensureManifestAttrs,
+} from './field-renderer-shared.js';
+
 export const fieldQuantumMethods = {
     _buildDualFluxVolume() {
         const maxPts = 8000;

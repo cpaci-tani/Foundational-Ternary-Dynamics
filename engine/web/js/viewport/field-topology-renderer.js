@@ -1,3 +1,14 @@
+/** fieldTopologyMethods — ViewportFieldRenderer mixin (halo / damping / genesis / strings). */
+import * as THREE from 'three';
+import { K_GENESIS } from '../constants.js';
+import { rampCyclicHSL } from './color-ramps.js';
+import { knotHue } from '../scales/scale0/runtime/field-line-knots.js';
+import {
+    CONFINEMENT_PAIR_DIST2,
+    _makeParticleFragMaterial,
+    _ensureManifestAttrs,
+} from './field-renderer-shared.js';
+
 export const fieldTopologyMethods = {
     _buildDarkMatterHalo() {
         const maxPts = 8000;
