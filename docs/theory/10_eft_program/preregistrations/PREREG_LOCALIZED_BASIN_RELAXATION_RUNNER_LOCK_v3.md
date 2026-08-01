@@ -1,0 +1,19 @@
+# RUNNER LOCK — Localized-basin relaxation v3
+
+**Identifier:** `FTD-0681`  
+**Status:** `[LOCKED BEFORE EXECUTION]`  
+**Date:** 2026-07-28
+
+- protocol SHA256:
+  `6E653BBD9D133F78ACE56E2E974EA322A275930C77E147478A8D4F31299D7E3A`;
+- v3 runner SHA256:
+  `F3CDB0DABDE25899B648E7811B3712F7DE60543E587374EE4D72875718361388`;
+- embedded corrected observation source SHA256:
+  `FAF48C7C863EC0DA4D41EAF5E3D9834129D9C834F20786C6C2DAA4071B51B1C3`;
+- embedded guarded v2 source SHA256:
+  `42C1A7CFF4B24C0D1EABD172DBD4A395552D521AFFE3757FF6B759F754451E12`;
+- Release executable SHA256:
+  `82078C827DE93514BDF6666B63E15B96A8EFA70D21DBA48E1EE961E5B9ECD91D`;
+- toolchain: pinned MSVC `14.44.35207`, Ninja Multi-Config, Release;
+- compilation completed before this lock;
+- the v3 executable had not been invoked when these hashes were recorded.
