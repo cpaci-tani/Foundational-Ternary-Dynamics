@@ -1,0 +1,24 @@
+# FTD-0699 runner lock — internal-excitation symmetry-ray spectrum v2
+
+**Frozen:** 2026-07-28, before execution
+
+- protocol SHA256:
+  `C1609A6060C5148A0D5B4B6334B862E2212C2C55B22579A25BC34858F7610858`
+- wrapper SHA256:
+  `466291EFCD87A60B8D24AB71FDE1E481E89B0FFA1F588D7E58051AE99D418370`
+- correction hook SHA256:
+  `3EDA9AF2F6ECB58F88F82B60FAB16227C38FA94030A45840B2AF84C265D56C46`
+- immutable observation core SHA256:
+  `F14028AE0D35CCBB3AA4979B3F22897C049719061911367871ABAF4729C05626`
+- corrected parent runner SHA256:
+  `8A6C73A54F7B43CBC1E8A990A2384153C6E093F8DEEA3D83BCD4C5345CEBE023`
+- Release executable SHA256:
+  `1D77E67B36E80347B80A1E1ED43DAFB1AFE291A7CAA81DACE7ACFAAB8B2CC5EA`
+
+Execution command from `engine/build`:
+
+```text
+Release\test_internal_excitation_symmetry_ray_spectrum_v2.exe
+```
+
+No listed artifact may be edited before the locked run completes.
