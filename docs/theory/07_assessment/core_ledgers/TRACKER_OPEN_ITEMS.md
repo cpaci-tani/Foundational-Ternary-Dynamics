@@ -4,7 +4,110 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-07-26 — FTD-0540 proves the compact cardinal hat cusp is representation-forced and FTD-0541 constructs the positive non-cardinal quadratic coat with exact current. FTD-0542 derives the coat's exact spacetime current and common gauge interaction. FTD-0543 proves that fixed-step configuration stationarity does not itself supply exact endpoint energy and prices the simplest discrete-gradient alternative by its non-unit phase-area determinant. FTD-0544 proves the matched field sector exactly exchanges `-<Ebar,K>` while propagating Gauss. FTD-0545 closes the universal coat fixed-step matter-work identity negative; FTD-0546 completes its required neutral self-consistent follow-up and closes the frozen minimal quadratic-coat common action negative as an exact-energy mobile law. FTD-0547 restores exact matter work in the constant-force accelerated subsector, FTD-0548 derives its schedule-dependent exact spacetime current, and FTD-0549 proves endpoint/midpoint data cannot reconstruct that split. FTD-0550 constructs the exact quadratic face-electric adjoint and curl-compatible edge-magnetic orbit gather. FTD-0551 closes the simultaneous one-step discrete-gradient matter/current/field transaction constructively. FTD-0552 then closes its unmodified isolated multi-tick use negative: generic coats accelerate in their own conserved lattice self-energy while symmetry positions pin. FTD-0553 proves a rigid localized neutral composite cannot cancel that compact-coat Peierls force: its exact coefficient is a positive spectral sum unless the source is translation-invariant and nonlocal. FTD-0554 proves the general boundary: exact homogeneous unitary fractional translation requires nonlocal signed coupling/current. FTD-0555 derives the remaining local spectral criterion `Pi_i=<((1-cos k_i)/(3+cos k_i))^2>_energy` and the analytic `R^-4` suppression law, but its locked finite-volume qualification fails 9 conjunctive controls and licenses no native carrier claim. FTD-0556 closes the integer-hopping kinematics for the isolated free-flux `(J,W)` pair: the exact Bloch map permits a noninteger extended-packet centroid inside a strict local causal front. FTD-0557 proves that this free band has no nonzero infinite-lattice `l2` point state or finite-time rigid `l2` translate; locked packets broaden and never manifest `s`. FTD-0558 corrects the moving-source pole, and FTD-0559 closes prescribed-source field energy. FTD-0560 proves every finite point-hop period has nonzero on-shell forcing. FTD-0561 derives the finite-source multipole hierarchy, FTD-0562 closes every fixed nonzero finite rigid linear source, FTD-0563 closes finite neutrality as a true linear-monopole escape, and FTD-0564 closes normalized-flux topology as a standalone charge-magnitude mechanism. FTD-0578 derives the reciprocal Moore action but finds diagonal centering and point Peierls defects; FTD-0579 proves no nonzero finite rigid carrier eliminates either defect and that smooth envelopes suppress them only as `O(R_rms^-2)`. Native reciprocal recoil, physical power, and nonlinear/deforming effective-charge carriers remain open. The live manifested-matter gate now requires a protected defect/bundle class or a genuinely deforming nonlinear `(s,J,W)` core together with one common action that supplies and locks closed flux, energy, recoil, and mobility; rigid finite-profile tuning, neutrality alone, topology alone, and finite rigid smearing are no longer live escapes. No toggle/scenario/IR claim was added and production defaults remain unchanged. FTD-0406 remains the selected CPU strong-sector contract described in §1.3. **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc.
+**FTD-0754C/0755--0768 latest state (2026-08-01):** support is a resolution
+scale, not matter's literal edge. After FTD-0758 exposed an inherited
+certificate defect, FTD-0760 froze the conditional shared-anchor rule before
+fresh execution. All six WSL2 CUDA modes and 24 artifacts pass the independent
+9002/9002 certificate. The resulting status is
+`M3_FINITE_TIME_SELECTED_MATTER_FAMILY`: all 18 fresh candidate histories
+remain in the selected core through tick 312, including 2238/2736 continuation
+rows with a shared integer anchor, and remote environmental fibres leave every
+registered pre-contact local/core quantity exactly unchanged. M3 is therefore
+resolved at this finite-time selected scope and is not counted as open. The
+FTD-0761's six boosted cores translate more than one cell and pass the
+core/action/energy/causality/regularity/inversion gates. FTD-0762 proves that
+their post-boost observer/ladder failures are integer-center chart rejection,
+not physical field comparison: unchanged-geometry preparation fails, while a
+rigidly recentered control passes all CUDA observer gates. FTD-0761 is therefore
+a moving-core witness, not a certified complete moving state and not a physical
+coherence closure. FTD-0763 constructs that fractional-center observer and all
+three untouched tick-224 CUDA calls pass their observer, boundary-ledger, and
+support-ladder gates. Instantaneous observer validity is therefore resolved and
+is not counted as open. FTD-0764 then closes rigid complete-field co-motion for
+the registered moving family; FTD-0765--0767 identify the old wake statistic as
+under-entrained centroid lag and prove that the prior displacement never cleared
+overlapping observer windows. FTD-0768's fourth qualified WSL2 CUDA run has now
+completed, but the immutable artifact is execution-invalid: its continuous
+forward/reverse recovery is `3.8786822642578e-9` against the locked `1e-10`
+gate. The certificate passes `2220/2221` and returns
+`LONG_TRANSPORT_EXECUTION_INVALID`. Descriptive clearing at ticks 704 and 768
+cannot be classified. Long-horizon state-only identity, fixed-lab clearing
+response, and total matter--field momentum/stress balance therefore remain
+open. FTD-0759 remains a separate performance item: its parity matrix passes
+and large-volume smokes exceed 10x, but the frozen utilization gate fails, so
+device-side batching/controller work remains open.
+
+**FTD-0768 final correction (supersedes the active-run sentences in the long
+incremental digest below):** the third pre-result run was stopped before output
+after exposing an omitted moving-mask/Reynolds term. The corrected fourth run
+completed and serialized artifact SHA256 `FE7E1915...170C3F`. Fixed-boundary
+transport, source work, observer sweep, complementary sweep, endpoint chaining,
+and every forward checkpoint pass, but continuous reverse recovery fails by
+`38.7868x`. FTD-0768 is consumed as execution-invalid and yields no physics
+verdict. See [`AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md).
+
+**Many-body rigidity correction (derived during FTD-0768; no successor campaign
+registered):** the pure selected FTD-0411 BCC temporal kernel cannot
+repair the candidate SC network's zero harmonic shear. A static history lives
+at `theta=0`, where `T_B(0)=0`, so every strain-independent BCC-clock action
+contributes zero static shear exactly. The conditional quadratic BCC result in
+the matter-network derivation belongs to a spatial body-diagonal graph, which
+the current cutoff does not supply. The remaining live route is a
+deformation-dependent link/connection holonomy derived from existing
+face/edge variables, or an explicitly priced new spatial channel. It must be
+distinguished from Peierls pinning and pass common-action, recoil, inversion,
+translation, and relaxed-Hessian gates. This item remains open and is unchanged
+by FTD-0768's execution-invalid result.
+
+**Many-body translation-phase correction:** exact rational algebra first proved
+that the eight integer-phase `L=4` capacity constraints have full row rank,
+while all 48 axial row slides remain tangent and span the rank-144 central-bond
+Hessian's null space. Common pressure is rank 21, nonzero, zero trace, and
+therefore indefinite on that space, leaving three translations plus 24 exact
+internal slips. Signed-source and unsigned-occupancy maps are injective on all
+27 modes. The general even-`L` theorem now classifies that injectivity: complete
+row first variations live only on two-site-thick end caps. It is surface
+visibility, not bulk rigidity.
+
+The same theorem closes the integer-aligned periodic medium as stable scalable
+matter. Its exact checkerboard amplitude is `A(delta)=1/2-2 delta^2`, and its
+relaxed field energy has common-translation curvature `-beta/96` per site at
+the integer phase. Binding and saturated capacity are invariant along that
+path, so pressure cannot repair it. The old six-ratio `L=4` test is retained
+only as a finite saddle control and is no longer the next mainline campaign.
+At half-cell phase the infinite bulk source vanishes; a finite even block has
+source only on two boundary planes and an exact `O(area)` transverse-Gauss
+upper bound. The open static item is now the half-phase finite body's active
+constraints, field forces, pressure, constrained Hessian, and release
+stability. The open dynamical item is whether connected zero-field phase
+corridors support a local common-action phase front/turnover motion rather than
+rigid volume translation. Those corridors coincide with the FTD-0500
+half-cell section obstruction. FTD-0624/0626 prove that the shape/current
+quotient survives but a unique anchor loses opposite-polarity multiplicity;
+the selected shared-anchor fibre repairs representation while fixed internal
+rest remains unclosed. Any successor must preregister fibre transport,
+off-tie barrier traversal, or atomic manifestation turnover as distinct
+mechanisms. Certificate 105/105 and pytest 1/1 pass. No such successor is
+currently preregistered; FTD-0768's invalid completion does not select one.
+
+**Existing-variable rigidity branch:** there is no separate free holonomy
+repair between the current face/edge action and a connection ontology. The
+pressure-qualified constrained Hessian already contains all zero-frequency
+field stiffness. Gauge-neutral endpoint data cannot couple locally and gauge-
+invariantly to an open link; that requires a transforming phase/fiber, while a
+closed material loop requires a new graph--connection action. The live no-new-
+primitive discriminator is therefore the half-phase finite equilibrium
+followed by field/pressure/common-translation/row-relaxed shear. The certified
+integer phase is its negative saddle control. Record fixed-chart and
+translation-relaxed curvature, translation-phase corrugation, orientation
+spread, volume scaling, and cubic controls. Classify positive fixed-chart-only
+response as pinning, positive phase-relaxed zero-frequency curvature as a
+material-rigidity candidate, `omega^2` response as inertia, and row-momentum
+decay with zero static curvature as viscosity. This remains unregistered; the
+FTD-0768 execution-invalid result removes the scheduling hold but supplies no
+selection evidence.
+
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-08-01 — FTD-0768 completed but is execution-invalid because continuous reverse recovery is `3.8786822642578e-9 > 1e-10`; certificate `2220/2221`. Its descriptive clearing checkpoints carry no physics verdict. FTD-0762 proves FTD-0761's observer closure was an integer-center chart defect. The moving-core witness survives; rigid complete-field co-motion is closed at the FTD-0764 scope, while valid cleared-region response and momentum balance remain open. FTD-0753 closes the fresh three-ray `L=321` causal-horizon witness constructively and FTD-0754 moves the live matter item to state-only observer discovery followed by held-out M3 perturbation/volume validation. FTD-0540 proves the compact cardinal hat cusp is representation-forced and FTD-0541 constructs the positive non-cardinal quadratic coat with exact current. FTD-0542 derives the coat's exact spacetime current and common gauge interaction. FTD-0543 proves that fixed-step configuration stationarity does not itself supply exact endpoint energy and prices the simplest discrete-gradient alternative by its non-unit phase-area determinant. FTD-0544 proves the matched field sector exactly exchanges `-<Ebar,K>` while propagating Gauss. FTD-0545 closes the universal coat fixed-step matter-work identity negative; FTD-0546 completes its required neutral self-consistent follow-up and closes the frozen minimal quadratic-coat common action negative as an exact-energy mobile law. FTD-0547 restores exact matter work in the constant-force accelerated subsector, FTD-0548 derives its schedule-dependent exact spacetime current, and FTD-0549 proves endpoint/midpoint data cannot reconstruct that split. FTD-0550 constructs the exact quadratic face-electric adjoint and curl-compatible edge-magnetic orbit gather. FTD-0551 closes the simultaneous one-step discrete-gradient matter/current/field transaction constructively. FTD-0552 then closes its unmodified isolated multi-tick use negative: generic coats accelerate in their own conserved lattice self-energy while symmetry positions pin. FTD-0553 proves a rigid localized neutral composite cannot cancel that compact-coat Peierls force: its exact coefficient is a positive spectral sum unless the source is translation-invariant and nonlocal. FTD-0554 proves the general boundary: exact homogeneous unitary fractional translation requires nonlocal signed coupling/current. FTD-0555 derives the remaining local spectral criterion `Pi_i=<((1-cos k_i)/(3+cos k_i))^2>_energy` and the analytic `R^-4` suppression law, but its locked finite-volume qualification fails 9 conjunctive controls and licenses no native carrier claim. FTD-0556 closes the integer-hopping kinematics for the isolated free-flux `(J,W)` pair: the exact Bloch map permits a noninteger extended-packet centroid inside a strict local causal front. FTD-0557 proves that this free band has no nonzero infinite-lattice `l2` point state or finite-time rigid `l2` translate`; locked packets broaden and never manifest `s`. FTD-0558 corrects the moving-source pole, and FTD-0559 closes prescribed-source field energy. FTD-0560 proves every finite point-hop period has nonzero on-shell forcing. FTD-0561 derives the finite-source multipole hierarchy, FTD-0562 closes every fixed nonzero finite rigid linear source, FTD-0563 closes finite neutrality as a true linear-monopole escape, and FTD-0564 closes normalized-flux topology as a standalone charge-magnitude mechanism. FTD-0578 derives the reciprocal Moore action but finds diagonal centering and point Peierls defects; FTD-0579 proves no nonzero finite rigid carrier eliminates either defect and that smooth envelopes suppress them only as `O(R_rms^-2)`. Native reciprocal recoil, physical power, and nonlinear/deforming effective-charge carriers remain open. The live manifested-matter gate now requires a protected defect/bundle class or a genuinely deforming nonlinear `(s,J,W)` core together with one common action that supplies and locks closed flux, energy, recoil, and mobility; rigid finite-profile tuning, neutrality alone, topology alone, and finite rigid smearing are no longer live escapes. No toggle/scenario/IR claim was added and production defaults remain unchanged. FTD-0406 remains the selected CPU strong-sector contract described in §1.3. **Live repo count:** raw regen 2026-07-12 gives 907 `[OPEN]` string-markers across 263 files (archive-excluded), but the raw count is dominated by the meta/ledger layer's own rows — see the §9 caveat; the curated math queue is `SPEC_OPEN_MATH_BY_SECTOR.md` v1.1 and the curated engine/doc items are §§1–8 here. The historical "~168 real across ~64 files" figure was the 2026-04-17 hand-filtered estimate; a fresh hand-filtered pass has not been run this arc.
 
 **FTD-0563 incremental addendum:** finite microscopic neutrality is no longer
 an admissible linear route to long-range charge. The selected face-Gauss
@@ -422,6 +525,354 @@ exhaust and three hit the chart boundary, so no interior local dressed core is
 licensed. Global `SO(3) x strain` orientation is the next compact gate; native
 low-momentum extension follows if it fails.
 This item is counted as open.
+
+**FTD-0747/0748 CUDA reproducibility addendum:** the raw sparse-current
+container length is closed as a physical support observable; canonical net
+oriented-face support passes its exact aggregation gates. The corrected
+FTD-0748 campaign is nevertheless mixed: face passes the frozen CPU-prefix
+tolerance while edge/body separation drifts reach `2.18e-10` and `1.21e-10`
+against `1e-10`. All later persistence gates pass. The CUDA current kernel
+uses floating `atomicAdd` on raw entries that can share one canonical face,
+and the current one-step determinism fixture does not qualify the 312-step
+coupled trajectory. The live backend gate is unique-face, collision-free
+current deposition plus repeated long-horizon record identity before another
+CUDA physics replication. Tolerance relaxation is not a repair. This item is
+counted as open backend qualification; the FTD-0748 three-ray claim is closed
+negative and production remains unchanged.
+
+**FTD-0749 CUDA determinism addendum:** unique-face non-atomic deposition
+closes trajectory replay constructively: all separation, pair/field energy,
+discrete, graph, and support cells are exactly identical across independent
+312-step a/b processes for face, edge, and body. Strict record D0 remains
+negative only because the read-only regional histogram uses floating atomics;
+its maximum replay difference is `2.78e-17`. CPU-prefix parity is constructive
+for edge/body but face misses the frozen `1e-10` gate at `1.387e-10` because
+aggregate-once and sequential raw double addition are distinct finite-precision
+maps. The live backend gate is now deterministic selected-radius reduction
+plus one-writer per-face ordered raw addition, followed by a face-decisive CPU
+prefix and replay. This item remains counted as open backend qualification;
+the strict FTD-0749 conjunction is closed negative and production is unchanged.
+
+**FTD-0750 CUDA arithmetic-parity addendum:** deterministic selected-radius
+reduction closes strict record replay exactly for face, edge, and body; every
+non-arm CSV cell and physical JSON value matches within independent a/b pairs.
+Ordered one-writer-per-face current addition also matches CPU sequential
+arithmetic exactly in the adversarial one-step unit. The frozen full campaign
+remains mixed: face CPU H1 passes at `6.57e-11`, while edge/body separation
+drift reaches `2.79e-10` and `1.21e-10` against `1e-10`. All other gates pass.
+The remaining live backend item is stage-by-stage CPU/CUDA parity for field
+preparation, implicit-root inputs/outputs, and the host/device boundary. No
+further long-horizon run is admissible until that residual is localized. This
+item remains counted as open backend arithmetic qualification; the FTD-0750
+three-ray conjunction is closed negative and production is unchanged.
+
+**FTD-0751 stagewise parity addendum:** the remaining whole-trajectory split
+is now localized. Across `L={33,65}` and face/edge/body rays, the initial state
+and tick-one magnetic preparation are bit-identical; every first difference is
+one ULP in tick-one source-free electric preparation, before the matter root
+and ordered current. The host forbids FMA contraction while the frozen CUDA
+PTX fuses `E0 + lambda*curl(B1)`. This closes localization and removes raw
+long-horizon CPU/GPU comparison from the main research path. The only live
+backend item is one separately locked explicit-rounding arithmetic-equivalence
+qualification, followed by the already-defined M2/M3 physical gates. No
+tolerance relaxation is licensed. This item remains counted as a short open
+backend qualification; production and ontology are unchanged.
+
+**FTD-0752 explicit-rounding parity addendum:** the one permitted repair is
+constructive. A separate research-only CUDA library compiled with
+`--fmad=false` gives bit-identical CPU/CUDA dynamics in all 336 registered
+stage rows across both volumes and all three directions. Read-only diagnostic
+difference is at most `1.388e-17` against `2e-15`, and the frozen PTX contains
+separate rounded multiply/add-subtract in both prepare kernels. The bounded
+backend arithmetic item is closed and is no longer counted as open. The live
+matter item is now the M2/M3 uncontained metastable-basin and autonomous-motion
+test. Established CUDA, production, and ontology remain unchanged.
+
+**FTD-0753/0754 physical-gate addendum:** a fresh no-FMA `L=321` run passes
+H0/A0/H2--H5 on face, edge, and body. The persistent negative core begins at
+tick 80/96/115, radius-48 first passage is tick 297 in every arm, and the
+outgoing shell remains positive through tick 312 before contact at tick 313.
+The independent certificate passes 134/134. This closes the registered large
+causal-horizon witness, not full M2 or M3. FTD-0754 then constructs a
+deterministic complete-state centered-readout split into selected bound Gauss
+dressing, outgoing characteristic, and incoming/radial background. Exact
+FTD-0753 replay preserves 939/939 old rows; 24/24 snapshots pass and the
+certificate is 116/116. This closes observer discovery constructively but not
+validation: the live counted matter item is now a separately locked FTD-0755
+unseen perturbation/volume campaign with strict predicate margins and a
+regularity bound establishing a nonzero finite-time open neighborhood. The
+FTD-0754B then proves the exact registered-readout identity
+`I_ctr=I_boundary+I_A+I_B`. The primitive-face term is a selected
+support-boundary Green-identity exchange; `I_A` and `I_B` arise from electric
+centering and magnetic reconstruction. All 24 old snapshots have valid ledgers
+and the independent addendum certificate passes 27/27. The primitive term is
+negative in all 21 dynamic snapshots, but centering reverses the centered total
+at face/tick 115. FTD-0755 therefore must not use the centered cross as an
+interaction or membership margin; it must freeze a support-radius ladder (or
+prove one selected surface) and keep internal, primitive-boundary, readout, and
+environmental ledgers distinct while testing common-action matching.
+Autonomous motion remains downstream. Production, established CUDA,
+scenarios, and ontology are unchanged.
+
+**FTD-0754C/0755/0756 support-invariant addendum:** nested minimum-energy Gauss
+dressings obey `U_R=U_S+1/2||b_R-b_S||^2`; the old-corpus certificate passes
+1205/1205. The live object predicate is therefore support-independent:
+declared reciprocal-pair sector, `mu_g=3/2-d>0`, and
+`mu_E=-(K+V(d))>0`. The locked FTD-0755 modes ran exactly once, but every
+tick-160 parent remained uninitialized; certificate 311/311 returns
+`M3_VALIDATION_INFRASTRUCTURE_UNRESOLVED`. FTD-0756 then passes preparation on
+all six `{L=321,385}`/ray arms and reproduces 1654 pre-abort FTD-0753 scalar
+strings exactly. Every arm fails only at observer stage 4 on the same tick at
+both volumes: face 57, edge 30, body 122. The wrapper used the continuously
+valued constituent midpoint where `observe_deterministic` requires an exactly
+integer center; FTD-0753 used the fixed integer preparation center. Thus no
+hostile candidate or causal fibre has yet run and no M3 family, particle, mass,
+charge, or field-ownership claim is closed. A successor must first qualify the
+fixed-center parent through tick 160, then freeze a fresh held-out validation;
+it cannot alter or rerun FTD-0755.
+
+**FTD-0757 fixed-chart parent addendum:** the required parent qualification is
+now constructive. All six `{L=321,385}`/ray histories reach tick 160 with the
+fixed integer regional chart and the unchanged action. The continuous
+constituent midpoint first becomes noninteger at face/edge/body transaction
+57/30/122 in both volumes, exactly reproducing the FTD-0756 abort map, but is
+recorded only and does not enter the observer. Certificate 6833/6833 covers
+966 rows and 3846 exact FTD-0753 scalar comparisons with zero numerical
+difference. This confirms the observer-domain diagnosis and authorizes a fresh
+held-out validation identifier; it does not establish M3 or reopen FTD-0755.
+
+**FTD-0758--0760 held-out and CUDA-residency addendum:** all six FTD-0758 modes
+ran exactly once and produced the complete 24-file record. The artifact
+certificate fails 18/6257 checks, all candidate-summary parity checks. The
+runner and engine condition unique-anchor projection on
+`allow_shared_anchor_chart`, but the inherited certificate requires the raw
+unique-anchor bit unconditionally. That bit is false on 2230/2736 dynamic
+candidate rows, while `step.valid`, common action, margins, regularity,
+observers, support ladders, nested volumes, and causal fibres pass. Because
+the inconsistency was discovered after output inspection, FTD-0758 is consumed
+and cannot be recertified into M3. A fresh successor must freeze
+`chart_admissible = allow_shared_anchor_chart || site_projection_valid` (or an
+equivalent single semantic field) before unseen arms run. FTD-0760 did so and
+then passed 9002/9002 on a fresh six-mode CUDA campaign, resolving the
+finite-time selected M3 item. The remaining live matter question is M4
+mobility with site-anchor turnover, balanced field momentum, and preservation
+of the now-certified relational predicate. FTD-0759 is
+infrastructure-only: its CUDA resident fields, local root gather, ordered
+current, common-action diagnostics, state-only observer, and support ladder
+pass all 18 locked `L={33,65}` face/edge/body by
+tick-0/tick-160/remote-parent cases (36 transactions), including two-step
+state-only inverse recovery and sparse compact-bound transfer. Result-free
+`L={321,385}` smokes exceed 10x and stay below 30 GiB with zero field
+downloads, but a 10-tick `L=385` sample has median SM utilization 0% (peak
+48%). A compact boundary gather, device-side batching/controller work, and the
+full timing matrix remain open.
+
+**FTD-0761 boosted-transport addendum:** the frozen `L=321`, 256-tick
+face/edge/body CUDA campaign passes certificate 247/247 but returns
+`M4_BOOSTED_RELATIONAL_COHERENCE_CLOSED_AT_REGISTERED_SCALE`. All three rest
+controls pass. All six boosted cores execute, translate by more than one cell,
+have positive displacement in every 64-tick block, mirror within `1.35e-11`,
+remain core members, and pass common-action, energy, causality, root, and
+one-step inverse gates. The sole coherence failure is systematic:
+`observer_valid=ladder_valid=0` on all 24 post-initial boosted checkpoints,
+while the corresponding six tick-160 checkpoints and all 15 rest checkpoints
+pass. Momentum is also not field-balanced, with cumulative defects up to
+`0.016598741284559227`. This is the historical frozen verdict; FTD-0762
+supersedes its physical interpretation.
+
+**FTD-0762 observer-forensics addendum:** three `L=321`, 64-tick CUDA replays
+pass certificate 179/179 and return
+`OBSERVER_INTEGER_CENTER_CHART_OBSTRUCTION`. At tick 224 the moved centroids
+are `0.400--0.416` sites from the observer's integer chart. CPU/CUDA observers,
+support ladders, and same-geometry preparation all fail before field
+comparison. Rigid recenter preserves relative geometry and momenta exactly and
+makes preparation, CUDA boundary ledger, observer, and ladder pass on all
+rays. FTD-0761's observer bits therefore cannot close physical coherence. The
+moving core remains a witness; complete fractional-center dressing and
+field-momentum balance remain live and open.
+
+**FTD-0763 fractional-center observer addendum:** the selected piecewise chart
+passes CPU/CUDA qualification and certificate 175/175. All three untouched
+`L=321` tick-224 histories now pass the CUDA observer, boundary ledger, and
+`{4,6,8}` ladder at their actual fractional centers; no rigid recenter is used.
+This resolves the instantaneous-observer construction and removes it from the
+open queue. It does not classify co-motion. Residual and outgoing energies rise
+between ticks 160 and 224, while matter-only momentum defects remain
+`0.00693--0.00883`; the live gate is a transported-chart time-relative
+morphology test plus a total field-momentum/stress ledger.
+
+**FTD-0764 transported-chart morphology addendum:** the time-relative gate is
+executed and certified 1524/1524. All three `L=321` CUDA rays reject a rigidly
+transported actual near-field morphology and both inherited field-momentum
+candidates fail. That registered co-motion question is closed negative for the
+frozen family and is no longer open. A trailing residual moment is present,
+but FTD-0765 identifies it exactly as centroid lag rather than an independent
+wake observable. The far outgoing component is present almost
+identically in rest controls, so motion-induced radiation is not established.
+The open queue is now: age/subtract the formation transient; sweep preparation
+age, velocity, width, and horizon; and construct or close a face/connection
+translation-momentum ledger without defining missing momentum by the defect.
+
+**FTD-0765 residual-entrainment addendum:** certificate 80/80 derives the
+absolute radius-48 residual-energy centroid from the locked FTD-0764 artifacts.
+The residual window entrains only `-1.1%/15.7%/16.9%` of the face/edge/body
+core displacement. The old wake moment is algebraically the rest-subtracted
+lag, so creation of a new wake is not established and remains open. The next
+registered discriminator must age the preparation, sweep signed velocity, and
+measure a rest-subtracted trailing energy excess plus entrainment. A physical
+wake requires an odd-in-velocity excess that persists with preparation age;
+centroid lag alone is no longer admissible evidence.
+
+**FTD-0766 aged wake/entrainment addendum:** the direct observer qualifies, but
+the registered execution is certified invalid 404/404. The unaged
+`q=+/-0.030` branches fail the state-only core energy margin before evolution,
+and every evaluable signed pair fails the raw field-mirror gate. The latter is
+partly overconstrained at `tau=0`, but aged later-time differences also exceed
+`1e-10`, so deleting the initial checkpoint would not repair the result.
+Descriptively, aging admits the larger boost, yet trailing asymmetry decreases
+with boost, fails the age-stability gate, and residual entrainment remains
+below 5%. The registered wake-creation branch is closed negative/invalid at
+this scope. A successor may lock rest-subtracted dynamic pair increments and
+explicit core energy margins; it may not retune or delete FTD-0766 arms. The
+translation-momentum/stress ledger remains independently open.
+
+**FTD-0767 dynamic-response/clearing addendum:** certificate 113/113 proves
+that signed rest subtraction cancels the static directional numerator and
+retains a positive local velocity-aligned deformation in every evaluable
+FTD-0766 pair. It also closes the spatial interpretation: the 16 valid moving
+arms travel only `0.190822--0.875652` site, versus disjoint selected-bound and
+near-window distances greater than 8 and 16. FTD-0766 therefore did not test a
+spatially detached wake. FTD-0768 then attempted to preserve state-only mobile
+identity through a fixed `L=321`, 768-tick face history, reach the locked
+initial-slab clearing distance `d>=9`, and measure paired actual/residual field
+difference, interference, regional energy flux, matter work, and full
+moving-arm inversion. Three launches were aborted before any registered
+checkpoint or artifact. The first two are known pre-formation; formation
+completion is not inferable from the third run's buffered log. The first exposed a tautological boundary ledger without the locked
+complementary quadrature; the corrected inside/outside oriented quadrature now
+passes CPU/CUDA qualification. The second exposed zero-filled `tau=0`
+field-momentum records and missing interval-by-interval certificate
+reconstruction. The repaired runner now also covers every-tick rest
+displacement, complete discrete reversal metadata, measured momentum defects,
+and the locked polynomial fixtures. Expanded CUDA qualification, the
+classifier/interval/momentum self-test, and all inherited certificates pass;
+fresh runner/certificate/executable hashes are frozen in the pre-execution
+audit. The third run exposed a missing moving-mask/Reynolds term: each one-step
+fixed-mask ledger closed, but accumulated recentered energy omitted observer
+sweep. The repaired runner records old/new before-state masks, complementary
+sweep, endpoint chaining, and fixed/moving interval identities; its focused
+test and 30/30 self-test pass. The fourth WSL2 CUDA execution completed with
+artifact SHA256 `FE7E1915...170C3F`. Every forward/checkpoint/ledger gate and
+exact discrete reversal passes, but continuous recovery is
+`3.8786822642578e-9 > 1e-10`. The independent certificate returns `2220/2221`
+and `LONG_TRANSPORT_EXECUTION_INVALID`. Although the invalid record
+descriptively crosses `d>=9` at ticks 704 and 768, no clearing-response or wake
+classification is admissible. A fresh successor may localize reverse-error
+growth; it may not alter the tolerance or reuse the descriptive outcome.
+
+**Matter-boundary structural addendum:** the FTD-0755 graph and energy margins
+bound a selected family in configuration/phase space, not a spatial membrane.
+That distinction is closed by the fixed-position/variable-momentum
+counterexample. The spatial surface question remains open and must not be
+answered with the FTD-0768 observer mask. After the long-transport gate, the
+next licensed structural branch is to determine whether the existing common
+action admits a factorized `N`-constituent interaction graph with local
+state-selected support and exact relative energy/momentum balance. A naive sum
+of the current opposite-polarity compact bonds would be bipartite: SC/BCC
+nearest-neighbour graphs are compatible, but FCC's nearest-neighbour triangles
+are obstructed. The pairwise extension itself is unimplemented, so crystal,
+surface-tension, solidity, and physical/temporal-domain claims remain open.
+For the existing pair, the isolated decay question is narrower and closed:
+negative rest-subtracted pair energy implies an intact reciprocal edge and
+cannot reach the cutoff under exact isolated conservation. The live decay
+question is therefore which accounted field/environmental exchange removes
+that energy margin, and whether an open-system limit produces an irreversible
+lifetime rather than only reversible dissociation.
+
+**Many-body material-network addendum:** unrestricted pairwise continuation is
+now closed as an extensive bulk candidate. Its discrete-gradient common-action
+algebra closes exactly, but opposite-polarity stacking gives `-epsilon N^2/4`;
+the linear Gauss self-energy has the same quadratic scaling and the registered
+FTD-0739 coefficient is too small to prevent the collapse. The live no-new-
+primitive branch is an unsigned distributed-shape capacity
+`n(v)=sum_a W_a(v)<=1`. Before any campaign it requires an exact local
+complementarity/contact transaction, state-only inversion across constraint
+activation, and proof that the rule is not merely anchor-chart exclusion.
+Bounded valence, new repulsion, nonlinear field saturation, or explicit
+constituent exclusion remain priced alternative extensions. No many-body run
+was licensed before FTD-0768 resolved; its invalid completion removes that
+scheduling hold but does not itself license or select a campaign.
+The capacity branch now has a conditional extensive lower bound:
+`U_N>=-(511/2)epsilon N`, obtained from the quadratic coat's `1/8` nearest-site
+weight and at most 64 nearest-site classes inside the compact radius. Energy
+scaling is therefore no longer the open defect on that branch. The live defect
+is construction of a unique local energy-exact and state-only-invertible
+contact transaction when one or several capacity constraints activate. A
+single incoming constraint now has a unique nonzero relativistic elastic-
+energy root, but its total matter impulse is the constraint's common-
+translation gradient relative to the lattice and is generically nonzero. The
+bare event changes no current or field, so it lacks the opposite recoil ledger.
+Simultaneous contacts additionally require an impact selector; the inequality
+alone gives an admissible multiplier cone, not a unique reversible event. The
+minimum-dressed field cannot rescue an elastic event: Hodge positivity makes
+every nontrivial same-Gauss field change cost positive energy, so zero contact
+energy change leaves field state and momentum unchanged. The first static
+successor is the `L=4` feasibility system `F_field+A^T lambda=0`, `lambda>=0`,
+with zero total capacity impulse. It remains derived but unexecuted;
+FTD-0768's invalid completion does not count as its execution. Cubic symmetry
+reduces it exactly to one scalar: the
+invariant capacity pattern has weights `B=(1/8,7/8,7/8,1/8)`, derivatives
+`D=(-1/2,-1/2,1/2,1/2)`, zero net impulse, and virial 24. Every component ratio
+`-F_field/C` must equal one nonnegative `lambda`; disagreement closes all
+nonuniform pressure alternatives by group averaging. The exact field adjoint is
+`F_a=-beta sigma_a sum_v phi(v) grad W_a(v)` with `(-Delta)phi=rho`; inversion
+gives zero total force, and cubic symmetry reduces its 192 components to six
+representatives with predetermined capacity magnitudes `{1,7,49}/128`.
+The exact geometry now separates two previously conflated FCC statements. A
+reciprocal FCC nearest-neighbour **bond graph** remains obstructed, but the SC
+site set decomposes exactly into two FCC **polarity sublattices**. SC face bonds
+join those sectors at the compact minimum and the full integer filling
+saturates quadratic-coat capacity. The live tests are whether the nonzero
+checkerboard Gauss source admits a stationary redressed state, whether the
+relative-sublattice polarization mode has a stable pole, whether relaxed shear
+is nonzero, and whether finite surface imbalance behaves as transferable
+polarity without being mislabeled conserved `U(1)` charge.
+The binding-only SC mechanical classification is no longer open: dilation is
+quadratic but simple-shear energy begins at `gamma^4`, so its harmonic shear
+modulus is zero. Capacity cannot repair it: independent saturated lattice rows
+can slide exactly while `n(v)=1` by partition of unity, so capacity supplies no
+bulk shear modulus. The live solidity question is whether a nonzero relaxed
+shear response comes from the minimized field or a derived BCC/internal or
+angular relation. Surface
+tests must compare polar `(111)` terminations against neutral `(100)/(110)`
+controls and include full redressed field relaxation before static-electricity
+language is available.
+The infinite/periodic bulk equilibrium itself is conditionally solved:
+`rho=chi/8`, `E_i=chi/48`, and `B=0` close Gauss, curl, field force, binding
+force, and capacity force exactly, with internal energy
+`-3 epsilon+beta/1536` per site. The live matter question is no longer whether
+the candidate algebra has any many-body rest state. It is whether a **finite**
+piece has a self-selected stable surface, avoids Peierls-locked translation,
+and retains a positive relaxed spectrum without an imposed container.
+The binding/capacity part of a finite object is now exact: a rectangular
+checkerboard block has `gamma_bind=epsilon/2` from missing bonds and discrete
+corner/edge/face/bulk removal costs `3/4/5/6 epsilon`. This closes “how can it
+be finite without a box?” only for static fixed-`N` binding energy. The finite
+neutral Gauss-energy question is now also closed constructively for the
+all-even control family: an exact compact routed field proves the minimum
+redressing is at most extensive, and the frozen selected coefficients give a
+negative formation-energy upper bound for every even cube `L>=2`. The live
+gate is no longer energetic binding. It is common-action relaxation and
+release: the minimum field's boundary force and the capacity-contact reaction
+must reach a finite stationary shape with a nonnegative relaxed spectrum, and
+the body must neither evaporate nor remain mobile only by substrate pinning.
+The diffuse interface is now exact:
+`sum_v n(v)(1-n(v))=(7/16)sum_areas-(49/256)sum_lengths+343/4096`.
+It is a coupling-scale surface observer, not a membrane or energy. `L=4` is
+the first all-even cube with both saturated bulk and slack surface and is the
+correct finite relaxation control after FTD-0768 and contact-recoil closure.
+Odd-by-odd-by-odd blocks are nonneutral and invalid as isolated periodic Gauss
+controls without a declared compensator.
 
 **FTD-0497/0498 incremental addendum:** the exact axial face-work transaction now
 crosses a real anchor threshold, but proves the existing ±1
