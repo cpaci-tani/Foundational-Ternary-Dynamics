@@ -255,6 +255,9 @@ add_library(ftd_eft STATIC
     src/eft/state_only_matter_field_observer.cpp
     src/eft/transported_chart_morphology.cpp
     src/eft/paired_field_response.cpp
+    # Arc 2 momentum stress ledger: unit-bond T^(i)/S^(i) construction and the
+    # cumulative F/W/Q accumulators.  Observer-only; no production consumer.
+    src/eft/momentum_transport_current.cpp
     src/eft/support_invariant_matter_predicate.cpp
     src/eft/matched_regional_energy_transport.cpp
     src/eft/batched_regional_energy_profile.cpp
@@ -1345,6 +1348,26 @@ if(FTD_ENABLE_CUDA)
                    tests/campaign_long_transport_dynamic_response_cuda.cpp)
     target_link_libraries(campaign_long_transport_dynamic_response_cuda
                           PRIVATE ftd_core ftd_cuda_m3_observer)
+
+    # Arc 2 total momentum stress ledger campaign (pre-registration
+    # PREREG_TOTAL_MOMENTUM_STRESS_LEDGER_v1).  Three runner modes:
+    #   --exactness-precheck  Sec 6.4 L=11 exactness pre-check (host only)
+    #   --firewall            Sec 8 L=17 two-tick qualification (needs a GPU,
+    #                         writes nothing; run manually before locking)
+    #   --run                 the registered L=321 campaign
+    # Only the host-only exactness pre-check is registered as a CTest: it is
+    # fast, deterministic and device-free.  The firewall and the L=321
+    # five-radius, two-arm, 768-tick forward-plus-reverse run stay manual, as
+    # the sibling FTD-0766/0768 campaigns do.
+    add_executable(campaign_total_momentum_stress_ledger
+                   tests/campaign_total_momentum_stress_ledger.cpp)
+    target_link_libraries(campaign_total_momentum_stress_ledger
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_test(NAME momentum_stress_ledger_exactness
+             COMMAND campaign_total_momentum_stress_ledger
+                     --exactness-precheck)
+    set_tests_properties(momentum_stress_ledger_exactness PROPERTIES
+                         TIMEOUT 600 LABELS "eft;observer")
 
     # Phase II.2-E: Wilson-Dirac CPU/GPU parity
     add_executable(test_wilson_dirac_cuda_parity tests/test_wilson_dirac_cuda_parity.cpp)
