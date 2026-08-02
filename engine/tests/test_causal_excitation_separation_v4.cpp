@@ -1,0 +1,9 @@
+// FTD-0689: prefix-sum regional execution of the frozen campaign.
+#define FTD_SEPARATION_PROTOCOL_SHA256 \
+  "43BC9D9E33EBBF9FC86AAE49C512FFFFC27224301F3713C0DBDBA99DD8266324"
+#define FTD_SEPARATION_IDENTIFIER "FTD-0689"
+#define FTD_SEPARATION_RESULT_DIRECTORY "results/ftd_0689"
+#define FTD_SEPARATION_RESULT_STEM "ftd_0689_causal_excitation_separation_v4"
+#define FTD_SEPARATION_CENTER_TOLERANCE 1e-12
+#define FTD_SEPARATION_USE_BATCHED_REGIONAL 1
+#include "test_causal_excitation_separation_v1.cpp"
