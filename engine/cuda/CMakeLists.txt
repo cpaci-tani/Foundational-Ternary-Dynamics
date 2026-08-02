@@ -102,6 +102,9 @@ add_library(ftd_cuda_m3_observer STATIC
     cuda_quadratic_coat_orbit_gather.cu
     cuda_transported_chart_morphology.cu
     cuda_paired_field_response.cu
+    # Arc 2 fused per-tick masked momentum-ledger reduction.  Scalar-only
+    # output; no complete field is downloaded.
+    cuda_momentum_transport_current.cu
 )
 target_include_directories(ftd_cuda_m3_observer PUBLIC
     ${CMAKE_SOURCE_DIR}/include
