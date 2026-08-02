@@ -254,6 +254,7 @@ add_library(ftd_eft STATIC
     src/eft/connected_moore_block_action.cpp
     src/eft/state_only_matter_field_observer.cpp
     src/eft/transported_chart_morphology.cpp
+    src/eft/paired_field_response.cpp
     src/eft/support_invariant_matter_predicate.cpp
     src/eft/matched_regional_energy_transport.cpp
     src/eft/batched_regional_energy_profile.cpp
@@ -1296,6 +1297,54 @@ if(FTD_ENABLE_CUDA)
 
     add_executable(test_gpu_dissipation tests/test_gpu_dissipation_source.cpp)
     target_link_libraries(test_gpu_dissipation ftd_core ftd_cuda)
+
+    # FTD-0764/0766 observer-only transported-chart morphology.  This target
+    # links the isolated reduction library; it does not enter ftd_core or the
+    # production tick.
+    add_executable(test_cuda_transported_chart_morphology
+                   tests/test_cuda_transported_chart_morphology.cpp)
+    target_link_libraries(test_cuda_transported_chart_morphology
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_executable(test_cuda_state_only_support_ladder
+                   tests/test_cuda_state_only_support_ladder.cpp)
+    target_link_libraries(test_cuda_state_only_support_ladder
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_executable(test_cuda_fractional_center_state_only_observer
+                   tests/test_cuda_fractional_center_state_only_observer.cpp)
+    target_link_libraries(test_cuda_fractional_center_state_only_observer
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_executable(test_cuda_paired_field_response
+                   tests/test_cuda_paired_field_response.cpp)
+    target_link_libraries(test_cuda_paired_field_response
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_test(NAME cuda_state_only_support_ladder
+             COMMAND test_cuda_state_only_support_ladder)
+    add_test(NAME cuda_fractional_center_state_only_observer
+             COMMAND test_cuda_fractional_center_state_only_observer)
+    add_test(NAME cuda_transported_chart_morphology
+             COMMAND test_cuda_transported_chart_morphology)
+    add_test(NAME cuda_paired_field_response
+             COMMAND test_cuda_paired_field_response)
+    set_tests_properties(cuda_state_only_support_ladder
+                         cuda_fractional_center_state_only_observer
+                         cuda_transported_chart_morphology
+                         cuda_paired_field_response PROPERTIES
+                         TIMEOUT 600 LABELS "gpu;eft;observer")
+
+    # FTD-0766 registered face-ray discovery campaign.  Manual execution only:
+    # the 21-arm L=321 replay is intentionally excluded from routine CTest.
+    add_executable(campaign_aged_wake_entrainment_cuda
+                   tests/campaign_aged_wake_entrainment_cuda.cpp)
+    target_link_libraries(campaign_aged_wake_entrainment_cuda
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+
+    # FTD-0768 registered long-transport paired-response campaign. Manual
+    # execution only; the L=321, 1536-forward-tick plus full reverse run is
+    # intentionally excluded from routine CTest.
+    add_executable(campaign_long_transport_dynamic_response_cuda
+                   tests/campaign_long_transport_dynamic_response_cuda.cpp)
+    target_link_libraries(campaign_long_transport_dynamic_response_cuda
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
 
     # Phase II.2-E: Wilson-Dirac CPU/GPU parity
     add_executable(test_wilson_dirac_cuda_parity tests/test_wilson_dirac_cuda_parity.cpp)

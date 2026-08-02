@@ -74,6 +74,22 @@ double permuted_scalar_residual(const std::vector<double>& source,
   return result;
 }
 
+double aggregate_difference(
+    const ftd::eft::QuadraticCoatAggregatedCurrent& lhs,
+    const ftd::eft::QuadraticCoatAggregatedCurrent& rhs) {
+  if(!lhs.valid||!rhs.valid||lhs.L!=rhs.L
+      ||lhs.entries.size()!=rhs.entries.size()) return INFINITY;
+  double result=0.0;
+  for(std::size_t i=0;i<lhs.entries.size();++i) {
+    const auto& a=lhs.entries[i];
+    const auto& b=rhs.entries[i];
+    if(a.axis!=b.axis||a.face.x!=b.face.x||a.face.y!=b.face.y
+        ||a.face.z!=b.face.z) return INFINITY;
+    result=std::max(result,std::abs(a.value-b.value));
+  }
+  return result;
+}
+
 double one_sided_plus(double f0, double f1, double f2,
                       double f3, double f4, double h) {
   return (-25.0*f0+48.0*f1-36.0*f2+16.0*f3-3.0*f4)/(12.0*h);
@@ -198,6 +214,51 @@ int main() {
         && maximum_metric(periodic) <= gate
         && maximum_metric(stationary) <= gate
         && stationary.current_support == 0);
+
+  const auto sparse_base=ftd::eft::make_quadratic_coat_face_current(
+      L,base_start,base_end,+1,false);
+  auto split=sparse_base;
+  split.sparse_current.clear();
+  for(const auto& entry:sparse_base.sparse_current) {
+    auto half=entry;
+    half.value*=0.5;
+    split.sparse_current.push_back(half);
+    split.sparse_current.push_back(half);
+  }
+  auto periodic_image=sparse_base;
+  for(auto& entry:periodic_image.sparse_current) {
+    entry.face.x+=L;
+    entry.face.y-=L;
+  }
+  const auto aggregate_base=ftd::eft::aggregate_quadratic_coat_face_current(
+      {sparse_base});
+  const auto aggregate_split=ftd::eft::aggregate_quadratic_coat_face_current(
+      {split});
+  const auto aggregate_periodic=ftd::eft::aggregate_quadratic_coat_face_current(
+      {periodic_image});
+  check("aggregated support is invariant under entry splitting and periodic images",
+      aggregate_base.valid&&aggregate_split.valid&&aggregate_periodic.valid
+      &&aggregate_split.raw_contributions==2*aggregate_base.raw_contributions
+      &&aggregate_difference(aggregate_base,aggregate_split)<=gate
+      &&aggregate_difference(aggregate_base,aggregate_periodic)<=gate);
+
+  const auto sparse_opposite=ftd::eft::make_quadratic_coat_face_current(
+      L,base_start,base_end,-1,false);
+  const auto cancelled=ftd::eft::aggregate_quadratic_coat_face_current(
+      {sparse_base,sparse_opposite},1.0,gate);
+  check("opposite duplicate contributions cancel before support is counted",
+      cancelled.valid&&cancelled.entries.empty()&&cancelled.net_l1<=gate
+      &&cancelled.cancelled_l1>0.0
+      &&cancelled.aggregation_moment_residual<=gate);
+
+  auto with_noise=sparse_base;
+  with_noise.sparse_current.push_back({{0,0,0},0,0.5*gate});
+  const auto gated=ftd::eft::aggregate_quadratic_coat_face_current(
+      {with_noise},1.0,gate);
+  check("the explicit support tolerance quarantines only its reported L1 mass",
+      gated.valid&&gated.entries.size()==aggregate_base.entries.size()
+      &&std::abs(gated.discarded_l1-0.5*gate)<=gate*1e-6
+      &&gated.aggregation_moment_residual<=gate);
 
   const std::size_t volume = static_cast<std::size_t>(L)*L*L;
   std::vector<double> potential_x(volume, 0.0);

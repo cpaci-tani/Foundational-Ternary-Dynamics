@@ -101,6 +101,7 @@ add_library(ftd_cuda_m3_observer STATIC
     cuda_state_only_support_ladder.cu
     cuda_quadratic_coat_orbit_gather.cu
     cuda_transported_chart_morphology.cu
+    cuda_paired_field_response.cu
 )
 target_include_directories(ftd_cuda_m3_observer PUBLIC
     ${CMAKE_SOURCE_DIR}/include

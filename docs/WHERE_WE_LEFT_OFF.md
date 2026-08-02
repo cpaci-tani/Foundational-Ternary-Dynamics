@@ -4,6 +4,189 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
+**Latest long-mobile-matter result (FTD-0768):** the fourth qualified aged
+`L=321`, 768-tick rest/moving CUDA campaign completed and serialized artifact
+SHA256 `FE7E1915...170C3F`. The entire forward history, all 13 checkpoints,
+discrete reversal, rest control, common action, energy, Gauss, causality,
+regularity, fixed/moving regional transport, complementary boundary, and
+mask-sweep ledgers pass. Continuous matter/field reverse recovery is
+`3.8786822642578e-9`, however, exceeding the locked `1e-10` gate. Independent
+certification returns `2220/2221` and `LONG_TRANSPORT_EXECUTION_INVALID`.
+Descriptive clearing at ticks 704/768 is quarantined; no cleared-response,
+wake, particle, radiation, or long-horizon identity verdict exists. Canonical
+status is LEDGER FTD-0768 and
+`docs/theory/07_assessment/AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`; the
+pre-execution audit preserves the three earlier infrastructure aborts.
+
+**Current matter ontology boundary (FTD-0669, reconciled through FTD-0768):**
+the supported identity candidate is the relational constituent kernel and its
+internal state, not one voxel and not the complete nearby field. The selected
+state-only Gauss representative is constitutive constraint data. Remaining
+dynamic field and boundary data are environmental unless a cleared-region
+energy ledger proves attachment, deposition, or independent radiation. FTD-0760
+certifies only a finite-time selected M3 family; FTD-0761 supplies a moving-core
+witness; FTD-0764--0767 close rigid field-coat and already-observed-wake readings
+at their registered scopes. This is a selected classical matter ontology, not a
+derived physical particle, charge sector, pole, or infrared theory.
+
+The current graph/energy margins bound that pair in state space; they do not
+define a spatial membrane. Exact algebra further shows that negative
+rest-subtracted pair energy implies `3/4<r^2<3/2`, so an isolated exactly
+energy-conserving pair cannot disconnect. Coupled breakup must be funded by an
+accounted field/environmental energy transfer; this is a reversible
+dissociation gate, not a decay law. A conditional pairwise many-body extension
+would turn missing bonds into surface energy and would be bipartite under the
+current opposite-polarity rule: nearest-neighbour SC/BCC graphs are compatible,
+whereas nearest-neighbour FCC is obstructed by triangles. That extension is not
+implemented and licenses no crystal, domain, membrane, or material-phase claim.
+
+The minimal `N`-constituent continuation is now algebraically explicit but
+blocked as a bulk law. Summing the compact interaction over every opposite-
+polarity pair preserves exact internal momentum and binding work, yet `m`
+coincident positive constituents opposite `m` negative constituents produce
+`m^2` minimum bonds and energy `-epsilon N^2/4`. The registered linear Gauss
+field retains the same quadratic scaling and is too weak in the FTD-0739 bound
+control to reverse that coefficient. Unrestricted pair additivity is therefore
+non-extensive. The least new-ontology candidate is a state-derived unsigned
+capacity `n(v)=sum_a W_a(v)<=1`, motivated by ternary site capacity; its exact
+reversible contact solve is not implemented. Canonical derivation:
+`docs/theory/02_foundations/DERIV_MINIMAL_MANY_BODY_MATTER_NETWORK_v1.md`.
+The candidate nevertheless has one exact positive result: every quadratic coat
+places at least `1/8` weight on a nearest site, so capacity bounds local degree
+by 511 and gives `U_N>=-(511/2)epsilon N`. It repairs extensivity
+kinematically; it does not yet supply collision/contact dynamics.
+
+The SC/FCC proposal also has an exact spatial realization: even and odd SC
+parity sites are two interpenetrating FCC sublattices. SC face edges join
+opposite polarities at the compact bond minimum; FCC same-polarity neighbours
+sit outside the bond cutoff. Full integer filling saturates coat capacity and
+has binding energy `-3 epsilon` per site, but its signed coat source is the
+nonzero checkerboard `rho=(-1)^parity/8`; the periodic redressing is given
+below, while finite-surface equilibrium remains open. Common sublattice motion
+is an acoustic candidate; relative motion is a
+restored polarity/polarization candidate. Surface sublattice imbalance can
+model static electrification, but physical charge conservation and `U(1)` are
+not derived.
+
+Mechanically, that SC binding network is cohesive but not yet solid: dilation
+costs `144 epsilon N eta^2`, whereas simple shear costs only
+`12 epsilon N gamma^4`, giving zero harmonic shear modulus. Capacity-induced
+shear must be separated from substrate pinning. A BCC body-diagonal relation
+would conditionally supply quadratic shear but is not derived by the current
+cutoff. It also cannot be inferred from the selected BCC clock: because
+`T_B(0)=0`, a strain-independent temporal kernel contributes exactly zero
+static shear. The live diagonal route is therefore either the already-counted
+relaxed field Hessian or a deliberately priced deformation-dependent
+graph--connection/spatial coupling; it is not a free consequence of the clock
+kernel or a reconstructed open link. The same parity
+geometry makes `(111)` surfaces polar and balanced `(100)/(110)` surfaces
+neutral, creating a precise static-electrification test after full field
+relaxation.
+
+The holonomy escape has also been narrowed exactly. Existing face/edge field
+energy is already included in the zero-frequency constrained Hessian. A
+noncompact link cannot couple locally to endpoints whose only matter data are
+gauge-neutral position, momentum, and polarity: gauge invariance makes such a
+bond energy independent of the link. Open-link elasticity therefore requires
+a transforming local phase/fiber; closed-loop elasticity is either the
+existing curvature energy or a new material-loop coupling. FTD-0658 has no
+intrinsic rest phase in the registered candidate set, and FTD-0494/0495's
+history fiber closes bookkeeping but not ordinary common action. The no-new-
+primitive test is consequently the pressure-qualified relaxed Hessian,
+minimized over common translation and independent row slides. It distinguishes
+static rigidity from substrate pinning, temporal inertia, and viscosity.
+
+The corresponding periodic bulk can be redressed exactly: its coat source is
+`rho=chi/8`, the static face solution is `E_i=chi/48`, `B=0`, and its raw field
+energy is `1/1536` per site. Symmetry cancels the gathered electric force while
+all SC bonds sit at the compact minimum. This conditionally proves a static
+many-body medium for the candidate algebra. It does not prove finite matter;
+the next structural target is a bounded uncontained piece with a stable
+self-selected surface and relaxed spectrum.
+
+Its binding/capacity energy is now explicit. An `L_x x L_y x L_z` block has
+`U=-3 epsilon N+epsilon(L_yL_z+L_xL_z+L_xL_y)`, so its missing-bond surface
+tension is `epsilon/2`; corner/edge/face/bulk removal costs are
+`3/4/5/6 epsilon` before field relaxation. This is a finite uncontained static
+candidate, not yet a full object. For the all-even control family the deposited
+source factorizes, an exact compact routed field proves the minimum Gauss
+energy is volume-plus-surface bounded, and the frozen selected coefficients
+give negative rest-subtracted formation energy for every even cube `L>=2`.
+Thus energetic binding survives finite redressing. Boundary-force relaxation,
+capacity contact, release, mobility, surface persistence, and a nonnegative
+relaxed spectrum remain required; none is supplied by the energy bound.
+
+The capacity geometry is now exact. A finite block has a saturated interior
+of `(L_x-2)(L_y-2)(L_z-2)` sites and a one-coat-thick slack interface with
+`sum_v n(v)(1-n(v))=(7/16)sum_areas-(49/256)sum_lengths+343/4096`.
+This supplies a derived diffuse surface observer, not an ontic membrane.
+Capacity is incompressible/fluid-like rather than solid-like: independently
+translated complete rows preserve `n(v)=1` exactly, so it contributes no bulk
+shear modulus. `L=4`, `N=64` is the first all-even control containing both
+saturated bulk and slack surface.
+
+One isolated incoming capacity constraint has a unique nonzero elastic-energy
+root under the frozen relativistic dispersion, but the associated total matter
+impulse is the constraint's common-translation gradient relative to the
+lattice and is generically nonzero. The bare event changes no current or field,
+so its opposite recoil is unaccounted. Simultaneous contacts also require a
+selector beyond the inequality itself. The immediate construction gate is
+therefore an atomic contact--field recoil transaction, not another binding
+force or post-hoc collision correction.
+
+The minimum Gauss field sharpens that gate into a no-go: at fixed density,
+every nontrivial transverse-electric or magnetic change costs positive field
+energy. An elastic fixed-position contact leaves matter and binding energy
+unchanged, so the minimum field must remain unchanged and cannot absorb its
+recoil. The first finite equilibrium discriminator is therefore the `L=4`
+pressure-feasibility system `F_field+A^T lambda=0`, `lambda>=0`, together with
+zero total capacity impulse. It is derived but intentionally not executed or
+preregistered while FTD-0768 was unresolved. Its invalid completion removes
+that scheduling hold without selecting a successor. Cubic symmetry reduces this to a
+one-ratio falsifier: the exact invariant pressure pattern has zero total
+impulse and virial 24, and every `-F_field/C` component must equal the same
+nonnegative `lambda`. No optimizer or fitted pressure is available as an
+escape if those ratios disagree. The field force is fixed analytically by the
+minimum-Gauss adjoint, total force vanishes by centered inversion, and cubic
+symmetry leaves only six representative ratios with capacity magnitudes
+`{1,7,49}/128`.
+
+The exact harmonic geometry is now known before those six field forces are
+evaluated. The eight active capacity rows have rank 8. All 48 axial row slides
+are tangent to them and form the null space of the rank-144 central-bond
+Hessian. Common pressure restricts to a rank-21, zero-trace nonzero symmetric
+matrix on that space, hence is necessarily indefinite. Its 27-dimensional
+kernel is exactly three `D_perp tensor D_perp` sectors: three translations and
+24 explicit nontranslation internal slips. Binding plus
+pressure cannot make the block a harmonic solid. The relaxed Gauss field must
+stabilize the downhill internal modes and decide the remaining null modes; its
+second variation is not automatically positive. Exact finite-support
+differentiation nevertheless proves that both the signed Gauss-source map and
+the unsigned occupancy map are injective on all 27 pressure-null modes, with
+rank 9 in each axial sector and zero total variation. The positive
+`<rho',G rho'>` term therefore sees every pressure-null motion, and every such
+motion changes the slack finite surface, but the background-source curvature
+can still cancel or reverse it. The result does not yet distinguish
+surface-restored cohesion, Peierls pinning, and bulk rigidity.
+
+The general even-`L` calculation now resolves that scaling ambiguity at the
+integer phase: complete-row signed and unsigned first variations are supported
+only on end caps. More strongly, the infinite checkerboard field energy has
+exact common-translation curvature `-beta/96` per site, while binding and
+capacity are invariant. The integer-aligned bulk is therefore a stationary
+saddle, and its six-ratio `L=4` pressure test is retained only as a control.
+At half-cell phase, bulk signed source cancels exactly; a finite block retains
+only boundary-plane source with an explicit `O(area)` Gauss-energy bound. The
+next static candidate is the finite half-phase body, and the next mobility
+candidate is a local phase-front/constituent-turnover process rather than a
+rigid volume hop. The exact neutral corridor sits on the FTD-0500 half-cell
+chart seam: it is valid for shape/current quotient physics but not for a
+unique inversion-covariant ternary anchor. FTD-0626's shared-anchor fibre is a
+constructive representation option, not production ontology, and its fixed
+internal rest gate remained negative. The phase-front test must therefore
+price fibre transport, an off-tie barrier, or atomic turnover explicitly. The
+exact certificate now passes 105/105.
+
 **Latest Number-One gate result (FTD-0605):** the full six-coordinate local
 shape chart does not contain a stable dressed compact core. Exact algebra
 shows why: the selected distance-binding Hessian has rank three, with three
@@ -98,7 +281,7 @@ The map of what the discrete ontology can and cannot set for itself: `docs/theor
 
 ## The engine
 
-A logic-first C++/CUDA simulation of the substrate (`engine/SPEC_ENGINE.md`); only 6 rules are derived from the axioms, all phenomenological features are toggle-gated and default OFF. Determinism is pinned by the golden hash **`0xb604d81a3d79366e`** at L=17 (rebuild and compare to verify a change is physics-neutral). The engine is **not** a quantum-dynamics engine — it has no ℏ and no Pauli exclusion, and the lattice's dispersion is not the Schrödinger one (FTD-0270); it does not derive atomic spectra.
+A logic-first C++/CUDA simulation of the substrate (`engine/SPEC_ENGINE.md`); only 6 rules are derived from the axioms, all phenomenological features are toggle-gated and default OFF. Determinism is pinned by the golden hash **`0xc54ffbeda5a3ea63`** at L=17 (re-pinned 2026-07-27 for the EM-diagnostic c² fix; superseded `0xb604d81a3d79366e`, `0x1343f31fc0163a84`, `0x450fca908f536e36` — ground truth is `engine/tests/test_render_bridge_golden.cpp`, not this page; rebuild and compare to verify a change is physics-neutral). The engine is **not** a quantum-dynamics engine — it has no ℏ and no Pauli exclusion, and the lattice's dispersion is not the Schrödinger one (FTD-0270); it does not derive atomic spectra.
 
 The charge story now has a microscopic and an emergent layer. FTD-0421 proves
 that no nontrivial exact additive charge survives every frozen production
