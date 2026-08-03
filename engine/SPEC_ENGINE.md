@@ -1137,6 +1137,30 @@ static branch is closed negative; global `SO(3)` orientation remains open.
 Nothing is wired to production, a toggle, scenario, RenderBridge, CUDA, or
 WASM.
 
+FTD-0770 adds `coupled_quartic_clock_field.{h,cpp}` to the `ftd_eft` leaf
+library as an isolated selected-extension probe. It supplies the general
+even-power action law, positive-action clock sites, oriented fixed phase
+connections, compliance factors, a kick--drift--kick graph Hamiltonian, and a
+finite-graph connection-integrability checker. The focused test verifies
+quadratic/quartic/sextic periods, quartic chain dispersion, sextic controls,
+total action, compliance, gauge covariance, fixed holonomy, and action-boundary
+rollback. The API is not a `Voxel` field or a RenderBridge phase; it has no
+toggle, CUDA/WASM path, scenario, production consumer, or golden-state effect.
+Its `G*` result is scoped negative: the registered dimensionless linear ratio
+retains the power-law exponent but cancels the local period normalization.
+
+FTD-0776 adds no production API or checked-in observation target. In an
+isolated detached worktree it built a transfer-supplied dumper against
+unchanged production physics source and ran four `L=32`, seed-1 CPU/SOR arms
+with wave propagation, the production state--flux operator at the
+selected/parametric `G_C=sqrt(alpha)`, Gauss projection, and
+genesis/evaporation enabled; Langevin and imposed de Broglie/Coulomb clocking
+were disabled. The preselected aggregate `q_active` yielded zero complete
+cycles in every 200,000-tick arm. This is an observable- and configuration-
+scoped engine fact, not a universal no-clock result. The artifact bundle is
+`engine/results/gstar_qactive_pilot_20260802/`; no toggle, RenderBridge phase,
+CUDA/WASM path, scenario, calibration, or golden state changed.
+
 Defaults are specified per row in `TOGGLE_SPECS[]`. Core substrate behavior
 defaults on (`wave_propagation`, `coupling`, `damping`, `genesis`,
 `gauss_projection`, `forces`, `gravity`, `poisson_coulomb`, `movement`,

@@ -4,6 +4,93 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
+**Latest exact clock--memory boundary (FTD-0777):** a locked finite-cover
+certificate passes `16/16`. Forward dyadic powers add readout resolution but
+no independent state. A compatible depth-`K` root tower has `2^K` sheets,
+monodromy `m -> m+1`, and first return after `2^K` fundamental carrier cycles,
+so it is an exact recurrence/epoch hierarchy inside a selected model. The
+stronger memory reading closes negatively: one transitive tower observes only
+`m_written+n mod 2^K`, so it cannot preserve a nonconstant cycle-invariant
+payload. A stable relative payload requires a separately selected,
+co-transported reference lift. Root lifting lengthens recurrence and retains
+arcsine rather than quartic occupancy; it derives neither minimum `dt`, native
+time, nor `G*`. No engine trajectory ran. Native carrier birth, reference,
+persistence, local decoding, and source/work closure remain `[OPEN]`, and
+FTD-0772/0776 remain unsuperseded.
+
+**Latest native `q_active` result (FTD-0776):** the deterministic locked
+`L=32`, seed-1, single-substrate CPU/SOR campaign produced four raw-valid
+200,000-tick trajectories. The preselected aggregate `q_active` had raw
+positive-going crossing counts `1,1,0,0` across `A={10,12,14,16}`, hence zero
+complete cycles in every arm against the required eight. Verdict
+`Q_ACTIVE_RECURRENCE_UNQUALIFIED_IN_LOCKED_L32_SEED1_CPU_SOR_PROFILE`:
+`[ENGINE FACT — MEASURED, OBSERVABLE- AND CONFIGURATION-SCOPED NEGATIVE]`.
+The `q_active` clock candidate is `[RETIRED]` only in this exact profile; an
+autonomous coupled matter--field recurrence remains `[OPEN]`. All quartic
+occupancy, speed, moment, correlated-`G`, and waveform diagnostics are N/A
+because recurrence failed first. No scale/body/minimum-`dt` work was run.
+This is distinct from FTD-0772's retrospective 18-cell FTD-0659 `Q_u` audit.
+The continuous quartic identities remain exact only under their conditional
+fixed-natural-coordinate/selected-edge assumptions and were not tested here.
+
+**Latest nonlinear waveform result (FTD-0773):** the continuous
+fixed-natural-coordinate inverse chain is exact under branch reversibility
+and conservative unit-mass closure. For the separately selected quadratic
+coordinate-edge energy `epsilon(q_v-q_w)^2/2`, the quartic waveform has the
+exact scale-free shape ratio
+`B_4=[Vbar(pi)-Vbar(0)]/Vbar''(0)=48pi/G*^4`
+`=1.967895315142656...`, and `H_0''K_4=epsilon/3`. This is a conditional
+theorem about a selected continuous waveform and edge: the numerator and
+curvature are correlated functionals of the same waveform, and the ratio
+changes under nonlinear coordinate or edge-functional changes. It is not an
+independent `G*` determination and not a native FTD time derivation. FTD-0772
+left all `18` native cells recurrence-unqualified and no native paired-edge
+coupling exists, so no engine test was licensed. The next native target remains
+a complete coupled matter--field recurrence before occupancy, phase-response,
+or coupling is retested. Exact symbolic certificate `95/95`.
+
+**Latest native temporal-occupancy result (FTD-0772):** the exact selected
+power-law occupancy is
+`rho_m(x)=m/[2B(1/m,1/2)sqrt(1-|x|^m)]`; in a fixed natural coordinate,
+quartic occupancy over an amplitude interval characterizes a quartic
+potential only on the swept region. This is not a coordinate-free modulus:
+nonlinear observable changes alter the density, and finite tick recurrence
+has an atomic measure. A hash-locked retrospective reanalysis fixed the
+signed FTD-0659 observer `Q_u=u^T(q_6,q_7)` before inspection. Execution,
+phase, support, fixed-ray, quadrature, amplitude, and covariance controls pass,
+but all `18` primary cells fail stationarity/return: the final-window crest is
+about `0.538`, with window CDF distance `0.314`. Verdict
+`NATIVE_TEMPORAL_OCCUPANCY_RECURRENCE_UNQUALIFIED`; the current bare doublet
+cannot license native quartic occupancy, phase response, or coupling. The next
+target is an autonomous coupled matter--field recurrence, not another statistic
+of the same decaying projection.
+
+**Latest clock--rod boundary (FTD-0771):** comparing the selected quartic
+period with one abstract causal lattice interval gives the exact conditional
+cycle fraction `d_4=(rho/u)(2E)^(1/4)/(sqrt(pi)G*)`, where `rho` is the
+clock-to-tick rate and `u=C_sub tau/ell`. At the selected normalization
+`rho=u=1`, `E=1/2`, this is `1/(sqrt(pi)G*)`. P1--P5 do not select the
+quartic clock, its relative rate, or its occupied shell: exact on-site flows
+at different rates remain deterministic and Moore-local but change `d_4`.
+If the comparison cone is the same coupled-clock wave cone, the ratio becomes
+`1/[pi sqrt(d_R eta)]` and the direct quartic period modulus cancels. Status is
+`[CONDITIONAL THEOREM + SCOPED CLOSED NEGATIVE + OPEN NATIVE MATCHING]`;
+“rod” here is a coordinate edge, not a material measuring rod. Exact
+certificate `20/20`; no production or calibration state changed.
+
+**Latest temporal-extension result (FTD-0770):** a selected positive-action
+graph of even-power action--angle clocks exactly conserves total action and
+supports conditional graph-Laplacian relative-phase waves. The amplitude-one
+quartic shell is `E=1/2`; equal Moore-26 coupling multiplies the axial
+continuum `c^2` by nine. The decisive control theorem is
+`kappa H0''/Omega^2=(kappa/E0)(m-2)/(2m)`, giving axial values
+`0,eta/4,eta/3` for `m=2,4,6`: the exponent survives but the quartic `G*`
+period normalization cancels. A fixed edge connection has only kinematic
+holonomy. The result is `[SELECTED MODEL + CONDITIONAL THEOREM + SCOPED CLOSED
+NEGATIVE + OPEN NATIVE BRIDGE]`; it changes no production clock, proper-time
+law, `U(1)`, matter, toggle, scenario, or golden state. Exact certificate
+`15/15`; focused CTest `1/1`.
+
 **Latest long-mobile-matter result (FTD-0768):** the fourth qualified aged
 `L=321`, 768-tick rest/moving CUDA campaign completed and serialized artifact
 SHA256 `FE7E1915...170C3F`. The entire forward history, all 13 checkpoints,

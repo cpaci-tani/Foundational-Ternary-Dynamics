@@ -1639,6 +1639,221 @@ The cost is a selected `Z2` clock/anti-kick and a new leading flux speed
   two composite clocks/rods and a no-faster-manifestation-signal test under one
   predeclared finite-lattice error law.
 
+### 1.9a Coupled Quartic Clock Field v1 — CONDITIONAL THEOREMS PASS; NATIVE BRIDGE OPEN (FTD-0770)
+
+**Canonical result:**
+[`ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md`](../../10_eft_program/derivations/ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md).
+
+The isolated selected-extension verifier closes the internal mathematical
+questions: total action is conserved, relative phase has graph-Laplacian waves,
+the imposed compliance ratio is exact, and zero cycle holonomy is equivalent
+to connection integrability. It also closes the registered non-rescalable
+linear-`G*` signature negative:
+
+```text
+kappa H0''/Omega^2=(kappa/E0)(m-2)/(2m).
+```
+
+The quartic exponent survives the quadratic/sextic control, but `G*` cancels.
+The following are the live open items; none is a production-engine task until
+a fresh protocol explicitly bridges the selected state to existing substrate
+variables:
+
+- [OPEN] derive or minimally adopt an autonomous positive-action `(I,theta)`
+  pair from existing FTD state while accounting for FTD-0659's `0.898691`
+  action leakage;
+- [OPEN] derive the dimensionless stiffness `kappa/E0` and neighbor weights
+  from an independently fixed FTD interaction;
+- [OPEN] specify the `I=0` boundary or a global canonical completion for
+  strong action transfer;
+- [OPEN] replace fixed `A_vw` with a separately priced dynamical connection
+  and conjugate field energy before asking whether holonomy propagates or
+  decays; and
+- [OPEN] preregister a nonlinear dimensionless observable not already decided
+  by the exact cancellation theorem before making any renewed fundamental-
+  `G*` time claim.
+
+### 1.9b Quartic Clock--Rod Synchronization — CONDITIONAL RATIO; NATIVE MATCHING OPEN (FTD-0771)
+
+**Canonical result:**
+[`ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md`](../../10_eft_program/derivations/ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md).
+
+The abstract clock--edge comparison is exact:
+
+```text
+d_4=(rho/u)(2E)^(1/4)/(sqrt(pi)G*),
+u=C_sub tau/ell.
+```
+
+It is not a P1--P5 synchronization theorem. Exact on-site clock flows at
+different `rho` remain deterministic and Moore-local while changing `d_4`;
+the amplitude-one shell is also unselected. Matching the rod cone to the same
+linear coupled-clock wave gives `d_4=1/[pi sqrt(d_R eta)]` and cancels the
+direct quartic `G*` modulus. These scoped questions are closed and are **not
+counted as open**.
+
+The live work is:
+
+- [OPEN] derive a state-functional native clock rate relative to the primitive
+  production tick, rather than declaring the dimensionless bridge `rho/u`;
+- [OPEN] derive a formation or stability law selecting a nonzero action shell
+  and, if claimed fundamental, the quartic exponent and canonical coefficient
+  normalization;
+- [OPEN] realize an operational composite clock, material rod, and signal cone
+  under the LR-6 finite-lattice protocol; an abstract coordinate edge is not a
+  material measuring rod; and
+- [OPEN] if common-cone matching is pursued, derive `eta=kappa/E` and graph
+  weights from an independently fixed interaction. This may determine a clock
+  rate, but FTD-0771 proves it does not preserve the direct quartic period
+  modulus in the registered linear sector.
+
+### 1.9c Native Temporal Occupancy — CURRENT BARE RECURRENCE UNQUALIFIED (FTD-0772)
+
+**Canonical result:**
+[`ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../../10_eft_program/derivations/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md).
+
+The exact mathematical result is now separated from the native claim. For the
+selected one-dimensional natural family,
+
+```text
+rho_m(x)=m/[2B(1/m,1/2)sqrt(1-|x|^m)],
+E|x|^r=B((r+1)/m,1/2)/B(1/m,1/2).
+```
+
+In a fixed natural coordinate, exact quartic occupancy over an amplitude
+interval characterizes a quartic potential on the swept region. It is not
+coordinate-free under nonlinear observable changes, and a finite tick orbit
+has an atomic rather than continuous measure.
+
+The hash-locked FTD-0659 reanalysis fixes `Q_u=u^T(q_6,q_7)` and the parent
+modal amplitude before occupancy inspection. All `18` cells preserve phase,
+fixed-ray support, quadrature agreement, amplitude scaling, and covariance,
+but all fail the fixed-window return and stationarity gates. The final-window
+crest is about `0.538`; the maximum window CDF distance is `0.314`. The verdict
+`NATIVE_TEMPORAL_OCCUPANCY_RECURRENCE_UNQUALIFIED` and the non-promotion of
+this corpus are closed and **not counted as open**. The apparent `m=6`
+nearest-control label is a decaying-envelope artifact, not a sextic result.
+
+The live work is:
+
+- [OPEN] construct or identify an autonomous **coupled matter--field**
+  recurrence that includes the degrees of freedom receiving FTD-0659's bare
+  doublet action; repeating the same deterministic 256-tick corpus is not a
+  new test;
+- [OPEN] preregister longer histories and multiple volumes with complete-state
+  recurrence, localization, return-amplitude, and energy-transfer observers;
+- [OPEN] fix a state-functional signed scalar before waveform inspection and
+  test whether its acceleration closes as a single-valued function of that
+  coordinate, without velocity, history, branch, or hidden-state dependence;
+- [OPEN] if and only if those gates pass, rerun the full-CDF/moment occupancy
+  protocol with a finite-tick equidistribution/refinement statement; and
+- [OPEN] derive a native phase response and neighbor coupling only after the
+  recurrent object exists. Until then `Z(theta)`, `H_vw`, `kappa`, and
+  `A_vw` remain unearned reduced variables.
+
+### 1.9d Quartic Waveform Nonlinear Edge Signature — CONDITIONAL EXACT RESULT; NATIVE PREREQUISITES BLOCKED (FTD-0773)
+
+**Canonical result:**
+[`ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../../10_eft_program/derivations/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md).
+
+The continuous inverse chain is exact only after fixing a branch-reversible,
+unit-mass natural coordinate and conservative closure. For the separately
+selected coordinate-edge energy
+
+```text
+V_vw = epsilon(q_v-q_w)^2/2,
+```
+
+the quartic waveform has
+
+```text
+B_4 = [Vbar(pi)-Vbar(0)]/Vbar''(0) = 48pi/G*^4
+    = 1.967895315142656...,
+H_0'' K_4 = epsilon/3.
+```
+
+This exact conditional result is closed and **not counted as open**. The ratio
+cancels amplitude, edge strength, clock rate, and quartic normalization once
+the fixed coordinate, uniform phase, and selected edge are held fixed. It is
+not invariant under nonlinear observable changes or a different edge
+functional. Its barrier and curvature are correlated functionals of the same
+selected waveform, so it is neither an independent `G*` estimator nor a
+native FTD derivation. Exact symbolic certificate `95/95`.
+
+No engine run is licensed. FTD-0772 found all `18` current native cells
+recurrence-unqualified, and no native paired-edge interaction supplies the
+registered `Vbar(phi)`. The live work is:
+
+- [OPEN] complete an autonomous coupled matter--field recurrence, including
+  every degree of freedom that receives or returns the bare-doublet action;
+- [OPEN] after recurrence is established, fix a signed state-functional
+  coordinate and prove a discrete suspension, refinement, or equidistribution
+  bridge before applying any continuous occupancy or derivative formula;
+- [OPEN] derive a paired-edge interaction from the native tick map and show
+  that its reduced energy is quadratic in the locked coordinate, rather than
+  inserting `epsilon(q_v-q_w)^2/2`; and
+- [OPEN] only after those prerequisites pass, preregister native phase and
+  coupling measurements with quadratic/quartic/sextic controls. Reimplementing
+  the selected quartic oscillator and edge would be a model check, not a
+  native test.
+
+### 1.9e Native q_active Temporal Pilot — EXACT-PROFILE CANDIDATE RETIRED; RECURRENCE OPEN (FTD-0776)
+
+**Canonical result:**
+[`ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md`](../../10_eft_program/derivations/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md).
+
+The four `L=32`, seed-1, CPU/SOR arms are raw-valid, but the preselected
+`q_active` aggregate has zero complete cycles in every 200,000-tick trace.
+Its role as a clock candidate in this exact profile is retired and **not
+counted as open**. Recurrence failed before any quartic diagnostic was
+admissible; no alternative observable may replace it post-result. This does
+not supersede FTD-0772's distinct fixed-ray `Q_u` result and is not a universal
+no-clock theorem.
+
+The live work remains:
+
+- [OPEN] identify an autonomous coupled matter--field recurrence using a
+  complete-state/localization criterion rather than another unchecked
+  aggregate projection;
+- [OPEN] preregister seed, volume, backend, solver, kinetic, and coupling
+  ablations before new results are viewed;
+- [OPEN] establish native coordinate closure before applying continuous
+  occupancy, phase, or edge-function formulas; and
+- [OPEN] attempt scale/body/minimum-`dt` work only after that recurrence gate
+  passes. Repeating this profile or substituting `q_center`/`q_all` is not a
+  licensed continuation.
+
+### 1.9f Dyadic Monodromy Clock--Memory Boundary — EXACT SYNTHETIC PASS; NATIVE BRIDGE OPEN (FTD-0777)
+
+**Canonical result:**
+[`ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md`](../../10_eft_program/derivations/ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md).
+
+The locked exact/synthetic certificate passes `16/16`. A finite compatible
+root tower is an exact recurrence/epoch hierarchy: depth `K` has `2^K` sheets,
+one carrier cycle gives `m -> m+1`, and the first lifted return is after `2^K`
+fundamental carrier cycles. The exact audit also closes the stronger memory
+reading negatively: one transitive tower observes only
+`m_written+n mod 2^K`, so it cannot preserve a nonconstant cycle-invariant
+payload. A stable relative payload requires a separately selected,
+co-transported reference lift.
+
+The finite-cover mathematics and single-tower no-go are closed and **not
+counted as open**. The live work is narrower:
+
+- [OPEN] find a bounded, localized native recurrence before searching for a
+  dyadic monodromy spectrum;
+- [OPEN] identify intrinsic unit-modulus return-map modes without using a
+  global Fourier sidecar or imposed phase field;
+- [OPEN] demonstrate autonomous local occupation plus a native co-transported
+  reference structure if stable payload is claimed;
+- [OPEN] close source/work, persistence, Moore-causality, and bounded local
+  decoding gates; and
+- [OPEN] keep quartic occupancy, `G*`, and minimum-`dt` tests downstream of a
+  fresh recurrence-qualified preregistration.
+
+FTD-0777 does not replace the FTD-0772 or FTD-0776 observables and licenses no
+native engine run by itself.
+
 ### 1.10 CPU-only no-op toggles —  CLOSED 2026-04-17 (callstack audit fixes)
 
 Resolved in two steps:
