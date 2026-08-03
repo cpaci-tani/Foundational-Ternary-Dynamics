@@ -216,3 +216,23 @@ configuration or metrics:
    screen returns `NO_CLOSURE` with a hardening sign, the registered follow-up is an
    amplitude scan upward toward `A_c = G* omega_B/(2 sqrt pi)`, as a separate locked
    preregistration, not an edit to this one.
+
+## Addendum 2026-08-03 (second) — FTD-0781: this profile cannot contain a carrier
+
+A source audit (FTD-0781) establishes that the locked profile's continuous sector is
+**affine** — linear waves plus static state sources — and its only nonlinearities are
+dissipative threshold events. The hard-or-soft binary is answered **neither**: the
+conservative anharmonicity of this profile is identically zero, and **no registered
+channel can pass GATES A+B here**. Registered before the dumper is built.
+
+The screen's purpose is restated accordingly, with its value increased rather than
+voided:
+
+1. **Locked prediction, testing FTD-0781:** every mode-projected channel must show
+   `dOmega/dA = 0` exactly at sub-threshold amplitude. A measured nonzero
+   anharmonicity **falsifies the source audit** and reopens this profile.
+2. Instrument validation of the v2 metrics on native data, and a survey of the mode
+   structure the coupled-sector search will need.
+3. The **carrier search itself moves to a movement-enabled profile** under a separate
+   successor preregistration; a carrier found there lives in the coupled matter–field
+   sector, the unique native option per FTD-0781 §4.
