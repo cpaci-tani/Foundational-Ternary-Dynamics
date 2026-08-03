@@ -65,7 +65,12 @@ and golden path. Per tick, for a fixed preregistered configuration:
    carrying no decision weight.
 
 Sampling: every tick for at least `2 x 10^5` ticks, matching the FTD-0776
-cadence so the two corpora are comparable.
+cadence so the two corpora are comparable. **Additionally, and non-negotiably,
+the dump must resolve at least 20 ticks per clock cycle of the candidate mode**
+(added 2026-08-03 per FTD-0780: the FTD-0659 corpus samples at 2.887 ticks per
+cycle, which makes finite-difference accelerations carry order-unity error and
+renders Gate A uncomputable on it). If a candidate's frequency is not known in
+advance, a short pilot must establish it before the full dump is scheduled.
 
 ## 3. Locked configuration and candidate register
 
