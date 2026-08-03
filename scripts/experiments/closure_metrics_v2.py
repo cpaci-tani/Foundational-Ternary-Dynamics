@@ -2,10 +2,14 @@
 
 The v1 estimator had three defects, all found by adversarial audit:
 
-  1. DEGENERATE ON DRIFT. Binning a drifting coordinate puts many oscillation
-     periods inside every bin, so the bin mean averages to ~0 and R^2 collapses
-     to 0 even for a PERFECTLY closed system. Ground truth a = -w^2 q with any
-     drift added scored M1 = 0.0000. The decision rule could never return PASS.
+  1. DEGENERATE ON A ZERO-VARIANCE TARGET. When qddot is identically zero (a
+     pure straight line), R^2 = 1 - var(resid)/var(total) is 0/0, so a
+     TRIVIALLY CLOSED observable scores ~0 and cannot be told apart from genuine
+     non-closure. This is the case q_active presents post-saturation.
+     NOTE, against an intermediate claim: the metric is NOT wrong on a drifting
+     oscillator. q = A sin(wt) + vt has qddot = -w^2(q - vt), which depends on t
+     as well as q, so it is genuinely NOT closed in q and scoring ~0 there is
+     correct (measured corr(q,qddot) = -0.0117).
   2. POSITIVE-BIAS FLOOR. Any second difference regressed against the
      coordinate carries a self-term (-2q[k] here, -q[k]/2 for np.gradient^2),
      so pure white noise scores R^2 = 4/6 = 0.667 with NO dynamics present.
@@ -35,8 +39,16 @@ def second_difference(q):
 
 
 def detrend(q, deg=3):
-    """Remove a low-order polynomial trend. Closure is a statement about the
-    oscillatory part; free drift is not evidence either way."""
+    """Remove a low-order polynomial trend.
+
+    THIS IS A FRAME CHOICE, NOT NEUTRAL PREPROCESSING. It removes the free-drift
+    zero mode and asks whether the CO-MOVING oscillation is closed - a different
+    question from whether q itself is a natural coordinate. On a harmonic-plus-
+    drift trajectory, corr(q, qddot) = -0.0117 raw and -1.0000 detrended; both
+    are correct answers to different questions. Defensible for a translation-
+    invariant lattice, where centre-of-mass drift is a trivial zero mode, but it
+    must be declared rather than assumed.
+    """
     x = np.linspace(-1.0, 1.0, len(q))
     return q - np.polyval(np.polyfit(x, q, deg), x)
 
