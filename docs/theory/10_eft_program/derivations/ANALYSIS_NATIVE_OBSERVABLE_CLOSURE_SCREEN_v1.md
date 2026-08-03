@@ -3,11 +3,16 @@
 > ## ⚠ AMENDED 2026-08-03 AFTER ADVERSARIAL AUDIT — VERDICT CHANGED
 >
 > The original verdict `NATIVE_OBSERVABLE_CLOSURE_FAILED` is **RETRACTED** and replaced
-> by `NATIVE_OBSERVABLE_CLOSURE_UNINFORMATIVE`. The screening metric was found to be
-> **structurally incapable of returning a pass on a drifting record**, so the original
-> reading measured the tool rather than the data. Six further claims are retracted in
-> §4. The exclusion of `q_active` as a clock candidate **stands**, on different and
-> simpler grounds (§5).
+> by `NATIVE_OBSERVABLE_CLOSURE_UNINFORMATIVE`. Post-saturation `q_active` is a straight
+> line with `qddot = 0` identically, so the closure metric's `R^2` is `0/0` — a trivially
+> closed observable is indistinguishable from a non-closed one, and the original H2
+> reading was not supported. Six further claims are retracted in §4. The exclusion of
+> `q_active` as a clock candidate **stands**, on different and simpler grounds (§5).
+>
+> **Re-audit note.** An intermediate revision of this amendment claimed the metric was
+> "structurally incapable of returning a pass on a drifting record." That was too broad
+> and is itself withdrawn — see §3.1. Drift genuinely breaks closure in the drifting
+> coordinate, so scoring ~0 there is correct behaviour.
 
 **Status:** `[THEOREM — EXACT, SPECTRAL RIGIDITY]` +
 `[ENGINE FACT — MEASURED, CORPUS-SCOPED]` +
@@ -71,9 +76,9 @@ closes it is `mu` **and** `lambda` jointly (equivalently `mu` and `A`).
 All metrics were computed as preregistered and the numbers reproduce exactly
 (`M1_fromq` A10 = `0.00366`). **The metrics themselves are invalid on this data.**
 
-### 3.1 The screening metric is degenerate on a drifting record [METHOD DEFECT]
+### 3.1 The screening metric is degenerate on a zero-variance target [METHOD DEFECT]
 
-Ground truth, `a = -omega^2 q` **exactly** (perfect closure), with drift added:
+The measurement that prompted the original claim — `a = -omega^2 q` exactly, with drift added:
 
 | drift slope | M1 |
 |---|---|
@@ -81,10 +86,17 @@ Ground truth, `a = -omega^2 q` **exactly** (perfect closure), with drift added:
 | `0.01` | `0.0000` |
 | `1000` | `0.0000` |
 
-Any drift collapses it. With 200 bins across the full `q` range each bin spans ~1000
-ticks ~ 20 oscillation periods, so every bin mean averages to ~0. **The metric measures
-oscillation-periods-per-bin, not closure**, and the decision rule could never return
-`PASS` on a drifting record. The original H2 reading was predetermined by the tool.
+**[RE-AUDIT — this reading was too broad.]** A harmonic oscillator plus linear drift is
+**genuinely not closed** in `q`: with `q = A sin(wt) + vt`, `qddot = -w^2 (q - vt)`
+depends on `t` as well as `q`, so the map is multi-valued and measured
+`corr(q, qddot) = -0.0117`. A metric returning ~0 there is **correct**, not defective.
+
+The real degeneracy is narrower: when the *target* has zero variance — a pure straight
+line, `qddot = 0` identically (measured `var = 1.13e-18`) — `R^2` is `0/0`. That case is
+trivially closed yet scores ~0, and the metric cannot distinguish it from genuine
+non-closure. **`q_active` post-saturation is exactly this case**, which is why the verdict
+is `UNINFORMATIVE`. The claim that the rule "could never return PASS on a drifting
+record" is withdrawn: on a drifting record there is usually nothing to pass.
 
 Two further defects in the same estimator:
 
@@ -161,7 +173,13 @@ residual variance. It is a superposition of hundreds of normal modes.
 
 ## 6. Method requirements for any successor screen
 
-1. **Detrend before binning**, or use an estimator drift does not destroy.
+1. **Detrend before binning — but declare it as a frame choice, not preprocessing.**
+   Detrending removes the free-drift zero mode and asks whether the *co-moving*
+   oscillation is closed. On a harmonic-plus-drift trajectory,
+   `corr(q, qddot) = -0.0117` raw and `-1.0000` detrended: both are correct answers to
+   *different* questions. The choice is defensible here, because free centre-of-mass
+   drift is a trivial zero mode of a translation-invariant lattice, but it changes what
+   is being asked and must be stated.
 2. **Use the true second difference** `q[k+1] - 2q[k] + q[k-1]`, not `np.gradient^2`
    (self-term, spacing-2 stencil blind to tick-scale content, annihilates Nyquist).
 3. **Calibrate every metric against a white-noise null before preregistering it.** The
