@@ -88,17 +88,28 @@ neighbours, and the body-diagonal neighbour at `(+1,+1,+1)`.
 
 ## 4. Metrics — identical to FTD-0778, reused without modification
 
-`P0` momentum consistency; `M1` positional closure `R^2`; `M2` phase-plane
-closure `R^2`; `M3` stationarity of `F`; `N1` noise control (upper half-band
-power and lag-1 autocorrelation of the acceleration). Acceleration computed two
+**The v1 metrics are RETIRED** (FTD-0778 §3.1: degenerate on drift, self-term bias
+floor at `R^2 = 2/3` on white noise, and a noise guard that could not fire). Use
+`scripts/experiments/closure_metrics_v2.py`: detrend before binning, true second
+difference, and `M1_excess` over a phase-randomised surrogate null. `P0` is retired
+entirely as circular. The band-fraction null is `0.5`, not `1.0`. Acceleration computed two
 independent ways and required to agree; Savitzky–Golay variant as noise
 control. Bin counts, drop rules, and the `0.95` threshold are inherited
 verbatim from `PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md`.
 
 ## 5. Look-elsewhere protection [MANDATORY]
 
-Screening `N_cand = 13` channels per arm across `4` arms is `52` tests. A
-single channel crossing `R^2 > 0.95` is therefore **not** by itself a pass.
+Screening `N_cand = 13` channels per arm, **each in both its coordinate and its
+conjugate**, across `4` arms is `13 x 2 x 4 = 104` tests — not 52, as an earlier
+revision stated. A single channel crossing threshold is therefore **not** by itself a
+pass.
+
+**Correction 2026-08-03.** Concordance across the four arms is a *robustness* check on
+correlated replicates (same seed, profile and lattice; only amplitude differs), **not a
+multiplicity correction**. The held-out `seed = 2` re-screen is the only genuine
+control. The threshold must additionally be calibrated against a surrogate null before
+use — see `scripts/experiments/closure_metrics_v2.py`, which reports excess over a
+phase-randomised null rather than a raw `R^2`.
 
 - **Full-table reporting.** The complete `52`-row screen table is reported
   regardless of outcome. Selective reporting of a winner is prohibited.
