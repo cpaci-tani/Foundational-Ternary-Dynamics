@@ -49,6 +49,22 @@ Two further admissibility rules follow from FTD-0778's diagnosis:
   (single-pass) record satisfies `qddot = F(q)` vacuously via `t = t(q)`, and
   its stationarity metric is uncomputable. A channel whose detrended record
   does not revisit values is `UNINFORMATIVE` by construction, not `FAILED`.
+- **Fold-license rule (added 2026-08-03).** A quotient `q -> q mod L` is an
+  admissible coordinate move **iff the dynamics is equivariant under
+  `q -> q + L`**: the quotient map is then a local isometry, constant mass
+  survives, and single-valued `F` descends. The lattice torus licenses this
+  natively for *position-type* observables, whose monotone records are the
+  unwrapped lifts of rotors. For flux-type zero modes (`V = 0`, periodic under
+  every `L`) the wrap is dynamically licensed but the circumference is a **free
+  selection** that sets the rotor frequency `Omega = p/L` — the same
+  answer-in-the-premise failure mode as the retired Quarter Principle's scale
+  `s`. Amplitude-space dyadic root-lifting is a nonlinear relabeling outside
+  the affine class and is **inadmissible** (its recorded fingerprint: FTD-0777's
+  lifted harmonic carrier retains arcsine fourth moment `3/8`, not quartic
+  `1/3`). Winding-register folding (mod `2^K` on the cycle count) is affine on
+  the angle and admissible, but presupposes a cycling carrier and adds no
+  state (FTD-0777, binding) — it is a readout layer downstream of GATE A, not
+  a route to it.
 
 ## 2. Required telemetry [OBSERVATION-ONLY]
 
@@ -90,6 +106,20 @@ advance, a short pilot must establish it before the full dump is scheduled.
 
 Site list (geometric, fixed): the seed voxel, its six axial nearest
 neighbours, and the body-diagonal neighbour at `(+1,+1,+1)`.
+
+**Existing-corpus note (2026-08-03).** The FTD-0776 corpus already contains one
+member of this admissible class: `q_center = J_x(L/2, L/2, L/2)`, the x-flux at
+the single central voxel (provenance: `RESULT_REPORT.md`, where it was a
+descriptive control). It is flux-type (no torus wrap applies) but bounded and
+recurrent, so the recurrence precondition holds without a fold. An
+**exploratory, post-hoc** v2 screen (not preregistered; carries no verdict
+weight) gives, across arms `A={10,12,14,16}`: `M1 = 0.418/0.216/0.146/0.207`
+against the `0.90` closed threshold, with surrogate-null excess
+`0.346/0.191/0.136/0.188`. Reading: **not closed as one degree of freedom, and
+not noise** — a deterministic phase-locked superposition, consistent with the
+`640-660` spectral lines needed for 80% of its variance. A single fixed voxel
+sees the whole normal-mode bath; this motivates the fixed low-`k` **mode**
+channels of §2 item 3, which project one mode instead of summing all of them.
 
 ## 4. Metrics — identical to FTD-0778, reused without modification
 
