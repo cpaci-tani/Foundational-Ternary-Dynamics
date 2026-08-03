@@ -1,5 +1,160 @@
 # Foundational Ternary Dynamics Changelog
 
+# FTD-0777 — Finite Dyadic Monodromy Clock--Memory Boundary v1 (2026-08-02)
+
+- Froze and ran an exact/synthetic 16-gate certificate for the distinction
+  between forward dyadic powers, compatible root lifts, and independent
+  ternary modal words. Protocol SHA256 `D1AA721C...AF32A`; verifier SHA256
+  `8907670C...9685`; focused independent pytest `4/4`.
+- All `16/16` gates pass. A selected depth-`K` compatible root tower has
+  exactly `2^K` sheets, carrier-loop monodromy `m -> m+1 mod 2^K`, and first
+  lifted return after `2^K` fundamental carrier cycles. Forward powers add no
+  independent state, and permanent append writes obstruct complete-state
+  recurrence through a write.
+- Booked the decisive exact negative boundary: a single transitive root tower
+  observes only `m_written+n mod 2^K`, so it cannot preserve a nonconstant
+  cycle-invariant event payload. A stable relative payload is exact only after
+  separately selecting a co-transported reference lift.
+- Root lifting lengthens the recurrence horizon and retains arcsine fourth
+  moment `3/8`, not quartic `1/3`. It does not derive a smaller `dt`, quartic
+  occupancy, `G*`, native memory, or an arrow of time. No engine trajectory or
+  production physics source was used or changed; native carrier/reference
+  birth, persistence, local decoding, and source/work closure remain open.
+- Preserved the protocol and verifier hashes after adversarial review and
+  recorded v1 errata in the analysis: two display-notation commas, the G11
+  artifact label (the controlling status remains `[CONDITIONAL EXACT
+  COMPOSITION]`), and the branch CSV's least-significant-bit-first convention.
+  No Boolean result or mathematical conclusion changes.
+
+# FTD-0776 — Native q_active Temporal Pilot v1 (2026-08-02)
+
+- Ran the deterministic four-arm `L=32`, seed-1, single-substrate CPU/SOR
+  campaign with Langevin and imposed de Broglie/Coulomb clocking disabled.
+  Every raw trajectory has 200,000 finite contiguous samples and nonempty
+  manifested support.
+- The preselected `q_active` aggregate produced raw positive-going crossing
+  counts `1,1,0,0` for `A={10,12,14,16}` and therefore zero complete cycles in
+  every arm against the locked minimum of eight. Recurrence failed first;
+  period/amplitude stability, occupancy/speed exponents, moments, correlated
+  `G` functionals, and the selected waveform ratio are N/A, not fitted fails.
+- Booked the observable- and configuration-scoped verdict
+  `Q_ACTIVE_RECURRENCE_UNQUALIFIED_IN_LOCKED_L32_SEED1_CPU_SOR_PROFILE`.
+  The `q_active` clock candidate is retired only in this exact profile; an
+  autonomous coupled matter--field recurrence remains open. The inherited
+  continuous quartic identities remain exact under their conditional fixed-
+  natural-coordinate/selected-edge assumptions and were not tested.
+- Preserved the immutable pre-run lock at SHA256 `3FECCBCC...072662E` and a
+  separate provenance erratum at `D7F1C0EB...113BD7`. The complete ignored
+  artifact manifest has 68 entries (CSV SHA256 `21DC6548...8343F6`). No
+  production physics source changed, and the failed first gate stopped all
+  scale/body/minimum-`dt` work. FTD-0774 remains separately locked/not run,
+  and its conditional FTD-0775 follow-up identifier remains reserved.
+
+# FTD-0773 — Quartic Waveform Nonlinear Edge Signature v1 (2026-08-02)
+
+- Completed the exact-only audit of the proposed
+  `occupancy -> speed -> potential -> phase/action` chain. The inversion is
+  exact only for a continuous, branch-reversible, fixed unit-mass natural
+  coordinate; unequal branch speeds yield only their harmonic mean, and a
+  finite FTD tick orbit has an atomic measure.
+- For the separately selected quadratic coordinate-edge energy
+  `epsilon(q_v-q_w)^2/2`, derived the even-power waveform shape functional
+  `B_m=Delta_m/K_m`. The quartic specialization is exactly
+  `B_4=48pi/G*^4=1.967895315142656...`, with
+  `H_0''K_4=epsilon/3`; quadratic and sextic controls remain distinct.
+- Proved that `B_4` cancels amplitude, edge strength, clock rate, and quartic
+  normalization once uniform phase and the quadratic edge are fixed. It is
+  not invariant under nonlinear observable changes or a different edge
+  functional, and its barrier and curvature are correlated functionals of
+  the same selected waveform—not an independent determination of `G*`.
+- Verdicts
+  `QUARTIC_CONTINUOUS_INVERSE_CHAIN_CONDITIONAL_THEOREMS_PASS`,
+  `QUARTIC_NONLINEAR_EDGE_SHAPE_FUNCTIONAL_GSTAR_PRESENT`,
+  `NATIVE_QUARTIC_TIME_DERIVATION_NOT_ESTABLISHED`, and
+  `NATIVE_NONLINEAR_EDGE_TEST_BLOCKED`. FTD-0772 left all `18` native cells
+  recurrence-unqualified, and no native paired-edge interaction exists, so
+  no engine run was licensed.
+- Locked the exact protocol under SHA256
+  `33E126673B8F072CAEBAD490B74F810818373D8014CC2D6F73CEF9592ED88DAA`.
+  The exact symbolic certificate passes `95/95` (SHA256
+  `CA8876D7...3CF7E`). The next native target is a complete coupled
+  matter--field recurrence, before renewed occupancy, phase-response, or
+  coupling tests.
+
+# FTD-0772 — Native Temporal Occupancy v1 (2026-08-02)
+
+- Derived the exact temporal-occupancy family
+  `rho_m(x)=m/[2B(1/m,1/2)sqrt(1-|x|^m)]` and moment law
+  `E|x|^r=B((r+1)/m,1/2)/B(1/m,1/2)` for the selected natural Hamiltonians.
+  For `m=4`, the normalization is `2/(sqrt(pi)G*)` and the registered moments
+  are `sqrt(pi)/G*`, `4/G*^2`, and `1/3`.
+- Proved the conditional fixed-coordinate converse: exact quartic occupancy
+  over an amplitude interval characterizes `V(q)=lambda q^4` only on the
+  swept region. Corrected the stronger invariant-modulus reading: nonlinear
+  observable reparameterizations change occupancy, and a finite tick orbit
+  has an atomic rather than absolutely continuous measure.
+- Locked a retrospective reanalysis of the immutable FTD-0659 corpus under
+  SHA256 `3E779CDF...9CC41C`. The signed observer
+  `Q_u=u^T(q_6,q_7)` and parent modal amplitude were fixed before occupancy
+  inspection; no engine rerun, fitted power, sample-maximum normalization, or
+  radial-observer substitution was allowed.
+- Provenance, all `74` parent histories, zero controls, phase, support,
+  fixed-ray, quadrature, amplitude, and covariance checks pass. All `18`
+  primary cells fail every registered window-return and stationarity gate:
+  the final-window crest is only `0.537876`, the maximum window CDF distance
+  is `0.313953`, and the maximum moment spread is `0.290896`.
+- Verdict `NATIVE_TEMPORAL_OCCUPANCY_RECURRENCE_UNQUALIFIED`; the quartic
+  gate is `0/18`. The nominal `m=6` nearest-control count (`18/18`) is
+  quarantined as a contracting-envelope artifact, not a sextic-potential
+  result. A complete matter--field recurrence must be found before native
+  occupancy, phase response, or coupling can be derived.
+- Exact mathematical certificate `45/45` and independent immutable-corpus/
+  result reconstruction `49/49` pass.
+
+# FTD-0771 — Quartic Clock--Rod Synchronization Boundary v1 (2026-08-02)
+
+- Derived the exact conditional cycle fraction for a selected quartic clock
+  against one abstract causal lattice interval:
+  `d_4=(rho/u)(2E)^(1/4)/(sqrt(pi)G*)`, with
+  `u=C_sub tau/ell`.
+- Proved a scoped P1--P5 underdetermination theorem. Exact on-site quartic
+  flows with different relative rates remain deterministic and Moore-local
+  while producing different `d_4`; the occupied energy shell is independently
+  unselected.
+- Distinguished common coordinate/unit invariance from physical relative-rate
+  selection, the topological `C_MOORE=1` support bound from selected
+  `C_SPEED=1/sqrt(3)`, and an abstract coordinate edge from an operational
+  material rod.
+- Proved the common-cone control: if the comparison speed is the same selected
+  coupled-clock wave speed, `d_4=1/[pi sqrt(d_R eta)]` and the direct quartic
+  `G*` period modulus cancels.
+- Locked the exact-only protocol under SHA256 `360BAC51...FE16`; symbolic
+  consistency certificate `20/20` passes. No engine, production tick, calibration,
+  proper-time law, matter ontology, toggle, scenario, or golden state changed.
+
+# FTD-0770 — Coupled Quartic Clock Field v1 (2026-08-02)
+
+- Locked and ran an isolated selected-extension clock Hamiltonian; no
+  production voxel, tick phase, toggle, scenario, calibration, or golden state
+  changed.
+- Corrected the local normalization: for `H=(p^2+q^4)/2`, the period
+  `sqrt(pi)G*` belongs to the amplitude-one shell `2E=1`, hence `E=1/2`, not
+  `E=1`.
+- Proved conditional total-action conservation and the linear equation
+  `ddot(phi)+kappa H0'' L phi=0`. The continuum graph factor is `1` for six
+  axial neighbors and `9` for equal-weight Moore-26 coupling.
+- Proved the decisive even-power control identity
+  `kappa H0''/Omega^2=(kappa/E0)(m-2)/(2m)`. Quadratic, quartic, and sextic
+  axial values are `0`, `eta/4`, and `eta/3`: the exponent is dynamically
+  distinguishable, while `G*` cancels from every registered dimensionless
+  linear observable. Verdict `GSTAR_LINEAR_SIGNATURE_ABSENT` at this scope.
+- Verified the imposed compliance rate and graph-cohomology integrability
+  criterion. A fixed background connection retains holonomy only because it
+  has no equation of motion; no dynamical-defect claim is licensed.
+- Exact certificate `15/15`; focused native CTest `1/1`. Maximum period error
+  `1.53e-9`, dispersion error `2.16e-8`, total-action drift `4.05e-13`, and
+  chain-energy drift `1.62e-14`.
+
 # FTD-0768 final — long-transport execution invalid (2026-08-01)
 
 - The fourth qualified WSL2 CUDA execution completed and wrote the immutable

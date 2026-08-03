@@ -203,6 +203,7 @@ add_library(ftd_eft STATIC
     src/eft/quadratic_coat_face_current.cpp
     src/eft/quadratic_coat_spacetime_action.cpp
     src/eft/fixed_step_energy_scope.cpp
+    src/eft/coupled_quartic_clock_field.cpp
     src/eft/matched_midpoint_poynting.cpp
     src/eft/quadratic_coat_matter_work.cpp
     src/eft/quadratic_coat_neutral_pair_work.cpp
@@ -1859,6 +1860,12 @@ ftd_add_test(test_quadratic_coat_spacetime_action tests/test_quadratic_coat_spac
 ftd_add_test(test_fixed_step_energy_scope tests/test_fixed_step_energy_scope.cpp
              CTEST_NAME fixed_step_energy_scope TIMEOUT 120
              LABELS selected_extension eft action variational fixed_step time energy discrete_gradient symplectic no_go theorem observer correction unit eft_quick)
+ftd_add_test(test_coupled_quartic_clock_field tests/test_coupled_quartic_clock_field.cpp
+             CTEST_NAME coupled_quartic_clock_field TIMEOUT 120
+             LABELS selected_extension eft clock action_angle quartic temporal phase synchronization dispersion compliance holonomy control theorem observer unit eft_quick)
+ftd_add_test(test_l17_complete_tangent_candidate tests/test_l17_complete_tangent_candidate.cpp
+             CTEST_NAME l17_complete_tangent_candidate TIMEOUT 7200
+             LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research)
 ftd_add_test(test_matched_midpoint_poynting tests/test_matched_midpoint_poynting.cpp
              CTEST_NAME matched_midpoint_poynting TIMEOUT 300
              LABELS selected_extension eft coat current field electric magnetic midpoint poynting work energy gauss continuity polarity reversal theorem observer constructive correction unit eft_quick)
