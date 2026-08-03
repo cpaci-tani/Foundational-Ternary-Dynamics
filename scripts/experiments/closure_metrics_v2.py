@@ -6,10 +6,16 @@ The v1 estimator had three defects, all found by adversarial audit:
      pure straight line), R^2 = 1 - var(resid)/var(total) is 0/0, so a
      TRIVIALLY CLOSED observable scores ~0 and cannot be told apart from genuine
      non-closure. This is the case q_active presents post-saturation.
-     NOTE, against an intermediate claim: the metric is NOT wrong on a drifting
-     oscillator. q = A sin(wt) + vt has qddot = -w^2(q - vt), which depends on t
-     as well as q, so it is genuinely NOT closed in q and scoring ~0 there is
-     correct (measured corr(q,qddot) = -0.0117).
+
+     DRIFT has three regimes (second re-audit): slow drift (v < A*w) makes the
+     map q -> qddot genuinely multi-valued, so ~0 is CORRECT; fast drift
+     (v > A*w) makes q monotone, whereupon qddot = F(q) exists trivially for
+     ANY record - single-valuedness is VACUOUS on a single-pass coordinate,
+     and M3 stationarity is uncomputable because no q-value is revisited.
+     RECURRENCE PRECONDITION: closure is testable only on records that revisit
+     coordinate values; single-pass records are UNINFORMATIVE by construction.
+     (Detrending restores recurrence when the underlying oscillation is real,
+     which is the frame-choice role it plays here.)
   2. POSITIVE-BIAS FLOOR. Any second difference regressed against the
      coordinate carries a self-term (-2q[k] here, -q[k]/2 for np.gradient^2),
      so pure white noise scores R^2 = 4/6 = 0.667 with NO dynamics present.

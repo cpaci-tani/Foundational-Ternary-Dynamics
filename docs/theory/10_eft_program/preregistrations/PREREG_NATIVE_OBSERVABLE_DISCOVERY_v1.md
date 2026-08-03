@@ -44,6 +44,11 @@ Two further admissibility rules follow from FTD-0778's diagnosis:
   degrees of freedom tracks population, not phase.
 - **Locality or mode-resolution required.** Candidates must be local (bounded
   fixed support), a projection onto a fixed mode, or a body-frame observable.
+- **Recurrence precondition (added after the second re-audit).** Closure is
+  testable only on records that revisit coordinate values: a monotone
+  (single-pass) record satisfies `qddot = F(q)` vacuously via `t = t(q)`, and
+  its stationarity metric is uncomputable. A channel whose detrended record
+  does not revisit values is `UNINFORMATIVE` by construction, not `FAILED`.
 
 ## 2. Required telemetry [OBSERVATION-ONLY]
 

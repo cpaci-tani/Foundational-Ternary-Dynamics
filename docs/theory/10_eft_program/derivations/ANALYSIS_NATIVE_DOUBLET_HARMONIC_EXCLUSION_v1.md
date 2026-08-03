@@ -73,7 +73,12 @@ quartic requires      : 1.000000, 2.000000, 4.000000     (Omega proportional to 
 harmonic requires     : 1.000000, 1.000000, 1.000000     (Omega independent of A)
 ```
 
-The amplitude range is exactly `4x`. The measured frequencies agree to `2.3e-4`.
+The amplitude range is exactly `4x`. The measured frequencies agree to `2.3e-4`
+under the audit's estimator; an independent median-based SHM re-estimate gives a more
+conservative spread of `1.6e-3` (the `a0` arm's amplitudes are ~`5e-6`, where relative
+numerical noise is largest, giving it `sd ~ 5e-3`). The spread is estimator-dependent
+within `[2e-4, 2e-3]`; against the required factor of `4` (`3e-1`), the conclusion is
+unchanged under every estimator.
 
 **Amplitude-regime caveat.** The absolute amplitudes span only `4.8e-6` to `2.1e-5`. In
 that regime *any* smooth even potential is quadratic-dominated, so this is a weak test of
