@@ -191,3 +191,28 @@ dump is one campaign's worth of wall time. FTD-0778 showed that omitting this
 step cost four `~26`-minute runs whose verdict, correctly read, was a statement
 about the observable rather than about the substrate. Gate A is placed first
 precisely because it is the cheap discriminator.
+
+## Addendum 2026-08-03 — carrier corner: quantitative targets for the pre-test
+
+Three additions from the cornering analysis (sidebranch §32), none altering the locked
+configuration or metrics:
+
+1. **Primary falsifier, per mode: the sign of `dOmega/dA`.** The carrier class requires
+   hardening anharmonicity so the fundamental can climb above the single acoustic band.
+   A measured softening sign across the registered channels closes the carrier question
+   negatively for this sector. This is the cheapest decision the dump can deliver and
+   should be evaluated first.
+2. **Quantitative target for GATE C: the flow curve.** For a mixed
+   quadratic-plus-quartic potential, `G_meas = (1/A) sqrt(6 pi I/(mu Omega))` flows
+   monotonically from `sqrt(3 pi) = 3.06998` (harmonic endpoint) to `G* = 2.95868`
+   (quartic endpoint) as a function of `a = A sqrt(lambda/mu)/omega_0`, reaching 50%
+   of span near `a ~ 1` and 98% near `a ~ 8`. The test is curve collapse across the
+   amplitude family with the single fitted scale `A_*`, not the endpoint number. A
+   harmonic mode must sit at the top of the curve (the FTD-0659 doublet does).
+3. **Regime tension, flagged for a v2.** This preregistration deliberately matches the
+   FTD-0776 configuration, but that campaign's centre injections thermalised (lattice
+   saturation within 1.4% of the run) with no localisation at any tested amplitude —
+   consistent with softening nonlinearity or sub-threshold amplitude. If the present
+   screen returns `NO_CLOSURE` with a hardening sign, the registered follow-up is an
+   amplitude scan upward toward `A_c = G* omega_B/(2 sqrt pi)`, as a separate locked
+   preregistration, not an edit to this one.
