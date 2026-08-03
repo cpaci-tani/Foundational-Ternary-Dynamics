@@ -86,17 +86,28 @@ The measurement that prompted the original claim — `a = -omega^2 q` exactly, w
 | `0.01` | `0.0000` |
 | `1000` | `0.0000` |
 
-**[RE-AUDIT — this reading was too broad.]** A harmonic oscillator plus linear drift is
-**genuinely not closed** in `q`: with `q = A sin(wt) + vt`, `qddot = -w^2 (q - vt)`
-depends on `t` as well as `q`, so the map is multi-valued and measured
-`corr(q, qddot) = -0.0117`. A metric returning ~0 there is **correct**, not defective.
+**[RE-AUDIT, second pass — the drift picture has THREE regimes, not two.]** With
+`q = A sin(wt) + vt` and oscillatory speed `A w = 0.471`:
 
-The real degeneracy is narrower: when the *target* has zero variance — a pure straight
-line, `qddot = 0` identically (measured `var = 1.13e-18`) — `R^2` is `0/0`. That case is
-trivially closed yet scores ~0, and the metric cannot distinguish it from genuine
-non-closure. **`q_active` post-saturation is exactly this case**, which is why the verdict
-is `UNINFORMATIVE`. The claim that the rule "could never return PASS on a drifting
-record" is withdrawn: on a drifting record there is usually nothing to pass.
+1. **Slow drift (`v < A w`, e.g. `v = 0.01`).** `q` is non-monotone; the map
+   `q -> qddot` is genuinely multi-valued (median within-bin spread of `qddot` is
+   `0.148` against `|qddot|max = 0.074` — twice the full amplitude). **Not closed**;
+   a metric scoring ~0 is correct.
+2. **Fast drift (`v > A w`, e.g. `v = 1000`).** `q` is strictly monotone, so
+   `t = t(q)` exists and `qddot = F(q)` **is** single-valued — the record is
+   *technically* closed. But so is **every** monotone record, by the same
+   construction: for a single-pass coordinate, single-valuedness is **vacuous**.
+   The operational tell is that `M3` (stationarity across record thirds) is
+   uncomputable, because no `q`-value is ever revisited — exactly the `n/a` the v1
+   screen reported. Verdict for such records is `UNINFORMATIVE` by construction.
+3. **Pure line.** The target `qddot` has zero variance (`var = 1.13e-18`), `R^2` is
+   `0/0`, and a trivially closed observable is indistinguishable from a non-closed
+   one. **`q_active` post-saturation is this case.**
+
+An intermediate revision claimed regime 1 covered all drift ("genuinely not closed");
+that was itself too broad — regime 2 exists. The practical conclusion is a **recurrence
+precondition for Gate A**: closure is testable only on records that revisit coordinate
+values. Single-pass records are `UNINFORMATIVE` regardless of metric.
 
 Two further defects in the same estimator:
 
