@@ -171,6 +171,66 @@ excluded by compact support, not by central-force character.** Equivalently:
 closing a two-bond flex needs a support-to-minimum ratio `≥ 2`, and this law's
 ratio is `1.2247`.
 
+## 8 · The stella octangula — the obstruction made exact
+
+The 2×2×2 checkerboard block of §3 **is** the stella octangula: its 8 vertices
+are the cube corners, its two interpenetrating regular tetrahedra are exactly
+the two parity classes, and FTD's `±` polarity assignment is precisely that
+parity split. Naming it this way exposes the mechanism.
+
+With cube edge 1:
+
+| pair type | count | distance | polarity | bonded |
+|---|---|---|---|---|
+| cube edges (A↔B) | 12 | **1.000** | opposite | ✅ |
+| **tetra edges** (A↔A, B↔B) | 12 | **1.414** | *same* | ❌ mask `= 0` **and** beyond support |
+| body diagonals | 4 | 1.732 | opposite | ❌ beyond support |
+
+**The compound's rigidity is carried entirely by the tetrahedral edges** — each
+tetrahedron is rigid because of its own six. Those are doubly excluded: same
+polarity (mask 0) *and* at `√2 = 1.414 >` support `1.2247`. What survives is
+the cube graph `Q₃`, which is floppy.
+
+Three arms, computed (`stella_octangula_c3.py`):
+
+| arm | `B` | rank | **stress** | flex | verdict |
+|---|---|---|---|---|---|
+| cube edges only — **what FTD has** | 12 | 12 | **0** | 6 | `n = ∞` |
+| cube + all 12 tetra braces | 24 | 18 | 6 | 0 | `n = 2` (rigid) |
+| cube + partial braces | — | — | >0 | >0 | **15 configurations** |
+
+**The first row is a proof, not a measurement.** `stress = 0` exactly: the 12
+cube-edge vectors are independent. By Connelly, second-order rigidity *requires*
+a self-stress, so with none, **every flex extends and `n = ∞` follows
+necessarily.** This upgrades §3's numerical finding (6 flat modes) to a
+structural certainty for the whole checkerboard family.
+
+**And the counterfactual locates exactly what is missing.** Adding tetrahedral
+braces moves the compound into the `n = 4`-eligible region — 15 partial
+bracings have both `stress > 0` and `flex > 0`, including `k = 6` cases with
+`stress = flex = 2`, the balanced knife-edge §7 identifies as the target. Full
+bracing overshoots to rigid. **But every brace is a same-polarity pair at `√2`,
+which the mask zeroes and support excludes. FTD cannot have a single one.**
+
+### The obstruction, stated exactly
+
+**The stella octangula is intrinsically a two-length-scale object (1 and `√2`);
+the registered compact law is single-scale — one minimum, at `r = 1`.** At an
+unstressed equilibrium every bond must sit at that one length, so the bond
+vectors of any FTD configuration are all the *same* length, and the second
+scale that would close the flex is unreachable.
+
+This is the same obstruction as §7's support-to-minimum ratio, seen from the
+other side. §7: closing a two-bond flex needs ratio `≥ 2`; the law has
+`1.2247`. §8: closing it needs bonds at two different lengths; the law has one.
+**Both say `n = 4` requires a two-scale interaction, and the compact law is
+single-scale by construction.**
+
+That is constructive rather than merely negative: it names what an admissible
+successor law must have — a second minimum, or a second interaction range — and
+it predicts C3 stays unrealized under *any* single-minimum central potential,
+not just this one.
+
 **That is the sharpest statement this screen supports, and it is falsifiable.**
 It predicts `n = 4` becomes available if the support-to-minimum ratio reaches
 2 — reachable by a longer-range law, or by a configuration whose closing bond
