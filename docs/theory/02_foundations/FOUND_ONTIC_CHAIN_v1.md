@@ -180,22 +180,58 @@ carry `Γ(1/4)`.
 
 ## 5 · Two shave candidates — stated, not registered
 
-### 5.1 `P3 ⟸ P1` `[CONJECTURE]`
+### 5.1 `P3 ⟸ P1` — **WITHDRAWN 2026-08-04, same day it was drafted**
 
-P1 posits a lattice. A lattice requires distinguishable sites. Distinguishability
-is distinction. Counting the mark yields three values. **Therefore P3 (ternary
-states) may not be independent of P1**, and the postulate count would fall
-**5 → 4**.
+The original text proposed that P3 (ternary states) might not be independent of
+P1, via *"a lattice requires distinguishable sites; counting the mark yields
+three values"*, blocked on a selection called *the boundary is a value*.
 
-**Blocked on step 1.** The derivation needs *the boundary is a value*, which is
-a selection. Honest form:
+**It is withdrawn for three independent reasons, any one sufficient.**
 
-> `P3 ⟸ P1 + (the boundary is a value)`
+**(i) The move is unavailable on a discrete space.** In a discrete topology
+*every* subset is clopen, so `∂A = cl(A) \ int(A) = A \ A = ∅` for every `A`.
+**Every topological boundary on a discrete lattice is empty.** There is no
+boundary to promote to a value. The route was not merely unproven — it was
+ill-posed for the ontology it was proposed for.
 
-That trades a full postulate for a smaller declared selection — likely a net
-gain, but it **must be booked as a trade, not a free derivation.** Registering
-it as a shave without pricing the boundary-as-value move would be the FTD-0788
-pattern: satisfying a constraint by quietly adopting something else.
+**(ii) The shave already exists.** FTD-0128
+(`FOUND_TERNARY_STATE_FROM_I.md`, 2026-07-03, `[SYNTHESIS]`) already grounds the
+ternary values in **Axiom 0 ("i exists")** —
+`i² = −1`, `|i²| = +1`, `0` the additive identity, so
+`s ∈ {i², 0, |i²|} = {−1, 0, +1}` — and states outright that the axiomatic
+footprint shrinks by one independent numerical choice. The proposal was
+redundant.
+
+**(iii) P3's independent content is not the ternary values.** P3 posits
+`J ∈ ℝ³` continuous per voxel, `s ∈ {−1,0,+1}` ternary, **and** that `J` is
+primary with `s` its threshold projection. By that third clause `s` is
+*already* declared non-independent **inside P3**. The free content of P3 is the
+**continuous flux field**, which neither FTD-0128 nor this chain addresses, and
+which is a strictly harder problem: deriving `ℝ³`-valued continuity from an
+uncontained discrete lattice.
+
+### 5.1a What is actually on the table — **Axiom 0**, not P3 `[CONJECTURE]`
+
+FTD-0128 and this chain run in **opposite directions**:
+
+| | assumes | yields |
+|---|---|---|
+| FTD-0128 | **Axiom 0 — "i exists"** | ternary |
+| this chain (§2) | distinction + the √(negation) demand | ternary **and** `i` |
+
+FTD-0128 *posits* `i`. §2 step 3 *derives* it, on the theorem that no linear
+square root of negation exists below two dimensions. **So the available shave is
+Axiom 0.**
+
+Booked honestly as a trade:
+
+- **out:** Axiom 0 ("i exists")
+- **in:** distinction + one closure demand (*negation has a half*)
+
+This is a reduction **only if distinction counts as free** — defensible, since
+any formal system capable of stating Axiom 0 already presupposes distinction,
+but that is the entire question and it is not settled here. **No reduction in
+the axiom count is registered.**
 
 ### 5.2 `D = 3` rigidity `[CONJECTURE — numerically unique, not forced]`
 
@@ -238,8 +274,11 @@ is correct and stands.
   the framework's foundations cost **three selections** (boundary-as-value,
   `D = 3`, lattice type) plus **one added structure** (order). The `G*` selection
   is newly *located* — at the lattice choice, not only at the clock.
-- **Drive** — §5 names two priced lines and the exact obstruction on each. The
-  `P3 ⟸ P1` line is the more promising: unlike the FC-2 arrow attempt, it is not
-  blocked by Loschmidt, and it does not require trading an axiom for a larger
-  commitment. It is blocked only on whether *the boundary is a value* can be
-  motivated rather than declared.
+- **Drive** — §5 names the priced lines and the exact obstruction on each.
+  `P3 ⟸ P1` was **withdrawn the day it was drafted** (§5.1): the move is
+  ill-posed on a discrete space, the shave already existed as FTD-0128, and
+  P3's independent content is the continuous flux rather than the ternary
+  values. What replaces it (§5.1a) is narrower and better posed: **the chain
+  derives `i`, where FTD-0128 assumes it**, so the candidate shave is
+  **Axiom 0** — held at `[CONJECTURE]`, and a reduction only if distinction
+  counts as free.
