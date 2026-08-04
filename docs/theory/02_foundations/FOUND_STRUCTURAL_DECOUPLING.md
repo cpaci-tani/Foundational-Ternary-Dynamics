@@ -52,7 +52,7 @@ The Phase I pre-registered campaign (tag `preregister-phase-i-native-coupling-v1
 
 **Result — outcome C:** measured `g_engine² ≈ 0.08-0.18` (varying with r), NOT the constant `1/x_+ ≈ 0.0073`. Pre-registered hypothesis FALSIFIED at all 8 fixtures.
 
-**Diagnosis:** the engine's tick cycle runs both the wave-propagation source coupling `δJ += G_C · ∇s` AND the gauss-projection step (`∇·J = ρ`). For static charges, the gauss-projection step **erases the longitudinal G_C contribution every tick**, leaving `V(r)` determined purely by the geometric kernel. The `G_C` factor does not survive the tick cycle.
+**Diagnosis:** the engine's tick cycle runs both the wave-propagation source coupling `δJ −= G_C · ∇s` (sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3; the erasure argument below is sign-independent) AND the gauss-projection step (`∇·J = ρ`). For static charges, the gauss-projection step **erases the longitudinal G_C contribution every tick**, leaving `V(r)` determined purely by the geometric kernel. The `G_C` factor does not survive the tick cycle.
 
 **What this leg shows:** static V(r) measurement does not carry the coupling because the coupling channel that could carry it is being erased at every tick by the projection step. Phase G's "no fine-structure content" reading is empirically reinforced from a second angle.
 
