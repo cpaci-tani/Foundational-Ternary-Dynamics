@@ -23,7 +23,16 @@ Anything below T5 (e.g. [PARAMETRIC] formula insertions, [SELECTION] arguments, 
 
 ---
 
-## TIER 1 — Rock-solid theorems (9)
+## TIER 1 — Rock-solid theorems (8)
+
+> **Count corrected 2026-08-04: 9 → 8.** OT-1.4 (Phase G geometric Coulomb) is
+> **demoted** — see its row. This propagates FTD-0785's demotion of spine
+> Theorem 6, which the spine flagged on 2026-08-03 as *"still lists Theorem 6 in
+> the upper tier and needs the same correction — flagged, not yet applied, since
+> that tracker is outside this document's scope."* Applied here. Since
+> `CLAUDE.md` makes **this tracker authoritative on tier assignment**, leaving it
+> at Tier 1 meant the authoritative document rated a regression fit as a
+> rock-solid theorem.
 
 These are pure algebra. They cannot be wrong without an arithmetic mistake. Each has been verified to machine precision or in exact rational arithmetic.
 
@@ -32,7 +41,7 @@ These are pure algebra. They cannot be wrong without an arithmetic mistake. Each
 | **OT-1.1** | Master quadratic `P(x) = x² − 16G*²x + 16G*³` has roots `x_± = 8G*² ± 4G*√(4G*² − G*)` | Quadratic formula on positive discriminant `64G*³(4G* − 1)` since `G* > 1/4`. | Paper A Thm 2.2; `proof_master_verification.py` (54/54 PASS) |
 | **OT-1.2** | `G* := Γ(1/4)/Γ(3/4) = Γ(1/4)²/(π√2) = 2ϖ/√π` | Euler reflection `Γ(1/4)·Γ(3/4) = π/sin(π/4) = π√2` | Paper A Thm 2.1; verified at 50-digit precision |
 | **OT-1.3** | (1+i)-tower harmonic invariant: `1/y_+ + 1/y_- = 1` for `y := x/G*` at every level `k ≥ 3` of `M_k(x) = x² − 2^k G*^{k-2}x + 2^k G*^{k-1}` | Three-line Vieta: `1/x_+ + 1/x_- = (x_++x_-)/(x_+x_-) = 1/G*`; multiply by G*. | Paper A Thm 3.1(i); `proof_harmonic_invariant_tower.py` (14/14 PASS at 50 digits) |
-| **OT-1.4** | Phase G geometric Coulomb: engine's gauss-projection step computes the lattice Poisson Green's function `G_L(r)` on the L³ torus by construction; `α_r(r,L) := 2 r G_L(r)` is therefore zero-free-parameter geometry, not a fine-structure observable | Direct: gauss-projection inverts the discrete Laplacian; the Green's function is what it returns | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md`; `AUDIT_ALPHA_EXTRACTION.md`; R²=1.0000 at L=384, 0.07% median residual |
+| **OT-1.4** ⚠ **DEMOTED — NOT TIER 1** | ~~Phase G geometric Coulomb: `α_r(r,L) := 2 r G_L(r)` is zero-free-parameter geometry~~ **The exact-identity claim is withdrawn (FTD-0785, propagated here 2026-08-04).** The spine demoted Theorem 6 to `[NUMERICAL FACT — VALIDATED FIT]`: the evidence is a **regression against simulator output at one finite L**, and **a 0.07% median residual is incompatible with a "zero free parameters" exact identity** — a by-construction identity would agree to machine precision. The row's own cited evidence refutes its own "by construction" justification. FTD-0785's honest split: **(a)** an exact lattice-Green's-function identity with stated hypotheses would be `[THEOREM]` — **not shown**; **(b)** "the engine reproduces the lattice Poisson kernel to 0.07% median residual at L=384" is `[MEASURED]`. **Only (b) is established**, and per `CLAUDE.md` engine measurements do not belong in this tracker at all — (b)'s home is the LEDGER. | ~~Direct: gauss-projection inverts the discrete Laplacian~~ — **a regression fit, not a derivation** | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md`; `AUDIT_ALPHA_EXTRACTION.md`; `scripts/benchmarks/fit_geometric_coulomb.py`. **What survives independently of the fit:** the *deflationary* reading — the projector returns a Green's function, so the engine's Coulomb carries **no fine-structure content** — which is structural and consistent with FTD-0792. That reading is retained; the exact identity is not. |
 | **OT-1.5** | BCC complex-structure theorem: 8 BCC corners under 90° rotation form 2 orbits of size 4; `Z[BCC] ⊗ Q = V_triv² ⊕ V_sign² ⊕ V_complex²` with `V_complex` carrying natural `Z[i]`-module structure ≅ `Z[i]²` | Per-orbit Z/4 regular-rep decomposition; standard rep theory | Paper B Thm 3.1; `proof_bcc_complex_structure.py` (5/5 PASS, exact rationals) |
 | **OT-1.6** | `Z[i]^× → O_h^ab` no-go: no injective homomorphism exists since Z[i]^× ≅ Z/4 has an order-4 element but O_h^ab ≅ Z/2 × Z/2 (Klein) does not | One-line group-order argument | Paper B Thm 6.1; `DERIV_BCC_COMPLEX_STRUCTURE.md` §3.2 |
 | **OT-1.7** | `G* via det_ζ quarter-conjugacy bridge`: $\det_\zeta D_{3/4}/\det_\zeta D_{1/4} = G^*$ where $D_a = \{n + a\}_{n\ge 0}$ are the spectra of operators on $S^1$ with quarter-twisted boundary $\psi(\phi+2\pi) = J\,\psi(\phi)$, $J^2 = -I$. **Arithmetic content**: $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$ are exactly the two non-trivial residue classes mod 4; restricted to primes these are the split and inert prime classes of $\mathbb{Z}[i]$ (Fermat's two-square theorem). $G^*$ is the regularized asymmetry between them. | Lerch's formula: $\det_\zeta\{n+a\}_{n\ge 0} = \sqrt{2\pi}/\Gamma(a)$; $\sqrt{2\pi}$ cancels in the ratio leaving $\Gamma(1/4)/\Gamma(3/4) = G^*$. Equivalently $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)]$. | FTD-0141 (2026-05-06); `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5; OT-1.2 (algebraic) and FTD-0127 (parity-twist) are two further readings of the same residue-class decomposition; the three identities are unified by $G^* = (\sqrt{2\pi}/\Gamma(3/4))/(\sqrt{2\pi}/\Gamma(1/4)) = \exp[\zeta_H'(0,1/4) - \zeta_H'(0,3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2)$ |
@@ -167,7 +176,7 @@ If you need to defend FTD's mathematical core to a skeptical mathematician in a 
 1. **OT-1.1** Master quadratic + roots (★★★★★)
 2. **OT-1.2** G* algebraic identity (★★★★★)
 3. **OT-1.3** Harmonic invariant tower (★★★★★)
-4. **OT-1.4** Phase G geometric Coulomb (★★★★★)
+4. ~~**OT-1.4** Phase G geometric Coulomb (★★★★★)~~ — **DEMOTED 2026-08-04**, no longer Tier 1 (FTD-0785: regression fit, not a proof)
 5. **OT-1.5** BCC complex-structure theorem (★★★★★)
 6. **OT-1.6** Z[i]^× → O_h^ab no-go (★★★★★)
 7. **OT-2.1** Watson identity (★★★★, Watson 1939 / Glasser–Zucker 1980)
