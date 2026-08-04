@@ -91,7 +91,7 @@ A LEDGER tag *labels* a claim; it does not answer *is the numerical match statis
 
 | Bucket | Claim family | Evidence |
 |---|---|---|
-| **(i) Scan-rigid** | **x₊ = 1/α** | FTD-0319 (the scan's dedicated row, formerly mis-cited "FTD-0189"): 0 non-G\* dual-matchers / 2.65M polynomials — the framework's *one* rigid identification (a `[NUMERICAL FACT]` under the registered gate; the "~4×10⁵:1 Bayes" is unsupported — runner yields ~19× scan-size; uniqueness is tolerance-conditioned). |
+| **(i) Scan-rigid** | ***(empty — 0 members)*** | **WITHDRAWN 2026-08-03, FTD-0791.** This row formerly held **x₊ = 1/α** on the strength of FTD-0319. The scan was audited and sits at the **chance base rate**: at the registered `2e-6` gate the null expects **1.42–1.67** matchers and the scan found **1** (Monte Carlo: a random number near 137 is matched by this family **79%** of the time), and at that gate the second leg eliminates nothing (1 → 1). FTD-0319 is retagged `[MEASURED]` → `[SELECTION]`. **The scan-rigid count is ZERO.** The 1.26 ppm agreement itself is unchanged and remains `[NUMERICAL FACT]` — arithmetic, not evidence. |
 | **(ii) Scan-tested → NULL** | FTD integer/monomial catalog (general); cluster-mass SM identification; **FQCR Model-IV quadruple (4,6;3,2)** | FTD-0097: catalog over-rich >5× background; FTD-0262: SM ratios p=2.05 (chance-level); **FTD-0143 (2026-07-12): all 2401 quadruples reproduce α⁻¹ at 1e−5 — the ansatz choice is generic, uniqueness rejected**. |
 | **(iii) Scan-tested → NOT rigid** | **sin²θ_W=3/13, α_s=7/59, m_e prefactor 16/3** (FTD-0310); **sin²θ₁₂=3/10, sin²θ₂₃=16/29, Δm²₃₁/Δm²₂₁=100/3** (FTD-0320) | **FTD-0310 + FTD-0320: none rigid.** α_s MDL-dominated by 2/17; sin²θ_W p≈0.05; prefactor p≈0.08; sin²θ₂₃ MDL-dominated by 6/11 (~10× better); Δm²-ratio by 33/1; sin²θ₁₂ chance-level (p=0.48). All six **demoted** to `[PARAMETRIC]`. |
 | **(iv) Tagged, NOT scanned** | ~122 remaining `[PARAMETRIC]` — now essentially the integer-**combination** families (quark masses, ~90 hadron spectroscopy, decay rates, precision-QED imports, CKM Wolfenstein, Koide) | **No rigidity scan run** for the combination families (the simple-rational subset is now scanned, bucket iii). Their test is the FTD-0097-style combinatorial look-elsewhere scan (deferred v2; FTD-0097 already NULL at the monomial level). *Still the deepest open methodological question.* |
@@ -118,7 +118,7 @@ A LEDGER tag *labels* a claim; it does not answer *is the numerical match statis
 
 - **~21 `[DERIVED]`/`[THEOREM]`** · **~131 `[PARAMETRIC]`** · **~10 `[IMPOSED]`/`[SELECTION]`** (~162 total claims; figures per the FTD-0348 correction of record). No drift across CATALOG / TRACKER_ONTIC_TRUTH / spine.
 - **Truth tiers:** T1 rock-solid `[THEOREM]` (OT-1.x) · T2 conditional-on-classical-theorems · T3 numerical-fact · T4 the coefficient-16 `[CONJECTURE]` · T5 the central conjecture x₊=1/α `[SMC]`.
-- **Rigidity overlay (the §4 news, quantified):** of the ~131 `[PARAMETRIC]`, **1** is scan-rigid (x₊, also the T5 conjecture; FTD-0319), **~6** are scan-tested-and-not-rigid (FTD-0310 + FTD-0320, all now `[PARAMETRIC]`), the bulk catalog is scan-NULL-at-the-monomial-level (FTD-0097), the FQCR quadruple is scan-generic (FTD-0143), and **~122 are unscanned** — now essentially the integer-combination families.
+- **Rigidity overlay (the §4 news, quantified):** of the ~131 `[PARAMETRIC]`, **0** are scan-rigid (**revised 2026-08-03, FTD-0791** — this read "**1** … (x₊, also the T5 conjecture; FTD-0319)" until that scan was audited and found to sit at its own null's expectation), **~6** are scan-tested-and-not-rigid (FTD-0310 + FTD-0320, all now `[PARAMETRIC]`), the bulk catalog is scan-NULL-at-the-monomial-level (FTD-0097), the FQCR quadruple is scan-generic (FTD-0143), and **~122 are unscanned** — now essentially the integer-combination families.
 - **The import bill (the §3 pricing, one line):** 1 adopted bit + 4 selected types + 4 named results (3 open) + 3 calibrations + the empirical bridges + 2 declined bets — stratified, deliberately **no single headline number** (`SPEC_IMPORT_LEDGER.md` §5's reading guard).
 
 ---
@@ -192,7 +192,7 @@ Every way the framework can be killed, upgraded, or refuted — merged from four
 | Ran | Result |
 |---|---|
 | FTD-0097 monomial look-elsewhere | catalog **over-rich** >5× background — monomial matches carry no evidential weight |
-| FTD-0319 x₊ dual-match scan | **survived** — the one scan-rigid identification (tolerance-conditioned `[NUMERICAL FACT]`) |
+| FTD-0319 x₊ dual-match scan | **DID NOT SURVIVE (FTD-0791, 2026-08-03)** — audited refute-by-default and replicated to the digit; the single dual-matcher is what the null predicts (1.42–1.67 expected). Retagged `[MEASURED]` → `[SELECTION]`; scan-rigid count now zero. *(This cell read "**survived** — the one scan-rigid identification" before the audit.)* |
 | FTD-0262 SM cluster-mass scan | **NULL** (p = 2.05, chance-level) |
 | FTD-0310 + FTD-0320 rigidity audits | six simple-rational identifications **not rigid** — all demoted `[PARAMETRIC]` |
 | FTD-0143 FQCR quadruple scan (2026-07-12) | **uniqueness rejected** — 2401/2401 α-matchers; ansatz generic at t=1 |

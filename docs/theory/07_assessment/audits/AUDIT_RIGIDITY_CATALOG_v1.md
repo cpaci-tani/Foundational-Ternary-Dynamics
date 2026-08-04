@@ -37,7 +37,7 @@ The gtca **F10** gap: a `[STRUCTURALLY MOTIVATED PARAMETRIC]` tag asserts that a
 
 - `sin²θ₁₂ = 3/10`, `sin²θ₂₃ = 16/29`, `Δm²₃₁/Δm²₂₁ = 100/3`: **`[STRUCTURALLY MOTIVATED PARAMETRIC]` → `[PARAMETRIC]`** in `CATALOG_PARAMETRIC_INSERTIONS.md` §7.1 and the LEDGER.
 - `sin²θ₁₃ = 1/52`: no tag change (already `[PARAMETRIC]`); recorded as the method's positive control.
-- FTD-0311 §4 rigidity-coverage map: these four move from bucket (iv) "tagged-but-unscanned" to bucket (iii) "scan-tested → not rigid". The scan-rigid count stays **exactly one** (x₊=1/α, FTD-0319).
+- FTD-0311 §4 rigidity-coverage map: these four move from bucket (iv) "tagged-but-unscanned" to bucket (iii) "scan-tested → not rigid". ~~The scan-rigid count stays **exactly one** (x₊=1/α, FTD-0319).~~ **SUPERSEDED 2026-08-03 (FTD-0791): the scan-rigid count is now ZERO.** FTD-0319 — the sole member of that bucket — was itself audited and sits at the chance base rate (null expects 1.42–1.67 matchers, 1 found); retagged `[MEASURED]` → `[SELECTION]`. Bucket (i) is empty. Note this *strengthens* the present audit's deflationary conclusion rather than weakening it: the identification this audit used as its rigid reference point turned out not to be rigid either.
 
 ## 5. Scope / what this does NOT do
 
