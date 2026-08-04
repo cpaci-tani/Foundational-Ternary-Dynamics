@@ -173,7 +173,7 @@ $$
 
 where the diagonal "$-4$" is $\bigl(6 \cdot \tfrac{1}{3} + 12 \cdot \tfrac{1}{6}\bigr) = 4$. This matches the engine stencil documented in `SPEC_FTD.md` and used by the `phase_read()` 18-point Moore Laplacian.
 
-**EL-residual verification** (`compute_el_residual()` at `engine/src/lagrangian.cpp:69-95`): after `phase_read()` runs, `delta_j_[i]` should equal $c^2(\Delta_{18}\,\mathbf{J})(\mathbf{v}) + g_c \nabla s + g_c \nabla\times(s\,\mathbf{v})$. Test runs typically report RMS $\sim 10^{-15}$ — the variational identity above is empirically verified at machine epsilon every tick.
+**EL-residual verification** (`compute_el_residual()` at `engine/src/lagrangian.cpp:69-95`): after `phase_read()` runs, `delta_j_[i]` should equal $c^2(\Delta_{18}\,\mathbf{J})(\mathbf{v}) - g_c \nabla s + g_c \nabla\times(s\,\mathbf{v})$ (electric-source sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3; the §2–§5 Laplacian derivation is independent of it). Test runs typically report RMS $\sim 10^{-15}$ — the variational identity above is empirically verified at machine epsilon every tick.
 
 ---
 

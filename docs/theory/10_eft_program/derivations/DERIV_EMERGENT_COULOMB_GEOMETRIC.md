@@ -242,7 +242,9 @@ where `G_L(r) ≈ 1/(4π r)`, so `2 r G_L(r) ≈ 1/(2π)`:
   `toggles.coulomb_charge_coupling` through to the solver.
 
 Scope note: the existing `toggles.coupling` flag drives a *separate*
-wave-equation source term `∂_t J += G_C · ∇s` (hardcoded `G_C = √α`).
+wave-equation source term `∂_t J −= G_C · ∇s` (hardcoded `G_C = √α`; sign per the
+Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3 — the scope note
+below only requires the term be *disabled*, so it is sign-independent).
 For a clean Phase-H test the pair-energy probe must disable it so that
 Gauss projection is the unique source of flux, otherwise two
 independent couplings compete and the `g_c²` scaling is broken.

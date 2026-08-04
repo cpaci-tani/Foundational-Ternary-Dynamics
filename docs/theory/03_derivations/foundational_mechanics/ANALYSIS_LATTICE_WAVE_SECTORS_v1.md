@@ -25,8 +25,10 @@ Three statements, at their honest tags:
 The substrate carries one propagating wave: the flux `J`. From `render_bridge.cpp` (phase_read / phase_write), its dynamics is
 
 ```
-∂²J/∂t² = c²·∇²J  +  g_c·∇(s)  +  g_c·∇×(s·v)          [DERIVED]
+∂²J/∂t² = c²·∇²J  −  g_c·∇(s)  +  g_c·∇×(s·v)          [DERIVED]
 ```
+
+*(Electric-source sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3; transcription corrected 2026-08-04. The dispersion analysis below is source-free and does not depend on this sign.)*
 
 a genuine **second-order** (d'Alembertian) wave equation, integrated by leapfrog over the 18-point isotropic Laplacian. Two structural facts fix its character:
 
