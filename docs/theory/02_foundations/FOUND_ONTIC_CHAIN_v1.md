@@ -77,11 +77,24 @@ Two operations are used throughout, and only two: **ADD** and **SQRT**.
 ### Step 0 — distinction `[PRIMITIVE]`
 Yields the mark.
 
-### Step 1 — count the mark as a value `[SELECTION — the boundary is a value]`
-A distinction yields inside and outside — that is *binary*. Admitting the mark
-**itself** as a third value yields **`{−1, 0, +1}`**. Natural in a calculus
-where the mark is an object (Spencer-Brown), but it is a move, and §5 turns on
-exactly this.
+### Step 1 — presence and two-sidedness `[SELECTION — narrow]`
+
+**Revised 2026-08-04.** This step first read *"count the mark as a value —
+admitting the boundary itself as a third value"*. That is **withdrawn**: in a
+discrete topology every subset is clopen, so every boundary is empty (§5.1 (i)).
+The replacement does not use boundaries at all:
+
+- **the `0`** — a site either carries a mark or does not. Forced once marks have
+  **finite support on an unbounded substrate**, which is P1's own finitude
+  clause: almost every site is unmarked, so a value for *nothing here* is
+  required.
+- **the `±1`** — a mark *is* a distinction, and a distinction is **two-sided**.
+  A one-sided distinction distinguishes nothing.
+
+Together: **`{−1, 0, +1}`**. The residual selection is that the two sides are
+*labelled* rather than interchangeable — if they were interchangeable, nothing
+would have been distinguished — which is close to analytic but is not proved
+here.
 
 Output: the ternary set, and on it exactly one nontrivial operation — negation.
 
@@ -133,7 +146,7 @@ Forced once the lattice is fixed. Watson 1939.
 | # | act | status |
 |---|---|---|
 | 0 | distinction | **primitive** |
-| 1 | the boundary is a value → `{−1,0,+1}` | **SELECTED** |
+| 1 | presence (finite support) + two-sidedness → `{−1,0,+1}` | **SELECTED — narrow** |
 | 1.5 | order | **ADDED** |
 | 2 | ADD → `ℤ` | forced |
 | 3 | SQRT of negation → the plane | forced *given the demand* |
@@ -150,7 +163,7 @@ classical mathematics.
 
 | constant | enters at | status |
 |---|---|---|
-| ternary `{−1,0,+1}` | step 1 | selected (boundary-as-value) |
+| ternary `{−1,0,+1}` | step 1 | selected — narrow (sides are labelled); cf. FTD-0128, which instead grounds it in Axiom 0 |
 | **4** `= \|⟨i⟩\| = \|Aut(E)\|` | step 5 | **forced** |
 | **16** `= 4²` — the master quadratic's coefficient | step 5, squared | **forced**, given the spine's identification |
 | `D = 3` | step 6 | selected (FTD-0355) |
