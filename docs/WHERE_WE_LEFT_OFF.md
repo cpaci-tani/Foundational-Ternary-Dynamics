@@ -4,6 +4,186 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
+**AND FTD-0794: no bridge connects the lattice to the quartic law.**
+Chain link 4 - "minimum `C4` support and null-flatness select the quartic
+clock", the last unwithdrawn lattice-to-quartic bridge - is refuted. The
+plaquette `C_4` rotation **selects the HARMONIC law and excludes the
+quartic**: under `(x,y) -> (-y,x)`, `x^2+y^2-1` is invariant, `x^4+y^2-1` is
+not, and no rescaling repairs it (symbolic solution set empty). The ring's own
+dynamics agrees - `Q`,`R` are the degenerate eigenvalue-2 pair of the `C_4`
+Laplacian, so `phi_ddot = -K L phi` gives two simple harmonic oscillators.
+**This argument was already retired as `GRAV-001` in the chain document's own
+Part III banner** and kept in section 4 regardless. Null-flatness is not a
+hypothesis but the conclusion (`F''(0) = -(A^2/E) V''(0)`, so assumption 5 IS
+"no quadratic term"), which the repo's own
+`ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md` already calls an **unearned
+premise**. And `G*` is pinned only by a minimal-degree tie-break: the degree-6
+family `1-(1+c)x^4+cx^6` satisfies the same assumptions and yields clock
+constants from **2.8375 to 3.1185**. Retagged `[CONDITIONAL THEOREM]` ->
+`[SELECTION - unearned]`. **`G*` enters FTD by choice.**
+
+**What survives of the G* chain, after 2026-08-03:** Watson 1939 (the BCC
+lattice Green's function carries `Gamma(1/4)`; `W_3 = G*^2/2pi`), and the fact
+that `z = 1/4` is the unique point where the Gamma reflection ratio is the
+eigenvalue of the square root of integration (`D^{-1/2}[x^{-3/4}] = G*
+x^{-1/4}`, verified exact). Both are classical mathematics about `Gamma(1/4)`.
+Neither selects a physical law. `G*` appears **zero** times in chain links
+19-30 (SR, GR, cosmology, group theory), so deleting it leaves that entire
+back half unchanged.
+
+**MOST IMPORTANT RESULT OF 2026-08-03 (FTD-0791/0792): the `137.036`
+agreement is at the chance base rate, and the engine never used it.**
+
+FTD-0319's uniqueness scan - the only evidence that the master-quadratic root
+`x_+ = 137.0361714582` is structure rather than coincidence - had **never
+been audited**. It has now been, refute-by-default, and independently
+replicated to the digit. **Leg 1 sits exactly at the base rate:** at the
+registered `2e-6` gate the null expects **1.42-1.67** matches and the scan
+found **1**; Monte Carlo shows a random number near 137 is matched to 2 ppm
+by that family **79% of the time**. **At the operative gate the second leg
+eliminates nothing** (1 -> 1), so *dual-matcher* and *matcher* are the same
+predicate. All residual surprise (~190:1, not the retracted 4e5:1) belongs
+entirely to the `x_-` vs `N_c` leg - **an identification the framework
+retired**. Both tolerances were set by the observed deviation, and the
+preregistered outcome had probability `0.9942` under its own null: the test
+had no power. **FTD-0319 is retagged `[MEASURED]` -> `[SELECTION]`; the
+designation *the framework's single scan-rigid identification* is WITHDRAWN
+and the scan-rigid count is now ZERO.** Eight canonical files still assert
+otherwise and are flagged for update. The 1.26 ppm agreement itself remains
+`[NUMERICAL FACT]` - it is arithmetic and unchanged.
+
+**FTD-0792:** the engine runs on `ALPHA = 1/137.035999177` (CODATA-matched)
+while the derived root sits unused in `ALPHA_TREE`, and a **source-lint
+CTest fails the build** if the derived value reaches a force path. So no
+engine result can ever be evidence *for* the master quadratic. The precision
+value comes from a 4-term series whose `c1 = 9/47` does 99.96% of the work
+(3.0 sigma), `c2 = 5/64` closes it to 0.004 sigma, and `c3`/`c4` move the
+answer by ~1/1000 of CODATA's error bar - unfalsifiable decoration. In its
+favour: no rational with denominator under 199 lands in CODATA's window, so
+`9/47` is genuinely constrained, and the engine header already tags the
+series `[CONJECTURE]` and forbids re-tagging it. The framework is honest
+here; the issue is that the chain imports the measured value at its first
+joint and enforces the import with a build lint.
+
+**Latest arc - the carrier corner and the surd bound (FTD-0778..0784,
+2026-08-03):** the two existing native corpora were re-screened with a
+repaired, surrogate-nulled closure estimator (v2; the v1 metric's verdicts
+were predetermined) - FTD-0776's records are UNINFORMATIVE for closure
+(monotone/single-pass, vacuous regime), not evidence against it (FTD-0778 as
+amended), and the FTD-0659 doublet is excluded as harmonic (FTD-0780). The
+carrier search was then cornered by proof and source audit rather than
+simulation: any closing linear functional of the field is harmonic
+(exact, sidebranch section 32.1); the locked affine sector has zero
+conservative anharmonicity and genesis is a drain, so no carrier lives there
+(FTD-0781); the movement-enabled sector divides into a native core plus
+imposed force phenomenology, with the bound-pair breathing mode as sole
+admissible candidate (FTD-0782); and that candidate closes on three grounds -
+softening everywhere, in-band fundamental, flow-curve reach a_max = 0.62
+versus the required a of order 8 - generalizing to the bracket theorem: wells
+pin at n ~ 2, capacity walls at n = infinity, G* lives at n = 4 strictly
+between, where no identified native mechanism produces a potential
+(FTD-0783). The twelve minimum carrier constraints are consolidated in
+`10_eft_program/SPEC_CARRIER_CONSTRAINTS_v1.md` (C3 - intermediate-exponent
+confinement - is the wall). Finally FTD-0784 bounds the prize: conditional
+only on Chudnovsky 1976, the FC-W surd sqrt of G*(4G*-1) lies outside
+`Q(G*, pi, sqrt(pi))`, so no rational single-clock observable - and no
+spectrum - can carry it even after total Gate A+B+C success; the
+master-quadratic invariants ARE measured moments (trace 64/<x^2>,
+determinant 64 sqrt(pi)/(<x^2><abs x>)), and the missing datum is exactly
+one Z/2 branch choice: W stays external, now field-theoretically. **FTD-0786 then corrected this program's own
+map of itself:** the coupled sector is *not* blocked behind the
+reciprocal-transaction problem. FTD-0545/0546/0549 closed only the frozen
+fixed-step form; FTD-0551's discrete-gradient map solved it exactly, and
+FTD-0600-0739 built the sector out (static dressed fixed point with positive
+analytic 48-coordinate Hessian, reversible dynamical rest, internal matter
+and field modes, coherent co-moving fixed-mass transport, durable
+finite-support capture). The transaction is a selection, so those results
+are selection-scoped, not blocked. The carrier fails there at **C2**: the
+first internal doublet sits strictly inside the propagating band
+(`Omega/omega_band = 0.8864`, FTD-0663 exact) and decays at
+`Gamma_E = 0.0065`/tick (FTD-0676) - 26.57 cycles per e-fold, and it cannot
+be lifted because it is a linear normal mode (`n = 2`, amplitude-independent
+frequency). So the two open doors collapsed to one: a native
+intermediate-exponent confining mechanism (C3). **FTD-0787 claimed to open that
+last door - and FTD-0789 refuted it the same day.** The claim was: C3 is realized natively, with no new primitive: transverse
+(flexural) displacement against an *untensioned* bond changes bond length
+only at second order, so the energy - quadratic in stretch - is exactly
+quartic in displacement. On a collinear trimer under the registered compact
+law the potential is finite and exact, `V(d) = -2 eps + 24 eps d^4 -
+32 eps d^6`, quadratic coefficient identically zero **by geometry, not
+tuning**, separatrix exactly at bond dissociation. **That is refuted.** The polarity mask makes the outer
+pair same-polarity, so `A_AC = 0` identically and the energy depends only on
+the two bond lengths - the **bend angle is an exact flat direction**, verified
+to machine zero. The transverse path stretches both bonds; the system reaches
+the same offset by bending, for free. The quartic was the curvature of a chord
+across a flat valley. Maxwell counting confirms it: `3N - B = 7` zero modes,
+spectrum `[0 x7, 0.96, 2.88]`, five trivial plus **two bends that are finite
+mechanisms**, flat to all orders. **C3 is NOT realized and FTD-0783's bracket
+corollary is restored.** What survives is a decidable criterion: `n = 2` iff
+rigid, `n = infinity` iff the flex extends to a finite mechanism, and
+**`n = 4` requires first-order flexibility with second-order rigidity**. Both
+registered configurations fail it oppositely (connected block rigid; trimer a
+free mechanism). Also established: C5 is comfortable and does **not** tighten
+with `eps` (31x margin, capped by coupling and causality). The withdrawn claim
+read: It still fails **C2**: bounded
+hardening caps `Omega_max = 0.400745` against a band top of `1.230959`. But
+the failure is now parametric rather than structural - frequency scales as
+`sqrt(eps/m)` while the quartic-purity window is eps-independent, so band
+clearance inside the clean range needs `eps > 0.2218` (field) or `0.5856`
+(wave), against a **selected** `eps = 0.01`. Since `eps/C_WAVE^2 = 0.03`,
+**the obstruction is an energy-scale separation between matter binding and
+field stiffness, not the shape of any potential.** **FTD-0788 then addressed `eps` itself - and FTD-0790
+refuted that too.** `z*G(1)` is identically `z*G(0) - 1`, so the proposal was
+`K_GENESIS - 1` with no lattice content; `K_GENESIS` is [SELECTION-ADOPTED] x
+[IMPOSED] x declared convention, and is a flux-amplitude gate rather than an
+energy; the argument excluded the field sector then used its propagator; and
+C2 is a ONE-SIDED threshold (`eps > 0.0944`) that ~26 simple expressions
+clear, so value-matching in this range is not evidence. FTD-0388 had already
+ruled the pattern inadmissible - *an adoption is never a derivation*. **Also
+corrected: FTD-0788's claim that `particle_masses.h` mislabels its constants
+was WRONG** - the repo convention `W_SC = 0.5054620197` is consistent across
+four sources; FTD-0788 switched to the literature convention and reported the
+repo's correct usage as a defect. Only `G(0)`, `G(1)`, `G(0)-G(1)=1/6`
+survive. **`eps` has no derivation and the well-depth question stands exactly
+where it was.** The withdrawn claim read: It is an
+orphan - 17.8x above the field-mediated scale (`E_F(1) = 5.611e-4`) and 51.6x
+below the lattice nearest-neighbour quantum, matching nothing the framework
+contains. The compact law has *compact support*, so it is a matter-sector
+contact term rather than a field-mediated one; and the engine's matter
+thresholds are already exact lattice Green's-function quantities
+(`z G(0) = W_SC = K_GENESIS`, matched to 1.8e-17). The exact companion
+identity `z[G(0) - G(1)] = 1` gives the nearest-neighbour quantum
+`z G(1) = W_SC - 1 = 0.5163860592`, and the compact law's minimum sits at
+exactly `r0 = 1`. **Under that motivated selection C2 is satisfied** - the
+flexural mode is above the field band over 24-100% of the separatrix at 4.0%
+quartic contamination. **This is a [SELECTION], not a derivation of `eps`,
+and no engine constant was changed.** The fork it opens is the programme's
+decisive item: a field-mediated `eps` (~5.6e-4) forbids a carrier permanently
+(short by 400x), a matter-sector lattice quantum (~0.52) makes it viable, and
+the two differ by ~2700x. **Deriving the compact law from the native force
+(FTD-0575 `[OPEN]`) now decides the carrier question.** Honest costs: every
+FTD-0600-0739 matter/field ratio shifts under the new scale, and the parent
+trilemma's collapse coefficient worsens 51.6x, so ternary site capacity must
+carry more weight. FTD-0783's bracket corollary is correspondingly narrowed: wells pin
+at `n ~ 2` only in the coordinate the stiffness acts on. The FTD-0779 telemetry dumper is repurposed as a test
+of FTD-0781's locked prediction (dOmega/dA = 0 exactly, sub-threshold). **FTD-0785** then audited the
+algebraic spine itself - never previously audited, and now the program's
+main surviving asset. Outcome: **every numerical identity verified at
+50-150 digits, no arithmetic error anywhere**; all failures were
+classificatory and are corrected in place - Theorem 6's proof was a
+regression fit (demoted; canonical count is now **6+3**, not 7+2), an
+untagged electron-mass identification with a concealed 68 ppm deviation was
+relocated out of the theorems-only core, the load-bearing Chudnovsky
+citation was misattributed, one uniqueness claim overclaimed, and the
+maximality disclaimer's stated reason was mathematically false. Two items
+stay OPEN: FTD-0314's C2 leans on Waldschmidt Conjecture 5.23 (an open
+problem, as the repo's own FTD-0377 records), so that [THEOREM] tag
+over-consolidates; and the FTD-0319 look-elsewhere scan audit did not
+finish. The same pass demoted FTD-0784, which had promoted a *transport* of
+FTD-0314 C3's argument to theorem grade. Sidebranch narrative:
+`Desktop/ftd-relativity-closure/RELATIVITY_CLOSURE_DERIVATION.md`
+sections 30-32.
+
 **Latest exact clock--memory boundary (FTD-0777):** a locked finite-cover
 certificate passes `16/16`. Forward dyadic powers add readout resolution but
 no independent state. A compatible depth-`K` root tower has `2^K` sheets,
