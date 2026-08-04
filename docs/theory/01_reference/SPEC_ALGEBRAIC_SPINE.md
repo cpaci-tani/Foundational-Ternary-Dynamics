@@ -828,8 +828,12 @@ is the graviton-audit id; pre-reg tag
 `preregister-adversarial-look-elsewhere-v1`): across **2.65 M degree-2
 polynomials** over an 18-constant basket FTD did not design, the master
 quadratic is the **unique dual-matcher** — zero non-G* dual-matchers,
-rank 1 by ~130×. That is structural evidence of polynomial-template
-uniqueness; it is not a derivation of α from FTD axioms. **Honest caveats:**
+rank 1 by ~130×. **Per FTD-0791 (banner above) that count is what chance
+predicts:** the null expects 1.42–1.67 matchers at the registered gate and
+the scan found 1, so the observation is consistent with no structure at all.
+It is therefore **not** structural evidence of polynomial-template
+uniqueness, and it is not a derivation of α from FTD axioms.
+**Further caveats, all predating the audit:**
 the ~130× rank gap is *within the G\*-family*
 (the rank-2 is itself a G\* polynomial); uniqueness is asymmetric-
 tolerance-conditioned (x₊ at 2 ppm vs x₋ at 1% — under a symmetric 1% gate
@@ -881,11 +885,13 @@ In order from most to least defensible:
 
 2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has a root
    matching 1/α to 1.26 ppm (the historical x₋ ↔ N_c reading, 0.8%,
-   is RETIRED — see §2/§11); under the FTD-0319 adversarial scan the
-   polynomial is the unique dual-matcher over an 18-constant basket,
-   with the tolerance-conditioning caveat declared in §11 and the
-   Theorem-3 criterion declaration of §3 required whenever the CM
-   uniqueness is invoked." — Theorems 2, 3 + observation §11.
+   is RETIRED — see §2/§11). **The uniqueness evidence formerly attached
+   to this item is withdrawn (FTD-0791):** the FTD-0319 scan's single
+   dual-matcher is exactly what its own null predicts (1.42–1.67
+   expected), so the scan supports no claim of structural specialness.
+   Cite the 1.26 ppm agreement as arithmetic, never as evidence, and
+   never call it scan-rigid — the scan-rigid count is zero." —
+   Theorems 2, 3 + observation §11.
    *(Corrected 2026-07-01, FTD-0348 — this item previously claimed a
    live dual match "to permille precision" [x₊ is ppm, x₋ was 0.8%],
    pointed at §9 for an observation that lives in §11, and omitted
