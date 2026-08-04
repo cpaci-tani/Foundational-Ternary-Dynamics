@@ -4,7 +4,35 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
-**LATEST — FTD-0799 (2026-08-04): the protonucleus saturates, and there is
+**LATEST — FTD-0800/0801 (2026-08-04): the screened compact-law C3 candidates
+close negative, but only at their actual executed scope.** FTD-0800's locked
+Maxwell screen found no native `n = 4` mechanism in the executed set: 38
+retained connected stationary equilibria at `N=3..6` and SC blocks at
+`L=2,3,4` are flat after relaxation. The apparent SC `gamma^4` shear cost is
+an affine/pinned result and falls to machine zero when free row slides are
+restored. **The `N=6` follow-up is expressly an `[EXPLORATORY NUMERICAL
+SCREEN]`, not an exhaustive no-go** (correction commit `0cf9e635`): graph
+deduplication gave 62 classes, but only 51 sampled embeddings cleared the
+chosen separation floor; none had both self-stress and flex. The other 11
+classes, unsampled realization components, special rank strata, and
+separation-floor dependence remain open. There is **no `N=6` or `N<=6`
+theorem**.
+
+FTD-0801 then tested the strongest elimination-produced successor, a periodic
+triangulated neutral sheet. Fixed-cell modes have clean quartic cost, but a
+free cell corrugates to machine-zero energy; the exact-zero `cos(2q.x)` mode
+is already a finite mechanism, so the free-body candidate is `n=infinity`.
+The conservative synthesis is that **every resolved quartic witness found so
+far under this scoped zero-tension, central-force, single-scale compact law is
+clamped**: a
+held path, pinned boundary, or fixed cell supplies it, and releasing that
+constraint removes it. That is `[SYNTHESIS]`, not a universal theorem. The
+`6x6` random sheet mode remains unresolved, the preregistered `8x8` size was
+not executed, and pre-tension, two-scale interactions, other realization
+strata, and finite-patch questions remain open. No production engine state
+changed.
+
+**FTD-0799 (2026-08-04): the protonucleus saturates, and there is
 still no derived body size.** The locked v1 campaign ran (arms A–D of five;
 **arm E, `R0=20`, is unrun**). All three kill conditions clear and charge is
 exactly conserved in every arm. **The quasi-static `R_c = 12.63` survived its

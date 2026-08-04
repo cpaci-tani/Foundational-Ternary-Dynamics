@@ -1,5 +1,43 @@
 # Foundational Ternary Dynamics Changelog
 
+# FTD-0801 — Periodic triangulated sheet is quartic only when clamped (2026-08-04)
+
+- Ran the locked periodic-sheet protocol on the executed `4x4` and `6x6`
+  cells. Fixed-cell corrugations show clean quartic scaling, while free-cell
+  relaxation drives the resolved corrugation witnesses to the numerical
+  floor; the decisive `cos(2q.x)` mode reaches exactly zero and supplies a
+  finite isometric mechanism. Verdict
+  `N4_CLAMPED_ONLY`: the free-body candidate is `n=infinity`, so C3 remains
+  unrealized at this scope.
+- Recorded the conservative synthesis across the held-path trimer, the
+  affine/pinned SC shear, and the fixed-cell sheet: every resolved quartic
+  witness in this executed set under the scoped zero-tension, central-force,
+  single-scale compact law is a
+  clamped quartic that vanishes when the relevant freedom is released. This is
+  `[SYNTHESIS]`, not a universal theorem or no-go.
+- Preserved the limits: the `6x6` random-mode residual is unresolved, the
+  preregistered `8x8` size was not executed, and finite patches, pre-tension,
+  two-scale interactions, and laws outside the tested scope remain open.
+  No production engine state changed.
+
+# FTD-0800 — Maxwell C3 screen closes negative at actual executed scope (2026-08-04)
+
+- Ran the locked Maxwell-criterion screen. All 38 retained connected
+  stationary Tier-B equilibria at executed `N=3..6` and the SC blocks at
+  `L=2,3,4` are flat after coordinate relaxation; no native `n=4` mechanism
+  appears in the screened set. The SC `gamma^4` shear cost is affine/pinned
+  and relaxes to machine-zero cost when row slides are released.
+- Incorporated correction commit `0cf9e635`: the `N=6` follow-up is an
+  **`[EXPLORATORY NUMERICAL SCREEN]`**, not an exhaustive realization-space
+  classification. Of 62 deduplicated graph classes, 51 supplied one accepted
+  sampled embedding and **0** of those had both self-stress and flex; 11
+  classes had no accepted embedding. Unsampled realization components,
+  rank-changing strata, and separation-floor dependence remain open.
+- The canonical status is `[CLOSED NEGATIVE — SCOPED] + [ENGINE FACT —
+  MEASURED]` for the actual executed set. **No universal `N=6` or
+  `N<=6` no-go follows, and no theorem is claimed.** No production engine
+  state changed.
+
 # FTD-0777 — Finite Dyadic Monodromy Clock--Memory Boundary v1 (2026-08-02)
 
 - Froze and ran an exact/synthetic 16-gate certificate for the distinction

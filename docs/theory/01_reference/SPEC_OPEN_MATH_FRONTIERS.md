@@ -74,4 +74,4 @@ Each frontier is graded:
 | F5 G\* transcendence | (c) | permanent Chudnovsky import; clause must ride along |
 | Catalog rigidity | (a/b) | simple-rational subset scanned (all demoted); combination families deferred |
 
-**The honest top line:** the spine's unconditional theorem-grade core is real but narrow; its deep content is conditional on Chudnovsky; its physics-facing matches are, where tested, not statistically special (one exception, x₊=1/α, at `[SMC]`); and the genuinely-closeable items (F1 done; F4 mechanizable) sit alongside three boundaries (F2/F3/F5) that FTD maps but cannot cross internally. No frontier licenses any promotion.
+**The honest top line:** the spine's unconditional theorem-grade core is real but narrow; its deep content is conditional on Chudnovsky; its physics-facing matches are, where tested, not statistically special — FTD-0791 withdrew the former `x₊=1/α` exception while leaving its canonical `[SMC]` tag unchanged — and the genuinely-closeable items (F1 done; F4 mechanizable) sit alongside three boundaries (F2/F3/F5) that FTD maps but cannot cross internally. No frontier licenses any promotion.
