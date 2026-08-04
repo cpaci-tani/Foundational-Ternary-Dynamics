@@ -171,6 +171,58 @@ excluded by compact support, not by central-force character.** Equivalently:
 closing a two-bond flex needs a support-to-minimum ratio `≥ 2`, and this law's
 ratio is `1.2247`.
 
+## 7.5 · Exhaustive closure at `N ≤ 6` — and a false alarm that produced it
+
+**Added 2026-08-04.** §5's Tier B was a *sample*: 38 equilibria relaxed from
+random starts. That cannot reach measure-zero degenerate geometries, and the
+verdict should be read accordingly. This section replaces the sample with an
+exhaustive enumeration at `N = 6` — and records a false positive that nearly
+entered the ledger.
+
+**The false alarm.** A first enumeration of unit-distance frameworks reported
+**701** labeled `N = 6` graphs satisfying Connelly's necessary condition
+(self-stress *and* flex), collapsing to 5 distinct `(B, rank, flex, stress)`
+signatures — including one at `flex = stress = 1`, the exact balance point §7
+identifies as the target. That looked like the first real `n = 4` candidate set
+of the entire programme.
+
+**It was an artifact.** The embedder carried no minimum-separation constraint,
+so it returned frameworks with **coincident vertices** — four of five
+representatives had non-bond `q = 0.000`, and one had pairs at `q = 0.005`. The
+polarity check passed them because same-polarity pairs carry `mask = 0` at
+*any* separation, including zero. And the mechanism is immediate once seen:
+**if two vertices coincide and both bond to a third, their bond vectors are
+identical, the rigidity matrix loses rank, and a self-stress appears for free.**
+Every one of the 701 self-stresses was manufactured that way.
+
+**The exhaustive result.** Re-run with a non-degeneracy floor (`d_min = 0.5`,
+half a bond length) and deduplicated by canonical form under `S_6` — 12,068
+labeled edge sets with min degree ≥ 2 collapse to **62 isomorphism classes**, a
+195× reduction that also removes the original run's redundancy:
+
+| | count |
+|---|---|
+| non-isomorphic classes (`N=6`, min degree ≥ 2) | **62** |
+| non-degenerately embeddable at unit distance | **51** |
+| **with self-stress AND flex** | **0** |
+| FTD-realizable | 0 |
+| `n = 4` hits | **0** |
+
+**No non-degenerate unit-distance framework on 6 vertices in `R³` has both a
+self-stress and a flex.** Since Connelly requires both for second-order
+rigidity, **no `n = 4` mechanism exists at `N ≤ 6` under the registered compact
+law** — not as a sampling result but as an enumeration over isomorphism classes.
+
+This *strengthens* §1's `NO_NATIVE_N4`: the verdict was right, and the method
+that produced it was weaker than the verdict. Both facts are now on record.
+
+**Honest limits.** `N ≤ 6` only — class counts grow steeply and `N = 7` is
+untested. **11 of 62 classes returned no non-degenerate embedding in 40 random
+starts**; those are unresolved, not proven non-embeddable. And `d_min = 0.5` is
+a chosen threshold: coincident vertices are unambiguously invalid, but the exact
+floor is a judgement call, and a smaller one would readmit near-degenerate
+geometries.
+
 ## 8 · The stella octangula — the obstruction made exact
 
 The 2×2×2 checkerboard block of §3 **is** the stella octangula: its 8 vertices
