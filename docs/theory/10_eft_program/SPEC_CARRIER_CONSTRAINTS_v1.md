@@ -6,7 +6,8 @@ cites a registered result, no new claims
 re-deriving; any proposed carrier candidate must be scored against all twelve
 before preregistration
 **Parents:** `FTD-0772`, `FTD-0776`, `FTD-0778/0779/0780`, `FTD-0781`,
-`FTD-0782`, `FTD-0783`, `FTD-0784`, sidebranch §§29–32
+`FTD-0782`, `FTD-0783`, `FTD-0784`, `FTD-0800`, `FTD-0801`, sidebranch
+§§29–32
 **Registered:** 2026-08-03. Companion narrative: sidebranch
 `RELATIVITY_CLOSURE_DERIVATION.md` §32.8.
 
@@ -38,7 +39,19 @@ criterion: for central-force networks at zero tension, `n = 2` iff rigid,
 requires first-order flexibility with second-order rigidity** — `null(H)`
 nonempty with the quartic form positive definite on it. Both registered
 extremes fail it oppositely (the connected block is rigid, FTD-0637/0638; the
-isolated trimer is a free mechanism). Statement of the constraint: null-flat bottom (`V''(0) = 0`) with `~q^4` growth
+isolated trimer is a free mechanism). FTD-0800 then found no `n = 4` mechanism
+in its actual screened set (38 sampled `N = 3..6` equilibria and SC blocks
+through `L = 4`); the apparent SC quartic is affine/clamped and vanishes under
+free relaxation. Its post-hoc `N = 6` graph-class follow-up is only an
+`[EXPLORATORY NUMERICAL SCREEN]`: 51 accepted sampled embeddings contain no
+stress-plus-flex hit, while 11 graph classes, other realization components and
+rank strata, and the chosen separation floor remain unresolved. **There is no
+`N <= 6` no-go.** FTD-0801 returns `N4_CLAMPED_ONLY` on the tested periodic
+triangulated sheets: the decisive `cos(2q.x)` witness reaches exact zero after
+cell release, while the `6x6` random residual remains unresolved. This supports
+only that the resolved quartic witnesses found so far under the scoped zero-tension,
+central-force, single-scale law are clamped; it is not a universal quartic
+no-go. Statement of the constraint: null-flat bottom (`V''(0) = 0`) with `~q^4` growth
 sustained over at least a decade of amplitude (`a >~ 8`). Finite-depth wells
 fail twice — `a_max ~ O(1)` and separatrix softening — pinning at `n ~ 2`.
 Hard walls harden but land at `n = infinity`, `G*`-free. This constraint
@@ -164,3 +177,10 @@ by ~2700x. Deriving the compact law from the native force (FTD-0575 `[OPEN]`)
 is now the single decisive item. Separately, FTD-0784 bounds the prize:
 even a candidate passing all twelve delivers `G*` but cannot deliver the
 FC-W surd; W stays external.
+
+**Current C3 status (2026-08-04, FTD-0800/0801):** C3 remains unrealized.
+The FTD-0788 energy-scale branch above is therefore conditional historical
+provenance, not the current single decisive item: a free-body `n = 4`
+mechanism must first be established. The live routes named by the scoped
+screens are a two-scale interaction or pre-tension, both outside the
+registered zero-tension, single-scale law and both still `[OPEN]`.

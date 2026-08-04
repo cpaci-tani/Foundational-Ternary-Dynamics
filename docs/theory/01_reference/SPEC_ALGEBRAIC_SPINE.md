@@ -243,7 +243,7 @@ these bound the searched depth and are not a nonexistence proof, which
 is exactly why the permanent tag is [SELECTION — declared], not
 [CLOSED NEGATIVE]. Any future forcing proof would be a **new result
 requiring its own LEDGER row**, not a pending promotion of this one.
-Theorem 4 remains one of the two honestly-tiered
+Theorem 4 remains one of the three honestly-tiered
 subsidiary results (with Theorems 6 and 7), not one of the six
 theorem-grade results (count convention: see the Subsidiary note
 above §0).
@@ -365,7 +365,7 @@ non-ultralocal at L >= 4 and is **not covered** by this theorem. The prior
 configurations) — proof + verification:
 `docs/theory/09_mathematical/ANALYSIS_PHASE_J_ZERO_MODES_v1.md` +
 `scripts/proofs/proof_phase_j_zero_modes.py` (44/44). **Headline-count note:**
-the 7+2 count convention (S0) is NOT changed by this retag — whether the all-L
+the 6+3 count convention (S0, corrected by FTD-0785) is NOT changed by this retag — whether the all-L
 theorem moves Theorem 7 into the theorem-grade bucket is an owner decision
 pending, since the result is conditional on the stencil-consistency
 [SELECTION]; until then Theorem 7 stays counted as honestly-tiered.
@@ -643,7 +643,7 @@ and `scripts/proofs/proof_lprime_chi4_boundary.py` (Identities A/B/C at
 high precision). LEDGER row: FTD-0127.
 
 **External ensemble exhibit (FTD-0366; no spine change — the count stays
-7+2).** The ℤ₄-sector decomposition of the strongly-coupled quartic matrix
+6+3 after FTD-0785).** The ℤ₄-sector decomposition of the strongly-coupled quartic matrix
 model of Córdova–Heidenreich–Popolitov–Shakirov (Commun. Math. Phys. 361
 (2018) 1235–1274, arXiv:1611.03142) realizes this parity split in ensemble
 language: the (ℤ/4)^× = {1,3} conjugate contour sectors carry Γ(1/4)- and
@@ -877,8 +877,8 @@ In order from most to least defensible:
 1. "FTD has a rigorous algebraic core: six theorem-grade results
    (Theorems 1, 2, 3, 5, 8, 9 — Theorem 3 at its arithmetic core
    only, |μ_K| = |disc(K)| unique to ℚ(i); its physics dual-match
-   landing is separately [NUMERICAL FACT]) plus two honestly-tiered
-   subsidiary results (Theorems 4, 7 — see the count convention in
+   landing is separately [NUMERICAL FACT]) plus three honestly-tiered
+   subsidiary results (Theorems 4, 6, 7 — see the count convention in
    the Subsidiary note above §0), centered on the constant
    G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
    Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; see §1)." — §§1-9.
