@@ -45,7 +45,7 @@ exactly one EM-mode force, everything else off. Even there, the matter-side forc
 selected normalization and the mobile transaction is registered as **not
 energy-consistent** (FTD-0545 closed the fixed-step matter-work identity negative;
 FTD-0546 the neutral coupled-pair energy; FTD-0549 locates the obstruction in solver
-stages, not endpoint formulas). Consequence, stated plainly: **any carrier result in
+stages, not endpoint formulas). Consequence, as originally stated: **any carrier result in
 this sector is `[ENGINE FACT]`-grade until the reciprocal transaction problem is
 solved** — the same honest status FTD-0776 carried. That does not block the search; it
 bounds what a positive licenses.
@@ -113,3 +113,30 @@ its well hardens, or that any of this survives the energy-consistency defects of
 hop scheme; the annihilation wall and the non-resonance requirement are standing
 threats. The section identifies the first admissible candidate and the cheapest
 decisive computation — it does not claim the candidate succeeds. `[OPEN]`.
+
+## 8. AMENDMENT 2026-08-03 (FTD-0786) — §3's governance sentence was wrong
+
+§3 says carrier results here stay `[ENGINE FACT]`-grade *until the reciprocal
+transaction problem is solved*, which reads as "the sector is blocked." The
+registered record contradicts this and the error propagated into the carrier
+spec's C11 and the sidebranch's "unopened doors."
+
+FTD-0545/0546/0549 closed only the **frozen fixed-step** common action.
+FTD-0549's own row names the escape ("solve internal stages atomically; this
+does not require a new ontological primitive"), and **FTD-0551 took it**: the
+discrete-gradient map `vbar = c^2(p0+p1)/(H0+H1)` obeys
+`H1 - H0 = vbar . (p1 - p0)` identically — exactly curing FTD-0545's
+central-difference defect — with exact energy and projection-free Gauss.
+FTD-0600–0739 then built the sector: constituent-complete common actions,
+a static dressed fixed point with positive analytic 48-coordinate Hessian,
+reversible dynamical rest, internal matter and field modes, coherent
+co-moving fixed-mass transport with out-of-sample mobility, and durable
+finite-support capture.
+
+**Correct statement:** the transaction is solved as `[SELECTED DYNAMICS]` —
+a valid reciprocal integrator, not a derived unique microscopic law. Results
+here are **selection-scoped, not blocked.** The carrier fails in this sector
+at **C2** (the first internal doublet sits inside the propagating band at
+`Omega/omega_band = 0.8864` and decays at `Gamma_E = 0.00653712`/tick), and
+C2 is unreachable because C3 is unfilled — see FTD-0786. §§1–7 are otherwise
+unaffected; the source map and the minimal-profile rule stand.

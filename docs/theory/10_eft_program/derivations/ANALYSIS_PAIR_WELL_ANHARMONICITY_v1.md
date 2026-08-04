@@ -89,3 +89,39 @@ and nothing in between.
 3. Scope: static analysis of the selected compact law at unit masses; lattice
    discreteness, Peierls effects, and the field dressing's back-reaction are not
    included. None of these plausibly rescues (a) or (c), which are structural.
+
+## 6. SCOPE AMENDMENT (FTD-0787) — WITHDRAWN 2026-08-03 BY FTD-0789
+
+> **This amendment is withdrawn.** FTD-0787's counterexample was refuted: its
+> "quartic" is the curvature of a rectilinear chord across an exactly flat
+> bend direction. **§4's corollary stands as originally written.** FTD-0789
+> supplies its proper generalisation: for central-force networks at zero
+> tension, rigid networks pin at `n = 2`, hypostatic networks whose flex
+> extends to a finite mechanism escape to `n = infinity`, and `n = 4` requires
+> first-order flexibility with **second-order rigidity** — a decidable matrix
+> condition that no registered native configuration has been shown to meet.
+>
+> The withdrawn text follows for the record.
+
+### 6 (withdrawn). SCOPE AMENDMENT 2026-08-03 (FTD-0787) — the corollary was too broad
+
+§4's structural corollary concluded that `G*` lives at `n = 4` "where no
+identified native mechanism produces such a potential." **That reach is now
+falsified by exhibition.** FTD-0787 exhibits one, using only the compact law
+registered here and no new primitive: the **transverse** displacement of a
+collinear trimer. Because `r0 = 1` is the bond *minimum* (zero tension) and a
+transverse offset changes bond length only at second order, the energy is
+exactly quartic in the displacement — `V(d) = -2 eps + 24 eps d^4 - 32 eps d^6`,
+with the quadratic coefficient identically zero **by geometry, not tuning**.
+
+What stands, unchanged: the three kills of the pair *breathing* channel (a),
+(b), (c); the `Omega(E)` quadrature; and the statement that finite wells pin
+at `n ~ 2` **in the coordinate the bond stiffness acts on**. What was wrong
+was the tacit generalisation from that coordinate to all coordinates of the
+same well. A well can be harmonic radially and quartic transversally at once;
+this one is.
+
+The bracket theorem therefore brackets *longitudinal* coordinates only, and
+the carrier question moves from C3 (now realized) to C2, where FTD-0787's
+mode falls short by a factor of 3.07 — a scale separation between matter
+binding and field stiffness, not a defect of shape.
