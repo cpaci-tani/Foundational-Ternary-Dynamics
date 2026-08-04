@@ -284,9 +284,10 @@ is correct and stands.
 - **Derive** — steps 2–5 and 8 are `[THEOREM]`, but they build mathematics, not
   physics. No claim is promoted.
 - **Mark and price the boundary** — this is the document's actual contribution:
-  the framework's foundations cost **three selections** (boundary-as-value,
-  `D = 3`, lattice type) plus **one added structure** (order). The `G*` selection
-  is newly *located* — at the lattice choice, not only at the clock.
+  the framework's foundations cost **three selections** — *the two sides of a
+  mark are labelled* (§2 step 1, narrow), `D = 3`, and the lattice type — plus
+  **one added structure** (order). The `G*` selection is newly *located*: at the
+  **lattice choice**, not only at the clock.
 - **Drive** — §5 names the priced lines and the exact obstruction on each.
   `P3 ⟸ P1` was **withdrawn the day it was drafted** (§5.1): the move is
   ill-posed on a discrete space, the shave already existed as FTD-0128, and
