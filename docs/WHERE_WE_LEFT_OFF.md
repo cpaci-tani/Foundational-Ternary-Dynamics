@@ -4,7 +4,29 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
-**LATEST — FTD-0795..0798 (2026-08-03/04), four audits of the foundations.**
+**LATEST — FTD-0799 (2026-08-04): the protonucleus saturates, and there is
+still no derived body size.** The locked v1 campaign ran (arms A–D of five;
+**arm E, `R0=20`, is unrun**). All three kill conditions clear and charge is
+exactly conserved in every arm. **The quasi-static `R_c = 12.63` survived its
+own falsifier and is bracketed** — `R0=12` gives *exactly zero* growth,
+`R0=13` grows — so it is a valid **nucleation** criterion. But the accretion
+instability it predicted does not happen: `R0=16` grows `+76.65%` and then
+arrests dead, `dN/dt` exactly zero for the final 399 ticks. **The prereg's
+gloss "a derived body size" is not supported** — `N*` tracks the seed
+(2,109 / 7,153 / 9,539 / 30,167 for `R0` = 8/12/13/16), so arms C and D arrest
+a factor 3.2 apart. No particle size, mass or radius is licensed. **The
+mechanism is new and it generalizes:** genesis deposits `-1` upstream and `+1`
+downstream, so every event **conserves charge while diluting net polarity**
+(arm D: polarity fraction 1.000 → 0.566). The source driving `|J|` is net
+polarity, not site count, so **growth erodes its own driver** — a negative
+feedback intrinsic to pair genesis. Corollary: the quasi-static law is a valid
+nucleation criterion and an **invalid growth law** (it predicts `|J| = 2.326`
+at arm D's arrest radius against a measured `1.283`, low by 1.81x, because it
+assumes the uniform-polarity source genesis has just destroyed). Profile-scoped:
+movement, curl, evaporation and Gauss projection are all OFF, and evaporation
+is the most likely omitted stabiliser. **Does not bear on C3.**
+
+**FTD-0795..0798 (2026-08-03/04), four audits of the foundations.**
 **FTD-0795** ran FTD-0258's six registered deviations from QM/SR against
 existing experiment. Verdict `SPINE_HAS_NO_ROW_THAT_IS_DEVIANT_LIVE_AND_TESTABLE`.
 PL-1 is **dead**: FTD's ontology is one continuous local flux manifesting on
