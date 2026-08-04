@@ -4,6 +4,37 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
+**LATEST — FTD-0795..0798 (2026-08-03/04), four audits of the foundations.**
+**FTD-0795** ran FTD-0258's six registered deviations from QM/SR against
+existing experiment. Verdict `SPINE_HAS_NO_ROW_THAT_IS_DEVIANT_LIVE_AND_TESTABLE`.
+PL-1 is **dead**: FTD's ontology is one continuous local flux manifesting on
+threshold, so splitting an excitation 50/50 forces `alpha >= 1` (maximal
+bunching), while the measured `alpha = 0.0188 +/- 0.0067` is **146 sigma below
+that floor** — and because `alpha` is coincidences over singles at one
+beamsplitter, efficiency and gain cancel in the ratio, so the result invokes
+no Hilbert space and cannot be deflected by rejecting the quantum formalism.
+PL-2/3/6 are vacuous, PL-4/5 live but ~39 orders from testable.
+**FTD-0796** proves the trap underneath that: **FC-1's completeness clause
+alone forces CHSH <= 2** — if the four observables are elements of `A_5` under
+one setting-independent measure, their pushforward *is* a joint distribution
+and Fine (1982) applies. **No locality assumption enters the argument.** The
+corpus misattributes the bound to Postulate 4 (Moore locality) and lists
+"violate locality" as an escape; that is wrong, and nonlocality buys nothing,
+because using it breaks FC-1 itself. The only live door is **superdeterminism**
+(already declared at FTD-0329 row 15), priced exactly at `S <= min(2+3M, 4)`
+with Tsirelson at `M* = 0.27614237`. Live contradiction registered: FTD-0329
+adopts measurement dependence while the constitution §2.3 and PL-2 assert
+statistical independence — mutually exclusive, and under ledger precedence
+FTD-0329 governs, which makes PL-2 unfalsifiable contrary to its own text.
+**FTD-0797** refuted the de Rham cone (spatial degree-blindness does not touch
+the cone; the production stencil is M18). **FTD-0798** refuted the
+Kaehler-Dirac carrier — it fails C1 and C3 at sight, and its *motivating
+premise was false*: the second-order flux already carries a Born-valued
+positive conserved density, which forecloses as a class every future argument
+that FTD needs a first-order sector to obtain a Born measure. Salvage: `M18`
+admits a local cubic-covariant 3-square decomposition. That was the
+**eleventh refuted construction of the session**.
+
 **AND FTD-0794: no bridge connects the lattice to the quartic law.**
 Chain link 4 - "minimum `C4` support and null-flatness select the quartic
 clock", the last unwithdrawn lattice-to-quartic bridge - is refuted. The
@@ -48,9 +79,24 @@ retired**. Both tolerances were set by the observed deviation, and the
 preregistered outcome had probability `0.9942` under its own null: the test
 had no power. **FTD-0319 is retagged `[MEASURED]` -> `[SELECTION]`; the
 designation *the framework's single scan-rigid identification* is WITHDRAWN
-and the scan-rigid count is now ZERO.** Eight canonical files still assert
-otherwise and are flagged for update. The 1.26 ppm agreement itself remains
-`[NUMERICAL FACT]` - it is arithmetic and unchanged.
+and the scan-rigid count is now ZERO.** ~~Eight canonical files still assert
+otherwise and are flagged for update.~~ **Propagated 2026-08-04** across the
+spine (§11 body + the §12 export surface), `SPEC_FTD_COMPLETE_FRAMEWORK`
+(bucket (i) is now empty), the unified axiom register + its JSON, the adoption
+pricing rules + its JSON, the dimensional map + its JSON,
+`INDEX_CONSTRUCTION_SPINE`, `SPEC_ALPHA_DYNAMICAL_BOUNDARY`,
+`SPEC_DOCTRINE_LEDGER`, `SPEC_OPEN_MATH_FRONTIERS`, `MONOGRAPH_FTD_CONSTRUCTION`,
+`AUDIT_RIGIDITY_CATALOG_v1`, `TRACKER_ONTIC_TRUTH` OT-5.1, and `CLAUDE.md`.
+`SPEC_PHYSICS_BRIDGE` carries a governing banner instead of a rewrite — its
+whole thesis is the three-leg bridge this removes, so rewriting it is a
+re-derivation and stays `[OPEN]`. Two things were deliberately left alone
+because each is a research act, not a transcription fix: **FC-W's price stays
+at y = 1 gap-class** though its "high-value" justification was exactly the
+withdrawn scan-rigidity, and **OT-3.3 is flagged rather than refuted** — it is
+a different runner (the 2.87M extended scan) whose base-rate control has never
+been run, and a zero count means nothing until the null expectation is known.
+The 1.26 ppm agreement itself remains `[NUMERICAL FACT]` - it is arithmetic
+and unchanged.
 
 **FTD-0792:** the engine runs on `ALPHA = 1/137.035999177` (CODATA-matched)
 while the derived root sits unused in `ALPHA_TREE`, and a **source-lint
@@ -124,15 +170,21 @@ rigid, `n = infinity` iff the flex extends to a finite mechanism, and
 **`n = 4` requires first-order flexibility with second-order rigidity**. Both
 registered configurations fail it oppositely (connected block rigid; trimer a
 free mechanism). Also established: C5 is comfortable and does **not** tighten
-with `eps` (31x margin, capped by coupling and causality). The withdrawn claim
-read: It still fails **C2**: bounded
-hardening caps `Omega_max = 0.400745` against a band top of `1.230959`. But
-the failure is now parametric rather than structural - frequency scales as
-`sqrt(eps/m)` while the quartic-purity window is eps-independent, so band
-clearance inside the clean range needs `eps > 0.2218` (field) or `0.5856`
-(wave), against a **selected** `eps = 0.01`. Since `eps/C_WAVE^2 = 0.03`,
-**the obstruction is an energy-scale separation between matter binding and
-field stiffness, not the shape of any potential.** **FTD-0788 then addressed `eps` itself - and FTD-0790
+with `eps` (31x margin, capped by coupling and causality).
+
+> ~~**WITHDRAWN with FTD-0787 (refuted by FTD-0789). Retained for provenance;
+> do not cite.** It still fails **C2**: bounded hardening caps
+> `Omega_max = 0.400745` against a band top of `1.230959`. But the failure is
+> now parametric rather than structural - frequency scales as `sqrt(eps/m)`
+> while the quartic-purity window is eps-independent, so band clearance inside
+> the clean range needs `eps > 0.2218` (field) or `0.5856` (wave), against a
+> **selected** `eps = 0.01`. Since `eps/C_WAVE^2 = 0.03`, the obstruction is an
+> energy-scale separation between matter binding and field stiffness, not the
+> shape of any potential.~~ *(All of this described a mechanism that does not
+> exist: the bend angle is an exact flat direction, so there was never a
+> quartic to have a purity window.)*
+
+**FTD-0788 then addressed `eps` itself - and FTD-0790
 refuted that too.** `z*G(1)` is identically `z*G(0) - 1`, so the proposal was
 `K_GENESIS - 1` with no lattice content; `K_GENESIS` is [SELECTION-ADOPTED] x
 [IMPOSED] x declared convention, and is a flux-amplitude gate rather than an
@@ -145,27 +197,38 @@ was WRONG** - the repo convention `W_SC = 0.5054620197` is consistent across
 four sources; FTD-0788 switched to the literature convention and reported the
 repo's correct usage as a defect. Only `G(0)`, `G(1)`, `G(0)-G(1)=1/6`
 survive. **`eps` has no derivation and the well-depth question stands exactly
-where it was.** The withdrawn claim read: It is an
-orphan - 17.8x above the field-mediated scale (`E_F(1) = 5.611e-4`) and 51.6x
-below the lattice nearest-neighbour quantum, matching nothing the framework
-contains. The compact law has *compact support*, so it is a matter-sector
-contact term rather than a field-mediated one; and the engine's matter
-thresholds are already exact lattice Green's-function quantities
-(`z G(0) = W_SC = K_GENESIS`, matched to 1.8e-17). The exact companion
-identity `z[G(0) - G(1)] = 1` gives the nearest-neighbour quantum
-`z G(1) = W_SC - 1 = 0.5163860592`, and the compact law's minimum sits at
-exactly `r0 = 1`. **Under that motivated selection C2 is satisfied** - the
-flexural mode is above the field band over 24-100% of the separatrix at 4.0%
-quartic contamination. **This is a [SELECTION], not a derivation of `eps`,
-and no engine constant was changed.** The fork it opens is the programme's
-decisive item: a field-mediated `eps` (~5.6e-4) forbids a carrier permanently
-(short by 400x), a matter-sector lattice quantum (~0.52) makes it viable, and
-the two differ by ~2700x. **Deriving the compact law from the native force
-(FTD-0575 `[OPEN]`) now decides the carrier question.** Honest costs: every
-FTD-0600-0739 matter/field ratio shifts under the new scale, and the parent
-trilemma's collapse coefficient worsens 51.6x, so ternary site capacity must
-carry more weight. FTD-0783's bracket corollary is correspondingly narrowed: wells pin
-at `n ~ 2` only in the coordinate the stiffness acts on. The FTD-0779 telemetry dumper is repurposed as a test
+where it was.**
+
+> ~~**WITHDRAWN with FTD-0788 (refuted by FTD-0790). Retained for provenance;
+> do not cite.** It is an
+> orphan - 17.8x above the field-mediated scale (`E_F(1) = 5.611e-4`) and 51.6x
+> below the lattice nearest-neighbour quantum, matching nothing the framework
+> contains. The compact law has *compact support*, so it is a matter-sector
+> contact term rather than a field-mediated one; and the engine's matter
+> thresholds are already exact lattice Green's-function quantities
+> (`z G(0) = W_SC = K_GENESIS`, matched to 1.8e-17). The exact companion
+> identity `z[G(0) - G(1)] = 1` gives the nearest-neighbour quantum
+> `z G(1) = W_SC - 1 = 0.5163860592`, and the compact law's minimum sits at
+> exactly `r0 = 1`. Under that motivated selection C2 is satisfied - the
+> flexural mode is above the field band over 24-100% of the separatrix at 4.0%
+> quartic contamination. This is a [SELECTION], not a derivation of `eps`,
+> and no engine constant was changed. The fork it opens is the programme's
+> decisive item: a field-mediated `eps` (~5.6e-4) forbids a carrier permanently
+> (short by 400x), a matter-sector lattice quantum (~0.52) makes it viable, and
+> the two differ by ~2700x. Deriving the compact law from the native force
+> (FTD-0575 `[OPEN]`) now decides the carrier question. Honest costs: every
+> FTD-0600-0739 matter/field ratio shifts under the new scale, and the parent
+> trilemma's collapse coefficient worsens 51.6x, so ternary site capacity must
+> carry more weight. FTD-0783's bracket corollary is correspondingly narrowed:
+> wells pin at `n ~ 2` only in the coordinate the stiffness acts on.~~
+>
+> *(FTD-0790: `z*G(1) = z*G(0) - 1` identically, for any lattice, so the
+> proposal was `K_GENESIS - 1` with zero lattice content — and C2 is a
+> one-sided threshold that ~26 simple expressions clear, so landing in the
+> range is not evidence. **FTD-0783's bracket corollary is restored, not
+> narrowed**, and the `eps` fork above is not open.)*
+
+The FTD-0779 telemetry dumper is repurposed as a test
 of FTD-0781's locked prediction (dOmega/dA = 0 exactly, sub-threshold). **FTD-0785** then audited the
 algebraic spine itself - never previously audited, and now the program's
 main surviving asset. Outcome: **every numerical identity verified at
@@ -532,7 +595,7 @@ Of the nine numbered results, seven are theorem-grade and two are honestly tiere
 
 Physics identifications ride at their actual tags and are never promoted by rhetorical momentum:
 
-- `x₊ ≈ 137.036 = 1/α` to 1.26 ppm is a `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) — the algebra is a theorem; the *physical identification* is not derived. The structural-uniqueness evidence is the FTD-0319 look-elsewhere scan (a `[NUMERICAL FACT]`).
+- `x₊ ≈ 137.036 = 1/α` to 1.26 ppm is a `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) — the algebra is a theorem; the *physical identification* is not derived. ~~The structural-uniqueness evidence is the FTD-0319 look-elsewhere scan (a `[NUMERICAL FACT]`).~~ **There is no structural-uniqueness evidence — withdrawn 2026-08-03 by FTD-0791, see the top of this page.** The scan sits at the chance base rate and is retagged `[SELECTION]`; the scan-rigid count is zero. What remains is the 1.26 ppm agreement as arithmetic, and the word "motivated" in the tag is now doing noticeably less work than when the tag was assigned.
 - Mass formulas, gauge ratios, and the gravity/QM identifications are `[PARAMETRIC]` or `[SMC]` (see the LEDGER and `CATALOG_PARAMETRIC_INSERTIONS.md`).
 - **α is not derived anywhere.** Whether the discrete ontology forces the EM coupling is the central open obstruction, **MC-T4.3**, a `[FOUNDATIONAL OBSTRUCTION]`: 0/4 FTD-native routes force the master-quadratic operator assembly (FTD-0242), so α is dynamical, not structural.
 - **FC-W** is the framework's one *adopted* import — an external order-2 twist realizing `δ = √(G*(4G*−1))`; under it `x₊ = 1/α` is a `[CONDITIONAL THEOREM given W]`, explicitly not `[DERIVED]` (FTD-0314/0315).
