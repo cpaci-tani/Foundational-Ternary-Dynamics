@@ -157,6 +157,38 @@ identification x−  N_c is retired per v1.4 §5.
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
+> ### ⚠ FTD-0321 (2026-08-04) — the SCAN half of this section is a range artifact
+>
+> The **arithmetic** theorem below (`|μ_K| = |disc(K)|` uniquely at `K = ℚ(i)`)
+> is **untouched** and remains `[THEOREM]`. What this banner governs is the
+> *scan* content — the FTD-0123 dual-match domain restated above, and every
+> reading of this section as showing that `d = −4` is privileged **by
+> dual-matching**.
+>
+> The full per-ideal-class Damerell scan that `PREREG_DAMERELL_SCAN_v1.md`
+> deferred has now been run (FTD-0321). Per-class periods were taken from `η` at
+> each class's CM point — Γ-products cannot separate them, since the h ≥ 2
+> Chowla–Selberg formula fixes only their product — with Chowla–Selberg itself
+> as an independent gate, passing at h ≥ 2 to `8.1e-50`.
+>
+> **Result:** `d = −4` is the unique dual-matcher across all 270 fundamental
+> h ≥ 2 fields with |d| ≤ 907 (2,558 ideal classes) — a superset of the
+> registered domain — and then **fails at |d| = 7,895**, reaching **1,271
+> fundamental dual-matchers across 696 distinct discriminants** by
+> |d| ≤ 500,000 (61.6M reduced forms). The registered domain is ~8.7× too small
+> to contain the first counterexample.
+>
+> **And the criterion cannot discriminate at all at scale:** a random target
+> near `G*` is matched by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803
+> gives the mechanism — `G*(τ) = √(8π|η|⁴Im τ)` is SL₂(ℤ)-invariant and `τ = i`
+> is the order-2 elliptic fixed point, so canonical `G*` is **by construction a
+> critical value** and sits at a density singularity of its own distribution.
+>
+> The trivial-multiplier criterion declared below was used unchanged; no
+> tolerance was tuned. See `ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md` and
+> `ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md`.
+
+
 **Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among imaginary quadratic fields — the PROOF below covers all squarefree $d$, matching `TRACKER_ONTIC_TRUTH.md` OT-1.9; an earlier copy of this line understated the scope as "the class-number-1 fields"). The underlying numerical scans over Heegner and higher class numbers are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan (via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
 
 **Scan-domain restatement (PERMANENT, 2026-07-01, FTD-0355 — closes FTD-0348 math flag F3; precision fix, no result change).** The FTD-0123 scan domain is: **all 43 fields of class number h ≤ 3** (complete lists — 9 at h=1, 18 at h=2, 16 at h=3, with largest $|d|$ = 163, 427, 907 respectively; the imaginary-quadratic class-number problem is solved for h ≤ 3) **plus the 20 smallest h = 4 discriminants ($|d| \le 312$)** — **63 discriminants in total, with h = 4 deliberately truncated** (20 of the 54 known h = 4 fields; the 23 with $312 < |d| \le 907$ and the 11 with $907 < |d| \le 1555$ were NOT scanned). The domain phrase in the Statement and Verification bullets below — "63 fundamental discriminants (h ∈ {1, 2, 3, 4} with $|d| \le 907$)" — is **superseded by this restatement**: "h ∈ {1..4} with $|d| \le 907$" describes an **86**-element set, not a 63-element set. All counts were independently recomputed at finalization (reduced-binary-quadratic-form enumeration over every fundamental $|d| \le 2000$). The scan's registered result (d = −4 as the sole trivial-multiplier dual-matcher *within the 63-element domain*) is unchanged; the frozen `PREREG_DAMERELL_SCAN_v1.md` is untouched by this note (its own complement-count fix is owner-only, per FTD-0348 §3).
