@@ -22,6 +22,17 @@
 %          Look-elsewhere trials factor (scan-size prior-odds heuristic, NOT a
 %          calibrated Bayes factor) on the order of 4x10^5; tolerance-conditioned.
 %          (2026-06-24 spine-audit reconciliation: see FTD-0319/0320, AUDIT_RIGIDITY_CATALOG_v1.)
+% CORRECTION (2026-08-05, FTD-0802): the v2 headline above is WRONG in two ways.
+%          (1) The cubic-embedding claim ("every cubic dual-matcher factors as
+%          master x linear") was a hardcoded literal in the runner, never a
+%          computed test, and is FALSE: all four cubic dual-matchers are
+%          x*P(x) - a_0 with a_0 in {1, G*, 2, 3}, nonzero remainder. The true
+%          count is 5 distinct dual-matchers, 4 beyond the master quadratic.
+%          (2) The pre-registered base-rate control (PREREG_OT33_BASERATE_v1,
+%          verify_ot33_baserate.py) returned Outcome B: N_null = 0.0014, i.e.
+%          finding zero others is what chance predicts, so the count carries no
+%          evidential weight; the x_- gate eliminates nothing at the registered
+%          tolerances. Body text corrected in-place below (S6.2, Summary).
 % ============================================================================
 
 \documentclass[11pt,reqno]{amsart}
@@ -577,12 +588,23 @@ itself, this extension produces a single genuine dual-matcher: the
 master quadratic at $(n, p, m, q) = (16, 2, 16, 3)$.
 \item \emph{Cubic embeddings.} Test cubic polynomials
 $Q(x) = x^{3} - a_{2}\,x^{2} + a_{1}\,x - a_{0}$ with coefficients of
-the same $\Gstar$-power-with-integer-multiplier shape. Every cubic
-that produces a dual-matching pair of roots factors as
-$Q(x) = P(x) \cdot (x - r)$ for some real $r$ --- i.e.\ each apparent
-``cubic dual-matcher'' is the master quadratic embedded in a cubic
-with one extra real root. The count of \emph{independent} cubic
-dual-matchers is therefore zero.
+the same $\Gstar$-power-with-integer-multiplier shape.
+\textbf{[Corrected 2026-08-05, FTD-0802.]} An earlier version of this
+item asserted that every cubic dual-matcher factors exactly as
+$Q(x) = P(x)\cdot(x - r)$ and that the count of independent cubic
+dual-matchers is therefore zero. That assertion was transcribed from a
+runner line that was a hardcoded literal, never a computed test, and it
+is \emph{false}: synthetic division shows all four cubic dual-matchers
+leave a nonzero remainder under $P$. They are
+$Q(x) = x\,P(x) - a_{0}$ for $a_{0} \in \{1, \Gstar, 2, 3\}$ ---
+genuinely distinct members of the declared family whose root pairs land
+inside the registered gates (largest $x_{+}$ deviation $1.63\times
+10^{-4}$ against the $1.73\times10^{-4}$ gate). The exact factorisation
+is impossible on its face: matching the constant term requires
+$r = a_{0}/(16\Gstar^{3})$ while the $x^{2}$ term requires $r = 0$,
+jointly satisfiable only at $a_{0} = 0$, outside the scanned range. The
+count of independent cubic dual-matchers is therefore \emph{four}, not
+zero.
 \item \emph{Eisenstein-integer multiplier family.} Replace the
 Gaussian-integer norms of the tower-multiplier scan
 \S\ref{sec:tower-scan} by Eisenstein-integer norms
@@ -597,8 +619,10 @@ dual-matchers.
 Adopting the master-quadratic empirical precisions as tolerances ---
 $1.26$ ppm absolute on $x_{+}$ and $0.80\%$ absolute on $x_{-}$,
 both relative to the targets $1/\alpha = 137.035999\ldots$ and
-$N_{c} = 3$ --- exactly one polynomial across the combined extended
-space satisfies both constraints: the master quadratic itself.
+$N_{c} = 3$ --- \textbf{five} distinct polynomials across the combined
+extended space satisfy both constraints: the master quadratic and the
+four cubics $x\,P(x) - a_{0}$ of item (B). (An earlier version stated
+``exactly one''; corrected 2026-08-05 per FTD-0802.)
 
 The result holds at the precise tolerances above. Relaxing the
 $x_{+}$ tolerance from 1.26 ppm to $10^{-3}$ admits a single-digit
@@ -614,8 +638,17 @@ it shows that the empirical match is not produced generically by any
 Gaussian-integer choice that defines the master quadratic is
 distinguished, not interchangeable with the analogous Eisenstein
 choice. The robust statement is a \emph{numerical fact}: across the extended
-family, the master quadratic is the unique dual-matcher at
-master-quadratic tolerance. One may summarise the scan size as a
+family, the master quadratic is the unique \emph{quadratic}
+dual-matcher at master-quadratic tolerance, and the four cubic
+matchers of item (B) are the only others. Two further facts bound what
+this count can evidence (FTD-0802, 2026-08-05): a pre-registered
+base-rate control returned $N_{\mathrm{null}} = 0.0014$ expected
+dual-matchers under displaced targets --- so a zero-others count is
+the \emph{chance} expectation for this family, not a signal --- and at
+the registered tolerances the $x_{-}$ gate eliminates no candidate
+that passes the $x_{+}$ gate (16 pass each), so ``dual-match'' and
+``match'' coincide here and the second target does no evidential work.
+One may summarise the scan size as a
 \emph{look-elsewhere trials factor} --- a uniform-prior, one-match
 heuristic over the $147{,}456$ base family (order $10^{4}$), widened by
 the present extension's scan-size factor of $\approx 19.5$ to order
@@ -663,10 +696,13 @@ polynomial families generated by $\Gstar$ and small integers; they
 neither establish nor refute any physical identification. They place
 the empirical identification $x_{+} = 1/\alpha$, $x_{-} = N_{c}$
 within a methodologically explicit context: the master quadratic is
-the unique polynomial of its complexity class to dual-match these two
-unrelated targets at the empirical precisions stated above. We leave
-the question of how to weigh this evidence against
-discipline-specific priors to the reader.
+the unique \emph{quadratic} of its complexity class to dual-match these
+two targets at the empirical precisions stated above, joined by four
+cubic relatives $x\,P(x) - a_{0}$; the pre-registered base-rate control
+(FTD-0802) shows a zero-others count would in any case have been the
+chance expectation for this family, and the $x_{-}$ gate is inert at
+the registered tolerances. We leave the question of how to weigh this
+evidence against discipline-specific priors to the reader.
 
 % ============================================================================
 \section{Discussion}
