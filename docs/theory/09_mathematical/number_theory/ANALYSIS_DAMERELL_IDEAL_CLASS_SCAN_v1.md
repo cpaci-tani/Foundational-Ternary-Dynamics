@@ -132,12 +132,23 @@ FTD-0802 base-rate method to the scan's own output, over `|d| ≤ 200,000`
 probability 1.** The dual-match criterion cannot discriminate anything once the
 domain is large enough to be representative.
 
-The mechanism is visible in the invariant. `G*² = 8π|η(τ)|⁴Im(τ)` behaves like
-`8π · y · e^{−πy/3}` for `y = Im(τ)`, which is maximised near `y = 3/π ≈ 0.955`
-— just above the reduced-form floor `y ≥ √3/2 ≈ 0.866`. The canonical
-`G* = 2.9587` sits essentially **at that maximum**, i.e. in the densest region
-of achievable values. The real target is not in a sparse place where a match
-would be surprising; it is in the most crowded place available.
+**Mechanism — see FTD-0803.** An earlier draft of this section explained the
+crowding by the large-`y` approximation `G*² ≈ 8π·y·e^{−πy/3}`, "maximised near
+`y = 3/π ≈ 0.955`". **That was wrong**: it drops the `∏(1−qⁿ)` factor, which is
+not negligible at `y ≈ 1`. The true stationary point on `x = 0` is at `y = 1`
+exactly — i.e. `τ = i` — and it is a **saddle**, not a maximum (the global
+maximum of the distribution is `G*(ρ) = 2.990158`, at the order-3 elliptic
+point).
+
+The correct mechanism: `G*(τ)` is `SL₂(ℤ)`-invariant and `τ = i` is the order-2
+elliptic fixed point, so the gradient vanishes there **by symmetry** (measured
+`dG/dy = 3.7e-40`, against `O(0.1)` at neighbouring `y`). Canonical `G*` is by
+construction the value at that critical point, and the density of `G*` values
+diverges logarithmically there — a saddle-type van Hove singularity. So the
+target is not merely "in a dense region"; it sits at a **forced** density
+singularity. Registered separately as FTD-0803, with its adversarial pass and
+its scope limits (the mechanism explains this CM scan only, and does **not**
+transfer to FTD-0319 / OT-3.3).
 
 ## 7. What this does and does not touch
 

@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (749 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (750 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -13,7 +13,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | Programme | Claims | Scope |
 |---|---:|---|
 | [Algebraic spine — master quadratic](#algebraic-spine-master-quadratic) | 18 | The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification. |
-| [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 40 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
+| [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 41 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
 | [Algebraic spine — periods, Watson, transcendence](#algebraic-spine-periods-watson-transcendence) | 14 | Watson integrals, lattice Green-function periods, the native closure N, delta-independence, E1/E2 transcendence, the period-import frontier. |
 | [Framework — postulates & constitution](#framework-postulates-constitution) | 13 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
 | [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 54 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
@@ -67,7 +67,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra.*
 
-**40 claims.**
+**41 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -111,6 +111,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0367` | THEOREM, COHERENT_INTERPRETATION, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION | Reflection flow parity — the product and ratio branches as first-order flows whose coefficients split by parity, differential algebraicity, and value… | L512 |
 | `FTD-0381` | OBSERVATION | The parity twist as a superdeterminant (CHPS r=4 χ₋₄-graded moment module) | L526 |
 | `FTD-0382` | SYNTHESIS, OBSERVATION, COHERENT_INTERPRETATION, SELECTION | The bilateral-symmetry criterion for an orientation carrier: C_s = Stab_{O(3)}(v,g) | L527 |
+| `FTD-0803` | MEASURED, CORRECTION | Why is the `G*` window crowded? Is FTD-0321's measured base rate an accident of the scan, or forced by where `G*` lives? | L965 |
 
 ---
 
@@ -1064,7 +1065,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 |---|---:|
 | THEOREM | 292 |
 | CLOSED_NEGATIVE | 185 |
-| MEASURED | 162 |
+| MEASURED | 163 |
 | OPEN | 129 |
 | SMC | 84 |
 | DERIVED | 84 |
@@ -1076,7 +1077,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | CONJECTURE | 31 |
 | SELECTED_DYNAMICS | 29 |
 | AXIOM | 27 |
-| CORRECTION | 24 |
+| CORRECTION | 25 |
 | EXECUTION_INVALID | 24 |
 | PARAMETRIC | 20 |
 | RETRACTED | 19 |
