@@ -34,7 +34,8 @@ All statements live in [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAI
 | `scripts/proofs/proof_bcc_complex_structure.py` | OT-1.5/1.6 in exact rationals | 5/5 PASS |
 | `scripts/proofs/proof_fqcr_convergence.py` | OT-1.8 finite-N attractor rate | all assertions PASS |
 | `scripts/proofs/proof_field_theoretic_qgstar.py` | OT-2.3 π-freeness route | PASS |
-| `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` | OT-3.3 scan (numerical fact only) | 0 dual-matchers / 2,871,576 |
+| `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` | OT-3.3 scan — **retagged `[SELECTION]` 2026-08-04, FTD-0802; no longer supports `x_+ = 1/α`** | **4** non-master dual-matchers / 2,871,576 (previously reported 0, via a hardcoded literal). Failed its base-rate control: `N_null = 0.0014`, Outcome B |
+| `scripts/experiments/verify_ot33_baserate.py` | FTD-0802 base-rate control for the above (pre-registered `PREREG_OT33_BASERATE_v1.md`) | `N_null = 0.0014`, `P(>=1) = 0.0009` — OUTCOME B |
 
 A reviewer who prefers independence should recompute OT-1.2 and OT-2.1 in their own CAS; both are one-session computations (the Watson integral to 100 digits in PARI/GP reproduces `G*²/(2π)`).
 

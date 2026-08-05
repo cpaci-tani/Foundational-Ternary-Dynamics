@@ -33,6 +33,18 @@
 > "the framework's single scan-rigid identification" is WITHDRAWN and the
 > scan-rigid count is ZERO.**
 >
+> **EXTENDED 2026-08-04 (FTD-0802) — the OTHER scan fell too.** This banner
+> originally governed only the FTD-0319 2.65M adversarial scan. The 2,871,576
+> extended scan (OT-3.3) cited throughout this document has now failed its own
+> pre-registered base-rate control: `N_null = 0.0014` dual-matchers under
+> displaced targets (Outcome B), so its zero count discriminates nothing. Its
+> `x_-` leg eliminates zero candidates, and its published count was **wrong** —
+> the "0 genuinely-new cubic dual-matchers" line was a hardcoded literal that no
+> code tested, and the true figure is 4. **OT-3.3 is retagged `[SELECTION]`.**
+> Every "0 non-G* dual-matchers across 2,871,576" claim below is therefore also
+> governed by this banner, and the three-leg bridge this document is built on
+> now has **no surviving numerical-uniqueness leg**.
+>
 > What is unaffected: the algebraic spine (Theorems 1, 2, 8, 9 below) and
 > the 1.26 ppm agreement itself, which remains `[NUMERICAL FACT]` — it is
 > arithmetic. What is affected: **every sentence in this document that
@@ -236,13 +248,17 @@ Combining the two uniqueness scans (commits `0074f92` +
 | Search space | Scan result |
 |---|---|
 | Tower scan (1-parameter, 58 candidates) | rank 1, ~50× gap to rank 2 |
-| Extended polynomial/multiplier scan (2,871,576 candidates) | 0 non-G\* dual-matchers; rank 1 by ~130× |
+| Extended polynomial/multiplier scan (2,871,576 candidates) | ~~0 non-G\* dual-matchers; rank 1 by ~130×~~ **CORRECTED 2026-08-04 (FTD-0802): 4 non-master dual-matchers, not 0; and `N_null = 0.0014` means zero would have been unsurprising anyway** |
 
 > **The "~4×10^5:1 Bayes factor" figure is retracted to [NUMERICAL FACT]:
 > it is NOT computed by the runner — the runner
 > yields only a ~19× scan-size factor — and it is tolerance-conditioned.
-> The measured, runner-backed result stands: 0 dual-matchers across
-> 2,871,576 polynomials, rank 1 by ~130×.**
+> ~~The measured, runner-backed result stands: 0 dual-matchers across
+> 2,871,576 polynomials, rank 1 by ~130×.~~ **The runner-backed result does NOT
+> stand (FTD-0802, 2026-08-04): the count is 4 non-master dual-matchers, the
+> "0 genuinely-new cubic" figure was a hardcoded literal no code tested, and
+> the base-rate control returns `N_null = 0.0014` — a zero count would have
+> carried no evidential weight even had it been correct.**
 
 The measured scan result is strong but is not a derivation. To establish
 decisive evidence, broader families or a non-statistical structural
