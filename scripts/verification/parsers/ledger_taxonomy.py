@@ -211,6 +211,7 @@ RANGES = [
     ((313, 315), "alpha-readout"),
     ((316, 317), "engine-emergence"),
     ((318, 320), "framework-audits"),
+    ((321, 321), "spine-gstar-cm-modular"),
     ((322, 330), "framework-boundary-imports"),
     ((331, 334), "gravity-cosmology"),
     ((335, 336), "framework-boundary-imports"),
