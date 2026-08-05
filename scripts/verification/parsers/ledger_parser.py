@@ -39,6 +39,21 @@ from typing import Iterable
 # Map raw bracket-content strings to canonical enum names.
 # The first match wins; longer / more specific patterns come first.
 TAG_NORMALISATION = [
+    # ---- withdrawal markers, checked FIRST (added 2026-08-04) --------------
+    # These must outrank the positive tags. A tag like
+    #   [RETAG - CONDITIONAL THEOREM TO SELECTION, UNEARNED]
+    # contains the word THEOREM and was normalising to THEOREM — i.e. a retag
+    # *away from* theorem grade was being reported as a theorem. Likewise
+    #   [DERIVED — LITERAL FORM REFUTED AT I5]  ->  DERIVED.
+    # In a corpus that is majority negative results, that is an overclaim
+    # generator, so withdrawal always wins the first-match race.
+    (re.compile(r"REFUT", re.I),                               "REFUTATION"),
+    (re.compile(r"RETAG", re.I),                               "RETAG"),
+    (re.compile(r"WITHDRAW", re.I),                            "WITHDRAWN"),
+    (re.compile(r"SUPERSED", re.I),                            "SUPERSEDED"),
+    (re.compile(r"DEMOT", re.I),                               "DEMOTED"),
+    (re.compile(r"OVERCLAIM", re.I),                           "OVERCLAIM"),
+    (re.compile(r"TAUTOLOG", re.I),                            "TAUTOLOGY"),
     (re.compile(r"STAGE\s+1\s+CLOSED\s+POSITIVE", re.I),       "STAGE_1_CLOSED_POSITIVE"),
     (re.compile(r"CLOSED\s+NEGATIVE", re.I),                   "CLOSED_NEGATIVE"),
     (re.compile(r"STRONGLY\s+MOTIVATED\s+CONJECTURE", re.I),   "SMC"),
@@ -69,6 +84,48 @@ TAG_NORMALISATION = [
     (re.compile(r"PARTIAL", re.I),                             "PARTIAL"),
     (re.compile(r"STRONG\s+POSITIVE", re.I),                   "STRONG_POSITIVE"),
     (re.compile(r"POSITIVE", re.I),                            "POSITIVE"),
+    # ---- vocabulary added 2026-08-04 -------------------------------------
+    # These verdict words entered the corpus after the original list was
+    # written and were normalising to UNKNOWN: 642 bracketed tags across 380
+    # of 747 rows.  Appended (not inserted) so that first-match-wins ordering
+    # leaves every previously-matched tag untouched — only brackets that
+    # matched nothing before can be caught here.
+    (re.compile(r"FOUNDATIONAL\s+OBSTRUCTION", re.I),          "FOUNDATIONAL_OBSTRUCTION"),
+    (re.compile(r"EXECUTION\s+INVALID", re.I),                 "EXECUTION_INVALID"),
+    (re.compile(r"NOT\s+EXECUTED", re.I),                      "NOT_EXECUTED"),
+    (re.compile(r"SELECTED\s+DYNAMICS", re.I),                 "SELECTED_DYNAMICS"),
+    (re.compile(r"ENGINE\s+FACT", re.I),                       "ENGINE_FACT"),
+    (re.compile(r"NO[- ]?GO", re.I),                           "NO_GO"),
+    (re.compile(r"CLOSED\s+RESOLVED", re.I),                   "CLOSED_RESOLVED"),
+    (re.compile(r"UNDERDETERMINED", re.I),                     "UNDERDETERMINED"),
+    (re.compile(r"INCONCLUSIVE", re.I),                        "INCONCLUSIVE"),
+    (re.compile(r"RECONCILIATION|TAG[- ]?HONESTY", re.I),      "RECONCILIATION"),
+    (re.compile(r"RETRACTION", re.I),                          "RETRACTED"),
+    (re.compile(r"CORRECTION", re.I),                          "CORRECTION"),
+    (re.compile(r"CONSTRUCTIVE", re.I),                        "CONSTRUCTIVE"),
+    (re.compile(r"COHERENT[- ]?INTERPRETATION", re.I),         "COHERENT_INTERPRETATION"),
+    (re.compile(r"STRUCTURAL\s+OBSERVATION|OBSERVATION", re.I), "OBSERVATION"),
+    (re.compile(r"SPECULATION", re.I),                         "SPECULATION"),
+    (re.compile(r"VERIFIED", re.I),                            "VERIFIED"),
+    (re.compile(r"BOUNDARY", re.I),                            "BOUNDARY"),
+    (re.compile(r"CONDITIONAL", re.I),                         "CONDITIONAL"),
+    (re.compile(r"EXACT", re.I),                               "EXACT"),
+    (re.compile(r"\bSMC\b"),                                   "SMC"),
+    # Long tail. UNRESOLVED must precede RESOLVED — `RESOLVED` matches inside it.
+    (re.compile(r"UNRESOLVED", re.I),                          "UNRESOLVED"),
+    (re.compile(r"QUALIFIED", re.I),                           "QUALIFIED_OBSERVER"),
+    (re.compile(r"INVALID", re.I),                             "INVALID"),
+    (re.compile(r"ABORTED", re.I),                             "EXECUTION_ABORTED"),
+    (re.compile(r"CONSUMED", re.I),                            "CONSUMED"),
+    (re.compile(r"CALIBRATION", re.I),                         "CALIBRATION"),
+    (re.compile(r"CHARTER|CONTRACT|\bSCOPE\b", re.I),          "SCOPE_CONTRACT"),
+    (re.compile(r"FOUNDATION", re.I),                          "FOUNDATION"),
+    (re.compile(r"POLICY", re.I),                              "POLICY"),
+    (re.compile(r"\bSPEC\b", re.I),                            "SPEC"),
+    (re.compile(r"\bBUG\b", re.I),                             "BUG"),
+    (re.compile(r"NOT\s+PURSUED", re.I),                       "NOT_PURSUED"),
+    (re.compile(r"RESOLVED", re.I),                            "RESOLVED"),
+    (re.compile(r"STRUCTURAL", re.I),                          "STRUCTURAL"),
 ]
 
 # Canonical epistemic-tag → color mapping (matches plan §Phase 1 schema).
@@ -103,6 +160,47 @@ EPISTEMIC_COLORS = {
     "CLOSED_NEGATIVE":            "#c62828",
     "OPEN":                       "#757575",
     "RETRACTED":                  "#424242",
+    # ---- added 2026-08-04 alongside the TAG_NORMALISATION extension -------
+    "FOUNDATIONAL_OBSTRUCTION":   "#b71c1c",
+    "NO_GO":                      "#c62828",
+    "EXECUTION_INVALID":          "#8d6e63",
+    "NOT_EXECUTED":               "#a1887f",
+    "UNDERDETERMINED":            "#9e9e9e",
+    "INCONCLUSIVE":               "#bdbdbd",
+    "BOUNDARY":                   "#ef6c00",
+    "SELECTED_DYNAMICS":          "#fbc02d",
+    "ENGINE_FACT":                "#66bb6a",
+    "CLOSED_RESOLVED":            "#2e7d32",
+    "EXACT":                      "#2e7d32",
+    "VERIFIED":                   "#43a047",
+    "CONSTRUCTIVE":               "#00897b",
+    "CONDITIONAL":                "#ffb74d",
+    "CORRECTION":                 "#1976d2",
+    "RECONCILIATION":             "#1976d2",
+    "OBSERVATION":                "#90a4ae",
+    "COHERENT_INTERPRETATION":    "#26c6da",
+    "SPECULATION":                "#ffa000",
+    "REFUTATION":                 "#b71c1c",
+    "RETAG":                      "#ef6c00",
+    "WITHDRAWN":                  "#424242",
+    "SUPERSEDED":                 "#616161",
+    "DEMOTED":                    "#ef6c00",
+    "OVERCLAIM":                  "#c62828",
+    "TAUTOLOGY":                  "#c62828",
+    "UNRESOLVED":                 "#9e9e9e",
+    "QUALIFIED_OBSERVER":         "#00838f",
+    "INVALID":                    "#8d6e63",
+    "EXECUTION_ABORTED":          "#8d6e63",
+    "CONSUMED":                   "#795548",
+    "CALIBRATION":                "#7e57c2",
+    "SCOPE_CONTRACT":             "#26c6da",
+    "FOUNDATION":                 "#4527a0",
+    "POLICY":                     "#546e7a",
+    "SPEC":                       "#5e35b1",
+    "BUG":                        "#1976d2",
+    "NOT_PURSUED":                "#757575",
+    "RESOLVED":                   "#2e7d32",
+    "STRUCTURAL":                 "#00acc1",
     "UNKNOWN":                    "#bdbdbd",
 }
 
@@ -184,8 +282,36 @@ _DOC_REF = re.compile(r"`?(docs/theory/[A-Za-z0-9_/\-]+\.md)`?")
 _PRIMARY_DOC = re.compile(r"`([A-Z][A-Z_0-9]+\.md)`")  # first uppercase-snake-case .md file
 
 
-def parse_quick_index_row(line: str) -> dict | None:
-    """Parse one Quick-index table row.  Returns None for non-rows."""
+_RECORD_LINK = re.compile(r"\s*\[…full record →\]\(#([a-z0-9\-]+)\)\s*$")
+_RECORD_BLOCK = re.compile(
+    r'<a id="([a-z0-9\-]+-record)"></a>\s*\n\s*'
+    r"\*\*Tag\.\*\*(.*?)\n\s*\*\*Record\.\*\*(.*?)(?=\n\s*---\s*\n)",
+    re.S,
+)
+
+
+def load_detail_blocks(text: str) -> dict[str, tuple[str, str]]:
+    """Map anchor -> (full tag text, full record text) from 'Full row records'.
+
+    The 2026-08-04 restructure moved each oversized row's Tag and Record cells
+    into a detail block, leaving a verbatim prefix plus a link in the table.
+    Reading only the table would silently lose the dependency and script
+    references that live in the moved text — 369 rows' `deps` and 85 rows'
+    `script_refs` in the ledger as it stands.
+    """
+    return {m.group(1): (m.group(2).strip(), m.group(3).strip())
+            for m in _RECORD_BLOCK.finditer(text)}
+
+
+def parse_quick_index_row(line: str,
+                          details: dict[str, tuple[str, str]] | None = None) -> dict | None:
+    """Parse one Quick-index table row.  Returns None for non-rows.
+
+    `details` is the mapping from `load_detail_blocks`.  When supplied, a row
+    that was restructured is re-joined with its full text before dependencies,
+    script references and the sector are extracted.  Omitting it keeps the old
+    table-only behaviour, so existing callers are unaffected.
+    """
     if not _FTD_ROW.match(line):
         return None
 
@@ -207,6 +333,16 @@ def parse_quick_index_row(line: str) -> dict | None:
         cells = cells[:3] + [" | ".join(cells[3:])]
 
     ftd_id, short_name, tag_raw, description = cells
+
+    # Re-join a restructured row with the full text held in its detail block.
+    # The table cell keeps a verbatim prefix; the block keeps the whole record.
+    link = _RECORD_LINK.search(description)
+    if link:
+        description = _RECORD_LINK.sub("", description)
+        if details:
+            full = details.get(link.group(1))
+            if full:
+                tag_raw, description = full
 
     # Tag normalisation.  The corpus has two row formats:
     #   (a) bare-tag rows  -- "| ... | THEOREM | UNAFFECTED |"
@@ -258,10 +394,11 @@ def parse_quick_index_row(line: str) -> dict | None:
 def parse_ledger(ledger_path: Path) -> list[dict]:
     """Parse the LEDGER.md Quick-index table.  Returns list of ledger-claim dicts."""
     text = ledger_path.read_text(encoding="utf-8")
+    details = load_detail_blocks(text)
     rows: list[dict] = []
     seen_ids: set[str] = set()
     for line in text.splitlines():
-        row = parse_quick_index_row(line)
+        row = parse_quick_index_row(line, details)
         if row is None:
             continue
         if row["id"] in seen_ids:
