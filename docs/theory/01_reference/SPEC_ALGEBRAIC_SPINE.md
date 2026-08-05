@@ -180,9 +180,9 @@ identification x−  N_c is retired per v1.4 §5.
 >
 > **And the criterion cannot discriminate at all at scale:** a random target
 > near `G*` is matched by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803
-> gives the mechanism — `G*(τ) = √(8π|η|⁴Im τ)` is SL₂(ℤ)-invariant and `τ = i`
-> is the order-2 elliptic fixed point, so canonical `G*` is **by construction a
-> critical value** and sits at a density singularity of its own distribution.
+> establishes that canonical `G*` sits at a **saddle** of the SL₂(ℤ)-invariant
+> `G*(τ) = √(8π|η|⁴Im τ)` — the order-2 elliptic point `τ = i` — giving a
+> logarithmic density divergence there. ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated.
 >
 > The trivial-multiplier criterion declared below was used unchanged; no
 > tolerance was tuned. See `ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md` and

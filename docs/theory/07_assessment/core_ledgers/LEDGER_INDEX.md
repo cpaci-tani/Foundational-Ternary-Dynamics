@@ -111,7 +111,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0367` | THEOREM, COHERENT_INTERPRETATION, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION | Reflection flow parity — the product and ratio branches as first-order flows whose coefficients split by parity, differential algebraicity, and value… | L512 |
 | `FTD-0381` | OBSERVATION | The parity twist as a superdeterminant (CHPS r=4 χ₋₄-graded moment module) | L526 |
 | `FTD-0382` | SYNTHESIS, OBSERVATION, COHERENT_INTERPRETATION, SELECTION | The bilateral-symmetry criterion for an orientation carrier: C_s = Stab_{O(3)}(v,g) | L527 |
-| `FTD-0803` | MEASURED, CORRECTION | Why is the `G*` window crowded? Is FTD-0321's measured base rate an accident of the scan, or forced by where `G*` lives? | L965 |
+| `FTD-0803` | THEOREM, MEASURED, REFUTATION, CORRECTION | Why is the `G*` window crowded? Is FTD-0321's measured base rate an accident of the scan, or forced by where `G*` lives? | L965 |
 
 ---
 
@@ -1063,7 +1063,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 292 |
+| THEOREM | 293 |
 | CLOSED_NEGATIVE | 185 |
 | MEASURED | 163 |
 | OPEN | 129 |
@@ -1090,7 +1090,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | EXACT | 12 |
 | POSITIVE | 10 |
 | UNDERDETERMINED | 10 |
+| REFUTATION | 10 |
 | PRE_REGISTRATION | 9 |
 | SCOPE_CONTRACT | 9 |
-| REFUTATION | 9 |
 
