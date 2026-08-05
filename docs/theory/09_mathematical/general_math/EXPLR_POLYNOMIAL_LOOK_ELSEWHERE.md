@@ -1,10 +1,46 @@
 # EXPLR — Polynomial-Level Look-Elsewhere Refinement (FTD-0097 Extension)
 
 **Document type:** Exploratory result (substantive positive)
-**Status:** [STRUCTURAL OBSERVATION] — extends FTD-0097's monomial scan to polynomial level; master quadratic shown to be uniquely dual-selective within the natural FTD polynomial family.
+**Status:** [NUMERICAL FACT — finite enumeration] *(downgraded from [STRUCTURAL OBSERVATION] 2026-08-04, FTD-0802 — see the governing banner below)* — extends FTD-0097's monomial scan to polynomial level. Exactly one polynomial in the stated finite family matches the numerical pair at MQ precision. **That count is what chance predicts (`N_null = 0.0014`), so it is not evidence of structural uniqueness.**
 
 **v1.4 annotation:** This scan uses the historical target pair `(1/α, N_c)` (where the second target reflects the pre-v1.4 `x_-  N_c` identification). That identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template-uniqueness fact reported here — that exactly one polynomial in the family matches the *numerical pair* (137.036…, 3.024) at MQ precision — is **independent of the physical interpretation of the second target** and stands. The "dual-prediction" prose below is preserved as historical interpretation, with the understanding that the load-bearing physics identification is now single-root (`x_+  1/α`, FTD-0013). `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. FTD-0319's later adversarial scan (formerly cited as FTD-0189; 2.65 M polynomials, 18-constant FTD-undesigned basket; rank 1 by ~130×) is the canonical follow-up.
 **Related:** `AUDIT_LOOK_ELSEWHERE_RESULTS.md` (FTD-0097 monomial scan); `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` (tower-level scan); `EXPLR_PATHS_TO_ALPHA.md` (α-derivation route survey); `THEOREM_HARMONIC_INVARIANT_TOWER.md` (FTD-0111)
+
+---
+
+> ## ⚠ GOVERNING BANNER — the uniqueness reading here does not survive its base rate
+>
+> **Added 2026-08-04 (FTD-0802); this banner governs. Where the body below and
+> this banner disagree, this banner wins.**
+>
+> This document is the source of the "uniquely dual-selective" reading that
+> propagated into OT-3.3, `SPEC_PHYSICS_BRIDGE`, `FOUND_STRUCTURAL_DECOUPLING`
+> and the papers. Both of its legs have now been audited refute-by-default:
+>
+> - **The canonical follow-up named in the v1.4 annotation below (FTD-0319, the
+>   2.65 M adversarial scan) sits at the chance base rate** — FTD-0791,
+>   2026-08-03. The null expects 1.42–1.67 matchers at the registered gate; the
+>   scan found 1. Retagged `[MEASURED]` → `[SELECTION]`.
+> - **The extended version of *this* family failed its own pre-registered
+>   base-rate control** — FTD-0802, 2026-08-04
+>   (`PREREG_OT33_BASERATE_v1.md`, `scripts/experiments/verify_ot33_baserate.py`).
+>   Measured on the rational-coefficient extension of the family scanned here:
+>   `N_null = 0.0014` dual-matchers under displaced targets (`P(>=1) = 0.0009`),
+>   so **a unique-matcher outcome is what chance predicts, not evidence against
+>   it**. The `x_+` leg alone matches a random target near 137 to 1.26 ppm
+>   **about one time in three** (`P(>=1) = 0.337`). The `x_-` leg eliminates
+>   **zero** candidates at the registered gate, so "dual-selective" and
+>   "selective" are the same predicate — and the `x_- ↔ N_c` target the v1.4
+>   annotation already flags as retired is doing none of the work.
+>   The extended scan's published count was **also wrong**: 4 non-master
+>   dual-matchers, not 0.
+>
+> **What survives:** the arithmetic. Exactly one polynomial in the stated finite
+> family matches the numerical pair at MQ precision — that is a true, checkable
+> [NUMERICAL FACT] about a finite enumeration. **What does not survive:** reading
+> it as structural uniqueness, or citing it as evidence for `x_+ = 1/α`. Per
+> FTD-0802 the identification now retains **no numerical-uniqueness support of
+> any kind**; OT-1.9 and OT-1.5 remain, both structural.
 
 ---
 

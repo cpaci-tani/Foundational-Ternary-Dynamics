@@ -4,7 +4,40 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
-**LATEST — FTD-0800/0801 (2026-08-04): the screened compact-law C3 candidates
+**LATEST — FTD-0802 (2026-08-04): `x_+ = 1/alpha` now has NO
+numerical-uniqueness support of any kind.** The base-rate control OT-3.3 had
+never faced was pre-registered (`PREREG_OT33_BASERATE_v1.md`, outcomes and both
+runner SHA-256s locked before execution) and run. **Outcome B:**
+`N_null = 0.0014` dual-matchers under displaced targets against a pre-blessed
+threshold of `< 0.1` — finding no other matcher is exactly what chance
+predicts, so the zero count discriminates nothing. The `x_-` leg eliminates
+**zero** candidates at the registered gate (16 pass `x_+`, 16 pass both), so
+*dual-match* and *match* are one predicate here, and `x_- <-> N_c` is retired
+(FTD-0014) — the identical defect FTD-0791 found in FTD-0319. The `x_+` leg
+alone matches a random target near 137 about **one time in three**.
+
+**Separately, the published count was wrong.** OT-3.3's "only the master
+quadratic dual-matches" rested on a runner line reading `EXT-B genuinely-new
+cubic dual-matchers: 0 (all are master quadratic x linear factor)` — a
+**hardcoded literal string**. `matchers_b` never entered `genuine_unique` and no
+code tested the claim. It is false: all four EXT-B cubics leave a nonzero
+remainder. Corrected runner reports **5 distinct dual-matchers, 4 beyond the
+master quadratic**. Two further defects in the same artifact: it aborted on
+Windows before scanning anything, and still printed the `~4e5` Bayes figure
+retracted in June (the audit comment had been added directly above the print,
+and the print left untouched).
+
+**OT-3.3 is retagged `[NUMERICAL FACT]` -> `[SELECTION]` and withdrawn as
+support for OT-5.1.** With FTD-0791 having taken the FTD-0319 leg, the
+remaining support for `x_+ = 1/alpha` is OT-1.9 and OT-1.5 — **both
+structural, neither numerical**. Read alongside FTD-0792 (the engine runs on
+the CODATA value; a source-lint test *enforces* that the derived root reaches
+no force path), the empirical case is: 1.26 ppm of arithmetic, occurring at
+chance frequency in its own scanned family, in an engine that never used it.
+The 1.26 ppm agreement itself remains `[NUMERICAL FACT]` and FTD-0001 stays
+`[SMC]` — this moves no other tag.
+
+**FTD-0800/0801 (2026-08-04): the screened compact-law C3 candidates
 close negative, but only at their actual executed scope.** FTD-0800's locked
 Maxwell screen found no native `n = 4` mechanism in the executed set: 38
 retained connected stationary equilibria at `N=3..6` and SC blocks at
@@ -142,11 +175,19 @@ whole thesis is the three-leg bridge this removes, so rewriting it is a
 re-derivation and stays `[OPEN]`. Two things were deliberately left alone
 because each is a research act, not a transcription fix: **FC-W's price stays
 at y = 1 gap-class** though its "high-value" justification was exactly the
-withdrawn scan-rigidity, and **OT-3.3 is flagged rather than refuted** — it is
-a different runner (the 2.87M extended scan) whose base-rate control has never
+withdrawn scan-rigidity, and **OT-3.3 was flagged rather than refuted** — a
+different runner (the 2.87M extended scan) whose base-rate control had never
 been run, and a zero count means nothing until the null expectation is known.
 The 1.26 ppm agreement itself remains `[NUMERICAL FACT]` - it is arithmetic
 and unchanged.
+
+> **UPDATE 2026-08-04 (FTD-0802): the second of those two is now closed.** That
+> control was pre-registered and run — Outcome B, `N_null = 0.0014` — and
+> OT-3.3's count was additionally found to be wrong (4 non-master
+> dual-matchers, not 0). OT-3.3 is retagged `[SELECTION]` and withdrawn as
+> support for OT-5.1; see the FTD-0802 section at the top of this page.
+> **FC-W's price remains the one item deliberately left**, and re-pricing it is
+> still a research act.
 
 **FTD-0792:** the engine runs on `ALPHA = 1/137.035999177` (CODATA-matched)
 while the derived root sits unused in `ALPHA_TREE`, and a **source-lint
