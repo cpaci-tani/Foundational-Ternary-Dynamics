@@ -109,9 +109,9 @@ proof.
 > h ≥ 2 fields with |d| ≤ 907 — and then **fails at |d| = 7,895**, reaching
 > **1,271 fundamental dual-matchers across 696 discriminants** by |d| ≤ 500,000.
 > The criterion has no discriminating power at scale: a random target is matched
-> by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803 gives the mechanism —
-> `G*` is an SL₂(ℤ)-invariant evaluated at the order-2 elliptic fixed point
-> `τ = i`, hence a **forced critical value** sitting at a density singularity.
+> by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803 establishes that `G*` sits
+> at a **saddle** of an SL₂(ℤ)-invariant (the order-2 elliptic point `τ = i`),
+> giving a logarithmic density divergence. ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated.
 >
 > The §4 "structural argument for non-match at h ≥ 2" is therefore **moot**:
 > there is no non-match to explain. OT-1.9's Tier-1 *arithmetic*

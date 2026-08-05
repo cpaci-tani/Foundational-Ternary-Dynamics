@@ -1,123 +1,150 @@
-# FTD-0803 — Why the G\* window is crowded: an elliptic fixed point forces a van Hove singularity
+# FTD-0803 — G\* sits at a saddle of an SL₂(ℤ)-invariant, giving a log density divergence of bounded consequence
 
-**Status:** `[MEASURED — VERIFIED OVER 3 DECADES]` +
-`[EXPLANATION — SURVIVED ONE ADVERSARIAL PASS, NOT TWO]` +
-`[SCOPE CORRECTION — APPLIES TO THE CM SCAN ONLY, NOT TO FTD-0319 / OT-3.3]`
-**Verdict:** `GSTAR_SITS_AT_A_FORCED_CRITICAL_VALUE_SO_ITS_WINDOW_IS_STRUCTURALLY_CROWDED`
-**Parent:** FTD-0321 (which measured the crowding; this explains it)
+**Status:** `[THEOREM — CLOSED FORM, saddle character and log coefficient]` +
+`[MEASURED — coefficient confirmed to 0.2%]` +
+`[CLOSED NEGATIVE — the "structurally guaranteed uninformative" consequence is REFUTED]` +
+`[CORRECTION — five statements in v1 of this row were wrong or overstated]`
+**Verdict:** `SADDLE_AND_LOG_DIVERGENCE_CONFIRMED_BUT_THE_ENHANCEMENT_IS_BOUNDED_AT_4_TO_5x`
+**Parent:** FTD-0321. **Audited:** independent refute-by-default pass, 2026-08-05.
 **Production impact:** none.
 
 ---
 
-## 1. The question
+## 1. What survives, and it is stronger than v1 claimed
 
-FTD-0321 measured that the dual-match criterion has no discriminating power at
-scale: over `|d| ≤ 200,000` a random target near `G*` is matched by ~204 ideal
-classes with `P(≥1) = 1.0000`. That is an observation. **Why** is that window
-crowded?
+**`G*(τ) = √(8π·|η(τ)|⁴·Im τ)` is SL₂(ℤ)-invariant.** Two independent `η`
+implementations (theta-quotient and q-product) agree to `3.9e-61`; random
+SL₂(ℤ) words over 66 γ-images and 5 base points give worst deviation `9.2e-59`.
 
-## 2. The claim
+**`τ = i` is a critical point, by symmetry.** `S(τ) = −1/τ` is holomorphic with
+`S'(i) = −1`, so its real Jacobian at `i` is `−I₂`. For real-valued `G` with
+`G∘S = G`, the chain rule gives `dG_i∘(−I) = dG_i`, hence `dG_i = 0`. No
+holomorphy of `G` is used.
 
-The per-class invariant used by FTD-0321,
+**It is a saddle — provable in closed form.** v1 reported this only as a
+measurement. `log G* = ½log(8π) + ½log y + 2log|η|`, and `log|η|` is harmonic
+(η is non-vanishing holomorphic), so
 
 ```
-G*(tau) := sqrt( 8 pi * |eta(tau)|^4 * Im(tau) )
+Δ log G* = −1/(2y²)   exactly   ⟹   tr Hess(G*) = −G*/(2y²) at any critical point
 ```
 
-is `SL_2(Z)`-invariant. `tau = i` is the order-2 elliptic fixed point of
-`SL_2(Z)` (fixed by `S: tau -> -1/tau`), and an invariant function must have
-vanishing gradient at an elliptic fixed point: the differential of `S` acts as
-`-1` on the tangent space, so `grad G = -grad G`, hence `0`. Canonical
-`G* = G*(i)` is therefore, **by construction, a critical value**.
+With `u := Re(log η)''(i) = π²E₄(i)/72 − 1/8 = 0.0745528312288587`,
 
-Near a critical point the map `tau -> G*` is degenerate: a two-dimensional
-neighbourhood is compressed into a vanishing range of values. CM points
-equidistribute in the fundamental domain, so the density of `G*` values is the
-pushforward of a smooth measure through that degenerate map, and it diverges at
-the critical value. The Hessian at `tau = i` has signature `(+, -)`, i.e. a
-**saddle**, and in two dimensions a saddle gives a **logarithmic** divergence —
-the van Hove singularity familiar from 2D densities of states.
+```
+Hess(G*)|_i = G*(i)·diag(2u, −2u − 1/2),    d²G/dx∂y = 0 exactly
+```
 
-**Consequence:** the FTD-0321 scan was structurally guaranteed to be
-uninformative at scale, independent of anything about `alpha`.
+the mixed partial vanishing being *forced* by the `x → −x` mirror. Hence
 
-## 3. Evidence
+```
+saddle  ⟺  9/π² < E₄(i) < 27/π²  ⟺  0.91189 < 1.455763 < 2.73567   ✓ strictly inside
+```
 
-| Test | Result |
-|---|---|
-| `SL_2(Z)`-invariance (6 matrices × 3 points) | worst deviation `8.7e-30` |
-| `dG/dy` at `x=0`, `y = 0.90 / 0.95 / **1.00** / 1.05 / 1.10` | `0.225 / 0.104 / **3.7e-40** / -0.089 / -0.167` |
-| `dG/dy` at `tau = rho` (order-3 point) | `1.8e-32` |
-| Hessian at `tau = i` | `d2G/dx2 = +0.441`, `d2G/dy2 = -1.920` → saddle |
-| Global max of the distribution | `2.990158 = G*(rho)`; `G*(i) = 2.958675` is the saddle below it |
+**Only two critical points exist in the fundamental domain.**
+`|∇ log G*| = (π/6)|E₂*(τ)|`, so critical points are exactly the zeros of the
+non-holomorphic weight-2 Eisenstein series. A 2401×4001 grid finds only `i` and
+`ρ`; excluding disks of radius 0.05/0.1/0.2 the minimum `|E₂*|` rises
+monotonically 0.0141/0.0276/0.0493.
 
-Density of `G*` values (exact `tau = i` forms **excluded** throughout — see §4):
+**`τ = ρ` is a nondegenerate local maximum** (Hessian `−0.9967·I`, exactly
+isotropic as order-3 symmetry forces) — and this is the control that makes the
+whole argument work; see §2.
 
-| half-width | \|d\| ≤ 25,000 | \|d\| ≤ 100,000 | \|d\| ≤ 400,000 |
-|---:|---:|---:|---:|
-| 1e-2 | 3,079,750 | 24,651,800 | 197,230,450 |
-| 1e-3 | 4,617,000 | 37,749,500 | 302,102,500 |
-| 1e-4 | 5,545,000 | 50,035,000 | 406,035,000 |
-| 1e-5 | 5,300,000 | 52,900,000 | 507,700,000 |
-| 1e-6 | 2,000,000 | 49,000,000 | 452,000,000 |
+**The divergence is logarithmic with a parameter-free coefficient.** Reduced
+forms with `|d| ≤ D` equidistribute w.r.t. `dxdy/y²` (elementary lattice count,
+verified: predicted 212,086 vs actual 202,198 in a box around `i`). Because
+`|τ| ≥ 1`, only the *half*-neighbourhood of `i` is populated:
 
-Log-slope over the clean decades `1e-2 .. 1e-4`, at `G*(i)` versus at a generic
-value `2.90`:
+```
+A = c(D)/√(λ₁|λ₂|),    c(D) = 3N/π,    √(λ₁|λ₂|) = 0.920453909591
+```
 
-| range | at `G*(i)` | at 2.90 | ratio |
-|---|---:|---:|---:|
-| \|d\| ≤ 25,000 | 535,322 / e-fold | 7,872 | **68×** |
-| \|d\| ≤ 100,000 | 5,511,892 / e-fold | 15,743 | **350×** |
-| \|d\| ≤ 400,000 | 45,341,332 / e-fold | ≈ 0 (flat) | unbounded |
+| D | A_fit | A_theory | ratio | rms(log) | rms(free power) |
+|---:|---:|---:|---:|---:|---:|
+| 25,000 | 367,273 | 709,231 | 0.518 | 0.084 | 0.098 |
+| 100,000 | 4,624,779 | 5,700,076 | 0.811 | 0.056 | 0.082 |
+| 400,000 | 44,973,027 | 45,703,943 | **0.984** | 0.0041 | 0.040 |
+| 1,600,000 | 365,283,767 | 366,045,113 | **0.998** | **0.0007** | 0.038 |
 
-**The saturation is a sampling cutoff, not a ceiling:** the plateau moves from
-half-width `1e-4` to `1e-5` as the range grows, exactly as a finite discriminant
-bound predicts. The divergence is genuine.
+Monotone convergence to theory as the finite-`D` cutoff recedes. A 3×10⁸-sample
+Monte Carlo from `dxdy/y²` (no arithmetic granularity at all) shows a clean log
+over **eight decades** (`w = 1e-1 … 1e-9`), `A/N = 1.0768` vs theory `1.0375`.
+A constrained `w^(−1/2)` law is **50× worse** (rel rms 0.689 vs 0.0136). Power
+laws are decisively excluded.
 
-## 4. Adversarial pass — three of the author's own statements were wrong
+**The `ρ` control behaves exactly as 2D theory demands:** no divergence at the
+extremum (MC density flat at ~1.35 across six decades; arithmetic `A_fit/A_theory
+→ 0`), log divergence at the saddle.
 
-This section is the audit, recorded because the corrections are the load-bearing
-part.
+## 2. The v1 reasoning was invalid — a critical point is not enough
 
-**(a) A cited derivative was vacuous.** The first write-up cited `dG/dx = 0` at
-`tau = i` as evidence of the elliptic fixed point. It is not: `x = 0` is a
-reflection axis (`tau -> -conj(tau)`), so `dG/dx` vanishes there for **every**
-`y` — verified at `y = 1.1, 1.6, 2.4`. Only `dG/dy` isolates `tau = i`. The
-claim survives on the corrected evidence; the original presentation padded it.
+v1 argued: *"near a critical point the map is degenerate, so the density
+diverges."* **That is false in 2D**, and `ρ` is the counterexample: it is a
+forced critical point of the same invariant, and the density there does **not**
+diverge. In 2D an extremum gives a finite step; only a **saddle** gives the
+logarithmic divergence. The conclusion is rescued by the saddle-specific
+statement, but the general argument v1 gave does not support it.
 
-**(b) The sharpest density figures were self-contamination.** 223 forms
-`(a,0,a)` have `tau = i` *exactly* (`d = -4f^2`, the conductor family) and pile a
-**delta spike** onto `G*(i)`. That is the same point counted repeatedly, not a
-van Hove singularity. Removing them drops the reported density at half-width
-`1e-6` from `276,500,000` to `165,000,000`, and at `1e-7` from `1,185,000,000`
-to noise. The divergence is real over `1e-2 .. 1e-5`; the author's most dramatic
-numbers were reading his own artifact. **All figures in §3 exclude these forms.**
+## 3. The consequence is REFUTED — the enhancement is bounded
 
-**(c) The punchline overreached.** The first statement was that *any*
-look-elsewhere test targeting `G*` is asking at the most crowded value. That
-holds for scans over **CM points / modular values** (FTD-0321). It does **not**
-transfer to FTD-0319 (2.65M polynomials over an 18-constant basket) or OT-3.3
-(2.87M `n·G*^p`-coefficient polynomials): those scan a different space with a
-different measure. Their high base rates are real and independently measured
-(FTD-0791, FTD-0802) but have their **own, separate causes**. Three scans
-failing for related-looking reasons is not one mechanism explaining all three.
+v1 concluded that FTD-0321's scan was *"structurally guaranteed to be
+uninformative at scale."* **This is a quantitative non-sequitur.**
 
-## 5. Honest limitations
+Sliding the true match window (half-width `1.843e-6`; the `x_-` leg is 1400×
+looser and never binds) across `(2.90, 2.98)`:
 
-- The density argument is **numerical, not proved**. Steps 2's symmetry claims
-  are checks of standard theorems; the pushforward divergence is measured.
-- Equidistribution of CM points (Duke) is **cited, not tested here**.
-- **One adversarial pass, not two.** The pass above was run by the same author
-  who wrote the claim. Per `feedback-ftd-audit-before-constructing`, that is
-  weaker than an independent refute-by-default review, and this row is tagged
-  accordingly. A second, independent pass is the natural next step before any
-  promotion.
-- Nothing here promotes a tag. `x_+ = 1/alpha` remains `[SMC]`; OT-1.9's
-  Tier-1 arithmetic is untouched; FTD-0321's registered `UNIQUE-CONFIRMED`
-  stands at `[NUMERICAL FACT]`.
+| \|d\| ≤ | forms | at `G*(i)` | band mean | enhancement | P(≥1) at a *random* target |
+|---:|---:|---:|---:|---:|---:|
+| 200,000 | 15,561,211 | 640 | 164.5 | 3.9× | **1.0000** |
+| 1,000,000 | 174,284,911 | 7,769 | 1,839 | 4.2× | **1.0000** |
+| 4,000,000 | 1,395,267,675 | 67,603 | 14,715 | 4.6× | **1.0000** |
+| 16,000,000 | 11,166,117,863 | 551,131 | 117,721 | **4.68×** | **1.0000** |
 
-## 6. Cross-references
+**The enhancement converges to a bounded ~4–5× and provably cannot grow:** `A`,
+`B` and the generic density all scale as `c(D) = 3N/π`, so the ratio is
+`D`-independent, while the raw CM count grows as `D^{3/2}` without bound.
 
-FTD-0321 (the scan this explains), FTD-0791 / FTD-0802 (the base-rate method,
-whose *results* this does **not** explain — see §4c),
-`ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md`, `TRACKER_ONTIC_TRUTH.md` OT-1.9.
+**The scan was uninformative because there are ~10⁸ CM values per unit `G*`, not
+because of the singularity.** A *randomly placed* target already gets
+`P(≥1) = 1.0000` with ~165–200 matchers. Removing the singularity entirely would
+not have saved it.
+
+**And the registered scan was not saturated at all.** The crossover where a
+random target expects one chance matcher is `|d| ≈ 6,676`. FTD-0321's registered
+domain `|d| ≤ 907` is **~7× inside the informative regime** (expected chance
+matchers ≈ 0.05, ≈ 0.2 with the van Hove factor). So the registered
+UNIQUE-CONFIRMED result **was** informative; only the declared deep extension is
+saturated, and v1's "at scale" qualifier was carrying the entire claim.
+
+## 4. Corrections to v1 of this row
+
+| # | v1 said | Corrected |
+|---|---|---|
+| 1 | critical point ⟹ density diverges | **False in 2D.** Saddle-specific; `ρ` is the counterexample (§2) |
+| 2 | *"Only `dG/dy` isolates `τ = i`"* | **Same error class v1 had just rejected.** `\|τ\| = 1` is *also* a mirror (`τ → 1/τ̄`, anti-holomorphic, fixing the arc pointwise), so `dG/dr` vanishes along the **whole** unit arc. At `i` the arc normal *is* `y`, so `dG/dy(i) = 0` is exactly as trivial as `dG/dx = 0` on `x = 0`. **Honest statement: `τ = i` is the transverse intersection of two mirrors, each killing one gradient component.** Same for `ρ`. |
+| 3 | slope ratio *"68× / 350× / unbounded"* | **Meaningless.** The denominator's true value is zero and the measured values are noise; at a different generic value (2.951234) the same ratios come out **negative**. v1 picked the generic point with the smallest accidental slope. Use `A_measured/A_theory` = 0.984, 0.998, and `A ≈ 0` elsewhere. |
+| 4 | *"global max of the distribution = G\*(ρ)"* | Conflates the max of the **function** with a max of the **density**. Density at `G*(ρ)` is ~3× *lower* than at `G*(i)`. |
+| 5 | *"density argument is numerical, not proved"*; Duke cited | **Under-claimed and mis-armed.** The saddle is closed-form provable and the log coefficient is a parameter-free prediction confirmed to 0.2%. Duke's theorem concerns a single `d → ∞`; this scan aggregates over all `|d| ≤ D`, for which equidistribution is an **elementary lattice count** — tested directly, no Duke needed. |
+
+## 5. Incidental, and worth recording
+
+The scan's target `x₊ = 137.0361714582` corresponds to `g = 2.958675119189114`
+— `G*(i)` to `4.8e-13`, i.e. `2.6e-7` window half-widths. The target sits at the
+singularity **by construction**. But CODATA `1/α = 137.035999177` corresponds to
+`g = 2.9586732801`, displaced from `G*(i)` by `1.839e-6` = **0.998 window
+half-widths**: the physical constant sits essentially exactly on the *edge* of
+the registered tolerance, not at the singularity's peak.
+
+## 6. Scope — unchanged and confirmed
+
+The mechanism explains **CM-point scans only**. It does not transfer to
+FTD-0319 or OT-3.3, whose nulls expect `1.42–1.67` and `0.0014` matchers — the
+*opposite* regime. A crowding mechanism cannot explain a sparsity failure. The
+audit confirmed this disclaimer is correctly stated in both analysis documents.
+
+## 7. Cross-references
+
+FTD-0321, FTD-0791 / FTD-0802 (whose results this does **not** explain — §6),
+`ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md`, `TRACKER_ONTIC_TRUTH.md` OT-1.9 /
+OT-5.1, `SPEC_ALGEBRAIC_SPINE.md` §3.

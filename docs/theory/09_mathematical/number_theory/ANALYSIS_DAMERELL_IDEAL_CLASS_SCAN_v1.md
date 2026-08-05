@@ -143,10 +143,9 @@ point).
 The correct mechanism: `G*(τ)` is `SL₂(ℤ)`-invariant and `τ = i` is the order-2
 elliptic fixed point, so the gradient vanishes there **by symmetry** (measured
 `dG/dy = 3.7e-40`, against `O(0.1)` at neighbouring `y`). Canonical `G*` is by
-construction the value at that critical point, and the density of `G*` values
-diverges logarithmically there — a saddle-type van Hove singularity. So the
-target is not merely "in a dense region"; it sits at a **forced** density
-singularity. Registered separately as FTD-0803, with its adversarial pass and
+construction the value at that critical point — specifically a **saddle**, which
+in 2D gives a logarithmic density divergence (an extremum would not; `τ = ρ` is
+the control). ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated. Registered separately as FTD-0803, with its adversarial pass and
 its scope limits (the mechanism explains this CM scan only, and does **not**
 transfer to FTD-0319 / OT-3.3).
 
