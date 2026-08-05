@@ -264,6 +264,7 @@ RANGES = [
     ((799, 799), "constituent-matter"),
     ((800, 801), "native-time-carrier"),
     ((802, 802), "framework-audits"),
+    ((803, 803), "spine-gstar-cm-modular"),
 ]
 
 # ---------------------------------------------------------------------------
