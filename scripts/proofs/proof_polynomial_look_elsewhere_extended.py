@@ -156,6 +156,32 @@ def cubic_roots(a2: float, a1: float, a0: float) -> List[float] | None:
     return sorted(real_roots, reverse=True) if real_roots else None
 
 
+def cubic_is_master_embedding(n2: int, p2: int, n1: int, p1: int,
+                              n0: int, p0: int, rel_tol: float = 1e-9) -> bool:
+    """Is x³ − a₂x² + a₁x − a₀ exactly divisible by the master quadratic?
+
+    [ADDED 2026-08-04] The EXT-B result was previously reported as
+    "0 genuinely-new cubic dual-matchers (all are master quadratic × linear
+    factor; not independent)" — but that was a hardcoded literal in a print
+    statement, and `matchers_b` was never added to `genuine_unique`. No code
+    tested the claim, and it is false: the four EXT-B matchers are
+    x·P_master(x) − a₀ with a₀ ∈ {1, G*, 2, 3}, which leave a nonzero
+    remainder. This function performs the test that was asserted.
+
+    Synthetic division of (1, −a₂, a₁, −a₀) by (1, −16G*², 16G*³).
+    """
+    a2 = n2 * (G_STAR ** p2)
+    a1 = n1 * (G_STAR ** p1)
+    a0 = n0 * (G_STAR ** p0)
+    b1, b0 = -MASTER_N * G_STAR ** MASTER_P, MASTER_M * G_STAR ** MASTER_Q
+    c2, c1, c0 = -a2, a1, -a0
+    q0 = c2 - b1                      # quotient is x + q0
+    r1 = c1 - b0 - q0 * b1            # remainder r1·x + r0
+    r0 = c0 - q0 * b0
+    scale = max(1.0, abs(a2), abs(a1), abs(a0))
+    return abs(r1) / scale < rel_tol and abs(r0) / scale < rel_tol
+
+
 def scan_cubic_polynomials(
     coeff_max: int = 32, p_max: int = 5,
 ) -> Tuple[int, List[Tuple]]:
@@ -236,6 +262,13 @@ def scan_extended_multipliers(
 # Master scan
 # ─────────────────────────────────────────────────────────────────────
 def main() -> int:
+    # The report below uses ∈, ×, ≤ and →. On a cp1252 console (Windows
+    # default) printing them raised UnicodeEncodeError at the first EXT-A
+    # header, so this runner aborted before scanning anything. Fixed
+    # 2026-08-04; matches the pattern already used in scripts/verification.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     print("=" * 72)
     print("proof_polynomial_look_elsewhere_extended.py — MC-T2.1 + MC-T2.2")
     print("=" * 72)
@@ -343,11 +376,19 @@ def main() -> int:
     # some small r. Verify by checking that the third root is close to
     # 1 / (linear coeff) · (constant coeff)^(-1) ≈ 1/16G*³ ≈ 0.0024.
     print()
-    print(f"  EXT-B cubics: {len(matchers_b)} found.")
-    print(f"    Each cubic factorizes as master_quadratic × (x − r) where")
-    print(f"    r = a_0 / (16 G*³) ≈ {1.0 / (16 * G_STAR ** 3):.4f} for a_0=1.")
-    print(f"    These are NOT independent dual-matchers — they're cubic")
-    print(f"    EMBEDDINGS of the master quadratic + a third root.")
+    # [FIX 2026-08-04] this block previously asserted "Each cubic factorizes
+    # as master_quadratic × (x − r) ... NOT independent dual-matchers".
+    # That is false, and self-inconsistent: matching the constant term needs
+    # r = a_0/(16G*³), while matching the x² term needs r = 0. Both hold only
+    # for a_0 = 0, and the scan starts at n_0 = 1. The cubics are
+    # x·P_master(x) − a_0, which leaves a nonzero remainder; the third root is
+    # only APPROXIMATELY a_0/(16G*³), and the other two roots are perturbed
+    # correspondingly (that is why x_+ ≠ 137.0361715 for all four).
+    print(f"  EXT-B cubics: {len(matchers_b)} found — form x·P_master(x) − a_0.")
+    print(f"    Third root ≈ a_0/(16 G*³) ≈ {1.0 / (16 * G_STAR ** 3):.4f} for a_0=1,")
+    print(f"    but the factorization is APPROXIMATE, not exact: matching the")
+    print(f"    constant term needs r = a_0/(16G*³) while the x² term needs")
+    print(f"    r = 0. Divisibility is tested per-cubic below.")
 
     # EXT-C: filter master quadratic out of Gaussian family
     print()
@@ -362,8 +403,15 @@ def main() -> int:
     # ─────────────────────────────────────────────────────────────────
     # Genuine count
     # ─────────────────────────────────────────────────────────────────
+    # [FIX 2026-08-04] EXT-B was excluded from this count by a hardcoded
+    # literal, never by a test — and the asserted reason ("all are master
+    # quadratic × linear factor") is false. Now computed.
+    ext_b_embeddings = [e for e in matchers_b if cubic_is_master_embedding(*e[:6])]
+    ext_b_genuine = [e for e in matchers_b if not cubic_is_master_embedding(*e[:6])]
+
     genuine_unique = (
         len({tuple(e[4:]) for e in unique_a})  # distinct (p, q) in EXT-A — should be 1 (= master quadratic)
+        + len(ext_b_genuine)
         + len(nontrivial_c)
         + len(matchers_c)
     )
@@ -372,63 +420,90 @@ def main() -> int:
     print("=" * 72)
     print(f"  EXT-A unique reduced fractions (modulo fraction redundancy): "
           f"{len({(e[0], e[1], e[2], e[3], e[4], e[5]) for e in unique_a})}")
-    print(f"  EXT-B genuinely-new cubic dual-matchers: 0 (all are master")
-    print(f"        quadratic × linear factor; not independent)")
+    print(f"  EXT-B cubic dual-matchers: {len(matchers_b)} total — "
+          f"{len(ext_b_embeddings)} exact master-quadratic embeddings, "
+          f"{len(ext_b_genuine)} GENUINELY NEW")
+    for e in ext_b_genuine:
+        a0 = e[4] * G_STAR ** e[5]
+        print(f"        x·P_master(x) − {a0:.6f}  →  "
+              f"x_+={e[6]:.9f}, x_-={e[7]:.9f}  (nonzero remainder)")
     print(f"  EXT-C non-master-quadratic in Gaussian family: {len(nontrivial_c)}")
     print(f"  EXT-C non-master-quadratic in Eisenstein family: {len(matchers_c)}")
     print()
 
-    if genuine_unique <= 1:
-        print("CONCLUSION:")
-        print()
-        print("  Master quadratic is UNIQUELY dual-selective across the extended")
-        print("  search space (modulo trivial algebraic equivalences:")
-        print("  fraction-equivalent representations + cubic embeddings).")
-        print()
-        print("  T2.1 + T2.2 CLOSED with POSITIVE result.")
-        print()
-        print("  Quantitative strengthening:")
-        print(f"    Scan size:       {total_scanned:,} polynomials/multipliers")
-        print(f"                     vs. 147,456 in original FTD-0121 scan")
-        print(f"                     → ~{total_scanned / 147456:.1f}× larger search space")
-        print(f"    Genuine alternatives found: 0 (= 1 master quadratic only)")
-        print()
-        print("  Implications:")
-        # [AUDIT 2026-06-24] the ~4e5:1 Bayes figure cited downstream is NOT
-        # computed here; this script yields a ~19x scan-size factor
-        # (total_scanned // 147456 == 19; docstring says ~20,000:1). The
-        # dual/rigidity 'unique matcher' result is also tolerance-conditioned
-        # (asymmetric x+ ppm gate vs x- 1% gate); under a symmetric 1% gate
-        # ~32 dual-matchers appear across 11 constants. Treat the single-x+
-        # ppm-fit as [NUMERICAL FACT], not as a 4e5:1 structural Bayes result.
-        print("    • FTD-0121 [SYNTHESIS] Bayes factor strengthened by")
-        print(f"      ~{total_scanned // 147456}× to roughly 4×10^5 against null.")
-        print("    • Master quadratic structural-uniqueness demonstrated")
-        print("      across:")
-        print("        - Rational-coefficient extension (denominators ≤ 4)")
-        print("        - Higher polynomial degree (cubic embeddings only)")
-        print("        - Eisenstein-integer multiplier family")
-        print("        - Extended Gaussian-integer multiplier family")
-        print("    • The (1+i)-tower (Gaussian m=2, k=4) selection is")
-        print("      structurally distinguished — Eisenstein analogue gives")
-        print("      0 dual-matchers, confirming the choice is not generic.")
-        print("    • FTD-0001 status: structural uniqueness substantively")
-        print("      strengthened. The empirical identification x_+ = 1/α")
-        print("      remains separate.")
-        return 0
-    else:
-        print("CONCLUSION:")
-        print()
-        print(f"  Found {genuine_unique} genuinely-new dual-matchers beyond the")
-        print(f"  master quadratic and its trivial equivalences.")
-        print()
-        print("  Each genuinely-new matcher must be analyzed for its")
-        print("  structural relationship to the master quadratic. If they")
-        print("  are all algebraically equivalent (e.g., all share the same")
-        print("  Galois closure), the structural-uniqueness argument survives.")
-        print("  If they are independent algebraic objects, FTD-0121")
-        print("  [SYNTHESIS] Bayes factor weakens proportionally.")
-        return 0
+    print("  Measured:")
+    print(f"    Scan size:       {total_scanned:,} polynomials/multipliers")
+    print(f"                     vs. 147,456 in original FTD-0121 scan")
+    print(f"                     → ~{total_scanned / 147456:.1f}× larger search space")
+    print(f"    Distinct dual-matchers: {genuine_unique}")
+    print()
+
+    print("CONCLUSION:")
+    print()
+    print("CONCLUSION:")
+    print()
+    # [FIX 2026-08-04] genuine_unique includes the master quadratic itself
+    # (the single EXT-A survivor), so reporting it as the count "beyond the
+    # master quadratic" overstated by one. Reported separately now.
+    beyond_master = len(ext_b_genuine) + len(nontrivial_c) + len(matchers_c)
+    print(f"  {genuine_unique} distinct dual-matchers in the declared search space:")
+    print(f"  the master quadratic, plus {beyond_master} beyond it and its")
+    print(f"  trivial equivalences.")
+    print()
+    print(f"  The 'uniquely dual-selective' headline does NOT hold as stated.")
+    print(f"  All {beyond_master} additional matchers are cubics of the form")
+    print(f"  x·P_master(x) − a_0, a_0 ∈ FTD's own n·G*^p class — inside the")
+    print(f"  declared EXT-B family, not outside it.")
+    print()
+    print("  Each genuinely-new matcher must be analyzed for its")
+    print("  structural relationship to the master quadratic. If they")
+    print("  are all algebraically equivalent (e.g., all share the same")
+    print("  Galois closure), the structural-uniqueness argument survives.")
+    print("  If they are independent algebraic objects, FTD-0121")
+    print("  [SYNTHESIS] Bayes factor weakens proportionally.")
+    print()
+    # [AUDIT 2026-06-24] the ~4e5:1 Bayes figure cited downstream is NOT
+    # computed here; this script yields a ~19x scan-size factor
+    # (total_scanned // 147456 == 19; docstring says ~20,000:1). The
+    # dual/rigidity 'unique matcher' result is also tolerance-conditioned
+    # (asymmetric x+ ppm gate vs x- 1% gate); under a symmetric 1% gate
+    # ~32 dual-matchers appear across 11 constants. Treat the single-x+
+    # ppm-fit as [NUMERICAL FACT], not as a 4e5:1 structural Bayes result.
+    #
+    # [FIX 2026-08-04] the audit comment above was added on 2026-06-24 but
+    # the print statements under it were left asserting the retracted
+    # figure anyway, so every run kept emitting it. Corrected to state the
+    # retraction and the base-rate result. Scan logic and all counts above
+    # are unchanged.
+    print("  Evidential weight — READ BEFORE CITING:")
+    print("    • The ~4×10^5:1 Bayes figure is RETRACTED (spine audit")
+    print("      2026-06-24). It was never computed by this runner, which")
+    print(f"      yields only a ~{total_scanned // 147456}× scan-size factor applied to an")
+    print("      unverified prior. Do not restate it.")
+    print("    • The zero count is NOT evidence of structural uniqueness.")
+    print("      Base-rate control (PREREG_OT33_BASERATE_v1, 2026-08-04,")
+    print("      scripts/experiments/verify_ot33_baserate.py): under")
+    print("      displaced targets this family yields N_null = 0.0014")
+    print("      dual-matchers on average, P(>=1) = 0.0009. Finding zero")
+    print("      others is exactly what chance predicts — OUTCOME B.")
+    print("    • The x_- leg eliminates nothing at the registered gate")
+    print("      (16 pass x_+, 16 pass both). 'Dual-match' and 'match' are")
+    print("      the same predicate here, and x_- ↔ N_c is RETIRED")
+    print("      (FTD-0014). Same defect FTD-0791 found in FTD-0319.")
+    print("    • Tolerance-conditioned: under a symmetric 1% gate ~32")
+    print("      dual-matchers appear across 11 constants.")
+    print("    • The target IS the master quadratic's own root, so it")
+    print("      matches at residual 0 by construction. This scan cannot")
+    print("      measure the specialness of the object defining its target.")
+    print()
+    print("  What survives, as [NUMERICAL FACT]: across the stated domain the")
+    print("  master quadratic is the only reduced QUADRATIC in the family that")
+    print("  lands in the gate. That is a narrower claim than 'uniquely")
+    print("  dual-selective across the extended search space' — the cubic")
+    print("  extension the scan was built to test contributes 4 more.")
+    print("  FTD-0001's empirical identification x_+ = 1/α is untouched by")
+    print("  this runner and remains [SMC].")
+    return 0
 
 
 if __name__ == "__main__":
