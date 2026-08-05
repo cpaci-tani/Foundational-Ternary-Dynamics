@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (748 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (749 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -13,7 +13,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | Programme | Claims | Scope |
 |---|---:|---|
 | [Algebraic spine — master quadratic](#algebraic-spine-master-quadratic) | 18 | The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification. |
-| [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 39 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
+| [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 40 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
 | [Algebraic spine — periods, Watson, transcendence](#algebraic-spine-periods-watson-transcendence) | 14 | Watson integrals, lattice Green-function periods, the native closure N, delta-independence, E1/E2 transcendence, the period-import frontier. |
 | [Framework — postulates & constitution](#framework-postulates-constitution) | 13 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
 | [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 54 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
@@ -67,7 +67,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra.*
 
-**39 claims.**
+**40 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -106,10 +106,11 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0183` | CLOSED_NEGATIVE | Phase 1 L7: G* opus follow-up Tier B (T-B1, T-B2) CLOSED NEGATIVE — N_base=4 is a crystallographic coincidence, not a Z[i] bridge. G* opus follow-up… | L230 |
 | `FTD-0212` | CLOSED_NEGATIVE | Lemniscatic K_2-regulator closed-form derivation | L370 |
 | `FTD-0237` | OBSERVATION, CONJECTURE, SELECTION | Gaussian–Eisenstein dichotomy & the $2^4=4^2$ coefficient uniqueness | L403 |
-| `FTD-0366` | SYNTHESIS, OBSERVATION, SMC, FOUNDATIONAL_OBSTRUCTION | G\* is the irreducible transcendental of the strongly-coupled quartic matrix model — CHPS 2018 mapped as an external construction site for ℚ(G\*)… | L510 |
-| `FTD-0367` | THEOREM, COHERENT_INTERPRETATION, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION | Reflection flow parity — the product and ratio branches as first-order flows whose coefficients split by parity, differential algebraicity, and value… | L511 |
-| `FTD-0381` | OBSERVATION | The parity twist as a superdeterminant (CHPS r=4 χ₋₄-graded moment module) | L525 |
-| `FTD-0382` | SYNTHESIS, OBSERVATION, COHERENT_INTERPRETATION, SELECTION | The bilateral-symmetry criterion for an orientation carrier: C_s = Stab_{O(3)}(v,g) | L526 |
+| `FTD-0321` | NUMERICAL_FACT, CLOSED_NEGATIVE, MEASURED, CORRECTION | Does the full per-ideal-class Damerell scan preserve `d = -4` as the unique dual-matcher, or do the h-1 extra components at `h >= 2` unlock new… | L467 |
+| `FTD-0366` | SYNTHESIS, OBSERVATION, SMC, FOUNDATIONAL_OBSTRUCTION | G\* is the irreducible transcendental of the strongly-coupled quartic matrix model — CHPS 2018 mapped as an external construction site for ℚ(G\*)… | L511 |
+| `FTD-0367` | THEOREM, COHERENT_INTERPRETATION, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION | Reflection flow parity — the product and ratio branches as first-order flows whose coefficients split by parity, differential algebraicity, and value… | L512 |
+| `FTD-0381` | OBSERVATION | The parity twist as a superdeterminant (CHPS r=4 χ₋₄-graded moment module) | L526 |
+| `FTD-0382` | SYNTHESIS, OBSERVATION, COHERENT_INTERPRETATION, SELECTION | The bilateral-symmetry criterion for an orientation carrier: C_s = Stab_{O(3)}(v,g) | L527 |
 
 ---
 
@@ -125,16 +126,16 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0113` | THEOREM | Retarded/static lattice Green identity | L318 |
 | `FTD-0116` | CLOSED_NEGATIVE, HYPOTHESIS | G*² as FTD lattice Z-factor (UV-IR matching constant) — physical interpretation of Watson identity with falsifiable predictions | L311 |
 | `FTD-0118` | VERIFIED, OPEN | Q3 + Q4 engine-stencil cross-checks (G18 confirmation of FTD-0113 + FTD-0116 falsification) | L317 |
-| `FTD-0368` | SCOPE_CONTRACT, SELECTION, THEOREM, COHERENT_INTERPRETATION, FOUNDATIONAL_OBSTRUCTION, SMC, AXIOM | The δ-independence program chartered — define the native closure N, then prove (or refute) δ = √(G\*(4G\*−1)) ∉ N; MC-T4.3's negative-side completion… | L512 |
-| `FTD-0369` | THEOREM, DERIVED, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | δ-IND v1 verdict: PROVEN-CONDITIONAL — δ = √(G\*(4G\*−1)) lies outside the frozen native closure N under the enumerated independence package E0–E2… | L514 |
-| `FTD-0370` | THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | The ramification locus of the native closure — the substrate ramifies only where it lives: Ram_t(hull) = {0, ∞} unconditionally-beyond-Chudnovsky… | L513 |
-| `FTD-0372` | NUMERICAL_FACT | The engine's default 18-point (SC+FCC)/2 Green's function is the period of an explicit order-4, degree-12 ODE — computed and classified (exported… | L516 |
-| `FTD-0373` | THEOREM, NUMERICAL_FACT | W₁₈ is not self-dual — the rigid-Calabi–Yau / weight-4-modular branch of the FTD-0372 residual is CLOSED NEGATIVE | L517 |
-| `FTD-0374` | NUMERICAL_FACT, SMC, THEOREM | The two-loop BCC sunset period retains lemniscatic (ℤ[i]/Γ(1/4), j=1728) character at two loops — the discrete-Feynman M2 falsifier's… | L518 |
-| `FTD-0375` | SYNTHESIS, THEOREM, CLOSED_NEGATIVE | Period-conjecture framing of the import boundary (`MATH_PERIOD_IMPORT_FRONTIER.md`) | L519 |
-| `FTD-0376` | SYNTHESIS, THEOREM | E1/E2 transcendence state-of-the-art + the precise price of δ∉N (`ANALYSIS_E1_E2_TRANSCENDENCE_SOTA.md`) | L520 |
-| `FTD-0377` | THEOREM, SYNTHESIS | {π, W_SC} algebraically independent — the disc −24 reduction closes E1's per-constant floor | L521 |
-| `FTD-0378` | THEOREM, SYNTHESIS | Exponential lattice periods are transcendental — E2's individual-transcendence sub-question closed for the SC and BCC symbols | L522 |
+| `FTD-0368` | SCOPE_CONTRACT, SELECTION, THEOREM, COHERENT_INTERPRETATION, FOUNDATIONAL_OBSTRUCTION, SMC, AXIOM | The δ-independence program chartered — define the native closure N, then prove (or refute) δ = √(G\*(4G\*−1)) ∉ N; MC-T4.3's negative-side completion… | L513 |
+| `FTD-0369` | THEOREM, DERIVED, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | δ-IND v1 verdict: PROVEN-CONDITIONAL — δ = √(G\*(4G\*−1)) lies outside the frozen native closure N under the enumerated independence package E0–E2… | L515 |
+| `FTD-0370` | THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | The ramification locus of the native closure — the substrate ramifies only where it lives: Ram_t(hull) = {0, ∞} unconditionally-beyond-Chudnovsky… | L514 |
+| `FTD-0372` | NUMERICAL_FACT | The engine's default 18-point (SC+FCC)/2 Green's function is the period of an explicit order-4, degree-12 ODE — computed and classified (exported… | L517 |
+| `FTD-0373` | THEOREM, NUMERICAL_FACT | W₁₈ is not self-dual — the rigid-Calabi–Yau / weight-4-modular branch of the FTD-0372 residual is CLOSED NEGATIVE | L518 |
+| `FTD-0374` | NUMERICAL_FACT, SMC, THEOREM | The two-loop BCC sunset period retains lemniscatic (ℤ[i]/Γ(1/4), j=1728) character at two loops — the discrete-Feynman M2 falsifier's… | L519 |
+| `FTD-0375` | SYNTHESIS, THEOREM, CLOSED_NEGATIVE | Period-conjecture framing of the import boundary (`MATH_PERIOD_IMPORT_FRONTIER.md`) | L520 |
+| `FTD-0376` | SYNTHESIS, THEOREM | E1/E2 transcendence state-of-the-art + the precise price of δ∉N (`ANALYSIS_E1_E2_TRANSCENDENCE_SOTA.md`) | L521 |
+| `FTD-0377` | THEOREM, SYNTHESIS | {π, W_SC} algebraically independent — the disc −24 reduction closes E1's per-constant floor | L522 |
+| `FTD-0378` | THEOREM, SYNTHESIS | Exponential lattice periods are transcendental — E2's individual-transcendence sub-question closed for the SC and BCC symbols | L523 |
 
 ---
 
@@ -177,53 +178,53 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0153` | SYNTHESIS | Math-First Ontology | L200 |
 | `FTD-0186` | DEFINITION, STAGE_1_CLOSED_POSITIVE | Boundary theorem Stage 1 — the structural / dynamical discriminator + classification of the decisive load-bearing set | L233 |
 | `FTD-0311` | SYNTHESIS, PARAMETRIC, SMC | The FTD Complete Framework — the unified honest map: one canonical doc stating what FTD derives, what it provably cannot (and why), what it predicts… | L457 |
-| `FTD-0322` | SYNTHESIS, THEOREM, SMC | Act-reduction count — how many "acts of intent" does the chain need? (single-`i`-act reduction test); verdict PARTIAL | L467 |
-| `FTD-0323` | SYNTHESIS, THEOREM, AXIOM, SMC | The arrow of time as a square root | L468 |
-| `FTD-0324` | SYNTHESIS, MEASURED, AXIOM, SMC | The arrow's direction is forced-given-FC-2, not free | L469 |
-| `FTD-0325` | SYNTHESIS, PARAMETRIC, SMC | Act-count completed over the SM — no field-act beyond {i, δ}; verdict CLOSED | L470 |
-| `FTD-0326` | DERIVED, SYNTHESIS, NO_GO, THEOREM, FOUNDATIONAL_OBSTRUCTION, SMC | No FTD-native ℤ/2 supplies δ — MC-T4.3 boundary robust against every native orientation symmetry; verdict PERMANENT-EXTENDED | L471 |
-| `FTD-0327` | SYNTHESIS, OPEN, SELECTION, SMC | The AGM place-bridge — why the substrate's √-machinery lands on G\*, never on δ | L474 |
-| `FTD-0328` | RECONCILIATION, OPEN, NUMERICAL_FACT, SELECTION, THEOREM | Corpus-wide reconciliation of the FTD-0318 spine-audit demotions + FC-W/act-count sync + FTD-0189→0319 repoint | L473 |
-| `FTD-0329` | SYNTHESIS, SELECTION, SMC, PARAMETRIC, FOUNDATIONAL_OBSTRUCTION | The Inherited-Assumptions Audit — FTD as the realist reconstruction of physics from a discrete logical core | L472 |
-| `FTD-0335` | SYNTHESIS, OPEN, BOUNDARY, SMC, FOUNDATIONAL_OBSTRUCTION, MEASURED | Boundary-map refresh — fold the 2026-06-26/27 boundaries into `AUDIT_BOUNDARY_MAP.md` | L479 |
-| `FTD-0336` | SYNTHESIS, CONJECTURE, SPECULATION, THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION | The modulus/argument frontier — the canonical boundary statement: a discrete deterministic forward-only substrate owns the *modulus* half and cannot… | L480 |
-| `FTD-0339` | SYNTHESIS, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION | The type-priority principle — context before content; the Framework Commitments are precondition-types | L483 |
-| `FTD-0340` | SYNTHESIS, CONJECTURE, THEOREM, DERIVED, SMC, FOUNDATIONAL_OBSTRUCTION | The square root as an act of selection — the algebraic signature of type-setting | L484 |
-| `FTD-0341` | DERIVED, SYNTHESIS, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION | The four named analytic-orientation carriers for `δ` all close negative; the magnitude/phase theorem | L485 |
-| `FTD-0342` | SYNTHESIS, AXIOM, CONJECTURE, SPECULATION, SMC, FOUNDATIONAL_OBSTRUCTION | Tick and fold as temporal generators — time reduced to two near-non-temporal primitives | L486 |
-| `FTD-0343` | SYNTHESIS, PARTIAL, SMC, FOUNDATIONAL_OBSTRUCTION | Why type theory, not OOP — completing FOUND_TYPE_PRIORITY_PRINCIPLE's type-theory analogy | L487 |
-| `FTD-0344` | CONJECTURE, OPEN, BOUNDARY, SMC, FOUNDATIONAL_OBSTRUCTION | Wins and walls share one root — the same renunciation dissolves the UV/CC catastrophes and forbids the argument-half | L488 |
-| `FTD-0353` | THEOREM, OPEN | Valuation theorem at (4G*-1) -- the alpha-boundary in one statement | L502 |
-| `FTD-0354` | THEOREM, CONJECTURE | GNC rigidity lemma -- two walls, one shape | L503 |
-| `FTD-0355` | RECONCILIATION, SELECTION | Permanent verdicts on the three graded-weakest | L504 |
-| `FTD-0357` | THEOREM, SYNTHESIS, OPEN | Four-walls-are-one: CLOSED as a distinctness theorem — one schema, two axes, no forcing | L498 |
-| `FTD-0358` | THEOREM, SELECTION | Construction-class closure: representativeness flag CLOSED (no-go + FC-0 sector-lock + declaration) | L499 |
-| `FTD-0365` | UNDERDETERMINED | Genesis-cokernel grading construction v1 — UNDERDETERMINED (re-scope): the lossy-merge fiber's section-invariant content is exact-rational + K_B; no… | L509 |
-| `FTD-0371` | SYNTHESIS, SMC, PARAMETRIC, THEOREM, SELECTION, FOUNDATIONAL_OBSTRUCTION, AXIOM | The priced-import ledger — every type FTD must import, counted in a common currency with a falsifier on each line; the Number-One-Goal "mark the… | L515 |
-| `FTD-0383` | SCOPE_CONTRACT, SELECTION, THEOREM, PARAMETRIC, NO_GO | The Consumption Program chartered — four fronts driving the import bill toward its audited floor (the Number-One Goal's new drive face) | L527 |
-| `FTD-0384` | RECONCILIATION | The pre-registration registry truth-reconciliation (Arc 1 "Honest Mint" of the Consumption Program) | L529 |
-| `FTD-0385` | SYNTHESIS, DERIVED, SELECTION | The Planck-calibration semantics: the √3-ladder, the naming theorem (c·t_P = ℓ_P ⟺ the edge gauge), and the double selection of the current naming | L531 |
-| `FTD-0386` | SYNTHESIS, AXIOM, SELECTION, IMPOSED, THEOREM, SMC | The Unified Axiom Register + the Unified Conditional Statement (Unification Annex Stage U1) | L532 |
-| `FTD-0387` | SCOPE_CONTRACT, PARAMETRIC, THEOREM, SMC, AXIOM | Adoption Pricing Rules (Unification Annex Stage U0) — the D5 currency, the D6 compression predicate, and the D7 FC-W calibration | L533 |
-| `FTD-0388` | SELECTION, THEOREM, MEASURED | K_MANIFEST := W_SC — the manifestation-kinetics scale adopted at the substrate's unit-charge Gauss self-energy (self-energy pinning OUTCOME-P1) | L534 |
-| `FTD-0395` | THEOREM, AXIOM | The complete current engine update map is non-injective on a public-API-admissible domain | L535 |
-| `FTD-0396` | NO_GO, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | Nonlinear delta-IND v2 properness audit: a fixed event budget does not by itself bound effective branch transcripts; unrestricted expressive power… | L536 |
-| `FTD-0508` | SYNTHESIS, THEOREM, DERIVED | Do the four framework imports (FC-1, FC-2, FC-W, L²-budget) and the 2026-07-25 engine obstruction theorems instantiate one common… | L655 |
-| `FTD-0509` | NUMERICAL_FACT, CONJECTURE, SYNTHESIS | Is the priced-import ledger's declared "adopted bit" the same unit as the substrate-derived per-merge branch-selection cost of FTD-0499, and how do… | L656 |
-| `FTD-0510` | THEOREM, DERIVED, OPEN | Can D = 3 be forced by any route confined to the dimension-blind fragment of the axiom register, or is the FTD-0355 circularity a necessity of the… | L657 |
-| `FTD-0515` | THEOREM, SYNTHESIS | At state level (not merely algebra level), what does purchasing the FC-2 section force, and what exactly is the tracial-accessible part of the record? | L662 |
-| `FTD-0516` | SELECTION, THEOREM, DERIVED, CONSTRUCTIVE, OPEN | Can the FTD-0512 restricted collision impulse be derived as a variational corner condition without a persistent new variable? | L663 |
-| `FTD-0518` | REFUTATION, THEOREM, SYNTHESIS | Does the FTD-0515 §4 symmetric-fiber sharpening survive its own named attack point, the L² wall (I5)? | L665 |
-| `FTD-0520` | THEOREM, DERIVED, SYNTHESIS, OPEN | Does the torsor form extend to the dispersion boundary (the frontier's one ATTEMPTED row), and what exactly does FTD-0270's "cavity-not-Schrödinger"… | L666 |
-| `FTD-0565` | NUMERICAL_FACT, CLOSED_NEGATIVE, SPECULATION, OPEN | Before subtracting the FTD-0552 self-force, what does the self-potential buy? (Toy probe of the fork's un-priced tine.) | L695 |
-| `FTD-0566` | THEOREM, SYNTHESIS, CONJECTURE | Is there a criterion for which fibers demand imports and which the dynamics sections itself? | L696 |
-| `FTD-0598` | SYNTHESIS | What is the least ontic extension forced by the reciprocal-mobile-matter boundary, and which additional types are required only for multibody matter… | L740 |
-| `FTD-0669` | SYNTHESIS | What is the least ontology of matter supported by the reciprocal constituent and field results without identifying one voxel, one field line, or the… | L811 |
-| `FTD-0740` | SCOPE_CONTRACT | What evidence standard defines the matter-ontology research program? | L882 |
-| `FTD-0741` | DERIVED | What minimum information must any adequate current-branch matter ontology retain? | L883 |
-| `FTD-0742` | SUPERSEDED | What was the matter-program evidence baseline before the resumed finite-support result? | L884 |
-| `FTD-0743` | SCOPE_CONTRACT | What exact state-only predicate would count as a metastable matter object? | L885 |
-| `FTD-0744` | SCOPE_CONTRACT | How should evidence decide among native state, reconstructed chart, constituent phase space, and connection-based extensions? | L886 |
+| `FTD-0322` | SYNTHESIS, THEOREM, SMC | Act-reduction count — how many "acts of intent" does the chain need? (single-`i`-act reduction test); verdict PARTIAL | L468 |
+| `FTD-0323` | SYNTHESIS, THEOREM, AXIOM, SMC | The arrow of time as a square root | L469 |
+| `FTD-0324` | SYNTHESIS, MEASURED, AXIOM, SMC | The arrow's direction is forced-given-FC-2, not free | L470 |
+| `FTD-0325` | SYNTHESIS, PARAMETRIC, SMC | Act-count completed over the SM — no field-act beyond {i, δ}; verdict CLOSED | L471 |
+| `FTD-0326` | DERIVED, SYNTHESIS, NO_GO, THEOREM, FOUNDATIONAL_OBSTRUCTION, SMC | No FTD-native ℤ/2 supplies δ — MC-T4.3 boundary robust against every native orientation symmetry; verdict PERMANENT-EXTENDED | L472 |
+| `FTD-0327` | SYNTHESIS, OPEN, SELECTION, SMC | The AGM place-bridge — why the substrate's √-machinery lands on G\*, never on δ | L475 |
+| `FTD-0328` | RECONCILIATION, OPEN, NUMERICAL_FACT, SELECTION, THEOREM | Corpus-wide reconciliation of the FTD-0318 spine-audit demotions + FC-W/act-count sync + FTD-0189→0319 repoint | L474 |
+| `FTD-0329` | SYNTHESIS, SELECTION, SMC, PARAMETRIC, FOUNDATIONAL_OBSTRUCTION | The Inherited-Assumptions Audit — FTD as the realist reconstruction of physics from a discrete logical core | L473 |
+| `FTD-0335` | SYNTHESIS, OPEN, BOUNDARY, SMC, FOUNDATIONAL_OBSTRUCTION, MEASURED | Boundary-map refresh — fold the 2026-06-26/27 boundaries into `AUDIT_BOUNDARY_MAP.md` | L480 |
+| `FTD-0336` | SYNTHESIS, CONJECTURE, SPECULATION, THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION | The modulus/argument frontier — the canonical boundary statement: a discrete deterministic forward-only substrate owns the *modulus* half and cannot… | L481 |
+| `FTD-0339` | SYNTHESIS, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION | The type-priority principle — context before content; the Framework Commitments are precondition-types | L484 |
+| `FTD-0340` | SYNTHESIS, CONJECTURE, THEOREM, DERIVED, SMC, FOUNDATIONAL_OBSTRUCTION | The square root as an act of selection — the algebraic signature of type-setting | L485 |
+| `FTD-0341` | DERIVED, SYNTHESIS, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION | The four named analytic-orientation carriers for `δ` all close negative; the magnitude/phase theorem | L486 |
+| `FTD-0342` | SYNTHESIS, AXIOM, CONJECTURE, SPECULATION, SMC, FOUNDATIONAL_OBSTRUCTION | Tick and fold as temporal generators — time reduced to two near-non-temporal primitives | L487 |
+| `FTD-0343` | SYNTHESIS, PARTIAL, SMC, FOUNDATIONAL_OBSTRUCTION | Why type theory, not OOP — completing FOUND_TYPE_PRIORITY_PRINCIPLE's type-theory analogy | L488 |
+| `FTD-0344` | CONJECTURE, OPEN, BOUNDARY, SMC, FOUNDATIONAL_OBSTRUCTION | Wins and walls share one root — the same renunciation dissolves the UV/CC catastrophes and forbids the argument-half | L489 |
+| `FTD-0353` | THEOREM, OPEN | Valuation theorem at (4G*-1) -- the alpha-boundary in one statement | L503 |
+| `FTD-0354` | THEOREM, CONJECTURE | GNC rigidity lemma -- two walls, one shape | L504 |
+| `FTD-0355` | RECONCILIATION, SELECTION | Permanent verdicts on the three graded-weakest | L505 |
+| `FTD-0357` | THEOREM, SYNTHESIS, OPEN | Four-walls-are-one: CLOSED as a distinctness theorem — one schema, two axes, no forcing | L499 |
+| `FTD-0358` | THEOREM, SELECTION | Construction-class closure: representativeness flag CLOSED (no-go + FC-0 sector-lock + declaration) | L500 |
+| `FTD-0365` | UNDERDETERMINED | Genesis-cokernel grading construction v1 — UNDERDETERMINED (re-scope): the lossy-merge fiber's section-invariant content is exact-rational + K_B; no… | L510 |
+| `FTD-0371` | SYNTHESIS, SMC, PARAMETRIC, THEOREM, SELECTION, FOUNDATIONAL_OBSTRUCTION, AXIOM | The priced-import ledger — every type FTD must import, counted in a common currency with a falsifier on each line; the Number-One-Goal "mark the… | L516 |
+| `FTD-0383` | SCOPE_CONTRACT, SELECTION, THEOREM, PARAMETRIC, NO_GO | The Consumption Program chartered — four fronts driving the import bill toward its audited floor (the Number-One Goal's new drive face) | L528 |
+| `FTD-0384` | RECONCILIATION | The pre-registration registry truth-reconciliation (Arc 1 "Honest Mint" of the Consumption Program) | L530 |
+| `FTD-0385` | SYNTHESIS, DERIVED, SELECTION | The Planck-calibration semantics: the √3-ladder, the naming theorem (c·t_P = ℓ_P ⟺ the edge gauge), and the double selection of the current naming | L532 |
+| `FTD-0386` | SYNTHESIS, AXIOM, SELECTION, IMPOSED, THEOREM, SMC | The Unified Axiom Register + the Unified Conditional Statement (Unification Annex Stage U1) | L533 |
+| `FTD-0387` | SCOPE_CONTRACT, PARAMETRIC, THEOREM, SMC, AXIOM | Adoption Pricing Rules (Unification Annex Stage U0) — the D5 currency, the D6 compression predicate, and the D7 FC-W calibration | L534 |
+| `FTD-0388` | SELECTION, THEOREM, MEASURED | K_MANIFEST := W_SC — the manifestation-kinetics scale adopted at the substrate's unit-charge Gauss self-energy (self-energy pinning OUTCOME-P1) | L535 |
+| `FTD-0395` | THEOREM, AXIOM | The complete current engine update map is non-injective on a public-API-admissible domain | L536 |
+| `FTD-0396` | NO_GO, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | Nonlinear delta-IND v2 properness audit: a fixed event budget does not by itself bound effective branch transcripts; unrestricted expressive power… | L537 |
+| `FTD-0508` | SYNTHESIS, THEOREM, DERIVED | Do the four framework imports (FC-1, FC-2, FC-W, L²-budget) and the 2026-07-25 engine obstruction theorems instantiate one common… | L656 |
+| `FTD-0509` | NUMERICAL_FACT, CONJECTURE, SYNTHESIS | Is the priced-import ledger's declared "adopted bit" the same unit as the substrate-derived per-merge branch-selection cost of FTD-0499, and how do… | L657 |
+| `FTD-0510` | THEOREM, DERIVED, OPEN | Can D = 3 be forced by any route confined to the dimension-blind fragment of the axiom register, or is the FTD-0355 circularity a necessity of the… | L658 |
+| `FTD-0515` | THEOREM, SYNTHESIS | At state level (not merely algebra level), what does purchasing the FC-2 section force, and what exactly is the tracial-accessible part of the record? | L663 |
+| `FTD-0516` | SELECTION, THEOREM, DERIVED, CONSTRUCTIVE, OPEN | Can the FTD-0512 restricted collision impulse be derived as a variational corner condition without a persistent new variable? | L664 |
+| `FTD-0518` | REFUTATION, THEOREM, SYNTHESIS | Does the FTD-0515 §4 symmetric-fiber sharpening survive its own named attack point, the L² wall (I5)? | L666 |
+| `FTD-0520` | THEOREM, DERIVED, SYNTHESIS, OPEN | Does the torsor form extend to the dispersion boundary (the frontier's one ATTEMPTED row), and what exactly does FTD-0270's "cavity-not-Schrödinger"… | L667 |
+| `FTD-0565` | NUMERICAL_FACT, CLOSED_NEGATIVE, SPECULATION, OPEN | Before subtracting the FTD-0552 self-force, what does the self-potential buy? (Toy probe of the fork's un-priced tine.) | L696 |
+| `FTD-0566` | THEOREM, SYNTHESIS, CONJECTURE | Is there a criterion for which fibers demand imports and which the dynamics sections itself? | L697 |
+| `FTD-0598` | SYNTHESIS | What is the least ontic extension forced by the reciprocal-mobile-matter boundary, and which additional types are required only for multibody matter… | L741 |
+| `FTD-0669` | SYNTHESIS | What is the least ontology of matter supported by the reciprocal constituent and field results without identifying one voxel, one field line, or the… | L812 |
+| `FTD-0740` | SCOPE_CONTRACT | What evidence standard defines the matter-ontology research program? | L883 |
+| `FTD-0741` | DERIVED | What minimum information must any adequate current-branch matter ontology retain? | L884 |
+| `FTD-0742` | SUPERSEDED | What was the matter-program evidence baseline before the resumed finite-support result? | L885 |
+| `FTD-0743` | SCOPE_CONTRACT | What exact state-only predicate would count as a metastable matter object? | L886 |
+| `FTD-0744` | SCOPE_CONTRACT | How should evidence decide among native state, reconstructed chart, constituent phase space, and connection-based extensions? | L887 |
 
 ---
 
@@ -248,18 +249,18 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0318` | AUDIT_FINDING, THEOREM, SELECTION, NUMERICAL_FACT, OPEN, CONJECTURE, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | Algebraic-spine deep adversarial audit — re-ran every proof script + recomputed every load-bearing identity at dps 100–150 + 3 hostile lenses per… | L464 |
 | `FTD-0319` | MEASURED, NUMERICAL_FACT, SMC | Adversarial polynomial look-elsewhere scan — the master quadratic is the unique dual-matcher over ~2.65M degree-2 polynomials over an 18-constant… | L465 |
 | `FTD-0320` | MEASURED, STRUCTURAL_PARAMETRIC, PARAMETRIC | Rigidity audit of the catalog rational identifications — extends FTD-0310 to the simple-rational mixing-angle/ratio claims still carrying… | L466 |
-| `FTD-0345` | RECONCILIATION, SELECTION, CONJECTURE, THEOREM, DERIVED, SPECULATION, PARAMETRIC, SMC, FOUNDATIONAL_OBSTRUCTION | Red-team remediation — mechanical propagation sweep (citations, tags, benchmark re-grading) fixing 10-specialist red-team audit findings | L489 |
-| `FTD-0346` | SYNTHESIS, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION | Boundary-framing restructuring + external-review disclosure — replaces "invariance-as-virtue" and "deliverable" rhetoric with PROVEN/ATTEMPTED… | L490 |
-| `FTD-0347` | SYNTHESIS, RECONCILIATION, SELECTION, NUMERICAL_FACT, OPEN, THEOREM, PARAMETRIC, SMC, FOUNDATIONAL_OBSTRUCTION | Provisional two-specialist review (math + physics) + fix of its six confirmed findings | L491 |
-| `FTD-0348` | SYNTHESIS, RECONCILIATION, RETRACTED, THEOREM, DERIVED, SELECTION | Fable two-specialist review + fix of its mechanically-fixable findings (retraction of DERIV_NONCOMMUTATIVE_EMERGENCE; Einstein Step-4 correction… | L492 |
-| `FTD-0351` | RECONCILIATION, DERIVED, THEOREM, SELECTION, UNDERDETERMINED | Theorem repairs: OT-2.7/FTD-0175 demoted to corrected-constraint-set [THEOREM] + conditional [SELECTION]; FTD-0244 Lemma 1 completed over Q(G*,pi) | L495 |
-| `FTD-0352` | SYNTHESIS, CONJECTURE, SPECULATION, SELECTION, SMC | Math grading pass + disciplined extension scouting | L496 |
-| `FTD-0356` | RECONCILIATION, RETRACTED, THEOREM, SELECTION, CLOSED_NEGATIVE, OPEN, PARAMETRIC, IMPOSED, DERIVED, SMC | FTD-0175/OT-2.7 downstream propagation (queued under FTD-0351) + MONOGRAPH_EFFECTIVE_EQUATIONS cluster review (flagged under FTD-0348 §3 item 6)… | L497 |
-| `FTD-0360` | RECONCILIATION, RETRACTED, THEOREM, OPEN, DERIVED, EMERGENT | Finalization mechanical batch: META_INDEX reconciliation; g_rr proof RETRACTED (third invalid [THEOREM]); Compton confirmed-conditional; node map… | L501 |
-| `FTD-0361` | RETRACTED, RECONCILIATION, OPEN, THEOREM, PARAMETRIC, IMPOSED, MEASURED, SELECTION, SMC | MONOGRAPH_EFFECTIVE_EQUATIONS cluster review, wave 2 (the pass FTD-0356 left queued): radial-metric g_rr proof RETRACTED; Compton volume duality… | L505 |
-| `FTD-0568` | SYNTHESIS, NUMERICAL_FACT | Is the quadratic-coat representation layer FTD-native machinery, or an independently re-derived instance of a known compatible-discretization… | L710 |
-| `FTD-0785` | MEASURED, THEOREM | Does the algebraic spine survive a refute-by-default adversarial audit - the one load-bearing artifact never previously audited? | L931 |
-| `FTD-0802` | CLOSED_NEGATIVE, CORRECTION, MEASURED | Does OT-3.3's zero dual-matcher count survive the base-rate control its sibling scan failed — and is the count itself correct? | L963 |
+| `FTD-0345` | RECONCILIATION, SELECTION, CONJECTURE, THEOREM, DERIVED, SPECULATION, PARAMETRIC, SMC, FOUNDATIONAL_OBSTRUCTION | Red-team remediation — mechanical propagation sweep (citations, tags, benchmark re-grading) fixing 10-specialist red-team audit findings | L490 |
+| `FTD-0346` | SYNTHESIS, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION | Boundary-framing restructuring + external-review disclosure — replaces "invariance-as-virtue" and "deliverable" rhetoric with PROVEN/ATTEMPTED… | L491 |
+| `FTD-0347` | SYNTHESIS, RECONCILIATION, SELECTION, NUMERICAL_FACT, OPEN, THEOREM, PARAMETRIC, SMC, FOUNDATIONAL_OBSTRUCTION | Provisional two-specialist review (math + physics) + fix of its six confirmed findings | L492 |
+| `FTD-0348` | SYNTHESIS, RECONCILIATION, RETRACTED, THEOREM, DERIVED, SELECTION | Fable two-specialist review + fix of its mechanically-fixable findings (retraction of DERIV_NONCOMMUTATIVE_EMERGENCE; Einstein Step-4 correction… | L493 |
+| `FTD-0351` | RECONCILIATION, DERIVED, THEOREM, SELECTION, UNDERDETERMINED | Theorem repairs: OT-2.7/FTD-0175 demoted to corrected-constraint-set [THEOREM] + conditional [SELECTION]; FTD-0244 Lemma 1 completed over Q(G*,pi) | L496 |
+| `FTD-0352` | SYNTHESIS, CONJECTURE, SPECULATION, SELECTION, SMC | Math grading pass + disciplined extension scouting | L497 |
+| `FTD-0356` | RECONCILIATION, RETRACTED, THEOREM, SELECTION, CLOSED_NEGATIVE, OPEN, PARAMETRIC, IMPOSED, DERIVED, SMC | FTD-0175/OT-2.7 downstream propagation (queued under FTD-0351) + MONOGRAPH_EFFECTIVE_EQUATIONS cluster review (flagged under FTD-0348 §3 item 6)… | L498 |
+| `FTD-0360` | RECONCILIATION, RETRACTED, THEOREM, OPEN, DERIVED, EMERGENT | Finalization mechanical batch: META_INDEX reconciliation; g_rr proof RETRACTED (third invalid [THEOREM]); Compton confirmed-conditional; node map… | L502 |
+| `FTD-0361` | RETRACTED, RECONCILIATION, OPEN, THEOREM, PARAMETRIC, IMPOSED, MEASURED, SELECTION, SMC | MONOGRAPH_EFFECTIVE_EQUATIONS cluster review, wave 2 (the pass FTD-0356 left queued): radial-metric g_rr proof RETRACTED; Compton volume duality… | L506 |
+| `FTD-0568` | SYNTHESIS, NUMERICAL_FACT | Is the quadratic-coat representation layer FTD-native machinery, or an independently re-derived instance of a known compatible-discretization… | L711 |
+| `FTD-0785` | MEASURED, THEOREM | Does the algebraic spine survive a refute-by-default adversarial audit - the one load-bearing artifact never previously audited? | L932 |
+| `FTD-0802` | CLOSED_NEGATIVE, CORRECTION, MEASURED | Does OT-3.3's zero dual-matcher count survive the base-rate control its sibling scan failed — and is the count itself correct? | L964 |
 
 ---
 
@@ -283,10 +284,10 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0227` | PARTIAL | Spekkens knowledge-balance from the internal-observer restriction (B-QM-1′) | L393 |
 | `FTD-0228` | CLOSED_NEGATIVE | Full symplectic budget symmetry from FTD geometry (B-QM-1″) | L394 |
 | `FTD-0258` | SYNTHESIS, CLOSED_NEGATIVE, CONJECTURE, SELECTION, OPEN, THEOREM, BOUNDARY | Deviation-prediction ledger — six structural deviations from the QM/SR formalism (the falsifiable spine) | L421 |
-| `FTD-0359` | THEOREM, CONJECTURE, IMPOSED, OPEN, CLOSED_NEGATIVE | PL-1 quantified: the Rice-vs-Born deviation in closed form — one parameter, five observables, an internal kill switch | L500 |
-| `FTD-0517` | THEOREM, SYNTHESIS, CONJECTURE | What must a subsystem be, structurally, to function as a measuring device for the frozen projection — and what does its measuring power cost? | L664 |
-| `FTD-0795` | EXACT, CLOSED_NEGATIVE, CONJECTURE, SELECTION | Do FTD-0258's six registered deviations from QM/SR survive contact with existing experiment? | L950 |
-| `FTD-0796` | THEOREM, EXACT, CORRECTION | Can a framework committed to `A_5`-completeness (FC-1) reproduce CHSH `S = 2 sqrt 2`? | L952 |
+| `FTD-0359` | THEOREM, CONJECTURE, IMPOSED, OPEN, CLOSED_NEGATIVE | PL-1 quantified: the Rice-vs-Born deviation in closed form — one parameter, five observables, an internal kill switch | L501 |
+| `FTD-0517` | THEOREM, SYNTHESIS, CONJECTURE | What must a subsystem be, structurally, to function as a measuring device for the frozen projection — and what does its measuring power cost? | L665 |
+| `FTD-0795` | EXACT, CLOSED_NEGATIVE, CONJECTURE, SELECTION | Do FTD-0258's six registered deviations from QM/SR survive contact with existing experiment? | L951 |
+| `FTD-0796` | THEOREM, EXACT, CORRECTION | Can a framework committed to `A_5`-completeness (FC-1) reproduce CHSH `S = 2 sqrt 2`? | L953 |
 
 ---
 
@@ -329,8 +330,8 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0307` | CLOSED_NEGATIVE, OPEN, DERIVED, SMC, FOUNDATIONAL_OBSTRUCTION | FTD-0110 Convention Audit (exit ii): is the N(A) calibration gauge or physical? — verdict PHYSICAL (exit ii CLOSED NEGATIVE on both knobs) | L453 |
 | `FTD-0308` | DERIVED, MEASURED, BOUNDARY, OPEN, IMPOSED, THEOREM, SMC | Engine-native atomic spectroscopy (FTD-0281 Leg-2): the engine's own clocked-flux time evolution in its own Coulomb well vs the operator built from… | L454 |
 | `FTD-0309` | MEASURED, DERIVED, CLOSED_NEGATIVE, OPEN, SMC | FTD-0110 nonlinear bridge, v2 genesis-counting model: can a faithful collective-coordinate reduction land the N(A) cluster-mass shape as… | L455 |
-| `FTD-0390` | CLOSED_NEGATIVE, SELECTION, THEOREM | m_e exponent n=11 ordering-selection look-elsewhere audit — the (S1) gravity-last / (S2) spinor-before-color rule pair is not independently forced | L542 |
-| `FTD-0397` | THEOREM, SELECTION | Order-type no-go for the electron exponent: unordered FTD-0084 data cannot select `n=11` | L537 |
+| `FTD-0390` | CLOSED_NEGATIVE, SELECTION, THEOREM | m_e exponent n=11 ordering-selection look-elsewhere audit — the (S1) gravity-last / (S2) spinor-before-color rule pair is not independently forced | L543 |
+| `FTD-0397` | THEOREM, SELECTION | Order-type no-go for the electron exponent: unordered FTD-0084 data cannot select `n=11` | L538 |
 
 ---
 
@@ -371,10 +372,10 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0313` | THEOREM, FOUNDATIONAL_OBSTRUCTION, SMC | The BCC-stencil sub-route of MC-T4.3: G* is a pure body-diagonal lattice self-energy — does routing EM onto that sublattice force α? (the geometric… | L459 |
 | `FTD-0314` | CLOSED_NEGATIVE, THEOREM, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION | Can the α-binding axiom W be EARNED from native substrate structure? — the carrier-narrowing theorem + three carrier closures (attacks MC-T4.3's… | L460 |
 | `FTD-0315` | AXIOM, THEOREM, DERIVED, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION | FC-W (the constitution's FC-4) — the framework's declared α-selection commitment: adopt the external binding law W whose exact content is pinned by… | L461 |
-| `FTD-0791` | RETAG, WITHDRAWN, CORRECTION | Does FTD-0319's uniqueness scan establish that the master quadratic is structure rather than coincidence? | L943 |
-| `FTD-0792` | ENGINE_FACT, CLOSED_NEGATIVE, CONJECTURE, THEOREM | Does the engine actually run on the derived master-quadratic root? | L944 |
-| `FTD-0793` | REFUTATION, EXACT, OBSERVATION | Is `G*` a normalization (a total mass), with the master quadratic as the sole exception? | L946 |
-| `FTD-0794` | REFUTATION, EXACT, TAUTOLOGY, RETAG | Does the minimum lattice select the quartic clock law (chain link 4, the last unwithdrawn bridge)? | L948 |
+| `FTD-0791` | RETAG, WITHDRAWN, CORRECTION | Does FTD-0319's uniqueness scan establish that the master quadratic is structure rather than coincidence? | L944 |
+| `FTD-0792` | ENGINE_FACT, CLOSED_NEGATIVE, CONJECTURE, THEOREM | Does the engine actually run on the derived master-quadratic root? | L945 |
+| `FTD-0793` | REFUTATION, EXACT, OBSERVATION | Is `G*` a normalization (a total mass), with the master quadratic as the sole exception? | L947 |
+| `FTD-0794` | REFUTATION, EXACT, TAUTOLOGY, RETAG | Does the minimum lattice select the quartic clock law (chain link 4, the last unwithdrawn bridge)? | L949 |
 
 ---
 
@@ -400,7 +401,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0196` | CANDIDATE_RECONSTRUCTION | Generation graph Γ_F(d) — CKM-shape overlap matrix from a K₃ triangle on (q*^{d+1}, 1, q*^d) with phase φ=π+π/d | L365 |
 | `FTD-0223` | SPEC | FTD Dynamical SU(3) Hadrodynamics | L376 |
 | `FTD-0224` | CLOSED_RESOLVED | Color Excess closed form & Blocked Effective Action Flow | L377 |
-| `FTD-0400` | NO_GO | Confinement-energy → rest-mass → gravity bridge audit: does one current-engine energy–momentum object generate the colour force, inertia, and… | L544 |
+| `FTD-0400` | NO_GO | Confinement-energy → rest-mass → gravity bridge audit: does one current-engine energy–momentum object generate the colour force, inertia, and… | L545 |
 
 ---
 
@@ -427,12 +428,12 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0213` | CLOSED_NEGATIVE | FTD native strong-field gravity signature | L371 |
 | `FTD-0214` | CLOSED_RESOLVED | QFT/GR Bridge Consolidation — four bridge gap resolutions | L372 |
 | `FTD-0229` | CLOSED_RESOLVED | Kerr-Newman Black Hole Derivation, Limits & Extensions | L396 |
-| `FTD-0331` | SELECTION, OPEN, BOUNDARY, DERIVED, THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION | The cosmological constant as a scale-covariant holographic ratio — a mechanism for the *smallness* of Λ, not its value; replaces the α¹⁶/α⁵⁷… | L475 |
-| `FTD-0332` | RECONCILIATION, DERIVED, SELECTION, OPEN, BOUNDARY, PARAMETRIC, CONJECTURE, SUPERSEDED, THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION | Corpus-wide cosmology-sector reconciliation — make FTD-0331 (Λ) canonical and remove the live cosmology contradictions | L476 |
-| `FTD-0333` | MEASURED, CONDITIONAL, SMC, FOUNDATIONAL_OBSTRUCTION | FTD-0270 P2 mass-gap swing — first canonical run INVALID (instability + flooding); strong no-gap hint; boundary unchanged | L478 |
-| `FTD-0334` | RECONCILIATION, PARAMETRIC, OPEN, BOUNDARY, CONJECTURE, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Deferred-layer cosmology cleanup — propagate FTD-0331/0332 into the papers/web/intuition/index layer | L477 |
-| `FTD-0338` | RECONCILIATION, OPEN, BOUNDARY, CLOSED_NEGATIVE, DERIVED, PARAMETRIC, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Manuscript cosmology propagation — completes the FTD-0334 deferral | L482 |
-| `FTD-0364` | SYNTHESIS, BOUNDARY, OPEN, DERIVED, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Λ source-gap L-scan feasibility — the engine route to closing FTD-0331's source gap is boundary-limited; `campaign_vacuum_energy.cpp` superseded | L508 |
+| `FTD-0331` | SELECTION, OPEN, BOUNDARY, DERIVED, THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION | The cosmological constant as a scale-covariant holographic ratio — a mechanism for the *smallness* of Λ, not its value; replaces the α¹⁶/α⁵⁷… | L476 |
+| `FTD-0332` | RECONCILIATION, DERIVED, SELECTION, OPEN, BOUNDARY, PARAMETRIC, CONJECTURE, SUPERSEDED, THEOREM, SMC, FOUNDATIONAL_OBSTRUCTION | Corpus-wide cosmology-sector reconciliation — make FTD-0331 (Λ) canonical and remove the live cosmology contradictions | L477 |
+| `FTD-0333` | MEASURED, CONDITIONAL, SMC, FOUNDATIONAL_OBSTRUCTION | FTD-0270 P2 mass-gap swing — first canonical run INVALID (instability + flooding); strong no-gap hint; boundary unchanged | L479 |
+| `FTD-0334` | RECONCILIATION, PARAMETRIC, OPEN, BOUNDARY, CONJECTURE, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Deferred-layer cosmology cleanup — propagate FTD-0331/0332 into the papers/web/intuition/index layer | L478 |
+| `FTD-0338` | RECONCILIATION, OPEN, BOUNDARY, CLOSED_NEGATIVE, DERIVED, PARAMETRIC, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Manuscript cosmology propagation — completes the FTD-0334 deferral | L483 |
+| `FTD-0364` | SYNTHESIS, BOUNDARY, OPEN, DERIVED, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Λ source-gap L-scan feasibility — the engine route to closing FTD-0331's source gap is boundary-limited; `campaign_vacuum_energy.cpp` superseded | L509 |
 
 ---
 
@@ -476,13 +477,13 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0106` | HYPOTHESIS | G\*/π asymmetry scan across three Tier-1 domains (time-direction/dissipation, Coulomb scattering phase, Hawking evaporation timescale)… | L322 |
 | `FTD-0107` | PARTIAL | Emergent-spectrum G1 follow-up: L=64 multilatitude rerun confirms deterministic cluster counts | L321 |
 | `FTD-0201` | METHODOLOGICAL_CLARIFICATION, THEOREM | Phase J ultralocality (Theorem 7) honest retag from `[THEOREM at L=2] + [CONJECTURE for general L]` to… | L386 |
-| `FTD-0747` | CLOSED_NEGATIVE | Does the first device-resident CUDA port reproduce the three-ray causal-horizon CPU record and physics conjunction? | L889 |
-| `FTD-0748` | CLOSED_NEGATIVE | Does canonical net oriented-face support repair FTD-0747's representation-dependent current gate and yield a uniform three-ray CUDA replay? | L890 |
-| `FTD-0749` | CONSTRUCTIVE | Does collision-free unique-face deposition make long CUDA trajectories deterministic and CPU-identical? | L891 |
-| `FTD-0750` | CLOSED_NEGATIVE | Do ordered raw current addition and deterministic regional reductions recover the exact CUDA replay and uniform CPU prefix? | L892 |
-| `FTD-0751` | NUMERICAL_FACT | At what exact stage does the remaining CPU/CUDA trajectory divergence first appear? | L893 |
-| `FTD-0752` | NUMERICAL_FACT | Does a separately compiled explicit-rounding CUDA backend close the bounded dynamic parity gate? | L894 |
-| `FTD-0759` | INFRASTRUCTURE | Can the M3 matter/root/observer pipeline remain device-resident with qualified CPU parity and utilization? | L901 |
+| `FTD-0747` | CLOSED_NEGATIVE | Does the first device-resident CUDA port reproduce the three-ray causal-horizon CPU record and physics conjunction? | L890 |
+| `FTD-0748` | CLOSED_NEGATIVE | Does canonical net oriented-face support repair FTD-0747's representation-dependent current gate and yield a uniform three-ray CUDA replay? | L891 |
+| `FTD-0749` | CONSTRUCTIVE | Does collision-free unique-face deposition make long CUDA trajectories deterministic and CPU-identical? | L892 |
+| `FTD-0750` | CLOSED_NEGATIVE | Do ordered raw current addition and deterministic regional reductions recover the exact CUDA replay and uniform CPU prefix? | L893 |
+| `FTD-0751` | NUMERICAL_FACT | At what exact stage does the remaining CPU/CUDA trajectory divergence first appear? | L894 |
+| `FTD-0752` | NUMERICAL_FACT | Does a separately compiled explicit-rounding CUDA backend close the bounded dynamic parity gate? | L895 |
+| `FTD-0759` | INFRASTRUCTURE | Can the M3 matter/root/observer pipeline remain device-resident with qualified CPU parity and utilization? | L902 |
 
 ---
 
@@ -526,11 +527,11 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0299` | MEASURED, BOUNDARY, SMC | Lattice wave sectors run of record — light dispersion atlas LIGHT-CONFIRMED + condensate-compression probe NULL | L448 |
 | `FTD-0316` | DERIVED, RETRACTED | Does a coherent flux drive show a sharp genesis ignition threshold and subsequent crest regulation? | L462 |
 | `FTD-0317` | EMERGENT, SMC, FOUNDATIONAL_OBSTRUCTION | Does spatial information do "creative work" in FTD genesis? — coherent vs scrambled disposition at fixed energy + `\|J\|` histogram | L463 |
-| `FTD-0337` | RECONCILIATION, SMC, FOUNDATIONAL_OBSTRUCTION, MEASURED | FTD-0308 mechanism correction — bare-wave leapfrog discretization, not a parametric KG-well instability | L481 |
-| `FTD-0362` | MEASURED, SMC, FOUNDATIONAL_OBSTRUCTION, CONDITIONAL | Native mass-gap swing v2 — CLOSED-NEGATIVE: the nonlinear genesis↔Gauss loop generates no rest-mass gap | L506 |
-| `FTD-0363` | MEASURED, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | GNC-w discriminator (Q_ij on locked Gauss-dressed clusters) v1 — INVALID: instrument defect, re-scope to v2; GNC-w stays [OPEN] | L507 |
-| `FTD-0379` | CLOSED_NEGATIVE, MEASURED | Vertex program M1 — does engine evolution satisfy the Dirac–Kähler equation on the local grade fields? | L523 |
-| `FTD-0380` | REFUTATION, SELECTION | Vertex program M2 — is the FTD-0087 su(2) closure failure dynamical noise? | L524 |
+| `FTD-0337` | RECONCILIATION, SMC, FOUNDATIONAL_OBSTRUCTION, MEASURED | FTD-0308 mechanism correction — bare-wave leapfrog discretization, not a parametric KG-well instability | L482 |
+| `FTD-0362` | MEASURED, SMC, FOUNDATIONAL_OBSTRUCTION, CONDITIONAL | Native mass-gap swing v2 — CLOSED-NEGATIVE: the nonlinear genesis↔Gauss loop generates no rest-mass gap | L507 |
+| `FTD-0363` | MEASURED, OPEN, SMC, FOUNDATIONAL_OBSTRUCTION, AXIOM | GNC-w discriminator (Q_ij on locked Gauss-dressed clusters) v1 — INVALID: instrument defect, re-scope to v2; GNC-w stays [OPEN] | L508 |
+| `FTD-0379` | CLOSED_NEGATIVE, MEASURED | Vertex program M1 — does engine evolution satisfy the Dirac–Kähler equation on the local grade fields? | L524 |
+| `FTD-0380` | REFUTATION, SELECTION | Vertex program M2 — is the FTD-0087 su(2) closure failure dynamical noise? | L525 |
 
 ---
 
@@ -542,31 +543,31 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0401` | NO_GO | Derived lattice speed versus legacy `c=1` matter clock and fused mass roles | L545 |
-| `FTD-0402` | PARTIAL | Causal normalization and explicit mass-role reconciliation in the current raw-lattice engine | L546 |
-| `FTD-0403` | THEOREM, OPEN | Targeted causal-normalization dependency closure | L547 |
-| `FTD-0404` | THEOREM, OPEN | Volumetric measure reconciliation: does three-dimensionality require cubing local energy formulas or an explicit cubic integration measure? | L548 |
-| `FTD-0405` | NO_GO | Native Confinement Energy–Momentum Contract feasibility: can the current RenderBridge colour pair force satisfy NCEMC-1–4 without a new law… | L550 |
-| `FTD-0406` | SCOPE_CONTRACT, SELECTION, IMPOSED | Owner-authorized strong stress–energy contract v1: can explicit selected choices close the FTD-0405 work/zero/localization obstructions on a frozen… | L551 |
-| `FTD-0407` | NO_GO, THEOREM, OPEN, AXIOM | Lorentz-recovery hard audit: full discrete flux pole, exact production CFL interval, nearest-Moore stability/improvement obstruction, constructive… | L552 |
-| `FTD-0408` | THEOREM | P4-preserving period-two Lorentz prototype: can two legal nearest-Moore ticks generate the radius-two effective counterterm without a radius-two… | L553 |
-| `FTD-0409` | POSITIVE, CONSTRUCTIVE, OPEN | Fixed-cone gate: can a minimal P4-local temporal or auxiliary architecture cancel the dimension-six pole while retaining the live `c²=1/3` cone? | L554 |
-| `FTD-0410` | THEOREM, NO_GO, OPEN, SELECTION | Can the Gauss arithmetic-geometric mean derive the FTD light cone rather than merely supply another selected speed? | L555 |
-| `FTD-0411` | THEOREM, POSITIVE, OPEN | Can the Moore layers define two domains, with BCC as temporal return structure and SC+FCC as physical-space propagation? | L556 |
-| `FTD-0412` | CORRECTION, NO_GO, OPEN | Common-cone gate after the BCC-time construction, including correction of the Wilson real-time operator | L557 |
-| `FTD-0413` | DERIVED, OPEN | Can a nearest-Moore face-diagonal Wilson kinetic stencil escape the FTD-0412 scalar-r q4 common-cone obstruction? | L559 |
-| `FTD-0414` | CORRECTION, DERIVED, CONDITIONAL, OPEN | If exact all-orders Lorentz symmetry is not required, what empirical infrared envelope does the selected free flux/matter cone obey? | L560 |
-| `FTD-0415` | THEOREM, DERIVED, OPEN | Do FTD's declared exact symmetries forbid radiative generation of lower-dimensional preferred-frame kinetic operators? | L561 |
-| `FTD-0416` | DERIVED, OPEN | Can standard anisotropic-QED RG attraction erase the preferred-frame threshold left open by FTD-0415? | L563 |
-| `FTD-0417` | THEOREM, DERIVED, OPEN | Can the photon/flux sector be made genuinely local without the nonlocal Helmholtz map `A=P_T J`? | L564 |
-| `FTD-0418` | THEOREM, DERIVED, OPEN | Can the FTD-0417 local photon be paired with one discrete spacetime matter regulator whose action fixes every vertex needed for one-loop matching? | L565 |
-| `FTD-0419` | NUMERICAL_FACT, THEOREM, CLOSED_NEGATIVE, OPEN | Does the bare FTD-0417/0418 leading common cone remain matched after the complete one-loop full-Brillouin-zone correction? | L566 |
-| `FTD-0420` | PRE_REGISTRATION, SCOPE_CONTRACT | Can the native-first Lorentz recovery cycle be frozen before any new measurements? | L567 |
-| `FTD-0421` | THEOREM, CLOSED_NEGATIVE | Does the frozen production event algebra admit a nontrivial additive source-free native charge over the preregistered discrete feature basis? | L568 |
-| `FTD-0422` | NOT_EXECUTED | Do frozen native histories supply a charged manifested pole and a common low-energy cone? | L569 |
-| `FTD-0423` | NOT_EXECUTED | Does native blocking drive every dimension-four preferred-frame operator toward the common-cone surface? | L570 |
-| `FTD-0424` | SCOPE_CONTRACT, CLOSED_NEGATIVE, OPEN | Can one universal dimension-four relative-cone counterterm control the auxiliary local-link EFT without sector or threshold retuning? | L571 |
-| `FTD-0425` | THEOREM, EXACT, OPEN | Is the frozen tick compatible with emergent low-energy unitarity? | L572 |
+| `FTD-0401` | NO_GO | Derived lattice speed versus legacy `c=1` matter clock and fused mass roles | L546 |
+| `FTD-0402` | PARTIAL | Causal normalization and explicit mass-role reconciliation in the current raw-lattice engine | L547 |
+| `FTD-0403` | THEOREM, OPEN | Targeted causal-normalization dependency closure | L548 |
+| `FTD-0404` | THEOREM, OPEN | Volumetric measure reconciliation: does three-dimensionality require cubing local energy formulas or an explicit cubic integration measure? | L549 |
+| `FTD-0405` | NO_GO | Native Confinement Energy–Momentum Contract feasibility: can the current RenderBridge colour pair force satisfy NCEMC-1–4 without a new law… | L551 |
+| `FTD-0406` | SCOPE_CONTRACT, SELECTION, IMPOSED | Owner-authorized strong stress–energy contract v1: can explicit selected choices close the FTD-0405 work/zero/localization obstructions on a frozen… | L552 |
+| `FTD-0407` | NO_GO, THEOREM, OPEN, AXIOM | Lorentz-recovery hard audit: full discrete flux pole, exact production CFL interval, nearest-Moore stability/improvement obstruction, constructive… | L553 |
+| `FTD-0408` | THEOREM | P4-preserving period-two Lorentz prototype: can two legal nearest-Moore ticks generate the radius-two effective counterterm without a radius-two… | L554 |
+| `FTD-0409` | POSITIVE, CONSTRUCTIVE, OPEN | Fixed-cone gate: can a minimal P4-local temporal or auxiliary architecture cancel the dimension-six pole while retaining the live `c²=1/3` cone? | L555 |
+| `FTD-0410` | THEOREM, NO_GO, OPEN, SELECTION | Can the Gauss arithmetic-geometric mean derive the FTD light cone rather than merely supply another selected speed? | L556 |
+| `FTD-0411` | THEOREM, POSITIVE, OPEN | Can the Moore layers define two domains, with BCC as temporal return structure and SC+FCC as physical-space propagation? | L557 |
+| `FTD-0412` | CORRECTION, NO_GO, OPEN | Common-cone gate after the BCC-time construction, including correction of the Wilson real-time operator | L558 |
+| `FTD-0413` | DERIVED, OPEN | Can a nearest-Moore face-diagonal Wilson kinetic stencil escape the FTD-0412 scalar-r q4 common-cone obstruction? | L560 |
+| `FTD-0414` | CORRECTION, DERIVED, CONDITIONAL, OPEN | If exact all-orders Lorentz symmetry is not required, what empirical infrared envelope does the selected free flux/matter cone obey? | L561 |
+| `FTD-0415` | THEOREM, DERIVED, OPEN | Do FTD's declared exact symmetries forbid radiative generation of lower-dimensional preferred-frame kinetic operators? | L562 |
+| `FTD-0416` | DERIVED, OPEN | Can standard anisotropic-QED RG attraction erase the preferred-frame threshold left open by FTD-0415? | L564 |
+| `FTD-0417` | THEOREM, DERIVED, OPEN | Can the photon/flux sector be made genuinely local without the nonlocal Helmholtz map `A=P_T J`? | L565 |
+| `FTD-0418` | THEOREM, DERIVED, OPEN | Can the FTD-0417 local photon be paired with one discrete spacetime matter regulator whose action fixes every vertex needed for one-loop matching? | L566 |
+| `FTD-0419` | NUMERICAL_FACT, THEOREM, CLOSED_NEGATIVE, OPEN | Does the bare FTD-0417/0418 leading common cone remain matched after the complete one-loop full-Brillouin-zone correction? | L567 |
+| `FTD-0420` | PRE_REGISTRATION, SCOPE_CONTRACT | Can the native-first Lorentz recovery cycle be frozen before any new measurements? | L568 |
+| `FTD-0421` | THEOREM, CLOSED_NEGATIVE | Does the frozen production event algebra admit a nontrivial additive source-free native charge over the preregistered discrete feature basis? | L569 |
+| `FTD-0422` | NOT_EXECUTED | Do frozen native histories supply a charged manifested pole and a common low-energy cone? | L570 |
+| `FTD-0423` | NOT_EXECUTED | Does native blocking drive every dimension-four preferred-frame operator toward the common-cone surface? | L571 |
+| `FTD-0424` | SCOPE_CONTRACT, CLOSED_NEGATIVE, OPEN | Can one universal dimension-four relative-cone counterterm control the auxiliary local-link EFT without sector or threshold retuning? | L572 |
+| `FTD-0425` | THEOREM, EXACT, OPEN | Is the frozen tick compatible with emergent low-energy unitarity? | L573 |
 
 ---
 
@@ -582,17 +583,17 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0114` | DERIVED | Exact lattice Bianchi identities on FTD's vertex-centered stencil family | L313 |
 | `FTD-0115` | DERIVED, THEOREM, OPEN | Corrected native moving-source response | L312 |
 | `FTD-0120` | THEOREM, OPEN, CONDITIONAL | Corrected moving-source extensions Q5/Q6/Q7/Q8 | L315 |
-| `FTD-0426` | MEASURED, CLOSED_NEGATIVE | Does production separation of primitive polarity generate an operational static charge in the native flux field? | L573 |
-| `FTD-0427` | THEOREM, MEASURED | Can a local matched face-current rule transport an effective Gauss source without repeated projection? | L574 |
-| `FTD-0428` | THEOREM, MEASURED | Can the selected matched face-current mechanism become one live longitudinal/transverse engine state without projection? | L575 |
-| `FTD-0429` | DERIVED | Does primitive polarity dynamically acquire a finite infrared closed-flux normalization in the frozen native engine? | L576 |
-| `FTD-0430` | DERIVED | Does an actual production movement event transport the native infrared polarity susceptibility with causal support and the same on-shell pole? | L577 |
-| `FTD-0431` | INVALID | Does the FTD-0429/0430 coarse polarity source retain a reaction-bearing infrared slow mode when native evaporation is enabled? | L578 |
-| `FTD-0432` | DERIVED, MEASURED | Does the exact production evaporation hazard explain the non-exponential polarity history observed by FTD-0431? | L579 |
-| `FTD-0433` | MEASURED | Does the exact dressed production hazard of one fixed axial fundamental source decrease toward the infrared at its native-pole first antinode? | L580 |
-| `FTD-0563` | THEOREM, CLOSED_NEGATIVE | Can a finite microscopically neutral source possess a true Gauss monopole, thereby evading the charged rigid-source obstruction? | L707 |
-| `FTD-0564` | THEOREM, CLOSED_NEGATIVE | Can a nonzero normalized-flux hedgehog degree by itself force or quantize electric Gauss charge? | L708 |
-| `FTD-0641` | THEOREM, MEASURED | Does the matched oriented-face electric / oriented-edge magnetic state possess its own divergence-free propagating modes, with phases fixed by the… | L783 |
+| `FTD-0426` | MEASURED, CLOSED_NEGATIVE | Does production separation of primitive polarity generate an operational static charge in the native flux field? | L574 |
+| `FTD-0427` | THEOREM, MEASURED | Can a local matched face-current rule transport an effective Gauss source without repeated projection? | L575 |
+| `FTD-0428` | THEOREM, MEASURED | Can the selected matched face-current mechanism become one live longitudinal/transverse engine state without projection? | L576 |
+| `FTD-0429` | DERIVED | Does primitive polarity dynamically acquire a finite infrared closed-flux normalization in the frozen native engine? | L577 |
+| `FTD-0430` | DERIVED | Does an actual production movement event transport the native infrared polarity susceptibility with causal support and the same on-shell pole? | L578 |
+| `FTD-0431` | INVALID | Does the FTD-0429/0430 coarse polarity source retain a reaction-bearing infrared slow mode when native evaporation is enabled? | L579 |
+| `FTD-0432` | DERIVED, MEASURED | Does the exact production evaporation hazard explain the non-exponential polarity history observed by FTD-0431? | L580 |
+| `FTD-0433` | MEASURED | Does the exact dressed production hazard of one fixed axial fundamental source decrease toward the infrared at its native-pole first antinode? | L581 |
+| `FTD-0563` | THEOREM, CLOSED_NEGATIVE | Can a finite microscopically neutral source possess a true Gauss monopole, thereby evading the charged rigid-source obstruction? | L708 |
+| `FTD-0564` | THEOREM, CLOSED_NEGATIVE | Can a nonzero normalized-flux hedgehog degree by itself force or quantize electric Gauss charge? | L709 |
+| `FTD-0641` | THEOREM, MEASURED | Does the matched oriented-face electric / oriented-edge magnetic state possess its own divergence-free propagating modes, with phases fixed by the… | L784 |
 
 ---
 
@@ -606,172 +607,172 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0434` | CLOSED_NEGATIVE | Does the canonical `s0-vacuum-photon` initializer propagate as the photon packet claimed by its scenario documentation and dashboard label? | L581 |
-| `FTD-0435` | MEASURED, CLOSED_NEGATIVE | Does the selected production `G_C s grad\|J\|` recoil have the polarity symmetry and scaling of an electric light-matter force? | L582 |
-| `FTD-0436` | MEASURED, CLOSED_NEGATIVE | Does the selected flux-gradient force polarize or translate a neutral `+1/-1` pair under a transverse travelling wave? | L583 |
-| `FTD-0437` | MEASURED, CLOSED_NEGATIVE, RESOLVED | Is the wave-free neutral-pair drift a dipole-oriented physical-force defect, lattice scan bias, or injection-history artifact? | L584 |
-| `FTD-0438` | MEASURED, CLOSED_NEGATIVE | Does the native central-generator flux momentum compensate the selected force's isolated-pair self-propulsion? | L585 |
-| `FTD-0439` | MEASURED | Is the isolated-pair reciprocity failure specific to the selected magnitude-gradient force, shared by direct flux forces, or present in the common… | L586 |
-| `FTD-0440` | MEASURED, INVALID | Is the FTD-0439 Poisson pair-momentum leak a cold-start SOR transient or a converged static reciprocity floor? | L587 |
-| `FTD-0441` | MEASURED | Is the FTD-0439 Poisson trajectory leak stored cold-start solver error even when neither source voxel hops? | L588 |
-| `FTD-0442` | UNKNOWN | Does the legacy divergence-gradient production force implement the particle Euler–Lagrange variation of the declared FTD coupling action? | L589 |
-| `FTD-0443` | THEOREM, MEASURED, CLOSED_NEGATIVE | What force/work statement follows exactly from the site-valued interaction, and does production implement it? | L590 |
-| `FTD-0444` | THEOREM, RETRACTED | Does exact scalar hop work uniquely determine force, particle momentum, and local field recoil? | L591 |
-| `FTD-0445` | THEOREM, MEASURED | Does a primitive edge/corner Moore hop uniquely induce the selected oriented-SC-face current history? | L592 |
-| `FTD-0446` | THEOREM | Can the three-component flux vector uniquely encode current on all 13 unoriented Moore channels? | L593 |
-| `FTD-0447` | THEOREM | Does native cubic symmetry remove FTD-0444's transverse force ambiguity for an isolated hop? | L594 |
-| `FTD-0448` | THEOREM | Does cubic covariance determine whether longitudinal field recoil belongs to the departure site, arrival site, or both? | L595 |
-| `FTD-0449` | MEASURED, CLOSED_NEGATIVE | Does the production movement event apply the exact endpoint action work, and can the event journal reconstruct its mechanics? | L596 |
-| `FTD-0450` | CORRECTION, THEOREM, CONSTRUCTIVE | Did FTD-0444's selected reversible map use the production flat energy-momentum relation? | L597 |
-| `FTD-0451` | CONSTRUCTIVE, OPEN | Can a local half-tick Moore-link record close and reverse the corrected particle work/recoil exchange? | L598 |
-| `FTD-0452` | THEOREM, CORRECTION | What energy actually closes a fixed-field hop, and do the engine's named energy diagnostics measure the production wave Hamiltonian? | L599 |
-| `FTD-0453` | THEOREM, CLOSED_NEGATIVE | Can any fixed-J update of the entire native wave-velocity field carry the selected recoil at zero exact tick-energy cost? | L600 |
-| `FTD-0454` | THEOREM, CLOSED_NEGATIVE | Does the zero-energy recoil obstruction survive the production-ordered simultaneous update `Delta J=Delta W=S`? | L601 |
-| `FTD-0455` | CONSTRUCTIVE, MEASURED, OPEN | Can a pre-existing exact travelling mode make the paired recoil transaction simultaneously energy- and momentum-conserving? | L602 |
-| `FTD-0456` | CONSTRUCTIVE, MEASURED, SELECTION | Can the travelling-wave-assisted zero-energy recoil be completed inside a fixed causal neighborhood of the hop? | L603 |
-| `FTD-0457` | CONSTRUCTIVE, MEASURED, SELECTION | Can a finite-energy localized source-free packet enable the same exact `R=1` recoil without a volume-growing background? | L604 |
-| `FTD-0458` | THEOREM, MEASURED, SELECTION | Does minimum impulse norm uniquely select the existing covariant-null transaction, and is that selector cubic covariant? | L605 |
-| `FTD-0459` | CLOSED_NEGATIVE, MEASURED | Does the finite packet support consecutive local conserving transactions when state coupling and production movement cadence act without any packet… | L606 |
-| `FTD-0460` | MEASURED, CORRECTION | Which additive field history blocks the FTD-0459 hop: packet, dressing, static polarity source, or velocity-curl source? | L607 |
-| `FTD-0461` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does production's source-site flux carry close integer-hop energy, and does the fixed-field endpoint work survive that carry? | L608 |
-| `FTD-0462` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does rigid translation of the complete polarity-generated field history remove the self-barrier, and is that event local? | L609 |
-| `FTD-0463` | THEOREM, MEASURED, CLOSED_NEGATIVE | Is FTD-0462's changing wave cross energy dominated by the transverse packet or by the selected longitudinal initial dressing? | L610 |
-| `FTD-0464` | THEOREM, CONSTRUCTIVE, MEASURED, CLOSED_NEGATIVE | Can a fixed endpoint-local portion of the source-generated field move with the polarity and admit every registered hop without the selected initial… | L611 |
-| `FTD-0465` | THEOREM, MEASURED, CLOSED_NEGATIVE | Is FTD-0464's local additive coat translation injective, and does its field momentum balance the particle update? | L612 |
-| `FTD-0466` | CONSTRUCTIVE, MEASURED, CLOSED_NEGATIVE | Does an exact injective permutation of the complete 36-site local field support close energy and momentum for the particle hop? | L613 |
-| `FTD-0467` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does any current production electric-force branch arise as the matter-side variation of the same interaction that supplies the native `-G_C grad(s)`… | L614 |
-| `FTD-0468` | THEOREM, MEASURED, OPEN | Does the existing `-G_C grad(s)` source kick carry the exact opposite field momentum of the common-action matter impulse `+G_C s grad(div J)`? | L615 |
-| `FTD-0469` | THEOREM, MEASURED, CORRECTION, OPEN | Does a source-centered common-action kick/drift/kick close shadow energy, total momentum, inversion, and per-particle kinetic accounting for frozen… | L616 |
-| `FTD-0470` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does the centered common-action site force integrate to the exact interaction work of a finite face hop, or is an oriented link derivative required? | L617 |
-| `FTD-0471` | THEOREM, MEASURED, CLOSED_NEGATIVE | Can the production cell-centered central-divergence field represent the Gauss-source change of one adjacent face hop locally? | L618 |
-| `FTD-0472` | THEOREM, MEASURED, SELECTION, OPEN | Does the selected matched face-current layer close an exact finite-step energy transaction, and does a primitive Moore hop determine that transaction… | L619 |
-| `FTD-0473` | THEOREM, CORRECTION, MEASURED, CLOSED_NEGATIVE, OPEN | Does the selected matched field possess an exact local translation momentum, and does the FTD-0472 electrostatic hop recoil in it? | L620 |
-| `FTD-0474` | MEASURED, CLOSED_NEGATIVE | Are finite manifested structures in the frozen engine maintained by a mechanical membrane, an explicit environment, periodic recirculation, or only… | L621 |
-| `FTD-0475` | MEASURED, CLOSED_NEGATIVE, OPEN | Are the travelling vacuum flux lines a co-moving field, a detached wake, or a leading guide for manifested matter? | L622 |
-| `FTD-0476` | MEASURED, CLOSED_NEGATIVE | Does a manifested polarity dynamically build a radial/co-moving flux dressing, leave a wake when moved, or release an outgoing field when removed? | L623 |
-| `FTD-0477` | MEASURED, CLOSED_NEGATIVE | Can a separate finite flux packet cause an initially resting polarity to become a reciprocal moving source with a co-moving dressing, wake, or… | L624 |
-| `FTD-0478` | DERIVED, THEOREM, SELECTION | Can `(site,remainder,polarity)` determine a compact subcell coupling shape and exact straight-segment face current? | L625 |
-| `FTD-0479` | CONSTRUCTIVE, CLOSED_NEGATIVE | Can the exact face current, matched fields, and production matter dispersion form one reciprocal implicit transaction? | L626 |
-| `FTD-0480` | CLOSED_NEGATIVE | Does the coupled observer qualify over all axis directions, static dressing, polynomial/wave fields, diagonal paths, translations, and cubic… | L627 |
-| `FTD-0481` | NOT_EXECUTED | Default-off `common_action_face_dynamics` branch. | L628 |
-| `FTD-0482` | NOT_EXECUTED | Reciprocal dressing, wake, and dashboard qualification. | L629 |
-| `FTD-0483` | NOT_EXECUTED | Infrared pole, cone, anisotropy, and spectral recovery. | L630 |
+| `FTD-0434` | CLOSED_NEGATIVE | Does the canonical `s0-vacuum-photon` initializer propagate as the photon packet claimed by its scenario documentation and dashboard label? | L582 |
+| `FTD-0435` | MEASURED, CLOSED_NEGATIVE | Does the selected production `G_C s grad\|J\|` recoil have the polarity symmetry and scaling of an electric light-matter force? | L583 |
+| `FTD-0436` | MEASURED, CLOSED_NEGATIVE | Does the selected flux-gradient force polarize or translate a neutral `+1/-1` pair under a transverse travelling wave? | L584 |
+| `FTD-0437` | MEASURED, CLOSED_NEGATIVE, RESOLVED | Is the wave-free neutral-pair drift a dipole-oriented physical-force defect, lattice scan bias, or injection-history artifact? | L585 |
+| `FTD-0438` | MEASURED, CLOSED_NEGATIVE | Does the native central-generator flux momentum compensate the selected force's isolated-pair self-propulsion? | L586 |
+| `FTD-0439` | MEASURED | Is the isolated-pair reciprocity failure specific to the selected magnitude-gradient force, shared by direct flux forces, or present in the common… | L587 |
+| `FTD-0440` | MEASURED, INVALID | Is the FTD-0439 Poisson pair-momentum leak a cold-start SOR transient or a converged static reciprocity floor? | L588 |
+| `FTD-0441` | MEASURED | Is the FTD-0439 Poisson trajectory leak stored cold-start solver error even when neither source voxel hops? | L589 |
+| `FTD-0442` | UNKNOWN | Does the legacy divergence-gradient production force implement the particle Euler–Lagrange variation of the declared FTD coupling action? | L590 |
+| `FTD-0443` | THEOREM, MEASURED, CLOSED_NEGATIVE | What force/work statement follows exactly from the site-valued interaction, and does production implement it? | L591 |
+| `FTD-0444` | THEOREM, RETRACTED | Does exact scalar hop work uniquely determine force, particle momentum, and local field recoil? | L592 |
+| `FTD-0445` | THEOREM, MEASURED | Does a primitive edge/corner Moore hop uniquely induce the selected oriented-SC-face current history? | L593 |
+| `FTD-0446` | THEOREM | Can the three-component flux vector uniquely encode current on all 13 unoriented Moore channels? | L594 |
+| `FTD-0447` | THEOREM | Does native cubic symmetry remove FTD-0444's transverse force ambiguity for an isolated hop? | L595 |
+| `FTD-0448` | THEOREM | Does cubic covariance determine whether longitudinal field recoil belongs to the departure site, arrival site, or both? | L596 |
+| `FTD-0449` | MEASURED, CLOSED_NEGATIVE | Does the production movement event apply the exact endpoint action work, and can the event journal reconstruct its mechanics? | L597 |
+| `FTD-0450` | CORRECTION, THEOREM, CONSTRUCTIVE | Did FTD-0444's selected reversible map use the production flat energy-momentum relation? | L598 |
+| `FTD-0451` | CONSTRUCTIVE, OPEN | Can a local half-tick Moore-link record close and reverse the corrected particle work/recoil exchange? | L599 |
+| `FTD-0452` | THEOREM, CORRECTION | What energy actually closes a fixed-field hop, and do the engine's named energy diagnostics measure the production wave Hamiltonian? | L600 |
+| `FTD-0453` | THEOREM, CLOSED_NEGATIVE | Can any fixed-J update of the entire native wave-velocity field carry the selected recoil at zero exact tick-energy cost? | L601 |
+| `FTD-0454` | THEOREM, CLOSED_NEGATIVE | Does the zero-energy recoil obstruction survive the production-ordered simultaneous update `Delta J=Delta W=S`? | L602 |
+| `FTD-0455` | CONSTRUCTIVE, MEASURED, OPEN | Can a pre-existing exact travelling mode make the paired recoil transaction simultaneously energy- and momentum-conserving? | L603 |
+| `FTD-0456` | CONSTRUCTIVE, MEASURED, SELECTION | Can the travelling-wave-assisted zero-energy recoil be completed inside a fixed causal neighborhood of the hop? | L604 |
+| `FTD-0457` | CONSTRUCTIVE, MEASURED, SELECTION | Can a finite-energy localized source-free packet enable the same exact `R=1` recoil without a volume-growing background? | L605 |
+| `FTD-0458` | THEOREM, MEASURED, SELECTION | Does minimum impulse norm uniquely select the existing covariant-null transaction, and is that selector cubic covariant? | L606 |
+| `FTD-0459` | CLOSED_NEGATIVE, MEASURED | Does the finite packet support consecutive local conserving transactions when state coupling and production movement cadence act without any packet… | L607 |
+| `FTD-0460` | MEASURED, CORRECTION | Which additive field history blocks the FTD-0459 hop: packet, dressing, static polarity source, or velocity-curl source? | L608 |
+| `FTD-0461` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does production's source-site flux carry close integer-hop energy, and does the fixed-field endpoint work survive that carry? | L609 |
+| `FTD-0462` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does rigid translation of the complete polarity-generated field history remove the self-barrier, and is that event local? | L610 |
+| `FTD-0463` | THEOREM, MEASURED, CLOSED_NEGATIVE | Is FTD-0462's changing wave cross energy dominated by the transverse packet or by the selected longitudinal initial dressing? | L611 |
+| `FTD-0464` | THEOREM, CONSTRUCTIVE, MEASURED, CLOSED_NEGATIVE | Can a fixed endpoint-local portion of the source-generated field move with the polarity and admit every registered hop without the selected initial… | L612 |
+| `FTD-0465` | THEOREM, MEASURED, CLOSED_NEGATIVE | Is FTD-0464's local additive coat translation injective, and does its field momentum balance the particle update? | L613 |
+| `FTD-0466` | CONSTRUCTIVE, MEASURED, CLOSED_NEGATIVE | Does an exact injective permutation of the complete 36-site local field support close energy and momentum for the particle hop? | L614 |
+| `FTD-0467` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does any current production electric-force branch arise as the matter-side variation of the same interaction that supplies the native `-G_C grad(s)`… | L615 |
+| `FTD-0468` | THEOREM, MEASURED, OPEN | Does the existing `-G_C grad(s)` source kick carry the exact opposite field momentum of the common-action matter impulse `+G_C s grad(div J)`? | L616 |
+| `FTD-0469` | THEOREM, MEASURED, CORRECTION, OPEN | Does a source-centered common-action kick/drift/kick close shadow energy, total momentum, inversion, and per-particle kinetic accounting for frozen… | L617 |
+| `FTD-0470` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does the centered common-action site force integrate to the exact interaction work of a finite face hop, or is an oriented link derivative required? | L618 |
+| `FTD-0471` | THEOREM, MEASURED, CLOSED_NEGATIVE | Can the production cell-centered central-divergence field represent the Gauss-source change of one adjacent face hop locally? | L619 |
+| `FTD-0472` | THEOREM, MEASURED, SELECTION, OPEN | Does the selected matched face-current layer close an exact finite-step energy transaction, and does a primitive Moore hop determine that transaction… | L620 |
+| `FTD-0473` | THEOREM, CORRECTION, MEASURED, CLOSED_NEGATIVE, OPEN | Does the selected matched field possess an exact local translation momentum, and does the FTD-0472 electrostatic hop recoil in it? | L621 |
+| `FTD-0474` | MEASURED, CLOSED_NEGATIVE | Are finite manifested structures in the frozen engine maintained by a mechanical membrane, an explicit environment, periodic recirculation, or only… | L622 |
+| `FTD-0475` | MEASURED, CLOSED_NEGATIVE, OPEN | Are the travelling vacuum flux lines a co-moving field, a detached wake, or a leading guide for manifested matter? | L623 |
+| `FTD-0476` | MEASURED, CLOSED_NEGATIVE | Does a manifested polarity dynamically build a radial/co-moving flux dressing, leave a wake when moved, or release an outgoing field when removed? | L624 |
+| `FTD-0477` | MEASURED, CLOSED_NEGATIVE | Can a separate finite flux packet cause an initially resting polarity to become a reciprocal moving source with a co-moving dressing, wake, or… | L625 |
+| `FTD-0478` | DERIVED, THEOREM, SELECTION | Can `(site,remainder,polarity)` determine a compact subcell coupling shape and exact straight-segment face current? | L626 |
+| `FTD-0479` | CONSTRUCTIVE, CLOSED_NEGATIVE | Can the exact face current, matched fields, and production matter dispersion form one reciprocal implicit transaction? | L627 |
+| `FTD-0480` | CLOSED_NEGATIVE | Does the coupled observer qualify over all axis directions, static dressing, polynomial/wave fields, diagonal paths, translations, and cubic… | L628 |
+| `FTD-0481` | NOT_EXECUTED | Default-off `common_action_face_dynamics` branch. | L629 |
+| `FTD-0482` | NOT_EXECUTED | Reciprocal dressing, wake, and dashboard qualification. | L630 |
+| `FTD-0483` | NOT_EXECUTED | Infrared pole, cone, anisotropy, and spectral recovery. | L631 |
 
 ### Common-action mechanics & reciprocity — action, worldline & Legendre structure
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0484` | THEOREM, OPEN | Is the exact subcell face current the spatial part of a local spacetime worldline action, and does that action determine the missing transverse force… | L631 |
-| `FTD-0485` | THEOREM, CLOSED_NEGATIVE | Does the selected action determine the full two-slab interior impulse, and is that force unique at the existing hop threshold? | L632 |
-| `FTD-0486` | THEOREM | Can the selected minimal action reproduce matched Gauss/source normalization and the frozen equal electric/magnetic force coefficients at… | L633 |
-| `FTD-0487` | THEOREM | Is the compact action's hop-threshold force jump a fixture artifact, or is it forced by nonzero matched Gauss charge? | L634 |
-| `FTD-0488` | THEOREM, CONSTRUCTIVE, UNDERDETERMINED | Can the Gauss-forced point-force jump be removed by locally subtracting each particle's own field from frozen total state? | L635 |
-| `FTD-0489` | THEOREM, CONSTRUCTIVE | Can the exact straight-worldline action select a manifested Moore endpoint by comparing finite open-hop action values? | L636 |
-| `FTD-0490` | THEOREM, CONSTRUCTIVE, OPEN | Does the proper discrete Legendre transform evade FTD-0489's open-action gauge defect in a cubical-cell interior? | L637 |
-| `FTD-0491` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Does one initial kinetic momentum select a unique incident-cell Legendre branch at a manifested knot? | L638 |
-| `FTD-0492` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Does the unique local linear cubic-invariant centered knot trace repair the symmetric branch while remaining the ordinary common-action derivative? | L639 |
-| `FTD-0493` | THEOREM, CLOSED_NEGATIVE | Does the centered weak trace close exact matched-face work, or omit a finite jump ledger? | L640 |
-| `FTD-0494` | THEOREM, CLOSED_NEGATIVE | Can the exact cusp-work ledger be absorbed into a local single-valued dressing energy of the frozen particle and face-field variables? | L641 |
-| `FTD-0495` | CONSTRUCTIVE, THEOREM, CLOSED_NEGATIVE | What minimum additional state records the nonintegrable cusp work reversibly, and can it retain centered motion under an ordinary common action? | L642 |
-| `FTD-0496` | THEOREM, CONSTRUCTIVE | Does existing momentum plus the explicit dressing fiber determine a unique centered matter/field transaction from a manifested knot? | L643 |
-| `FTD-0497` | CONSTRUCTIVE, THEOREM, CLOSED_NEGATIVE | Can exact axial face work cross the existing remainder threshold and still recover the raw manifested state under the same reverse map? | L644 |
-| `FTD-0498` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does the exact `(site,remainder)` quotient make the FTD-0497 inverse defect a harmless engine gauge redundancy? | L645 |
-| `FTD-0499` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Can a finite local chart label or other finite hidden state make the non-injective threshold map reversible while leaving its projected raw update… | L646 |
-| `FTD-0500` | CONSTRUCTIVE, THEOREM, MEASURED, CLOSED_NEGATIVE | Can one centered canonical chart repair raw inversion while preserving exact cubic covariance and frozen production behavior? | L647 |
-| `FTD-0501` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Can summed trilinear polarity and exact face current serve as a complete quotient ontology for multiple manifested objects? | L648 |
-| `FTD-0502` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Does an unordered multiset of manifested endpoints uniquely determine the exact oriented face current? | L649 |
-| `FTD-0503` | THEOREM, CONSTRUCTIVE, OPEN | Can existing per-manifestation phase space uniquely select the free transport 1-chain before endpoint write-back? | L650 |
-| `FTD-0504` | THEOREM, CLOSED_NEGATIVE, OPEN | Does every coincident-target event require a new collision law, or are identical crossings only a label redundancy? | L651 |
-| `FTD-0505` | THEOREM, CONSTRUCTIVE, RETRACTED | Can an exact tick-boundary same-sign collision be resolved without adding capacity, interaction range, or temporal phase? | L652 |
-| `FTD-0506` | MEASURED, CLOSED_NEGATIVE | Does the production same-sign “elastic bounce” qualify as the reciprocal finite-range exclusion escape isolated by FTD-0505? | L653 |
-| `FTD-0507` | THEOREM, RETRACTED, MEASURED | Does the frozen overlapping `(site,remainder)` atlas already store an exact tick-boundary collision state? | L654 |
-| `FTD-0511` | WITHDRAWN | Does the Front-B P6C-T collision-vertex temporal-phase candidate remain licensed after the FTD-0507 chart-capacity correction? | L658 |
-| `FTD-0512` | DERIVED, CONSTRUCTIVE, THEOREM, CLOSED_NEGATIVE | Can existing constituent phase space supply the FTD-0507 boundary collision map, and can aggregate face action derive it? | L659 |
-| `FTD-0513` | THEOREM, CONSTRUCTIVE, OPEN | What is the lowest cubic-covariant constituent moment that retains the FTD-0512 axial counterflow, and is it a complete matter state? | L660 |
-| `FTD-0514` | THEOREM, CONSTRUCTIVE, OPEN | Does exact oriented face continuity supply a local constituent momentum balance and the FTD-0513 kinetic-stress bridge, including the selected… | L661 |
+| `FTD-0484` | THEOREM, OPEN | Is the exact subcell face current the spatial part of a local spacetime worldline action, and does that action determine the missing transverse force… | L632 |
+| `FTD-0485` | THEOREM, CLOSED_NEGATIVE | Does the selected action determine the full two-slab interior impulse, and is that force unique at the existing hop threshold? | L633 |
+| `FTD-0486` | THEOREM | Can the selected minimal action reproduce matched Gauss/source normalization and the frozen equal electric/magnetic force coefficients at… | L634 |
+| `FTD-0487` | THEOREM | Is the compact action's hop-threshold force jump a fixture artifact, or is it forced by nonzero matched Gauss charge? | L635 |
+| `FTD-0488` | THEOREM, CONSTRUCTIVE, UNDERDETERMINED | Can the Gauss-forced point-force jump be removed by locally subtracting each particle's own field from frozen total state? | L636 |
+| `FTD-0489` | THEOREM, CONSTRUCTIVE | Can the exact straight-worldline action select a manifested Moore endpoint by comparing finite open-hop action values? | L637 |
+| `FTD-0490` | THEOREM, CONSTRUCTIVE, OPEN | Does the proper discrete Legendre transform evade FTD-0489's open-action gauge defect in a cubical-cell interior? | L638 |
+| `FTD-0491` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Does one initial kinetic momentum select a unique incident-cell Legendre branch at a manifested knot? | L639 |
+| `FTD-0492` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Does the unique local linear cubic-invariant centered knot trace repair the symmetric branch while remaining the ordinary common-action derivative? | L640 |
+| `FTD-0493` | THEOREM, CLOSED_NEGATIVE | Does the centered weak trace close exact matched-face work, or omit a finite jump ledger? | L641 |
+| `FTD-0494` | THEOREM, CLOSED_NEGATIVE | Can the exact cusp-work ledger be absorbed into a local single-valued dressing energy of the frozen particle and face-field variables? | L642 |
+| `FTD-0495` | CONSTRUCTIVE, THEOREM, CLOSED_NEGATIVE | What minimum additional state records the nonintegrable cusp work reversibly, and can it retain centered motion under an ordinary common action? | L643 |
+| `FTD-0496` | THEOREM, CONSTRUCTIVE | Does existing momentum plus the explicit dressing fiber determine a unique centered matter/field transaction from a manifested knot? | L644 |
+| `FTD-0497` | CONSTRUCTIVE, THEOREM, CLOSED_NEGATIVE | Can exact axial face work cross the existing remainder threshold and still recover the raw manifested state under the same reverse map? | L645 |
+| `FTD-0498` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does the exact `(site,remainder)` quotient make the FTD-0497 inverse defect a harmless engine gauge redundancy? | L646 |
+| `FTD-0499` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Can a finite local chart label or other finite hidden state make the non-injective threshold map reversible while leaving its projected raw update… | L647 |
+| `FTD-0500` | CONSTRUCTIVE, THEOREM, MEASURED, CLOSED_NEGATIVE | Can one centered canonical chart repair raw inversion while preserving exact cubic covariance and frozen production behavior? | L648 |
+| `FTD-0501` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Can summed trilinear polarity and exact face current serve as a complete quotient ontology for multiple manifested objects? | L649 |
+| `FTD-0502` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Does an unordered multiset of manifested endpoints uniquely determine the exact oriented face current? | L650 |
+| `FTD-0503` | THEOREM, CONSTRUCTIVE, OPEN | Can existing per-manifestation phase space uniquely select the free transport 1-chain before endpoint write-back? | L651 |
+| `FTD-0504` | THEOREM, CLOSED_NEGATIVE, OPEN | Does every coincident-target event require a new collision law, or are identical crossings only a label redundancy? | L652 |
+| `FTD-0505` | THEOREM, CONSTRUCTIVE, RETRACTED | Can an exact tick-boundary same-sign collision be resolved without adding capacity, interaction range, or temporal phase? | L653 |
+| `FTD-0506` | MEASURED, CLOSED_NEGATIVE | Does the production same-sign “elastic bounce” qualify as the reciprocal finite-range exclusion escape isolated by FTD-0505? | L654 |
+| `FTD-0507` | THEOREM, RETRACTED, MEASURED | Does the frozen overlapping `(site,remainder)` atlas already store an exact tick-boundary collision state? | L655 |
+| `FTD-0511` | WITHDRAWN | Does the Front-B P6C-T collision-vertex temporal-phase candidate remain licensed after the FTD-0507 chart-capacity correction? | L659 |
+| `FTD-0512` | DERIVED, CONSTRUCTIVE, THEOREM, CLOSED_NEGATIVE | Can existing constituent phase space supply the FTD-0507 boundary collision map, and can aggregate face action derive it? | L660 |
+| `FTD-0513` | THEOREM, CONSTRUCTIVE, OPEN | What is the lowest cubic-covariant constituent moment that retains the FTD-0512 axial counterflow, and is it a complete matter state? | L661 |
+| `FTD-0514` | THEOREM, CONSTRUCTIVE, OPEN | Does exact oriented face continuity supply a local constituent momentum balance and the FTD-0513 kinetic-stress bridge, including the selected… | L662 |
 
 ### Common-action mechanics & reciprocity — contact, collision & charts
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0525` | THEOREM, CONSTRUCTIVE, MEASURED | Is the FTD-0516 hard-contact surface already the active set of frozen ternary/chart production movement? | L667 |
-| `FTD-0526` | THEOREM, MEASURED, CORRECTION, OPEN | Does FTD-0525's raw contact crossing differ physically from hard-contact bounce, and what exactly happens at the later chart horizon? | L668 |
-| `FTD-0527` | THEOREM, CONSTRUCTIVE, OPEN | Can the FTD-0526 occupied-target overshoot defect be repaired with the frozen site/remainder variables while preserving exact face current, and what… | L669 |
-| `FTD-0528` | MEASURED, THEOREM, OPEN | Does the FTD-0527 identical-contact quotient factor through the actual native pre-movement coupling source and through complete matched face-current… | L670 |
-| `FTD-0529` | THEOREM, CLOSED_NEGATIVE, RESOLVED, OPEN | Can the unchanged energy-preserving FTD-0527 elastic contact output couple reciprocally to every admissible matched face field? | L671 |
-| `FTD-0530` | HYPOTHESIS, THEOREM, OPEN | Does the curl-free axial exception carry nonzero Gauss-fixed longitudinal work that requires a contact impulse? | L672 |
-| `FTD-0531` | CONSTRUCTIVE, MEASURED, CLOSED_NEGATIVE, OPEN | Can existing relativistic momentum absorb the diagonal FTD-0529 field work while endpoints, exact current, Gauss, and reversal are solved together? | L673 |
-| `FTD-0532` | DERIVED, CLOSED_NEGATIVE, OPEN | Does the constructive FTD-0531 diagonal endpoint lie inside the compact one-cell FTD-0485 action domain at the chart-horizon hop? | L674 |
-| `FTD-0533` | NUMERICAL_FACT, RESOLVED, CLOSED_NEGATIVE | Does the complete FTD-0484 deposited action possess a unique shared-point variation through the internal simultaneous knots of FTD-0532? | L675 |
-| `FTD-0534` | THEOREM, CONSTRUCTIVE | Can the FTD-0531 midpoint work field and staggered magnetic endpoints be represented by one FTD-0484 connection slab? | L676 |
-| `FTD-0535` | THEOREM, CLOSED_NEGATIVE, CONSTRUCTIVE | Does the exact FTD-0484 temporal current split fit the frozen Faraday-then-total-current phase ordering? | L677 |
-| `FTD-0536` | DERIVED, CONSTRUCTIVE, CLOSED_NEGATIVE | Does the minimal implicit atomic face action exist on the diagonal hop, and are the FTD-0531 scalar energy roots stationary solutions of it? | L678 |
-| `FTD-0537` | NUMERICAL_FACT, RESOLVED, CONDITIONAL | Does the FTD-0536 action admit a differentiably verified six-coordinate initial-value root, and does that root close either registered total energy? | L679 |
-| `FTD-0538` | THEOREM, CONSTRUCTIVE, RESOLVED, CLOSED_NEGATIVE | Does containing every endpoint derivative stencil within one current chart resolve FTD-0537 and validate the unchanged action root? | L680 |
-| `FTD-0539` | CONSTRUCTIVE, NUMERICAL_FACT, CLOSED_NEGATIVE | Do the exact shell-2 reflection-plane roots have a unique normal Legendre derivative, a nonsmooth stationary inclusion, or no stationary normal… | L681 |
-| `FTD-0540` | THEOREM, CONSTRUCTIVE | Is the FTD-0539 cusp a tunable artifact of the chosen trilinear coefficients, or is it forced by the local polarity representation? | L682 |
-| `FTD-0541` | SELECTION, THEOREM, NUMERICAL_FACT | Can the positive non-cardinal smooth escape from FTD-0540 carry an exact local oriented-face current and remove the inactive integer-plane cusp? | L683 |
-| `FTD-0542` | SELECTION, THEOREM | Does the selected smooth quadratic coat admit an exact spacetime current and a single interaction functional that generates every face and temporal… | L684 |
+| `FTD-0525` | THEOREM, CONSTRUCTIVE, MEASURED | Is the FTD-0516 hard-contact surface already the active set of frozen ternary/chart production movement? | L668 |
+| `FTD-0526` | THEOREM, MEASURED, CORRECTION, OPEN | Does FTD-0525's raw contact crossing differ physically from hard-contact bounce, and what exactly happens at the later chart horizon? | L669 |
+| `FTD-0527` | THEOREM, CONSTRUCTIVE, OPEN | Can the FTD-0526 occupied-target overshoot defect be repaired with the frozen site/remainder variables while preserving exact face current, and what… | L670 |
+| `FTD-0528` | MEASURED, THEOREM, OPEN | Does the FTD-0527 identical-contact quotient factor through the actual native pre-movement coupling source and through complete matched face-current… | L671 |
+| `FTD-0529` | THEOREM, CLOSED_NEGATIVE, RESOLVED, OPEN | Can the unchanged energy-preserving FTD-0527 elastic contact output couple reciprocally to every admissible matched face field? | L672 |
+| `FTD-0530` | HYPOTHESIS, THEOREM, OPEN | Does the curl-free axial exception carry nonzero Gauss-fixed longitudinal work that requires a contact impulse? | L673 |
+| `FTD-0531` | CONSTRUCTIVE, MEASURED, CLOSED_NEGATIVE, OPEN | Can existing relativistic momentum absorb the diagonal FTD-0529 field work while endpoints, exact current, Gauss, and reversal are solved together? | L674 |
+| `FTD-0532` | DERIVED, CLOSED_NEGATIVE, OPEN | Does the constructive FTD-0531 diagonal endpoint lie inside the compact one-cell FTD-0485 action domain at the chart-horizon hop? | L675 |
+| `FTD-0533` | NUMERICAL_FACT, RESOLVED, CLOSED_NEGATIVE | Does the complete FTD-0484 deposited action possess a unique shared-point variation through the internal simultaneous knots of FTD-0532? | L676 |
+| `FTD-0534` | THEOREM, CONSTRUCTIVE | Can the FTD-0531 midpoint work field and staggered magnetic endpoints be represented by one FTD-0484 connection slab? | L677 |
+| `FTD-0535` | THEOREM, CLOSED_NEGATIVE, CONSTRUCTIVE | Does the exact FTD-0484 temporal current split fit the frozen Faraday-then-total-current phase ordering? | L678 |
+| `FTD-0536` | DERIVED, CONSTRUCTIVE, CLOSED_NEGATIVE | Does the minimal implicit atomic face action exist on the diagonal hop, and are the FTD-0531 scalar energy roots stationary solutions of it? | L679 |
+| `FTD-0537` | NUMERICAL_FACT, RESOLVED, CONDITIONAL | Does the FTD-0536 action admit a differentiably verified six-coordinate initial-value root, and does that root close either registered total energy? | L680 |
+| `FTD-0538` | THEOREM, CONSTRUCTIVE, RESOLVED, CLOSED_NEGATIVE | Does containing every endpoint derivative stencil within one current chart resolve FTD-0537 and validate the unchanged action root? | L681 |
+| `FTD-0539` | CONSTRUCTIVE, NUMERICAL_FACT, CLOSED_NEGATIVE | Do the exact shell-2 reflection-plane roots have a unique normal Legendre derivative, a nonsmooth stationary inclusion, or no stationary normal… | L682 |
+| `FTD-0540` | THEOREM, CONSTRUCTIVE | Is the FTD-0539 cusp a tunable artifact of the chosen trilinear coefficients, or is it forced by the local polarity representation? | L683 |
+| `FTD-0541` | SELECTION, THEOREM, NUMERICAL_FACT | Can the positive non-cardinal smooth escape from FTD-0540 carry an exact local oriented-face current and remove the inactive integer-plane cusp? | L684 |
+| `FTD-0542` | SELECTION, THEOREM | Does the selected smooth quadratic coat admit an exact spacetime current and a single interaction functional that generates every face and temporal… | L685 |
 
 ### Common-action mechanics & reciprocity — energy closure & Peierls barriers
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0543` | THEOREM, CONSTRUCTIVE | Does fixed-step stationarity of the common action itself prove exact endpoint-energy conservation, and what does the simplest exact-energy repair… | L685 |
-| `FTD-0544` | THEOREM | Can the matched face/edge field sector exchange the coat-current work exactly while preserving Gauss, independent of the unresolved particle equation? | L686 |
-| `FTD-0545` | THEOREM, CLOSED_NEGATIVE | Does analytic endpoint variation of the quadratic-coat action make the production matter-energy gain identically equal to the exact matched field… | L687 |
-| `FTD-0546` | DERIVED, NUMERICAL_FACT, CLOSED_NEGATIVE | Does the FTD-0545 matter-energy defect survive after the exact temporal source and endpoint-current split generate a neutral, periodic… | L688 |
-| `FTD-0547` | DERIVED | Is the FTD-0545/0546 matter-work defect intrinsic to the production dispersion, or caused by freezing velocity while momentum changes during the tick? | L689 |
-| `FTD-0548` | DERIVED, NUMERICAL_FACT | Does the exact accelerated worldline admit the same gauge-covariant quadratic-coat deposits, and can the old linear-time endpoint split be reused? | L690 |
-| `FTD-0549` | THEOREM | Can exact `K0,K1,T` be reconstructed after solving only endpoint and midpoint kinematics? | L691 |
-| `FTD-0550` | SELECTION, THEOREM, NUMERICAL_FACT | Does the quadratic coat determine compatible electric and magnetic orbit gathers from the same staggered action complex? | L692 |
-| `FTD-0551` | SELECTED_DYNAMICS, THEOREM, NUMERICAL_FACT | Can the exact quadratic current and orbit gathers close one simultaneous relativistic matter/matched-field transaction? | L693 |
-| `FTD-0552` | DERIVED, NUMERICAL_FACT, CLOSED_NEGATIVE | Does an isolated quadratic coat at a generic subcell position remain static in its own neutral periodic dressing? | L694 |
-| `FTD-0553` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE | Can a rigid localized neutral composite cancel the compact quadratic coat's lattice self-force without subtraction or a new primitive? | L697 |
-| `FTD-0554` | THEOREM, CONSTRUCTIVE | Can exact microscopic continuous translation, unitary energy preservation, the one-site shift, and strict finite-range locality coexist on a discrete… | L698 |
-| `FTD-0555` | THEOREM, NUMERICAL_FACT | What exact condition makes a local extended source's compact-coat Peierls barrier irrelevant in the infrared? | L699 |
-| `FTD-0556` | THEOREM, NUMERICAL_FACT | Can strict integer-site locality produce continuous observable transport without fractional primitive matter position? | L700 |
-| `FTD-0557` | THEOREM, NUMERICAL_FACT | Can the isolated free-flux Bloch band itself supply a nonzero localized stationary or rigidly translating carrier? | L701 |
-| `FTD-0558` | THEOREM, DERIVED, RETRACTED | What is the exact production moving-source pole, and does the lattice radiate for every nonzero smooth-source speed? | L702 |
-| `FTD-0559` | THEOREM, DERIVED | What exact field energy does a prescribed external drive deposit through the corrected production operator? | L703 |
-| `FTD-0560` | THEOREM, CLOSED_NEGATIVE | Can one polarity hopping one site every finite `T` ticks carry an exactly co-moving square-summable native linear dressing? | L704 |
-| `FTD-0561` | THEOREM, CLOSED_NEGATIVE | Does rigid spatial extension remove the slow-hop resonant source, and what does microscopic neutrality change? | L705 |
-| `FTD-0562` | THEOREM, CLOSED_NEGATIVE | Can any fixed nonzero finite neutral form factor cancel the complete three-dimensional slow-hop resonance surface? | L706 |
-| `FTD-0567` | THEOREM, CLOSED_NEGATIVE | Does production genesis supply the nonlinear flux-amplitude lock and conservative common action still open after FTD-0564? | L709 |
-| `FTD-0569` | THEOREM, CLOSED_NEGATIVE | Can an explicit local environment make the frozen genesis/evaporation kernel reversible while reproducing its acceptance law? | L711 |
-| `FTD-0570` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Can an exact-real environment supply the missing indefinite branch history, and does that make production genesis a common-action map? | L712 |
-| `FTD-0571` | THEOREM, CLOSED_NEGATIVE | Can the missing symplectic reservoir be identified with existing `Voxel` fields that genesis leaves untouched, without changing the projected… | L713 |
-| `FTD-0572` | THEOREM, CONSTRUCTIVE, NO_GO | Under the FTD-0570 `(J,W)` canonical pairing, what is the minimum bath required by the accepted-genesis symplectic defect, and can that bath repeat… | L714 |
-| `FTD-0573` | THEOREM, DERIVED, RESOLVED | Does cubic covariance select the FTD-0570 `(J,W)` canonical form, and what bath-rank price does that symmetry impose? | L715 |
-| `FTD-0574` | THEOREM, DERIVED, NO_GO, CORRECTION, OPEN | Does the frozen production `(J,W)` field tick have a native discrete action, and does the documented onsite velocity interaction generate the coded… | L716 |
-| `FTD-0575` | DERIVED, THEOREM, NO_GO, OPEN | Does the exact FTD-0574 source action generate a reciprocal path force, and does that channel recover a long-range electromagnetic static pole? | L717 |
-| `FTD-0576` | THEOREM, NO_GO, OPEN | Can the FTD-0575 Hodge channel close exact finite-step energy for mobile matter while retaining the native central operators, cardinal ternary… | L718 |
-| `FTD-0577` | THEOREM, RESOLVED | Can a minimal noncardinal coupling coat cancel the FTD-0576 checkerboard obstruction while preserving ternary primitive manifestation, exact local… | L719 |
-| `FTD-0578` | THEOREM, DERIVED, CLOSED_NEGATIVE | Does the noncardinal Moore-coated current arise from one reciprocal spacetime action, and is its compact point carrier already a free exact-energy… | L720 |
-| `FTD-0579` | THEOREM, DERIVED, CLOSED_NEGATIVE | Can any nonzero finite rigid extension of the Moore carrier eliminate the diagonal energy-centering mismatch or reciprocal Peierls pinning exactly? | L721 |
-| `FTD-0580` | THEOREM, CLOSED_NEGATIVE | Can positivity and exact endpoint-energy centering select a route-free diagonal coupling history, and does that history remove the remaining Peierls… | L722 |
-| `FTD-0581` | THEOREM, DERIVED, OPEN | Can passive native `(J,W)` dressing remove the FTD-0580 chord barrier, and what does an active escape cost? | L723 |
-| `FTD-0582` | THEOREM, MEASURED, CLOSED_NEGATIVE, DERIVED | Can an energetic phase-carrying native `(J,W)` mode transfer the FTD-0581 barrier energy into manifested momentum in the frozen tick? | L724 |
+| `FTD-0543` | THEOREM, CONSTRUCTIVE | Does fixed-step stationarity of the common action itself prove exact endpoint-energy conservation, and what does the simplest exact-energy repair… | L686 |
+| `FTD-0544` | THEOREM | Can the matched face/edge field sector exchange the coat-current work exactly while preserving Gauss, independent of the unresolved particle equation? | L687 |
+| `FTD-0545` | THEOREM, CLOSED_NEGATIVE | Does analytic endpoint variation of the quadratic-coat action make the production matter-energy gain identically equal to the exact matched field… | L688 |
+| `FTD-0546` | DERIVED, NUMERICAL_FACT, CLOSED_NEGATIVE | Does the FTD-0545 matter-energy defect survive after the exact temporal source and endpoint-current split generate a neutral, periodic… | L689 |
+| `FTD-0547` | DERIVED | Is the FTD-0545/0546 matter-work defect intrinsic to the production dispersion, or caused by freezing velocity while momentum changes during the tick? | L690 |
+| `FTD-0548` | DERIVED, NUMERICAL_FACT | Does the exact accelerated worldline admit the same gauge-covariant quadratic-coat deposits, and can the old linear-time endpoint split be reused? | L691 |
+| `FTD-0549` | THEOREM | Can exact `K0,K1,T` be reconstructed after solving only endpoint and midpoint kinematics? | L692 |
+| `FTD-0550` | SELECTION, THEOREM, NUMERICAL_FACT | Does the quadratic coat determine compatible electric and magnetic orbit gathers from the same staggered action complex? | L693 |
+| `FTD-0551` | SELECTED_DYNAMICS, THEOREM, NUMERICAL_FACT | Can the exact quadratic current and orbit gathers close one simultaneous relativistic matter/matched-field transaction? | L694 |
+| `FTD-0552` | DERIVED, NUMERICAL_FACT, CLOSED_NEGATIVE | Does an isolated quadratic coat at a generic subcell position remain static in its own neutral periodic dressing? | L695 |
+| `FTD-0553` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE | Can a rigid localized neutral composite cancel the compact quadratic coat's lattice self-force without subtraction or a new primitive? | L698 |
+| `FTD-0554` | THEOREM, CONSTRUCTIVE | Can exact microscopic continuous translation, unitary energy preservation, the one-site shift, and strict finite-range locality coexist on a discrete… | L699 |
+| `FTD-0555` | THEOREM, NUMERICAL_FACT | What exact condition makes a local extended source's compact-coat Peierls barrier irrelevant in the infrared? | L700 |
+| `FTD-0556` | THEOREM, NUMERICAL_FACT | Can strict integer-site locality produce continuous observable transport without fractional primitive matter position? | L701 |
+| `FTD-0557` | THEOREM, NUMERICAL_FACT | Can the isolated free-flux Bloch band itself supply a nonzero localized stationary or rigidly translating carrier? | L702 |
+| `FTD-0558` | THEOREM, DERIVED, RETRACTED | What is the exact production moving-source pole, and does the lattice radiate for every nonzero smooth-source speed? | L703 |
+| `FTD-0559` | THEOREM, DERIVED | What exact field energy does a prescribed external drive deposit through the corrected production operator? | L704 |
+| `FTD-0560` | THEOREM, CLOSED_NEGATIVE | Can one polarity hopping one site every finite `T` ticks carry an exactly co-moving square-summable native linear dressing? | L705 |
+| `FTD-0561` | THEOREM, CLOSED_NEGATIVE | Does rigid spatial extension remove the slow-hop resonant source, and what does microscopic neutrality change? | L706 |
+| `FTD-0562` | THEOREM, CLOSED_NEGATIVE | Can any fixed nonzero finite neutral form factor cancel the complete three-dimensional slow-hop resonance surface? | L707 |
+| `FTD-0567` | THEOREM, CLOSED_NEGATIVE | Does production genesis supply the nonlinear flux-amplitude lock and conservative common action still open after FTD-0564? | L710 |
+| `FTD-0569` | THEOREM, CLOSED_NEGATIVE | Can an explicit local environment make the frozen genesis/evaporation kernel reversible while reproducing its acceptance law? | L712 |
+| `FTD-0570` | THEOREM, CONSTRUCTIVE, CLOSED_NEGATIVE | Can an exact-real environment supply the missing indefinite branch history, and does that make production genesis a common-action map? | L713 |
+| `FTD-0571` | THEOREM, CLOSED_NEGATIVE | Can the missing symplectic reservoir be identified with existing `Voxel` fields that genesis leaves untouched, without changing the projected… | L714 |
+| `FTD-0572` | THEOREM, CONSTRUCTIVE, NO_GO | Under the FTD-0570 `(J,W)` canonical pairing, what is the minimum bath required by the accepted-genesis symplectic defect, and can that bath repeat… | L715 |
+| `FTD-0573` | THEOREM, DERIVED, RESOLVED | Does cubic covariance select the FTD-0570 `(J,W)` canonical form, and what bath-rank price does that symmetry impose? | L716 |
+| `FTD-0574` | THEOREM, DERIVED, NO_GO, CORRECTION, OPEN | Does the frozen production `(J,W)` field tick have a native discrete action, and does the documented onsite velocity interaction generate the coded… | L717 |
+| `FTD-0575` | DERIVED, THEOREM, NO_GO, OPEN | Does the exact FTD-0574 source action generate a reciprocal path force, and does that channel recover a long-range electromagnetic static pole? | L718 |
+| `FTD-0576` | THEOREM, NO_GO, OPEN | Can the FTD-0575 Hodge channel close exact finite-step energy for mobile matter while retaining the native central operators, cardinal ternary… | L719 |
+| `FTD-0577` | THEOREM, RESOLVED | Can a minimal noncardinal coupling coat cancel the FTD-0576 checkerboard obstruction while preserving ternary primitive manifestation, exact local… | L720 |
+| `FTD-0578` | THEOREM, DERIVED, CLOSED_NEGATIVE | Does the noncardinal Moore-coated current arise from one reciprocal spacetime action, and is its compact point carrier already a free exact-energy… | L721 |
+| `FTD-0579` | THEOREM, DERIVED, CLOSED_NEGATIVE | Can any nonzero finite rigid extension of the Moore carrier eliminate the diagonal energy-centering mismatch or reciprocal Peierls pinning exactly? | L722 |
+| `FTD-0580` | THEOREM, CLOSED_NEGATIVE | Can positivity and exact endpoint-energy centering select a route-free diagonal coupling history, and does that history remove the remaining Peierls… | L723 |
+| `FTD-0581` | THEOREM, DERIVED, OPEN | Can passive native `(J,W)` dressing remove the FTD-0580 chord barrier, and what does an active escape cost? | L724 |
+| `FTD-0582` | THEOREM, MEASURED, CLOSED_NEGATIVE, DERIVED | Can an energetic phase-carrying native `(J,W)` mode transfer the FTD-0581 barrier energy into manifested momentum in the frozen tick? | L725 |
 
 ### Common-action mechanics & reciprocity — protected sector, seed bootstrap & removal counts
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0583` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the current real matched face/edge variables carry a localized topologically protected matter sector? | L725 |
-| `FTD-0584` | THEOREM, NO_GO, OPEN | Do fixed ternary source, Gauss law, global flux, or uncontained support create a localized protected sector in the frozen ordinary-real fields, and… | L726 |
-| `FTD-0585` | THEOREM, ENGINE_FACT, CLOSED_NEGATIVE, OPEN | Does moving manifested support prove transported matter, and can the frozen reaction-free field sector generate motion from rest? | L727 |
-| `FTD-0586` | THEOREM, NUMERICAL_FACT, MEASURED, CLOSED_NEGATIVE, SUPERSEDED | Can a sanitized finite ternary seed bootstrap a new manifested site through its own causal state-gradient field, without injected flux, Gauss… | L728 |
-| `FTD-0587` | DERIVED, MEASURED, UNRESOLVED, CLOSED_NEGATIVE, CORRECTION | After the externally ignited FTD-0474 dispersal support reaches its locked tail, is persistence supplied by retained injected field, native causal… | L729 |
-| `FTD-0588` | THEOREM, NUMERICAL_FACT, MEASURED, CLOSED_NEGATIVE, SUPERSEDED | Does exact spatial orthogonality close the first FTD-0586 collective-source counts, and what part of independently timed evaporation remains… | L730 |
-| `FTD-0589` | THEOREM, NUMERICAL_FACT, MEASURED, CLOSED_NEGATIVE, SUPERSEDED | Does exact finite-pulse cancellation close the FTD-0588 all-off tail, and what arbitrary-removal count remains unexcluded? | L731 |
-| `FTD-0590` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE, SUPERSEDED | Does exact cubic-orbit coherence close the seven-source arbitrary-removal boundary without selecting a source geometry or removal schedule? | L732 |
-| `FTD-0591` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE, SUPERSEDED | Does the unchanged orbit-coherence inequality close the separately preregistered eight-source count? | L733 |
-| `FTD-0592` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE, OPEN | Does the unchanged orbit-coherence inequality close the separately preregistered nine-source count? | L734 |
-| `FTD-0593` | THEOREM, NUMERICAL_FACT, INCONCLUSIVE, OPEN | Does the unchanged orbit-coherence inequality close the separately preregistered ten-source count? | L735 |
-| `FTD-0594` | THEOREM, NUMERICAL_FACT, INCONCLUSIVE, CLOSED_NEGATIVE | Does exact equality of the native pulse coefficient across all stencil-eigenvalue-degenerate cubic orbits close the ten-source bound? | L736 |
-| `FTD-0595` | THEOREM, NUMERICAL_FACT, INCONCLUSIVE, CLOSED_NEGATIVE | Does exact axial-neighbor pair capacity tighten the ten-source shared-`M` bound enough to close the first-event question? | L737 |
-| `FTD-0596` | THEOREM, INCONCLUSIVE, CLOSED_NEGATIVE | Does the complete Fourier-positive cubic distance-distribution relaxation tighten the ten-source shared-`M` bound enough to close the first-event… | L738 |
-| `FTD-0597` | THEOREM, CLOSED_NEGATIVE | Does the exact same-observation-time removal-pulse product range close the ten-source bound when combined with the unchanged FTD-0596 distance… | L739 |
+| `FTD-0583` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the current real matched face/edge variables carry a localized topologically protected matter sector? | L726 |
+| `FTD-0584` | THEOREM, NO_GO, OPEN | Do fixed ternary source, Gauss law, global flux, or uncontained support create a localized protected sector in the frozen ordinary-real fields, and… | L727 |
+| `FTD-0585` | THEOREM, ENGINE_FACT, CLOSED_NEGATIVE, OPEN | Does moving manifested support prove transported matter, and can the frozen reaction-free field sector generate motion from rest? | L728 |
+| `FTD-0586` | THEOREM, NUMERICAL_FACT, MEASURED, CLOSED_NEGATIVE, SUPERSEDED | Can a sanitized finite ternary seed bootstrap a new manifested site through its own causal state-gradient field, without injected flux, Gauss… | L729 |
+| `FTD-0587` | DERIVED, MEASURED, UNRESOLVED, CLOSED_NEGATIVE, CORRECTION | After the externally ignited FTD-0474 dispersal support reaches its locked tail, is persistence supplied by retained injected field, native causal… | L730 |
+| `FTD-0588` | THEOREM, NUMERICAL_FACT, MEASURED, CLOSED_NEGATIVE, SUPERSEDED | Does exact spatial orthogonality close the first FTD-0586 collective-source counts, and what part of independently timed evaporation remains… | L731 |
+| `FTD-0589` | THEOREM, NUMERICAL_FACT, MEASURED, CLOSED_NEGATIVE, SUPERSEDED | Does exact finite-pulse cancellation close the FTD-0588 all-off tail, and what arbitrary-removal count remains unexcluded? | L732 |
+| `FTD-0590` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE, SUPERSEDED | Does exact cubic-orbit coherence close the seven-source arbitrary-removal boundary without selecting a source geometry or removal schedule? | L733 |
+| `FTD-0591` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE, SUPERSEDED | Does the unchanged orbit-coherence inequality close the separately preregistered eight-source count? | L734 |
+| `FTD-0592` | THEOREM, NUMERICAL_FACT, CLOSED_NEGATIVE, OPEN | Does the unchanged orbit-coherence inequality close the separately preregistered nine-source count? | L735 |
+| `FTD-0593` | THEOREM, NUMERICAL_FACT, INCONCLUSIVE, OPEN | Does the unchanged orbit-coherence inequality close the separately preregistered ten-source count? | L736 |
+| `FTD-0594` | THEOREM, NUMERICAL_FACT, INCONCLUSIVE, CLOSED_NEGATIVE | Does exact equality of the native pulse coefficient across all stencil-eigenvalue-degenerate cubic orbits close the ten-source bound? | L737 |
+| `FTD-0595` | THEOREM, NUMERICAL_FACT, INCONCLUSIVE, CLOSED_NEGATIVE | Does exact axial-neighbor pair capacity tighten the ten-source shared-`M` bound enough to close the first-event question? | L738 |
+| `FTD-0596` | THEOREM, INCONCLUSIVE, CLOSED_NEGATIVE | Does the complete Fourier-positive cubic distance-distribution relaxation tighten the ten-source shared-`M` bound enough to close the first-event… | L739 |
+| `FTD-0597` | THEOREM, CLOSED_NEGATIVE | Does the exact same-observation-time removal-pulse product range close the ten-source bound when combined with the unchanged FTD-0596 distance… | L740 |
 
 ---
 
@@ -793,205 +794,205 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0349` | DERIVED, BOUNDARY, AXIOM | Collective-coordinate reduction attempt — PARTIAL: cluster inertia = N*M_REST iff the Gradient-Normalization Condition (GNC), which fails for both… | L493 |
-| `FTD-0350` | THEOREM, PARAMETRIC, SMC | Phase-J ultralocality at all L >= 2 — spine Theorem 7's L>=4 ambiguity closed as a proven masking artifact | L494 |
-| `FTD-0392` | CLOSED_NEGATIVE | Hedgehog topological charge of the flux field is robust across birth circumstance, but robustly ZERO at manifestation freeze — not the nonzero value… | L541 |
-| `FTD-0394` | MEASURED | Engine-native readout-collision demonstration for manifestation's many-to-one claim — fills the citation gap in FC-2's "provably unrecoverable" | L540 |
-| `FTD-0398` | MEASURED | Terminal transport test for FTD-0392's octahedral Berg–Lüscher charge | L538 |
-| `FTD-0399` | INVALID | Target-blind particlehood test before any further mass observable | L539 |
+| `FTD-0349` | DERIVED, BOUNDARY, AXIOM | Collective-coordinate reduction attempt — PARTIAL: cluster inertia = N*M_REST iff the Gradient-Normalization Condition (GNC), which fails for both… | L494 |
+| `FTD-0350` | THEOREM, PARAMETRIC, SMC | Phase-J ultralocality at all L >= 2 — spine Theorem 7's L>=4 ambiguity closed as a proven masking artifact | L495 |
+| `FTD-0392` | CLOSED_NEGATIVE | Hedgehog topological charge of the flux field is robust across birth circumstance, but robustly ZERO at manifestation freeze — not the nonzero value… | L542 |
+| `FTD-0394` | MEASURED | Engine-native readout-collision demonstration for manifestation's many-to-one claim — fills the citation gap in FC-2's "provably unrecoverable" | L541 |
+| `FTD-0398` | MEASURED | Terminal transport test for FTD-0392's octahedral Berg–Lüscher charge | L539 |
+| `FTD-0399` | INVALID | Target-blind particlehood test before any further mass observable | L540 |
 
 ### Constituent-complete matter — compact cores, trimers & walkers
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0599` | THEOREM, CLOSED_NEGATIVE | Can one site-ontic reciprocal hop be defined as a unique, local, energy-closing, state-invertible atomic map using only existing persistent `s`, `J`… | L741 |
-| `FTD-0600` | SELECTED_DYNAMICS, THEOREM, MEASURED, CLOSED_NEGATIVE | Does explicit constituent-complete ternary matter permit a single reversible common-action transaction with bound site-crossing motion, and does the… | L742 |
-| `FTD-0601` | SELECTED_DYNAMICS, THEOREM, MEASURED, CLOSED_NEGATIVE | Does the FTD-0600 common-action construction remain reversible and momentum-closed after replacing the fixed compensator with a second dynamical… | L743 |
-| `FTD-0602` | THEOREM, MEASURED, CLOSED_NEGATIVE | Was FTD-0601's outward force caused by its arbitrary Gauss dressing, and does the unique minimum-energy Gauss field repair attraction and momentum? | L744 |
-| `FTD-0603` | CLOSED_NEGATIVE, THEOREM, NUMERICAL_FACT | Is the minimum-energy neutral-pair attraction and apparent momentum exchange invariant under fractional rigid translation through one lattice cell? | L745 |
-| `FTD-0604` | THEOREM, MEASURED, CLOSED_NEGATIVE | Can the least arbitrary internal deformation—a charge-conjugate symmetric breathing coordinate already present in constituent phase space—remove the… | L746 |
-| `FTD-0605` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does the full six-dimensional local zero-centroid shape space already present in the mirrored constituents contain a stable dressed compact core? | L747 |
-| `FTD-0606` | THEOREM, MEASURED, UNRESOLVED | Does a globally reparameterized SO(3) x strain chart contain a stable dressed static core for the two charge-conjugate equilateral trimers, and does… | L748 |
-| `FTD-0607` | MEASURED, UNRESOLVED | Does imposing the one-label-per-site ternary capacity inside the SO(3) x strain optimization itself still admit stable compact static cores, and can… | L749 |
-| `FTD-0608` | MEASURED, UNRESOLVED | Can the phase-15 site-admissible compact core, launched at collective velocity, transport completely through the next lattice site under the… | L750 |
-| `FTD-0609` | MEASURED, CONSTRUCTIVE, CLOSED_NEGATIVE | Does permitting at most two distinct constituent records to share one integer chart anchor (a default-off fibre extension) repair the FTD-0608… | L751 |
-| `FTD-0610` | MEASURED, CLOSED_NEGATIVE | Is the extracted phase-15 charge-`+1` trimer, neutralized by an external uniform or frozen-partner compensator, an isolated stationary rest state of… | L752 |
-| `FTD-0611` | MEASURED, CLOSED_NEGATIVE | Does a genuine rest state of one charge-`+1` trimer exist in the periodic uniform neutralizer `rho_bg=-1/L^3`, passing a locked… | L753 |
-| `FTD-0612` | MEASURED | Does one deterministic Newton refinement of the FTD-0611 basin repair its locked gradient and rest-drift precision failure while preserving the… | L754 |
-| `FTD-0613` | MEASURED, CLOSED_NEGATIVE | Does the refined FTD-0612 rest state translate reversibly and axis-symmetrically under equal-momentum directional boosts at three registered speeds? | L755 |
-| `FTD-0614` | MEASURED, NUMERICAL_FACT, UNRESOLVED | Does the refined compact core's translation landscape have a unique locally relaxed passive energy barrier, and is the FTD-0613 fixed-body axis… | L756 |
-| `FTD-0615` | MEASURED, OPEN | Can an internal excitation of the compact fixed point's six-dimensional zero-centre-momentum tangent basis translate the intact centre through the… | L757 |
-| `FTD-0616` | MEASURED, CLOSED_NEGATIVE, OPEN | Does the FTD-0615 constructive internal walker persist in a straight, sign-controlled direction over a longer 512-tick history? | L758 |
-| `FTD-0617` | MEASURED, SELECTION, OPEN | Does the FTD-0615/0616 rotational-plane response vary as an isotropic, angle-independent velocity mode, or does it show a mixed-parity… | L759 |
-| `FTD-0618` | MEASURED, CLOSED_NEGATIVE, OPEN | Can a net-neutral, charge-conjugate half-turn pair of compact cores cancel their transverse gait response while sharing coherent axial translation… | L760 |
-| `FTD-0619` | MEASURED, CLOSED_NEGATIVE, OPEN | Does the force-matched spline-Poynting field momentum, rather than the previously used local pseudomomentum, close the FTD-0618 coupled… | L761 |
-| `FTD-0620` | MEASURED, CLOSED_NEGATIVE, OPEN | Does the FTD-0618 balanced neutral gait return to its launch internal state within a locked 512-tick window, or is its motion a one-time relaxation? | L762 |
+| `FTD-0599` | THEOREM, CLOSED_NEGATIVE | Can one site-ontic reciprocal hop be defined as a unique, local, energy-closing, state-invertible atomic map using only existing persistent `s`, `J`… | L742 |
+| `FTD-0600` | SELECTED_DYNAMICS, THEOREM, MEASURED, CLOSED_NEGATIVE | Does explicit constituent-complete ternary matter permit a single reversible common-action transaction with bound site-crossing motion, and does the… | L743 |
+| `FTD-0601` | SELECTED_DYNAMICS, THEOREM, MEASURED, CLOSED_NEGATIVE | Does the FTD-0600 common-action construction remain reversible and momentum-closed after replacing the fixed compensator with a second dynamical… | L744 |
+| `FTD-0602` | THEOREM, MEASURED, CLOSED_NEGATIVE | Was FTD-0601's outward force caused by its arbitrary Gauss dressing, and does the unique minimum-energy Gauss field repair attraction and momentum? | L745 |
+| `FTD-0603` | CLOSED_NEGATIVE, THEOREM, NUMERICAL_FACT | Is the minimum-energy neutral-pair attraction and apparent momentum exchange invariant under fractional rigid translation through one lattice cell? | L746 |
+| `FTD-0604` | THEOREM, MEASURED, CLOSED_NEGATIVE | Can the least arbitrary internal deformation—a charge-conjugate symmetric breathing coordinate already present in constituent phase space—remove the… | L747 |
+| `FTD-0605` | THEOREM, MEASURED, CLOSED_NEGATIVE | Does the full six-dimensional local zero-centroid shape space already present in the mirrored constituents contain a stable dressed compact core? | L748 |
+| `FTD-0606` | THEOREM, MEASURED, UNRESOLVED | Does a globally reparameterized SO(3) x strain chart contain a stable dressed static core for the two charge-conjugate equilateral trimers, and does… | L749 |
+| `FTD-0607` | MEASURED, UNRESOLVED | Does imposing the one-label-per-site ternary capacity inside the SO(3) x strain optimization itself still admit stable compact static cores, and can… | L750 |
+| `FTD-0608` | MEASURED, UNRESOLVED | Can the phase-15 site-admissible compact core, launched at collective velocity, transport completely through the next lattice site under the… | L751 |
+| `FTD-0609` | MEASURED, CONSTRUCTIVE, CLOSED_NEGATIVE | Does permitting at most two distinct constituent records to share one integer chart anchor (a default-off fibre extension) repair the FTD-0608… | L752 |
+| `FTD-0610` | MEASURED, CLOSED_NEGATIVE | Is the extracted phase-15 charge-`+1` trimer, neutralized by an external uniform or frozen-partner compensator, an isolated stationary rest state of… | L753 |
+| `FTD-0611` | MEASURED, CLOSED_NEGATIVE | Does a genuine rest state of one charge-`+1` trimer exist in the periodic uniform neutralizer `rho_bg=-1/L^3`, passing a locked… | L754 |
+| `FTD-0612` | MEASURED | Does one deterministic Newton refinement of the FTD-0611 basin repair its locked gradient and rest-drift precision failure while preserving the… | L755 |
+| `FTD-0613` | MEASURED, CLOSED_NEGATIVE | Does the refined FTD-0612 rest state translate reversibly and axis-symmetrically under equal-momentum directional boosts at three registered speeds? | L756 |
+| `FTD-0614` | MEASURED, NUMERICAL_FACT, UNRESOLVED | Does the refined compact core's translation landscape have a unique locally relaxed passive energy barrier, and is the FTD-0613 fixed-body axis… | L757 |
+| `FTD-0615` | MEASURED, OPEN | Can an internal excitation of the compact fixed point's six-dimensional zero-centre-momentum tangent basis translate the intact centre through the… | L758 |
+| `FTD-0616` | MEASURED, CLOSED_NEGATIVE, OPEN | Does the FTD-0615 constructive internal walker persist in a straight, sign-controlled direction over a longer 512-tick history? | L759 |
+| `FTD-0617` | MEASURED, SELECTION, OPEN | Does the FTD-0615/0616 rotational-plane response vary as an isotropic, angle-independent velocity mode, or does it show a mixed-parity… | L760 |
+| `FTD-0618` | MEASURED, CLOSED_NEGATIVE, OPEN | Can a net-neutral, charge-conjugate half-turn pair of compact cores cancel their transverse gait response while sharing coherent axial translation… | L761 |
+| `FTD-0619` | MEASURED, CLOSED_NEGATIVE, OPEN | Does the force-matched spline-Poynting field momentum, rather than the previously used local pseudomomentum, close the FTD-0618 coupled… | L762 |
+| `FTD-0620` | MEASURED, CLOSED_NEGATIVE, OPEN | Does the FTD-0618 balanced neutral gait return to its launch internal state within a locked 512-tick window, or is its motion a one-time relaxation? | L763 |
 
 ### Constituent-complete matter — connected blocks & resolution scaling
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0621` | THEOREM, MEASURED, OPEN | Can an exactly ternary, finite, neutral integer block-bipole configuration suppress its relative (barrier-to-field-energy) lattice pinning toward… | L763 |
-| `FTD-0622` | SELECTED_DYNAMICS, THEOREM, MEASURED | Can the exact integer FTD-0621 block-bipole family be embedded in one local, constituent-complete, reversible common action whose relative Peierls… | L764 |
-| `FTD-0623` | SELECTED_DYNAMICS, MEASURED, THEOREM, OPEN | Does the smallest connected FTD-0622 integer object remain coherent, state-only reversible, and coherently mobile under a finite boost across… | L765 |
-| `FTD-0624` | SELECTED_DYNAMICS, MEASURED, CLOSED_NEGATIVE, OPEN | Does the connected 16-constituent block's static half-cell centre correspond to an admissible, dynamically stable, reversible rest state under… | L766 |
-| `FTD-0625` | SELECTED_DYNAMICS, MEASURED, CLOSED_NEGATIVE, OPEN | Does zero-total-momentum rigid internal circulation, launched at the connected block's measured Peierls-barrier energies, stabilize it against the… | L767 |
-| `FTD-0626` | MEASURED, CLOSED_NEGATIVE, OPEN | Does applying the already-priced FTD-0609 multiplicity-two chart fibre repair the FTD-0624/0625 occupancy failures without changing the matter-field… | L768 |
-| `FTD-0627` | SELECTED_DYNAMICS, MEASURED, CLOSED_NEGATIVE, OPEN | Over a 256-tick horizon, does the fibre-enabled exact-half connected block's centre-rest state remain bounded and reversible, and does its complete… | L769 |
-| `FTD-0628` | MEASURED, OPEN | Does the unchanged selected connected-block action possess a nearby symmetry-preserving configuration that is stationary against all 48 constituent… | L770 |
-| `FTD-0629` | DERIVED, MEASURED, OPEN | Does the FTD-0628 dressed fixed point support four bounded, reversible, approximately decoupled finite-amplitude internal responses whose… | L771 |
-| `FTD-0630` | MEASURED, EXECUTION_INVALID | Is the FTD-0628 body-half dressed state a three-axis translation saddle — positive body-axis curvature but negative transverse curvatures — and does… | L772 |
-| `FTD-0631` | MEASURED, CLOSED_NEGATIVE | Does the connected-block candidate — translated to the positive-curvature (fully-half) phase on all three lattice axes — admit a genuine… | L773 |
-| `FTD-0632` | DERIVED, MEASURED | What is the minimum finite nearest-site chart multiplicity required to represent every geometry in the locked four-coordinate connected-block Hessian… | L774 |
-| `FTD-0633` | DERIVED, MEASURED | Does replacing the provisional cap-two chart with the independently derived cap-eight cubic chart remove the sole FTD-0631 obstruction and produce a… | L775 |
-| `FTD-0634` | MEASURED, EXECUTION_INVALID | Does the FTD-0633 dressed state remain a local energy minimum when every constituent is displaced independently in all three Cartesian directions… | L776 |
-| `FTD-0635` | MEASURED, EXECUTION_INVALID | Does repairing the 48-coordinate gradient estimator (finer step `h_g=2e-5`, unchanged Hessian step `h_H=2e-4`) resolve FTD-0634's gradient-gate… | L777 |
-| `FTD-0636` | MEASURED, EXECUTION_INVALID | Does confining the Hessian/translation stencils to `h_H=4e-5` (strictly inside the quadratic-B-spline knot clearance) produce a locally valid… | L778 |
-| `FTD-0637` | DERIVED, MEASURED | Is the FTD-0633 dressed state a stationary positive basin of the complete 48-coordinate static functional when derivatives are evaluated analytically… | L779 |
-| `FTD-0638` | DERIVED, MEASURED | Does the positive analytic basin found by FTD-0637 contain a genuine 48-coordinate stationary state when the state is refined by a full-space Newton… | L780 |
-| `FTD-0639` | MEASURED | Does the FTD-0638 local minimum remain a bounded, reversible rest state under the already selected constituent common-action tick, or is it only a… | L781 |
-| `FTD-0640` | DERIVED, MEASURED | Does the analytically centered connected object carry genuine internal matter degrees of freedom whose measured common-action phases follow the… | L782 |
-| `FTD-0642` | DERIVED, MEASURED | Does releasing all 48 exact-center matter coordinates under the same registered transverse face/edge field perturbations produce one reversible… | L784 |
-| `FTD-0643` | EXECUTION_INVALID | Does releasing a finite uniform momentum on all 16 constituents along canonical directions establish coherent finite collective transport with a… | L785 |
-| `FTD-0644` | MEASURED, CLOSED_NEGATIVE | After repairing the FTD-0643 arm-count defect and rotating the whole dressed state in the cubic controls, does the corrected 32-arm boost ladder pass… | L786 |
-| `FTD-0645` | MEASURED | After rotating the analytic modal basis with the state (repairing the FTD-0644 observer defect), does the 32-arm boost ladder pass every exact… | L787 |
-| `FTD-0646` | MEASURED | Over a long 256-tick horizon, does the fixed-object collective-momentum boost produce secular translation (a persistent free-particle-like mode) or… | L788 |
-| `FTD-0647` | THEOREM, CLOSED_NEGATIVE | Can the current connected ternary bipole be made progressively wider while retaining a finite nonzero rest mass, if every constituent and action… | L789 |
-| `FTD-0648` | DERIVED, MEASURED | Does an ordinary three-dimensional cell-measure rescaling convert the connected-block width sequence into a fixed-mass, fixed-integrated-polarity… | L790 |
-| `FTD-0649` | DERIVED, MEASURED | Can the four FTD-0648 resolution factors be installed in one reciprocal matter-field transaction (dispersion, source/current/Gauss, field… | L791 |
-| `FTD-0650` | EXECUTION_INVALID | Does the FTD-0649 fixed-mass reciprocal action remain coherent, reversible, and secularly mobile over one common physical horizon as resolution… | L792 |
-| `FTD-0651` | CONSTRUCTIVE | Does the repeated-root Broyden-cached central-difference Jacobian solve the frozen FTD-0649 common-action residual with the same accepted states as… | L793 |
-| `FTD-0652` | SELECTED_DYNAMICS | Does the FTD-0649 fixed-mass reciprocal common action remain coherent, reversible, and secularly mobile over a common physical horizon as lattice… | L794 |
-| `FTD-0653` | THEOREM, CORRECTION | Is the FTD-0652 minimum-mobility-nondecrease-with-width criterion a valid necessary-and-sufficient diagnostic for an isotropic mobile continuum limit? | L795 |
-| `FTD-0654` | SELECTED_DYNAMICS | Do the FTD-0652 anisotropy and target-centred mobility improvements survive on unseen launch velocities and a doubled physical horizon? | L796 |
-| `FTD-0655` | EXECUTION_INVALID | Does the matched field-energy dressing travel as one coherent dynamical pattern with the fixed-total-measure constituent core, as measured by the… | L797 |
-| `FTD-0656` | MEASURED | After correcting the FTD-0655 tick-count contradiction, does the matched field-energy dressing travel as one coherent pattern with the mobile… | L798 |
+| `FTD-0621` | THEOREM, MEASURED, OPEN | Can an exactly ternary, finite, neutral integer block-bipole configuration suppress its relative (barrier-to-field-energy) lattice pinning toward… | L764 |
+| `FTD-0622` | SELECTED_DYNAMICS, THEOREM, MEASURED | Can the exact integer FTD-0621 block-bipole family be embedded in one local, constituent-complete, reversible common action whose relative Peierls… | L765 |
+| `FTD-0623` | SELECTED_DYNAMICS, MEASURED, THEOREM, OPEN | Does the smallest connected FTD-0622 integer object remain coherent, state-only reversible, and coherently mobile under a finite boost across… | L766 |
+| `FTD-0624` | SELECTED_DYNAMICS, MEASURED, CLOSED_NEGATIVE, OPEN | Does the connected 16-constituent block's static half-cell centre correspond to an admissible, dynamically stable, reversible rest state under… | L767 |
+| `FTD-0625` | SELECTED_DYNAMICS, MEASURED, CLOSED_NEGATIVE, OPEN | Does zero-total-momentum rigid internal circulation, launched at the connected block's measured Peierls-barrier energies, stabilize it against the… | L768 |
+| `FTD-0626` | MEASURED, CLOSED_NEGATIVE, OPEN | Does applying the already-priced FTD-0609 multiplicity-two chart fibre repair the FTD-0624/0625 occupancy failures without changing the matter-field… | L769 |
+| `FTD-0627` | SELECTED_DYNAMICS, MEASURED, CLOSED_NEGATIVE, OPEN | Over a 256-tick horizon, does the fibre-enabled exact-half connected block's centre-rest state remain bounded and reversible, and does its complete… | L770 |
+| `FTD-0628` | MEASURED, OPEN | Does the unchanged selected connected-block action possess a nearby symmetry-preserving configuration that is stationary against all 48 constituent… | L771 |
+| `FTD-0629` | DERIVED, MEASURED, OPEN | Does the FTD-0628 dressed fixed point support four bounded, reversible, approximately decoupled finite-amplitude internal responses whose… | L772 |
+| `FTD-0630` | MEASURED, EXECUTION_INVALID | Is the FTD-0628 body-half dressed state a three-axis translation saddle — positive body-axis curvature but negative transverse curvatures — and does… | L773 |
+| `FTD-0631` | MEASURED, CLOSED_NEGATIVE | Does the connected-block candidate — translated to the positive-curvature (fully-half) phase on all three lattice axes — admit a genuine… | L774 |
+| `FTD-0632` | DERIVED, MEASURED | What is the minimum finite nearest-site chart multiplicity required to represent every geometry in the locked four-coordinate connected-block Hessian… | L775 |
+| `FTD-0633` | DERIVED, MEASURED | Does replacing the provisional cap-two chart with the independently derived cap-eight cubic chart remove the sole FTD-0631 obstruction and produce a… | L776 |
+| `FTD-0634` | MEASURED, EXECUTION_INVALID | Does the FTD-0633 dressed state remain a local energy minimum when every constituent is displaced independently in all three Cartesian directions… | L777 |
+| `FTD-0635` | MEASURED, EXECUTION_INVALID | Does repairing the 48-coordinate gradient estimator (finer step `h_g=2e-5`, unchanged Hessian step `h_H=2e-4`) resolve FTD-0634's gradient-gate… | L778 |
+| `FTD-0636` | MEASURED, EXECUTION_INVALID | Does confining the Hessian/translation stencils to `h_H=4e-5` (strictly inside the quadratic-B-spline knot clearance) produce a locally valid… | L779 |
+| `FTD-0637` | DERIVED, MEASURED | Is the FTD-0633 dressed state a stationary positive basin of the complete 48-coordinate static functional when derivatives are evaluated analytically… | L780 |
+| `FTD-0638` | DERIVED, MEASURED | Does the positive analytic basin found by FTD-0637 contain a genuine 48-coordinate stationary state when the state is refined by a full-space Newton… | L781 |
+| `FTD-0639` | MEASURED | Does the FTD-0638 local minimum remain a bounded, reversible rest state under the already selected constituent common-action tick, or is it only a… | L782 |
+| `FTD-0640` | DERIVED, MEASURED | Does the analytically centered connected object carry genuine internal matter degrees of freedom whose measured common-action phases follow the… | L783 |
+| `FTD-0642` | DERIVED, MEASURED | Does releasing all 48 exact-center matter coordinates under the same registered transverse face/edge field perturbations produce one reversible… | L785 |
+| `FTD-0643` | EXECUTION_INVALID | Does releasing a finite uniform momentum on all 16 constituents along canonical directions establish coherent finite collective transport with a… | L786 |
+| `FTD-0644` | MEASURED, CLOSED_NEGATIVE | After repairing the FTD-0643 arm-count defect and rotating the whole dressed state in the cubic controls, does the corrected 32-arm boost ladder pass… | L787 |
+| `FTD-0645` | MEASURED | After rotating the analytic modal basis with the state (repairing the FTD-0644 observer defect), does the 32-arm boost ladder pass every exact… | L788 |
+| `FTD-0646` | MEASURED | Over a long 256-tick horizon, does the fixed-object collective-momentum boost produce secular translation (a persistent free-particle-like mode) or… | L789 |
+| `FTD-0647` | THEOREM, CLOSED_NEGATIVE | Can the current connected ternary bipole be made progressively wider while retaining a finite nonzero rest mass, if every constituent and action… | L790 |
+| `FTD-0648` | DERIVED, MEASURED | Does an ordinary three-dimensional cell-measure rescaling convert the connected-block width sequence into a fixed-mass, fixed-integrated-polarity… | L791 |
+| `FTD-0649` | DERIVED, MEASURED | Can the four FTD-0648 resolution factors be installed in one reciprocal matter-field transaction (dispersion, source/current/Gauss, field… | L792 |
+| `FTD-0650` | EXECUTION_INVALID | Does the FTD-0649 fixed-mass reciprocal action remain coherent, reversible, and secularly mobile over one common physical horizon as resolution… | L793 |
+| `FTD-0651` | CONSTRUCTIVE | Does the repeated-root Broyden-cached central-difference Jacobian solve the frozen FTD-0649 common-action residual with the same accepted states as… | L794 |
+| `FTD-0652` | SELECTED_DYNAMICS | Does the FTD-0649 fixed-mass reciprocal common action remain coherent, reversible, and secularly mobile over a common physical horizon as lattice… | L795 |
+| `FTD-0653` | THEOREM, CORRECTION | Is the FTD-0652 minimum-mobility-nondecrease-with-width criterion a valid necessary-and-sufficient diagnostic for an isotropic mobile continuum limit? | L796 |
+| `FTD-0654` | SELECTED_DYNAMICS | Do the FTD-0652 anisotropy and target-centred mobility improvements survive on unseen launch velocities and a doubled physical horizon? | L797 |
+| `FTD-0655` | EXECUTION_INVALID | Does the matched field-energy dressing travel as one coherent dynamical pattern with the fixed-total-measure constituent core, as measured by the… | L798 |
+| `FTD-0656` | MEASURED | After correcting the FTD-0655 tick-count contradiction, does the matched field-energy dressing travel as one coherent pattern with the mobile… | L799 |
 
 ### Constituent-complete matter — internal modes & matter-field transfer
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0657` | THEOREM | Can a linear retarded response of the current classical common-action state identify a massive-particle pole `omega^2=omega_0^2+c^2k^2` solely… | L799 |
-| `FTD-0658` | THEOREM, CLOSED_NEGATIVE, CONSTRUCTIVE | Does any currently registered FTD candidate (the fixed dressed rest state, a prepared internal matter mode, or the co-moving field dressing) supply a… | L800 |
-| `FTD-0659` | SELECTED_DYNAMICS | Does the first non-rigid analytic internal matter eigenspace carry a robust, state-functional, conserved action-angle phase under the selected… | L801 |
-| `FTD-0660` | SELECTED_DYNAMICS | When the first internal constituent doublet loses its matter-only action, does the complete common-action state place the complementary excitation in… | L802 |
-| `FTD-0661` | SELECTED_DYNAMICS | Does correcting the zero-observer threshold and replacing the two-vector polarization sample with a covariant four-vector tight frame resolve the… | L803 |
-| `FTD-0662` | SELECTED_DYNAMICS | Does normalizing the tight-frame covariance observer by each arm's own initial doublet energy make the polarization control basis-invariant and yield… | L804 |
-| `FTD-0663` | THEOREM, MEASURED | Does the first internal matter doublet's discrete phase lie inside the propagating face/edge field band, excluding kinematic frequency-gap protection… | L805 |
-| `FTD-0664` | EXECUTION_INVALID | Is the early loss of action from the first internal matter doublet, and the outward growth of its dynamic face/edge field residual, already present… | L806 |
-| `FTD-0665` | SELECTED_DYNAMICS | Does the corrected volume-scaled protocol establish volume-independent pre-return generation of an outward dynamic field from the internal-mode… | L807 |
-| `FTD-0666` | RETRACTED | Does extending the truncated L=17 volume-scaled run to tick 100 confirm the predicted absolute return-time window (ticks 74-78) for the internal-mode… | L808 |
-| `FTD-0667` | THEOREM | Can eliminating the field block of a linearized one-tick matter/field tangent map produce an exact discrete memory law that explains apparent… | L809 |
-| `FTD-0668` | RETRACTED | Does the internal-mode excitation return before the causally isolated self-contact time on a large L=97 volume, ruling out periodic self-return as… | L810 |
-| `FTD-0670` | RETRACTED | Does the held-out internal-mode envelope turn upward before any conservative periodic return can reach the core? | L812 |
-| `FTD-0671` | THEOREM | Can matched leapfrog field energy be partitioned into exact regional transport and deposited-current work? | L813 |
-| `FTD-0672` | RETRACTED | What field-energy flow occurs during the former tick-68--80 recovery window? | L814 |
-| `FTD-0673` | THEOREM | Can the excited-minus-control energy be decomposed without assigning unexplained loss to a reservoir? | L815 |
-| `FTD-0674` | EXECUTION_INVALID | Does another registered reservoir donate energy back to the canonical doublet after its trough? | L816 |
-| `FTD-0675` | THEOREM | Was the paired-mode displacement diagnostic a canonical modal-energy coordinate? | L817 |
-| `FTD-0676` | SELECTED_DYNAMICS | Does the corrected canonical mode energy decay reproducibly before causal return? | L818 |
-| `FTD-0677` | THEOREM | Can localized internal phase and near/intermediate/far difference-field content be measured covariantly? | L819 |
-| `FTD-0678` | EXECUTION_INVALID | Does the first locked localized-basin relaxation campaign establish dynamics? | L820 |
-| `FTD-0679` | EXECUTION_INVALID | Does the second localized-basin campaign produce a valid target record? | L821 |
-| `FTD-0680` | CORRECTION | Was the localized-basin observer's flat storage mapping correct? | L822 |
-| `FTD-0681` | EXECUTION_INVALID | Does the corrected locked relaxation replay satisfy its preregistered replication gate? | L823 |
-| `FTD-0682` | NUMERICAL_FACT | What survives as descriptive evidence in the corrected FTD-0681 data? | L824 |
-| `FTD-0683` | QUALIFIED_OBSERVER | Can radial field morphology be sampled at the actual staggered face/edge carrier positions? | L825 |
-| `FTD-0684` | EXECUTION_INVALID | Does the first causal-excitation separation campaign execute? | L826 |
-| `FTD-0685` | EXECUTION_INVALID | Does the tolerance-corrected causal-excitation campaign finish with scalar regional masks? | L827 |
-| `FTD-0686` | THEOREM | Can all registered regional energies be evaluated in one exact batched pass? | L828 |
-| `FTD-0687` | EXECUTION_INVALID | Does the batched-observer causal-excitation campaign finish? | L829 |
-| `FTD-0688` | THEOREM | Can nested regional profiles be computed by an exact prefix-sum observer? | L830 |
-| `FTD-0689` | EXECUTION_INVALID | Does the prefix-sum `L=129` causal-excitation campaign finish? | L831 |
-| `FTD-0690` | EXECUTION_INVALID | Can the causal-excitation discriminator finish on the first executable `L=113`, 96-tick extension? | L832 |
-| `FTD-0691` | EXECUTION_INVALID | Does block-sampling the expensive spatial observer make the same `L=113` campaign executable? | L833 |
-| `FTD-0692` | QUALIFIED_OBSERVER | Can a local residual evaluator reproduce the complete common-action transaction before accepted-state materialization? | L834 |
-| `FTD-0693` | EXECUTION_INVALID | Can the qualified but unindexed local-residual campaign complete the locked discriminator? | L835 |
-| `FTD-0694` | SELECTED_DYNAMICS | What does the indexed-local causal-excitation campaign show before periodic contact? | L836 |
-| `FTD-0695` | THEOREM | What source-free group velocities are available at the first connected internal resonance? | L837 |
-| `FTD-0696` | THEOREM | Can a carrier-aware symmetry-ray Fourier spectrum be measured covariantly on staggered fields? | L838 |
-| `FTD-0697` | THEOREM | Can the qualified symmetry-ray spectrum be batched without changing its complex coefficients? | L839 |
-| `FTD-0698` | EXECUTION_INVALID | Does the first held-out internal-excitation spectrum campaign classify resonant transfer? | L840 |
-| `FTD-0699` | MEASURED | Does a corrected fresh-amplitude spectrum resolve the internal excitation on all principal rays? | L841 |
+| `FTD-0657` | THEOREM | Can a linear retarded response of the current classical common-action state identify a massive-particle pole `omega^2=omega_0^2+c^2k^2` solely… | L800 |
+| `FTD-0658` | THEOREM, CLOSED_NEGATIVE, CONSTRUCTIVE | Does any currently registered FTD candidate (the fixed dressed rest state, a prepared internal matter mode, or the co-moving field dressing) supply a… | L801 |
+| `FTD-0659` | SELECTED_DYNAMICS | Does the first non-rigid analytic internal matter eigenspace carry a robust, state-functional, conserved action-angle phase under the selected… | L802 |
+| `FTD-0660` | SELECTED_DYNAMICS | When the first internal constituent doublet loses its matter-only action, does the complete common-action state place the complementary excitation in… | L803 |
+| `FTD-0661` | SELECTED_DYNAMICS | Does correcting the zero-observer threshold and replacing the two-vector polarization sample with a covariant four-vector tight frame resolve the… | L804 |
+| `FTD-0662` | SELECTED_DYNAMICS | Does normalizing the tight-frame covariance observer by each arm's own initial doublet energy make the polarization control basis-invariant and yield… | L805 |
+| `FTD-0663` | THEOREM, MEASURED | Does the first internal matter doublet's discrete phase lie inside the propagating face/edge field band, excluding kinematic frequency-gap protection… | L806 |
+| `FTD-0664` | EXECUTION_INVALID | Is the early loss of action from the first internal matter doublet, and the outward growth of its dynamic face/edge field residual, already present… | L807 |
+| `FTD-0665` | SELECTED_DYNAMICS | Does the corrected volume-scaled protocol establish volume-independent pre-return generation of an outward dynamic field from the internal-mode… | L808 |
+| `FTD-0666` | RETRACTED | Does extending the truncated L=17 volume-scaled run to tick 100 confirm the predicted absolute return-time window (ticks 74-78) for the internal-mode… | L809 |
+| `FTD-0667` | THEOREM | Can eliminating the field block of a linearized one-tick matter/field tangent map produce an exact discrete memory law that explains apparent… | L810 |
+| `FTD-0668` | RETRACTED | Does the internal-mode excitation return before the causally isolated self-contact time on a large L=97 volume, ruling out periodic self-return as… | L811 |
+| `FTD-0670` | RETRACTED | Does the held-out internal-mode envelope turn upward before any conservative periodic return can reach the core? | L813 |
+| `FTD-0671` | THEOREM | Can matched leapfrog field energy be partitioned into exact regional transport and deposited-current work? | L814 |
+| `FTD-0672` | RETRACTED | What field-energy flow occurs during the former tick-68--80 recovery window? | L815 |
+| `FTD-0673` | THEOREM | Can the excited-minus-control energy be decomposed without assigning unexplained loss to a reservoir? | L816 |
+| `FTD-0674` | EXECUTION_INVALID | Does another registered reservoir donate energy back to the canonical doublet after its trough? | L817 |
+| `FTD-0675` | THEOREM | Was the paired-mode displacement diagnostic a canonical modal-energy coordinate? | L818 |
+| `FTD-0676` | SELECTED_DYNAMICS | Does the corrected canonical mode energy decay reproducibly before causal return? | L819 |
+| `FTD-0677` | THEOREM | Can localized internal phase and near/intermediate/far difference-field content be measured covariantly? | L820 |
+| `FTD-0678` | EXECUTION_INVALID | Does the first locked localized-basin relaxation campaign establish dynamics? | L821 |
+| `FTD-0679` | EXECUTION_INVALID | Does the second localized-basin campaign produce a valid target record? | L822 |
+| `FTD-0680` | CORRECTION | Was the localized-basin observer's flat storage mapping correct? | L823 |
+| `FTD-0681` | EXECUTION_INVALID | Does the corrected locked relaxation replay satisfy its preregistered replication gate? | L824 |
+| `FTD-0682` | NUMERICAL_FACT | What survives as descriptive evidence in the corrected FTD-0681 data? | L825 |
+| `FTD-0683` | QUALIFIED_OBSERVER | Can radial field morphology be sampled at the actual staggered face/edge carrier positions? | L826 |
+| `FTD-0684` | EXECUTION_INVALID | Does the first causal-excitation separation campaign execute? | L827 |
+| `FTD-0685` | EXECUTION_INVALID | Does the tolerance-corrected causal-excitation campaign finish with scalar regional masks? | L828 |
+| `FTD-0686` | THEOREM | Can all registered regional energies be evaluated in one exact batched pass? | L829 |
+| `FTD-0687` | EXECUTION_INVALID | Does the batched-observer causal-excitation campaign finish? | L830 |
+| `FTD-0688` | THEOREM | Can nested regional profiles be computed by an exact prefix-sum observer? | L831 |
+| `FTD-0689` | EXECUTION_INVALID | Does the prefix-sum `L=129` causal-excitation campaign finish? | L832 |
+| `FTD-0690` | EXECUTION_INVALID | Can the causal-excitation discriminator finish on the first executable `L=113`, 96-tick extension? | L833 |
+| `FTD-0691` | EXECUTION_INVALID | Does block-sampling the expensive spatial observer make the same `L=113` campaign executable? | L834 |
+| `FTD-0692` | QUALIFIED_OBSERVER | Can a local residual evaluator reproduce the complete common-action transaction before accepted-state materialization? | L835 |
+| `FTD-0693` | EXECUTION_INVALID | Can the qualified but unindexed local-residual campaign complete the locked discriminator? | L836 |
+| `FTD-0694` | SELECTED_DYNAMICS | What does the indexed-local causal-excitation campaign show before periodic contact? | L837 |
+| `FTD-0695` | THEOREM | What source-free group velocities are available at the first connected internal resonance? | L838 |
+| `FTD-0696` | THEOREM | Can a carrier-aware symmetry-ray Fourier spectrum be measured covariantly on staggered fields? | L839 |
+| `FTD-0697` | THEOREM | Can the qualified symmetry-ray spectrum be batched without changing its complex coefficients? | L840 |
+| `FTD-0698` | EXECUTION_INVALID | Does the first held-out internal-excitation spectrum campaign classify resonant transfer? | L841 |
+| `FTD-0699` | MEASURED | Does a corrected fresh-amplitude spectrum resolve the internal excitation on all principal rays? | L842 |
 
 ### Constituent-complete matter — transport, gait & depinning
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0700` | THEOREM | Is sub-cone axial motion kinematically exposed to transverse lattice modes? | L842 |
-| `FTD-0701` | CLOSED_NEGATIVE | Does the selected ideal connected bipole cancel the complete axial resonant channel? | L843 |
-| `FTD-0702` | QUALIFIED_OBSERVER | Can the actual oriented face current be measured spectrally with carrier phase and matched transversality? | L844 |
-| `FTD-0703` | CLOSED_NEGATIVE | Does the connected dressed object's deposited quadratic-coat current cancel every resonant transverse channel? | L845 |
-| `FTD-0704` | SELECTED_DYNAMICS | Can the complete dressed 16-constituent state be prepared as a coherent moving source? | L846 |
-| `FTD-0705` | SELECTED_DYNAMICS | Does the moving dressed source exhibit the locked sharp transverse-field threshold? | L847 |
-| `FTD-0706` | EXECUTION_INVALID | Does the first complete moving-dressing preparation satisfy `F^2(X)=T_1X` from a qualified rest state? | L848 |
-| `FTD-0707` | MEASURED | Do four symmetry-preserving static coordinates certify a complete `L=33` rest fixed point? | L849 |
-| `FTD-0708` | NUMERICAL_FACT | Can the full constituent impulse residual be solved to obtain a true selected rest fixed point? | L850 |
-| `FTD-0709` | CLOSED_NEGATIVE | Does a static boost of the corrected rest solution create a complete moving relative orbit? | L851 |
-| `FTD-0710` | NUMERICAL_FACT | Can iterative full-field shooting solve the prescribed rigid co-moving trajectory? | L852 |
-| `FTD-0711` | THEOREM | Is the rigid `v=1/2` co-moving field equation exactly solvable in Fourier space? | L853 |
-| `FTD-0712` | SELECTED_DYNAMICS | Can existing constituent deformation cancel the eight resonant null projections? | L854 |
-| `FTD-0713` | SELECTED_DYNAMICS | Can the null-canceling gait remain causal and bound under the registered deformation limits? | L855 |
-| `FTD-0714` | THEOREM | Can an unequal two-tick labeled gait return its constituent momenta under the symmetric endpoint velocity law? | L856 |
-| `FTD-0715` | THEOREM | Does the first odd temporal cycle admit a causal bound internal momentum return? | L857 |
-| `FTD-0716` | SELECTED_DYNAMICS | Does the period-three deposited current admit a complete translated-return field? | L858 |
-| `FTD-0717` | CLOSED_NEGATIVE | Does the independent minimum-norm co-moving field satisfy the period-three matter common action? | L859 |
-| `FTD-0718` | CLOSED_NEGATIVE | Can the homogeneous co-moving field freedom repair the locked period-three force mismatch? | L860 |
-| `FTD-0719` | THEOREM | Do equal endpoint matter densities determine the oriented deposited current? | L861 |
-| `FTD-0720` | NUMERICAL_FACT | Does the interacting common action select one current/root within the registered seed family? | L862 |
+| `FTD-0700` | THEOREM | Is sub-cone axial motion kinematically exposed to transverse lattice modes? | L843 |
+| `FTD-0701` | CLOSED_NEGATIVE | Does the selected ideal connected bipole cancel the complete axial resonant channel? | L844 |
+| `FTD-0702` | QUALIFIED_OBSERVER | Can the actual oriented face current be measured spectrally with carrier phase and matched transversality? | L845 |
+| `FTD-0703` | CLOSED_NEGATIVE | Does the connected dressed object's deposited quadratic-coat current cancel every resonant transverse channel? | L846 |
+| `FTD-0704` | SELECTED_DYNAMICS | Can the complete dressed 16-constituent state be prepared as a coherent moving source? | L847 |
+| `FTD-0705` | SELECTED_DYNAMICS | Does the moving dressed source exhibit the locked sharp transverse-field threshold? | L848 |
+| `FTD-0706` | EXECUTION_INVALID | Does the first complete moving-dressing preparation satisfy `F^2(X)=T_1X` from a qualified rest state? | L849 |
+| `FTD-0707` | MEASURED | Do four symmetry-preserving static coordinates certify a complete `L=33` rest fixed point? | L850 |
+| `FTD-0708` | NUMERICAL_FACT | Can the full constituent impulse residual be solved to obtain a true selected rest fixed point? | L851 |
+| `FTD-0709` | CLOSED_NEGATIVE | Does a static boost of the corrected rest solution create a complete moving relative orbit? | L852 |
+| `FTD-0710` | NUMERICAL_FACT | Can iterative full-field shooting solve the prescribed rigid co-moving trajectory? | L853 |
+| `FTD-0711` | THEOREM | Is the rigid `v=1/2` co-moving field equation exactly solvable in Fourier space? | L854 |
+| `FTD-0712` | SELECTED_DYNAMICS | Can existing constituent deformation cancel the eight resonant null projections? | L855 |
+| `FTD-0713` | SELECTED_DYNAMICS | Can the null-canceling gait remain causal and bound under the registered deformation limits? | L856 |
+| `FTD-0714` | THEOREM | Can an unequal two-tick labeled gait return its constituent momenta under the symmetric endpoint velocity law? | L857 |
+| `FTD-0715` | THEOREM | Does the first odd temporal cycle admit a causal bound internal momentum return? | L858 |
+| `FTD-0716` | SELECTED_DYNAMICS | Does the period-three deposited current admit a complete translated-return field? | L859 |
+| `FTD-0717` | CLOSED_NEGATIVE | Does the independent minimum-norm co-moving field satisfy the period-three matter common action? | L860 |
+| `FTD-0718` | CLOSED_NEGATIVE | Can the homogeneous co-moving field freedom repair the locked period-three force mismatch? | L861 |
+| `FTD-0719` | THEOREM | Do equal endpoint matter densities determine the oriented deposited current? | L862 |
+| `FTD-0720` | NUMERICAL_FACT | Does the interacting common action select one current/root within the registered seed family? | L863 |
 
 ### Constituent-complete matter — capture, binding & persistence
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0721` | DERIVED, THEOREM | Must pair connectivity be stored, and can a closed pair form from outside its compact interaction support without an energy receiver? | L863 |
-| `FTD-0722` | CLOSED_NEGATIVE | Does the matched field capture an initially unbound derived pair in the first registered encounter protocol? | L864 |
-| `FTD-0723` | CLOSED_NEGATIVE | Does a constant exported-energy estimate predict a capture window at `p=0.0200--0.0300`? | L865 |
-| `FTD-0724` | NUMERICAL_FACT | Does the preregistered lower-energy crossover produce covariant trapping and detached-field capture? | L866 |
-| `FTD-0725` | NUMERICAL_FACT | Is FTD-0724's covariance defect physical or nonlinear-root conditioning? | L867 |
-| `FTD-0726` | SELECTED_DYNAMICS | Does the full lower-energy formation matrix pass under the independently qualified exact-root realization? | L868 |
-| `FTD-0727` | UNRESOLVED | Does the qualified trapped family retain a bound dressing for 96 ticks under symmetry, polarity, and escape controls? | L869 |
-| `FTD-0728` | NUMERICAL_FACT | Does a tenfold tighter root tolerance make the complete persistence campaign covariantly convergent? | L870 |
-| `FTD-0729` | NUMERICAL_FACT | Does the worst late-reentry covariance defect converge under another decade of root refinement? | L871 |
-| `FTD-0730` | NUMERICAL_FACT | Is the late re-entry a local two-volume behavior or an `L=33` recurrence artifact? | L872 |
-| `FTD-0731` | SELECTED_DYNAMICS | Does multi-pass field-assisted capture persist on two volumes for the registered horizon? | L873 |
-| `FTD-0732` | CONSTRUCTIVE | Do locked perturbations around captured states all remain admissible and captured? | L874 |
-| `FTD-0733` | THEOREM | What is the exact admissible radial shell for negative internal energy at fixed kinetic energy? | L875 |
-| `FTD-0734` | SELECTED_DYNAMICS | Do energy-adapted mixed perturbation corners remain captured under all registered symmetry controls? | L876 |
-| `FTD-0735` | NUMERICAL_FACT | Do strict capture margins and regular implicit roots imply finite-time open neighborhoods? | L877 |
-| `FTD-0736` | CLOSED_NEGATIVE | Does graph re-entry before any possible periodic return already imply a persistent negative core? | L878 |
-| `FTD-0737` | SELECTED_DYNAMICS | Does negative-core formation occur after a reproducible precontact energetic delay? | L879 |
-| `FTD-0738` | THEOREM | Must interaction-support entry precede energetic binding for the selected compact potential? | L880 |
-| `FTD-0739` | SELECTED_DYNAMICS | Can the selected reciprocal action form a durable finite-support relational core plus an outgoing field tail before periodic contact? | L881 |
+| `FTD-0721` | DERIVED, THEOREM | Must pair connectivity be stored, and can a closed pair form from outside its compact interaction support without an energy receiver? | L864 |
+| `FTD-0722` | CLOSED_NEGATIVE | Does the matched field capture an initially unbound derived pair in the first registered encounter protocol? | L865 |
+| `FTD-0723` | CLOSED_NEGATIVE | Does a constant exported-energy estimate predict a capture window at `p=0.0200--0.0300`? | L866 |
+| `FTD-0724` | NUMERICAL_FACT | Does the preregistered lower-energy crossover produce covariant trapping and detached-field capture? | L867 |
+| `FTD-0725` | NUMERICAL_FACT | Is FTD-0724's covariance defect physical or nonlinear-root conditioning? | L868 |
+| `FTD-0726` | SELECTED_DYNAMICS | Does the full lower-energy formation matrix pass under the independently qualified exact-root realization? | L869 |
+| `FTD-0727` | UNRESOLVED | Does the qualified trapped family retain a bound dressing for 96 ticks under symmetry, polarity, and escape controls? | L870 |
+| `FTD-0728` | NUMERICAL_FACT | Does a tenfold tighter root tolerance make the complete persistence campaign covariantly convergent? | L871 |
+| `FTD-0729` | NUMERICAL_FACT | Does the worst late-reentry covariance defect converge under another decade of root refinement? | L872 |
+| `FTD-0730` | NUMERICAL_FACT | Is the late re-entry a local two-volume behavior or an `L=33` recurrence artifact? | L873 |
+| `FTD-0731` | SELECTED_DYNAMICS | Does multi-pass field-assisted capture persist on two volumes for the registered horizon? | L874 |
+| `FTD-0732` | CONSTRUCTIVE | Do locked perturbations around captured states all remain admissible and captured? | L875 |
+| `FTD-0733` | THEOREM | What is the exact admissible radial shell for negative internal energy at fixed kinetic energy? | L876 |
+| `FTD-0734` | SELECTED_DYNAMICS | Do energy-adapted mixed perturbation corners remain captured under all registered symmetry controls? | L877 |
+| `FTD-0735` | NUMERICAL_FACT | Do strict capture margins and regular implicit roots imply finite-time open neighborhoods? | L878 |
+| `FTD-0736` | CLOSED_NEGATIVE | Does graph re-entry before any possible periodic return already imply a persistent negative core? | L879 |
+| `FTD-0737` | SELECTED_DYNAMICS | Does negative-core formation occur after a reproducible precontact energetic delay? | L880 |
+| `FTD-0738` | THEOREM | Must interaction-support entry precede energetic binding for the selected compact potential? | L881 |
+| `FTD-0739` | SELECTED_DYNAMICS | Can the selected reciprocal action form a durable finite-support relational core plus an outgoing field tail before periodic contact? | L882 |
 
 ### Constituent-complete matter — causal-horizon persistence, wake & momentum closure
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0745` | CLOSED_NEGATIVE | Does the first six-shell environmental-closure campaign carry outward field energy to radii 32 and 48 by tick 184 while the finite core persists? | L887 |
-| `FTD-0746` | EXECUTION_ABORTED | Can the unchanged causal-horizon persistence discriminator be completed on CPU at `L=321`? | L888 |
-| `FTD-0753` | NUMERICAL_FACT | Does the explicit-rounding CUDA backend produce a large causal-horizon finite-support witness on all principal rays? | L895 |
-| `FTD-0754` | CORRECTION | Can one state-only observer separate selected bound dressing from outgoing/incoming residual field on the frozen FTD-0753 records? | L896 |
-| `FTD-0755` | INFRASTRUCTURE | Does the first support-invariant held-out M3 validation execute its candidate and remote-fibre dynamics? | L897 |
-| `FTD-0756` | INFRASTRUCTURE | Why did every FTD-0755 parent stop before held-out initialization? | L898 |
-| `FTD-0757` | NUMERICAL_FACT | Does a fixed integer preparation chart preserve the qualified M3 parent while its derived midpoint becomes fractional? | L899 |
-| `FTD-0758` | CONSUMED | Does the fixed-chart held-out validation establish the finite-time selected matter family? | L900 |
-| `FTD-0760` | SELECTED_DYNAMICS | Does a relational-chart held-out CUDA validation establish an open finite-time selected matter family? | L902 |
-| `FTD-0761` | UNKNOWN | Do boosted members of the selected family translate while preserving relational-core identity and complete moving-state coherence? | L903 |
-| `FTD-0762` | UNKNOWN | Are FTD-0761's moving-dressing observer failures physical or an integer-center chart obstruction? | L904 |
-| `FTD-0763` | CONSTRUCTIVE | Can the selected Gauss dressing observer be extended covariantly to fractional constituent centers? | L905 |
-| `FTD-0764` | CLOSED_NEGATIVE | Does the complete selected field dressing co-move rigidly with the transported relational core? | L906 |
-| `FTD-0765` | CORRECTION | Does FTD-0764's trailing residual moment independently demonstrate wake creation? | L907 |
-| `FTD-0766` | EXECUTION_INVALID | Does age/boost variation establish a mirrored, persistent dynamical wake? | L908 |
-| `FTD-0767` | NUMERICAL_FACT | Did the aged wake campaign spatially clear the initial observer window, and what does signed rest subtraction measure? | L909 |
-| `FTD-0768` | EXECUTION_INVALID | Does a 768-tick aged face history preserve state-only mobile identity, clear the fixed laboratory slab, close the complete regional ledger, and… | L910 |
-| `FTD-0769` | EXECUTION_INVALID | Does total matter+field momentum close for the FTD-0760/0761 moving-core family under transport, and if not, is the non-closure regionally localized… | L911 |
+| `FTD-0745` | CLOSED_NEGATIVE | Does the first six-shell environmental-closure campaign carry outward field energy to radii 32 and 48 by tick 184 while the finite core persists? | L888 |
+| `FTD-0746` | EXECUTION_ABORTED | Can the unchanged causal-horizon persistence discriminator be completed on CPU at `L=321`? | L889 |
+| `FTD-0753` | NUMERICAL_FACT | Does the explicit-rounding CUDA backend produce a large causal-horizon finite-support witness on all principal rays? | L896 |
+| `FTD-0754` | CORRECTION | Can one state-only observer separate selected bound dressing from outgoing/incoming residual field on the frozen FTD-0753 records? | L897 |
+| `FTD-0755` | INFRASTRUCTURE | Does the first support-invariant held-out M3 validation execute its candidate and remote-fibre dynamics? | L898 |
+| `FTD-0756` | INFRASTRUCTURE | Why did every FTD-0755 parent stop before held-out initialization? | L899 |
+| `FTD-0757` | NUMERICAL_FACT | Does a fixed integer preparation chart preserve the qualified M3 parent while its derived midpoint becomes fractional? | L900 |
+| `FTD-0758` | CONSUMED | Does the fixed-chart held-out validation establish the finite-time selected matter family? | L901 |
+| `FTD-0760` | SELECTED_DYNAMICS | Does a relational-chart held-out CUDA validation establish an open finite-time selected matter family? | L903 |
+| `FTD-0761` | UNKNOWN | Do boosted members of the selected family translate while preserving relational-core identity and complete moving-state coherence? | L904 |
+| `FTD-0762` | UNKNOWN | Are FTD-0761's moving-dressing observer failures physical or an integer-center chart obstruction? | L905 |
+| `FTD-0763` | CONSTRUCTIVE | Can the selected Gauss dressing observer be extended covariantly to fractional constituent centers? | L906 |
+| `FTD-0764` | CLOSED_NEGATIVE | Does the complete selected field dressing co-move rigidly with the transported relational core? | L907 |
+| `FTD-0765` | CORRECTION | Does FTD-0764's trailing residual moment independently demonstrate wake creation? | L908 |
+| `FTD-0766` | EXECUTION_INVALID | Does age/boost variation establish a mirrored, persistent dynamical wake? | L909 |
+| `FTD-0767` | NUMERICAL_FACT | Did the aged wake campaign spatially clear the initial observer window, and what does signed rest subtraction measure? | L910 |
+| `FTD-0768` | EXECUTION_INVALID | Does a 768-tick aged face history preserve state-only mobile identity, clear the fixed laboratory slab, close the complete regional ledger, and… | L911 |
+| `FTD-0769` | EXECUTION_INVALID | Does total matter+field momentum close for the FTD-0760/0761 moving-core family under transport, and if not, is the non-closure regionally localized… | L912 |
 
 ### Constituent-complete matter — protonucleus & body growth
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0799` | MEASURED, CLOSED_NEGATIVE, THEOREM | Does a manifested body above the quasi-static critical radius `R_c = 12.63` grow without bound, saturate at a preferred size, or collapse? | L958 |
+| `FTD-0799` | MEASURED, CLOSED_NEGATIVE, THEOREM | Does a manifested body above the quasi-static critical radius `R_c = 12.63` grow without bound, saturate at a preferred size, or collapse? | L959 |
 
 ---
 
@@ -1003,28 +1004,28 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
-| `FTD-0770` | IMPOSED, THEOREM, CLOSED_NEGATIVE, OPEN | Does a selected lattice of coupled quartic action--angle clocks produce a relational temporal field, and does any registered dimensionless linear… | L912 |
-| `FTD-0771` | THEOREM, CLOSED_NEGATIVE, SELECTION | Does comparing the selected quartic clock with the support-bound reference for one abstract lattice interval derive a unique minimum dimensionless… | L913 |
-| `FTD-0772` | THEOREM, QUALIFIED_OBSERVER, CLOSED_NEGATIVE, OPEN | Does the signed fixed-ray coordinate of the only registered native phase-bearing candidate possess a stationary, amplitude-invariant temporal… | L914 |
-| `FTD-0773` | THEOREM, IMPOSED, OPEN | Does the proposed quartic occupancy-to-clock chain, supplemented by a quadratic coordinate-edge interaction, yield an exact nonlinear `G*` signature… | L915 |
-| `FTD-0776` | MEASURED, EXACT, OPEN, CONDITIONAL | Does the preselected `[CANDIDATE]` aggregate `q_active=sum_{s_i!=0} J_{i,x}` furnish a recurrence qualifying the quartic diagnostics in the frozen… | L916 |
-| `FTD-0777` | EXACT, NO_GO, CONDITIONAL, OPEN | Can a finite dyadic root cover furnish an exact recurrence hierarchy and stable mode-addition memory, and does it bridge the selected quartic clock… | L917 |
-| `FTD-0778` | THEOREM, MEASURED, OPEN | Where can `G*` survive as an invariant, and does the preregistered `q_active` aggregate behave as a natural coordinate in the locked FTD-0776 profile? | L918 |
-| `FTD-0779` | PRE_REGISTRATION | Does any admissible native channel behave as a natural coordinate in a fixed preregistered profile? | L919 |
-| `FTD-0780` | MEASURED, OPEN | Is the FTD-0659 doublet - the strongest registered native phase-bearing candidate - a quartic clock? | L921 |
-| `FTD-0781` | ENGINE_FACT, THEOREM, OPEN | Does the locked FTD-0776/0779 profile contain a conservative anharmonic sector at all - is the nonlinearity hard or soft? | L923 |
-| `FTD-0782` | ENGINE_FACT, SYNTHESIS, OPEN, IMPOSED | What does the movement-enabled sector actually contain, and what is the first admissible carrier candidate there? | L925 |
-| `FTD-0783` | MEASURED, CLOSED_NEGATIVE, STRUCTURAL | Does the compact-law bound pair's breathing mode qualify as the carrier - what is the sign of its anharmonicity? | L927 |
-| `FTD-0784` | EXACT, THEOREM, STRUCTURAL, OPEN | Can any native single-clock observable carry the FC-W surd delta = sqrt of G*(4G*-1) - and if not, what exactly is missing? | L929 |
-| `FTD-0786` | CORRECTION, SYNTHESIS, EXACT, STRUCTURAL, ENGINE_FACT, SELECTED_DYNAMICS | Is the movement-enabled sector actually blocked by the reciprocal-transaction problem - and if not, where does the carrier fail there? | L933 |
-| `FTD-0787` | REFUTATION, THEOREM | Is there a native mechanism realizing C3 - null-flat bottom with quartic growth - and does it clear the band? | L935 |
-| `FTD-0788` | REFUTATION, EXACT, SELECTION, IMPOSED, OPEN | What sets the compact-law well depth `eps`, and does the answer decide C2? | L937 |
-| `FTD-0789` | REFUTATION, THEOREM, OPEN | Does FTD-0787's flexural quartic survive adversarial audit? | L939 |
-| `FTD-0790` | REFUTATION, EXACT, CORRECTION, SELECTION, IMPOSED | Does FTD-0788's lattice-quantum derivation of `eps` survive adversarial audit? | L941 |
-| `FTD-0797` | REFUTATION, EXACT, THEOREM, ENGINE_FACT | Does putting every sector on the cubic de Rham complex deliver the exact common cone section 24 demands? | L954 |
-| `FTD-0798` | CLOSED_NEGATIVE, THEOREM, CONSTRUCTIVE, CORRECTION | Is a massive Kaehler-Dirac field a viable first-order clock-operator carrier? | L956 |
-| `FTD-0800` | CLOSED_NEGATIVE, MEASURED | Does any configuration in the locked Maxwell-criterion screen realize C3 as a native `n = 4` mechanism under the registered compact pair law? | L960 |
-| `FTD-0801` | CLOSED_NEGATIVE, MEASURED, SYNTHESIS | Does the locked periodic triangulated-sheet candidate realize C3 as an `n = 4` mechanism for a free body under the registered compact law? | L962 |
+| `FTD-0770` | IMPOSED, THEOREM, CLOSED_NEGATIVE, OPEN | Does a selected lattice of coupled quartic action--angle clocks produce a relational temporal field, and does any registered dimensionless linear… | L913 |
+| `FTD-0771` | THEOREM, CLOSED_NEGATIVE, SELECTION | Does comparing the selected quartic clock with the support-bound reference for one abstract lattice interval derive a unique minimum dimensionless… | L914 |
+| `FTD-0772` | THEOREM, QUALIFIED_OBSERVER, CLOSED_NEGATIVE, OPEN | Does the signed fixed-ray coordinate of the only registered native phase-bearing candidate possess a stationary, amplitude-invariant temporal… | L915 |
+| `FTD-0773` | THEOREM, IMPOSED, OPEN | Does the proposed quartic occupancy-to-clock chain, supplemented by a quadratic coordinate-edge interaction, yield an exact nonlinear `G*` signature… | L916 |
+| `FTD-0776` | MEASURED, EXACT, OPEN, CONDITIONAL | Does the preselected `[CANDIDATE]` aggregate `q_active=sum_{s_i!=0} J_{i,x}` furnish a recurrence qualifying the quartic diagnostics in the frozen… | L917 |
+| `FTD-0777` | EXACT, NO_GO, CONDITIONAL, OPEN | Can a finite dyadic root cover furnish an exact recurrence hierarchy and stable mode-addition memory, and does it bridge the selected quartic clock… | L918 |
+| `FTD-0778` | THEOREM, MEASURED, OPEN | Where can `G*` survive as an invariant, and does the preregistered `q_active` aggregate behave as a natural coordinate in the locked FTD-0776 profile? | L919 |
+| `FTD-0779` | PRE_REGISTRATION | Does any admissible native channel behave as a natural coordinate in a fixed preregistered profile? | L920 |
+| `FTD-0780` | MEASURED, OPEN | Is the FTD-0659 doublet - the strongest registered native phase-bearing candidate - a quartic clock? | L922 |
+| `FTD-0781` | ENGINE_FACT, THEOREM, OPEN | Does the locked FTD-0776/0779 profile contain a conservative anharmonic sector at all - is the nonlinearity hard or soft? | L924 |
+| `FTD-0782` | ENGINE_FACT, SYNTHESIS, OPEN, IMPOSED | What does the movement-enabled sector actually contain, and what is the first admissible carrier candidate there? | L926 |
+| `FTD-0783` | MEASURED, CLOSED_NEGATIVE, STRUCTURAL | Does the compact-law bound pair's breathing mode qualify as the carrier - what is the sign of its anharmonicity? | L928 |
+| `FTD-0784` | EXACT, THEOREM, STRUCTURAL, OPEN | Can any native single-clock observable carry the FC-W surd delta = sqrt of G*(4G*-1) - and if not, what exactly is missing? | L930 |
+| `FTD-0786` | CORRECTION, SYNTHESIS, EXACT, STRUCTURAL, ENGINE_FACT, SELECTED_DYNAMICS | Is the movement-enabled sector actually blocked by the reciprocal-transaction problem - and if not, where does the carrier fail there? | L934 |
+| `FTD-0787` | REFUTATION, THEOREM | Is there a native mechanism realizing C3 - null-flat bottom with quartic growth - and does it clear the band? | L936 |
+| `FTD-0788` | REFUTATION, EXACT, SELECTION, IMPOSED, OPEN | What sets the compact-law well depth `eps`, and does the answer decide C2? | L938 |
+| `FTD-0789` | REFUTATION, THEOREM, OPEN | Does FTD-0787's flexural quartic survive adversarial audit? | L940 |
+| `FTD-0790` | REFUTATION, EXACT, CORRECTION, SELECTION, IMPOSED | Does FTD-0788's lattice-quantum derivation of `eps` survive adversarial audit? | L942 |
+| `FTD-0797` | REFUTATION, EXACT, THEOREM, ENGINE_FACT | Does putting every sector on the cubic de Rham complex deliver the exact common cone section 24 demands? | L955 |
+| `FTD-0798` | CLOSED_NEGATIVE, THEOREM, CONSTRUCTIVE, CORRECTION | Is a massive Kaehler-Dirac field a viable first-order clock-operator carrier? | L957 |
+| `FTD-0800` | CLOSED_NEGATIVE, MEASURED | Does any configuration in the locked Maxwell-criterion screen realize C3 as a native `n = 4` mechanism under the registered compact pair law? | L961 |
+| `FTD-0801` | CLOSED_NEGATIVE, MEASURED, SYNTHESIS | Does the locked periodic triangulated-sheet candidate realize C3 as an `n = 4` mechanism for a free body under the registered compact law? | L963 |
 
 ---
 
@@ -1062,21 +1063,21 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | Tag | Rows |
 |---|---:|
 | THEOREM | 292 |
-| CLOSED_NEGATIVE | 184 |
-| MEASURED | 161 |
+| CLOSED_NEGATIVE | 185 |
+| MEASURED | 162 |
 | OPEN | 129 |
 | SMC | 84 |
 | DERIVED | 84 |
 | SELECTION | 75 |
 | SYNTHESIS | 63 |
-| NUMERICAL_FACT | 53 |
+| NUMERICAL_FACT | 54 |
 | CONSTRUCTIVE | 47 |
 | FOUNDATIONAL_OBSTRUCTION | 43 |
 | CONJECTURE | 31 |
 | SELECTED_DYNAMICS | 29 |
 | AXIOM | 27 |
+| CORRECTION | 24 |
 | EXECUTION_INVALID | 24 |
-| CORRECTION | 23 |
 | PARAMETRIC | 20 |
 | RETRACTED | 19 |
 | NO_GO | 16 |
