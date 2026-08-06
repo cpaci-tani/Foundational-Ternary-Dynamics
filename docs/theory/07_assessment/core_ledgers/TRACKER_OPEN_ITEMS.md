@@ -3007,7 +3007,7 @@ Snapshot (2026-07-12, regenerated; the archive/ exclusion added to the command t
 | File | Count |
 |---|---:|
 | `docs/theory/03_derivations/INDEX_03_DERIVATIONS.md` | 13 |
-| `docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md` | 12 |
+| `docs/theory/10_eft_program/derivations/lorentz_recovery_causal_structure/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md` | 12 |
 | `docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md` | 12 |
 | `docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md` | 10 |
 | `docs/theory/01_reference/SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` | 10 |
