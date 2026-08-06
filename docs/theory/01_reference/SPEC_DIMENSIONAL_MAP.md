@@ -184,7 +184,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 - **Value:** 0.5109989507 MeV/c²
 - **Tag:** `IMPOSED`
 - **LEDGER:** [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096)
-- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/THEOREM_MU_NO_GO_FTD0096.md`
+- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/sm_constants_mass_flavour/THEOREM_MU_NO_GO_FTD0096.md`
 - **Calibration note:** FTD-0096 (calibration-interface theorem): mass-unit μ_FTD is calibration, not derivation, on equal footing with a_phys. Three independent closures of FTD-0094 confirm this from methodological (FTD-0097 look-elsewhere null-rejected upward), structural-mechanism (FTD-0093 Mechanism C closed negative), and dimensional (this no-go) sides. Exactly two SI-dimensional calibrations (a_phys ≡ ℓ_P and K_B = m_e) are theorem-enforced as the irreducible minimum.
 - **Notes:** Second of two SI-dimensional calibrations. Together with a_phys, completes the calibration interface.
 
