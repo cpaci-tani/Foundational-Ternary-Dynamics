@@ -1,0 +1,50 @@
+[
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EMERGENT_STATIC_CHARGE.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_EMERGENT_STATIC_CHARGE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EXTERNAL_DRIVE_RADIATION_FUNCTIONAL.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_EXTERNAL_DRIVE_RADIATION_FUNCTIONAL.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GAUSS_MONOPOLE_MOBILE_DICHOTOMY.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_GAUSS_MONOPOLE_MOBILE_DICHOTOMY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_GAUSS_TRANSPORT.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_MATCHED_GAUSS_TRANSPORT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_MAXWELL_INTEGRATION.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_MATCHED_MAXWELL_INTEGRATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_DRESSED_EVAPORATION_HAZARD.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_NATIVE_DRESSED_EVAPORATION_HAZARD.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_DRESSED_HAZARD_IR_SCALING.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_NATIVE_DRESSED_HAZARD_IR_SCALING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_DYNAMIC_POLARITY_RESPONSE.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_NATIVE_DYNAMIC_POLARITY_RESPONSE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_MOVING_SOURCE_POLE_CORRECTION.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_NATIVE_MOVING_SOURCE_POLE_CORRECTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_REACTION_POLARITY_SLOW_MODE.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_NATIVE_REACTION_POLARITY_SLOW_MODE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_RETARDED_POLARITY_TRANSPORT.md",
+    "new": "docs/theory/07_assessment/charge_gauss_native_em/AUDIT_NATIVE_RETARDED_POLARITY_TRANSPORT.md"
+  }
+]

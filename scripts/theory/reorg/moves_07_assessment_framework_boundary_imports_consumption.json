@@ -1,0 +1,18 @@
+[
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GENESIS_ACTION_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_GENESIS_ACTION_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_HARD_CONTACT_CORNER_ACTION.md",
+    "new": "docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_HARD_CONTACT_CORNER_ACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_IMPORT_BIT_CURRENCY.md",
+    "new": "docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_IMPORT_BIT_CURRENCY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_REDTEAM_DISSECTION_2026-07-01.md",
+    "new": "docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_REDTEAM_DISSECTION_2026-07-01.md"
+  }
+]

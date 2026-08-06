@@ -1,0 +1,610 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ACCELERATED_COAT_SPACETIME_CURRENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ACCELERATED_COAT_SPACETIME_CURRENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ACCELERATED_WORLDLINE_ENERGY_ESCAPE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ACCELERATED_WORLDLINE_ENERGY_ESCAPE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_AXIAL_CONTACT_LONGITUDINAL_WORK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_AXIAL_CONTACT_LONGITUDINAL_WORK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_AXIAL_FACE_HOP_RECIPROCITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_AXIAL_FACE_HOP_RECIPROCITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BLOCKED_HOP_WORK_DECOMPOSITION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BLOCKED_HOP_WORK_DECOMPOSITION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BLOCKED_HOP_WORK_DECOMPOSITION_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BLOCKED_HOP_WORK_DECOMPOSITION_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BOUND_PILOT_WAKE_DISCRIMINATOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BOUND_PILOT_WAKE_DISCRIMINATOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BOUND_PILOT_WAKE_DISCRIMINATOR_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BOUND_PILOT_WAKE_DISCRIMINATOR_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BOUNDARY_CHART_CAPACITY_CORRECTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BOUNDARY_CHART_CAPACITY_CORRECTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BOUNDARY_COLLISION_RESOLUTION_TRILEMMA_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BOUNDARY_COLLISION_RESOLUTION_TRILEMMA_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CANONICAL_SUBCELL_SECTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CANONICAL_SUBCELL_SECTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CENTERED_FIBER_KNOT_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTERED_FIBER_KNOT_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CENTERED_KNOT_TRACE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTERED_KNOT_TRACE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CENTERED_TRACE_WORK_LEDGER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTERED_TRACE_WORK_LEDGER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CENTRAL_FIELD_MOMENTUM_RECOIL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTRAL_FIELD_MOMENTUM_RECOIL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CENTRAL_GAUSS_HOP_REALIZABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTRAL_GAUSS_HOP_REALIZABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COLLECTIVE_SOURCE_HISTORY_BOUND_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_COLLECTIVE_SOURCE_HISTORY_BOUND_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COMMON_ACTION_KICK_RECIPROCITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_COMMON_ACTION_KICK_RECIPROCITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COMMON_MOORE_WORLDLINE_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_COMMON_MOORE_WORLDLINE_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONFIGURATION_SPACE_CARRIER_NECESSITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONFIGURATION_SPACE_CARRIER_NECESSITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONSTITUENT_RELATIVE_COLLISION_SELECTOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONSTITUENT_RELATIVE_COLLISION_SELECTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONTACT_QUOTIENT_COUPLING_SCOPE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONTACT_QUOTIENT_COUPLING_SCOPE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONTACT_QUOTIENT_HORIZON_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONTACT_QUOTIENT_HORIZON_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COUPLED_MATCHED_FACE_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_COUPLED_MATCHED_FACE_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CUBIC_HOP_WORK_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CUBIC_HOP_WORK_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CUSP_DRESSING_INTEGRABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CUSP_DRESSING_INTEGRABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DIAGONAL_ENDPOINT_ACTION_DOMAIN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DIAGONAL_ENDPOINT_ACTION_DOMAIN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DISCRETE_INTERACTION_WORK_CONTRACT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DISCRETE_INTERACTION_WORK_CONTRACT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DISCRETE_LEGENDRE_WORLDLINE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DISCRETE_LEGENDRE_WORLDLINE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DRESSING_FIBER_LEDGER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DRESSING_FIBER_LEDGER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DYNAMICAL_FLUX_DRESSING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DYNAMICAL_FLUX_DRESSING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DYNAMICAL_FLUX_DRESSING_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DYNAMICAL_FLUX_DRESSING_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EDGE_PLANE_ONE_SIDED_VARIATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EDGE_PLANE_ONE_SIDED_VARIATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EIGHT_SOURCE_ORBIT_COHERENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EIGHT_SOURCE_ORBIT_COHERENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EMERGENT_BOUNDARY_MECHANISM_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EMERGENT_BOUNDARY_MECHANISM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ENDOGENOUS_REACTION_CARRIER_BOUND_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ENDOGENOUS_REACTION_CARRIER_BOUND_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ENDPOINT_RECOIL_SUPPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ENDPOINT_RECOIL_SUPPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ENDPOINT_SCHEDULE_UNDERDETERMINATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ENDPOINT_SCHEDULE_UNDERDETERMINATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EXACT_MOMENTUM_FACE_BALANCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EXACT_MOMENTUM_FACE_BALANCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EXTENDED_SOURCE_PEIERLS_SCALING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EXTENDED_SOURCE_PEIERLS_SCALING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EXTENDED_SOURCE_PEIERLS_SCALING_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EXTENDED_SOURCE_PEIERLS_SCALING_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EXTERNAL_DRIVE_RADIATION_FUNCTIONAL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EXTERNAL_DRIVE_RADIATION_FUNCTIONAL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FACE_FLUX_OBSERVER_QUALIFICATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FACE_FLUX_OBSERVER_QUALIFICATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FINITE_MEMORY_REVERSIBLE_LIFT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FINITE_MEMORY_REVERSIBLE_LIFT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FIXED_J_RECOIL_CAPACITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FIXED_J_RECOIL_CAPACITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FIXED_STEP_ENERGY_SCOPE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FIXED_STEP_ENERGY_SCOPE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FLUX_SELF_INTERFERENCE_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FLUX_SELF_INTERFERENCE_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FORCE_BRANCH_RECIPROCITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FORCE_BRANCH_RECIPROCITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FREE_FLUX_LOCALIZATION_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FREE_FLUX_LOCALIZATION_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FULL_SURFACE_SOURCE_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FULL_SURFACE_SOURCE_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GAUSS_MONOPOLE_MOBILE_DICHOTOMY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GAUSS_MONOPOLE_MOBILE_DICHOTOMY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GAUSS_THRESHOLD_FORCE_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GAUSS_THRESHOLD_FORCE_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_CUBIC_CANONICAL_FORM_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_CUBIC_CANONICAL_FORM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_ENVIRONMENT_FEEDBACK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_ENVIRONMENT_FEEDBACK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_MINIMAL_BATH_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_MINIMAL_BATH_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_NATURAL_EXTENSION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_NATURAL_EXTENSION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_RESERVOIR_DILATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_RESERVOIR_DILATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GUIDE_CROSS_ENERGY_DECOMPOSITION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GUIDE_CROSS_ENERGY_DECOMPOSITION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_HALF_TICK_LINK_EXCHANGE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_HALF_TICK_LINK_EXCHANGE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_HOP_MECHANICS_UNDERDETERMINATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_HOP_MECHANICS_UNDERDETERMINATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_HOP_SOURCE_MULTIPOLE_HIERARCHY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_HOP_SOURCE_MULTIPOLE_HIERARCHY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_IGNITION_CUT_SUPPORT_ABLATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_IGNITION_CUT_SUPPORT_ABLATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_IMPLICIT_ATOMIC_ENDPOINT_SOLVE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_IMPLICIT_ATOMIC_ENDPOINT_SOLVE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_IMPLICIT_ATOMIC_FACE_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_IMPLICIT_ATOMIC_FACE_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INJECTIVE_LOCAL_PERMUTATION_EVENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_INJECTIVE_LOCAL_PERMUTATION_EVENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTEGER_TRANSLATION_BLOCH_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_INTEGER_TRANSLATION_BLOCH_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ISOLATED_PAIR_ACTION_REACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ISOLATED_PAIR_ACTION_REACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_KNOT_LEGENDRE_BRANCH_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_KNOT_LEGENDRE_BRANCH_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LINK_ACTION_WORK_COMPATIBILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LINK_ACTION_WORK_COMPATIBILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCAL_COAT_INJECTIVITY_MOMENTUM_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCAL_COAT_INJECTIVITY_MOMENTUM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCAL_POLARITY_REGULARITY_TRILEMMA_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCAL_POLARITY_REGULARITY_TRILEMMA_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCAL_SUPPORT_RECOIL_THRESHOLD_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCAL_SUPPORT_RECOIL_THRESHOLD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_PACKET_RECOIL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCALIZED_PACKET_RECOIL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_ACTION_NORMALIZATION_NO_GO_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_ACTION_NORMALIZATION_NO_GO_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_CONTACT_ENERGY_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_CONTACT_ENERGY_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_FACE_ENERGY_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_FACE_ENERGY_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_FACE_MOMENTUM_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_FACE_MOMENTUM_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_MIDPOINT_POYNTING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_MIDPOINT_POYNTING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MECHANICAL_HISTORY_HOP_WORK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MECHANICAL_HISTORY_HOP_WORK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MINIMAL_CONSTITUENT_STRESS_LIFT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MINIMAL_CONSTITUENT_STRESS_LIFT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MINIMAL_MOORE_COMPATIBILITY_COAT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MINIMAL_MOORE_COMPATIBILITY_COAT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MINIMUM_NORM_TRANSACTION_SELECTOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MINIMUM_NORM_TRANSACTION_SELECTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MOMENTUM_SELECTED_WORLDLINE_MATCHING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MOMENTUM_SELECTED_WORLDLINE_MATCHING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MOORE_CHANNEL_PROJECTION_KERNEL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MOORE_CHANNEL_PROJECTION_KERNEL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MOORE_HOP_ROUTE_AMBIGUITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MOORE_HOP_ROUTE_AMBIGUITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MULTIBODY_SHAPE_OBSERVABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MULTIBODY_SHAPE_OBSERVABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MULTICELL_WORLDLINE_VARIATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MULTICELL_WORLDLINE_VARIATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_ACTIVE_MODE_BACKREACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_ACTIVE_MODE_BACKREACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_CONTACT_ACTIVE_SET_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_CONTACT_ACTIVE_SET_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_ENERGY_CONTRACT_RECONCILIATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_ENERGY_CONTRACT_RECONCILIATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_FIELD_DISCRETE_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_FIELD_DISCRETE_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_HODGE_RECIPROCITY_STATIC_POLE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HODGE_RECIPROCITY_STATIC_POLE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_HOP_DRESSING_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HOP_DRESSING_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_MOTION_REACTION_FRONT_TRICHOTOMY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_MOTION_REACTION_FRONT_TRICHOTOMY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NESTED_SOURCE_HISTORY_TRANSLATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NESTED_SOURCE_HISTORY_TRANSLATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NEUTRAL_PAIR_WAVE_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NEUTRAL_PAIR_WAVE_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NINE_SOURCE_ORBIT_COHERENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NINE_SOURCE_ORBIT_COHERENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NONCOMPACT_FACE_COHOMOLOGY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NONCOMPACT_FACE_COHOMOLOGY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_OPEN_WORLDLINE_HOP_SELECTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_OPEN_WORLDLINE_HOP_SELECTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_OVERSHOOT_PRESERVING_CONTACT_REBASE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_OVERSHOOT_PRESERVING_CONTACT_REBASE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PAIRED_JW_RECOIL_CAPACITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PAIRED_JW_RECOIL_CAPACITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_POISSON_COLD_START_MEMORY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_POISSON_COLD_START_MEMORY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PRODUCTION_HOP_KINEMATICS_CORRECTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PRODUCTION_HOP_KINEMATICS_CORRECTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PRODUCTION_LOCAL_FLUX_CARRY_WORK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PRODUCTION_LOCAL_FLUX_CARRY_WORK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PRODUCTION_SAME_SIGN_BOUNCE_RECIPROCITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PRODUCTION_SAME_SIGN_BOUNCE_RECIPROCITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PROTONUCLEUS_GROWTH_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PROTONUCLEUS_GROWTH_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_FACE_CURRENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_FACE_CURRENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_MATTER_WORK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_MATTER_WORK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_NEUTRAL_COMPOSITE_PEIERLS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_NEUTRAL_COMPOSITE_PEIERLS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_NEUTRAL_PAIR_WORK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_NEUTRAL_PAIR_WORK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_ORBIT_GATHER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_ORBIT_GATHER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_SELF_FORCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_SELF_FORCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_SPACETIME_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_SPACETIME_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_RECIPROCAL_MOVING_SOURCE_DISCRIMINATOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_RECIPROCAL_MOVING_SOURCE_DISCRIMINATOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_REMOVAL_TIME_ORBIT_COHERENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_REMOVAL_TIME_ORBIT_COHERENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_REMOVAL_TIME_PULSE_BOUND_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_REMOVAL_TIME_PULSE_BOUND_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_RIGID_SOURCE_HISTORY_TRANSLATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_RIGID_SOURCE_HISTORY_TRANSLATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SELF_FIELD_SUBTRACTION_LOCALITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SELF_FIELD_SUBTRACTION_LOCALITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SEQUENTIAL_NO_RESET_TRANSACTIONS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SEQUENTIAL_NO_RESET_TRANSACTIONS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SINGLE_ACTION_RECIPROCITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SINGLE_ACTION_RECIPROCITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SINGLE_SLAB_CONNECTION_COMPATIBILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SINGLE_SLAB_CONNECTION_COMPATIBILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SITE_ONTIC_ATOMIC_RECIPROCAL_HOP_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SITE_ONTIC_ATOMIC_RECIPROCAL_HOP_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SPACETIME_WORLDLINE_GAUGE_COUPLING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SPACETIME_WORLDLINE_GAUGE_COUPLING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SPLINE_POYNTING_NOETHER_DEFECT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SPLINE_POYNTING_NOETHER_DEFECT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_STAGGERED_CURRENT_SPLIT_COMPATIBILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_STAGGERED_CURRENT_SPLIT_COMPATIBILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SUBCELL_FACE_CURRENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SUBCELL_FACE_CURRENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SUBCELL_REPRESENTATION_QUOTIENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SUBCELL_REPRESENTATION_QUOTIENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SYMMETRIC_CHORD_MOORE_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_CHORD_MOORE_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SYMMETRIC_HALF_TICK_ENERGY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_HALF_TICK_ENERGY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SYMMETRIC_HALF_TICK_ENERGY_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_HALF_TICK_ENERGY_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TEN_SOURCE_DISTANCE_DISTRIBUTION_LP_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TEN_SOURCE_DISTANCE_DISTRIBUTION_LP_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TEN_SOURCE_ORBIT_COHERENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TEN_SOURCE_ORBIT_COHERENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TEN_SOURCE_PAIR_DISTANCE_CAPACITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TEN_SOURCE_PAIR_DISTANCE_CAPACITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TEN_SOURCE_SHARED_M_COHERENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TEN_SOURCE_SHARED_M_COHERENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TEN_SOURCE_TEMPORAL_PRODUCT_CAPACITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TEN_SOURCE_TEMPORAL_PRODUCT_CAPACITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TERNARY_BLOCK_BIPOLE_PEIERLS_SCALING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TERNARY_BLOCK_BIPOLE_PEIERLS_SCALING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TERNARY_COLLISION_VERTEX_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TERNARY_COLLISION_VERTEX_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TRAVELLING_WAVE_RECOIL_THRESHOLD_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TRAVELLING_WAVE_RECOIL_THRESHOLD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TWO_SLAB_VARIATIONAL_FORCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TWO_SLAB_VARIATIONAL_FORCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_WORLDLINE_CURRENT_KERNEL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_WORLDLINE_CURRENT_KERNEL_v1.md"
+  }
+]

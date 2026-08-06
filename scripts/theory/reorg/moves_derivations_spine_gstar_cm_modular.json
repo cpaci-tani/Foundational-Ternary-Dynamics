@@ -1,0 +1,14 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/derivations/DERIV_BCC_ALGEBRAIC_READOUT.md",
+    "new": "docs/theory/10_eft_program/derivations/spine_gstar_cm_modular/DERIV_BCC_ALGEBRAIC_READOUT.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md",
+    "new": "docs/theory/10_eft_program/derivations/spine_gstar_cm_modular/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/FOUND_READOUT_STRUCTURE_INDEPENDENCE.md",
+    "new": "docs/theory/10_eft_program/derivations/spine_gstar_cm_modular/FOUND_READOUT_STRUCTURE_INDEPENDENCE.md"
+  }
+]

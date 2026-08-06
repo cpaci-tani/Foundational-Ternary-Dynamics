@@ -1,0 +1,10 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_DEVIATION_LEDGER_AUDIT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/quantum_foundations/ANALYSIS_DEVIATION_LEDGER_AUDIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_FC1_BELL_TRAP_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/quantum_foundations/ANALYSIS_FC1_BELL_TRAP_v1.md"
+  }
+]

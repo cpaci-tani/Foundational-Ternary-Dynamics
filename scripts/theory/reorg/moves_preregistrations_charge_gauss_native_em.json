@@ -1,0 +1,34 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_EVAPORATION_HAZARD_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_DRESSED_EVAPORATION_HAZARD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_DRESSED_HAZARD_IR_SCALING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_MOVING_SOURCE_POLE_CORRECTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_MOVING_SOURCE_POLE_CORRECTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_REACTION_POLARITY_SLOW_MODE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_REACTION_POLARITY_SLOW_MODE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v2.md"
+  }
+]

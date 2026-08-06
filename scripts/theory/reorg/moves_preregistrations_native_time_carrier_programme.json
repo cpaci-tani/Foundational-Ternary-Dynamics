@@ -1,0 +1,46 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COUPLED_QUARTIC_CLOCK_FIELD_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_COUPLED_QUARTIC_CLOCK_FIELD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_HODGE_CHANNEL_C3_RESCREEN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_HODGE_CHANNEL_C3_RESCREEN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MAXWELL_C3_SCREEN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_MAXWELL_C3_SCREEN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_OBSERVABLE_DISCOVERY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_NATIVE_OBSERVABLE_DISCOVERY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_TEMPORAL_OCCUPANCY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_NATIVE_TEMPORAL_OCCUPANCY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TRIANGULATED_SHEET_N4_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_TRIANGULATED_SHEET_N4_v1.md"
+  }
+]

@@ -3730,7 +3730,7 @@ and skipped the evaporation kernel.
 The owner directed an extension of the project's goals toward a proper theory of
 everything — "consume all of physics in FTD through logic and semantics." A
 21-agent adversarial audit (committed as
-`docs/theory/07_assessment/AUDIT_CONSUMPTION_EXPANSION_2026-07-12.md`)
+`docs/theory/07_assessment/alpha_readout_programme/AUDIT_CONSUMPTION_EXPANSION_2026-07-12.md`)
 established the honest maximal form, and the Number-One Goal was amended
 (owner decision of record; propagated to all 7 goal-statement sites):
 

@@ -1,0 +1,50 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_COLLECTIVE_SOURCE_HISTORY_BOUND.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_COLLECTIVE_SOURCE_HISTORY_BOUND.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_EIGHT_SOURCE_ORBIT_COHERENCE.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_EIGHT_SOURCE_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_IGNITION_CUT_SUPPORT_ABLATION.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_IGNITION_CUT_SUPPORT_ABLATION.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_NINE_SOURCE_ORBIT_COHERENCE.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_NINE_SOURCE_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_REMOVAL_TIME_ORBIT_COHERENCE.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_REMOVAL_TIME_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_REMOVAL_TIME_PULSE_BOUND.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_REMOVAL_TIME_PULSE_BOUND.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_TEN_SOURCE_DISTANCE_DISTRIBUTION_LP.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_TEN_SOURCE_DISTANCE_DISTRIBUTION_LP.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_TEN_SOURCE_ORBIT_COHERENCE.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_TEN_SOURCE_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_TEN_SOURCE_PAIR_DISTANCE_CAPACITY.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_TEN_SOURCE_PAIR_DISTANCE_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_TEN_SOURCE_SHARED_M_COHERENCE.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_TEN_SOURCE_SHARED_M_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_TEN_SOURCE_TEMPORAL_PRODUCT_CAPACITY.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_TEN_SOURCE_TEMPORAL_PRODUCT_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/ANALYSIS_THOMSON_UNLOCKED_RECOIL_v1.md",
+    "new": "docs/theory/10_eft_program/common_action_mechanics_reciprocity/ANALYSIS_THOMSON_UNLOCKED_RECOIL_v1.md"
+  }
+]

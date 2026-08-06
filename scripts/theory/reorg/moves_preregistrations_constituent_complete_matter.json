@@ -1,0 +1,626 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_AGED_WAKE_ENTRAINMENT_DISCRIMINATOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_AGED_WAKE_ENTRAINMENT_DISCRIMINATOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v3.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_LONG_HORIZON_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_LONG_HORIZON_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BALANCED_GAIT_PHASE_RETURN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BALANCED_GAIT_PHASE_RETURN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BATCHED_MATCHED_SYMMETRY_RAY_SPECTRUM_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BATCHED_MATCHED_SYMMETRY_RAY_SPECTRUM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BATCHED_REGIONAL_ENERGY_PROFILE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BATCHED_REGIONAL_ENERGY_PROFILE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BLOCK_SAMPLED_EXCITATION_SEPARATION_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BLOCK_SAMPLED_EXCITATION_SEPARATION_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BLOCK_SAMPLED_EXCITATION_SEPARATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BLOCK_SAMPLED_EXCITATION_SEPARATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_BOUND_DRESSING_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BOUND_DRESSING_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CANONICAL_PRECONTACT_MODE_DECAY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CANONICAL_PRECONTACT_MODE_DECAY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAPTURE_ENERGY_SHELL_GEOMETRY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAPTURE_ENERGY_SHELL_GEOMETRY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAPTURE_ROOT_REGULARITY_NEIGHBORHOOD_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAPTURE_ROOT_REGULARITY_NEIGHBORHOOD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAPTURED_STATE_PERTURBATION_SURVIVAL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAPTURED_STATE_PERTURBATION_SURVIVAL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_BOUND_INTERNAL_GAIT_CONTINUATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_BOUND_INTERNAL_GAIT_CONTINUATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_BUFFER_RELATIONAL_FORMATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_BUFFER_RELATIONAL_FORMATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_INDEXED_LOCAL_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_INDEXED_LOCAL_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_INDEXED_LOCAL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_INDEXED_LOCAL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_L113_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_L113_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_L113_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_L113_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_LOCAL_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_LOCAL_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_LOCAL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_LOCAL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v3.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v4.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_RUNNER_LOCK_v4.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_v3.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_EXCITATION_SEPARATION_v4.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_EXCITATION_SEPARATION_v4.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSALLY_ISOLATED_ENVELOPE_TURNING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSALLY_ISOLATED_ENVELOPE_TURNING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CELL_MEASURE_COMMON_ACTION_CLOSURE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CELL_MEASURE_COMMON_ACTION_CLOSURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CELL_MEASURE_FIXED_MASS_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CELL_MEASURE_FIXED_MASS_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CLOSED_NEUTRAL_TRIMER_PAIR_DYNAMICS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CLOSED_NEUTRAL_TRIMER_PAIR_DYNAMICS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CLOSED_SYMMETRY_BALANCED_GAIT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CLOSED_SYMMETRY_BALANCED_GAIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COMOVING_FIELD_FOURIER_SOLVABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_COMOVING_FIELD_FOURIER_SOLVABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COMPONENT_AWARE_RADIAL_FIELD_PROFILE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_COMPONENT_AWARE_RADIAL_FIELD_PROFILE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_DYNAMICAL_REST_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_DYNAMICAL_REST_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_ENVELOPE_HESSIAN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_ENVELOPE_HESSIAN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_MATTER_MODES_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_MATTER_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_STATIC_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_STATIC_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_COUPLED_TRANSVERSE_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_COUPLED_TRANSVERSE_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_CUBIC_EIGHT_FIBRE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_CUBIC_EIGHT_FIBRE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_DYNAMIC_STABILIZATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_DYNAMIC_STABILIZATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_DYNAMICAL_REST_RECURRENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_DYNAMICAL_REST_RECURRENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_EIGHT_FIBRE_STATIC_BASIN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_EIGHT_FIBRE_STATIC_BASIN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_FIXED_MASS_REFINEMENT_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_FIXED_MASS_REFINEMENT_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_FULL_CONSTITUENT_HESSIAN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_FULL_CONSTITUENT_HESSIAN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_FULL_CONSTITUENT_HESSIAN_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_FULL_CONSTITUENT_HESSIAN_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_FULL_HALF_STATIC_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_FULL_HALF_STATIC_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_KNOT_LOCAL_HESSIAN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_KNOT_LOCAL_HESSIAN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_LINEAR_MODES_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_LINEAR_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_SHARED_ANCHOR_FIBRE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_SHARED_ANCHOR_FIBRE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_STATIC_DRESSING_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_STATIC_DRESSING_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_TRANSLATION_CURVATURE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_TRANSLATION_CURVATURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_TRANSLATION_STABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_TRANSLATION_STABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_MOORE_BLOCK_COMMON_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_MOORE_BLOCK_COMMON_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CONSTITUENT_COMPLETE_CHARGED_TRIMER_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONSTITUENT_COMPLETE_CHARGED_TRIMER_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COVARIANT_LOWER_ENERGY_FORMATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_COVARIANT_LOWER_ENERGY_FORMATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_DERIVED_INTERACTION_GRAPH_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_DERIVED_INTERACTION_GRAPH_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ENERGY_ADAPTED_MIXED_CAPTURE_CORNERS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ENERGY_ADAPTED_MIXED_CAPTURE_CORNERS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FIELD_ASSISTED_CAPTURE_WINDOW_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FIELD_ASSISTED_CAPTURE_WINDOW_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FIELD_ASSISTED_DERIVED_PAIR_CAPTURE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FIELD_ASSISTED_DERIVED_PAIR_CAPTURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FRACTIONAL_CENTER_DRESSING_OBSERVER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FRACTIONAL_CENTER_DRESSING_OBSERVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FULL_MIRRORED_INTERNAL_SHAPE_CORE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FULL_MIRRORED_INTERNAL_SHAPE_CORE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_FULL_STATE_IRREVERSIBILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FULL_STATE_IRREVERSIBILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GLOBAL_ORIENTATION_STRAIN_CORE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_GLOBAL_ORIENTATION_STRAIN_CORE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERACTING_COMMON_ACTION_ROOT_MULTISEED_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERACTING_COMMON_ACTION_ROOT_MULTISEED_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_RUNNER_LOCK_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_RUNNER_LOCK_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_GAIT_ANGULAR_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_GAIT_ANGULAR_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v3.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_MODE_RETURN_TIME_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_MODE_RETURN_TIME_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_WALKER_DIRECTION_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_WALKER_DIRECTION_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_L33_FULL_IMPULSE_REST_SOLVE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L33_FULL_IMPULSE_REST_SOLVE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_L33_SYMMETRY_REST_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L33_SYMMETRY_REST_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LATE_REENTRY_COVARIANCE_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LATE_REENTRY_COVARIANCE_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCAL_RESIDUAL_MATERIALIZATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCAL_RESIDUAL_MATERIALIZATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_RUNNER_LOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_RUNNER_LOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_RUNNER_LOCK_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_RUNNER_LOCK_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_RUNNER_LOCK_v3.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_RUNNER_LOCK_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_v3.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOWER_ENERGY_COVARIANCE_CONDITIONING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOWER_ENERGY_COVARIANCE_CONDITIONING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_LOWER_ENERGY_FORMATION_CROSSOVER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOWER_ENERGY_FORMATION_CROSSOVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_DEVICE_RESIDENT_PIPELINE_PARITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_DEVICE_RESIDENT_PIPELINE_PARITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_FIXED_CHART_HELD_OUT_VALIDATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_FIXED_CHART_HELD_OUT_VALIDATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_FIXED_CHART_PARENT_QUALIFICATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_FIXED_CHART_PARENT_QUALIFICATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_PARENT_REPLAY_FORENSICS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_PARENT_REPLAY_FORENSICS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_RELATIONAL_CHART_HELD_OUT_VALIDATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_RELATIONAL_CHART_HELD_OUT_VALIDATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_STATE_ONLY_OBSERVER_DISCOVERY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_STATE_ONLY_OBSERVER_DISCOVERY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M3_SUPPORT_INVARIANT_VALIDATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M3_SUPPORT_INVARIANT_VALIDATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M4_BOOSTED_RELATIONAL_TRANSPORT_DISCOVERY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M4_BOOSTED_RELATIONAL_TRANSPORT_DISCOVERY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_M4_MOVING_DRESSING_OBSERVER_FORENSICS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_M4_MOVING_DRESSING_OBSERVER_FORENSICS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_SYMMETRY_RAY_SPECTRUM_OBSERVER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MATCHED_SYMMETRY_RAY_SPECTRUM_OBSERVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MINIMUM_ENERGY_NEUTRAL_PAIR_FORCE_SIGN_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MINIMUM_ENERGY_NEUTRAL_PAIR_FORCE_SIGN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MOBILE_DRESSING_STRUCTURE_FACTOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MOBILE_DRESSING_STRUCTURE_FACTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MOBILE_DRESSING_STRUCTURE_FACTOR_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MOBILE_DRESSING_STRUCTURE_FACTOR_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MULTIPASS_FORMATION_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_MULTIPASS_FORMATION_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_EXCITED_MATTER_CLOCK_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_NATIVE_EXCITED_MATTER_CLOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NEUTRAL_PAIR_TRANSLATION_PHASE_BALANCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_NEUTRAL_PAIR_TRANSLATION_PHASE_BALANCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ORIENTATION_GAUSS_INDEPENDENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ORIENTATION_GAUSS_INDEPENDENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_OUT_OF_SAMPLE_MOBILITY_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_OUT_OF_SAMPLE_MOBILITY_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PERIOD_THREE_COMMON_ACTION_PREFLIGHT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PERIOD_THREE_COMMON_ACTION_PREFLIGHT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PERIOD_THREE_COMOVING_FIELD_SOLVABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PERIOD_THREE_COMOVING_FIELD_SOLVABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PERIOD_THREE_FIELD_BOUND_COMMON_ACTION_SELECTOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PERIOD_THREE_FIELD_BOUND_COMMON_ACTION_SELECTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PERIOD_THREE_INTERNAL_MOMENTUM_LIFT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PERIOD_THREE_INTERNAL_MOMENTUM_LIFT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PERSISTENCE_COVARIANCE_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PERSISTENCE_COVARIANCE_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PERSISTENCE_REENTRY_VOLUME_DISCRIMINATOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PERSISTENCE_REENTRY_VOLUME_DISCRIMINATOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_POLARITY_SNAPSHOT_CURRENT_NONUNIQUENESS_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_POLARITY_SNAPSHOT_CURRENT_NONUNIQUENESS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PRECONTACT_ENERGETIC_CAPTURE_DELAY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PRECONTACT_ENERGETIC_CAPTURE_DELAY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PREFIX_SUM_REGIONAL_PROFILE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PREFIX_SUM_REGIONAL_PROFILE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_PRESCRIBED_TRAJECTORY_COMOVING_FIELD_SHOOTING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PRESCRIBED_TRAJECTORY_COMOVING_FIELD_SHOOTING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_QUALIFIED_INTERIOR_COMPACT_MATTER_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_QUALIFIED_INTERIOR_COMPACT_MATTER_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_RECOVERY_RESERVOIR_DONOR_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_RECOVERY_RESERVOIR_DONOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_REFINED_CORE_PEIERLS_LANDSCAPE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_REFINED_CORE_PEIERLS_LANDSCAPE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_REFINED_SINGLE_CORE_DIRECTIONAL_BOOST_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_REFINED_SINGLE_CORE_DIRECTIONAL_BOOST_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_REPEATED_EXACT_ROOT_ACCELERATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_REPEATED_EXACT_ROOT_ACCELERATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_RESONANT_INTERNAL_GAIT_CANCELLATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_RESONANT_INTERNAL_GAIT_CANCELLATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_REST_QUALIFIED_MOVING_DRESSING_RELATIVE_ORBIT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_REST_QUALIFIED_MOVING_DRESSING_RELATIVE_ORBIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SHARED_ANCHOR_CONSTITUENT_FIBRE_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_SHARED_ANCHOR_CONSTITUENT_FIBRE_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SINGLE_CORE_NEUTRALIZER_CONTROL_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_SINGLE_CORE_NEUTRALIZER_CONTROL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SITE_ADMISSIBLE_COMPACT_MATTER_MOTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_SITE_ADMISSIBLE_COMPACT_MATTER_MOTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_STATE_ONLY_SUPPORT_LADDER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_STATE_ONLY_SUPPORT_LADDER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SYMMETRIC_BREATHING_MATTER_CORE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_SYMMETRIC_BREATHING_MATTER_CORE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TOTAL_MOMENTUM_STRESS_LEDGER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_TOTAL_MOMENTUM_STRESS_LEDGER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_TRANSPORTED_CHART_MATTER_MORPHOLOGY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_TRANSPORTED_CHART_MATTER_MORPHOLOGY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_UNIFORM_NEUTRALIZED_SINGLE_CORE_STATIC_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_UNIFORM_NEUTRALIZED_SINGLE_CORE_STATIC_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_UNIFORM_SINGLE_CORE_STATIONARY_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_UNIFORM_SINGLE_CORE_STATIONARY_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ZERO_MOMENTUM_INTERNAL_MODE_MOBILITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ZERO_MOMENTUM_INTERNAL_MODE_MOBILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/SCOPE_M3_STATE_ONLY_OBSERVER_DISCOVERY_SPLIT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/SCOPE_M3_STATE_ONLY_OBSERVER_DISCOVERY_SPLIT_v1.md"
+  }
+]
