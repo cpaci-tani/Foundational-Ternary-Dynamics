@@ -55,7 +55,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_NATIVE_HODGE_RECIPROCITY_STATIC_POLE.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_HODGE_RECIPROCITY_STATIC_POLE_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HODGE_RECIPROCITY_STATIC_POLE_v1.md`
 - preregistration SHA-256:
   `BE33049A5C93E887574BDE5509E93F666150A5CAF02E2B93989D96980D1788F6`
 - native observer: `test_native_hodge_reciprocity`

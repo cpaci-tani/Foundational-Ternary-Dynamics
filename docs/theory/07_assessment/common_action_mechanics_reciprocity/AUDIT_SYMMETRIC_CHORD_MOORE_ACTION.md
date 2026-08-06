@@ -58,7 +58,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_SYMMETRIC_CHORD_MOORE_ACTION.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_SYMMETRIC_CHORD_MOORE_ACTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_CHORD_MOORE_ACTION_v1.md`
 - preregistration SHA-256:
   `E3B651CA2E4D05395DA876DA61B873A11E6E5BD17220CDC70EB055F944527DF3`
 - native observer: `test_symmetric_chord_moore_action`

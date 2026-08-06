@@ -3,7 +3,7 @@
 **Identifier:** `FTD-0459`  
 **Date executed:** 2026-07-24  
 **Status:** `[CLOSED NEGATIVE — FROZEN PROTOCOL]`  
-**Preregistration:** `docs/theory/10_eft_program/preregistrations/PREREG_SEQUENTIAL_NO_RESET_TRANSACTIONS_v1.md`  
+**Preregistration:** `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SEQUENTIAL_NO_RESET_TRANSACTIONS_v1.md`  
 **Run of record:** `engine/results/ftd_0459/windows_msvc_cpu.csv`
 
 ## Result

@@ -62,7 +62,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION_v1.md`
 - preregistration SHA-256:
   `7E9C64012B5595969CBE645302450F234387747138A420D371E834FAB705914A`
 - native observer: `test_finite_rigid_moore_carrier_obstruction`

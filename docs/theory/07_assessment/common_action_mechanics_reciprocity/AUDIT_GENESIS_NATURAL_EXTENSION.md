@@ -68,7 +68,7 @@ Artifacts:
 - `engine/tests/test_genesis_natural_extension.cpp`
 - `scripts/proofs/proof_genesis_natural_extension.py`
 - `engine/results/ftd_0570/windows_msvc_cpu.json`
-- `docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_NATURAL_EXTENSION_v1.md`
+- `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_NATURAL_EXTENSION_v1.md`
 - `docs/theory/10_eft_program/derivations/THEOREM_GENESIS_NATURAL_EXTENSION.md`
 
 ## FTD-0571 follow-up

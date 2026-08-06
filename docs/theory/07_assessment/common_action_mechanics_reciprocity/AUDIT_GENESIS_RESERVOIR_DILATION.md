@@ -83,5 +83,5 @@ Artifacts:
 - `engine/tests/test_genesis_reservoir_dilation.cpp`
 - `scripts/proofs/proof_genesis_reservoir_dilation.py`
 - `engine/results/ftd_0569/windows_msvc_cpu.json`
-- `docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_RESERVOIR_DILATION_v1.md`
+- `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_RESERVOIR_DILATION_v1.md`
 - `docs/theory/10_eft_program/derivations/THEOREM_GENESIS_RESERVOIR_DILATION.md`

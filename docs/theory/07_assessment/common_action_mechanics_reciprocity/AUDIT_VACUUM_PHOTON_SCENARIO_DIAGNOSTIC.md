@@ -80,7 +80,7 @@ structure, or a common Lorentz cone.
 ## Reproducibility
 
 - Pre-registration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md`
 - Source lock:
   `scripts/proofs/vacuum_photon_scenario_diagnostic_lock.json`
 - Run manifest: `engine/results/ftd_0434/manifest.json`
