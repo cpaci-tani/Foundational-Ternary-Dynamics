@@ -1,7 +1,7 @@
 # ANALYSIS — Native mass-gap swing, v2: CLOSED-NEGATIVE (no gap)
 
 **Tag:** `[MEASURED — CLOSED-NEGATIVE]`. **LEDGER id:** FTD-0362.
-**Pre-registration (hash-locked before the run):** `docs/theory/10_eft_program/preregistrations/PREREG_QDYN_MASS_GAP_v2.md`, git tag `preregister-qdyn-mass-gap-v2`, lock commit `ec48707f`.
+**Pre-registration (hash-locked before the run):** `docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_QDYN_MASS_GAP_v2.md`, git tag `preregister-qdyn-mass-gap-v2`, lock commit `ec48707f`.
 **Instrument:** `engine/tests/campaign_mass_gap_v2.cpp`. **Data of record:** `engine/results/mass_gap_v2/mass_gap_v2_v2.csv`.
 **Supersedes:** FTD-0333 (v1, verdict INVALID — the run this v2 makes valid).
 
