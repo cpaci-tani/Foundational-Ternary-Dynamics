@@ -3,7 +3,7 @@
 **Status:** `[PRE-EXECUTION AUDIT — EXISTING DISCOVERY CORPUS ONLY]`  
 **Date:** 2026-07-30  
 **Protocol:**
-`docs/theory/10_eft_program/preregistrations/PREREG_STATE_ONLY_SUPPORT_LADDER_v1.md`
+`docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_STATE_ONLY_SUPPORT_LADDER_v1.md`
 
 ## Frozen scope
 

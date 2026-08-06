@@ -57,7 +57,7 @@ Artifacts:
 - `scripts/proofs/proof_orientation_gauss_independence.py`
 - `engine/results/ftd_0564/windows_msvc_cpu.json`
 - `docs/theory/10_eft_program/derivations/THEOREM_ORIENTATION_GAUSS_INDEPENDENCE.md`
-- `docs/theory/10_eft_program/preregistrations/PREREG_ORIENTATION_GAUSS_INDEPENDENCE_v1.md`
+- `docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ORIENTATION_GAUSS_INDEPENDENCE_v1.md`
 
 ## Licensed interpretation
 
