@@ -236,6 +236,32 @@ itself **unregistered** (*"LEDGER id: (none — assigned only if/when the owner 
 — and re-pricing is registered as an owner act, not a research act. A boundary map that is the
 qualitative face of the priced-import ledger cannot report convergence while omitting this.
 
+### R.8 · Re-audit of the §2 stoppers against the *mature* framework — §2c first
+
+*Prompted by the observation that the three §2 proofs are dated **2026-05-25 (FTD-0208)**,
+**2026-05-29 (FTD-0225/0226)** and **2026-06-07 (FTD-0251/0253)** — ten weeks and ~575 ledger rows
+before FTD-0803. A no-go binds only under its stated assumptions; nobody had checked whether those
+assumptions still describe the framework. This subsection does that, one row at a time.*
+
+**§2c — PREMISE VACATED (verified from source).** The v3 proof concludes *no Pythagorean budget*
+from *no inner product*, and derives *no inner product* from the **ternary state variable** not
+being a vector space (:48, :60). But the per-voxel state is larger than the ternary variable: it
+carries `Vec3` flux, velocity and wave-velocity, `voxel.h` supplies `mag2()` and `dot()` on them,
+and the **genesis threshold** — the ontology's most primitive event — is
+`v.flux.mag2() > K_GENESIS * K_GENESIS`, an exact Euclidean ball test. So the §4-catalog claim of
+*"zero … L²-norm structure"* does not survive contact with current source. **The row moves off
+`PROVEN`; the conclusion is `[OPEN]`, not refuted** — an inner product is necessary but not
+sufficient for `(dτ/dt)² + v² = 1`. **Two checks decide it, neither done:** is Euclidean `mag2`
+forced or selected (if selected, FTD-0388 governs and the boundary reforms as a selection); and do
+the L¹-partition and L^∞-neighborhood legs carry the conclusion without the vacated premise?
+
+⚠ **Note on provenance, recorded because it bears on how much weight the other two rows carry:**
+the flux has been vector-valued since the Lagrangian was written (`ΔJ = c²∇²J − g_c∇s + g_c∇×(sv)`
+is unintelligible otherwise), so this premise may have been **inaccurate when written in May 2026**
+rather than made inaccurate by maturation — and it passed an independent adversarial review scored
+9.8/10. Whichever it is, **§2a and §2b have not yet been re-audited** and no inference should be
+drawn about them from this row.
+
 ### R.7 · Propagation debt this refresh does **not** discharge
 
 This map is now current; **the corpus is not.** Registered contradictions still live elsewhere,
@@ -311,7 +337,7 @@ implementation gap, not a claim about the ontology at all.
 | §1 FC-W carrier-narrowing (FTD-0314/0326/0327) | transcendence of √(G\*(4G\*−1)) | ⚠ **REVISED 2026-08-06:** PROVEN for the C1/C3 legs **conditional on Chudnovsky (1976)**; the **C2 cross-CM-field leg is conditional on an OPEN conjecture** (Waldschmidt 5.23), per FTD-0785 — the headline `[THEOREM]` over-consolidates | Disproof of Chudnovsky; **or a resolution of Waldschmidt 5.23 against C2** (the cheaper route); or an un-exhibited forward-derived weight-mixing period surviving the FTD-0314 pressure |
 | §2a (QM non-commutativity, 4 angles) | commutative substrate ⇒ no quantum core | **PROVEN** (structural; each angle a distinct argument from the substrate's stated commutativity) | A demonstration that the substrate's flux/state algebra is non-commutative under a reading not yet considered |
 | §2b (Lorentzian metric / reversibility) | P5 = determinism, not reversibility | **PROVEN** (structural; the π/G\* reversible/irreversible split is exact) | A forcing argument deriving reversibility from P1–P5 as stated |
-| §2c (clock hypothesis / L²-not-L¹ budget) | Pythagorean norm absent from Scale-0 primitives | **PROVEN** (v3, after 2 earlier attempts — v1 UNDERDETERMINED, v2 INVALIDATED — were superseded, not stacked as extra evidence) | A native Scale-0 construction carrying an L²-norm without importing it |
+| §2c (clock hypothesis / L²-not-L¹ budget) | Pythagorean norm absent from Scale-0 primitives | ⚠ **PREMISE VACATED 2026-08-06 (§R.8)** — was PROVEN (v3); its load-bearing "no inner product at the single-voxel level" step is contradicted by `voxel.h:22/:26` and the `mag2()`-threshold genesis rule. Conclusion now `[OPEN]` pending two checks | The falsifier *"a native Scale-0 construction carrying an L²-norm without importing it"* now turns on whether Euclidean `mag2` is **forced or selected** |
 | §2d (dispersion ceiling, FTD-0270) | cavity- not Schrödinger-dispersion | **ATTEMPTED** (`[MEASURED]` — an empirical finding, not a proof that quadratic dispersion is impossible in this substrate class) | A measurement at a different scale/coupling/regime showing ω∝k² natively |
 | §2d (P2 mass-gap swing, FTD-0333) | native rest-mass gap | **ATTEMPTED**, and the attempt itself is `[INVALID per pre-registration]` — a gate failure, not a clean negative | A stable-integrator rerun that passes the pre-registered gate |
 | §3 (gravity: G_N=1/100, Yilmaz, scalar-vector, a_phys-γ) | every gravity route tried | **ATTEMPTED** (parametric/numerical falsification in each case) | A recalibration or candidate route not yet tried |
@@ -469,6 +495,27 @@ primitives** — the ternary state space has no native L²-norm; the natural Sca
 the **L¹ linear** ceiling `v + dτ/dt ≤ 1`. The Pythagorean/isotropic structure is
 macroscopic-emergent (Scale 5+). So the clock hypothesis is an independent **`[AXIOM]`** at the
 coordinate level; `SPEC_FTD_LAGRANGIAN.md` §4.3 is `[THEOREM conditional on clock-hypothesis AXIOM]`.
+
+> ⚠ **PREMISE VACATED — RE-AUDIT 2026-08-06 (§R.8). This row no longer reads PROVEN as written.**
+> The v3 proof's load-bearing step is scoped to the **ternary state variable**, and the substrate's
+> per-voxel state is larger than that variable. Verbatim from
+> `03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`: *"There is no vector space
+> structure over ℝ or ℂ at the single-voxel level"* (:48); *"Orthogonality requires an inner
+> product. Since the ternary state space S is not a vector space, no inner product exists"* (:60);
+> *"The §4 catalog contains **zero** quadratic, Pythagorean, continuous rotational, or L²-norm
+> Hilbert space structure"* (:41). **Current source contradicts this at the single-voxel level:**
+> `engine/include/ftd/voxel.h:22` defines `mag2() = x*x + y*y + z*z` and `:26` defines `dot()` —
+> an inner product, per voxel — and `engine/src/render_bridge_phases/phase_write.cpp:329` makes the
+> **manifestation threshold itself** an exact L² ball test: `v.flux.mag2() > K_GENESIS * K_GENESIS`.
+> The most primitive event in the ontology — flux becoming matter — is a Euclidean-norm threshold
+> on a `Vec3`. **What this does and does not do:** it vacates the stated premise, so the row is no
+> longer `PROVEN` as written; it does **not** derive the clock hypothesis, since a native inner
+> product is necessary for `(dτ/dt)² + v² = 1` but not sufficient. **Two checks decide the row and
+> neither is done:** (1) is the Euclidean `mag2` **forced or selected**? If selected, FTD-0388's
+> guard applies (*"an adoption is never a derivation"*) and the boundary reforms as a selection
+> rather than an impossibility. (2) Do the remaining legs — the L¹ partition as the natural
+> addition law, the L^∞ 26-Moore causal neighborhood — carry the conclusion **without** the
+> non-vector premise? Until both are answered the conclusion is `[OPEN]`, not refuted.
 
 **Related positive-but-scoped result — dynamical time dilation (FTD-0252):** a wave-clock built
 from the *massless* lattice (never reading the circular `voxel.tau`). v1 → **OTHER** (`√(1−v²)` is
