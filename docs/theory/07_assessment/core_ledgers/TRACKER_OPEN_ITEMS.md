@@ -3019,7 +3019,7 @@ Snapshot (2026-07-12, regenerated; the archive/ exclusion added to the command t
 | `docs/theory/03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md` | 8 |
 | `docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md` | 8 |
 | `docs/theory/10_eft_program/derivations/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` | 7 |
-| `docs/theory/07_assessment/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md` | 7 |
+| `docs/theory/07_assessment/framework_audits_redteams_reconciliation/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md` | 7 |
 | `docs/theory/03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` | 7 |
 | `docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md` | 6 |
 | `docs/theory/06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md` | 6 |
