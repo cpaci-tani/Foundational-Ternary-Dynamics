@@ -610,7 +610,7 @@ These are the files that reference one or more of the ARCHIVE-proposed docs and 
 
 - `docs/theory/10_eft_program/scopes_and_specs/SCOPE_DET_IDENTITY_ATTACK_v1.md` — redirect to `THEOREM_COMMUTATIVITY_INDEPENDENCE.md`
 - `docs/theory/10_eft_program/derivations/DERIV_ALPHA_READOUT_EMPIRICAL.md` — redirect to `THEOREM_COMMUTATIVITY_INDEPENDENCE.md`
-- `docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md` — redirect to `THEOREM_COMMUTATIVITY_INDEPENDENCE.md`
+- `docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md` — redirect to `THEOREM_COMMUTATIVITY_INDEPENDENCE.md`
 - `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0238 path entry) — update path
 - `docs/theory/10_eft_program/derivations/THEOREM_COMMUTATIVITY_INDEPENDENCE.md` (header "Supersedes status of:" line) — update path to archive
 - `docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md` — update two references
