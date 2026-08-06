@@ -48,7 +48,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 | [AUDIT_RATIONAL_FIT_CLAIMS.md](AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
 | [REPORT_GAP_ANALYSIS.md](archive/REPORT_GAP_ANALYSIS.md) | [ARCHIVED] | Historical root-level epistemic gap report; preserved as provenance, with live status controlled by LEDGER / TRACKER_OPEN_ITEMS. |
 | [AUDIT_DUAL_SUBSTRATE_PROVENANCE.md](AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) | [AUDIT FINDING] | Provenance check on the dual-substrate decomposition; F1-hygiene, no spine demotion. |
-| [AUDIT_MASS_CHAIN_REDTEAM.md](AUDIT_MASS_CHAIN_REDTEAM.md) | [ADVERSARIAL CRITIQUE] | Rigorous adversarial critique of the leptonic and hadronic mass derivation chain; identifies post-hoc fitting and MeV scale calibration issues. |
+| [AUDIT_MASS_CHAIN_REDTEAM.md](engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md) | [ADVERSARIAL CRITIQUE] | Rigorous adversarial critique of the leptonic and hadronic mass derivation chain; identifies post-hoc fitting and MeV scale calibration issues. |
 
 ---
 
