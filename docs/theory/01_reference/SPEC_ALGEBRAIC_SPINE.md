@@ -233,7 +233,7 @@ Hence, d = 1 is the unique solution. ∎
 - `scripts/proofs/proof_chowla_selberg_higher_h_scan.py` (FTD-0123, classes 1–4 / 63 discriminants; pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1`)
 - `docs/theory/10_eft_program/archive/campaign_complete/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `docs/theory/10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md` (FTD-0124, full 5814-grid criterion-bifurcation analysis)
 
-See also `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` for context.
+See also `docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md` for context.
 
 **LEDGER:** FTD-0003 (quick-index entry, `[THEOREM]`); FTD-0123 (Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion bifurcation finding); FTD-0181 (Integer-4 Unification and $|\mu| = |\text{disc}|$ coincidence).
 

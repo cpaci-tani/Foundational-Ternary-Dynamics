@@ -42,7 +42,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 |---|---|---|
 | [ROUNDTABLE_STATE_OF_FTD_2026-05-22.md](archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md) | [SYNTHESIS] **[ARCHIVED]** | State-of-the-theory roundtable; monograph `MONOGRAPH_FTD_CONSTRUCTION.md` is the canonical construction story that replaces it. |
 | [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md) | Critical Self-Assessment | Honest "derived vs imported" accounting; narrative essay (defer to LEDGER for numbers). |
-| [AUDIT_HIDDEN_SELECTIONS.md](AUDIT_HIDDEN_SELECTIONS.md) | Critical Honest Assessment · **[v6/v7 reframe SUPERSEDED]** | Catalogs the selection principles in the G* → α chain that are argued, not proven. §§1–5 selection analysis is sound; the v6/v7 "circularity IS the derivation" reframe is superseded (banner-marked), fermion [DERIVED]→[CONJECTURE]. |
+| [AUDIT_HIDDEN_SELECTIONS.md](spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) | Critical Honest Assessment · **[v6/v7 reframe SUPERSEDED]** | Catalogs the selection principles in the G* → α chain that are argued, not proven. §§1–5 selection analysis is sound; the v6/v7 "circularity IS the derivation" reframe is superseded (banner-marked), fermion [DERIVED]→[CONJECTURE]. |
 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) | **[LEGACY/provenance] [ARCHIVED]** | Pre-reframe outsider-facing synthesis. **Superseded; do NOT cite externally.** Banner-marked; untestable consciousness/reference-frame-context [THEOREM] tags downgraded to [SPECULATIVE CONJECTURE]; α-comparison overclaims softened to the actual [STRONGLY MOTIVATED CONJECTURE] tag. For current status use `LEDGER.md` / `TRACKER_ONTIC_TRUTH.md` / `SPEC_ALGEBRAIC_SPINE.md`. |
 | [AUDIT_INFINITY_REFRAME.md](AUDIT_INFINITY_REFRAME.md) | [AUDIT] | Portfolio-wide triage of the completed-infinity → undefined-boundary ontology shift. |
 | [AUDIT_RATIONAL_FIT_CLAIMS.md](AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
@@ -58,7 +58,7 @@ Deep audits of individual claims, mechanisms, and engine subsystems.
 
 | File | Tag | Purpose |
 |---|---|---|
-| [AUDIT_MASTER_QUADRATIC.md](AUDIT_MASTER_QUADRATIC.md) | [AUDIT] | Numerical + epistemic review of the master quadratic; verdict [STRONGLY MOTIVATED CONJECTURE]. |
+| [AUDIT_MASTER_QUADRATIC.md](spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md) | [AUDIT] | Numerical + epistemic review of the master quadratic; verdict [STRONGLY MOTIVATED CONJECTURE]. |
 | [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) | [AUDIT] | Route-invariant boundary for MC-T4.3; 4 FTD-native routes converge on the unforced operator-assembly; α dynamical not structural (FTD-0242). |
 | [AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md](audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md) | [AUDIT] | RSI Leg 3: flip ruled out + 3b-scope + reduction route-invariant + conditional theorem [THEOREM]; K-BIND [CLOSED THEOREM-NEGATIVE] (FTD-0244). FTD-0013 unchanged. |
 | [AUDIT_KAPPA_PSI_4PI.md](AUDIT_KAPPA_PSI_4PI.md) | [AUDIT] (FTD-0188) | κ_ψ = 4π is a [DEFINITION]; "closure law forces 4π" is [CLOSED NEGATIVE]. |
@@ -187,7 +187,7 @@ Multi-round and red-team reviews of the G* / number-theory manuscripts.
 | [SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md](archive/SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md) | [SYNTHESIS] **[ARCHIVED]** | Polymath synthesis on the G* bedrock (χ_−4 / ternary alphabet); monograph Part I §I.2 absorbs its narrative. |
 | [AUDIT_GSTAR_PAPER_MULTI_ROUND.md](AUDIT_GSTAR_PAPER_MULTI_ROUND.md) | [CRITIC SYNTHESIS] | Consolidated three-round referee report on PAPER_GSTAR_INTRODUCTION + BRIDGE (replaces three husk reports). |
 | [REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md](REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md) | [RED-TEAM SYNTHESIS] | Four-agent parallel red-team; catches the L(E,1) = ϖ/4 BSD-formula error. |
-| [AUDIT_PAPER_SYMPATHETIC_2026-04-28.md](AUDIT_PAPER_SYMPATHETIC_2026-04-28.md) | [AUDIT · sympathetic] | Sympathetic audit of PAPER_MASTER_QUADRATIC_AND_BRIDGE; finds earned-but-unclaimed strength. |
+| [AUDIT_PAPER_SYMPATHETIC_2026-04-28.md](spine_master_quadratic/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md) | [AUDIT · sympathetic] | Sympathetic audit of PAPER_MASTER_QUADRATIC_AND_BRIDGE; finds earned-but-unclaimed strength. |
 
 ---
 

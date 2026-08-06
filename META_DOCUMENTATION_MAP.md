@@ -33,7 +33,7 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 1. [SPEC_FTD_REFERENCE.md](docs/theory/01_reference/SPEC_FTD_REFERENCE.md) — Technical reference
 2. [DERIV_ALPHA_PRECISION_FORMULA.md](docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) — The 1.26 ppm result
 3. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — What's proven vs parametric
-4. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) — Explicit selection principles
+4. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) — Explicit selection principles
 
 ### For Philosophers
 1. [FOUND_THE_FIRST_DISTINCTION.md](docs/theory/02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — From void to existence
@@ -55,7 +55,7 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 
 ### For Skeptics
 1. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — Honest accounting (~23 genuine derivations, ~129 parametric)
-2. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) — Every implicit assumption made explicit
+2. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) — Every implicit assumption made explicit
 3. [AUDIT_BELL_ANALYSIS.md](docs/theory/07_assessment/AUDIT_BELL_ANALYSIS.md) — Bell inequality theory and simulation
 4. [AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md) — Master weakness compilation
 5. [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) — **(FTD-0242)** MC-T4.3 route-invariant boundary: 0/4 FTD-native routes force the master-quadratic α operator, so α is **dynamical, not structural**. `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is not derived; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`.

@@ -5615,7 +5615,7 @@ CONJECTURE]** (downgraded from the catalog's prior [THEOREM] tag).
 
 ### Deliverables
 
-- New: `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` (full audit)
+- New: `docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md` (full audit)
 - New: `scripts/proofs/audit_master_quadratic_rigidity.py` (4 rigidity
   tests: coefficient scan, G* sensitivity, alternative constants,
   naive integer)
