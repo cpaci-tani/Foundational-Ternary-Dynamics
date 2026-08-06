@@ -4,7 +4,7 @@
 **LEDGER row:** FTD-0243
 **Dependencies:** Postulates 1–5 (`FOUND_AXIOM_ZERO.md`), `lean/Standalone.lean`, `DERIV_BELL_COSINE_FROM_GAUSS.md`, `DERIV_SINGLET_FROM_VOID_EVENT.md`.
 **Supersedes status of:** `docs/theory/07_assessment/archive/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md` (promoted to [THEOREM]; original now archived).
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md`
 
 ---
 
