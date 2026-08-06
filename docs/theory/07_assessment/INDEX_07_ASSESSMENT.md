@@ -12,7 +12,7 @@ Newcomers should read these in order:
 
 1. [LEDGER.md](core_ledgers/LEDGER.md) — the single source of truth for per-claim status; papers derive their tags from here.
 2. [TRACKER_ONTIC_TRUTH.md](core_ledgers/TRACKER_ONTIC_TRUTH.md) — canonical bedrock: what *actually* survives skeptical mathematical review, ranked into 5 truth tiers.
-3. [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md) — the brutally-honest "derived vs imported" critical-assessment essay.
+3. [AUDIT_EPISTEMIC_AUDIT.md](quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) — the brutally-honest "derived vs imported" critical-assessment essay.
 4. [CATALOG_PARAMETRIC_INSERTIONS.md](CATALOG_PARAMETRIC_INSERTIONS.md) — every place FTD supplies numbers to a borrowed formula (~162 rows).
 5. [TRACKER_OPEN_ITEMS.md](core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code + theory, one place to pick work.
 
@@ -41,7 +41,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 | File | Tag | Purpose |
 |---|---|---|
 | [ROUNDTABLE_STATE_OF_FTD_2026-05-22.md](archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md) | [SYNTHESIS] **[ARCHIVED]** | State-of-the-theory roundtable; monograph `MONOGRAPH_FTD_CONSTRUCTION.md` is the canonical construction story that replaces it. |
-| [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md) | Critical Self-Assessment | Honest "derived vs imported" accounting; narrative essay (defer to LEDGER for numbers). |
+| [AUDIT_EPISTEMIC_AUDIT.md](quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | Critical Self-Assessment | Honest "derived vs imported" accounting; narrative essay (defer to LEDGER for numbers). |
 | [AUDIT_HIDDEN_SELECTIONS.md](spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) | Critical Honest Assessment · **[v6/v7 reframe SUPERSEDED]** | Catalogs the selection principles in the G* → α chain that are argued, not proven. §§1–5 selection analysis is sound; the v6/v7 "circularity IS the derivation" reframe is superseded (banner-marked), fermion [DERIVED]→[CONJECTURE]. |
 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) | **[LEGACY/provenance] [ARCHIVED]** | Pre-reframe outsider-facing synthesis. **Superseded; do NOT cite externally.** Banner-marked; untestable consciousness/reference-frame-context [THEOREM] tags downgraded to [SPECULATIVE CONJECTURE]; α-comparison overclaims softened to the actual [STRONGLY MOTIVATED CONJECTURE] tag. For current status use `LEDGER.md` / `TRACKER_ONTIC_TRUTH.md` / `SPEC_ALGEBRAIC_SPINE.md`. |
 | [AUDIT_INFINITY_REFRAME.md](AUDIT_INFINITY_REFRAME.md) | [AUDIT] | Portfolio-wide triage of the completed-infinity → undefined-boundary ontology shift. |

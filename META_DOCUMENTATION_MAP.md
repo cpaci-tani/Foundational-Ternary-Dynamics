@@ -21,7 +21,7 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 | Make a change without breaking sibling systems | [MAINTAINABILITY.md](MAINTAINABILITY.md) — 8 hazards + 15 step-by-step recipes + tech-debt ledger |
 | Check project health | [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) — weighted project health scorecard and priorities |
 | See the core mathematics | [docs/theory/01_reference/MATH_MASTER_QUADRATIC.md](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) |
-| Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~23 genuine derivations, ~129 parametric) |
+| Assess what's genuinely derived | [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) (~23 genuine derivations, ~129 parametric) |
 | Find an unresolved item to work on | [docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md](docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across code + theory in one ledger |
 | Run the verification suite | `python scripts/proofs/proof_master_verification.py` |
 
@@ -32,7 +32,7 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 ### For Physicists
 1. [SPEC_FTD_REFERENCE.md](docs/theory/01_reference/SPEC_FTD_REFERENCE.md) — Technical reference
 2. [DERIV_ALPHA_PRECISION_FORMULA.md](docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) — The 1.26 ppm result
-3. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — What's proven vs parametric
+3. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) — What's proven vs parametric
 4. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) — Explicit selection principles
 
 ### For Philosophers
@@ -54,7 +54,7 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 3. `scripts/experiments/` — Bell tests, CERN analysis, physics simulations
 
 ### For Skeptics
-1. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — Honest accounting (~23 genuine derivations, ~129 parametric)
+1. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) — Honest accounting (~23 genuine derivations, ~129 parametric)
 2. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) — Every implicit assumption made explicit
 3. [AUDIT_BELL_ANALYSIS.md](docs/theory/07_assessment/AUDIT_BELL_ANALYSIS.md) — Bell inequality theory and simulation
 4. [AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md) — Master weakness compilation

@@ -114,7 +114,7 @@ Two corpus assertions are surgically retagged per manifest §4.3:
 
 **After:** the assertion is retagged `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200, status under canonical 26-neighbour engine OPEN]` and the inline "produce the Born rule" claim is qualified with a footnote pointing at this document.
 
-### 5.2 `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md:393`
+### 5.2 `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md:393`
 
 **Before:** "**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce `|ψ|²`."
 
