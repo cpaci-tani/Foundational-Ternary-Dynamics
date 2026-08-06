@@ -94,4 +94,4 @@ localized matter packets.
 The locked Windows/MSVC CPU run completed with all validity and reversal gates
 passing. It scheduled 42 attempts, executed zero, found zero eligible Moore
 neighbours at every attempt, and returned `FIRST_TRANSACTION_UNAVAILABLE`.
-See `docs/theory/07_assessment/AUDIT_SEQUENTIAL_NO_RESET_TRANSACTIONS.md`.
+See `docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SEQUENTIAL_NO_RESET_TRANSACTIONS.md`.
