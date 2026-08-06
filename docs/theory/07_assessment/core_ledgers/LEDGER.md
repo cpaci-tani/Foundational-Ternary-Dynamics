@@ -888,11 +888,11 @@ open.
 | FTD-0745 | **Does the first six-shell environmental-closure campaign carry outward field energy to radii 32 and 48 by tick 184 while the finite core persists?** | [SELECTED DYNAMICS — CLOSED NEGATIVE AT REGISTERED M2 SHELL LAW] | NEW 2026-07-29 — [`ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md`](../../10_eft_program/derivations/ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md), certificate `131/131`. This closes the […full record →](#ftd-0745-record) |
 | FTD-0746 | **Can the unchanged causal-horizon persistence discriminator be completed on CPU at `L=321`?** | **[EXECUTION ABORTED — NO RESULT], verdict CAUSAL_HORIZON_CPU_ABORT_NO_PHYSICS.** The clean face arm was stopped before serialization after about 2 h 55 min to move the campaign to CUDA; edge/body were never started and no CSV/JSON exists. | NEW 2026-07-29 — [`AUDIT_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CPU_ABORT_v1.md`](../constituent_complete_matter/AUDIT_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CPU_ABORT_v1.md). The abort supplies timing provenance only. |
 | FTD-0747 | **Does the first device-resident CUDA port reproduce the three-ray causal-horizon CPU record and physics conjunction?** | [MIXED — THREE-RAY CONJUNCTION CLOSED NEGATIVE] | NEW 2026-07-29 — [`AUDIT_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_RESULT_v2.md`](../constituent_complete_matter/AUDIT_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_RESULT_v2.md), certificate `52/52`. Radius-48 arrival at […full record →](#ftd-0747-record) |
-| FTD-0748 | **Does canonical net oriented-face support repair FTD-0747's representation-dependent current gate and yield a uniform three-ray CUDA replay?** | [MIXED — STRICT THREE-RAY CONJUNCTION CLOSED NEGATIVE] | NEW 2026-07-29 — [`AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md`](../AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md), certificate `65/65`. The remaining exposure is collision-prone floating […full record →](#ftd-0748-record) |
-| FTD-0749 | **Does collision-free unique-face deposition make long CUDA trajectories deterministic and CPU-identical?** | [MIXED — TRAJECTORY DETERMINISM CONSTRUCTIVE; STRICT RECORD GATE NEGATIVE] | NEW 2026-07-29 — [`AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md`](../AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md), certificate `121/121`. […full record →](#ftd-0749-record) |
-| FTD-0750 | **Do ordered raw current addition and deterministic regional reductions recover the exact CUDA replay and uniform CPU prefix?** | [MIXED — STRICT D0 CONSTRUCTIVE; CPU-PREFIX CONJUNCTION CLOSED NEGATIVE] | NEW 2026-07-29 — [`AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md`](../AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md), certificate `117/117`. […full record →](#ftd-0750-record) |
-| FTD-0751 | **At what exact stage does the remaining CPU/CUDA trajectory divergence first appear?** | [NUMERICAL FACT — BACKEND DIVERGENCE LOCALIZED] | NEW 2026-07-30 — [`AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md`](../AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md), certificate `109/109`. […full record →](#ftd-0751-record) |
-| FTD-0752 | **Does a separately compiled explicit-rounding CUDA backend close the bounded dynamic parity gate?** | [CONSTRUCTIVE NUMERICAL FACT — BACKEND GATE CLOSED] | NEW 2026-07-30 — [`AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md`](../AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md), certificate `101/101`. Established CUDA and production remain unchanged. […full record →](#ftd-0752-record) |
+| FTD-0748 | **Does canonical net oriented-face support repair FTD-0747's representation-dependent current gate and yield a uniform three-ray CUDA replay?** | [MIXED — STRICT THREE-RAY CONJUNCTION CLOSED NEGATIVE] | NEW 2026-07-29 — [`AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md`](../engine_infrastructure_rg/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md), certificate `65/65`. The remaining exposure is collision-prone floating […full record →](#ftd-0748-record) |
+| FTD-0749 | **Does collision-free unique-face deposition make long CUDA trajectories deterministic and CPU-identical?** | [MIXED — TRAJECTORY DETERMINISM CONSTRUCTIVE; STRICT RECORD GATE NEGATIVE] | NEW 2026-07-29 — [`AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md`](../engine_infrastructure_rg/AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md), certificate `121/121`. […full record →](#ftd-0749-record) |
+| FTD-0750 | **Do ordered raw current addition and deterministic regional reductions recover the exact CUDA replay and uniform CPU prefix?** | [MIXED — STRICT D0 CONSTRUCTIVE; CPU-PREFIX CONJUNCTION CLOSED NEGATIVE] | NEW 2026-07-29 — [`AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md`](../engine_infrastructure_rg/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md), certificate `117/117`. […full record →](#ftd-0750-record) |
+| FTD-0751 | **At what exact stage does the remaining CPU/CUDA trajectory divergence first appear?** | [NUMERICAL FACT — BACKEND DIVERGENCE LOCALIZED] | NEW 2026-07-30 — [`AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md`](../engine_infrastructure_rg/AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md), certificate `109/109`. […full record →](#ftd-0751-record) |
+| FTD-0752 | **Does a separately compiled explicit-rounding CUDA backend close the bounded dynamic parity gate?** | [CONSTRUCTIVE NUMERICAL FACT — BACKEND GATE CLOSED] | NEW 2026-07-30 — [`AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md`](../engine_infrastructure_rg/AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md), certificate `101/101`. Established CUDA and production remain unchanged. […full record →](#ftd-0752-record) |
 | FTD-0753 | **Does the explicit-rounding CUDA backend produce a large causal-horizon finite-support witness on all principal rays?** | [CONSTRUCTIVE NUMERICAL FACT — LARGE CAUSAL-HORIZON WITNESS; FULL M2 PARTIAL] | NEW 2026-07-30 — [`AUDIT_EXPLICIT_ROUNDING_CAUSAL_HORIZON_M2_RESULT_v1.md`](../constituent_complete_matter/AUDIT_EXPLICIT_ROUNDING_CAUSAL_HORIZON_M2_RESULT_v1.md), certificate `134/134`. M3, unique field decomposition, and a […full record →](#ftd-0753-record) |
 | FTD-0754 | **Can one state-only observer separate selected bound dressing from outgoing/incoming residual field on the frozen FTD-0753 records?** | [CONSTRUCTIVE OBSERVER DISCOVERY + EXACT NESTED-SUPPORT CORRECTION] | NEW 2026-07-30 — [`AUDIT_M3_STATE_ONLY_OBSERVER_DISCOVERY_RESULT_v1.md`](../constituent_complete_matter/AUDIT_M3_STATE_ONLY_OBSERVER_DISCOVERY_RESULT_v1.md). Discovery does not constitute held-out M3 validation or radiation […full record →](#ftd-0754-record) |
 | FTD-0755 | **Does the first support-invariant held-out M3 validation execute its candidate and remote-fibre dynamics?** | [CONSUMED — INFRASTRUCTURE UNRESOLVED; NO PHYSICS VERDICT] | NEW 2026-07-30 — [`AUDIT_M3_SUPPORT_INVARIANT_VALIDATION_RESULT_v1.md`](../constituent_complete_matter/AUDIT_M3_SUPPORT_INVARIANT_VALIDATION_RESULT_v1.md), certificate `311/311` reconstructing the invalid outcome. […full record →](#ftd-0755-record) |
@@ -7804,7 +7804,7 @@ is the exact original cell text. Restructured by
 
 **Tag.** **[MIXED — STRICT THREE-RAY CONJUNCTION CLOSED NEGATIVE], verdict CANONICAL_CURRENT_HORIZON_CUDA_MIXED.** Canonical current, all physics gates, and face prefix pass; edge/body separation drift `2.18e-10/1.21e-10` exceeds `1e-10`.
 
-**Record.** NEW 2026-07-29 — [`AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md`](../AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md), certificate `65/65`. The remaining exposure is collision-prone floating atomic deposition.
+**Record.** NEW 2026-07-29 — [`AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md`](../engine_infrastructure_rg/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md), certificate `65/65`. The remaining exposure is collision-prone floating atomic deposition.
 
 ---
 
@@ -7814,7 +7814,7 @@ is the exact original cell text. Restructured by
 
 **Tag.** **[MIXED — TRAJECTORY DETERMINISM CONSTRUCTIVE; STRICT RECORD GATE NEGATIVE], verdict DETERMINISTIC_CANONICAL_CURRENT_CUDA_MIXED.** Every paired physical trajectory is exactly identical, but read-only atomic reductions differ by up to `2.78e-17`; the face CPU prefix also misses at `1.387e-10`.
 
-**Record.** NEW 2026-07-29 — [`AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md`](../AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md), certificate `121/121`.
+**Record.** NEW 2026-07-29 — [`AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md`](../engine_infrastructure_rg/AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md), certificate `121/121`.
 
 ---
 
@@ -7824,7 +7824,7 @@ is the exact original cell text. Restructured by
 
 **Tag.** **[MIXED — STRICT D0 CONSTRUCTIVE; CPU-PREFIX CONJUNCTION CLOSED NEGATIVE], verdict ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_MIXED.** All within-pair non-arm records are exact and face passes, but edge/body separation defects `2.79e-10/1.21e-10` exceed `1e-10`.
 
-**Record.** NEW 2026-07-29 — [`AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md`](../AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md), certificate `117/117`.
+**Record.** NEW 2026-07-29 — [`AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md`](../engine_infrastructure_rg/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md), certificate `117/117`.
 
 ---
 
@@ -7834,7 +7834,7 @@ is the exact original cell text. Restructured by
 
 **Tag.** **[NUMERICAL FACT — BACKEND DIVERGENCE LOCALIZED], verdict STAGEWISE_E1_CPU_CUDA_PARITY_LOCALIZED.** All six arms are bit-identical through tick-one magnetic preparation and first differ by one ULP in source-free electric preparation, before the implicit root/current; CUDA uses fused `fma.rn.f64` while CPU forbids contraction.
 
-**Record.** NEW 2026-07-30 — [`AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md`](../AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md), certificate `109/109`.
+**Record.** NEW 2026-07-30 — [`AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md`](../engine_infrastructure_rg/AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md), certificate `109/109`.
 
 ---
 
@@ -7844,7 +7844,7 @@ is the exact original cell text. Restructured by
 
 **Tag.** **[CONSTRUCTIVE NUMERICAL FACT — BACKEND GATE CLOSED], verdict EXPLICIT_ROUNDING_E1_CUDA_PARITY_CONSTRUCTIVE.** All 336 dynamic stage rows across `L={33,65}`, principal rays, and eight ticks are bit-identical; diagnostic difference is at most `1.388e-17`.
 
-**Record.** NEW 2026-07-30 — [`AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md`](../AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md), certificate `101/101`. Established CUDA and production remain unchanged.
+**Record.** NEW 2026-07-30 — [`AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md`](../engine_infrastructure_rg/AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md), certificate `101/101`. Established CUDA and production remain unchanged.
 
 ---
 
