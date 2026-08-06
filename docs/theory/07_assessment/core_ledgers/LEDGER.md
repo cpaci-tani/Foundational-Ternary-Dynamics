@@ -1374,7 +1374,7 @@ downstream cites can reference.
 
 ### FTD-0097: Pre-registered look-elsewhere scan
 - **tag:** [MEASURED] (2026-04-27; verdict NULL REJECTED upward, catalog over-rich)
-- **proof_location:** `docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`; `tools/scan_look_elsewhere.py`; `engine/results/look_elsewhere_2026-04-27/`
+- **proof_location:** `docs/theory/07_assessment/sm_constants_mass_flavour/AUDIT_LOOK_ELSEWHERE_RESULTS.md`; `tools/scan_look_elsewhere.py`; `engine/results/look_elsewhere_2026-04-27/`
 - **pre-registration:** `git tag preregister-look-elsewhere-scan-v1` against commit f11dcaa BEFORE run.
 - **content:** 671,574 monomials × 20 targets; 62 raw / 11 dedup hits at ε=10⁻⁴ vs Poisson null λ=4. χ²(df=19) = 470 raw / 38 dedup. **Confirms FTD-0094 [PARAMETRIC] from methodological side.**
 - **2026-05-01 polynomial-level extension:** 147,456 polynomials of form `x² − n·G*^p·x + m·G*^q`; **exactly 1 dual-matcher** (the master quadratic). **Hash-locked 2026-05-01:** `git tag hashlock-polynomial-scan-v1` against `f36b741` (retrospective lock, NOT pre-registration; flagged in audit).
