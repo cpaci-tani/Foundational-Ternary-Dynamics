@@ -8,7 +8,7 @@
 ## Frozen artifacts
 
 - Protocol:
-  `docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_v2.md`
+  `docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_v2.md`
 - Runner source:
   `engine/tests/campaign_causal_horizon_environmental_persistence_cuda.cpp`
 - Runner source SHA-256:
