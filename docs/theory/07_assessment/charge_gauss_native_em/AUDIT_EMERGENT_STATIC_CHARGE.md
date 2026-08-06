@@ -138,7 +138,7 @@ remain unestablished.
 
 ## 7. Artifacts
 
-- preregistration: `docs/theory/10_eft_program/preregistrations/PREREG_EMERGENT_STATIC_CHARGE_v1.md`
+- preregistration: `docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_EMERGENT_STATIC_CHARGE_v1.md`
 - observer: `engine/include/ftd/eft/emergent_charge_surface.h`
 - campaign: `engine/tests/campaign_emergent_static_charge.cpp`
 - source lock: `scripts/proofs/emergent_static_charge_lock.json`
