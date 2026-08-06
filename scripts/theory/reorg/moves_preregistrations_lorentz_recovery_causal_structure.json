@@ -1,0 +1,46 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_NORMALIZATION_MASS_ROLES_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_CAUSAL_NORMALIZATION_MASS_ROLES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_EMERGENT_STATIC_CHARGE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_EMERGENT_STATIC_CHARGE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_AMPLITUDE_ACTION_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_GENESIS_AMPLITUDE_ACTION_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MATCHED_GAUSS_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_MATCHED_GAUSS_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_CONFINEMENT_ENERGY_MOMENTUM_CONTRACT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_NATIVE_CONFINEMENT_ENERGY_MOMENTUM_CONTRACT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_FIRST_DUAL_TRACK_RECOVERY.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_NATIVE_FIRST_DUAL_TRACK_RECOVERY.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_STRONG_STRESS_ENERGY_CONTRACT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_STRONG_STRESS_ENERGY_CONTRACT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_VOLUMETRIC_MEASURE_RECONCILIATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_VOLUMETRIC_MEASURE_RECONCILIATION_v1.md"
+  }
+]

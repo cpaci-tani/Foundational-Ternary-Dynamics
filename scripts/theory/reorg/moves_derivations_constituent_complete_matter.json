@@ -1,0 +1,470 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v2.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v3.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_ANALYTIC_CENTER_LONG_HORIZON_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_ANALYTIC_CENTER_LONG_HORIZON_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_BALANCED_GAIT_PHASE_RETURN_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_BALANCED_GAIT_PHASE_RETURN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_BOUND_DRESSING_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_BOUND_DRESSING_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CANONICAL_PRECONTACT_MODE_DECAY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CANONICAL_PRECONTACT_MODE_DECAY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CAPTURE_ROOT_REGULARITY_NEIGHBORHOOD_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAPTURE_ROOT_REGULARITY_NEIGHBORHOOD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CAPTURED_STATE_PERTURBATION_SURVIVAL_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAPTURED_STATE_PERTURBATION_SURVIVAL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CAUSAL_BOUND_INTERNAL_GAIT_CONTINUATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAUSAL_BOUND_INTERNAL_GAIT_CONTINUATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CAUSAL_BUFFER_RELATIONAL_FORMATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAUSAL_BUFFER_RELATIONAL_FORMATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CAUSAL_EXCITATION_SEPARATION_INDEXED_LOCAL_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAUSAL_EXCITATION_SEPARATION_INDEXED_LOCAL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CAUSAL_REGIONAL_FIELD_FLOW_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAUSAL_REGIONAL_FIELD_FLOW_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CELL_MEASURE_COMMON_ACTION_CLOSURE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CELL_MEASURE_COMMON_ACTION_CLOSURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CELL_MEASURE_FIXED_MASS_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CELL_MEASURE_FIXED_MASS_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v2.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CELL_MEASURE_LONG_HORIZON_TRANSPORT_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CLOSED_SYMMETRY_BALANCED_GAIT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CLOSED_SYMMETRY_BALANCED_GAIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_COMOVING_FIELD_FOURIER_SOLVABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_COMOVING_FIELD_FOURIER_SOLVABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_ANALYTIC_MATTER_MODES_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_ANALYTIC_MATTER_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_ANALYTIC_STATIC_AND_DYNAMICAL_REST_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_ANALYTIC_STATIC_AND_DYNAMICAL_REST_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_COUPLED_TRANSVERSE_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_COUPLED_TRANSVERSE_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_DYNAMIC_STABILIZATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_DYNAMIC_STABILIZATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_DYNAMICAL_REST_RECURRENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_DYNAMICAL_REST_RECURRENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_FIXED_MASS_REFINEMENT_OBSTRUCTION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_FIXED_MASS_REFINEMENT_OBSTRUCTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_FULL_CONSTITUENT_HESSIAN_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_FULL_CONSTITUENT_HESSIAN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_LINEAR_MODES_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_LINEAR_MODES_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_SHARED_ANCHOR_FIBRE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_SHARED_ANCHOR_FIBRE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_STATIC_DRESSING_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_STATIC_DRESSING_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_TRANSLATION_PHASE_AND_CUBIC_FIBRE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_TRANSLATION_PHASE_AND_CUBIC_FIBRE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_BLOCK_TRANSLATION_STABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BLOCK_TRANSLATION_STABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_MOORE_BLOCK_COMMON_ACTION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_MOORE_BLOCK_COMMON_ACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_COVARIANT_LOWER_ENERGY_FORMATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_COVARIANT_LOWER_ENERGY_FORMATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_ENERGY_ADAPTED_MIXED_CAPTURE_CORNERS_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_ENERGY_ADAPTED_MIXED_CAPTURE_CORNERS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_FIELD_ASSISTED_CAPTURE_WINDOW_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_FIELD_ASSISTED_CAPTURE_WINDOW_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_FIELD_ASSISTED_DERIVED_PAIR_CAPTURE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_FIELD_ASSISTED_DERIVED_PAIR_CAPTURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERACTING_COMMON_ACTION_ROOT_MULTISEED_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERACTING_COMMON_ACTION_ROOT_MULTISEED_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v2.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_EXCITATION_SYMMETRY_RAY_SPECTRUM_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_GAIT_ANGULAR_RESPONSE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_GAIT_ANGULAR_RESPONSE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_MODE_ACTION_TRANSFER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_MODE_ACTION_TRANSFER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_MODE_ACTION_TRANSFER_v2.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_MODE_ACTION_TRANSFER_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_MODE_ACTION_TRANSFER_v3.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_MODE_ACTION_TRANSFER_v3.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_INTERNAL_WALKER_DIRECTION_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_INTERNAL_WALKER_DIRECTION_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_L33_FULL_IMPULSE_REST_SOLVE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_L33_FULL_IMPULSE_REST_SOLVE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_L33_SYMMETRY_REST_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_L33_SYMMETRY_REST_REFINEMENT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_LATE_REENTRY_COVARIANCE_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_LATE_REENTRY_COVARIANCE_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_LOCALIZED_BASIN_RELAXATION_CORRECTED_DATA.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_LOCALIZED_BASIN_RELAXATION_CORRECTED_DATA.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_LOWER_ENERGY_COVARIANCE_CONDITIONING_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_LOWER_ENERGY_COVARIANCE_CONDITIONING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_LOWER_ENERGY_FORMATION_CROSSOVER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_LOWER_ENERGY_FORMATION_CROSSOVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MATCHED_SYMMETRY_RAY_SPECTRUM_OBSERVER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MATCHED_SYMMETRY_RAY_SPECTRUM_OBSERVER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MOBILE_DRESSING_STRUCTURE_FACTOR_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MOBILE_DRESSING_STRUCTURE_FACTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MOBILE_DRESSING_STRUCTURE_FACTOR_v2.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MOBILE_DRESSING_STRUCTURE_FACTOR_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MOVEMENT_SECTOR_C2_WALL_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MOVEMENT_SECTOR_C2_WALL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MULTIPASS_FORMATION_PERSISTENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MULTIPASS_FORMATION_PERSISTENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_NATIVE_EXCITED_MATTER_CLOCK_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_NATIVE_EXCITED_MATTER_CLOCK_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_OUT_OF_SAMPLE_MOBILITY_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_OUT_OF_SAMPLE_MOBILITY_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PERIOD_THREE_COMMON_ACTION_PREFLIGHT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PERIOD_THREE_COMMON_ACTION_PREFLIGHT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PERIOD_THREE_COMOVING_FIELD_SOLVABILITY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PERIOD_THREE_COMOVING_FIELD_SOLVABILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PERIOD_THREE_FIELD_BOUND_COMMON_ACTION_SELECTOR_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PERIOD_THREE_FIELD_BOUND_COMMON_ACTION_SELECTOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PERIOD_THREE_INTERNAL_MOMENTUM_LIFT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PERIOD_THREE_INTERNAL_MOMENTUM_LIFT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PERSISTENCE_COVARIANCE_CONVERGENCE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PERSISTENCE_COVARIANCE_CONVERGENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PERSISTENCE_REENTRY_VOLUME_DISCRIMINATOR_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PERSISTENCE_REENTRY_VOLUME_DISCRIMINATOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PRECONTACT_ENERGETIC_CAPTURE_DELAY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PRECONTACT_ENERGETIC_CAPTURE_DELAY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PRESCRIBED_TRAJECTORY_COMOVING_FIELD_SHOOTING_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_PRESCRIBED_TRAJECTORY_COMOVING_FIELD_SHOOTING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_RECOVERY_RESERVOIR_DONOR_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_RECOVERY_RESERVOIR_DONOR_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_REFINED_CORE_PEIERLS_LANDSCAPE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_REFINED_CORE_PEIERLS_LANDSCAPE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_REPEATED_EXACT_ROOT_ACCELERATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_REPEATED_EXACT_ROOT_ACCELERATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_RESONANT_INTERNAL_GAIT_CANCELLATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_RESONANT_INTERNAL_GAIT_CANCELLATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_REST_QUALIFIED_MOVING_DRESSING_RELATIVE_ORBIT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_REST_QUALIFIED_MOVING_DRESSING_RELATIVE_ORBIT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v2.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_VOLUME_SCALED_INTERNAL_MODE_TRANSFER_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_ZERO_MOMENTUM_INTERNAL_MODE_MOBILITY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/ANALYSIS_ZERO_MOMENTUM_INTERNAL_MODE_MOBILITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_AXIAL_LATTICE_CHERENKOV_EXPOSURE.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_AXIAL_LATTICE_CHERENKOV_EXPOSURE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_BATCHED_MATCHED_SYMMETRY_RAY_SPECTRUM.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_BATCHED_MATCHED_SYMMETRY_RAY_SPECTRUM.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_CAPTURE_ENERGY_SHELL_GEOMETRY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_CAPTURE_ENERGY_SHELL_GEOMETRY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_CLASSICAL_COMPOSITE_POLE_BOUNDARY.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_CLASSICAL_COMPOSITE_POLE_BOUNDARY.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_CLOSED_NEUTRAL_TRIMER_PAIR_DYNAMICS_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_CLOSED_NEUTRAL_TRIMER_PAIR_DYNAMICS_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_CONNECTED_BIPOLE_CHERENKOV_FORM_FACTOR.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_CONNECTED_BIPOLE_CHERENKOV_FORM_FACTOR.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_CONNECTED_RESERVOIR_DECOMPOSITION.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_CONNECTED_RESERVOIR_DECOMPOSITION.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_CONSTITUENT_COMPLETE_CHARGED_TRIMER_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_CONSTITUENT_COMPLETE_CHARGED_TRIMER_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_DERIVED_INTERACTION_GRAPH_TRANSACTION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_DERIVED_INTERACTION_GRAPH_TRANSACTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_FULL_MIRRORED_INTERNAL_SHAPE_CORE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_FULL_MIRRORED_INTERNAL_SHAPE_CORE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_GLOBAL_ORIENTATION_STRAIN_CORE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_GLOBAL_ORIENTATION_STRAIN_CORE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_INTERNAL_MODE_FIELD_BAND_EMBEDDING.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_INTERNAL_MODE_FIELD_BAND_EMBEDDING.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_INTERNAL_RESONANT_GROUP_VELOCITY_SURFACE.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_INTERNAL_RESONANT_GROUP_VELOCITY_SURFACE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_INTRINSIC_MATTER_PHASE_CRITERION.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_INTRINSIC_MATTER_PHASE_CRITERION.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_LOCALIZED_BASIN_OBSERVER.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_LOCALIZED_BASIN_OBSERVER.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_MASS_METRIC_MODAL_ENERGY.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_MASS_METRIC_MODAL_ENERGY.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_MATCHED_REGIONAL_ENERGY_TRANSPORT.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_MATCHED_REGIONAL_ENERGY_TRANSPORT.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_MATTER_FIELD_MEMORY_KERNEL.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_MATTER_FIELD_MEMORY_KERNEL.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_MINIMUM_ENERGY_NEUTRAL_PAIR_FORCE_SIGN_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_MINIMUM_ENERGY_NEUTRAL_PAIR_FORCE_SIGN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_MOBILITY_CONVERGENCE_CRITERION.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_MOBILITY_CONVERGENCE_CRITERION.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_ORIENTATION_GAUSS_INDEPENDENCE.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_ORIENTATION_GAUSS_INDEPENDENCE.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_POLARITY_SNAPSHOT_CURRENT_NONUNIQUENESS.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_POLARITY_SNAPSHOT_CURRENT_NONUNIQUENESS.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_QUALIFIED_INTERIOR_COMPACT_MATTER_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_QUALIFIED_INTERIOR_COMPACT_MATTER_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_REFINED_SINGLE_CORE_DIRECTIONAL_BOOST_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_REFINED_SINGLE_CORE_DIRECTIONAL_BOOST_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_RELATIONAL_ENTRY_PRECEDES_ENERGETIC_BINDING_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_RELATIONAL_ENTRY_PRECEDES_ENERGETIC_BINDING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_SHARED_ANCHOR_CONSTITUENT_FIBRE_TRANSPORT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_SHARED_ANCHOR_CONSTITUENT_FIBRE_TRANSPORT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_SINGLE_CORE_NEUTRALIZER_CONTROL_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_SINGLE_CORE_NEUTRALIZER_CONTROL_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_SITE_ADMISSIBLE_COMPACT_MATTER_MOTION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_SITE_ADMISSIBLE_COMPACT_MATTER_MOTION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_STATE_ONLY_NESTED_SUPPORT_FLOW_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_STATE_ONLY_NESTED_SUPPORT_FLOW_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_SYMMETRIC_BREATHING_MATTER_CORE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_SYMMETRIC_BREATHING_MATTER_CORE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_TWO_TICK_RECIPROCAL_GAIT_OBSTRUCTION.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_TWO_TICK_RECIPROCAL_GAIT_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_UNIFORM_NEUTRALIZED_SINGLE_CORE_STATIC_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_UNIFORM_NEUTRALIZED_SINGLE_CORE_STATIC_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/THEOREM_UNIFORM_SINGLE_CORE_STATIONARY_REFINEMENT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_UNIFORM_SINGLE_CORE_STATIONARY_REFINEMENT_v1.md"
+  }
+]

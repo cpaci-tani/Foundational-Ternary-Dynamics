@@ -1,0 +1,66 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_AFFINE_SECTOR_CARRIER_EXCLUSION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_AFFINE_SECTOR_CARRIER_EXCLUSION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_FLEXURAL_REFUTATION_RIGIDITY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_FLEXURAL_REFUTATION_RIGIDITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_MAXWELL_C3_SCREEN_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_MAXWELL_C3_SCREEN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_NATIVE_DOUBLET_HARMONIC_EXCLUSION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_NATIVE_DOUBLET_HARMONIC_EXCLUSION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_PAIR_WELL_ANHARMONICITY_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_PAIR_WELL_ANHARMONICITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_QUARTIC_SELECTION_REFUTED_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_QUARTIC_SELECTION_REFUTED_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_TRIANGULATED_SHEET_N4_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_TRIANGULATED_SHEET_N4_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/ANALYSIS_WELL_DEPTH_REFUTATION_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_WELL_DEPTH_REFUTATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/DERIV_FLEXURAL_QUARTIC_MECHANISM_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/DERIV_FLEXURAL_QUARTIC_MECHANISM_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/derivations/DERIV_WELL_DEPTH_LATTICE_QUANTUM_v1.md",
+    "new": "docs/theory/10_eft_program/derivations/native_time_carrier_programme/DERIV_WELL_DEPTH_LATTICE_QUANTUM_v1.md"
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_AGM_CONE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_AGM_CONE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_COMMON_CONE_GATE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_COMMON_CONE_GATE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_FIXED_CONE_GATE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_FIXED_CONE_GATE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_FULL_BZ_MATCHING.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_FULL_BZ_MATCHING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_IR_ENVELOPE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_IR_ENVELOPE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_ON_SHELL_COUNTERTERM.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_ON_SHELL_COUNTERTERM.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_P4_PERIOD2.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_P4_PERIOD2.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RECOVERY_HARD.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_RG_ATTRACTION.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RG_ATTRACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_SPACETIME_WILSON.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_SPACETIME_WILSON.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_DUAL_TRACK_LOCK.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_NATIVE_DUAL_TRACK_LOCK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_UNITARITY_GATE.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_NATIVE_UNITARITY_GATE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v1_INVALID.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v1_INVALID.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/RESULT_STRONG_STRESS_ENERGY_CONTRACT_v1.md",
+    "new": "docs/theory/07_assessment/lorentz_recovery_causal_structure/RESULT_STRONG_STRESS_ENERGY_CONTRACT_v1.md"
+  }
+]

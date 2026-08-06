@@ -1,0 +1,22 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_MANIFESTATION_NONCOMMUTATIVITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_MANIFESTATION_NONCOMMUTATIVITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SPEKKENS_KNOWLEDGE_BALANCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_SPEKKENS_KNOWLEDGE_BALANCE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_SYMPLECTIC_BUDGET_SYMMETRY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_SYMPLECTIC_BUDGET_SYMMETRY_v1.md"
+  }
+]

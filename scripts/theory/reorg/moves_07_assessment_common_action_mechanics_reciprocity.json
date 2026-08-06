@@ -1,0 +1,570 @@
+[
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ACCELERATED_COAT_SPACETIME_CURRENT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_ACCELERATED_COAT_SPACETIME_CURRENT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ACCELERATED_WORLDLINE_ENERGY_ESCAPE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_ACCELERATED_WORLDLINE_ENERGY_ESCAPE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_AXIAL_CONTACT_LONGITUDINAL_WORK.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_AXIAL_CONTACT_LONGITUDINAL_WORK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_AXIAL_FACE_HOP_RECIPROCITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_AXIAL_FACE_HOP_RECIPROCITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_BLOCKED_HOP_WORK_DECOMPOSITION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_BLOCKED_HOP_WORK_DECOMPOSITION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_BOUNDARY_CHART_CAPACITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_BOUNDARY_CHART_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_BOUNDARY_COLLISION_RESOLUTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_BOUNDARY_COLLISION_RESOLUTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CANONICAL_SUBCELL_SECTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CANONICAL_SUBCELL_SECTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CENTERED_FIBER_KNOT_TRANSACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CENTERED_FIBER_KNOT_TRANSACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CENTERED_KNOT_TRACE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CENTERED_KNOT_TRACE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CENTERED_TRACE_WORK_LEDGER.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CENTERED_TRACE_WORK_LEDGER.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CENTRAL_FIELD_MOMENTUM_RECOIL.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CENTRAL_FIELD_MOMENTUM_RECOIL.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_COLLECTIVE_SOURCE_HISTORY_BOUND.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_COLLECTIVE_SOURCE_HISTORY_BOUND.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_COMMON_MOORE_WORLDLINE_ACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_COMMON_MOORE_WORLDLINE_ACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONFIGURATION_SPACE_CARRIER_NECESSITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CONFIGURATION_SPACE_CARRIER_NECESSITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONSTITUENT_RELATIVE_COLLISION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CONSTITUENT_RELATIVE_COLLISION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONTACT_QUOTIENT_COUPLING_SCOPE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CONTACT_QUOTIENT_COUPLING_SCOPE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONTACT_QUOTIENT_HORIZON.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CONTACT_QUOTIENT_HORIZON.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CUBIC_HOP_WORK_RESPONSE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CUBIC_HOP_WORK_RESPONSE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CUSP_DRESSING_INTEGRABILITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_CUSP_DRESSING_INTEGRABILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DIAGONAL_ENDPOINT_ACTION_DOMAIN.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_DIAGONAL_ENDPOINT_ACTION_DOMAIN.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DISCRETE_LEGENDRE_WORLDLINE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_DISCRETE_LEGENDRE_WORLDLINE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DRESSING_FIBER_LEDGER.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_DRESSING_FIBER_LEDGER.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DYNAMICAL_FLUX_DRESSING.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_DYNAMICAL_FLUX_DRESSING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EDGE_PLANE_ONE_SIDED_VARIATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_EDGE_PLANE_ONE_SIDED_VARIATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EIGHT_SOURCE_ORBIT_COHERENCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_EIGHT_SOURCE_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EMERGENT_BOUNDARY_MECHANISM.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_EMERGENT_BOUNDARY_MECHANISM.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ENDOGENOUS_REACTION_CARRIER_BOUND.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_ENDOGENOUS_REACTION_CARRIER_BOUND.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ENDPOINT_RECOIL_SUPPORT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_ENDPOINT_RECOIL_SUPPORT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ENDPOINT_SCHEDULE_UNDERDETERMINATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_ENDPOINT_SCHEDULE_UNDERDETERMINATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EXACT_MOMENTUM_FACE_BALANCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_EXACT_MOMENTUM_FACE_BALANCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EXTENDED_SOURCE_PEIERLS_SCALING.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_EXTENDED_SOURCE_PEIERLS_SCALING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FINITE_MEMORY_REVERSIBLE_LIFT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FINITE_MEMORY_REVERSIBLE_LIFT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FIXED_J_RECOIL_CAPACITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FIXED_J_RECOIL_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FIXED_STEP_ENERGY_SCOPE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FIXED_STEP_ENERGY_SCOPE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FLUX_SELF_INTERFERENCE_RESPONSE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FLUX_SELF_INTERFERENCE_RESPONSE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FORCE_BRANCH_RECIPROCITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FORCE_BRANCH_RECIPROCITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FREE_FLUX_LOCALIZATION_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FREE_FLUX_LOCALIZATION_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_FULL_SURFACE_SOURCE_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_FULL_SURFACE_SOURCE_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GENESIS_CUBIC_CANONICAL_FORM.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GENESIS_CUBIC_CANONICAL_FORM.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GENESIS_ENVIRONMENT_FEEDBACK.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GENESIS_ENVIRONMENT_FEEDBACK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GENESIS_MINIMAL_BATH.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GENESIS_MINIMAL_BATH.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GENESIS_NATURAL_EXTENSION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GENESIS_NATURAL_EXTENSION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GENESIS_RESERVOIR_DILATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GENESIS_RESERVOIR_DILATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_HALF_TICK_LINK_EXCHANGE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_HALF_TICK_LINK_EXCHANGE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_HOP_SOURCE_MULTIPOLE_HIERARCHY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_HOP_SOURCE_MULTIPOLE_HIERARCHY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_IGNITION_CUT_SUPPORT_ABLATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_IGNITION_CUT_SUPPORT_ABLATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_IMPLICIT_ATOMIC_ENDPOINT_SOLVE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_IMPLICIT_ATOMIC_ENDPOINT_SOLVE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_IMPLICIT_ATOMIC_FACE_ACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_IMPLICIT_ATOMIC_FACE_ACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_INTEGER_TRANSLATION_BLOCH_TRANSPORT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_INTEGER_TRANSLATION_BLOCH_TRANSPORT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ISOLATED_PAIR_ACTION_REACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_ISOLATED_PAIR_ACTION_REACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_KNOT_LEGENDRE_BRANCH.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_KNOT_LEGENDRE_BRANCH.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LEGACY_FORCE_LAGRANGIAN_CONTRACT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_LEGACY_FORCE_LAGRANGIAN_CONTRACT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LOCAL_POLARITY_REGULARITY_TRILEMMA.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_LOCAL_POLARITY_REGULARITY_TRILEMMA.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LOCAL_SUPPORT_RECOIL_THRESHOLD.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_LOCAL_SUPPORT_RECOIL_THRESHOLD.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_LOCALIZED_PACKET_RECOIL.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_LOCALIZED_PACKET_RECOIL.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_CONTACT_ENERGY_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MATCHED_CONTACT_ENERGY_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_FACE_ENERGY_TRANSACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MATCHED_FACE_ENERGY_TRANSACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_FACE_MOMENTUM_TRANSACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MATCHED_FACE_MOMENTUM_TRANSACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MATCHED_MIDPOINT_POYNTING.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MATCHED_MIDPOINT_POYNTING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MECHANICAL_HISTORY_HOP_WORK.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MECHANICAL_HISTORY_HOP_WORK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MINIMAL_CONSTITUENT_STRESS_LIFT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MINIMAL_CONSTITUENT_STRESS_LIFT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MINIMAL_MOORE_COMPATIBILITY_COAT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MINIMAL_MOORE_COMPATIBILITY_COAT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MINIMUM_NORM_TRANSACTION_SELECTOR.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MINIMUM_NORM_TRANSACTION_SELECTOR.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MOMENTUM_SELECTED_WORLDLINE_MATCHING.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MOMENTUM_SELECTED_WORLDLINE_MATCHING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MULTIBODY_SHAPE_OBSERVABILITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MULTIBODY_SHAPE_OBSERVABILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_MULTICELL_WORLDLINE_VARIATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_MULTICELL_WORLDLINE_VARIATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_ACTIVE_MODE_BACKREACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_ACTIVE_MODE_BACKREACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_CONTACT_ACTIVE_SET.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_CONTACT_ACTIVE_SET.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_FIELD_DISCRETE_ACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_FIELD_DISCRETE_ACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_HODGE_ENERGY_CONTINUITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_HODGE_ENERGY_CONTINUITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_HODGE_RECIPROCITY_STATIC_POLE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_HODGE_RECIPROCITY_STATIC_POLE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_HOP_DRESSING_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_HOP_DRESSING_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NATIVE_MOTION_REACTION_FRONT_TRICHOTOMY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_MOTION_REACTION_FRONT_TRICHOTOMY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NEUTRAL_PAIR_TRANSLATION_PHASE_BALANCE_v1.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NEUTRAL_PAIR_TRANSLATION_PHASE_BALANCE_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NEUTRAL_PAIR_WAVE_RESPONSE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NEUTRAL_PAIR_WAVE_RESPONSE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NINE_SOURCE_ORBIT_COHERENCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NINE_SOURCE_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_NONCOMPACT_FACE_COHOMOLOGY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_NONCOMPACT_FACE_COHOMOLOGY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_OPEN_WORLDLINE_HOP_SELECTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_OPEN_WORLDLINE_HOP_SELECTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_OVERSHOOT_PRESERVING_CONTACT_REBASE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_OVERSHOOT_PRESERVING_CONTACT_REBASE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_PAIRED_JW_RECOIL_CAPACITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_PAIRED_JW_RECOIL_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_POISSON_COLD_START_MEMORY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_POISSON_COLD_START_MEMORY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_POISSON_RECIPROCITY_CONVERGENCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_POISSON_RECIPROCITY_CONVERGENCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_PRODUCTION_LOCAL_FLUX_CARRY_WORK.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_PRODUCTION_LOCAL_FLUX_CARRY_WORK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_PRODUCTION_SAME_SIGN_BOUNCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_PRODUCTION_SAME_SIGN_BOUNCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_COMPOSITE_PEIERLS.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_COMPOSITE_PEIERLS.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_FACE_CURRENT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_FACE_CURRENT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_MATTER_WORK.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_MATTER_WORK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_NEUTRAL_PAIR_WORK.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_NEUTRAL_PAIR_WORK.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_ORBIT_GATHER.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_ORBIT_GATHER.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_SELF_FORCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_SELF_FORCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_QUADRATIC_COAT_SPACETIME_ACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_SPACETIME_ACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_RECIPROCAL_MOVING_SOURCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_RECIPROCAL_MOVING_SOURCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_REMOVAL_TIME_ORBIT_COHERENCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_REMOVAL_TIME_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_REMOVAL_TIME_PULSE_BOUND.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_REMOVAL_TIME_PULSE_BOUND.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SEQUENTIAL_NO_RESET_TRANSACTIONS.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SEQUENTIAL_NO_RESET_TRANSACTIONS.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SINGLE_ACTION_RECIPROCITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SINGLE_ACTION_RECIPROCITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SINGLE_SLAB_CONNECTION_COMPATIBILITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SINGLE_SLAB_CONNECTION_COMPATIBILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SITE_ONTIC_ATOMIC_RECIPROCAL_HOP_v1.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SITE_ONTIC_ATOMIC_RECIPROCAL_HOP_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_STAGGERED_CURRENT_SPLIT_COMPATIBILITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_STAGGERED_CURRENT_SPLIT_COMPATIBILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SUBCELL_FACE_CURRENT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SUBCELL_FACE_CURRENT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SUBCELL_REPRESENTATION_QUOTIENT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SUBCELL_REPRESENTATION_QUOTIENT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SYMMETRIC_CHORD_MOORE_ACTION.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SYMMETRIC_CHORD_MOORE_ACTION.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TEN_SOURCE_DISTANCE_DISTRIBUTION_LP.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TEN_SOURCE_DISTANCE_DISTRIBUTION_LP.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TEN_SOURCE_ORBIT_COHERENCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TEN_SOURCE_ORBIT_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TEN_SOURCE_PAIR_DISTANCE_CAPACITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TEN_SOURCE_PAIR_DISTANCE_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TEN_SOURCE_SHARED_M_COHERENCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TEN_SOURCE_SHARED_M_COHERENCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TEN_SOURCE_TEMPORAL_PRODUCT_CAPACITY.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TEN_SOURCE_TEMPORAL_PRODUCT_CAPACITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TERNARY_COLLISION_VERTEX.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TERNARY_COLLISION_VERTEX.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_WORLDLINE_CURRENT_KERNEL.md",
+    "new": "docs/theory/07_assessment/common_action_mechanics_reciprocity/AUDIT_WORLDLINE_CURRENT_KERNEL.md"
+  }
+]

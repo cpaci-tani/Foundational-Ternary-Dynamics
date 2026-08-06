@@ -1,0 +1,38 @@
+[
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_PREEXEC_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_PREEXEC_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_RESULT_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_PREEXEC_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_PREEXEC_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_DETERMINISTIC_CANONICAL_CURRENT_CUDA_RESULT_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EXPLICIT_ROUNDING_CAUSAL_HORIZON_M2_PREEXEC_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_EXPLICIT_ROUNDING_CAUSAL_HORIZON_M2_PREEXEC_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_EXPLICIT_ROUNDING_E1_CUDA_PARITY_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_PREEXEC_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_PREEXEC_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_RESULT_v1.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md",
+    "new": "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_STAGEWISE_E1_CPU_CUDA_PARITY_v1.md"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_DET_FORCING_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_DET_FORCING_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_ESTIMATOR_VALIDATION_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_BOUNDARY_v2.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_BOUNDARY_v2.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md"
+  },
+  {
+    "old": "docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md",
+    "new": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md"
+  }
+]

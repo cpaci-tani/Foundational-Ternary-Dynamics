@@ -1,0 +1,14 @@
+[
+  {
+    "old": "docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md",
+    "new": "docs/theory/07_assessment/qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/RESULT_NCEMC_FEASIBILITY.md",
+    "new": "docs/theory/07_assessment/qcd_colour_electroweak/RESULT_NCEMC_FEASIBILITY.md"
+  },
+  {
+    "old": "docs/theory/07_assessment/RESULT_VOLUMETRIC_MEASURE_RECONCILIATION.md",
+    "new": "docs/theory/07_assessment/qcd_colour_electroweak/RESULT_VOLUMETRIC_MEASURE_RECONCILIATION.md"
+  }
+]
