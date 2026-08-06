@@ -82,5 +82,5 @@ The result does not authorize adding such a variable or action. That branch rema
 - `scripts/proofs/proof_orientation_gauss_independence.py`
 - `engine/results/ftd_0564/windows_msvc_cpu.json`
 - `docs/theory/10_eft_program/derivations/THEOREM_ORIENTATION_GAUSS_INDEPENDENCE.md`
-- `docs/theory/07_assessment/AUDIT_ORIENTATION_GAUSS_INDEPENDENCE.md`
+- `docs/theory/07_assessment/constituent_complete_matter/AUDIT_ORIENTATION_GAUSS_INDEPENDENCE.md`
 
