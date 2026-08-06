@@ -45,7 +45,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 | [AUDIT_HIDDEN_SELECTIONS.md](spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) | Critical Honest Assessment · **[v6/v7 reframe SUPERSEDED]** | Catalogs the selection principles in the G* → α chain that are argued, not proven. §§1–5 selection analysis is sound; the v6/v7 "circularity IS the derivation" reframe is superseded (banner-marked), fermion [DERIVED]→[CONJECTURE]. |
 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) | **[LEGACY/provenance] [ARCHIVED]** | Pre-reframe outsider-facing synthesis. **Superseded; do NOT cite externally.** Banner-marked; untestable consciousness/reference-frame-context [THEOREM] tags downgraded to [SPECULATIVE CONJECTURE]; α-comparison overclaims softened to the actual [STRONGLY MOTIVATED CONJECTURE] tag. For current status use `LEDGER.md` / `TRACKER_ONTIC_TRUTH.md` / `SPEC_ALGEBRAIC_SPINE.md`. |
 | [AUDIT_INFINITY_REFRAME.md](AUDIT_INFINITY_REFRAME.md) | [AUDIT] | Portfolio-wide triage of the completed-infinity → undefined-boundary ontology shift. |
-| [AUDIT_RATIONAL_FIT_CLAIMS.md](AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
+| [AUDIT_RATIONAL_FIT_CLAIMS.md](sm_constants_mass_flavour/AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
 | [REPORT_GAP_ANALYSIS.md](archive/REPORT_GAP_ANALYSIS.md) | [ARCHIVED] | Historical root-level epistemic gap report; preserved as provenance, with live status controlled by LEDGER / TRACKER_OPEN_ITEMS. |
 | [AUDIT_DUAL_SUBSTRATE_PROVENANCE.md](AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) | [AUDIT FINDING] | Provenance check on the dual-substrate decomposition; F1-hygiene, no spine demotion. |
 | [AUDIT_MASS_CHAIN_REDTEAM.md](engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md) | [ADVERSARIAL CRITIQUE] | Rigorous adversarial critique of the leptonic and hadronic mass derivation chain; identifies post-hoc fitting and MeV scale calibration issues. |
@@ -174,7 +174,7 @@ The pre-registered scan that controls FTD's catalog over-richness.
 | File | Tag | Purpose |
 |---|---|---|
 | [PROTOCOL_LOOK_ELSEWHERE_SCAN.md](qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md) | [PROTOCOL] | Hash-locked pre-registration of the deterministic look-elsewhere scan (FTD-0097). |
-| [AUDIT_LOOK_ELSEWHERE_RESULTS.md](AUDIT_LOOK_ELSEWHERE_RESULTS.md) | [MEASURED] | Scan results: catalog over-rich at the monomial level; null rejected upward at ε = 10⁻⁴. |
+| [AUDIT_LOOK_ELSEWHERE_RESULTS.md](sm_constants_mass_flavour/AUDIT_LOOK_ELSEWHERE_RESULTS.md) | [MEASURED] | Scan results: catalog over-rich at the monomial level; null rejected upward at ε = 10⁻⁴. |
 
 ---
 
