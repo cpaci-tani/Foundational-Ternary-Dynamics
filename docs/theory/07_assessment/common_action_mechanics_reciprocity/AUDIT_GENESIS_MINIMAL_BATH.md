@@ -107,4 +107,4 @@ Artifacts:
 - `scripts/proofs/proof_genesis_minimal_bath.py`
 - `engine/results/ftd_0572/windows_msvc_cpu.json`
 - `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_MINIMAL_BATH_v1.md`
-- `docs/theory/10_eft_program/derivations/THEOREM_GENESIS_MINIMAL_BATH.md`
+- `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_MINIMAL_BATH.md`

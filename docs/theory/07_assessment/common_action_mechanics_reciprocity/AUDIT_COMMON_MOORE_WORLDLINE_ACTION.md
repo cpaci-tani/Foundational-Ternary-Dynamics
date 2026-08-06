@@ -63,7 +63,7 @@
 ## Reproducibility
 
 - theorem:
-  `docs/theory/10_eft_program/derivations/THEOREM_COMMON_MOORE_WORLDLINE_ACTION.md`
+  `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_COMMON_MOORE_WORLDLINE_ACTION.md`
 - preregistration:
   `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_COMMON_MOORE_WORLDLINE_ACTION_v1.md`
 - preregistration SHA-256:
