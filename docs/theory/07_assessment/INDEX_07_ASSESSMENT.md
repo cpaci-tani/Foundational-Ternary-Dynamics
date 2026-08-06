@@ -47,7 +47,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 | [AUDIT_INFINITY_REFRAME.md](AUDIT_INFINITY_REFRAME.md) | [AUDIT] | Portfolio-wide triage of the completed-infinity → undefined-boundary ontology shift. |
 | [AUDIT_RATIONAL_FIT_CLAIMS.md](sm_constants_mass_flavour/AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
 | [REPORT_GAP_ANALYSIS.md](archive/REPORT_GAP_ANALYSIS.md) | [ARCHIVED] | Historical root-level epistemic gap report; preserved as provenance, with live status controlled by LEDGER / TRACKER_OPEN_ITEMS. |
-| [AUDIT_DUAL_SUBSTRATE_PROVENANCE.md](AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) | [AUDIT FINDING] | Provenance check on the dual-substrate decomposition; F1-hygiene, no spine demotion. |
+| [AUDIT_DUAL_SUBSTRATE_PROVENANCE.md](spine_gstar_cm_modular/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) | [AUDIT FINDING] | Provenance check on the dual-substrate decomposition; F1-hygiene, no spine demotion. |
 | [AUDIT_MASS_CHAIN_REDTEAM.md](engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md) | [ADVERSARIAL CRITIQUE] | Rigorous adversarial critique of the leptonic and hadronic mass derivation chain; identifies post-hoc fitting and MeV scale calibration issues. |
 
 ---
@@ -185,7 +185,7 @@ Multi-round and red-team reviews of the G* / number-theory manuscripts.
 | File | Tag | Purpose |
 |---|---|---|
 | [SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md](archive/SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md) | [SYNTHESIS] **[ARCHIVED]** | Polymath synthesis on the G* bedrock (χ_−4 / ternary alphabet); monograph Part I §I.2 absorbs its narrative. |
-| [AUDIT_GSTAR_PAPER_MULTI_ROUND.md](AUDIT_GSTAR_PAPER_MULTI_ROUND.md) | [CRITIC SYNTHESIS] | Consolidated three-round referee report on PAPER_GSTAR_INTRODUCTION + BRIDGE (replaces three husk reports). |
+| [AUDIT_GSTAR_PAPER_MULTI_ROUND.md](spine_gstar_cm_modular/AUDIT_GSTAR_PAPER_MULTI_ROUND.md) | [CRITIC SYNTHESIS] | Consolidated three-round referee report on PAPER_GSTAR_INTRODUCTION + BRIDGE (replaces three husk reports). |
 | [REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md](REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md) | [RED-TEAM SYNTHESIS] | Four-agent parallel red-team; catches the L(E,1) = ϖ/4 BSD-formula error. |
 | [AUDIT_PAPER_SYMPATHETIC_2026-04-28.md](spine_master_quadratic/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md) | [AUDIT · sympathetic] | Sympathetic audit of PAPER_MASTER_QUADRATIC_AND_BRIDGE; finds earned-but-unclaimed strength. |
 

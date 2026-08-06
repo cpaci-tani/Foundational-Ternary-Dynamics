@@ -603,7 +603,7 @@ These are the files that reference one or more of the ARCHIVE-proposed docs and 
 
 ### References to `SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md`
 
-- `docs/theory/07_assessment/AUDIT_GSTAR_PAPER_MULTI_ROUND.md` (lines 13, 87, 276) — citation references; update to new archive path
+- `docs/theory/07_assessment/spine_gstar_cm_modular/AUDIT_GSTAR_PAPER_MULTI_ROUND.md` (lines 13, 87, 276) — citation references; update to new archive path
 - `docs/theory/07_assessment/INDEX_07_ASSESSMENT.md` (table row) — remove from active list or note as archived
 
 ### References to `SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`
