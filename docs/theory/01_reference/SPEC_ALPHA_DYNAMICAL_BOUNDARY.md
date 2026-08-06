@@ -60,7 +60,7 @@ A pre-registered adversarial attack (`scripts/proofs/proof_w_carrier_narrowing.p
 ## 4 · What the conjecture *does* rest on (evidence, not derivation)
 
 `x₊ = 1/α` carries the strongest structural evidence the framework holds — but it is **evidence, not a chain**:
-- **FTD-0319** (formerly cited as FTD-0189) adversarial look-elsewhere scan: the master quadratic is the **unique dual-matcher** — 0 non-G\* dual-matchers across **2.65M degree-2 polynomials** over an 18-constant basket FTD did not design (rank 1 by ~130×).
+- ~~**FTD-0319** (formerly cited as FTD-0189) adversarial look-elsewhere scan: the master quadratic is the **unique dual-matcher** — 0 non-G\* dual-matchers across **2.65M degree-2 polynomials** over an 18-constant basket FTD did not design (rank 1 by ~130×).~~ **STRUCK 2026-08-03 (FTD-0791).** The scan sits at the chance base rate: the null expects **1.42–1.67** matchers at the registered gate and it found **1**, so "unique dual-matcher" is the expected outcome under no structure, and at that gate the second leg eliminates nothing (1 → 1). Retagged `[MEASURED]` → `[SELECTION]`; **the scan-rigid count is zero**. This bullet may not be cited as evidence.
 - The **ℤ[i] complex-structure unification** (FTD-0122/OT-1.5): the CM automorphism count (4) and the tower level k=4 unify through `ℤ[i]²`.
 - CM-curve uniqueness of the lemniscatic d=−4 at class number 1.
 

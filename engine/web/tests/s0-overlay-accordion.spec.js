@@ -4,7 +4,8 @@
  *
  * Pins the three behaviours added when the always-open 6-column grid became a
  * compact collapsible accordion (see overlays/panel-shell.js):
- *   - all categories collapsed by default, click-to-expand, multiple open;
+ *   - all categories expanded by default (opt-in per-category collapse persists),
+ *     click-to-collapse, multiple open (or collapsed) at once;
  *   - an Active strip of removable chips derived from button .active state;
  *   - a filter that hides non-matching overlays + auto-expands matching categories.
  * The toggle wiring itself is covered by toggle-coverage.spec.js and is unchanged.
@@ -18,7 +19,7 @@ const expand = (page) => page.evaluate(() => {
 });
 
 test.describe('Scale-0 Visualization accordion', () => {
-    test('collapses by default, compact, with an active-overlay chip', async ({ page }) => {
+    test('expands by default, compact, with an active-overlay chip', async ({ page }) => {
         await gotoAndReady(page);
         await page.waitForTimeout(1500);
         await expand(page);
@@ -37,14 +38,14 @@ test.describe('Scale-0 Visualization accordion', () => {
         });
         expect(s.hasSearch && s.hasStrip).toBe(true);
         expect(s.categories).toBe(7);
-        expect(s.allCollapsed, 'all categories collapsed by default').toBe(true);
+        expect(s.allCollapsed, 'all categories expanded by default').toBe(false);
         expect(s.width, 'panel is compact, not the ~700px grid').toBeLessThan(320);
         // flux-volume is on by default → strip shown with a Flux Volume chip.
         expect(s.stripHidden).toBe(false);
         expect(s.chips.some((c) => /Flux Volume/.test(c))).toBe(true);
     });
 
-    test('clicking a category header expands it (multiple stay open)', async ({ page }) => {
+    test('clicking a category header toggles it independently (not mutually exclusive)', async ({ page }) => {
         await gotoAndReady(page);
         await page.waitForTimeout(1500);
         await expand(page);
@@ -52,13 +53,15 @@ test.describe('Scale-0 Visualization accordion', () => {
         const isOpen = (col) => page.evaluate((c) => !document.querySelector(`#viewport-overlay [data-col="${c}"]`).classList.contains('is-collapsed'), col);
         const clickHead = (col) => page.evaluate((c) => document.querySelector(`#viewport-overlay [data-col="${c}"] .s0-overlay-col-head`).click(), col);
 
+        // Both categories start expanded (default). Collapse volume only.
+        expect(await isOpen('volume'), 'volume starts expanded').toBe(true);
+        expect(await isOpen('fields'), 'fields starts expanded').toBe(true);
         await clickHead('volume');
-        await clickHead('fields');
-        expect(await isOpen('volume'), 'volume open').toBe(true);
-        expect(await isOpen('fields'), 'fields open too (multi-open)').toBe(true);
+        expect(await isOpen('volume'), 'volume collapses on click').toBe(false);
+        expect(await isOpen('fields'), 'fields untouched, stays open (multi-state independence)').toBe(true);
         await clickHead('volume');
-        expect(await isOpen('volume'), 'volume re-collapses on second click').toBe(false);
-        expect(await isOpen('fields'), 'fields stays open').toBe(true);
+        expect(await isOpen('volume'), 'volume re-expands on second click').toBe(true);
+        expect(await isOpen('fields'), 'fields stays open throughout').toBe(true);
     });
 
     test('active strip chip × turns the overlay off', async ({ page }) => {
@@ -96,7 +99,7 @@ test.describe('Scale-0 Visualization accordion', () => {
         expect(r.volHidden, 'Volume hidden (no match)').toBe(true);
         expect(r.vorticVisible, 'Vorticity visible').toBe(true);
 
-        // Clearing restores: filter classes gone, default-collapsed back.
+        // Clearing restores: filter classes gone, default-expanded back.
         await page.evaluate(() => { const s = document.getElementById('s0-overlay-search'); s.value = ''; s.dispatchEvent(new Event('input', { bubbles: true })); });
         await page.waitForTimeout(150);
         r = await page.evaluate(() => ({
@@ -104,6 +107,6 @@ test.describe('Scale-0 Visualization accordion', () => {
             volCollapsed: document.querySelector('#viewport-overlay [data-col="volume"]').classList.contains('is-collapsed'),
         }));
         expect(r.anyFiltered, 'no filter classes after clear').toBe(false);
-        expect(r.volCollapsed, 'categories back to collapsed default').toBe(true);
+        expect(r.volCollapsed, 'categories restored back to expanded default').toBe(false);
     });
 });

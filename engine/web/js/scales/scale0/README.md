@@ -20,9 +20,9 @@ Scale0.resizeLattice(ctx);           // on window resize
 Scale0.exitScale0();                 // tear down
 ```
 
-Plus: `getFluxMock`, `setLatticeNeedsUpload`, `setForceStyle`,
-`setFieldToggle`, `getCurrentScenarioId`, `handleShortcutKey`,
-`shouldUseFluxMock`.
+Plus: `getFluxMock` (legacy name for the off-thread `WasmBridgeProxy`),
+`setLatticeNeedsUpload`, `setForceStyle`, `setFieldToggle`,
+`getCurrentScenarioId`, `handleShortcutKey`.
 
 ## Internal structure (3-folder package convention; see ADR-0004)
 
@@ -61,15 +61,18 @@ for the canonical shape and the rules that govern who reads/writes what.
 1. User changes the scenario dropdown
 2. `bindings.js` calls `loadScenario(ctx, name)`
 3. `runtime/scenario-loader.js`:
-   a. Checks `shouldUseFluxMock` (`flux-*`, `s0-seed-*`, `s0-field-*`, `quantum-*`, or bridge-without-flux-volume → MockBridge/worker)
-   b. Allocates fluxMock if needed; `setFluxMock(fluxMock, useFluxMock)` on `state/store.js`
-   c. `getPhysicsHarness(activeBridge).load(harness)` → `scenario-registry.js` → `bridge/scenarios/*.js`
-   d. `applyToggleDefaults` + post-load gravity/absorbing toggles (mirrored to WASM + mock caps)
+   a. If `wasmWorkerEligible` (COI + SAB + primary `isWasm` + worker not disabled), construct
+      `WasmBridgeProxy` and store it in legacy `fluxMock` / `useFluxMock` slots
+   b. Otherwise keep physics on `ctx.bridge` (`WasmBridge` or WebSocketBridge)
+   c. Active bridge runs `setupScenario` → WASM `ftd::dispatch_scenario` (JS `bridge/scenarios/`
+      is parity-only; registry `load(harness)` always uses the catalog id)
+   d. `applyToggleDefaults` + post-load profile / research terms on the active owner
    e. `viewport.setLatticeSize(activeN)` when viewport N differs from active bridge
    f. Resets visual state, restores overlay prefs, marks `fieldNeedsUpdate` + `latticeNeedsUpload`
-4. Tick loop resumes via `runtime/tick.js` (`runScale0PhysicsTicks` — exclusive mock XOR main)
+4. Tick loop resumes via `runtime/tick.js` (worker self-ticks when `useFluxMock`; else main bridge)
 
-**Do not** call `fluxMock.setupScenario()` before `scenario.load()` — double-seeds the mock.
+Worker init failure → `onInitFailure` falls back to in-thread WASM and latches
+`ctx._wasmWorkerDisabled`. Setup failure (`setupScenario` false) → toast via `onSetupFailure`.
 
 ## Invariants
 

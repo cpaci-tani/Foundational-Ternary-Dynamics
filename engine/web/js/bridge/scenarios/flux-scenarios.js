@@ -505,6 +505,11 @@ export function setupFluxScenario(name, harness, ctx) {
                     }
                     break;
                 }
+
+                default:
+                    // Unknown flux-* id: do not claim the prefix. Returning true
+                    // would stop the dispatcher and leave a bare post-reset lattice.
+                    return false;
             }
             return true;
 }

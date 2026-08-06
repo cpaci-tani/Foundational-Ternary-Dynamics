@@ -3,7 +3,15 @@ import { getPhysicsHarness } from '../../../physics/index.js';
 import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
-import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY, SCALE0_ABSORBING_SCENARIOS, SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
+import {
+    SCALE0_TOGGLES,
+    SCALE0_SCENARIO_OVERRIDES,
+    LIGHT_SCENARIO_OVERRIDES,
+    SCALE0_SCENARIO_BOUNDARY,
+    SCALE0_ABSORBING_SCENARIOS,
+    SCALE0_MASS_GRAVITY_SCENARIOS,
+    SCALE0_SCENARIO_RESEARCH_TERMS,
+} from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
 import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js';
 import {
@@ -23,7 +31,6 @@ import {
     FIELD_TOGGLE_BINDINGS,
     markScenarioOverrideRows,
     readButtonActive,
-    readCheckboxValue,
     readInputValue,
     setButtonActive,
     setCheckboxValue,
@@ -35,21 +42,21 @@ import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js
 
 // Toggle-reset whitelist used by `applyToggleDefaults`.
 //
-// Contract: every scenario in `bridge/scenarios/*.js` and
-// `engine/src/scenarios/*.cpp` MUST only mutate toggle keys that
-// appear in `SCALE0_TOGGLES`. Keys outside the whitelist (e.g.
-// `pair_production`, `langevin`, `latency_field`, `emergent_forces`)
-// are intentionally NOT reset between scenarios — they are long-term
-// research controls owned by the user, not scenario state.
-//
-// The scenario implementations now exercise the full production-facing
-// whitelist (wave, coupling, damping, genesis/evaporation, projection,
-// forces, movement, and selected interaction terms). If you add a scenario
-// that needs to flip a non-whitelisted toggle,
-// either (a) add the key to SCALE0_TOGGLES with its default value, or
-// (b) restore the previous value at scenario-end. Don't leave the
-// mutation hanging — that's the toggle-leak vector ARC-1 audited.
+// Contract (aligned with engine/include/ftd/scenarios.h):
+//   • SCALE0_TOGGLES is the UI-visible subset the loader resets every load.
+//   • Isolation helpers (configure_*_terms) MAY zero the full TermToggles
+//     registry, including research keys — required for certified ICs.
+//   • Research keys outside the whitelist normally persist across loads unless
+//     a configure_* helper clears them, or SCALE0_SCENARIO_RESEARCH_TERMS pins
+//     them for a specific scenario (applied after the whitelist reset).
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
+
+function reportScenarioSetupFailure(msg) {
+    console.error('[Scale0]', msg);
+    if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
+        window.showToast(msg, 'error');
+    }
+}
 // Round-trip the user's overlay preferences across scenario switches. Both maps
 // are DERIVED from the canonical button↔flag list in ui/dom.js
 // (FIELD_TOGGLE_BINDINGS, shared with bindings.js) so this can never drift behind
@@ -239,11 +246,11 @@ function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed =
     // keeps the user's current speed — only boundary / flux-volume defaults
     // need re-applying there.
     if (resetSpeed) ctx.applyTicksPerFrameFromSlider(50);
-    // Boundary: a scenario may pin its own (SCALE0_SCENARIO_BOUNDARY); otherwise
-    // reset to the default cube + non-reflective. Without honoring the config
-    // here, this step would clobber the reflective boundary the scenario needs
-    // (it runs after the flux-mock boundary is set). flux-zero-point relies on
-    // this to keep its energy trapped → persistent floor.
+    // Boundary: a scenario may pin its own (SCALE0_SCENARIO_BOUNDARY). When no
+    // entry exists the loader defaults to dispersal (mode 2) — NOT the live
+    // DOM boundary controls. Any body / configure_* that sets Periodic MUST
+    // also register SCALE0_SCENARIO_BOUNDARY[id] = { mode: 0 }, or this step
+    // (after scenario.load) sponges the seed.
     const bnd = SCALE0_SCENARIO_BOUNDARY[scenarioId] || {};
     const mode = bnd.mode ?? (bnd.reflective === true ? 1 : 2);
     ctx.applyBoundaryShape(bnd.shape ?? 'cube');
@@ -305,6 +312,17 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
             mockScale0?.setToggle(key, val);
         }
     }
+
+    // Research terms outside SCALE0_TOGGLES (no checkbox). Applied after the
+    // whitelist so isolation profiles that enable langevin / ew_background_sweep
+    // / pair_production / emergent_forces reach both bridges.
+    const research = SCALE0_SCENARIO_RESEARCH_TERMS[scenarioName];
+    if (research) {
+        for (const [key, val] of Object.entries(research)) {
+            mainScale0.setToggle?.(key, val);
+            mockScale0?.setToggle?.(key, val);
+        }
+    }
 }
 
 /**
@@ -323,6 +341,7 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
  * from its `onEngineToggles` callback once the first real frame lands.
  */
 export function syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenarioId) {
+    // Legacy state fields: useFluxMock / fluxMock hold the WASM worker proxy.
     const bridge = (ctx.useFluxMock && ctx.fluxMock) ? ctx.fluxMock : ctx.bridge;
     if (!bridge || typeof bridge.getToggle !== 'function') return false;
     if (bridge.isWorker && !bridge.hasEngineToggles) return false;
@@ -442,6 +461,14 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const scenario = getScale0Scenario(scenarioId);
     telemetryHub.resetScale(0);
 
+    // Monotonic load generation: ignore late worker callbacks from a superseded load.
+    ctx._loadGeneration = (ctx._loadGeneration || 0) + 1;
+    const loadGen = ctx._loadGeneration;
+    // Publish the intended id BEFORE async worker create so onEngineToggles /
+    // onSetupFailure can gate against the current selection immediately.
+    setCurrentScenarioId(scenario.id);
+    setSelectedScenarioId(scenario.id);
+
     // Preserve the user's current overlay-toggle preferences across the reset.
     // ctx.resetAllVisualState() → resetScale0VisualState() wipes every field
     // flag + button; without this snapshot the user has to re-enable their
@@ -449,53 +476,60 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const overlayPrefs = captureOverlayPreferences(state);
 
     const latticeSize = ctx.bridge.latticeSize || 33;
-    let useFluxMock = false;
-    let fluxMock = null;
+    // Local names: wasmWorker is the off-thread WASM Scale-0 owner. State still
+    // uses the legacy fluxMock / useFluxMock fields (historical MockBridge slot).
+    let useWasmWorker = false;
+    let wasmWorker = null;
     if (wasmWorkerEligible(scenario.id, ctx.bridge) && !ctx._wasmWorkerDisabled) {
-        // Off-thread WASM engine (Phase 1): host the real C++ physics in a Web Worker.
+        // Off-thread WASM engine: host the real C++ physics in a Web Worker.
         // If the worker fails to initialise (e.g. importScripts NetworkError on the
         // -pthread MT glue), onInitFailure fires once: we disable the worker path for
         // this ctx and re-run the load on the in-thread WasmBridge so the engine never
         // silently dies (the proxy is the ACTIVE bridge while useFluxMock=true, so a
         // dead worker means NOTHING ticks).
-        fluxMock = new WasmBridgeProxy(latticeSize, {
-            onInitFailure: () => fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params),
+        wasmWorker = new WasmBridgeProxy(latticeSize, {
+            onInitFailure: () => {
+                if (ctx._loadGeneration !== loadGen) return;
+                fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params);
+            },
+            onSetupFailure: (msg) => {
+                if (ctx._loadGeneration !== loadGen) return;
+                reportScenarioSetupFailure(msg || `Scenario setup failed: ${scenario.id}`);
+            },
             // The worker owns the truth about which terms the C++ body left live.
-            // Reconcile the UI to it whenever it republishes, against the CURRENT
-            // scenario id — a late frame from a superseded load must not repaint
-            // the card for a scenario the user already switched away from.
+            // Reconcile the UI to it whenever it republishes, against THIS load.
             onEngineToggles: () => {
+                if (ctx._loadGeneration !== loadGen) return;
                 const activeId = getScale0State().currentScenarioId;
                 if (activeId) syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId);
             },
         });
-        useFluxMock = true;
+        useWasmWorker = true;
     }
 
-    applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenario.id);
-    if (fluxMock) {
-        for (const [key, , elId] of DEFAULT_TOGGLES) {
-            fluxMock.capabilities.scale0.setToggle(key, readCheckboxValue(elId));
-        }
-    }
+    // Apply the in-memory scenario profile (defaults + overrides + research terms).
+    // Do NOT re-read DOM checkboxes onto the worker — that re-coupled physics to
+    // stale UI and undid applyToggleDefaults.
+    applyToggleDefaults(ctx.bridge.capabilities.scale0, wasmWorker?.capabilities?.scale0 ?? null, scenario.id);
 
-    setFluxMock(fluxMock, useFluxMock);
-    ctx.useFluxMock = useFluxMock;
-    ctx.fluxMock = fluxMock;
+    setFluxMock(wasmWorker, useWasmWorker);
+    ctx.useFluxMock = useWasmWorker;
+    ctx.fluxMock = wasmWorker;
 
     ctx.resetAllVisualState();
 
-    const activeBridge = (useFluxMock && fluxMock) ? fluxMock : ctx.bridge;
+    const activeBridge = (useWasmWorker && wasmWorker) ? wasmWorker : ctx.bridge;
+    if (typeof activeBridge.setupScenario !== 'function') {
+        reportScenarioSetupFailure(`Active Scale-0 bridge has no setupScenario (${scenario.id})`);
+    }
     const harness = getPhysicsHarness(activeBridge);
 
-    // Load the scenario IMMEDIATELY on selection, whether or not the run loop is
-    // ticking. Previously a paused selection was deferred into
-    // state._pendingScenarioLoad and only fired on the first tick after Play, so
-    // picking a scenario while paused appeared to do nothing until Play. Loading
-    // here means the lattice is seeded + displayed right away; applyAuxiliaryDefaults
-    // below still runs AFTER scenario.load (the worker-path _pendingCommands replay
-    // ordering documented there is preserved).
-    scenario.load(harness, params);
+    // Load immediately on selection (paused or running). Worker path posts
+    // create asynchronously; in-thread returns bool for unknown ids.
+    const setupOk = scenario.load(harness);
+    if (setupOk === false) {
+        reportScenarioSetupFailure(`Unknown or unhandled scenario: ${scenario.id}`);
+    }
 
     // Scenario-owned observatory panels are mounted from the same canonical
     // load path as their physics. The genesis panel used to be orphaned: its
@@ -533,11 +567,9 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     applyGravityAbsorbingToggles(
         scenario.id,
         ctx.bridge.capabilities.scale0,
-        fluxMock?.capabilities?.scale0 ?? null,
+        wasmWorker?.capabilities?.scale0 ?? null,
     );
 
-    setCurrentScenarioId(scenario.id);
-    setSelectedScenarioId(scenario.id);
     markScenarioOverrideRows(DEFAULT_TOGGLES);
     syncComboSliders(ctx, state);
     state.latticeNeedsUpload = true;

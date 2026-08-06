@@ -52,7 +52,7 @@ The Phase I pre-registered campaign (tag `preregister-phase-i-native-coupling-v1
 
 **Result — outcome C:** measured `g_engine² ≈ 0.08-0.18` (varying with r), NOT the constant `1/x_+ ≈ 0.0073`. Pre-registered hypothesis FALSIFIED at all 8 fixtures.
 
-**Diagnosis:** the engine's tick cycle runs both the wave-propagation source coupling `δJ += G_C · ∇s` AND the gauss-projection step (`∇·J = ρ`). For static charges, the gauss-projection step **erases the longitudinal G_C contribution every tick**, leaving `V(r)` determined purely by the geometric kernel. The `G_C` factor does not survive the tick cycle.
+**Diagnosis:** the engine's tick cycle runs both the wave-propagation source coupling `δJ −= G_C · ∇s` (sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3; the erasure argument below is sign-independent) AND the gauss-projection step (`∇·J = ρ`). For static charges, the gauss-projection step **erases the longitudinal G_C contribution every tick**, leaving `V(r)` determined purely by the geometric kernel. The `G_C` factor does not survive the tick cycle.
 
 **What this leg shows:** static V(r) measurement does not carry the coupling because the coupling channel that could carry it is being erased at every tick by the projection step. Phase G's "no fine-structure content" reading is empirically reinforced from a second angle.
 
@@ -117,7 +117,7 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 - **FTD-0013** (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — unchanged
 - ~~**FTD-0014** (x_− = N_c at 0.80%)~~ — **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`).
 - All nine numbered spine results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention) — unchanged
-- The structural-uniqueness scan from FTD-0121 / Paper A (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×) — unchanged. *(The "~4×10⁵:1 Bayes factor" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; per the spine audit.)*
+- ~~The structural-uniqueness scan from FTD-0121 / Paper A (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×) — unchanged.~~ **WITHDRAWN 2026-08-04 (FTD-0802):** the count is **4** non-master dual-matchers, not 0 — the "0 genuinely-new cubic" figure was a hardcoded literal that no code tested — and the scan failed its pre-registered base-rate control (`N_null = 0.0014`, Outcome B), so a zero count would have carried no evidential weight regardless. OT-3.3 retagged `[SELECTION]`. *(The "~4×10⁵:1 Bayes factor" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; per the spine audit.)*
 - The BCC complex-structure theorem (FTD-0122) — unchanged
 
 What was tested and ruled out is a **specific dynamical interpretation** of the `x_+  1/α` identification: that `α = 1/x_+` plays the role of QED's coupling at the matter-sector vertex via classical gauge fields. The polynomial algebra and the empirical match remain at their established tags.

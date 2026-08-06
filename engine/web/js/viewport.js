@@ -679,8 +679,8 @@ export class Viewport {
     // -- Flux Streamlines (flux colormap) --
     // Phase 3b -- delegated to ViewportFluxRenderer.
     _buildFluxStreamlines() { this._fluxRenderer._buildFluxStreamlines(); }
-    updateFluxStreamlines(streamlines, maxFluxMag) {
-        this._fluxRenderer.updateFluxStreamlines(streamlines, maxFluxMag);
+    updateFluxStreamlines(streamlines, maxFluxMag, mags) {
+        this._fluxRenderer.updateFluxStreamlines(streamlines, maxFluxMag, mags);
     }
     toggleFluxStreamlines(on) { this._fluxRenderer.toggleFluxStreamlines(on); }
 

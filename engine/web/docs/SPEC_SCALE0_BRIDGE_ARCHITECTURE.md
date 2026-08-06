@@ -2,7 +2,7 @@
 
 **Status:** foundation reference (descriptive — documents the system as built).
 **Scope:** the **bridge layer** that the Scale-0 scenario subsystem and runtime pipeline sit on —
-the four bridge implementations, the capability-factory pattern, the bridge contract + direct-read
+the live bridge implementations, the capability-factory pattern, the bridge contract + direct-read
 surface, the Web-Worker proxy + SharedArrayBuffer design, bridge selection, and dispose/lifecycle.
 **Companions:** [`SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](SPEC_SCALE0_SCENARIO_ARCHITECTURE.md)
 (scenarios sit on these bridges), [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md)
@@ -14,94 +14,101 @@ surface, the Web-Worker proxy + SharedArrayBuffer design, bridge selection, and 
 Every claim carries a `file:line` — re-derive from source before relying on it (the discipline that
 keeps these docs honest; counts/line numbers may drift).
 
+> **Retired (do not reintroduce as the live Scale-0 path):** `MockBridge` /
+> `mock-bridge.js` / `MockBridgeProxy` / `mock-bridge-proxy.js`. Scale-0 physics
+> is owned by the WASM `RenderBridge` (`WasmBridge` in-thread or `WasmBridgeProxy`
+> off-thread). The JS tree under `bridge/scenarios/` is a **parity mirror** of
+> `engine/src/scenarios/*.cpp`, not the live seed path. See `bridge/README.md`.
+
 ---
 
 ## 1. The 30-second model
 
 A **bridge** is the uniform object the whole dashboard talks to for physics: `ctx.bridge`. It owns
 the lattice/particle state and exposes `setupScenario`, `tick`, samplers, diagnostics, and toggles.
-There are **four implementations** behind one symmetric surface, chosen by capability and environment:
+There are **three live implementations** behind one symmetric surface, chosen by capability and
+environment:
 
-| Bridge | File | Role | `isWasm`/`isNativeGPU`/`isWorker` | Ready |
+| Bridge | File | Role | Flags | Ready |
 |---|---|---|---|---|
-| **WebSocketBridge** | `ws-bridge.js` | Native C++ engine (auto-GPU on CUDA) over `ws://127.0.0.1:9100` — the fastest path when `ws_server.exe` is running | `isNativeGPU: true` | async (connect) |
-| **WasmBridge** | `bridge/wasm-bridge.js` | Emscripten C++ engine in-browser — the canonical path | `isWasm: true` | async (`init`) |
-| **MockBridge** | `bridge/mock-bridge.js` | Pure-JS reference lattice — offline/parity/fallback | (all false) | sync (immediate) |
-| **MockBridgeProxy** | `bridge/mock-bridge-proxy.js` | Worker wrapper around a MockBridge; main thread reads its `SharedArrayBuffer`s zero-copy | `isWorker: true` | async (worker `ready`) |
+| **WebSocketBridge** | `ws-bridge.js` | Native C++ engine (auto-GPU on CUDA) over `ws://127.0.0.1:9100` — fastest when `ws_server.exe` is running | `isNativeGPU: true` | async (connect) |
+| **WasmBridge** | `bridge/wasm-bridge.js` | Emscripten C++ engine in-browser — canonical in-thread path (prefers Memory64) | `isWasm: true` | async (`init`) |
+| **WasmBridgeProxy** | `bridge/wasm-bridge-proxy.js` | Worker wrapper around `ftd_core_mt`; main thread reads flux zero-copy from the worker's SharedArrayBuffer heap | `isWasm: true`, `isWorker: true` | async (worker `ready`) |
 
-All four present the **same surface** via two mechanisms: the **capability factory** (§3) for the
+All three present the **same surface** via two mechanisms: the **capability factory** (§3) for the
 `bridge.capabilities.scaleN.*` namespace, and the **bridge contract** (§4) for the direct
 read/mutate methods. The scenario subsystem and the runtime pipeline are written against that surface
-and never branch on bridge type — *except* the two places that must: scenario bridge-ownership
-(`shouldUseFluxMock`, §6) and the worker read-surface (§5).
+and never branch on bridge type — *except* Scale-0 worker ownership (§6) and the worker read-surface (§5).
 
 ```
-            ctx.bridge  (one of four impls)
+            ctx.bridge  (WebSocketBridge | WasmBridge)
                  │  capabilities.scale0.*   (factory — §3)
                  │  direct reads/mutates     (contract  — §4)
-   ┌─────────────┼───────────────┬───────────────────┐
-WebSocketBridge  WasmBridge   MockBridge        MockBridgeProxy
-  (native GPU)    (WASM C++)   (JS reference)   (Worker + SAB shadow — §5)
+   ┌─────────────┴──────────────┐
+WebSocketBridge            WasmBridge
+  (native GPU)              (WASM C++)
+                              │
+                    optional ownership swap
+                              │
+                       WasmBridgeProxy
+                    (Worker + SAB flux — §5)
 ```
+
+Legacy store fields `fluxMock` / `useFluxMock` still name the **off-thread WASM owner**
+(`WasmBridgeProxy`); they no longer mean a JS MockBridge.
 
 ---
 
-## 2. The four bridges
+## 2. The three live bridges
 
 ### 2.1 WebSocketBridge — native GPU (`ws-bridge.js`)
 
 A drop-in bridge that forwards to a native C++ `RenderBridge` (auto-GPU on CUDA builds) running as
-`ws_server.exe` on `ws://127.0.0.1:9100`. Probed **first** at boot (§6); if the socket connects it
-becomes `ctx.bridge`. Flags: `isNativeGPU: true`, `isWasm: false`. It throttles high-frequency
-diagnostics queries and lazily constructs a fallback `MockBridge` for any method the protocol doesn't
-implement. No explicit `dispose()` — the socket closes on page unload. (Absent `ws_server.exe`, the
-connection fails fast and boot falls through to WASM; the `ws://…:9100` connection error is
-known-benign console noise, filtered by `tests/_helpers.js` `KNOWN_NOISE`.)
+`ws_server.exe` on `ws://127.0.0.1:9100`. Probed **first** at boot when not on the static live-server
+port (§6); if the socket connects it becomes `ctx.bridge`. Flags: `isNativeGPU: true`,
+`isWasm: false`. It throttles high-frequency diagnostics queries. No explicit `dispose()` — the
+socket closes on page unload. (Absent `ws_server.exe`, the connection fails fast and boot falls
+through to WASM; the `ws://…:9100` connection error is known-benign console noise, filtered by
+`tests/_helpers.js` `KNOWN_NOISE`.)
 
 ### 2.2 WasmBridge — Emscripten C++ (`bridge/wasm-bridge.js`)
 
-The canonical in-browser path. `init(latticeSize)` (`:116-142`) loads the WASM module via a
-**singleton load promise** (`_wasmLoadPromise`, prevents duplicate `<script>` injection) and sets
-`ready=true`. It selects wasm32 vs wasm64 at load time (§7). Key surface:
+The canonical in-browser path. `init(latticeSize)` loads the WASM module via a **singleton load
+promise** (`_wasmLoadPromise`, prevents duplicate `<script>` injection) and sets `ready=true`. It
+selects wasm32 vs wasm64 at load time (§7). Key surface:
 
-- `setupScenario(name, harness)` (`:373-376`) → `this._module.setupScenario(this._bridge, name)`
-  (the C++ `dispatch_scenario`).
-- `reset(latticeSize)` (`:180-230`) **destroys and re-allocates** the C++ `RenderBridge` at the same
-  voxel count (drops `_pe`/`_ae`/`_aeFallback` first) to bound peak memory.
-- The **`_wasmCallOr` guard** (`:89-93`) wraps ~20 sampler methods that may be absent from the
-  module, returning frozen `EMPTY_FIELD_SAMPLE`/`EMPTY_SCALAR_SAMPLE` singletons (`:68-83`) so a
-  missing sampler degrades to empty without a per-call allocation. Every heap read returns an
-  Emscripten `typed_memory_view` (memory-model-agnostic — see the wasm64 spot-check in the 06-03 audit).
-- Scale 1 (ParticleEngine) is delegated to C++; Scale 2 (AtomEngine) is currently forced to a JS
-  MockBridge fallback (`_aeHasWasm: false`, the Planck-unit conversion shim is unbuilt).
+- `setupScenario(name, harness)` → embind `setupScenario` → C++ `ftd::dispatch_scenario`
+  (returns `bool`; unknown id fails — see `bindings_render_bridge.cpp`).
+- `reset(latticeSize)` **destroys and re-allocates** the C++ `RenderBridge` at the same voxel count
+  (drops PE/AE first) to bound peak memory.
+- Sampler guards return frozen empty samples when a binder is absent so missing samplers degrade
+  without per-call allocation. Heap reads use Emscripten `typed_memory_view` (memory-model-agnostic).
+- Scale 1 (ParticleEngine) is delegated to C++; Scale 2 (AtomEngine) currently falls back to the JS
+  `mock-atom-engine.js` when WASM AE is incomplete.
 
-### 2.3 MockBridge — pure JS (`bridge/mock-bridge.js`)
+There is **no MockBridge fallback** on WASM init failure — boot throws with a rebuild hint
+(`app.js` init path).
 
-The reference physics implementation: offline testing, JSC++ parity, and the Scale-2/3 fallback.
-`ready` immediately (no async init); snaps even lattice sizes to odd. Internal state: `_tick`,
-`_dt`, `_particles[]`, and the flux buffers `_fluxJ`/`_fluxWV` (Float64×3), `_fluxMag` (Float64),
-`_stateGrid` (Int8) allocated by `_initFluxGrid` — backed by `SharedArrayBuffer`s when `_useSAB`
-is set (the worker path, §5). It composes focused factories: lattice samplers, the diagnostics
-provider (energy caching, `bridge/mock-diagnostics.js`), the ParticleEngine, the AtomEngine, and the
-scenario dispatcher (`runSetupScenario`). `setupScenario(name, harness)` (`:1704`) dispatches to the
-JS scenario library. Sparse-tick optimization (`_sparseTick`/`_activeBox`, `SPEC_SCALE0_LATTICE_PERF`
-§3) restricts work to the active flux region, falling back to dense when the wave fills the box.
+### 2.3 WasmBridgeProxy — Web Worker (`bridge/wasm-bridge-proxy.js`)
 
-### 2.4 MockBridgeProxy — Web Worker (`bridge/mock-bridge-proxy.js`)
+A main-thread proxy whose physics runs in a Web Worker (`bridge/wasm-bridge.worker.js` →
+`ftd_core_mt`) so the heavy O(N³) tick never stalls render. The **default deployed Scale-0 path**
+when COI + SharedArrayBuffer are available and the primary bridge is WASM. Flags:
+`isWasm: true`, `isWorker: true`. Architecture in §5. Live counter
+`window.__ftdWasmWorkers()` → `{live, created, terminated}` backs worker-conservation tests.
 
-A main-thread proxy whose physics runs in a Web Worker so the heavy O(N³) tick never stalls render.
-The **default deployed Scale-0 path** (cross-origin-isolation enabled). Flags:
-`isWorker: true`. Architecture in §5. A live counter `window.__ftdScale0Workers()` →
-`{live, created, terminated}` backs `tests/scale0-worker-teardown.spec.js` (worker conservation).
+On init failure (`onInitFailure`) or a dead frame watchdog, the scenario loader falls back to
+in-thread `WasmBridge` and latches `ctx._wasmWorkerDisabled`. Setup failures
+(`setupScenario` → false) surface via `onSetupFailure` (toast), distinct from init fallback.
 
 ---
 
 ## 3. The capability-factory pattern
 
-The four bridges expose **raw** methods on themselves (`bridge.tick()`, `bridge.getFluxVolume()`),
+The live bridges expose **raw** methods on themselves (`bridge.tick()`, `bridge.getFluxVolume()`),
 but those vary in signature/presence. The dashboard talks to a **symmetric** per-scale surface
 instead: `bridge.capabilities.scale0.*`. This is installed once at module load by
-`installCapabilityGetter(proto)` (`bridge/capabilities/install.js:22-36`), a lazy, cached getter
+`installCapabilityGetter(proto)` (`bridge/capabilities/install.js`), a lazy, cached getter
 on each bridge prototype:
 
 ```js
@@ -119,146 +126,110 @@ Object.defineProperty(proto, 'capabilities', {
 ```
 
 `createScale0Capabilities(bridge)` (`bridge/capabilities/scale0.js`) returns an object whose every
-method closes over that bridge: `tickScale0: () => bridge.tick()`, `setupScenario: (name) =>
-bridge.setupScenario(name)` (`:56`), `getScale0FieldSamples({kind, stride})` (a dispatcher over
-`e`/`b`/`poynting`/`divJ`/`vorticity`/`helicity`/`kretschmann`/`latency`/`fisher`/`coherence`/`curlJ`/
-`state`/`gaussResidual`), `getScale0Diagnostics`, `getScale0EnergyAudit`, `getScale0Lagrangian`,
-`setToggle`, `setBoundaryShape`, etc. (The snapshot/scrub capability pair was removed — the
-simulation is forward-only; see `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8.)
+method closes over that bridge: `tickScale0`, `setupScenario`, `getScale0FieldSamples`,
+`getScale0Diagnostics`, `setToggle`, `setBoundaryShape`, etc. (The snapshot/scrub capability pair
+was removed — the simulation is forward-only; see `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8.)
 
 **Why the indirection:** (1) a guaranteed-present, uniform surface so callers never branch on bridge
-type; (2) namespace isolation (raw methods stay on the instance, the scale surface lives under
-`.capabilities.scaleN`); (3) lazy + cached per instance. The factory is also installed on the
-**worker's** MockBridge prototype, so the same `capabilities.scale0.tickScale0()` drives physics
-off-thread. Contract: `CONTRACTS.md` §2.
+type; (2) namespace isolation; (3) lazy + cached per instance. The factory is also installed on the
+**worker's** WASM bridge surface, so the same `capabilities.scale0.tickScale0()` drives physics
+off-thread (as a no-op on the proxy — the worker self-ticks). Contract: `CONTRACTS.md` §2.
 
 ---
 
 ## 4. The bridge contract + direct-read surface
 
 `bridge/bridge-contract.js` is the documentation-and-anti-drift layer. The `ScaleBridge` typedef
-(`:19-58`) lists every method both bridges must implement with matching shape — identity (`isWasm`,
+lists every method live bridges must implement with matching shape — identity (`isWasm`,
 `ready`, `latticeSize`), lifecycle (`reset`), scenarios (`setupScenario`), diagnostics, the particle
 list, the field samplers, and the 2D slice. No class formally `implements` it (JS has no nominal
 interfaces); the parity is by convention + the regression tests.
 
-The load-bearing export is **`SCALE0_DIRECT_READS`** (`:80-110`) — the canonical list of read methods
+The load-bearing export is **`SCALE0_DIRECT_READS`** — the canonical list of read methods
 consumers call **directly** on the bridge object (not via `capabilities.scale0.*`). Under the worker
-proxy the bridge is a `MockBridgeProxy`; it must forward every one of these to its shadow, or the
-consumer silently blanks. The list is the single source of truth, consumed by both
-`mock-bridge-proxy.js` (installs one shadow-delegating forwarder per name) and the worker spec. This
-is the **reference example of a contract done right** — one named export wired into both the
-implementation and its regression test, so adding a sampler to one place can't silently break charts.
-(History: `inspectVoxel` was patched in one-at-a-time in `68024ba1` before this list existed.) Full
-treatment: `audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`.
+proxy the bridge is a `WasmBridgeProxy`; it must serve every one of these from the SAB heap view
+and/or the last `frame` payload, or the consumer silently blanks. The list is the single source of
+truth, consumed by the proxy and the worker specs. Full treatment:
+`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md` (historical MockBridgeProxy wording in that audit is
+superseded by this SPEC for the live path).
 
 ---
 
-## 5. The worker-proxy architecture (SAB shadow)
+## 5. The worker-proxy architecture (SAB flux)
 
-The worker path decouples the heavy tick from the render loop while keeping reads cheap.
+The worker path decouples the heavy tick from the render loop while keeping flux reads cheap.
 
-**Shared memory** — `bridge/shared-field.js` is the single source of truth for the layout: one
-`SharedArrayBuffer` per buffer (`fluxJ`/`fluxWV` Float64×3, `fluxMag` Float64, `state` Int8;
-`FIELD_BYTES` `:10-15`) plus a small **Int32 control SAB** (`CTRL = {FRAME, N, TICK, RUNNING, PCOUNT,
-LEN:8}` `:19`) carrying the frame counter and a few live integers via `Atomics`. `allocSharedField(N)`
-allocates the set; `viewSharedField(sab)` builds typed-array views — **used identically on the worker
-side and the main-thread shadow** (both see the same memory). Float64 scalars (energies) ride the
-small per-frame `postMessage`, not shared memory. The module requires cross-origin isolation
-(COOP/COEP via `serve.py`); callers gate on `crossOriginIsolated`.
+**Shared memory** — the threaded WASM heap is a `SharedArrayBuffer`. The worker keeps
+`getFluxVolume` caches fresh in shared memory each tick; the main-thread proxy returns a
+zero-copy view. Small scalars (energies, diagnostics, particle frames) ride `postMessage`, not
+shared memory. Requires cross-origin isolation (COOP/COEP via `serve.py`).
 
-**Main thread (`MockBridgeProxy`):**
-- `setupScenario(name)` posts a `create` message (N, scenarioId, toggles, boundary) and flips
-  `_ready=false`; mutators (`injectFlux`, `setToggle`, …) post `command` messages via `_cmd`.
-- A **shadow `MockBridge`** has its flux/state buffers **repointed** to the worker's SABs, with
-  `_sparseTick=false` (it never ticks on the main thread). Direct reads (`getFluxVolume`,
-  `getFluxSlice`, `inspectVoxel`, the `SCALE0_DIRECT_READS` set) delegate to the shadow → zero-copy
-  reads straight off the SABs. Before `ready` they return empty/null fallbacks.
-- **Audit + Lagrangian + the particle list** ride the periodic `frame` payload — **not** the shadow.
-  The shadow never ticks, so a shadow sweep of `getEnergyAudit`/`getLagrangian` would read all-zero
-  (the bug fixed by `b319fd90`). Instead the **worker** computes them and posts scalars; the proxy
-  serves the latest (`_lastAudit`/`_lastLagrangian`/`_lastParticleList`, exposed via the
-  `getScale0EnergyAudit`/`getScale0Lagrangian` caps **and** bare `getEnergyAudit()`/`getLagrangian()`
-  forwarders). Under demand-gating (`FTD_TELEMETRY_ONDEMAND`) the worker computes audit +
-  Lagrangian **only when a visible consumer's want-mask is set**, at a cadence decoupled from the tick
-  — see [`SPEC_SCALE0_PERF_TELEMETRY_PANELS.md`](SPEC_SCALE0_PERF_TELEMETRY_PANELS.md) §5.
-  (`getScale0ParticleList` ships every `PLIST_EVERY` frames.)
+**Main thread (`WasmBridgeProxy`):**
+- Construction posts `create` (N, scenarioId, toggles, boundary, pool size) and waits for `ready`.
+- Mutators (`injectFlux`, `setToggle`, `setupScenario`, …) post `command` messages.
+- **No MockBridge shadow** — flux reads come from the WASM heap view; audit / Lagrangian /
+  particle list ride the periodic `frame` payload (`_lastAudit` / `_lastLagrangian` / …).
+- Demand-gating (`_wantSampler` / telemetry want-mask) keeps expensive samplers off unless a
+  visible consumer needs them — see [`SPEC_SCALE0_PERF_TELEMETRY_PANELS.md`](SPEC_SCALE0_PERF_TELEMETRY_PANELS.md).
 
-**Worker (`bridge/mock-bridge.worker.js`):** on `create`, builds a `MockBridge(N)` with `_useSAB=true`,
-applies boundary/reflective/scenario via `applyInit` (`:75-86`), then calls `publishShared(N)`
-(`:28-35`: reads `getSharedField()` for the SAB set, posts `ready` with the SABs), and starts a
-self-ticking `setTimeout` loop (~60 Hz, tick-time-limited at large L).
-**SAB-ensure invariant (health audit §A.1):** `_useSAB` `_initFluxGrid` only runs
-when the scenario actually injects flux, so the former **particle-only / no-flux**
-`flux-annihilation` seed (its kicks all fell below the injection threshold) left `_sharedField` null and
-`publishShared` crashed on `getSharedField().ctrl`. `applyInit` now force-calls `_initFluxGrid()` if
-`getSharedField()` is still null after `setupScenario`, so every scenario mounts on the worker path
-(the state grid is SAB-backed too).
-Each frame it updates `_fluxMag` (the O(N³) magnitude — off the main thread), atomically stores
-`TICK`/`PCOUNT` and increments `FRAME`, and posts a small `frame` payload (`tick`, `diag`, `parts`,
-`audit` + `lag` when the telemetry want-mask is set, and `particleList` every `PLIST_EVERY`).
+**Worker (`bridge/wasm-bridge.worker.js`):** loads `ftd_core_mt`, constructs a `RenderBridge`,
+publishes shared flux views, then self-ticks (~60 Hz, tick-time-limited at large L). Default
+pthread pool is 1 (serial off-thread); `window.__ftdWasmWorkerPool` can raise it (Phase 2).
 
 **Teardown:** `terminate()` decrements the live counter, posts `dispose`, and calls
-`worker.terminate()`; `dispose()` is an alias (idempotent, guarded against the double-call). The
-worker's `dispose` clears its timer and disposes its MockBridge. `setFluxMock` disposes the prior
-proxy before overwriting (`state/store.js:137-148`) — verified by `scale0-worker-teardown.spec.js`.
+`worker.terminate()` — idempotent. Scenario loader `setFluxMock(null, false)` disposes the prior
+proxy before overwrite. Init-failure fallback clears the proxy and reloads on in-thread WASM.
 
 ---
 
-## 6. Bridge selection — boot, scale switches, and Scale-0 flux-mock ownership
+## 6. Bridge selection — boot, scale switches, and Scale-0 worker ownership
 
-**Boot probe order** (`app.js`, ~`:468-523`): `?engine=mock` forces MockBridge; otherwise try
-**native** (`tryNativeBridge` → WebSocketBridge on `ws://127.0.0.1:9100`), then **WASM**
-(`createBridge` → `WasmBridge.init`, falling back to MockBridge on failure), landing on whichever
-succeeds as `ctx.bridge`. The status chip reflects the winner (Native/WASM/Mock · GPU/CPU).
+**Boot probe order** (`app.js` `init`):
+1. Optional native: `?engine=native` or non-live-server port → `tryNativeBridge` (WebSocketBridge).
+2. Else / on native miss → `createBridge` → `WasmBridge.init` (**throws** on failure; no mock fallback).
+3. Status chip reflects Native vs WASM.
 
 **Scale switches** (`app.js` `switchEngineMode`): Scales 0–3 **reuse the single app-level
 `ctx.bridge`**; Scales 4 (planetary) and 5 (cosmic) construct their own bridge inside their
-`loadScenario` and may swap `ctx.bridge` (so callers must re-read `ctx.bridge` each frame — `CONTRACTS.md`
-§3; the inspector is re-pointed at the main bridge on a switch back, audit P1-1).
+`loadScenario` and may swap `ctx.bridge` (so callers must re-read `ctx.bridge` each frame —
+`CONTRACTS.md` §3).
 
-**Scale-0 flux-mock ownership** — the one place Scale 0 may run on a **second** bridge:
-`shouldUseFluxMock(bridge, scenarioName)` (`scales/scale0/runtime/scenario-loader.js:70-78`): native
-GPU/WS → never; `flux-` prefix → always the JS mock; else probe `getFluxVolume()` and use the mock
-**only if** the active bridge can't serve flux. So with a working WASM bridge, **only `flux-*` runs
-on the mock**; everything else (s0-*, light-*, quantum-*) runs on WASM (verified by the all-scenario
-health sweep). `workerEligible(...)` (`:89-94`) additionally requires `FTD_PHYSICS_WORKER &&
-SharedArrayBuffer && crossOriginIsolated`, and `makeFluxMock` (`:95-99`) builds a `MockBridgeProxy`
-(worker) or in-thread `MockBridge` accordingly. When a flux-mock owns the
-scenario, `state.fluxMock` ticks and `ctx.bridge` is idle for Scale 0 (`state.useFluxMock` selects
-which one the runtime ticks/reads — see the runtime SPEC §2). The resize heap-guard estimates the
-**owning** bridge's per-voxel cost (`scenario-loader.js:356-385`): mock ≈150 B/voxel (2 GB JS cap),
-C++ ≈1300 B/voxel (8 GB wasm64 / 2 GB wasm32).
+**Scale-0 worker ownership** — the one place Scale 0 may run on a **second** bridge object:
+`wasmWorkerEligible(...)` in `scales/scale0/runtime/scenario-loader.js` requires
+`FTD_WASM_WORKER` (default on; `window.__ftdWasmWorker = false` forces in-thread),
+`SharedArrayBuffer`, `crossOriginIsolated`, and a primary WASM bridge. When eligible,
+`loadScale0Scenario` constructs a `WasmBridgeProxy`, stores it in the legacy
+`fluxMock` / `useFluxMock` slots, and routes ticks/reads through
+`getActiveScale0Bridge(ctx, state)`. Native/WS primary bridges keep physics on `ctx.bridge`
+(no WASM worker ownership). Resize rebuilds the proxy at the new lattice size.
 
 ---
 
 ## 7. wasm32 vs wasm64 (Memory64)
 
-`WasmBridge` feature-detects Memory64 once per session (`supportsMemory64()`, `:51-62`: construct a
+`WasmBridge` feature-detects Memory64 once per session (`supportsMemory64()`: construct a
 `new WebAssembly.Memory({index:'i64'})` and catch). Supported → load `wasm/ftd_core64.js`
 (`createFTDModule64`, 8 GB heap); unsupported (iOS/Safari, flagged Firefox) → `wasm/ftd_core.js`
-(`createFTDModule`, 2 GB heap). `this.isWasm64` records the choice; exactly one build loads per session
-(the `_wasmLoadPromise` singleton). The build sets `-sMEMORY64=1 -sWASM_BIGINT=1`
-(`engine/wasm/CMakeLists.txt`); all heap reads go through `typed_memory_view` (no manual JS pointer
-arithmetic), so the JS side is memory-model-agnostic (06-03 audit A5). Heap cap feeds the resize
-guard (§6).
+(`createFTDModule`, 2 GB heap). `this.isWasm64` records the choice; exactly one build loads per
+session (the `_wasmLoadPromise` singleton). The worker path uses `ftd_core_mt` (wasm32 + threads) —
+Memory64 and pthreads are not combined in the current deploy. Heap reads go through
+`typed_memory_view` (no manual JS pointer arithmetic). Heap cap feeds the resize guard.
 
 ---
 
 ## 8. Dispose / lifecycle
 
-| Bridge | `reset()` | `dispose()` |
+| Bridge | `reset()` | `dispose()` / teardown |
 |---|---|---|
 | **WebSocketBridge** | reconnect | implicit (socket closes on unload) |
-| **WasmBridge** (`:238-251`) | destroy + re-allocate the C++ RenderBridge at the same N (drops PE/AE first) | `delete()` the C++ RenderBridge + ParticleEngine + AtomEngine, dispose the JS AE fallback, drop the lazy harness, `ready=false` — idempotent |
-| **MockBridge** | clear particles/fields, reset `_tick`, re-init flux buffers | typed arrays GC'd on dereference; engines cleared by the owning controller |
-| **MockBridgeProxy** (`:176-182`) | re-`create` on the worker | `terminate()`: decrement live counter, post `dispose`, `worker.terminate()` — idempotent |
+| **WasmBridge** | destroy + re-allocate the C++ RenderBridge at the same N (drops PE/AE first) | `delete()` the C++ RenderBridge + ParticleEngine + AtomEngine, dispose the JS AE fallback, drop the lazy harness, `ready=false` — idempotent |
+| **WasmBridgeProxy** | re-`create` on the worker | `terminate()`: decrement live counter, post `dispose`, `worker.terminate()` — idempotent |
 
-Scenario switches reset via `setupScenario`→`reset` inside the dispatcher; scale switches dispose
-panels + the flux-mock via the lifecycle controller (`scales/scale0/controller.js` `mount`/`destroy`).
+Scenario switches reset via `setupScenario` inside the dispatcher; scale switches dispose
+panels + the worker proxy via the lifecycle controller (`scales/scale0/controller.js` `mount`/`destroy`).
 Lifecycle validity (no leaked rAF subscribers / GPU memory / workers across switches)
-is verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/71) and
-`scale0-worker-teardown.spec.js`.
+is verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` and
+worker teardown specs.
 
 ---
 
@@ -267,14 +238,13 @@ is verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/7
 | Concern | File |
 |---|---|
 | Native GPU bridge | `ws-bridge.js` |
-| WASM bridge | `bridge/wasm-bridge.js` |
-| JS reference bridge | `bridge/mock-bridge.js` (+ `bridge/mock-diagnostics.js`) |
-| Worker proxy | `bridge/mock-bridge-proxy.js` + `bridge/mock-bridge.worker.js` + `bridge/shared-field.js` |
+| WASM bridge (in-thread) | `bridge/wasm-bridge.js` |
+| WASM worker proxy | `bridge/wasm-bridge-proxy.js` + `bridge/wasm-bridge.worker.js` |
 | Capability factory | `bridge/capabilities/install.js` + `scale0.js`/`scale1.js`/`scale2.js` |
 | Contract + direct-reads | `bridge/bridge-contract.js` |
-| Construction / re-export shim | `bridge-init.js` |
-| Selection / boot probe | `app.js` (native → WASM → mock); flux-mock: `scales/scale0/runtime/scenario-loader.js:121-150` |
+| Construction / re-export shim | `bridge-init.js` → `bridge/bridge-factory.js` |
+| Selection / boot probe | `app.js` (native → WASM); worker ownership: `scales/scale0/runtime/scenario-loader.js` |
+| JS scenario parity mirror | `bridge/scenarios/` (not the live seed path) |
+| Scale-2 JS MD fallback | `bridge/mock-atom-engine.js` |
 
-*`file:line` references reflect the source at writing; re-derive before relying on them. The
-capability-getter and SAB layout (§3, §5) were verified verbatim; the rest is mapped from source with
-file:line and should be re-confirmed for exact line numbers.*
+*`file:line` references reflect the source at writing; re-derive before relying on them.*

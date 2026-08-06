@@ -1,0 +1,309 @@
+# ANALYSIS — Maxwell-criterion screen for a native `n = 4` mechanism (C3)
+
+**Status:** `[CLOSED NEGATIVE — SCOPED]` + `[ENGINE FACT — MEASURED]` +
+`[CORRECTION — THE SC SHEAR QUARTIC IS AFFINE, NOT RELAXED]`
+**Verdict:** `NO_NATIVE_N4_IN_THE_SCREENED_SET`
+**Protocol:** `../preregistrations/PREREG_MAXWELL_C3_SCREEN_v1.md`, locked at
+commit `38292bf1` **before the runner existed**. Executed 2026-08-04.
+**Runners:** `scripts/experiments/maxwell_c3_screen.py`,
+`scripts/experiments/verify_sc_shear_quartic.py`
+**Production impact:** none.
+
+## 1 · Outcome
+
+`NO_NATIVE_N4`. No configuration in the screened set satisfies FTD-0789's
+criterion. Every candidate with a nontrivial null space classifies `n = ∞`.
+
+**The registered expectation was wrong in the optimistic direction.** The
+prereg registered `N4_SEMIDEFINITE` as the expected Tier-C outcome (quartic on
+some null directions, flat on others). The measured result is *fully* flat —
+plain `n = ∞`. Recorded because the prereg required it.
+
+## 2 · Controls (Tier A) — and the bug they caught
+
+| control | result | expected | |
+|---|---|---|---|
+| collinear trimer `(+1,−1,+1)` | `n = ∞`, `3N−B = 9−2 = 7`, 5 trivial (collinear, detected via the inertia tensor), 2 nontrivial, both exactly flat | `n = ∞`, 7 | **PASS** |
+| 2×2×2 checkerboard, `N=8` | `B=12`, Maxwell 12, 6 nontrivial, all flat | reference | **PASS** |
+
+The screen reproduces FTD-0789 independently. Along a trimer bend:
+
+| `t` | straight-line path | relaxed path |
+|---|---|---|
+| 0.005 | 3.375e-10 | **0** |
+| 0.01 | 5.399e-09 | **0** |
+| 0.05 | 3.358e-06 | **0** |
+| 0.1 | 5.292e-05 | **0** |
+
+Straight-path ratios are `t⁴` to three figures. **That is FTD-0787's quartic
+and FTD-0789's refutation of it, re-derived by an independent implementation.**
+
+**The controls did their job by failing first.** The initial run walked null
+directions out to amplitude 1.0, where the trimer dissociates
+(`dE = +0.02 = 2ε`, both bonds broken), and the classifier scored dissociation
+as curvature — **reporting the trimer as an `n = 4` candidate**, precisely the
+error the screen exists to prevent. Fixed by tracking the bond set along the
+walk and discarding amplitudes where it changes. Recorded per prereg §7.3
+rather than silently patched.
+
+## 3 · Tier C — the SC binding network
+
+| block | `N` | `B` | `3N−B` | trivial | `dim N₀` | all flat? | verdict |
+|---|---|---|---|---|---|---|---|
+| L=2 | 8 | 12 | 12 | 6 | 6 | yes | `n = ∞` |
+| L=3 | 27 | 54 | 27 | 6 | 21 | yes | `n = ∞` |
+| L=4 | 64 | **144** | **48** | 6 | 42 | yes | `n = ∞` |
+
+L=4 reproduces the repo's registered numbers exactly — **rank-144 central-bond
+Hessian with 48 zero modes**, matching "all 48 axial row slides are tangent to
+them and form the null space of the rank-144 central-bond Hessian."
+
+**The preregistered decisive question is answered: the row slides are exactly
+flat, to machine zero, at every block size.** They are finite mechanisms.
+
+## 4 · Correction — the `12 ε N γ⁴` shear quartic is affine, not relaxed
+
+The repo records the SC network as *"cohesive but not yet solid: dilation costs
+`144 ε N η²`, whereas simple shear costs only `12 ε N γ⁴`, giving zero harmonic
+shear modulus."* A positive quartic on a first-order-flat direction is the
+`n = 4` signature, so this was the strongest single lead for C3.
+
+Measured under three protocols, all holding the net shear exactly (verified —
+the surviving shear fraction is `1.0000` in every case, so none of this is a
+snap-back artifact):
+
+| γ (L=4) | affine | pinned boundaries | **free body (projected)** |
+|---|---|---|---|
+| 0.01 | 5.759e-8 | 5.759e-8 | **5.8e-15** |
+| 0.05 | 3.588e-5 | 3.588e-5 | **2.0e-15** |
+| 0.1 | 5.683e-4 | 5.683e-4 | **2.0e-15** |
+
+**The quartic scaling is confirmed** — `dE/γ⁴` is constant at 2.1597 (L=3) and
+5.7592 (L=4) over `γ ∈ [0.01, 0.05]`.
+
+**The coefficient is `12 ε L²(L−1)`, not `12 ε N`:** `12(0.01)(9)(2) = 2.16`
+and `12(0.01)(16)(3) = 5.76`, matching to five figures. Since
+`L²(L−1) = N(L−1)/L`, the registered `12 ε N` is the correct **bulk asymptote**
+and carries a `(L−1)/L` surface factor at finite `L`. The count is just the
+number of bonds along the shear-gradient axis. **No error in the registered
+formula as a bulk statement.**
+
+**But the relaxed cost is exactly zero.** The affine and pinned protocols agree
+because pinning the extreme `y`-planes *forbids the row-slide mechanism* —
+rows cannot slide when their ends are clamped. Release them and the block
+reaches the identical net shear by **sliding whole rows, at machine-zero cost**.
+
+So `12 ε N γ⁴` is the **Cauchy–Born / affine** shear cost. It is the energy of a
+deformation path that forbids the mechanism the network actually uses. **The
+free network has no shear stiffness at any order, not merely at harmonic
+order.** This is the FTD-0787 error class — a chord across a flat valley —
+arising here from an affine ansatz rather than a hand-chosen path.
+
+**Consequence for the framing:** "cohesive but not yet solid" understates it.
+In the shear channel the SC binding network is not a soft solid, it is a
+**fluid to all orders**. The `γ⁴` is real only for a *clamped* block; C3 needs
+a free body, where it is absent.
+
+## 5 · Tier B
+
+38 bound equilibria over `N = 3..6`, polarities `{−1, 0, +1}`, 24 seeds per
+decoration, retained when connected (`B ≥ N−1`) and stationary
+(`|∇E| < 1e-9`). **All 38 classify `n = ∞`.** No `n = 4`, and no intermediate
+exponent.
+
+Note the neutral state was included, as the prereg required: the mask returns
+`1/2` whenever either site is `s = 0`, so `(+1,−1,0)` triples have all three
+pairs bonded, unlike FTD-0787's `(+1,−1,+1)`. **Breaking the bipartite
+structure did not produce second-order rigidity.**
+
+## 6 · What this does and does not establish
+
+**Does:** every configuration screened — the two registered ones, 38 small
+clusters including neutral-decorated ones, and SC blocks to `L=4` — sits at
+`n = 2` or `n = ∞`. **FTD-0783's bracket theorem stands, and its strongest
+apparent counterexample is removed.** C3 remains unrealized.
+
+**Does not:** this is a *screen*, not a no-go theorem. `N ≤ 6` in Tier B,
+`L ≤ 4` in Tier C, zero tension, central forces only. A no-go would require
+proving that no central-force network under this law can be first-order
+flexible and second-order rigid — which is a real and now well-posed
+mathematical question, and is *not* answered here.
+
+## 7 · The positive control the prereg omitted — and the obstruction it found
+
+Tier A carries only **negative** controls (a known `n = ∞` and a known `n = 2`).
+A screen structurally blind to `n = 4` would pass both and return
+`NO_NATIVE_N4` for the wrong reason. That hole is now closed
+(`verify_n4_positive_control.py`).
+
+Textbook first-order-flexible / second-order-rigid framework: **three collinear
+points with all three bars**, natural lengths `1, 1, 2`, zero tension. Moving
+the middle point perpendicular preserves every bond to first order; at second
+order the two short bars must lengthen by `~d²/2` while the long bar is fixed,
+and the triangle inequality blocks the motion.
+
+| `t` | straight | **relaxed** | fitted exponent |
+|---|---|---|---|
+| 0.02 | 9.00e-8 | 6.00e-8 | **3.9999** |
+| 0.05 | 3.51e-6 | 2.34e-6 | **3.9994** |
+| 0.1 | 5.58e-5 | 3.74e-5 | **3.9973** |
+
+Clean `t⁴`, positive coefficient, **surviving relaxation** at a ratio of `2/3`.
+That ratio is itself the discriminator this whole screen turns on: **a genuine
+quartic relaxes to a finite fraction of its straight-line value; a chord
+relaxes to zero.** The screen detects `n = 4` when present, so `NO_NATIVE_N4`
+is a real negative.
+
+**A conjecture drafted for this section was refuted by that control and is
+recorded rather than deleted.** It read: *second-order rigidity needs a
+self-stress, a zero-tension central-force network at its bond minimum has none,
+so C3 is unreachable in this class as a matter of structure.* **False** — the
+control above is zero-tension, central-force, at its bond minimum, and is
+second-order rigid. Standard rigidity theory agrees: along an infinitesimal
+flex that does not extend, `δ_ij = ½|P⊥Δu|²/L`, so `E = Σ½k δ² = O(u⁴) > 0`
+generically. `n = 4` is *generically available* in this class.
+
+**So the obstruction is not the class — it is the support radius.** The
+blocking bond must span the flexing unit. For a collinear triple with sub-bonds
+at their minimum `r = 1`, the closing bond is at `r = 2`. The registered compact
+law has support `r < √(3/2) ≈ 1.2247`. **2 > 1.2247, so the mechanism is
+excluded by compact support, not by central-force character.** Equivalently:
+closing a two-bond flex needs a support-to-minimum ratio `≥ 2`, and this law's
+ratio is `1.2247`.
+
+## 7.5 · Exploratory `N = 6` graph-class screen — and the false alarm it corrected
+
+**Added and corrected 2026-08-04.** §5's Tier B was a *sample*: 38 equilibria
+relaxed from random starts. The follow-up here is also a numerical screen, not
+an exhaustive realization-space classification. It exactly enumerates a set
+of graph isomorphism classes, then samples their unit-distance embeddings.
+It records a false positive that nearly entered the ledger and a useful scoped
+no-hit; it does **not** close `N ≤ 6`.
+
+**The false alarm.** A first enumeration of unit-distance frameworks reported
+**701** labeled `N = 6` graphs satisfying Connelly's necessary condition
+(self-stress *and* flex), collapsing to 5 distinct `(B, rank, flex, stress)`
+signatures — including one at `flex = stress = 1`, the exact balance point §7
+identifies as the target. That looked like the first real `n = 4` candidate set
+of the entire programme.
+
+**The saved representatives were artifacts.** The embedder carried no
+minimum-separation constraint, so the five retained signature representatives
+had **coincident or near-coincident vertices** — four had non-bond
+`q = 0.000`, and one had pairs at `q = 0.005`. The polarity check passed them
+because same-polarity pairs carry `mask = 0` at *any* separation, including
+zero. The mechanism is immediate once seen: **if two vertices coincide and
+both bond to a third, their bond vectors are identical, the rigidity matrix
+loses rank, and a self-stress appears for free.** This invalidates the five
+saved representatives and the inference drawn from the reported 701 labeled
+hits. It does not prove, record by record, that all 701 had the same defect;
+that population was not preserved as an auditable artifact.
+
+**The scoped follow-up.** A post-hoc follow-up imposed a chosen separation
+floor (`d_min = 0.5`, half a bond length) and deduplicated graphs by canonical
+form under `S_6`. The graph count is exact: 12,068 labeled edge sets with
+minimum degree ≥ 2 collapse to **62 graph isomorphism classes**. The embedding
+stage is not exact: it used 40 random least-squares starts per graph and kept
+at most one embedding. Unit-distance graphs can have multiple realization
+components and rank-changing special strata, so graph isomorphism does not
+classify frameworks.
+
+| | count |
+|---|---|
+| non-isomorphic classes (`N=6`, min degree ≥ 2) | **62** |
+| classes with one sampled embedding clearing `d_min = 0.5` | **51** |
+| sampled embeddings with self-stress AND flex | **0** |
+| classes with no accepted embedding after 40 starts | **11 — unresolved** |
+| FTD-realizable | 0 |
+| sampled `n = 4` hits | **0** |
+
+**Supported conclusion — `[EXPLORATORY NUMERICAL SCREEN]`:** among the 51
+accepted sampled embeddings, none had both a self-stress and a flex, so none
+reached the necessary gate for `n = 4`. The other 11 graph classes, all other
+realization components and special rank strata, and the dependence on the
+chosen separation floor remain unresolved. No universal `N = 6` or `N ≤ 6`
+no-go follows.
+
+This is consistent with §1's scoped `NO_NATIVE_N4_IN_THE_SCREENED_SET`; it
+does not strengthen that verdict into a theorem or change its tag. The useful
+result is methodological: raw separation distances exposed a degenerate-
+embedding false alarm before it could be promoted.
+
+**Claim-grade successor.** Lock the admissibility rule and artifacts first.
+For each graph, certify the full semialgebraic unit-distance realization space
+or mark it unresolved, including separation/support margins and rigidity-rank
+strata. If a stress-plus-flex stratum survives, certify the reduced quartic on
+the whole nontrivial null space — strict positivity on its unit sphere, or an
+explicit zero/negative direction — with exact or interval methods. A positive
+result needs one certified framework and a whole-null-space certificate; a
+negative result needs universal realization-space coverage. Another random
+embedding sweep cannot supply either verdict.
+
+## 8 · The stella octangula — the obstruction made exact
+
+The 2×2×2 checkerboard block of §3 **is** the stella octangula: its 8 vertices
+are the cube corners, its two interpenetrating regular tetrahedra are exactly
+the two parity classes, and FTD's `±` polarity assignment is precisely that
+parity split. Naming it this way exposes the mechanism.
+
+With cube edge 1:
+
+| pair type | count | distance | polarity | bonded |
+|---|---|---|---|---|
+| cube edges (A↔B) | 12 | **1.000** | opposite | ✅ |
+| **tetra edges** (A↔A, B↔B) | 12 | **1.414** | *same* | ❌ mask `= 0` **and** beyond support |
+| body diagonals | 4 | 1.732 | opposite | ❌ beyond support |
+
+**The compound's rigidity is carried entirely by the tetrahedral edges** — each
+tetrahedron is rigid because of its own six. Those are doubly excluded: same
+polarity (mask 0) *and* at `√2 = 1.414 >` support `1.2247`. What survives is
+the cube graph `Q₃`, which is floppy.
+
+Three arms, computed (`stella_octangula_c3.py`):
+
+| arm | `B` | rank | **stress** | flex | verdict |
+|---|---|---|---|---|---|
+| cube edges only — **what FTD has** | 12 | 12 | **0** | 6 | `n = ∞` |
+| cube + all 12 tetra braces | 24 | 18 | 6 | 0 | `n = 2` (rigid) |
+| cube + partial braces | — | — | >0 | >0 | **15 configurations** |
+
+**The first row is a proof, not a measurement.** `stress = 0` exactly: the 12
+cube-edge vectors are independent. By Connelly, second-order rigidity *requires*
+a self-stress, so with none, **every flex extends and `n = ∞` follows
+necessarily.** This upgrades §3's numerical finding (6 flat modes) to a
+structural certainty for the whole checkerboard family.
+
+**And the counterfactual locates exactly what is missing.** Adding tetrahedral
+braces moves the compound into the `n = 4`-eligible region — 15 partial
+bracings have both `stress > 0` and `flex > 0`, including `k = 6` cases with
+`stress = flex = 2`, the balanced knife-edge §7 identifies as the target. Full
+bracing overshoots to rigid. **But every brace is a same-polarity pair at `√2`,
+which the mask zeroes and support excludes. FTD cannot have a single one.**
+
+### The obstruction, stated exactly
+
+**The stella octangula is intrinsically a two-length-scale object (1 and `√2`);
+the registered compact law is single-scale — one minimum, at `r = 1`.** At an
+unstressed equilibrium every bond must sit at that one length, so the bond
+vectors of any FTD configuration are all the *same* length, and the second
+scale that would close the flex is unreachable.
+
+This is the same obstruction as §7's support-to-minimum ratio, seen from the
+other side. §7: closing a two-bond flex needs ratio `≥ 2`; the law has
+`1.2247`. §8: closing it needs bonds at two different lengths; the law has one.
+**Both say `n = 4` requires a two-scale interaction, and the compact law is
+single-scale by construction.**
+
+That is constructive rather than merely negative: it names what an admissible
+successor law must have — a second minimum, or a second interaction range — and
+it predicts C3 stays unrealized under *any* single-minimum central potential,
+not just this one.
+
+**That is the sharpest statement this screen supports, and it is falsifiable.**
+It predicts `n = 4` becomes available if the support-to-minimum ratio reaches
+2 — reachable by a longer-range law, or by a configuration whose closing bond
+is geometrically shorter than twice the sub-bond. Whether *any* flex-closing
+geometry fits inside ratio `1.2247` is **`[OPEN]`**: the `N ≤ 6` search found
+none, which is suggestive and not a proof. **That question — not another
+construction — is the successor, and it would convert this screen into the
+no-go it currently is not.**

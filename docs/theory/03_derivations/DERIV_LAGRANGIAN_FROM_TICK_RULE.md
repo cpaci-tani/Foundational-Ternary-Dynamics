@@ -16,7 +16,21 @@ The critical first step—which this document addresses—is extracting the Eucl
 ## 2. The Engine's Tick Rule
 
 From `engine/src/lagrangian.cpp` and `ontic.h`, the explicit discrete time-evolution for the flux field $J$ at site $i$ and discrete time $t$ is:
-$$ \Delta J_{i, t} = J_{i, t+1} - J_{i, t} = c^2 \nabla^2 J_{i, t} + g_c \nabla s_{i, t} + g_c \nabla \times (s_{i, t} v_{i, t}) $$
+$$ \Delta J_{i, t} = J_{i, t+1} - J_{i, t} = c^2 \nabla^2 J_{i, t} - g_c \nabla s_{i, t} + g_c \nabla \times (s_{i, t} v_{i, t}) $$
+
+> **⚠ Term 2 sign amendment (2026-07-18) — partial propagation, §3–§4 FLAGGED.**
+> The electric source above previously read $+g_c\nabla s$; production is
+> $-g_c\nabla s$ (`phase_read.cpp:208-213`, `lagrangian.h:52-68`,
+> `SPEC_FTD_LAGRANGIAN.md` §3.3). **Only this tick-rule transcription has been
+> corrected (2026-08-04).** The Lagrangian density in §3 and the Euclidean action
+> in §4/§5 below still carry the pre-amendment $-g_c\,s\,(\nabla\cdot J)$
+> convention and are therefore no longer consistent with this line. Propagating
+> the flip through the Wick rotation — and through the downstream users of
+> $S_E$ (`DERIV_PARTITION_FUNCTION_L2.md`, `OPEN_GC_FROM_FIRST_PRINCIPLES.md`,
+> LEDGER FTD-0246) — is a **re-derivation, not a transcription fix**, and is left
+> [OPEN]. The §5 conclusion ($g_c$ is unconstrained by time-discretization) is
+> independent of the sign and stands either way.
+
 where:
 - $c = C_{\text{SPEED}} = 1/\sqrt{3}$ is the lattice wave speed.
 - $g_c$ is the bare Gauss coupling (currently empirically set to $\sqrt{2\pi \alpha}$).

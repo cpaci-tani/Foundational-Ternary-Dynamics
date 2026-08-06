@@ -588,6 +588,9 @@ export function setupS0SeedScenario(name, harness, ctx) {
                         const g = K_B * 0.3 * Math.exp(-r22/(2*nuSig*nuSig));
                         if (g < 1e-3) continue;
                         harness.injectFlux(mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
+                        // Mirror C++ IW seed: dual-substrate leapfrog needs a
+                        // matching wave_vel packet or the stress probe is mute.
+                        harness.injectWaveVel(mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
                     }
                     break;
                 }
@@ -848,6 +851,9 @@ export function setupS0SeedScenario(name, harness, ctx) {
                             }
                     break;
                 }
+
+                default:
+                    return false;
             }
             return true;
 }

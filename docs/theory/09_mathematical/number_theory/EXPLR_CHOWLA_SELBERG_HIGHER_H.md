@@ -97,6 +97,28 @@ proof.
 
 ## 3. The h ≥ 2 generalization
 
+> **⚠ ANSWERED 2026-08-04 (FTD-0321) — negatively.** The scan this section
+> called for has been run, per `PREREG_DAMERELL_SCAN_v1.md`. Note first a
+> correction to §3's own framing: the formula displayed below fixes only the
+> **product** over ideal classes, so Γ-products *cannot* supply the per-class
+> period vector this section asks for. The periods were taken from `η` at each
+> class's CM point instead, with Chowla–Selberg retained as an independent gate
+> (passing at h ≥ 2 to `8.1e-50`).
+>
+> **Result:** `d = −4` is the unique dual-matcher across all 270 fundamental
+> h ≥ 2 fields with |d| ≤ 907 — and then **fails at |d| = 7,895**, reaching
+> **1,271 fundamental dual-matchers across 696 discriminants** by |d| ≤ 500,000.
+> The criterion has no discriminating power at scale: a random target is matched
+> by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803 establishes that `G*` sits
+> at a **saddle** of an SL₂(ℤ)-invariant (the order-2 elliptic point `τ = i`),
+> giving a logarithmic density divergence. ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated.
+>
+> The §4 "structural argument for non-match at h ≥ 2" is therefore **moot**:
+> there is no non-match to explain. OT-1.9's Tier-1 *arithmetic*
+> (`|μ_K| = |disc(K)|`) is untouched. See
+> `ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md`.
+
+
 For class number h(K) ≥ 2, the curve $E_K$ no longer has a single
 period; it has a period lattice with $h$ inequivalent generators.
 The Chowla–Selberg formula generalizes to:
@@ -176,7 +198,7 @@ searched 2.87M polynomials in the EXTENDED Gaussian-integer-tower
 family + Eisenstein-integer-tower family.
 
 **Result**: 0 dual-matchers in Eisenstein family. 1 dual-matcher in
-extended Gaussian family (the master quadratic itself). *(Note: "dual-matcher" here refers to the historical target pair `(1/α, N_c)` used by the scan; the `x_-  N_c` identification is **retired** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact about the master quadratic is **independent of the target identification** and stands.)*
+extended Gaussian family (the master quadratic itself). ⚠ **CORRECTED 2026-08-04 (FTD-0802): the EXT-B cubic arm contributes 4 further dual-matchers that were excluded by a hardcoded literal, never by a test — the true total is 5 distinct matchers, 4 beyond the master quadratic. The scan also failed its base-rate control (`N_null = 0.0014`, Outcome B).** *(Note: "dual-matcher" here refers to the historical target pair `(1/α, N_c)` used by the scan; the `x_-  N_c` identification is **retired** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact about the master quadratic is **independent of the target identification** and stands.)*
 
 **Interpretation**: this is INDIRECT evidence for the d = −4 structural
 privilege. Eisenstein integers Z[ω] (CM ring of curves with j = 0,
@@ -205,8 +227,8 @@ strengthening T2.1+T2.2.
 |---|---|---|
 | Chowla–Selberg formula at h = 1 | classical [THEOREM] | done (FTD-0002) |
 | Damerell formula at h = 2, 3, ... | classical [THEOREM] | literature, 1-2 days |
-| Numerical scan of master-quadratic analogue at h ≥ 2 | [OPEN] | 1-2 weeks |
-| Structural theorem of d = −4 uniqueness across all CM curves | [OPEN] | 2-6 weeks |
+| Numerical scan of master-quadratic analogue at h ≥ 2 | ~~[OPEN]~~ **DONE 2026-08-04, FTD-0321 — and it came back NEGATIVE** | ran in one session |
+| Structural theorem of d = −4 uniqueness across all CM curves | ~~[OPEN]~~ **MOOT — there is nothing to prove: uniqueness is FALSE beyond |d| = 7,894** | n/a |
 
 ---
 

@@ -193,6 +193,9 @@ export function setupQuantumScenario(name, harness, ctx) {
                     }
                     break;
                 }
+
+                default:
+                    return false;
             }
             return true;
 }

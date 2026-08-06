@@ -1,266 +1,74 @@
 /**
  * Scale 0 — Live Multi-Field Flux Slice Panel
  *
- * Mirrors the visualization panel's enabled fields (FIELDS column +
- * |J|), rendering each enabled field as a row of three 2D heatmaps at
- * the lattice mid-planes (xy @ z=L/2, xz @ y=L/2, yz @ x=L/2). The
- * panel's per-row mirror chip lets the user manually override the
- * visualization-panel state per-field — handy for inspecting a field
- * without lighting up the 3D viewport's volumetric overlay.
+ * Every field defaults to VISIBLE, rendering each as a row of three 2D
+ * heatmaps at the lattice mid-planes (xy @ z=L/2, xz @ y=L/2, yz @
+ * x=L/2) — independent of the 3D visualization panel's own toggle
+ * state. The panel's per-row chip lets the user manually force a row
+ * off (or back to mirroring the 3D panel's toggle) if they want to
+ * declutter or inspect a field without lighting up the 3D viewport's
+ * volumetric overlay.
  *
- * Supported fields (FIELD_DRIVERS):
- *   |J|     bridge.getFluxSlice(axis, mid)        scalar density
- *   |E|     bridge.getEFieldSampled(1)            vector → magnitude
- *   |B|     bridge.getBFieldSampled(1)            vector → magnitude
- *   |S|     bridge.getPoyntingSampled(1)          vector → magnitude
- *   ∇·J    bridge.getDivJSampled(1)              signed scalar
+ * Supported fields (FIELD_DRIVERS, 27 rows):
+ *   - 1 flagship dense volume slice: |J| via bridge.getFluxSlice(axis, mid).
+ *   - 14 raw sampler-kind rows (one per SCALE0_SAMPLER_METHODS entry,
+ *     bridge-contract.js): |E|, |B|, |S|, ∇·J, |J| (sparse), |ω|,
+ *     helicity, kretschmann, latency, fisher, coherence, |∇×J|, s
+ *     (ternary state), Gauss residual r.
+ *   - 3 force-field rows: EM, gravity, strong (bridge.get{EM,Gravity,
+ *     Strong}ForceField), color-matched to the 3D Forces column palette.
+ *   - 9 derived Tier-1 overlay rows, each reusing the exact exported
+ *     compute*Frame function from runtime/overlay-frames.js verbatim
+ *     (no reimplemented formulas): |ψ|², phase φ, ℒ(x), entropy density,
+ *     Φ potential, EM energy u, P_E, P_B, event horizon.
  *
- * Mirror semantics:
+ * All raw-kind + derived rows are fed by ONE shared per-frame sample
+ * cache (_buildFrameSampleCache), populated only with the kinds/types
+ * that currently-visible rows actually need — see that method's doc
+ * comment. Derived rows read the shared cache plus a panel-owned,
+ * per-driver scratch object (this._scratch[key]) that is NEVER the real
+ * Scale-0 controller state.
+ *
+ * Visibility semantics:
  *   - Each row's visibility = (override === 'on') ? true
  *                           : (override === 'off') ? false
  *                           : !!mirroredFlags[vizFlagKey]
- *   - "Reset mirror" header link clears all overrides.
- *   - Scenario change (simTick decreasing) auto-clears all overrides
- *     and resets per-field rolling autoscale.
+ *   - Every field defaults to override='on' (always visible) regardless
+ *     of vizFlagKey or the 3D panel's toggle state. Clicking a row's chip
+ *     cycles on -> off -> mirror -> on, so a user who wants the old
+ *     "follow the 3D panel" behavior for one field can still opt into it
+ *     per-row; nothing defaults to mirror/hidden anymore.
+ *   - "Show all" header link forces every override back to 'on'.
+ *   - Scenario change (simTick decreasing) also resets every override to
+ *     'on' and resets per-field rolling autoscale, so a new scenario
+ *     always opens with everything visible.
  *
- * Performance: 5 fields × 3 axes = 15 tiles. At L=32 each frame samples
- * up to 4 stride=1 sparse fields plus the |J| volume scan, then paints
- * 15 × 1024 cells × 4 RGBA bytes. Throttled to every Nth render frame
- * via `updateEvery` (default 2). Hidden rows skip sampling AND paint.
+ * Performance: 27 fields × 3 axes = 81 tiles, all visible and sampled/
+ * painted every throttled frame by default (see `updateEvery`, default 2)
+ * — rows that share an underlying quantity (e.g. eField feeding |E|,
+ * emEnergy, ePressure, and ℒ(x) simultaneously) still fetch it once per
+ * frame via the shared sample cache, not once per row, and a user can
+ * force any individual row off via its chip if the full set is more than
+ * they want rendered at once.
  */
 
-import {
-    rampViridis,
-    rampEmEnergy,
-    rampVorticity,
-    rampCharge,
-} from '../../../../viewport/color-ramps.js';
+import { rampViridis } from '../../../../viewport/color-ramps.js';
 import { getFieldStateSnapshot, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import {
+    DEFAULT_CANVAS_PX,
+    DENSE_CANVAS_PX,
+    FLOOR_FRAC,
+    DENSE_THRESHOLD,
+    SLOT_TO_KIND,
+    STRIDE_ONE_SLOTS,
+    FIELD_DRIVERS,
+    DRIVER_BY_KEY,
+    DEFAULT_FIELD_OVERRIDE,
+    axisIndex,
+} from './flux-slice-helpers.js';
 
-const DEFAULT_CANVAS_PX = 220;
-const DENSE_CANVAS_PX = 160; // shrink when >2 active rows are visible
-const FLOOR_FRAC = 1e-6;
-const DENSE_THRESHOLD = 2;
-
-// ── Per-field driver registry ───────────────────────────────────────
-//
-// One entry per supported field. The slice panel iterates this list,
-// renders one row per active driver, and dispatches to the driver's
-// sample/ramp pair to paint each tile.
-//
-// `vizFlagKey` matches the keys in store.js::fieldFlags
-// (FIELD_TOGGLE_KEYS, lines 3–42 of state/store.js).
-//
-// `sample(bridge, axis, mid, N)` MUST return a Float64Array(N*N)
-// scoped to a single plane. Implementations live below.
-//
-// `signed` controls the autoscale + ramp input: false → t = v / vmax in
-// [0, 1]; true → t = clamp(v / vmax, -1, +1) for diverging ramps.
-//
-// `ramp` is one of the named ramps from viewport/color-ramps.js.
-const FIELD_DRIVERS = [
-    {
-        key: 'fluxJ',
-        label: '|J|',
-        vizFlagKey: 'showFluxLines',
-        signed: false,
-        ramp: rampViridis,
-        // Per-frame source: returns whatever the driver needs to slice;
-        // for fluxJ the source is unused because getFluxSlice slices directly.
-        source: (/* bridge */) => null,
-        sample: (bridge, axis, mid, N /*, source */) => {
-            // getFluxSlice reuses an internal _sliceBuf. The
-            // transpose+Y-flip combo rewrites the bridge's layout into
-            // the panel's (col=first-named-axis, +second-named-axis up)
-            // convention in a single pass, snapshotting in the process
-            // so the next bridge call can clobber _sliceBuf safely.
-            const s = bridge.getFluxSlice?.(axis, mid);
-            if (!s || s.length !== N * N) return s ? s.slice() : null;
-            return transposeAndFlipNN(s, N);
-        },
-    },
-    {
-        key: 'eField',
-        label: '|E|',
-        vizFlagKey: 'showEField',
-        signed: false,
-        ramp: rampEmEnergy,
-        // Pull the sparse sample ONCE per frame (cached in `source`); the
-        // sample() callback then filters it per-axis at zero extra bridge
-        // cost. Saves ~2× per (field, axis) pair vs calling per-axis.
-        source: (bridge) => bridge.getEFieldSampled?.(1),
-        sample: (bridge, axis, mid, N, source) =>
-            sliceVectorMag(source, axis, mid, N),
-    },
-    {
-        key: 'bField',
-        label: '|B|',
-        vizFlagKey: 'showBField',
-        signed: false,
-        ramp: rampVorticity,
-        source: (bridge) => bridge.getBFieldSampled?.(1),
-        sample: (bridge, axis, mid, N, source) =>
-            sliceVectorMag(source, axis, mid, N),
-    },
-    {
-        key: 'poynting',
-        label: '|S|',
-        vizFlagKey: 'showPoynting',
-        signed: false,
-        ramp: rampEmEnergy,
-        source: (bridge) => bridge.getPoyntingSampled?.(1),
-        sample: (bridge, axis, mid, N, source) =>
-            sliceVectorMag(source, axis, mid, N),
-    },
-    {
-        key: 'divJ',
-        label: '∇·J',
-        vizFlagKey: 'showDivField',
-        signed: true,
-        ramp: rampCharge,
-        source: (bridge) => bridge.getDivJSampled?.(1),
-        sample: (bridge, axis, mid, N, source) =>
-            sliceScalarSigned(source, axis, mid, N),
-    },
-];
-
-const DRIVER_BY_KEY = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, d]));
-
-// ── File-local helpers ───────────────────────────────────────────────
-
-/**
- * Rasterize a sparse sampled vector field (positions = voxel centers,
- * vectors = 3-tuples per sample) onto an N×N grid covering the chosen
- * mid-plane. Cells without a matching sample stay zero.
- *
- * Output layout (consumed by ImageData(buf,N,N) where pixel (px,py) reads
- * buf[(py*N + px)*4..]):
- *
- *   - "xy" panel (axis=2, z=mid):  panel X = lattice x →,  panel Y = lattice y ↑
- *   - "xz" panel (axis=1, y=mid):  panel X = lattice x →,  panel Y = lattice z ↑
- *   - "yz" panel (axis=0, x=mid):  panel X = lattice y →,  panel Y = lattice z ↑
- *
- * The Y axis is FLIPPED on the canvas (row = N-1-axis_value) so each
- * panel matches the Three.js viewport's right-handed Y-up orientation:
- * "+y goes up" in the xy tile mirrors "+y goes up" in the 3D scene.
- * Without the flip, ImageData's natural y-down convention would make
- * the panels appear as their mirror image of the on-screen lattice.
- *
- * Concretely we store `out[row*N + col]` where:
- *   - `col` (canvas X) is the FIRST-named axis value (rightward).
- *   - `row` (canvas Y) is `N - 1 - second_named_axis_value` (upward
- *     in screen space, since canvas Y is technically downward).
- *
- * @param {{positions:Float32Array, vectors:Float32Array, count:number}|null|undefined} sample
- * @param {0|1|2} axis  0 → x=mid (yz plane); 1 → y=mid (xz); 2 → z=mid (xy)
- * @param {number} mid  integer voxel index of the slice plane
- * @param {number} N    lattice size
- * @returns {Float64Array}  N*N scalar magnitudes
- */
-function sliceVectorMag(sample, axis, mid, N) {
-    const out = new Float64Array(N * N);
-    if (!sample || !sample.count) return out;
-    const pos = sample.positions;
-    const vec = sample.vectors;
-    if (!pos || !vec) return out;
-    const M = N - 1;
-    for (let s = 0, p = 0, v = 0; s < sample.count; s++, p += 3, v += 3) {
-        // Voxel centers come in as (x + 0.5, y + 0.5, z + 0.5).
-        // Floor the center to recover the integer voxel index.
-        const ix = (pos[p]     - 0.5) | 0;
-        const iy = (pos[p + 1] - 0.5) | 0;
-        const iz = (pos[p + 2] - 0.5) | 0;
-        let row, col;
-        if (axis === 0) {
-            // yz plane: panel X = y (col), panel Y = z, flipped so +z goes UP.
-            if (ix !== mid) continue;
-            col = iy; row = M - iz;
-        } else if (axis === 1) {
-            // xz plane: panel X = x (col), panel Y = z, flipped so +z goes UP.
-            if (iy !== mid) continue;
-            col = ix; row = M - iz;
-        } else {
-            // xy plane: panel X = x (col), panel Y = y, flipped so +y goes UP.
-            if (iz !== mid) continue;
-            col = ix; row = M - iy;
-        }
-        if (col < 0 || col >= N || row < 0 || row >= N) continue;
-        const m = Math.hypot(vec[v], vec[v + 1], vec[v + 2]);
-        out[row * N + col] = m;
-    }
-    return out;
-}
-
-/**
- * Same as sliceVectorMag but for sparse scalar samples. Preserves sign
- * (no abs/hypot) so signed fields like ∇·J light up with diverging ramps.
- *
- * Layout matches sliceVectorMag — see that docstring for the panel-axis
- * + Y-up convention.
- *
- * @param {{positions:Float32Array, values:Float32Array, count:number}|null|undefined} sample
- */
-function sliceScalarSigned(sample, axis, mid, N) {
-    const out = new Float64Array(N * N);
-    if (!sample || !sample.count) return out;
-    const pos = sample.positions;
-    const val = sample.values;
-    if (!pos || !val) return out;
-    const M = N - 1;
-    for (let s = 0, p = 0; s < sample.count; s++, p += 3) {
-        const ix = (pos[p]     - 0.5) | 0;
-        const iy = (pos[p + 1] - 0.5) | 0;
-        const iz = (pos[p + 2] - 0.5) | 0;
-        let row, col;
-        if (axis === 0) {
-            if (ix !== mid) continue;
-            col = iy; row = M - iz;
-        } else if (axis === 1) {
-            if (iy !== mid) continue;
-            col = ix; row = M - iz;
-        } else {
-            if (iz !== mid) continue;
-            col = ix; row = M - iy;
-        }
-        if (col < 0 || col >= N || row < 0 || row >= N) continue;
-        out[row * N + col] = val[s];
-    }
-    return out;
-}
-
-/**
- * Transpose + Y-flip an N×N Float64Array (row-major) coming from
- * bridge.getFluxSlice.
- *
- * The bridge's layout is `data[a*N + b]` with (a, b) = (lattice-fast-axis,
- * lattice-slow-axis), the OPPOSITE of the sparse-sample helpers' layout.
- * In addition the panels apply Y-up (canvas row = N-1-axis_value) so the
- * heatmap matches the Three.js viewport. Both rewrites happen here in
- * a single pass so the paint code is source-agnostic.
- *
- * Mapping (using the bridge's getFluxSlice convention):
- *   - axis 0 (yz, x fixed): bridge → buf[y*N + z];
- *     panel target col=y, row=N-1-z  ⇒ out[(N-1-c)*N + r] = buf[r*N + c]
- *   - axis 1 (xz, y fixed): bridge → buf[x*N + z];
- *     panel target col=x, row=N-1-z  ⇒ out[(N-1-c)*N + r] = buf[r*N + c]
- *   - axis 2 (xy, z fixed): bridge → buf[x*N + y];
- *     panel target col=x, row=N-1-y  ⇒ out[(N-1-c)*N + r] = buf[r*N + c]
- *
- * All three axes share the same rewrite: out[(N-1-c)*N + r] = buf[r*N + c].
- */
-function transposeAndFlipNN(buf, N) {
-    if (!buf || buf.length !== N * N) return buf;
-    const out = new Float64Array(N * N);
-    const M = N - 1;
-    for (let r = 0; r < N; r++) {
-        for (let c = 0; c < N; c++) {
-            out[(M - c) * N + r] = buf[r * N + c];
-        }
-    }
-    return out;
-}
 
 // ── FluxSlicePanel class ────────────────────────────────────────────
 
@@ -296,8 +104,8 @@ export class FluxSlicePanel {
         // tail call fires. The controller-driven update() is still wired up
         // (controller.js:322) and remains the primary path; this loop is the
         // safety net for stale-cache / mount-order races where the external
-        // hook isn't reliably calling us.
-        this._rafId = null;
+        // hook isn't reliably calling us. Liveness is tracked by `this._sub`
+        // (set/cleared by _startSelfDrive/_stopSelfDrive) — see update().
         this._lastSelfTickMs = 0;
 
         this._panel = null;
@@ -308,22 +116,34 @@ export class FluxSlicePanel {
         // Per-axis (xy/xz/yz) visibility — applies globally across all rows.
         this._axisVisible = { xy: true, xz: true, yz: true };
 
-        // Per-field override map. null = follow viz panel; 'on' / 'off' force.
-        // |J| defaults to 'on' so opening the panel always shows |J| even
-        // when no viz toggles are enabled (preserves prior UX).
-        this._fieldOverride = {
-            fluxJ: 'on', eField: null, bField: null, poynting: null, divJ: null,
-        };
+        // Per-field override map. 'on' / 'off' force; null = follow the 3D
+        // viz panel's toggle instead. Every field defaults to 'on' so
+        // opening the panel always shows every slice, independent of the 3D
+        // panel's toggle state — a user can still force an individual row
+        // off (or back to null/mirror) via its chip — EXCEPT the 3 force
+        // rows, which default to null/mirror (see DEFAULT_FIELD_OVERRIDE's
+        // doc comment: force-field sampling is expensive enough that it
+        // must be opt-in, not silently requested the moment the panel
+        // opens). Built from FIELD_DRIVERS so the 27-entry registry is the
+        // single source of truth — never hand-enumerated a second time here.
+        this._fieldOverride = { ...DEFAULT_FIELD_OVERRIDE };
 
         // Snapshot of viz panel flags, refreshed once per frame.
         this._mirroredFlags = {};
 
         // Per-field rolling autoscale max — each field gets its own decay
         // because magnitudes differ by orders.
-        this._fieldGlobalMax = {
-            fluxJ: 0, eField: 0, bField: 0, poynting: 0, divJ: 0,
-        };
+        this._fieldGlobalMax = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, 0]));
         this._maxDecay = 0.985;
+
+        // Per-driver, panel-owned scratch object (one plain {} per key) for
+        // the derived rows' overlay-frames.js compute functions (their own
+        // internal buffers: ensureTier1Buffers, per-field decayingMax, the
+        // phase row's dualLVecs/dualRVecs, …). NEVER the real Scale-0
+        // controller state — a fresh object per driver key, owned solely by
+        // this panel instance, so the panel's own sampling/scratch cannot
+        // interfere with the 3D overlay's real state (or vice versa).
+        this._scratch = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, {}]));
 
         // Per-field × per-axis slot bookkeeping. Filled in init().
         // Shape: { [fieldKey]: { row, label, chip, slots: { xy, xz, yz } } }
@@ -382,8 +202,8 @@ export class FluxSlicePanel {
                             title="Toggle yz plane (x=L/2)">yz</button>
                 </div>
                 <button type="button" class="flux-slice-reset-mirror"
-                        title="Clear all per-field overrides; revert to mirroring the visualization panel"
-                        disabled>Reset mirror</button>
+                        title="Force every field back on (undoes any per-field force-off / mirror overrides)"
+                        disabled>Show all</button>
                 ${trailingButton}
             </div>
             <div class="flux-slice-rows">
@@ -515,7 +335,29 @@ export class FluxSlicePanel {
             this._startSelfDrive();
         } else {
             this._stopSelfDrive();
+            this._releaseAllWantedSamplers();
         }
+    }
+
+    // Release every kind@stride this panel currently has registered with
+    // the worker via WasmBridgeProxy._wantSampler, regardless of which
+    // driver(s) wanted them — the panel-closing / tab-switched-away
+    // counterpart to the per-frame diff in _buildFrameSampleCache (which
+    // only releases what a live frame determines is no longer needed).
+    // Without this, closing the panel (or switching away from its dock tab)
+    // left every previously-visible kind permanently registered, since
+    // update() — the only place that diff runs — stops being called at all
+    // once hidden.
+    _releaseAllWantedSamplers() {
+        if (!this._prevWantedKeys) return;
+        const bridge = this.getBridge?.();
+        if (bridge && typeof bridge.unwantSampler === 'function') {
+            for (const key of this._prevWantedKeys) {
+                const at = key.lastIndexOf('@');
+                bridge.unwantSampler(key.slice(0, at), Number(key.slice(at + 1)));
+            }
+        }
+        this._prevWantedKeys = null;
     }
 
     _startSelfDrive() {
@@ -585,9 +427,13 @@ export class FluxSlicePanel {
         this.setFieldOverride(fieldKey, next);
     }
 
+    // Forces every field back to the always-visible default ('on') — the
+    // header "Show all" button's handler. Named resetMirror for historical
+    // reasons (no external callers; see the button's own label/title for
+    // what a user actually sees).
     resetMirror() {
         for (const k of Object.keys(this._fieldOverride)) {
-            this._fieldOverride[k] = null;
+            this._fieldOverride[k] = 'on';
             this._refreshChip(k);
         }
         this._refreshResetButton();
@@ -626,13 +472,38 @@ export class FluxSlicePanel {
     // ── Per-frame update ──────────────────────────────────────────────
 
     update() {
-        if (!isPanelLive(this._panel)) return;
+        // isPanelLive checks whether ITS ARGUMENT carries the `.active` class
+        // (or sits inside a non-collapsed `.floating-window`) — see every other
+        // Scale-0 panel (dispersion-panel.js, gravity-panel.js, thermo-panel.js,
+        // etc.), which all pass their MOUNT HOST, never their own inner root.
+        // In dock mode the side-panel tab system toggles `.active` on the HOST
+        // container (`#panel-flux-slice`, this._dockHost) — never on this._panel
+        // (the inner `#flux-slice-panel` div created by init()), so checking
+        // this._panel here always read false and every dock-mode paint was
+        // silently skipped forever (the panel rendered as permanently-black,
+        // unpainted `{alpha:false}` canvases). In legacy overlay mode there is
+        // no separate host (_dockHost is null), so this._panel itself is the
+        // right thing to check (its own display:none toggle / any
+        // .floating-window ancestor).
+        const live = isPanelLive(this._dockHost || this._panel);
+        if (!live) {
+            // Dock mode never flips `this.visible` false (the tab system
+            // hides it via isPanelLive instead, see doc comment above), so
+            // setVisible(false)'s release path never fires for it — this is
+            // the only place a dock-mode "tab switched away" transition is
+            // observable. Release once, right when liveness is lost, not on
+            // every subsequent dead frame.
+            if (this._wasLive) this._releaseAllWantedSamplers();
+            this._wasLive = false;
+            return;
+        }
+        this._wasLive = true;
         if (!this.visible || !this._panel) return;
         // Defensive: if the self-drive loop isn't running but we're visible,
         // start it. Covers cases where the panel was set visible by a path
         // that bypassed setVisible (e.g. external code flipping `.visible`
         // directly, hot-reload remount of an externally-driven instance).
-        if (this._rafId === null) this._startSelfDrive();
+        if (!this._sub) this._startSelfDrive();
         this.frameCount = (this.frameCount + 1) | 0;
         if ((this.frameCount % this.updateEvery) !== 0) return;
 
@@ -675,44 +546,56 @@ export class FluxSlicePanel {
             : true;
 
         // Scenario change → simTick reset to 0 from a positive value.
-        // Clear all per-field overrides and rolling autoscale so the new
-        // scenario starts clean.
+        // Reset every per-field override back to 'on' (the always-visible
+        // default) and clear rolling autoscale so the new scenario starts
+        // clean and fully visible.
         if (this._lastSimTick > 0 && simTick < this._lastSimTick) {
+            // Reset to the default map (force rows → mirror), NOT blanket
+            // 'on' — a scenario switch must not silently re-arm the
+            // expensive force-field samplers (see DEFAULT_FIELD_OVERRIDE's
+            // doc comment). "Show all" (resetMirror(), an explicit user
+            // click) is the only action that forces force rows on too.
             for (const k of Object.keys(this._fieldOverride)) {
-                if (k === 'fluxJ') continue; // |J| keeps default 'on'
-                this._fieldOverride[k] = null;
+                this._fieldOverride[k] = DEFAULT_FIELD_OVERRIDE[k];
             }
             for (const k of Object.keys(this._fieldGlobalMax)) {
                 this._fieldGlobalMax[k] = 0;
             }
-            // Default |J| stays 'on'; everything else mirrors the new scenario's flags.
-            this._fieldOverride.fluxJ = 'on';
             for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
             this._refreshResetButton();
         }
         this._lastSimTick = simTick;
 
-        // Reconcile row visibility + dense layout.
+        // Reconcile row visibility + dense layout. Also collects the
+        // visible-this-frame subset so the shared sample cache below fetches
+        // only what's actually needed (see _buildFrameSampleCache).
         let activeCount = 0;
+        const visibleDrivers = [];
         for (const drv of FIELD_DRIVERS) {
             const visible = this._isFieldRowVisible(drv.key);
             const row = this._fields[drv.key].row;
             const wasHidden = row.classList.contains('row-hidden');
             if (visible && wasHidden) row.classList.remove('row-hidden');
             else if (!visible && !wasHidden) row.classList.add('row-hidden');
-            if (visible) activeCount++;
+            if (visible) { activeCount++; visibleDrivers.push(drv); }
         }
         // Dense mode shrinks tile size when many rows are open.
         this._panel.classList.toggle('dense', activeCount > DENSE_THRESHOLD);
 
-        // Per-field sample → max → paint.
-        for (const drv of FIELD_DRIVERS) {
-            if (!this._isFieldRowVisible(drv.key)) continue;
+        // ONE shared per-frame sample fetch — see _buildFrameSampleCache's
+        // own doc comment for exactly which kinds/types get fetched and why
+        // (only what visibleDrivers actually need this frame).
+        const sharedSampled = this._buildFrameSampleCache(bridge, visibleDrivers, mid);
 
-            // Pull the per-frame source ONCE (a single bridge call), then
-            // filter it per-axis below. Saves ~2× bridge cost vs the naive
-            // sample-per-axis pattern when 3 axes are visible.
-            const source = drv.source?.(bridge);
+        // Per-field sample → max → paint.
+        for (const drv of visibleDrivers) {
+            // Pull the per-frame source ONCE (from the shared cache, or via
+            // the driver's own compute for derived rows), then filter it
+            // per-axis below. Saves ~2× bridge cost vs the naive
+            // sample-per-axis pattern when 3 axes are visible, and dedupes
+            // across rows that share the same underlying quantity (e.g.
+            // eField feeding both the |E| row and emEnergy/ePressure).
+            const source = drv.source?.(bridge, sharedSampled, this._scratch[drv.key]);
 
             // Sample only the visible axes for this field.
             const slices = {};
@@ -759,6 +642,119 @@ export class FluxSlicePanel {
         }
     }
 
+    // ── Shared per-frame sample cache ──────────────────────────────────
+    //
+    // Builds ONE sampled object for this frame, populated only with the
+    // raw kinds / force-field types that the CURRENTLY VISIBLE rows in
+    // `visibleDrivers` actually need — never all 14 kinds unconditionally
+    // (that would defeat the "hidden rows skip sampling" perf design this
+    // panel already relies on). Each kind/type is fetched via
+    // bridge.getSamplerOr(kind, 1) (bridge-contract.js's samplerOr() — the
+    // exact function getScale0FieldSamples itself calls under
+    // capabilities.scale0, reached one property-hop shorter here since the
+    // panel already holds the raw bridge) AT MOST ONCE, keyed exactly like
+    // field-sample-cache.js's slots (fluxVector, eField, bField, poynting,
+    // divergence, vorticity, helicity, kretschmann, latency, fisher,
+    // coherence, curlJ, state, gaussResidual, plus forceEm/forceGravity/
+    // forceStrong for the 3 force fields, a separate bridge-method family
+    // and not a SCALE0_SAMPLER_METHODS kind).
+    //
+    // Raw-kind / force rows read straight out of the returned object via
+    // their own `source(bridge, sampled)`. Derived rows additionally read
+    // whatever their own `requiredSampledKeys` named, then call their
+    // overlay-frames.js compute function against it plus their own
+    // per-driver scratch object (this._scratch[drv.key]) — never fetched
+    // here directly, since a derived row does not itself occupy a slot in
+    // `sampled`.
+    // `mid` (the slice-plane index, N>>1) is passed in from update() rather
+    // than recomputed, so the stride-safety check below always matches the
+    // exact plane the sample/paint pipeline is about to slice.
+    //
+    // Stride choice (audit fix — was hardcoded to 1 for EVERY kind here,
+    // regardless of that kind's own established default): every method on
+    // WasmBridgeProxy already defaults to stride 2 (getEFieldSampled(stride
+    // = 2), getVorticitySampled(stride = 2), getEMForceField(stride = 2),
+    // etc.) EXCEPT state/gaussResidual, which default to stride 1
+    // (STRIDE_ONE_SLOTS in field-sample-cache.js — genuinely sparse/
+    // threshold quantities the 3D overlay system always samples at full
+    // resolution). Forcing stride 1 for every OTHER kind here scanned 8x
+    // more voxels per kind than necessary, and WasmBridgeProxy's
+    // _wantSampler registration is PERMANENTLY STICKY (once a kind+stride
+    // is requested, the worker computes it on every postFrame() forever —
+    // there is no un-want) — so opening this panel even once with all 27
+    // rows visible by default permanently saddled the worker with ~15
+    // needlessly full-resolution kinds for the rest of the session,
+    // competing directly with the SAME worker thread's tick-advancing loop
+    // and causing ticking to stall intermittently.
+    //
+    // coarseStride falls back to 1 whenever the coarser stride would MISS
+    // the mid-plane index entirely (mid % stride !== 0) — a correctness
+    // guard, not just a quality one: the underlying WASM sampler only ever
+    // visits multiples of stride starting at 0, so a mismatched stride
+    // makes the slice come back completely EMPTY, not just coarser.
+    _buildFrameSampleCache(bridge, visibleDrivers, mid) {
+        const sampled = {};
+        const neededSlots = new Set();
+        for (const drv of visibleDrivers) {
+            if (drv.slot && !drv.forceType) neededSlots.add(drv.slot);
+            if (drv.requiredSampledKeys) {
+                for (const slot of drv.requiredSampledKeys) neededSlots.add(slot);
+            }
+        }
+        // mid % 2 === 0  ⟺  N ≡ 1 (mod 4), since mid = (N-1)/2 for the odd
+        // lattice sizes this app uses. Every size the "Size" dropdown offers
+        // today (9, 17, 25, 33, 49, 65, 97, 113, 145, 181) satisfies this, so
+        // coarseStride is always 2 in practice — but the fallback to 1 is a
+        // real correctness case (stride-2 sampling from index 0 would MISS
+        // an odd mid-plane entirely), not dead code. If a future lattice
+        // size ≡ 3 (mod 4) is ever added to that dropdown, every kind here
+        // (including the force fields) silently drops to full-resolution
+        // sampling — an 8x cost multiplier. The get_em_force_field /
+        // get_strong_force_field budget guards in ftd_wasm.cpp are the real
+        // backstop against that regressing into a worker stall again; this
+        // comment exists so a future edit to the size list doesn't reopen
+        // the gap unknowingly.
+        const coarseStride = (mid % 2 === 0) ? 2 : 1;
+        const wantedKeys = new Set();
+        for (const slot of neededSlots) {
+            const kind = SLOT_TO_KIND[slot];
+            if (!kind) continue;
+            const stride = STRIDE_ONE_SLOTS.has(slot) ? 1 : coarseStride;
+            sampled[slot] = bridge.getSamplerOr?.(kind, stride) ?? null;
+            wantedKeys.add(`${kind}@${stride}`);
+        }
+        // Force fields: getEMForceField / getGravityForceField /
+        // getStrongForceField, not a sampler `kind` — fetched directly,
+        // once per visible force row, at the same coarse stride as raw kinds
+        // (their own defaults are stride 2 too, so this matches, not
+        // regresses, established convention).
+        for (const drv of visibleDrivers) {
+            if (!drv.forceType || sampled[drv.slot] !== undefined) continue;
+            if (drv.forceType === 'em') sampled[drv.slot] = bridge.getEMForceField?.(coarseStride) ?? null;
+            else if (drv.forceType === 'gravity') sampled[drv.slot] = bridge.getGravityForceField?.(coarseStride) ?? null;
+            else if (drv.forceType === 'strong') sampled[drv.slot] = bridge.getStrongForceField?.(coarseStride) ?? null;
+            wantedKeys.add(`${drv.forceType}@${coarseStride}`);
+        }
+        // Release any kind@stride that was wanted last frame but has no
+        // visible consumer this frame — WasmBridgeProxy._wantSampler's
+        // registration is otherwise permanently sticky (the worker computes
+        // every wanted kind on every postFrame() forever; there is no
+        // un-want without this). Diffed here (not per-driver-hide) because
+        // several rows share the same slot (e.g. eField feeds |E|, emEnergy,
+        // ePressure, ℒ(x) — only release once NONE of them are visible).
+        if (typeof bridge.unwantSampler === 'function') {
+            if (this._prevWantedKeys) {
+                for (const key of this._prevWantedKeys) {
+                    if (wantedKeys.has(key)) continue;
+                    const at = key.lastIndexOf('@');
+                    bridge.unwantSampler(key.slice(0, at), Number(key.slice(at + 1)));
+                }
+            }
+            this._prevWantedKeys = wantedKeys;
+        }
+        return sampled;
+    }
+
     _paintSlice(drv, axis, data, N, norm, axisFrameMax, simTick, isRunning) {
         const slot = this._fields[drv.key]?.slots[axis];
         if (!slot) return;
@@ -774,7 +770,21 @@ export class FluxSlicePanel {
 
         const ramp = drv.ramp;
         const rgb = [0, 0, 0];
-        if (drv.signed) {
+        if (drv.rawRamp) {
+            // Feed the raw sample value straight into the ramp instead of
+            // the usual autoscaled-and-clamped `data[i] * norm` — only the
+            // `phase` driver sets this today. rampCyclicHSL wants a raw
+            // radian angle (the 3D renderer calls it the same way), and a
+            // per-frame [-1,1] autoscale ratio would be meaningless for an
+            // angular quantity.
+            for (let i = 0, p = 0; i < data.length; i++, p += 4) {
+                ramp(data[i], rgb, 0);
+                buf[p]     = (rgb[0] * 255) | 0;
+                buf[p + 1] = (rgb[1] * 255) | 0;
+                buf[p + 2] = (rgb[2] * 255) | 0;
+                buf[p + 3] = 255;
+            }
+        } else if (drv.signed) {
             // Map t ∈ [-1, +1] through the diverging ramp (rampCharge etc.).
             for (let i = 0, p = 0; i < data.length; i++, p += 4) {
                 let t = data[i] * norm;
@@ -995,6 +1005,7 @@ export class FluxSlicePanel {
     dispose() {
         this._disposed = true;     // self-drive guard (Audit pass 2 FLUX-2)
         this._stopSelfDrive();
+        this._releaseAllWantedSamplers();
         if (this._expanded) this._collapse();
         this._resizeObs?.disconnect();
         this._resizeObs = null;
@@ -1015,11 +1026,6 @@ export class FluxSlicePanel {
     }
 }
 
-function axisIndex(axis) {
-    if (axis === 'yz') return 0;
-    if (axis === 'xz') return 1;
-    return 2; // xy
-}
 
 /**
  * Idempotent mount used from the Scale 0 controller. Stashes the

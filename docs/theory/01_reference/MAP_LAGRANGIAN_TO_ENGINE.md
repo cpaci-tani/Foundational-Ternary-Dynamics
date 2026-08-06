@@ -37,7 +37,7 @@ The engine's correspondence to the analytical action is not a claim — it's a m
 
 | Diagnostic | Function | Where | What it verifies |
 |---|---|---|---|
-| Field-EOM residual | `compute_el_residual()` | `lagrangian.cpp:69-95`, decl. `lagrangian.h:202` | After `phase_read()`, `delta_j_[i]` should equal $c^2\nabla^2\mathbf{J} + g_c\nabla s + g_c\nabla\times(s\,\mathbf{v})$. Returns `{rms, max_abs}`; expected RMS $\sim 10^{-15}$. |
+| Field-EOM residual | `compute_el_residual()` | `lagrangian.cpp:69-95`, decl. `lagrangian.h:202` | After `phase_read()`, `delta_j_[i]` should equal $c^2\nabla^2\mathbf{J} - g_c\nabla s + g_c\nabla\times(s\,\mathbf{v})$ (electric-source sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3). Returns `{rms, max_abs}`; expected RMS $\sim 10^{-15}$. |
 | Particle-EOM residual | `compute_particle_el_residual()` | `lagrangian.cpp:97+`, decl. `lagrangian.h:220` | After `tick()`, `force_diag_[i]` for each manifested voxel should equal independently-recomputed $F_\text{EM} + F_\text{grav} + F_\text{Lorentz}$ from the Lagrangian's $\delta L/\delta x$. Returns `{rms, max_abs, particle_count}`. |
 | Lagrangian-density audit | `compute_lagrangian_diagnostics()` | `lagrangian.cpp:7-65`, decl. `lagrangian.h:198` | Sums every per-site term independently for cross-checking. Populates `LagrangianDiag` (`lagrangian.h:156-187`) with field-kinetic, field-gradient, Born-Infeld, coupling, velocity-coupling, gauss, dissipation totals + the discrete action $S = \sum_v L(v)$ + Gauss-constraint violation maxima. |
 
@@ -77,7 +77,7 @@ RenderBridge::tick()                                            [render_bridge.c
 ├─ phase_read()                                                 [render_bridge_phases/phase_read.cpp]
 │   │
 │   ├─ Term 5+6 (field sector) implicit: 18-pt Laplacian + leapfrog source
-│   │    via δL/δJ = c²∇²J + g_c∇s + g_c∇×(s·v)
+│   │    via δL/δJ = c²∇²J − g_c∇s + g_c∇×(s·v)   [Term 2 sign amended 2026-07-18]
 │   │
 │   └─ EL residual independently audited by compute_el_residual()  [lagrangian.cpp:69-95]
 │

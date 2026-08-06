@@ -33,18 +33,22 @@ check(
     and (ROOT / reg["meta"]["verifier"]).exists(),
 )
 
-# C2: layer counts (5 postulates, 5 commitments, 4 selected, 3 calibrations, 4 named results, 4 posits)
+# C2: layer counts (5 postulates, 5 commitments, 4 selected, 3 calibrations, 5 named results, 4 posits)
+# [UPDATED 2026-08-04] L4 4 -> 5: IMP-C5 (the compatible-discretization /
+# tensor B-spline de Rham complex, minted by FTD-0568) was in
+# import_ledger.json but had never been mirrored into the register, which was
+# the sole cause of C5 failing. Adding it necessarily moves this count.
 layers = reg["register"]
 counts = {k: len(v) for k, v in layers.items()}
 check(
-    "C2 layer counts 5/5/4/3/4/4",
+    "C2 layer counts 5/5/4/3/5/4",
     counts
     == {
         "L0_postulates": 5,
         "L1_commitments": 5,
         "L2_selected_types": 4,
         "L3_calibrations": 3,
-        "L4_named_results": 4,
+        "L4_named_results": 5,
         "L5_dynamics_posits": 4,
     },
     str(counts),

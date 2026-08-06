@@ -127,6 +127,7 @@ export function bindUI(ctx) {
     // live-reading accessors (scale switches reassign them).
     wireScale0Controls(ctx, {
         setLatticeNeedsUpload,
+        loadScenario,
     });
 
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;

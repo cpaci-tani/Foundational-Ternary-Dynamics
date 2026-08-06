@@ -62,6 +62,39 @@ QuadraticCoatOrbitGatherResult evaluate_quadratic_coat_orbit_gather(
     const MatchedEdgeField& magnetic,
     const Vec3& discrete_gradient_velocity,
     double temporal_scale,
-    double beta = 1.0);
+    double beta = 1.0,
+    double polarity_scale = 1.0);
+
+/// Same physical gather as evaluate_quadratic_coat_orbit_gather, but the
+/// caller guarantees that the field arrays have already passed the complete
+/// finite-value scan.  This avoids an O(L^3) validation pass inside each
+/// nonlinear root probe.
+QuadraticCoatOrbitGatherResult
+evaluate_quadratic_coat_orbit_gather_prevalidated_fields(
+    const QuadraticCoatFaceCurrent& segment,
+    const MatchedFaceFlux& electric,
+    const MatchedEdgeField& magnetic,
+    const Vec3& discrete_gradient_velocity,
+    double temporal_scale,
+    double beta = 1.0,
+    double polarity_scale = 1.0);
+
+/// Evaluate all constituent gathers against
+///   E_mid = (fixed_electric + electric_pre_current
+///            + current_scale * sum(segment currents)) / 2
+/// without materializing that dense midpoint field.  The current segments
+/// must use sparse storage.  This is an exact storage optimization of the
+/// common-action residual, not a different interaction law.
+std::vector<QuadraticCoatOrbitGatherResult>
+evaluate_quadratic_coat_orbit_gather_sparse_midpoint_batch_prevalidated_fields(
+    const std::vector<QuadraticCoatFaceCurrent>& segments,
+    const MatchedFaceFlux& fixed_electric,
+    const MatchedFaceFlux& electric_pre_current,
+    double current_scale,
+    const MatchedEdgeField& magnetic,
+    const std::vector<Vec3>& discrete_gradient_velocities,
+    double temporal_scale,
+    double beta = 1.0,
+    double polarity_scale = 1.0);
 
 }  // namespace ftd::eft

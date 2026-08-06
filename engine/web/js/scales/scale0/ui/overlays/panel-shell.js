@@ -6,8 +6,9 @@
  * "container" behaviours of the revamped panel:
  *
  *   1. Per-category collapse — each `.s0-overlay-col` header is a clickable
- *      accordion row; all collapsed by default, state persisted per category.
- *      Multiple categories can be open at once.
+ *      accordion row; all categories expanded by default (opt-in per-category
+ *      collapse persists), state persisted per category. Multiple categories
+ *      can be open — or collapsed — at once.
  *   2. Active-overlays strip — `#s0-overlay-active` shows a removable chip for
  *      every currently-active overlay, DERIVED from the buttons' `.active` state
  *      via a MutationObserver, so it can never drift. A chip's × re-fires that
@@ -25,8 +26,8 @@ const lsKey = (col) => `ftd.s0overlay.cat.${col}.collapsed`;
 function readCollapsed(col) {
     try {
         const v = localStorage.getItem(lsKey(col));
-        return v === null ? true : v === '1';   // default: collapsed
-    } catch { return true; }
+        return v === null ? false : v === '1';   // default: expanded
+    } catch { return false; }
 }
 function writeCollapsed(col, collapsed) {
     try { localStorage.setItem(lsKey(col), collapsed ? '1' : '0'); } catch { /* ignore */ }
@@ -171,6 +172,7 @@ function applyFilter(body, query) {
     if (!q) {
         body.classList.remove('is-empty');
         for (const btn of body.querySelectorAll('.view-toggle')) btn.classList.remove('is-filtered-out');
+        for (const group of body.querySelectorAll('.s0-overlay-group')) group.classList.remove('is-filtered-out');
         for (const col of body.querySelectorAll('.s0-overlay-col')) {
             col.classList.remove('is-filtered-out');
             col.classList.toggle('is-collapsed', readCollapsed(col.dataset.col));   // restore persisted
@@ -181,11 +183,23 @@ function applyFilter(body, query) {
     let anyMatch = false;
     for (const col of body.querySelectorAll('.s0-overlay-col')) {
         let colMatch = false;
-        for (const btn of col.querySelectorAll('.view-toggle')) {
-            const match = !btn.classList.contains('is-inapplicable')
-                && btn.textContent.trim().toLowerCase().includes(q);
-            btn.classList.toggle('is-filtered-out', !match);
-            if (match) colMatch = true;
+        // Match/hide a trigger and its flux-slice-axis-mini sub-row as one unit
+        // (a .s0-overlay-group), not independently — otherwise a query that matches
+        // only a mini toggle's label (e.g. "glow", "xy") strands that toggle visible
+        // with no trigger label above it, and the now-empty group wrapper is left
+        // stretched-and-blank in the grid (.s0-overlay-group.is-filtered-out below).
+        const units = col.querySelectorAll(':scope > .view-toggle, :scope > .s0-overlay-group');
+        for (const unit of units) {
+            const isGroup = unit.classList.contains('s0-overlay-group');
+            const btns = isGroup ? unit.querySelectorAll('.view-toggle') : [unit];
+            let unitMatch = false;
+            for (const btn of btns) {
+                if (!btn.classList.contains('is-inapplicable')
+                    && btn.textContent.trim().toLowerCase().includes(q)) { unitMatch = true; break; }
+            }
+            for (const btn of btns) btn.classList.toggle('is-filtered-out', !unitMatch);
+            if (isGroup) unit.classList.toggle('is-filtered-out', !unitMatch);
+            if (unitMatch) colMatch = true;
         }
         col.classList.toggle('is-filtered-out', !colMatch);
         col.classList.remove('is-collapsed');   // auto-expand matching categories

@@ -1,7 +1,22 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven; maximality is [OPEN] and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield. The spine has **nine numbered results** — **seven theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two honestly tiered below theorem grade** (Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, [THEOREM at L=2] only). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* dual-match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the 7+2-with-split formulation here is the single canonical count, and every count statement below now matches it. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
+**Audit note (2026-08-03, FTD-0785).** This document was subjected to two
+independent adversarial audits instructed to refute by default. **Every
+numerical identity in it verified to 50+ digits — no arithmetic error was
+found.** The failures were all classificatory: a regression fit labeled
+"Proof" (Theorem 6, now demoted, changing the count to 6+3), an untagged
+physics identification inside a theorems-only document (the electron-mass
+expression, now relocated to §11 with its 68 ppm deviation stated), a
+misattributed load-bearing citation (Chudnovsky), one uniqueness overclaim
+(§9 on Theorem 8), a mathematically wrong justification for a correct
+disclaimer (maximality), and three stale cross-reference rows. All are
+corrected in place and registered in `ANALYSIS_SPINE_ADVERSARIAL_AUDIT_v1.md`.
+Two findings are **not** yet remediated and are recorded as open: the
+FTD-0314 C2 dependency on an open conjecture, and the un-audited FTD-0319
+look-elsewhere scan.
+
+**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven. (Reason corrected 2026-08-03, FTD-0785: the former witness Q(Γ(1/4)) does **not** work — it does not contain Q(G*) at all, since G* ∈ Q(Γ(1/4)) would make π = Γ(1/4)²/(√2·G*) algebraic over Q(Γ(1/4)), contradicting the same Chudnovsky independence invoked in Theorem 9; the two fields are *incomparable*. Maximality is nonetheless false, and trivially so: any proper algebraic extension such as Q(G*, √2) is π-free and strictly contains Q(G*). This makes maximality a non-question rather than an interesting [OPEN] problem.) The spine has **nine numbered results** — **six theorem-grade** (Theorems 1, 2, 3, 5, 8, 9) and **three honestly tiered below theorem grade** (**Theorem 6, demoted 2026-08-03 by FTD-0785 — its "proof" is a regression fit against simulator output, see §6**; Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, retagged [THEOREM at all L ≥ 2] by FTD-0350 but retained in the tiered bucket pending an independent check of that retag). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* dual-match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the split-count formulation here is the single canonical count, and every count statement below now matches it. **Superseded 2026-08-03 (FTD-0785):** the count is now **6+3**, not 7+2, because Theorem 6 was demoted; `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 vs T4/T3) listed Theorem 6 (OT-1.4) in the upper tier. **Applied 2026-08-04:** OT-1.4 is demoted out of Tier 1 there and the Tier-1 count corrected 9 → 8. This mattered more than a cosmetic mismatch, because `CLAUDE.md` makes that tracker **authoritative on tier assignment** — so while it stood, the authoritative document rated a regression fit as a rock-solid theorem. What survives there is the *deflationary* reading (the projector returns a Green's function, so the engine's Coulomb carries no fine-structure content), which is structural and consistent with FTD-0792; the exact identity does not.
 **Purpose:** state the load-bearing algebraic content of FTD in
 **[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -14,7 +29,7 @@ the Standard Model.
 ## 0 · What this document is and is not
 
 **This document IS:** a canonical statement of FTD's rigorous
-mathematical core — nine numbered results, of which **seven are
+mathematical core — nine numbered results, of which **six are
 theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9 — Theorem 3 at its
 arithmetic core only; its physics dual-match landing is separately
 `[NUMERICAL FACT]`, see the count convention in the Subsidiary note
@@ -77,8 +92,12 @@ The two equivalent closed forms follow from the Γ-function reflection identity 
 
 **The Gauss AGM Constant Bridge.** The reflection ratio $G^*$ is exactly twice the product of the Gauss Constant $G = 1 / M(2^{1/2}, 1) \approx 0.83462684$ and the square root of $\pi$:
 $$G^* = 2 G \pi^{1/2}$$
-Substituting this identity into the FTD electrostatic self-energy formula expresses the electron rest mass $m_e$ in lattice units as a pure transcendental function of the Gauss constant $G$:
-$$m_e = \frac{2}{2 + \left(4 - \frac{1}{2G\pi^{1/2}}\right)^{1/2}} \approx 0.51103345$$
+**(A physics identification that formerly sat here — an electron-mass
+expression in the Gauss constant — was removed 2026-08-03 per FTD-0785. It
+carried no epistemic tag inside a document whose §0 contract is
+"[THEOREM]-only form, with no physics interpretation," and its eight displayed
+digits concealed a 68 ppm deviation from the measured electron mass. It is
+restated, tagged, and quantified in §11.)**
 
 **Notational warning.** G* (project canonical, ≈ 2.959) and the Bernoulli/Gauss lemniscate constant ϖ (≈ 2.622) are sometimes both called "the lemniscate constant" in informal usage. They are distinct: the master quadratic `x² − 16G*²x + 16G*³ = 0` produces x_+ = 137.036 (= 1/α numerically) ONLY at G* = 2.959, not at ϖ = 2.622 (which would give x_+ = 107.3, far from 1/α). Always cross-check against `scripts/constants.py` (`G_STAR`) when a numerical value is needed.
 
@@ -137,6 +156,38 @@ identification x−  N_c is retired per v1.4 §5.
 ---
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
+
+> ### ⚠ FTD-0321 (2026-08-04) — the SCAN half of this section is a range artifact
+>
+> The **arithmetic** theorem below (`|μ_K| = |disc(K)|` uniquely at `K = ℚ(i)`)
+> is **untouched** and remains `[THEOREM]`. What this banner governs is the
+> *scan* content — the FTD-0123 dual-match domain restated above, and every
+> reading of this section as showing that `d = −4` is privileged **by
+> dual-matching**.
+>
+> The full per-ideal-class Damerell scan that `PREREG_DAMERELL_SCAN_v1.md`
+> deferred has now been run (FTD-0321). Per-class periods were taken from `η` at
+> each class's CM point — Γ-products cannot separate them, since the h ≥ 2
+> Chowla–Selberg formula fixes only their product — with Chowla–Selberg itself
+> as an independent gate, passing at h ≥ 2 to `8.1e-50`.
+>
+> **Result:** `d = −4` is the unique dual-matcher across all 270 fundamental
+> h ≥ 2 fields with |d| ≤ 907 (2,558 ideal classes) — a superset of the
+> registered domain — and then **fails at |d| = 7,895**, reaching **1,271
+> fundamental dual-matchers across 696 distinct discriminants** by
+> |d| ≤ 500,000 (61.6M reduced forms). The registered domain is ~8.7× too small
+> to contain the first counterexample.
+>
+> **And the criterion cannot discriminate at all at scale:** a random target
+> near `G*` is matched by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803
+> establishes that canonical `G*` sits at a **saddle** of the SL₂(ℤ)-invariant
+> `G*(τ) = √(8π|η|⁴Im τ)` — the order-2 elliptic point `τ = i` — giving a
+> logarithmic density divergence there. ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated.
+>
+> The trivial-multiplier criterion declared below was used unchanged; no
+> tolerance was tuned. See `ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md` and
+> `ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md`.
+
 
 **Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among imaginary quadratic fields — the PROOF below covers all squarefree $d$, matching `TRACKER_ONTIC_TRUTH.md` OT-1.9; an earlier copy of this line understated the scope as "the class-number-1 fields"). The underlying numerical scans over Heegner and higher class numbers are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan (via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
 
@@ -224,8 +275,8 @@ these bound the searched depth and are not a nonexistence proof, which
 is exactly why the permanent tag is [SELECTION — declared], not
 [CLOSED NEGATIVE]. Any future forcing proof would be a **new result
 requiring its own LEDGER row**, not a pending promotion of this one.
-Theorem 4 remains one of the two honestly-tiered
-subsidiary results (with Theorem 7), not one of the seven
+Theorem 4 remains one of the three honestly-tiered
+subsidiary results (with Theorems 6 and 7), not one of the six
 theorem-grade results (count convention: see the Subsidiary note
 above §0).
 
@@ -282,11 +333,20 @@ Define α_r(r, L) := 2 · r · G_L(r). Then α_r(r, L) is the engine's
 emergent radial Coulomb-mode coefficient at every finite L, with zero
 free parameters and zero fine-structure-constant content.
 
-**Proof.** Direct computation of the lattice Poisson kernel and
-comparison to the engine's measured Coulomb potential. R² = 1.0000 at
-L = 384 in the Coulomb tail; median 0.07% residual. See
-`docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md` and
-`scripts/proofs/fit_geometric_coulomb.py`.
+**Status (corrected 2026-08-03, FTD-0785): `[NUMERICAL FACT — VALIDATED
+FIT]`, NOT theorem-grade.** The evidence is a regression against measured
+simulator output at one finite `L`: R² = 1.0000 at L = 384 in the Coulomb
+tail, median 0.07% residual. Fit statistics are not a proof, and a 0.07%
+residual is incompatible with the Statement's "zero free parameters" exact-
+identity framing; the Statement is moreover engine-referential — it cannot be
+posed without the simulator. Splitting it honestly: **(a)** an exact lattice-
+Green's-function identity, if one can be exhibited with hypotheses, would be
+`[THEOREM]` — not shown here; **(b)** "the engine reproduces the lattice
+Poisson kernel to 0.07% median residual at L = 384" is `[MEASURED]`. Only (b)
+is established. See
+`docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
+and `scripts/benchmarks/fit_geometric_coulomb.py` (both paths were wrong in
+prior copies).
 
 **LEDGER:** Phase G theorem (April 19 closure of EFT Recovery
 Program Phase F).
@@ -337,7 +397,7 @@ non-ultralocal at L >= 4 and is **not covered** by this theorem. The prior
 configurations) — proof + verification:
 `docs/theory/09_mathematical/ANALYSIS_PHASE_J_ZERO_MODES_v1.md` +
 `scripts/proofs/proof_phase_j_zero_modes.py` (44/44). **Headline-count note:**
-the 7+2 count convention (S0) is NOT changed by this retag — whether the all-L
+the 6+3 count convention (S0, corrected by FTD-0785) is NOT changed by this retag — whether the all-L
 theorem moves Theorem 7 into the theorem-grade bucket is an owner decision
 pending, since the result is conditional on the stencil-consistency
 [SELECTION]; until then Theorem 7 stays counted as honestly-tiered.
@@ -438,8 +498,11 @@ in `scripts/proofs/proof_harmonic_invariant_tower.py`.
 **LEDGER:** FTD-0111.
 
 **Dependencies:** Theorem 1 (`G*` algebraic identity); Theorem 2
-(master quadratic, the `k = 4` instance); Schneider–Chudnovsky
-transcendence of `G*` (for transcendence of `A_k` at `k ≥ 4`).
+(master quadratic, the `k = 4` instance); **Chudnovsky-1976**
+transcendence of `G*` (attribution corrected 2026-08-03, FTD-0785,
+completing the fix registered as FTD-0318: Schneider 1941 gives
+transcendence of `B(1/2,1/4) = √π·G*`, which does **not** yield
+transcendence of `G*`; only the Chudnovsky independence does) (for transcendence of `A_k` at `k ≥ 4`).
 
 **Consequence (DERIVED, restatement of Theorem 2).** The master
 quadratic's `α`-tree-level prediction admits the publication-grade
@@ -469,8 +532,14 @@ the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
   holds for any family `{M(x) = x² − bx + c : c = G* · b}` regardless
   of the multiplier, so the (1+i)-tower (`m_k = 2^k`) is one indexed
   sub-family rather than the unique forced one. A multiplier-level
-  rigidity scan analogous to the 60k-polynomial scan that rigidified
-  FTD-0001 is **[OPEN]**.
+  rigidity scan is **[OPEN]** — ~~analogous to the 60k-polynomial scan that
+  rigidified FTD-0001~~. **That model reference is struck (FTD-0791,
+  2026-08-03):** the scan it names did **not** rigidify anything — it sits at
+  the chance base rate (null expects 1.42–1.67 matchers, it found 1), FTD-0319
+  is retagged `[MEASURED]` → `[SELECTION]`, and the scan-rigid count is zero.
+  **Any multiplier-level scan must therefore carry its own base-rate control
+  from the outset** (the analogue of `verify_look_elsewhere_baserate.py`);
+  a bare count of matchers would repeat the error rather than avoid it.
 - Any QFT-anomaly construction. The level-`k` discriminant correction
   `A_k` is a level-indexed algebraic transcendental; calling it an
   "anomaly factor" by analogy with QFT conformal anomalies is metaphor
@@ -525,9 +594,11 @@ with algebraic independence is the constant case: both sides reduce to
 the same rational. Therefore `α ∈ Q`. ∎
 
 **Conditional clause.** This theorem is conditional on the algebraic
-independence of `π` and `Γ(1/4)` over `Q`, established by D. V.
-Chudnovsky, "Algebraic independence of values of exponential and
-hypergeometric functions" (1976) and consolidated in the modern
+independence of `π` and `Γ(1/4)` over `Q`, established by **G. V.**
+Chudnovsky, "Algebraic independence of constants connected with the
+exponential and elliptic functions," Dokl. Akad. Nauk Ukrain. SSR Ser. A
+(1976), no. 8, 698–701 (attribution corrected 2026-08-03, FTD-0785: prior
+copies named the wrong brother and a title that does not exist) and consolidated in the modern
 references (Waldschmidt 2000, *Diophantine Approximation on Linear
 Algebraic Groups*, §1.4). The result is a standard tool of contemporary
 transcendence theory; "conditional" here means "depends on this
@@ -535,9 +606,11 @@ established theorem", not "depends on a conjecture".
 
 **Why it matters.** Theorem 9 makes the `π`-free positioning of FTD's
 algebraic spine a precise field-theoretic statement rather than a
-slogan. Combined with Theorem 8 (which proves `G*` is the unique
-named-constant generator with which the entire master-quadratic tower
-admits clean rational-coefficient × integer-power form), Theorem 9
+slogan. Combined with Theorem 8 — which does **not** prove `G*` is a unique
+generator (corrected 2026-08-03, FTD-0785; Theorem 8's own "does NOT claim"
+block states the harmonic invariant holds for *any* family
+`{x² − bx + c : c = G*·b}` and leaves multiplier-level rigidity `[OPEN]`) —
+Theorem 9
 characterizes `Q(G*)` as **a distinguished π-free subfield** of
 `Q(π, Γ(1/4))` — the algebraic content of the spine that is invisible
 to `Q(π)` alone. (It is **not** claimed maximal or canonical; see "What
@@ -548,8 +621,9 @@ it does NOT claim" below.)
 **Dependencies:** Theorem 1 (`G*` identity), Chudnovsky 1976.
 
 **What it does NOT claim.**
-- That `G*` is in OEIS under its own A-number. (A085565 is the
-  lemniscate constant `L = 2ϖ`, not `G*`. No
+- That `G*` is in OEIS under its own A-number. (A085565 ≈ 1.31102877 is the *first* lemniscate constant `ϖ/2`, not
+  `2ϖ` — corrected 2026-08-03, FTD-0785; `ϖ ≈ 2.622` is A062539 and
+  `2ϖ ≈ 5.244` is A064853. None of them is `G*`. No
   A-number for `Γ(1/4)/Γ(3/4)` itself is confirmed.)
 - That Gauss computed `G*` as a privileged object. (Gauss computed
   `Γ(1/4)` and `ϖ`; the specific ratio `Γ(1/4)/Γ(3/4)` is not
@@ -607,7 +681,7 @@ and `scripts/proofs/proof_lprime_chi4_boundary.py` (Identities A/B/C at
 high precision). LEDGER row: FTD-0127.
 
 **External ensemble exhibit (FTD-0366; no spine change — the count stays
-7+2).** The ℤ₄-sector decomposition of the strongly-coupled quartic matrix
+6+3 after FTD-0785).** The ℤ₄-sector decomposition of the strongly-coupled quartic matrix
 model of Córdova–Heidenreich–Popolitov–Shakirov (Commun. Math. Phys. 361
 (2018) 1235–1274, arXiv:1611.03142) realizes this parity split in ensemble
 language: the (ℤ/4)^× = {1,3} conjugate contour sectors carry Γ(1/4)- and
@@ -622,8 +696,8 @@ sector is pure π-class — machine-verified in
 
 ## 10 · Subsidiary theorems and structural nulls
 
-These are smaller [THEOREM]-level claims that depend on the seven
-above:
+These are smaller [THEOREM]-level claims that depend on the six
+theorem-grade results above:
 
 - **D = 3 from |Aut(E)|² = 2^D · (D−1)!** — the *arithmetic* uniqueness
   (f(D) = 2^D·(D−1)! equals 16 only at D = 3; f(1..5) = {2, 4, 16, 96, 768})
@@ -739,6 +813,42 @@ explicitly state material already covered by Theorems 1-9. Spine count remains 9
 
 ## 11 · The empirical observation (NOT a theorem — explicit boundary)
 
+> **AUDITED 2026-08-03 — FTD-0791. The uniqueness claim does not survive.**
+> The FTD-0319 scan had never been audited. It now has been, and independently
+> replicated. **Leg 1 sits exactly at the chance base rate:** at the registered
+> `2e-6` gate the null expects **1.42–1.67** matches and the scan found **1**;
+> a random number near 137 is matched to 2 ppm by this family **79% of the
+> time**. **At that gate the second leg eliminates nothing** (1 → 1), so
+> "dual-matcher" and "matcher" coincide. All remaining surprise (~190:1, not
+> `4e5:1`) comes from the `x_- ↔ N_c` leg — **an identification this framework
+> retired**. Both tolerances were set by the observed deviation (1.59x and
+> 1.25x headroom; the source says they were chosen "so the master quadratic
+> counts comfortably"), and uniqueness exists only in a narrow band of gate
+> choices picked after the answer was known. The preregistered outcome had
+> probability 0.9942 under its own null — the test had no power.
+>
+> **FTD-0319 is retagged `[MEASURED]` → `[SELECTION]`.** The claim below that
+> the polynomial "is the unique dual-matcher" must be read with the base rate
+> attached. The designation "the framework's single scan-rigid identification"
+> is **withdrawn**; the scan-rigid count is **zero**. The 1.26 ppm agreement
+> itself remains `[NUMERICAL FACT]` — it is arithmetic, and it is unchanged.
+>
+> Separately (FTD-0792): the engine does not run on this root. It runs on a
+> CODATA-matched value, and a build lint forbids the derived root from
+> reaching any force path.
+
+**Relocated 2026-08-03 (FTD-0785) — the electron-mass expression.**
+`[NUMERICAL FACT — physics identification, NOT part of any theorem count;
+no LEDGER row]`. Substituting `G* = 2G√π` into the FTD electrostatic
+self-energy formula gives, in lattice units,
+`m_e = 2/(2 + (4 − 1/(2G√π))^{1/2}) = 0.5110334515...`. Against the measured
+electron rest energy `0.51099895069 MeV` this is a **relative deviation of
+6.75×10⁻⁵ (67.5 ppm)** — the earlier presentation displayed eight digits and
+stated no deviation. The "lattice units" hedge makes the comparison
+deniable in exactly the direction that flatters it. Same tolerance-asymmetry
+caveat as the `1/α` observation below applies, and no look-elsewhere control
+has ever been run for this one.
+
 The larger root of the master quadratic (Theorem 2) matches the
 inverse fine-structure constant:
 
@@ -756,8 +866,12 @@ is the graviton-audit id; pre-reg tag
 `preregister-adversarial-look-elsewhere-v1`): across **2.65 M degree-2
 polynomials** over an 18-constant basket FTD did not design, the master
 quadratic is the **unique dual-matcher** — zero non-G* dual-matchers,
-rank 1 by ~130×. That is structural evidence of polynomial-template
-uniqueness; it is not a derivation of α from FTD axioms. **Honest caveats:**
+rank 1 by ~130×. **Per FTD-0791 (banner above) that count is what chance
+predicts:** the null expects 1.42–1.67 matchers at the registered gate and
+the scan found 1, so the observation is consistent with no structure at all.
+It is therefore **not** structural evidence of polynomial-template
+uniqueness, and it is not a derivation of α from FTD axioms.
+**Further caveats, all predating the audit:**
 the ~130× rank gap is *within the G\*-family*
 (the rank-2 is itself a G\* polynomial); uniqueness is asymmetric-
 tolerance-conditioned (x₊ at 2 ppm vs x₋ at 1% — under a symmetric 1% gate
@@ -798,22 +912,24 @@ not a derivation of α from FTD axioms.
 
 In order from most to least defensible:
 
-1. "FTD has a rigorous algebraic core: seven theorem-grade results
-   (Theorems 1, 2, 3, 5, 6, 8, 9 — Theorem 3 at its arithmetic core
+1. "FTD has a rigorous algebraic core: six theorem-grade results
+   (Theorems 1, 2, 3, 5, 8, 9 — Theorem 3 at its arithmetic core
    only, |μ_K| = |disc(K)| unique to ℚ(i); its physics dual-match
-   landing is separately [NUMERICAL FACT]) plus two honestly-tiered
-   subsidiary results (Theorems 4, 7 — see the count convention in
+   landing is separately [NUMERICAL FACT]) plus three honestly-tiered
+   subsidiary results (Theorems 4, 6, 7 — see the count convention in
    the Subsidiary note above §0), centered on the constant
    G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
    Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; see §1)." — §§1-9.
 
 2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has a root
    matching 1/α to 1.26 ppm (the historical x₋ ↔ N_c reading, 0.8%,
-   is RETIRED — see §2/§11); under the FTD-0319 adversarial scan the
-   polynomial is the unique dual-matcher over an 18-constant basket,
-   with the tolerance-conditioning caveat declared in §11 and the
-   Theorem-3 criterion declaration of §3 required whenever the CM
-   uniqueness is invoked." — Theorems 2, 3 + observation §11.
+   is RETIRED — see §2/§11). **The uniqueness evidence formerly attached
+   to this item is withdrawn (FTD-0791):** the FTD-0319 scan's single
+   dual-matcher is exactly what its own null predicts (1.42–1.67
+   expected), so the scan supports no claim of structural specialness.
+   Cite the 1.26 ppm agreement as arithmetic, never as evidence, and
+   never call it scan-rigid — the scan-rigid count is zero." —
+   Theorems 2, 3 + observation §11.
    *(Corrected 2026-07-01, FTD-0348 — this item previously claimed a
    live dual match "to permille precision" [x₊ is ppm, x₋ was 0.8%],
    pointed at §9 for an observation that lives in §11, and omitted
@@ -862,11 +978,11 @@ What this document explicitly does NOT allow you to claim:
 |---|---|---|---|
 | 1 G* identity | `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` | `proof_motivic_master_quadratic.py` | FTD-0002 |
 | 2 Master quadratic | `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | `audit_master_quadratic_rigidity.py` | FTD-0001 |
-| 3 CM uniqueness | `AUDIT_MASTER_QUADRATIC.md` | `scan_cm_curves.py` | (audit-derived; numerical scan over 9 class-number-1 discriminants) |
+| 3 CM uniqueness | `AUDIT_MASTER_QUADRATIC.md` | `scan_cm_curves.py` | (audit-derived; arithmetic core is the `|μ_K| = |disc K|` uniqueness; the physics dual-match scan covers **63** discriminants with h ≤ 4 — row corrected 2026-08-03, FTD-0785, prior copy said 9) |
 | 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0006 / FTD-0007 |
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
-| 7 Phase J ultralocal (THEOREM at L=2; NUMERICAL EVIDENCE at L=3; OPEN/ambiguous L≥4) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
+| 7 Phase J ultralocal ([THEOREM at all L ≥ 2] per FTD-0350 — row corrected 2026-08-03, FTD-0785; it still carried the superseded "L=2 only / OPEN at L≥4" status contradicted by §7) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_zero_modes.py` | FTD-0005 area |
 | 8 Harmonic invariant tower (rows added 2026-07-01, FTD-0348 — this table previously stopped at Theorem 7) | `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md` | `proof_harmonic_invariant_tower.py` | FTD-0111 |
 | 9 Q(G*) π-free subfield (conditional on Chudnovsky 1976) | `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 | `proof_field_theoretic_qgstar.py` | FTD-0112 |
 
@@ -887,8 +1003,8 @@ What this document explicitly does NOT allow you to claim:
 
 ## 14 · Single-line summary
 
-**FTD's algebraic spine is seven theorem-grade results plus two honestly-tiered subsidiary results (nine numbered sections; Theorem 3 counting at its arithmetic core only — see the count convention above §0), centered on G* =
-Γ(1/4)/Γ(3/4) ≈ 2.9587: the G* identity (Chowla-Selberg), the master
+**FTD's algebraic spine is six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered sections; Theorem 3 counting at its arithmetic core only — see the count convention above §0), centered on G* =
+Γ(1/4)/Γ(3/4) ≈ 2.9587: the G* identity (**elementary Γ-reflection**, not Chowla–Selberg — corrected 2026-08-03, FTD-0785, restoring consistency with §1's 2026-07-01 correction), the master
 quadratic P(x) = x² − 16G*²x + 16G*³ and its two roots, CM uniqueness
 within class-number-1 fields, the coefficient 16 = |Aut(E)|² for E:
 y² = x³ − x, the Watson identity W₃ = G*²/(2π), the Phase G geometric
@@ -917,7 +1033,7 @@ in meters) goes through the **calibration interface**: exactly two
 SI-dimensional anchors (`a_phys ≡ ℓ_P` and `K_B = m_e`) are
 theorem-enforced as the irreducible minimum (FTD-0059 + FTD-0096).
 
-The full dimensionless  dimensional bridge — including the seven
+The full dimensionless  dimensional bridge — including the six
 theorems, the four dimensionless physical predictions
 (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations, and
 one worked dimensional application — is catalogued at:

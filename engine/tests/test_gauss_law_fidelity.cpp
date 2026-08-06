@@ -468,12 +468,23 @@ void test_gf_b_live_dynamics() {
           "longer converges to div(J)=s at the charge site. The isolation "
           "story (stencil mismatch slows but does not cap enforcement at odd "
           "L) has changed — re-derive the mechanism split.");
-    check("GF-B1s: live defaults settle WRONG-SIGNED at the site (tail f < -0.02; measured -0.095)",
-          r_B1.frac_mean_tail < -0.02,
-          "The live steady state no longer has an inward-pointing near-field "
-          "at a +1 charge. The coupling-source sign analysis (G_C*grad(s) "
-          "points toward a positive charge) and the fidelity table in this "
-          "file's header need re-measurement.");
+    // Re-pinned 2026-08-04: this assertion still encoded the PRE-amendment
+    // reality (tail f < -0.02, measured -0.095 on 2026-07-16). The Term-2
+    // electric-coupling sign amendment of 2026-07-18 fixed the sign and the
+    // header block above was updated to +0.1145, but this check was not --
+    // so a corrected engine failed its own test. Now pinned as a BAND, which
+    // catches a regression in either direction.
+    check("GF-B1s: live defaults settle RIGHT-SIGNED but partial at the site "
+          "(0.02 < tail f < 0.50; measured +0.1145 post Term-2 amendment)",
+          r_B1.frac_mean_tail > 0.02 && r_B1.frac_mean_tail < 0.50,
+          "The live steady state has moved. At or below 0.02 (or negative) the "
+          "Term-2 electric-coupling sign amendment of 2026-07-18 has REGRESSED "
+          "-- the near-field would again point INWARD at a +1 charge, which is "
+          "the defect that amendment repaired. At or above 0.50 the wave_vel "
+          "longitudinal reservoir is no longer capping enforcement: either the "
+          "[OPEN] velocity-sector projection landed or the drive amplitude "
+          "changed. Either way, re-measure the fidelity table in this file's "
+          "header and SPEC_FTD_LAGRANGIAN.md 3.3.");
     check("GF-B5p: removing wave+coupling restores near-full enforcement (tail > 0.95; measured +0.988)",
           r_B5.frac_mean_tail > 0.95,
           "With the wave/coupling dynamics off, the per-tick projector no "

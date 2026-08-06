@@ -38,9 +38,9 @@ Per tick (CPU, default integrator, dt = 1; `render_bridge.cpp:600-753` fixes the
 
 **Rule 1 — phase_read** (`phase_read.cpp:77-144`): for X ∈ {L, R}
 
-  ΔJ_X = c² L₁₈ J_X + 𝟙_coupling · (G_C/2) · (∇s + ∇×(s·v)) − 𝟙_clock · ω_eff² · J_X,
+  ΔJ_X = c² L₁₈ J_X + 𝟙_coupling · (G_C/2) · (−∇s + ∇×(s·v)) − 𝟙_clock · ω_eff² · J_X,
 
-with c² = C_WAVE² = 1/3, the coupling source **split equally** (`G_C * 0.5` into each register, lines 122-126), and the de Broglie clock a shared scalar multiplier on each register's own value (lines 133-140). Both operators and both coefficients are identical across X.
+with c² = C_WAVE² = 1/3, the coupling source **split equally** (`G_C * 0.5` into each register, lines 122-126), and the de Broglie clock a shared scalar multiplier on each register's own value (lines 133-140). Both operators and both coefficients are identical across X. *(Electric-source sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3; transcription corrected 2026-08-04 to match `phase_read.cpp:208-213` and `kernels_stencil_dual.cu:141-147`. The §3/§4 theorems turn only on the 50/50 split being identical across L and R, so they are unaffected by this sign.)*
 
 **Rule 2 — phase_write leapfrog + damping** (`phase_write.cpp:187-227`): W_X += ΔJ_X; J_X += W_X; then, where damping applies, (J_X, W_X) ↦ λ(x)·(J_X, W_X) with the *same* site-dependent factor λ(x) (Larmor-modulated or not) on both registers. All three integrator variants (default, `symplectic_leapfrog`, `verlet_wave_integrator` including the Rule-2a second half-kick at `render_bridge.cpp:646-652`) use identical coefficients on L and R. Observable sync: flux := J_L + J_R, wave_vel := W_L + W_R (lines 226-227) — the engine's observable *is* F by construction.
 
@@ -52,7 +52,7 @@ with c² = C_WAVE² = 1/3, the coupling source **split equally** (`G_C * 0.5` in
 
 In (F, D) coordinates [THEOREM, by §1]:
 
-  V_F += c² L₁₈ F + 𝟙_coupling · G_C · (∇s + ∇×(s·v)) − 𝟙_clock · ω_eff² F;  F += V_F;  (F, V_F) ↦ λ(F, V_F)
+  V_F += c² L₁₈ F + 𝟙_coupling · G_C · (−∇s + ∇×(s·v)) − 𝟙_clock · ω_eff² F;  F += V_F;  (F, V_F) ↦ λ(F, V_F)
   V_D += c² L₁₈ D − 𝟙_clock · ω_eff² D;              D += V_D;  (D, V_D) ↦ λ(D, V_D)
   Gauss: F −= ∇φ (gated sites); D untouched.
   Movement/annihilation/boundary: F and D transported/attenuated by identical coefficients.
@@ -83,7 +83,7 @@ Census method: every occurrence of `flux_L|flux_R|wave_vel_L|wave_vel_R|chiralit
 | Operation | Site | Form |
 |---|---|---|
 | 18-pt Laplacian, both registers | `phase_read.cpp:89-118`; `kernels_stencil_dual.cu:96-127` | same L₁₈ each |
-| Coupling source split | `phase_read.cpp:122-126`; `kernels_stencil_dual.cu:129-156` | +(G_C/2)(∇s + ∇×(s·v)) to each ⇒ sources F only |
+| Coupling source split | `phase_read.cpp:122-126`; `kernels_stencil_dual.cu:129-156` | (G_C/2)(−∇s + ∇×(s·v)) to each ⇒ sources F only |
 | de Broglie clock (both variants) | `phase_read.cpp:133-140`; `kernels_stencil_dual.cu:158-170` | −ω_eff²·(own register), shared scalar |
 | Leapfrog, 3 integrator variants | `phase_write.cpp:188-208`; Rule-2a `render_bridge.cpp:646-652`; `kernels_stencil_dual.cu:328-343` | identical coefficients |
 | Damping incl. Larmor modulation | `phase_write.cpp:211-223`; `kernels_stencil_dual.cu:345-359` | same λ(x) both registers |

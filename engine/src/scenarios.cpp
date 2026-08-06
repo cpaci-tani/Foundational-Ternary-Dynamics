@@ -18,6 +18,7 @@
 
 #include "ftd/scenarios.h"
 #include "ftd/render_bridge.h"
+#include "scenarios/_helpers.h"
 
 #include <cstdint>
 #include <random>
@@ -73,6 +74,9 @@ bool dispatch_scenario(RenderBridge& rb, const std::string& name) {
         // Physical Purpose: Serves as the baseline state of the lattice with no initial particles or fields.
         // Initial Condition Parameters: None.
         // Expected Behaviour: The lattice remains completely quiet and empty.
+        // Isolate every production phase so the null control is not the
+        // full dashboard default stack running on a zero field.
+        configure_static_seed_terms(rb);
         return true;
     }
 

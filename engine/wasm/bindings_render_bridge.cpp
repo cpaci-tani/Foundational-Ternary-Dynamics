@@ -251,26 +251,22 @@ static constexpr LegacyAlias kLegacyAliases[] = {
     {"vacuum",       "flux-vacuum-foam"},
 };
 
-static void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
-    // Primary path: ported JS scenario library (flux-/light-/quantum-/
-    // s0-seed-/s0-vacuum-/s0-field-). Dispatcher returns true on prefix match.
-    if (ftd::dispatch_scenario(rb, name)) return;
-
-    // Backward-compat: 'empty' is also handled by the JS dispatcher (index.js)
-    // as an early-return; the C++ dispatcher does not match it via prefix, so
-    // keep this explicit no-op so legacy callers see consistent behavior.
-    if (name == "empty") return;
+// Returns true iff a scenario body (or legacy alias) handled `name`.
+// Callers must treat false as failure — do not present an empty lattice as a
+// successful load of the requested id.
+static bool setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
+    // Primary path: Scale-0 scenario library (flux-/light-/quantum-/
+    // s0-seed-/s0-vacuum-/s0-field-/empty). Dispatcher returns true on match.
+    if (ftd::dispatch_scenario(rb, name)) return true;
 
     // Resolve any legacy short name to its modern alias and redispatch.
     for (const auto& alias : kLegacyAliases) {
         if (name == alias.old_name) {
-            ftd::dispatch_scenario(rb, alias.modern_name);
-            return;
+            return ftd::dispatch_scenario(rb, alias.modern_name);
         }
     }
 
-    // Unknown name — silently no-op (matches pre-2026-04-28 behavior; the
-    // primary dispatcher already returned false above).
+    return false;
 }
 
 // ── Scale 0 → Scale 1 coarse-graining export ─────────────────────────
