@@ -430,7 +430,7 @@ are not evidence for an `L ≥ 4` failure.
 `docs/theory/09_mathematical/ANALYSIS_PHASE_J_ZERO_MODES_v1.md`; executable
 verification in `scripts/proofs/proof_phase_j_zero_modes.py` (44/44). The
 explicit `L=2` construction in
-`docs/theory/10_eft_program/derivations/DERIV_PARTITION_FUNCTION_L2.md` is a
+`docs/theory/10_eft_program/derivations/spine_master_quadratic/DERIV_PARTITION_FUNCTION_L2.md` is a
 historical special-case computation. FTD-0350 Test 7 recovers its numerical
 identity on the matched forward stencil for all 1107 neutral configurations;
 the old document's unstated stencil/domain interpretation is superseded by

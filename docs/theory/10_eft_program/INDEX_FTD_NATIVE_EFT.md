@@ -56,7 +56,7 @@ These define the formal structure. They get read; they don't get measured.
 | File | Tag | Purpose |
 |---|---|---|
 | [`DERIV_EMERGENT_COULOMB_GEOMETRIC.md`](derivations/alpha_readout_programme/DERIV_EMERGENT_COULOMB_GEOMETRIC.md) | [THEOREM] | $V(r)$ is geometric Coulomb with zero fine-structure content; closed-form, zero free parameters. The Phase-G resolution of the Phase-F α-plateau. |
-| [`DERIV_PARTITION_FUNCTION_L2.md`](derivations/DERIV_PARTITION_FUNCTION_L2.md) | [THEOREM at L=2] | First explicit FTD partition-function computation; ultralocality structural finding. The Phase-J result. |
+| [`DERIV_PARTITION_FUNCTION_L2.md`](derivations/spine_master_quadratic/DERIV_PARTITION_FUNCTION_L2.md) | [THEOREM at L=2] | First explicit FTD partition-function computation; ultralocality structural finding. The Phase-J result. |
 | [`THEOREM_A_PHYS_NO_GO.md`](derivations/framework_postulates_constitution/THEOREM_A_PHYS_NO_GO.md) | [THEOREM] | No length $a_\text{phys}$ is derivable from Axiom Zero; calibration only (FTD-0059). |
 | [`THEOREM_MU_NO_GO_FTD0096.md`](derivations/sm_constants_mass_flavour/THEOREM_MU_NO_GO_FTD0096.md) | [THEOREM] / [CLOSED NEGATIVE] | Mass-unit $\mu$ not derivable from Axiom Zero; closes FTD-0096, confirms terminal [PARAMETRIC] for the L₂ identity. |
 | [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](derivations/engine_infrastructure_rg/THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md) | [THEOREM]/[MEASURED] | Diagonal blocking identities $M_{JJ}=16$, $M_{J^4}=256$ exact; engine smoothness measured at all L. |
