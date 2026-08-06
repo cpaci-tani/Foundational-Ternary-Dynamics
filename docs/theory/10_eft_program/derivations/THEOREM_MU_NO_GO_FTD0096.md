@@ -172,7 +172,7 @@ Three independent closures from different directions all agree: the L₂ identit
 - LEDGER row FTD-0097 (look-elsewhere scan): `docs/theory/07_assessment/core_ledgers/LEDGER.md`
 - Open-item tracker: [`archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`](archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md) — marked CLOSED RESOLVED-BY-THEOREM
 - SPEC_FTD calibration declaration: `docs/SPEC_FTD.md` (LATTICE  PHYSICAL CALIBRATION section)
-- Sympathetic audit identifying this as closeable: `docs/theory/07_assessment/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md`
+- Sympathetic audit identifying this as closeable: `docs/theory/07_assessment/spine_master_quadratic/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md`
 
 ---
 

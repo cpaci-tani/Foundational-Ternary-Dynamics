@@ -618,7 +618,7 @@ These are the files that reference one or more of the ARCHIVE-proposed docs and 
 ### References to `ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`
 
 - `docs/theory/META_INDEX.md` (catalog section) — update to note archived
-- `docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md` (inline reference) — update to archive path
+- `docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md` (inline reference) — update to archive path
 - `docs/theory/07_assessment/INDEX_07_ASSESSMENT.md` (table row) — remove from active list or note as archived
 - `docs/theory/08_structural/PREREG_FINITE_NEUTRAL_LOCK_v1.md` — update reference
 - `docs/theory/01_reference/SPEC_FTD_REFERENCE.md` — update reference to monograph or new path
