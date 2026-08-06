@@ -49,7 +49,7 @@ classification of every section below.
 this map's existing taxonomy at all. This section is the delta; the body is annotated ⚠ where
 superseded. **Nothing here promotes any tag.***
 
-### R.1 · α's *evidential* base collapsed; its *structural* boundary is untouched
+### R.1 · α's *evidential* base collapsed; its *structural* boundary stands with one exception
 
 FTD-0242 (route-invariance), FTD-0243 (Galois-blindness) and FTD-0244 (K-BIND) stand exactly
 as written. **FTD-0314 does not.** ⚠ FTD-0785 (2026-08-03, inside this window) found that
@@ -96,9 +96,15 @@ tag. The 1.26 ppm agreement itself is unchanged `[NUMERICAL FACT]`: it is arithm
 ### R.2 · The substrate selects *against* the quartic (FTD-0794) — the "forces ¬X" class gains a member
 
 Most boundaries in §1–§5 have the form *"the substrate does not force X."* FTD-0794 joins the
-smaller class that already contains §2b (finiteness *opposes* reversibility), §2c (the L² budget is
-*structurally incompatible* with Scale-0's L¹ ceiling), §3.5 (Λ = 0 `[DERIVED]`) and §5's no-sound
-result: **the substrate's own structure forces ¬X.** Chain
+smaller class that already contains §2b (finiteness *opposes* reversibility) and §3.5
+(Λ = 0 `[DERIVED]`): **the substrate's own structure forces ¬X.**
+
+> ⚠ **CORRECTED 2026-08-06 (same day).** An earlier draft of this paragraph also listed §2c and
+> §5's no-sound result in this class. Both were over-reads and are withdrawn. §2c's premise is
+> itself vacated (§R.8), so it cannot serve as an exemplar of anything. And **no-sound is not a
+> "forces ¬X" result**: §0.5 and §5 both classify it **ATTEMPTED**, and its canonical tag is
+> `[SELECTION] + [BOUNDARY]` (`ANALYSIS_LATTICE_WAVE_SECTORS_v1.md:120, :147`). Under this
+> document's own precedence rule (header), the canonical source wins over this map. Chain
 link 4 — "minimum `C₄` support and null-flatness select the quartic clock", the last unwithdrawn
 lattice-to-quartic bridge — is refuted: under the plaquette rotation `(x,y) → (−y,x)`,
 `x²+y²−1` is invariant and `x⁴+y²−1` is not, and no rescaling repairs it (symbolic solution set
@@ -255,12 +261,68 @@ sufficient for `(dτ/dt)² + v² = 1`. **Two checks decide it, neither done:** i
 forced or selected (if selected, FTD-0388 governs and the boundary reforms as a selection); and do
 the L¹-partition and L^∞-neighborhood legs carry the conclusion without the vacated premise?
 
+**§2a — FORMAL LEG STANDS; ITS STATED UNIFICATION WITH §2c IS SEVERED.** The load-bearing step is
+vintage-independent and survives: beables are real-valued functionals on one configuration space
+under the **pointwise product** (`PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md:162–163`, :153–154), and
+a pointwise product of real functions is commutative unconditionally. Note the same prereg's D1
+already lists `J ∈ ℝ³` (:147–151), so §2a never depended on the substrate being scalar. **But its
+unification claim is now broken:** `AUDIT_MODULAR_TIME_ALGEBRA_TYPE_CLOSED_NEGATIVE.md:27` grounds
+itself in *"exactly the inner-product / L² structure FTD-0208 proved the discrete substrate lacks
+(the substrate's `{−1,0,+1}^Λ` has no inner product)"* and :29 concludes *"FTD-0208 … and B1 …
+are **one obstruction**."* That shared premise is the one §R.8 vacated. **§2a therefore stands on its
+own legs and must no longer be presented as the same obstruction as §2c.** Its field inventory
+(four fields) is also stale against a voxel now carrying ~23 members.
+
+**§2b — DID NOT VACATE; three legs got HARDER.** A re-audit went looking for a 2c-style premise
+failure and did not find one: FTD-0499 and FTD-0569 converted the aphorism *"finiteness opposes
+reversibility"* into theorems (an exact deficit `(m−1)|H|`, *"independent of the numerical size of
+`H`"*; *"no fixed finite local sidecar"*), and FTD-0395/0465/0466 add non-injectivity as a measured
+`[THEOREM]` with two failed injective-variant attempts. **One defect found:** §0.5 grades §2b
+**PROVEN** citing *"the π/G\* reversible/irreversible split is exact"*, but that split's canonical
+source `FOUND_SPACETIME_FORCING_BOUNDARY.md:102` tags it `[SYNTHESIS] — not a theorem`. The grade
+needs re-justification from a different leg, or demotion to the legs that are theorems.
+
+**⚠ A cross-cutting instrument, not a boundary: THE SOURCE-DRIFT SWEEP.** Seven of twelve
+independent assessments hit the *same* failure mode — a May/June enumeration of `voxel.h` that no
+longer matches the file. §2c (`voxel.h:22/:26`, the origin), §2a's four-field D1 inventory,
+FTD-0073's field list, the no-sound leg's *"no `u(x)`"* against `voxel.h:113 velocity` and
+`:116 remainder`, the spin-2 field-content premise, thermodynamics'
+`FOUND_LATTICE_PHYSICS_INTUITIONS.md:137` *"Lattice dynamics are reversible"* against FTD-0395, and
+baryogenesis' positive claims predating FTD-0421. **Proposed deliverable:** for every registered
+claim quoting a specific engine file, check the quotation against head. ~1 desk-week, mechanical.
+**Its own falsifier:** sample 20 rows first — if drift is under ~10%, abandon the sweep, since the
+7/12 hit rate is its entire justification.
+
 ⚠ **Note on provenance, recorded because it bears on how much weight the other two rows carry:**
 the flux has been vector-valued since the Lagrangian was written (`ΔJ = c²∇²J − g_c∇s + g_c∇×(sv)`
 is unintelligible otherwise), so this premise may have been **inaccurate when written in May 2026**
 rather than made inaccurate by maturation — and it passed an independent adversarial review scored
 9.8/10. Whichever it is, **§2a and §2b have not yet been re-audited** and no inference should be
 drawn about them from this row.
+
+### R.9 · Load-bearing structure that is neither forced nor priced
+
+*Found 2026-08-06 by twelve independent assessments. `import_ledger.json` carries six `self_set`
+entries (claimed **forced**) and sixteen `imports` (claimed **priced**). The following are used by
+registered physics and appear in **neither** column — which is a direct gap against Number-One-Goal
+clause 1, "every physical structure is either forced content or a marked-and-priced import."*
+
+| Unpriced structure | Where it is load-bearing | Proposed row |
+|---|---|---|
+| **The Euclidean norm on the flux 3-vector** | the manifestation threshold itself, `phase_write.cpp:329`: `v.flux.mag2() > K_GENESIS*K_GENESIS`; also `voxel.h:22/:26` | `IMP-S5 [SELECTION]` — falsifier: a derivation of the norm from P1–P5, **or** a demonstration that the registered physics is invariant under replacing it with L¹/L^∞ |
+| **GNC** | the Gauss/normalization chain | to be specified |
+| **The clock hypothesis** | `SPEC_FTD_LAGRANGIAN.md` §4.3 + §8 L-1, both `[THEOREM conditional on clock-hypothesis AXIOM]` | already `[AXIOM]` in prose; **not** a priced-ledger row |
+| **The whole cosmology sector** | ΛCDM apparatus, Friedmann, inflation, BAO | zero rows; currently absorbed inside IMP-E3's "~50+" *category count* |
+| **Confinement** | §5 / §11-confine | likewise unpriced |
+
+⚠ **Not minted here.** Minting these is an owner act and is blocked behind the D5/D6/D7 sitting
+(`SPEC_ADOPTION_PRICING_RULES.md:85` — the rules "take effect only when the owner books" them) and
+behind FTD-0388's own registered registry debt. This table records the gap; it does not price it.
+
+**Un-graphed external dependencies.** The framework leans on at least three *open* external
+results with no dependency map: **Waldschmidt Conjecture 5.23** (load-bearing for FTD-0314's C2 leg
+— discovered by FTD-0785 after months unnoticed), **Rohrlich–Lang/GPC**, and the **Fresán–Jossen
+exponential period conjecture**. A one-page "what dies if each falls" graph is cheap and missing.
 
 ### R.7 · Propagation debt this refresh does **not** discharge
 
@@ -273,6 +335,7 @@ listed so they are not lost (precedent: FTD-0791's own record enumerated eight f
 | OT-3.3 / FTD-0802 | retagged `[SELECTION]`, withdrawn as OT-5.1 support | `SPEC_FTD_COMPLETE_FRAMEWORK.md` §§4/6/8.4 updated for FTD-0791 **only**; FTD-0802 absent |
 | OT-1.4 | demoted out of Tier 1 (FTD-0785); spine count 7+2 → 6+3 | `SPEC_FTD_COMPLETE_FRAMEWORK.md` still `[THEOREM]` and "Seven theorem-grade" |
 | FTD-0319 | scan-rigid count **zero** | `import_ledger.json` IMP-E1 provenance still cites "structural-uniqueness scan FTD-0319"; SS-6 still "7 of 9 numbered results" |
+| **⚠ `SPEC_FTD_COMPLETE_FRAMEWORK.md` contradicts *itself*** | `:92–96` and `:121` carry FTD-0791: the scan-rigid count is **ZERO** | `:99` of the **same file** still reads *"exactly **one** numerical identification … has survived an adversarial uniqueness scan"* — an unregistered intra-file contradiction, added to this table 2026-08-06 |
 | FTD-0796 | Bell bound is FC-1 completeness | `AUDIT_BELL_ANALYSIS.md`, `DERIV_OBSERVER_BELL_MECHANISM.md`, `SPEC_FTD_FRAMEWORK_V1.md` §2.3, PL-2 |
 
 ---
@@ -324,6 +387,13 @@ species that classify results about *evidence* and *testability* rather than abo
 - **EVIDENTIAL** (added 2026-08-06, §R.5) — a limit on what the corpus may *assert*, established
   by a base-rate control against a declared null. Overturned by a support that passes such a
   control.
+- **EXTERNALLY BLOCKED** (added 2026-08-06) — a limit that is not FTD's at all: the row's closure
+  waits on **open mathematics outside the framework**. Zero rows carry this as a *primary* class,
+  which is itself the finding: it appears only as unregistered sub-legs — FTD-0314's C2 leg on
+  **Waldschmidt Conjecture 5.23** (FTD-0785, registered "left OPEN, not remediated"), `δ ∉ N` on
+  **Rohrlich–Lang/GPC** and the **Fresán–Jossen exponential period conjecture**
+  (`ANALYSIS_E1_E2_TRANSCENDENCE_SOTA.md:13, :72`), and `§11-confine` at RP–FO. **The framework has
+  open-mathematics dependencies it has not graphed** — see §R.9.
 
 A third, narrower flavor of ATTEMPTED is **engine-blocked**: a result plausible in principle
 but not yet measurable without breaking the current simulator's golden-tick gate — an
