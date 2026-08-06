@@ -350,7 +350,7 @@ The EFT program (Phases 1–4) can plausibly move these entries from [PARAMETRIC
 **Do not update if:** you are merely tweaking numerical precision on an existing row — that belongs in the proof script, not the catalog.
 
 **Cross-references:**
-- `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` — narrative discussion of the honest accounting
+- `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md` — narrative discussion of the honest accounting
 - `docs/theory/07_assessment/REF_CLAIMS_MATRIX.md` — structured claim-by-claim dependency matrix
 - `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` — [OPEN] items, many of which block upgrades here
 - `docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md` — the program that aims to reduce the [PARAMETRIC] column

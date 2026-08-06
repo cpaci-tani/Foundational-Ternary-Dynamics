@@ -328,7 +328,7 @@ What is genuinely derived vs. claimed.
 
 | Order | Document | Description |
 |-------|----------|-------------|
-| 7.1 | [AUDIT_EPISTEMIC_AUDIT.md](07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | ~30 genuine, ~50 parametric, ~50 external; includes T1-T5 formalization tier appendix |
+| 7.1 | [AUDIT_EPISTEMIC_AUDIT.md](07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | ~30 genuine, ~50 parametric, ~50 external; includes T1-T5 formalization tier appendix |
 | 7.2 | [AUDIT_SELF_CONSISTENCY.md](07_assessment/AUDIT_SELF_CONSISTENCY.md) | Integer self-consistency proof (6 constraints satisfied) + exhaustive integer-uniqueness search (folded in): {3,4,7,13} is unique under combined physics + sequence constraints |
 | 7.3 | [AUDIT_BELL_ANALYSIS.md](07_assessment/AUDIT_BELL_ANALYSIS.md) | Bell inequality theory and simulation: S ≤ 2 from lattice (expected; QM is aggregate) |
 | 7.4 | [AUDIT_HIDDEN_SELECTIONS.md](07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) | Selection principles as explicit axioms SP1-SP5 (v3.0) |
