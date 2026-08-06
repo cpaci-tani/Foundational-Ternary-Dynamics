@@ -344,7 +344,7 @@ Green's-function identity, if one can be exhibited with hypotheses, would be
 `[THEOREM]` — not shown here; **(b)** "the engine reproduces the lattice
 Poisson kernel to 0.07% median residual at L = 384" is `[MEASURED]`. Only (b)
 is established. See
-`docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
+`docs/theory/10_eft_program/derivations/alpha_readout_programme/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
 and `scripts/benchmarks/fit_geometric_coulomb.py` (both paths were wrong in
 prior copies).
 

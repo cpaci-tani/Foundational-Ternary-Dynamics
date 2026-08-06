@@ -80,7 +80,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 - **Formula:** α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters.
 - **LEDGER:** [FTD-0004](../07_assessment/core_ledgers/LEDGER.md#ftd-0004)
-- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
+- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/10_eft_program/derivations/alpha_readout_programme/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
 - **Notes:** Reframed away from the QED-deviation reading: the lattice α plateau at ≈1.8× α_ref is the Poisson Green's function shape, not a fine-structure correction. Zero free parameters.
 
 ### Phase J partition-function ultralocality at L=2 (`phase_j_ultralocality`)
