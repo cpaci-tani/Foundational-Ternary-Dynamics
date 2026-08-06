@@ -99,5 +99,5 @@ Options 1 and 3 add structure relative to the frozen `(s,J,W)` state. None is au
 - `engine/tests/test_genesis_action_obstruction.cpp`
 - `scripts/proofs/proof_genesis_action_obstruction.py`
 - `engine/results/ftd_0565/windows_msvc_cpu.json`
-- `docs/theory/10_eft_program/derivations/THEOREM_GENESIS_ACTION_OBSTRUCTION.md`
+- `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_ACTION_OBSTRUCTION.md`
 - `docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_GENESIS_ACTION_OBSTRUCTION.md`

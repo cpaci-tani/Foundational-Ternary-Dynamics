@@ -60,7 +60,7 @@
 ## Reproducibility
 
 - theorem:
-  `docs/theory/10_eft_program/derivations/THEOREM_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION.md`
+  `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION.md`
 - preregistration:
   `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FINITE_RIGID_MOORE_CARRIER_OBSTRUCTION_v1.md`
 - preregistration SHA-256:

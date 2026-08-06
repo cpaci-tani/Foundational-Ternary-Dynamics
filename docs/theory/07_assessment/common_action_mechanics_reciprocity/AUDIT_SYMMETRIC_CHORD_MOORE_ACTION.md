@@ -56,7 +56,7 @@
 ## Reproducibility
 
 - theorem:
-  `docs/theory/10_eft_program/derivations/THEOREM_SYMMETRIC_CHORD_MOORE_ACTION.md`
+  `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_SYMMETRIC_CHORD_MOORE_ACTION.md`
 - preregistration:
   `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_CHORD_MOORE_ACTION_v1.md`
 - preregistration SHA-256:

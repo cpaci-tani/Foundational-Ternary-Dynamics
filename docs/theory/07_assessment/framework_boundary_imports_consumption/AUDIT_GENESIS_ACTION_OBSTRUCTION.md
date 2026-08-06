@@ -65,7 +65,7 @@ Artifacts:
 - `engine/tests/test_genesis_action_obstruction.cpp`
 - `scripts/proofs/proof_genesis_action_obstruction.py`
 - `engine/results/ftd_0567/windows_msvc_cpu.json`
-- `docs/theory/10_eft_program/derivations/THEOREM_GENESIS_ACTION_OBSTRUCTION.md`
+- `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_ACTION_OBSTRUCTION.md`
 - `docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_GENESIS_AMPLITUDE_ACTION_OBSTRUCTION_v1.md`
 
 ## Licensed interpretation

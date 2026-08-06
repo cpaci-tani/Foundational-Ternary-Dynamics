@@ -61,7 +61,7 @@
 ## Reproducibility
 
 - theorem:
-  `docs/theory/10_eft_program/derivations/THEOREM_NATIVE_ACTIVE_MODE_BACKREACTION.md`
+  `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_NATIVE_ACTIVE_MODE_BACKREACTION.md`
 - preregistration:
   `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_ACTIVE_MODE_BACKREACTION_v1.md`
 - preregistration SHA-256:

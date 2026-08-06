@@ -51,7 +51,7 @@
 ## Reproducibility
 
 - theorem:
-  `docs/theory/10_eft_program/derivations/THEOREM_NATIVE_HODGE_ENERGY_CONTINUITY.md`
+  `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_NATIVE_HODGE_ENERGY_CONTINUITY.md`
 - preregistration:
   `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md`
 - preregistration SHA-256:

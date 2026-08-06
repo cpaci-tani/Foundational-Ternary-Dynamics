@@ -83,7 +83,7 @@ Artifacts:
 - `scripts/proofs/proof_genesis_cubic_canonical_form.py`
 - `engine/results/ftd_0573/windows_msvc_cpu.json`
 - `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_CUBIC_CANONICAL_FORM_v1.md`
-- `docs/theory/10_eft_program/derivations/THEOREM_GENESIS_CUBIC_CANONICAL_FORM.md`
+- `docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_CUBIC_CANONICAL_FORM.md`
 
 ## Validation
 
