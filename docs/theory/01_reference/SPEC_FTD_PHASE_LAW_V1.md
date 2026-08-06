@@ -42,7 +42,7 @@ $$ U = U_{movement} \circ U_{forces} \circ U_{Gauss} \circ U_{write} \circ U_{re
 
 The full canonical phase-ladder per tick $t \to t+1$:
 
-1.  **$U_{read}$ (Field Read):** A parallel, read-only loop over the lattice. Computes $\Delta J$ using the 18-point Moore Laplacian $\nabla^2_{18} J$ and the state-flux coupling $g_c \nabla s + g_c \nabla \times (s \cdot u)$.
+1.  **$U_{read}$ (Field Read):** A parallel, read-only loop over the lattice. Computes $\Delta J$ using the 18-point Moore Laplacian $\nabla^2_{18} J$ and the state-flux coupling $-g_c \nabla s + g_c \nabla \times (s \cdot u)$ (electric-source sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3).
     * The exact 18-point Laplacian stencil is:
       $$ \nabla^2_{18}J(v) = \frac{1}{3}\sum_{\text{faces}}J(v+n) + \frac{1}{6}\sum_{\text{edges}}J(v+n) - 4J(v) $$
 2.  **$U_{write}$ (Field Write & Manifestation):** A parallel commit loop.

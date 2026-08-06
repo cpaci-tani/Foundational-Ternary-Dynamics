@@ -30,6 +30,34 @@ struct QuadraticPolarityCoat {
   bool valid = false;
 };
 
+struct QuadraticCoatSparseCurrentEntry {
+  Coord face{};
+  int axis = 0;
+  double value = 0.0;
+};
+
+/// A unique periodic oriented-face coefficient obtained after summing every
+/// contributing segment.  Unlike sparse_current.size(), this representation
+/// is invariant under splitting, duplication/cancellation, and periodic image
+/// choice.
+struct QuadraticCoatAggregatedCurrentEntry {
+  Coord face{};
+  int axis = 0;
+  double value = 0.0;
+};
+
+struct QuadraticCoatAggregatedCurrent {
+  int L = 0;
+  std::vector<QuadraticCoatAggregatedCurrentEntry> entries;
+  std::size_t raw_contributions = 0;
+  double raw_l1 = 0.0;
+  double net_l1 = 0.0;
+  double cancelled_l1 = 0.0;
+  double discarded_l1 = 0.0;
+  double aggregation_moment_residual = 0.0;
+  bool valid = false;
+};
+
 struct QuadraticCoatFaceCurrent {
   int L = 0;
   int charge = 0;
@@ -42,6 +70,8 @@ struct QuadraticCoatFaceCurrent {
   std::vector<double> current_x;
   std::vector<double> current_y;
   std::vector<double> current_z;
+  std::vector<QuadraticCoatSparseCurrentEntry> sparse_current;
+  bool dense_materialized = true;
   int rho_support = 0;
   int current_support = 0;
   double partition_residual = 0.0;
@@ -66,7 +96,17 @@ QuadraticCoatFaceCurrent make_quadratic_coat_face_current(
     int L,
     const Vec3& start_effective_position,
     const Vec3& end_effective_position,
-    int charge);
+    int charge,
+    bool materialize_dense = true);
+
+/// Sum a collection of sparse segment currents on unique periodic oriented
+/// faces.  Coefficients with |value| <= zero_tolerance are reported through
+/// discarded_l1 and omitted from entries.  This is an observer: it does not
+/// alter the current applied to the field.
+QuadraticCoatAggregatedCurrent aggregate_quadratic_coat_face_current(
+    const std::vector<QuadraticCoatFaceCurrent>& segments,
+    double scale = 1.0,
+    double zero_tolerance = 0.0);
 
 double quadratic_coat_current_divergence_at(
     const QuadraticCoatFaceCurrent& segment, int x, int y, int z);

@@ -47,37 +47,50 @@ $x_+$ as the physical coupling, so $\alpha$ is \textbf{dynamical, not structural
 \emph{the number matches to $\ppmval$~ppm, and the ontology does not derive that
 it should.}
 
-\section{The structural-uniqueness evidence (and its honest limit)}\label{sec:uniqueness}
+\section{The structural-uniqueness evidence (withdrawn), and what audit left standing}\label{sec:uniqueness}
 A $\ppmval$-ppm coincidence invites the obvious objection: with enough constants
-and enough integers, \emph{some} simple expression will land near any target. The
-framework's answer is a structural-uniqueness argument, and it is the strongest
-evidence the program holds.
+and enough integers, \emph{some} simple expression will land near any target. An
+earlier version of this section presented a structural-uniqueness argument as
+``the strongest evidence the program holds.'' \textbf{That argument did not
+survive its own base-rate controls, and this section now records the corrected
+state (2026-08-03/05; FTD-0791, FTD-0802, FTD-0321).}
 
-\runin{The adversarial look-elsewhere scan.}\margetag{meas} The scan asked: among
-all degree-2 polynomials of the master quadratic's natural form over a basket of
-18 physical constants \emph{that FTD did not design}, how many match the
-framework's two targets as well as the master quadratic does? The answer is
-\textbf{zero non-$\Gs$ dual-matchers across 2.65 million degree-2
-polynomials}, the master quadratic is the \textbf{unique} dual-matcher in the
-search space, \textbf{rank~1 by ${\sim}130\times$} over the nearest competitor.
-Against a random-coincidence null this is \textbf{${\sim}4\times10^5\!:\!1$} in
-favour of the structural reading. Two supporting nulls sharpen the picture: the
-\textbf{Eisenstein-family null} (the Eisenstein-integer multiplier family
-contributes zero dual-matchers) and the \textbf{Chowla--Selberg $h\ge2$ null} (no
-higher-class-number CM field reproduces the match through the $\Gamma$-product
-analogue). This is a genuine measured fact (\etag{meas}), and it is the cleanest
-reason to take the match seriously rather than dismiss it as numerology.
+\runin{The adversarial look-elsewhere scan --- withdrawn.}\margetag{sel} The scan
+asked: among all degree-2 polynomials of the master quadratic's natural form over
+a basket of 18 physical constants \emph{that FTD did not design}, how many match
+the framework's two targets as well as the master quadratic does? It reported
+zero non-$\Gs$ dual-matchers across 2.65 million polynomials. A refute-by-default
+audit (FTD-0791) found the result sits \textbf{exactly at its chance base rate}:
+the null expects $1.42$--$1.67$ matchers at the registered gate and the scan
+found $1$; a random target near $137$ is matched to $2$~ppm by that family
+$79\%$ of the time; both tolerances were set by the observed deviation, so the
+preregistered outcome had probability $0.9942$ under its own null. The
+${\sim}4\times10^5\!:\!1$ figure was retracted separately (2026-06-24): it was
+never computed by the runner. The companion extended scan (FTD-0802) failed the
+same control ($N_{\mathrm{null}} = 0.0014$: finding zero others is the chance
+expectation) \emph{and} its published count was wrong --- four cubic
+dual-matchers, excluded by an untested hardcoded claim, exist inside the declared
+family. \textbf{The scan-rigid count is zero.}
 
-\runin{The honest limit.} The evidence is strong, and it is \emph{evidence}, not a
-derivation chain, which is exactly what the \etag{smc} grade records. The
-${\sim}4\times10^5\!:\!1$ figure is computed \emph{within a declared natural
-family}; the full look-elsewhere correction across \emph{all} of the framework's
-degrees of freedom (every constant it might have admitted, every polynomial form
-it might have selected) is not something a single scan can close. By the project's
-own Bayesian convention a figure above $10^6\!:\!1$ is ``decisive'';
-${\sim}4\times10^5\!:\!1$ is deliberately short of that. The evidence materially
-raises the posterior that the match is not coincidence, and it remains evidence,
-not proof.
+\runin{The supporting nulls --- one stands, one fell.} The
+\textbf{Eisenstein-family null} (zero dual-matchers among Eisenstein-integer
+multipliers) stands. The \textbf{Chowla--Selberg $h\ge2$ null} fell to the full
+per-ideal-class Damerell scan (FTD-0321): $d=-4$ is unique only on the registered
+domain $|d|\le 907$; by $|d|\le 500{,}000$ there are \textbf{1{,}271 fundamental
+dual-matchers across 696 discriminants} (smallest at $|d| = 7{,}895$), and the
+criterion has no discriminating power at scale because $\Gs$ is the value of an
+$SL_2(\Z)$-invariant at the order-2 elliptic point --- a saddle whose value
+density is log-divergent (FTD-0803).
+
+\runin{The honest position.} What survives is the $\ppmval$-ppm arithmetic
+itself, the Eisenstein null, and the $\Z[i]$ structural unification
+(\ftdid{0122}); what is withdrawn is every claim that a uniqueness \emph{scan}
+elevates the match above coincidence. The \etag{smc} grade on $x_+ = 1/\alpha$
+already said ``evidence, not derivation''; the corrected statement is sharper:
+the identification presently has \emph{no numerical-uniqueness support at all},
+and rests on structural considerations alone. Negative results are first-class
+in this program, and this correction is reported with the same prominence the
+withdrawn claim once had.
 
 \section{Retired and closed-negative}\label{sec:closed}
 A construction story is incomplete without its dead ends: preserving them is what

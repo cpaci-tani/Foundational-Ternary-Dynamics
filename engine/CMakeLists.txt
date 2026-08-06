@@ -203,6 +203,7 @@ add_library(ftd_eft STATIC
     src/eft/quadratic_coat_face_current.cpp
     src/eft/quadratic_coat_spacetime_action.cpp
     src/eft/fixed_step_energy_scope.cpp
+    src/eft/coupled_quartic_clock_field.cpp
     src/eft/matched_midpoint_poynting.cpp
     src/eft/quadratic_coat_matter_work.cpp
     src/eft/quadratic_coat_neutral_pair_work.cpp
@@ -249,6 +250,19 @@ add_library(ftd_eft STATIC
     src/eft/collective_source_history_bound.cpp
     src/eft/removal_time_pulse_bound.cpp
     src/eft/removal_time_orbit_coherence.cpp
+    src/eft/derived_interaction_graph.cpp
+    src/eft/spline_poynting_momentum.cpp
+    src/eft/connected_moore_block_action.cpp
+    src/eft/state_only_matter_field_observer.cpp
+    src/eft/transported_chart_morphology.cpp
+    src/eft/paired_field_response.cpp
+    # Arc 2 momentum stress ledger: unit-bond T^(i)/S^(i) construction and the
+    # cumulative F/W/Q accumulators.  Observer-only; no production consumer.
+    src/eft/momentum_transport_current.cpp
+    src/eft/support_invariant_matter_predicate.cpp
+    src/eft/matched_regional_energy_transport.cpp
+    src/eft/batched_regional_energy_profile.cpp
+    src/eft/component_aware_radial_field_profile.cpp
     src/eft/eight_source_orbit_coherence.cpp
     src/eft/nine_source_orbit_coherence.cpp
     src/eft/ten_source_orbit_coherence.cpp
@@ -260,6 +274,13 @@ add_library(ftd_eft STATIC
     src/eft/pole_matching.cpp
 )
 target_include_directories(ftd_eft PUBLIC ${CMAKE_SOURCE_DIR}/include)
+if(OpenMP_CXX_FOUND)
+    # Observer-only state reconstruction scans O(L^3) centered samples.  The
+    # pragma lives in ftd_eft, so linking OpenMP only through ftd_core leaves
+    # CUDA-only research executables silently serial.  No dynamics uses this
+    # pragma; this enables the declared deterministic x-slab reduction only.
+    target_link_libraries(ftd_eft PUBLIC OpenMP::OpenMP_CXX)
+endif()
 
 # Core library
 add_library(ftd_core
@@ -1281,6 +1302,74 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_dissipation tests/test_gpu_dissipation_source.cpp)
     target_link_libraries(test_gpu_dissipation ftd_core ftd_cuda)
 
+    # FTD-0764/0766 observer-only transported-chart morphology.  This target
+    # links the isolated reduction library; it does not enter ftd_core or the
+    # production tick.
+    add_executable(test_cuda_transported_chart_morphology
+                   tests/test_cuda_transported_chart_morphology.cpp)
+    target_link_libraries(test_cuda_transported_chart_morphology
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_executable(test_cuda_state_only_support_ladder
+                   tests/test_cuda_state_only_support_ladder.cpp)
+    target_link_libraries(test_cuda_state_only_support_ladder
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_executable(test_cuda_fractional_center_state_only_observer
+                   tests/test_cuda_fractional_center_state_only_observer.cpp)
+    target_link_libraries(test_cuda_fractional_center_state_only_observer
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_executable(test_cuda_paired_field_response
+                   tests/test_cuda_paired_field_response.cpp)
+    target_link_libraries(test_cuda_paired_field_response
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_test(NAME cuda_state_only_support_ladder
+             COMMAND test_cuda_state_only_support_ladder)
+    add_test(NAME cuda_fractional_center_state_only_observer
+             COMMAND test_cuda_fractional_center_state_only_observer)
+    add_test(NAME cuda_transported_chart_morphology
+             COMMAND test_cuda_transported_chart_morphology)
+    add_test(NAME cuda_paired_field_response
+             COMMAND test_cuda_paired_field_response)
+    set_tests_properties(cuda_state_only_support_ladder
+                         cuda_fractional_center_state_only_observer
+                         cuda_transported_chart_morphology
+                         cuda_paired_field_response PROPERTIES
+                         TIMEOUT 600 LABELS "gpu;eft;observer")
+
+    # FTD-0766 registered face-ray discovery campaign.  Manual execution only:
+    # the 21-arm L=321 replay is intentionally excluded from routine CTest.
+    add_executable(campaign_aged_wake_entrainment_cuda
+                   tests/campaign_aged_wake_entrainment_cuda.cpp)
+    target_link_libraries(campaign_aged_wake_entrainment_cuda
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+
+    # FTD-0768 registered long-transport paired-response campaign. Manual
+    # execution only; the L=321, 1536-forward-tick plus full reverse run is
+    # intentionally excluded from routine CTest.
+    add_executable(campaign_long_transport_dynamic_response_cuda
+                   tests/campaign_long_transport_dynamic_response_cuda.cpp)
+    target_link_libraries(campaign_long_transport_dynamic_response_cuda
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+
+    # Arc 2 total momentum stress ledger campaign (pre-registration
+    # PREREG_TOTAL_MOMENTUM_STRESS_LEDGER_v1).  Three runner modes:
+    #   --exactness-precheck  Sec 6.4 L=11 exactness pre-check (host only)
+    #   --firewall            Sec 8 L=17 two-tick qualification (needs a GPU,
+    #                         writes nothing; run manually before locking)
+    #   --run                 the registered L=321 campaign
+    # Only the host-only exactness pre-check is registered as a CTest: it is
+    # fast, deterministic and device-free.  The firewall and the L=321
+    # five-radius, two-arm, 768-tick forward-plus-reverse run stay manual, as
+    # the sibling FTD-0766/0768 campaigns do.
+    add_executable(campaign_total_momentum_stress_ledger
+                   tests/campaign_total_momentum_stress_ledger.cpp)
+    target_link_libraries(campaign_total_momentum_stress_ledger
+                          PRIVATE ftd_core ftd_cuda_m3_observer)
+    add_test(NAME momentum_stress_ledger_exactness
+             COMMAND campaign_total_momentum_stress_ledger
+                     --exactness-precheck)
+    set_tests_properties(momentum_stress_ledger_exactness PROPERTIES
+                         TIMEOUT 600 LABELS "eft;observer")
+
     # Phase II.2-E: Wilson-Dirac CPU/GPU parity
     add_executable(test_wilson_dirac_cuda_parity tests/test_wilson_dirac_cuda_parity.cpp)
     target_link_libraries(test_wilson_dirac_cuda_parity ftd_core ftd_cuda)
@@ -1771,6 +1860,12 @@ ftd_add_test(test_quadratic_coat_spacetime_action tests/test_quadratic_coat_spac
 ftd_add_test(test_fixed_step_energy_scope tests/test_fixed_step_energy_scope.cpp
              CTEST_NAME fixed_step_energy_scope TIMEOUT 120
              LABELS selected_extension eft action variational fixed_step time energy discrete_gradient symplectic no_go theorem observer correction unit eft_quick)
+ftd_add_test(test_coupled_quartic_clock_field tests/test_coupled_quartic_clock_field.cpp
+             CTEST_NAME coupled_quartic_clock_field TIMEOUT 120
+             LABELS selected_extension eft clock action_angle quartic temporal phase synchronization dispersion compliance holonomy control theorem observer unit eft_quick)
+ftd_add_test(test_l17_complete_tangent_candidate tests/test_l17_complete_tangent_candidate.cpp
+             CTEST_NAME l17_complete_tangent_candidate TIMEOUT 7200
+             LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research)
 ftd_add_test(test_matched_midpoint_poynting tests/test_matched_midpoint_poynting.cpp
              CTEST_NAME matched_midpoint_poynting TIMEOUT 300
              LABELS selected_extension eft coat current field electric magnetic midpoint poynting work energy gauss continuity polarity reversal theorem observer constructive correction unit eft_quick)

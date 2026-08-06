@@ -1,0 +1,20 @@
+# FTD-0693 — Causal excitation separation local-root runner lock v1
+
+**Status:** `[RUNNER LOCK — BEFORE EXECUTION]`
+
+| Artifact | SHA256 |
+|---|---|
+| protocol | `6000652A6D9ECD6B304E33D5B75172B90D56064F813907AC68AC068370B47B6A` |
+| wrapper | `D89BADC2DD4AA0A779B25A0F41328D5A679DD1F8771FC813263FF46B9F9E9EF7` |
+| embedded runner | `2DADC9AF66F93515E885889A89D95C3A4AF4259C205BAE6EDAE2B5D4FBEC177C` |
+| connected-action header | `813429315D7DC5040A0295B2E89D38CC4C270098BFB8AED0FBFD2C0D9AA6900D` |
+| connected-action source | `06ECBE3B945C091945CDFD44E2B6372D40AC8365A428E2A17D007C91C0E049BA` |
+| orbit-gather header | `53BCFB4855F5257022925E3B5097C85E9AD1AE642300B9DDF3473A86EEF94F76` |
+| orbit-gather source | `BD985F69B71758BF505AEBECACAAC8F4D15339ED367235EE19D985E93D98ACB4` |
+| Release executable | `80E35A2048462C076A2C6BBA93C64E672BE7F64875806C56B3010A009CF62BEF` |
+
+Built through `engine/build_native.bat` under the pinned MSVC 14.44 native
+toolchain. The executable is run directly because the corresponding CTest is
+disabled after registration to keep long research campaigns out of the normal
+test battery.
+

@@ -38,7 +38,7 @@ const STRIDE_ONE_SLOTS = new Set(['state', 'gaussResidual']);
 export const SCALAR_SAMPLE_DEPS = {
     showPsiSquared: ['fluxVector'],
     showPhase: ['fluxVector'],
-    showLagrangianDensity: ['fluxVector', 'poynting', 'divergence'],
+    showLagrangianDensity: ['fluxVector', 'poynting', 'divergence', 'eField'],
     showEntropyDensity: ['fluxVector'],
     showGravPotential: ['fluxVector'],
     showEmEnergy: ['eField', 'bField'],
@@ -136,7 +136,7 @@ export function buildSampleSnapshot(fieldCapability, flags, stride, acScale0) {
         flags.showLagrangianDensity || flags.showEntropyDensity || flags.showGravPotential;
     if (needFlux) cache.ensureSample('fluxVector');
     if (flags.showPoynting || flags.showLagrangianDensity) cache.ensureSample('poynting');
-    if (flags.showEField || flags.showEmEnergy || flags.showEPressure) cache.ensureSample('eField');
+    if (flags.showEField || flags.showEmEnergy || flags.showEPressure || flags.showLagrangianDensity) cache.ensureSample('eField');
     if (flags.showBField || flags.showEmEnergy || flags.showBPressure) cache.ensureSample('bField');
     if (flags.showDivField || flags.showLagrangianDensity || flags.showChargeDensity) {
         cache.ensureSample('divergence');

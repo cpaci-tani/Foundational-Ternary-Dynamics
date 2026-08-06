@@ -88,7 +88,8 @@ engine/
 #### 1.1.2 Scale 0 Decomposed Tick Phases (`src/render_bridge_phases/`)
 To eliminate structural bloat, the Scale 0 `tick()` pipeline is decomposed into four key translation units:
 * **`phase_read.cpp`**: Implements the Wave Equation + state-flux coupling. Computes:
-  $$\Delta J = c^2 \nabla^2 J + g_c \nabla s + g_c (\nabla \times (s v))$$
+  $$\Delta J = c^2 \nabla^2 J - g_c \nabla s + g_c (\nabla \times (s v))$$
+  (electric-source sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3)
   Includes the dual-substrate split stencils.
 * **`phase_write.cpp`**: Implements leapfrog advances ($v_{wave} \mathrel{+}= \Delta J; J \mathrel{+}= v_{wave}$), Langevin stochastic thermalization, Larmor radiation damping, and probabilistic genesis ($|J| > K_{genesis}$). Asserts mass-gap creation and stochastic Boltzmann evaporation ($p_{evap} = e^{-E_{7\text{-site}}/K_B^2} \cdot K_{EVAP\_RATE}$ per tick, RNG-gated).
 * **`phase_forces.cpp`**: Field-mediated forces pipeline. Evaluates electrostatic $F_{EM} = -\alpha s \nabla \phi_C$ (via warm-started SOR Poisson solver), gravitational $F_{grav} = G_N \nabla \rho$ (using tier-2 stencils), and magnetic Lorentz forces $F_{magnetic} = \alpha s (v \times B)$.
@@ -259,7 +260,7 @@ Every tick of the Scale 0 engine proceeds through a rigorous pipeline, executing
 1. **Toggle Combination Validation:** Inspects the active `TermToggles` combination using `toggles.validate()`. If `strict_validation` is enabled, invalid combinations (e.g., enabling both Poisson Coulomb and Emergent Forces) throw an exception (or abort under WASM). If strict validation is off, warnings are deduplicated and logged once.
 2. **Phase 1: Wave Propagation & Coupling (`phase_read()`):** Computes the vector field changes $\Delta J$.
    * Iterates through the lattice, applying an **18-point Moore neighborhood isotropic Laplacian stencil** to evaluate the wave equation $\frac{\partial^2 J}{\partial t^2} = c^2 \nabla^2 J$. The weights (face = 1/3, edge = 1/6, self = -4) maintain fourth-order $O(h^4)$ spatial isotropy.
-   * If `toggles.coupling` is active, adds the state-flux coupling term $g_c \nabla s$ (manifested charges acting as sources) and the Biot-Savart term $g_c \nabla \times (s v)$ (moving charges inducing rotational flux).
+   * If `toggles.coupling` is active, adds the state-flux coupling term $-g_c \nabla s$ (manifested charges acting as sources; sign per the Term 2 amendment of 2026-07-18, `SPEC_FTD_LAGRANGIAN.md` §3.3 — the drive points *outward* at a $+1$ charge) and the Biot-Savart term $g_c \nabla \times (s v)$ (moving charges inducing rotational flux).
 3. **Phase 2: Commit Flux & Manifestation (`phase_write()`):** Commits the field updates via symplectic Störmer–Verlet leapfrog integration:
    $$\text{wave\_vel} \leftarrow \text{wave\_vel} + \Delta J$$
    $$\text{flux} \leftarrow \text{flux} + \text{wave\_vel}$$
@@ -347,7 +348,7 @@ source of truth for dependency strings and defaults:
 | Toggle Name | Default | Dependencies | Conflicts | Backends | Detailed Physical Meaning / Simulation Role |
 | :--- | :---: | :--- | :--- | :---: | :--- |
 | **`wave_propagation`** | `true` | None | None | `ANY` | Phase-read: Updates vector field flux via 18-point Moore isotropic Laplacian stencil. Represents core spatial wave equation. |
-| **`coupling`** | `true` | None | None | `ANY` | Phase-read: Adds state-flux coupling $g_c \nabla s$ and Biot-Savart term $g_c \nabla \times (s v)$ where charges act as field sources. |
+| **`coupling`** | `true` | None | None | `ANY` | Phase-read: Adds state-flux coupling $-g_c \nabla s$ (sign amended 2026-07-18, see §3.3 of `SPEC_FTD_LAGRANGIAN.md`) and Biot-Savart term $g_c \nabla \times (s v)$ where charges act as field sources. |
 | **`damping`** | `true` | None | None | `ANY` | Phase-write: Exponential flux magnitude decay at rate $\alpha$. Prevents numerical run-away of self-field energy. |
 | **`genesis`** | `true` | None | None | `ANY` | Phase-write: Master toggle enabling probabilistic particle creation and evaporation when local flux $|J| > K_{genesis}$. |
 | **`evaporation`** | `false` | None | None | `ANY` | Phase-write: Isolates particle evaporation logic ($|J| < K_B \rightarrow s=0$) for test isolation. OR'd with `genesis`. |

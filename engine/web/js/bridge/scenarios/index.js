@@ -1,8 +1,9 @@
 /**
- * Scale-0 / Scale-1 / Scale-2 scenario dispatcher — MockBridge side.
+ * Scale-0 scenario dispatcher — JS parity mirror of engine/src/scenarios/*.
  *
- * Scenario extraction from the bridge modularization pass documented in
- * engine/web/docs/INDEX.md.
+ * LIVE dashboard loads use the C++ library via WASM (WasmBridge /
+ * WasmBridgeProxy). This JS tree is kept for name-parity CI and as a
+ * reference twin — not the production seed path.
  *
  * The 86-scenario switch body originally lived inline in MockBridge. It was
  * first lifted into this single file as a monolith (to de-risk the move),
@@ -30,10 +31,7 @@
  * once here. Physics geometry uses the reference-lattice helpers so scenarios
  * keep the same physical size when L is changed (separate from visual scaling).
  *
- * CONTRACT — `this` binding via `.call(bridgeInstance, name, ctx)` is
- * mandatory. Every `this.reset()`, `this._initFluxGrid()`,
- * `this.injectParticle(...)`, etc., inside group files binds to the
- * MockBridge instance.
+ * Returns true iff a group handled `name`; false if unknown (never silent success).
  */
 
 import { setupFluxScenario }    from './flux-scenarios.js';
@@ -43,7 +41,7 @@ import { setupVacuumScenario }  from './vacuum-scenarios.js';
 import { setupS0SeedScenario }  from './s0-seed-scenarios.js';
 import { setupS0FieldScenario } from './s0-field-scenarios.js';
 import { createPhysicsLatticeHelpers } from './physics-lattice.js';
-import { createScenarioHarness } from './_helpers.js';
+import { createScenarioHarness, configureStaticSeedTerms } from './_helpers.js';
 
 /**
  * Dispatcher: executes a scenario by name by trying each group in order.
@@ -64,20 +62,26 @@ export function runSetupScenario(name, harness = null) {
     if (harness) harness.reset();
     else bridge.reset();
 
-    // 'empty' is equivalent to "just reset" — handle before the prefix chain
-    // so it short-circuits cleanly (no group file owns the 'empty' prefix).
-    // Unknown names also fall through the whole chain and silently no-op,
-    // which matches the pre-refactor behavior.
-    if (name === 'empty') return;
+    // 'empty' is the null-control baseline: reset, then isolate every production
+    // phase so the dashboard does not leave the full default stack armed on a
+    // zero field. No group file owns the 'empty' prefix.
+    if (name === 'empty') {
+        const scenarioHarness = harness ?? createScenarioHarness(bridge);
+        configureStaticSeedTerms(scenarioHarness);
+        return true;
+    }
 
     // Try each group in order. First matching prefix wins; stops immediately.
     const ctx = { N, mid, midF, ...createPhysicsLatticeHelpers(N) };
     const scenarioHarness = harness ?? createScenarioHarness(bridge);
-    scenarioHarness.initFluxGrid?.();
-    if (setupFluxScenario(name, scenarioHarness, ctx))    return;
-    if (setupLightScenario(name, scenarioHarness, ctx))   return;
-    if (setupQuantumScenario(name, scenarioHarness, ctx)) return;
-    if (setupVacuumScenario(name, scenarioHarness, ctx))  return;
-    if (setupS0SeedScenario(name, scenarioHarness, ctx))  return;
-    if (setupS0FieldScenario(name, scenarioHarness, ctx)) return;
+    if (typeof scenarioHarness.initFluxGrid === 'function') scenarioHarness.initFluxGrid();
+    if (setupFluxScenario(name, scenarioHarness, ctx))    return true;
+    if (setupLightScenario(name, scenarioHarness, ctx))   return true;
+    if (setupQuantumScenario(name, scenarioHarness, ctx)) return true;
+    if (setupVacuumScenario(name, scenarioHarness, ctx))  return true;
+    if (setupS0SeedScenario(name, scenarioHarness, ctx))  return true;
+    if (setupS0FieldScenario(name, scenarioHarness, ctx)) return true;
+
+    console.warn('[scenarios] unknown scenario id (JS parity mirror):', name);
+    return false;
 }

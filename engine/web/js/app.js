@@ -6,9 +6,7 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge } from './bridge-init.js';
 import { appRegistry } from './core/registry.js';
-import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
@@ -53,8 +51,10 @@ import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-pane
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
-// Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
+// Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
+import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
+import { bootBridge } from './app-wire/bridge-boot.js';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -408,37 +408,14 @@ function _fillFieldParticleBuf(pData) {
 // all moved to Scale1Controller. See engine/web/js/scales/scale1/controller.js
 
 // ── Toast Notification System ────────────────────────────────────────
-function showToast(msg, severity = 'info') {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${severity}`;
-    const span = document.createElement('span');
-    span.textContent = msg;
-    const btn = document.createElement('button');
-    btn.textContent = '\u00d7';
-    btn.addEventListener('click', () => toast.remove());
-    toast.appendChild(span);
-    toast.appendChild(btn);
-    container.appendChild(toast);
-    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 8000);
-}
 // Leaf modules (scenario-loader, scale0 toolbar) reach the toast system via
 // this window hook — they must not import app.js (CONTRACTS §3 Rule 1).
 window.showToast = showToast;
 
-// ── Loading Progress ─────────────────────────────────────────────────
-function _loadProgress(pct, msg) {
-    const bar = document.getElementById('load-bar');
-    const status = document.getElementById('load-status');
-    if (bar) bar.style.width = pct + '%';
-    if (status) status.textContent = msg;
-}
-
 // ── Initialization ───────────────────────────────────────────────────
 // Safety timeout: dismiss loading overlay after 8000ms even if init() hangs
 // (e.g. WASM compilation stalls, WebGL context fails). This prevents the user
-// from being stuck on a blank screen — the dashboard will render in mock mode.
+// from being stuck on a blank screen.
 setTimeout(() => {
     const lo = document.getElementById('loading-overlay');
     if (lo && !lo.classList.contains('hidden')) {
@@ -462,59 +439,7 @@ async function init() {
 
     _loadProgress(10, 'Probing GPU engine...');
     const latticeSize = parseInt(document.getElementById('lattice-size').value);
-    const engineEl = document.getElementById('status-engine');
-    const computeEl = document.getElementById('status-compute');
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const forceNative = urlParams.get('engine') === 'native';
-    const isLiveServerPort = /^55\d{2}$/.test(window.location.port);
-
-    if (forceNative || !isLiveServerPort) {
-        // 1. Try native GPU engine
-        debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
-        try {
-            bridge = await tryNativeBridge(latticeSize);
-        } catch (e) {
-            console.warn('[init] Native GPU bridge error:', e);
-            bridge = null;
-        }
-    } else {
-        debugLog('[init] Skipping native GPU: static dev server (use ?engine=native for ws_server)');
-        bridge = null;
-    }
-
-    debugLog('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
-    if (bridge && bridge.ready) {
-        _loadProgress(30, 'GPU engine connected');
-        engineEl.textContent = 'Native Engine';
-        engineEl.style.color = '#c084fc';
-        computeEl.textContent = bridge.isNativeGPU ? 'GPU' : 'CPU';
-        computeEl.style.color = bridge.isNativeGPU ? '#4ade80' : '#60a5fa';
-        computeEl.title = bridge.isNativeGPU
-            ? 'Connected to native GPU engine (CUDA)'
-            : 'Connected to native CPU engine';
-        showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
-    } else {
-        _loadProgress(20, 'Compiling WASM engine...');
-        try {
-            bridge = await createBridge(latticeSize);
-        } catch (err) {
-            // Revision 2.7: specific, actionable failure surface (the generic
-            // top-level overlay hid WHAT failed). There is no mock fallback on
-            // this path by design — scenarios need the native engine.
-            _loadProgress(25, 'WASM engine FAILED to load');
-            throw new Error(
-                'WASM engine failed to load (' + err.message + '). The dashboard ' +
-                'cannot run scenarios without it — rebuild via engine\\build_wasm.bat ' +
-                'and check the browser console / network tab for the failing module.');
-        }
-        _loadProgress(30, 'WASM engine ready');
-        engineEl.textContent = 'WASM Engine';
-        engineEl.style.color = '#4ade80';
-        computeEl.textContent = 'CPU';
-        computeEl.style.color = '#60a5fa';
-        computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
-    }
+    bridge = await bootBridge(latticeSize, { showToast, loadProgress: _loadProgress });
     appRegistry.register('activeBridge', bridge);
 
     // Create 3D viewport

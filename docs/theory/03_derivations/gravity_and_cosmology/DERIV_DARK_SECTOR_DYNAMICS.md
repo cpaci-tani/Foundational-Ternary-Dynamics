@@ -31,18 +31,26 @@ This document connects the engine's measured behaviors to the cosmological const
 
 The FTD Lagrangian contains a coupling term (SPEC_FTD_LAGRANGIAN.md S3.4, L-7):
 
-    L_coupling = -g_c * s * (div J)
+    L_coupling = +g_c * s * (div J)
 
 where g_c = sqrt(alpha) ~ 0.0854 and s in {-1, 0, +1}.
 
+> **Term 2 sign amendment (2026-07-18).** This coupling term and the wave-equation
+> source below previously carried the opposite sign (`-g_c*s*divJ`, source
+> `+g_c*grad(s)`). See `SPEC_FTD_LAGRANGIAN.md` §3.3 and `lagrangian.h:52-68`.
+> Transcription corrected 2026-08-04. The amendment flips the *direction* of the
+> injected self-field (now outward at a `+1` charge, constraint-aligned); it does
+> not change the injection *rate* of §1.2, which is quadratic in `grad(s)`, nor
+> any conclusion of this document.
+
 The Euler-Lagrange equations yield the source term in the wave equation:
 
-    d^2 J / dt^2 = c^2 * laplacian(J) + g_c * grad(s) + g_c * curl(s * v)
+    d^2 J / dt^2 = c^2 * laplacian(J) - g_c * grad(s) + g_c * curl(s * v)
 
-For a manifested particle at site x_0 with s(x_0) = +/-1 and s = 0 everywhere else, the gradient grad(s) is nonzero at the 6 face-neighbors of x_0. This is implemented in `render_bridge.cpp` phase_read (line 325):
+For a manifested particle at site x_0 with s(x_0) = +/-1 and s = 0 everywhere else, the gradient grad(s) is nonzero at the 6 face-neighbors of x_0. This is implemented in `render_bridge_phases/phase_read.cpp` (lines 208-213):
 
-    delta_j_[i] += gradient_state(i) * G_C;     // Source: grad(s)
-    delta_j_[i] += curl_state_velocity(i) * G_C; // Source: curl(s*v)
+    delta_j_[i] -= gradient_state_op(...) * G_C;     // Source: -grad(s)
+    delta_j_[i] += curl_state_velocity_op(...) * G_C; // Source: curl(s*v)
 
 **Every tick, each manifested particle injects new flux into its 6 face-neighbors.** This is not a numerical artifact -- it follows directly from the Lagrangian coupling term.
 
@@ -206,7 +214,7 @@ This is the FTD formalization of wavefunction "collapse" -- not a mysterious pro
 
 Once manifested, the particle:
 
-1. **Sources its own self-field** via the coupling term (g_c * grad(s))
+1. **Sources its own self-field** via the coupling term (-g_c * grad(s); sign amended 2026-07-18, see S1.1)
 2. **Builds an envelope** that extends ~15 voxels (r_eff)
 3. **Interacts through the envelope**: Coulomb force from grad(phi_C) (Poisson equation sourced by div(J)), gravity from grad(rho) where rho = |J|
 4. **Carries mass** K_B = m_e from the Born-Infeld rest energy, plus electromagnetic self-energy from the envelope
@@ -265,7 +273,7 @@ resolution is asserted.
 
 | ID | Claim | Status | Key Equation / Evidence |
 |----|-------|--------|------------------------|
-| DSD-1 | Coupling term injects energy into particle neighborhood each tick | **[THEOREM]** | delta_J = g_c * grad(s) from Lagrangian EL equations |
+| DSD-1 | Coupling term injects energy into particle neighborhood each tick | **[THEOREM]** | delta_J = -g_c * grad(s) from Lagrangian EL equations (sign amended 2026-07-18) |
 | DSD-2 | Injection rate is O(alpha) per particle per tick | **[THEOREM]** | dE/dt = g_c^2 * |grad s|^2 = alpha * O(1) |
 | DSD-3 | Selective damping: far-field flux propagates losslessly | **[THEOREM]** | should_damp = !selective or near_particle_[i] |
 | DSD-4 | Net energy leak into vacuum = dark energy mechanism | **[SELECTION — superseded by FTD-0331]** | Injection - dissipation at 1-hop boundary; no L-dependence ⇒ not a native Λ source; source [OPEN] |

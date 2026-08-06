@@ -29,6 +29,7 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 | Add a JS Playwright test | `engine/web/tests/*.spec.js` | template: `engine/web/tests/audit-regression.spec.js` |
 | Add a Python verification script | `scripts/verification/` | template: `scripts/verification/verify_*.py` |
 | Add a formal proof | `scripts/proofs/proof_*.py` | run via `python -m scripts.proofs.<name>` |
+| Add or inspect an isolated selected-EFT probe | `engine/include/ftd/eft/`, `engine/src/eft/`, `engine/tests/`, `scripts/experiments/` | `docs/theory/10_eft_program/INDEX_FTD_NATIVE_EFT.md`; clock-field example: `coupled_quartic_clock_field.*` (FTD-0770, not a RenderBridge path); immutable native-corpus reanalysis: `analyze_native_temporal_occupancy.py` (FTD-0772); observation-only native aggregate pilot artifacts: `engine/results/gstar_qactive_pilot_20260802/` (FTD-0776, ignored evidence bundle); exact finite-cover clock/memory boundary: `scripts/proofs/proof_dyadic_monodromy_clock_memory.py` (FTD-0777, no engine path) |
 | Find a physics derivation | `docs/theory/03_derivations/` (DERIV_*.md) | `docs/theory/META_INDEX.md` catalog |
 | Find a foundational document | `docs/theory/02_foundations/` (FOUND_*.md) | same catalog |
 | Find an audit / assessment | `docs/theory/07_assessment/` (AUDIT_*.md) | same catalog |

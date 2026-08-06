@@ -254,6 +254,9 @@ export function setupS0FieldScenario(name, harness, ctx) {
                     }
                     break;
                 }
+
+                default:
+                    return false;
             }
             return true;
 }

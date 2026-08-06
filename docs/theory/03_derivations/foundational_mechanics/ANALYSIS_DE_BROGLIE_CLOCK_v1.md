@@ -13,7 +13,7 @@ Adding a Klein-Gordon rest-mass clock `∂²J/∂t² = c²∇²J − ω₀²J` (
 
 ## 1 · A0 — the clock is imposed (gate, on record)
 
-The flux dynamics is `delta_j = c²·Lap18(J) + G_C·∇s + G_C·∇×(s·v)` (`phase_read.cpp:105–164`) — **no restoring term**. Genesis applies a dissipative *drain* (`v.flux *= max(0,1−K_GENESIS/|J|)`), not `−ω₀²J`. FTD-0251's native clock winds at `ω(k)`, **zero at k=0** (massless). So FTD has **no rest-mass oscillation**; `ω₀ ∝ K_B` must be **added**. Verdict: `ω₀∝K_B is [IMPOSED/SELECTION], not [FORCED]`.
+The flux dynamics is `delta_j = c²·Lap18(J) − G_C·∇s + G_C·∇×(s·v)` (`phase_read.cpp:205–213`) — **no restoring term**. *(Transcription corrected 2026-08-04: this line previously carried the pre-2026-07-18 `+G_C·∇s` sign; the electric source is `−g_c∇s` per the Term 2 sign amendment, `SPEC_FTD_LAGRANGIAN.md` §3.3 / `lagrangian.h:52-68`. The A0 gate below turns only on the **absence of a restoring term**, which is unaffected by this sign.)* Genesis applies a dissipative *drain* (`v.flux *= max(0,1−K_GENESIS/|J|)`), not `−ω₀²J`. FTD-0251's native clock winds at `ω(k)`, **zero at k=0** (massless). So FTD has **no rest-mass oscillation**; `ω₀ ∝ K_B` must be **added**. Verdict: `ω₀∝K_B is [IMPOSED/SELECTION], not [FORCED]`.
 
 ## 2 · B core — measured (run of record)
 
