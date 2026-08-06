@@ -177,7 +177,7 @@ Per PROTOCOL §9:
 
 Cross-references:
 
-- `docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md` — the locked spec
+- `docs/theory/07_assessment/qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md` — the locked spec
 - `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` — the ~129 PARAMETRIC entries this scan implicitly tested against
 - `docs/theory/07_assessment/core_ledgers/LEDGER.md` FTD-0093 (Mechanism C closed negative), FTD-0094 (L2 [PARAMETRIC]), FTD-0096 (μ-arrow [OPEN])
 - `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — the seven-theorem algebraic spine remains UNCHANGED by this scan

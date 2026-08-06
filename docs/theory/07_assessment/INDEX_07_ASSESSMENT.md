@@ -173,7 +173,7 @@ The pre-registered scan that controls FTD's catalog over-richness.
 
 | File | Tag | Purpose |
 |---|---|---|
-| [PROTOCOL_LOOK_ELSEWHERE_SCAN.md](PROTOCOL_LOOK_ELSEWHERE_SCAN.md) | [PROTOCOL] | Hash-locked pre-registration of the deterministic look-elsewhere scan (FTD-0097). |
+| [PROTOCOL_LOOK_ELSEWHERE_SCAN.md](qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md) | [PROTOCOL] | Hash-locked pre-registration of the deterministic look-elsewhere scan (FTD-0097). |
 | [AUDIT_LOOK_ELSEWHERE_RESULTS.md](AUDIT_LOOK_ELSEWHERE_RESULTS.md) | [MEASURED] | Scan results: catalog over-rich at the monomial level; null rejected upward at ε = 10⁻⁴. |
 
 ---
