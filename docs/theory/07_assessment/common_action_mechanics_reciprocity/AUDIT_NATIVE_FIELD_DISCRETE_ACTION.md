@@ -68,7 +68,7 @@ force, toggles, event order, RNG, and defaults remain unchanged.
 ## Reproducibility
 
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_FIELD_DISCRETE_ACTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_FIELD_DISCRETE_ACTION_v1.md`
 - preregistration SHA-256:
   `09970E8A18974B56F399DC68023BD7527FDCED50A937054413C3FC53B7F1AFEB`
 - native observer: `test_native_field_discrete_action`

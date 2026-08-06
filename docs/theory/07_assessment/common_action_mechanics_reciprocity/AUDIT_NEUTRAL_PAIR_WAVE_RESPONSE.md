@@ -94,7 +94,7 @@ normalization claim follows.
 ## 7. Artifacts
 
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_NEUTRAL_PAIR_WAVE_RESPONSE_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NEUTRAL_PAIR_WAVE_RESPONSE_v1.md`
 - campaign: `engine/tests/campaign_neutral_pair_wave_response.cpp`
 - run record: `engine/results/ftd_0436/windows_msvc_cpu_L33.csv`
 - manifest: `engine/results/ftd_0436/manifest.json`

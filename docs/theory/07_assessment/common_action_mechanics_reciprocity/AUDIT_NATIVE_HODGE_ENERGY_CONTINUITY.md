@@ -53,7 +53,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_NATIVE_HODGE_ENERGY_CONTINUITY.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md`
 - preregistration SHA-256:
   `98B3F8D13E6FBAAD26931C6DD7EC37C9377BD054899012B109C63A0512C26E78`
 - native observer: `test_native_hodge_energy_continuity`

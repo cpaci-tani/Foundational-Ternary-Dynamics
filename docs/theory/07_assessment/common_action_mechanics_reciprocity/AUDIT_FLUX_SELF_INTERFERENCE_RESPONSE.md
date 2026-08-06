@@ -140,7 +140,7 @@ symmetry, or empirical coupling normalization.
 ## 7. Artifacts
 
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_FLUX_SELF_INTERFERENCE_RESPONSE_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FLUX_SELF_INTERFERENCE_RESPONSE_v1.md`
 - campaign: `engine/tests/campaign_flux_self_interference_response.cpp`
 - run record: `engine/results/ftd_0435/windows_msvc_cpu_L33.csv`
 - manifest: `engine/results/ftd_0435/manifest.json`

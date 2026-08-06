@@ -59,7 +59,7 @@ unmodified point-action mobility branch is closed negative.
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_MINIMAL_MOORE_COMPATIBILITY_COAT.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_MINIMAL_MOORE_COMPATIBILITY_COAT_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MINIMAL_MOORE_COMPATIBILITY_COAT_v1.md`
 - preregistration SHA-256:
   `94C706936189B077A144ACA7B64D4FEBE93DCDB93AEA36BA604C466480C80F8D`
 - native observer: `test_minimal_moore_compatibility_coat`

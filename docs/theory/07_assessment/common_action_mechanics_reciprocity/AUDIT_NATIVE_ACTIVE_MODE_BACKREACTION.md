@@ -63,7 +63,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_NATIVE_ACTIVE_MODE_BACKREACTION.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_ACTIVE_MODE_BACKREACTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_ACTIVE_MODE_BACKREACTION_v1.md`
 - preregistration SHA-256:
   `5A488BB1E9B9B25DA4363B0C8B27CDA9EA48B7FD6822124666179A3B5D948BEE`
 - native observer: `test_native_active_mode_backreaction`

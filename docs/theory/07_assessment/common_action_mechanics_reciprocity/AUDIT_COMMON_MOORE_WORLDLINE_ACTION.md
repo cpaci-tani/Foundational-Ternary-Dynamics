@@ -65,7 +65,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_COMMON_MOORE_WORLDLINE_ACTION.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_COMMON_MOORE_WORLDLINE_ACTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_COMMON_MOORE_WORLDLINE_ACTION_v1.md`
 - preregistration SHA-256:
   `DE4F20274E679F0C0E39967B985025F85D5D6F56A1D142B86CE6DE603A62019B`
 - native observer: `test_common_moore_worldline_action`

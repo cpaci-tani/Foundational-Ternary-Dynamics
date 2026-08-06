@@ -64,7 +64,7 @@
 - theorem:
   `docs/theory/10_eft_program/derivations/THEOREM_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION.md`
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PASSIVE_DRESSING_DEPINNING_OBSTRUCTION_v1.md`
 - preregistration SHA-256:
   `CB525DEF5A5E6B92127C4DFD9C72DCF1F7799E7D97113519EDF2C732E56B0DDC`
 - native observer: `test_passive_dressing_depinning_obstruction`

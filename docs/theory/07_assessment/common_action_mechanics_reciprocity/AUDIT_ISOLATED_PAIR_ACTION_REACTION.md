@@ -77,7 +77,7 @@ momentum-conservation claim.
 ## 5. Artifacts
 
 - preregistration:
-  `docs/theory/10_eft_program/preregistrations/PREREG_ISOLATED_PAIR_ACTION_REACTION_v1.md`
+  `docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ISOLATED_PAIR_ACTION_REACTION_v1.md`
 - campaign: `engine/tests/campaign_isolated_pair_action_reaction.cpp`
 - run record: `engine/results/ftd_0437/windows_msvc_cpu_L33.csv`
 - manifest: `engine/results/ftd_0437/manifest.json`
