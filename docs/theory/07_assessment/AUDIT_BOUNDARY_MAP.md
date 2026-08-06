@@ -2,6 +2,8 @@
 
 **Tag:** `[SYNTHESIS]` — cross-document integration of existing boundary claims at their
 canonical tags. **Introduces no new theorem; promotes no tag; derives nothing new.**
+**Last refresh: 2026-08-06** (§R below folds in FTD-0781–0803; body text after §R predates it
+and is annotated in place with ⚠ where the refresh supersedes it).
 Every row points at a canonical source; where a source and this map disagree on a tag,
 the canonical source (LEDGER / TRACKER_ONTIC_TRUTH / SPEC_ALGEBRAIC_SPINE) wins.
 
@@ -35,6 +37,220 @@ classification of every section below.
 
 ---
 
+## R · REFRESH 2026-08-06 — folding in FTD-0781–0803
+
+> ⚠ **THIS REFRESH IS NOT YET BOOKED IN THE LEDGER.** A row is drafted for owner ratification;
+> until it is booked, §R (and §6.1, §R.7, the two new §0.5 species, and the §7 addendum) is
+> **prose, not a registered claim**, and nothing in it may be cited as settled. Precedent:
+> FTD-0335 and FTD-0346, both booked at edit time.
+
+*The body of this map was last revised 2026-07-01 (FTD-0346). The five weeks since produced
+~25 ledger rows, several of which change rows below materially and two of which do not fit
+this map's existing taxonomy at all. This section is the delta; the body is annotated ⚠ where
+superseded. **Nothing here promotes any tag.***
+
+### R.1 · α's *evidential* base collapsed; its *structural* boundary is untouched
+
+FTD-0242 (route-invariance), FTD-0243 (Galois-blindness) and FTD-0244 (K-BIND) stand exactly
+as written. **FTD-0314 does not.** ⚠ FTD-0785 (2026-08-03, inside this window) found that
+FTD-0314's C2 leg asserts `Γ(1/3)` and `Γ(1/4)` algebraically independent — which is
+**Waldschmidt Conjecture 5.23, an open problem** (the repo's own FTD-0377 says so) — so the
+cross-CM-field exclusion is conditional on an *open conjecture*, not on Chudnovsky alone, and
+**FTD-0314's headline `[THEOREM]` over-consolidates**. FTD-0784 separately found C3's period
+field `F = Q̄(π, Γ(1/4))` inconsistently defined (it asserts `Ω ∈ F` while `√π ∉ F`);
+the conclusion survives, the definition needs repair. With that stated, what fell *additionally*
+is the evidence for the *identification* those boundaries bound:
+
+- **FTD-0791** — FTD-0319's ~2.65M-polynomial look-elsewhere scan sits at the **chance base
+  rate**: the null expects 1.42–1.67 matchers at the registered gate and the scan found 1; a
+  random number near 137 is matched to 2 ppm by that family **79%** of the time; at the
+  operative gate the second leg eliminates nothing (1 → 1); both tolerances were set by the
+  observed deviation, and the preregistered outcome had probability 0.9942 under its own null.
+  Retagged `[MEASURED]` → `[SELECTION]`. **The scan-rigid count is ZERO.**
+- **FTD-0802** — OT-3.3 (the 2.87M extended scan) failed its **preregistered** base-rate
+  control (`N_null = 0.0014`, Outcome B), and its published count was additionally *wrong*: the
+  "0 genuinely-new cubic dual-matchers" line was a hardcoded literal that no code tested; the
+  corrected runner reports **5 distinct dual-matchers, 4 beyond the master quadratic**.
+  Retagged `[SELECTION]`; withdrawn as support for OT-5.1.
+- **FTD-0321 + FTD-0803** — the CM leg is range-limited. The registered `|d| ≤ 907` domain
+  UNIQUE-CONFIRMED stands and was *genuinely informative* (~7× inside the informative regime;
+  crossover at `|d| ≈ 6,676`), but the deep extension finds **1,271 fundamental dual-matchers
+  by `|d| ≤ 500k`**, so `d = −4`'s dual-match privilege is a range artifact. Per the tracker's
+  tracker (**2026-08-04, FTD-0321**), **OT-1.9 as cited is gone**; OT-5.1's support is OT-1.5 plus
+  the bare arithmetic coincidence `|μ_K| = |disc(K)|`. The separate **2026-08-05** correction is
+  the one that *partially restores* the registered domain and bounds the enhancement at ~4–5×. Registered incidental worth carrying: the scan's target sits at
+  `G*(i)` to `4.8×10⁻¹³` **by construction**, but CODATA `1/α` sits `0.998` window half-widths
+  away — on the **edge** of the registered tolerance, not at the peak. Structural cause
+  registered: `G*` is the value of
+  an `SL₂(ℤ)`-invariant at the order-2 elliptic point — a closed-form-provable saddle with
+  log-divergent value density — though the enhancement is **bounded at ~4–5×**, and the real
+  swamping at scale is the `D^{3/2}` CM count, not the singularity.
+- **FTD-0792** — the engine runs on CODATA `ALPHA`; `ALPHA_TREE` feeds nothing, and a
+  source-lint CTest **fails the build** if the derived root reaches a force path. No engine
+  result can be evidence *for* the master quadratic.
+
+**Net:** `x₊ = 1/α` retains **no numerical-uniqueness support of any kind**. It remains `[SMC]`
+— the tag was always right; what is gone is the evidence that made it *feel* stronger than its
+tag. The 1.26 ppm agreement itself is unchanged `[NUMERICAL FACT]`: it is arithmetic.
+
+### R.2 · The substrate selects *against* the quartic (FTD-0794) — the "forces ¬X" class gains a member
+
+Most boundaries in §1–§5 have the form *"the substrate does not force X."* FTD-0794 joins the
+smaller class that already contains §2b (finiteness *opposes* reversibility), §2c (the L² budget is
+*structurally incompatible* with Scale-0's L¹ ceiling), §3.5 (Λ = 0 `[DERIVED]`) and §5's no-sound
+result: **the substrate's own structure forces ¬X.** Chain
+link 4 — "minimum `C₄` support and null-flatness select the quartic clock", the last unwithdrawn
+lattice-to-quartic bridge — is refuted: under the plaquette rotation `(x,y) → (−y,x)`,
+`x²+y²−1` is invariant and `x⁴+y²−1` is not, and no rescaling repairs it (symbolic solution set
+empty). The ring's own dynamics agrees — `Q`, `R` are the degenerate eigenvalue-2 pair of the
+`C₄` Laplacian, i.e. two simple harmonic oscillators. Null-flatness is the *conclusion*, not a
+hypothesis. `G*` is pinned only by a minimal-degree tie-break; a degree-6 family satisfying the
+same assumptions gives clock constants 2.8375–3.1185. **Registered consequence: `G*` enters the
+quartic-clock chain by choice — *at link 4*.** ⚠ The scope matters and must not be stripped: it
+does **not** follow that `G*` is unforced in FTD. §1's `16G*² = 16·|μ₄|²·G_BCC(0)` trace and the
+J-twisted `det_ζ` ratio remain `[THEOREM]`, `import_ledger.json` SS-3 keeps `G*` in the
+**self-set** at `[THEOREM]`, and FTD-0794's own record states what survives: Watson 1939 (the BCC
+Green's function carrying `Γ(1/4)`) and the `z = 1/4` reflection-ratio/half-integration
+eigenvalue fact — both classical mathematics.
+
+### R.3 · A new §2-family result (FTD-0796) — and a corpus misattribution this map does not carry
+
+*(§2a of this map contains no Bell/CHSH claim, so nothing here corrects it; the misattribution
+below lives in other documents, listed at the end of this subsection.)*
+
+**FC-1's completeness clause *alone* forces CHSH ≤ 2** — if the four
+observables are elements of `A₅` under one setting-independent measure, their pushforward *is* a
+joint distribution and Fine (1982) applies. **No locality assumption enters the argument.** The
+corpus misattributes the bound to Postulate 4 (Moore locality) and lists "violate locality" as
+an escape; that is wrong, and nonlocality buys nothing, because using it breaks FC-1 itself. The
+only live door is **superdeterminism** (already declared at FTD-0329 row 15), priced exactly at
+`S ≤ min(2+3M, 4)` with Tsirelson at `M* = 0.27614237`. **Live contradiction registered:**
+FTD-0329 adopts measurement dependence while constitution §2.3 and PL-2 assert statistical
+independence — mutually exclusive; under ledger precedence FTD-0329 governs, which makes PL-2
+unfalsifiable contrary to its own text.
+
+**Three further registered findings from the same row, which a boundary map must carry:**
+- **FTD's actual prediction is the triangle, not the cosine.** Its registered correlator
+  `E(θ) = −(1 − 2|θ|/π)` optimises to a global CHSH maximum of **exactly 2.0000000000** — a
+  maximally correlated *local* model, 29.29% below Tsirelson.
+- **The registered `2√2` mechanism fails arithmetic:** its two stated factors give
+  `2 · √2 · 2 = 5.657 > 4`, above the algebraic CHSH maximum.
+- **A new unbooked debt:** explaining why nature stops at 2.828 rather than 4, given that
+  Tsirelson's bound is a theorem about the formalism FC-1 declines. Also registered: `M` must be
+  fine-tuned to **0.34%** across every setting-generation method *including cosmic photons from
+  causally disconnected quasars*; and `gauss_project()` is never invoked by
+  `bell_lattice_test.py`, so PL-2's "all tested configurations" is narrower than advertised.
+
+**Propagation owed (per the FTD-0796 record, not yet done):** `AUDIT_BELL_ANALYSIS.md`,
+`DERIV_OBSERVER_BELL_MECHANISM.md`, `SPEC_FTD_FRAMEWORK_V1.md` §2.3, and PL-2.
+
+### R.4 · The carrier program is negative at every identified door; one class foreclosed
+
+- **FTD-0798** closes the Kähler–Dirac first-order carrier (fails C1 and C3 at sight) and kills
+  its *motivating premise as a class*: the second-order flux **already** carries a Born-valued
+  positive conserved density, which forecloses every future argument that FTD needs a
+  first-order sector to obtain a Born measure. Salvage: `M18` admits a local cubic-covariant
+  3-square decomposition.
+- **FTD-0797** refutes the de Rham common-cone route (spatial degree-blindness does not touch
+  the cone; the production stencil is `M18`).
+- The `G*`-carrier question is now negative at **every identified door**: linear functionals of
+  the field (exact — any closing linear functional is harmonic), the affine/locked field sector
+  (FTD-0781), the compact-law pair-breathing channel (FTD-0783), generic wells and capacity
+  walls (the **bracket theorem**: wells pin at `n ≈ 2`, walls at `n = ∞`, `G*` lives at `n = 4`
+  strictly between), and the fully-built movement sector (FTD-0786 — which also *corrects* the
+  program's map of itself: the reciprocal-transaction problem is **not** a blocker, and the
+  coupled sector should not be treated as unexplored).
+- **FTD-0784** bounds the prize: even a carrier passing Gates A+B+C delivers `G*` but **cannot** deliver the FC-W surd — `δ ∉ Q(G*, π, √π)`. (A *transport*
+  of FTD-0314 C3's argument, demoted accordingly; not an independent theorem.)
+- **`eps` (the compact-law well depth) has no derivation.** FTD-0788's lattice-quantum proposal
+  was refuted by FTD-0790: `z·G(1) = z·G(0) − 1` **identically** — a statement about the discrete
+  Laplacian's source term, true for any lattice, with zero lattice content — and the pattern was
+  already ruled inadmissible by FTD-0388 ("an adoption is never a derivation").
+
+**What survives is one decidable question.** FTD-0789's **Maxwell trichotomy**: for central-force
+networks at zero tension, `rank(H) ≤ B` so zero modes `≥ 3N − B`, and — rigid network → `n = 2`
+(harmonic); flex extending to a finite mechanism → `n = ∞` (flat); **`n = 4` requires first-order
+flexible *and* second-order rigid**. Both registered configurations fail it from opposite sides.
+Two screens have failed *since* the trichotomy was stated, and one construction was withdrawn
+*by* it (FTD-0787, withdrawn by FTD-0789; then FTD-0800 and FTD-0801, both
+`[CLOSED NEGATIVE — SCOPED]`, with FTD-0800's `N=6` follow-up expressly an
+`[EXPLORATORY NUMERICAL SCREEN]` — **there is no `N ≤ 6` theorem**). This converts an open-ended
+carrier search into a decidable criterion, which is the one genuine structural gain of the period.
+
+### R.5 · Two new *species* of boundary, which §0.5's taxonomy has no slot for
+
+**(D) The empirical boundary (FTD-0795)** — verdict
+`SPINE_HAS_NO_ROW_THAT_IS_DEVIANT_LIVE_AND_TESTABLE`. Two *different* things sit under this
+verdict and must not be merged:
+
+- **PL-1 is a falsification, not a testability limit** — and it is registered
+  `[CONDITIONAL CLOSED NEGATIVE — PL-1 PHYSICAL READING]`, not unconditionally closed. FTD's
+  ontology is one continuous local flux manifesting on threshold, so splitting an excitation
+  50/50 forces `α ≥ 1` (maximal bunching) while the measured `α = 0.0188 ± 0.0067` is **146σ
+  below that floor**; because `α` is coincidences over singles at one beamsplitter, efficiency
+  and gain cancel, so the result invokes no Hilbert space and cannot be deflected by rejecting
+  the quantum formalism. ⚠ **The registered escape is different and must be stated:** the result
+  is conditional on the *manifestation-equals-detection* identification, which FTD itself tags
+  `[CONJECTURE]` — and taking that escape **empties PL-1 of physical content** rather than
+  saving it. PL-3 is additionally dead as physics; PL-6 is additionally **STALE** (the FTD-0564
+  monopole downgrade and FTD-0355 `D = 3` `[SELECTION]` are unpropagated).
+- **Only PL-4/5 are the testability boundary.** PL-4 is live but untestable by a factor
+  **5×10⁷ in energy scale** (`E_QG,2 = √24 E_P = 6.0×10¹⁹ GeV` vs LHAASO `> 1.2×10¹² GeV`);
+  PL-5 is live but **~39 orders** from testable (`(E/E_P)⁴ = 4.5×10⁻⁵⁷` at 100 TeV vs `~10⁻¹⁸`
+  sensitivity). PL-2/3/6 are vacuous.
+
+The *species* this instantiates is a limit on what the framework can currently be **tested on**,
+which is distinct from every other boundary on this map (all of which limit what it can
+**derive**).
+
+**(E) The evidential boundary (FTD-0791/0802, with FTD-0803 as the positive control)** — both of
+the corpus's numerical-uniqueness supports failed base-rate controls. Neither is a claim about
+discreteness; both are claims about what the corpus may *assert*. The registered lesson is
+methodological and general: **a match inside a large declared family, with tolerances set by the
+observed deviation, carries no evidential weight until the null is computed.** FTD-0803 supplies
+the positive instance — the conditions under which such a scan *is* informative are computable,
+and FTD-0321's registered domain met them.
+
+### R.6 · Direction of travel
+
+Clause 3 of the Number-One Goal asks that every priced line be driven to **retirement**, a
+**theorem-grade no-go**, or a **sharper falsifier**. Over the last five weeks: **zero
+retirements**; several no-gos (R.4); one sharper falsifier (the Maxwell trichotomy). The map is
+converging — and it is worth stating plainly that *convergence of the boundary map is not the
+same as progress on the content map*: the forced content did not grow, while the boundary set
+did. That is the honest reading, and it is exactly what clause 2 asks for.
+
+**One line moved in the wrong direction and must be recorded here.** FTD-0387's D7 — itself
+`[SCOPE / METHODOLOGY — DRAFT awaiting owner ratification]`, which *"ratifies nothing, adopts
+nothing"* and which no purchase may cite as settled until the owner rulings are booked — places
+FC-W at the **marginal point `y = c = 1`** and takes it as the pricing floor. D6 admits equality
+only when the single gap-class is **high-value**, and D7's registered high-value justification
+was the framework's single scan-rigid identification (FTD-0319). FTD-0791 withdrew that. The
+withdrawal **has** been transcribed (`adoption_pricing.json`, 2026-08-03: a WARNING field marking
+the justification withdrawn, and the removal of "scan-rigid" from `calibration_role`); what has
+**not** happened is the re-pricing — the yield figure is *"LEFT UNCHANGED pending an owner
+decision"*, and whether the gap-class is still high-value without that backing is `[OPEN]` **and
+gates the calibration**. So the floor that calibrates every future adoption now rests on an open
+question. A decision document exists — `01_reference/DRAFT_FCW_REPRICING_D7_v1.md` (2026-08-05),
+itself **unregistered** (*"LEDGER id: (none — assigned only if/when the owner books a ruling)"*)
+— and re-pricing is registered as an owner act, not a research act. A boundary map that is the
+qualitative face of the priced-import ledger cannot report convergence while omitting this.
+
+### R.7 · Propagation debt this refresh does **not** discharge
+
+This map is now current; **the corpus is not.** Registered contradictions still live elsewhere,
+listed so they are not lost (precedent: FTD-0791's own record enumerated eight flagged files):
+
+| Item | Current per LEDGER / this map | Still says otherwise |
+|---|---|---|
+| PL-1 | `[CONDITIONAL CLOSED NEGATIVE]`, falsified at 146σ (FTD-0795) | `SPEC_FTD_COMPLETE_FRAMEWORK.md` — "`[NUMERICAL FACT]`, pre-reg confirmed"; "run — Rice confirmed" |
+| OT-3.3 / FTD-0802 | retagged `[SELECTION]`, withdrawn as OT-5.1 support | `SPEC_FTD_COMPLETE_FRAMEWORK.md` §§4/6/8.4 updated for FTD-0791 **only**; FTD-0802 absent |
+| OT-1.4 | demoted out of Tier 1 (FTD-0785); spine count 7+2 → 6+3 | `SPEC_FTD_COMPLETE_FRAMEWORK.md` still `[THEOREM]` and "Seven theorem-grade" |
+| FTD-0319 | scan-rigid count **zero** | `import_ledger.json` IMP-E1 provenance still cites "structural-uniqueness scan FTD-0319"; SS-6 still "7 of 9 numbered results" |
+| FTD-0796 | Bell bound is FC-1 completeness | `AUDIT_BELL_ANALYSIS.md`, `DERIV_OBSERVER_BELL_MECHANISM.md`, `SPEC_FTD_FRAMEWORK_V1.md` §2.3, PL-2 |
+
+---
+
 ## 0 · The organizing thesis — three closure mechanisms + one engine category
 
 Almost every boundary below is an instance of one of three recurring mechanisms:
@@ -65,7 +281,9 @@ not yet expressible in the current simulator without breaking the bit-exact gold
 
 ## 0.5 · Reading key — two kinds of claim, classified per section
 
-Every item in §1–§5 is exactly one of:
+Items in §1–§5 are **PROVEN** or **ATTEMPTED**; §6 items are **OPEN**. §R.5 adds two further
+species that classify results about *evidence* and *testability* rather than about
+*derivability*, and which by construction do not appear in §1–§5:
 
 - **PROVEN** — a structural no-go theorem, valid within stated (and stated-explicitly)
   assumptions. Overturning it requires either disproving one of those assumptions or
@@ -74,6 +292,12 @@ Every item in §1–§5 is exactly one of:
   the prior that the *next* attempt along the same route also fails; it proves nothing about
   routes not yet tried, and it does not "strengthen" anything the way a proof would.
 - **OPEN** (§6 only) — neither of the above; still live.
+- **EMPIRICAL** (added 2026-08-06, §R.5) — a limit on what the framework can currently be
+  *tested on*, not on what it can derive. Overturned by exhibiting a registered deviation that
+  is simultaneously deviant, live, and testable.
+- **EVIDENTIAL** (added 2026-08-06, §R.5) — a limit on what the corpus may *assert*, established
+  by a base-rate control against a declared null. Overturned by a support that passes such a
+  control.
 
 A third, narrower flavor of ATTEMPTED is **engine-blocked**: a result plausible in principle
 but not yet measurable without breaking the current simulator's golden-tick gate — an
@@ -84,7 +308,7 @@ implementation gap, not a claim about the ontology at all.
 | §1 rows 2, 3, 6 (route-invariance, K-BIND, Tr/Det independence) | assembly of α's readout operator | **PROVEN** (conditional on the stated axiomatized operator calculus) | An FC-W-class axiom forcing the assembly, or a flaw in the trace/determinant independence argument itself |
 | §1 row 1 ("0/4 routes force assembly") | the route search feeding the above | **ATTEMPTED** (4 native + 1 red-team route, all failed) | A 6th route, not yet tried, that succeeds |
 | §1 row 4 (x₋ has no SM correspondent) | x₋'s physical status | **ATTEMPTED** (25 pre-specified observables tested, all falsified) | A 26th observable not yet tested that matches |
-| §1 FC-W carrier-narrowing (FTD-0314/0326/0327) | transcendence of √(G\*(4G\*−1)) | **PROVEN, conditional on Chudnovsky (1976)** | Disproof of Chudnovsky's algebraic-independence theorem, or an un-exhibited forward-derived weight-mixing period surviving the FTD-0314 pressure |
+| §1 FC-W carrier-narrowing (FTD-0314/0326/0327) | transcendence of √(G\*(4G\*−1)) | ⚠ **REVISED 2026-08-06:** PROVEN for the C1/C3 legs **conditional on Chudnovsky (1976)**; the **C2 cross-CM-field leg is conditional on an OPEN conjecture** (Waldschmidt 5.23), per FTD-0785 — the headline `[THEOREM]` over-consolidates | Disproof of Chudnovsky; **or a resolution of Waldschmidt 5.23 against C2** (the cheaper route); or an un-exhibited forward-derived weight-mixing period surviving the FTD-0314 pressure |
 | §2a (QM non-commutativity, 4 angles) | commutative substrate ⇒ no quantum core | **PROVEN** (structural; each angle a distinct argument from the substrate's stated commutativity) | A demonstration that the substrate's flux/state algebra is non-commutative under a reading not yet considered |
 | §2b (Lorentzian metric / reversibility) | P5 = determinism, not reversibility | **PROVEN** (structural; the π/G\* reversible/irreversible split is exact) | A forcing argument deriving reversibility from P1–P5 as stated |
 | §2c (clock hypothesis / L²-not-L¹ budget) | Pythagorean norm absent from Scale-0 primitives | **PROVEN** (v3, after 2 earlier attempts — v1 UNDERDETERMINED, v2 INVALIDATED — were superseded, not stacked as extra evidence) | A native Scale-0 construction carrying an L²-norm without importing it |
@@ -146,7 +370,9 @@ can force the assembly `(Tr,Det)=(16G*²,16G*³)` or distinguish the physical ro
 external selection `W`.
 
 **FC-W carrier-narrowing — K-BIND extended from operators to the whole finite-symmetry class
-(FTD-0314/0326/0327)** `[THEOREM, conditional on Chudnovsky]` + `[SYNTHESIS]`: the surd
+(FTD-0314/0326/0327)** `[THEOREM, conditional on Chudnovsky]` ⚠ *(see §R.1: FTD-0785 found the
+C2 leg additionally conditional on Waldschmidt Conjecture 5.23, an open problem — this headline
+tag over-consolidates)* + `[SYNTHESIS]`: the surd
 `√(G*(4G*−1))` is **transcendental over ℚ** (`Q(G*)∩Q^ab=Q`), so *no* finite-symmetry carrier
 (chirality, ±1 sign, the binary-octahedral 2O cover, permutation parity) and *no* native operator
 realizes it — extending K-BIND from operators to the **entire finite-symmetry class**. FTD-0326:
@@ -186,6 +412,16 @@ sourced (Moore Layer Theorem + four topological routes, `DERIV_NC_FROM_TOPOLOGY.
 **Central obstruction:** all of the above sit under **MC-T4.3** — the operational α-readout
 mechanism — a `[FOUNDATIONAL OBSTRUCTION]` open 3+ months. `x₊ = 1/α` (FTD-0013) stays
 `[STRONGLY MOTIVATED CONJECTURE]`.
+
+> ⚠ **REFRESHED 2026-08-06 (§R.1). One structural result in this section did change:**
+> FTD-0314's headline `[THEOREM]` **over-consolidates** — its C2 leg is conditional on Waldschmidt
+> Conjecture 5.23, an *open problem* (FTD-0785), not on Chudnovsky alone; and FTD-0784 registered
+> that C3's period field `F` is inconsistently defined (the conclusion survives, the definition
+> needs repair). FTD-0242 / FTD-0243 / FTD-0244 are unchanged. Separately, every
+> *numerical-uniqueness* support for the identification is withdrawn (FTD-0791, FTD-0802,
+> FTD-0321/0803), and FTD-0792 records that the engine cannot evidence the master quadratic by
+> construction. Any text describing the α-root as "scan-rigid" or as "the framework's single
+> scan-rigid identification" is **withdrawn** — the scan-rigid count is zero.
 
 ---
 
@@ -361,6 +597,14 @@ not independent empirical trials.
 
 Preserved for provenance — to prevent zombie re-emergence of exhausted routes.
 
+> ⚠ **NOT YET EXTENDED (2026-08-06).** This catalog still ends at the 2026-07-01 revision. The
+> window folded in §R closed roughly ten further routes — FTD-0781, 0783, 0786, 0787/0789,
+> 0788/0790, 0793, 0794, 0797, 0798, 0800/0801 — plus **FTD-0795 / PL-1**, a *falsified registered
+> prediction* (`[CONDITIONAL CLOSED NEGATIVE]`: the `α ≥ 1` bunching floor against a measured
+> `α = 0.0188 ± 0.0067`, **146σ**), which belongs in a **Prediction spine** theme this table does
+> not yet have — none of which appear below. Extending the table
+> is outstanding maintenance; until then §R.4 is the only record of them here.
+
 | Theme | IDs | One-line reason for closure |
 |---|---|---|
 | **α-derivation routes** | 0031 (g_c, all 3 BCC routes), 0050 (RG char-poly; stencil ⊥ BCC), 0073 (Clifford/Dirac mode-erasure), 0094 (L2 identity → parametric), 0097 (look-elsewhere), 0116 (Z-factor), 0164 (3 χ₋₄→P_G* routes), 0183 (N_base=4 not ℤ[i]), 0204/0205 (ARC-B1 categorical mismatch), 0212 (Beilinson PSLQ null) | structural orthogonality or high-precision numerical disproof |
@@ -401,7 +645,67 @@ bucket.)
 - **Confinement** — flagged with a recognized structural obstruction (RP–FO effort).
 - **FTD-0252 diagonals** — ultra-relativistic γ convergence needs L ≳ 257.
 - Sector queue (`SPEC_OPEN_MATH_BY_SECTOR.md`): §8-running β-coefficients, §11-confine, §10 flavor
-  depth matrices, W-CRIT-3 (Lorentz invariance), W-CRIT-4 (Bell S>2), the BH 11-item cluster.
+  depth matrices, W-CRIT-3 (Lorentz invariance), ~~W-CRIT-4 (Bell S>2)~~, the BH 11-item cluster.
+
+### 6.1 · Refresh 2026-08-06 — what moved into, out of, and within this bucket
+
+**Sharpened, not newly closed (correction to an earlier draft of this subsection):**
+- **W-CRIT-4 (Bell S > 2)** was **already** `[CLOSED DECLINED]` under FC-1 before this window
+  (`SPEC_OPEN_MATH_BY_SECTOR.md` §7; LEDGER **FTD-0023**), and §6's body line already carries the
+  strikethrough. What **FTD-0796** adds is not the closure but its
+  *mechanism and price*: FC-1's completeness clause alone forces CHSH ≤ 2 with no locality
+  assumption, so **the declination cannot be revisited by adopting nonlocality** — doing so
+  breaks FC-1 itself. What remains is a *priced* door, not an open one (below).
+
+**Closed in this window, though never in this bucket:**
+- The **de Rham common-cone** and **Kähler–Dirac carrier** routes (FTD-0797, FTD-0798), the
+  latter foreclosing the entire "FTD needs a first-order sector for a Born measure" class.
+- The **lattice-to-quartic bridge at link 4** (FTD-0794) — closed *against* the framework: the
+  substrate's own `C₄` symmetry selects the harmonic law and excludes the quartic there.
+
+**Still open, but re-bounded:**
+- **MC-T4.3** — unchanged structurally, and now additionally bounded by **FTD-0784**: even a
+  carrier passing Gates A+B+C delivers `G*` but *cannot* deliver
+  the FC-W surd (registered scope: **Gates A+B+C**). The exit "a carrier that earns W" is
+  therefore narrower than the §1 text suggests — a successful carrier would still leave W unpaid.
+- **Post-K-BIND α-positive route** — same, with the evidential caveat of §R.1: no numerical
+  support remains for the identification the route would vindicate.
+
+**The one decidable open door (added 2026-08-06):**
+- **C3 / the Maxwell trichotomy** (FTD-0789) — does any native configuration realize
+  `n = 4`, i.e. **first-order flexible and second-order rigid**? Unlike everything else in this
+  bucket this is *decidable* rather than open-ended: `null(H)` nonempty with the quartic form
+  positive definite on it. One construction was withdrawn *by* the criterion (FTD-0787, by FTD-0789);
+  FTD-0800 and FTD-0801, both `[CLOSED NEGATIVE — SCOPED]`, have failed *since* it was stated.
+  Each was scoped to its executed set — the door is not proven shut, but the prior is now poor.
+- ***Proposed, not registered:*** every C3 screen so far has sampled **constructed static
+  configurations** (enumerated equilibria, a designed trimer, a periodic sheet). Marginal-stability
+  physics elsewhere — jamming isostaticity, self-organized criticality — populates edges through
+  **dynamically arrested** states instead. The FTD-0799 arrest configurations (which grew, then
+  stopped dead — `dN/dt` exactly zero for the final 399–599 ticks in all four arms — by the
+  registered genesis self-quenching mechanism) have never been screened against the trichotomy. This would be the first C3 target
+  suggested by a *mechanism* rather than an enumeration; it requires a locked pre-registration
+  before execution and predicts nothing. ⚠ **Two adverse facts must travel with this proposal:**
+  FTD-0799's own record states flatly *"This result does not bear on the C3 carrier question,"*
+  and its arms are profile-scoped — movement, curl coupling, evaporation and Gauss projection
+  were all **OFF**, and arm E (`R0 = 20`) was **not run**. The proposal is therefore to screen an
+  *existing artifact* under a new question, not to inherit any of FTD-0799's standing.
+
+**Priced but unexplored (a distinct status — not open, not closed):**
+- **Superdeterminism** — declared at FTD-0329 row 15 and priced exactly at `S ≤ min(2+3M, 4)`
+  with Tsirelson reached at `M* = 0.27614237`. It is the *only* live door to Bell violation, and
+  it carries a **registered live contradiction**: FTD-0329 adopts measurement dependence while
+  constitution §2.3 and PL-2 assert statistical independence. Under ledger precedence FTD-0329
+  governs, which makes PL-2 unfalsifiable contrary to its own text. Resolving that contradiction
+  is an owner act, not a research act.
+
+**Closed negative but mechanistically productive (worth recording as a distinct outcome):**
+- **FTD-0799** — no derived body size (`N*` tracks the seed; arms arrest a factor 3.2 apart), but
+  the *mechanism* is new and general: genesis deposits `−1` upstream and `+1` downstream, so every
+  event **conserves charge while diluting net polarity**, and since the source driving `|J|` is net
+  polarity, **growth erodes its own driver** (`dN/dt` exactly zero for the final **399–599** ticks
+  in all four arms; **arm E, `R0 = 20`, was not run**). The quasi-static law is thereby a valid
+  *nucleation* criterion and an invalid *growth* law.
 
 ---
 
@@ -427,6 +731,25 @@ not earned. The discrete ontology reaches further into **number theory** than in
 That is the map drawn honestly in **both** directions, exactly as the Number-One Goal's second
 clause demands: the spine *derives*, and these boundaries *mark precisely how far discreteness
 reaches.*
+
+> **Addendum, 2026-08-06.** The five weeks summarized in §R added a second axis to this picture,
+> and it is now the map's most important distinction: **structure versus evidence.** The §1–§5
+> no-go results on what the substrate cannot force survive **with three registered exceptions**,
+> all from FTD-0785's no-promotion pass: FTD-0314's headline `[THEOREM]` over-consolidates (C2 is
+> conditional on an open conjecture); FTD-0784's surd bound was **demoted** from
+> `[CONDITIONAL THEOREM]` to `[TRANSPORT]`; and OT-1.4 was demoted out of Tier 1, moving the
+> canonical spine count from 7+2 to **6+3** — plus one definitional defect registered separately
+> by **FTD-0784** (C3's period field `F`), which the conclusion survives. With those stated, what
+> was audited away is
+> overwhelmingly the *evidence* for the identifications those structures bound, and the auditing
+> was severe: both numerical-uniqueness scans at their nulls, the CM leg
+> range-limited, the engine unable to evidence the master quadratic by construction, and the
+> lattice's own symmetry selecting against the quartic clock. A framework can be structurally
+> honest and evidentially thin at the same time, and FTD is now demonstrably both. The sentence
+> "the discrete ontology reaches further into number theory than into physics" survives the
+> refresh — but it should now be read with §R.5(E) attached: *reach* into number theory is not
+> the same as *evidence* from it, and the corpus's own base-rate controls are what established
+> the difference.
 
 ---
 
