@@ -187,8 +187,8 @@ charge across reactions even if the reaction-free response survives.
 
 ## 10. Artifacts
 
-- v1 preregistration: `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v1.md`
-- v2 preregistration: `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v2.md`
+- v1 preregistration: `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v1.md`
+- v2 preregistration: `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_RETARDED_POLARITY_TRANSPORT_v2.md`
 - observer: `engine/include/ftd/eft/native_retarded_polarity_response.h`
 - unit: `engine/tests/test_native_retarded_polarity_response.cpp`
 - campaign: `engine/tests/campaign_native_retarded_polarity_transport.cpp`

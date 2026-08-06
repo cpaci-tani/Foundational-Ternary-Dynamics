@@ -140,7 +140,7 @@ infrared despite the exact full-event nullspace closure of FTD-0421.
 ## 8. Artifacts
 
 - v1 preregistration: `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v1.md`
-- v2 preregistration: `docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v2.md`
+- v2 preregistration: `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_NATIVE_DYNAMIC_POLARITY_RESPONSE_v2.md`
 - observer: `engine/include/ftd/eft/native_dynamic_polarity_response.h`
 - campaign: `engine/tests/campaign_native_dynamic_polarity_response.cpp`
 - source lock: `scripts/proofs/native_dynamic_polarity_response_lock.json`
