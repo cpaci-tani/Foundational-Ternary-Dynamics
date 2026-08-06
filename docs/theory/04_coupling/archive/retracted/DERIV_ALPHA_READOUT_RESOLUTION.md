@@ -23,7 +23,7 @@
 > stays **[STRONGLY MOTIVATED CONJECTURE]** resting on FTD-0189 polynomial-uniqueness.
 > See `docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`,
 > `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` (W-CRIT-2), and
-> `docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md`.
+> `docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md`.
 >
 > *(Part III "Track B" un-readability material is subsumed by the canonical RSI pre-registration
 > and the FTD-0235 det-identity audit; consult those, not this doc.)*
