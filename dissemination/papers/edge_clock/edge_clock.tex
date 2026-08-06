@@ -15,8 +15,8 @@
 \title{\bfseries The Clock at the Edge of Stability:\\
 \large exact timekeeping across a pitchfork bifurcation, and why a bad clock
 is a good sensor}
-\author{C.~Pacitani\thanks{Draft v3, 2026-08-05 (v1 and v2 audited
-refute-by-default; corrections applied). All simulation and figure code
+\author{C.~Pacitani\thanks{Draft v6, 2026-08-06 (v1--v5 audited
+refute-by-default across four independent rounds; corrections applied). All simulation and figure code
 accompanies this manuscript and reproduces every number from scratch; the
 companion interactive laboratory and code will be archived with a citable DOI
 at submission.}}
@@ -48,8 +48,8 @@ pair $(4kK,\mathcal B)$ turns amplitude-dependent timing --- a defect for a
 clock --- into a precision meter of the distance to threshold. The same
 structure governs the edge in \emph{equilibrium}: all thermodynamics
 collapses onto one thermal detuning variable $\gamma=\mu\sqrt{\beta/\lambda}$,
-with $\langle x^{2}\rangle=\sqrt{k_BT/\lambda}\,/\Gstar$ at threshold, a
-$\tfrac34 k_B$ equipartition deficit, and a thermal noise lineshape whose
+with $\langle x^{2}\rangle=\sqrt{k_BT/\lambda}\,/\Gstar$ at threshold, an
+equipartition deficit ($C=\tfrac34 k_B$ per mode), and a thermal noise lineshape whose
 peak obeys $f_{\mathrm{peak}}\propto T^{1/4}$ --- a third, dynamics-free
 measurement channel. Quantum mechanically the normal form reduces once more
 to a single detuning $g=\mu(2m)^{1/3}/(\lambda\hbar)^{2/3}$: the pitchfork
@@ -424,7 +424,7 @@ a bath at temperature $T$ instead, and the entire equilibrium theory turns
 out to mirror the dynamical one --- with its own detuning variable, its own
 universal curves, and $\Gstar$ again at the critical point. (All results in
 this section are verified numerically in the accompanying code to
-$10^{-10}$ or better; Appendix~\ref{app:thermo} has the derivations.)
+$10^{-9}$ or better, the lineshape by Monte Carlo; Appendix~\ref{app:thermo} has the derivations.)
 
 \paragraph{One thermal variable.} The momentum integral is Gaussian always
 (kinetic equipartition, $\langle p^{2}/2m\rangle=\tfrac12 k_BT$, is exact
@@ -516,10 +516,15 @@ spectral peak \emph{climbs as the fourth root of temperature}
 $16{:}1$ temperature ratio, against the predicted $2$;
 Fig.~\ref{fig:thermo}c). For nanomechanical resonators parked at buckling,
 this is a signature measurable in the thermomechanical noise floor with no
-drive at all. The finite-$Q$ and driven versions of this lineshape connect
-to the established theory of fluctuations in nonlinear oscillators, and a
-careful reconciliation with that literature is required before this
-subsection's novelty is asserted beyond the closed forms themselves.
+drive at all. The mechanism --- the spectrum as the thermal distribution of
+energy-dependent orbit frequencies --- is the classical Dykman--Krivoglaz
+picture for underdamped nonlinear oscillators \cite{dykman71}; what appears
+not to be in the literature is the pure-quartic closed form
+Eq.~\eqref{eq:lineshape} and the $T^{1/4}$ peak law themselves. The
+finite-$Q$ and driven versions connect to the modern
+nonlinear-nanomechanics line of that theory \cite{dykmanbook,huang}, and a
+careful reconciliation with it is required before novelty is asserted
+beyond the closed forms.
 
 \begin{figure}[t]
 \centering
@@ -556,7 +561,11 @@ give identical reduced spectra to $10^{-16}$). Three deformations of one
 structure: $k$ indexes the orbit, $\gamma$ the ensemble, $g$ the spectrum.
 
 \paragraph{The edge has an $\hbar$-width.} Equation~\eqref{eq:qdetuning}
-says quantum mechanics rounds the pitchfork on the scale $|g|\lesssim1$,
+says quantum mechanics rounds the pitchfork on the scale $|g|\lesssim1$
+(quantum rounding of the Euler-buckling pitchfork, in exactly this
+quadratic-plus-quartic normal form, has been analyzed in nanomechanics
+\cite{carr,werner} --- the scale, not the concept, is what
+Eq.~\eqref{eq:qdetuning} packages),
 i.e.\ $|\mu|\lesssim\mu_{\hbar}=(\lambda\hbar)^{2/3}/(2m)^{1/3}$. Inside
 that window there is no transition at all: the ground state is symmetric for
 \emph{every} $g$, the would-be broken doublets are split by tunneling, and
@@ -574,7 +583,7 @@ E_{n} \;\simeq\; \Bigl[\tfrac{3\sqrt{\pi}\,(n+\tfrac12)}{\Gstar}\Bigr]^{4/3}
 \varepsilon,
 \label{eq:qwkb}
 \end{equation}
-exact to $0.05\%$ by $n=40$ and to $1\%$ by $n=2$
+accurate to $0.6\%$ by $n=2$ and $0.002\%$ by $n=40$
 (Fig.~\ref{fig:quantum}a); the numerically exact ground state is
 $E_{0}=1.06036\,\varepsilon$, the classic strong-coupling benchmark of the
 quartic-oscillator literature \cite{benderwu,hioe} --- none of the spectral
@@ -838,7 +847,7 @@ Am.\ J.\ Phys.\ \textbf{91}, 659 (2023).
 \bibitem{liu} H.~Liu, G.~Baglioni, C.~B.~Constant, H.~S.~J.~van der Zant,
 P.~G.~Steeneken, and G.~J.~Verbiest, ``Enhanced sensitivity and tunability
 of thermomechanical resonance near the buckling bifurcation,''
-arXiv:2305.00712 (2023).
+2D Mater.\ 	extbf{11}, 025028 (2024).
 
 \bibitem{bretin} V.~Bretin, S.~Stock, Y.~Seurin, and J.~Dalibard,
 ``Fast rotation of a Bose--Einstein condensate,''
@@ -859,6 +868,30 @@ block distribution functions,'' Z.\ Phys.\ B \textbf{43}, 119--140 (1981).
 
 \bibitem{brezin} E.~Br\'ezin and J.~Zinn-Justin, ``Finite size effects in
 phase transitions,'' Nucl.\ Phys.\ B \textbf{257}, 867--893 (1985).
+
+\bibitem{quartonexp} Y.~Ye \emph{et al.}, ``Near-ultrastrong nonlinear
+light-matter coupling in superconducting circuits,'' Nat.\ Commun.\
+\textbf{16}, 3799 (2025).
+
+\bibitem{dykman71} M.~I.~Dykman and M.~A.~Krivoglaz, ``Classical theory of
+nonlinear oscillators interacting with a medium,'' Phys.\ Status Solidi (b)
+\textbf{48}, 497--512 (1971).
+
+\bibitem{dykmanbook} M.~Dykman (ed.), \emph{Fluctuating Nonlinear
+Oscillators: From Nanomechanics to Quantum Superconducting Circuits}
+(Oxford University Press, Oxford, 2012).
+
+\bibitem{huang} L.~Huang, S.~M.~Soskin, I.~A.~Khovanov, R.~Mannella,
+K.~Ninios, and H.~B.~Chan, ``Frequency stabilization and noise-induced
+spectral narrowing in resonators with zero dispersion,'' Nat.\ Commun.\
+\textbf{10}, 3930 (2019).
+
+\bibitem{carr} S.~M.~Carr, W.~E.~Lawrence, and M.~N.~Wybourne,
+``Accessibility of quantum effects in mesomechanical systems,''
+Phys.\ Rev.\ B \textbf{64}, 220101(R) (2001).
+
+\bibitem{werner} P.~Werner and W.~Zwerger, ``Macroscopic quantum effects in
+nanomechanical systems,'' Europhys.\ Lett.\ \textbf{65}, 158 (2004).
 
 \end{thebibliography}
 
