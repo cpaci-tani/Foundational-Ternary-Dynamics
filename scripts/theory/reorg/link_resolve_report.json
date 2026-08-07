@@ -2,29 +2,12 @@
   "root": "docs/theory",
   "applied": true,
   "n_files_scanned": 1733,
-  "n_links": 5413,
-  "n_broken": 27,
-  "n_repaired": 2,
+  "n_links": 5595,
+  "n_broken": 25,
+  "n_repaired": 0,
   "n_ambiguous": 2,
   "n_dead": 23,
-  "repairs": [
-    {
-      "file": "docs/theory/01_reference/INDEX_01_REFERENCE.md",
-      "link_text": "SPEC_CLOSED_FLUX_LOOP_READOUT.md",
-      "raw_target": "SPEC_CLOSED_FLUX_LOOP_READOUT.md",
-      "resolved_attempt": "docs\\theory\\01_reference\\SPEC_CLOSED_FLUX_LOOP_READOUT.md",
-      "new_target": "docs/theory/01_reference/archive/SPEC_CLOSED_FLUX_LOOP_READOUT.md",
-      "new_relative_link": "archive/SPEC_CLOSED_FLUX_LOOP_READOUT.md"
-    },
-    {
-      "file": "docs/theory/01_reference/INDEX_01_REFERENCE.md",
-      "link_text": "SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md",
-      "raw_target": "SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md",
-      "resolved_attempt": "docs\\theory\\01_reference\\SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md",
-      "new_target": "docs/theory/01_reference/archive/SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md",
-      "new_relative_link": "archive/SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md"
-    }
-  ],
+  "repairs": [],
   "ambiguous": [
     {
       "file": "docs/theory/03_derivations/standard_model/DERIV_FERMI_COUPLING_CONSTANT.md",
