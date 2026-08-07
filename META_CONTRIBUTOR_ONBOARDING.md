@@ -60,7 +60,7 @@ Read these before making theory-facing edits:
 
 - [docs/SPEC_FTD.md](docs/SPEC_FTD.md)
 - [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
-- [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md)
+- [docs/reference/archive/REF_SCOPE_LIMITATIONS.md](docs/reference/archive/REF_SCOPE_LIMITATIONS.md)
 - [docs/reference/REF_EPISTEMIC_LABELS.md](docs/reference/REF_EPISTEMIC_LABELS.md)
 
 ---
@@ -78,7 +78,7 @@ Read these before making theory-facing edits:
 1. [docs/SPEC_FTD.md](docs/SPEC_FTD.md)
 2. [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md)
 3. [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
-4. [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md)
+4. [docs/reference/archive/REF_SCOPE_LIMITATIONS.md](docs/reference/archive/REF_SCOPE_LIMITATIONS.md)
 5. [docs/reference/REF_SYMBOL_GLOSSARY.md](docs/reference/REF_SYMBOL_GLOSSARY.md)
 
 **Practical entry points**
@@ -239,7 +239,7 @@ cd dissemination/whitepaper && pdflatex FTD_Whitepaper.tex
 ### Theory / Documentation Contributor
 
 1. Read [docs/SPEC_FTD.md](docs/SPEC_FTD.md).
-2. Read [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) and [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md).
+2. Read [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) and [docs/reference/archive/REF_SCOPE_LIMITATIONS.md](docs/reference/archive/REF_SCOPE_LIMITATIONS.md).
 3. Use [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) to choose a category.
 4. Before editing, check [docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) and [docs/theory/07_assessment/core_ledgers/LEDGER.md](docs/theory/07_assessment/core_ledgers/LEDGER.md) to confirm current tag status.
 5. Treat `archive/` and superseded docs as historical unless a current document sends you there.

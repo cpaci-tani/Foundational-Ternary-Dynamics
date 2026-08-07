@@ -93,9 +93,11 @@ $$\frac{1}{\alpha} = x_+ = 137.0360$$
 
 ### FTD Prediction
 
-$$N_{gen} = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$$
+**The `x_- ≡ N_c` (and by extension `x_- ≡ N_gen`) identification used below is RETIRED** (per the FTD/FQCR Cleanup Taxonomy v1.4 §5; FTD-0014 removed from the LEDGER in commit `ca7eb61`; see `CLAUDE.md`). `x_- ≈ 3.024` is a mathematical artifact of the master quadratic's smaller root, not a physical identification — the same correction pattern already applied to §6 (Bell) below.
 
-This is an **exact discrete prediction**: there are precisely 3 generations of fermions.
+$$N_{gen} = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3 \quad \text{(retired derivation path)}$$
+
+The value 3 itself is not thereby falsified: `N_c = 3` (and with it, in this framework's own bookkeeping, `N_gen = 3`) has independent structural support via the Moore Layer Theorem (`THEOREM_MOORE_LAYER_DECOMPOSITION.md`) and `DERIV_NC_FROM_TOPOLOGY.md`'s four independent routes — not via `x_-`. What is retracted here is the derivation path shown above, not the number.
 
 ### Status
 

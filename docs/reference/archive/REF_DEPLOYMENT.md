@@ -1,5 +1,23 @@
 # FTD Web Deployment Guide
 
+**Document Status:** `[SUPERSEDED]` — archived 2026-08-06
+
+> **Archived, not current.** This guide's target infrastructure has
+> substantially changed: `dissemination/manuscript/_webbook/` (the "119-chapter
+> HTML textbook") was deprecated 2026-05-03 in favor of `manuscript_v2` and no
+> longer exists on disk. Of the "5 standalone force simulations" listed below,
+> only `electromagnetic_simulation.html` still exists in
+> `dissemination/interactive/`; the other 4
+> (`gravity_simulation.html`, `strong_force_simulation.html`,
+> `weak_force_simulation.html`, `unified_forces_simulation.html`) are gone, and
+> that directory now holds 26 unrelated files. The "MockBridge Fallback"
+> section's claim that Scale 1 falls back to "Full JavaScript Velocity Verlet
+> physics" is also false: the Scale-1 JS mock engine was deleted 2026-07-29 in
+> favor of the native WASM ParticleEngine. Kept for provenance per the
+> doc-cleanup skill; do not follow as a current deployment procedure.
+
+---
+
 Deploy the FTD interactive web experience via FTP to any static hosting server.
 
 ---

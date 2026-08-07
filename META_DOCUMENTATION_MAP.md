@@ -95,9 +95,9 @@ ftd/
 │   ├── reference/                   # Canonical reference materials
 │   │   ├── REF_EPISTEMIC_LABELS.md  # Tag definitions ([AXIOM], [THEOREM], etc.)
 │   │   ├── REF_SYMBOL_GLOSSARY.md   # All notation and symbols
-│   │   ├── REF_SCOPE_LIMITATIONS.md # What FTD does NOT address
 │   │   ├── REF_EXPERIMENTAL_STATUS.md # Current testing/validation status
-│   │   ├── REF_DEPLOYMENT.md        # Static web deployment guide
+│   │   ├── archive/REF_SCOPE_LIMITATIONS.md # What FTD does NOT address (SUPERSEDED, archived 2026-08-06)
+│   │   ├── archive/REF_DEPLOYMENT.md # Static web deployment guide (SUPERSEDED, archived 2026-08-06)
 │   │   ├── REF_NAMING_CONVENTIONS.md  # File naming standards
 │   │   └── REF_BIBLIOGRAPHY.md      # Classical (non-FTD) sources cited by load-bearing FTD claims
 │   │
@@ -239,7 +239,7 @@ Located in `docs/reference/`:
 |----------|---------|
 | [REF_EPISTEMIC_LABELS.md](docs/reference/REF_EPISTEMIC_LABELS.md) | How to read epistemic tags: [AXIOM], [THEOREM], [CONJECTURE], [IMPOSED], [EMERGENT], [OPEN] |
 | [REF_SYMBOL_GLOSSARY.md](docs/reference/REF_SYMBOL_GLOSSARY.md) | All mathematical notation, symbols, and dimensions |
-| [REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md) | What FTD does NOT address — required acknowledgments |
+| [REF_SCOPE_LIMITATIONS.md](docs/reference/archive/REF_SCOPE_LIMITATIONS.md) | What FTD does NOT address — required acknowledgments |
 | [REF_EXPERIMENTAL_STATUS.md](docs/reference/REF_EXPERIMENTAL_STATUS.md) | Current testing and validation status |
 | [REF_NAMING_CONVENTIONS.md](docs/reference/REF_NAMING_CONVENTIONS.md) | File and code naming standards |
 | [REF_BIBLIOGRAPHY.md](docs/reference/REF_BIBLIOGRAPHY.md) | Classical (non-FTD) sources cited by load-bearing FTD claims (Gauss, Hecke, Tate, Chowla–Selberg, Chudnovsky, etc.); single source of truth for external attribution |

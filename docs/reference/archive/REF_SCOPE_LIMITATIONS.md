@@ -1,7 +1,22 @@
 # SCOPE LIMITATIONS
 ## Foundational Ternary Dynamics
 
-**Document Status:** REQUIRED FOR ALL DISTRIBUTIONS
+**Document Status:** `[SUPERSEDED]` — archived 2026-08-06
+
+> **Archived, not current.** This document predates the project's current
+> LEDGER-driven epistemic-tag discipline and describes infrastructure that no
+> longer exists: a "12 update phases" tick cycle (current: 10 phases, see
+> `CLAUDE.md`), a Qt6 GUI at `engine/qt_gui/` (does not exist), "61 CTests"
+> (current: 544 registered CTest targets), and "N_c ≈ 3.024 from master
+> quadratic" as a live SU(3) claim — this is exactly the `x_- ≡ N_c`
+> identification `CLAUDE.md` records as **RETIRED** (FTD-0014 removed from the
+> LEDGER in commit `ca7eb61`; `N_c = 3` now comes from independent topology
+> routes, see `DERIV_NC_FROM_TOPOLOGY.md`). The "v1.0 certified" /
+> "REQUIRED FOR ALL DISTRIBUTIONS" framing is itself out of step with the
+> project's current epistemic-tag system. Kept for provenance per the
+> doc-cleanup skill; do not cite as current. For current scope and status,
+> see `CLAUDE.md` and the LEDGER
+> (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
 
 ---
 
