@@ -4,6 +4,8 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
+**Index (read this first to find an item):** [`TRACKER_OPEN_ITEMS_INDEX.md`](TRACKER_OPEN_ITEMS_INDEX.md) — a generated one-line-per-item companion (81 items, ~150 lines vs this file's 3,100+), same pattern as `LEDGER_INDEX.md` for `LEDGER.md`. Navigation aid only; this file remains canonical. Regenerate with `python scripts/theory/build_open_items_index.py`.
+
 **FTD-0800/0801 incremental addendum (2026-08-04):** FTD-0800's
 Maxwell-criterion campaign returned `NO_NATIVE_N4_IN_THE_SCREENED_SET`
 `[CLOSED NEGATIVE — SCOPED]`, not a universal no-go. Correction commit
