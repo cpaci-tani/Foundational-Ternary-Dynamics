@@ -6,7 +6,7 @@
 **Native verdict:** `NATIVE_DYADIC_CLOCK_MEMORY_NOT_TESTED`
 
 Pre-registration:
-[`PREREG_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md`](../preregistrations/PREREG_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md)
+[`PREREG_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md`](../../preregistrations/native_time_carrier_programme/PREREG_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md)
 
 ## 1. Claim tested
 

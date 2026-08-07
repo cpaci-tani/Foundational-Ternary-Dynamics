@@ -37,13 +37,13 @@ Only two axioms are required:
 
 **Claim**: Self-reference requires complex numbers.
 
-**Argument**: Self-reference requires a structure that can "return to itself" through iteration. The geometric realization of self-reference is a **self-crossing curve** — a curve that meets itself at the origin (see [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md)).
+**Argument**: Self-reference requires a structure that can "return to itself" through iteration. The geometric realization of self-reference is a **self-crossing curve** — a curve that meets itself at the origin (see [FOUND_THE_FIRST_DISTINCTION.md](../../02_foundations/FOUND_THE_FIRST_DISTINCTION.md)).
 
 The minimal self-crossing algebraic curve is the lemniscate (n = 4), whose associated elliptic curve y² = x³ - x has Complex Multiplication by the Gaussian integers ℤ[i]. This requires the imaginary unit i.
 
 Alternatively: self-reference requires rotation (the observer goes around and returns). A rotation operator σ with σ⁴ = id but σ² ≠ id has eigenvalues satisfying μ² = -1, forcing extension from ℝ to ℂ.
 
-**Epistemic note**: This argument depends on identifying self-reference with self-crossing topology and/or rotation — these are motivated [SELECTION] principles, not uniquely forced by the axioms. See [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) SP1.
+**Epistemic note**: This argument depends on identifying self-reference with self-crossing topology and/or rotation — these are motivated [SELECTION] principles, not uniquely forced by the axioms. See [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) SP1.
 
 **QM Consequence**: The wave function ψ ∈ ℂ must be complex-valued.
 
@@ -92,7 +92,7 @@ This lives in the **ghost domain** (-1):
 
 $$P = \psi \cdot \psi^* = |ψ|^2 \in \mathbb{R}$$
 
-This is the unique ℝ-linear, reflexion-invariant, normalized projection ℂ → ℝ (see [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md), Theorem EF-T3), composed with squaring for positive-definiteness. The reconstruction P(x) = E(x)² + E(ix)² = |x|² is the Pythagorean theorem applied to the Existence Filter.
+This is the unique ℝ-linear, reflexion-invariant, normalized projection ℂ → ℝ (see [FOUND_THE_EXISTENCE_FILTER.md](../../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md), Theorem EF-T3), composed with squaring for positive-definiteness. The reconstruction P(x) = E(x)² + E(ix)² = |x|² is the Pythagorean theorem applied to the Existence Filter.
 
 **Epistemic note**: The argument that |·|² is the unique valid probability measure requires the imposed sampling rule (manifestation probability proportional to |J|²). This is argued from conservation and max-entropy considerations but remains a **[SELECTION]**, not a theorem — a reviewer may ask "why |ψ|² and not |ψ| or |ψ|⁴?" **Canonical status: LEDGER FTD-0187** — this §2.4 [SELECTION] is the canonical prose statement for the Born-rule derivation question across FTD; the further step *probability = normalized energy density* is [OPEN] (target T1c).
 
@@ -184,7 +184,7 @@ $$|\Psi\rangle = \frac{1}{\sqrt{2}}(|{+1}\rangle_A|{-1}\rangle_B - |{-1}\rangle_
 
 This is just 0 = (-1) + (+1) expressed for a bipartite system.
 
-**Bell correlations**: The pure lattice dynamics (local deterministic) produce S ≤ 2, as expected from Bell's theorem. This is confirmed by systematic simulation (see [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md)). Quantum correlations S > 2 emerge through the **three-level observer Bell mechanism** [SELECTION]:
+**Bell correlations**: The pure lattice dynamics (local deterministic) produce S ≤ 2, as expected from Bell's theorem. This is confirmed by systematic simulation (see [AUDIT_BELL_ANALYSIS.md](../../07_assessment/quantum_foundations/AUDIT_BELL_ANALYSIS.md)). Quantum correlations S > 2 emerge through the **three-level observer Bell mechanism** [SELECTION]:
 
 - **Level 1** (substrate, deterministic threshold): S = 2 [THEOREM]
 - **Level 2** (independent complex, Born rule per particle): S = √2 [THEOREM]
@@ -269,7 +269,7 @@ Virtual particles mediate forces because flux fluctuations carry energy-momentum
 | Virtual particles | Sub-threshold flux (0 < \|J\| < K_B) | **[SELECTION]** |
 | Measurement problem | Observer coupling (s ≠ 0 → flux gradient) | **[SELECTION]** |
 
-**Epistemic note:** Items tagged [THEOREM] follow rigorously from the axioms. Items tagged [SELECTION] involve motivated but non-unique interpretive choices. Items tagged [CONJECTURE] require further mathematical development. See [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) and [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Epistemic note:** Items tagged [THEOREM] follow rigorously from the axioms. Items tagged [SELECTION] involve motivated but non-unique interpretive choices. Items tagged [CONJECTURE] require further mathematical development. See [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) and [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md).
 
 ---
 
@@ -310,9 +310,9 @@ Any universe with observers would have quantum mechanics because quantum mechani
 The derivation contains:
 
 - 2 axioms (existence, self-reference)
-- 5 selection principles (SP1-SP5, see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md))
+- 5 selection principles (SP1-SP5, see [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md))
 - 0 free **numerical** parameters (given those selections)
-- ~24 genuine derivations, ~50 parametric insertions (see [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
+- ~24 genuine derivations, ~50 parametric insertions (see [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md))
 
 ---
 
@@ -347,9 +347,9 @@ From this, together with the selection principles, the structure of quantum mech
 ## References
 
 - [DERIV_BOTTOM_UP_PHYSICS.md](../foundational_mechanics/DERIV_BOTTOM_UP_PHYSICS.md) — Ontological foundation
-- [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
-- [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
-- [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots and context-conditioned self-reference
+- [FOUND_THE_FIRST_DISTINCTION.md](../../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
+- [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
+- [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots and context-conditioned self-reference
 - CLAUDE.md §4, §11-13 — Manifestation and measurement
 
 ---

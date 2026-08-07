@@ -264,9 +264,9 @@ as emergent carriers.
 
 ## 9. Boundary references
 
-- [`ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../derivations/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md) — FTD-0772 recurrence-unqualified native candidate.
-- [`ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md`](../derivations/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md) — FTD-0776 scoped negative and retired exact-profile candidate.
-- [`ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../derivations/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md) — conditional quartic identities and native boundary.
-- [`EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md`](../../09_mathematical/general_math/EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md) — documented forward-power curve, not the root tower defined here.
-- [`EXPLR_DYADIC_GEOMETRIC_BYTE.md`](../../09_mathematical/general_math/EXPLR_DYADIC_GEOMETRIC_BYTE.md) — independent support/ternary-word counts; native map open.
-- [`EXPLR_DYADIC_CUBIC_MASTER_QUADRATIC_BOUNDARY.md`](../../09_mathematical/general_math/EXPLR_DYADIC_CUBIC_MASTER_QUADRATIC_BOUNDARY.md) — no dyadic/master-quadratic promotion.
+- [`ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../../derivations/native_time_carrier_programme/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md) — FTD-0772 recurrence-unqualified native candidate.
+- [`ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md`](../../derivations/native_time_carrier_programme/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md) — FTD-0776 scoped negative and retired exact-profile candidate.
+- [`ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../../derivations/native_time_carrier_programme/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md) — conditional quartic identities and native boundary.
+- [`EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md`](../../../09_mathematical/general_math/EXPLR_DYADIC_LACUNARY_FOURIER_CURVE.md) — documented forward-power curve, not the root tower defined here.
+- [`EXPLR_DYADIC_GEOMETRIC_BYTE.md`](../../../09_mathematical/general_math/EXPLR_DYADIC_GEOMETRIC_BYTE.md) — independent support/ternary-word counts; native map open.
+- [`EXPLR_DYADIC_CUBIC_MASTER_QUADRATIC_BOUNDARY.md`](../../../09_mathematical/general_math/EXPLR_DYADIC_CUBIC_MASTER_QUADRATIC_BOUNDARY.md) — no dyadic/master-quadratic promotion.

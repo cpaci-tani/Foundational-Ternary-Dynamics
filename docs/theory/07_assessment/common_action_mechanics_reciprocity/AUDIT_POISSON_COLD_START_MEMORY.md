@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0441`  
 **Status:** `[MEASURED — POISSON INITIALIZATION]` + `[CLOSED — FTD-0439 POISSON LEAK EXPLAINED]`  
 **Verdict:** `COLD_START_TRANSIENT_EXPLAINS_POISSON_LEAK`  
-**Pre-registration:** [`PREREG_POISSON_COLD_START_MEMORY_v1.md`](../10_eft_program/preregistrations/PREREG_POISSON_COLD_START_MEMORY_v1.md)  
+**Pre-registration:** [`PREREG_POISSON_COLD_START_MEMORY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_POISSON_COLD_START_MEMORY_v1.md)  
 **Run of record:** `engine/results/ftd_0441/windows_msvc_cpu_L33.csv`
 
 ## 1. Result

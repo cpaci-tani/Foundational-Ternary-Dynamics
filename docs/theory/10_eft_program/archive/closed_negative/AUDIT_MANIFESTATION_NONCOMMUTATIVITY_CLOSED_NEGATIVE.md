@@ -3,7 +3,7 @@
 **Tag:** `[CLOSED NEGATIVE]` (pre-reg §6: distributive Boolean → classical coarse-graining). **No spine claim moved.**
 **Date:** 2026-05-29
 **Result of:** `PREREG_MANIFESTATION_NONCOMMUTATIVITY_v1.md` (B-QM-1, FTD-0226 provisional), SHA256 `fefcd6ad26320ed4f2b3e8a46144080894c3eceb07bf90378295cd3a3386d91b` (commit deferred; SHA recorded in-session before the attempt).
-**Verifier:** [`scripts/proofs/proof_manifestation_noncommutativity.py`](../../../scripts/proofs/proof_manifestation_noncommutativity.py) (5/5).
+**Verifier:** [`scripts/proofs/proof_manifestation_noncommutativity.py`](../../../../../scripts/proofs/proof_manifestation_noncommutativity.py) (5/5).
 **Companion:** `SCOPE_DERIVE_QM_GAP.md`. **Consistent with:** FTD-0199 / FTD-0200 (Born CLOSED-NEGATIVE); B1 (`AUDIT_MODULAR_TIME_ALGEBRA_TYPE_CLOSED_NEGATIVE.md`); FTD-0208.
 
 ---

@@ -22,5 +22,5 @@ finite-volume rest fixed point first, then solve or falsify the complete-state
 relative-orbit equation without replacing the field after motion.
 
 See
-[`ANALYSIS_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md`](../10_eft_program/derivations/ANALYSIS_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md).
+[`ANALYSIS_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_COMPLETE_MOVING_DRESSING_RELATIVE_ORBIT_v1.md).
 

@@ -9,8 +9,8 @@
 **Depends on:**
 
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld action, lattice DOF
-- [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — T_μν from Noether's theorem
-- [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations
+- [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — T_μν from Noether's theorem
+- [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations
 
 > **⚠ Reconciliation (FTD-0331 — [DERIV_LAMBDA_SCALE_COVARIANT.md](../03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md)).** The vacuum expectation value used below, `⟨T₀₀⟩_vac = ½ Σ ∫ ω(k)`, is a **quantum zero-point sum** (`½ℏω` per mode). FTD's substrate is classical and declines `ℏ` (FC-1, FTD-0255), so the empty void `(J=0, s=0)` is identically zero-energy and carries **no zero-point floor** — the `½ℏω` weighting has no FC-1 warrant. Consequently FTD does **not** have the `M_Planck⁴` catastrophe to "resolve"; it is dissolved by construction. The `ρ_Λ = m_e⁴·α¹⁶·G*²` / `α⁵⁷` result is a **value-match with no length dependence** and is canonically `[PARAMETRIC]` numerology (`SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` W-COSMO-4). The honest mechanism — Λ as a scale-covariant holographic ratio `Λ ~ (ℓ_P/L_H)²`, with the value a `[BOUNDARY]` — now lives in `DERIV_LAMBDA_SCALE_COVARIANT.md`. Per precedence (LEDGER > doc > prose) that account governs; this document is retained for provenance.
 
@@ -337,7 +337,7 @@ This derivation is a [PARAMETRIC] value-match (W-COSMO-4): it reproduces the Ω_
 
 ## 8.1 Connection to Engine Dynamics [SELECTION]
 
-The $\alpha^{16}$ suppression can be understood dynamically through the engine's coupling-damping balance (see [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md)):
+The $\alpha^{16}$ suppression can be understood dynamically through the engine's coupling-damping balance (see [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/gravity_and_cosmology/DERIV_DARK_SECTOR_DYNAMICS.md)):
 
 - **Coupling injection:** Each manifested particle sources flux via $\Delta J = g_c \cdot \nabla(s)$, injecting $O(\alpha)$ energy per tick per particle into its neighborhood
 - **Selective damping:** Only near-particle sites (within 1-hop) are damped; far-field flux propagates losslessly
@@ -357,8 +357,8 @@ The canonical formula remains $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*
 
 | Document | Relevant Content |
 |----------|-----------------|
-| [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | EFE-10 now resolved |
-| [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation |
+| [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | EFE-10 now resolved |
+| [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, DOF count |
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Framework constants |
-| [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md) | Dynamical interpretation, dark sector unification |
+| [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/gravity_and_cosmology/DERIV_DARK_SECTOR_DYNAMICS.md) | Dynamical interpretation, dark sector unification |

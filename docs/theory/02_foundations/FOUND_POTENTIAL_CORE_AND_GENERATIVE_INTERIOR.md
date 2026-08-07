@@ -535,7 +535,7 @@ For any two 3^3 clusters on `Z^3`, exactly one of the three modes (external, ove
 
 ### PI-C12 [CONJECTURE] Mode hierarchy maps to the Bell levels
 
-The three observation modes may correspond to the three physically distinct regimes identified in [../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md):
+The three observation modes may correspond to the three physically distinct regimes identified in [../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md):
 
 | Observation mode | Bell hierarchy level | Correlation bound | Mechanism |
 |-----------------|---------------------|-------------------|-----------|
@@ -659,7 +659,7 @@ The self-observation loop -- where a single 3^3 cluster's Manifest Output re-ent
 
 - The **gap equation** `x^2 = 16 G*^2 (x - G*)` from [FOUND_SELF_REFERENTIAL_CLOSURE.md](FOUND_SELF_REFERENTIAL_CLOSURE.md): the coupling x is determined by the condition that the lattice's vacuum energy, computed using coupling x, yields the same x when fed back
 - The **k = 1/2 reference frame context regime** from [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md): the complementation fixed point that generates complex roots
-- The **Level 3 (observer)** of the Bell hierarchy from [../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md): non-factorizable joint probability arising from self-coupling
+- The **Level 3 (observer)** of the Bell hierarchy from [../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md): non-factorizable joint probability arising from self-coupling
 
 ### Why the sLoop requires BCC
 

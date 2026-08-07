@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — FROZEN LOCAL DRESSING ENERGY]`  
 **Verdict:** `CELLWISE_PRIMITIVE_GLOBAL_MEMORY_OBSTRUCTION`  
 **Pre-registration:**
-[`PREREG_CUSP_DRESSING_INTEGRABILITY_v1.md`](../10_eft_program/preregistrations/PREREG_CUSP_DRESSING_INTEGRABILITY_v1.md)  
+[`PREREG_CUSP_DRESSING_INTEGRABILITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CUSP_DRESSING_INTEGRABILITY_v1.md)  
 **Run of record:** `engine/results/ftd_0494/windows_msvc_cpu.json`
 
 ## 1. The omitted work has a unique cellwise primitive

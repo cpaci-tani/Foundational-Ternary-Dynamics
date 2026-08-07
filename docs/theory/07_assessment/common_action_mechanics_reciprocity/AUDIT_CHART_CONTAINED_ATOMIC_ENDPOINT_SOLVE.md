@@ -8,7 +8,7 @@
 `[CONDITIONAL CLOSED NEGATIVE — SHELL-3 ENERGY]`  
 **Verdict:** `CHART_CONTAINED_ENDPOINT_SOLVE_UNRESOLVED`  
 **Pre-registration:**
-[`PREREG_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE_v1.md`](../10_eft_program/preregistrations/PREREG_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE_v1.md)  
+[`PREREG_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CHART_CONTAINED_ATOMIC_ENDPOINT_SOLVE_v1.md)  
 **Run of record:** `engine/results/ftd_0538/windows_msvc_cpu.json`
 
 ## 1. Result

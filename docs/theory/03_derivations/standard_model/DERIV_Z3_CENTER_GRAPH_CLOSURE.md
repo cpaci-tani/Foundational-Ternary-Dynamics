@@ -2,8 +2,8 @@
 
 **Tag:** `[THEOREM]` (closure characterisation + projector identity) + `[CANDIDATE PRINCIPLE]` (open-flux penalty — not asserted, not tested)
 **LEDGER:** FTD-0195
-**Engine primitive:** [`../../../engine/include/ftd/color_center.h`](../../../engine/include/ftd/color_center.h)
-**Constructive verification:** [`../../../engine/tests/test_z3_color_center.cpp`](../../../engine/tests/test_z3_color_center.cpp) — `ctest -R "^z3_color_center$"` passes 1/1, all six sub-tests green at machine precision.
+**Engine primitive:** [`../../../engine/include/ftd/color_center.h`](../../../../engine/include/ftd/color_center.h)
+**Constructive verification:** [`../../../engine/tests/test_z3_color_center.cpp`](../../../../engine/tests/test_z3_color_center.cpp) — `ctest -R "^z3_color_center$"` passes 1/1, all six sub-tests green at machine precision.
 **Status:** The closure characterisation and the projector identity are `[THEOREM]` from finite-group + linear algebra. The "open-flux penalty" (any energetic cost imputed to non-closed states) is `[CANDIDATE PRINCIPLE]` — not addressed here and not in this test.
 
 ---
@@ -113,12 +113,12 @@ The closure theorem is *general* finite-group fact (true for any Z_3 action on t
 
 ## §7 — Cross-references
 
-- **Engine primitive:** [`../../../engine/include/ftd/color_center.h`](../../../engine/include/ftd/color_center.h) — `Z3Charge` class, `is_center_closed(...)`, `z3_omega()`, `z3_generator_z()`, `center_projector_p0()`, 3×3 complex matrix helpers.
-- **Test:** [`../../../engine/tests/test_z3_color_center.cpp`](../../../engine/tests/test_z3_color_center.cpp).
+- **Engine primitive:** [`../../../engine/include/ftd/color_center.h`](../../../../engine/include/ftd/color_center.h) — `Z3Charge` class, `is_center_closed(...)`, `z3_omega()`, `z3_generator_z()`, `center_projector_p0()`, 3×3 complex matrix helpers.
+- **Test:** [`../../../engine/tests/test_z3_color_center.cpp`](../../../../engine/tests/test_z3_color_center.cpp).
 - **CMake:** `ftd_add_test(test_z3_color_center … LABELS native)` in `engine/CMakeLists.txt`, adjacent to `test_branch_holonomy_gap`.
 - **LEDGER:** FTD-0195 (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
-- **Sibling overlays** (same campaign): [`DERIV_BRANCH_HOLONOMY_GAP.md`](../foundational_mechanics/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy, FTD-0194), [`../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md`](../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md) (generation graph, `[CANDIDATE RECONSTRUCTION]`, FTD-0196).
-- **Related FTD claims:** the SU(3)-from-BCC-triality theorem in [`../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) (the substrate origin of the color SU(3) into which this Z_3 center embeds).
+- **Sibling overlays** (same campaign): [`DERIV_BRANCH_HOLONOMY_GAP.md`](../foundational_mechanics/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy, FTD-0194), [`../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md`](../../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md) (generation graph, `[CANDIDATE RECONSTRUCTION]`, FTD-0196).
+- **Related FTD claims:** the SU(3)-from-BCC-triality theorem in [`../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) (the substrate origin of the color SU(3) into which this Z_3 center embeds).
 
 ---
 

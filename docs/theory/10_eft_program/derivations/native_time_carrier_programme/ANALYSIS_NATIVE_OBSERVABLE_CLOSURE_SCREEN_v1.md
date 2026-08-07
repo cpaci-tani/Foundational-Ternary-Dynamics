@@ -21,7 +21,7 @@
 **Verdict:** `NATIVE_OBSERVABLE_CLOSURE_UNINFORMATIVE`
 (supersedes `NATIVE_OBSERVABLE_CLOSURE_FAILED`)
 **Preregistration:**
-[`PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md`](../preregistrations/PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md)
+[`PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md`](../../preregistrations/native_time_carrier_programme/PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md)
 **Production impact:** none; read-only, no engine execution, no artifact modified
 
 ## 1. Result in one sentence

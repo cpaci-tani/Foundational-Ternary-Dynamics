@@ -14,5 +14,5 @@ cancels the radiation channel” is false as a global statement. Only an edge
 screening statement survives.
 
 See
-[`ANALYSIS_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md`](../10_eft_program/derivations/ANALYSIS_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md).
+[`ANALYSIS_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_BIPOLE_DEPOSITED_CURRENT_FORM_FACTOR_v1.md).
 

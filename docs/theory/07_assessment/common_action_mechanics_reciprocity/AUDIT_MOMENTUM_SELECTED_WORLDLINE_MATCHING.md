@@ -7,7 +7,7 @@
 `[OPEN — COINCIDENT-TARGET COLLISION]`  
 **Verdict:** `PHASE_SPACE_SELECTS_FREE_WORLDLINE_CHAIN`  
 **Pre-registration:**
-[`PREREG_MOMENTUM_SELECTED_WORLDLINE_MATCHING_v1.md`](../10_eft_program/preregistrations/PREREG_MOMENTUM_SELECTED_WORLDLINE_MATCHING_v1.md)  
+[`PREREG_MOMENTUM_SELECTED_WORLDLINE_MATCHING_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MOMENTUM_SELECTED_WORLDLINE_MATCHING_v1.md)  
 **Run of record:** `engine/results/ftd_0503/windows_msvc_cpu.json`
 
 ## 1. Free phase space determines a target

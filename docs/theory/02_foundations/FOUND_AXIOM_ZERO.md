@@ -389,7 +389,7 @@ yet close this objection because irreducibility excludes exact finite-state
 positive-norm linear/unitary localization rational in `M18`; the engine
 implements only a default-off two-tick IR surrogate. Nonlinear/constrained or
 interacting realization remains open. See
-[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../07_assessment/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md).
+[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md).
 
 ### 4.4 "Circularity is unfalsifiable"
 

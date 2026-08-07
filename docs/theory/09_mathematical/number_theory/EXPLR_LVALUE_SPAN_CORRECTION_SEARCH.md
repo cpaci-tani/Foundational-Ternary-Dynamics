@@ -4,7 +4,7 @@
 
 **Status:** [EMERGENT] (negative result, computationally established)
 **Method:** PARI/GP `lindep` integer-relation search at 100-digit precision
-**Related:** [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](DERIV_MASTER_QUADRATIC_CM_LVALUES.md), [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)
+**Related:** [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](DERIV_MASTER_QUADRATIC_CM_LVALUES.md), [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)
 
 ---
 
@@ -131,7 +131,7 @@ The present result ($\sim 10^7$) is firmly in the "no relation" regime.
 
 - $\varepsilon_X$ as an **algebraic combination at higher degree** (cubic or quartic relations not searched).
 - $\varepsilon_X$ from **Hecke character L-values** $L(\psi^k, s)$ with $k \geq 3$, not tested here (Sym³ of the CM curve factors through Hecke characters, not directly through Sym³ L-function computation).
-- $\varepsilon_X$ from **non-L-value structural sources** — the one-loop lattice tadpole, lattice spacing $a = 2/D$, or Brillouin-zone integrals $I_n = \int_{\mathrm{BZ}} d^3k/((\hat k^2 + m^2_{\mathrm{lat}})^n)$. This is the mechanism actually used in [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md), which closes 99.2% of the gap.
+- $\varepsilon_X$ from **non-L-value structural sources** — the one-loop lattice tadpole, lattice spacing $a = 2/D$, or Brillouin-zone integrals $I_n = \int_{\mathrm{BZ}} d^3k/((\hat k^2 + m^2_{\mathrm{lat}})^n)$. This is the mechanism actually used in [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md), which closes 99.2% of the gap.
 - $\varepsilon_X$ from **Eisenstein–Kronecker values** $K^*(k, \tau)$ at higher weights $k \geq 4$, not tested.
 - $\varepsilon_X$ as a **transcendence-theoretic relation** requiring weights or monodromy data beyond naive L-value basis (e.g., $p$-adic L-values).
 
@@ -177,7 +177,7 @@ A reference implementation is available at `scripts/proofs/proof_lindep_search.p
 |------------|--------|
 | $\varepsilon_X \in \mathbb{Q}\text{-span}(\mathcal{B}_0)$ with small integers | **Ruled out** (PARI `lindep`, 100 digits) |
 | $\varepsilon_X$ closed by higher Hecke character L-values | Untested; plausible |
-| $\varepsilon_X$ from lattice tadpole with $a = 2/D$ | **Confirmed to 99.2%** ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) |
+| $\varepsilon_X$ from lattice tadpole with $a = 2/D$ | **Confirmed to 99.2%** ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) |
 | $\varepsilon_X$ has a Langlands-theoretic closed form | Open |
 
 The practical takeaway: **the one-loop lattice mechanism is the correct direction, and the L-value direction is closed for the simple basis.**

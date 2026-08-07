@@ -123,7 +123,7 @@ Three independent corpus facts make the same statement operationally:
 
 1. **No displacement degree of freedom.** `engine/include/ftd/voxel.h` carries `state`, `flux`, `wave_vel`, and `velocity` (rigid transport, nodes/tick) — but no strain / displacement / elastic field. There is no `u(x)` to obey an acoustic wave equation.
 2. **The Gauss constraint projects out the longitudinal mode.** `∇·J = ρ` enslaves the longitudinal flux `J_L` to the source instantaneously, leaving only the **2 transverse** propagating modes (the photon's polarizations). The would-be "longitudinal sound of the flux" is non-dynamical by construction ([`DERIV_BELL_COSINE_FROM_GAUSS.md`](../quantum_mechanics/DERIV_BELL_COSINE_FROM_GAUSS.md); the Helmholtz split is standard FTD electrodynamics).
-3. **Genesis is first-order, not critical.** FTD-0272 ([`ANALYSIS_GENESIS_CRITICALITY_v1.md`](../../10_eft_program/ANALYSIS_GENESIS_CRITICALITY_v1.md)) found the manifestation transition strongly first-order — no critical point, no diverging correlation length, no Goldstone mode. A continuous symmetry breaking that would seed a gapless density wave is absent.
+3. **Genesis is first-order, not critical.** FTD-0272 ([`ANALYSIS_GENESIS_CRITICALITY_v1.md`](../../10_eft_program/spine_master_quadratic/ANALYSIS_GENESIS_CRITICALITY_v1.md)) found the manifestation transition strongly first-order — no critical point, no diverging correlation length, no Goldstone mode. A continuous symmetry breaking that would seed a gapless density wave is absent.
 
 The only scalar propagating mode FTD does carry is the Higgs (an oscillation in the flux **magnitude** `|J|` about its VEV) — a *gapped* mode coupled to manifestation, not a gapless displacement/compression wave, so not a sound analog.
 

@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — UNCONDITIONAL ALGEBRAIC INVERSION]`  
 **Verdict:** `SYMMETRIC_KNOT_HAS_EIGHT_LEGENDRE_BRANCHES`  
 **Pre-registration:**
-[`PREREG_KNOT_LEGENDRE_BRANCH_v1.md`](../10_eft_program/preregistrations/PREREG_KNOT_LEGENDRE_BRANCH_v1.md)  
+[`PREREG_KNOT_LEGENDRE_BRANCH_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_KNOT_LEGENDRE_BRANCH_v1.md)  
 **Run of record:** `engine/results/ftd_0491/windows_msvc_cpu.json`
 
 ## 1. Exact counterexample

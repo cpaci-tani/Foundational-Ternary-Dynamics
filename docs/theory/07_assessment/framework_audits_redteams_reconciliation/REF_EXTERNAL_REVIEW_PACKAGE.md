@@ -1,6 +1,6 @@
 # REF — External human-review dispatch package (v1)
 
-**Tag:** `[REFERENCE — dispatch package]`. Prepared 2026-07-25 against the standing meta-gap of [`TRACKER_OPEN_ITEMS.md`](core_ledgers/TRACKER_OPEN_ITEMS.md) §0: *zero items in this corpus have been reviewed by a human outside the project; every adversarial pass to date is AI-generated self-critique.* This package is the dispatch-ready close-path. **It does not and cannot close the §0 item** — only a named external human's completed review, booked with date and findings, closes it. Dispatch is an owner action.
+**Tag:** `[REFERENCE — dispatch package]`. Prepared 2026-07-25 against the standing meta-gap of [`TRACKER_OPEN_ITEMS.md`](../core_ledgers/TRACKER_OPEN_ITEMS.md) §0: *zero items in this corpus have been reviewed by a human outside the project; every adversarial pass to date is AI-generated self-critique.* This package is the dispatch-ready close-path. **It does not and cannot close the §0 item** — only a named external human's completed review, booked with date and findings, closes it. Dispatch is an owner action.
 
 ---
 
@@ -15,7 +15,7 @@
 
 ## 2 · The minimal claim set (nothing else is being submitted)
 
-All statements live in [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md); tier assignments in [`TRACKER_ONTIC_TRUTH.md`](core_ledgers/TRACKER_ONTIC_TRUTH.md). The seven theorem-grade results: the master quadratic's root structure (OT-1.1); `G* = Γ(1/4)/Γ(3/4) = Γ(1/4)²/(π√2)` (OT-1.2); the harmonic-invariant tower `1/y₊ + 1/y₋ = 1` (OT-1.3); the Phase-G geometric Coulomb identity (OT-1.4); CM-uniqueness of `ℚ(i)` under the unit-group/discriminant coincidence (OT-1.9); the Watson identity `W₃ = G*²/(2π)` conditional on Watson 1939 / Glasser–Zucker 1980 (OT-2.1); and `ℚ(G*) ∩ ℚ(π) = ℚ` conditional on Chudnovsky 1976 (OT-2.3).
+All statements live in [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md); tier assignments in [`TRACKER_ONTIC_TRUTH.md`](../core_ledgers/TRACKER_ONTIC_TRUTH.md). The seven theorem-grade results: the master quadratic's root structure (OT-1.1); `G* = Γ(1/4)/Γ(3/4) = Γ(1/4)²/(π√2)` (OT-1.2); the harmonic-invariant tower `1/y₊ + 1/y₋ = 1` (OT-1.3); the Phase-G geometric Coulomb identity (OT-1.4); CM-uniqueness of `ℚ(i)` under the unit-group/discriminant coincidence (OT-1.9); the Watson identity `W₃ = G*²/(2π)` conditional on Watson 1939 / Glasser–Zucker 1980 (OT-2.1); and `ℚ(G*) ∩ ℚ(π) = ℚ` conditional on Chudnovsky 1976 (OT-2.3).
 
 **The named external dependency to scrutinize:** the whole conditional half rests on Chudnovsky 1976 (algebraic independence of π and Γ(1/4)), consolidated in Waldschmidt's Grundlehren volume. If the reviewer believes this dependency is miscited or overdrawn, that finding alone justifies the review.
 

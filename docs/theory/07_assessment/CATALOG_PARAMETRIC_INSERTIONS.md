@@ -204,7 +204,7 @@ The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FT
 
 ## 10b · Atomic Dynamics & Structure — EMPIRICAL / [PARAMETRIC] / ABSENT (FTD-0270)
 
-Full inventory: [`AUDIT_ATOMIC_DYNAMICS_STATUS.md`](AUDIT_ATOMIC_DYNAMICS_STATUS.md). FTD derives ~0% of atomic quantum dynamics; the ingredients below are standard chemistry/QM with FTD constants, empirical lookups, or absent. (Listed here because the catalog previously omitted the atomic domain.)
+Full inventory: [`AUDIT_ATOMIC_DYNAMICS_STATUS.md`](engine_emergence_campaigns/AUDIT_ATOMIC_DYNAMICS_STATUS.md). FTD derives ~0% of atomic quantum dynamics; the ingredients below are standard chemistry/QM with FTD constants, empirical lookups, or absent. (Listed here because the catalog previously omitted the atomic domain.)
 
 | Quantity | Origin | FTD status | Source |
 |---|---|---|---|

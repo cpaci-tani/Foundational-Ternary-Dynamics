@@ -10,7 +10,7 @@
 
 **This document uses FTD-derived parameters in standard physics formulas.**
 
-Per [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), the "~120 predictions" break down as:
+Per [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md), the "~120 predictions" break down as:
 
 | Category | Count | Description |
 |----------|-------|-------------|
@@ -20,7 +20,7 @@ Per [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), the "
 
 **External inputs required (NOT derived):**
 - M_Planck (absolute mass scale)
-- ~~G_F (Fermi constant)~~ — **Now DERIVED**: see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md)
+- ~~G_F (Fermi constant)~~ — **Now DERIVED**: see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/standard_model/DERIV_FERMI_COUPLING_CONSTANT.md)
 - Λ_QCD (QCD scale)
 - Decay constants f_π, f_K, f_D, f_B (pattern-matched)
 - Phase space factors (kinematic)
@@ -906,6 +906,6 @@ FTD produces **~126 Standard Model observables** using four integers {3, 4, 7, 1
 
 **Note on vertex structure:** The phi^3 exact EFT (see [DERIV_PHI3_EXACT_EFT.md](../04_coupling/DERIV_PHI3_EXACT_EFT.md)) provides the fundamental three-point vertex with universal coupling lambda_3 = 1/3. This explains why all Standard Model vertices are three-point at tree level: the cubic potential V(x) = x^3/3 - 8G*^2 x^2 + 16G*^3 x terminates exactly at third order, so no quartic or higher vertices appear without loop corrections.
 
-**External inputs required:** M_Planck, ~~G_F~~ (now derived, see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md)), Λ_QCD, decay constants f_π/f_K/f_D/f_B, phase space factors.
+**External inputs required:** M_Planck, ~~G_F~~ (now derived, see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/standard_model/DERIV_FERMI_COUPLING_CONSTANT.md)), Λ_QCD, decay constants f_π/f_K/f_D/f_B, phase space factors.
 
 The genuine derivations achieve sub-percent accuracy on dimensionless ratios. The parametric insertions demonstrate internal consistency but do not constitute independent predictions — they inherit their accuracy from the imported physics.

@@ -60,7 +60,7 @@ where:
 | Real part | $a = \text{Re}(x)$ | **Explicate order** | Physical, observable, objective |
 | Imaginary part | $b = \text{Im}(x)$ | **Implicate order** | Phase-bearing, dispositional, self-referential |
 
-**FTD correspondence:** The complex potential state maps to the complexified flux $\psi = J_x + iJ_y$ at a voxel ([DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.3). The real part $J_x$ is the explicit physical flux component; the imaginary part $J_y$ is the perpendicular, self-referential component — the component that emerged when self-reference created $i$ ([FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md), Part II).
+**FTD correspondence:** The complex potential state maps to the complexified flux $\psi = J_x + iJ_y$ at a voxel ([DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.3). The real part $J_x$ is the explicit physical flux component; the imaginary part $J_y$ is the perpendicular, self-referential component — the component that emerged when self-reference created $i$ ([FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md), Part II).
 
 ### 1.2 The Reflexion Operator
 
@@ -251,7 +251,7 @@ $$\text{Re}(x) = 0 \implies E(x) = 0$$
 
 The set of "existent" states is $\{x \in \mathbb{C} : E(x) \neq 0\} = \{x : \text{Re}(x) \neq 0\}$ — everything except the imaginary axis.
 
-**FTD connection:** The ghost domain ($d = -1$) in [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/DERIV_BOTTOM_UP_PHYSICS.md) is precisely the imaginary axis. Ghosts — states with $s = -1$ in the ternary ontology — are "invisible to external observation." The Existence Filter gives this invisibility an algebraic definition: a purely imaginary state $x = bi$ has $E(bi) = 0$. It is there (it has magnitude $|bi| = |b| > 0$), but it does not *exist* in the sense of surviving self-reflection.
+**FTD connection:** The ghost domain ($d = -1$) in [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/foundational_mechanics/DERIV_BOTTOM_UP_PHYSICS.md) is precisely the imaginary axis. Ghosts — states with $s = -1$ in the ternary ontology — are "invisible to external observation." The Existence Filter gives this invisibility an algebraic definition: a purely imaginary state $x = bi$ has $E(bi) = 0$. It is there (it has magnitude $|bi| = |b| > 0$), but it does not *exist* in the sense of surviving self-reflection.
 
 This resolves a longstanding interpretive question: **why can't we observe the ghost domain directly?** Because observation IS the Existence Filter — it extracts $\text{Re}(x)$, and ghosts live on $\text{Im}(x)$.
 
@@ -338,7 +338,7 @@ At every level, the Existence Filter extracts "what survives self-reflection." T
 
 $$\text{existence} \xrightarrow{+\text{ self-reference}} \text{magnitude} \xrightarrow{+\text{ squaring}} \text{probability} \xrightarrow{+\text{ CPTP}} \text{outcome}$$
 
-Cross-reference: [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.4; [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md), §3.4; [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md), §§1-3.
+Cross-reference: [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.4; [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md), §3.4; [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md), §§1-3.
 
 ---
 
@@ -513,11 +513,11 @@ Five contributions not found in any existing FTD document:
 | Document Extended | What Is Extended | How |
 |-------------------|------------------|-----|
 | [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) | $0 = (+1) + (-1)$ | Identified as EF-T6: the Existence Filter at Level $-1$ |
-| [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$ | Placed in hierarchy (EF-D3) and reconstructed from $E$ (EF-T5) |
+| [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$ | Placed in hierarchy (EF-D3) and reconstructed from $E$ (EF-T5) |
 | Agent meaning formalization, Part IA | Modular conjugation $J$ | Identified as generalization of $\theta$ (EF-T7); $E$ = $J$-fixed projection (EF-D4) |
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Phase angle $\theta = 52.54°$ | Reinterpreted as a projection ratio under $E$ (EF-T9) |
 | Agent meaning formalization | AM-O3 (structure of $S$) | Partial resolution: $S = S_{\text{real}} \times S_{\text{imag}}$, $E$ projects to $S_{\text{real}}$ |
-| [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost invisibility | Algebraic formula: $E(bi) = 0$ (EF-C2) |
+| [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/foundational_mechanics/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost invisibility | Algebraic formula: $E(bi) = 0$ (EF-C2) |
 
 ### 9.4 Open Questions
 
@@ -569,8 +569,8 @@ $$\boxed{E(\text{Meaning}_t^{\mathbb{C}}) = E(\text{IG}_t + i \cdot \text{VI}_t)
 | [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) | $i$ from self-reference$^2$; Born rule as $\mathbb{C} \to \mathbb{R}$ projection |
 | [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B partition, unified vocabulary for origin / $i$ / reference frame context / generative interior, `Activate_C` in lattice language |
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Reference frame context quadratic roots, phase angle $\theta = 52.54°$, Born rule as projection |
-| [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$, collapse = manifestation |
-| [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost/Body/Void ontology |
+| [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$, collapse = manifestation |
+| [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/foundational_mechanics/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost/Body/Void ontology |
 | [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | Level hierarchy ($-3$ to $12$) |
 
 ### 10.4 Claims Summary

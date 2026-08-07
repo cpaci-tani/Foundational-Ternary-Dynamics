@@ -43,7 +43,7 @@ $$\Delta_\sigma U \;=\; \kappa_\psi\,J_\chi \qquad\text{(weak field)}$$
 
 with clock readout `dτ = e^{−U} dt`, `a = −c²∇_Γ U`, and the gravity bridge `G_N = (κ_ψ/4π)·c³ℓ_F²/ℏ`. The Frontier-3 question is whether `κ_ψ = 4π` is *theorem-forced* or merely an imported continuum normalization.
 
-Committed FTD already contains the equivalent structure under different notation. [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) (FTD-0131) solves the discrete Poisson equation for a point source and obtains `G_N = −K_B^grav/(4π m_e)` — the `4π` sitting in the **denominator**, taken directly from the Green's-function tail of §1.1. The FQCR `κ_ψ` and the committed `K_B^grav` are the same bookkeeping slot. The audit below is therefore not about novel FQCR machinery; it is about a coefficient FTD has already placed correctly once.
+Committed FTD already contains the equivalent structure under different notation. [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) (FTD-0131) solves the discrete Poisson equation for a point source and obtains `G_N = −K_B^grav/(4π m_e)` — the `4π` sitting in the **denominator**, taken directly from the Green's-function tail of §1.1. The FQCR `κ_ψ` and the committed `K_B^grav` are the same bookkeeping slot. The audit below is therefore not about novel FQCR machinery; it is about a coefficient FTD has already placed correctly once.
 
 ---
 
@@ -75,7 +75,7 @@ So the `4π` is **the surface area of `S²`**, nothing else: `4π = |S²| = ∫_
 
 The `4π` re-enters FTD at one place only: the **asymptotic tail of the 3-D lattice Green's function**, which FTD already owns as a theorem.
 
-[`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.1 (FTD-0004, **[THEOREM]**, `SPEC_ALGEBRAIC_SPINE.md §6`, classical Glasser–Zucker, verified to 0.07 % at L = 384):
+[`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.1 (FTD-0004, **[THEOREM]**, `SPEC_ALGEBRAIC_SPINE.md §6`, classical Glasser–Zucker, verified to 0.07 % at L = 384):
 
 $$G_+(r) \;\to\; \frac{1}{4\pi r}\qquad\text{at large }r$$
 
@@ -117,7 +117,7 @@ The nonlinearity does not rescue it. `D_σ†W·sinh(D_σ U)` fixes the *structu
 
 Path Forward §2 hopes: `κ_ψ = 4π ⟹ G_N = c³ℓ_F²/ℏ ⟹ ℓ_F = √(ℏG_N/c³) = ℓ_P`. This fails for a **second, independent** reason, even granting the convention.
 
-[`THEOREM_A_PHYS_NO_GO.md`](../10_eft_program/THEOREM_A_PHYS_NO_GO.md) (FTD-0059, **[THEOREM]**): *no quantity with SI dimension of length is derivable from Axiom Zero* — extended (Corollary 3.1/4.1) to mass, time, energy. `ℓ_F` is a length; its value is therefore **100 % calibration**.
+[`THEOREM_A_PHYS_NO_GO.md`](../10_eft_program/derivations/framework_postulates_constitution/THEOREM_A_PHYS_NO_GO.md) (FTD-0059, **[THEOREM]**): *no quantity with SI dimension of length is derivable from Axiom Zero* — extended (Corollary 3.1/4.1) to mass, time, energy. `ℓ_F` is a length; its value is therefore **100 % calibration**.
 
 The bridge `G_N = (κ_ψ/4π)·c³ℓ_F²/ℏ` is a single equation. The prefactor `(κ_ψ/4π)` is a pure convention ratio (§4); given empirical `{G_N, c, ℏ}` and a *chosen* `κ_ψ`, the bridge simply **defines** `ℓ_F`. Choosing `κ_ψ = 4π` is choosing the convention in which that definition reads `ℓ_F = ℓ_P` exactly; any other choice gives `ℓ_F = ℓ_P·(4π/κ_ψ)^{1/2}`.
 
@@ -173,4 +173,4 @@ No FTD LEDGER tag is promoted or demoted. The FQCR source law's *structure* (`U`
 
 ## 10 · Provenance
 
-Audit performed under the FTD/FQCR Cleanup & Taxonomy v1.4 "new thread" (Path Forward §8). Method: first-principles derivation of the lattice vs continuum closure structure, cross-checked against committed FTD theorems — FTD-0004 (Green's-function tail, [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.1), FTD-0059 ([`THEOREM_A_PHYS_NO_GO.md`](../10_eft_program/THEOREM_A_PHYS_NO_GO.md)), FTD-0131, FTD-0137, FTD-0184. No numerical search was run; the only constant involved (`4π = 2π^{3/2}/Γ(3/2)`) is elementary and exact. LEDGER row: FTD-0188.
+Audit performed under the FTD/FQCR Cleanup & Taxonomy v1.4 "new thread" (Path Forward §8). Method: first-principles derivation of the lattice vs continuum closure structure, cross-checked against committed FTD theorems — FTD-0004 (Green's-function tail, [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.1), FTD-0059 ([`THEOREM_A_PHYS_NO_GO.md`](../10_eft_program/derivations/framework_postulates_constitution/THEOREM_A_PHYS_NO_GO.md)), FTD-0131, FTD-0137, FTD-0184. No numerical search was run; the only constant involved (`4π = 2π^{3/2}/Γ(3/2)`) is elementary and exact. LEDGER row: FTD-0188.

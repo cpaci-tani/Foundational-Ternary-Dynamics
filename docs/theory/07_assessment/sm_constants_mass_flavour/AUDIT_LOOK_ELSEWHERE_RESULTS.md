@@ -2,9 +2,9 @@
 
 **Tag:** [MEASURED] — pre-registered scan executed; verdict per PROTOCOL §7
 **LEDGER row:** FTD-0097
-**Pre-registration:** [`PROTOCOL_LOOK_ELSEWHERE_SCAN.md`](PROTOCOL_LOOK_ELSEWHERE_SCAN.md)
+**Pre-registration:** [`PROTOCOL_LOOK_ELSEWHERE_SCAN.md`](../qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md)
 **Pre-reg tag:** `preregister-look-elsewhere-scan-v1` (commit `f11dcaa`, 2026-04-27)
-**Runner:** [`tools/scan_look_elsewhere.py`](../../../tools/scan_look_elsewhere.py)
+**Runner:** [`tools/scan_look_elsewhere.py`](../../../../tools/scan_look_elsewhere.py)
 **Runner SHA256 (current on-disk, re-registered 2026-06-24):** `2074f23926862a78daf362cc5774c738b9d6fcb4002f5eff985974eff356d690`
 **Runner SHA256 (original 2026-04-27 pre-registration, superseded):** `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f`
 **Scan output:** `engine/results/look_elsewhere_2026-04-27/`

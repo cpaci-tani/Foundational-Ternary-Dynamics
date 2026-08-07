@@ -3,7 +3,7 @@
 **Tag:** [PROTOCOL · pre-registration]
 **Date:** 2026-04-27
 **LEDGER row:** FTD-0102 (assigned ahead of measurement)
-**Companion:** [`docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md`](PROTOCOL_OPERATOR_MIXING_MATRIX.md), [`docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
+**Companion:** [`docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md`](PROTOCOL_OPERATOR_MIXING_MATRIX.md), [`docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](../closed_negative/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
 **Plan:** `~/.claude/plans/let-s-plan-a-way-ethereal-sonnet.md` (Campaign B of the engine-as-instrument portfolio)
 
 This protocol is **pre-registered before measurement** per CLAUDE.md epistemic discipline rules.

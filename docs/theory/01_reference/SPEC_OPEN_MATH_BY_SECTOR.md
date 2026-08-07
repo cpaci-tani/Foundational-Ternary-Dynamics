@@ -13,7 +13,7 @@
 - [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — atomic per-claim provenance
 - [`../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`](../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) — T1–T5 tiers
 - [`../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — atomic file-level `[OPEN]` markers (non-math TODOs)
-- [`../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`](../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md) — FTD-0244 K-BIND closure
+- [`../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`](../10_eft_program/derivations/alpha_readout_programme/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md) — FTD-0244 K-BIND closure
 - [`../../../evaluation/AUDIT_WEAKNESSES_MASTER.md`](../../../evaluation/AUDIT_WEAKNESSES_MASTER.md) — historical W-CRIT / W-COSMO weakness audit source
 
 ---

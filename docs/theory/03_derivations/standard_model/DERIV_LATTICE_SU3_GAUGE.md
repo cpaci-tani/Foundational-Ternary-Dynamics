@@ -472,11 +472,11 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 
 | Document | What It Provides |
 |----------|-----------------|
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action; coupling terms; Gauss constraint |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action; coupling terms; Gauss constraint |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Lattice Feynman rules (propagator, vertex, Ward identity) |
-| [DERIV_OCTONIONIC_STRUCTURE.md](../05_particles/DERIV_OCTONIONIC_STRUCTURE.md) | G₂ = Aut(𝕆) ⊃ SU(3); algebraic origin of color |
-| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | α_s = 7/59; quark masses |
-| [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Λ_QCD value; string tension cross-check |
+| [DERIV_OCTONIONIC_STRUCTURE.md](../../05_particles/DERIV_OCTONIONIC_STRUCTURE.md) | G₂ = Aut(𝕆) ⊃ SU(3); algebraic origin of color |
+| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | α_s = 7/59; quark masses |
+| [DERIV_LAMBDA_QCD_DERIVATION.md](../../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Λ_QCD value; string tension cross-check |
 
 ## 9.2 Documents That Depend On This Derivation
 
@@ -484,8 +484,8 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 |----------|-------------|
 | [DERIV_LATTICE_SU2_WEAK.md](DERIV_LATTICE_SU2_WEAK.md) | SU(3) established → full SU(3)×SU(2)×U(1) |
 | [DERIV_HIGGS_FROM_MANIFESTATION.md](DERIV_HIGGS_FROM_MANIFESTATION.md) | Gauge sector complete → symmetry breaking framework |
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Non-Abelian sector → Lagrangian completeness |
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | SU(3) status reclassification |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | Non-Abelian sector → Lagrangian completeness |
+| [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | SU(3) status reclassification |
 
 ## 9.3 Open Questions
 

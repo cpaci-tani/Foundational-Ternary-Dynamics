@@ -76,7 +76,7 @@ The extra $+4$ I included in the "walk sum" was double-counting the starting val
 
 **Wrote:** "$\alpha_\infty/\alpha_{\rm ref} = 27/8 = 3.375$" as the identified bridge factor matching Phase-F measurement of 3.6.
 
-**Correct per [AUDIT_ALPHA_EXTRACTION.md](../10_eft_program/AUDIT_ALPHA_EXTRACTION.md):**
+**Correct per [AUDIT_ALPHA_EXTRACTION.md](../audits/AUDIT_ALPHA_EXTRACTION.md):**
 - The 3.6× decomposes as $2 \times 1.8$
 - The 2× is a convention artifact (engine `field_energy` has no ½ factor)
 - The 1.8× is the lattice Green's function $2 r G_L(r)$ at $r/L \approx 0.31$

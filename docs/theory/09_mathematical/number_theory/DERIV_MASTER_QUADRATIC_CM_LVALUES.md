@@ -4,7 +4,7 @@
 
 **Status:** [THEOREM] (sum-of-roots identification); [COROLLARY] (product-of-roots)
 **Verified:** PARI/GP, 100-digit precision, both identities
-**Dependencies:** [DERIV_LFUNCTION_GSTAR_CONNECTION.md](DERIV_LFUNCTION_GSTAR_CONNECTION.md), [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md), [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)
+**Dependencies:** [DERIV_LFUNCTION_GSTAR_CONNECTION.md](DERIV_LFUNCTION_GSTAR_CONNECTION.md), [DERIV_WATSON_GSTAR_IDENTITY.md](../../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md), [MATH_MASTER_QUADRATIC.md](../../01_reference/MATH_MASTER_QUADRATIC.md)
 
 ---
 
@@ -164,7 +164,7 @@ $$2^9 \;=\; 2^5 \cdot 16 \;=\; 32 \cdot |\mathrm{Aut}(E)|^2$$
 
 The factor 16 is $|\mathrm{Aut}(E)|^2$, the intrinsic CM invariant. The factor 32 is the Damerell rational inverse $(8\pi)^{-1} \to 32$ after absorbing $\pi$ into the $\varpi^2 \to G^{*2}\pi/4$ substitution.
 
-Three independent routes give 16 (see [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md), §2.2; this doc does not re-derive them):
+Three independent routes give 16 (see [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md), §2.2; this doc does not re-derive them):
 
 1. Arithmetic: $|\mathrm{Aut}(E)|^2 = |E(\mathbb{Q})_{\mathrm{tors}}|^2 = 16$
 2. Lattice stabilizer: $|\mathrm{Stab}_{O_h}(\mathrm{axis})| = |O_h|/3 = 48/3 = 16$
@@ -192,8 +192,8 @@ Only the Sym² identification is non-elementary.
 This document **does not duplicate**:
 
 - [DERIV_LFUNCTION_GSTAR_CONNECTION.md](DERIV_LFUNCTION_GSTAR_CONNECTION.md) — which establishes $G^* = 8 L(E,1)/\sqrt{\pi}$ and the coefficient $16 = |E(\mathbb{Q})_{\mathrm{tors}}|^2$ from BSD. That document is the Sym¹ (rank-0 BSD) story.
-- [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — which frames the five selection principles SP1–SP5 and the conditional-theorem structure.
-- [FOUND_BLIND_DERIVATION_CHAIN.md](../02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) — which gives the 13-step chain from $i$ to $\alpha^{-1}$.
+- [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — which frames the five selection principles SP1–SP5 and the conditional-theorem structure.
+- [FOUND_BLIND_DERIVATION_CHAIN.md](../../02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) — which gives the 13-step chain from $i$ to $\alpha^{-1}$.
 
 This document **adds**: the explicit Sym² L-value identification for the sum-of-roots coefficient, with the Damerell–Shimura derivation, the 100-digit PARI verification, and the honest framing that product-of-roots is an elementary corollary.
 
@@ -201,7 +201,7 @@ This document **adds**: the explicit Sym² L-value identification for the sum-of
 
 ## §6. Physics Identification Is Deferred
 
-This document establishes an **arithmetic theorem**. It does not claim $x_+ = 1/\alpha$; that identification is Selection Principle SP4 in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md). The present theorem stands independently of any physical interpretation.
+This document establishes an **arithmetic theorem**. It does not claim $x_+ = 1/\alpha$; that identification is Selection Principle SP4 in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md). The present theorem stands independently of any physical interpretation.
 
 The practical consequence: this result is **publishable as pure analytic number theory** (Journal of Number Theory, Ramanujan Journal) without invoking any FTD physics claim. The physics identification is a separate argument filed elsewhere.
 
@@ -249,13 +249,13 @@ Both gap tests return `1` (true) at 100-digit precision.
 
 ## §8. Conditional Theorem Statement
 
-Taking the present result together with the selection principles documented in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md):
+Taking the present result together with the selection principles documented in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md):
 
 > **Conditional Theorem.** *Given selection principles SP1 (CM curve $j = 1728$), SP2 (degree-2 master polynomial), and SP3 (coefficient $|\mathrm{Aut}(E)|^2 = 16$), the master quadratic's coefficients are determined up to the Damerell–Shimura normalization:*
 >
 > $$x^2 - 2^9 L(\mathrm{Sym}^2 E, 1)\,x + 2^{13}\pi^{-3/2} L(E,1)^3 = 0$$
 >
-> *with larger root $x_+ = 137.0361714582\ldots$ matching $\alpha^{-1}_{\mathrm{CODATA\,2018}} = 137.035999084$ at 1.26 ppm (tree level). The one-loop lattice correction ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes the gap to 9.6 ppb.*
+> *with larger root $x_+ = 137.0361714582\ldots$ matching $\alpha^{-1}_{\mathrm{CODATA\,2018}} = 137.035999084$ at 1.26 ppm (tree level). The one-loop lattice correction ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes the gap to 9.6 ppb.*
 
 SP4 (physical identification $x_+ = 1/\alpha$) remains a selection principle and is not proven by the arithmetic theorem.
 

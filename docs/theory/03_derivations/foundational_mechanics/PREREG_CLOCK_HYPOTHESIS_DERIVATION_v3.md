@@ -8,12 +8,12 @@
 **Supersedes:** v1 (`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`, commit `4c15ba1`, tag `preregister-clock-hypothesis-derivation-v1`) closed UNDERDETERMINED per `AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`; **v2** (drafted 2026-05-25, never hash-locked, **INVALIDATED** on process + substance axes per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`; archived to `archive/retracted/`).
 **Companion docs:**
 - [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — flagged POSTULATE 2 (reconciled to SPEC §4.3 modulo clock hypothesis 2026-05-24)
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7 (bandwidth constraint) + §4.3 (Born-Infeld proper time) + §8 L-1 [THEOREM modulo clock hypothesis]
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7 (bandwidth constraint) + §4.3 (Born-Infeld proper time) + §8 L-1 [THEOREM modulo clock hypothesis]
 - [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (reconciliation that identified the clock hypothesis as the narrowed remaining open piece)
 - [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](../../07_assessment/audits/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) (v1 verdict + named routes for v2)
 - [`AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`](../../07_assessment/audits/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md) (v2 invalidation; sharpens v3 target)
-- [`archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md`](archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md) (archived v2 attempt)
-- [`archive/retracted/FOUND_CLOCK_HYPOTHESIS.md`](archive/retracted/FOUND_CLOCK_HYPOTHESIS.md) (archived v2 result)
+- [`archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md`](../archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md) (archived v2 attempt)
+- [`archive/retracted/FOUND_CLOCK_HYPOTHESIS.md`](../archive/retracted/FOUND_CLOCK_HYPOTHESIS.md) (archived v2 result)
 
 > **Pre-registration discipline.** Sections §§2–9 are committed **before** the closure attempt is run. After commit: SHA256 → `../10_eft_program/REF_PREREGISTER_MANIFEST.md`, git tag `preregister-clock-hypothesis-derivation-v3` applied. Any post-hoc edit to §§2–9 invalidates v3; a v4 is required before the closure attempt is run or re-run. The closure attempt's result lands in a separate doc (`FOUND_CLOCK_HYPOTHESIS_v3.md` or `AUDIT_CLOCK_HYPOTHESIS_v3_UNDERDETERMINED.md` or `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`), never as edits to this file. **B-9 (NEW per v2 audit): the pre-reg file and the result document MUST NOT share a same-minute mtime; the commit-then-tag step must be visible in `git log` before the result document is authored.** **B-10 (NEW per v2 audit): adversarial review (§9 step 9) must be conducted by a separately dispatched independent agent (Task / Agent tool invocation to a `general-purpose` or `Explore` agent), not by a same-process self-review.**
 

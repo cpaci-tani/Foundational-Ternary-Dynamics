@@ -203,7 +203,7 @@ The combinatorial content of the Standard Model — the number of forces, their 
 ## Depends On
 
 - [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md) — D=3 axiom, CFL condition
-- [DERIV_MOORE_GAUGE_STRUCTURE.md](../03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md) — J-component gauge group assignment
+- [DERIV_MOORE_GAUGE_STRUCTURE.md](../03_derivations/standard_model/DERIV_MOORE_GAUGE_STRUCTURE.md) — J-component gauge group assignment
 - [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) — Watson integrals for each sublattice
 - [EXPLR_PHASE_LATTICE_MOORE.md](EXPLR_PHASE_LATTICE_MOORE.md) — Phase lattice construction and dark states
 

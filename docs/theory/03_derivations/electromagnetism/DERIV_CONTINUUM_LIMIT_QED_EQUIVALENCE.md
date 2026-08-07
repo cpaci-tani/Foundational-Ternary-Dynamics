@@ -29,7 +29,7 @@ The FTD Lagrangian is a compact U(1) lattice gauge theory in temporal gauge, wit
 | Coupling $g_c \cdot s\,\nabla\cdot\mathbf{J}$ | $e\,\psi^\dagger\partial\!\!\!/A\psi$ minimal coupling |
 | Ternary $s\in\{-1,0,+1\}$ | Charge $q\in\{-1,0,+1\}$ |
 
-The FTD bare coupling is $g_c \equiv \sqrt{\alpha_{\text{FTD}}}$, where $\alpha_{\text{FTD}} = 1/x_+$ is determined by the master quadratic $x^2 = 16G^{*2}(x - G^*)$ ([MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)).
+The FTD bare coupling is $g_c \equiv \sqrt{\alpha_{\text{FTD}}}$, where $\alpha_{\text{FTD}} = 1/x_+$ is determined by the master quadratic $x^2 = 16G^{*2}(x - G^*)$ ([MATH_MASTER_QUADRATIC.md](../../01_reference/MATH_MASTER_QUADRATIC.md)).
 
 This identification is *structural*: the FTD Lagrangian satisfies every axiom of compact U(1) LGT in temporal gauge. It is not analogical, and it is not a model — it is a recognition of what FTD already is.
 
@@ -84,7 +84,7 @@ $$
 $$
 
 **Remark on the role of $G^*$ and the Watson identity.**
-The algebraic identity $G^{*2} = 2\pi\,W_3^{\text{FTD}}$, where $W_3^{\text{FTD}} = \Gamma(1/4)^4/(4\pi^3)$, is a *true* lemniscatic relation (both sides reduce to $\Gamma(1/4)^4$). It expresses $G^*$ in a form reminiscent of a lattice self-energy, which is suggestive but should not be over-interpreted: $W_3^{\text{FTD}}$ is **not** the standard Watson integral of the cubic lattice (the genuine BCC self-energy at the origin is $G(0) \approx 0.2527$, related but normalized differently). The role of $G^*$ in Lemma IV.1 is *algebraic* — it fixes $x_+$ — not as a direct identification of the lattice Green's function. See [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) for the algebraic identity, and the cautionary note in [project memory: Watson normalization] for the interpretive caveat.
+The algebraic identity $G^{*2} = 2\pi\,W_3^{\text{FTD}}$, where $W_3^{\text{FTD}} = \Gamma(1/4)^4/(4\pi^3)$, is a *true* lemniscatic relation (both sides reduce to $\Gamma(1/4)^4$). It expresses $G^*$ in a form reminiscent of a lattice self-energy, which is suggestive but should not be over-interpreted: $W_3^{\text{FTD}}$ is **not** the standard Watson integral of the cubic lattice (the genuine BCC self-energy at the origin is $G(0) \approx 0.2527$, related but normalized differently). The role of $G^*$ in Lemma IV.1 is *algebraic* — it fixes $x_+$ — not as a direct identification of the lattice Green's function. See [DERIV_WATSON_GSTAR_IDENTITY.md](../../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) for the algebraic identity, and the cautionary note in [project memory: Watson normalization] for the interpretive caveat.
 
 **Lemma IV.3 (Rigidity is non-trivial).** [Observation.]
 Because the FTD lattice spacing is not a fitted parameter, the equality $1/x_+ = \alpha_{\text{Thomson}}$ has only two logical possibilities:
@@ -99,7 +99,7 @@ The *operational* content of Lemma IV.2 is option 2: the FTD lattice IS specifyi
 
 **Theorem V.1 (Continuum-limit equivalence).** [Conditional THEOREM.]
 Assume:
-- **(C1)** The "minimal continuous extension" of FTD identifies $\mathbf{J}$ as a U(1) gauge potential on the cubic graph (no defined boundary) in temporal gauge. (This is the [SELECTION] residue of [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md), §2.3b.)
+- **(C1)** The "minimal continuous extension" of FTD identifies $\mathbf{J}$ as a U(1) gauge potential on the cubic graph (no defined boundary) in temporal gauge. (This is the [SELECTION] residue of [FOUND_AXIOM_ZERO.md](../../02_foundations/FOUND_AXIOM_ZERO.md), §2.3b.)
 - **(C2)** Wilson's two-phase theorem (Theorem II.1) holds for compact U(1) LGT.
 - **(C3)** The Coulomb-phase fine-spacing convergence (Theorem III.1) holds.
 - **(C4)** Charged matter is added consistently in the FTD lattice, recovering QED Feynman rules ([DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md)).
@@ -131,7 +131,7 @@ By (C1) + (C2) + (C3) + (C4), FTD lattice observables at $x_+$ converge to those
 
 The five conditions (C1)–(C5) collectively form the residual hypothesis. Of these:
 - (C2), (C3), (C4) are *external* lattice-gauge-theory results that FTD imports without modification.
-- (C1) is the only genuine FTD-specific [SELECTION] still in play, and it traces to a single sentence in [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md).
+- (C1) is the only genuine FTD-specific [SELECTION] still in play, and it traces to a single sentence in [FOUND_AXIOM_ZERO.md](../../02_foundations/FOUND_AXIOM_ZERO.md).
 - (C5) is the new content of this document and is itself a [THEOREM] given the master quadratic.
 
 **Net epistemic effect.** Before this document, $x_+ = 1/\alpha$ was [SELECTION] (a numerical match awaiting a mechanism). After this document, it is [THEOREM] *conditional on a single, explicit, structurally minimal selection in Axiom Zero*. The fine-spacing-recovery gap is closed; the only remaining philosophical assumption is whether one accepts the minimal continuous extension of FTD's ternary-on-cubic-graph data as a U(1) gauge potential — and that selection is independently motivated by $O_h$ symmetry and the requirement of local gauge invariance under $s\to s + \nabla\chi$.
@@ -147,7 +147,7 @@ The five conditions (C1)–(C5) collectively form the residual hypothesis. Of th
 - [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](../foundational_mechanics/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md) — the structural identification.
 - [DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md) — full lattice QED, charged matter, doubler handling, Ward identity.
 - [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) — the gap equation and its two roots.
-- [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — pure-math statement.
-- [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md) — minimal continuous extension (§2.3b).
-- [FOUND_GSTAR_SCALE.md](../02_foundations/FOUND_GSTAR_SCALE.md) — $G^*$ as the structural scale.
-- [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) — the algebraic identity $G^{*2} = 2\pi W_3^{\text{FTD}}$ (with normalization caveat).
+- [MATH_MASTER_QUADRATIC.md](../../01_reference/MATH_MASTER_QUADRATIC.md) — pure-math statement.
+- [FOUND_AXIOM_ZERO.md](../../02_foundations/FOUND_AXIOM_ZERO.md) — minimal continuous extension (§2.3b).
+- [FOUND_GSTAR_SCALE.md](../../02_foundations/FOUND_GSTAR_SCALE.md) — $G^*$ as the structural scale.
+- [DERIV_WATSON_GSTAR_IDENTITY.md](../../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) — the algebraic identity $G^{*2} = 2\pi W_3^{\text{FTD}}$ (with normalization caveat).

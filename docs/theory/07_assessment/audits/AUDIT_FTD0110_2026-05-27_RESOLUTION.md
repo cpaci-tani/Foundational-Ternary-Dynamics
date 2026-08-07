@@ -81,7 +81,7 @@ The linear theorem ([`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../../03_derivations
 
 ## 2 · What the verification scripts actually verify
 
-[`scripts/proofs/proof_ftd0110_full_aggregation.py`](../../../scripts/proofs/proof_ftd0110_full_aggregation.py) and [`scripts/proofs/proof_ftd0110_active_partition.py`](../../../scripts/proofs/proof_ftd0110_active_partition.py) — referenced in some §6 cross-checks — are **not proofs of the §6 theorems**. Their headers state explicitly:
+[`scripts/proofs/proof_ftd0110_full_aggregation.py`](../../../../scripts/proofs/proof_ftd0110_full_aggregation.py) and [`scripts/proofs/proof_ftd0110_active_partition.py`](../../../../scripts/proofs/proof_ftd0110_active_partition.py) — referenced in some §6 cross-checks — are **not proofs of the §6 theorems**. Their headers state explicitly:
 
 - *"Phase B falsified the naive 'f_slow per block = 1/√d' hypothesis. This script tests the NEXT candidate framework based on Phase B's actual findings: LANGEVIN EQUIPARTITION FRAMEWORK..."* (full_aggregation.py)
 - *"This script formally verifies the active-block partitioning aggregation rule (AP-no-over-count) designed to resolve the multi-block over-counting bug in FTD-0110."* (active_partition.py)
@@ -92,7 +92,7 @@ They explore independent multi-scale aggregation mechanisms ($\eta(x) = \text{bl
 
 ## 3 · The honest path forward
 
-The 2026-05-01 [`EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](../../03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) and the 2026-05-23 scoping memo [`SCOPE_FTD_0110_NONLINEAR_BRIDGE.md`](../10_eft_program/SCOPE_FTD_0110_NONLINEAR_BRIDGE.md) already laid out the actual closure path:
+The 2026-05-01 [`EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](../../03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) and the 2026-05-23 scoping memo [`SCOPE_FTD_0110_NONLINEAR_BRIDGE.md`](../../10_eft_program/scopes_and_specs/SCOPE_FTD_0110_NONLINEAR_BRIDGE.md) already laid out the actual closure path:
 
 - **Mechanism α (multi-block irrep mixing)**, ~1 week of careful calculation. Compute the per-shell A_{1g} → non-A_{1g} leakage of the lattice Green's function $G_L(r)$ from the central injection projected onto the 4 A_{1g} eigenvectors of each off-centre 27-block. Sum over shells; the predicted log-A coefficient is the dominant-mechanism test. Status (per scoping memo): session-scoped desk track. **This is the real Phase 1 work for FTD-0110.**
 - **Mechanism β (genesis-induced irrep mixing)** and **Mechanism γ (Langevin non-equipartition)**, 3-5 days each — bound the other two contributions.
@@ -144,10 +144,10 @@ If any falsifier lands, this audit is closed-negative and the 2026-05-27 retag s
 
 - **Canonical derivation docs:** [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../../03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md), [`DERIV_FTD0110_NONLINEAR_BRIDGE.md`](../../03_derivations/foundational_mechanics/DERIV_FTD0110_NONLINEAR_BRIDGE.md).
 - **Honest analysis the §6 resolution displaces:** [`EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](../../03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md).
-- **Scoping memo (2026-05-23, FTD-0203):** [`SCOPE_FTD_0110_NONLINEAR_BRIDGE.md`](../10_eft_program/SCOPE_FTD_0110_NONLINEAR_BRIDGE.md).
-- **Candidate-aggregation proof scripts (not §6 verifications):** [`scripts/proofs/proof_ftd0110_full_aggregation.py`](../../../scripts/proofs/proof_ftd0110_full_aggregation.py), [`scripts/proofs/proof_ftd0110_active_partition.py`](../../../scripts/proofs/proof_ftd0110_active_partition.py).
-- **LEDGER row:** [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) FTD-0110 (with 2026-04-27 / 2026-05-04 / 2026-05-27 maintenance history).
-- **Tracker entry:** [`TRACKER_ONTIC_TRUTH.md`](../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) OT-3.4.
+- **Scoping memo (2026-05-23, FTD-0203):** [`SCOPE_FTD_0110_NONLINEAR_BRIDGE.md`](../../10_eft_program/scopes_and_specs/SCOPE_FTD_0110_NONLINEAR_BRIDGE.md).
+- **Candidate-aggregation proof scripts (not §6 verifications):** [`scripts/proofs/proof_ftd0110_full_aggregation.py`](../../../../scripts/proofs/proof_ftd0110_full_aggregation.py), [`scripts/proofs/proof_ftd0110_active_partition.py`](../../../../scripts/proofs/proof_ftd0110_active_partition.py).
+- **LEDGER row:** [`LEDGER.md`](../core_ledgers/LEDGER.md) FTD-0110 (with 2026-04-27 / 2026-05-04 / 2026-05-27 maintenance history).
+- **Tracker entry:** [`TRACKER_ONTIC_TRUTH.md`](../core_ledgers/TRACKER_ONTIC_TRUTH.md) OT-3.4.
 
 ---
 

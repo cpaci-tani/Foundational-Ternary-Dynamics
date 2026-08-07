@@ -7,14 +7,14 @@
 **LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock time (current top per audit 2026-05-24 is FTD-0203).
 **Supersedes:** none — first pre-registration on the spin-2 boundary theorem.
 **Companion docs:**
-- [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent)
-- [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) — Arc C2 P1 consolidated derivation (load-bearing proof scaffold for this pre-reg)
-- [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../derivations/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 derivation
-- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 [CLOSED NEGATIVE] empirical floor
-- [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md`](PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md) — methodological template (9-section format, F-/B-checklist structure)
-- [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) §4 — frozen non-site-local observable catalog inherited
-- [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — FTD-0189 ripple analysis (load-bearing for C2-4)
-- [`../03_derivations/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../03_derivations/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) — Arc B P2 pre-reg (verdict feeds C2 scalar-sector branch per §3 D7)
+- [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent)
+- [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../../derivations/gravity_cosmology/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) — Arc C2 P1 consolidated derivation (load-bearing proof scaffold for this pre-reg)
+- [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../../derivations/framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 derivation
+- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 [CLOSED NEGATIVE] empirical floor
+- [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md`](../spine_master_quadratic/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md) — methodological template (9-section format, F-/B-checklist structure)
+- [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) §4 — frozen non-site-local observable catalog inherited
+- [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — FTD-0189 ripple analysis (load-bearing for C2-4)
+- [`../03_derivations/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../../../03_derivations/archive/superseded/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) — Arc B P2 pre-reg (verdict feeds C2 scalar-sector branch per §3 D7)
 
 > **Pre-registration discipline.** Sections §§2-9 are committed before the closure attempt is run. After commit: SHA256 → `REF_PREREGISTER_MANIFEST.md`, git tag `preregister-spin2-boundary-theorem-v1` applied. Any post-hoc edit to §§2-9 invalidates v1; a v2 is required before the closure attempt is run or re-run. The closure attempt's result lands in a separate doc (`FOUND_SPIN2_BOUNDARY_THEOREM.md` or `AUDIT_SPIN2_BOUNDARY_THEOREM_*.md`), never as edits to this file.
 
@@ -30,7 +30,7 @@
 
 **Doctrine clause this serves.** CLAUDE.md goal-clause 2: "Derive everything we can from a discrete ontology — **and rigorously establish what we cannot.**" Arc C2 makes the substrate-gravity boundary theorem-grade: substrate hosts scalar (FTD-0131 g_00 via Phase G + Born-Infeld §4.3) and vector (transverse-J spin-1) sectors; helicity-±2 is forbidden in the §4 frozen catalog at free-theory + Gauss-only level; full nonlinear GR enters via Deser-bootstrap matching, not substrate emergence.
 
-**Prior-favoured outcome.** FOUND. The DERIV docs ([`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../derivations/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) + [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md)) already establish the chain at [THEOREM] free-theory + Gauss-only level for clauses (C2-1), (C2-2), (C2-3), and at [SMC] canonical-toggle level with FTD-0193 empirical validation. Clause (C2-4) is [REFERENCE], not derivation. **The closure attempt's function is mechanical F-/B-checklist verification + adversarial review**, not new derivation work. State openly: this pre-reg is largely a verdict-discipline instrument, not a research-frontier instrument. The risk is F9 (the "obvious" theorem hiding assumptions); the mitigation is the §7 falsifier and §8 banned-moves checklists.
+**Prior-favoured outcome.** FOUND. The DERIV docs ([`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../../derivations/framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) + [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../../derivations/gravity_cosmology/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md)) already establish the chain at [THEOREM] free-theory + Gauss-only level for clauses (C2-1), (C2-2), (C2-3), and at [SMC] canonical-toggle level with FTD-0193 empirical validation. Clause (C2-4) is [REFERENCE], not derivation. **The closure attempt's function is mechanical F-/B-checklist verification + adversarial review**, not new derivation work. State openly: this pre-reg is largely a verdict-discipline instrument, not a research-frontier instrument. The risk is F9 (the "obvious" theorem hiding assumptions); the mitigation is the §7 falsifier and §8 banned-moves checklists.
 
 **Sibling to FTD-0186.** Arc C2 is the gravity-sector dual of FTD-0186 Stage 1 (the structural / dynamical-value discriminator). FTD-0186 distinguishes claims that substrate combinatorics forces (STRUCTURAL) from claims requiring external input (NON-UNIVERSAL DYNAMICAL). Arc C2 distinguishes substrate-derivable gravity content (scalar + vector, established) from import-required gravity content (spin-2 + full GR, established as boundary). Independent on their axes; methodologically parallel. The FTD-0186 v2 §1 honesty framing ("v2 is scope clarification, not a 'win'") is mirrored here.
 
@@ -38,7 +38,7 @@
 
 ## §2 — The question (LOCKED)
 
-**Q-SPIN2-BOUNDARY-v1.** Does the spin-2 boundary theorem of [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) §1 hold under the axioms + calibration + canonical toggle set + §4 frozen catalog specified in §3-§4 below? Specifically, do **all four clauses** (C2-1) through (C2-4) — as stated verbatim in [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) §1 — pass the §7 falsifier checklist and the §8 banned-moves checklist when the §9 method is executed?
+**Q-SPIN2-BOUNDARY-v1.** Does the spin-2 boundary theorem of [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../../derivations/gravity_cosmology/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) §1 hold under the axioms + calibration + canonical toggle set + §4 frozen catalog specified in §3-§4 below? Specifically, do **all four clauses** (C2-1) through (C2-4) — as stated verbatim in [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../../derivations/gravity_cosmology/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) §1 — pass the §7 falsifier checklist and the §8 banned-moves checklist when the §9 method is executed?
 
 The verdict applies the dual-tag structure of the DERIV docs:
 
@@ -52,7 +52,7 @@ All three §6 outcomes are pre-blessed. The verdict is genuinely open — Outcom
 
 ## §3 — Definitions (LOCKED)
 
-- **D1 — The boundary-theorem statement.** The verbatim §1 statement of [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md), including the four clauses (C2-1), (C2-2), (C2-3), (C2-4) and the net-statement paragraph. Any deviation from this verbatim text in the closure attempt requires a v2 pre-reg.
+- **D1 — The boundary-theorem statement.** The verbatim §1 statement of [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](../../derivations/gravity_cosmology/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md), including the four clauses (C2-1), (C2-2), (C2-3), (C2-4) and the net-statement paragraph. Any deviation from this verbatim text in the closure attempt requires a v2 pre-reg.
 - **D2 — Free-theory + Gauss-only level.** The regime where: state field s ≡ 0; no state-flux coupling (`g_c · s · ∇·J` term OFF); no velocity coupling (`g_c · s · v·J` term OFF); no manifestation thresholds (genesis + evaporation OFF); no Langevin noise; Gauss constraint (`∇_L · J = ρ`) is the ONLY interaction. The J-field obeys the linearized lattice wave equation `Δ_t² J_a = C² L_18 J_a`.
 - **D3 — Canonical toggle set level.** The regime defined by the engine's default toggle configuration at the time of hash-lock of this pre-reg. **Snapshot required at lock time:** the closure attempt MUST cite the exact `engine/include/ftd/term_toggles.h` defaults at the hash-lock commit, equivalent to the §8 toggle set of `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` (11 toggles ON; `dual_substrate` + `weak_transmutation` OFF).
 - **D4 — §4 frozen observable catalog.** The catalog of `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4: closed flux-loops / Wilson-loop-style readouts, plaquette bivectors, bilinear link observables, boundary-to-boundary transfer observables, reference frame projections. The candidate rank-2 observables for the spin-2 channel within this catalog are the J-bilinears `O_ij = J_iJ_j − ⅓δ_ij|J|²` (flux-quadrupole) and `Õ_ij = [(∂_iJ_a)(∂_jJ_a)]_TT` (stress), per `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` §5.

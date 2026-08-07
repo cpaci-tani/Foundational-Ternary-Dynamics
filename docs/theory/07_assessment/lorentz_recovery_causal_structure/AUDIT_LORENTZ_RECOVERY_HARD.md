@@ -3,7 +3,7 @@
 **Registry:** FTD-0407  
 **Status:** `[SCOPED NO-GO — current default free-flux update]` + `[OPEN — interacting and multi-sector recovery]`  
 **Verdict:** `LEADING-ORDER-FLUX-ONLY`  
-**Recomputing verifier:** [`proof_lorentz_recovery_hard.py`](../../../scripts/proofs/proof_lorentz_recovery_hard.py) (27/27 exact/source-contract checks)
+**Recomputing verifier:** [`proof_lorentz_recovery_hard.py`](../../../../scripts/proofs/proof_lorentz_recovery_hard.py) (27/27 exact/source-contract checks)
 
 ---
 
@@ -47,14 +47,14 @@ All statements above are finite-lattice statements. The Taylor coefficients are 
 
 The default free, single-substrate path is fixed by four source facts:
 
-1. [`field_operators.h`](../../../engine/include/ftd/field_operators.h) applies
+1. [`field_operators.h`](../../../../engine/include/ftd/field_operators.h) applies
    `(1/3) face_sum + (1/6) edge_sum - 4 center`.
 2. With the FTD-0408 prototype toggle OFF (the default),
-   [`phase_read.cpp`](../../../engine/src/render_bridge_phases/phase_read.cpp)
+   [`phase_read.cpp`](../../../../engine/src/render_bridge_phases/phase_read.cpp)
    sets `delta_j = C_WAVE^2 * lap`.
-3. [`phase_write.cpp`](../../../engine/src/render_bridge_phases/phase_write.cpp) performs the unit-step kick-drift update
+3. [`phase_write.cpp`](../../../../engine/src/render_bridge_phases/phase_write.cpp) performs the unit-step kick-drift update
    `wave_vel += delta_j; flux += wave_vel`.
-4. [`term_toggles.h`](../../../engine/include/ftd/term_toggles.h) defaults to `FULL`, with both alternate wave integrators off.
+4. [`term_toggles.h`](../../../../engine/include/ftd/term_toggles.h) defaults to `FULL`, with both alternate wave integrators off.
 
 Eliminating `wave_vel` gives the exact second-order recurrence
 
@@ -239,7 +239,7 @@ recalibration. See [`AUDIT_LORENTZ_P4_PERIOD2.md`](AUDIT_LORENTZ_P4_PERIOD2.md).
 
 ## 4. Why the existing correlator benchmark is insufficient
 
-[`benchmark_lorentz_recovery.cpp`](../../../engine/tests/benchmark_lorentz_recovery.cpp) compares one axis-aligned plane wave's temporal and spatial correlators after rescaling by the leading speed. That is a free-mode dispersion diagnostic. It does not test a boost transformation, an interacting two-point function, or equality of limiting speeds across species.
+[`benchmark_lorentz_recovery.cpp`](../../../../engine/tests/benchmark_lorentz_recovery.cpp) compares one axis-aligned plane wave's temporal and spatial correlators after rescaling by the leading speed. That is a free-mode dispersion diagnostic. It does not test a boost transformation, an interacting two-point function, or equality of limiting speeds across species.
 
 For the benchmark mode the exact relation is
 
@@ -259,7 +259,7 @@ Lorentz recovery requires one operational cone for every observable low-energy s
 
 ### 5.1 Imported Wilson matter
 
-The standalone [`wilson_dirac.h`](../../../engine/include/ftd/wilson_dirac.h)
+The standalone [`wilson_dirac.h`](../../../../engine/include/ftd/wilson_dirac.h)
 module uses an independent continuous-time clock and is not integrated into
 `RenderBridge`. FTD-0412 later corrected its real-time operator: the historical
 code evolved spatial `D_W` directly and its special-spinor norm test did not

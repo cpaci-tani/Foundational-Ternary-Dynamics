@@ -1,8 +1,8 @@
 # Complete Operator Basis under the Frozen Gate-1 Contract
 
 **Status:** [THEOREM] (enumeration under frozen dimensions); [SELECTION] on C/P/T conventions
-**Purpose:** Gate 3 closure of the bridge contract. Enumerate all $O_h$-invariant, $C$-invariant local operators in $(\rho, J, j, A)$ through engineering dimension $D \le 6$ under the frozen scaling of [FTD-0064](../07_assessment/core_ledgers/LEDGER.md).
-**Supersedes:** [SPEC_OPERATOR_BASIS.md](archive/campaign_complete/SPEC_OPERATOR_BASIS.md) (Phase-3 lattice-unit spec) in the continuum EFT sense.
+**Purpose:** Gate 3 closure of the bridge contract. Enumerate all $O_h$-invariant, $C$-invariant local operators in $(\rho, J, j, A)$ through engineering dimension $D \le 6$ under the frozen scaling of [FTD-0064](../../07_assessment/core_ledgers/LEDGER.md).
+**Supersedes:** [SPEC_OPERATOR_BASIS.md](../archive/campaign_complete/SPEC_OPERATOR_BASIS.md) (Phase-3 lattice-unit spec) in the continuum EFT sense.
 
 ---
 
@@ -92,7 +92,7 @@ Truncation at $D = 6$ includes all corrections suppressed by $(\ell_P / \ell_{\t
 
 The dual-cell Wilsonian blocking map (SPEC_FTD_NATIVE_BLOCKING_MAP.md) acts on the enumeration above. Operators of the **same symmetry type** mix into each other at linear order in the blocking:
 
-**Marginal block ($D = 4$):** $\mathcal{O}_2, \mathcal{O}_3, \mathcal{O}_4, \mathcal{O}_5$ all mix among themselves because they share $C$-even, $P$-even, $T$-even ($\mathcal{O}_5$: $T$-odd but decouples separately) quantum numbers. The mixing matrix at tree level on a Gaussian native generator was measured at (1, 1, 1, 1) for the native response tuple (FTD-0064 referenced [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](../derivations/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md)). Non-Gaussian flow (FTD-0065, P1.3) is the next measurement.
+**Marginal block ($D = 4$):** $\mathcal{O}_2, \mathcal{O}_3, \mathcal{O}_4, \mathcal{O}_5$ all mix among themselves because they share $C$-even, $P$-even, $T$-even ($\mathcal{O}_5$: $T$-odd but decouples separately) quantum numbers. The mixing matrix at tree level on a Gaussian native generator was measured at (1, 1, 1, 1) for the native response tuple (FTD-0064 referenced [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](../derivations/lorentz_recovery_causal_structure/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md)). Non-Gaussian flow (FTD-0065, P1.3) is the next measurement.
 
 **Relevant → marginal flow:** $\mathcal{O}_1$ (photon mass, $D = 2$) is relevant and generates $\mathcal{O}_3$-like corrections at one loop. Whether $\mathcal{O}_1$ is generated dynamically by FTD dynamics or remains zero is a measurement question (ctest `native_operator_spectrum` or equivalent).
 

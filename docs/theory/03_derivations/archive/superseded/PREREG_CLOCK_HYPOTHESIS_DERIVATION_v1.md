@@ -7,11 +7,11 @@
 **LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock time (current top per audit 2026-05-24 is FTD-0203).
 **Supersedes:** none — first pre-registration on the clock hypothesis as an isolable interpretive step.
 **Companion docs:**
-- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — flagged POSTULATE 2 (now reconciled to SPEC §4.3 modulo clock hypothesis)
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7 (bandwidth constraint) + §4.3 (Born-Infeld proper time) + §8 L-1 [THEOREM modulo clock hypothesis]
-- [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (reconciliation that identified the clock hypothesis as the narrowed remaining open piece)
-- [`../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) §14 — tick-rate-variation framing
-- Methodological templates: [`../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) (9-section format + F-a..F-j ruleset + §8 banned moves)
+- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — flagged POSTULATE 2 (now reconciled to SPEC §4.3 modulo clock hypothesis)
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../../../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7 (bandwidth constraint) + §4.3 (Born-Infeld proper time) + §8 L-1 [THEOREM modulo clock hypothesis]
+- [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (reconciliation that identified the clock hypothesis as the narrowed remaining open piece)
+- [`../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](../../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) §14 — tick-rate-variation framing
+- Methodological templates: [`../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../../../10_eft_program/preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) (9-section format + F-a..F-j ruleset + §8 banned moves)
 
 > **Pre-registration discipline.** Sections §§2–9 are committed before the closure attempt is run. After commit: SHA256 → `../10_eft_program/REF_PREREGISTER_MANIFEST.md`, git tag applied. Any post-hoc edit to §§2–9 invalidates v1; a v2 is required before the closure attempt is run or re-run. The closure attempt's result lands in a separate doc (`REPORT_CLOCK_HYPOTHESIS_DERIVATION.md` or `AUDIT_CLOCK_HYPOTHESIS_CLOSED_NEGATIVE.md`), never as edits to this file.
 
@@ -21,7 +21,7 @@
 
 ## §1 — Context and doctrine
 
-**Origin.** The Arc B P0 reconciliation audit (2026-05-24, [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md)) found that `SPEC_FTD_LAGRANGIAN.md` §4.3 [THEOREM] subsumes `DERIV_NEWTON_FROM_SUBSTRATE.md` §1.4's `[POSTULATE 2, flagged]` for the linearized tick-rate response. SPEC §4.3 derives `dτ/dt = √(f - v²/f)` (exact Schwarzschild proper time for all `f ∈ (0,1]`) from the Born-Infeld action `S = -K_B ∫√((f²-v²)/f) dt` plus a single interpretive step: "**By the clock hypothesis**, `dτ ∝ √((f²-v²)/f) dt`."
+**Origin.** The Arc B P0 reconciliation audit (2026-05-24, [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md)) found that `SPEC_FTD_LAGRANGIAN.md` §4.3 [THEOREM] subsumes `DERIV_NEWTON_FROM_SUBSTRATE.md` §1.4's `[POSTULATE 2, flagged]` for the linearized tick-rate response. SPEC §4.3 derives `dτ/dt = √(f - v²/f)` (exact Schwarzschild proper time for all `f ∈ (0,1]`) from the Born-Infeld action `S = -K_B ∫√((f²-v²)/f) dt` plus a single interpretive step: "**By the clock hypothesis**, `dτ ∝ √((f²-v²)/f) dt`."
 
 **The clock hypothesis** is the identification: the Born-Infeld action measure IS proper time, rather than merely a Lagrangian density. A grep across `docs/` (executed 2026-05-24) returns exactly 2 files: SPEC §4.3 and the AUDIT doc. **The clock hypothesis is not formally tagged anywhere in the FTD corpus.** It is treated as a definitional/interpretive step in §4.3 without explicit `[AXIOM]` or `[SELECTION]` flag.
 

@@ -2,7 +2,7 @@
 
 **Tag:** [THEOREM] (Langevin stationary ensemble exists and is equipartitioned, FTD-0069); [MEASURED] (Gaussian fixed point at $b \le 8$, FTD-0070); [PARTIAL] (source-coupled generator $Z[J]$ under nonlinear dynamics, FTD-0069; real-engine transport histories connected to native blocking)
 **Ledger rows:** FTD-0069 (Langevin ensemble), FTD-0070 (multiscale flow).
-**Depends on:** [FTD-0051](../07_assessment/core_ledgers/LEDGER.md) (Langevin thermostat, CPU+GPU validated), [FTD-0064](../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [FTD-0065](../07_assessment/core_ledgers/LEDGER.md) (dual-cell adapter), [FTD-0066](../07_assessment/core_ledgers/LEDGER.md) (Ward identity), [FTD-0067](../07_assessment/core_ledgers/LEDGER.md) (mixed-toggle multi-tick Ward), [FTD-0068](../07_assessment/core_ledgers/LEDGER.md) (operator basis), [FTD-0069](../07_assessment/core_ledgers/LEDGER.md) (Langevin ensemble).
+**Depends on:** [FTD-0051](../../../07_assessment/core_ledgers/LEDGER.md) (Langevin thermostat, CPU+GPU validated), [FTD-0064](../../../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [FTD-0065](../../../07_assessment/core_ledgers/LEDGER.md) (dual-cell adapter), [FTD-0066](../../../07_assessment/core_ledgers/LEDGER.md) (Ward identity), [FTD-0067](../../../07_assessment/core_ledgers/LEDGER.md) (mixed-toggle multi-tick Ward), [FTD-0068](../../../07_assessment/core_ledgers/LEDGER.md) (operator basis), [FTD-0069](../../../07_assessment/core_ledgers/LEDGER.md) (Langevin ensemble).
 
 **Purpose:** Consolidate the FTD-native RG flow into the nonlinear regime. This document upgrades the linear constrained-flux generator to a nonlinear Langevin stationary ensemble (Gate 2), measures the native flux-energy density at four blocking levels $b \in \{1, 2, 4, 8\}$ to confirm a Gaussian fixed point (Gates 4 + 7), and connects actual `RenderBridge::tick()` movement and reaction histories to the dual-cell continuity ledger used by the native RG flow tests.
 
@@ -10,7 +10,7 @@
 
 # Part I — The Langevin Stationary Ensemble (Gate 2)
 
-*Source: `DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE.md`. Ledger row: FTD-0069. Gate 2 of the bridge contract — upgrades the linear constrained-flux generator `DERIV_FTD_NATIVE_LINEAR_GENERATOR.md` to a nonlinear stationary ensemble built from the Langevin-thermostatted FTD tick cycle. Depends on [FTD-0051](../07_assessment/core_ledgers/LEDGER.md) (Langevin thermostat, CPU+GPU validated), [FTD-0064](../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [`test_langevin_equipartition`](../../../engine/tests/test_langevin_equipartition.cpp) (acceptance test), [`benchmark_langevin_gpu`](../../../engine/tests/benchmark_langevin_gpu.cpp) (scan).*
+*Source: `DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE.md`. Ledger row: FTD-0069. Gate 2 of the bridge contract — upgrades the linear constrained-flux generator `DERIV_FTD_NATIVE_LINEAR_GENERATOR.md` to a nonlinear stationary ensemble built from the Langevin-thermostatted FTD tick cycle. Depends on [FTD-0051](../../../07_assessment/core_ledgers/LEDGER.md) (Langevin thermostat, CPU+GPU validated), [FTD-0064](../../../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [`test_langevin_equipartition`](../../../../../engine/tests/test_langevin_equipartition.cpp) (acceptance test), [`benchmark_langevin_gpu`](../../../../../engine/tests/benchmark_langevin_gpu.cpp) (scan).*
 
 ## I.1 The ensemble
 
@@ -28,7 +28,7 @@ All other phases of the tick (phase_read, phase_write leapfrog, Gauss projection
 
 $$ \left\langle |\mathbf{w}|^2 \right\rangle_{\mathrm{voxel}} = 3 T \qquad \text{(Langevin unit mass, three components).} $$
 
-This is verified to 4% by [`test_langevin_equipartition`](../../../engine/tests/test_langevin_equipartition.cpp) at $(L, T, \gamma) = (16, 0.01, 0.01)$ on the GPU single-substrate path (FTD-0051 acceptance criterion).
+This is verified to 4% by [`test_langevin_equipartition`](../../../../../engine/tests/test_langevin_equipartition.cpp) at $(L, T, \gamma) = (16, 0.01, 0.01)$ on the GPU single-substrate path (FTD-0051 acceptance criterion).
 
 ## I.2 Source-coupled partition function
 
@@ -57,7 +57,7 @@ At $T \to 0, \gamma \to 0$ with $T / \gamma$ fixed, the OU update reduces to pur
 
 $$ Z[J^{\mathrm{ext}}] \xrightarrow{T \to 0} Z_{\mathrm{linear}}[J^{\mathrm{ext}}] $$
 
-where $Z_{\mathrm{linear}}$ is the linear constrained-flux generator of [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md). The Langevin ensemble is therefore a **strict generalization** of the linear generator: it recovers the linear generator in the thermal zero-limit and provides a genuine nonlinear stationary measure away from it.
+where $Z_{\mathrm{linear}}$ is the linear constrained-flux generator of [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](../lorentz_recovery_causal_structure/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md). The Langevin ensemble is therefore a **strict generalization** of the linear generator: it recovers the linear generator in the thermal zero-limit and provides a genuine nonlinear stationary measure away from it.
 
 ## I.4 What this gives Gate 2
 
@@ -103,12 +103,12 @@ This is a concrete proposal for Phase 2 (RG flow measurements at $b \ge 4$) of t
 
 ## I.7 Relation to existing work
 
-- [FTD-0051](../07_assessment/core_ledgers/LEDGER.md): Langevin thermostat infrastructure (this ensemble's underlying update).
-- [FTD-0064](../07_assessment/core_ledgers/LEDGER.md): frozen Gate-1 dimensions consumed by $Z[J^{\mathrm{ext}}]$.
-- [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md): the $T \to 0$ limit of this ensemble.
-- [SPEC_FTD_EFT_BRIDGE_CONTRACT.md Gate 2](SPEC_FTD_EFT_BRIDGE_CONTRACT.md#gate-2-native-action-or-measure): the target gate; upgraded from [PARTIAL] at the ensemble-existence level to [CLOSED] (source-coupling explicit computation remains a Phase-2 task for full Gate-7 observable deliverables).
-- [`test_langevin_equipartition`](../../../engine/tests/test_langevin_equipartition.cpp): CPU + GPU acceptance test.
-- [`benchmark_langevin_gpu`](../../../engine/tests/benchmark_langevin_gpu.cpp): scan over $(T, \gamma)$ on GPU.
+- [FTD-0051](../../../07_assessment/core_ledgers/LEDGER.md): Langevin thermostat infrastructure (this ensemble's underlying update).
+- [FTD-0064](../../../07_assessment/core_ledgers/LEDGER.md): frozen Gate-1 dimensions consumed by $Z[J^{\mathrm{ext}}]$.
+- [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](../lorentz_recovery_causal_structure/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md): the $T \to 0$ limit of this ensemble.
+- [SPEC_FTD_EFT_BRIDGE_CONTRACT.md Gate 2](../../scopes_and_specs/SPEC_FTD_EFT_BRIDGE_CONTRACT.md#gate-2-native-action-or-measure): the target gate; upgraded from [PARTIAL] at the ensemble-existence level to [CLOSED] (source-coupling explicit computation remains a Phase-2 task for full Gate-7 observable deliverables).
+- [`test_langevin_equipartition`](../../../../../engine/tests/test_langevin_equipartition.cpp): CPU + GPU acceptance test.
+- [`benchmark_langevin_gpu`](../../../../../engine/tests/benchmark_langevin_gpu.cpp): scan over $(T, \gamma)$ on GPU.
 
 *P1.6 of the EFT-completion roadmap. Closes Gate 2 at the "stationary-ensemble-exists" level; full source-coupled Gate-2 computation and Gate-7 observable derivations await Phase-2 RG flow measurements at $b \ge 4$.*
 
@@ -116,7 +116,7 @@ This is a concrete proposal for Phase 2 (RG flow measurements at $b \ge 4$) of t
 
 # Part II — Native RG Flow at $b \in \{1, 2, 4, 8\}$ (Gates 4 + 7)
 
-*Source: `DERIV_FTD_NATIVE_MULTISCALE_FLOW.md`. Ledger row: FTD-0070. Phase-2 of the EFT roadmap — closes Gate 4 (RG flow) and Gate 7 (native observables with uncertainties) of the bridge contract by measuring the native flux-energy density at four blocking levels under mixed non-linear dynamics. Depends on [FTD-0064](../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [FTD-0069](../07_assessment/core_ledgers/LEDGER.md) (Langevin ensemble — Part I above), [FTD-0067](../07_assessment/core_ledgers/LEDGER.md) (mixed-toggle multi-tick Ward), [FTD-0068](../07_assessment/core_ledgers/LEDGER.md) (operator basis).*
+*Source: `DERIV_FTD_NATIVE_MULTISCALE_FLOW.md`. Ledger row: FTD-0070. Phase-2 of the EFT roadmap — closes Gate 4 (RG flow) and Gate 7 (native observables with uncertainties) of the bridge contract by measuring the native flux-energy density at four blocking levels under mixed non-linear dynamics. Depends on [FTD-0064](../../../07_assessment/core_ledgers/LEDGER.md) (frozen dimensions), [FTD-0069](../../../07_assessment/core_ledgers/LEDGER.md) (Langevin ensemble — Part I above), [FTD-0067](../../../07_assessment/core_ledgers/LEDGER.md) (mixed-toggle multi-tick Ward), [FTD-0068](../../../07_assessment/core_ledgers/LEDGER.md) (operator basis).*
 
 ## II.1 Setup
 

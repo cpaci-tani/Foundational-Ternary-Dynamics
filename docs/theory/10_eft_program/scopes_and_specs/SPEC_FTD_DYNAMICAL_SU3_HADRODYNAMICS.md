@@ -3,8 +3,8 @@
 **Document Classification:** Theoretical Design & Protocol Specification  
 **Status:** [THEOREM] + [SELECTION] (mixed — see Section 6)  
 **Campaign ID:** FTD-0223  
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
-**Depends on:** [`docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md`](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md), ~~[`FOUND_COLOR_CONFINEMENT_RESOLUTION.md`](../derivations/FOUND_COLOR_CONFINEMENT_RESOLUTION.md)~~ **(dependency RETRACTED 2026-07-12 — its FOUND verdict is withdrawn, census audit §2/FTD-0384; this spec's confinement-dependent sections inherit [OPEN STRUCTURAL OBSTRUCTION] status)**
+**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../../SPEC_FTD.md)  
+**Depends on:** [`docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md`](../../03_derivations/standard_model/DERIV_LATTICE_SU3_GAUGE.md), ~~[`FOUND_COLOR_CONFINEMENT_RESOLUTION.md`](../derivations/qcd_colour_electroweak/FOUND_COLOR_CONFINEMENT_RESOLUTION.md)~~ **(dependency RETRACTED 2026-07-12 — its FOUND verdict is withdrawn, census audit §2/FTD-0384; this spec's confinement-dependent sections inherit [OPEN STRUCTURAL OBSTRUCTION] status)**
 
 ---
 
@@ -197,6 +197,6 @@ This recovers the FTD target value $0.209$ exactly, validating the Abelian proje
 
 ## 7. Cross-References
 
-*   [`docs/SPEC_FTD.md`](../../SPEC_FTD.md) — Authoritative Postulates.
-*   [`docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md`](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md) — Non-Abelian Propagator and beta function.
-*   [`docs/theory/10_eft_program/FOUND_COLOR_CONFINEMENT_RESOLUTION.md`](../derivations/FOUND_COLOR_CONFINEMENT_RESOLUTION.md) — ~~Confinement substrate derivation~~ **RETRACTED 2026-07-12** (verdict withdrawn; census audit §2/FTD-0384; confinement stays [OPEN STRUCTURAL OBSTRUCTION]).
+*   [`docs/SPEC_FTD.md`](../../../SPEC_FTD.md) — Authoritative Postulates.
+*   [`docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md`](../../03_derivations/standard_model/DERIV_LATTICE_SU3_GAUGE.md) — Non-Abelian Propagator and beta function.
+*   [`docs/theory/10_eft_program/FOUND_COLOR_CONFINEMENT_RESOLUTION.md`](../derivations/qcd_colour_electroweak/FOUND_COLOR_CONFINEMENT_RESOLUTION.md) — ~~Confinement substrate derivation~~ **RETRACTED 2026-07-12** (verdict withdrawn; census audit §2/FTD-0384; confinement stays [OPEN STRUCTURAL OBSTRUCTION]).

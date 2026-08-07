@@ -7,8 +7,8 @@
 
 **Depends on:**
 - [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) --- Dimensional triad
-- [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) --- G* decomposition
-- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) --- Space-time separation
+- [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) --- G* decomposition
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) --- Space-time separation
 - `ontic.h` --- Complete derivation chain (9 layers)
 
 ---
@@ -364,9 +364,9 @@ The modular selector (which picks the lemniscatic curve from all possible ellipt
 ## Cross-References
 
 - **Dimensional triad**: [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md)
-- **G* decomposition**: [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
-- **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
-- **Reference frame context source map**: [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
+- **G* decomposition**: [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
+- **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
+- **Reference frame context source map**: [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Ontic chain**: `engine/include/ftd/ontic.h`
 - **Numerical verification**: `scripts/exploration/explore_ontic_constants.py`
 

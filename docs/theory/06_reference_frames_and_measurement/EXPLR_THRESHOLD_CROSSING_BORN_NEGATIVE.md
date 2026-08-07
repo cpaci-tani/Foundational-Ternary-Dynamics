@@ -24,7 +24,7 @@ The pre-registered test fired **Outcome C** per the manifest's outcome → tag m
 LEDGER FTD-0187 tags the load-bearing step *probability = normalized energy density* as `[OPEN]` (target T1c). A subsequent corpus sweep identified two documents NOT in the FTD-0187 consolidation that carry an even stronger claim:
 
 - [`SPEC_SIX_ALGORITHMS.md:65`](../01_reference/SPEC_SIX_ALGORITHMS.md): "the threshold crossing statistics produce the Born rule"
-- [`AUDIT_EPISTEMIC_AUDIT.md:393`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md): "threshold crossing statistics reproduce `|ψ|²`"
+- [`AUDIT_EPISTEMIC_AUDIT.md:393`](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md): "threshold crossing statistics reproduce `|ψ|²`"
 
 Both are asserted without a derivation. Standard upcrossing-rate analysis (Rice 1944) for a Gaussian process with mean `μ` and variance `σ²` crossing level `K` gives a rate `∝ exp(−(K − μ)² / 2σ²)`, which is *not* `|μ|²` scaling. The test was set up to discriminate which of `{Born, classical linear, Rice, none}` fires.
 
@@ -149,7 +149,7 @@ In both cases the surrounding prose is preserved; only the load-bearing sentence
 - [`PREREG_THRESHOLD_CROSSING_BORN_v1.md`](PREREG_THRESHOLD_CROSSING_BORN_v1.md) — the manifest that locked this test.
 - [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (this test).
 - [`SPEC_SIX_ALGORITHMS.md`](../01_reference/SPEC_SIX_ALGORITHMS.md) §1A — site of retag.
-- [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — site of retag.
+- [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) — site of retag.
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 [THEOREM] + EF-C3 [CONJECTURE] (the `|ψ|²` form question).
 - [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope here).
 - [`EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md`](../09_mathematical/archive/EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md) — sibling closed-negative document; same epistemic pattern (pre-registered test, Outcome != A, honest retag in canonical sources).

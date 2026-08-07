@@ -482,7 +482,7 @@ Notable: $P_0 \approx 1/(4\pi)$ to 0.032% — [CONJECTURED]
 
 The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N_{\text{eff}} = \pi + 20$.
 
-**Full treatment:** See [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
+**Full treatment:** See [EXPLR_TRIT_INFORMATION_THEORY.md](../../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
 
 ---
 
@@ -673,11 +673,11 @@ The fact that FTD discovers these integers through physical reasoning (discrete 
 ## Cross-References
 
 - **Riemann zeta connections:** [EXPLR_RIEMANN_ZETA_CONNECTION.md](../number_theory/EXPLR_RIEMANN_ZETA_CONNECTION.md)
-- **Ontological hierarchy:** [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md)
-- **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
-- **FTD Reference:** [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md)
-- **Trit information theory:** [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
-- **Octonionic structure:** [DERIV_OCTONIONIC_STRUCTURE.md](../05_particles/DERIV_OCTONIONIC_STRUCTURE.md)
-- **Physics reference:** [REF_PHYSICS_REFERENCE.md](../05_particles/REF_PHYSICS_REFERENCE.md)
+- **Ontological hierarchy:** [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md)
+- **Claims tracking:** [REF_CLAIMS_MATRIX.md](../../07_assessment/REF_CLAIMS_MATRIX.md)
+- **FTD Reference:** [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md)
+- **Trit information theory:** [EXPLR_TRIT_INFORMATION_THEORY.md](../../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
+- **Octonionic structure:** [DERIV_OCTONIONIC_STRUCTURE.md](../../05_particles/DERIV_OCTONIONIC_STRUCTURE.md)
+- **Physics reference:** [REF_PHYSICS_REFERENCE.md](../../05_particles/REF_PHYSICS_REFERENCE.md)
 
 ---

@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — QUOTIENT AS FROZEN ENGINE GAUGE]`  
 **Verdict:** `FACE_PHYSICS_FACTORS_PRODUCTION_DOES_NOT`  
 **Pre-registration:**
-[`PREREG_SUBCELL_REPRESENTATION_QUOTIENT_v1.md`](../10_eft_program/preregistrations/PREREG_SUBCELL_REPRESENTATION_QUOTIENT_v1.md)  
+[`PREREG_SUBCELL_REPRESENTATION_QUOTIENT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SUBCELL_REPRESENTATION_QUOTIENT_v1.md)  
 **Run of record:** `engine/results/ftd_0498/windows_msvc_cpu.json`
 
 ## 1. `site + remainder` is an overlapping coordinate atlas

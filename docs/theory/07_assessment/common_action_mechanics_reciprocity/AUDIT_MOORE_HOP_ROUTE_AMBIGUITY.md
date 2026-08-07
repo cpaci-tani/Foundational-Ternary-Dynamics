@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0445`  
 **Status:** `[THEOREM — ENDPOINT CONTINUITY DOES NOT SELECT A FACE ROUTE]` + `[MEASURED — EXISTING EXTRACTOR SELECTS X/Y/Z]`  
 **Verdict:** `FACE_ROUTING_UNDERDETERMINED`  
-**Pre-registration:** [`PREREG_MOORE_HOP_ROUTE_AMBIGUITY_v1.md`](../10_eft_program/preregistrations/PREREG_MOORE_HOP_ROUTE_AMBIGUITY_v1.md)  
+**Pre-registration:** [`PREREG_MOORE_HOP_ROUTE_AMBIGUITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MOORE_HOP_ROUTE_AMBIGUITY_v1.md)  
 **Run of record:** `engine/results/ftd_0445/windows_msvc_cpu_L9.csv`
 
 ## 1. Exact route multiplicity

@@ -5,9 +5,9 @@
 **Status:** `[DERIVED — EXACT UNIFORM-FORCE SUBSECTOR]`  
 **Verdict:** `UNIFORM_ACCELERATED_WORLDLINE_REPAIRS_WORK_EXACTLY`  
 **Pre-registration:**
-[`PREREG_ACCELERATED_WORLDLINE_ENERGY_ESCAPE_v1.md`](../10_eft_program/preregistrations/PREREG_ACCELERATED_WORLDLINE_ENERGY_ESCAPE_v1.md)  
+[`PREREG_ACCELERATED_WORLDLINE_ENERGY_ESCAPE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ACCELERATED_WORLDLINE_ENERGY_ESCAPE_v1.md)  
 **Derivation:**
-[`DERIV_ACCELERATED_WORLDLINE_ENERGY_ESCAPE.md`](../10_eft_program/derivations/DERIV_ACCELERATED_WORLDLINE_ENERGY_ESCAPE.md)  
+[`DERIV_ACCELERATED_WORLDLINE_ENERGY_ESCAPE.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_ACCELERATED_WORLDLINE_ENERGY_ESCAPE.md)  
 **Run of record:** `engine/results/ftd_0547/windows_msvc_cpu.json`
 
 ## Result

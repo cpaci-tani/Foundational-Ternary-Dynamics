@@ -7,7 +7,7 @@
 `[CONSTRUCTIVE CONTROL — PRIOR KINEMATICS SELECTS ENDPOINT]`  
 **Verdict:** `OPEN_WORLDLINE_ACTION_NOT_A_HOP_SELECTOR`  
 **Pre-registration:**
-[`PREREG_OPEN_WORLDLINE_HOP_SELECTION_v1.md`](../10_eft_program/preregistrations/PREREG_OPEN_WORLDLINE_HOP_SELECTION_v1.md)  
+[`PREREG_OPEN_WORLDLINE_HOP_SELECTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_OPEN_WORLDLINE_HOP_SELECTION_v1.md)  
 **Run of record:** `engine/results/ftd_0489/windows_msvc_cpu.json`
 
 ## 1. Result

@@ -2,7 +2,7 @@
 
 **Status:** [CONJECTURE] with [THEOREM] no-go for the spontaneous version
 **Supersedes:** fermion-emergence claim in "Generated Document April 24, 2026 – 12:47 AM.pdf" (§1, labelled there as THEOREM 1)
-**Depends on:** [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md), [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md)
+**Depends on:** [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md), [FOUND_AXIOM_ZERO.md](../../02_foundations/FOUND_AXIOM_ZERO.md)
 **Ledger row:** FTD-0061
 
 ---
@@ -72,8 +72,8 @@ Until all five gates are passed, "fermions emerge from the b=2 block" is a direc
 
 ## 5. Relation to existing FTD work
 
-- [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) already supplies a 6+12+8 = 26 Moore decomposition into SC + FCC + BCC. That is about directional sublattices in a different sense (not about algebraic products). The b=2 / Walsh decomposition here is cell-internal; the Moore decomposition is inter-site. They are independent structures and should not be conflated.
-- [SPEC_FTD_NATIVE_BLOCKING_MAP.md](../10_eft_program/SPEC_FTD_NATIVE_BLOCKING_MAP.md) defines the b=2 Wilsonian blocking map on source / flux / current. That map sums fine variables into coarse variables and does **not** introduce a Clifford product. Whether blocking dynamics on iterated b=2 steps generates such a product at criticality is the live question; it is not settled by the block decomposition itself.
+- [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) already supplies a 6+12+8 = 26 Moore decomposition into SC + FCC + BCC. That is about directional sublattices in a different sense (not about algebraic products). The b=2 / Walsh decomposition here is cell-internal; the Moore decomposition is inter-site. They are independent structures and should not be conflated.
+- [SPEC_FTD_NATIVE_BLOCKING_MAP.md](../../10_eft_program/scopes_and_specs/SPEC_FTD_NATIVE_BLOCKING_MAP.md) defines the b=2 Wilsonian blocking map on source / flux / current. That map sums fine variables into coarse variables and does **not** introduce a Clifford product. Whether blocking dynamics on iterated b=2 steps generates such a product at criticality is the live question; it is not settled by the block decomposition itself.
 - The existing matter-sector documents (`DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md`, `DERIV_PROJECTED_EFT_MATTER_COUPLING.md`) already carry [SELECTION] tags for Dirac matter. They explicitly note that the fermion content is not forced by FTD axioms. That state is unchanged by this exploration.
 
 ## 6. Epistemic tag
@@ -101,7 +101,7 @@ Diagonal agrees with Clifford ($e_i^2 = \mathbb{1}$). Off-diagonal is maximally 
 
 **Cause.** Every weight-1 mode injection produces the same uniform state after tick 1 via the genesis rule (sign of divergence → polarity). The mode index is lost before the second tick can expose any ordering asymmetry.
 
-**Verdict.** Clifford emergence on the b=2 block via genesis + movement is **falsified**. See [DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md §8](DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md#8-measurement-executed-2026-04-24) for the measurement table and [LEDGER.md:FTD-0061](../07_assessment/core_ledgers/LEDGER.md) for the closure record.
+**Verdict.** Clifford emergence on the b=2 block via genesis + movement is **falsified**. See [DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md §8](DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md#8-measurement-executed-2026-04-24) for the measurement table and [LEDGER.md:FTD-0061](../../07_assessment/core_ledgers/LEDGER.md) for the closure record.
 
 The fermion-emergence direction is not yet fully closed — four alternative routes (pair production, weak transmutation, Moore-26 stencil, velocity-driven movement) remain measurable with the same harness. Each is a future falsifier.
 

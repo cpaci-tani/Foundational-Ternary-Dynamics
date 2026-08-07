@@ -6,7 +6,7 @@
 
 **Tag:** `[INVALID RUN — pre-registered gate V-1 failed; no mechanism outcome claimed or claimable]` + `[OBSERVATION — corrected per §4: environment-class reproducibility break; the FTD-0110 empirical k(A) baseline is not reproducible on any available code×backend combination today]`. **Nothing promoted; Mechanisms γ/β remain exactly as FTD-0259 left them (outcome language banned per pre-reg F-a).**
 **Date:** 2026-06-09/10
-**Pre-registration:** [`PREREG_THERMOSTAT_OFF_AMPLITUDE_SWEEP_v1.md`](PREREG_THERMOSTAT_OFF_AMPLITUDE_SWEEP_v1.md) (tag `preregister-thermostat-off-sweep-v1`, lock commit `4fa056c2`)
+**Pre-registration:** [`PREREG_THERMOSTAT_OFF_AMPLITUDE_SWEEP_v1.md`](../../foundational_mechanics/PREREG_THERMOSTAT_OFF_AMPLITUDE_SWEEP_v1.md) (tag `preregister-thermostat-off-sweep-v1`, lock commit `4fa056c2`)
 **Run of record:** `engine/results/thermostat_off_sweep_2026-06-09/` (28 CSVs + frozen `verdict.txt`; clean worktree at the lock commit; WSL2 build, 0 run failures)
 **LEDGER:** FTD-0260.
 

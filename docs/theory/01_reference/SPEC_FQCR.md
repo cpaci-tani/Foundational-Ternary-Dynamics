@@ -3,7 +3,7 @@
 **Tag:** [REFERENCE]
 **Status:** [REFERENCE] — capstone document for the FQCR framework. Per-element tags within (see §4 status table).
 **Consolidates:** also absorbs `EXPLR_QUARTER_ROTATION_SPHERE_VISUALIZATION.md` — see Appendix A.
-**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141, Model I), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142, Model II), [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10, [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143), [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md) (FTD-0144, curve-side trilogy bridge).
+**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141, Model I), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142, Model II), [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10, [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143), [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md) (FTD-0144, curve-side trilogy bridge).
 **Verifier script:** [`scripts/proofs/proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py)
 
 The Finite Quarter-Conjugacy Recurrence (FQCR) is a five-model framework that:
@@ -62,13 +62,13 @@ $$ u_{m+1} + u_{m-1} = s_N(t)\, u_m. $$
 
 **[THEOREM]** by Lerch's formula $\det_\zeta\{n + a\}_{n\ge 0} = \sqrt{2\pi}/\Gamma(a)$.
 
-Full derivation: [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141).
+Full derivation: [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141).
 
 ### Proposition 2: Finite-N convergence (Model II)
 
 > $$ G_N^* := (N+1)^{-1/2} \prod_{n=0}^{N} \frac{n + 3/4}{n + 1/4} \;\to\; G^* \quad \text{as } N \to \infty, \qquad |G_N^* - G^*| = O(1/N^2). $$
 
-**[THEOREM]** by Stirling's expansion, empirically verified at $C \approx 0.046$ via [`proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py). Full derivation: [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142).
+**[THEOREM]** by Stirling's expansion, empirically verified at $C \approx 0.046$ via [`proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py). Full derivation: [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142).
 
 This **discharges the `AUDIT_INFINITY_REFRAME.md` ε-L obligation for $G^*$**: the bridge constant is now a finite-N attractor, fully compatible with FTD's undefined-boundary lattice ontology.
 
@@ -152,7 +152,7 @@ with three additive terms:
 
 The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other linear combinations of these primitives) is also a **[SELECTION]**.
 
-**Cross-reference.** The compatibility paper of the QCR trilogy (see [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md)) defines the same coefficient $\kappa_N(t) = R_N(t)/(16 G_N^*)$ in its Definition 2.2; the symbol $R_N(t)$ in this document and in the compatibility paper is the same object. The trilogy itself does not commit to a specific decomposition $R = 1 + \lambda + A$; that choice remains an FQCR-internal [SELECTION] pending FTD-0143.
+**Cross-reference.** The compatibility paper of the QCR trilogy (see [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md)) defines the same coefficient $\kappa_N(t) = R_N(t)/(16 G_N^*)$ in its Definition 2.2; the symbol $R_N(t)$ in this document and in the compatibility paper is the same object. The trilogy itself does not commit to a specific decomposition $R = 1 + \lambda + A$; that choice remains an FQCR-internal [SELECTION] pending FTD-0143.
 
 ---
 
@@ -189,7 +189,7 @@ The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other 
 | Theorem 9 (FTD-0112): $Q(G^*)$ field-theoretic | Unaffected; FQCR does not introduce new transcendentals. |
 | FTD-0127: parity-twist (L-function lens) | **Two readings of the same residue-class decomposition mod 4**, sharper than the original "complementary lenses" framing. The shifts $\{1/4, 3/4\}$ in FQCR are not free parameters — once $J^2 = -I$ is committed, the quarter-twisted boundary forces the spectral shifts to be the two non-trivial residue classes mod 4. After scaling by 4, $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$; restricted to primes, these are the split and inert prime classes of $\mathbb{Z}[i]$ (Fermat's two-square theorem). FTD-0127 takes the parity-symmetric (sum/difference) combinations of the same Hurwitz components $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$ that FQCR Model I works on directly. Unification one-line: $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2) = \Gamma(1/4)/\Gamma(3/4)$. See `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5 for the full residue-class / Z[i]-prime-splitting derivation. |
 | FTD-0001/0013 SMC chain | FQCR's Model V physical readout is exactly FTD-0013 restated in operator language; tag stays at SMC. No promotion. *(FTD-0014 retired per v1.4 §5; LEDGER row removed in commit `ca7eb61`.)* |
-| FTD-0144 (QCR trilogy bridge) | The compatibility paper supplies the curve-side geometric pairing for FQCR's branch-side recurrence, plus a concrete depth-4 five-harmonic numerical incarnation of FTD's $(1+i)$-tower (Theorem 8 / FTD-0111). Cross-confirms FQCR Models II–V at the formula level. Documented in [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md). No spine inflation; no tier promotion. |
+| FTD-0144 (QCR trilogy bridge) | The compatibility paper supplies the curve-side geometric pairing for FQCR's branch-side recurrence, plus a concrete depth-4 five-harmonic numerical incarnation of FTD's $(1+i)$-tower (Theorem 8 / FTD-0111). Cross-confirms FQCR Models II–V at the formula level. Documented in [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md). No spine inflation; no tier promotion. |
 
 ### To FQCR's own derivation chain
 
@@ -218,7 +218,7 @@ The FQCR research program identifies four falsifiable tests. Their status:
 - $1/N^2$ scaling holds to 10% across $N \ge 1024$ with empirical $C \approx 0.046$ ✓
 
 ### Test 2 — quotient uniqueness
-**Status: EXECUTED 2026-07-12 — Outcome B, uniqueness REJECTED (FTD-0143 [CLOSED NEGATIVE]).** Pre-reg: [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md); execution: [`ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md`](../10_eft_program/reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md); artifacts: `engine/results/fqcr_quotient_uniqueness_2026-05-06_l_scan/`.
+**Status: EXECUTED 2026-07-12 — Outcome B, uniqueness REJECTED (FTD-0143 [CLOSED NEGATIVE]).** Pre-reg: [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md); execution: [`ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md`](../10_eft_program/reports_and_audits/ANALYSIS_FQCR_QUOTIENT_UNIQUENESS.md); artifacts: `engine/results/fqcr_quotient_uniqueness_2026-05-06_l_scan/`.
 
 Result: **all 2401 quadruples** in the locked space match $\alpha^{-1}$ at the $10^{-5}$ criterion (§3.3 fails maximally); the canonical quadruple ranks 1333/2401 by α-residual, beaten by the identity quadruple $(2,2;2,2)$ whose anomaly term is exactly zero. At $t=1$ the anomaly term is $Q$-suppressed ($Q = e^{-2\pi}$), so the readout is numerically quadruple-insensitive — the α-proximity is carried entirely by the quadruple-independent part ($R = 1 + \lambda_N(4i)$). Per the pre-registered Outcome B: Model IV stays [SELECTION] with no uniqueness backing; the $(4,6;3,2)$ choice is a chance-level fit at the look-elsewhere-corrected level; Model V's physical [SMC] claim is unaffected (independent provenance via FTD-0013). The mechanical criterion-split ("C") and the B/C outcome-definition overlap are disclosed and adjudicated in the analysis §5. Test 3 ($t$-running) remains the only route by which the quadruple could acquire discriminating content — it would need its own pre-reg.
 
@@ -267,7 +267,7 @@ Until then, this v1.0 stands as the canonical FQCR reference.
 
 - This document (`SPEC_FQCR.md`) — Definition 1 ($J^2 = -I$), Definition 2 (quarter-twisted spectra), Proposition 4 ($z^2 - sz + 1 = 0$).
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — Theorem 1 ($G^* = \Gamma(1/4)/\Gamma(3/4)$), Theorem 2 (master quadratic).
-- [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md) — branch-side / curve-side / compatibility correspondence (FTD-0144).
+- [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md) — branch-side / curve-side / compatibility correspondence (FTD-0144).
 
 ### Honesty Note
 
@@ -341,7 +341,7 @@ The recurrence $z^2 - sz + 1 = 0$ admits any real $s$. Three values of $s$ recur
 | $4\sqrt{G^*} \approx 6.88032$ | FQCR Model V at $R_N(t) = 1$, $N \to \infty$. Equivalently the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ rescaled by $x = 4(G^*)^{3/2} z$. | $1.90684$ | $0.14855$ | This document, Proposition 5; [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) Theorem 2. |
 | $3$ (integer / golden trace) | $z^2 - 3z + 1 = 0$; roots $\varphi^{\pm 2} = (3 \pm \sqrt{5})/2$ | $0.96242$ | $0.38197 = \varphi^{-2}$ | Comparison baseline; classical golden-ratio identity. |
 
-**Numerical note.** $G^* \approx 2.9587$ is close to $3$ in absolute terms ($\approx 1.4\%$ below). The two rapidities $\chi(G^*) \approx 0.94371$ and $\chi(3) \approx 0.96242$ differ by $\approx 1.9\%$; the suppressed branches $0.38918$ and $0.38197$ differ by $\approx 1.9\%$. **This near-coincidence is not a derivation hook**. The look-elsewhere discipline of [FTD-0097](../07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) applies: any numerical match between two values that are individually $O(1)$ and $\approx 1\%$ apart is chance-level on a per-target basis.
+**Numerical note.** $G^* \approx 2.9587$ is close to $3$ in absolute terms ($\approx 1.4\%$ below). The two rapidities $\chi(G^*) \approx 0.94371$ and $\chi(3) \approx 0.96242$ differ by $\approx 1.9\%$; the suppressed branches $0.38918$ and $0.38197$ differ by $\approx 1.9\%$. **This near-coincidence is not a derivation hook**. The look-elsewhere discipline of [FTD-0097](../07_assessment/sm_constants_mass_flavour/AUDIT_LOOK_ELSEWHERE_RESULTS.md) applies: any numerical match between two values that are individually $O(1)$ and $\approx 1\%$ apart is chance-level on a per-target basis.
 
 The genuinely structural quantity in FTD's spine is the **second** row, $s = 4\sqrt{G^*}$, because that is the trace forced by the master quadratic. The first row is the trace that drops out if one lazily writes $z^2 - G^* z + 1 = 0$; it has no current dynamical reading.
 
@@ -362,9 +362,9 @@ Verification of these numerics: see `scripts/constants.py` (canonical `G_STAR`, 
 
 - This document (`SPEC_FQCR.md`) §1–§3 — canonical $J$-operator + recurrence framework. The branch-side material in §A.1–§A.3 is a re-derivation of this in $\mathbb{R}^2 / \mathbb{R}^3$ language.
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10 — Theorem 8 (1+i)-tower; same $Z_4$ structural anchor.
-- [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md) — branch / curve / compatibility correspondence. The §A.3 sphere construction is a 3D enrichment of the curve-side picture; not a substitute for it.
-- [`EXPLR_HALF_MOBIUS_LEMNISCATE.md`](../09_mathematical/EXPLR_HALF_MOBIUS_LEMNISCATE.md) — $Z_4$ topology in molecular orbitals; same lemniscatic kernel from a different application angle.
-- [`EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md`](../09_mathematical/EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md) — Born-rule / Joukowski-transform reading of the same circle→lemniscate map. Independent route to the same kernel; not connected to the trace-disambiguation question.
+- [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md) — branch / curve / compatibility correspondence. The §A.3 sphere construction is a 3D enrichment of the curve-side picture; not a substitute for it.
+- [`EXPLR_HALF_MOBIUS_LEMNISCATE.md`](../09_mathematical/general_math/EXPLR_HALF_MOBIUS_LEMNISCATE.md) — $Z_4$ topology in molecular orbitals; same lemniscatic kernel from a different application angle.
+- [`EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md`](../09_mathematical/general_math/EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md) — Born-rule / Joukowski-transform reading of the same circle→lemniscate map. Independent route to the same kernel; not connected to the trace-disambiguation question.
 
 ### §A.7 — Provenance
 

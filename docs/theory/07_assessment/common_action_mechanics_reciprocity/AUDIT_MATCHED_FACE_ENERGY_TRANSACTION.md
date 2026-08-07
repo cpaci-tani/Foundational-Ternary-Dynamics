@@ -7,7 +7,7 @@
 `[MEASURED — TRANSVERSE MOORE-ROUTE DEPENDENCE]` +
 `[SELECTION REQUIRED — EDGE/CORNER ROUTE TYPE]` +
 `[OPEN — FIELD MOMENTUM/PARTICLE INERTIA/HOP SELECTION]`  
-**Pre-registration:** [`PREREG_MATCHED_FACE_ENERGY_TRANSACTION_v1.md`](../10_eft_program/preregistrations/PREREG_MATCHED_FACE_ENERGY_TRANSACTION_v1.md)  
+**Pre-registration:** [`PREREG_MATCHED_FACE_ENERGY_TRANSACTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_FACE_ENERGY_TRANSACTION_v1.md)  
 **Run of record:** `engine/results/ftd_0472/windows_msvc_cpu.csv`
 
 ## Verdict

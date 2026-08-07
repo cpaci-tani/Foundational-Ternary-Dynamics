@@ -357,7 +357,7 @@ Equivalently, **G\* = 2 · exp(β′(0))**.
 
 **What this means:** Γ has two complementary expansion sectors. The **Stirling sector** (Bernoulli `B_{2k}`) carries the smooth large-z asymptotic and the *solved* zeta values `ζ(2), ζ(4), ζ(6), …` (all rational multiples of `π^{2k}`). The **L-value sector** (β′(0) and its expansion) carries the *unsolved* irreducibles: Catalan `β(2)`, `ζ(3)`, `β(4)`, `ζ(5)`, `β(6)`, `ζ(7)`, …. **G\* lives entirely in the L-value sector.** Stirling sees G* only through the limit `Γ(1/4) = lim_{N→∞} 4^N · Γ(N + 1/4) / [(1)(5)(9)…(4N−3)]`, which converges via Stirling-on-Γ(N+1/4) at rate ~1/N, never directly.
 
-The expanded form of `β′(0) + log 2` in irreducible L-values is documented separately in [`MATH_LOG_GSTAR_IDENTITY.md`](../09_mathematical/MATH_LOG_GSTAR_IDENTITY.md):
+The expanded form of `β′(0) + log 2` in irreducible L-values is documented separately in [`MATH_LOG_GSTAR_IDENTITY.md`](../09_mathematical/number_theory/MATH_LOG_GSTAR_IDENTITY.md):
 
 $$\log G^* \;=\; \frac{\gamma + 3\log 2}{2} \,-\, \frac{G_{\text{Cat}}}{2} \,+\, \frac{7}{24}\zeta(3) \,-\, \frac{\beta(4)}{4} \,+\, \frac{31}{160}\zeta(5) \,-\, \cdots$$
 
@@ -377,7 +377,7 @@ $$\boxed{\;G^* \;=\; \lim_{N\to\infty}\frac{1}{\sqrt{N}}\prod_{k=0}^{N-1}\frac{4
 
 **The two routes to G\*.** Together with Derivation 9's β′(0) identity, this gives **two complementary access paths** to G\*:
 1. **Wallis-Stirling**: the *limit* of a Bernoulli-free Stirling-recursion product (this paragraph)
-2. **Lerch L-derivative**: the *closed form* `log G* = β′(0) + log 2`, with the L-value series expansion in [`MATH_LOG_GSTAR_IDENTITY.md`](../09_mathematical/MATH_LOG_GSTAR_IDENTITY.md)
+2. **Lerch L-derivative**: the *closed form* `log G* = β′(0) + log 2`, with the L-value series expansion in [`MATH_LOG_GSTAR_IDENTITY.md`](../09_mathematical/number_theory/MATH_LOG_GSTAR_IDENTITY.md)
 
 The first shows that Bernoulli numbers cannot reach G\* through Stirling; the second shows that G\* lives in the L-derivative (Beilinson-irreducible) sector. **The two together prove the Stirling-vs-Beta complementarity claimed at the start of this derivation.**
 
@@ -507,7 +507,7 @@ The condition Tr(M) = det(M) — trace equals determinant — means the additive
 
 ### 6.1 The Self-Consistency Gap
 
-The argument that self-duality of L(E,s) at s = 1 forces Tr = N for the coupling polynomial is [STRONG CONJECTURE]. Sharpened in Galois language: let `f ∈ S₂(Γ₀(32))` be the weight-2 newform attached to E. The Atkin–Lehner involution at 32 acts on f with eigenvalue +1 (equivalent to root number ε(E) = +1; this is a theorem). The master quadratic's coefficients arise from `L(Sym² E, 1)` and `L(E, 1)³` per [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../09_mathematical/DERIV_MASTER_QUADRATIC_CM_LVALUES.md). The conjecture `Tr_u = Norm_u` of the normalized quadratic `u² − Su + S = 0` is the stronger Galois-equivariant statement that the Petersson self-pairing `⟨f, f⟩` decomposes under `Gal(Q(i)/Q)` into (+1)- and (−1)-isotypic components with **equal masses** at the central critical point. **`AL = +1` is necessary but not sufficient** for this; closing the gap is a problem in automorphic forms, not in physics.
+The argument that self-duality of L(E,s) at s = 1 forces Tr = N for the coupling polynomial is [STRONG CONJECTURE]. Sharpened in Galois language: let `f ∈ S₂(Γ₀(32))` be the weight-2 newform attached to E. The Atkin–Lehner involution at 32 acts on f with eigenvalue +1 (equivalent to root number ε(E) = +1; this is a theorem). The master quadratic's coefficients arise from `L(Sym² E, 1)` and `L(E, 1)³` per [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../09_mathematical/number_theory/DERIV_MASTER_QUADRATIC_CM_LVALUES.md). The conjecture `Tr_u = Norm_u` of the normalized quadratic `u² − Su + S = 0` is the stronger Galois-equivariant statement that the Petersson self-pairing `⟨f, f⟩` decomposes under `Gal(Q(i)/Q)` into (+1)- and (−1)-isotypic components with **equal masses** at the central critical point. **`AL = +1` is necessary but not sufficient** for this; closing the gap is a problem in automorphic forms, not in physics.
 
 ### 6.2 The Physical Axiom
 

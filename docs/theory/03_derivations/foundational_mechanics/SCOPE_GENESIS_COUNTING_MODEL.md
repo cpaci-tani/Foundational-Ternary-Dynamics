@@ -6,7 +6,7 @@
 **Owner posture:** *"I don't mind imposing stuff if we have the motivation and derivation of things. Our framework is cutting edge. We must be willing to do that."* — motivated `[IMPOSED]` inputs + a rigorous conditional derivation is a first-class result (the FTD-0271 `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` pattern).
 
 > **Execution note:** v1 was hash-locked and run as
-> [`PREREG_GENESIS_COUNTING_v1.md`](../../10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md).
+> [`PREREG_GENESIS_COUNTING_v1.md`](../../10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_GENESIS_COUNTING_v1.md).
 > The verdict is **`COUNTING_MODEL_V1_CLOSED_NEGATIVE`**; see
 > [`ANALYSIS_GENESIS_COUNTING_v1.md`](../archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md).
 > This closes the v1 slosh-pass/static-gating route only. The broader FTD-0110-NL /

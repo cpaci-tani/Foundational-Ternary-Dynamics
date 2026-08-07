@@ -62,12 +62,12 @@ Numerical check: $26/18 = 13/9 \approx 1.444$, agreement 0.4%.
 
 **Hypothesis** (pre-audit): $\alpha_\infty / \alpha_{\rm ref} = 27/8 = 3.375$ is the phenomenal-to-noumenal block-volume ratio.
 
-**Audit** ([AUDIT_ALPHA_EXTRACTION.md](../10_eft_program/AUDIT_ALPHA_EXTRACTION.md)): **hypothesis falsified at the identification level**. The engine's measured 3.6× is decomposed by the audit as:
+**Audit** ([AUDIT_ALPHA_EXTRACTION.md](../07_assessment/audits/AUDIT_ALPHA_EXTRACTION.md)): **hypothesis falsified at the identification level**. The engine's measured 3.6× is decomposed by the audit as:
 
 $$ 3.6 = \underbrace{2}_{\text{convention factor}} \times \underbrace{1.8}_{\text{lattice Green's function}} $$
 
 - **Factor ×2:** the engine's `field_energy` is $\Sigma |J|^2$ without the classical ½ factor; V(r) is therefore 2× the classical Coulomb-tail coupling.
-- **Factor ×1.8:** the residual is the zero-parameter value of the periodic lattice Poisson Green's function $2 r G_L(r)$ at $r/L \approx 0.31$ on the 7-point Laplacian stencil (Phase G resolution, [DERIV_EMERGENT_COULOMB_GEOMETRIC.md](../10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md)).
+- **Factor ×1.8:** the residual is the zero-parameter value of the periodic lattice Poisson Green's function $2 r G_L(r)$ at $r/L \approx 0.31$ on the 7-point Laplacian stencil (Phase G resolution, [DERIV_EMERGENT_COULOMB_GEOMETRIC.md](../10_eft_program/derivations/alpha_readout_programme/DERIV_EMERGENT_COULOMB_GEOMETRIC.md)).
 
 **The engine's Phase-F "α_∞" measurement is not physical α.** It is lattice-Coulomb geometry — $V(r) \sim G_L(r)$, *pure stencil geometry with zero fine-structure content*. The comparison `α_∞ / α_ref` where `α_ref = ALPHA_EFT = G_C² = 1/137.036` is a **category error**: comparing a lattice-Green's-function amplitude to the fine-structure constant.
 

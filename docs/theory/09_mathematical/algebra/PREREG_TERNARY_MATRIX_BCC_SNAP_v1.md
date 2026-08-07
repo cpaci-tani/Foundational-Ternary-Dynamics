@@ -18,7 +18,7 @@ This test is exploratory mathematics. It does not promote any FTD tag. Its purpo
 
 A user-presented synthesis (2026-05-23 session) proposes a four-step extension of FTD's algebraic spine: (1) Borwein/Guillera quartic self-replication for `G*` (an existing computational route, see [`REF_GUILLERA_CORPUS_MAP.md`](../general_math/REF_GUILLERA_CORPUS_MAP.md)); (2) promotion of Guillera's scalar operator `𝒟 = a + bϑ_x` to a matrix operator `𝒟_T = A(x) + B·Θ` on a ternary carrier; (3) the claim that iterates of `𝒟_T` "snap" onto BCC lattice nodes; (4) identification of the iteration's limit set with a deterministic replacement for QM wave-function collapse.
 
-This pre-registration tests **only step (3)**, the load-bearing structural claim. Steps (1), (2) are scaffolding, and step (4) is out-of-scope (see §4.5 of the session plan; cf. canonical-collapse-mechanism document [`DERIV_COLLAPSE_MECHANISM.md`](../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md)).
+This pre-registration tests **only step (3)**, the load-bearing structural claim. Steps (1), (2) are scaffolding, and step (4) is out-of-scope (see §4.5 of the session plan; cf. canonical-collapse-mechanism document [`DERIV_COLLAPSE_MECHANISM.md`](../../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md)).
 
 **The problem.** A matrix promotion of a scalar identity is mathematically under-determined: many matrices reduce to a given scalar identity. The choice of `A(x)`, `B`, `Θ`, and the carrier is load-bearing. Without an explicit construction, the BCC-snap claim has no falsifiable content. This document pins all four choices explicitly, defines what "snap to BCC nodes" means operationally, and pre-commits the outcome-to-tag mapping.
 
@@ -28,7 +28,7 @@ This pre-registration tests **only step (3)**, the load-bearing structural claim
 
 ### §2.1 Carrier space — FROZEN
 
-The carrier space is `ℝ³`, with the standard orthonormal basis `{e₁, e₂, e₃}`. The BCC primitive offsets are the FTD-canonical `(±1, ±1, ±1)` per [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) line 27. Implementation uses `mpmath.mpf` at 50-digit precision.
+The carrier space is `ℝ³`, with the standard orthonormal basis `{e₁, e₂, e₃}`. The BCC primitive offsets are the FTD-canonical `(±1, ±1, ±1)` per [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) line 27. Implementation uses `mpmath.mpf` at 50-digit precision.
 
 ### §2.2 The matrix family `𝒟_T = A + B · Θ` — FROZEN
 
@@ -158,8 +158,8 @@ After hash-lock: the runner is executed exactly once at the locked SHA256, the r
 ## §8 — Cross-references
 
 - [`REF_GUILLERA_CORPUS_MAP.md`](../general_math/REF_GUILLERA_CORPUS_MAP.md) — Guillera fence (§0, §4).
-- [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — canonical BCC formalism; (±1, ±1, ±1) primitive offsets.
-- [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — Theorems 1–9 (G*, master quadratic) at their honest tier per §0.
-- [`DERIV_COLLAPSE_MECHANISM.md`](../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope for this test).
-- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — per-claim tags.
+- [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — canonical BCC formalism; (±1, ±1, ±1) primitive offsets.
+- [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) — Theorems 1–9 (G*, master quadratic) at their honest tier per §0.
+- [`DERIV_COLLAPSE_MECHANISM.md`](../../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope for this test).
+- [`LEDGER.md`](../../07_assessment/core_ledgers/LEDGER.md) — per-claim tags.
 - `scripts/proofs/proof_quartic_quarter_constants.py` — Guillera's quartic instance (not invoked by this runner).

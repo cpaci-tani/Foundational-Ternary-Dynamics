@@ -3,12 +3,12 @@
 **Tag:** `[THEOREM at free-theory + Gauss-only level for clauses (C2-1), (C2-2), (C2-3)]` + `[STRONGLY MOTIVATED CONJECTURE for canonical toggle set per FTD-0193 empirical floor]` + `[REFERENCE for (C2-4)]` (effective-theory matching via Deser-bootstrap of POSITED `h_μν` per FTD-0189 + AUDIT_NEWTON_POSTULATES_RECONCILIATION §3 + DERIV_EINSTEIN_FIELD_EQUATIONS [SELECTION/CONDITIONAL] retags). **Outcome A (FOUND)** per pre-reg §6 outcome-A criteria.
 
 **LEDGER row:** FTD-0209 (Arc C2 P4 closure verdict)
-**Pre-registration:** [`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`](../preregistrations/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md) — git tag `preregister-spin2-boundary-theorem-v1`, commit `d8e016b`, SHA256 `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`. Hash-lock verified via `git rev-list -n1 preregister-spin2-boundary-theorem-v1`.
+**Pre-registration:** [`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`](../../preregistrations/gravity_cosmology/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md) — git tag `preregister-spin2-boundary-theorem-v1`, commit `d8e016b`, SHA256 `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`. Hash-lock verified via `git rev-list -n1 preregister-spin2-boundary-theorem-v1`.
 **Adversarial reviewer (per pre-reg §9 step 10):** independent `general-purpose` agent (no project priors). Verdict cited verbatim in §11 below.
 **Companion docs (load-bearing proof scaffold):**
 - [`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md`](DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md) — 4-clause consolidated derivation (commit `d2ec208`)
-- [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 bubble-integral analysis (commit `d2ec208`)
-- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 [CLOSED NEGATIVE] empirical floor
+- [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 bubble-integral analysis (commit `d2ec208`)
+- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 [CLOSED NEGATIVE] empirical floor
 
 ---
 

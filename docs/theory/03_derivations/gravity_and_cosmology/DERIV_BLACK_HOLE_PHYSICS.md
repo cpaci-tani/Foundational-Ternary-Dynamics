@@ -278,7 +278,7 @@ The black hole loses mass in Planck-mass quanta, radiating its final energy in $
 
 [4] A. Almheiri, D. Marolf, J. Polchinski, J. Sully, "Black holes: complementarity vs. firewalls," *JHEP* **02**, 062 (2013).
 
-[5] [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — The Born-Infeld action and Euclidean continuation.
+[5] [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) — The Born-Infeld action and Euclidean continuation.
 
 ---
 

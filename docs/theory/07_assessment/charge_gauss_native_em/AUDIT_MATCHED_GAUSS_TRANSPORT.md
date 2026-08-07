@@ -5,7 +5,7 @@
 **Verdict:** `A_SELECTED_LOCAL_PROJECTION_FREE_TRANSPORT`
 **Date:** 2026-07-23
 **Pre-registration:**
-[`PREREG_MATCHED_GAUSS_TRANSPORT_v1.md`](../10_eft_program/preregistrations/PREREG_MATCHED_GAUSS_TRANSPORT_v1.md)
+[`PREREG_MATCHED_GAUSS_TRANSPORT_v1.md`](../../10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_MATCHED_GAUSS_TRANSPORT_v1.md)
 
 **Successor notice (FTD-0428, 2026-07-23):** the licensed default-off
 integration was executed. Minimum-energy dressing, coupled transverse

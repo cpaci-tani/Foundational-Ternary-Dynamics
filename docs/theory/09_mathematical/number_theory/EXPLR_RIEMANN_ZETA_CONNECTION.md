@@ -190,5 +190,5 @@ The FTD-Riemann connections represent **clever pattern-matching** within a space
 ## Cross-References
 
 - **Number theory connections:** [EXPLR_NUMBER_THEORY.md](../general_math/EXPLR_NUMBER_THEORY.md)
-- **Framework reference:** [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md)
-- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- **Framework reference:** [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md)
+- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)

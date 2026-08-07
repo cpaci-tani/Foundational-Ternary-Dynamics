@@ -8,7 +8,7 @@
 **Verdict:**
 `PRODUCTION_BOUNCE_IS_FIXED_TARGET_RESET_NOT_RECIPROCAL_COLLISION`  
 **Pre-registration:**
-[`PREREG_PRODUCTION_SAME_SIGN_BOUNCE_RECIPROCITY_v1.md`](../10_eft_program/preregistrations/PREREG_PRODUCTION_SAME_SIGN_BOUNCE_RECIPROCITY_v1.md)  
+[`PREREG_PRODUCTION_SAME_SIGN_BOUNCE_RECIPROCITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PRODUCTION_SAME_SIGN_BOUNCE_RECIPROCITY_v1.md)  
 **Run of record:** `engine/results/ftd_0506/windows_msvc_cpu.json`
 
 **Successor note (FTD-0507):** FTD-0505's unconditional capacity/range/phase

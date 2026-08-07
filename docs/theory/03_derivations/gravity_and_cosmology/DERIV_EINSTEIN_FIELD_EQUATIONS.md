@@ -9,7 +9,7 @@
 
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) — SR, linearized GR (§§1-15)
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — T_μν via Noether's theorem
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld render-bridge action
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld render-bridge action
 - [SPEC_SM_REPLACEMENT_COMPLETE.md](../../01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md) — the α_G integer-dressing formula's canonical [STRUCTURALLY MOTIVATED PARAMETRIC] filing (citation corrected 2026-07-01 — the previously-cited lemniscate-hierarchy whitepaper does not contain this formula)
 
 ---
@@ -369,7 +369,7 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 |----------|-----------------|
 | [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) | SR, linearized GR, GAP-2 now resolved |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation, conservation law |
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, Poisson equation |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, Poisson equation |
 | [SPEC_SM_REPLACEMENT_COMPLETE.md](../../01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md) | α_G integer-dressing formula ([STRUCTURALLY MOTIVATED PARAMETRIC]; citation corrected 2026-07-01) |
 
 ---

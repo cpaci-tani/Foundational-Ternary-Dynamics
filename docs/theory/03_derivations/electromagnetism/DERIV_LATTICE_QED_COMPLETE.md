@@ -7,9 +7,9 @@
 
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) -- Lattice propagator = Euclidean propagator (Theorem 1.1), Wick rotation (Theorem 1.2), vertex factor (Theorem 1.3), Ward identity (Theorem 1.5), Wilson fermion propagator (Theorem 4.2)
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- $g_c = \sqrt{\alpha}$ derivation
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- The FTD Lagrangian with coupling term and Gauss constraint
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) -- The FTD Lagrangian with coupling term and Gauss constraint
 - [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) -- Lattice Green's functions, dispersion relation
-- [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) -- 4-term precision formula for $1/\alpha$
+- [DERIV_ALPHA_PRECISION_FORMULA.md](../../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) -- 4-term precision formula for $1/\alpha$
 
 ---
 
@@ -2234,9 +2234,9 @@ A shift of $\delta(1/\alpha) \sim 10^{-4}$ (the 1.26 ppm gap) translates to $\de
 
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) -- Lattice propagator (Theorem 1.1), Wick rotation (Theorem 1.2), vertex factor (Theorem 1.3), Ward identity (Theorem 1.5), gauge-fixed photon propagator (Theorem 4.1), Wilson fermion propagator (Theorem 4.2), Moller scattering (Theorem 4.3)
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- $g_c = \sqrt{\alpha}$ derivation
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- FTD Lagrangian with coupling term and Gauss constraint
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) -- FTD Lagrangian with coupling term and Gauss constraint
 - [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) -- Lattice Green's functions and dispersion relation
-- [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) -- 4-term precision formula for $1/\alpha$ with coefficients $c_1$--$c_4$ from $\{3, 4, 7, 13\}$
+- [DERIV_ALPHA_PRECISION_FORMULA.md](../../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) -- 4-term precision formula for $1/\alpha$ with coefficients $c_1$--$c_4$ from $\{3, 4, 7, 13\}$
 
 ### Combined Epistemic Summary
 

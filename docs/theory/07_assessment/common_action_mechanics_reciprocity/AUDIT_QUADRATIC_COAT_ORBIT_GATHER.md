@@ -5,9 +5,9 @@
 **Status:** `[SELECTION — QUADRATIC COAT] + [THEOREM — ELECTRIC ADJOINT AND SPLINE-CURL COMMUTATION] + [NUMERICAL FACT — LOCKED CAMPAIGN]`  
 **Verdict:** `QUADRATIC_COAT_ORBIT_GATHER_CONSTRUCTIVE`  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_ORBIT_GATHER_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_ORBIT_GATHER_v1.md)  
+[`PREREG_QUADRATIC_COAT_ORBIT_GATHER_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_ORBIT_GATHER_v1.md)  
 **Derivation:**
-[`DERIV_QUADRATIC_COAT_ORBIT_GATHER.md`](../10_eft_program/derivations/DERIV_QUADRATIC_COAT_ORBIT_GATHER.md)  
+[`DERIV_QUADRATIC_COAT_ORBIT_GATHER.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_QUADRATIC_COAT_ORBIT_GATHER.md)  
 **Run of record:** `engine/results/ftd_0550/windows_msvc_cpu.json`
 
 ## Result

@@ -350,7 +350,7 @@ To make the framework honest and formalizable, we now state the selection princi
 
 **Motivation:** Numerical match to 1.26 ppm. The 7-term precision formula extends this to a 24-digit algebraic identity against the CODATA 2022 *recommended value*, though CODATA's experimental precision is only ~11 digits so beyond that the "match" is a structural property of the chosen coefficients rather than a tested prediction. The digit-13 prediction (= 0) would become testable at $\sigma(1/\alpha) < 10^{-15}$.
 
-**Status:** [SELECTION] (SP4) — conditional-[THEOREM] upgrade path via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md), modulo standard lattice-QED continuum-limit recovery.
+**Status:** [SELECTION] (SP4) — conditional-[THEOREM] upgrade path via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../../03_derivations/electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md), modulo standard lattice-QED continuum-limit recovery.
 
 ### Axiom SP5: Framework Integers
 *The integers {N_c = 3, N_base = 4, b₃ = 7, N_eff = 13} arise from the self-consistency of the lattice gauge structure and satisfy the interlocking constraints: b₃ = N_base + N_c, N_eff = F₇ = T₇ (Fibonacci-Tribonacci crossover), and j = (N_base × N_c)³.*
@@ -377,7 +377,7 @@ The algebra in each step is verifiable. The conditional nature is honest: **chan
 
 ## Conclusion
 
-FTD's derivation of α is **noteworthy but conditional**. The tree-level result matches CODATA 2022 to 1.26 ppm with zero numerical parameters (conditional on SP1-SP3). The 7-term precision formula matches the CODATA 2022 *recommended value* to 24 digits **as an algebraic identity** (see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). **Experimentally**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ (~11 digits); beyond that, the 7-term "match" is a structural property of the specific chosen coefficients and cannot currently be tested against data. The digit-13 prediction (= 0) is genuinely falsifiable by future experiment at $\sigma < 10^{-15}$.
+FTD's derivation of α is **noteworthy but conditional**. The tree-level result matches CODATA 2022 to 1.26 ppm with zero numerical parameters (conditional on SP1-SP3). The 7-term precision formula matches the CODATA 2022 *recommended value* to 24 digits **as an algebraic identity** (see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../../09_mathematical/general_math/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). **Experimentally**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ (~11 digits); beyond that, the 7-term "match" is a structural property of the specific chosen coefficients and cannot currently be tested against data. The digit-13 prediction (= 0) is genuinely falsifiable by future experiment at $\sigma < 10^{-15}$.
 
 Honesty requires acknowledging that this is not a "derivation from zero choices." It involves:
 

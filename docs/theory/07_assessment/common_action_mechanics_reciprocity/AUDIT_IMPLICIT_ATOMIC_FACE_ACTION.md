@@ -9,9 +9,9 @@
 **Verdict:**
 `ATOMIC_FACE_ACTION_CONSTRUCTIVE_SCALAR_ROOT_NOT_STATIONARY`  
 **Pre-registration:**
-[`PREREG_IMPLICIT_ATOMIC_FACE_ACTION_v1.md`](../10_eft_program/preregistrations/PREREG_IMPLICIT_ATOMIC_FACE_ACTION_v1.md)  
+[`PREREG_IMPLICIT_ATOMIC_FACE_ACTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_IMPLICIT_ATOMIC_FACE_ACTION_v1.md)  
 **Derivation:**
-[`DERIV_IMPLICIT_ATOMIC_FACE_ACTION.md`](../10_eft_program/derivations/DERIV_IMPLICIT_ATOMIC_FACE_ACTION.md)  
+[`DERIV_IMPLICIT_ATOMIC_FACE_ACTION.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_IMPLICIT_ATOMIC_FACE_ACTION.md)  
 **Run of record:** `engine/results/ftd_0536/windows_msvc_cpu.json`
 
 ## 1. Minimal atomic action

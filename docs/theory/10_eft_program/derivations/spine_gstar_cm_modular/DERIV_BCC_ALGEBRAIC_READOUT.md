@@ -9,7 +9,7 @@
 
 ## 0 · Introduction
 
-This document operationalizes the **BCC complex structure theorem** (proven in [`DERIV_BCC_COMPLEX_STRUCTURE.md`](../09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md) and classified as `OT-1.9` [THEOREM] bedrock) as a physical readout observable. 
+This document operationalizes the **BCC complex structure theorem** (proven in [`DERIV_BCC_COMPLEX_STRUCTURE.md`](../../../09_mathematical/general_math/DERIV_BCC_COMPLEX_STRUCTURE.md) and classified as `OT-1.9` [THEOREM] bedrock) as a physical readout observable. 
 
 The central challenge of the Alpha Readout Contract (`SPEC_ALPHA_READOUT_CONTRACT.md`) is to "earn the map" from the algebraic spine to Quantum Electrodynamics (QED) without circularity or fine-tuning. By utilizing the canonical $\mathbb{Z}[i]$-module structure of the complex subspace $V_{\text{complex}}$ inside the Body-Centered Cubic (BCC) corner representation, we construct an operational observable $O_{\text{BCC}}$ that bridges the discrete 3D cubic lattice directly to lemniscatic arithmetic.
 

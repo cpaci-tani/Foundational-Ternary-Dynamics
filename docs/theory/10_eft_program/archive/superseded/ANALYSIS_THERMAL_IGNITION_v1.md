@@ -1,7 +1,7 @@
 # ANALYSIS (scout) — Min/max temperature + ignition map of the FTD lattice (FTD-0274)
 
 > **SUPERSEDED (2026-06-12) by the FTD-0275 run of record**
-> ([`ANALYSIS_THERMAL_PHASE_MAP_v1.md`](ANALYSIS_THERMAL_PHASE_MAP_v1.md),
+> ([`ANALYSIS_THERMAL_PHASE_MAP_v1.md`](../../ANALYSIS_THERMAL_PHASE_MAP_v1.md),
 > pre-registered, tag `preregister-thermal-phase-map-v1`). Three scout readings
 > are revised: **(Q1)** "T_up rises with L" is **confirmed and quantified**
 > (≈ L^1.36 across L = 16–48 with seed statistics); **(Q2)** the "no ceiling" /

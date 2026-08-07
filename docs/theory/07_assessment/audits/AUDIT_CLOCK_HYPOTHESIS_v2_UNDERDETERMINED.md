@@ -10,10 +10,10 @@
 **Companion docs:**
 - [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) — v1 audit; precedent for the UNDERDETERMINED verdict format
 - [`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../../03_derivations/archive/superseded/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) — v1 pre-reg; properly committed (`4c15ba1`) + tagged (`preregister-clock-hypothesis-derivation-v1`)
-- [`archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md`](archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md) — invalidated v2 pre-reg (archived)
-- [`archive/retracted/FOUND_CLOCK_HYPOTHESIS.md`](archive/retracted/FOUND_CLOCK_HYPOTHESIS.md) — invalidated v2 result (archived)
+- [`archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md`](../../03_derivations/archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md) — invalidated v2 pre-reg (archived)
+- [`archive/retracted/FOUND_CLOCK_HYPOTHESIS.md`](../../03_derivations/archive/retracted/FOUND_CLOCK_HYPOTHESIS.md) — invalidated v2 result (archived)
 - [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) — Arc B P0 reconciliation; remains at the v1-audit floor (clock-hypothesis is "1 flagged interpretive step" pending v3 outcome)
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7, §4.3 — unchanged tags (`[THEOREM modulo clock hypothesis]`) per v2's invalidation
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7, §4.3 — unchanged tags (`[THEOREM modulo clock hypothesis]`) per v2's invalidation
 
 ---
 

@@ -48,8 +48,8 @@ Prior to this derivation, $G_F$ was listed as an **external input** in the FTD f
 | $v$ | Higgs VEV: $v = M_P\sqrt{2\pi}\,\alpha^8$ | 246.09 GeV |
 
 Each of these is derived in prior documents:
-- $G^*$: Complex Multiplication theory, j = 1728 ([SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) §6)
-- $\alpha$: Master quadratic ([SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) §6)
+- $G^*$: Complex Multiplication theory, j = 1728 ([SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md) §6)
+- $\alpha$: Master quadratic ([SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md) §6)
 - $v$: Alpha hierarchy ([DERIV_HIGGS_FROM_MANIFESTATION.md](DERIV_HIGGS_FROM_MANIFESTATION.md) §4)
 
 ## 2.2 The Derivation [THEOREM]
@@ -222,7 +222,7 @@ The 1.3% error arises from the compounding of errors in $G_F$ (0.13%) and $m_\mu
 
 | Document | What It Provides |
 |----------|-----------------|
-| [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Master quadratic, α, framework integers |
+| [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md) | Master quadratic, α, framework integers |
 | [DERIV_HIGGS_FROM_MANIFESTATION.md](DERIV_HIGGS_FROM_MANIFESTATION.md) | VEV formula v = M_P√(2π)α⁸ |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | g_c = √α |
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | Weak force as stress threshold → massive propagator |
@@ -231,10 +231,10 @@ The 1.3% error arises from the compounding of errors in $G_F$ (0.13%) and $m_\mu
 
 | Document | Required Update |
 |----------|----------------|
-| [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Remove $G_F$ from "External inputs required" list |
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Reclassify $G_F$ from external to derived; update counts |
+| [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md) | Remove $G_F$ from "External inputs required" list |
+| [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | Reclassify $G_F$ from external to derived; update counts |
 | [README.md](../../../README.md) | Update epistemic notice: $G_F$ no longer external |
-| [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md) | Add GF-1 through GF-7 |
+| [REF_CLAIMS_MATRIX.md](../../07_assessment/REF_CLAIMS_MATRIX.md) | Add GF-1 through GF-7 |
 
 ## 6.3 Remaining External Input
 

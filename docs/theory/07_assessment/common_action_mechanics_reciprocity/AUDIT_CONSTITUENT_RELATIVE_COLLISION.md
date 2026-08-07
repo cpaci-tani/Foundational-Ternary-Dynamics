@@ -8,7 +8,7 @@
 `[CLOSED NEGATIVE — AGGREGATE FACE ACTION AS COLLISION ORIGIN]`  
 **Verdict:** `SELECTED_REFLECTION_EXISTS_FACE_ACTION_CANNOT_DERIVE_IT`  
 **Pre-registration:**
-[`PREREG_CONSTITUENT_RELATIVE_COLLISION_SELECTOR_v1.md`](../10_eft_program/preregistrations/PREREG_CONSTITUENT_RELATIVE_COLLISION_SELECTOR_v1.md)  
+[`PREREG_CONSTITUENT_RELATIVE_COLLISION_SELECTOR_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONSTITUENT_RELATIVE_COLLISION_SELECTOR_v1.md)  
 **Run of record:** `engine/results/ftd_0512/windows_msvc_cpu.json`
 
 ## 1. Existing phase space is sufficient to write the restricted map

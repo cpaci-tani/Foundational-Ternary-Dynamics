@@ -108,4 +108,4 @@ close: the band-limited translation group preserves neutral field energy to
 `6.94e-17`, while every registered noninteger density change and exact current
 has full `L` support and the minimum kernel weight is `-0.216195...`. The
 locked verdict is `EXACT_TRANSLATION_REQUIRES_NONLOCAL_COUPLING`. See
-[`AUDIT_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md`](../../07_assessment/AUDIT_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md).
+[`AUDIT_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md).

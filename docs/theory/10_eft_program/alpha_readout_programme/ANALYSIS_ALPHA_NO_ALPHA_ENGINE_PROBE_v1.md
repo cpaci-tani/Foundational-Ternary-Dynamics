@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0285  
 **Status:** [INVALIDATED PROTOCOL -- NO CLAIM PROMOTED]  
-**Pre-reg:** [`PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md)  
+**Pre-reg:** [`PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](../preregistrations/alpha_readout_programme/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md)  
 **Lock tag:** `preregister-alpha-no-alpha-engine-probe-v1`  
 **Lock commit:** `cce615b07009a36de4d045d6fb5218b44fbbde6c`  
 **Artifact:** `engine/tests/campaign_alpha_no_alpha_probe.cpp`  

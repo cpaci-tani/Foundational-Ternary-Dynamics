@@ -127,7 +127,7 @@ with JSON `null` in memory, and then parses the result. No persisted datum or
 verdict is rewritten. This is a serialization defect to fix in the next runner,
 not a physics-gate failure under the enumerated E0 conditions.
 
-[`proof_finite_support_environmental_closure.py`](../../../../scripts/proofs/proof_finite_support_environmental_closure.py)
+[`proof_finite_support_environmental_closure.py`](../../../../../scripts/proofs/proof_finite_support_environmental_closure.py)
 independently reconstructs all 925 forward rows, five inverse summaries, the
 frozen FTD-0739 prefix comparison, every gate, and the ordered verdict.
 

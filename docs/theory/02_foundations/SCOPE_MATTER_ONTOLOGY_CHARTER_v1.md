@@ -405,9 +405,9 @@ source-free outward component crossed radius 24 without registered return.
 The locked radius-32/48 arrival conjunction failed, so that M2 candidate is
 closed negative at E5 and broader environmental closure remains unresolved.
 M3 does not advance. See
-[`ANALYSIS_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md`](../10_eft_program/derivations/ANALYSIS_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md)
+[`ANALYSIS_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md`](../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md)
 and
-[`ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md`](../10_eft_program/derivations/ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md).
+[`ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md`](../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md).
 
 FTD-0747 through FTD-0750 subsequently extended the same selected candidate to
 `L=321`: the negative core, stable near field, causal radius-48 arrival at tick

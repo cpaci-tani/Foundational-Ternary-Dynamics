@@ -436,11 +436,11 @@ The complete chain — from self-duality to i to reference frame context to meas
 
 ## Cross-References
 
-- **Number theory connections:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
+- **Number theory connections:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md)
 - **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 - **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md)
-- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
 - **Reference frame context domain/source map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Reference frame context synthesis:** [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
 - **Verification script:** [../../../scripts/verification/verify_trit_framework.py](../../../scripts/verification/verify_trit_framework.py)

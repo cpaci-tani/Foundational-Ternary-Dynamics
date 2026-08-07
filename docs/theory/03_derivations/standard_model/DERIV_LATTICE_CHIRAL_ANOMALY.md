@@ -13,7 +13,7 @@
 - [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) -- N_c = 3 from flux geometry (Theorem 1.1), color trace factors
 - [DERIV_LATTICE_SU2_WEAK.md](DERIV_LATTICE_SU2_WEAK.md) -- SU(2) weak sector, electroweak mixing
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- g_c = sqrt(alpha) derivation
-- [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) -- Quark charges, pion mass, decay constants
+- [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) -- Quark charges, pion mass, decay constants
 
 ---
 
@@ -460,8 +460,8 @@ The resulting baryon-to-photon ratio $\eta \sim 10^{-10}$ (CLAUDE.md, Section 22
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Lattice propagator, vertex factor $g_c = \sqrt{\alpha}$, Ward identity |
 | [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) | $N_c = 3$ derivation from flux geometry, color sector |
 | [DERIV_LATTICE_SU2_WEAK.md](DERIV_LATTICE_SU2_WEAK.md) | SU(2) sector, electroweak anomaly cancellation |
-| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Quark charges, CKM phase, pion mass |
+| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Quark charges, CKM phase, pion mass |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ from master quadratic |
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | FTD Lagrangian, action principle, Gauss constraint |
-| [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Master reference for all FTD results |
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Classification of derivations vs parametric insertions |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | FTD Lagrangian, action principle, Gauss constraint |
+| [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md) | Master reference for all FTD results |
+| [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | Classification of derivations vs parametric insertions |

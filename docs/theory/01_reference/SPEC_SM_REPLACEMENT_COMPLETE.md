@@ -609,25 +609,25 @@ The capstone achievement is not any single derivation but the structural claim: 
 
 | Document | Content |
 |----------|---------|
-| [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) | All 4 forces from lattice Green's functions |
-| [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Propagator, vertex, stress-energy tensor, Moller scattering |
-| [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ derivation |
+| [DERIV_FORCE_EMERGENCE.md](../03_derivations/foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | All 4 forces from lattice Green's functions |
+| [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Propagator, vertex, stress-energy tensor, Moller scattering |
+| [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ derivation |
 | [DERIV_VARIATIONAL_PROOF.md](../03_derivations/foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | Scoped field/source variation only; all-update generator claim retracted by FTD-0467/0565 |
 
 ## Wave 3: Non-Abelian Gauge Sectors + Higgs
 
 | Document | Content |
 |----------|---------|
-| [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md) | SU(3) gauge theory from flux geometry |
-| [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/DERIV_LATTICE_SU2_WEAK.md) | SU(2) weak sector, $G_F$ derived, ~50 decay rate upgrades |
-| [DERIV_HIGGS_FROM_MANIFESTATION.md](../03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | Higgs mechanism from manifestation dynamics |
+| [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/standard_model/DERIV_LATTICE_SU3_GAUGE.md) | SU(3) gauge theory from flux geometry |
+| [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md) | SU(2) weak sector, $G_F$ derived, ~50 decay rate upgrades |
+| [DERIV_HIGGS_FROM_MANIFESTATION.md](../03_derivations/standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md) | Higgs mechanism from manifestation dynamics |
 
 ## Wave 4: Formal QFT Completion
 
 | Document | Content |
 |----------|---------|
-| [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Path integral $Z[\mathbf{J}]$, generating functional, effective action |
-| [DERIV_LATTICE_CHIRAL_ANOMALY.md](../03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md) | Chiral anomaly, $\pi^0 \to \gamma\gamma$, baryogenesis |
+| [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../03_derivations/quantum_mechanics/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Path integral $Z[\mathbf{J}]$, generating functional, effective action |
+| [DERIV_LATTICE_CHIRAL_ANOMALY.md](../03_derivations/standard_model/DERIV_LATTICE_CHIRAL_ANOMALY.md) | Chiral anomaly, $\pi^0 \to \gamma\gamma$, baryogenesis |
 
 ## Foundations and Constants
 
@@ -639,7 +639,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas $\gamma \to \varpi \to M \to \pi \to G^*$; not the canonical $\alpha$ derivation chain |
 | [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) | 4-term precision formula |
 | [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | $\Lambda_{\text{QCD}}$ from dimensional transmutation |
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Honest derivation accounting |
+| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | Honest derivation accounting |
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Full PDG coverage |
 
 ---
@@ -681,7 +681,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-31 | $N_{\text{base}} = 2^{(D+1)/2} = 4$ | [SELECTION] | $D = 3$ + spinor dimension argument |
 | SM-32 | Mexican hat potential from BI + manifestation feedback | [SELECTION] | SM-30, Born-Infeld nonlinearity |
 | SM-33 | Hierarchy problem resolved by lattice UV cutoff | [SELECTION] | Physical cutoff at $a$ (= $\ell_P$ under Planck-primary calibration FTD-0041; gauge per FTD-0137) |
-| SM-34 | Substrate-to-aggregate transition yields $S > 2$ | [SELECTION] | Three-level hierarchy: L1=2, L2=sqrt(2), L3=2*sqrt(2); see [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) |
+| SM-34 | Substrate-to-aggregate transition yields $S > 2$ | [SELECTION] | Three-level hierarchy: L1=2, L2=sqrt(2), L3=2*sqrt(2); see [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md) |
 | SM-35 | Two-loop correction closes 1.26 ppm gap | [CONJECTURE] | Right magnitude; exact coefficient not computed |
 | SM-36 | Dark matter = sub-threshold flux, $\mathcal{L} = 0.75$ | [CONJECTURE] | Qualitative consistency only |
 | SM-37 | $D = 3$ as the physical spatial dimension | [SELECTION — declared] (FTD-0355) | Sufficiency arguments (gauge + atomic stability + Fibonacci), not a forcing proof; the RHS target 16 = \|O_h\|/3 presupposes D=3 — circularity named |

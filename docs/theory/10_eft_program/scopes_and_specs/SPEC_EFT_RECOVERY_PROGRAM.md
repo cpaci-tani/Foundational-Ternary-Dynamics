@@ -117,7 +117,7 @@ toggles_on:         [wave_propagation, coupling, gauss_projection, forces]
 The criteria above remain the historical Phase-1B lock, but they are no longer
 sufficient for a Lorentz-covariance verdict. They test one free flux mode after
 leading-speed rescaling. The exact fully discrete audit in
-[`AUDIT_LORENTZ_RECOVERY_HARD.md`](../../07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md)
+[`AUDIT_LORENTZ_RECOVERY_HARD.md`](../../07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RECOVERY_HARD.md)
 establishes:
 
 ```text

@@ -2,7 +2,7 @@
 
 **Tag:** `[THEORY]`
 **Status:** Mixed (see banner). §3 kinematic Schwarzschild-encoding is `[THEOREM at the kinematic-combination level]` + `[SELECTION]` (curvature reading); §4 full Einstein Field Equations and the "resolves GAP-G2/GAP-G5" claims are `[GAP]` / `[CONJECTURE]`, **not derived**.
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md`](../../CLAUDE.md).
+**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md), [`CLAUDE.md`](../../../CLAUDE.md).
 
 > **Epistemic status.** Per the canonical GAP doc [`FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) the **full nonlinear Einstein equations are `[GAP-G2] — not derived`** and **background independence is `[GAP-G5] — broken by the fixed lattice`**; the constitution (`SPEC_FTD_FRAMEWORK_V1.md` §5.2, FC-2) declares the Lorentzian metric an `[AXIOM]`-class emergent-IR commitment, not a derivation. What is genuine: the §3 *kinematic* result that the combined time-dilation/length-contraction formula **encodes** the Schwarzschild line element (`[THEOREM]` at the kinematic-combination level; `[SELECTION]` for the curvature interpretation). §4's Lovelock appeal does **not** derive the EFE — it posits a divergence-free coupling to a metric-deviation field $h_{\mu\nu}$ whose emergent spin-2 origin is itself `[OPEN]` (cf. CLAUDE.md FTD-0189 Step-0). (Separately: the `G_N = 1/(b_3+N_c)^2 = 0.01` identification in §4.3 is **`[CLOSED NEGATIVE]`** per FTD-0131.) The blanket `[THEOREM]` framing that this document "derives General Relativity and the Einstein Field Equations … resolves GAP-G2/G5" is upward drift relative to canon; no equation is altered, only the epistemic tags and the "proves/resolves" language.
 

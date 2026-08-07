@@ -9,7 +9,7 @@
 **Verdict:**
 `EXACT_WORLDLINE_SPLIT_REQUIRES_IMPLICIT_ATOMIC_FIELD_TRANSACTION`  
 **Pre-registration:**
-[`PREREG_STAGGERED_CURRENT_SPLIT_COMPATIBILITY_v1.md`](../10_eft_program/preregistrations/PREREG_STAGGERED_CURRENT_SPLIT_COMPATIBILITY_v1.md)  
+[`PREREG_STAGGERED_CURRENT_SPLIT_COMPATIBILITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_STAGGERED_CURRENT_SPLIT_COMPATIBILITY_v1.md)  
 **Run of record:** `engine/results/ftd_0535/windows_msvc_cpu.json`
 
 ## 1. Endpoint-resolved action identity

@@ -6,9 +6,9 @@
 `[CONSTRUCTIVE — EXACT COUNTEREXAMPLE AND DISCRETE-GRADIENT PRICE]`  
 **Verdict:** `FIXED_STEP_ACTION_ENERGY_NOT_AUTOMATIC`  
 **Pre-registration:**
-[`PREREG_FIXED_STEP_ENERGY_SCOPE_v1.md`](../10_eft_program/preregistrations/PREREG_FIXED_STEP_ENERGY_SCOPE_v1.md)  
+[`PREREG_FIXED_STEP_ENERGY_SCOPE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FIXED_STEP_ENERGY_SCOPE_v1.md)  
 **Theorem:**
-[`THEOREM_FIXED_STEP_ENERGY_SCOPE.md`](../10_eft_program/derivations/THEOREM_FIXED_STEP_ENERGY_SCOPE.md)  
+[`THEOREM_FIXED_STEP_ENERGY_SCOPE.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_FIXED_STEP_ENERGY_SCOPE.md)  
 **Run of record:** `engine/results/ftd_0543/windows_msvc_cpu.json`
 
 ## Result

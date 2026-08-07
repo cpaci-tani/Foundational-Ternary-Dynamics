@@ -10,8 +10,8 @@
 
 ## Depends On
 
-- [FOUND_THE_RATIO_AND_THE_PRODUCT.md](../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) -- The product/ratio dichotomy from Gamma(1/4) and Gamma(3/4)
-- [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) -- The lemniscate as the First Distinction made geometric
+- [FOUND_THE_RATIO_AND_THE_PRODUCT.md](../../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) -- The product/ratio dichotomy from Gamma(1/4) and Gamma(3/4)
+- [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) -- The lemniscate as the First Distinction made geometric
 - [PROOF_ALPHA_FROM_SELF_DUALITY.md](PROOF_ALPHA_FROM_SELF_DUALITY.md) -- Alpha from G* via the master quadratic
 
 ---

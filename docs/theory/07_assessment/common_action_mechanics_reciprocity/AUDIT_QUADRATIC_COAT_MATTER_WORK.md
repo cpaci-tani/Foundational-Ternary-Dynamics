@@ -6,9 +6,9 @@
 UNIVERSAL FIXED-STEP MATTER-WORK IDENTITY]`  
 **Verdict:** `COAT_FIXED_STEP_MATTER_WORK_NOT_IDENTITY`  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_MATTER_WORK_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_MATTER_WORK_v1.md)  
+[`PREREG_QUADRATIC_COAT_MATTER_WORK_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_MATTER_WORK_v1.md)  
 **Theorem:**
-[`THEOREM_QUADRATIC_COAT_MATTER_WORK_NONIDENTITY.md`](../10_eft_program/derivations/THEOREM_QUADRATIC_COAT_MATTER_WORK_NONIDENTITY.md)  
+[`THEOREM_QUADRATIC_COAT_MATTER_WORK_NONIDENTITY.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_QUADRATIC_COAT_MATTER_WORK_NONIDENTITY.md)  
 **Run of record:** `engine/results/ftd_0545/windows_msvc_cpu.json`
 
 ## Result

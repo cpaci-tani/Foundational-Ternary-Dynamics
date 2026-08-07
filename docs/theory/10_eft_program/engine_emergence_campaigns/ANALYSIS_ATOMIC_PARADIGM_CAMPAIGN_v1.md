@@ -1,7 +1,7 @@
 # ANALYSIS -- Atomic paradigm campaign FTD-0280 through FTD-0283
 
 > **CROSS-CUTTING CORRECTION** (see
-> [`../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md)).
+> [`../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](../../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md)).
 > The FTD-0278 hydrogen **"n=2 multiplet / O_h T1u triple / Rydberg ladder"** was found
 > OVERCLAIMED and corrected to **HYDROGEN-1s-CONFIRMED**: in most record cells only the 1s
 > is bound, and the "exactly degenerate T1u triple" is **torus momentum degeneracy, not

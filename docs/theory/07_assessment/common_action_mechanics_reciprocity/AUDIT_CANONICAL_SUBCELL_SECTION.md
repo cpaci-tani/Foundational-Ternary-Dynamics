@@ -8,7 +8,7 @@
 `[CLOSED NEGATIVE — FROZEN PRODUCTION COMPATIBILITY]`  
 **Verdict:** `CANONICAL_CHART_REQUIRES_RULE_REWRITE`  
 **Pre-registration:**
-[`PREREG_CANONICAL_SUBCELL_SECTION_v1.md`](../10_eft_program/preregistrations/PREREG_CANONICAL_SUBCELL_SECTION_v1.md)  
+[`PREREG_CANONICAL_SUBCELL_SECTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CANONICAL_SUBCELL_SECTION_v1.md)  
 **Run of record:** `engine/results/ftd_0500/windows_msvc_cpu.json`
 
 ## 1. A centered section is constructive away from ties

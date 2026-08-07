@@ -2,7 +2,7 @@
 
 **Tag:** [PRE-REGISTRATION — PROCEDURAL RE-RUN] (LOCK-STD v1; git tag `preregister-graviton-substrate-mode-v2-1` at the registration commit)
 **Parent lock:** [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) (tag `preregister-graviton-substrate-mode-v2`, commit `bb354b6`) — **canonical and unmodified**. This document changes NO question, NO operator, NO outcome condition, and NO exclusion; §5–§8 of the parent apply verbatim.
-**Verdict of record being re-tested:** [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — **Outcome B** at L∈{32, 64, 128} (LEDGER FTD-0193).
+**Verdict of record being re-tested:** [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — **Outcome B** at L∈{32, 64, 128} (LEDGER FTD-0193).
 
 ---
 

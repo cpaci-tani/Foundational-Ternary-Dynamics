@@ -10,7 +10,7 @@
 
 ## 0 · Purpose and context
 
-Following the **CLOSED-NEGATIVE** synthesis of the three primary **ARC-B1** observable-selection routes (plaquette bivectors, boundary-to-boundary transfer, and reference frame projections; recorded in [`AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md`](../10_eft_program/AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md)), the search space for the central foundational obstruction **MC-T4.3 (Operational alpha-readout mechanism)** must narrow and adapt.
+Following the **CLOSED-NEGATIVE** synthesis of the three primary **ARC-B1** observable-selection routes (plaquette bivectors, boundary-to-boundary transfer, and reference frame projections; recorded in [`AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md`](../archive/closed_negative/AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md)), the search space for the central foundational obstruction **MC-T4.3 (Operational alpha-readout mechanism)** must narrow and adapt.
 
 The ARC-B1 closures demonstrated a profound **categorical structural mismatch**:
 * **Substrate arithmetic:** FTD-native lattice observables yield eigenvalues and characteristic equations whose coefficients are finite-combinatorial (e.g., Lie algebra structure constants, subalgebra dimensions) or lattice-spectral (e.g., discrete Laplacian exponentials $e^{-E_k \tau}$).

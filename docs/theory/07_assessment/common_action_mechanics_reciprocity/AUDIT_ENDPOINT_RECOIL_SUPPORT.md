@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0448`  
 **Status:** `[THEOREM — CUBIC COVARIANCE DOES NOT FIX SITE-CENTERED RECOIL SUPPORT]`  
 **Verdict:** `CUBIC_SYMMETRY_LEAVES_ENDPOINT_RECOIL_AMBIGUITY`  
-**Pre-registration:** [`PREREG_ENDPOINT_RECOIL_SUPPORT_v1.md`](../10_eft_program/preregistrations/PREREG_ENDPOINT_RECOIL_SUPPORT_v1.md)  
+**Pre-registration:** [`PREREG_ENDPOINT_RECOIL_SUPPORT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ENDPOINT_RECOIL_SUPPORT_v1.md)  
 **Run of record:** `engine/results/ftd_0448/windows_msvc_cpu.csv`
 
 ## 1. Exact counterexample

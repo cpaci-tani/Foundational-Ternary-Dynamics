@@ -353,8 +353,8 @@ The torus knot type of FTD vortices IS the Cayley-Dickson level of the condensat
 
 ## Cross-References
 
-- [DERIV_OCTONIONIC_STRUCTURE.md](../05_particles/DERIV_OCTONIONIC_STRUCTURE.md) — Division algebra origins of FTD
-- [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) — Lemniscate curve hierarchy
+- [DERIV_OCTONIONIC_STRUCTURE.md](../../05_particles/DERIV_OCTONIONIC_STRUCTURE.md) — Division algebra origins of FTD
+- [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) — Lemniscate curve hierarchy
 - [EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md](../general_math/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md) — Rigorous curve analysis
 - [FOURCIER_CURVE_ANALYSIS.md](../../../dissemination/manuscript/media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Fourcier parametric analysis
 

@@ -1917,7 +1917,7 @@ positive-norm linear/unitary auxiliary system rational in `M18` can isolate it; 
 nonlocal. The default-off `lorentz_bcc_time_floquet` path is therefore only a
 stable local IR surrogate through q4, not evidence that production dynamics
 already contain an exact BCC time domain. Canonical analysis:
-[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../../07_assessment/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md).
+[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../../../07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md).
 
 ### 18.2 Do we need U(1) gauge structure?
 

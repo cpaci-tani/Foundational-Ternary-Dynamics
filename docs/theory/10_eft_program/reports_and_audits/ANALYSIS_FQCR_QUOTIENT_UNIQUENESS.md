@@ -3,7 +3,7 @@
 **Tag:** [CLOSED NEGATIVE — pre-registered execution, Outcome B]
 **Date:** 2026-07-12 (execution; pre-reg locked 2026-05-06, tag `preregister-fqcr-quotient-uniqueness-v1` @ `557593e4`)
 **LEDGER row:** FTD-0143
-**Pre-registration:** [`../preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md)
+**Pre-registration:** [`../preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md)
 **Artifacts:** `engine/results/fqcr_quotient_uniqueness_2026-05-06_l_scan/` (meta.json, all_quadruples.csv, ranking CSVs, alpha_match_quadruples.csv, in-dir ANALYSIS.md with full lock-integrity record)
 **Runner:** `tools/scan_fqcr_quotient_uniqueness.py` (SHA256 registered in `REF_PREREGISTER_MANIFEST.md`)
 

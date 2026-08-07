@@ -4,9 +4,9 @@
 **LEDGER row:** FTD-0203.
 **Owner-question this answers:** *"For each remaining FTD-0110 sub-investigation, is it desk-analytical work I can land in a session, or engine-resourced campaign work that needs WSL2/CUDA time?"*
 **Sources read:**
-- [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) -- the linear-level closure (`k = 1/N_base = 1/4` from O_h character-table multiplicity, [THEOREM]).
-- [`docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](../03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) -- the Phase A/B/C sharpening that ruled out the 1/√d law and the Langevin-equipartition framing as per-block efficiencies (FALSIFIED in Phase B and C respectively).
-- [`engine/tests/test_langevin_equipartition.cpp`](../../../engine/tests/test_langevin_equipartition.cpp) -- operational Langevin infrastructure (FTD-0051; CPU single-substrate OU update; equipartition verified to ~4%).
+- [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../../03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) -- the linear-level closure (`k = 1/N_base = 1/4` from O_h character-table multiplicity, [THEOREM]).
+- [`docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](../../03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) -- the Phase A/B/C sharpening that ruled out the 1/√d law and the Langevin-equipartition framing as per-block efficiencies (FALSIFIED in Phase B and C respectively).
+- [`engine/tests/test_langevin_equipartition.cpp`](../../../../engine/tests/test_langevin_equipartition.cpp) -- operational Langevin infrastructure (FTD-0051; CPU single-substrate OU update; equipartition verified to ~4%).
 
 > **What this scope memo is NOT.** Not a closure attempt; not a pre-registration; not a tag move. It classifies the remaining work so the user can decide *what fits a session* and *what is a campaign*. Per the plan: "Engine-campaign pre-reg sketch (not the full pre-reg; that's Session B1+1 if pursued)."
 

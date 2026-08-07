@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0452`  
 **Status:** `[THEOREM — FIXED-J HOP ENERGY CLOSURE]` + `[CORRECTION — FTD-0451 ENERGY LABEL]` + `[DIAGNOSTIC DEFECT]`  
 **Verdict:** `ENERGY_CONTRACT_RECONCILED_DIAGNOSTICS_INCOMPLETE`  
-**Pre-registration:** [`PREREG_NATIVE_ENERGY_CONTRACT_RECONCILIATION_v1.md`](../10_eft_program/preregistrations/PREREG_NATIVE_ENERGY_CONTRACT_RECONCILIATION_v1.md)  
+**Pre-registration:** [`PREREG_NATIVE_ENERGY_CONTRACT_RECONCILIATION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_ENERGY_CONTRACT_RECONCILIATION_v1.md)  
 **Run of record:** `engine/results/ftd_0452/windows_msvc_cpu.csv`
 
 ## 1. Fixed-field hop energy closes without wave deposition

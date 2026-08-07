@@ -8,7 +8,7 @@
 ## 1. Locked protocol
 
 The controlling protocol is
-[`PREREG_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../10_eft_program/preregistrations/PREREG_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md),
+[`PREREG_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../../10_eft_program/preregistrations/constituent_complete_matter/PREREG_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md),
 whose SHA256 is
 `5E4D0E9A81BD8C7E901A765792284E1BEF64129791CC874357D22F9630A2F48F`.
 It remains unchanged. The registered run is one aged `L=321`, 768-tick

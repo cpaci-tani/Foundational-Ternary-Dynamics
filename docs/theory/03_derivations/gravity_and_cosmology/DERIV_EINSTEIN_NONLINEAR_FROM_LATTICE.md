@@ -10,7 +10,7 @@
 - [DERIV_EINSTEIN_FIELD_EQUATIONS.md](DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Linearized EFE + Lovelock completion
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) — SR, linearized GR (Theorem 14.1)
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — T_μν via Noether's theorem
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld action
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld action
 
 ---
 

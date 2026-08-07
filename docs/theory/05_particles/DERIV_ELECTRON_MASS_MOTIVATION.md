@@ -114,6 +114,6 @@ print(f"Error:      {error:.2f}%")                    # 0.19%
 ## Cross-References
 
 - **Ladder rule:** [FOUND_LADDER_GENERATING_RULE.md](../02_foundations/FOUND_LADDER_GENERATING_RULE.md) — why {1,2,3,4,8,11,14,20}
-- **16 from Faddeev-Popov:** [DERIV_MASTER_QUADRATIC_FROM_Z.md](../03_derivations/DERIV_MASTER_QUADRATIC_FROM_Z.md) — gauge DOF counting
+- **16 from Faddeev-Popov:** [DERIV_MASTER_QUADRATIC_FROM_Z.md](../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_FROM_Z.md) — gauge DOF counting
 - **D = 3:** [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — dimensional uniqueness
 - **Muon/tau ratios:** [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) — lepton mass hierarchy

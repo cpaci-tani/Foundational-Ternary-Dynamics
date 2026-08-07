@@ -2,8 +2,8 @@
 
 **Tag:** [REFERENCE]
 **LEDGER row reservation:** FTD-0144 [STRUCTURAL CORRESPONDENCE]
-**Companion docs:** [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142), [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) Part VII, [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10.X (FTD-0111 Theorem 8).
-**Verifier script:** [`scripts/proofs/proof_fqcr_branch_value.py`](../../../scripts/proofs/proof_fqcr_branch_value.py)
+**Companion docs:** [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141), [`DERIV_GSTAR_FINITE_APPROX.md`](../../03_derivations/foundational_mechanics/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142), [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) Part VII, [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10.X (FTD-0111 Theorem 8).
+**Verifier script:** [`scripts/proofs/proof_fqcr_branch_value.py`](../../../../scripts/proofs/proof_fqcr_branch_value.py)
 
 ---
 
@@ -187,7 +187,7 @@ The trilogy's integration into FTD is deliberately minimal:
 
 ## §7 — Reproducibility
 
-[`proof_fqcr_branch_value.py`](../../../scripts/proofs/proof_fqcr_branch_value.py) verifies:
+[`proof_fqcr_branch_value.py`](../../../../scripts/proofs/proof_fqcr_branch_value.py) verifies:
 
 1. **Exact rational arithmetic.** $\sum_{n=0}^{4} 2^n a_n b_n = 1 - \tfrac{1}{2} + 1 - \tfrac{28}{25} + \tfrac{1}{16} = \tfrac{177}{400}$ (LCM 400 denominator), so $\mathrm{Area}(\gamma_4) = 177\pi/400$ exactly. Asserts equality to the closed form claimed in compatibility paper Proposition 7.4.
 2. **Numerical Green's-formula cross-check.** Computes $\tfrac{1}{2}\int_0^{2\pi}(x_4\,y'_4 - y_4\,x'_4)\,dt$ at 50-digit precision (mpmath) and asserts agreement with the rational value to $< 10^{-40}$.

@@ -38,7 +38,7 @@
 > `archive/retracted/DERIV_BORN_PROPORTIONALITY_RESOLUTION_RETRACTED.md`, is invalid
 > outright — its exact result is anti-Born affine. The two failure modes are different;
 > this one's math is right and its scope was oversold.)
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md](../../CLAUDE.md).
+**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md), [`CLAUDE.md](../../../CLAUDE.md).
 
 ---
 

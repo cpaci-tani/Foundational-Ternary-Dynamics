@@ -657,8 +657,8 @@ of all theorems in this document.
 
 ## Cross-References
 
-- [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) - Imaginary unit foundations
-- [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) - Full hierarchy
+- [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) - Imaginary unit foundations
+- [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) - Full hierarchy
 
 ---
 

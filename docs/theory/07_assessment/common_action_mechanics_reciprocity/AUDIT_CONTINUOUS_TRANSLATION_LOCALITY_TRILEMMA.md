@@ -6,9 +6,9 @@
 [CONSTRUCTIVE — NONLOCAL BAND-LIMITED ESCAPE]`  
 **Verdict:** `EXACT_TRANSLATION_REQUIRES_NONLOCAL_COUPLING`  
 **Pre-registration:**
-[`PREREG_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA_v1.md`](../10_eft_program/preregistrations/PREREG_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA_v1.md)  
+[`PREREG_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA_v1.md)  
 **Theorem:**
-[`THEOREM_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md`](../10_eft_program/derivations/THEOREM_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md)  
+[`THEOREM_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_CONTINUOUS_TRANSLATION_LOCALITY_TRILEMMA.md)  
 **Run of record:** `engine/results/ftd_0554/windows_msvc_cpu.json`
 
 ## Result

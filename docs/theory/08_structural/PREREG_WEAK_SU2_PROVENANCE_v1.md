@@ -104,7 +104,7 @@ collapses the `SU(2)` conclusion. The audit identifies the load-bearing
 steps explicitly and grades each.
 
 **D5 — Frozen audit targets.** The primary target is
-[`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/DERIV_LATTICE_SU2_WEAK.md).
+[`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md).
 The audit also reads `FOUND_FORCE_STRUCTURE.md` (FST-1, FST-6) and **any
 document either cites as load-bearing** for the `SU(2)` construction — all
 as they exist **at the Q12 hash-lock commit**. A later edit to any target

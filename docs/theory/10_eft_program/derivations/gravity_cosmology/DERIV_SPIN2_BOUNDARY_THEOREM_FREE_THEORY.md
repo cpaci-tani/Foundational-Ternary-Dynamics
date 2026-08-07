@@ -5,14 +5,14 @@
 This document consolidates the Arc C2 P1 substantive derivation into a unified free-theory + canonical-toggle-set version of the boundary theorem. It is the load-bearing pre-pre-reg derivation underlying `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` (Arc C2 P3). Tag promotion to a full closed-form theorem requires P3 pre-reg + P4 closure attempt against the locked design.
 
 **Companion docs:**
-- [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent; this is its P1 closure)
-- [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 derivation (J-bilinear bubble integral has no isolated pole)
-- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE]` empirical validation
-- [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — FTD-0189 ripple establishing (C2-4) framing
-- [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — retagged (EFE-6/8/9 → [SELECTION/CONDITIONAL]); the Deser-bootstrap chain cited by (C2-4)
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) — §3 action functional, §4.2 [THEOREM] Poisson on ℒ, §4.3 [THEOREM modulo clock hypothesis] Born-Infeld Schwarzschild
-- [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) — FTD-0131 substrate gravity (the scalar-sector lower-end of the boundary statement)
-- [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) §4 — frozen non-site-local observable catalog Arc C2 inherits
+- [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent; this is its P1 closure)
+- [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) — load-bearing C2-2 derivation (J-bilinear bubble integral has no isolated pole)
+- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE]` empirical validation
+- [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — FTD-0189 ripple establishing (C2-4) framing
+- [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — retagged (EFE-6/8/9 → [SELECTION/CONDITIONAL]); the Deser-bootstrap chain cited by (C2-4)
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../../../01_reference/SPEC_FTD_LAGRANGIAN.md) — §3 action functional, §4.2 [THEOREM] Poisson on ℒ, §4.3 [THEOREM modulo clock hypothesis] Born-Infeld Schwarzschild
+- [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) — FTD-0131 substrate gravity (the scalar-sector lower-end of the boundary statement)
+- [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../../preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) §4 — frozen non-site-local observable catalog Arc C2 inherits
 
 > **What this document is.** A consolidated derivation of the four clauses of the spin-2 boundary theorem (C2-1 through C2-4) at free-theory + canonical-toggle scope. The free-theory clauses receive [THEOREM]-grade rigor; the canonical-toggle extension carries [SMC] tag per the FTD-0193 empirical validation; the effective-theory matching clause (C2-4) is established by reference to the already-retagged Deser-bootstrap chain.
 
@@ -24,7 +24,7 @@ This document consolidates the Arc C2 P1 substantive derivation into a unified f
 
 ## §0 — Conventions
 
-Inherit from [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §0 (lattice Λ = ℤ³ undefined-boundary, flux field J : Λ × ℕ → ℝ³, state field s : Λ × ℕ → {−1, 0, +1}, latency field ℒ : Λ → [0, 1), 18-point Laplacian L_18, lattice momentum k̂_μ = 2 sin(k_μ/2), Brillouin zone BZ³ = [−π, π]³, lattice CFL constant C² = 1/3). Add: the **canonical toggle set** is the engine's default toggle configuration at the time of `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` (specifically the 11 toggles ON + `dual_substrate`/`weak_transmutation` OFF set explicitly enumerated there; will be re-snapshotted at Arc C2 P3 pre-reg lock).
+Inherit from [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §0 (lattice Λ = ℤ³ undefined-boundary, flux field J : Λ × ℕ → ℝ³, state field s : Λ × ℕ → {−1, 0, +1}, latency field ℒ : Λ → [0, 1), 18-point Laplacian L_18, lattice momentum k̂_μ = 2 sin(k_μ/2), Brillouin zone BZ³ = [−π, π]³, lattice CFL constant C² = 1/3). Add: the **canonical toggle set** is the engine's default toggle configuration at the time of `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` (specifically the 11 toggles ON + `dual_substrate`/`weak_transmutation` OFF set explicitly enumerated there; will be re-snapshotted at Arc C2 P3 pre-reg lock).
 
 ---
 
@@ -34,11 +34,11 @@ Inherit from [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POL
 >
 > **(C2-1) Linear spectrum.** The substrate's linearized dynamics support two independent propagating sectors: (a) the flux-field vector sector — after Gauss projection, the J-field carries 2 transverse spin-1 modes per wavevector k, with dispersion `ω(k) = C · ω_L(k)`; (b) the latency-field scalar sector — the latency `ℒ` is a quasi-static scalar satisfying the discrete Poisson equation `∇²_L ℒ = 4πG ρ_mass` per `SPEC_FTD_LAGRANGIAN.md` §4.2 [THEOREM], with no independent propagating dynamics in the free-theory limit. Total propagating mode count per k = 2 (transverse vector). No rank-2 propagating mode.
 >
-> **(C2-2) J-bilinear non-separability.** The connected two-point correlator of the symmetric traceless rank-2 J-bilinear `O_ij = J_iJ_j − ⅓δ_ij|J|²`, projected onto the transverse-traceless (helicity-±2) subspace, is a bubble-integral convolution of J-propagators with branch-cut analytic structure — no isolated pole. Rigorous derivation: [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md). Empirical validation: FTD-0193 measured TT correlator at L=64 identical to spin-1 control at 11/12 k-points to 7 significant digits.
+> **(C2-2) J-bilinear non-separability.** The connected two-point correlator of the symmetric traceless rank-2 J-bilinear `O_ij = J_iJ_j − ⅓δ_ij|J|²`, projected onto the transverse-traceless (helicity-±2) subspace, is a bubble-integral convolution of J-propagators with branch-cut analytic structure — no isolated pole. Rigorous derivation: [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md). Empirical validation: FTD-0193 measured TT correlator at L=64 identical to spin-1 control at 11/12 k-points to 7 significant digits.
 >
-> **(C2-3) No substrate-derived emergent graviton in §4 catalog.** Since (i) the only candidate non-site-local rank-2 observables in the §4 frozen catalog are J-bilinears or J-derivative bilinears (`O_ij`, `Õ_ij` per `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` §5; see uniqueness argument in [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §2.2), and (ii) per (C2-2) these observables produce no isolated pole in the TT channel, there is no substrate-derived emergent graviton within the §4 catalog. Extension outside the §4 catalog (e.g., to finite-trace `s_m` variation per Doctrine §12 candidate principles) is Arc C1 territory and is `[OPEN]` if pursued.
+> **(C2-3) No substrate-derived emergent graviton in §4 catalog.** Since (i) the only candidate non-site-local rank-2 observables in the §4 frozen catalog are J-bilinears or J-derivative bilinears (`O_ij`, `Õ_ij` per `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` §5; see uniqueness argument in [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §2.2), and (ii) per (C2-2) these observables produce no isolated pole in the TT channel, there is no substrate-derived emergent graviton within the §4 catalog. Extension outside the §4 catalog (e.g., to finite-trace `s_m` variation per Doctrine §12 candidate principles) is Arc C1 territory and is `[OPEN]` if pursued.
 >
-> **(C2-4) Full nonlinear GR is matched, not derived.** The metric perturbation `h_μν` enters the FTD gravity content as Conjecture 10.1 per FTD-0189 [AUDIT FINDING] — *posited*, not substrate-constructed. The Deser-bootstrap chain `(h_μν posited) → (linearized Einstein equations [SELECTION/CONDITIONAL]) → (Lovelock-completion [SELECTION/CONDITIONAL])` documented in [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) (EFE-6/8/9 retagged per FTD-0189 ripple) recovers full GR as effective-theory matching of imported scaffold. Gravitational-wave dynamics, perihelion precession, light bending, and other strong-field GR phenomena are matched via this chain; they are not substrate-derived from FTD axioms 1-5.
+> **(C2-4) Full nonlinear GR is matched, not derived.** The metric perturbation `h_μν` enters the FTD gravity content as Conjecture 10.1 per FTD-0189 [AUDIT FINDING] — *posited*, not substrate-constructed. The Deser-bootstrap chain `(h_μν posited) → (linearized Einstein equations [SELECTION/CONDITIONAL]) → (Lovelock-completion [SELECTION/CONDITIONAL])` documented in [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) (EFE-6/8/9 retagged per FTD-0189 ripple) recovers full GR as effective-theory matching of imported scaffold. Gravitational-wave dynamics, perihelion precession, light bending, and other strong-field GR phenomena are matched via this chain; they are not substrate-derived from FTD axioms 1-5.
 >
 > **Net statement.** The substrate-derivable gravity content within the §4 catalog at free-theory + Gauss-only level is **scalar (latency ℒ, via Phase G Poisson, [THEOREM]) + transverse vector (J spin-1, propagating, [THEOREM])**. Helicity-±2 is forbidden by (C2-3) within the catalog at this level. Full nonlinear GR enters by (C2-4) as effective-theory matching of imported h_μν, conditional on Conjecture 10.1 (which FTD-0193 [CLOSED NEGATIVE] establishes as falsified in the probed regime for substrate emergence).
 
@@ -70,7 +70,7 @@ The canonical toggle set at the `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` lock (com
 
 ### §3.1 — J-sector spectrum (2 spin-1 transverse modes)
 
-Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §1.1 + §1.2: the linearized lattice wave equation `Δ_t² J_a = C² L_18 J_a` with Gauss constraint `∇_L · J = ρ` (vacuum: ρ = 0) gives:
+Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §1.1 + §1.2: the linearized lattice wave equation `Δ_t² J_a = C² L_18 J_a` with Gauss constraint `∇_L · J = ρ` (vacuum: ρ = 0) gives:
 
 - **3 J components per voxel.** Pre-constraint dof count = 3.
 - **Gauss removes 1 dof** (longitudinal mode is gauge, non-propagating).
@@ -115,7 +115,7 @@ Interactions in the canonical toggle set (state-flux coupling, velocity coupling
 
 ## §4 — Clause (C2-2): J-bilinear non-separability
 
-Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §3:
+Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §3:
 
 1. **Wick contraction** of `⟨O_ij(x) O_kl(y)⟩_c` factors into a sum of `⟨J J⟩⟨J J⟩` products (bubble diagram). [THEOREM]
 2. **Momentum-space bubble integral** `Π(k, ω) = ∫(d⁴p) G_J(p) G_J(k − p)` is the standard two-particle convolution. [THEOREM]
@@ -123,7 +123,7 @@ Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §3
 4. **TT projection**: contracting `P^{TT}_{ijkl}(k)` with the bilinear correlator preserves the branch-cut-only structure. [THEOREM]
 5. **Empirical validation**: FTD-0193 §4 measured the TT correlator at L=64 identical to spin-1 control ω at 11/12 k-points to 7 sig figs. [VERIFIED]
 
-The full derivation is in [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md); not reproduced here. The net for (C2-2): **the J-bilinear's TT projection has no isolated pole** — the spin-2 channel is "continuum, no separable mode."
+The full derivation is in [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md); not reproduced here. The net for (C2-2): **the J-bilinear's TT projection has no isolated pole** — the spin-2 channel is "continuum, no separable mode."
 
 **Tag for (C2-2):** [THEOREM] at free-theory + Gauss-only level; [SMC] for canonical toggle set with FTD-0193 empirical validation; [OPEN] for L > 64 / non-§4-catalog observables.
 
@@ -133,7 +133,7 @@ The full derivation is in [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR
 
 ### §5.1 — Uniqueness of the J-bilinear candidate
 
-Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §2.2: the only candidate non-site-local rank-2 observables in the §4 frozen catalog are J-bilinears (`O_ij`) or J-derivative bilinears (`Õ_ij = [(∂J)(∂J)]_TT`). This is a direct group-theoretic consequence: from a 3-vector field J without introducing new fundamental fields, the only local rank-2 observables built without higher-derivative or non-local operators are bilinears in J or its derivatives.
+Per [`DERIV_J_BILINEAR_NO_SPIN2_POLE.md`](../framework_postulates_constitution/DERIV_J_BILINEAR_NO_SPIN2_POLE.md) §2.2: the only candidate non-site-local rank-2 observables in the §4 frozen catalog are J-bilinears (`O_ij`) or J-derivative bilinears (`Õ_ij = [(∂J)(∂J)]_TT`). This is a direct group-theoretic consequence: from a 3-vector field J without introducing new fundamental fields, the only local rank-2 observables built without higher-derivative or non-local operators are bilinears in J or its derivatives.
 
 **Tag: [THEOREM]** — group-theoretic decomposition of `Sym²(V) − Tr(V ⊗ V)/3` for V the 3-vector representation, restricted to the local-bilinear sector of the §4 frozen catalog.
 
@@ -160,7 +160,7 @@ The argument:
 
 ### §6.1 — The Deser-bootstrap chain (per FTD-0189 + AUDIT §3 ripple)
 
-Per [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) Steps 1-5 (retagged per FTD-0189 ripple):
+Per [`../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) Steps 1-5 (retagged per FTD-0189 ripple):
 
 - **Step 1 (Metric emergence):** `g_μν = η_μν + h_μν(ℒ)` — h_μν is *posited*, not substrate-constructed. Per FTD-0189: Conjecture 10.1.
 - **Step 2 (Stress-energy via Noether):** [THEOREM]; survives FTD-0189 unchanged (no h_μν dependence).

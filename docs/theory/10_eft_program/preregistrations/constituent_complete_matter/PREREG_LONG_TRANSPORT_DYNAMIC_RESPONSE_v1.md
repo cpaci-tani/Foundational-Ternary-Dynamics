@@ -2,7 +2,7 @@
 
 **Status:** `[CONSUMED — FINAL OUTCOME LONG_TRANSPORT_EXECUTION_INVALID]`
 
-**Result:** [`AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../../07_assessment/AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md) — continuous reverse recovery
+**Result:** [`AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../../../07_assessment/constituent_complete_matter/AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md) — continuous reverse recovery
 `3.8786822642578e-9 > 1e-10`; certificate `2220/2221`.
 
 **Scope:** default-off research branch; unchanged FTD-0761/0763 dynamics

@@ -10,9 +10,9 @@
 
 ## Depends On
 
-- [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Canonical Fourcier definition, Cayley-Dickson hierarchy, OT-1 through OT-8
+- [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Canonical Fourcier definition, Cayley-Dickson hierarchy, OT-1 through OT-8
 - [EXPLR_HALF_MOBIUS_LEMNISCATE.md](../general_math/EXPLR_HALF_MOBIUS_LEMNISCATE.md) — Z₄ period lattice, Berry phase, discriminant trichotomy, EXPLR-HM-1 through HM-7
-- [DERIV_SPIN_STATISTICS_BRIDGE.md](../03_derivations/DERIV_SPIN_STATISTICS_BRIDGE.md) — Discriminant formula, Z₂ from lemniscates, Z/6Z structure
+- [DERIV_SPIN_STATISTICS_BRIDGE.md](../../03_derivations/quantum_mechanics/DERIV_SPIN_STATISTICS_BRIDGE.md) — Discriminant formula, Z₂ from lemniscates, Z/6Z structure
 - [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — CDF-9 trefoil conjecture, octonionic ratios
 - [FOURCIER_CURVE_ANALYSIS.md](../../../dissemination/manuscript/media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Canonical coefficients, regime structure
 
@@ -434,9 +434,9 @@ The Z₁₂ completion would mean 12 = N_base × N_c elementary topological stat
 ## Cross-References
 
 - **Canonical definition:** [FOURCIER_CURVE_ANALYSIS.md](../../../dissemination/manuscript/media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Coefficients, regime structure, generating function
-- **Cayley-Dickson hierarchy:** [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Ontological lobe classification
+- **Cayley-Dickson hierarchy:** [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Ontological lobe classification
 - **Half-Möbius topology:** [EXPLR_HALF_MOBIUS_LEMNISCATE.md](../general_math/EXPLR_HALF_MOBIUS_LEMNISCATE.md) — Z₄ lattice, Berry phase, C₁₃Cl₂ mapping
-- **Discriminant trichotomy:** [DERIV_SPIN_STATISTICS_BRIDGE.md](../03_derivations/DERIV_SPIN_STATISTICS_BRIDGE.md) — Root classification, Z₂ from lemniscate
+- **Discriminant trichotomy:** [DERIV_SPIN_STATISTICS_BRIDGE.md](../../03_derivations/quantum_mechanics/DERIV_SPIN_STATISTICS_BRIDGE.md) — Root classification, Z₂ from lemniscate
 - **Trefoil knot:** [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — CDF-9 (flux vortex trefoil conjecture)
 - **G* dimensional triad:** [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](../number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) — Product/Sum = G*
 - **Mathematical analysis:** [EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md](../general_math/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md) — Arc length, Feigenbaum bridge

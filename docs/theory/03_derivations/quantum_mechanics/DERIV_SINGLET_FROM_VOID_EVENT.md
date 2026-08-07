@@ -4,7 +4,7 @@
 
 **Status:** [THEOREM] for the four constraint lemmas (charge, chirality-as-helicity, spin, antisymmetry); [SELECTION] for the complexification J → ψ; [THEOREM] for the singlet uniqueness given the four constraints.
 
-**Depends on:** [DERIV_QM_FROM_LATTICE](DERIV_QM_FROM_LATTICE.md) (identifies this exact lemma as the open [SELECTION → THEOREM] target), [DERIV_BELL_COSINE_FROM_GAUSS](DERIV_BELL_COSINE_FROM_GAUSS.md) (Gauss → 2 transverse DOF → cosine → S = 2√2), [DERIV_OBSERVER_BELL_MECHANISM](DERIV_OBSERVER_BELL_MECHANISM.md) (three-level hierarchy), [DERIV_SPIN_STATISTICS_BRIDGE](DERIV_SPIN_STATISTICS_BRIDGE.md) (π₁(SO(3)) = ℤ₂), [SPEC_FTD §2.2, §4.1](../../SPEC_FTD.md), [FOUND_LATTICE_PHYSICS_INTUITIONS](../02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md).
+**Depends on:** [DERIV_QM_FROM_LATTICE](DERIV_QM_FROM_LATTICE.md) (identifies this exact lemma as the open [SELECTION → THEOREM] target), [DERIV_BELL_COSINE_FROM_GAUSS](DERIV_BELL_COSINE_FROM_GAUSS.md) (Gauss → 2 transverse DOF → cosine → S = 2√2), [DERIV_OBSERVER_BELL_MECHANISM](DERIV_OBSERVER_BELL_MECHANISM.md) (three-level hierarchy), [DERIV_SPIN_STATISTICS_BRIDGE](DERIV_SPIN_STATISTICS_BRIDGE.md) (π₁(SO(3)) = ℤ₂), [SPEC_FTD §2.2, §4.1](../../../SPEC_FTD.md), [FOUND_LATTICE_PHYSICS_INTUITIONS](../../02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md).
 
 **Closes:** The remaining [SELECTION] in the Bell loop. Once the void event is identified as producing the singlet, the Tsirelson bound S = 2√2 follows from standard QM (Tsirelson 1980). FTD does not "violate" Bell — FTD produces the singlet, and quantum mechanics handles the rest.
 

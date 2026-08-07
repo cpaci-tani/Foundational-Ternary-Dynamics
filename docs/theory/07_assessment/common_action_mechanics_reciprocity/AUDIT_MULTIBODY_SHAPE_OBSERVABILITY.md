@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — AGGREGATE SHAPE/CURRENT AS COMPLETE MATTER STATE]`  
 **Verdict:** `SHAPE_CURRENT_REQUIRES_WORLDLINE_DECOMPOSITION`  
 **Pre-registration:**
-[`PREREG_MULTIBODY_SHAPE_OBSERVABILITY_v1.md`](../10_eft_program/preregistrations/PREREG_MULTIBODY_SHAPE_OBSERVABILITY_v1.md)  
+[`PREREG_MULTIBODY_SHAPE_OBSERVABILITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MULTIBODY_SHAPE_OBSERVABILITY_v1.md)  
 **Run of record:** `engine/results/ftd_0501/windows_msvc_cpu.json`
 
 ## 1. Exact CIC factorization theorem

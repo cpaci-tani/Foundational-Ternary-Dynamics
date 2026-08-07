@@ -9,7 +9,7 @@ LEDGER claim; where it finds a mistag it *recommends* a correction (§8).
 — SHA256 `25ee75f4cf472841bf79a2c14495728731b2b2c27f5395ab28f3b30ea2c61784`,
 git tag `preregister-weak-su2-provenance-v1`, lock commit `af49d80`. The
 pre-registration was **not edited** during the audit (pre-reg §11 step 4).
-**Frozen targets read:** [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
+**Frozen targets read:** [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md)
 (v1.0, primary) and [`../02_foundations/FOUND_FORCE_STRUCTURE.md`](../02_foundations/FOUND_FORCE_STRUCTURE.md)
 (FST-1, FST-6), as they exist at the lock commit.
 
@@ -269,7 +269,7 @@ Out of scope, explicitly: this audit does **not** re-litigate
   (Q10, FTD-0190) → [`AUDIT_COLOUR_SINGLET_RANK.md`](AUDIT_COLOUR_SINGLET_RANK.md)
   (Q11, FTD-0191) → this audit (Q12, FTD-0192, terminating).
 - **Pre-registration registry:** [`../10_eft_program/REF_PREREGISTER_MANIFEST.md`](../10_eft_program/REF_PREREGISTER_MANIFEST.md).
-- **Frozen audit targets:** [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
+- **Frozen audit targets:** [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md)
   (the primary derivation; SU2-1 is the §8 recommendation target),
   [`../02_foundations/FOUND_FORCE_STRUCTURE.md`](../02_foundations/FOUND_FORCE_STRUCTURE.md)
   (the `φ`-home; FST-1/FST-6).

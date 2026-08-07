@@ -7,7 +7,7 @@
 `[COUNTEREXAMPLE — SOURCE-FREE JUMP WORK]`  
 **Verdict:** `CENTERED_TRACE_LEAVES_EXACT_CUSP_WORK_LEDGER`  
 **Pre-registration:**
-[`PREREG_CENTERED_TRACE_WORK_LEDGER_v1.md`](../10_eft_program/preregistrations/PREREG_CENTERED_TRACE_WORK_LEDGER_v1.md)  
+[`PREREG_CENTERED_TRACE_WORK_LEDGER_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTERED_TRACE_WORK_LEDGER_v1.md)  
 **Run of record:** `engine/results/ftd_0493/windows_msvc_cpu.json`
 
 ## 1. Exact omitted-work theorem

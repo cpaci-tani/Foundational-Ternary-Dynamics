@@ -560,20 +560,20 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 
 | Document | What It Provides |
 |----------|-----------------|
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action; coupling term; Gauss constraint |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action; coupling term; Gauss constraint |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | g_c = √α |
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | Gauge symmetry emergence |
-| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Higgs mass formula; gauge boson masses |
-| [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | VEV formula; Weinberg angle |
+| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Higgs mass formula; gauge boson masses |
+| [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md) | VEV formula; Weinberg angle |
 | [DERIV_LATTICE_SU2_WEAK.md](DERIV_LATTICE_SU2_WEAK.md) | SU(2) structure to be broken |
 
 ## 10.2 Documents That Depend On This Derivation
 
 | Document | What It Uses |
 |----------|-------------|
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Manifestation potential as SM Higgs replacement |
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Classification of Higgs derivations |
-| [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Higgs VEV as input for QCD running |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | Manifestation potential as SM Higgs replacement |
+| [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | Classification of Higgs derivations |
+| [DERIV_LAMBDA_QCD_DERIVATION.md](../../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Higgs VEV as input for QCD running |
 
 ## 10.3 Open Questions
 

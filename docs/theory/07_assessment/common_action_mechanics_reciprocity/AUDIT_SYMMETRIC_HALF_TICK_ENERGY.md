@@ -7,7 +7,7 @@
 `[MEASURED — MSVC RUN OF RECORD + INDEPENDENT PYTHON REPLICA]` +
 `[MEASURED — UNFUNDED PARTICLE KINETIC ENERGY AT FIXED SITE]`  
 **Pre-registration:**
-[`PREREG_SYMMETRIC_HALF_TICK_ENERGY_v2.md`](../10_eft_program/preregistrations/PREREG_SYMMETRIC_HALF_TICK_ENERGY_v2.md)
+[`PREREG_SYMMETRIC_HALF_TICK_ENERGY_v2.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_HALF_TICK_ENERGY_v2.md)
 (v1 superseded, see section on gate history)  
 **Run of record:** `engine/results/ftd_0469/windows_msvc_cpu.csv`  
 **Replica:** `scratch/ftd_0469_replica/`

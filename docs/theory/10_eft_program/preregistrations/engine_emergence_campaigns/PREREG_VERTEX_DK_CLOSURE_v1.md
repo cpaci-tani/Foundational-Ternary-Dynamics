@@ -5,10 +5,10 @@
 **Date locked:** 2026-07-10
 **Program:** the vertex program — §7-bivector → §7-dirac critical path (`SPEC_OPEN_MATH_BY_SECTOR.md` §2), Branch-A/Branch-B fermion accounting
 **Companions:**
-- [`DERIV_DIRAC_KAHLER_IDENTIFICATION.md`](../../09_mathematical/algebra/DERIV_DIRAC_KAHLER_IDENTIFICATION.md) (FTD-0089) — M1 executes its §A1.5 verification path, never before run
-- [`DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md`](../../09_mathematical/algebra/DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md) (FTD-0086/0087/0088) — M2 executes the noise-controlled re-test named in its §3.5.3 as "most consequential follow-up," never before run
-- [`DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md`](../../09_mathematical/number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) (FTD-0073) — the no-go both measurements must respect (both readouts are non-site-local bilinear/trilinear, outside its scope)
-- [`SPEC_ALPHA_READOUT_CONTRACT.md`](../../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md) — exclusion rules inherited (§2 below)
+- [`DERIV_DIRAC_KAHLER_IDENTIFICATION.md`](../../../09_mathematical/algebra/DERIV_DIRAC_KAHLER_IDENTIFICATION.md) (FTD-0089) — M1 executes its §A1.5 verification path, never before run
+- [`DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md`](../../../09_mathematical/algebra/DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md) (FTD-0086/0087/0088) — M2 executes the noise-controlled re-test named in its §3.5.3 as "most consequential follow-up," never before run
+- [`DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md`](../../../09_mathematical/number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) (FTD-0073) — the no-go both measurements must respect (both readouts are non-site-local bilinear/trilinear, outside its scope)
+- [`SPEC_ALPHA_READOUT_CONTRACT.md`](../../../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md) — exclusion rules inherited (§2 below)
 
 > **Pre-registration.** This document is committed to the repository *before either measurement runs.* Expectations, pass/fail criteria, outcome taxonomy, and priors are specified up-front. If a measurement produces a surprising number, this spec is **not** edited to match — the result is reported honestly in the analysis doc and the theory must explain the surprise. Compile checks are permitted before the lock commit; **no measurement output may be observed before the lock commit.**
 

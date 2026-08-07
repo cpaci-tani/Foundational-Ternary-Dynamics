@@ -13,10 +13,10 @@
 - [SPEC_FTD.md](../../SPEC_FTD.md) — The FTD specification (axioms, tick cycle, manifestation rule)
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — Existence Filter $E(x) = \text{Re}(x)$, projection hierarchy, Born rule reconstruction
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Softplus/ReLU as factor type interpolation, collapse-gravity duality
-- [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) — Five correspondences between $\beta$ and von Neumann factor types
-- [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) — Partition function, KMS states at $\beta = \pi$
-- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) — Complexified flux, Schrodinger equation from lattice dynamics
-- [DERIV_HIGGS_FROM_MANIFESTATION.md](../03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) — Phase transition at $K_B$, Higgs as order parameter
+- [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) — Five correspondences between $\beta$ and von Neumann factor types
+- [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../03_derivations/quantum_mechanics/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) — Partition function, KMS states at $\beta = \pi$
+- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) — Complexified flux, Schrodinger equation from lattice dynamics
+- [DERIV_HIGGS_FROM_MANIFESTATION.md](../03_derivations/standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md) — Phase transition at $K_B$, Higgs as order parameter
 
 ---
 

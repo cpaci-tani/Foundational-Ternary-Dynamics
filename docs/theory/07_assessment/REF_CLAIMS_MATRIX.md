@@ -384,7 +384,7 @@ The integers are now **derived from sequence theory**, not selected:
 3. **Self-referential closure**: Crossover at index b_3 creates self-determining structure
 4. **Cross-domain unity**: Same integers appear in physics, number theory, combinatorics
 
-See [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md) for complete analysis.
+See [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md) for complete analysis.
 
 ---
 

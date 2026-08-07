@@ -8,7 +8,7 @@
 `[OPEN — ASYMMETRIC/DISTINGUISHABLE CONTACT]`  
 **Verdict:** `AXIAL_ELASTIC_CONTACT_IS_RECIPROCAL_ON_FIXED_PATH`  
 **Pre-registration:**
-[`PREREG_AXIAL_CONTACT_LONGITUDINAL_WORK_v1.md`](../10_eft_program/preregistrations/PREREG_AXIAL_CONTACT_LONGITUDINAL_WORK_v1.md)  
+[`PREREG_AXIAL_CONTACT_LONGITUDINAL_WORK_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_AXIAL_CONTACT_LONGITUDINAL_WORK_v1.md)  
 **Run of record:** `engine/results/ftd_0530/windows_msvc_cpu.json`
 
 ## 1. The preregistered nonzero-work prediction is false

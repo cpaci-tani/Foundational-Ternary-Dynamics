@@ -766,7 +766,7 @@ This document extends and deepens:
 - **Prerequisite:** [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md)
 - **Related:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md)
 - **Related:** [DERIV_OCTONIONIC_STRUCTURE.md](../05_particles/DERIV_OCTONIONIC_STRUCTURE.md)
-- **Related:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
+- **Related:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md)
 - **Verification:** `verify_complete_algebra_of_i.py`
 
 ---

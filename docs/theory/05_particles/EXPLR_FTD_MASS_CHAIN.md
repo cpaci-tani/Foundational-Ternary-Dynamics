@@ -10,7 +10,7 @@
 > - The **algebraic spine** — the $G^*$ identity, the master-quadratic polynomial, and its roots — is `[THEOREM]` (pure number theory; stands independent of any physics).
 > - Every **physical identification** — $x_+\!\leftrightarrow\!1/\alpha$, the 4-term $\alpha$ fit, $m_e\!\leftrightarrow\!0.511$ MeV, the proton/neutron mass formulas — is `[STRONGLY MOTIVATED CONJECTURE]`, `[HIGH-PRECISION PARAMETRIC]`, `[COORDINATE COINCIDENCE]`, or `[PARAMETRIC FITTING]`.
 >
-> Per-step grades below are adopted from [`AUDIT_MASS_CHAIN_REDTEAM.md`](../07_assessment/AUDIT_MASS_CHAIN_REDTEAM.md) §3. The mass scale is **calibrated** (mass-unit $\equiv m_e$; $K_B$ anchor), and none of these ratios is produced **dynamically** by the C++ engine (red-team Axis E). See canonical `../07_assessment/core_ledgers/LEDGER.md` (FTD-0013, FTD-0015); note the **retired** $x_-\!\leftrightarrow\!N_c$ identification (FTD-0014, removed in `ca7eb61`); and note $G^* \approx 2.959$ is distinct from the lemniscate constant $\varpi \approx 2.622$ (FTD-0117).
+> Per-step grades below are adopted from [`AUDIT_MASS_CHAIN_REDTEAM.md`](../07_assessment/engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md) §3. The mass scale is **calibrated** (mass-unit $\equiv m_e$; $K_B$ anchor), and none of these ratios is produced **dynamically** by the C++ engine (red-team Axis E). See canonical `../07_assessment/core_ledgers/LEDGER.md` (FTD-0013, FTD-0015); note the **retired** $x_-\!\leftrightarrow\!N_c$ identification (FTD-0014, removed in `ca7eb61`); and note $G^* \approx 2.959$ is distinct from the lemniscate constant $\varpi \approx 2.622$ (FTD-0117).
 
 ---
 
@@ -194,7 +194,7 @@ The table below is a **numerical comparison** against CODATA 2022, *not* a "veri
 The chain is a tight **arithmetic synthesis**: from $G^*$ and the base integers $\{3, 4, 7, 13\}$ it reproduces $\alpha$ and the lepton/nucleon mass values to ppm–ppb precision. That synthesis is mathematically striking and worth recording. But it is **not** an "unbroken physical derivation," and it does **not** "verify" the FTD ontology:
 
 - The theorem-grade content is the **algebraic spine only** — the $G^*$ identity, the master-quadratic polynomial, and its roots.
-- Every *physical* step is a `[STRONGLY MOTIVATED CONJECTURE]`, `[HIGH-PRECISION PARAMETRIC]`, `[COORDINATE COINCIDENCE]`, or `[PARAMETRIC FITTING]`, per the per-step tags and the red-team [`AUDIT_MASS_CHAIN_REDTEAM.md`](../07_assessment/AUDIT_MASS_CHAIN_REDTEAM.md).
+- Every *physical* step is a `[STRONGLY MOTIVATED CONJECTURE]`, `[HIGH-PRECISION PARAMETRIC]`, `[COORDINATE COINCIDENCE]`, or `[PARAMETRIC FITTING]`, per the per-step tags and the red-team [`AUDIT_MASS_CHAIN_REDTEAM.md`](../07_assessment/engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md).
 - The mass scale is **calibrated** (mass-unit $\equiv m_e$), and none of these ratios is produced **dynamically** by the C++ engine (red-team Axis E; `../02_foundations/FOUND_STRUCTURAL_DECOUPLING.md`).
 
 The chain becomes a physical derivation only if the operational $\alpha$-readout program (MC-T4.3 / ARC-B1) is closed in the engine. Until then it stands as an elegant mathematical synthesis with honestly-flagged gaps — recorded here at its true epistemic status, not promoted beyond it.

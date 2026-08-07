@@ -3,10 +3,10 @@
 **Tag:** [INFRASTRUCTURE / METHODOLOGY] -- a research-navigation tool, not new mathematics.
 **LEDGER row:** FTD-0202.
 **Sources:**
-- Graph data: [`scripts/verification/results/synonymy_graph.json`](../../../scripts/verification/results/synonymy_graph.json)
-- Graph extractor: [`scripts/verification/extract_synonymy_graph.py`](../../../scripts/verification/extract_synonymy_graph.py)
-- Source-of-truth identities: [`scripts/verification/verify_gstar_paper.py`](../../../scripts/verification/verify_gstar_paper.py) (100 distinct `check()` call sites; some loops generate multiple runtime checks)
-- G\* paper (uncommitted, pending arXiv upload): [`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`](../../papers/PAPER_GSTAR_INTRODUCTION.tex)
+- Graph data: [`scripts/verification/results/synonymy_graph.json`](../../../../scripts/verification/results/synonymy_graph.json)
+- Graph extractor: [`scripts/verification/extract_synonymy_graph.py`](../../../../scripts/verification/extract_synonymy_graph.py)
+- Source-of-truth identities: [`scripts/verification/verify_gstar_paper.py`](../../../../scripts/verification/verify_gstar_paper.py) (100 distinct `check()` call sites; some loops generate multiple runtime checks)
+- G\* paper (uncommitted, pending arXiv upload): [`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`](../../../papers/PAPER_GSTAR_INTRODUCTION.tex)
 
 > **Scope discipline.** This roadmap is **descriptive, not generative.** It identifies which mathematical objects are well-connected in the verified-identity corpus and which are isolated; it does **not** produce new theorems. Its value is methodological: prioritising where future verification effort lands. **No FTD claim is promoted or demoted by this document.**
 

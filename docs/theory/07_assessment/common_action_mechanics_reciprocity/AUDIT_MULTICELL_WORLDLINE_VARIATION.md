@@ -10,7 +10,7 @@
 `[OPEN — NEW NONLINEAR ATOMIC ROOT]`  
 **Verdict:** `GLOBAL_DEPOSITED_ACTION_HAS_UNIQUE_INTERNAL_KNOT_VARIATION`  
 **Pre-registration:**
-[`PREREG_MULTICELL_WORLDLINE_VARIATION_v1.md`](../10_eft_program/preregistrations/PREREG_MULTICELL_WORLDLINE_VARIATION_v1.md)  
+[`PREREG_MULTICELL_WORLDLINE_VARIATION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MULTICELL_WORLDLINE_VARIATION_v1.md)  
 **Run of record:** `engine/results/ftd_0533/windows_msvc_cpu.json`
 
 ## 1. Correction to the apparent missing action

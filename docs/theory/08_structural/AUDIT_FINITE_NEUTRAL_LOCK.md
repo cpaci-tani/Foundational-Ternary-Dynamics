@@ -322,7 +322,7 @@ forced assembly is not.
 - **Verification script:** [`../../../scripts/proofs/audit_finite_neutral_lock.py`](../../../scripts/proofs/audit_finite_neutral_lock.py).
 - **Catalog sources:** [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
   (`SU(3)` triality), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md)
-  (Moore decomposition), [`../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md)
+  (Moore decomposition), [`../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md)
   (the 27-block `A_{1g}` multiplicity).
 
 ---

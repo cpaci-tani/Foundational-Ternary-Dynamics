@@ -6,9 +6,9 @@
 QUADRATURE]`  
 **Verdict:** `ACCELERATED_COAT_CURRENT_EXACT_LINEAR_SPLIT_REJECTED`  
 **Pre-registration:**
-[`PREREG_ACCELERATED_COAT_SPACETIME_CURRENT_v1.md`](../10_eft_program/preregistrations/PREREG_ACCELERATED_COAT_SPACETIME_CURRENT_v1.md)  
+[`PREREG_ACCELERATED_COAT_SPACETIME_CURRENT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ACCELERATED_COAT_SPACETIME_CURRENT_v1.md)  
 **Derivation:**
-[`DERIV_ACCELERATED_COAT_SPACETIME_CURRENT.md`](../10_eft_program/derivations/DERIV_ACCELERATED_COAT_SPACETIME_CURRENT.md)  
+[`DERIV_ACCELERATED_COAT_SPACETIME_CURRENT.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_ACCELERATED_COAT_SPACETIME_CURRENT.md)  
 **Run of record:** `engine/results/ftd_0548/windows_msvc_cpu.json`
 
 ## Result

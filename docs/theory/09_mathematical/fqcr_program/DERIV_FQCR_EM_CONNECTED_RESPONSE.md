@@ -1,8 +1,8 @@
 # Derivation of the FQCR-EM Connected Response at Tree Level
 
 **Tag:** [THEOREM] (for the mathematical limits), [SELECTION] (for the choice of FQCR-EM connected response variable structure)  
-**Authoritative Reference:** [`docs/theory/01_reference/SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md)  
-**Companion Documents:** [`docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md`](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md), [`docs/theory/09_mathematical/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md)
+**Authoritative Reference:** [`docs/theory/01_reference/SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md)  
+**Companion Documents:** [`docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md`](../../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md), [`docs/theory/09_mathematical/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md)
 
 ---
 
@@ -179,5 +179,5 @@ These terms act as the FQCR equivalent of loop corrections (one-loop and higher)
 ## 5. Epistemic Status and Verification
 
 - **[THEOREM]:** The limits $\lim_{t \to \infty} \lambda(4 i t) = 0$, $\lim_{t \to \infty} A(t) = 0$, and the resulting recovery of $x_+$ are rigorous mathematical theorems. They are verified numerically to high precision and are analytically exact.
-- **[SELECTION]:** The choice of the additive response law $R_{\text{conn}} = 1 + \lambda + A$ is a selection-level parameterization. While it successfully reproduces the CODATA value at $t=1$, it remains one of several possible combinations of these primitives (see [`explore_fqcr_response_laws.py`](../../../scripts/exploration/explore_fqcr_response_laws.py)).
+- **[SELECTION]:** The choice of the additive response law $R_{\text{conn}} = 1 + \lambda + A$ is a selection-level parameterization. While it successfully reproduces the CODATA value at $t=1$, it remains one of several possible combinations of these primitives (see [`explore_fqcr_response_laws.py`](../../../../scripts/exploration/explore_fqcr_response_laws.py)).
 - **[SMC] (Strongly Motivated Conjecture):** The physical reading of the scale parameter $t$ as representing energy scale (RG running) and the identification of $\alpha^{-1}_{\text{FQCR}}(1)$ with the physical coupling remain conjectural.

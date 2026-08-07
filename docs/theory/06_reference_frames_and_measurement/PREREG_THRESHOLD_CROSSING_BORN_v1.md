@@ -23,7 +23,7 @@ LEDGER FTD-0187 (2026-05-21) consolidated the Born-rule derivation status across
 A subsequent corpus sweep (2026-05-23) identified two documents NOT in the original 12-doc consolidation that carry an even stronger assertion:
 
 - [`SPEC_SIX_ALGORITHMS.md:65`](../01_reference/SPEC_SIX_ALGORITHMS.md): "The probability follows from `|ψ|²` because `ρ = |J|` and **the threshold crossing statistics produce the Born rule**."
-- [`AUDIT_EPISTEMIC_AUDIT.md:393`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md): "threshold crossing statistics reproduce `|ψ|²`."
+- [`AUDIT_EPISTEMIC_AUDIT.md:393`](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md): "threshold crossing statistics reproduce `|ψ|²`."
 
 Neither carries an attached derivation; both assert the claim as if obvious. A standard upcrossing-rate analysis (Rice 1944) for a Gaussian process with mean `μ` and variance `σ²` crossing level `K` gives upcrossing rate `(ω/2π) · exp(−(K − μ)²/2σ²)`, which is *not* a `|μ|²` scaling. So either:
 
@@ -184,5 +184,5 @@ Until all three are done, the runner must NOT be executed.
 - [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope for this run).
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 theorem, EF-C3 conjecture.
 - [`SPEC_SIX_ALGORITHMS.md`](../01_reference/SPEC_SIX_ALGORITHMS.md) §line 65 — the target corpus assertion.
-- [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) §line 393 — the second target assertion.
-- [`PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md`](../09_mathematical/PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md) — the prior pre-registration whose pattern this one follows; closed negative as FTD-0197.
+- [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) §line 393 — the second target assertion.
+- [`PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md`](../09_mathematical/algebra/PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md) — the prior pre-registration whose pattern this one follows; closed negative as FTD-0197.

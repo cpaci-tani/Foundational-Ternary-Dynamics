@@ -5,9 +5,9 @@
 **Status:** `[THEOREM — ENDPOINT/MIDPOINT INSUFFICIENCY]`  
 **Verdict:** `ENDPOINT_DATA_DO_NOT_DETERMINE_SPACETIME_CURRENT`  
 **Pre-registration:**
-[`PREREG_ENDPOINT_SCHEDULE_UNDERDETERMINATION_v1.md`](../10_eft_program/preregistrations/PREREG_ENDPOINT_SCHEDULE_UNDERDETERMINATION_v1.md)  
+[`PREREG_ENDPOINT_SCHEDULE_UNDERDETERMINATION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_ENDPOINT_SCHEDULE_UNDERDETERMINATION_v1.md)  
 **Theorem:**
-[`THEOREM_ENDPOINT_SCHEDULE_UNDERDETERMINATION.md`](../10_eft_program/derivations/THEOREM_ENDPOINT_SCHEDULE_UNDERDETERMINATION.md)  
+[`THEOREM_ENDPOINT_SCHEDULE_UNDERDETERMINATION.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_ENDPOINT_SCHEDULE_UNDERDETERMINATION.md)  
 **Run of record:** `engine/results/ftd_0549/windows_msvc_cpu.json`
 
 ## Result

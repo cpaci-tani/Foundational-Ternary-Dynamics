@@ -28,9 +28,9 @@
 > is a `[SELECTION + OPEN DYNAMICAL MAP]`.
 
 **Tag:** [THEOREM] (for the cyclic subgroup $C_4$ representation decomposition of the BCC unit cell and integer winding of an explicitly supplied nonvanishing closed loop), [SELECTION + OPEN DYNAMICAL MAP] (for identifying that loop with ternary electric charge), [SELECTION] (for the transfer matrix trace/determinant mapping, readout prefactor, and observable projection)
-**Authoritative Reference:** [`docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`](../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)  
-**Pre-Registration:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) (FTD-0231)  
-**Companion Documents:** [`docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`](../../07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md) (FTD-0231), [`docs/theory/10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) (FTD-0230).
+**Authoritative Reference:** [`docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`](../../../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)  
+**Pre-Registration:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](../../preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) (FTD-0231)  
+**Companion Documents:** [`docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`](../../../07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md) (FTD-0231), [`docs/theory/10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) (FTD-0230).
 
 ---
 

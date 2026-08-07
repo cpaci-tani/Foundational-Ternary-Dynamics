@@ -9,7 +9,7 @@
 **Verdict:**
 `HARD_CONTACT_REMAINS_SELECTED_PRODUCTION_ACTIVE_SET_IS_LATE`  
 **Pre-registration:**
-[`PREREG_NATIVE_CONTACT_ACTIVE_SET_v1.md`](../10_eft_program/preregistrations/PREREG_NATIVE_CONTACT_ACTIVE_SET_v1.md)  
+[`PREREG_NATIVE_CONTACT_ACTIVE_SET_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_CONTACT_ACTIVE_SET_v1.md)  
 **Run of record:** `engine/results/ftd_0525/windows_msvc_cpu.json`
 
 ## 1. Exact state-space discriminator

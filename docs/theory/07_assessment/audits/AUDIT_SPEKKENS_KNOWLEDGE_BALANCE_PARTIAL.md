@@ -2,7 +2,7 @@
 
 **Tag:** `[PARTIAL]` / `[UNDERDETERMINED]` (pre-reg §6: D1 binding derived; D2 sharpness needs an additional, located ingredient). **No spine claim moved.**
 **Result of:** `PREREG_SPEKKENS_KNOWLEDGE_BALANCE_v1.md` (B-QM-1′, FTD-0227 provisional), SHA256 `79e3b7f8c4a7e4aff5887c0cd130c45f5477778400c1da4db1cd51fcdc49f2dc` (commit deferred; SHA recorded in-session before the attempt).
-**Verifier:** [`scripts/proofs/proof_spekkens_knowledge_balance.py`](../../../scripts/proofs/proof_spekkens_knowledge_balance.py) (10/10).
+**Verifier:** [`scripts/proofs/proof_spekkens_knowledge_balance.py`](../../../../scripts/proofs/proof_spekkens_knowledge_balance.py) (10/10).
 **Companion:** `SCOPE_DERIVE_QM_GAP.md`. **Explains:** FTD-0199 / FTD-0200 (Born CLOSED-NEGATIVE → now structurally accounted for).
 
 ---

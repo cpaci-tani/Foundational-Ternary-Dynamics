@@ -226,6 +226,6 @@ The zero mode count is `2^(floor(coupling_order/1.5))` or more precisely: the nu
 
 - [THEOREM_MOORE_LAYER_DECOMPOSITION.md](THEOREM_MOORE_LAYER_DECOMPOSITION.md) — Moore layer decomposition, gauge groups from J-component counting
 - [../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) — Watson's three integrals, BCC attribution, numerical confirmation
-- [../03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md](../03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group assignment by sublattice
+- [../03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md](../03_derivations/standard_model/DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group assignment by sublattice
 - [../02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](../02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) — Observer formalism, sLoop requires BCC
 - [../02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md](../02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) — Gap equation as self-referential fixed point

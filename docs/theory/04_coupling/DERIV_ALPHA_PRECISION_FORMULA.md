@@ -2,7 +2,7 @@
 
 ## Sub-Attometer Accuracy from Lemniscate Geometry and Framework Integers
 
-**Status:** [CONJECTURE] — 24-digit agreement with CODATA 2022 *recommended value* confirmed as **algebraic identity** (mpmath 60-digit, residual 2.58e-24). Not experimentally verifiable beyond digit ~11. See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for full audit.
+**Status:** [CONJECTURE] — 24-digit agreement with CODATA 2022 *recommended value* confirmed as **algebraic identity** (mpmath 60-digit, residual 2.58e-24). Not experimentally verifiable beyond digit ~11. See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/general_math/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for full audit.
 
 ---
 
@@ -419,7 +419,7 @@ Until these are resolved, the formula should be understood as a **remarkable obs
 
 - **Master quadratic (pure math):** [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — Layer 1: G* definition, roots, parametric family
 - **Selection principles & physical correspondences:** [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — Layer 2: SP1-SP5, integer circularity analysis; Layer 3: conditional applications
-- **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
+- **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md)
 - **Verification scripts:** `scripts/verification/verify_precision_formula_v3.py` (7-term), `scripts/verification/verify_precision_formula_v2.py` (3-term)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
 *Discovery: 7-term extended precision formula for fine structure constant (24 digits)*

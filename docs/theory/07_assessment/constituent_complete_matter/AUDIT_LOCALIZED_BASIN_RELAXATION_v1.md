@@ -5,7 +5,7 @@
 **Status:** `[EXECUTION INVALID — NO DYNAMICS SAMPLED]`  
 **Verdict:** `LOCALIZED_BASIN_RELAXATION_EXECUTION_INVALID`  
 **Preregistration:**
-[`PREREG_LOCALIZED_BASIN_RELAXATION_v1.md`](../10_eft_program/preregistrations/PREREG_LOCALIZED_BASIN_RELAXATION_v1.md)
+[`PREREG_LOCALIZED_BASIN_RELAXATION_v1.md`](../../10_eft_program/preregistrations/constituent_complete_matter/PREREG_LOCALIZED_BASIN_RELAXATION_v1.md)
 
 ## Result
 

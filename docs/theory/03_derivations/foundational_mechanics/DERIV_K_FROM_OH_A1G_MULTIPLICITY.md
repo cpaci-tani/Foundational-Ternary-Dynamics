@@ -2,7 +2,7 @@
 
 **Tag:** [DERIVED at linear level] / [STRONGLY MOTIVATED CONJECTURE for nonlinear regime]
 **LEDGER row:** FTD-0110
-**Verification script:** [`scripts/exploration/verify_k_derivation_2026-04-28.py`](../../../scripts/exploration/verify_k_derivation_2026-04-28.py)
+**Verification script:** [`scripts/exploration/verify_k_derivation_2026-04-28.py`](../../../../scripts/exploration/verify_k_derivation_2026-04-28.py)
 **Depends on:** FTD-0107 (cluster measurement), FTD-0084 (N_base structural), FTD-0088 (Cl(3,0) decomposition), FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md
 **Related:** FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5
 
@@ -264,7 +264,7 @@ All six 4's are projections of the same structural fact: **the cubic point group
 
 ## 7 · Verification artifacts
 
-- [`scripts/exploration/verify_k_derivation_2026-04-28.py`](../../../scripts/exploration/verify_k_derivation_2026-04-28.py) — runs C1-C4 verification.
+- [`scripts/exploration/verify_k_derivation_2026-04-28.py`](../../../../scripts/exploration/verify_k_derivation_2026-04-28.py) — runs C1-C4 verification.
 - C1: character-table verification of mult(A_{1g}) = 4. **PASS** (from group theory).
 - C2: direct 27×27 diagonalization confirms 4 A_{1g}-pure eigvecs with eigenvalues matching hand-derived 4×4. **PASS** (machine precision).
 - C3: forward wave-equation evolution from δ_center; initial energy distribution {3/8, 1/8, 3/8, 1/8} exactly. **PASS**.

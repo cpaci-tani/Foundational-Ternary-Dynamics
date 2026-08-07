@@ -8,7 +8,7 @@
 `[CLOSED NEGATIVE — BOTH REGISTERED ENERGIES]`  
 **Verdict:** `EDGE_PLANE_NONSMOOTH_STATIONARY_REQUIRES_SUBGRADIENT_SELECTION`  
 **Pre-registration:**
-[`PREREG_EDGE_PLANE_ONE_SIDED_VARIATION_v1.md`](../10_eft_program/preregistrations/PREREG_EDGE_PLANE_ONE_SIDED_VARIATION_v1.md)  
+[`PREREG_EDGE_PLANE_ONE_SIDED_VARIATION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EDGE_PLANE_ONE_SIDED_VARIATION_v1.md)  
 **Run of record:** `engine/results/ftd_0539/windows_msvc_cpu.json`
 
 ## 1. In-plane roots exist

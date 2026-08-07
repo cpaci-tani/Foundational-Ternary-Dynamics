@@ -7,9 +7,9 @@ NONZERO ENERGY DEFECT] + [CLOSED NEGATIVE — FROZEN MINIMAL QUADRATIC-COAT
 COMMON ACTION]`  
 **Verdict:** `SELF_CONSISTENT_COAT_PAIR_ENERGY_CLOSES_NEGATIVE`  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_NEUTRAL_PAIR_WORK_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_NEUTRAL_PAIR_WORK_v1.md)  
+[`PREREG_QUADRATIC_COAT_NEUTRAL_PAIR_WORK_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_NEUTRAL_PAIR_WORK_v1.md)  
 **Derivation:**
-[`DERIV_QUADRATIC_COAT_NEUTRAL_PAIR_WORK.md`](../10_eft_program/derivations/DERIV_QUADRATIC_COAT_NEUTRAL_PAIR_WORK.md)  
+[`DERIV_QUADRATIC_COAT_NEUTRAL_PAIR_WORK.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_QUADRATIC_COAT_NEUTRAL_PAIR_WORK.md)  
 **Run of record:** `engine/results/ftd_0546/windows_msvc_cpu.json`
 
 ## Result

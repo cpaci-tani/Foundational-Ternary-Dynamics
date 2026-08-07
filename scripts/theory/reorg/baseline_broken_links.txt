@@ -1,5 +1,2 @@
   docs\theory\07_assessment\core_ledgers\LEDGER.md: [i](Sym²^c ∩ Z[i]-trivial) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\Sym²^c ∩ Z[i]-trivial
-  docs\theory\07_assessment\core_ledgers\LEDGER.md: [AUDIT_ALPHA_EXTRACTION.md](../10_eft_program/AUDIT_ALPHA_EXTRACTION.md) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\10_eft_program\AUDIT_ALPHA_EXTRACTION.md
-  docs\theory\07_assessment\core_ledgers\LEDGER.md: [AUDIT_ALPHA_EXTRACTION.md](../10_eft_program/AUDIT_ALPHA_EXTRACTION.md) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\10_eft_program\AUDIT_ALPHA_EXTRACTION.md
-  docs\theory\07_assessment\core_ledgers\LEDGER.md: [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\03_derivations\AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md
   docs\theory\07_assessment\core_ledgers\LEDGER.md: [i](Sym²^c ∩ Z[i]-trivial) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\Sym²^c ∩ Z[i]-trivial

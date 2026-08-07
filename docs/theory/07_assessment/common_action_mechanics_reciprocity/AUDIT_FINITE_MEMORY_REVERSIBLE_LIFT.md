@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — FINITE LOCAL CHART MEMORY]`  
 **Verdict:** `UNBOUNDED_HISTORY_REQUIRED_FOR_FROZEN_PROJECTION`  
 **Pre-registration:**
-[`PREREG_FINITE_MEMORY_REVERSIBLE_LIFT_v1.md`](../10_eft_program/preregistrations/PREREG_FINITE_MEMORY_REVERSIBLE_LIFT_v1.md)  
+[`PREREG_FINITE_MEMORY_REVERSIBLE_LIFT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FINITE_MEMORY_REVERSIBLE_LIFT_v1.md)  
 **Run of record:** `engine/results/ftd_0499/windows_msvc_cpu.json`
 
 ## 1. The finite-memory obstruction is exact

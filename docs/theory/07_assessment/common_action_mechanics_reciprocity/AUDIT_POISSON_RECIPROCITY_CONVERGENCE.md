@@ -4,8 +4,8 @@
 **Identifier:** `FTD-0440`  
 **Status:** `[MEASURED — STATIC POISSON FORCE]` + `[PASS — PRE-RELAXED RECIPROCITY]` + `[INVALIDATED — MONOTONE COLD-RESIDUAL MODEL]`  
 **Locked verdict:** `NO_SOR_DEPENDENCE`  
-**Valid pre-registration:** [`PREREG_POISSON_RECIPROCITY_CONVERGENCE_v2.md`](../10_eft_program/preregistrations/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v2.md)  
-**Invalid unexecuted v1:** [`PREREG_POISSON_RECIPROCITY_CONVERGENCE_v1.md`](../10_eft_program/preregistrations/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v1.md)  
+**Valid pre-registration:** [`PREREG_POISSON_RECIPROCITY_CONVERGENCE_v2.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v2.md)  
+**Invalid unexecuted v1:** [`PREREG_POISSON_RECIPROCITY_CONVERGENCE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_POISSON_RECIPROCITY_CONVERGENCE_v1.md)  
 **Run of record:** `engine/results/ftd_0440/windows_msvc_cpu_L33.csv`
 
 ## 1. Result

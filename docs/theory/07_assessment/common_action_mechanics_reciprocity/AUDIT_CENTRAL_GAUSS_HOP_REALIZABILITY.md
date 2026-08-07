@@ -7,7 +7,7 @@
 `[MEASURED — MATCHED FACE LOCAL CLOSURE]` +
 `[CLOSED NEGATIVE — CELL-CENTERED J AS SOLE LOCAL SOURCE-TRANSPORT FIELD]` +
 `[OPEN — MATCHED-FACE ENERGY/MOMENTUM TRANSACTION]`  
-**Pre-registration:** [`PREREG_CENTRAL_GAUSS_HOP_REALIZABILITY_v1.md`](../10_eft_program/preregistrations/PREREG_CENTRAL_GAUSS_HOP_REALIZABILITY_v1.md)  
+**Pre-registration:** [`PREREG_CENTRAL_GAUSS_HOP_REALIZABILITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTRAL_GAUSS_HOP_REALIZABILITY_v1.md)  
 **Run of record:** `engine/results/ftd_0471/windows_msvc_cpu.csv`
 
 ## Verdict

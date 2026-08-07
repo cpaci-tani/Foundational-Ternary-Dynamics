@@ -2,7 +2,7 @@
 
 **Status:** [PROPOSAL / SKETCH] — outlines the C1 closability path from [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](../fqcr_program/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) §5. Not derived; not numerically verified end-to-end. The structural constraint identified in §5 is, however, a [THEOREM] of the existing operator stack.
 **Tag impact:** none. This is brainstorming the operator extension that would, if realized, upgrade FTD-0013 [SMC] toward [DERIVED]. No upgrades performed here.
-**Companion:** [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](../fqcr_program/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md), [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md).
+**Companion:** [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](../fqcr_program/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md), [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md), [`REF_REFERENCE_FRAME_VOCABULARY.md`](../../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md).
 
 ---
 
@@ -20,7 +20,7 @@ This doc sketches what (C1) would look like. It does not perform the calculation
 
 ## §2 — FTD's existing "observer" inventory
 
-[`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) explicitly disambiguates "observer." The relevant entries:
+[`REF_REFERENCE_FRAME_VOCABULARY.md`](../../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) explicitly disambiguates "observer." The relevant entries:
 
 | Vocabulary term | Meaning | Operator-theoretic content |
 |---|---|---|
@@ -69,7 +69,7 @@ $$
 
 Before sketching the extension, an observation that constrains it:
 
-**[THEOREM] (derived in this doc, machine-precision verified in [`scripts/exploration/explore_fqcr_t_scale_map.py`](../../../scripts/exploration/explore_fqcr_t_scale_map.py)).** The slope $\partial x_+ / \partial R$ of the FQCR Model V branch readout at the base point ($R = 1$, $N \to \infty$) is
+**[THEOREM] (derived in this doc, machine-precision verified in [`scripts/exploration/explore_fqcr_t_scale_map.py`](../../../../scripts/exploration/explore_fqcr_t_scale_map.py)).** The slope $\partial x_+ / \partial R$ of the FQCR Model V branch readout at the base point ($R = 1$, $N \to \infty$) is
 
 $$
 \left.\frac{\partial x_+}{\partial R}\right|_{R=1} = -\frac{2(G^*)^{3/2}}{\sqrt{4G^* - 1}} = -\frac{G^*}{\delta} \approx -3.092
@@ -245,8 +245,8 @@ This test is not run here because the t-scale map question is a prerequisite, an
 ## §9 — Cross-references
 
 - [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](../fqcr_program/EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) §5 — the C1/C2/C3 trifurcation that this proposal addresses.
-- [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.2, §6 Test 3 — the [SELECTION] tags this proposal would ultimately upgrade.
-- [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) — observer disambiguation; "observation layer" reading.
-- [`FOUND_THE_RATIO_AND_THE_PRODUCT.md`](../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) §5 — the "observer = imaginary axis" reading; complementary to but distinct from the QED-running reading used here.
-- [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) — the [PROPOSITION] tag on $P = 16G^{*3}$ that may also receive operator-theoretic provenance via this extension.
+- [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.2, §6 Test 3 — the [SELECTION] tags this proposal would ultimately upgrade.
+- [`REF_REFERENCE_FRAME_VOCABULARY.md`](../../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) — observer disambiguation; "observation layer" reading.
+- [`FOUND_THE_RATIO_AND_THE_PRODUCT.md`](../../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) §5 — the "observer = imaginary axis" reading; complementary to but distinct from the QED-running reading used here.
+- [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../../07_assessment/spine_gstar_cm_modular/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) — the [PROPOSITION] tag on $P = 16G^{*3}$ that may also receive operator-theoretic provenance via this extension.
 - [`MATH_LOG_GSTAR_IDENTITY.md`](../number_theory/MATH_LOG_GSTAR_IDENTITY.md) §3.5 — Beilinson-conjecture framing of $G^*$ as a regulator-irreducible-sector generating function; the right framework for understanding what "extending the operator stack" actually means structurally.

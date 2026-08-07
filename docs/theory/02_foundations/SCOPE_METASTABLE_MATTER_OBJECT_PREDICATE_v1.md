@@ -330,6 +330,6 @@ The exploratory interpretation and its decisive state-fibre tests are recorded
 in
 [EXPLR_RECURSIVE_MATTER_DERIVATION_AFTER_FTD0754_v1.md](EXPLR_RECURSIVE_MATTER_DERIVATION_AFTER_FTD0754_v1.md),
 with the exact selected-observer ledger in
-[THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md](../10_eft_program/derivations/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md).
+[THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md](../10_eft_program/derivations/constituent_complete_matter/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md).
 Those additions promote no M3 or particle claim and do not alter this
 contract's held-out firewall.

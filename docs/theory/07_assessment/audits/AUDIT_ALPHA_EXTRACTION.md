@@ -27,7 +27,7 @@ plus an unresolved ~1.85× residual.
 **Verdict (final, Phase G):** the residual is **not a
 residual**. It is the zero-parameter value of the periodic lattice
 Poisson Green's function `2 · r · G_L(r)` at the chosen r/L slice.
-See [DERIV_EMERGENT_COULOMB_GEOMETRIC.md](../../10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md):
+See [DERIV_EMERGENT_COULOMB_GEOMETRIC.md](../../10_eft_program/derivations/alpha_readout_programme/DERIV_EMERGENT_COULOMB_GEOMETRIC.md):
 the engine's emergent V(r) mode is unit-charge geometric Coulomb with
 **zero fine-structure content**, and the measured α_r matches the
 zero-parameter analytical prediction to **R² = 1.0000, median 0.07%
