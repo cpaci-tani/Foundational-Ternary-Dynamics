@@ -5369,7 +5369,7 @@ and §7 for prioritized next actions.
 
 ### Deliverables
 
-- NEW: `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`
+- NEW: `docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md`
 - UPDATED: `CLAUDE.md` (ontology statement in "What FTD Is")
 - UPDATED: `META_INDEX.md` (row 7.13 registering reframe audit)
 
@@ -6281,7 +6281,7 @@ sweeps missed.
 
 ### New artifact
 
-- **`docs/theory/07_assessment/AUDIT_ENGINE_CALLSTACK.md`** — complete
+- **`docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_ENGINE_CALLSTACK.md`** — complete
   call-path tree for both paths, cross-reference of all 21 `TermToggles`
   vs CPU/GPU/test coverage, 10 findings (F1–F10), prioritised action
   list. Linked from CLAUDE.md and TRACKER_OPEN_ITEMS.md.
@@ -9490,7 +9490,7 @@ that the FTD-0097 scan ruled as chance-level on 2026-04-27.
 PMNS angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 
 **Foundational commitment:** undefined-boundary lattice ontology (not
-completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`.
+completed-infinity ℤ³). See `docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md`.
 
 **The structural gap (2026-04-27 diagnosis + 2026-04-28 closure, see
 WHERE_WE_LEFT_OFF.md §10 and §10.6):** at the start of 2026-04-27 evening,

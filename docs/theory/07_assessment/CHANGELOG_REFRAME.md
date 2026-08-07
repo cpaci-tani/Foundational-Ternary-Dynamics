@@ -914,7 +914,7 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 | `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` | New §0: standing `[OPEN]` external-human-review-status item, naming this session's own audit as an instance of the pattern, not an exception | ADD |
 | `docs/theory/07_assessment/audits/FALSIFICATION_LEDGER_CONSTRUCTION.md` | "Survives external scrutiny by mathematicians and philosophers of physics" corrected to disclose AI-persona methodology; "boundary strengthened" → ATTEMPTED framing | FIX |
 | `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0249 row) | Matching "strengthening" correction | FIX |
-| `docs/theory/07_assessment/REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md` | Institutional-sounding persona labels flagged as role-play framing, not credentials | FIX |
+| `docs/theory/07_assessment/framework_audits_redteams_reconciliation/REDTEAM_GSTAR_IVY_LEAGUE_2026-05-19.md` | Institutional-sounding persona labels flagged as role-play framing, not credentials | FIX |
 
 **Net effect:** zero promotions. `x₊=1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; no α derived; golden hash `0xb604d81a3d79366e` untouched. Every change either downgrades an overclaim to its already-canonical tag, adds a missing citation/tag/falsifier, or discloses a standing gap. LEDGER rows FTD-0345/FTD-0346 added; next free id **FTD-0347** (FTD-0340–0344 reserved on the still-unmerged `docs/sqrt-as-act-orientation-closure` branch).
 

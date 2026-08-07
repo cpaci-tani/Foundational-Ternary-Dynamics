@@ -132,7 +132,7 @@ Every finite-L FTD prediction with a dimension requires `a_phys` — the lattice
 ## 9 · Reproducibility / pointers
 
 ```
-docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md       # undefined-boundary ontology triage
+docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md       # undefined-boundary ontology triage
 docs/theory/02_foundations/FOUND_AXIOM_ZERO.md            # Axiom Zero, position property
 docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md   # 3.6× plateau context
 docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md  # the sibling open problem

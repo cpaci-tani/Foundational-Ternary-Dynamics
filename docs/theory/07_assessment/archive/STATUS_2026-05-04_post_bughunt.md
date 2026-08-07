@@ -127,7 +127,7 @@ F2, F3, F5, F8, F9, F12, F15 (per `engine/AUDIT_BUG_HUNT.md` if it exists, other
 
 ### §3.5 (infra) AUDIT_ENGINE_CALLSTACK F1–F8
 
-From `docs/theory/07_assessment/AUDIT_ENGINE_CALLSTACK.md`:
+From `docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_ENGINE_CALLSTACK.md`:
 
 - 4 toggles silent no-op on CPU (`pair_production`, `strong_force`, `exchange_force`, `triad_binding`) — add runtime warning or implement CPU ports.
 - GPU path skips `toggles.validate()` — move call before GPU fork.
