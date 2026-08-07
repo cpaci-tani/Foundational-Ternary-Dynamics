@@ -25,6 +25,7 @@ The load-bearing status authorities. If a paper and one of these disagree, these
 | File | Tag | Purpose |
 |---|---|---|
 | [LEDGER.md](core_ledgers/LEDGER.md) | [REFERENCE] | Master claim ledger; every load-bearing claim with tag history + dependencies. Single source of truth for claim status. |
+| [LEDGER_INDEX.md](core_ledgers/LEDGER_INDEX.md) | [REFERENCE] | Generated one-line-per-claim map of the LEDGER (750 claim rows per its own header) grouped into 19 research programmes; the navigation layer for the 2026-08-06 corpus reorg's programme subdirectories (`common_action_mechanics_reciprocity/`, `constituent_complete_matter/`, etc.) — check here before opening a question, to see whether it's already been investigated. Regenerate via `scripts/theory/build_ledger_index.py`; do not edit by hand. |
 | [TRACKER_ONTIC_TRUTH.md](core_ledgers/TRACKER_ONTIC_TRUTH.md) | [REFERENCE] | Canonical bedrock; 5 truth tiers (T1 rock-solid → T5 conjecture), each tied to a verification artifact. |
 | [TRACKER_OPEN_ITEMS.md](core_ledgers/TRACKER_OPEN_ITEMS.md) | [REFERENCE] | Central ledger of every `[OPEN]` claim — code stubs, theory gaps, verification tasks. |
 | [CATALOG_PARAMETRIC_INSERTIONS.md](CATALOG_PARAMETRIC_INSERTIONS.md) | [REFERENCE] | Canonical enumeration of parametric insertions vs genuine derivations. |
@@ -202,6 +203,66 @@ Point-in-time verification artifacts; live state lives in the canonical trackers
 
 ---
 
+## `audits/` — remaining items (added 2026-08-06)
+
+20 further files in `audits/` not already linked above (2 of the directory's 22 files — `AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` and `AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md` — are already listed in "Claim-specific & topic audits"). Tag column copies each file's own `Tag:`/`Status:` header line verbatim.
+
+| File | Tag | Purpose |
+|---|---|---|
+| [AUDIT_ALGEBRAIC_SPINE_2026-06-24.md](audits/AUDIT_ALGEBRAIC_SPINE_2026-06-24.md) | [AUDIT FINDING / TAG-HONESTY] | Deep adversarial re-audit of the algebraic spine (Theorems 1–9); demotion-only corrections across 15 files, zero promotions; provenance anchor for every "corrected 2026-06-24 spine audit" note in the corpus (FTD-0318). |
+| [AUDIT_ALPHA_EXTRACTION.md](audits/AUDIT_ALPHA_EXTRACTION.md) | [AUDIT] | Line-by-line review of the Phase-F "3.6× α_ref" extraction pipeline; superseded by the Phase-G finding that the residual is the zero-parameter periodic-lattice Poisson Green's function, not fine-structure content. Carries a 2026-07-01 staleness notice (FTD-0348). |
+| [AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md](audits/AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md) | [UNDERDETERMINED] | Tests whether the operator determinant equals the J-twisted ζ-regularized determinant; verdict UNDERDETERMINED per pre-reg §6, no spine claim moved (FTD-0235). |
+| [AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md](audits/AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md) | [UNDERDETERMINED] | Broadens the determinant-grading no-go (FTD-0233) with the J-twisted ζ-regularized-determinant candidate; identification with the operator determinant is natural-yet-unforced, UNDERDETERMINED (FTD-0234). |
+| [AUDIT_ANALYTIC_ORIENTATION_CARRIERS.md](audits/AUDIT_ANALYTIC_ORIENTATION_CARRIERS.md) | [DERIVED] + [SYNTHESIS] | Closes the four named analytic-orientation carriers (eta-invariant, theta-with-characteristics, half-derivative, AGM orientation) for the δ period against `AUDIT_W_CARRIER_NARROWING.md`'s surviving loophole; conditional on Chudnovsky 1976 (FTD-0341). |
+| [AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md](audits/AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md) | [AUDIT] | Independent adversarial review finds the ARC-C1/ARC-B2 "FOUND" α-readout verdicts overclaimed; honest status is UNDERDETERMINED; corrected in turn by FTD-0584 (FTD-0232). |
+| [AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md](audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md) | [AUDIT] | Establishes the boundary separating QED imports from native FTD observables for charge quantization (ARC-C1); its topological-quantization claim was later corrected negative by FTD-0584 (FTD-0231). |
+| [AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md](audits/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) | [AUDIT FINDING — UNDERDETERMINED per pre-reg §6 Outcome B] | v1 closure attempt on the clock-hypothesis substrate derivation; adversarial review overturns the executor's self-assessed CLOSED-NEGATIVE to UNDERDETERMINED; queues a v2 pre-registration (FTD-0208). |
+| [AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md](audits/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md) | [AUDIT FINDING — UNDERDETERMINED per pre-reg v2 §6 Outcome B; pre-registration discipline VIOLATED per v2 §1 line 16] | v2 closure attempt invalidated on both process (pre-reg never committed-and-tagged before the result) and substance (a smuggled un-derived budget-conservation primitive); v3 queued (FTD-0208). |
+| [AUDIT_CORPUS_CONSOLIDATION_2026-06-02.md](audits/AUDIT_CORPUS_CONSOLIDATION_2026-06-02.md) | [AUDIT] | Read-only disposition table classifying every active `docs/theory/` document ahead of the Construction Monograph consolidation; no files moved, renamed, or tags changed. |
+| [AUDIT_FTD0110_2026-05-27_RESOLUTION.md](audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md) | [P4 ADVERSARIAL AUDIT] | Challenges the 2026-05-27 retag of FTD-0110 to `[DERIVED]` via the Orbit-Equipartition/Timescale-Separation theorems; recommends reverting to the 2026-05-04 honest position (bridge `[OPEN]`, cluster-size formula `[SMC]`). |
+| [AUDIT_HEEGNER_TOWER_RIGIDITY.md](audits/AUDIT_HEEGNER_TOWER_RIGIDITY.md) | [COMPLETE] | Pre-registered 9-Heegner × 19-coefficient × 17-target rigidity scan; the canonical FTD case is the unique trivial-multiplier match (`[THEOREM]` at that criterion), but one of ~10–20 comparable matches once rational multipliers are allowed (`[SELECTION]`) (FTD-0123). |
+| [AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md](audits/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md) | [COMPLETE] | Pre-registered rigidity scan of the Lemniscate-Alpha 5-harmonic Cayley-Dickson curve; the two-road agreement is real but not structurally unique (~4–5% of natural curves in the family match comparably); confirms SSB-3 `[SELECTION]` (FTD-0122). |
+| [AUDIT_NEWTON_POSTULATES_RECONCILIATION.md](audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) | [AUDIT] | Cross-doc tag-reconciliation between `SPEC_FTD_LAGRANGIAN.md` and `DERIV_NEWTON_FROM_SUBSTRATE.md`; records which `[POSTULATE]` flags are subsumed by `[THEOREM]`-tagged Lagrangian content (FTD-0131 lineage). |
+| [AUDIT_RIGIDITY_CATALOG_v1.md](audits/AUDIT_RIGIDITY_CATALOG_v1.md) | [MEASURED — rigidity audit] | Frozen-MDL null-calibration rigidity test on three `[STRUCTURALLY MOTIVATED PARAMETRIC]` catalog identifications; deflationary — 0 RIGID, all three demote to `[PARAMETRIC]` (FTD-0320). |
+| [AUDIT_RIGIDITY_LOADBEARING_v1.md](audits/AUDIT_RIGIDITY_LOADBEARING_v1.md) | [MEASURED — rigidity audit] | Applies the FTD-0189 look-elsewhere rigidity test to three load-bearing physics identifications that were promoted-then-retracted in the overclaim wave (FTD-0310). |
+| [AUDIT_SCALE0_SUBSTRATE_RESULTS.md](audits/AUDIT_SCALE0_SUBSTRATE_RESULTS.md) | [AUDIT / MEASUREMENT RESULT] | Runs the hash-locked Scale-0 Substrate Protocol pre-registration against the live WASM engine (L=64); verdicts land here, never as edits to the locked pre-reg file. |
+| [AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PARTIAL.md](audits/AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PARTIAL.md) | [PARTIAL] / [UNDERDETERMINED] | Tests whether the internal-observer restriction yields Spekkens knowledge-balance structure; derives the binding half but not the sharp half — the missing ingredient is located but not closed (FTD-0227 provisional). |
+| [AUDIT_W_CARRIER_NARROWING.md](audits/AUDIT_W_CARRIER_NARROWING.md) | [THEOREM] + [OPEN] + [CONJECTURE] | Asks whether the α-binding axiom W can be earned natively; three carrier closures land `[THEOREM]`, one loophole survives `[OPEN]`, its closure is `[CONJECTURE]`; conditional on Chudnovsky 1976 (FTD-0314). |
+| [FALSIFICATION_LEDGER_CONSTRUCTION.md](audits/FALSIFICATION_LEDGER_CONSTRUCTION.md) | [AUDIT] | Five-persona AI red-team (steelman → attack → verdict) plus an F9 collusion re-attack of `MONOGRAPH_FTD_CONSTRUCTION.md`; verifies the monograph promotes nothing and states every claim at its canonical tag. |
+
+---
+
+## `archive/` — remaining items (added 2026-08-06)
+
+5 further files in `archive/` not already linked above (the directory's other 6 files are already listed in "Core epistemic audits", "G* paper review reports", and "Session-wrap audits & status snapshots").
+
+| File | Tag | Purpose |
+|---|---|---|
+| [AUDIT_CAUSALLY_ISOLATED_ENVELOPE_TURNING_v1.md](archive/AUDIT_CAUSALLY_ISOLATED_ENVELOPE_TURNING_v1.md) | [RETRACTED — MODAL MASS-METRIC ERROR, FTD-0675] **[ARCHIVED]** | Historical `CAUSALLY_ISOLATED_ENVELOPE_TURNING_CONSTRUCTIVE` verdict; the modal displacement observable omitted the mass metric, and FTD-0675 supplies an exact counterexample. Archived for provenance only (FTD-0670). |
+| [AUDIT_CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_v1.md](archive/AUDIT_CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_v1.md) | [RETRACTED — MODAL MASS-METRIC ERROR, FTD-0675] **[ARCHIVED]** | Historical `CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_MIXED` verdict; FTD-0675 invalidates the modal recurrence/turning observable — causal-buffer and field-morphology facts are retained, no recurrence verdict survives (FTD-0668). |
+| [AUDIT_INTERNAL_MODE_RETURN_TIME_v1.md](archive/AUDIT_INTERNAL_MODE_RETURN_TIME_v1.md) | [RETRACTED — MODAL MASS-METRIC ERROR, FTD-0675] **[ARCHIVED]** | Historical internal-mode return-time discriminator (tick 73); FTD-0675 invalidates the modal return observable used — the execution record is preserved, but tick 73 is not a canonical mode-energy return time (FTD-0666). |
+| [AUDIT_WEB_ENGINE_CONSISTENCY.md](archive/AUDIT_WEB_ENGINE_CONSISTENCY.md) | [CLOSED -- RESOLVED] **[ARCHIVED]** | Scale and telemetry consistency audit of the FTD web engine, Category 7 assessment (FTD-0250). |
+| [SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md](archive/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md) | [SYNTHESIS] **[ARCHIVED]** | Cross-document roll-up of "the commutativity wall" claims at their canonical LEDGER tags; no new theorem, no promotion or demotion (FTD-0238 provisional). |
+
+---
+
+## `campaigns/archive_session_outputs/` — itemized contents (added 2026-08-06)
+
+6 of the directory's 7 files (its `README.md` is directory-level navigation prose, not itemized here — consistent with this index's existing convention of not listing `README.md` files as content rows). Five of the six carry no explicit bracket-style epistemic tag in their own header (they are process/triage reports, not physics claims); tagged `[UNTAGGED]` per the no-guessing rule, except the sixth (`SESSION_SYNTHESIS_2026-04-30.md`) whose own `Status:` line supplies `[REFERENCE]` verbatim.
+
+| File | Tag | Purpose |
+|---|---|---|
+| [DEVILS_ADVOCATE_REPORT.md](campaigns/archive_session_outputs/DEVILS_ADVOCATE_REPORT.md) | [UNTAGGED] | Adversarial falsification pass on six 2026-04-19 reframe restatements against `CANONICAL_REFRAME.md` v1.0; 3 blocking bugs found and fixed same-day, remainder PASS-WITH-NOTES. |
+| [ENGINE_AUDIT_REFRAME.md](campaigns/archive_session_outputs/ENGINE_AUDIT_REFRAME.md) | [UNTAGGED] | Grep-based sweep of ~70 engine files (C++/CUDA/JS) for completed-infinity framing and hidden α; 3 HIGH findings (2 fixed same-day, 1 deferred), 6 MEDIUM, 9 LOW. Flag-do-not-fix protocol. |
+| [FLAGGED_PASSAGES_PAPERS.md](campaigns/archive_session_outputs/FLAGGED_PASSAGES_PAPERS.md) | [UNTAGGED] | Automated-grep classification of 34 TeX/MD papers in `docs/papers/` against the reframe canonical; 10 clean, ~37 proscribed passages across 7 files. |
+| [INVENTORY_PORTFOLIO.md](campaigns/archive_session_outputs/INVENTORY_PORTFOLIO.md) | [UNTAGGED] | Catalogs 280 editable artifacts outside `docs/theory/` (papers, manuscripts, notebooks, interactive HTML) for reframe-affectedness; 267 editable, 13 PDF-only. |
+| [REDERIVE_REPORT_YM_NS.md](campaigns/archive_session_outputs/REDERIVE_REPORT_YM_NS.md) | [UNTAGGED] | Per-paper triage of the speculative Yang-Mills Mass Gap and Navier-Stokes papers against the reframe; assessment only, no paper rewritten — SPLIT/DEMOTE/RETRACT options laid out. |
+| [SESSION_SYNTHESIS_2026-04-30.md](campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md) | [REFERENCE] | Theorem/retraction/open-problem synthesis imported verbatim from a parallel working session (2026-04-30), cross-referenced against live project state for citation. |
+
+**On the 2026-08-06 programme reorg (~1,011 files into 19 subdirectories, e.g. `common_action_mechanics_reciprocity/`, `constituent_complete_matter/`):** not separately itemized in this index. The topic-based tables above already link directly into those subdirectories wherever this index cites a specific claim (see the FTD-0426–FTD-0605 rows under "Claim-specific & topic audits", which point at `charge_gauss_native_em/`, `common_action_mechanics_reciprocity/`, and `constituent_complete_matter/` paths), so the reorg is already reflected here at the individual-claim level. The directory-level navigation layer for the full programme roll-up is `core_ledgers/LEDGER_INDEX.md` (added to "Canonical trackers & catalogs" above), generated straight from `LEDGER.md` and grouped into the same 19 programmes — duplicating that enumeration by hand in this file would desynchronize on the next LEDGER update, so this index defers to it rather than re-listing ~1,000 rows.
+
+---
+
 ## Subdirectories
 
 This cluster has two subdirectories holding historical / packaged material — not enumerated here:
@@ -211,4 +272,4 @@ This cluster has two subdirectories holding historical / packaged material — n
 
 ---
 
-43 catalogued active docs in this index (+ subdirectories `reframe_deployment/` and `archive_session_outputs/`).
+162 catalogued active docs in this index (2026-08-06 recount — up from the stale "43" this line previously read; the increase is `audits/`, `archive/`, and `campaigns/archive_session_outputs/` reaching full or near-full itemization above, not new documents being written), + subdirectory `campaigns/archive/reframe_deployment/` (prose-only, not itemized).
