@@ -52,11 +52,11 @@
 | [SPEC_SCALE_CONTEXT_READOUT.md](SPEC_SCALE_CONTEXT_READOUT.md) | [AXIOM] / [ACTIVE SPEC] | Defines the scale-context layer $\mathcal{C}_{\rm scale}$ to mathematically separate phenomenon scale from lattice and box scales. |
 | [SPEC_EM_PUBLIC_OBSERVABLE_CLASSIFICATION.md](SPEC_EM_PUBLIC_OBSERVABLE_CLASSIFICATION.md) | [REFERENCE] | Taxonomy of the major FTD electromagnetic observable topologies. |
 | [SPEC_ALPHA_READOUT_OSCILLATORY_CLOUD.md](SPEC_ALPHA_READOUT_OSCILLATORY_CLOUD.md) | [OPEN PROGRAM] | Replaces the static topological loop formalisms. Defines the Alpha Readout target $W_U$ as the dynamic return map of a finite resonant excitation over one natural period. |
-| [SPEC_CLOSED_FLUX_LOOP_READOUT.md](SPEC_CLOSED_FLUX_LOOP_READOUT.md) | [SUPERSEDED] | Falsified by engine test. Static geometric formulation. |
+| [SPEC_CLOSED_FLUX_LOOP_READOUT.md](archive/SPEC_CLOSED_FLUX_LOOP_READOUT.md) | [SUPERSEDED] | Falsified by engine test. Static geometric formulation. |
 | [SPEC_LATTICE_HODGE_CONNECTION.md](SPEC_LATTICE_HODGE_CONNECTION.md) | [OPEN PROGRAM] | Decomposes the flux field ($J = d\phi + \delta B + H$). |
 | [SPEC_CONNECTION_EXTRACTION_RULE.md](SPEC_CONNECTION_EXTRACTION_RULE.md) | [OPEN PROGRAM] | Defines the native connection $A_J$ extracted from the $\mathbb{Z}[i]$-quadrature. |
 | [SPEC_QUADRATURE_CANONICALIZATION.md](SPEC_QUADRATURE_CANONICALIZATION.md) | [OPEN PROGRAM] | Formalizes the admissibility requirements for canonically deriving the intrinsic $\mathbb{Z}[i]$ field $z(v)$. |
-| [SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md](SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md) | [SUPERSEDED] | Falsified by engine test. Static spatial fluctuation response operator. |
+| [SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md](archive/SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md) | [SUPERSEDED] | Falsified by engine test. Static spatial fluctuation response operator. |
 | [SPEC_DIMENSIONAL_MAP.md](SPEC_DIMENSIONAL_MAP.md) | [REFERENCE] (auto-generated) | Dimensionless  dimensional map: spine theorems → predictions → calibration → one worked application. |
 | [SPEC_SM_REPLACEMENT_COMPLETE.md](SPEC_SM_REPLACEMENT_COMPLETE.md) | capstone spec (re-tagged) | L_SM → L_RB replacement; Waves 1–4 synthesis (LEDGER wins on tag conflicts). |
 | [SPEC_FTD_COMPARATIVE_PHYSICS.md](SPEC_FTD_COMPARATIVE_PHYSICS.md) | reference standard | The PF Atlas — how π/4 enters and exits Standard Model formulas, side by side with FTD. |
@@ -87,4 +87,4 @@
 
 ---
 
-29 active docs in this cluster (+ 0 archived).
+29 active docs in this cluster (+ 4 archived: ARCH_SPEC_FTD_COMPLETE_CHAIN.md, archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md, and — archived 2026-08-06, both self-declared [SUPERSEDED] — SPEC_CLOSED_FLUX_LOOP_READOUT.md and SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md). Active-doc count and full index coverage refresh pending (2026-08-06 docs audit found ~54 active docs on disk vs. this count of 29 — see project notes).
