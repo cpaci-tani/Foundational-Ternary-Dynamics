@@ -8,7 +8,7 @@
 
 1. [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) — integer-encoding survey + SM completeness audit; the orientation doc for the cluster.
 2. [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) — full SM-observable roll-up with the ~35 [THEOREM] / ~50 [PARAMETRIC] / ~50+ [EXTERNAL] breakdown stated up front.
-3. [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) — why {3, 4, 7, 13} arise from normed division algebras; x₊, x₋ = 70 ± 67 (Heegner).
+3. [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) — why {3, 4, 7, 13} arise from normed division algebras; x₊, x₋ = 70 ± 67 (Heegner) — arithmetic is [NUMERICAL FACT], but the x₋ ↔ N_c physical reading is **RETIRED** (LEDGER FTD-0014).
 4. [SPEC_ATOMIC_PROPERTY_LEDGER.md](SPEC_ATOMIC_PROPERTY_LEDGER.md) — FTD translation of standard atomic properties, establishing the contextual scale vector $\mathcal{A}_{\rm atom}$ and the implemented `AtomicClosureContext` API.
 
 ## Masses & Standard Model spectrum
@@ -17,8 +17,10 @@
 |---|---|---|
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Mixed: ~35 [THEOREM] / ~50 [PARAMETRIC] / ~50+ [EXTERNAL] | SM observables from framework structure; explicit epistemic notice on which predictions are genuine vs imported. |
 | [DERIV_ELECTRON_MASS_MOTIVATION.md](DERIV_ELECTRON_MASS_MOTIVATION.md) | [SELECTION] | Factor-by-factor motivation for m_e = M_P·√(2π)·(16/3)·α¹¹ (0.19%); combination not uniquely derived. |
+| [THEOREM_N11_ORDER_TYPE_NO_GO.md](THEOREM_N11_ORDER_TYPE_NO_GO.md) | [THEOREM — scoped to permutation-invariant data] | Unordered FTD-0084 multiset {3,3,4,6} is a single S4 orbit of 12 orderings; no permutation-invariant function on it can select the n=11 mass-exponent ordering (FTD-0397). |
 | [PRED_ELECTROWEAK_MASSES.md](PRED_ELECTROWEAK_MASSES.md) | [THEOREM] (running + tree) + [PARAMETRIC] (radiative corr.) | M_Z to 0.02% and M_W to 0.5% from α, sin²θ_W = 3/13, v — zero free parameters. |
 | [FOUND_DISCRETE_NATIVE_MASS_GENERATION.md](FOUND_DISCRETE_NATIVE_MASS_GENERATION.md) | [FOUNDATIONAL / OPERATIONAL] | Rest mass operationally defined as voxel cardinality, with linear-level scaling (FTD-0110) and point-group representation analysis. |
+| [ANALYSIS_TARGET_BLIND_PARTICLEHOOD_v1.md](ANALYSIS_TARGET_BLIND_PARTICLEHOOD_v1.md) | [INVALID — G2 manifestation portability gate failed] | Target-blind A/C/E particlehood campaign (FTD-0399); licenses no particlehood result and no permission to attempt another mass observable on the current engine. |
 | [EXPLR_FTD_MASS_CHAIN.md](EXPLR_FTD_MASS_CHAIN.md) | [arithmetic synthesis — mixed status] | G* → master quadratic → m_e/m_p/m_n arithmetic chain. THEOREM spine; PARAMETRIC / COORDINATE-COINCIDENCE mass matches (mass-unit ≡ m_e; not engine-dynamical). Paired with red-team [AUDIT_MASS_CHAIN_REDTEAM.md](../07_assessment/engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md). |
 
 ## Atomic scale context
@@ -44,7 +46,7 @@
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) | consolidated derivation | Division algebras and Heegner numbers behind {3, 4, 7, 13}; master-quadratic roots as 70 ± 67. |
+| [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) | consolidated derivation | Division algebras and Heegner numbers behind {3, 4, 7, 13}; master-quadratic roots as 70 ± 67 — arithmetic [NUMERICAL FACT], x₋ ↔ N_c physical reading **RETIRED** (LEDGER FTD-0014). |
 | [DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md](DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md) | — | (See above — listed under engine measurements.) |
 | [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) | [REFERENCE] | Integer-encoding catalog + SM completeness matrix; consolidates the former REF_PHYSICS_ENCODINGS + COMPLETENESS_MATRIX docs. |
 | [REF_SCALE1_DYNAMICS_FTD_FORM.md](REF_SCALE1_DYNAMICS_FTD_FORM.md) | [REFERENCE] | Code-grounded cross-walk of every web-dashboard Scale-1 (Particle Engine) dynamic, each formula re-expressed in FTD constants (α→G_C², m_e→K_B, c→1/√3, mass ratios from {3,4,7,13}). Honest banner: re-expression is notation, not derivation — the laws stay imported (tags unchanged). |
@@ -61,4 +63,4 @@ Pure header-only theory overlays on the existing lattice engine, tagged `[CANDID
 
 ---
 
-12 active docs in this cluster (+ 2 archived).
+14 active docs in this cluster (0 archived).
