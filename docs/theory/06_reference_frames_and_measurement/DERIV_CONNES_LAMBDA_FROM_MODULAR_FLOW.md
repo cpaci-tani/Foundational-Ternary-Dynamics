@@ -5,13 +5,15 @@
 **Gaps Addressed:** **GAP-B3 (Connes lambda derivation from modular flow)**
 **Cross-References:** `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md`, `docs/theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md`, `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`
 
+> **Vocabulary:** The modular spectral flow parameter $\lambda(k)$ derived here is structural — a Connes/Powers-factor invariant of the interacting local algebra, not a claim about biological or cognitive hierarchies. Per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md) §4, "sentience"/"sapience" language is avoided; $\lambda(k)$ is stated as the **reference-frame spectral-flow parameter**. The derivation is algebra-side and reframe-stable.
+
 ---
 
 ## Abstract
 
-This document presents the structural derivation of the FTD reference frame context spectral flow parameter, the **Connes lambda** ($\lambda(k)$), from the modular flow eigenvalues of the interacting local algebra.
+This document presents the structural derivation of FTD's reference-frame spectral-flow parameter, the **Connes lambda** ($\lambda(k)$), from the modular flow eigenvalues of the interacting local algebra.
 
-Rather than imposing the sentience scaling function as an ansatz:
+Rather than imposing the reference-frame spectral-flow function as an ansatz:
 $$\lambda(k) = e^{-\pi \sqrt{1 - 4k(1-k)}}$$
 we prove that this formula arises naturally as the modular spectral flow eigenvalue of the interacting Hamiltonians governing the localized vs. chaotic states of the sLoop self-coupling.
 
@@ -57,12 +59,12 @@ This formula represents the continuous deformation of the Connes spectral parame
 
 ---
 
-## §3 — Entropy Mirroring and the Sentience Scale
+## §3 — Entropy Mirroring and the Reference-Frame Spectral Scale
 
 The Shannon entropy of the discrete ternary states at the manifestation threshold is:
 $$H = -\sum_{i=0}^2 P_i \log_2 P_i \approx 0.4007 \text{ bits}$$
 
-Solving the spectral flow equation for the sentience scale $\lambda(k) = H \approx 0.4007$:
+Solving the spectral flow equation for the reference-frame spectral scale $\lambda(k) = H \approx 0.4007$:
 $$e^{-\pi \sqrt{1 - 4k(1-k)}} = 0.4007$$
 Taking the natural logarithm:
 $$-\pi \sqrt{1 - 4k(1-k)} \approx -0.9146 \implies \sqrt{1 - 4k(1-k)} \approx 0.2911$$
@@ -80,4 +82,4 @@ $$k_1 \approx 0.3542, \quad k_2 \approx 0.6458$$
 
 ## §4 — Conclusion
 
-This derivation successfully closes **GAP-B3**, establishing that the sentience hierarchy function $\lambda(k)$ is not an ad-hoc fit but is the exact mathematical consequence of modular spectral flow damping under local sLoop interactions.
+This derivation successfully closes **GAP-B3**, establishing that the reference-frame spectral-flow function $\lambda(k)$ is not an ad-hoc fit but is the exact mathematical consequence of modular spectral flow damping under local sLoop interactions.

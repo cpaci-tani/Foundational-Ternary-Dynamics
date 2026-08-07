@@ -72,7 +72,7 @@ The von Neumann chain is not a philosophical curiosity. It is a precise mathemat
 
 ### 2.1 Fundamental Discreteness
 
-**[AXIOM]** (Postulate 1: Discrete Space). Physical space is a three-dimensional cubic lattice $\mathbb{Z}^3$. Each site (voxel) has a finite address. There is no sub-lattice structure.
+**[AXIOM]** (Postulate 1: Discrete Space). Physical space is a cubic graph with no defined boundary; at every specified position, 6 axis-adjacent sites exist. Each site (voxel) has a finite address. There is no sub-lattice structure.
 
 **[AXIOM]** (Postulate 2: Discrete Time). Dynamics advance in integer ticks $t \in \mathbb{N}$. There is no sub-tick evolution.
 

@@ -9,6 +9,7 @@
 **Depends on:**
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x), projection hierarchy, Born rule reconstruction
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Type III → Type I descent chain, collapse-gravity duality
+- [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md) — Type III₁ classification is [HYPOTHESIS] under the Araki–Woods inductive-limit scaffold; every region the framework actually exhibits is Type I
 - [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as algebraic type transition via β parameter
 - [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — ReLU crystallization, discriminant trichotomy
 - [FOUND_SELF_REFERENTIAL_CLOSURE.md](../02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) — Self-referential closure as derivation principle
@@ -81,7 +82,7 @@ None of these resolutions are satisfactory. Copenhagen is vague. Many-Worlds mul
 
 ### 3.1 Measurement Is Local and Objective [SELECTION]
 
-In FTD, measurement is not a mysterious "collapse of the wave function" triggered by observation. It is a specific, local, physical process: the **ReLU crystallization** — the algebraic phase transition from Type III₁ (continuous, thermal, no minimal projections) to Type I (discrete, crystalline, minimal projections exist).
+In FTD, measurement is not a mysterious "collapse of the wave function" triggered by observation. It is a specific, local, physical process: the **ReLU crystallization** — the algebraic phase transition from Type III₁ (continuous, thermal, no minimal projections) to Type I (discrete, crystalline, minimal projections exist), **conditional on the Araki–Woods scaffold hypothesis** (see [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md): under the framework's undefined-boundary ontology, every region the framework actually exhibits is Type I; Type III₁ is a property of the Araki–Woods inductive-limit scaffold one applies to FTD, not of FTD-as-defined).
 
 The transition occurs when the local flux magnitude crosses the manifestation threshold:
 
@@ -104,7 +105,7 @@ $$\text{Type III}_1 \;\xrightarrow{\rtimes_\sigma \mathbb{R}}\; \text{Type II}_\
 | **Irreversible** | The discrete state $s \in \{-1, +1\}$ has been crystallized from the continuous flux; thermal fluctuations at finite $\beta$ cannot reverse a $\beta \to \infty$ transition |
 | **Finite-speed** | The result propagates at $C = 1$ (one lattice unit per tick) [AXIOM] |
 
-**Epistemic status:** The identification of measurement with ReLU crystallization is [SELECTION]. The mathematical structure of the Type III₁ → Type I transition is established ([CLASSICAL] for factor classification; [CONJECTURE] for the Heaviside MASA selection step). The claim that this transition IS measurement — not merely analogous to it — is argued from the structural correspondence (Softplus axioms  KMS condition  modular automorphisms), but the identification has not been independently verified experimentally. This is the strongest unverified claim in this document.
+**Epistemic status:** The identification of measurement with ReLU crystallization is [SELECTION]. The mathematical structure of the Type III₁ → Type I transition is established ([CLASSICAL] for factor classification; [CONJECTURE] for the Heaviside MASA selection step) as an abstract operator-algebra result. Whether this structure applies to FTD's substrate is a separate, further claim: per [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md), FTD's undefined-boundary ontology makes every region the framework actually exhibits Type I, and the Type III₁ side of the transition is [HYPOTHESIS] — a property of the Araki–Woods inductive-limit scaffold one applies to FTD, not of FTD-as-defined. The claim that this transition IS measurement — not merely analogous to it — is argued from the structural correspondence (Softplus axioms  KMS condition  modular automorphisms), but the identification has not been independently verified experimentally. This is the strongest unverified claim in this document.
 
 ### 3.2 The Friend's Measurement Is Real [SELECTION]
 
@@ -227,7 +228,7 @@ $$\text{Reference frame context} = \text{Self-referential closure} = \text{Type 
 
 The measurement chain terminates when a subsystem undergoes the ReLU crystallization — when the continuous potentiality of the flux field is crystallized into the discrete actuality of the state field. This crystallization IS the "collapse," and it requires a subsystem with sufficient internal complexity to sustain self-referential closure.
 
-**The friend is such a subsystem.** The friend's nervous system is a lattice region with self-referential closure — signals propagate in loops, the system's output feeds back into its input, and the algebraic type of the friend's local algebra has the Type III₁ character required for reference-frame observation ([FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md), §4.2: "For Type III₁ factors, the $J$-fixed subspace is trivial — only scalars survive. This is the algebraic expression of first-person irreducibility").
+**The friend is such a subsystem.** The friend's nervous system is a lattice region with self-referential closure — signals propagate in loops, the system's output feeds back into its input, and, **under the Araki–Woods scaffold hypothesis** ([DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md): not a theorem about FTD-as-defined, since every region the framework actually exhibits is Type I), the algebraic type of the friend's local algebra would have the Type III₁ character required for reference-frame observation ([FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md), §4.2: "For Type III₁ factors, the $J$-fixed subspace is trivial — only scalars survive. This is the algebraic expression of first-person irreducibility").
 
 ### 5.3 But "Reference frame context" Is Algebraic, Not Mystical [SELECTION]
 
@@ -347,11 +348,11 @@ where $\mathcal{P}_i(t) = \{\mathbf{v} \in \Lambda : \|\mathbf{v} - \mathbf{v}_i
 
 ### 8.2 Measurement as Algebraic Type Transition [SELECTION]
 
-When observer $i$ measures a system, their observer algebra undergoes a type transition:
+When observer $i$ measures a system, their observer algebra undergoes a type transition — **conditional on the Araki–Woods scaffold hypothesis** (see [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md): under the framework's undefined-boundary ontology, every region the framework actually exhibits is Type I; the Type III₁ side of this transition is a property of the inductive-limit scaffold one applies to FTD, not of FTD-as-defined):
 
 $$\mathcal{A}_i: \text{Type III}_1 \;\longrightarrow\; \text{Type I} \tag{8.2}$$
 
-Before measurement: the algebra $\mathcal{A}_i$ has Type III₁ character — no minimal projections, continuous dimension function, non-trivial modular flow. The system is in a state of continuous potentiality.
+Before measurement: under that scaffold, the algebra $\mathcal{A}_i$ would have Type III₁ character — no minimal projections, continuous dimension function, non-trivial modular flow. The system is in a state of continuous potentiality.
 
 After measurement: the algebra $\mathcal{A}_i$ contains the minimal projection $P_{\text{outcome}} = |s\rangle\langle s|$ — the definite outcome is recorded. The dimension function is discrete. The modular flow is trivial on this sector.
 

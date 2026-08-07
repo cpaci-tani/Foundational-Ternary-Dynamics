@@ -18,7 +18,7 @@
 | [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md) | [THEOREM] on finite lattices (Type I at every L) + [HYPOTHESIS] for Type-III | Von Neumann algebra of lattice observables and its Murray–von Neumann type; Araki–Woods inductive limit treated as a separate scaffold. |
 | [DERIV_COLLAPSE_MECHANISM.md](DERIV_COLLAPSE_MECHANISM.md) | [SELECTION] with [THEOREM] components | Quantum collapse as an algebraic phase transition: Softplus → ReLU operator, Lindblad master equation, ~18-tick decoherence. |
 | [FOUND_WIGNERS_FRIEND_RESOLUTION.md](FOUND_WIGNERS_FRIEND_RESOLUTION.md) | foundational synthesis with epistemic classification | Why Wigner's friend (and Frauchiger-Renner) dissolves when measurement is an algebraic Type-III → Type-I operation. |
-| [DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md](DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md) | [CONJECTURE] | Connes lambda modular flow derivation: sentience hierarchy scaling lambda(k) derived from interacting modular Hamiltonian spectral flow ratio. |
+| [DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md](DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md) | [CONJECTURE] | Connes lambda modular flow derivation: reference-frame spectral-flow scaling lambda(k) derived from interacting modular Hamiltonian spectral flow ratio. |
 | [EXPLR_SUBSTRATE_NATIVE_ANGLE.md](EXPLR_SUBSTRATE_NATIVE_ANGLE.md) | [MEASURED] + [SELECTION] + [BOUNDARY] | Engine probe (`substrate_angle_probe`): the substrate's only native dynamical angle is the symplectic (quadrature) clock — winds at ω(k); the transverse spatial orientation is frozen; L/R mirrors. The quadrature angle exists but is strictly commutative ([q,p]=0) — incompatibility is the injected M; independent of the W-CRIT-2 α-readout. LEDGER FTD-0251. |
 
 

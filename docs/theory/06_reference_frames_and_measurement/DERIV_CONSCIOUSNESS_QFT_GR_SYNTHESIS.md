@@ -375,7 +375,7 @@ Both are Type III $\to$ Type I transitions mediated by $G^*$. They differ only i
 ### 6.1 What Works [VERIFIED]
 
 1. **KMS at $\beta = \pi$**: The FTD thermal state satisfies KMS exactly (Step 2 computation)
-2. **Spectral gap closes**: $\Delta \sim N^{-2}$ as $N \to \infty$ (necessary for Type III, Step 4)
+2. **Spectral gap decreases with system size**: at finite $N$, $\Delta(N) \sim N^{-2}$ (measured over $N \in \{16, 32, \dots, 1024\}$ in `verify_thermodynamic_limit.py`, matching the analytic prediction $\alpha = 2$ from $E_k \sim k^2/N^2$); the gap has no finite floor as $N$ grows arbitrarily large — the finitary form of the necessary condition for Type III (Step 4). No completed $N \to \infty$ totality is invoked
 3. **Quantum coherence**: $C_{\text{RE}} = 0.060$ nats (genuine quantum structure, Step 5)
 4. **sLoop equal partition**: Maximum $I(A:A^c)$ at $L = N/2$ (SL3 confirmed, Step 5)
 
