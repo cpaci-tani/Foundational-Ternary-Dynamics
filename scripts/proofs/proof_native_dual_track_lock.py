@@ -11,7 +11,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 LOCK = ROOT / "scripts/proofs/native_dual_track_lock.json"
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_FIRST_DUAL_TRACK_RECOVERY.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_NATIVE_FIRST_DUAL_TRACK_RECOVERY.md"
 
 
 def stripped_text(path: Path) -> str:

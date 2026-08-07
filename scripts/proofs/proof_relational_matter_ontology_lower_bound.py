@@ -9,13 +9,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCES = {
-    "docs/theory/10_eft_program/derivations/THEOREM_MATTER_FIELD_MEMORY_KERNEL.md":
+    "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_MATTER_FIELD_MEMORY_KERNEL.md":
         "404A757087233C606A4D82D7522E1E96648D6EF16036EAC5492CD6AA76AB4726",
-    "docs/theory/10_eft_program/derivations/THEOREM_POLARITY_SNAPSHOT_CURRENT_NONUNIQUENESS.md":
+    "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_POLARITY_SNAPSHOT_CURRENT_NONUNIQUENESS.md":
         "FCB92C607A6D8FFC15F384D7D8DCE9943EB733786AC546B5FC3041C59D2B9EC6",
-    "docs/theory/10_eft_program/derivations/THEOREM_CONFIGURATION_SPACE_CARRIER_NECESSITY.md":
+    "docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_CONFIGURATION_SPACE_CARRIER_NECESSITY.md":
         "9FCD2E7AA89C8B38339D730B04AAD2A9797F40E3EDD08ACA3B5C9CFCB4996FBD",
-    "docs/theory/10_eft_program/derivations/THEOREM_RELATIONAL_ENTRY_PRECEDES_ENERGETIC_BINDING_v1.md":
+    "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_RELATIONAL_ENTRY_PRECEDES_ENERGETIC_BINDING_v1.md":
         "9595C2C83A271BAFB0A696C999C89B235B6CEF1EB57CEE2970A4839BFB9E6322",
 }
 

@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_SPLINE_POYNTING_NOETHER_DEFECT_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SPLINE_POYNTING_NOETHER_DEFECT_v1.md"
 PARENT = ROOT / "engine/results/ftd_0618/ftd_0618_closed_symmetry_balanced_gait_v1.json"
 RESULT_DIR = ROOT / "engine/results/ftd_0619"
 RESULT = RESULT_DIR / "ftd_0619_spline_poynting_noether_defect_v1.json"

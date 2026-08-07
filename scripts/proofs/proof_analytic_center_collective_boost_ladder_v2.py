@@ -8,7 +8,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v2.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v2.md"
 RESULT = ROOT / "engine/results/ftd_0644"
 SHA = "24464297DBB82B8D14E143CADB593D49EA07DFDC42648D57350CEF66971B1DD3"
 

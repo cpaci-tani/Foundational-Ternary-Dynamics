@@ -5,7 +5,7 @@ proof_readout_reduction_collapse.py
 
 LEG 3b of the Readout-Structure Independence theorem (MC-T4.3 boundary),
 pre-registered in
-docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md
+docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md
 (§5 Leg 3(3b); §9 method step 4).
 
 CLAIM (made a theorem here, exact representation-theory arithmetic):

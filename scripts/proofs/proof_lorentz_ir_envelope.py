@@ -179,7 +179,7 @@ def main() -> None:
     header = read("engine/include/ftd/lorentz_ir_envelope.h")
     native = read("engine/tests/test_lorentz_ir_envelope.cpp")
     cmake = read("engine/CMakeLists.txt")
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_IR_ENVELOPE.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_IR_ENVELOPE.md")
     require("LORENTZ_IR_ALL_SPEED_SPREAD_COEFF = 11.0 / 540.0" in header
             and "LORENTZ_IR_COMMON_SPEED_GAP_COEFF = 65.0 / 3969.0" in header,
             "S1 engine header exposes both exact envelope coefficients")

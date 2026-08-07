@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_RECOVERY_RESERVOIR_DONOR_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_RECOVERY_RESERVOIR_DONOR_v1.md"
 RUNNER = ROOT / "engine/tests/test_recovery_reservoir_donor.cpp"
 RESULT = ROOT / "engine/results/ftd_0674/ftd_0674_recovery_reservoir_donor_v1.json"
 TICKS = ROOT / "engine/results/ftd_0674/ftd_0674_recovery_reservoir_donor_ticks_v1.csv"

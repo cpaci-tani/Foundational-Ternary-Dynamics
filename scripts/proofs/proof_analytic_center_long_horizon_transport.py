@@ -9,7 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_LONG_HORIZON_TRANSPORT_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_LONG_HORIZON_TRANSPORT_v1.md"
 PARENT = ROOT / "engine/results/ftd_0645/ftd_0645_analytic_center_collective_boost_ladder_v3.json"
 RESULT = ROOT / "engine/results/ftd_0646"
 SHA = "AFE7AD10F6A3935D882EE327F08FDA721ABF19A223029201EACB24FC98C989AF"

@@ -17,8 +17,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CANONICAL_CURRENT_HORIZON_CUDA_v1.md"
-PREEXEC = ROOT / "docs/theory/07_assessment/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_PREEXEC_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/engine_infrastructure_rg/PREREG_CANONICAL_CURRENT_HORIZON_CUDA_v1.md"
+PREEXEC = ROOT / "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_CANONICAL_CURRENT_HORIZON_CUDA_PREEXEC_v1.md"
 RUNNER = ROOT / "engine/tests/campaign_canonical_current_horizon_cuda.cpp"
 AGGREGATE_HEADER = ROOT / "engine/include/ftd/eft/quadratic_coat_face_current.h"
 AGGREGATE_SOURCE = ROOT / "engine/src/eft/quadratic_coat_face_current.cpp"

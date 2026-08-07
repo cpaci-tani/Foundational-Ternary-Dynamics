@@ -14,7 +14,7 @@ getcontext().prec = 50
 D = Decimal
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md"
 RUNNER = ROOT / "engine/tests/test_causal_regional_field_flow.cpp"
 RESULT = ROOT / "engine/results/ftd_0672/ftd_0672_causal_regional_field_flow_v1.json"
 TICKS = ROOT / "engine/results/ftd_0672/ftd_0672_causal_regional_field_flow_ticks_v1.csv"

@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_LATE_REENTRY_COVARIANCE_CONVERGENCE_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_LATE_REENTRY_COVARIANCE_CONVERGENCE_v1.md"
 TEST = ROOT / "engine/tests/test_late_reentry_covariance_convergence.cpp"
 JSON_PATH = ROOT / "engine/results/ftd_0729/ftd_0729_late_reentry_covariance_convergence_v1.json"
 CSV_PATH = ROOT / "engine/results/ftd_0729/ftd_0729_late_reentry_covariance_convergence_v1.csv"

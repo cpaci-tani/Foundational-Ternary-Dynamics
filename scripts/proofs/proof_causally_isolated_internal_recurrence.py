@@ -15,7 +15,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSALLY_ISOLATED_INTERNAL_RECURRENCE_v1.md"
 RUNNER = ROOT / "engine/tests/test_causally_isolated_internal_recurrence.cpp"
 RESULT = ROOT / "engine/results/ftd_0668/ftd_0668_causally_isolated_internal_recurrence_v1.json"
 TICKS = ROOT / "engine/results/ftd_0668/ftd_0668_causally_isolated_internal_recurrence_ticks_v1.csv"

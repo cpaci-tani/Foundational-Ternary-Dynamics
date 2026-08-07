@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_UNIFORM_SINGLE_CORE_STATIONARY_REFINEMENT_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_UNIFORM_SINGLE_CORE_STATIONARY_REFINEMENT_v1.md"
 RESULT = ROOT / "engine/results/ftd_0612/ftd_0612_uniform_single_core_refinement_v1.json"
 ITERATIONS = ROOT / "engine/results/ftd_0612/ftd_0612_uniform_single_core_iterations_v1.csv"
 EXPECTED = "B0C93907D5EEB6BE96ED9BA485E2BC452E6180FE619533052A2D870C73B52002"

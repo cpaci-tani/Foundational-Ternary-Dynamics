@@ -35,7 +35,7 @@ When documents disagree, use this order:
 2. [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) for engine architecture, runtime model, and build surfaces.
 3. Current code and filesystem reality for executable behavior:
    [engine/CMakeLists.txt](engine/CMakeLists.txt), [engine/src/](engine/src), [scripts/tests/](scripts/tests), [scripts/proofs/](scripts/proofs), [engine/config/](engine/config).
-4. [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [evaluation/](evaluation) when you need to know how strong a claim really is.
+4. [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) and [evaluation/](evaluation) when you need to know how strong a claim really is.
 5. Navigation docs such as [META_DOCUMENTATION_MAP.md](META_DOCUMENTATION_MAP.md) and [META_PROJECT_ATLAS.md](META_PROJECT_ATLAS.md) for discovery only, not as normative sources.
 6. `archive/` and superseded theory documents as historical context only unless a newer document explicitly points back to them.
 
@@ -59,7 +59,7 @@ The project’s AI and documentation discipline is explicit and should be preser
 Read these before making theory-facing edits:
 
 - [docs/SPEC_FTD.md](docs/SPEC_FTD.md)
-- [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
 - [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md)
 - [docs/reference/REF_EPISTEMIC_LABELS.md](docs/reference/REF_EPISTEMIC_LABELS.md)
 
@@ -77,7 +77,7 @@ Read these before making theory-facing edits:
 
 1. [docs/SPEC_FTD.md](docs/SPEC_FTD.md)
 2. [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md)
-3. [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+3. [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
 4. [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md)
 5. [docs/reference/REF_SYMBOL_GLOSSARY.md](docs/reference/REF_SYMBOL_GLOSSARY.md)
 
@@ -97,7 +97,7 @@ Read these before making theory-facing edits:
 **Where drift is visible**
 
 - Documentation counts and version labels have needed active cleanup across the public navigation layer; use [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md) for the 2026-04 cleanup provenance.
-- Claim strength differs across layers. [docs/SPEC_FTD.md](docs/SPEC_FTD.md) uses strong “derived/complete” language, while [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) explicitly downgrades many results to selection, insertion, or external physics adoption.
+- Claim strength differs across layers. [docs/SPEC_FTD.md](docs/SPEC_FTD.md) uses strong “derived/complete” language, while [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) explicitly downgrades many results to selection, insertion, or external physics adoption.
 
 ### 2. Engine And Runtime
 
@@ -239,7 +239,7 @@ cd dissemination/whitepaper && pdflatex FTD_Whitepaper.tex
 ### Theory / Documentation Contributor
 
 1. Read [docs/SPEC_FTD.md](docs/SPEC_FTD.md).
-2. Read [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md).
+2. Read [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) and [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md).
 3. Use [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) to choose a category.
 4. Before editing, check [docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) and [docs/theory/07_assessment/core_ledgers/LEDGER.md](docs/theory/07_assessment/core_ledgers/LEDGER.md) to confirm current tag status.
 5. Treat `archive/` and superseded docs as historical unless a current document sends you there.
@@ -267,7 +267,7 @@ cd dissemination/whitepaper && pdflatex FTD_Whitepaper.tex
 - **Version skew in navigation docs.**
   The root guides lag the flagship specs: [META_PROJECT_ATLAS.md](META_PROJECT_ATLAS.md) and [META_DOCUMENTATION_MAP.md](META_DOCUMENTATION_MAP.md) still report older framework/engine versions than [docs/SPEC_FTD.md](docs/SPEC_FTD.md) and [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md).
 - **Claim-strength tension across repo layers.**
-  [README.md](README.md) and [docs/SPEC_FTD.md](docs/SPEC_FTD.md) present strong result language; [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [evaluation/AUDIT_UNRESOLVED_ISSUES.md](evaluation/AUDIT_UNRESOLVED_ISSUES.md) provide the necessary caveats.
+  [README.md](README.md) and [docs/SPEC_FTD.md](docs/SPEC_FTD.md) present strong result language; [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) and [evaluation/AUDIT_UNRESOLVED_ISSUES.md](evaluation/AUDIT_UNRESOLVED_ISSUES.md) provide the necessary caveats.
 - **Engine orchestration hotspots.**
   Changes that touch [engine/src/render_bridge.cpp](engine/src/render_bridge.cpp), [engine/src/main.cpp](engine/src/main.cpp), [engine/web/js/app.js](engine/web/js/app.js), or [engine/CMakeLists.txt](engine/CMakeLists.txt) tend to have wide blast radius.
 - **Python naming drift and duplication.**

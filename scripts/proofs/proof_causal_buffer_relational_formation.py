@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_BUFFER_RELATIONAL_FORMATION_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_BUFFER_RELATIONAL_FORMATION_v1.md"
 RUNNER = ROOT / "engine/tests/test_causal_buffer_relational_formation.cpp"
 RESULT_JSON = ROOT / "engine/results/ftd_0736/ftd_0736_causal_buffer_relational_formation_v1.json"
 RESULT_CSV = ROOT / "engine/results/ftd_0736/ftd_0736_causal_buffer_relational_formation_v1.csv"

@@ -10,7 +10,7 @@ ITER=R/"ftd_0707_l33_symmetry_rest_refinement_iterations_v1.csv"
 STATE=R/"ftd_0707_l33_symmetry_rest_refinement_state_v1.csv"
 TICKS=R/"ftd_0707_l33_symmetry_rest_refinement_ticks_v1.csv"
 RUNNER=ROOT/"engine/tests/test_l33_symmetry_rest_refinement.cpp"
-PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/PREREG_L33_SYMMETRY_REST_REFINEMENT_v1.md"
+PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L33_SYMMETRY_REST_REFINEMENT_v1.md"
 PROTOCOL="0E1C61DDE059B8693DB68438CA17E056B39146278804BB35349DEA6FB5827FB0"
 HASHES={SUMMARY:"E6AFF7C65AB2A4086AEE17F3608911EED2F044CF89B7E9585ECB5F8AF67CE367",
 ITER:"D0CBC4FC895A2C99EEBF653A4178FD3EE367A2B4A41B50D76B3158A09A7E36F0",

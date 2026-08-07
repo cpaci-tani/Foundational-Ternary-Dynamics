@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-THEOREM = ROOT / "docs/theory/10_eft_program/derivations/THEOREM_RELATIONAL_ENTRY_PRECEDES_ENERGETIC_BINDING_v1.md"
+THEOREM = ROOT / "docs/theory/10_eft_program/derivations/constituent_complete_matter/THEOREM_RELATIONAL_ENTRY_PRECEDES_ENERGETIC_BINDING_v1.md"
 RESULT_JSON = ROOT / "engine/results/ftd_0737/ftd_0737_precontact_energetic_capture_delay_v1.json"
 RESULT_CSV = ROOT / "engine/results/ftd_0737/ftd_0737_precontact_energetic_capture_delay_v1.csv"
 

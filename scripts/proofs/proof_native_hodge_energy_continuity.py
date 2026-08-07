@@ -407,7 +407,7 @@ def run_native() -> dict[str, object]:
 
 def main() -> int:
     prereg_hash = sha256(
-        REPO / "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md"
+        REPO / "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NATIVE_HODGE_ENERGY_CONTINUITY_v1.md"
     )
     if prereg_hash != PREREG_SHA:
         raise AssertionError(f"preregistration hash drift: {prereg_hash}")

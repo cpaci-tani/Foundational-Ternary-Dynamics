@@ -179,5 +179,5 @@ to make it appear.
 - [ARCHITECTURE.md](ARCHITECTURE.md) explains loop dynamics, memory ownership,
   backend synchronization, and manifestation lifecycle.
 - [SPEC_ENGINE.md](SPEC_ENGINE.md) is the detailed living engine reference.
-- [../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- [../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
   is the place to check claim status.

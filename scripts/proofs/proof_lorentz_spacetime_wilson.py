@@ -211,8 +211,8 @@ def main() -> None:
     # ------------------------------------------------------------------
     # Documentation/source contract.
     # ------------------------------------------------------------------
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_SPACETIME_WILSON.md")
-    local = read("docs/theory/07_assessment/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_SPACETIME_WILSON.md")
+    local = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md")
     wilson = read(
         "docs/theory/10_eft_program/scopes_and_specs/SPEC_WILSON_DIRAC_FTD.md"
     )

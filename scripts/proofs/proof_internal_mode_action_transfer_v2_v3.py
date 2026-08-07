@@ -11,8 +11,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-P2 = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v2.md"
-P3 = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v3.md"
+P2 = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v2.md"
+P3 = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_MODE_ACTION_TRANSFER_v3.md"
 J1 = ROOT / "engine/results/ftd_0660/ftd_0660_internal_mode_action_transfer_v1.json"
 J2 = ROOT / "engine/results/ftd_0661/ftd_0661_internal_mode_action_transfer_v2.json"
 J3 = ROOT / "engine/results/ftd_0662/ftd_0662_internal_mode_action_transfer_v3.json"

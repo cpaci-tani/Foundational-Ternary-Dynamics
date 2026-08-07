@@ -72,7 +72,7 @@ def main() -> None:
     require(after_rg / 1e-15 > 4e4,
             "P2 optimistic FTD-0416 running misses the declared tolerance by >4e4")
 
-    audit = (ROOT / "docs/theory/07_assessment/AUDIT_LORENTZ_ON_SHELL_COUNTERTERM.md").read_text(encoding="utf-8")
+    audit = (ROOT / "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_ON_SHELL_COUNTERTERM.md").read_text(encoding="utf-8")
     require("not an on-shell result" in audit and "scheme-specific" in audit,
             "S1 surrogate is not promoted to physical pole matching")
     require("ONE-CALIBRATION-SURROGATE-FAILS-THRESHOLD" in audit,

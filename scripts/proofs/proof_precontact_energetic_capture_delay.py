@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_PRECONTACT_ENERGETIC_CAPTURE_DELAY_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PRECONTACT_ENERGETIC_CAPTURE_DELAY_v1.md"
 RUNNER = ROOT / "engine/tests/test_precontact_energetic_capture_delay.cpp"
 RESULT_JSON = ROOT / "engine/results/ftd_0737/ftd_0737_precontact_energetic_capture_delay_v1.json"
 RESULT_CSV = ROOT / "engine/results/ftd_0737/ftd_0737_precontact_energetic_capture_delay_v1.csv"

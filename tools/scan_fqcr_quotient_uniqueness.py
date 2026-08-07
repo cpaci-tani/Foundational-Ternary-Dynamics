@@ -227,7 +227,7 @@ def main():
         cwd=REPO, capture_output=True, text=True).stdout.strip()
     self_sha = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     meta = {
-        "prereg": "docs/theory/10_eft_program/preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md",
+        "prereg": "docs/theory/10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md",
         "prereg_tag": "preregister-fqcr-quotient-uniqueness-v1",
         "prereg_tag_commit": tag_commit,
         "run_date": "2026-07-12",

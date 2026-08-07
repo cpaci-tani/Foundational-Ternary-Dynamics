@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE = ROOT / "engine/results/ftd_0649"
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CELL_MEASURE_COMMON_ACTION_CLOSURE_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CELL_MEASURE_COMMON_ACTION_CLOSURE_v1.md"
 RUNNER = ROOT / "engine/tests/test_cell_measure_common_action_closure.cpp"
 JSON_PATH = BASE / "ftd_0649_cell_measure_common_action_closure_v1.json"
 ARMS_PATH = BASE / "ftd_0649_cell_measure_common_action_closure_arms_v1.csv"

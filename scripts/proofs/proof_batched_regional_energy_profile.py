@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_BATCHED_REGIONAL_ENERGY_PROFILE_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BATCHED_REGIONAL_ENERGY_PROFILE_v1.md"
 EXPECTED = "D1E180A987A24059AB8C49DF97E3A562C91EBE017AA80FA7DB4ED539D46F5E18"
 
 

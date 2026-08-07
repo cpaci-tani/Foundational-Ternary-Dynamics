@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_BOUND_DRESSING_PERSISTENCE_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_BOUND_DRESSING_PERSISTENCE_v1.md"
 TEST = ROOT / "engine/tests/test_bound_dressing_persistence.cpp"
 JSON_PATH = ROOT / "engine/results/ftd_0727/ftd_0727_bound_dressing_persistence_v1.json"
 CSV_PATH = ROOT / "engine/results/ftd_0727/ftd_0727_bound_dressing_persistence_v1.csv"

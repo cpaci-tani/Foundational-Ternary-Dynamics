@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULT = ROOT / "engine/results/ftd_0641"
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_INDEPENDENT_FIELD_MODES_v1.md"
 SHA = "6EB4C1035C29187F22D2FC8BD7A152EF47F148165204B7614504A70979EDB9C8"
 
 

@@ -128,8 +128,8 @@ def main() -> None:
     checks += 1
 
     # Documentation/source contract.
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md")
-    rg_audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_RG_ATTRACTION.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md")
+    rg_audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RG_ATTRACTION.md")
     bridge = read(
         "docs/theory/10_eft_program/derivations/"
         "DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md"

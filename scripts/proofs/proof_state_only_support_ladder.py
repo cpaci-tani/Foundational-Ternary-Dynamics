@@ -20,7 +20,7 @@ RESULTS = ROOT / "engine" / "results" / "ftd_0754_support_ladder"
 BOUNDARY = ROOT / "engine" / "results" / "ftd_0754_boundary_accounting"
 PROTOCOL_HASH = "F1E8A18631D923040607128D34CCC6C2FF17D6D9D0BA594CBF57C7A9157BD48A"
 EXPECTED_HASHES = {
-    "docs/theory/10_eft_program/preregistrations/PREREG_STATE_ONLY_SUPPORT_LADDER_v1.md":
+    "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_STATE_ONLY_SUPPORT_LADDER_v1.md":
         PROTOCOL_HASH,
     "engine/include/ftd/eft/state_only_matter_field_observer.h":
         "F180DAE14DF62244E9F091F68670EA1EEA192881D87BAE86D43BE633C09CC696",

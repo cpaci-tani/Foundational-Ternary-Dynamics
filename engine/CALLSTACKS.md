@@ -14,7 +14,7 @@ Companion references:
 - `engine/SCENARIO_ARCHITECTURE.md` - scenario lifecycle, bridge ownership, and seed setup.
 - `engine/docs/ENGINE_CODE_MAP.md` - file/subsystem navigation map + per-file manifest.
 - `engine/include/ftd/term_toggles.h` - runtime toggle registry.
-- `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` - claim status.
+- `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md` - claim status.
 
 ## 1. Entrypoints
 

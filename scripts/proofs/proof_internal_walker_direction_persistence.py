@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_INTERNAL_WALKER_DIRECTION_PERSISTENCE_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_INTERNAL_WALKER_DIRECTION_PERSISTENCE_v1.md"
 PARENT = ROOT / "engine/results/ftd_0615/ftd_0615_zero_momentum_internal_modes_v1.json"
 RESULT = ROOT / "engine/results/ftd_0616/ftd_0616_internal_walker_direction_persistence_v1.json"
 ARMS = ROOT / "engine/results/ftd_0616/ftd_0616_internal_walker_arms_v1.csv"

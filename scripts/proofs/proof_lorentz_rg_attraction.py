@@ -134,8 +134,8 @@ def main() -> None:
     # Source-contract checks prevent a continuum surrogate from being cited
     # as the missing FTD lattice calculation.
     # ------------------------------------------------------------------
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_RG_ATTRACTION.md")
-    radiative = read("docs/theory/07_assessment/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RG_ATTRACTION.md")
+    radiative = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md")
     wilson = read("docs/theory/10_eft_program/scopes_and_specs/SPEC_WILSON_DIRAC_FTD.md")
     u1_bridge = read(
         "docs/theory/10_eft_program/derivations/"

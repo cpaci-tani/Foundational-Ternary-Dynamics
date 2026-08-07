@@ -2,7 +2,7 @@
 """
 FTD-0097 deterministic look-elsewhere scan runner.
 
-Implements docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md
+Implements docs/theory/07_assessment/qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md
 verbatim. Generates all monomials c · a_1 · a_2 · ... · a_d for
 d ∈ {1,2,3,4}, c ∈ {-3,-2,-1,1,2,3}, atoms picked with repetition
 from the 38-atom catalog. Reports hits against 20 dimensionless
@@ -395,7 +395,7 @@ def emit_meta(values: np.ndarray, hit_count: int, per_target_counts: dict, path:
     meta = {
         "campaign": "look_elsewhere_2026-04-27",
         "ledger_row": "FTD-0097",
-        "protocol": "docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md",
+        "protocol": "docs/theory/07_assessment/qcd_colour_electroweak/PROTOCOL_LOOK_ELSEWHERE_SCAN.md",
         "pre_reg_tag": "preregister-look-elsewhere-scan-v1",
         "n_atoms": N_ATOMS,
         "n_targets": N_TARGETS,

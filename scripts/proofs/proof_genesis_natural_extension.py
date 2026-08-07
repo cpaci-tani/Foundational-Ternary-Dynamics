@@ -33,8 +33,8 @@ SOURCE_PATHS = {
     "voxel_rng": ROOT / "engine/include/ftd/voxel_rng.h",
     "reservoir_header": ROOT / "engine/include/ftd/eft/genesis_reservoir_dilation.h",
     "reservoir_source": ROOT / "engine/src/eft/genesis_reservoir_dilation.cpp",
-    "ftd0569_theorem": ROOT / "docs/theory/10_eft_program/derivations/THEOREM_GENESIS_RESERVOIR_DILATION.md",
-    "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_NATURAL_EXTENSION_v1.md",
+    "ftd0569_theorem": ROOT / "docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_RESERVOIR_DILATION.md",
+    "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_NATURAL_EXTENSION_v1.md",
 }
 IMPLEMENTATION_PATHS = {
     "header": ROOT / "engine/include/ftd/eft/genesis_natural_extension.h",

@@ -60,12 +60,12 @@ LOCKED_ARTIFACTS = [
     ),
     LockedArtifact(
         name="FTD-0278 preregistration",
-        path="docs/theory/10_eft_program/preregistrations/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md",
+        path="docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md",
         sha256="6d644aabce4cbd6e54fb159e776eb4e046dfd422ed115dd5710dd7fb2d21c792",
     ),
     LockedArtifact(
         name="FTD-0279 preregistration",
-        path="docs/theory/10_eft_program/preregistrations/PREREG_HELIUM_LATTICE_SCF_v1.md",
+        path="docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HELIUM_LATTICE_SCF_v1.md",
         sha256="f49262b727fb9c29fc08af52f0f432cd052fc326b32a77c90cd4b9ad3691019a",
     ),
 ]

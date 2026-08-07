@@ -95,7 +95,7 @@ The project sits at A- (74.0). The theory is internally consistent (Bell closed,
 
 **Primary evidence**
 
-- [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- [docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
 - [docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](../docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
 - [docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md](../docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md) (Bell resolution)
 - [AUDIT_UNRESOLVED_ISSUES.md](AUDIT_UNRESOLVED_ISSUES.md)

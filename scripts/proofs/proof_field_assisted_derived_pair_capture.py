@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_FIELD_ASSISTED_DERIVED_PAIR_CAPTURE_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FIELD_ASSISTED_DERIVED_PAIR_CAPTURE_v1.md"
 TEST = ROOT / "engine/tests/test_field_assisted_derived_pair_capture.cpp"
 JSON_PATH = ROOT / "engine/results/ftd_0722/ftd_0722_field_assisted_derived_pair_capture_v1.json"
 CSV_PATH = ROOT / "engine/results/ftd_0722/ftd_0722_field_assisted_derived_pair_capture_v1.csv"

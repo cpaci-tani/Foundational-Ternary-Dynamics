@@ -87,7 +87,7 @@ Important distinction:
 
 - Public-facing summaries, especially in `README.md` and flagship docs, are stronger in tone than the audit/evaluation layer.
 - This pass does not rewrite the theory corpus, but it does ensure navigation docs steer readers to:
-  - `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md`
+  - `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md`
   - `docs/reference/REF_SCOPE_LIMITATIONS.md`
   - `evaluation/AUDIT_UNRESOLVED_ISSUES.md`
 

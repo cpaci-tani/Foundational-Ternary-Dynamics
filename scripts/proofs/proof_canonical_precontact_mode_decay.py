@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CANONICAL_PRECONTACT_MODE_DECAY_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CANONICAL_PRECONTACT_MODE_DECAY_v1.md"
 PARENT_JSON = ROOT / "engine/results/ftd_0674/ftd_0674_recovery_reservoir_donor_v1.json"
 PARENT_CSV = ROOT / "engine/results/ftd_0674/ftd_0674_recovery_reservoir_donor_ticks_v1.csv"
 RESULT_JSON = ROOT / "engine/results/ftd_0676/ftd_0676_canonical_precontact_mode_decay_v1.json"

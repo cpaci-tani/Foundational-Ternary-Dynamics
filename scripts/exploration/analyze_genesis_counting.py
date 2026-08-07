@@ -3,7 +3,7 @@
 FTD-0277 v1 adjudicator: collective-coordinate / genesis-counting model.
 
 This script encodes the frozen gates in
-docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md.
+docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_GENESIS_COUNTING_v1.md.
 It evaluates the already-declared analytic firing-rank model against the
 FTD-0261/0269 run-of-record targets. It performs no parameter fitting beyond
 the declared broken-power diagnostic.

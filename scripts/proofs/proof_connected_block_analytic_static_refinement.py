@@ -10,7 +10,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULT = ROOT / "engine/results/ftd_0638"
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_STATIC_REFINEMENT_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_STATIC_REFINEMENT_v1.md"
 SHA = "2E74799DB0372137071B5CF840D5C330AF4A3FEDE14EE9C4972B2C1796D056BA"
 
 

@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_ENERGY_ADAPTED_MIXED_CAPTURE_CORNERS_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ENERGY_ADAPTED_MIXED_CAPTURE_CORNERS_v1.md"
 TEST = ROOT / "engine/tests/test_energy_adapted_mixed_capture_corners.cpp"
 JSON_PATH = ROOT / "engine/results/ftd_0734/ftd_0734_energy_adapted_mixed_capture_corners_v1.json"
 CSV_PATH = ROOT / "engine/results/ftd_0734/ftd_0734_energy_adapted_mixed_capture_corners_v1.csv"
