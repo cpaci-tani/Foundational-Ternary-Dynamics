@@ -8,7 +8,7 @@
 **Artifact SHA256:** `a47de9c1bb52f92a6dc35471f4eba516fb76acaf9b66abd3de44dd6431d67edf`
 **Lock commit:** `8ccfee7b`
 **Lock tag:** `preregister-thomson-radiation-shells-v1`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md`
 
 ---
 

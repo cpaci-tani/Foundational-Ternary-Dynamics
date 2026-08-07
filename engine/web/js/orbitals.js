@@ -7,7 +7,7 @@
  * applied universally to all elements and tuned for display. This is NOT a
  * multi-electron solve and makes no claim that the cloud matches the true
  * electron density of, e.g., carbon. FTD does not derive atomic orbitals; see
- * docs/theory/07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md.
+ * docs/theory/07_assessment/engine_emergence_campaigns/AUDIT_ATOMIC_DYNAMICS_STATUS.md.
  *
  * Also renders nuclear structure: protons (red) and neutrons (blue) as dense
  * point clusters at the atom center, with nuclear radius scaling as A^(1/3).

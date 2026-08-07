@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0292
 **Status:** [MEASUREMENT -- NUMERIC GATE INVALIDATED]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_INVARIANT_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_TICK_INVARIANT_v1.md`
 **Lock commit:** `87f0cda2`
 **Lock tag:** `preregister-thomson-tick-invariant-v1`
 **Artifact:** `engine/tests/campaign_thomson_tick_invariant.cpp`

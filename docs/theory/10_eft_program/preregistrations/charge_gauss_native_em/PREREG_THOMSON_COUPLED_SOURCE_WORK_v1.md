@@ -8,7 +8,7 @@
 **Artifact SHA256:** `95747a57895973577e0054d075752b79e74173507097652e31498b125d7ec88e`
 **Lock commit:** `5d88062e`
 **Lock tag:** `preregister-thomson-coupled-source-work-v1`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md`
 
 ---
 

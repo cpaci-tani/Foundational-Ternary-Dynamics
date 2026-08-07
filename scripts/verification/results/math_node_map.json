@@ -20206,9 +20206,9 @@
         ],
         "primary_tag": "THEOREM",
         "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-05-25 — `docs/theory/10_eft_program/derivations/FOUND_SPIN2_BOUNDARY_THEOREM.md`. Pre-reg `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` hash-locked commit `d8e016b` tag `preregister-spin2-boundary-theorem-v1` SHA256 `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`. Adversarial reviewer (per pre-reg §10): independent `general-purpose` agent (executor cannot self-review). Adversarial verdict: **PASS-WITH-CAVEATS** (4 caveats addressed inline in result-doc: §5.1 uniqueness sub-case walk; lattice bubble-integral finite-L caveat; L=128 deferral framing; Conjecture 10.1 scope-bounding). 0/10 F-falsifiers fire (independently confirmed). 0/8 banned moves invoked (independently confirmed). Load-bearing F-h (no conflation of FTD-0193 empirics with axiomatic forbiddenness) correctly handled — (C2-3) [THEOREM] tag rests on structural composition argument; FTD-0193 is the [SMC] empirical floor only. Plan v2 Arc C2 marked CLOSED with FOUND verdict. Arc E (MC-T4.3 boundary theorem)...",
+        "description": "NEW 2026-05-25 — `docs/theory/10_eft_program/derivations/gravity_cosmology/FOUND_SPIN2_BOUNDARY_THEOREM.md`. Pre-reg `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` hash-locked commit `d8e016b` tag `preregister-spin2-boundary-theorem-v1` SHA256 `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`. Adversarial reviewer (per pre-reg §10): independent `general-purpose` agent (executor cannot self-review). Adversarial verdict: **PASS-WITH-CAVEATS** (4 caveats addressed inline in result-doc: §5.1 uniqueness sub-case walk; lattice bubble-integral finite-L caveat; L=128 deferral framing; Conjecture 10.1 scope-bounding). 0/10 F-falsifiers fire (independently confirmed). 0/8 banned moves invoked (independently confirmed). Load-bearing F-h (no conflation of FTD-0193 empirics with axiomatic forbiddenness) correctly handled — (C2-3) [THEOREM] tag rests on structural composition argument; FTD-0193 is the [SMC] empirical floor only. Plan v2 Arc C2 marked CLOSED with FOUND verdict. Arc E (MC-T4.3 boundary theorem)...",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/10_eft_program/derivations/FOUND_SPIN2_BOUNDARY_THEOREM.md",
+        "primary_doc": "docs/theory/10_eft_program/derivations/gravity_cosmology/FOUND_SPIN2_BOUNDARY_THEOREM.md",
         "script_refs": [],
         "deps": [
           "FTD-0131",
@@ -20597,9 +20597,9 @@
         ],
         "primary_tag": "UNDERDETERMINED",
         "epistemic_color": "#9e9e9e",
-        "description": "NEW 2026-05-28; corrected 2026-07-26 by FTD-0584 — `docs/theory/10_eft_program/derivations/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`, locked preregistration (historical), and `docs/theory/07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`.",
+        "description": "NEW 2026-05-28; corrected 2026-07-26 by FTD-0584 — `docs/theory/10_eft_program/derivations/alpha_readout_programme/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`, locked preregistration (historical), and `docs/theory/07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`.",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/10_eft_program/derivations/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md",
+        "primary_doc": "docs/theory/10_eft_program/derivations/alpha_readout_programme/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md",
         "script_refs": [],
         "deps": [
           "FTD-0584"
@@ -20703,9 +20703,9 @@
         ],
         "primary_tag": "PRE_REGISTRATION",
         "epistemic_color": "#1976d2",
-        "description": "NEW 2026-05-30 (registered during audit-remediation consolidation to surface the collision; not authored here) — `docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_BOUNDARY_v2.md`, `docs/theory/07_assessment/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`.",
+        "description": "NEW 2026-05-30 (registered during audit-remediation consolidation to surface the collision; not authored here) — `docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_BOUNDARY_v2.md`, `docs/theory/07_assessment/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`.",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_ALPHA_READOUT_BOUNDARY_v2.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_ALPHA_READOUT_BOUNDARY_v2.md",
         "script_refs": [],
         "deps": []
       },
@@ -20772,9 +20772,9 @@
         ],
         "primary_tag": "THEOREM",
         "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-06-10 — `docs/theory/10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`. Verified by `scripts/proofs/proof_k_bind_axiomatization.py`.",
+        "description": "NEW 2026-06-10 — `docs/theory/10_eft_program/derivations/alpha_readout_programme/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`. Verified by `scripts/proofs/proof_k_bind_axiomatization.py`.",
         "sector": "pure-math/master-quadratic",
-        "primary_doc": "docs/theory/10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md",
+        "primary_doc": "docs/theory/10_eft_program/derivations/alpha_readout_programme/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md",
         "script_refs": [
           "scripts/proofs/proof_k_bind_axiomatization.py"
         ],
@@ -21200,9 +21200,9 @@
         ],
         "primary_tag": "THEOREM",
         "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-06-10 — `docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md`. Closes the blocked effective action task in the status checklist. Deps: FTD-0112, SPEC_FTD_NATIVE_BLOCKING_MAP.md, THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md.",
+        "description": "NEW 2026-06-10 — `docs/theory/10_eft_program/derivations/spine_gstar_cm_modular/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md`. Closes the blocked effective action task in the status checklist. Deps: FTD-0112, SPEC_FTD_NATIVE_BLOCKING_MAP.md, THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md.",
         "sector": "pure-math/unclassified",
-        "primary_doc": "docs/theory/10_eft_program/derivations/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md",
+        "primary_doc": "docs/theory/10_eft_program/derivations/spine_gstar_cm_modular/DERIV_FTD_NATIVE_EFFECTIVE_ACTION.md",
         "script_refs": [],
         "deps": [
           "FTD-0112"
@@ -21508,9 +21508,9 @@
         ],
         "primary_tag": "CLOSED_NEGATIVE",
         "epistemic_color": "#c62828",
-        "description": "NEW 2026-06-12 — pre-reg `docs/theory/10_eft_program/preregistrations/PREREG_DRAIN_SCALING_v1.md` (tag `preregister-drain-scaling-v1`); analysis `docs/theory/03_derivations/foundational_mechanics/DERIV_KINETIC_DRAIN_FROM_QUADRATURE.md`; artifacts `engine/tests/campaign_drain_scan.cpp` (SHA `acd03bbd…`) + `scripts/exploration/analyze_drain_scan.py` (SHA `59df53fe…`) + `scripts/exploration/genesis_na_law_gamma_sweep.py`; runs of record `engine/results/drain_scan/{drain_scan_v1.csv,gamma_sweep_legB.log}` (local). Deps: FTD-0269 (the N(A) BOUNDARY this follows up), FTD-0261 (current-stack reference law), FTD-0110 (linear k=¼ theorem, untouched), FTD-0257 (the (q,p) quadrature pair tested in Leg C).",
+        "description": "NEW 2026-06-12 — pre-reg `docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_DRAIN_SCALING_v1.md` (tag `preregister-drain-scaling-v1`); analysis `docs/theory/03_derivations/foundational_mechanics/DERIV_KINETIC_DRAIN_FROM_QUADRATURE.md`; artifacts `engine/tests/campaign_drain_scan.cpp` (SHA `acd03bbd…`) + `scripts/exploration/analyze_drain_scan.py` (SHA `59df53fe…`) + `scripts/exploration/genesis_na_law_gamma_sweep.py`; runs of record `engine/results/drain_scan/{drain_scan_v1.csv,gamma_sweep_legB.log}` (local). Deps: FTD-0269 (the N(A) BOUNDARY this follows up), FTD-0261 (current-stack reference law), FTD-0110 (linear k=¼ theorem, untouched), FTD-0257 (the (q,p) quadrature pair tested in Leg C).",
         "sector": "pure-math/structure",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_DRAIN_SCALING_v1.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_DRAIN_SCALING_v1.md",
         "script_refs": [
           "scripts/exploration/analyze_drain_scan.py",
           "scripts/exploration/genesis_na_law_gamma_sweep.py"
@@ -21533,7 +21533,7 @@
         "epistemic_color": "#c62828",
         "description": "**[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]** (Leg 1, pre-registered `PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md`, tag `preregister-hydrogen-lattice-spectrum-v1`, lock `6be49fe9`, artifact SHA `8e953fac…`) + **[THEOREM at engine level]** (Leg 0 guidance no-go). The \"biggest-win\" arc from the emergent-physics roadmap: flips the framework's worst sector statement from \"atomic dynamics ~0% derived\" (FTD-0270, which STANDS unconditionally) to \"atomic bound-state structure derivable GIVEN one motivated scalar + one motivated coupling\" — the conditional twin of FTD-0271 extended from free-particle kinematics to BOUND-STATE structure. **(Leg 0) Guidance-absence no-go** (`DERIV_GUIDANCE_ABSENCE_NOGO.md`, commit `fe05c473`): the FTD force law contains NO phase-gradient coupling — [THEOREM at engine level] by enumeration (f_em magnitude/potential/divergence + f_grav density + f_lorentz curl + f_color position; none a functional of the envelope phase S) + the FTD-0271 Phase-E measured null (v≈1e-19...",
         "sector": "pure-math/structure",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md",
         "script_refs": [
           "scripts/exploration/derive_hydrogen_lattice_spectrum.py"
         ],
@@ -21557,9 +21557,9 @@
         ],
         "primary_tag": "DERIVED",
         "epistemic_color": "#388e3c",
-        "description": "NEW 2026-06-12 — pre-reg `docs/theory/10_eft_program/preregistrations/PREREG_HELIUM_LATTICE_SCF_v1.md`; verdict `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_HELIUM_LATTICE_SCF_v1.md`; artifact `scripts/exploration/derive_helium_lattice_scf.py` (imports the LOCKED FTD-0278 module — its lock untouched); run of record `scripts/exploration/results/helium_scf_2026-06-12.{csv,log}` (local). Deps: FTD-0278 (the conditional sector + the locked one-body machinery), FTD-0270 (the challenge answered at its ceiling), FTD-0255/FC-1 (the declared correlation boundary), FTD-0004/OT-1.4 (the Green's function, used twice).",
+        "description": "NEW 2026-06-12 — pre-reg `docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HELIUM_LATTICE_SCF_v1.md`; verdict `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_HELIUM_LATTICE_SCF_v1.md`; artifact `scripts/exploration/derive_helium_lattice_scf.py` (imports the LOCKED FTD-0278 module — its lock untouched); run of record `scripts/exploration/results/helium_scf_2026-06-12.{csv,log}` (local). Deps: FTD-0278 (the conditional sector + the locked one-body machinery), FTD-0270 (the challenge answered at its ceiling), FTD-0255/FC-1 (the declared correlation boundary), FTD-0004/OT-1.4 (the Green's function, used twice).",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_HELIUM_LATTICE_SCF_v1.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HELIUM_LATTICE_SCF_v1.md",
         "script_refs": [
           "scripts/exploration/derive_helium_lattice_scf.py"
         ],
@@ -21673,9 +21673,9 @@
         ],
         "primary_tag": "MEASURED",
         "epistemic_color": "#66bb6a",
-        "description": "NEW 2026-06-14 — pre-reg `docs/theory/10_eft_program/preregistrations/PREREG_WAVE_SECTORS_v1.md`; verdict `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_WAVE_SECTORS_v1.md`; artifacts `engine/tests/campaign_wave_sectors.cpp` (SHA `e25396b8…`) + `scripts/exploration/analyze_wave_sectors.py` (SHA `b76869fe…`); runs of record `engine/results/wave_sectors/*.csv` (local). Companion [VISUALIZATION]: docked Scale-0 dispersion panel `dispersion-panel.js`. Deps: FTD-0298 (boundary confirmed), FTD-0270 (axial dispersion), FTD-0272 (first-order genesis condensate), FTD-0258/PL-5 (anisotropy).",
+        "description": "NEW 2026-06-14 — pre-reg `docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_WAVE_SECTORS_v1.md`; verdict `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_WAVE_SECTORS_v1.md`; artifacts `engine/tests/campaign_wave_sectors.cpp` (SHA `e25396b8…`) + `scripts/exploration/analyze_wave_sectors.py` (SHA `b76869fe…`); runs of record `engine/results/wave_sectors/*.csv` (local). Companion [VISUALIZATION]: docked Scale-0 dispersion panel `dispersion-panel.js`. Deps: FTD-0298 (boundary confirmed), FTD-0270 (axial dispersion), FTD-0272 (first-order genesis condensate), FTD-0258/PL-5 (anisotropy).",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_WAVE_SECTORS_v1.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_WAVE_SECTORS_v1.md",
         "script_refs": [
           "scripts/exploration/analyze_wave_sectors.py"
         ],
@@ -21696,9 +21696,9 @@
         ],
         "primary_tag": "CLOSED_NEGATIVE",
         "epistemic_color": "#c62828",
-        "description": "NEW 2026-06-14 -- pre-reg `docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md`; analysis `docs/theory/03_derivations/archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md`; artifact `scripts/exploration/genesis_counting_model.py` SHA `4fdaa1f9...`; analyzer `scripts/exploration/analyze_genesis_counting.py` SHA `7a450602...`; local run `scripts/exploration/results/genesis_counting_v1/analysis.{txt,json}`. Deps: FTD-0261 (current-stack N(A) law), FTD-0267 (one-shot genesis telemetry), FTD-0269 (boundary map), FTD-0276 (drain/gamma follow-up), FTD-0110/0250 (open collective-coordinate reduction).",
+        "description": "NEW 2026-06-14 -- pre-reg `docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_GENESIS_COUNTING_v1.md`; analysis `docs/theory/03_derivations/archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md`; artifact `scripts/exploration/genesis_counting_model.py` SHA `4fdaa1f9...`; analyzer `scripts/exploration/analyze_genesis_counting.py` SHA `7a450602...`; local run `scripts/exploration/results/genesis_counting_v1/analysis.{txt,json}`. Deps: FTD-0261 (current-stack N(A) law), FTD-0267 (one-shot genesis telemetry), FTD-0269 (boundary map), FTD-0276 (drain/gamma follow-up), FTD-0110/0250 (open collective-coordinate reduction).",
         "sector": "pure-math/G*-family",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_GENESIS_COUNTING_v1.md",
         "script_refs": [
           "scripts/exploration/analyze_genesis_counting.py",
           "scripts/exploration/genesis_counting_model.py"
@@ -22074,9 +22074,9 @@
         ],
         "primary_tag": "MEASURED",
         "epistemic_color": "#66bb6a",
-        "description": "NEW 2026-06-24 — runners `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` + `tools/scan_adversarial_look_elsewhere.py`; backing `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`. Deps: FTD-0001 (master quadratic), FTD-0013 (x₊=1/α [SMC]), FTD-0097 (the monomial-catalog look-elsewhere precedent), FTD-0318 (the audit that minted this row). Supersedes the \"FTD-0189 (look-elsewhere scan)\" citation string corpus-wide.",
+        "description": "NEW 2026-06-24 — runners `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` + `tools/scan_adversarial_look_elsewhere.py`; backing `docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md`. Deps: FTD-0001 (master quadratic), FTD-0013 (x₊=1/α [SMC]), FTD-0097 (the monomial-catalog look-elsewhere precedent), FTD-0318 (the audit that minted this row). Supersedes the \"FTD-0189 (look-elsewhere scan)\" citation string corpus-wide.",
         "sector": "pure-math/master-quadratic",
-        "primary_doc": "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md",
+        "primary_doc": "docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md",
         "script_refs": [
           "scripts/proofs/proof_polynomial_look_elsewhere_extended.py"
         ],
@@ -22212,9 +22212,9 @@
         ],
         "primary_tag": "DERIVED",
         "epistemic_color": "#388e3c",
-        "description": "NEW 2026-06-25 — `docs/theory/10_eft_program/derivations/FOUND_MCT43_NATIVE_Z2_PERMANENCE.md` (+ pre-reg). Deps: FTD-0244 (the no-go core, extended), FTD-0242 (route-invariance), FTD-0314 (carrier-narrowing, corroborated), FTD-0315 (FC-W), FTD-0325 (i⊥δ), FTD-0327 (AGM witness).",
+        "description": "NEW 2026-06-25 — `docs/theory/10_eft_program/derivations/framework_boundary_imports_consumption/FOUND_MCT43_NATIVE_Z2_PERMANENCE.md` (+ pre-reg). Deps: FTD-0244 (the no-go core, extended), FTD-0242 (route-invariance), FTD-0314 (carrier-narrowing, corroborated), FTD-0315 (FC-W), FTD-0325 (i⊥δ), FTD-0327 (AGM witness).",
         "sector": "pure-math/G*-family",
-        "primary_doc": "docs/theory/10_eft_program/derivations/FOUND_MCT43_NATIVE_Z2_PERMANENCE.md",
+        "primary_doc": "docs/theory/10_eft_program/derivations/framework_boundary_imports_consumption/FOUND_MCT43_NATIVE_Z2_PERMANENCE.md",
         "script_refs": [],
         "deps": [
           "FTD-0242",
@@ -22691,9 +22691,9 @@
         ],
         "primary_tag": "RECONCILIATION",
         "epistemic_color": "#1976d2",
-        "description": "NEW 2026-07-01 — capture doc `docs/theory/07_assessment/AUDIT_REDTEAM_DISSECTION_2026-07-01.md` (21-agent red-team: 10 specialists + 10 independent verifiers + chair synthesis, 447 corpus searches). Branch `docs/redteam-remediation-2026-07-01` (off `main`). Deps: FTD-0001/0013/0015/0121/0129/0189/0193/0319 (the claims corrected), `PROPAGATION_RULE.md` (manuscript edit discipline). Next free id FTD-0346 (merged 2026-07-01 alongside FTD-0340–0344 from `docs/sqrt-as-act-orientation-closure`, sequenced by id below).",
+        "description": "NEW 2026-07-01 — capture doc `docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_REDTEAM_DISSECTION_2026-07-01.md` (21-agent red-team: 10 specialists + 10 independent verifiers + chair synthesis, 447 corpus searches). Branch `docs/redteam-remediation-2026-07-01` (off `main`). Deps: FTD-0001/0013/0015/0121/0129/0189/0193/0319 (the claims corrected), `PROPAGATION_RULE.md` (manuscript edit discipline). Next free id FTD-0346 (merged 2026-07-01 alongside FTD-0340–0344 from `docs/sqrt-as-act-orientation-closure`, sequenced by id below).",
         "sector": "pure-math/master-quadratic",
-        "primary_doc": "docs/theory/07_assessment/AUDIT_REDTEAM_DISSECTION_2026-07-01.md",
+        "primary_doc": "docs/theory/07_assessment/framework_boundary_imports_consumption/AUDIT_REDTEAM_DISSECTION_2026-07-01.md",
         "script_refs": [],
         "deps": [
           "FTD-0001",
@@ -22742,9 +22742,9 @@
         ],
         "primary_tag": "SYNTHESIS",
         "epistemic_color": "#00897b",
-        "description": "NEW 2026-07-01 — capture doc `docs/theory/07_assessment/AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md`. Deps: FTD-0345/0346 (the remediation whose propagation gaps findings 1/4/5 are), FTD-0318 (the Theorem-3 arithmetic/physics split finding 6 canonicalizes), FTD-0244/0314 (the K-BIND tension flagged open), FTD-0013/0023 (Bell/α tags restated). On `main`. Next free id FTD-0348.",
+        "description": "NEW 2026-07-01 — capture doc `docs/theory/07_assessment/framework_audits_redteams_reconciliation/AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md`. Deps: FTD-0345/0346 (the remediation whose propagation gaps findings 1/4/5 are), FTD-0318 (the Theorem-3 arithmetic/physics split finding 6 canonicalizes), FTD-0244/0314 (the K-BIND tension flagged open), FTD-0013/0023 (Bell/α tags restated). On `main`. Next free id FTD-0348.",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/07_assessment/AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md",
+        "primary_doc": "docs/theory/07_assessment/framework_audits_redteams_reconciliation/AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md",
         "script_refs": [],
         "deps": [
           "FTD-0013",
@@ -22866,9 +22866,9 @@
         ],
         "primary_tag": "SYNTHESIS",
         "epistemic_color": "#00897b",
-        "description": "NEW 2026-07-01 — `docs/theory/07_assessment/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md`. Deps: FTD-0345-0351 (the day's arc it grades). Next free id FTD-0353.",
+        "description": "NEW 2026-07-01 — `docs/theory/07_assessment/framework_audits_redteams_reconciliation/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md`. Deps: FTD-0345-0351 (the day's arc it grades). Next free id FTD-0353.",
         "sector": "physics/EM-alpha",
-        "primary_doc": "docs/theory/07_assessment/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md",
+        "primary_doc": "docs/theory/07_assessment/framework_audits_redteams_reconciliation/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md",
         "script_refs": [],
         "deps": [
           "FTD-0345",
@@ -23088,7 +23088,7 @@
         ],
         "primary_tag": "MEASURED",
         "epistemic_color": "#66bb6a",
-        "description": "NEW 2026-07-03 — verdict doc `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_QDYN_MASS_GAP_v2.md`; instrument `engine/tests/campaign_mass_gap_v2.cpp`; frozen pre-reg `docs/theory/10_eft_program/preregistrations/PREREG_QDYN_MASS_GAP_v2.md` (git tag `preregister-qdyn-mass-gap-v2`, lock commit `ec48707f`); data of record `engine/results/mass_gap_v2/mass_gap_v2_v2.csv`. Deps: FTD-0270 (the boundary adjudicated), FTD-0333 (v1 INVALID, superseded), FTD-0337 (the leapfrog-growth artifact the E1 integrator fixes), FTD-0271 (native-massless flux). FTD-0361 reserved on unmerged branch `claude/nostalgic-mendeleev-3aa48a`. Next free id FTD-0363.",
+        "description": "NEW 2026-07-03 — verdict doc `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_QDYN_MASS_GAP_v2.md`; instrument `engine/tests/campaign_mass_gap_v2.cpp`; frozen pre-reg `docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_QDYN_MASS_GAP_v2.md` (git tag `preregister-qdyn-mass-gap-v2`, lock commit `ec48707f`); data of record `engine/results/mass_gap_v2/mass_gap_v2_v2.csv`. Deps: FTD-0270 (the boundary adjudicated), FTD-0333 (v1 INVALID, superseded), FTD-0337 (the leapfrog-growth artifact the E1 integrator fixes), FTD-0271 (native-massless flux). FTD-0361 reserved on unmerged branch `claude/nostalgic-mendeleev-3aa48a`. Next free id FTD-0363.",
         "sector": "physics/EM-alpha",
         "primary_doc": "docs/theory/03_derivations/foundational_mechanics/ANALYSIS_QDYN_MASS_GAP_v2.md",
         "script_refs": [],
@@ -23686,9 +23686,9 @@
         ],
         "primary_tag": "SELECTION",
         "epistemic_color": "#fbc02d",
-        "description": "NEW 2026-07-17 — `docs/theory/10_eft_program/preregistrations/PREREG_SELFENERGY_PINNING_v1.md` (§9–§11) + `scripts/proofs/prereg_selfenergy_pinning_predictions.py` + manifest row. Deps: FTD-0130 (role disentanglement), FTD-0116 (measured-stencil adjudication precedent), FTD-0059/0096 (calibration no-gos, untouched), FTD-0044 (per-voxel gap context), FTD-0387 (pricing rules, DRAFT — not pre-empted). Next free id FTD-0389.",
+        "description": "NEW 2026-07-17 — `docs/theory/10_eft_program/preregistrations/engine_infrastructure_rg/PREREG_SELFENERGY_PINNING_v1.md` (§9–§11) + `scripts/proofs/prereg_selfenergy_pinning_predictions.py` + manifest row. Deps: FTD-0130 (role disentanglement), FTD-0116 (measured-stencil adjudication precedent), FTD-0059/0096 (calibration no-gos, untouched), FTD-0044 (per-voxel gap context), FTD-0387 (pricing rules, DRAFT — not pre-empted). Next free id FTD-0389.",
         "sector": "pure-math/Watson-Catalan",
-        "primary_doc": "docs/theory/10_eft_program/preregistrations/PREREG_SELFENERGY_PINNING_v1.md",
+        "primary_doc": "docs/theory/10_eft_program/preregistrations/engine_infrastructure_rg/PREREG_SELFENERGY_PINNING_v1.md",
         "script_refs": [
           "scripts/proofs/prereg_selfenergy_pinning_predictions.py"
         ],
@@ -23711,7 +23711,7 @@
         ],
         "primary_tag": "THEOREM",
         "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-07-20 — `docs/theory/02_foundations/ANALYSIS_FULL_STATE_IRREVERSIBILITY_v1.md` + `docs/theory/10_eft_program/preregistrations/PREREG_FULL_STATE_IRREVERSIBILITY_v1.md` + `engine/tests/test_full_state_irreversibility.cpp`; raw record `engine/results/full_state_irreversibility_2026-07-20/`. Deps: FTD-0394 (readout-only collision), FTD-0253/FC-2 (arrow framing, tags unchanged). Next free id FTD-0396.",
+        "description": "NEW 2026-07-20 — `docs/theory/02_foundations/ANALYSIS_FULL_STATE_IRREVERSIBILITY_v1.md` + `docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FULL_STATE_IRREVERSIBILITY_v1.md` + `engine/tests/test_full_state_irreversibility.cpp`; raw record `engine/results/full_state_irreversibility_2026-07-20/`. Deps: FTD-0394 (readout-only collision), FTD-0253/FC-2 (arrow framing, tags unchanged). Next free id FTD-0396.",
         "sector": "pure-math/unclassified",
         "primary_doc": "docs/theory/02_foundations/ANALYSIS_FULL_STATE_IRREVERSIBILITY_v1.md",
         "script_refs": [],
@@ -23733,7 +23733,7 @@
         ],
         "primary_tag": "NO_GO",
         "epistemic_color": "#c62828",
-        "description": "NEW 2026-07-20 — `docs/theory/02_foundations/ANALYSIS_NONLINEAR_DELTA_IND_v2.md` + `docs/theory/10_eft_program/preregistrations/PREREG_NONLINEAR_DELTA_IND_v2.md` + `scripts/proofs/proof_nonlinear_delta_ind_v2.py`; raw record `engine/results/nonlinear_delta_ind_v2_2026-07-20/`. Deps: FTD-0368/0369 (v1 linear closure and conditional theorem), FTD-0383 D-1 (v2 authorization). Next free id FTD-0397.",
+        "description": "NEW 2026-07-20 — `docs/theory/02_foundations/ANALYSIS_NONLINEAR_DELTA_IND_v2.md` + `docs/theory/10_eft_program/preregistrations/framework_boundary_imports_consumption/PREREG_NONLINEAR_DELTA_IND_v2.md` + `scripts/proofs/proof_nonlinear_delta_ind_v2.py`; raw record `engine/results/nonlinear_delta_ind_v2_2026-07-20/`. Deps: FTD-0368/0369 (v1 linear closure and conditional theorem), FTD-0383 D-1 (v2 authorization). Next free id FTD-0397.",
         "sector": "pure-math/master-quadratic",
         "primary_doc": "docs/theory/02_foundations/ANALYSIS_NONLINEAR_DELTA_IND_v2.md",
         "script_refs": [
@@ -23755,7 +23755,7 @@
         ],
         "primary_tag": "THEOREM",
         "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-07-20 — `docs/theory/05_particles/THEOREM_N11_ORDER_TYPE_NO_GO.md` + `docs/theory/10_eft_program/preregistrations/PREREG_N11_ORDER_TYPE_NO_GO_v1.md` + `scripts/proofs/proof_n11_order_type_no_go.py`; raw record `engine/results/n11_order_type_no_go_2026-07-20/`. Deps: FTD-0084 (multiset theorem), FTD-0015/0390 (selection status and prior audit). Next free id FTD-0398.",
+        "description": "NEW 2026-07-20 — `docs/theory/05_particles/THEOREM_N11_ORDER_TYPE_NO_GO.md` + `docs/theory/10_eft_program/preregistrations/spine_master_quadratic/PREREG_N11_ORDER_TYPE_NO_GO_v1.md` + `scripts/proofs/proof_n11_order_type_no_go.py`; raw record `engine/results/n11_order_type_no_go_2026-07-20/`. Deps: FTD-0084 (multiset theorem), FTD-0015/0390 (selection status and prior audit). Next free id FTD-0398.",
         "sector": "physics/gravity",
         "primary_doc": "docs/theory/05_particles/THEOREM_N11_ORDER_TYPE_NO_GO.md",
         "script_refs": [
@@ -23776,7 +23776,7 @@
         ],
         "primary_tag": "MEASURED",
         "epistemic_color": "#66bb6a",
-        "description": "NEW 2026-07-20 — `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md` + `docs/theory/10_eft_program/preregistrations/PREREG_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md` + `engine/tests/campaign_topological_charge_transport.cpp` + `scripts/proofs/verify_topological_charge_transport.py`; raw record `engine/results/topological_charge_transport_2026-07-20/`. Deps: FTD-0392 (freeze-time local-shell result), FTD-0096 (mass-scale no-go). Next free id FTD-0399.",
+        "description": "NEW 2026-07-20 — `docs/theory/03_derivations/foundational_mechanics/ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md` + `docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md` + `engine/tests/campaign_topological_charge_transport.cpp` + `scripts/proofs/verify_topological_charge_transport.py`; raw record `engine/results/topological_charge_transport_2026-07-20/`. Deps: FTD-0392 (freeze-time local-shell result), FTD-0096 (mass-scale no-go). Next free id FTD-0399.",
         "sector": "pure-math/unclassified",
         "primary_doc": "docs/theory/03_derivations/foundational_mechanics/ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md",
         "script_refs": [
@@ -23797,7 +23797,7 @@
         ],
         "primary_tag": "INVALID",
         "epistemic_color": "#8d6e63",
-        "description": "NEW 2026-07-20 — `docs/theory/05_particles/ANALYSIS_TARGET_BLIND_PARTICLEHOOD_v1.md` + `docs/theory/10_eft_program/preregistrations/PREREG_TARGET_BLIND_PARTICLEHOOD_v1.md` + `engine/tests/campaign_target_blind_particlehood.cpp` + `scripts/proofs/verify_target_blind_particlehood.py`; raw record `engine/results/target_blind_particlehood_2026-07-20/`. Deps: seed-diversity campaign, FTD-0096, FTD-0398. Next free id FTD-0400.",
+        "description": "NEW 2026-07-20 — `docs/theory/05_particles/ANALYSIS_TARGET_BLIND_PARTICLEHOOD_v1.md` + `docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_TARGET_BLIND_PARTICLEHOOD_v1.md` + `engine/tests/campaign_target_blind_particlehood.cpp` + `scripts/proofs/verify_target_blind_particlehood.py`; raw record `engine/results/target_blind_particlehood_2026-07-20/`. Deps: seed-diversity campaign, FTD-0096, FTD-0398. Next free id FTD-0400.",
         "sector": "pure-math/structure",
         "primary_doc": "docs/theory/05_particles/ANALYSIS_TARGET_BLIND_PARTICLEHOOD_v1.md",
         "script_refs": [
@@ -23837,7 +23837,7 @@
         ],
         "primary_tag": "CLOSED_NEGATIVE",
         "epistemic_color": "#c62828",
-        "description": "NEW 2026-07-20 — `docs/theory/03_derivations/foundational_mechanics/DERIV_REST_MASS_FROM_TOPOLOGICAL_CHARGE.md` + `docs/theory/10_eft_program/preregistrations/PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md` + `engine/tests/campaign_hedgehog_charge_robustness.cpp` + `scripts/exploration/validate_hedgehog_charge.py`. Deps: FTD-0096, FTD-0398, the seed-diversity campaign, FTD-0388. Next free id at original booking FTD-0393.",
+        "description": "NEW 2026-07-20 — `docs/theory/03_derivations/foundational_mechanics/DERIV_REST_MASS_FROM_TOPOLOGICAL_CHARGE.md` + `docs/theory/10_eft_program/preregistrations/framework_boundary_imports_consumption/PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md` + `engine/tests/campaign_hedgehog_charge_robustness.cpp` + `scripts/exploration/validate_hedgehog_charge.py`. Deps: FTD-0096, FTD-0398, the seed-diversity campaign, FTD-0388. Next free id at original booking FTD-0393.",
         "sector": "physics/EM-alpha",
         "primary_doc": "docs/theory/03_derivations/foundational_mechanics/DERIV_REST_MASS_FROM_TOPOLOGICAL_CHARGE.md",
         "script_refs": [
@@ -23884,9 +23884,9 @@
         ],
         "primary_tag": "NO_GO",
         "epistemic_color": "#c62828",
-        "description": "NEW 2026-07-21 — `docs/theory/07_assessment/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md` + `scripts/proofs/audit_confinement_energy_gravity_bridge.py` (12/12). Deps: FTD-0025 (confinement remains inserted/selected), FTD-0096 (mass-unit no-go), FTD-0250 (imposed cluster inertia), FTD-0399 (particlehood gate), FTD-0401 (successor normalization prerequisite). Next free id at booking FTD-0401.",
+        "description": "NEW 2026-07-21 — `docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md` + `scripts/proofs/audit_confinement_energy_gravity_bridge.py` (12/12). Deps: FTD-0025 (confinement remains inserted/selected), FTD-0096 (mass-unit no-go), FTD-0250 (imposed cluster inertia), FTD-0399 (particlehood gate), FTD-0401 (successor normalization prerequisite). Next free id at booking FTD-0401.",
         "sector": "physics/QCD",
-        "primary_doc": "docs/theory/07_assessment/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md",
+        "primary_doc": "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md",
         "script_refs": [
           "scripts/proofs/audit_confinement_energy_gravity_bridge.py"
         ],

@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0296
 **Status:** [MEASUREMENT -- FIXED-CHARGE SOURCE WORK CONTINUITY CONFIRMED]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_COUPLED_SOURCE_WORK_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_COUPLED_SOURCE_WORK_v1.md`
 **Lock commit:** `5d88062e`
 **Lock tag:** `preregister-thomson-coupled-source-work-v1`
 **Artifact:** `engine/tests/campaign_thomson_coupled_source_work.cpp`

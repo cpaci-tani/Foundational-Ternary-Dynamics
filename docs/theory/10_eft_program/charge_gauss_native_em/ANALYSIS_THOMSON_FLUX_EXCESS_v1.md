@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0289
 **Status:** [MEASUREMENT -- NATIVE EMERGENT EXCESS FLUX DEFLECTION]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_FLUX_EXCESS_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_FLUX_EXCESS_v1.md`
 **Lock commit:** `acb4005a`
 **Lock tag:** `preregister-thomson-flux-excess-v1`
 **Artifact:** `engine/tests/campaign_thomson_flux_excess.cpp`

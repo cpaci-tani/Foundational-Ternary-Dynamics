@@ -23,7 +23,7 @@
  * to ANY 1/r force (Bohr/Kepler) and carries no quantum content. The Rydberg
  * SCALE is calibrated via ALPHA and K_B, not derived. FTD has no quantum
  * kinetic operator and no discrete energy levels; see
- * docs/theory/07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md. Do not cite this
+ * docs/theory/07_assessment/engine_emergence_campaigns/AUDIT_ATOMIC_DYNAMICS_STATUS.md. Do not cite this
  * as "FTD derives the hydrogen spectrum."
  */
 

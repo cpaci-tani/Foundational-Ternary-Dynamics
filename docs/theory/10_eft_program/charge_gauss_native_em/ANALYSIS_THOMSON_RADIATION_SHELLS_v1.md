@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0290
 **Status:** [MEASUREMENT -- NO BASELINE-SUBTRACTED OUTWARD POWER]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_RADIATION_SHELLS_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_RADIATION_SHELLS_v1.md`
 **Lock commit:** `8ccfee7b`
 **Lock tag:** `preregister-thomson-radiation-shells-v1`
 **Artifact:** `engine/tests/campaign_thomson_radiation_shells.cpp`

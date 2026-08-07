@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0295
 **Status:** [MEASUREMENT -- SOURCE-FREE LOCAL TICK CONTINUITY CONFIRMED]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`
 **Lock commit:** `1d4a29a5`
 **Lock tag:** `preregister-thomson-tick-local-continuity-v2`
 **Artifact:** `engine/tests/campaign_thomson_tick_local_continuity_v2.cpp`

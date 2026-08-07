@@ -8,7 +8,7 @@
 **Artifact SHA256:** `1f562ac9e9e0f3fdeb72bce00fda2c00f70117271439ef27d418d05c29ec7589`
 **Lock commit:** `acb4005a`
 **Lock tag:** `preregister-thomson-flux-excess-v1`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_FLUX_EXCESS_v1.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_FLUX_EXCESS_v1.md`
 
 ---
 

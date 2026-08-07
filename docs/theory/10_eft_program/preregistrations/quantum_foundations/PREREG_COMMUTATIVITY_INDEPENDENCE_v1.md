@@ -474,7 +474,7 @@ must not contradict — cross-checked, not re-proven).
 
 1. Finalise §§1–11. Compute SHA256:
    ```sh
-   sha256sum docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md
+   sha256sum docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md
    ```
 2. Record the SHA256 + tag in `REF_PREREGISTER_MANIFEST.md` (following the
    existing FTD-0186/0190/0191/0192 entries) and add a `[PRE-REGISTRATION]`
@@ -483,7 +483,7 @@ must not contradict — cross-checked, not re-proven).
    claimed through FTD-0241).
 3. Commit + lightweight tag:
    ```sh
-   git commit docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md
+   git commit docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md
    git tag preregister-commutativity-independence-v1 \
        -m "Pre-reg: commutativity independence no-go (QM+GR boundary)"
    ```

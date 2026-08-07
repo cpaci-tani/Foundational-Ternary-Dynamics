@@ -3,7 +3,7 @@
  * @brief Does the substrate's DECAY clock dilate like its PROPER-TIME clock?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_TWO_CLOCK_CONSISTENCY_v1.md
+ *   docs/theory/10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_TWO_CLOCK_CONSISTENCY_v1.md
  * (tag `preregister-two-clock-consistency-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement instrument

@@ -3,7 +3,7 @@
  * @brief Gate 2 — the gravitational-optical channel: does the substrate bend light?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_LIGHT_DEFLECTION_CHANNEL_v1.md
+ *   docs/theory/10_eft_program/preregistrations/gravity_cosmology/PREREG_LIGHT_DEFLECTION_CHANNEL_v1.md
  * (tag `preregister-light-deflection-channel-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement instrument

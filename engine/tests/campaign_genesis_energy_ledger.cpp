@@ -4,7 +4,7 @@
  *        constraint self-energy W_SC(L) that a SYNTHETIC unit charge does?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_ENERGY_LEDGER_v1.md
+ *   docs/theory/10_eft_program/preregistrations/framework_boundary_imports_consumption/PREREG_GENESIS_ENERGY_LEDGER_v1.md
  * (tag `preregister-genesis-energy-ledger-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement instrument

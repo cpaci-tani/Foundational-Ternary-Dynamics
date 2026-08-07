@@ -8,7 +8,7 @@
 **Artifact SHA256:** `c362d35e1a2c61216982bb7ae2c8cf4ee916e59f1e3bcc77a62cee993caa8b5f`
 **Lock commit:** `83863d5e`
 **Lock tag:** `preregister-thomson-tick-invariant-v2`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_TICK_INVARIANT_v2.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_TICK_INVARIANT_v2.md`
 
 ---
 
