@@ -173,6 +173,49 @@ Until such derivation lands, the COMBINATION is [SELECTION]. The tag for the ove
 
 ---
 
+## 4.5 · The vertex-derivation attempt was made and closed negative (FTD-0135)
+
+**Merged in from `DERIV_SUBSTRATE_YUKAWA_VERTEX.md` (2026-08-06), which asserted
+`[DERIVED]` for the combination above and is archived — see correction below.**
+
+The exact promotion path sketched in §5 below was attempted, 2026-05-04, as
+**LEDGER FTD-0135**, tagged **[CLOSED NEGATIVE for single-session scope;
+MC-T4.3-class work required for full closure]**. FTD-0135's own record states
+the outcome precisely: the four steps required to promote this document's
+combination from [STRUCTURALLY MOTIVATED PARAMETRIC] to [DERIVED] "are not
+derivation steps; they are *requirements* for derivation steps. **Sketching a
+path is not walking it.**" The specific obstruction: `mult(A_{1g})²`,
+`1/mult(T_{1u})`, and `|1+i|` would each need to arise from actual **lattice
+Feynman rules built from a Born-Infeld-style action on the FTD flux field**
+— infrastructure that does not exist. There is no substrate-level matter-field
+definition (FTD-0110's cluster-mass identification is *kinematic*, not
+*dynamical*) and no substrate-level Higgs field definition (the HIGGS-4 `v`
+formula is itself [SELECTION]). FTD-0135 explicitly warns against exactly the
+failure mode a later document committed: "under session momentum it would be
+tempting to tag the 4-step argument sketch as 'partial derivation'... the
+honest tag is that the sketch identifies what needs to exist, not what has
+been derived."
+
+**A later document did exactly that.** `DERIV_SUBSTRATE_YUKAWA_VERTEX.md`,
+created 2026-07-20 — more than two months after FTD-0135's closure, with no
+LEDGER id and no citation of FTD-0135 — restated essentially the same
+four-step sketch as a completed computation: it wrote the trace ratio
+`Trace(P_in)×Trace(P_out)/Trace(P_mediate) = mult(A_{1g})²/mult(T_{1u}) = 16/3`
+as if evaluating real projection operators derived from lattice Feynman
+rules, when the ratio is the same `4×4/3` arithmetic already present in §2.1
+above — no Born-Infeld action, no matter/Higgs substrate-field definitions,
+and no lattice Feynman-rule infrastructure were actually built. Its own proof
+script computes the same arithmetic identity this document already reports,
+not a new dynamical result. It tagged the combination **[DERIVED]** on that
+basis. This is now corrected: the document is archived (see
+`docs/theory/03_derivations/archive/closed_negative/DERIV_SUBSTRATE_YUKAWA_VERTEX_RETRACTED.md`)
+and its claim is retagged to match FTD-0135's canonical verdict,
+**[CLOSED NEGATIVE for single-session scope]** — not [DERIVED]. This
+document's own tag (**[STRUCTURALLY MOTIVATED PARAMETRIC]**, §0 above) is
+unaffected and remains the honest floor.
+
+---
+
 ## 5 · The next derivation step (what would close it to [DERIVED])
 
 To upgrade the COMBINATION from [SMP] to [DERIVED], one path is:

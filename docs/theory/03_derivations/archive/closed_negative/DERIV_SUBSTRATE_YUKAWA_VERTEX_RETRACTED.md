@@ -1,7 +1,28 @@
-# DERIV — Substrate-Level Derivation of the Yukawa Vertex Amplitude
+# DERIV — Substrate-Level Derivation of the Yukawa Vertex Amplitude (ARCHIVED)
 
-**Document Classification:** Theoretical Derivation
-**Status:** [DERIVED]
+> **⚠ RETRACTED (2026-08-06).** This document's `[DERIVED]` claim is
+> **CLOSED NEGATIVE**, matching LEDGER **FTD-0135** (2026-05-04) — the exact
+> promotion attempt this document restates, written more than two months
+> after FTD-0135 closed it negative, with no LEDGER id and no citation of
+> that closure. FTD-0135's record is explicit about why: promoting the
+> `16√2/3` combination to `[DERIVED]` requires **lattice Feynman rules built
+> from a Born-Infeld-style action on the FTD flux field** — infrastructure
+> that does not exist (no substrate-level matter-field definition, no
+> substrate-level Higgs field definition). This document's §2 "Dynamic
+> Amplitude Evaluation" computes `Trace(P_in)×Trace(P_out)/Trace(P_mediate) =
+> mult(A_{1g})²/mult(T_{1u}) = 16/3` — the same `4×4/3` arithmetic already
+> reported as a structural (not dynamical) identification in
+> `DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md` §2.1 — and presents it as if
+> evaluating real projection operators from lattice Feynman rules that were
+> never built. FTD-0135's own record names exactly this failure mode in
+> advance: **"sketching a path is not walking it."** Content merged (as a
+> documented, rejected attempt) into
+> `docs/theory/03_derivations/standard_model/DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md`
+> §4.5. Kept here for provenance per the doc-cleanup skill; do not cite as
+> `[DERIVED]`.
+
+**Document Classification:** Theoretical Derivation (superseded)
+**Status:** ~~[DERIVED]~~ **[CLOSED NEGATIVE for single-session scope; MC-T4.3-class work required for full closure]** — matching LEDGER FTD-0135, not the [DERIVED] tag this document originally asserted.
 **Depends on:**
 - DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md (the structural factorization)
 - DERIV_LATTICE_SU2_WEAK.md (SU(2) structural basis)

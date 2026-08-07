@@ -241,7 +241,7 @@ QCD-sector derivations: confinement, pion mass, the electron Yukawa prefactor.
 | [DERIV_PION_MASS_FROM_GSTAR.md](standard_model/DERIV_PION_MASS_FROM_GSTAR.md) | 6 [THEOREM] + 3 [SELECTION] + 5 [CONJECTURE] | The 15-step G\* → m_π chain; integer-reduction theorem; 0.048% match. |
 | [DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md](standard_model/DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md) | [STRUCTURALLY MOTIVATED PARAMETRIC] | The electron Yukawa prefactor `16√2/3` from O_h character theory (FTD-0134). |
 | [DERIV_YANG_MILLS_CONFINEMENT.md](DERIV_YANG_MILLS_CONFINEMENT.md) | [MEASURED at an inserted coupling [SELECTION]] (reconciled) | Engine-measured Wilson-loop area-law confinement signature at β = x₋; the full Yang-Mills proof is RETRACTED (FTD-0042) — only the per-voxel mass gap (FTD-0044) survives as [THEOREM] (LEDGER FTD-0303). |
-| [DERIV_SUBSTRATE_YUKAWA_VERTEX.md](standard_model/DERIV_SUBSTRATE_YUKAWA_VERTEX.md) | [DERIVED] | Substrate-level derivation of the Yukawa vertex amplitude. |
+| [DERIV_SUBSTRATE_YUKAWA_VERTEX_RETRACTED.md](archive/closed_negative/DERIV_SUBSTRATE_YUKAWA_VERTEX_RETRACTED.md) | ~~[DERIVED]~~ **[CLOSED NEGATIVE]** (archived 2026-08-06) | Restated FTD-0135's rejected vertex-derivation sketch as `[DERIVED]`, 2 months after its closure, with no LEDGER id. Content merged into `DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md` §4.5. |
 
 ## Foundational chains and resolutions
 

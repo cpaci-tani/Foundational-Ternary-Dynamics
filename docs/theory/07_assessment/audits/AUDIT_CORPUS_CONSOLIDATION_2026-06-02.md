@@ -208,7 +208,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `03_derivations/standard_model/DERIV_MOORE_GAUGE_STRUCTURE.md` | I | KEEP-supporting | SM gauge groups from Moore neighborhood; supports Part I §I.4 |
 | `03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md` | I | KEEP-canonical | N_c=3 from four topological routes [THEOREM]; cited by Part I §I.4 (independent N_c source) |
 | `03_derivations/standard_model/DERIV_PION_MASS_FROM_GSTAR.md` | none | KEEP-supporting | Pion mass from G*; physics |
-| `03_derivations/standard_model/DERIV_SUBSTRATE_YUKAWA_VERTEX.md` | none | KEEP-supporting | Substrate Yukawa vertex; physics |
+| `03_derivations/standard_model/DERIV_SUBSTRATE_YUKAWA_VERTEX.md` | none | ARCHIVED 2026-08-06 | Substrate Yukawa vertex — its [DERIVED] claim retracted (matches LEDGER FTD-0135's earlier [CLOSED NEGATIVE]); content merged into DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md §4.5; now at `03_derivations/archive/closed_negative/DERIV_SUBSTRATE_YUKAWA_VERTEX_RETRACTED.md` |
 | `03_derivations/standard_model/DERIV_THREE_GENERATIONS.md` | none | KEEP-supporting | N_gen=3 from cuboctahedral axes; physics |
 | `03_derivations/standard_model/DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md` | none | KEEP-supporting | Yukawa from 27-block characters; physics |
 | `03_derivations/standard_model/DERIV_Z3_CENTER_GRAPH_CLOSURE.md` | none | KEEP-supporting | Z_3 center graph; physics |
