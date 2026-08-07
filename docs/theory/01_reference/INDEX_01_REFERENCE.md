@@ -15,7 +15,7 @@
 4. [SPEC_FQCR.md](SPEC_FQCR.md) — Finite Quarter-Conjugacy Recurrence capstone; operator-theoretic provenance of G* (Models I–V).
 5. [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) — standalone mathematical monograph deriving G* from nine branches of mathematics.
 6. [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) — canonical ordering principle: ontology = finite invariant structure, physics = stable readout of it.
-7. [SPEC_FTD_REFERENCE.md](SPEC_FTD_REFERENCE.md) — the framework-wide reference document (entry point for the whole theory).
+7. [`docs/SPEC_FTD.md`](../../SPEC_FTD.md) — the framework-wide readable overview and entry point for the whole theory, per the constitution's own §0.4 division of labor. (`SPEC_FTD_REFERENCE.md` formerly held this slot; its top-line claim-count table and version framing are superseded — see the correction notice at the top of that file. Its individually-cited sections remain in use by several derivation documents and have not been retracted.)
 
 ---
 

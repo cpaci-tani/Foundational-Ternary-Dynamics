@@ -1,6 +1,36 @@
 # Foundational Ternary Dynamics (FTD) - Complete Reference
 
-**Status:** Framework achieving 100% PDG format coverage; awaiting experimental validation
+**Status:** `[SUPERSEDED AS ENTRY POINT]` (2026-08-06) — see correction notice below.
+
+> **Correction notice (2026-08-06).** This document's own claim-count table
+> below ("~35 genuinely derived / ~50 parametric / ~50+ external") is a
+> **third, unreconciled figure** — it matches neither `CLAUDE.md`'s
+> reconciled accounting (18 derived/theorem-grade, 133 parametric, 11
+> imposed/selected = 162, reconciled 2026-07-26) nor
+> `SPEC_FTD_COMPLETE_FRAMEWORK.md`'s figure. Its "v5.29" versioning tag is
+> not used anywhere else in the current LEDGER-era corpus, and its
+> "100% PDG format coverage... awaiting experimental validation" framing
+> predates the project's current LEDGER-driven epistemic-tag discipline.
+> **The constitution (`SPEC_FTD_FRAMEWORK_V1.md` §0.4) already names
+> [`docs/SPEC_FTD.md`](../../SPEC_FTD.md) — not this document — as "the
+> readable framework overview."** This document was never formally
+> retired to match, so it kept sitting as `INDEX_01_REFERENCE.md`'s
+> "Read first" item 7 pointing readers to a stale accounting.
+>
+> **This document is NOT archived.** A number of derivation documents
+> (e.g. `DERIV_FERMI_COUPLING_CONSTANT.md`, `DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md`,
+> `DERIV_LATTICE_CHIRAL_ANOMALY.md`) and `docs/theory/07_assessment/REF_CLAIMS_MATRIX.md`
+> cite specific numbered sections of this document as a claim source; those
+> individual sections have not been re-verified or retracted by this
+> notice, and archiving the whole document would orphan those citations
+> without checking each one. **Only the document's own top-line summary
+> (claim counts, "Key Claim" line, version tag, status framing) is
+> superseded** — for the current reconciled accounting, see `CLAUDE.md`;
+> for the current framework overview, see
+> [`docs/SPEC_FTD.md`](../../SPEC_FTD.md); for the current status map, see
+> `SPEC_FTD_COMPLETE_FRAMEWORK.md`. A full reconciliation of this
+> document's individually-cited sections against current canon is a
+> separate, larger pass, not done here.
 
 ---
 
