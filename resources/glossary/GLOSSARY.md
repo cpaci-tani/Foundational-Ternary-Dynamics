@@ -83,4 +83,4 @@ FTD-specific vocabulary with one-line definitions. Canonical symbol list: `docs/
 - Full symbol list with LaTeX forms: `docs/reference/REF_SYMBOL_GLOSSARY.md`
 - Epistemic labels: `docs/reference/REF_EPISTEMIC_LABELS.md`
 - Naming conventions: `docs/reference/REF_NAMING_CONVENTIONS.md`
-- Scope limitations: `docs/reference/REF_SCOPE_LIMITATIONS.md`
+- Scope limitations: `docs/reference/archive/REF_SCOPE_LIMITATIONS.md` (archived)
