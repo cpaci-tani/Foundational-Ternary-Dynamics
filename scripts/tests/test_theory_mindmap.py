@@ -150,6 +150,61 @@ def test_every_tag_has_a_color(data: dict) -> None:
     assert not missing, f"tags with no colour assigned: {missing}"
 
 
+def test_concept_layer_is_populated(data: dict) -> None:
+    assert data["stats"]["concepts"] > 100, "concept vocabulary collapsed"
+    assert data["stats"]["concept_edges"] > 200, "concept graph has no connections"
+
+
+def test_concept_edges_reference_known_concepts(data: dict) -> None:
+    ids = {c["id"] for c in data["concepts"]}
+    dangling = [e for e in data["concept_edges"]
+                if e["source"] not in ids or e["target"] not in ids]
+    assert not dangling, f"{len(dangling)} concept edges point at unknown concepts"
+
+
+def test_no_corpus_stopword_concepts(data: dict) -> None:
+    """A concept in most of the corpus carries no connective information.
+
+    Regression guard: the first concept build was dominated by 'Ftd', which
+    matched 1,706 of 1,734 documents (98%), making every strongest edge
+    'X <-> Ftd'. The document-frequency ceiling exists to prevent that.
+    """
+    total = data["stats"]["documents_total"]
+    hogs = [(c["id"], c["doc_count"]) for c in data["concepts"]
+            if c["doc_count"] > 0.40 * total]
+    assert not hogs, f"corpus-stopword concepts survived the DF ceiling: {hogs[:5]}"
+
+
+def test_document_concepts_are_known_and_bounded(data: dict) -> None:
+    ids = {c["id"] for c in data["concepts"]}
+    for d in data["documents"]:
+        cs = d.get("concepts", [])
+        assert len(cs) <= 12, f"{d['path']} carries {len(cs)} concepts (cap is 12)"
+        unknown = [c for c in cs if c not in ids]
+        assert not unknown, f"{d['path']} references unknown concepts {unknown}"
+
+
+def test_synonyms_are_merged_not_duplicated(data: dict) -> None:
+    """'Alpha' and 'α' are one concept, not two.
+
+    Regression guard: before synonym merging, the strongest 'connections' in
+    the graph were the vocabulary talking to itself -- Alpha<->α (199),
+    Master<->Master quadratic (148), Horizon<->black hole (84).
+    """
+    ids = {c["id"] for c in data["concepts"]}
+    for a, b in [("Alpha", "α"), ("Master", "Master quadratic"),
+                 ("Horizon", "black hole"), ("Modes", "Mode")]:
+        assert not (a in ids and b in ids), (
+            f"{a!r} and {b!r} both present; synonym merge regressed"
+        )
+
+
+def test_viewer_exposes_both_modes() -> None:
+    html = VIEWER.read_text(encoding="utf-8")
+    for hook in ("modeStruct", "modeConcept", "conceptLayout", "drawConcepts"):
+        assert hook in html, f"viewer is missing the {hook} hook"
+
+
 def test_viewer_has_no_external_dependencies() -> None:
     """Self-contained by design: the predecessor died offline on CDN loads."""
     html = VIEWER.read_text(encoding="utf-8")
