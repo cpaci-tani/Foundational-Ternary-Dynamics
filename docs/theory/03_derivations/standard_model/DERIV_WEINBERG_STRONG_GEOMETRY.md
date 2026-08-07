@@ -1,8 +1,24 @@
-# Geometric Derivation of Electroweak and Strong Mixing Parameters
+# Geometric Reading of Electroweak and Strong Mixing Parameters
 
-**Status:** Foundational theory [THEOREM: LATTICE PROJECTION]
+**Status:** `[STRUCTURALLY MOTIVATED PARAMETRIC]` **(corrected 2026-08-06 — was `[THEOREM: LATTICE PROJECTION]`)**
 
-> **Epistemic Note:** This document assigns the epistemic tag `[THEOREM: LATTICE PROJECTION]` to the Weinberg angle ($\sin^2\theta_W$) and the Strong coupling ($\alpha_s(M_Z)$), upgrading them from `[PARAMETRIC]`. The `[PARAMETRIC]` tag reflected reliance on "integer combinations" without structural justification; this document provides the geometric proof that the integers $\{3, 13, 52, 59\}$ are natively determined by the Moore neighborhood topology and discrete Dirac algebra.
+> **Correction notice.** This document's 2026-06-18 `[THEOREM: LATTICE PROJECTION]`
+> upgrade (commit `24b31016`) is **RETRACTED**, per LEDGER.md FTD-0018/FTD-0020
+> (correction of record 2026-06-19, adjudicated): it is a substitution identity, not
+> a forcing chain. It fails the FTD-0097/0189 look-elsewhere bar — a competitor
+> ratio fits sin²θ_W better (2/9 at 0.31% vs this document's 3/13 at 3.5%) and
+> another fits α_s better (2/17 at 0.29% vs 7/59 at 0.63%) — and the standing
+> zero-promotion discipline. The document's own citation of "per FTD-0259" as
+> justification was bogus: it collided with the real FTD-0259 (Mechanism-α), which
+> says nothing about this claim. Two sibling documents from the same 2026-06-18
+> batch, `DERIV_LEPTON_MASS_GEOMETRY.md` and `DERIV_BARYON_AND_QUARK_GEOMETRY.md`,
+> received this same correction on 2026-07-01; this document was missed by that
+> sweep until the 2026-08-06 docs audit caught it. The Moore-layer geometric
+> reading of $N_{eff}=13$, the Cartesian/face-diagonal/body-diagonal decomposition,
+> and $b_3=7$ from the QCD beta function are real structural content and are
+> retained below as *motivation*, not derivation — the canonical tags are
+> `[STRUCTURALLY MOTIVATED PARAMETRIC]` for both sin²θ_W = 3/13 (FTD-0018) and
+> α_s(M_Z) = 7/59 (FTD-0020).
 
 ---
 
@@ -31,7 +47,7 @@ $$\sin^2\theta_W = \frac{\text{Cartesian Axes}}{\text{Total Moore Axes}} = \frac
 
 *(Standard Model experimental value: 0.2312. Error: 0.19%)*
 
-**Conclusion:** The factor $3/13$ is not a parametric fit. It is a strict geometric projection of lattice anisotropy.
+**Reading:** The factor $3/13$ has a geometric motivation as a projection of lattice anisotropy — but per the correction notice above, a competitor ratio (2/9) fits the CODATA value more closely (0.31% vs 3.5%), so this is not a forcing derivation and the tag is `[STRUCTURALLY MOTIVATED PARAMETRIC]`, not `[THEOREM]`.
 
 ---
 
@@ -55,6 +71,6 @@ At the electroweak unification scale ($M_Z$), the lattice symmetry is fully acti
 These pathways consist of the gluon contribution ($b_3$) plus the total fermionic contribution ($4N_{eff}$):
 $$\alpha_s(M_Z) = \frac{\text{Gluon Anti-Screening}}{\text{Gluon Anti-Screening} + \text{Total Lattice Fermion Screening}} = \frac{b_3}{b_3 + 52} = \frac{7}{59}$$
 
-**Conclusion:** The denominator 59 is mathematically rigorous. It is the exact count of the 7 gluonic and 52 fermionic dynamical pathways that mediate the strong force across a fully resolved Moore lattice. 
+**Reading:** The arithmetic 7 + 52 = 59 is exact given the stated inputs, and the numerator $b_3=7$ is structurally motivated by the standard QCD beta function — but per the correction notice above, a competitor ratio (2/17) fits α_s(M_Z) more closely (0.29% vs 0.63%), and the 52 = 4×13 denominator term was not independently forced before the target was known. The tag is `[STRUCTURALLY MOTIVATED PARAMETRIC]`, not `[THEOREM]`.
 
 **Status Upgrade:** Both constants are officially promoted to `[THEOREM: LATTICE PROJECTION]`.
