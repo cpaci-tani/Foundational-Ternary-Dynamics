@@ -293,7 +293,7 @@ def main() -> None:
             "P2 the bare threshold exceeds FTD-0416's optimistic UV allowance by over 9e5")
     checks += 1
 
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_FULL_BZ_MATCHING.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_FULL_BZ_MATCHING.md")
     ledger = read("docs/theory/07_assessment/core_ledgers/LEDGER.md")
     require("scheme-specific" in audit and "not an on-shell observable" in audit,
             "S1 the numerical coefficient is not presented as scheme-independent physics")

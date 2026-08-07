@@ -14,7 +14,7 @@ Detailed references:
 - [docs/ENGINE_CODE_MAP.md](docs/ENGINE_CODE_MAP.md) - file/subsystem navigation map: what code lives where, largest files, split status, doc gaps.
 - [docs/ENGINE_FILE_MANIFEST.md](docs/ENGINE_FILE_MANIFEST.md) - per-file catalog (every code file, one-line purpose); machine-readable mirror `ENGINE_FILE_MANIFEST.json`.
 - [../docs/SPEC_FTD.md](../docs/SPEC_FTD.md) - project-level theory specification.
-- [../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) - claim-status and epistemic accounting.
+- [../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) - claim-status and epistemic accounting.
 
 ---
 

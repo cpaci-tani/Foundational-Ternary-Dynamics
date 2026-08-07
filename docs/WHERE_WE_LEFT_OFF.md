@@ -436,7 +436,7 @@ certification returns `2220/2221` and `LONG_TRANSPORT_EXECUTION_INVALID`.
 Descriptive clearing at ticks 704/768 is quarantined; no cleared-response,
 wake, particle, radiation, or long-horizon identity verdict exists. Canonical
 status is LEDGER FTD-0768 and
-`docs/theory/07_assessment/AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`; the
+`docs/theory/07_assessment/constituent_complete_matter/AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`; the
 pre-execution audit preserves the three earlier infrastructure aborts.
 
 **Current matter ontology boundary (FTD-0669, reconciled through FTD-0768):**

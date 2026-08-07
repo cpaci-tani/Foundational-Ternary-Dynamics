@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULT = ROOT / "engine/results/ftd_0639"
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_DYNAMICAL_REST_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_DYNAMICAL_REST_v1.md"
 SHA = "28B9E9415C49FD989A4FBC60B33D9588E8F6A13A52B78E36881A9379F18D8AF3"
 
 

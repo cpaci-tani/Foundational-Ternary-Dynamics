@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ANALYTIC_CENTER_COLLECTIVE_BOOST_LADDER_v1.md"
 RESULT = ROOT / "engine/results/ftd_0643"
 SHA = "CE7CB494A298CED4C04F39E7B776D2785675B339398621AF7D0DBB92CA0B03ED"
 

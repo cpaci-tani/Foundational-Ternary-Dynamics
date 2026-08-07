@@ -59,7 +59,7 @@ def main() -> None:
             and "annihilation erases distinct spin/color preimages" in source,
             "S1 engine counterexamples cover two independent information-loss routes")
     checks += 1
-    audit = (ROOT / "docs/theory/07_assessment/AUDIT_NATIVE_UNITARITY_GATE.md").read_text(encoding="utf-8")
+    audit = (ROOT / "docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_NATIVE_UNITARITY_GATE.md").read_text(encoding="utf-8")
     require("LINEAR-SECTOR-REVERSIBLE" in audit and "FULL-TICK-NON-INJECTIVE" in audit,
             "S2 scoped verdict separates the free sector from the full tick")
     checks += 1

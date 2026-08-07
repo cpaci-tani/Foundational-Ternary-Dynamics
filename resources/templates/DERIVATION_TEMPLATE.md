@@ -103,7 +103,7 @@ Expected output: `<NAME>: PASS` (or describe what "pass" means here).
 - Downstream: `<what uses this>` (may be empty when first written)
 - Code: `scripts/proofs/proof_<NAME>.py`, `scripts/verification/verify_<NAME>.py`
 - Related experimental data: `scripts/experiments/<related>.py`
-- Audit ledger: `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` (add the new claim to the ledger)
+- Audit ledger: `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md` (add the new claim to the ledger)
 
 ## Changelog
 

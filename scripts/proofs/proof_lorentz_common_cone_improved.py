@@ -136,7 +136,7 @@ def main() -> None:
     native_test = read("engine/tests/test_lorentz_common_cone_improved.cpp")
     gauge_test = read("engine/tests/test_wilson_dirac_gauge.cpp")
     cmake = read("engine/CMakeLists.txt")
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md")
     engine_spec = read("engine/SPEC_ENGINE.md")
 
     require("double kinetic_transverse_weight = 0.0" in header,

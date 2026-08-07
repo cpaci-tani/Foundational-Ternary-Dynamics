@@ -9,7 +9,7 @@ SUMMARY=R/"ftd_0710_prescribed_trajectory_comoving_field_shooting_v1.json"
 GMRES=R/"ftd_0710_prescribed_trajectory_comoving_field_gmres_v1.csv"
 FIELD=R/"ftd_0710_prescribed_trajectory_comoving_field_rhs_v1.csv"
 RUNNER=ROOT/"engine/tests/test_prescribed_trajectory_comoving_field_shooting.cpp"
-PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/PREREG_PRESCRIBED_TRAJECTORY_COMOVING_FIELD_SHOOTING_v1.md"
+PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_PRESCRIBED_TRAJECTORY_COMOVING_FIELD_SHOOTING_v1.md"
 PROTOCOL="82E52438F5483C5C3A427B31D9B068314778B804C2320EEBFFCA1EA6EE593A4B"
 HASHES={SUMMARY:"194AA2AA9AB989CDF2AFED59E71E6565555EB7B639EC8D814160C630E528122A",
 GMRES:"102BE1B856771F55A95804FB4E2E624AAC91985319A04B935EAC182999C5A449",

@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE = ROOT / "engine/results/ftd_0648"
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CELL_MEASURE_FIXED_MASS_REFINEMENT_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CELL_MEASURE_FIXED_MASS_REFINEMENT_v1.md"
 JSON_PATH = BASE / "ftd_0648_cell_measure_fixed_mass_refinement_v1.json"
 ARMS_PATH = BASE / "ftd_0648_cell_measure_fixed_mass_refinement_arms_v1.csv"
 SLOPES_PATH = BASE / "ftd_0648_cell_measure_fixed_mass_refinement_slopes_v1.csv"

@@ -25,8 +25,8 @@ SOURCE_FILES = {
     "voxel_rng": ROOT / "engine/include/ftd/voxel_rng.h",
     "finite_lift_header": ROOT / "engine/include/ftd/eft/finite_memory_reversible_lift.h",
     "finite_lift_source": ROOT / "engine/src/eft/finite_memory_reversible_lift.cpp",
-    "ftd0567_theorem": ROOT / "docs/theory/10_eft_program/derivations/THEOREM_GENESIS_ACTION_OBSTRUCTION.md",
-    "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_RESERVOIR_DILATION_v1.md",
+    "ftd0567_theorem": ROOT / "docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_ACTION_OBSTRUCTION.md",
+    "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_RESERVOIR_DILATION_v1.md",
 }
 
 LOCKED_SOURCE_HASHES = {

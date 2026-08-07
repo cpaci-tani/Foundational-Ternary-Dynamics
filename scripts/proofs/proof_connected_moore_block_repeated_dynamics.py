@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_MOORE_BLOCK_REPEATED_DYNAMICS_v1.md"
 PARENT = ROOT / "engine/results/ftd_0622/ftd_0622_connected_moore_block_action_v1.json"
 RESULT = ROOT / "engine/results/ftd_0623/ftd_0623_connected_moore_block_repeated_v1.json"
 ARMS = ROOT / "engine/results/ftd_0623/ftd_0623_connected_moore_block_repeated_arms_v1.csv"

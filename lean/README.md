@@ -76,7 +76,7 @@ Use `cd lean && lake build` for the default citable workspace (`FtdNoGo`). Build
 > They must not be cited as a Lean proof that alpha is derived.
 
 This is the Lean 4 (Mathlib) formalization of the **algebraic core** of
-[`docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md`](../docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md)
+[`docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md`](../docs/theory/10_eft_program/preregistrations/quantum_foundations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md)
 (FTD pre-registration of the QM+GR "commutativity wall" as a forward
 theorem). It turns the prose Claims A / C, the F-a landmine, and the
 independence model into machine-checkable statements.

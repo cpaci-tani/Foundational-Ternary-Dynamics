@@ -7,8 +7,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_v1.md"
-PREEXEC = ROOT / "docs/theory/07_assessment/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_PREEXEC_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/engine_infrastructure_rg/PREREG_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_v1.md"
+PREEXEC = ROOT / "docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_ORDERED_CURRENT_DETERMINISTIC_OBSERVER_CUDA_PREEXEC_v1.md"
 RUNNER = ROOT / "engine/tests/campaign_ordered_current_observer_cuda.cpp"
 CUDA_HEADER = ROOT / "engine/include/ftd/eft/cuda_matched_field_pipeline.h"
 CUDA_SOURCE = ROOT / "engine/cuda/cuda_matched_field_pipeline.cu"

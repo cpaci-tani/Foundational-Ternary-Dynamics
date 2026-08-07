@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CLOSED_SYMMETRY_BALANCED_GAIT_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CLOSED_SYMMETRY_BALANCED_GAIT_v1.md"
 PARENT = ROOT / "engine/results/ftd_0617/ftd_0617_internal_gait_angular_response_v1.json"
 RESULT = ROOT / "engine/results/ftd_0618/ftd_0618_closed_symmetry_balanced_gait_v1.json"
 ARMS = ROOT / "engine/results/ftd_0618/ftd_0618_closed_symmetry_balanced_gait_arms_v1.csv"

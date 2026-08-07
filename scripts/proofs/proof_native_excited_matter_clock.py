@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_EXCITED_MATTER_CLOCK_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_NATIVE_EXCITED_MATTER_CLOCK_v1.md"
 PARENT = ROOT / "engine/results/ftd_0640/ftd_0640_connected_block_analytic_matter_modes_v1.json"
 MODES = ROOT / "engine/results/ftd_0640/ftd_0640_connected_block_analytic_matter_modes_modes_v1.csv"
 RESULT = ROOT / "engine/results/ftd_0659/ftd_0659_native_excited_matter_clock_v1.json"

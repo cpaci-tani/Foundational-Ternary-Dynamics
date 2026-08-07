@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md"
 RUNNER = ROOT / "engine/tests/test_finite_support_outgoing_tail_formation.cpp"
 CMAKE = ROOT / "engine/CMakeLists.txt"
 EXPECTED_PROTOCOL_SHA256 = (

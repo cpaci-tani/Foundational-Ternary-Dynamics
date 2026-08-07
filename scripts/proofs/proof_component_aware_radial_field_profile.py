@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_COMPONENT_AWARE_RADIAL_FIELD_PROFILE_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_COMPONENT_AWARE_RADIAL_FIELD_PROFILE_v1.md"
 EXPECTED_PROTOCOL_HASH = "4B79D37C5914DD0D5CFBDFB013FD04DCFA76CC32C5C2BD0D7A07EE9001C3425A"
 
 

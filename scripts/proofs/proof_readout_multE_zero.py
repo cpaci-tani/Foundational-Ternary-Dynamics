@@ -15,7 +15,7 @@ CLAIM (machine-checked here, exact integer/character arithmetic):
   and the 2-dimensional irrep E has  mult_O(E) = 0.
 
 CONSEQUENCE (the reason this matters; see
-docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md):
+docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md):
 
   A complex structure J (J^2 = -I) needs an even-dimensional invariant block.
   Since mult_O(E) = 0, there is NO O-symmetric 2-dimensional subspace on the

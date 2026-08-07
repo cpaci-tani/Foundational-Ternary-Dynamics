@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_COVARIANT_LOWER_ENERGY_FORMATION_v1.md"
+PREREG = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_COVARIANT_LOWER_ENERGY_FORMATION_v1.md"
 TEST = ROOT / "engine/tests/test_covariant_lower_energy_formation.cpp"
 JSON_PATH = ROOT / "engine/results/ftd_0726/ftd_0726_covariant_lower_energy_formation_v1.json"
 CSV_PATH = ROOT / "engine/results/ftd_0726/ftd_0726_covariant_lower_energy_formation_v1.csv"

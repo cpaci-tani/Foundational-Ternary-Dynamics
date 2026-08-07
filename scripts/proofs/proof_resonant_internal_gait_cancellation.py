@@ -9,7 +9,7 @@ SUMMARY=R/"ftd_0712_resonant_internal_gait_cancellation_v1.json"
 ITER=R/"ftd_0712_resonant_internal_gait_iterations_v1.csv"
 STATE=R/"ftd_0712_resonant_internal_gait_state_v1.csv"
 RUNNER=ROOT/"engine/tests/test_resonant_internal_gait_cancellation.cpp"
-PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/PREREG_RESONANT_INTERNAL_GAIT_CANCELLATION_v1.md"
+PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_RESONANT_INTERNAL_GAIT_CANCELLATION_v1.md"
 PROTOCOL="47BC6C8897FFFC0C983FDA6BB73910C6FADE87206544DE74BF63E7F52E344852"
 HASHES={SUMMARY:"DB9E76C4EEB0AF2C599B6C63FD520E3E58862F15272DD2EA9A4445006E8E21FB",
 ITER:"8FDF21423EB9483098B3A43E3936665E306F88200B83521A6BF613344647F084",

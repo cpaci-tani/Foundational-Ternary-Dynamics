@@ -119,8 +119,8 @@ def main() -> None:
             "R1 equal cutoff/breaking scales remove external-energy suppression")
     checks += 1
 
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md")
-    hard = read("docs/theory/07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md")
+    hard = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RECOVERY_HARD.md")
     tracker = read("docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md")
     bianchi = read("docs/theory/03_derivations/electromagnetism/DERIV_LATTICE_HODGE_DUALITY.md")
     require("MARGINAL-OPERATORS-ALLOWED; RADIATIVE-PROTECTION-NOT-SHOWN" in audit,

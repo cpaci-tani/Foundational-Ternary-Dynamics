@@ -159,7 +159,7 @@ def main() -> None:
     poisson = read("engine/src/poisson_solvers.cpp")
     cosmic_gw = read("engine/src/cosmic/cosmic_gravitational_waves.cpp")
     engine_spec = read("engine/SPEC_ENGINE.md")
-    audit = read("docs/theory/07_assessment/AUDIT_LORENTZ_COMMON_CONE_GATE.md")
+    audit = read("docs/theory/07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_COMMON_CONE_GATE.md")
 
     require("double spatial_speed = 1.0" in header,
             "S1 Wilson spatial-speed selection preserves legacy default one")

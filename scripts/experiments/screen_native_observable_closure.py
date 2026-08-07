@@ -1,7 +1,7 @@
 """FTD-0778 - Gate A (natural-coordinate closure) screen on the FTD-0776 corpus.
 
 Read-only. Executes exactly the metrics locked in
-docs/theory/10_eft_program/preregistrations/PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md
+docs/theory/10_eft_program/preregistrations/native_time_carrier_programme/PREREG_NATIVE_OBSERVABLE_CLOSURE_SCREEN_v1.md
 before any inspection of the data. No engine execution; no artifact modified.
 """
 import numpy as np, pandas as pd, json, os, pathlib

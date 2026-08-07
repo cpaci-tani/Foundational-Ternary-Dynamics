@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_v2.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_HORIZON_ENVIRONMENTAL_PERSISTENCE_CUDA_v2.md"
 RUNNER = ROOT / "engine/tests/campaign_causal_horizon_environmental_persistence_cuda.cpp"
 PARENT = ROOT / "engine/tests/test_causal_horizon_environmental_persistence.cpp"
 CUDA = ROOT / "engine/cuda/cuda_matched_field_pipeline.cu"

@@ -28,8 +28,8 @@ SOURCE_PATHS = {
     "voxel": ROOT / "engine/include/ftd/voxel.h",
     "natural_extension_header": ROOT / "engine/include/ftd/eft/genesis_natural_extension.h",
     "natural_extension_source": ROOT / "engine/src/eft/genesis_natural_extension.cpp",
-    "ftd0570_theorem": ROOT / "docs/theory/10_eft_program/derivations/THEOREM_GENESIS_NATURAL_EXTENSION.md",
-    "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_ENVIRONMENT_FEEDBACK_v1.md",
+    "ftd0570_theorem": ROOT / "docs/theory/10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_GENESIS_NATURAL_EXTENSION.md",
+    "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_ENVIRONMENT_FEEDBACK_v1.md",
 }
 IMPLEMENTATION_PATHS = {
     "header": ROOT / "engine/include/ftd/eft/genesis_environment_feedback.h",

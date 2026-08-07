@@ -40,7 +40,7 @@ def source_provenance() -> dict[str, str]:
         "energy_ledger": ROOT / "engine/src/energy_ledger_compute.cpp",
         "action_test": ROOT / "engine/tests/test_action_stationarity.cpp",
         "injectivity_test": ROOT / "engine/tests/test_native_injectivity_gate.cpp",
-        "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_AMPLITUDE_ACTION_OBSTRUCTION_v1.md",
+        "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/lorentz_recovery_causal_structure/PREREG_GENESIS_AMPLITUDE_ACTION_OBSTRUCTION_v1.md",
     }
     phase_write = files["phase_write"].read_text(encoding="utf-8")
     require_all(

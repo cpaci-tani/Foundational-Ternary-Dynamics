@@ -12,7 +12,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULT = ROOT / "engine/results/ftd_0640"
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_CONNECTED_BLOCK_ANALYTIC_MATTER_MODES_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CONNECTED_BLOCK_ANALYTIC_MATTER_MODES_v1.md"
 SHA = "203168B41C4B611695A7DF0AA9D311EF2A23AED10CA69900B46C834BA1DD7BDC"
 REPRESENTATIVE = (0, 1, 3, 5, 6, 8, 12, 18, 24, 31, 39, 45, 47)
 

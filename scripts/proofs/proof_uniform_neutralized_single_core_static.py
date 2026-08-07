@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_UNIFORM_NEUTRALIZED_SINGLE_CORE_STATIC_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_UNIFORM_NEUTRALIZED_SINGLE_CORE_STATIC_v1.md"
 RESULT = ROOT / "engine/results/ftd_0611/ftd_0611_uniform_single_core_static_v1.json"
 STARTS = ROOT / "engine/results/ftd_0611/ftd_0611_uniform_single_core_starts_v1.csv"
 EXPECTED = "45FC3250CE24A236EBC231DAD9AA171CADFD754FA8289601892B73C107279B69"

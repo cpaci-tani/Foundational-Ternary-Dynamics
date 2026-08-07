@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_FINITE_SUPPORT_ENVIRONMENTAL_CLOSURE_v1.md"
 RUNNER = ROOT / "engine/tests/test_finite_support_environmental_closure.cpp"
 CMAKE = ROOT / "engine/CMakeLists.txt"
 BASELINE = ROOT / "engine/results/ftd_0739/ftd_0739_finite_support_outgoing_tail_formation_v1.csv"

@@ -70,7 +70,7 @@ A discrete computational framework for simulating physical systems from explicit
 - 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py` — an internal-consistency check (insertions reproduce fitted values), not 50 independently-confirmed predictions
 - Complete Standard Model computation: `scripts/proofs/proof_complete_sm.py`
 
-**Honest accounting:** ~21 derived/theorem-grade claims (corrected 2026-07-01, FTD-0348 — the μ/τ mass-ratio rows moved to [STRUCTURALLY MOTIVATED PARAMETRIC]), ~131 parametric insertions (FTD values in standard QFT formulas), ~10 imposed/selected, ~50+ external physics adopted. 50 physics tests pass across three tiers. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md).
+**Honest accounting:** ~21 derived/theorem-grade claims (corrected 2026-07-01, FTD-0348 — the μ/τ mass-ratio rows moved to [STRUCTURALLY MOTIVATED PARAMETRIC]), ~131 parametric insertions (FTD values in standard QFT formulas), ~10 imposed/selected, ~50+ external physics adopted. 50 physics tests pass across three tiers. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) and [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md).
 
 ---
 
@@ -161,7 +161,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`
 - **Documentation map**: `META_DOCUMENTATION_MAP.md`
-- **Epistemic audit**: `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md`
+- **Epistemic audit**: `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md`
 - **Changelog**: `CHANGELOG.md`
 - **Complete SM**: `scripts/proofs/proof_complete_sm.py`
 - **Motivic proof**: `scripts/proofs/proof_motivic_master_quadratic.py`

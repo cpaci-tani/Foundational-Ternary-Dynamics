@@ -9,7 +9,7 @@ SUMMARY=R/"ftd_0713_causal_bound_internal_gait_continuation_v1.json"
 ITER=R/"ftd_0713_causal_bound_internal_gait_iterations_v1.csv"
 STATE=R/"ftd_0713_causal_bound_internal_gait_state_v1.csv"
 RUNNER=ROOT/"engine/tests/test_causal_bound_internal_gait_continuation.cpp"
-PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/PREREG_CAUSAL_BOUND_INTERNAL_GAIT_CONTINUATION_v1.md"
+PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_BOUND_INTERNAL_GAIT_CONTINUATION_v1.md"
 PROTOCOL="901F2F2FDACEB47D62ED57EE0E4E114B1C4C29C6DF7F8188EA39E86F3DC724BF"
 HASHES={SUMMARY:"E32B537808A128B4B080FE2EC6B42C4DF5E494F87E9D1EF09CB86CBB88DFE051",
 ITER:"0F57ECD24388A9AE4B7CCD43402E911501E3046027EC627C6C7CF266DA001D34",

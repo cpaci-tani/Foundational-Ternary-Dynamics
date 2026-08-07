@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_REFINED_CORE_PEIERLS_LANDSCAPE_v1.md"
+PROTOCOL = ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_REFINED_CORE_PEIERLS_LANDSCAPE_v1.md"
 RESULT = ROOT / "engine/results/ftd_0614/ftd_0614_refined_core_peierls_landscape_v1.json"
 SAMPLES = ROOT / "engine/results/ftd_0614/ftd_0614_refined_core_peierls_samples_v1.csv"
 BOOST = ROOT / "engine/results/ftd_0613/ftd_0613_refined_directional_boost_v1.json"

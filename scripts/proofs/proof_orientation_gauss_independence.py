@@ -162,7 +162,7 @@ def source_provenance():
         "render_bridge": ROOT / "engine/src/render_bridge.cpp",
         "gauge_test": ROOT / "engine/tests/test_gauge_links.cpp",
         "phase_read": ROOT / "engine/src/render_bridge_phases/phase_read.cpp",
-        "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/PREREG_ORIENTATION_GAUSS_INDEPENDENCE_v1.md",
+        "preregistration": ROOT / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_ORIENTATION_GAUSS_INDEPENDENCE_v1.md",
     }
     voxel = files["voxel"].read_text(encoding="utf-8")
     require_all(voxel, (

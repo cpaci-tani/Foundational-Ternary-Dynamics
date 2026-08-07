@@ -44,7 +44,7 @@ TRACKS = [
             "engine/src/render_bridge.cpp",
             "engine/src/render_bridge_phases/phase_read.cpp",
             "engine/tests/test_db_clock_coulomb.cpp",
-            "docs/theory/10_eft_program/preregistrations/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md",
+            "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md",
         ],
         "claim_ceiling": "hook-smoke only until the locked FFT campaign runs",
     },
@@ -54,7 +54,7 @@ TRACKS = [
         "kind": "negative-boundary record under fixed I1+I2+I3 imports",
         "primary_artifacts": [
             "scripts/exploration/atomic_next_three_campaigns.py",
-            "docs/theory/10_eft_program/preregistrations/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md",
+            "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md",
         ],
         "claim_ceiling": "mean-field ceiling; exchange/correlation remain unrepresented",
     },
@@ -64,7 +64,7 @@ TRACKS = [
         "kind": "fixed-cell dimensionless scaling test",
         "primary_artifacts": [
             "scripts/exploration/atomic_next_three_campaigns.py",
-            "docs/theory/10_eft_program/preregistrations/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md",
+            "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md",
         ],
         "claim_ceiling": "dimensionless scaling only; no lab-unit calibration",
     },
@@ -153,13 +153,13 @@ def static_checks() -> list[dict[str, object]]:
         artifact_status("engine/src/render_bridge_phases/phase_read.cpp", "omega_eff_sq"),
         artifact_status("engine/tests/test_db_clock_coulomb.cpp", "DBC-2"),
         artifact_status(
-            "docs/theory/10_eft_program/preregistrations/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md"
+            "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md"
         ),
         artifact_status(
-            "docs/theory/10_eft_program/preregistrations/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md"
+            "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md"
         ),
         artifact_status(
-            "docs/theory/10_eft_program/preregistrations/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md"
+            "docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md"
         ),
     ]
 

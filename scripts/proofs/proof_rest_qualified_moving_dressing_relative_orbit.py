@@ -8,7 +8,7 @@ R=ROOT/"engine/results/ftd_0709"
 SUMMARY=R/"ftd_0709_rest_qualified_moving_dressing_relative_orbit_v1.json"
 METRICS=R/"ftd_0709_rest_qualified_moving_dressing_relative_orbit_metrics_v1.csv"
 RUNNER=ROOT/"engine/tests/test_rest_qualified_moving_dressing_relative_orbit.cpp"
-PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/PREREG_REST_QUALIFIED_MOVING_DRESSING_RELATIVE_ORBIT_v1.md"
+PREREG=ROOT/"docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_REST_QUALIFIED_MOVING_DRESSING_RELATIVE_ORBIT_v1.md"
 PROTOCOL="14AE617CE7D5EA4F4617FAB667F34CFE339309512B2D9E2D1BE97C946D47A74E"
 HASHES={SUMMARY:"86562D8A4ACF7E46CFECC1FF420B3B669294DBECCEB7FBE6040FDAF8CC00FF7C",
 METRICS:"93AF5C6B0198F1D9FC4D71B76C5BE2A94832869111ED2FCC937190E11465F3F9",

@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LOCKS = {
-    "docs/theory/10_eft_program/preregistrations/PREREG_NONCOMPACT_FACE_COHOMOLOGY_v1.md":
+    "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_NONCOMPACT_FACE_COHOMOLOGY_v1.md":
         "755D703FB3E9DA9CA7F2EB46B1FE399D704F739AD08050D39242D1EB0B2BB922",
     "engine/include/ftd/eft/matched_gauss_transport.h":
         "1E07F87A0EBD0D1830D0632B82C2BD65497EBEAE7BB152EA02C5AAE19328B033",
