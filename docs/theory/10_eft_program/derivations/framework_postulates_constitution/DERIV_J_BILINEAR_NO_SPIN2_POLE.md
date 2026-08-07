@@ -1,13 +1,13 @@
 # DERIV — J-bilinear two-point correlator has no separable helicity-±2 pole (free-theory + tree-level)
 
-**Tag:** `[THEOREM at free-theory level + tree-level interactions in the canonical Gauss-only toggle subset]` + `[STRONGLY MOTIVATED CONJECTURE for full canonical toggle set with all interactions]` + `[OPEN for general non-canonical toggle configurations]`. Load-bearing step 3 of the Arc C2 spin-2 boundary theorem program per [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) §3.
+**Tag:** `[THEOREM at free-theory level + tree-level interactions in the canonical Gauss-only toggle subset]` + `[STRONGLY MOTIVATED CONJECTURE for full canonical toggle set with all interactions]` + `[OPEN for general non-canonical toggle configurations]`. Load-bearing step 3 of the Arc C2 spin-2 boundary theorem program per [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) §3.
 **LEDGER row reservation:** provisional, confirm against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; this derivation is referenced by `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`.
 **Companion docs:**
-- [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 scoping (parent doc; this derivation is its §3 step 3)
-- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 empirical validation (11/12 k-points identical to spin-1 control at L=64)
-- [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](../preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) — the pre-registration FTD-0193 closed against
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.1 (lattice derivatives) + §3.3 (action) + §6.1 (lattice Green's function `G_L(k) = 1/k̂²`)
-- [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) — Phase G scalar gravity (the substrate-derivable content above which Arc C2 establishes the boundary)
+- [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 scoping (parent doc; this derivation is its §3 step 3)
+- [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 empirical validation (11/12 k-points identical to spin-1 control at L=64)
+- [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](../../preregistrations/gravity_cosmology/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) — the pre-registration FTD-0193 closed against
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../../../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.1 (lattice derivatives) + §3.3 (action) + §6.1 (lattice Green's function `G_L(k) = 1/k̂²`)
+- [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) — Phase G scalar gravity (the substrate-derivable content above which Arc C2 establishes the boundary)
 
 **What this document does:** rigorously establishes — at the free-theory + Gauss-only-interaction level — that the connected two-point correlator of the symmetric traceless rank-2 J-bilinear contains **no separable helicity-±2 pole**; the transverse-traceless projection produces a two-particle continuum (bubble-diagram structure) carrying the spin-1 J-mode dispersion through the bilinear product. This makes rigorous the "spin-1 fields produce spin-0 ⊕ spin-1 ⊕ spin-2 kinematically but only continuum-level (not pole-level) in the spin-2 channel" claim flagged as hand-waved in the parent scope memo.
 

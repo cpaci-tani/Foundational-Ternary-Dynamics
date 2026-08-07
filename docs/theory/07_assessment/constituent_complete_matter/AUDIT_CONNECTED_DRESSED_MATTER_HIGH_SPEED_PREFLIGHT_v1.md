@@ -12,5 +12,5 @@ voxel, and the run does not demonstrate native formation, a conserved gauge
 charge, an asymptotic particle, or a radiation-free speed range.
 
 See
-[`ANALYSIS_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md`](../10_eft_program/derivations/ANALYSIS_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md).
+[`ANALYSIS_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CONNECTED_DRESSED_MATTER_HIGH_SPEED_PREFLIGHT_v1.md).
 

@@ -10,7 +10,7 @@
 `[OPEN — NEW NONLINEAR ATOMIC ROOT/ARBITRARY FIELDS]`  
 **Verdict:** `SYMMETRIC_DIAGONAL_ENERGY_COUPLED_ENDPOINT_CONSTRUCTIVE`  
 **Pre-registration:**
-[`PREREG_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT_v1.md`](../10_eft_program/preregistrations/PREREG_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT_v1.md)  
+[`PREREG_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SYMMETRIC_DIAGONAL_COUPLED_ENDPOINT_v1.md)  
 **Run of record:** `engine/results/ftd_0531/windows_msvc_cpu.json`
 
 ## 1. What was solved

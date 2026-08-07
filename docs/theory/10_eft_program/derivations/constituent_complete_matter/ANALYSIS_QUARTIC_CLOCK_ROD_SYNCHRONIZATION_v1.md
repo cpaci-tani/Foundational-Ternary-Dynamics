@@ -6,7 +6,7 @@
 `[OPEN — NATIVE RATE, SHELL, AND CLOCK SELECTION]`  
 **Date:** 2026-08-02  
 **Protocol:**
-[`PREREG_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md`](../preregistrations/PREREG_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md),
+[`PREREG_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md`](../../preregistrations/native_time_carrier_programme/PREREG_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md),
 SHA-256
 `360BAC51AC50F525DD4AF6DCD588F61831F13778C38FF5644854E2D35817FE16`  
 **Production status:** unchanged
@@ -322,7 +322,7 @@ derive the clock rate by matching the selected linear clock-wave cone
 
 ## 9. Exact certificate
 
-[`proof_quartic_clock_rod_synchronization.py`](../../../../scripts/proofs/proof_quartic_clock_rod_synchronization.py)
+[`proof_quartic_clock_rod_synchronization.py`](../../../../../scripts/proofs/proof_quartic_clock_rod_synchronization.py)
 contains no fitted or empirical inputs. It is an exact symbolic consistency
 certificate accompanying the analytic derivation and executes `20/20` checks
 covering the transformed period quadrature, quartic gamma reduction, rate

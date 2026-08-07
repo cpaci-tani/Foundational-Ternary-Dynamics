@@ -7,7 +7,7 @@
 `[MEASURED — EXACT CURRENT EXCHANGE]` +
 `[CLOSED NEGATIVE — QUIET ELECTROSTATIC RECOIL IN THIS CHANNEL]` +
 `[OPEN — AUTONOMOUS MATTER CURRENT/INERTIA]`  
-**Pre-registration:** [`PREREG_MATCHED_FACE_MOMENTUM_TRANSACTION_v1.md`](../10_eft_program/preregistrations/PREREG_MATCHED_FACE_MOMENTUM_TRANSACTION_v1.md)  
+**Pre-registration:** [`PREREG_MATCHED_FACE_MOMENTUM_TRANSACTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_FACE_MOMENTUM_TRANSACTION_v1.md)  
 **Run of record:** `engine/results/ftd_0473/windows_msvc_cpu.csv`
 
 ## Verdict

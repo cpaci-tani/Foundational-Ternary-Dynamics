@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0444`  
 **Status:** `[THEOREM — SCALAR WORK UNDERDETERMINES LOCAL MECHANICS]` + `[CONSTRUCTIVE EXAMPLE — SELECTED REVERSIBLE MAP]`  
 **Verdict:** `REVERSIBLE_SELECTED_MAP_BUT_LOCAL_DYNAMICS_UNDERDETERMINED`  
-**Pre-registration:** [`PREREG_HOP_MECHANICS_UNDERDETERMINATION_v1.md`](../10_eft_program/preregistrations/PREREG_HOP_MECHANICS_UNDERDETERMINATION_v1.md)  
+**Pre-registration:** [`PREREG_HOP_MECHANICS_UNDERDETERMINATION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_HOP_MECHANICS_UNDERDETERMINATION_v1.md)  
 **Run of record:** `engine/results/ftd_0444/windows_msvc_cpu.csv`
 
 ## 1. Result

@@ -7,7 +7,7 @@
 `[OPEN — KNOT BRANCH]`  
 **Verdict:** `INTERIOR_DISCRETE_LEGENDRE_GAUGE_COVARIANT`  
 **Pre-registration:**
-[`PREREG_DISCRETE_LEGENDRE_WORLDLINE_v1.md`](../10_eft_program/preregistrations/PREREG_DISCRETE_LEGENDRE_WORLDLINE_v1.md)  
+[`PREREG_DISCRETE_LEGENDRE_WORLDLINE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DISCRETE_LEGENDRE_WORLDLINE_v1.md)  
 **Run of record:** `engine/results/ftd_0490/windows_msvc_cpu.json`
 
 ## 1. Corrected classical equation

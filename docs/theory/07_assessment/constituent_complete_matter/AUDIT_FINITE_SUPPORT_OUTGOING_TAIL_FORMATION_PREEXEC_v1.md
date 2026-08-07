@@ -38,7 +38,7 @@ volume, horizon, current, event order, or verdict ordering.
 
 ## 3. Static certificate
 
-[`proof_finite_support_outgoing_tail_protocol_conformance.py`](../../../scripts/proofs/proof_finite_support_outgoing_tail_protocol_conformance.py)
+[`proof_finite_support_outgoing_tail_protocol_conformance.py`](../../../../scripts/proofs/proof_finite_support_outgoing_tail_protocol_conformance.py)
 checks the protocol hash, embedded hash, volume, horizon, support, shells,
 options, matrix, forward/reverse counts, physical gates, serialization, exact
 verdicts, obsolete-verdict absence, and CTest registration.

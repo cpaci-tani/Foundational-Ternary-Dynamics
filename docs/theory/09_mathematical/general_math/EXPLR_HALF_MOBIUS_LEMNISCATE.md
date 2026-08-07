@@ -10,11 +10,11 @@
 
 ## Depends On
 
-- [DERIV_SPIN_STATISTICS_BRIDGE.md](../03_derivations/DERIV_SPIN_STATISTICS_BRIDGE.md) — Discriminant trichotomy (§3), Z₂ from lemniscates (§1), Z/6Z structure (§1.6)
-- [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Cayley-Dickson hierarchy, power-of-2 frequencies, lobe creation at algebraic transitions
-- [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — j = 1728, CM selection, I₄ integral
+- [DERIV_SPIN_STATISTICS_BRIDGE.md](../../03_derivations/quantum_mechanics/DERIV_SPIN_STATISTICS_BRIDGE.md) — Discriminant trichotomy (§3), Z₂ from lemniscates (§1), Z/6Z structure (§1.6)
+- [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Cayley-Dickson hierarchy, power-of-2 frequencies, lobe creation at algebraic transitions
+- [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — j = 1728, CM selection, I₄ integral
 - [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](../number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) — G* dimensional triad, dual-substrate ψ = J_L + J_R
-- [engine/include/ftd/ontic.h](../../../engine/include/ftd/ontic.h) — Layer 2b (k_crit = 4/G*, emergence of i)
+- [engine/include/ftd/ontic.h](../../../../engine/include/ftd/ontic.h) — Layer 2b (k_crit = 4/G*, emergence of i)
 
 ---
 

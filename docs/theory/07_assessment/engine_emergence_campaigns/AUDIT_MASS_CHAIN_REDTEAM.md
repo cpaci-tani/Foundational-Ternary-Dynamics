@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-This report presents a rigorous, adversarial red-team critique of the **FTD Leptonic and Hadronic Mass Derivation Chain** (documented in [`../05_particles/EXPLR_FTD_MASS_CHAIN.md`](../05_particles/EXPLR_FTD_MASS_CHAIN.md)). 
+This report presents a rigorous, adversarial red-team critique of the **FTD Leptonic and Hadronic Mass Derivation Chain** (documented in [`../05_particles/EXPLR_FTD_MASS_CHAIN.md`](../../05_particles/EXPLR_FTD_MASS_CHAIN.md)). 
 
 While the mathematical self-consistency and precision of the numerical fits in the mass chain are undeniable (ppb-level for $\alpha$, ppm-level for $m_e$ and $m_p$), the claim that these values are "derived from first principles of the lattice" is highly vulnerable on several fronts. 
 

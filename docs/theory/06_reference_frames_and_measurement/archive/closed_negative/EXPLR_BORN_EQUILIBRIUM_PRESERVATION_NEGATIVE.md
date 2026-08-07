@@ -3,7 +3,7 @@
 **Document type:** Exploratory test result (closed-negative on the DGZ-equilibrium route)
 **Status:** `[CLOSED NEGATIVE]` on DGZ-equilibrium preservation in the 6-neighbour substrate; pre-registered formal outcome is `D_mixed`, but the underlying data is structurally clearer than that label conveys (see §3).
 **Created:** 2026-05-23
-**Pre-registration:** [`PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md`](PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md)
+**Pre-registration:** [`PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md`](../../PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md)
 **Git tag (hash-lock):** `preregister-born-equilibrium-preservation-v1` (commit `16f10a2`, runner SHA256 `94b280f40c6ef69b2d6b1f964ca165cdaadc3fd975a56504bb54a9f519ff0732`)
 **Runner:** `scripts/exploration/explore_born_equilibrium_preservation.py`
 **Results:** `scripts/exploration/results/born_equilibrium_preservation_2026-05-23.{csv,md}`
@@ -114,10 +114,10 @@ The net effect: `freq_long(v)` is **anti-correlated** with `|ψ(v)|²` because h
 
 ## 7 · Cross-references
 
-- [`PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md`](PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md) — the locked manifest.
-- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (threshold-crossing closed-negative), FTD-0199 (this test).
-- [`EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) — v1 closed-negative (different question, same substrate).
-- [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical Softplus → ReLU framework; v4 would test the finite-β case.
+- [`PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md`](../../PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md) — the locked manifest.
+- [`LEDGER.md`](../../../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (threshold-crossing closed-negative), FTD-0199 (this test).
+- [`EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](../../EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) — v1 closed-negative (different question, same substrate).
+- [`DERIV_COLLAPSE_MECHANISM.md`](../../DERIV_COLLAPSE_MECHANISM.md) — canonical Softplus → ReLU framework; v4 would test the finite-β case.
 - Dürr, Goldstein, Zanghì 1992 — the analytical framework this test mirrored.
 
 ---

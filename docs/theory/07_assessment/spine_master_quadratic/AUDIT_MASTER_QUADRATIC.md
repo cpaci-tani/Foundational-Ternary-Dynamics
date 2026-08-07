@@ -349,7 +349,7 @@ actually constructed. The gap-equation narrative should be flagged
 ### 7.3 · First-principles g_c — **STATED, NOT SOLVED**
 
 A structural scoping document has been written:
-[`OPEN_GC_FROM_FIRST_PRINCIPLES.md`](../10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md).
+[`OPEN_GC_FROM_FIRST_PRINCIPLES.md`](../../10_eft_program/scopes_and_specs/OPEN_GC_FROM_FIRST_PRINCIPLES.md).
 Three candidate mechanisms (Dirac quantisation, lattice-to-continuum
 matching, self-consistent fixed point) are identified. None is
 currently closed; the most tractable is Mechanism A (Wilson-loop

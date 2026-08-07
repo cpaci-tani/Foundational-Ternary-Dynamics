@@ -9,7 +9,7 @@
 `[OPEN — CONJUGATE FIELD/CONTACT ACTION]`  
 **Verdict:** `RANK2_STRESS_IS_MINIMAL_FOR_TWO_STREAM_KERNEL_NOT_COMPLETE`  
 **Pre-registration:**
-[`PREREG_MINIMAL_CONSTITUENT_STRESS_LIFT_v1.md`](../10_eft_program/preregistrations/PREREG_MINIMAL_CONSTITUENT_STRESS_LIFT_v1.md)  
+[`PREREG_MINIMAL_CONSTITUENT_STRESS_LIFT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MINIMAL_CONSTITUENT_STRESS_LIFT_v1.md)  
 **Run of record:** `engine/results/ftd_0513/windows_msvc_cpu.json`
 
 ## 1. Why density and vector current had to fail

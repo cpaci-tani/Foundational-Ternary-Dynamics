@@ -1,7 +1,7 @@
 # Exploration — The Tower of Class-Number-1 Reflection Ratios as Scales of π and G*
 
 **Tag:** [REFERENCE] / [EXPLORATORY MATH] (foundational-math extension; no physics promotion)
-**Companions:** [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) Theorem 3 (CM uniqueness), [`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`](../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md), [`PAPER_RATIO_AND_THE_ARROW.tex`](../../papers/src/PAPER_RATIO_AND_THE_ARROW.tex)
+**Companions:** [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) Theorem 3 (CM uniqueness), [`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`](../../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md), [`PAPER_RATIO_AND_THE_ARROW.tex`](../../../papers/src/PAPER_RATIO_AND_THE_ARROW.tex)
 
 ---
 

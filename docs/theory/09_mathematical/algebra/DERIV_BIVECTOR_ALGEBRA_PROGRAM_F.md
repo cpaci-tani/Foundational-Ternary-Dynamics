@@ -19,9 +19,9 @@ This doc consolidates one empirical campaign probing whether FTD's non-local flu
 The campaign lineage descends from **Program F (FTD-0085)** — documented separately in [`DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md`](DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md), which detected non-commutativity in the bilinear sector. That doc is **not** consolidated here; it remains a standalone document.
 
 **Companion GPU tests:**
-- [`test_plaquette_bivector_clifford.cpp`](../../../engine/tests/test_plaquette_bivector_clifford.cpp) (§1, FTD-0086)
-- [`test_bivector_closure.cpp`](../../../engine/tests/test_bivector_closure.cpp) (§2, FTD-0087)
-- [`test_clifford_multigrade.cpp`](../../../engine/tests/test_clifford_multigrade.cpp) (§3, FTD-0088)
+- [`test_plaquette_bivector_clifford.cpp`](../../../../engine/tests/test_plaquette_bivector_clifford.cpp) (§1, FTD-0086)
+- [`test_bivector_closure.cpp`](../../../../engine/tests/test_bivector_closure.cpp) (§2, FTD-0087)
+- [`test_clifford_multigrade.cpp`](../../../../engine/tests/test_clifford_multigrade.cpp) (§3, FTD-0088)
 
 **Prior probes referenced across the campaign:** FTD-0061, 0071, 0072, 0073, 0074, 0075, 0085; [`DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md`](../number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) — the site-local no-go this campaign breaks.
 
@@ -34,7 +34,7 @@ The campaign lineage descends from **Program F (FTD-0085)** — documented separ
 **Companions:**
 - [DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md](DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md) (FTD-0085) — Program F detected non-commutativity in bilinear sector
 - [DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md](../number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) — site-local no-go this breaks
-- [test_plaquette_bivector_clifford.cpp](../../../engine/tests/test_plaquette_bivector_clifford.cpp) — GPU test
+- [test_plaquette_bivector_clifford.cpp](../../../../engine/tests/test_plaquette_bivector_clifford.cpp) — GPU test
 - FTD-0061, 0071, 0072, 0073, 0074, 0075, 0085 — prior probes
 
 ## 1.0 — Executive statement
@@ -301,7 +301,7 @@ Key numbers:
 **Ledger row:** FTD-0087
 **Companions:**
 - §1 above (FTD-0086) — F-prime matching signature
-- [test_bivector_closure.cpp](../../../engine/tests/test_bivector_closure.cpp) — GPU test
+- [test_bivector_closure.cpp](../../../../engine/tests/test_bivector_closure.cpp) — GPU test
 
 ## 2.0 — Executive statement
 
@@ -525,7 +525,7 @@ If Path 1 also fails: accept Path 2/3.
 **Companions:**
 - FTD-0086 (§1) — F-prime bivector matching signature
 - FTD-0087 (§2) — F-double-prime closure tests (1/3 PASS, 4-injection failure)
-- [test_clifford_multigrade.cpp](../../../engine/tests/test_clifford_multigrade.cpp) — GPU test
+- [test_clifford_multigrade.cpp](../../../../engine/tests/test_clifford_multigrade.cpp) — GPU test
 
 ## 3.0 — Executive statement
 
@@ -768,6 +768,6 @@ Reading the three stages together (FTD-0086 + FTD-0087 + FTD-0088):
 - [`DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md`](DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL.md) (FTD-0085) — Program F, which detected non-commutativity in the bilinear sector and motivated the plaquette basis. **Not consolidated here; remains a separate doc.**
 - [`DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md`](../number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) — the site-local mode-erasure no-go (FTD-0073) this campaign breaks on the plaquette bivector basis.
 - FTD-0061, 0071, 0072, 0073, 0074, 0075, 0077, 0085 — prior probes and selections referenced across the campaign (FTD-0075 = thermalized Langevin ensemble; FTD-0077 = $C_3 \subset SU(3)$ Branch-B selection analogy).
-- [`engine/tests/test_plaquette_bivector_clifford.cpp`](../../../engine/tests/test_plaquette_bivector_clifford.cpp) — GPU test for §1 (FTD-0086).
-- [`engine/tests/test_bivector_closure.cpp`](../../../engine/tests/test_bivector_closure.cpp) — GPU test for §2 (FTD-0087).
-- [`engine/tests/test_clifford_multigrade.cpp`](../../../engine/tests/test_clifford_multigrade.cpp) — GPU test for §3 (FTD-0088).
+- [`engine/tests/test_plaquette_bivector_clifford.cpp`](../../../../engine/tests/test_plaquette_bivector_clifford.cpp) — GPU test for §1 (FTD-0086).
+- [`engine/tests/test_bivector_closure.cpp`](../../../../engine/tests/test_bivector_closure.cpp) — GPU test for §2 (FTD-0087).
+- [`engine/tests/test_clifford_multigrade.cpp`](../../../../engine/tests/test_clifford_multigrade.cpp) — GPU test for §3 (FTD-0088).

@@ -18,10 +18,10 @@ This suite consolidates one exploratory campaign that stress-tested FQCR Model V
 The forward-looking proposal sketch lives in a separate doc — [`PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md`](../general_math/PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md) — and is **not** consolidated here; it remains a standalone forward-looking document.
 
 **Companion scripts:**
-- [`scripts/exploration/explore_fqcr_observer_term.py`](../../../scripts/exploration/explore_fqcr_observer_term.py) (§A)
-- [`scripts/exploration/explore_fqcr_multilepton.py`](../../../scripts/exploration/explore_fqcr_multilepton.py) (§B)
-- [`scripts/exploration/explore_fqcr_response_laws.py`](../../../scripts/exploration/explore_fqcr_response_laws.py) (§C)
-- [`scripts/exploration/explore_fqcr_t_scale_map.py`](../../../scripts/exploration/explore_fqcr_t_scale_map.py) (§D)
+- [`scripts/exploration/explore_fqcr_observer_term.py`](../../../../scripts/exploration/explore_fqcr_observer_term.py) (§A)
+- [`scripts/exploration/explore_fqcr_multilepton.py`](../../../../scripts/exploration/explore_fqcr_multilepton.py) (§B)
+- [`scripts/exploration/explore_fqcr_response_laws.py`](../../../../scripts/exploration/explore_fqcr_response_laws.py) (§C)
+- [`scripts/exploration/explore_fqcr_t_scale_map.py`](../../../../scripts/exploration/explore_fqcr_t_scale_map.py) (§D)
 
 ---
 
@@ -89,7 +89,7 @@ $$
 | 0.50 | 1.02 | $-0.1700$ | $-0.2122$ | 19.9% |
 | 0.80 | 0.64 | $-0.1294$ | $-0.2122$ | 39.0% |
 
-**At $\mu \in [5, 10]$ MeV — the asymptotic-UV regime where the structural prediction was derived — the match is sub-percent.** Both finite-difference and analytic-chain-rule computations agree (computed independently in [`scripts/exploration/explore_fqcr_observer_term.py`](../../../scripts/exploration/explore_fqcr_observer_term.py)).
+**At $\mu \in [5, 10]$ MeV — the asymptotic-UV regime where the structural prediction was derived — the match is sub-percent.** Both finite-difference and analytic-chain-rule computations agree (computed independently in [`scripts/exploration/explore_fqcr_observer_term.py`](../../../../scripts/exploration/explore_fqcr_observer_term.py)).
 
 **Slope match degrades at moderate $\mu$.** The smooth threshold of $\log(1 + (\mu/m_e)^2)$ doesn't reproduce QED's sharp electron-decoupling at $\mu = m_e$. This is an artefact of the functional form, not the structural prediction.
 
@@ -294,7 +294,7 @@ If items 1-3 close, FTD-0013 has an end-to-end derivation chain $J^2 = -I \to G^
 
 # §C — FQCR Response-Law Comparison
 
-**Status:** [EXPLORATORY] — structural-stability test of the additive response law $R_N(t) = 1 + \lambda_N(4it) + A_N(t)$ tagged [SELECTION] in [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.3.
+**Status:** [EXPLORATORY] — structural-stability test of the additive response law $R_N(t) = 1 + \lambda_N(4it) + A_N(t)$ tagged [SELECTION] in [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.3.
 **Tag impact:** none. The [SELECTION] tag stands. This test was *not* pre-registered; criteria were declared at execution time.
 
 ## C.1 — Setup
@@ -325,7 +325,7 @@ The test: rank the three laws by structural-stability criteria across $t \in [0.
 
 ## C.2 — At $t=1$ (the [SELECTION] base point), the test is degenerate
 
-Numerical results from [`explore_fqcr_response_laws.py`](../../../scripts/exploration/explore_fqcr_response_laws.py) at $N = 512$:
+Numerical results from [`explore_fqcr_response_laws.py`](../../../../scripts/exploration/explore_fqcr_response_laws.py) at $N = 512$:
 
 $$
 \lambda_N(4i) \approx 5.580 \times 10^{-5}, \qquad A_N(1) \approx -8.12 \times 10^{-8}.
@@ -426,9 +426,9 @@ The [SELECTION] tag on $R_N(t) = 1 + \lambda_N(4it) + A_N(t)$ stays. This test d
 
 ## C.8 — Why this matters for the broader epistemic stack
 
-This is the same pattern as the [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) finding from earlier today: a structural choice in FQCR Model V is *consistent with* the data without being *forced* by the data, and the canonical [SELECTION] tag is honest. The risk is rhetorical inflation — saying "the additive law is structurally preferred" — when the test really shows "the additive law is one of several that all pass."
+This is the same pattern as the [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../../07_assessment/spine_gstar_cm_modular/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) finding from earlier today: a structural choice in FQCR Model V is *consistent with* the data without being *forced* by the data, and the canonical [SELECTION] tag is honest. The risk is rhetorical inflation — saying "the additive law is structurally preferred" — when the test really shows "the additive law is one of several that all pass."
 
-The actually load-bearing test for FQCR Model V is **[FTD-0143 quotient uniqueness](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md)** (the $7^4 = 2401$-quadruple scan over alternatives to $(4,6;3,2)$). That scan probes a higher-dimensional [SELECTION] knob ($\Psi_N$ exponent quadruple) than the response-law test does, and is pre-registered. Until it runs, the structural-uniqueness claim about the FQCR Model V machinery rests on numerical coincidences at $t = 1$, which this test has now shown to be law-degenerate.
+The actually load-bearing test for FQCR Model V is **[FTD-0143 quotient uniqueness](../../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md)** (the $7^4 = 2401$-quadruple scan over alternatives to $(4,6;3,2)$). That scan probes a higher-dimensional [SELECTION] knob ($\Psi_N$ exponent quadruple) than the response-law test does, and is pre-registered. Until it runs, the structural-uniqueness claim about the FQCR Model V machinery rests on numerical coincidences at $t = 1$, which this test has now shown to be law-degenerate.
 
 ## C.9 — Engaging with the four open questions
 
@@ -442,7 +442,7 @@ The operator-stack discussion raised four open questions. Brief audit of each ag
 
 The user's reading: "16 is the quadratic scale of the order-four clock" ($J^4 = I$, branch is degree 2, hence $4^2 = 16$).
 
-This is consistent with the canonical provenance per [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) §2.2:
+This is consistent with the canonical provenance per [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) §2.2:
 - Route A: $|\mathrm{Aut}(E)|^2 = 4^2 = 16$ — matches the user's clock-order reading exactly, since $\mathrm{Aut}(E) = \mathbb{Z}/4 = \langle J \rangle$.
 - Route B: $z_\mathrm{BCC} \times 2 = 8 \times 2 = 16$ — coordination-times-non-void.
 
@@ -452,17 +452,17 @@ The "test other $m$" question is already addressed structurally: [`EXPLR_TOWER_M
 
 ### Q3 — Why $(4, 6; 3, 2)$ in $\Psi_N(t)$?
 
-**Status from existing machinery:** The $7^4 = 2401$-alternative scan is [PRE-REGISTERED] as FTD-0143 / [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) and gated on a separate session. The user's red-team alternatives $(4,6)/(3,1)$, $(4,6)/(4,2)$, $(4,4)/(3,2)$, $(2,3)/(3,2)$ are subsets of the 2401-element scan space.
+**Status from existing machinery:** The $7^4 = 2401$-alternative scan is [PRE-REGISTERED] as FTD-0143 / [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) and gated on a separate session. The user's red-team alternatives $(4,6)/(3,1)$, $(4,6)/(4,2)$, $(4,4)/(3,2)$, $(2,3)/(3,2)$ are subsets of the 2401-element scan space.
 
 **Recommendation:** the load-bearing question is the FTD-0143 scan, not a hand-picked alternative comparison. If FTD-0143 confirms $(4,6;3,2)$ uniqueness at the strict tolerance, the [SELECTION] tag upgrades to "[SELECTION with uniqueness backing]" per the pre-registered protocol.
 
-The user's interpretive reading $(4, 6) = $ quarter clock + six bivector modes ($\dim \Lambda^2(\mathbb{R}^4) = 6$); $(3, 2) = $ spatial projection + two transverse modes — is consistent with FTD's spacetime ontology and is already implicit in [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.1. The interpretation does not promote the tag, but it makes the [SELECTION] less arbitrary.
+The user's interpretive reading $(4, 6) = $ quarter clock + six bivector modes ($\dim \Lambda^2(\mathbb{R}^4) = 6$); $(3, 2) = $ spatial projection + two transverse modes — is consistent with FTD's spacetime ontology and is already implicit in [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.1. The interpretation does not promote the tag, but it makes the [SELECTION] less arbitrary.
 
 ### Q4 — Why $t = 1$ physical?
 
 The user notes $t = 1$ is the fixed point of $t \mapsto 1/t$ — the modular self-dual tick. Mathematically clean, physically a [SELECTION].
 
-**Status:** [SELECTION] per [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.2; the physical interpretation of $t$ is open and gates the FTD-0143 follow-up Test 3 (running behaviour).
+**Status:** [SELECTION] per [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.2; the physical interpretation of $t$ is open and gates the FTD-0143 follow-up Test 3 (running behaviour).
 
 The §C.2 finding above adds support to $t = 1$ as the natural base point for a different reason: it is the point at which the response-law $R(t)$'s second-order corrections vanish to relevant precision — i.e., $t = 1$ is the point where the FQCR Model V branch readout is *insensitive to response-law choice*. That could be re-read as "$t = 1$ is the unique base point where all natural response laws agree to physical precision." Whether that re-reading lifts the [SELECTION] tag depends on whether one accepts insensitivity-of-readout as a structural principle. I would argue it doesn't — insensitivity makes $t = 1$ a comfortable place to evaluate, but doesn't force the physical identification.
 
@@ -483,12 +483,12 @@ The §C.2 finding above adds support to $t = 1$ as the natural base point for a 
 
 # §D — FQCR Model V $t \leftrightarrow$ Scale Map Candidates
 
-**Status:** [EXPLORATORY] — addresses the gating question for [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §6 Test 3 (running behaviour). **Does not close the question.**
+**Status:** [EXPLORATORY] — addresses the gating question for [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §6 Test 3 (running behaviour). **Does not close the question.**
 **Tag impact:** none. The [SELECTION] tag on $t = 1$ in SPEC_FQCR §3.2 stands. The "physical interpretation of $t$" listed under SPEC_FQCR §7 (out of scope) remains open.
 
 ## D.1 — The question
 
-[`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.2 declares $t = 1$ as the [SELECTION] base point at which the FQCR Model V branch readout is identified with $\alpha^{-1}$:
+[`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.2 declares $t = 1$ as the [SELECTION] base point at which the FQCR Model V branch readout is identified with $\alpha^{-1}$:
 
 $$
 \alpha^{-1} \;\stackrel{?}{=}\; \lim_{N \to \infty} x_+(N, 1).
@@ -510,7 +510,7 @@ $$
 
 which is the canonical 0+1-dimensional thermal partition function with inverse temperature $\beta$. The FQCR convention $Q = e^{-2\pi t}$ identifies $t = \beta/(2\pi)$. For a 0+1 spectrum (no kinetic Laplacian), the natural mass-scale identification is $\mu \sim 1/\beta \sim 1/t$. Pinning $t = 1 \leftrightarrow \mu = m_*$ for $m_*$ an FTD natural mass unit gives the map.
 
-**FTD natural mass unit.** Per [`SPEC_DIMENSIONAL_MAP.md`](../01_reference/SPEC_DIMENSIONAL_MAP.md), $K_B \equiv m_e$ in the calibration. So $m_* = m_e$. Then $t = 1 \leftrightarrow \mu = m_e$, and CODATA $\alpha^{-1}(m_e) \approx 137.036$ matches $x_+(1) = 137.036$ by design.
+**FTD natural mass unit.** Per [`SPEC_DIMENSIONAL_MAP.md`](../../01_reference/SPEC_DIMENSIONAL_MAP.md), $K_B \equiv m_e$ in the calibration. So $m_* = m_e$. Then $t = 1 \leftrightarrow \mu = m_e$, and CODATA $\alpha^{-1}(m_e) \approx 137.036$ matches $x_+(1) = 137.036$ by design.
 
 ### Map B — Logarithmic / RG, $\mu = m_e \cdot e^{(1 - t)/c}$
 
@@ -607,7 +607,7 @@ What it *is*:
 2. At $t \neq 1$, $x_+(t)$ is a mathematical perturbation around the base point. The slope under Map A is in the right *direction* (decreasing $\alpha^{-1}$ with increasing $\mu$) and roughly QED's order of magnitude near $t = 1$, but accelerates much faster than QED at smaller $t$.
 3. The structural Landau-like point at $t_* \approx 0.062$ corresponds to $\alpha = N_c$ in the master quadratic, not to QED's Landau pole.
 
-So the framework gives a value at $t = 1$ but does not naturally give *running*. This is consistent with [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.2's [SELECTION] tag and with §7's listing of "physical interpretation of $t$" as out-of-scope.
+So the framework gives a value at $t = 1$ but does not naturally give *running*. This is consistent with [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.2's [SELECTION] tag and with §7's listing of "physical interpretation of $t$" as out-of-scope.
 
 **The closability question:** to give physical meaning to $x_+(t)$ at $t \neq 1$, one of the following must happen:
 
@@ -648,13 +648,13 @@ This script does not run that test (because under Map A, $t < 1$ is bounded and 
 ## §E — Suite cross-references
 
 - [`PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md`](../general_math/PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md) — the forward-looking proposal whose §4 prediction $c = \delta/(3\pi G^*)$ §A confirms and §B extends; §5.3 chicken-and-egg with the t-scale map. **Not consolidated here; remains a separate doc.**
-- [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.1, §3.2, §3.3, §6 Test 3, §7 — the [SELECTION] tags on $(4, 6; 3, 2)$, on $t = 1$, and on the additive form $R = 1 + \lambda + A$; the explicit OPEN status of running behaviour. §6 Test 3 is partially answered by §B.
-- [`SPEC_DIMENSIONAL_MAP.md`](../01_reference/SPEC_DIMENSIONAL_MAP.md) — calibration declarations ($a_\mathrm{phys} \equiv \ell_P$, $K_B = m_e$) used in Maps A and C.
-- [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) — the audit that surfaced the chain-rule factor $-G^*/\delta$ underlying §A/§B; the same epistemic pattern (structural choice consistent with data without being forced by it) seen in §C/§D.
-- [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) §2.2 — the canonical provenance of $16 = 4^2$ (Route A / Route B), addressing §C.9 Q2.
-- [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143) — the load-bearing $7^4 = 2401$-quadruple structural-uniqueness test referenced in §C.8 and §C.9 Q3.
+- [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.1, §3.2, §3.3, §6 Test 3, §7 — the [SELECTION] tags on $(4, 6; 3, 2)$, on $t = 1$, and on the additive form $R = 1 + \lambda + A$; the explicit OPEN status of running behaviour. §6 Test 3 is partially answered by §B.
+- [`SPEC_DIMENSIONAL_MAP.md`](../../01_reference/SPEC_DIMENSIONAL_MAP.md) — calibration declarations ($a_\mathrm{phys} \equiv \ell_P$, $K_B = m_e$) used in Maps A and C.
+- [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../../07_assessment/spine_gstar_cm_modular/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) — the audit that surfaced the chain-rule factor $-G^*/\delta$ underlying §A/§B; the same epistemic pattern (structural choice consistent with data without being forced by it) seen in §C/§D.
+- [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) §2.2 — the canonical provenance of $16 = 4^2$ (Route A / Route B), addressing §C.9 Q2.
+- [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143) — the load-bearing $7^4 = 2401$-quadruple structural-uniqueness test referenced in §C.8 and §C.9 Q3.
 - [`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`](../number_theory/EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md) — the $(m, k) = (2, 4) \Rightarrow 16$ uniqueness scan that addresses §C.9 Q2.
-- [`scripts/exploration/explore_fqcr_observer_term.py`](../../../scripts/exploration/explore_fqcr_observer_term.py) — runs Configurations I and II for §A, including the slope check that gives the 0.4-0.6% match.
-- [`scripts/exploration/explore_fqcr_multilepton.py`](../../../scripts/exploration/explore_fqcr_multilepton.py) — runs the §B multi-lepton extension; reproducible in <2s.
-- [`scripts/exploration/explore_fqcr_response_laws.py`](../../../scripts/exploration/explore_fqcr_response_laws.py) — the script that produced the §C response-law numbers.
-- [`scripts/exploration/explore_fqcr_t_scale_map.py`](../../../scripts/exploration/explore_fqcr_t_scale_map.py) — the script that produced the §D t-scale-map numbers.
+- [`scripts/exploration/explore_fqcr_observer_term.py`](../../../../scripts/exploration/explore_fqcr_observer_term.py) — runs Configurations I and II for §A, including the slope check that gives the 0.4-0.6% match.
+- [`scripts/exploration/explore_fqcr_multilepton.py`](../../../../scripts/exploration/explore_fqcr_multilepton.py) — runs the §B multi-lepton extension; reproducible in <2s.
+- [`scripts/exploration/explore_fqcr_response_laws.py`](../../../../scripts/exploration/explore_fqcr_response_laws.py) — the script that produced the §C response-law numbers.
+- [`scripts/exploration/explore_fqcr_t_scale_map.py`](../../../../scripts/exploration/explore_fqcr_t_scale_map.py) — the script that produced the §D t-scale-map numbers.

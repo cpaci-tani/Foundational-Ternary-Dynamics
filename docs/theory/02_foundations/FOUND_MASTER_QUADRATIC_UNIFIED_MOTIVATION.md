@@ -4,8 +4,8 @@
 **Ledger row:** FTD-0081
 **Purpose:** Collect the two independent derivations of the master quadratic, show they converge on the same polynomial, and narrow the remaining selection (SP2 degree 2) to a single minimality principle — effectively closing the motivation of the master quadratic.
 **Companions:**
-- [DERIV_MASTER_QUADRATIC_FROM_Z.md](../03_derivations/DERIV_MASTER_QUADRATIC_FROM_Z.md) — physics route from the partition function
-- [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../09_mathematical/DERIV_MASTER_QUADRATIC_CM_LVALUES.md) — L-value route from Damerell–Shimura
+- [DERIV_MASTER_QUADRATIC_FROM_Z.md](../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_FROM_Z.md) — physics route from the partition function
+- [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../09_mathematical/number_theory/DERIV_MASTER_QUADRATIC_CM_LVALUES.md) — L-value route from Damerell–Shimura
 - [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — the five selection principles SP1–SP5
 
 ---

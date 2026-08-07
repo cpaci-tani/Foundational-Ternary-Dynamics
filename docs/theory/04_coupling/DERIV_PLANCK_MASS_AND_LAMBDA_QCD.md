@@ -240,8 +240,8 @@ The entire meson spectrum (42 states in DERIV_COMPLETE_PARTICLE_PHYSICS.md) trac
 | Document | What We Use |
 |----------|------------|
 | [DERIV_LAMBDA_QCD_DERIVATION.md](DERIV_LAMBDA_QCD_DERIVATION.md) | Non-circular chain (v2.0) |
-| [DERIV_HIGGS_FROM_MANIFESTATION.md](../03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | v = M_P√(2π)α⁸ |
-| [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md) | G_F derivation |
+| [DERIV_HIGGS_FROM_MANIFESTATION.md](../03_derivations/standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md) | v = M_P√(2π)α⁸ |
+| [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/standard_model/DERIV_FERMI_COUPLING_CONSTANT.md) | G_F derivation |
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | m_e, α, sin²θ_W formulas |
 
 ## 5.2 Documents That Should Be Updated
@@ -249,5 +249,5 @@ The entire meson spectrum (42 states in DERIV_COMPLETE_PARTICLE_PHYSICS.md) trac
 | Document | Update Needed |
 |----------|--------------|
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Remove G_F, Λ_QCD from "External inputs"; clarify M_P as sole axiom |
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Reclassify G_F and Λ_QCD; update counts |
+| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | Reclassify G_F and Λ_QCD; update counts |
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Update epistemic notice |

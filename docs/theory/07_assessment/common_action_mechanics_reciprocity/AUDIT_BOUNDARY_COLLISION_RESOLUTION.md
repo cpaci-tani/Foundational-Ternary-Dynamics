@@ -8,7 +8,7 @@
 `[RETRACTED — UNCONDITIONAL CAPACITY/RANGE/PHASE TRILEMMA; FTD-0507]`  
 **Verdict:** `SUPERSEDED_BY_FTD_0507_BOUNDARY_CHART_CAPACITY`  
 **Pre-registration:**
-[`PREREG_BOUNDARY_COLLISION_RESOLUTION_TRILEMMA_v1.md`](../10_eft_program/preregistrations/PREREG_BOUNDARY_COLLISION_RESOLUTION_TRILEMMA_v1.md)  
+[`PREREG_BOUNDARY_COLLISION_RESOLUTION_TRILEMMA_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BOUNDARY_COLLISION_RESOLUTION_TRILEMMA_v1.md)  
 **Run of record:** `engine/results/ftd_0505/windows_msvc_cpu.json`
 
 ## 0. Successor correction — FTD-0507

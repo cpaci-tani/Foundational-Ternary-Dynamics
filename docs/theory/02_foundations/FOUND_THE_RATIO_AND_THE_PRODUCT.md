@@ -161,8 +161,8 @@ The mathematical content (sections 1-3) is [THEOREM]. The interpretive content (
 ## Cross-References
 
 - **The blind derivation:** [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) — i -> alpha in 13 steps
-- **The log G\* identity:** [MATH_LOG_GSTAR_IDENTITY.md](../09_mathematical/MATH_LOG_GSTAR_IDENTITY.md) — G\* absorbs all unsolved constants
-- **The anti-correlation theorem:** [MATH_ANTI_CORRELATION_THEOREM.md](../09_mathematical/MATH_ANTI_CORRELATION_THEOREM.md) — solved vs unsolved L-values
+- **The log G\* identity:** [MATH_LOG_GSTAR_IDENTITY.md](../09_mathematical/number_theory/MATH_LOG_GSTAR_IDENTITY.md) — G\* absorbs all unsolved constants
+- **The anti-correlation theorem:** [MATH_ANTI_CORRELATION_THEOREM.md](../09_mathematical/general_math/MATH_ANTI_CORRELATION_THEOREM.md) — solved vs unsolved L-values
 - **The first distinction:** [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md) — what precedes i
 - **The existence filter:** [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — Re(x) as projection
 - **Phase as reference frame context:** documented in project memory (project_phase_reference frame context.md)

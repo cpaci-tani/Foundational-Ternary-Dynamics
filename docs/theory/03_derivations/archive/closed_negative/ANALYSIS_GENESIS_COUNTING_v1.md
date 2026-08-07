@@ -2,8 +2,8 @@
 
 **Status:** `[CLOSED NEGATIVE -- v1 collective-coordinate counting route]`
 **Date:** 2026-06-14
-**Pre-registration:** [`PREREG_GENESIS_COUNTING_v1.md`](../../10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md)
-**Scope:** [`SCOPE_GENESIS_COUNTING_MODEL.md`](SCOPE_GENESIS_COUNTING_MODEL.md)
+**Pre-registration:** [`PREREG_GENESIS_COUNTING_v1.md`](../../../10_eft_program/preregistrations/sm_constants_mass_flavour/PREREG_GENESIS_COUNTING_v1.md)
+**Scope:** [`SCOPE_GENESIS_COUNTING_MODEL.md`](../../foundational_mechanics/SCOPE_GENESIS_COUNTING_MODEL.md)
 **Run of record:** `scripts/exploration/results/genesis_counting_v1/analysis.txt`
 
 ---

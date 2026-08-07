@@ -8,7 +8,7 @@
 **Verdict:**
 `ENERGY_ENDPOINT_CONSTRUCTIVE_COMPACT_COMMON_ACTION_OUT_OF_DOMAIN_AT_HOP`  
 **Pre-registration:**
-[`PREREG_DIAGONAL_ENDPOINT_ACTION_DOMAIN_v1.md`](../10_eft_program/preregistrations/PREREG_DIAGONAL_ENDPOINT_ACTION_DOMAIN_v1.md)  
+[`PREREG_DIAGONAL_ENDPOINT_ACTION_DOMAIN_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DIAGONAL_ENDPOINT_ACTION_DOMAIN_v1.md)  
 **Run of record:** `engine/results/ftd_0532/windows_msvc_cpu.json`
 
 ## 1. Composition question

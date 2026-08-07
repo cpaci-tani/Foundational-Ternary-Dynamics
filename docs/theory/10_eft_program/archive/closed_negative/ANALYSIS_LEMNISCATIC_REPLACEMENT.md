@@ -3,7 +3,7 @@
 **Tag:** [PARTIAL] — pre-reg outcome PASS-NONE; secondary reading closes lemniscatic-replacement negative for the horizon-area observable
 **Date:** 2026-04-27
 **LEDGER row:** FTD-0105
-**Pre-registration:** [`PROTOCOL_LEMNISCATIC_REPLACEMENT.md`](PROTOCOL_LEMNISCATIC_REPLACEMENT.md) (tag `preregister-lemniscatic-v1`)
+**Pre-registration:** [`PROTOCOL_LEMNISCATIC_REPLACEMENT.md`](../campaign_complete/PROTOCOL_LEMNISCATIC_REPLACEMENT.md) (tag `preregister-lemniscatic-v1`)
 **Hardware:** WSL2 RTX 5090, CUDA 13.0
 **Wall time:** 8 min 10 s for L=64, 4 cluster_radii × 5 seeds = 20 ensembles
 

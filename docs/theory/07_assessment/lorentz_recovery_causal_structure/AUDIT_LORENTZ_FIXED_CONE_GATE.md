@@ -3,7 +3,7 @@
 **Registry:** FTD-0409  
 **Status:** `[SCOPED NO-GO — scalar periods 2–3 and minimal positive-Hermitian auxiliary]` + `[CONSTRUCTIVE TARGET — stable period-four trace]` + `[OPEN — realizable period-four/multi-state transfer]`  
 **Verdict:** `MINIMAL-FIXED-CONE-CLASSES-CLOSED`  
-**Exact verifier:** [`proof_lorentz_fixed_cone_gate.py`](../../../scripts/proofs/proof_lorentz_fixed_cone_gate.py) (25/25)
+**Exact verifier:** [`proof_lorentz_fixed_cone_gate.py`](../../../../scripts/proofs/proof_lorentz_fixed_cone_gate.py) (25/25)
 
 ---
 

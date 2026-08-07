@@ -448,7 +448,7 @@ $\alpha_G \sim \alpha^{20}$ is read as gravity being a **cross-domain coupling**
 | P4 | No forces between EM and gravity scales | [CONJECTURE] |
 | P5 | Time irreversibility is ontological, not thermodynamic | [SELECTION within FTD] |
 
-**Full details:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
+**Full details:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 
 ---
 
@@ -478,16 +478,16 @@ Whether the physics side of FTD is a theory of everything or an elaborate coinci
 
 ## Cross-References
 
-- **Trit information theory:** [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
-- **Reference frame context domain/source map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
-- **Reference frame context synthesis:** [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
-- **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
-- **Master quadratic audit (canonical tag for x₊=1/α):** [AUDIT_MASTER_QUADRATIC.md](AUDIT_MASTER_QUADRATIC.md)
-- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md)
-- **Bell mechanism:** [AUDIT_BELL_ANALYSIS.md](AUDIT_BELL_ANALYSIS.md)
-- **SM Lagrangian mapping:** [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md)
-- **Space-time separation:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
-- **Verification (trit):** [../../../scripts/verification/verify_trit_framework.py](../../../scripts/verification/verify_trit_framework.py)
+- **Trit information theory:** [EXPLR_TRIT_INFORMATION_THEORY.md](../../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
+- **Reference frame context domain/source map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
+- **Reference frame context synthesis:** [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
+- **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
+- **Master quadratic audit (canonical tag for x₊=1/α):** [AUDIT_MASTER_QUADRATIC.md](../spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md)
+- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)
+- **Bell mechanism:** [AUDIT_BELL_ANALYSIS.md](../quantum_foundations/AUDIT_BELL_ANALYSIS.md)
+- **SM Lagrangian mapping:** [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md)
+- **Space-time separation:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
+- **Verification (trit):** [../../../scripts/verification/verify_trit_framework.py](../../../../scripts/verification/verify_trit_framework.py)
 - **Verification (space-time):** `verify_space_time.py`
 
 ---

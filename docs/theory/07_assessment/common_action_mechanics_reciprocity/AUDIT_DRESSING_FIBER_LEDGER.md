@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — CENTERED ORDINARY COMMON ACTION]`  
 **Verdict:** `SCALAR_LEDGER_CLOSES_BOOKKEEPING_NOT_COMMON_ACTION`  
 **Pre-registration:**
-[`PREREG_DRESSING_FIBER_LEDGER_v1.md`](../10_eft_program/preregistrations/PREREG_DRESSING_FIBER_LEDGER_v1.md)  
+[`PREREG_DRESSING_FIBER_LEDGER_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DRESSING_FIBER_LEDGER_v1.md)  
 **Run of record:** `engine/results/ftd_0495/windows_msvc_cpu.json`
 
 ## 1. One real history coordinate closes the scalar energy ledger

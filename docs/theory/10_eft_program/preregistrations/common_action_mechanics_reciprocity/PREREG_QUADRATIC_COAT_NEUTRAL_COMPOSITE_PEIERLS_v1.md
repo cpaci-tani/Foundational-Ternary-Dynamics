@@ -142,4 +142,4 @@ spectral, Poisson, current, work, polarity, translation, and cubic gates.
 Every registered localized arm has a strictly positive coefficient; the
 smallest barrier is `7.3632527388345549e-05`. The locked verdict is
 `RIGID_NEUTRAL_COMPOSITE_PEIERLS_OBSTRUCTION`. See
-[`AUDIT_QUADRATIC_COAT_COMPOSITE_PEIERLS.md`](../../07_assessment/AUDIT_QUADRATIC_COAT_COMPOSITE_PEIERLS.md).
+[`AUDIT_QUADRATIC_COAT_COMPOSITE_PEIERLS.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_COMPOSITE_PEIERLS.md).

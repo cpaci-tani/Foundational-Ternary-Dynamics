@@ -64,7 +64,7 @@ completed and serialized artifact SHA256 `FE7E1915...170C3F`. Fixed-boundary
 transport, source work, observer sweep, complementary sweep, endpoint chaining,
 and every forward checkpoint pass, but continuous reverse recovery fails by
 `38.7868x`. FTD-0768 is consumed as execution-invalid and yields no physics
-verdict. See [`AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md).
+verdict. See [`AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md`](../constituent_complete_matter/AUDIT_LONG_TRANSPORT_DYNAMIC_RESPONSE_v1.md).
 
 **Many-body rigidity correction (derived during FTD-0768; no successor campaign
 registered):** the pure selected FTD-0411 BCC temporal kernel cannot
@@ -1284,7 +1284,7 @@ the numerical control does not qualify a carrier. The live gate is a stable,
 independently prepared production `(s,J)` family with decreasing `Pi_i`, or an
 independently derived integer-hopping band. No production change was made.
 
-**Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
+**Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../engine_infrastructure_rg/AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
 ## How to use this file
 
@@ -1312,7 +1312,7 @@ independently derived integer-hopping band. No production change was made.
 
 **[OPEN] — standing item, not resolvable by any documentation pass.**
 
-*(2026-07-25: a dispatch-ready package now exists — [`REF_EXTERNAL_REVIEW_PACKAGE.md`](../REF_EXTERNAL_REVIEW_PACKAGE.md): minimal claim set (the seven spine results), mandatory AI-self-critique disclosure, runnable verification table, and owner dispatch instructions. The package does NOT close this item; only a completed, dated external human review does.)*
+*(2026-07-25: a dispatch-ready package now exists — [`REF_EXTERNAL_REVIEW_PACKAGE.md`](../framework_audits_redteams_reconciliation/REF_EXTERNAL_REVIEW_PACKAGE.md): minimal claim set (the seven spine results), mandatory AI-self-critique disclosure, runnable verification table, and owner dispatch instructions. The package does NOT close this item; only a completed, dated external human review does.)*
 
 **External human review status (2026-07-01): zero items in this corpus have been reviewed by
 a human outside the project.** Every adversarial / referee / critic / red-team pass performed
@@ -1382,9 +1382,9 @@ the γ-integration corrects that bug too.
 
 **Historical FTD-0401 correction:** the then-current engine mixed raw velocity with a legacy `c=1` matter clock and fused `M_REST` roles. That source-contract no-go remains provenance in [`AUDIT_C_SPEED_MASS_NORMALIZATION.md`](../AUDIT_C_SPEED_MASS_NORMALIZATION.md).
 
-**FTD-0402 historical result:** the production correction is implemented. Raw `u` maps to `beta=u/C_SPEED`; force, movement, proper time, latency, Born–Infeld, evaporation, and de Broglie phase use one budget. GPU device-side `tau` and its separate cap are removed. Explicit roles are `M_INERTIAL=K_B`, `E_REST=K_B/3`, and `M_GRAVITATIONAL=K_B`; their numerical equality is imposed, not derived. EnergyAudit exposes normalized particle energy/momentum and distinguishes dynamic from incomplete accounted energy. Its frozen verdict remains `PARTIAL`: [`RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md`](../RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md).
+**FTD-0402 historical result:** the production correction is implemented. Raw `u` maps to `beta=u/C_SPEED`; force, movement, proper time, latency, Born–Infeld, evaporation, and de Broglie phase use one budget. GPU device-side `tau` and its separate cap are removed. Explicit roles are `M_INERTIAL=K_B`, `E_REST=K_B/3`, and `M_GRAVITATIONAL=K_B`; their numerical equality is imposed, not derived. EnergyAudit exposes normalized particle energy/momentum and distinguishes dynamic from incomplete accounted energy. Its frozen verdict remains `PARTIAL`: [`RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md`](../lorentz_recovery_causal_structure/RESULT_CAUSAL_NORMALIZATION_MASS_ROLES.md).
 
-**FTD-0403 successor closure:** v1 exposed and invalidated a stale over-speed boundary fixture. The test-only repair crosses the face using an in-budget velocity plus accumulated remainder and verifies zero projection. Under a fresh v2 lock, exact A1–A7/S1–S9, native 14/14, CUDA 6/6, golden 7/7, WASM/web 3/3, compatibility, link, and census gates pass. No full CTest or unrelated campaign was run. This closes the current-engine normalization contract over the frozen changed surface; it does not establish covariance, a mass scale, or inertial–gravitational equivalence. Canonical result: [`RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md`](../RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md).
+**FTD-0403 successor closure:** v1 exposed and invalidated a stale over-speed boundary fixture. The test-only repair crosses the face using an in-budget velocity plus accumulated remainder and verifies zero projection. Under a fresh v2 lock, exact A1–A7/S1–S9, native 14/14, CUDA 6/6, golden 7/7, WASM/web 3/3, compatibility, link, and census gates pass. No full CTest or unrelated campaign was run. This closes the current-engine normalization contract over the frozen changed surface; it does not establish covariance, a mass scale, or inertial–gravitational equivalence. Canonical result: [`RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md`](../lorentz_recovery_causal_structure/RESULT_CAUSAL_NORMALIZATION_TARGETED_CLOSURE_v2.md).
 
 ### 1.3 Dynamical SU(3) colour force — [PARTIAL — CPU v1 SELECTED CONTRACT; DOMAIN EXTENSION OPEN], reclassified by FTD-0406
 **Location:** `engine/src/render_bridge_phases/phase_forces.cpp`, `engine/src/particle_engine.cpp`, energy/latency diagnostics; canonical audit `AUDIT_CONFINEMENT_ENERGY_GRAVITY_BRIDGE.md` (FTD-0400).
@@ -1497,17 +1497,17 @@ hard recovery problem.
 ### 1.9 Lorentz recovery hard gates — PARTIAL 2026-07-22 (FTD-0407–0425)
 
 **Canonical audit:**
-[`AUDIT_LORENTZ_RECOVERY_HARD.md`](../AUDIT_LORENTZ_RECOVERY_HARD.md) and
-[`AUDIT_LORENTZ_P4_PERIOD2.md`](../AUDIT_LORENTZ_P4_PERIOD2.md), followed by
-[`AUDIT_LORENTZ_FIXED_CONE_GATE.md`](../AUDIT_LORENTZ_FIXED_CONE_GATE.md),
-[`AUDIT_LORENTZ_AGM_CONE.md`](../AUDIT_LORENTZ_AGM_CONE.md), and
-[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md),
-[`AUDIT_LORENTZ_COMMON_CONE_GATE.md`](../AUDIT_LORENTZ_COMMON_CONE_GATE.md), and
-[`AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md`](../AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md), and
-[`AUDIT_LORENTZ_IR_ENVELOPE.md`](../AUDIT_LORENTZ_IR_ENVELOPE.md), and
-[`AUDIT_LORENTZ_RADIATIVE_CLOSURE.md`](../AUDIT_LORENTZ_RADIATIVE_CLOSURE.md),
-[`AUDIT_LORENTZ_RG_ATTRACTION.md`](../AUDIT_LORENTZ_RG_ATTRACTION.md), and
-[`AUDIT_LORENTZ_LOCAL_LINK_FLUX.md`](../AUDIT_LORENTZ_LOCAL_LINK_FLUX.md).
+[`AUDIT_LORENTZ_RECOVERY_HARD.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_RECOVERY_HARD.md) and
+[`AUDIT_LORENTZ_P4_PERIOD2.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_P4_PERIOD2.md), followed by
+[`AUDIT_LORENTZ_FIXED_CONE_GATE.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_FIXED_CONE_GATE.md),
+[`AUDIT_LORENTZ_AGM_CONE.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_AGM_CONE.md), and
+[`AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_TWO_DOMAIN_BCC_TIME.md),
+[`AUDIT_LORENTZ_COMMON_CONE_GATE.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_COMMON_CONE_GATE.md), and
+[`AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_COMMON_CONE_IMPROVED.md), and
+[`AUDIT_LORENTZ_IR_ENVELOPE.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_IR_ENVELOPE.md), and
+[`AUDIT_LORENTZ_RADIATIVE_CLOSURE.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_RADIATIVE_CLOSURE.md),
+[`AUDIT_LORENTZ_RG_ATTRACTION.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_RG_ATTRACTION.md), and
+[`AUDIT_LORENTZ_LOCAL_LINK_FLUX.md`](../lorentz_recovery_causal_structure/AUDIT_LORENTZ_LOCAL_LINK_FLUX.md).
 
 The exact default pole is
 `theta²=S2/3-S2²/54-11S2³/9720+S2 Q4/216-Q6/270+O(q^8)`, with
@@ -1662,7 +1662,7 @@ The cost is a selected `Z2` clock/anti-kick and a new leading flux speed
 ### 1.9a Coupled Quartic Clock Field v1 — CONDITIONAL THEOREMS PASS; NATIVE BRIDGE OPEN (FTD-0770)
 
 **Canonical result:**
-[`ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md`](../../10_eft_program/derivations/ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md).
+[`ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_COUPLED_QUARTIC_CLOCK_FIELD_v1.md).
 
 The isolated selected-extension verifier closes the internal mathematical
 questions: total action is conserved, relative phase has graph-Laplacian waves,
@@ -1696,7 +1696,7 @@ variables:
 ### 1.9b Quartic Clock--Rod Synchronization — CONDITIONAL RATIO; NATIVE MATCHING OPEN (FTD-0771)
 
 **Canonical result:**
-[`ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md`](../../10_eft_program/derivations/ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md).
+[`ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_QUARTIC_CLOCK_ROD_SYNCHRONIZATION_v1.md).
 
 The abstract clock--edge comparison is exact:
 
@@ -1730,7 +1730,7 @@ The live work is:
 ### 1.9c Native Temporal Occupancy — CURRENT BARE RECURRENCE UNQUALIFIED (FTD-0772)
 
 **Canonical result:**
-[`ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../../10_eft_program/derivations/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md).
+[`ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_NATIVE_TEMPORAL_OCCUPANCY_v1.md).
 
 The exact mathematical result is now separated from the native claim. For the
 selected one-dimensional natural family,
@@ -1774,7 +1774,7 @@ The live work is:
 ### 1.9d Quartic Waveform Nonlinear Edge Signature — CONDITIONAL EXACT RESULT; NATIVE PREREQUISITES BLOCKED (FTD-0773)
 
 **Canonical result:**
-[`ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../../10_eft_program/derivations/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md).
+[`ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md).
 
 The continuous inverse chain is exact only after fixing a branch-reversible,
 unit-mass natural coordinate and conservative closure. For the separately
@@ -1820,7 +1820,7 @@ registered `Vbar(phi)`. The live work is:
 ### 1.9e Native q_active Temporal Pilot — EXACT-PROFILE CANDIDATE RETIRED; RECURRENCE OPEN (FTD-0776)
 
 **Canonical result:**
-[`ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md`](../../10_eft_program/derivations/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md).
+[`ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_NATIVE_QACTIVE_TEMPORAL_PILOT_v1.md).
 
 The four `L=32`, seed-1, CPU/SOR arms are raw-valid, but the preselected
 `q_active` aggregate has zero complete cycles in every 200,000-tick trace.
@@ -1846,7 +1846,7 @@ The live work remains:
 ### 1.9f Dyadic Monodromy Clock--Memory Boundary — EXACT SYNTHETIC PASS; NATIVE BRIDGE OPEN (FTD-0777)
 
 **Canonical result:**
-[`ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md`](../../10_eft_program/derivations/ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md).
+[`ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_DYADIC_MONODROMY_CLOCK_MEMORY_v1.md).
 
 The locked exact/synthetic certificate passes `16/16`. A finite compatible
 root tower is an exact recurrence/epoch hierarchy: depth `K` has `2^K` sheets,
@@ -2616,41 +2616,41 @@ event-native mechanism for moving a dressed manifestation despite having
 instantaneous momentum capacity.
 
 **Canonical result:**
-[`AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md`](../AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md),
-[`AUDIT_SUBCELL_FACE_CURRENT.md`](../AUDIT_SUBCELL_FACE_CURRENT.md),
-[`AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md`](../AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md),
-[`AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md`](../AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md),
-[`AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md`](../AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md),
-[`AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md`](../AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md),
-[`AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md`](../AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md),
-[`AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md`](../AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md),
-[`AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md`](../AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md),
-[`AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md`](../AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md),
-[`AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md`](../AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md),
-[`AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md`](../AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md),
-[`AUDIT_CUBIC_HOP_WORK_RESPONSE.md`](../AUDIT_CUBIC_HOP_WORK_RESPONSE.md),
-[`AUDIT_ENDPOINT_RECOIL_SUPPORT.md`](../AUDIT_ENDPOINT_RECOIL_SUPPORT.md),
-[`AUDIT_MECHANICAL_HISTORY_HOP_WORK.md`](../AUDIT_MECHANICAL_HISTORY_HOP_WORK.md),
-[`AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md`](../AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md),
-[`AUDIT_HALF_TICK_LINK_EXCHANGE.md`](../AUDIT_HALF_TICK_LINK_EXCHANGE.md),
-[`AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md`](../AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md),
-[`AUDIT_FIXED_J_RECOIL_CAPACITY.md`](../AUDIT_FIXED_J_RECOIL_CAPACITY.md),
-[`AUDIT_PAIRED_JW_RECOIL_CAPACITY.md`](../AUDIT_PAIRED_JW_RECOIL_CAPACITY.md),
-[`AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md`](../AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md),
-[`AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md`](../AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md),
-[`AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md`](../AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md),
-[`AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md`](../AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md),
-[`AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md`](../AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md),
-[`AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md`](../AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md),
-[`AUDIT_SINGLE_ACTION_RECIPROCITY.md`](../AUDIT_SINGLE_ACTION_RECIPROCITY.md),
-[`AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md`](../AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md),
-[`AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md`](../AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md),
-[`AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md`](../AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md),
-[`AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md`](../AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md),
-[`AUDIT_EMERGENT_BOUNDARY_MECHANISM.md`](../AUDIT_EMERGENT_BOUNDARY_MECHANISM.md),
-[`AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md`](../AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md),
-[`AUDIT_DYNAMICAL_FLUX_DRESSING.md`](../AUDIT_DYNAMICAL_FLUX_DRESSING.md),
-and [`AUDIT_RECIPROCAL_MOVING_SOURCE.md`](../AUDIT_RECIPROCAL_MOVING_SOURCE.md).
+[`AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md`](../common_action_mechanics_reciprocity/AUDIT_DISCRETE_INTERACTION_WORK_CONTRACT.md),
+[`AUDIT_SUBCELL_FACE_CURRENT.md`](../common_action_mechanics_reciprocity/AUDIT_SUBCELL_FACE_CURRENT.md),
+[`AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md`](../common_action_mechanics_reciprocity/AUDIT_COUPLED_MATCHED_FACE_TRANSACTION.md),
+[`AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md`](../common_action_mechanics_reciprocity/AUDIT_FACE_FLUX_OBSERVER_QUALIFICATION.md),
+[`AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md`](../common_action_mechanics_reciprocity/AUDIT_SPACETIME_WORLDLINE_GAUGE_COUPLING.md),
+[`AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md`](../common_action_mechanics_reciprocity/AUDIT_TWO_SLAB_VARIATIONAL_FORCE.md),
+[`AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md`](../common_action_mechanics_reciprocity/AUDIT_MATCHED_ACTION_NORMALIZATION_NO_GO.md),
+[`AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md`](../common_action_mechanics_reciprocity/AUDIT_GAUSS_THRESHOLD_FORCE_OBSTRUCTION.md),
+[`AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md`](../common_action_mechanics_reciprocity/AUDIT_SELF_FIELD_SUBTRACTION_LOCALITY.md),
+[`AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md`](../common_action_mechanics_reciprocity/AUDIT_HOP_MECHANICS_UNDERDETERMINATION.md),
+[`AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md`](../common_action_mechanics_reciprocity/AUDIT_MOORE_HOP_ROUTE_AMBIGUITY.md),
+[`AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md`](../common_action_mechanics_reciprocity/AUDIT_MOORE_CHANNEL_PROJECTION_KERNEL.md),
+[`AUDIT_CUBIC_HOP_WORK_RESPONSE.md`](../common_action_mechanics_reciprocity/AUDIT_CUBIC_HOP_WORK_RESPONSE.md),
+[`AUDIT_ENDPOINT_RECOIL_SUPPORT.md`](../common_action_mechanics_reciprocity/AUDIT_ENDPOINT_RECOIL_SUPPORT.md),
+[`AUDIT_MECHANICAL_HISTORY_HOP_WORK.md`](../common_action_mechanics_reciprocity/AUDIT_MECHANICAL_HISTORY_HOP_WORK.md),
+[`AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md`](../common_action_mechanics_reciprocity/AUDIT_PRODUCTION_HOP_KINEMATICS_CORRECTION.md),
+[`AUDIT_HALF_TICK_LINK_EXCHANGE.md`](../common_action_mechanics_reciprocity/AUDIT_HALF_TICK_LINK_EXCHANGE.md),
+[`AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md`](../common_action_mechanics_reciprocity/AUDIT_NATIVE_ENERGY_CONTRACT_RECONCILIATION.md),
+[`AUDIT_FIXED_J_RECOIL_CAPACITY.md`](../common_action_mechanics_reciprocity/AUDIT_FIXED_J_RECOIL_CAPACITY.md),
+[`AUDIT_PAIRED_JW_RECOIL_CAPACITY.md`](../common_action_mechanics_reciprocity/AUDIT_PAIRED_JW_RECOIL_CAPACITY.md),
+[`AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md`](../common_action_mechanics_reciprocity/AUDIT_TRAVELLING_WAVE_RECOIL_THRESHOLD.md),
+[`AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md`](../common_action_mechanics_reciprocity/AUDIT_RIGID_SOURCE_HISTORY_TRANSLATION.md),
+[`AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md`](../common_action_mechanics_reciprocity/AUDIT_GUIDE_CROSS_ENERGY_DECOMPOSITION.md),
+[`AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md`](../common_action_mechanics_reciprocity/AUDIT_NESTED_SOURCE_HISTORY_TRANSLATION.md),
+[`AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md`](../common_action_mechanics_reciprocity/AUDIT_LOCAL_COAT_INJECTIVITY_MOMENTUM.md),
+[`AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md`](../common_action_mechanics_reciprocity/AUDIT_INJECTIVE_LOCAL_PERMUTATION_EVENT.md),
+[`AUDIT_SINGLE_ACTION_RECIPROCITY.md`](../common_action_mechanics_reciprocity/AUDIT_SINGLE_ACTION_RECIPROCITY.md),
+[`AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md`](../common_action_mechanics_reciprocity/AUDIT_COMMON_ACTION_KICK_RECIPROCITY.md),
+[`AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md`](../common_action_mechanics_reciprocity/AUDIT_SYMMETRIC_HALF_TICK_ENERGY.md),
+[`AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md`](../common_action_mechanics_reciprocity/AUDIT_LINK_ACTION_WORK_COMPATIBILITY.md),
+[`AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md`](../common_action_mechanics_reciprocity/AUDIT_CENTRAL_GAUSS_HOP_REALIZABILITY.md),
+[`AUDIT_EMERGENT_BOUNDARY_MECHANISM.md`](../common_action_mechanics_reciprocity/AUDIT_EMERGENT_BOUNDARY_MECHANISM.md),
+[`AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md`](../common_action_mechanics_reciprocity/AUDIT_BOUND_PILOT_WAKE_DISCRIMINATOR.md),
+[`AUDIT_DYNAMICAL_FLUX_DRESSING.md`](../common_action_mechanics_reciprocity/AUDIT_DYNAMICAL_FLUX_DRESSING.md),
+and [`AUDIT_RECIPROCAL_MOVING_SOURCE.md`](../common_action_mechanics_reciprocity/AUDIT_RECIPROCAL_MOVING_SOURCE.md).
 
 ---
 
@@ -2946,9 +2946,9 @@ Three unresolved threads from a discussion-only QM/GR-incompatibility round tabl
 ### 7.9 C3 native `n = 4` decision — **1 `[OPEN]` (theorem-grade target)**
 
 **Files:**
-[`ANALYSIS_MAXWELL_C3_SCREEN_v1.md`](../../10_eft_program/derivations/ANALYSIS_MAXWELL_C3_SCREEN_v1.md),
-[`ANALYSIS_TRIANGULATED_SHEET_N4_v1.md`](../../10_eft_program/derivations/ANALYSIS_TRIANGULATED_SHEET_N4_v1.md),
-and [`SPEC_CARRIER_CONSTRAINTS_v1.md`](../../10_eft_program/SPEC_CARRIER_CONSTRAINTS_v1.md).
+[`ANALYSIS_MAXWELL_C3_SCREEN_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_MAXWELL_C3_SCREEN_v1.md),
+[`ANALYSIS_TRIANGULATED_SHEET_N4_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/ANALYSIS_TRIANGULATED_SHEET_N4_v1.md),
+and [`SPEC_CARRIER_CONSTRAINTS_v1.md`](../../10_eft_program/native_time_carrier_programme/SPEC_CARRIER_CONSTRAINTS_v1.md).
 
 - **[OPEN] Decide C3 at certificate grade.** For the compact, zero-tension
   central-force law, either exhibit an admissible first-order-flexible,

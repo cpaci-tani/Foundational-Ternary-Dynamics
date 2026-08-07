@@ -458,7 +458,7 @@ is licensed by FTD-0773.
 ## 11. Verification
 
 The immutable protocol is
-[`PREREG_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../preregistrations/PREREG_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md).
+[`PREREG_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md`](../../preregistrations/native_time_carrier_programme/PREREG_QUARTIC_WAVEFORM_NONLINEAR_EDGE_SIGNATURE_v1.md).
 Its SHA256 is the value recorded in the header.
 
 The independent exact certificate is

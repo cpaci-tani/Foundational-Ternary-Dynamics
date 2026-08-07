@@ -390,7 +390,7 @@ The Fourcier curve doesn't *describe* reality — it is the mechanism by which G
 - **Ontological foundation:** [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md) — The abstract First Distinction
 - **Existence Filter:** [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — Projection from potentiality to existence
 - **Ontic constant chain:** [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — γ→ϖ→M→π→G*
-- **Cayley-Dickson isomorphism:** [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](../09_mathematical/EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — Computational verification
+- **Cayley-Dickson isomorphism:** [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](../09_mathematical/algebra/EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — Computational verification
 - **Reference frame context domain map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for Domain A/B/C, context selection, and vocabulary
 - **Original Fourcier analysis:** [FOURCIER_CURVE_ANALYSIS.md](../../../dissemination/manuscript/media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Coefficient structure
 

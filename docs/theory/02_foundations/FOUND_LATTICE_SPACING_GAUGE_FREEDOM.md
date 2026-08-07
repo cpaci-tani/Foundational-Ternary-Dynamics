@@ -529,7 +529,7 @@ These are quantitatively distinct manifestation rules. **Yet both produce k ≈ 
 
 **The algebraic-origin reading (k = 1/N_base = ¼ from the i-cycle) is the surviving candidate.** It doesn't require the drain mechanism, because the ¼ is structural in the dynamics' 4-fold cardinality (i-cycle / Cl(3,0) grades / O_h^ab irreps / Z_4), not in any specific engine implementation choice.
 
-**Status — [DERIVED] at the linear level:** the ¼ coefficient origin is **[DERIVED] at the linear level** — see [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The derivation chain:
+**Status — [DERIVED] at the linear level:** the ¼ coefficient origin is **[DERIVED] at the linear level** — see [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The derivation chain:
 
 1. mult(A_{1g}) = 4 in the 27-block under O_h (character-table [THEOREM]).
 2. δ_center is A_{1g}-pure (geometric fact: center is O_h-fixed).

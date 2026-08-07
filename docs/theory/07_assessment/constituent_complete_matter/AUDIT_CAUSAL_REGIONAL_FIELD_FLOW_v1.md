@@ -5,9 +5,9 @@
 **Status:** `[SELECTED DYNAMICS — MIXED]`  
 **Verdict:** `CAUSAL_REGIONAL_FIELD_FLOW_MIXED`  
 **Pre-registration:**
-[`PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md`](../10_eft_program/preregistrations/PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md)  
+[`PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md`](../../10_eft_program/preregistrations/constituent_complete_matter/PREREG_CAUSAL_REGIONAL_FIELD_FLOW_v1.md)  
 **Analysis:**
-[`ANALYSIS_CAUSAL_REGIONAL_FIELD_FLOW_v1.md`](../10_eft_program/derivations/ANALYSIS_CAUSAL_REGIONAL_FIELD_FLOW_v1.md)
+[`ANALYSIS_CAUSAL_REGIONAL_FIELD_FLOW_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_CAUSAL_REGIONAL_FIELD_FLOW_v1.md)
 
 > **FTD-0675 correction:** the exact regional field ledger survives, but the
 > paired-mode observable used to label ticks 68--80 a recovery window omitted

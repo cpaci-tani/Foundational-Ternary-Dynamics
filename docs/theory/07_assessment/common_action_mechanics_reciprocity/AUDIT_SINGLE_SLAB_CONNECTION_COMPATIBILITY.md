@@ -10,7 +10,7 @@
 **Verdict:**
 `MIDPOINT_WORK_AND_STAGGERED_MAGNETIC_HISTORY_REQUIRE_MULTISTAGE_CONNECTION`  
 **Pre-registration:**
-[`PREREG_SINGLE_SLAB_CONNECTION_COMPATIBILITY_v1.md`](../10_eft_program/preregistrations/PREREG_SINGLE_SLAB_CONNECTION_COMPATIBILITY_v1.md)  
+[`PREREG_SINGLE_SLAB_CONNECTION_COMPATIBILITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_SINGLE_SLAB_CONNECTION_COMPATIBILITY_v1.md)  
 **Run of record:** `engine/results/ftd_0534/windows_msvc_cpu.json`
 
 ## 1. Exact obstruction

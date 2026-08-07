@@ -136,7 +136,7 @@ The eigensolver (Smith-1961 stable cubic + cross-product null vectors) is a gene
 - **Test:** [`../../../engine/tests/test_generation_graph.cpp`](../../../engine/tests/test_generation_graph.cpp).
 - **CMake:** `ftd_add_test(test_generation_graph … LABELS native)` in `engine/CMakeLists.txt`.
 - **LEDGER:** FTD-0196 (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
-- **Sibling overlays:** [`../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md`](../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy `[THEOREM]`, FTD-0194), [`../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 closure `[THEOREM]`, FTD-0195).
+- **Sibling overlays:** [`../03_derivations/DERIV_BRANCH_HOLONOMY_GAP.md`](../03_derivations/foundational_mechanics/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy `[THEOREM]`, FTD-0194), [`../03_derivations/DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../03_derivations/standard_model/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 closure `[THEOREM]`, FTD-0195).
 
 ---
 

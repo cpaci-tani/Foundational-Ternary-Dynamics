@@ -7,7 +7,7 @@ hash-lock in this session.
 **Git tag:** pending owner commit. This live attempt is locked by the SHA256
 artifact hashes in SS3, not by a repository tag.
 **Executes:** the FTD-0277 Arc-3 counting-model route scoped in
-[`SCOPE_GENESIS_COUNTING_MODEL.md`](../../03_derivations/foundational_mechanics/SCOPE_GENESIS_COUNTING_MODEL.md):
+[`SCOPE_GENESIS_COUNTING_MODEL.md`](../../../03_derivations/foundational_mechanics/SCOPE_GENESIS_COUNTING_MODEL.md):
 can a firing-rank collective-coordinate model derive the current-stack `N(A)` law
 **given** the imposed engine register?
 

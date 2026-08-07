@@ -14,7 +14,7 @@
 **Tag:** `[CLOSED NEGATIVE]` — pre-reg §6 CLOSED-NEGATIVE ("a structural argument that the frozen ingredients generate only a restricted set of G\*-degrees that excludes the determinant's"). **No spine claim moved.**
 **Date:** 2026-05-28
 **Result of:** the pre-registered attempt `PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md` (FTD-0233 provisional), SHA256 `f55c7504401a1e5eb4a61ae18380d10c0ae8a4d407cfb1fc48da45e91918abd7` (recorded in-session before the analysis; git commit deferred by owner instruction — see §8).
-**Verifier:** [`scripts/proofs/proof_determinant_grading_parity.py`](../../../scripts/proofs/proof_determinant_grading_parity.py) — 11/11 parity facts verified (sympy + mpmath).
+**Verifier:** [`scripts/proofs/proof_determinant_grading_parity.py`](../../../../../scripts/proofs/proof_determinant_grading_parity.py) — 11/11 parity facts verified (sympy + mpmath).
 **Confirms + sharpens:** `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` (the ARC-C1/B2 "FOUND" is an overclaim; honest status UNDERDETERMINED).
 
 ---

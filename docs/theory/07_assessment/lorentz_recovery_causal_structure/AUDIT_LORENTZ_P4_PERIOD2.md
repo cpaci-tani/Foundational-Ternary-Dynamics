@@ -3,7 +3,7 @@
 **Registry:** FTD-0408  
 **Status:** `[SELECTED IMPLEMENTATION PROTOTYPE]` + `[THEOREM — free linear Floquet pole]`  
 **Verdict:** `LR-1-TREE-POLE-PASS; COMMON-CONE-FAILS-PENDING-RECALIBRATION`  
-**Exact verifier:** [`proof_lorentz_p4_period2.py`](../../../scripts/proofs/proof_lorentz_p4_period2.py) (27/27)  
+**Exact verifier:** [`proof_lorentz_p4_period2.py`](../../../../scripts/proofs/proof_lorentz_p4_period2.py) (27/27)  
 **Native gate:** `lorentz_period2_floquet`
 
 ---

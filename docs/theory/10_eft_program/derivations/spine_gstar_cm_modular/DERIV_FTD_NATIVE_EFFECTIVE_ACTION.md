@@ -2,7 +2,7 @@
 
 **Tag:** [THEOREM] (diagonal identities) / [MEASURED] (Wilson coefficients) / [SELECTION] (dictionary)
 **LEDGER id:** FTD-0264 (closes the blocked effective action task in the checklist)
-**Depends on:** [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](../scopes_and_specs/SPEC_FTD_NATIVE_BLOCKING_MAP.md), [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md), [`ANALYSIS_GATE_C_VS_L.md`](../archive/campaign_complete/ANALYSIS_GATE_C_VS_L.md), [`ANALYSIS_OFFDIAGONAL_ASYMMETRY.md`](../archive/campaign_complete/ANALYSIS_OFFDIAGONAL_ASYMMETRY.md).
+**Depends on:** [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](../../scopes_and_specs/SPEC_FTD_NATIVE_BLOCKING_MAP.md), [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](../engine_infrastructure_rg/THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md), [`ANALYSIS_GATE_C_VS_L.md`](../../archive/campaign_complete/ANALYSIS_GATE_C_VS_L.md), [`ANALYSIS_OFFDIAGONAL_ASYMMETRY.md`](../../archive/campaign_complete/ANALYSIS_OFFDIAGONAL_ASYMMETRY.md).
 
 ---
 
@@ -20,7 +20,7 @@ Using the results of the $S_{\text{eff}}$ measurement campaigns ([FTD-0112](file
 
 ## 1. Microscopic Action and Coarse-Graining
 
-From [`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`](DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md), the microscopic FTD path measure over a discrete time window is defined by a constrained history action:
+From [`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`](../common_action_mechanics_reciprocity/DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md), the microscopic FTD path measure over a discrete time window is defined by a constrained history action:
 
 $$ S[J, s] = \sum_{t} \sum_{x} \left( \frac{1}{2} |J_t(x) - J_{t-1}(x) - \Delta J_{\text{wave}}|^2 + \lambda (\nabla \cdot J_t(x) - g_c s_t(x))^2 + \frac{1}{2\sigma_L^2} \eta_t(x)^2 \right) $$
 

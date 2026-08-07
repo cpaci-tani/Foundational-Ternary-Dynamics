@@ -7,7 +7,7 @@
 `[MEASURED — EVOLVING NATIVE HISTORIES]` +
 `[CLOSED NEGATIVE — CENTERED SITE FORCE AS EXACT HOP LAW]` +
 `[OPEN — LINK RECOIL/SOURCE TRANSPORT]`  
-**Pre-registration:** [`PREREG_LINK_ACTION_WORK_COMPATIBILITY_v1.md`](../10_eft_program/preregistrations/PREREG_LINK_ACTION_WORK_COMPATIBILITY_v1.md)  
+**Pre-registration:** [`PREREG_LINK_ACTION_WORK_COMPATIBILITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LINK_ACTION_WORK_COMPATIBILITY_v1.md)  
 **Run of record:** `engine/results/ftd_0470/windows_msvc_cpu.csv`
 
 ## Verdict

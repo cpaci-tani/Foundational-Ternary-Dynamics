@@ -3,7 +3,7 @@
 **Tag:** `[CLOSED NEGATIVE]` (pre-reg §6: N_c=3 candidate fails the kind-test; no other FTD source). **Adversarial (P4).** **No spine claim moved.**
 **Date:** 2026-05-29
 **Result of:** `PREREG_SYMPLECTIC_BUDGET_SYMMETRY_v1.md` (B-QM-1″, FTD-0228 provisional), SHA256 `dd8a8fa065ae2800d7554a2c82938137d340e0825e37a3362ffc1f22951a0f20` (commit deferred; SHA recorded in-session before the attempt).
-**Verifier:** [`scripts/proofs/proof_symplectic_budget_symmetry.py`](../../../scripts/proofs/proof_symplectic_budget_symmetry.py) (5/5).
+**Verifier:** [`scripts/proofs/proof_symplectic_budget_symmetry.py`](../../../../../scripts/proofs/proof_symplectic_budget_symmetry.py) (5/5).
 **Corrects:** the "J ⋈ N_c=3 convergence" surfaced (and flagged UNVERIFIED) in `AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PARTIAL.md` §1.
 
 ---

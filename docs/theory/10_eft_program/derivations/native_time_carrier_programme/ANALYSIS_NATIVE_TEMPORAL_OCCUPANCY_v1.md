@@ -237,7 +237,7 @@ signed turning directions and can turn a circular or rotating doublet into a
 constant envelope, violating the one-dimensional hypothesis of the theorem.
 
 This choice was locked before occupancy inspection in
-[`PREREG_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../preregistrations/PREREG_NATIVE_TEMPORAL_OCCUPANCY_v1.md).
+[`PREREG_NATIVE_TEMPORAL_OCCUPANCY_v1.md`](../../preregistrations/native_time_carrier_programme/PREREG_NATIVE_TEMPORAL_OCCUPANCY_v1.md).
 
 ## 5. Immutable corpus and execution
 

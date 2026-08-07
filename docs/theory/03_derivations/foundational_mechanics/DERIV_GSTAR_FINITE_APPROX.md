@@ -2,8 +2,8 @@
 
 **Tag:** [THEOREM]
 **LEDGER row reservation:** FTD-0142
-**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141), [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`AUDIT_INFINITY_REFRAME.md`](../07_assessment/AUDIT_INFINITY_REFRAME.md), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §1, §10.
-**Verifier script:** [`scripts/proofs/proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py)
+**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141), [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md), [`AUDIT_INFINITY_REFRAME.md`](../../07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md), [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) §1, §10.
+**Verifier script:** [`scripts/proofs/proof_fqcr_convergence.py`](../../../../scripts/proofs/proof_fqcr_convergence.py)
 **Purpose:** Establishes a finite-$N$ approximation $G_N^*$ to the bridge constant $G^*$ such that $G_N^* \to G^*$ as $N \to \infty$ at a controlled rate. This is **Model II** of the Finite Quarter-Conjugacy Recurrence (FQCR) framework. The result discharges an open obligation from `AUDIT_INFINITY_REFRAME.md`: any FTD claim of the form "$X = \lim_{L \to \infty} X_L$" must be restated as "$X_L \to X$ at rate $r(L)$ with $X_L$ defined for all finite $L$." This doc provides exactly that restatement for $G^*$.
 
 ---
@@ -99,7 +99,7 @@ This is now a finite-friendly definition: every finite computation that uses $G_
 
 ## §5 — Verification
 
-The companion proof script [`scripts/proofs/proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py) computes $G_N^*$ for $N \in \{16, 32, 64, 128, 256, 512, 1024, 2048, 4096\}$ via the Gamma-product representation (using `mpmath` at 50 decimal places for numerical stability of the higher-order Gamma evaluations), then asserts:
+The companion proof script [`scripts/proofs/proof_fqcr_convergence.py`](../../../../scripts/proofs/proof_fqcr_convergence.py) computes $G_N^*$ for $N \in \{16, 32, 64, 128, 256, 512, 1024, 2048, 4096\}$ via the Gamma-product representation (using `mpmath` at 50 decimal places for numerical stability of the higher-order Gamma evaluations), then asserts:
 
 1. $|G_N^* - G^*| < 10^{-7}$ at $N = 1024$.
 2. $|G_N^* - G^*| < 10^{-8}$ at $N = 4096$.

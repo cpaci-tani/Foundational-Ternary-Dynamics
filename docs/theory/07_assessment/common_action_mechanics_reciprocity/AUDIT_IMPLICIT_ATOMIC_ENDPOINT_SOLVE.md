@@ -7,7 +7,7 @@
 `[CONDITIONAL DIAGNOSTIC — BOTH REGISTERED ENERGIES NONCLOSING]`  
 **Verdict:** `IMPLICIT_ATOMIC_ENDPOINT_SOLVE_UNRESOLVED`  
 **Pre-registration:**
-[`PREREG_IMPLICIT_ATOMIC_ENDPOINT_SOLVE_v1.md`](../10_eft_program/preregistrations/PREREG_IMPLICIT_ATOMIC_ENDPOINT_SOLVE_v1.md)  
+[`PREREG_IMPLICIT_ATOMIC_ENDPOINT_SOLVE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_IMPLICIT_ATOMIC_ENDPOINT_SOLVE_v1.md)  
 **Run of record:** `engine/results/ftd_0537/windows_msvc_cpu.json`
 
 ## 1. Locked initial-value solve

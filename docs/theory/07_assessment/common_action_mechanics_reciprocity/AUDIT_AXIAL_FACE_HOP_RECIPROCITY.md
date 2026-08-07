@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — FROZEN RAW-STATE RECIPROCITY]`  
 **Verdict:** `AXIAL_HOP_PHYSICAL_QUOTIENT_ONLY`  
 **Pre-registration:**
-[`PREREG_AXIAL_FACE_HOP_RECIPROCITY_v1.md`](../10_eft_program/preregistrations/PREREG_AXIAL_FACE_HOP_RECIPROCITY_v1.md)  
+[`PREREG_AXIAL_FACE_HOP_RECIPROCITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_AXIAL_FACE_HOP_RECIPROCITY_v1.md)  
 **Run of record:** `engine/results/ftd_0497/windows_msvc_cpu.json`
 
 ## 1. A real exact face-current hop exists

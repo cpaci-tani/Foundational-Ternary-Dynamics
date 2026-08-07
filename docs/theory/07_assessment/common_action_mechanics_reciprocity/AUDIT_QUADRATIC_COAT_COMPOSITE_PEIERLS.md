@@ -7,9 +7,9 @@
 RIGID NEUTRAL-COMPOSITE SELF-FORCE CURE]`  
 **Verdict:** `RIGID_NEUTRAL_COMPOSITE_PEIERLS_OBSTRUCTION`  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_NEUTRAL_COMPOSITE_PEIERLS_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_NEUTRAL_COMPOSITE_PEIERLS_v1.md)  
+[`PREREG_QUADRATIC_COAT_NEUTRAL_COMPOSITE_PEIERLS_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_NEUTRAL_COMPOSITE_PEIERLS_v1.md)  
 **Theorem:**
-[`THEOREM_QUADRATIC_COAT_COMPOSITE_PEIERLS.md`](../10_eft_program/derivations/THEOREM_QUADRATIC_COAT_COMPOSITE_PEIERLS.md)  
+[`THEOREM_QUADRATIC_COAT_COMPOSITE_PEIERLS.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_QUADRATIC_COAT_COMPOSITE_PEIERLS.md)  
 **Run of record:** `engine/results/ftd_0553/windows_msvc_cpu.json`
 
 ## Result

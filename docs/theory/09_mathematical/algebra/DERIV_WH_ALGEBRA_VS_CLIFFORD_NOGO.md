@@ -183,7 +183,7 @@ The resulting anticommutator matrix on the three weight-1 modes $e_1 = \chi_{100
 
 1. **Pair production.** `toggles.pair_production` has a different threshold and sign rule than genesis. Repeat the measurement with pair_production enabled instead.
 2. **Weak transmutation.** `toggles.weak_transmutation` is a stress-threshold polarity flip on already-manifested sites. Could provide an order-dependent mechanism that doesn't collapse on first tick.
-3. **Moore-26 layer decomposition.** The SC + FCC + BCC structure of [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) carries richer algebraic content than the 2³ block. The 26-site stencil's grade structure could host Clifford generators that the 8-site block cannot.
+3. **Moore-26 layer decomposition.** The SC + FCC + BCC structure of [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) carries richer algebraic content than the 2³ block. The 26-site stencil's grade structure could host Clifford generators that the 8-site block cannot.
 4. **Velocity-driven movement.** Enable `toggles.forces` so phase_forces drives velocity, which activates phase_movement's annihilation branch. Test whether annihilation between sequential injections is order-dependent.
 
 Each is a separate measurement protocol with the same test harness. Under this falsification the "fermion emergence from b=2 block" direction is closed; the "fermion emergence from FTD" direction remains open through the four routes above.

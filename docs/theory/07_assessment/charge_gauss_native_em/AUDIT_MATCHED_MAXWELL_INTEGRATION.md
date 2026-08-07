@@ -12,7 +12,7 @@
 **Verdict:** `A_SELECTED_INTEGRATED_PROJECTION_FREE_MAXWELL`
 **Date:** 2026-07-23
 **Pre-registration:**
-[`PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md`](../10_eft_program/preregistrations/PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md)
+[`PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md`](../../10_eft_program/preregistrations/charge_gauss_native_em/PREREG_MATCHED_MAXWELL_INTEGRATION_v1.md)
 
 ## 1. Result
 

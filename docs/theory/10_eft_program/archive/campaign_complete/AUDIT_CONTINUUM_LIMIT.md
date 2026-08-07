@@ -12,7 +12,7 @@
 
 ## 1 · Why this audit exists
 
-[FTD-0098/0099](../07_assessment/core_ledgers/LEDGER.md#FTD-0098) measured the operator-mixing matrix M_ab(b=2) at L=16 and L=32 with a `--L=N` CLI flag. This audit extends that data series to L=64 to test whether the engine's mixing matrix has a smooth continuum limit, by tracking three convergence indicators:
+[FTD-0098/0099](../../../07_assessment/core_ledgers/LEDGER.md#FTD-0098) measured the operator-mixing matrix M_ab(b=2) at L=16 and L=32 with a `--L=N` CLI flag. This audit extends that data series to L=64 to test whether the engine's mixing matrix has a smooth continuum limit, by tracking three convergence indicators:
 
 1. cond(S) — well-conditioning of the operator-snapshot covariance (lower is better)
 2. Wilson eigenvalue positivity — number of real-positive eigenvalues of (M+M^T)/2
@@ -110,7 +110,7 @@ The cleanest reading: **the engine has a well-defined operator-mixing matrix str
 
 ## 5 · Comparison to the BCC closure pattern (FTD-0093)
 
-The BCC sub-stencil spectrum audit (FTD-0093, [`AUDIT_BCC_SUBLATTICE_SPECTRUM.md`](archive/closed_negative/AUDIT_BCC_SUBLATTICE_SPECTRUM.md)) tracked a similar L ∈ {24, 32, 48} progression and closed [NEGATIVE]: BCC ratio 11.76→10.31→15.24, never approaching predicted 45.31. That audit had a **specific quantitative prediction** to falsify and missed it by 10σ at every L.
+The BCC sub-stencil spectrum audit (FTD-0093, [`AUDIT_BCC_SUBLATTICE_SPECTRUM.md`](../closed_negative/AUDIT_BCC_SUBLATTICE_SPECTRUM.md)) tracked a similar L ∈ {24, 32, 48} progression and closed [NEGATIVE]: BCC ratio 11.76→10.31→15.24, never approaching predicted 45.31. That audit had a **specific quantitative prediction** to falsify and missed it by 10σ at every L.
 
 This continuum-limit audit has **no specific prediction to falsify** — it's a convergence diagnostic. Both audits illustrate the user's reorientation: pre-registered measurements that produce structurally informative results regardless of whether they confirm a prior conjecture. FTD-0093 closes a derivation chain negative; FTD-0103 produces an inconclusive but informative continuum-limit diagnostic.
 

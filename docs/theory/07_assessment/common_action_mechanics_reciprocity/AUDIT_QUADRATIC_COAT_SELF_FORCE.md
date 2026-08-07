@@ -5,9 +5,9 @@
 **Status:** `[DERIVED — SELF-ENERGY MECHANISM] + [NUMERICAL FACT — GENERIC SELF-FORCE] + [CLOSED NEGATIVE — UNSUBTRACTED ISOLATED MOBILE LAW]`  
 **Verdict:** `UNSUBTRACTED_QUADRATIC_SELF_FORCE_PRESENT`  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_SELF_FORCE_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_SELF_FORCE_v1.md)  
+[`PREREG_QUADRATIC_COAT_SELF_FORCE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_SELF_FORCE_v1.md)  
 **Derivation:**
-[`DERIV_QUADRATIC_COAT_SELF_FORCE.md`](../10_eft_program/derivations/DERIV_QUADRATIC_COAT_SELF_FORCE.md)  
+[`DERIV_QUADRATIC_COAT_SELF_FORCE.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_QUADRATIC_COAT_SELF_FORCE.md)  
 **Run of record:** `engine/results/ftd_0552/windows_msvc_cpu.json`
 
 ## Result

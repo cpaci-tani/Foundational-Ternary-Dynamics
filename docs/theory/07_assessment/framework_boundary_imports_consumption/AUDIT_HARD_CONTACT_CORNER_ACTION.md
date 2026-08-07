@@ -11,7 +11,7 @@
 **Verdict:**
 `SELECTED_HARD_CONTACT_ACTION_DERIVES_RESTRICTED_IMPULSE_NO_FIELD_ORIGIN`  
 **Pre-registration:**
-[`PREREG_HARD_CONTACT_CORNER_ACTION_v1.md`](../10_eft_program/preregistrations/PREREG_HARD_CONTACT_CORNER_ACTION_v1.md)  
+[`PREREG_HARD_CONTACT_CORNER_ACTION_v1.md`](../../10_eft_program/preregistrations/framework_boundary_imports_consumption/PREREG_HARD_CONTACT_CORNER_ACTION_v1.md)  
 **Run of record:** `engine/results/ftd_0516/windows_msvc_cpu.json`
 
 ## 1. The selected matter action

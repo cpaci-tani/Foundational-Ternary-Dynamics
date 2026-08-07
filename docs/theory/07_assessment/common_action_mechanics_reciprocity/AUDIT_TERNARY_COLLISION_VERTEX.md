@@ -8,7 +8,7 @@
 `[OPEN — DISTINGUISHABLE/BOUNDARY COLLISION VERTEX]`  
 **Verdict:** `IDENTICAL_INTERIOR_CROSSING_IS_PERMUTATION_GAUGE`  
 **Pre-registration:**
-[`PREREG_TERNARY_COLLISION_VERTEX_v1.md`](../10_eft_program/preregistrations/PREREG_TERNARY_COLLISION_VERTEX_v1.md)  
+[`PREREG_TERNARY_COLLISION_VERTEX_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TERNARY_COLLISION_VERTEX_v1.md)  
 **Run of record:** `engine/results/ftd_0504/windows_msvc_cpu.json`
 
 **Successor correction (FTD-0507):** the capacity formula below is exact for

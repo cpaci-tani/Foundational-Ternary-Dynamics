@@ -4,8 +4,8 @@
 
 **Status:** [CONJECTURE] — 24-digit agreement independently reproduced; 6/7 coefficients uniquely forced at cascade precision; unique clean base-integer decomposition confirmed; observationally underdetermined at CODATA precision. See §3.3 for full audit table.
 **Precision claim:** 24-digit agreement confirmed as algebraic identity (mpmath 60-digit); not experimentally verifiable beyond digit ~11.
-**Audit script:** [`scripts/exploration/audit_seven_term_rigidity.py`](../../../scripts/exploration/audit_seven_term_rigidity.py)
-**Dependencies:** [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../number_theory/DERIV_MASTER_QUADRATIC_CM_LVALUES.md), [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md), [DERIV_LFUNCTION_GSTAR_CONNECTION.md](../number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md)
+**Audit script:** [`scripts/exploration/audit_seven_term_rigidity.py`](../../../../scripts/exploration/audit_seven_term_rigidity.py)
+**Dependencies:** [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../number_theory/DERIV_MASTER_QUADRATIC_CM_LVALUES.md), [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md), [DERIV_LFUNCTION_GSTAR_CONNECTION.md](../number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md)
 
 ---
 
@@ -78,7 +78,7 @@ This is a tractable computer-search question. The proof script at §7 is the rec
 
 ### 3.3 Status of the audit
 
-The rigidity audit has been run (script: [`scripts/exploration/audit_seven_term_rigidity.py`](../../../scripts/exploration/audit_seven_term_rigidity.py)). Outcome:
+The rigidity audit has been run (script: [`scripts/exploration/audit_seven_term_rigidity.py`](../../../../scripts/exploration/audit_seven_term_rigidity.py)). Outcome:
 
 **Step (A) — Precision reproduction: PASS.** The 7-term series with claimed coefficients gives
 $$1/\alpha_{\mathrm{FTD}} = 137.035999176999999999999997420\ldots$$
@@ -125,7 +125,7 @@ At CODATA 2022 experimental precision, the 7 coefficients are collectively **obs
 > 4. The 24-digit "match to CODATA" is not experimentally verifiable: CODATA 2022 constrains $1/\alpha$ to ~11 digits ($\pm 2.1 \times 10^{-8}$), and at that precision the coefficients are dramatically underdetermined. Digits 12–24 of the claimed match are a **structural property of the specific chosen coefficients**, not a prediction that can currently be tested against data.
 >
 > **Upgrade path to [THEOREM]:**
-> - Derive the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ uniquely from lattice first principles (the cuboctahedral argument in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5 is partially in place but not complete — see [CIRCULARITY RISK]).
+> - Derive the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ uniquely from lattice first principles (the cuboctahedral argument in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5 is partially in place but not complete — see [CIRCULARITY RISK]).
 > - Derive the expansion parameter $\varepsilon = e^\pi - \pi - 20$ from lattice structure (the integer 20 remains unmotivated).
 > - Complete the $c_7$ residual analysis: show the 2.5× cascade-tolerance gap is absorbable by an 8th term that decomposes cleanly, or accept it as inherent truncation error.
 >
@@ -148,16 +148,16 @@ This is a transcendental small parameter with $|\varepsilon| \sim 10^{-3}$, not 
 
 The integers $\{N_c = 3, N_{\mathrm{base}} = 4, b_3 = 7, N_{\mathrm{eff}} = 13\}$ have lattice-structural derivations filed elsewhere:
 
-- $N_c = 3$: [DERIV_NC_FROM_TOPOLOGY.md](../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md) (four independent routes to $N_c = 3$)
+- $N_c = 3$: [DERIV_NC_FROM_TOPOLOGY.md](../../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md) (four independent routes to $N_c = 3$)
 - $N_{\mathrm{base}} = 4$: cuboctahedral coordination number in $\mathbb{Z}^3$ (vertex figure)
 - $b_3 = 7$: independent face pairs under parity in the 27-site Moore lattice
 - $N_{\mathrm{eff}} = 13$: cuboctahedral coordination shell (12 surrounding + 1 center)
 
-The derived integers $D = 47$ and $\mathrm{BCC} = 8$ follow. See [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §SP5 for the cuboctahedral geometric origin.
+The derived integers $D = 47$ and $\mathrm{BCC} = 8$ follow. See [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §SP5 for the cuboctahedral geometric origin.
 
 ### 4.3 Comparison with the one-loop lattice correction
 
-The one-loop tadpole closes the gap from 1.26 ppm to 9.6 ppb — a 99.2% closure with a single correction term ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)). The 7-term series claims a 24-digit closure using seven terms. These are two different approaches:
+The one-loop tadpole closes the gap from 1.26 ppm to 9.6 ppb — a 99.2% closure with a single correction term ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)). The 7-term series claims a 24-digit closure using seven terms. These are two different approaches:
 
 | Approach | Mechanism | Terms | Precision | Status |
 |----------|-----------|-------|-----------|--------|
@@ -192,7 +192,7 @@ Three reasons to file rather than discard:
 
 1. **The coefficients are too specific to lose.** The denominators $\{47, 64, 141, 11, 21, 8\}$ are not free parameters; each is a combination of well-defined lattice integers. If the conjecture is refuted, the refutation will be valuable (it shows which base-integer combinations are NOT the right basis). If the conjecture is confirmed, the theorem depends on preserving these coefficients.
 
-2. **The one-loop mechanism already works.** Even if the 7-term series is a post-hoc fit, the FTD story does not depend on it. The one-loop tadpole ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes 99.2% of the gap with a principled lattice computation. The 7-term series is a strong bonus, not a load-bearing claim.
+2. **The one-loop mechanism already works.** Even if the 7-term series is a post-hoc fit, the FTD story does not depend on it. The one-loop tadpole ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes 99.2% of the gap with a principled lattice computation. The 7-term series is a strong bonus, not a load-bearing claim.
 
 3. **The 24-digit precision claim, if true, is consistent with $|\varepsilon| \sim 10^{-3}$ convergence.** Each term is roughly $10^{-3}$ smaller than the last, so 7 terms naturally reach ~21–24 digits of precision. This removes convergence as a red flag. The remaining concern is circularity of coefficients (§3); the integer 20 in $\varepsilon = e^\pi - \pi - 20$ is expressible as $b_3 + N_{\mathrm{eff}}$ in the base-integer set (§4.1), so it is not an insertion from outside the framework.
 

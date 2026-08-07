@@ -6,7 +6,7 @@
 **Epistemic Level:** [THEOREM] for algebraic identities; [SELECTION] for physical interpretation
 
 **Depends on:**
-- [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/EXPLR_ONTIC_CONSTANT_ATLAS.md) --- Complete constant catalog
+- [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/number_theory/EXPLR_ONTIC_CONSTANT_ATLAS.md) --- Complete constant catalog
 - `ontic.h` --- Complete derivation chain
 
 ---
@@ -245,7 +245,7 @@ The second differences measure the "acceleration" of the walk. The walk starts f
 
 ## Cross-References
 
-- **Constant atlas**: [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/EXPLR_ONTIC_CONSTANT_ATLAS.md)
+- **Constant atlas**: [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/number_theory/EXPLR_ONTIC_CONSTANT_ATLAS.md)
 - **G* status stack**: the status stack lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR/TRACKER_ONTIC_TRUTH
 - **Dual substrate**: see `ontic.h` Layer 3b
 - **Numerical verification**: `scripts/exploration/explore_ladder_generating_rule.py`

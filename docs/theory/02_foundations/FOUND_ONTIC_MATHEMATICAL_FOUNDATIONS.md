@@ -367,7 +367,7 @@ The physical implication (if the master quadratic identification x₊ = 1/α is 
 - **Prior hierarchy:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md), [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md)
 - **G* and master quadratic:** [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md)
 - **Precision formula:** [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md)
-- **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
+- **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md)
 - **Classical analysis:** Gauss, *Disquisitiones Generales* (1813); Euler, *De summis serierum reciprocarum* (1735); Mertens (1874)
 
 ---

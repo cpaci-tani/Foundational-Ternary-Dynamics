@@ -10,7 +10,7 @@
 **Post-baseline status update (2026-07-29):** FTD-0739 subsequently ran once
 under its locked protocol and closed M1 constructively at the registered
 selected-dynamics scope; see
-[`AUDIT_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md`](AUDIT_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md).
+[`AUDIT_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md`](constituent_complete_matter/AUDIT_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md).
 FTD-0745 subsequently tested the first held-out M2 ladder. All core and late
 near-field gates pass, but the registered radius-32/48 arrival conjunction
 fails before contact. FTD-0753 later removes that specific horizon mismatch:
@@ -76,7 +76,7 @@ M1 only; Track-B paper analysis may proceed in parallel without using the word
 
 **Positive evidence**
 
-- [`PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md`](../10_eft_program/preregistrations/PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md)
+- [`PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md`](../10_eft_program/preregistrations/constituent_complete_matter/PREREG_FINITE_SUPPORT_OUTGOING_TAIL_FORMATION_v1.md)
   is locked under SHA-256 `9AA9B806…A7868E`.
 - Exact compact-support preparation and regional-energy observer focused tests
   pass.

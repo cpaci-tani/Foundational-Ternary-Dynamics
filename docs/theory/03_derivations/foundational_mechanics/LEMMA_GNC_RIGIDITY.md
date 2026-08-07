@@ -2,7 +2,7 @@
 
 **LEDGER row:** FTD-0354 (row written by the controller; this document does not edit the LEDGER)
 **Date:** 2026-07-02
-**Provenance:** extension **E1** of [`ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md`](../../07_assessment/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md) (FTD-0352), executed as proposed; grounded in FTD-0349 ([`DERIV_CLUSTER_COLLECTIVE_COORDINATE_v1.md`](DERIV_CLUSTER_COLLECTIVE_COORDINATE_v1.md)).
+**Provenance:** extension **E1** of [`ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md`](../../07_assessment/framework_audits_redteams_reconciliation/ASSESSMENT_MATH_GRADES_AND_EXTENSIONS_2026-07-01.md) (FTD-0352), executed as proposed; grounded in FTD-0349 ([`DERIV_CLUSTER_COLLECTIVE_COORDINATE_v1.md`](DERIV_CLUSTER_COLLECTIVE_COORDINATE_v1.md)).
 **Tag:** **[THEOREM]** for the rigidity lemma, the divergence identity, and the affine classification (§2–§4 — elementary linear algebra about the FTD-0349 ansatz class); **[THEOREM]** for the lattice non-rigidity exhibit (§5); **[CONJECTURE]** for the two-walls-one-shape unification (§6). **Zero promotions:** FTD-0110/FTD-0250 tags unchanged; the clock hypothesis stays **[AXIOM]** (FTD-0208); GNC stays un-forced; whether real engine clusters satisfy GNC stays **[OPEN]** — it is the pre-registered FTD-0349 §9 Q_ij measurement, which this document does not touch. FC-1, FC-2, FC-W untouched.
 **Verification:** [`scripts/proofs/proof_gnc_rigidity.py`](../../../../scripts/proofs/proof_gnc_rigidity.py) — **27/27 PASS** (run of record 2026-07-02; test ids R1–R8 cited inline).
 **Read first:** FTD-0349 §2–§3, §7–§9; [FTD-0208 LEDGER row](../../07_assessment/core_ledgers/LEDGER.md) (clock hypothesis [AXIOM]); [`SPEC_FTD_LAGRANGIAN.md`](../../01_reference/SPEC_FTD_LAGRANGIAN.md) §4.3.

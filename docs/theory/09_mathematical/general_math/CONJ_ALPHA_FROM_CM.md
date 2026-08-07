@@ -116,7 +116,7 @@ BCC(8)/Moore(26) = 0.3077 vs Planck Ω_m = 0.315 ± 0.007. Within 1σ but not de
 ## Attack Vectors
 
 ### Path A: Retracted
-**Path A retracted (load-bearing premise was completed-infinity self-consistency).** Under undefined-boundary ontology, the conjecture's Path A — proposing that 1/α emerges as the L → ∞ self-consistent fixed point of a finite-L sequence — is no longer well-posed. The other paths in this document (algebraic uniqueness via CM curve, dual match via the master quadratic) are independent of Path A and survive unchanged. The preferred attack vector is now algebraic + structural, anchored in [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) and CM-curve uniqueness across class-number-1 fields.
+**Path A retracted (load-bearing premise was completed-infinity self-consistency).** Under undefined-boundary ontology, the conjecture's Path A — proposing that 1/α emerges as the L → ∞ self-consistent fixed point of a finite-L sequence — is no longer well-posed. The other paths in this document (algebraic uniqueness via CM curve, dual match via the master quadratic) are independent of Path A and survive unchanged. The preferred attack vector is now algebraic + structural, anchored in [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) and CM-curve uniqueness across class-number-1 fields.
 
 ### Path B: CM period relation
 Prove that the CM curve E: y² = x³ − x satisfies an intrinsic algebraic relation of the form x² − |Aut(E)|²G*²x + |Aut(E)|²G*³ = 0 where x is a natural "coupling" associated to the curve's period lattice. This would be a new theorem in arithmetic geometry.

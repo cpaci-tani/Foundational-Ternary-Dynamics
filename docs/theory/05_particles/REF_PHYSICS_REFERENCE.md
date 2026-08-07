@@ -241,7 +241,7 @@ Pions, kaons, η, η', D mesons, B mesons — all to < 0.1% accuracy. See comple
 
 ## Cross-References
 
-- **Number theory:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
+- **Number theory:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md)
 - **Framework reference:** [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
-- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md)

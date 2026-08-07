@@ -84,4 +84,4 @@ static, ballistic, packet-force, hop, and forward/reverse gates.
 Run 2026-07-26 on the pinned MSVC CPU observer: all 72 nonlinear roots and
 every locked gate passed. The registered verdict is
 `QUADRATIC_COAT_DG_TRANSACTION_CONSTRUCTIVE`. See
-[`AUDIT_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION.md`](../../07_assessment/AUDIT_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION.md).
+[`AUDIT_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_DISCRETE_GRADIENT_TRANSACTION.md).

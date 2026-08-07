@@ -3,7 +3,7 @@
 **Tag:** [PROTOCOL · pre-registration]
 **Date:** 2026-04-27
 **LEDGER row:** FTD-0104 (assigned ahead of measurement)
-**Companion:** [`PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md`](PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md), [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
+**Companion:** [`PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md`](PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md), [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](../closed_negative/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
 **Plan:** `~/.claude/plans/let-s-plan-a-way-ethereal-sonnet.md` (Campaign D of the engine-as-instrument portfolio)
 
 This protocol is **pre-registered before measurement** per CLAUDE.md epistemic discipline rules.

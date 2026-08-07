@@ -1,7 +1,7 @@
 # Engine Callstack Audit
 
 **Scope:** `ftd::RenderBridge` — the production Scale-0 engine — and its GPU counterpart `ftd::gpu::GpuEngine`. Traces every call path from `tick()` to leaf functions; checks CPU/GPU parity; flags dead code, silent no-ops, and inconsistent naming.
-**Companion:** [`TRACKER_OPEN_ITEMS.md`](core_ledgers/TRACKER_OPEN_ITEMS.md).
+**Companion:** [`TRACKER_OPEN_ITEMS.md`](../core_ledgers/TRACKER_OPEN_ITEMS.md).
 
 **STATUS:** all 10 findings RESOLVED. Re-verification at HEAD `b4f1dcf` walked every finding against live source; all CALLSTACK fixes confirmed in place. Per-finding RESOLVED annotations in §3 cite the exact `file:line` at HEAD where each fix lives. The verification test referenced in the original status line — `tests/test_callstack_audit_fixes.cpp` — was renamed/folded into `tests/test_audit_regression.cpp` during the engine refactor sweep; `test_callstack_audit_fixes.cpp` no longer exists.
 
@@ -377,4 +377,4 @@ All four correctly push to GPU via `gpu_push_to_device()` / `host_mutated_` flag
 
 **Open follow-ups (not in this audit):**
 
-The CALLSTACK audit is closed. Remaining engine cleanup is tracked under the **bug-hunt** numbering (commit `f2a721a`): F2 γ_FTD GPU port, F3 accel_mag unification, F5 evaporation Boltzmann RNG, F8/F9 spin/RNG portability, F12 emergent_forces GPU, F15 dead phase_movement_kernel parameters. See [STATUS_2026-05-04_post_bughunt.md](archive/STATUS_2026-05-04_post_bughunt.md) for that tracker. Do **not** confuse the two F-numbering schemes — see that doc's §"Two F-numbering schemes" for disambiguation.
+The CALLSTACK audit is closed. Remaining engine cleanup is tracked under the **bug-hunt** numbering (commit `f2a721a`): F2 γ_FTD GPU port, F3 accel_mag unification, F5 evaporation Boltzmann RNG, F8/F9 spin/RNG portability, F12 emergent_forces GPU, F15 dead phase_movement_kernel parameters. See [STATUS_2026-05-04_post_bughunt.md](../archive/STATUS_2026-05-04_post_bughunt.md) for that tracker. Do **not** confuse the two F-numbering schemes — see that doc's §"Two F-numbering schemes" for disambiguation.

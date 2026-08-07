@@ -10,7 +10,7 @@
 **Verdict:**
 `ELASTIC_CONTACT_CANNOT_COUPLE_RECIPROCALLY_WITHOUT_FIELD_DEPENDENT_MATTER_OR_DRESSING`  
 **Pre-registration:**
-[`PREREG_MATCHED_CONTACT_ENERGY_OBSTRUCTION_v1.md`](../10_eft_program/preregistrations/PREREG_MATCHED_CONTACT_ENERGY_OBSTRUCTION_v1.md)  
+[`PREREG_MATCHED_CONTACT_ENERGY_OBSTRUCTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_CONTACT_ENERGY_OBSTRUCTION_v1.md)  
 **Run of record:** `engine/results/ftd_0529/windows_msvc_cpu.json`
 
 ## 1. Exact obstruction

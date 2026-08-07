@@ -4,7 +4,7 @@
 **Ledger row:** FTD-0085
 **Companions:**
 - [DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md](../number_theory/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md) — the no-go theorem Program F tests against
-- [test_link_bilinear_clifford.cpp](../../../engine/tests/test_link_bilinear_clifford.cpp) — GPU test
+- [test_link_bilinear_clifford.cpp](../../../../engine/tests/test_link_bilinear_clifford.cpp) — GPU test
 - FTD-0061, 0071, 0072, 0073, 0074, 0075 — prior site-local / linear-readout probes (all negative)
 
 ---

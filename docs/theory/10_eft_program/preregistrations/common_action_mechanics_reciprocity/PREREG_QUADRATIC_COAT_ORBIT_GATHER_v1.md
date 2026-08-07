@@ -104,4 +104,4 @@ motion.
 Run 2026-07-26 on the pinned MSVC CPU observer: all 72 arms and every locked
 gate passed. The registered verdict is
 `QUADRATIC_COAT_ORBIT_GATHER_CONSTRUCTIVE`. See
-[`AUDIT_QUADRATIC_COAT_ORBIT_GATHER.md`](../../07_assessment/AUDIT_QUADRATIC_COAT_ORBIT_GATHER.md).
+[`AUDIT_QUADRATIC_COAT_ORBIT_GATHER.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_ORBIT_GATHER.md).

@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0447`  
 **Status:** `[THEOREM — ISOLATED CUBIC-COVARIANT POLAR WORK RESPONSE]`  
 **Verdict:** `CUBIC_STABILIZER_FIXES_LONGITUDINAL_WORK_RESPONSE`  
-**Pre-registration:** [`PREREG_CUBIC_HOP_WORK_RESPONSE_v1.md`](../10_eft_program/preregistrations/PREREG_CUBIC_HOP_WORK_RESPONSE_v1.md)  
+**Pre-registration:** [`PREREG_CUBIC_HOP_WORK_RESPONSE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CUBIC_HOP_WORK_RESPONSE_v1.md)  
 **Run of record:** `engine/results/ftd_0447/windows_msvc_cpu.csv`
 
 ## 1. Theorem

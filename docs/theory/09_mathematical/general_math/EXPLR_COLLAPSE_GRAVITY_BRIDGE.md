@@ -35,9 +35,9 @@ A crucial subtlety: the factor type is **observer-dependent**. The Tolman relati
 
 **Depends on:**
 - [EXPLR_RELU_TYPE_TRANSITION.md](EXPLR_RELU_TYPE_TRANSITION.md) — Type III $\to$ Type I via Softplus $\beta$, RT dictionary
-- [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — Same flux $J$ for QFT and GRT
-- [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — $G^* = \varpi/\sqrt{\text{PF}}$, PF cancellation
-- [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — Projection hierarchy $E(x) \to |x|^2 \to \Phi$
+- [DERIV_QFT_GRT_BRIDGE.md](../../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — Same flux $J$ for QFT and GRT
+- [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — $G^* = \varpi/\sqrt{\text{PF}}$, PF cancellation
+- [FOUND_THE_EXISTENCE_FILTER.md](../../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — Projection hierarchy $E(x) \to |x|^2 \to \Phi$
 
 ---
 
@@ -105,7 +105,7 @@ $$T_H = \frac{1}{8\pi M}$$
 
 This is [CLASSICAL] (Hawking 1975).
 
-From [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) §3.2, express $8\pi$ through FTD integers:
+From [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) §3.2, express $8\pi$ through FTD integers:
 
 $$8\pi = 2 \cdot N_{\text{base}}^2 \cdot \text{PF} = 2 \cdot 16 \cdot \frac{\pi}{4} = 8\pi \quad \checkmark$$
 
@@ -160,7 +160,7 @@ $$S_{BH} \times T_H = \frac{M}{2} \qquad \text{(PF cancels, from DERIV\_GSTAR\_P
 
 $$S_{BH} \times T_H = \frac{N_{\text{base}}^2 \cdot \text{PF} \cdot M^2}{2 N_{\text{base}}^2 \cdot \text{PF} \cdot M} = \frac{M}{2} \quad \blacksquare$$
 
-**Interpretation** [SELECTION]: The Connes parameter $\lambda_H = e^{-\beta_H}$ depends on PF (geometric packing), so the algebraic type classification contains geometric information. But the thermodynamic observables ($S \times T$) are PF-free — the physics is topological even though the algebraic classification is geometric. This is consistent with the PF cancellation pattern established in [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md): PF enters intermediate expressions but cancels in physical observables.
+**Interpretation** [SELECTION]: The Connes parameter $\lambda_H = e^{-\beta_H}$ depends on PF (geometric packing), so the algebraic type classification contains geometric information. But the thermodynamic observables ($S \times T$) are PF-free — the physics is topological even though the algebraic classification is geometric. This is consistent with the PF cancellation pattern established in [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md): PF enters intermediate expressions but cancels in physical observables.
 
 ---
 
@@ -212,7 +212,7 @@ The duality:
 
 **These are not contradictory** — they are two valid descriptions of the same system from different observer perspectives. The factor type is a property of the **observer-system coupling** (the sLoop), not of spacetime alone.
 
-**Connection to FTD:** This is precisely the sLoop principle from [CLAUDE.md](../../../CLAUDE.md) §12.4: the observer is ontologically continuous with the observed. A local observer embedded in the near-horizon flux field experiences different algebraic structure than an asymptotic observer decoupled from the local thermal bath.
+**Connection to FTD:** This is precisely the sLoop principle from [CLAUDE.md](../../../../CLAUDE.md) §12.4: the observer is ontologically continuous with the observed. A local observer embedded in the near-horizon flux field experiences different algebraic structure than an asymptotic observer decoupled from the local thermal bath.
 
 ---
 
@@ -254,7 +254,7 @@ So $G^*$ appears in the gravitational $\beta$ through the PF factor, just as $k_
 
 ### 4.3 Connection to the Existence Filter Hierarchy [CONJECTURE CG-C5]
 
-From [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md), the projection hierarchy:
+From [FOUND_THE_EXISTENCE_FILTER.md](../../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md), the projection hierarchy:
 
 | Level | Projection | Formula | Character |
 |-------|-----------|---------|-----------|
@@ -483,10 +483,10 @@ Under the FTD Constitution (FTD-0254) and the dynamic-alpha pivot (FTD-0242), al
 | Document | Relevance |
 |----------|-----------|
 | [EXPLR_RELU_TYPE_TRANSITION.md](EXPLR_RELU_TYPE_TRANSITION.md) | RT dictionary, Softplus $\beta$, type descent chain, phase diagram |
-| [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Same flux $J$ for QFT and GRT, $T_{\mu\nu}$ via Noether |
-| [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | $G^* = \varpi/\sqrt{\text{PF}}$, BH thermodynamics, PF cancellation |
-| [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy $E \to |\cdot|^2 \to \Phi$ |
-| [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B/C partition, vocabulary discipline, and context selection |
+| [DERIV_QFT_GRT_BRIDGE.md](../../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Same flux $J$ for QFT and GRT, $T_{\mu\nu}$ via Noether |
+| [DERIV_GSTAR_PF_BRIDGE.md](../../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | $G^* = \varpi/\sqrt{\text{PF}}$, BH thermodynamics, PF cancellation |
+| [FOUND_THE_EXISTENCE_FILTER.md](../../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy $E \to |\cdot|^2 \to \Phi$ |
+| [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B/C partition, vocabulary discipline, and context selection |
 
 ---
 

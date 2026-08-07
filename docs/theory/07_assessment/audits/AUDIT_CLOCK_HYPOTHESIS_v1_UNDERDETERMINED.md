@@ -7,9 +7,9 @@
 **Honest framing:** the F9 risk register's HIGHEST-risk arc behaved as predicted — the executor under-claimed (CLOSED-NEGATIVE looked epistemically humble but was actually incorrect at the operational level given untested routes + falsifier firings the executor missed). The adversarial review checkpoint caught this. **The framework works.** This audit document records the correct UNDERDETERMINED verdict + queues v2 pre-reg work.
 **Companion docs:**
 - [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 — identified the clock-hypothesis gap
-- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.3, §3.7, §4.3 — Born-Infeld action, bandwidth constraint, proper-time identification
+- [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.3, §3.7, §4.3 — Born-Infeld action, bandwidth constraint, proper-time identification
 - [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — original POSTULATE 2 framing
-- [`AUDIT_FINITE_NEUTRAL_LOCK.md`](../08_structural/AUDIT_FINITE_NEUTRAL_LOCK.md) — format precedent for UNDERDETERMINED result-docs
+- [`AUDIT_FINITE_NEUTRAL_LOCK.md`](../../08_structural/AUDIT_FINITE_NEUTRAL_LOCK.md) — format precedent for UNDERDETERMINED result-docs
 
 ---
 

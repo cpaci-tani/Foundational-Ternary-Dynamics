@@ -142,7 +142,7 @@ pseudovector; its only *forced* internal symmetry is the parity `ℤ₂`.
 
 `[SELECTION].` `FOUND_FORCE_STRUCTURE.md` additionally assigns a weak
 `SU(2)` to `φ` (FST-1 `[SELECTION]`, FST-6 `[CONJECTURE]`,
-[`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)).
+[`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md)).
 That `SU(2)` would contribute a second rank-1 — its Cartan. But the
 assignment is selection-grade: nothing in the catalog *forces* `φ` to
 carry an internal `SU(2)` rather than only its parity `ℤ₂`.
@@ -247,7 +247,7 @@ successor question — "Q12" — is sharp and already has a home document:
 > **Q12.** Is the weak `SU(2)` on the dual-substrate chirality mode
 > `φ = J_L − J_R` a genuine `[DERIVED]` consequence of the catalog, or a
 > selection-grade count-match? Audit
-> [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
+> [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md)
 > and `FOUND_FORCE_STRUCTURE.md` FST-1/FST-6 against the boundary-theorem
 > discriminator.
 
@@ -303,7 +303,7 @@ stays `[CONJECTURE]`-grade.
 - **Verification script:** [`../../../scripts/proofs/audit_colour_singlet_rank.py`](../../../scripts/proofs/audit_colour_singlet_rank.py).
 - **Catalog-defining sources:** [`../02_foundations/FOUND_FORCE_STRUCTURE.md`](../02_foundations/FOUND_FORCE_STRUCTURE.md)
   (the dual-substrate four-mode decomposition; FST-1/FST-6),
-  [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
+  [`../03_derivations/DERIV_LATTICE_SU2_WEAK.md`](../03_derivations/standard_model/DERIV_LATTICE_SU2_WEAK.md)
   (the weak `SU(2)` — the Q12 audit target),
   [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
   (the `SU(3)` colour triality).

@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0456`  
 **Status:** `[CONSTRUCTIVE EXISTENCE — R=1 LOCAL ZERO-ENERGY RECOIL]` + `[MEASURED — EXTENSIVE IR BACKGROUND COST]` + `[OPEN — NATIVE EVENT SELECTION]`  
 **Verdict:** `R1_LOCAL_TRAVELLING_WAVE_RECOIL_THRESHOLD_CONSTRUCTED`  
-**Pre-registration:** [`PREREG_LOCAL_SUPPORT_RECOIL_THRESHOLD_v1.md`](../10_eft_program/preregistrations/PREREG_LOCAL_SUPPORT_RECOIL_THRESHOLD_v1.md)  
+**Pre-registration:** [`PREREG_LOCAL_SUPPORT_RECOIL_THRESHOLD_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCAL_SUPPORT_RECOIL_THRESHOLD_v1.md)  
 **Run of record:** `engine/results/ftd_0456/windows_msvc_cpu.csv`
 
 ## 1. The recoil transaction has a strictly local realization

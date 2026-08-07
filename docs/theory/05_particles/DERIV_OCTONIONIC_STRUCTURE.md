@@ -291,8 +291,8 @@ The master quadratic x² - 16G*²x + 16G*³ = 0 encodes:
 
 ## Cross-References
 
-- **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
-- **j = 1728:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md) §II
+- **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md)
+- **j = 1728:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/general_math/EXPLR_NUMBER_THEORY.md) §II
 - **Physics encodings:** [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
 *Framework: Foundational Ternary Dynamics v5.16*

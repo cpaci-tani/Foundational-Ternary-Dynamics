@@ -5,9 +5,9 @@
 **Status:** `[THEOREM — EXACT AUXILIARY FIELD ENERGY AND GAUSS TRANSPORT]`  
 **Verdict:** `MATCHED_MIDPOINT_POYNTING_EXACT`  
 **Pre-registration:**
-[`PREREG_MATCHED_MIDPOINT_POYNTING_v1.md`](../10_eft_program/preregistrations/PREREG_MATCHED_MIDPOINT_POYNTING_v1.md)  
+[`PREREG_MATCHED_MIDPOINT_POYNTING_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MATCHED_MIDPOINT_POYNTING_v1.md)  
 **Theorem:**
-[`THEOREM_MATCHED_MIDPOINT_POYNTING.md`](../10_eft_program/derivations/THEOREM_MATCHED_MIDPOINT_POYNTING.md)  
+[`THEOREM_MATCHED_MIDPOINT_POYNTING.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_MATCHED_MIDPOINT_POYNTING.md)  
 **Run of record:** `engine/results/ftd_0544/windows_msvc_cpu.json`
 
 ## Result

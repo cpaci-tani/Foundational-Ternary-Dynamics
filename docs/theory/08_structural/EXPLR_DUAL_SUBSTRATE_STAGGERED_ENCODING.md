@@ -1,6 +1,6 @@
 # EXPLR: The Dual Substrate as a Sum/Difference Register — the Staggered Re-encoding Adjudicated
 
-**Status:** [THEOREM — lattice operator algebra] for the (F, D) decoupling (§1–§4, §6) and the checkerboard-conjugation computation (§8); [FACT — engine inventory] for the touchpoint census (§5) and the T3 amendment trigger (§9); [CONJECTURE — semantics only] for the corner-register reading in its surviving weak form (§8.3). Verifier: `scripts/proofs/proof_dual_substrate_staggered_encoding.py`, **15/15**. Provisional AI-derived content, not externally reviewed; provenance: the 2026-07-17 staggered re-encoding investigation chartered off [`LEMMA_DEGREE_QUARANTINE.md`](LEMMA_DEGREE_QUARANTINE.md) and [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md).
+**Status:** [THEOREM — lattice operator algebra] for the (F, D) decoupling (§1–§4, §6) and the checkerboard-conjugation computation (§8); [FACT — engine inventory] for the touchpoint census (§5) and the T3 amendment trigger (§9); [CONJECTURE — semantics only] for the corner-register reading in its surviving weak form (§8.3). Verifier: `scripts/proofs/proof_dual_substrate_staggered_encoding.py`, **15/15**. Provisional AI-derived content, not externally reviewed; provenance: the 2026-07-17 staggered re-encoding investigation chartered off [`LEMMA_DEGREE_QUARANTINE.md`](LEMMA_DEGREE_QUARANTINE.md) and [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/spine_gstar_cm_modular/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md).
 **Zero promotions:** the dual substrate stays **[IMPOSED]** (engine design choice); no LEDGER row is minted; no α content appears anywhere in this note; the corpus-level dual-substrate objects (E_L, E_R, δ² = 1 − 1/(4G\*)) are cited at their provenance-audit standing (DSP-3/DSP-4: Vieta dressing, not independent constraints). The BCC/checkerboard connection is adjudicated *against* its strong form here and survives only as a kinematic relabeling.
 
 ---
@@ -196,7 +196,7 @@ Accordingly, [`LEMMA_DEGREE_QUARANTINE.md`](LEMMA_DEGREE_QUARANTINE.md) §3 (T3)
 ## §12. Cross-references
 
 - [`LEMMA_DEGREE_QUARANTINE.md`](LEMMA_DEGREE_QUARANTINE.md) — the operator-algebra frame (σ₁₈, twist action, e₃ quarantine); its T3 amended per §9.
-- [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) — corpus-level provenance of (E_L, E_R, δ); DSP-3/DSP-4 (Vieta dressing) unchanged by this note.
+- [`AUDIT_DUAL_SUBSTRATE_PROVENANCE.md`](../07_assessment/spine_gstar_cm_modular/AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) — corpus-level provenance of (E_L, E_R, δ); DSP-3/DSP-4 (Vieta dressing) unchanged by this note.
 - [`AUDIT_LINK8_CLOSURE.md`](../10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md) — the engine-stencil ≠ BCC finding this note's §4/§8 reinforce.
 - `engine/tests/campaign_parity_violation.cpp` — declared physics reading of the A4 touchpoint ([IMPOSED] SU(2) L-coupling; V–A from δ → 1).
 - `engine/tests/test_dual_substrate.cpp`, `test_substrate_angle_probe.cpp`, `test_open5_legacy_flux_l.cpp` — the existing test surface over the register.

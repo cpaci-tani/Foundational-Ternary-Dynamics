@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0439`  
 **Status:** `[MEASURED — EXISTING FORCE BRANCHES]` + `[CLOSED NEGATIVE — MAGNITUDE GRADIENT]` + `[PASS — LEGACY DIVERGENCE GRADIENT, FINITE PROTOCOL]` + `[FAILED GATE — POISSON NUMERICAL RECIPROCITY]`  
 **Locked verdict:** `MOVEMENT_OR_PHASE_ORDER_DEFECT`  
-**Pre-registration:** [`PREREG_FORCE_BRANCH_RECIPROCITY_v1.md`](../10_eft_program/preregistrations/PREREG_FORCE_BRANCH_RECIPROCITY_v1.md)  
+**Pre-registration:** [`PREREG_FORCE_BRANCH_RECIPROCITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FORCE_BRANCH_RECIPROCITY_v1.md)  
 **Run of record:** `engine/results/ftd_0439/windows_msvc_cpu_L33.csv`
 
 ## 1. Result

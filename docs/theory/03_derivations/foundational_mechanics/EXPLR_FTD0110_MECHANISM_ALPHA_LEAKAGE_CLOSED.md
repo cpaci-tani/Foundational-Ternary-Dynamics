@@ -3,7 +3,7 @@
 **Document type:** Exploratory quantitative test (closes one mechanism class; redirects the queued calculation)
 **Status:** `[VERIFIED]` (the 2/3 leakage lemma) + `[CLOSED NEGATIVE — for the leakage-aggregation family of Mechanism α as the k(A)-drift mechanism]` + `[METHODOLOGICAL]` (log-vs-power undecidability) + `[OBSERVATION]` (the Langevin knee) + `[OPEN — redirected]` (the bridge itself). **Nothing promoted; FTD-0110's tags unchanged (linear [DERIVED]; nonlinear bridge [OPEN]; clustermass identification [SMC]).**
 **LEDGER row:** FTD-0259
-**Runner:** [`scripts/exploration/explore_ftd0110_mechanism_alpha_leakage.py`](../../../scripts/exploration/explore_ftd0110_mechanism_alpha_leakage.py) (pre-stated predictions P1–P3 in the docstring, written before compute — pre-registration)
+**Runner:** [`scripts/exploration/explore_ftd0110_mechanism_alpha_leakage.py`](../../../../scripts/exploration/explore_ftd0110_mechanism_alpha_leakage.py) (pre-stated predictions P1–P3 in the docstring, written before compute — pre-registration)
 **Depends on:** [`EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) (the mechanism menu), [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) (linear theorem), [`../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md) (the reverted §6 closure; canonical honest position), [`../../02_foundations/FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`](../../02_foundations/FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md) §6.5 (the 11-point k(A) table)
 
 ---

@@ -4,7 +4,7 @@
 hash-lock. **Date:** 2026-06-13. **LEDGER id (reserved):** FTD-0302.
 **Git tag (to be applied at lock):** `preregister-alpha-det-forcing-v2`.
 **Executes:** the three obligations A/B/C scoped — but never run — in
-[`SCOPE_DET_IDENTITY_ATTACK_v1.md`](../scopes_and_specs/SCOPE_DET_IDENTITY_ATTACK_v1.md)
+[`SCOPE_DET_IDENTITY_ATTACK_v1.md`](../../scopes_and_specs/SCOPE_DET_IDENTITY_ATTACK_v1.md)
 (2026-05-30). **Builds on FTD-0284** (the elliptic/hyperbolic closure of the
 complex-structure-on-readout branch) and **inherits the FTD-0235 falsifier gate V1–V7**.
 **Posture:** a genuine deep swing — attempt FOUND (deriving α) from multiple angles AND the

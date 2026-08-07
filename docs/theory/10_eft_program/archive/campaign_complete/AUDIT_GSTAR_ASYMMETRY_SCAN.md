@@ -24,7 +24,7 @@
 
 ### Domain A — Time-direction / dissipation / Rayleigh damping
 
-**Anchor:** [`DERIV_HEAT_EQUATION_FROM_RATIO.md`](../03_derivations/DERIV_HEAT_EQUATION_FROM_RATIO.md) [THEOREM] proves that the reflection ratio R(z) = Γ(z)/Γ(1−z) is the eigenvalue of the fractional operator D^(2z−1) acting on power-law states. At z = 1/4: R(1/4) = G\*; the operator becomes D^(−1/2) (the half-integral); this is the operator that defines the Heat Equation's boundary-flux / temperature relation, Brownian motion, and irreversible diffusion. The product Γ(z)Γ(1−z) generates time-reversible structures; the ratio generates time-asymmetric ones. **This is the structural reason G\* should appear where dissipation / arrow-of-time physics dominates.**
+**Anchor:** [`DERIV_HEAT_EQUATION_FROM_RATIO.md`](../../../03_derivations/foundational_mechanics/DERIV_HEAT_EQUATION_FROM_RATIO.md) [THEOREM] proves that the reflection ratio R(z) = Γ(z)/Γ(1−z) is the eigenvalue of the fractional operator D^(2z−1) acting on power-law states. At z = 1/4: R(1/4) = G\*; the operator becomes D^(−1/2) (the half-integral); this is the operator that defines the Heat Equation's boundary-flux / temperature relation, Brownian motion, and irreversible diffusion. The product Γ(z)Γ(1−z) generates time-reversible structures; the ratio generates time-asymmetric ones. **This is the structural reason G\* should appear where dissipation / arrow-of-time physics dominates.**
 
 **Catalog (5 formulas):**
 

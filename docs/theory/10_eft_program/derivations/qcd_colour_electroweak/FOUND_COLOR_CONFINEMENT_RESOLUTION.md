@@ -15,9 +15,9 @@
 > Front D P5, `SCOPE_CONSUMPTION_PROGRAM.md` §4 — this retraction is named prior art there).
 
 **Tag:** ~~[THEOREM] (for the true non-Abelian $SU(3)$ character expansion and strong-coupling area-law), [SELECTION] / [CONJECTURE] (for the effective $U(1)$ Abelian projection analogy)~~ **[RETRACTED — see banner]**  
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md)  
-**Pre-Registration:** [`docs/theory/10_eft_program/PREREG_COLOR_CONFINEMENT_v1.md`](../preregistrations/PREREG_COLOR_CONFINEMENT_v1.md) (FTD-0217)  
-**Companion Documents:** [`docs/theory/03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md`](../03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md).
+**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../../../SPEC_FTD.md)  
+**Pre-Registration:** [`docs/theory/10_eft_program/PREREG_COLOR_CONFINEMENT_v1.md`](../../preregistrations/qcd_colour_electroweak/PREREG_COLOR_CONFINEMENT_v1.md) (FTD-0217)  
+**Companion Documents:** [`docs/theory/03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md`](../../../03_derivations/foundational_mechanics/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md).
 
 ---
 

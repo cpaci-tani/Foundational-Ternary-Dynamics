@@ -6,13 +6,13 @@
 
 **Depends on:**
 
-- [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md) -- Proves S <= 2 at substrate level; detection loophole analysis
-- [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) -- Projection hierarchy E(x) = Re(x)
-- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) -- QM from First Distinction; complexification of flux
-- [FOUND_BORN_RULE_NULL_CONE.md](../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- Born rule as null-cone geometry
-- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) -- Discriminant trichotomy; ReLU crystallization
-- [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) -- Type III to Type I transition; Softplus/ReLU
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and coupling term
+- [AUDIT_BELL_ANALYSIS.md](../../07_assessment/quantum_foundations/AUDIT_BELL_ANALYSIS.md) -- Proves S <= 2 at substrate level; detection loophole analysis
+- [FOUND_THE_EXISTENCE_FILTER.md](../../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) -- Projection hierarchy E(x) = Re(x)
+- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) -- QM from First Distinction; complexification of flux
+- [FOUND_BORN_RULE_NULL_CONE.md](../../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- Born rule as null-cone geometry
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) -- Discriminant trichotomy; ReLU crystallization
+- [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) -- Type III to Type I transition; Softplus/ReLU
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and coupling term
 
 **Depended on by:**
 

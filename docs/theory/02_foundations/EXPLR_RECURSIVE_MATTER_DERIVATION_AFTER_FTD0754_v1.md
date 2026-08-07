@@ -162,7 +162,7 @@ ledger, to derive a common-action subsystem surface term, or to use a global
 energy-orthogonal Hodge dressing and accept nonlocal support. Calling the
 observed streamlines a literal object-owned aura, wake, pilot wave, photon
 bundle, or material strand would still outrun the result. See
-[THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md](../10_eft_program/derivations/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md).
+[THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md](../10_eft_program/derivations/constituent_complete_matter/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md).
 
 ## 5. Working definition
 

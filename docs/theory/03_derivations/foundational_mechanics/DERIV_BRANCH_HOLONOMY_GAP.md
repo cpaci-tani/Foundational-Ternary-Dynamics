@@ -2,8 +2,8 @@
 
 **Tag:** [THEOREM]
 **LEDGER:** FTD-0194
-**Engine primitive:** [`../../../engine/include/ftd/branch_holonomy.h`](../../../engine/include/ftd/branch_holonomy.h)
-**Constructive verification:** [`../../../engine/tests/test_branch_holonomy_gap.cpp`](../../../engine/tests/test_branch_holonomy_gap.cpp) — `ctest -R "^branch_holonomy_gap$"` passes 1/1, all six sub-tests green at machine precision (λ_min match to 1e-12).
+**Engine primitive:** [`../../../engine/include/ftd/branch_holonomy.h`](../../../../engine/include/ftd/branch_holonomy.h)
+**Constructive verification:** [`../../../engine/tests/test_branch_holonomy_gap.cpp`](../../../../engine/tests/test_branch_holonomy_gap.cpp) — `ctest -R "^branch_holonomy_gap$"` passes 1/1, all six sub-tests green at machine precision (λ_min match to 1e-12).
 **Status:** `[THEOREM]` — finite-group / linear-algebra theorem about the Z_2-twisted Laplacian on a finite cyclic group; equivalent to the antiperiodic-boundary-condition spectrum on a periodic ring.
 
 ---
@@ -91,11 +91,11 @@ The gap formula has downstream physical readings (antiperiodic fermionic boundar
 
 ## §6 — Cross-references
 
-- **Engine primitive:** [`../../../engine/include/ftd/branch_holonomy.h`](../../../engine/include/ftd/branch_holonomy.h) — `SignedRing1D` class, `apply()` / `build_matrix()`, `torus_branch_twist_gap_1d(N)`, `twisted_ring_spectrum_closed_form(N)`, `trivial_ring_spectrum_closed_form(N)`.
-- **Test:** [`../../../engine/tests/test_branch_holonomy_gap.cpp`](../../../engine/tests/test_branch_holonomy_gap.cpp).
+- **Engine primitive:** [`../../../engine/include/ftd/branch_holonomy.h`](../../../../engine/include/ftd/branch_holonomy.h) — `SignedRing1D` class, `apply()` / `build_matrix()`, `torus_branch_twist_gap_1d(N)`, `twisted_ring_spectrum_closed_form(N)`, `trivial_ring_spectrum_closed_form(N)`.
+- **Test:** [`../../../engine/tests/test_branch_holonomy_gap.cpp`](../../../../engine/tests/test_branch_holonomy_gap.cpp).
 - **CMake:** registered as `ftd_add_test(test_branch_holonomy_gap … LABELS native)` in `engine/CMakeLists.txt`, adjacent to `test_sublattice_laplacian` (same conceptual cluster of signed / sub-stencil Laplacians).
 - **LEDGER:** FTD-0194 (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
-- **Sibling overlays** (same campaign): [`DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../standard_model/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 color-center closure, FTD-0195), [`../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md`](../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md) (generation graph `Γ_F(d)`, `[CANDIDATE RECONSTRUCTION]`, FTD-0196).
+- **Sibling overlays** (same campaign): [`DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../standard_model/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 color-center closure, FTD-0195), [`../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md`](../../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md) (generation graph `Γ_F(d)`, `[CANDIDATE RECONSTRUCTION]`, FTD-0196).
 
 ---
 

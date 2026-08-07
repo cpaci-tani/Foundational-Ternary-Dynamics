@@ -6,9 +6,9 @@
 `[THEOREM — EXACT SPACETIME CONTINUITY AND GAUGE-ENDPOINT IDENTITY]`  
 **Verdict:** `QUADRATIC_COAT_SPACETIME_ACTION_CONSTRUCTIVE`  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_SPACETIME_ACTION_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_SPACETIME_ACTION_v1.md)  
+[`PREREG_QUADRATIC_COAT_SPACETIME_ACTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_SPACETIME_ACTION_v1.md)  
 **Derivation:**
-[`DERIV_QUADRATIC_COAT_SPACETIME_ACTION.md`](../10_eft_program/derivations/DERIV_QUADRATIC_COAT_SPACETIME_ACTION.md)  
+[`DERIV_QUADRATIC_COAT_SPACETIME_ACTION.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_QUADRATIC_COAT_SPACETIME_ACTION.md)  
 **Run of record:** `engine/results/ftd_0542/windows_msvc_cpu.json`
 
 ## Result

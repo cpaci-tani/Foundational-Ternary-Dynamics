@@ -241,9 +241,9 @@ There are thus *two* [SELECTION] steps: (a) "is the lattice integer 3?" — [SEL
 
 ## Cross-References
 
-- [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) — Routes 1 and 2 foundation
-- [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — BCC sublattice and SU(3)
-- [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — D = 3 from Watson integral self-consistency and |Aut(E_i)|² = 16
+- [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) — Routes 1 and 2 foundation
+- [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](../../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — BCC sublattice and SU(3)
+- [DERIV_D3_FROM_AUTOMORPHISM.md](../../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — D = 3 from Watson integral self-consistency and |Aut(E_i)|² = 16
 - [DERIV_MOORE_GAUGE_STRUCTURE.md](DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group from sublattice
 - [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](../foundational_mechanics/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) — Confined phase Wilson loops
 - [ARCH_SPEC_FTD_COMPLETE_CHAIN.md](../../01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] statement of N_c = 3; archived — superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md`; this document corroborates it and does **not** upgrade it to [THEOREM])

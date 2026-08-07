@@ -3,7 +3,7 @@
 **Tag:** `[CLOSED NEGATIVE]` (pre-reg §6: type I → no canonical modular flow). **No spine claim moved.**
 **Date:** 2026-05-29
 **Result of:** `PREREG_MODULAR_TIME_ALGEBRA_TYPE_v1.md` (B1, FTD-0225 provisional), SHA256 `f8a3e960c400863677e631abba898e13d73ef64023e9da9ea51fe088b63606e5` (commit deferred; SHA recorded in-session before the attempt).
-**Verifier:** [`scripts/proofs/proof_modular_time_algebra_type.py`](../../../scripts/proofs/proof_modular_time_algebra_type.py) (4/4).
+**Verifier:** [`scripts/proofs/proof_modular_time_algebra_type.py`](../../../../../scripts/proofs/proof_modular_time_algebra_type.py) (4/4).
 **Companion:** `SCOPE_ROUTE_B_MODULAR_TIME.md`. **Unifies with:** `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` (FTD-0208).
 
 ---

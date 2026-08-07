@@ -19,9 +19,9 @@
 > text preserved below.
 
 **Tag:** [THEOREM] (for the algebraic decomposition and infinite-aperture limits), [SELECTION] (for the choice of observable and readout map)  
-**Authoritative Reference:** [`docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`](../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)  
-**Pre-Registration:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md) (FTD-0230)  
-**Companion Documents:** [`docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md`](../09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md) (FTD-0122)
+**Authoritative Reference:** [`docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`](../../../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)  
+**Pre-Registration:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md`](../../preregistrations/engine_emergence_campaigns/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md) (FTD-0230)  
+**Companion Documents:** [`docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md`](../../../09_mathematical/general_math/DERIV_BCC_COMPLEX_STRUCTURE.md) (FTD-0122)
 
 ---
 

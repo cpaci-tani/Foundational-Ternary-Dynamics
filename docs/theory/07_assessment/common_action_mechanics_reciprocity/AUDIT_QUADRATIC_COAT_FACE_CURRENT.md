@@ -7,9 +7,9 @@
 `[NUMERICAL FACT — INTEGER-PLANE C1 ACTION RESPONSE]`  
 **Verdict:** `QUADRATIC_COAT_EXACT_CURRENT_C1_CONSTRUCTIVE`  
 **Derivation:**
-[`DERIV_QUADRATIC_COAT_FACE_CURRENT.md`](../10_eft_program/derivations/DERIV_QUADRATIC_COAT_FACE_CURRENT.md)  
+[`DERIV_QUADRATIC_COAT_FACE_CURRENT.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/DERIV_QUADRATIC_COAT_FACE_CURRENT.md)  
 **Pre-registration:**
-[`PREREG_QUADRATIC_COAT_FACE_CURRENT_v1.md`](../10_eft_program/preregistrations/PREREG_QUADRATIC_COAT_FACE_CURRENT_v1.md)  
+[`PREREG_QUADRATIC_COAT_FACE_CURRENT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_QUADRATIC_COAT_FACE_CURRENT_v1.md)  
 **Run of record:** `engine/results/ftd_0541/windows_msvc_cpu.json`
 
 ## 1. Constructive result

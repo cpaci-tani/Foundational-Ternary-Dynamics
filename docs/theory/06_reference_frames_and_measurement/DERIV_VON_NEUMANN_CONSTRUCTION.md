@@ -351,7 +351,7 @@ Key findings:
 2. [FOUND_VON_NEUMANN_CHAIN.md](FOUND_VON_NEUMANN_CHAIN.md) -- Von Neumann chain resolution
 3. [DERIV_COLLAPSE_MECHANISM.md](DERIV_COLLAPSE_MECHANISM.md) -- ReLU crystallization, Lindblad equation
 4. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) -- Master quadratic, three domains
-5. [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) -- ReLU as type transition
+5. [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) -- ReLU as type transition
 
 ### External
 

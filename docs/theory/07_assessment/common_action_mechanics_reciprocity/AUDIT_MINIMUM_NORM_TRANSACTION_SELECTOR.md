@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0458`  
 **Status:** `[THEOREM — UNIQUE MINIMUM-NORM SELECTOR FOR THE REGISTERED QUADRATIC SHELL]` + `[MEASURED — FULL CUBIC COVARIANCE]` + `[SELECTION — NORM PRINCIPLE NOT NATIVE]`  
 **Verdict:** `MINIMUM_NORM_LOCAL_SELECTOR_UNIQUE_CUBIC_COVARIANT`  
-**Pre-registration:** [`PREREG_MINIMUM_NORM_TRANSACTION_SELECTOR_v1.md`](../10_eft_program/preregistrations/PREREG_MINIMUM_NORM_TRANSACTION_SELECTOR_v1.md)  
+**Pre-registration:** [`PREREG_MINIMUM_NORM_TRANSACTION_SELECTOR_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MINIMUM_NORM_TRANSACTION_SELECTOR_v1.md)  
 **Run of record:** `engine/results/ftd_0458/windows_msvc_cpu.csv`
 
 ## 1. The 104-dimensional ambiguity has one minimum-norm point

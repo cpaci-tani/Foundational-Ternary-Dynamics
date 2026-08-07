@@ -3,7 +3,7 @@
 **Tag:** `[PRE-REGISTRATION]` (locked before the verdict). **Supersedes the linear Variant A/B formulations of v1.**
 **Date:** 2026-06-10
 **LEDGER:** FTD-0263 (continued).
-**Builds on:** [`ANALYSIS_BETA_ENVELOPE_MODEL_v1.md`](ANALYSIS_BETA_ENVELOPE_MODEL_v1.md) + its partial resolution.
+**Builds on:** [`ANALYSIS_BETA_ENVELOPE_MODEL_v1.md`](../archive/closed_negative/ANALYSIS_BETA_ENVELOPE_MODEL_v1.md) + its partial resolution.
 
 ---
 

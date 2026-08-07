@@ -14,7 +14,7 @@
 
 
 **Status:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` (pre-registered run of record).
-**Pre-registration:** [`PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md`](../../10_eft_program/preregistrations/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md),
+**Pre-registration:** [`PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md`](../../10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md),
 tag `preregister-hydrogen-lattice-spectrum-v1`, lock commit `6be49fe9`; artifact SHA
 `8e953fac…`. **Verdict per frozen logic: `HYDROGEN-CONFIRMED`** (G-1 ∧ F-A ∧ F-B ∧ F-C ∧ F-E all PASS).
 **Run of record:** `scripts/exploration/results/hydrogen_spectrum_2026-06-12.{csv,log}` (local).

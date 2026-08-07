@@ -14,7 +14,7 @@
 - [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) -- Master quadratic roots x+, x-
 - [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) -- G* as the bridge between dispositional and actual
 - [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) -- Watson BCC integral W_3 = G*^2/(2*pi)
-- [EXPLR_HALF_MOBIUS_LEMNISCATE.md](../09_mathematical/EXPLR_HALF_MOBIUS_LEMNISCATE.md) -- Z_4 symmetry of the lemniscatic period lattice
+- [EXPLR_HALF_MOBIUS_LEMNISCATE.md](../09_mathematical/general_math/EXPLR_HALF_MOBIUS_LEMNISCATE.md) -- Z_4 symmetry of the lemniscatic period lattice
 
 ---
 

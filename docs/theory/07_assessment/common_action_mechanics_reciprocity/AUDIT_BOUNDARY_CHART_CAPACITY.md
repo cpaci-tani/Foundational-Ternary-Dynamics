@@ -8,7 +8,7 @@
 `[THEOREM — AXIAL RELATIVE-MODE CURRENT KERNEL]`  
 **Verdict:** `BOUNDARY_CAPACITY_DEPENDS_ON_CHART_MULTIPLICITY`  
 **Pre-registration:**
-[`PREREG_BOUNDARY_CHART_CAPACITY_CORRECTION_v1.md`](../10_eft_program/preregistrations/PREREG_BOUNDARY_CHART_CAPACITY_CORRECTION_v1.md)  
+[`PREREG_BOUNDARY_CHART_CAPACITY_CORRECTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_BOUNDARY_CHART_CAPACITY_CORRECTION_v1.md)  
 **Run of record:** `engine/results/ftd_0507/windows_msvc_cpu.json`
 
 ## 1. FTD-0505 used the wrong storage premise

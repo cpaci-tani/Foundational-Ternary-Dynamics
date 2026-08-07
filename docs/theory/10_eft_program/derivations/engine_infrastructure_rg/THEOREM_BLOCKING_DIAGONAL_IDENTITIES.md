@@ -2,8 +2,8 @@
 
 **Tag:** [THEOREM] (blocking identities) + [MEASURED] (engine smoothness)
 **LEDGER row:** FTD-0112 (extends; promotes two diagonal entries from [MEASURED] to [THEOREM])
-**Companion measurement:** [`MEASUREMENT_S_EFF_NONLINEAR_v1_partial.md`](archive/campaign_complete/MEASUREMENT_S_EFF_NONLINEAR_v1_partial.md)
-**Pre-registration:** [`PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md`](archive/campaign_complete/PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md), tag `preregister-s-eff-nonlinear-v1`
+**Companion measurement:** [`MEASUREMENT_S_EFF_NONLINEAR_v1_partial.md`](../../archive/campaign_complete/MEASUREMENT_S_EFF_NONLINEAR_v1_partial.md)
+**Pre-registration:** [`PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md`](../../archive/campaign_complete/PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md), tag `preregister-s-eff-nonlinear-v1`
 
 ---
 

@@ -11,12 +11,12 @@
 
 ## Depends On
 
-- [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — G* = ϖ/√(PF) factorization, PF notation, theta self-duality
-- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) — §2.7 existing spin-statistics claim, First Distinction
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
-- [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha: winding number, lobe structure, Z/6Z, Cayley-Dickson hierarchy
-- [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 720° periodicity, void mitosis, two-lemniscate G* agreement (MIT-1/MIT-5)
-- [engine/include/ftd/ontic.h](../../../engine/include/ftd/ontic.h) — Layer 2b (k_crit, emergence of i), Layer 3 (master quadratic)
+- [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — G* = ϖ/√(PF) factorization, PF notation, theta self-duality
+- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) — §2.7 existing spin-statistics claim, First Distinction
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
+- [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha: winding number, lobe structure, Z/6Z, Cayley-Dickson hierarchy
+- [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 720° periodicity, void mitosis, two-lemniscate G* agreement (MIT-1/MIT-5)
+- [engine/include/ftd/ontic.h](../../../../engine/include/ftd/ontic.h) — Layer 2b (k_crit, emergence of i), Layer 3 (master quadratic)
 
 ---
 
@@ -160,7 +160,7 @@ $$\mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/3\mathbb
 
 where ℤ/2ℤ encodes particle-antiparticle duality (from the lemniscate's ℤ₂) and ℤ/3ℤ encodes color triality (from the 3-lobe structure). Each lobe contains one color-anticolor pair: (r, r̄), (g, ḡ), (b, b̄). The full quark sector — three colors × particle/antiparticle — is geometrically encoded in the Fourcier curve.
 
-See [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md), Claim OT-7 [VERIFIED].
+See [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md), Claim OT-7 [VERIFIED].
 
 ## §1.7 Two Roads to G*: The Ontological Agreement [THEOREM]
 
@@ -176,7 +176,7 @@ The Bernoulli route employs elliptic integral theory, the arithmetic-geometric m
 
 **[SELECTION]**: The 6.41 ppm gap could indicate: (a) higher-order corrections analogous to radiative corrections in QED, (b) the fundamental inexactness of the Fourcier approximation to the true ontological curve, or (c) a genuine physical distinction between the two sectors. This remains an open question.
 
-See [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md), Claims MIT-1, MIT-5 [THEOREM].
+See [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md), Claims MIT-1, MIT-5 [THEOREM].
 
 ## §1.8 The Ontological Priority of Both Lemniscates [SELECTION]
 
@@ -233,7 +233,7 @@ Fermions correspond to the **PF component** of G*: the lattice constraint that d
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`). In PF notation (see [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md), Theorem 1.1):
+produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`). In PF notation (see [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md), Theorem 1.1):
 
 $$x^2 - \frac{16\varpi^2}{\text{PF}} \, x + \frac{16\varpi^3}{\text{PF}^{3/2}} = 0.$$
 
@@ -350,7 +350,7 @@ $$D = \log_2(k_{\text{phys}}) + \log_2(k_{\text{cons}}) = \log_2(16) + \log_2(1/
 
 The physical coefficient k_phys = 16 contributes +4 "potential dimensions"; the reference frame context coefficient k_cons = 1/2 imposes a −1 "fermionic cost" (the half-twist). If either sector is absent, D ≠ 3 and the physics derived from the master quadratic does not produce viable coupling constants.
 
-**[CONJECTURE]**: The identification k_cons = 1/2 as the fixed point of f(k) = 1 − k (see [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md)) provides one derivation, but independent justification from the FTD action principle S[s, J] is needed to avoid circularity.
+**[CONJECTURE]**: The identification k_cons = 1/2 as the fixed point of f(k) = 1 − k (see [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md)) provides one derivation, but independent justification from the FTD action principle S[s, J] is needed to avoid circularity.
 
 ---
 
@@ -523,11 +523,11 @@ The following remain to be formalized:
 
 ## References
 
-- [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — G* factorization, PF decomposition, theta self-duality
-- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) — §2.7 Spin and Statistics
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical constant atlas, lemniscate properties
-- [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha, Cayley-Dickson hierarchy, OT-7/OT-8
-- [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — Void mitosis, 720° periodicity, MIT-1/MIT-5
-- [engine/include/ftd/ontic.h](../../../engine/include/ftd/ontic.h) — Ontic derivation chain (Layers 2b, 3)
+- [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — G* factorization, PF decomposition, theta self-duality
+- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) — §2.7 Spin and Statistics
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical constant atlas, lemniscate properties
+- [FOUND_FOURCIER_ONTIC_TOOL.md](../../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha, Cayley-Dickson hierarchy, OT-7/OT-8
+- [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — Void mitosis, 720° periodicity, MIT-1/MIT-5
+- [engine/include/ftd/ontic.h](../../../../engine/include/ftd/ontic.h) — Ontic derivation chain (Layers 2b, 3)
 - CLAUDE.md §2.7 — Spin-statistics in simulation context
 *Classification: Formal Derivation — Spin-Statistics Bridge*

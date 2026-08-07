@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0300
 **Status:** `[MEASUREMENT ANALYSIS — INDETERMINATE (frozen); SPARC boundary]`
-**Pre-registration:** [`PREREG_HALO_FORCEDNESS_v1.md`](preregistrations/PREREG_HALO_FORCEDNESS_v1.md)
+**Pre-registration:** [`PREREG_HALO_FORCEDNESS_v1.md`](../preregistrations/sm_constants_mass_flavour/PREREG_HALO_FORCEDNESS_v1.md)
 **Lock tag:** `preregister-halo-forcedness-v1`  **Lock commit:** `168148e0`
 **Artifacts (SHA256 in the pre-reg §3):** `engine/tests/campaign_halo_forcedness.cpp`,
 `scripts/exploration/analyze_halo_forcedness.py`, `scripts/exploration/run_halo_constant_sweeps.py`

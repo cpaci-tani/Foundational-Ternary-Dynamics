@@ -2,7 +2,7 @@
 
 **Status:** `[DERIVED — branch (A) closure]` + `[UNDERDETERMINED — branch (B)]`
 = **FORCED-ESCAPE NARROWED.**
-**Pre-registration:** [`PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md`](preregistrations/PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md),
+**Pre-registration:** [`PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md`](../preregistrations/alpha_readout_programme/PREREG_ALPHA_D3_FORCED_ESCAPE_v1.md),
 tag `preregister-alpha-d3-forced-escape-v1`; artifact SHA `b320e0eb…`.
 **What this is:** a genuine, rigorous swing at the α obstruction — the single surviving exit
 of MC-T4.3 (the RSI Leg-3 FORCED-escape). **It does not derive α** and does not promote

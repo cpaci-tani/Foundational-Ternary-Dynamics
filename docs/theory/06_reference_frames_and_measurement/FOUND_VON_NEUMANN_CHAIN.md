@@ -12,7 +12,7 @@
 - [SPEC_FTD.md](../../SPEC_FTD.md) — Master specification (five postulates)
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — Existence Filter $E(x) = \text{Re}(x)$
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Master quadratic, three domains, discriminant trichotomy
-- [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as Type III$_1$ $\to$ Type I algebraic transition
+- [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as Type III$_1$ $\to$ Type I algebraic transition
 - [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md) — Self-referential closure
 
 ---
@@ -125,7 +125,7 @@ The measurement problem, in algebraic language, is: **how does Type III$_1$ subs
 
 $$\mathcal{M}_\beta(z) = \frac{1}{\beta} \ln(1 + e^{\beta z}), \quad z = |J| - K_B$$
 
-interpolates between Type III$_1$ (finite $\beta$, smooth, KMS condition satisfied) and Type I ($\beta \to \infty$, ReLU, KMS destroyed). The complete algebraic descent is (see [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md)):
+interpolates between Type III$_1$ (finite $\beta$, smooth, KMS condition satisfied) and Type I ($\beta \to \infty$, ReLU, KMS destroyed). The complete algebraic descent is (see [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md)):
 
 $$\text{Type III}_1 \;\xrightarrow[\text{[CLASSICAL]}]{\;\rtimes_\sigma \mathbb{R}\;}\; \text{Type II}_\infty \;\xrightarrow[\text{[CLASSICAL]}]{\;\mathcal{R} \otimes B(\mathcal{H})\;}\; \text{Type II}_1 \;\xrightarrow[\text{[CONJECTURE]}]{\;\Theta(K)\;}\; \text{Type I}$$
 
@@ -355,7 +355,7 @@ The physical level is the most conservative: it requires only the five postulate
 - We do **not** claim to have solved the measurement problem in general quantum mechanics. We claim FTD does not have the problem.
 - We do **not** claim human reference frame context is algebraic self-referential closure. We claim the mathematical structure von Neumann identified as "reference frame context" corresponds to algebraic self-referential closure in FTD.
 - We do **not** claim $N_{\text{meas}} = 18$ is a firm prediction. It is a conjecture requiring simulation verification.
-- We do **not** claim the ReLU Type III$_1$ $\to$ Type I transition is a proven theorem of operator algebra. The final step (MASA selection via Heaviside partition) remains a conjecture (see [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md)).
+- We do **not** claim the ReLU Type III$_1$ $\to$ Type I transition is a proven theorem of operator algebra. The final step (MASA selection via Heaviside partition) remains a conjecture (see [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md)).
 
 ---
 
@@ -366,7 +366,7 @@ The physical level is the most conservative: it requires only the five postulate
 1. [SPEC_FTD.md](../../SPEC_FTD.md) --- Master FTD specification, five postulates, two-layer ontology
 2. [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) --- Existence Filter $E(x) = \text{Re}(x)$, projection hierarchy, Born rule reconstruction
 3. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) --- Master quadratic, three domains, discriminant trichotomy, complete derivation chain
-4. [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) --- ReLU as algebraic Type III$_1$ $\to$ Type I transition, KMS destruction, Softplus uniqueness
+4. [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) --- ReLU as algebraic Type III$_1$ $\to$ Type I transition, KMS destruction, Softplus uniqueness
 5. [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md) --- Self-referential closure, first distinction $0 = (+1) + (-1)$
 
 ### External

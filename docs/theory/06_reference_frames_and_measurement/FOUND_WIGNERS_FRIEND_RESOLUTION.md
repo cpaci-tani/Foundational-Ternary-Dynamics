@@ -9,7 +9,7 @@
 **Depends on:**
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x), projection hierarchy, Born rule reconstruction
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Type III → Type I descent chain, collapse-gravity duality
-- [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as algebraic type transition via β parameter
+- [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as algebraic type transition via β parameter
 - [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — ReLU crystallization, discriminant trichotomy
 - [FOUND_SELF_REFERENTIAL_CLOSURE.md](../02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) — Self-referential closure as derivation principle
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Axioms, action, fields
@@ -87,7 +87,7 @@ The transition occurs when the local flux magnitude crosses the manifestation th
 
 $$|J(\mathbf{v}, t)| \geq K_B \quad \Longrightarrow \quad s(\mathbf{v}, t): 0 \to \pm 1 \tag{3.1}$$
 
-This is mediated by the Softplus/ReLU operator ([EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md)):
+This is mediated by the Softplus/ReLU operator ([EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md)):
 
 $$\mathcal{M}_\beta(z) = \frac{1}{\beta}\ln(1 + e^{\beta z}) \;\xrightarrow{\beta \to \infty}\; \text{ReLU}(z) = \max(0, z) \tag{3.2}$$
 
@@ -449,7 +449,7 @@ Three contributions not found in existing FTD documents:
 | Document Extended | What Is Extended | How |
 |-------------------|------------------|-----|
 | [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) | $E(x) = \text{Re}(x)$ as projection | Applied to Wigner's vs friend's descriptions (Eq. 4.3) |
-| [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Type III₁ → Type I descent | Applied to measurement irreversibility argument (§3.4) |
+| [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) | Type III₁ → Type I descent | Applied to measurement irreversibility argument (§3.4) |
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Collapse as algebraic transition | Extended to multi-observer setting with causal structure |
 | [FOUND_SELF_REFERENTIAL_CLOSURE.md](../02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) | Self-referential closure principle | Applied as measurement chain termination criterion |
 
@@ -461,7 +461,7 @@ Three contributions not found in existing FTD documents:
 
 1. [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — Existence Filter, projection hierarchy
 2. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Reference frame context–QFT–GR bridge, algebraic descent
-3. [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as Type III → Type I transition
+3. [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) — ReLU as Type III → Type I transition
 4. [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — ReLU crystallization, emergent time
 5. [FOUND_SELF_REFERENTIAL_CLOSURE.md](../02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) — Self-referential closure
 6. [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Axioms, fields, action

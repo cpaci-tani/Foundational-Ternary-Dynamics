@@ -141,11 +141,11 @@ HARD_CONTACT_REMAINS_SELECTED_PRODUCTION_ACTIVE_SET_IS_LATE
 ```
 
 Canonical result:
-[`AUDIT_NATIVE_CONTACT_ACTIVE_SET.md`](../../07_assessment/AUDIT_NATIVE_CONTACT_ACTIVE_SET.md).
+[`AUDIT_NATIVE_CONTACT_ACTIVE_SET.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_NATIVE_CONTACT_ACTIVE_SET.md).
 
 **Successor correction:** FTD-0526 preserves this locked verdict only at its
 raw-dispatch scope. For identical carriers, pass-through and bounce are the
 same physical quotient before the hop; commensurate face arms rejoin exactly.
 Only edge/corner overshoot deletion at the later reset creates a physical
 difference. See
-[`AUDIT_CONTACT_QUOTIENT_HORIZON.md`](../../07_assessment/AUDIT_CONTACT_QUOTIENT_HORIZON.md).
+[`AUDIT_CONTACT_QUOTIENT_HORIZON.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_CONTACT_QUOTIENT_HORIZON.md).

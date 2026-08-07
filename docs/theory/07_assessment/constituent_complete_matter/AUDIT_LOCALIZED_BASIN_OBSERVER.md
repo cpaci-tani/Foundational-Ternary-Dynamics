@@ -5,7 +5,7 @@
 **Status:** `[THEOREM — EXACT SELECTED OBSERVER]`  
 **Verdict:** `LOCALIZED_BASIN_OBSERVER_EXACT`  
 **Theorem:**
-[`THEOREM_LOCALIZED_BASIN_OBSERVER.md`](../10_eft_program/derivations/THEOREM_LOCALIZED_BASIN_OBSERVER.md)
+[`THEOREM_LOCALIZED_BASIN_OBSERVER.md`](../../10_eft_program/derivations/constituent_complete_matter/THEOREM_LOCALIZED_BASIN_OBSERVER.md)
 
 **Correction:** the original implementation/qualification hashes in this
 audit were superseded by FTD-0680 after an x/z flat-index reversal was found.

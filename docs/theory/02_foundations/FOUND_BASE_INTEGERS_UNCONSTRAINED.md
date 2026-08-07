@@ -2,7 +2,7 @@
 
 **Tag:** `[THEORY]`
 **Status:** `[THEOREM]` — derives the FTD base integers ab-initio from Fibonacci, Tribonacci, and Lucas crossover uniqueness.
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md](../../CLAUDE.md).
+**Authoritative Reference:** [`docs/SPEC_FTD.md`](../../SPEC_FTD.md), [`CLAUDE.md](../../../CLAUDE.md).
 
 ---
 

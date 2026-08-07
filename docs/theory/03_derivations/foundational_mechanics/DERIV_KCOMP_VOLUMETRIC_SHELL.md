@@ -8,7 +8,7 @@
 **Depends on:**
 
 - [DERIV_OBSERVER_BELL_MECHANISM.md](../quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md) -- Three-level hierarchy (L1: S=2, L2: S=sqrt(2), L3: S=2*sqrt(2))
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and coupling term g_c*s*div(J)
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and coupling term g_c*s*div(J)
 - [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) -- Gauss constraint and U(1) gauge emergence
 
 **Verification:** `engine/tests/test_gpu_physics.cpp` campaign GP-KCOMP-SHELL (10/10 checks pass on GPU, 128^3 lattice)

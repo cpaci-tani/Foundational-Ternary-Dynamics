@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0438`  
 **Status:** `[MEASURED — SELECTED FORCE]` + `[CLOSED NEGATIVE — CENTRAL LOCAL TOTAL MOMENTUM]`  
 **Verdict:** `NO_COMPENSATING_FIELD_RECOIL`  
-**Pre-registration:** [`PREREG_CENTRAL_FIELD_MOMENTUM_RECOIL_v1.md`](../10_eft_program/preregistrations/PREREG_CENTRAL_FIELD_MOMENTUM_RECOIL_v1.md)  
+**Pre-registration:** [`PREREG_CENTRAL_FIELD_MOMENTUM_RECOIL_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTRAL_FIELD_MOMENTUM_RECOIL_v1.md)  
 **Run of record:** `engine/results/ftd_0438/windows_msvc_cpu_L33.csv`
 
 ## 1. Result

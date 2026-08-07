@@ -10,7 +10,7 @@
 **Verdict:**
 `CONTACT_IS_GAUGE_LATE_RESET_BREAKS_QUOTIENT_ONLY_BY_OVERSHOOT`  
 **Pre-registration:**
-[`PREREG_CONTACT_QUOTIENT_HORIZON_v1.md`](../10_eft_program/preregistrations/PREREG_CONTACT_QUOTIENT_HORIZON_v1.md)  
+[`PREREG_CONTACT_QUOTIENT_HORIZON_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONTACT_QUOTIENT_HORIZON_v1.md)  
 **Run of record:** `engine/results/ftd_0526/windows_msvc_cpu.json`
 
 ## 1. The correction

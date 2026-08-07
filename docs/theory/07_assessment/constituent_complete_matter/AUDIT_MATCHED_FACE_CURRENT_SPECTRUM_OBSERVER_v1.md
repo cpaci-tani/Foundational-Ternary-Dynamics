@@ -13,5 +13,5 @@ coefficient of a supplied classical current. It supplies no field response,
 causal separation, energy normalization, photon count, or matter ontology.
 
 See
-[`ANALYSIS_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md`](../10_eft_program/derivations/ANALYSIS_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md).
+[`ANALYSIS_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MATCHED_FACE_CURRENT_SPECTRUM_OBSERVER_v1.md).
 

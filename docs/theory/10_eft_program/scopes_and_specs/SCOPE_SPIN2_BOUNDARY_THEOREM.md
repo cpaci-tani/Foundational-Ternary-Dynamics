@@ -3,11 +3,11 @@
 **Tag:** `[SCOPING MEMO]` — not a pre-registration, not a closure, not a tag promotion. Identifies the theorem-statement structure, axiom dependencies, proof-structure preview, falsifier-criteria preview, and connection to existing work for the Arc C2 boundary theorem of Wilsonian-reframe plan v2. Mirrors the form of `SCOPE_NEWTON_POSTULATES_RECONCILIATION.md` (Arc B P0) and the prior-art template of `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md` (FTD-0186 Stage 1).
 **Companion docs:**
 - [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE per Outcome B]` — the decisive empirical evidence
-- [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](../preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) — the pre-registration FTD-0193 closed against
-- [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md`](../preregistrations/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md) — FTD-0186 Stage 1 v2 (template for Arc C2's pre-reg v1)
-- [`../02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md`](../02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md) — the v1-execution result (boundary-theorem prior-art)
-- [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — the FTD-0189 ripple analysis (Linearized Einstein retag, load-bearing for Arc C2 framing)
-- [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md) — FTD-0131 substrate gravity derivation (Wilsonian scaling-law lower-end)
+- [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](../preregistrations/gravity_cosmology/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) — the pre-registration FTD-0193 closed against
+- [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md`](../preregistrations/spine_master_quadratic/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md) — FTD-0186 Stage 1 v2 (template for Arc C2's pre-reg v1)
+- [`../02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md`](../../02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md) — the v1-execution result (boundary-theorem prior-art)
+- [`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §3 — the FTD-0189 ripple analysis (Linearized Einstein retag, load-bearing for Arc C2 framing)
+- [`../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) — FTD-0131 substrate gravity derivation (Wilsonian scaling-law lower-end)
 - [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) §4 — the frozen non-site-local observable catalog Arc C2 must respect
 
 > **What this memo is NOT.** Not a pre-registration. Not a tag promotion. Not the boundary theorem itself. It identifies the boundary-theorem program for a future Arc C2 P3 pre-registration + P4 closure attempt. Per plan v2 Arc C2 P0 deliverable: structural-precise theorem-statement scoping + dependency mapping + risk register.

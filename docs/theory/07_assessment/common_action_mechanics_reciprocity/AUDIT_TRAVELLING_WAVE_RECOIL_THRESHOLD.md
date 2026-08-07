@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0455`  
 **Status:** `[CONSTRUCTIVE EXISTENCE — CONDITIONAL ZERO-ENERGY RECOIL]` + `[MEASURED — MIXED LOCAL/GLOBAL SCALING]` + `[OPEN — LOCAL PRODUCTION MECHANISM]`  
 **Verdict:** `TRAVELLING_WAVE_THRESHOLD_CONSTRUCTED_SCALING_MIXED`  
-**Pre-registration:** [`PREREG_TRAVELLING_WAVE_RECOIL_THRESHOLD_v1.md`](../10_eft_program/preregistrations/PREREG_TRAVELLING_WAVE_RECOIL_THRESHOLD_v1.md)  
+**Pre-registration:** [`PREREG_TRAVELLING_WAVE_RECOIL_THRESHOLD_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_TRAVELLING_WAVE_RECOIL_THRESHOLD_v1.md)  
 **Run of record:** `engine/results/ftd_0455/windows_msvc_cpu.csv`
 
 ## 1. A pre-existing travelling wave opens the energy-momentum surface

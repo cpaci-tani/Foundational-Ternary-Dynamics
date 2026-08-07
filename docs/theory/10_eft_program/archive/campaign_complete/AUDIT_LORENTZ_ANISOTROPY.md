@@ -8,7 +8,7 @@
 > **Scope correction (FTD-0407, 2026-07-22):** this archived campaign
 > establishes spatial rotational improvement only. Its historical statements
 > that “Pillar 3 (Lorentz covariance) passes” are superseded by
-> [`AUDIT_LORENTZ_RECOVERY_HARD.md`](../../../07_assessment/AUDIT_LORENTZ_RECOVERY_HARD.md).
+> [`AUDIT_LORENTZ_RECOVERY_HARD.md`](../../../07_assessment/lorentz_recovery_causal_structure/AUDIT_LORENTZ_RECOVERY_HARD.md).
 > The fully discrete update has a rotationally invariant dimension-six
 > preferred-frame term before the measured cubic anisotropy appears, and the
 > interacting/common-cone/radiative gates remain open. The `p≈4` measurement

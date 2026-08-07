@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0443`  
 **Status:** `[THEOREM — FINITE-SITE HOP WORK]` + `[MEASURED — PRODUCTION CROSS-CONTRACT]` + `[CLOSED NEGATIVE — LEGACY VARIATIONAL CLAIM]`  
 **Verdict:** `EXACT_HOP_WORK_PRODUCTION_MISMATCH`  
-**Pre-registration:** [`PREREG_DISCRETE_INTERACTION_WORK_CONTRACT_v1.md`](../10_eft_program/preregistrations/PREREG_DISCRETE_INTERACTION_WORK_CONTRACT_v1.md)  
+**Pre-registration:** [`PREREG_DISCRETE_INTERACTION_WORK_CONTRACT_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_DISCRETE_INTERACTION_WORK_CONTRACT_v1.md)  
 **Run of record:** `engine/results/ftd_0443/windows_msvc_cpu_L17.csv`
 
 ## 1. Exact result

@@ -18,7 +18,7 @@ core that survives direction alignment, amplitude ordering, and preparation
 aging.
 
 The locked protocol is
-[`PREREG_AGED_WAKE_ENTRAINMENT_DISCRIMINATOR_v1.md`](../10_eft_program/preregistrations/PREREG_AGED_WAKE_ENTRAINMENT_DISCRIMINATOR_v1.md),
+[`PREREG_AGED_WAKE_ENTRAINMENT_DISCRIMINATOR_v1.md`](../../10_eft_program/preregistrations/constituent_complete_matter/PREREG_AGED_WAKE_ENTRAINMENT_DISCRIMINATOR_v1.md),
 whose SHA256 is
 `B8FF05668DF306D05B6D3F7F4715C38B6C3A78C9205E9C747146C2F3A95AFA7F`.
 

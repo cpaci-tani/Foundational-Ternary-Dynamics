@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0509`
 **Status:** `[NUMERICAL FACT — frozen-grid arithmetic]` + `[CONJECTURE — recorded: currency identification]` + `[SYNTHESIS — no line repriced]`
 **Verdict:** `OUTCOME B — COMMENSURABLE_UNIT_SPLIT_SCALING`
-**Pre-registration:** [`PREREG_IMPORT_BIT_CURRENCY_RECONCILIATION_v1.md`](../10_eft_program/preregistrations/PREREG_IMPORT_BIT_CURRENCY_RECONCILIATION_v1.md) (git tag `preregister-import-bit-currency-v1`, committed before execution)
+**Pre-registration:** [`PREREG_IMPORT_BIT_CURRENCY_RECONCILIATION_v1.md`](../../10_eft_program/preregistrations/framework_boundary_imports_consumption/PREREG_IMPORT_BIT_CURRENCY_RECONCILIATION_v1.md) (git tag `preregister-import-bit-currency-v1`, committed before execution)
 **Runner:** `scripts/proofs/proof_import_bit_currency.py` — gates 4/4 PASS.
 
 ## 1 · Question and result

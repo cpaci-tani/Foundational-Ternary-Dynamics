@@ -5,7 +5,7 @@
 **Verdict:** **SPLIT-BOOKKEEPING**
 **Scope:** Static source-contract audit of the current RenderBridge, GPU backend, and ParticleEngine. No numerical target, particle mass, CODATA value, or fitted residual is used. This is not a pre-registered measurement: the evidence is the tracked implementation itself, recomputed by an exact source-contract verifier.
 
-> **Successor disposition (FTD-0405, 2026-07-21):** the NCEMC feasibility lock returned **DOUBLE-OBSTRUCTION**. The current RenderBridge colour force admits a radial potential family and closes isolated two-body manifested momentum, but its force-kick/movement tick fails exact work exchange and the additive strong-energy zero/local stress distribution used by gravity are not selected. NCEMC-2/4 remain blocked; the current-force mass bridge remains closed. See [`RESULT_NCEMC_FEASIBILITY.md`](RESULT_NCEMC_FEASIBILITY.md).
+> **Successor disposition (FTD-0405, 2026-07-21):** the NCEMC feasibility lock returned **DOUBLE-OBSTRUCTION**. The current RenderBridge colour force admits a radial potential family and closes isolated two-body manifested momentum, but its force-kick/movement tick fails exact work exchange and the additive strong-energy zero/local stress distribution used by gravity are not selected. NCEMC-2/4 remain blocked; the current-force mass bridge remains closed. See [`RESULT_NCEMC_FEASIBILITY.md`](../qcd_colour_electroweak/RESULT_NCEMC_FEASIBILITY.md).
 
 > **Owner-authorized successor (FTD-0406, 2026-07-21):** the missing choices were then explicitly authorized and booked as `[IMPOSED]/[SELECTION]` architecture. The default-off CPU v1 path shares one selected `U(1)=0` pair energy across collision-free energy/momentum projection, audit/ledger, local string T00/stress and latency gravity using `T00/C_SPEED²`. It returns **CPU-SCOPED-CONTRACT**, closing NCEMC-1–4 only on the isolated flat collision-free CPU domain. FTD-0405 remains valid for the unmodified tick; GPU, topology changes, mixed forces and NCEMC-5 remain open. See [`RESULT_STRONG_STRESS_ENERGY_CONTRACT_v1.md`](RESULT_STRONG_STRESS_ENERGY_CONTRACT_v1.md).
 
@@ -44,20 +44,20 @@ If the force acts while `H_strong` is missing from either of the latter interfac
 
 | Role | Current implementation | Audit consequence |
 |---|---|---|
-| RenderBridge colour dynamics | `f_color` is added directly to the momentum push in [`phase_forces.cpp`](../../../engine/src/render_bridge_phases/phase_forces.cpp) | A phenomenological strong force acts. |
-| CPU energy snapshot | `total_energy = field_energy + wave_energy + particle_ke` in [`diagnostics_compute.cpp`](../../../engine/src/diagnostics_compute.cpp) | No colour potential or strong-field energy enters the total. |
-| Tick energy ledger | `½(|J|²+|wave_vel|²)+particle_ke` in [`energy_ledger_compute.cpp`](../../../engine/src/energy_ledger_compute.cpp) | Work done by the colour force has no matching potential reservoir. |
-| Declared lattice Hamiltonian | Born–Infeld, state–flux, velocity, and Gauss terms in [`lagrangian.h`](../../../engine/include/ftd/lagrangian.h) | No colour-force or `J_strong` term generates the implemented confinement force. |
-| Cluster inertia | `m = N·M_REST` in [`phase_forces.cpp`](../../../engine/src/render_bridge_phases/phase_forces.cpp) | Inertial mass is consumed as an imposed input, not read from confined energy. |
-| CPU latency source | `M_REST·|s| + ½(|J|²+|wave_vel|²)` when the option is enabled in [`poisson_solvers.cpp`](../../../engine/src/poisson_solvers.cpp) | Ordinary field energy can gravitate by an imposed source law; strong-sector energy cannot. |
-| Force-side gravity | `G_N·∇density(J)` in [`phase_forces.cpp`](../../../engine/src/render_bridge_phases/phase_forces.cpp) | It does not read the latency potential or a shared total-energy density. |
-| GPU strong diagnostic | Records `½|J_strong|²`, but excludes it and `wave_vel_strong` from `total_energy` in [`gpu_engine.cu`](../../../engine/cuda/gpu_engine.cu) | The diagnostic is partial and non-load-bearing. |
-| GPU latency source | `M_REST·|s|` only in [`kernels_poisson.cu`](../../../engine/cuda/kernels_poisson.cu) | CPU/GPU gravitational source contracts differ when field-energy gravity is requested. |
-| ParticleEngine | Strong force acts, while `total_pe = coulomb_pe + gravity_pe` in [`particle_engine.cpp`](../../../engine/src/particle_engine.cpp) | Its active strong interaction also lacks potential-energy bookkeeping. |
+| RenderBridge colour dynamics | `f_color` is added directly to the momentum push in [`phase_forces.cpp`](../../../../engine/src/render_bridge_phases/phase_forces.cpp) | A phenomenological strong force acts. |
+| CPU energy snapshot | `total_energy = field_energy + wave_energy + particle_ke` in [`diagnostics_compute.cpp`](../../../../engine/src/diagnostics_compute.cpp) | No colour potential or strong-field energy enters the total. |
+| Tick energy ledger | `½(|J|²+|wave_vel|²)+particle_ke` in [`energy_ledger_compute.cpp`](../../../../engine/src/energy_ledger_compute.cpp) | Work done by the colour force has no matching potential reservoir. |
+| Declared lattice Hamiltonian | Born–Infeld, state–flux, velocity, and Gauss terms in [`lagrangian.h`](../../../../engine/include/ftd/lagrangian.h) | No colour-force or `J_strong` term generates the implemented confinement force. |
+| Cluster inertia | `m = N·M_REST` in [`phase_forces.cpp`](../../../../engine/src/render_bridge_phases/phase_forces.cpp) | Inertial mass is consumed as an imposed input, not read from confined energy. |
+| CPU latency source | `M_REST·|s| + ½(|J|²+|wave_vel|²)` when the option is enabled in [`poisson_solvers.cpp`](../../../../engine/src/poisson_solvers.cpp) | Ordinary field energy can gravitate by an imposed source law; strong-sector energy cannot. |
+| Force-side gravity | `G_N·∇density(J)` in [`phase_forces.cpp`](../../../../engine/src/render_bridge_phases/phase_forces.cpp) | It does not read the latency potential or a shared total-energy density. |
+| GPU strong diagnostic | Records `½|J_strong|²`, but excludes it and `wave_vel_strong` from `total_energy` in [`gpu_engine.cu`](../../../../engine/cuda/gpu_engine.cu) | The diagnostic is partial and non-load-bearing. |
+| GPU latency source | `M_REST·|s|` only in [`kernels_poisson.cu`](../../../../engine/cuda/kernels_poisson.cu) | CPU/GPU gravitational source contracts differ when field-energy gravity is requested. |
+| ParticleEngine | Strong force acts, while `total_pe = coulomb_pe + gravity_pe` in [`particle_engine.cpp`](../../../../engine/src/particle_engine.cpp) | Its active strong interaction also lacks potential-energy bookkeeping. |
 | Long-range law | RenderBridge uses harmonic `F∝r`; ParticleEngine uses constant `F=σ` | There is no engine-wide canonical confinement Hamiltonian to couple. |
 | Momentum observable | RenderBridge exposes a Poynting proxy but no complete field-plus-particle total momentum | The native invariant `E²-c_lat²P²` cannot be formed target-blindly. |
 
-These are source facts, not interpretations. The verifier [`audit_confinement_energy_gravity_bridge.py`](../../../scripts/proofs/audit_confinement_energy_gravity_bridge.py) recomputes all twelve contracts and returns `SPLIT-BOOKKEEPING`.
+These are source facts, not interpretations. The verifier [`audit_confinement_energy_gravity_bridge.py`](../../../../scripts/proofs/audit_confinement_energy_gravity_bridge.py) recomputes all twelve contracts and returns `SPLIT-BOOKKEEPING`.
 
 ## 3. Scoped no-go
 

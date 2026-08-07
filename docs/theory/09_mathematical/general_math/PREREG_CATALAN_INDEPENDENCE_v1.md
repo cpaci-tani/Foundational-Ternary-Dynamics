@@ -6,7 +6,7 @@
 **LEDGER row reservation:** FTD-0206.
 **Supersedes:** none -- first pre-registration documenting the Catalan algebraic-independence frontier.
 **Companion docs:**
-- [`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`](../../papers/PAPER_GSTAR_INTRODUCTION.tex) Conjecture 19.2 (the conjecture statement + PSLQ evidence as stated in the paper).
+- [`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`](../../../papers/PAPER_GSTAR_INTRODUCTION.tex) Conjecture 19.2 (the conjecture statement + PSLQ evidence as stated in the paper).
 - [`docs/theory/09_mathematical/REF_GUILLERA_CORPUS_MAP.md`](REF_GUILLERA_CORPUS_MAP.md) (the surrounding AGM/period framework).
 - [`docs/theory/09_mathematical/ROADMAP_IDENTITY_PRIORITIES.md`](ROADMAP_IDENTITY_PRIORITIES.md) (Bundle 1 in the synonymy-graph roadmap -- Catalan  {G_G, π, x_+, x_-} -- FO-blocked, this PREREG is the boundary documentation).
 - `scripts/verification/verify_gstar_paper.py` (the verified-identity corpus the conjecture lives at the edge of).

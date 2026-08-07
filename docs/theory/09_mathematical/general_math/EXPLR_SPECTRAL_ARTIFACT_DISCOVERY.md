@@ -133,4 +133,4 @@ Despite the artifact, several genuine results emerged from this investigation:
 ## Cross-References
 
 - **Valid spectral result:** [EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md](EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md) -- Born rule as Joukowski transform
-- **Born rule derivation:** [FOUND_BORN_RULE_NULL_CONE.md](../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- null-cone geometry (unaffected)
+- **Born rule derivation:** [FOUND_BORN_RULE_NULL_CONE.md](../../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- null-cone geometry (unaffected)

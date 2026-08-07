@@ -3,14 +3,14 @@
 ## How div(J) = rho Produces E(theta) = -cos(theta) and S = 2sqrt(2)
 
 **Status:** [THEOREM] + [SELECTION] -- Mathematical chain verified (13/13 numerical checks). The Gauss-to-cosine link is theorem; the identification with quantum measurement is selection.
-**Proof script:** [`scripts/proofs/proof_bell_cosine_from_gauss.py`](../../../scripts/proofs/proof_bell_cosine_from_gauss.py)
+**Proof script:** [`scripts/proofs/proof_bell_cosine_from_gauss.py`](../../../../scripts/proofs/proof_bell_cosine_from_gauss.py)
 
 **Depends on:**
 
-- [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and Gauss constraint
+- [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and Gauss constraint
 - [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md) -- Three-level observer hierarchy for Bell violations
-- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) -- QM from First Distinction; complexification of flux
-- [FOUND_BORN_RULE_NULL_CONE.md](../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- Born rule as null-cone geometry
+- [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../archive/DERIV_QUANTUM_MECHANICS_RESOLVED.md) -- QM from First Distinction; complexification of flux
+- [FOUND_BORN_RULE_NULL_CONE.md](../../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- Born rule as null-cone geometry
 
 **Depended on by:**
 

@@ -68,4 +68,4 @@ Run 2026-07-26 on the pinned MSVC CPU observer. Eight symmetry-position arms
 remain static, but all four generic-subcell arms move while the algebraic
 energy ledger remains exact. The registered verdict is
 `UNSUBTRACTED_QUADRATIC_SELF_FORCE_PRESENT`. See
-[`AUDIT_QUADRATIC_COAT_SELF_FORCE.md`](../../07_assessment/AUDIT_QUADRATIC_COAT_SELF_FORCE.md).
+[`AUDIT_QUADRATIC_COAT_SELF_FORCE.md`](../../../07_assessment/common_action_mechanics_reciprocity/AUDIT_QUADRATIC_COAT_SELF_FORCE.md).

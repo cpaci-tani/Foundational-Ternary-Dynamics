@@ -106,7 +106,7 @@ and discrete history field apart from the conjugated polarity label.
 
 ## 6. Independent certificate and hashes
 
-[`proof_finite_support_outgoing_tail_formation.py`](../../../../scripts/proofs/proof_finite_support_outgoing_tail_formation.py)
+[`proof_finite_support_outgoing_tail_formation.py`](../../../../../scripts/proofs/proof_finite_support_outgoing_tail_formation.py)
 independently reconstructs every transition, continuous negative onset,
 entry-to-onset energy prediction, tail gate, bound control, polarity metric,
 global maximum, count, and verdict from the CSV/JSON records.

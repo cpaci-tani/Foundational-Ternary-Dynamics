@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0446`  
 **Status:** `[THEOREM — REGISTERED 13-CHANNEL FIRST-MOMENT MAP HAS NULLITY 10]`  
 **Verdict:** `VECTOR_PROJECTION_HAS_TEN_HIDDEN_CHANNEL_MODES`  
-**Pre-registration:** [`PREREG_MOORE_CHANNEL_PROJECTION_KERNEL_v1.md`](../10_eft_program/preregistrations/PREREG_MOORE_CHANNEL_PROJECTION_KERNEL_v1.md)  
+**Pre-registration:** [`PREREG_MOORE_CHANNEL_PROJECTION_KERNEL_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MOORE_CHANNEL_PROJECTION_KERNEL_v1.md)  
 **Run of record:** `engine/results/ftd_0446/windows_msvc_cpu.csv`
 
 ## 1. Exact result

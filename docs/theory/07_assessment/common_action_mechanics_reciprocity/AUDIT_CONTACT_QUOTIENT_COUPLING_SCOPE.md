@@ -10,7 +10,7 @@
 **Mechanistic result:**
 `NATIVE_COUPLING_BREAKS_CONTACT_QUOTIENT_ALL_DIRECTIONS_MATCHED_HISTORY_FACTORS`  
 **Pre-registration:**
-[`PREREG_CONTACT_QUOTIENT_COUPLING_SCOPE_v1.md`](../10_eft_program/preregistrations/PREREG_CONTACT_QUOTIENT_COUPLING_SCOPE_v1.md)  
+[`PREREG_CONTACT_QUOTIENT_COUPLING_SCOPE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CONTACT_QUOTIENT_COUPLING_SCOPE_v1.md)  
 **Run of record:** `engine/results/ftd_0528/windows_msvc_cpu.json`
 
 ## 1. The preregistered axial prediction failed

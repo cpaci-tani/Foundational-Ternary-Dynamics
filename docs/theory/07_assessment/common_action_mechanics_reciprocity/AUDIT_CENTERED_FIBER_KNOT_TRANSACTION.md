@@ -7,7 +7,7 @@
 `[CONSTRUCTIVE — NONHOLONOMIC FIBER TRANSACTION]`  
 **Verdict:** `UNIQUE_CENTERED_FIBER_KNOT_STEP`  
 **Pre-registration:**
-[`PREREG_CENTERED_FIBER_KNOT_TRANSACTION_v1.md`](../10_eft_program/preregistrations/PREREG_CENTERED_FIBER_KNOT_TRANSACTION_v1.md)  
+[`PREREG_CENTERED_FIBER_KNOT_TRANSACTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTERED_FIBER_KNOT_TRANSACTION_v1.md)  
 **Run of record:** `engine/results/ftd_0496/windows_msvc_cpu.json`
 
 ## 1. Exact centered trace of a straight deposited current

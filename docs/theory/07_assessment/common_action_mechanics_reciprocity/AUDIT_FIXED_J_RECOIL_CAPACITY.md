@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0453`  
 **Status:** `[THEOREM — GLOBAL FIXED-J W-KICK MINIMUM]` + `[CLOSED NEGATIVE — ZERO-ENERGY RECOIL FOR REGISTERED MINIMAL FIELD]`  
 **Verdict:** `FIXED_J_ZERO_ENERGY_RECOIL_IMPOSSIBLE_MINIMAL_WORK_FIELD`  
-**Pre-registration:** [`PREREG_FIXED_J_RECOIL_CAPACITY_v1.md`](../10_eft_program/preregistrations/PREREG_FIXED_J_RECOIL_CAPACITY_v1.md)  
+**Pre-registration:** [`PREREG_FIXED_J_RECOIL_CAPACITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_FIXED_J_RECOIL_CAPACITY_v1.md)  
 **Run of record:** `engine/results/ftd_0453/windows_msvc_cpu.csv`
 
 ## 1. Result

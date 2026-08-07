@@ -104,7 +104,7 @@ reconstruction to `1.3010e-18`. The centered total changes sign at face tick
 115 even though the primitive boundary term remains negative. Consequently the
 centered total cannot be a matter-membership margin or energy-ownership
 observable. See
-[THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md](../10_eft_program/derivations/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md).
+[THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md](../../10_eft_program/derivations/constituent_complete_matter/THEOREM_STATE_ONLY_BOUNDARY_ENERGY_LEDGER_v1.md).
 
 This qualification changes no observer gate: centered field reconstruction,
 Gauss compatibility, and the characteristic partition of `R` remain exact at

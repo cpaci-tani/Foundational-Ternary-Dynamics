@@ -412,8 +412,8 @@ This matches α_s(M_Z) ≈ 0.118 to 0.6%.
 
 ## Cross-References
 
-- **α derivation:** [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md)
-- **Born rule / projection hierarchy:** [../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) §§2, 5
+- **α derivation:** [DERIV_ALPHA_PRECISION_FORMULA.md](../../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md)
+- **Born rule / projection hierarchy:** [../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md](../../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) §§2, 5
 - **Decay dynamics:** CLAUDE.md §4.3
 
 ---

@@ -6,9 +6,9 @@
 `[CONSTRUCTIVE — TWO ESCAPE WITNESSES]`  
 **Verdict:** `LOCAL_POLARITY_REGULARITY_TRILEMMA_PROVED`  
 **Derivation:**
-[`THEOREM_LOCAL_POLARITY_REGULARITY_TRILEMMA.md`](../10_eft_program/derivations/THEOREM_LOCAL_POLARITY_REGULARITY_TRILEMMA.md)  
+[`THEOREM_LOCAL_POLARITY_REGULARITY_TRILEMMA.md`](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_LOCAL_POLARITY_REGULARITY_TRILEMMA.md)  
 **Pre-registration:**
-[`PREREG_LOCAL_POLARITY_REGULARITY_TRILEMMA_v1.md`](../10_eft_program/preregistrations/PREREG_LOCAL_POLARITY_REGULARITY_TRILEMMA_v1.md)  
+[`PREREG_LOCAL_POLARITY_REGULARITY_TRILEMMA_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCAL_POLARITY_REGULARITY_TRILEMMA_v1.md)  
 **Run of record:** `engine/results/ftd_0540/windows_msvc_cpu.json`
 
 ## 1. Finding

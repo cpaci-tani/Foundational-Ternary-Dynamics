@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — ORDINARY BRANCH-ACTION DERIVATIVE]`  
 **Verdict:** `CENTERED_TRACE_UNIQUE_LOCAL_BUT_NOT_BRANCH_ACTION_DERIVATIVE`  
 **Pre-registration:**
-[`PREREG_CENTERED_KNOT_TRACE_v1.md`](../10_eft_program/preregistrations/PREREG_CENTERED_KNOT_TRACE_v1.md)  
+[`PREREG_CENTERED_KNOT_TRACE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_CENTERED_KNOT_TRACE_v1.md)  
 **Run of record:** `engine/results/ftd_0492/windows_msvc_cpu.json`
 
 ## 1. Unique local weak trace

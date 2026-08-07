@@ -7,7 +7,7 @@
 `[CLOSED NEGATIVE — ENDPOINT-MULTISET CURRENT UNIQUENESS]`  
 **Verdict:** `WORLDLINE_PATH_IS_REQUIRED_STATE`  
 **Pre-registration:**
-[`PREREG_WORLDLINE_CURRENT_KERNEL_v1.md`](../10_eft_program/preregistrations/PREREG_WORLDLINE_CURRENT_KERNEL_v1.md)  
+[`PREREG_WORLDLINE_CURRENT_KERNEL_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_WORLDLINE_CURRENT_KERNEL_v1.md)  
 **Run of record:** `engine/results/ftd_0502/windows_msvc_cpu.json`
 
 ## 1. Continuity fixes a boundary, not a history

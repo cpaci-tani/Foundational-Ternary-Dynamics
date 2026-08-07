@@ -7,7 +7,7 @@
 
 **Date:** 2026-07-25
 
-**Protocol:** [`PREREG_EMERGENT_BOUNDARY_MECHANISM_v1.md`](../10_eft_program/preregistrations/PREREG_EMERGENT_BOUNDARY_MECHANISM_v1.md)
+**Protocol:** [`PREREG_EMERGENT_BOUNDARY_MECHANISM_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_EMERGENT_BOUNDARY_MECHANISM_v1.md)
 
 **Run of record:** `engine/results/ftd_0474/`
 

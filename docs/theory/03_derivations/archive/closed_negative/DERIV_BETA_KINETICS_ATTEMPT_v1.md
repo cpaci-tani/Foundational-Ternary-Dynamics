@@ -2,7 +2,7 @@
 
 **Tag:** `[COMPUTED — DWELL-FAIL per frozen rules]`; substantively **`[CLOSED NEGATIVE — for the dwell-time-integrated (pre-genesis Boltzmann) variant of Mechanism β]`** + a sharpened `[OPEN]`. **Nothing promoted.**
 **Date:** 2026-06-10
-**Runner (frozen thresholds in docstring, stated before compute):** [`scripts/exploration/derive_beta_kinetics_prediction.py`](../../../scripts/exploration/derive_beta_kinetics_prediction.py); output log at `/c/tmp/ftd0266_kinetics.log`. Priors: SUPPORTED 35 % / PARTIAL 40 % / FAIL 25 % (**landed in FAIL**).
+**Runner (frozen thresholds in docstring, stated before compute):** [`scripts/exploration/derive_beta_kinetics_prediction.py`](../../../../../scripts/exploration/derive_beta_kinetics_prediction.py); output log at `/c/tmp/ftd0266_kinetics.log`. Priors: SUPPORTED 35 % / PARTIAL 40 % / FAIL 25 % (**landed in FAIL**).
 **Targets:** the FTD-0263 constraint profile + the seventh (3–6× suppression of transient crossings, from FTD-0265).
 **LEDGER:** FTD-0266.
 **Depends on:** FTD-0265 (envelope model), FTD-0263 (constraint profile), FTD-0261 (the law), FTD-0251 (dispersion pin α=1/18).

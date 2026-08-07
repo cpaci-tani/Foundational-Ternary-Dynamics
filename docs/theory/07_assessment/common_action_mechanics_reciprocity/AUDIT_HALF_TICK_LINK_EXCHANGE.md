@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0451`  
 **Status:** `[CONSTRUCTIVE EXAMPLE — REVERSIBLE SELECTED EXCHANGE LEDGER]` + `[CORRECTED BY FTD-0452 — ENERGY LABEL]` + `[OPEN — FIELD MOMENTUM]`  
 **Verdict:** `REVERSIBLE_HALF_TICK_LINK_LEDGER_CONSTRUCTED_NOT_DYNAMICS`  
-**Pre-registration:** [`PREREG_HALF_TICK_LINK_EXCHANGE_v1.md`](../10_eft_program/preregistrations/PREREG_HALF_TICK_LINK_EXCHANGE_v1.md)  
+**Pre-registration:** [`PREREG_HALF_TICK_LINK_EXCHANGE_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_HALF_TICK_LINK_EXCHANGE_v1.md)  
 **Run of record:** `engine/results/ftd_0451/windows_msvc_cpu.csv`
 
 ## 1. Constructed object

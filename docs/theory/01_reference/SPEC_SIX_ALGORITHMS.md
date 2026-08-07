@@ -406,7 +406,7 @@ The weak force is the only force that **changes particle identity.** EM and stro
 | **Entropy role** | Leak rate (α = γ) | Locks minimum-cost configs | Rearranges entropy budget | Cumulative α-coupling |
 | **Relative to α** | α¹ | α^(~0.6) at M_Z | α⁸ (sets W mass) | α²⁰ |
 
-> **Derivation:** All four force functional forms emerge from lattice Green's functions of the flux wave equation. Coulomb and gravity are gradients of the massless Green's function G₀(r) → 1/(4πr); the strong force is the gradient of the massive propagator G_m(r) → e^{-mr}/(4πr); the Lorentz force arises from the curl structure J  A. See [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) for the complete derivation with 18 verified tests.
+> **Derivation:** All four force functional forms emerge from lattice Green's functions of the flux wave equation. Coulomb and gravity are gradients of the massless Green's function G₀(r) → 1/(4πr); the strong force is the gradient of the massive propagator G_m(r) → e^{-mr}/(4πr); the Lorentz force arises from the curl structure J  A. See [DERIV_FORCE_EMERGENCE.md](../03_derivations/foundational_mechanics/DERIV_FORCE_EMERGENCE.md) for the complete derivation with 18 verified tests.
 
 ---
 

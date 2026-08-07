@@ -21,4 +21,4 @@ The result does not support “flux lines are photons,” “flux is a literal w
 or “the object radiates above `v_edge`” as established claims.
 
 See
-[`ANALYSIS_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md`](../10_eft_program/derivations/ANALYSIS_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md).
+[`ANALYSIS_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md`](../../10_eft_program/derivations/constituent_complete_matter/ANALYSIS_MOVING_DRESSED_MATTER_TRANSVERSE_FIELD_GROWTH_v1.md).

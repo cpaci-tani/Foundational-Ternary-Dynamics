@@ -3,7 +3,7 @@
 **From 0 = (-1) + (+1) to the Standard Model**
 
 **Document Status:** Ontological Foundation — Entry Point
-**Epistemic Class:** [AXIOM] → [THEOREM] / [SELECTION] / [CONJECTURE] (see tags per section; see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) for selection principles)
+**Epistemic Class:** [AXIOM] → [THEOREM] / [SELECTION] / [CONJECTURE] (see tags per section; see [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) for selection principles)
 
 ---
 
@@ -96,7 +96,7 @@ Requires a structure that can "point at itself"
 
 Alternatively: a self-reference operator σ with σ⁴ = id but σ² ≠ id has eigenvalues satisfying μ² = -1, forcing extension from ℝ to ℂ.
 
-**Epistemic note**: The identification of self-reference with self-crossing topology (or with a specific rotation property) is a **[SELECTION]** principle (SP1 in [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)), not a theorem derivable from A1 and A2 alone.
+**Epistemic note**: The identification of self-reference with self-crossing topology (or with a specific rotation property) is a **[SELECTION]** principle (SP1 in [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md)), not a theorem derivable from A1 and A2 alone.
 
 **Ontological level**: Level 0.5 (between void and manifestation)
 
@@ -476,7 +476,7 @@ x₋ = 3.024                [THEOREM: Smaller root of the quadratic]
 ~50 parametric insertions [IMPOSED: FTD values in standard QFT formulas]
 ```
 
-**Given selections SP1-SP5, zero free numerical parameters.** The selection principles are motivated by parsimony and consistency but are not uniquely determined by the two axioms alone. See [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) for the complete analysis.
+**Given selections SP1-SP5, zero free numerical parameters.** The selection principles are motivated by parsimony and consistency but are not uniquely determined by the two axioms alone. See [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) for the complete analysis.
 
 ## 10.2 What is NOT Derived
 
@@ -484,11 +484,11 @@ For honesty, we list what remains axiomatic or selected:
 
 1. **Why anything exists at all** — 0 = (-1) + (+1) is the starting axiom
 2. **Why self-reference occurs** — observers existing is axiomatic
-3. **Five selection principles** (SP1-SP5) — motivated but not uniquely forced; see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)
-4. **Framework integers** {3, 4, 7, 13} — self-consistent (proven) but identified from known physics (circularity risk; see [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
+3. **Five selection principles** (SP1-SP5) — motivated but not uniquely forced; see [AUDIT_HIDDEN_SELECTIONS.md](../../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md)
+4. **Framework integers** {3, 4, 7, 13} — self-consistent (proven) but identified from known physics (circularity risk; see [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md))
 5. **Bell mechanism** — substrate gives S ≤ 2; aggregate QM emergence is **[SELECTION]** — S = 2√2 emergent from QM (Tsirelson's bound)
 
-**Given A1, A2, and SP1-SP5**, the constants (α, G*) and ~24 genuine derivations follow as conditional theorems. An additional ~50 results are parametric insertions (FTD values in standard physics formulas). See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for complete accounting.
+**Given A1, A2, and SP1-SP5**, the constants (α, G*) and ~24 genuine derivations follow as conditional theorems. An additional ~50 results are parametric insertions (FTD values in standard physics formulas). See [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) for complete accounting.
 
 ---
 
@@ -512,13 +512,13 @@ $$0 = (-1) + (+1)$$
 
 ## References
 
-- [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
-- [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
-- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — XY vs X+Y
-- [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots, `K_C`, and Domain A/B/C terminology
+- [FOUND_THE_FIRST_DISTINCTION.md](../../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
+- [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — XY vs X+Y
+- [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots, `K_C`, and Domain A/B/C terminology
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — g_c = √α
-- [REF_PHYSICS_REFERENCE.md](../05_particles/REF_PHYSICS_REFERENCE.md) — Framework integers in physics
-- [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) — 100% PDG coverage
+- [REF_PHYSICS_REFERENCE.md](../../05_particles/REF_PHYSICS_REFERENCE.md) — Framework integers in physics
+- [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) — 100% PDG coverage
 
 ---
 

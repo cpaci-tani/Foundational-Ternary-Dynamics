@@ -166,7 +166,7 @@ Epistemic agency is the process of translating the high, isotropic symmetries of
 
 ## Cross-References
 
-- **The five primary postulates:** [docs/SPEC_FTD.md](../SPEC_FTD.md) §1.1
+- **The five primary postulates:** [docs/SPEC_FTD.md](../../SPEC_FTD.md) §1.1
 - **The ratio and product arrow:** [FOUND_THE_RATIO_AND_THE_PRODUCT.md](FOUND_THE_RATIO_AND_THE_PRODUCT.md)
 - **The noumenal core bridge:** [FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md](FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md)
 - **Moore neighborhood symmetries:** [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md)

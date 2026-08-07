@@ -18,7 +18,7 @@
 **The claim "zero free parameters" is FALSE.** External inputs required:
 - M_Planck, G_F, Λ_QCD, decay constants, phase space factors, and standard QED/QCD loop integrals.
 
-See [LEDGER.md](../07_assessment/core_ledgers/LEDGER.md), [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), for the honest, rigorous state of the theory. (State-of-theory roundtable archived: `../07_assessment/archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`; monograph `MONOGRAPH_FTD_CONSTRUCTION.md` is the canonical replacement.)
+See [LEDGER.md](../07_assessment/core_ledgers/LEDGER.md), [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md), for the honest, rigorous state of the theory. (State-of-theory roundtable archived: `../07_assessment/archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`; monograph `MONOGRAPH_FTD_CONSTRUCTION.md` is the canonical replacement.)
 
 ---
 
@@ -109,7 +109,7 @@ Four integers encode all physics:
 
 **Fibonacci Constraint:** b_3 + N_c + N_c = 7 + 3 + 3 = 13 = n_eff = F_7 ✓
 
-**Uniqueness Conjecture [CONJECTURE]:** These may be the only integers satisfying all constraints with N_c > 1. A rigorous uniqueness proof has not been established — see [AUDIT_SELF_CONSISTENCY.md](../07_assessment/AUDIT_SELF_CONSISTENCY.md) for analysis.
+**Uniqueness Conjecture [CONJECTURE]:** These may be the only integers satisfying all constraints with N_c > 1. A rigorous uniqueness proof has not been established — see [AUDIT_SELF_CONSISTENCY.md](../07_assessment/framework_postulates_constitution/AUDIT_SELF_CONSISTENCY.md) for analysis.
 
 ### 5.1 What Uses These Integers (SP5 Circularity Table)
 
@@ -126,7 +126,7 @@ The integers were originally identified by inspecting known physics values ($N_c
 | Lepton mass ratios, proton/electron ratio | YES (integer arithmetic) | **Circular** |
 | $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$, with $16/3 = (N_{eff}+N_c)/N_c$ | YES ($16/3$) | **Circular** |
 
-**Practical rule.** Before quoting any FTD match to experiment, classify it against this table. If SP5-dependent, the match is evidence for the *choice* of integers, not independent validation of a mechanism. A derivation of the base-integer set from lattice first principles — not from known physics — would remove the circularity risk across the entire right-hand column. See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5 and [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) §SP5.
+**Practical rule.** Before quoting any FTD match to experiment, classify it against this table. If SP5-dependent, the match is evidence for the *choice* of integers, not independent validation of a mechanism. A derivation of the base-integer set from lattice first principles — not from known physics — would remove the circularity risk across the entire right-hand column. See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5 and [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) §SP5.
 
 ---
 
@@ -171,7 +171,7 @@ x₋ = (-b - √D) / 2 = (140.0601 - 134.0122) / 2 = 3.0239639163
 - **x₋ = 3.0239639163** → mathematical artifact of `P(x)`; no physics identification (the historical `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`)
 
 ### Why x₊ = 1/α [STRONGLY MOTIVATED CONJECTURE]
-The identification x₊ = 1/α depends on five selection principles (see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)):
+The identification x₊ = 1/α depends on five selection principles (see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md)):
 1. **SP1**: CM preference for j = 1728 (selected, not uniquely forced)
 2. **SP2**: Lemniscatic curve selection among CM curves
 3. **SP3**: Quadratic form x² - 16c²x + 16c³ = 0 (imposed, not derived)
@@ -428,7 +428,7 @@ Error: **0.01%**
 
 **Measurement:** Collapse = manifestation when |J| > KB
 
-**Bell Violations:**  [SELECTION] — The three-level observer Bell mechanism resolves how aggregate S > 2 emerges from substrate S ≤ 2. Two factors: complexification (Gauss constraint → psi = J_x + iJ_y, changing correlation shape) and sLoop coupling (shared substrate → non-factorizable joint probability, doubling correlation strength). Net: S_substrate × √2 = S_observer. Numerically verified (4/4 checks). See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) and [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md).
+**Bell Violations:**  [SELECTION] — The three-level observer Bell mechanism resolves how aggregate S > 2 emerges from substrate S ≤ 2. Two factors: complexification (Gauss constraint → psi = J_x + iJ_y, changing correlation shape) and sLoop coupling (shared substrate → non-factorizable joint probability, doubling correlation strength). Net: S_substrate × √2 = S_observer. Numerically verified (4/4 checks). See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md) and [AUDIT_BELL_ANALYSIS.md](../07_assessment/quantum_foundations/AUDIT_BELL_ANALYSIS.md).
 
 ---
 
@@ -657,7 +657,7 @@ A correction term was proposed:
 
 ## 22. Vacuum Energy Formula (v5.5)
 
-> **FTD-0331 reconciliation (governing; LEDGER > doc > prose).** The formula below is a **[PARAMETRIC]** value-match (W-COSMO-4): it reproduces the Ω_Λ number but carries no length dependence and rests on a ½ℏω zero-point sum FC-1 declines. FTD's classical vacuum (J=0, s=0) is identically zero-energy, so **FTD predicts Λ=0** [DERIVED, given FC-1]; the old 10¹²³ catastrophe is **DISSOLVED-by-construction**, not "resolved." Honest decomposition: the **form** Λ·ℓ_P² = f(ℓ_P/L) is **[DERIVED-from-FC-3]**; the no-collapse **ceiling** Λ ≲ (ℓ_P/L_H)² is **[SELECTION]** (CKN); the nonzero **source** is **[OPEN]** (no native source survives); the **value** Ω_Λ≈0.68 / ~10⁻¹²² is a **[BOUNDARY]** (needs L_H/ℓ_P, which FTD-0059 [THEOREM] proves is not native). A measured w≠−1 does NOT falsify FTD. See [DERIV_LAMBDA_SCALE_COVARIANT.md](../04_coupling/DERIV_LAMBDA_SCALE_COVARIANT.md) and [SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md](SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md).
+> **FTD-0331 reconciliation (governing; LEDGER > doc > prose).** The formula below is a **[PARAMETRIC]** value-match (W-COSMO-4): it reproduces the Ω_Λ number but carries no length dependence and rests on a ½ℏω zero-point sum FC-1 declines. FTD's classical vacuum (J=0, s=0) is identically zero-energy, so **FTD predicts Λ=0** [DERIVED, given FC-1]; the old 10¹²³ catastrophe is **DISSOLVED-by-construction**, not "resolved." Honest decomposition: the **form** Λ·ℓ_P² = f(ℓ_P/L) is **[DERIVED-from-FC-3]**; the no-collapse **ceiling** Λ ≲ (ℓ_P/L_H)² is **[SELECTION]** (CKN); the nonzero **source** is **[OPEN]** (no native source survives); the **value** Ω_Λ≈0.68 / ~10⁻¹²² is a **[BOUNDARY]** (needs L_H/ℓ_P, which FTD-0059 [THEOREM] proves is not native). A measured w≠−1 does NOT falsify FTD. See [DERIV_LAMBDA_SCALE_COVARIANT.md](../03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md) and [SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md](SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md).
 
 ### The Formula
 ```

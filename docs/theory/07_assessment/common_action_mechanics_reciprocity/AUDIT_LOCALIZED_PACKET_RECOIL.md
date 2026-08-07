@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0457`  
 **Status:** `[CONSTRUCTIVE EXISTENCE — FINITE-ENERGY LOCAL PACKET]` + `[MEASURED — BOX-STABLE R=1 THRESHOLD]` + `[OPEN — PRODUCTION SELECTION]`  
 **Verdict:** `LOCALIZED_PACKET_R1_THRESHOLD_VOLUME_STABLE`  
-**Pre-registration:** [`PREREG_LOCALIZED_PACKET_RECOIL_v1.md`](../10_eft_program/preregistrations/PREREG_LOCALIZED_PACKET_RECOIL_v1.md)  
+**Pre-registration:** [`PREREG_LOCALIZED_PACKET_RECOIL_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_LOCALIZED_PACKET_RECOIL_v1.md)  
 **Run of record:** `engine/results/ftd_0457/windows_msvc_cpu.csv`
 
 ## 1. The extensive-background defect does not survive localization

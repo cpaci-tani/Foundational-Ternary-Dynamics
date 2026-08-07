@@ -3,7 +3,7 @@
 **Tag:** [PARTIAL] — variance prediction at canonical amplitude empirically confirmed within ~7%; multi-amplitude scaling test pending T5b completion
 **LEDGER row:** FTD-0110 (extension of nonlinear-bridge closure)
 **Companion:** [`DERIV_FTD0110_NONLINEAR_BRIDGE.md`](DERIV_FTD0110_NONLINEAR_BRIDGE.md) (Bridge-I + Bridge-II single-block); [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) (linear-level k = 1/N_base)
-**Verification script:** [`scripts/exploration/analyze_cluster_variance_2026-04-29.py`](../../../scripts/exploration/analyze_cluster_variance_2026-04-29.py)
+**Verification script:** [`scripts/exploration/analyze_cluster_variance_2026-04-29.py`](../../../../scripts/exploration/analyze_cluster_variance_2026-04-29.py)
 
 ---
 

@@ -1,7 +1,7 @@
 # ANALYSIS — Helium on the FTD lattice: HELIUM-CONFIRMED (FTD-0279)
 
 **Status:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` (pre-registered run of record).
-**Pre-registration:** [`PREREG_HELIUM_LATTICE_SCF_v1.md`](../../10_eft_program/preregistrations/PREREG_HELIUM_LATTICE_SCF_v1.md),
+**Pre-registration:** [`PREREG_HELIUM_LATTICE_SCF_v1.md`](../../10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_HELIUM_LATTICE_SCF_v1.md),
 tag `preregister-helium-lattice-scf-v1`, lock commit `310ad4ee`; artifact SHA `ecfa2cd0…`.
 **Verdict per frozen logic: `HELIUM-CONFIRMED`** (F-He-A ∧ B ∧ C ∧ D all PASS, including
 the blind L=64 trend leg).

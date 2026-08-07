@@ -715,9 +715,9 @@ The lattice creates time ($G^{*2}$). Time creates dynamics (the tick cycle). Dyn
 > **Consolidation note:** Part XV absorbs the full content of `FOUND_RELATIVITY_GRAVITY_DISTINCTION.md` (v2.0, March 17, 2026). Where Part XIV establishes gravity-as-saturation as a structural claim, Part XV formalizes the *three-concept distinction* — SR vs gravity vs GR — with precise terminology, the seven-level hierarchy, and the epistemic claims tables. This part uses one tag that does not appear elsewhere in this document, **[GAP]** ("missing derivation; acknowledged future work"), retained from the source.
 
 **Depends on:**
-- [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) — SR derivation (Part I) and g₀₀ from flux saturation (Part II, Theorem 11.1)
-- [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) — Newtonian gravity as weak-field limit
-- [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — Linearized GR (propagators, wave equations)
+- [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/gravity_and_cosmology/DERIV_RELATIVITY_DERIVATION.md) — SR derivation (Part I) and g₀₀ from flux saturation (Part II, Theorem 11.1)
+- [DERIV_FORCE_EMERGENCE.md](../03_derivations/foundational_mechanics/DERIV_FORCE_EMERGENCE.md) — Newtonian gravity as weak-field limit
+- [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — Linearized GR (propagators, wave equations)
 - [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Gap analysis (GAP-G2, GAP-G4, GAP-G5)
 
 ### 15.0 Abstract
@@ -782,7 +782,7 @@ SR derives entirely from **POSTULATE 4** (Local Causality): updates to voxel $v$
 
 **Consequence:** $C = 1$ voxel/tick — maximum propagation speed.
 
-From this single axiom, the following are **complete theorems** (proven in [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) Part I):
+From this single axiom, the following are **complete theorems** (proven in [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/gravity_and_cosmology/DERIV_RELATIVITY_DERIVATION.md) Part I):
 
 | Result | Formula | Status |
 |--------|---------|--------|
@@ -822,7 +822,7 @@ Gravity arises from a second, independent mechanism: **mass creates information 
 
 Near a mass $M$, lattice nodes carry more information (gravitational field data, flux density). This consumes part of each node's computational budget before any spatial or temporal processes begin.
 
-**The availability factor** (from Theorem 11.1 in [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md)):
+**The availability factor** (from Theorem 11.1 in [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/gravity_and_cosmology/DERIV_RELATIVITY_DERIVATION.md)):
 
 $$f(r) = 1 - \frac{\rho_{\text{info}}}{\rho_{\text{max}}} = 1 - \frac{r_s}{r}$$
 
@@ -1172,11 +1172,11 @@ If correct, the three temporal modes (kinematic, thermodynamic, geometric) of th
 - **The Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Ontological Genesis:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md)
 - **Self-referential closure:** [FOUND_SELF_REFERENTIAL_CLOSURE.md](FOUND_SELF_REFERENTIAL_CLOSURE.md)
-- **Relativity derivation:** [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md)
-- **Force emergence (Newtonian weak-field limit):** [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md)
-- **QFT/GRT bridge (linearized GR):** [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md)
+- **Relativity derivation:** [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/gravity_and_cosmology/DERIV_RELATIVITY_DERIVATION.md)
+- **Force emergence (Newtonian weak-field limit):** [DERIV_FORCE_EMERGENCE.md](../03_derivations/foundational_mechanics/DERIV_FORCE_EMERGENCE.md)
+- **QFT/GRT bridge (linearized GR):** [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md)
 - **QFT/GRT bridge roadmap (gap analysis):** [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md)
-- **Collapse-gravity bridge:** [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md)
+- **Collapse-gravity bridge:** [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../09_mathematical/general_math/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md)
 - **G* flux-time triad:** EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (09_mathematical)
 - **ReLU type transition:** EXPLR_RELU_TYPE_TRANSITION.md (09_mathematical)
 - **Discrete-continuous bridge:** DERIV_DISCRETE_CONTINUOUS_BRIDGE.md (04_coupling)

@@ -12,7 +12,7 @@ interpretation.
 Compute the FTD partition function `Z = ∫ DJ exp(-S_E[J, s])` explicitly
 on the smallest nontrivial periodic lattice (L = 2, i.e. 2×2×2 = 8
 voxels), using the action specified in
-[`SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.3.
+[`SPEC_FTD_LAGRANGIAN.md`](../../../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.3.
 Ask: does classical extremisation of S_E fix g_c from first principles?
 
 ## 2 · Setup

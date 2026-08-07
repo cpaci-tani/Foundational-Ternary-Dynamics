@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0450`  
 **Status:** `[CORRECTION — FTD-0444 PRODUCTION-DIAGNOSTIC CLAIM RETRACTED]` + `[THEOREM — EXACT FACTOR-THREE MISMATCH]` + `[CONSTRUCTIVE EXAMPLE — CORRECTED SELECTED MAP]`  
 **Verdict:** `PRODUCTION_KINEMATICS_CORRECTS_SELECTED_MAP`  
-**Pre-registration:** [`PREREG_PRODUCTION_HOP_KINEMATICS_CORRECTION_v1.md`](../10_eft_program/preregistrations/PREREG_PRODUCTION_HOP_KINEMATICS_CORRECTION_v1.md)  
+**Pre-registration:** [`PREREG_PRODUCTION_HOP_KINEMATICS_CORRECTION_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PRODUCTION_HOP_KINEMATICS_CORRECTION_v1.md)  
 **Run of record:** `engine/results/ftd_0450/windows_msvc_cpu.csv`
 
 ## 1. Defect

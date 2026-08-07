@@ -41,7 +41,7 @@ $$[T_i, T_j] = i\varepsilon_{ijk} T_k$$
 
 **Proof.** Direct computation. The Pauli matrices satisfy [σ_i, σ_j] = 2iε_{ijk}σ_k, hence [T_i, T_j] = iε_{ijk}T_k. □
 
-**Epistemic note (Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
+**Epistemic note (Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
 
 The raising and lowering operators are:
 
@@ -500,8 +500,8 @@ where:
 
 | Document | What Changes |
 |----------|-------------|
-| [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | G_F removed from "explicit inputs"; ~50 decays reclassified |
-| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Decay rates in Parts I-II now have fully derived couplings |
+| [AUDIT_EPISTEMIC_AUDIT.md](../../07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) | G_F removed from "explicit inputs"; ~50 decays reclassified |
+| [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Decay rates in Parts I-II now have fully derived couplings |
 | CLAUDE.md Chapter 6.5 | Stress-threshold transmutation = W boson exchange |
 | CLAUDE.md Chapter 22.4 | "~50 parametric insertions" → "~50 derived predictions" |
 
@@ -509,7 +509,7 @@ where:
 
 | Document | What It Provides |
 |----------|-----------------|
-| [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | BI action; VEV formula v = M_P√(2π)α⁸ |
+| [SPEC_FTD_LAGRANGIAN.md](../../01_reference/SPEC_FTD_LAGRANGIAN.md) | BI action; VEV formula v = M_P√(2π)α⁸ |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Lattice Feynman rules, Ward identity |
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | Force laws from lattice Green's functions |
 

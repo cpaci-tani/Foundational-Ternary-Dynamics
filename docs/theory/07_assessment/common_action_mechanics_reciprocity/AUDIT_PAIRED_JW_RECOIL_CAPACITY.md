@@ -4,7 +4,7 @@
 **Identifier:** `FTD-0454`  
 **Status:** `[THEOREM — GLOBAL ADDITIVE PAIRED-IMPULSE MINIMUM]` + `[CLOSED NEGATIVE — ZERO-ENERGY RECOIL FOR REGISTERED MINIMAL FIELD]`  
 **Verdict:** `PAIRED_JW_ZERO_ENERGY_RECOIL_IMPOSSIBLE_MINIMAL_WORK_FIELD`  
-**Pre-registration:** [`PREREG_PAIRED_JW_RECOIL_CAPACITY_v1.md`](../10_eft_program/preregistrations/PREREG_PAIRED_JW_RECOIL_CAPACITY_v1.md)  
+**Pre-registration:** [`PREREG_PAIRED_JW_RECOIL_CAPACITY_v1.md`](../../10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PAIRED_JW_RECOIL_CAPACITY_v1.md)  
 **Run of record:** `engine/results/ftd_0454/windows_msvc_cpu.csv`
 
 ## 1. Result
