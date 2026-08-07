@@ -85,6 +85,17 @@
     </div>
 
     <div class="box">
+      <h2>Mode</h2>
+      <div class="row">
+        <button class="btn" id="modeStruct">📁 Structure</button>
+        <button class="btn" id="modeConcept">🔗 Concepts</button>
+      </div>
+      <div class="sub" style="padding:7px 0 0" id="modeHint">
+        Structure: where documents live. Concepts: how topics connect by keyword.
+      </div>
+    </div>
+
+    <div class="box">
       <h2>View</h2>
       <div class="row">
         <button class="btn" id="expandAll">Expand all</button>
@@ -115,6 +126,8 @@
 const DATA_URL = 'theory_mindmap.json';
 
 let DATA=null, DOCS={}, ADJ={}, ROOT=null, NODES=[], HIDDEN_TAGS=new Set(), SHOW_ARCHIVED=false;
+let MODE='structure';                 // 'structure' | 'concepts'
+let CN=[], CE=[], CBY={}, cSel=null;  // concept nodes / edges / index / selection
 let view={x:0,y:0,k:1}, drag=null, selected=null, hover=null;
 const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
 
@@ -183,6 +196,136 @@ function layout(){
   ROOT._x=0; ROOT._y=0;
 }
 
+/* ---------- concept graph: layout + render ----------
+   Deterministic seeded force layout. No RNG so the picture is identical on
+   every load, and no animation loop so it costs nothing once settled. */
+function conceptLayout(){
+  const src=DATA.concepts||[], ed=DATA.concept_edges||[];
+  const keep=new Set(src.map(c=>c.id));
+  CN=src.map((c,i)=>{
+    const a=(i/src.length)*Math.PI*2, r=140+((i*97)%420);   // seeded spiral seed
+    return {...c, x:Math.cos(a)*r, y:Math.sin(a)*r, vx:0, vy:0};
+  });
+  CBY={}; CN.forEach(n=>CBY[n.id]=n);
+  CE=ed.filter(e=>keep.has(e.source)&&keep.has(e.target));
+
+  const maxW=Math.max(1,...CE.map(e=>e.weight));
+  for(let it=0; it<220; it++){
+    // attraction along edges, weighted by shared-document count
+    CE.forEach(e=>{
+      const a=CBY[e.source], b=CBY[e.target];
+      let dx=b.x-a.x, dy=b.y-a.y, d=Math.hypot(dx,dy)||1;
+      const target=90+220*(1-e.weight/maxW);
+      const f=(d-target)*0.0035*(0.35+e.weight/maxW);
+      dx/=d; dy/=d; a.vx+=dx*f; a.vy+=dy*f; b.vx-=dx*f; b.vy-=dy*f;
+    });
+    // repulsion (O(n^2) is fine at ~260 nodes)
+    for(let i=0;i<CN.length;i++) for(let j=i+1;j<CN.length;j++){
+      const a=CN[i], b=CN[j];
+      let dx=b.x-a.x, dy=b.y-a.y, d2=dx*dx+dy*dy||1;
+      if(d2>360000) continue;
+      const f=2600/d2, d=Math.sqrt(d2);
+      dx/=d; dy/=d; a.vx-=dx*f; a.vy-=dy*f; b.vx+=dx*f; b.vy+=dy*f;
+    }
+    CN.forEach(n=>{                       // integrate + centre pull + damping
+      n.vx-=n.x*0.0016; n.vy-=n.y*0.0016;
+      n.x+=n.vx; n.y+=n.vy; n.vx*=0.82; n.vy*=0.82;
+    });
+  }
+}
+
+function cRadius(n){ return Math.min(4+Math.sqrt(n.doc_count)*0.85, 20); }
+const CSRC_COLOR={object_aliases:'#58a6ff', glossary:'#3fb950', pinned:'#d29922', filename:'#a371f7'};
+
+function drawConcepts(){
+  const w=cv.clientWidth,h=cv.clientHeight;
+  ctx.save(); ctx.clearRect(0,0,w,h);
+  ctx.translate(w/2+view.x,h/2+view.y); ctx.scale(view.k,view.k);
+
+  const maxW=Math.max(1,...CE.map(e=>e.weight));
+  const nbr = cSel? new Set(CE.filter(e=>e.source===cSel.id||e.target===cSel.id)
+                              .map(e=>e.source===cSel.id?e.target:e.source)) : null;
+  CE.forEach(e=>{
+    const a=CBY[e.source], b=CBY[e.target];
+    const hot = cSel && (e.source===cSel.id||e.target===cSel.id);
+    if(cSel && !hot) return;                       // focus mode: only its links
+    ctx.strokeStyle = hot? 'rgba(88,166,255,.75)' : `rgba(139,148,158,${0.10+0.5*e.weight/maxW})`;
+    ctx.lineWidth=(hot?2.0:0.4+2.2*e.weight/maxW)/view.k;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  });
+
+  CN.forEach(n=>{
+    const dim = cSel && n!==cSel && !nbr.has(n.id);
+    ctx.globalAlpha = dim? 0.16 : 1;
+    ctx.beginPath(); ctx.arc(n.x,n.y,cRadius(n),0,Math.PI*2);
+    ctx.fillStyle=CSRC_COLOR[n.source]||'#8b949e'; ctx.fill();
+    if(n===cSel||n===hover){ ctx.strokeStyle='#58a6ff'; ctx.lineWidth=2.4/view.k; ctx.stroke(); }
+    ctx.globalAlpha=1;
+  });
+
+  ctx.textBaseline='middle'; ctx.textAlign='center';
+  CN.forEach(n=>{
+    const dim = cSel && n!==cSel && !nbr.has(n.id);
+    if(dim) return;
+    if(view.k<0.45 && n.doc_count<120 && n!==cSel) return;
+    ctx.font=`${(n===cSel?12:10.5)/view.k}px -apple-system,Segoe UI,Roboto,sans-serif`;
+    ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--fg');
+    ctx.fillText(n.label, n.x, n.y-cRadius(n)-6/view.k);
+  });
+  ctx.restore();
+}
+
+function pickConcept(mx,my){
+  const w=cv.clientWidth,h=cv.clientHeight;
+  const x=(mx-w/2-view.x)/view.k, y=(my-h/2-view.y)/view.k;
+  let best=null,bd=1e9;
+  CN.forEach(n=>{ const d=Math.hypot(n.x-x,n.y-y);
+    if(d<cRadius(n)+7 && d<bd){bd=d;best=n;} });
+  return best;
+}
+
+function showConceptDetail(c){
+  const docs=DATA.documents.filter(d=>(d.concepts||[]).includes(c.id))
+                           .sort((a,b)=>b.inbound-a.inbound);
+  const links=CE.filter(e=>e.source===c.id||e.target===c.id)
+                .map(e=>({o:e.source===c.id?e.target:e.source,w:e.weight}))
+                .sort((a,b)=>b.w-a.w).slice(0,12);
+  const el=document.getElementById('detail');
+  document.getElementById('dbody').innerHTML=`
+    <h3>${esc(c.label)}</h3>
+    <div class="path">concept · ${esc(c.source)}</div>
+    <dl>
+      <dt>documents</dt><dd>${c.doc_count}</dd>
+      <dt>mentions</dt><dd>${c.hits}</dd>
+    </dl>
+    <div style="margin-top:10px"><b style="font-size:12px">Connects most to</b>
+      <div style="margin-top:5px;font-size:12px">
+        ${links.map(l=>`<span class="cchip" data-c="${esc(l.o)}"
+           style="display:inline-block;margin:2px 3px 2px 0;padding:2px 7px;border:1px solid var(--border);
+                  border-radius:20px;cursor:pointer">${esc(l.o)} <span style="color:var(--fg-dim)">${l.w}</span></span>`).join('')||'<i>none above threshold</i>'}
+      </div></div>
+    <div style="margin-top:11px"><b style="font-size:12px">Top documents</b>
+      <div id="cdocs" style="margin-top:5px;font-size:12px;max-height:230px;overflow-y:auto">
+        ${docs.slice(0,25).map(d=>`<div data-id="${esc(d.id)}" style="padding:3px 5px;border-radius:4px;cursor:pointer"
+            title="${esc(d.path)}">${esc(d.stem)}</div>`).join('')}
+      </div></div>`;
+  el.style.display='block';
+  el.querySelectorAll('.cchip').forEach(x=>x.onclick=()=>{ cSel=CBY[x.dataset.c]; showConceptDetail(cSel); draw(); });
+  el.querySelectorAll('#cdocs [data-id]').forEach(x=>x.onclick=()=>{
+    MODE='structure'; syncModeButtons(); focusDoc(x.dataset.id); });
+}
+
+function syncModeButtons(){
+  const s=document.getElementById('modeStruct'), c=document.getElementById('modeConcept');
+  const on='border-color:var(--accent);color:var(--accent)';
+  s.style.cssText=MODE==='structure'?on:''; c.style.cssText=MODE==='concepts'?on:'';
+  document.getElementById('modeHint').textContent = MODE==='concepts'
+    ? `${(DATA.concepts||[]).length} concepts · ${(DATA.concept_edges||[]).length} links · node size = documents, colour = vocabulary source`
+    : 'Structure: where documents live. Concepts: how topics connect by keyword.';
+  document.getElementById('detail').style.display='none';
+  cSel=null; selected=null;
+}
+
 /* ---------- render ---------- */
 function nodeColor(n){
   if(n.kind==='doc') return n.ref? n.ref.color : '#757575';
@@ -204,6 +347,7 @@ function label(n){
 }
 
 function draw(){
+  if(MODE==='concepts'){ drawConcepts(); return; }
   const w=cv.clientWidth,h=cv.clientHeight;
   ctx.save();
   ctx.clearRect(0,0,w,h);
@@ -267,6 +411,7 @@ function draw(){
 
 /* ---------- hit testing ---------- */
 function pick(mx,my){
+  if(MODE==='concepts') return pickConcept(mx,my);
   const w=cv.clientWidth,h=cv.clientHeight;
   const x=(mx-w/2-view.x)/view.k, y=(my-h/2-view.y)/view.k;
   let best=null,bd=1e9;
@@ -308,6 +453,7 @@ cv.addEventListener('wheel',e=>{
 },{passive:false});
 
 function activate(n){
+  if(MODE==='concepts'){ cSel=(cSel===n)?null:n; showConceptDetail(n); draw(); return; }
   if(n.kind!=='doc'){ n.collapsed=!n.collapsed; layout(); draw(); return; }
   selected=n; showDetail(n.ref); draw();
 }
@@ -342,12 +488,24 @@ document.getElementById('q').addEventListener('input',e=>{
   const q=e.target.value.trim().toLowerCase();
   const box=document.getElementById('results');
   if(q.length<2){ box.innerHTML=''; return; }
+  const cHits=(DATA.concepts||[]).filter(c=>c.label.toLowerCase().includes(q)).slice(0,10);
   const hits=DATA.documents.filter(d=>
     d.title.toLowerCase().includes(q)||d.path.toLowerCase().includes(q)||
-    d.ftd_ids.some(i=>i.toLowerCase().includes(q))).slice(0,40);
-  box.innerHTML=hits.map(d=>`<div data-id="${esc(d.id)}" title="${esc(d.path)}">${esc(d.stem)}</div>`).join('')
-    ||'<div style="color:var(--fg-dim);cursor:default">no match</div>';
+    d.ftd_ids.some(i=>i.toLowerCase().includes(q))||
+    (d.concepts||[]).some(c=>c.toLowerCase().includes(q))).slice(0,40);
+  box.innerHTML =
+    cHits.map(c=>`<div data-c="${esc(c.id)}" style="color:var(--accent)" title="concept">
+        🔗 ${esc(c.label)} <span style="color:var(--fg-dim)">${c.doc_count} docs</span></div>`).join('')
+    + hits.map(d=>`<div data-id="${esc(d.id)}" title="${esc(d.path)}">${esc(d.stem)}</div>`).join('')
+    || '<div style="color:var(--fg-dim);cursor:default">no match</div>';
   box.querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>focusDoc(el.dataset.id));
+  box.querySelectorAll('[data-c]').forEach(el=>el.onclick=()=>{
+    MODE='concepts'; syncModeButtons();
+    if(!CN.length) conceptLayout();
+    cSel=CBY[el.dataset.c];
+    view.k=0.9; view.x=-cSel.x*view.k; view.y=-cSel.y*view.k;
+    showConceptDetail(cSel); draw();
+  });
 });
 
 function focusDoc(id){
@@ -394,6 +552,12 @@ document.getElementById('collapseAll').onclick=()=>{
 document.getElementById('reset').onclick=()=>{ view={x:0,y:0,k:1}; selected=null;
   document.getElementById('detail').style.display='none'; draw(); };
 document.getElementById('showArchived').onchange=e=>{ SHOW_ARCHIVED=e.target.checked; layout(); draw(); };
+document.getElementById('modeStruct').onclick=()=>{
+  MODE='structure'; syncModeButtons(); view={x:0,y:0,k:1}; layout(); draw(); };
+document.getElementById('modeConcept').onclick=()=>{
+  MODE='concepts'; syncModeButtons(); view={x:0,y:0,k:0.75};
+  if(!CN.length) conceptLayout();
+  draw(); };
 
 /* ---------- boot ---------- */
 fetch(DATA_URL).then(r=>{ if(!r.ok) throw new Error(r.status+' '+r.statusText); return r.json(); })
@@ -405,7 +569,7 @@ fetch(DATA_URL).then(r=>{ if(!r.ok) throw new Error(r.status+' '+r.statusText); 
   const s=j.stats;
   document.getElementById('stat').textContent=
     `${s.documents_active} active · ${s.documents_archived} archived · ${s.sectors} sectors · ${s.cross_edges} links`;
-  buildTree(); renderTags(); layout(); resize();
+  buildTree(); renderTags(); layout(); syncModeButtons(); resize();
 })
 .catch(err=>{
   document.body.innerHTML=`<div id="err">Could not load <b>${DATA_URL}</b>: ${esc(err.message)}

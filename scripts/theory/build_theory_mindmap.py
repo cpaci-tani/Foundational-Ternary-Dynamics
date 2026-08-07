@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import subprocess
 import sys
@@ -221,12 +222,23 @@ def group_for(rel: str) -> tuple[str, str]:
     return doc_type_of(Path(rel).stem), "doctype"
 
 
+# Each document is read once and reused by both the structural parse and the
+# concept scan; reading twice roughly doubled a full build.
+_TEXT_CACHE: dict[str, str] = {}
+
+
+def doc_text(rel: str) -> str:
+    if rel not in _TEXT_CACHE:
+        try:
+            _TEXT_CACHE[rel] = (REPO_ROOT / rel).read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            _TEXT_CACHE[rel] = ""
+    return _TEXT_CACHE[rel]
+
+
 def parse_doc(rel: str) -> dict:
     path = REPO_ROOT / rel
-    try:
-        text = path.read_text(encoding="utf-8", errors="ignore")
-    except OSError:
-        text = ""
+    text = doc_text(rel)
     head = text[:4000]
 
     m = TITLE_RE.search(head)
@@ -283,6 +295,110 @@ def parse_doc(rel: str) -> dict:
         "links": sorted(set(links)),
         "bytes": path.stat().st_size if path.exists() else 0,
     }
+
+
+# --- semantic layer tuning -------------------------------------------------
+# Co-occurrence is dense by nature (323 concepts could yield ~52k pairs), so it
+# is thresholded twice: a pair must share at least MIN_PAIR_DOCS documents, and
+# each concept keeps only its TOP_EDGES_PER_CONCEPT strongest partners. Without
+# both, the graph is a hairball and the JSON balloons.
+MIN_PAIR_DOCS = 6
+TOP_EDGES_PER_CONCEPT = 12
+TOP_CONCEPTS_PER_DOC = 12
+
+# A concept appearing in most of the corpus is a stopword FOR this corpus and
+# carries no information about how topics connect. The first build showed why
+# this is not optional: "Ftd" matched 1,706 of 1,734 documents (98%), and every
+# single strongest edge was "X <-> Ftd". Terms like Only/Result/State/Finite
+# behaved the same way. Rather than maintain an ever-growing hand stoplist, any
+# concept above this document-frequency ceiling is dropped automatically.
+MAX_DOC_FRACTION = 0.35
+# Per-document concepts are ranked by tf-idf rather than raw count, so a
+# document's "top" concepts are the ones that distinguish it, not the ones
+# everybody mentions.
+
+
+def build_concept_layer(docs: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Attach per-document concepts and return (concepts, concept_edges)."""
+    from theory.theory_concepts import build_vocabulary, compile_matchers, concepts_in
+
+    vocab = build_vocabulary([d["stem"] for d in docs], set(DOC_TYPES))
+    matchers = compile_matchers(vocab)
+
+    # Pass 1: raw hits per document, so document-frequency is known before any
+    # ranking decision is made.
+    raw: dict[str, dict[str, int]] = {}
+    concept_docs: dict[str, set[str]] = {}
+    concept_hits: Counter = Counter()
+
+    for d in docs:
+        hits = concepts_in(doc_text(d["path"]), matchers)
+        raw[d["id"]] = hits
+        for k, n in hits.items():
+            concept_docs.setdefault(k, set()).add(d["id"])
+            concept_hits[k] += n
+
+    # Drop corpus-wide stopwords by document frequency (see MAX_DOC_FRACTION).
+    n_docs = max(len(docs), 1)
+    ceiling = MAX_DOC_FRACTION * n_docs
+    kept = {c for c, ds in concept_docs.items() if 0 < len(ds) <= ceiling}
+    dropped = sorted(
+        (c for c in concept_docs if c not in kept),
+        key=lambda c: -len(concept_docs[c]),
+    )
+
+    # Pass 2: rank each document's concepts by tf-idf over the kept vocabulary.
+    doc_concepts: dict[str, list[str]] = {}
+    for d in docs:
+        hits = {k: v for k, v in raw[d["id"]].items() if k in kept}
+        scored = sorted(
+            hits.items(),
+            key=lambda kv: (-(kv[1] * math.log(n_docs / len(concept_docs[kv[0]]))), kv[0]),
+        )[:TOP_CONCEPTS_PER_DOC]
+        labels = [k for k, _ in scored]
+        d["concepts"] = labels
+        doc_concepts[d["id"]] = labels
+
+    concept_docs = {c: ds for c, ds in concept_docs.items() if c in kept}
+    vocab = {k: v for k, v in vocab.items() if k in kept}
+
+    concepts = [
+        {
+            "id": label,
+            "label": label,
+            "source": vocab[label]["source"],
+            "doc_count": len(concept_docs.get(label, ())),
+            "hits": concept_hits.get(label, 0),
+        }
+        for label in sorted(vocab)
+        if concept_docs.get(label)
+    ]
+
+    # Co-occurrence weighted by shared-document count, computed from each
+    # document's top concepts (not every mention) so the edges reflect what a
+    # document is actually *about* rather than what it name-drops once.
+    pair = Counter()
+    for labels in doc_concepts.values():
+        uniq = sorted(set(labels))
+        for i in range(len(uniq)):
+            for j in range(i + 1, len(uniq)):
+                pair[(uniq[i], uniq[j])] += 1
+
+    strong = [(a, b, w) for (a, b), w in pair.items() if w >= MIN_PAIR_DOCS]
+    keep: set[tuple[str, str]] = set()
+    per: dict[str, list] = {}
+    for a, b, w in strong:
+        per.setdefault(a, []).append((w, b))
+        per.setdefault(b, []).append((w, a))
+    for node, lst in per.items():
+        for w, other in sorted(lst, reverse=True)[:TOP_EDGES_PER_CONCEPT]:
+            keep.add((min(node, other), max(node, other)))
+
+    edges = [
+        {"source": a, "target": b, "weight": pair[(a, b)]}
+        for (a, b) in sorted(keep) if (a, b) in pair
+    ]
+    return concepts, edges
 
 
 def build() -> dict:
@@ -342,6 +458,8 @@ def build() -> dict:
             s["children"].append(g)
         g["children"].append({"id": d["id"], "kind": "doc"})
 
+    concepts, concept_edges = build_concept_layer(docs)
+
     active = [d for d in docs if not d["archived"]]
     tag_counts = Counter(d["primary_tag"] for d in active)
 
@@ -357,12 +475,16 @@ def build() -> dict:
             "groups": sum(len(s["children"]) for s in sectors.values()),
             "cross_edges": len(edges),
             "tagged_active": sum(1 for d in active if d["primary_tag"] != "UNTAGGED"),
+            "concepts": len(concepts),
+            "concept_edges": len(concept_edges),
         },
         "tag_counts": dict(tag_counts.most_common()),
         "epistemic_colors": {**EPISTEMIC_COLORS, **SUPPLEMENT_COLORS},
         "tree": tree,
         "documents": docs,
         "edges": edges,
+        "concepts": concepts,
+        "concept_edges": concept_edges,
     }
 
 

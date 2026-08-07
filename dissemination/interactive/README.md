@@ -125,9 +125,20 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 
 ### Theory Mindmap (`theory_mindmap.html`) — **generated, do not hand-edit**
 
-Radial, collapsible map of **every git-tracked document under `docs/theory/`**
-(1,734 docs / 4,137 cross-links as of 2026-08-06), grouped sector → programme →
-document and coloured by each document's own epistemic tag.
+Two-mode map of **every git-tracked document under `docs/theory/`** (1,734 docs
+as of 2026-08-06).
+
+- **📁 Structure** — radial collapsible tree, sector → programme → document,
+  coloured by each document's own epistemic tag; 4,137 resolved cross-links.
+- **🔗 Concepts** — *how topics connect by keyword*, independent of
+  directories. ~260 concepts and ~2,000 co-occurrence links drawn from four
+  curated vocabularies (the mathematical-object alias table, `GLOSSARY.md`,
+  a pinned subject-matter list, and filename tokens). Node size = documents
+  mentioning it; colour = vocabulary source. Click a concept to focus its
+  links, jump between related concepts, or drop into any document that
+  discusses it.
+
+Search spans titles, paths, LEDGER `FTD-NNNN` ids, and concepts.
 
 - **Data:** `theory_mindmap.json`, produced by
   `scripts/theory/build_theory_mindmap.py`. Neither file is hand-edited.
