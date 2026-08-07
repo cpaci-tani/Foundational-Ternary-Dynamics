@@ -4,6 +4,10 @@
 
 ---
 
+> **⚠ CORRECTION (2026-08-06).** Part I below and claim **OCT-1** originally tagged the master-quadratic root decomposition x₊, x₋ = 70 ± 67 as **[THEOREM]** and asserted throughout that x₋ = 3 = 70 − 67 = N_c (the color number) as established fact. The **70 ± 67 arithmetic itself is a genuine numerical identity — [NUMERICAL FACT]**. The **physical identification x₋ ↔ N_c is RETIRED**: LEDGER FTD-0014 ("`x_-  N_c`") was removed from the LEDGER in commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5, and the retirement was independently reaffirmed twice since — FTD-0791 (2026-08-03) found the FTD engine source itself annotating the constant as *"artifact; NOT N_c — retired FTD-0014"*, and FTD-0802 (2026-08-04) again states `x_- <-> N_c is retired (FTD-0014)` while auditing a sibling scan. `N_c = 3` in FTD is sourced **independently** of this document's root decomposition — via the Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md` (four independent routes). OCT-1 and the affected headers/prose in Part I below are corrected in place; no other claim in this document is altered. See the same correction already applied to `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`, `DERIV_DISCRETE_CONTINUOUS_BRIDGE.md`, and `DERIV_WATSON_GSTAR_IDENTITY.md` §3.2.
+
+---
+
 ## Executive Summary
 
 The FTD framework integers {3, 4, 7, 13} emerge necessarily from the structure of normed division algebras. A remarkable discovery reveals that the master quadratic roots satisfy:
@@ -22,20 +26,20 @@ where **67 is a Heegner number** (class number 1). This connects electromagnetic
 
 ## Part I: The 70 ± 67 Structure
 
-### 1.1 Root Decomposition **[THEOREM]**
+### 1.1 Root Decomposition **[NUMERICAL FACT]** (arithmetic) — physical reading of x₋ **[RETIRED]**, see banner above
 
 The master quadratic x² - 16G*²x + 16G*³ = 0 has roots:
 
 | Root | Value | Decomposition | Physical Meaning |
 |------|-------|---------------|------------------|
-| x₊ | 137.036 | 70 + 67 | 1/α (electromagnetic) |
-| x₋ | 3.024 | 70 - 67 | N_c (color) |
+| x₊ | 137.036 | 70 + 67 | 1/α (electromagnetic) — [STRONGLY MOTIVATED CONJECTURE], per LEDGER FTD-0013 |
+| x₋ | 3.024 | 70 - 67 | ~~N_c (color)~~ — **RETIRED** (LEDGER FTD-0014, removed `ca7eb61`); x₋ is a mathematical artifact of the polynomial, not an independent route to N_c = 3 |
 
 **Verification:**
 - x₊ + x₋ = 140.06 ≈ 2 × 70
 - x₊ - x₋ = 134.01 ≈ 2 × 67
 
-### 1.2 Significance of 67 **[THEOREM]**
+### 1.2 Significance of 67 **[NUMERICAL FACT]** (67 is a Heegner number — classical number theory)
 
 The number 67 is one of only **9 Heegner numbers**: {1, 2, 3, 7, 11, 19, 43, 67, 163}
 
@@ -44,17 +48,19 @@ Heegner numbers are values d for which Q(√-d) has **class number 1**, meaning:
 - Simplest possible arithmetic structure
 - Connected to CM elliptic curves and j-invariants
 
-**Physical interpretation:** Class number 1 may explain why physical constants have "clean" values and gauge symmetries are unambiguous.
+**Physical interpretation [CONJECTURE]:** Class number 1 may explain why physical constants have "clean" values and gauge symmetries are unambiguous. *(This framing was originally paired with the retired x₋ ↔ N_c reading — see banner above; the standalone mathematical fact that 67 is a Heegner number is unaffected.)*
 
-### 1.3 The Center Value 70 **[THEOREM]**
+### 1.3 The Center Value 70 **[NUMERICAL FACT]** (arithmetic) — "67 + N_c" reading **[RETIRED]**, see banner above
 
 The value 70 = (x₊ + x₋)/2 decomposes as:
 
 | Decomposition | Expression |
 |---------------|------------|
-| Heegner + color | 67 + 3 = 67 + N_c |
+| Heegner + color *(retired reading — see banner above)* | 67 + 3 = 67 + N_c |
 | Prime factors | 2 × 5 × 7 = 2 × 5 × b₃ |
 | Framework form | N_base × N_eff + N_c × (N_eff - N_base) = 52 + 18 |
+
+The "Heegner + color" row's use of N_c = 3 is not evidence for N_c — it merely restates 70 = 67 + 3 using the framework's independently-established N_c value (Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`); it does **not** derive N_c from x₋.
 
 ---
 
@@ -250,7 +256,7 @@ The 42 = 2 × 3 × 7 encodes the "complexified color-octonion" structure:
 
 | Claim ID | Statement | Value | Status |
 |----------|-----------|-------|--------|
-| **OCT-1** | x₊, x₋ = 70 ± 67 | Heegner structure | **[THEOREM]** |
+| **OCT-1** | x₊, x₋ = 70 ± 67 | Heegner structure | **[NUMERICAL FACT]** (arithmetic) + **[RETIRED]** (x₋ ↔ N_c physical identification — LEDGER FTD-0014, removed `ca7eb61`; reaffirmed FTD-0791, FTD-0802) |
 | **OCT-2** | 67 is a Heegner number | Class number 1 | **[THEOREM]** |
 | **OCT-3** | N_c = 3 and b₃ = 7 are Heegner | 2 of 4 integers | **[THEOREM]** |
 | **OCT-4** | 1×2×3×7 = 42 = 2×N_c×b₃ | First 4 Heegner | **[THEOREM]** |
