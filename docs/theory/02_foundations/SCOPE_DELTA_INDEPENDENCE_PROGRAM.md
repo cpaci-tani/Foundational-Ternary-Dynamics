@@ -79,7 +79,7 @@ Under the Number-One Goal this program is clause 2 pursued to its strongest form
 - `FOUND_MODULUS_ARGUMENT_FRONTIER.md` (FTD-0336) + `FOUND_TYPE_PRIORITY_PRINCIPLE.md` (FTD-0339) — the frontier this theorem would harden; type-priority is the program's philosophical spine.
 - `docs/theory/09_mathematical/number_theory/MATH_PERIOD_IMPORT_FRONTIER.md` (FTD-0375) — the period-conjecture *framing* of this program's boundary: δ located relative to the CM motive `h¹(E_lemn)` whose GPC is a Chudnovsky theorem (trdeg=2); it makes explicit that the general δ∉N is Chudnovsky **+ open E1/E2** (not Chudnovsky alone), and that the frame re-describes rather than corroborates δ∉N (shared Chudnovsky input — no double-counting).
 - `docs/theory/09_mathematical/general_math/MATH_REFLECTION_FLOW_PARITY.md` (FTD-0367) — the DA/hypertranscendence instrument; its §4 guard is inherited here as guard 6.
-- `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` — the ε-L limit-policy vocabulary N1 is built from.
+- `docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md` — the ε-L limit-policy vocabulary N1 is built from.
 - `PREREG_NONLINEAR_DELTA_IND_v2.md` + `ANALYSIS_NONLINEAR_DELTA_IND_v2.md` — FTD-0396's locked two-rung nonlinear properness test and its double BLOCKED-ESCAPE verdict.
 - Classical: O. Hölder (1887), Math. Ann. 28, 1–13 (see `REF_BIBLIOGRAPHY.md` §1); D.V. & G.V. Chudnovsky (1976) — the standing conditionality of the spine.
 

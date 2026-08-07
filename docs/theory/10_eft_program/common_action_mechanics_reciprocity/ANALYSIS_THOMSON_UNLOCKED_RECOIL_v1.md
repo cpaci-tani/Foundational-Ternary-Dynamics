@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0288
 **Status:** [MEASUREMENT -- NATIVE EMERGENT FLUX-GRADIENT RECOIL]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_UNLOCKED_RECOIL_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_UNLOCKED_RECOIL_v1.md`
 **Lock commit:** `7260b274590ba2c7e4cae81336023aefd58c1acc`
 **Lock tag:** `preregister-thomson-unlocked-recoil-v1`
 **Artifact:** `engine/tests/campaign_thomson_unlocked_recoil.cpp`

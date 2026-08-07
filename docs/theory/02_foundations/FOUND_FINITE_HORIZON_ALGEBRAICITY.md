@@ -63,7 +63,7 @@ The enumeration above is complete **relative to `SPEC_ENGINE.md` §1's core-rule
 
 - `SCOPE_DELTA_INDEPENDENCE_PROGRAM.md` (FTD-0368) — the charter this discharges Stage S1 of; next stage S2 (the definition fight: N1 = N0 + effective ε-L limits, pre-registered before δ is tested).
 - `engine/SPEC_ENGINE.md` §1 — the canonical rule list the enumeration is relative to.
-- `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` — the limit-policy vocabulary now load-bearing.
+- `docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md` — the limit-policy vocabulary now load-bearing.
 - `docs/theory/09_mathematical/number_theory/THEOREM_VALUATION_4GSTAR_MINUS_1.md` (FTD-0353/0360) — door one's current best result.
 - `docs/theory/01_reference/SPEC_OPEN_MATH_BY_SECTOR.md` MC-T4.3 — door two's canonical statement.
 - `scripts/proofs/proof_lemma0_finite_horizon.py` — the schema verifier (exact arithmetic, zero floats).
