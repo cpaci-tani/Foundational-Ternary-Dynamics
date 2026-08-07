@@ -2,12 +2,32 @@
   "package": "FTD_FQCR_v1_5_checkpoint_package",
   "date": "2026-05-22",
   "core_claim": "Finite pointer-clock closure with scalar source law, conditional TT gaplessness/speed/radiation, and finite aperture measurement.",
+  "status": "DISPERSED (noted 2026-08-06) — the checkpoint content was folded into the active corpus at the locations below; this directory retains only manifest.json and README.md as the package index, for provenance. The 4 relocated files are correctly placed at their current_location and were NOT moved as part of this note.",
   "files": [
-    "FTD_FQCR_v1_5_Checkpoint.md",
-    "README.md",
-    "FTD_FQCR_v1_5_Agent_Prompt.txt",
-    "FTD_FQCR_v1_5_Next_Frontiers.md",
-    "FTD_FQCR_v1_5_Status_Ledger.csv",
-    "FTD_FQCR_v1_5_Equation_Index.csv"
+    {
+      "package_name": "FTD_FQCR_v1_5_Checkpoint.md",
+      "current_location": "docs/theory/01_reference/SPEC_FQCR_V1_5_CHECKPOINT.md"
+    },
+    {
+      "package_name": "README.md",
+      "current_location": "docs/theory/archive/packages/FTD_FQCR_v1_5_checkpoint_package/README.md"
+    },
+    {
+      "package_name": "FTD_FQCR_v1_5_Agent_Prompt.txt",
+      "current_location": null,
+      "note": "Not present in the tracked corpus under this name; not accounted for by this provenance note."
+    },
+    {
+      "package_name": "FTD_FQCR_v1_5_Next_Frontiers.md",
+      "current_location": "docs/theory/10_eft_program/EXPLR_FQCR_V1_5_NEXT_FRONTIERS.md"
+    },
+    {
+      "package_name": "FTD_FQCR_v1_5_Status_Ledger.csv",
+      "current_location": "docs/theory/07_assessment/core_ledgers/REF_FQCR_V1_5_STATUS_LEDGER.csv"
+    },
+    {
+      "package_name": "FTD_FQCR_v1_5_Equation_Index.csv",
+      "current_location": "docs/reference/REF_FQCR_V1_5_EQUATION_INDEX.csv"
+    }
   ]
 }

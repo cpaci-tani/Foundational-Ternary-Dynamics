@@ -1,4 +1,13 @@
-# Quark Mass Ratios from Lattice Integers
+# ARCHIVED/RETRACTED — Quark Mass Ratios from Lattice Integers
+
+> **Retraction (2026-05-27, commit `20207156d7`):** Retracted in the same
+> cleanup pass as FTD-0219 (`EXPLR_MASS_SCALE_GENERATION_RETRACTED.md`) — the
+> quark-mass candidate formulas below are exploratory numerology on the
+> framework integer set, tagged `[OPEN]`/`[CONJECTURE]` at authoring time and
+> never reaching derivation status. This file is retained only as
+> provenance. The corrected active statement is
+> `docs/theory/05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`
+> (LEDGER row FTD-0221).
 
 ## Exploring Whether Quark Masses Follow the Lepton Pattern
 

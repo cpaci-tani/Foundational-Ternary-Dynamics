@@ -1,4 +1,13 @@
-# EXPLR · Discrete-Native Mass Scale Generation and the μ Loophole
+# ARCHIVED/RETRACTED — Discrete-Native Mass Scale Generation and the μ Loophole
+
+> **Retraction (FTD-0219, 2026-05-27):** Officially retracted per adversarial
+> review and strict epistemic discipline. The discrepancy-correction and
+> loophole seesaw parameters below are post-hoc continuous fits with no
+> first-principles substrate dynamics — not a derivation of the mass scale
+> μ. This file is retained only as provenance. The corrected active
+> statement is
+> `docs/theory/05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`
+> (LEDGER row FTD-0221).
 
 **Tag:** [CONJECTURE] / [SELECTION]
 **Date:** 2026-05-27

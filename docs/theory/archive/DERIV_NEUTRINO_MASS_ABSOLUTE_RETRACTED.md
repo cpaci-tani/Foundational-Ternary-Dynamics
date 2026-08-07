@@ -1,4 +1,13 @@
-# Absolute Neutrino Mass Scale from the FTD Seesaw
+# ARCHIVED/RETRACTED — Absolute Neutrino Mass Scale from the FTD Seesaw
+
+> **Retraction (2026-05-27, commit `20207156d7`):** Retracted in the same
+> cleanup pass as FTD-0219 (`EXPLR_MASS_SCALE_GENERATION_RETRACTED.md`) — the
+> seesaw parameter decomposition below (m_D, M_R expressed in FTD integer
+> factors) is a post-hoc continuous fit with no first-principles substrate
+> dynamics, not a derivation. This file is retained only as provenance. The
+> corrected active statement is
+> `docs/theory/05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`
+> (LEDGER row FTD-0221).
 
 ## Deriving m_1, m_2, m_3 from Framework Integers and the Master Quadratic
 
