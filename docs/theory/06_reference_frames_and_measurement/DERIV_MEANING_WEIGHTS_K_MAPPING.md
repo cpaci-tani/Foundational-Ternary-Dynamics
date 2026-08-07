@@ -2,9 +2,11 @@
 
 > **STATUS: [THEOREM] — proving the exact math connecting the meaning weights $\alpha, \beta$ to the master-quadratic parameter $k$.**
 
+> **PROVENANCE FLAG (added 2026-08-06, doc-cleanup pass):** This file's citations do not resolve against `docs/theory/07_assessment/core_ledgers/LEDGER.md`. (1) **LEDGER id FTD-0245 is unregistered** — the LEDGER numbering jumps FTD-0244 → FTD-0248 with no FTD-0245 row; the id FTD-0245 is instead claimed by an unrelated document, `docs/theory/03_derivations/DERIV_LATTICE_PATH_INTEGRAL_JTWIST.md` (tagged `[DERIVATION] / [OPEN]`). (2) **The "Depends on: FTD-0242 (Domain partition)" citation is mislabeled** — LEDGER's actual FTD-0242 is "Route-invariance of the MC-T4.3 operator-assembly boundary," an unrelated alpha-readout-boundary claim, not a "Domain partition" result. Consequently the `[THEOREM]` tag below has never been through ledger-level registration/review. This note is provenance-flagging only — it corrects no math, mints no new LEDGER id, and moves no tag; resolving it (registering a real id or retracting the citation) is a separate, out-of-scope step.
+
 **Tag:** [THEOREM]
-**LEDGER id:** FTD-0245
-**Depends on:** FTD-0001 (G* definition), FTD-0242 (Domain partition), FTD-0187 (Existence Filter hierarchy).
+**LEDGER id:** FTD-0245 ⚠ unregistered — see provenance flag above
+**Depends on:** FTD-0001 (G* definition), FTD-0242 (Domain partition) ⚠ mislabeled — see provenance flag above, FTD-0187 (Existence Filter hierarchy).
 
 ---
 

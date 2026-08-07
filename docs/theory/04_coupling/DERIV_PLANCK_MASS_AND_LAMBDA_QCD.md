@@ -1,7 +1,7 @@
 # Planck Mass and Λ_QCD: Closing the External Input Loop
 
 **Document Classification:** Theoretical Derivation
-**Status:** [THEOREM] (Λ_QCD) + [SELECTION] (M_P self-consistency)
+**Status:** [SELECTION] (Λ_QCD) + [THEOREM] (M_P self-consistency) — corrected 2026-08-06: the line previously read "[THEOREM] (Λ_QCD) + [SELECTION] (M_P self-consistency)", inverted relative to the document's own body tags (§2's LQ-3/LQ-4 rows and the §2.4 "Bottom line" both tag Λ_QCD [SELECTION]; §1.3/§1.4's M_P self-consistency claims are tagged [THEOREM]/[AXIOM])
 **Depends on:** SPEC_FTD_REFERENCE.md, DERIV_LAMBDA_QCD_DERIVATION.md, DERIV_HIGGS_FROM_MANIFESTATION.md, DERIV_FERMI_COUPLING_CONSTANT.md
 
 ---
