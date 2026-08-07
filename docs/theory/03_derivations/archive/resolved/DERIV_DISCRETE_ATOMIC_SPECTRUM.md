@@ -1,4 +1,9 @@
-# The Discrete Atomic Spectrum and Shell Structure
+# The Discrete Atomic Spectrum and Shell Structure (ARCHIVED — merged 2026-08-06)
+
+> **Merged into `../standard_model/DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §4
+> (2026-08-06),** alongside three sibling documents from the same 2026-06-18
+> batch applying the same technique to different targets. Content preserved
+> verbatim there; kept here for provenance per the doc-cleanup skill.
 
 **Status:** Foundational theory [STRONGLY MOTIVATED CONJECTURE] **(unaudited — correction notice added 2026-08-06)**
 

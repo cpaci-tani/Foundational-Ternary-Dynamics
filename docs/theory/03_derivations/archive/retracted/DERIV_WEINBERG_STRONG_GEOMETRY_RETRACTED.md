@@ -1,4 +1,9 @@
-# Geometric Reading of Electroweak and Strong Mixing Parameters
+# Geometric Reading of Electroweak and Strong Mixing Parameters (ARCHIVED — merged 2026-08-06)
+
+> **Merged into `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §2 (2026-08-06),**
+> alongside three sibling documents from the same 2026-06-18 batch applying
+> the same technique to different targets. Content preserved verbatim there;
+> kept here for provenance per the doc-cleanup skill.
 
 **Status:** `[STRUCTURALLY MOTIVATED PARAMETRIC]` **(corrected 2026-08-06 — was `[THEOREM: LATTICE PROJECTION]`)**
 
@@ -73,4 +78,3 @@ $$\alpha_s(M_Z) = \frac{\text{Gluon Anti-Screening}}{\text{Gluon Anti-Screening}
 
 **Reading:** The arithmetic 7 + 52 = 59 is exact given the stated inputs, and the numerator $b_3=7$ is structurally motivated by the standard QCD beta function — but per the correction notice above, a competitor ratio (2/17) fits α_s(M_Z) more closely (0.29% vs 0.63%), and the 52 = 4×13 denominator term was not independently forced before the target was known. The tag is `[STRUCTURALLY MOTIVATED PARAMETRIC]`, not `[THEOREM]`.
 
-**Status Upgrade:** Both constants are officially promoted to `[THEOREM: LATTICE PROJECTION]`.

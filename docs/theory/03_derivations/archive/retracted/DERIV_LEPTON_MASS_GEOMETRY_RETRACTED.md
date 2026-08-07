@@ -1,4 +1,9 @@
-# Geometric Reading of the Lepton Mass-Ratio Integers
+# Geometric Reading of the Lepton Mass-Ratio Integers (ARCHIVED — merged 2026-08-06)
+
+> **Merged into `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §1 (2026-08-06),**
+> alongside three sibling documents from the same 2026-06-18 batch applying
+> the same technique to different targets. Content preserved verbatim there;
+> kept here for provenance per the doc-cleanup skill.
 
 **Epistemic Status:** `[STRUCTURALLY MOTIVATED PARAMETRIC]` **(corrected 2026-07-01, FTD-0348 — was `[THEOREM]`)**
 

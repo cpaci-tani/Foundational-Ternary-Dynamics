@@ -118,7 +118,7 @@ where B_μ is the U(1)_Y hypercharge field and W³_μ is the neutral SU(2) field
 
 $$\boxed{\sin^2\theta_W = \frac{N_c}{N_{\text{eff}}} = \frac{3}{13} \approx 0.23077}$$
 
-*where N_c = 3 represents the orthogonal Cartesian axes (Coulomb interaction), and N_eff = 13 represents the total number of spatial axes in the 26-neighbor Moore neighborhood. See `DERIV_WEINBERG_STRONG_GEOMETRY.md` for the formal geometric proof.*
+*where N_c = 3 represents the orthogonal Cartesian axes (Coulomb interaction), and N_eff = 13 represents the total number of spatial axes in the 26-neighbor Moore neighborhood. See `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §2 for the formal geometric proof.*
 
 **Comparison with experiment:**
 
@@ -481,7 +481,7 @@ where:
 | SU2-2 | Void |0⟩ is SU(2) singlet | **[THEOREM]** | T_i|0⟩ = 0 (§1.3) | SU2-1 |
 | SU2-3 | W± = transmutation operators T± | **[SELECTION]** | Consistent with stress-threshold mechanism (§2.1) | SU2-1, Ch. 6.5 |
 | SU2-4 | Z⁰ = diagonal T₃ coupling | **[SELECTION]** | Consistent with neutral-current phenomenology (§2.2) | SU2-1 |
-| SU2-5 | sin²θ_W = 3/13 = 0.23077 | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0018 — the 2026-06-18 `[THEOREM]` upgrade was RETRACTED 2026-06-19, adjudicated; corrected in DERIV_WEINBERG_STRONG_GEOMETRY.md 2026-08-06) | 0.19% agreement with PDG (§3.1) | DERIV_WEINBERG_STRONG_GEOMETRY.md |
+| SU2-5 | sin²θ_W = 3/13 = 0.23077 | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0018 — the 2026-06-18 `[THEOREM]` upgrade was RETRACTED 2026-06-19, adjudicated; corrected in DERIV_WEINBERG_STRONG_GEOMETRY.md 2026-08-06) | 0.19% agreement with PDG (§3.1) | DERIV_GEOMETRIC_MASS_RATIO_READINGS.md §2 |
 | SU2-6 | M_W = 80.36 GeV | **[SELECTION]** | 0.02% agreement with PDG (§3.3) | SU2-5, v, α |
 | SU2-7 | M_Z = 91.19 GeV | **[SELECTION]** | 0.002% agreement with PDG (§3.3) | SU2-6, sin²θ_W |
 | SU2-8 | G_F = 1/(√2 v²) = 1.1677 × 10⁻⁵ GeV⁻² | **[THEOREM]** | 0.11% agreement (§6.2) | v = M_P√(2π)α⁸ |

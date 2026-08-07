@@ -127,7 +127,7 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 
 #### Quark Masses (6/6) — [PARAMETRIC]
 
-> **Note:** the `[THEOREM]`-grade "$L_n$ phase-space" recipes are **not used** — substitution identities, not a forcing chain; they fail the FTD-0097/0189 look-elsewhere bar and the zero-promotion discipline. **Honest tag: `[PARAMETRIC]` (all six; m_t imports Z=118/Oganesson from chemistry).** The integer-fit formulas are listed below. See `DERIV_BARYON_AND_QUARK_GEOMETRY.md` / `CATALOG_PARAMETRIC_INSERTIONS.md` §5.
+> **Note:** the `[THEOREM]`-grade "$L_n$ phase-space" recipes are **not used** — substitution identities, not a forcing chain; they fail the FTD-0097/0189 look-elsewhere bar and the zero-promotion discipline. **Honest tag: `[PARAMETRIC]` (all six; m_t imports Z=118/Oganesson from chemistry).** The integer-fit formulas are listed below. See `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 / `CATALOG_PARAMETRIC_INSERTIONS.md` §5.
 
 | Particle | FTD Formula (integer fit) | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
