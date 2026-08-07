@@ -50,6 +50,15 @@ The number-theoretic core. These establish the identities the framework's centra
 | [EXPLR_PARITY_TWIST_SUPERDETERMINANT.md](general_math/EXPLR_PARITY_TWIST_SUPERDETERMINANT.md) | [STRUCTURAL OBSERVATION] | **(FTD-0381)** The parity twist's Γ-classes as det/Ber of one native, canonically oriented graded Hankel object, at exactly N ≡ 0 mod 4 (Ber = G\*⁴/48 at N=4; bare √2π/G\* are amplitude-level); Q = x² odd, Q² = the string-equation operator; redteam-corrected (orientation bit withdrawn; Galois-on-weights exchange). No fermion/α content. Verified 14/14. |
 | [REF_BOSON_FERMION_DICHOTOMY_TABLE.md](general_math/REF_BOSON_FERMION_DICHOTOMY_TABLE.md) | [REFERENCE — synthesis] | 17-row boson/fermion dichotomy table (exchange, algebras, spin-statistics, Matsubara, Euler products, det/Ber, SUSY shape, frontier) with the Γ-structure column at existing tags (FTD-0367/0381/0336/0379-0380). Binding guards: rows independent; ℤ/2s not identified; no "G\* is fermionic"; substrate measured bosonic. No new claim, no new id. |
 | [DERIV_JONES_INDEX_THRESHOLD_RATIO.md](general_math/DERIV_JONES_INDEX_THRESHOLD_RATIO.md) | [CONJECTURE] | Jones Index and manifestation threshold ratio: KB/KC = 4sqrt(2) derived from the hyperfinite Type III subfactor inclusion Jones Index [N:M] = 32. |
+| [ANALYSIS_PHASE_J_ZERO_MODES_v1.md](ANALYSIS_PHASE_J_ZERO_MODES_v1.md) | [THEOREM] (conditional — matched-stencil, λ_G→∞) | FTD-0350: Phase J ultralocality (spine Theorem 7) proven at every L≥2 on the Gauss-realizable space; the prior L≥4 ambiguity closed as a masking artifact, not a structural gap. |
+| [THEOREM_LATTICE_COULOMB_ASYMPTOTIC_v1.md](THEOREM_LATTICE_COULOMB_ASYMPTOTIC_v1.md) | [THEOREM] (§2, exact) + [THEOREM — standard] (§3) + [MEASURED] (§4) | Exact ℤ³ lattice-Green's-function identity α_r(r) → 1/(2π), zero free parameters; supersedes spine Theorem 6 (Phase G) as the load-bearing content demoted by FTD-0785. |
+| [PREREG_CATALAN_INDEPENDENCE_v1.md](general_math/PREREG_CATALAN_INDEPENDENCE_v1.md) | [PRE-REGISTRATION] | Locks the frontier-documentation discipline for the G\*-paper's Conjecture 19.2 (Catalan's constant algebraic independence over ℚ̄(G\*,π)); not a proof attempt. |
+| [ROADMAP_IDENTITY_PRIORITIES.md](general_math/ROADMAP_IDENTITY_PRIORITIES.md) | [INFRASTRUCTURE / METHODOLOGY] | Synonymy-graph roadmap over the 100 verified G\*-paper identities; prioritises future verification effort, produces no new theorems. |
+| [NODE_MAP_FTD_MATH.md](NODE_MAP_FTD_MATH.md) | [INFRASTRUCTURE / METHODOLOGY] | Generated cross-sector connectivity map (13 spine theorems, 527 LEDGER claims, 93 objects, 1142 identities); descriptive navigation, not theorem-production. |
+| [ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md](number_theory/ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md) | [NUMERICAL FACT — exhaustive over stated domain] + [CLOSED NEGATIVE] + [MEASURED] | FTD-0321: full per-ideal-class Damerell scan; d=−4's dual-match privilege confirmed on its registered domain, shown a range artifact beyond it. |
+| [ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md](number_theory/ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md) | [THEOREM — closed form] + [MEASURED] + [CLOSED NEGATIVE] + [CORRECTION] | FTD-0803 (parent FTD-0321): G\* sits at an SL₂(ℤ)-invariant saddle giving a bounded log-density divergence (4–5×); the "structurally uninformative" consequence is refuted. |
+| [MATH_PERIOD_IMPORT_FRONTIER.md](number_theory/MATH_PERIOD_IMPORT_FRONTIER.md) | [SYNTHESIS] | FTD-0375: restates FTD's import boundary (G\*, δ) in period-theoretic / Grothendieck-period-conjecture vocabulary; introduces no theorem, promotes no tag. |
+| [THEOREM_VALUATION_4GSTAR_MINUS_1.md](number_theory/THEOREM_VALUATION_4GSTAR_MINUS_1.md) | [THEOREM — relative to documented native inventory] (conditional on Chudnovsky 1976) + [SELECTION] + [SYNTHESIS] | FTD-0353: the surd δ=√(G\*(4G\*−1)) lies outside every documented native period hull; realizing it is exactly the FC-W ramification adoption. |
 
 
 ## The central α conjecture: CM identification & structural-uniqueness scans
@@ -98,6 +107,7 @@ The Walsh-Hadamard / Cl(3,0) / Dirac-Kähler thread testing whether fermions eme
 | [DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md](algebra/DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md) | [MEASURED] (per-stage) | Consolidated Cl(3,0) multigrade campaign (F-prime / F-double-prime / Path 1). ⚠ §3's noise reinterpretation REFUTED 2026-07-10 (FTD-0380). |
 | [DERIV_DIRAC_KAHLER_IDENTIFICATION.md](algebra/DERIV_DIRAC_KAHLER_IDENTIFICATION.md) | [STRUCTURAL ID — kinematic only] + [THEOREM NEGATIVE] | FTD's 4-grade structure is a Dirac-Kähler field (kinematic; dynamical clause CLOSED NEGATIVE 2026-07-10, FTD-0379); Cl(3,0) cannot give mass ratios. |
 | [ANALYSIS_VERTEX_DK_CLOSURE_v1.md](algebra/ANALYSIS_VERTEX_DK_CLOSURE_v1.md) | [CLOSED NEGATIVE] ×2 + [MEASURED] | Vertex program v1 (FTD-0379/0380, pre-registered): FTD-0089's literal DK evolution fails (grades better described by KG, 4/4); su(2) closure does not recover under the prescribed noise controls (0/18 cells). Branch-A closed at the protocols tested; instrument caveats §1.3. |
+| [PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md](algebra/PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md) | [PRE-REGISTRATION] | Locks the construction and outcome-map for testing whether a matrix promotion of Guillera's operator "snaps" onto BCC lattice directions, before the measurement is run. |
 
 ## FQCR & observer-operator program
 
@@ -137,6 +147,8 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 | [EXPLR_RELU_TYPE_TRANSITION.md](general_math/EXPLR_RELU_TYPE_TRANSITION.md) | formal exploration | The Softplus β interpolates between von Neumann factor types (III → I). |
 | [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](general_math/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | formal exploration | Hawking temperature links collapse to curvature via the Softplus β parameter. |
 | [EXPLR_EULER_RATIO_RICCI_FLOW.md](number_theory/EXPLR_EULER_RATIO_RICCI_FLOW.md) | [CONJECTURE] | The Euler reflection ratio, Gaussian flow, and the arrow of time. |
+| [EXPLR_ERDOS_TERNARY_MAPPING.md](EXPLR_ERDOS_TERNARY_MAPPING.md) | [EXPLORATION] / [OPEN] | Maps the Erdős cap-set problem (no-3-term-AP subsets of ℤ₃ⁿ) onto FTD's ternary voxel ontology; scoping note for a prospective engine-driven search. |
+| [EXPLR_UNIT_DISTANCE_ALGEBRA.md](EXPLR_UNIT_DISTANCE_ALGEBRA.md) | [EXPLORATION] / [OPEN] | Maps the Erdős unit-distance problem onto FTD's cyclotomic/algebraic-basis structure; scoping note for a prospective engine-driven search. |
 
 ---
 
@@ -146,7 +158,9 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 - [DERIV_TIER_B_CLOSED_NEGATIVE.md](archive/DERIV_TIER_B_CLOSED_NEGATIVE.md) — [CLOSED NEGATIVE]: G\* opus Tier B targets T-B1/T-B2; the engine `N_base = 4` is a numerical coincidence, not a structural bridge to the Q(i)-arithmetic 4.
 - [EXPLR_TWO_PI_GSTAR_CONNECTION.md](archive/EXPLR_TWO_PI_GSTAR_CONNECTION.md) — [CLOSED NEGATIVE]: the proposed structural connection between 1/(2π) and G\*, falsified by the Q4a measurement.
+- [EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md](archive/EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md) — [CLOSED NEGATIVE]: executed result of the pre-registered BCC-snap test ([PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md](algebra/PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md)) — iterates of the ternary matrix operator do not snap to BCC primitive directions.
+- [NODE_MAP_FTD_MATH.md](archive/NODE_MAP_FTD_MATH.md) — [INFRASTRUCTURE / METHODOLOGY], superseded snapshot: stale generated LEDGER-connectivity map (commit `1632e92`); superseded by the current [NODE_MAP_FTD_MATH.md](NODE_MAP_FTD_MATH.md) at this directory's root.
 
 ---
 
-62 active docs in this cluster (+ 2 archived).
+87 active docs in this cluster (+ 4 archived).
