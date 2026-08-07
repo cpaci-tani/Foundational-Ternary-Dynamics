@@ -29,8 +29,11 @@ and the print left untouched).
 
 **OT-3.3 is retagged `[NUMERICAL FACT]` -> `[SELECTION]` and withdrawn as
 support for OT-5.1.** With FTD-0791 having taken the FTD-0319 leg, the
-remaining support for `x_+ = 1/alpha` is OT-1.9 and OT-1.5 — **both
-structural, neither numerical**. Read alongside FTD-0792 (the engine runs on
+remaining support for `x_+ = 1/alpha` is **OT-1.5 plus OT-1.9's unit-group
+arithmetic only** — FTD-0321 (2026-08-04) took OT-1.9's dual-match reading
+(the `d = -4` privilege breaks by `|d| <= 500,000` with 1,271 dual-matchers;
+what survives of OT-1.9 carries no dual-match content; see TRACKER
+OT-5.1). Read alongside FTD-0792 (the engine runs on
 the CODATA value; a source-lint test *enforces* that the derived root reaches
 no force path), the empirical case is: 1.26 ppm of arithmetic, occurring at
 chance frequency in its own scanned family, in an engine that never used it.
