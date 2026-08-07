@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0293
 **Status:** [MEASUREMENT -- DISCRETE TICK MODIFIED ENERGY CONFIRMED]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_INVARIANT_v2.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_TICK_INVARIANT_v2.md`
 **Lock commit:** `83863d5e`
 **Lock tag:** `preregister-thomson-tick-invariant-v2`
 **Artifact:** `engine/tests/campaign_thomson_tick_invariant_v2.cpp`

@@ -142,7 +142,7 @@ Per cell, per triple: signal = |mean over seeds on expected plaquette|; off = ma
 |---|---|---|
 | M1 runner | `engine/tests/test_dk_evolution.cpp` | `cb3083d4180127d76b38cd504a8107aea44c874b04592588a0e5fbac81696f96` |
 | M2 runner | `engine/tests/test_bivector_closure_v2.cpp` | `c6c74322dbf2f46fdfcefe9252391feb13364dc37e2dc1bb0ae028c0f9f8637a` |
-| This prereg | `docs/theory/10_eft_program/preregistrations/PREREG_VERTEX_DK_CLOSURE_v1.md` | (locked by the commit) |
+| This prereg | `docs/theory/10_eft_program/preregistrations/engine_emergence_campaigns/PREREG_VERTEX_DK_CLOSURE_v1.md` | (locked by the commit) |
 
 Output: both runners print full per-cell / per-grade tables and a verdict line against the criteria above; console output captured to `engine/results/vertex_dk_closure_2026-07-10/` (gitignored per convention; manifest row added to `REF_PREREGISTER_MANIFEST.md`). CTest names: `dk_evolution`, `bivector_closure_v2` (LABELS native eft vertex; long TIMEOUT — these are campaign runners, not smoke tests).
 

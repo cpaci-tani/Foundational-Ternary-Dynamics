@@ -8,7 +8,7 @@
 **Artifact SHA256:** `357a2a2b4bd7fb8d8604a4c30490f68ab9a404e8574ed6e55b034056a5b3f3e8`
 **Lock commit:** `47ccbee4`
 **Lock tag:** `preregister-thomson-native-continuity-v1`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md`
 
 ---
 

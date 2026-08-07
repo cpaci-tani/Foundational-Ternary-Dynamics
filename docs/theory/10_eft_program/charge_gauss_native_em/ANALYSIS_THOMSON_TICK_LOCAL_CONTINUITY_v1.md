@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0294
 **Status:** [MEASUREMENT -- NUMERIC RELATIVE-GATE INVALIDATED]
-**Pre-registration:** `docs/theory/10_eft_program/preregistrations/PREREG_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`
+**Pre-registration:** `docs/theory/10_eft_program/preregistrations/charge_gauss_native_em/PREREG_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`
 **Lock commit:** `7ebc236e`
 **Lock tag:** `preregister-thomson-tick-local-continuity-v1`
 **Artifact:** `engine/tests/campaign_thomson_tick_local_continuity.cpp`

@@ -556,7 +556,7 @@ The classical half of the cosmological constant problem (where does the $M_\text
 
 ### Alpha Precision: 1.26 ppm tree-level (post-2026-04-19 honest accounting)
 
-**Status:** 1.26 ppm tree-level match. The master-quadratic identity $x^2 - 16G^{*2}x + 16G^{*3} = 0$ is a [THEOREM]. Its match to CODATA $\alpha^{-1}$ at 1.26 ppm is empirically observed but the *physical identification* $x_+ = 1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE]. The original "0.21 ppt" claim has been retracted: the $\varepsilon$-expansion is a post-hoc fit beyond CODATA's experimental precision (0.15 ppb), so additional digit-string agreement is not testable as a prediction. See @sec-precision and `docs/theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md`.
+**Status:** 1.26 ppm tree-level match. The master-quadratic identity $x^2 - 16G^{*2}x + 16G^{*3} = 0$ is a [THEOREM]. Its match to CODATA $\alpha^{-1}$ at 1.26 ppm is empirically observed but the *physical identification* $x_+ = 1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE]. The original "0.21 ppt" claim has been retracted: the $\varepsilon$-expansion is a post-hoc fit beyond CODATA's experimental precision (0.15 ppb), so additional digit-string agreement is not testable as a prediction. See @sec-precision and `docs/theory/07_assessment/sm_constants_mass_flavour/AUDIT_RATIONAL_FIT_CLAIMS.md`.
 
 ### Summary of Upgrades (post-2026-04-19 audit + post-2026-05-02 tracker reconciliation)
 

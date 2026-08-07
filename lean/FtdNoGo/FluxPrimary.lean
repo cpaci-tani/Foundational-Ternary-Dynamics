@@ -56,7 +56,7 @@
   D3(i) (F-circular fires); it sharpens faithfulness within the assumption. It
   moves NO corpus tag: D3(i) stays `[DEFINITION]`, x₊=1/α stays `[SMC]`, the
   Level-4 ceiling is untouched. Full §9 verdict + independent review in
-  `docs/theory/10_eft_program/AUDIT_COMMUTATIVITY_DERIVATION_LEAN_SUBSTRATE.md`.
+  `docs/theory/10_eft_program/quantum_foundations/AUDIT_COMMUTATIVITY_DERIVATION_LEAN_SUBSTRATE.md`.
 -/
 import Mathlib
 import FtdNoGo.Postulates

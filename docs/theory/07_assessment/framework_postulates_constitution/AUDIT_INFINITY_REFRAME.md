@@ -238,7 +238,7 @@ units and physical length).
 ## 10 · Reproducibility
 
 ```
-docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md  # this doc
+docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md  # this doc
 docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md  # Phase I core audit
 docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md  # Phase J
 docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md  # three-mechanism analysis

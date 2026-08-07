@@ -85,7 +85,7 @@
       "ledger_ids": ["FTD-0001"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
-        "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md",
+        "docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md",
         "scripts/proofs/scan_cm_curves.py"
       ],
       "constants_py_ref": null,
@@ -154,7 +154,7 @@
       "ledger_ids": ["FTD-0004"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
-        "docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md"
+        "docs/theory/10_eft_program/derivations/alpha_readout_programme/DERIV_EMERGENT_COULOMB_GEOMETRIC.md"
       ],
       "constants_py_ref": null,
       "lab_measurement": {
@@ -203,7 +203,7 @@
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
         "docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
-        "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md"
+        "docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md"
       ],
       "constants_py_ref": "ALPHA_INV",
       "lab_measurement": {
@@ -330,7 +330,7 @@
       "ledger_ids": ["FTD-0030", "FTD-0041", "FTD-0059"],
       "source_files": [
         "docs/SPEC_FTD.md",
-        "docs/theory/10_eft_program/derivations/THEOREM_A_PHYS_NO_GO.md",
+        "docs/theory/10_eft_program/derivations/framework_postulates_constitution/THEOREM_A_PHYS_NO_GO.md",
         "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md",
         "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md"
       ],
@@ -377,7 +377,7 @@
       "ledger_ids": ["FTD-0041", "FTD-0096"],
       "source_files": [
         "docs/SPEC_FTD.md",
-        "docs/theory/10_eft_program/derivations/THEOREM_MU_NO_GO_FTD0096.md"
+        "docs/theory/10_eft_program/derivations/sm_constants_mass_flavour/THEOREM_MU_NO_GO_FTD0096.md"
       ],
       "constants_py_ref": "K_B",
       "lab_measurement": {

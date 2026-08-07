@@ -377,7 +377,7 @@ separate); the QM commutativity wall (the sibling pre-reg; cross-checked, not re
 
 1. Finalise §§1–11. Compute SHA256:
    ```sh
-   sha256sum docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md
+   sha256sum docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md
    ```
 2. **Confirm the next-free LEDGER id** by grepping the whole `docs/` tree (concurrent
    sessions have claimed through ~FTD-0243). Record SHA256 + tag + the confirmed id in

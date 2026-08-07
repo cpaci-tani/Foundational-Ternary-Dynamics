@@ -8,7 +8,7 @@
 **Artifact SHA256:** `aae604ea897943102273f89b819735283804474d26a2a531f769835dc46f5c89`
 **Lock commit:** `0ba544f5`
 **Lock tag:** `preregister-thomson-moving-recoil-accounting-v1`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`
 
 ---
 

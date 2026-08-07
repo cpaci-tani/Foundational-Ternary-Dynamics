@@ -4,7 +4,7 @@
  *        circumstances, or does it depend on how the particle was made?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_MANIFESTATION_SEED_DIVERSITY_v1.md
+ *   docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_MANIFESTATION_SEED_DIVERSITY_v1.md
  * (tag `preregister-manifestation-seed-diversity-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement instrument

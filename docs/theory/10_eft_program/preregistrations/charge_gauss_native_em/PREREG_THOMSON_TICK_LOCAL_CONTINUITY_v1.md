@@ -8,7 +8,7 @@
 **Artifact SHA256:** `6b137c83016b9aefb10d47d22df0094487ab761c06e167870a209004ada99aa3`
 **Lock commit:** `7ebc236e`
 **Lock tag:** `preregister-thomson-tick-local-continuity-v1`
-**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`
+**Run analysis:** `docs/theory/10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`
 
 ---
 

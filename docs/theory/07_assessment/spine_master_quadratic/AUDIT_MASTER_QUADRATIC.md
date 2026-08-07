@@ -385,7 +385,7 @@ docs/theory/09_mathematical/MATH_MASTER_QUADRATIC.md  # the 250-page math layer
 docs/theory/09_mathematical/DERIV_QUADRATIC_NECESSITY.md  # why degree 2 (honest [SELECTION])
 docs/theory/08_structural/DERIV_WATSON_GSTAR_IDENTITY.md  # BCC  period bridge
 docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC / Watson
-docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md  # existing catalog of selections
+docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md  # existing catalog of selections
 ```
 
 Run these in sequence to reproduce the full Phase I audit:

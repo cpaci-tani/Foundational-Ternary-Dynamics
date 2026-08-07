@@ -5,7 +5,7 @@
  *        window) genesis happens to fire?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_GENESIS_TIMING_DEPENDENCE_v1.md
+ *   docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_GENESIS_TIMING_DEPENDENCE_v1.md
  * (tag `preregister-genesis-timing-dependence-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement instrument

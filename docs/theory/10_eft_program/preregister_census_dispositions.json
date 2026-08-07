@@ -11,7 +11,7 @@
  },
  "preregister-alpha-d3-forced-escape-v1": {
   "status": "executed-verdict-booked",
-  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1.md; manifest row owed via census addendum",
+  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/alpha_readout_programme/ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1.md; manifest row owed via census addendum",
   "date": "2026-07-12"
  },
  "preregister-alpha-det-forcing-v2": {
@@ -121,7 +121,7 @@
  },
  "preregister-genesis-criticality-v1": {
   "status": "executed-verdict-booked",
-  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/ANALYSIS_GENESIS_CRITICALITY_v1.md; manifest row owed via census addendum",
+  "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/spine_master_quadratic/ANALYSIS_GENESIS_CRITICALITY_v1.md; manifest row owed via census addendum",
   "date": "2026-07-12"
  },
  "preregister-gnc-qij-v1": {
@@ -136,7 +136,7 @@
  },
  "preregister-graviton-substrate-mode-v2": {
   "status": "executed-verdict-booked",
-  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/AUDIT_LEDGER_ID_COLLISIONS.md; docs/theory/10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md; manifest row owed via census addendum",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/gravity_cosmology/AUDIT_LEDGER_ID_COLLISIONS.md; docs/theory/10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md; manifest row owed via census addendum",
   "date": "2026-07-12"
  },
  "preregister-heegner-tower-rigidity-v1": {
@@ -301,7 +301,7 @@
  },
  "preregister-threshold-crossing-born-v1": {
   "status": "executed-verdict-booked",
-  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md; manifest row owed via census addendum",
+  "note": "tag exists; verdict doc(s): docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md; manifest row owed via census addendum",
   "date": "2026-07-12"
  },
  "preregister-tower-level-scan-v1": {

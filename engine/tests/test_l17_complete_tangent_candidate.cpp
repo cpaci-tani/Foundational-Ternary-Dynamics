@@ -3143,7 +3143,7 @@ bool write_hash_manifest(const std::filesystem::path& stem) {
   if (!hashes) return false;
   hashes << "artifact,sha256,bytes\n";
   const auto protocol = repo_root()/
-      "docs/theory/10_eft_program/preregistrations/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
   const auto runner = engine_root()/"tests/test_l17_complete_tangent_candidate.cpp";
   const auto support = engine_root()/"tests/support/connected_moore_tangent_codec.h";
   std::vector<std::pair<std::string,std::filesystem::path>> fixed{{
@@ -3165,7 +3165,7 @@ bool validate_hash_manifest(const std::filesystem::path& stem) {
   std::string line;
   if (!std::getline(input,line) || line!="artifact,sha256,bytes") return false;
   const auto protocol = repo_root()/
-      "docs/theory/10_eft_program/preregistrations/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
   std::map<std::string,std::filesystem::path> expected{{"protocol",protocol},
       {"runner",engine_root()/"tests/test_l17_complete_tangent_candidate.cpp"},
       {"support",engine_root()/"tests/support/connected_moore_tangent_codec.h"},
@@ -3257,7 +3257,7 @@ int main() {
   }
   TangentSummary summary;
   const auto protocol_path = repo_root()/
-      "docs/theory/10_eft_program/preregistrations/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
   summary.protocol_locked =
       ftd0774::sha256_file(protocol_path.string()) == kProtocolSha256;
   summary.provenance = summary.protocol_locked;

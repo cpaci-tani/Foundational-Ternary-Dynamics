@@ -4,7 +4,7 @@
  *        symmetry-breaking floor set by acting on a single site at all?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_PERTURBATION_MAGNITUDE_CURL_SWEEP_v1.md
+ *   docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_PERTURBATION_MAGNITUDE_CURL_SWEEP_v1.md
  * (tag `preregister-perturbation-magnitude-curl-sweep-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement instrument

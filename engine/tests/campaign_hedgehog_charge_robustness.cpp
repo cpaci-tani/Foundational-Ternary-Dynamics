@@ -4,7 +4,7 @@
  *        across birth circumstances that produced a 9.2x energy spread?
  *
  * Implements the measurement registered by
- *   docs/theory/10_eft_program/preregistrations/PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md
+ *   docs/theory/10_eft_program/preregistrations/framework_boundary_imports_consumption/PREREG_HEDGEHOG_CHARGE_ROBUSTNESS_v1.md
  * (tag `preregister-hedgehog-charge-robustness-v1`).
  *
  * THE PRE-REGISTRATION IS CANONICAL. This file is a measurement

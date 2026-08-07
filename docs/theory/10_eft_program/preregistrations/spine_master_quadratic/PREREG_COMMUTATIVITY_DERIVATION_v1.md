@@ -323,7 +323,7 @@ criteria for; the closure verdict is a downstream artifact.
 
 1. Finalise §§1–11. Compute SHA256:
    ```sh
-   sha256sum docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_DERIVATION_v1.md
+   sha256sum docs/theory/10_eft_program/preregistrations/spine_master_quadratic/PREREG_COMMUTATIVITY_DERIVATION_v1.md
    ```
 2. Record SHA256 + tag in `REF_PREREGISTER_MANIFEST.md`; add a
    `[PRE-REGISTRATION]` row to `../../07_assessment/core_ledgers/LEDGER.md` at
@@ -333,7 +333,7 @@ criteria for; the closure verdict is a downstream artifact.
    same pass.
 3. Commit + lightweight tag:
    ```sh
-   git commit docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_DERIVATION_v1.md
+   git commit docs/theory/10_eft_program/preregistrations/spine_master_quadratic/PREREG_COMMUTATIVITY_DERIVATION_v1.md
    git tag preregister-commutativity-derivation-v1 \
        -m "Pre-reg: derive D3(i) commutativity over all of A5 (generalizes FTD-0226)"
    ```
