@@ -29,6 +29,12 @@
 | [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) | [REFERENCE] / [SYNTHESIS] / [OPEN PROGRAM] | Canonical math-first ontology + readout-ordering principle (FTD-0153). |
 | [SPEC_OPEN_MATH_BY_SECTOR.md](SPEC_OPEN_MATH_BY_SECTOR.md) | [REFERENCE] | Sector-organised open research-questions queue, 10 SM sectors (FTD-0146); replaces tier-aligned checklist. |
 | [REF_REFERENCE_FRAME_VOCABULARY.md](REF_REFERENCE_FRAME_VOCABULARY.md) | [REFERENCE] (proposed canonical) | Canonical reference frame structure/frame dynamics vocabulary replacing "reference frame context" terminology. |
+| [SPEC_UNIFIED_AXIOM_REGISTER.md](SPEC_UNIFIED_AXIOM_REGISTER.md) | [SYNTHESIS] | Unified Axiom Register (Unification Annex Stage U1, FTD-0386): postulates + framework commitments + selected types + calibrations + named results + dynamics posits assembled once, plus the Unified Conditional Statement U-1..U-12 at tags of record. Adopts nothing; FTD-U names the Stage-U3 deliverable only. |
+| [SPEC_OPEN_MATH_FRONTIERS.md](SPEC_OPEN_MATH_FRONTIERS.md) | [REFERENCE] / canonical | Per-frontier map of what the algebraic spine can still close in-repo, close only by importing a tool, or cannot close internally (companion to FTD-0318 spine audit and FTD-0320 rigidity-catalog scan). |
+| [SPEC_ALPHA_DYNAMICAL_BOUNDARY.md](SPEC_ALPHA_DYNAMICAL_BOUNDARY.md) | [SYNTHESIS / FOUNDATIONAL OBSTRUCTION — ACCEPTED BOUNDARY] | Canonical one-page verdict on the α-derivation question: α is dynamical, not structural — no FTD-native route fixes the electromagnetic coupling; MC-T4.3 stays a foundational obstruction. |
+| [SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md](SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md) | [SYNTHESIS / BOUNDARY] | Canonical verdict that cosmology is FTD's most-imported, least-substrate-derived sector — ΛCDM apparatus filled with FTD constants, never "derived." |
+| [SPEC_ENERGY_SCALES_AND_DETECTABILITY.md](SPEC_ENERGY_SCALES_AND_DETECTABILITY.md) | [SYNTHESIS] | Energy-scale lens on already-tagged claims: where the Planck-scale lattice instrument sits relative to CERN's IR-particle regime and what the engine can vs cannot detect. No row promoted by inclusion. |
+| [SPEC_SCALE_RATIO_ONTOLOGY.md](SPEC_SCALE_RATIO_ONTOLOGY.md) | [AXIOM]-class (FC-3, FTD-0304) | Framework Commitment FC-3 — scale-ratio covariance: only dimensionless ratios are physical; phenomenon identity is box-independent, observability is apparatus-relative. |
 
 ## Algebraic spine, G*, and the master quadratic
 
@@ -85,6 +91,24 @@
 | [SPEC_PREDICTION_LEDGER_DEVIATIONS.md](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) | [SYNTHESIS] registry | **The structural deviation spine (FTD-0258)**: six deviations from the QM/SR *formalism* (PL-1..PL-6) with protocols, scope caveats, kill conditions; PL-2 carries the mandatory lab-Bell honesty block. No row promoted by inclusion. |
 | [SPEC_PREDICTIONS_FORWARD_2026.md](SPEC_PREDICTIONS_FORWARD_2026.md) | [SYNTHESIS] registry | **Forward predictions on behalf of the framework (FTD-0268)**: lab-facing FP rows (first-order EWPT/GW, κ_λ = 1.0089, LV nulls, structural nulls) + engine-native blind EP rows (hash-locked L=257 time-dilation extension, N(A) interpolation bands, k⁴ extension to L=768) + the anti-overclaim guard and the honest Higgs-status digest. No row promoted by inclusion. |
 
+## Consumption Program: charter, pricing, and process discipline
+
+| File | Tag | Purpose |
+|---|---|---|
+| [SCOPE_CONSUMPTION_PROGRAM.md](SCOPE_CONSUMPTION_PROGRAM.md) | [SCOPE / PROGRAM CHARTER] | The Number-One Goal's drive face operationalized (FTD-0383): Fronts A (retirement campaign), B (P6C-* ontology-extension search), C (forcing-proof + formalization), D (sector-consumption of parametric rows). Consumption is a direction, not an achievability claim; proves and promotes nothing. |
+| [SPEC_ADOPTION_PRICING_RULES.md](SPEC_ADOPTION_PRICING_RULES.md) | [SCOPE / METHODOLOGY — DRAFT awaiting owner ratification at D5/D6/D7] | Unification Annex Stage U0: proposed rules for how a candidate axiom is priced and judged for adoption (currency, compression predicate, FC-W calibration). Ratifies nothing, adopts nothing until the owner rulings are booked (FTD-0387). |
+| [SPEC_LOCK_STANDARD.md](SPEC_LOCK_STANDARD.md) | [SPEC / DISCIPLINE] | LOCK-STD v1 — the eleven mandatory requirements every Consumption Program pre-registration lock must satisfy before any computation or proof-attempt output is observed. Constrains process, not verdicts; introduces no claim. |
+| [DRAFT_FC4_DELTA_ACT_DECLARATION.md](DRAFT_FC4_DELTA_ACT_DECLARATION.md) | [SYNTHESIS] | The δ-act — the act-of-intent reading of FC-W (the constitution's live FC-4, FTD-0315). An interpretive exposition of the same commitment, not a second declaration; mints and promotes nothing. |
+| [DRAFT_FCW_REPRICING_D7_v1.md](DRAFT_FCW_REPRICING_D7_v1.md) | [DRAFT — research act; decision-ready; rules NOTHING until the owner books it] | Structures the deferred D7 re-pricing of FC-W (`SPEC_ADOPTION_PRICING_RULES.md` §3) after FTD-0791/FTD-0802 withdrew the identification's numerical-uniqueness support. Analyses the question; adjudicates no axiom. |
+
+## Construction narrative
+
+| File | Tag | Purpose |
+|---|---|---|
+| [MONOGRAPH_FTD_CONSTRUCTION.md](MONOGRAPH_FTD_CONSTRUCTION.md) | [SYNTHESIS] | Bottom-up construction story of FTD's mathematics for an interdisciplinary / philosophy-of-physics readership; re-states existing canonical claims at their canonical tags, introduces no new mathematics. |
+| [INDEX_CONSTRUCTION_SPINE.md](INDEX_CONSTRUCTION_SPINE.md) | [REFERENCE] | Navigation index drilling from each `MONOGRAPH_FTD_CONSTRUCTION.md` section to its authoritative canonical backing source; where the two disagree on a tag, the source document is correct. |
+| [MATH_ECOSYSTEM_MINDMAP.md](MATH_ECOSYSTEM_MINDMAP.md) | [UNTAGGED] | High-density mermaid mindmap of the FTD mathematical-physical network (number theory → manifestation). Carries per-node epistemic tags inline but no document-level Tag/Status line was found — flagged here rather than guessed; verify against source before citing its status. |
+
 ---
 
-29 active docs in this cluster (+ 4 archived: ARCH_SPEC_FTD_COMPLETE_CHAIN.md, archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md, and — archived 2026-08-06, both self-declared [SUPERSEDED] — SPEC_CLOSED_FLUX_LOOP_READOUT.md and SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md). Active-doc count and full index coverage refresh pending (2026-08-06 docs audit found ~54 active docs on disk vs. this count of 29 — see project notes).
+52 active docs in this cluster (+ 4 archived: ARCH_SPEC_FTD_COMPLETE_CHAIN.md, archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md, and — archived 2026-08-06, both self-declared [SUPERSEDED] — SPEC_CLOSED_FLUX_LOOP_READOUT.md and SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md). Count verified 2026-08-06 against `find docs/theory/01_reference -maxdepth 1 -name '*.md'` (53 files, minus this index itself = 52) with every row in this index checked to resolve; the 14 rows missing at the 2026-08-04 audit (including the three CLAUDE.md names FTD-0383/0386/0387) are now indexed.
