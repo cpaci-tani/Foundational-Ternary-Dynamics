@@ -102,7 +102,7 @@ The link variable is:
 $$U_\mu(v) = \exp\left(ig_s a A^a_\mu(v) T^a\right) \in \text{SU}(3)$$
 
 where:
-- g_s = √(α_s) is the strong coupling (with α_s = 7/59 from the geometric fixed point of vacuum screening, see `DERIV_WEINBERG_STRONG_GEOMETRY.md`)
+- g_s = √(α_s) is the strong coupling (with α_s = 7/59 from the geometric fixed point of vacuum screening, see `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §2)
 - a = 1 (lattice spacing in natural units)
 - T^a = λ^a/2 are the SU(3) generators
 
@@ -338,7 +338,7 @@ For N_f = 6 (below the 16.5 threshold), QCD is asymptotically free. At the Z bos
 
 $$\alpha_s(M_Z) = \frac{7}{59} = 0.1186$$
 
-This is a **geometric fixed point of the framework**: the ratio 7/59 is determined by the exact thermodynamic partition of gluonic anti-screening ($b_3 = 7$) against total fermionic screening ($4N_{eff} = 52$), yielding $7/(7+52) = 7/59$. See `DERIV_WEINBERG_STRONG_GEOMETRY.md` for the formal geometric proof.
+This is a **geometric fixed point of the framework**: the ratio 7/59 is determined by the exact thermodynamic partition of gluonic anti-screening ($b_3 = 7$) against total fermionic screening ($4N_{eff} = 52$), yielding $7/(7+52) = 7/59$. See `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §2 for the formal geometric proof.
 
 ## 5.6 Running from M_Z to Low Energies [THEOREM]
 
@@ -458,7 +458,7 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 | SU3-8 | Four-gluon vertex from BI nonlinearity | **[SELECTION]** | Argued from BI expansion; tensor structure adopted | BI action + SU(3) gauge invariance |
 | SU3-9 | β₀ = (11N_c − 2N_f)/3 = 7 | **[THEOREM]** | One-loop lattice calculation, same technique as QED | SU3-4, SU3-6, SU3-7 |
 | SU3-10 | Asymptotic freedom (α_s decreases at high E) | **[THEOREM]** | β₀ > 0 for N_f < 16.5 | SU3-9 |
-| SU3-11 | α_s(M_Z) = 7/59 = 0.1186 | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0020 — the 2026-06-18 `[THEOREM]` upgrade was RETRACTED 2026-06-19, adjudicated; corrected in DERIV_WEINBERG_STRONG_GEOMETRY.md 2026-08-06) | Geometric fixed point of Dirac vacuum screening on 13 axes | DERIV_WEINBERG_STRONG_GEOMETRY.md |
+| SU3-11 | α_s(M_Z) = 7/59 = 0.1186 | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0020 — the 2026-06-18 `[THEOREM]` upgrade was RETRACTED 2026-06-19, adjudicated; corrected in DERIV_WEINBERG_STRONG_GEOMETRY.md 2026-08-06) | Geometric fixed point of Dirac vacuum screening on 13 axes | DERIV_GEOMETRIC_MASS_RATIO_READINGS.md §2 |
 | SU3-12 | Wilson loop area law → confinement | **[SELECTION]** | Standard lattice QCD argument applied to FTD | SU3-7, SU3-8, Gauss constraint |
 | SU3-13 | String tension σ ≈ Λ²_QCD | **[SELECTION]** | Dimensional analysis + cross-check | DERIV_LAMBDA_QCD_DERIVATION.md |
 | SU3-14 | Slavnov-Taylor identity (transversality) | **[THEOREM]** | Lattice Bianchi identity → D_ν J^a_ν = 0 | Gauss constraint, SU(3) algebra |

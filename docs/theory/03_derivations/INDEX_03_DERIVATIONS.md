@@ -56,15 +56,13 @@ The U(1) / SU(2) / SU(3) structure, the Higgs sector, generations, and couplings
 | [DERIV_FERMI_COUPLING_CONSTANT.md](standard_model/DERIV_FERMI_COUPLING_CONSTANT.md) | [THEOREM] | Fermi coupling G_F from the Higgs VEV chain. |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | conditional derivation / matching selection | The g_c = √α coupling within the selected state-flux dictionary (audit-conditioned). |
 
-## Geometric mass-ratio readings (2026-06-18 batch, corrected)
+## Geometric mass-ratio readings (2026-06-18 batch, consolidated 2026-08-06)
 
-Three sibling documents from the same 2026-06-18 batch each carried a `[THEOREM]` upgrade that was subsequently retracted as a substitution identity (not a forcing chain); all three now read `[STRUCTURALLY MOTIVATED PARAMETRIC]`/`[SMC]`. Grouped together because they share this correction provenance.
+Four sibling documents from the same 2026-06-18 batch applied one reused technique (Moore-neighborhood boundary counting by O_h symmetry class) to four different targets. Three carried a `[THEOREM]` upgrade later retracted as a substitution identity; the fourth (atomic spectrum) was never promoted but shared the same unhedged rhetoric. Merged into one document 2026-08-06, each target keeping its own tag and provenance as a section; originals archived.
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_LEPTON_MASS_GEOMETRY.md](standard_model/DERIV_LEPTON_MASS_GEOMETRY.md) | [STRUCTURALLY MOTIVATED PARAMETRIC] *(corrected 2026-07-01, FTD-0348 — was [THEOREM])* | Geometric reading of the muon (207) and tau (3477) mass-ratio integers via Moore L_n boundary-node counting; motivation, not derivation. |
-| [DERIV_WEINBERG_STRONG_GEOMETRY.md](standard_model/DERIV_WEINBERG_STRONG_GEOMETRY.md) | [STRUCTURALLY MOTIVATED PARAMETRIC] *(corrected 2026-08-06 — was [THEOREM: LATTICE PROJECTION])* | Geometric reading of sin²θ_W = 3/13 (FTD-0018) and α_s(M_Z) = 7/59 (FTD-0020) via the 13-axis Moore neighborhood decomposition; the 2026-06-18 [THEOREM] upgrade is retracted as a substitution identity that fails the look-elsewhere bar. |
-| [DERIV_BARYON_AND_QUARK_GEOMETRY.md](standard_model/DERIV_BARYON_AND_QUARK_GEOMETRY.md) | proton [STRONGLY MOTIVATED CONJECTURE] (`N_eff/α + N_base·N_eff + N_c`, 173 ppm); L₉ re-spelling + six quark masses [PARAMETRIC] | Proton mass ratio and the six quark masses; the earlier [THEOREM] promotion is RETRACTED as a substitution identity — see also the Hadrons section below. |
+| [DERIV_GEOMETRIC_MASS_RATIO_READINGS.md](standard_model/DERIV_GEOMETRIC_MASS_RATIO_READINGS.md) | [STRUCTURALLY MOTIVATED PARAMETRIC] throughout, per-section exceptions noted | §1 lepton mass ratios (muon 207, tau 3477); §2 sin²θ_W=3/13 (FTD-0018) + α_s(M_Z)=7/59 (FTD-0020); §3 proton [SMC] + six quark masses [PARAMETRIC]; §4 atomic spectrum/shell structure [SMC, unaudited]. Consolidates `DERIV_LEPTON_MASS_GEOMETRY.md`, `DERIV_WEINBERG_STRONG_GEOMETRY.md`, `DERIV_BARYON_AND_QUARK_GEOMETRY.md`, `DERIV_DISCRETE_ATOMIC_SPECTRUM.md` (all archived, see `archive/retracted/` and `archive/resolved/`). |
 
 ## QED, QFT machinery, and scattering
 
@@ -161,7 +159,6 @@ The FTD-0270/0271/0278/0279/0252/0268 arc: given an imposed rest-mass clock, FTD
 | [ANALYSIS_HYDROGEN_LATTICE_SPECTRUM_v1.md](foundational_mechanics/ANALYSIS_HYDROGEN_LATTICE_SPECTRUM_v1.md) | [CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT] (narrowed — see correction below) | Hydrogen-like spectrum run of record; the 1s ground state is genuinely bound and Coulombic (FTD-0278 Leg 1). |
 | [CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md](foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md) | [CORRECTION] | The "n=2 multiplet / Rydberg ladder" claim is overclaimed — torus continuum-mode degeneracy, not bound 2s/2p orbitals; narrows the verdict to HYDROGEN-1s-CONFIRMED. |
 | [ANALYSIS_HELIUM_LATTICE_SCF_v1.md](foundational_mechanics/ANALYSIS_HELIUM_LATTICE_SCF_v1.md) | [CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT] | Given three motivated imports (clock, scalar coupling, mode-occupancy), the engine's own Gauss-law Green's function produces a mean-field helium atom with correct screening and ionization physics (FTD-0279). |
-| [DERIV_DISCRETE_ATOMIC_SPECTRUM.md](quantum_mechanics/DERIV_DISCRETE_ATOMIC_SPECTRUM.md) | [STRONGLY MOTIVATED CONJECTURE] | Multi-electron atomic spectrum and periodic-table shell capacities from Moore-neighborhood topology; Helium ground state to 0.02%. |
 | [PREREG_DYNAMICAL_TIME_DILATION_v1.md](foundational_mechanics/PREREG_DYNAMICAL_TIME_DILATION_v1.md) | [PRE-REGISTRATION] | Locks design + analysis for a moving-lattice-clock dilation-law campaign (Campaign 2, FTD-0252). |
 | [PREREG_DYNAMICAL_TIME_DILATION_v2.md](foundational_mechanics/PREREG_DYNAMICAL_TIME_DILATION_v2.md) | [PRE-REGISTRATION] | Supersedes v1's T2 sub-question to probe the un-probed IR limit of the dilation law. |
 | [ANALYSIS_DYNAMICAL_TIME_DILATION.md](foundational_mechanics/ANALYSIS_DYNAMICAL_TIME_DILATION.md) | [OBSERVATION] | D(v)=√(1−v²) is an algebraic identity of the wave construction, realized to <0.06% at low velocity; UV lattice corrections bend D below γ at higher velocity (FTD-0252). |

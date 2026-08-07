@@ -95,9 +95,9 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 | Quantity | Value | Formula | FTD inputs | Tag | Source |
 |---|---|---|---|---|---|
 | m_e | 0.511 MeV | m_e = m_P · √(2π) · (16/3) · α¹¹ | α, m_P | **[STRONGLY MOTIVATED CONJECTURE]** (CORRECTION: [THEOREM] of `fdc483d0` RETRACTED — substitution identity, fails FTD-0097/0189 bar; restored to its honest tier) | Exponent n=11 is [SELECTION] (corrected 2026-07-01 — was [DERIVED]; `DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS.md`'s later audit found the ladder-walk 4+4+3 ordering is a bottleneck, not uniquely forced); prefactor 16/3 is the tightest simple rational at that exponent (1 of 2 within 1% across 6489 combos). The (N_eff+N_c)/N_c re-spelling is algebra, not a derivation. `DERIV_ELECTRON_MASS_ANCHOR.md`, `proof_electron_mass.py` |
-| m_μ / m_e | 207 (0.11% off 206.7683) | 3·b_3·(b_3+N_c) − N_c | {N_c, b_3} | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — was [DERIVED]; the demotion of record is `TRACKER_OPEN_ITEMS.md` §"Lepton Mass Ratios" / `SPEC_SM_REPLACEMENT_COMPLETE.md`, never propagated here; the prior row also mis-stated the formula as "N_c²·N_eff·b_3 + offsets" = 819, and cited `proof_mass_ratios.py`, which does not exist) | `proof_complete_sm.py`; `DERIV_LEPTON_MASS_GEOMETRY.md` (retagged same date — its L₃-shell counting makes post-hoc choices, and its "residual is QED vacuum polarization" attribution is an unfalsifiable promissory note: both masses in the ratio are already dressed pole masses) |
+| m_μ / m_e | 207 (0.11% off 206.7683) | 3·b_3·(b_3+N_c) − N_c | {N_c, b_3} | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — was [DERIVED]; the demotion of record is `TRACKER_OPEN_ITEMS.md` §"Lepton Mass Ratios" / `SPEC_SM_REPLACEMENT_COMPLETE.md`, never propagated here; the prior row also mis-stated the formula as "N_c²·N_eff·b_3 + offsets" = 819, and cited `proof_mass_ratios.py`, which does not exist) | `proof_complete_sm.py`; `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §1 (retagged same date — its L₃-shell counting makes post-hoc choices, and its "residual is QED vacuum polarization" attribution is an unfalsifiable promissory note: both masses in the ratio are already dressed pole masses) |
 | m_τ / m_e | 3477 (0.007% off 3477.23) | (N_eff+N_base)·(m_μ/m_e) − 2·N_c·b_3 | {N_c, N_base, N_eff, b_3} | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (corrected 2026-07-01, FTD-0348 — was [DERIVED]; same demotion of record as m_μ/m_e) | `proof_complete_sm.py`; `dimensional_map.json` (tier "parametric", FTD-0008) |
-| m_p / m_e | 1836.47 | N_eff/α + N_base·N_eff + N_c | {N_c, N_base, N_eff, α} | **[STRONGLY MOTIVATED CONJECTURE]** (CORRECTION: [THEOREM] of `fdc483d0` RETRACTED — the 1938−102 knot form is a substitution identity, strictly less informative than this formula; restored to its honest tier) | 173 ppm error; 5.8× experimental precision (30 ppm). Uses three Moore integers + α so harder to dismiss as a rational fit, but "derivation" is overstated. The `1938 − 102` knot re-spelling is integer-only [PARAMETRIC]. `proof_proton_electron_ratio.py`, `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_p / m_e | 1836.47 | N_eff/α + N_base·N_eff + N_c | {N_c, N_base, N_eff, α} | **[STRONGLY MOTIVATED CONJECTURE]** (CORRECTION: [THEOREM] of `fdc483d0` RETRACTED — the 1938−102 knot form is a substitution identity, strictly less informative than this formula; restored to its honest tier) | 173 ppm error; 5.8× experimental precision (30 ppm). Uses three Moore integers + α so harder to dismiss as a rational fit, but "derivation" is overstated. The `1938 − 102` knot re-spelling is integer-only [PARAMETRIC]. `proof_proton_electron_ratio.py`, `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
 
 The m_e and m_p/m_e rows produce both the formula *and* the numerical value from lattice structure at `[SMC]` grade; the μ/τ ratio rows (corrected 2026-07-01) are integer recipes of the same class this catalog's quark section demoted — structurally motivated, not derived.
 
@@ -111,12 +111,12 @@ All six quark masses are integer-combination *fits* using the framework integers
 
 | Quantity | Formula (as constructed) | FTD inputs | Source |
 |---|---|---|---|
-| m_u/m_e | Unilateral Triad (4) — ~5% off exp | {N_base} | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_d/m_e | $L_1$ Face (9) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_s/m_e | $L_7$ Face + $L_2$ + Core (183) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_c/m_e | $L_{10}$ + $L_2$ (2484) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_b/m_e | $L_{18}$ + $L_4$ + $L_1$ + Triad (8170) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_t/m_e | $L_{118}$ (334170) — **imports Z=118/Oganesson from chemistry** | external Z | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_u/m_e | Unilateral Triad (4) — ~5% off exp | {N_base} | `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
+| m_d/m_e | $L_1$ Face (9) | Phase Space | `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
+| m_s/m_e | $L_7$ Face + $L_2$ + Core (183) | Phase Space | `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
+| m_c/m_e | $L_{10}$ + $L_2$ (2484) | Phase Space | `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
+| m_b/m_e | $L_{18}$ + $L_4$ + $L_1$ + Triad (8170) | Phase Space | `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
+| m_t/m_e | $L_{118}$ (334170) — **imports Z=118/Oganesson from chemistry** | external Z | `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 |
 
 **Reviewer flag.** These formulas have no independent structural derivation on the lattice. They are valuable as consistency checks (they *do* hit experimental values to within a few percent), but reporting them as "FTD predicts the quark masses" overstates the evidence — six tunable integer recipes will hit six targets by construction, and m_t imports an external chemistry input (Z=118). Correct reporting: "given the framework integers, integer-combination fits reproduce the six quark masses."
 

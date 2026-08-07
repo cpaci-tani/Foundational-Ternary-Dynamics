@@ -1,4 +1,9 @@
-# Baryon and Quark Mass Geometry — Proton `[SMC]`, Quark masses `[PARAMETRIC]`
+# Baryon and Quark Mass Geometry — Proton `[SMC]`, Quark masses `[PARAMETRIC]` (ARCHIVED — merged 2026-08-06)
+
+> **Merged into `DERIV_GEOMETRIC_MASS_RATIO_READINGS.md` §3 (2026-08-06),**
+> alongside three sibling documents from the same 2026-06-18 batch applying
+> the same technique to different targets. Content preserved verbatim there;
+> kept here for provenance per the doc-cleanup skill.
 
 **Epistemic Status:** Proton ratio `[STRONGLY MOTIVATED CONJECTURE]` (via the prior
 $N_{eff}/\alpha$ formula) · the $L_9$ "knot" re-spelling `[PARAMETRIC]` · the six quark masses
