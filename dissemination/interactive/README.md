@@ -123,9 +123,40 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 - Claim Boundary panel separating imported parametric physics, computed outputs, presentation effects, and open questions
 - Standard nuclear-physics parametrizations for pedagogy; the island emerges from imported shell corrections, and no FTD physics claim is promoted by this tool
 
+### Theory Mindmap (`theory_mindmap.html`) — **generated, do not hand-edit**
+
+Radial, collapsible map of **every git-tracked document under `docs/theory/`**
+(1,734 docs / 4,137 cross-links as of 2026-08-06), grouped sector → programme →
+document and coloured by each document's own epistemic tag.
+
+- **Data:** `theory_mindmap.json`, produced by
+  `scripts/theory/build_theory_mindmap.py`. Neither file is hand-edited.
+- **Regenerate** (required in the same commit whenever theory docs are added,
+  moved, archived, renamed, or retagged):
+  ```
+  python scripts/theory/build_theory_mindmap.py
+  ```
+- **Requires a server** (unlike the simulations below): `fetch()` is blocked on
+  `file://` by CORS.
+  ```
+  python -m http.server 8009 -d dissemination/interactive
+  ```
+  then open `http://localhost:8009/theory_mindmap.html`.
+- Self-contained: vanilla canvas, zero CDN dependencies.
+- Maintenance rules live in the `theory-mindmap` skill
+  (`.claude/skills/theory-mindmap/SKILL.md`); drift is caught by
+  `scripts/tests/test_theory_mindmap.py`.
+
+> **`3d_theory_map.html` + `graph.json` are SUPERSEDED (2026-08-06)** by the
+> above. They were hand-built once on 2026-05-25 with no generator, and had
+> decayed to 26% corpus coverage with 56% of paths broken. Retained for
+> provenance only — do not cite or extend them.
+
 ## How to Use
 
 1. **Open any HTML file directly in a web browser** - no server required
+   (exception: `theory_mindmap.html`, which fetches JSON and needs a server —
+   see its section above)
 2. Use the control panels on the right to adjust parameters
 3. Toggle visualizations (force vectors, trails, field overlays)
 4. Try the preset configurations to see different physics scenarios
