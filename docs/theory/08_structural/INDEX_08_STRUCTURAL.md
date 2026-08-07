@@ -72,6 +72,17 @@ The flux/state duality and the information-theoretic lens on G*.
 
 ---
 
+## Degree quarantine / dual-substrate operator algebra
+
+Why the engine's realized dynamics cannot reach the BCC/corner-sector coordinate, and the (F,D) sum/difference adjudication of the dual-substrate register that amends it.
+
+| File | Tag | Purpose |
+|---|---|---|
+| [LEMMA_DEGREE_QUARANTINE.md](LEMMA_DEGREE_QUARANTINE.md) | [THEOREM — lattice operator algebra] (T1/T2); [FACT — engine inventory] (T3) | The engine's degree-≤2 operator algebra cannot reach or measure the BCC/e₃ corner coordinate; the spine's BCC-resident constants are dynamically incorruptible within this closure. Verifier: `proof_degree_quarantine.py`, 6/6. |
+| [EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING.md](EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING.md) | [THEOREM — lattice operator algebra] (§1–§4, §6, §8 computation); [FACT — engine inventory] (§5, §9); [CONJECTURE — semantics only] (§8.3) | Adjudicates the dual-substrate (F,D) = (J_L+J_R, J_L−J_R) re-encoding: D decouples everywhere except a declared list of chirality touchpoints; the checkerboard/BCC corner-register reading survives only as a kinematic relabeling. Verifier: `proof_dual_substrate_staggered_encoding.py`, 15/15. |
+
+---
+
 ## Pre-registrations & audit results
 
 Hash-locked pre-registrations of structural audits in this cluster — the prose is fixed and SHA256-pinned before any matching is attempted — and the audit results that execute them (registry: [`../10_eft_program/REF_PREREGISTER_MANIFEST.md`](../10_eft_program/REF_PREREGISTER_MANIFEST.md)).
@@ -87,4 +98,4 @@ Hash-locked pre-registrations of structural audits in this cluster — the prose
 
 ---
 
-18 active docs in this cluster (+ 0 archived).
+20 active docs in this cluster (+ 0 archived).
