@@ -968,28 +968,46 @@ single body cradled by three anchors on an equilateral triangle of side
 $s<\sqrt3$: for such $s$ there are two mirror equilibria at heights
 $\pm h$, $h = \sqrt{1-s^2/3}$, with all three bonds at exactly $r_0$.
 
-The barrier between them is not a fitted quantity. An explicit hinge path
---- break one bond, swing on the remaining two --- costs exactly
-$1.000\,\varepsilon$, which \emph{proves} the upper bound. That no
-cheaper channel exists is a separate question, and it is answered
-numerically rather than analytically: a watershed computation over the
-entire configuration space, union-find over energy-sorted cells, returns
-$1.016$--$1.021\,\varepsilon$ across $s\in[0.9,1.3]$, with the excess
-attributable to grid resolution and the third-bond tail. The direct route
-through the centre costs about $30\varepsilon$. So
+The barrier between them is not a fitted quantity, and it is not a
+measurement either. An explicit hinge path --- break one bond, swing on
+the remaining two --- costs exactly $1.000\,\varepsilon$, which bounds it
+above. The matching lower bound needs no grid over most of its domain.
 
 \begin{proposition}[Register barrier]
 \label{prop:registerbarrier}
-The register's barrier is at most one bond's dissociation depth,
-essentially independent of the geometry: $\Delta E \le \varepsilon$, by
-the explicit hinge path.
+For $s\in[0.9,1.3]$ the register's barrier is exactly one bond's
+dissociation depth, independent of the geometry: $\Delta E = \varepsilon$,
+and the transition state is the in-plane two-bond configuration.
 \end{proposition}
 
-The matching lower bound is \emph{not} proven here. A watershed on a
-finite grid cannot exclude a channel narrower than its cell, so
-$\Delta E = \varepsilon$ is an upper bound proven plus a lower bound
-corroborated at the resolution searched --- not an equality established.
-Every use of ``$\Delta E = \varepsilon$'' below carries that scope.
+\begin{proof}[Proof sketch]
+The two minima sit at $z=\pm h$, so any continuous path between them has
+a moment with $z=0$: \emph{every} path crosses the anchor plane. Hence
+$\Delta E \ge \min_{z=0}E - E_{\rm ground}$, which replaces a min--max
+over paths by a minimisation over a plane. On that plane write $N$ for
+the number of bonds inside the attractive window $(3/4,\,3/2)$. The bond
+law satisfies $V\ge-\varepsilon$ everywhere, $V\ge0$ for $q\le3/4$, and
+--- decisively --- $V\equiv0$ for $q\ge3/2$. So $E\ge-\varepsilon N$
+pointwise, and wherever $N\le2$ we have $E\ge-2\varepsilon$ \emph{with no
+numerics at all}. Only the $N=3$ set can threaten the bound, and a
+Lipschitz-certified scan clears it there by between $0.55$ and
+$1.5\,\varepsilon$ (at $s=1.3$ the set is empty). The value
+$-2\varepsilon$ is attained: in-plane the body can sit at distance
+exactly $r_0$ from two anchors, its distance to the third being
+$s\sqrt3/2+\sqrt{1-s^2/4}\in[1.67,1.89]$, which \emph{exceeds the support
+radius} $3/2$, so the third bond contributes exactly zero. With
+$E_{\rm ground}=-3\varepsilon$ this gives $\Delta E\ge\varepsilon$, and
+the hinge path gives $\Delta E\le\varepsilon$.
+\end{proof}
+
+Compact support is load-bearing here, and worth naming as the modelling
+choice it is: under a Morse or Lennard-Jones tail the third bond would
+contribute a small negative amount at the crossing and the barrier would
+sit strictly \emph{below} $\varepsilon$. The earlier watershed
+computation, which returned $1.016$--$1.021\,\varepsilon$, is now
+diagnosed rather than trusted --- its $1.6$--$2.1\%$ excess was entirely
+grid resolution, as the proof's exact $1.000$ confirms. The direct route
+through the centre costs about $30\varepsilon$.
 
 Two structural observations follow, and the first is the reason this
 section sits beside the last. The register must be \emph{rigid with a
@@ -2690,15 +2708,43 @@ Nor could this instrument exhibit it: $\Gstar$ is recovered from
 makes the recovery a clean test of the law and a null test of the
 coupling.
 
-The link the demonstrator leaves unshown is a scaling, not an identity.
-Section~\ref{sec:mvc} gives the minimum viable clock an effective
-stiffness $\lambda_{\rm eff} = 8k_1k_2/(k_1+3k_2)$ --- a function of the
-bond stiffnesses, which a single-scale potential ties to $\varepsilon$ by
-dimensional analysis but which is not the same number as the well depth.
-\textbf{Whether one $\varepsilon$ genuinely fixes all three, and in what
-proportion, is open} --- and it is the sharpest falsifiable commitment in
-the architecture, since any measurement moving one of the three without
-the others would break it.
+\emph{And the economy claim, pressed, does not hold.} The clock's
+stiffness is $\lambda_{\rm eff}=8k_1k_2/(k_1+3k_2)$, and the curvatures
+are fixed by the depths of the two potentials: $k_1 = 24\varepsilon$ for
+the unit bond and $k_2 = \tfrac83\varepsilon_2$ for the purchased closure
+species, whose depth $\varepsilon_2$ is its own. Writing
+$\rho=\varepsilon_2/\varepsilon$,
+\begin{equation}
+\lambda_{\rm eff} = \frac{64\,\varepsilon\,\rho}{3+\rho},
+\qquad
+\Delta E = \varepsilon,
+\qquad
+\ln(\tau_{\rm flip}\nu_0) = \varepsilon/T .
+\label{eq:economy}
+\end{equation}
+Two things follow, and both correct the claim as it was stated. First,
+the three responses do not move in fixed proportion even at fixed $\rho$:
+their exponents in $\varepsilon$ are $+1$ for the barrier, $+1$ for the
+log-retention and $-\tfrac12$ for the clock period, so raising
+$\varepsilon$ deepens the well, lengthens the memory exponentially and
+\emph{speeds} the clock. Second and more seriously, $\rho$ is a free
+dimensionless parameter that appears in the clock and in neither of the
+others: sweeping $\rho$ from $\tfrac14$ to $16$ moves $T\!\cdot\!A$ by a
+factor of $3.3$ while the barrier and the retention law are untouched.
+That is precisely the falsifier this subsection wrote for itself --- a
+measurement moving one of the three without the others --- and it is
+fired not by an experiment but by the second interaction species that
+Section~\ref{sec:mvc} had already purchased and priced. \textbf{There is
+a separate clock constant, and its name is $\rho$.}
+
+What survives is the part that carries the paper. $\Gstar$ does not
+depend on $\rho$: integrating the reduced mode across
+$\varepsilon\in[\tfrac12,2]$ and $\rho\in[\tfrac14,4]$ recovers
+$T\!\cdot\!A\sqrt{2\lambda_{\rm eff}/m}/\sqrt\pi = \Gstar$ to
+$6\times10^{-14}$ throughout. The second energy scale buys the clock's
+\emph{rate} and cannot touch the clock's \emph{constant}. The economy
+claim fails where it priced the rate and holds where it priced the
+number.
 
 \subsection{The regime, on an independent instrument}
 
@@ -2999,11 +3045,18 @@ $2\times10^{-6}$ in the $A\to0$ extrapolation. \textbf{Galilean
 invariant, and therefore disqualified as a relativity test} \\
 No native quartic clock & Negative at screened scope only; not a
 no-go theorem \\
-Register barrier $\le\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
-Upper bound exact (explicit hinge path); the matching \emph{lower} bound
-is finite-grid numerical only ($1.016$--$1.021\,\varepsilon$), so
-$\Delta E=\varepsilon$ is corroborated at the resolution searched, not
-proven \\
+Register barrier $=\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
+\textbf{Proven}, both bounds, for $s\in[0.9,1.3]$: hinge path above,
+plane-crossing plus $E\ge-\varepsilon N$ below, with only the $N=3$ set
+needing certification. Conditional on the bond law's \emph{compact
+support} --- a Morse or LJ tail puts the barrier strictly below
+$\varepsilon$ \\
+One constant, three roles & \textbf{Refuted as stated.} With the closure
+species carrying its own depth, $\rho=\varepsilon_2/\varepsilon$ moves
+the clock rate alone \eqref{eq:economy} and the three exponents are
+$(+1,+1,-\tfrac12)$, not a fixed proportion. $\Gstar$ is independent of
+$\rho$ to $6\times10^{-14}$: the second scale buys the rate, not the
+constant \\
 Born weighting interpolates with $\bar\Omega\tau$ & Measured at
 mechanism level, imposed ensemble; neither an exact law nor a substrate
 theorem \\
@@ -3102,21 +3155,21 @@ satisfying \eqref{eq:R4}, or prove that a preferred-foliation selector
 can be operationally hidden.
 \item \textbf{Quantum sequential growth.} The classical classification is
 known; the quantum analogue with interfering weights is open.
-\item \textbf{One constant, or three?} The architecture commits to a
-single $\varepsilon$ pricing binding, clock rate and retention. Two of
-the three are exhibited together in Section~\ref{sec:toy}; the link from
-the well depth to the clock's effective stiffness $\lambda_{\rm eff}$ is
-a dimensional scaling, not an identity, and no instrument here moves
-$\varepsilon$ and reads all three responses at once. Build one.
 \item \textbf{A coupled model.} Every demonstrator in this paper runs its
 modules independently. Exhibit a system in which the clock's phase gates
 the register and the register's state back-reacts on the carrier, and
 check whether the architecture survives the feedback it has so far
 avoided.
-\item \textbf{The register's lower bound.} Prove
-$\Delta E \ge \varepsilon$ analytically, or exhibit a cheaper channel.
-The upper bound is an explicit path; the lower bound is at present a
-finite-grid search (Prop.~\ref{prop:registerbarrier}).
+\item \textbf{What the second energy scale is.} $\rho =
+\varepsilon_2/\varepsilon$ is now a named free parameter of the
+architecture \eqref{eq:economy} rather than an unnoticed one. Either
+derive it from the closure species' own structure, or accept it as a
+second declared constant and price it in the import ledger.
+\item \textbf{The barrier without compact support.} Proposition
+\ref{prop:registerbarrier} is exact because the bond law vanishes
+identically beyond $3/2$. Establish the corresponding statement for a
+potential with a tail --- where the barrier is strictly below
+$\varepsilon$ --- or show that compact support is forced.
 \item \textbf{From finite dimensions to local algebras.} The
 reconstruction of Section~\ref{sec:operational} is finite-dimensional, while
 the covariant setting of Section~\ref{sec:relativity} uses local algebras
@@ -3160,7 +3213,7 @@ five slow-shares, 32 seeds &
 Viable: BF $=0.936$ at $f=1$ \\
 Register statics &
 watershed over full configuration space &
-Barrier $=\varepsilon$, geometry-independent \\
+Barrier $=\varepsilon$, proven both ways \\
 \bottomrule
 \end{tabular}
 \caption{The instrument series. Full parameters, seeds, gate values and
@@ -3169,6 +3222,19 @@ model of Section~\ref{sec:toy} is deliberately \emph{not} listed: it is a
 demonstrator that reproduces known answers, not an instrument of record,
 and no claim in this paper rests on it.}
 \end{table}
+
+\paragraph{Analytic artifacts, which are proofs rather than instruments.}
+Two results in this paper are established by argument and verified by
+computation rather than measured, so they carry no pre-registration and
+belong outside the series above. Both run in seconds and print their own
+assertions. Proposition~\ref{prop:registerbarrier}, both bounds, is
+\texttt{scripts/experiments/temporal\_interior/}\allowbreak
+\texttt{derive\_register\_barrier\_lower\_bound.py}; the economy result
+\eqref{eq:economy}, including the exponents and the $\rho$-independence
+of $\Gstar$ to $6\times10^{-14}$, is
+\texttt{derive\_epsilon\_economy.py} in the same directory. The period
+decomposition of Section~\ref{sec:quadrature} is
+\texttt{derive\_period\_decomposition.py}.
 
 \noindent The clock's falsifier was stated before any engine campaign. A
 seeded four-chain must show the anti-pendulum signature, meaning unit
