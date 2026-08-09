@@ -576,7 +576,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0812` | DERIVED, MEASURED, EXACT | Does the limiting speed depend on the rest mass? | L974 |
 | `FTD-0813` | DERIVED, MEASURED | Does a bound composite inherit its constituents' cone or its own total mass's? | L975 |
 | `FTD-0815` | DERIVED, OPEN | The two owed proofs: does operational hiding follow, and does Lorentz recovery close? | L977 |
-| `FTD-0816` | DERIVED, SCOPE_CONTRACT | Can two sectors of the model be given a common cone, and what does it cost? | L978 |
+| `FTD-0816` | DERIVED, MEASURED, WITHDRAWN, SCOPE_CONTRACT | Can two sectors of the model be given a common cone, and what does it cost? | L978 |
 
 ---
 
@@ -1080,7 +1080,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 |---|---:|
 | THEOREM | 294 |
 | CLOSED_NEGATIVE | 187 |
-| MEASURED | 169 |
+| MEASURED | 170 |
 | OPEN | 135 |
 | DERIVED | 92 |
 | SMC | 84 |
