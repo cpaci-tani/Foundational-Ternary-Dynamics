@@ -712,6 +712,8 @@ ftd_add_test(test_cluster_genealogy tests/test_cluster_genealogy.cpp)
 ftd_add_test(campaign_cluster_fission_fusion tests/campaign_cluster_fission_fusion.cpp TIMEOUT 1800)
 ftd_add_test(campaign_cluster_relaxation tests/campaign_cluster_relaxation.cpp TIMEOUT 1800)
 ftd_add_test(campaign_alpha_readout_scattering tests/campaign_alpha_readout_scattering.cpp TIMEOUT 3600)
+ftd_add_test(campaign_born_regime_map tests/campaign_born_regime_map.cpp TIMEOUT 7200)
+ftd_add_test(campaign_latency_slow_gate tests/campaign_latency_slow_gate.cpp TIMEOUT 7200)
 ftd_add_test(campaign_higgs_bi_pair_production tests/campaign_higgs_bi_pair_production.cpp TIMEOUT 1800)
 ftd_add_test(campaign_ew_phase_transition tests/campaign_ew_phase_transition.cpp TIMEOUT 1800)
 
