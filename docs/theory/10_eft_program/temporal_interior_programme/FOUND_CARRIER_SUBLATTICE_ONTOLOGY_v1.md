@@ -4,7 +4,7 @@
 `[DERIVED — BODY CENTRES SUFFICE: THE BCC-RESTRICTED SOS MINIMUM EQUALS THE UNRESTRICTED ONE]` +
 `[DERIVED — THE MASS LADDER, FROM CLIFFORD COUNTING]` +
 `[OPEN — WHICH ONTOLOGICAL READING IS ADOPTED; TWO ARE PRICED HERE, NEITHER IS CHOSEN]` +
-`[DRAFT — NO LEDGER ROW MINTED; owner books]`
+`[BOOKED — FTD-0819]`
 **Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_carrier_sublattice.py`
 **Parents:** `ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md` §4b–4c (FTD-0816,
 the sum-of-squares resolution and its minimality correction),
