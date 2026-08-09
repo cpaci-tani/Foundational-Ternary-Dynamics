@@ -1,8 +1,11 @@
 """toy_minimal_temporal_interior.py — a complete, computable toy model of
 the semantic-ontology architecture.
 
-THE MODEL.  Five coupled pieces, each minimal and each with an exact or
-independently-known answer, so every number below is checkable:
+THE MODEL.  Five COEXISTING pieces -- not coupled: each panel is an
+independent computation and no module consumes another's state.  They
+share module-level constants, and that is the whole of the composition
+claim.  Each is minimal and has an exact or independently-known answer,
+so every number below is checkable:
 
   1. SUBSTRATE   a discrete field on a lattice with a causal polytope and
                  an emergent light cone (the containment result).
@@ -22,7 +25,9 @@ WHAT IT DEMONSTRATES, end to end:
   * potentiality -> actuality   (the gate produces singular events)
   * the weighting of those events interpolates amplitude -> Born as the
     mode outruns the noise bandwidth
-  * one constant eps prices binding, clock rate and memory together
+  * eps prices binding AND memory (panels d, e) -- NOT the clock rate:
+    the clock integrates its own hard-coded lam, so the third role of
+    eps is asserted by the architecture and not exhibited here
 
 Outputs a six-panel figure with strict typographic discipline: one font
 size scheme, no rotated text except axis labels, no overlapping artists,
@@ -42,7 +47,8 @@ from scipy.integrate import solve_ivp
 
 G_STAR = Gamma(0.25) / Gamma(0.75)
 C_CONE = 1.0 / np.sqrt(3.0)
-EPS = 1.0                     # the one constant: bond depth = barrier
+EPS = 1.0                     # bond depth = barrier; drives (d) and (e)
+                              # ONLY -- the clock's lam is independent
 K_THRESH = 0.5054620197
 
 # ----- one typographic scheme, applied everywhere ---------------------
@@ -111,11 +117,12 @@ def panel_clock(ax):
     """Unscaled Q(t): the periods visibly differ, which is the whole point."""
     lam, m = 2.0, 4.0
     tmax = 46.0
-    for A0, col in [(0.30, C1), (0.20, C4), (0.12, C2)]:
+    for A0, col, ls in [(0.30, C1, "-"), (0.20, C4, "--"),
+                        (0.12, C2, "-.")]:
         T, sol = clock_period(A0, lam, m, span=2.6)
         tend = min(tmax, sol.t[-1])
         ts = np.linspace(0, tend, 1400)
-        ax.plot(ts, sol.sol(ts)[0], color=col, lw=1.5,
+        ax.plot(ts, sol.sol(ts)[0], color=col, ls=ls, lw=1.5,
                 label=f"$A={A0:.2f}$,   $T={T:.1f}$")
         ax.plot([T], [A0], marker="|", ms=9, color=col, mew=1.6)
     ax.axhline(0, color=CG, lw=0.6, zorder=0)

@@ -439,7 +439,7 @@ def main():
           f"   ({decades:.1f} decades)")
     print(f"      beyond the reach polytope: identically zero (asserted)")
 
-    fig = plt.figure(figsize=(fs.TEXTWIDTH_IN, 8.2514), constrained_layout=True)
+    fig = plt.figure(figsize=(fs.TEXTWIDTH_IN, 8.1000), constrained_layout=True)
     gs = fig.add_gridspec(3, 2, height_ratios=[1.34, 0.86, 0.86])
     axa = fig.add_subplot(gs[0, 0], projection="3d")
     axb = fig.add_subplot(gs[0, 1], projection="3d")
