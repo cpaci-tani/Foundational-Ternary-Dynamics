@@ -411,13 +411,12 @@ actualization and the successor potentiality if it occurs.
 What no part of this supplies is the selection of one outcome. Writing
 $\Sigma_O$ for that block, there are two mathematically distinct
 implementations,
-\begin{equation}
+\[
 \underbrace{K_O(o\mid\rho,M,H)}_{\text{primitive stochastic}}
 \qquad\text{or}\qquad
 \underbrace{\lambda\sim\mu(\dd\lambda\mid\rho,M,H),\;\;
 o = F_O(\rho,M,H,\lambda)}_{\text{context-complete deterministic}},
-\label{eq:sigma}
-\end{equation}
+\]
 and in either case the physical content is the requirement that the
 resulting frequencies reproduce the weights,
 \begin{equation}
@@ -592,7 +591,8 @@ failed.
 
 The mirror-even zero-momentum mode $q = (-1,+1,+1,-1)U$ lies on a
 dynamically invariant manifold, so it closes exactly as a one-degree-of-freedom
-quartic oscillator with
+quartic oscillator --- an instance of \eqref{eq:quartic}, with the
+blocked-flex coefficient evaluated on this stress --- with
 \begin{equation}
 \lambda_{\rm eff} = \frac{8k_1k_2}{k_1+3k_2}, \qquad m_{\rm eff} = 4,
 \qquad
@@ -658,7 +658,8 @@ $1.000\,\varepsilon$; the residual few per cent is grid resolution and
 the third-bond tail. The direct route through the centre costs about
 $30\varepsilon$. So
 
-\begin{proposition}
+\begin{proposition}[Register barrier]
+\label{prop:registerbarrier}
 The register's barrier is one bond's dissociation depth, essentially
 independent of the geometry: $\Delta E = \varepsilon$.
 \end{proposition}
@@ -715,7 +716,8 @@ deterministic and supplies no ensemble of its own. Every probabilistic
 statement in this paper inherits that qualification.
 
 \paragraph{Retention is Arrhenius, and this fixes the cost of memory.}
-Section~\ref{sec:register} gives $\tau_{\rm flip}\sim\nu_0^{-1}
+Proposition~\ref{prop:registerbarrier} put the barrier at one bond depth,
+and Section~\ref{sec:register} gives $\tau_{\rm flip}\sim\nu_0^{-1}
 e^{\varepsilon/T}$. A register is therefore not free: holding one bit for
 $N$ clock cycles requires $\varepsilon/T \gtrsim \ln(N\,\nu_0 T_{\rm
 clock})$, so memory depth is logarithmic in the energy budget --- the
@@ -874,6 +876,7 @@ and $0.09$ up to a slow-channel share of $75\%$, and reaches $0.936$ only
 when the slow channel is essentially the \emph{sole} stochastic element.
 
 \begin{proposition}[Purity requirement]
+\label{prop:purity}
 Crossing statistics are dominated by the fastest stochastic component
 present. Born weighting therefore requires not merely the presence of a
 slow channel but its near-exclusivity at the threshold.
@@ -949,6 +952,14 @@ local orthogonality~\cite{localorth}, and limits on communication
 complexity~\cite{vandam} --- and none is established as \emph{the}
 derivation.
 
+Figure~\ref{fig:tiers} computes all three ceilings, and adds what the
+number buys. Device-independent certification turns $S$ into a resource:
+at $S=2$ the outcomes could have been written down in advance and the
+certified min-entropy is exactly zero, while at $2\sqrt2$ it is exactly
+one bit. Whatever fixes the ceiling therefore fixes how much
+unpredictability the world makes available --- a physical quantity, not a
+bookkeeping one.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{fig12_tiers.pdf}
@@ -1019,9 +1030,8 @@ does not freeze at $T\to0$ and why deuterium and hydrogen bonds differ in
 length and reaction rate. None of that requires a record.
 
 The distinction matters for the architecture. The commutator is the
-\emph{input} to \eqref{eq:compweight}'s counterpart at the correlation
-level, $S^2 = 4 + \lVert[A_0,A_1]\rVert\lVert[B_0,B_1]\rVert$; $S$ is the
-\emph{readout}. Records are required for the readout and not for the
+\emph{input} to $S^2 = 4 + \lVert[A_0,A_1]\rVert\lVert[B_0,B_1]\rVert$,
+and $S$ is the \emph{readout} (Figure~\ref{fig:bellangles}). Records are required for the readout and not for the
 commutator, and the ceiling of $2\sqrt2$ was fixed by the algebra before
 any apparatus existed to approach it. An account that locates
 noncommutativity in the compiled record therefore explains the wrong
@@ -1422,12 +1432,11 @@ that species dilates exactly, and its $k$-dependence \emph{is} the
 violation. Adding a mass to the leapfrog gives the exact dispersion
 $4\sin^2(\Omega/2) = C^2(-L(k)) + M^2$, and expanding along $[100]$,
 $[110]$ and $[111]$ returns \emph{identical} coefficients through $k^4$:
-\begin{equation}
+\[
 \Omega^2 = \Big(M^2 + \tfrac{M^4}{12}\Big)
 + \Big(\tfrac13 + \tfrac{M^2}{18} + \tfrac{M^4}{90}\Big)k^2
 - \Big(\tfrac1{54} + \tfrac{M^2}{1080}\Big)k^4 + \dots
-\label{eq:massivedisp}
-\end{equation}
+\]
 Reading the $k^2$ coefficient as the squared limiting speed,
 \begin{equation}
 \frac{C_{\rm eff}(M)}{C} = 1 + \frac{M^2}{12} + \frac{19M^4}{1440}
@@ -1687,7 +1696,10 @@ description; a more fundamental description makes it smaller.
 What remains open is the dynamical half: whether an \emph{interacting}
 composite --- one whose binding field carries its own momentum share and
 its own limiting speed --- reproduces \eqref{eq:compweight} beyond first
-order.
+order. Figure~\ref{fig:conearc} collects the kinematic half: the
+mass-dependence, the dilation residual, the flatness in constituent
+number, and the plane on which a distance potential is a valid
+description at all.
 
 \subsection{What a potential is, and where the gate actually lies}
 \label{sec:potential}
@@ -1808,6 +1820,9 @@ exponent of $-1.137$, $-1.142$, $-1.180$ across $\lambda = 0.02, 0.03,
 0.05$: a spread of $0.043$, against $1.76$ for the two-category carrier.
 Allowing the carrier its own limiting speed --- one fitted parameter
 against three velocities --- makes the form exact, $p = -1.000\pm0.002$.
+Figure~\ref{fig:carrierarc} shows the two families side by side: the
+two-category curves fan apart with the boost, the one-energy curves
+collapse onto $1/\gamma$.
 
 \begin{figure}[p]
 \centering
@@ -1858,6 +1873,9 @@ the stiffness cancelling from both, so the ratio is pure $G^*$. And at
 displacement $a$ the ratio is $(a/A)^2 G^{*2}/4\pi$, which vanishes: a
 degenerate direction is free to first order, so at a tenth of the
 reference displacement the quartic mode is $144$ times cheaper to move.
+Figure~\ref{fig:clockgeometry} sets the two clocks beside each other ---
+their constants as arc lengths, their orbits at equal energy, and the
+threshold surface on which the quartic one lives.
 
 \begin{figure}[p]
 \centering
@@ -1951,6 +1969,12 @@ than a heavy nucleus.}
 \end{figure}
 
 \subsection{The discrete diagnostic}
+\label{sec:diagnostic}
+
+The obligations above were all continuum-shaped: a cone, a boost, a
+dispersion. A discrete substrate admits one further test that has no
+continuum analogue, and it is worth recording even though it decides
+nothing here.
 
 If a theory supplies a coarse-graining from its histories to locally
 finite causal sets, the recursion \eqref{eq:recursion} becomes accretion
@@ -2196,6 +2220,9 @@ the support boundary --- ten decades, about $1.3$ per lattice cell --- and
 is then identically zero, which the artifact asserts rather than reports.
 The shell holds a Sommerfeld precursor: calculable, exponentially
 suppressed, bounded above by an exponential and below by an exact zero.
+Figure~\ref{fig:causal3d} draws the whole structure --- the cone inside
+the reach polytope, the census by tick, and the ten-decade fall to that
+exact zero.
 
 This is a genuine structural difference from the continuum, and it is
 reported as such rather than smoothed over. It is also, so far as these
@@ -2208,7 +2235,9 @@ elapsed time.
 \section{The merge, stated exactly}
 \label{sec:synthesis}
 
-We can now say what merges.
+We can now say what merges. Figure~\ref{fig:merge} states it as a supply
+diagram: which pillar supplies which layer of the architecture, and which
+layer nobody supplies.
 
 \begin{figure}[t]
 \centering
@@ -2295,6 +2324,10 @@ each carries a falsifier.
 \section{Status of claims}
 \label{sec:ledger}
 
+Table~\ref{tab:ledger} states every substantive claim in the paper at its
+actual strength. Where the body and this table disagree, the table is
+correct.
+
 {\small
 \renewcommand{\arraystretch}{1.05}
 \begin{longtable}{p{0.46\textwidth} p{0.46\textwidth}}
@@ -2310,6 +2343,8 @@ each carries a falsifier.
 \endhead
 \bottomrule
 \endfoot
+The actual/potential distinction \eqref{eq:distinction} & Primitive; the
+one structure every later section is built on \\
 Singular actuality & Declared postulate (Post.~\ref{post:A}); priced
 against the branching alternative \\
 Closure map $\Gamma$ from history to state & Declared scaffold; history
@@ -2321,8 +2356,9 @@ on those premises~\cite{cdp} \\
 Convex state/effect structure & Derived within the imported framework \\
 Effect-noncontextual additivity & Declared postulate (Post.~\ref{post:B})
 \\
-Trace rule and the Born square & External theorem, conditional on the
-quantum effect space \emph{and Postulate~\ref{post:B}}~\cite{busch} \\
+Trace rule and the Born square \eqref{eq:born} & External theorem,
+conditional on the quantum effect space \emph{and
+Postulate~\ref{post:B}}~\cite{busch} \\
 Born pushforward \eqref{eq:pushforward} for any concrete substrate &
 \textbf{Open}; neither $F_O$ nor $\mu$ is constructed here \\
 CPTP dynamics, unitarity, Schr\"odinger form & External theorems,
@@ -2336,8 +2372,8 @@ Exact within the declared two-scale extension; $\Gstar$ recovered to
 $2\times10^{-6}$ in simulation \\
 No native quartic clock & Negative at screened scope only; not a
 no-go theorem \\
-Register barrier $=\varepsilon$ & Exact statics within the declared model
-\\
+Register barrier $=\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
+Exact statics within the declared model \\
 Born weighting interpolates with $\bar\Omega\tau$ & Measured at
 mechanism level, imposed ensemble; neither an exact law nor a substrate
 theorem \\
@@ -2351,7 +2387,9 @@ Order-independence \eqref{eq:R3} $\nRightarrow$ equivariance
 \eqref{eq:R4} & Logical separation; both conditions open for any
 preferred-foliation realization \\
 Operational hiding of a preferred foliation & Derived as a reduction
-(Prop.~\ref{prop:hiding}); implied by reproducing quantum statistics \\
+(Prop.~\ref{prop:hiding}); implied by reproducing quantum statistics. The
+residual barrier is Bell-theoretic, not covariance
+(Prop.~\ref{prop:barrier}) \\
 Free-sector isotropy of the stencil & Exact: isotropic through $O(k^4)$,
 residual $(ka)^4/3240$ \\
 Radiative stability, dimension-4 channel & Reduced
@@ -2368,9 +2406,9 @@ at fixed operator the readings differ only at the exact-zero boundary,
 whose relative amplitude falls $1.19$ decades per tick \\
 Two-body register: common cone, free massive modes & \textbf{Computed},
 not clock-gated: limiting speed isotropic but mass-dependent,
-$C_{\rm eff}/C = 1 + M^2/12$; intra-species dilation exact to
-$O(\beta^4)$, error $M^2\beta^4/4$; proton--electron mismatch
-$1.6\times10^{-40}$ \\
+$C_{\rm eff}/C = 1 + M^2/12$ \eqref{eq:ceff}; intra-species dilation
+exact to $O(\beta^4)$, error $M^2\beta^4/4$ \eqref{eq:dilerr};
+proton--electron mismatch $1.6\times10^{-40}$ \\
 Two-body register: common cone across sectors & \textbf{Not obstructed in
 principle, and priced} (\S\ref{sec:intersector}): a scalar Wilson
 parameter fails \emph{exactly and at all orders}, and the first
@@ -2416,9 +2454,10 @@ substrate itself supplies.
 unit-strut tensegrity exist under the single-scale law, with blocking
 form definite on its full flex space? No candidate realizes it; no
 impossibility proof exists.
-\item \textbf{Shielded actualization.} The purity requirement demands
-that the slow channel be nearly exclusive at the threshold. Can any
-physical manifestation rule be shielded from its own field's fast noise?
+\item \textbf{Shielded actualization.} The purity requirement
+(Prop.~\ref{prop:purity}) demands that the slow channel be nearly
+exclusive at the threshold. Can any physical manifestation rule be
+shielded from its own field's fast noise?
 \item \textbf{Selector-history equivariance.} Exhibit a selector law
 satisfying \eqref{eq:R4}, or prove that a preferred-foliation selector
 can be operationally hidden.
