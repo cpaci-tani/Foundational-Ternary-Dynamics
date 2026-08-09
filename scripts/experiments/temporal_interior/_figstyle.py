@@ -75,6 +75,7 @@ def _select_backend():
             "pgf.texsystem": "pdflatex",
             "pgf.rcfonts": False,
             "pgf.preamble": (r"\usepackage[T1]{fontenc}"
+                             r"\usepackage{amsmath}"
                              r"\usepackage{mathpazo}"),
             "font.family": "serif",
         })

@@ -608,6 +608,28 @@ are independent perturbations --- one changes the quadratic coefficient,
 the other adds a higher one --- and $\Gstar$ is the \emph{double} limit
 $\mu\to0$, $A\to0$. Neither limit alone suffices, which is a sharper
 statement of the price than either drift gives on its own.
+Figure~\ref{fig:collapse} draws both statements at once: the one curve
+every detuning lies on, and the two-drift plane whose corner is the only
+point where the constant lives.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{collapse.pdf}
+\caption{The crossover, exactly, and the double limit. (a) Every
+oscillation of the normal form at every detuning lies on the single curve
+$T A\sqrt{2\lambda/m} = 4\kappa K(\kappa)$: harmonic side as
+$\kappa^2\to0$, oscillation over the double-well barrier for
+$\kappa^2>\tfrac12$, and the quartic clock at exactly $\kappa^2 =
+\tfrac12$ --- the self-dual modulus $K'=K$ --- where the value is
+$\sqrt\pi\,\Gstar = 5.2441$. (b) The two drift directions are
+independent: detuning $s$ moves the constant along
+\eqref{eq:collapse}, sextic admixture $r$ moves it along
+\eqref{eq:sexticdrift}, and $\Gstar$ is attained only at the corner
+$(0,0)$ --- the double limit $\mu\to0$, $A\to0$. Contours are exact
+quadrature; the corner value agrees with $\sqrt\pi\,\Gstar$ to
+$10^{-9}$.}
+\label{fig:collapse}
+\end{figure}
 
 \subsection{The native case is harmonic}
 \label{sec:native}
@@ -837,7 +859,31 @@ measured $(T,A)$ pair fixes $\kappa$, and by \eqref{eq:modulus} $\kappa$
 is the order parameter of the detuning. So a marginal clock reads out the quantity it must hold
 fixed. Whether that is a mechanism for holding it, or merely the
 statement that the error signal exists, is exactly the open problem of
-Section~\ref{sec:open}.
+Section~\ref{sec:open}. Figure~\ref{fig:sensorloop} draws the loop with
+its one missing edge.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\node[sel]   (osc) at (0,0)     {marginal oscillator\\[-1pt]\tiny $V=\lambda x^4$ at $\mu\approx0$};
+\node[thm]   (ta)  at (3.6,0)   {measured $(T,A)$\\[-1pt]\tiny one ringdown};
+\node[thm]   (kap) at (7.2,0)   {modulus $\kappa$\\[-1pt]\tiny via \eqref{eq:collapse}};
+\node[sel]   (mu)  at (10.5,0)  {detuning $\mu$\\[-1pt]\tiny via \eqref{eq:modulus}};
+\node[openb] (act) at (5.4,-1.9) {actuator: what pays the maintenance?\\[-1pt]\tiny open problem, Section~\ref{sec:open}};
+\draw[con] (osc) -- (ta);
+\draw[con] (ta) -- (kap);
+\draw[con] (kap) -- (mu);
+\draw[wk]  (mu) |- node[lbl,pos=0.75] {error signal exists} (act);
+\draw[wk]  (act) -| node[lbl,pos=0.25] {holds $\mu=0$?} (osc);
+\end{tikzpicture}
+\caption{The sensor inversion, and the missing edge. A marginal clock's
+timing fixes its own distance from the threshold --- the solid path is
+exact --- so the error signal needed to hold $\mu=0$ demonstrably exists.
+What would consume it is the double-ruled block: nothing in this paper
+constructs an actuator, and that absence is the open problem the
+maintenance cost points at.}
+\label{fig:sensorloop}
+\end{figure}
 
 So the price is a maintenance cost, continuously paid, not a construction
 cost; and \eqref{eq:gstarprice} is what it returns. \emph{$\pi$ is native
@@ -979,7 +1025,29 @@ e^{\varepsilon/T}$. A register is therefore not free: holding one bit for
 $N$ clock cycles requires $\varepsilon/T \gtrsim \ln(N\,\nu_0 T_{\rm
 clock})$, so memory depth is logarithmic in the energy budget --- the
 familiar thermodynamic shape, arrived at here from the model's own
-statics rather than assumed.
+statics rather than assumed. Figure~\ref{fig:epsilon} states the
+resulting economy as the falsifiable commitment it is.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\node[thm] (eps) at (0,0) {$\varepsilon$\\[-1pt]\tiny one energy scale, set once};
+\node[sel] (bind) at (-4.5,-1.8) {binding\\[-1pt]\tiny register barrier $\Delta E=\varepsilon$\\[-2pt]\tiny (Prop.~\ref{prop:registerbarrier})};
+\node[sel] (clk)  at (0,-1.8)    {clock rate\\[-1pt]\tiny stiffness $\lambda\sim\varepsilon$ in \eqref{eq:periodlaw}};
+\node[sel] (ret)  at (4.5,-1.8)  {retention\\[-1pt]\tiny $\tau_{\rm flip}\,\nu_0\sim e^{\varepsilon/T}$};
+\draw[con] (eps) -- (bind);
+\draw[con] (eps) -- (clk);
+\draw[con] (eps) -- (ret);
+\end{tikzpicture}
+\caption{One constant, three bills. The same $\varepsilon$ prices the
+matter's binding, the clock's rate, and the memory's lifetime, in fixed
+proportion --- there is no separate constant for any of the three. This
+is a structural commitment rather than an economy of notation: any
+measurement that moved one of the three without the others would break
+the architecture, and Section~\ref{sec:toy} exhibits all three roles on
+one instrument.}
+\label{fig:epsilon}
+\end{figure}
 
 \paragraph{And a timescale condition.} The thermodynamic quantity that
 turns out to control whether actualization statistics are \emph{quantum}
@@ -1205,6 +1273,30 @@ success per presentation; success goes as amplitude squared and
 presentations go as frequency, and their product is occupation. On this
 reading the mysterious $1/\sqrt{2\Omega}$ of quantum field theory is the
 conversion from \emph{how big the wave is} to \emph{how often it knocks}.
+
+Figure~\ref{fig:mechanism} draws the counting itself, deliberately
+without noise: two modes a threshold cannot tell apart by occupation ---
+one tall and slow, one half the height knocking four times as often ---
+and the two faces a noisy threshold multiplies, presentations counted at
+a low level and amplitude gating at a high one.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{mechanism.pdf}
+\caption{The mechanism, before any measurement. (a) Two modes at equal
+occupation $n = \tfrac12\Omega A^2$: the fast one is half the height and
+presents four times as often. (b) The same traces against two thresholds,
+every crossing computed and marked. At the low threshold both modes
+clear, and the counts are exactly in the frequency ratio ($12$ against
+$3$): crossings count \emph{presentations}. At the high threshold only
+the tall mode reaches, and the fast mode logs zero: \emph{success} gates
+on amplitude. A noisy threshold samples between these faces, and the
+product they multiply to --- presentations $\times$ success --- is
+occupation. This figure is an illustration of the counting logic on one
+declared trace, not a measurement; the measured interpolation between the
+two weightings is Figure~\ref{fig:bornregime}.}
+\label{fig:mechanism}
+\end{figure}
 
 The three predictions are distinguishable. Preparing two standing modes
 at \emph{equal occupation} and regressing the excess crossing rate on
@@ -1644,6 +1736,33 @@ quantum statistics, its preferred foliation would automatically be
 hidden.} The foliation is not the difficulty. Reproducing the statistics
 is, and that obstacle is a Bell-theoretic one which has nothing to do
 with relativity --- it would be present in a non-relativistic world.
+Figure~\ref{fig:reductions} draws the two propositions as one diagram:
+what buys hiding, and where the one blocked path actually is.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\node[thm] (stats) at (0,0.85)    {reproduce quantum statistics\\[-1pt]\tiny hypothesis (i)};
+\node[thm] (ord)   at (0,-0.85)   {order-independence \eqref{eq:R3}\\[-1pt]\tiny hypothesis (ii), standard QFT};
+\node[thm] (hid)   at (5.1,0)     {foliation operationally hidden\\[-1pt]\tiny Prop.~\ref{prop:hiding}};
+\node[sel] (samp)  at (0,-2.55)   {one sample space,\\[-1pt]\tiny setting-independent measure};
+\node[thm] (fine)  at (5.1,-2.55) {$|S|\le2$ (Fine)\\[-1pt]\tiny vs.\ attained $2\sqrt2$};
+\node[openb] (bar) at (9.6,-1.3)  {the barrier\\[-1pt]\tiny Bell-theoretic,\\[-2pt]\tiny not covariance};
+\draw[con] (stats) -- (hid);
+\draw[con] (ord)   -- (hid);
+\draw[con] (samp)  -- node[lbl,pos=0.45] {Prop.~\ref{prop:barrier}} (fine);
+\draw[wk]  (fine)  -- node[lbl,pos=0.42] {breaks (i)} (bar);
+\draw[wk]  (hid)   -- node[lbl,pos=0.42] {so hiding is free} (bar);
+\end{tikzpicture}
+\caption{The two reductions in one picture. Hiding a preferred foliation
+follows from reproducing quantum statistics together with standard
+order-independence --- it is not an independent obligation. What blocks a
+classical substrate is the lower path: a single setting-independent
+sample space caps CHSH at $2$ against the attained $2\sqrt2$, which
+breaks hypothesis~(i) directly. The open obligation (double-ruled) is
+therefore Bell-theoretic and would exist in a non-relativistic world.}
+\label{fig:reductions}
+\end{figure}
 
 The second debt is real, and its free sector can be paid exactly. The
 model's Laplacian is the eighteen-point operator

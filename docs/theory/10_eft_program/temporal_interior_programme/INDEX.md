@@ -90,16 +90,22 @@ its own identities). One takes an argument:
 **Figures** — eight PNGs beside the scripts; the PDFs land in
 `dissemination/papers/semantic_ontology/figures/`.
 
-| figure | script | carries |
+| figure (content-named PDF) | script | carries |
 |---|---|---|
-| `fig9_toymodel` | `toy_minimal_temporal_interior.py` | the six-panel minimal interior |
-| `fig10_causal3d` | `toy3d_causal_structure.py` | past/future/elsewhere at `t = 1`, in 3D |
-| `fig11_conearc` | `fig_cone_arc.py` | the cone arc: massive, composite, validity |
-| `fig12_tiers` | `fig_correlation_tiers.py` | the three correlation ceilings `2 / 2√2 / 4` |
-| `fig13_bellangles` | `fig_bell_angles.py` | why the CHSH framing needs two records |
-| `fig14_carrierarc` | `fig_carrier_arc.py` | the carrier arc, plotted as behaviour |
-| `fig15_clockgeometry` | `fig_clock_geometry.py` | clock vs degenerate clock, geometrically |
-| `fig16_intersector` | `fig_intersector_cone.py` | the nine squares and the spinor-dimension price |
+| `toymodel` | `toy_minimal_temporal_interior.py` | the six-panel minimal interior |
+| `causal3d` | `toy3d_causal_structure.py` | past/future/elsewhere at `t = 1`, in 3D |
+| `conearc` | `fig_cone_arc.py` | the cone arc: massive, composite, validity |
+| `tiers` | `fig_correlation_tiers.py` | the three correlation ceilings `2 / 2√2 / 4` |
+| `bellangles` | `fig_bell_angles.py` | why the CHSH framing needs two records |
+| `carrierarc` | `fig_carrier_arc.py` | the carrier arc, plotted as behaviour |
+| `clockgeometry` | `fig_clock_geometry.py` | clock vs degenerate clock, geometrically |
+| `intersector` | `fig_intersector_cone.py` | the squares and the corrected spinor-dimension price (4–8) |
+| `collapse` | `fig_collapse_doublelimit.py` | the universal `4κK(κ)` collapse and the double-limit plane — `G*` only at the corner |
+| `mechanism` | `fig_threshold_mechanism.py` | what a threshold counts: presentations × success = occupation, noise-free by design |
+
+(Figures were renamed by content 2026-08-09; the paper also carries five
+in-document TikZ diagrams — the recursion, the merge, the ε economy, the
+two reductions, and the sensor loop with its missing actuator edge.)
 
 **Manuscript** — `dissemination/papers/semantic_ontology/` (`FTD-0818`),
 39 pp, 14 computed figures.
