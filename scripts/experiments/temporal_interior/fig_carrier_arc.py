@@ -28,6 +28,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+from scipy.interpolate import make_interp_spline
 from scipy.linalg import toeplitz, eigh
 import _figstyle as fs          # sets backend + rcParams; import first
 import matplotlib.pyplot as plt
@@ -137,9 +138,19 @@ def panel_ticking(ax, tr0, trU, om0, omU):
     b = trU[:n] - trU[:n].mean()
     a, b = a / np.abs(a).max(), b / np.abs(b).max()
     t = np.arange(n)
-    ax.plot(t, a, color=C1, lw=1.1,
+    # cubic spline through every computed per-tick sample, onto a fine
+    # display grid: at one point per tick the straight polyline segments
+    # render as visible angular corners, worst on the boosted trace's
+    # near-Nyquist radiation content.  The spline still passes through
+    # every real sample -- it changes how the line between them is
+    # drawn, not what was computed -- so the peak-top roughness (real;
+    # the caption calls it out) survives as curved bumps, not erased.
+    tf = np.linspace(0, n - 1, 8 * n)
+    af = make_interp_spline(t, a, k=3)(tf)
+    bf = make_interp_spline(t, b, k=3)(tf)
+    ax.plot(tf, af, color=C1, lw=1.1,
             label=f"at rest,  $T={2*np.pi/om0:.1f}$")
-    ax.plot(t, b, color=CO, lw=0.8, ls=(0, (2.2, 1.0)),
+    ax.plot(tf, bf, color=CO, lw=0.8, ls=(0, (2.2, 1.0)),
             label=f"boosted,  $T={2*np.pi/omU:.1f}$")
     ax.axhline(0, color=CG, lw=0.6, zorder=0)
     ax.set_xlim(0, n)
