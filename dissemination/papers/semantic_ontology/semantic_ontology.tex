@@ -1,0 +1,2516 @@
+% =====================================================================
+%  The Semantic Ontology of Actualization
+%  Build:  pdflatex semantic_ontology.tex   (x2; inline thebibliography,
+%          so no biber/bibtex pass is required).  See build.bat.
+%  Figures: figures/make_figures.py generates fig2..fig7; fig1 and fig8
+%          are TikZ, compiled here.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[margin=1.05in]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,fit,backgrounds}
+\usepackage[most]{tcolorbox}
+\usepackage{caption}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,%
+            urlcolor=blue!60!black]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+
+\newcommand{\Gstar}{{G^{*}}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\dd}{\mathrm{d}}
+\DeclareMathOperator{\Hent}{H}
+
+\theoremstyle{definition}
+\newtheorem{postulate}{Postulate}
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{criterion}{Criterion}
+\theoremstyle{remark}
+\newtheorem{scopenote}{Scope}
+
+% --- epistemic shape vocabulary: status is encoded in SHAPE and RULE,
+%     never in colour, so the diagrams are print- and colour-blind-safe.
+\tikzset{
+  >={Stealth[length=4pt]},
+  thm/.style   ={rectangle, rounded corners=2pt, draw, line width=0.9pt,
+                 inner sep=3.2pt, font=\scriptsize, align=center},
+  sel/.style   ={rectangle, rounded corners=2pt, draw, line width=0.4pt,
+                 inner sep=3.2pt, font=\scriptsize, align=center},
+  conj/.style  ={rectangle, rounded corners=2pt, draw, line width=0.5pt,
+                 dash pattern=on 2.4pt off 1.8pt, inner sep=3.2pt,
+                 font=\scriptsize, align=center},
+  openb/.style ={rectangle, draw, line width=0.35pt, double,
+                 double distance=2.0pt, inner sep=3.2pt,
+                 font=\scriptsize, align=center},
+  seed/.style  ={circle, double, draw, line width=0.6pt, inner sep=2.2pt,
+                 font=\scriptsize, align=center},
+  con/.style   ={->, draw, line width=0.6pt},
+  wk/.style    ={->, draw, line width=0.5pt,
+                 dash pattern=on 2.4pt off 1.8pt, gray!55!black},
+  lbl/.style   ={font=\tiny\itshape, fill=white, inner sep=1.0pt},
+}
+
+\newtcolorbox{scopebox}[1][]{colback=black!2.5, colframe=black!45,
+  boxrule=0.4pt, arc=1.5pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\small, #1}
+
+\title{\bfseries The Semantic Ontology of Actualization\\[2pt]
+\large Clocks, weights, and the common architecture of\\
+relativity, thermodynamics, and quantum theory}
+
+\author{C.~Pacitani\thanks{Draft, 2026-08-07. This is a foundations paper:
+an architecture assembled from established external results plus two
+declared postulates, together with a small number of exactly stated and
+pre-registered measurements made within one concrete discrete model. It
+should be cited as foundations, never as a physics result. Every
+quantitative claim carries its scope in the text and again in the status
+ledger of Section~\ref{sec:ledger}. All figures are computed by an
+accompanying script; all measured values are transcribed from locked
+pre-registration records listed in Appendix~\ref{app:instruments}.}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Relativity, thermodynamics, and quantum theory are usually merged, when
+they are merged at all, by unifying their \emph{equations}. This paper
+merges their \emph{semantics} instead. We take as primitive a distinction
+that all three already presuppose but none formalizes: between what is
+actual --- a finite record of events that has happened --- and what is
+potential --- a structured field of weighted alternatives that has not.
+An experiment is then a three-fold selection: of an intervention, of a
+question, and of one outcome from the weighted alternatives that question
+admits. Writing this as a closed recursion isolates a single unresolved
+object, the actualization block~$\Sigma$, and everything else falls into
+place around it. Quantum field theory supplies the covariant law of the
+potential layer; the operational reconstruction programme supplies its
+finite-dimensional state space, and an effect-additivity postulate
+supplies the trace rule, so that the Born square is a theorem about
+weights rather than an axiom about probability. Relativity constrains
+$\Sigma$'s covariant form, and we separate --- as is not always done ---
+the order-independence of spacelike instruments, which is standard
+physics, from selector-history equivariance, which is a distinct and open
+obligation. Thermodynamics supplies what neither supplies: irreversibility
+and a timescale. Two contributions are new. First, a \emph{clock}: in a
+discrete model we show that timekeeping splits by a decidable rigidity
+criterion into three exhaustive cases, that the substrate natively
+realizes only the harmonic one whose constant is~$\pi$, and that the
+complementary quartic clock, whose constant is the lemniscatic
+$\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)$, is available only at an
+itemized price --- four bodies and one additional interaction range. Its
+period law is exact and its constant is recovered from simulation with no
+fitted scale. Second, a reinterpretation of Born weighting: in a
+pre-registered mechanism-level measurement, threshold statistics
+interpolate from amplitude weighting to occupation (Born) weighting as
+mode frequency exceeds the noise bandwidth, so that the Born rule appears
+as a \emph{regime} of actualization rather than an axiom. We report with
+equal prominence the accompanying negative --- that the same law did not
+transfer to the model's own thermal field in the sampled domain --- and a
+purity requirement discovered along the way: the slow channel must be
+essentially the sole stochastic element at the threshold. We claim a
+shared architecture with itemized interfaces, not a unification.
+\end{abstract}
+
+% =====================================================================
+\section{Introduction: four vocabularies, one distinction}
+\label{sec:intro}
+
+A physicist moving between relativity, thermodynamics, and quantum theory
+changes vocabulary three times. In relativity the primitive is an
+\emph{event} and the structure is a partial order. In thermodynamics the
+primitives are \emph{macrostates} and the structure is a monotone. In
+quantum theory the primitive is a \emph{state} and the structure is an
+algebra of operators. The three are routinely combined at the level of
+equations --- quantum field theory on curved backgrounds, black-hole
+thermodynamics, relativistic statistical mechanics --- and yet the
+combinations remain notoriously partial, and the partiality always
+localizes to the same place: what happens when something \emph{becomes
+the case}.
+
+This paper proposes that the three theories already share a semantic
+distinction which none of them makes explicit, and that making it
+explicit is what the merge requires. The distinction is between the
+\emph{actual} --- a finite, singular record of what has occurred --- and
+the \emph{potential} --- a structured field of weighted alternatives that
+have not occurred and mostly never will. Once the distinction is drawn,
+each theory turns out to govern a different part of it. Quantum theory,
+including its relativistic form, is the law of the potential layer: how
+weighted alternatives are structured, how they evolve, how they compose.
+Relativity constrains how the transition from potential to actual can be
+described without a preferred frame. Thermodynamics supplies the
+direction and the cost of that transition, and --- as we will show --- a
+quantitative condition on when it produces quantum statistics at all.
+
+Section~\ref{sec:ontology} sets the primitive ontology and the first of
+two declared postulates. Section~\ref{sec:operational} builds the
+operational layer and imports the reconstruction results that recover
+complex quantum theory from it. Sections~\ref{sec:clock}
+and~\ref{sec:register} present this paper's constructive contributions, a
+clock and a register, in a concrete discrete model.
+Section~\ref{sec:thermo} develops the thermodynamic pillar.
+Section~\ref{sec:born} presents the measured reinterpretation of Born
+weighting. Sections~\ref{sec:relativity} and~\ref{sec:qg} carry the
+architecture into relativity and quantum gravity.
+Section~\ref{sec:toy} exhibits a single computable model in which all the
+pieces coexist, so that the claim of coherence can be checked rather than
+asserted. Section~\ref{sec:synthesis} states the merge thesis exactly, and
+Section~\ref{sec:ledger} prices every claim in the paper.
+
+\begin{scopebox}
+\textbf{What this paper claims, and what it does not.} It claims a
+\emph{common semantic architecture with itemized interfaces} --- not a
+unification, not a derivation of quantum mechanics, and not a new
+dynamical theory. The reconstruction results of
+Section~\ref{sec:operational} are \emph{imported} and conditional on
+their own premises. The measurements of Sections~\ref{sec:clock}
+and~\ref{sec:born} are made within one concrete discrete model and carry
+the scope of their pre-registrations. Planck's constant, the Hamiltonian,
+particle masses, and coupling constants are not derived anywhere in this
+paper.
+\end{scopebox}
+
+% =====================================================================
+\section{Primitive ontology}
+\label{sec:ontology}
+
+At stage $n$ the \textbf{actual history} is a finite sequence of events
+\begin{equation}
+H_n = (e_1, e_2, \ldots, e_n).
+\end{equation}
+There may be many possible continuations, collected in a set
+$\mathcal{P}(H_n) = \{e'_1, e'_2, \ldots\}$. The founding move of this
+architecture is to refuse to identify these two objects:
+\begin{equation}
+\text{actual history } H_n \;\neq\; \text{potential continuations }
+\mathcal{P}(H_n).
+\label{eq:distinction}
+\end{equation}
+
+\begin{postulate}[Singular actuality]
+\label{post:A}
+One realized experiment produces one next event $e_{n+1}$, so that
+$H_{n+1} = H_n \circ e_{n+1}$.
+\end{postulate}
+
+\noindent Postulate~\ref{post:A} is a declared commitment of this
+scaffold, not a theorem and not a consequence of any dynamics presented
+here. Its principal alternative --- denying it, and taking all weighted
+continuations to be actual --- is a live position in the literature and
+is priced symmetrically in Section~\ref{sec:responses}. We adopt it
+because the architecture we are building is an architecture \emph{of}
+actualization, and a theory in which nothing becomes the case has no
+actualization to organize.
+
+An experiment is not merely an encounter with a probability
+distribution. Before any distribution is defined, two selections are
+made: of a controlled input $u = \Sigma_U(\mathcal{U})$ and of a
+measurement context $M = \Sigma_M(\mathcal{M})$. These are
+\emph{operational} selections --- a knob, a clock, a deterministic
+circuit will do --- and carry no commitment about freedom. The point is
+logical order: \emph{what are we doing to the system}, and \emph{what
+distinction will be read out}, both precede \emph{with what
+frequencies}.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+% --- the two ontological bands -------------------------------------
+\begin{scope}[on background layer]
+  \fill[black!4]  (-0.35,0.75) rectangle (12.9,2.35);
+  \fill[black!10] (-0.35,-1.75) rectangle (12.9,-0.25);
+\end{scope}
+\node[font=\scriptsize\itshape, anchor=north west] at (-0.28,2.30)
+  {potential};
+\node[font=\scriptsize\itshape, anchor=south west] at (-0.28,-1.70)
+  {actual};
+
+% --- nodes ----------------------------------------------------------
+\node[thm]   (H)   at (1.35,-1.0)  {$H_n$\\[-1pt]\tiny actual history};
+\node[sel]   (rho) at (3.9,1.55)   {$\rho_n$\\[-1pt]\tiny structured\\[-2pt]\tiny potentiality};
+\node[sel]   (w)   at (7.0,1.55)   {$\{(e_i,w_i)\}$\\[-1pt]\tiny weighted\\[-2pt]\tiny alternatives};
+\node[openb] (S)   at (10.0,1.55)  {$\Sigma$\\[-1pt]\tiny actualization};
+\node[thm]   (e)   at (10.0,-1.0)  {$e_{n+1}$\\[-1pt]\tiny one event};
+\node[thm]   (H1)  at (12.15,-1.0) {$H_{n+1}$};
+
+% --- flow -----------------------------------------------------------
+\draw[con] (H) to[out=90,in=200] node[lbl,pos=0.62] {$\Gamma$} (rho);
+\draw[con] (rho) -- node[lbl] {context $M$} (w);
+\draw[con] (w) -- (S);
+\draw[con] (S) -- node[lbl,pos=0.46] {selects one} (e);
+\draw[con] (e) -- (H1);
+\draw[wk] (H1) to[out=-90,in=-90,looseness=0.45]
+  node[lbl,pos=0.5] {stage $n\!+\!1$} (H);
+
+% --- the layer crossing --------------------------------------------
+\draw[gray!55,dashed] (-0.35,0.28) -- (12.9,0.28);
+\node[font=\tiny\itshape, anchor=west, gray!45!black] at (0.0,0.05)
+  {the layer crossing: everything above is potential, only events below are actual};
+\end{tikzpicture}
+\caption{The recursion~\eqref{eq:recursion}. Structure is encoded in
+shape and rule, never in colour: solid boxes are theorem-grade within
+their stated premises, thin boxes are selections or imported
+representations, and the double-ruled box is the paper's one open object.
+Actual history generates structured potentiality through a state-assignment
+map $\Gamma$; a chosen context resolves it into weighted alternatives; the
+actualization block selects one; the record extends and the cycle repeats.
+Everything above the lower band is potential; only the events in it are
+actual.}
+\label{fig:ontology}
+\end{figure}
+
+% =====================================================================
+\section{The operational layer, and what recovers quantum theory}
+\label{sec:operational}
+
+\subsection{States, effects, and convexity}
+
+Two preparations are equivalent if every subsequent experiment gives the
+same statistics; the equivalence class is a \emph{state} $\omega$. Two
+detector outcomes are equivalent if they have the same probability for
+every preparation; the class is an \emph{effect} $e$. The primitive
+pairing is
+\begin{equation}
+e(\omega) \in [0,1],
+\end{equation}
+read as the potential weight of actualizing $e$ given $\omega$. There is
+as yet no Hilbert space, no wavefunction and no Born rule. If $\omega_1$
+is prepared with frequency $p$ and $\omega_2$ with frequency $1-p$,
+operational consistency forces
+$e(p\omega_1 + (1-p)\omega_2) = p\,e(\omega_1) + (1-p)\,e(\omega_2)$, so
+the state space is convex and effects are affine. This is the
+general-probabilistic level: it contains classical probability,
+real-Hilbert quantum theory, and much else.
+
+\subsection{The reconstruction, imported}
+
+What selects complex quantum theory from that class is a separate,
+external result. Chiribella, D'Ariano and Perinotti~\cite{cdp} derive
+finite-dimensional complex quantum theory from the
+operational-probabilistic framework together with six principles:
+causality, perfect distinguishability, ideal compression, local
+distinguishability, pure conditioning, and purification --- the last
+being what separates the quantum member from the classical one. Under
+those premises,
+\begin{equation}
+\mathcal{H}_A \simeq \mathbb{C}^{d_A}.
+\label{eq:cdp}
+\end{equation}
+
+\begin{scopebox}
+\textbf{Status of \eqref{eq:cdp}.} A theorem \emph{external} to this
+paper, conditional on its six imported premises. Nothing here derives
+those premises from anything more primitive; Appendix~\ref{app:invoice}
+itemizes them as an import invoice, which is the honest replacement for
+treating ``the Hilbert space'' as a single unpriced assumption.
+\end{scopebox}
+
+\subsection{The trace rule from effect additivity}
+
+Once the quantum effect space is in hand, the shape of the weight
+functional is fixed by a second declared postulate.
+
+\begin{postulate}[Effect-noncontextual additivity]
+\label{post:B}
+A weight functional $w:\mathcal{E}(\mathcal{H})\to[0,1]$ with $w(I)=1$
+satisfies $w(E+F) = w(E) + w(F)$ whenever $E+F\le I$, for \emph{all}
+effect decompositions, including those whose members do not commute.
+\end{postulate}
+
+\noindent Postulate~\ref{post:B} is substantive and load-bearing: it is a
+noncontextuality of valuation over generalized measurements, and a
+contextual valuation escapes what follows without contradiction. From
+additivity, $w(qE) = q\,w(E)$ for rational $q$. Monotonicity is derived
+rather than assumed --- for effects $E\le F$ the difference $F-E$ is an
+effect, so $w(F) = w(E) + w(F-E) \ge w(E)$ --- and squeezing with
+rationals $q_n\uparrow\lambda\le r_n\downarrow\lambda$ gives
+$w(\lambda E) = \lambda w(E)$ for real $\lambda$. Extending by
+differences yields a positive linear functional, and in finite dimension
+every such functional is a trace:
+\begin{equation}
+w(E) = \Tr(\rho_w E).
+\label{eq:trace}
+\end{equation}
+This is Busch's generalized Gleason theorem~\cite{busch}, valid already
+in dimension two, where the original Gleason theorem --- which assumes
+additivity only over \emph{projective} decompositions --- requires
+$\dim\ge3$ and fails. The strengthening from projectors to effects is
+exactly the content of Postulate~\ref{post:B}. Throughout this paper,
+\eqref{eq:trace} and everything downstream of it is described as
+\emph{derived from Postulate~\ref{post:B}}, never as derived
+\emph{simpliciter}.
+
+\subsection{Probability is state plus question}
+
+With \eqref{eq:trace} the logical order of Section~\ref{sec:ontology}
+becomes formal. For a measurement $M = \{E_i\}$ with $\sum_i E_i = I$,
+\begin{equation}
+p(i \mid \rho, M) = \Tr(\rho E_i), \qquad \sum_i p_i = \Tr\rho = 1 ,
+\end{equation}
+so a probability exists only once a question is supplied: the state is
+not itself a probability distribution. For a pure state and a sharp
+outcome this reduces to the familiar square,
+\begin{equation}
+p_i = \Tr\big(|\psi\rangle\langle\psi|\,|i\rangle\langle i|\big)
+    = |\langle i|\psi\rangle|^2 ,
+\label{eq:born}
+\end{equation}
+which in this architecture is a \emph{theorem about weights} standing at
+the end of the chain $|\psi\rangle \to \rho \to (\rho,M) \to p_i$, rather
+than an axiom about probability standing at its beginning.
+
+Two structural facts follow immediately and matter later. Global phase
+is unphysical, so pure potentiality is a ray and $\psi$ decomposes into a
+weight structure and a phase structure, of which squaring retains only
+the first. And coherent potentiality is not ignorance over the same
+alternatives: for $|\psi\rangle = \alpha|A\rangle+\beta|B\rangle$ the
+cross term $2\,\mathrm{Re}\,\alpha^*\beta\langle A|E|B\rangle$ is absent
+from the corresponding mixture. That argument excludes one specific
+mixture reading; the stronger exclusion of $\psi$-epistemic models is the
+Pusey--Barrett--Rudolph theorem~\cite{pbr}, at the price of its
+preparation-independence assumption.
+
+\subsection{Dynamics, instruments, and the selector}
+
+Requiring affineness on mixtures, positivity, and positivity under
+extension by an untouched ancilla gives complete positivity, so physical
+channels are CPTP maps in the instrument tradition of Davies and
+Lewis~\cite{davieslewis}. A reversible transformation preserving
+pure-state transition probabilities acts on rays and is unitary or
+antiunitary (Wigner~\cite{wigner}); for a one-parameter group the
+antiunitary branch is excluded because $U(t) = U(t/2)U(t/2)$ and the
+square of either is unitary, and the projective obstruction vanishes for
+$\mathbb{R}$~\cite{bargmann}, so with strong continuity Stone's
+theorem~\cite{stone} gives $U(t) = e^{-itG}$ and, on defining
+$H := \hbar G$,
+\begin{equation}
+i\hbar\,\partial_t|\psi\rangle = H|\psi\rangle, \qquad
+i\hbar\,\dot\rho = [H,\rho].
+\end{equation}
+The existence of a phase generator is structural; the numerical value of
+$\hbar$ is empirical and is not derived here. A measurement context is
+represented not by an observable but by an \emph{instrument}
+$\{\mathcal{I}^M_o\}$ of CP trace-nonincreasing maps summing to a
+trace-preserving map, with $E^M_o = (\mathcal{I}^M_o)^*(I)$; an
+instrument carries two things at once, the weight of a possible
+actualization and the successor potentiality if it occurs.
+
+What no part of this supplies is the selection of one outcome. Writing
+$\Sigma_O$ for that block, there are two mathematically distinct
+implementations,
+\begin{equation}
+\underbrace{K_O(o\mid\rho,M,H)}_{\text{primitive stochastic}}
+\qquad\text{or}\qquad
+\underbrace{\lambda\sim\mu(\dd\lambda\mid\rho,M,H),\;\;
+o = F_O(\rho,M,H,\lambda)}_{\text{context-complete deterministic}},
+\label{eq:sigma}
+\end{equation}
+and in either case the physical content is the requirement that the
+resulting frequencies reproduce the weights,
+\begin{equation}
+(F_O)_*\mu(\{o\}) = \Tr(\rho E^M_o) ,
+\label{eq:pushforward}
+\end{equation}
+called the \emph{Born pushforward} below. Note that $\Sigma_O$ means the
+whole implementation --- the kernel, or the pair $(F_O,\mu)$ --- so that
+the measure cannot be hidden inside a deterministic map. Given an
+outcome, the successor state is ordinary conditionalization,
+$\rho' = \mathcal{I}^M_k(\rho)/p_k$; histories compose by
+$P(h) = \Tr[\mathcal{I}^{M_N}_{o_N}\circ\cdots\circ\mathcal{I}^{M_1}_{o_1}(\rho_0)]$,
+so the potential histories are plural while the actual history is
+singular. Collecting the pieces gives the recursion of
+Figure~\ref{fig:ontology},
+\begin{equation}
+(H_n,\mathcal{C}_n,\mathcal{D}) \xrightarrow{\;\Gamma\;} \rho_n
+\longrightarrow \{(e_i,w_i)\}
+\xrightarrow{\;K\ \text{or}\ (F,\mu)\;} e_{n+1} \longrightarrow H_{n+1},
+\label{eq:recursion}
+\end{equation}
+in which $\mathcal{C}_n$ is the preparation and control record and
+$\mathcal{D}$ the stipulated dynamics. The closure map $\Gamma$ is part
+of the scaffold, not a theorem: history alone does not determine a state.
+
+% =====================================================================
+\section{Time: the clock}
+\label{sec:clock}
+
+Everything above concerns weights. Nothing in it contains a clock. We now
+turn to the paper's first constructive contribution, and for this we need
+a concrete model rather than an operational abstraction.
+
+\subsection{The setting}
+
+The model is a discrete one: point bodies on a lattice, interacting
+through a compact central pair potential with a single minimum at
+separation $r_0$, and carrying a polarity that makes the interaction
+graph bipartite. Two features matter. Every bond in an equilibrium sits
+\emph{at} its potential minimum, so the configuration carries zero actual
+tension; and the potential has compact support, so ``bonded'' is a sharp
+predicate. What follows is exact within that model.
+
+\subsection{A decidable trichotomy}
+
+Let $R$ be the rigidity matrix of a framework, whose rows are the stretch
+rates $\hat{u}_e\cdot(q_i-q_j)$ of each bond under a displacement field
+$q$. Expanding a path $p(d) = p_0 + d\,q + d^2 w$, the stretch of bond $e$
+is $d\,(Rq)_e + d^2[\kappa_e(q) + (Rw)_e] + O(d^3)$ with
+$\kappa_e(q) = |q_i-q_j|_\perp^2/2\ell_e$. Three cases are exhaustive.
+
+\begin{criterion}[The rigidity trichotomy]
+\label{crit:trichotomy}
+At zero tension, along a direction $q$:
+\begin{enumerate}\itemsep2pt
+\item if $Rq \neq 0$, the direction is first-order rigid and the energy
+      grows as $d^2$: $n=2$, a harmonic clock;
+\item if $Rq = 0$ and $\kappa(q) \perp \operatorname{coker} R$, the flex
+      extends to second order and generically to a finite mechanism:
+      $n \ge 6$ or $n = \infty$;
+\item if $Rq = 0$ but $\langle\omega,\kappa(q)\rangle \neq 0$ for a
+      self-stress $\omega \in \operatorname{coker} R$, the flex is
+      \emph{blocked}, and minimizing over $w$ gives exactly
+      \begin{equation}
+      E(d) = \lambda(q)\,d^4 + O(d^6), \qquad
+      \lambda(q) = \frac{\langle\hat\omega,\kappa(q)\rangle^2}
+                        {2\sum_e \hat\omega_e^2/k_e} ,
+      \label{eq:quartic}
+      \end{equation}
+      so $n=4$.
+\end{enumerate}
+Hence $n=4$ at zero tension exists \emph{if and only if} a self-stress
+exists and blocks the flex.
+\end{criterion}
+
+Two corollaries follow at once: no self-stress means no $n=4$, and actual
+tension means $n=2$, since a nonzero equilibrium stress puts a $d^2$ term
+on any flex it blocks. The quartic case lives only at the degenerate
+point --- zero actual tension with nonzero \emph{possible} stress. This
+makes what is otherwise a question about potential shapes decidable by
+linear algebra.
+
+The trichotomy matters because the three cases keep time differently
+(Figure~\ref{fig:trichotomy}). The harmonic case is isochronous and its
+period constant is $\pi$. The quartic case is the anti-pendulum: its
+frequency grows with amplitude, and its period constant is the
+lemniscatic
+\begin{equation}
+\Gstar = \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)} = 2.958675119188639\ldots
+\end{equation}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig2_trichotomy.pdf}
+\caption{The rigidity trichotomy and the clocks it produces. (a) The three
+exhaustive cases of Criterion~\ref{crit:trichotomy} at zero tension.
+(b) The corresponding period laws: the harmonic case is amplitude-independent
+with constant $\pi$; the quartic case has $T\propto A^{-1}$ with constant
+$\Gstar$; a hard wall also gives $T\propto A^{-1}$ but with no special
+constant.}
+\label{fig:trichotomy}
+\end{figure}
+
+\subsection{The native case is harmonic}
+
+Which cases does the model realize by itself? Its zero-tension equilibria
+are exactly the frameworks whose active bonds all sit at $r_0$ with
+opposite-polarity endpoints --- unit-edge bipartite frameworks. A screen
+over every connected minimum-degree-two bipartite interaction graph up to
+$N=7$, plus the cube graph, found \textbf{no self-stressed embedding}:
+seventeen graph classes, zero hits, with constraint-clean minima of
+$\lambda_{\min}(RR^{\mathsf T})$ bounded away from zero at $1.03\times
+10^{-2}$. Exactly, the cubic checkerboard blocks at $L=2,3,4$ have
+self-stress dimension zero, so all their flexes extend. Larger stressed
+objects contract to networks of straight unit chains meeting at joints,
+and the two minimal joint graphs are squeezed by geometry: an interior
+four-joint configuration has a joint angle of at most $30^\circ$ against
+a clearance requirement of $28.96^\circ$, and an exhaustive
+integer-distance search --- 153{,}898 integral quadruples to diameter 60,
+7{,}177 of them with an interior point --- tops out at $26.14^\circ$.
+
+One object survives the static gates: a nineteen-body hexagonal wheel,
+all twenty-four bonds exactly unit, with a one-dimensional self-stress
+(rim in tension, spokes in compression) and every individual chain-bowing
+flex blocked. It is, to our knowledge, the first zero-tension
+self-stressed equilibrium exhibited in this model. \emph{And it fails as
+a clock.} Its quartic form is a squared difference,
+$E_4 \propto (\sum\kappa_{\rm rim} - \sum\kappa_{\rm spoke})^2$, so the
+combined flex that bows the rim and buckles the spokes equally costs
+nothing: the blocking form on the 28-dimensional nontrivial flex space is
+sign-indefinite, with eigenvalues from $-1.467$ to $+0.743$. Direct
+integration confirms it, the constrained static energy collapsing to
+$\sim10^{-12}$. The verified per-chain quartic was a chord across a flat
+valley.
+
+The failure sharpens the criterion, and the sharpened form is a genuine
+result of this paper:
+
+\begin{criterion}[Buckling]
+\label{crit:buckling}
+Chain stations are free hinges, so a \emph{compressed} chain of length
+$\ge 2$ buckles at zero energy; only tensioned chains are
+straight-stable. A native $n=4$ clock therefore requires, beyond
+Criterion~\ref{crit:trichotomy}: \textup{(1)} a self-stress;
+\textup{(2)} a blocking form definite on the \emph{whole} flex space, not
+merely mode by mode; and \textup{(3)} every compressed member a
+\emph{single bond}.
+\end{criterion}
+
+Because an all-tension self-stress is impossible on a finite framework,
+condition~(3) forces mixed structures --- single-bond struts together
+with straight tensioned chains. Whether such an integer ``unit-strut
+tensegrity'' exists in this model is open; the first candidate family is
+killed exactly, its closure condition $s^2-4k^2=-1$ being impossible
+modulo~4.
+
+\subsection{The minimum viable clock}
+
+If the quartic clock is not native, what is the cheapest object that
+realizes it? The answer is exact. Take four bodies $A^+B^-C^+D^-$
+collinear at positions $0,1,2,3$, with the three unit bonds at their
+minimum (curvature $k_1$) and \emph{one additional interaction species}
+closing $A$ to $D$ at its own minimum at range $3r_0$ (curvature $k_2$).
+All four bonds are at zero tension. Then $\operatorname{rank}R = 3$, the
+self-stress is one-dimensional with $\omega=(1,1,1,-1)$, and the blocking
+form on the four-dimensional nontrivial flex space has eigenvalues
+$\{2,\;10/3\}$ with kernel exactly the trivial motions --- positive
+definite on \emph{every} nontrivial flex. The chain is prestress-stable:
+$n=4$ in all directions. Crucially its one compressed member is a single
+bond, so Criterion~\ref{crit:buckling} is satisfied where the wheel
+failed.
+
+The mirror-even zero-momentum mode $q = (-1,+1,+1,-1)U$ lies on a
+dynamically invariant manifold, so it closes exactly as a one-degree-of-freedom
+quartic oscillator with
+\begin{equation}
+\lambda_{\rm eff} = \frac{8k_1k_2}{k_1+3k_2}, \qquad m_{\rm eff} = 4,
+\qquad
+\boxed{\;T\cdot A = \sqrt{\pi}\,\Gstar\,
+\sqrt{\frac{m_{\rm eff}}{2\lambda_{\rm eff}}}
+= \sqrt{\pi}\,\Gstar\,\frac{\sqrt{k_1+3k_2}}{2\sqrt{k_1k_2}}\;}
+\label{eq:periodlaw}
+\end{equation}
+Direct integration of the reduced mode reproduces \eqref{eq:periodlaw} to
+machine precision, and a full twelve-degree-of-freedom conservative
+simulation of the four-body system holds $T\cdot A$ constant to $0.33\%$
+across a sixfold amplitude range, recovering $\Gstar$ to $2\times10^{-6}$
+in the $A\to0$ extrapolation \emph{with no fitted scale}
+(Figure~\ref{fig:clock}).
+
+Minimality is exact by enumeration: at $N\le3$ the opposite-polarity
+graphs are trees and cannot carry stress; at $N=4$ the single-scale
+embeddings have no stressed realization; and polarity alternation forces
+the closure span to be odd, hence $3r_0$ at minimum. \textbf{Four bodies
+and one additional interaction range is the floor.}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig3_clock.pdf}
+\caption{The minimum viable clock carrier. (a) Four bodies, three unit
+bonds carrying tension and one single-bond strut at range $3r_0$ carrying
+compression; the self-stress is $\omega=(1,1,1,-1)$ and the blocking form
+is positive definite on every nontrivial flex, so the object is
+prestress-stable at zero tension. (b) The period law~\eqref{eq:periodlaw}
+verified without a fitted scale: direct integration of the reduced mode
+reproduces it to machine precision, and the two horizontal lines mark the
+independent full twelve-degree-of-freedom result.}
+\label{fig:clock}
+\end{figure}
+
+\begin{scopebox}
+\textbf{The price.} One additional interaction species, plus its scale
+parameters. What it buys is the quartic clock exactly. What it does not
+buy is a spectral window: with $k_1=k_2=\varepsilon$, clearing the
+propagating band requires $\varepsilon A_{\max}^2 > 1.0556$ against the
+field band top $2\arcsin(1/\sqrt3) = 1.230959$, i.e.\ $\varepsilon >
+4.22$ at $A_{\max}=0.5$, far above any value the model otherwise
+motivates. The honest reading is that the carrier's true price is matter
+stiffness at field-stiffness parity. Its falsifier is stated in
+Appendix~\ref{app:instruments}.
+\end{scopebox}
+
+% =====================================================================
+\section{Memory: the register}
+\label{sec:register}
+
+A clock alone carries no past. The minimal memory in the same model is a
+single body cradled by three anchors on an equilateral triangle of side
+$s<\sqrt3$: for such $s$ there are two mirror equilibria at heights
+$\pm h$, $h = \sqrt{1-s^2/3}$, with all three bonds at exactly $r_0$.
+
+The barrier between them is not a fitted quantity. A watershed
+computation over the \emph{entire} configuration space --- union-find over
+energy-sorted cells, so that no cheaper channel can hide --- gives a
+barrier of $1.016$--$1.021\,\varepsilon$ across $s\in[0.9,1.3]$, against
+a hinge path (break one bond, swing on the remaining two) of exactly
+$1.000\,\varepsilon$; the residual few per cent is grid resolution and
+the third-bond tail. The direct route through the centre costs about
+$30\varepsilon$. So
+
+\begin{proposition}
+The register's barrier is one bond's dissociation depth, essentially
+independent of the geometry: $\Delta E = \varepsilon$.
+\end{proposition}
+
+Two structural observations follow, and the first is the reason this
+section sits beside the last. The register must be \emph{rigid with a
+barrier}; the clock must be \emph{flexible but blocked}. They occupy
+opposite corners of the very same rigidity criterion. And the same
+constant $\varepsilon$ that sets the bond depth sets the retention time,
+through the Arrhenius form $\tau_{\rm flip} \sim \nu_0^{-1}
+e^{\varepsilon/T}$ under any declared noise ensemble
+(Figure~\ref{fig:register}). One constant prices binding, clock rate, and
+memory at once.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig7_register.pdf}
+\caption{The geometric bit. (a) Two mirror states separated by a barrier
+of exactly one bond depth along the hinge path; the direct route through
+the repulsive core costs about thirty times as much, and a watershed over
+the full configuration space confirms no cheaper channel exists. (b) The
+same $\varepsilon$ fixes retention through an Arrhenius law, so the
+memory's lifetime is set by the constant that binds the matter.}
+\label{fig:register}
+\end{figure}
+
+% =====================================================================
+\section{Thermodynamics: irreversibility and timescale}
+\label{sec:thermo}
+
+Thermodynamics enters this architecture at three places, and in each it
+supplies something neither the weight layer nor the relativistic
+structure can.
+
+\paragraph{Actualization is irreversible, and the model has it natively.}
+The unitary evolution of Section~\ref{sec:operational} preserves
+information; the transition from potential to actual does not. In the
+concrete model this is not an interpretive overlay but a measured
+property of the dynamics: the manifestation event is a threshold
+projection, and a single such act removes about $37\%$ of the field norm.
+The inversion is worth stating plainly, because it runs opposite to the
+usual framing of the measurement problem: in this model \emph{collapse is
+the native operation and unitarity is the imported idealization}. What
+the substrate does for free is actualize; what it must borrow is
+reversible evolution between actualizations.
+
+\paragraph{The bath is a real thermodynamic object.} The stochastic
+element in the measurements of Section~\ref{sec:born} is an
+Ornstein--Uhlenbeck thermostat on the field velocity, and it is not
+decorative: it equipartitions, delivering $\langle|v|^2\rangle = 3T$ per
+site to within a few per cent, with an autocorrelation decaying at the
+declared rate. It is, however, \emph{imposed}: the underlying dynamics is
+deterministic and supplies no ensemble of its own. Every probabilistic
+statement in this paper inherits that qualification.
+
+\paragraph{Retention is Arrhenius, and this fixes the cost of memory.}
+Section~\ref{sec:register} gives $\tau_{\rm flip}\sim\nu_0^{-1}
+e^{\varepsilon/T}$. A register is therefore not free: holding one bit for
+$N$ clock cycles requires $\varepsilon/T \gtrsim \ln(N\,\nu_0 T_{\rm
+clock})$, so memory depth is logarithmic in the energy budget --- the
+familiar thermodynamic shape, arrived at here from the model's own
+statics rather than assumed.
+
+\paragraph{And a timescale condition, which is the paper's second new
+result.} The thermodynamic quantity that turns out to control whether
+actualization statistics are \emph{quantum} is not an energy but a
+\emph{ratio of timescales}: the mode frequency against the noise
+correlation time. That is the subject of the next section, and it is the
+point at which the thermodynamic pillar stops being connective tissue and
+starts doing work.
+
+% =====================================================================
+\section{Born weighting as a regime}
+\label{sec:born}
+
+\subsection{What a threshold counts}
+
+Consider the simplest possible actualization mechanism: a coherent field
+riding on noise, and an event recorded whenever the total crosses a
+threshold. Which feature of a mode does such a counter weight?
+
+There are three candidates with different physical meanings. It might
+weight by \emph{amplitude squared}, which is what a naive
+excess-rate calculation gives at leading order. It might weight by
+\emph{energy}, which carries an extra factor of $\Omega^2$. Or it might
+weight by \emph{occupation} $n = E/\Omega$ --- amplitude squared times
+frequency, the classical action variable and the adiabatic invariant ---
+which is the Born-valued quantity, because the relativistic mode
+normalization $A\sim1/\sqrt{2\Omega}$ is precisely the conversion between
+field amplitude and occupation. The physical intuition for the third is
+worth stating: a detection rate is presentations per unit time times
+success per presentation; success goes as amplitude squared and
+presentations go as frequency, and their product is occupation. On this
+reading the mysterious $1/\sqrt{2\Omega}$ of quantum field theory is the
+conversion from \emph{how big the wave is} to \emph{how often it knocks}.
+
+The three predictions are distinguishable. Preparing two standing modes
+at \emph{equal occupation} and regressing the excess crossing rate on
+their spatial signatures yields a ratio $R$ whose value is
+$\Omega_1/\Omega_2$ under amplitude weighting, $1$ under occupation
+weighting, and $\Omega_2/\Omega_1$ under energy weighting. We report the
+normalized statistic
+$\mathrm{BF} = (R - R_{\rm amp})/(1 - R_{\rm amp})$, the
+\emph{Born-fraction}, which is $0$ for amplitude and $1$ for Born.
+
+\subsection{The measured interpolation}
+
+Under pre-registration --- outcomes, gates, kill conditions and runner
+hashes locked before execution --- the answer is neither of the three
+fixed alternatives. The weighting \emph{interpolates}, and the control
+parameter is the product of mode frequency and noise correlation time.
+Across five arms spanning $\bar\Omega\tau$ from $0.64$ to $78.36$ the
+Born-fraction rises strictly monotonically from $0.049$ to $0.836$
+(Table~\ref{tab:born}, Figure~\ref{fig:bornregime}), with a descriptive
+crossover near $\bar\Omega\tau \approx 17$.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrcc}
+\toprule
+Instrument & $\bar\Omega\tau$ & Born-fraction & 99\% CI \\
+\midrule
+saturation scan, arm 1 & 0.64 & 0.0494 & [0.0359, 0.0623] \\
+saturation scan, arm 2 & 2.54 & 0.1020 & [0.0898, 0.1144] \\
+saturation scan, arm 3 & 10.15 & 0.2735 & [0.2549, 0.2903] \\
+saturation scan, arm 4 & 19.59 & 0.4694 & [0.4583, 0.4797] \\
+saturation scan, arm 5 & 78.36 & 0.8362 & [0.8130, 0.8612] \\
+\midrule
+earlier discrimination, slow & $\approx 0.7$ & 0.024 & [0.014, 0.036] \\
+earlier discrimination, fast & $\approx 2.7$ & 0.099 & [0.090, 0.109] \\
+\midrule
+slow-channel test, $f=1$ & 141.7 & 0.9361 & [0.8953, 0.9700] \\
+\bottomrule
+\end{tabular}
+\caption{Born-fraction against the frequency--correlation-time product.
+The two instruments are reported separately and are \emph{not} averaged:
+the slow points differ by about $0.02$ beyond seed noise, a declared
+phase-draw systematic. The last row is a pure slow channel rather than a
+sixth arm of the same scan.}
+\label{tab:born}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig5_bornregime.pdf}
+\caption{The central measurement. Threshold-crossing statistics
+interpolate from amplitude weighting to occupation (Born) weighting as
+mode frequency exceeds the noise bandwidth. Markers distinguish
+instruments deliberately: the two slow-point estimates are never averaged,
+the engine cells are a different noise structure spanning only
+$\bar\Omega\tau = 0.19$--$0.86$, and the highest point is a pure slow
+channel. The dotted curve is descriptive and carries no decision weight.}
+\label{fig:bornregime}
+\end{figure}
+
+\noindent The reading, at exactly its scope: \emph{within the declared
+mechanism class, Born weighting is the fast-mode/slow-noise asymptote of
+threshold statistics}. The rule appears as a regime, not an axiom. It is
+neither an exact Born law nor a theorem about any substrate; whether the
+asymptote is exactly $1$ or near the descriptive $0.86$ is open.
+
+\subsection{The negative, reported at equal prominence}
+
+The same law was then tested where it would matter more: on the model's
+own thermal field, with its own propagating noise, under a locked
+ten-cell design. \textbf{It did not transfer.} No declared axis reached
+the registered structure threshold --- the Spearman correlation of
+Born-fraction against the primary axis was $+0.01$, against the secondary
+$+0.37$, and against threshold height $-0.20$, all far below the required
+$0.7$. The registered outcome is negative.
+
+The post-hoc diagnosis --- and it is flagged as post-hoc, not registered
+--- is visible in Figure~\ref{fig:bandmap}: the mean-subtracted noise
+correlation time sat pinned between $0.6$ and $1.9$ ticks in every cell
+regardless of the thermostat's damping, so the accessible range of
+$\bar\Omega\tau$ was only $0.19$--$0.86$, entirely below the crossover.
+Within that range the measured values, $0.01$--$0.05$, are quantitatively
+consistent with the interpolation law. The structural suggestion is that
+thermal noise carried by the field itself can never be slow relative to
+that field's own band, because signal and noise are the same medium. We
+state that as a suggestion: the record disfavours the route in the
+sampled domain and does not prove that it can never succeed.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig4_bandmap.pdf}
+\caption{Why the negative was structural rather than accidental. The
+propagating band carries both the signal modes and the thermal noise, so
+the noise rate cannot be pushed below the band. Only a channel outside
+that band --- here the model's slowly accumulating gravitational-potential
+sector, three orders of magnitude slower --- sits where an actualization
+gate would have to sit.}
+\label{fig:bandmap}
+\end{figure}
+
+\subsection{A slow channel, and the purity requirement}
+
+That diagnosis has a testable consequence: if the gate must be slow and
+the field cannot be, the model must be searched for a slow channel of
+different origin. It has one --- a slowly accumulating potential sector
+sourced by the matter configuration. Measured under its own locked
+pre-registration on a self-gravitating configuration with no thermostat
+and no manifestation events, its fluctuations have correlation time
+$\tau = 317.9$ ticks against the field's $0.81$: a ratio of $391$, and
+$\bar\Omega\tau = 141.7$, deep in the regime the interpolation law
+identifies.
+
+Feeding a channel at that timescale into the mechanism, with the fast
+field noise still present at full strength, gives the result in
+Figure~\ref{fig:purity}: the Born-fraction stays pinned between $0.04$
+and $0.09$ up to a slow-channel share of $75\%$, and reaches $0.936$ only
+when the slow channel is essentially the \emph{sole} stochastic element.
+
+\begin{proposition}[Purity requirement]
+Crossing statistics are dominated by the fastest stochastic component
+present. Born weighting therefore requires not merely the presence of a
+slow channel but its near-exclusivity at the threshold.
+\end{proposition}
+
+\noindent This is a demanding condition and it is the honest headline of
+the whole exercise: a physical realization must \emph{shield} the
+actualization comparison from the fast field, not merely add a slow term
+to it.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\textwidth]{fig6_purity.pdf}
+\caption{The purity requirement. Mixing a slow channel into fast noise
+does not gradually produce Born weighting; the statistics remain
+amplitude-dominated until the slow channel is nearly exclusive.}
+\label{fig:purity}
+\end{figure}
+
+\subsection{Three ceilings, and the gap nobody has closed}
+\label{sec:tiers}
+
+The architecture's central distinction has so far been qualitative:
+potentiality is \emph{structured}, and actuality is singular. Bell
+correlations make the first half quantitative, and doing so exposes an
+open problem that is the paper's thesis in numerical form.
+
+Three ceilings bound the CHSH quantity, and each corresponds to a
+different admissible explanatory structure:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+ceiling & value & structure that could produce it \\
+\midrule
+local & $2$ & an ensemble of pre-assigned values \\
+quantum (Tsirelson~\cite{tsirelson}) & $2\sqrt2 \approx 2.8284$ & a noncommutative weight structure \\
+no-signalling (PR~\cite{pr}) & $4$ & any consistent probability assignment \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Three precisions keep the reading honest.
+
+\emph{The first ceiling is not a bound on actuality.} Every recorded
+outcome is actual whatever $S$ turns out to be; actuality is singular per
+trial and is not bounded by anything. What $2$ bounds is what
+\emph{pre-assigned} values could produce --- the sixteen vertices of the
+local polytope are exactly the deterministic assignments in which each
+system already carries an answer to both questions it might be asked.
+This is why singular actuality and $S = 2\sqrt2$ coexist without strain:
+the tension is with pre-assignment, not with actualization.
+
+\emph{The second is a slice, not a shape.} $2\sqrt2$ is the CHSH facet of
+the quantum set; that set is not a polytope and its full boundary is
+characterized only by a converging hierarchy of semidefinite
+relaxations~\cite{npa}.
+
+\emph{The third is not merely a formal maximum.} Correlations reaching
+$4$ exist that never permit a signal --- Popescu--Rohrlich boxes are
+perfectly consistent with relativistic causality~\cite{pr}. So the outer
+ceiling is not an artefact of allowing the impossible; it is the honest
+extent of what consistency alone permits.
+
+That last point is the substance. \textbf{Nothing in causality, locality,
+or logical consistency explains why nature stops at $2\sqrt2$.} Relativity
+licenses everything up to $4$; the world uses $70.7\%$ of it and leaves
+the rest unclaimed. Several principles have been proposed that recover
+Tsirelson's bound or approach it --- information
+causality~\cite{infocausality}, macroscopic locality~\cite{macroloc},
+local orthogonality~\cite{localorth}, and limits on communication
+complexity~\cite{vandam} --- and none is established as \emph{the}
+derivation.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig12_tiers.pdf}
+\caption{The three ceilings, computed. (a) Local correlations stop at
+$2$, quantum at $2\sqrt2$, and no-signalling at $4$; the hatched band is
+the $29.3\%$ that relativistic consistency permits and nature does not
+use. (b) What the number buys: the device-independent min-entropy runs
+from exactly zero certified bits at $S=2$ --- where the outcomes could
+have been written down in advance --- to exactly one bit at $2\sqrt2$.
+(c) The price, from $S^2 = 4 + \lVert[A_0,A_1]\rVert\,\lVert[B_0,B_1]\rVert$:
+each commutator norm is capped at $2$, so a product of $4$ requires both
+at maximum. There is no partial-credit route to $2\sqrt2$. The dotted
+curve is the identity and the markers are the directly computed operator
+norm; they agree to $2\times10^{-15}$.}
+\label{fig:tiers}
+\end{figure}
+
+The architecture therefore acquires a quantitative form and an open
+problem in the same stroke. The potential is not ``whatever is not
+forbidden'': it is a specific, tightly constrained subset of the
+consistent, and the constraint has no accepted explanation. Whatever
+fixes the weight structure of Section~\ref{sec:operational} is the same
+thing that fixes this ceiling, and neither the reconstruction programme
+nor anything in this paper supplies it. The gap between $2\sqrt2$ and $4$
+is the width of that ignorance, measured.
+
+\subsection{What the angles do, and which part needs a record}
+\label{sec:angles}
+
+One further separation is worth making explicit, because two claims are
+commonly run together and only one of them is true.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{fig13_bellangles.pdf}
+\caption{The angles, and the boundary. (a) For polarisation-entangled
+light the quantum correlation $\cos2\theta$ and the best local model --- a
+straight line --- \emph{touch} at $0^\circ$, $45^\circ$ and $90^\circ$, so
+the violation is an angle window rather than a uniform excess; the widest
+single gap is $0.211$ at $19.85^\circ$. (b) At the CHSH settings each of
+the four contexts contributes exactly $1/\sqrt2$, well inside the
+$|E|\leq1$ available to any correlator: no context is individually
+anomalous, and the local bound constrains only the total. (c) Two crossed
+polarisers transmit nothing; inserting a third at $45^\circ$ transmits
+$I_0/8$. One beam, one pass, no ensemble comparison and no record --- the
+angle dependence is physical, not a feature of the bookkeeping. (d) $S$
+by contrast is a compiled statistic: the four sub-ensembles are verified
+disjoint and exhaustive, no trial enters more than one, and the number
+exists only after all four are combined.}
+\label{fig:bellangles}
+\end{figure}
+
+\emph{The CHSH number is a construction.} Its four correlators are
+measured on four disjoint sub-ensembles; no trial contributes to more than
+one; and no individual context is anomalous --- each sits at $1/\sqrt2$,
+comfortably inside the unit bound available to any correlator whatever.
+$S$ is assembled, and it does not exist without something that assembles
+it. This is Fine's gluing statement in operational dress, and it is
+correct.
+
+\emph{The noncommutativity is not a construction.} It has consequences in
+single systems with no ensemble and no memory. Two crossed polarisers pass
+nothing; insert a third at $45^\circ$ and $I_0/8$ passes. That is one
+beam making one pass, and the order of the elements changes what emerges.
+The same structure fixes ground-state energies --- $E_0 = \hbar\omega/2$
+follows from $[x,p]\neq0$ and vanishes without it --- which is why helium
+does not freeze at $T\to0$ and why deuterium and hydrogen bonds differ in
+length and reaction rate. None of that requires a record.
+
+The distinction matters for the architecture. The commutator is the
+\emph{input} to \eqref{eq:compweight}'s counterpart at the correlation
+level, $S^2 = 4 + \lVert[A_0,A_1]\rVert\lVert[B_0,B_1]\rVert$; $S$ is the
+\emph{readout}. Records are required for the readout and not for the
+commutator, and the ceiling of $2\sqrt2$ was fixed by the algebra before
+any apparatus existed to approach it. An account that locates
+noncommutativity in the compiled record therefore explains the wrong
+object: it would leave the three-polariser experiment, and the stability
+of ordinary matter, without a cause.
+
+\begin{scopebox}
+\textbf{Scope of Section~\ref{sec:born}.} All ensembles are imposed; the
+mechanism-level measurements run on a standalone instrument rather than
+the full model; the coupling in the last experiment is a declared
+additive model class. The slow-channel measurement's profile contains no
+random-number consumer, so its run is fully deterministic and its
+seed-independence is vacuous --- configuration-varied robustness is a
+registered refinement, not a completed check. None of this establishes a
+Born law for any substrate. The tier structure of
+Section~\ref{sec:tiers} is a restatement of established bounds, not a new
+result; its contribution is to locate the paper's open question inside
+them.
+\end{scopebox}
+
+% =====================================================================
+\section{Relativity}
+\label{sec:relativity}
+
+The architecture divides cleanly under relativity, and the division is
+the paper's organizing claim about what merges and what does not.
+
+\subsection{The weight layer relativizes; this is standard physics}
+
+Covariant potentiality is the assignment of local algebras to spacetime
+regions with Einstein causality,
+$[\mathcal{A}(O_A),\mathcal{A}(O_B)] = 0$ for spacelike-separated
+regions~\cite{haagkastler,haag}, with probabilities given by the
+state--effect pairing $p_\omega(E) = \omega(E)$ --- the
+representation-independent replacement for the trace, since a generic
+local algebra is not of type~I and admits no intrinsic density matrix.
+Covariant evolution of the potential layer is the Tomonaga--Schwinger
+equation~\cite{tomonaga}, conditional on integrability. And for
+causally disjoint local instruments the joint statistics are independent
+of composition order,
+\begin{equation}
+p_\omega^{A\prec B}(a,b|x,y) = p_\omega^{B\prec A}(a,b|x,y),
+\label{eq:R3}
+\end{equation}
+provided the instruments satisfy a causal local measurement
+scheme~\cite{fewsterverch}. Equation~\eqref{eq:R3}, not trace
+preservation alone, is the operational statement that the order of
+spacelike actualizations is gauge at the level of ensembles.
+
+\subsection{Order-independence is not selector covariance}
+
+It is tempting, and wrong, to conclude that a covariant weight layer
+delivers a covariant selector. Let $\mu_f$ be the measure over complete
+realized histories induced by a selector law under foliation $f$, and let
+$\tau_{f\to g}$ exchange only the birth order of spacelike-incomparable
+events. The two genuinely distinct further conditions are
+\begin{equation}
+\mu_g = (\tau_{f\to g})_*\mu_f
+\qquad\text{and}\qquad
+(\pi_{\mathcal{E}})_*\mu_{f_0} = P^{\rm cov}_{\mathcal{E}}
+\ \ \text{for every experiment } \mathcal{E},
+\label{eq:R4}
+\end{equation}
+the first requiring genuine equivariance and the second requiring only
+that a physically fixed preferred foliation $f_0$ be operationally
+hidden. \textbf{Neither follows from \eqref{eq:R3}}, which contains no
+selector law and no history measure. Keeping these apart is, in our view,
+the single most common conflation in discussions of relativistic
+collapse.
+
+\subsection{Four representative responses, each priced}
+
+\label{sec:responses}
+The available responses are families rather than an exhaustive
+classification, and they are not mutually exclusive.
+
+\emph{No selector.} Deny Postulate~\ref{post:A}: unitary theory only, and
+the covariance problem disappears because there is nothing to make
+covariant~\cite{everett}. The price is symmetric and real --- the Born
+weights must then be derived without a selector, whether by
+decision-theoretic argument~\cite{deutsch,wallace} or
+envariance~\cite{zurek}, and both remain contested~\cite{kent}.
+
+\emph{Hypersurface-relative conditionalization.} Take the state update to
+be conditionalization and let it be hypersurface-relative, as
+in~\cite{aharonovalbert,myrvold}. This is update semantics; it does not
+by itself say which event becomes actual or with what measure.
+
+\emph{Covariant stochastic flashes.} Take the actualization events
+themselves as the primitive ontology~\cite{bell}, for which
+relativistic models exist for fixed particle number, originally without
+interaction~\cite{tumulka06} and subsequently with
+interaction~\cite{tumulka20}. Indistinguishable particles, variable
+number, and full interacting field theory remain open.
+
+\emph{A real preferred foliation.} Let the selector act on a real but
+hidden foliation. This makes a total actualization order well defined,
+and it is where the discrete model of this paper sits, since a global
+tick order is one of its axioms. The price is usually stated as two
+independent proofs: that the selector law satisfies \eqref{eq:R4}, and
+that every observable sector passes ordinary Lorentz-recovery tests.
+Section~\ref{sec:proofs} shows that these two are not on the same
+footing --- the first dissolves, and the second half-closes.
+
+\subsection{Discharging the first debt, and locating the second}
+\label{sec:proofs}
+
+The two proofs owed by a preferred-foliation ontology are not symmetric.
+
+\begin{proposition}[Operational hiding is not an independent obligation]
+\label{prop:hiding}
+Let a selector on a fixed foliation $f_0$ generate a measure $\mu_{f_0}$
+over complete histories. If \textup{(i)} the marginal of $\mu_{f_0}$ on
+recorded data equals the quantum composed-history weight
+$P(h) = \Tr[\mathcal{I}^{M_N}_{o_N}\circ\cdots\circ
+\mathcal{I}^{M_1}_{o_1}(\rho_0)]$ for every experiment, and \textup{(ii)}
+those weights satisfy \eqref{eq:R3}, then
+$(\pi_{\mathcal{E}})_*\mu_{f_0} = P^{\rm cov}_{\mathcal{E}}$ for every
+operational experiment: the foliation is operationally hidden.
+\end{proposition}
+
+\begin{proof}
+By (i) the recorded distribution is $P(h)$. By (ii) $P(h)$ is unchanged
+when spacelike-separated instruments are exchanged in composition order,
+and two admissible foliations of one experiment differ exactly by such
+exchanges; so $P(h)$ is foliation-independent and equals
+$P^{\rm cov}_{\mathcal{E}}$.
+\end{proof}
+
+The proof is nearly immediate once the hypotheses are stated, and its
+value is relocation rather than resolution: hiding a preferred foliation
+requires nothing beyond reproducing quantum statistics. It is one-way ---
+foliation-independent statistics need not be quantum --- and it does not
+deliver the stronger equivariance of \eqref{eq:R4}'s first equation,
+which concerns unobservable history detail and is presumably false for a
+genuinely preferred foliation. Neither is needed for empirical adequacy.
+
+The corollary is more informative than the proposition.
+
+\begin{proposition}[The barrier is not relativistic]
+\label{prop:barrier}
+If a substrate's four CHSH observables are functions on one sample space
+under a single setting-independent measure, their pushforward is a joint
+distribution and Fine's theorem gives $|S|\le2$. Hypothesis \textup{(i)}
+of Proposition~\ref{prop:hiding} then fails on Bell experiments, and with
+it operational hiding.
+\end{proposition}
+
+\noindent Exhaustive enumeration gives $\max|S| = 2$ over all sixteen
+deterministic joint assignments against the attained quantum
+$2\sqrt2 = 2.828427$, while the order-independence half of
+Proposition~\ref{prop:hiding} checks numerically to $2.2\times10^{-16}$
+over random states and settings. So: \emph{if a substrate reproduced
+quantum statistics, its preferred foliation would automatically be
+hidden.} The foliation is not the difficulty. Reproducing the statistics
+is, and that obstacle is a Bell-theoretic one which has nothing to do
+with relativity --- it would be present in a non-relativistic world.
+
+The second debt is real, and its free sector can be paid exactly. The
+model's Laplacian is the eighteen-point operator
+$\tfrac13\sum_{\rm face} + \tfrac16\sum_{\rm edge} - 4$, whose symbol
+expands (in exact arithmetic) to
+\begin{equation}
+L(\mathbf{k}) = -k^2 + \tfrac1{12}\big(k^2\big)^2
+- \tfrac1{360}\Big(\textstyle\sum_i k_i^6
++ 5\sum_{i\neq j}k_i^4k_j^2\Big) + O(k^8).
+\label{eq:symbol}
+\end{equation}
+The fourth-order term is a perfect function of $k^2$: \textbf{the stencil
+is isotropic through fourth order}, and structurally so --- the naive
+seven-point operator has fourth-order coefficient
+$\tfrac1{12}\sum_i k_i^4$, which is not, and the twelve edge terms are
+exactly what cancels it. The leading anisotropy is therefore pushed to
+sixth order, giving a fractional direction-dependent phase velocity
+\begin{equation}
+\left|\frac{\Delta v}{v}\right|_{\langle100\rangle-\langle111\rangle}
+= \frac{(ka)^4}{3240} + O\big((ka)^6\big).
+\label{eq:aniso}
+\end{equation}
+At Planck spacing this is $1.4\times10^{-56}$ for the highest observed
+gamma rays and $1.4\times10^{-36}$ for the most energetic cosmic-ray
+primaries, tens of orders of magnitude below optical-cavity isotropy
+bounds near $10^{-18}$.
+
+\subsection{Radiative stability, reduced}
+\label{sec:radiative}
+
+Equation~\eqref{eq:aniso} is a tree-level statement, and a small
+tree-level number is not by itself evidence of Lorentz recovery. The
+standard objection is that a Planck-suppressed dimension-six violation,
+inserted in a loop whose integral is dominated by the cutoff, generates a
+\emph{dimension-four} violation with coefficient of order $\alpha/\pi$,
+requiring tuning of order $10^{-20}$ against observation~\cite{collins}.
+Three exact facts change what that argument demands of a theory built on
+a single substrate.
+
+\emph{First, the isotropy is forced.} For a general cubic-symmetric
+eighteen-point operator with face weight $w_f$ and edge weight $w_e$, the
+continuum limit requires $w_f + 4w_e = 1$ and isotropy of the $k^4$ term
+requires $w_f = 2w_e$; together these have the unique solution
+$w_f = \tfrac13$, $w_e = \tfrac16$ --- the production weights. There is
+no free parameter to be tuned.
+
+\emph{Second, the dimension-four anisotropy is forbidden, not small.}
+Averaging a general symmetric quadratic form $c_{ij}k_ik_j$ over the
+forty-eight elements of the cubic group leaves $c_{ij}\propto\delta_{ij}$.
+Any cubic-invariant quadratic form \emph{is} isotropic, so the dangerous
+coefficient vanishes identically.
+
+\emph{Third, and decisively, dimension-four violation is relational.} For
+a single propagating sector with $\omega^2 = c_0^2(1+\epsilon)k^2$, the
+rescaling $t\to t/\sqrt{1+\epsilon}$ removes $\epsilon$ completely: that
+sector's speed \emph{is} the definition of the speed, and there is
+nothing to compare it against. With two sectors the same rescaling leaves
+$(1+\epsilon_2)/(1+\epsilon_1)$, so only the difference survives. This is
+why every experimental bound on dimension-four violation is a bound on a
+relative quantity --- photon against matter, or species against species.
+
+\begin{proposition}[Reduction of radiative stability]
+\label{prop:radiative}
+The radiative-stability problem concerns \emph{differential}
+renormalization: loops in one sector shifting its cone relative to
+another's. Its observable content therefore requires at least two
+independently renormalized propagating sectors. A theory whose
+excitations are all configurations of one substrate field inherits
+instead the question of whether its emergent sectors share a cone.
+\end{proposition}
+
+\noindent Nor is the surviving dimension-six term enhanced: the
+Collins mechanism gains a factor $\Lambda^2$ by converting a
+$1/\Lambda^2$ coefficient into a dimensionless one, and a dimension-six
+operator renormalizing itself gains nothing, so corrections stay of order
+$(\alpha/\pi)a^2$ --- the same order as \eqref{eq:symbol}'s tree value.
+
+\begin{scopebox}
+\textbf{What remains, stated as a deferral rather than a solution.}
+Proposition~\ref{prop:radiative} does not solve the naturalness problem
+for multi-species effective theories; it identifies which part of it a
+single-substrate theory actually carries. That part is the common-cone
+question, and it is open: the matter and field sectors of the discrete
+model propagate by different mechanisms, no interacting common cone is
+established, and the wave speed $1/\sqrt3$ is a selection rather than a
+forced saturation. Interacting vertices and operational composite boosts
+are likewise untested. And the deferral has a date: the moment a second
+independently renormalized sector emerges --- charged matter with its own
+radiative structure --- the problem returns in full, and nothing argued
+here will avert it. Physical Lorentz invariance remains open.
+\end{scopebox}
+
+\subsection{Where the remaining obligation lives: one body or two}
+\label{sec:onetwo}
+
+The two reductions above have the same shape, and it is worth asking why.
+Both dissolved an apparently relativistic obligation into something that
+was not about relativity: hiding a foliation reduced to reproducing
+quantum statistics, whose barrier is Bell-theoretic; radiative stability
+reduced to a comparison between sectors. The common cause is a structural
+feature of the Lorentz group itself.
+
+Rotations are the little group of a timelike vector: acting on a body's
+rest four-velocity $u = (c,\mathbf{0})$, a spatial rotation leaves it
+fixed. A boost does not --- it maps that rest frame to a different one.
+So the group's two factors differ in what it takes to test them. A
+rotation can be tested by \emph{one} apparatus, reoriented and compared
+against itself. A boost relates two rest frames, and a rest frame must be
+physically instantiated by a clock and a rod; testing boost invariance
+therefore requires a second body. The decomposition is exhaustive and has
+no overlap:
+
+\begin{center}
+\small
+\begin{tabular}{lll}
+\toprule
+& \textbf{one body} (rotations) & \textbf{two bodies} (boosts) \\
+\midrule
+what is compared & apparatus with itself, reoriented & one frame against another \\
+typical test & isotropy, sidereal variation & time dilation, cone equality \\
+status here & \textbf{closed} & \textbf{open} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This is exactly the seam along which our results fell. The argument that
+closed the dimension-four anisotropy was a statement about the point
+group $O_h$ --- a rotation group --- and the surviving residual
+\eqref{eq:aniso} is a one-body observable: reorient the apparatus and
+look for a sidereal signal. Everything still open is a boost statement,
+and each is two-body: whether the matter and field cones agree, whether
+interacting vertices preserve a common cone, whether composite clocks and
+rods transform correctly. The single-cone absorption argument of
+Section~\ref{sec:radiative} says the same thing from the other side: one
+cone can always be scaled to unity, while a \emph{ratio} of two cones is
+invariant under every global rescaling and cannot be defined away.
+
+\begin{proposition}[The boost half is clock-gated]
+\label{prop:gate}
+Every boost observable is a functional of at least two proper-time
+parametrizations --- time dilation compares $\dd\tau_1$ with $\dd\tau_2$;
+velocity composition relates two frames; geodesic deviation is defined by
+the separation of two worldlines, a single freely falling body detecting
+nothing by the equivalence principle. A theory that has not constructed a
+physical clock therefore cannot pose the boost tests at all: their
+observables are undefined in it, not merely unverified.
+\end{proposition}
+
+\noindent Proposition~\ref{prop:gate} reorganizes the recovery contract
+rather than discharging it. The one-body register is closed, with numbers.
+The two-body register is open, and it is gated on precisely the
+construction Section~\ref{sec:clock} priced and the native search did not
+find. This closes a loop the paper drew once already: Section~\ref{sec:qg}
+argued that with no external time the stage index must be read off a
+physical clock, making the clock the precondition of the architecture's
+own index. The same instrument is the precondition of the boost question.
+One construction, two obligations, both waiting on it --- which is a more
+useful statement of where this programme is stuck than ``Lorentz
+invariance is open,'' because it names the object whose absence is the
+obstruction.
+
+The reading extends past special relativity. Curvature is defined
+operationally by geodesic deviation, so gravity's observable content is
+two-body as well, and the same gate applies to it.
+
+One component of the two-body register can be sharpened immediately. The
+model's wave speed $1/\sqrt3$ is not the stability bound: for the
+eighteen-point operator the symbol attains $\max|L| = 16/3$ on the face
+diagonal, giving $C \le \sqrt3/2$. It is instead exactly the largest
+isotropic speed whose light cone is \emph{contained} in the octahedral
+causal polytope, whose facets $\sum_i \pm x_i = 1$ lie at distance
+$1/\sqrt{D}$ from the origin. That is the same $1/\sqrt{D}$ as the
+per-axis component of an isotropic unit spread, since
+$\mathbb{E}[n_i^2] = 1/D$ for a uniformly random unit vector --- one
+isotropic unit distributed over $D$ orthogonal axes, counted two ways.
+The characterization is exact, and it relocates the choice rather than
+removing it: the containment bound is $1/\sqrt3$ only for six-neighbour
+causality, whereas the eighteen-point Laplacian's reach and the model's
+stated Moore locality both give $1$. The cone speed is therefore an
+interior selection whose adoption carries a commitment about which
+neighbourhood defines causal reach.
+
+That commitment turns out to be lighter than it looks, and it is worth
+saying exactly how light, because the temptation is to record it as an
+open empirical question. It is not one. The competing neighbourhoods
+differ only in where the field's \emph{exact zero} begins, and the field
+never approaches that boundary: measured on the point-source Green's
+function, the amplitude at the strict support edge falls by $1.19$ decades
+per tick --- $2.5\times10^{-7}$ of the peak at $t=8$,
+$2.7\times10^{-17}$ at $t=16$, $2.0\times10^{-26}$ at $t=24$ --- crossing
+double-precision representability at about sixteen ticks. With the
+operator held fixed, no measurement and no simulation can distinguish
+six-neighbour from eighteen- or twenty-six-neighbour causality. The choice
+is definitional, about a boundary of measure zero in any observable, and
+should not be presented as awaiting evidence.
+
+What \emph{is} observable is set by the dispersion rather than by the
+stencil, and it is reassuringly isotropic. The strict support is a
+cuboctahedron, anisotropic by $34.3\%$ between its face and edge
+directions; the field's own causal surface is a sphere to $0.71\%$ at the
+signal front, and even fifteen decades down in amplitude reaches only
+$7.2\%$ --- so the stencil's shape is never attained at any measurable
+amplitude. The residual anisotropy also \emph{decreases} with elapsed
+time, as $t^{-1.1}$ to $t^{-1.3}$ depending on probe depth, consistent
+with the Airy-front expectation $t^{-4/3}$ for an $O(k^4)$ dispersive
+correction. Isotropy is restored in the continuum limit at a measured
+rate.
+
+None of this closes anything. It is a one-body statement --- an
+independent cross-check of the free-sector result above by a different
+method --- and the obligation that matters is the two-body one.
+
+\subsection{The kinematic half of the two-body register}
+\label{sec:massivecone}
+
+That obligation, however, was bundled too coarsely, and unbundling it
+turns part of it into a calculation.
+
+Begin with what will \emph{not} work. The natural test is to take the
+clock of Section~\ref{sec:clock}, give it momentum, and compare its period
+to $\gamma$. This is vacuous. That clock is a mechanical framework,
+$m\ddot q = -\nabla V(|q_i - q_j|)$, and such an equation is \emph{Galilean}
+invariant: boosting it leaves the period exactly unchanged for any
+velocity. It would report zero time dilation whatever the substrate did.
+Dilation in a field substrate comes from the binding being mediated at the
+substrate's own speed --- Lorentz's electron-theory reasoning, and the
+light-clock argument in modern dress --- so the object to interrogate is
+the \emph{dispersion of a massive mode}, which needs no clock at all.
+
+The operational form is exact. A packet around wavenumber $k$ moves at its
+group velocity $v_g = |\nabla_k\Omega|$, and the relativistic prediction
+for its internal rate per unit proper time is
+\begin{equation}
+\Omega_{\rm proper}(k) = \Omega(k)\sqrt{1 - v_g(k)^2/c^2} = \text{const},
+\label{eq:properfreq}
+\end{equation}
+an identity whenever $\Omega^2 = c^2k^2 + M^2$. So
+\eqref{eq:properfreq} is $k$-independent precisely when a moving clock of
+that species dilates exactly, and its $k$-dependence \emph{is} the
+violation. Adding a mass to the leapfrog gives the exact dispersion
+$4\sin^2(\Omega/2) = C^2(-L(k)) + M^2$, and expanding along $[100]$,
+$[110]$ and $[111]$ returns \emph{identical} coefficients through $k^4$:
+\begin{equation}
+\Omega^2 = \Big(M^2 + \tfrac{M^4}{12}\Big)
++ \Big(\tfrac13 + \tfrac{M^2}{18} + \tfrac{M^4}{90}\Big)k^2
+- \Big(\tfrac1{54} + \tfrac{M^2}{1080}\Big)k^4 + \dots
+\label{eq:massivedisp}
+\end{equation}
+Reading the $k^2$ coefficient as the squared limiting speed,
+\begin{equation}
+\frac{C_{\rm eff}(M)}{C} = 1 + \frac{M^2}{12} + \frac{19M^4}{1440}
++ O(M^6).
+\label{eq:ceff}
+\end{equation}
+
+The limiting speed is thus \emph{exactly isotropic} --- the three symmetry
+directions agree identically, not approximately --- and \emph{depends on
+the rest mass}. The second is a negative result: two species of different
+mass do not share a cone exactly. It is the classic species-dependent
+maximum-attainable-velocity signature.
+
+Within a species the situation is benign. Using that species' own
+$C_{\rm eff}$, the residual in \eqref{eq:properfreq} is $O(k^4)$ and equals
+$k^4/(36M^2)$ to three or four significant figures at every mass sampled;
+in the physically natural variable $\beta = v_g/C$ this is
+\begin{equation}
+\frac{\Delta\Omega_{\rm proper}}{\Omega_{\rm proper}}
+\simeq \frac{M^2\beta^4}{4}.
+\label{eq:dilerr}
+\end{equation}
+Each mass therefore carries its own very nearly Lorentzian sector, and the
+violation lives in the mismatch \emph{between} sectors. Numerically, with
+one tick at $3.11\times10^{-44}\,$s, the electron and proton limiting
+speeds differ by $1.6\times10^{-40}$, and an electron clock at
+$\beta = 0.1$ dilates correctly to $1.5\times10^{-50}$. This is a
+dimension-six-suppressed, $(m/M_{\rm Planck})^2$ effect --- a concrete
+instance of the ``returns at dimension six'' noted in
+Section~\ref{sec:radiative}, here at tree level.
+
+The same expansion reproduces the free-sector anisotropy of
+Section~\ref{sec:proofs} independently, giving
+$(v_{[100]} - v_{[111]})/C = -k^4/3240$ exactly, which validates the
+chain.
+
+One scope limit matters more than the result: this concerns \emph{one
+sector with a varying mass}, whereas the far larger problem is that
+distinct sectors of the model carry leading speeds differing at order
+unity.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{fig16_intersector.pdf}
+\caption{Why two sectors miss, and what a hit costs. (a) Normalised to a
+common slope, the flux symbol and a Wilson operator agree
+\emph{identically} along the cubic axes --- both are $2-2\cos q$ --- and
+diverge only off them, reaching $1.65$ along $[110]$ and $1.99$ along
+$[111]$ at $|q| = 2$. The mismatch is purely angular, so no rescaling is
+even the right shape. (b) The reason, in the $z=0$ slice: the flux
+symbol's nine squares carry arguments $q_i/2$ and $(q_i\pm q_j)/2$, i.e.
+hops of \emph{half} a lattice unit (orange), while Wilson hops land on
+integer sites (blue dashed). The sectors were being matched on different
+lattices. (c) The identity itself: three face squares and six edge
+squares stack exactly onto $-L_{18}$, with residual $1.8\times10^{-15}$
+over $4000$ random momenta. (d) The price: $n$ squares require $n$
+mutually anticommuting structures, and dimension $2^k$ carries $2k+1$, so
+nine first becomes available at spinor dimension $16$ --- fourfold Dirac,
+recognisably the staggered taste multiplication.}
+\label{fig:intersector}
+\end{figure}
+
+\subsection{What a composite inherits}
+\label{sec:composite}
+
+The remaining question --- whether a bound composite inherits its
+constituents' limiting speed --- is ill-posed until one says what makes it
+a composite. A body is bound by something, and the binding decides which
+constituents' properties are averaged and with what weights. That vague
+statement has an exact form. Treating $\delta_a = (c_a^2 - C^2)/C^2$ as a
+perturbation on a Lorentzian theory, the composite's shift is
+$\langle\Delta H\rangle$ in the bound state, and the $K$-dependent part of
+each constituent's kinetic energy is its share of the total momentum:
+\begin{equation}
+\delta_{\rm comp} = \sum_a w_a \delta_a, \qquad
+w_a = \frac{\mu_a}{\sum_b \mu_b}, \quad \mu_a = \frac{m_a}{c_a^2}.
+\label{eq:compweight}
+\end{equation}
+The weights need no interaction model: a composite at total momentum $K$
+distributes it by the co-moving condition, which is exactly
+$E(K) = \min\{\sum_a\omega_a(k_a) : \sum_a k_a = K\}$, and to first order
+in $\delta$ the binding shifts the rest mass but not the weighting.
+
+Two readings then differ enormously. If a composite behaved as a
+fundamental particle of its total mass, $\delta = M_{\rm tot}^2/6$, growing
+as the square of the constituent number; under \eqref{eq:compweight} it is
+the constituent average, independent of that number. Computing $E(K)$ from
+the exact dispersion decides it. For unequal pairs, $\delta_{\rm comp}$
+matches \eqref{eq:compweight} to eight significant figures; for $N$
+identical constituents it is constant to seven digits as $N$ runs from $1$
+to $30$, while $M_{\rm tot}$ grows thirtyfold.
+
+This is load-bearing rather than decorative. A one-kilogram body read as a
+single particle of its total mass would be superluminal by thirteen orders
+of magnitude ($\Delta C/C = 5.9\times10^{13}$); read as a composite of
+nucleons it sits at $1.6\times10^{-40}$, as does the Earth. Every body
+built from nucleons therefore shares one limiting speed to that accuracy,
+and bodies differ from each other only through \emph{composition} --- the
+electron mass fraction and the nuclear binding fraction --- giving a
+differential of order $10^{-42}$.
+
+The structure is hierarchical in one respect and flat in another, and the
+distinction is worth stating. Dynamical periods --- a planetary year, a
+day, a nuclear vibration --- are set by a specific binding at a specific
+scale and differ from system to system without limit. The limiting speed
+does not: because \eqref{eq:compweight} is an average, ascending from
+nucleon to nucleus to planet re-averages quantities that are already
+equal, and every level above the first returns the same answer. A planet
+elsewhere genuinely has different clocks and the same cone, provided it is
+built from the same constituents.
+
+The recursion downward suppresses further. If nucleons are themselves
+composite, $\delta_{\rm nucleon}$ is likewise a weighted average over
+\emph{its} constituents, and since most of a nucleon's mass is field energy
+rather than constituent rest mass, that average is dominated by
+near-massless contributions with $\delta \approx 0$. The figure
+$1.6\times10^{-40}$ is thus an upper bound at the nucleon level of
+description; a more fundamental description makes it smaller.
+
+What remains open is the dynamical half: whether an \emph{interacting}
+composite --- one whose binding field carries its own momentum share and
+its own limiting speed --- reproduces \eqref{eq:compweight} beyond first
+order.
+
+\subsection{What a potential is, and where the gate actually lies}
+\label{sec:potential}
+
+It is worth being exact about why the mechanical clock fails, because the
+obvious diagnosis is the wrong one and it mislocates the remaining work.
+
+A potential $V(|q_i-q_j|)$ is not a primitive of a discrete substrate. A
+single cell is a state and a local update rule; it has neither a distance
+nor a potential, both being emergent \emph{two-body} descriptions obtained
+by localizing two sources, integrating out the field between them, and
+letting the propagation time vanish. Two independent limits are taken in
+that sentence, controlled by different parameters: the constituents'
+dispersion is replaced by $p^2/2m$ (controlled by $v/c$), and the retarded
+exchange is replaced by an instantaneous $V(r)$ (controlled by
+$\omega r/c$).
+
+\emph{Only the first destroys time dilation}, and hydrogen is the proof.
+The Coulomb potential is instantaneous to $O(\alpha^2)$ --- the second
+limit is taken, and is excellent at $\omega a_0/c = \alpha/2 \approx
+3.6\times10^{-3}$ --- yet atoms dilate exactly. Dilation comes from the
+electron's relativistic dispersion, which is what \eqref{eq:compweight}
+already says: the constituents supply $\delta_a$, the binding supplies
+only the weights.
+
+The mechanical clock of Section~\ref{sec:clock} takes both limits, and its
+own parameters license neither. At $A = 0.30$ its nodes move at
+$v_{\max}/C = 0.156$, so the Newtonian substitution discards
+$(v/C)^2 = 2.4\%$; and $\omega r/C = 0.62$ for unit spacing, rising to
+$1.87$ across the chain, against $3.6\times10^{-3}$ for an atom and $0.30$
+for a heavy nucleus. It is more relativistic internally than a nucleus.
+
+So the clock is not the wrong \emph{kind} of object; it is under-modelled
+in one identifiable respect. The natural conclusion --- that giving its
+nodes the lattice dispersion is a substitution rather than a search ---
+turns out to be wrong, and running it is what shows why.
+
+\subsection{The substitution, executed}
+\label{sec:substitution}
+
+Two constituents on the axial lattice, bound by a finite square well in
+the relative coordinate, give an exactly diagonalizable relative-motion
+problem at each total momentum $K$. Two bound states below the
+two-particle continuum supply a genuine internal clock, of gap
+$\Omega = E_1 - E_0$. A moving clock must satisfy
+$\Omega(K) = \Omega(0)/\gamma$ with $\gamma = E_0(K)/E_0(0)$ --- and must
+do so \emph{with the same exponent whatever the clock is made of}. That
+universality is the whole content of dilation; a material-dependent rate
+is not dilation, however cleanly it fits a power law. So one fits
+$\Omega(K)/\Omega(0) = \gamma^{\,p}$ and asks whether $p=-1$ universally.
+
+\emph{The control confirms the substitution is necessary.} With Newtonian
+nodes the internal gap is $K$-independent to $8.7\times10^{-6}$ while
+$\gamma$ reaches $1.399$: $p=0$ exactly, and the carrier as built could
+never have tested dilation at all.
+
+\emph{The substitution is not sufficient.} With lattice nodes the clock
+does slow --- but the exponent spans $[-2.700,\,-0.937]$ across
+constituent mass and binding fraction, a spread of $1.76$, where
+relativity admits $-1$ for every clock. The substitution moves $p$ off
+zero and does not move it to $-1$; it does not move it to a single value.
+
+The diagnosis is the limit dismissed a moment ago. The relative effective
+mass obeys $\mu_K = \mu_0\gamma^3$ exactly --- free-dispersion kinematics
+at the equal-velocity point, and material-independent. What is missing is
+the other half: a static lab-frame well does not Lorentz-contract, and so
+supplies no compensating universal factor. Hydrogen dilates exactly
+because its binding fraction is $\sim10^{-5}$, \emph{not} because
+non-covariant binding is harmless; at binding fractions of $0.04$--$0.31$
+it is the leading error.
+
+So the two limits divide differently than stated above, and the corrected
+division is this: the constituent dispersion controls whether a composite
+clock dilates \emph{at all}; the covariance of the binding controls
+whether that dilation is \emph{universal}, which is to say relativistic.
+Both are required, and the requirement on a carrier is correspondingly
+harder --- constituents carrying the substrate dispersion \emph{and}
+binding mediated by the substrate field, so that the binding region
+contracts with the motion.
+
+One further obstruction is now known to be independent rather than
+decisive. At every amplitude the mechanical clock's internal frequency
+lies inside the propagating band, $\omega < 2\arcsin C = 1.2310$, so such
+a carrier radiates. But the composites above are bound \emph{below} the
+continuum at every $K$ --- band clearance holds there by construction ---
+and dilation still fails. Clearing the band would not have sufficed.
+
+\subsection{One energy, and the universality that follows}
+\label{sec:oneenergy}
+
+The failure has a structural reading. Two energy categories were carried
+with different transformation laws: a substrate-native kinetic term, for
+which $\mu_K = \mu_0\gamma^3$ material-independently, and an added
+potential, static, transforming not at all. A potential is a second
+ontological category laid on the substrate, and the substrate has no rule
+by which to transform it --- which is why the exponent came out
+\emph{non-universal} rather than merely wrong.
+
+The obvious repair fails. Letting the binding region Lorentz-contract,
+$R\to R/\gamma$ self-consistently, moves $p$ toward \emph{zero} rather
+than toward $-1$, and by an amount depending on the well's shape: for a
+$\mathrm{sech}^2$ well the deep-limit level spacing scales as
+$\mu^{-1/2}$, not the $\mu^{-1}$ a particle-in-a-box argument supplies.
+There is no assignment of transformation rules to a separately-specified
+potential that reproduces covariance, because covariance is a property of
+the whole functional and not a rule attachable to a term. The carrier's
+energy must therefore be \emph{one} functional of the substrate field,
+with no separately-specified interaction --- forced by the failure of the
+patch rather than adopted for elegance.
+
+Doing so works. In the $\varphi^4$ model $U=\tfrac{\lambda}{4}
+(\varphi^2-v^2)^2$ --- one bounded functional, no added potential --- a
+kink--antikink pair is stable, and carries a discrete internal shape mode
+at $(\sqrt3/2)m$, below the continuum edge, so band clearance holds by
+construction. Boosting it with the covariant profile and reading the
+shape-mode frequency from a translation-invariant probe gives a dilation
+exponent of $-1.137$, $-1.142$, $-1.180$ across $\lambda = 0.02, 0.03,
+0.05$: a spread of $0.043$, against $1.76$ for the two-category carrier.
+Allowing the carrier its own limiting speed --- one fitted parameter
+against three velocities --- makes the form exact, $p = -1.000\pm0.002$.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{fig14_carrierarc.pdf}
+\caption{The carrier arc, watched rather than tabulated. (a) The carrier
+itself: one field, whose profile contracts by $1/\gamma$ when it moves.
+(b) The claim, directly. The internal clock's trace at rest and boosted,
+released in phase: the moving clock has fallen $2.2$ cycles behind by tick
+$430$. The roughness on the boosted trace is real --- a boosted lattice
+kink radiates. (c) Universality as convergence. Two-category carriers fan
+apart, one of them running \emph{faster} when moving; at $\gamma = 1.22$
+they span $0.283$ while the one-energy carriers span $0.006$, a factor of
+$46$. The one-energy curves collapse onto each other and lie a little
+below $1/\gamma$, the residual discussed in the text. (d) Why this is
+still not the $G^*$ clock: the shape-mode frequency is flat in amplitude
+--- isochronous to $\le0.23\%$, set by the FFT bin --- where a quartic
+clock would fall as $1/A$.}
+\label{fig:carrierarc}
+\end{figure}
+
+\subsection{What the lemniscatic price buys}
+\label{sec:gstarprice}
+
+The programme has long recorded that the harmonic clock is native and the
+lemniscatic one must be purchased. It could say what the price was and not
+what it bought, which is an unstable thing to leave in a ledger. The
+structure above settles it.
+
+Take $V = \lambda q^n$ with $n$ even. Only $n=2$ has nonzero second-order
+stiffness; every $n \ge 4$ is second-order \emph{free} and still
+oscillates. Ordinarily those properties exclude one another --- a stiff
+mode oscillates but resists being moved, a soft mode moves freely but does
+not oscillate --- and the quartic is the \emph{minimal} escape, requiring
+exactly one vanishing Taylor coefficient where $n=6$ requires two. $G^*$
+is the period constant of that minimal degeneracy:
+$\int_0^1(1-u^4)^{-1/2}du = \varpi/2 = \sqrt\pi\,G^*/4$, a period of the
+lemniscatic curve.
+
+The purchase is then exact. Fixing mass, displacement and period, the
+energy to hold the mode displaced is
+\begin{equation}
+\frac{E\,T^2}{mA^2} = 2\pi^2 \ \ \text{(harmonic)}, \qquad
+\frac{\pi}{2}G^{*2} \ \ \text{(quartic)}, \qquad
+\frac{E_{\rm quartic}}{E_{\rm harmonic}} = \frac{G^{*2}}{4\pi} = 0.6966,
+\label{eq:gstarprice}
+\end{equation}
+the stiffness cancelling from both, so the ratio is pure $G^*$. And at
+displacement $a$ the ratio is $(a/A)^2 G^{*2}/4\pi$, which vanishes: a
+degenerate direction is free to first order, so at a tenth of the
+reference displacement the quartic mode is $144$ times cheaper to move.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.95\textwidth]{fig15_clockgeometry.pdf}
+\caption{The two clocks, seen. (a) The constants are not normalisations
+but arc lengths: the unit circle's is $2\pi = 6.2832$, the unit
+lemniscate's is $\sqrt\pi G^* = 5.2441$ --- the latter integrated
+numerically here and agreeing with $B(\tfrac14,\tfrac12)$ to $10^{-7}$.
+(b) Phase orbits at equal energy steps: harmonic level sets are ellipses
+traversed uniformly, so the period ignores the orbit's size; quartic ones
+are flat-flanked ovals and are traversed faster as they grow. (c) The
+degenerate clock does not live at a generic point but on a single surface
+--- the threshold $\mu = 0$ between one well and two, where the cubic is
+forbidden by symmetry and the quartic is what remains. (d) The degeneracy
+made visible: contours about a nondegenerate minimum are closed ellipses
+(dashed), while the quartic valley (solid) opens along the clock
+direction. That flatness is the cheapness of \eqref{eq:gstarprice}.
+(e) Dilation as geometry, drawn from the measured kink periods: tick
+events on two worldlines, one at rest and one at $u = 0.5\,C$, with the
+moving clock's ticks further apart in time. (f) The behaviour that
+follows.}
+\label{fig:clockgeometry}
+\end{figure}
+
+The genericity has to be located carefully, and it is easy to misplace.
+For a reflection-symmetric system the normal form is
+$V = \tfrac12\mu x^2 + \lambda x^4 + O(x^6)$, and \emph{at} $\mu = 0$ the
+quartic is generic: the cubic is forbidden by symmetry rather than removed
+by tuning, so the quartic clock is the normal form of a perfect Euler
+column at critical load and of any mean-field symmetry-breaking order
+parameter. What is non-generic is not the shape of the potential but the
+\emph{location} --- $\mu = 0$ is a codimension-one surface, and staying on
+it against detuning is the whole difficulty.
+
+So the price is a maintenance cost, continuously paid, not a construction
+cost; and \eqref{eq:gstarprice} is what it returns. \emph{$\pi$ is native
+because sitting off the threshold is generic; $G^*$ is priced because
+sitting on it must be actively held} --- and what the holding buys is that
+timekeeping and steerability stop trading against each other. A carrier
+required only to be stable will be harmonic, since stability alone selects
+a point off the threshold; a carrier that must also be reconfigurable at
+low cost is pushed onto it.
+
+This is also where the agency reading acquires a mechanism rather than an
+analogy. An agent, thermodynamically, is a system that spends free energy
+to hold a configuration against drift --- and holding $\mu = 0$ is exactly
+that: an unmaintained system falls off the threshold and becomes a
+harmonic clock. The sharp form of the question is therefore not whether
+agents keep lemniscatic time, but that \emph{a $G^*$ clock is one which
+must be actively maintained, and what the maintenance buys is cheap
+actuation}. That is a claim about control cost. It neither requires nor
+supplies anything about consciousness, and marginal stability --- a
+genuine hallmark of adaptive systems --- is equally a property of sandpiles
+and buckling columns.
+
+This interprets $G^*$ and does not recover it. No valid carrier has
+produced it: the mechanical framework that did is Galilean and
+disqualified, and the one carrier that dilates is isochronous. Nor does
+the argument reach agency --- it is a selection statement about efficient
+design, and marginal stability, while a hallmark of adaptive systems, is
+equally a property of sandpiles and buckling columns.
+
+Two caveats belong beside the dilation result. The lattice is not exactly
+covariant and it shows: the kink's \emph{energy} transforms with
+$c\simeq C$ to two parts in a thousand while its \emph{clock} transforms
+with a $c$ some $6\%$ lower, a gap that narrows as the kink widens but is
+not shown to close. And this carrier's internal mode is \emph{isochronous} --- a
+$\pi$-clock. It demonstrates that a one-energy carrier dilates; it does
+not produce the lemniscatic clock, and the tension of
+Section~\ref{sec:clock} stands: stable configurations have locally
+quadratic minima and hence harmonic modes, while $G^*$ requires a
+degenerate direction stabilized at fourth order.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{fig11_conearc.pdf}
+\caption{The cone arc of Sections~\ref{sec:massivecone}--\ref{sec:potential},
+computed. (a) The limiting speed extracted from the exact dispersion
+tracks $M^2/12$; the fitted log--log slope is $2.0013$. (b) Using each
+species' own $C_{\rm eff}$, the dilation relation fails only at
+$O(\beta^4)$, and the residual follows the analytic $k^4/36M^2$ (dotted)
+to within $1.1\%$ across three masses. (c) The composite result: a bound
+object's excess is its constituents', constant to seven digits as the
+constituent number runs $1\to30$, while the reading that treats it as one
+particle of the total mass grows as $N^2$. (d) The two limits hidden in a
+distance potential, with real systems placed. Orbits lie on the diagonal
+because $\omega r = v$ for them; the mechanical clock does not, and sits
+outside the licensed corner on both axes --- more relativistic internally
+than a heavy nucleus.}
+\label{fig:conearc}
+\end{figure}
+
+\subsection{The discrete diagnostic}
+
+If a theory supplies a coarse-graining from its histories to locally
+finite causal sets, the recursion \eqref{eq:recursion} becomes accretion
+of one event at a time onto a partial order, and covariance acquires a
+discrete form: the probability of reaching a given unlabelled causal set
+must not depend on the labelled growth path,
+$\prod_{r\in\gamma}t_r = \prod_{r\in\gamma'}t_r$. Under internal
+temporality, Markov normalization, discrete general covariance
+\emph{and Bell causality}, the classical solutions are
+classified~\cite{rideoutsorkin}; the quantum case remains an open
+programme~\cite{sorkin,srivastavasurya}. Two precision points are worth
+carrying: the birth label of an element is gauge, whereas the stage
+number $n = |C_n|$ is label-invariant and is not gauge, though neither is
+it a coordinate time. We record this as an \emph{optional diagnostic}: it
+is neither necessary nor sufficient for hiding a preferred lattice, and
+it does not replace the Lorentz-recovery obligation above.
+
+% =====================================================================
+\section{Quantum gravity, and the clock again}
+\label{sec:qg}
+
+Canonical quantization removes the external time parameter altogether,
+leaving the constraint $\hat{H}\Psi = 0$~\cite{dewitt}. The standard
+relational repair conditions on a clock subsystem~\cite{pagewootters},
+recovering evolution as conditional potentiality, with known objections
+about localization and propagators~\cite{kuchar} that are partly
+addressed by covariant clock observables~\cite{hohn} and complicated
+again for finite-resource clocks~\cite{hausmann}.
+
+For this paper the point is structural and closes a loop. If the stage
+index of the recursion \eqref{eq:recursion} is not external, it must be
+read off a physical clock inside the history --- and Section~\ref{sec:clock}
+was precisely an inventory of what a physical clock costs in a concrete
+model. \textbf{The clock programme is therefore not a subplot of the
+architecture; it is the precondition of the architecture's own index.}
+In the discrete model the two are distinct and both are needed: a global
+update index is postulated, while an internal carrier that converts
+succession into operational duration is exactly what
+Section~\ref{sec:clock} prices and does not obtain natively.
+
+One further hypothesis class connects gravity to $\Sigma$ directly, by
+making the gravitational self-energy difference set an actualization
+timescale, $\tau \sim \hbar/E_G$~\cite{diosi,penrose}. Its
+parameter-free version is excluded by underground radiation
+tests~\cite{donadi}, and the Markovian model is further constrained by
+XENONnT~\cite{xenon}. We note the structural resemblance to
+Section~\ref{sec:born}'s slow-channel result --- a gravitational sector
+supplying the slow gate --- and we label it exactly as what it is: a
+speculative alignment between two independently derived shapes of
+requirement, not evidence for either.
+
+% =====================================================================
+\section{A minimal model in which the architecture composes}
+\label{sec:toy}
+
+The preceding sections established their results one instrument at a
+time. That is the right discipline, but it leaves a question unanswered:
+do the pieces \emph{fit together}, or have we assembled a collection of
+separately-true statements whose conjunction was never checked?
+
+This section answers that question with a single computable system in
+which all five pieces coexist --- substrate, clock, register, gate, and
+noise --- small enough to run in under a minute, and exact enough that
+three of its identities can be verified to machine precision rather than
+asserted. It is a demonstrator, not an instrument of record: no claim of
+Section~\ref{sec:clock}--\ref{sec:born} depends on it, and it establishes
+no physics. What it adds is the demonstration that those claims compose,
+and that the composition needs no additional constants.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{fig9_toymodel.pdf}
+\caption{The minimal temporal interior, computed end to end. (a) The
+light cone at $C=1/\sqrt3$ lies inside the octahedral reach and hence
+inside every candidate causal polytope. (b) Unscaled clock trajectories:
+amplitudes differing by $2.5\times$ give periods differing by the
+reciprocal factor --- a bigger swing is a \emph{faster} clock. (c) The
+same integration on log axes recovers slope exactly $-1$ and the constant
+$G^*$ to $1.6\times10^{-13}$, with nothing fitted. (d) The register's
+barrier equals its well depth exactly. (e) Retention is Arrhenius in that
+same $\varepsilon$. (f) The weighting of actual events interpolates from
+amplitude to occupation as $\bar\Omega\tau$ grows, with $1\sigma$
+bootstrap intervals shown rather than suppressed; the dotted curve is the
+locked-run descriptive reference of Figure~\ref{fig:bornregime}.}
+\label{fig:toymodel}
+\end{figure}
+
+\subsection{The clock law, exactly}
+
+The carrier's mirror-even mode reduces at quartic order to
+$m\ddot Q = -4\lambda Q^{3}$. Energy conservation gives
+$\tfrac{m}{2}\dot Q^{2} + \lambda Q^{4} = \lambda A^{4}$, so a quarter
+period is
+\[
+\frac{T}{4} \;=\; \frac{1}{A}\sqrt{\frac{m}{2\lambda}}
+\int_{0}^{1}\!\frac{du}{\sqrt{1-u^{4}}}
+\;=\; \frac{1}{A}\sqrt{\frac{m}{2\lambda}}\cdot\frac{\sqrt{\pi}\,G^{*}}{4},
+\]
+using $\int_{0}^{1}(1-u^{4})^{-1/2}\,du = \tfrac14 B(\tfrac14,\tfrac12)$.
+Hence the period law
+\begin{equation}
+T\cdot A \;=\; \sqrt{\pi}\,G^{*}\,\sqrt{\tfrac{m}{2\lambda}},
+\qquad G^{*} = \Gamma(1/4)/\Gamma(3/4).
+\label{eq:periodlaw2}
+\end{equation}
+
+Panel~(b) of Figure~\ref{fig:toymodel} shows this without any rescaling:
+the three trajectories have $A = 0.30, 0.20, 0.12$ and periods
+$17.5, 26.2, 43.7$. Panel~(c) integrates six amplitudes spanning a factor
+of six at tolerance $10^{-12}$, locates each far turning point by event
+detection, and recovers a fitted log--log slope of $-1.000000000$ and
+$\max_{A}\lvert G^{*}_{\rm rec}/G^{*} - 1\rvert = 1.61\times10^{-13}$,
+where $G^{*}_{\rm rec}$ inverts \eqref{eq:periodlaw2} with no free
+parameter. The recovery sits at integrator tolerance, which is the correct
+outcome for an identity rather than a fit.
+
+The significance is the contrast, not the constant. A quadratic well
+would give $\pi$ and isochrony; the quartic well gives $G^{*}$ and
+amplitude dependence. That is the difference between a clock whose rate is
+independent of how hard it was struck and one whose rate is not --- and it
+is the reason Section~\ref{sec:clock} treats the lemniscatic clock as a
+purchase rather than a gift.
+
+\subsection{One constant, three roles}
+
+The architecture's economy claim is that a single energy scale prices
+three apparently unrelated things. In the model this is literal:
+$\varepsilon$ is set once and enters as the depth of the well that binds
+the carrier, as the quartic stiffness $\lambda$ that sets the clock rate
+through \eqref{eq:periodlaw2}, and as the Arrhenius barrier in
+$\tau_{\rm flip}\nu_{0}\sim e^{\varepsilon/T}$. There is no separate
+memory constant, no separate clock constant, and no separate binding
+constant. Raising $\varepsilon$ stiffens the carrier, speeds the clock and
+lengthens the bit's life together and in fixed proportion.
+
+This is a falsifiable structural commitment rather than an aesthetic one:
+any measurement that moved one of the three without the others would break
+it. Panels~(d) and~(e) display the second and third roles --- the barrier
+is exactly the well depth, with no geometric prefactor, and retention runs
+from $\sim\!55$ attempt times at $T = 0.25\,\varepsilon$ to
+$\sim\!1.7\times10^{7}$ at $T = 0.06\,\varepsilon$.
+
+\subsection{The regime, on an independent instrument}
+
+Panel~(f) reruns the weighting question with a different construction from
+the one behind Figure~\ref{fig:bornregime}. Two standing modes carry
+lattice-dispersion frequencies $\Omega(k) = 2\arcsin(C\sin(k/2))$ and are
+given \emph{equal action}, $A_{2} = A_{1}\sqrt{\Omega_{1}/\Omega_{2}}$, so
+they differ in amplitude but not in occupation. The two candidate
+weightings then predict opposite values for the ratio of second-harmonic
+coefficients in the excess crossing rate, and the Born-fraction
+$\mathrm{BF} = (R - R_{\rm amp})/(1 - R_{\rm amp})$ is $0$ and $1$
+respectively by construction.
+
+\begin{center}
+\small
+\begin{tabular}{@{}rlr@{}}
+\toprule
+$\bar\Omega\tau$ & BF ($1\sigma$ bootstrap) & reference \\
+\midrule
+0.32  & $0.028\ (-0.026/{+}0.028)$ & 0.000 \\
+1.28  & $0.052\ (-0.027/{+}0.027)$ & 0.005 \\
+5.07  & $0.100\ (-0.023/{+}0.021)$ & 0.073 \\
+15.22 & $0.400\ (-0.034/{+}0.039)$ & 0.393 \\
+58.77 & $0.774\ (-0.041/{+}0.047)$ & 0.796 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The two upper cells agree closely with the locked-run reference;
+the lower cells sit high by about one standard deviation, which is what a
+deliberately small instrument looks like when its uncertainty is reported
+rather than hidden. The qualitative structure --- amplitude weighting
+below the crossover, occupation weighting above it --- reproduces on an
+instrument that shares no code path with the preregistered scan.
+
+None of this promotes the Born reading beyond its scope. The mechanism
+class is still declared, the ensemble is still imposed, and the engine's
+own cells still sit at $\bar\Omega\tau \in [0.19, 0.86]$, below the
+crossover, which is why Section~\ref{sec:born} reports a null there. What
+the model shows is narrower and worth stating plainly: the interpolation
+is not an artefact of one instrument's construction.
+
+\subsection{The causal cell in three dimensions}
+\label{sec:cell3d}
+
+Panel~(a) of Figure~\ref{fig:toymodel} is drawn in the plane for
+legibility. Developed properly in three dimensions it yields the
+sharpest structural difference in this paper between a discrete substrate
+and the continuum it approximates, and it is worth stating on its own.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{fig10_causal3d.pdf}
+\caption{The complete causal partition around one event. (a) At $t=1$ the
+light-cone sphere is inscribed in the octahedron --- its inradius
+\emph{is} $C$, so the eight faces are tangent --- which is itself inside
+the reach polytope. (b) Past, future, and elsewhere in $(x,y,t)$, with the
+round cone strictly inside the square-sectioned reach. (c) The precursor
+shell is the gap between the two bounds; the cone closes over the body
+diagonal at $t=3$ exactly. (d) At $t=1$ eighteen sites have been touched
+and only the origin lies in the cone. (e) Every finite-wavelength mode is
+strictly subluminal, so the cone is a true signal front. (f) Across the
+shell the Green's function falls ten decades and then terminates in an
+exact zero.}
+\label{fig:causal3d}
+\end{figure}
+
+Two structures compete to define causal reach, and they do not coincide.
+\emph{Reach} is unconditional: the update rule touches a finite neighbour
+set each tick, so after $t$ ticks the field is exactly zero outside the
+$t$-fold dilation of the causal polytope. This is locality, not dynamics.
+\emph{The light cone} is dynamical: a disturbance travels $Ct$. Between
+them sits a shell that is formally reachable but outside the effective
+cone --- so the discrete model has \emph{four} regions where the continuum
+has three.
+
+The geometry at one tick is exact, and contains one coincidence that is
+not a coincidence. The octahedron's inradius is $1/\sqrt3$, which is the
+cone speed; the light-cone sphere is therefore \emph{inscribed} in the
+octahedron, tangent at its eight faces, and the octahedron is in turn
+inside the cuboctahedron (inradius $1$) and the cube (inradius $1$). This
+is what $C = \min\{\text{containment bounds}\}$ means geometrically: the
+cone fits inside every candidate causal polytope, and fits the tightest
+one exactly.
+
+The census is then startling at first reading. \textbf{At $t=1$ the light
+cone contains exactly one lattice site --- the origin --- while eighteen
+have already been touched.} The nearest site is at distance $1$; the cone
+has radius $0.577$. The cone acquires its first other site at $t=2$, and
+at $t=3$ it contains exactly the twenty-seven-site block, because
+$3C = \sqrt3$ is precisely the body-diagonal distance. The correct reading
+is not that causality fails at one tick, but that the effective light cone
+is a coarse-grained object with no content below $t\approx\sqrt3$ ticks.
+
+What occupies the shell is settled by two measurements. First, the group
+velocity of the leapfrog, differentiated analytically and scanned over a
+$181^3$ grid of the Brillouin zone, has supremum exactly $C$, approached
+only as $k\to0$; every finite-wavelength mode is strictly subluminal, so
+no signal outruns the cone. Second, the point-source Green's function at
+$t=10$ falls from $5.8\times10^{-3}$ at the cone to $2.8\times10^{-13}$ at
+the support boundary --- ten decades, about $1.3$ per lattice cell --- and
+is then identically zero, which the artifact asserts rather than reports.
+The shell holds a Sommerfeld precursor: calculable, exponentially
+suppressed, bounded above by an exponential and below by an exact zero.
+
+This is a genuine structural difference from the continuum, and it is
+reported as such rather than smoothed over. It is also, so far as these
+measurements reach, a harmless one --- and Section~\ref{sec:onetwo} makes
+the sense of ``harmless'' quantitative: the shell's anisotropy is never
+that of the stencil, and what anisotropy remains decays as a power of
+elapsed time.
+
+% =====================================================================
+\section{The merge, stated exactly}
+\label{sec:synthesis}
+
+We can now say what merges.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+% ---- sources (left) -------------------------------------------------
+\node[thm]  (qft)  at (0,2.05)  {quantum field theory\\[-1pt]\tiny local algebras, $\omega(E)$};
+\node[thm]  (rec)  at (0,0.75)  {operational reconstruction\\[-1pt]\tiny $+$ Postulate~\ref{post:B}};
+\node[sel]  (rel)  at (0,-0.75) {relativity\\[-1pt]\tiny covariance of the selector};
+\node[sel]  (thm2) at (0,-2.15) {thermodynamics\\[-1pt]\tiny arrow, cost, timescale};
+\node[conj] (mod)  at (0,-3.55) {discrete model\\[-1pt]\tiny one candidate substrate};
+
+% ---- architecture layers (right) ------------------------------------
+\node[thm]   (W) at (6.6,1.45)  {\textbf{the weight layer}\\[-1pt]\tiny
+   structured potentiality;\\[-2pt]\tiny evolution; composition};
+\node[openb] (S) at (6.6,-1.05) {\textbf{the selector} $\Sigma$\\[-1pt]\tiny
+   one outcome; covariant form;\\[-2pt]\tiny the Born pushforward};
+\node[sel]   (C) at (6.6,-3.20) {\textbf{clock \& register}\\[-1pt]\tiny
+   duration, retention, cost};
+
+\draw[con] (qft)  -- node[lbl,pos=0.56] {covariant law} (W);
+\draw[con] (rec)  -- node[lbl,pos=0.56] {state space, trace rule} (W);
+\draw[con] (rel)  -- node[lbl,pos=0.54] {constrains} (S);
+\draw[con] (thm2) -- node[lbl,pos=0.52] {irreversibility; the regime} (S);
+\draw[con] (thm2) -- node[lbl,pos=0.55] {Arrhenius cost} (C);
+\draw[wk]  (mod)  -- node[lbl,pos=0.55] {instantiates, priced} (C);
+
+% ---- shape legend ---------------------------------------------------
+\begin{scope}[shift={(0,-5.15)}]
+  \node[thm]   (l1) at (0.55,0) {\phantom{Xy}};
+  \node[sel]   (l2) at (3.55,0) {\phantom{Xy}};
+  \node[conj]  (l3) at (6.35,0) {\phantom{Xy}};
+  \node[openb] (l4) at (9.15,0) {\phantom{Xy}};
+  \node[font=\tiny, anchor=west] at (0.95,0) {theorem-grade};
+  \node[font=\tiny, anchor=west] at (3.95,0) {selection / import};
+  \node[font=\tiny, anchor=west] at (6.75,0) {candidate};
+  \node[font=\tiny, anchor=west] at (9.55,0) {open};
+\end{scope}
+\end{tikzpicture}
+\caption{What supplies what. Shapes encode status, never colour, as shown
+in the legend: solid for theorem-grade within stated premises, thin for
+selections and imported representations, dashed for a candidate
+instantiation, double-ruled for the paper's one open object. Solid arrows
+are constructions; the dashed arrow marks a candidate instantiation that
+is priced rather than free. The weight layer is supplied twice over and
+is the settled part of the architecture; the selector is supplied by no
+one, which is the paper's point.}
+\label{fig:merge}
+\end{figure}
+
+\textbf{Quantum field theory supplies the weight layer, completely.}
+Local algebras, covariant evolution, and the order-independence of
+spacelike instruments are established physics; the architecture
+contributes vocabulary, not theorems.
+
+\textbf{The reconstruction programme plus Postulate~\ref{post:B} supplies
+its finite-dimensional state space and the trace rule.} The Born square
+becomes a theorem about weights, standing at the end of a chain rather
+than at its beginning.
+
+\textbf{Relativity constrains the selector, and prices each option.}
+Crucially it does \emph{not} deliver a covariant selector for free: the
+gap between \eqref{eq:R3} and \eqref{eq:R4} is real and open.
+
+\textbf{Thermodynamics supplies the arrow, the cost, and --- the new
+part --- the regime condition.} Actualization is irreversible and
+measurably so; memory costs $\varepsilon$ and retains for
+$e^{\varepsilon/T}$; and whether actualization statistics are quantum at
+all depends on a ratio of timescales.
+
+\textbf{The discrete model instantiates the architecture and prices it.}
+It supplies succession, a cone, a native harmonic clock, and native
+actualization events; it must purchase the lemniscatic clock, memory
+retention, and --- if Section~\ref{sec:born} is right about the regime ---
+a slow channel to actualize through.
+
+The thesis is therefore modest in form and, we think, substantive in
+content: \emph{these theories share one semantic architecture, and
+locating each of them within it makes their interfaces explicit and
+priceable.} That is less than a unification. It is also more than an
+analogy, because the interfaces are itemized, several are measured, and
+each carries a falsifier.
+
+% =====================================================================
+\section{Status of claims}
+\label{sec:ledger}
+
+{\small
+\renewcommand{\arraystretch}{1.05}
+\begin{longtable}{p{0.46\textwidth} p{0.46\textwidth}}
+\caption{Every substantive claim in the paper, at its actual strength.}\label{tab:ledger}\\
+\toprule
+\textbf{Claim} & \textbf{Status} \\
+\midrule
+\endfirsthead
+\multicolumn{2}{@{}l}{\footnotesize\itshape Table \thetable, continued}\\[2pt]
+\toprule
+\textbf{Claim} & \textbf{Status} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Singular actuality & Declared postulate (Post.~\ref{post:A}); priced
+against the branching alternative \\
+Closure map $\Gamma$ from history to state & Declared scaffold; history
+alone is insufficient \\
+Operational framework and six principles & Imported premises; not derived
+here \\
+Complex finite-dimensional quantum theory & External theorem, conditional
+on those premises~\cite{cdp} \\
+Convex state/effect structure & Derived within the imported framework \\
+Effect-noncontextual additivity & Declared postulate (Post.~\ref{post:B})
+\\
+Trace rule and the Born square & External theorem, conditional on the
+quantum effect space \emph{and Postulate~\ref{post:B}}~\cite{busch} \\
+Born pushforward \eqref{eq:pushforward} for any concrete substrate &
+\textbf{Open}; neither $F_O$ nor $\mu$ is constructed here \\
+CPTP dynamics, unitarity, Schr\"odinger form & External theorems,
+conditional on their stated premises \\
+The rigidity trichotomy (Crit.~\ref{crit:trichotomy}) & Exact within the
+declared model \\
+Buckling criterion (Crit.~\ref{crit:buckling}) & Exact within the
+declared model; new here \\
+Minimum viable clock: $\lambda_{\rm eff}$, period law, minimality &
+Exact within the declared two-scale extension; $\Gstar$ recovered to
+$2\times10^{-6}$ in simulation \\
+No native quartic clock & Negative at screened scope only; not a
+no-go theorem \\
+Register barrier $=\varepsilon$ & Exact statics within the declared model
+\\
+Born weighting interpolates with $\bar\Omega\tau$ & Measured at
+mechanism level, imposed ensemble; neither an exact law nor a substrate
+theorem \\
+Non-transfer to the model's thermal field & Registered negative at its
+sampled scope; the same-band diagnosis is post-hoc \\
+Purity requirement & Measured at mechanism level; coupling is a declared
+additive class \\
+Slow sector is slow ($\tau = 317.9$ vs $0.81$) & Measured; profile is
+deterministic, so seed-independence is vacuous \\
+Order-independence \eqref{eq:R3} $\nRightarrow$ equivariance
+\eqref{eq:R4} & Logical separation; both conditions open for any
+preferred-foliation realization \\
+Operational hiding of a preferred foliation & Derived as a reduction
+(Prop.~\ref{prop:hiding}); implied by reproducing quantum statistics \\
+Free-sector isotropy of the stencil & Exact: isotropic through $O(k^4)$,
+residual $(ka)^4/3240$ \\
+Radiative stability, dimension-4 channel & Reduced
+(Prop.~\ref{prop:radiative}): forbidden by cubic symmetry, unobservable
+for one sector, unenhanced at dimension six; returns at a second
+independently renormalized sector \\
+Lorentz recovery, one-body (rotational) register & \textbf{Closed} by the
+point group; residual anisotropy $(ka)^4/3240$ \\
+Isotropy of the causal surface & Measured: sphere to $0.71\%$ at the
+signal front, decaying as $t^{-1.1}$ to $t^{-1.3}$; the stencil's own
+$34.3\%$ is never attained at any measurable amplitude \\
+Which neighbourhood defines causal reach & Definitional, not empirical:
+at fixed operator the readings differ only at the exact-zero boundary,
+whose relative amplitude falls $1.19$ decades per tick \\
+Two-body register: common cone, free massive modes & \textbf{Computed},
+not clock-gated: limiting speed isotropic but mass-dependent,
+$C_{\rm eff}/C = 1 + M^2/12$; intra-species dilation exact to
+$O(\beta^4)$, error $M^2\beta^4/4$; proton--electron mismatch
+$1.6\times10^{-40}$ \\
+Two-body register: common cone across sectors & \textbf{Open and failing
+at order unity}; distinct sectors carry different leading speeds ---
+untouched by the mass-dependence result \\
+Two-body register: composite inheritance, free constituents &
+\textbf{Computed}: momentum-weighted average \eqref{eq:compweight},
+verified to 8 digits; independent of constituent number to 7 digits;
+every nucleonic body shares one cone to $1.6\times10^{-40}$ \\
+Two-body register: interacting vertices, composite boosts &
+\textbf{Open} (Prop.~\ref{prop:gate}), and harder than it looked. Giving
+the constituents the substrate dispersion is \textbf{necessary}
+(Newtonian nodes give $p=0$ to $10^{-5}$) but \textbf{not sufficient}: the
+dilation exponent is non-universal, spanning $[-2.70,-0.94]$ where
+relativity admits $-1$. A covariantly-contracting binding is also
+required. Band clearance is a separate and non-decisive obstruction ---
+these composites clear the band and still fail \\
+Gravitational actualization resemblance & Speculative alignment only;
+the parameter-free version is externally excluded~\cite{donadi} \\
+$\hbar$, Hamiltonian, masses, couplings & \textbf{Not derived} anywhere
+in this paper \\
+\end{longtable}}
+
+\clearpage
+
+% =====================================================================
+\section{Open problems}
+\label{sec:open}
+
+\begin{enumerate}\itemsep3pt
+\item \textbf{The Born pushforward for a concrete substrate.} Construct
+$F_O$ and $\mu$ from a substrate's own dynamics and test
+\eqref{eq:pushforward} against laboratory frequencies. For a
+deterministic substrate this is a quantum-equilibrium problem: the
+microstate measure must be Born-distributed under the coarse-graining the
+substrate itself supplies.
+\item \textbf{Native quartic timekeeping.} Does a finite integer
+unit-strut tensegrity exist under the single-scale law, with blocking
+form definite on its full flex space? No candidate realizes it; no
+impossibility proof exists.
+\item \textbf{Shielded actualization.} The purity requirement demands
+that the slow channel be nearly exclusive at the threshold. Can any
+physical manifestation rule be shielded from its own field's fast noise?
+\item \textbf{Selector-history equivariance.} Exhibit a selector law
+satisfying \eqref{eq:R4}, or prove that a preferred-foliation selector
+can be operationally hidden.
+\item \textbf{Quantum sequential growth.} The classical classification is
+known; the quantum analogue with interfering weights is open.
+\end{enumerate}
+
+% =====================================================================
+\appendix
+\section{Instruments and pre-registrations}
+\label{app:instruments}
+
+Every measurement reported here was pre-registered: outcomes, gates and
+kill conditions fixed, and runner hashes recorded, before execution. The
+discipline is load-bearing rather than ceremonial --- one instrument in
+this series voided itself on its own gate (a mis-derived conservation
+invariant, caught at $3.6\times10^{-2}$ against a $10^{-10}$ tolerance)
+and was re-locked and re-run before producing any reported number.
+
+\begin{table}[h!]
+\centering\small
+\begin{tabular}{p{0.30\textwidth} p{0.26\textwidth} p{0.36\textwidth}}
+\toprule
+Instrument & Design & Outcome \\
+\midrule
+Weighting discrimination &
+two modes, equal occupation, 48 seeds &
+Regime-dependent: BF $0.024\to0.099$ \\
+Saturation scan &
+five arms, $\bar\Omega\tau = 0.64$--$78$ &
+Approaches: BF $\to 0.836$, monotone \\
+Engine regime map &
+ten cells, native thermal field &
+\textbf{No structure}: $|\rho|\le0.37 < 0.7$ \\
+Slow-sector timescale &
+self-gravitating configuration &
+Slow: $\tau=317.9$ vs $0.81$, ratio $391$ \\
+Slow-channel coupling &
+five slow-shares, 32 seeds &
+Viable: BF $=0.936$ at $f=1$ \\
+Register statics &
+watershed over full configuration space &
+Barrier $=\varepsilon$, geometry-independent \\
+\bottomrule
+\end{tabular}
+\caption{The instrument series. Full parameters, seeds, gate values and
+hashes are in the corresponding pre-registration records. The composed
+model of Section~\ref{sec:toy} is deliberately \emph{not} listed: it is a
+demonstrator that reproduces known answers, not an instrument of record,
+and no claim in this paper rests on it.}
+\end{table}
+
+\noindent The clock's falsifier was stated before any engine campaign. A
+seeded four-chain must show the anti-pendulum signature, meaning unit
+slope of $\log f$ against $\log A$, and must satisfy
+\[
+T A\sqrt{2\lambda_{\rm eff}/m_{\rm eff}}\big/\sqrt{\pi} = \Gstar
+\]
+to declared tolerance, in a profile where no imposed phenomenology does
+the work. Failure of either kills the candidate.
+
+\section{The reconstruction as an import invoice}
+\label{app:invoice}
+
+Treating ``the Hilbert space'' as one unpriced assumption hides its
+structure. The reconstruction replaces it with six separately auditable
+premises, and therefore with six separately falsifiable questions that
+can be put to a candidate substrate one at a time. The scoring below is
+preliminary and non-binding; it names what would have to be shown.
+
+\begin{table}[h!]
+\centering\small
+\begin{tabular}{p{0.27\textwidth} p{0.66\textwidth}}
+\toprule
+Premise & What a substrate would have to establish \\
+\midrule
+Causality & Plausibly native given forward determinism and an arrow; the
+record-level protocol test is distinct and open \\
+Perfect distinguishability & Plausibly native for discrete states;
+whether this carries the reconstructed-state meaning is open \\
+Ideal compression & Open; no analogue scored \\
+Local distinguishability & \textbf{The complex-selecting premise} ---
+real-Hilbert theory fails it. A native complex structure in the lattice
+symmetry is suggestive but does not establish operational local
+tomography \\
+Pure conditioning & Open; no analogue scored \\
+Purification & \textbf{The quantum-selecting premise, and the likely crux
+import} --- whether a dispositional layer can serve as purifier structure
+is a genuine research question \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+\begin{thebibliography}{99}\small
+
+\bibitem{cdp} G.~Chiribella, G.~M.~D'Ariano, and P.~Perinotti,
+\emph{Informational derivation of quantum theory},
+Phys.\ Rev.\ A \textbf{84}, 012311 (2011).
+
+\bibitem{busch} P.~Busch, \emph{Quantum states and generalized
+observables: a simple proof of Gleason's theorem},
+Phys.\ Rev.\ Lett.\ \textbf{91}, 120403 (2003).
+
+\bibitem{davieslewis} E.~B.~Davies and J.~T.~Lewis, \emph{An operational
+approach to quantum probability}, Commun.\ Math.\ Phys.\ \textbf{17}, 239
+(1970).
+
+\bibitem{pbr} M.~F.~Pusey, J.~Barrett, and T.~Rudolph, \emph{On the
+reality of the quantum state}, Nature Physics \textbf{8}, 475 (2012).
+
+\bibitem{wigner} E.~P.~Wigner, \emph{Group Theory and its Application to
+the Quantum Mechanics of Atomic Spectra} (Academic Press, 1959).
+
+\bibitem{bargmann} V.~Bargmann, \emph{On unitary ray representations of
+continuous groups}, Ann.\ Math.\ \textbf{59}, 1 (1954).
+
+\bibitem{stone} M.~H.~Stone, \emph{On one-parameter unitary groups in
+Hilbert space}, Ann.\ Math.\ \textbf{33}, 643 (1932).
+
+\bibitem{everett} H.~Everett III, \emph{``Relative state'' formulation of
+quantum mechanics}, Rev.\ Mod.\ Phys.\ \textbf{29}, 454 (1957).
+
+\bibitem{deutsch} D.~Deutsch, \emph{Quantum theory of probability and
+decisions}, Proc.\ R.\ Soc.\ A \textbf{455}, 3129 (1999).
+
+\bibitem{wallace} D.~Wallace, \emph{The Emergent Multiverse} (Oxford
+University Press, 2012).
+
+\bibitem{zurek} W.~H.~Zurek, \emph{Probabilities from entanglement,
+Born's rule from envariance}, Phys.\ Rev.\ A \textbf{71}, 052105 (2005).
+
+\bibitem{kent} A.~Kent, \emph{One world versus many}, in S.~Saunders
+\emph{et al.} (eds.), \emph{Many Worlds?} (Oxford University Press,
+2010).
+
+\bibitem{haagkastler} R.~Haag and D.~Kastler, \emph{An algebraic approach
+to quantum field theory}, J.\ Math.\ Phys.\ \textbf{5}, 848 (1964).
+
+\bibitem{haag} R.~Haag, \emph{Local Quantum Physics}, 2nd ed.\ (Springer,
+1996).
+
+\bibitem{fewsterverch} C.~J.~Fewster and R.~Verch, \emph{Quantum fields
+and local measurements}, Commun.\ Math.\ Phys.\ \textbf{378}, 851 (2020).
+
+\bibitem{tomonaga} S.~Tomonaga, Prog.\ Theor.\ Phys.\ \textbf{1}, 27
+(1946); J.~Schwinger, Phys.\ Rev.\ \textbf{74}, 1439 (1948).
+
+\bibitem{aharonovalbert} Y.~Aharonov and D.~Z.~Albert, Phys.\ Rev.\ D
+\textbf{24}, 359 (1981); \textbf{29}, 228 (1984).
+
+\bibitem{myrvold} W.~C.~Myrvold, \emph{On peaceful coexistence: is the
+collapse postulate incompatible with relativity?}, Stud.\ Hist.\ Phil.\
+Mod.\ Phys.\ \textbf{33}, 435 (2002).
+
+\bibitem{bell} J.~S.~Bell, \emph{Are there quantum jumps?}, in
+\emph{Speakable and Unspeakable in Quantum Mechanics} (Cambridge
+University Press, 1987).
+
+\bibitem{tumulka06} R.~Tumulka, \emph{A relativistic version of the
+Ghirardi--Rimini--Weber model}, J.\ Stat.\ Phys.\ \textbf{125}, 821
+(2006).
+
+\bibitem{tumulka20} R.~Tumulka, \emph{A relativistic GRW flash process
+with interaction}, arXiv:2002.00482 (2020).
+
+\bibitem{collins} J.~Collins, A.~Perez, D.~Sudarsky, L.~Urrutia, and
+H.~Vucetich, \emph{Lorentz invariance and quantum gravity: an additional
+fine-tuning problem?}, Phys.\ Rev.\ Lett.\ \textbf{93}, 191301 (2004).
+
+\bibitem{rideoutsorkin} D.~P.~Rideout and R.~D.~Sorkin, \emph{A classical
+sequential growth dynamics for causal sets}, Phys.\ Rev.\ D \textbf{61},
+024002 (2000).
+
+\bibitem{sorkin} R.~D.~Sorkin, \emph{Quantum mechanics as quantum measure
+theory}, Mod.\ Phys.\ Lett.\ A \textbf{9}, 3119 (1994).
+
+\bibitem{srivastavasurya} R.~Srivastava and S.~Surya, \emph{Implementing
+Bell causality in quantum sequential growth}, arXiv:2603.25503 (2026).
+
+\bibitem{dewitt} B.~S.~DeWitt, \emph{Quantum theory of gravity.~I},
+Phys.\ Rev.\ \textbf{160}, 1113 (1967).
+
+\bibitem{pagewootters} D.~N.~Page and W.~K.~Wootters, \emph{Evolution
+without evolution}, Phys.\ Rev.\ D \textbf{27}, 2885 (1983).
+
+\bibitem{kuchar} K.~V.~Kucha\v{r}, \emph{Time and interpretations of
+quantum gravity}, Int.\ J.\ Mod.\ Phys.\ D \textbf{20}, 3 (2011).
+
+\bibitem{hohn} P.~A.~H\"ohn, A.~R.~H.~Smith, and M.~P.~E.~Lock,
+\emph{Equivalence of approaches to relational quantum dynamics in
+relativistic settings}, Front.\ Phys.\ \textbf{9}, 587083 (2021).
+
+\bibitem{hausmann} L.~Hausmann, A.~Schmidhuber, and E.~Castro-Ruiz,
+\emph{Measurement events relative to temporal quantum reference frames},
+Quantum \textbf{9}, 1616 (2025).
+
+\bibitem{diosi} L.~Di\'osi, \emph{A universal master equation for the
+gravitational violation of quantum mechanics}, Phys.\ Lett.\ A
+\textbf{120}, 377 (1987).
+
+\bibitem{penrose} R.~Penrose, \emph{On gravity's role in quantum state
+reduction}, Gen.\ Relativ.\ Gravit.\ \textbf{28}, 581 (1996).
+
+\bibitem{donadi} S.~Donadi \emph{et al.}, \emph{Underground test of
+gravity-related wave function collapse}, Nature Physics \textbf{17}, 74
+(2021).
+
+\bibitem{xenon} E.~Aprile \emph{et al.} (XENON Collaboration),
+\emph{Challenging spontaneous quantum collapse with XENONnT},
+Phys.\ Rev.\ Lett.\ \textbf{136}, 120201 (2026).
+
+\bibitem{tsirelson} B.~S.~Cirel'son, \emph{Quantum generalizations of
+Bell's inequality}, Lett.\ Math.\ Phys.\ \textbf{4}, 93 (1980).
+
+\bibitem{pr} S.~Popescu and D.~Rohrlich, \emph{Quantum nonlocality as an
+axiom}, Found.\ Phys.\ \textbf{24}, 379 (1994).
+
+\bibitem{npa} M.~Navascu\'es, S.~Pironio, and A.~Ac\'in, \emph{Bounding
+the set of quantum correlations}, Phys.\ Rev.\ Lett.\ \textbf{98},
+010401 (2007).
+
+\bibitem{infocausality} M.~Paw{\l}owski, T.~Paterek, D.~Kaszlikowski,
+V.~Scarani, A.~Winter, and M.~\.Zukowski, \emph{Information causality as
+a physical principle}, Nature \textbf{461}, 1101 (2009).
+
+\bibitem{macroloc} M.~Navascu\'es and H.~Wunderlich, \emph{A glance
+beyond the quantum model}, Proc.\ R.\ Soc.\ A \textbf{466}, 881 (2010).
+
+\bibitem{localorth} T.~Fritz, A.~B.~Sainz, R.~Augusiak, J.~B.~Brask,
+R.~Chaves, A.~Leverrier, and A.~Ac\'in, \emph{Local orthogonality as a
+multipartite principle for quantum correlations}, Nature Communications
+\textbf{4}, 2263 (2013).
+
+\bibitem{vandam} W.~van Dam, \emph{Implausible consequences of
+superstrong nonlocality}, Natural Computing \textbf{12}, 9 (2013).
+
+\end{thebibliography}
+
+\end{document}
