@@ -260,187 +260,21 @@ frequencies}.
 \node[font=\tiny\itshape, anchor=west, gray!45!black] at (0.0,0.05)
   {the layer crossing: everything above is potential, only events below are actual};
 \end{tikzpicture}
-\caption{The recursion~\eqref{eq:recursion}. Structure is encoded in
-shape and rule, never in colour: solid boxes are theorem-grade within
-their stated premises, thin boxes are selections or imported
-representations, and the double-ruled box is the paper's one open object.
-Actual history generates structured potentiality through a state-assignment
-map $\Gamma$; a chosen context resolves it into weighted alternatives; the
-actualization block selects one; the record extends and the cycle repeats.
-Everything above the lower band is potential; only the events in it are
-actual.}
+\caption{The shape of the recursion, drawn here before most of it has
+been paid for. Structure is encoded in shape and rule, never in colour:
+solid boxes are theorem-grade within their stated premises, thin boxes
+are selections or imported representations, and the double-ruled box is
+the paper's one open object. Actual history generates structured
+potentiality through a state-assignment map $\Gamma$; a chosen context
+resolves it into weighted alternatives; the actualization block selects
+one; the record extends and the cycle repeats. Everything above the lower
+band is potential; only the events in it are actual. \emph{Of the objects
+shown, this section has bought only the two bands and the singular
+event.} The state-assignment map, the context and the weights are
+purchased in Section~\ref{sec:operational}, which is where the diagram
+closes into the equation it depicts.}
 \label{fig:ontology}
 \end{figure}
-
-% =====================================================================
-\section{The operational layer, and what recovers quantum theory}
-\label{sec:operational}
-
-\subsection{States, effects, and convexity}
-
-Two preparations are equivalent if every subsequent experiment gives the
-same statistics; the equivalence class is a \emph{state} $\omega$. Two
-detector outcomes are equivalent if they have the same probability for
-every preparation; the class is an \emph{effect} $e$. The primitive
-pairing is
-\begin{equation}
-e(\omega) \in [0,1],
-\end{equation}
-read as the potential weight of actualizing $e$ given $\omega$. There is
-as yet no Hilbert space, no wavefunction and no Born rule. If $\omega_1$
-is prepared with frequency $p$ and $\omega_2$ with frequency $1-p$,
-operational consistency forces
-$e(p\omega_1 + (1-p)\omega_2) = p\,e(\omega_1) + (1-p)\,e(\omega_2)$, so
-the state space is convex and effects are affine. This is the
-general-probabilistic level: it contains classical probability,
-real-Hilbert quantum theory, and much else.
-
-\subsection{The reconstruction, imported}
-
-What selects complex quantum theory from that class is a separate,
-external result. Chiribella, D'Ariano and Perinotti~\cite{cdp} derive
-finite-dimensional complex quantum theory from the
-operational-probabilistic framework together with six principles:
-causality, perfect distinguishability, ideal compression, local
-distinguishability, pure conditioning, and purification --- the last
-being what separates the quantum member from the classical one. Under
-those premises,
-\begin{equation}
-\mathcal{H}_A \simeq \mathbb{C}^{d_A}.
-\label{eq:cdp}
-\end{equation}
-
-\begin{scopebox}
-\textbf{Status of \eqref{eq:cdp}.} A theorem \emph{external} to this
-paper, conditional on its six imported premises. Nothing here derives
-those premises from anything more primitive; Appendix~\ref{app:invoice}
-itemizes them as an import invoice, which is the honest replacement for
-treating ``the Hilbert space'' as a single unpriced assumption.
-\end{scopebox}
-
-\subsection{The trace rule from effect additivity}
-
-Once the quantum effect space is in hand, the shape of the weight
-functional is fixed by a second declared postulate.
-
-\begin{postulate}[Effect-noncontextual additivity]
-\label{post:B}
-A weight functional $w:\mathcal{E}(\mathcal{H})\to[0,1]$ with $w(I)=1$
-satisfies $w(E+F) = w(E) + w(F)$ whenever $E+F\le I$, for \emph{all}
-effect decompositions, including those whose members do not commute.
-\end{postulate}
-
-\noindent Postulate~\ref{post:B} is substantive and load-bearing: it is a
-noncontextuality of valuation over generalized measurements, and a
-contextual valuation escapes what follows without contradiction. From
-additivity, $w(qE) = q\,w(E)$ for rational $q$. Monotonicity is derived
-rather than assumed --- for effects $E\le F$ the difference $F-E$ is an
-effect, so $w(F) = w(E) + w(F-E) \ge w(E)$ --- and squeezing with
-rationals $q_n\uparrow\lambda\le r_n\downarrow\lambda$ gives
-$w(\lambda E) = \lambda w(E)$ for real $\lambda$. Extending by
-differences yields a positive linear functional, and in finite dimension
-every such functional is a trace:
-\begin{equation}
-w(E) = \Tr(\rho_w E).
-\label{eq:trace}
-\end{equation}
-This is Busch's generalized Gleason theorem~\cite{busch}, valid already
-in dimension two, where the original Gleason theorem --- which assumes
-additivity only over \emph{projective} decompositions --- requires
-$\dim\ge3$ and fails. The strengthening from projectors to effects is
-exactly the content of Postulate~\ref{post:B}. Throughout this paper,
-\eqref{eq:trace} and everything downstream of it is described as
-\emph{derived from Postulate~\ref{post:B}}, never as derived
-\emph{simpliciter}.
-
-\subsection{Probability is state plus question}
-
-With \eqref{eq:trace} the logical order of Section~\ref{sec:ontology}
-becomes formal. For a measurement $M = \{E_i\}$ with $\sum_i E_i = I$,
-\begin{equation}
-p(i \mid \rho, M) = \Tr(\rho E_i), \qquad \sum_i p_i = \Tr\rho = 1 ,
-\end{equation}
-so a probability exists only once a question is supplied: the state is
-not itself a probability distribution. For a pure state and a sharp
-outcome this reduces to the familiar square,
-\begin{equation}
-p_i = \Tr\big(|\psi\rangle\langle\psi|\,|i\rangle\langle i|\big)
-    = |\langle i|\psi\rangle|^2 ,
-\label{eq:born}
-\end{equation}
-which in this architecture is a \emph{theorem about weights} standing at
-the end of the chain $|\psi\rangle \to \rho \to (\rho,M) \to p_i$, rather
-than an axiom about probability standing at its beginning.
-
-Two structural facts follow immediately and matter later. Global phase
-is unphysical, so pure potentiality is a ray and $\psi$ decomposes into a
-weight structure and a phase structure, of which squaring retains only
-the first. And coherent potentiality is not ignorance over the same
-alternatives: for $|\psi\rangle = \alpha|A\rangle+\beta|B\rangle$ the
-cross term $2\,\mathrm{Re}\,\alpha^*\beta\langle A|E|B\rangle$ is absent
-from the corresponding mixture. That argument excludes one specific
-mixture reading; the stronger exclusion of $\psi$-epistemic models is the
-Pusey--Barrett--Rudolph theorem~\cite{pbr}, at the price of its
-preparation-independence assumption.
-
-\subsection{Dynamics, instruments, and the selector}
-
-Requiring affineness on mixtures, positivity, and positivity under
-extension by an untouched ancilla gives complete positivity, so physical
-channels are CPTP maps in the instrument tradition of Davies and
-Lewis~\cite{davieslewis}. A reversible transformation preserving
-pure-state transition probabilities acts on rays and is unitary or
-antiunitary (Wigner~\cite{wigner}); for a one-parameter group the
-antiunitary branch is excluded because $U(t) = U(t/2)U(t/2)$ and the
-square of either is unitary, and the projective obstruction vanishes for
-$\mathbb{R}$~\cite{bargmann}, so with strong continuity Stone's
-theorem~\cite{stone} gives $U(t) = e^{-itG}$ and, on defining
-$H := \hbar G$,
-\begin{equation}
-i\hbar\,\partial_t|\psi\rangle = H|\psi\rangle, \qquad
-i\hbar\,\dot\rho = [H,\rho].
-\end{equation}
-The existence of a phase generator is structural; the numerical value of
-$\hbar$ is empirical and is not derived here. A measurement context is
-represented not by an observable but by an \emph{instrument}
-$\{\mathcal{I}^M_o\}$ of CP trace-nonincreasing maps summing to a
-trace-preserving map, with $E^M_o = (\mathcal{I}^M_o)^*(I)$; an
-instrument carries two things at once, the weight of a possible
-actualization and the successor potentiality if it occurs.
-
-What no part of this supplies is the selection of one outcome. Writing
-$\Sigma_O$ for that block, there are two mathematically distinct
-implementations,
-\[
-\underbrace{K_O(o\mid\rho,M,H)}_{\text{primitive stochastic}}
-\qquad\text{or}\qquad
-\underbrace{\lambda\sim\mu(\dd\lambda\mid\rho,M,H),\;\;
-o = F_O(\rho,M,H,\lambda)}_{\text{context-complete deterministic}},
-\]
-and in either case the physical content is the requirement that the
-resulting frequencies reproduce the weights,
-\begin{equation}
-(F_O)_*\mu(\{o\}) = \Tr(\rho E^M_o) ,
-\label{eq:pushforward}
-\end{equation}
-called the \emph{Born pushforward} below. Note that $\Sigma_O$ means the
-whole implementation --- the kernel, or the pair $(F_O,\mu)$ --- so that
-the measure cannot be hidden inside a deterministic map. Given an
-outcome, the successor state is ordinary conditionalization,
-$\rho' = \mathcal{I}^M_k(\rho)/p_k$; histories compose by
-$P(h) = \Tr[\mathcal{I}^{M_N}_{o_N}\circ\cdots\circ\mathcal{I}^{M_1}_{o_1}(\rho_0)]$,
-so the potential histories are plural while the actual history is
-singular. Collecting the pieces gives the recursion of
-Figure~\ref{fig:ontology},
-\begin{equation}
-(H_n,\mathcal{C}_n,\mathcal{D}) \xrightarrow{\;\Gamma\;} \rho_n
-\longrightarrow \{(e_i,w_i)\}
-\xrightarrow{\;K\ \text{or}\ (F,\mu)\;} e_{n+1} \longrightarrow H_{n+1},
-\label{eq:recursion}
-\end{equation}
-in which $\mathcal{C}_n$ is the preparation and control record and
-$\mathcal{D}$ the stipulated dynamics. The closure map $\Gamma$ is part
-of the scaffold, not a theorem: history alone does not determine a state.
 
 % =====================================================================
 \section{Time: the clock}
@@ -978,9 +812,9 @@ supplies something neither the weight layer nor the relativistic
 structure can.
 
 \paragraph{Actualization is irreversible, and the model has it natively.}
-The unitary evolution of Section~\ref{sec:operational} preserves
-information; the transition from potential to actual does not. In the
-concrete model this is not an interpretive overlay but a measured
+A reversible evolution preserves information; the transition from
+potential to actual does not. In the concrete model this is not an
+interpretive overlay but a measured
 property of the dynamics: the manifestation event is a threshold
 projection, and a single such act removes about $37\%$ of the field norm.
 The inversion is worth stating plainly, because it runs opposite to the
@@ -1007,13 +841,198 @@ clock})$, so memory depth is logarithmic in the energy budget --- the
 familiar thermodynamic shape, arrived at here from the model's own
 statics rather than assumed.
 
-\paragraph{And a timescale condition, which is the paper's second new
-result.} The thermodynamic quantity that turns out to control whether
-actualization statistics are \emph{quantum} is not an energy but a
-\emph{ratio of timescales}: the mode frequency against the noise
-correlation time. That is the subject of the next section, and it is the
-point at which the thermodynamic pillar stops being connective tissue and
-starts doing work.
+\paragraph{And a timescale condition.} The thermodynamic quantity that
+turns out to control whether actualization statistics are \emph{quantum}
+is not an energy but a \emph{ratio of timescales}: the mode frequency
+against the noise correlation time. It is the point at which the
+thermodynamic pillar stops being connective tissue and starts doing work.
+
+\paragraph{The debt this leaves.} Three purchases have now been made ---
+a duration, a persistence, and a single constant $\varepsilon$ that
+prices both --- and with them a substrate can count. It can say that this
+happened, then that, and that the interval between them was so many
+ticks. What it still cannot say is \emph{with what weight} one
+continuation occurs rather than another. Nothing in a clock, a barrier or
+an Arrhenius rate assigns a number to an alternative that did not happen.
+
+That is a debt of a different kind from the previous three. A clock and a
+register were built; a weight cannot be built the same way, because the
+question is not what mechanism produces it but what \emph{structure} the
+weights must have once frequencies can be accumulated at all --- and
+accumulating frequencies is exactly what the last two sections bought.
+The next section answers it, and does so by importing rather than
+constructing. The import is itemized, because it is the largest single
+thing this paper does not derive.
+
+% =====================================================================
+\section{Weights, and where they come from}
+\label{sec:operational}
+
+\subsection{States, effects, and convexity}
+
+Two preparations are equivalent if every subsequent experiment gives the
+same statistics; the equivalence class is a \emph{state} $\omega$. Two
+detector outcomes are equivalent if they have the same probability for
+every preparation; the class is an \emph{effect} $e$. The primitive
+pairing is
+\begin{equation}
+e(\omega) \in [0,1],
+\end{equation}
+read as the potential weight of actualizing $e$ given $\omega$. There is
+as yet no Hilbert space, no wavefunction and no Born rule. If $\omega_1$
+is prepared with frequency $p$ and $\omega_2$ with frequency $1-p$,
+operational consistency forces
+$e(p\omega_1 + (1-p)\omega_2) = p\,e(\omega_1) + (1-p)\,e(\omega_2)$, so
+the state space is convex and effects are affine. This is the
+general-probabilistic level: it contains classical probability,
+real-Hilbert quantum theory, and much else.
+
+\subsection{The reconstruction, imported}
+
+What selects complex quantum theory from that class is a separate,
+external result. Chiribella, D'Ariano and Perinotti~\cite{cdp} derive
+finite-dimensional complex quantum theory from the
+operational-probabilistic framework together with six principles:
+causality, perfect distinguishability, ideal compression, local
+distinguishability, pure conditioning, and purification --- the last
+being what separates the quantum member from the classical one. Under
+those premises,
+\begin{equation}
+\mathcal{H}_A \simeq \mathbb{C}^{d_A}.
+\label{eq:cdp}
+\end{equation}
+
+\begin{scopebox}
+\textbf{Status of \eqref{eq:cdp}.} A theorem \emph{external} to this
+paper, conditional on its six imported premises. Nothing here derives
+those premises from anything more primitive; Appendix~\ref{app:invoice}
+itemizes them as an import invoice, which is the honest replacement for
+treating ``the Hilbert space'' as a single unpriced assumption.
+\end{scopebox}
+
+\subsection{The trace rule from effect additivity}
+
+Once the quantum effect space is in hand, the shape of the weight
+functional is fixed by a second declared postulate.
+
+\begin{postulate}[Effect-noncontextual additivity]
+\label{post:B}
+A weight functional $w:\mathcal{E}(\mathcal{H})\to[0,1]$ with $w(I)=1$
+satisfies $w(E+F) = w(E) + w(F)$ whenever $E+F\le I$, for \emph{all}
+effect decompositions, including those whose members do not commute.
+\end{postulate}
+
+\noindent Postulate~\ref{post:B} is substantive and load-bearing: it is a
+noncontextuality of valuation over generalized measurements, and a
+contextual valuation escapes what follows without contradiction. From
+additivity, $w(qE) = q\,w(E)$ for rational $q$. Monotonicity is derived
+rather than assumed --- for effects $E\le F$ the difference $F-E$ is an
+effect, so $w(F) = w(E) + w(F-E) \ge w(E)$ --- and squeezing with
+rationals $q_n\uparrow\lambda\le r_n\downarrow\lambda$ gives
+$w(\lambda E) = \lambda w(E)$ for real $\lambda$. Extending by
+differences yields a positive linear functional, and in finite dimension
+every such functional is a trace:
+\begin{equation}
+w(E) = \Tr(\rho_w E).
+\label{eq:trace}
+\end{equation}
+This is Busch's generalized Gleason theorem~\cite{busch}, valid already
+in dimension two, where the original Gleason theorem --- which assumes
+additivity only over \emph{projective} decompositions --- requires
+$\dim\ge3$ and fails. The strengthening from projectors to effects is
+exactly the content of Postulate~\ref{post:B}. Throughout this paper,
+\eqref{eq:trace} and everything downstream of it is described as
+\emph{derived from Postulate~\ref{post:B}}, never as derived
+\emph{simpliciter}.
+
+\subsection{Probability is state plus question}
+
+With \eqref{eq:trace} the logical order of Section~\ref{sec:ontology}
+becomes formal. For a measurement $M = \{E_i\}$ with $\sum_i E_i = I$,
+\begin{equation}
+p(i \mid \rho, M) = \Tr(\rho E_i), \qquad \sum_i p_i = \Tr\rho = 1 ,
+\end{equation}
+so a probability exists only once a question is supplied: the state is
+not itself a probability distribution. For a pure state and a sharp
+outcome this reduces to the familiar square,
+\begin{equation}
+p_i = \Tr\big(|\psi\rangle\langle\psi|\,|i\rangle\langle i|\big)
+    = |\langle i|\psi\rangle|^2 ,
+\label{eq:born}
+\end{equation}
+which in this architecture is a \emph{theorem about weights} standing at
+the end of the chain $|\psi\rangle \to \rho \to (\rho,M) \to p_i$, rather
+than an axiom about probability standing at its beginning.
+
+Two structural facts follow immediately and matter later. Global phase
+is unphysical, so pure potentiality is a ray and $\psi$ decomposes into a
+weight structure and a phase structure, of which squaring retains only
+the first. And coherent potentiality is not ignorance over the same
+alternatives: for $|\psi\rangle = \alpha|A\rangle+\beta|B\rangle$ the
+cross term $2\,\mathrm{Re}\,\alpha^*\beta\langle A|E|B\rangle$ is absent
+from the corresponding mixture. That argument excludes one specific
+mixture reading; the stronger exclusion of $\psi$-epistemic models is the
+Pusey--Barrett--Rudolph theorem~\cite{pbr}, at the price of its
+preparation-independence assumption.
+
+\subsection{Dynamics, instruments, and the selector}
+
+Requiring affineness on mixtures, positivity, and positivity under
+extension by an untouched ancilla gives complete positivity, so physical
+channels are CPTP maps in the instrument tradition of Davies and
+Lewis~\cite{davieslewis}. A reversible transformation preserving
+pure-state transition probabilities acts on rays and is unitary or
+antiunitary (Wigner~\cite{wigner}); for a one-parameter group the
+antiunitary branch is excluded because $U(t) = U(t/2)U(t/2)$ and the
+square of either is unitary, and the projective obstruction vanishes for
+$\mathbb{R}$~\cite{bargmann}, so with strong continuity Stone's
+theorem~\cite{stone} gives $U(t) = e^{-itG}$ and, on defining
+$H := \hbar G$,
+\begin{equation}
+i\hbar\,\partial_t|\psi\rangle = H|\psi\rangle, \qquad
+i\hbar\,\dot\rho = [H,\rho].
+\end{equation}
+The existence of a phase generator is structural; the numerical value of
+$\hbar$ is empirical and is not derived here. A measurement context is
+represented not by an observable but by an \emph{instrument}
+$\{\mathcal{I}^M_o\}$ of CP trace-nonincreasing maps summing to a
+trace-preserving map, with $E^M_o = (\mathcal{I}^M_o)^*(I)$; an
+instrument carries two things at once, the weight of a possible
+actualization and the successor potentiality if it occurs.
+
+What no part of this supplies is the selection of one outcome. Writing
+$\Sigma_O$ for that block, there are two mathematically distinct
+implementations,
+\[
+\underbrace{K_O(o\mid\rho,M,H)}_{\text{primitive stochastic}}
+\qquad\text{or}\qquad
+\underbrace{\lambda\sim\mu(\dd\lambda\mid\rho,M,H),\;\;
+o = F_O(\rho,M,H,\lambda)}_{\text{context-complete deterministic}},
+\]
+and in either case the physical content is the requirement that the
+resulting frequencies reproduce the weights,
+\begin{equation}
+(F_O)_*\mu(\{o\}) = \Tr(\rho E^M_o) ,
+\label{eq:pushforward}
+\end{equation}
+called the \emph{Born pushforward} below. Note that $\Sigma_O$ means the
+whole implementation --- the kernel, or the pair $(F_O,\mu)$ --- so that
+the measure cannot be hidden inside a deterministic map. Given an
+outcome, the successor state is ordinary conditionalization,
+$\rho' = \mathcal{I}^M_k(\rho)/p_k$; histories compose by
+$P(h) = \Tr[\mathcal{I}^{M_N}_{o_N}\circ\cdots\circ\mathcal{I}^{M_1}_{o_1}(\rho_0)]$,
+so the potential histories are plural while the actual history is
+singular. Collecting the pieces gives the recursion of
+Figure~\ref{fig:ontology},
+\begin{equation}
+(H_n,\mathcal{C}_n,\mathcal{D}) \xrightarrow{\;\Gamma\;} \rho_n
+\longrightarrow \{(e_i,w_i)\}
+\xrightarrow{\;K\ \text{or}\ (F,\mu)\;} e_{n+1} \longrightarrow H_{n+1},
+\label{eq:recursion}
+\end{equation}
+in which $\mathcal{C}_n$ is the preparation and control record and
+$\mathcal{D}$ the stipulated dynamics. The closure map $\Gamma$ is part
+of the scaffold, not a theorem: history alone does not determine a state.
 
 % =====================================================================
 \section{Born weighting as a regime}
