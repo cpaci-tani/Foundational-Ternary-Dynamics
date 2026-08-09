@@ -22,6 +22,8 @@ manuscript/*_files/
 *.pdf
 !papers/PAPER_FTD_AS_WILSONIAN_EFT.pdf
 !whitepaper/FTD_Whitepaper.pdf
+!papers/semantic_ontology/semantic_ontology.pdf
+!papers/semantic_ontology/figures/*.pdf
 # LaTeX auxiliary files
 *.aux
 *.log
