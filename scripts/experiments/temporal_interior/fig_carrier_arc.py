@@ -101,7 +101,7 @@ def panel_profile(ax, lam=0.03, v=1.0):
     # gamma = 1.155 is a 13% narrowing and invisible at this zoom; use a
     # harder boost so the contraction is actually seen
     for u, col, ls, lab in ((0.0, C1, "-", "at rest"),
-                            (0.82 * C, CO, "-", "at $u=0.82\\,C$")):
+                            (0.82 * C, CO, "--", "at $u=0.82\\,C$")):
         phi, _, _, w, g = kink(lam, v, u)
         sel = np.abs(XK + DK) < 13
         ax.plot(XK[sel] + DK, phi[sel], ls, color=col, lw=1.8,
@@ -124,39 +124,73 @@ def panel_profile(ax, lam=0.03, v=1.0):
                  "contracts when it moves")
 
 
-def panel_ticking(ax, tr0, trU, om0, omU):
+def panel_ticking(axL, axR, tr0, trU, om0, omU):
+    """Two windows of the same run, broken axis.
+
+    The full 430-tick span holds ~14 cycles of each trace; overlaid they
+    are moire, not information.  Window 1 shows the release (in phase),
+    window 2 the same traces around tick 430 (2.2 cycles apart) -- the
+    claim is visible in each window instead of smeared across both.
+    """
     n = 430
     a = tr0[:n] - tr0[:n].mean()
     b = trU[:n] - trU[:n].mean()
     a, b = a / np.abs(a).max(), b / np.abs(b).max()
     t = np.arange(n)
-    ax.plot(t, a, color=C1, lw=1.4, label=f"at rest,  $T={2*np.pi/om0:.1f}$")
-    ax.plot(t, b, color=CO, lw=1.4,
-            label=f"boosted,  $T={2*np.pi/omU:.1f}$")
-    ax.axhline(0, color=CG, lw=0.6, zorder=0)
-    ax.set_xlim(0, n)
-    ax.set_ylim(-1.45, 1.75)
-    ax.set_yticks([-1, 0, 1])
-    ax.set_xlabel("ticks")
-    ax.set_ylabel("clock coordinate")
-    ax.legend(loc="upper right", handlelength=1.6, borderpad=0.3,
-              labelspacing=0.28, frameon=True, framealpha=1.0, ncol=1,
-              edgecolor="none", facecolor="white").set_zorder(9)
+    W1, W2 = (0, 72), (358, 430)
+
+    for ax, (lo, hi) in ((axL, W1), (axR, W2)):
+        ax.plot(t, a, color=C1, lw=1.4,
+                label=f"at rest,  $T={2*np.pi/om0:.1f}$")
+        ax.plot(t, b, color=CO, lw=1.4, ls="--",
+                label=f"boosted,  $T={2*np.pi/omU:.1f}$")
+        ax.axhline(0, color=CG, lw=0.6, zorder=0)
+        ax.set_xlim(lo, hi)
+        ax.set_ylim(-1.45, 1.80)
+        ax.set_xlabel("ticks")
+    axL.set_yticks([-1, 0, 1])
+    axL.set_ylabel("clock coordinate")
+    axR.tick_params(labelleft=False)
+    axR.set_yticks([-1, 0, 1])
+    # narrow windows: two ticks each, or the labels mash together
+    axL.set_xticks([0, 50])
+    axR.set_xticks([370, 430])
+
+    # break marks at the seam
+    for ax, x in ((axL, 1.0), (axR, 0.0)):
+        for y in (-0.02, 1.02):
+            ax.plot([x - 0.012, x + 0.012], [y - 0.03, y + 0.03],
+                    transform=ax.transAxes, color=CK, lw=0.9,
+                    clip_on=False, zorder=10)
+
+    # legend on the LEFT window's free top band; the right window keeps
+    # its top band for nothing, so neither text block fights the seam
+    axL.legend(loc="upper right", handlelength=1.6, borderpad=0.3,
+               labelspacing=0.28, frameon=True, framealpha=1.0, ncol=1,
+               edgecolor="none", facecolor="white").set_zorder(9)
     lag = n * (om0 - omU) / om0 / (2 * np.pi / om0)
-    # no leader here: any line from text to trace crosses both traces
-    ax.text(n / 2, -1.42, f"they start together; by tick {n} the moving "
-            f"clock has fallen {lag:.1f} cycles behind",
-            fontsize=FS_ANN, color=CK, ha="center", va="bottom")
-    ax.set_title("(b)  the same clock, at rest and moving:\n"
-                 "the moving one ticks slower")
+    axL.text(0.05, 0.03, "released\nin phase", fontsize=FS_ANN, color=CK,
+             ha="left", va="bottom", transform=axL.transAxes, zorder=8,
+             bbox=dict(facecolor="white", edgecolor="none", pad=1.2))
+    axR.text(0.95, 0.965, f"by tick {n}:\n{lag:.1f} cycles apart",
+             fontsize=FS_ANN, color=CK, ha="right", va="top",
+             transform=axR.transAxes,
+             bbox=dict(facecolor="white", edgecolor="none", pad=1.2))
+    # title centred over the PAIR: axL spans x in [0,1] of its own axes
+    # coords, axR sits at [1+wspace, 2+wspace], so the pair's midpoint is
+    # at 1 + wspace/2
+    axL.set_title("(b)  the same clock, at rest and moving:\n"
+                  "the moving one ticks slower", x=1.06)
 
 
 def panel_collapse(ax, two, one):
     g = np.linspace(1.0, 1.30, 100)
     ax.plot(g, 1.0 / g, color=CK, lw=1.8, ls="--", zorder=3,
             label="relativity, $1/\\gamma$")
-    for (gs, rs), col in zip(two, (CO, C4, CG_, "#b03060", "#8a6d3b")):
-        ax.plot(gs, rs, "-", color=col, lw=1.0, alpha=0.85, zorder=2)
+    dash_cycle = ("-", "--", "-.", ":", (0, (3, 1, 1, 1)))
+    for (gs, rs), col, ls in zip(
+            two, (CO, C4, CG_, "#8a1c4a", "#70572d"), dash_cycle):
+        ax.plot(gs, rs, color=col, ls=ls, lw=1.0, alpha=0.9, zorder=2)
         ax.plot(gs[-1:], rs[-1:], "o", color=col, ms=3.6, zorder=2)
     for (gs, rs), mk in zip(one, ("o", "s", "^")):
         ax.plot(gs, rs, mk + "-", color=C1, ms=4.2, lw=1.4, zorder=4)
@@ -170,8 +204,14 @@ def panel_collapse(ax, two, one):
     ax.text(1.228, 1.245, "two energies:\ndifferent materials,\n"
                           "different curves", fontsize=FS_ANN, color=CO,
             ha="right", va="top")
-    ax.text(1.115, 0.792, "one energy: every carrier\non the same curve",
-            fontsize=FS_ANN, color=C1, ha="center", va="bottom")
+    # top-left is the only region no curve enters; a thin leader ties the
+    # label to the blue bundle it names (every lower placement collided
+    # with either the descending curves or the legend)
+    ax.annotate("one energy: every carrier\non the same curve",
+                xy=(1.185, 0.82), xytext=(1.005, 1.285),
+                fontsize=FS_ANN, color=C1, ha="left", va="top", zorder=8,
+                arrowprops=dict(arrowstyle="->", color=CG, lw=0.8,
+                                shrinkB=3))
     ax.set_title("(c)  universality is curves collapsing,\n"
                  "not numbers agreeing")
 
@@ -260,14 +300,22 @@ def main():
           f"{np.ptp(oms):.2e} vs FFT bin {binw:.2e} "
           f"=> flat to <= {binw/oms[0]:.2%}")
 
-    fig, axes = plt.subplots(2, 2, figsize=(fs.TEXTWIDTH_IN, 5.3228),
-                             constrained_layout=True)
+    fig = plt.figure(figsize=(fs.TEXTWIDTH_IN, 5.3228),
+                     constrained_layout=True)
     fig.get_layout_engine().set(w_pad=0.10, h_pad=0.12,
                                 hspace=0.07, wspace=0.07)
-    panel_profile(axes[0, 0])
-    panel_ticking(axes[0, 1], tr0, trU, om0, omU)
-    panel_collapse(axes[1, 0], two, one)
-    panel_isochrony(axes[1, 1], amps, oms, oms[0])
+    gs = fig.add_gridspec(2, 2)
+    axA = fig.add_subplot(gs[0, 0])
+    # panel (b) is a broken axis: two windows of one run
+    gsb = gs[0, 1].subgridspec(1, 2, wspace=0.12)
+    axB1 = fig.add_subplot(gsb[0, 0])
+    axB2 = fig.add_subplot(gsb[0, 1], sharey=axB1)
+    axC = fig.add_subplot(gs[1, 0])
+    axD = fig.add_subplot(gs[1, 1])
+    panel_profile(axA)
+    panel_ticking(axB1, axB2, tr0, trU, om0, omU)
+    panel_collapse(axC, two, one)
+    panel_isochrony(axD, amps, oms, oms[0])
     fs.save(fig, "carrierarc")
     print(f"  wrote {fs.FIGDIR / 'carrierarc.pdf'}")
 

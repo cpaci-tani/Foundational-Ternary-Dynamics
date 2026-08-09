@@ -2,8 +2,10 @@
 %  The Semantic Ontology of Actualization
 %  Build:  pdflatex semantic_ontology.tex   (x2; inline thebibliography,
 %          so no biber/bibtex pass is required).  See build.bat.
-%  Figures: figures/make_figures.py generates fig2..fig7; fig1 and fig8
-%          are TikZ, compiled here.
+%  Figures: figures/make_figures.py generates six vector PDFs; ten
+%          standalone scripts under scripts/experiments/temporal_interior
+%          generate the remaining vector PDFs; five TikZ diagrams compile
+%          in-document.
 % =====================================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -31,6 +33,9 @@
 \newcommand{\Gstar}{{G^{*}}}
 \newcommand{\Tr}{\operatorname{Tr}}
 \newcommand{\dd}{\mathrm{d}}
+% Minimum secondary-label size for full-width figures.  \tiny is 6 pt in
+% this 11 pt document and is not comfortable at print scale.
+\newcommand{\figsub}{\scriptsize}
 \DeclareMathOperator{\Hent}{H}
 
 \theoremstyle{definition}
@@ -60,7 +65,7 @@
   con/.style   ={->, draw, line width=0.6pt},
   wk/.style    ={->, draw, line width=0.5pt,
                  dash pattern=on 2.4pt off 1.8pt, gray!55!black},
-  lbl/.style   ={font=\tiny\itshape, fill=white, inner sep=1.0pt},
+  lbl/.style   ={font=\figsub\itshape, fill=white, inner sep=1.0pt},
 }
 
 \newtcolorbox{scopebox}[1][]{colback=black!2.5, colframe=black!45,
@@ -265,11 +270,11 @@ frequencies}.
   {actual};
 
 % --- nodes ----------------------------------------------------------
-\node[thm]   (H)   at (1.35,-1.0)  {$H_n$\\[-1pt]\tiny actual history};
-\node[sel]   (rho) at (3.9,1.55)   {$\rho_n$\\[-1pt]\tiny structured\\[-2pt]\tiny potentiality};
-\node[sel]   (w)   at (7.0,1.55)   {$\{(e_i,w_i)\}$\\[-1pt]\tiny weighted\\[-2pt]\tiny alternatives};
-\node[openb] (S)   at (10.0,1.55)  {$\Sigma$\\[-1pt]\tiny actualization};
-\node[thm]   (e)   at (10.0,-1.0)  {$e_{n+1}$\\[-1pt]\tiny one event};
+\node[thm]   (H)   at (1.35,-1.0)  {$H_n$\\[-1pt]\figsub actual history};
+\node[sel]   (rho) at (3.9,1.55)   {$\rho_n$\\[-1pt]\figsub structured\\[-2pt]\figsub potentiality};
+\node[sel]   (w)   at (7.0,1.55)   {$\{(e_i,w_i)\}$\\[-1pt]\figsub weighted\\[-2pt]\figsub alternatives};
+\node[openb] (S)   at (10.0,1.55)  {$\Sigma$\\[-1pt]\figsub actualization};
+\node[thm]   (e)   at (10.0,-1.0)  {$e_{n+1}$\\[-1pt]\figsub one event};
 \node[thm]   (H1)  at (12.15,-1.0) {$H_{n+1}$};
 
 % --- flow -----------------------------------------------------------
@@ -283,7 +288,7 @@ frequencies}.
 
 % --- the layer crossing --------------------------------------------
 \draw[gray!55,dashed] (-0.35,0.28) -- (12.9,0.28);
-\node[font=\tiny\itshape, anchor=west, gray!45!black] at (0.0,0.05)
+\node[font=\figsub\itshape, anchor=west, gray!45!black] at (0.0,0.05)
   {the layer crossing: everything above is potential, only events below are actual};
 \end{tikzpicture}
 \caption{The shape of the recursion, drawn here before most of it has
@@ -865,11 +870,11 @@ its one missing edge.
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
-\node[sel]   (osc) at (0,0)     {marginal oscillator\\[-1pt]\tiny $V=\lambda x^4$ at $\mu\approx0$};
-\node[thm]   (ta)  at (3.6,0)   {measured $(T,A)$\\[-1pt]\tiny one ringdown};
-\node[thm]   (kap) at (7.2,0)   {modulus $\kappa$\\[-1pt]\tiny via \eqref{eq:collapse}};
-\node[sel]   (mu)  at (10.5,0)  {detuning $\mu$\\[-1pt]\tiny via \eqref{eq:modulus}};
-\node[openb] (act) at (5.4,-1.9) {actuator: what pays the maintenance?\\[-1pt]\tiny open problem, Section~\ref{sec:open}};
+\node[sel]   (osc) at (0,0)     {marginal oscillator\\[-1pt]\figsub $V=\lambda x^4$ at $\mu\approx0$};
+\node[thm]   (ta)  at (3.6,0)   {measured $(T,A)$\\[-1pt]\figsub one ringdown};
+\node[thm]   (kap) at (7.2,0)   {modulus $\kappa$\\[-1pt]\figsub via \eqref{eq:collapse}};
+\node[sel]   (mu)  at (10.5,0)  {detuning $\mu$\\[-1pt]\figsub via \eqref{eq:modulus}};
+\node[openb] (act) at (5.4,-1.9) {actuator: what pays the maintenance?\\[-1pt]\figsub open problem, Section~\ref{sec:open}};
 \draw[con] (osc) -- (ta);
 \draw[con] (ta) -- (kap);
 \draw[con] (kap) -- (mu);
@@ -1031,10 +1036,10 @@ resulting economy as the falsifiable commitment it is.
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
-\node[thm] (eps) at (0,0) {$\varepsilon$\\[-1pt]\tiny one energy scale, set once};
-\node[sel] (bind) at (-4.5,-1.8) {binding\\[-1pt]\tiny register barrier $\Delta E=\varepsilon$\\[-2pt]\tiny (Prop.~\ref{prop:registerbarrier})};
-\node[sel] (clk)  at (0,-1.8)    {clock rate\\[-1pt]\tiny stiffness $\lambda\sim\varepsilon$ in \eqref{eq:periodlaw}};
-\node[sel] (ret)  at (4.5,-1.8)  {retention\\[-1pt]\tiny $\tau_{\rm flip}\,\nu_0\sim e^{\varepsilon/T}$};
+\node[thm] (eps) at (0,0) {$\varepsilon$\\[-1pt]\figsub one energy scale, set once};
+\node[sel] (bind) at (-4.5,-1.8) {binding\\[-1pt]\figsub register barrier $\Delta E=\varepsilon$\\[-2pt]\figsub (Prop.~\ref{prop:registerbarrier})};
+\node[sel] (clk)  at (0,-1.8)    {clock rate\\[-1pt]\figsub stiffness $\lambda\sim\varepsilon$ in \eqref{eq:periodlaw}};
+\node[sel] (ret)  at (4.5,-1.8)  {retention\\[-1pt]\figsub $\tau_{\rm flip}\,\nu_0\sim e^{\varepsilon/T}$};
 \draw[con] (eps) -- (bind);
 \draw[con] (eps) -- (clk);
 \draw[con] (eps) -- (ret);
@@ -1742,12 +1747,12 @@ what buys hiding, and where the one blocked path actually is.
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
-\node[thm] (stats) at (0,0.85)    {reproduce quantum statistics\\[-1pt]\tiny hypothesis (i)};
-\node[thm] (ord)   at (0,-0.85)   {order-independence \eqref{eq:R3}\\[-1pt]\tiny hypothesis (ii), standard QFT};
-\node[thm] (hid)   at (5.1,0)     {foliation operationally hidden\\[-1pt]\tiny Prop.~\ref{prop:hiding}};
-\node[sel] (samp)  at (0,-2.55)   {one sample space,\\[-1pt]\tiny setting-independent measure};
-\node[thm] (fine)  at (5.1,-2.55) {$|S|\le2$ (Fine)\\[-1pt]\tiny vs.\ attained $2\sqrt2$};
-\node[openb] (bar) at (9.6,-1.3)  {the barrier\\[-1pt]\tiny Bell-theoretic,\\[-2pt]\tiny not covariance};
+\node[thm] (stats) at (0,0.85)    {reproduce quantum statistics\\[-1pt]\figsub hypothesis (i)};
+\node[thm] (ord)   at (0,-0.85)   {order-independence \eqref{eq:R3}\\[-1pt]\figsub hypothesis (ii), standard QFT};
+\node[thm] (hid)   at (5.1,0)     {foliation operationally hidden\\[-1pt]\figsub Prop.~\ref{prop:hiding}};
+\node[sel] (samp)  at (0,-2.55)   {one sample space,\\[-1pt]\figsub setting-independent measure};
+\node[thm] (fine)  at (5.1,-2.55) {$|S|\le2$ (Fine)\\[-1pt]\figsub vs.\ attained $2\sqrt2$};
+\node[openb] (bar) at (9.6,-1.3)  {the barrier\\[-1pt]\figsub Bell-theoretic,\\[-2pt]\figsub not covariance};
 \draw[con] (stats) -- (hid);
 \draw[con] (ord)   -- (hid);
 \draw[con] (samp)  -- node[lbl,pos=0.45] {Prop.~\ref{prop:barrier}} (fine);
@@ -2430,10 +2435,10 @@ collapse onto $1/\gamma$.
 \includegraphics[width=\textwidth]{carrierarc.pdf}
 \caption{The carrier arc, watched rather than tabulated. (a) The carrier
 itself: one field, whose profile contracts by $1/\gamma$ when it moves.
-(b) The claim, directly. The internal clock's trace at rest and boosted,
-released in phase: the moving clock has fallen $2.2$ cycles behind by tick
-$430$. The roughness on the boosted trace is real --- a boosted lattice
-kink radiates. (c) Universality as convergence. Two-category carriers fan
+(b) The claim, directly, in two windows of one run: at release the
+traces are in phase, and by tick $430$ the moving clock has fallen $2.2$
+cycles behind. The roughness on the boosted trace is real --- a boosted
+lattice kink radiates. (c) Universality as convergence. Two-category carriers fan
 apart, one of them running \emph{faster} when moving; measured as a
 spread in the \emph{frequency ratio} $\Omega/\Omega_0$ at $\gamma =
 1.22$, they span $0.283$ against the one-energy carriers' $0.006$, a
@@ -2774,18 +2779,18 @@ layer nobody supplies.
 \centering
 \begin{tikzpicture}
 % ---- sources (left) -------------------------------------------------
-\node[thm]  (qft)  at (0,2.05)  {quantum field theory\\[-1pt]\tiny local algebras, $\omega(E)$};
-\node[thm]  (rec)  at (0,0.75)  {operational reconstruction\\[-1pt]\tiny $+$ Postulate~\ref{post:B}};
-\node[sel]  (rel)  at (0,-0.75) {relativity\\[-1pt]\tiny covariance of the selector};
-\node[sel]  (thm2) at (0,-2.15) {thermodynamics\\[-1pt]\tiny arrow, cost, timescale};
-\node[conj] (mod)  at (0,-3.55) {discrete model\\[-1pt]\tiny one candidate substrate};
+\node[thm]  (qft)  at (0,2.05)  {quantum field theory\\[-1pt]\figsub local algebras, $\omega(E)$};
+\node[thm]  (rec)  at (0,0.75)  {operational reconstruction\\[-1pt]\figsub $+$ Postulate~\ref{post:B}};
+\node[sel]  (rel)  at (0,-0.75) {relativity\\[-1pt]\figsub covariance of the selector};
+\node[sel]  (thm2) at (0,-2.15) {thermodynamics\\[-1pt]\figsub arrow, cost, timescale};
+\node[conj] (mod)  at (0,-3.55) {discrete model\\[-1pt]\figsub one candidate substrate};
 
 % ---- architecture layers (right) ------------------------------------
-\node[thm]   (W) at (6.6,1.45)  {\textbf{the weight layer}\\[-1pt]\tiny
-   structured potentiality;\\[-2pt]\tiny evolution; composition};
-\node[openb] (S) at (6.6,-1.05) {\textbf{the selector} $\Sigma$\\[-1pt]\tiny
-   one outcome; covariant form;\\[-2pt]\tiny the Born pushforward};
-\node[sel]   (C) at (6.6,-3.20) {\textbf{clock \& register}\\[-1pt]\tiny
+\node[thm]   (W) at (6.6,1.45)  {\textbf{the weight layer}\\[-1pt]\figsub
+   structured potentiality;\\[-2pt]\figsub evolution; composition};
+\node[openb] (S) at (6.6,-1.05) {\textbf{the selector} $\Sigma$\\[-1pt]\figsub
+   one outcome; covariant form;\\[-2pt]\figsub the Born pushforward};
+\node[sel]   (C) at (6.6,-3.20) {\textbf{clock \& register}\\[-1pt]\figsub
    duration, retention, cost};
 
 \draw[con] (qft)  -- node[lbl,pos=0.56] {covariant law} (W);
@@ -2805,10 +2810,10 @@ layer nobody supplies.
   \node[sel]   (l2) at (3.55,0) {\phantom{Xy}};
   \node[conj]  (l3) at (6.35,0) {\phantom{Xy}};
   \node[openb] (l4) at (9.15,0) {\phantom{Xy}};
-  \node[font=\tiny, anchor=west] at (0.95,0) {theorem-grade};
-  \node[font=\tiny, anchor=west] at (3.95,0) {selection / import};
-  \node[font=\tiny, anchor=west] at (6.75,0) {candidate};
-  \node[font=\tiny, anchor=west] at (9.55,0) {open};
+  \node[font=\figsub, anchor=west] at (0.95,0) {theorem-grade};
+  \node[font=\figsub, anchor=west] at (3.95,0) {selection / import};
+  \node[font=\figsub, anchor=west] at (6.75,0) {candidate};
+  \node[font=\figsub, anchor=west] at (9.55,0) {open};
 \end{scope}
 \end{tikzpicture}
 \caption{What supplies what. Shapes encode status, never colour, as shown
