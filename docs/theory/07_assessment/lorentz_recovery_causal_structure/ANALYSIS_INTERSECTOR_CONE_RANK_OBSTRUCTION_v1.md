@@ -3,7 +3,8 @@
 **Status:** `[DERIVED — EXACT ALL-ORDERS NO-GO, SCALAR-r WILSON vs PRODUCTION FLUX]` +
 `[DERIVED — q⁶ OBSTRUCTION IS A RANK VIOLATION, NOT A COUNTING SHORTFALL]` +
 `[DERIVED — EXACT COVARIANT SEVEN-SQUARE DECOMPOSITION; SPINOR DIMENSION 8]` +
-`[MEASURED — UNRESTRICTED SOS MINIMUM IS FIVE; SPINOR DIMENSION 4]` +
+`[MEASURED — UNRESTRICTED SOS MINIMUM IS FOUR; SPINOR DIMENSION 4; RIGOROUS FLOOR THREE]` +
+`[CORRECTION 2026-08-09 — §4c's five came from an under-dispersed search; the massless prediction is WITHDRAWN; see §4d]` +
 `[CORRECTION — §4b's "spinor dimension 16 / staggered taste multiplication" was a LOOSE UPPER BOUND; see §4c]` +
 `[SCOPE — SPATIAL SYMBOLS ONLY; TIME DISCRETISATION NOT MATCHED HERE]` +
 `[BOOKED — FTD-0816]`
@@ -275,6 +276,33 @@ multiplication reading does not survive — a fourfold multiplication was an
 artefact of a non-minimal decomposition, not a feature of the symbol.
 
 Artifact: `scripts/experiments/temporal_interior/derive_sos_rank_minimal.py`.
+
+## 4d. Second correction: four, not five — and the search method was the defect
+
+An adversarial pass claimed an exact rank-4 decomposition; it is right.
+§4c's search drew all 400 restarts from one fixed initial scale, which
+samples a single basin 400 times rather than 400 basins once. With the
+scale dispersed, a **four-square** decomposition is found and certified to
+`5.3e-15` on 4000 fresh momenta (Gram spectrum `{16/3, 16/3, 16/3, 4}`,
+not covariant). Its basin is rare — hit after 13, 52 and 146 starts on
+three runs and missed once at 200 — which is itself the lesson: restart
+counts bound nothing unless the starts are independent.
+
+The floor is now honest: `n ≥ 3` by the Hessian rank at a zero (the only
+proof); `n = 3` not found at 1200 dispersed starts (search evidence only).
+Restricted to the body-centre sector the search reaches **five and stalls**
+(2000 starts), so `FTD-0819`'s "same minimum" reading is corrected there.
+
+**The mass ladder inverts.** Saturation alternates — 3, 5, 7 squares
+saturate their spinor dimension; 4, 6, 8 leave one structure spare — so
+the minimal carrier **admits a mass at ordinary Dirac dimension 4**: four
+kinetic structures plus the mass exactly fill the five that dimension 4
+carries. §4c's "necessarily massless" prediction is **withdrawn**.
+Covariance, not mass, is what multiplies the spinor: the covariant seven
+saturates dimension 8, so covariance plus a mass forces 16.
+
+Artifact updated in place: `derive_sos_rank_minimal.py` now disperses its
+initial scale and budgets 3000 starts at `n = 4`.
 
 ## 5. Scope
 

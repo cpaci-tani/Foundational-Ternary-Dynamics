@@ -180,9 +180,16 @@ def try_rank(Zk, pv, n, rng, tries):
         G = Zk @ v.reshape(d, n)                      # (P, n)
         return (2.0 * G[:, None, :] * Zk[:, :, None]).reshape(len(pv), d * n)
 
+    # CORRECTION 2026-08-09: the initial scale is now DISPERSED.  The
+    # first version drew every restart from scale 0.7, which samples one
+    # basin many times rather than many basins once, and reported the
+    # minimum as five.  Dispersing the scale finds a certified FOUR
+    # within tens of starts.  Restart counts only bound what a search of
+    # this kind can bound if the starts are actually independent.
     best, bestF = np.inf, None
     for _ in range(tries):
-        F0 = rng.normal(scale=0.7, size=d * n)
+        sc = 0.2 + 4.0 * rng.random()
+        F0 = rng.normal(scale=sc, size=d * n)
         res = least_squares(resid, F0, jac=jac, method="trf",
                             xtol=1e-15, ftol=1e-15, gtol=1e-15, max_nfev=20000)
         rms = float(np.sqrt(np.mean(res.fun ** 2)))
@@ -405,8 +412,12 @@ def main():
     print("   n   params   starts   residual RMS      verdict")
     print("  --------------------------------------------------------------")
     found = {}
+    # n = 4's basin is RARE: dispersed runs have hit it after 13, 52 and
+    # 146 starts, and one 200-start run missed it entirely.  The budget
+    # below makes a miss improbable rather than merely unlucky.
     for n in range(9, 2, -1):
-        tries = 8 if n >= 7 else (60 if n >= 5 else 400)
+        tries = 8 if n >= 7 else (3000 if n == 4 else
+                                  (200 if n >= 5 else 1200))
         rms, F = try_rank(Zk, pv, n, rng, tries)
         if rms < 1e-12:
             found[n] = F

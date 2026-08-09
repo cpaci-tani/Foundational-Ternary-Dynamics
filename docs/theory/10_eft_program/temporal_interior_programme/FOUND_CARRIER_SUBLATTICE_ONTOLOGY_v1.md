@@ -1,7 +1,7 @@
 # FOUNDATION — What the Common Cone Costs the Postulates: the Carrier Sublattice
 
 **Status:** `[DERIVED — THE CARRIER SECTOR IS EXACTLY THE BCC STRUCTURE FACTOR'S COMPLEMENT]` +
-`[DERIVED — BODY CENTRES SUFFICE: THE BCC-RESTRICTED SOS MINIMUM EQUALS THE UNRESTRICTED ONE]` +
+`[DERIVED — BODY CENTRES SUFFICE AT LENGTH FIVE; CORRECTED 2026-08-09: THE UNRESTRICTED MINIMUM IS FOUR AND LEAVES THE BODY CENTRES]` +
 `[DERIVED — THE MASS LADDER, FROM CLIFFORD COUNTING]` +
 `[OPEN — WHICH ONTOLOGICAL READING IS ADOPTED; TWO ARE PRICED HERE, NEITHER IS CHOSEN]` +
 `[BOOKED — FTD-0819]`
@@ -191,6 +191,28 @@ structure, so any such term is a falsifiable commitment to a larger spinor.
   FTD-0816 §4c.
 - **Time discretisation** remains unmatched (FTD-0816 §5), and can only add
   conditions.
+
+## 7a. Correction (2026-08-09)
+
+FTD-0816 §4d found the unrestricted minimum is **four**, not five — the
+five came from an under-dispersed search. That changes §2's headline but
+not its substance:
+
+- restricted to body centres the dispersed search reaches **five and
+  stalls** (2000 starts), so "body centres suffice" holds **at length
+  five**, and the shortest carrier buys one square by leaving them for
+  the face/edge shells;
+- the **no-finer-lattice conclusion is unchanged** — every shell in play
+  is a half-offset of the existing lattice, so `a_phys` does not move;
+- the structure-factor complement identity (§3) is exact and unaffected;
+- the mass ladder (§6) **inverts**: 4 squares at dimension 4 leave one
+  structure spare, so the minimal carrier **admits a mass at Dirac
+  dimension**; the "necessarily massless" line is withdrawn. Covariance,
+  not mass, multiplies the spinor.
+
+The stall at four is search evidence of exactly the kind that
+mis-reported the minimum, and is asserted at that confidence and no
+higher; the only proof in this document's rank claims is `n ≥ 3`.
 
 ## 8. Reproduction
 

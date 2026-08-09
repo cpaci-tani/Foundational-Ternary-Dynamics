@@ -71,7 +71,7 @@
 \large Clocks, weights, and the common architecture of\\
 relativity, thermodynamics, and quantum theory}
 
-\author{C.~Pacitani\thanks{Draft, 2026-08-07. This is a foundations paper:
+\author{C.~Pacitani\thanks{Draft, 2026-08-09. This is a foundations paper:
 an architecture assembled from established external results plus two
 declared postulates, together with a small number of exactly stated and
 pre-registered measurements made within one concrete discrete model. It
@@ -105,15 +105,20 @@ $\Sigma$'s covariant form, and we separate --- as is not always done ---
 the order-independence of spacelike instruments, which is standard
 physics, from selector-history equivariance, which is a distinct and open
 obligation. Thermodynamics supplies what neither supplies: irreversibility
-and a timescale. Two contributions are new. First, a \emph{clock}: in a
-discrete model we show that timekeeping splits by a decidable rigidity
-criterion into three exhaustive cases, that the substrate natively
-realizes only the harmonic one whose constant is~$\pi$, and that the
-complementary quartic clock, whose constant is the lemniscatic
-$\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)$, is available only at an
-itemized price --- four bodies and one additional interaction range. Its
-period law is exact and its constant is recovered from simulation with no
-fitted scale. Second, a reinterpretation of Born weighting: in a
+and a timescale. Two contributions are new. First, a \emph{clock}: the period constant of
+any mechanical oscillator factors into a universal quadrature root
+$\sqrt\pi$ and a degree ratio, with the harmonic case uniquely
+self-reproducing --- which is why its constant is a power of $\pi$ ---
+and the quartic case yielding the lemniscatic
+$\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)$. A proposition with named
+hypotheses states when a threshold forces the quartic, in the $A\to0$
+limit, with its finite-amplitude failure mode exhibited exactly. In a
+discrete model, timekeeping then splits by a decidable rigidity criterion
+into three exhaustive cases; the substrate natively realizes only the
+harmonic one, and the quartic clock is available only at an itemized
+price --- four bodies and one additional interaction range, plus a
+threshold that must be actively held. Its period law is exact and its
+constant is recovered from simulation with no fitted scale. Second, a reinterpretation of Born weighting: in a
 pre-registered mechanism-level measurement, threshold statistics
 interpolate from amplitude weighting to occupation (Born) weighting as
 mode frequency exceeds the noise bandwidth, so that the Born rule appears
@@ -199,9 +204,10 @@ this framework by choice. The full accounting is
 Table~\ref{tab:ledger}.
 \end{scopebox}
 
-Nothing has been bought yet. The first purchase is the smallest one
-available, and it is made in the next section: a single distinction,
-without which there is not yet anything for a physics to be about.
+Nothing has been declared yet, and nothing bought. The construction
+begins in the next section with the cheapest possible commitment: a
+single distinction, without which there is not yet anything for a physics
+to be about.
 
 % =====================================================================
 \section{Primitive ontology}
@@ -1791,10 +1797,11 @@ observables are undefined in it, not merely unverified.
 rather than discharging it. The one-body register is closed, with numbers.
 The two-body register is open, and it is gated on precisely the
 construction Section~\ref{sec:clock} priced and the native search did not
-find. This closes a loop the paper drew once already: Section~\ref{sec:qg}
-argued that with no external time the stage index must be read off a
-physical clock, making the clock the precondition of the architecture's
-own index. The same instrument is the precondition of the boost question.
+find. This is the second time the same object has gated something:
+Section~\ref{sec:succession} argued that if the stage index is to mean
+elapsed time, something physical must carry it, and Section~\ref{sec:qg}
+will pay that argument out in full. The same instrument is the
+precondition of the boost question.
 One construction, two obligations, both waiting on it --- which is a more
 useful statement of where this programme is stuck than ``Lorentz
 invariance is open,'' because it names the object whose absence is the
@@ -1854,9 +1861,12 @@ method --- and the obligation that matters is the two-body one.
 \subsection{The two-body bill, itemized}
 \label{sec:twobodybill}
 
-Six line-items follow. The first three are computed and close;
-the last three are where the obligation is still open, and each
-names the object whose absence blocks it.
+Six line-items follow. Three are computed and close at their stated
+scope --- the free massive modes, the composite inheritance, and the
+one-energy dilation; one is resolved in principle and priced but not
+built --- the cross-sector cone; and two are diagnoses that relocate the
+remaining work --- what a potential is, and what the substitution shows.
+Each names the object whose absence blocks what is still open.
 
 \subsubsection{Free massive modes}
 \label{sec:massivecone}
@@ -2002,21 +2012,35 @@ $4[S_1-2S_2+3ABC]$, $\tfrac{16}3[S_2-3ABC]$ and $4ABC$; the triple products
 cancel exactly, $12-16+4 = 0$, leaving
 $4S_1-\tfrac83S_2 = \tfrac43[3S_1-2S_2] = -L_{18}$. The lone singlet is not
 decoration --- it is what kills $ABC$. A search over the same class finds
-decompositions at every length down to \emph{five} and none at four from
-four hundred restarts, with the five certified to $5.3\times10^{-15}$ on
-four thousand fresh momenta; it is genuinely non-covariant, so the two
-numbers are the honest bracket. Seven costs spinor dimension eight, five
-costs four. Figure~\ref{fig:intersector} draws the mismatch, its cause, one
+decompositions at every length down to \emph{four}, certified to
+$5.3\times10^{-15}$ on four thousand fresh momenta, and none at three ---
+where three is also the rigorous floor, since the symbol's Hessian at a
+zero has rank three and $n$ squares can produce at most rank $n$. The
+four is genuinely non-covariant, so four and seven are the honest
+bracket. Seven costs spinor dimension eight, four costs four.
+(An earlier draft of this passage reported the minimum as five; its
+search drew four hundred starts from a single initialization scale, which
+samples one basin many times rather than many basins once. Dispersing the
+scale finds the four within tens of starts. The correction is retained
+here because the method failure is as instructive as the number.)
+Figure~\ref{fig:intersector} draws the mismatch, its cause, one
 decomposition, and the price.
 
 Which half-offsets appear is the question that decides what this costs the
 primitive ontology, because displacements are positions. Three shells are
 available --- face $(\pm\tfrac12,0,0)$, edge $(\pm\tfrac12,\pm\tfrac12,0)$
-and body centre $(\pm\tfrac12,\pm\tfrac12,\pm\tfrac12)$ --- and restricting
-the search to body centres alone returns the \emph{same} minimum, five. The
-other two shells buy nothing at any length. The carrier therefore does not
-want a finer cubic lattice, and the lattice spacing, on which every
-dimensional prediction depends, does not move.
+and body centre $(\pm\tfrac12,\pm\tfrac12,\pm\tfrac12)$ --- and the
+restriction now cuts finely: confined to body centres alone the search
+reaches five and stalls there over two thousand dispersed starts, while
+the unrestricted four uses the face and edge shells. So the shortest
+carrier buys one square by leaving the body centres, and the
+body-centre-only reading costs one square of length. Either way the
+carrier does not want a finer cubic lattice --- every shell in play is a
+half-offset of the existing one --- and the lattice spacing, on which
+every dimensional prediction depends, does not move. (The stall at four
+is search evidence of the same kind that previously mis-reported the
+minimum, and is offered with exactly that confidence; the rank bound
+$n\ge3$ is the only proof in this paragraph.)
 
 Seven is moreover not a search outcome but a dimension. The eight
 half-angle triple products $\prod_ig_i(q_i/2)$ with $g_i\in\{\cos,\sin\}$
@@ -2031,21 +2055,23 @@ is covariant and why it is exactly seven. The field symbol and the
 body-centred symbol are two points in one seven-dimensional cone, differing
 only in their weights.
 
-Two consequences deserve stating, one structural and one that reads as a
-prediction. Structurally, this is the third independent route by which the
+Two consequences deserve stating, one structural and one from Clifford
+counting. Structurally, this is the third independent route by which the
 discrete model arrives at the body-centred lattice, the other two being a
 Watson-type period identity and the emergence of an $\mathrm{SU}(3)$ factor,
 both from the same triple cosine product at the same half arguments; and it
 correspondingly \emph{sharpens} a known tension, since the model's
-production stencil is orthogonal to that lattice. As a prediction: a mass
-term must anticommute with every kinetic structure, so it costs one further
-structure, and both minimal carriers exactly saturate their algebra --- five
-at dimension four with nothing spare, seven at dimension eight with nothing
-spare. The minimal carrier is therefore \emph{necessarily massless} at Dirac
-dimension; a mass forces dimension eight, and cubic covariance together with
-a mass forces sixteen. There is no room at dimension four for a $\gamma^5$
-twist or a Wilson term either, so any such addition is a falsifiable
-commitment to a larger spinor.
+production stencil is orthogonal to that lattice. The counting: a mass
+term must anticommute with every kinetic structure, so it costs one
+further structure, and saturation alternates down the ladder --- four
+squares at dimension four leave \emph{one structure spare}, so the
+minimal carrier \emph{admits a mass at ordinary Dirac dimension}, while
+the covariant seven saturates dimension eight exactly, so cubic
+covariance together with a mass forces sixteen. Covariance, not mass, is
+what costs spinor dimension here. (An earlier draft, built on the
+mis-reported five, concluded the opposite --- that the minimal carrier was
+necessarily massless; that prediction died with the five and is recorded
+here so it cannot be cited from memory.)
 
 \begin{scopebox}
 \textbf{What this does and does not close.} It closes the question of
@@ -2054,9 +2080,10 @@ explicit exact decomposition, and its price is stated in physical currency.
 It does not deliver a working matter sector. Whether the resulting operator
 is an acceptable fermion --- doubling, chirality, and the locality of the
 induced interactions --- is untested; the time discretization is a separate
-matching problem that can only add conditions; five anticommuting structures
-is not a ternary state, so the carrier must either \emph{emerge} from the
-primitive states or be \emph{adopted} as a new type at a price; and the
+matching problem that can only add conditions; a spinor's worth of
+anticommuting structures is not a ternary state, so the carrier must
+either \emph{emerge} from the primitive states or be \emph{adopted} as a
+new type at a price; and the
 order-unity mismatch still stands in the model as it is actually run.
 Interacting vertices remain open, as Proposition~\ref{prop:gate} says they
 must.
@@ -2084,10 +2111,10 @@ exact cubic-covariant \emph{seven}-square identity holds,
 $-L_{18} = 4\sum_i \sin^2\!x_i\cos^2\!x_j\cos^2\!x_k
 + \tfrac{16}{3}\sum_i \sin^2\!x_j\sin^2\!x_k\cos^2\!x_i
 + 4\sin^2\!x_1\sin^2\!x_2\sin^2\!x_3$ with $x = q/2$, costing dimension
-$8$; and a search over the nearest-neighbour class finds a \emph{five}
-at dimension $4$ --- ordinary Dirac --- which is genuinely non-covariant.
-The fourfold taste multiplication was an artefact of a non-minimal
-decomposition, not a feature of the symbol.}
+$8$; and a search over the nearest-neighbour class finds a \emph{four}
+at dimension $4$ --- ordinary Dirac, with one anticommuting structure to
+spare for a mass --- which is genuinely non-covariant. What multiplies the
+spinor here is covariance, not the symbol itself.}
 \label{fig:intersector}
 \end{figure}
 
@@ -2303,6 +2330,7 @@ clock would fall as $1/A$.}
 \end{figure}
 
 \paragraph{Two caveats beside the dilation result.}
+The lattice is not exactly
 covariant and it shows: the kink's \emph{energy} transforms with
 $c\simeq C$ to two parts in a thousand while its \emph{clock} transforms
 with a $c$ some $6\%$ lower, a gap that narrows as the kink widens but is
@@ -2358,12 +2386,10 @@ it does not replace the Lorentz-recovery obligation above.
 
 The division leaves a bill: the one-body half closed with numbers, the
 two-body half open, priced, and gated on an instrument this paper costed
-in Section~
-ef{sec:clock} and the substrate did not supply. The next
+in Section~\ref{sec:clock} and the substrate did not supply. The next
 section observes that the architecture's own stage index is gated the
 same way --- which is the promise left standing in
-Section~
-ef{sec:succession}.
+Section~\ref{sec:succession}.
 
 % =====================================================================
 \section{Quantum gravity, and the clock again}
@@ -2831,11 +2857,12 @@ principle, and priced} (\S\ref{sec:intersector}): a scalar Wilson
 parameter fails \emph{exactly and at all orders}, and the first
 obstruction past that is a rank violation rather than a counting
 shortfall --- but the field symbol is a sum of squares at half-lattice
-offsets, exactly seven of them covariantly \eqref{eq:seven} and five at
-minimum, so the price is spinor dimension between $4$ and $8$ and the
-required shell is the body centres alone. \textbf{Still open}: whether
-that operator is an acceptable fermion, the time discretization, and the
-order-unity mismatch as the model is actually run \\
+offsets, exactly seven of them covariantly \eqref{eq:seven} and four at
+the searched minimum (rigorous floor three, from the Hessian rank), so
+the price is spinor dimension between $4$ and $8$; the four admits a mass
+at Dirac dimension but is non-covariant and leaves the body-centre shell.
+An earlier draft reported the minimum as five from an
+under-dispersed search; corrected \\
 Two-body register: composite inheritance, free constituents &
 \textbf{Computed}: momentum-weighted average \eqref{eq:compweight},
 verified to 8 digits; independent of constituent number to 7 digits;
