@@ -126,7 +126,7 @@ shared architecture with itemized interfaces, not a unification.
 \end{abstract}
 
 % =====================================================================
-\section{Introduction: four vocabularies, one distinction}
+\section{Building a world, and paying for it}
 \label{sec:intro}
 
 A physicist moving between relativity, thermodynamics, and quantum theory
@@ -155,20 +155,33 @@ described without a preferred frame. Thermodynamics supplies the
 direction and the cost of that transition, and --- as we will show --- a
 quantitative condition on when it produces quantum statistics at all.
 
-Section~\ref{sec:ontology} sets the primitive ontology and the first of
-two declared postulates. Section~\ref{sec:operational} builds the
-operational layer and imports the reconstruction results that recover
-complex quantum theory from it. Sections~\ref{sec:clock}
-and~\ref{sec:register} present this paper's constructive contributions, a
-clock and a register, in a concrete discrete model.
-Section~\ref{sec:thermo} develops the thermodynamic pillar.
-Section~\ref{sec:born} presents the measured reinterpretation of Born
-weighting. Sections~\ref{sec:relativity} and~\ref{sec:qg} carry the
-architecture into relativity and quantum gravity.
-Section~\ref{sec:toy} exhibits a single computable model in which all the
-pieces coexist, so that the claim of coherence can be checked rather than
-asserted. Section~\ref{sec:synthesis} states the merge thesis exactly, and
-Section~\ref{sec:ledger} prices every claim in the paper.
+The way to test a claim like that is to try to build the thing and keep
+the receipts. So the paper proceeds as a construction: begin with the
+distinction and nothing else, and at each stage add only what the stage
+before it made necessary --- saying, every time, what the addition cost.
+A section that adds nothing is a section that should not be there, and a
+section that adds something without naming a price is the failure mode
+this method exists to prevent.
+
+Four kinds of cost recur, and the paper uses these four words for them
+throughout. A \textbf{postulate} is declared outright: it buys structure
+and is answerable only to consistency and to the reader's judgement that
+it was worth declaring. An \textbf{import} is an external theorem,
+carried in whole and conditional on its own premises, which the paper
+does not re-prove. A \textbf{purchase} is a piece of machinery the
+substrate did not supply and that has to be added to it --- an
+interaction range, a species, a degree of freedom. And a
+\textbf{maintenance} is a condition that is not paid once but held: a
+configuration the world drifts away from unless something keeps
+returning it. The last is the least familiar and turns out to be the most
+expensive.
+
+Two postulates are declared, in Sections~\ref{sec:ontology}
+and~\ref{sec:operational}. The imports are itemized rather than summarized,
+because they are the largest single thing the paper does not derive. The
+purchases and the maintenance are what the constructive sections are
+about. Section~\ref{sec:ledger} totals all of it, and where that table and
+the body disagree, the table is right.
 
 \begin{scopebox}
 \textbf{What this paper claims, and what it does not.} It claims a
@@ -180,7 +193,10 @@ their own premises. The measurements of Sections~\ref{sec:clock}
 and~\ref{sec:born} are made within one concrete discrete model and carry
 the scope of their pre-registrations. Planck's constant, the Hamiltonian,
 particle masses, and coupling constants are not derived anywhere in this
-paper.
+paper. Nor is the lemniscatic constant of Section~\ref{sec:clock}: it is
+the period of a shape the substrate is not shown to adopt, and it enters
+this framework by choice. The full accounting is
+Table~\ref{tab:ledger}.
 \end{scopebox}
 
 % =====================================================================
@@ -277,20 +293,56 @@ closes into the equation it depicts.}
 \end{figure}
 
 % =====================================================================
+\section{Succession is not yet time}
+\label{sec:succession}
+
+What has been bought so far is a distinction and a rule for extending a
+record. That is strictly less than a world, and the gap is worth naming
+precisely, because it is the first place the construction has to spend.
+
+Writing $H_{n+1} = H_n \circ e_{n+1}$ gives an \emph{order}. An order
+supports two predicates, \emph{before} and \emph{after}, and it supports
+nothing else. In particular it does not support \emph{how much}. Nothing
+in a growing list distinguishes a long interval from a short one, because
+the list has no second interval to compare against: each event is simply
+the next.
+
+A duration is a ratio. To say that one interval is $3.7$ of another is to
+have counted something that happened $3.7$ times, so a unit is required
+before a duration is meaningful, and a unit requires a \emph{recurrence}
+--- a feature that comes back, so that returns can be counted. Monotone
+succession never returns. Whatever supplies the recurrence is therefore
+not the index; it is a physical thing inside the history, and it must be
+paid for.
+
+Two consequences follow, and they set up everything after this section.
+
+First, the demand has a definite shape: a bounded degree of freedom, a
+law that restores it, and a constant relating how far it swings to how
+long it takes. That constant is where the price will show up, because the
+restoring law is not free --- a substrate either supplies one or does not.
+
+Second, and less obviously, the same argument applies to the paper's own
+bookkeeping. The recursion this architecture will run on is indexed by a
+stage, and if the index is to mean elapsed time rather than list
+position, something physical has to carry it. A clock is therefore not a
+component of the architecture among others; it is a precondition of the
+architecture's own description of itself. That thread is picked up in
+Section~\ref{sec:qg}, once there is a recursion on the page to be
+indexed.
+
+So: what is the cheapest recurrence a discrete substrate can host, what
+constant does it keep, and what does it cost?
+
+% =====================================================================
 \section{Time: the clock}
 \label{sec:clock}
 
-A record that only grows carries an order and nothing more. To say that
-one interval is longer than another --- to have a \emph{duration} rather
-than a succession --- something in the world has to come back to where it
-was, so that the return can be counted. That is a demand on the
-substrate, not on our description of it, and it is the first demand in
-this paper that costs something.
-
-Four questions, in order. What does a period cost, in the sense of what
-fixes its constant? What shapes can a substrate make available? Which of
-them, if any, is forced? And what does the shortfall between those two
-answers cost, and buy? Each subsection below answers exactly one of them.
+Four questions, in the order Section~\ref{sec:succession} leaves them.
+What does a period cost, in the sense of what fixes its constant? What
+shapes can a substrate make available? Which of them, if any, is forced?
+And what does the shortfall between those two answers cost, and buy? Each
+subsection below answers exactly one of them.
 
 \subsection{The setting}
 
