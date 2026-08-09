@@ -265,6 +265,16 @@ RANGES = [
     ((800, 801), "native-time-carrier"),
     ((802, 802), "framework-audits"),
     ((803, 803), "spine-gstar-cm-modular"),
+    # 2026-08-07/08 temporal-interior and cone arc.
+    ((804, 806), "native-time-carrier"),        # MVC, native n=4 screen, programme charter
+    ((807, 807), "qm-foundations"),             # Born-weighting preregistration arc
+    ((808, 808), "native-time-carrier"),        # the geometric bit as a register
+    ((809, 809), "qm-foundations"),             # engine regime map (N) + latency gate
+    ((810, 813), "lorentz-causal"),             # cone speed, causal cell, massive & composite cones
+    ((814, 814), "native-time-carrier"),        # one-energy carrier, universal kink dilation
+    ((815, 816), "lorentz-causal"),             # the two owed proofs; the inter-sector cone
+    ((817, 817), "native-time-carrier"),        # what G* is the constant of
+    ((818, 818), "meta-process"),               # the semantic-ontology manuscript
 ]
 
 # ---------------------------------------------------------------------------

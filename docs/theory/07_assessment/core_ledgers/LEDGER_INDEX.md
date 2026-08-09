@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (750 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (765 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -18,19 +18,19 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Framework — postulates & constitution](#framework-postulates-constitution) | 13 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
 | [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 54 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
 | [Framework — audits, red-teams, reconciliation](#framework-audits-red-teams-reconciliation) | 25 | Adversarial audits, red-team remediation, retractions, tag-honesty and corpus-wide reconciliation passes, rigidity / look-elsewhere audits. |
-| [Quantum foundations](#quantum-foundations) | 16 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
+| [Quantum foundations](#quantum-foundations) | 18 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
 | [SM constants — mass & flavour](#sm-constants-mass-flavour) | 33 | m_e, m_p/m_e, Higgs mass, mixing angles, PMNS/CKM, Yukawa prefactors, the cluster-size-mass identification and its N(A) law. |
 | [Alpha readout programme (MC-T4.3)](#alpha-readout-programme-mc-t4-3) | 33 | The alpha-readout contract, the ARC-A/B/C campaigns, observable selection, FC-W and the carrier-narrowing theorem, engine alpha probes. |
 | [QCD, colour & electroweak](#qcd-colour-electroweak) | 15 | Confinement, colour charge and singlets, SU(3)/Z3 structure, hadrodynamics, electroweak rank, generations, no-4th-generation. |
 | [Gravity & cosmology](#gravity-cosmology) | 21 | Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter. |
 | [Engine infrastructure & RG](#engine-infrastructure-rg) | 39 | Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity. |
 | [Engine emergence campaigns](#engine-emergence-campaigns) | 37 | Fermion-emergence phases, genesis/evaporation and thermal phase maps, atomic and bound-state spectra, wave sectors and dispersion. |
-| [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 25 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
+| [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 31 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
 | [Charge, Gauss & native EM emergence](#charge-gauss-native-em-emergence) | 15 | Native additive charge, Gauss projection and dressing, face-current sidecars, longitudinal susceptibility, dressed hazards, monopoles. |
 | [Common-action mechanics & reciprocity](#common-action-mechanics-reciprocity) | 146 | Forces, work and recoil for a hop; the worldline/Legendre action; charts, collisions and quotients; energy closure and Peierls barriers. |
 | [Constituent-complete matter](#constituent-complete-matter) | 167 | Compact cores, trimers and connected blocks; rest states and Hessians; transport, gait, capture/binding, wakes, causal-horizon persistence. |
-| [Native time & the carrier programme](#native-time-the-carrier-programme) | 22 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
-| [Meta — papers, tooling, project process](#meta-papers-tooling-project-process) | 16 | Paper splits and referee rounds, monographs, node maps and synonymy graphs, trackers, pre-registration registries, project policy. |
+| [Native time & the carrier programme](#native-time-the-carrier-programme) | 28 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
+| [Meta — papers, tooling, project process](#meta-papers-tooling-project-process) | 17 | Paper splits and referee rounds, monographs, node maps and synonymy graphs, trackers, pre-registration registries, project policy. |
 
 ---
 
@@ -269,7 +269,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection.*
 
-**16 claims.**
+**18 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -289,6 +289,8 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0517` | THEOREM, SYNTHESIS, CONJECTURE | What must a subsystem be, structurally, to function as a measuring device for the frozen projection — and what does its measuring power cost? | L665 |
 | `FTD-0795` | EXACT, CLOSED_NEGATIVE, CONJECTURE, SELECTION | Do FTD-0258's six registered deviations from QM/SR survive contact with existing experiment? | L951 |
 | `FTD-0796` | THEOREM, EXACT, CORRECTION | Can a framework committed to `A_5`-completeness (FC-1) reproduce CHSH `S = 2 sqrt 2`? | L953 |
+| `FTD-0807` | IMPOSED, CORRECTION, OPEN | Which weighting do threshold upcrossings follow — amplitude, occupation (Born), or energy? | L969 |
+| `FTD-0809` | MEASURED, OPEN | Does the mechanism-level Born regime carry into the engine, and is the latency sector a viable slow gate? | L971 |
 
 ---
 
@@ -540,7 +542,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG.*
 
-**25 claims.**
+**31 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -569,6 +571,12 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0423` | NOT_EXECUTED | Does native blocking drive every dimension-four preferred-frame operator toward the common-cone surface? | L571 |
 | `FTD-0424` | SCOPE_CONTRACT, CLOSED_NEGATIVE, OPEN | Can one universal dimension-four relative-cone counterterm control the auxiliary local-link EFT without sector or threshold retuning? | L572 |
 | `FTD-0425` | THEOREM, EXACT, OPEN | Is the frozen tick compatible with emergent low-energy unitarity? | L573 |
+| `FTD-0810` | DERIVED, CLOSED_NEGATIVE, OPEN | What characterizes the cone speed `C = 1/√3`, and is it forced? | L972 |
+| `FTD-0811` | DERIVED, MEASURED | What is the causal cell of the M18 stencil in three dimensions, and how does isotropy restore? | L973 |
+| `FTD-0812` | DERIVED, MEASURED, EXACT | Does the limiting speed depend on the rest mass? | L974 |
+| `FTD-0813` | DERIVED, MEASURED | Does a bound composite inherit its constituents' cone or its own total mass's? | L975 |
+| `FTD-0815` | DERIVED, OPEN | The two owed proofs: does operational hiding follow, and does Lorentz recovery close? | L977 |
+| `FTD-0816` | DERIVED, SCOPE_CONTRACT | Can two sectors of the model be given a common cone, and what does it cost? | L978 |
 
 ---
 
@@ -1001,7 +1009,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them.*
 
-**22 claims.**
+**28 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -1027,6 +1035,12 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0798` | CLOSED_NEGATIVE, THEOREM, CONSTRUCTIVE, CORRECTION | Is a massive Kaehler-Dirac field a viable first-order clock-operator carrier? | L957 |
 | `FTD-0800` | CLOSED_NEGATIVE, MEASURED | Does any configuration in the locked Maxwell-criterion screen realize C3 as a native `n = 4` mechanism under the registered compact pair law? | L961 |
 | `FTD-0801` | CLOSED_NEGATIVE, MEASURED, SYNTHESIS | Does the locked periodic triangulated-sheet candidate realize C3 as an `n = 4` mechanism for a free body under the registered compact law? | L963 |
+| `FTD-0804` | CONDITIONAL, THEOREM, MEASURED | Does a minimum viable clock carrier exist, and at what price? | L966 |
+| `FTD-0805` | CONSTRUCTIVE, CLOSED_NEGATIVE, OPEN | Does the registered single-scale law natively host an `n = 4` mechanism? | L967 |
+| `FTD-0806` | SCOPE_CONTRACT, SYNTHESIS | Temporal-interior programme registered (charter plus three criteria specs). | L968 |
+| `FTD-0808` | EXACT | T2 first screen: does a geometric bit hold state, and at what barrier? | L970 |
+| `FTD-0814` | DERIVED, MEASURED, RETRACTED, OPEN | What must a clock carrier be made of for its rate to dilate relativistically? | L976 |
+| `FTD-0817` | DERIVED | What is `G*` the constant of, in clock terms? | L979 |
 
 ---
 
@@ -1034,7 +1048,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *Paper splits and referee rounds, monographs, node maps and synonymy graphs, trackers, pre-registration registries, project policy.*
 
-**16 claims.**
+**17 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -1054,6 +1068,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0207` | INFRASTRUCTURE | FTD math node map -- multi-layer connectivity graph (objects identities spine theorems LEDGER claims) rendered in four complementary output formats… | L380 |
 | `FTD-0248` | CONJECTURE, SELECTION, THEOREM | Epistemic Symmetries and Chiral Trajectories | L411 |
 | `FTD-0249` | SYNTHESIS, AXIOM | FTD construction monograph — canonical bottom-up construction story of FTD's mathematics (front-door synthesis) | L412 |
+| `FTD-0818` | SYNTHESIS | Consolidated dissemination: the semantic-ontology manuscript. | L980 |
 
 ---
 
@@ -1063,34 +1078,34 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 293 |
-| CLOSED_NEGATIVE | 185 |
-| MEASURED | 163 |
-| OPEN | 129 |
+| THEOREM | 294 |
+| CLOSED_NEGATIVE | 187 |
+| MEASURED | 169 |
+| OPEN | 135 |
+| DERIVED | 92 |
 | SMC | 84 |
-| DERIVED | 84 |
 | SELECTION | 75 |
-| SYNTHESIS | 63 |
+| SYNTHESIS | 65 |
 | NUMERICAL_FACT | 54 |
-| CONSTRUCTIVE | 47 |
+| CONSTRUCTIVE | 48 |
 | FOUNDATIONAL_OBSTRUCTION | 43 |
 | CONJECTURE | 31 |
 | SELECTED_DYNAMICS | 29 |
 | AXIOM | 27 |
-| CORRECTION | 25 |
+| CORRECTION | 26 |
 | EXECUTION_INVALID | 24 |
 | PARAMETRIC | 20 |
-| RETRACTED | 19 |
+| RETRACTED | 20 |
 | NO_GO | 16 |
 | PARTIAL | 16 |
+| IMPOSED | 16 |
 | BOUNDARY | 16 |
-| IMPOSED | 15 |
 | RECONCILIATION | 14 |
+| EXACT | 14 |
 | OBSERVATION | 12 |
-| EXACT | 12 |
+| SCOPE_CONTRACT | 11 |
 | POSITIVE | 10 |
 | UNDERDETERMINED | 10 |
 | REFUTATION | 10 |
 | PRE_REGISTRATION | 9 |
-| SCOPE_CONTRACT | 9 |
 
