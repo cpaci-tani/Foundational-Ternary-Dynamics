@@ -199,6 +199,10 @@ this framework by choice. The full accounting is
 Table~\ref{tab:ledger}.
 \end{scopebox}
 
+Nothing has been bought yet. The first purchase is the smallest one
+available, and it is made in the next section: a single distinction,
+without which there is not yet anything for a physics to be about.
+
 % =====================================================================
 \section{Primitive ontology}
 \label{sec:ontology}
@@ -292,6 +296,11 @@ closes into the equation it depicts.}
 \label{fig:ontology}
 \end{figure}
 
+One thing this buys is worth isolating before going on, because it
+is smaller than it looks. A record that extends has an order. What it
+does not have is a scale on that order, and the next section shows why
+that gap cannot be closed by looking at the record harder.
+
 % =====================================================================
 \section{Succession is not yet time}
 \label{sec:succession}
@@ -371,7 +380,8 @@ I(n) = \int_0^1\frac{\dd u}{\sqrt{1-u^{n}}}
 = \frac1n B\!\left(\tfrac1n,\tfrac12\right).
 \label{eq:quadrature}
 \end{equation}
-Everything specific to the clock is in $I(n)$, and $I(n)$ factors --- in a
+Everything specific to the clock is in the $I(n)$ of \eqref{eq:quadrature},
+and it factors --- in a
 way that says which part of a clock constant is kinematics and which part
 is the potential:
 \begin{equation}
@@ -740,7 +750,9 @@ traversed uniformly, so the period ignores the orbit's size; quartic ones
 are flat-flanked ovals and are traversed faster as they grow. (c) The
 degenerate clock does not live at a generic point but on a single surface
 --- the threshold $\mu = 0$ between one well and two, where the cubic is
-forbidden by symmetry and the quartic is what remains. (d) The degeneracy
+forbidden by symmetry and the quartic is what remains. This is the
+picture of Proposition~\ref{prop:threshold}: the codimension-one surface
+is the hypothesis, and being off it is the generic case. (d) The degeneracy
 made visible: contours about a nondegenerate minimum are closed ellipses
 (dashed), while the quartic valley (solid) opens along the clock
 direction. That flatness is the cheapness of \eqref{eq:gstarprice}.
@@ -854,6 +866,12 @@ same $\varepsilon$ fixes retention through an Arrhenius law, so the
 memory's lifetime is set by the constant that binds the matter.}
 \label{fig:register}
 \end{figure}
+
+Both purchases so far were quoted in the same unit, $\varepsilon$, and
+neither section said what fixes it or what it costs to keep paying.
+That is a thermodynamic question --- a barrier is only a barrier
+relative to a temperature --- and it is the subject of the next
+section.
 
 % =====================================================================
 \section{Thermodynamics: irreversibility and timescale}
@@ -1085,6 +1103,13 @@ Figure~\ref{fig:ontology},
 in which $\mathcal{C}_n$ is the preparation and control record and
 $\mathcal{D}$ the stipulated dynamics. The closure map $\Gamma$ is part
 of the scaffold, not a theorem: history alone does not determine a state.
+
+The weight layer is now complete, at a cost stated line by line. But
+nothing in it says \emph{when} a weight becomes a frequency. That is not a
+question about the algebra of weights; it is a question about the
+mechanism that reads them out, and about how fast it reads compared with
+how fast the thing being read is moving. The next section measures
+exactly that ratio.
 
 % =====================================================================
 \section{Born weighting as a regime}
@@ -1406,6 +1431,12 @@ result; its contribution is to locate the paper's open question inside
 them.
 \end{scopebox}
 
+Everything established to this point is a \emph{one-frame} statement: a
+regime condition read on one instrument, a ceiling fixed by one
+algebra, a clock ticking where it was built. Relativity is the demand
+that two frames agree, and it is the first obligation in this paper
+that cannot be discharged by any single apparatus, however good.
+
 % =====================================================================
 \section{Relativity}
 \label{sec:relativity}
@@ -1435,7 +1466,7 @@ scheme~\cite{fewsterverch}. Equation~\eqref{eq:R3}, not trace
 preservation alone, is the operational statement that the order of
 spacelike actualizations is gauge at the level of ensembles.
 
-\subsection{Order-independence is not selector covariance}
+\paragraph{Order-independence is not selector covariance.}
 
 It is tempting, and wrong, to conclude that a covariant weight layer
 delivers a covariant selector. Let $\mu_f$ be the measure over complete
@@ -1570,7 +1601,7 @@ gamma rays and $1.4\times10^{-36}$ for the most energetic cosmic-ray
 primaries, tens of orders of magnitude below optical-cavity isotropy
 bounds near $10^{-18}$.
 
-\subsection{Radiative stability, reduced}
+\paragraph{Radiative stability, reduced.}
 \label{sec:radiative}
 
 Equation~\eqref{eq:aniso} is a tree-level statement, and a small
@@ -1756,7 +1787,14 @@ None of this closes anything. It is a one-body statement --- an
 independent cross-check of the free-sector result above by a different
 method --- and the obligation that matters is the two-body one.
 
-\subsection{The kinematic half of the two-body register}
+\subsection{The two-body bill, itemized}
+\label{sec:twobodybill}
+
+Six line-items follow. The first three are computed and close;
+the last three are where the obligation is still open, and each
+names the object whose absence blocks it.
+
+\subsubsection{Free massive modes}
 \label{sec:massivecone}
 
 That obligation, however, was bundled too coarsely, and unbundling it
@@ -1833,7 +1871,7 @@ unity. That problem is the subject of the next subsection, and it turns
 out to be the one place in this paper where a stubbornly negative result
 inverted.
 
-\subsection{The cross-sector cone: an exact no-go, and what dissolved it}
+\subsubsection{A common cone across sectors}
 \label{sec:intersector}
 
 One sector can always be given unit speed by choosing the time unit. That
@@ -1989,7 +2027,7 @@ decomposition, not a feature of the symbol.}
 \label{fig:intersector}
 \end{figure}
 
-\subsection{What a composite inherits}
+\subsubsection{What a composite inherits}
 \label{sec:composite}
 
 The remaining question --- whether a bound composite inherits its
@@ -2054,7 +2092,7 @@ mass-dependence, the dilation residual, the flatness in constituent
 number, and the plane on which a distance potential is a valid
 description at all.
 
-\subsection{What a potential is, and where the gate actually lies}
+\subsubsection{What a potential is, and where the gate actually lies}
 \label{sec:potential}
 
 It is worth being exact about why the mechanical clock fails, because the
@@ -2090,7 +2128,7 @@ in one identifiable respect. The natural conclusion --- that giving its
 nodes the lattice dispersion is a substitution rather than a search ---
 turns out to be wrong, and running it is what shows why.
 
-\subsection{The substitution, executed}
+\subsubsection{The substitution, executed}
 \label{sec:substitution}
 
 Two constituents on the axial lattice, bound by a finite square well in
@@ -2140,7 +2178,7 @@ a carrier radiates. But the composites above are bound \emph{below} the
 continuum at every $K$ --- band clearance holds there by construction ---
 and dilation still fails. Clearing the band would not have sufficed.
 
-\subsection{One energy, and the universality that follows}
+\subsubsection{One energy, and the universality that follows}
 \label{sec:oneenergy}
 
 The failure has a structural reading. Two energy categories were carried
@@ -2186,10 +2224,14 @@ itself: one field, whose profile contracts by $1/\gamma$ when it moves.
 released in phase: the moving clock has fallen $2.2$ cycles behind by tick
 $430$. The roughness on the boosted trace is real --- a boosted lattice
 kink radiates. (c) Universality as convergence. Two-category carriers fan
-apart, one of them running \emph{faster} when moving; at $\gamma = 1.22$
-they span $0.283$ while the one-energy carriers span $0.006$, a factor of
-$46$. The one-energy curves collapse onto each other and lie a little
-below $1/\gamma$, the residual discussed in the text. (d) Why this is
+apart, one of them running \emph{faster} when moving; measured as a
+spread in the \emph{frequency ratio} $\Omega/\Omega_0$ at $\gamma =
+1.22$, they span $0.283$ against the one-energy carriers' $0.006$, a
+factor of $46$. (The body quotes the same comparison as a spread in the
+\emph{fitted exponent}, $1.76$ against $0.043$; the two pairs measure
+different things and neither is a restatement of the other.) The
+one-energy curves collapse onto each other and lie a little below
+$1/\gamma$, the residual discussed in the text. (d) Why this is
 still not the $G^*$ clock: the shape-mode frequency is flat in amplitude
 --- isochronous to $\le0.23\%$, set by the FFT bin --- where a quartic
 clock would fall as $1/A$.}
@@ -2250,6 +2292,15 @@ it a coordinate time. We record this as an \emph{optional diagnostic}: it
 is neither necessary nor sufficient for hiding a preferred lattice, and
 it does not replace the Lorentz-recovery obligation above.
 
+The division leaves a bill: the one-body half closed with numbers, the
+two-body half open, priced, and gated on an instrument this paper costed
+in Section~
+ef{sec:clock} and the substrate did not supply. The next
+section observes that the architecture's own stage index is gated the
+same way --- which is the promise left standing in
+Section~
+ef{sec:succession}.
+
 % =====================================================================
 \section{Quantum gravity, and the clock again}
 \label{sec:qg}
@@ -2284,6 +2335,11 @@ supplying the slow gate --- and we label it exactly as what it is: a
 speculative alignment between two independently derived shapes of
 requirement, not evidence for either.
 
+That closes the loop the construction opened. A loop that closes on paper
+may still not run, though, and what has not been shown is that these
+pieces coexist in one system rather than in eleven separate arguments.
+A model can settle that; prose cannot.
+
 % =====================================================================
 \section{A minimal model in which the architecture composes}
 \label{sec:toy}
@@ -2311,7 +2367,9 @@ inside every candidate causal polytope. (b) Unscaled clock trajectories:
 amplitudes differing by $2.5\times$ give periods differing by the
 reciprocal factor --- a bigger swing is a \emph{faster} clock. (c) The
 same integration on log axes recovers slope exactly $-1$ and the constant
-$G^*$ to $1.6\times10^{-13}$, with nothing fitted. (d) The register's
+$G^*$ to $1.6\times10^{-13}$, with nothing fitted --- \emph{reproducing}
+the law of Section~\ref{sec:clock} on an instrument that shares no code
+path with it, not deriving it a second time. (d) The register's
 barrier equals its well depth exactly. (e) Retention is Arrhenius in that
 same $\varepsilon$. (f) The weighting of actual events interpolates from
 amplitude to occupation as $\bar\Omega\tau$ grows, with $1\sigma$
@@ -2489,6 +2547,12 @@ the sense of ``harmless'' quantitative: the shell's anisotropy is never
 that of the stencil, and what anisotropy remains decays as a power of
 elapsed time.
 
+So the architecture composes, on one instrument, with no constant added
+beyond those already booked. What the demonstrator cannot do is say
+what the composition \emph{means} --- which pillar supplies which layer,
+and which layer nobody supplies. That is the statement the next section
+owes.
+
 % =====================================================================
 \section{The merge, stated exactly}
 \label{sec:synthesis}
@@ -2521,6 +2585,10 @@ layer nobody supplies.
 \draw[con] (thm2) -- node[lbl,pos=0.52] {irreversibility; the regime} (S);
 \draw[con] (thm2) -- node[lbl,pos=0.55] {Arrhenius cost} (C);
 \draw[wk]  (mod)  -- node[lbl,pos=0.55] {instantiates, priced} (C);
+% the clock is not only supplied: it supplies the index the whole
+% recursion is written in, which is the loop the paper closes
+\draw[wk]  (C) to[out=15,in=-15,looseness=1.5]
+  node[lbl,pos=0.5,right=1pt] {supplies the index} (S);
 
 % ---- shape legend ---------------------------------------------------
 \begin{scope}[shift={(0,-5.15)}]
@@ -2578,6 +2646,11 @@ priceable.} That is less than a unification. It is also more than an
 analogy, because the interfaces are itemized, several are measured, and
 each carries a falsifier.
 
+Itemized is a claim that can be checked, and checking it needs the items
+in one place at their actual strength rather than at the strength the
+surrounding prose lends them. That table is next, and it is the only part
+of this paper that binds.
+
 % =====================================================================
 \section{Status of claims}
 \label{sec:ledger}
@@ -2621,13 +2694,35 @@ Born pushforward \eqref{eq:pushforward} for any concrete substrate &
 \textbf{Open}; neither $F_O$ nor $\mu$ is constructed here \\
 CPTP dynamics, unitarity, Schr\"odinger form & External theorems,
 conditional on their stated premises \\
+Quadrature root $\times$ degree ratio \eqref{eq:qrdr} & Exact identity,
+verified $n = 2,3,4,5,6,8$. The $\sqrt\pi$ is kinematic and common to
+every mechanical clock; the $\Gamma$ ratio is the potential's
+contribution. $n=2$ is uniquely self-reproducing, which is why the
+harmonic constant is a power of $\pi$ \\
+Threshold forcing (Prop.~\ref{prop:threshold}) & Exact \emph{within its
+stated hypotheses} (H1--H4) and \emph{in the limit $A\to0$}. Forces the
+quartic given a threshold, a reflection symmetry and $\lambda\neq0$. It
+does \textbf{not} force any substrate to sit at a threshold, and $\mu=0$
+is codimension one \\
+Finite-amplitude drift \eqref{eq:sexticdrift} & Exact. $\Gstar$ is the
+$A\to0$ endpoint only: with $V = \lambda q^4+\nu q^6$ the constant sweeps
+continuously in $r = \nu A^2/\lambda$, and every member has
+$\lambda\neq0$. The measured $0.33\%$ across a sixfold amplitude range is
+this term, at $r = 0.0056$ \\
+\textbf{$\Gstar$ is chosen, not derived} & \textbf{No valid carrier has
+produced it.} The native single-scale screen returned zero; the four-body
+carrier that produces it requires a purchased interaction species and is
+Galilean, hence disqualified as a relativistic instrument; the one
+carrier here that demonstrably dilates is isochronous. $\Gstar$ enters
+this framework by choice \\
 The rigidity trichotomy (Crit.~\ref{crit:trichotomy}) & Exact within the
 declared model \\
 Buckling criterion (Crit.~\ref{crit:buckling}) & Exact within the
 declared model; new here \\
 Minimum viable clock: $\lambda_{\rm eff}$, period law, minimality &
 Exact within the declared two-scale extension; $\Gstar$ recovered to
-$2\times10^{-6}$ in simulation \\
+$2\times10^{-6}$ in the $A\to0$ extrapolation. \textbf{Galilean
+invariant, and therefore disqualified as a relativity test} \\
 No native quartic clock & Negative at screened scope only; not a
 no-go theorem \\
 Register barrier $=\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
@@ -2712,6 +2807,14 @@ substrate itself supplies.
 unit-strut tensegrity exist under the single-scale law, with blocking
 form definite on its full flex space? No candidate realizes it; no
 impossibility proof exists.
+\item \textbf{What holds the threshold.} Proposition~\ref{prop:threshold}
+forces the quartic \emph{at} $\mu = 0$, and $\mu = 0$ is a
+codimension-one surface: the generic configuration is not on it, and an
+unmaintained system falls off it and becomes a harmonic clock. So the
+lemniscatic clock's real price is a maintenance cost, and this paper does
+not identify anything that pays it. What physical mechanism holds
+$\mu = 0$ against detuning? Without an answer, the proposition describes
+a clock nothing is shown to be able to keep.
 \item \textbf{Shielded actualization.} The purity requirement
 (Prop.~\ref{prop:purity}) demands that the slow channel be nearly
 exclusive at the threshold. Can any physical manifestation rule be

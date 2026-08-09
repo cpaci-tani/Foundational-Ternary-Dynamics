@@ -293,7 +293,7 @@ def main():
     print("Minimal Temporal Interior — toy model")
     print(f"  G* = {G_STAR:.12f},  C = 1/sqrt(3) = {C_CONE:.6f},  "
           f"eps = {EPS}, K = {K_THRESH}")
-    fig, axes = plt.subplots(3, 2, figsize=(fs.TEXTWIDTH_IN, 8.0013),
+    fig, axes = plt.subplots(3, 2, figsize=(fs.TEXTWIDTH_IN, 7.9013),
                              constrained_layout=True)
     panel_substrate(axes[0, 0])
     panel_clock(axes[0, 1])

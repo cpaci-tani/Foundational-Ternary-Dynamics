@@ -241,7 +241,7 @@ def main():
 
     # 7.55, not the aspect-preserving 7.94: this figure carries the
     # longest caption in the paper and overflowed its page by 24 pt.
-    fig, axes = plt.subplots(3, 2, figsize=(fs.TEXTWIDTH_IN, 7.5500),
+    fig, axes = plt.subplots(3, 2, figsize=(fs.TEXTWIDTH_IN, 7.4000),
                              constrained_layout=True)
     fig.get_layout_engine().set(w_pad=0.10, h_pad=0.12,
                                 hspace=0.07, wspace=0.07)

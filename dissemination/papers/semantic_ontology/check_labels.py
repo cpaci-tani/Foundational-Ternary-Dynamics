@@ -19,9 +19,10 @@ from pathlib import Path
 TEX = Path(__file__).resolve().parent / "semantic_ontology.tex"
 BS = chr(92)
 
-# Navigation-only anchors: defined so hyperref has a target, never cited.
-# Anything else in the unreferenced list is a real loose end.
-NAV_OK = {"sec:intro", "sec:open", "sec:ledger"}
+# A \label on a section is a hyperref anchor and is legitimately
+# uncited; a \label on an equation, figure, table or proposition is a
+# promise that something points at it.  Only the latter are loose ends.
+NAV_PREFIXES = ("sec:", "app:")
 
 
 def scan(text):
@@ -57,8 +58,8 @@ def main():
     print("distinct referenced: %d" % len(used))
     print()
     print("DANGLING (fatal) : %d %s" % (len(dangling), dangling or ""))
-    real_unref = [k for k in unref if k not in NAV_OK]
-    print("unreferenced     : %d  (%d after nav-only allowance)"
+    real_unref = [k for k in unref if not k.startswith(NAV_PREFIXES)]
+    print("unreferenced     : %d  (%d excluding section/appendix anchors)"
           % (len(unref), len(real_unref)))
     for k in real_unref:
         print("    %s" % k)
