@@ -559,6 +559,50 @@ sixfold amplitude range, and recovers $\Gstar$ to $2\times10^{-6}$ only
 in the $A\to0$ extrapolation. A $0.33\%$ deficit is $r = 0.0056$. The
 residual drift and the counterexample family are one term seen twice.
 
+\subsection{Off the threshold, exactly}
+\label{sec:crossover}
+
+The proposition holds \emph{at} $\mu = 0$. Since the whole price is that
+$\mu = 0$ must be held, what happens as it slips is not a footnote --- it
+is the thing being paid for, and it is exactly solvable.
+
+For the normal form $V = \tfrac12\mu x^2 + \lambda x^4$ the quadrature
+closes in elliptic functions: the orbit is $x(t) = A\,\mathrm{cn}(\Omega
+t;\kappa)$ with $\Omega^2 = (\mu+4\lambda A^2)/m$, and writing everything
+in terms of the modulus
+\begin{equation}
+\kappa^2 = \frac{2\lambda A^2}{\mu + 4\lambda A^2}
+\label{eq:modulus}
+\end{equation}
+eliminates $\mu$ and $A$ separately, leaving a single universal curve:
+\begin{equation}
+\boxed{\;T\,A\,\sqrt{\tfrac{2\lambda}{m}} \;=\; 4\,\kappa\,K(\kappa)\;}
+\label{eq:collapse}
+\end{equation}
+with $K$ the complete elliptic integral of the first kind. Every
+oscillation at every detuning lies on this one curve: the harmonic side
+at $\kappa^2\to0$, the double-well side at $\tfrac12<\kappa^2<1$, and the
+quartic clock at exactly $\kappa^2 = \tfrac12$, where
+$4\kappa K = \sqrt\pi\,\Gstar$ and \eqref{eq:periodlaw} is recovered.
+
+Two things follow, and the second is the more interesting.
+
+\emph{The threshold is a self-dual point.} $\kappa = 1/\sqrt2$ is the
+fixed point of the exchange $\kappa\leftrightarrow\kappa'$ between a
+modulus and its complement, where $K' = K$. So $\Gstar$ is not merely the
+constant of one potential among many; it is the value the period takes at
+the one modulus that is its own complement. That is the same fact
+\eqref{eq:qrdr} reports as $n = 2$ being self-reproducing, seen through
+the elliptic parametrisation rather than the Gamma one.
+
+\emph{The constant drifts two ways, and both are now exact.} Detuning
+moves $\kappa^2$ off $\tfrac12$ along \eqref{eq:collapse}; a sextic
+admixture moves the constant along \eqref{eq:sexticdrift} in $r$. They
+are independent perturbations --- one changes the quadratic coefficient,
+the other adds a higher one --- and $\Gstar$ is the \emph{double} limit
+$\mu\to0$, $A\to0$. Neither limit alone suffices, which is a sharper
+statement of the price than either drift gives on its own.
+
 \subsection{The native case is harmonic}
 \label{sec:native}
 
@@ -768,6 +812,26 @@ saying what that buys as well as what it costs. The quartic clock is the
 normal form of a perfect Euler column at critical load and of any
 mean-field symmetry-breaking order parameter; what is non-generic about
 it is not the shape of the potential but the \emph{location}.
+
+\paragraph{Why the maintenance is expensive, and not merely required.}
+There is a sharper reason than codimension, and it is the same fact that
+made horology choose $n = 2$. A clock whose frequency tracks its own
+amplitude converts every amplitude perturbation into a frequency
+perturbation. Isochronism is not an aesthetic preference but \emph{noise
+immunity}: the pendulum's $\partial T/\partial A \approx 0$ is the whole
+reason clocks work, and the anti-pendulum maximises exactly the coupling
+the pendulum was chosen to suppress. Near threshold the mode is soft,
+susceptibilities grow and relaxation slows --- so the very sensitivity
+that makes critical points interesting makes them poor timekeepers.
+
+That inverts usefully. A defect of a clock is a virtue of a sensor, and
+what this oscillator's timing is exquisitely sensitive to is
+\emph{its own distance from the threshold}: by \eqref{eq:collapse} the
+measured $(T,A)$ pair fixes $\kappa$, and by \eqref{eq:modulus} $\kappa$
+is the order parameter of the detuning. So a marginal clock reads out the quantity it must hold
+fixed. Whether that is a mechanism for holding it, or merely the
+statement that the error signal exists, is exactly the open problem of
+Section~\ref{sec:open}.
 
 So the price is a maintenance cost, continuously paid, not a construction
 cost; and \eqref{eq:gstarprice} is what it returns. \emph{$\pi$ is native
