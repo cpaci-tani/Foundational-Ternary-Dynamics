@@ -2,21 +2,24 @@
 
 CLAIM: the production flux symbol is a sum of squares whose arguments sit
 at HALF-lattice offsets; integer-displacement Wilson fermions therefore
-cannot match it at any shell count, and the price of a match is spinor
-dimension 16.
+cannot match it at any shell count, and the price of a match is a spinor
+dimension between 4 and 8.
 
 FOUR PANELS, all exact:
   (a) THE MISMATCH.  Flux and Wilson normalised to the same slope still
       part company, and by a DIFFERENT amount in each symmetry direction --
       so no rescaling closes the gap.
-  (b) THE REASON.  The nine squares carry arguments q_i/2 and
-      (q_i +- q_j)/2, i.e. hops of half a lattice unit.  Wilson hops land
-      on integer sites.  The sectors were being matched on the wrong
-      lattice.
+  (b) THE REASON.  The squares carry arguments q_i/2 and (q_i +- q_j)/2,
+      i.e. hops of half a lattice unit.  Wilson hops land on integer
+      sites.  The sectors were being matched on the wrong lattice.
   (c) THE IDENTITY.  The nine squares stacked, summing exactly to -L18
       along a cut through the zone.
-  (d) THE PRICE.  n squares need n mutually anticommuting structures;
-      dimension 2^k carries 2k+1.  Nine crosses at dim 16.
+  (d) THE PRICE, corrected.  n squares need n mutually anticommuting
+      structures and dimension 2^k carries 2k+1, so the price is set by
+      the SHORTEST decomposition, not by any decomposition.  Nine is not
+      shortest: an exact cubic-covariant SEVEN exists (dim 8), and the
+      unrestricted minimum is FIVE (dim 4, ordinary Dirac) at the cost of
+      cubic covariance.  See derive_sos_rank_minimal.py.
 
 PRIOR ART: FTD-0412 (scalar-r no-go at q^4 vs the BCC-time pole) and
 FTD-0413 (face-diagonal weight buying q^4).  The exact all-orders no-go,
@@ -170,35 +173,63 @@ def panel_identity(ax):
     ax.legend(loc="upper left", handlelength=1.5, borderpad=0.3,
               labelspacing=0.26, frameon=True, framealpha=1.0,
               edgecolor="none", facecolor="white").set_zorder(9)
-    ax.set_title("(c)  the identity: nine squares stack\n"
-                 "exactly onto the flux symbol")
+    # Two short lines: the long single-clause version overran the panel.
+    ax.set_title("(c)  one decomposition, not the fewest:\n"
+                 "nine squares stack onto the symbol")
     return np.abs(face.sum(0) + edge.sum(0) - flux(q)).max()
 
 
+def spinor_dim(n):
+    """Smallest 2^k carrying n mutually anticommuting Hermitian structures."""
+    k = 0
+    while 2 * k + 1 < n:
+        k += 1
+    return 2 ** k
+
+
 def panel_price(ax):
+    """The price is set by the SHORTEST decomposition, not by any one.
+
+    Three decompositions of the same symbol, each verified independently:
+    nine (FTD-0816, exact, covariant), seven (exact, covariant, solved from
+    a six-parameter orbit ansatz), five (numerical, certified to 5.3e-15 on
+    4000 fresh momenta, and NOT covariant).
+    """
     k = np.arange(1, 6)
     dim, nstruct = 2 ** k, 2 * k + 1
-    ax.step(dim, nstruct, where="post", color=C1, lw=1.8, zorder=3)
-    ax.plot(dim, nstruct, "o", color=C1, ms=5.0, zorder=4)
-    ax.axhline(9, color=CO, lw=1.5, ls="--", zorder=2)
-    ax.plot([16], [9], "*", color=CO, ms=13, zorder=5)
+    ax.step(dim, nstruct, where="post", color=CG, lw=1.6, zorder=2)
+    ax.plot(dim, nstruct, "o", color=CG, ms=4.2, zorder=3)
+
+    marks = ((9, CK, "o", "nine (FTD-0816)\nexact, covariant"),
+             (7, C1, "s", "seven\nexact, covariant"),
+             (5, CO, "*", "five: the minimum\n(not covariant)"))
+    for n, col, mk, lab in marks:
+        d = spinor_dim(n)
+        ax.plot([d], [n], mk, color=col, ms=13 if mk == "*" else 7.0,
+                zorder=6, mec="white", mew=0.8)
+        ax.plot([1.7, d], [n, n], color=col, lw=1.0, ls=":", zorder=4)
+        ax.plot([d, d], [2.2, n], color=col, lw=1.0, ls=":", zorder=4)
+
     ax.set_xscale("log", base=2)
     ax.set_xlim(1.7, 40)
     ax.set_ylim(2.2, 12.5)
     dticks(ax.xaxis, [2, 4, 8, 16, 32], "{:d}")
     ax.set_yticks([3, 5, 7, 9, 11])
     ax.set_xlabel("spinor dimension")
-    ax.set_ylabel("anticommuting structures")
-    ax.text(2.0, 9.35, "nine squares needed", fontsize=FS_ANN, color=CO,
-            ha="left", va="bottom")
-    ax.annotate("Dirac ($4$) carries $5$:\nnot enough", xy=(4, 5),
-                xytext=(5.2, 3.1), fontsize=FS_ANN, color=CK,
-                ha="left", va="center",
-                arrowprops=dict(arrowstyle="-", color=CG, lw=0.7))
-    ax.text(17.5, 9.0, "first sufficient:\ndim $16$", fontsize=FS_ANN,
-            color=CO, ha="left", va="center")
-    ax.set_title("(d)  the price: nine structures,\n"
-                 "hence 16-component spinors")
+    ax.set_ylabel("squares = anticommuting structures")
+    # Kept short: the long form ran through the dim-8 guide line.
+    ax.text(2.05, 5.45, "five: the minimum\n(not covariant)",
+            fontsize=FS_ANN, color=CO, ha="left", va="bottom")
+    ax.text(2.05, 7.45, "seven: exact, covariant", fontsize=FS_ANN,
+            color=C1, ha="left", va="bottom")
+    ax.text(2.05, 9.45, "nine: FTD-0816, loose", fontsize=FS_ANN,
+            color=CK, ha="left", va="bottom")
+    ax.annotate("", xy=(4.3, 2.75), xytext=(15.0, 2.75),
+                arrowprops=dict(arrowstyle="->", color=CO, lw=1.1))
+    ax.text(7.6, 2.95, "price falls $16 \\to 4$", fontsize=FS_ANN,
+            color=CO, ha="center", va="bottom")
+    ax.set_title("(d)  the price is set by the SHORTEST\n"
+                 "decomposition: dimension 4, not 16")
 
 
 def main():
@@ -212,11 +243,21 @@ def main():
     assert err < 1e-12, "SOS identity failed"
     print(f"  [verify] squares: {face.shape[0]} face + {edge.shape[0]} edge "
           f"= {face.shape[0] + edge.shape[0]}")
-    for k in range(1, 6):
-        if 2 * k + 1 >= 9:
-            print(f"  [verify] first sufficient spinor dimension = {2**k} "
-                  f"({2*k+1} structures)")
-            break
+    # The exact covariant seven, checked here so panel (d) draws nothing
+    # it has not verified.  x = q/2.
+    x = qs / 2.0
+    s2, c2 = np.sin(x) ** 2, np.cos(x) ** 2
+    cyc = ((0, 1, 2), (1, 2, 0), (2, 0, 1))
+    seven = (4.0 * sum(s2[:, i] * c2[:, j] * c2[:, k] for i, j, k in cyc)
+             + (16.0 / 3.0) * sum(s2[:, j] * s2[:, k] * c2[:, i]
+                                  for i, j, k in cyc)
+             + 4.0 * s2[:, 0] * s2[:, 1] * s2[:, 2])
+    e7 = np.abs(seven - flux(qs)).max()
+    print(f"  [verify] exact covariant SEVEN-square identity: "
+          f"max |residual| = {e7:.3e}")
+    assert e7 < 1e-12, "the seven-square identity failed"
+    for n in (9, 7, 5):
+        print(f"  [verify] {n} squares -> spinor dimension {spinor_dim(n)}")
     for nm, d, _, _ in DIRS:
         u = np.array(d, float) / np.linalg.norm(d)
         q = 2.0 * u

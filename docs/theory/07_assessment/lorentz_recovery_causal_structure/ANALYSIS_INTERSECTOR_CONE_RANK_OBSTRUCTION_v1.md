@@ -2,9 +2,14 @@
 
 **Status:** `[DERIVED — EXACT ALL-ORDERS NO-GO, SCALAR-r WILSON vs PRODUCTION FLUX]` +
 `[DERIVED — q⁶ OBSTRUCTION IS A RANK VIOLATION, NOT A COUNTING SHORTFALL]` +
+`[DERIVED — EXACT COVARIANT SEVEN-SQUARE DECOMPOSITION; SPINOR DIMENSION 8]` +
+`[MEASURED — UNRESTRICTED SOS MINIMUM IS FIVE; SPINOR DIMENSION 4]` +
+`[CORRECTION — §4b's "spinor dimension 16 / staggered taste multiplication" was a LOOSE UPPER BOUND; see §4c]` +
 `[SCOPE — SPATIAL SYMBOLS ONLY; TIME DISCRETISATION NOT MATCHED HERE]` +
 `[BOOKED — FTD-0816]`
-**Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_intersector_cone_counting.py`
+**Date:** 2026-08-08 (§4c added same day) · **Artifacts:**
+`scripts/experiments/temporal_interior/derive_intersector_cone_counting.py`,
+`scripts/experiments/temporal_interior/derive_sos_rank_minimal.py`
 **Parents:** `AUDIT_LORENTZ_COMMON_CONE_GATE.md` (FTD-0412, the scalar-r
 no-go at q⁴ against the BCC-time pole), FTD-0413 (the face-diagonal
 kinetic weight that buys q⁴).
@@ -193,16 +198,83 @@ matched on the wrong lattice.**
 
 **Settles.** The common cone is not obstructed in principle. There is an
 explicit exact decomposition, and its price is stated in physical
-currency: a staggered-type matter sector on the half-offset lattice with
-spinor dimension 16.
+currency: a matter sector on the half-offset lattice.
 
-**Does not settle.** That nine is *minimal* — it is an upper bound from
-this particular decomposition, and a smaller SOS rank may exist. Nor that
-the resulting operator is an acceptable fermion: doubling, chirality, and
-the locality of the induced interactions are all untested here, and a
-staggered construction has known costs in each. Nor is the time
-discretisation matched (§5). The claim is existence-with-a-price, not a
-working sector.
+**Does not settle.** Whether the resulting operator is an acceptable
+fermion: doubling, chirality, and the locality of the induced interactions
+are all untested here. Nor is the time discretisation matched (§5). The
+claim is existence-with-a-price, not a working sector.
+
+## 4c. Correction: nine is **not** minimal, and the price is not 16
+
+Same day, on the question §4b left open. Write $x = q/2$ and let $V$ be the
+nearest-neighbour class on the half-offset lattice — trigonometric
+polynomials of degree $\le 1$ per variable in $x$, i.e. the span of the 27
+monomials $\prod_i g_i$ with $g_i \in \{1, \cos x_i, \sin x_i\}$. Three
+results, in increasing strength.
+
+**(i) The ambient space is 19-dimensional, not 27.** $p$ vanishes exactly
+on $\{0,\pi\}^3$, squares are non-negative, so every $f_a$ vanishes there;
+the 8 $s$-free monomials evaluate on those points to an invertible $8\times
+8$ Hadamard matrix, so their coefficients are forced to zero. Only the 19
+monomials carrying at least one $\sin$ survive.
+
+**(ii) An exact seven-square decomposition exists, and it is cubic-covariant.**
+
+$$\boxed{\;-L_{18} \;=\; 4\sum_i \sin^2\!x_i\cos^2\!x_j\cos^2\!x_k
+\;+\; \tfrac{16}{3}\sum_i \sin^2\!x_j\sin^2\!x_k\cos^2\!x_i
+\;+\; 4\,\sin^2\!x_1\sin^2\!x_2\sin^2\!x_3\;}$$
+
+Solved symbolically from a six-parameter orbit ansatz (sympy returns eight
+solutions, all sign variants of this one) and checkable by hand: with
+$A = \sin^2 x_1$ etc. and $S_1 = A+B+C$, $S_2 = AB+BC+CA$, the three groups
+contribute $4[S_1 - 2S_2 + 3ABC]$, $\tfrac{16}{3}[S_2 - 3ABC]$ and $4ABC$.
+**The triple products cancel exactly** — $12 - 16 + 4 = 0$ — leaving
+$4S_1 - \tfrac83 S_2 = \tfrac43[3S_1 - 2S_2] = -L_{18}$. The singlet is not
+decoration; it is what kills $ABC$.
+
+Seven squares need seven anticommuting structures, so **the covariant price
+is spinor dimension 8, not 16.**
+
+**(iii) Unrestricted, the minimum is five — ordinary Dirac.** A
+Burer–Monteiro search over $F \in \mathbb{R}^{19\times n}$ (residuals on a
+$5^3$ grid, which resolves every frequency in $[-2,2]$ exactly, so grid
+agreement *is* functional agreement) finds decompositions at
+$n = 9,8,7,6,5$ and none at $n = 4$ or $3$ from 400 restarts each. The
+$n=5$ solution re-checks to $5.3\times10^{-15}$ on 4000 fresh random
+momenta. **Five squares fit spinor dimension 4** — plain Dirac, with no
+multiplication at all.
+
+The five is genuinely non-covariant: $\max|PGP^{\mathsf T} - G| = 4.0$ over
+the 48 group elements, not a rounding artefact.
+
+| squares | anticommuting structures | spinor dim | status |
+|---|---|---|---|
+| 9 (§4b) | 9 | 16 | exact, covariant — **loose** |
+| **7** | 7 | **8** | **exact, covariant** |
+| **5** | 5 | **4** | numerical, certified; **not covariant** |
+| 4 | — | — | none found, 400 restarts |
+
+> ⚠ **A retracted sub-argument.** A first draft of this section asserted
+> that no covariant decomposition of length 5 can exist, on the grounds
+> that covariant lengths are sums of orbit sizes $\{1, 3\}$. That is right
+> only for $f_a$ lying in a *single* sign-character sector, where the sign
+> group acts by $\pm1$ and $f_a^2$ is sign-invariant. An $f_a$ mixing
+> sectors — $s_1 + s_2s_3$, say — has a larger orbit, of any size dividing
+> $|\mathbb{Z}_2^3\rtimes S_3| = 48$. Five is not a divisor of 48, so no
+> *single* orbit has size five; but $5 = 2+3 = 1+4 = 1+2+2$ are all
+> arithmetically available. **The covariant minimum is therefore bounded
+> above by 7 and below by nothing better than 3** — the pure-sector search
+> reported here does not settle it.
+
+**What §4b's claim becomes.** "The price is spinor dimension 16 —
+recognisably staggered taste multiplication" was an upper bound presented
+as the price. The honest statement: the price is **at most 8** if cubic
+covariance is required and **at most 4** if it is not, and the taste-
+multiplication reading does not survive — a fourfold multiplication was an
+artefact of a non-minimal decomposition, not a feature of the symbol.
+
+Artifact: `scripts/experiments/temporal_interior/derive_sos_rank_minimal.py`.
 
 ## 5. Scope
 

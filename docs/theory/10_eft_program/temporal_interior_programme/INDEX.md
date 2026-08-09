@@ -64,7 +64,7 @@ IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best.
 | `FTD-0812` | [`ANALYSIS_MASSIVE_CONE_AND_DILATION_v1.md`](ANALYSIS_MASSIVE_CONE_AND_DILATION_v1.md) | `C_eff²(M) = C²(1 + M²/6 + M⁴/30)`, exactly isotropic; species do **not** share a cone (proton–electron `1.6e-40`) |
 | `FTD-0813` | [`ANALYSIS_COMPOSITE_CONE_INHERITANCE_v1.md`](ANALYSIS_COMPOSITE_CONE_INHERITANCE_v1.md), [`ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md`](ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md) | `δ_comp = Σ w_a δ_a` with momentum-fraction weights — without it a 1 kg body is superluminal by `5.9e13` |
 | `FTD-0815` | [`DERIV_TWO_OWED_PROOFS_v1.md`](DERIV_TWO_OWED_PROOFS_v1.md) | hiding ⇒ Born pushforward ⇒ **the barrier is Bell**; free sector exact, `(v_[100] − v_[111])/C = −k⁴/3240`; radiative dim-4 closed three ways; **one-body CLOSED, two-body OPEN and clock-gated** |
-| `FTD-0816` | [`ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md`](../../07_assessment/lorentz_recovery_causal_structure/ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md) | exact all-orders no-go; the `q⁶` obstruction is a **rank** violation; resolved constructively — `−L₁₈` is a **sum of nine squares at half-integer arguments**, price = spinor dimension 16 |
+| `FTD-0816` | [`ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md`](../../07_assessment/lorentz_recovery_causal_structure/ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md) | exact all-orders no-go; the `q⁶` obstruction is a **rank** violation; resolved constructively — `−L₁₈` is a **sum of squares at half-integer arguments**. §4c: nine is **not** minimal — an exact covariant **seven** gives dimension 8, and the unrestricted minimum is **five**, dimension 4 (ordinary Dirac, non-covariant) |
 
 ⚠ These are **reductions, not solutions**. Lorentz recovery remains
 `[OPEN]`; the FTD-0407–0425 supersession is unaffected, and the
@@ -100,10 +100,13 @@ its own identities). One takes an argument:
 
 ## 4. Open
 
-- Whether **nine** squares is minimal (`FTD-0816`); a smaller SOS rank
-  would lower the spinor-dimension price below 16.
+- The **cubic-covariant** SOS minimum (`FTD-0816` §4c). Seven is achieved
+  exactly; the unrestricted minimum is five but breaks covariance. Whether
+  a covariant five or six exists is open — the pure-sector orbit argument
+  that seemed to exclude five was retracted, since a sector-mixing $f_a$
+  can have any orbit size dividing 48 and `5 = 2+3 = 1+4` remain available.
 - Doubling, chirality, and locality of the induced interactions for the
-  half-offset staggered construction — none tested.
+  half-offset construction — none tested.
 - Time-discretisation matching: `FTD-0816` is spatial symbols only, and
   the flux sector's own `4sin²(Ω/2) = C²(−L)` can only add conditions.
 - The two-body Lorentz sector (`FTD-0815`), which is clock-gated on the
