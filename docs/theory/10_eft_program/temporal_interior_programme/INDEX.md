@@ -66,6 +66,12 @@ IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best.
 | `FTD-0815` | [`DERIV_TWO_OWED_PROOFS_v1.md`](DERIV_TWO_OWED_PROOFS_v1.md) | hiding ⇒ Born pushforward ⇒ **the barrier is Bell**; free sector exact, `(v_[100] − v_[111])/C = −k⁴/3240`; radiative dim-4 closed three ways; **one-body CLOSED, two-body OPEN and clock-gated** |
 | `FTD-0816` | [`ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md`](../../07_assessment/lorentz_recovery_causal_structure/ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md) | exact all-orders no-go; the `q⁶` obstruction is a **rank** violation; resolved constructively — `−L₁₈` is a **sum of squares at half-integer arguments**. §4c: nine is **not** minimal — an exact covariant **seven** gives dimension 8, and the unrestricted minimum is **five**, dimension 4 (ordinary Dirac, non-covariant) |
 
+### The ontology the cone demands
+
+| row | document | result |
+|---|---|---|
+| *unbooked* | [`FOUND_CARRIER_SUBLATTICE_ONTOLOGY_v1.md`](FOUND_CARRIER_SUBLATTICE_ONTOLOGY_v1.md) | the carrier sector **is** the BCC structure factor's complement: the 8 half-argument triple products square-sum to 1, the excluded one is `S = Πcos(qᵢ/2)`, and the other **7 are the carrier**. Body centres suffice — the BCC-restricted SOS minimum **equals** the unrestricted one, so no finer cubic lattice and no `a_phys` move. Two readings priced (BCC site set vs. a field on the cubes); neither adopted. Both minimal carriers **saturate** their Clifford algebra, so the five is necessarily **massless** at Dirac dimension |
+
 ⚠ These are **reductions, not solutions**. Lorentz recovery remains
 `[OPEN]`; the FTD-0407–0425 supersession is unaffected, and the
 order-unity inter-sector mismatch that motivates `FTD-0816` still stands
