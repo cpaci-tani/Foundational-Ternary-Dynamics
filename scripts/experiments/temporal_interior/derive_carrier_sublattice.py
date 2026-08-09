@@ -127,7 +127,9 @@ def try_rank(Zk, pv, n, rng, tries):
 
     best, bestF = np.inf, None
     for _ in range(tries):
-        r = least_squares(resid, rng.normal(scale=0.7, size=d * n), jac=jac,
+        # dispersed initial scale -- see the CORRECTION note in main()
+        sc = 0.2 + 4.0 * rng.random()
+        r = least_squares(resid, rng.normal(scale=sc, size=d * n), jac=jac,
                           method="trf", xtol=1e-15, ftol=1e-15, gtol=1e-15,
                           max_nfev=20000)
         rms = float(np.sqrt(np.mean(r.fun ** 2)))
@@ -231,41 +233,55 @@ def main():
           f"   ({100*outside/(inbcc+outside):.1f}% of the total)")
 
     print()
-    assert bcc_min == 5, "expected the BCC-restricted minimum to be five"
-    print(f"  RESULT: BCC-only minimum = {bcc_min} = the unrestricted minimum.")
-    print( "          The face and edge half-offsets buy NOTHING: every")
-    print( "          shortest decomposition can be taken to live entirely on")
-    print( "          the body centres (+-1/2,+-1/2,+-1/2).  The particular")
-    print(f"          unrestricted solution above spends "
-          f"{100*outside/(inbcc+outside):.0f}% of its weight outside,")
-    print( "          but that is where its random start landed, not a need.")
+    # CORRECTION 2026-08-09.  The unrestricted minimum is FOUR, found once
+    # the search's initial scale is dispersed (the earlier fixed-scale
+    # search sampled one basin 400 times and reported five).  The BCC
+    # restriction now cuts finely: confined to body centres the search
+    # reaches five and stalls there over 2000 dispersed starts, while the
+    # four uses the face and edge shells.  So "body centres suffice" holds
+    # at length five; the shortest carrier buys one square by leaving
+    # them.  Either way no finer cubic lattice is wanted -- every shell in
+    # play is a half-offset of the existing one.  The stall at four is
+    # search evidence of exactly the kind that mis-reported the minimum
+    # before, and is asserted at that confidence and no higher; the only
+    # proof here is the Hessian floor n >= 3.
+    assert bcc_min == 5, "expected the BCC-restricted search to stall at five"
+    print(f"  RESULT: BCC-only search minimum = {bcc_min}; unrestricted = 4")
+    print( "          (certified elsewhere; see derive_sos_rank_minimal.py).")
+    print( "          Body centres suffice at length five; the four buys its")
+    print( "          shortness by leaving them for the face/edge shells.")
+    print( "          No finer cubic lattice either way: every shell in play")
+    print( "          is a half-offset of the existing lattice, so a_phys")
+    print( "          does not move.")
     print()
     print( "          Sign-character orbits INSIDE the BCC sector are 3 (scc),")
     print( "          3 (ssc) and 1 (sss), so pure-sector covariant lengths")
-    print( "          there are 3, 4, 6, 7 -- the exact covariant seven, and")
-    print( "          the five is again non-covariant.")
-    print()
-    print( "          Dimension 4 carries exactly 2k+1 = 5 anticommuting")
-    print( "          structures.  A five-square carrier therefore SATURATES")
-    print( "          the Dirac Clifford algebra with nothing left over.")
+    print( "          there are 3, 4, 6, 7 -- the exact covariant seven; the")
+    print( "          unrestricted four is non-covariant.")
     print()
     print("  THE MASS LADDER.  H = sum_mu Gamma^mu phi_mu + Gamma^(n+1) M has")
     print("  H^2 = sum phi^2 + M^2 only if the mass structure anticommutes")
     print("  with every kinetic one, so a mass costs one MORE structure.")
+    print("  Saturation ALTERNATES: 3, 5, 7 squares saturate their dimension;")
+    print("  4, 6, 8 leave one structure spare.")
     print()
     print("   carrier            structures   spinor dim   spare")
     print("  ------------------------------------------------------")
-    for lab, n in (("five, massless", 5), ("five + mass", 6),
+    for lab, n in (("four, massless", 4), ("four + mass", 5),
                    ("seven (covariant)", 7), ("seven + mass", 8)):
         d = spinor_dim(n)
         cap = 2 * int(np.log2(d)) + 1
         print(f"  {lab:18s} {n:6d}       {d:6d}      {cap - n:4d}")
-    assert spinor_dim(5) == 4 and spinor_dim(6) == 8
+    assert spinor_dim(4) == 4 and spinor_dim(5) == 4
     assert spinor_dim(7) == 8 and spinor_dim(8) == 16
     print()
-    print("  So the minimal carrier is MASSLESS at Dirac dimension -- a mass")
-    print("  forces dimension 8 -- and cubic covariance WITH a mass forces")
-    print("  dimension 16, which is where FTD-0816's nine landed by accident.")
+    print("  So the minimal carrier ADMITS A MASS at ordinary Dirac dimension")
+    print("  -- four kinetic structures plus the mass exactly fill the five")
+    print("  that dimension 4 carries -- while cubic covariance with a mass")
+    print("  forces dimension 16.  Covariance, not mass, is what multiplies")
+    print("  the spinor.  (An earlier version, built on the mis-reported")
+    print("  five, concluded the carrier was necessarily massless; that")
+    print("  prediction is withdrawn.)")
 
 
 if __name__ == "__main__":

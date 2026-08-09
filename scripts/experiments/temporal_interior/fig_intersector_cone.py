@@ -18,8 +18,10 @@ FOUR PANELS, all exact:
       structures and dimension 2^k carries 2k+1, so the price is set by
       the SHORTEST decomposition, not by any decomposition.  Nine is not
       shortest: an exact cubic-covariant SEVEN exists (dim 8), and the
-      unrestricted minimum is FIVE (dim 4, ordinary Dirac) at the cost of
-      cubic covariance.  See derive_sos_rank_minimal.py.
+      searched minimum is FOUR (dim 4, ordinary Dirac, one structure
+      spare for a mass) at the cost of cubic covariance; the rigorous
+      floor is three, from the Hessian rank.  An earlier five came from
+      an under-dispersed search.  See derive_sos_rank_minimal.py.
 
 PRIOR ART: FTD-0412 (scalar-r no-go at q^4 vs the BCC-time pole) and
 FTD-0413 (face-diagonal weight buying q^4).  The exact all-orders no-go,
@@ -176,7 +178,7 @@ def panel_price(ax):
 
     Three decompositions of the same symbol, each verified independently:
     nine (FTD-0816, exact, covariant), seven (exact, covariant, solved from
-    a six-parameter orbit ansatz), five (numerical, certified to 5.3e-15 on
+    a six-parameter orbit ansatz), four (numerical, certified to 5.3e-15 on
     4000 fresh momenta, and NOT covariant).
     """
     k = np.arange(1, 6)
@@ -186,7 +188,7 @@ def panel_price(ax):
 
     marks = ((9, CK, "o", "nine (FTD-0816)\nexact, covariant"),
              (7, C1, "s", "seven\nexact, covariant"),
-             (5, CO, "*", "five: the minimum\n(not covariant)"))
+             (4, CO, "*", "four: searched minimum\n(not covariant)"))
     for n, col, mk, lab in marks:
         d = spinor_dim(n)
         ax.plot([d], [n], mk, color=col, ms=13 if mk == "*" else 7.0,
@@ -202,7 +204,7 @@ def panel_price(ax):
     ax.set_xlabel("spinor dimension")
     ax.set_ylabel("squares = anticommuting structures")
     # Kept short: the long form ran through the dim-8 guide line.
-    ax.text(2.05, 5.45, "five: the minimum\n(not covariant)",
+    ax.text(2.05, 4.45, "four: searched minimum\n(mass fits; not covariant)",
             fontsize=FS_ANN, color=CO, ha="left", va="bottom")
     ax.text(2.05, 7.45, "seven: exact, covariant", fontsize=FS_ANN,
             color=C1, ha="left", va="bottom")
@@ -240,7 +242,7 @@ def main():
     print(f"  [verify] exact covariant SEVEN-square identity: "
           f"max |residual| = {e7:.3e}")
     assert e7 < 1e-12, "the seven-square identity failed"
-    for n in (9, 7, 5):
+    for n in (9, 7, 4):
         print(f"  [verify] {n} squares -> spinor dimension {spinor_dim(n)}")
     for nm, d, _, _ in DIRS:
         u = np.array(d, float) / np.linalg.norm(d)
