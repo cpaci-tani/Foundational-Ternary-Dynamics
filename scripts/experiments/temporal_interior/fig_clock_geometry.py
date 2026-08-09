@@ -33,38 +33,22 @@ from pathlib import Path
 import numpy as np
 from scipy.integrate import quad
 from scipy.special import gamma as Gam, beta as Bfn
-import matplotlib
-matplotlib.use("Agg")
+import _figstyle as fs          # sets backend + rcParams; import first
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FixedLocator, FixedFormatter, NullLocator
 
-OUT = Path(__file__).resolve().parent
-FIGDIR = (Path(__file__).resolve().parents[3] / "dissemination" / "papers"
-          / "semantic_ontology" / "figures")
-FIGDIR.mkdir(parents=True, exist_ok=True)
 
 GS = Gam(0.25) / Gam(0.75)
 C = 1.0 / np.sqrt(3.0)
 
-FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = 7.5, 8.5, 9.0, 7.0, 7.0
-plt.rcParams.update({
-    "font.family": "serif", "mathtext.fontset": "cm",
-    "font.size": FS_TICK, "axes.labelsize": FS_LAB,
-    "axes.titlesize": FS_TITLE, "legend.fontsize": FS_LEG,
-    "xtick.labelsize": FS_TICK, "ytick.labelsize": FS_TICK,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "axes.titlepad": 7.0, "axes.labelpad": 3.5,
-    "figure.dpi": 160, "savefig.dpi": 300, "lines.linewidth": 1.5,
-})
-C1, CO, CG_, C4 = "#2a78d6", "#eb6834", "#1baf7a", "#7a4bbd"
-CK, CG = "#2b2b2b", "#9a9a9a"
+FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = (
+    fs.FS_TICK, fs.FS_LAB, fs.FS_TITLE, fs.FS_LEG, fs.FS_ANN)
+C1, CO, CG_, C4 = fs.C1, fs.C2, fs.C3, fs.C4
+CK, CG = fs.CK, fs.CG
+decade_ticks = fs.decade_ticks
 
 
 def dticks(axis, t, fmt="{:g}"):
-    lab = list(fmt) if not isinstance(fmt, str) else [fmt.format(x) for x in t]
-    axis.set_major_locator(FixedLocator(t))
-    axis.set_major_formatter(FixedFormatter(lab))
-    axis.set_minor_locator(NullLocator())
+    fs.decade_ticks(axis, t, fmt)
 
 
 # =====================================================================
@@ -255,7 +239,9 @@ def main():
     print(f"  [verify] measured kink periods: rest {T0}, at u=0.5C {Tu}"
           f"   ratio {Tu/T0:.4f}  (ideal gamma {1/np.sqrt(1-0.25):.4f})")
 
-    fig, axes = plt.subplots(3, 2, figsize=(7.3, 9.4),
+    # 7.55, not the aspect-preserving 7.94: this figure carries the
+    # longest caption in the paper and overflowed its page by 24 pt.
+    fig, axes = plt.subplots(3, 2, figsize=(fs.TEXTWIDTH_IN, 7.5500),
                              constrained_layout=True)
     fig.get_layout_engine().set(w_pad=0.10, h_pad=0.12,
                                 hspace=0.07, wspace=0.07)
@@ -265,9 +251,8 @@ def main():
     panel_valley(axes[1, 1])
     panel_worldlines(axes[2, 0], T0, Tu, u)
     panel_laws(axes[2, 1])
-    fig.savefig(FIGDIR / "fig15_clockgeometry.pdf")
-    fig.savefig(OUT / "fig15_clockgeometry.png", dpi=200)
-    print(f"  wrote {FIGDIR / 'fig15_clockgeometry.pdf'}")
+    fs.save(fig, "clockgeometry")
+    print(f"  wrote {fs.FIGDIR / 'clockgeometry.pdf'}")
 
 
 if __name__ == "__main__":
