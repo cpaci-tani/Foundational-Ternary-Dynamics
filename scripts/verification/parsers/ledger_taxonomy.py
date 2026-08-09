@@ -277,7 +277,8 @@ RANGES = [
     ((818, 818), "meta-process"),               # the semantic-ontology manuscript
     ((819, 819), "lorentz-causal"),            # carrier sublattice: body centres suffice
     ((820, 821), "native-time-carrier"),       # period factorisation; threshold forcing
-    ((822, 823), "native-time-carrier"),       # register barrier proven; economy refuted
+    ((822, 824), "native-time-carrier"),       # register barrier proven; economy
+                                               # refuted; MVC reduction corrections
 ]
 
 # ---------------------------------------------------------------------------

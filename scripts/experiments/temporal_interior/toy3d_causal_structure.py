@@ -23,7 +23,11 @@ WHAT IS COMPUTED (nothing is drawn that is not first computed):
                 in the precursor shell, and unreachable.
   3. FRONT      the exact maximum group velocity of the M18 leapfrog over
                 the whole Brillouin zone -- this decides whether the
-                effective cone is a true signal front or merely typical.
+                effective cone is the strict front or merely typical.
+                It is NOT the front: a supremum over group velocities
+                bounds where the disturbance is concentrated, not where
+                it is exactly zero.  The strict front is the reach
+                boundary; the shell between them holds a precursor.
   4. LEAKAGE    a real 3-D leapfrog run from a band-limited source,
                 measuring the amplitude that actually reaches the
                 precursor shell.
@@ -372,7 +376,7 @@ def panel_front(ax, vmax, vgrid):
     ax.text(0.03, 3e4, "every mode is\nsubluminal", fontsize=FS_ANN,
             color=CK, ha="left", va="center")
     ax.set_title("(e)  no mode outruns $C$:\n"
-                 "the cone is a true signal front")
+                 "$C$ is the effective cone, not the front")
 
 
 def panel_greens(ax, profiles, decades):

@@ -166,36 +166,86 @@ def verify_exact_N2_bound():
 # ---------------------------------------------------------------------
 # Step 3 — the only risky set: N = 3, certified by Lipschitz + grid
 # ---------------------------------------------------------------------
-def certify_N3(s, Lper, step=0.002):
-    """Certified lower bound for E on the in-plane N=3 set.
+def V_min_on_interval(a, b):
+    """Exact minimum of V over [a, b], by the shape of V.
 
-    Any point of the plane lies within step/sqrt(2) of a grid node, and E
-    is Lipschitz with constant 3*Lper on the region where every bond
-    exceeds 1/2 (elsewhere E >= +2 eps by verify_repulsive_exit).  So
-
-        min_plane E  >=  min_grid E  -  3 * Lper * step / sqrt(2).
+    V decreases on [0,1], increases on [1,3/2], and is identically 0
+    beyond 3/2.  So the minimum over an interval is -eps if the interval
+    straddles 1, V(b) if the interval lies left of 1, and V(a) if it lies
+    right of 1 (with V(a)=0 once a >= 3/2).  No sampling, no Lipschitz
+    slack: this is interval arithmetic and it is exact.
     """
-    A = anchors(s)
-    lo = A.min(axis=0) - Q_SUP - 0.1
-    hi = A.max(axis=0) + Q_SUP + 0.1
+    a = np.maximum(a, 0.0)
+    straddles = (a <= 1.0) & (b >= 1.0)
+    left = b < 1.0
+    out = np.where(straddles, -EPS, np.where(left, V(b), V(a)))
+    return out
+
+
+def certify_interval(s_lo, s_hi, step=0.004):
+    """RIGOROUS certificate over a BOX of side lengths, not sampled points.
+
+    The earlier version of this function had two holes, both found by
+    external review and both real:
+
+      (1) it certified five discrete values of s rather than the interval
+          [0.9, 1.3] the proposition claims;
+      (2) it decided membership of the N=3 set from the CELL CENTRE, so a
+          set smaller than the grid cell was invisible.  At s = 1.3 the
+          centroid sits at distance s/sqrt(3) = 0.75056 from all three
+          anchors -- inside the window (3/4, 3/2) by 0.00056 -- so the
+          N=3 set there is a disc of radius ~5e-4 and the old 0.002 grid
+          reported it EMPTY.  The reviewer caught exactly this.
+
+    Both are fixed by replacing point sampling with interval arithmetic.
+    Each cell is a box in (x, y, s); every bond distance is bracketed
+    over the whole box (|d(d)/ds| <= 1 for these anchors, so the s-width
+    simply widens the bracket); a cell is certified when EITHER at most
+    two bonds can possibly be in the attractive window -- in which case
+    E >= -2 eps by the exact pointwise bound, no numerics -- OR the
+    interval lower bound on E already exceeds -2 eps.  Nothing is
+    sampled, so nothing can hide between samples.
+    """
+    A_lo, A_hi = anchors(s_lo), anchors(s_hi)
+    lo = np.minimum(A_lo, A_hi).min(axis=0) - Q_SUP - 0.1
+    hi = np.maximum(A_lo, A_hi).max(axis=0) + Q_SUP + 0.1
+
+    s_mid = 0.5 * (s_lo + s_hi)
+    s_half = 0.5 * (s_hi - s_lo)
+    A = anchors(s_mid)
+
     gx = np.arange(lo[0], hi[0] + step, step)
     gy = np.arange(lo[1], hi[1] + step, step)
     X, Y = np.meshgrid(gx, gy, indexing="ij")
     P = np.stack([X.ravel(), Y.ravel()], axis=1)
 
-    E, d = E_plane(P, A)
-    N = ((d > Q_REP) & (d < Q_SUP)).sum(axis=1)
-    near = (d.min(axis=1) >= 0.5)          # repulsive core excluded, proven
+    # half-diagonal of the spatial cell, widened by the s-uncertainty:
+    # the anchors move at unit rate in s, so |delta d| <= s_half
+    delta = step / np.sqrt(2.0) + s_half
 
-    m3 = N == 3
-    e3 = E[m3 & near].min() if np.any(m3 & near) else np.inf
-    slack = 3.0 * Lper * step / np.sqrt(2.0)
-    certified3 = e3 - slack
+    d = np.linalg.norm(P[:, None, :] - A[None, :, :], axis=2)
+    d_lo = np.maximum(d - delta, 0.0)
+    d_hi = d + delta
 
-    e_all = E[near].min()
-    return dict(n3_count=int((m3 & near).sum()), e3_grid=float(e3),
-                slack=float(slack), e3_certified=float(certified3),
-                e_grid_min=float(e_all))
+    # a bond is POSSIBLY in the attractive window if its bracket meets it
+    possible = (d_hi > Q_REP) & (d_lo < Q_SUP)
+    N_max = possible.sum(axis=1)
+
+    # exact route: at most two bonds can be attractive => E >= -2 eps
+    exact_ok = N_max <= 2
+
+    # interval route for the rest
+    E_lo = V_min_on_interval(d_lo, d_hi).sum(axis=1)
+    interval_ok = E_lo > -2.0 * EPS
+
+    certified = exact_ok | interval_ok
+    risky = ~certified
+    worst = float(E_lo[~exact_ok].min()) if np.any(~exact_ok) else np.inf
+    return dict(cells=int(P.shape[0]),
+                by_exact=int(exact_ok.sum()),
+                by_interval=int((~exact_ok & interval_ok).sum()),
+                uncertified=int(risky.sum()),
+                worst_E_lo_on_N3=worst)
 
 
 # ---------------------------------------------------------------------
@@ -231,40 +281,66 @@ def main():
     verify_exact_N2_bound()
     print()
 
-    print("  s      h       E_ground   plane min  (grid)   N=3 certified"
-          "   attained E   d3      barrier")
-    print("  " + "-" * 88)
+    # ---- the plane minimum, certified over the whole s-INTERVAL --------
+    print("  Certifying min_{z=0} E >= -2 eps over the CONTINUUM"
+          " s in [0.9, 1.3]")
+    print("  (interval arithmetic on boxes — nothing sampled, so nothing"
+          " can hide between samples)")
+    print()
+    print("  s-slab            cells      by exact N<=2   by interval"
+          "   uncertified   worst E_lo on N>=3")
+    print("  " + "-" * 94)
+    S_EDGES = np.arange(0.90, 1.3001, 0.02)
+    total_unc = 0
+    worst_all = np.inf
+    for a, b in zip(S_EDGES[:-1], S_EDGES[1:]):
+        c = certify_interval(a, b)
+        total_unc += c["uncertified"]
+        worst_all = min(worst_all, c["worst_E_lo_on_N3"])
+        print(f"  [{a:.2f}, {b:.2f}]  {c['cells']:10d}   {c['by_exact']:12d}"
+              f"   {c['by_interval']:10d}   {c['uncertified']:10d}"
+              f"   {c['worst_E_lo_on_N3']:+.6f}")
+    assert total_unc == 0, (
+        f"{total_unc} cells uncertified — the plane bound is NOT established")
+    print()
+    print(f"  [verify] uncertified cells over the whole interval: {total_unc}")
+    print(f"  [verify] worst interval lower bound where N can reach 3:"
+          f" {worst_all:+.6f}  (needs > -2)")
+    print()
+
+    # ---- attainment and the resulting barrier, at sample geometries ----
+    print("  s      h       E_ground   attained E   d3       barrier")
+    print("  " + "-" * 58)
     barriers = []
     for s in (0.9, 1.0, 1.1, 1.2, 1.3):
         Eg, h, dg = ground_state(s)
         assert np.allclose(dg, 1.0, atol=1e-12), f"ground bonds != r0: {dg}"
         assert abs(Eg + 3 * EPS) < 1e-12, f"ground energy != -3 eps: {Eg}"
-
-        cert = certify_N3(s, Lper)
         att = attainment(s)
         assert att["out_of_support"], (
             f"s={s}: third bond at {att['d3']:.4f} < 3/2, so the two-bond "
             "configuration is NOT exactly -2 eps")
         assert abs(att["E"] + 2 * EPS) < 1e-12, (
             f"s={s}: two-bond configuration is {att['E']}, not -2 eps")
-        # the N=3 set must stay clear of -2 eps, certified
-        assert cert["e3_certified"] > -2.0 * EPS, (
-            f"s={s}: N=3 set certified only to {cert['e3_certified']:.4f}, "
-            "which does not clear -2 eps")
-
         barrier = att["E"] - Eg
         barriers.append(barrier)
-        print(f"  {s:.1f}  {h:.4f}  {Eg:+.6f}   {cert['e_grid_min']:+.6f}"
-              f"        {cert['e3_certified']:+.6f}     {att['E']:+.6f}"
-              f"   {att['d3']:.4f}  {barrier:.9f}")
+        print(f"  {s:.1f}  {h:.4f}  {Eg:+.6f}   {att['E']:+.6f}"
+              f"   {att['d3']:.4f}   {barrier:.9f}")
 
+    # attainment holds on the whole interval, not just at the samples:
+    ss = np.linspace(0.9, 1.3, 4001)
+    d3 = ss * np.sqrt(3.0) / 2.0 + np.sqrt(1.0 - ss**2 / 4.0)
+    assert d3.min() >= Q_SUP, (
+        f"third bond dips to {d3.min():.4f} < 3/2 somewhere in the interval")
     print()
+    print(f"  [verify] third bond over the interval: "
+          f"{d3.min():.4f} .. {d3.max():.4f}   (all >= 3/2, so V_3 = 0 exactly)")
+
     b = np.array(barriers)
     assert np.allclose(b, EPS, atol=1e-12), f"barrier != eps: {b}"
-    print(f"  [verify] barrier = {b.min():.12f} .. {b.max():.12f}"
-          f"   (exact eps across s in [0.9, 1.3])")
+    print(f"  [verify] barrier = {b.min():.12f} .. {b.max():.12f}")
     print(f"  [verify] upper bound  <= eps   explicit hinge path")
-    print(f"  [verify] lower bound  >= eps   IVT + plane minimum -2 eps")
+    print(f"  [verify] lower bound  >= eps   IVT + certified plane minimum")
     print(f"  [verify] transition state identified: the in-plane two-bond"
           f" configuration")
     print()

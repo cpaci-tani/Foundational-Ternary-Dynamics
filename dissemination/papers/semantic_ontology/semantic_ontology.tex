@@ -566,12 +566,21 @@ What excludes it is the limit: $r\propto A^2$, so the drift vanishes
 with the amplitude and $\Gstar$ is the $A\to0$ endpoint, not a
 finite-amplitude value.
 
-This is worth stating plainly because the same term appears in this
-paper's own measurement. The twelve-degree-of-freedom simulation of
-Section~\ref{sec:mvc} holds $T\cdot A$ constant only to $0.33\%$ across a
-sixfold amplitude range, and recovers $\Gstar$ to $2\times10^{-6}$ only
-in the $A\to0$ extrapolation. A $0.33\%$ deficit is $r = 0.0056$. The
-residual drift and the counterexample family are one term seen twice.
+It is tempting to read this paper's own measurement as the same term, and
+an earlier draft did. That reading was wrong twice over, and the
+correction is worth more than the coincidence was. The
+twelve-degree-of-freedom simulation of Section~\ref{sec:mvc} holds
+$T\cdot A$ constant only to $0.33\%$ across a sixfold amplitude range,
+recovering $\Gstar$ to $2\times10^{-6}$ only in the $A\to0$
+extrapolation. But that $0.33\%$ is an \emph{excess}, not a deficit:
+$T\cdot A$ \emph{rises} with amplitude and every recovered $\Gstar$ sits
+\emph{above} $\Gstar$, which in the coordinates of
+\eqref{eq:sexticdrift} is $r<0$, not $r>0$. And the excess is not mostly
+the sextic term at all --- Section~\ref{sec:mvc} decomposes it, and
+$22.7$ parts in $23$ are \emph{kinetic}, a correction this family does not
+contain. The drift and the counterexample family are \textbf{not} one
+term seen twice. They are two different terms of comparable size, and
+only the smaller one belongs to this section.
 
 \subsection{Off the threshold, exactly}
 \label{sec:crossover}
@@ -724,10 +733,15 @@ $n=4$ in all directions. Crucially its one compressed member is a single
 bond, so Criterion~\ref{crit:buckling} is satisfied where the wheel
 failed.
 
-The mirror-even zero-momentum mode $q = (-1,+1,+1,-1)U$ lies on a
-dynamically invariant manifold, so it closes exactly as a one-degree-of-freedom
-quartic oscillator --- an instance of \eqref{eq:quartic}, with the
-blocked-flex coefficient evaluated on this stress --- with
+The mirror-even zero-momentum mode $q = (-1,+1,+1,-1)U$ is transverse, so
+it elongates the outer bonds only at \emph{second} order and the chain
+relaxes longitudinally in response. Together with the two longitudinal
+stretches it drives, it spans a dynamically invariant
+\emph{three}-degree-of-freedom sector; adiabatically eliminating the two
+stiff stretches closes it as a one-degree-of-freedom oscillator that is
+purely quartic in the $A\to0$ limit --- an instance of
+\eqref{eq:quartic}, with the blocked-flex coefficient evaluated on this
+stress --- with
 \begin{equation}
 \lambda_{\rm eff} = \frac{8k_1k_2}{k_1+3k_2}, \qquad m_{\rm eff} = 4,
 \qquad
@@ -742,6 +756,24 @@ simulation of the four-body system holds $T\cdot A$ constant to $0.33\%$
 across a sixfold amplitude range, recovering $\Gstar$ to $2\times10^{-6}$
 in the $A\to0$ extrapolation \emph{with no fitted scale}
 (Figure~\ref{fig:clock}).
+
+\emph{And the residual is computable, which is better than calling it
+small.} Relaxing the chain at fixed $U$ gives a reduced system that is
+not the ideal normal form in two respects. Its potential carries a sixth
+order term, $E_{\rm eff}(U) = \lambda_{\rm eff}U^4 +
+16k_1k_2(k_1{-}k_2)(k_1{+}3k_2)^{-2}U^6 + \cdots$, which vanishes
+\emph{only} at equal couplings --- where the series runs
+$2U^4 - 2U^8 + 6U^{12}$, in powers of four alone --- so the equal-coupling
+purity is a cancellation, not a law. And its reduced \emph{mass} is
+amplitude dependent, $m_{\rm eff}(U) = 4 + 4U^2 - \cdots$, a correction
+the sextic family of Section~\ref{sec:crossover} does not contain at all.
+Quadrature on the reduced system reproduces the simulated drift
+($+0.328\%$ against $+0.331\%$ at $A=0.12$) and decomposes it:
+$+0.314\%$ kinetic against $+0.014\%$ potential, a ratio of $22.7$. The
+drift is therefore an \emph{excess}, dominated by the mass term --- which
+is why it is not the sextic admixture of Section~\ref{sec:crossover}, and
+why $\Gstar$ is recovered only in the limit where both corrections
+vanish.
 
 Minimality is exact by enumeration: at $N\le3$ the opposite-polarity
 graphs are trees and cannot carry stress; at $N=4$ the single-scale
@@ -989,16 +1021,30 @@ the number of bonds inside the attractive window $(3/4,\,3/2)$. The bond
 law satisfies $V\ge-\varepsilon$ everywhere, $V\ge0$ for $q\le3/4$, and
 --- decisively --- $V\equiv0$ for $q\ge3/2$. So $E\ge-\varepsilon N$
 pointwise, and wherever $N\le2$ we have $E\ge-2\varepsilon$ \emph{with no
-numerics at all}. Only the $N=3$ set can threaten the bound, and a
-Lipschitz-certified scan clears it there by between $0.55$ and
-$1.5\,\varepsilon$ (at $s=1.3$ the set is empty). The value
-$-2\varepsilon$ is attained: in-plane the body can sit at distance
-exactly $r_0$ from two anchors, its distance to the third being
-$s\sqrt3/2+\sqrt{1-s^2/4}\in[1.67,1.89]$, which \emph{exceeds the support
-radius} $3/2$, so the third bond contributes exactly zero. With
-$E_{\rm ground}=-3\varepsilon$ this gives $\Delta E\ge\varepsilon$, and
-the hinge path gives $\Delta E\le\varepsilon$.
+numerics at all}. Only the set where $N$ can reach $3$ needs certifying,
+and it is certified by interval arithmetic over boxes in $(x,y,s)$
+jointly --- every bond distance bracketed over the whole box, a cell
+discharged either because at most two bonds \emph{can} be attractive or
+because its interval lower bound already clears $-2\varepsilon$. Over
+$2.3\times10^{7}$ boxes covering the continuum $s\in[0.9,1.3]$ no cell is
+left uncertified, and the worst bound where $N$ can reach $3$ is
+$-1.51\,\varepsilon$. The value $-2\varepsilon$ is attained: in-plane the
+body sits at distance exactly $r_0$ from two anchors, its distance to the
+third being $s\sqrt3/2+\sqrt{1-s^2/4}\in[1.67,1.89]$ throughout, which
+\emph{exceeds the support radius} $3/2$, so the third bond contributes
+exactly zero. With $E_{\rm ground}=-3\varepsilon$ this gives
+$\Delta E\ge\varepsilon$, and the hinge path gives
+$\Delta E\le\varepsilon$.
 \end{proof}
+
+Two holes in an earlier version of this certificate are worth recording,
+both found by review. It sampled five values of $s$ rather than the
+interval, and it decided window-membership from cell \emph{centres} ---
+so at $s=1.3$, where the centroid sits at $0.75056$ and clears the window
+edge by $6\times10^{-4}$, it reported the three-bond set \emph{empty}
+when that set is a disc of radius $\sim\!5\times10^{-4}$. Interval
+arithmetic removes both: a set smaller than the grid can no longer hide
+inside it.
 
 Compact support is load-bearing here, and worth naming as the modelling
 choice it is: under a Morse or Lennard-Jones tail the third bond would
@@ -1083,19 +1129,21 @@ resulting economy as the falsifiable commitment it is.
 \begin{tikzpicture}
 \node[thm] (eps) at (0,0) {$\varepsilon$\\[-1pt]\figsub one energy scale, set once};
 \node[sel] (bind) at (-4.5,-1.8) {binding\\[-1pt]\figsub register barrier $\Delta E=\varepsilon$\\[-2pt]\figsub (Prop.~\ref{prop:registerbarrier})};
-\node[sel] (clk)  at (0,-1.8)    {clock rate\\[-1pt]\figsub stiffness $\lambda\sim\varepsilon$ in \eqref{eq:periodlaw}};
+\node[openb] (clk) at (0,-1.8)   {clock rate\\[-1pt]\figsub needs $\varepsilon$ \emph{and} $\rho=\varepsilon_2/\varepsilon$\\[-2pt]\figsub (\S\ref{sec:toy}: not priced by $\varepsilon$ alone)};
 \node[sel] (ret)  at (4.5,-1.8)  {retention\\[-1pt]\figsub $\tau_{\rm flip}\,\nu_0\sim e^{\varepsilon/T}$};
 \draw[con] (eps) -- (bind);
 \draw[con] (eps) -- (clk);
 \draw[con] (eps) -- (ret);
 \end{tikzpicture}
-\caption{One constant, three bills. The same $\varepsilon$ prices the
-matter's binding, the clock's rate, and the memory's lifetime, in fixed
-proportion --- there is no separate constant for any of the three. This
-is a structural commitment rather than an economy of notation: any
-measurement that moved one of the three without the others would break
-the architecture, and Section~\ref{sec:toy} exhibits all three roles on
-one instrument.}
+\caption{One constant, three bills --- and the bill that did not clear.
+The same $\varepsilon$ prices the matter's binding and the memory's
+lifetime, at exponents $+1$ and $+1$. It does \emph{not} price the clock
+rate: the purchased closure species carries its own depth, so the clock
+needs $\rho=\varepsilon_2/\varepsilon$ as well, and $\rho$ moves the
+clock while leaving the other two fixed. That is the architecture's own
+falsifier --- a measurement moving one of the three without the others
+--- and Section~\ref{sec:toy} fires it. The commitment survives for two
+of the three bills, and $\Gstar$ itself is independent of $\rho$.}
 \label{fig:epsilon}
 \end{figure}
 
@@ -1292,15 +1340,20 @@ in which $\mathcal{C}_n$ is the preparation and control record and
 $\mathcal{D}$ the stipulated dynamics. The closure map $\Gamma$ is part
 of the scaffold, not a theorem: history alone does not determine a state.
 
-The weight layer is now complete, at a cost stated line by line. But
-nothing in it says \emph{when} a weight becomes a frequency. That is not a
+The weight layer is now assembled, at a cost stated line by line --- and
+assembled \emph{finite-dimensionally}, which is less than complete: the
+covariant setting of Section~\ref{sec:relativity} uses local algebras
+that are not of type~I and admit no density matrix, and nothing here
+bridges the two. That bridge is imported wholesale and stands among the
+open problems. But even granting it, nothing in this layer says
+\emph{when} a weight becomes a frequency. That is not a
 question about the algebra of weights; it is a question about the
 mechanism that reads them out, and about how fast it reads compared with
 how fast the thing being read is moving. The next section measures
 exactly that ratio.
 
 % =====================================================================
-\section{Born weighting as a regime}
+\section{Occupation weighting as a regime}
 \label{sec:born}
 
 \subsection{What a threshold counts}
@@ -1468,9 +1521,13 @@ when the slow channel is essentially the \emph{sole} stochastic element.
 
 \begin{proposition}[Purity requirement]
 \label{prop:purity}
-Crossing statistics are dominated by the fastest stochastic component
-present. Born weighting therefore requires not merely the presence of a
-slow channel but its near-exclusivity at the threshold.
+\emph{In the additive two-channel model class studied here}, crossing
+statistics are dominated by the fastest stochastic component present, so
+occupation weighting requires not merely the presence of a slow channel
+but its near-exclusivity at the threshold. The evidential base is five
+slow-channel shares at $32$ seeds on one instrument; the statement is an
+observation about that class, not a theorem about crossing statistics in
+general.
 \end{proposition}
 
 \noindent This is a demanding condition and it is the honest headline of
@@ -1956,14 +2013,23 @@ invariant under every global rescaling and cannot be defined away.
 
 \begin{proposition}[The boost half is clock-gated]
 \label{prop:gate}
-Every boost observable is a functional of at least two proper-time
-parametrizations --- time dilation compares $\dd\tau_1$ with $\dd\tau_2$;
-velocity composition relates two frames; geodesic deviation is defined by
-the separation of two worldlines, a single freely falling body detecting
-nothing by the equivalence principle. A theory that has not constructed a
-physical clock therefore cannot pose the boost tests at all: their
-observables are undefined in it, not merely unverified.
+Every \emph{operational two-frame comparison} is a functional of at least
+two proper-time parametrizations --- time dilation compares $\dd\tau_1$
+with $\dd\tau_2$; velocity composition relates two frames; geodesic
+deviation is defined by the separation of two worldlines, a single freely
+falling body detecting nothing by the equivalence principle. A theory
+that has not constructed a physical clock cannot pose \emph{those} tests:
+their observables are undefined in it, not merely unverified.
 \end{proposition}
+
+\noindent The scope word is load-bearing and an earlier draft omitted it.
+Not every boost-\emph{sensitive} quantity needs two clocks: the
+dispersion test of Section~\ref{sec:massivecone} reads exactness of
+per-species dilation off $\Omega_{\rm proper}(k)$ with no constructed
+clock at all, and it is a one-body measurement. What is clock-gated is
+the operational comparison, not the boost sensitivity --- which is why
+part of the two-body bill turned out to be a calculation rather than an
+obligation.
 
 \noindent Proposition~\ref{prop:gate} reorganizes the recovery contract
 rather than discharging it. The one-body register is closed, with numbers.
@@ -2007,8 +2073,9 @@ differ only in where the field's \emph{exact zero} begins, and the field
 never approaches that boundary: measured on the point-source Green's
 function, the amplitude at the strict support edge falls by $1.19$ decades
 per tick --- $2.5\times10^{-7}$ of the peak at $t=8$,
-$2.7\times10^{-17}$ at $t=16$, $2.0\times10^{-26}$ at $t=24$ --- crossing
-double-precision representability at about sixteen ticks. With the
+$2.7\times10^{-17}$ at $t=16$, $2.0\times10^{-26}$ at $t=24$ --- falling
+below double precision's resolution \emph{relative to the peak}
+(machine epsilon, $2.2\times10^{-16}$) at about sixteen ticks. With the
 operator held fixed, no measurement and no simulation can distinguish
 six-neighbour from eighteen- or twenty-six-neighbour causality. The choice
 is definitional, about a boundary of measure zero in any observable, and
@@ -3189,6 +3256,26 @@ discipline is load-bearing rather than ceremonial --- one instrument in
 this series voided itself on its own gate (a mis-derived conservation
 invariant, caught at $3.6\times10^{-2}$ against a $10^{-10}$ tolerance)
 and was re-locked and re-run before producing any reported number.
+
+\paragraph{What that discipline does and does not currently establish.}
+Stated plainly, because the distinction is easy to overclaim. The
+recorded hashes verify that the runner in the repository \emph{now} is
+byte-identical to the one the record names, and they do. What they do not
+establish is the \emph{ordering}: the records and their runners entered
+version control in commits made \emph{after} the runs they govern, and
+the git tag that would have locked them beforehand --- a discipline this
+project uses elsewhere, with $136$ such tags --- was never minted for
+this arc. So pre-registration here is attested by the records' own dates
+and an interim hash, not corroborated by an immutable external timestamp.
+A reader who declines to take the dates on trust should treat these as
+carefully documented analyses rather than as externally audited
+pre-registrations. Separately and more seriously: the committed kink
+runner does \emph{not} reproduce the parameter set quoted for the kink
+dilation in Section~\ref{sec:oneenergy} --- it carries a superseded
+first-pass configuration whose wider couplings lose the shape mode
+entirely, and re-running it does not return the exponents printed there.
+Those exponents should be read as unreproduced from the repository as it
+stands until that runner is restored.
 
 \begin{table}[h!]
 \centering\small
