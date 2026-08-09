@@ -275,6 +275,8 @@ RANGES = [
     ((815, 816), "lorentz-causal"),             # the two owed proofs; the inter-sector cone
     ((817, 817), "native-time-carrier"),        # what G* is the constant of
     ((818, 818), "meta-process"),               # the semantic-ontology manuscript
+    ((819, 819), "lorentz-causal"),            # carrier sublattice: body centres suffice
+    ((820, 821), "native-time-carrier"),       # period factorisation; threshold forcing
 ]
 
 # ---------------------------------------------------------------------------

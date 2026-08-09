@@ -70,7 +70,7 @@ IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best.
 
 | row | document | result |
 |---|---|---|
-| *unbooked* | [`FOUND_CARRIER_SUBLATTICE_ONTOLOGY_v1.md`](FOUND_CARRIER_SUBLATTICE_ONTOLOGY_v1.md) | the carrier sector **is** the BCC structure factor's complement: the 8 half-argument triple products square-sum to 1, the excluded one is `S = Πcos(qᵢ/2)`, and the other **7 are the carrier**. Body centres suffice — the BCC-restricted SOS minimum **equals** the unrestricted one, so no finer cubic lattice and no `a_phys` move. Two readings priced (BCC site set vs. a field on the cubes); neither adopted. Both minimal carriers **saturate** their Clifford algebra, so the five is necessarily **massless** at Dirac dimension |
+| `FTD-0819` | [`FOUND_CARRIER_SUBLATTICE_ONTOLOGY_v1.md`](FOUND_CARRIER_SUBLATTICE_ONTOLOGY_v1.md) | the carrier sector **is** the BCC structure factor's complement: the 8 half-argument triple products square-sum to 1, the excluded one is `S = Πcos(qᵢ/2)`, and the other **7 are the carrier**. Body centres suffice — the BCC-restricted SOS minimum **equals** the unrestricted one, so no finer cubic lattice and no `a_phys` move. Two readings priced (BCC site set vs. a field on the cubes); neither adopted. Both minimal carriers **saturate** their Clifford algebra, so the five is necessarily **massless** at Dirac dimension |
 
 ⚠ These are **reductions, not solutions**. Lorentz recovery remains
 `[OPEN]`; the FTD-0407–0425 supersession is unaffected, and the

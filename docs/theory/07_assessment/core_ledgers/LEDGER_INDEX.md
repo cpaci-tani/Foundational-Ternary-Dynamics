@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (765 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (768 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -25,11 +25,11 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Gravity & cosmology](#gravity-cosmology) | 21 | Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter. |
 | [Engine infrastructure & RG](#engine-infrastructure-rg) | 39 | Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity. |
 | [Engine emergence campaigns](#engine-emergence-campaigns) | 37 | Fermion-emergence phases, genesis/evaporation and thermal phase maps, atomic and bound-state spectra, wave sectors and dispersion. |
-| [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 31 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
+| [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 32 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
 | [Charge, Gauss & native EM emergence](#charge-gauss-native-em-emergence) | 15 | Native additive charge, Gauss projection and dressing, face-current sidecars, longitudinal susceptibility, dressed hazards, monopoles. |
 | [Common-action mechanics & reciprocity](#common-action-mechanics-reciprocity) | 146 | Forces, work and recoil for a hop; the worldline/Legendre action; charts, collisions and quotients; energy closure and Peierls barriers. |
 | [Constituent-complete matter](#constituent-complete-matter) | 167 | Compact cores, trimers and connected blocks; rest states and Hessians; transport, gait, capture/binding, wakes, causal-horizon persistence. |
-| [Native time & the carrier programme](#native-time-the-carrier-programme) | 28 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
+| [Native time & the carrier programme](#native-time-the-carrier-programme) | 30 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
 | [Meta — papers, tooling, project process](#meta-papers-tooling-project-process) | 17 | Paper splits and referee rounds, monographs, node maps and synonymy graphs, trackers, pre-registration registries, project policy. |
 
 ---
@@ -542,7 +542,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG.*
 
-**31 claims.**
+**32 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -577,6 +577,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0813` | DERIVED, MEASURED | Does a bound composite inherit its constituents' cone or its own total mass's? | L975 |
 | `FTD-0815` | DERIVED, OPEN | The two owed proofs: does operational hiding follow, and does Lorentz recovery close? | L977 |
 | `FTD-0816` | DERIVED, MEASURED, WITHDRAWN, SCOPE_CONTRACT | Can two sectors of the model be given a common cone, and what does it cost? | L978 |
+| `FTD-0819` | DERIVED, OPEN | Which sublattice does a common-cone matter carrier actually need, and what does that cost Postulate 1? | L981 |
 
 ---
 
@@ -1009,7 +1010,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them.*
 
-**28 claims.**
+**30 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -1041,6 +1042,8 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0808` | EXACT | T2 first screen: does a geometric bit hold state, and at what barrier? | L970 |
 | `FTD-0814` | DERIVED, MEASURED, RETRACTED, OPEN | What must a clock carrier be made of for its rate to dilate relativistically? | L976 |
 | `FTD-0817` | DERIVED | What is `G*` the constant of, in clock terms? | L979 |
+| `FTD-0820` | DERIVED | Which part of a clock constant is kinematics and which part is the potential? | L982 |
+| `FTD-0821` | DERIVED, CORRECTION | Is the quartic clock forced, or chosen — and what exactly does the forcing statement require? | L983 |
 
 ---
 
@@ -1081,8 +1084,8 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | THEOREM | 294 |
 | CLOSED_NEGATIVE | 187 |
 | MEASURED | 170 |
-| OPEN | 135 |
-| DERIVED | 92 |
+| OPEN | 136 |
+| DERIVED | 95 |
 | SMC | 84 |
 | SELECTION | 75 |
 | SYNTHESIS | 65 |
@@ -1091,8 +1094,8 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | FOUNDATIONAL_OBSTRUCTION | 43 |
 | CONJECTURE | 31 |
 | SELECTED_DYNAMICS | 29 |
+| CORRECTION | 27 |
 | AXIOM | 27 |
-| CORRECTION | 26 |
 | EXECUTION_INVALID | 24 |
 | PARAMETRIC | 20 |
 | RETRACTED | 20 |
