@@ -2,7 +2,7 @@
 
 **Status:** `[ANALYSIS — EXACT CONDITIONAL RESULTS WITHIN A DECLARED TWO-SCALE EXTENSION]`
 + `[EXPLORATORY NUMERICAL SCREEN — native single-scale arm, scoped]`
-+ `[DRAFT — NO LEDGER ROW MINTED; owner books at the next free id]`
++ `[BOOKED — FTD-0804, FTD-0805]`
 **Date:** 2026-08-07
 **Parents:** `SPEC_CARRIER_CONSTRAINTS_v1.md` (C1–C12), FTD-0789 (the n = 4
 criterion), FTD-0800/0801 (screen scopes; the two-scale/pre-tension doors),

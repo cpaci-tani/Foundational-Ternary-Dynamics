@@ -72,3 +72,11 @@ No row is promoted by appearing here; the ledger rows govern. A future
 quantitative wing (pricing these imports in FTD-0371's currency) is owner
 work. The charter's ceiling sentence binds: the map describes structure,
 and any experiential identification remains `[CONJECTURE — INTERPRETIVE]`.
+
+**Foundational companion (2026-08-07):**
+`FOUND_SELECTION_POTENTIALITY_ACTUALIZATION_CHAIN_v1.md` — the operational
+scaffold beneath this map: recovers complex quantum theory at the
+reconstruction level (CDP + Busch), isolates singular actualization as
+the one added postulate, and refines this map's "completed Hilbert space"
+row into the six-axiom import invoice of its Part H §34. Where this map
+says *what* the observer completes, the chain says *from which axioms*.

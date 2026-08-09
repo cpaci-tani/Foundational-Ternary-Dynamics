@@ -1,10 +1,23 @@
-# DRAFT LEDGER ROWS — 2026-08-07 session (FOR OWNER BOOKING)
+# DRAFT LEDGER ROWS — 2026-08-07 session (BOOKED 2026-08-08)
 
-**Status:** `[DRAFT — NOT BOOKED]`. Ids deliberately blank: mint from
-`scripts/audit/check_registry.py` **after** deciding the
-`edge-clock-dissemination` merge (that branch carries its own unbooked
-draft row). Every claim below cites its artifact; booking these moves no
-tag beyond what each row states. Delete this file once booked.
+**Status:** `[BOOKED — FTD-0804 … FTD-0808]`. Retained for provenance
+rather than deleted: this file records what each row said at drafting
+time, before the wording that entered the LEDGER. The id-collision
+condition it waited on is resolved — `edge-clock-dissemination` tops at
+FTD-0803, the same maximum as `main`, so the merge decision does not move
+these ids.
+
+| draft row (in order below) | booked as |
+|---|---|
+| minimum viable clock carrier | `FTD-0804` |
+| native single-scale `n = 4` screen / hexagon wheel | `FTD-0805` |
+| temporal-interior programme charter + criteria specs | `FTD-0806` |
+| Born-density upcrossing / saturation preregistration arc | `FTD-0807` |
+| T2 first screen: the geometric bit | `FTD-0808` |
+
+The 2026-08-08 continuation booked separately as `FTD-0809` … `FTD-0818`;
+see [`INDEX.md`](../../10_eft_program/temporal_interior_programme/INDEX.md).
+Booking moved no tag beyond what each row states.
 
 ---
 
