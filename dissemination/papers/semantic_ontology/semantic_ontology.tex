@@ -83,8 +83,11 @@ pre-registered measurements made within one concrete discrete model. It
 should be cited as foundations, never as a physics result. Every
 quantitative claim carries its scope in the text and again in the status
 ledger of Section~\ref{sec:ledger}. All figures are computed by an
-accompanying script; all measured values are transcribed from locked
-pre-registration records listed in Appendix~\ref{app:instruments}.}}
+accompanying script. The measurements of Sections~\ref{sec:clock}
+and~\ref{sec:born} are transcribed from the locked pre-registration
+records listed in Appendix~\ref{app:instruments}; the quantitative
+results of Section~\ref{sec:relativity} are exploratory computations,
+not pre-registered, and are marked as such where they appear.}}
 \date{}
 
 \begin{document}
@@ -610,9 +613,21 @@ the elliptic parametrisation rather than the Gamma one.
 moves $\kappa^2$ off $\tfrac12$ along \eqref{eq:collapse}; a sextic
 admixture moves the constant along \eqref{eq:sexticdrift} in $r$. They
 are independent perturbations --- one changes the quadratic coefficient,
-the other adds a higher one --- and $\Gstar$ is the \emph{double} limit
-$\mu\to0$, $A\to0$. Neither limit alone suffices, which is a sharper
-statement of the price than either drift gives on its own.
+the other adds a higher one --- and $\Gstar$ is the corner $s\to0$,
+$r\to0$ of the reduced plane, where $s = \mu/2\lambda A^2$ and
+$r = \nu A^2/\lambda$.
+
+\emph{The rate matters, and this is sharper than a double limit.} Read
+back in the bare parameters, $\mu\to0$ and $A\to0$ \emph{together do not
+suffice}: the reduced detuning $s$ is a ratio, so the value attained
+depends on the path. Sending $\mu\to0$ with $\mu/A^2$ held at any nonzero
+constant leaves $s$ fixed and returns $4\kappa K(\kappa)$ at that
+modulus, not $\sqrt\pi\,\Gstar$; taking $A\to0$ first at fixed $\mu$
+sends $s\to\infty$ and the constant to zero. Even the two iterated limits
+disagree. The condition that selects the lemniscatic value is
+$\mu/A^2\to0$ --- the detuning must vanish \emph{faster than the
+amplitude squared}. This is the price stated exactly: $\Gstar$ is not
+merely a corner but a corner approached at a controlled rate.
 Figure~\ref{fig:collapse} draws both statements at once: the one curve
 every detuning lies on, and the two-drift plane whose corner is the only
 point where the constant lives.
@@ -630,9 +645,11 @@ $\sqrt\pi\,\Gstar = 5.2441$. (b) The two drift directions are
 independent: detuning $s$ moves the constant along
 \eqref{eq:collapse}, sextic admixture $r$ moves it along
 \eqref{eq:sexticdrift}, and $\Gstar$ is attained only at the corner
-$(0,0)$ --- the double limit $\mu\to0$, $A\to0$. Contours are exact
-quadrature; the corner value agrees with $\sqrt\pi\,\Gstar$ to
-$10^{-9}$.}
+$(0,0)$ of \emph{these reduced} coordinates. In the bare parameters that
+corner requires $\mu/A^2\to0$, not merely $\mu\to0$ and $A\to0$: a path
+holding $\mu/A^2$ fixed runs along a horizontal line of the plane and
+never reaches the corner. Contours are exact quadrature; the corner value
+agrees with $\sqrt\pi\,\Gstar$ to $10^{-9}$.}
 \label{fig:collapse}
 \end{figure}
 
@@ -951,20 +968,28 @@ single body cradled by three anchors on an equilateral triangle of side
 $s<\sqrt3$: for such $s$ there are two mirror equilibria at heights
 $\pm h$, $h = \sqrt{1-s^2/3}$, with all three bonds at exactly $r_0$.
 
-The barrier between them is not a fitted quantity. A watershed
-computation over the \emph{entire} configuration space --- union-find over
-energy-sorted cells, so that no cheaper channel can hide --- gives a
-barrier of $1.016$--$1.021\,\varepsilon$ across $s\in[0.9,1.3]$, against
-a hinge path (break one bond, swing on the remaining two) of exactly
-$1.000\,\varepsilon$; the residual few per cent is grid resolution and
-the third-bond tail. The direct route through the centre costs about
-$30\varepsilon$. So
+The barrier between them is not a fitted quantity. An explicit hinge path
+--- break one bond, swing on the remaining two --- costs exactly
+$1.000\,\varepsilon$, which \emph{proves} the upper bound. That no
+cheaper channel exists is a separate question, and it is answered
+numerically rather than analytically: a watershed computation over the
+entire configuration space, union-find over energy-sorted cells, returns
+$1.016$--$1.021\,\varepsilon$ across $s\in[0.9,1.3]$, with the excess
+attributable to grid resolution and the third-bond tail. The direct route
+through the centre costs about $30\varepsilon$. So
 
 \begin{proposition}[Register barrier]
 \label{prop:registerbarrier}
-The register's barrier is one bond's dissociation depth, essentially
-independent of the geometry: $\Delta E = \varepsilon$.
+The register's barrier is at most one bond's dissociation depth,
+essentially independent of the geometry: $\Delta E \le \varepsilon$, by
+the explicit hinge path.
 \end{proposition}
+
+The matching lower bound is \emph{not} proven here. A watershed on a
+finite grid cannot exclude a channel narrower than its cell, so
+$\Delta E = \varepsilon$ is an upper bound proven plus a lower bound
+corroborated at the resolution searched --- not an equality established.
+Every use of ``$\Delta E = \varepsilon$'' below carries that scope.
 
 Two structural observations follow, and the first is the reason this
 section sits beside the last. The register must be \emph{rigid with a
@@ -982,7 +1007,8 @@ memory at once.
 \caption{The geometric bit. (a) Two mirror states separated by a barrier
 of exactly one bond depth along the hinge path; the direct route through
 the repulsive core costs about thirty times as much, and a watershed over
-the full configuration space confirms no cheaper channel exists. (b) The
+the full configuration space finds nothing cheaper at the resolution
+searched. (b) The
 same $\varepsilon$ fixes retention through an Arrhenius law, so the
 memory's lifetime is set by the constant that binds the matter.}
 \label{fig:register}
@@ -1029,8 +1055,9 @@ and Section~\ref{sec:register} gives $\tau_{\rm flip}\sim\nu_0^{-1}
 e^{\varepsilon/T}$. A register is therefore not free: holding one bit for
 $N$ clock cycles requires $\varepsilon/T \gtrsim \ln(N\,\nu_0 T_{\rm
 clock})$, so memory depth is logarithmic in the energy budget --- the
-familiar thermodynamic shape, arrived at here from the model's own
-statics rather than assumed. Figure~\ref{fig:epsilon} states the
+familiar thermodynamic shape. The model's statics supply the barrier
+value; the exponential form is imported Kramers rate theory under the
+imposed bath, and inherits its premises. Figure~\ref{fig:epsilon} states the
 resulting economy as the falsifiable commitment it is.
 
 \begin{figure}[t]
@@ -1576,8 +1603,11 @@ does not freeze at $T\to0$ and why deuterium and hydrogen bonds differ in
 length and reaction rate. None of that requires a record.
 
 The distinction matters for the architecture. The commutator is the
-\emph{input} to $S^2 = 4 + \lVert[A_0,A_1]\rVert\lVert[B_0,B_1]\rVert$,
-and $S$ is the \emph{readout} (Figure~\ref{fig:bellangles}). Records are required for the readout and not for the
+\emph{input} to $S_{\max}^2 = 4 +
+\lVert[A_0,A_1]\rVert\lVert[B_0,B_1]\rVert$ --- an identity for the
+operator norm, and a \emph{bound} on any state's observed $\langle
+S\rangle$ --- and that observed value is the \emph{readout}
+(Figure~\ref{fig:bellangles}). Records are required for the readout and not for the
 commutator, and the ceiling of $2\sqrt2$ was fixed by the algebra before
 any apparatus existed to approach it. An account that locates
 noncommutativity in the compiled record therefore explains the wrong
@@ -2563,14 +2593,23 @@ time. That is the right discipline, but it leaves a question unanswered:
 do the pieces \emph{fit together}, or have we assembled a collection of
 separately-true statements whose conjunction was never checked?
 
-This section answers that question with a single computable system in
+This section answers that question with a single computable artifact in
 which all five pieces coexist --- substrate, clock, register, gate, and
 noise --- small enough to run in under a minute, and exact enough that
 three of its identities can be verified to machine precision rather than
 asserted. It is a demonstrator, not an instrument of record: no claim of
 Section~\ref{sec:clock}--\ref{sec:born} depends on it, and it establishes
-no physics. What it adds is the demonstration that those claims compose,
-and that the composition needs no additional constants.
+no physics.
+
+\emph{``Compose'' here means coexistence under shared constants, and
+nothing stronger.} The five pieces run as five independent computations
+in one program: no module consumes another's state, and there is no
+feedback anywhere in the artifact. What it demonstrates is that the
+claims can be instantiated together, at one set of constants, without
+contradiction --- which is worth checking and is not the same as a
+coupled dynamics. A genuinely coupled model, in which the clock's phase
+gates the register and the register's state back-reacts on the carrier,
+does not exist and is named among the open problems.
 
 \begin{figure}[p]
 \centering
@@ -2631,21 +2670,35 @@ purchase rather than a gift.
 \subsection{One constant, three roles}
 
 The architecture's economy claim is that a single energy scale prices
-three apparently unrelated things. In the model this is literal:
-$\varepsilon$ is set once and enters as the depth of the well that binds
-the carrier, as the quartic stiffness $\lambda$ that sets the clock rate
-through \eqref{eq:periodlaw2}, and as the Arrhenius barrier in
-$\tau_{\rm flip}\nu_{0}\sim e^{\varepsilon/T}$. There is no separate
-memory constant, no separate clock constant, and no separate binding
-constant. Raising $\varepsilon$ stiffens the carrier, speeds the clock and
-lengthens the bit's life together and in fixed proportion.
+three apparently unrelated things: the depth of the well that binds the
+carrier, the quartic stiffness $\lambda$ that sets the clock rate through
+\eqref{eq:periodlaw2}, and the Arrhenius barrier in $\tau_{\rm
+flip}\nu_{0}\sim e^{\varepsilon/T}$. The commitment is that these are not
+three independent constants.
 
-This is a falsifiable structural commitment rather than an aesthetic one:
-any measurement that moved one of the three without the others would break
-it. Panels~(d) and~(e) display the second and third roles --- the barrier
-is exactly the well depth, with no geometric prefactor, and retention runs
-from $\sim\!55$ attempt times at $T = 0.25\,\varepsilon$ to
-$\sim\!1.7\times10^{7}$ at $T = 0.06\,\varepsilon$.
+\emph{The demonstrator exhibits two of the three, not all three.} In the
+script, $\varepsilon$ is set once and drives the register well and the
+retention curve --- panels~(d) and~(e), where the barrier is the well
+depth with no geometric prefactor and retention runs from $\sim\!55$
+attempt times at $T = 0.25\,\varepsilon$ to $\sim\!1.7\times10^{7}$ at
+$T = 0.06\,\varepsilon$. The clock panel integrates its own stiffness as
+an independent hard-coded value, and the detector its own threshold and
+noise width. So the third role --- $\varepsilon$ \emph{setting} the clock
+rate --- is asserted by the architecture and \emph{not} exhibited here.
+Nor could this instrument exhibit it: $\Gstar$ is recovered from
+\eqref{eq:periodlaw2} in a form independent of $\lambda$, which is what
+makes the recovery a clean test of the law and a null test of the
+coupling.
+
+The link the demonstrator leaves unshown is a scaling, not an identity.
+Section~\ref{sec:mvc} gives the minimum viable clock an effective
+stiffness $\lambda_{\rm eff} = 8k_1k_2/(k_1+3k_2)$ --- a function of the
+bond stiffnesses, which a single-scale potential ties to $\varepsilon$ by
+dimensional analysis but which is not the same number as the well depth.
+\textbf{Whether one $\varepsilon$ genuinely fixes all three, and in what
+proportion, is open} --- and it is the sharpest falsifiable commitment in
+the architecture, since any measurement moving one of the three without
+the others would break it.
 
 \subsection{The regime, on an independent instrument}
 
@@ -2707,9 +2760,10 @@ round cone strictly inside the square-sectioned reach. (c) The precursor
 shell is the gap between the two bounds; the cone closes over the body
 diagonal at $t=3$ exactly. (d) At $t=1$ eighteen sites have been touched
 and only the origin lies in the cone. (e) Every finite-wavelength mode is
-strictly subluminal, so the cone is a true signal front. (f) Across the
-shell the Green's function falls ten decades and then terminates in an
-exact zero.}
+strictly subluminal, so no \emph{propagating mode} outruns $C$ --- making
+it the effective cone, not the strict front, which is the reach boundary.
+(f) Across the shell the Green's function falls ten decades and then
+terminates in an exact zero.}
 \label{fig:causal3d}
 \end{figure}
 
@@ -2744,7 +2798,12 @@ What occupies the shell is settled by two measurements. First, the group
 velocity of the leapfrog, differentiated analytically and scanned over a
 $181^3$ grid of the Brillouin zone, has supremum exactly $C$, approached
 only as $k\to0$; every finite-wavelength mode is strictly subluminal, so
-no signal outruns the cone. Second, the point-source Green's function at
+no propagating mode outruns the cone. This does \emph{not} make $C$ the
+signal front: a supremum over group velocities bounds where the
+disturbance is \emph{concentrated}, not where it is exactly zero, and the
+next measurement shows the field is nonzero outside $Ct$. The strict
+front is the reach boundary; $C$ is the effective cone. Second, the
+point-source Green's function at
 $t=10$ falls from $5.8\times10^{-3}$ at the cone to $2.8\times10^{-13}$ at
 the support boundary --- ten decades, about $1.3$ per lattice cell --- and
 is then identically zero, which the artifact asserts rather than reports.
@@ -2761,11 +2820,12 @@ the sense of ``harmless'' quantitative: the shell's anisotropy is never
 that of the stencil, and what anisotropy remains decays as a power of
 elapsed time.
 
-So the architecture composes, on one instrument, with no constant added
-beyond those already booked. What the demonstrator cannot do is say
-what the composition \emph{means} --- which pillar supplies which layer,
-and which layer nobody supplies. That is the statement the next section
-owes.
+So the architecture's pieces coexist, on one instrument, with no constant
+added beyond those already booked and the clock's free units --- which
+the period law's scale invariance makes immaterial. What the demonstrator
+cannot do is couple them, and it cannot say what the composition
+\emph{means} --- which pillar supplies which layer, and which layer
+nobody supplies. That is the statement the next section owes.
 
 % =====================================================================
 \section{The merge, stated exactly}
@@ -2939,8 +2999,11 @@ $2\times10^{-6}$ in the $A\to0$ extrapolation. \textbf{Galilean
 invariant, and therefore disqualified as a relativity test} \\
 No native quartic clock & Negative at screened scope only; not a
 no-go theorem \\
-Register barrier $=\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
-Exact statics within the declared model \\
+Register barrier $\le\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
+Upper bound exact (explicit hinge path); the matching \emph{lower} bound
+is finite-grid numerical only ($1.016$--$1.021\,\varepsilon$), so
+$\Delta E=\varepsilon$ is corroborated at the resolution searched, not
+proven \\
 Born weighting interpolates with $\bar\Omega\tau$ & Measured at
 mechanism level, imposed ensemble; neither an exact law nor a substrate
 theorem \\
@@ -3039,6 +3102,26 @@ satisfying \eqref{eq:R4}, or prove that a preferred-foliation selector
 can be operationally hidden.
 \item \textbf{Quantum sequential growth.} The classical classification is
 known; the quantum analogue with interfering weights is open.
+\item \textbf{One constant, or three?} The architecture commits to a
+single $\varepsilon$ pricing binding, clock rate and retention. Two of
+the three are exhibited together in Section~\ref{sec:toy}; the link from
+the well depth to the clock's effective stiffness $\lambda_{\rm eff}$ is
+a dimensional scaling, not an identity, and no instrument here moves
+$\varepsilon$ and reads all three responses at once. Build one.
+\item \textbf{A coupled model.} Every demonstrator in this paper runs its
+modules independently. Exhibit a system in which the clock's phase gates
+the register and the register's state back-reacts on the carrier, and
+check whether the architecture survives the feedback it has so far
+avoided.
+\item \textbf{The register's lower bound.} Prove
+$\Delta E \ge \varepsilon$ analytically, or exhibit a cheaper channel.
+The upper bound is an explicit path; the lower bound is at present a
+finite-grid search (Prop.~\ref{prop:registerbarrier}).
+\item \textbf{From finite dimensions to local algebras.} The
+reconstruction of Section~\ref{sec:operational} is finite-dimensional, while
+the covariant setting of Section~\ref{sec:relativity} uses local algebras
+that are not of type~I and admit no density matrix. The bridge is
+imported wholesale and never constructed.
 \end{enumerate}
 
 % =====================================================================
@@ -3046,7 +3129,8 @@ known; the quantum analogue with interfering weights is open.
 \section{Instruments and pre-registrations}
 \label{app:instruments}
 
-Every measurement reported here was pre-registered: outcomes, gates and
+Every measurement \emph{in the series catalogued below} was
+pre-registered: outcomes, gates and
 kill conditions fixed, and runner hashes recorded, before execution. The
 discipline is load-bearing rather than ceremonial --- one instrument in
 this series voided itself on its own gate (a mis-derived conservation
