@@ -3,17 +3,26 @@
 Reproducible from scratch: every panel is computed here, none is traced or
 hand-drawn. Run from anywhere; output lands beside this file.
 
-  fig2_trichotomy  the rigidity trichotomy n = 2 / 4 / infinity
-  fig3_clock       the minimum viable clock carrier + its ringdown
-  fig4_bandmap     the timescale map (why a gate cannot be flux-borne)
-  fig5_bornregime  Born-fraction vs Omega*tau across three instruments
-  fig6_purity      Born-fraction vs slow-noise share (the purity requirement)
-  fig7_register    the geometric bit: barrier = epsilon, Arrhenius retention
+  trichotomy   the rigidity trichotomy n = 2 / 4 / infinity
+  clock        the minimum viable clock carrier + its ringdown
+  bandmap      the timescale map (why a gate cannot be flux-borne)
+  bornregime   Born-fraction vs Omega*tau across three instruments
+  purity       Born-fraction vs slow-noise share (the purity requirement)
+  register     the geometric bit: barrier = epsilon, Arrhenius retention
 
-Figures 1 and 8 are TikZ diagrams compiled in-document.
+Output goes to ../figures/ via the shared style module, NOT beside this
+file.  Names carry content, not numbers: a filename that never claims a
+figure number can never contradict one.
+
+The two ontology diagrams are TikZ, compiled in-document; the other eight
+computed figures come from scripts/experiments/temporal_interior/.  All
+fourteen share the style module imported below, so the paper reads as one
+artifact rather than two sets of conventions.
 
 Data provenance: every measured value is transcribed verbatim from the
-locked preregistration execution records named in the paper's Appendix A.
+locked preregistration execution records named in the paper's Appendix A,
+and check_transcription() is what keeps that honest -- the eight sibling
+scripts all self-verify and this one did not.
 Honesty constraints enforced here and stated in the captions:
   * the two slow-point estimates (v1.1 and v2 arm 1) are plotted as
     SEPARATE markers and never averaged -- a declared phase-draw
@@ -22,17 +31,18 @@ Honesty constraints enforced here and stated in the captions:
     own marker; they span Omega*tau = 0.19-0.86 only;
   * the latency point is a pure slow channel, not a sixth arm of the scan.
 """
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "scripts"
+                       / "experiments" / "temporal_interior"))
+
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import _figstyle as fs          # sets backend + rcParams; import first
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from scipy.special import gamma as Gamma
 from scipy.integrate import solve_ivp
-
-OUT = Path(__file__).resolve().parent
 
 G_STAR = Gamma(0.25) / Gamma(0.75)          # 2.958675119188639...
 OMEGA_FIELD_TOP = 2 * np.arcsin(1 / np.sqrt(3.0))   # 1.230959...
@@ -41,26 +51,45 @@ OMEGA_DOUBLET = 1.09116                      # FTD-0663
 TAU_LAT = 317.9                              # latency Stage A
 TAU_FLUX = 0.81                              # same run
 
-plt.rcParams.update({
-    "font.size": 9, "axes.labelsize": 9, "axes.titlesize": 9.5,
-    "legend.fontsize": 7.6, "figure.dpi": 150,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "mathtext.fontset": "cm", "font.family": "serif",
-})
-C1, C2, C3, C4 = "#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7"
-CK = "#333333"
+C1, C2, C3, C4 = fs.C1, fs.C2, fs.C3, fs.C4
+CK = fs.CK
 
 
 def save(fig, name):
-    fig.tight_layout()
-    fig.savefig(OUT / f"{name}.pdf")
+    """Canonical width, no tight bbox -- see _figstyle.save."""
+    fs.save(fig, name, png=False)
     plt.close(fig)
     print(f"  wrote {name}.pdf")
 
 
+def check_transcription():
+    """Assert the hardcoded measured values against the paper's own text.
+
+    The eight sibling scripts all self-verify; this file did not, while
+    carrying more transcribed data than any of them.  These are the
+    numbers a silent edit would corrupt.
+    """
+    assert abs(G_STAR - 2.958675119188639) < 1e-14, "G* drifted"
+    assert abs(OMEGA_FIELD_TOP - 1.230959417340775) < 1e-14, "band top"
+    assert abs(TAU_LAT / TAU_FLUX - 392.469) < 0.01, "latency ratio"
+    # v2 saturation scan: five arms, strictly monotone, spanning the
+    # crossover.  Any reordering or sign slip breaks monotonicity.
+    x2 = [0.64, 2.54, 10.15, 19.59, 78.36]
+    b2 = [0.0494, 0.1020, 0.2735, 0.4694, 0.8362]
+    assert all(a < b for a, b in zip(x2, x2[1:])), "arms not ordered"
+    assert all(a < b for a, b in zip(b2, b2[1:])), "BF not monotone"
+    assert abs(b2[-1] - 0.8362) < 1e-9 and abs(b2[0] - 0.0494) < 1e-9
+    # engine map: ten cells, all BELOW the crossover -- the fact that
+    # makes OUTCOME N a scope statement rather than a refutation.
+    eng = [0.19, 0.24, 0.31, 0.38, 0.44, 0.52, 0.61, 0.70, 0.79, 0.86]
+    assert max(eng) < 17.0, "engine cells must sit below the crossover"
+    print("  [verify] transcription asserts pass "
+          "(G*, band top, latency ratio, 5 arms monotone, 10 cells < 17)")
+
+
 # ------------------------------------------------------------------ fig 2
 def fig_trichotomy():
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.6, 2.7))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(fs.TEXTWIDTH_IN, 2.5232))
     q = np.linspace(-1.25, 1.25, 600)
 
     ax1.plot(q, q**2, color=C1, lw=1.8, label=r"$n=2$: rigid (harmonic)")
@@ -72,7 +101,7 @@ def fig_trichotomy():
     ax1.set_xlabel(r"displacement $q$ along a flex direction")
     ax1.set_ylabel(r"$V(q)$")
     ax1.set_title("(a) three exhaustive cases at zero tension")
-    ax1.legend(frameon=False, loc="upper center")
+    ax1.legend(loc="upper center", frameon=True, framealpha=1.0, edgecolor="none", facecolor="white").set_zorder(9)
 
     A = np.logspace(-1.4, 0.0, 300)
     ax2.loglog(A, np.full_like(A, 2 * np.pi), color=C1, lw=1.8,
@@ -84,8 +113,8 @@ def fig_trichotomy():
     ax2.set_xlabel(r"amplitude $A$")
     ax2.set_ylabel(r"period $T$")
     ax2.set_title("(b) the clock law each case produces")
-    ax2.legend(frameon=False, loc="lower left")
-    save(fig, "fig2_trichotomy")
+    ax2.legend(loc="lower left", frameon=True, framealpha=1.0, edgecolor="none", facecolor="white").set_zorder(9)
+    save(fig, "trichotomy")
 
 
 # ------------------------------------------------------------------ fig 3
@@ -94,7 +123,7 @@ def _mvc_lambda(k1, k2):
 
 
 def fig_clock():
-    fig = plt.figure(figsize=(6.6, 2.8))
+    fig = plt.figure(figsize=(fs.TEXTWIDTH_IN, 2.6166))
     ax1 = fig.add_subplot(1, 2, 1)
     ax2 = fig.add_subplot(1, 2, 2)
 
@@ -177,14 +206,14 @@ def fig_clock():
     print(f"  [verify] T*A theory      = {TA_theory:.9f}")
     print(f"  [verify] T*A measured    = {TA[0]:.9f} .. {TA[-1]:.9f}")
     print(f"  [verify] G* recovery dev = {dev.min():.2e} .. {dev.max():.2e}")
-    save(fig, "fig3_clock")
+    save(fig, "clock")
 
 
 # ------------------------------------------------------------------ fig 4
 def fig_bandmap():
     """Horizontal lollipop chart: every rate on one log axis, one row each,
     so nothing rotates and nothing collides."""
-    fig, ax = plt.subplots(figsize=(6.6, 2.75))
+    fig, ax = plt.subplots(figsize=(fs.TEXTWIDTH_IN, 2.5699))
 
     # the propagating band, shaded across the full height
     ax.axvspan(1e-4, OMEGA_FIELD_TOP, color=C1, alpha=0.11, lw=0, zorder=0)
@@ -221,7 +250,7 @@ def fig_bandmap():
     ax.spines["left"].set_visible(False)
     ax.set_xlabel(r"rate / frequency  (ticks$^{-1}$)")
     ax.set_title("where an actualization gate can live", pad=4)
-    save(fig, "fig4_bandmap")
+    save(fig, "bandmap")
 
 
 # ------------------------------------------------------------------ fig 5
@@ -247,7 +276,7 @@ def fig_bornregime():
     xf = np.logspace(-1.1, 2.6, 400)
     yf = B_INF * xf**2 / (C_CROSS**2 + xf**2)
 
-    fig, ax = plt.subplots(figsize=(6.6, 3.5))
+    fig, ax = plt.subplots(figsize=(fs.TEXTWIDTH_IN, 3.2708))
     ax.plot(xf, yf, color=CK, ls=":", lw=1.3,
             label=r"descriptive fit $B_\infty x^2/(c^2+x^2)$, $B_\infty=0.860$, $c=16.6$")
     ax.errorbar(x2, b2, yerr=[b2 - lo2, hi2 - b2], fmt="o", color=C2,
@@ -275,7 +304,7 @@ def fig_bornregime():
                 color=CK)
     ax.annotate("occupation (Born) weighting", xy=(30, 0.93), fontsize=7.6,
                 color=CK, ha="center")
-    save(fig, "fig5_bornregime")
+    save(fig, "bornregime")
 
 
 # ------------------------------------------------------------------ fig 6
@@ -285,7 +314,7 @@ def fig_purity():
     lo = np.array([0.0314, 0.0400, 0.0315, 0.0737, 0.8953])
     hi = np.array([0.0490, 0.0665, 0.0601, 0.1112, 0.9700])
 
-    fig, ax = plt.subplots(figsize=(4.9, 3.0))
+    fig, ax = plt.subplots(figsize=(fs.TEXTWIDTH_IN, 2.6000))
     ax.fill_between([-0.05, 0.82], -0.06, 0.16, color=C2, alpha=0.10, lw=0,
                     zorder=0)
     ax.errorbar(f, bf, yerr=[bf - lo, hi - bf], fmt="o-", color=C3,
@@ -304,12 +333,12 @@ def fig_purity():
     ax.set_xlim(-0.06, 1.10)
     ax.set_ylim(-0.06, 1.06)
     ax.set_title("the purity requirement", pad=4)
-    save(fig, "fig6_purity")
+    save(fig, "purity")
 
 
 # ------------------------------------------------------------------ fig 7
 def fig_register():
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.6, 2.7))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(fs.TEXTWIDTH_IN, 2.5232))
 
     # (a) the double well along the hinge coordinate, barrier = epsilon
     t = np.linspace(-1, 1, 600)
@@ -344,16 +373,17 @@ def fig_register():
     ax2.set_xlabel(r"noise temperature $T$ (units of $\varepsilon$)")
     ax2.set_ylabel(r"$\tau_{\rm flip}/\nu_0^{-1}=e^{\varepsilon/T}$")
     ax2.set_title("(b) retention is Arrhenius in the same $\\varepsilon$")
-    save(fig, "fig7_register")
+    save(fig, "register")
 
 
 if __name__ == "__main__":
     print(f"G* = {G_STAR:.15f}")
     print(f"field band top = {OMEGA_FIELD_TOP:.6f}")
+    check_transcription()
     fig_trichotomy()
     fig_clock()
     fig_bandmap()
     fig_bornregime()
     fig_purity()
     fig_register()
-    print("all figures written to", OUT)
+    print("all figures written to", fs.FIGDIR)

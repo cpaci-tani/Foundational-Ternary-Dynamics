@@ -33,18 +33,12 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import _figstyle as fs          # sets backend + rcParams; import first
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Circle
-from matplotlib.ticker import FixedLocator, FixedFormatter, NullLocator
 from scipy.special import gamma as Gamma
 from scipy.integrate import solve_ivp
 
-OUT = Path(__file__).resolve().parent
-FIGDIR = (Path(__file__).resolve().parents[3] / "dissemination" / "papers"
-          / "semantic_ontology" / "figures")
-FIGDIR.mkdir(parents=True, exist_ok=True)
 
 G_STAR = Gamma(0.25) / Gamma(0.75)
 C_CONE = 1.0 / np.sqrt(3.0)
@@ -52,19 +46,11 @@ EPS = 1.0                     # the one constant: bond depth = barrier
 K_THRESH = 0.5054620197
 
 # ----- one typographic scheme, applied everywhere ---------------------
-FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = 7.5, 8.5, 9.0, 7.0, 7.0
-plt.rcParams.update({
-    "font.family": "serif", "mathtext.fontset": "cm",
-    "font.size": FS_TICK, "axes.labelsize": FS_LAB,
-    "axes.titlesize": FS_TITLE, "legend.fontsize": FS_LEG,
-    "xtick.labelsize": FS_TICK, "ytick.labelsize": FS_TICK,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "axes.titlepad": 7.0, "axes.labelpad": 3.5,
-    "figure.dpi": 160, "savefig.dpi": 300,
-    "lines.linewidth": 1.5,
-})
-C1, C2, C3, C4 = "#2a78d6", "#eb6834", "#1baf7a", "#7a4bbd"
-CK, CG = "#2b2b2b", "#9a9a9a"
+FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = (
+    fs.FS_TICK, fs.FS_LAB, fs.FS_TITLE, fs.FS_LEG, fs.FS_ANN)
+C1, C2, C3, C4 = fs.C1, fs.C2, fs.C3, fs.C4
+CK, CG = fs.CK, fs.CG
+decade_ticks = fs.decade_ticks
 
 
 # =====================================================================
@@ -144,15 +130,6 @@ def panel_clock(ax):
                  "(ticks mark one period)")
 
 
-def decade_ticks(axis, ticks, fmt="{:g}"):
-    """Fixed plain-decimal ticks on a log axis, minor labels suppressed.
-
-    matplotlib's default log locator emits both decade and minor labels on a
-    sub-decade range, which collides (e.g. "3x10^-1" against "4x10^-1").
-    """
-    axis.set_major_locator(FixedLocator(ticks))
-    axis.set_major_formatter(FixedFormatter([fmt.format(t) for t in ticks]))
-    axis.set_minor_locator(NullLocator())
 
 
 def panel_clock_recovery(ax):
@@ -316,7 +293,7 @@ def main():
     print("Minimal Temporal Interior — toy model")
     print(f"  G* = {G_STAR:.12f},  C = 1/sqrt(3) = {C_CONE:.6f},  "
           f"eps = {EPS}, K = {K_THRESH}")
-    fig, axes = plt.subplots(3, 2, figsize=(7.4, 9.6),
+    fig, axes = plt.subplots(3, 2, figsize=(fs.TEXTWIDTH_IN, 8.0013),
                              constrained_layout=True)
     panel_substrate(axes[0, 0])
     panel_clock(axes[0, 1])
@@ -326,9 +303,8 @@ def main():
     panel_regime(axes[2, 1])
     fig.get_layout_engine().set(w_pad=0.10, h_pad=0.12, hspace=0.07,
                                 wspace=0.07)
-    fig.savefig(FIGDIR / "fig9_toymodel.pdf")
-    fig.savefig(OUT / "fig9_toymodel.png", dpi=200)
-    print(f"  wrote {FIGDIR/'fig9_toymodel.pdf'}")
+    fs.save(fig, "toymodel")
+    print(f"  wrote {fs.FIGDIR/'toymodel.pdf'}")
 
 
 if __name__ == "__main__":

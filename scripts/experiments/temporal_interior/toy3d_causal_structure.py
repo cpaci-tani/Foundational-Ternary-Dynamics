@@ -39,41 +39,21 @@ from pathlib import Path
 import itertools
 
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import _figstyle as fs          # sets backend + rcParams; import first
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FixedLocator, FixedFormatter, NullLocator
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection, Line3DCollection
 from scipy.spatial import ConvexHull
 
-OUT = Path(__file__).resolve().parent
-FIGDIR = (Path(__file__).resolve().parents[3] / "dissemination" / "papers"
-          / "semantic_ontology" / "figures")
-FIGDIR.mkdir(parents=True, exist_ok=True)
 
 C_CONE = 1.0 / np.sqrt(3.0)
 
-FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = 7.5, 8.5, 9.0, 7.0, 7.0
-plt.rcParams.update({
-    "font.family": "serif", "mathtext.fontset": "cm",
-    "font.size": FS_TICK, "axes.labelsize": FS_LAB,
-    "axes.titlesize": FS_TITLE, "legend.fontsize": FS_LEG,
-    "xtick.labelsize": FS_TICK, "ytick.labelsize": FS_TICK,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "axes.titlepad": 7.0, "axes.labelpad": 3.5,
-    "figure.dpi": 160, "savefig.dpi": 300, "lines.linewidth": 1.5,
-})
-C1, C2, C3, C4 = "#2a78d6", "#eb6834", "#1baf7a", "#7a4bbd"
-CK, CG = "#2b2b2b", "#9a9a9a"
+FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = (
+    fs.FS_TICK, fs.FS_LAB, fs.FS_TITLE, fs.FS_LEG, fs.FS_ANN)
+C1, C2, C3, C4 = fs.C1, fs.C2, fs.C3, fs.C4
+CK, CG = fs.CK, fs.CG
+decade_ticks = fs.decade_ticks
 
 
-def decade_ticks(axis, ticks, fmt="{:g}"):
-    """Fixed plain ticks on a log axis; `fmt` is a format string or labels."""
-    labels = list(fmt) if not isinstance(fmt, str) else \
-        [fmt.format(t) for t in ticks]
-    axis.set_major_locator(FixedLocator(ticks))
-    axis.set_major_formatter(FixedFormatter(labels))
-    axis.set_minor_locator(NullLocator())
 
 
 # =====================================================================
@@ -459,7 +439,7 @@ def main():
           f"   ({decades:.1f} decades)")
     print(f"      beyond the reach polytope: identically zero (asserted)")
 
-    fig = plt.figure(figsize=(7.4, 9.9), constrained_layout=True)
+    fig = plt.figure(figsize=(fs.TEXTWIDTH_IN, 8.2514), constrained_layout=True)
     gs = fig.add_gridspec(3, 2, height_ratios=[1.34, 0.86, 0.86])
     axa = fig.add_subplot(gs[0, 0], projection="3d")
     axb = fig.add_subplot(gs[0, 1], projection="3d")
@@ -471,9 +451,8 @@ def main():
     panel_greens(fig.add_subplot(gs[2, 1]), (TG, (rc, am)), decades)
     fig.get_layout_engine().set(w_pad=0.10, h_pad=0.12, hspace=0.06,
                                 wspace=0.06)
-    fig.savefig(FIGDIR / "fig10_causal3d.pdf")
-    fig.savefig(OUT / "fig10_causal3d.png", dpi=200)
-    print(f"\n  wrote {FIGDIR/'fig10_causal3d.pdf'}")
+    fs.save(fig, "causal3d")
+    print(f"\n  wrote {fs.FIGDIR/'causal3d.pdf'}")
 
 
 if __name__ == "__main__":

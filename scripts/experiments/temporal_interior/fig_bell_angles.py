@@ -35,27 +35,15 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import _figstyle as fs          # sets backend + rcParams; import first
 import matplotlib.pyplot as plt
 
-OUT = Path(__file__).resolve().parent
-FIGDIR = (Path(__file__).resolve().parents[3] / "dissemination" / "papers"
-          / "semantic_ontology" / "figures")
-FIGDIR.mkdir(parents=True, exist_ok=True)
 
-FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = 7.5, 8.5, 9.0, 7.0, 7.0
-plt.rcParams.update({
-    "font.family": "serif", "mathtext.fontset": "cm",
-    "font.size": FS_TICK, "axes.labelsize": FS_LAB,
-    "axes.titlesize": FS_TITLE, "legend.fontsize": FS_LEG,
-    "xtick.labelsize": FS_TICK, "ytick.labelsize": FS_TICK,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "axes.titlepad": 7.0, "axes.labelpad": 3.5,
-    "figure.dpi": 160, "savefig.dpi": 300, "lines.linewidth": 1.5,
-})
-C1, CO, CG_, C4 = "#2a78d6", "#eb6834", "#1baf7a", "#7a4bbd"
-CK, CG = "#2b2b2b", "#9a9a9a"
+FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = (
+    fs.FS_TICK, fs.FS_LAB, fs.FS_TITLE, fs.FS_LEG, fs.FS_ANN)
+C1, CO, CG_, C4 = fs.C1, fs.C2, fs.C3, fs.C4
+CK, CG = fs.CK, fs.CG
+decade_ticks = fs.decade_ticks
 TS = 2.0 * np.sqrt(2.0)
 
 # CHSH settings for light, in degrees
@@ -235,7 +223,7 @@ def panel_accumulate(ax, ntrial=20000, seeds=24, rng0=5):
 def main():
     print("Bell angles figure")
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.3, 6.2),
+    fig, axes = plt.subplots(2, 2, figsize=(fs.TEXTWIDTH_IN, 5.2383),
                              constrained_layout=True)
     fig.get_layout_engine().set(w_pad=0.10, h_pad=0.12,
                                 hspace=0.07, wspace=0.07)
@@ -269,10 +257,8 @@ def main():
     assert disjoint, "the four contexts are not disjoint"
     print(f"  [verify] compiled S at 20000 trials = {Sfin:.4f}   "
           f"(target {TS:.4f})")
-
-    fig.savefig(FIGDIR / "fig13_bellangles.pdf")
-    fig.savefig(OUT / "fig13_bellangles.png", dpi=200)
-    print(f"  wrote {FIGDIR / 'fig13_bellangles.pdf'}")
+    fs.save(fig, "bellangles")
+    print(f"  wrote {fs.FIGDIR / 'bellangles.pdf'}")
 
 
 if __name__ == "__main__":
