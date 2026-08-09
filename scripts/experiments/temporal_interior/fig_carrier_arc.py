@@ -142,7 +142,9 @@ def panel_ticking(axL, axR, tr0, trU, om0, omU):
     for ax, (lo, hi) in ((axL, W1), (axR, W2)):
         ax.plot(t, a, color=C1, lw=1.4,
                 label=f"at rest,  $T={2*np.pi/om0:.1f}$")
-        ax.plot(t, b, color=CO, lw=1.4, ls="--",
+        # thin, dense dashes: at lw 1.4 with the default dash pattern the
+        # boosted trace read as chunky blocks over the blue
+        ax.plot(t, b, color=CO, lw=0.9, ls=(0, (2.2, 1.0)),
                 label=f"boosted,  $T={2*np.pi/omU:.1f}$")
         ax.axhline(0, color=CG, lw=0.6, zorder=0)
         ax.set_xlim(lo, hi)
