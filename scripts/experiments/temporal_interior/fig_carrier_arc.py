@@ -124,65 +124,41 @@ def panel_profile(ax, lam=0.03, v=1.0):
                  "contracts when it moves")
 
 
-def panel_ticking(axL, axR, tr0, trU, om0, omU):
-    """Two windows of the same run, broken axis.
+def panel_ticking(ax, tr0, trU, om0, omU):
+    """The full run on one axis.
 
-    The full 430-tick span holds ~14 cycles of each trace; overlaid they
-    are moire, not information.  Window 1 shows the release (in phase),
-    window 2 the same traces around tick 430 (2.2 cycles apart) -- the
-    claim is visible in each window instead of smeared across both.
+    Fourteen cycles of each trace: viable only because the boosted trace
+    is thin and dense-dashed, so the two read as interleaved curves and
+    the slow beat between them -- in phase at release, drifting apart --
+    IS the visible content of the full span.
     """
     n = 430
     a = tr0[:n] - tr0[:n].mean()
     b = trU[:n] - trU[:n].mean()
     a, b = a / np.abs(a).max(), b / np.abs(b).max()
     t = np.arange(n)
-    W1, W2 = (0, 72), (358, 430)
-
-    for ax, (lo, hi) in ((axL, W1), (axR, W2)):
-        ax.plot(t, a, color=C1, lw=1.4,
-                label=f"at rest,  $T={2*np.pi/om0:.1f}$")
-        # thin, dense dashes: at lw 1.4 with the default dash pattern the
-        # boosted trace read as chunky blocks over the blue
-        ax.plot(t, b, color=CO, lw=0.9, ls=(0, (2.2, 1.0)),
-                label=f"boosted,  $T={2*np.pi/omU:.1f}$")
-        ax.axhline(0, color=CG, lw=0.6, zorder=0)
-        ax.set_xlim(lo, hi)
-        ax.set_ylim(-1.45, 1.80)
-        ax.set_xlabel("ticks")
-    axL.set_yticks([-1, 0, 1])
-    axL.set_ylabel("clock coordinate")
-    axR.tick_params(labelleft=False)
-    axR.set_yticks([-1, 0, 1])
-    # narrow windows: two ticks each, or the labels mash together
-    axL.set_xticks([0, 50])
-    axR.set_xticks([370, 430])
-
-    # break marks at the seam
-    for ax, x in ((axL, 1.0), (axR, 0.0)):
-        for y in (-0.02, 1.02):
-            ax.plot([x - 0.012, x + 0.012], [y - 0.03, y + 0.03],
-                    transform=ax.transAxes, color=CK, lw=0.9,
-                    clip_on=False, zorder=10)
-
-    # legend on the LEFT window's free top band; the right window keeps
-    # its top band for nothing, so neither text block fights the seam
-    axL.legend(loc="upper right", handlelength=1.6, borderpad=0.3,
-               labelspacing=0.28, frameon=True, framealpha=1.0, ncol=1,
-               edgecolor="none", facecolor="white").set_zorder(9)
+    ax.plot(t, a, color=C1, lw=1.1,
+            label=f"at rest,  $T={2*np.pi/om0:.1f}$")
+    ax.plot(t, b, color=CO, lw=0.8, ls=(0, (2.2, 1.0)),
+            label=f"boosted,  $T={2*np.pi/omU:.1f}$")
+    ax.axhline(0, color=CG, lw=0.6, zorder=0)
+    ax.set_xlim(0, n)
+    ax.set_ylim(-1.25, 1.95)
+    ax.set_yticks([-1, 0, 1])
+    ax.set_xlabel("ticks")
+    ax.set_ylabel("clock coordinate")
+    ax.legend(loc="upper right", handlelength=1.6, borderpad=0.3,
+              labelspacing=0.28, frameon=True, framealpha=1.0, ncol=1,
+              edgecolor="none", facecolor="white").set_zorder(9)
     lag = n * (om0 - omU) / om0 / (2 * np.pi / om0)
-    axL.text(0.05, 0.03, "released\nin phase", fontsize=FS_ANN, color=CK,
-             ha="left", va="bottom", transform=axL.transAxes, zorder=8,
-             bbox=dict(facecolor="white", edgecolor="none", pad=1.2))
-    axR.text(0.95, 0.965, f"by tick {n}:\n{lag:.1f} cycles apart",
-             fontsize=FS_ANN, color=CK, ha="right", va="top",
-             transform=axR.transAxes,
-             bbox=dict(facecolor="white", edgecolor="none", pad=1.2))
-    # title centred over the PAIR: axL spans x in [0,1] of its own axes
-    # coords, axR sits at [1+wspace, 2+wspace], so the pair's midpoint is
-    # at 1 + wspace/2
-    axL.set_title("(b)  the same clock, at rest and moving:\n"
-                  "the moving one ticks slower", x=1.06)
+    # top-left band (above the traces); three short lines, because the
+    # legend owns the right half of the same band and any line past
+    # ~0.5 axes width runs under its opaque face
+    ax.text(0.02, 0.975, f"released in phase;\nby tick {n} they are\n"
+            f"{lag:.1f} cycles apart", fontsize=FS_ANN, color=CK,
+            ha="left", va="top", transform=ax.transAxes, linespacing=1.05)
+    ax.set_title("(b)  the same clock, at rest and moving:\n"
+                 "the moving one ticks slower")
 
 
 def panel_collapse(ax, two, one):
@@ -308,14 +284,11 @@ def main():
                                 hspace=0.07, wspace=0.07)
     gs = fig.add_gridspec(2, 2)
     axA = fig.add_subplot(gs[0, 0])
-    # panel (b) is a broken axis: two windows of one run
-    gsb = gs[0, 1].subgridspec(1, 2, wspace=0.12)
-    axB1 = fig.add_subplot(gsb[0, 0])
-    axB2 = fig.add_subplot(gsb[0, 1], sharey=axB1)
+    axB = fig.add_subplot(gs[0, 1])
     axC = fig.add_subplot(gs[1, 0])
     axD = fig.add_subplot(gs[1, 1])
     panel_profile(axA)
-    panel_ticking(axB1, axB2, tr0, trU, om0, omU)
+    panel_ticking(axB, tr0, trU, om0, omU)
     panel_collapse(axC, two, one)
     panel_isochrony(axD, amps, oms, oms[0])
     fs.save(fig, "carrierarc")
