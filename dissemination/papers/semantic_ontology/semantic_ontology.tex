@@ -446,9 +446,17 @@ of the scaffold, not a theorem: history alone does not determine a state.
 \section{Time: the clock}
 \label{sec:clock}
 
-Everything above concerns weights. Nothing in it contains a clock. We now
-turn to the paper's first constructive contribution, and for this we need
-a concrete model rather than an operational abstraction.
+A record that only grows carries an order and nothing more. To say that
+one interval is longer than another --- to have a \emph{duration} rather
+than a succession --- something in the world has to come back to where it
+was, so that the return can be counted. That is a demand on the
+substrate, not on our description of it, and it is the first demand in
+this paper that costs something.
+
+Four questions, in order. What does a period cost, in the sense of what
+fixes its constant? What shapes can a substrate make available? Which of
+them, if any, is forced? And what does the shortfall between those two
+answers cost, and buy? Each subsection below answers exactly one of them.
 
 \subsection{The setting}
 
@@ -459,6 +467,69 @@ graph bipartite. Two features matter. Every bond in an equilibrium sits
 \emph{at} its potential minimum, so the configuration carries zero actual
 tension; and the potential has compact support, so ``bonded'' is a sharp
 predicate. What follows is exact within that model.
+
+\subsection{What a period costs}
+\label{sec:quadrature}
+
+Before asking which oscillator a substrate supplies, it is worth asking
+what any of them charges. Take a symmetric confining potential
+$V = \lambda|x|^n$ and release a body of mass $m$ from rest at amplitude
+$A$, so $E = \lambda A^n$. Energy conservation fixes the speed,
+$v = \sqrt{2(E-V)/m}$, and a quarter period is the time to cross from the
+centre to the turning point:
+\begin{equation}
+\frac{T}{4} = \int_0^{A}\frac{\dd x}{v}
+= A\sqrt{\frac{m}{2E}}\;I(n),
+\qquad
+I(n) = \int_0^1\frac{\dd u}{\sqrt{1-u^{n}}}
+= \frac1n B\!\left(\tfrac1n,\tfrac12\right).
+\label{eq:quadrature}
+\end{equation}
+Everything specific to the clock is in $I(n)$, and $I(n)$ factors --- in a
+way that says which part of a clock constant is kinematics and which part
+is the potential:
+\begin{equation}
+I(n) \;=\; \underbrace{\sqrt{\pi}}_{\text{quadrature root}}
+\;\cdot\;
+\underbrace{\frac{\Gamma(1/n)}{n\,\Gamma(1/n+1/2)}}_{\text{degree ratio}} .
+\label{eq:qrdr}
+\end{equation}
+The first factor is $\Gamma(\tfrac12)$, and it is there because the
+integrand carries a square root --- speed is the root of an energy. That
+is true of \emph{every} mechanical clock whatever its potential, so
+$\sqrt\pi$ is a charge nobody escapes. The second factor is the only
+thing that moves when the potential's degree does.
+
+\begin{center}
+\small
+\begin{tabular}{cccc}
+\toprule
+$n$ & $I(n)$ & degree ratio & \\
+\midrule
+$2$ & $1.5707963268$ & $0.8862269255$ & $=\sqrt\pi/2$ \\
+$3$ & $1.4021821053$ & $0.7910965381$ & \\
+$4$ & $1.3110287771$ & $0.7396687798$ & $=\Gstar/4$ \\
+$5$ & $1.2537306248$ & $0.7073417591$ & \\
+$6$ & $1.2143253239$ & $0.6851096988$ & \\
+$8$ & $1.1635925712$ & $0.6564868082$ & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two rows are special, and their relation is the point.
+
+At $n=2$ the degree ratio is $\Gamma(\tfrac12)/\Gamma(1) = \sqrt\pi/2$ ---
+\emph{the quadrature root again}. The harmonic case is the unique
+self-reproducing one, so its constant is $I(2) = \sqrt\pi\cdot\sqrt\pi/2 =
+\pi/2$: a power of $\pi$ and nothing else. This is why the circle constant
+turns up in timekeeping at all, and it is a statement about the
+\emph{root}, not about circles.
+
+At $n=4$ the degree ratio is $\Gstar/4$, giving $I(4) = \sqrt\pi\,\Gstar/4
+= \varpi/2$, half the lemniscate constant. So $\pi$ and $\Gstar$ are not
+rival constants competing to be fundamental. They are the same
+kinematic factor multiplied by two different degree ratios, and
+$\Gstar = 2\varpi/\sqrt\pi$ is that statement rearranged.
 
 \subsection{A decidable trichotomy}
 
@@ -501,9 +572,9 @@ linear algebra.
 
 The trichotomy matters because the three cases keep time differently
 (Figure~\ref{fig:trichotomy}). The harmonic case is isochronous and its
-period constant is $\pi$. The quartic case is the anti-pendulum: its
-frequency grows with amplitude, and its period constant is the
-lemniscatic
+period constant is $\pi$, which \eqref{eq:qrdr} has already explained.
+The quartic case is the anti-pendulum: its frequency grows with
+amplitude, and its period constant is the lemniscatic
 \begin{equation}
 \Gstar = \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)} = 2.958675119188639\ldots
 \end{equation}
@@ -520,7 +591,80 @@ constant.}
 \label{fig:trichotomy}
 \end{figure}
 
+\subsection{What forces the quartic, and what does not}
+\label{sec:threshold}
+
+The trichotomy says a quartic clock is \emph{available}. A stronger
+statement is available too, and because it is the one most likely to be
+over-read, it is stated with its hypotheses attached and its failure
+modes named.\footnote{The reading of the quartic as the clock of marginal
+stability, together with the period law and the anti-pendulum framing,
+originates in a companion manuscript on the edge-of-stability clock; what
+is added here is the statement as a proposition with named hypotheses,
+the factorisation \eqref{eq:qrdr}, and the finite-amplitude term.}
+
+\begin{proposition}[Threshold forcing]
+\label{prop:threshold}
+Let a single degree of freedom evolve in a potential $V(x;\mu)$ such that
+\begin{enumerate}\itemsep2pt
+\item[\textnormal{(H1)}] $V$ is smooth in $x$ and in a control parameter
+  $\mu$, with one degree of freedom;
+\item[\textnormal{(H2)}] $V$ is invariant under $x\mapsto-x$;
+\item[\textnormal{(H3)}] the family crosses $\mu=0$ transversally, at
+  which point $\partial_x^2V(0;0)=0$;
+\item[\textnormal{(H4)}] the quartic coefficient is nonzero,
+  $\lambda \equiv \tfrac1{4!}\partial_x^4V(0;0) > 0$.
+\end{enumerate}
+Then at $\mu=0$ the leading behaviour is $V = \lambda x^4 + O(x^6)$, and
+\emph{in the limit $A\to0$}
+\[
+T\cdot A \;=\; \sqrt{\pi}\,\Gstar\sqrt{m/2\lambda}.
+\]
+\end{proposition}
+
+The content is in what each hypothesis excludes. (H2) is what kills the
+cubic --- and it kills it \emph{by symmetry, not by tuning}, which is why
+the quartic is generic here rather than fine-tuned. (H3) is the
+threshold. (H4) is nondegeneracy. And the $A\to0$ clause is not
+decoration: it is the whole of the second failure mode below.
+
+\paragraph{The substrate is not known to sit at a threshold.}
+Proposition~\ref{prop:threshold} forces the quartic \emph{given} a
+threshold; it says nothing about why a substrate would be at one. Since
+$\mu=0$ is a codimension-one surface, the generic configuration is not on
+it, and staying on it is a condition that must be actively held. The
+price is therefore a maintenance cost paid continuously, not a
+construction cost paid once --- which is the sense in which this is a
+clock at the \emph{edge} of stability rather than a clock in a well.
+
+\paragraph{Two ways it fails, and only one of them is obvious.}
+Dropping (H4) entirely gives a pure sextic and a single different
+constant, $4I(6)/\sqrt\pi = 2.7404387952$. That failure is visible.
+
+The other is not, and it is a genuine counterexample to any
+finite-amplitude version of the proposition. Take $V = \lambda x^4 + \nu
+x^6$ with both terms present, and write $r = \nu A^2/\lambda$. Then
+\begin{equation}
+T\cdot A = 4\sqrt{\frac{m}{2\lambda}}
+\int_0^1\frac{\dd u}{\sqrt{(1-u^4) + r\,(1-u^6)}},
+\label{eq:sexticdrift}
+\end{equation}
+and the constant sweeps \emph{continuously} with $r$: the bracket runs
+$5.2441$, $5.2133$, $4.9589$, $3.5563$ at $r = 0,\,0.01,\,0.1,\,1$. Every
+member of this family has $\lambda\neq0$, so (H4) does not exclude it.
+What excludes it is the limit: $r\propto A^2$, so the drift vanishes
+with the amplitude and $\Gstar$ is the $A\to0$ endpoint, not a
+finite-amplitude value.
+
+This is worth stating plainly because the same term appears in this
+paper's own measurement. The twelve-degree-of-freedom simulation of
+Section~\ref{sec:mvc} holds $T\cdot A$ constant only to $0.33\%$ across a
+sixfold amplitude range, and recovers $\Gstar$ to $2\times10^{-6}$ only
+in the $A\to0$ extrapolation. A $0.33\%$ deficit is $r = 0.0056$. The
+residual drift and the counterexample family are one term seen twice.
+
 \subsection{The native case is harmonic}
+\label{sec:native}
 
 Which cases does the model realize by itself? Its zero-tension equilibria
 are exactly the frameworks whose active bonds all sit at $r_0$ with
@@ -574,6 +718,7 @@ killed exactly, its closure condition $s^2-4k^2=-1$ being impossible
 modulo~4.
 
 \subsection{The minimum viable clock}
+\label{sec:mvc}
 
 If the quartic clock is not native, what is the cheapest object that
 realizes it? The answer is exact. Take four bodies $A^+B^-C^+D^-$
@@ -614,6 +759,30 @@ embeddings have no stressed realization; and polarity alternation forces
 the closure span to be odd, hence $3r_0$ at minimum. \textbf{Four bodies
 and one additional interaction range is the floor.}
 
+Two remarks about $\omega = (1,1,1,-1)$, since the sign pattern invites a
+reading it will not support. It is indexed by \emph{bonds}, not
+directions, and its signs are tension and compression: the lone minus
+sits on the closure bond, forced both by the impossibility of an
+all-tension self-stress on a finite framework and by a four-cycle having
+exactly one closure. The object that could carry a signature is the
+blocking form, whose coefficients these are --- and it is positive
+\emph{semi}-definite, spectrum $\{0,0,2,10/3\}$, with no negative
+direction at all. Written in the consecutive stretches $u_i$ it is
+$\propto 3\sum u_i^2 - (\sum u_i)^2$, the variance: the minus subtracts a
+mean and thereby removes the rigid-motion zero mode. It does not open a
+cone. An \emph{indefinite} blocking form is precisely a buckling mode,
+which is how the wheel of Section~\ref{sec:native} failed.
+
+\paragraph{And the carrier cannot test what it was built beside.}
+Recorded here, at the point of purchase, rather than where it is later
+needed: this clock is a mechanical framework, $m\ddot q = -\nabla
+V(|q_i-q_j|)$, and such an equation is \emph{Galilean} invariant.
+Boosting it leaves the period exactly unchanged at any velocity, so it
+would report zero time dilation whatever the substrate did. The carrier
+is therefore disqualified as an instrument for the relativistic
+obligations of Section~\ref{sec:relativity} --- not by a defect in its
+construction, but by the kind of object it is.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{clock.pdf}
@@ -639,6 +808,120 @@ motivates. The honest reading is that the carrier's true price is matter
 stiffness at field-stiffness parity. Its falsifier is stated in
 Appendix~\ref{app:instruments}.
 \end{scopebox}
+
+\subsection{What the lemniscatic price buys}
+\label{sec:gstarprice}
+
+The price is now fully stated: one interaction species, and a threshold
+that must be held. What has not been stated is what it returns. A ledger
+that records a cost and not its purchase is an unstable thing to leave
+standing, and the structure of the last three subsections settles it.
+
+Read the table of \eqref{eq:qrdr} again, this time as a list of
+degeneracies. Only $n=2$ has nonzero second-order stiffness; every
+$n\ge4$ is second-order \emph{free} and still oscillates. Ordinarily
+those properties exclude one another --- a stiff mode oscillates but
+resists being moved, a soft mode moves freely but does not oscillate ---
+and the quartic is the \emph{minimal} escape, needing exactly one
+vanishing Taylor coefficient where $n=6$ needs two. $\Gstar$ is the period
+constant of that minimal degeneracy.
+
+The purchase is then exact. Fixing mass, displacement and period, the
+energy to hold the mode displaced is
+\begin{equation}
+\frac{E\,T^2}{mA^2} = 2\pi^2 \ \ \text{(harmonic)}, \qquad
+\frac{\pi}{2}G^{*2} \ \ \text{(quartic)}, \qquad
+\frac{E_{\rm quartic}}{E_{\rm harmonic}} = \frac{G^{*2}}{4\pi} = 0.6966,
+\label{eq:gstarprice}
+\end{equation}
+the stiffness cancelling from both, so the ratio is pure $G^*$. And at
+displacement $a$ the ratio is $(a/A)^2 G^{*2}/4\pi$, which vanishes: a
+degenerate direction is free to first order, so at a tenth of the
+reference displacement the quartic mode is $144$ times cheaper to move.
+Figure~\ref{fig:clockgeometry} sets the two clocks beside each other ---
+their constants as arc lengths, their orbits at equal energy, and the
+threshold surface on which the quartic one lives.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{clockgeometry.pdf}
+\caption{The two clocks, seen. (a) The constants are not normalisations
+but arc lengths: the unit circle's is $2\pi = 6.2832$, the unit
+lemniscate's is $\sqrt\pi G^* = 5.2441$ --- the latter integrated
+numerically here and agreeing with $B(\tfrac14,\tfrac12)$ to $10^{-7}$.
+(b) Phase orbits at equal energy steps: harmonic level sets are ellipses
+traversed uniformly, so the period ignores the orbit's size; quartic ones
+are flat-flanked ovals and are traversed faster as they grow. (c) The
+degenerate clock does not live at a generic point but on a single surface
+--- the threshold $\mu = 0$ between one well and two, where the cubic is
+forbidden by symmetry and the quartic is what remains. (d) The degeneracy
+made visible: contours about a nondegenerate minimum are closed ellipses
+(dashed), while the quartic valley (solid) opens along the clock
+direction. That flatness is the cheapness of \eqref{eq:gstarprice}.
+(e) Dilation as geometry, drawn from the measured kink periods: tick
+events on two worldlines, one at rest and one at $u = 0.5\,C$, with the
+moving clock's ticks further apart in time. (f) The behaviour that
+follows.}
+\label{fig:clockgeometry}
+\end{figure}
+
+Proposition~\ref{prop:threshold} located the genericity, and it is worth
+saying what that buys as well as what it costs. The quartic clock is the
+normal form of a perfect Euler column at critical load and of any
+mean-field symmetry-breaking order parameter; what is non-generic about
+it is not the shape of the potential but the \emph{location}.
+
+So the price is a maintenance cost, continuously paid, not a construction
+cost; and \eqref{eq:gstarprice} is what it returns. \emph{$\pi$ is native
+because sitting off the threshold is generic; $G^*$ is priced because
+sitting on it must be actively held} --- and what the holding buys is that
+timekeeping and steerability stop trading against each other. A carrier
+required only to be stable will be harmonic, since stability alone selects
+a point off the threshold; a carrier that must also be reconfigurable at
+low cost is pushed onto it.
+
+This is also where the agency reading acquires a mechanism rather than an
+analogy. An agent, thermodynamically, is a system that spends free energy
+to hold a configuration against drift --- and holding $\mu = 0$ is exactly
+that: an unmaintained system falls off the threshold and becomes a
+harmonic clock. The sharp form of the question is therefore not whether
+agents keep lemniscatic time, but that \emph{a $G^*$ clock is one which
+must be actively maintained, and what the maintenance buys is cheap
+actuation}. That is a claim about control cost. It neither requires nor
+supplies anything about consciousness, and marginal stability --- a
+genuine hallmark of adaptive systems --- is equally a property of sandpiles
+and buckling columns.
+
+\begin{scopebox}
+\textbf{This interprets $G^*$; it does not recover it.} The proposition
+forces the quartic \emph{given} a threshold, a reflection symmetry and a
+nonvanishing quartic coefficient. Nothing here forces a substrate to sit
+at a threshold, and \textbf{no valid carrier has produced $G^*$}: the
+native single-scale screen returned zero, the four-body carrier that does
+produce it needs a purchased interaction species and is Galilean and
+therefore disqualified as a relativistic instrument, and the one carrier
+in this paper that demonstrably dilates is isochronous --- a $\pi$-clock.
+$G^*$ enters this framework by choice. Nor does the argument reach
+agency: it is a selection statement about efficient design, and marginal
+stability, while a hallmark of adaptive systems, is equally a property of
+sandpiles and buckling columns.
+\end{scopebox}
+
+\subsection{What a clock is owed by the rest of the paper}
+
+One forward debt is worth naming before leaving. The recursion this
+architecture runs on is indexed by a stage, and an index is not a
+duration: something physical has to carry it. That makes the clock not a
+subplot of the architecture but a precondition of its own bookkeeping.
+Section~\ref{sec:qg} pays this out, once there is a recursion on the page
+to be indexed.
+
+A clock, though, is not yet a record. One that is reset by every
+fluctuation counts nothing, because counting requires that the last tick
+still be there when the next arrives. Persistence is a separate purchase
+and it is made in the same currency --- an energy barrier --- which is the
+subject of the next section.
+
 
 % =====================================================================
 \section{Memory: the register}
@@ -1410,14 +1693,13 @@ turns part of it into a calculation.
 
 Begin with what will \emph{not} work. The natural test is to take the
 clock of Section~\ref{sec:clock}, give it momentum, and compare its period
-to $\gamma$. This is vacuous. That clock is a mechanical framework,
-$m\ddot q = -\nabla V(|q_i - q_j|)$, and such an equation is \emph{Galilean}
-invariant: boosting it leaves the period exactly unchanged for any
-velocity. It would report zero time dilation whatever the substrate did.
-Dilation in a field substrate comes from the binding being mediated at the
-substrate's own speed --- Lorentz's electron-theory reasoning, and the
-light-clock argument in modern dress --- so the object to interrogate is
-the \emph{dispersion of a massive mode}, which needs no clock at all.
+to $\gamma$. It is vacuous, for the reason recorded when that clock was
+bought: a mechanical framework is Galilean invariant and reports zero
+dilation whatever the substrate does. Dilation in a field substrate comes
+from the binding being mediated at the substrate's own speed --- Lorentz's
+electron-theory reasoning, and the light-clock argument in modern dress
+--- so the object to interrogate is the \emph{dispersion of a massive
+mode}, which needs no clock at all.
 
 The operational form is exact. A packet around wavenumber $k$ moves at its
 group velocity $v_g = |\nabla_k\Omega|$, and the relativistic prediction
@@ -1843,102 +2125,7 @@ clock would fall as $1/A$.}
 \label{fig:carrierarc}
 \end{figure}
 
-\subsection{What the lemniscatic price buys}
-\label{sec:gstarprice}
-
-The programme has long recorded that the harmonic clock is native and the
-lemniscatic one must be purchased. It could say what the price was and not
-what it bought, which is an unstable thing to leave in a ledger. The
-structure above settles it.
-
-Take $V = \lambda q^n$ with $n$ even. Only $n=2$ has nonzero second-order
-stiffness; every $n \ge 4$ is second-order \emph{free} and still
-oscillates. Ordinarily those properties exclude one another --- a stiff
-mode oscillates but resists being moved, a soft mode moves freely but does
-not oscillate --- and the quartic is the \emph{minimal} escape, requiring
-exactly one vanishing Taylor coefficient where $n=6$ requires two. $G^*$
-is the period constant of that minimal degeneracy:
-$\int_0^1(1-u^4)^{-1/2}du = \varpi/2 = \sqrt\pi\,G^*/4$, a period of the
-lemniscatic curve.
-
-The purchase is then exact. Fixing mass, displacement and period, the
-energy to hold the mode displaced is
-\begin{equation}
-\frac{E\,T^2}{mA^2} = 2\pi^2 \ \ \text{(harmonic)}, \qquad
-\frac{\pi}{2}G^{*2} \ \ \text{(quartic)}, \qquad
-\frac{E_{\rm quartic}}{E_{\rm harmonic}} = \frac{G^{*2}}{4\pi} = 0.6966,
-\label{eq:gstarprice}
-\end{equation}
-the stiffness cancelling from both, so the ratio is pure $G^*$. And at
-displacement $a$ the ratio is $(a/A)^2 G^{*2}/4\pi$, which vanishes: a
-degenerate direction is free to first order, so at a tenth of the
-reference displacement the quartic mode is $144$ times cheaper to move.
-Figure~\ref{fig:clockgeometry} sets the two clocks beside each other ---
-their constants as arc lengths, their orbits at equal energy, and the
-threshold surface on which the quartic one lives.
-
-\begin{figure}[p]
-\centering
-\includegraphics[width=\textwidth]{clockgeometry.pdf}
-\caption{The two clocks, seen. (a) The constants are not normalisations
-but arc lengths: the unit circle's is $2\pi = 6.2832$, the unit
-lemniscate's is $\sqrt\pi G^* = 5.2441$ --- the latter integrated
-numerically here and agreeing with $B(\tfrac14,\tfrac12)$ to $10^{-7}$.
-(b) Phase orbits at equal energy steps: harmonic level sets are ellipses
-traversed uniformly, so the period ignores the orbit's size; quartic ones
-are flat-flanked ovals and are traversed faster as they grow. (c) The
-degenerate clock does not live at a generic point but on a single surface
---- the threshold $\mu = 0$ between one well and two, where the cubic is
-forbidden by symmetry and the quartic is what remains. (d) The degeneracy
-made visible: contours about a nondegenerate minimum are closed ellipses
-(dashed), while the quartic valley (solid) opens along the clock
-direction. That flatness is the cheapness of \eqref{eq:gstarprice}.
-(e) Dilation as geometry, drawn from the measured kink periods: tick
-events on two worldlines, one at rest and one at $u = 0.5\,C$, with the
-moving clock's ticks further apart in time. (f) The behaviour that
-follows.}
-\label{fig:clockgeometry}
-\end{figure}
-
-The genericity has to be located carefully, and it is easy to misplace.
-For a reflection-symmetric system the normal form is
-$V = \tfrac12\mu x^2 + \lambda x^4 + O(x^6)$, and \emph{at} $\mu = 0$ the
-quartic is generic: the cubic is forbidden by symmetry rather than removed
-by tuning, so the quartic clock is the normal form of a perfect Euler
-column at critical load and of any mean-field symmetry-breaking order
-parameter. What is non-generic is not the shape of the potential but the
-\emph{location} --- $\mu = 0$ is a codimension-one surface, and staying on
-it against detuning is the whole difficulty.
-
-So the price is a maintenance cost, continuously paid, not a construction
-cost; and \eqref{eq:gstarprice} is what it returns. \emph{$\pi$ is native
-because sitting off the threshold is generic; $G^*$ is priced because
-sitting on it must be actively held} --- and what the holding buys is that
-timekeeping and steerability stop trading against each other. A carrier
-required only to be stable will be harmonic, since stability alone selects
-a point off the threshold; a carrier that must also be reconfigurable at
-low cost is pushed onto it.
-
-This is also where the agency reading acquires a mechanism rather than an
-analogy. An agent, thermodynamically, is a system that spends free energy
-to hold a configuration against drift --- and holding $\mu = 0$ is exactly
-that: an unmaintained system falls off the threshold and becomes a
-harmonic clock. The sharp form of the question is therefore not whether
-agents keep lemniscatic time, but that \emph{a $G^*$ clock is one which
-must be actively maintained, and what the maintenance buys is cheap
-actuation}. That is a claim about control cost. It neither requires nor
-supplies anything about consciousness, and marginal stability --- a
-genuine hallmark of adaptive systems --- is equally a property of sandpiles
-and buckling columns.
-
-This interprets $G^*$ and does not recover it. No valid carrier has
-produced it: the mechanical framework that did is Galilean and
-disqualified, and the one carrier that dilates is isochronous. Nor does
-the argument reach agency --- it is a selection statement about efficient
-design, and marginal stability, while a hallmark of adaptive systems, is
-equally a property of sandpiles and buckling columns.
-
-Two caveats belong beside the dilation result. The lattice is not exactly
+\paragraph{Two caveats beside the dilation result.}
 covariant and it shows: the kink's \emph{energy} transforms with
 $c\simeq C$ to two parts in a thousand while its \emph{clock} transforms
 with a $c$ some $6\%$ lower, a gap that narrows as the kink widens but is
