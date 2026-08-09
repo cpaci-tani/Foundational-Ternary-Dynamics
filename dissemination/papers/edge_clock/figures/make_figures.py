@@ -1,6 +1,8 @@
 """Figures for 'The clock at the edge of stability'. Reproducible from scratch.
 Fig 1: the edge traversal (potential family) + period-vs-amplitude landscape.
 Fig 2: simulated ringdown validation: calibration-free G* recovery + waveform functional.
+Fig 3 is the exact crossover pair: the universal collapse 4kK(k) and the
+closed-form B(k).
 (Restored 2026-08-05 after an untracked-file wipe; identical to the audited version.)
 """
 import numpy as np

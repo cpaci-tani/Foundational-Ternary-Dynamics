@@ -12,11 +12,14 @@
 \newcommand{\Gstar}{{G^{*}}}
 \graphicspath{{figures/}}
 
-\title{\bfseries The Clock at the Edge of Stability}
-\author{C.~Pacitani\thanks{Draft v2, 2026-08-05 (v1 audited refute-by-default;
-corrections applied). Interactive companion and all simulation/analysis code
-accompany this manuscript. Section~\ref{sec:data} is reserved for measured
-data; all quantitative results herein are exact theory or simulation.}}
+\title{\bfseries The Clock at the Edge of Stability:\\
+\large exact timekeeping across a pitchfork bifurcation, and why a bad clock
+is a good sensor}
+\author{C.~Pacitani\thanks{Draft v6, 2026-08-06 (v1--v5 audited
+refute-by-default across four independent rounds; corrections applied). All simulation and figure code
+accompanies this manuscript and reproduces every number from scratch; the
+companion interactive laboratory and code will be archived with a citable DOI
+at submission.}}
 \date{}
 
 \begin{document}
@@ -25,22 +28,40 @@ data; all quantitative results herein are exact theory or simulation.}}
 \begin{abstract}
 Galileo founded timekeeping on isochronism: a harmonic clock's period ignores
 its amplitude, and the constant governing it is $\pi$. Exactly at a symmetric
-instability threshold --- a column at critical load, a mode at a pitchfork
-bifurcation --- the quadratic restoring term vanishes and the generic surviving
-dynamics is the \emph{pure quartic} oscillator, whose behavior is the
-anti-pendulum: its frequency is proportional to its own amplitude. Its period
-constant is not $\pi$ but $\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)=
-2.9586751\ldots$, the lemniscate's analogue of the circle constant. We present
-this ``clock of marginal stability'' as a self-contained piece of classical
-physics: the threshold normal form, the exact period law
-$T=\sqrt{\pi}\,\Gstar\sqrt{m/2\lambda}/A$, its elliptic generalization off the
-edge, and a battery of calibration-free signatures --- the linear
-frequency--amplitude law, a dimensionless waveform functional
-$\mathcal B_4=48\pi/\Gstar^{4}$, and quantum level scaling
-$E_n\propto n^{4/3}$. A two-spring tabletop realization makes the potential
-purely quartic \emph{by symmetry} rather than by tuning, and end-to-end
-simulations of that apparatus, including its dominant systematics, recover
-$\Gstar$ to $0.3\%$ with no fitted scale. An interactive in-browser laboratory
+instability threshold --- a column at critical load, a mode at a supercritical
+pitchfork --- the quadratic restoring term vanishes and the generic surviving
+dynamics is the \emph{pure quartic} oscillator: the anti-pendulum, whose
+frequency is proportional to its own amplitude, with period constant
+$\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)=2.9586751\ldots$, the lemniscate's
+analogue of the circle constant. We present the timekeeping of marginal
+stability as an exactly solvable, experimentally ready subject. Beyond the
+classical period law $T=\sqrt{\pi}\,\Gstar\sqrt{m/2\lambda}/A$, we show that
+the harmonic--quartic--double-well crossover collapses, for every symmetric
+orbit at detunings of either sign, onto one universal curve
+$T\,A\sqrt{2\lambda/m}=4kK(k)$, with the elliptic modulus
+$k^{2}=2\lambda A^{2}/(\mu+4\lambda A^{2})$ as the scaling variable and the
+quartic point at exactly $k^{2}=\tfrac12$; and we derive a closed form for a
+calibration-free waveform functional along the same crossover,
+$\mathcal{B}(k)$, which descends from the sinusoid value $2$ through the
+lemniscatic value $48\pi/\Gstar^{4}$ with zero adjustable parameters. The
+pair $(4kK,\mathcal B)$ turns amplitude-dependent timing --- a defect for a
+clock --- into a precision meter of the distance to threshold. The same
+structure governs the edge in \emph{equilibrium}: all thermodynamics
+collapses onto one thermal detuning variable $\gamma=\mu\sqrt{\beta/\lambda}$,
+with $\langle x^{2}\rangle=\sqrt{k_BT/\lambda}\,/\Gstar$ at threshold, an
+equipartition deficit ($C=\tfrac34 k_B$ per mode), and a thermal noise lineshape whose
+peak obeys $f_{\mathrm{peak}}\propto T^{1/4}$ --- a third, dynamics-free
+measurement channel. Quantum mechanically the normal form reduces once more
+to a single detuning $g=\mu(2m)^{1/3}/(\lambda\hbar)^{2/3}$: the pitchfork
+is rounded within an $\hbar$-width, the spectrum follows a WKB $\Gstar$-law
+$E_n\propto(n+\tfrac12)^{4/3}$ with a widening-ladder spacing ratio
+$(E_2-E_1)/(E_1-E_0)=1.335$ measurable in quarton-class circuits, and
+thermal freeze-out lands exactly on the classical edge values. A two-spring
+tabletop realization forbids every \emph{odd} term by symmetry, leaving a
+single micrometer tuning to cancel the quadratic, and end-to-end
+simulations of that apparatus, including its
+dominant systematics, recover $\Gstar$ to $0.3\%$ with no fitted scale and
+trace both universal curves. An interactive in-browser laboratory
 accompanies the paper.
 \end{abstract}
 
@@ -80,6 +101,29 @@ circular sine; the mathematics descends directly from Fagnano's
 eighteenth-century division of the lemniscatic arc and Gauss's
 arithmetic--geometric mean \cite{ww,siegel}.
 
+\paragraph{Relation to prior work.} None of the ingredients is new in
+isolation, and we make no such claim: the quartic period integral is
+classical \cite{ww,landau}; the Duffing oscillator's Jacobi-elliptic
+solutions are textbook material \cite{byrd,nayfeh,kovacic}; intrinsically
+nonlinear oscillators with amplitude-dependent periods have a pedagogical
+literature of their own \cite{mohazzabi}, including exact Beta-function
+periods for the $|x|^{p}$ family \cite{cveticanin} and the Fourier content
+of the exact waveforms \cite{belendez}; and the very two-spring geometry
+used below has had its \emph{statics} --- the pitchfork, its imperfections,
+and its hysteresis --- analyzed in this journal \cite{ong,bissell}. Its
+\emph{timekeeping}, to our knowledge, has not. What we believe is new here
+is the \emph{composition}: the
+identification of the elliptic modulus as the scaling variable that collapses
+the entire threshold crossover onto one universal period curve
+(Sec.~\ref{sec:exact}, Eq.~\eqref{eq:collapse}); the closed-form waveform
+functional $\mathcal{B}(k)$ along that crossover
+(Eq.~\eqref{eq:Bk}), giving a second, calibration-free universal curve; the
+inversion of the clock's defect into a threshold-proximity meter
+(Sec.~\ref{sec:sensor}); and a symmetric tabletop realization with a
+simulation-validated, gate-declared measurement chain
+(Secs.~\ref{sec:apparatus}--\ref{sec:validation}). We would welcome earlier
+references for any of these and will gladly cite them.
+
 Why should a physicist care about a clock nobody builds on purpose? Because
 nature builds it at every \emph{symmetric instability threshold}, and
 thresholds are everywhere.
@@ -99,42 +143,18 @@ For $\mu>0$ the well is harmonic; for $\mu<0$ it splits into a double well.
 \emph{Exactly at threshold} the quadratic term is gone and the generic leading
 behavior --- generic because the cubic is forbidden by symmetry, not by
 tuning --- is the pure quartic. Equation~\eqref{eq:normalform} is the normal
-form of a perfect Euler column at critical load (a supercritical, or
-stable-symmetric, buckling instability), of any order parameter at a
+form of a perfect Euler column at critical load (a supercritical,
+stable-symmetric buckling instability) and of any order parameter at a
 continuous symmetry-breaking transition treated at mean-field level
-\cite{landau}. The quartic oscillator is therefore not an exotic special
-case: it is \emph{the universal clock of marginal stability}, the timekeeping
-that remains when a mode has gone soft symmetrically.
+\cite{landau}. One caveat bounds the claim: the story requires
+$\lambda>0$. In the \emph{subcritical} class ($\lambda<0$, stabilization
+only at sixth order or by contact), the edge is a cliff rather than a
+clock, and nothing below applies; ``universal'' here means universal within
+the supercritical class.
 
-The full period law across the threshold follows from one quadrature. With
-turning point $A$ and energy $E=\tfrac12\mu A^{2}+\lambda A^{4}$,
-\begin{equation}
-T(A;\mu)
-\;=\;
-4\sqrt{\frac{m}{2}}\;
-\frac{K(\kappa)}{\sqrt{\tfrac{\mu}{2}+2\lambda A^{2}}},
-\qquad
-\kappa^{2} \;=\; \frac{\lambda A^{2}}{\tfrac{\mu}{2}+2\lambda A^{2}},
-\label{eq:elliptic}
-\end{equation}
-where $K$ is the complete elliptic integral of the first kind (modulus
-convention). The two limits close exactly: at $\mu=0$,
-$\kappa^{2}=\tfrac12$ and $K(1/\sqrt2)=\Gamma(\tfrac14)^{2}/4\sqrt{\pi}$
-reproduce Eq.~\eqref{eq:period}; at $\lambda=0$, $K(0)=\pi/2$ gives
-$2\pi\sqrt{m/\mu}$. The value $\kappa=1/\sqrt2$ is the \emph{self-dual
-modulus} --- the fixed point of the exchange $k\leftrightarrow k'$ between a
-modulus and its complement, where $K'=K$ --- and it is where every appearance
-of $\Gstar$ in classical analysis originates; the reader may recognize it
-from the $90^\circ$ pendulum, whose exact period is
-$4\sqrt{L/g}\,K(1/\sqrt2)$.
-
-Equation~\eqref{eq:elliptic} also supplies the experimental narrative
-(Fig.~\ref{fig:edge}b): at small amplitude a residual $\mu$ dominates and the
-period saturates at the harmonic value; at large amplitude every curve joins
-the universal $T\propto1/A$ quartic branch; the crossover amplitude measures
-the distance to the edge. Tuning $\mu\to0$ pushes the harmonic plateau out of
-the observable window --- the signature that one has arrived at the edge is
-that \emph{the clock forgets how to be isochronous at all amplitudes}.
+The quartic oscillator is therefore not an exotic special case: it is
+\emph{the clock of supercritical marginal stability}, the timekeeping that
+remains when a mode has gone soft symmetrically.
 
 \begin{figure}[t]
 \centering
@@ -148,11 +168,112 @@ amplitude joining the universal quartic branch $T=\sqrt{\pi}\,\Gstar
 \label{fig:edge}
 \end{figure}
 
-\section{Calibration-free signatures}
+\section{The crossover is exactly solvable}
+\label{sec:exact}
+
+The full period law across the threshold follows from one quadrature. With
+turning point $A$ and energy $E=\tfrac12\mu A^{2}+\lambda A^{4}$,
+\begin{equation}
+T(A;\mu)
+\;=\;
+4\sqrt{\frac{m}{2}}\;
+\frac{K(\kappa)}{\sqrt{\tfrac{\mu}{2}+2\lambda A^{2}}},
+\qquad
+\kappa^{2} \;=\; \frac{\lambda A^{2}}{\tfrac{\mu}{2}+2\lambda A^{2}},
+\label{eq:elliptic}
+\end{equation}
+where $K$ is the complete elliptic integral of the first kind (modulus
+convention). The limits close exactly: at $\mu=0$, $\kappa^{2}=\tfrac12$ and
+$K(1/\sqrt2)=\Gamma(\tfrac14)^{2}/4\sqrt{\pi}$ reproduce
+Eq.~\eqref{eq:period}; at $\lambda=0$, $K(0)=\pi/2$ gives $2\pi\sqrt{m/\mu}$.
+The value $\kappa=1/\sqrt2$ is the \emph{self-dual modulus} --- the fixed
+point of the exchange $k\leftrightarrow k'$ between a modulus and its
+complement, where $K'=K$ --- and it is where every appearance of $\Gstar$ in
+classical analysis originates; the reader may recognize it from the
+$90^{\circ}$ pendulum, whose exact period is $4\sqrt{L/g}\,K(1/\sqrt2)$.
+
+Equation~\eqref{eq:elliptic} is standard. The two statements we now extract
+from it appear not to be, and they are the paper's central results.
+
+\paragraph{Result 1: one curve carries the whole crossover.}
+The exact orbit of Eq.~\eqref{eq:normalform} is a Jacobi elliptic cosine,
+$x(t)=A\,\mathrm{cn}(\Omega t;k)$ with $\Omega^{2}=(\mu+4\lambda A^{2})/m$
+and modulus
+\begin{equation}
+k^{2} \;=\; \frac{2\lambda A^{2}}{\mu+4\lambda A^{2}}
+\label{eq:modulus}
+\end{equation}
+(the same $\kappa$ as above) \cite{byrd,nayfeh}. Rewriting
+Eq.~\eqref{eq:elliptic} in terms of $k$ eliminates $\mu$ and $A$ separately
+and leaves
+\begin{equation}
+\boxed{\;T\,A\,\sqrt{\frac{2\lambda}{m}} \;=\; 4\,k\,K(k)\;}
+\label{eq:collapse}
+\end{equation}
+--- a \emph{single universal curve} onto which every oscillation of every
+detuning collapses: harmonic side ($k^{2}\!\to\!0$), the quartic point
+(exactly $k^{2}=\tfrac12$, where $4kK=\sqrt{\pi}\,\Gstar$, recovering
+Eq.~\eqref{eq:period}), and the double-well side ($\tfrac12<k^{2}<1$,
+oscillations over the barrier), all on one axis. The modulus is the order
+parameter of marginal timekeeping: measuring $(T,A)$ and knowing
+$(\lambda,m)$ places a data point on Fig.~\ref{fig:crossover}a, and its
+abscissa \emph{is} the dimensionless distance to threshold. The collapse in
+Fig.~\ref{fig:crossover}a is demonstrated with full-geometry simulated
+ringdowns at five micrometer settings spanning both sides of the edge; the
+small departures visible at the largest $k^{2}$ are the apparatus's real
+$x^{6}$ term, not a failure of Eq.~\eqref{eq:collapse}.
+
+\paragraph{Result 2: the waveform functional in closed form.}
+Parameterize one cycle by uniform phase $\theta\in[0,2\pi)$ and define the
+scale-, amplitude-, and unit-invariant ratio
+\begin{equation}
+\mathcal B \;=\; \frac{2\,\langle x^{2}\rangle}{\langle (dx/d\theta)^{2}\rangle}.
+\label{eq:B}
+\end{equation}
+A sinusoid gives $\mathcal B=2$ exactly. Averaging the cn orbit over a
+period (Appendix~\ref{app:Bk}) gives the exact crossover curve
+\begin{equation}
+\boxed{\;\mathcal B(k) \;=\; \frac{3\pi^{2}}{2K^{2}}\;
+\frac{E-(1-k^{2})K}{(1-k^{2})K+(2k^{2}-1)E}\;}
+\label{eq:Bk}
+\end{equation}
+with $E=E(k)$ the complete elliptic integral of the second kind. Its limits:
+$\mathcal B(0)=2$ (harmonic); at the quartic point,
+$\mathcal B(1/\sqrt2)=48\pi/\Gstar^{4}=1.9678953151\ldots$, a pure number
+$1.6\%$ below the sinusoid value. Equation~\eqref{eq:Bk} is a
+\emph{zero-parameter} prediction: no scale, no calibration, no fit enters
+either axis of Fig.~\ref{fig:crossover}b. The same construction on the
+one-parameter family $V\propto|x|^{p}$ gives
+$\mathcal B_{p}=p(p+2)\pi^{2}B(\tfrac3p,\tfrac12)/2B(\tfrac1p,\tfrac12)^{3}$
+(Appendix~\ref{app:B}), so $\mathcal B$ also discriminates \emph{which}
+power law a flat-bottomed well has: $\mathcal B_{4}=1.96790$ against
+$\mathcal B_{6}=1.92399$ --- the sextic member is what a tricritical-like
+threshold would show, and the quartic--sextic separation exceeds the entire
+quartic--sinusoid gap by some $40\%$, so the discrimination is easier than
+the detection.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig3_crossover.pdf}
+\caption{The two exact crossover curves, with full-geometry simulated
+ringdown data (suspension term and damping included). (a) Universal collapse
+Eq.~\eqref{eq:collapse}: five micrometer settings spanning taut to slack,
+including over-the-barrier double-well oscillations ($k^{2}>\tfrac12$), all
+on $4kK(k)$; departures at the largest $k^{2}$ are the real $x^{6}$ term.
+(b) The waveform functional Eq.~\eqref{eq:Bk} traced by the simulated
+ringdown with per-cycle phase mapping; both axes are dimensionless and
+nothing is fitted.}
+\label{fig:crossover}
+\end{figure}
+
+\section{Signatures with no fitted parameters}
 \label{sec:signatures}
 
 The quartic clock offers unusually clean tests because its key signatures are
-dimensionless or scale-free.
+dimensionless or free of fitted scales. (We reserve ``calibration-free'' for
+quantities like $\mathcal B$, where genuinely nothing must be measured
+beforehand; the $\Gstar$ recovery below requires \emph{calibrated} $\lambda$
+and $m$ but fits nothing.)
 
 \paragraph{S1 --- the clock law.} On the quartic branch $T\cdot A$ is constant
 and
@@ -165,29 +286,13 @@ from a static force--displacement measurement, $m$ from a scale. In log--log
 form the signature is a frequency--amplitude slope of exactly $+1$
 (a harmonic clock gives $0$).
 
-\paragraph{S2 --- the waveform functional.} The pure-quartic waveform is the
-lemniscatic sine, visibly flatter-topped than a sinusoid. Parameterizing one
-cycle by uniform phase $\theta\in[0,2\pi)$ and writing
-$x'=dx/d\theta$, the ratio
-\begin{equation}
-\mathcal B \;=\; \frac{2\,\langle x^{2}\rangle}{\langle x'^{2}\rangle}
-\label{eq:B}
-\end{equation}
-is invariant under changes of amplitude, of time unit, and of overall scale.
-For the potential family $V\propto |x|^{p}$ one finds
-$\mathcal B_2 = 2$ exactly (sinusoid), while the quartic member evaluates to
-\begin{equation}
-\mathcal B_4 \;=\; \frac{48\pi}{\Gstar^{4}} \;=\; 1.9678953151\ldots,
-\qquad
-\mathcal B_6 \;=\; \frac{24\pi^{3}}{B(\tfrac16,\tfrac12)^{3}}
-= 1.9239861993\ldots
-\label{eq:B4}
-\end{equation}
-(with $B$ the Euler beta function); the derivation is two lines from the
-virial moment $\langle x^{2}\rangle = 4/\Gstar^{2}$ and the phase-speed
-identity $\langle x'^{2}\rangle = \Gstar^{2}/6\pi$ of the normalized quartic
-waveform. The $1.6\%$ depression of $\mathcal B$ below $2$ is a pure number:
-measuring it requires no calibration of anything.
+\paragraph{S2 --- the crossover pair.} Equations \eqref{eq:collapse} and
+\eqref{eq:Bk} upgrade S1 from a point test to two curve tests: all cycles of
+all runs at all detunings must fall on $4kK(k)$ and $\mathcal B(k)$
+simultaneously, with the \emph{same} $k$ assigned to each cycle. A
+conspiracy that fakes one curve does not fake the other: the period curve
+tests the energy--frequency relation, the waveform curve tests the orbit
+shape, and they share only the modulus.
 
 \paragraph{S3 --- quantum level scaling.} The phase-space area at energy $E$
 is $J(E) = \tfrac{2}{3}\,\Gstar\sqrt{2\pi m}\;\lambda^{-1/4}E^{3/4}$, so
@@ -196,29 +301,63 @@ harmonic $E_n\propto n$. Anharmonic superconducting circuits tuned to a
 quartic point \cite{quarton}, or particles in quartic optical traps, would
 realize this rung.
 
-\section{A tabletop realization that is quartic by symmetry}
+\section{A bad clock is a good sensor}
+\label{sec:sensor}
+
+Horology chose $n=2$ for a reason, and the reason is noise. A clock whose
+frequency is proportional to its amplitude converts every amplitude
+perturbation into a frequency perturbation: near threshold the mode is soft,
+susceptibilities grow, relaxation slows, and the very sensitivity that makes
+critical points interesting makes them terrible timekeepers. Isochronism is
+not an aesthetic preference; it is noise immunity, and the pendulum's
+$\partial T/\partial A\approx0$ is the whole reason clocks work. The
+anti-pendulum maximizes exactly the coupling the pendulum was chosen to
+suppress.
+
+But a defect of a clock is, read backwards, a virtue of a sensor: \emph{the
+quantity this oscillator's timing is exquisitely sensitive to is the distance
+to its own threshold.} Equation~\eqref{eq:collapse} makes the inversion
+quantitative. From a single ringdown --- per-cycle periods and amplitudes,
+nothing else --- one assigns each cycle its $4kK$ value, reads off
+$k^{2}(A)$, and inverts Eq.~\eqref{eq:modulus}:
+$\mu = 2\lambda A^{2}\,(1-2k^{2})/k^{2}$. The detuning $\mu$ is the
+integrated proximity to instability: residual pretension in an assembly,
+axial load short of buckling in a beam, prestress in a MEMS resonator. The
+protocol of Sec.~\ref{sec:apparatus} measures it \emph{without touching the
+threshold}: in the validation of Sec.~\ref{sec:validation} the five
+micrometer settings are recovered from timing data alone with the correct
+linear knob response ($R^{2}=0.999994$) and the suspension's known
+gravitational contribution recovered as the intercept to $3\%$. In this
+reading the apparatus is not a curiosity but a prototype: anharmonic
+ringdown timing as a nondestructive meter of how far a structure sits from
+its own edge --- with the exact, parameter-free curves
+\eqref{eq:collapse} and \eqref{eq:Bk} as its calibration.
+
+\section{A tabletop realization: odd terms forbidden by symmetry}
 \label{sec:apparatus}
 
 The experimental difficulty at any critical point is staying there:
 imperfections detune $\mu$ away from zero. The following geometry sidesteps
 half of the problem by making the \emph{odd} terms vanish identically rather
 than approximately. A mass $m$ sits midway between two anchors separated by
-$2L$, held by two identical springs (stiffness $k$, natural length $L_0$).
+$2L$, held by two identical springs (stiffness $k_s$, natural length $L_0$).
 For transverse displacement $x$ each spring has length $\sqrt{L^{2}+x^{2}}$;
 with the springs exactly at natural length ($L=L_0$) the extension is
 second order in $x$, and the total potential is
 \begin{equation}
-V(x) \;=\; \frac{k}{4L^{2}}\,x^{4}\;+\;O(x^{6}),
-\qquad \lambda = \frac{k}{4L^{2}},
+V(x) \;=\; \frac{k_s}{4L^{2}}\,x^{4}\;+\;O(x^{6}),
+\qquad \lambda = \frac{k_s}{4L^{2}},
 \label{eq:springquartic}
 \end{equation}
 with the reflection symmetry exact by construction --- no cubic term is
-possible, tuned or not. Pretension $\delta=L-L_0$ reintroduces
-$\mu = 2k\delta/L$, so a single micrometer on one anchor walks the system
+possible, tuned or not. The \emph{quadratic} term, by contrast, is not
+symmetry-protected: cancelling it is a genuine tuning, and that is precisely
+the micrometer's job. Pretension $\delta=L-L_0$ reintroduces
+$\mu = 2k_s\delta/L$, so a single micrometer on one anchor walks the system
 through the full pitchfork of Fig.~\ref{fig:edge}a. At a representative
-design point ($k=500$\,N/m, $L=12$\,cm, $m=200$\,g) the periods in the
+design point ($k_s=500$\,N/m, $L=12$\,cm, $m=200$\,g) the periods in the
 working amplitude window of $1.0$--$2.4$\,cm run from $0.74$ to $1.78$\,s in
-the $\mu=0$ idealization (from $0.72$ to $1.42$\,s once the suspension term
+the $\mu=0$ idealization (from $0.71$ to $1.43$\,s once the suspension term
 of Sec.~\ref{sec:validation} is included) --- comfortable territory for
 camera tracking.
 
@@ -226,7 +365,7 @@ Because the frequency tracks its own amplitude, a \emph{single ringdown
 sweeps the entire} $T(A)$ \emph{curve}: per-cycle periods from successive
 zero crossings, per-cycle amplitudes from the geometric mean of bracketing
 peaks. Ten ringdowns constitute a complete dataset for
-Eq.~\eqref{eq:recovery}.
+Eqs.~\eqref{eq:collapse}--\eqref{eq:recovery}.
 
 \begin{figure}[t]
 \centering
@@ -234,7 +373,7 @@ Eq.~\eqref{eq:recovery}.
 \caption{End-to-end \emph{simulation} of the apparatus of
 Sec.~\ref{sec:apparatus}, including the exact (untruncated) spring geometry,
 the suspension's gravitational restoring term, and damping ($Q\approx300$).
-(a) The calibration-free combination $T\,A\sqrt{2\lambda/\pi m}$ per cycle:
+(a) The zero-fit combination $T\,A\sqrt{2\lambda/\pi m}$ per cycle:
 ignoring the suspension term biases the recovery ($-8\%$, orange); modeling
 it with Eq.~\eqref{eq:elliptic}, with $\mu$ pinned at its known value
 (experimentally: by an independent pendulum-period measurement), recovers
@@ -253,8 +392,9 @@ synthetic apparatus that includes what the idealization omits: the exact
 two-spring geometry (whose $x^{6}$ softening shifts the period by $+0.3\%$ at
 $A=0.1L$ and $+1.2\%$ at $A=0.2L$, setting the window edge), a
 bifilar-suspension gravitational term $\mu_g = mg/\ell$ (which is \emph{not}
-small --- at $\ell=1.5$\,m it shifts small-amplitude periods by up to
-$\sim25\%$ and must be modeled, not ignored), and linear damping. The
+small --- at $\ell=1.5$\,m it shifts periods by $\sim20\%$ at the window's
+small-amplitude edge, and more below it, and must be modeled, not ignored),
+and linear damping. The
 declared analysis --- Eq.~\eqref{eq:elliptic} with $\mu$ pinned at its
 independently known value --- recovers (Fig.~\ref{fig:recovery}a) a
 frequency--amplitude slope of $0.988$ and $\Gstar$ to $+0.28\%$, robust to a
@@ -265,9 +405,10 @@ simulation: because this clock chirps, each cycle must be mapped onto its own
 $2\pi$ of phase before averaging --- resampling several cycles against a
 single fixed period smears phase and spuriously pushes $\mathcal B$
 \emph{above} $2$. With per-cycle mapping the extractor is unbiased at the
-$3\times10^{-5}$ level on exact controls, and the simulated ringdown
-traverses $\mathcal B = 1.994\to1.974$, descending from near the harmonic
-value toward $\mathcal B_4$ as amplitude grows into the quartic branch.
+$3\times10^{-5}$ level on exact controls, the simulated ringdown traverses
+$\mathcal B = 1.994\to1.974$ along the exact curve of Eq.~\eqref{eq:Bk}
+(Fig.~\ref{fig:crossover}b), and the five-detuning dataset collapses onto
+Eq.~\eqref{eq:collapse} (Fig.~\ref{fig:crossover}a).
 
 The projected error budget for $\Gstar_{\mathrm{exp}}$ --- static $\lambda$
 calibration ($1\%$), effective mass ($0.8\%$), amplitude calibration
@@ -275,30 +416,246 @@ calibration ($1\%$), effective mass ($0.8\%$), amplitude calibration
 combines, through the square roots in Eq.~\eqref{eq:recovery}, to
 $\approx1.1\%$.
 
-\section{Measured data}
-\label{sec:data}
+\section{The edge in equilibrium: exact thermodynamics}
+\label{sec:thermo}
 
-\emph{[Reserved. This section will report the ringdown datasets, the
-$T(A;\mu)$ global fit across micrometer settings, the recovered
-$\Gstar_{\mathrm{exp}}$ with its uncertainty, and the measured
-$\mathcal B(A)$ trend, against the gates declared in the preregistered
-protocol accompanying this paper.]}
+Everything so far concerned isolated dynamics. Put the mode in contact with
+a bath at temperature $T$ instead, and the entire equilibrium theory turns
+out to mirror the dynamical one --- with its own detuning variable, its own
+universal curves, and $\Gstar$ again at the critical point. (All results in
+this section are verified numerically in the accompanying code to
+$10^{-9}$ or better, the lineshape by Monte Carlo; Appendix~\ref{app:thermo} has the derivations.)
 
-\section{Where else this clock lives}
+\paragraph{One thermal variable.} The momentum integral is Gaussian always
+(kinetic equipartition, $\langle p^{2}/2m\rangle=\tfrac12 k_BT$, is exact
+regardless of the potential). Rescaling $x$ by $(\beta\lambda)^{1/4}$ in the
+configurational integral leaves a single dimensionless group
+\begin{equation}
+\gamma \;=\; \mu\sqrt{\beta/\lambda}
+\qquad (\beta = 1/k_BT)
+\label{eq:gamma}
+\end{equation}
+--- the \emph{thermal} detuning, the equilibrium twin of the dynamic modulus
+$k$. Every dimensionless equilibrium quantity is a universal function of
+$\gamma$ alone (Fig.~\ref{fig:thermo}).
+
+\paragraph{The critical values.} At threshold ($\gamma=0$) the moments
+evaluate in Gamma functions:
+\begin{equation}
+\langle x^{2}\rangle
+=\sqrt{\frac{k_BT}{\lambda}}\;\frac{\Gamma(\tfrac34)}{\Gamma(\tfrac14)}
+=\frac{1}{\Gstar}\sqrt{\frac{k_BT}{\lambda}},
+\qquad
+U\equiv\frac{\langle x^{4}\rangle}{\langle x^{2}\rangle^{2}}
+=\frac{\Gstar^{2}}{4}=\frac{\Gamma(\tfrac14)^{4}}{8\pi^{2}}
+=2.188440\ldots
+\label{eq:thermalcrit}
+\end{equation}
+The variance result means the constant that rules the edge's
+\emph{timekeeping} also rules its \emph{thermal fluctuations} --- with no
+oscillation measured at all: a static, dynamics-free recovery of $\Gstar$
+from thermomechanical noise. The dimensionless ratio $U$ interpolates from
+$3$ (Gaussian, taut) through $\Gstar^{2}/4$ at the edge to $1$ (two-state,
+deep double well); readers from statistical mechanics will recognize it as
+the Binder cumulant ratio, whose mean-field critical value is exactly this
+pure-quartic number \cite{binder,brezin} --- here realized in a single
+mechanical mode with a micrometer, rather than in the finite-size scaling
+limit of a lattice model.
+
+\paragraph{Equipartition deficit.} Generalized equipartition
+($\langle x V'(x)\rangle=k_BT$) gives the critical mode
+$\langle V\rangle=\tfrac14 k_BT$, hence
+\begin{equation}
+\langle E\rangle_{\gamma=0}=\tfrac34\,k_BT,
+\qquad
+C_{\gamma=0}=\tfrac34\,k_B
+\label{eq:heatcap}
+\end{equation}
+--- a mode at its threshold carries three-quarters of a harmonic mode's heat
+capacity. The full universal curve $C(\gamma)$ (Fig.~\ref{fig:thermo}b) dips
+\emph{below} $\tfrac34 k_B$ on the slightly-slack side (minimum
+$\approx0.67\,k_B$ near $\gamma\approx-2.5$) before recovering through a
+Schottky-like excess in the double-well regime: heat capacity alone is a
+threshold detector.
+
+\paragraph{The Laplace bridge.} The two halves of this paper are one
+object: since the phase-space area between energy shells of a single orbit
+family is $T(E)\,dE$, the classical partition function of that family is
+\begin{equation}
+Z_{\mathrm{osc}}(\beta)\;=\;\int T(E)\,e^{-\beta E}\,dE .
+\label{eq:laplace}
+\end{equation}
+For $\mu\ge0$ there is one family, Eq.~\eqref{eq:collapse} covers it, and
+the identity is verified to ten digits in the code: \emph{the
+thermodynamics is the Laplace transform of the clock curve}, with the
+dynamical modulus $k$ and the thermal detuning $\gamma$ as conjugate
+descriptions of the same crossover. For $\mu<0$ the phase space carries a
+\emph{second} class of motion --- the two sub-barrier intra-well orbit
+families on $E_{\min}=-\mu^{2}/16\lambda \le E<0$, themselves
+Jacobi-elliptic --- and the bridge completes to
+$Z=\int_{E_{\min}}^{0}2\,T_{\mathrm{well}}(E)\,e^{-\beta E}dE
++\int_{0}^{\infty}T(E)\,e^{-\beta E}dE$: verified to $4\times10^{-9}$ at
+$(\mu,\beta)=(-2,1.3)$, where the over-barrier family alone would omit
+$36\%$ of $Z$. The $\gamma<0$ curves in this section are computed by direct
+quadrature and do not rely on the bridge.
+
+\paragraph{The thermal lineshape and the $T^{1/4}$ law.} An undamped
+thermal ensemble of critical-mode orbits has frequency distribution
+(Appendix~\ref{app:thermo})
+\begin{equation}
+P(f)\;\propto\;f^{2}\,e^{-(f/f_T)^{4}},
+\qquad
+f_T=\frac{(k_BT/\lambda)^{1/4}}{\sqrt{\pi}\,\Gstar}\sqrt{\frac{2\lambda}{m}}
+\;\propto\;T^{1/4},
+\label{eq:lineshape}
+\end{equation}
+peaked at $f_{\mathrm{peak}}=(1/2)^{1/4}f_T$. A harmonic mode's thermal
+spectrum sits at a temperature-independent frequency; a marginal mode's
+spectral peak \emph{climbs as the fourth root of temperature}
+(Monte-Carlo check: median frequency ratio $1.998$ between baths at
+$16{:}1$ temperature ratio, against the predicted $2$;
+Fig.~\ref{fig:thermo}c). For nanomechanical resonators parked at buckling,
+this is a signature measurable in the thermomechanical noise floor with no
+drive at all. The mechanism --- the spectrum as the thermal distribution of
+energy-dependent orbit frequencies --- is the classical Dykman--Krivoglaz
+picture for underdamped nonlinear oscillators \cite{dykman71}; what appears
+not to be in the literature is the pure-quartic closed form
+Eq.~\eqref{eq:lineshape} and the $T^{1/4}$ peak law themselves. The
+finite-$Q$ and driven versions connect to the modern
+nonlinear-nanomechanics line of that theory \cite{dykmanbook,huang}, and a
+careful reconciliation with it is required before novelty is asserted
+beyond the closed forms.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig4_thermo.pdf}
+\caption{Exact equilibrium theory of the edge, all universal in the thermal
+detuning $\gamma=\mu\sqrt{\beta/\lambda}$. (a) The moment ratio
+$U=\langle x^{4}\rangle/\langle x^{2}\rangle^{2}$: Gaussian $3$ (taut) to
+two-state $1$ (deep double well) through $\Gstar^{2}/4$ exactly at the edge.
+(b) Heat capacity per mode: the $\tfrac34 k_B$ critical value, the sub-$\tfrac34$
+valley on the slack side, and the Schottky-like double-well excess.
+(c) Thermal frequency distribution of an undamped critical mode at three
+temperatures (curves: Eq.~\eqref{eq:lineshape}; dots: direct phase-space
+Monte Carlo at $k_BT=1$); the peak climbs as $T^{1/4}$.}
+\label{fig:thermo}
+\end{figure}
+
+\section{The quantum rung}
+\label{sec:quantum}
+
+The same normal form has a third one-parameter reduction. Rescaling
+$\hat x = a\hat u$ with $a=(\hbar^{2}/2m\lambda)^{1/6}$ and measuring energy
+in $\varepsilon=\lambda a^{4}=(\lambda\hbar^{4}/4m^{2})^{1/3}$ turns
+$\hat H = \hat p^{2}/2m+\tfrac12\mu\hat x^{2}+\lambda\hat x^{4}$ into
+\begin{equation}
+\hat h \;=\; \hat v^{2} \;+\; \tfrac{g}{2}\,\hat u^{2} \;+\; \hat u^{4},
+\qquad
+g \;=\; \frac{\mu\,(2m)^{1/3}}{(\lambda\hbar)^{2/3}}
+\label{eq:qdetuning}
+\end{equation}
+--- a single \emph{quantum} detuning, the third sibling of the dynamical
+modulus $k$ and the thermal $\gamma$ (universality verified to machine
+precision in the code: two different $(m,\mu,\lambda,\hbar)$ at equal $g$
+give identical reduced spectra to $10^{-16}$). Three deformations of one
+structure: $k$ indexes the orbit, $\gamma$ the ensemble, $g$ the spectrum.
+
+\paragraph{The edge has an $\hbar$-width.} Equation~\eqref{eq:qdetuning}
+says quantum mechanics rounds the pitchfork on the scale $|g|\lesssim1$
+(quantum rounding of the Euler-buckling pitchfork, in exactly this
+quadratic-plus-quartic normal form, has been analyzed in nanomechanics
+\cite{carr,werner} --- the scale, not the concept, is what
+Eq.~\eqref{eq:qdetuning} packages),
+i.e.\ $|\mu|\lesssim\mu_{\hbar}=(\lambda\hbar)^{2/3}/(2m)^{1/3}$. Inside
+that window there is no transition at all: the ground state is symmetric for
+\emph{every} $g$, the would-be broken doublets are split by tunneling, and
+the splitting closes smoothly (exponentially) as $g\to-\infty$
+(Fig.~\ref{fig:quantum}b) --- the classical edge's sharpness is an
+$\hbar\to0$ idealization. For the tabletop of Sec.~\ref{sec:apparatus},
+$\mu_{\hbar}\sim10^{-20}$\,N/m --- twenty orders below the micrometer's
+reach, which is why the classical treatment is exact there; a quarton-class
+circuit lives \emph{inside} its $\hbar$-width by design.
+
+\paragraph{The spectrum carries the $G^{*}$-law.} At $g=0$ the
+Bohr--Sommerfeld action of Sec.~\ref{sec:signatures} gives
+\begin{equation}
+E_{n} \;\simeq\; \Bigl[\tfrac{3\sqrt{\pi}\,(n+\tfrac12)}{\Gstar}\Bigr]^{4/3}
+\varepsilon,
+\label{eq:qwkb}
+\end{equation}
+accurate to $0.6\%$ by $n=2$ and $0.002\%$ by $n=40$
+(Fig.~\ref{fig:quantum}a); the numerically exact ground state is
+$E_{0}=1.06036\,\varepsilon$, the classic strong-coupling benchmark of the
+quartic-oscillator literature \cite{benderwu,hioe} --- none of the spectral
+theory here is new, and we claim only the composition. The device-facing
+number is the spacing ratio: the pure quartic ladder \emph{widens} with $n$,
+\begin{equation}
+\frac{E_{2}-E_{1}}{E_{1}-E_{0}} \;=\; 1.3346,
+\qquad
+\frac{E_{3}-E_{2}}{E_{2}-E_{1}} \;=\; 1.1458,
+\label{eq:qratios}
+\end{equation}
+fixed, dimensionless, and opposite in sign of anharmonicity to a transmon's
+narrowing ladder --- a two-tone spectroscopy test of whether a circuit mode
+truly sits at its quartic point.
+
+\paragraph{Freeze-out welds the rungs together.} The quantum thermal state
+at $g=0$ interpolates the paper's sections: the heat capacity rises from the
+quantum $0$ to the \emph{classical edge value} $\tfrac34 k_B$ of
+Sec.~\ref{sec:thermo} (reaching $0.749\,k_B$ by $k_BT=30\,\varepsilon$), and
+the moment ratio $U$ descends from its ground-state value
+\begin{equation}
+U_{0} \;=\; \frac{\langle0|\hat u^{4}|0\rangle}{\langle0|\hat u^{2}|0\rangle^{2}}
+\;=\; 2.6969
+\label{eq:U0}
+\end{equation}
+--- a universal pure number of the quantum edge, sitting between the
+Gaussian $3$ and the classical $\Gstar^{2}/4$ --- down to the classical
+value as $T$ grows (Fig.~\ref{fig:quantum}c). Temperature and $\hbar$ are
+conjugate dials moving the same system between the $\gamma$-theory and the
+$g$-theory; the classical edge of Secs.~\ref{sec:exact}--\ref{sec:thermo}
+is the high-$T$, small-$\hbar$ face of one object.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig5_quantum.pdf}
+\caption{The quantum rung (all in reduced units of Eq.~\eqref{eq:qdetuning};
+numerically exact finite-difference spectra). (a) Pure-quartic levels
+against the WKB $G^{*}$-law Eq.~\eqref{eq:qwkb}. (b) The spectrum across the
+quantum detuning $g$: no transition, only smooth doublet formation as the
+wells deepen. (c) Thermal freeze-out at $g=0$: heat capacity and moment
+ratio approach the \emph{classical} edge values $\tfrac34 k_B$ and
+$\Gstar^{2}/4$ of Sec.~\ref{sec:thermo}.}
+\label{fig:quantum}
+\end{figure}
+
+\section{Outlook: from simulation to measurement, and beyond}
 \label{sec:platforms}
 
-Buckled micro- and nanomechanical beams at critical load realize the same
-normal form at kHz--MHz frequencies with quality factors in the thousands,
-making the waveform functional easy; superconducting circuits in which the
-Josephson cosine's quadratic term is cancelled --- the ``quarton'' line of
-devices \cite{quarton} --- realize a \emph{quantum} quartic point where the
-$E_n\propto n^{4/3}$ rung becomes measurable; and cold atoms have already
-been held in quartic-plus-quadratic traps --- built, historically, to
-confine fast-rotating Bose--Einstein condensates and their vortex lattices
-\cite{bretin} --- so the many-body breathing dynamics of a pure-quartic trap
-is within reach of existing technique. In each case the introduction offered
-here is the same: at the edge of stability, timekeeping is lemniscatic, its
-constant is $\Gstar$, and its signatures are pure numbers.
+The natural next step is the measurement itself, and a preregistered
+protocol --- hypotheses, quantitative pass/fail gates, kill conditions, and
+the analysis code frozen before data --- accompanies this paper; the
+apparatus costs a few hundred dollars and the primary dataset is ten
+ringdowns. Beyond the tabletop: buckled micro- and nanomechanical beams at
+critical load realize the same normal form at kHz--MHz frequencies with
+quality factors in the thousands, where the $\mathcal B(k)$ curve becomes
+easy and the threshold-proximity metrology of Sec.~\ref{sec:sensor} has an
+engineering constituency --- resonant sensors deliberately operated near
+the buckling bifurcation for enhanced responsivity already exist
+\cite{liu} --- with prestress and buckling margin as the natural
+measurands;
+superconducting circuits in which the Josephson cosine's quadratic term is
+cancelled --- the ``quarton'' element, demonstrated to date as a purely
+nonlinear \emph{coupler} between qubits \cite{quarton} --- point at a
+\emph{quantum} quartic mode where the $E_n\propto n^{4/3}$ rung becomes
+measurable; and cold atoms have already been held in quartic-plus-quadratic
+traps --- built, historically, to confine fast-rotating Bose--Einstein
+condensates and their vortex lattices \cite{bretin} --- so the many-body
+breathing dynamics of a pure-quartic trap is within reach of existing
+technique. In each case the offer is the same: at the supercritical edge of
+stability, timekeeping is lemniscatic, its constant is $\Gstar$, its entire
+crossover is two exact parameter-free curves, and what ruins it as a clock
+is precisely what qualifies it as a sensor.
 
 \section*{Companion materials}
 
@@ -309,8 +666,10 @@ Eqs.~\eqref{eq:period} and \eqref{eq:recovery} with adjustable $(A,\lambda,m)$
 Sec.~\ref{sec:validation} --- together with a two-dimensional
 Ginzburg--Landau vortex sandbox illustrating, by contrast, dynamics whose
 amplitude mode is harmonic: a visual reminder that a quartic \emph{interaction}
-is not a quartic \emph{clock}. All simulation and figure code is included and
-runs from scratch.
+is not a quartic \emph{clock}. All simulation and figure code is included,
+runs from scratch, and prints its own verification of
+Eqs.~\eqref{eq:collapse} and \eqref{eq:Bk} against direct quadrature and
+independent waveform simulation at generic moduli.
 
 \section*{Acknowledgments}
 \emph{[Reserved.]}
@@ -340,9 +699,15 @@ T=4\sqrt{\frac m2}\int_0^{\pi/2}
 \frac{K(\kappa)}{\sqrt{\tfrac{\mu}{2}+2\lambda A^{2}}},
 \]
 with $\kappa^{2}=\lambda A^{2}/(\tfrac{\mu}{2}+2\lambda A^{2})$ ---
-Eq.~\eqref{eq:elliptic}.
+Eq.~\eqref{eq:elliptic}. The collapse Eq.~\eqref{eq:collapse} follows by
+eliminating: from Eq.~\eqref{eq:modulus},
+$\tfrac{\mu}{2}+2\lambda A^{2}=\lambda A^{2}/k^{2}$, so
+$T=4\sqrt{m/2}\;K\,k/(A\sqrt{\lambda})$, i.e.
+$T\,A\sqrt{2\lambda/m}=4kK(k)$, valid on both sides of threshold
+($0<k^{2}<1$; $k^{2}>\tfrac12$ is the double-well side, oscillations above
+the barrier).
 
-\section{The waveform functional}
+\section{The waveform functional on the $|x|^{p}$ family}
 \label{app:B}
 
 Let $x(\theta)$ be one cycle of the normalized ($|x|\le1$) waveform in
@@ -360,9 +725,83 @@ phase-speed law $(dx/d\theta)^{2}=\tfrac{4B_{p0}^{2}}{p^{2}\pi^{2}}
 For $p=2$ this is $2$ exactly. For $p=4$, $B(\tfrac34,\tfrac12)=
 4\sqrt{\pi}/\Gstar$ and $B(\tfrac14,\tfrac12)=\sqrt{\pi}\,\Gstar$ give
 $\langle x^{2}\rangle=4/\Gstar^{2}$, $\langle x'^{2}\rangle=\Gstar^{2}/6\pi$,
-and $\mathcal B_4=48\pi/\Gstar^{4}$ --- Eq.~\eqref{eq:B4}.
+and $\mathcal B_4=48\pi/\Gstar^{4}$.
 
-\begin{thebibliography}{9}
+\section{The waveform functional along the crossover}
+\label{app:Bk}
+
+With $x=A\,\mathrm{cn}(u;k)$, $u=\Omega t$, one period is $4K$, and uniform
+phase is $\theta=\pi u/2K$, so $dx/d\theta=(2K/\pi)\,dx/du
+=-(2K/\pi)A\,\mathrm{sn}\,\mathrm{dn}$. The period averages of the Jacobi
+functions are standard \cite{byrd}:
+\[
+\langle \mathrm{cn}^{2}\rangle=\frac{E-(1-k^{2})K}{k^{2}K},
+\qquad
+\langle \mathrm{sn}^{2}\rangle=\frac{K-E}{k^{2}K},
+\qquad
+\langle \mathrm{sn}^{4}\rangle=\frac{(2+k^{2})K-2(1+k^{2})E}{3k^{4}K},
+\]
+and $\mathrm{sn}^{2}\mathrm{dn}^{2}=\mathrm{sn}^{2}-k^{2}\mathrm{sn}^{4}$
+gives
+\[
+\langle \mathrm{sn}^{2}\mathrm{dn}^{2}\rangle
+=\frac{(1-k^{2})K+(2k^{2}-1)E}{3k^{2}K}.
+\]
+Therefore
+\[
+\mathcal B(k)
+=\frac{2A^{2}\langle \mathrm{cn}^{2}\rangle}
+      {(2K/\pi)^{2}A^{2}\langle \mathrm{sn}^{2}\mathrm{dn}^{2}\rangle}
+=\frac{3\pi^{2}}{2K^{2}}\,
+\frac{E-(1-k^{2})K}{(1-k^{2})K+(2k^{2}-1)E},
+\]
+which is Eq.~\eqref{eq:Bk}. Limits: $k\to0$ gives $\mathcal B\to2$
+(expanding $E,K$ to $O(k^{2})$); $k^{2}=\tfrac12$ gives, with
+$K(1/\sqrt2)=\Gamma(\tfrac14)^{2}/4\sqrt{\pi}$ and the Legendre relation,
+$\mathcal B=48\pi/\Gstar^{4}$. Both limits, and a generic-modulus spot
+check against direct waveform simulation, are verified numerically in the
+accompanying code.
+
+\section{The thermodynamics of the edge: derivations}
+\label{app:thermo}
+
+\paragraph{Moments.} With $x=(\beta\lambda)^{-1/4}u$ the configurational
+weight becomes $e^{-\frac{\gamma}{2}u^{2}-u^{4}}$ with $\gamma$ of
+Eq.~\eqref{eq:gamma}. At $\gamma=0$,
+$\langle u^{2n}\rangle=\Gamma(\tfrac{2n+1}{4})/\Gamma(\tfrac14)$, giving
+$\langle u^{2}\rangle=\Gamma(\tfrac34)/\Gamma(\tfrac14)=1/\Gstar$ (via the
+reflection formula, as in Appendix~\ref{app:period}) and
+$\langle u^{4}\rangle=\Gamma(\tfrac54)/\Gamma(\tfrac14)=\tfrac14$, whence
+Eq.~\eqref{eq:thermalcrit}: $U(0)=\tfrac14\Gstar^{2}$. The Gaussian limit
+$\gamma\to+\infty$ gives Wick's $U=3$; the deep double well
+$\gamma\to-\infty$ concentrates on $\pm x_{\min}$, giving $U=1$.
+
+\paragraph{Energy and heat capacity.} Generalized equipartition
+$\langle xV'(x)\rangle=k_BT$ applied to $V=\lambda x^{4}$ gives
+$4\langle V\rangle=k_BT$; adding the kinetic $\tfrac12 k_BT$ yields
+Eq.~\eqref{eq:heatcap}. For general $\gamma$, $C(\gamma)$ follows from
+differentiating $\langle E\rangle$; the curve in Fig.~\ref{fig:thermo}b is
+computed by direct quadrature.
+
+\paragraph{Laplace bridge.} The phase-space measure between energy shells
+of a one-degree-of-freedom orbit family is $dJ = T(E)\,dE$ (the period is
+the derivative of the action), so summing over families,
+$Z_{\mathrm{osc}}=\int e^{-\beta H}\,dx\,dp=\sum_{\mathrm{families}}\int
+T_{i}(E)\,e^{-\beta E}dE$ --- Eq.~\eqref{eq:laplace}. For $\mu\ge0$ the sum
+has one term; for $\mu<0$ it has three (two congruent intra-well families
+below the barrier, one symmetric family above). This is elementary but
+load-bearing: it is the exact sense in which the equilibrium theory of
+Sec.~\ref{sec:thermo} is the integral transform of the dynamical periods,
+of which Eq.~\eqref{eq:collapse} describes the symmetric family.
+
+\paragraph{Lineshape.} For the critical mode, $E=\lambda A^{4}$ and
+$f(E)=(E/\lambda)^{1/4}\sqrt{2\lambda/m}\,/(\sqrt{\pi}\Gstar)$. The thermal
+weight of orbits is $T(E)e^{-\beta E}dE\propto E^{-1/4}e^{-\beta E}dE$;
+transforming to $f$ with $E\propto f^{4}$ (so $dE\propto f^{3}df$ and
+$E^{-1/4}\propto f^{-1}$) gives $P(f)\propto f^{2}e^{-(f/f_T)^4}$ with
+$f_T$ as in Eq.~\eqref{eq:lineshape}, peaked at $(1/2)^{1/4}f_T$.
+
+\begin{thebibliography}{99}
 
 \bibitem{huygens} C.~Huygens, \emph{Horologium Oscillatorium} (Paris, 1673).
 
@@ -378,6 +817,38 @@ origins of elliptic functions).
 (Butterworth--Heinemann, Oxford, 1976) (anharmonic oscillations; normal
 forms at instability).
 
+\bibitem{byrd} P.~F.~Byrd and M.~D.~Friedman, \emph{Handbook of Elliptic
+Integrals for Engineers and Scientists}, 2nd ed.\ (Springer, Berlin, 1971).
+
+\bibitem{nayfeh} A.~H.~Nayfeh and D.~T.~Mook, \emph{Nonlinear Oscillations}
+(Wiley, New York, 1979).
+
+\bibitem{kovacic} I.~Kovacic and M.~J.~Brennan (eds.), \emph{The Duffing
+Equation: Nonlinear Oscillators and their Behaviour} (Wiley, Chichester,
+2011).
+
+\bibitem{mohazzabi} P.~Mohazzabi, ``Theory and examples of intrinsically
+nonlinear oscillators,'' Am.\ J.\ Phys.\ \textbf{72}, 492--498 (2004).
+
+\bibitem{cveticanin} L.~Cveticanin, ``Oscillator with fraction order
+restoring force,'' J.\ Sound Vib.\ \textbf{320}, 1064--1077 (2009).
+
+\bibitem{belendez} A.~Bel\'endez \emph{et al.}, ``Nonlinear oscillator with
+power-form elastic-term: Fourier series expansion of the exact solution,''
+Commun.\ Nonlinear Sci.\ Numer.\ Simul.\ \textbf{22}, 134--148 (2015).
+
+\bibitem{ong} C.~Ong, ``Hysteresis in a simple V-shaped spring-mass
+system,'' Am.\ J.\ Phys.\ \textbf{89}, 663--665 (2021).
+
+\bibitem{bissell} J.~Bissell and D.~Nagaitis, ``Perfect and imperfect
+pitchfork bifurcations in a V-shaped spring-mass system,''
+Am.\ J.\ Phys.\ \textbf{91}, 659 (2023).
+
+\bibitem{liu} H.~Liu, G.~Baglioni, C.~B.~Constant, H.~S.~J.~van der Zant,
+P.~G.~Steeneken, and G.~J.~Verbiest, ``Enhanced sensitivity and tunability
+of thermomechanical resonance near the buckling bifurcation,''
+2D Mater.\ 	extbf{11}, 025028 (2024).
+
 \bibitem{bretin} V.~Bretin, S.~Stock, Y.~Seurin, and J.~Dalibard,
 ``Fast rotation of a Bose--Einstein condensate,''
 Phys.\ Rev.\ Lett.\ \textbf{92}, 050403 (2004).
@@ -385,6 +856,42 @@ Phys.\ Rev.\ Lett.\ \textbf{92}, 050403 (2004).
 \bibitem{quarton} Y.~Ye \emph{et al.}, Phys.\ Rev.\ Lett.\ \textbf{127},
 050502 (2021) (the ``quarton'': a Josephson element with cancelled quadratic
 term, realizing a purely nonlinear --- quartic --- potential).
+
+\bibitem{benderwu} C.~M.~Bender and T.~T.~Wu, ``Anharmonic oscillator,''
+Phys.\ Rev.\ \textbf{184}, 1231--1260 (1969).
+
+\bibitem{hioe} F.~T.~Hioe and E.~W.~Montroll, ``Quantum theory of anharmonic
+oscillators,'' J.\ Math.\ Phys.\ \textbf{16}, 1945--1955 (1975).
+
+\bibitem{binder} K.~Binder, ``Finite size scaling analysis of Ising model
+block distribution functions,'' Z.\ Phys.\ B \textbf{43}, 119--140 (1981).
+
+\bibitem{brezin} E.~Br\'ezin and J.~Zinn-Justin, ``Finite size effects in
+phase transitions,'' Nucl.\ Phys.\ B \textbf{257}, 867--893 (1985).
+
+\bibitem{quartonexp} Y.~Ye \emph{et al.}, ``Near-ultrastrong nonlinear
+light-matter coupling in superconducting circuits,'' Nat.\ Commun.\
+\textbf{16}, 3799 (2025).
+
+\bibitem{dykman71} M.~I.~Dykman and M.~A.~Krivoglaz, ``Classical theory of
+nonlinear oscillators interacting with a medium,'' Phys.\ Status Solidi (b)
+\textbf{48}, 497--512 (1971).
+
+\bibitem{dykmanbook} M.~Dykman (ed.), \emph{Fluctuating Nonlinear
+Oscillators: From Nanomechanics to Quantum Superconducting Circuits}
+(Oxford University Press, Oxford, 2012).
+
+\bibitem{huang} L.~Huang, S.~M.~Soskin, I.~A.~Khovanov, R.~Mannella,
+K.~Ninios, and H.~B.~Chan, ``Frequency stabilization and noise-induced
+spectral narrowing in resonators with zero dispersion,'' Nat.\ Commun.\
+\textbf{10}, 3930 (2019).
+
+\bibitem{carr} S.~M.~Carr, W.~E.~Lawrence, and M.~N.~Wybourne,
+``Accessibility of quantum effects in mesomechanical systems,''
+Phys.\ Rev.\ B \textbf{64}, 220101(R) (2001).
+
+\bibitem{werner} P.~Werner and W.~Zwerger, ``Macroscopic quantum effects in
+nanomechanical systems,'' Europhys.\ Lett.\ \textbf{65}, 158 (2004).
 
 \end{thebibliography}
 
