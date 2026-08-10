@@ -1,8 +1,8 @@
 """Where does pi come from, where does G* come from, and what breaks them?
 
 Two exact results and one caveat, all needed by the clock section of the
-semantic-ontology paper.  Every number the paper quotes for these comes
-from here; none is transcribed.
+semantic-ontology paper.  The quadrature and sextic-family numbers come
+from here; the separate harmonic-surrogate campaign does not.
 
 1. THE DECOMPOSITION.  The quarter period of a degree-n symmetric
    oscillator V = lambda|x|^n, at amplitude A, is
@@ -17,9 +17,10 @@ from here; none is transcribed.
    RATIO Gamma(1/n)/(n Gamma(1/n+1/2)), which is what changes with n.
 
    n = 2 is the unique SELF-REPRODUCING case: its degree ratio is itself
-   sqrt(pi)/2, so the harmonic constant is pi = sqrt(pi) * sqrt(pi)/2.
-   That is why the harmonic clock's constant is a power of pi and every
-   other clock's is a Gamma ratio.  At n = 4 the degree ratio is G*/4.
+   sqrt(pi)/2, so I(2)=pi/2 (and the full period coefficient is 2pi for
+   m=1, V=x^2/2).  At n=4, I(4)=sqrt(pi)G*/4 (and the corresponding full
+   T.A coefficient is sqrt(pi)G*).  This is why the harmonic row contains
+   only a power of pi while the quartic row contains the Gamma ratio G*.
 
    (Terminology note: "surd" is NOT used for sqrt(pi) here.  In this
    repository the surd is delta = sqrt(G*(4G*-1)), the FC-W import of
@@ -38,10 +39,10 @@ from here; none is transcribed.
    degeneracy, and the proposition needs an A -> 0 clause rather than a
    lambda clause.
 
-   The payoff is that this is the paper's own measurement seen from the
-   other side: the twelve-DOF ringdown holds T*A constant to 0.33% over a
-   sixfold amplitude range and recovers G* only in the A -> 0
-   extrapolation.  That 0.33% is r.
+   This sextic family is an independent counterexample, not a model of the
+   paper's harmonic-spring surrogate.  Positive r produces a deficit in
+   T*A, whereas the surrogate reports a +0.33% excess dominated by
+   amplitude-dependent effective mass.  The two must not be identified.
 
 Reproduction:
     python scripts/experiments/temporal_interior/derive_period_decomposition.py
@@ -198,14 +199,9 @@ def main():
     print("    [verify] r = 0 gives exactly sqrt(pi) G* = %s"
           % mp.nstr(SQPI * GSTAR, 15))
 
-    # The paper's own 0.33% over a sixfold amplitude range: what r is that?
-    target = mp.mpf("0.0033")
-    r_meas = mp.findroot(lambda rr: 1 - J_of_r(rr) / J0 - target,
-                         mp.mpf("0.005"))
-    print("    [verify] a 0.33%% deficit in T*A corresponds to r = %s;"
-          % mp.nstr(r_meas, 6))
-    print("             the MVC's measured drift is this term, and the")
-    print("             A -> 0 extrapolation is what removes it.")
+    print("    [scope] positive sextic r gives a T*A deficit; the MVC")
+    print("            surrogate's +0.33% excess has a different sign and")
+    print("            is dominated by amplitude-dependent effective mass.")
     print()
 
     # The pure sextic, i.e. what lambda = 0 actually gives (a single

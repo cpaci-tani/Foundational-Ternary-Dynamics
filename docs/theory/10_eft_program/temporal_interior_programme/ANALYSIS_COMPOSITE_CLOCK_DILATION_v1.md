@@ -1,158 +1,206 @@
-# ANALYSIS — The Dispersion Substitution, Executed: Necessary and Not Sufficient
+# ANALYSIS — Composite Spectral Gap Against the Finite-Gap SR Comparator
 
-**Status:** `[MEASURED — NON-UNIVERSAL DILATION EXPONENT]` +
-`[NEGATIVE — A STATIC BINDING CANNOT GIVE RELATIVISTIC DILATION]` +
-`[RETRACTION — withdraws the 2026-08-08 claim that the fix was "a modelling change, not a carrier search"]` +
-`[BOOKED — FTD-0814]`
-**Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_composite_clock_dilation.py`
-**Parents:** `ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md` (**which this
-corrects**), `ANALYSIS_COMPOSITE_CONE_INHERITANCE_v1.md`,
+**Status:** `[OPEN]` — exploratory/inconclusive finite-gap diagnostic. The
+former $p=-1$ exponent verdict and static-binding no-go are withdrawn.
+**Date:** 2026-08-08; corrected 2026-08-09
+**Artifact:** `scripts/experiments/temporal_interior/derive_composite_clock_dilation.py`
+**Parents:** `ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md` (which the first
+version attempted to correct), `ANALYSIS_COMPOSITE_CONE_INHERITANCE_v1.md`,
 `DERIV_TWO_OWED_PROOFS_v1.md` §2.7.
-**Production impact:** none. No constant is changed; no tag moves.
+**Production impact:** none. No constant or production rule is changed.
 
 ---
 
 ## 1. What was owed
 
-The minimum viable clock is Galilean because its nodes carry Newtonian
-dispersion $p^2/2m$. `ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md` §4
-diagnosed this and asserted the remedy:
+The minimum viable mechanical clock used Newtonian constituent dispersion
+$p^2/2m$ and was therefore Galilean. A proposed diagnostic replaced that
+dispersion with the axial lattice-KG dispersion and asked whether the gap
+between two bound levels slowed relativistically.
 
-> "Replacing $p^2/2m$ by the lattice-KG dispersion is a modelling change,
-> not a carrier search."
+The first version of this analysis used
 
-That was stated and not run. It has now been run, and **it is wrong.**
+$$
+\frac{\Omega(K)}{\Omega(0)}=\gamma^p,
+\qquad \gamma=\frac{E_0(K)}{E_0(0)},
+$$
 
-## 2. The instrument
+and treated $p=-1$ as the exact special-relativistic target. That target is
+not exact for a finite spectral gap. Because all sampled $\gamma$ values are
+close to one, taking a ratio of logarithms also magnified small discrepancies
+into a large apparent spread in $p$. The earlier negative verdict therefore
+does not follow from the reported exponent range.
 
-Two constituents on the axial section of the M18 lattice, bound by a
-finite square well in the relative coordinate. At fixed total momentum $K$
-the relative-motion Hamiltonian
-$$H_K = \mathrm{Toeplitz}\big[\mathcal{F}^{-1}(\omega(q)+\omega(K-q))\big]
-       + \mathrm{diag}\,V(r)$$
-is Hermitian and small, so it is diagonalized exactly. Two bound states
-below the two-particle continuum give a genuine internal clock with gap
-$\Omega = E_1 - E_0$.
+## 2. Instrument and scope
 
-**The test, and why universality is the whole of it.** A moving clock must
-satisfy $\Omega(K) = \Omega(0)/\gamma$ with $\gamma = E_0(K)/E_0(0)$ — and
-must do so *with the same exponent whatever the clock is made of*. That
-universality **is** time dilation; a material-dependent rate is not
-dilation at all, however cleanly it fits a power law. So the instrument
-fits
-$$\frac{\Omega(K)}{\Omega(0)} = \gamma^{\,p}$$
-and asks whether $p = -1$ independently of constituent mass and binding
-fraction.
+Two constituents on the axial section of the M18 lattice are bound by a
+finite square well in the relative coordinate. At fixed total momentum $K$,
 
-## 3. The control confirms the substitution is necessary
+$$
+H_K=\operatorname{Toeplitz}
+\!\left[\mathcal F^{-1}\!\left(\omega(q)+\omega(K-q)\right)\right]
++\operatorname{diag}V(r)
+$$
 
-With Newtonian nodes (momentum folded to $[-\pi,\pi)$ first — see §6):
+is diagonalized numerically. Two eigenvalues below the free two-particle
+continuum define the spectral gap
+$\Omega(K)=E_1(K)-E_0(K)$.
 
-$$\max_K\left|\frac{\Omega(K)}{\Omega(0)}-1\right| = 8.7\times10^{-6}
-\qquad\text{while }\gamma\text{ reaches }1.399 .$$
+The scope is one dimensional, one lattice size ($L=512$), one square-well
+interaction class, six fixed parameter cases, and three comparison momenta
+$K\in\{0.10,0.15,0.20\}$. No finite-volume, momentum-window, continuum, or
+interacting common-cone convergence study is supplied. The calculation is
+therefore an exploratory diagnostic, not a structural result about static
+potentials or Lorentz recovery.
 
-So $p = 0$: the internal clock does not move at all however fast the
-composite travels. The Galilean theorem holds numerically, and the carrier
-as built could never have tested dilation. **The substitution is
-necessary.**
+## 3. The correct finite-gap comparator
 
-## 4. The result: the exponent is not universal
+For a Lorentz-covariant two-level system with rest energies $M_0$ and $M_1$,
+the exact energies at common momentum $P$ are
 
-| $M$ | well $(G,R)$ | binding fraction | $\Omega(0)$ | $p$ |
-|---|---|---|---|---|
-| 0.40 | (0.045, 13) | 0.0479 | 0.017961 | $-1.976$ |
-| 0.40 | (0.150, 6) | 0.1550 | 0.067457 | $-1.460$ |
-| 0.40 | (0.300, 4) | 0.3103 | 0.131191 | $-1.088$ |
-| 0.25 | (0.030, 13) | 0.0444 | 0.018666 | $-0.937$ |
-| 0.60 | (0.100, 8) | 0.0724 | 0.033247 | $-2.295$ |
-| 0.80 | (0.200, 6) | 0.1113 | 0.048528 | $-2.700$ |
+$$
+E_j(P)=\sqrt{M_j^2+c^2P^2}.
+$$
 
-$p$ spans $[-2.700, -0.937]$ — a spread of $1.76$ — varying with **both**
-the constituent mass and the binding fraction. Relativity admits $p=-1$,
-for every clock. The lattice constituents do make the clock slow, but by
-an amount that depends on what the clock is made of.
+The fixed-momentum gap ratio is consequently
 
-> **The substitution is necessary and not sufficient.** It moves the
-> exponent off zero, and does not move it to $-1$; it does not even move it
-> to a single value.
+$$
+R_{\rm SR}(P)
+=\frac{E_1(P)-E_0(P)}{M_1-M_0}
+=\frac{M_0+M_1}{E_0(P)+E_1(P)}.
+\tag{1}
+$$
 
-## 5. Diagnosis: the binding does not contract
+Writing $\gamma_0=E_0(P)/M_0$ gives the form used by the artifact,
 
-The relative effective mass is exact kinematics, and the instrument
-verifies it:
+$$
+R_{\rm SR}
+=\frac{M_0+M_1}
+{\gamma_0M_0+\sqrt{M_1^2+M_0^2(\gamma_0^2-1)}}.
+\tag{2}
+$$
 
-| $K$ | $\mu_K/\mu_0$ | $\gamma^3$ | ratio |
-|---|---|---|---|
-| 0.2 | 1.03525 | 1.03281 | 1.0024 |
-| 0.4 | 1.14469 | 1.13328 | 1.0101 |
-| 0.6 | 1.34001 | 1.30719 | 1.0251 |
-| 0.8 | 1.64333 | 1.56339 | 1.0511 |
+Only in the infinitesimal-gap limit
+$(M_1-M_0)/M_0\to0$ does (2) reduce to $1/\gamma_0$. Thus $p=-1$ is a
+small-gap approximation, not the exact target for the finite gaps in this
+instrument.
 
-$\mu_K = \mu_0\gamma^3$, from the curvature of $\omega(q)+\omega(K-q)$ at
-its equal-velocity minimum. That factor is material-independent. What is
-missing is the other half: **a static lab-frame well does not
-Lorentz-contract.** A covariantly-bound composite gets a binding region
-narrowing as $1/\gamma$, supplying a compensating material-independent
-factor; a square well nailed to the lattice supplies nothing, and the
-residual is then set by how the particular well's level spacing happens to
-respond to $\mu$ — which is exactly the material dependence observed.
+For the table below, the measured ground-state ratio
+$E_0(K)/E_0(0)$ is used as a conditional proxy for $\gamma_0$. This asks
+whether the excited level shares the dispersion inferred from the ground
+level. It does **not** independently establish that the ground level itself
+has the correct common-cone relativistic dispersion.
 
-## 6. What this retracts
+## 4. Controls
 
-`ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md` §2 argued that of the two
-limits hidden in a distance potential — Newtonian constituents and
-instantaneous binding — **only the first destroys dilation**, citing
-hydrogen: instantaneous Coulomb binding, exact dilation. The inference was
-that the retardation axis could be set aside.
+With Newtonian constituents, after folding momentum into $[-\pi,\pi)$, the
+gap stays fixed to
 
-**That inference is withdrawn.** Hydrogen escapes because its binding
-fraction is $\sim10^{-5}$, so the non-covariance of its binding is a
-negligible correction — *not* because non-covariant binding is harmless.
-At binding fractions of $0.04$–$0.31$ it is the leading error, and it
-destroys universality.
+$$
+\max_K\left|\frac{\Omega(K)}{\Omega(0)}-1\right|
+=8.69\times10^{-6}
+$$
 
-The corrected statement of the two limits:
+while the ground-state ratio reaches $\gamma_0=1.3992$. At that endpoint the
+maximum relative discrepancy from (2) is $39.1\%$. Within this declared
+instrument, Newtonian constituent dispersion therefore fails the finite-gap
+SR comparator. This is a valid control result; it is not a proof that a
+particular lattice substitution is the unique remedy.
 
-| limit | what it controls |
-|---|---|
-| constituent dispersion ($v/c$) | whether the clock dilates **at all** |
-| binding covariance ($\omega r/c$) | whether the dilation is **universal**, i.e. relativistic |
+The method note from the first run remains relevant. The Newtonian arm had
+initially evaluated $q^2$ on the raw periodic grid $[0,2\pi)$, making
+$\omega_{\rm NR}(K-q)$ discontinuous at the zone boundary. Folding to
+$[-\pi,\pi)$ removes that numerical artifact.
 
-Both are required. The first was correctly identified; the second was
-wrongly dismissed.
+## 5. Corrected fixed-case results
 
-*A method note, recorded because it nearly inverted the control.* The
-Newtonian arm initially failed its own assertion at $6.9\times10^{-2}$.
-The cause was not physics: $q^2$ was evaluated on the raw grid
-$[0,2\pi)$, where it is not periodic, so $\omega_{\rm NR}(K-q)$ was
-discontinuous at the zone edge. Folding $q$ into $[-\pi,\pi)$ first
-recovers $8.7\times10^{-6}$. A non-periodic function evaluated on a
-periodic momentum grid is a silent error of exactly the kind an assert
-exists to catch.
+Define the reported residual
 
-## 7. Consequence for the gate
+$$
+r(K)=\frac{\Omega(K)/\Omega(0)}{R_{\rm SR}(K)}-1.
+$$
 
-The composite-boost item does **not** reduce to a substitution. Its
-requirement is now stated more precisely than before, and is harder:
+The deterministic rerun gives:
 
-> a carrier whose constituents carry the substrate dispersion **and**
-> whose binding is mediated by the substrate field, so that the binding
-> region contracts with the motion.
+| $M$ | well $(G,R)$ | binding fraction | $\Omega(0)/E_0(0)$ | $r(0.10)$ | $r(0.15)$ | $r(0.20)$ | $\max|r|$ |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0.40 | (0.045, 13) | 0.0479 | 0.0234 | $-0.269\%$ | $-0.605\%$ | $-1.076\%$ | $1.076\%$ |
+| 0.40 | (0.150, 6) | 0.1550 | 0.0991 | $-0.158\%$ | $-0.357\%$ | $-0.638\%$ | $0.638\%$ |
+| 0.40 | (0.300, 4) | 0.3103 | 0.2362 | $-0.092\%$ | $-0.208\%$ | $-0.373\%$ | $0.373\%$ |
+| 0.25 | (0.030, 13) | 0.0444 | 0.0390 | $+0.034\%$ | $+0.044\%$ | $-0.0001\%$ | $0.044\%$ |
+| 0.60 | (0.100, 8) | 0.0724 | 0.0294 | $-0.165\%$ | $-0.372\%$ | $-0.660\%$ | $0.660\%$ |
+| 0.80 | (0.200, 6) | 0.1113 | 0.0332 | $-0.130\%$ | $-0.292\%$ | $-0.519\%$ | $0.519\%$ |
 
-Band clearance (C2) remains a separate obstruction. The two are now known
-to be independent: this instrument's composites are bound *below* the
-two-particle continuum at every $K$ — band clearance is satisfied here by
-construction — and dilation still fails. Clearing the band would not have
-been enough.
+The maximum fixed-case residuals span $0.044\%$ to $1.076\%$. These values
+do not establish exact Lorentzian dilation, but they also do not support the
+earlier headline that a material-dependent exponent spanning
+$[-2.700,-0.937]$ is a structural failure. One case is consistent with the
+conditional comparator at the present numerical scope, while the others
+show sub-percent to one-percent residuals whose origin has not been isolated.
+
+## 6. The $\mu_K/\mu_0$ relation is approximate
+
+For the free pair, let $\mu_K^{-1}$ be the curvature of
+$\omega(q)+\omega(K-q)$ at its equal-velocity minimum, and define the
+corresponding free-pair ratio
+
+$$
+\gamma_f=\frac{\omega(K/2)}{\omega(0)}.
+$$
+
+The continuum relativistic small-momentum relation is
+$\mu_K/\mu_0\simeq\gamma_f^3$. It is not an exact identity of the lattice
+dispersion:
+
+| $K$ | $\mu_K/\mu_0$ | $\gamma_f^3$ | relative residual |
+|---:|---:|---:|---:|
+| 0.2 | 1.03525 | 1.03183 | $+0.332\%$ |
+| 0.4 | 1.14469 | 1.12907 | $+1.383\%$ |
+| 0.6 | 1.34001 | 1.29673 | $+3.338\%$ |
+| 0.8 | 1.64333 | 1.54242 | $+6.542\%$ |
+
+The earlier table compared the free-pair curvature to an interacting
+ground-state $\gamma$ and then called the result exact despite residuals up
+to several percent. The corrected comparison keeps both quantities in the
+same free-pair sector and labels the relation at its actual asymptotic
+strength.
+
+## 7. Revised verdict and retractions
+
+The supported conclusions are now only:
+
+1. In this instrument, Newtonian constituent dispersion leaves the internal
+   gap essentially fixed and fails the finite-gap SR comparator.
+2. With the chosen lattice constituent dispersion, the six fixed square-well
+   cases lie within $0.044\%$--$1.076\%$ of the conditional comparator over
+   the three sampled momenta.
+3. Those residuals have not been separated into finite-volume,
+   finite-momentum, lattice-dispersion, interaction, or genuine common-cone
+   contributions.
+
+The following former conclusions are withdrawn:
+
+- $p=-1$ as the exact finite-gap target;
+- the spread of fitted $p$ as a structural non-universality result;
+- $\mu_K/\mu_0=\gamma^3$ as an exact lattice identity;
+- the claim that the static well has been shown to be the cause of the
+  residual;
+- the claimed static-binding no-go and the associated assertion that a
+  Lorentz-contracting binding region is the uniquely diagnosed repair.
+
+A covariant interacting action remains the appropriate eventual test, but
+that is a programme requirement, not a conclusion of this six-case screen.
+Band clearance is likewise a separate condition: the two bound levels lie
+below the free continuum in these cases, but this does not settle their
+boost law.
 
 ## 8. Reproduction
 
-```
+```text
 python scripts/experiments/temporal_interior/derive_composite_clock_dilation.py
 ```
 
-About a minute; deterministic. The run asserts the Galilean control, the
-boundedness of the excited state at every sampled parameter set, and that
-the exponent spread exceeds $0.5$ — the last so that a future change which
-accidentally restored universality would fail loudly rather than pass
-unnoticed.
+The run is deterministic. It asserts the Newtonian control, verifies that
+the excited level remains below the continuum in every fixed case, and
+checks the infinitesimal-gap limit of (2). It does not encode the scientific
+outcome as a pass/fail gate.

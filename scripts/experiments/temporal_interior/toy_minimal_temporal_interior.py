@@ -7,11 +7,13 @@ share module-level constants, and that is the whole of the composition
 claim.  Each is minimal and has an exact or independently-known answer,
 so every number below is checkable:
 
-  1. SUBSTRATE   a discrete field on a lattice with a causal polytope and
-                 an emergent light cone (the containment result).
-  2. CLOCK       the minimum viable carrier's mirror-even mode, an exact
-                 quartic oscillator:  Q'' = -(4 lam/m) Q^3,
-                 period law  T*A = sqrt(pi) G* sqrt(m/2 lam).
+  1. SUBSTRATE   a discrete field on a lattice with a strict reach polytope
+                 and a contained long-wave effective cone.
+  2. CLOCK       the carrier's leading-order mirror-even normal form,
+                 represented here by the ideal quartic oscillator
+                 Q'' = -(4 lam/m) Q^3, whose exact ideal-model period law is
+                 T*A = sqrt(pi) G* sqrt(m/2 lam).  The full carrier has
+                 finite-amplitude corrections and is not simulated here.
   3. REGISTER    a bistable coordinate in a double well of barrier eps,
                  retention tau_flip ~ exp(eps/T)  (Kramers/Arrhenius).
   4. GATE        a threshold on |J| that converts continuous potentiality
@@ -23,7 +25,8 @@ WHAT IT DEMONSTRATES, end to end:
   * succession -> duration      (the clock keeps time at G*)
   * passage -> retention        (the register holds a bit for exp(eps/T))
   * potentiality -> actuality   (the gate produces singular events)
-  * the weighting of those events interpolates amplitude -> Born as the
+  * its classical threshold statistic interpolates amplitude ->
+    action/occupation weighting as the
     mode outruns the noise bandwidth
   * eps prices binding AND memory (panels d, e) -- NOT the clock rate:
     the clock integrates its own hard-coded lam, so the third role of
@@ -60,7 +63,7 @@ decade_ticks = fs.decade_ticks
 
 
 # =====================================================================
-# 1. SUBSTRATE — causal polytopes and the contained light cone
+# 1. SUBSTRATE — causal polytopes and the contained effective cone
 # =====================================================================
 def panel_substrate(ax):
     sq = Polygon([(1, 1), (-1, 1), (-1, -1), (1, -1)], closed=True,
@@ -80,7 +83,7 @@ def panel_substrate(ax):
                 xytext=(0.72, 1.52), fontsize=FS_ANN, color=C1,
                 ha="left", va="center",
                 arrowprops=dict(arrowstyle="-", color=C1, lw=0.7))
-    ax.annotate("light cone\n$C=1/\\sqrt{3}$", xy=(-0.34, -0.34),
+    ax.annotate("effective cone\n$C=1/\\sqrt{3}$", xy=(-0.34, -0.34),
                 xytext=(-1.98, -1.62), fontsize=FS_ANN, color=C2,
                 ha="left", va="center",
                 arrowprops=dict(arrowstyle="-", color=C2, lw=0.7))
@@ -91,7 +94,7 @@ def panel_substrate(ax):
     ax.set_xticks([-1, 0, 1])
     ax.set_yticks([-1, 0, 1])
     ax.set_xlabel("lattice cells per tick")
-    ax.set_title("(a)  substrate: the light cone sits inside every\n"
+    ax.set_title("(a)  substrate: the effective cone sits inside every\n"
                  "candidate causal polytope")
 
 
@@ -164,7 +167,7 @@ def panel_clock_recovery(ax):
     ax.text(0.075, 12.0, f"slope $= {slope:.6f}$\n"
                          f"$G^*$ recovered to ${dev:.0e}$",
             fontsize=FS_ANN, color=CK, ha="left", va="center")
-    ax.set_title("(c)  the clock law, with no fitted scale:\n"
+    ax.set_title("(c)  ideal normal-form clock law, no fitted scale:\n"
                  "slope $-1$ and the constant is $G^*$")
     print(f"  [verify] clock: slope = {slope:.9f}  (exact -1)")
     print(f"  [verify] clock: max |G*_rec/G*-1| = {dev:.3e}")
@@ -215,9 +218,9 @@ def panel_retention(ax):
 # =====================================================================
 # 4-5. GATE + NOISE — the weighting regime
 # =====================================================================
-def born_fraction(lam1, lam2, tau, L=1536, T=6000, seeds=10, sigma=0.17,
+def occupation_fraction(lam1, lam2, tau, L=1536, T=6000, seeds=10, sigma=0.17,
                   A1=0.10, rng0=7, boot=800):
-    """Returns (BF, 1-sigma CI half-widths (lo,hi), Om_bar*tau).
+    """Returns (OF, 1-sigma CI half-widths (lo,hi), Om_bar*tau).
     Per-seed excess is retained so the estimate carries a bootstrap CI --
     this instrument is deliberately small, so the uncertainty is real and
     is shown rather than hidden."""
@@ -252,25 +255,25 @@ def born_fraction(lam1, lam2, tau, L=1536, T=6000, seeds=10, sigma=0.17,
             else:
                 per_seed[sd] = sig_c - c
 
-    def bf_of(ex):
+    def of_of(ex):
         co, *_ = np.linalg.lstsq(X, ex, rcond=None)
         return ((co[2] / co[1]) - Ramp) / (1 - Ramp)
 
-    bf = bf_of(per_seed.mean(axis=0))
+    of = of_of(per_seed.mean(axis=0))
     rg = np.random.default_rng(99)
-    bs = [bf_of(per_seed[rg.integers(0, seeds, seeds)].mean(axis=0))
+    bs = [of_of(per_seed[rg.integers(0, seeds, seeds)].mean(axis=0))
           for _ in range(boot)]
     lo, hi = np.percentile(bs, [16, 84])
-    return bf, (bf - lo, hi - bf), np.sqrt(O1 * O2) * tau
+    return of, (of - lo, hi - of), np.sqrt(O1 * O2) * tau
 
 
 def panel_regime(ax):
     cells = [(64, 32, 4), (32, 16, 8), (16, 8, 16), (16, 8, 48), (8, 4, 96)]
     xs, ys, el, eh = [], [], [], []
     for l1, l2, tau in cells:
-        bf, (dlo, dhi), xt = born_fraction(l1, l2, tau)
-        xs.append(xt); ys.append(bf); el.append(dlo); eh.append(dhi)
-        print(f"  [verify] gate: Om*tau={xt:7.2f}  BF={bf:6.3f} "
+        of, (dlo, dhi), xt = occupation_fraction(l1, l2, tau)
+        xs.append(xt); ys.append(of); el.append(dlo); eh.append(dhi)
+        print(f"  [verify] gate: Om*tau={xt:7.2f}  OF={of:6.3f} "
               f"(-{dlo:.3f}/+{dhi:.3f})")
     xs, ys = np.array(xs), np.array(ys)
     xf = np.logspace(-0.7, 2.7, 300)
@@ -280,18 +283,18 @@ def panel_regime(ax):
                 capsize=2.5, label="toy model  ($1\\sigma$)")
     ax.axhline(0.0, color=CG, lw=0.6, zorder=0)
     ax.set_xlabel("$\\bar\\Omega\\,\\tau$   (mode frequency $\\times$ noise time)")
-    ax.set_ylabel("Born-fraction")
+    ax.set_ylabel("occupation fraction  OF")
     ax.set_ylim(-0.14, 1.16)
     ax.set_xlim(0.2, 500)
     ax.set_yticks([0.0, 0.5, 1.0])
-    # lifted clear of the leftmost point and its error bar (top at BF~0.06)
+    # lifted clear of the leftmost point and its error bar (top at OF~0.06)
     ax.text(0.23, 0.20, "amplitude\nweighting", fontsize=FS_ANN, color=CK,
             ha="left", va="bottom")
-    ax.text(420, 0.66, "Born\nweighting", fontsize=FS_ANN, color=CK,
+    ax.text(420, 0.66, "action / occupation\nweighting", fontsize=FS_ANN, color=CK,
             ha="right", va="top")
     ax.legend(frameon=False, loc="upper left", handlelength=1.6,
               borderpad=0.2, labelspacing=0.3)
-    ax.set_title("(f)  gate: the weighting of actual events\n"
+    ax.set_title("(f)  gate: the classical threshold statistic\n"
                  "interpolates with the timescale ratio")
 
 

@@ -1,7 +1,7 @@
 """mvc_fourchain_clock.py — the minimum viable clock carrier candidate.
 
 The two-scale door SPEC_CARRIER_CONSTRAINTS_v1.md names as [OPEN], made
-concrete and exact:
+concrete at leading order:
 
     A+ -- B- -- C+ -- D-   collinear, unit bonds AB, BC, CD (species 1),
     plus one closure bond A--D at range 3 (species 2).
@@ -10,24 +10,25 @@ All bonds sit at their potential minima (ZERO TENSION), yet the network
 carries a self-stress omega = (t, t, t, -t) (tension in the short bonds
 balanced by compression capacity in the long one). By the Connelly
 second-order rigidity criterion, that possible stress blocks every
-nontrivial transverse first-order flex, so the energy along each flex is
-exactly QUARTIC: first-order flexibility with second-order rigidity —
+nontrivial transverse first-order flex, so the leading energy along each
+such flex is QUARTIC as amplitude tends to zero: first-order flexibility
+with second-order rigidity —
 precisely the C3 criterion FTD-0789 established (n = 4 iff flex + blocked).
 
 This script:
   PART 1 (sympy, exact): rigidity matrix, stress, flex space, the blocking
     form and its positivity (Cauchy-Schwarz structure), the exact quartic
     coefficient of the mirror-even zero-momentum mode, effective mass.
-  PART 2 (numeric): full 12-DOF conservative dynamics under an explicit
-    two-well pair law; ringdown protocol with constrained-relaxed initial
-    conditions; measures T(A), tests T*A = const, and recovers
-    G* = Gamma(1/4)/Gamma(3/4) with NO fitted scale.
+  PART 2 (numeric): a curvature-matched 12-DOF HARMONIC-SPRING surrogate;
+    ringdown protocol with constrained-relaxed initial conditions; measures
+    finite-amplitude drift and extrapolates the A->0 normal-form limit.
   PART 3: the C2 x C5 window arithmetic (band clearance vs separatrix)
     as an explicit inequality in (epsilon, A_max).
 
-Epistemic status: a [SELECTED MODEL — DECLARED TWO-SCALE EXTENSION] of the
-registered compact law; the quartic and its period law are exact conditional
-mathematics within it. This is NOT a native carrier (fails C11 by
+Epistemic status: Part 1 is exact leading-order rigidity mathematics for a
+declared two-scale geometry. Part 2 is an exploratory harmonic-bond
+surrogate sharing local curvatures, not the registered compact law; only its
+A->0 normal form transfers. This is NOT a native carrier (fails C11 by
 construction — that is what "minimum viable" means) and registers no
 LEDGER claim.
 """
@@ -126,7 +127,7 @@ for name, q in [("BC-symmetric (0,1,1,0)", [0, 1, 1, 0]),
 
 print()
 print("=" * 74)
-print("PART 2 — ringdown simulation, G* recovery with no fitted scale")
+print("PART 2 — exploratory harmonic-spring surrogate ringdown")
 print("=" * 74)
 
 K1 = K2 = 1.0
@@ -202,7 +203,7 @@ def evolve_measure(u0, n_cycles=8):
     drift = abs(Efin + 0.5 * MASS * (v * v).sum() - (E0)) / max(E0, 1e-300)
     return T_mean, A_mean, len(periods), drift
 
-lam_used = 2.0    # k1=k2=1 exact value from Part 1
+lam_used = 2.0    # k1=k2=1 leading quartic value from Part 1
 print(f"{'u0':>7} {'T':>12} {'A':>9} {'T*A':>10} {'G*_exp':>12} {'cycles':>7}")
 TA_th = float(mp.sqrt(mp.pi) * G_STAR)
 results = []

@@ -1,7 +1,8 @@
 """fig_collapse_doublelimit.py -- the universal collapse, and the double limit.
 
-CLAIM (paper section "Off the threshold, exactly"): every oscillation of
-V = mu x^2/2 + lambda x^4 at every detuning lies on ONE curve,
+CLAIM (paper section "Off the threshold, exactly"): every origin-crossing
+oscillation of V = mu x^2/2 + lambda x^4 (including the over-barrier branch
+when mu < 0) lies on ONE curve,
 T*A*sqrt(2 lambda/m) = 4 kappa K(kappa), with the quartic clock at the
 self-dual modulus kappa^2 = 1/2 where 4 kappa K = sqrt(pi) G*; and with a
 sextic admixture the constant drifts a SECOND, independent way, so G* is
@@ -9,7 +10,7 @@ the double limit (mu -> 0, A -> 0) and neither limit alone suffices.
 
 TWO PANELS, all exact quadrature:
   (a) the collapse curve over kappa^2: harmonic side, quartic point,
-      double-well side -- one axis carrying every detuning.
+      double-well over-barrier side -- one axis carrying every licensed branch.
   (b) the double-limit surface F(s, r) = T*A*sqrt(2 lambda/m) over the
       two drift directions s = mu/(2 lambda A^2) and r = nu A^2/lambda.
       G* lives at the corner (0,0) only; the two axes are the two exact
@@ -81,7 +82,7 @@ def panel_collapse(ax):
     ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_xlabel(r"modulus $\kappa^{2} = 2\lambda A^{2}/(\mu+4\lambda A^{2})$")
     ax.set_ylabel(r"$T\,A\,\sqrt{2\lambda/m}$")
-    ax.set_title("(a)  one curve carries every detuning:\n"
+    ax.set_title("(a)  one curve carries origin-crossing motion:\n"
                  "the universal collapse $4\\kappa K(\\kappa)$")
 
 
@@ -93,7 +94,7 @@ def panel_doublelimit(ax):
 
     lv = np.array([3.6, 4.0, 4.4, 4.8, 5.0, 5.15])
     cs = ax.contour(SS, RR, Z, levels=lv, colors=[CG], linewidths=0.8)
-    ax.clabel(cs, fmt="%.2f", fontsize=6.5)
+    ax.clabel(cs, fmt="%.2f", fontsize=FS_LEG)
 
     BOX = dict(facecolor="white", edgecolor="none", pad=1.2)
     ax.plot([0], [0], "*", color=CO, ms=14, zorder=6,

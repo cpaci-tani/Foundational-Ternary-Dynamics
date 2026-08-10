@@ -1,24 +1,24 @@
-"""derive_composite_cone.py — does a bound composite inherit its
-constituents' limiting speed, or its own total mass's?
+"""derive_composite_cone.py — free multiparticle threshold kinematics.
 
 THE QUESTION, POSED CORRECTLY.  "Does a composite inherit C_eff?" is
-ill-posed until one says what makes it a composite.  A body is bound by
-something, and the binding decides which constituents' properties get
-averaged and with what weights.  The computable form of that is:
+ill-posed until one supplies an interacting bound-state dispersion.  This
+script computes the narrower free-particle question:
 
     a composite at total momentum K distributes K among its constituents;
     each constituent contributes its own c_a^2 in proportion to the share
     of the momentum it carries.
 
-For free constituents co-moving as one object, that distribution is fixed
+For free constituents at their fixed-total-momentum threshold, that
+distribution is fixed
 exactly by minimising the total energy at fixed total momentum,
 
     E(K) = min over {k_a : sum k_a = K} of  sum_a omega_a(k_a),
 
-which is precisely the co-moving (equal-velocity) condition a bound state
-satisfies.  No interaction has to be modelled to get the KINEMATICS: to
-first order in the Lorentz-violating parameter the binding shifts the rest
-mass but not the momentum weighting.
+which gives the equal-velocity stationary condition.  This is not a bound
+state: there is no interaction, normalizable internal wavefunction, binding
+energy, or stress contribution.  Those missing terms can change the
+center-of-mass dispersion and must be derived before applying the result to
+nucleons, atoms, laboratory bodies, or astronomical bodies.
 
 WHY IT MATTERS.  The two candidate answers differ enormously:
 
@@ -28,9 +28,9 @@ WHY IT MATTERS.  The two candidate answers differ enormously:
           delta = sum_a w_a M_a^2 / 6      -- saturates at the CONSTITUENT
                                               scale, independent of N
 
-Under (A) a macroscopic body would be wildly superluminal and the theory
-would be dead on arrival.  This script decides between them from the exact
-lattice dispersion.
+The calculation distinguishes (A) and (B) only for the stated free
+threshold.  It does not decide the corresponding bound-state or macroscopic
+question.
 """
 from __future__ import annotations
 
@@ -130,25 +130,10 @@ print("""
 
 print()
 print("=" * 76)
-print("(4) PHYSICAL SCALE")
+print("(4) SCOPE")
 print("=" * 76)
-T = 5.391247e-44 / np.sqrt(3.0)
-W_E = 7.7634e20
-Me, Mp = W_E * T, W_E * 1836.152673 * T
-print(f"    nucleon  M_p           = {Mp:.4e}   -> dC/C = {Mp**2/12:.3e}")
-print(f"    electron M_e           = {Me:.4e}   -> dC/C = {Me**2/12:.3e}")
-kg = Me / 9.1093837015e-31
-for nm, mass in (("1 kg body", 1.0), ("Earth", 5.972e24)):
-    Mtot = kg * mass
-    print(f"\n    {nm}:  M_tot = {Mtot:.3e}")
-    print(f"       if it behaved as ONE particle of that mass:"
-          f"  dC/C = {Mtot**2/12:.3e}   <-- absurd")
-    print(f"       as a composite of nucleons:              "
-          f"  dC/C = {Mp**2/12:.3e}")
-print(f"""
-    So every body built from nucleons shares one limiting speed to about
-    the {Mp**2/12:.1e} level, and bodies differ from each other only through
-    COMPOSITION -- the electron mass fraction and the nuclear binding
-    fraction, both of order 1e-3 to 1e-2 of the total.  The differential
-    between two macroscopic bodies of different make-up is therefore of
-    order {0.01*Mp**2/12:.1e}, not {Mp**2/12:.1e}.""")
+print("""
+    These are FREE MULTIPARTICLE THRESHOLDS, not bound-state dispersions.
+    No inference to nucleons, atoms, kilogram-scale bodies, or the Earth is
+    licensed until an interacting E_B(K) is derived with binding-field,
+    stress, and renormalization contributions included.""")

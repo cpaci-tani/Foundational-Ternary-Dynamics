@@ -6,7 +6,7 @@
 **Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_gstar_degeneracy_price.py`
 **Parents:** `DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md` §5 (the
 stability/non-isochrony tension this explains),
-`ANALYSIS_KINK_CLOCK_DILATION_v1.md` (the working carrier, isochronous).
+`ANALYSIS_SOLITON_SHAPE_MODE_DILATION_v1.md` (the soliton shape-mode carrier, isochronous).
 **Origin:** the owner's reading that G\* "has its cake and eats it too,"
 and is "almost an information/context coefficient."
 **Production impact:** none. No constant is changed; no tag moves. This
@@ -195,7 +195,7 @@ produced G\*:
 |---|---|
 | MVC ringdown, $2\times10^{-6}$ | measured, but the MVC is a mechanical framework with a distance potential — Galilean, and disqualified as a dynamical carrier (`ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md`) |
 | quartic oscillator, 10 digits | **mathematics**: a theorem about $\int_0^1(1-u^4)^{-1/2}du$. Any quartic oscillator anywhere gives it |
-| $\varphi^4$ kink, the one carrier that dilates | **isochronous** — a π-clock |
+| $\varphi^4$ soliton shape-mode carrier | **isochronous** — a π-clock |
 
 **Three readings that do not follow.**
 

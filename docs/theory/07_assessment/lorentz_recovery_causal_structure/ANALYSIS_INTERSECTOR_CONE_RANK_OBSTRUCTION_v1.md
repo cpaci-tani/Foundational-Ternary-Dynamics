@@ -3,9 +3,10 @@
 **Status:** `[DERIVED — EXACT ALL-ORDERS NO-GO, SCALAR-r WILSON vs PRODUCTION FLUX]` +
 `[DERIVED — q⁶ OBSTRUCTION IS A RANK VIOLATION, NOT A COUNTING SHORTFALL]` +
 `[DERIVED — EXACT COVARIANT SEVEN-SQUARE DECOMPOSITION; SPINOR DIMENSION 8]` +
-`[MEASURED — UNRESTRICTED SOS MINIMUM IS FOUR; SPINOR DIMENSION 4; RIGOROUS FLOOR THREE]` +
+`[NUMERICAL CANDIDATE — FOUR SQUARES; EXACT EXISTENCE UNPROVEN; RIGOROUS BOUNDS 3 TO 7]` +
 `[CORRECTION 2026-08-09 — §4c's five came from an under-dispersed search; the massless prediction is WITHDRAWN; see §4d]` +
 `[CORRECTION — §4b's "spinor dimension 16 / staggered taste multiplication" was a LOOSE UPPER BOUND; see §4c]` +
+`[SCOPE — CLIFFORD DIMENSIONS PRICE THE DECLARED TERMWISE-ANTICOMMUTING ANSATZ, NOT ALL MATRIX FACTORIZATIONS]` +
 `[SCOPE — SPATIAL SYMBOLS ONLY; TIME DISCRETISATION NOT MATCHED HERE]` +
 `[BOOKED — FTD-0816]`
 **Date:** 2026-08-08 (§4c added same day) · **Artifacts:**
@@ -138,10 +139,11 @@ That is a semidefinite feasibility problem. Two regimes:
 
 - **Rank-constrained** (a single kinetic vector, i.e. one Clifford
   structure): the Gram must be rank one. This is what fails above.
-- **Unconstrained** (several independent anticommuting structures, whose
-  squares add without cross terms): a plain SDP. Its minimal number of
-  squares is the required count of Clifford structures — which is
-  **spinor dimension**, hence fermion content.
+- **Termwise Clifford** (several independent anticommuting structures,
+  whose squares add without cross terms): a plain SDP supplies a direct
+  construction. Its square count prices that ansatz; it is not a universal
+  matrix-factorization lower bound because factor identities could allow
+  collective cross-term cancellation.
 
 So the open question has a sharp form and a physically meaningful price:
 *how many independent Clifford structures does a common cone cost, and is
@@ -153,7 +155,7 @@ heavy, and checkable against the doubling problem.
 That is the next computation, and it decides the matter for all shell
 counts and all spinor dimensions simultaneously.
 
-## 4b. Resolved, constructively: the flux symbol **is** a sum of squares
+## 4b. Resolved, constructively: exact decompositions on two placement classes
 
 Regroup the symbol as
 $-L_{18} = \tfrac23\sum_i(1-\cos q_i) + \tfrac23\sum_{i<j}(1-\cos q_i\cos q_j)$
@@ -167,44 +169,48 @@ $$\boxed{\;-L_{18} \;=\; \tfrac43\sum_i \sin^2\!\frac{q_i}{2}
 
 Verified symbolically and numerically ($\max$ residual $2.2\times10^{-15}$
 over 2000 random momenta). **Three face squares plus six edge squares:
-nine.** Two things follow, and the second explains everything above.
+nine.** This is an economical half-angle construction, but it is not an
+endpoint-location or necessity theorem.
 
-**(i) The price is spinor dimension 16.** $H = \sum_\mu\Gamma^\mu\phi_\mu$
-gives $H^2 = \sum_\mu\phi_\mu^2$ only when the $\Gamma^\mu$ mutually
-anticommute, so $n$ squares demand $n$ anticommuting structures. Dimension
+**(i) This termwise-Clifford construction uses spinor dimension 16.** For
+$H = \sum_\mu\Gamma^\mu\phi_\mu$, imposing cancellation separately for
+each cross term makes the $\Gamma^\mu$ mutually anticommute. Dimension
 $2^k$ carries $2k+1$:
 
 | spinor dim | 2 | 4 (Dirac) | 8 | **16** |
 |---|---|---|---|---|
 | structures | 3 | 5 | 7 | **9** |
 
-Nine squares therefore need **16-component spinors** — a fourfold increase
-over Dirac. That is recognisably the staggered taste multiplication
-($16 = 4\ \text{tastes}\times 4$), not an exotic new cost.
+Nine squares therefore use **16-component spinors** in that ansatz. Section
+4c lowers this half-angle count to seven.
 
-**(ii) The arguments are half-integer, and that is why Wilson fails.**
-Every square carries $q_i/2$ or $(q_i\pm q_j)/2$. These are not
-trigonometric polynomials in $q$ with integer frequencies — they are
-fields at **half-lattice offsets**. Equivalently, $-L_{18}$ on the coarse
-lattice is the square of a nine-direction hopping operator (three axes,
-six face diagonals) on the lattice of **half** the spacing.
+**(ii) Integer displacements also give an exact construction.** For every
+integer hop $d$ with graph weight $w$,
 
-That is the staggered (Kogut–Susskind) structure. Wilson fermions live on
-integer displacements, and no amount of shell-adding moves them off that
-sublattice — which is the *reason* behind §2's exact no-go and §4's rank
-obstruction, rather than a restatement of them. **The sectors were being
-matched on the wrong lattice.**
+$$2w[1-\cos(q\!\cdot\!d)]
+=w\sin^2(q\!\cdot\!d)+w[1-\cos(q\!\cdot\!d)]^2.$$
+
+Taking the three face-pair hops at $w=1/3$ and six edge-pair hops at
+$w=1/6$ yields an exact **eighteen-square integer-frequency** decomposition
+of $-L_{18}$. The identity
+$e^{iq}-1=2ie^{iq/2}\sin(q/2)$ makes the conceptual point: a half-angle
+magnitude does not by itself locate endpoints at half sites. Naive
+termwise Cliffordization of the integer construction uses dimension $512$
+($2k+1\ge18$), so the half-angle basis is much more economical; it is not
+forced by existence. The scalar-Wilson no-go of §2 and the limited Gram
+obstructions of §4 remain valid only for their stated ansätze.
 
 ### What this settles, and what it does not
 
-**Settles.** The common cone is not obstructed in principle. There is an
-explicit exact decomposition, and its price is stated in physical
-currency: a matter sector on the half-offset lattice.
+**Settles.** The common spatial symbol is not obstructed in principle.
+There are explicit exact integer-hop and half-angle decompositions, with
+different known termwise-Clifford construction prices.
 
 **Does not settle.** Whether the resulting operator is an acceptable
 fermion: doubling, chirality, and the locality of the induced interactions
 are all untested here. Nor is the time discretisation matched (§5). The
-claim is existence-with-a-price, not a working sector.
+claim is existence-with-a-price, not a working sector. A physical
+half-offset ontology is optional and separately open.
 
 ## 4c. Correction: nine is **not** minimal, and the price is not 16
 
@@ -234,8 +240,9 @@ contribute $4[S_1 - 2S_2 + 3ABC]$, $\tfrac{16}{3}[S_2 - 3ABC]$ and $4ABC$.
 $4S_1 - \tfrac83 S_2 = \tfrac43[3S_1 - 2S_2] = -L_{18}$. The singlet is not
 decoration; it is what kills $ABC$.
 
-Seven squares need seven anticommuting structures, so **the covariant price
-is spinor dimension 8, not 16.**
+In the termwise Clifford ansatz, seven squares use seven anticommuting
+structures, so **this cubic-covariant construction uses spinor dimension 8,
+not 16.**
 
 **(iii) Unrestricted, the minimum is five — ordinary Dirac.** A
 Burer–Monteiro search over $F \in \mathbb{R}^{19\times n}$ (residuals on a
@@ -253,7 +260,7 @@ the 48 group elements, not a rounding artefact.
 |---|---|---|---|
 | 9 (§4b) | 9 | 16 | exact, covariant — **loose** |
 | **7** | 7 | **8** | **exact, covariant** |
-| **5** | 5 | **4** | numerical, certified; **not covariant** |
+| **5** | 5 | **4** | numerical residual; **not an exact certificate**, not covariant |
 | 4 | — | — | none found, 400 restarts |
 
 > ⚠ **A retracted sub-argument.** A first draft of this section asserted
@@ -270,34 +277,38 @@ the 48 group elements, not a rounding artefact.
 
 **What §4b's claim becomes.** "The price is spinor dimension 16 —
 recognisably staggered taste multiplication" was an upper bound presented
-as the price. The honest statement: the price is **at most 8** if cubic
-covariance is required and **at most 4** if it is not, and the taste-
-multiplication reading does not survive — a fourfold multiplication was an
+as the price. The honest termwise-Clifford construction price is **at most 8** if
+cubic covariance is required; the numerical four candidate suggests
+dimension 4 if it can be certified exactly. The taste-multiplication
+reading does not survive — a fourfold multiplication was an
 artefact of a non-minimal decomposition, not a feature of the symbol.
 
 Artifact: `scripts/experiments/temporal_interior/derive_sos_rank_minimal.py`.
 
-## 4d. Second correction: four, not five — and the search method was the defect
+## 4d. Second correction: a numerical four candidate — not an exact minimum
 
-An adversarial pass claimed an exact rank-4 decomposition; it is right.
+An adversarial pass produced a rank-4 numerical candidate, but did not
+publish an exact or interval existence certificate.
 §4c's search drew all 400 restarts from one fixed initial scale, which
 samples a single basin 400 times rather than 400 basins once. With the
-scale dispersed, a **four-square** decomposition is found and certified to
-`5.3e-15` on 4000 fresh momenta (Gram spectrum `{16/3, 16/3, 16/3, 4}`,
+scale dispersed, a **four-square** least-squares candidate is found with
+residual `5.3e-15` on 4000 fresh momenta (Gram spectrum
+`{16/3, 16/3, 16/3, 4}`,
 not covariant). Its basin is rare — hit after 13, 52 and 146 starts on
 three runs and missed once at 200 — which is itself the lesson: restart
 counts bound nothing unless the starts are independent.
 
-The floor is now honest: `n ≥ 3` by the Hessian rank at a zero (the only
-proof); `n = 3` not found at 1200 dispersed starts (search evidence only).
+The bounds are now honest: `n ≥ 3` by the Hessian rank at a zero, while
+the exact seven gives `n ≤ 7`. The statements that `n = 3` was not found
+and that four fits numerically are search evidence only.
 Restricted to the body-centre sector the search reaches **five and stalls**
 (2000 starts), so `FTD-0819`'s "same minimum" reading is corrected there.
 
-**The mass ladder inverts.** Saturation alternates — 3, 5, 7 squares
-saturate their spinor dimension; 4, 6, 8 leave one structure spare — so
-the minimal carrier **admits a mass at ordinary Dirac dimension 4**: four
-kinetic structures plus the mass exactly fill the five that dimension 4
-carries. §4c's "necessarily massless" prediction is **withdrawn**.
+**The mass-ladder consequence is conditional.** Saturation alternates —
+3, 5, 7 squares saturate their spinor dimension; 4, 6, 8 leave one
+structure spare. Thus an exactly certified four-square carrier would admit
+a mass at ordinary Dirac dimension 4. §4c's "necessarily massless"
+prediction is **withdrawn**, but the replacement is not theorem-grade.
 Covariance, not mass, is what multiplies the spinor: the covariant seven
 saturates dimension 8, so covariance plus a mass forces 16.
 

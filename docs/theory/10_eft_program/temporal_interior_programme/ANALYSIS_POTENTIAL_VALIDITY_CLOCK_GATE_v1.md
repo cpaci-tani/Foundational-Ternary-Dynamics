@@ -93,30 +93,19 @@ with the binding supplying only the momentum weights. The physics
 currently discarded is of order $(v/C)^2 = 2.4\%$ at $A = 0.30$ — not
 $10^{-40}$, and comfortably measurable.
 
-> ⚠ **RETRACTED same day** — `ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md`
-> ran the substitution. It is **necessary but not sufficient**, and the
-> paragraph above is withdrawn.
->
-> With Newtonian nodes the internal clock is K-independent to
-> $8.7\times10^{-6}$ while $\gamma$ reaches $1.40$ — so the substitution
-> is indeed necessary. But with lattice nodes the dilation exponent $p$ in
-> $\Omega(K)/\Omega(0)=\gamma^{\,p}$ is **not universal**: it spans
-> $[-2.700, -0.937]$ across constituent mass and binding fraction, where
-> relativity admits $p=-1$ for every clock. A material-dependent rate is
-> not dilation.
->
-> The cause is the *other* limit, dismissed in §2 above. The relative
-> effective mass obeys $\mu_K = \mu_0\gamma^3$ exactly (verified), but a
-> static lab-frame well does not Lorentz-contract and supplies no
-> compensating material-independent factor. **Hydrogen dilates exactly
-> because its binding fraction is $\sim10^{-5}$, not because non-covariant
-> binding is harmless** — at binding fractions $0.04$–$0.31$ it is the
-> leading error.
->
-> Corrected: the constituent dispersion controls whether the clock dilates
-> **at all**; the covariance of the binding controls whether the dilation
-> is **universal**. Both are required. §2's table below should be read with
-> that amendment.
+> ⚠ **SUPERSEDED 2026-08-09** —
+> `ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md` now uses the exact finite-gap
+> relativistic comparator. The former $p=-1$ target was only the
+> infinitesimal-gap limit and materially exaggerated the discrepancy.
+> Across the six fixed cases, observed-to-SR ratios at $K=0.2$ differ by at
+> most about $1.1\%$, with one case indistinguishable at quoted precision;
+> the $\mu_K/\mu_0\simeq\gamma^3$ relation is also only approximate.
+> Therefore both the “necessary but insufficient” verdict and the static-
+> binding mechanism diagnosis are withdrawn. The campaign is exploratory
+> and inconclusive pending finite-volume, discretization and held-out-
+> momentum controls. What survives is a programme criterion: kinetic,
+> binding, stress-energy and boost generators should arise from one
+> interacting dynamics before covariance is claimed.
 
 ## 5. The obstruction that does not dissolve
 

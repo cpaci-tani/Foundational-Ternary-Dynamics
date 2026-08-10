@@ -1,23 +1,24 @@
 """derive_massive_cone_dispersion.py — does the limiting speed depend on
-the rest mass?  The two-body time-dilation register, computed.
+the rest mass?  A free-sector mass-shell diagnostic, computed.
 
 WHY THIS AND NOT A BOOSTED MVC.  The minimum viable clock is a mechanical
 framework, m q'' = -grad V(|q_i - q_j|).  That is GALILEAN invariant: boost
-it and its period is unchanged, T(v) = T(0) exactly.  Testing it for time
-dilation is vacuous.  Dilation in a field substrate comes from the binding
-being mediated at speed C, so the object to interrogate is the DISPERSION
-of a massive mode, not a mechanical oscillator.
+it and its period is unchanged, T(v) = T(0) exactly.  It therefore cannot
+serve as an SR clock test.  The calculation below interrogates only the
+DISPERSION of a free massive scalar mode; it does not construct a moving
+physical clock.
 
-THE OPERATIONAL TEST.  A packet built around wavenumber k moves at its own
-group velocity v_g = |grad_k Omega|.  Its internal phase advances, per unit
-LAB time, at Omega; per unit PROPER time the relativistic prediction is
+THE FREE MASS-SHELL DIAGNOSTIC.  A packet built around wavenumber k has
+group velocity v_g = |grad_k Omega|.  Define
 
-    Omega_proper(k) = Omega(k) * sqrt(1 - v_g(k)^2 / c^2)   =  M   (const)
+    D(k) = Omega(k) * sqrt(1 - v_g(k)^2 / c^2)   =  M   (const)
 
 which is an identity for Omega^2 = c^2 k^2 + M^2 (since v_g = c^2 k/Omega
-gives 1 - v_g^2/c^2 = M^2/Omega^2).  So: Omega_proper is k-INDEPENDENT iff
-a moving clock of that species dilates exactly.  Its k-dependence IS the
-Lorentz violation, and it is exactly computable.
+gives 1 - v_g^2/c^2 = M^2/Omega^2).  Constancy of D therefore diagnoses a
+Lorentz-form free dispersion on the stated branch and with the stated
+choice of c.  Its k-dependence measures a mass-shell residual; it is not an
+operational clock observable and does not demonstrate physical time
+dilation.
 
 THE LATTICE KLEIN-GORDON.  Adding a mass to the M18 leapfrog,
     phi(t+1) - 2 phi(t) + phi(t-1) = C^2 L phi - M^2 phi
@@ -29,7 +30,7 @@ what ANY massive excitation obeys at quadratic order in the scalar sector.
 It is NOT a claim about FTD's own manifestation/mass mechanism, and it is a
 different question from FTD-0412, which compares distinct SECTORS (flux vs
 Wilson vs gauge) at zero mass.  Here the sector is fixed and the mass
-varies.
+varies.  No bound carrier or clock readout is constructed.
 """
 from __future__ import annotations
 
@@ -112,7 +113,7 @@ print(f"      k^4 coefficient = {sp.nsimplify(c4)}"
 
 print()
 print("=" * 74)
-print("(3) THE TIME-DILATION TEST, NUMERICALLY")
+print("(3) THE FREE MASS-SHELL DIAGNOSTIC, NUMERICALLY")
 print("=" * 74)
 
 
@@ -131,7 +132,7 @@ def vgroup(kv, Mv):
     dW/dk_i = C^2 (2/3) sin k_i (1 + cos k_j + cos k_l).
     Net: C^2 sin k_i (1 + c_j + c_l) / (3 sin Omega).  (The factor 2 in
     dW/dOmega is easy to drop; doing so doubles v_g and turns the O(k^4)
-    dilation residual below into a spurious O(k^2) one.)"""
+    mass-shell residual below into a spurious O(k^2) one.)"""
     kv = np.atleast_2d(kv)
     c, s = np.cos(kv), np.sin(kv)
     Om = omega(kv, Mv)
@@ -162,8 +163,8 @@ print(f"  [check] v_g at M=0 via massless formula {a:.12f}")
 print(f"          v_g at M=0 via massive  formula {b:.12f}   "
       f"agree: {abs(a-b) < 1e-13}")
 print()
-print("  Omega_proper = Omega * sqrt(1 - v_g^2/c^2), along [100].")
-print("  For exact Lorentz this is k-independent.  Two candidate c:")
+print("  D(k) = Omega * sqrt(1 - v_g^2/c^2), along [100].")
+print("  For Lorentz-form free dispersion this is k-independent.  Two candidate c:")
 print()
 def C_eff_exact(Mv):
     """k^2 coefficient of the EXACT dispersion, by fit at small k.
@@ -195,17 +196,17 @@ for Mv in (0.05, 0.2, 0.5):
         print(f"  {Mv:8.3f} {kk:8.3f} {vg/C_NUM:9.5f} "
               f"{dC:13.3e} {dE:15.3e} {kk**4/(36*Mv**2):15.3e}")
 print("""
-  READING.  With the bare cone speed C the dilation relation fails at
+  READING.  With the bare cone speed C the mass-shell diagnostic fails at
   O(k^2), coefficient -1/36 -- but that is the ordinary lattice dispersion,
   not a Lorentz anomaly: it is removed exactly by using the species' own
   limiting speed C_eff(M).  What survives is O(k^4), tracking k^4/(36 M^2),
-  which is the k^4 term of the dispersion (-1/54) fed through the dilation
-  formula.  So each mass has its OWN very nearly Lorentzian sector; the
+  which is the k^4 term of the dispersion (-1/54) fed through the diagnostic.
+  So each mass has its OWN very nearly Lorentzian free sector; the
   violation lives in the MISMATCH BETWEEN sectors.""")
 
 print()
 print("=" * 74)
-print("(4) THE TWO-BODY STATEMENT, AT PHYSICAL SCALE")
+print("(4) THE TWO-SPECIES FREE-SECTOR STATEMENT, UNDER A SCALE INSERTION")
 print("=" * 74)
 T_PHYS = 5.391247e-44 / np.sqrt(3.0)         # one tick, electron-primary
 W_E = 7.7634e20                              # m_e c^2 / hbar  [rad/s]
@@ -219,9 +220,9 @@ print(f"\n  dC/C for the electron     = M_e^2/12 = {Me**2/12:.4e}")
 print(f"  dC/C for the proton       = M_p^2/12 = {Mp**2/12:.4e}")
 print(f"  DIFFERENTIAL, proton-electron       = {(Mp**2 - Me**2)/12:.4e}")
 print(f"""
-  So two clocks of different rest mass, in the SAME sector, do not share
-  a limiting speed exactly.  The mismatch is (m/M_Planck)^2/12 in natural
-  units -- a dimension-six-suppressed effect, isotropic, and of order
-  1e-40 for the proton-electron pair.  Testing it would require bounding
-  a species-dependent limiting speed at the 1e-40 level, which is far
-  beyond present reach.""")
+  So two free scalar modes of different rest mass, in the SAME sector, do
+  not share a limiting speed exactly.  Under the displayed Planck-scale
+  insertion, the mismatch is (m/M_Planck)^2/12 in natural units -- a
+  dimension-six-suppressed effect, isotropic, and of order 1e-40 for the
+  proton/electron mass scales.  This is a conditional scale calibration,
+  not a proton/electron carrier or clock prediction.""")

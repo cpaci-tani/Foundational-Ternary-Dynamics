@@ -1,41 +1,43 @@
-"""toy3d_causal_structure.py — the complete relativistic partition of a
-discrete spacetime around one event, in three dimensions, at t = 1.
+"""toy3d_causal_structure.py — strict reach and effective-cone bookkeeping
+around one event in a three-dimensional discrete spacetime.
 
-THE QUESTION.  Continuum relativity partitions spacetime around an event
-into three regions: causal past, causal future, and elsewhere.  A discrete
-substrate does not.  It has FOUR, because two different structures compete
-to define "causal reach":
+THE QUESTION.  A local dispersive update has both a strict dependency
+support and a long-wave propagation scale.  Splitting their difference
+produces four useful bookkeeping regions.  This is not a unique four-region
+causal ontology: dispersive continuum systems can have the same distinction.
 
   REACH      the update rule touches a finite neighbour set each tick, so
              after t ticks the field is EXACTLY zero outside the t-fold
              dilation of the causal polytope.  This bound is unconditional
              -- it is locality, not dynamics.
-  LIGHT CONE the effective wave speed is C = 1/sqrt(3), so a smooth
-             disturbance travels a distance C*t.  This bound is dynamical.
+  EFFECTIVE  the long-wave speed scale is C = 1/sqrt(3), so a smooth packet
+             is concentrated near distance C*t.  This is not a support bound.
 
 Between them sits a shell that is formally reachable but outside the
-effective cone.  This script establishes exactly what lives there.
+effective cone.  This script measures the precursor present there in the
+declared point-source run.
 
 WHAT IS COMPUTED (nothing is drawn that is not first computed):
   1. GEOMETRY   the three candidate causal polytopes, their inradii and
                 circumradii, and the light-cone sphere at C*t.
   2. CENSUS     for each t, how many lattice sites are inside the cone,
                 in the precursor shell, and unreachable.
-  3. FRONT      the exact maximum group velocity of the M18 leapfrog over
-                the whole Brillouin zone -- this decides whether the
-                effective cone is the strict front or merely typical.
-                It is NOT the front: a supremum over group velocities
+  3. VELOCITY   an analytic group-velocity formula sampled on a 181^3 grid
+                of the Brillouin zone.  This is evidence about, not a proof
+                of, the global supremum.  In any case the effective cone is
+                NOT the strict front: a supremum over group velocities
                 bounds where the disturbance is concentrated, not where
                 it is exactly zero.  The strict front is the reach
                 boundary; the shell between them holds a precursor.
-  4. LEAKAGE    a real 3-D leapfrog run from a band-limited source,
+  4. LEAKAGE    a real 3-D leapfrog run from a point source,
                 measuring the amplitude that actually reaches the
                 precursor shell.
 
-THE HEADLINE, established below: at t = 1 the light cone contains no
-lattice site but the origin, while the update rule has already touched 18.
-Every site the substrate can influence in its first tick lies outside its
-own light cone.  The resolution is in panel (e).
+THE HEADLINE, established below: at t = 1 the effective cone contains no
+lattice site but the origin, while the update rule has already touched its
+18 neighbours.  Those non-origin dependencies are outside the effective
+cone but inside the exact support.  This is distinguishable immediately;
+the resolution is the strict/effective distinction shown in panel (e).
 """
 from __future__ import annotations
 
@@ -129,7 +131,7 @@ def census(tmax=10, R=26):
 
 
 # =====================================================================
-# 2. FRONT — exact maximum group velocity over the Brillouin zone
+# 2. VELOCITY — analytic formula evaluated on a finite Brillouin-zone grid
 # =====================================================================
 def symbol_L(k):
     c = np.cos(k)
@@ -165,7 +167,7 @@ def max_group_velocity(n=181):
 
 
 # =====================================================================
-# 3. LEAKAGE — a real leapfrog run, band-limited source
+# 3. LEAKAGE — a real leapfrog run, point source
 # =====================================================================
 def greens_profile(ticks, R=26, nbin=1.0):
     """Radial profile of |phi| for a POINT source after `ticks` ticks.
@@ -240,7 +242,7 @@ def panel_cell(ax):
     """(a) the t=1 causal cell in 3-D.
 
     Three objects only, and one exact tangency: the octahedron's inradius
-    IS the cone speed, so its eight faces touch the light-cone sphere."""
+    IS the cone speed, so its eight faces touch the effective-cone sphere."""
     draw_polytope(ax, POLY["cuboctahedron (18)"], C1, 0.0, 0.85)
     draw_polytope(ax, POLY["octahedron (6)"], CG, 0.0, 0.7, ls=":")
     sphere(ax, C_CONE, C2, 0.80)
@@ -249,7 +251,7 @@ def panel_cell(ax):
     ax.scatter([0], [0], [0], s=17, color=CK, depthshade=False)
     style_3d(ax, 1.30)
     for i, (txt, col) in enumerate([
-            ("light cone, radius $C$", C2),
+            ("effective cone, radius $C$", C2),
             ("octahedron: faces tangent", CG),
             ("reach at $t=1$: 18 sites", C1)]):
         ax.text2D(0.02, 0.145 - 0.058 * i, txt, transform=ax.transAxes,
@@ -270,7 +272,7 @@ def panel_minkowski(ax):
         segs = [[(0, 0, 0), p] for p in top]
         segs += [[top[i], top[(i + 1) % 4]] for i in range(4)]
         ax.add_collection3d(Line3DCollection(segs, colors=C1, linewidths=0.9))
-        # light cone: circular
+        # long-wave effective cone: circular
         th = np.linspace(0, 2 * np.pi, 80)
         tt = np.linspace(0, T, 26)
         TT, TH = np.meshgrid(tt, th, indexing="ij")
@@ -287,11 +289,11 @@ def panel_minkowski(ax):
                            (0.95, 0.505, "elsewhere", CG)]:
         ax.text2D(x, y, txt, transform=ax.transAxes, fontsize=FS_ANN,
                   color=col, ha="center", va="center")
-    ax.text2D(0.02, 0.145, "light cone $C|t|$", transform=ax.transAxes,
+    ax.text2D(0.02, 0.145, "effective cone $C|t|$", transform=ax.transAxes,
               fontsize=FS_ANN, color=C2, ha="left", va="center")
     ax.text2D(0.02, 0.087, "reach $|t|$", transform=ax.transAxes,
               fontsize=FS_ANN, color=C1, ha="left", va="center")
-    ax.set_title("(b)  the four regions in $(x,y,t)$:\n"
+    ax.set_title("(b)  four bookkeeping regions in $(x,y,t)$:\n"
                  "cone inside reach, reach inside elsewhere")
 
 
@@ -311,7 +313,7 @@ def style_3d(ax, lim, zlab=None):
 def panel_radial(ax, rows):
     """(c) the two boundaries as functions of t, with the sites marked."""
     t = np.array([r["t"] for r in rows], float)
-    ax.plot(t, C_CONE * t, color=C2, lw=1.8, label="light cone  $Ct$")
+    ax.plot(t, C_CONE * t, color=C2, lw=1.8, label="effective cone  $Ct$")
     ax.plot(t, 1.0 * t, color=C1, lw=1.5, ls="--",
             label="reach, inradius  $t$")
     ax.plot(t, np.sqrt(2) * t, color=C1, lw=1.0, ls=":",
@@ -336,7 +338,7 @@ def panel_radial(ax, rows):
               labelspacing=0.28, frameon=True, framealpha=1.0,
               edgecolor="none", facecolor="white").set_zorder(9)
     ax.set_title("(c)  the precursor shell is the gap\n"
-                 "between the two bounds")
+                 "between strict reach and the effective scale")
 
 
 def panel_census(ax, rows):
@@ -346,7 +348,7 @@ def panel_census(ax, rows):
     reach = np.array([r["reach"] for r in rows], float)
     ax.semilogy(t, reach, "o-", color=C1, ms=4, label="reachable")
     ax.semilogy(t, np.maximum(cone, 0.5), "s-", color=C2, ms=4,
-                label="inside the light cone")
+                label="inside the effective cone")
     ax.set_xlim(0.4, 10.6); ax.set_ylim(0.5, 6e4)
     ax.set_xticks([2, 4, 6, 8, 10])
     ax.set_xlabel("ticks  $t$")
@@ -362,7 +364,7 @@ def panel_census(ax, rows):
 
 
 def panel_front(ax, vmax, vgrid):
-    """(e) the group-velocity distribution: is the cone a true front?"""
+    """(e) sampled group-velocity distribution versus the strict front."""
     v = vgrid.ravel()
     v = v[np.isfinite(v) & (v > 0)]
     ax.hist(v / C_CONE, bins=90, color=C1, alpha=0.55, edgecolor="none")
@@ -371,11 +373,11 @@ def panel_front(ax, vmax, vgrid):
     ax.set_xlim(0, 1.06)
     ax.set_xlabel("group speed  $|\\nabla_k\\Omega| \\,/\\, C$")
     ax.set_ylabel("Brillouin-zone samples")
-    ax.text(0.98, 3e4, f"max $= {vmax/C_CONE:.6f}\\,C$", fontsize=FS_ANN,
+    ax.text(0.98, 3e4, f"grid max $= {vmax/C_CONE:.6f}\\,C$", fontsize=FS_ANN,
             color=C2, ha="right", va="center")
-    ax.text(0.03, 3e4, "every mode is\nsubluminal", fontsize=FS_ANN,
+    ax.text(0.03, 3e4, "no sampled mode\nexceeds $C$", fontsize=FS_ANN,
             color=CK, ha="left", va="center")
-    ax.set_title("(e)  no mode outruns $C$:\n"
+    ax.set_title("(e)  the grid scan finds none above $C$:\n"
                  "$C$ is the effective cone, not the front")
 
 
@@ -394,13 +396,13 @@ def panel_greens(ax, profiles, decades):
                  ["$10^{-12}$", "$10^{-8}$", "$10^{-4}$", "$1$"])
     ax.set_xlabel(f"distance from the event  (at $t={t}$)")
     ax.set_ylabel("$\\max\\,|\\phi|$  in the shell")
-    ax.text(C_CONE * t * 0.5, 2.0, "signal", fontsize=FS_ANN, color=C2,
+    ax.text(C_CONE * t * 0.5, 2.0, "main packet", fontsize=FS_ANN, color=C2,
             ha="center", va="center")
     ax.text((C_CONE * t + np.sqrt(2) * t) * 0.5, 2.0, "precursor",
             fontsize=FS_ANN, color=C1, ha="center", va="center")
     ax.text(np.sqrt(2) * t + 1.6, 2.0, "exactly\nzero", fontsize=FS_ANN,
             color=CK, ha="center", va="center")
-    ax.set_title(f"(f)  the Green's function: signal, then\n"
+    ax.set_title(f"(f)  one Green-function profile: packet, then\n"
                  f"{decades:.0f} decades of precursor, then nothing")
 
 
@@ -413,7 +415,7 @@ def main():
         r = inradius(pts)
         cr = np.linalg.norm(pts, axis=1).max()
         print(f"      {nm:22s} inradius {r:.6f}   circumradius {cr:.6f}")
-    print(f"      light cone at t=1                  radius {C_CONE:.6f}")
+    print(f"      effective cone at t=1              radius {C_CONE:.6f}")
 
     rows = census()
     print("\n  [2] census by tick   (cone / precursor / reachable)")
@@ -433,7 +435,7 @@ def main():
     print(f"\n  [4] point-source Green's function at t={TG}"
           f"   (cone {C_CONE*TG:.3f}, support {np.sqrt(2)*TG:.3f})")
     for r, a in zip(rc, am):
-        zone = "signal   " if r < C_CONE * TG else "precursor"
+        zone = "packet   " if r < C_CONE * TG else "precursor"
         if r < 2 or r % 2 < 1:
             print(f"      r={r:5.1f}  {zone}  max|phi| = {a:.3e}")
     inside = am[rc < C_CONE * TG].min()

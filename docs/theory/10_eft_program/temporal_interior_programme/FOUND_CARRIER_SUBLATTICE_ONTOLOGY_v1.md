@@ -1,9 +1,8 @@
-# FOUNDATION — What the Common Cone Costs the Postulates: the Carrier Sublattice
+# FOUNDATION — Optional Half-Offset Economy for a Common Spatial Symbol
 
-**Status:** `[DERIVED — THE CARRIER SECTOR IS EXACTLY THE BCC STRUCTURE FACTOR'S COMPLEMENT]` +
-`[DERIVED — BODY CENTRES SUFFICE AT LENGTH FIVE; CORRECTED 2026-08-09: THE UNRESTRICTED MINIMUM IS FOUR AND LEAVES THE BODY CENTRES]` +
-`[DERIVED — THE MASS LADDER, FROM CLIFFORD COUNTING]` +
-`[OPEN — WHICH ONTOLOGICAL READING IS ADOPTED; TWO ARE PRICED HERE, NEITHER IS CHOSEN]` +
+**Status:** `[THEOREM — EXACT INTEGER-HOP EIGHTEEN AND HALF-ANGLE SEVEN CONSTRUCTIONS]` +
+`[MEASURED — NUMERICAL FOUR-SQUARE HALF-ANGLE CANDIDATE]` +
+`[OPEN — WHETHER THE ECONOMICAL HALF-OFFSET BASIS IS PHYSICALLY INSTANTIATED]` +
 `[BOOKED — FTD-0819]`
 **Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_carrier_sublattice.py`
 **Parents:** `ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md` §4b–4c (FTD-0816,
@@ -13,6 +12,24 @@ Watson identity and SU(3) from the BCC triple cosine product).
 **Production impact:** none. No constant is changed; no tag moves; no
 postulate is amended. This document *prices* an amendment; it does not
 make one.
+
+> **Binding correction (2026-08-09).** Sections 2--6 preserve the original
+> search history but their claims that a half-offset lattice is necessary,
+> that body centres contain the unrestricted minimum, and that the carrier
+> is forced to be massless are superseded by §7a and this correction. Every
+> integer graph hop obeys
+> `2w(1-cos(q·d)) = w sin²(q·d) + w(1-cos(q·d))²`; the M18 face and edge
+> hops therefore give an exact **18-square integer-frequency** construction.
+> Half offsets reduce the known exact count to seven (and support a
+> numerical four candidate), but they are an economy, not an existence or
+> postulate-amendment requirement. The refined-site/staggered-cochain fork
+> is relevant only if that optional economical basis is physically adopted.
+> A second original inference is also withdrawn: although the seven
+> equal-weight triple-product squares sum to
+> `1-S²=(1-S)(1+S)`, the usual BCC Laplacian is proportional to `1-S`.
+> The extra factor `1+S` prevents the claim that the two symbols are simply
+> points in one constant-weight seven-square cone. What survives is an
+> algebraic alignment with the BCC structure factor, not identity of cones.
 
 ---
 
@@ -92,10 +109,12 @@ one square per basis monomial, weights $(4,4,4,\tfrac{16}3,\tfrac{16}3,
 \tfrac{16}3,4)$. That is *why* it is covariant and *why* it is exactly
 seven: seven is the dimension of the sector, not a search outcome.
 
-**$-L_{18}$ and $-L_{\rm BCC}$ live in the same seven-dimensional square
-cone**, differing only in the weights — equal weights give $(1-S)(1+S)$,
-FTD's give the flux symbol. The flux sector and the carrier sector are not
-merely compatible; they are two points in one cone.
+**The half-angle basis is algebraically aligned with the BCC structure
+factor, not identical to its Laplacian cone.** Equal weights give
+$(1-S)(1+S)$, whereas $-L_{\rm BCC}=8(1-S)$; the extra $1+S$ factor is
+load-bearing. The flux symbol is diagonal in the same seven basis functions,
+but this does not make the two Laplacians points in one constant-weight
+square cone.
 
 This is the third independent arrival at BCC in FTD. The first two are the
 Watson identity $W_3 = G^{*2}/2\pi$ and the SU(3) gauge group, both of
@@ -194,21 +213,23 @@ structure, so any such term is a falsifiable commitment to a larger spinor.
 
 ## 7a. Correction (2026-08-09)
 
-FTD-0816 §4d found the unrestricted minimum is **four**, not five — the
-five came from an under-dispersed search. That changes §2's headline but
-not its substance:
+FTD-0816 §4d found an unrestricted numerical four-square candidate after
+the earlier fixed-scale search reported five. No exact or interval
+existence certificate is supplied, so the rigorous bounds remain
+`3 <= n_min <= 7`. This changes §2's headline:
 
 - restricted to body centres the dispersed search reaches **five and
   stalls** (2000 starts), so "body centres suffice" holds **at length
   five**, and the shortest carrier buys one square by leaving them for
   the face/edge shells;
-- the **no-finer-lattice conclusion is unchanged** — every shell in play
-  is a half-offset of the existing lattice, so `a_phys` does not move;
+- the ontology is **not yet chosen**: refined physical sites give spacing
+  `a/2` and force an `a_phys` recalibration, whereas staggered cochains
+  retain Bravais spacing `a` but add face/edge/body carrier types;
 - the structure-factor complement identity (§3) is exact and unaffected;
-- the mass ladder (§6) **inverts**: 4 squares at dimension 4 leave one
-  structure spare, so the minimal carrier **admits a mass at Dirac
-  dimension**; the "necessarily massless" line is withdrawn. Covariance,
-  not mass, multiplies the spinor.
+- the mass-ladder replacement is conditional: an exactly certified four
+  would leave one structure spare and admit a mass at Dirac dimension;
+  the "necessarily massless" line is withdrawn, but the replacement is
+  not theorem-grade.
 
 The stall at four is search evidence of exactly the kind that
 mis-reported the minimum, and is asserted at that confidence and no

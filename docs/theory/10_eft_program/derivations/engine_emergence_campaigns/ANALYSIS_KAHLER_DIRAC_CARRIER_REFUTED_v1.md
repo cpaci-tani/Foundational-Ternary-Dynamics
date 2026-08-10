@@ -128,12 +128,16 @@ that costs four unwanted tastes.
 
 1. **The positive-frequency Born density** (§2) — `[THEOREM — NEW]`. Forecloses
    the "first-order sector needed for Born" argument as a class.
-2. **`M18` admits a local, cubic-covariant 3-square decomposition** —
-   `[CONSTRUCTIVE — NEW]`, reproducing `M18` coefficient-for-coefficient across
-   all 512 Fourier modes to `1.9e-13`. So a *local* Kähler–Dirac operator with
-   `D^2 = M18 . I` exists (the naive one gives `M6`, reintroducing a
-   dimension-four anisotropy the production stencil does not have). Currently
-   purposeless, but real, and found by the referee against his own interest.
+2. **The former `M18` three-square salvage claim is unsupported and
+   withdrawn** — `[CORRECTION — 2026-08-09]`. The original text supplied
+   neither the three factors nor a runner, and a repository-wide search
+   found no formula or artifact capable of reproducing the stated
+   `1.9e-13` check. The current proved statement is narrower: an exact
+   cubic-covariant seven-square construction is published, the Hessian
+   gives a floor of three, and a four-square object is only a numerical
+   candidate. The rigorous current bound is therefore `3 <= n_min <= 7`.
+   If the three factors are recovered, they must be published and checked
+   before this claim can be reinstated.
 
 ## 10. Record
 

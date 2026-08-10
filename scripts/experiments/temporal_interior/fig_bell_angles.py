@@ -4,31 +4,32 @@ Two claims are commonly run together.  This figure separates them, because
 one is true and the other is not.
 
   TRUE:  the CHSH number S is a COMPILED STATISTIC.  Its four correlators
-         come from four disjoint sub-ensembles; no trial contributes to
-         more than one; and the classical bound is exceeded only once the
-         FOURTH context is added.  S does not exist without a compiler.
+         come from four disjoint sub-ensembles and no trial contributes to
+         more than one.  The bound constrains their completed signed
+         combination; any claim that it is crossed "on term k" depends on
+         an arbitrary ordering.  S does not exist without a compiler.
 
-  FALSE: "noncommutativity therefore lives only in the record."  Three
-         polarisers at 0/45/90 transmit I0/8 where two crossed ones
-         transmit nothing -- one beam, one pass, no ensemble comparison,
-         no memory.  The angle dependence is physical.
+  DISTINCT: three polarisers at 0/45/90 transmit I0/8 where two crossed
+            ones transmit nothing. Classical Jones/Maxwell and quantum
+            optics both reproduce this ordered projection. It requires an
+            output readout but no cross-context CHSH compilation; it is not
+            uniquely quantum evidence.
 
 PHOTON CONVENTION.  For polarisation-entangled light E(th) = cos(2 th),
 the angle doubling that makes real photon Bell tests use 22.5 deg steps.
 
 PIECES (exact unless noted):
-  (a) E(th): quantum cos(2 th) against the best local bound, which is
-      LINEAR and touches it at 0, 45, 90 deg -- so the violation is an
-      angle-window effect, zero at the touching points.
-  (b) the four CHSH terms, each exactly 1/sqrt2, and the running sum:
-      the bound is crossed ONLY on the fourth.
-  (c) three polarisers -- single beam, no record, angle-dependent.
+  (a) E(th): quantum cos(2 th) against the registered deterministic
+      sign-threshold triangle model.  The curves touch at 0, 45, 90 deg;
+      their pointwise gap is not a universal locality bound.
+  (b) the four CHSH terms, each exactly 1/sqrt2, and their completed sum.
+  (c) three polarisers -- ordered projection, no CHSH compilation.
   (d) S accumulating over trials [MONTE CARLO, shown with a band], and
       the four sub-ensembles verified disjoint.
 
 SCOPE.  This does not show Bell's theorem inapplicable.  It shows which
-ingredient needs records (the sum) and which does not (the commutator
-that lets the sum exceed 2).
+ingredient needs cross-context compilation (the observed sum) and which is
+an algebraic premise of the quantum bound (the commutator).
 """
 from __future__ import annotations
 
@@ -48,8 +49,8 @@ TS = 2.0 * np.sqrt(2.0)
 
 # CHSH settings for light, in degrees
 A0, A1, B0, B1 = 0.0, 45.0, 22.5, 67.5
-TERMS = [("$E(a,b)$", A0, B0, +1), ("$-E(a,b')$", A0, B1, -1),
-         ("$E(a',b)$", A1, B0, +1), ("$E(a',b')$", A1, B1, +1)]
+TERMS = [(r"$E_{00}$", A0, B0, +1), (r"$-E_{01}$", A0, B1, -1),
+         (r"$E_{10}$", A1, B0, +1), (r"$E_{11}$", A1, B1, +1)]
 
 
 def Equant(dth_deg):
@@ -58,8 +59,12 @@ def Equant(dth_deg):
 
 
 def Elocal(dth_deg):
-    """Best local model: LINEAR in the angle, running from +1 at 0 deg to
-    -1 at 90 deg, hence touching the quantum curve at 0, 45 and 90.
+    """Registered sign-threshold triangle model, linear in the angle.
+
+    It runs from +1 at 0 deg to -1 at 90 deg and therefore touches the
+    quantum curve at 0, 45 and 90.  Bell locality does not make this
+    pointwise curve an optimum; locality constrains cross-context CHSH
+    combinations.
 
     The slope is 2/90 per degree, not 4/90 -- the latter reaches -1 at
     45 deg where the quantum curve is 0, and the two would not touch at
@@ -75,7 +80,8 @@ def panel_curve(ax):
     q, l = Equant(th), Elocal(th)
     ax.fill_between(th, l, q, where=q >= l, color=CO, alpha=0.16, lw=0)
     ax.plot(th, q, color=CO, lw=1.8, label="quantum  $\\cos 2\\theta$")
-    ax.plot(th, l, color=C1, lw=1.4, ls="--", label="best local model")
+    ax.plot(th, l, color=C1, lw=1.4, ls="--",
+            label="registered triangle model")
     for t in (0.0, 45.0, 90.0):
         ax.plot([t], [Equant(t)], "o", color=CK, ms=3.6, zorder=5)
     ax.axvline(22.5, color=CG, lw=0.7, ls=":", zorder=1)
@@ -94,8 +100,12 @@ def panel_curve(ax):
             fontsize=FS_ANN, color=CK, ha="center", va="center")
     ax.set_title("(a)  the angles matter because the two\n"
                  "curves touch at three angles")
-    gap = q - l
-    return th[int(np.argmax(gap))], gap.max()
+    # Analytic maximum on [0,45 deg]:
+    # d/dtheta [cos(2theta)-1+4theta/pi] = 0
+    # iff sin(2theta)=2/pi.
+    th_max = 0.5 * np.arcsin(2.0 / np.pi)
+    gap_max = np.cos(2.0 * th_max) - 1.0 + 4.0 * th_max / np.pi
+    return np.rad2deg(th_max), gap_max
 
 
 def panel_terms(ax):
@@ -163,8 +173,8 @@ def panel_polarisers(ax):
     ax.text(3, 0.190, "at $0$ or $90$ the third polariser\n"
                       "does nothing: still zero",
             fontsize=FS_ANN, color=C1, ha="left", va="top")
-    ax.set_title("(c)  one beam, one pass, no record:\n"
-                 "the angle dependence is physical")
+    ax.set_title("(c)  ordered projection, classical or quantum:\n"
+                 "no cross-context CHSH compilation")
     return I.max()
 
 
@@ -232,7 +242,7 @@ def main():
     for t in (0.0, 45.0, 90.0):
         assert abs(Equant(t) - Elocal(t)) < 1e-12, f"curves differ at {t}"
     print(f"  [verify] quantum and local agree exactly at 0, 45, 90 deg")
-    print(f"  [verify] widest gap at theta = {th_max:.2f} deg, "
+    print(f"  [verify] analytic widest gap at theta = {th_max:.8f} deg, "
           f"size {gap_max:.6f}")
 
     vals, tot = panel_terms(axes[0, 1])

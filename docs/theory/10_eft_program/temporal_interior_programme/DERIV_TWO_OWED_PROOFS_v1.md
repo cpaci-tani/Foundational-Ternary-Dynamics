@@ -285,49 +285,41 @@ external problem.
 ---
 
 
-### 2.7 The one-body / two-body split (owner's observation, formalized)
+### 2.7 Single-apparatus and cross-frame tests (operational heuristic)
 
 *(Added 2026-08-08; artifact
 `scripts/experiments/temporal_interior/derive_onebody_twobody_split.py`. Origin: the
 owner's observation that "relativity is the temporal comparison of two
 separate bodies.")*
 
-Both reductions above dissolved an apparently relativistic obligation
-into something not about relativity. The common cause is structural.
+Rotations form the little group of a timelike rest vector, while a boost
+maps that vector to another frame. They are not independent Lorentz-group
+factors: boost commutators generate rotations. The useful distinction is
+therefore operational and non-exhaustive:
 
-**Rotations are the little group of one body's rest frame; boosts are
-not.** Acting on the rest four-velocity $u=(c,\mathbf 0)$, a spatial
-rotation leaves it fixed while a boost maps it to a different frame
-(verified symbolically). Hence the Lorentz group splits, exhaustively and
-without overlap, by *how many bodies a test requires*:
-
-| | one body (rotations) | two bodies (boosts) |
+| | single-apparatus orientation | cross-frame standards |
 |---|---|---|
 | compared | apparatus with itself, reoriented | one frame against another |
 | tests | isotropy, sidereal variation | time dilation, cone equality, tidal deviation |
-| status | **closed** ($O_h$ forces isotropy; residual $(ka)^4/3240$) | **open** |
+| status | **scoped tree-level result** ($O_h$ residual $(ka)^4/3240$) | **open** |
 
-This is exactly the seam our results fell along. §2.5(B) was an argument
-about $O_h$ — a *rotation* group — and §2.3's residual is a one-body
-observable. Every surviving item is a boost statement and every one is
-two-body: common cone, interacting vertices, composite boosts. §2.5(C)
-says it from the other side: one cone can be scaled to unity, while a
-*ratio* of two cones is invariant under every global rescaling
-(verified) and cannot be defined away.
+Section 2.5(B) concerns spatial $O_h$ isotropy, and §2.3's residual is a
+single-apparatus observable. Cross-frame comparisons of physical standards
+remain open. This is not an exhaustive split: a one-body dispersion can be
+boost-sensitive, while one cone can be scaled to unity and a ratio of two
+cones cannot be removed by a common rescaling.
 
-> **Proposition (the boost half is clock-gated).** Every boost observable
-> is a functional of at least two proper-time parametrizations — time
-> dilation compares $\dd	au_1$ with $\dd	au_2$; velocity composition
-> relates two frames; geodesic deviation is defined by the separation of
-> two worldlines, a single freely falling body detecting nothing by the
-> equivalence principle. A theory that has not constructed a physical
-> clock cannot pose the boost tests at all: their observables are
-> undefined in it, not merely unverified.
+> **Scope convention.** Claims about a substrate-built clock or rod across
+> frames require the theory to construct the relevant standards. This is a
+> methodological gate on those claims, not a theorem that every
+> boost-sensitive or curvature observable is mathematically undefined
+> without two clocks. Geodesic deviation, for example, uses one reference
+> proper time and a Jacobi field.
 
-**Consequence for the programme.** The recovery contract has been posed
-as a field-theory question — dispersions, operator dimensions, radiative
-corrections. Most of it is a *metrology* question. The one-body register
-is closed with numbers; the two-body register is open and gated on the
+**Consequence for the programme.** The recovery contract contains both
+field-theory questions — dispersions, operator dimensions, radiative
+corrections — and metrology questions about constructed standards. The
+spatial-symbol result is scoped; cross-frame standards remain gated on the
 clock construction of `ANALYSIS_MINIMUM_VIABLE_CLOCK_CARRIER_v1.md`,
 which the native single-scale search did not find. This is a more useful
 statement of where the programme is stuck than "Lorentz invariance is
@@ -335,9 +327,9 @@ open", because it names the object whose absence is the obstruction —
 and it is the *same* object the Page–Wootters reading requires for the
 stage index. One construction, two obligations.
 
-The reading extends past special relativity: curvature is defined
-operationally by geodesic deviation, so gravity's observable content is
-two-body as well and inherits the same gate.
+The same restraint applies past special relativity: operational curvature
+requires physical standards, but geodesic deviation itself does not prove a
+universal two-clock gate.
 
 ---
 

@@ -87,11 +87,9 @@ effective light cone is a coarse-grained object with no content below
 $t \approx \sqrt3$ ticks.** Asking where the cone is at $t=1$ is asking a
 question below the resolution at which the concept was defined.
 
-## 4. The cone is a true signal front
+## 4. The group-velocity cone is effective, not the strict front
 
-If some mode of the discrete dynamics propagated faster than $C$, the
-precursor shell would carry real signal and the effective cone would be
-merely typical rather than binding. It does not. For the leapfrog
+For the leapfrog
 dispersion $\Omega(k) = 2\arcsin\!\big(\tfrac{C}{2}\sqrt{-L(k)}\big)$ the
 group velocity was differentiated analytically,
 $$\frac{\partial\Omega}{\partial k_i}
@@ -99,11 +97,12 @@ $$\frac{\partial\Omega}{\partial k_i}
        {3\sqrt{1-S^2}\,\sqrt{-L}}, \qquad S = \tfrac{C}{2}\sqrt{-L},$$
 and scanned over a $181^3$ grid of the irreducible zone. The result:
 $$\max_{k\neq0} |\nabla_k\Omega| = 0.999975\,C .$$
-The supremum is $C$, attained only in the limit $k\to0$ (where the
-expression is a removable singularity with limit exactly $C$); **every
-finite-wavelength mode is strictly subluminal.** No signal outruns the
-cone, so whatever occupies the precursor shell is not propagating
-disturbance.
+The grid finds no sampled value above $C$ and approaches $C$ as $k\to0$,
+where the expression has a removable limit. This is evidence about the
+effective packet/group-velocity cone, not a proof of the global supremum.
+More importantly, even an exact group-velocity supremum would not be a
+strict support theorem: the Green function below is nonzero outside $Ct$.
+The exact signal/support front is the reach boundary of the finite update.
 
 ## 5. What is actually in the shell
 
@@ -125,13 +124,15 @@ At $t=10$ (cone radius $5.774$, support radius $\sqrt2\cdot10 = 14.142$):
 
 The amplitude falls **10.3 decades across the shell**, roughly $1.3$
 decades per lattice cell, and then terminates in a machine-exact zero that
-the artifact asserts rather than reports. This is a Sommerfeld precursor:
-present, calculable, and exponentially suppressed — the analytic tail of
-the Fourier integral ahead of a front that no mode reaches.
+the artifact asserts rather than reports. This is precursor-like:
+present, calculable, and strongly suppressed in the reported finite-time
+profile, outside the effective group-velocity cone but inside exact support.
 
-So the discrete causal structure has four regions where the continuum has
-three, and the extra one is harmless in a precise sense: it is bounded
-above by an exponential and below by an exact zero.
+So the bookkeeping has four regions: effective-cone interior, precursor
+shell, exact support boundary and unreached exterior. The run shows about
+ten decades of suppression across the shell and then an exact zero. It
+does not establish a uniform exponential bound in time or physical
+harmlessness.
 
 > **A measurement error worth recording.** The first attempt probed the
 > shell with a *Gaussian* source and reported a flat $\approx 3\%$ of
@@ -151,9 +152,10 @@ It settles, as exact geometry: the tangency $C = $ octahedral inradius;
 the $t=1$ census; the exact closure of the cone over the $3^3$ block at
 $t=3$; the strict support bound at every $t$.
 
-It establishes, as measurement on this stencil: that the maximum group
-velocity is $C$, so the cone is a true front; and that the precursor
-amplitude falls by ten decades across the shell.
+It establishes, as measurement on this stencil: that a $181^3$ scan found
+no group velocity above $C$, supporting an effective cone; and that the
+precursor amplitude falls by ten decades across the shell in the reported
+run. Neither statement makes $Ct$ the strict front.
 
 It does not bear on the constitutional question left open by
 `ANALYSIS_CONE_SPEED_CHARACTERIZED_v1.md` — which neighbourhood *defines*

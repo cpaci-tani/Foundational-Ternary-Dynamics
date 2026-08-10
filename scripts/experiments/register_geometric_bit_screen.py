@@ -7,14 +7,13 @@ support q < 3/2. For s < sqrt(3) the bonds sit at exactly r = 1 in TWO
 mirror configurations C_+- = (0, 0, +-h), h = sqrt(1 - s^2/3): a
 barrier-separated two-state system at zero tension — the R2 candidate.
 
-Statics-level screen, exact to grid resolution:
+Statics-level finite-grid screen:
   - both states verified as zero-tension minima; Hessian = 96 eps * sum
     u_i u_i^T (positive definite iff the three bond directions span R^3);
-  - TRUE barrier between the states by watershed flood-fill over the full
-    3D configuration space of C (union-find over energy-sorted grid cells:
-    the barrier is the energy at which the two basins first merge) —
-    NOT a per-path estimate (the hexagon-wheel G4/G5 lesson applied to
-    statics);
+  - a finite-grid upper estimate of the minimax barrier by watershed
+    flood-fill over a bounded 3D box (union-find over energy-sorted grid
+    cells). It is not a continuum certificate; the exact Delta E=eps result
+    is proved by derive_register_barrier_lower_bound.py;
   - the hinge-path profile (break one bond, swing on the two-bond circle)
     reported for interpretation;
   - scan over anchor side s.
@@ -64,7 +63,7 @@ def screen(s):
     hess_eigs = np.linalg.eigvalsh(H)
     E0 = float(E(Cp[None, :])[0])
 
-    # watershed barrier over the full 3D box
+    # finite-grid watershed estimate over the declared bounded 3D box
     ax = np.linspace(-BOX, BOX, GRID_N)
     X, Y, Z = np.meshgrid(ax, ax, ax, indexing="ij")
     pts = np.stack([X, Y, Z], axis=-1)
@@ -147,8 +146,9 @@ def main():
               f"{eigs:>26} {r['barrier']:>13.4f} {r['hinge']:>9.4f}")
     print()
     print("reading: E0 = -3 eps at every s (zero tension); positive-definite")
-    print("Hessian (R2 stability); watershed = TRUE barrier over all of")
-    print("configuration space; hinge = the break-one-bond path for")
+    print("Hessian (R2 stability); watershed = finite-grid upper estimate")
+    print("to the minimax barrier, not a continuum certificate; hinge =")
+    print("the break-one-bond path for")
     print("interpretation. Retention (R3) = Arrhenius in dE/T under a")
     print("declared [IMPOSED] ensemble — deferred to the composite prereg.")
 

@@ -2,10 +2,10 @@
 
 CLAIM: pi and G* are not abstract normalisations.  They are the arc
 lengths of two curves; the degenerate clock lives at a pitchfork threshold
-where the energy valley goes flat in one direction; and time dilation is
-the geometry of tick events on a worldline.
+where the energy valley goes flat in one direction; and the special-
+relativistic dilation target can be drawn as tick events on worldlines.
 
-SIX PIECES, all exact:
+EXACT IDENTITIES AND SCHEMATIC/NORMALIZED PANELS AS NOTED:
   (a) the circle and the lemniscate drawn to the same scale, with their
       arc lengths 2 pi and sqrt(pi) G* -- the constants ARE the curves.
   (b) phase portraits at equal energy spacing: harmonic orbits are
@@ -16,8 +16,9 @@ SIX PIECES, all exact:
   (d) the degeneracy as geometry: energy contours around a nondegenerate
       minimum are ellipses; around a quartic one they open into a flat
       valley -- and flatness IS cheapness to steer.
-  (e) dilation as geometry: tick events on two worldlines, one at rest and
-      one moving, drawn from the MEASURED kink periods.
+  (e) the special-relativistic TARGET: tick events on two worldlines, one
+      at rest and one moving.  This is a schematic, not soliton
+      shape-mode evidence.
   (f) the period laws, the behaviour that distinguishes the two clocks.
 
 PRIOR ART.  The marginal-stability reading of G*, the period law and the
@@ -72,7 +73,7 @@ def panel_curves(ax):
     th = np.linspace(0, 2 * np.pi, 400)
     ax.plot(np.cos(th), np.sin(th), color=C1, lw=1.8, label="circle")
     lx, ly = lemniscate()
-    ax.plot(lx, ly, color=CO, lw=1.8, label="lemniscate")
+    ax.plot(lx, ly, color=CO, lw=1.8, ls="--", label="lemniscate")
     ax.plot([0], [0], "o", color=CK, ms=3.0)
     ax.set_aspect("equal")
     ax.set_xlim(-1.35, 1.35)
@@ -106,9 +107,9 @@ def orbit(E, V, xmax, n=500):
 def panel_phase(ax):
     for E, al in zip((0.12, 0.28, 0.50, 0.78), (0.45, 0.6, 0.78, 1.0)):
         x, p = orbit(E, lambda t: 0.5 * t ** 2, np.sqrt(2 * E))
-        ax.plot(x, p, color=C1, lw=1.2, alpha=al)
+        ax.plot(x, p, color=C1, lw=1.2, ls="-", alpha=al)
         x, p = orbit(E, lambda t: t ** 4, E ** 0.25)
-        ax.plot(x, p, color=CO, lw=1.2, alpha=al)
+        ax.plot(x, p, color=CO, lw=1.2, ls="--", alpha=al)
     ax.set_aspect("equal")
     ax.set_xlim(-1.45, 1.45)
     ax.set_ylim(-1.45, 1.45)
@@ -128,10 +129,12 @@ def panel_phase(ax):
 
 def panel_pitchfork(ax):
     x = np.linspace(-1.5, 1.5, 500)
-    for mu, col, lab in ((0.9, C1, "$\\mu>0$: one well, harmonic"),
-                         (0.0, CO, "$\\mu=0$: the $G^{*}$ clock"),
-                         (-0.9, C4, "$\\mu<0$: two wells")):
-        ax.plot(x, 0.5 * mu * x ** 2 + x ** 4, color=col, lw=1.8, label=lab)
+    for mu, col, ls, lab in (
+            (0.9, C1, "-", "$\\mu>0$: one well, harmonic"),
+            (0.0, CO, "--", "$\\mu=0$: the $G^{*}$ clock"),
+            (-0.9, C4, "-.", "$\\mu<0$: two wells")):
+        ax.plot(x, 0.5 * mu * x ** 2 + x ** 4, color=col, ls=ls,
+                lw=1.8, label=lab)
     ax.axhline(0, color=CG, lw=0.6, zorder=0)
     ax.set_xlim(-1.5, 1.5)
     ax.set_ylim(-0.35, 1.55)
@@ -193,20 +196,20 @@ def panel_worldlines(ax, T0, Tu, u):
     ax.set_ylabel("time  (ticks)")
     ax.text(-36, 178, f"at rest\n$T={T0:.1f}$", fontsize=FS_ANN, color=C1,
             ha="left", va="top")
-    ax.text(112, 96, f"moving\n$T={Tu:.1f}$", fontsize=FS_ANN, color=CO,
+    ax.text(112, 96, f"SR target\n$T={Tu:.1f}$", fontsize=FS_ANN, color=CO,
             ha="right", va="center")
     # the left light line passes through (-36, 30); park this clear of both
     ax.text(114, 22, "dotted: light", fontsize=FS_ANN, color=CG,
             ha="right", va="center")
-    ax.set_title("(e)  dilation, seen: the moving clock's\n"
-                 "ticks are further apart in time")
+    ax.set_title("(e)  special-relativistic target (schematic):\n"
+                 "moving ticks are further apart")
 
 
 def panel_laws(ax):
     A = np.logspace(np.log10(0.12), np.log10(1.0), 60)
     ax.loglog(A, np.ones_like(A), color=C1, lw=1.8,
               label="harmonic:  $T$ fixed")
-    ax.loglog(A, A[0] / A, color=CO, lw=1.8,
+    ax.loglog(A, A[0] / A, color=CO, lw=1.8, ls="--",
               label="quartic:  $T \\propto 1/A$")
     ax.set_xlim(0.11, 1.1)
     ax.set_ylim(0.09, 1.7)
@@ -217,7 +220,7 @@ def panel_laws(ax):
     ax.legend(loc="lower left", handlelength=1.6, borderpad=0.3,
               labelspacing=0.26, frameon=True, framealpha=1.0,
               edgecolor="none", facecolor="white").set_zorder(9)
-    ax.text(1.05, 1.12, "$T\\!\\cdot\\!A=\\sqrt{\\pi}G^{*}$", fontsize=FS_ANN,
+    ax.text(1.05, 1.12, "$T\\!\\cdot\\!A=\\mathrm{constant}$ (normalised)", fontsize=FS_ANN,
             color=CO, ha="right", va="bottom")
     ax.set_title("(f)  and the behaviour that follows:\n"
                  "one ignores amplitude, one counts it")
@@ -234,10 +237,13 @@ def main():
     print(f"  [verify] circle circumference  = {2*np.pi:.9f} = 2 pi")
     print(f"  [verify] ratio 2pi / sqrt(pi)G* = {2*np.pi/(np.sqrt(np.pi)*GS):.9f}")
 
-    # measured kink periods (lam = 0.03), from fig_carrier_arc
-    T0, Tu, u = 29.6, 35.0, 0.5 * C
-    print(f"  [verify] measured kink periods: rest {T0}, at u=0.5C {Tu}"
-          f"   ratio {Tu/T0:.4f}  (ideal gamma {1/np.sqrt(1-0.25):.4f})")
+    # Special-relativistic target only; the soliton shape-mode campaign is
+    # unreproduced.
+    T0, u = 30.0, 0.5 * C
+    gamma = 1 / np.sqrt(1 - (u / C) ** 2)
+    Tu = gamma * T0
+    print(f"  [verify] SR target: rest {T0}, at u=0.5C {Tu:.6f}"
+          f"   ratio {Tu/T0:.6f} = gamma {gamma:.6f}")
 
     # 7.55, not the aspect-preserving 7.94: this figure carries the
     # longest caption in the paper and overflowed its page by 24 pt.

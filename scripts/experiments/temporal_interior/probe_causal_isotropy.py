@@ -7,9 +7,9 @@ different symmetry:
   STRICT SUPPORT   set by the stencil.  For M18 it is the cuboctahedron,
                    whose radius runs from t (face) to sqrt(2) t (edge) --
                    manifestly ANISOTROPIC, by 41% between axes.
-  SIGNAL FRONT     set by the dispersion.  Omega = C|k| + O(k^3) with the
-                   leading term exactly isotropic, so the front is a
-                   SPHERE of radius C t.
+  EFFECTIVE CONE   characterized by the dispersion.  Omega = C|k| + O(k^3)
+                   has an isotropic leading term, so long-wave packet peaks
+                   concentrate near a SPHERE of radius C t.
 
 Both are real.  So "is the causal structure isotropic?" has no unqualified
 answer -- it depends on the amplitude at which you can still see.  This
@@ -98,8 +98,8 @@ def radius_at(a, dirs, eps_list, R, rmax, nr=1400):
 
 
 def scan(T, R, ndir=600, nr=4000):
-    """A(eps) at one t.  Rows whose mean radius falls inside the signal
-    front are NEAR FIELD, not a causal boundary, and are dropped: there the
+    """A(eps) at one t.  Rows whose mean radius falls inside the effective
+    cone are NEAR FIELD, not a strict causal boundary, and are dropped: there the
     envelope is tracking the packet interior, not its edge."""
     a = greens(T, R)
     dirs = fib_directions(ndir)
@@ -130,7 +130,7 @@ def main():
 
     T, R = 24, 36
     a, rows = scan(T, R)
-    print(f"\n  DETAIL AT t = {T}   (front {C*T:.3f}, support "
+    print(f"\n  DETAIL AT t = {T}   (effective cone {C*T:.3f}, support "
           f"{1.0*T:.1f}-{np.sqrt(2)*T:.1f}, peak |phi| {a.max():.3e})")
     print("     eps      R_mean   (max-min)/mean   rms/mean"
           "      [100]     [110]     [111]")
@@ -140,8 +140,8 @@ def main():
               f"   {r['rms']:9.4f}   {k[0]:8.3f}  {k[1]:8.3f}  {k[2]:8.3f}")
 
     print("\n  SCALING WITH t, AT A SELF-NORMALIZING THRESHOLD")
-    print("    The front amplitude itself decays with t, so a fixed eps")
-    print("    ladder drifts relative to the front.  The threshold is set")
+    print("    The effective-cone amplitude itself decays with t, so a fixed eps")
+    print("    ladder drifts relative to that contour.  The threshold is set")
     print("    instead to eta x (envelope at r = C t), which tracks it.")
     print("\n      t    E_front      A(eta=1)   A(eta=.01)  A(eta=1e-4)")
     dat = {1.0: [], 1e-2: [], 1e-4: []}
@@ -175,7 +175,7 @@ def main():
         print(f"    eta = {eta:6.0e}:  A(t) ~ t^({p:+.2f})"
               f"   [Airy prediction: -4/3 = -1.33]")
     print(f"\n  READ-OFF")
-    print(f"    At the signal front the causal surface is a sphere to"
+    print(f"    At the effective cone the detected contour is spherical to"
           f" {rows[0]['A']:.2%} at t={T}.")
     print(f"    Fourteen decades down it has only reached"
           f" {rows[-1]['A']:.2%}, against the stencil's own {cub:.1%}.")

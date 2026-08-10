@@ -7,8 +7,8 @@ anticommuting structures and dimension 2^k carries 2k+1.  Nine first fits at
 16.  Seven would fit at 8.  So whether nine is MINIMAL is worth an hour: it
 is the difference between a fourfold and a twofold Dirac price.
 
-WHAT IS ASKED.  Write x = q/2 (the half-offset lattice on which the squares
-actually live).  Let V be the nearest-neighbour class on that lattice:
+WHAT IS ASKED.  Write x = q/2 and choose the corresponding half-angle
+nearest-neighbour function class V:
 trigonometric polynomials of degree <= 1 per variable in x, i.e. the span of
 the 27 monomials prod_i g_i with g_i in {1, cos x_i, sin x_i}.  Minimise n
 subject to  p = sum_{a=1}^n f_a^2  with every f_a in V.
@@ -29,8 +29,10 @@ DECOMPOSITION (phase 0).
                zero set.
   3. [exact]   a zero-set lower bound on n.
   4. [search]  Burer-Monteiro least squares for n = 9 down to 3.
-  5. [exact]   anything the search finds is re-verified symbolically, so a
-               successful descent is rigorous; a failed one is evidence.
+  5. [numeric] anything the search finds is rechecked on a DFT grid and
+               fresh momenta.  It remains a numerical candidate: no
+               symbolic, rational-reconstruction or interval existence
+               certificate is supplied; a failed descent is evidence only.
 
 Reproduction:  python scripts/experiments/temporal_interior/derive_sos_rank_minimal.py
 """
@@ -183,8 +185,9 @@ def try_rank(Zk, pv, n, rng, tries):
     # CORRECTION 2026-08-09: the initial scale is now DISPERSED.  The
     # first version drew every restart from scale 0.7, which samples one
     # basin many times rather than many basins once, and reported the
-    # minimum as five.  Dispersing the scale finds a certified FOUR
-    # within tens of starts.  Restart counts only bound what a search of
+    # minimum as five.  Dispersing the scale finds a numerical FOUR
+    # candidate within tens of starts.  Fresh-point residuals are not an
+    # exact or interval existence certificate.  Restart counts only bound what a search of
     # this kind can bound if the starts are actually independent.
     best, bestF = np.inf, None
     for _ in range(tries):
@@ -448,7 +451,7 @@ def main():
         err = certify(found[nmin], keep)
         print(f"  [verify] n = {nmin} re-checked on 4000 fresh momenta: "
               f"max |residual| = {err:.3e}")
-        assert err < 1e-9, "the minimal decomposition failed its own recheck"
+        assert err < 1e-9, "the numerical candidate failed its fresh-point recheck"
         G = found[nmin] @ found[nmin].T
         ev = np.linalg.eigvalsh(G)
         print(f"  [verify] Gram is PSD, rank {int((ev > 1e-10).sum())}, "
@@ -458,7 +461,8 @@ def main():
               f"max |P G P^T - G| = {dev:.3e} "
               f"({'covariant' if dev < 1e-8 else 'NOT covariant'})")
     print()
-    print(f"  RESULT: unrestricted minimum n = {nmin}  -> spinor dimension "
+    print(f"  RESULT: best numerical unrestricted candidate n = {nmin}"
+          f"  -> candidate spinor dimension "
           f"{spinor_dim(nmin)}")
     print(f"          covariant EXISTENCE at n = {nsym} (exact) -> spinor "
           f"dimension {spinor_dim(nsym)}")

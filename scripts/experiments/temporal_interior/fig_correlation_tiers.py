@@ -1,8 +1,8 @@
 """fig_correlation_tiers.py — figure for the three ceilings (paper SS7.5).
 
-CLAIM: the potential is not "whatever is not forbidden".  It is a specific,
-tightly constrained subset of the consistent, and the constraint has no
-accepted derivation.
+CLAIM: the quantum set is a specific, tightly constrained subset of the
+nonsignalling conditional-probability set, and the constraint has no
+accepted derivation in this programme.
 
 THREE PIECES, ALL EXACT:
   (a) the three ceilings 2, 2 sqrt2, 4, and which structure each admits
@@ -72,7 +72,7 @@ def hmin(S):
 
 # =====================================================================
 def panel_tiers(ax):
-    rows = [("no-signalling", 4.0, CG, "any consistent\nprobability assignment"),
+    rows = [("no-signalling", 4.0, CG, "a nonsignalling\nconditional assignment"),
             ("quantum", TS, CO, "a noncommutative\nweight structure"),
             ("local", 2.0, C1, "pre-assigned values")]
     for i, (nm, v, col, _) in enumerate(rows):
