@@ -1,4 +1,4 @@
-"""derive_kink_clock_dilation.py — does the ONE-ENERGY carrier dilate,
+"""derive_soliton_shape_mode_dilation.py — does the ONE-ENERGY carrier dilate,
 and does it dilate UNIVERSALLY?
 
 THE CARRIER.  phi^4 model, U = (lam/4)(phi^2 - v^2)^2, on the M18 axial
@@ -11,7 +11,7 @@ THE TEST.  Boost the pair.  In the continuum the phi^4 model is exactly
 Lorentz invariant, so the boosted kink is the CONTRACTED profile
     phi(x,t) = v tanh( gamma (x - u t) / w ),
     phidot   = -(u gamma v / w) sech^2( gamma (x - u t) / w ),
-and its internal clock must satisfy
+and its internal shape-mode frequency must satisfy
     Omega(u) = Omega(0) / gamma ,      gamma = 1/sqrt(1 - u^2/c^2),
 with the SAME exponent for every lam.  Universality is the whole content
 of dilation: the two-category (nodes + static well) model failed exactly
@@ -74,7 +74,7 @@ def freq(tr, drop=0.15):
 
 
 def main():
-    print("Kink clock dilation — does the one-energy carrier dilate "
+    print("Soliton shape-mode clock dilation — does the one-energy carrier dilate "
           "universally?")
     print(f"  C = 1/sqrt3 = {C:.6f},  N = {N},  separation 2d = {2*D:.0f}")
 
@@ -127,7 +127,7 @@ def main():
   COMPARISON
     two-category carrier (nodes + static well):  p spanned [-2.70, -0.94],
         spread 1.76 across constituent mass and binding fraction.
-    one-energy carrier (phi^4 kink):             p spread across lam is
+    one-energy carrier (phi^4 soliton shape mode): p spread across lam is
         {means.max()-means.min():.4f}.""")
 
 

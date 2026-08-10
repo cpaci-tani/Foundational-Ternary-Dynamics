@@ -1,20 +1,21 @@
 """fig_cone_arc.py — figure for the cone arc (paper SS8.6-8.8).
 
-CLAIM: the limiting speed depends on the rest mass; a bound composite
-inherits its CONSTITUENTS' excess rather than its own total mass's; and
-the mechanical clock's Galilean character is a modelling artifact, not a
-categorical fact about the carrier.
+CLAIM: the limiting speed depends on the rest mass; the bottom of a FREE
+N-particle continuum has an N-independent normalized threshold-cone shift;
+and the mechanical clock's Galilean character is a modelling artifact,
+not a categorical fact about the carrier.  No bound-state inheritance or
+macroscopic extrapolation is claimed.
 
-FOUR PIECES, ALL EXACT (each checked against a closed form):
+EXACT DISPERSION INPUTS; NUMERICAL OR ASYMPTOTIC CHECKS AS NOTED:
   (a) C_eff(M)/C - 1  extracted from the exact dispersion, against M^2/12
-  (b) dilation residual against the analytic k^4/(36 M^2)
-  (c) composite delta vs N, flat, against the naive (N M)^2/6 growing as N^2
+  (b) free mass-shell diagnostic residual against analytic k^4/(36 M^2)
+  (c) free-threshold delta vs N, flat, against treating total mass as one particle
   (d) the two-limit validity plane, with real systems placed on it
 
 SCOPE: illustrates results established elsewhere; introduces no new claim
 and moves no tag.  Scalar sector only -- says nothing about FTD's own mass
-mechanism.  The composite result is first order in the LV parameter with
-non-relativistic internal motion.
+mechanism.  The threshold result is not a theorem about an interacting
+bound-state pole.
 """
 from __future__ import annotations
 
@@ -117,7 +118,7 @@ def panel_dilation(ax):
                   label=f"$M={M}$", zorder=3)
         worst = max(worst, np.abs(res / pred - 1).max())
     ax.set_xlabel("$\\beta = v_g/C$")
-    ax.set_ylabel("dilation residual")
+    ax.set_ylabel("mass-shell residual")
     decade_ticks(ax.xaxis, [1e-3, 1e-2, 1e-1],
                  ["$10^{-3}$", "$10^{-2}$", "$10^{-1}$"])
     decade_ticks(ax.yaxis, [1e-12, 1e-9, 1e-6],
@@ -127,12 +128,12 @@ def panel_dilation(ax):
               edgecolor="none", facecolor="white").set_zorder(9)
     ax.text(0.97, 0.04, "dotted: $k^4/36M^2$", fontsize=FS_ANN,
             color=CK, ha="right", va="bottom", transform=ax.transAxes)
-    ax.set_title("(b)  within a species dilation is exact\n"
-                 "to $O(\\beta^4)$, and the residual is known")
+    ax.set_title("(b)  the free mass-shell diagnostic\n"
+                 "has a known $O(\\beta^4)$ residual")
     return worst
 
 
-def composite_delta(masses):
+def free_threshold_delta(masses):
     """delta from E(K) = min over splits of sum_a omega_a(k_a).
     For N identical constituents the split is k_a = K/N by symmetry."""
     Ks = np.linspace(0.0, 2e-3, 9)
@@ -144,15 +145,15 @@ def composite_delta(masses):
     return (2.0 * E[0] * a2) / C2 - 1.0
 
 
-def panel_composite(ax):
+def panel_free_threshold(ax):
     m0 = 0.3
     Ns = np.array([1, 2, 3, 5, 8, 12, 20, 30])
-    dc = np.array([composite_delta([m0] * int(n)) for n in Ns])
+    dc = np.array([free_threshold_delta([m0] * int(n)) for n in Ns])
     naive = (Ns * m0) ** 2 / 6.0
     ax.loglog(Ns, naive, "s--", color=C1, ms=4.0,
               label="if it were one particle\nof the total mass")
     ax.loglog(Ns, dc, "o-", color=CO, ms=4.5,
-              label="composite (computed)")
+              label="free threshold (computed)")
     ax.axhline(m0 * m0 / 6, color=CK, ls=":", lw=1.0, zorder=1)
     ax.set_xlabel("number of constituents  $N$")
     ax.set_ylabel("$\\delta = c^2/C^2 - 1$")
@@ -168,8 +169,8 @@ def panel_composite(ax):
     # with the "30" tick label
     ax.text(1.15, 5.5e-3, "constituent $M^2/6$", fontsize=FS_ANN,
             color=CK, ha="left", va="center")
-    ax.set_title("(c)  the composite inherits its constituents',\n"
-                 "not its own total mass's")
+    ax.set_title("(c)  free $N$-particle threshold cone shift\n"
+                 "is $N$-independent (not a bound state)")
     return dc
 
 
@@ -235,11 +236,11 @@ def main():
     worst = panel_dilation(axes[0, 1])
     print(f"  [verify] residual vs k^4/36M^2: max rel dev = {worst:.3e}")
 
-    dc = panel_composite(axes[1, 0])
+    dc = panel_free_threshold(axes[1, 0])
     spread = dc.max() / dc.min() - 1
-    print(f"  [verify] composite delta over N=1..30: spread = {spread:.3e}"
+    print(f"  [verify] free-threshold delta over N=1..30: spread = {spread:.3e}"
           f"   (naive would grow 900x)")
-    assert spread < 1e-5, "composite delta is not N-independent"
+    assert spread < 1e-5, "free-threshold delta is not N-independent"
 
     wr, voc = panel_validity(axes[1, 1])
     print(f"  [verify] clock at A=0.30: wr/C = {wr[2]:.4f}, "

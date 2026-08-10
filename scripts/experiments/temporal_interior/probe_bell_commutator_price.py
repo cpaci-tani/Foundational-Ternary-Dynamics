@@ -125,11 +125,13 @@ print(f"    => every convex mixture also obeys |S| <= "
 print("""
     This bound is insensitive to ANY algebra layered on top.  Bell's
     argument is about the conditional distributions P(a,b|x,y), not about
-    the operators used to describe the alternatives.  A substrate whose
-    postulates are (discrete, local, deterministic) supplies exactly a
-    mixture over these vertices, with lambda the configuration on a
-    spacelike slice -- so it returns |S| <= 2 whatever effect algebra is
-    written above it.
+    the operators used to describe the alternatives.  If the settings are
+    independent of the slice state lambda AND the recorded responses factor
+    locally with no remote-context dependence, then a discrete deterministic
+    substrate induces exactly a mixture over these vertices and returns
+    |S| <= 2.  Discreteness, locality and determinism alone do not supply
+    those two operational premises; measurement dependence is a separate
+    escape that must be declared and constrained.
 
     The commutator identity therefore explains what QUANTUM MECHANICS
     needs in order to exceed 2.  It does not supply a route by which a

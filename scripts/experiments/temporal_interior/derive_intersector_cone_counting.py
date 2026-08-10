@@ -119,9 +119,11 @@ for n in range(1, 9):
     print(f"  q^{2*n:<5} {k:>12} {cond:>12} {tot:>12}")
 
 print("""
-  So matching two sectors through order q^{2N} costs
-  sum_{n<=N} (count(n) - 1) independent tuned conditions, and that sum
-  GROWS WITHOUT BOUND.  There is no order at which the counting closes.""")
+  Under naive order-by-order finite-shell tuning, matching two sectors
+  through order q^{2N} imposes sum_{n<=N}(count(n)-1) conditions, and that
+  sum GROWS WITHOUT BOUND.  This counting is not a no-go against a finite
+  all-orders identity, which can satisfy infinitely many coefficients at
+  once (as the exact SOS identity below does).""")
 
 
 # ---------------------------------------------------------------------
@@ -213,10 +215,10 @@ for s in sol:
 print(f"""
   matched through q^6 by a real operator: {ok}
   => the enriched operator buys q^2 and q^4 (FTD-0413) and the knob is
-     spent.  Each new order contributes count(n)-1 fresh conditions while
-     each new shell contributes one coefficient, so matching is an
-     ORDER-BY-ORDER improvement programme with an unbounded bill -- the
-     Symanzik situation -- and not a closure.""")
+     spent.  In this naive order-by-order finite-shell ansatz, each new
+     order contributes count(n)-1 conditions while each new shell adds one
+     coefficient.  That is a Symanzik-style improvement programme, not a
+     proof that no finite all-orders structural identity can close.""")
 
 
 # =====================================================================
@@ -244,10 +246,14 @@ print(f"  [verify] squares: 3 face + 6 edge = 9")
 print(f"  [verify] anticommuting structures in dim 2^k = 2k+1 -> "
       f"9 needs dim {2**4}")
 print("""
-  AND THE ARGUMENTS ARE HALF-INTEGER (q_i/2, (q_i +- q_j)/2): fields at
-  half-lattice offsets, i.e. the STAGGERED structure.  Wilson fermions
-  live on integer displacements, so no shell count reaches them.  That is
-  WHY (1) and (3) fail -- the sectors were matched on the wrong lattice.
+  THIS IS AN ECONOMICAL HALF-ANGLE BASIS, NOT A NECESSITY THEOREM.
+  The phase in exp(iq)-1 = 2i exp(iq/2) sin(q/2) means a half-angle
+  magnitude does not by itself place endpoints at half sites.  Every graph
+  hop also has the exact integer-frequency identity
+      2w(1-cos(q.d)) = w sin^2(q.d) + w(1-cos(q.d))^2.
+  For M18 the 3 face pairs and 6 edge pairs therefore give an exact
+  18-square integer-hop construction.  Half offsets lower the known square
+  count; they are not forced by existence.
 
   UPPER BOUND ONLY: 9 is this decomposition's count, not proven minimal;
   and doubling, chirality and induced-interaction locality are untested.""")

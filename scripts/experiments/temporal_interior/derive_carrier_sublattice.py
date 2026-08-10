@@ -1,10 +1,12 @@
 """Which sublattice does the matter carrier actually need?
 
-FTD-0816 4c settled the COUNT (seven covariant, five unrestricted).  This
-settles the ONTOLOGY, which is the load-bearing half: a square's argument
-fixes the displacements its hopping operator uses, and displacements are
-sites.  So the question "what does a common cone cost the postulates" is
-the question "which half-offsets appear".
+FTD-0816 gives an exact spatially cubic-covariant seven-square construction,
+a numerical unrestricted four-square candidate, and rigorous bounds
+3 <= n_min <= 7.  This script classifies the Fourier support of the chosen
+half-angle basis.  It does NOT settle the physical ontology: the exact
+18-square integer-hop construction proves that half offsets are economical,
+not necessary.  The question here is conditional: if the shorter
+half-angle basis is physically instantiated, which placement classes occur?
 
 With x = q/2, a monomial prod_i g_i(x_i) has displacement component m
 equal to {0} when g_m = 1 and {+-1/2} when g_m is cos or sin, because
@@ -22,14 +24,14 @@ one sin -- is the BCC sector.  It has 2^3 - 1 = 7 elements.  Seven.  The
 covariant seven-square decomposition is one square per BCC basis monomial,
 which is why it is covariant and why it is exactly seven.
 
-WHAT IS AT STAKE.  SC sites plus body centres IS the BCC lattice.  If the
-carrier needs only body centres, the ontological demand is not a finer
-cubic lattice (which would halve a_phys and move every dimensional
-prediction with it) but the OTHER sublattice of a BCC lattice -- and FTD
-already reaches BCC independently, via the Watson identity W_3 = G*^2/2pi
-and the SU(3) triple cosine product.  If instead the shortest
-decompositions must reach to face and edge offsets, the demand is the
-finer lattice and the price is much higher.
+CONDITIONAL PRICE.  SC sites plus body centres form the BCC placement
+classes.  If the carrier uses the half-offset basis, its Fourier support
+requires body, face, and/or edge placements according to the monomials
+above.  The algebra does not decide whether these are physical sites on an
+a/2 refinement (which would recalibrate a_phys) or staggered face/edge/body
+cochains on the existing Bravais complex (which keeps a but adds carrier
+types).  Half offsets are an economical representation, not proof that a
+finer physical lattice is required.
 
 Reproduction:
     python scripts/experiments/temporal_interior/derive_carrier_sublattice.py
@@ -233,26 +235,27 @@ def main():
           f"   ({100*outside/(inbcc+outside):.1f}% of the total)")
 
     print()
-    # CORRECTION 2026-08-09.  The unrestricted minimum is FOUR, found once
+    # CORRECTION 2026-08-09.  An unrestricted numerical FOUR-square
+    # candidate is found once
     # the search's initial scale is dispersed (the earlier fixed-scale
     # search sampled one basin 400 times and reported five).  The BCC
     # restriction now cuts finely: confined to body centres the search
     # reaches five and stalls there over 2000 dispersed starts, while the
     # four uses the face and edge shells.  So "body centres suffice" holds
     # at length five; the shortest carrier buys one square by leaving
-    # them.  Either way no finer cubic lattice is wanted -- every shell in
-    # play is a half-offset of the existing one.  The stall at four is
+    # them.  No finer physical lattice is forced: the half-offset support
+    # leaves open an a/2 refined-site reading or staggered cochains on the
+    # existing Bravais complex.  The stall at four is
     # search evidence of exactly the kind that mis-reported the minimum
     # before, and is asserted at that confidence and no higher; the only
     # proof here is the Hessian floor n >= 3.
     assert bcc_min == 5, "expected the BCC-restricted search to stall at five"
-    print(f"  RESULT: BCC-only search minimum = {bcc_min}; unrestricted = 4")
-    print( "          (certified elsewhere; see derive_sos_rank_minimal.py).")
+    print(f"  RESULT: BCC-only search stalls at {bcc_min}; unrestricted candidate = 4")
+    print( "          (numerical only; no exact/interval existence certificate).")
     print( "          Body centres suffice at length five; the four buys its")
     print( "          shortness by leaving them for the face/edge shells.")
-    print( "          No finer cubic lattice either way: every shell in play")
-    print( "          is a half-offset of the existing lattice, so a_phys")
-    print( "          does not move.")
+    print( "          Half-offset ontology remains open: refined physical sites")
+    print( "          recalibrate a_phys; staggered cochains keep a but add types.")
     print()
     print( "          Sign-character orbits INSIDE the BCC sector are 3 (scc),")
     print( "          3 (ssc) and 1 (sss), so pure-sector covariant lengths")
@@ -275,11 +278,11 @@ def main():
     assert spinor_dim(4) == 4 and spinor_dim(5) == 4
     assert spinor_dim(7) == 8 and spinor_dim(8) == 16
     print()
-    print("  So the minimal carrier ADMITS A MASS at ordinary Dirac dimension")
-    print("  -- four kinetic structures plus the mass exactly fill the five")
-    print("  that dimension 4 carries -- while cubic covariance with a mass")
-    print("  forces dimension 16.  Covariance, not mass, is what multiplies")
-    print("  the spinor.  (An earlier version, built on the mis-reported")
+    print("  CONDITIONAL: if the numerical four is certified, four kinetic")
+    print("  structures plus a mass fill the five carried by dimension 4.")
+    print("  The specified exact cubic-covariant seven plus a mass requires")
+    print("  dimension 16; no general covariant minimum is proved.")
+    print("  (An earlier version, built on the mis-reported")
     print("  five, concluded the carrier was necessarily massless; that")
     print("  prediction is withdrawn.)")
 

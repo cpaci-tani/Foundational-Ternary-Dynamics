@@ -1,7 +1,7 @@
 # ANALYSIS — The Limiting Speed Depends on the Rest Mass: the Kinematic Half of the Two-Body Register, Computed
 
 **Status:** `[DERIVED — EXACT DISPERSION, SYMBOLIC]` +
-`[MEASURED — DILATION RESIDUAL, NUMERIC]` +
+`[MEASURED — FREE MASS-SHELL RESIDUAL, NUMERIC]` +
 `[NEGATIVE — SPECIES DO NOT SHARE A CONE EXACTLY]` +
 `[AMENDS — DERIV_TWO_OWED_PROOFS_v1 §2.7: one of the three two-body items was a missing calculation, not a missing instrument]` +
 `[BOOKED — FTD-0812]`
@@ -39,17 +39,18 @@ is not correct, and this document supplies the calculation.
 
 ## 2. The operational form of the test
 
-A packet built around wavenumber $k$ travels at its own group velocity
-$v_g = |\nabla_k\Omega|$. Its internal phase advances per unit lab time at
-$\Omega$; per unit *proper* time the relativistic prediction is
+A free packet built around wavenumber $k$ travels at group velocity
+$v_g = |\nabla_k\Omega|$. Relativistic mass-shell dispersion implies the
+diagnostic
 
-$$\Omega_{\rm proper}(k) \;=\; \Omega(k)\,\sqrt{1 - v_g(k)^2/c^2}
-\;=\; \text{const},$$
+$$\Omega_{\rm shell}(k) \;=\; \Omega(k)\,\sqrt{1 - v_g(k)^2/c^2}
+\;=\; M,$$
 
 which is an identity for $\Omega^2 = c^2k^2 + M^2$, since
-$v_g = c^2k/\Omega$ gives $1-v_g^2/c^2 = M^2/\Omega^2$. **So
-$\Omega_{\rm proper}$ is $k$-independent precisely when a moving clock of
-that species dilates exactly, and its $k$-dependence *is* the violation.**
+$v_g = c^2k/\Omega$ gives $1-v_g^2/c^2 = M^2/\Omega^2$. This is a
+free-mode mass-shell diagnostic, not an observable internal clock rate;
+constancy tests Lorentz form but does not by itself demonstrate physical
+clock dilation.
 
 Adding a mass to the M18 leapfrog,
 $\phi_{t+1}-2\phi_t+\phi_{t-1} = C^2L\phi - M^2\phi$, gives the exact
@@ -99,7 +100,7 @@ $|\Delta v/v| = (ka)^4/3240$ by an independent route. This validates the
 whole symbolic chain. (Note also that $[110]$ carries *no* $k^4$ term at
 all — it is the extremal direction.)
 
-## 4. Does a moving clock dilate?
+## 4. Free mass-shell residual
 
 Numerically, along $[100]$, with $C_{\rm eff}(M)$ extracted from the exact
 dispersion by fit rather than from the truncated series:
@@ -121,19 +122,17 @@ is removed *exactly* by using the species' own limiting speed.
 **With $C_{\rm eff}(M)$ the residual is $O(k^4)$ and equals $k^4/(36M^2)$**
 to three or four significant figures at every mass and every $k$ sampled.
 Analytically, if $\Omega^2 = C_{\rm eff}^2k^2 + M_{\rm eff}^2 + bk^4$ then
-$\Omega_{\rm proper}^2 = M_{\rm eff}^2 - 3bk^4$, and $b = -1/54$ gives
+$\Omega_{\rm shell}^2 = M_{\rm eff}^2 - 3bk^4$, and $b = -1/54$ gives
 exactly $k^4/(36M^2)$.
 
-Converting to the physically natural variable — for a slow clock
+Converting to a slow-packet variable
 $k \simeq (M/C)\beta$ with $\beta = v_g/C$, and $C^2 = 1/3$ —
 
-$$\boxed{\;\frac{\Delta\Omega_{\rm proper}}{\Omega_{\rm proper}}
+$$\boxed{\;\frac{\Delta\Omega_{\rm shell}}{\Omega_{\rm shell}}
 \;\simeq\; \frac{M^2\beta^4}{4}.\;}$$
 
-So **each mass has its own very nearly Lorentzian sector**: within a
-species, time dilation holds up to a $\beta^4$ correction suppressed by
-$M^2 = (m/M_{\rm Planck})^2$. The violation lives in the *mismatch between*
-sectors, not inside one.
+So **each free mass has its own very nearly Lorentzian dispersion**. This
+does not establish the behavior of a clock built from interacting modes.
 
 ## 5. The two-body number
 
@@ -145,14 +144,14 @@ sectors, not inside one.
 | $\Delta C/C$ electron | $4.87\times10^{-47}$ |
 | $\Delta C/C$ proton | $1.64\times10^{-40}$ |
 | **differential, proton vs electron** | $\mathbf{1.64\times10^{-40}}$ |
-| dilation error, electron clock at $\beta=0.1$ | $1.5\times10^{-50}$ |
+| mass-shell residual, electron-sized mode at $\beta=0.1$ | $1.5\times10^{-50}$ |
 
 The species-dependent limiting speed is a dimension-six-suppressed effect,
 $(m/M_{\rm Planck})^2/12$, isotropic, and of order $10^{-40}$ for the
 proton–electron pair. Bounding it would require sensitivity to a
 differential maximum-attainable-velocity at the $10^{-40}$ level, many
-orders beyond present reach. Time dilation for any physical clock holds to
-$\sim10^{-50}$.
+orders beyond present reach. No physical-clock precision follows from this
+free-mode diagnostic.
 
 This is consistent with, and independent of, the earlier radiative-
 stability finding that the dimension-four channel is forbidden by cubic
@@ -183,7 +182,7 @@ a blocker:
 
 | item | status after this document |
 |---|---|
-| **Common cone, free massive modes** | **Computed, not clock-gated.** Species-dependent limiting speed $C_{\rm eff} = C(1+M^2/12+\dots)$, isotropic; intra-species dilation exact to $O(\beta^4)$ with error $M^2\beta^4/4$. A negative result of quantified, unobservable size. |
+| **Common cone, free massive modes** | **Computed, not clock-gated.** Species-dependent limiting speed $C_{\rm eff} = C(1+M^2/12+\dots)$, isotropic; the free mass-shell diagnostic has residual $M^2\beta^4/4$. No physical-clock claim. |
 | **Common cone, across sectors** | **Open and failing** at order unity — FTD-0412, unchanged by this. |
 | **Interacting vertices, composite boosts** | **Open and genuinely clock-gated.** Whether a bound *composite* inherits the dilation of its constituents' dispersion is not settled by a free-mode calculation, and the MVC cannot test it (§1). |
 

@@ -15,13 +15,14 @@ bond is a purchased second interaction species at range 3 r_0, and it
 carries its OWN depth eps_2, independent of the bond depth eps.  The
 purchase is an energy as well as a range.
 
-WHAT FOLLOWS, EXACTLY.  Curvatures at the respective minima are set by
-the depths:  k_1 = 24 eps  for the unit bond, and k_2 = c * eps_2 for the
-closure species (c = 8/3 when it shares the bond law's shape stretched to
-range 3; c = 24 when it shares the WIDTH instead).  The paper's period
-law then gives, with rho = eps_2/eps,
+WHAT FOLLOWS, EXACTLY AT LEADING NORMAL-FORM ORDER.  The registered bond law is a polynomial in
+q = r^2, but the spring constants entering the mechanical normal form are
+RADIAL curvatures.  They are k_1 = 96 eps for the unit bond and
+k_2 = (32/3) eps_2 for a closure species with the same shape stretched to
+radial range 3.  The paper's period law then gives, with
+rho = eps_2/eps,
 
-    lambda_eff = 8 k_1 k_2 / (k_1 + 3 k_2) = 64 eps rho / (3 + rho)
+    lambda_eff = 8 k_1 k_2 / (k_1 + 3 k_2) = 256 eps rho / (3 + rho)
                                                         [shared shape]
 
 and the three responses separate:
@@ -44,16 +45,19 @@ THREE CONSEQUENCES, all of which the paper must now carry.
      an experiment, but from the two-scale extension the paper had
      already purchased and priced in Section 4.6.
 
-  3. WHAT SURVIVES, and it is the part that matters.  G* is untouched by
-     rho.  The second energy scale sets the clock's RATE and cannot move
-     the clock's CONSTANT: T.A.sqrt(2 lambda_eff/m)/sqrt(pi) = G* for
+  3. WHAT SURVIVES, and it is the part that matters.  In the leading
+     A -> 0 quartic normal form, G* is untouched by rho.  The second
+     energy scale sets the clock's RATE and cannot move the normalized
+     quartic coefficient: T.A.sqrt(2 lambda_eff/m)/sqrt(pi) = G* for
      every (eps, eps_2).  The economy claim fails at the rate and holds
-     at the constant.
+     at the leading normal-form constant.
 
-SCOPE.  Exact within the declared bond law and the two-scale extension.
-The closure is a statement about THIS architecture's bookkeeping, not
-about any substrate.  It moves no epistemic tag: G* was chosen before
-this script and is chosen after it.
+SCOPE.  The radial curvatures and epsilon/rho algebra are exact within the
+declared bond law and two-scale extension.  The period integration is the
+ideal leading A -> 0 quartic normal form; finite-amplitude compact-bond
+dynamics is not solved here.  The closure is a statement about THIS
+architecture's bookkeeping, not about any substrate.  It moves no
+epistemic tag: G* was chosen before this script and is chosen after it.
 """
 from __future__ import annotations
 
@@ -71,29 +75,35 @@ M_EFF = 4.0
 # Exact algebra
 # ---------------------------------------------------------------------
 def symbolic():
-    eps, eps2, rho, q = sp.symbols("epsilon epsilon_2 rho q", positive=True)
+    eps, eps2, rho, q, r = sp.symbols(
+        "epsilon epsilon_2 rho q r", positive=True
+    )
 
-    # unit bond: the register/carrier law, depth eps, minimum at q = 1
+    # Unit bond: the register/carrier law, depth eps, minimum at r=1.
+    # The clock's k_1 is the radial curvature, not d^2V/dq^2.
     V1 = -16 * eps * (q - sp.Rational(3, 2)) ** 2 * (q - sp.Rational(3, 4))
-    k1 = sp.simplify(sp.diff(V1, q, 2).subs(q, 1))
-    assert k1 == 24 * eps, f"k1 = {k1}, expected 24 eps"
+    V1_radial = V1.subs(q, r**2)
+    k1 = sp.simplify(sp.diff(V1_radial, r, 2).subs(r, 1))
+    assert k1 == 96 * eps, f"k1 = {k1}, expected 96 eps"
 
-    # closure species, same shape stretched to range 3, depth eps_2
-    V2 = (-16 * eps2 * (q / 3 - sp.Rational(3, 2)) ** 2
-          * (q / 3 - sp.Rational(3, 4)))
-    k2 = sp.simplify(sp.diff(V2, q, 2).subs(q, 3))
-    assert sp.simplify(k2 - sp.Rational(8, 3) * eps2) == 0, \
-        f"k2 = {k2}, expected 8 eps_2/3"
+    # Closure species: same q-law shape stretched to radial range 3.
+    # Hence q is scaled by 3^2=9, the minimum is r=3, and k_2 is radial.
+    V2 = (-16 * eps2 * (q / 9 - sp.Rational(3, 2)) ** 2
+          * (q / 9 - sp.Rational(3, 4)))
+    V2_radial = V2.subs(q, r**2)
+    k2 = sp.simplify(sp.diff(V2_radial, r, 2).subs(r, 3))
+    assert sp.simplify(k2 - sp.Rational(32, 3) * eps2) == 0, \
+        f"k2 = {k2}, expected 32 eps_2/3"
 
     # the paper's period-law coefficient
     lam = sp.simplify(8 * k1 * k2 / (k1 + 3 * k2))
     lam_rho = sp.simplify(lam.subs(eps2, rho * eps))
-    assert sp.simplify(lam_rho - 64 * eps * rho / (3 + rho)) == 0, \
+    assert sp.simplify(lam_rho - 256 * eps * rho / (3 + rho)) == 0, \
         f"lambda_eff = {lam_rho}"
 
     # the shared-eps special case the architecture had assumed
     lam_one = sp.simplify(lam_rho.subs(rho, 1))
-    assert lam_one == 16 * eps, f"lambda_eff(rho=1) = {lam_one}"
+    assert lam_one == 64 * eps, f"lambda_eff(rho=1) = {lam_one}"
 
     # does rho survive in the clock period but not the barrier?
     TA = sp.sqrt(sp.pi) * sp.Symbol("G") * sp.sqrt(M_EFF / (2 * lam_rho))
@@ -112,7 +122,7 @@ def symbolic():
 
 
 # ---------------------------------------------------------------------
-# The reduced mode, integrated: does G* care about rho?
+# The leading quartic normal form, integrated: does G* care about rho?
 # ---------------------------------------------------------------------
 def period_of(lam, A0, m=M_EFF):
     """Exact quarter-period of Q'' = -(4 lam/m) Q^3 by event detection."""
@@ -144,7 +154,7 @@ def main():
     recovered = []
     for eps in (0.5, 1.0, 2.0):
         for rho in (0.25, 1.0, 4.0):
-            lam = 64.0 * eps * rho / (3.0 + rho)
+            lam = 256.0 * eps * rho / (3.0 + rho)
             A0 = 0.3
             T = period_of(lam, A0)
             TA = T * A0
@@ -164,7 +174,7 @@ def main():
 
     # the three exponents, measured rather than asserted
     e = np.array([0.5, 1.0, 2.0, 4.0])
-    lam_e = 64.0 * e * 1.0 / (3.0 + 1.0)
+    lam_e = 256.0 * e * 1.0 / (3.0 + 1.0)
     TA_e = np.array([period_of(l, 0.3) * 0.3 for l in lam_e])
     p_clock = np.polyfit(np.log(e), np.log(TA_e), 1)[0]
     p_barrier = np.polyfit(np.log(e), np.log(e), 1)[0]
@@ -174,7 +184,7 @@ def main():
 
     # rho moves the clock ALONE
     r = np.array([0.25, 1.0, 4.0, 16.0])
-    lam_r = 64.0 * 1.0 * r / (3.0 + r)
+    lam_r = 256.0 * 1.0 * r / (3.0 + r)
     TA_r = np.array([period_of(l, 0.3) * 0.3 for l in lam_r])
     spread = TA_r.max() / TA_r.min()
     print(f"  [verify] rho 0.25 -> 16 moves T.A by {spread:.3f}x"
@@ -187,8 +197,8 @@ def main():
     print("   - 'no separate clock constant' FALSE: rho = eps_2/eps is free")
     print("     and moves the clock rate alone — the paper's own falsifier,")
     print("     fired by the two-scale extension it had already purchased")
-    print("   - G* is INDEPENDENT of rho: the second energy scale buys the")
-    print("     clock's RATE and cannot touch the clock's CONSTANT")
+    print("   - in the leading A->0 quartic normal form, G* is INDEPENDENT")
+    print("     of rho: the second energy scale buys the clock's RATE")
 
 
 if __name__ == "__main__":

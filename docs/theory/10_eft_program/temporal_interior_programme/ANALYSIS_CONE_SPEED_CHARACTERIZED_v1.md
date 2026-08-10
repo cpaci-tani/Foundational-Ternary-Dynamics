@@ -226,26 +226,27 @@ attained at any measurable amplitude. Isotropy moreover *improves* with
 elapsed time, as $A(t)\sim t^{-1.1}$ to $t^{-1.3}$, consistent with the
 Airy-front prediction $t^{-4/3}$.
 
-**(b) The disputed boundary is inaccessible, quantitatively.** The
+**(b) The disputed boundary is weak in the sampled profile.** The
 relative amplitude at the strict support edge falls **1.19 decades per
 tick** — $2.5\times10^{-7}$ at $t=8$, $2.7\times10^{-17}$ at $t=16$,
 $2.0\times10^{-26}$ at $t=24$ — crossing the double-precision relative
-floor at about sixteen ticks ($\sim5\times10^{-43}$ s). Holding the
-operator fixed at M18, the declared causal neighbourhood changes only
-where the field's exact zero begins, and after sixteen ticks that
-location is below representability relative to the signal.
+spacing near unity at about sixteen ticks ($\sim5\times10^{-43}$ s under
+the stated calibration). This is not a representability limit: binary64
+can store values far below $10^{-26}$. Holding the operator fixed at M18,
+the declared causal neighbourhood changes where the field's exact zero
+begins; the finite-time profile shows strong suppression there, not
+dynamical inaccessibility.
 
 **Consequence for §5.** Options 1 and 2 there are presented as live
 alternatives with stated prices. They remain mathematically distinct — the
 containment bound genuinely differs by reading, and $1/\sqrt3$ genuinely
-is forced only under the octahedral one — but **no experiment and no
-simulation can distinguish them at fixed operator**, so the choice cannot
-be settled by evidence and should not be presented as awaiting any. It is
-a definitional commitment about a measure-zero boundary. The §6
-recommendation (retain $1/\sqrt3$; label it a motivated `[IMPOSED]`
-justified as the strictest containment bound) is unaffected and, if
-anything, better supported: the conservatism costs nothing because the
-constraint is nowhere near binding.
+is forced only under the octahedral one — and are exactly distinguishable
+from support (already at $t=1$). The reported run does not determine
+whether that distinction is physically observable at later calibrated
+times. The §6 recommendation (retain $1/\sqrt3$; label it a motivated
+`[IMPOSED]` justified as the strictest containment bound) is unaffected;
+the sampled suppression is evidence about effective contours, not a
+forcing argument.
 
 **Scope guard — this amendment does not transfer to a stencil change.**
 Everything above holds with the *operator* fixed at M18 and only the

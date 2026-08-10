@@ -39,15 +39,14 @@ _BACKEND = os.environ.get("FTD_FIG_BACKEND", "pgf").lower()
 FIGDIR = (pathlib.Path(__file__).resolve().parents[3] / "dissemination"
           / "papers" / "semantic_ontology" / "figures")
 
-# Palette.  Status is carried by shape and line-rule, never by colour
-# alone -- these must stay legible in greyscale and to a colour-blind
-# reader.
-C1 = "#2a78d6"      # blue
-C2 = "#eb6834"      # orange
-C3 = "#1baf7a"      # green
-C4 = "#7a4bbd"      # purple
+# Palette.  Every foreground colour has at least 4.5:1 contrast against
+# white; status is still carried by shape and line-rule, never colour alone.
+C1 = "#2166b1"      # blue
+C2 = "#b54718"      # orange
+C3 = "#087f5b"      # green
+C4 = "#6c3eb3"      # purple
 CK = "#2b2b2b"      # near-black, for reference curves
-CG = "#9a9a9a"      # grey, for guides and de-emphasis
+CG = "#737373"      # grey, for guides and de-emphasis
 
 FS_TICK, FS_LAB, FS_TITLE, FS_LEG, FS_ANN = 8.0, 8.5, 9.0, 7.5, 7.5
 

@@ -1,354 +1,536 @@
-"""derive_register_barrier_lower_bound.py — the register barrier, exactly.
+"""Machine-verifiable lower-bound certificate for the register barrier.
 
-CLOSES the open problem "The register's lower bound".
+The register consists of three anchors at the vertices of an equilateral
+triangle of side ``s`` and one mobile body.  Each anchor-body bond has law
 
-STATUS BEFORE THIS SCRIPT.  The paper proved  dE <= eps  by exhibiting an
-explicit hinge path (break one bond, swing on the remaining two), and
-CORROBORATED the matching lower bound with a watershed over a finite grid
-that returned 1.016--1.021 eps.  A finite grid cannot exclude a channel
-narrower than its cell, so the equality dE = eps was asserted at
-proposition grade on the strength of an upper bound plus a measurement.
-An external review flagged exactly this, correctly.
+    V(q) = -16 eps (q - 3/2)^2 (q - 3/4),  q < 3/2,
+           0,                              q >= 3/2.
 
-THE PROOF.  The lower bound needs no grid at all over most of the domain.
+For ``s in [9/10, 13/10]`` the two mirror ground states have energy
+``-3 eps``.  Every continuous path between them crosses the anchor plane,
+so it is enough to prove that the energy in that plane is at least
+``-2 eps``.  The proof has two parts:
 
-  (1) TOPOLOGY.  The two mirror equilibria sit at z = +h and z = -h with
-      h = sqrt(1 - s^2/3) > 0.  Any continuous path between them is a
-      continuous z(t) running from +h to -h, so by the intermediate value
-      theorem it has a moment with z = 0: EVERY path crosses the anchor
-      plane.  Hence
-          barrier  >=  min_{z=0} E  -  E_ground.
-      This converts a min-max over an infinite-dimensional path space
-      into a minimisation over a PLANE.
+* Analytically, ``V >= -eps`` everywhere and a bond can be negative only
+  for ``3/4 < q < 3/2``.  Hence any point at which at most two bonds can
+  be attractive already has energy at least ``-2 eps``.
+* Closed boxes in ``(x, y, s)`` bound the squared distance ``q=d^2`` to
+  every anchor.  Every primitive floating-point operation is widened by
+  one binary64 ULP with ``numpy.nextafter``.  For the registered law these
+  outward bounds show that no box permits all three bonds to be attractive;
+  hence the analytic two-bond bound discharges every box.  No point samples
+  are used.
 
-  (2) THE PLANE MINIMUM IS EXACTLY -2 eps, and mostly by inspection.
-      Write N(x) = #{i : the i-th bond is in its attractive window}.  The
-      bond law  V(q) = -16 eps (q-3/2)^2 (q-3/4)  for q < 3/2, else 0,
-      has three properties, each verified below:
-          V >= -eps           everywhere, with equality only at q = 1
-          V  =  0             for q >= 3/2      (COMPACT SUPPORT)
-          V >= 0              for q <= 3/4
-      Therefore E >= -eps * N pointwise.  So on the whole region where
-      N <= 2 we get E >= -2 eps WITH NO NUMERICS -- an exact inequality
-      from the shape of one function.  Only the N = 3 set can threaten
-      the bound, and there the margin turns out to be ~1.5 eps, which a
-      Lipschitz-certified scan covers with room to spare.
+Outside ``[-3/2, 3/2]^2`` the bond to the anchor at the origin has
+``q=d^2 >= 9/4 > 3/2`` and is outside its attractive window, so the
+analytic two-bond argument covers the rest of the infinite plane.  The
+boxes partition the remaining rectangle and the full side-length interval
+using exact rational endpoints.
 
-  (3) ATTAINMENT.  In-plane, the body can sit at distance exactly 1 from
-      two anchors.  Its distance to the third is then
-      s*sqrt(3)/2 + sqrt(1 - s^2/4), which for s in [0.9, 1.3] EXCEEDS
-      the support radius 3/2 -- so the third bond contributes exactly
-      zero, not a small tail.  E = -2 eps exactly.
+Attainment is analytic rather than sampled.  A point at unit distance from
+two anchors has third distance
 
-  Compact support is what makes this an equality instead of an estimate:
-  with a Lennard-Jones or Morse tail the third bond would contribute a
-  small negative amount and the barrier would be slightly below eps.
+    d3(s) = (sqrt(3)/2)s + sqrt(1 - s^2/4).
 
-  Together: min_{z=0} E = -2 eps exactly, E_ground = -3 eps, so
-  barrier >= eps; the hinge path gives barrier <= eps; hence
+Its derivative is positive whenever ``s^2 < 3``.  This holds throughout
+the declared interval, and at its left endpoint
 
-      ***  barrier = eps  EXACTLY, for s in [0.9, 1.3]  ***
+    d3(9/10) = (9 sqrt(3) + sqrt(319))/20
+             > (9*(17/10) + 17)/20 = 323/200 > 3/2.
 
-  and the transition state is identified: the in-plane two-bond
-  configuration, which is precisely where the hinge path crosses.
+Thus ``q_3=d_3^2>3/2``: the third bond is identically zero and the plane minimum ``-2 eps``
+is attained for every allowed ``s``.  Combined with the topological plane
+crossing and the explicit hinge upper bound, the register barrier is
+exactly ``eps`` within this declared toy model.
 
-SCOPE.  Exact within the declared bond law and the three-anchor geometry.
-It does NOT establish anything about a substrate, and the compact support
-is a modelling choice, not a derived fact -- the proof says what that
-choice buys.
+Run with ``--json`` to emit only the machine-readable certificate.  A
+human-readable audit followed by the same JSON object is the default.
+
+Scope: the certificate is conditional on the declared compact-support
+bond law, geometry, and the IEEE-754 assumptions checked at runtime.  It
+does not establish a substrate result.  Compact support is load-bearing.
 """
 from __future__ import annotations
+
+import argparse
+from fractions import Fraction
+import hashlib
+import json
+from pathlib import Path
+import platform
+import sys
+from typing import Any
 
 import numpy as np
 
 
 EPS = 1.0
 R0 = 1.0
-Q_SUP = 1.5          # compact support: V == 0 for q >= Q_SUP
-Q_REP = 0.75         # V >= 0 for q <= Q_REP
+Q_SUP = 1.5
+Q_REP = 0.75
+
+# Exact rational partition.  The xy square is [-3/2, 3/2]^2 and the
+# side-length interval is [9/10, 13/10].
+XY_DEN = 250                 # xy cell width = 1/250 = 0.004
+XY_MIN_NUM = -375            # -375/250 = -3/2
+XY_MAX_NUM = 375             #  375/250 =  3/2
+S_DEN = 50                   # s slab width = 1/50 = 0.02
+S_MIN_NUM = 45               # 45/50 = 9/10
+S_MAX_NUM = 65               # 65/50 = 13/10
+
+NEG_INF = np.float64(-np.inf)
+POS_INF = np.float64(np.inf)
 
 
 def V(q):
-    """Bond law with compact support at q = 3/2, depth eps at q = 1."""
-    q = np.asarray(q, dtype=float)
-    return np.where(q < Q_SUP, -16.0 * EPS * (q - 1.5) ** 2 * (q - 0.75), 0.0)
-
-
-def dV(q):
-    """V'(q) = -48 eps (q - 3/2)(q - 1) inside the support, else 0."""
-    q = np.asarray(q, dtype=float)
-    return np.where(q < Q_SUP, -48.0 * EPS * (q - 1.5) * (q - 1.0), 0.0)
-
-
-def anchors(s):
-    """Three anchors on an equilateral triangle of side s, in z = 0."""
-    return np.array([[0.0, 0.0],
-                     [s, 0.0],
-                     [s / 2.0, s * np.sqrt(3.0) / 2.0]])
-
-
-def E_plane(P, A):
-    """Total energy of an in-plane body position P against anchors A."""
-    d = np.linalg.norm(P[:, None, :] - A[None, :, :], axis=2)
-    return V(d).sum(axis=1), d
+    """Bond law, retained for diagnostics (not used as an interval bound)."""
+    q = np.asarray(q, dtype=np.float64)
+    return np.where(q < Q_SUP,
+                    -16.0 * EPS * (q - 1.5) ** 2 * (q - 0.75),
+                    0.0)
 
 
 # ---------------------------------------------------------------------
-# Step 1 — the three properties of the bond law, verified
+# Directed outward rounding for nonnegative interval computations
 # ---------------------------------------------------------------------
-def verify_bond_law():
-    q = np.linspace(0.0, 3.0, 2_000_001)
-    v = V(q)
-
-    vmin, qmin = v.min(), q[v.argmin()]
-    assert vmin >= -EPS - 1e-12, f"V dips below -eps: {vmin}"
-    assert abs(vmin + EPS) < 1e-9, f"depth is not eps: {vmin}"
-    assert abs(qmin - 1.0) < 1e-5, f"minimum not at q=1: {qmin}"
-
-    assert np.all(v[q >= Q_SUP] == 0.0), "support is not compact at 3/2"
-    assert np.all(v[q <= Q_REP] >= -1e-15), "V negative inside q <= 3/4"
-
-    # analytic curvature at the minimum: V''(1) = 24 eps
-    h = 1e-5
-    k = (V(1.0 + h) - 2 * V(1.0) + V(1.0 - h)) / h**2
-    assert abs(k - 24.0 * EPS) < 1e-3, f"curvature {k} != 24 eps"
-
-    # Lipschitz constant on the region that can matter (all bonds >= 1/2;
-    # a bond below 1/2 already costs >= +4 eps, see verify_repulsive_exit)
-    qq = np.linspace(0.5, Q_SUP, 200_001)
-    Lmax = np.abs(dV(qq)).max()
-    print(f"  [verify] V min          = {vmin:+.12f}  at q = {qmin:.6f}"
-          f"   (exact -eps at q=1)")
-    print(f"  [verify] V(q>=3/2)      = 0 identically        (compact support)")
-    print(f"  [verify] V(q<=3/4)      >= 0                   (repulsive core)")
-    print(f"  [verify] V''(1)         = {k:.6f}              (exact 24 eps)")
-    print(f"  [verify] max|V'| on [1/2, 3/2] = {Lmax:.6f}    (per bond)")
-    return Lmax
+def rd(value):
+    """One-ULP rounding toward -infinity."""
+    return np.nextafter(np.asarray(value, dtype=np.float64), NEG_INF)
 
 
-def verify_repulsive_exit():
-    """A bond closer than 1/2 costs at least +4 eps, so E >= +2 eps > -2 eps.
+def ru(value):
+    """One-ULP rounding toward +infinity."""
+    return np.nextafter(np.asarray(value, dtype=np.float64), POS_INF)
 
-    V is decreasing on [0, 1] (V' = -48 eps (q-3/2)(q-1) < 0 there), so
-    for q <= 1/2 we have V(q) >= V(1/2) = +4 eps.  With the other two
-    bonds bounded below by -eps each, E >= 4 - 2 = +2 eps.  Such points
-    can therefore be excluded from any scan without loss.
+
+def add_lo(a, b):
+    return rd(np.asarray(a, dtype=np.float64) + np.asarray(b, dtype=np.float64))
+
+
+def add_hi(a, b):
+    return ru(np.asarray(a, dtype=np.float64) + np.asarray(b, dtype=np.float64))
+
+
+def sub_lo(a, b):
+    return rd(np.asarray(a, dtype=np.float64) - np.asarray(b, dtype=np.float64))
+
+
+def sub_hi(a, b):
+    return ru(np.asarray(a, dtype=np.float64) - np.asarray(b, dtype=np.float64))
+
+
+def mul_nonnegative_lo(a, b):
+    """Lower product bound when both exact operands are nonnegative."""
+    product = rd(np.asarray(a, dtype=np.float64) *
+                 np.asarray(b, dtype=np.float64))
+    # nextafter(0, -inf) is negative; the exact product cannot be.
+    return np.maximum(product, 0.0)
+
+
+def mul_nonnegative_hi(a, b):
+    """Upper product bound when both exact operands are nonnegative."""
+    return ru(np.asarray(a, dtype=np.float64) *
+              np.asarray(b, dtype=np.float64))
+
+
+def sqrt_lo(a):
+    root = rd(np.sqrt(np.maximum(np.asarray(a, dtype=np.float64), 0.0)))
+    return np.maximum(root, 0.0)
+
+
+def sqrt_hi(a):
+    return ru(np.sqrt(np.maximum(np.asarray(a, dtype=np.float64), 0.0)))
+
+
+def rational_lo(numerator, denominator):
+    """Binary64 lower enclosure of an exact, small rational."""
+    return rd(np.asarray(numerator, dtype=np.float64) /
+              np.float64(denominator))
+
+
+def rational_hi(numerator, denominator):
+    """Binary64 upper enclosure of an exact, small rational."""
+    return ru(np.asarray(numerator, dtype=np.float64) /
+              np.float64(denominator))
+
+
+def verify_arithmetic_model() -> dict[str, Any]:
+    """Fail closed if the runtime is not the arithmetic model we certify."""
+    info = np.finfo(np.float64)
+    assert info.nmant == 52 and info.iexp == 11
+    assert np.dtype(np.float64).itemsize == 8
+    assert np.nextafter(np.float64(1.0), POS_INF) > 1.0
+    assert np.nextafter(np.float64(1.0), NEG_INF) < 1.0
+    assert np.sqrt(np.float64(4.0)) == 2.0
+    assert np.float64(0.75) * 4.0 == 3.0
+    assert np.float64(1.5) * 2.0 == 3.0
+    return {
+        "format": "IEEE-754 binary64",
+        "rounding": "round-to-nearest primitives; one nextafter ULP outward",
+        "mantissa_bits_including_hidden": 53,
+        "exponent_bits": 11,
+        "numpy_version": np.__version__,
+        "checks_passed": True,
+    }
+
+
+# ---------------------------------------------------------------------
+# Exact analytic components
+# ---------------------------------------------------------------------
+def verify_bond_law_exact() -> dict[str, Any]:
+    """Verify the polynomial identities with exact rational arithmetic."""
+    q0 = Fraction(3, 4)
+    q1 = Fraction(1, 1)
+    qsup = Fraction(3, 2)
+
+    def v_fraction(q: Fraction) -> Fraction:
+        if q >= qsup:
+            return Fraction(0)
+        return -16 * (q - qsup) ** 2 * (q - q0)
+
+    assert v_fraction(q0) == 0
+    assert v_fraction(q1) == -1
+    assert v_fraction(qsup) == 0
+    assert v_fraction(Fraction(1, 2)) == 4
+
+    # V'(q) = -48(q-3/2)(q-1): decreasing up to q=1 and increasing
+    # from q=1 to the compact-support endpoint.  Together with the sign
+    # outside the attractive window, this proves V >= -1 globally.
+    derivative_roots = (Fraction(1), Fraction(3, 2))
+    curvature_at_one = Fraction(24)
+    assert derivative_roots == (q1, qsup)
+    assert curvature_at_one > 0
+
+    return {
+        "global_minimum": "V(1) = -eps",
+        "negative_only_on": "3/4 < q < 3/2",
+        "compact_support": "V(q) = 0 for q >= 3/2",
+        "repulsive_checkpoint": "V(1/2) = 4 eps",
+        "derivative_factorization": "V'(q) = -48 eps (q-3/2)(q-1)",
+        "curvature_in_q_at_minimum": "d^2 V/dq^2 at q=1 is 24 eps",
+        "radial_curvature_at_r_0": "d^2 V(r^2)/dr^2 at r=1 is 96 eps",
+        "exact_rational_checks_passed": True,
+    }
+
+
+def verify_attainment_exact() -> dict[str, Any]:
+    """Exact monotonic endpoint proof for the in-plane two-bond state."""
+    s_hi = Fraction(13, 10)
+    assert s_hi * s_hi < 3
+
+    # sqrt(3) > 17/10 because (17/10)^2 < 3; sqrt(319) > 17.
+    sqrt3_lower = Fraction(17, 10)
+    sqrt319_lower = Fraction(17)
+    assert sqrt3_lower * sqrt3_lower < 3
+    assert sqrt319_lower * sqrt319_lower < 319
+
+    d3_left_lower = (9 * sqrt3_lower + sqrt319_lower) / 20
+    assert d3_left_lower == Fraction(323, 200)
+    assert d3_left_lower > Fraction(3, 2)
+
+    return {
+        "formula": "d3(s) = (sqrt(3)/2)s + sqrt(1-s^2/4)",
+        "monotonicity": "d3'(s) > 0 on [9/10,13/10] because s^2 < 3",
+        "endpoint_exact_lower_bound": "d3(9/10) > 323/200 > 3/2",
+        "consequence": "q3=d3^2>3/2, so the third bond is outside support; E_plane = -2 eps",
+        "sampled_points_used": 0,
+        "exact_rational_checks_passed": True,
+    }
+
+
+# ---------------------------------------------------------------------
+# Outward-rounded box certificate
+# ---------------------------------------------------------------------
+def coordinate_separation_bounds(p_lo, p_hi, a_lo, a_hi):
+    """Bounds on |p-a| for two closed one-dimensional intervals."""
+    # The lower gap is zero when intervals overlap.  Outward inputs and
+    # downward subtraction ensure it is never overestimated.
+    gap = np.maximum(
+        0.0,
+        np.maximum(sub_lo(a_lo, p_hi), sub_lo(p_lo, a_hi)),
+    )
+
+    # The largest separation is attained at one of the two opposing ends.
+    span = np.maximum(sub_hi(a_hi, p_lo), sub_hi(p_hi, a_lo))
+    span = np.maximum(span, 0.0)
+    return gap, span
+
+
+def squared_distance_bounds(px_lo, px_hi, py_lo, py_hi,
+                            ax_lo, ax_hi, ay_lo, ay_hi):
+    """Outward bounds on q=d^2 between two rectangles."""
+    gx, sx = coordinate_separation_bounds(px_lo, px_hi, ax_lo, ax_hi)
+    gy, sy = coordinate_separation_bounds(py_lo, py_hi, ay_lo, ay_hi)
+
+    d2_lo = add_lo(mul_nonnegative_lo(gx, gx),
+                   mul_nonnegative_lo(gy, gy))
+    d2_lo = np.maximum(d2_lo, 0.0)
+    d2_hi = add_hi(mul_nonnegative_hi(sx, sx),
+                   mul_nonnegative_hi(sy, sy))
+    return d2_lo, d2_hi
+
+
+def potential_at_point_lower(q):
+    """Outward lower bound for V(q), with 3/4 <= q <= 3/2."""
+    q = np.asarray(q, dtype=np.float64)
+    left_factor = np.maximum(sub_hi(1.5, q), 0.0)
+    right_factor = np.maximum(sub_hi(q, 0.75), 0.0)
+    square = mul_nonnegative_hi(left_factor, left_factor)
+    product = mul_nonnegative_hi(16.0, square)
+    product = mul_nonnegative_hi(product, right_factor)
+    return -product
+
+
+def potential_interval_lower(a, b):
+    """Outward lower bound on min(V([a,b])) from exact monotonicity.
+
+    V decreases on [3/4,1], increases on [1,3/2], and is nonnegative
+    outside that attractive window.  The selected endpoint is already an
+    outward distance bound; ``potential_at_point_lower`` then rounds every
+    nonnegative polynomial operation outward.
     """
-    v_half = float(V(0.5))
-    assert v_half > 3.99 * EPS, f"V(1/2) = {v_half}, expected +4 eps"
-    q = np.linspace(0.0, 1.0, 100_001)
-    assert np.all(np.diff(V(q)) <= 1e-12), "V not decreasing on [0,1]"
-    print(f"  [verify] V(1/2)         = {v_half:+.6f}"
-          f"               => any bond < 1/2 gives E >= +2 eps")
-    return v_half
+    a = np.maximum(np.asarray(a, dtype=np.float64), 0.0)
+    b = np.asarray(b, dtype=np.float64)
+    out = np.zeros_like(a)
 
-
-# ---------------------------------------------------------------------
-# Step 2 — the exact part: N <= 2 needs no numerics
-# ---------------------------------------------------------------------
-def verify_exact_N2_bound():
-    """E >= -eps * N pointwise, hence E >= -2 eps wherever N <= 2.
-
-    This is an inequality between functions, not a measurement: V >= -eps
-    everywhere and V = 0 outside the window, so a point with at most two
-    bonds inside the window cannot go below -2 eps.  No grid involved.
-    """
-    rng = np.random.default_rng(20260809)
-    q = rng.uniform(0.0, 3.0, 400_000)
-    v = V(q)
-    inside = (q > Q_REP) & (q < Q_SUP)
-    assert np.all(v[~inside] >= -1e-15), "V < 0 outside the window"
-    assert np.all(v >= -EPS - 1e-12), "V < -eps somewhere"
-    print("  [verify] E >= -eps * N  pointwise  =>  N <= 2 gives E >= -2 eps"
-          "   (exact, no grid)")
-
-
-# ---------------------------------------------------------------------
-# Step 3 — the only risky set: N = 3, certified by Lipschitz + grid
-# ---------------------------------------------------------------------
-def V_min_on_interval(a, b):
-    """Exact minimum of V over [a, b], by the shape of V.
-
-    V decreases on [0,1], increases on [1,3/2], and is identically 0
-    beyond 3/2.  So the minimum over an interval is -eps if the interval
-    straddles 1, V(b) if the interval lies left of 1, and V(a) if it lies
-    right of 1 (with V(a)=0 once a >= 3/2).  No sampling, no Lipschitz
-    slack: this is interval arithmetic and it is exact.
-    """
-    a = np.maximum(a, 0.0)
     straddles = (a <= 1.0) & (b >= 1.0)
-    left = b < 1.0
-    out = np.where(straddles, -EPS, np.where(left, V(b), V(a)))
+    out[straddles] = -EPS
+
+    left = (~straddles) & (b > Q_REP) & (b < 1.0)
+    if np.any(left):
+        out[left] = potential_at_point_lower(b[left])
+
+    right = (~straddles) & (a > 1.0) & (a < Q_SUP)
+    if np.any(right):
+        out[right] = potential_at_point_lower(a[right])
+
     return out
 
 
-def certify_interval(s_lo, s_hi, step=0.004):
-    """RIGOROUS certificate over a BOX of side lengths, not sampled points.
+def anchor_boxes(s_num_lo: int, s_num_hi: int):
+    """Outward anchor-coordinate boxes for one exact rational s slab."""
+    s_lo = rational_lo(s_num_lo, S_DEN)
+    s_hi = rational_hi(s_num_hi, S_DEN)
 
-    The earlier version of this function had two holes, both found by
-    external review and both real:
+    sqrt3_nearest = np.sqrt(np.float64(3.0))
+    sqrt3_lo = rd(sqrt3_nearest)
+    sqrt3_hi = ru(sqrt3_nearest)
 
-      (1) it certified five discrete values of s rather than the interval
-          [0.9, 1.3] the proposition claims;
-      (2) it decided membership of the N=3 set from the CELL CENTRE, so a
-          set smaller than the grid cell was invisible.  At s = 1.3 the
-          centroid sits at distance s/sqrt(3) = 0.75056 from all three
-          anchors -- inside the window (3/4, 3/2) by 0.00056 -- so the
-          N=3 set there is a disc of radius ~5e-4 and the old 0.002 grid
-          reported it EMPTY.  The reviewer caught exactly this.
+    half_s_lo = mul_nonnegative_lo(s_lo, 0.5)
+    half_s_hi = mul_nonnegative_hi(s_hi, 0.5)
+    a3y_lo = mul_nonnegative_lo(
+        mul_nonnegative_lo(s_lo, sqrt3_lo), 0.5)
+    a3y_hi = mul_nonnegative_hi(
+        mul_nonnegative_hi(s_hi, sqrt3_hi), 0.5)
 
-    Both are fixed by replacing point sampling with interval arithmetic.
-    Each cell is a box in (x, y, s); every bond distance is bracketed
-    over the whole box (|d(d)/ds| <= 1 for these anchors, so the s-width
-    simply widens the bracket); a cell is certified when EITHER at most
-    two bonds can possibly be in the attractive window -- in which case
-    E >= -2 eps by the exact pointwise bound, no numerics -- OR the
-    interval lower bound on E already exceeds -2 eps.  Nothing is
-    sampled, so nothing can hide between samples.
-    """
-    A_lo, A_hi = anchors(s_lo), anchors(s_hi)
-    lo = np.minimum(A_lo, A_hi).min(axis=0) - Q_SUP - 0.1
-    hi = np.maximum(A_lo, A_hi).max(axis=0) + Q_SUP + 0.1
-
-    s_mid = 0.5 * (s_lo + s_hi)
-    s_half = 0.5 * (s_hi - s_lo)
-    A = anchors(s_mid)
-
-    gx = np.arange(lo[0], hi[0] + step, step)
-    gy = np.arange(lo[1], hi[1] + step, step)
-    X, Y = np.meshgrid(gx, gy, indexing="ij")
-    P = np.stack([X.ravel(), Y.ravel()], axis=1)
-
-    # half-diagonal of the spatial cell, widened by the s-uncertainty:
-    # the anchors move at unit rate in s, so |delta d| <= s_half
-    delta = step / np.sqrt(2.0) + s_half
-
-    d = np.linalg.norm(P[:, None, :] - A[None, :, :], axis=2)
-    d_lo = np.maximum(d - delta, 0.0)
-    d_hi = d + delta
-
-    # a bond is POSSIBLY in the attractive window if its bracket meets it
-    possible = (d_hi > Q_REP) & (d_lo < Q_SUP)
-    N_max = possible.sum(axis=1)
-
-    # exact route: at most two bonds can be attractive => E >= -2 eps
-    exact_ok = N_max <= 2
-
-    # interval route for the rest
-    E_lo = V_min_on_interval(d_lo, d_hi).sum(axis=1)
-    interval_ok = E_lo > -2.0 * EPS
-
-    certified = exact_ok | interval_ok
-    risky = ~certified
-    worst = float(E_lo[~exact_ok].min()) if np.any(~exact_ok) else np.inf
-    return dict(cells=int(P.shape[0]),
-                by_exact=int(exact_ok.sum()),
-                by_interval=int((~exact_ok & interval_ok).sum()),
-                uncertified=int(risky.sum()),
-                worst_E_lo_on_N3=worst)
+    zero = np.float64(0.0)
+    return (
+        (zero, zero, zero, zero),
+        (s_lo, s_hi, zero, zero),
+        (half_s_lo, half_s_hi, a3y_lo, a3y_hi),
+    )
 
 
-# ---------------------------------------------------------------------
-# Step 4 — attainment: the in-plane two-bond configuration
-# ---------------------------------------------------------------------
-def attainment(s):
-    """The point at distance exactly 1 from two anchors, third out of support."""
-    A = anchors(s)
-    # intersection of unit circles about a1, a2, taken on the far side of a3
-    P = np.array([[s / 2.0, -np.sqrt(1.0 - s**2 / 4.0)]])
-    E, d = E_plane(P, A)
-    d = d[0]
-    return dict(d1=float(d[0]), d2=float(d[1]), d3=float(d[2]),
-                E=float(E[0]), out_of_support=bool(d[2] >= Q_SUP))
+def xy_cells():
+    """Outward boxes for the exact rational xy partition."""
+    nums = np.arange(XY_MIN_NUM, XY_MAX_NUM, dtype=np.int64)
+    lo_1d = rational_lo(nums, XY_DEN)
+    hi_1d = rational_hi(nums + 1, XY_DEN)
+
+    px_lo, py_lo = np.meshgrid(lo_1d, lo_1d, indexing="ij")
+    px_hi, py_hi = np.meshgrid(hi_1d, hi_1d, indexing="ij")
+    return (px_lo.ravel(), px_hi.ravel(),
+            py_lo.ravel(), py_hi.ravel())
 
 
-def ground_state(s):
-    """Both mirror minima: body at the centroid, height +-h, all bonds at 1."""
-    h = np.sqrt(1.0 - s**2 / 3.0)
-    A3 = np.column_stack([anchors(s), np.zeros(3)])
-    P = np.array([s / 2.0, s / (2.0 * np.sqrt(3.0)), h])
-    d = np.linalg.norm(P - A3, axis=1)
-    return float(V(d).sum()), float(h), d
+def certify_s_slab(s_num_lo: int, s_num_hi: int,
+                   cells: tuple[np.ndarray, ...]) -> dict[str, Any]:
+    """Certify every xy cell for one closed exact rational s slab."""
+    px_lo, px_hi, py_lo, py_hi = cells
+    anchors = anchor_boxes(s_num_lo, s_num_hi)
+
+    q_lows: list[np.ndarray] = []
+    q_highs: list[np.ndarray] = []
+    possible_count = np.zeros(px_lo.shape, dtype=np.uint8)
+
+    for ax_lo, ax_hi, ay_lo, ay_hi in anchors:
+        q_lo, q_hi = squared_distance_bounds(
+            px_lo, px_hi, py_lo, py_hi,
+            ax_lo, ax_hi, ay_lo, ay_hi,
+        )
+        q_lows.append(q_lo)
+        q_highs.append(q_hi)
+        possible_count += ((q_hi > Q_REP) & (q_lo < Q_SUP))
+
+    candidate = possible_count == 3
+    candidate_count = int(np.count_nonzero(candidate))
+    exact_count = int(candidate.size - candidate_count)
+
+    if candidate_count:
+        e0 = potential_interval_lower(q_lows[0][candidate],
+                                      q_highs[0][candidate])
+        e1 = potential_interval_lower(q_lows[1][candidate],
+                                      q_highs[1][candidate])
+        e2 = potential_interval_lower(q_lows[2][candidate],
+                                      q_highs[2][candidate])
+        energy_lower = add_lo(add_lo(e0, e1), e2)
+        interval_ok = energy_lower >= -2.0 * EPS
+        interval_count = int(np.count_nonzero(interval_ok))
+        uncertified = int(candidate_count - interval_count)
+        worst = float(np.min(energy_lower))
+    else:
+        interval_count = 0
+        uncertified = 0
+        worst = None
+
+    return {
+        "s_interval": [f"{s_num_lo}/{S_DEN}", f"{s_num_hi}/{S_DEN}"],
+        "cells": int(px_lo.size),
+        "by_analytic_N_le_2": exact_count,
+        "by_interval": interval_count,
+        "uncertified": uncertified,
+        "worst_energy_lower": worst,
+        "worst_energy_lower_hex": None if worst is None else worst.hex(),
+    }
 
 
-def main():
-    print("Register barrier — matching lower bound, proven")
-    print(f"  law: V(q) = -16 eps (q-3/2)^2 (q-3/4) for q < 3/2, else 0;"
-          f"  eps = {EPS}")
-    print()
-    Lper = verify_bond_law()
-    verify_repulsive_exit()
-    verify_exact_N2_bound()
-    print()
+def build_certificate(verbose: bool = True) -> dict[str, Any]:
+    arithmetic = verify_arithmetic_model()
+    bond = verify_bond_law_exact()
+    attainment = verify_attainment_exact()
+    cells = xy_cells()
 
-    # ---- the plane minimum, certified over the whole s-INTERVAL --------
-    print("  Certifying min_{z=0} E >= -2 eps over the CONTINUUM"
-          " s in [0.9, 1.3]")
-    print("  (interval arithmetic on boxes — nothing sampled, so nothing"
-          " can hide between samples)")
-    print()
-    print("  s-slab            cells      by exact N<=2   by interval"
-          "   uncertified   worst E_lo on N>=3")
-    print("  " + "-" * 94)
-    S_EDGES = np.arange(0.90, 1.3001, 0.02)
-    total_unc = 0
-    worst_all = np.inf
-    for a, b in zip(S_EDGES[:-1], S_EDGES[1:]):
-        c = certify_interval(a, b)
-        total_unc += c["uncertified"]
-        worst_all = min(worst_all, c["worst_E_lo_on_N3"])
-        print(f"  [{a:.2f}, {b:.2f}]  {c['cells']:10d}   {c['by_exact']:12d}"
-              f"   {c['by_interval']:10d}   {c['uncertified']:10d}"
-              f"   {c['worst_E_lo_on_N3']:+.6f}")
-    assert total_unc == 0, (
-        f"{total_unc} cells uncertified — the plane bound is NOT established")
-    print()
-    print(f"  [verify] uncertified cells over the whole interval: {total_unc}")
-    print(f"  [verify] worst interval lower bound where N can reach 3:"
-          f" {worst_all:+.6f}  (needs > -2)")
-    print()
+    slab_results: list[dict[str, Any]] = []
+    total_cells = 0
+    total_exact = 0
+    total_interval = 0
+    total_uncertified = 0
+    worst: float | None = None
 
-    # ---- attainment and the resulting barrier, at sample geometries ----
-    print("  s      h       E_ground   attained E   d3       barrier")
-    print("  " + "-" * 58)
-    barriers = []
-    for s in (0.9, 1.0, 1.1, 1.2, 1.3):
-        Eg, h, dg = ground_state(s)
-        assert np.allclose(dg, 1.0, atol=1e-12), f"ground bonds != r0: {dg}"
-        assert abs(Eg + 3 * EPS) < 1e-12, f"ground energy != -3 eps: {Eg}"
-        att = attainment(s)
-        assert att["out_of_support"], (
-            f"s={s}: third bond at {att['d3']:.4f} < 3/2, so the two-bond "
-            "configuration is NOT exactly -2 eps")
-        assert abs(att["E"] + 2 * EPS) < 1e-12, (
-            f"s={s}: two-bond configuration is {att['E']}, not -2 eps")
-        barrier = att["E"] - Eg
-        barriers.append(barrier)
-        print(f"  {s:.1f}  {h:.4f}  {Eg:+.6f}   {att['E']:+.6f}"
-              f"   {att['d3']:.4f}   {barrier:.9f}")
+    if verbose:
+        print("Register barrier lower-bound certificate")
+        print("  exact domain: x,y in [-3/2,3/2], s in [9/10,13/10]")
+        print("  outside xy domain: origin bond is non-attractive, so N <= 2")
+        print("  arithmetic: every binary64 primitive widened one ULP outward")
+        print()
+        print("  s slab          cells     analytic N<=2    interval   uncertified"
+              "   worst E lower")
+        print("  " + "-" * 88)
 
-    # attainment holds on the whole interval, not just at the samples:
-    ss = np.linspace(0.9, 1.3, 4001)
-    d3 = ss * np.sqrt(3.0) / 2.0 + np.sqrt(1.0 - ss**2 / 4.0)
-    assert d3.min() >= Q_SUP, (
-        f"third bond dips to {d3.min():.4f} < 3/2 somewhere in the interval")
-    print()
-    print(f"  [verify] third bond over the interval: "
-          f"{d3.min():.4f} .. {d3.max():.4f}   (all >= 3/2, so V_3 = 0 exactly)")
+    for s_num_lo in range(S_MIN_NUM, S_MAX_NUM):
+        result = certify_s_slab(s_num_lo, s_num_lo + 1, cells)
+        slab_results.append(result)
+        total_cells += result["cells"]
+        total_exact += result["by_analytic_N_le_2"]
+        total_interval += result["by_interval"]
+        total_uncertified += result["uncertified"]
+        slab_worst = result["worst_energy_lower"]
+        if slab_worst is not None:
+            worst = slab_worst if worst is None else min(worst, slab_worst)
 
-    b = np.array(barriers)
-    assert np.allclose(b, EPS, atol=1e-12), f"barrier != eps: {b}"
-    print(f"  [verify] barrier = {b.min():.12f} .. {b.max():.12f}")
-    print(f"  [verify] upper bound  <= eps   explicit hinge path")
-    print(f"  [verify] lower bound  >= eps   IVT + certified plane minimum")
-    print(f"  [verify] transition state identified: the in-plane two-bond"
-          f" configuration")
-    print()
-    print("  QED — barrier = eps exactly, not corroborated but proven.")
-    print("  Compact support is load-bearing: with a Morse or LJ tail the")
-    print("  third bond would contribute a small negative amount at the")
-    print("  crossing and the barrier would sit strictly below eps.")
+        if verbose:
+            a, b = result["s_interval"]
+            print(f"  [{a:>5},{b:<5}]  {result['cells']:9d}"
+                  f"   {result['by_analytic_N_le_2']:13d}"
+                  f"   {result['by_interval']:9d}"
+                  f"   {result['uncertified']:11d}"
+                  f"   {result['worst_energy_lower']:+.9f}"
+                  if result['worst_energy_lower'] is not None
+                  else f"  [{a:>5},{b:<5}]  {result['cells']:9d}"
+                  f"   {result['by_analytic_N_le_2']:13d}"
+                  f"   {result['by_interval']:9d}"
+                  f"   {result['uncertified']:11d}            n/a")
+
+    assert total_uncertified == 0, (
+        f"{total_uncertified} boxes remain uncertified")
+    if worst is not None:
+        assert worst >= -2.0 * EPS, (
+            f"outward lower bound {worst} is below -2 eps")
+        margin_lo: float | None = float(add_lo(worst, 2.0 * EPS))
+        assert margin_lo >= 0.0
+    else:
+        assert total_interval == 0
+        assert total_exact == total_cells
+        margin_lo = None
+
+    script_path = Path(__file__).resolve()
+    script_sha256 = hashlib.sha256(script_path.read_bytes()).hexdigest()
+    certificate: dict[str, Any] = {
+        "schema": "ftd.register_barrier.interval-certificate.v1",
+        "claim": "min_{z=0} E = -2 eps for every s in [9/10,13/10]",
+        "status": "proved_with_stated_arithmetic_model",
+        "scope": "declared compact-support bond law and three-anchor geometry",
+        "arithmetic": arithmetic,
+        "analytic_bond_law": bond,
+        "analytic_attainment": attainment,
+        "coverage": {
+            "xy_domain": ["-3/2", "3/2", "-3/2", "3/2"],
+            "s_domain": ["9/10", "13/10"],
+            "xy_step": "1/250",
+            "s_step": "1/50",
+            "xy_cells_per_slab": int(cells[0].size),
+            "s_slabs": S_MAX_NUM - S_MIN_NUM,
+            "total_boxes": total_cells,
+            "outside_domain_argument": (
+                "outside [-3/2,3/2]^2 the origin bond has q>=9/4>3/2, "
+                "so at most two bonds are attractive"
+            ),
+            "sampled_points_used": 0,
+        },
+        "result": {
+            "boxes_by_analytic_N_le_2": total_exact,
+            "boxes_by_outward_interval": total_interval,
+            "uncertified_boxes": total_uncertified,
+            "worst_outward_energy_lower": worst,
+            "worst_outward_energy_lower_hex": (
+                None if worst is None else worst.hex()),
+            "margin_above_minus_2_lower": margin_lo,
+            "margin_above_minus_2_lower_hex": (
+                None if margin_lo is None else margin_lo.hex()),
+            "plane_minimum": "-2 eps",
+            "ground_energy": "-3 eps",
+            "barrier_lower_bound": "eps",
+        },
+        "slabs": slab_results,
+        "provenance": {
+            "script": str(script_path),
+            "script_sha256": script_sha256,
+            "python": platform.python_version(),
+            "implementation": platform.python_implementation(),
+            "platform": platform.platform(),
+        },
+    }
+
+    if verbose:
+        print()
+        print(f"  certified boxes: {total_cells:,}")
+        print(f"  uncertified boxes: {total_uncertified}")
+        if worst is None:
+            print("  three-attractive candidate boxes: 0")
+            print("  interval-energy fallback: not needed")
+        else:
+            print(f"  worst outward energy lower bound: {worst:+.12f}")
+            print(f"  certified margin above -2 eps: {margin_lo:.12f}")
+        print("  attainment: analytic monotonic endpoint proof; no samples")
+        print("  conclusion: plane minimum = -2 eps; barrier >= eps")
+        print()
+
+    return certificate
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="emit only the machine-readable JSON certificate",
+    )
+    args = parser.parse_args(argv)
+    certificate = build_certificate(verbose=not args.json)
+    print(json.dumps(certificate, sort_keys=True,
+                     separators=(",", ":") if args.json else None))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

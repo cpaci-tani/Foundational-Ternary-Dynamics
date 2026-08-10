@@ -52,7 +52,7 @@ IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best.
 | row | document | result |
 |---|---|---|
 | `FTD-0804`, `FTD-0805` | [`ANALYSIS_MINIMUM_VIABLE_CLOCK_CARRIER_v1.md`](../native_time_carrier_programme/ANALYSIS_MINIMUM_VIABLE_CLOCK_CARRIER_v1.md) | MVC 4-chain exact, `G*` to `2e-6` with no fitted scale; the hexagon wheel is the first native stressed equilibrium and is **refuted as a clock** |
-| `FTD-0814` | [`DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md`](DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md), [`ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md`](ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md), [`ANALYSIS_KINK_CLOCK_DILATION_v1.md`](ANALYSIS_KINK_CLOCK_DILATION_v1.md) | a two-category carrier dilates **non-universally**; the one-energy requirement is what restores universality; a `φ⁴` kink dilates at `p = −1.000 ± 0.002` |
+| `FTD-0814` | [`DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md`](DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md), [`ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md`](ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md), [`ANALYSIS_SOLITON_SHAPE_MODE_DILATION_v1.md`](ANALYSIS_SOLITON_SHAPE_MODE_DILATION_v1.md) | a two-category carrier dilates **non-universally**; the one-energy requirement is what restores universality; the `φ⁴` soliton shape-mode clock campaign reports `p = −1.000 ± 0.002` |
 | `FTD-0817` | [`FOUND_GSTAR_DEGENERACY_INTERPRETATION_v1.md`](FOUND_GSTAR_DEGENERACY_INTERPRETATION_v1.md) | `G*` as the period constant of the minimal degeneracy; exchange rate `G*²/4π = 0.696602`. **Interpretation, not recovery** — prior art is `dissemination/papers/edge_clock/` |
 
 ### The cone — one-body Lorentz structure
@@ -64,7 +64,7 @@ IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best.
 | `FTD-0812` | [`ANALYSIS_MASSIVE_CONE_AND_DILATION_v1.md`](ANALYSIS_MASSIVE_CONE_AND_DILATION_v1.md) | `C_eff²(M) = C²(1 + M²/6 + M⁴/30)`, exactly isotropic; species do **not** share a cone (proton–electron `1.6e-40`) |
 | `FTD-0813` | [`ANALYSIS_COMPOSITE_CONE_INHERITANCE_v1.md`](ANALYSIS_COMPOSITE_CONE_INHERITANCE_v1.md), [`ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md`](ANALYSIS_POTENTIAL_VALIDITY_CLOCK_GATE_v1.md) | `δ_comp = Σ w_a δ_a` with momentum-fraction weights — without it a 1 kg body is superluminal by `5.9e13` |
 | `FTD-0815` | [`DERIV_TWO_OWED_PROOFS_v1.md`](DERIV_TWO_OWED_PROOFS_v1.md) | hiding ⇒ Born pushforward ⇒ **the barrier is Bell**; free sector exact, `(v_[100] − v_[111])/C = −k⁴/3240`; radiative dim-4 closed three ways; **one-body CLOSED, two-body OPEN and clock-gated** |
-| `FTD-0816` | [`ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md`](../../07_assessment/lorentz_recovery_causal_structure/ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md) | exact all-orders no-go; the `q⁶` obstruction is a **rank** violation; resolved constructively — `−L₁₈` is a **sum of squares at half-integer arguments**. §4c/§4d: nine is **not** minimal — an exact covariant **seven** gives dimension 8, and the unrestricted minimum is **four**, dimension 4 with one structure spare for a mass (rigorous floor three; the earlier five came from an under-dispersed search) |
+| `FTD-0816` | [`ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md`](../../07_assessment/lorentz_recovery_causal_structure/ANALYSIS_INTERSECTOR_CONE_RANK_OBSTRUCTION_v1.md) | exact all-orders no-go; the `q⁶` obstruction is a **rank** violation; exact covariant **seven** gives the proven upper bound and Hessian rank gives floor three. A non-covariant four-square object is a numerical candidate only, so rigorous bounds are `3 <= n_min <= 7` |
 
 ### The ontology the cone demands
 
@@ -113,7 +113,8 @@ two reductions, and the sensor loop with its missing actuator edge.)
 ## 4. Open
 
 - The **cubic-covariant** SOS minimum (`FTD-0816` §4c). Seven is achieved
-  exactly; the unrestricted minimum is four but breaks covariance. Whether
+  exactly; a non-covariant four-square candidate is numerical, not an
+  exact minimum. Whether
   a covariant length below seven exists is open — the pure-sector orbit
   argument that seemed to bound this was retracted, since a sector-mixing $f_a$
   can have any orbit size dividing 48 and `5 = 2+3 = 1+4` remain available.

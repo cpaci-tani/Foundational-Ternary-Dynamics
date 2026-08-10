@@ -66,16 +66,20 @@ matrix (rows = stretch rates `û_e·(q_i − q_j)`). Along a displacement path
 cases for a direction `q`:
 
 - **`(Rq) ≠ 0`** — first-order rigid direction: energy `~ d²` (`n = 2`).
-- **`Rq = 0` and `κ(q) ⟂ coker(R)`** — the flex extends to second order;
-  iterating (and generically to a finite mechanism, Asimow–Roth): `n ≥ 6`
-  or `n = ∞`.
-- **`Rq = 0` and `⟨ω, κ(q)⟩ ≠ 0` for a self-stress `ω ∈ coker(R)`** — the
-  flex is **blocked**: minimizing over `w` gives exactly
+- **`Rq = 0` and `κ(q) ⟂ coker(R)`** — the flex extends through second
+  order; it may be obstructed at higher order or extend to a finite
+  mechanism, so the quartic term vanishes and `n ≥ 6` or `n = ∞`.
+- **`Rq = 0` and `κ(q)` is not orthogonal to `coker(R)`** — the flex is
+  **blocked**: minimizing over `w` gives exactly
 
-  > `E(d) = λ(q)·d⁴ + O(d⁶)`,  `λ(q) = ⟨ω̂, κ(q)⟩² / (2·Σ_e ω̂_e²/k_e)`
+  > `E(d) = λ(q)·d⁴ + O(d⁵)`,
+  > `λ(q) = (1/2) min_w Σ_e k_e[κ_e(q)+(Rw)_e]² > 0`.
 
-  (weighted projection of `κ` onto the stress). **`n = 4` at zero tension
-  exists iff a self-stress exists and blocks the flex.** This is FTD-0789's
+  This is the weighted projection of `κ` onto the full stress space. If
+  `dim coker(R)=1`, it reduces to
+  `λ=⟨ω̂,κ⟩²/(2 Σ_e ω̂_e²/k_e)`. **`n = 4` at zero tension exists iff a
+  self-stress exists and blocks the flex.** The MVC has one-dimensional
+  coker, so the reduced formula used below is valid there. This is FTD-0789's
   criterion in closed form, and it makes C3 *decidable by linear algebra*
   at any candidate configuration.
 

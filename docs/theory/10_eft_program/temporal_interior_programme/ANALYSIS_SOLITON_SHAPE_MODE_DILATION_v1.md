@@ -1,10 +1,10 @@
-# ANALYSIS — The One-Energy Carrier Dilates, and Universally
+# ANALYSIS — The $\varphi^4$ Soliton Shape-Mode Clock Campaign
 
 **Status:** `[MEASURED — UNIVERSAL DILATION, EXPONENT −1.000 ± 0.002]` +
 `[DERIVED — THE ONE-ENERGY REQUIREMENT IS WHAT RESTORES UNIVERSALITY]` +
 `[OPEN — THE CLOCK'S LIMITING SPEED AND THE ENERGY'S DISAGREE BY ~6%]` +
 `[BOOKED — FTD-0814]`
-**Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_kink_clock_dilation.py`
+**Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/derive_soliton_shape_mode_dilation.py`
 **Parents:** `DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md` (the carrier),
 `ANALYSIS_COMPOSITE_CLOCK_DILATION_v1.md` (the two-category failure this
 is measured against).
@@ -17,7 +17,7 @@ is measured against).
 | carrier | structure | dilation exponent $p$ | spread |
 |---|---|---|---|
 | nodes + static well | **two** energy categories | $[-2.70,\ -0.94]$ | **1.76** |
-| $\varphi^4$ kink | **one** energy functional | $[-1.180,\ -1.137]$ | **0.043** |
+| $\varphi^4$ soliton shape-mode carrier | **one** energy functional | $[-1.180,\ -1.137]$ | **0.043** |
 
 Same lattice, same probe, same test. **Collapsing the two energy
 categories into one reduces the spread of the dilation exponent by a
@@ -81,10 +81,10 @@ Two independent determinations of the kink's limiting speed **disagree**:
 | route | $c/C$ |
 |---|---|
 | from the energy, $E(u)/E(0) = \gamma$ | $1.0010,\ 1.0015,\ 1.0025$ |
-| from the clock, $\Omega(u)/\Omega(0) = 1/\gamma$ | $0.944,\ 0.940,\ 0.928$ |
+| from the shape mode, $\Omega(u)/\Omega(0) = 1/\gamma$ | $0.944,\ 0.940,\ 0.928$ |
 
 The kink's *energy* transforms with $c \simeq C$ to two parts in a
-thousand; its *internal clock* transforms with a $c$ about $6\%$ lower. In
+thousand; its *internal shape mode* transforms with a $c$ about $6\%$ lower. In
 an exactly Lorentz-covariant theory these are the same number. They are
 not, and the discrepancy is a lattice-discreteness effect: it shrinks as
 the kink widens ($0.928 \to 0.940 \to 0.944$ for $w = 3.65 \to 5.77$), but
@@ -96,7 +96,7 @@ So the honest statement has two halves and neither should be dropped:
 > exponent is $-1$ to $0.2\%$ across a carrier family, where the
 > two-category model could not produce a single exponent at all.
 >
-> **The lattice is not exactly covariant, and it shows here.** The clock
+> **The lattice is not exactly covariant, and it shows here.** The shape mode
 > and the energy do not agree on the limiting speed, at the $6\%$ level
 > for kinks a few sites wide.
 
@@ -113,8 +113,9 @@ on a carrier is no longer "constituents with the substrate dispersion plus
 a covariantly-contracting binding," stated as an aspiration; it is
 "a configuration of one energy functional," demonstrated to work.
 
-**Does not settle.** This carrier is the $\varphi^4$ kink, whose internal
-mode is **isochronous** — a $\pi$-clock, not the lemniscatic $G^*$ clock
+**Does not settle.** This is the $\varphi^4$ soliton shape-mode carrier: its
+periodic realization is a widely separated kink--antikink pair, and its
+internal mode is **isochronous** — a $\pi$-clock, not the lemniscatic $G^*$ clock
 the programme wants. The structural tension of
 `DERIV_CARRIER_CONSTITUENTS_ONE_ENERGY_v1.md` §5 stands untouched: stable
 configurations have locally quadratic minima and therefore harmonic
@@ -128,7 +129,7 @@ $6\%$ for these widths.
 ## 6. Reproduction
 
 ```
-python scripts/experiments/temporal_interior/derive_kink_clock_dilation.py
+python scripts/experiments/temporal_interior/derive_soliton_shape_mode_dilation.py
 ```
 
 A few minutes. Deterministic. The run carries a validity guard rejecting

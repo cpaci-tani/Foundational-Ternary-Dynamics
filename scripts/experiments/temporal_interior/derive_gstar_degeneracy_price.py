@@ -24,8 +24,8 @@ physical carrier (it has not been).
 
 WHAT THIS IS NOT.  It is not a recovery of G* from a carrier.  The MVC
 gave T A = sqrt(pi) G* but is a mechanical framework with a distance
-potential, hence Galilean and disqualified as a dynamical carrier; the one
-carrier that works (the phi^4 kink) is isochronous, i.e. a pi-clock.  G*
+potential, hence Galilean and disqualified as a dynamical carrier; the
+phi^4 soliton shape-mode carrier is isochronous, i.e. a pi-clock.  G*
 remains recovered as a theorem about lemniscatic integrals only.
 """
 from __future__ import annotations

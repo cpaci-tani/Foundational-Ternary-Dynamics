@@ -1,10 +1,10 @@
 """fig_threshold_mechanism.py -- what a threshold counts, drawn.
 
-CLAIM (paper section "What a threshold counts"): a detection rate is
-presentations per unit time times success per presentation; presentations
-go as frequency, success goes as amplitude, and their product is
-occupation n = E/Omega -- so the 1/sqrt(2 Omega) of field theory is the
-conversion from how big a wave is to how often it knocks.
+CLAIM (paper section "What a threshold counts"): low hard thresholds count
+presentations in proportion to frequency, while high hard thresholds show a
+binary amplitude-access gate. These are limiting faces only. This trace
+does not derive p_success proportional to A^2 or prove that their product is
+occupation; noisy interpolation is measured separately.
 
 The section's RESULT figure (bornregime) shows the measured interpolation.
 This is the MECHANISM figure, and it is deliberately noise-free: adding a
@@ -19,10 +19,9 @@ thresholds:
   a HIGH threshold only the tall mode reaches: SUCCESS gates on
   amplitude, and the fast mode logs zero.
 
-A noisy threshold samples between these two faces, and the product the
-two faces multiply to is occupation.  Every crossing shown is computed
-from the plotted trace; the [verify] block asserts the 4:1 count ratio
-and the amplitude gate exactly.
+A noisy threshold may interpolate between these faces. Every crossing shown
+is computed from the plotted trace; the [verify] block asserts only the 4:1
+count ratio and the binary amplitude gate.
 """
 from __future__ import annotations
 
@@ -82,11 +81,13 @@ def main():
     ax.set_ylim(-1.35, 1.75)
     ax.legend(loc="upper right", ncols=2, frameon=True, framealpha=1.0,
               edgecolor="none", facecolor="white").set_zorder(9)
-    ax.text(0.8, 1.38,
-            r"equal occupation $n=\tfrac12\Omega A^{2}$: half the height,"
-            r" four times the knocks",
-            fontsize=FS_ANN, color=CK, ha="left", va="center")
-    ax.set_title("(a)  two modes a threshold cannot tell apart by occupation")
+    ax.text(0.8, 1.58,
+            r"equal occupation $n=\tfrac12\Omega A^{2}$:"
+            "\n"
+            r"half the height, four times the knocks",
+            fontsize=FS_ANN, color=CK, ha="left", va="top",
+            linespacing=1.05)
+    ax.set_title("(a)  two modes chosen to have equal occupation")
 
     # -- (b) the two faces of the count
     ax = axes[1]
@@ -103,18 +104,20 @@ def main():
             zorder=5, mec="white", mew=0.6)
     ax.plot(t[hi1], np.full(len(hi1), TH_HI), "v", color=C1, ms=6.0,
             zorder=5, mec="white", mew=0.6)
-    ax.text(0.8, -1.15,
+    ax.text(0.8, -1.34,
             f"low: slow {len(lo1)}, fast {len(lo2)} (exactly "
-            r"$\Omega_2/\Omega_1=4$); "
+            r"$\Omega_2/\Omega_1=4$)"
+            "\n"
             f"high: slow {len(hi1)}, fast {len(hi2)} --- "
-            "their product is what occupation weighs",
-            fontsize=FS_ANN, color=CK, ha="left", va="center")
+            "a binary amplitude-access gate",
+            fontsize=FS_ANN, color=CK, ha="left", va="center",
+            linespacing=1.05)
     ax.set_xlabel("time")
     ax.set_ylabel("signal")
-    ax.set_ylim(-1.4, 1.45)
+    ax.set_ylim(-1.68, 1.45)
     ax.set_xlim(0, T_END)
-    ax.set_title("(b)  presentations $\\times$ success: "
-                 "the two faces a noisy threshold multiplies")
+    ax.set_title("(b)  two limiting faces of thresholding:\n"
+                 "frequency count and amplitude-access gate")
 
     fs.save(fig, "mechanism")
     print(f"  wrote {fs.FIGDIR / 'mechanism.pdf'}")

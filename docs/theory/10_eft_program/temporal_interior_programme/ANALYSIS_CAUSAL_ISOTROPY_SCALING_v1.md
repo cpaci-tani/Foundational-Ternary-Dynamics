@@ -1,7 +1,7 @@
 # ANALYSIS — Causal Isotropy is Amplitude-Dependent, and Restores as a Power of Time
 
 **Status:** `[MEASURED — SCALING LAW, ONE-BODY SECTOR]` +
-`[DERIVED — THE SUPPORT BOUNDARY IS DYNAMICALLY INACCESSIBLE]` +
+`[MEASURED — SUPPORT-EDGE AMPLITUDE IS SMALL IN THE SAMPLED RUN; EXACT SUPPORT REMAINS]` +
 `[BOOKED — FTD-0811]`
 **Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/probe_causal_isotropy.py`
 **Parents:** `ANALYSIS_CAUSAL_CELL_3D_v1.md` (the four regions),
@@ -86,7 +86,7 @@ difference in amplitude maps to a large difference in crossing radius. The
 $\eta = 1$ probe is ill-conditioned by construction and is reported only
 so that its exclusion is on the record.
 
-## 4. The support boundary is dynamically inaccessible
+## 4. The sampled support boundary is weak, not inaccessible
 
 The gap between the front ($Ct$) and the support edge ($\sqrt2\,t$) grows
 linearly in $t$, while the precursor decays exponentially across it. The
@@ -97,14 +97,17 @@ geometrically:
 |---|---|---|---|---|---|
 | $\max|\phi|_{\rm edge} / \max|\phi|$ | $2.5\times10^{-7}$ | $1.8\times10^{-12}$ | $2.7\times10^{-17}$ | $9.9\times10^{-22}$ | $2.0\times10^{-26}$ |
 
-a decay of **1.19 decades per tick**, crossing the double-precision
-relative floor at $t \approx 16$ ticks — about $5\times10^{-43}$ s under
-the electron-primary calibration.
+a fitted decay of **1.19 decades per tick** over these five sampled times.
+The value $2.7\times10^{-17}$ is below the spacing of binary64 numbers
+near unity, but it is not below binary64 representability; binary64 can
+represent normal values down to about $10^{-308}$. Nor does this finite
+sample establish an asymptotic decay law or a physical detection floor.
 
 > **Consequence.** Holding the operator fixed at M18, the *declared causal
-> neighbourhood* affects only where the field's exact zero begins. After
-> sixteen ticks that boundary sits below double precision relative to the
-> signal, and falls a further $1.2$ decades every tick thereafter.
+> neighbourhood* fixes where the field's exact zero begins. In the sampled
+> point-source run the support-edge amplitude becomes very small relative
+> to the peak; exact support remains mathematically distinguishable and its
+> physical detectability has not been established.
 
 ## 5. What this amends
 
@@ -119,12 +122,11 @@ polytopes, and "carry the tension openly."
 That recommendation stands, and this measurement sharpens *why* rather
 than overturning it. The amendment is:
 
-1. **The tension is real in the mathematics and empty in the dynamics.**
-   The containment requirement constrains a boundary the field never
-   populates above $10^{-17}$ after sixteen ticks. Choosing between
-   octahedral, cuboctahedral and cubic causality — with the operator held
-   fixed — is not an empirically decidable question at any accessible
-   amplitude, and the inaccessibility is now quantified.
+1. **The tension is real in the mathematics and small-amplitude in the
+   sampled dynamics.** The containment requirement constrains an exact
+   support boundary whose relative amplitude fell below $10^{-17}$ at one
+   sampled time. That does not make the alternative causal declarations
+   empirically equivalent in principle; they already differ at $t=1$.
 2. **The min-containment justification is a conservatism argument, not a
    forcing argument** — which the doc already says by tagging the result a
    motivated `[IMPOSED]`, and which this makes precise. Containment is
