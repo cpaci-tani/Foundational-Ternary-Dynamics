@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (921 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (922 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -25,7 +25,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Gravity & cosmology](#gravity-cosmology) | 21 | Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter. |
 | [Engine infrastructure & RG](#engine-infrastructure-rg) | 39 | Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity. |
 | [Engine emergence campaigns](#engine-emergence-campaigns) | 37 | Fermion-emergence phases, genesis/evaporation and thermal phase maps, atomic and bound-state spectra, wave sectors and dispersion. |
-| [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 32 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
+| [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 33 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
 | [Charge, Gauss & native EM emergence](#charge-gauss-native-em-emergence) | 15 | Native additive charge, Gauss projection and dressing, face-current sidecars, longitudinal susceptibility, dressed hazards, monopoles. |
 | [Common-action mechanics & reciprocity](#common-action-mechanics-reciprocity) | 146 | Forces, work and recoil for a hop; the worldline/Legendre action; charts, collisions and quotients; energy closure and Peierls barriers. |
 | [Constituent-complete matter](#constituent-complete-matter) | 167 | Compact cores, trimers and connected blocks; rest states and Hessians; transport, gait, capture/binding, wakes, causal-horizon persistence. |
@@ -545,7 +545,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG.*
 
-**32 claims.**
+**33 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -581,6 +581,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0815` | DERIVED, OPEN | The two owed proofs: does operational hiding follow, and does Lorentz recovery close? | L977 |
 | `FTD-0816` | DERIVED, MEASURED, WITHDRAWN, SCOPE_CONTRACT | Can two sectors of the model be given a common cone, and what does it cost? | L978 |
 | `FTD-0819` | DERIVED, OPEN | Which sublattice does a common-cone matter carrier actually need, and what does that cost Postulate 1? | L981 |
+| `FTD-1003` | THEOREM, CORRECTION, OPEN | Can a symmetry-protected embedded mode evade the C2 band-clearance blocker on the composite-boost row? | L1141 |
 
 ---
 
@@ -1234,9 +1235,9 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 428 |
+| THEOREM | 429 |
 | CLOSED_NEGATIVE | 239 |
-| OPEN | 232 |
+| OPEN | 233 |
 | MEASURED | 175 |
 | SELECTION | 106 |
 | DERIVED | 99 |
@@ -1245,7 +1246,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | NUMERICAL_FACT | 54 |
 | CONSTRUCTIVE | 48 |
 | FOUNDATIONAL_OBSTRUCTION | 43 |
-| CORRECTION | 40 |
+| CORRECTION | 41 |
 | BOUNDARY | 36 |
 | CONJECTURE | 31 |
 | IMPOSED | 30 |

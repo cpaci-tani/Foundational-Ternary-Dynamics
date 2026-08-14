@@ -323,6 +323,7 @@ EXCEPTIONS = {
     "FTD-1000": "framework-postulates",         # CLK-1 folded into FC-2, constitution amendment
     "FTD-1001": "native-time-carrier",          # batch certificate relock (0993/0995/0998 chains)
     "FTD-1002": "framework-boundary-imports",   # four-walls/fold adjudication: 4 walls, 3 roofs
+    "FTD-1003": "lorentz-causal",               # no point-group protection; C2 escape closed
 }
 
 

@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "source_commit": "76ab298c4c249af7cc825db91401a90759a5d402",
+ "source_commit": "e1d5d26fa747f0f6ae5718edf87fb81827200276",
  "generator": "scripts/theory/build_theory_mindmap.py",
  "stats": {
   "documents_total": 2050,
@@ -11,7 +11,7 @@
   "cross_edges": 5147,
   "tagged_active": 1767,
   "concepts": 318,
-  "concept_edges": 2535
+  "concept_edges": 2536
  },
  "tag_counts": {
   "PRE_REGISTRATION": 572,
@@ -12869,8 +12869,8 @@
     "Manifestation",
     "Boost",
     "Relative",
-    "Carry",
-    "Face"
+    "Face",
+    "Carry"
    ]
   },
   {
@@ -13038,8 +13038,8 @@
     "Chain",
     "N_c",
     "m_e",
-    "Symmetry",
     "Moore",
+    "Symmetry",
     "Cubic",
     "Minimal"
    ]
@@ -18183,8 +18183,8 @@
     "Symmetry",
     "Scale",
     "Convergence",
-    "Shell",
     "Split",
+    "Shell",
     "φ"
    ]
   },
@@ -18256,8 +18256,8 @@
     "Minimal",
     "Wilson loop",
     "Root",
-    "Selection",
-    "N_c = 3"
+    "N_c = 3",
+    "Selection"
    ]
   },
   {
@@ -29749,8 +29749,8 @@
     "Recoil",
     "Momentum",
     "Localized",
-    "Threshold",
     "Reversible",
+    "Threshold",
     "Volume",
     "Wave"
    ]
@@ -31242,8 +31242,8 @@
     "Recoil",
     "Force",
     "Factor",
-    "Selection",
     "Hop",
+    "Selection",
     "Hamiltonian",
     "Reversible",
     "Isolated"
@@ -32391,8 +32391,8 @@
    "outbound": 0,
    "concepts": [
     "Ten",
-    "Orbit",
     "Refinement",
+    "Orbit",
     "Shared",
     "Removal",
     "Coherence",
@@ -34027,7 +34027,7 @@
     "Return",
     "Spectrum",
     "Separation",
-    "Shell"
+    "Period"
    ]
   },
   {
@@ -35322,19 +35322,25 @@
    "archived": false,
    "ftd_ids": [
     "FTD-0662",
-    "FTD-0663"
+    "FTD-0663",
+    "FTD-1003"
    ],
-   "bytes": 863,
+   "bytes": 1919,
    "inbound": 1,
    "outbound": 0,
    "concepts": [
+    "Symmetry",
     "Volume",
+    "Shell",
     "Excitation",
     "Transfer",
     "Discriminator",
+    "Orbit",
+    "Carry",
     "Gap",
-    "Symmetry",
-    "Certificate"
+    "Certificate",
+    "Invariant",
+    "Selection"
    ]
   },
   {
@@ -38366,7 +38372,7 @@
     "FTD-0428",
     "FTD-0584"
    ],
-   "bytes": 2246021,
+   "bytes": 2249393,
    "inbound": 38,
    "outbound": 706,
    "concepts": [
@@ -38402,7 +38408,7 @@
    "color": "#9e9e9e",
    "archived": false,
    "ftd_ids": [],
-   "bytes": 167067,
+   "bytes": 167224,
    "inbound": 2,
    "outbound": 0,
    "concepts": [
@@ -54668,8 +54674,8 @@
     "Relative",
     "Polarity",
     "Momentum",
-    "Shell",
     "Basin",
+    "Shell",
     "Volume",
     "Localized",
     "Orbit",
@@ -60998,8 +61004,8 @@
     "Pair",
     "Self",
     "Momentum",
-    "Shell",
     "Period",
+    "Shell",
     "G*",
     "Symmetry",
     "Hamiltonian",
@@ -68976,8 +68982,8 @@
     "Wave",
     "Delta",
     "Contract",
-    "Invariant",
     "Hop",
+    "Invariant",
     "Recoil",
     "Separation",
     "Closure",
@@ -89684,8 +89690,8 @@
     "Factor",
     "Support",
     "Square",
-    "Carry",
     "Face",
+    "Carry",
     "Body"
    ]
   },
@@ -89828,22 +89834,22 @@
    "ftd_ids": [
     "FTD-0813"
    ],
-   "bytes": 6713,
+   "bytes": 7980,
    "inbound": 2,
    "outbound": 0,
    "concepts": [
     "Dilation",
     "Distance",
+    "Boost",
     "Carrier",
     "Voxel",
-    "Boost",
     "Obstruction",
+    "Symmetry",
+    "Orbit",
     "Constituent",
     "Retarded",
     "Momentum",
-    "Gap",
-    "Static",
-    "Clock"
+    "Gap"
    ]
   },
   {
@@ -111606,7 +111612,7 @@
    "label": "Analytic",
    "source": "filename",
    "doc_count": 264,
-   "hits": 590
+   "hits": 593
   },
   {
    "id": "Anchor",
@@ -111669,14 +111675,14 @@
    "label": "Body",
    "source": "filename",
    "doc_count": 398,
-   "hits": 1415
+   "hits": 1416
   },
   {
    "id": "Boost",
    "label": "Boost",
    "source": "filename",
    "doc_count": 120,
-   "hits": 280
+   "hits": 285
   },
   {
    "id": "Born rule",
@@ -111732,14 +111738,14 @@
    "label": "Carrier",
    "source": "filename",
    "doc_count": 381,
-   "hits": 1630
+   "hits": 1632
   },
   {
    "id": "Carry",
    "label": "Carry",
    "source": "filename",
-   "doc_count": 375,
-   "hits": 957
+   "doc_count": 376,
+   "hits": 958
   },
   {
    "id": "Causal",
@@ -112110,7 +112116,7 @@
    "label": "Endpoint",
    "source": "filename",
    "doc_count": 377,
-   "hits": 1388
+   "hits": 1389
   },
   {
    "id": "Envelope",
@@ -112270,8 +112276,8 @@
    "id": "Force",
    "label": "Force",
    "source": "filename",
-   "doc_count": 705,
-   "hits": 2264
+   "doc_count": 706,
+   "hits": 2265
   },
   {
    "id": "Form",
@@ -112480,8 +112486,8 @@
    "id": "Invariant",
    "label": "Invariant",
    "source": "filename",
-   "doc_count": 638,
-   "hits": 2008
+   "doc_count": 639,
+   "hits": 2010
   },
   {
    "id": "Isolated",
@@ -112586,7 +112592,7 @@
    "label": "Lorentz",
    "source": "filename",
    "doc_count": 310,
-   "hits": 593
+   "hits": 594
   },
   {
    "id": "Lorentz recovery",
@@ -112599,8 +112605,8 @@
    "id": "Lower",
    "label": "Lower",
    "source": "filename",
-   "doc_count": 212,
-   "hits": 404
+   "doc_count": 213,
+   "hits": 406
   },
   {
    "id": "MC-T4.3",
@@ -112635,7 +112641,7 @@
    "label": "Mechanism",
    "source": "filename",
    "doc_count": 556,
-   "hits": 1827
+   "hits": 1830
   },
   {
    "id": "Memory",
@@ -112677,7 +112683,7 @@
    "label": "Momentum",
    "source": "filename",
    "doc_count": 648,
-   "hits": 2814
+   "hits": 2815
   },
   {
    "id": "Moore",
@@ -112823,8 +112829,8 @@
    "id": "Orbit",
    "label": "Orbit",
    "source": "filename",
-   "doc_count": 284,
-   "hits": 1008
+   "doc_count": 285,
+   "hits": 1014
   },
   {
    "id": "Orientation",
@@ -113187,8 +113193,8 @@
    "id": "Selection",
    "label": "Selection",
    "source": "filename",
-   "doc_count": 638,
-   "hits": 4410
+   "doc_count": 639,
+   "hits": 4412
   },
   {
    "id": "Self",
@@ -113215,8 +113221,8 @@
    "id": "Shell",
    "label": "Shell",
    "source": "filename",
-   "doc_count": 330,
-   "hits": 1392
+   "doc_count": 331,
+   "hits": 1394
   },
   {
    "id": "Spacetime",
@@ -113285,8 +113291,8 @@
    "id": "Symmetry",
    "label": "Symmetry",
    "source": "filename",
-   "doc_count": 480,
-   "hits": 1390
+   "doc_count": 481,
+   "hits": 1400
   },
   {
    "id": "Temporal",
@@ -113327,8 +113333,8 @@
    "id": "Threshold",
    "label": "Threshold",
    "source": "filename",
-   "doc_count": 612,
-   "hits": 2083
+   "doc_count": 613,
+   "hits": 2084
   },
   {
    "id": "Toggle",
@@ -113587,7 +113593,7 @@
    "label": "renormalization",
    "source": "pinned",
    "doc_count": 116,
-   "hits": 311
+   "hits": 312
   },
   {
    "id": "sin²θ_W",
@@ -113748,7 +113754,7 @@
    "label": "π",
    "source": "object_aliases",
    "doc_count": 203,
-   "hits": 1816
+   "hits": 1823
   },
   {
    "id": "φ",
@@ -115016,7 +115022,7 @@
   {
    "source": "Carrier",
    "target": "Clock",
-   "weight": 31
+   "weight": 30
   },
   {
    "source": "Carrier",
@@ -115140,13 +115146,18 @@
   },
   {
    "source": "Carrier",
+   "target": "Symmetry",
+   "weight": 14
+  },
+  {
+   "source": "Carrier",
    "target": "Ternary",
    "weight": 16
   },
   {
    "source": "Carry",
    "target": "Certificate",
-   "weight": 11
+   "weight": 12
   },
   {
    "source": "Carry",
@@ -115925,6 +115936,11 @@
   },
   {
    "source": "Certificate",
+   "target": "Shell",
+   "weight": 16
+  },
+  {
+   "source": "Certificate",
    "target": "Split",
    "weight": 14
   },
@@ -116346,7 +116362,7 @@
   {
    "source": "Clock",
    "target": "Dilation",
-   "weight": 12
+   "weight": 11
   },
   {
    "source": "Clock",
@@ -116467,11 +116483,6 @@
    "source": "Clock",
    "target": "Repair",
    "weight": 17
-  },
-  {
-   "source": "Clock",
-   "target": "Shell",
-   "weight": 15
   },
   {
    "source": "Clock",
@@ -117156,7 +117167,7 @@
   {
    "source": "Constituent",
    "target": "Orbit",
-   "weight": 16
+   "weight": 17
   },
   {
    "source": "Constituent",
@@ -117246,7 +117257,7 @@
   {
    "source": "Constituent",
    "target": "Static",
-   "weight": 37
+   "weight": 36
   },
   {
    "source": "Constituent",
@@ -118676,7 +118687,7 @@
   {
    "source": "Distance",
    "target": "Orbit",
-   "weight": 10
+   "weight": 11
   },
   {
    "source": "Distance",
@@ -118696,7 +118707,7 @@
   {
    "source": "Distance",
    "target": "Static",
-   "weight": 10
+   "weight": 9
   },
   {
    "source": "Distance",
@@ -119641,7 +119652,7 @@
   {
    "source": "Excitation",
    "target": "Shell",
-   "weight": 12
+   "weight": 13
   },
   {
    "source": "Excitation",
@@ -120776,7 +120787,7 @@
   {
    "source": "Gap",
    "target": "Selection",
-   "weight": 33
+   "weight": 34
   },
   {
    "source": "Gap",
@@ -121741,7 +121752,7 @@
   {
    "source": "Invariant",
    "target": "Symmetry",
-   "weight": 12
+   "weight": 13
   },
   {
    "source": "Invariant",
@@ -122861,7 +122872,7 @@
   {
    "source": "Momentum",
    "target": "Orbit",
-   "weight": 19
+   "weight": 20
   },
   {
    "source": "Momentum",
@@ -122936,7 +122947,7 @@
   {
    "source": "Momentum",
    "target": "Static",
-   "weight": 23
+   "weight": 22
   },
   {
    "source": "Momentum",
@@ -122946,7 +122957,7 @@
   {
    "source": "Momentum",
    "target": "Symmetry",
-   "weight": 15
+   "weight": 16
   },
   {
    "source": "Momentum",
@@ -124146,12 +124157,12 @@
   {
    "source": "Period",
    "target": "Recurrence",
-   "weight": 9
+   "weight": 10
   },
   {
    "source": "Period",
    "target": "Return",
-   "weight": 12
+   "weight": 13
   },
   {
    "source": "Period",
@@ -125176,7 +125187,7 @@
   {
    "source": "Retarded",
    "target": "Static",
-   "weight": 9
+   "weight": 8
   },
   {
    "source": "Retarded",
@@ -125211,7 +125222,7 @@
   {
    "source": "Return",
    "target": "Shell",
-   "weight": 12
+   "weight": 11
   },
   {
    "source": "Return",
@@ -125526,7 +125537,7 @@
   {
    "source": "Selection",
    "target": "Symmetry",
-   "weight": 19
+   "weight": 20
   },
   {
    "source": "Selection",
@@ -125746,7 +125757,7 @@
   {
    "source": "Shell",
    "target": "Transfer",
-   "weight": 11
+   "weight": 12
   },
   {
    "source": "Shell",
