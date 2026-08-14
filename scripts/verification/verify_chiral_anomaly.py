@@ -261,8 +261,8 @@ print("\n" + "=" * 70)
 print("SECTION 6: PI0 -> GAMMA GAMMA (ANOM-7, ANOM-8)")
 print("=" * 70)
 
-# ANOM-8: N_c factor derived
-print("\nANOM-8: N_c = 3 in anomaly coefficient is derived")
+# ANOM-8: N_c factor, with N_c supplied by the independent structural sector.
+print("\nANOM-8: anomaly coefficient with structurally sourced N_c = 3")
 anomaly_factor = N_C * (Q_U**2 - Q_D**2)
 record(
     "N_c*(Q_u^2 - Q_d^2) = 3*(4/9 - 1/9) = 1",
@@ -270,9 +270,9 @@ record(
     f"N_c*(Q_u^2 - Q_d^2) = {N_C}*({Q_U**2:.4f} - {Q_D**2:.4f}) = {anomaly_factor:.6f}"
 )
 record(
-    "N_c = 3 from master quadratic (not input for pi0 calculation)",
-    True,
-    "N_c = floor(x_-) = floor(3.024) = 3; derived from G* [THEOREM]"
+    "N_c = 3 is explicit in the anomaly factor",
+    N_C == 3,
+    "N_c provenance is the independent topology/Moore structure; x_- identification retired"
 )
 
 # ANOM-7: Decay rate
@@ -423,12 +423,12 @@ record(
     f"alpha(G*) = {alpha_from_gstar:.8f}, alpha(used) = {ALPHA:.8f}"
 )
 
-# N_c in anomaly matches N_c from x_-
+# Historical arithmetic relation only; it is not N_c provenance and is not
+# counted as a verification target.
 x_minus = (16 * c_val**2 - np.sqrt(disc)) / 2
-record(
-    "N_c in anomaly matches floor(x_-)",
-    int(np.floor(x_minus)) == N_C,
-    f"floor(x_-) = floor({x_minus:.4f}) = {int(np.floor(x_minus))} = {N_C}"
+print(
+    f"  legacy note: floor(x_-) = {int(np.floor(x_minus))}; "
+    "the physical N_c identification is retired"
 )
 
 # Full SM anomalous Ward identity

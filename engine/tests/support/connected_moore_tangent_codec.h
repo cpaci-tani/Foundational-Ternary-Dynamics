@@ -247,6 +247,7 @@ struct LongitudinalSolve {
   double source_mean = INFINITY;
   double source_total = INFINITY;
   double source_scale = INFINITY;
+  double compatibility_reference = INFINITY;
   double compatibility_absolute = INFINITY;
   double compatibility_relative = INFINITY;
   double relative_residual = INFINITY;
@@ -257,7 +258,8 @@ struct LongitudinalSolve {
 
 inline LongitudinalSolve solve_longitudinal(
     const std::vector<double>& source, double tolerance = 1e-13,
-    int max_iterations = 4096) {
+    int max_iterations = 4096,
+    double compatibility_reference = NAN) {
   LongitudinalSolve result;
   if (source.size() != kVolume || !(tolerance > 0.0)
       || max_iterations <= 0) return result;
@@ -267,9 +269,12 @@ inline LongitudinalSolve solve_longitudinal(
   result.source_total = static_cast<double>(total);
   result.source_mean = static_cast<double>(mean);
   result.source_scale = max_abs(rhs);
+  result.compatibility_reference =
+      std::isfinite(compatibility_reference) && compatibility_reference > 0.0
+      ? compatibility_reference : result.source_scale;
   result.compatibility_absolute = std::abs(result.source_mean);
-  result.compatibility_relative = result.source_scale > 0.0
-      ? result.compatibility_absolute / result.source_scale
+  result.compatibility_relative = result.compatibility_reference > 0.0
+      ? result.compatibility_absolute / result.compatibility_reference
       : (result.compatibility_absolute == 0.0 ? 0.0 : INFINITY);
   if (!std::isfinite(result.compatibility_relative)
       || result.compatibility_relative > tolerance) return result;
@@ -338,6 +343,12 @@ struct ChartVector {
   std::vector<double> dp;
   MatchedFaceFlux e;
   MatchedEdgeField b;
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  // C6: the uniform electric harmonic is a genuine direct-sum coordinate.
+  // `e` is the zero-mean transverse representative; physical operations use
+  // completed_electric(value) below.
+  std::array<double,3> e_harmonic{{0.0,0.0,0.0}};
+#endif
 
   ChartVector()
       : dx(kMatterDimension, 0.0), dp(kMatterDimension, 0.0),
@@ -346,11 +357,28 @@ struct ChartVector {
 
 inline bool finite_chart(const ChartVector& value) {
   const auto finite = [](double x) { return std::isfinite(x); };
-  return value.dx.size() == kMatterDimension
+  bool result = value.dx.size() == kMatterDimension
       && value.dp.size() == kMatterDimension
       && std::all_of(value.dx.begin(), value.dx.end(), finite)
       && std::all_of(value.dp.begin(), value.dp.end(), finite)
       && finite_face(value.e) && finite_edge(value.b);
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  result = result
+      && std::all_of(value.e_harmonic.begin(), value.e_harmonic.end(), finite);
+#endif
+  return result;
+}
+
+inline MatchedFaceFlux completed_electric(const ChartVector& value) {
+  MatchedFaceFlux result = value.e;
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  for (std::size_t i = 0; i < kVolume; ++i) {
+    result.x[i] += value.e_harmonic[0];
+    result.y[i] += value.e_harmonic[1];
+    result.z[i] += value.e_harmonic[2];
+  }
+#endif
+  return result;
 }
 
 inline ChartVector scaled(const ChartVector& value, double scale) {
@@ -367,6 +395,10 @@ inline ChartVector scaled(const ChartVector& value, double scale) {
     result.b.y[i] = scale * value.b.y[i];
     result.b.z[i] = scale * value.b.z[i];
   }
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  for (int axis = 0; axis < 3; ++axis)
+    result.e_harmonic[axis] = scale * value.e_harmonic[axis];
+#endif
   return result;
 }
 
@@ -377,6 +409,10 @@ inline void axpy(ChartVector& target, const ChartVector& source, double alpha) {
   }
   add_scaled(target.e, source.e, alpha);
   add_scaled(target.b, source.b, alpha);
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  for (int axis = 0; axis < 3; ++axis)
+    target.e_harmonic[axis] += alpha * source.e_harmonic[axis];
+#endif
 }
 
 inline ChartVector difference(const ChartVector& left,
@@ -389,11 +425,12 @@ inline ChartVector difference(const ChartVector& left,
 inline std::vector<double> flatten(const ChartVector& value) {
   std::vector<double> result;
   result.reserve(kRawChartDimension);
+  const MatchedFaceFlux electric = completed_electric(value);
   result.insert(result.end(), value.dx.begin(), value.dx.end());
   result.insert(result.end(), value.dp.begin(), value.dp.end());
-  result.insert(result.end(), value.e.x.begin(), value.e.x.end());
-  result.insert(result.end(), value.e.y.begin(), value.e.y.end());
-  result.insert(result.end(), value.e.z.begin(), value.e.z.end());
+  result.insert(result.end(), electric.x.begin(), electric.x.end());
+  result.insert(result.end(), electric.y.begin(), electric.y.end());
+  result.insert(result.end(), electric.z.begin(), electric.z.end());
   result.insert(result.end(), value.b.x.begin(), value.b.x.end());
   result.insert(result.end(), value.b.y.begin(), value.b.y.end());
   result.insert(result.end(), value.b.z.begin(), value.b.z.end());
@@ -416,9 +453,11 @@ inline double inner(const TangentMetric& metric, const ChartVector& left,
     for (int j = 0; j < kMatterDimension; ++j)
       result += static_cast<long double>(left.dx[i])
           * metric.hessian[i][j] * right.dx[j];
-  const MatchedEdgeField curl_left = ftd::eft::matched_curl_adjoint(left.e);
-  const MatchedEdgeField curl_right = ftd::eft::matched_curl_adjoint(right.e);
-  const long double field = ftd::eft::matched_face_dot(left.e, right.e)
+  const MatchedFaceFlux left_e = completed_electric(left);
+  const MatchedFaceFlux right_e = completed_electric(right);
+  const MatchedEdgeField curl_left = ftd::eft::matched_curl_adjoint(left_e);
+  const MatchedEdgeField curl_right = ftd::eft::matched_curl_adjoint(right_e);
+  const long double field = ftd::eft::matched_face_dot(left_e, right_e)
       + ftd::eft::matched_edge_dot(left.b, right.b)
       - 0.5L * metric.lambda
           * (ftd::eft::matched_edge_dot(left.b, curl_right)
@@ -550,7 +589,8 @@ inline RetractionResult retract(const Chart& chart, const ChartVector& tangent,
           + amount * tangent.dp[3 * particle + axis]);
     result.state.constituents[particle].momentum = momentum;
   }
-  add_scaled(result.state.electric, tangent.e, amount);
+  const MatchedFaceFlux tangent_electric = completed_electric(tangent);
+  add_scaled(result.state.electric, tangent_electric, amount);
   result.state.magnetic_half = chart.reference.magnetic_half;
   add_scaled(result.state.magnetic_half, tangent.b, amount);
   const auto deposited = chart.deposit_fn(result.state);
@@ -602,6 +642,21 @@ struct CodecResult {
   double tangent_source_mean_rel = INFINITY;
   double hodge_source_mean_abs = INFINITY;
   double hodge_source_mean_rel = INFINITY;
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  double hodge_compatibility_reference = INFINITY;
+#endif
+#ifdef FTD_0831_REPRESENTABILITY_FLOOR
+  double face_completed_max = INFINITY;
+#endif
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  double complete_chart_norm = INFINITY;
+  double chart_dx_square = INFINITY;
+  double chart_dp_square = INFINITY;
+  double chart_electric_square = INFINITY;
+  double chart_magnetic_square = INFINITY;
+  double hodge_correction_absolute = INFINITY;
+  double reconstruction_absolute = INFINITY;
+#endif
   double tangent_poisson_relative_residual = INFINITY;
   double hodge_poisson_relative_residual = INFINITY;
   ChartVector value;
@@ -651,31 +706,91 @@ inline CodecResult encode_centered(const Chart& chart,
   }
   enforce_zero_face_means(residue);
   result.preclean_divergence = ftd::eft::max_divergence(residue);
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  const auto hodge = solve_longitudinal(
+      divergence(residue), 1e-13, 4096,
+      std::max(face_max_abs(residue), 1e-30));
+#else
   const auto hodge = solve_longitudinal(divergence(residue), 1e-13, 4096);
+#endif
   result.hodge_poisson_relative_residual = hodge.relative_residual;
   result.hodge_source_mean_abs = hodge.compatibility_absolute;
   result.hodge_source_mean_rel = hodge.compatibility_relative;
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  result.hodge_compatibility_reference = hodge.compatibility_reference;
+#endif
   if (!hodge.valid) return result;
   MatchedFaceFlux hodge_field = hodge.field;
   enforce_zero_face_means(hodge_field);
   result.value.e = face_difference(residue, hodge_field);
   enforce_zero_face_means(result.value.e);
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  result.value.e_harmonic = result.face_raw;
+#else
   for (std::size_t i = 0; i < kVolume; ++i) {
     result.value.e.x[i] += result.face_raw[0];
     result.value.e.y[i] += result.face_raw[1];
     result.value.e.z[i] += result.face_raw[2];
   }
+#ifdef FTD_0830_HARMONIC_REINSERTION_REPAIR
+  // Round the completed field back onto its three explicitly retained
+  // uniform coordinates. This is the post-reinsertion counterpart of the
+  // four-pass zero-mean projection above; it does not touch the transverse
+  // summand or change the registered harmonic target.
+  for (int pass = 0; pass < 4; ++pass) {
+    const auto completed_means = face_means(result.value.e);
+    for (std::size_t i = 0; i < kVolume; ++i) {
+      result.value.e.x[i] += result.face_raw[0] - completed_means[0];
+      result.value.e.y[i] += result.face_raw[1] - completed_means[1];
+      result.value.e.z[i] += result.face_raw[2] - completed_means[2];
+    }
+  }
+#endif
+#endif
   // Measure the retained harmonic coordinates from the completed chart
   // fields. These are replay primitives, not copied bookkeeping values.
-  result.face_rebuilt = face_means(result.value.e);
+  const MatchedFaceFlux completed = completed_electric(result.value);
+  result.face_rebuilt = face_means(completed);
   result.edge_rebuilt = edge_means(result.value.b);
-  result.cleaned_divergence = ftd::eft::max_divergence(result.value.e);
+#ifdef FTD_0831_REPRESENTABILITY_FLOOR
+  result.face_completed_max = face_max_abs(completed);
+#endif
+  result.cleaned_divergence = ftd::eft::max_divergence(completed);
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  long double dx_square = 0.0L, dp_square = 0.0L;
+  for (double entry : result.value.dx) dx_square += entry * entry;
+  for (double entry : result.value.dp) dp_square += entry * entry;
+  result.chart_dx_square = static_cast<double>(dx_square);
+  result.chart_dp_square = static_cast<double>(dp_square);
+  result.chart_electric_square = face_dot(delta_e, delta_e);
+  result.chart_magnetic_square = edge_dot(result.value.b, result.value.b);
+  const long double product_square = dx_square + dp_square
+      + result.chart_electric_square + result.chart_magnetic_square;
+  result.complete_chart_norm = std::sqrt(
+      std::max(0.0L, product_square));
+  result.hodge_correction_absolute = face_l2(hodge_field);
+#else
   const double denominator = std::max(face_l2(delta_e), 1e-30);
-  result.hodge_correction = face_l2(hodge_field) / denominator;
+#endif
   MatchedFaceFlux rebuilt = longitudinal_field;
-  add_scaled(rebuilt, result.value.e, 1.0);
+  add_scaled(rebuilt, completed, 1.0);
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  result.reconstruction_absolute = face_l2(
+      face_difference(delta_e, rebuilt));
+  const auto product_relative = [&](double numerator) {
+    if (result.complete_chart_norm > 0.0)
+      return numerator / result.complete_chart_norm;
+    return numerator == 0.0 ? 0.0 : INFINITY;
+  };
+  result.hodge_correction = product_relative(
+      result.hodge_correction_absolute);
+  result.reconstruction = product_relative(
+      result.reconstruction_absolute);
+#else
+  result.hodge_correction = face_l2(hodge_field) / denominator;
   result.reconstruction = face_l2(face_difference(delta_e, rebuilt))
       / denominator;
+#endif
   double face_scale = 1e-30, edge_scale = 1e-30;
   result.face_harmonic = 0.0;
   result.edge_harmonic = 0.0;
@@ -689,7 +804,18 @@ inline CodecResult encode_centered(const Chart& chart,
         result.edge_harmonic,
         std::abs(result.edge_raw[axis] - result.edge_rebuilt[axis]));
   }
+#ifdef FTD_0831_REPRESENTABILITY_FLOOR
+  constexpr double relative_target = 1e-12;
+  const double unit_roundoff =
+      0.5 * std::numeric_limits<double>::epsilon();
+  const double operation_count = static_cast<double>(kVolume + 32);
+  const double gamma = operation_count * unit_roundoff
+      / (1.0 - operation_count * unit_roundoff);
+  result.face_harmonic /= face_scale
+      + gamma * result.face_completed_max / relative_target;
+#else
   result.face_harmonic /= face_scale;
+#endif
   result.edge_harmonic /= edge_scale;
   result.valid = finite_chart(result.value)
       && result.preclean_divergence <= 2e-7
@@ -748,11 +874,13 @@ inline double stable_energy_increment(
   const MatchedEdgeField& b0 = chart.reference.magnetic_half;
   const MatchedEdgeField curl_l1 = ftd::eft::matched_curl_adjoint(l1);
   const MatchedEdgeField curl_l0 = ftd::eft::matched_curl_adjoint(l0);
-  const MatchedEdgeField curl_e = ftd::eft::matched_curl_adjoint(tangent.e);
+  const MatchedFaceFlux tangent_electric = completed_electric(tangent);
+  const MatchedEdgeField curl_e =
+      ftd::eft::matched_curl_adjoint(tangent_electric);
   const long double transverse =
-      amount * ftd::eft::matched_face_dot(l1, tangent.e)
+      amount * ftd::eft::matched_face_dot(l1, tangent_electric)
       + 0.5L * amount * amount
-          * ftd::eft::matched_face_dot(tangent.e, tangent.e)
+          * ftd::eft::matched_face_dot(tangent_electric, tangent_electric)
       + amount * ftd::eft::matched_edge_dot(b0, tangent.b)
       + 0.5L * amount * amount
           * ftd::eft::matched_edge_dot(tangent.b, tangent.b)

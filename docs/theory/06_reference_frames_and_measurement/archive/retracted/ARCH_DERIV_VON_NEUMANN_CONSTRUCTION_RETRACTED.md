@@ -1,9 +1,18 @@
-# Von Neumann Algebra Construction for FTD Lattice Observables
+# ARCHIVED — Von Neumann Algebra Construction for FTD Lattice Observables
+
+> **[RETRACTED 2026-08-09 — FTD-0825]** This document conflated the
+> commutative algebra of actual ternary records with a full matrix algebra and
+> treated finite spectral diagnostics as evidence for a Type-III factor. It is
+> retained only as provenance. The corrected successor result is
+> [`THEOREM_DISCRETE_CONTEXTUAL_LOCAL_NET_v1.md`](../../../10_eft_program/temporal_interior_programme/THEOREM_DISCRETE_CONTEXTUAL_LOCAL_NET_v1.md):
+> actual records form a diagonal commutative algebra; the qutrit matrix net is
+> a separately selected potentiality representation; finite regions are Type I;
+> and no Type-III classification follows without a specified GNS representation.
 
 ## Type Classification of the Ternary Lattice Observable Algebra
 
-**Status:** [THEOREM] on finite lattices (Type I at every L); [HYPOTHESIS] for any Type-III interpretation. The lattice is **undefined-boundary** (Axiom Zero), so the "infinite-volume Type III₁" classification is not a theorem about FTD-as-defined; it is a hypothesis about what an Araki–Woods inductive-limit scaffold *would* yield *if* assembled on a system of this kind.
-**Proof script:** `scripts/proofs/proof_von_neumann_type.py`
+**Historical status at archive time:** [RETRACTED]. The former finite-region and Type-III claims below are not canonical.
+**Corrected proof script:** `scripts/proofs/proof_von_neumann_type.py`
 **Vocabulary:** see [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). This derivation is purely operator-algebraic; "observable algebras" and "modular flows" are reframe-stable. References to reference frame context in upstream docs are stated as **frame-relative coupling between the system algebra and the observation-layer algebra**.
 
 ---

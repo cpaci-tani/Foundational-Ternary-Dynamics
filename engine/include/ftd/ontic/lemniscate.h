@@ -7,8 +7,9 @@
  *   Layer 0:  Transcendental Seeds (EULER_GAMMA, GAMMA_QUARTER)
  *   Layer 0b: Modular Selection (NOME_LEMNISCATIC, THETA_LEMNISCATIC)
  *   Layer 1:  Elliptic Geometry (VARPI, GAUSS_CONSTANT_M)
- *   Layer 2:  Universal Operator (G_STAR, PI, PF, I_1_BCC/W_3, SQRT_GSTAR, GSTAR_FLUX/TIME/ACTION)
- *   Layer 2b: Euler's Identity and emergence of i (K_CRIT, X_BORN)
+ *   Layer 2:  Lemniscatic identities (G_STAR, PI, PF, I_1_BCC/W_3,
+ *             SQRT_GSTAR, and legacy power aliases)
+ *   Layer 2b: Generalized-quadratic discriminant (K_CRIT, X_BORN)
  *
  * No dependencies on other ontic/ headers.
  */
@@ -87,40 +88,34 @@ inline constexpr double VARPI = 2.622057554292119810;
 inline constexpr double GAUSS_CONSTANT_M = 0.8346268416740731;
 
 // ============================================================================
-// Layer 2: Universal Operator
+// Layer 2: Lemniscatic identities
 // ============================================================================
-// The Universal Render Bridge constant G*:
+// The lemniscatic gamma ratio G*:
 //   G* = 2√(ϖ·M)               (π-free: scaled geometric mean)
 //   G* = 2ϖ/√π                 (equivalent, using π = ϖ/M)
 //
 // G* bridges the elliptic (ϖ) and the arithmetic-geometric (M).
-// It is the fundamental constant of the render bridge: the geometric
-// mean of the lemniscate period and Gauss's constant, scaled by 2.
+// Its exact dynamical role established by the temporal-interior programme is
+// as the dimensionless period coefficient of the critical quartic clock:
+//   T A = √π G* √(m/(2λ)).
 //
-// THE DIMENSIONAL TRIAD [SELECTION]:
-//   G*¹ = 2.959  →  FLUX      (J: spatial amplitude per DoF)
-//   G*² = 8.754  →  ENERGY    (E: temporal amplitude per DoF, = time)
-//   G*³ = 25.90  →  ACTION    (S: spatiotemporal record per DoF)
+// The historical assignments G*→flux, G*²→time/energy, and G*³→action are
+// [SELECTIONS], not dimensional consequences of these pure numbers. The
+// constants below retain their names for source compatibility only. Likewise,
+// P/S=G* and the harmonic-mean formula are algebraic facts about the master-
+// quadratic roots; their identification with physical α or N_c is separate.
 //
-// From Vieta: Sum/16 = G*² (energy), Product/16 = G*³ (action),
-// P/S = G* = action/energy = time per DoF. G* is simultaneously
-// the natural flux amplitude AND the natural time unit, with G*²
-// being their shared energy. The observable ψ = J_L + J_R = G*
-// exactly (from dual substrate), confirming G* IS the flux.
-//
-// G* = HM(1/α, N_c)/2 — half the harmonic mean of the physics roots.
-//
-// See: EXPLR_GSTAR_FLUX_TIME.md
+// See: AUDIT_GSTAR_CLOCK_DEEP_DIVE_v1.md
 //
 // Pre-computed from G* = 2√(ϖ·M). Verified in ontic_audit().
 inline constexpr double G_STAR = 2.958675119188639;
 
-// π DERIVED from the ontic chain [THEOREM]:
+// Exact reparameterization identity:
 //   G* = 2ϖ/√π  →  √π = 2ϖ/G*  →  π = 4ϖ²/G*²
 //
-// This makes ϖ ontologically prior to π. The lemniscate constant
-// (encoding self-intersection geometry) is more fundamental than
-// the circle constant (encoding rotational symmetry).
+// Because the definitions of ϖ, M, and G* already contain π through gamma
+// reflection, this identity does not derive π from π-free axioms and does not
+// establish an ontological priority relation.
 inline constexpr double PI = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);
 
 // Packing fraction: the ratio of inscribed circle to enclosing square
@@ -148,74 +143,47 @@ inline constexpr double I_1_BCC = G_STAR * G_STAR / (2.0 * PI);
 // Legacy alias (documents may reference W_3):
 inline constexpr double W_3 = I_1_BCC;
 
-// The time operator: √G*
-// Each G*-tick divides into two √G* sub-ticks (Read and Write phases).
+// Positive square root of G*. No time-operator or read/write-subtick role has
+// been derived; the name is retained as a convenient algebraic constant.
 inline constexpr double SQRT_GSTAR = 1.720079974649039;
 
-// G* Dimensional Triad (EXPLR_GSTAR_FLUX_TIME.md):
-//   G*¹ = 2.959  → FLUX:   spatial amplitude per DoF
-//   G*² = 8.754  → TIME:   energy = temporal amplitude per DoF
-//   G*³ = 25.90  → ACTION: spatiotemporal record per DoF
-//
-// Key identity: P/S = (x₊·x₋)/(x₊+x₋) = G*³·16/(G*²·16) = G*
-// G* is half the harmonic mean of 1/α and N_c.
-inline constexpr double GSTAR_FLUX   = G_STAR;                      // G*¹ per DoF
-inline constexpr double GSTAR_TIME   = G_STAR * G_STAR;             // G*² per DoF
-inline constexpr double GSTAR_ACTION = G_STAR * G_STAR * G_STAR;    // G*³ per DoF
+// Legacy power aliases. They are exact numerical powers, but their historical
+// FLUX/TIME/ACTION labels are not physical dimensions or native-clock results.
+inline constexpr double GSTAR_FLUX   = G_STAR;                      // legacy: G*¹
+inline constexpr double GSTAR_TIME   = G_STAR * G_STAR;             // legacy: G*²
+inline constexpr double GSTAR_ACTION = G_STAR * G_STAR * G_STAR;    // legacy: G*³
 
 // ============================================================================
-// Layer 2b: Euler's Identity and the Emergence of i
+// Layer 2b: Generalized-quadratic discriminant
 // ============================================================================
 // Euler's identity:  e^{iπ} + 1 = 0
-//
-// Every symbol is in the ontic chain except i. The imaginary unit is not
-// postulated — it EMERGES from G* via the generalized master quadratic:
 //
 //   x² - k·G*²·x + k·G*³ = 0
 //   Discriminant Δ = k·G*³·(k·G* - 4)
 //
-// DISCRIMINANT TRICHOTOMY — one quadratic, three regimes:
-//   k·G* > 4  (k=16):    Δ > 0  →  REAL roots     (bosons: coupling constants α, N_c)
-//   k·G* = 4  (k=4/G*):  Δ = 0  →  degenerate     (measurement / Born rule)
-//   k·G* < 4  (k=1/2):   Δ < 0  →  COMPLEX roots  (fermions: Dirac equation from e^{ibt})
+// Exact trichotomy: kG*>4 gives two real roots, kG*=4 a repeated real
+// root, and kG*<4 a complex-conjugate pair. This elementary discriminant
+// fact does not derive complex numbers, fermions, the Dirac equation,
+// measurement, or the Born rule. Those physical identifications are retired
+// legacy interpretations under the v2 contextual-actualization programme.
 //
-// The fermion sector is DERIVED, not imported: complex roots oscillate as
-// e^{ibt}, which IS the spinor wavefunction evolution (Dirac equation).
-// Bosons, fermions, and measurement all emerge from the same quadratic.
+// A selected geometric encoding maps +1 to e^{i0}, -1 to e^{iπ}, and 0
+// to the origin. Euler's identity then mirrors the ternary arithmetic
+// (-1)+(+1)=0. The matter/antimatter interpretation is not inferred by the
+// identity itself.
 //
-// The critical coefficient k_crit = 4/G* is the boundary where i appears.
-// Below this threshold, self-reference forces the algebra out of R into C.
-//
-// NULL CONE GEOMETRY [THEOREM — FOUND_BORN_RULE_NULL_CONE.md]:
-//   At the critical point, the Born rule emerges from the null-cone
-//   equation i² + a² + b² = 0. This single equation simultaneously
-//   encodes: the unit circle (U(1) phase), the Pythagorean theorem,
-//   the Riemann sphere (spinors), and the Wick rotation between
-//   Euclidean (probability) and Lorentzian (causality) signatures.
-//   P = |ψ|² is quadratic because it IS the null-cone's quadratic form.
-//
-// The ternary states {-1, 0, +1} map to complex geometry:
-//   +1  =  e^{i·0}     (zero rotation: matter)
-//   -1  =  e^{iπ}      (half rotation: antimatter)
-//    0  =  origin       (center of rotation: void)
-//
-// Euler's identity is the ANNIHILATION equation:
-//   e^{iπ} + 1 = 0  ↔  (-1) + (+1) = 0  ↔  antimatter + matter = void
-//
-// The lemniscatic nome encodes a striking corollary:
+// On the principal logarithm branch, the lemniscatic nome obeys:
 //   q = (-1)^i = (e^{iπ})^i = e^{i²π} = e^{-π}
-//   "Antimatter raised to the power of reference frame context = modular selector"
+// This is a branch-dependent complex-power identity, not a physical mapping.
 
-// Critical coefficient: the boundary between real and complex domains.
-// k_crit = 4/G* ≈ 1.352 — where i emerges from the quadratic structure.
+// Critical coefficient where the generalized quadratic has zero discriminant.
 inline constexpr double K_CRIT = 4.0 / G_STAR;
 
-// Degenerate root at the critical point: x = k_crit·G*²/2 = 2·G*
+// Repeated root x=2G*. X_BORN is a legacy compatibility name; this identity
+// neither supplies Born weights nor derives a probability pushforward.
 inline constexpr double X_BORN = 2.0 * G_STAR;
 
-// Nome as (-1)^i: verified numerically as e^{-π} in audit.
-// This identity connects the ternary state -1 to i via Euler's formula.
-// (NOME_LEMNISCATIC is defined in Layer 0b; this is a cross-layer identity.)
+// NOME_LEMNISCATIC is defined in Layer 0b.
 
 }  // namespace ontic
 }  // namespace ftd

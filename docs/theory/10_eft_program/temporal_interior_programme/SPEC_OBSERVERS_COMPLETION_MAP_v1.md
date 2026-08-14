@@ -2,7 +2,7 @@
 
 **Status:** `[SYNTHESIS — BOUNDARY MAP]`; assembles existing results at their
 tags of record; introduces no theorem, promotes nothing
-**Date:** 2026-08-07 · **Parent charter:** `SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md`
+**Date:** 2026-08-07 · **Successor parent charter:** `SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md` (v1 provenance archived)
 **Parents:** FTD-0336 (modulus/argument frontier), FTD-0371 (priced-import
 ledger), FC-1 (M declined), OT-1.5 (BCC ℤ[i]² `[THEOREM]`), FTD-0798 §2
 (free-sector Born density `[THEOREM]`), FTD-0796 (FC-1 ⇒ CHSH ≤ 2),

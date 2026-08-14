@@ -1,5 +1,13 @@
 # SPEC — Minimum Constraints on a Native G* Carrier v1
 
+> **Scope clarification (2026-08-10):** “minimum” here means the full
+> acceptance floor for a **native `G*` carrier campaign**, not the logical
+> definition of any clock. A harmonic oscillator can carry phase and elapsed
+> time even though `dOmega/dI=0`; it fails this document's quartic `G*` gate,
+> not clockhood by definition. See
+> [`SPEC_SUBSTRATE_NATIVE_CLOCK_MINIMUM_v1.md`](SPEC_SUBSTRATE_NATIVE_CLOCK_MINIMUM_v1.md)
+> for the strict clock → local physical clock → `G*` clock hierarchy.
+
 **Status:** `[SYNTHESIS — CONSOLIDATED CONSTRAINT SPEC]`; every constraint
 cites a registered result, no new claims
 **Purpose:** the checklist a campaign designer inherits instead of

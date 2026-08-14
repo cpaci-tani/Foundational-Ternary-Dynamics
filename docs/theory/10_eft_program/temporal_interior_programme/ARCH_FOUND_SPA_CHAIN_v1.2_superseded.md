@@ -27,7 +27,7 @@ govern every FTD status stated here.
 **Programme parents and recorded evidence:**
 [`SPEC_OBSERVERS_COMPLETION_MAP_v1.md`](./SPEC_OBSERVERS_COMPLETION_MAP_v1.md)
 (front T5),
-[`SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md`](./SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md),
+[`ARCH_SCOPE_TEMPORAL_INTERIOR_PROGRAM_V1.md`](../archive/superseded/ARCH_SCOPE_TEMPORAL_INTERIOR_PROGRAM_V1.md),
 [`ANALYSIS_FC1_BELL_TRAP_v1.md`](../derivations/quantum_foundations/ANALYSIS_FC1_BELL_TRAP_v1.md)
 (FTD-0796), FTD-0187/FTD-0199/FTD-0200 in the canonical ledger,
 [`PREREG_BORN_DENSITY_UPCROSSING_v1.md`](../preregistrations/quantum_foundations/PREREG_BORN_DENSITY_UPCROSSING_v1.md),

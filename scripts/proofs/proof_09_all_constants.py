@@ -1,18 +1,18 @@
 """
-Proof 09: All Constants — Complete Ontic Derivation Chain
-==========================================================
+Proof 09: Constants Registry — Identity and Consistency Checks
+===============================================================
 
-CLAIM: All ~75 constants in ontic.h trace back to {D=3, G*}.
-This module derives every constant layer by layer, compares to
-both ontic.h values and experiment, and tags epistemic status.
+This legacy module checks a mixture of exact identities, selected relations,
+calibrations, and physical comparisons. It does not prove that all constants
+derive from {D=3, G*}; claim status is controlled by the LEDGER.
 
 Layers:
   -1: Self-Referential Seed (e)
    0: Transcendental Seeds (γ, Γ(1/4))
   0b: Modular Selection (q, θ₃)
    1: Elliptic Geometry (ϖ, M)
-   2: Universal Operator (G*, π, PF)
-  2b: Euler's Identity (i emergence, k_crit)
+   2: Lemniscatic identities (G*, π, PF)
+  2b: Generalized-quadratic discriminant (k_crit, repeated root)
    3: Master Quadratic (x₊, x₋)
   3b: Dual Substrate (δ, E_L, E_R)
    4: Framework Integers ({3,4,7,13})
@@ -162,9 +162,9 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
 
-    # π derived from ontic chain: π = 4ϖ²/G*²
+    # Exact reparameterization: π = 4ϖ²/G*² (not a π-free derivation)
     s.assert_close(
-        "L2: π = 4ϖ²/G*² (ontic derivation)",
+        "L2: π = 4ϖ²/G*² (exact reparameterization)",
         PI_ONTIC, math.pi, PPM_1,
         tag="[THEOREM]"
     )
@@ -172,7 +172,7 @@ def run() -> ProofSuite:
     # PF = π/4
     s.assert_close("L2: PF = π/4", PF, math.pi / 4.0, PPM_1, tag="[THEOREM]")
 
-    # √G* = time operator
+    # Algebraic square root; no derived time-operator role.
     sqrt_gstar = math.sqrt(G_STAR)
     s.assert_close(
         "L2: √G* ≈ 1.7201",
@@ -181,7 +181,7 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # Layer 2b: Euler's Identity & Emergence of i
+    # Layer 2b: Generalized-quadratic discriminant
     # =========================================================================
     # k_crit = 4/G* — the boundary between real and complex
     k_crit = 4.0 / G_STAR
@@ -191,25 +191,25 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
 
-    # k=16 (physics) > k_crit → real roots
+    # Selected k=16 > k_crit → real roots
     s.assert_true(
-        "L2b: k_phys=16 > k_crit → REAL roots (physics)",
+        "L2b: selected k=16 > k_crit → two real roots",
         16.0 > k_crit,
         tag="[THEOREM]"
     )
 
-    # k=0.5 (reference frame context) < k_crit → complex roots
+    # Selected k=0.5 < k_crit → complex-conjugate roots
     s.assert_true(
-        "L2b: k_cons=0.5 < k_crit → COMPLEX roots (reference frame context)",
+        "L2b: selected k=0.5 < k_crit → complex-conjugate roots",
         0.5 < k_crit,
         tag="[THEOREM]"
     )
 
-    # Degenerate root: x_Born = 2G*
-    x_born = 2.0 * G_STAR
+    # Repeated root: x_repeat = 2G*. No Born inference follows.
+    x_repeat = 2.0 * G_STAR
     s.assert_close(
-        "L2b: x_Born = 2G* ≈ 5.917",
-        x_born, 2.0 * G_STAR, MACHINE_EPS,
+        "L2b: x_repeat = 2G* ≈ 5.917",
+        x_repeat, 2.0 * G_STAR, MACHINE_EPS,
         tag="[THEOREM]"
     )
 

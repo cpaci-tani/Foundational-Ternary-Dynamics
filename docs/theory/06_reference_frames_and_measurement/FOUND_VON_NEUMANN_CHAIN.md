@@ -4,6 +4,12 @@
 
 **Status:** Formal synthesis with epistemic classification
 
+> **[RETRACTED FOR V2 — FTD-0825]** This document's FTD-specific
+> Type-III-to-Type-I termination claim depends on the retracted operator-algebra
+> construction. It is historical provenance only. The live successor contract
+> is the contextual actualization batch in
+> `SPEC_CONTEXTUAL_ACTUALIZATION_TIME_v1.md`.
+
 > **Vocabulary:** The von Neumann chain resolution is purely structural — it depends on Type-III → Type-I descent terminating at the lattice's algebraic structure, not on the metaphysics of reference frame context. "Observers" in this document are stated as **reference frames with observation-layer coupling** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The infinite-regress is terminated by the **lattice's finite frame-relative-coupling structure**, not by a special "ultimate observer." The resolution is algebra-side and reframe-stable.
 
 ---

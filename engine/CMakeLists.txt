@@ -204,6 +204,37 @@ add_library(ftd_eft STATIC
     src/eft/quadratic_coat_spacetime_action.cpp
     src/eft/fixed_step_energy_scope.cpp
     src/eft/coupled_quartic_clock_field.cpp
+    src/eft/contextual_actualization.cpp
+    src/eft/native_event_characteristics.cpp
+    src/eft/relative_action_transducer.cpp
+    src/eft/phase_referenced_action_rail.cpp
+    src/eft/catalytic_phase_reference.cpp
+    src/eft/clock_gated_hamiltonian_exchange.cpp
+    src/eft/ternary_eligibility_clutch.cpp
+    src/eft/signal_acknowledged_two_stroke_reset.cpp
+    src/eft/reversible_ternary_signal_uncomputation.cpp
+    src/eft/oriented_ternary_quarter_turn.cpp
+    src/eft/hamiltonian_ternary_quarter_turn_actuator.cpp
+    src/eft/alternating_oriented_ternary_parity_rail.cpp
+    src/eft/local_canonical_hamiltonian_parity_rail.cpp
+    src/eft/flux_wave_velocity_markov_carrier.cpp
+    src/eft/gauss_record_canonical_reduction.cpp
+    src/eft/reversible_checkerboard_gauss_preparation.cpp
+    src/eft/finite_port_gauss_battery.cpp
+    src/eft/canonical_source_centered_gauss_gate.cpp
+    src/eft/autonomous_phase_parity_source_reaction.cpp
+    src/eft/cubic_reaction_vector_source_transport.cpp
+    src/eft/collective_reaction_triplet_inertia.cpp
+    src/eft/dressed_boost_momentum_map.cpp
+    src/eft/bloch_quasimomentum_lift.cpp
+    src/eft/reciprocal_carry_reservoir.cpp
+    src/eft/quartic_relative_carry_gearbox.cpp
+    src/eft/common_relative_connection_gearbox.cpp
+    src/eft/self_pair_connection_critical_gearbox.cpp
+    src/eft/oriented_even_self_pair_rectifier.cpp
+    src/eft/native_ternary_dipole_phase_wedge_memory.cpp
+    src/eft/native_ternary_plaquette_quarter_turn.cpp
+    src/eft/reciprocal_record_port.cpp
     src/eft/matched_midpoint_poynting.cpp
     src/eft/quadratic_coat_matter_work.cpp
     src/eft/quadratic_coat_neutral_pair_work.cpp
@@ -1865,9 +1896,124 @@ ftd_add_test(test_fixed_step_energy_scope tests/test_fixed_step_energy_scope.cpp
 ftd_add_test(test_coupled_quartic_clock_field tests/test_coupled_quartic_clock_field.cpp
              CTEST_NAME coupled_quartic_clock_field TIMEOUT 120
              LABELS selected_extension eft clock action_angle quartic temporal phase synchronization dispersion compliance holonomy control theorem observer unit eft_quick)
+ftd_add_test(test_contextual_actualization tests/test_contextual_actualization.cpp
+             CTEST_NAME contextual_actualization TIMEOUT 120
+             LABELS selected_extension eft contextual actualization born bell clock temporal no_signalling theorem observer unit eft_quick)
+ftd_add_test(test_reciprocal_record_port tests/test_reciprocal_record_port.cpp
+             CTEST_NAME reciprocal_record_port TIMEOUT 120
+             LABELS selected_extension eft temporal actualization record barrier reciprocal energy orientation theorem constructive unit eft_quick)
+ftd_add_test(test_native_event_characteristics tests/test_native_event_characteristics.cpp
+             CTEST_NAME native_event_characteristics TIMEOUT 120
+             LABELS selected_extension eft temporal actualization activation characteristic reciprocal energy orientation dispersion theorem boundary unit eft_quick)
+ftd_add_test(test_relative_action_transducer tests/test_relative_action_transducer.cpp
+             CTEST_NAME relative_action_transducer TIMEOUT 120
+             LABELS selected_extension eft temporal actualization action symplectic orientation energy loss boundary theorem unit eft_quick)
+ftd_add_test(test_phase_referenced_action_rail tests/test_phase_referenced_action_rail.cpp
+             CTEST_NAME phase_referenced_action_rail TIMEOUT 120
+             LABELS selected_extension eft temporal actualization action symplectic orientation phase calendar energy transport boundary theorem unit eft_quick)
+ftd_add_test(test_catalytic_phase_reference tests/test_catalytic_phase_reference.cpp
+             CTEST_NAME catalytic_phase_reference TIMEOUT 120
+             LABELS selected_extension eft temporal actualization action symplectic orientation phase reference energy reciprocal transport boundary theorem unit eft_quick)
+ftd_add_test(test_clock_gated_hamiltonian_exchange tests/test_clock_gated_hamiltonian_exchange.cpp
+             CTEST_NAME clock_gated_hamiltonian_exchange TIMEOUT 120
+             LABELS selected_extension eft temporal actualization action symplectic hamiltonian orientation phase reference energy reciprocal backreaction boundary theorem unit eft_quick)
+ftd_add_test(test_ternary_eligibility_clutch tests/test_ternary_eligibility_clutch.cpp
+             CTEST_NAME ternary_eligibility_clutch TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary latch clutch handshake action symplectic hamiltonian orientation phase reference energy reciprocal reset boundary theorem unit eft_quick)
+ftd_add_test(test_signal_acknowledged_two_stroke_reset tests/test_signal_acknowledged_two_stroke_reset.cpp
+             CTEST_NAME signal_acknowledged_two_stroke_reset TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary latch acknowledgement two_stroke action hamiltonian orientation phase reference energy reset bath export boundary theorem unit eft_quick)
+ftd_add_test(test_reversible_ternary_signal_uncomputation tests/test_reversible_ternary_signal_uncomputation.cpp
+             CTEST_NAME reversible_ternary_signal_uncomputation TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary latch acknowledgement uncomputation reversible orientation reference energy reset export boundary theorem unit eft_quick)
+ftd_add_test(test_oriented_ternary_quarter_turn tests/test_oriented_ternary_quarter_turn.cpp
+             CTEST_NAME oriented_ternary_quarter_turn TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary latch port quarter_turn reversible orientation isometry energy reset exchange backpressure boundary theorem unit eft_quick)
+ftd_add_test(test_hamiltonian_ternary_quarter_turn_actuator tests/test_hamiltonian_ternary_quarter_turn_actuator.cpp
+             CTEST_NAME hamiltonian_ternary_quarter_turn_actuator TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary latch port quarter_turn reversible orientation hamiltonian clock action energy work reserve boundary theorem unit eft_quick)
+ftd_add_test(test_alternating_oriented_ternary_parity_rail tests/test_alternating_oriented_ternary_parity_rail.cpp
+             CTEST_NAME alternating_oriented_ternary_parity_rail TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary rail parity transport reversible orientation exchange backpressure boundary theorem unit eft_quick)
+ftd_add_test(test_local_canonical_hamiltonian_parity_rail tests/test_local_canonical_hamiltonian_parity_rail.cpp
+             CTEST_NAME local_canonical_hamiltonian_parity_rail TIMEOUT 120
+             LABELS selected_extension eft temporal actualization ternary rail parity transport reversible orientation symplectic hamiltonian clock action energy current boundary theorem unit eft_quick)
+ftd_add_test(test_flux_wave_velocity_markov_carrier tests/test_flux_wave_velocity_markov_carrier.cpp
+             CTEST_NAME flux_wave_velocity_markov_carrier TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux wave velocity markov history symplectic hamiltonian carrier energy damping projection boundary theorem unit eft_quick)
+ftd_add_test(test_gauss_record_canonical_reduction tests/test_gauss_record_canonical_reduction.cpp
+             CTEST_NAME gauss_record_canonical_reduction TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux wave velocity gauss incidence canonical reduction record preparation loss ledger locality boundary theorem unit eft_quick)
+ftd_add_test(test_reversible_checkerboard_gauss_preparation tests/test_reversible_checkerboard_gauss_preparation.cpp
+             CTEST_NAME reversible_checkerboard_gauss_preparation TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux gauss incidence checkerboard reversible preparation environment history energy convergence locality boundary theorem unit eft_quick)
+ftd_add_test(test_finite_port_gauss_battery tests/test_finite_port_gauss_battery.cpp
+             CTEST_NAME finite_port_gauss_battery TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux gauss checkerboard reversible preparation environment history port battery reservoir energy capacity locality boundary theorem unit eft_quick)
+ftd_add_test(test_canonical_source_centered_gauss_gate tests/test_canonical_source_centered_gauss_gate.cpp
+             CTEST_NAME canonical_source_centered_gauss_gate TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux gauss checkerboard reversible preparation environment history port battery reservoir energy interaction canonical symplectic hamiltonian clock phase locality boundary theorem unit eft_quick)
+ftd_add_test(test_autonomous_phase_parity_source_reaction tests/test_autonomous_phase_parity_source_reaction.cpp
+             CTEST_NAME autonomous_phase_parity_source_reaction TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux gauss checkerboard reversible preparation environment history reaction source recoil parity autonomous energy interaction canonical symplectic hamiltonian clock phase locality boundary theorem unit eft_quick)
+ftd_add_test(test_cubic_reaction_vector_source_transport tests/test_cubic_reaction_vector_source_transport.cpp
+             CTEST_NAME cubic_reaction_vector_source_transport TIMEOUT 120
+             LABELS selected_extension eft temporal actualization flux gauss reversible preparation environment history reaction source recoil vector cubic momentum inertia transport current energy canonical symplectic locality boundary theorem unit eft_quick)
+ftd_add_test(test_collective_reaction_triplet_inertia tests/test_collective_reaction_triplet_inertia.cpp
+             CTEST_NAME collective_reaction_triplet_inertia TIMEOUT 120
+             LABELS selected_extension eft temporal actualization reaction source recoil vector cubic momentum inertia collective constituent common_action energy canonical symplectic locality boundary theorem unit eft_quick)
+ftd_add_test(test_dressed_boost_momentum_map tests/test_dressed_boost_momentum_map.cpp
+             CTEST_NAME dressed_boost_momentum_map TIMEOUT 120
+             LABELS selected_extension eft temporal actualization reaction source recoil vector cubic momentum inertia dressed field matter common_action energy canonical locality boundary theorem unit eft_quick)
+ftd_add_test(test_bloch_quasimomentum_lift tests/test_bloch_quasimomentum_lift.cpp
+             CTEST_NAME bloch_quasimomentum_lift TIMEOUT 120
+             LABELS selected_extension eft temporal actualization translation bloch quasimomentum winding momentum inertia spectral finite_range locality boundary theorem unit eft_quick)
+ftd_add_test(test_reciprocal_carry_reservoir tests/test_reciprocal_carry_reservoir.cpp
+             CTEST_NAME reciprocal_carry_reservoir TIMEOUT 120
+             LABELS selected_extension eft temporal actualization translation bloch quasimomentum winding carry reservoir impulse momentum inertia energy locality boundary theorem unit eft_quick)
+ftd_add_test(test_quartic_relative_carry_gearbox tests/test_quartic_relative_carry_gearbox.cpp
+             CTEST_NAME quartic_relative_carry_gearbox TIMEOUT 120
+             LABELS selected_extension eft temporal actualization clock quartic pair_energy relative common_mode impulse translation bloch quasimomentum winding carry reservoir momentum energy gstar locality boundary theorem unit eft_quick)
+ftd_add_test(test_common_relative_connection_gearbox tests/test_common_relative_connection_gearbox.cpp
+             CTEST_NAME common_relative_connection_gearbox TIMEOUT 120
+             LABELS selected_extension eft temporal actualization clock quartic relative common_mode connection impulse translation bloch quasimomentum winding carry reservoir momentum energy angular_momentum gstar locality boundary theorem unit eft_quick)
+ftd_add_test(test_self_pair_connection_critical_gearbox tests/test_self_pair_connection_critical_gearbox.cpp
+             CTEST_NAME self_pair_connection_critical_gearbox TIMEOUT 120
+             LABELS selected_extension eft temporal actualization clock quartic self_pair relative common_mode connection impulse translation bloch quasimomentum winding carry reservoir momentum energy gstar locality boundary theorem unit eft_quick)
+ftd_add_test(test_oriented_even_self_pair_rectifier tests/test_oriented_even_self_pair_rectifier.cpp
+             CTEST_NAME oriented_even_self_pair_rectifier TIMEOUT 120
+             LABELS selected_extension eft temporal actualization clock quartic self_pair rectifier chirality orientation polar_axis relative common_mode connection impulse translation bloch quasimomentum winding carry reservoir momentum energy gstar locality boundary theorem unit eft_quick)
+ftd_add_test(test_native_ternary_dipole_phase_wedge_memory tests/test_native_ternary_dipole_phase_wedge_memory.cpp
+             CTEST_NAME native_ternary_dipole_phase_wedge_memory TIMEOUT 120
+             LABELS selected_extension eft temporal actualization clock quartic chirality orientation polar_axis phase_wedge dipole bilateral memory recursion ternary flux momentum energy gstar locality boundary theorem unit eft_quick)
+ftd_add_test(test_native_ternary_plaquette_quarter_turn tests/test_native_ternary_plaquette_quarter_turn.cpp
+             CTEST_NAME native_ternary_plaquette_quarter_turn TIMEOUT 120
+             LABELS selected_extension eft temporal actualization orientation chirality plaquette quarter_turn recursion ternary bivector self_dual energy topology boundary theorem unit eft_quick)
+ftd_add_test(campaign_production_orientation_memory_census tests/campaign_production_orientation_memory_census.cpp
+             CTEST_NAME production_orientation_memory_census TIMEOUT 1800
+             LABELS native eft production observer campaign preregistered orientation_memory dipole phase_wedge chirality genesis engine_as_instrument)
+ftd_add_test(campaign_production_ternary_plaquette_recurrence_census tests/campaign_production_ternary_plaquette_recurrence_census.cpp
+             CTEST_NAME production_ternary_plaquette_recurrence_census TIMEOUT 3600
+             LABELS native eft production observer campaign preregistered plaquette quarter_turn recurrence chirality ternary genesis engine_as_instrument)
+
+ftd_add_test(campaign_held_out_pair_specific_phase_wedge_centrality tests/campaign_held_out_pair_specific_phase_wedge_centrality.cpp
+             CTEST_NAME held_out_pair_specific_phase_wedge_centrality TIMEOUT 2400
+             LABELS native eft production observer campaign preregistered held_out orientation_memory pair_specificity centrality phase_wedge genesis engine_as_instrument)
 ftd_add_test(test_l17_complete_tangent_candidate tests/test_l17_complete_tangent_candidate.cpp
              CTEST_NAME l17_complete_tangent_candidate TIMEOUT 7200
              LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research)
+ftd_add_test(test_l17_complete_tangent_certificate_repair_v2 tests/test_l17_complete_tangent_certificate_repair_v2.cpp
+             CTEST_NAME l17_complete_tangent_certificate_repair_v2 TIMEOUT 7200
+             LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research certificate_repair)
+ftd_add_test(test_l17_complete_tangent_harmonic_reinsertion_repair_v3 tests/test_l17_complete_tangent_harmonic_reinsertion_repair_v3.cpp
+             CTEST_NAME l17_complete_tangent_harmonic_reinsertion_repair_v3 TIMEOUT 7200
+             LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research certificate_repair harmonic)
+ftd_add_test(test_l17_complete_tangent_representability_floor_v4 tests/test_l17_complete_tangent_representability_floor_v4.cpp
+             CTEST_NAME l17_complete_tangent_representability_floor_v4 TIMEOUT 7200
+             LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research certificate_repair harmonic representability)
+ftd_add_test(test_l17_complete_tangent_nonsingular_product_chart_v5 tests/test_l17_complete_tangent_nonsingular_product_chart_v5.cpp
+             CTEST_NAME l17_complete_tangent_nonsingular_product_chart_v5 TIMEOUT 7200
+             LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research chart product_norm)
 ftd_add_test(test_matched_midpoint_poynting tests/test_matched_midpoint_poynting.cpp
              CTEST_NAME matched_midpoint_poynting TIMEOUT 300
              LABELS selected_extension eft coat current field electric magnetic midpoint poynting work energy gauss continuity polarity reversal theorem observer constructive correction unit eft_quick)
@@ -1954,6 +2100,12 @@ ftd_add_test(test_genesis_cubic_canonical_form tests/test_genesis_cubic_canonica
 ftd_add_test(test_native_field_discrete_action tests/test_native_field_discrete_action.cpp
              CTEST_NAME native_field_discrete_action TIMEOUT 120
              LABELS selected_extension eft lattice field wave symplectic action energy source coupling cubic symmetry theorem observer correction unit eft_quick)
+ftd_add_test(test_native_modal_phase_action tests/test_native_modal_phase_action.cpp
+             CTEST_NAME native_modal_phase_action TIMEOUT 120
+             LABELS selected_extension eft lattice field wave symplectic action phase clock modal dispersion target_blind theorem observer unit eft_quick)
+ftd_add_test(test_native_pair_energy_recursion tests/test_native_pair_energy_recursion.cpp
+             CTEST_NAME native_pair_energy_recursion TIMEOUT 120
+             LABELS selected_extension eft clock quartic pair_energy discrete_gradient reversible energy orientation target_blind theorem reference unit eft_quick)
 ftd_add_test(test_native_hodge_reciprocity tests/test_native_hodge_reciprocity.cpp
              CTEST_NAME native_hodge_reciprocity TIMEOUT 120
              LABELS selected_extension eft lattice field source coupling action reciprocity hodge electromagnetism static infrared theorem observer no_go correction unit eft_quick)

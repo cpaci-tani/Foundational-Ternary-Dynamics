@@ -1,4 +1,5 @@
-// FTD-0774: SHA-locked L=17 complete matter--field tangent candidate.
+// Shared implementation for the SHA-locked FTD-0774 candidate and the
+// target-blind FTD-0829 certificate-repair successor.
 
 #define FTD_0640_EMBEDDED
 #include "test_connected_block_analytic_matter_modes.cpp"
@@ -29,9 +30,27 @@ using ftd::eft::ConnectedMooreBlockState;
 using ftd::eft::MatchedEdgeField;
 using ftd::eft::MatchedFaceFlux;
 
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+constexpr char kFtdId[] = "FTD-0832";
+constexpr char kProtocolSha256[] =
+    "2CE5516F7C0D4AF06649D54DD50C1E680C5BEE7CBEDFA10BDB09C2669FA81805";
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+constexpr char kFtdId[] = "FTD-0831";
+constexpr char kProtocolSha256[] =
+    "A7BA4CEE3CC57AEC23CA9B9F60B0330C1E5B09EDBFC07FD5CC3E441AC736B3A1";
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+constexpr char kFtdId[] = "FTD-0830";
+constexpr char kProtocolSha256[] =
+    "A0D660F846D6C9AF43D94D475F1890E3D90D3967C6218B065ABDD9AA3BBFA5EC";
+#elif defined(FTD_0829_CERTIFICATE_REPAIR)
+constexpr char kFtdId[] = "FTD-0829";
+constexpr char kProtocolSha256[] =
+    "04C771A53E0A749492359255C613BD72A693A399920C0F3CA0FAE757931F361F";
+#else
 constexpr char kFtdId[] = "FTD-0774";
 constexpr char kProtocolSha256[] =
     "0604AF560EA193BDE9E339ADB3FB28C0631B43D204186BEDA977EB700DD7F27E";
+#endif
 constexpr char kSourceCommit[] =
     "93748ac2021e4db5a9b8583cc28493332c716ac0";
 constexpr double kH0 = 2e-6;
@@ -77,7 +96,36 @@ std::filesystem::path engine_root() {
 std::filesystem::path repo_root() { return engine_root().parent_path(); }
 
 std::filesystem::path result_root() {
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  return engine_root() / "results/ftd_0832";
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+  return engine_root() / "results/ftd_0831";
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+  return engine_root() / "results/ftd_0830";
+#elif defined(FTD_0829_CERTIFICATE_REPAIR)
+  return engine_root() / "results/ftd_0829";
+#else
   return engine_root() / "results/ftd_0774";
+#endif
+}
+
+std::filesystem::path protocol_path() {
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  return repo_root() /
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_NONSINGULAR_PRODUCT_CHART_v5.md";
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+  return repo_root() /
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_REPRESENTABILITY_FLOOR_v4.md";
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+  return repo_root() /
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_HARMONIC_REINSERTION_REPAIR_v3.md";
+#elif defined(FTD_0829_CERTIFICATE_REPAIR)
+  return repo_root() /
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CERTIFICATE_REPAIR_v2.md";
+#else
+  return repo_root() /
+      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+#endif
 }
 
 std::string quote(const std::filesystem::path& path) {
@@ -611,6 +659,24 @@ std::string codec_detail(const CodecResult& codec, bool pass) {
       << ";tangent_source_mean_rel=" << codec.tangent_source_mean_rel
       << ";hodge_source_mean_abs=" << codec.hodge_source_mean_abs
       << ";hodge_source_mean_rel=" << codec.hodge_source_mean_rel;
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  output << ";hodge_compatibility_reference="
+      << codec.hodge_compatibility_reference;
+#endif
+#ifdef FTD_0831_REPRESENTABILITY_FLOOR
+  output << ";face_completed_max=" << codec.face_completed_max;
+#endif
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  output << ";complete_chart_norm=" << codec.complete_chart_norm
+      << ";chart_dx_square=" << codec.chart_dx_square
+      << ";chart_dp_square=" << codec.chart_dp_square
+      << ";chart_electric_square=" << codec.chart_electric_square
+      << ";chart_magnetic_square=" << codec.chart_magnetic_square
+      << ";hodge_correction_absolute="
+      << codec.hodge_correction_absolute
+      << ";reconstruction_absolute="
+      << codec.reconstruction_absolute;
+#endif
   return output.str();
 }
 
@@ -804,18 +870,26 @@ class OperatorAuditLedger {
   std::vector<ExecutionStatusRow> ordered_rows(
       bool complete,const std::string& terminal_construction="all",
       const std::string& complete_operation="run_complete",
-      const std::string& abort_operation="run_abort") const {
+      const std::string& abort_operation="run_abort",
+      bool preserve_reservation_order=false) const {
     std::lock_guard<std::mutex> lock(mutex_);
     auto groups = groups_;
-    std::sort(groups.begin(), groups.end(), [](const auto& left,
-                                               const auto& right) {
-      const auto& a=left.second.front();
-      const auto& b=right.second.front();
-      return std::tie(a.construction,a.stage,a.operation,a.power,a.column,
-                      a.direction)
-          <std::tie(b.construction,b.stage,b.operation,b.power,b.column,
-                    b.direction);
-    });
+    if (preserve_reservation_order) {
+      std::sort(groups.begin(), groups.end(), [](const auto& left,
+                                                 const auto& right) {
+        return left.first < right.first;
+      });
+    } else {
+      std::sort(groups.begin(), groups.end(), [](const auto& left,
+                                                 const auto& right) {
+        const auto& a=left.second.front();
+        const auto& b=right.second.front();
+        return std::tie(a.construction,a.stage,a.operation,a.power,a.column,
+                        a.direction)
+            <std::tie(b.construction,b.stage,b.operation,b.power,b.column,
+                      b.direction);
+      });
+    }
     std::vector<ExecutionStatusRow> rows;
     rows.reserve(groups.size() * 5 + 1);
     std::uint64_t normalized_id=0;
@@ -1018,13 +1092,15 @@ bool write_execution_status(const std::filesystem::path& stem,
                             const std::string& suffix="_execution_status.csv",
                             const std::string& terminal_construction="all",
                             const std::string& complete_operation="run_complete",
-                            const std::string& abort_operation="run_abort") {
+                            const std::string& abort_operation="run_abort",
+                            bool preserve_reservation_order=false) {
   std::ofstream output(stem.string()+suffix);
   if(!output)return false;
   output << kExecutionStatusHeader << '\n';
   for (const auto& row : ledger.ordered_rows(complete,terminal_construction,
                                              complete_operation,
-                                             abort_operation)) {
+                                             abort_operation,
+                                             preserve_reservation_order)) {
     output << row.evaluation_id << ',' << row.record_kind << ','
         << row.construction << ',' << row.stage << ',' << row.operation << ',';
     if (row.power.has_value()) output << *row.power;
@@ -3142,13 +3218,36 @@ bool write_hash_manifest(const std::filesystem::path& stem) {
   std::ofstream hashes(hashes_path);
   if (!hashes) return false;
   hashes << "artifact,sha256,bytes\n";
-  const auto protocol = repo_root()/
-      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+  const auto protocol = protocol_path();
   const auto runner = engine_root()/"tests/test_l17_complete_tangent_candidate.cpp";
   const auto support = engine_root()/"tests/support/connected_moore_tangent_codec.h";
   std::vector<std::pair<std::string,std::filesystem::path>> fixed{{
       {"protocol",protocol},{"runner",runner},{"support",support},
       {"json",stem.string()+".json"}}};
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  fixed.push_back({"successor_wrapper",engine_root()/"tests"/
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+      "test_l17_complete_tangent_nonsingular_product_chart_v5.cpp"});
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+      "test_l17_complete_tangent_representability_floor_v4.cpp"});
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+      "test_l17_complete_tangent_harmonic_reinsertion_repair_v3.cpp"});
+#else
+      "test_l17_complete_tangent_certificate_repair_v2.cpp"});
+#endif
+  fixed.push_back({"proof",repo_root()/
+      "scripts/proofs/proof_l17_complete_tangent_candidate.py"});
+  fixed.push_back({"proof_wrapper",repo_root()/"scripts/proofs"/
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+      "proof_l17_complete_tangent_nonsingular_product_chart_v5.py"});
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+      "proof_l17_complete_tangent_representability_floor_v4.py"});
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+      "proof_l17_complete_tangent_harmonic_reinsertion_repair_v3.py"});
+#else
+      "proof_l17_complete_tangent_certificate_repair_v2.py"});
+#endif
+#endif
   for (std::size_t i = 0; i < kCompiledClosure.size(); ++i)
     fixed.push_back({"compiled_closure_"+std::to_string(i),
                      repo_root()/kCompiledClosure[i].relative});
@@ -3164,12 +3263,35 @@ bool validate_hash_manifest(const std::filesystem::path& stem) {
   std::ifstream input(stem.string()+"_hashes.csv");
   std::string line;
   if (!std::getline(input,line) || line!="artifact,sha256,bytes") return false;
-  const auto protocol = repo_root()/
-      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+  const auto protocol = protocol_path();
   std::map<std::string,std::filesystem::path> expected{{"protocol",protocol},
       {"runner",engine_root()/"tests/test_l17_complete_tangent_candidate.cpp"},
       {"support",engine_root()/"tests/support/connected_moore_tangent_codec.h"},
       {"json",stem.string()+".json"}};
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  expected["successor_wrapper"]=engine_root()/"tests"/
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+      "test_l17_complete_tangent_nonsingular_product_chart_v5.cpp";
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+      "test_l17_complete_tangent_representability_floor_v4.cpp";
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+      "test_l17_complete_tangent_harmonic_reinsertion_repair_v3.cpp";
+#else
+      "test_l17_complete_tangent_certificate_repair_v2.cpp";
+#endif
+  expected["proof"]=repo_root()/
+      "scripts/proofs/proof_l17_complete_tangent_candidate.py";
+  expected["proof_wrapper"]=repo_root()/"scripts/proofs"/
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+      "proof_l17_complete_tangent_nonsingular_product_chart_v5.py";
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+      "proof_l17_complete_tangent_representability_floor_v4.py";
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+      "proof_l17_complete_tangent_harmonic_reinsertion_repair_v3.py";
+#else
+      "proof_l17_complete_tangent_certificate_repair_v2.py";
+#endif
+#endif
   for(std::size_t i=0;i<kCompiledClosure.size();++i)
     expected["compiled_closure_"+std::to_string(i)]=
         repo_root()/kCompiledClosure[i].relative;
@@ -3250,16 +3372,29 @@ bool finalize_artifacts(const std::filesystem::path& stem,
 }  // namespace
 
 int main() {
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  const auto stem = result_root()/
+      "ftd_0832_l17_complete_tangent_nonsingular_product_chart_v5";
+#elif defined(FTD_0831_REPRESENTABILITY_FLOOR)
+  const auto stem = result_root()/
+      "ftd_0831_l17_complete_tangent_representability_floor_v4";
+#elif defined(FTD_0830_HARMONIC_REINSERTION_REPAIR)
+  const auto stem = result_root()/
+      "ftd_0830_l17_complete_tangent_harmonic_reinsertion_repair_v3";
+#elif defined(FTD_0829_CERTIFICATE_REPAIR)
+  const auto stem = result_root()/
+      "ftd_0829_l17_complete_tangent_certificate_repair_v2";
+#else
   const auto stem = result_root()/"ftd_0774_l17_complete_tangent_candidate_v1";
+#endif
   if(!initialize_artifacts(stem)){
-    std::cerr<<"FTD-0774 artifact initialization failed\n";
+    std::cerr<<kFtdId<<" artifact initialization failed\n";
     return 1;
   }
   TangentSummary summary;
-  const auto protocol_path = repo_root()/
-      "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md";
+  const auto locked_protocol_path = protocol_path();
   summary.protocol_locked =
-      ftd0774::sha256_file(protocol_path.string()) == kProtocolSha256;
+      ftd0774::sha256_file(locked_protocol_path.string()) == kProtocolSha256;
   summary.provenance = summary.protocol_locked;
   for (const auto& parent : kParents)
     summary.provenance = summary.provenance
@@ -3394,7 +3529,11 @@ int main() {
   ChartVector f_b;
   f_b.b = ftd::eft::matched_curl_adjoint(f_e.e);
   ChartVector h_e, h_b;
+#ifdef FTD_0832_NONSINGULAR_PRODUCT_CHART
+  h_e.e_harmonic[0] = 1.0;
+#else
   std::fill(h_e.e.x.begin(), h_e.e.x.end(), 1.0);
+#endif
   std::fill(h_b.b.x.begin(), h_b.b.x.end(), 1.0);
   bool field_vectors = f_e.e.L == 17
       && ftd0774::normalize(metric, f_e)
@@ -3402,7 +3541,8 @@ int main() {
       && ftd0774::normalize(metric, h_e)
       && ftd0774::normalize(metric, h_b)
       && ftd::eft::max_divergence(f_e.e) <= 1e-12
-      && ftd::eft::max_divergence(h_e.e) <= 1e-12;
+      && ftd::eft::max_divergence(
+          ftd0774::completed_electric(h_e)) <= 1e-12;
   ChartVector fe_plus_fb=f_e;ftd0774::axpy(fe_plus_fb,f_b,1.0);
   ChartVector fe_minus_fb=f_e;ftd0774::axpy(fe_minus_fb,f_b,-1.0);
   ChartVector q6_plus_fe=seeds[0];ftd0774::axpy(q6_plus_fe,f_e,1.0);
@@ -3851,10 +3991,16 @@ int main() {
   summary.endpoint_preflight = summary.endpoint_preflight && zero_control;
 
   const bool preflight_record_complete=preflight_derivative_ledger.size()==98;
+#ifdef FTD_0829_CERTIFICATE_REPAIR
+  constexpr bool preserve_preflight_order=true;
+#else
+  constexpr bool preserve_preflight_order=false;
+#endif
   const bool preflight_status_written=write_execution_status(
       stem,preflight_derivative_ledger,preflight_record_complete,
       "_preflight_derivative_status.csv","preflight",
-      "preflight_record_complete","preflight_record_abort");
+      "preflight_record_complete","preflight_record_abort",
+      preserve_preflight_order);
   summary.endpoint_preflight=summary.endpoint_preflight
       &&preflight_record_complete&&preflight_status_written;
 

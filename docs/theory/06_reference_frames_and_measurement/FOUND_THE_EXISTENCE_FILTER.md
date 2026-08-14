@@ -4,6 +4,12 @@
 
 **Status:** Formal synthesis with projection hierarchy
 
+> **[V2 COMPATIBILITY NOTICE — FTD-0825]** The algebraic identity
+> `E(x)=Re(x)` remains valid. Its interpretation as physical collapse or as a
+> Born-frequency derivation does not. In v2, Born weights are conditional on
+> the adopted state/effect architecture; recovery of their physical frequency
+> pushforward is separately preregistered and remains `[OPEN]`.
+
 > **Vocabulary:** The mathematical content (Existence Filter, projection hierarchy, Born Rule reconstruction, Tomita–Takesaki modular conjugation correspondence) is stated in the canonical vocabulary. Naming: *reference frame context phase angle* → **frame-relative phase angle**; *reference frame context* in the load-bearing claims → **frame-relative integration / frame-relative readout** per the canonical [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). Qualia commitments are dropped; the remaining claims are structural/operator-algebraic. The Existence Filter itself $E(x) = (x + \bar{x})/2$ is structural and reframe-stable.
 
 ---

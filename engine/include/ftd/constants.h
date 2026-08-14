@@ -2,8 +2,9 @@
 /**
  * FTD Render-Bridge Constants
  *
- * Engine-facing interface to the ontic derivation chain.
- * All values derive from {D=3, ϖ} via ontic.h.
+ * Engine-facing interface to the ontic constants registry. It mixes exact
+ * identities with tagged selections and calibrations; not all values derive
+ * from {D=3, ϖ}.
  *
  * This header re-exports the ontic constants into the ftd:: namespace
  * so existing engine code (render_bridge.cpp, lagrangian.h, etc.) can
@@ -53,7 +54,7 @@ using ontic::GAUSS_CONSTANT_M;
 using ontic::PI;
 using ontic::VARPI;
 
-// Layer 2: Universal operator
+// Layer 2: Lemniscatic identities and legacy power aliases
 using ontic::G_STAR;
 using ontic::GSTAR_ACTION;
 using ontic::GSTAR_FLUX;
@@ -61,7 +62,7 @@ using ontic::GSTAR_TIME;
 using ontic::PF;
 using ontic::SQRT_GSTAR;
 
-// Layer 2b: Euler's identity / emergence of i
+// Layer 2b: Generalized-quadratic discriminant
 using ontic::K_CRIT;
 using ontic::X_BORN;
 

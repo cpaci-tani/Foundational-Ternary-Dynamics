@@ -9,8 +9,10 @@
  * is [STRONGLY MOTIVATED CONJECTURE] per FTD-0013. The "all physics"
  * blanket claim in earlier versions of this header was an overclaim
  * (corrected 2026-05-27, audit ticket P0-15).
- * Nine layers, each derived from the one above. The only inputs are D=3
- * (spatial dimensions) and the lemniscate constant varpi.
+ * The file mixes exact algebraic identities with explicitly tagged physical
+ * selections, calibrations, and conjectural identifications. It is therefore
+ * a constants registry, not a proof that every layer follows from D=3 and
+ * varpi alone.
  *
  * These JS values mirror ontic.h to the precision shown and are
  * authoritative for the dashboard; consumers MUST import from here
@@ -32,13 +34,17 @@ export const THETA_LEMNISCATIC = 1.08643481121331;
 // ── Layer 1: Elliptic Geometry ──────────────────────────────────────
 export const VARPI  = 2.622057554292119810;           // lemniscate constant
 export const GAUSS_CONSTANT_M = 0.8346268416740731;
-export const G_STAR = 2.958675119188639;              // universal render bridge constant
-export const PI_FTD = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);  // derived π
+export const G_STAR = 2.958675119188639;              // lemniscatic gamma ratio
+// Exact reparameterization identity; not a π-free derivation because the
+// definitions of VARPI and G_STAR already use π/gamma reflection.
+export const PI_FTD = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);
 export const PF     = PI_FTD / 4.0;                   // packing fraction
 
-// ── Layer 2b: Euler's Identity ──────────────────────────────────────
-export const K_CRIT = 4.0 / G_STAR;                  // boundary where i emerges
-export const X_BORN = 2.0 * G_STAR;                  // degenerate root (Born rule)
+// ── Layer 2b: generalized-quadratic discriminant ───────────────────
+export const K_CRIT = 4.0 / G_STAR;                  // zero-discriminant coefficient
+// Legacy compatibility name for the repeated root 2G*. It does not derive
+// Born weights or a physical probability law.
+export const X_BORN = 2.0 * G_STAR;
 
 // ── Layer 3: Master Quadratic Roots ─────────────────────────────────
 export const COEFFICIENT = 16;                         // N_BASE^2 = 2^(D+1)

@@ -4,13 +4,20 @@
 
 **Status:** [SELECTION] with [THEOREM] components — formal derivation chain
 
+> **[V2 COMPATIBILITY NOTICE — FTD-0825]** The former FTD-specific
+> `Type III -> Type I` and ReLU-as-collapse chain is retracted. Finite actual
+> record algebras are commutative, while the adopted qutrit potentiality net is
+> finite Type I. The Softplus/ReLU and Lindblad mathematics below survives only
+> as a phenomenological model unless re-established inside the successor net.
+> It is not the v2 actualization law and it does not derive Born frequencies.
+
 > **Vocabulary:** This document's mathematical content (Softplus → ReLU operator, Lindblad master equation, Existence Filter as Lindblad operator, decoherence timescale ≈ 18 ticks) is structural and reframe-stable. The places where the chain references "reference frame context" or the "observer" are stated using the canonical [reference frame structure / frame dynamics] vocabulary in [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). In particular: collapse is **the dynamical realization of frame-relative coupling**, not a "local reference frame" producing measurement. Wave-function collapse requires a frame-relative coupling between the system and the observation layer; whether the frame-relative coupling is realized by a reference frame is *not* a claim this derivation makes.
 
 ---
 
 **Depends on:**
 
-- [SPEC_FTD.md](../../SPEC_FTD.md) — The FTD specification (axioms, tick cycle, manifestation rule)
+- [SPEC_FTD_FRAMEWORK_V2_CONTEXTUAL_ACTUALIZATION.md](../01_reference/SPEC_FTD_FRAMEWORK_V2_CONTEXTUAL_ACTUALIZATION.md) — ratified successor constitution at formal reference scope
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — Existence Filter $E(x) = \text{Re}(x)$, projection hierarchy, Born rule reconstruction
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Softplus/ReLU as factor type interpolation, collapse-gravity duality
 - [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) — Five correspondences between $\beta$ and von Neumann factor types

@@ -127,11 +127,13 @@ D_SIGMA = 15
 # RENDER-BRIDGE OPERATORS (v2.0 -- SPEC_FTD_LAGRANGIAN.md)
 # =============================================================================
 
-# Universal Render Bridge: processor clock of reality
-# G* converts between continuous probability-wave domain (varpi) and discrete lattice domain (PF)
+# Legacy render-bridge alias. G* is the dimensionless lemniscatic gamma ratio;
+# no processor-clock or continuum-to-lattice conversion role follows from the
+# identity alone. See AUDIT_GSTAR_CLOCK_DEEP_DIVE_v1.md.
 G_STAR_RENDER = G_STAR  # Alias for render-bridge formalism
 
-# Time Operator: single Read or Write sub-event
+# Algebraic square root only; the historical time-operator interpretation is
+# not a derived physical clock.
 SQRT_GSTAR = np.sqrt(G_STAR)  # ~ 1.7201
 
 # Spatial dimensions (axiom)

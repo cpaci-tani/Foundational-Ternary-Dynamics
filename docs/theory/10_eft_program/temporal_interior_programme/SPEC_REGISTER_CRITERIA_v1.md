@@ -2,7 +2,7 @@
 
 **Status:** `[SYNTHESIS — CONSOLIDATED CRITERIA SPEC]`; declares the checklist
 before any candidate is scored; introduces no claim, scores no candidate
-**Date:** 2026-08-07 · **Parent charter:** `SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md`
+**Date:** 2026-08-07 · **Successor parent charter:** `SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md` (v1 provenance archived)
 **Parents:** FTD-0777 (clock–memory boundary: one transitive tower holds no
 payload; a stable relative payload requires a separately selected,
 co-transported reference lift), FTD-0394 (readout irreversibility),

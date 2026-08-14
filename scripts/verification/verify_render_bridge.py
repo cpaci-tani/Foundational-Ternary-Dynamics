@@ -1,8 +1,9 @@
 """
-Render-Bridge Verification Suite
+Legacy Render-Bridge Algebraic Consistency Suite
 
-Verifies the complete derivation chain from SPEC_FTD_LAGRANGIAN.md v2.0:
-  D=3 -> PF -> N_base -> 16 -> G* -> master quadratic -> {alpha, N_c, b_3, N_eff}
+Checks identities used by SPEC_FTD_LAGRANGIAN.md v2.0.  It does not prove a
+physical derivation chain from D=3 to alpha or N_c; those identifications have
+their current statuses in the LEDGER.
   Born-Infeld weak-field reduction -> v1.0 Klein-Gordon
   gamma_FTD special cases
   Contextual Tensor properties
@@ -21,8 +22,8 @@ PF = np.pi / 4                        # Packing fraction on each lattice face
 N_BASE = int(2**((D + 1) / 2))        # Spinor dimension
 GAMMA_QUARTER = gamma(0.25)           # Gamma(1/4)
 VARPI = GAMMA_QUARTER**2 / (2 * np.sqrt(2 * np.pi))  # Lemniscate constant
-G_STAR = VARPI / np.sqrt(PF)          # Universal Render Bridge
-SQRT_GSTAR = np.sqrt(G_STAR)          # Time operator
+G_STAR = VARPI / np.sqrt(PF)          # Lemniscatic identity
+SQRT_GSTAR = np.sqrt(G_STAR)          # Algebraic square root only
 
 # ============================================================================
 # Test infrastructure
@@ -55,7 +56,7 @@ def section(title):
 # ============================================================================
 
 def test_derivation_chain():
-    section("TEST 1: Complete Derivation Chain (D=3 -> alpha)")
+    section("TEST 1: Algebraic consistency and selected inputs")
 
     # Sub-test 1a: PF from D=3
     pf_computed = np.pi / 4
@@ -104,7 +105,7 @@ def test_derivation_chain():
           abs(x_plus - 137.036) < 0.001,
           f"x_+ = {x_plus:.10f}")
 
-    check("x_- ~ 3.024 (N_c root)",
+    check("x_- ~ 3.024 (algebraic smaller root)",
           abs(x_minus - 3.024) < 0.001,
           f"x_- = {x_minus:.10f}")
 
@@ -117,11 +118,9 @@ def test_derivation_chain():
           abs((x_plus * x_minus) - 16 * c**3) < 1e-10,
           f"Product = {x_plus * x_minus:.10f}, 16*G*^3 = {16*c**3:.10f}")
 
-    # Sub-test 1i: Derived integers
-    N_c = int(np.floor(x_minus))
-    check("N_c = floor(x_-) = 3",
-          N_c == 3,
-          f"N_c = {N_c}")
+    # Sub-test 1i: independently selected/structurally sourced integers.
+    # The historical identification N_c=floor(x_-) is retired.
+    N_c = 3
 
     N_gen = N_c
     N_f = 2 * N_gen

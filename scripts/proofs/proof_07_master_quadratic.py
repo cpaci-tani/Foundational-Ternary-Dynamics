@@ -1,12 +1,13 @@
 """
-Proof 07: Master Quadratic — From G* to α and N_c
-====================================================
+Proof 07: Master Quadratic Algebra and Physical-Identification Boundaries
+=======================================================================
 
 CLAIM [THEOREM + CONJECTURE]: The master quadratic
     x² - 16·G*²·x + 16·G*³ = 0
-produces x₊ = 137.036... (identified as 1/α) and x₋ = 3.024... (→ N_c = 3).
+produces x₊ = 137.036... and x₋ = 3.024....
 
-The algebra is [THEOREM]. The identification x₊ = 1/α is [CONJECTURE].
+The algebra is [THEOREM]. The identification x₊ = 1/α is a conjectural
+physical match; the historical identification x₋→N_c is retired.
 """
 
 import math
@@ -18,7 +19,7 @@ from .common import (ProofSuite, MACHINE_EPS, PPM_1, PPM_10, PERCENT_1,
 
 
 def run() -> ProofSuite:
-    s = ProofSuite("Proof 07: Master Quadratic (x₊ → α, x₋ → N_c)")
+    s = ProofSuite("Proof 07: Master Quadratic Algebra")
 
     c = G_STAR
     k = COEFFICIENT  # = 16
@@ -128,10 +129,10 @@ def run() -> ProofSuite:
     # Δ = k·G*³·(k·G* - 4)
     # Three regimes:
 
-    # k = 16 (physics): Δ > 0 → real roots
+    # Selected k=16: Δ > 0 → real roots
     disc_phys = k * c**3 * (k * c - 4.0)
     s.assert_true(
-        "k=16: Δ > 0 → REAL roots (physics domain)",
+        "selected k=16: Δ > 0 → two real roots",
         disc_phys > 0,
         tag="[THEOREM]"
     )
@@ -140,24 +141,24 @@ def run() -> ProofSuite:
     k_crit = 4.0 / c
     disc_crit = k_crit * c**3 * (k_crit * c - 4.0)
     s.assert_close(
-        "k=4/G*: Δ = 0 → degenerate (Born rule/measurement boundary)",
+        "k=4/G*: Δ = 0 → repeated-root boundary",
         disc_crit, 0.0, 1e-10,
         tag="[THEOREM]"
     )
 
-    # Degenerate root: x = k_crit·G*²/2 = 2G*
-    x_born = k_crit * c**2 / 2.0
+    # Repeated root: x = k_crit·G*²/2 = 2G*. No Born inference follows.
+    x_repeat = k_crit * c**2 / 2.0
     s.assert_close(
-        "Degenerate root x_Born = 2G* ≈ 5.917",
-        x_born, 2.0 * c, MACHINE_EPS * 100,
+        "Repeated root x_repeat = 2G* ≈ 5.917",
+        x_repeat, 2.0 * c, MACHINE_EPS * 100,
         tag="[THEOREM]"
     )
 
-    # k = 1/2 (reference frame context): Δ < 0 → complex roots
+    # Selected k=1/2: Δ < 0 → complex-conjugate roots
     k_cons = 0.5
     disc_cons = k_cons * c**3 * (k_cons * c - 4.0)
     s.assert_true(
-        "k=1/2: Δ < 0 → COMPLEX roots (reference frame context domain)",
+        "selected k=1/2: Δ < 0 → complex-conjugate roots",
         disc_cons < 0,
         tag="[THEOREM]"
     )
@@ -170,19 +171,19 @@ def run() -> ProofSuite:
     y2 = (-b_coeff - cmath.sqrt(b_coeff**2 - 4 * a_coeff * c_coeff)) / (2 * a_coeff)
 
     s.assert_close(
-        "Reference frame context root Re(y) = G*²/4",
+        "Selected k=1/2 root Re(y) = G*²/4",
         y1.real, c**2 / 4.0, MACHINE_EPS * 100,
         tag="[THEOREM]"
     )
 
     s.assert_true(
-        "Reference frame context root has nonzero Im(y) (irreducibly subjective)",
+        "Selected k=1/2 root has nonzero Im(y)",
         abs(y1.imag) > 0.1,
         tag="[THEOREM]"
     )
 
     # =========================================================================
-    # Step 7: Dimensional origin — D = log₂(k_phys/k_cons)
+    # Step 7: Selected-parameter mnemonic — not a derivation of dimension
     # =========================================================================
     # log₂(16) + log₂(1/2) = 4 + (-1) = 3 = D
     D_from_k = math.log2(16) + math.log2(0.5)
@@ -190,7 +191,7 @@ def run() -> ProofSuite:
     s.assert_close(
         "D = log₂(16) + log₂(1/2) = 4 - 1 = 3",
         D_from_k, 3.0, MACHINE_EPS,
-        tag="[THEOREM]"
+        tag="[SELECTION]"
     )
 
     # =========================================================================
@@ -224,7 +225,7 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
 
-    # Equivalently: G* = Product/Sum = G*³/G*² (dimensional triad)
+    # Equivalently: G* = Product/Sum = G*³/G*² (algebraic power ratio)
     s.assert_close(
         "G* = Vieta(Product)/Vieta(Sum) = 16G*³/(16G*²)",
         (k * c**3) / (k * c**2), c, MACHINE_EPS,

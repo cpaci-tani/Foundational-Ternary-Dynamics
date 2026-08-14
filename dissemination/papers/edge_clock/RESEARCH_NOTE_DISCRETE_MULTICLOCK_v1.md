@@ -77,7 +77,7 @@ resonance overlap), not constant-hunting.
 
 ## What needs doing (the honest queue)
 
-1. **Derive χ_c = 1/3** (or refute it): rotating-wave reduction of the coupled pair with *lemniscatic* carriers → DNLS-dimer-type self-trapping condition; the cn-carrier overlap integrals are elliptic, so a closed form should exist. This is the note's headline open problem.
+1. **Resolve the resonance-channel geometry:** map the phase-dependent transport windows, estimate their widths with resonance-overlap/KAM diagnostics, and test convergence under timestep, duration, and initial-condition controls. The protocol-independent claims χ_c=1/G* and χ_c=1/3 are already refuted above and must not be reopened by constant hunting.
 2. **Derive the tongue structure of R2**: the orbit's instantaneous stiffness 12λx²(t)/m is a known elliptic function of time, so the discrete-map stability problem is a Hill equation with cn² coefficient — the tongue boundaries should be computable exactly (Lamé equation territory). Genus-1 machinery once more.
 3. Explain the R3 plateaus and the R4 re-entrant windows.
 4. Independent refute-by-default audit of all of the above before anything is registered or added to any manuscript.

@@ -46,9 +46,11 @@ that provably carries the quartic clock — the **collinear two-scale
 4-chain** — and prices it. Within the declared extension the result is
 exact: the chain is prestress-stable at zero tension, every transverse flex
 has strictly quartic energy with closed-form coefficient, the mirror-even
-mode closes as a 1-DOF pure quartic oscillator, and a full 12-DOF
-conservative simulation recovers `G* = Γ(1/4)/Γ(3/4)` from ringdown timing
-with **no fitted scale to 2×10⁻⁶ relative** (A→0 extrapolation).
+mode closes as a 1-DOF pure quartic oscillator, and a curvature-matched
+12-DOF harmonic-spring surrogate simulation (§4, "Simulation" — sharing
+local curvatures with, but not integrating, the registered compact
+potential `V(q)`) recovers `G* = Γ(1/4)/Γ(3/4)` from ringdown timing with
+**no fitted scale to 2×10⁻⁶ relative** (A→0 extrapolation).
 
 Neither arm moves a tag. The MVC is not a native carrier — it fails C11 *by
 construction*; that is what "minimum viable" means. FTD-0794's verdict
@@ -239,7 +241,14 @@ blocking form is positive-definite on the *entire* nontrivial flex space
 is genuinely second-order rigid; the wheel was not. This is now a
 load-bearing property of the design, not an accident.
 
-**Simulation.** Full 12-DOF conservative dynamics (velocity-Verlet,
+**Simulation.** This run is a curvature-matched 12-DOF **harmonic-spring
+surrogate**, not the registered compact law `V(q) = −16ε(q−3/2)²(q−3/4)`
+(see the script's own epistemic-status note); it is a legitimate leading-order
+test because the `n = 4` behavior established in §1–2 is geometric (a
+property of the rigidity structure, not of the potential's anharmonicity),
+so a surrogate sharing local curvatures with `V(q)` reproduces the same
+leading-order dynamics, and only its `A→0` normal form is claimed to
+transfer. Full 12-DOF conservative dynamics (velocity-Verlet,
 constrained-relaxed initial conditions, `k₁ = k₂ = 1`): `T·A` constant to
 0.33% across a 6× amplitude range with the expected `O(A²)` finite-amplitude
 drift, and the `A→0` extrapolation gives

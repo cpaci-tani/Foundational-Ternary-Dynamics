@@ -255,7 +255,7 @@ Ne = 169.0/3  # e-folds
 ns = 1 - 2/Ne
 test(2, 17, 'n_s = 1 - 2/N_e', ns, 0.9649, tolerance=0.1)
 
-# T2.18: Dimensional triad
+# T2.18: exact G* power identity (no dimensional assignment)
 g1, g2, g3 = G_STAR, G_STAR**2, G_STAR**3
 test(2, 18, 'G*^1 * G*^2 * G*^3 = G*^6', g1*g2*g3, G_STAR**6)
 

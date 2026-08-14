@@ -2,7 +2,7 @@
 
 **Status:** `[SYNTHESIS — CONSOLIDATED CRITERIA SPEC / DEFINITIONAL]`; three
 rungs, each gated; no rung has a candidate; introduces no claim
-**Date:** 2026-08-07 · **Parent charter:** `SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md`
+**Date:** 2026-08-07 · **Successor parent charter:** `SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md` (v1 provenance archived)
 **Parents:** P3 (J primary, s = threshold action of J), the phase_read
 pathway (sub-threshold flux is dynamically live), `SPEC_REGISTER_CRITERIA_v1.md`
 (rung b's gate), FTD-0187/FTD-0200 (the statistical layer this ladder does
