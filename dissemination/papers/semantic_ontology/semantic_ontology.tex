@@ -78,8 +78,8 @@
 relativity, thermodynamics, and quantum theory}
 
 \author{C.~Pacitani\thanks{Draft, 2026-08-09. This is a foundations paper:
-an architecture assembled from established external results plus two
-declared postulates, together with a small number of exactly stated and
+an architecture assembled from established external results plus explicitly
+booked v2 axioms, adoptions, and selections, together with exactly stated and
 author-attested, protocol-locked measurements made across explicitly
 declared mechanism-level and engine-scoped instruments/model classes
 associated with one concrete discrete programme. It
@@ -109,22 +109,25 @@ actual --- a finite record of events that has happened --- and what is
 potential --- a structured field of weighted alternatives that has not.
 An experiment is then a three-fold selection: of an intervention, of a
 question, and of one outcome from the weighted alternatives that question
-admits. Writing this as a closed recursion isolates the central unresolved
-object, the actualization block~$\Sigma$, and organizes the remaining
-obligations around it. Quantum field theory supplies an imported covariant law
-for the potential layer; separately, the operational reconstruction
-programme supplies a finite-dimensional state space, and an
-effect-additivity postulate supplies the trace rule, so that the Born
-square is a theorem about weights rather than an axiom about probability.
-The bridge from that finite trace setting to local quantum-field algebras
-is open. Relativity constrains
-$\Sigma$'s covariant form, and we separate --- as is not always done ---
+admits. The FTD-v2 successor reported here adopts a noncommutative local net
+for potentiality while retaining a commutative algebra of actual records,
+and supplies an imposed deterministic, globally contextual reference
+selector~$\Sigma$. This closes logical compatibility, not the physical Born
+problem: the selector consumes state--effect weights and therefore cannot
+explain their substrate frequencies. The finite qutrit tensor net is only a
+selected Type-I consistency witness; no Type-III classification follows from
+it or from finite spectral statistics. Relativity constrains
+$\Sigma$'s operational form, and we separate --- as is not always done ---
 the order-independence of spacelike instruments, which is standard
 physics, from strong selector-history equivariance, which is a distinct
-unresolved condition and is not required merely to hide a preferred
+condition not imposed by v2 and is not required merely to hide a preferred
 foliation operationally. Thermodynamics supplies a language for irreversible records,
 their cost, and their timescales, while a complete entropy balance for the
-selector remains open. Two contributions are developed here. First, a
+selector remains open. Global update order, local clock duration, and the
+count of compliant actualization gates are kept distinct. In particular,
+$G^*$ is the exact period factor and selected gate cadence of a maintained
+critical quartic clock; it is neither global time nor an outcome selector.
+Two contributions are developed here. First, a
 \emph{reorganization of the standard power-law clock quadrature}: within
 the homogeneous family $V=\lambda|x|^n$, the period
 constant factors into a quadrature root $\sqrt\pi$ and a degree ratio,
@@ -147,7 +150,7 @@ mechanism-level measurement, threshold statistics interpolate from
 amplitude weighting toward action/occupation weighting as mode frequency
 exceeds the noise bandwidth. We call the normalized interpolation
 coordinate the \emph{occupation fraction}; it is not a probability and the
-experiment does not derive the Born rule. The general Born pushforward
+experiment does not derive the Born rule. The physical Born pushforward
 remains open. We report with
 equal prominence the accompanying negative --- that the same law did not
 transfer to the model's own thermal field in the sampled domain --- and a
@@ -210,8 +213,12 @@ configuration the world drifts away from unless something keeps
 returning it. The last is the least familiar and turns out to be the most
 expensive.
 
-Two postulates are declared, in Sections~\ref{sec:ontology}
-and~\ref{sec:operational}. The imports are itemized rather than summarized,
+The successor's axioms, adoptions, and selections are declared in
+Sections~\ref{sec:ontology}, \ref{sec:clock}, and
+\ref{sec:operational}. They include the potentiality net, the preparation
+map, split locality, measurement independence, and the reference selector;
+none is relabelled as emergence from the classical ternary substrate. The
+imports are itemized rather than summarized,
 because they are the largest single thing the paper does not derive. The
 purchases and the maintenance are what the constructive sections are
 about. Section~\ref{sec:ledger} totals all of it, and where that table and
@@ -239,6 +246,20 @@ from singularity, dissipation, thresholding, or noninvertibility: those
 properties concern how a record is made and retained, while the physical
 pushforward measure remains open. The full accounting is
 Table~\ref{tab:ledger}.
+\end{scopebox}
+
+\begin{scopebox}
+\textbf{Successor status (FTD-0825).} The v2 branch supersedes v1's
+declined-measurement-map posture (FTD-0329 row 15) \emph{on the v2 branch
+only}; the v1 constitution itself is unmodified by this and remains the
+framework's default branch. The v2 branch instead adopts: commutative
+classical actual beables; a complex,
+noncommutative potentiality net; Moore-local substrate propagation with a
+globally nonseparable selector; and measurement independence
+$\mu(\lambda\mid C)=\mu(\lambda)$. Operational signalling remains forbidden.
+Reference-model success is not substrate evidence: physical Born recovery,
+preferred-order hiding, and native maintenance of the $G^*$ clock remain
+open.
 \end{scopebox}
 
 Nothing has been declared yet, and nothing bought. The construction
@@ -316,7 +337,7 @@ frequencies}.
 \node[sel]   (H)   at (1.35,-1.0)  {$H_n$\\[-1pt]\figsub actual history [AXIOM]};
 \node[sel]   (rho) at (3.9,1.55)   {$\rho_n$\\[-1pt]\figsub structured\\[-2pt]\figsub potentiality};
 \node[sel]   (w)   at (7.0,1.55)   {$\{(e_i,w_i)\}$\\[-1pt]\figsub weighted\\[-2pt]\figsub alternatives};
-\node[openb] (S)   at (10.0,1.55)  {$\Sigma$\\[-1pt]\figsub actualization};
+\node[sel]   (S)   at (10.0,1.55)  {$\Sigma_C$\\[-1pt]\figsub reference actualization [IMPOSED]};
 \node[sel]   (e)   at (10.0,-1.0)  {$e_{n+1}$\\[-1pt]\figsub one event [AXIOM]};
 \node[sel]   (H1)  at (12.15,-1.0) {$H_{n+1}$\\[-1pt]\figsub [AXIOM]};
 
@@ -336,9 +357,8 @@ frequencies}.
 \end{tikzpicture}
 \caption{The shape of the recursion, drawn here before most of it has
 been paid for. Structure is encoded in shape and rule, never in colour:
-solid boxes are theorem-grade within their stated premises, thin boxes
-are axioms, selections, or imported representations, and the double-ruled
-box is the central unresolved block. Actual history generates structured
+solid boxes are theorem-grade within their stated premises, while thin boxes
+are axioms, selections, or imported representations. Actual history generates structured
 potentiality through a state-assignment map $\Gamma$; a chosen context
 resolves it into weighted alternatives; the actualization block selects
 one; the record extends and the cycle repeats. Everything above the lower
@@ -346,7 +366,8 @@ band is potential; only the events in it are actual. \emph{Of the objects
 shown, this section has bought only the two bands and the singular
 event.} The state-assignment map, the context and the weights are
 purchased in Section~\ref{sec:operational}, which is where the diagram
-closes into the equation it depicts.}
+closes into the equation it depicts. The imposed $\Sigma_C$ closes only the
+reference recursion; its physical substrate pushforward remains open.}
 \label{fig:ontology}
 \end{figure}
 
@@ -386,13 +407,15 @@ long it takes. That constant is where the price will show up, because the
 restoring law is not free --- a substrate either supplies one or does not.
 
 Second, and less obviously, the same argument applies to the paper's own
-bookkeeping. The recursion this architecture will run on is indexed by a
-stage, and if the index is to mean elapsed time rather than list
-position, something physical has to carry it. A clock is therefore not a
-component of the architecture among others; it is a precondition of the
-architecture's own description of itself. That thread is picked up in
-Section~\ref{sec:qg}, once there is a recursion on the page to be
-indexed.
+bookkeeping. The recursion this architecture will run on is indexed by the
+ontic integer update order $n$. That index is a causal ordering variable,
+not an elapsed duration. Operational duration requires a maintained local
+clock with phase $\phi_x(n)$ and inferred duration $\tau_x$; actualization
+introduces the still different count $k_x$ of phase-compliant gates. A clock
+is therefore not a component of the architecture among others; it is a
+precondition for turning update order into measured duration. That thread is
+picked up in Section~\ref{sec:qg}, once there is a recursion on the page to
+be indexed.
 
 So: what is the cheapest recurrence a discrete substrate can host, what
 constant does it keep, and what does it cost?
@@ -987,10 +1010,15 @@ what this oscillator's timing is exquisitely sensitive to is
 \emph{its own distance from the threshold}: by \eqref{eq:collapse} the
 measured $(T,A)$ pair fixes $\kappa$, and by \eqref{eq:modulus} $\kappa$
 is the order parameter of the detuning. So a marginal clock reads out the quantity it must hold
-fixed. Whether that is a mechanism for holding it, or merely the
-statement that the error signal exists, is exactly the open problem of
-Section~\ref{sec:open}. Figure~\ref{fig:sensorloop} draws the loop with
-its one missing edge.
+fixed. The v2 reference construction closes this as a control problem by
+selection: one context-blind feedback channel drives the dimensionless
+detuning $\delta=\mu/A^2$ toward zero, while a second stabilizes amplitude
+or action. Its audit records controller work, dissipation, detuning, and
+amplitude; maintenance is never treated as free. A gate opens only at a
+fixed phase crossing and under preregistered compliance tolerances. This
+constructs a mathematical controller, not a native substrate actuator.
+Figure~\ref{fig:sensorloop} separates the implemented reference loop from
+that remaining physical debt.
 
 \begin{figure}[t]
 \centering
@@ -999,19 +1027,20 @@ its one missing edge.
 \node[thm]   (ta)  at (3.6,0)   {measured $(T,A)$\\[-1pt]\figsub one ringdown};
 \node[thm]   (kap) at (7.2,0)   {modulus $\kappa$\\[-1pt]\figsub via \eqref{eq:collapse}};
 \node[sel]   (mu)  at (10.5,0)  {detuning $\mu$\\[-1pt]\figsub via \eqref{eq:modulus}};
-\node[openb] (act) at (5.4,-1.9) {actuator: what pays the maintenance?\\[-1pt]\figsub open problem, Section~\ref{sec:open}};
+\node[openb] (act) at (5.4,-1.9) {physical actuator\\[-1pt]\figsub reference controller selected; native payer open};
 \draw[con] (osc) -- (ta);
 \draw[con] (ta) -- (kap);
 \draw[con] (kap) -- (mu);
 \draw[wk]  (mu) |- node[lbl,pos=0.75] {error signal exists} (act);
 \draw[wk]  (act) -| node[lbl,pos=0.25] {holds $\mu=0$?} (osc);
 \end{tikzpicture}
-\caption{The sensor inversion, and the missing edge. A marginal clock's
+\caption{The sensor inversion and its status split. A marginal clock's
 timing fixes its own distance from the threshold --- the solid path is
 exact --- so the error signal needed to hold $\mu=0$ demonstrably exists.
-What would consume it is the double-ruled block: nothing in this paper
-constructs an actuator, and that absence is the open problem the
-maintenance cost points at.}
+The v2 reference controller consumes that signal with context-blind dual
+feedback and audits its work and dissipation. The double-ruled block is the
+still-missing native actuator: reference stabilization is not evidence that
+the substrate pays the maintenance cost.}
 \label{fig:sensorloop}
 \end{figure}
 
@@ -1047,7 +1076,10 @@ therefore disqualified as a relativistic instrument. The only positive
 dilation fit reported here is isochronous --- a $\pi$-clock --- and uses a
 fitted speed about six percent below the free-sector energy speed, so it
 does not establish a shared relativistic clock.
-$G^*$ enters this framework by choice. Nor does the argument reach
+$G^*$ enters this framework by choice. Its selected role is purely temporal:
+it controls when a compliant event is eligible, while $\Sigma$ controls which
+outcome occurs. Conflating those two roles would make the Born argument
+circular. Nor does the argument reach
 agency: it is a selection statement about efficient design, and marginal
 stability, while a hallmark of adaptive systems, is equally a property of
 sandpiles and buckling columns.
@@ -1305,6 +1337,41 @@ remain open after that import.
 \section{Weights, and where they come from}
 \label{sec:operational}
 
+\subsection{The adopted local net and the actual record algebra}
+
+For each finite region $\Lambda\subset\mathbb Z^3$, the actual beables are
+bounded functions of classical flux and ternary configurations,
+\begin{equation}
+ \mathcal A_{\rm act}(\Lambda)=
+ \mathcal B_b\!\left((\mathbb R^3\!\times\!\{-1,0,+1\})^\Lambda\right).
+ \label{eq:actualalgebra}
+\end{equation}
+This algebra is commutative. Its finite ternary record subalgebra is the
+diagonal algebra
+$\mathcal D_\Lambda\cong\mathbb C^{3^{|\Lambda|}}$; it is not the full matrix
+algebra $M_{3^{|\Lambda|}}(\mathbb C)$. The potentiality layer is a separately
+adopted net $\Lambda\mapsto\mathcal A_{\rm pot}(\Lambda)$ satisfying isotony,
+compatible restriction, and commutation for spacelike-disjoint regions. The
+first selected witness is
+\begin{equation}
+ \mathcal A_{\rm pot}^{\rm ref}(\Lambda)=
+ \bigotimes_{x\in\Lambda}M_3(\mathbb C).
+ \label{eq:qutritnet}
+\end{equation}
+Its finite-region algebras are Type~I and its quasi-local inductive limit is
+UHF. No Type-III conclusion follows automatically: any factor classification
+in a GNS representation depends on the chosen state and representation, and
+finite random-matrix level statistics cannot decide it.
+
+A preparation map $\Gamma_\Lambda$ from substrate preparation classes to
+compatible local states $\omega_\Lambda$ is therefore an adoption with a
+named recovery debt. The compatibility condition
+$\omega_{\Lambda_2}|_{\mathcal A_{\rm pot}(\Lambda_1)}=
+\omega_{\Lambda_1}$ for $\Lambda_1\subseteq\Lambda_2$ is proved by the
+selected reference witness and must later be recovered physically. This is an
+abstract discrete local net first and a qutrit representation second; the
+classical ternary alphabet alone does not derive noncommutativity.
+
 \subsection{States, effects, and convexity}
 
 Two preparations are equivalent if every subsequent experiment gives the
@@ -1437,7 +1504,8 @@ trace-preserving map, with $E^M_o = (\mathcal{I}^M_o)^*(I)$; an
 instrument carries two things at once, the weight of a possible
 actualization and the successor potentiality if it occurs.
 
-What no part of this supplies is the selection of one outcome. Writing
+What the state/effect and instrument architecture does not supply
+intrinsically is the selection of one outcome. Writing
 $\Sigma_O$ for that block, there are two mathematically distinct
 implementations,
 \[
@@ -1452,7 +1520,33 @@ resulting frequencies reproduce the weights,
 (F_O)_*\mu(\{o\}) = \Tr(\rho E^M_o) ,
 \label{eq:pushforward}
 \end{equation}
-called the \emph{Born pushforward} below. Note that $\Sigma_O$ means the
+called the \emph{Born pushforward} below. V2 supplies the following
+\textbf{[IMPOSED reference realization]}. For the complete joint context
+$C$, order its outcomes and write $w_o^C=\omega(E_o^C)$. With
+$u\in[0,1)$ distributed by Lebesgue measure, set
+\begin{equation}
+ \Sigma_C(u)=\min\left\{o:
+ u<\sum_{j\le o}w_j^C\right\},
+ \qquad u_{n+1}=2u_n\bmod1 .
+ \label{eq:quantileselector}
+\end{equation}
+Lebesgue measure is invariant under doubling. The quantile intervals have
+exactly the required lengths:
+\begin{equation}
+ (\Sigma_C)_*\mu_{\rm eq}(o)=\omega(E_o^C).
+\end{equation}
+The hidden measure is context independent,
+$\mu_{\rm eq}(\lambda\mid C)=\mu_{\rm eq}(\lambda)$, while the response map
+depends on the complete context and is intentionally nonfactorizable across
+Bell wings. Thus the construction proves deterministic contextuality,
+measurement independence, and compatibility with the target weights. It is
+\emph{not} a Born derivation, because those weights are read to place the
+quantile boundaries. The physical programme must recover both the equilibrium
+measure and the pushforward from substrate dynamics without target-coded
+weights; its first preregistered candidate is the free-flux positive-frequency
+density $n=|\phi_+|^2$.
+
+Note that $\Sigma_O$ means the
 whole implementation --- the kernel, or the pair $(F_O,\mu)$ --- so that
 the measure cannot be hidden inside a deterministic map. Given an
 outcome, the successor state is ordinary conditionalization,
@@ -1471,12 +1565,11 @@ in which $\mathcal{C}_n$ is the preparation and control record and
 $\mathcal{D}$ the stipulated dynamics. The closure map $\Gamma$ is part
 of the scaffold, not a theorem: history alone does not determine a state.
 
-The weight layer is now assembled, at a cost stated line by line --- and
-assembled \emph{finite-dimensionally}, which is less than complete: the
-covariant setting of Section~\ref{sec:relativity} uses local algebras
-that are not of type~I and admit no density matrix, and nothing here
-bridges the two. That bridge is imported wholesale and stands among the
-open problems. But even granting it, nothing in this layer says
+The weight layer is now assembled, at a cost stated line by line. The abstract
+local-net axioms and the finite qutrit witness are separate adoptions; the
+latter is Type~I, its quasi-local limit is UHF, and any non-Type-I GNS factor
+would require an additional state-and-representation argument. But even
+granting the adopted net, nothing in this layer says physically
 \emph{when} a weight becomes a frequency. That is not a
 question about the algebra of weights; it is a question about the
 mechanism that reads them out, and about how fast it reads compared with
@@ -1735,14 +1828,17 @@ The proposition marks the exact boundary of the user's intuition. An
 actual choice can be one-way without the unchosen alternatives being
 co-actual quantum worlds; that is a coherent ontology of singular records.
 But if the bag's marble positions and drawing dynamics define all four
-responses on one common ensemble, it remains a classical Bell model. To
-reach $2\sqrt2$, at least one named premise must fail: the global joint
-assignment may not exist (contextuality), the ensemble may depend on the
-settings (measurement dependence), the response may depend on the remote
-context (failure of factorization), or ordinary Kolmogorov probability may
-not apply. This paper supplies none of those mechanisms. Energy-paid record
-formation explains why an outcome persists; it does not yet explain the
-quantum correlation law.
+responses on one common ensemble, it remains a classical Bell model. Fine's
+theorem makes the joint-distribution boundary exact~\cite{fine}. To reach
+$2\sqrt2$, at least one named premise must fail. V2 keeps measurement
+independence and ordinary equilibrium probability, but rejects the existence
+of four context-free local response variables: $\Sigma_C$ depends on the
+complete joint context and does not factorize across the wings. This is an
+explicit ontic cost, not an evasion produced by discreteness. The imposed
+reference selector reproduces the selected singlet law while keeping each
+local marginal independent of the remote setting. Energy-paid record
+formation still explains only why an outcome persists; it does not derive the
+physical quantum correlation law from substrate dynamics.
 
 \subsection{Three ceilings, and the gap nobody has closed}
 \label{sec:tiers}
@@ -1826,6 +1922,12 @@ norm; they agree to $2\times10^{-15}$.}
 \label{fig:tiers}
 \end{figure}
 
+Within the adopted commuting-wing operator model, the usual CHSH square
+identity gives $\|\mathcal B\|\le2\sqrt2$. Consequently a PR-box value of
+$4$ is rejected inside this reference architecture, even though it satisfies
+no-signalling. The selected singlet state and observables saturating the
+quantum ceiling remain imported reference data, not substrate outputs.
+
 The architecture therefore acquires a quantitative form and an open
 problem in the same stroke. The potential is not ``whatever is not
 forbidden'': it is a specific, tightly constrained subset of the
@@ -1869,7 +1971,7 @@ measured on four disjoint sub-ensembles; no trial contributes to more than
 one; and no individual context is anomalous --- each sits at $1/\sqrt2$,
 comfortably inside the unit bound available to any correlator whatever.
 $S$ is assembled, and it does not exist without something that assembles
-it. This is Fine's gluing statement in operational dress, and it is
+it. This is Fine's gluing statement in operational dress~\cite{fine}, and it is
 correct.
 
 \emph{Order dependence is not CHSH compilation.} Two crossed polarisers pass
@@ -1929,8 +2031,10 @@ regions with Einstein causality,
 $[\mathcal{A}(O_A),\mathcal{A}(O_B)] = 0$ for spacelike-separated
 regions~\cite{haagkastler,haag}, with probabilities given by the
 state--effect pairing $p_\omega(E) = \omega(E)$ --- the
-representation-independent replacement for the trace, since a generic
-local algebra is not of type~I and admits no intrinsic density matrix.
+representation-independent replacement for the trace. Continuum AQFT local
+algebras may be non-Type-I and admit no intrinsic density matrix; this is an
+external comparator, not a classification of the finite qutrit net in
+\eqref{eq:qutritnet}.
 Covariant evolution of the potential layer is the Tomonaga--Schwinger
 equation~\cite{tomonaga}, conditional on integrability. And for
 causally disjoint local instruments the joint statistics are independent
@@ -1942,7 +2046,12 @@ p_\omega^{A\prec B}(a,b|x,y) = p_\omega^{B\prec A}(a,b|x,y),
 provided the instruments satisfy a causal local measurement
 scheme~\cite{fewsterverch}. Equation~\eqref{eq:R3}, not trace
 preservation alone, is the operational statement that the order of
-spacelike actualizations is gauge at the level of ensembles.
+spacelike instruments is gauge at the level of ensembles. V2 packages a
+Bell trial as one \emph{ActualizationBatch}: the wing instruments remain
+localized, commuting, and order independent, while the preferred-tick
+selector consumes the complete joint context and produces the joint record.
+For every admissible batch its local marginals must be independent of the
+remote setting.
 
 \paragraph{Order-independence is not selector covariance.}
 
@@ -2055,9 +2164,12 @@ $2\sqrt2 = 2.828427$, while the order-independence half of
 Proposition~\ref{prop:hiding} checks numerically to $2.2\times10^{-16}$
 over random states and settings. So: \emph{if a substrate reproduced
 quantum statistics, its preferred foliation would automatically be
-hidden.} The foliation is not the difficulty. Reproducing the statistics
-is, and that obstacle is a Bell-theoretic one which has nothing to do
-with relativity --- it would be present in a non-relativistic world.
+hidden.} The v2 reference selector evades the corollary's common-response
+premise by using a complete-context, nonfactorizable map while retaining a
+setting-independent equilibrium measure. That is a consistency witness only.
+The physical difficulty is recovering the same statistics from substrate
+dynamics without target-coded weights, and that obstacle is Bell-theoretic
+rather than relativistic --- it would be present in a non-relativistic world.
 Figure~\ref{fig:reductions} draws the two propositions as one diagram:
 what buys hiding, and where the one blocked path actually is.
 
@@ -2079,10 +2191,12 @@ what buys hiding, and where the one blocked path actually is.
 \caption{The two reductions in one picture. Hiding a preferred foliation
 follows from reproducing quantum statistics together with standard
 order-independence --- it is not an independent obligation. What blocks a
-classical substrate is the lower path: a single setting-independent
-sample space caps CHSH at $2$ against the attained $2\sqrt2$, which
-breaks hypothesis~(i) directly. The open obligation (double-ruled) is
-therefore Bell-theoretic and would exist in a non-relativistic world.}
+locally factorized substrate is the lower path: a single setting-independent
+joint assignment caps CHSH at $2$ against the attained $2\sqrt2$, which
+breaks hypothesis~(i) directly. V2 preserves measurement independence but
+rejects that joint assignment through a globally contextual selector. The
+open obligation (double-ruled) is physical recovery of that response law,
+which would exist even in a non-relativistic world.}
 \label{fig:reductions}
 \end{figure}
 
@@ -2843,16 +2957,23 @@ about localization and propagators~\cite{kuchar} that are partly
 addressed by covariant clock observables~\cite{hohn} and complicated
 again for finite-resource clocks~\cite{hausmann}.
 
-For this paper the point is structural and closes a loop. If the stage
-index of the recursion \eqref{eq:recursion} is not external, it must be
-read off a physical clock inside the history --- and Section~\ref{sec:clock}
-was precisely an inventory of what a physical clock costs in a concrete
-model. \textbf{The clock programme is therefore not a subplot of the
-architecture; it is the precondition of the architecture's own index.}
-In the discrete model the two are distinct and both are needed: a global
-update index is postulated, while an internal carrier that converts
-succession into operational duration is exactly what
-Section~\ref{sec:clock} prices and does not obtain natively.
+For this paper the point is structural and closes a loop. The v2 contract
+keeps three quantities separate:
+\begin{equation}
+ \begin{aligned}
+ n& &&\text{ontic global update order},\\
+ \phi_x(n),\tau_x& &&\text{local phase and operational duration},\\
+ k_x& &&\text{compliant actualization-gate count}.
+ \end{aligned}
+\end{equation}
+The first is postulated and does not need to be read from a clock. The second
+turns succession into operational duration and must be carried and maintained
+inside the history. The third counts only fixed-phase crossings that pass the
+clock-compliance tolerances. For the selected quartic carrier
+$TA=\sqrt\pi G^*\sqrt{m/(2\lambda)}$: $G^*$ fixes the cadence of eligibility,
+not the global order and not the outcome. \textbf{The clock programme is
+therefore the precondition of local duration and gating, not the source of
+the world's global update index.}
 
 One further hypothesis class connects gravity to $\Sigma$ directly, by
 making the gravitational self-energy difference set an actualization
@@ -2865,11 +2986,14 @@ supplying the slow gate --- and we label it exactly as what it is: a
 speculative alignment between two independently derived shapes of
 requirement, not evidence for either.
 
-That closes the loop the construction opened. A loop that closes on paper
-may still not run, though, and what has not been shown is that these
-pieces coexist in one system rather than in eleven separate arguments.
-A genuinely coupled model could settle that; the side-by-side check below
-cannot.
+That closes the loop the construction opened. The v2 reference pipeline now
+runs the directed composition
+$n\to$ substrate history $\to\omega\to$ local instruments $\to G^*$ gate
+$\to\Sigma\to$ records, with the controller audit carried alongside it.
+Because its preparation map and Born weights are adopted, it is a standalone
+mathematical consistency model, not a physical substrate realization. The
+older side-by-side check below remains useful only as an independent-module
+audit.
 
 % =====================================================================
 \section{A side-by-side minimal demonstrator}
@@ -2886,13 +3010,14 @@ side-by-side demonstrator, not an instrument of record: no claim of
 Sections~\ref{sec:clock}--\ref{sec:born} depends on it, and it establishes
 no composed physics.
 
-The modules are independent computations: no module consumes another's
-state, and there is no feedback anywhere in the artifact. The test catches
-shared-constant and transcription inconsistencies; it does not show that
-the mechanisms coexist in one dynamical system. A genuinely coupled model,
-in which the clock's phase
-gates the register and the register's state back-reacts on the carrier,
-does not exist and is named among the open problems.
+The modules in this older artifact are independent computations: no module
+consumes another's state, and there is no feedback anywhere in it. The test
+catches shared-constant and transcription inconsistencies; it does not show
+that the mechanisms coexist in one dynamical system. Separately, the v2
+reference simulator composes history, preparation, instruments, maintained
+gate, selector, and records through explicit interfaces. It still imports the
+state--effect weights and does not implement physical register-to-carrier
+backreaction, so a substrate-native coupled model remains open.
 
 \begin{figure}[p]
 \centering
@@ -3156,15 +3281,15 @@ layer nobody supplies.
 % ---- sources (left) -------------------------------------------------
 \node[thm]  (qft)  at (0,2.05)  {quantum field theory\\[-1pt]\figsub local algebras, $\omega(E)$};
 \node[thm]  (rec)  at (0,0.75)  {operational reconstruction\\[-1pt]\figsub $+$ Postulate~\ref{post:B}};
-\node[sel]  (rel)  at (0,-0.75) {relativity\\[-1pt]\figsub covariance of the selector};
+\node[sel]  (rel)  at (0,-0.75) {relativity\\[-1pt]\figsub operational hiding constraint};
 \node[sel]  (thm2) at (0,-2.15) {thermodynamics\\[-1pt]\figsub arrow, cost, timescale};
 \node[conj] (mod)  at (0,-3.55) {discrete model\\[-1pt]\figsub one candidate substrate};
 
 % ---- architecture layers (right) ------------------------------------
 \node[sel]   (W) at (6.6,1.45)  {\textbf{the weight layer}\\[-1pt]\figsub
-   imported finite trace / AQFT law;\\[-2pt]\figsub bridge open};
-\node[openb] (S) at (6.6,-1.05) {\textbf{the selector} $\Sigma$\\[-1pt]\figsub
-   singular outcome [IMPOSED];\\[-2pt]\figsub Born/Bell pushforward [OPEN]};
+   adopted local net; qutrit witness;\\[-2pt]\figsub physical preparation map open};
+\node[sel] (S) at (6.6,-1.05) {\textbf{the selector} $\Sigma_C$\\[-1pt]\figsub
+   reference quantile map [IMPOSED];\\[-2pt]\figsub physical pushforward [OPEN]};
 \node[sel]   (C) at (6.6,-3.20) {\textbf{clock \& register}\\[-1pt]\figsub
    duration, retention, cost};
 
@@ -3174,10 +3299,9 @@ layer nobody supplies.
 \draw[con] (thm2) -- node[lbl,pos=0.52] {record cost; retention} (S);
 \draw[con] (thm2) -- node[lbl,pos=0.55] {Arrhenius cost} (C);
 \draw[wk]  (mod)  -- node[lbl,pos=0.55] {instantiates, priced} (C);
-% the clock is not only supplied: it supplies the index the whole
-% recursion is written in, which is the loop the paper closes
+% the clock supplies local gate cadence, not the global update index
 \draw[wk]  (C) to[out=15,in=-15,looseness=1.5]
-  node[lbl,pos=0.5,right=1pt] {supplies the index} (S);
+  node[lbl,pos=0.5,right=1pt] {supplies gate cadence} (S);
 
 % ---- shape legend ---------------------------------------------------
 \begin{scope}[shift={(0,-5.15)}]
@@ -3194,20 +3318,22 @@ layer nobody supplies.
 \caption{What supplies what. Shapes encode status, never colour, as shown
 in the legend: solid for theorem-grade within stated premises, thin for
 selections and imported representations, dashed for a candidate
-instantiation, double-ruled for the central open block. Other open
+instantiation, and double-ruled for an open interface. Other open
 interfaces are labelled explicitly in the nodes and caption. Solid arrows
 are constructions; the dashed arrow marks a candidate instantiation that
-is priced rather than free. The finite trace representation and the AQFT
-law are imported at different scopes and their bridge is open. Singular
-actuality is imposed; no concrete Born/Bell selector is supplied.}
+is priced rather than free. The abstract local net and qutrit witness are
+adopted at different scopes. Singular actuality and the contextual quantile
+selector are imposed; the selector proves exact reference pushforward but
+does not recover physical Born/Bell frequencies.}
 \label{fig:merge}
 \end{figure}
 
 \textbf{Quantum field theory supplies a covariant comparator for the
 potential layer [IMPORTED].} Local algebras, covariant evolution, and
-spacelike order-independence are standard physics. The finite-dimensional
-reconstruction used earlier does not construct this local-algebraic
-setting; their bridge remains \textbf{open}.
+spacelike order-independence are standard physics. V2 adopts an abstract
+discrete local net and supplies a finite Type-I qutrit witness. Recovering its
+preparation map and any physically relevant continuum representation from
+substrate dynamics remains \textbf{open}.
 
 \textbf{The reconstruction programme plus Postulate~\ref{post:B} supplies
 trace-form weights conditionally [EXTERNAL THEOREM].} It does not construct
@@ -3216,8 +3342,10 @@ Born square is settled inside the imported effect space; the physical Born
 pushforward remains \textbf{open}.
 
 \textbf{Relativity constrains the selector, and prices each option.}
-Crucially it does \emph{not} deliver a covariant selector for free: the
-gap between \eqref{eq:R3} and \eqref{eq:R4} is real and open.
+The reference ActualizationBatch has commuting local instruments and
+remote-setting-independent marginals. It does \emph{not} establish empirical
+hiding of the preferred tick: the gap between \eqref{eq:R3} and
+\eqref{eq:R4} remains a physical recovery debt.
 
 \textbf{Singular actuality supplies one record [IMPOSED].} Unselected
 alternatives are potential or counterfactual relative to that record, not
@@ -3233,8 +3361,9 @@ facts determines the relative frequencies of alternative records.
 One common substrate space carrying four jointly defined local response
 variables under one setting-independent ensemble measure implies
 $|S|\le2$, however singular, dissipative, or noninvertible each record is.
-This paper constructs no mechanism that reaches the quantum
-correlations.
+The imposed reference selector explicitly rejects joint local response
+factorization while preserving measurement independence; it reaches the
+selected quantum correlations only because it consumes their weights.
 
 \textbf{The discrete model instantiates the architecture and prices it.}
 It supplies succession, a strict dependency reach, screened harmonic
@@ -3247,10 +3376,11 @@ experiment supplies only a classical detector regime.
 The merge is therefore an itemized architecture, not a unification:
 quantum theory specifies conditional weights, thermodynamics prices the
 production and retention of a record, relativity constrains its operational
-description, and the selector must still connect those pieces without
-violating the Bell accounting. The central open object is the joint
-construction of a physical response map, its ensemble measure, and the
-required Born/Bell pushforwards.
+description, and the reference selector shows that deterministic contextual
+actualization is logically compatible with the Bell accounting. The central
+open object is the joint \emph{physical} construction of the preparation map,
+equilibrium measure, response map, and required Born/Bell pushforwards without
+reading their targets.
 
 Itemized is a claim that can be checked, and checking it needs the items
 in one place at their actual strength rather than at the strength the
@@ -3291,6 +3421,15 @@ definition within the scaffold; no theorem that they persist as independent
 substrate objects \\
 Closure map $\Gamma$ from history to state & Declared scaffold; history
 alone is insufficient \\
+Actual record algebra \eqref{eq:actualalgebra} & \textbf{[AXIOM]}; bounded
+classical configuration functions are commutative and finite ternary records
+form $\mathbb C^{3^{|\Lambda|}}$, not a full matrix algebra \\
+Potentiality net and qutrit witness \eqref{eq:qutritnet} & \textbf{[AXIOM]
++ [SELECTED REFERENCE REPRESENTATION]}; finite regions are Type~I and the
+quasi-local reference limit is UHF. No automatic Type-III claim \\
+Preparation map $\Gamma_\Lambda$ & Adopted interface with restriction
+consistency proved in the reference witness; physical substrate recovery
+\textbf{[OPEN]} \\
 Identification of genesis/manifestation with $\Sigma_O$ &
 \textbf{[CONJECTURE --- model-scoped identification]}; the engine rule is
 explicit, but no laboratory outcome map is constructed \\
@@ -3315,12 +3454,16 @@ Effect-noncontextual additivity & Declared postulate
 Trace rule and the Born square \eqref{eq:born} & External
 \textbf{[THEOREM]}, conditional on the imported effect space and
 Postulate~\ref{post:B}~\cite{busch} \\
-Finite reconstruction $\to$ local AQFT bridge & \textbf{[OPEN]}; no
-inductive/continuum construction or representation compatibility is given
-\\
+Discrete local-net proof package & \textbf{[THEOREM --- adopted reference
+net]}; isotony, actual commutativity, spacelike commutation, compatible state
+restriction, normalized causal instruments, and order independence \\
 Physical Born pushforward \eqref{eq:pushforward} & \textbf{[OPEN]};
 neither the physical response map nor its ensemble measure is constructed
 \\
+Deterministic quantile selector \eqref{eq:quantileselector} &
+\textbf{[IMPOSED REFERENCE REALIZATION]}; exact pushforward under invariant
+Lebesgue measure, measurement independent and globally contextual. It consumes
+$\omega(E)$ and is therefore not a physical Born derivation \\
 CPTP dynamics, unitarity, Schr\"odinger form & External theorems,
 conditional on their stated premises \\
 Quadrature root $\times$ degree ratio \eqref{eq:qrdr} & Exact identity
@@ -3349,6 +3492,10 @@ $2\times10^{-6}$ there only by extrapolation. Galilean and disqualified as
 a relativity test \\
 No native quartic clock & Negative at screened scope only; not a no-go
 theorem \\
+Context-blind dual clock feedback and compliant gate & \textbf{[SELECTED
+REFERENCE CONTROLLER]}; detuning and amplitude/action channels with explicit
+work, dissipation, and compliance audit. Native actuation and non-rescalability
+remain \textbf{[OPEN]} \\
 Register barrier $=\varepsilon$ (Prop.~\ref{prop:registerbarrier}) &
 \textbf{[THEOREM --- declared compact-support model]}; exact plane crossing
 and $N\le2$ bound plus $11{,}250{,}000$ exact-rational,
@@ -3376,12 +3523,14 @@ Singularity, dissipation, or noninvertibility \emph{alone} as an escape
 from Fine/Bell &
 \textbf{[CLOSED NEGATIVE]}; it changes record formation, not the induced
 joint distribution \\
-Quantum CHSH recovery by the concrete selector & \textbf{[OPEN]}; no
-physical Born/Bell pushforward is constructed. $2\sqrt2$ is an external
-quantum bound, not a result of the threshold mechanism \\
+Reference CHSH recovery by $\Sigma_C$ & \textbf{[THEOREM inside adopted
+algebra + IMPOSED selector]}; selected singlet/observables give $2\sqrt2$,
+all local marginals are no-signalling, local factorization fails, and PR-box
+$S=4$ is excluded. No physical substrate Born/Bell recovery \\
 Order-independence \eqref{eq:R3} $\nRightarrow$ equivariance
-\eqref{eq:R4} & Logical separation; both conditions open for any
-preferred-foliation realization \\
+\eqref{eq:R4} & Logical separation; order independence passes in the adopted
+causal-instrument reference model, while empirical preferred-order hiding and
+strong history equivariance remain open \\
 Operational hiding of a preferred foliation & Conditional reduction
 (Prop.~\ref{prop:hiding}); follows if quantum composed-history statistics
 and spacelike order-independence are already supplied \\
@@ -3451,17 +3600,16 @@ in this paper \\
 
 \begin{enumerate}\itemsep3pt
 \item \textbf{The Born pushforward for a concrete substrate.} Construct
-$F_O$ and $\mu$ from a substrate's own dynamics and test
-\eqref{eq:pushforward} against laboratory frequencies. For a
-deterministic substrate this is a quantum-equilibrium problem: the
-microstate measure must be Born-distributed under the coarse-graining the
-substrate itself supplies.
-\item \textbf{The Bell pushforward.} State explicitly which premise of
-Proposition~\ref{prop:irreversiblebell} the concrete selector rejects and
-construct the resulting cross-context law. Noninvertibility, dissipation,
-and singular records do not answer this. Any measurement-dependent or
-context-indexed route must be declared and quantitatively constrained
-rather than inferred from actualization.
+$F_O$ and $\mu_{\rm eq}$ from the substrate's own dynamics without reading
+target probabilities. The locked, unexecuted first campaign tests the
+free-flux density $n=|\phi_+|^2$, equilibrium invariance, context overlap,
+held-out instruments, and an explicit target-leak sentinel; interacting and
+genesis transfer are later gates.
+\item \textbf{The physical Bell pushforward.} V2 has already named the
+rejected premise: the deterministic selector is globally contextual and
+nonfactorizable, while measurement independence is retained. Recover that
+response law from the substrate and show no-signalling on held-out contexts.
+Noninvertibility, dissipation, and singular records do not answer this.
 \item \textbf{Thermodynamic closure of record writing.} Complete a repeated
 genesis--record--reset cycle with bath state, heat, work and entropy tracked.
 The current bath-rank and nonrepeatability theorems price the missing
@@ -3471,45 +3619,47 @@ outcome.
 unit-strut tensegrity exist under the single-scale law, with blocking
 form definite on its full flex space? No candidate realizes it; no
 impossibility proof exists.
-\item \textbf{What holds the threshold.} Proposition~\ref{prop:threshold}
+\item \textbf{What physically holds the threshold.} Proposition~\ref{prop:threshold}
 forces the quartic \emph{at} $\mu = 0$, and $\mu = 0$ is a
 codimension-one surface: the generic configuration is not on it, and an
-unmaintained system falls off it and becomes a harmonic clock. So the
-lemniscatic clock's real price is a maintenance cost, and this paper does
-not identify anything that pays it. What physical mechanism holds
-$\mu = 0$ against detuning? Without an answer, the proposition describes
-a clock nothing is shown to be able to keep.
+unmaintained system falls off it and becomes a harmonic clock. The selected
+dual feedback controller proves that a context-blind audited loop can hold the
+reference clock. What native mechanism pays that work, survives held-out
+perturbations, and distinguishes $G^*$ from a removable period rescaling?
 \item \textbf{Shielded actualization.} The measured purity diagnostic
 (page~\pageref{diag:purity}) indicates that, in the tested additive
 instrument, the slow channel must be nearly
 exclusive at the threshold. Can any physical manifestation rule be
 shielded from its own field's fast noise?
-\item \textbf{Selector-history equivariance.} Exhibit strong equivariance,
-or state explicitly that a preferred-foliation ontology rejects it.
-Operational hiding is conditionally reduced by
-Proposition~\ref{prop:hiding}; its Born/Bell hypothesis remains open.
+\item \textbf{Preferred-order operational hiding.} Strong history
+equivariance is not imposed by v2; its ontology permits a real preferred
+order. Operational hiding is conditionally reduced by
+Proposition~\ref{prop:hiding}, but the substrate Born/Bell hypothesis and
+common-cone tests remain open.
 \item \textbf{Quantum sequential growth.} The classical classification is
 known; the quantum analogue with interfering weights is open.
-\item \textbf{A coupled model.} Every demonstrator in this paper runs its
-modules independently. Exhibit a system in which the clock's phase gates
-the register and the register's state back-reacts on the carrier, and
-check whether the architecture survives the feedback it has so far
-avoided.
+\item \textbf{A physically coupled model.} The v2 standalone simulator now
+composes history, preparation, local instruments, maintained $G^*$ gate,
+selector, and records, but it imports the state--effect weights. Recover the
+preparation and pushforward from substrate dynamics, add register-to-carrier
+backreaction, and check the energy and signalling audits without target
+leakage.
 \item \textbf{What the second energy scale is.} $\rho =
 \varepsilon_2/\varepsilon$ is now a named free parameter of the
 architecture \eqref{eq:economy} rather than an unnoticed one. Either
 derive it from the closure species' own structure, or accept it as a
 second declared constant and price it in the import ledger.
+\par\smallskip
 \item \textbf{The barrier without compact support.} Proposition
 \ref{prop:registerbarrier} is exact because the bond law vanishes
 identically beyond $3/2$. Establish the corresponding statement for a
 potential with a tail --- where the barrier is strictly below
 $\varepsilon$ --- or show that compact support is forced.
-\item \textbf{From finite dimensions to local algebras.} The
-reconstruction of Section~\ref{sec:operational} is finite-dimensional, while
-the covariant setting of Section~\ref{sec:relativity} uses local algebras
-that are not of type~I and admit no density matrix. The bridge is
-imported wholesale and never constructed.
+\item \textbf{From the selected net to a physical representation.} The
+finite qutrit witness is Type~I and its quasi-local limit is UHF. Determine
+which preparation states the substrate generates, construct the relevant GNS
+representations, and classify any limiting factor only from that
+state-and-representation data. No Type-III status is assumed.
 \item \textbf{Radiative and interacting common-cone matching.} Inventory
 all symmetry-allowed operators of dimensions three and four for one action,
 remove the single time-normalization redundancy, and compute the remaining
@@ -3700,6 +3850,9 @@ Phys.\ Rev.\ A \textbf{84}, 012311 (2011).
 \bibitem{busch} P.~Busch, \emph{Quantum states and generalized
 observables: a simple proof of Gleason's theorem},
 Phys.\ Rev.\ Lett.\ \textbf{91}, 120403 (2003).
+
+\bibitem{fine} A.~Fine, \emph{Hidden variables, joint probability, and the
+Bell inequalities}, Phys.\ Rev.\ Lett.\ \textbf{48}, 291 (1982).
 
 \bibitem{davieslewis} E.~B.~Davies and J.~T.~Lewis, \emph{An operational
 approach to quantum probability}, Commun.\ Math.\ Phys.\ \textbf{17}, 239
