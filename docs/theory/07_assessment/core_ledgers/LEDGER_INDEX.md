@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (920 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (921 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -16,7 +16,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 41 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
 | [Algebraic spine — periods, Watson, transcendence](#algebraic-spine-periods-watson-transcendence) | 14 | Watson integrals, lattice Green-function periods, the native closure N, delta-independence, E1/E2 transcendence, the period-import frontier. |
 | [Framework — postulates & constitution](#framework-postulates-constitution) | 14 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
-| [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 54 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
+| [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 55 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
 | [Framework — audits, red-teams, reconciliation](#framework-audits-red-teams-reconciliation) | 25 | Adversarial audits, red-team remediation, retractions, tag-honesty and corpus-wide reconciliation passes, rigidity / look-elsewhere audits. |
 | [Quantum foundations](#quantum-foundations) | 19 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
 | [SM constants — mass & flavour](#sm-constants-mass-flavour) | 33 | m_e, m_p/m_e, Higgs mass, mixing angles, PMNS/CKM, Yukawa prefactors, the cluster-size-mass identification and its N(A) law. |
@@ -169,7 +169,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set.*
 
-**54 claims.**
+**55 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -227,6 +227,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0742` | SUPERSEDED | What was the matter-program evidence baseline before the resumed finite-support result? | L885 |
 | `FTD-0743` | SCOPE_CONTRACT | What exact state-only predicate would count as a metastable matter object? | L886 |
 | `FTD-0744` | SCOPE_CONTRACT | How should evidence decide among native state, reconstructed chart, constituent phase space, and connection-based extensions? | L887 |
+| `FTD-1002` | SYNTHESIS | Does the FTD-1000 fold contradict the four-walls distinctness theorem (FTD-0357), or is it licensed by it? | L1140 |
 
 ---
 
@@ -1240,7 +1241,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | SELECTION | 106 |
 | DERIVED | 99 |
 | SMC | 84 |
-| SYNTHESIS | 67 |
+| SYNTHESIS | 68 |
 | NUMERICAL_FACT | 54 |
 | CONSTRUCTIVE | 48 |
 | FOUNDATIONAL_OBSTRUCTION | 43 |
