@@ -244,5 +244,19 @@ two reductions, and the sensor loop with its missing actuator edge.)
   class, which would close C3 negative rather than positive. Either outcome
   retires a priced line; continuing to build algebraic scaffolding around an
   unresolved carrier does not.
+  **Update (2026-08-14, FTD-1004): step 2 has now been run — first
+  preregistered exact-certificate pass, Outcome B (scope-negative).**
+  `PREREG_UNIT_STRUT_TENSEGRITY_DECISION_v1.md` (lock tag
+  `preregister-unit-strut-tensegrity-decision-v1`), 12/12 checks: the lens
+  kill replicated bound-free; wheel, single-ring axial cage, rectangle
+  ladder, and two-term axial closures all closed negative exactly; the live
+  prism family (n ∈ {3,4}, spans ≤ 6, both wirings × chiralities, 288 cells)
+  died entirely at polarity (180) and embedding closure (108) — **no cell
+  reached the clearance, stress, or blocking gates**. Native C3 remains
+  [OPEN] beyond the declared scope; the named escapes are ≥3-term axial
+  closures, non-rectangular multi-strut quadrilaterals, non-prismatic
+  topologies, and larger spans. The two carrier-programme source documents
+  are hash-pinned by the prereg and deliberately left unedited; this note
+  and LEDGER row FTD-1004 carry the status.
 - The carrier's limiting speed and the energy's still disagree by ~6%
   (`FTD-0814`).
