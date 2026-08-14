@@ -167,6 +167,49 @@ The 2×2 logical independence of M and reversibility is fully witnessed: commuta
 
 **Corollary 3 (the frontier, sharpened)** `[SYNTHESIS]`. The modulus/argument frontier survives intact and gains precision: the substrate owns the modulus half; the argument half is not one missing object but **two missing axes** — the pairing (adjoint-defining) axis, whose state-sector absence is *forced* by lossiness (Lemma C), and the branch (root-selecting) axis, whose absence is arithmetic (valuation parity). "The chosen adjoint of the lossy map" remains the right slogan for the question; the answers it demands are provably plural.
 
+### 5.4 · Post-adoption note (2026-08-13, FTD-1002): the FTD-1000 fold — one roof is not one wall
+
+On 2026-08-13 the constitution folded the clock `[AXIOM]` (W4's coordinate-level
+surrogate) into FC-2's metric-half declaration as its per-worldline proper-time
+clause (FTD-1000). The four walls' data are therefore now housed under **three**
+constitutional declarations: FC-1 (W1, declined); FC-2 (carrying *two* adopted
+data — the flux-sector metric pairing, W2's metric half, and the matter-sector
+clock γ-consequence, W4's coordinate-level surrogate — plus the arrow
+declination); FC-W (W3, adopted). This packaging change touches nothing in this
+document's adjudication, and the following reads are of record:
+
+- **The supply matrix (§5.1) is unchanged.** W2 ⊬ W4 stands exactly as proven —
+  the cross-sector bar of §3.4, with the substrate itself the counterexample —
+  and the fold makes no supply claim: its own constitutional wording is
+  "adopted as part of the same commitment, **not derived separately**," with
+  FTD-0208 v3 cited as the reason no derivation exists.
+- **Main-theorem clause 3 is unchanged.** The clock datum is not *eliminated*
+  in favor of FC-2's metric datum; it is co-declared beside it. Clause 3's
+  phrase "the four commitments" is to be read as the four import **data** at
+  their §1 formalizations — the wall count — not as a count of constitutional
+  declarations, which FTD-1000 reduced to three. Four walls, two axes, three
+  roofs. (The wall count is a fact about choice spaces; the roof count is a
+  fact about the constitution's act structure — the FTD-0322–0327 act-count
+  distinction. FTD-1000 changed the latter only.)
+- **Corollary 1 sharpens rather than breaks.** The commitment pattern is now
+  decline (FC-1) / decline-plus-scoped-metric-plus-clock-clause (FC-2) / adopt
+  (FC-W). The two-clause structure inside FC-2 is *coherent only because*
+  W2(metric) and W4 are distinct, mutually non-supplying data: were
+  W2 ⊢ W4 true, the clock clause would be redundant (the metric adoption would
+  already carry it); were the two data identical, the fold would be vacuous.
+  The fold's very wording relies on the distinctness core this document
+  proves — the theorem is what licenses the packaging, not what the packaging
+  threatens.
+- **§3.5's reading is untouched.** The clock clause adopted by FTD-1000 is
+  exactly the coordinate-level γ-consequence of `SPEC_FTD_LAGRANGIAN.md` §4.3
+  (the same datum W4's §1 row always named); the unpinned (1+3) mixed-Gram
+  cross-terms flagged by FTD-0354 §6 remain unpinned, and wall 4's full
+  pairing content remains unadopted and closed-negative for substrate
+  derivation.
+
+`[SYNTHESIS + OBSERVATION]` — this note adjudicates the fold against the
+existing lemmas; it adds no lemma, moves no tag, and changes no cell of §5.1.
+
 ---
 
 ## 6 · Honest ceiling
