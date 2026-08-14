@@ -191,7 +191,7 @@ $$W_3 \;=\; \frac{G^{*2}}{2\pi}.$$
 
 The BCC sub-lattice is one of the three polyhedral layers of the substrate's Moore neighbourhood, so this is `G*` arising from a *lattice* quantity — a Green's-function period — of an entirely different *character* from Route 1's Γ-ratio (the Watson value is itself a `Γ(1/4)`-period, so this is convergence across different constructions, not across unrelated origins). The tag is `[THEOREM]` conditional on the cited classical evaluation, which means "rigour equals the source," not "depends on a conjecture." *([`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §5, Theorem 5; verified to 100 digits in PARI.)*
 
-**Route 3 — the `det_ζ` quarter-conjugacy bridge `[THEOREM]` (OT-1.7, FTD-0141).** Let `J` be the conjugacy operator with `J² = −I` (multiplication by `i`; the same `Z₄` seed of §I.1). A wavefunction on `S¹` with the quarter-twisted boundary condition `ψ(φ + 2π) = J ψ(φ)` has its two `J`-eigensectors forced onto the shifted spectra `D_{1/4} = {n + 1/4}_{n≥0}` and `D_{3/4} = {n + 3/4}_{n≥0}`. Lerch's formula for the ζ-regularized determinant of an arithmetic progression,
+**Route 3 — the `det_ζ` quarter-conjugacy bridge `[THEOREM — CONDITIONAL DOMAIN]` (OT-1.7, FTD-0141; corrected FTD-0839).** Let `J` be the conjugacy operator with `J² = −I`. After additionally selecting `S¹`, the quarter-twisted boundary `ψ(φ + 2π) = J ψ(φ)`, a positive half-line, origin `n=0`, unit spectral scale, first-order operator, and multiplicity one, its eigensectors have spectra `D_{1/4} = {n + 1/4}_{n≥0}` and `D_{3/4} = {n + 3/4}_{n≥0}`. Lerch's formula for the ζ-regularized determinant of an arithmetic progression,
 
 $$\textstyle{\det}_\zeta\{n + a\}_{n\ge 0} \;=\; \frac{\sqrt{2\pi}}{\Gamma(a)},$$
 
@@ -319,7 +319,7 @@ To answer the readout problem one cannot merely fail to find an assembly and cal
 
 - **What IS forward-forced** `[DERIVED]/[THEOREM]`, agreed by every route with nothing smuggled:
   - the **even trace** `16G*²` — `16 = |μ₄|²` for `E : y² = x³ − x` (FTD-0006); `G*² = 2π·G_BCC(0)`, the Watson BCC self-energy (FTD-0002);
-  - the **existence of a clean FTD-native odd source**: the J-twisted determinant ratio `det_ζ(D_{3/4})/det_ζ(D_{1/4}) = Γ(1/4)/Γ(3/4) = G*` (degree 1; the `√(2π)` cancels, so there is no forbidden `√π` prefactor — FTD-0234). This is *strictly stronger than trace-only*: it means `16G*³ = 16G*²·G*` is **assemblable**, which genuinely lifts the bare-parity no-go of FTD-0233.
+  - the **existence of a clean conditional odd source**: on the FQCR selected spectral domain, `det_ζ(D_{3/4})/det_ζ(D_{1/4}) = Γ(1/4)/Γ(3/4) = G*`. FTD-0839 proves that this is not forced by `J²=-I`: origin, multiplicity, order, scale, and chiral polarization change or erase it. Algebraically it still makes `16G*³ = 16G*²·G*` assemblable; physically the source is conditional rather than production-native.
 - **What is NOT forced** `[OPEN — the boundary]`:
   - the **operator assembly itself** — that the *same* 2×2 readout carrying `Tr = 16G*²` also has `det = 16G*³`. For a 2×2 operator, trace and determinant are **independent invariants**; fixing the trace leaves the determinant free. The odd scalar `G*` exists, but nothing forces the *gluing* — neither that the two invariants belong to one operator, nor that the odd scalar lands in the determinant slot rather than anywhere else. This residual is precisely the imposed master-quadratic Vieta target, **W-CRIT-2**. `[OPEN]`
 
@@ -353,7 +353,7 @@ These three components are why the boundary is a *wall* and not a mere absence o
 
 The three theorem-grade components hem the obstruction into a single irreducible obligation. In the four dialects of §II.3 it is one statement — the canonical sources call it **K-BIND** (`= K-3c = R* = K-GAL`):
 
-> **K-BIND** `[CLOSED THEOREM-NEGATIVE under FTD-0244]`. Prove — or refute — that no substrate-native operator construction can bind the degree-1, `C₃`-agnostic odd scalar `G*` (the J-twisted `det_ζ` ratio, FTD-0234 `[THEOREM]`) into the determinant slot of the *same* 2×2 readout that carries the definite complex structure `i`, with the exponent fixed at exactly **1** by the substrate rather than chosen.
+> **K-BIND** `[CLOSED THEOREM-NEGATIVE under FTD-0244]`. Prove — or refute — that no substrate-native operator construction can bind the degree-1, `C₃`-agnostic scalar `G*` (represented conditionally by the J-twisted `det_ζ` ratio; FTD-0839) into the determinant slot of the *same* 2×2 readout that carries the definite complex structure `i`, with the spectral realization and exponent fixed by the substrate rather than chosen.
 
 In the field dialect this is the cleanest form, and it gives the Part its name. To fix α, the substrate must **natively realize** the quantity
 

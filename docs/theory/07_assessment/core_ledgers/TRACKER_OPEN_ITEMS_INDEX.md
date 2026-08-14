@@ -1,16 +1,16 @@
 # Open Items Tracker — Index
 
-Generated companion to `TRACKER_OPEN_ITEMS.md` (81 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
+Generated companion to `TRACKER_OPEN_ITEMS.md` (83 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
 
 This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remains canonical; open/closed status here is read mechanically from each item's own heading text (a `CLOSED`/`RETRACTED`/`not counted as open` marker), not reclassified. Where this index and the tracker's prose disagree, the tracker wins.
 
-**40 open, 41 closed/retired** (of 81 item headings).
+**41 open, 42 closed/retired** (of 83 item headings).
 
 ---
 
 ## §1 Engine code
 
-**10 open / 19 total.**
+**10 open / 20 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|
@@ -29,6 +29,7 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 | 1.9d | [Quartic Waveform Nonlinear Edge Signature](TRACKER_OPEN_ITEMS.md#19d-quartic-waveform-nonlinear-edge-signature-conditional-exact-result-native-prerequisites-blocked-ftd-0773) | CONDITIONAL EXACT RESULT; NATIVE PREREQUISITES BLOCKED (FTD-0773) | **OPEN** |
 | 1.9e | [Native q_active Temporal Pilot](TRACKER_OPEN_ITEMS.md#19e-native-q_active-temporal-pilot-exact-profile-candidate-retired-recurrence-open-ftd-0776) | EXACT-PROFILE CANDIDATE RETIRED; RECURRENCE OPEN (FTD-0776) | **OPEN** |
 | 1.9f | [Dyadic Monodromy Clock--Memory Boundary](TRACKER_OPEN_ITEMS.md#19f-dyadic-monodromy-clock--memory-boundary-exact-synthetic-pass-native-bridge-open-ftd-0777) | EXACT SYNTHETIC PASS; NATIVE BRIDGE OPEN (FTD-0777) | **OPEN** |
+| 1.9g | [Native Phase/Action and CM Realization](TRACKER_OPEN_ITEMS.md#19g-native-phaseaction-and-cm-realization-modal-carrier-established-quartic-clock-lift-closed-conditionally-local-clock-open-ftd-082608270828) | MODAL CARRIER ESTABLISHED; QUARTIC-CLOCK LIFT CLOSED CONDITIONALLY; LOCAL CLOCK OPEN (FTD-0826/0827/0828) |  |
 | 1.10 | [CPU-only no-op toggles](TRACKER_OPEN_ITEMS.md#110-cpu-only-no-op-toggles-closed-2026-04-17-callstack-audit-fixes) | CLOSED 2026-04-17 (callstack audit fixes) |  |
 | 1.9 | [Muon / tau spatial prescription](TRACKER_OPEN_ITEMS.md#19-muon-tau-spatial-prescription-closed-2026-04-17) | CLOSED 2026-04-17 |  |
 | 1.11 | [s-field Metropolis for thermal ternary ensembles](TRACKER_OPEN_ITEMS.md#111-s-field-metropolis-for-thermal-ternary-ensembles-ledger-ftd-0052-open-deferred) | LEDGER FTD-0052 — **[OPEN, DEFERRED]** | **OPEN** |
@@ -36,7 +37,7 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 
 ## §2 Theory — derivations (`docs/theory/03_derivations/`)
 
-**8 open / 13 total.**
+**9 open / 14 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|
@@ -50,6 +51,7 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 | 2.8 | [Lattice chiral anomaly](TRACKER_OPEN_ITEMS.md#28-lattice-chiral-anomaly-3-open) | **3 `[OPEN]`** | **OPEN** |
 | 2.9 | [Variational proof](TRACKER_OPEN_ITEMS.md#29-variational-proof-2-open) | **2 `[OPEN]`** | **OPEN** |
 | 2.10 | [QM from lattice](TRACKER_OPEN_ITEMS.md#210-qm-from-lattice-closed-declined-2026-06-10) | CLOSED DECLINED 2026-06-10 |  |
+| 2.10a | [Contextual-actualization successor](TRACKER_OPEN_ITEMS.md#210a-contextual-actualization-successor-4-open-v2-branch-ftd-0825) | **4 `[OPEN]` (v2 branch, FTD-0825)** | **OPEN** |
 | 2.11 | [K_comp volumetric shell](TRACKER_OPEN_ITEMS.md#211-k_comp-volumetric-shell-2-open) | **2 `[OPEN]`** | **OPEN** |
 | 2.12 | [Single-file 1-`[OPEN]` items in derivations](TRACKER_OPEN_ITEMS.md#212-single-file-1-open-items-in-derivations) | — | **OPEN** |
 | 2.13 | [Mechanism C](TRACKER_OPEN_ITEMS.md#213-mechanism-c-g_c-from-bcc-bridge-operator-closed-negative-archived) | `g_c` from BCC bridge operator — **CLOSED NEGATIVE (archived)** |  |
@@ -113,7 +115,7 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 | 7.6 | [Misc status/meta files](TRACKER_OPEN_ITEMS.md#76-misc-statusmeta-files) | — | **OPEN** |
 | 7.7 | [2026-04-27/28 priorities (post engine-as-instrument cycle)](TRACKER_OPEN_ITEMS.md#77-2026-04-2728-priorities-post-engine-as-instrument-cycle-0-open-4-closed) | **0 `[OPEN]`, 4  CLOSED** |  |
 | 7.8 | [Round-table discussion residue](TRACKER_OPEN_ITEMS.md#78-round-table-discussion-residue-3-open-2026-06-30-no-canonical-doc) | **3 `[OPEN]`** (2026-06-30, no canonical doc) | **OPEN** |
-| 7.9 | [C3 native `n = 4` decision](TRACKER_OPEN_ITEMS.md#79-c3-native-n-4-decision-1-open-theorem-grade-target) | **1 `[OPEN]` (theorem-grade target)** | **OPEN** |
+| 7.9 | [Local clock and C3 native `n = 4` decision](TRACKER_OPEN_ITEMS.md#79-local-clock-and-c3-native-n-4-decision-2-open-separate-gates) | **2 `[OPEN]` (separate gates)** | **OPEN** |
 
 ## §8 Scripts
 

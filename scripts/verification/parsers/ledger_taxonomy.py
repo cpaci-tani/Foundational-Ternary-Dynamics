@@ -279,6 +279,11 @@ RANGES = [
     ((820, 821), "native-time-carrier"),       # period factorisation; threshold forcing
     ((822, 824), "native-time-carrier"),       # register barrier proven; economy
                                                # refuted; MVC reduction corrections
+    ((825, 825), "qm-foundations"),            # contextual-actualization successor
+    ((826, 826), "native-time-carrier"),        # native modal carrier + CM realization boundary
+    ((827, 827), "native-time-carrier"),        # conditional quartic-clock / CM gearbox
+    ((828, 828), "native-time-carrier"),        # minimum native-clock requirements + orientation
+    ((829, 999), "native-time-carrier"),        # tangent ladder through cumulative growth resource/backpressure law
 ]
 
 # ---------------------------------------------------------------------------
@@ -314,6 +319,9 @@ EXCEPTIONS = {
     # alpha-adjacent rows inside other blocks
     "FTD-0011": "alpha-readout",                # g_c^2 scales alpha_r
     "FTD-0013": "spine-master-quadratic",       # stays with the polynomial
+    # outside every range (first ids past FTD-0999) but framework-level content
+    "FTD-1000": "framework-postulates",         # CLK-1 folded into FC-2, constitution amendment
+    "FTD-1001": "native-time-carrier",          # batch certificate relock (0993/0995/0998 chains)
 }
 
 

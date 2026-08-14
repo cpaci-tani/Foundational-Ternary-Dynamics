@@ -197,7 +197,7 @@ Every way the framework can be killed, upgraded, or refuted — merged from four
 | FTD-0310 + FTD-0320 rigidity audits | six simple-rational identifications **not rigid** — all demoted `[PARAMETRIC]` |
 | FTD-0143 FQCR quadruple scan (2026-07-12) | **uniqueness rejected** — 2401/2401 α-matchers; ansatz generic at t=1 |
 | FTD-0244 K-BIND | **theorem-negative** — the native-carrier route to FC-W·a is closed |
-| FTD-0208 clock hypothesis v3 | **closed negative, axiom-level** — the L² budget is an independent import |
+| FTD-0208 clock hypothesis v3 | **closed negative, axiom-level** — the L² budget is not substrate-derivable; as of 2026-08-13 (FTD-1000) folded into FC-2's metric-half declaration (`SPEC_FTD_FRAMEWORK_V1.md` §5.2) rather than tracked as a standalone independent import |
 | FTD-0131 "G_N = 1/100" | **falsified** under every natural reading (10²⁰–10⁴³ off) |
 | FTD-0025 confinement routes | all three classical substrate routes **closed negative** (structural obstruction stands) |
 | FTD-0362 native mass gap | **closed negative** in the probed regime |

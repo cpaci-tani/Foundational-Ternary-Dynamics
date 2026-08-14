@@ -5,6 +5,15 @@
 **Data:** [`unified_axiom_register.json`](unified_axiom_register.json) (canonical) · **Verifier:** `scripts/proofs/proof_unified_register.py`.
 **Precedence:** LEDGER > constitution > this document > other prose. On L2/L3/L4 membership and on all prices and falsifiers, `import_ledger.json` (FTD-0371) is authoritative; this register must reconcile to it exactly (§4).
 
+> **Version boundary (FTD-0825, 2026-08-09).** This register and
+> `unified_axiom_register.json` specify v1/FC-1 and remain frozen for provenance.
+> They are not silently amended by the successor programme. The v2 branch is
+> defined by `SPEC_FTD_FRAMEWORK_V2_CONTEXTUAL_ACTUALIZATION.md` and its
+> machine-readable overlay `contextual_actualization_register_v2.json`. In v2,
+> measurement independence is axiomatic and the noncommutative potentiality net
+> plus globally contextual selector are explicit adoptions/selections. DEC-1
+> remains true historically for v1 and is superseded only inside the v2 branch.
+
 ---
 
 ## §0 · Scope and interpretive constraints
@@ -38,11 +47,13 @@ Three interpretive constraints govern the document. First, every §2 row whose p
 | Posit | Content | Tag of record |
 |---|---|---|
 | ACT-1 | the second-order flux-wave action (Δ_t J)², standing, flux-sector-scoped per FC-2's arrow half; consumed by U-9/U-12 | [AXIOM — flux-wave-sector-scoped] |
-| CLK-1 | the coordinate-level clock hypothesis (Lagrangian §4.3); FTD-0208 v3 CLOSED NEGATIVE: not substrate-derivable | [AXIOM — coordinate-level, independent] |
+| CLK-1 | the local proper-time dilation rate law (Lagrangian §4.3) — not the global tick (P2, unconditional, never in question) — folded 2026-08-13 into FC-2 §5.2 as its per-worldline clause (FTD-1000); FTD-0208 v3 CLOSED NEGATIVE: not substrate-derivable | [AXIOM — folded into FC-2, constitution §5.2 / FTD-1000] |
 | CLK-2 | the rest-mass Klein–Gordon clock of FTD-0271 (A0: the native flux is massless; default-OFF toggle) | [IMPOSED/SELECTION], not [FORCED] |
 | MDL-1 | the Langevin noise model, under which PL-1 is a theorem *of the model* | [IMPOSED — model] |
 
-**Recorded gaps.** (i) CLK-1, CLK-2, MDL-1, and ACT-1 carry no import-ledger line; their pricing awaits the D5 currency ruling (an import-ledger v1.2 revision). (ii) The engine-level [IMPOSED] dynamics inputs — the latency field L(x), the dual-substrate L/R decomposition, and the threshold kinetics K_GENESIS = N_c·K_MANIFEST (constitution §1.4/§3.2) — likewise carry no register line; same trigger. (iii) The FC-3 falsification-criterion gap noted above.
+**CLK-1 update (native time carrier programme, FTD-0899–FTD-0999, 2026-08-11/12; adversarially audited 2026-08-13).** This ~100-file programme (`docs/theory/10_eft_program/native_time_carrier_programme/`, `derivations/native_time_carrier_programme/`, `temporal_interior_programme/`) is a direct attack on CLK-1 — it searches for a native substrate clock/time carrier. It did not close the gap: every candidate still fails carrier constraint C11 by self-admission, several sub-branches (native orientation memory, plaquette/C4 circulation) were tried and closed negative, the native C3 unit-strut-tensegrity campaign it names as next was not run in this stretch, and it culminates in FTD-0999, an exact but purely scalar clock-growth conservation law with finite-tick G*, Born, and Bell all left open; G* itself is used only as an exogenous cadence constant, never re-derived (FTD-0904 certificate C49). CLK-1 remained exactly where it was — [AXIOM — coordinate-level, independent] — after this programme; that independent tracking ended 2026-08-13 (FTD-1000), when CLK-1 was folded into FC-2 §5.2 as its per-worldline proper-time clause (see the L5 table row above) — a re-homing, not a tag promotion, and the programme's own open/negative findings are untouched by it. Fuller accounts: LEDGER.md (search FTD-0899–FTD-0999, and FTD-1000) and SPEC_DOCTRINE_LEDGER.md §2.1.
+
+**Recorded gaps.** (i) CLK-2, MDL-1, and ACT-1 carry no import-ledger line; their pricing awaits the D5 currency ruling (an import-ledger v1.2 revision). CLK-1 no longer appears in this gap: as of 2026-08-13 (FTD-1000) it is folded into the already-adopted FC-2 (constitution §5.2) and rides that commitment's status rather than needing an independent price. (ii) The engine-level [IMPOSED] dynamics inputs — the latency field L(x), the dual-substrate L/R decomposition, and the threshold kinetics K_GENESIS = N_c·K_MANIFEST (constitution §1.4/§3.2) — likewise carry no register line; same trigger. (iii) The FC-3 falsification-criterion gap noted above.
 
 **Non-members.** DEC-1 (M) and DEC-2 (reversibility) are declined commitments, held as falsifiable bets. The five chartered candidates P6C-F/G/C/M/U of §3 are not adopted and appear in no layer above. That list covers only the §5.5 Stage-U2 candidates; **P6C-R** (kinematic frame-invariance) remains chartered at charter §2/AM-5 as the minimal candidate on the DEC-2 bet.
 

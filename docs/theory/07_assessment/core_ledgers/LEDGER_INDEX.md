@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (771 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (920 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -15,10 +15,10 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Algebraic spine — master quadratic](#algebraic-spine-master-quadratic) | 18 | The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification. |
 | [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 41 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
 | [Algebraic spine — periods, Watson, transcendence](#algebraic-spine-periods-watson-transcendence) | 14 | Watson integrals, lattice Green-function periods, the native closure N, delta-independence, E1/E2 transcendence, the period-import frontier. |
-| [Framework — postulates & constitution](#framework-postulates-constitution) | 13 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
+| [Framework — postulates & constitution](#framework-postulates-constitution) | 14 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
 | [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 54 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
 | [Framework — audits, red-teams, reconciliation](#framework-audits-red-teams-reconciliation) | 25 | Adversarial audits, red-team remediation, retractions, tag-honesty and corpus-wide reconciliation passes, rigidity / look-elsewhere audits. |
-| [Quantum foundations](#quantum-foundations) | 18 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
+| [Quantum foundations](#quantum-foundations) | 19 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
 | [SM constants — mass & flavour](#sm-constants-mass-flavour) | 33 | m_e, m_p/m_e, Higgs mass, mixing angles, PMNS/CKM, Yukawa prefactors, the cluster-size-mass identification and its N(A) law. |
 | [Alpha readout programme (MC-T4.3)](#alpha-readout-programme-mc-t4-3) | 33 | The alpha-readout contract, the ARC-A/B/C campaigns, observable selection, FC-W and the carrier-narrowing theorem, engine alpha probes. |
 | [QCD, colour & electroweak](#qcd-colour-electroweak) | 15 | Confinement, colour charge and singlets, SU(3)/Z3 structure, hadrodynamics, electroweak rank, generations, no-4th-generation. |
@@ -29,7 +29,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Charge, Gauss & native EM emergence](#charge-gauss-native-em-emergence) | 15 | Native additive charge, Gauss projection and dressing, face-current sidecars, longitudinal susceptibility, dressed hazards, monopoles. |
 | [Common-action mechanics & reciprocity](#common-action-mechanics-reciprocity) | 146 | Forces, work and recoil for a hop; the worldline/Legendre action; charts, collisions and quotients; energy closure and Peierls barriers. |
 | [Constituent-complete matter](#constituent-complete-matter) | 167 | Compact cores, trimers and connected blocks; rest states and Hessians; transport, gait, capture/binding, wakes, causal-horizon persistence. |
-| [Native time & the carrier programme](#native-time-the-carrier-programme) | 33 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
+| [Native time & the carrier programme](#native-time-the-carrier-programme) | 180 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
 | [Meta — papers, tooling, project process](#meta-papers-tooling-project-process) | 17 | Paper splits and referee rounds, monographs, node maps and synonymy graphs, trackers, pre-registration registries, project policy. |
 
 ---
@@ -144,7 +144,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules.*
 
-**13 claims.**
+**14 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -161,6 +161,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0255` | AXIOM, THEOREM, OPEN | FC-1 — the framework declines the measurement-map import M (commutative algebra A₅ is complete) | L418 |
 | `FTD-0256` | AXIOM, SYNTHESIS, THEOREM, CLOSED_NEGATIVE | FC-2 — the arrow is native; global reversibility declined; Lorentzian metric emergent-IR + sector-scoped; space ⊥ time | L419 |
 | `FTD-0257` | SYNTHESIS, SELECTION, MEASURED, THEOREM, IMPOSED | Two-orthogonal-fields formalization — Flux ⊥ State primary pair; nested symplectic (q,p) quadrature pair; decompositions-not-dimensions | L420 |
+| `FTD-1000` | SUPERSEDED, SYNTHESIS | Does folding CLK-1 into FC-2's metric-half declaration correctly register an adoption rather than a derivation, and does it require disambiguating… | L1138 |
 
 ---
 
@@ -269,7 +270,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection.*
 
-**18 claims.**
+**19 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -291,6 +292,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0796` | THEOREM, EXACT, CORRECTION | Can a framework committed to `A_5`-completeness (FC-1) reproduce CHSH `S = 2 sqrt 2`? | L953 |
 | `FTD-0807` | IMPOSED, CORRECTION, OPEN | Which weighting do threshold upcrossings follow — amplitude, occupation (Born), or energy? | L969 |
 | `FTD-0809` | MEASURED, OPEN | Does the mechanism-level Born regime carry into the engine, and is the latency sector a viable slow gate? | L971 |
+| `FTD-0825` | AXIOM, SELECTION, THEOREM, OPEN | Does the contextual-actualization successor close the Bell/Born/time ambiguity at reference-model level without rewriting v1? | L987 |
 
 ---
 
@@ -1010,7 +1012,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them.*
 
-**33 claims.**
+**180 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -1038,7 +1040,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0801` | CLOSED_NEGATIVE, MEASURED, SYNTHESIS | Does the locked periodic triangulated-sheet candidate realize C3 as an `n = 4` mechanism for a free body under the registered compact law? | L963 |
 | `FTD-0804` | CONDITIONAL, THEOREM, MEASURED | Does a minimum viable clock carrier exist, and at what price? | L966 |
 | `FTD-0805` | CONSTRUCTIVE, CLOSED_NEGATIVE, OPEN | Does the registered single-scale law natively host an `n = 4` mechanism? | L967 |
-| `FTD-0806` | SCOPE_CONTRACT, SYNTHESIS | Temporal-interior programme registered (charter plus three criteria specs). | L968 |
+| `FTD-0806` | SUPERSEDED, SYNTHESIS | Temporal-interior programme registered (charter plus three criteria specs). | L968 |
 | `FTD-0808` | EXACT | T2 first screen: does a geometric bit hold state, and at what barrier? | L970 |
 | `FTD-0814` | DERIVED, MEASURED, RETRACTED, OPEN | What must a clock carrier be made of for its rate to dilate relativistically? | L976 |
 | `FTD-0817` | DERIVED | What is `G*` the constant of, in clock terms? | L979 |
@@ -1047,6 +1049,153 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0822` | THEOREM, SUPERSEDED, CONDITIONAL | Is the register's barrier equal to one bond depth, or only bounded by it? | L985 |
 | `FTD-0823` | REFUTATION, DERIVED | Does one energy scale `ε` price binding, clock rate and retention — the architecture's economy claim? | L986 |
 | `FTD-0824` | DERIVED, CORRECTION | What is the four-chain clock's finite-amplitude correction, exactly? | L984 |
+| `FTD-0826` | THEOREM, CONDITIONAL, CLOSED_NEGATIVE, SELECTION | Can a target-blind native phase/action carrier be source-fixed and connected, by one genuine operator, to the archimedean quartic period and… | L988 |
+| `FTD-0827` | THEOREM, OPEN | Does the selected critical quartic clock itself supply the oriented rank-two conductor-32 CM gearbox that the BCC symmetric square loses? | L989 |
+| `FTD-0828` | SYNTHESIS, THEOREM, CORRECTION, OPEN | What are the minimum requirements for a substrate-native clock, and can the substrate retain the clockwise/counterclockwise datum erased by BCC's… | L990 |
+| `FTD-0829` | EXECUTION_INVALID, CORRECTION | Can the locked FTD-0774 tangent campaign be made adjudicable by repairing its periodic-Hodge normalization and preflight serialization without… | L991 |
+| `FTD-0830` | EXECUTION_INVALID | Does stable four-pass reinsertion of the separately retained face harmonic close the FTD-0829 certificate boundary? | L992 |
+| `FTD-0831` | MEASURED, EXECUTION_INVALID, OPEN | After replacing the impossible near-zero harmonic ratio by its declared binary64 backward-error floor, does the complete tangent preflight become… | L993 |
+| `FTD-0832` | MEASURED, EXECUTION_INVALID, OPEN | Does an explicit electric harmonic coordinate and nonsingular complete-product chart finally adjudicate the locked L=17 tangent candidate? | L994 |
+| `FTD-0833` | INVALID | Can the first FTD-0832 replay `NameError` be repaired without changing the verifier or any gate? | L995 |
+| `FTD-0834` | INVALID | Can both v5 replay scope defects be repaired while leaving the producer, corpus, verifier, and gates unchanged? | L996 |
+| `FTD-0835` | INVALID, THEOREM | Does the selected quartic clock admit a minimal bilateral self-dual energy representation whose weighted traversal is `sqrt(pi) G*`? | L997 |
+| `FTD-0836` | THEOREM, IMPOSED, OPEN | What is the simplest exact self-dual recursive form of the selected quartic clock, and what does it say about `G*`? | L998 |
+| `FTD-0837` | INVALID, THEOREM | Does a source-locked exact certificate show whether the frozen production core already contains the bilateral quartic clock dynamics? | L999 |
+| `FTD-0838` | THEOREM, SELECTION | Which bilateral, restoring, and reservoir dynamics are absent from the frozen production clock core, and what is the minimum conditional repair? | L1000 |
+| `FTD-0839` | THEOREM, CORRECTION, OPEN | Does `i` derive Gamma/`G*`, and can its complex square supply quarticity without losing clock orientation? | L1001 |
+| `FTD-0840` | THEOREM, BOUNDARY, SELECTION | Does the retained canonical lift and a signed self-pair supply an exact stable recursion, and does that close the `G*` tick cadence? | L1002 |
+| `FTD-0841` | THEOREM, BOUNDARY, SELECTION | Can the scalar self-pair mechanism be localized on the native vector flux type without choosing an axis, and what still prevents a physical local… | L1003 |
+| `FTD-0842` | THEOREM, OPEN | Can the selected local self-pair quartic and the production spatial-gradient energy be closed in one exact local update, and does their positive… | L1004 |
+| `FTD-0843` | THEOREM | Does a rank-one common/relative split give a positive P4-local quartic carrier? | L1005 |
+| `FTD-0844` | THEOREM, SELECTION | Can complementary common propagation and relative quartic recurrence produce the simplest positive, local, stable two-channel clock carrier? | L1006 |
+| `FTD-0845` | THEOREM | Can an exact source-locked discriminator classify the minimum conservative phase readout of the relative quartic carrier? | L1007 |
+| `FTD-0846` | THEOREM, SELECTION | What phase information can a common/even pointer retain, and what is the lowest-degree positive local faithful readout that preserves critical… | L1008 |
+| `FTD-0847` | THEOREM | Can the FTD-0846 continuous odd pointer be converted into a stable, local, loss-booked ternary record? | L1009 |
+| `FTD-0848` | THEOREM, SELECTION | What is the minimum symmetric polynomial ternary latch, and can its damping, switching work, persistence, and information loss be closed exactly? | L1010 |
+| `FTD-0849` | THEOREM | Does a source-locked exact discriminator show that current production genesis, evaporation, damping, and ternary writes already realize the FTD-0848… | L1011 |
+| `FTD-0850` | ENGINE_FACT, THEOREM, CLOSED_NEGATIVE, PARTIAL, OPEN | Which pieces of a ternary latch are already present in production, and what dynamics are still absent? | L1012 |
+| `FTD-0851` | THEOREM, CONDITIONAL, CLOSED_NEGATIVE, SELECTION | What is the minimum receiver for a signed ternary erasure, and do current movement, annihilation exhaust, and event journaling implement it… | L1013 |
+| `FTD-0852` | THEOREM, ENGINE_FACT, CLOSED_NEGATIVE, SELECTION | Can the odd event receiver propagate into causal history without overwriting earlier signs, and does production already supply that carrier? | L1014 |
+| `FTD-0853` | THEOREM, SELECTION, CLOSED_NEGATIVE, OPEN | What is the minimum cubically symmetric local transaction that writes a signed positive-energy erasure into the dual relative field? | L1015 |
+| `FTD-0854` | THEOREM | Does the first locked certificate establish diagnostic event energy and the cubic history-rail gearbox? | L1016 |
+| `FTD-0855` | THEOREM, IMPOSED, SELECTION, CLOSED_NEGATIVE, OPEN | Can the adopted matter-energy decrement supply event `B`, and does the cubic shell itself form the recursively ready causal history rail? | L1017 |
+| `FTD-0856` | THEOREM, SELECTION, ENGINE_FACT, CLOSED_NEGATIVE, OPEN | What is the minimum deterministic reciprocal barrier between a protected ternary record and its causal field history? | L1018 |
+| `FTD-0857` | THEOREM | Does the first locked certificate establish native event acceptance and protected characteristic propagation? | L1019 |
+| `FTD-0858` | ENGINE_FACT, THEOREM, SELECTION, CLOSED_NEGATIVE, OPEN | Do source-native event predicates and the dual canonical pair close the physical reciprocal port, or expose the next type boundary? | L1020 |
+| `FTD-0859` | THEOREM | Does the first locked certificate establish a target-blind relative action/orientation transducer and its faithfulness boundary? | L1021 |
+| `FTD-0860` | THEOREM, SELECTION, CLOSED_NEGATIVE, OPEN | Can a nonzero relative canonical carrier absorb event energy without a ready port, and can one unlabelled pair faithfully retain the erased event? | L1022 |
+| `FTD-0861` | THEOREM | Does the first locked phase-referenced rail certificate establish exact signed-event recovery and bounded export? | L1023 |
+| `FTD-0862` | THEOREM, SELECTION, CLOSED_NEGATIVE, OPEN | Can a prepared phase standard turn the quarter-turn pump into a faithful, recursively reusable and bounded causal event carrier? | L1024 |
+| `FTD-0863` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the selected phase standard orient a separate initially-zero signal so event energy transfers reciprocally without spending or double counting… | L1025 |
+| `FTD-0864` | THEOREM | Does the first locked clock-gated Hamiltonian certificate establish the exact swap lift and nonlinear-clock boundary? | L1026 |
+| `FTD-0865` | THEOREM, IMPOSED, CLOSED_NEGATIVE, OPEN | Can the reciprocal event exchange be generated by a closed clock-gated Hamiltonian, and can the same uncompensated quartic clock remain an exact… | L1027 |
+| `FTD-0866` | THEOREM | Does the first locked ternary-clutch certificate establish the one-shot handshake? | L1028 |
+| `FTD-0867` | THEOREM, IMPOSED, OPEN | Can the existing ternary latch supply dynamic hold/exchange eligibility while the outgoing signal preserves the signed event across a gate-zero reset… | L1029 |
+| `FTD-0868` | THEOREM | Does the first locked signal-acknowledged two-stroke certificate establish finite-time recursive reset? | L1030 |
+| `FTD-0869` | THEOREM, IMPOSED, OPEN | Can completed local signal formation acknowledge its own event, reset the latch exactly, and return the reference controller ready within one… | L1031 |
+| `FTD-0870` | THEOREM | Does the first locked certificate establish reversible actual-layer signal uncomputation? | L1033 |
+| `FTD-0871` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the completed oriented signal reversibly reset the actual ternary latch without a new acknowledgement bit, reset-history trit, or bath? | L1034 |
+| `FTD-0872` | THEOREM, CLOSED_NEGATIVE, OPEN | What is the minimum reversible actual-layer permutation that transfers a ternary latch into its oriented output, and can output backpressure be… | L1035 |
+| `FTD-0873` | THEOREM, IMPOSED, CLOSED_NEGATIVE, OPEN | Can the oriented ternary quarter-turn be realized as a minimum autonomous Hamiltonian phase gate with an explicit physical scale and complete… | L1036 |
+| `FTD-0874` | THEOREM, SELECTION, OPEN | Can existing tick and coordinate parity schedule the oriented ternary quarter-turn into a causal reversible one-shot record rail, and what does… | L1037 |
+| `FTD-0875` | THEOREM, SELECTION, IMPOSED, OPEN | Does the alternating scalar parity rail admit a fixed symplectic structure, and what is the minimum local canonical Hamiltonian lift with an exact… | L1038 |
+| `FTD-0876` | THEOREM, ENGINE_FACT, CLOSED_NEGATIVE, OPEN | Does the production flux/wave-velocity state already supply the local canonical carrier type required by FTD-0875, and is the complete production… | L1039 |
+| `FTD-0877` | THEOREM | Does the first locked matched Gauss-record certificate establish the constrained canonical reduction and live-projector boundary? | L1040 |
+| `FTD-0878` | THEOREM | Does the first verifier-only repair validate the FTD-0877 certificate? | L1041 |
+| `FTD-0879` | THEOREM | Does the bare-phrase comment-marker repair validate FTD-0878? | L1042 |
+| `FTD-0880` | THEOREM, CLOSED_NEGATIVE, OPEN | What exact canonical record structure does matched Gauss incidence supply, what locality/loss boundary follows, and does the live cell-centred… | L1043 |
+| `FTD-0881` | THEOREM | Does the frozen reversible checkerboard Gauss-preparation certificate execute validly? | L1044 |
+| `FTD-0882` | THEOREM, CLOSED_NEGATIVE, SELECTION, OPEN | Can local reversible dynamics prepare the matched minimum-energy Gauss record without evaluating the inverse Laplacian in a gate, and what exact… | L1045 |
+| `FTD-0883` | THEOREM | Does the frozen finite-port rail and positive source-battery certificate execute validly? | L1046 |
+| `FTD-0884` | THEOREM, CLOSED_NEGATIVE, IMPOSED, OPEN | What finite ready-port capacity and positive source-work law can complete FTD-0882 without claiming impossible universal recycling? | L1047 |
+| `FTD-0885` | THEOREM | Does the first locked canonical source-centered Gauss-gate certificate execute validly? | L1048 |
+| `FTD-0886` | THEOREM, CLOSED_NEGATIVE, BOUNDARY, IMPOSED, OPEN | What phase-complete canonical structure pays the Gauss source work, and does the FTD-0884 square-root battery survive away from its one-amplitude… | L1049 |
+| `FTD-0887` | THEOREM | Does the first locked autonomous phase-parity/source-reaction certificate execute validly? | L1050 |
+| `FTD-0888` | THEOREM, CLOSED_NEGATIVE, SELECTION, IMPOSED, OPEN | Can one autonomous Hamiltonian compile alternating checkerboard layers, and what minimum positive channel permits source reaction without violating… | L1051 |
+| `FTD-0889` | THEOREM | Does the first locked cubic reaction-vector/source-transport certificate execute validly? | L1052 |
+| `FTD-0890` | THEOREM, CLOSED_NEGATIVE, SELECTION, IMPOSED, OPEN | Can a scalar reaction choose spatial recoil, and what exact source-transport gearbox follows once a local vector and the selected relativistic… | L1053 |
+| `FTD-0891` | THEOREM | Does the first locked collective-triplet/inertial-curvature certificate execute validly? | L1054 |
+| `FTD-0892` | THEOREM, CLOSED_NEGATIVE, OPEN, SELECTION, IMPOSED | Does the selected constituent common-action phase space supply the required reaction triplet, and can static stability determine its inertial mass? | L1055 |
+| `FTD-0893` | THEOREM, CLOSED_NEGATIVE, OPEN, IMPOSED | What exact object determines the inertia of a dynamically dressed matter-field state, and does the selected common action already supply it? | L1056 |
+| `FTD-0894` | THEOREM | Does the first locked Bloch-quasimomentum lift/local momentum-map trilemma certificate execute validly? | L1057 |
+| `FTD-0895` | THEOREM, CORRECTION | Does the scoped four-expression repair close the FTD-0894 certificate without changing its mathematics or scope? | L1058 |
+| `FTD-0896` | THEOREM, OPEN, IMPOSED | Can the native integer-translation/Bloch structure supply the globally real additive physical momentum map required by FTD-0893 while remaining… | L1059 |
+| `FTD-0897` | THEOREM, OPEN | What minimum local update retains reciprocal-zone information during an equal-and-opposite pair interaction, and does it already supply physical… | L1060 |
+| `FTD-0898` | THEOREM, OPEN | Can the selected local relative-quartic recursion generate the FTD-0897 impulse, carry positive energy and the `G*` period factor in one exact… | L1061 |
+| `FTD-0899` | THEOREM | Does the first locked common/relative connection and momentum-gearbox certificate execute validly? | L1062 |
+| `FTD-0900` | THEOREM, CORRECTION | Does the one-symbol component-range repair close the FTD-0899 certificate without changing its mathematics or scope? | L1063 |
+| `FTD-0901` | THEOREM, OPEN, BOUNDARY | Can one minimum common/relative action transfer mechanical common impulse while preserving full energy and total momentum, and can its continuously… | L1064 |
+| `FTD-0902` | THEOREM | Does the first locked positive-connection order/self-pair critical-clock certificate execute validly? | L1065 |
+| `FTD-0903` | THEOREM, BOUNDARY, OPEN | Can a positive common/relative connection preserve the critical quartic while exchanging mechanical impulse, and what boundary remains? | L1066 |
+| `FTD-0904` | THEOREM, BOUNDARY, OPEN | Can the exact rest-sector self-pair clock rectify without an externally timed clutch, and what orientation information is necessary? | L1067 |
+| `FTD-0905` | THEOREM | Can the existing native ternary/flux types represent the polar axis and time-odd orientation memory required by FTD-0904, and can one central mode… | L1068 |
+| `FTD-0906` | THEOREM | Does whitespace normalization alone repair the FTD-0905 exact source-marker failure? | L1069 |
+| `FTD-0907` | THEOREM, CORRECTION, BOUNDARY, OPEN | What is the minimum native-type polar/chiral memory, is it stable under a central recursive law, and can it be the same exact G* clock mode? | L1070 |
+| `FTD-0908` | MEASURED, OPEN | Does the unchanged production tick form and retain the FTD-0907 neutral-dipole/time-odd phase-wedge observables beyond a transient? | L1071 |
+| `FTD-0909` | INFRASTRUCTURE | Is the FTD-0908 production census instrument fixed and independently adjudicable before its first data? | L1072 |
+| `FTD-0910` | MEASURED, BOUNDARY, OPEN | What does FTD-0908 Outcome A establish once chirality flips and the frozen randomized null are audited? | L1073 |
+| `FTD-0911` | CLOSED_NEGATIVE | Does actual endpoint pairing retain chirality beyond every fixed matched derangement, and is the FTD-0907 exact central map present in held-out… | L1074 |
+| `FTD-0912` | INFRASTRUCTURE | Is the FTD-0911 held-out pair/centrality instrument fixed and independently reconstructible before data? | L1075 |
+| `FTD-0913` | CLOSED_NEGATIVE, OPEN | What is the held-out disposition of the two-endpoint wedge as natural recursive memory? | L1076 |
+| `FTD-0914` | THEOREM, BOUNDARY, CLOSED_NEGATIVE, OPEN | Can the minimum closed cardinal loop realize `i`, retain clockwise/counterclockwise direction, and provide natural recursive memory? | L1077 |
+| `FTD-0915` | MEASURED, CLOSED_NEGATIVE, OPEN | Does unchanged production form and run the exact identity-bearing ternary plaquette through a full oriented four-step cycle? | L1078 |
+| `FTD-0916` | EXECUTION_INVALID | Was the first production plaquette-recurrence corpus independently reconstructible? | L1079 |
+| `FTD-0917` | UNKNOWN | Can raw-site telemetry repair FTD-0916 without changing any physics or adjudication gate? | L1080 |
+| `FTD-0918` | THEOREM, ENGINE_FACT, CLOSED_NEGATIVE, OPEN | Does the native flux/wave pair carry the missing plaquette handedness charge, and is one elementary plaquette a closed production rotor? | L1081 |
+| `FTD-0919` | THEOREM, CLOSED_NEGATIVE, OPEN | Does the unchanged free-field action contain a larger exact `C4` circulation carrier that can be localized as a finite clock body? | L1082 |
+| `FTD-0920` | THEOREM, CLOSED_NEGATIVE, CONDITIONAL, OPEN | Can the unchanged reciprocal density/current source supply the unique boundary return that closes the elementary native `C4` plaquette? | L1083 |
+| `FTD-0921` | CLOSED_NEGATIVE, THEOREM, OPEN | Does the Moore-coated plaquette return have a compact Hodge preimage, and can a compact transverse return be compiled through the live `j=s v` source… | L1084 |
+| `FTD-0922` | EXECUTION_INVALID, THEOREM | Can an exact outside-band evanescent field profile and source-locked `C4` recurrence be constructed from a compact ternary dipole core? | L1085 |
+| `FTD-0923` | THEOREM, EXACT, CLOSED_NEGATIVE, OPEN | Does the exact uncontained-versus-periodic domain repair validate the FTD-0922 evanescent reference orbit without changing its physics or outcome… | L1086 |
+| `FTD-0924` | THEOREM, NO_GO, CLOSED_NEGATIVE, OPEN | Do the paired ternary-dipole transitions admit an exact compact central current, and can that current be compiled through the unchanged live… | L1087 |
+| `FTD-0925` | THEOREM, OPEN | Can the FTD-0924 bridge current be compiled into a finite neutral ternary scaffold with causal production velocities, exact live continuity, and a… | L1088 |
+| `FTD-0926` | THEOREM, POSITIVE, OPEN | Can the existing subcell remainder and velocity autonomously generate the FTD-0925 current orbit through one homogeneous local positive Hamiltonian? | L1089 |
+| `FTD-0927` | THEOREM, NO_GO, OPEN | Can present-state central continuity generate the complete ternary record and exact midpoint field source, and can the same minimum canonical… | L1090 |
+| `FTD-0928` | THEOREM, POSITIVE, CONDITIONAL, OPEN | Can a discrete generating function repair the frozen one-way recurrence; if not, what is the minimum positive reciprocal self-dual action, and what… | L1091 |
+| `FTD-0929` | THEOREM, POSITIVE, OPEN | Is the FTD-0928 field-shaped companion locally determined by the present source, can it form in finite causal depth, and what information/energy… | L1092 |
+| `FTD-0930` | THEOREM, RESOLVED, OPEN | Can the FTD-0929 target-blind field preparation be made locally canonical and positive, what is its minimum fresh-port cost, and does the same… | L1093 |
+| `FTD-0931` | THEOREM, RESOLVED, OPEN | Can the existing native flux/momentum pair form the fixed-source massless static halo causally without damping or an indefinite fresh-port stream… | L1094 |
+| `FTD-0932` | THEOREM, NO_GO, RESOLVED, OPEN | Does temporal quarter-turn phase `z=i` place the fixed-center C4 source in a native spectral gap that permits causal companion tracking, and can a… | L1095 |
+| `FTD-0933` | THEOREM, POSITIVE, NO_GO, BOUNDARY, OPEN | What exact field mismatch is left by one abrupt integer relocation of a formed C4 source, does the native field re-dress the new center causally, and… | L1096 |
+| `FTD-0934` | THEOREM, NO_GO, BOUNDARY, RESOLVED, OPEN | Does the C4 hop wake define a natural translation-group geometry, why can that energy not select a directed recoil, and what minimum representation… | L1097 |
+| `FTD-0935` | THEOREM, CONDITIONAL, OPEN | Can existing native data realize the directed compact character required by FTD-0934, is the minimum cubic integer-linear gearbox unique, and which… | L1098 |
+| `FTD-0936` | CORRECTION, THEOREM, NO_GO, OPEN | Does the raw FTD-0935 C4 character always retain direction, what canonical repair removes its parity kernel, and does the formed compact body carry… | L1100 |
+| `FTD-0938` | THEOREM, POSITIVE, PARTIAL, OPEN | Does the live primitive body current determine the minimum critical-quartic-preserving connection, can its closed source cycle be directly composed… | L1101 |
+| `FTD-0940` | THEOREM, DERIVED, NO_GO, OPEN | Can the actual ternary record distinguish signed field-charge transport from the directed center transport of a neutral C4 body, and does that split… | L1102 |
+| `FTD-0941` | THEOREM, CLOSED_NEGATIVE, OPEN | Can exact unbounded occupancy winding be retained by fixed bounded finite-alphabet hardware, how do cumulative flux/body labels/link carry compare… | L1103 |
+| `FTD-0942` | THEOREM, CLOSED_NEGATIVE, CORRECTION, DERIVED, OPEN | Do the existing production L/R real fields and update laws already realize FTD-0941's reversible collision-separated occupancy-history carrier, and… | L1104 |
+| `FTD-0943` | THEOREM, CLOSED_NEGATIVE, OPEN | Does the isolated production C18 relative canonical pair admit an exact finite-range characteristic diagonalization or any nonzero finite-support… | L1105 |
+| `FTD-0945` | THEOREM, CLOSED_NEGATIVE, OPEN | Do the existing event-mediated production actions autonomously write and transport a reversible relative L/R direction/history record after the… | L1106 |
+| `FTD-0948` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the existing relative canonical vector support a degree-minimum bounded nonlinear recursive charge, and can a natural signed occupancy event… | L1107 |
+| `FTD-0949` | THEOREM, OPEN | Does the selected C18-coupled relative-field sextic admit a finite-energy exponentially localized recursive solution on the uncontained substrate… | L1108 |
+| `FTD-0951` | THEOREM, OPEN | Can compact core data causally construct finite-radius approximants to the exact FTD-0949 tailed body without reading that target, while retaining… | L1109 |
+| `FTD-0953` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the nonlinear FTD-0949 body relax through a positive local canonical environment, and is finite positive action capacity sufficient to close… | L1110 |
+| `FTD-0954` | THEOREM, CLOSED_NEGATIVE, POSITIVE, OPEN | Can the FTD-0953 positive nonlinear Routh port be completed by a local phase-reacting canonical transfer that conserves physical axial charge and… | L1111 |
+| `FTD-0955` | THEOREM, CLOSED_NEGATIVE, OPEN | Can one globally periodic autonomous controller compile the phase-reacting charge transfer and positive nonlinear Routh-port update, return… | L1112 |
+| `FTD-0957` | SELECTION, THEOREM, BOUNDARY, OPEN | Can a minimum globally periodic relative-action-curvature law turn the FTD-0955 neutral phase into a positive stable recursive sector while… | L1113 |
+| `FTD-0959` | CLOSED_NEGATIVE, SELECTION, THEOREM, OPEN | Can the stable relative-phase sector be exactly isochronous and release an independently rotating controller at every crossing without a phase lift… | L1114 |
+| `FTD-0961` | THEOREM, CLOSED_NEGATIVE, BOUNDARY, OPEN | Can the signed FTD-0959 crossing history and lifted winding be realized by already-booked oriented ternary/history rails without adding another… | L1115 |
+| `FTD-0963` | SELECTION, THEOREM, OPEN | Can an oriented local clock traversal itself load the existing signed history port and actively align a controller without a discontinuous sign… | L1116 |
+| `FTD-0965` | THEOREM, CLOSED_NEGATIVE, CORRECTION, OPEN | Can the exact selected FTD-0963 connection be represented and evolved by the unchanged production state/tick without adding a public degree of… | L1117 |
+| `FTD-0969` | THEOREM, BOUNDARY, OPEN | Can a finite neutral actual ternary body derive the regional polar frame, spatial pseudoscalar, and improper-covariant transverse complex structure… | L1118 |
+| `FTD-0970` | THEOREM, CLOSED_NEGATIVE, OPEN | Does the FTD-0969 regional body frame determine the missing canonical moving-frame reaction, and can that induced connection itself realize the… | L1119 |
+| `FTD-0972` | THEOREM, BOUNDARY, OPEN | Can the exact `kappa=0` body degeneracy plus one ternary latch retain both crossing directions reversibly, and does the resulting recursive… | L1120 |
+| `FTD-0974` | THEOREM, SELECTION, OPEN | Does the retained C4 carrier uniquely determine a reversible field coupling, and what is the minimum positive canonical suspension when one faithful… | L1121 |
+| `FTD-0975` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the FTD-0974 two-pair suspension coexist with the five-pair FTD-0963 gearbox inside the six existing production pairs without double-booking the… | L1122 |
+| `FTD-0977` | THEOREM, CORRECTION, BOUNDARY, OPEN | Does the retained C4 carrier plus one physical clock force the proposed merged connection law, including its common profile and active physical… | L1123 |
+| `FTD-0978` | THEOREM, CORRECTION, BOUNDARY, CLOSED_NEGATIVE, OPEN | Does the unchanged production de Broglie-clock plus weak-transmutation route implement the clock-indexed oriented C4 twist required by FTD-0977? | L1124 |
+| `FTD-0980` | THEOREM, BOUNDARY, SELECTION, OPEN | What is the minimum clockwise/counterclockwise square root of the production left/right half-turn, and can it be local, exactly energy preserving… | L1126 |
+| `FTD-0982` | THEOREM, POSITIVE, SELECTION, OPEN | Does an exact finite-range multicomponent factor of the C18 stiffness eliminate the nonlocality of the instantaneous oriented root, and if not what… | L1128 |
+| `FTD-0985` | THEOREM, BOUNDARY, CONDITIONAL, OPEN | Can the single physical clock/action pair service arbitrarily separated same-tick work events, or does Moore locality require locally owned… | L1129 |
+| `FTD-0987` | THEOREM, CLOSED_NEGATIVE, SELECTION | Does the unused sixth production pair supply the native local work hardware, and what additional law is required to make it an owned reserve? | L1130 |
+| `FTD-0989` | THEOREM, CORRECTION, SELECTION | Can the exact C18 incidence channels realize local regional ownership, current, reciprocal switching, and the correct physical work-action… | L1131 |
+| `FTD-0990` | THEOREM, SELECTION, OPEN | Does the actual ternary state already supply the static work membrane, and can the dual substrate separate a protected recursive body clock from an… | L1132 |
+| `FTD-0992` | THEOREM, CLOSED_NEGATIVE, OPEN | Does the occupancy membrane determine its own local formation/reversal work, and what is the minimum fail-closed active aperture retaining temporal… | L1133 |
+| `FTD-0994` | THEOREM, CLOSED_NEGATIVE, CONDITIONAL, OPEN | Can released local membrane work and retained orientation start a zero Cartesian clock pair, and can the resulting phase be written uniformly into an… | L1134 |
+| `FTD-0996` | THEOREM, OPEN | What exact local law lets formation work grow a coherent body clock, and does a matched critical-quartic receiver inherit the G* calendar without… | L1135 |
+| `FTD-0997` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the existing relative L-R pair supply the phase-complete machine for recursive common-clock growth, and can the static membrane refill it at a… | L1136 |
+| `FTD-0999` | THEOREM, BOUNDARY, OPEN | What exact cumulative resource law governs coherent clock growth, and what concurrency, finite-reserve, causal-delay, and inverse constraints follow… | L1137 |
+| `FTD-1001` | THEOREM | Do the FTD-0993/0994, FTD-0995/0996, and FTD-0998/0999 certificates remain valid under the 2026-08-13 documentation-only source amendments? | L1139 |
 
 ---
 
@@ -1084,34 +1233,34 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 295 |
-| CLOSED_NEGATIVE | 187 |
-| MEASURED | 170 |
-| OPEN | 136 |
-| DERIVED | 97 |
+| THEOREM | 428 |
+| CLOSED_NEGATIVE | 239 |
+| OPEN | 232 |
+| MEASURED | 175 |
+| SELECTION | 106 |
+| DERIVED | 99 |
 | SMC | 84 |
-| SELECTION | 75 |
-| SYNTHESIS | 65 |
+| SYNTHESIS | 67 |
 | NUMERICAL_FACT | 54 |
 | CONSTRUCTIVE | 48 |
 | FOUNDATIONAL_OBSTRUCTION | 43 |
+| CORRECTION | 40 |
+| BOUNDARY | 36 |
 | CONJECTURE | 31 |
+| IMPOSED | 30 |
+| EXECUTION_INVALID | 30 |
 | SELECTED_DYNAMICS | 29 |
-| CORRECTION | 28 |
-| AXIOM | 27 |
-| EXECUTION_INVALID | 24 |
+| AXIOM | 28 |
+| NO_GO | 23 |
 | PARAMETRIC | 20 |
 | RETRACTED | 20 |
-| NO_GO | 16 |
-| PARTIAL | 16 |
-| IMPOSED | 16 |
-| BOUNDARY | 16 |
+| PARTIAL | 18 |
+| POSITIVE | 17 |
+| CONDITIONAL | 16 |
+| EXACT | 15 |
 | RECONCILIATION | 14 |
-| EXACT | 14 |
 | OBSERVATION | 12 |
-| SCOPE_CONTRACT | 11 |
-| REFUTATION | 11 |
-| POSITIVE | 10 |
-| UNDERDETERMINED | 10 |
-| PRE_REGISTRATION | 9 |
+| RESOLVED | 12 |
+| ENGINE_FACT | 12 |
+| SUPERSEDED | 11 |
 

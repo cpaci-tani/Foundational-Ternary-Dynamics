@@ -180,7 +180,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| §12-clock-hypothesis | Substrate-derive the **single** flagged interpretive step of the FTD-0131 reconciliation: the clock hypothesis used in SPEC_FTD_LAGRANGIAN.md §4.3. Closed by v3: the Scale-0 substrate supports an L¹ linear ceiling, not the required L²/Pythagorean budget; the clock hypothesis is therefore an independent coordinate-level **[AXIOM]**. | [CLOSED NEGATIVE, AXIOM-LEVEL] | closed | — |
+| §12-clock-hypothesis | Substrate-derive the **single** flagged interpretive step of the FTD-0131 reconciliation: the clock hypothesis used in SPEC_FTD_LAGRANGIAN.md §4.3. Closed by v3: the Scale-0 substrate supports an L¹ linear ceiling, not the required L²/Pythagorean budget; the clock hypothesis therefore stays an **[AXIOM]** — as of 2026-08-13 (FTD-1000) folded into FC-2's metric-half declaration (`SPEC_FTD_FRAMEWORK_V1.md` §5.2) rather than tracked as an independent coordinate-level axiom. | [CLOSED NEGATIVE, AXIOM-LEVEL] | closed | — |
 | §12-cnorm | FTD-0402 implements one raw nodes/tick map (`B=|u|²/C_SPEED²+L²`), explicit mass roles, normalized energy–momentum diagnostics, common host `tau`, and targeted CPU/GPU parity. FTD-0403 v2 closes the exact changed-surface dependency contract without a full unrelated CTest run; FTD-0402 remains historically PARTIAL | [CLOSED — TARGETED-CLOSURE, FTD-0403] | closed | — |
 | §12-beyond-N | Beyond-leading-order GR: Mercury perihelion, light bending, gravitational waves (full nonlinear Einstein equations beyond Deser bootstrap [SELECTION, FTD-0026]) | [OPEN] | RP | clock-hypothesis AXIOM |
 | §12-EP | Equivalence-principle analogue from substrate. No canonical anchor | [OPEN] | RP | — |
@@ -409,7 +409,7 @@ These are explicit no-go results. Re-attempting them without new structural insi
 | FTD-0018, FTD-0019, FTD-0020, FTD-0021, FTD-0022 | §3, §4 | sin²θ_W = 3/13, sin²θ_13 = 1/52, α_s = 7/59, PMNS angles, 7-term α series — all retagged [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC] in the demotion wave |
 | FTD-0042, FTD-0043 | §4, §7 | Yang-Mills mass gap and Navier-Stokes regularity papers RETRACTED; FTD-0044 per-voxel mass gap survives as the load-bearing residual theorem |
 | FTD-0079 | §1, §9 | (SC+FCC)/2  BCC Watson-integral identity (no exact identity exists; finite-L stencil mismatch ~3% bounds engine accuracy) |
-| FTD-0208 | §6 | Clock-hypothesis L² budget substrate derivation closed negative; clock hypothesis retained as coordinate-level AXIOM |
+| FTD-0208 | §6 | Clock-hypothesis L² budget substrate derivation closed negative; clock hypothesis retained as AXIOM — folded into FC-2 (constitution §5.2) as of 2026-08-13, FTD-1000; no longer tracked as independent |
 | FTD-0244 | §2, §10 | K-BIND / operator-calculus route closed theorem-negative; no substrate-native operator forces the master-quadratic assembly |
 
 For complete closed-negative provenance see `LEDGER.md` per-row entries.

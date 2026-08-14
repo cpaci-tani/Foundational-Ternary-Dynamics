@@ -3,18 +3,18 @@
 **Tag:** [REFERENCE]
 **Status:** [REFERENCE] — capstone document for the FQCR framework. Per-element tags within (see §4 status table).
 **Consolidates:** also absorbs `EXPLR_QUARTER_ROTATION_SPHERE_VISUALIZATION.md` — see Appendix A.
-**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141, Model I), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142, Model II), [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10, [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143), [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md) (FTD-0144, curve-side trilogy bridge).
+**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141, Model I), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142, Model II), [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10, [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/preregistrations/spine_master_quadratic/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143), [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md) (FTD-0144, curve-side trilogy bridge), [`THEOREM_I_GAMMA_QUARTIC_SQUARE_SPLIT_v1.md`](../10_eft_program/derivations/native_time_carrier_programme/THEOREM_I_GAMMA_QUARTIC_SQUARE_SPLIT_v1.md) (FTD-0839 scope correction and controls).
 **Verifier script:** [`scripts/proofs/proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py)
 
 The Finite Quarter-Conjugacy Recurrence (FQCR) is a five-model framework that:
 
-1. Provides an **operator-theoretic provenance** for the bridge constant $G^*$ via $\zeta$-regularized determinants of quarter-twisted spectra (Model I, [THEOREM]).
+1. Provides a **conditional operator-theoretic representation** of the bridge constant $G^*$ via $\zeta$-regularized determinants of anchored chiral quarter-twisted spectra (Model I, [THEOREM conditional on the registered domain]).
 2. Restates that provenance in **finite-N reframe-compatible** form (Model II, [THEOREM]).
 3. Reduces to a **second-order linear recurrence** with a conserved Casimir invariant (Model III, [THEOREM]).
 4. Parameterises a **modular-anomaly form** $R_N(t)$ via a $(4, 6; 3, 2)$ exponent quadruple (Model IV, [SELECTION]).
 5. Reframes the FTD master quadratic as a **transfer-matrix characteristic polynomial** $M_N(t)$, with the dominant eigenvalue identified conjecturally with $\alpha^{-1}$ at $t = 1$ (Model V, [SMC] for the physical claim, [THEOREM] for the structural identity).
 
-**Core message.** FQCR is not a replacement for FTD's existing algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). It is a **complementary set of operator-theoretic lenses** that anchor several spine claims to a unified primitive — the conjugacy operator $J$ with $J^2 = -I$. Model I + II are subsidiaries to Theorem 1 ($G^*$ identity); Model V is a subsidiary to Theorem 2 (master quadratic). Models III + IV are new structural content.
+**Core message.** FQCR is not a replacement for FTD's existing algebraic spine (nine numbered results: seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). It is a **complementary set of operator-theoretic lenses**. FTD-0839 establishes that $J^2=-I$ supplies only the quarter eigenphases; Model I additionally adopts a twisted circle, chiral half-line, origin, scale, first-order operator, and multiplicity one. Model I + II are subsidiaries to Theorem 1 ($G^*$ identity); Model V is a subsidiary to Theorem 2 (master quadratic). Models III + IV are new structural content.
 
 ---
 
@@ -32,11 +32,11 @@ This is the **algebraic source of the quarter split** that pervades the FTD spin
 
 ### Definition 2: Quarter-twisted spectra
 
-For a wavefunction $\psi : S^1 \to \mathbb{C}^2$ subject to $\psi(\phi + 2\pi) = J\,\psi(\phi)$, decomposing along the $J$-eigenbasis forces the allowed Fourier modes to lie in
+For a wavefunction $\psi : S^1 \to \mathbb{C}^2$ subject to the **selected** domain law $\psi(\phi + 2\pi) = J\,\psi(\phi)$, decomposing along the $J$-eigenbasis gives full-line shifts $\mathbb Z+1/4$ and $\mathbb Z+3/4$. Model I then selects the positive half-line, origin `n=0`, unit scale, first-order operator, and multiplicity one:
 
 $$ D_{1/4} := \{n + \tfrac{1}{4}\}_{n\ge 0}, \qquad D_{3/4} := \{n + \tfrac{3}{4}\}_{n\ge 0}. $$
 
-These are the spectra of two disjoint differential-like operators on a domain compatible with the quarter-twisted boundary condition.
+These are the spectra of two disjoint differential-like operators on the registered domain. They do not follow from $J^2=-I$ alone. The orientation-blind full-line Laplacian control has equal determinant `2` in both sectors and ratio `1` (FTD-0839).
 
 ### Definition 3: Recurrence coefficient and update law
 
@@ -60,7 +60,7 @@ $$ u_{m+1} + u_{m-1} = s_N(t)\, u_m. $$
 
 > $$ \frac{\det_\zeta D_{3/4}}{\det_\zeta D_{1/4}} = \frac{\Gamma(1/4)}{\Gamma(3/4)} = G^*. $$
 
-**[THEOREM]** by Lerch's formula $\det_\zeta\{n + a\}_{n\ge 0} = \sqrt{2\pi}/\Gamma(a)$.
+**[THEOREM — CONDITIONAL ON THE REGISTERED SPECTRAL DOMAIN]** by Lerch's formula $\det_\zeta\{n + a\}_{n\ge 0} = \sqrt{2\pi}/\Gamma(a)$. FTD-0839 proves that changing the origin, multiplicity, operator order, common zeta scale, or chiral polarization changes or removes the ratio.
 
 Full derivation: [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141).
 
@@ -162,7 +162,8 @@ The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other 
 |---|---|---|---|
 | I — quarter-conjugacy | $J^2 = -I \Rightarrow Z_4$ | [THEOREM] | Standard linear algebra |
 | I — Lerch's formula recap | $\det_\zeta\{n+a\} = \sqrt{2\pi}/\Gamma(a)$ | [THEOREM] | External; standard analytic number theory |
-| I — determinant bridge | $\det_\zeta D_{3/4}/\det_\zeta D_{1/4} = G^*$ | **[THEOREM]** (new content) | Proposition 1, FTD-0141 |
+| I — spectral realization | twisted circle + chiral half-line + origin/scale/order/multiplicity | **[SELECTION / OPEN PHYSICAL REALIZATION]** | Not forced by $J^2=-I$; FTD-0839 controls |
+| I — determinant bridge | $\det_\zeta D_{3/4}/\det_\zeta D_{1/4} = G^*$ | **[THEOREM — CONDITIONAL DOMAIN]** | Proposition 1, FTD-0141; scope corrected by FTD-0839 |
 | II — finite product | $G_N^*$ defined for all finite $N$ | [DEFINITION] | Doesn't need a tag |
 | II — Stirling convergence | $G_N^* \to G^*$ at $O(1/N^2)$ | [THEOREM] | Proposition 2, FTD-0142 |
 | II — reframe discharge | $G^*$ is a finite-N attractor | [THEOREM] | Discharges `AUDIT_INFINITY_REFRAME` obligation |
@@ -187,7 +188,7 @@ The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other 
 | Theorem 2 (FTD-0001): master quadratic | FQCR Model V provides transfer-matrix interpretation. **Subsidiary** to Theorem 2. *(Prior FTD-0014 citation corrected to FTD-0001; FTD-0014 — the `x_-  N_c` identification — is retired per v1.4 §5, row removed in commit `ca7eb61`.)* |
 | Theorem 8 (FTD-0111): $(1+i)$-tower | Shares the $Z_4$ structural anchor with the conjugacy operator $J$. Unified $Z_4$ subsection in §10 of `SPEC_ALGEBRAIC_SPINE.md` is proposed as future stylistic refactor. |
 | Theorem 9 (FTD-0112): $Q(G^*)$ field-theoretic | Unaffected; FQCR does not introduce new transcendentals. |
-| FTD-0127: parity-twist (L-function lens) | **Two readings of the same residue-class decomposition mod 4**, sharper than the original "complementary lenses" framing. The shifts $\{1/4, 3/4\}$ in FQCR are not free parameters — once $J^2 = -I$ is committed, the quarter-twisted boundary forces the spectral shifts to be the two non-trivial residue classes mod 4. After scaling by 4, $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$; restricted to primes, these are the split and inert prime classes of $\mathbb{Z}[i]$ (Fermat's two-square theorem). FTD-0127 takes the parity-symmetric (sum/difference) combinations of the same Hurwitz components $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$ that FQCR Model I works on directly. Unification one-line: $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2) = \Gamma(1/4)/\Gamma(3/4)$. See `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5 for the full residue-class / Z[i]-prime-splitting derivation. |
+| FTD-0127: parity-twist (L-function lens) | **Two readings of the same residue-class decomposition mod 4.** Once the full FQCR Model-I domain is registered, its shifts are the two non-trivial residue classes mod 4. The boundary, Fourier lattice, chiral half-line, origin, scale, order, and multiplicity are not consequences of $J^2=-I$ alone (FTD-0839). After scaling by 4, $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$; restricted to primes, these are the split and inert prime classes of $\mathbb{Z}[i]$. FTD-0127 takes the sum/difference combinations of the same Hurwitz components. Unification identity: $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2) = \Gamma(1/4)/\Gamma(3/4)$. |
 | FTD-0001/0013 SMC chain | FQCR's Model V physical readout is exactly FTD-0013 restated in operator language; tag stays at SMC. No promotion. *(FTD-0014 retired per v1.4 §5; LEDGER row removed in commit `ca7eb61`.)* |
 | FTD-0144 (QCR trilogy bridge) | The compatibility paper supplies the curve-side geometric pairing for FQCR's branch-side recurrence, plus a concrete depth-4 five-harmonic numerical incarnation of FTD's $(1+i)$-tower (Theorem 8 / FTD-0111). Cross-confirms FQCR Models II–V at the formula level. Documented in [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md). No spine inflation; no tier promotion. |
 
