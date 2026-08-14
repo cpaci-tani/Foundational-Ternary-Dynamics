@@ -126,6 +126,25 @@ modes should not be conflated again:
 | nodes Newtonian $\Rightarrow$ no dilation | **modelling error; fixable by substitution** |
 | $\omega$ inside the band $\Rightarrow$ radiates | **genuine obstruction; C2, cost recorded** |
 
+> **Addendum 2026-08-14 (FTD-1003).** The one route by which a carrier could
+> sit inside the band and *not* radiate — a symmetry-protected embedded mode,
+> left open verbatim by FTD-0663 — is now closed in its spatial point-group
+> sense by `THEOREM_NO_POINT_GROUP_PROTECTION_v1.md`. C2 therefore cannot be
+> voided by symmetry; it must be paid, tuned around at codimension exactly
+> one (tuning, not protection), or evaded by a mechanism outside point-group
+> symmetry (a topological route remains formally open).
+>
+> ⚠ **The same theorem corrects this section's threshold against the
+> programme's interest.** The edge quoted above, $2\arcsin C = 1.2310$, is
+> only the $\langle 100\rangle$ axis-branch maximum; the transverse band runs
+> to $\pi$, and the no-go holds at every $\omega \in (0,\pi)$ — a free orbit
+> is exhibited at $\omega = 1.5$, above the quoted edge and still radiating.
+> True clearance therefore requires $\omega > \pi$, about $2.55\times$ higher,
+> so the recorded $\varepsilon \ge 4.22$ is a **lower bound computed against a
+> too-low edge**. The composite-boost blocker is harsher than recorded, not
+> milder. Owner ruling invited on whether any recorded reason treats the axis
+> top as operative.
+
 ## 6. Reproduction
 
 ```
