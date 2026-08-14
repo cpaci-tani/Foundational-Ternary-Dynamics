@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (922 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (923 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -29,7 +29,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Charge, Gauss & native EM emergence](#charge-gauss-native-em-emergence) | 15 | Native additive charge, Gauss projection and dressing, face-current sidecars, longitudinal susceptibility, dressed hazards, monopoles. |
 | [Common-action mechanics & reciprocity](#common-action-mechanics-reciprocity) | 146 | Forces, work and recoil for a hop; the worldline/Legendre action; charts, collisions and quotients; energy closure and Peierls barriers. |
 | [Constituent-complete matter](#constituent-complete-matter) | 167 | Compact cores, trimers and connected blocks; rest states and Hessians; transport, gait, capture/binding, wakes, causal-horizon persistence. |
-| [Native time & the carrier programme](#native-time-the-carrier-programme) | 180 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
+| [Native time & the carrier programme](#native-time-the-carrier-programme) | 181 | The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them. |
 | [Meta — papers, tooling, project process](#meta-papers-tooling-project-process) | 17 | Paper splits and referee rounds, monographs, node maps and synonymy graphs, trackers, pre-registration registries, project policy. |
 
 ---
@@ -1014,7 +1014,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The quartic action-angle clock, G* as a temporal invariant, the C1/C2/C3 carrier conditions and every carrier candidate opened against them.*
 
-**180 claims.**
+**181 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -1198,6 +1198,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0997` | THEOREM, CLOSED_NEGATIVE, OPEN | Can the existing relative L-R pair supply the phase-complete machine for recursive common-clock growth, and can the static membrane refill it at a… | L1136 |
 | `FTD-0999` | THEOREM, BOUNDARY, OPEN | What exact cumulative resource law governs coherent clock growth, and what concurrency, finite-reserve, causal-delay, and inverse constraints follow… | L1137 |
 | `FTD-1001` | THEOREM | Do the FTD-0993/0994, FTD-0995/0996, and FTD-0998/0999 certificates remain valid under the 2026-08-13 documentation-only source amendments? | L1139 |
+| `FTD-1004` | CLOSED_NEGATIVE, DERIVED, OPEN | Does a finite integer unit-strut tensegrity realize native critical quarticity within the first declared exact-certificate scope (clock-minimum spec… | L1142 |
 
 ---
 
@@ -1236,11 +1237,11 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | Tag | Rows |
 |---|---:|
 | THEOREM | 429 |
-| CLOSED_NEGATIVE | 239 |
-| OPEN | 233 |
+| CLOSED_NEGATIVE | 240 |
+| OPEN | 234 |
 | MEASURED | 175 |
 | SELECTION | 106 |
-| DERIVED | 99 |
+| DERIVED | 100 |
 | SMC | 84 |
 | SYNTHESIS | 68 |
 | NUMERICAL_FACT | 54 |
