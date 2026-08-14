@@ -6,7 +6,7 @@
 **Date:** 2026-08-08 · **Artifact:** `scripts/experiments/temporal_interior/toy_minimal_temporal_interior.py`
 **Figure:** `dissemination/papers/semantic_ontology/figures/fig9_toymodel.pdf`
 **Parents:** `FOUND_SELECTION_POTENTIALITY_ACTUALIZATION_CHAIN_v1.md` (v1.3),
-`SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md`,
+`SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md`,
 `ANALYSIS_CONE_SPEED_CHARACTERIZED_v1.md`,
 `ANALYSIS_GEOMETRIC_BIT_REGISTER_SCREEN_v1.md`,
 `PREREG_BORN_REGIME_MAP_ENGINE_v1.md`.

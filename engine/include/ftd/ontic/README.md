@@ -14,13 +14,13 @@ Consumers that want a flat `ftd::ALPHA` (etc.) include
 
 ## Internal structure (layer order)
 
-| Layer | Header | What it derives |
+| Layer | Header | Contents (status remains claim-specific) |
 |---|---|---|
 | -1 | `ontic.h` (umbrella) | EULER_E (self-referential seed) |
 | 0 | `ontic.h` | EULER_GAMMA, GAMMA_QUARTER (transcendentals) |
 | 0b | `ontic.h` | NOME_LEMNISCATIC, THETA_LEMNISCATIC (modular selection) |
 | 1 | `lemniscate.h` | VARPI, GAUSS_CONSTANT_M, G_STAR, PI_FTD, packing fraction PF |
-| 2b | `ontic.h` | K_CRIT (where i emerges), X_BORN (Born rule degenerate root) |
+| 2b | `lemniscate.h` | K_CRIT (zero-discriminant coefficient), X_BORN (legacy name for repeated root 2G*; no Born inference) |
 | 3 | `master_quadratic.h` | x_+, x_-, COEFFICIENT 16, structural alpha-readout value |
 | 4 | `ontic.h` | Framework integers: D=3, N_c=3, N_gen=3, N_f=6, N_base=4, b_3=7, N_eff=13 |
 | 5 | `gauge_couplings.h` | G_C (state-flux coupling), ALPHA runtime coupling, ALPHA_S_MZ, SIN2_WEINBERG, ALPHA_WEAK |
@@ -45,10 +45,11 @@ Header guards in `engine/include/ftd/constants.h` ensure:
 - `G_C * G_C ≈ ALPHA` (1e-8 tolerance)
 - Master quadratic identities (`N_BASE = N_c² - N_c - 2`, etc.)
 
-The 9-layer derivation chain in this directory was untouched by the 8-phase
+The 9-layer constants registry in this directory was untouched by the 8-phase
 engine refactor (commits 2db67ca…87158ae) — only test-side and
-phase-decomposition code moved. Extending the static_assert chain when
-adding new derived constants is required (see ADR-0009 / CONTRACTS.md §7).
+phase-decomposition code moved. Its hierarchy is a dependency order, not a
+blanket derivation claim. Extend the static_assert chain when adding exact
+identities (see ADR-0009 / CONTRACTS.md §7).
 
 ## How to extend
 

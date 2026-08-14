@@ -1161,6 +1161,841 @@ scoped engine fact, not a universal no-clock result. The artifact bundle is
 `engine/results/gstar_qactive_pilot_20260802/`; no toggle, RenderBridge phase,
 CUDA/WASM path, scenario, calibration, or golden state changed.
 
+FTD-0840 adds `eft/native_pair_energy_recursion.h` as a header-only isolated
+selected-extension reference. It implements the globally monotone implicit
+discrete-gradient step for
+`H=p^2/(2m)+lambda*q^4=lambda[(q|q|)^2+y^2]`, returning the signed pair
+coordinates, equation residuals, energy residual, swept-area orientation, and
+fail-closed solver status. The focused CTest verifies both square sheets,
+forward and signed-step reversal, physical momentum reversal, strict nonzero
+orientation, invalid/nonconvergent rejection, and 20,000-step compact-shell
+confinement. Maximum observed equation, one-step energy, reverse-state, and
+long-run energy residuals are `1.10e-14`, `2.67e-15`, `7.44e-15`, and
+`4.06e-13`. The header contains no `G*`, target period, `Voxel`,
+`RenderBridge`, toggle, production phase, CUDA/WASM path, or scenario. It is
+reference mechanics for an adopted pair coupling, not evidence that the
+production substrate supplies that coupling or an exact finite-tick cadence.
+
+FTD-0841 audits the local vector lift without adding an engine path. Existing
+`Voxel::flux` and `Voxel::wave_vel` already provide the local canonical type
+`(J,W)`. The self-pair tensor `J otimes J` has Frobenius energy `|J|^4`, and
+the associated vector discrete-gradient recursion is uniquely solvable,
+reversible, energy- and angular-momentum-conserving, oriented, and bounded
+conditional on selecting the radial onsite coupling. No such term is present
+in the production phase or energy ledger. Cubic symmetry alone permits an
+anisotropic quartic, only invariant linearly polarized sectors have the scalar
+`G*` period law, and no combined onsite-plus-spatial energy transaction has
+been implemented. FTD-0841 therefore closes a source-type audit, not a
+production feature.
+
+FTD-0842 audits the next coupled reference without adding an implementation.
+The selected simultaneous discrete gradient for production `K` plus onsite
+`lambda|J|^4` is uniquely solvable and exactly energy closed, but its linear
+control inverts `2mI+h^2K/2`; that inverse is dense on a connected quotient.
+It therefore cannot be inserted as one P4-local production tick. Positive
+edge energy also leaves only the box-wide constant zero mode, so a bounded
+profile is not an exact critical-quartic clock. At `lambda=0` the selected map
+is implicit midpoint, not the existing kick--drift map or its cross-term tick
+invariant. No toggle, field, solver, phase, or energy-ledger entry was added.
+
+FTD-0844 constructs a selected two-channel reference without changing the
+engine. In the orthogonal common/relative chart, the required spatial metric
+has rank one: only the common mode propagates, while each relative site runs
+the isolated quartic recursion. This would preserve the existing common-mode
+tick invariant plus positive relative onsite energies with one-shell
+dependencies. The frozen dual path instead computes separate L/R Laplacians,
+equivalent to `b=0`, not the required `b=a`; no cross-gradient, relative
+quartic, readout, toggle, or production ledger exists. FTD-0843's invalid
+`26/28` parent and FTD-0844's repaired `28/28` certificate affect no binary.
+
+FTD-0846 similarly changes no binary. Its selected onsite reference adds an
+exchange-odd pointer `(r,pi)` and the quartic difference interaction
+`kappa(r-q)^4/4`; the exact proof closes a reversible three-account energy
+transaction and exposes its phase torque. No `Voxel` member represents that
+pointer, no phase implements the coupling, no continuous pointer history is
+converted to `state in {-1,0,+1}`, and no common-field propagation or toggle
+consumes it. FTD-0845's invalid `31/32` parent and FTD-0846's repaired `32/32`
+certificate are theory-only.
+
+FTD-0848 also changes no binary. Its selected mathematical reference adds a
+continuous latch coordinate with sextic three-well potential, an AVF damped
+transaction, scalar bath/controller ledgers, and a basin quotient to
+`state in {-1,0,+1}`. Production `Voxel::state` supplies only that codomain:
+no member stores the latch coordinate or bath ledger, no tick phase evaluates
+the sextic/AVF update or coupling schedule. FTD-0847's invalid first run and
+FTD-0848's repaired `30/30` certificate are theory-only.
+
+FTD-0850 source-locks and classifies the current production alternative; it
+also changes no binary. With seed/site/tick retained, genesis is deterministic
+and context blind, its nonzero divergence sign is odd, and the single-field
+branch withdraws positive radial field energy. Evaporation is a real
+many-to-one `+/-1 -> 0` map. These are partial ternary acquisition/loss
+fragments, not the FTD-0848 latch: every finite-energy unlocked state has
+positive evaporation hazard, dual genesis omits the single-branch withdrawal,
+and no event-level bath/controller receiver consumes genesis/evaporation in the
+aggregate audit or retains erased metadata. FTD-0849 is preserved invalid at
+`28/30`; the verifier-only FTD-0850 repair passes `30/30`. No production code,
+toggle, layout, or tick ordering changed.
+
+FTD-0851 also changes no binary. It proves that an all-energy receiver for
+`+/-1 -> 0` needs an odd label plus nonnegative energy account; when exported
+energy `B` is positive, one signed amplitude `a=s*sqrt(2B)` carries both. The
+selected balanced representation `L=s*sqrt(B), R=-s*sqrt(B)` is a reference
+formula only. Production `flux_L/flux_R` is not assigned that event pulse and
+is not included as a separate receiver energy by `update_energy_ledger_cpu`.
+The current same-sign collision is a remainder-reset barrier fragment,
+annihilation emission is sign blind at fixed continuous input, and the full
+event journal is observation-only. No new public type, receiver storage,
+event transaction, or propagation phase is implemented.
+
+FTD-0852 again changes no binary. It proves a selected exact history-carrier
+update and audits the existing dual path. Production already contains a
+homogeneous relative candidate: `phase_read` applies identical L/R operators
+and equal matter sources, while `phase_write` advances the channels separately
+before rebuilding their sums. However, no event writes the FTD-0851 odd pulse
+into that difference channel; the stencil propagates both ways rather than as
+the exact injective clearing shift; and `update_energy_ledger_cpu` squares only
+the reconstructed common `flux`/`wave_vel`, so `R=-L` relative energy is
+unaccounted. No event hook, dual-energy term, history rail, barrier, or public
+receiver type was added.
+
+FTD-0853 also changes no binary and adds no public engine type. It proves that
+the existing six face neighbours and dual wave-velocity coordinates are
+sufficient for a selected reference deposit: opposite L/R radial impulses of
+magnitude `sqrt(B/6)` preserve the common field and transfer exactly `B` when
+the local pre-event port coordinate `Q0` vanishes. Production does not yet
+derive event energy `B`, test the ready port, write the impulse, account dual
+relative energy/current, prove clearing under its bidirectional stencil, or
+encode the complete erased state. No event hook, ledger term, barrier, toggle,
+phase, or C++ interface was added.
+
+FTD-0855 changes no binary and adds no public type. It observes that the
+existing diagnostics already assign a manifested record the matter energy
+`B=E_REST+flat_particle_kinetic_energy=gamma*E_REST`, which disappears from
+that diagnostic account when evaporation clears the state. It then proves at
+reference scope that `D=Q/sqrt(12)` maps the selected six-face radial mode
+isometrically to the odd history rail, so a one-cell outward shift forms the
+next receiver port. The production drift ledger still excludes rest and
+separate dual energy; the shared bidirectional dual field is not a reserved
+directed rail; and no event routing, reciprocal barrier, or full-state receiver
+exists. No ledger term, event hook, field partition, phase, toggle, or C++
+interface was added.
+
+FTD-0856 changes no production binary behavior. It proves the minimum reference
+contract for a reciprocal record boundary: a distinct hold/exchange eligibility
+value, retained incoming/outgoing characteristic orientation, and a controlled
+identity/swap matrix between matter amplitude and the incident relative pulse.
+The contract now has an isolated public witness in
+`ftd::eft::scatter_reciprocal_record_port`; its focused Release CTest passes
+`1/1`. `Voxel::locked` supplies only the hold distinction. The dual `flux_L/R`
+plus `wave_vel_L/R` type has capacity for a relative conjugate pair, but
+production does not construct protected characteristics or apply the
+scatterer. The same-sign movement reset remains nonreciprocal under FTD-0506.
+No production event hook, characteristic buffer, energy term, gate controller,
+phase, toggle, or tick-phase consumer was added.
+
+FTD-0857 is preserved execution-invalid: its seven source hashes passed before
+the verifier aborted on a nonexistent event-slice marker. The narrowly frozen
+FTD-0858 repair passes `40/40`. It proves that the existing fixed-input genesis
+and evaporation acceptances are deterministic, Moore-local, and target blind,
+but operate on common `flux`/`wave_vel`. Antisymmetric L/R perturbations leave
+those trigger inputs fixed while changing the relative receiver, so acceptance
+does not determine an on-shell reciprocal port. The relative pair nevertheless
+admits an exact incoming/outgoing energy-current chart. On the axial
+plane-symmetric sector, C18 reduces to the 1D Laplacian, but selected
+`C_WAVE^2=1/3` gives trace defect `(8/3)sin^2(k/2)` from exact one-cell rails.
+The isolated `ftd::eft` implementation and focused Release CTest pass `1/1`.
+No production event hook, common-to-relative transducer, protected buffer,
+relative-energy ledger, controller state, toggle, or tick-phase consumer was
+added.
+
+FTD-0859 is preserved execution-invalid at `31/36`; all seven source hashes
+passed before five verifier-only structural/sign/whitespace checks failed. The
+narrow FTD-0860 repair passes `36/36`. Its isolated
+`ftd::eft::pump_relative_action` reference applies
+`z'=sqrt((I+B)/I)sJz` on a nonzero canonical pair, adds exactly `B` to action,
+has unit symplectic Jacobian, and has a known-event inverse. It fails closed on
+an empty carrier. The unlabelled result is intentionally nonfaithful because
+opposite event signs collide on opposite background phases; faithful signed
+history remains the separate reserved rail. The focused Release CTest passes
+`1/1`. No production event hook, protected local pair, relative/loss ledger,
+controller, export law, toggle, default, or tick-phase consumer was added.
+
+FTD-0861 is preserved execution-invalid at `35/36`; every source and exact
+mathematical gate passed, while one production-boundary prose marker failed.
+The one-repair FTD-0862 wrapper passes `36/36`. Its isolated
+`ftd::eft::step_phase_referenced_action_rail` reference supplies a prepared
+nonzero phase calendar, loads the FTD-0860 signed quarter-turn, shifts each
+pair one cell outward, and exports the complete tail pair. Calendar compliance
+is `spatial_twist-temporal_advance=0 mod 2pi`; on that selected subspace the
+readout recovers `event_energy=I-I_*` and event sign from the oriented area.
+The finite excess-action ledger closes and the input/tail-completed step is
+injective. The focused Release CTest passes `1/1`. The API is not C18 and no
+production phase source, protected/cubic rail, event hook, relative/tail
+ledger, controller, `Voxel`, toggle, default, or tick-phase consumer was added.
+
+FTD-0863 adds the isolated
+`ftd::eft::step_catalytic_phase_reference` realization. A nonzero canonical
+reference rotates autonomously with conserved action and defines an orthonormal
+phase frame for a separate signal pair. The FTD-0856 controlled identity/swap
+exchanges matter amplitude with the phase-orthogonal signal coefficient, so an
+initially-zero signal can receive exactly the event energy and orientation; the
+same involution absorbs it and the reference action is unchanged. The focused
+Release CTest passes `1/1`. This refines the existing selected phase-rail type;
+it does not add a production `Voxel` field, event hook, C18 mode, controller,
+backreaction, toggle, default, tick phase, `G*` cadence, or energy-current
+ledger.
+
+FTD-0864 is preserved execution-invalid at `39/40`; FTD-0865's one-repair
+wrapper passes the inherited `40/40`. The isolated
+`ftd::eft::evolve_clock_gated_hamiltonian_cycle` API evaluates the exact
+one-cycle flow of the imposed harmonic reference Hamiltonian on full matter
+and signal modes. The registered frequency/coupling winding produces exact
+identity or full-mode swap, reports the common/relative actions, strict minimum
+reference reserve, interaction-energy/reference-loan equality, and endpoint
+energy residual, and fails closed when the reference reserve is insufficient.
+Its focused Release CTest passes `1/1`. The API explicitly reports that
+eligibility is frozen and a quartic load-blind controller is not established.
+No production field, `Voxel`, event hook, controller state, compensation,
+quartic clock, C18 rail, toggle, default, or tick phase was added.
+
+FTD-0866 is preserved execution-invalid at `39/40`: its C14 certificate
+expression omitted the `nu*I_r` term of the already-registered Hamiltonian.
+FTD-0867 freezes exactly that one coordinate correction and passes the
+inherited `40/40`. The isolated
+`ftd::eft::execute_ternary_eligibility_handshake` API derives hold/exchange
+eligibility from the existing ternary latch as `s^2`, requires a zero incoming
+signal and a reference-orthogonal matter mode whose oriented sign matches the
+latch, inherits the strict reference-reserve gate, and performs one exact
+clock cycle. Its output signal decodes the original sign and energy, and the
+API reports a gate-zero request to release the clutch with zero clutch-switch
+work. The focused Release CTest passes `1/1`. The API explicitly reports that
+microscopic latch reset, autonomous acknowledgement, clock synchronization,
+and cubic production coupling are not supplied. No production field, `Voxel`,
+event hook, bath state, toggle, default, tick phase, `G*` cadence, or selector
+weight was added.
+
+FTD-0868 is preserved execution-invalid after recording `25/26` checks through
+C26 and aborting during C27 construction on two verifier-representation
+defects. FTD-0869 freezes exactly those repairs and passes inherited `44/44`.
+The isolated `ftd::eft::execute_signal_acknowledged_two_stroke_reset` API
+implements the registered endpoint contract: the completed local signal is the
+target-blind acknowledgement, the compressed exchange enforces `I_0>B`, the
+selected nonsmooth cusp resets the latch within the second half-cycle, and the
+controller/scalar-bath ledger closes at `kappa*A`. A final full-mode handoff to
+an initially empty output port leaves the local latch and matter/signal modes
+ready while the output decoder retains sign and event energy. The focused
+Release CTest passes `1/1`.
+
+This API is not a subgradient time integrator, microscopic bath, protected
+cubic transport path, production latch coupling, or native `G*` synchronizer.
+It changes no `Voxel`, production field, toggle, default, or tick phase. Those
+physical mechanisms and perturbative robustness remain open.
+
+FTD-0870 is preserved execution-invalid at `39/40`; its only failure was a
+whitespace-sensitive protocol-prose marker. FTD-0871 freezes one C35
+whitespace-normalization repair and passes inherited `40/40`. The isolated
+`ftd::eft::execute_reversible_ternary_signal_uncomputation` API decodes the
+completed oriented signal, verifies that it matches the ternary latch, and
+applies the exact `Z_3` operation `s_after=s-d(E)`. It also records the inverse
+`s=s_after+d(E)`, leaves signal energy unchanged, and hands the signal to an
+initially empty output port. The focused Release CTest passes `1/1` for both
+signs, the no-event state, inverse recovery, mismatch/backpressure failures,
+and scope flags.
+
+The API recomputes acknowledgement and adds no persistent acknowledgement bit,
+reset-history trit, or logical bath. It explicitly does not implement the
+continuous `x`-latch trajectory, controller work, protected cubic transport,
+production coupling, or native `G*` synchronization. No `Voxel`, production
+field, toggle, default, or tick phase changed.
+
+FTD-0872 closes the isolated actual-layer permutation itself. The
+`ftd::eft::apply_oriented_ternary_quarter_turn` API acts on the ordered ternary
+latch/port pair by identity when ineligible, by `R(s,o)=(-o,s)` in the forward
+orientation, and by `R^-1(s,o)=(o,-s)` in the reverse orientation. It verifies
+the exact inverse, label-norm preservation, sign-reversal equivariance,
+nine-state bijection, ready emission, and reciprocal absorption. A nonempty
+port undergoes the all-domain reciprocal exchange; the API does not implement
+the provably noninjective “empty-port transfer, otherwise identity” wrapper.
+The focused Release CTest passes `1/1`, and the coupled actualization/rail set
+passes `11/11`.
+
+The label norm is not a physical energy scale. At the FTD-0872 boundary the
+API supplies no continuous actuator, controller-work ledger, protected cubic
+transport, production coupling, or native `G*` synchronization.
+
+FTD-0873 adds the isolated
+`ftd::eft::evolve_hamiltonian_ternary_quarter_turn_cycle` reference actuator.
+It embeds the ternary latch/port as one canonical carrier pair, adds one
+independent clock pair, and evaluates the exact imposed harmonic full-cycle
+flow. The inactive branch holds; the active orientations produce `R` and
+`R^-1`. The result reports the imposed record-energy scale, strict
+bidirectional reserve, maximum clock-action excursion, transient
+reference/interaction energy exchange, gate-zero and antiphase switching
+accounts, and endpoint energy residual. The focused Release CTest passes
+`1/1`; the coupled chain passes `12/12`.
+
+This is not a production controller. The amplitude/frequency scale and
+Hamiltonian are imposed, eligibility/orientation are frozen over a cycle, and
+repeat/norm-only gating is not a one-shot schedule. Native formation, dynamic
+gate-zero control, protected cubic transport, production coupling, robustness,
+and synchronization to the separate quartic `G*` calendar remain open. The
+implementation changes no `Voxel`, production field, toggle, default, or tick
+phase.
+
+FTD-0874 adds the isolated
+`ftd::eft::step_alternating_oriented_ternary_parity_rail` and exact inverse
+APIs. Existing integer global-tick parity selects the two alternating
+disjoint nearest-neighbour matchings; each active bond applies
+`(a,b)->(-b,a)`. The result exposes active bonds, label norm and support
+counts, exact inverse recovery, ready transfers, occupied reciprocal
+exchanges, locality, endpoint retention, and explicit scope flags.
+
+For a prepared isolated sign at rail site zero, the focused test verifies
+exact one-edge-per-tick transport through twelve ticks for both signs and then
+reverses the history exactly. It also exhaustively checks all finite ternary
+states through length six, a fixed-matching non-propagation control, occupied
+backpressure, composition with the FTD-0873 actuator, and fail-closed invalid
+inputs. The focused Release CTest passes `1/1`; the coupled chain passes
+`13/13`.
+
+This is a selected finite-horizon reference scheduler, not a production rail.
+Occupied bonds retain information but do not guarantee readiness or progress.
+The engine still supplies no native intersite Hamiltonian for the bond turn,
+automatic cubic axis/routing law, sustained congestion resolution, reciprocal
+finite-boundary completion, production event/energy-current coupling,
+robustness, or synchronization to the separate quartic `G*` calendar. No
+`Voxel`, production field, toggle, default, boundary mode, or tick phase is
+changed.
+
+FTD-0875 adds the isolated
+`ftd::eft::evolve_local_canonical_hamiltonian_parity_rail_cycle` API. Each
+rail site carries one reference canonical pair `(q,p)`. A complete selected
+harmonic clock cycle integrates the disjoint-bond generator to the exact
+forward or inverse FTD-0874 parity layer. The result exposes per-bond before/
+after states, carrier and interaction energy, clock-action excursion, local
+antisymmetric bond current, prepared-record energy transfer, endpoint
+residuals, exact inverse recovery, and scope flags.
+
+The implementation also exposes the finite scalar common symplectic form. It
+pairs boundary-mirror sites and is therefore a nonlocal, length-dependent
+control—not local substrate hardware. Exhaustive focused tests verify the
+actual-section ternary map, generic continuous inverse, positivity and reserve
+bounds, current antisymmetry and energy continuity, exact prepared-energy
+transfer, and the special zero-clock-backreaction actual orbit. The focused
+Release CTest passes `1/1`; the coupled chain passes `14/14`.
+
+This is an imposed isolated reference Hamiltonian, not production dynamics.
+The engine still does not form the onsite canonical doublet natively, recover
+its amplitude/frequency scale, route in three dimensions, resolve sustained
+congestion, close reciprocal finite boundaries, couple the current to
+production event accounting, establish robustness, or synchronize the common
+harmonic phase to the separate quartic `G*` calendar. No `Voxel`, production
+field, toggle, default, boundary mode, or tick phase is changed.
+
+FTD-0876 adds the isolated read-only
+`ftd::eft::carrier_from_voxel`,
+`ftd::eft::flux_history_to_markov_carrier`, and
+`ftd::eft::evolve_free_wave_kick_drift` APIs. They identify the existing
+production `flux`/`wave_vel` pair with the exact first-order Markov chart of a
+two-slice flux history and verify symmetric-stiffness free-wave kick/drift plus
+its inverse on all three vector components. The result exposes native pair
+count, exact history recovery, inverse residual, vector bond generator,
+damping pullback scale/phase determinant, and explicit non-promotion flags.
+
+The focused test copies a real `Voxel` without mutation, recovers exact vector
+history, evolves and reverses a symmetric three-site stiffness witness,
+verifies the component-summed FTD-0875 generator and damping determinant, and
+fails closed on nonsymmetric stiffness, malformed matrices, invalid steps, and
+nonfinite data. The focused Release CTest passes `1/1`; the coupled chain
+passes `15/15`.
+
+This closes only native carrier-coordinate availability. The complete
+production tick is not declared symplectic: damping, Langevin, Gauss
+projection, manifestation/evaporation, and boundary maps are not included in
+the exact free-wave map. No prepared ternary record, FTD-0875 production bond
+actuator, amplitude/energy scale, constrained-phase Gauss proof, complete
+environment ledger, route, or quartic-`G*` synchronization is supplied. No
+`Voxel`, production field, toggle, default, boundary mode, or tick phase is
+changed.
+
+FTD-0877--0880 add the isolated
+`ftd::eft::decompose_matched_gauss_canonical`,
+`ftd::eft::make_static_ternary_gauss_record`, and
+`ftd::eft::prepare_matched_gauss_record` APIs. They operate only on the
+already selected `MatchedFaceFlux` incidence complex. For matched divergence
+`D` and `L=DD^T`, the observer constructs `q=DJ`, `p=L^+DP`, the exact
+longitudinal fields, and divergence-free transverse remainders. It verifies
+reconstruction, orthogonality, and equality of the full and reduced
+symplectic pairings.
+
+The static-record constructor mean-subtracts periodic nonneutral probes
+explicitly, solves the minimum-energy longitudinal representative, and sets
+charge momentum to zero. The preparation observer returns both the prepared
+field and the discarded longitudinal discrepancy; the pair reconstructs the
+input exactly. It deliberately reports that unledgered preparation and an
+environment dynamics have not been supplied.
+
+The production-boundary observer records the exact symbol mismatch. The live
+central divergence/gradient composition is `-sum sin^2(k_a)`, whereas the
+18-point SOR stencil gives `-2` rather than `-1` at `(pi/2,0,0)` and `-4`
+rather than `0` at `(pi,0,0)`. Finite SOR and the default manifested-site
+skip are additional departures. Therefore the production pass is described
+as approximate constraint relaxation, not an exact matched or canonical
+projector.
+
+The repaired exact certificate passes `66/66`; the invalid FTD-0877--0879
+executions remain preserved. The focused Release CTest passes `1/1`, and the
+coupled actualization chain passes `16/16`. No production `Voxel`, toggle,
+default, or tick phase changed. No native dynamic record formation, uniformly
+local charge conjugate, reversible environment dynamics, production parity
+actuation, physical scale, routing, or quartic-`G*` synchronization follows.
+
+FTD-0881--0882 add the isolated
+`ftd::eft::apply_reversible_checkerboard_gauss_layer`,
+`ftd::eft::reverse_reversible_checkerboard_gauss_layer`, and
+`ftd::eft::ReversibleCheckerboardGaussPreparation` APIs. On even periodic
+matched-face probes, one cell parity at a time rotates the local six-face
+Gauss residual into an explicit signed environment port. Fresh-zero ports
+make the layer an affine orthogonal projection; alternating parity layers
+converge from empty flux to the FTD-0880 minimum-energy record without calling
+the pseudoinverse in a local gate. Every outgoing port is retained, so reversing
+the layer order reconstructs the exact finite input history.
+
+The witness records field energy, incoming/outgoing environment energy, and
+local source work. At its empty-field/fresh-port limiting boundary, field and
+history energies are equal and each is one half of supplied source work. It
+also reports that generic exact completion is not achieved in a fixed finite
+number of local layers. The repaired certificate passes `60/60`; the invalid
+FTD-0881 `58/60` execution remains preserved. The focused Release CTest passes
+`1/1`, and the coupled actualization chain passes `17/17`. No `Voxel`,
+production field, toggle, default, boundary mode, or tick phase changed. The
+API supplies no autonomous fresh-port recycling, positive source reservoir,
+moving-source continuity, finite-boundary completion, production coupling,
+physical scale, Born target, or quartic-`G*` synchronization.
+
+FTD-0883--0884 add the isolated `ftd::eft::FinitePortGaussBattery`
+reference witness. A cyclic bank of `C` initially zero signed-port vectors
+supplies exactly the first `C` fresh checkerboard layers while retaining the
+field, every port, the cursor, and the reversal history. Once a generic
+nonzero output returns to the cursor on layer `C+1`, that port is no longer
+fresh. This is a capacity theorem for the explicit cyclic bank, not a
+universal finite-dimensional memory no-go; compressed exact-real memories and
+open or unbounded signed-history rails remain outside the result.
+
+For source work `w_x=q_x(e_x-r_x)/6` and positive reference energy
+`E_b=b_x^2/2`, the witness applies the unique sign-preserving strict-reserve
+update
+
+```text
+b_x' = sgn(b_x) sqrt(b_x^2 - 2 w_x),
+b_x  = sgn(b_x') sqrt((b_x')^2 + 2 w_x).
+```
+
+Battery-energy loss is exactly the local source work, so total
+field+port-bank+battery energy is invariant and the full finite state reverses
+exactly. The quadratic battery type, sign branch, and reserve scale are
+`[IMPOSED]`; no canonical Hamiltonian or symplectic reservoir, native battery
+formation/recharge, or natural scale has been derived. The repaired
+certificate passes `56/56`; the invalid FTD-0883 `54/56` execution remains
+preserved. The focused Release CTest passes `1/1`, and the coupled
+actualization chain passes `18/18`. No production `Voxel`, field, toggle,
+default, boundary mode, or tick phase changed. No universal memory no-go,
+moving-source routing, production coupling, Born target, or quartic-`G*`
+gearbox follows.
+
+FTD-0885--0886 add the isolated
+`ftd::eft::CanonicalSourceCenteredGaussGate` reference witness in
+`include/ftd/eft/canonical_source_centered_gauss_gate.h`. For one normalized
+active mode it uses
+
+```text
+y = d_x J / sqrt(6),  s = q_x / sqrt(6),  u = y - s,  a = e_x / sqrt(6)
+N = (u^2 + a^2 + pi_u^2 + pi_a^2) / 2
+L = a pi_u - u pi_a
+H = omega I + omega N + sigma omega (1 - cos(theta)) L / 4.
+```
+
+Because `{N,L}=0` and `|L|<=N`, the carrier Hamiltonian is positive and one
+clock cycle implements the exact canonical forward/reverse quarter-turn. On
+the zero-conjugate section this is exactly the FTD-0882 residual/environment
+gate. The raw-work audit uses
+`E_raw=(y^2+a^2)/2` and `U_int=-s*y+s^2/2`; it verifies
+`Delta E_raw=w` and `Delta U_int=-w`. At this fixed-source local scope, source
+work is interaction-energy exchange rather than an independent battery drain.
+
+The same API audits the FTD-0884 phase boundary. Its square-root coordinate
+map has an exact cotangent lift, but that lift changes positive oscillator
+energy by `-w(1+p_b^2/b^2)`, so the desired decrement is exact only on the
+zero-conjugate Lagrangian section. A state-dependent phase-blind action drain
+is not symplectic. `shift_open_canonical_history_right` supplies the separate
+complete-pair open-history kinematic witness and exact inverse; it is not a
+finite recycler or a production environment.
+
+The invalid FTD-0885 `60/64` execution remains preserved. The FTD-0886 repair
+changes only three certificate-marker defects (the fourth failure was
+dependent) and passes the inherited `64/64`; the
+focused Release CTest passes `1/1`, and the coupled actualization chain passes
+`19/19`. No production `Voxel`, field, toggle, default, boundary mode, or tick
+phase changed. The witness supplies no autonomous common parity Hamiltonian,
+dynamical source formation/motion/recoil, physical open-history hardware, 3D
+routing, production coupling, native scale, Born target, or quartic-`G*`
+gearbox.
+
+FTD-0887--0888 add the isolated
+`ftd::eft::evolve_autonomous_phase_parity_source_reaction_cycle` reference API
+in `include/ftd/eft/autonomous_phase_parity_source_reaction.h`. It uses one
+autonomous phase circle split into six disjoint `C1` windows. In generator
+order
+
+```text
+(L_ua^0, L_ar^0, N_r^0, L_ua^1, L_ar^1, N_r^1),
+alpha = (pi/2, eta, pi/2, pi/2, eta, pi/2),
+H = Omega I + 6 Omega N + Omega sum_j (6 alpha_j/pi) rho_j(theta) G_j.
+```
+
+Each base `N` flow makes an identity winding and each pulse integrates to its
+target angle. Because the windows have disjoint interiors, the two-color
+sequence needs no assumed commutation between different-color generators and
+no external integer-parity switch. The carrier obeys
+`H-Omega I >= 3 Omega N`; clock action returns at each full cycle.
+
+The same API adds one source-reaction canonical pair and implements the exact
+local splitter. On the ready slice it sends residual energy
+
+```text
+E_hist = cos^2(eta) E_res,
+E_react = sin^2(eta) E_res.
+```
+
+Thus the FTD-0886 history-only endpoint is positive-energy saturated: nonzero
+zero-initialized reaction energy must be paid by reduced history energy. One
+scalar reaction coordinate cannot be symplectic, so one canonical pair is
+minimum in the registered onsite-direct-sum class. This is another instance of
+the existing selected canonical-pair type, not a new type. `eta=pi/4` is the
+unique equal split only after output-channel exchange symmetry is imposed; the
+equal split is `[SELECTION]`.
+
+The invalid FTD-0887 `68/72` execution remains preserved. The FTD-0888 wrapper
+repairs only three representation defects and passes inherited `72/72`; the
+focused Release CTest passes `1/1`, and the coupled actualization chain passes
+`20/20`. No production `Voxel`, field, toggle, default, boundary mode, or tick
+phase changed. The reaction pair is not yet a physical ternary matter source:
+native source identification, mass/inertia, intercell motion/recoil, native
+phase-window formation/origin/scale, physical open history, 3D routing,
+production coupling, Born targets, and the separate quartic-`G*` gearbox remain
+open.
+
+FTD-0889--0890 add the isolated
+`ftd::eft::analyze_cubic_reaction_vector_source_transport` reference API in
+`include/ftd/eft/cubic_reaction_vector_source_transport.h`. It makes the next
+boundary executable without wiring production. Cubic symmetry forbids a
+scalar-only reaction from choosing nonzero spatial recoil, and one
+three-dimensional vector copy cannot carry a nondegenerate alternating form.
+The minimum orientation-free carrier in the registered onsite class is
+therefore three canonical pairs `(R,Pi) in T1u+T1u`. FTD-0888's one-pair
+minimum remains valid for its scalar internal reaction channel; a spatial
+one-pair slice is conditional on an independently supplied fixed direction.
+
+For selected rest energy `E0` and limiting speed `c`, the API implements the
+exact cotangent chart
+
+```text
+p = sqrt(E0 + |Pi|^2/4) Pi/c,
+x = Dg(Pi)^(-T) R,
+K(p) = sqrt(E0^2 + c^2 |p|^2) - E0 = |Pi|^2/2.
+```
+
+The physical source then follows exact free Hamiltonian drift; the centered
+subcell quotient and `FaceCurrentSegment` provide reversible endpoint motion
+and exact discrete continuity. A required matter impulse supplied by the
+matched field momentum ledger orients the reaction. The available residual
+energy fixes `sin^2(eta)=K_req/E_res`; insufficient energy fails closed, and
+equal splitting is not universal.
+
+The invalid FTD-0889 `64/68` execution remains preserved. FTD-0890 repairs
+only three representation defects and passes inherited `68/68`; the focused
+Release CTest passes `1/1`, and the isolated actualization chain passes
+`21/21`. No production `Voxel`, field, toggle, default, boundary mode, or tick
+phase changed. `E0`, `c`, the relativistic dispersion, and the vector reaction
+role are selected/imposed. Native vector common-action formation and coupling,
+mass-scale derivation, stable matter, production, Born targets, and the
+separate quartic-`G*` gearbox remain open.
+
+FTD-0891--0892 add the isolated
+`ftd::eft::analyze_collective_reaction_triplet_inertia` reference API in
+`include/ftd/eft/collective_reaction_triplet_inertia.h`. It does not change
+production. Given selected constituent canonical positions/momenta, tangent
+probes, positive constituent rest energies, and simultaneous impulses, it
+constructs the orthogonal Helmert modes and verifies
+
+```text
+X = (1/N) sum x_a,
+P = sum p_a,
+sum p_a dot dx_a = P dot dX + sum_(mu>0) pi_mu dot dq_mu.
+```
+
+Thus the FTD-0890 three-pair reaction vector is already the exact collective
+sector of the selected constituent phase space; no new selected vector type is
+introduced. The API reconstructs every constituent coordinate/momentum and
+checks that internal zero-sum impulses cancel while any external constituent
+impulses change `P` by their exact sum.
+
+For the selected per-constituent dispersion
+`E_a=sqrt(epsilon_a^2+c^2|p_a|^2)`, the API evaluates the unique common-velocity
+minimum at fixed `P` and verifies
+
+```text
+p_a = epsilon_a P / sum epsilon,
+E_coll = sqrt((sum epsilon)^2 + c^2 |P|^2),
+M_coll = sum epsilon / c^2.
+```
+
+This is conditional inertial additivity, not an absolute mass derivation. The
+API explicitly reports the mismatch from a static binding offset that does not
+participate in the boosted family. Its scope flags deny static-Hessian mass
+identification, exact total field-matter continuous Noether momentum,
+constituent formation, stable-pole derivation, production coupling, Born-target
+use, and native `G*` synchronization. The invalid FTD-0891 `62/68` run is
+preserved; FTD-0892 repairs only five verifier representations and passes the
+inherited `68/68`. The focused Release CTest passes `1/1`.
+The isolated actualization chain passes `22/22`.
+
+FTD-0893 adds the isolated
+`ftd::eft::analyze_dressed_boost_momentum_map` reference API in
+`include/ftd/eft/dressed_boost_momentum_map.h`. For one matter-like and one
+field-like time-odd amplitude per cubic axis it accepts
+
+```text
+A = [[a,g],[g,k]],
+B = [b_m,b_f],
+```
+
+requires `a>0`, `k>0`, and `ak-g^2>0`, and evaluates
+
+```text
+M = B A^-1 B^T
+  = (k b_m^2 - 2 g b_m b_f + a b_f^2)/(ak-g^2).
+```
+
+It returns the unique minimum-energy matter/field allocation at fixed imposed
+total momentum, verifies `E_kin=|P|^2/(2M)`, exposes the exact ambiguity
+`B->sB`, `M->s^2M`, and checks signed cubic covariance. It fails closed for a
+non-positive energy Hessian, zero momentum row, zero scale control, invalid
+tolerance, or nonfinite input. Static energy shifts are recorded but cannot
+alter `M`. Public flags deny that the physical total-momentum map, absolute
+mass, common-action Noether closure, stable pole, production coupling, Born
+target, or native `G*` synchronization has been derived. The first locked
+SymPy certificate passes `57/57`; focused Release CTest passes `1/1`. No
+production source, `Voxel`, toggle, default, or tick phase changes. The
+isolated actualization chain passes `23/23`.
+
+FTD-0896 adds the isolated
+`ftd::eft::analyze_bloch_quasimomentum_lift` reference API in
+`include/ftd/eft/bloch_quasimomentum_lift.h`. It accepts two principal Bloch
+triplets in `[-pi,pi)^3`, two explicit integer winding triplets, an imposed
+momentum scale, and a finite sawtooth truncation order. Componentwise it
+computes
+
+```text
+k_12 = wrap(k_1+k_2),
+w_12 = w_1+w_2+carry(k_1+k_2),
+k_tilde_12 = k_12+2 pi w_12 = k_tilde_1+k_tilde_2.
+```
+
+The analyzer records the reciprocal information lost by principal values,
+the imposed candidate `P=p_* k_tilde`, and the periodic finite-range control
+`2 sum_(r=1)^R (-1)^(r+1)sin(rk)/r`. It fails closed for nonfinite or
+nonprincipal labels, nonpositive scale/tolerance, invalid truncation order,
+or winding overflow. Public flags deny a continuous torus-to-real section, a
+finite-range global unwrapped generator, derived winding dynamics, a derived
+physical momentum scale, exact total field-matter momentum, absolute mass,
+production coupling, Born-target use, or native `G*` synchronization. The
+FTD-0894 and FTD-0895 invalid executions are preserved; the scoped FTD-0896
+repair passes inherited `81/81`. Focused Release CTest passes `1/1`, and the
+isolated actualization chain passes `24/24`. No production source, `Voxel`,
+toggle, default, or tick phase changes.
+
+FTD-0897 adds the isolated
+`ftd::eft::apply_reciprocal_carry_transaction` reference API in
+`include/ftd/eft/reciprocal_carry_reservoir.h`. It accepts two principal
+Bloch-label triplets, one supplied opposite increment triplet, an integer
+reciprocal reservoir, an imposed momentum scale, and a tolerance. For each
+component it computes
+
+```text
+k_1' = wrap(k_1+q),  c_1 = carry(k_1+q),
+k_2' = wrap(k_2-q),  c_2 = carry(k_2-q),
+W' = W+c_1+c_2,
+k_1'+k_2'+2 pi W' = k_1+k_2+2 pi W.
+```
+
+The result records the unique carry update, full inverse recovery, candidate
+physical totals after the imposed scale, periodic-band energy before/after,
+and the fact that band energy is blind to the reservoir. It fails closed for
+nonfinite inputs, nonpositive tolerance/scale, nonprincipal labels,
+unrepresentable carries, integer overflow, conservation failure, or reversal
+failure. Public flags deny that the increment, substrate reservoir, reservoir
+energy, physical scale, exact total field--matter momentum, absolute mass,
+production coupling, Born target, or native `G*` synchronization has been
+derived. The first locked exact certificate passes `89/89`; focused Release
+CTest passes `1/1`, and the isolated actualization/EFT chain passes `25/25`.
+No production source, `Voxel`, toggle, default, or tick phase changes.
+
+FTD-0898 adds the isolated
+`ftd::eft::analyze_quartic_relative_carry_gearbox` reference API in
+`include/ftd/eft/quartic_relative_carry_gearbox.h`. It composes the existing
+`advance_native_pair_energy` discrete-gradient relative quartic with the
+FTD-0897 reciprocal-carry transaction. The endpoint generates
+
+```text
+Delta P_L = +Delta Pi/sqrt(2),
+Delta P_R = -Delta Pi/sqrt(2),
+q = Delta Pi/(sqrt(2) p_*),
+P_L+P_R = sqrt(2) P_C = constant.
+```
+
+The result reports the exact relative-energy residual, generated increment,
+before/after principal charts and windings, aggregate carry endpoint,
+common-momentum residual, signed-step inverse residual, and the continuum
+quartic period-amplitude product. It fails closed for nonfinite input, invalid
+tolerance or scale, relative-solver failure, unrepresentable chart winding,
+integer overflow, child carry failure, endpoint mismatch, or inverse failure.
+Public flags deny common-mode coupling, matter--field identification, derived
+`p_*`, carry energy, finite-tick `G*` cadence, absolute mass, production
+coupling, Born-target use, or a new selected type. The first locked exact
+certificate passes `97/97`; focused Release CTest passes `1/1`, and the
+isolated actualization chain passes `26/26`. No production source, `Voxel`,
+toggle, default, or tick phase changes.
+
+FTD-0899--0901 add the isolated
+`ftd::eft::analyze_common_relative_connection_gearbox` reference API in
+`include/ftd/eft/common_relative_connection_gearbox.h`. FTD-0899 and FTD-0900
+are preserved execution-invalid; the exactly scoped FTD-0901 repair passes the
+inherited exact certificate `87/87`.
+
+For the imposed reference law
+
+```text
+L = (M/2)|Cdot|^2 + (m/2)|Ddot|^2
+    + gamma D.Cdot - lambda|D|^4,
+P = M Cdot + gamma D,
+K = P - gamma D,
+Delta K = -gamma Delta D,
+```
+
+the analyzer solves the theorem's unique three-vector discrete-gradient
+endpoint and reports equation, energy, canonical momentum, mechanical impulse,
+equal/opposite channel impulse, canonical angular momentum, reciprocal carry,
+signed-step inverse, connection-curvature, clock-Hessian, and clock-origin
+tilt audits. The reciprocal chart remains conditional on the supplied
+`momentum_scale=p_*`.
+
+It fails closed for nonfinite data, nonpositive masses/coupling/tolerance or
+scale, zero step, zero iteration limit, endpoint-solver failure,
+unrepresentable chart winding, integer overflow, child-carry failure,
+invariant failure, or reverse failure. Public flags state that the connection
+law is imposed; `i` supplies orientation but does not derive `gamma`; physical
+coordinates, `p_*`, absolute mass, integer-tick `G*`, a discrete variational
+action, production coupling, and Born weights remain underived. It also
+reports the exact registered boundary that continuous nonzero `gamma` adds
+critical-clock Hessian `gamma^2/M`; `gamma=0` restores critical quarticity and
+turns off the mechanical gearbox.
+
+The pinned MSVC 14.44 Release build succeeds, focused CTest passes `1/1`, and
+the isolated actualization chain passes `27/27`. No production source,
+`Voxel`, renderer, boundary, toggle, default, or tick phase changes.
+
+FTD-0902--0903 add the isolated
+`ftd::eft::analyze_self_pair_connection_critical_gearbox` reference API in
+`include/ftd/eft/self_pair_connection_critical_gearbox.h`. FTD-0902 is
+preserved execution-invalid at `80/81`; the exactly one-substitution FTD-0903
+repair passes the inherited exact certificate `81/81`.
+
+The linearly polarized analyzer composes the existing quartic recursion and
+reciprocal-carry witness in the canonical-common rest sector:
+
+```text
+U(D) = D |D|,
+A(D) = gamma U(D),
+Lambda = lambda + gamma^2/(2 M),
+H_rest = Pi^2/(2 m) + Lambda D^4,
+Delta K = -gamma Delta U.
+```
+
+It reports the bare/connection/effective quartic couplings, signed self-pair
+endpoints, mixed connection derivatives, mechanical impulse, symmetric
+common displacement, child quartic energy and carry, signed-step inverse,
+zero origin Jacobian/Hessian, moving-sector quadratic-ray coefficient,
+conditional equal-partition value, symmetric-cycle zero-drift boundary, and
+the continuum `G*` period-amplitude product.
+
+It fails closed for nonfinite input, nonpositive masses/bare coupling,
+nonpositive tolerance or scale, zero step, zero iteration limit, effective-
+coupling or signed-pair overflow, child recursion/carry failure, invariant
+failure, or reverse failure. Public flags state that the connection law is
+imposed; `i` does not derive `gamma`; equal self-dual partition is not adopted;
+physical `p_*`, mass, net transport, finite-tick `G*`, production coupling,
+and Born weights remain underived. Generic moving sectors are explicitly not
+reported as exact quartic clocks.
+
+The pinned MSVC 14.44 Release build succeeds, focused CTest passes `1/1`, and
+the isolated actualization/EFT chain passes `28/28`. No production source,
+`Voxel`, renderer, boundary, toggle, default, or tick phase changes.
+
+FTD-0904 adds the isolated
+`ftd::eft::analyze_oriented_even_self_pair_rectifier` reference API in
+`include/ftd/eft/oriented_even_self_pair_rectifier.h`. It composes the same
+quartic recursion/carry witness with the imposed polarized connection
+
+```text
+A(q,e,chi) = chi gamma q^2 e,
+Lambda = lambda + gamma^2/(2 M),
+H_rest = pi^2/(2 m) + Lambda q^4.
+```
+
+The analyzer requires a unit polar axis `e` and exact chirality `chi=+/-1`.
+It reports connection endpoints, mechanical impulse, directed common
+displacement, child energy/carry/reversal, moving-sector coefficient,
+turning amplitude, continuum period-amplitude product, cycle displacement,
+mean velocity, and mean gear ratio. Public flags preserve the symmetry no-go
+for an even inversion-equivariant polar function of `D` alone and mark native
+axis/chirality formation, `gamma`, physical scale, mass, production, Born,
+and integer-tick cadence as open.
+
+It fails closed for nonfinite input, invalid mass/coupling/step/tolerance/
+scale/iteration count, nonunit axis, invalid chirality, overflow, child
+failure, invariant failure, or reverse failure. The locked exact certificate
+passes `74/74`; the focused Release CTest passes `1/1` and the isolated
+actualization/EFT chain passes `29/29`. No production source, `Voxel`,
+renderer, boundary, toggle, default, or tick phase changes.
+
+FTD-0905--0907 add the isolated
+`ftd::eft::analyze_native_ternary_dipole_phase_wedge_memory` reference API in
+`include/ftd/eft/native_ternary_dipole_phase_wedge_memory.h`. It accepts a
+finite collection of positions, ternary states, flux vectors, and
+wave-velocity vectors. It requires a neutral region with exactly one `+1`
+and one `-1` endpoint, then reports the origin-independent dipole axis,
+projected bilateral coordinates/momenta, phase wedge, time-reversal and
+signed-cubic audits, Gram determinant, imposed memory energy, wedge-
+conservation residual, radial minimum/curvature, centrifugal term, and the
+FTD-0840 swept-area parity control.
+
+Public flags distinguish native-type representability from dynamics. They
+record that the dipole axis and time-odd phase wedge use existing field
+types, while production formation, maintenance, erasure, the central memory
+law, rectifier coupling, `gamma`, physical scale, mass, production, Born, and
+integer-tick cadence remain open. A nonzero wedge is explicitly incompatible
+with treating the same central mode as the pure radial G* clock.
+
+The analyzer fails closed for nonfinite input, invalid memory parameters,
+empty/nonternary/nonneutral regions, missing or nonunique endpoints,
+coincident endpoints, zero dipole, zero phase wedge, child-probe failure, or
+invariant failure. The FTD-0907 exact certificate passes `75/75`; the focused
+Release CTest passes `1/1` and the isolated actualization/EFT chain passes
+`30/30`. No production source, `Voxel`, renderer, boundary, toggle, default,
+or tick phase changes.
+
 Defaults are specified per row in `TOGGLE_SPECS[]`. Core substrate behavior
 defaults on (`wave_propagation`, `coupling`, `damping`, `genesis`,
 `gauss_projection`, `forces`, `gravity`, `poisson_coulomb`, `movement`,

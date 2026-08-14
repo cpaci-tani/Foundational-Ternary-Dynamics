@@ -4,6 +4,12 @@
 
 **Status:** Technical synthesis — consolidates scattered derivations into unified chain
 
+> **[V2 COMPATIBILITY NOTICE — FTD-0825]** Any FTD-specific Type-III factor,
+> modular-flow identity, or Type-III-to-Type-I actualization claim in this
+> document is retracted. Those statements do not follow from finite qutrit
+> level statistics or from the actual ternary record algebra. The successor's
+> live finite-net result is Type I and keeps GNS factor classification open.
+
 > **Vocabulary:** The mathematical content (G* → three domains → QFT + GRT + frame-relative-projection layer → modular flow bridge) is stated in the canonical vocabulary. The "reference frame context chain" is the **frame-relative-projection chain** per [`REF_REFERENCE_FRAME_VOCABULARY.md`](../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md). The "reference frame context branch" is the **complex-root frame-relative-eigenmode branch** — the part of the master-quadratic eigenvalue structure that lives on the noumenal axis. The bridge to qualia / phenomenal experience is *not* claimed by this derivation; that is the open structural problem of frame-relative emergence (MC-T4.3).
 
 ---

@@ -18,6 +18,13 @@
 >    1.091645` is amplitude-independent to `2.3e-4`, not to six decimals. The
 >    six-decimal agreement was a property of `unwrapped_phase`, a modal-projection
 >    quantity that structurally cannot express amplitude dependence.
+>
+> **LOGICAL SCOPE CORRECTION 2026-08-10:** harmonicity excludes this object
+> as an action-sensitive critical-quartic `G*` clock; it does **not** imply
+> that a harmonic phase cannot measure elapsed time. The ordinary local-clock
+> obstruction is instead the measured action leakage/band embedding and the
+> absence of autonomous coupled closure. See
+> `SPEC_SUBSTRATE_NATIVE_CLOCK_MINIMUM_v1.md`.
 
 **Status:** `[ENGINE FACT — MEASURED, CORPUS-SCOPED NEGATIVE]` +
 `[GATE A RUNNABLE — supersedes the retracted "sampling inadequate" reading]` +
@@ -116,9 +123,13 @@ reason it is the wrong operator; see FTD-0778 §6.)
 1. **The doublet is excluded as a quartic-clock candidate**, on grounds independent of
    closure and independent of the sampling problem. This closes Gate B negatively for
    this corpus without Gate A ever running.
-2. **A harmonic mode is rate-degenerate.** With `H0'' = dOmega/dI = 0`, the map
-   `I -> Omega` is constant, so the rate carries no information about internal action;
-   the mode cannot serve as a clock that distinguishes states.
+2. **A harmonic mode is rate-degenerate, not clockless.** With
+   `H0'' = dOmega/dI = 0`, the map `I -> Omega` is constant, so the rate carries
+   no information about internal action and cannot supply the critical-quartic
+   `G*` mechanism. Its phase can still distinguish points around a cycle and
+   measure elapsed time. This doublet fails the stronger autonomous local-clock
+   gate because its matter-only action leaks into the coupled field and its mode
+   is band-embedded, not because harmonic clocks are logically impossible.
 3. **This independently confirms FTD-0772 §7.** That section noted the doublet's
    positive Hessian eigenvalue `lambda_1 = 0.75321764` is structurally incompatible
    with the quartic requirement `V''(0) = 0`. The frequency-amplitude measurement is

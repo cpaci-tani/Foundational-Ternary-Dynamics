@@ -1,6 +1,10 @@
-# SCOPE — The Temporal Interior Programme v1
+# ARCHIVED — The Temporal Interior Programme v1
 
-**Status:** `[SCOPE / PROGRAMME CHARTER — DRAFT FOR OWNER RATIFICATION]`
+> **[SUPERSEDED 2026-08-09 — FTD-0825]** Preserved as the unratified v1
+> charter. The owner-ratified successor charter is
+> [`SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md`](../../temporal_interior_programme/SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md).
+
+**Historical status:** `[SUPERSEDED — NEVER RATIFIED]`
 **Date:** 2026-08-07 · **Owner ordering of fronts:** T3 → T2 → T4 → T5 → T1
 **Parents:** P2/P3/P5, FC-1/FC-2, FTD-0336 (modulus/argument frontier),
 FTD-0371 (priced-import ledger), FTD-0777 (clock–memory boundary),

@@ -18,8 +18,10 @@ import hashlib
 import itertools
 import json
 import math
+import os
 import re
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
@@ -28,19 +30,80 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PREREG = (
-    ROOT
-    / "docs/theory/10_eft_program/preregistrations"
-    / "PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md"
+SUCCESSOR_V5 = os.environ.get("FTD_0832_NONSINGULAR_PRODUCT_CHART") == "1"
+SUCCESSOR_V4 = SUCCESSOR_V5 or os.environ.get("FTD_0831_REPRESENTABILITY_FLOOR") == "1"
+SUCCESSOR_V3 = SUCCESSOR_V4 or os.environ.get("FTD_0830_HARMONIC_REINSERTION_REPAIR") == "1"
+SUCCESSOR_V2 = SUCCESSOR_V3 or os.environ.get("FTD_0829_CERTIFICATE_REPAIR") == "1"
+FTD_ID = (
+    "FTD-0832" if SUCCESSOR_V5 else "FTD-0831" if SUCCESSOR_V4
+    else "FTD-0830" if SUCCESSOR_V3
+    else "FTD-0829" if SUCCESSOR_V2 else "FTD-0774"
+)
+CERTIFICATE_LABEL = f"{FTD_ID} independent tangent certificate"
+PREREG = ROOT / (
+    "docs/theory/10_eft_program/preregistrations/constituent_complete_matter/"
+    + (
+        "PREREG_L17_COMPLETE_TANGENT_NONSINGULAR_PRODUCT_CHART_v5.md"
+        if SUCCESSOR_V5
+        else "PREREG_L17_COMPLETE_TANGENT_REPRESENTABILITY_FLOOR_v4.md"
+        if SUCCESSOR_V4
+        else "PREREG_L17_COMPLETE_TANGENT_HARMONIC_REINSERTION_REPAIR_v3.md"
+        if SUCCESSOR_V3
+        else "PREREG_L17_COMPLETE_TANGENT_CERTIFICATE_REPAIR_v2.md"
+        if SUCCESSOR_V2
+        else "PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md"
+    )
 )
 PROTOCOL_SHA256 = (
-    "0604AF560EA193BDE9E339ADB3FB28C0631B43D204186BEDA977EB700DD7F27E"
+    "2CE5516F7C0D4AF06649D54DD50C1E680C5BEE7CBEDFA10BDB09C2669FA81805"
+    if SUCCESSOR_V5
+    else "A7BA4CEE3CC57AEC23CA9B9F60B0330C1E5B09EDBFC07FD5CC3E441AC736B3A1"
+    if SUCCESSOR_V4
+    else "A0D660F846D6C9AF43D94D475F1890E3D90D3967C6218B065ABDD9AA3BBFA5EC"
+    if SUCCESSOR_V3
+    else "04C771A53E0A749492359255C613BD72A693A399920C0F3CA0FAE757931F361F"
+    if SUCCESSOR_V2
+    else "0604AF560EA193BDE9E339ADB3FB28C0631B43D204186BEDA977EB700DD7F27E"
 )
 SOURCE_COMMIT = "93748ac2021e4db5a9b8583cc28493332c716ac0"
-RUNNER_SHA256 = "0AF8F7BE9D6962F893F4CB975D75C172C91564CAB7F044A9D4533AA0ED7296C0"
-SUPPORT_SHA256 = "C28E3B2768BDAC9542A9AF16CE67608CBD1E4D7E46ED2AEAD3D06640722BC9C3"
-RESULT_DIR = ROOT / "engine/results/ftd_0774"
-STEM = RESULT_DIR / "ftd_0774_l17_complete_tangent_candidate_v1"
+RUNNER_SHA256 = (
+    "51F520D3A030DD6F5028F82D1C3FE008E1EF603CD26018B980CD8C67C929F3CC" if SUCCESSOR_V5
+    else "67D42609C2A96BD9109465085C9E5CB6B1D7B39F7C0965DD0843CDA3A9BD0AA4" if SUCCESSOR_V4
+    else "B523461A4D2649BADD39218B73314D07484AF74674A10823CCAB4F7CE6B6A0DD" if SUCCESSOR_V3
+    else "1522E69C97B2F7063158FF339B14A7595310CD4A3BD3A4524AFA728A9F8542E1" if SUCCESSOR_V2
+    else "0AF8F7BE9D6962F893F4CB975D75C172C91564CAB7F044A9D4533AA0ED7296C0"
+)
+SUPPORT_SHA256 = (
+    "60F69945F83BD488B0AE16B9B0C3C9F58C4A91495E54633BCB2931FA8CC75AE7" if SUCCESSOR_V5
+    else "A9B89D1720496571E8F9AD7C0484230AE6BFACA90259B371534147E48BE6F942" if SUCCESSOR_V4
+    else "7467CCD756ED01C7002762A896357E0F98EEF9D5EA4E40822BD6D60923570EB3" if SUCCESSOR_V3
+    else "A488D01A394D0FB9E52648F34FB382EE57EDDFF83C2DFBCFC6D20A9506BECE61" if SUCCESSOR_V2
+    else "C28E3B2768BDAC9542A9AF16CE67608CBD1E4D7E46ED2AEAD3D06640722BC9C3"
+)
+SUCCESSOR_WRAPPER_SHA256 = (
+    "01077C43EB575CD8DA08784451ED1D558FF3776E9039D40707A3DB9B413F2359" if SUCCESSOR_V5
+    else "1451B31A778D70BFEB3A6FA722A98D77658A8EE310197B94D5CBCB1AF75ABF0F" if SUCCESSOR_V4
+    else "34A12ED81CCFFCA68395B39529CC2C070FDFFA536F6E7F4E96E4F0FADCA6F38A" if SUCCESSOR_V3
+    else "985360AA6DB45088CB1A74A0875F6D031E722A3D24C622236D0C31BD5D53585C"
+)
+RESULT_DIR = ROOT / (
+    "engine/results/ftd_0832" if SUCCESSOR_V5
+    else "engine/results/ftd_0831" if SUCCESSOR_V4
+    else "engine/results/ftd_0830" if SUCCESSOR_V3
+    else "engine/results/ftd_0829" if SUCCESSOR_V2
+    else "engine/results/ftd_0774"
+)
+STEM = RESULT_DIR / (
+    "ftd_0832_l17_complete_tangent_nonsingular_product_chart_v5"
+    if SUCCESSOR_V5
+    else "ftd_0831_l17_complete_tangent_representability_floor_v4"
+    if SUCCESSOR_V4
+    else "ftd_0830_l17_complete_tangent_harmonic_reinsertion_repair_v3"
+    if SUCCESSOR_V3
+    else "ftd_0829_l17_complete_tangent_certificate_repair_v2"
+    if SUCCESSOR_V2
+    else "ftd_0774_l17_complete_tangent_candidate_v1"
+)
 RESULT_JSON = STEM.with_suffix(".json")
 PREFLIGHT = Path(str(STEM) + "_preflight.csv")
 HESSIAN = Path(str(STEM) + "_hessian.csv")
@@ -62,6 +125,23 @@ FIELD_CONTROL = Path(str(STEM) + "_field_control.csv")
 KRYLOV_STATUS = Path(str(STEM) + "_krylov_status.csv")
 RUNNER = ROOT / "engine/tests/test_l17_complete_tangent_candidate.cpp"
 SUPPORT = ROOT / "engine/tests/support/connected_moore_tangent_codec.h"
+SUCCESSOR_WRAPPER = ROOT / "engine/tests" / (
+    "test_l17_complete_tangent_nonsingular_product_chart_v5.cpp"
+    if SUCCESSOR_V5
+    else "test_l17_complete_tangent_representability_floor_v4.cpp"
+    if SUCCESSOR_V4
+    else "test_l17_complete_tangent_harmonic_reinsertion_repair_v3.cpp"
+    if SUCCESSOR_V3 else "test_l17_complete_tangent_certificate_repair_v2.cpp"
+)
+PROOF = ROOT / "scripts/proofs/proof_l17_complete_tangent_candidate.py"
+PROOF_WRAPPER = ROOT / "scripts/proofs" / (
+    "proof_l17_complete_tangent_nonsingular_product_chart_v5.py"
+    if SUCCESSOR_V5
+    else "proof_l17_complete_tangent_representability_floor_v4.py"
+    if SUCCESSOR_V4
+    else "proof_l17_complete_tangent_harmonic_reinsertion_repair_v3.py"
+    if SUCCESSOR_V3 else "proof_l17_complete_tangent_certificate_repair_v2.py"
+)
 EMBEDDED_SOURCES = {
     "compiled_closure_0": ROOT / "engine/tests/test_connected_block_analytic_matter_modes.cpp",
     "compiled_closure_1": ROOT / "engine/tests/test_connected_block_analytic_dynamical_rest.cpp",
@@ -325,7 +405,17 @@ def harmonic_detail_replay(row: dict[str, str]) -> tuple[float, float, float, fl
         "tangent_source_mean_abs", "tangent_source_mean_rel",
         "hodge_source_mean_abs", "hodge_source_mean_rel",
     )
-    if len(pieces) != 9 or pieces[0] not in {"pass", "fail"}:
+    if SUCCESSOR_V2:
+        expected_order += ("hodge_compatibility_reference",)
+    if SUCCESSOR_V4:
+        expected_order += ("face_completed_max",)
+    if SUCCESSOR_V5:
+        expected_order += (
+            "complete_chart_norm", "chart_dx_square", "chart_dp_square",
+            "chart_electric_square", "chart_magnetic_square",
+            "hodge_correction_absolute", "reconstruction_absolute",
+        )
+    if len(pieces) != len(expected_order) + 1 or pieces[0] not in {"pass", "fail"}:
         raise CertificateError(f"malformed harmonic detail grammar {row['detail']!r}")
     encoded: dict[str, list[float]] = {}
     observed_order: list[str] = []
@@ -352,13 +442,81 @@ def harmonic_detail_replay(row: dict[str, str]) -> tuple[float, float, float, fl
             "incomplete harmonic detail"
         )
 
+    if SUCCESSOR_V2:
+        reference = encoded["hodge_compatibility_reference"][0]
+        if not math.isfinite(reference) or reference < 1e-30:
+            raise CertificateError("invalid v2 Hodge compatibility reference")
+        replayed_ratio = encoded["hodge_source_mean_abs"][0] / reference
+        if not math.isclose(
+            replayed_ratio, encoded["hodge_source_mean_rel"][0],
+            rel_tol=2e-15, abs_tol=0.0,
+        ):
+            raise CertificateError("v2 Hodge backward-error ratio mismatch")
+
+    if SUCCESSOR_V5:
+        squares = [
+            encoded["chart_dx_square"][0],
+            encoded["chart_dp_square"][0],
+            encoded["chart_electric_square"][0],
+            encoded["chart_magnetic_square"][0],
+        ]
+        if any(not math.isfinite(value) or value < 0.0 for value in squares):
+            raise CertificateError("invalid v5 complete-chart square primitive")
+        replayed_norm = math.sqrt(math.fsum(squares))
+        recorded_norm = encoded["complete_chart_norm"][0]
+        if not math.isfinite(recorded_norm) or recorded_norm < 0.0 or not math.isclose(
+            replayed_norm, recorded_norm, rel_tol=3e-15, abs_tol=0.0,
+        ):
+            raise CertificateError("v5 complete product-chart norm mismatch")
+
+        def product_relative(numerator: float) -> float:
+            if not math.isfinite(numerator) or numerator < 0.0:
+                raise CertificateError("invalid v5 absolute codec numerator")
+            if recorded_norm > 0.0:
+                return numerator / recorded_norm
+            return 0.0 if numerator == 0.0 else math.inf
+
+        replayed_hodge = product_relative(
+            encoded["hodge_correction_absolute"][0]
+        )
+        replayed_reconstruction = product_relative(
+            encoded["reconstruction_absolute"][0]
+        )
+        if not scalar_close(
+            replayed_hodge, required(row, "hodge_correction"), 3e-15
+        ) or not scalar_close(
+            replayed_reconstruction, required(row, "reconstruction"), 3e-15
+        ):
+            raise CertificateError("v5 product-chart codec ratio mismatch")
+
     def residual(raw: list[float], rebuilt: list[float]) -> float:
         numerator = max(abs(lhs - rhs) for lhs, rhs in zip(raw, rebuilt))
         denominator = max([abs(value) for value in raw] + [1e-30])
         return numerator / denominator
 
+    def face_residual() -> float:
+        if not SUCCESSOR_V4:
+            return residual(encoded["face_raw"], encoded["face_rebuilt"])
+        completed_max = encoded["face_completed_max"][0]
+        if not math.isfinite(completed_max) or completed_max < 0.0:
+            raise CertificateError("invalid v4 completed-face maximum")
+        numerator = max(
+            abs(lhs - rhs) for lhs, rhs in zip(
+                encoded["face_raw"], encoded["face_rebuilt"]
+            )
+        )
+        face_scale = max(
+            [abs(value) for value in encoded["face_raw"]] + [1e-30]
+        )
+        unit_roundoff = 0.5 * sys.float_info.epsilon
+        operation_count = N_SITE + 32
+        gamma = operation_count * unit_roundoff / (
+            1.0 - operation_count * unit_roundoff
+        )
+        return numerator / (face_scale + gamma * completed_max / 1e-12)
+
     return (
-        residual(encoded["face_raw"], encoded["face_rebuilt"]),
+        face_residual(),
         residual(encoded["edge_raw"], encoded["edge_rebuilt"]),
         encoded["tangent_source_mean_abs"][0],
         encoded["tangent_source_mean_rel"][0],
@@ -2000,10 +2158,10 @@ def replay_krylov_status(
 def main() -> int:
     missing = [path for path in ARTIFACTS if not path.is_file()]
     if missing:
-        print("FTD-0774 independent tangent certificate: CORPUS ABSENT")
+        print(f"{CERTIFICATE_LABEL}: CORPUS ABSENT")
         for path in missing:
             print(f"MISSING {path.relative_to(ROOT)}")
-        print("Run the locked C++ FTD-0774 producer before replay.")
+        print(f"Run the locked C++ {FTD_ID} producer before replay.")
         return 2
 
     checks: list[tuple[str, bool]] = []
@@ -2070,7 +2228,12 @@ def main() -> int:
         check("locked protocol hash", sha256(PREREG) == PROTOCOL_SHA256)
         check("frozen runner hash", sha256(RUNNER) == RUNNER_SHA256)
         check("frozen tangent support hash", sha256(SUPPORT) == SUPPORT_SHA256)
-        check("FTD identity", result.get("ftd_id") == "FTD-0774")
+        if SUCCESSOR_V2:
+            check(
+                "frozen successor wrapper hash",
+                sha256(SUCCESSOR_WRAPPER) == SUCCESSOR_WRAPPER_SHA256,
+            )
+        check("FTD identity", result.get("ftd_id") == FTD_ID)
         check("embedded protocol hash", result.get("protocol_sha256") == PROTOCOL_SHA256)
         check("embedded source commit", result.get("source_commit") == SOURCE_COMMIT)
         check("production unchanged", result.get("production_changed") is False)
@@ -2114,6 +2277,10 @@ def main() -> int:
             "krylov_status": KRYLOV_STATUS,
             **EMBEDDED_SOURCES,
         }
+        if SUCCESSOR_V2:
+            manifest_targets["successor_wrapper"] = SUCCESSOR_WRAPPER
+            manifest_targets["proof"] = PROOF
+            manifest_targets["proof_wrapper"] = PROOF_WRAPPER
         manifest_ok = True
         for name, path in manifest_targets.items():
             row = manifest.get(name)
@@ -2362,8 +2529,11 @@ def main() -> int:
         def required(row: dict[str, str], field: str) -> float:
             value = optional_float(row, field)
             if value is None:
+                row_label = row.get(
+                    "probe", row.get("operation", row.get("record_kind", "?"))
+                )
                 raise CertificateError(
-                    f"{row['record_kind']}/{row['probe']}: missing {field}"
+                    f"{row.get('record_kind', '?')}/{row_label}: missing {field}"
                 )
             return value
 
@@ -3784,13 +3954,13 @@ def main() -> int:
         check("construction dimensions replay", reported_dimensions == dimension_replay)
 
     except (CertificateError, KeyError, ValueError, OSError, json.JSONDecodeError) as exc:
-        print("FTD-0774 independent tangent certificate: ARTIFACT/REPLAY INVALID")
+        print(f"{CERTIFICATE_LABEL}: ARTIFACT/REPLAY INVALID")
         print(f"ERROR {exc}")
         return 1
 
     failures = [label for label, passed in checks if not passed]
     print(
-        "FTD-0774 independent tangent certificate: "
+        f"{CERTIFICATE_LABEL}: "
         f"{len(checks) - len(failures)}/{len(checks)} checks PASS"
     )
     print(f"protocol_sha256={PROTOCOL_SHA256}")

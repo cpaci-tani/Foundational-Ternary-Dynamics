@@ -1,17 +1,19 @@
 """
-Born Rule Comprehensive Derivation
-===================================
+Born Rule Conditional Reference Checks (legacy filename)
+========================================================
 
-TIER 2+ Enhancement: Address the circularity objection in Born rule derivation
+Epistemic correction: these checks do not derive physical Born frequencies
+from the FTD substrate.
 
 The PHYS-QFT reviewer's concern C3 states that the Born rule is circular:
 "The probability P = |psi|^2 is assumed, not derived."
 
-This script provides FOUR INDEPENDENT derivations of the Born rule,
-any one of which is sufficient. Together, they constitute overwhelming
-evidence that |psi|^2 is the UNIQUE probability measure.
+The script collects four familiar arguments or toy checks. Gleason is
+conditional on an adopted Hilbert/effect probability structure; the other
+three import target-bearing quantum or information-theoretic assumptions.
+Passing their numerical checks establishes internal consistency only.
 
-DERIVATIONS:
+CONDITIONAL CHECKS:
 1. Gleason's Theorem Approach - From Hilbert space structure alone
 2. Frequency/Counting Approach - From manifestation statistics
 3. Conservation/Symmetry Approach - From probability current conservation
@@ -55,7 +57,7 @@ def print_header(title: str):
 
 
 # =============================================================================
-# DERIVATION 1: GLEASON'S THEOREM APPROACH
+# CONDITIONAL CHECK 1: GLEASON'S THEOREM APPROACH
 # =============================================================================
 
 def gleason_theorem_verification() -> Dict:
@@ -69,11 +71,13 @@ def gleason_theorem_verification() -> Dict:
     For a pure state rho = |phi><phi|:
         P(|psi>) = |<phi|psi>|^2
 
-    This IS the Born rule.
+    This yields the state-effect rule conditionally on the theorem's adopted
+    probability/additivity and Hilbert-space assumptions. It is not a
+    substrate frequency derivation.
 
     We verify numerically that no other functional form works.
     """
-    print_header("DERIVATION 1: GLEASON'S THEOREM")
+    print_header("CONDITIONAL CHECK 1: GLEASON'S THEOREM")
 
     results = {"name": "Gleason", "tests": [], "passed": 0, "total": 0}
 
@@ -170,12 +174,14 @@ def gleason_theorem_verification() -> Dict:
 
 
 # =============================================================================
-# DERIVATION 2: FREQUENCY/COUNTING APPROACH
+# CANDIDATE CHECK 2: FREQUENCY/COUNTING APPROACH
 # =============================================================================
 
 def frequency_derivation() -> Dict:
     """
-    The Born rule emerges from counting statistics.
+    Test a threshold/noise candidate against quadratic scaling. A successful
+    fit would be candidate evidence only; it does not establish universality,
+    equilibrium selection, or absence of target leakage.
 
     In FTD, manifestation occurs when flux density exceeds threshold KB.
     For a complex flux psi = J_x + i*J_y with Gaussian noise:
@@ -189,7 +195,7 @@ def frequency_derivation() -> Dict:
 
     We verify this numerically.
     """
-    print_header("DERIVATION 2: FREQUENCY/COUNTING")
+    print_header("CANDIDATE CHECK 2: FREQUENCY/COUNTING")
 
     results = {"name": "Frequency", "tests": [], "passed": 0, "total": 0}
 
@@ -303,24 +309,26 @@ def frequency_derivation() -> Dict:
 
 
 # =============================================================================
-# DERIVATION 3: CONSERVATION/SYMMETRY APPROACH
+# CONDITIONAL CHECK 3: CONSERVATION/SYMMETRY APPROACH
 # =============================================================================
 
 def conservation_derivation() -> Dict:
     """
-    The Born rule follows from probability current conservation.
+    Given Schrödinger evolution, verify conservation of the usual quadratic
+    density. Because that evolution and its inner product are imported here,
+    this is a conditional consistency check, not an FTD derivation.
 
     The Schrödinger equation implies:
         d/dt |psi|^2 + div(j) = 0
 
     where j = (hbar/2mi)(psi* grad(psi) - psi grad(psi*))
 
-    This continuity equation means |psi|^2 is the UNIQUE density
-    that is conserved under Schrödinger evolution.
+    The continuity equation singles out |psi|^2 within the adopted model and
+    regularity assumptions.
 
     We verify this numerically for a 1D wave packet.
     """
-    print_header("DERIVATION 3: CONSERVATION/SYMMETRY")
+    print_header("CONDITIONAL CHECK 3: CONSERVATION/SYMMETRY")
 
     results = {"name": "Conservation", "tests": [], "passed": 0, "total": 0}
 
@@ -431,25 +439,25 @@ def conservation_derivation() -> Dict:
 
 
 # =============================================================================
-# DERIVATION 4: MAXIMUM ENTROPY APPROACH
+# CONDITIONAL CHECK 4: MAXIMUM ENTROPY APPROACH
 # =============================================================================
 
 def max_entropy_derivation() -> Dict:
     """
-    The Born rule is the maximum entropy distribution consistent
-    with the constraints imposed by quantum mechanics.
+    Explore a maximum-entropy construction after quantum expectation-value
+    constraints have already been imposed. Those constraints contain the
+    state-effect pairing, so this cannot independently derive the Born rule.
 
     Given:
     - A Hilbert space state |psi>
     - The requirement that <A> = <psi|A|psi> for all observables
 
-    The distribution P(a) that maximizes entropy subject to these
-    constraints is the Born rule.
+    The resulting distribution is conditional on those constraints.
 
     This is Jaynes' approach: probabilities should be assigned to
     maximize entropy subject to known constraints.
     """
-    print_header("DERIVATION 4: MAXIMUM ENTROPY")
+    print_header("CONDITIONAL CHECK 4: MAXIMUM ENTROPY")
 
     results = {"name": "MaxEntropy", "tests": [], "passed": 0, "total": 0}
 
@@ -559,26 +567,26 @@ def max_entropy_derivation() -> Dict:
 
 
 # =============================================================================
-# CIRCULARITY RESOLUTION
+# CIRCULARITY AUDIT
 # =============================================================================
 
 def circularity_resolution() -> Dict:
     """
-    Address the specific circularity objection.
+    State the surviving conditional result and the remaining recovery debt.
 
     The objection: "P = |psi|^2 is assumed in defining manifestation probability,
     so the Born rule is circular."
 
-    Resolution: The four derivations above show that |psi|^2 is UNIQUELY
-    determined by:
+    The four checks use:
     1. Hilbert space structure (Gleason)
     2. Threshold crossing statistics (Frequency)
     3. Probability conservation (Conservation)
     4. Maximum entropy principle (MaxEnt)
 
-    The circularity is broken because we DERIVE the form, not assume it.
+    They do not jointly recover the physical equilibrium measure and
+    frequency pushforward from substrate dynamics.
     """
-    print_header("CIRCULARITY RESOLUTION")
+    print_header("CIRCULARITY AUDIT")
 
     results = {"name": "Circularity", "tests": [], "passed": 0, "total": 0}
 
@@ -587,24 +595,23 @@ def circularity_resolution() -> Dict:
     print("'The probability P = |psi|^2 is assumed when")
     print(" defining manifestation, so its emergence is circular.'")
 
-    print("\nResolution:")
+    print("\nConditional result:")
     print("-" * 50)
-    print("The four independent derivations establish that |psi|^2")
-    print("is the UNIQUE probability measure satisfying:")
+    print("The checks show that |psi|^2 is compatible with:")
     print()
     print("  1. GLEASON: Additivity on orthogonal subspaces")
     print("  2. FREQUENCY: Threshold crossing statistics")
     print("  3. CONSERVATION: Probability current continuity")
     print("  4. MAX ENTROPY: Information-theoretic optimality")
     print()
-    print("Each derivation independently DERIVES the exponent 2.")
-    print("No other exponent satisfies all constraints.")
+    print("These are not independent substrate derivations: several checks")
+    print("already import Hilbert, Schrödinger, or expectation constraints.")
 
-    # Synthesis test: All four derivations agree
-    print("\nTest: All derivations independently select exponent = 2")
+    # Synthesis test: all four adopted checks use the quadratic rule.
+    print("\nTest: all adopted reference constructions use exponent 2")
 
     test_pass = True  # Will be set by aggregate
-    results["tests"].append(("Synthesis", test_pass, "All derivations agree on |psi|^2"))
+    results["tests"].append(("Synthesis", test_pass, "All reference checks use |psi|^2"))
     results["total"] += 1
     if test_pass:
         results["passed"] += 1
@@ -617,12 +624,11 @@ def circularity_resolution() -> Dict:
 
     print("\nConclusion:")
     print("-" * 50)
-    print("The Born rule is NOT circular in FTD.")
-    print("The form P = |psi|^2 is DERIVED from structural constraints,")
-    print("not assumed. The exponent 2 is uniquely selected by the")
-    print("requirements of additivity, conservation, and optimality.")
+    print("The state-effect form is conditionally justified once its")
+    print("mathematical setting is adopted. Physical Born-frequency recovery")
+    print("from FTD microdynamics remains OPEN.")
 
-    print(f"\nCircularity Resolution: {results['passed']}/{results['total']} tests passed")
+    print(f"\nCircularity audit: {results['passed']}/{results['total']} checks passed")
 
     return results
 
@@ -632,15 +638,15 @@ def circularity_resolution() -> Dict:
 # =============================================================================
 
 def run_all_derivations():
-    """Execute all Born rule derivations and summarize."""
+    """Execute the legacy conditional checks and summarize."""
     print("\n" + "=" * 70)
-    print("  BORN RULE COMPREHENSIVE DERIVATION")
-    print("  Addressing PHYS-QFT Reviewer Concern C3")
+    print("  BORN RULE CONDITIONAL REFERENCE CHECKS")
+    print("  Physical substrate-frequency recovery remains open")
     print("=" * 70)
 
     all_results = []
 
-    # Run all derivations
+    # Run all conditional/candidate checks.
     all_results.append(gleason_theorem_verification())
     all_results.append(frequency_derivation())
     all_results.append(conservation_derivation())
@@ -653,7 +659,7 @@ def run_all_derivations():
     total_passed = sum(r["passed"] for r in all_results)
     total_tests = sum(r["total"] for r in all_results)
 
-    print("\n| Derivation | Tests Passed | Status |")
+    print("\n| Check | Tests Passed | Status |")
     print("|------------|--------------|--------|")
 
     for r in all_results:
@@ -665,15 +671,14 @@ def run_all_derivations():
     # Final verdict
     if total_passed >= total_tests * 0.9:
         print("\n" + "=" * 70)
-        print("  BORN RULE: DERIVED (NOT ASSUMED)")
-        print("  Circularity objection: RESOLVED")
+        print("  CONDITIONAL REFERENCE CHECKS: PASSED")
+        print("  SUBSTRATE BORN-FREQUENCY RECOVERY: OPEN")
         print("=" * 70)
-        print("\nThe Born rule P = |psi|^2 is the UNIQUE probability measure")
-        print("satisfying the structural requirements of quantum mechanics.")
-        print("This resolves PHYS-QFT concern C3.")
+        print("\nThese checks consume quantum/state-effect structure and do not")
+        print("supply an equilibrium measure or target-free physical pushforward.")
         return True
     else:
-        print("\n[NEEDS WORK] Some derivations did not fully pass.")
+        print("\n[NEEDS WORK] Some conditional checks did not fully pass.")
         return False
 
 

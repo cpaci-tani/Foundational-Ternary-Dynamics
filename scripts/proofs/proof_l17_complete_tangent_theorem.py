@@ -21,7 +21,7 @@ import sympy as sp
 ROOT = Path(__file__).resolve().parents[2]
 PREREG = (
     ROOT
-    / "docs/theory/10_eft_program/preregistrations"
+    / "docs/theory/10_eft_program/preregistrations/constituent_complete_matter"
     / "PREREG_L17_COMPLETE_TANGENT_CANDIDATE_v1.md"
 )
 PROTOCOL_SHA256 = (

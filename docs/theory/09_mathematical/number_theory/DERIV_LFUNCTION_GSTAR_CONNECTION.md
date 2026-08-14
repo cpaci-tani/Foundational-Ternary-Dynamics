@@ -17,23 +17,35 @@ We prove that the FTD master constant G* equals $8/\sqrt{\pi}$ times the central
 
 ### 1.1 The BSD Formula for E: y² = x³ - x [THEOREM]
 
-The elliptic curve $E: y^2 = x^3 - x$ has the following arithmetic invariants (all proven; LMFDB label 32.a3):
+The elliptic curve $E: y^2 = x^3 - x$ has the following arithmetic invariants
+(all proven; Cremona label `32a2`, LMFDB curve label `32.a2`):
 
 | Invariant | Value | Status |
 |-----------|-------|--------|
+| Cremona/LMFDB isogeny label | $32\mathrm{a}2$ / $32.\mathrm{a}2$ | Standard |
 | Conductor $N$ | 32 | Standard |
 | $j$-invariant | 1728 | Standard |
 | Rank $r$ | 0 | Proven (Coates-Wiles 1977) |
 | $\text{End}(E)$ | $\mathbb{Z}[i]$ | CM by Gaussian integers |
-| $\text{Aut}(E)$ | $\{1, -1, i, -i\} \cong C_4$ | Standard |
+| $\text{Aut}(E_{\overline{\mathbb Q}})$ | $\{1, -1, i, -i\} \cong C_4$ | Standard |
 | $E(\mathbb{Q})_{\text{tors}}$ | $\mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2\mathbb{Z}$ | Torsion points: $\{O, (0,0), (1,0), (-1,0)\}$ |
 | $\text{Sha}(E/\mathbb{Q})$ | $\{1\}$ | Proven trivial (Rubin 1991) |
-| Tamagawa numbers | $c_2 = 4$; $c_p = 1$ for odd $p$ | Standard |
-| Real period | $\Omega_+ = \varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$ | Standard |
+| Tamagawa numbers | $c_2 = 2$; $c_p = 1$ for odd $p$ | Standard |
+| Least positive real period for $\omega=dx/(2y)$ | $\Omega_{\min}=\varpi=\Gamma(1/4)^2/(2\sqrt{2\pi})$ | Standard |
+| Real components | $|\pi_0(E(\mathbb R))|=2$ | Standard |
+| BSD real volume | $\Omega_{\mathrm{BSD}}=\int_{E(\mathbb R)}|\omega|=2\varpi$ | Standard |
 
-The BSD conjecture (proven for this curve since rank = 0 and $\text{Sha}$ is trivial) gives:
+The BSD formula (proven for this rank-zero CM curve) must use the Neron
+differential $\omega=dx/(2y)$ and the volume of **both** real components. It
+therefore gives:
 
-$$L(E,1) = \frac{\Omega_+ \cdot |\text{Sha}| \cdot \prod_p c_p}{|E(\mathbb{Q})_{\text{tors}}|^2} = \frac{\varpi \cdot 1 \cdot 4}{4^2} = \frac{\varpi}{4} \tag{1.1}$$
+$$L(E,1) = \frac{\Omega_{\mathrm{BSD}} \cdot |\text{Sha}| \cdot \prod_p c_p}{|E(\mathbb{Q})_{\text{tors}}|^2} = \frac{(2\varpi) \cdot 1 \cdot 2}{4^2} = \frac{\varpi}{4}. \tag{1.1}$$
+
+The formerly printed factors $\Omega_+=\varpi$ and $c_2=4$ produced the same
+product accidentally; separately, both normalizations were wrong for this
+model. Sage's fixed-curve data give Cremona label `32a2`, Kodaira symbol III at
+$2$, Tamagawa number $2$, two real components, and period basis
+$(\varpi,i\varpi)$.
 
 ### 1.2 G* in Terms of L(E,1) [THEOREM]
 
@@ -62,11 +74,12 @@ The coefficient 16 in the master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ equa
 
 $$16 = |E(\mathbb{Q})_{\text{tors}}|^2 = 4^2$$
 
-This is the **same 16** that appears in the BSD denominator. The torsion group determines both:
-- The coefficient of the master quadratic (via $|E(\mathbb{Q})_{\text{tors}}|^2$)
-- The scaling between $\varpi$ and $L(E,1)$ (via BSD: $L(E,1) = \varpi/|E(\mathbb{Q})_{\text{tors}}|$)
-
-These are not independent observations — they arise from the same arithmetic structure.
+This is numerically the **same 16** that appears in the BSD denominator. The
+first equality is an FTD algebraic identification; the second is an invariant
+of $E$. The central-value scaling is not determined by torsion alone: it also
+uses the two real components and $c_2=2$. Thus the exact statement is the full
+BSD quotient in (1.1), not $L(E,1)=\varpi/|E(\mathbb Q)_{\rm tors}|$ as a
+general rule.
 
 ---
 
@@ -93,7 +106,11 @@ For a CM curve with $\text{End}(E) = \mathbb{Z}[i]$, the Hecke eigenvalue $a_p$ 
 
 The framework integers $\{3, 7, 47\}$ are all $\equiv 3 \pmod{4}$, making them inert with $a_p = 0$. This is not a coincidence — these primes are precisely the ones that **cannot be decomposed** in the Gaussian integers. They are "indivisible" in $\mathbb{Z}[i]$, which in FTD language means they are structurally atomic.
 
-The exception $N_{\text{eff}} = 13 \equiv 1 \pmod{4}$ splits as $13 = (2+3i)(2-3i)$, giving $a_{13} = 2 \cdot 2 + 2 \cdot 3 = ... $ actually $a_{13} = 2\,\text{Re}(\pi_{13})$ where $\pi_{13} = 3+2i$, so $a_{13} = 6 = 2N_c$. The Hecke eigenvalue at the "effective DOF" prime is twice the number of colors.
+The exception $N_{\text{eff}} = 13 \equiv 1 \pmod{4}$ splits as
+$13=(3+2i)(3-2i)$. For the conductor-32 primary Hecke character this gives
+$a_{13}=2\,\operatorname{Re}(3+2i)=6$. The sign is fixed by the Hecke-character
+congruence (or equivalently by point counting); it is not obtained by choosing
+a Gaussian quadrant after inspection.
 
 ### 2.3 The Precision Formula Coefficients [CONJECTURE]
 

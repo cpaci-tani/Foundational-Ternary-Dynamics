@@ -73,57 +73,54 @@ int ontic_audit() {
     std::cout << "     (lemniscate const)   = " << VARPI << "\n";
     std::cout << "     from (1/4)          = " << varpi_check << "\n";
     check_close("varpi = Gamma(1/4)^2 / (2*sqrt(2pi))", VARPI, varpi_check, 1e-10);
-    // Verify: M = varpi / pi (consistency with Layer 2 derived pi)
+    // Verify the exact M = varpi/pi identity.
     check_close("M = varpi / pi", GAUSS_CONSTANT_M, VARPI / PI, 1e-10);
 
-    // --- Layer 2: Universal Operator ---
-    std::cout << "\n--- Layer 2: Universal Operator ---\n";
-    // PRIMARY: pi derived from ontic chain -- pi = 4*varpi^2/G*^2
-    double pi_derived = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);
+    // --- Layer 2: Lemniscatic identities ---
+    std::cout << "\n--- Layer 2: Lemniscatic identities ---\n";
+    double pi_reparameterized = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);
     std::cout << "    G*                     = " << G_STAR << "\n";
-    std::cout << "     = 4/G*            = " << std::setprecision(17) << pi_derived << "\n";
+    std::cout << "    4*varpi^2/G*^2        = " << std::setprecision(17) << pi_reparameterized << "\n";
     std::cout << "    PI (constexpr)         = " << PI << "\n";
-    check_close("PI = 4*varpi^2/G*^2 (ontic derivation)", PI, pi_derived, 1e-14);
+    check_close("PI = 4*varpi^2/G*^2 (exact reparameterization)", PI, pi_reparameterized, 1e-14);
     check_close("PI ~ 3.14159265358979", PI, 3.14159265358979, 1e-12);
     std::cout << std::setprecision(15);
-    // PF follows from derived pi
+    // PF is defined from PI.
     check_close("PF = pi/4", PF, PI / 4.0, 1e-14);
     // Verify G* consistency (reverse direction: G* = varpi/sqrt(PF))
     double gstar_check = VARPI / std::sqrt(PF);
     std::cout << "    G* from /PF          = " << gstar_check << "\n";
     check_close("G* = varpi / sqrt(PF) (consistency)", G_STAR, gstar_check, 1e-10);
-    // Verify G* = 2*sqrt(varpi*M) (pi-free identity)
+    // Verify the equivalent G* = 2*sqrt(varpi*M) representation.
     double gstar_from_wm = 2.0 * std::sqrt(VARPI * GAUSS_CONSTANT_M);
     std::cout << "    G* from 2(M)       = " << gstar_from_wm << "\n";
-    check_close("G* = 2*sqrt(varpi*M) (pi-free)", G_STAR, gstar_from_wm, 1e-10);
+    check_close("G* = 2*sqrt(varpi*M) (equivalent representation)", G_STAR, gstar_from_wm, 1e-10);
     check_close("sqrt(G*) consistent", SQRT_GSTAR, std::sqrt(G_STAR), 1e-10);
 
-    // --- Layer 2b: Euler's Identity & Emergence of i ---
-    std::cout << "\n--- Layer 2b: Euler's Identity & Emergence of i ---\n";
+    // --- Layer 2b: Generalized-quadratic discriminant ---
+    std::cout << "\n--- Layer 2b: Generalized-quadratic discriminant ---\n";
     // Critical coefficient: k_crit = 4/G*
     std::cout << "    k_crit = 4/G*          = " << K_CRIT << "\n";
     check_close("k_crit = 4/G*", K_CRIT, 4.0 / G_STAR, 1e-14);
-    // Physics k=16 > k_crit (real roots)
-    check("k_phys (16) > k_crit: physics has real roots", 16.0 > K_CRIT);
-    // Reference frame context k=0.5 < k_crit (complex roots)
-    check("k_cons (0.5) < k_crit: reference frame context has complex roots", K_NOETIC < K_CRIT);
+    check("selected k=16 lies in the two-real-root regime", 16.0 > K_CRIT);
+    check("selected k=0.5 lies in the complex-pair regime", K_NOETIC < K_CRIT);
     // Discriminant at critical point = 0
     double disc_crit = K_CRIT * G_STAR * G_STAR * G_STAR * (K_CRIT * G_STAR - 4.0);
     std::cout << "    (k_crit)              = " << disc_crit << " (should be 0)\n";
     check_close("discriminant = 0 at k_crit", disc_crit, 0.0, 1e-10);
     // Degenerate root: x = k_crit*G*^2/2 = 2G*
-    std::cout << "    x_Born = 2G*           = " << X_BORN << "\n";
-    check_close("x_Born = 2*G*", X_BORN, 2.0 * G_STAR, 1e-14);
+    std::cout << "    repeated root (legacy X_BORN) = " << X_BORN << "\n";
+    check_close("legacy X_BORN alias = 2*G*", X_BORN, 2.0 * G_STAR, 1e-14);
     // Euler's identity: e^{-pi} = nome (connecting Layer -1 to Layer 0b)
     double euler_nome = std::exp(-PI);
     std::cout << "    e^{-}                 = " << euler_nome << "\n";
     std::cout << "    nome (stored)          = " << NOME_LEMNISCATIC << "\n";
     check_close("e^{-pi} = nome (Euler's identity corollary)", euler_nome, NOME_LEMNISCATIC, 1e-12);
     // (-1)^i = e^{i^2*pi} = e^{-pi} = nome
-    std::cout << "    (-1)^i = e^{-pi}       = " << euler_nome << " (antimatter^reference frame context = nome)\n";
-    // Ternary annihilation: e^{i*pi} + 1 = 0 <-> (-1) + (+1) = 0
+    std::cout << "    principal-branch (-1)^i = e^{-pi} = " << euler_nome << "\n";
+    // Euler identity, without an additional physical-sector inference.
     double euler_check = std::cos(PI) + 1.0;  // real part of e^{i*pi} + 1
-    check_close("Euler: cos(pi) + 1 = 0 (annihilation)", euler_check, 0.0, 1e-14);
+    check_close("Euler: cos(pi) + 1 = 0", euler_check, 0.0, 1e-14);
 
     // --- Layer 3: Master Quadratic ---
     std::cout << "\n--- Layer 3: Master Quadratic ---\n";
@@ -141,17 +138,18 @@ int ontic_audit() {
 
     // --- Layer 4: Framework Integers ---
     std::cout << "\n--- Layer 4: Framework Integers ---\n";
-    check("N_c = floor(x_-) = 3", static_cast<int>(std::floor(xm)) == N_C);
+    std::cout << "    floor(x_-) = " << static_cast<int>(std::floor(xm))
+              << " (historical N_c identification retired)\n";
     check("b_3 = (11*N_c - 2*N_f)/3 = 7", (11*N_C - 2*N_F)/3 == B_3);
     check("N_eff = b_3 + 2*N_c = 13", B_3 + 2*N_C == N_EFF);
     check("N_eff = Fibonacci F_7", N_EFF == 13);
     check("D = N_c*N_base^2 - 1 = 47", N_C * N_BASE * N_BASE - 1 == D_CONSTRAINT);
 
-    // --- Layer 4c: Color Excess delta_c ---
-    std::cout << "\n--- Layer 4c: Color Excess delta_c ---\n";
+    // --- Layer 4c: Legacy smaller-root offset ---
+    std::cout << "\n--- Layer 4c: Legacy smaller-root offset ---\n";
     double delta_c = xm - 3.0;
     std::cout << "    delta_c = x- - 3       = " << std::setprecision(18) << delta_c << "\n";
-    check_close("DELTA_COLOR matches quadratic root", DELTA_COLOR, delta_c, 1e-12);
+    check_close("legacy DELTA_COLOR alias matches x_- - 3", DELTA_COLOR, delta_c, 1e-12);
 
     // Exact identity: delta = 8G*^2 - 4G*^(3/2)*sqrt(4G*-1) - 3
     double delta_exact = 8.0*c*c - 4.0*std::pow(c, 1.5)*std::sqrt(4.0*c - 1.0) - 3.0;
@@ -161,17 +159,8 @@ int ontic_audit() {
     double delta_vieta = 16.0*c*c*c * (1.0/xp) - 3.0;
     check_close("delta_c Vieta form (16G*^3*alpha - 3)", delta_c, delta_vieta, 1e-12);
 
-    // Candidate closed forms (informational -- none asserted as exact)
-    double cf_42    = 1.0 / (2.0 * N_C * B_3);
-    double cf_pi_a  = PI * (1.0 / xp);
-    double cf_as_3p = 2.0 * ALPHA_S_MZ / (3.0 * PI);
-    double cf_a_gs  = (1.0 / xp) * c;
-    std::cout << std::setprecision(15);
-    std::cout << "    Candidate closed forms (none exact):\n";
-    std::cout << "      1/(2*N_c*b3) = 1/42  = " << cf_42    << "  (" << std::abs(cf_42    - delta_c)/delta_c*100.0 << "% error)\n";
-    std::cout << "      pi*alpha              = " << cf_pi_a  << "  (" << std::abs(cf_pi_a  - delta_c)/delta_c*100.0 << "% error)\n";
-    std::cout << "      2*alpha_s/(3pi)       = " << cf_as_3p << "  (" << std::abs(cf_as_3p - delta_c)/delta_c*100.0 << "% error)\n";
-    std::cout << "      alpha*G*              = " << cf_a_gs  << "  (" << std::abs(cf_a_gs  - delta_c)/delta_c*100.0 << "% error)\n";
+    // No near-miss candidate scan: project policy permits only preregistered
+    // identities with a structural derivation.
 
     // --- Layer 4b: Neutrino Mixing ---
     std::cout << "\n--- Layer 4b: Neutrino Mixing ---\n";
@@ -378,14 +367,14 @@ int ontic_audit() {
     check_close("n_F(z*) = 1/PHI (golden filling)", nf_zstar, PHI_INV, 1e-14);
     std::cout << "    n_F(z*) = " << nf_zstar << " = 1/phi\n";
 
-    // --- G* Dimensional Triad ---
-    std::cout << "\n--- G* Dimensional Triad ---\n";
+    // --- Legacy G* power aliases ---
+    std::cout << "\n--- Legacy G* power aliases (no dimensional claim) ---\n";
 
     check_close("GSTAR_FLUX = G*", GSTAR_FLUX, G_STAR, 1e-15);
     check_close("GSTAR_TIME = G*^2", GSTAR_TIME, G_STAR * G_STAR, 1e-14);
     check_close("GSTAR_ACTION = G*^3", GSTAR_ACTION, G_STAR * G_STAR * G_STAR, 1e-12);
 
-    // Key identity: P/S = G* (Vieta product-to-sum ratio IS the flux)
+    // Exact Vieta product-to-sum ratio; no flux/time unit follows by itself.
     double ps_ratio = E_PRODUCT / E_SUM;
     check_close("P/S = E_PRODUCT/E_SUM = G*", ps_ratio, G_STAR, 1e-12);
     std::cout << "    P/S = " << ps_ratio << " = G*\n";
@@ -471,7 +460,8 @@ int ontic_audit() {
     std::cout << "\n================================================================\n";
     std::cout << "  ONTIC AUDIT: " << pass << " passed, " << fail << " failed\n";
     std::cout << "  Parameters: DAMPING = " << DAMPING << " [IMPOSED]\n";
-    std::cout << "  Everything else derived from {D=3, varpi}.\n";
+    std::cout << "  Exact identities and tagged selected/calibrated claims are mixed;\n";
+    std::cout << "  consult the import ledger and epistemic audit for provenance.\n";
     std::cout << "================================================================\n";
 
     return fail;

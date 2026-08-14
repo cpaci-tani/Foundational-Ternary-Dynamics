@@ -7,15 +7,16 @@
 ## Read first
 
 1. [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — canonical live replacement for the retired reference frame context-mathematics doc; the Domain A/B partition in lattice language.
-2. [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x), the conceptual spine of the complex-to-real projection story.
-3. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — the consolidated frame-relative-projection chain G\* → three domains → QFT + GR + frame-relative layer.
+2. [THEOREM_DISCRETE_CONTEXTUAL_LOCAL_NET_v1.md](../10_eft_program/temporal_interior_programme/THEOREM_DISCRETE_CONTEXTUAL_LOCAL_NET_v1.md) — live v2 algebra: commutative actual records, selected noncommutative potential net, finite Type I.
+3. [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — historical projection proposal with a v2 compatibility notice.
 
 ## Measurement & the von Neumann chain
 
 | File | Tag | Purpose |
 |---|---|---|
-| [FOUND_VON_NEUMANN_CHAIN.md](FOUND_VON_NEUMANN_CHAIN.md) | formal synthesis with epistemic classification | How FTD terminates the infinite measurement regress via Type-III → Type-I descent at the lattice's finite frame-relative-coupling structure. |
-| [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md) | [THEOREM] on finite lattices (Type I at every L) + [HYPOTHESIS] for Type-III | Von Neumann algebra of lattice observables and its Murray–von Neumann type; Araki–Woods inductive limit treated as a separate scaffold. |
+| [FOUND_VON_NEUMANN_CHAIN.md](FOUND_VON_NEUMANN_CHAIN.md) | [RETRACTED FOR V2] | Historical Type-III → Type-I termination proposal. |
+| [THEOREM_DISCRETE_CONTEXTUAL_LOCAL_NET_v1.md](../10_eft_program/temporal_interior_programme/THEOREM_DISCRETE_CONTEXTUAL_LOCAL_NET_v1.md) | [THEOREM] for the adopted finite reference net | Correct actual/potential algebra separation, isotony, restriction consistency, locality, and finite Type-I classification. |
+| [ARCH_DERIV_VON_NEUMANN_CONSTRUCTION_RETRACTED.md](archive/retracted/ARCH_DERIV_VON_NEUMANN_CONSTRUCTION_RETRACTED.md) | [RETRACTED] | Provenance for the invalid actual-algebra/Type-III chain. |
 | [DERIV_COLLAPSE_MECHANISM.md](DERIV_COLLAPSE_MECHANISM.md) | [SELECTION] with [THEOREM] components | Quantum collapse as an algebraic phase transition: Softplus → ReLU operator, Lindblad master equation, ~18-tick decoherence. |
 | [FOUND_WIGNERS_FRIEND_RESOLUTION.md](FOUND_WIGNERS_FRIEND_RESOLUTION.md) | foundational synthesis with epistemic classification | Why Wigner's friend (and Frauchiger-Renner) dissolves when measurement is an algebraic Type-III → Type-I operation. |
 | [DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md](DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md) | [CONJECTURE] | Connes lambda modular flow derivation: reference-frame spectral-flow scaling lambda(k) derived from interacting modular Hamiltonian spectral flow ratio. |
@@ -42,4 +43,4 @@
 
 ---
 
-13 active docs in this cluster (+ 1 archived).
+12 active docs in this cluster (+ 2 archived/retracted provenance records).

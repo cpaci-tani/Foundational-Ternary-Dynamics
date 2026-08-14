@@ -12369,9 +12369,9 @@
         "n_prints": 27
       },
       {
-        "id": "verify_algebra_classification.py:summary",
-        "label": "verify_algebra_classification.py: 0 asserts + 35 prints (heuristic summary)",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\verification\\verify_algebra_classification.py",
+        "id": "verify_algebra_classification_retired.py:summary",
+        "label": "RETIRED verify_algebra_classification_retired.py: finite spacing is not a Type-III proof",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\verification\\retired\\verify_algebra_classification_retired.py",
         "source_line": 1,
         "participants": [],
         "extractor": "E3",

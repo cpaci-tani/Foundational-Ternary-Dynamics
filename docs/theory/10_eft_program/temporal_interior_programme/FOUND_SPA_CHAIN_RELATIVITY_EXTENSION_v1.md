@@ -13,7 +13,7 @@
 - **Parents:** the
   [Selection–Potentiality–Actualization chain](FOUND_SELECTION_POTENTIALITY_ACTUALIZATION_CHAIN_v1.md),
   [Observer's Completion Map](SPEC_OBSERVERS_COMPLETION_MAP_v1.md), and
-  [Temporal Interior Programme charter](SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md)
+  [Temporal Interior Programme charter](SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md)
 - **Canonical companions:** the
   [Wigner's-friend resolution](../../06_reference_frames_and_measurement/FOUND_WIGNERS_FRIEND_RESOLUTION.md),
   [reference-frame vocabulary](../../01_reference/REF_REFERENCE_FRAME_VOCABULARY.md),
@@ -457,7 +457,7 @@ further work [19–22,27,28].
 FTD is logically different. P2 already postulates the global update index
 \(n\) as ontic succession [AXIOM]. FTD does not need a clock carrier in order
 for its update map to be indexed. What the
-[Temporal Interior Programme](SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md) and
+[Temporal Interior Programme](SCOPE_TEMPORAL_INTERIOR_PROGRAM_v2.md) and
 [carrier specification](../native_time_carrier_programme/SPEC_CARRIER_CONSTRAINTS_v1.md)
 seek is an internal physical subsystem that converts succession into
 operational duration and supports comparisons among clocks and rods. A

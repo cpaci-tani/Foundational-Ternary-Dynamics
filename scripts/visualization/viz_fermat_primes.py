@@ -311,7 +311,9 @@ for a in range(-BOUND, BOUND + 1):
             if is_prime(val) and val % 4 == 3:
                 bpy.ops.mesh.primitive_uv_sphere_add(
                     radius=SPHERE_RADIUS * 1.5,
-                    location=(a, b, val * SCALE_Z),
+                    # Keep inert and split elements on the same paraboloid:
+                    # N(p + 0i) = p^2, not p.
+                    location=(a, b, norm2 * SCALE_Z),
                     segments=12, ring_count=8
                 )
                 obj = bpy.context.active_object
@@ -333,7 +335,7 @@ for a in range(-BOUND, BOUND + 1):
 
 print(f"Generated {count} Gaussian prime spheres on the paraboloid.")
 print(f"Blue (split, quadrant): p ≡ 1 mod 4, Z = a^2 + b^2")
-print(f"Red (inert, axis): p ≡ 3 mod 4, on coordinate axes")
+print(f"Red (inert, axis): p ≡ 3 mod 4, Z = p^2 on coordinate axes")
 
 # Set viewport shading to Material Preview for glow visibility
 for area in bpy.context.screen.areas:

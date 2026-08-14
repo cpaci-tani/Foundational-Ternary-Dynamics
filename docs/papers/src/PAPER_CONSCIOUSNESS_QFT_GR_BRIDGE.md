@@ -371,7 +371,14 @@ The argument (not yet a proof):
 2. **SL1** (fixed point) + **SL4** (modular Hamiltonian) $\to$ the modular flow $\sigma_t$ is well-defined and non-trivial $\to$ Type III
 3. **SL3** (equal partition) $\to$ the spectrum of the modular operator is the full positive reals $\to$ Connes spectrum $S(M) = \mathbb{R}_+$ $\to$ Type III$_1$ specifically
 
-**Status:** **[RESOLVED]**. The mathematical proof has been established computationally in `verify_algebra_classification.py`. By constructing the local modular Hamiltonian $K_A$ from the exact fermionic correlation matrix, it was demonstrated that the emergent chaotic gauge field forces the modular spectrum into a dense, gapless continuum with GUE level repulsion—the exact mathematical signature of a Type III$_1$ von Neumann factor.
+**Status:** **[RETRACTED 2026-08-09 — FTD-0825]**. The retired
+`scripts/verification/retired/verify_algebra_classification_retired.py`
+measured finite random-matrix level statistics. Such statistics do not
+classify a von Neumann algebra or establish a Type III$_1$ factor. The
+successor finite-net theorem instead separates the commutative actual record
+algebra from a selected qutrit potentiality algebra, whose finite regions are
+Type I; any GNS factor classification remains state- and
+representation-dependent.
 
 ### 5.7 The Observer Bell Mechanism [SELECTION]
 

@@ -1,9 +1,10 @@
 """
-Proof 06: G* Emergence — Full Derivation Chain from Axioms
-============================================================
+Proof 06: Conditional G* Construction from Selected Lemniscatic Structure
+=========================================================================
 
-CLAIM [CONDITIONAL THEOREM]: G* = √2·Γ(1/4)²/(2π) ≈ 2.9587 emerges from
-the chain D=3 → cubic lattice → j=1728 → ϖ → G*.
+CLAIM [CONDITIONAL THEOREM]: once the cubic/lemniscatic selections are made,
+G* = √2·Γ(1/4)²/(2π) ≈ 2.9587 follows by exact identities. This is not a
+proof that the physical substrate selects the chain or that G* is a clock.
 
 Of 9 steps in the chain, 6 are [THEOREM] and 2 are [SELECTION], 1 is [AXIOM].
 The conclusion follows rigorously from the selection principles.
@@ -18,7 +19,7 @@ from .common import (ProofSuite, MACHINE_EPS, PPM_1,
 
 
 def run() -> ProofSuite:
-    s = ProofSuite("Proof 06: G* Emergence (Full Derivation Chain)")
+    s = ProofSuite("Proof 06: Conditional G* Lemniscatic Construction")
 
     # =========================================================================
     # The Complete Chain: 9 Steps
@@ -171,15 +172,15 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # The dimensional triad
+    # Legacy power aliases (no dimensional inference)
     # =========================================================================
-    G1 = G_STAR        # flux amplitude per DoF
-    G2 = G_STAR**2     # energy per DoF (= time)
-    G3 = G_STAR**3     # action per DoF
+    G1 = G_STAR
+    G2 = G_STAR**2
+    G3 = G_STAR**3
 
-    s.assert_close("G*¹ ≈ 2.959 (flux)", G1, 2.9587, 1e-3, tag="[THEOREM]")
-    s.assert_close("G*² ≈ 8.754 (energy/time)", G2, 8.754, 1e-2, tag="[THEOREM]")
-    s.assert_close("G*³ ≈ 25.90 (action)", G3, 25.90, 1e-1, tag="[THEOREM]")
+    s.assert_close("G*¹ ≈ 2.959", G1, 2.9587, 1e-3, tag="[THEOREM]")
+    s.assert_close("G*² ≈ 8.754", G2, 8.754, 1e-2, tag="[THEOREM]")
+    s.assert_close("G*³ ≈ 25.90", G3, 25.90, 1e-1, tag="[THEOREM]")
 
     # Vieta confirms: Sum/16 = G*², Product/16 = G*³
     from .common import X_PLUS, X_MINUS
@@ -198,9 +199,9 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
 
-    # P/S = G* (the ratio of action to energy IS the flux)
+    # Pure power-ratio identity; no action/energy/flux units follow.
     s.assert_close(
-        "P/S = G*³/G*² = G* (dimensional triad closure)",
+        "G*³/G*² = G* (power-ratio identity)",
         G3 / G2, G1, MACHINE_EPS,
         tag="[THEOREM]"
     )

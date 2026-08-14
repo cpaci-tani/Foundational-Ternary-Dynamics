@@ -1,9 +1,9 @@
 # DERIV · G\* via Quarter-Conjugacy Determinant Bridge
 
-**Tag:** [THEOREM] (subject to standard zeta-regularization conventions)
+**Tag:** [THEOREM — CONDITIONAL ON THE REGISTERED SPECTRAL DOMAIN]
 **LEDGER row reservation:** FTD-0141
-**Companion docs:** [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_FINITE_APPROX.md`](DERIV_GSTAR_FINITE_APPROX.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../../09_mathematical/number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`DERIV_LFUNCTION_GSTAR_CONNECTION.md`](../../09_mathematical/number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md), [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10.
-**Purpose:** Establishes an operator-theoretic provenance for $G^*$ — namely, that $G^*$ is the $\zeta$-regularized determinant ratio of two quarter-twisted spectra arising from a primitive conjugacy operator $J$ with $J^2 = -I$. This is **Model I** of the Finite Quarter-Conjugacy Recurrence (FQCR) framework. The result is complementary to FTD-0127's parity-twist (number-theoretic / L-function lens); both land $G^*$ from different angles without one subsuming the other.
+**Companion docs:** [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_FINITE_APPROX.md`](DERIV_GSTAR_FINITE_APPROX.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../../09_mathematical/number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`DERIV_LFUNCTION_GSTAR_CONNECTION.md`](../../09_mathematical/number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md), [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10, [`THEOREM_I_GAMMA_QUARTIC_SQUARE_SPLIT_v1.md`](../../10_eft_program/derivations/native_time_carrier_programme/THEOREM_I_GAMMA_QUARTIC_SQUARE_SPLIT_v1.md) (FTD-0839 correction/control package).
+**Purpose:** Establishes the exact conditional identity that $G^*$ is the $\zeta$-regularized determinant ratio of the registered anchored chiral quarter-twisted spectra. FTD-0839 corrects the stronger historical reading: $J^2=-I$ supplies the quarter eigenphases, but does **not** by itself supply the circle domain, twisted boundary, positive half-line, spectral origin, scale, operator order, or multiplicity. This is **Model I** of the Finite Quarter-Conjugacy Recurrence (FQCR) framework.
 
 ---
 
@@ -16,7 +16,7 @@
 
 - $J^4 = I$, so $J$ generates a cyclic group of order 4: $\{I, J, -I, -J\}$.
 - The eigenvalues of $J$ on $\mathbb{C}$ are $\pm i = e^{\pm 2\pi i/4}$, the two primitive fourth roots of unity.
-- The action of $J$ partitions any $J$-equivariant function space into eigenspaces with $\tfrac{1}{4}$- and $\tfrac{3}{4}$-shifted Fourier modes.
+- After a twisted-circle function space is additionally selected, the action of $J$ partitions it into eigenspaces with $\tfrac{1}{4}$- and $\tfrac{3}{4}$-shifted Fourier modes.
 
 This is the algebraic source of the **quarter split** that pervades the FTD algebraic spine: the $i$-cycle ontology in `FOUND_AXIOM_ZERO.md`, the framework integer $N_\text{base} = 4$ in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (FTD-0110 linear closure), and the $(1+i)$-tower of FTD-0111 (Theorem 8) all share this $Z_4$ structure as their common anchor.
 
@@ -40,7 +40,7 @@ Restricting to the half-line $n \ge 0$ defines two spectral progressions
 
 $$ D_{1/4} := \{n + \tfrac{1}{4}\}_{n\ge 0}, \qquad D_{3/4} := \{n + \tfrac{3}{4}\}_{n\ge 0}. $$
 
-These are the spectra of two disjoint differential-like operators on a domain compatible with the quarter-twisted boundary condition. The full-line spectra are obtained by adjoining $\{-(n + \tfrac{1}{4})\}_{n\ge 1}$ and similarly for $D_{3/4}$; for the determinant ratio of interest (§3), the half-line restriction is the canonical choice and avoids the $\zeta$-regularization sign-ambiguity that pairs of negative eigenvalues would introduce.
+These are the spectra of two disjoint differential-like operators on a domain compatible with the quarter-twisted boundary condition. **The restriction $n\ge0$ is a selected chiral/positive-frequency polarization, not a consequence of $J^2=-I$.** FTD-0839's orientation-blind full-line Laplacian control has determinant $4\sin^2(\pi a)$, hence equal values `2` at $a=1/4,3/4$ and ratio `1`. The half-line is therefore load-bearing physical/domain data.
 
 ---
 
@@ -85,9 +85,11 @@ By Theorem 1 of `SPEC_ALGEBRAIC_SPINE.md` (FTD-0001 [THEOREM]), $G^* = \Gamma(1/
 
 1. *Choice of orientation.* Whether the ratio is taken as $\det D_{3/4} / \det D_{1/4}$ or the reciprocal is a convention. The orientation chosen here yields $G^* > 1$ (specifically $G^* \approx 2.9587$), consistent with the existing FTD definition.
 
-2. *Cancellation of $\sqrt{2\pi}$.* The cancellation is not coincidental — it reflects that the $\zeta$-regularized "vacuum energy" of the half-line (the $\sqrt{2\pi}$ factor) is shared between the plus and minus sectors. The determinant *ratio* is the genuinely invariant content, independent of the regularization scheme's overall normalization. This is a robustness feature: $G^*$ does not depend on conventions choices that affect each $\det_\zeta$ individually.
+2. *Cancellation and scale correction.* The explicit $\sqrt{2\pi}$ factors cancel in the registered dimensionless spectra. This does **not** imply invariance under every common spectral rescaling. Since $\zeta_H(0,a)=1/2-a$, $\det_\zeta(cD_a)=c^{1/2-a}\det_\zeta D_a$, so the ratio becomes $c^{-1/2}G^*$. The spectral unit or renormalization prescription is load-bearing (FTD-0839).
 
-3. *Half-line restriction.* Adjoining the negative-shift modes $\{-(n + \tfrac{1}{4})\}_{n\ge 1}$ would require regularizing $\det_\zeta\{-(n+a)\}$, which by definition involves $\zeta_H(s, -a)$. The functional equation gives a sign and a phase factor; under the convention that the full-line spectrum is symmetric, the additional contributions cancel between plus and minus sectors. The half-line restriction is the canonical choice and matches the boundary-value problem setup in §2.
+3. *Half-line restriction.* The half-line is the registered chiral choice that makes the oriented ratio possible. It is mathematically consistent but not yet physically derived. The positive full-line squared-spectrum control erases the orientation and returns ratio `1`.
+
+4. *Origin, multiplicity, and operator order.* Moving the origin to `n=1` gives $G^*/3$; `r` identical copies give $(G^*)^r$; and using the squared half-line operator gives $(G^*)^2$. Model I therefore includes an anchored origin, multiplicity one, and a first-order operator.
 
 ---
 
@@ -103,7 +105,7 @@ $$ 4\,D_{1/4} = \{1, 5, 9, 13, 17, 21, \ldots\} = \{n \in \mathbb{Z}_{>0} : n \e
 
 $$ 4\,D_{3/4} = \{3, 7, 11, 15, 19, 23, \ldots\} = \{n \in \mathbb{Z}_{>0} : n \equiv 3 \pmod 4\}. $$
 
-These are **exactly the two non-trivial residue classes mod 4**. The shifts $\{1/4, 3/4\}$ aren't free parameters of the construction — they are forced by $J^2 = -I$, which fixes the eigenvalue phases of $\pm i$, which fixes the quarter-twisted boundary condition, which forces the spectral shifts to be $\{n + 1/4\}$ and $\{n + 3/4\}$. Once $J$ is committed to, the residue-class decomposition is a theorem of the construction.
+These are **exactly the two non-trivial residue classes mod 4**. Within the full registered construction the shifts are fixed: the selected $J$, twisted-circle boundary, and Fourier lattice force $\{n+1/4,n+3/4\}$. The boundary and Fourier domain are additional inputs; $J^2=-I$ alone fixes only the eigenphases $\pm i$ (FTD-0839).
 
 ### §5.2 — Restricted to primes, these classes encode $\mathbb{Z}[i]$ splitting
 
@@ -179,7 +181,7 @@ The algebraic spine in `SPEC_ALGEBRAIC_SPINE.md` — nine numbered results, seve
 
 3. Theorem 9 (FTD-0112, field-theoretic $Q(G^*)$) is unaffected — the operator-theoretic derivation does not introduce new transcendentals or change the field-theoretic content of $G^*$.
 
-The status tag for this result is **[THEOREM]** — the proof is straightforward modulo the standard zeta-regularization machinery; no new selection or conjecture is required.
+The status tag for the determinant equality is **[THEOREM — CONDITIONAL ON THE REGISTERED SPECTRAL DOMAIN]**. The equality is straightforward modulo standard zeta-regularization machinery. The physical realization of the twisted circle, chiral half-line, origin, scale, operator order, and multiplicity is selected/open rather than derived.
 
 ---
 
@@ -191,6 +193,8 @@ To prevent overclaim:
 - **Does not derive the master quadratic.** The polynomial $x^2 - 16G^{*2}x + 16G^{*3} = 0$ retains its existing provenance (FTD-0014, coefficient 16 from $|\text{Aut}(E)|^2$, etc.). The transfer-matrix interpretation (FQCR Model V) is a notational reframing of the same polynomial, not a new derivation.
 - **Does not pin the half-line restriction physically.** The choice $n \ge 0$ vs full-line is canonical for the operator-determinant calculation but is not derived from FTD axioms. A future strengthening might tie this to a physical interpretation of "positive-frequency modes".
 - **Does not prove uniqueness of $J$.** Multiple operators satisfy $J^2 = -I$ (any $90°$-rotation in any 2D real subspace works); the derivation extracts $G^*$ from any such $J$ but doesn't single out a canonical one. The framework integer $N_\text{base} = 4$ is a separate (also derived) anchor.
+- **Does not fix the spectral unit, origin, order, or multiplicity.** FTD-0839 proves by exact controls that each changes or removes the ratio.
+- **Does not survive the symmetric square.** The complex square supplies quartic energy but maps both quarter orientations to the same half-twist sector; a native lift-to-pair gearbox remains open.
 
 ---
 

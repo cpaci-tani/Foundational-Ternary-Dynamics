@@ -305,7 +305,8 @@ class OnticChain:
             tag="[THEOREM]", unit="dimensionless",
         ))
 
-        # π derived from the ontic chain (NOT postulated)
+        # Exact reparameterization; the definitions already contain π through
+        # gamma reflection, so this is not a π-free ontological derivation.
         pi_derived = 4.0 * varpi**2 / G_star**2
         self._add(Constant(
             name="PI", symbol="π",
@@ -328,7 +329,7 @@ class OnticChain:
             name="SQRT_GSTAR", symbol="√G*",
             value=math.sqrt(G_star),
             layer="2", depends_on=["G_STAR"],
-            formula="√G* (time operator: Read/Write sub-tick)",
+            formula="√G* (algebraic square root; no derived clock role)",
             tag="[THEOREM]", unit="dimensionless",
         ))
 
@@ -345,7 +346,7 @@ class OnticChain:
             tag="[THEOREM]", unit="dimensionless",
         ))
 
-    # ── Layer 2b: Euler's Identity (emergence of i) ──────────────────────
+    # ── Layer 2b: generalized-quadratic discriminant ─────────────────────
 
     def _layer_2b(self):
         G = self._v("G_STAR")
@@ -359,10 +360,10 @@ class OnticChain:
         ))
 
         self._add(Constant(
-            name="X_BORN", symbol="x_Born",
+            name="X_BORN", symbol="x_repeat (legacy X_BORN)",
             value=2.0 * G,
             layer="2b", depends_on=["G_STAR"],
-            formula="2G* (degenerate root at k=k_crit)",
+            formula="2G* (repeated root; no Born-probability inference)",
             tag="[THEOREM]", unit="dimensionless",
         ))
 

@@ -1,4 +1,10 @@
-"""
+"""RETIRED PROVENANCE — FTD-0825 (2026-08-09).
+
+Random-matrix level spacing and a dense finite modular spectrum do not
+classify a von Neumann algebra as Type III.  This script is intentionally not
+proof-of-record and must not be used to promote an algebraic classification.
+The corrected finite-net proof is scripts/proofs/proof_von_neumann_type.py.
+
 Step 9: Von Neumann Algebra Classification (GAP-Q1 & GAP-Q2)
 ==================================================================================
 

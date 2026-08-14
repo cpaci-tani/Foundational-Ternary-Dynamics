@@ -1,11 +1,14 @@
 """
-Verification Script: The Emergence of i
+Legacy Script: Conditional Complex-Geometry Checks
 
-This script verifies the mathematical claims in THE_EMERGENCE_OF_i.md:
-1. Shows that only i^2 = -1 preserves magnitude under rotation
+The filename is retained for provenance. The script checks:
+1. That the ordinary complex algebra supports Euclidean norm-preserving rotation
 2. Verifies Gaussian integer structure in lemniscate (j = 1728)
 3. Demonstrates the reference frame context quadratic complex roots
-4. Shows the Born rule as C -> R projection
+4. That the imposed squared-modulus map sends normalized amplitudes to weights
+
+It does not derive the complex field, quantum mechanics, or physical Born
+frequencies from FTD's substrate axioms.
 
 Framework: Foundational Ternary Dynamics v5.14
 Date: January 31, 2026
@@ -74,9 +77,8 @@ def verify_rotation_algebras():
     print()
 
     print("-" * 70)
-    print("CONCLUSION: Only i^2 = -1 (complex numbers) preserves magnitude")
-    print("            under rotation. This is NECESSARY for quantum mechanics")
-    print("            where |psi|^2 must be conserved.")
+    print("CONCLUSION: the selected complex algebra represents Euclidean rotations")
+    print("            with a positive multiplicative norm.")
     print()
 
     return True
@@ -129,7 +131,7 @@ def verify_gaussian_integers():
 
     return j_invariant == j_from_framework
 
-def verify_reference frame context_quadratic():
+def verify_reference_frame_context_quadratic():
     """
     Verify the complex roots of the reference frame context quadratic.
     """
@@ -216,10 +218,10 @@ def verify_reference frame context_quadratic():
 
 def verify_born_rule():
     """
-    Verify the Born rule as C -> R projection.
+    Verify the imposed normalized squared-modulus map C -> R.
     """
     print("=" * 70)
-    print("PART 4: The Born Rule as C -> R Projection")
+    print("PART 4: Selected Squared-Modulus Map C -> R")
     print("=" * 70)
     print()
 
@@ -230,11 +232,11 @@ def verify_born_rule():
     print(f"  psi = {psi.real} + {psi.imag}i")
     print()
 
-    # Born rule
+    # Imposed reference state-effect rule; no frequency derivation here.
     psi_star = np.conj(psi)
     probability = psi * psi_star
 
-    print("Born rule: P = psi* x psi = |psi|^2")
+    print("Selected reference rule: P = psi* x psi = |psi|^2")
     print()
     print(f"  psi* = {psi_star.real} + {psi_star.imag}i")
     print(f"  psi * psi* = ({psi.real} + {psi.imag}i)({psi_star.real} + {psi_star.imag}i)")
@@ -303,8 +305,8 @@ def verify_lemniscate_crossing_angle():
 
 def main():
     print("=" * 70)
-    print("VERIFICATION: THE EMERGENCE OF i")
-    print("Why complex numbers (i^2 = -1) are necessary")
+    print("CONDITIONAL COMPLEX-GEOMETRY CHECKS")
+    print("No substrate emergence or Born-frequency claim")
     print("=" * 70)
     print()
 
@@ -317,10 +319,10 @@ def main():
     results.append(("Gaussian Integers", verify_gaussian_integers()))
 
     # Part 3: Reference frame context quadratic
-    results.append(("Reference frame context Quadratic", verify_reference frame context_quadratic()))
+    results.append(("Reference Frame Quadratic", verify_reference_frame_context_quadratic()))
 
     # Part 4: Born rule
-    results.append(("Born Rule", verify_born_rule()))
+    results.append(("Squared-Modulus Map", verify_born_rule()))
 
     # Part 5: Lemniscate crossing
     results.append(("Lemniscate 90-deg Crossing", verify_lemniscate_crossing_angle()))
@@ -347,10 +349,11 @@ def main():
         print("  1. i^2 = -1 is the UNIQUE rotation-preserving 2D structure")
         print("  2. The lemniscate has CM by Z[i] (same i)")
         print("  3. Reference frame context quadratic has complex roots (same i)")
-        print("  4. Born rule is C -> R projection (extracts real from complex)")
+        print("  4. The imposed squared-modulus map is real and nonnegative")
         print("  5. Lemniscate crosses at 90 degrees (geometric signature of i)")
         print()
-        print("CONCLUSION: i emerges necessarily from self-reference^2")
+        print("CONCLUSION: the selected constructions are mutually consistent;")
+        print("            physical emergence remains open")
         print()
 
     print("=" * 70)

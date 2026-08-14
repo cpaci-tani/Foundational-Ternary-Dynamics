@@ -200,8 +200,11 @@ check(
 
 # Numerical values (printed for record)
 print()
-print(f"  x_+ = {x_plus}  (matches 1/alpha to 1.26 ppm)")
-print(f"  x_- = {x_minus}  (matches N_c=3 to 0.8 percent)")
+print(
+    f"  x_+ = {x_plus}  "
+    "(1/alpha identification is SMC; 1.26 ppm match has no uniqueness support)"
+)
+print(f"  x_- = {x_minus}  (algebraic root; historical N_c identification retired)")
 print(f"  16 G*^2 = {16 * G_star**2}")
 print(f"  16 G*^3 = {16 * G_star**3}")
 

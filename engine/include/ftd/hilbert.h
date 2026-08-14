@@ -7,16 +7,17 @@
  * The complexified transverse flux components form a wave function.
  * Inner product: <psi|phi> = sum_v psi*(v) * phi(v)
  * Norm: ||psi|| = sqrt(<psi|psi>)
- * Born probability: P(v) = |psi(v)|^2 / ||psi||^2
+ * Selected reference probability: P(v) = |psi(v)|^2 / ||psi||^2
  *
  * Theory references:
  *   - CLAUDE.md Ch.11-13            (quantum phenomena, measurement)
  *   - DERIV_QUANTUM_MECHANICS_RESOLVED.md  (Hilbert space from flux)
  *   - SPEC_FTD_REFERENCE.md         (formal specification)
  *
- * Epistemic status: [THEOREM] — H_FTD = L^2(Lattice, C) is a mathematical
- * construction from the complexified flux field. The Born rule emerges
- * from manifestation statistics under the imposed sampling rule.
+ * Epistemic status: [CONSTRUCTION] — H_FTD = L^2(Lattice, C) is a chosen
+ * mathematical representation of two flux components. The normalized-square
+ * probability rule is [IMPOSED] here; this header neither derives a physical
+ * Born-frequency measure nor recovers the representation from P1-P5.
  */
 
 #include "voxel.h"

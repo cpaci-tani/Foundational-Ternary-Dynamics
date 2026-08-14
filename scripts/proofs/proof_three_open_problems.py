@@ -210,11 +210,10 @@ print(f"""
     Bell violation does not exist at the single-measurement level.
 
   The engine's S = 2 is CORRECT for its measurement protocol.
-  S = 2*sqrt(2) emerges from ensemble averaging over the complexified
-  Born-rule statistics, which are derived from the Gauss constraint.
-
-  Status: [THEOREM] — Bell violation derived from Gauss constraint,
-  not imported from quantum mechanics.
+  HISTORICAL CLAIM RETRACTED: the script's S=2*sqrt(2) construction imports
+  complexified Born weights and does not derive them from the Gauss constraint.
+  Under the v2 programme the singlet/Born reference is selected/imported;
+  substrate Born-frequency recovery remains open.
 """)
 
 # ===========================================================================
