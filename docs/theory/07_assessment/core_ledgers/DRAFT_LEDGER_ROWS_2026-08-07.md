@@ -75,7 +75,7 @@ criteria specs).* **|** [SCOPE / PROGRAMME CHARTER — DRAFT FOR OWNER
 RATIFICATION] + [SYNTHESIS — three criteria specs, no candidate scored,
 nothing promoted] **|** NEW 2026-08-07 —
 `docs/theory/10_eft_program/temporal_interior_programme/`:
-`SCOPE_TEMPORAL_INTERIOR_PROGRAM_v1.md` (two set types — succession P2,
+`archive/superseded/ARCH_SCOPE_TEMPORAL_INTERIOR_PROGRAM_V1.md` (historical unratified v1; two set types — succession P2,
 potentiality P3; three purchased structures — clock/register/tracker;
 fronts T1–T5; the binding ceiling sentence: scaffold-to-interior is an
 IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best),

@@ -15,6 +15,12 @@
 
 Claim: these are independent. Are they?
 
+> **FTD-0839 scope correction (2026-08-10).** This historical audit used
+> "the J chain derives `G*`" too strongly. The determinant equality is exact
+> only after selecting a twisted circle, chiral half-line, spectral origin,
+> unit, first-order operator, and multiplicity one. `J²=-I` alone supplies
+> only the quarter eigenphases. The full-line control has ratio `1`.
+
 The motivation to ask: the J chain (FTD-0141) derives $G^*$ itself operator-theoretically — $G^* = \det_\zeta D_{3/4} / \det_\zeta D_{1/4}$ via Lerch's formula on the quarter-twisted spectra of $J^2 = -I$ ([`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md), [THEOREM]). If the dual substrate $(J_L, J_R, \delta)$ is also independently J-derived, then the convergence with the master quadratic at $(S, P) = (16G^{*2}, 16G^{*3})$ is real coherence evidence. If not, lines 1 and 2 above are the same algebraic identity in two coordinate systems and the rhetoric overstates the case.
 
 ---
@@ -23,11 +29,11 @@ The motivation to ask: the J chain (FTD-0141) derives $G^*$ itself operator-theo
 
 | Object | Derivation chain | Status | Source |
 |---|---|---|---|
-| $G^* = \Gamma(1/4)/\Gamma(3/4)$ | $J^2 = -I \to$ quarter-twisted spectra $D_{1/4}, D_{3/4} \to$ Lerch's formula $\det_\zeta\{n+a\} = \sqrt{2\pi}/\Gamma(a) \to$ ratio | [THEOREM] | FTD-0141 / [DERIV_GSTAR_QUARTER_CONJUGACY.md §4](../../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) |
+| $G^* = \Gamma(1/4)/\Gamma(3/4)$ | selected $J$ + twisted circle + anchored chiral first-order spectrum $D_{1/4},D_{3/4}$ + Lerch determinant | [THEOREM — CONDITIONAL DOMAIN] | FTD-0141, scope corrected FTD-0839 |
 | $J^4 = I$, $Z_4$ structure | Algebraic from $J^2 = -I$ | [THEOREM] | FTD-0141 §1 / SPEC_FQCR §1 |
 | Recurrence $z^2 - sz + 1 = 0$ | Möbius reduction of $u_{m+1} + u_{m-1} = s\,u_m$ | [THEOREM] | SPEC_FQCR Proposition 4 |
 
-**Not derived from the J chain alone:** the specific values $(S, P) = (16G^{*2}, 16G^{*3})$. The J chain gives $G^*$; getting $(S, P)$ from $G^*$ requires *additional structural input* — the master-quadratic provenance (Routes A and B for the coefficient 16; see §3).
+**Not derived from `J²=-I` alone:** even the FQCR `G*` representation needs the registered spectral domain above. The specific values $(S,P)=(16G^{*2},16G^{*3})$ require still more structural input — the master-quadratic provenance (Routes A and B for the coefficient 16; see §3).
 
 ---
 
@@ -88,7 +94,7 @@ The polynomial degree (2) is forced by the CM field $\mathbb{Q}(i)$ having $[\ma
 
 For the **whole stack** $\{G^*, 16G^{*2}, 16G^{*3}, \text{master quadratic}, (J_L, J_R, \delta)\}$, the provably independent inputs are:
 
-1. **$G^*$ itself**, via the J chain (FTD-0141, [THEOREM]).
+1. **The conditional `G*` determinant representation**, via the registered J-twisted chiral domain (FTD-0141/0839).
 2. **The integer 16**, via two independent finite-combinatorial routes (CM auto count, BCC × ternary).
 
 Once you have these two, everything else is algebraic forcing:
@@ -119,7 +125,7 @@ Header lines 36–40: replace the temporal-gauge DOF count with the CM auto coun
 
 ## §7 — Open question: can the J chain reach $S = 16G^{*2}$ and $P = 16G^{*3}$ independently?
 
-Currently the J chain derives $G^*$ via a *first-order* determinant ratio (Lerch on $\zeta_H'(0, a)$). The natural question: do *higher-order* determinant invariants of the same J operator give $S = 16G^{*2}$ and $P = 16G^{*3}$ from an independent starting point?
+On the selected domain, the J-twisted construction represents $G^*$ via a *first-order* determinant ratio. Before asking whether higher-order invariants give $S=16G^{*2}$ and $P=16G^{*3}$, a native construction must first derive the domain, polarization, origin, unit, order, and multiplicity exposed by FTD-0839.
 
 Candidates worth probing:
 - Quadratic determinant invariants $\det_\zeta D_{1/4} \cdot \det_\zeta D_{3/4}$ or sums; these would land at $\Gamma(1/4)\Gamma(3/4) = \pi\sqrt{2}$ (the *product* channel) at first order. Higher-order invariants — second derivatives at $s = 0$, regulator-style — might yield $G^{*2}$ or $G^{*3}$ but require the appropriate Beilinson / regulator setup ([`MATH_LOG_GSTAR_IDENTITY.md`](../../09_mathematical/number_theory/MATH_LOG_GSTAR_IDENTITY.md) §3.5 frames $G^*$ as a generating function for this sector at level 4).

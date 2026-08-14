@@ -498,7 +498,7 @@ The five completed steps establish the **free-field baseline**. The bridge progr
 
 ### Step 9: Von Neumann Algebra Classification (GAP-Q1 / GAP-Q2) — COMPLETED (April 2026)
 
-**Companion script:** `scripts/verification/verify_algebra_classification.py`
+**Historical companion script:** `scripts/verification/retired/verify_algebra_classification_retired.py` — retired by FTD-0825 because finite level spacing cannot classify a Type-III factor.
 
 **What was computed:**
 - Using the restricted fermionic correlation matrix $C_A$ from Step 8, we constructed the exact local Modular Hamiltonian $K_A = -\ln(C_A^{-1} - I)$ for a spatial subregion.

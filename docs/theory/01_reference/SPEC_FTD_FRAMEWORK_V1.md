@@ -1,7 +1,7 @@
 # SPEC — The FTD Framework, Version 1 (the Constitution)
 
 **Tag:** `[SYNTHESIS]` (re-states canonical claims at their canonical tags) **+ five `[AXIOM]`-class framework-commitment declarations (FC-0, FC-1, FC-2, FC-3, FC-4)** + `[SELECTION]` (the register and decomposition choices made here).
-**LEDGER:** FTD-0254 (this document); FC-1 = FTD-0255; FC-2 = FTD-0256; the two-field formalization = FTD-0257; the deviation ledger = FTD-0258; FC-3 = FTD-0304; the carrier-narrowing theorem = FTD-0314; FC-4 (FC-W) = FTD-0315.
+**LEDGER:** FTD-0254 (this document); FC-1 = FTD-0255; FC-2 = FTD-0256 (metric-half scope amended 2026-08-13, FTD-1000 — CLK-1 fold, tag unchanged); the two-field formalization = FTD-0257; the deviation ledger = FTD-0258; FC-3 = FTD-0304; the carrier-narrowing theorem = FTD-0314; FC-4 (FC-W) = FTD-0315; the CLK-1/FC-2 fold = FTD-1000.
 **Status line (read first):** **Nothing is promoted by this document.** `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; FTD-0208 stays `[CLOSED NEGATIVE]`; the algebraic spine count (7 theorem-grade + 2 honestly tiered) is unchanged. The new content of this document is a set of **declarations** — choices of model, not derivations — plus the assembly of existing results into one constitution.
 **Companion:** [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) (FTD-0258, the falsifiable deviation spine).
 
@@ -93,6 +93,8 @@ The closed generator inventory of the observable algebra is `{s, J, wave_vel, L}
 ### 1.5 Space ⊥ time at the base `[AXIOM-level structure + FC-2 forward-pointer]`
 
 P1 (the lattice) and P2 (the tick) are **separate primitives**: FTD's base ontology has a 3-space and a 1-time, not a 4-geometry. Nothing at the postulate level mixes them; the *causal cone* that relates them is a theorem of locality (§5.2), and the Lorentzian *metric* that would weave them into Minkowski spacetime is **not forced** by P1–P5 (FTD-0253). FC-2 (§2.6, §5.2) declares FTD's position: the mixing is **emergent and sector-scoped**, the separation fundamental.
+
+**Read precisely (2026-08-13, FTD-1000):** P2 already supplies an unconditional, global, absolute clock (the tick itself) — this is never in question and is not what FC-2 or CLK-1 govern. What is not forced is the *rate* at which a moving localized object's own proper time advances relative to that global tick (the quadratic Lorentz-factor law, CLK-1, FTD-0208) — a strictly narrower claim than "a clock exists." A third, unrelated question — whether ordinary matter can host a self-sustaining periodic process from the bare postulates alone, no purchased interaction species — belongs to the native-time-carrier programme (FTD-0899–FTD-0999), not to this section or to FC-2. See §5.2 for the full CLK-1/FC-2 fold.
 
 ---
 
@@ -258,17 +260,19 @@ FTD's physics layer is a **computational effective field theory**: the IR behavi
 
 **Joint-reading guard (FTD-0400–0406, 2026-07-21):** rows 4, 7, 9, and 12 still do not form one derived native stress–energy account. FTD-0400 finds `SPLIT-BOOKKEEPING`; FTD-0401 identifies the raw/c=1 mismatch; FTD-0402 corrects the selected live normalization but remains historically `PARTIAL`; FTD-0403 closes `§12-cnorm`; and FTD-0404 makes the volume measure explicit. FTD-0405 returns `DOUBLE-OBSTRUCTION` for the unmodified direct colour pair-force route. After explicit owner authorization, FTD-0406 installs a default-off selected CPU v1 contract: `U(1)=0`, exact collision-free energy/momentum projection, local string T00/stress and `T00/C_SPEED²` latency sourcing. The zero, localization and projection are model choices; GPU, topology changes, mixed forces, moving latency and mass readout remain open. No framework type, mass scale, or equivalence principle is derived.
 
-### 5.2 FC-2, metric half — emergent relativity, sector-scoped `[AXIOM-class declaration — FTD-0256]`
+### 5.2 FC-2, metric half — emergent relativity, sector-scoped `[AXIOM-class declaration — FTD-0256, metric-half scope amended 2026-08-13 by FTD-1000]`
 
 The relativistic structure decomposes exactly as FTD-0253 proved:
 
-- **Forced:** the local Moore dependency hull (`[THEOREM]`, row 1) — not a unique relativistic light cone.
-- **Posited:** the second-order wave action `(Δ_t J)²` (`[AXIOM]`, scoped to the flux sector per FC-2's arrow half), which carries clocks, `γ`, and Lorentzian structure.
+- **Forced:** the local Moore dependency hull (`[THEOREM]`, row 1) — not a unique relativistic light cone. **Also forced, unconditionally, from P2 alone:** the existence of a global absolute clock (the substrate tick). Neither of these is in question anywhere below.
+- **Posited:** the second-order wave action `(Δ_t J)²` (`[AXIOM]`, scoped to the flux sector per FC-2's arrow half), which carries clocks, `γ`, and Lorentzian structure — specifically, the *rate law* by which a moving localized object's proper time relates to the global tick, not the tick's existence.
 - **Measured:** spatial anisotropy dies as `k⁴` and the scoped wave-clock residual dies as `L⁻²`. FTD-0407 shows those measurements are insufficient for boosts, common-cone universality, or radiative stability.
 
 > **FC-2 — metric half.** *FTD commits to the Lorentzian metric as an **emergent IR property of the weakly-coupled flux wave sector only** — not a postulate of the substrate. Space (P1) and time (P2) are fundamentally separate; Minkowski mixing is the IR shadow of second-order flux dynamics; the substrate frame's simultaneity is absolute (neo-Lorentzian positioning — empirically respectful of every SR confirmation in the IR, structurally committed to a preferred foliation at the substrate level). UV departures from exact Lorentz invariance are therefore **native predictions**, not embarrassments (§6.1 PL-4/PL-5).*
+>
+> *Within this posit, the individual-worldline proper-time law — the quadratic budget relation `(dτ/dt)² + v² = 1` — is adopted as part of the same commitment, not derived separately: FTD-0208 v3 proves the substrate's native Scale-0 combination rules (coordinate magnitudes under addition, max, positive-rational scaling) are closed under polyhedrality and can never produce a strictly-convex, SO(3)-invariant budget form — exactly what the quadratic relation is (`FOUND_L2_CLOSURE_RECAST.md`). This does not touch P2: the global tick is unconditional; only the moving-object dilation rate riding on top of it is posited here. CLK-1, formerly tracked as an independent coordinate-level axiom, is folded into FC-2 (FTD-1000): adopting the metric and adopting its clock law are the same act.*
 
-**Declaration, not derivation:** FTD-0253 maps the boundary; FTD-0252 measures the IR approach on its scoped axis; FC-2 picks the reading. The clock hypothesis keeps its coordinate-level `[AXIOM]` tag with measured IR-emergent support (⟨100⟩, `R ∝ L⁻²`) — nothing stronger.
+**Declaration, not derivation:** FTD-0253 maps the boundary; FTD-0252 measures the IR approach on its scoped axis; FC-2 picks the reading. CLK-1 is no longer independently tracked (see `SPEC_UNIFIED_AXIOM_REGISTER.md` — folded, FTD-1000) — it is this posit's proper-time content, with measured IR-emergent support (⟨100⟩, `R ∝ L⁻²`) — nothing stronger.
 
 ### 5.3 Quantum phenomenology, scoped `[SYNTHESIS]`
 
@@ -317,6 +321,7 @@ The constitution stakes its own commitments, in advance:
 1. Exact γ (or exact Lorentz invariance) at finite L off the IR limit — i.e., a measured *absence* of the predicted UV corrections where the lattice requires them (PL-4/PL-5 returning null at finite scale).
 2. A P1–P5 derivation of global reversibility (would refute FTD-0253's boundary).
 3. Failure of the measured IR approach: the `L⁻²` law breaking on ⟨100⟩ at larger L, or the k⁴ anisotropy decay reversing — emergence claims that stop emerging.
+4. *(Added 2026-08-13, FTD-1000.)* A native Scale-0 operation outside the closure generated by `{+, max, ℚ⁺·}` on coordinate magnitudes is exhibited that yields a strictly-convex, SO(3)-invariant budget form — i.e., an exact quadratic combination of the substrate's own primitives, reachable without importing continuous geometry. This falsifies the polyhedrality-conservation lemma underlying CLK-1's fold and reopens FTD-0208. (This falsifier concerns only the local dilation rate, per §1.5/§5.2 — it cannot touch P2, which is postulated, not derived, and has no falsifier of its own.)
 
 **FC-0 is killed by:** an inequivalent reading of the lattice symmetry producing the same spine (uniqueness failure), or a spine theorem failing under FC-0 (soundness failure).
 
@@ -341,5 +346,5 @@ the surviving FTD-0314 loophole (a new forward-derived period — K-BIND's last 
 
 1. **Amendment rule.** Framework commitments change only by a new `[AXIOM]`-class LEDGER row with full `tag_history` superseding the old one; postulates P1–P5 change only by declaring a successor framework. No document, including this one, may promote a claim — promotions happen in the LEDGER with evidence, and this constitution then *follows*.
 2. **Precedence.** LEDGER > this constitution > all other prose (per §0.3).
-3. **Registry of rows declared here:** FTD-0254 (this document, `[SYNTHESIS]`); FTD-0255 (FC-1, `[AXIOM]`-class); FTD-0256 (FC-2, `[AXIOM]`-class); FTD-0257 (two-field formalization, `[SYNTHESIS + SELECTION]`); FTD-0258 (deviation ledger, `[SYNTHESIS]` registry); FTD-0314 (carrier-narrowing theorem, `[THEOREM]`); FTD-0315 (FC-4 = FC-W, `[AXIOM]`-class). FC-0 is carried inside FTD-0254/FTD-0249 (the ℤ[i]-reading honesty correction), not as a separate row. **The act-count arc (FTD-0322–0327) reconciled its "proposed FC-4 (δ-act)" INTO FC-W** — the same commitment (both declare the selection of `√(G*(4G*−1))`); no separate FC was minted, and `DRAFT_FC4_DELTA_ACT_DECLARATION.md` is FC-W's act-of-intent reading.
-4. **Unchanged by this document:** FTD-0013 `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`; FTD-0208 `[CLOSED NEGATIVE]`; FTD-0242/0243 boundaries; the spine count; every `[CLOSED NEGATIVE]` in the corpus. **Nothing promoted.**
+3. **Registry of rows declared here:** FTD-0254 (this document, `[SYNTHESIS]`); FTD-0255 (FC-1, `[AXIOM]`-class); FTD-0256 (FC-2, `[AXIOM]`-class; metric-half scope amended by FTD-1000); FTD-0257 (two-field formalization, `[SYNTHESIS + SELECTION]`); FTD-0258 (deviation ledger, `[SYNTHESIS]` registry); FTD-0314 (carrier-narrowing theorem, `[THEOREM]`); FTD-0315 (FC-4 = FC-W, `[AXIOM]`-class); FTD-1000 (CLK-1 folded into FC-2 §5.2 as its per-worldline proper-time clause, plus a 4th FC-2 falsifier at §6.2 — `[AXIOM-class declaration]`, supersedes FTD-0256's tag_history per rule 1 above; no new FC minted, no tag promoted). FC-0 is carried inside FTD-0254/FTD-0249 (the ℤ[i]-reading honesty correction), not as a separate row. **The act-count arc (FTD-0322–0327) reconciled its "proposed FC-4 (δ-act)" INTO FC-W** — the same commitment (both declare the selection of `√(G*(4G*−1))`); no separate FC was minted, and `DRAFT_FC4_DELTA_ACT_DECLARATION.md` is FC-W's act-of-intent reading.
+4. **Unchanged by this document:** FTD-0013 `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`; FTD-0208 `[CLOSED NEGATIVE]`; FTD-0242/0243 boundaries; the spine count; every `[CLOSED NEGATIVE]` in the corpus; P2 `[AXIOM]` (unconditional, the global tick — FTD-1000 folds only CLK-1's local dilation-rate clause into FC-2, never P2 itself). **Nothing promoted.**

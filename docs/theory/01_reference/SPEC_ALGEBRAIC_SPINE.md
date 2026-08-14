@@ -111,6 +111,17 @@ An earlier erroneous formula `Γ(1/4)²/(2 · (2\pi)^{1/2}·Γ(1/2))` (which eva
 
 **What it does NOT claim.** Nothing about physics. G* is a specific real number defined by gamma-function values; the theorem records its algebraic identity, nothing more.
 
+**External-programme note (2026-08-13).** The independent FTD-0899–FTD-0999
+native-time-carrier programme (`docs/theory/10_eft_program/native_time_carrier_programme/`
+et al.) includes FTD-0904, a G*-gear-ratio boundary claim
+(`THEOREM_ORIENTED_EVEN_SELF_PAIR_RECTIFIER_AND_GSTAR_GEAR_RATIO_BOUNDARY_v1.md`)
+that references this theorem's constant. Independently re-verified this
+session — see LEDGER rows FTD-0899–FTD-0999 and `SPEC_DOCTRINE_LEDGER.md`
+§2.1 for the fuller account — G* there is used strictly as this spine's
+pre-established constant, never re-fit and never fed back: certificate
+check C49 explicitly confirms G* is absent from the finite endpoint
+equations of that claim. Theorem 1's [THEOREM] status is unaffected.
+
 ---
 
 ## 2 · Theorem 2 — Master quadratic polynomial
@@ -725,17 +736,20 @@ theorem-grade results above:
 ### 10.X · FQCR subsidiaries to Theorems 1, 2, 8
 
 The Finite Quarter-Conjugacy Recurrence framework (FQCR; see
-`SPEC_FQCR.md`) lands several operator-theoretic readings of existing
+`SPEC_FQCR.md`) lands several conditional operator-theoretic readings of existing
 spine theorems. None of these introduce a 10th theorem — the spine
 count remains 9. Each lands as a subsidiary that adds an operator
 provenance chain alongside the existing algebraic / number-theoretic
 provenance.
 
-- **G\* via $\det_\zeta$ quarter-conjugacy bridge (FTD-0141, [THEOREM])** —
+- **G\* via $\det_\zeta$ quarter-conjugacy bridge (FTD-0141,
+  [THEOREM — CONDITIONAL DOMAIN]; scope corrected by FTD-0839)** —
   the bridge constant of Theorem 1 is the $\zeta$-regularized determinant
   ratio of the quarter-twisted spectra $\{n + \tfrac{1}{4}\}_{n\ge 0}$ and
-  $\{n + \tfrac{3}{4}\}_{n\ge 0}$ arising from the conjugacy operator $J$
-  with $J^2 = -I$. Operator-theoretic provenance via Lerch's formula.
+  $\{n + \tfrac{3}{4}\}_{n\ge 0}$ on the registered twisted, chiral,
+  anchored, unit-scale first-order domain. $J^2=-I$ supplies only the
+  eigenphases; the spectral realization is additional data. Operator identity
+  via Lerch's formula. The orientation-blind full-line control has ratio `1`.
   Complementary to FTD-0127's parity-twist (number-theoretic / L-function
   lens). See `DERIV_GSTAR_QUARTER_CONJUGACY.md`.
 - **G\* as finite-N attractor (FTD-0142, [THEOREM])** — the finite product
