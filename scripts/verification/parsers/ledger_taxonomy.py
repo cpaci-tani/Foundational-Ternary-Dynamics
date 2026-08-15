@@ -330,6 +330,7 @@ EXCEPTIONS = {
     "FTD-1007": "native-time-carrier",          # ternary mask extension owner-adopted
     "FTD-1008": "native-time-carrier",          # ternary-sector first menu, Outcome B
     "FTD-1009": "lorentz-causal",              # two-body bion dilation chain, execution record
+    "FTD-1010": "lorentz-causal",              # v2.1 deviation model; surrogate line closed 19/20
 }
 
 
