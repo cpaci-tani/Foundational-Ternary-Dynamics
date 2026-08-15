@@ -329,6 +329,7 @@ EXCEPTIONS = {
     "FTD-1006": "native-time-carrier",          # strutted axial class fully closed (v2+v2.1)
     "FTD-1007": "native-time-carrier",          # ternary mask extension owner-adopted
     "FTD-1008": "native-time-carrier",          # ternary-sector first menu, Outcome B
+    "FTD-1009": "lorentz-causal",              # two-body bion dilation chain, execution record
 }
 
 
