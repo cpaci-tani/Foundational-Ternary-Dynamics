@@ -1,5 +1,28 @@
 # INDEX — The Temporal-Interior Programme
 
+> **State of the carrier question (status note, 2026-08-15).** For the reader
+> who does not want to wade through the arc below: the native-clock question
+> is now a **mapped boundary, not an open plain**. The 2026-08-14 campaign
+> chain (FTD-1004 → FTD-1008) closed, by preregistered exact certificates:
+> six candidate families and the 288-cell prism grid (FTD-1004); the surd and
+> Pythagorean closure arithmetic (FTD-1005); the **entire strutted
+> axially-symmetric class** — statics forces staggered unit rings, rigidity
+> wants triangulated bracing, binary polarity forbids triangles (FTD-1006).
+> The owner then adopted the **ternary mask** (FTD-1007: σ ∈ {−1,0,+1}, only
+> equal-nonzero bonds forbidden), dissolving the mod-2 obstruction algebra —
+> and the ternary sector's first menu (FTD-1008) still returned no carrier:
+> legal convex solids are isostatic (stress-free), the one stressed object
+> fails blocking, the first Bricard branch is clearance-starved. **The
+> FTD-0789 needle — a self-stress whose blocking form is positive definite on
+> a real flex — has never been exhibited in any sector.** C3 continues as a
+> low-intensity no-go arc with two named cells (the axis-fixed Bricard
+> branch; the no-prestress-stable-flexible-unit-framework conjecture). The
+> clock rides as FC-2's adopted import (FTD-1000), now supported rather than
+> embarrassed by the no-go evidence. The programme's active main line moves
+> to the **two-body Lorentz campaign**
+> ([`SCOPE_TWO_BODY_LORENTZ_CAMPAIGN_v1.md`](SCOPE_TWO_BODY_LORENTZ_CAMPAIGN_v1.md),
+> DRAFT), which the FTD-1000 fold conditionally unblocked.
+
 **Scope of this file:** navigation only. It introduces no claim and moves
 no tag; where it and the [LEDGER](../../07_assessment/core_ledgers/LEDGER.md)
 disagree, the LEDGER wins. Booked rows: **`FTD-0804` … `FTD-0825`**.
