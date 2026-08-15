@@ -258,5 +258,15 @@ two reductions, and the sensor loop with its missing actuator edge.)
   topologies, and larger spans. The two carrier-programme source documents
   are hash-pinned by the prereg and deliberately left unedited; this note
   and LEDGER row FTD-1004 carry the status.
+  **Update 2 (2026-08-14, FTD-1005): the kill pattern is now a theorem.**
+  `THEOREM_AXIAL_SURD_OBSTRUCTION_AND_PYTHAGOREAN_CURRENCY_v1.md` (verifier
+  8/8): T1 — no all-surd axial closure pays a unit strut at any number of
+  stages (closes the ≥3-term escape in full generality); T2 — rational
+  closure requires Pythagorean stages k²−t²/c=h² minted only at
+  crystallographic ring orders n ∈ {3,4,6}; T3 — single-ring axial cages
+  fail unconditionally (any span, any radius). Surviving axial territory
+  begins at two rings; smallest currency (2,3,1)@n=3, (3,4,1)@n=4,
+  (5,4,3)@n=6 names the drum/bicupola v2 targets. A v2 campaign remains
+  prereg-gated before any stress/blocking verdict.
 - The carrier's limiting speed and the energy's still disagree by ~6%
   (`FTD-0814`).
