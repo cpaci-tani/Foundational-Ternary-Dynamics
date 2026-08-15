@@ -22,6 +22,15 @@
 > to the **two-body Lorentz campaign**
 > ([`SCOPE_TWO_BODY_LORENTZ_CAMPAIGN_v1.md`](SCOPE_TWO_BODY_LORENTZ_CAMPAIGN_v1.md),
 > DRAFT), which the FTD-1000 fold conditionally unblocked.
+> **Update (2026-08-15, post-FTD-1009):** that campaign's S2 chain ran —
+> four locks, all gates-failed at declared strictness, first measured
+> two-body dilation signal recorded as diagnostic (γ̂/γ within 3%,
+> p̂ = +0.85; LEDGER FTD-1009). The successor main line is the
+> **Universality Programme**
+> ([`SCOPE_UNIVERSALITY_PROGRAMME_v1.md`](SCOPE_UNIVERSALITY_PROGRAMME_v1.md),
+> DRAFT — thesis: relativity as the shadow of one-functional unity;
+> fronts: P1 deviation model, P2 Hiding Theorem, P3 Functional Census,
+> P4 horizon boundaries).
 
 **Scope of this file:** navigation only. It introduces no claim and moves
 no tag; where it and the [LEDGER](../../07_assessment/core_ledgers/LEDGER.md)
