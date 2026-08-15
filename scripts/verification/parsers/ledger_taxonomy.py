@@ -325,6 +325,7 @@ EXCEPTIONS = {
     "FTD-1002": "framework-boundary-imports",   # four-walls/fold adjudication: 4 walls, 3 roofs
     "FTD-1003": "lorentz-causal",               # no point-group protection; C2 escape closed
     "FTD-1004": "native-time-carrier",          # unit-strut tensegrity decision v1, Outcome B
+    "FTD-1005": "native-time-carrier",          # axial surd no-go + Pythagorean currency
 }
 
 
