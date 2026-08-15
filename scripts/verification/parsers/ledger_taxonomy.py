@@ -327,6 +327,7 @@ EXCEPTIONS = {
     "FTD-1004": "native-time-carrier",          # unit-strut tensegrity decision v1, Outcome B
     "FTD-1005": "native-time-carrier",          # axial surd no-go + Pythagorean currency
     "FTD-1006": "native-time-carrier",          # strutted axial class fully closed (v2+v2.1)
+    "FTD-1007": "native-time-carrier",          # ternary mask extension owner-adopted
 }
 
 
