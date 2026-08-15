@@ -268,5 +268,18 @@ two reductions, and the sensor loop with its missing actuator edge.)
   begins at two rings; smallest currency (2,3,1)@n=3, (3,4,1)@n=4,
   (5,4,3)@n=6 names the drum/bicupola v2 targets. A v2 campaign remains
   prereg-gated before any stress/blocking verdict.
+  **Update 3 (2026-08-14, FTD-1006): the strutted axial class is CLOSED.**
+  Two locked runs: v2 (`preregister-antiprism-decision-v2`, 6/6, 31 cells)
+  machine-checked the reach-parity reduction — the class collapses to
+  staggered unit-ring pairs (antiprisms) at n ∈ {4,6} — and found every
+  cell POLARITY-KILLED, localizing the obstruction to triangles: full
+  antiprism bracing forms r1[j]–r1[j+1]–r2[j] triangles, and the polarity
+  mask is bipartite = triangle-free; the bracing rigidity wants, polarity
+  forbids. v2.1 (`preregister-antiprism-decision-v2-1`, 2/2, 27 cells)
+  decided the one triangle-free bracing: bare H(4)/H(6) NO-STRESS exactly
+  (coker = 0); dressings die at clearance/no-stress. Joint conclusion: no
+  strutted axially-symmetric unit-strut tensegrity exists under the
+  registered law. Native C3 survives only in non-axial or chain-networked
+  configurations outside the ring-orbit contraction.
 - The carrier's limiting speed and the energy's still disagree by ~6%
   (`FTD-0814`).
