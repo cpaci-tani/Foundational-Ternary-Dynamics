@@ -257,7 +257,15 @@ def parse_doc(rel: str) -> dict:
     # single-file "sector" named after the file.
     sector = parts[2] if len(parts) > 3 else "_root"
     group, group_kind = group_for(rel)
-    archived = "/archive/" in rel or "/archive" in str(Path(rel).parent)
+    # Exact path-segment match only -- a prior `"/archive" in str(Path(rel).parent)`
+    # substring check both (a) stringified a Path natively, so it silently no-op'd
+    # on Windows (backslash separators never contain "/archive") while actually
+    # firing on POSIX, and (b) had no segment boundary, so on POSIX it
+    # false-positived on any directory merely *starting with* "archive" --
+    # e.g. archive_session_outputs/ (session-output artifacts, not a
+    # superseded/retracted archive) got silently misclassified as archived.
+    # `.parts` is platform-independent and matches whole segments only.
+    archived = "archive" in Path(rel).parent.parts
 
     ftd_ids = sorted(set(FTD_ID_RE.findall(head)))
 
