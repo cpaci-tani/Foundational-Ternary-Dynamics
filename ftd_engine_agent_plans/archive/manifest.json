@@ -1,20 +1,21 @@
 {
   "package": "FTD Engine Agent Implementation Plans",
   "version": "0.1",
+  "archived_note": "2026-08-16 cleanup: PLAN_01/PLAN_02/PLAN_03 remain active at ../ (one level up) because they are still cited as design provenance by live engine source and LEDGER.md. Everything in this archive/ folder is historical: PLAN_04 was executed via other channels, PLAN_05/PLAN_06 were never executed.",
   "files": [
     "ENGINE_AGENT_CHECKLIST.md",
-    "PLAN_01_BRANCH_HOLONOMY_GAP.md",
-    "PLAN_02_Z3_COLOR_CENTER.md",
-    "PLAN_03_GENERATION_GRAPH.md",
+    "../PLAN_01_BRANCH_HOLONOMY_GAP.md",
+    "../PLAN_02_Z3_COLOR_CENTER.md",
+    "../PLAN_03_GENERATION_GRAPH.md",
     "PLAN_04_DOCS_LEDGER.md",
     "PLAN_05_DASHBOARD_SCENARIOS.md",
     "PLAN_06_NONLINEAR_SOURCE_LAW.md",
     "README_IMPLEMENTATION_SEQUENCE.md"
   ],
   "recommended_order": [
-    "PLAN_01_BRANCH_HOLONOMY_GAP.md",
-    "PLAN_02_Z3_COLOR_CENTER.md",
-    "PLAN_03_GENERATION_GRAPH.md",
+    "../PLAN_01_BRANCH_HOLONOMY_GAP.md",
+    "../PLAN_02_Z3_COLOR_CENTER.md",
+    "../PLAN_03_GENERATION_GRAPH.md",
     "PLAN_04_DOCS_LEDGER.md",
     "PLAN_05_DASHBOARD_SCENARIOS.md",
     "PLAN_06_NONLINEAR_SOURCE_LAW.md"
