@@ -2,7 +2,7 @@
 
 ## A Mathematical Monograph
 
-**Author:** C. cpaci-tani, with AI assistance
+**Author:** the FTD project, with AI assistance
 **Abstract:** We introduce the lemniscatic bridge constant G* = √2·Γ(1/4)²/(2π) ≈ 2.9587 as the central invariant connecting nine branches of mathematics — classical geometry, complex analysis, elliptic function theory, computational number theory, modular forms, lattice combinatorics, arithmetic geometry, Ramanujan-style hypergeometric series for 1/π, and the Hurwitz/Lerch L-derivative theory of Γ-asymptotics. We derive G* independently from each branch, prove the triad identity π = 4ϖ²/G*², and construct the master quadratic whose roots give 137.036 and 3.024. The constant has been computed since Gauss (1799) under various names; what is new is the quadratic and the conjecture that its larger root equals 1/α, the inverse fine structure constant.
 
 ---

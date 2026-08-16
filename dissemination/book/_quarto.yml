@@ -7,8 +7,7 @@ book:
   title: "The Golden Thread"
   subtitle: "From Ancient Sages to the Master Quadratic"
   author:
-    - name: "William J cpaci-tani III"
-      affiliation: "Independent Researcher"
+          affiliation: "Independent Researcher"
   date: "2026"
   description: |
     A journey through humanity's perennial wisdom, culminating in the mathematical

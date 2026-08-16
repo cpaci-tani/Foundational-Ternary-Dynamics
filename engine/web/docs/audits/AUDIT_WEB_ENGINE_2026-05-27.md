@@ -61,7 +61,7 @@ by path only.
 | P1-10 | Higgs self-coupling `λ_H = m_H²/(2v²)` tagged `[DERIVED]` — pure parametric insertion of the SM tree-level formula. Should be `[PARAMETRIC]`. | `config/scenarios.js:105` |
 | P1-11 | Thomas-Fermi prefactor `20.93 eV·Z^(7/3)` tagged `[DERIVED]` — standard Lieb–Simon Thomas-Fermi theory, not FTD-derived. Should be `[IMPOSED]` / `[EXTERNAL]`. | `constants.js:393-398` |
 | P1-12 | `ALPHA = G_C² [DERIVED]` masks the calibration step `G_C ≡ sqrt(1/X_PLUS_PRECISION)`. Add explicit `[CALIBRATED]` note or pointer to FTD-0013 conjecture status. | `constants.js:60-62` |
-| P1-13 | `ontic-observatory.js` surfaces "Theorem 3.1" / "Theorem 4.1" / "Theorem 5.4" / "Corollary 6.3" / "Theorem A.1" attributed to cpaci-tani (2026) — no LEDGER row, no `docs/papers/` entry, no arXiv id. Live panel ships unaudited theorem labels. | `ontic-observatory.js:1-14` (header), surfaced via `renderFcCard`, `renderInfoDynamics` |
+| P1-13 | `ontic-observatory.js` surfaces "Theorem 3.1" / "Theorem 4.1" / "Theorem 5.4" / "Corollary 6.3" / "Theorem A.1" attributed to the FTD project (2026) — no LEDGER row, no `docs/papers/` entry, no arXiv id. Live panel ships unaudited theorem labels. | `ontic-observatory.js:1-14` (header), surfaced via `renderFcCard`, `renderInfoDynamics` |
 | P1-14 | 7 of ~14 FAQ `theoryRefs` 404 (broken post-May 2026 corpus consolidation). FAQ "Theory Refs" footer routinely sends users to missing files. | `ui/components/faq/data.js:41,42,88,178,201,290,320` |
 | P1-15 | Reference frame structure vocabulary sweep (`REF_REFERENCE_FRAME_VOCABULARY.md`, 2026-05-01) was not applied to the dashboard FAQ or knowledge base. Load-bearing physics text still uses "reference frame context" framing. | `ui/components/faq/data.js:32,33,37,38,41,42`; `ui/components/knowledge-base/data.js:1154-1162` |
 | P1-16 | FTD-0131 closed-negative status of `G_N = 1/(b_3+N_c)²` as a *framework-integer reading of physical G_N* is not surfaced. FAQ presents the identity as merely `[PARAMETRIC]`, omitting that the LEDGER closes it as a physical-G_N identification. | `ui/components/faq/data.js:193` |
@@ -223,7 +223,7 @@ standard pedagogy). See §B for removals, §C for keepers needing correction.
 | Higgs self-coupling `[DERIVED]` | `λ_H = m_H²/(2v²) ≈ 0.129` | SM tree-level formula filled with FTD m_H — pure parametric insertion. Retag `[PARAMETRIC]`. | `config/scenarios.js:105` |
 | Thomas-Fermi `[DERIVED]` | "Standard derivation: integrate the Thomas-Fermi electron density …" | Standard Lieb–Simon TF theory; no FTD axiom enters. Retag `[IMPOSED]` or `[EXTERNAL]`. | `constants.js:393-398` |
 | ALPHA = G_C² `[DERIVED]` | `// alias: alpha = G_C^2 [DERIVED]` | `G_C` is calibrated to `sqrt(1/X_PLUS_PRECISION) = sqrt(α_CODATA)`. Add `[CALIBRATED]` note or pointer to FTD-0013. | `constants.js:60-62` |
-| cpaci-tani 2026 theorems | "Theorem 3.1", "Theorem 4.1", "Theorem 5.4", "Corollary 6.3", "Theorem A.1" surfaced in observatory header | No LEDGER row, no `docs/papers/` entry. Demote labels to "Proposition" / "Heuristic" or attach explicit provenance. | `ontic-observatory.js:1-14` |
+| Unsourced 2026 theorems | "Theorem 3.1", "Theorem 4.1", "Theorem 5.4", "Corollary 6.3", "Theorem A.1" surfaced in observatory header | No LEDGER row, no `docs/papers/` entry. Demote labels to "Proposition" / "Heuristic" or attach explicit provenance. | `ontic-observatory.js:1-14` |
 | `G_N = 1/(b_3+N_c)²` FAQ entry | `[PARAMETRIC]` with "numerical match works at chosen normalisation" | Per FTD-0131 (SPEC_DOCTRINE_LEDGER §10), this is `[CLOSED NEGATIVE]` as a *physical-G_N identification* ("off by ~10²⁰ to ~10⁴³"). Surviving claim is substrate-derived `α_G(e,e)`, not in dashboard. | `ui/components/faq/data.js:193` |
 
 ---
@@ -429,7 +429,7 @@ H-6. **AE units calibration vs relabel.** Scale 2 cards labelled "eV" carry sim-
 
 H-7. **Scale 6 numeric key.** `scale6/` or `scale12/`? CSS class is `.scale12-only`; controller class is `Scale6LifecycleController`; engine-mode value is `'meta'`. Consolidating to a single number requires choosing one. Recommend renaming to "meta" everywhere and dropping the numeric key.
 
-H-8. **cpaci-tani 2026 provenance.** Five "theorems" surface in `ontic-observatory.js` under that attribution. No paper in `docs/papers/`, no LEDGER row, no arXiv id. Either source the paper or demote labels to "Proposition" / "Heuristic".
+H-8. **Unsourced 2026 theorem provenance.** Five "theorems" surface in `ontic-observatory.js` under that attribution. No paper in `docs/papers/`, no LEDGER row, no arXiv id. Either source the paper or demote labels to "Proposition" / "Heuristic".
 
 H-9. **`x₋` row removal vs preservation.** Removing the row from the Ontic Chain panel is one option; preserving as "mathematical root of master quadratic; identification with N_c is RETIRED" is another. The second is more pedagogically informative. Confirm preference.
 

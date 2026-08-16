@@ -468,7 +468,7 @@
 | [`units.js`](../../engine/web/js/units.js) | 418 | FTD Unit Conversion Layer Central module for converting raw simulation values to human-readable strings with proper physical unit labels. |
 | [`UnrealBloomPass.js`](../../engine/web/js/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js) | 415 | UnrealBloomPass is inspired by the bloom pass of Unreal Engine. |
 | [`inspector.js`](../../engine/web/js/inspector.js) | 410 | Inspector Panel — click-to-inspect particle properties. |
-| [`aggregation-bridge.js`](../../engine/web/js/aggregation-bridge.js) | 371 | Aggregation Bridge Module — Appendix A of cpaci-tani (2026). |
+| [`aggregation-bridge.js`](../../engine/web/js/aggregation-bridge.js) | 371 | Aggregation Bridge Module — Appendix A of the FTD project (2026). |
 | [`meta-pedagogy.js`](../../engine/web/js/meta-pedagogy.js) | 356 | Meta Pedagogy — Interactive exploration of the 3³ Existential Unit. |
 | [`lattice-synth.js`](../../engine/web/js/audio/lattice-synth.js) | 353 | @file engine/web/js/audio/lattice-synth.js @purpose Connects FTD wave telemetry into the Web Audio API to hear the lattice. |
 | [`ontic-observatory.js`](../../engine/web/js/ontic-observatory.js) | 334 | Ontic Observatory — Makes the Ontic Incompleteness narrative visible. |

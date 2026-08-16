@@ -1,7 +1,7 @@
 /**
  * Ontic Observatory — Makes the Ontic Incompleteness narrative visible.
  *
- * Surfaces 5 propositions attributed to cpaci-tani (2026), an
+ * Surfaces 5 propositions attributed to an unsourced 2026 document, an
  * "Ontic Incompleteness" framing that has NOT been audited into FTD's
  * LEDGER and has no entry in docs/papers/. The labels below are
  * intentionally demoted from "Theorem"/"Corollary" to "Proposition"

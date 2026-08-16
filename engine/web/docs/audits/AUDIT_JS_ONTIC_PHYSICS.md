@@ -148,7 +148,7 @@ mock/WASM split-brain:
 
 - `config/scenarios.js` — header warns against promoting mass IDs to `[THEOREM]`
 - `ui/app-ontic.js` — X_MINUS labeled RETIRED for N_c identification
-- `ontic-observatory.js` — cpaci-tani propositions demoted from “Theorem”
+- `ontic-observatory.js` — propositions demoted from “Theorem”
 - `faq/data.js` — Born rule, Bell, Ω_Λ tagged `[SELECTION]` / `[PARAMETRIC]` with honesty blocks
 - `atlas-content.js` — Born rule marked unresolved
 - `p1-observables/bell.js` — classical ≤ 2 vs Tsirelson labeled, not claimed derived

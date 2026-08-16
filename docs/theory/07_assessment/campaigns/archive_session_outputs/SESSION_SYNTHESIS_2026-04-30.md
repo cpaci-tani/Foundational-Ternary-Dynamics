@@ -84,7 +84,7 @@ $$16\,G^{*\,3}\,\alpha^2 - 16\,G^{*\,2}\,\alpha + 1 = 0$$
 
 with the smaller root selected. Verified algebraically to 50 digits.
 
-**HYPOTHESIS (empirical content).** $x_+(4) = \alpha^{-1}$ at tree level to 1.26 ppm; closed by William's one-loop lattice tadpole correction to 9.6 ppb agreement with CODATA.
+**HYPOTHESIS (empirical content).** $x_+(4) = \alpha^{-1}$ at tree level to 1.26 ppm; closed by a one-loop lattice tadpole correction to 9.6 ppb agreement with CODATA.
 
 ---
 

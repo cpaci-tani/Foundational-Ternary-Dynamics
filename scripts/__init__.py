@@ -6,4 +6,4 @@ in the FTD framework, from the master quadratic to particle masses.
 """
 
 __version__ = "1.0.0"
-__author__ = "William J cpaci-tani III"
+__author__ = "the FTD project"

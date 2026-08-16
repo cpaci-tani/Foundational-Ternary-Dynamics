@@ -150,7 +150,6 @@ This repository is licensed under the Creative Commons Attribution-NonCommercial
 
 ```bibtex
 @misc{cpaci-tani2026ftd,
-  author = {William J. cpaci-tani III},
   title  = {Foundational Ternary Dynamics},
   year   = {2026},
   note   = {FTD research corpus and simulation engine},

@@ -11672,7 +11672,6 @@ This release upgrades the epistemic status of the master quadratic:
 ---
 
 ## Contributors
-- G. William (framework development)
 - E. Claude (theoretical analysis, documentation)
 
 ---
