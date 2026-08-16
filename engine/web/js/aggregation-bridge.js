@@ -1,5 +1,5 @@
 /**
- * Aggregation Bridge Module — Appendix A of Steinmetz (2026).
+ * Aggregation Bridge Module — Appendix A of the FTD project (2026).
  *
  * Implements the 4-level aggregation hierarchy and emergence monitoring.
  * The user (external observer) provides C_0; the system evolves via f.

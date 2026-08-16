@@ -150,7 +150,6 @@ This repository is licensed under the Creative Commons Attribution-NonCommercial
 
 ```bibtex
 @misc{steinmetz2026ftd,
-  author = {William J. Steinmetz III},
   title  = {Foundational Ternary Dynamics},
   year   = {2026},
   note   = {FTD research corpus and simulation engine},

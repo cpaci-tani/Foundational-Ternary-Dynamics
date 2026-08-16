@@ -6816,7 +6816,7 @@
       "loc": 371,
       "subsystem": "web/js-toplevel",
       "primary": true,
-      "purpose": "Aggregation Bridge Module \u2014 Appendix A of Steinmetz (2026).",
+      "purpose": "Aggregation Bridge Module \u2014 Appendix A of the FTD project (2026).",
       "symbols": [
         "AggregateDetector",
         "ScaleBridgeVisualizer",

@@ -1,6 +1,6 @@
 # Gauge Coupling Constants from Lattice Coordination Geometry
 
-**William C. Steinmetz**
+**Anonymous**
 
 ---
 
