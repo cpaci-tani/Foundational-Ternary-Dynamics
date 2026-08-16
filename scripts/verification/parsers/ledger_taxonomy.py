@@ -331,6 +331,7 @@ EXCEPTIONS = {
     "FTD-1008": "native-time-carrier",          # ternary-sector first menu, Outcome B
     "FTD-1009": "lorentz-causal",              # two-body bion dilation chain, execution record
     "FTD-1010": "lorentz-causal",              # v2.1 deviation model; surrogate line closed 19/20
+    "FTD-1011": "lorentz-causal",              # hiding order (ka)^2 via isotropic curvature; 4/4
 }
 
 
