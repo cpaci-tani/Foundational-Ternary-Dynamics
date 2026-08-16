@@ -1,5 +1,6 @@
 # Foundational Ternary Dynamics
 
+[![CI](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/actions/workflows/ci.yml)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)

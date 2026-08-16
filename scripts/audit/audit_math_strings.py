@@ -15,7 +15,12 @@ SURFACE_GLOBS = [
     'engine/web/js/ui/components/tooltips/definitions.js',
     'engine/web/js/config/scenarios.js',
     'engine/web/js/ui/panels/lagrangian-panel/term-row.js',
-    'engine/web/js/reference frame context-pedagogy.js',
+    # NOTE (2026-08-16 cleanup): the Scale-11 consciousness-pedagogy.js surface
+    # this list used to include was legitimately deleted 2026-05-01 (054b5309,
+    # Scale-11 consciousness/reflexivity removal), then an unrelated global
+    # vocabulary find-replace on 2026-05-30 mangled the already-dead entry into
+    # a nonexistent path that silently no-op'd via the FileNotFoundError catch
+    # below. Removed rather than "fixed" -- there is no live successor file.
     'engine/web/data/measurements.json',
 ]
 

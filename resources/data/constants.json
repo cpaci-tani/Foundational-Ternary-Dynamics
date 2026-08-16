@@ -8,11 +8,11 @@
   },
 
   "framework_integers": {
-    "N_c":      { "value": 3,  "meaning": "number of colors; master-quadratic smaller root" },
+    "N_c":      { "value": 3,  "meaning": "number of colors; Moore Layer Theorem (4 independent routes). NOT the master-quadratic root x- -- that identification is RETIRED, FTD-0014 removed from the LEDGER in commit ca7eb61" },
     "N_base":   { "value": 4,  "meaning": "smallest FLT-forbidden exponent; base dimensionality" },
     "b_3":      { "value": 7,  "meaning": "QCD beta coefficient at N_f=6" },
     "N_eff":    { "value": 13, "meaning": "effective DOF; Fibonacci F_7" },
-    "N_gen":    { "value": 3,  "meaning": "generations = floor(x-)" },
+    "N_gen":    { "value": 3,  "meaning": "generations = 3, from the Moore Layer Theorem (not floor(x-); that route is RETIRED)" },
     "D_constraint": { "value": 47, "meaning": "N_c * N_base^2 - 1" },
     "D_sigma":  { "value": 15, "meaning": "division-algebra tower sum 1+2+4+8" }
   },

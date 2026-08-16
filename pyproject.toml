@@ -17,6 +17,7 @@ exclude = [
     "dissemination/whitepaper",
     "dissemination/notebooks",
     "dissemination/visuals",
+    "dissemination/papers/*/figures",
     "docs/internal/explorations",
     "scripts",
     "simulations",

@@ -10,11 +10,11 @@
       "symbol": "N_c",
       "value": 3,
       "tag": "[THEOREM]",
-      "origin": "master quadratic smaller root x_- = 8 G*^2 - 4 G* sqrt(4 G*^2 - G*) = 3.024",
+      "origin": "Moore Layer Theorem (BCC polyhedral decomposition), corroborated by RG flow termination and topological quantization -- see independent_routes",
+      "origin_note": "The master-quadratic smaller root x_- = 8 G*^2 - 4 G* sqrt(4 G*^2 - G*) = 3.024 is NOT a route to N_c: the x_- ~ N_c identification is RETIRED (FTD-0014, removed from the LEDGER in commit ca7eb61). x_- is a mathematical artifact of the master quadratic with no independent claim on N_c.",
       "meaning": "number of colors; dimension of SU(3) triplet",
       "polyhedral_shell": "8 BCC corners under gerade/ungerade parity",
       "independent_routes": [
-        "master quadratic x-",
         "RG flow termination: alpha_s beta function zero at N_c=3",
         "topological quantization: pi_2(SU(3)/SU(2)) = Z",
         "Moore BCC decomposition: 8 corners / 2 parities * quaternion grading",
@@ -71,7 +71,7 @@
     {
       "symbol": "N_gen",
       "value": 3,
-      "expression": "floor(x_-)",
+      "expression": "N_c (Moore Layer Theorem) -- NOT floor(x_-); that route is RETIRED, see N_c.origin_note",
       "meaning": "number of matter generations"
     }
   ],

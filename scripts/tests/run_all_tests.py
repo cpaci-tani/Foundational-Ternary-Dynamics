@@ -32,10 +32,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 # Import all test modules
 from scripts.tests import test_framework_integers
 from scripts.tests import test_master_quadratic
-from scripts.tests import test_particle_masses
+from scripts.tests import test_mass_derivations_rigorous
 from scripts.tests import test_coupling_constants
 from scripts.tests import test_cosmology
-from scripts.tests import test_mixing_matrices
+from scripts.tests import test_mixing_matrices_rigorous
 from scripts.tests import verify_pedagogy
 
 
@@ -47,10 +47,10 @@ def create_test_suite():
     # Add all test modules
     suite.addTests(loader.loadTestsFromModule(test_framework_integers))
     suite.addTests(loader.loadTestsFromModule(test_master_quadratic))
-    suite.addTests(loader.loadTestsFromModule(test_particle_masses))
+    suite.addTests(loader.loadTestsFromModule(test_mass_derivations_rigorous))
     suite.addTests(loader.loadTestsFromModule(test_coupling_constants))
     suite.addTests(loader.loadTestsFromModule(test_cosmology))
-    suite.addTests(loader.loadTestsFromModule(test_mixing_matrices))
+    suite.addTests(loader.loadTestsFromModule(test_mixing_matrices_rigorous))
     suite.addTests(loader.loadTestsFromModule(verify_pedagogy))
 
     return suite
