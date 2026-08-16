@@ -1,6 +1,6 @@
 # Foundational Ternary Dynamics
 
-[![CI](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/actions/workflows/ci.yml)
+[![CI](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/workflows/ci.yml)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -112,7 +112,7 @@ ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 python engine/web/serve.py 8080
 ```
 
-Then open `http://localhost:8080`, or visit the published dashboard at [williamsteinmetz.github.io/Foundational-Ternary-Dynamics](https://williamsteinmetz.github.io/Foundational-Ternary-Dynamics/). GPU measurement campaigns run through WSL2 Ubuntu-22.04; the exact local convention is recorded in [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md).
+Then open `http://localhost:8080`, or visit the published dashboard at [cpaci-tani.github.io/Foundational-Ternary-Dynamics](https://cpaci-tani.github.io/Foundational-Ternary-Dynamics/). GPU measurement campaigns run through WSL2 Ubuntu-22.04; the exact local convention is recorded in [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md).
 
 ## Epistemic discipline
 
@@ -154,6 +154,6 @@ This repository is licensed under the Creative Commons Attribution-NonCommercial
   title  = {Foundational Ternary Dynamics},
   year   = {2026},
   note   = {FTD research corpus and simulation engine},
-  url    = {https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics}
+  url    = {https://github.com/cpaci-tani/Foundational-Ternary-Dynamics}
 }
 ```
