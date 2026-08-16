@@ -136,6 +136,25 @@ include(FtdAddTest)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+# Experimental-module quarantine (revision 3.7, ADR-0016): DagEngine, the
+# cognition sidecar, and the discrete-universe CUDA prototype are kept —
+# never deleted (provenance convention) — but their build membership is an
+# explicit boundary. Declared here (moved 2026-08-16 from its prior location
+# ~250 lines down, immediately before the ftd_core target that also gates on
+# it) because CMake processes top-to-bottom: this option() must exist before
+# any if(FTD_BUILD_EXPERIMENTAL) check, including the ftd_cognition library
+# just below. It didn't before, so on a FRESH configure (no cached value from
+# a prior run — exactly what CI always does) that first if() saw an
+# undefined, falsy variable and silently skipped ftd_cognition, while
+# test_cognitive_lattice/benchmark_cognitive_lattice (gated further down,
+# after the old declaration point) correctly saw it ON and tried to link
+# against a library that was never built — LNK1181 "cannot open input file
+# ftd_cognition.lib". Invisible on any machine with a previously-configured
+# build directory, since CMake reuses a variable already in the cache from
+# the very start of the next run, which is exactly why this went unnoticed
+# locally but failed on every CI run's from-scratch checkout.
+option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" ON)
+
 # ftd_cognition — sidecar ternary memory/retrieval substrate for LLM/agent
 # workflows. Deliberately independent of ftd_core / RenderBridge / Voxel.
 if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
@@ -382,14 +401,12 @@ add_library(ftd_core
 # Emscripten guard keeps the three WASM build trees untouched.
 option(FTD_ENABLE_PCH "Use precompiled headers for ftd_core (compile-speed only)" ON)
 
-# Experimental-module quarantine (revision 3.7, ADR-0016): DagEngine (sparse
-# octree prototype, deprecated ticket W6), the cognition sidecar, and the
-# discrete-universe CUDA prototype are kept — never deleted (provenance
-# convention) — but their build membership is now an EXPLICIT boundary.
-# Default ON = zero change to any existing build; OFF produces a lean core
-# with the experimental targets absent. A source-lint (cmake/FtdSourceLint.cmake)
-# guards that no production TU includes the quarantined headers.
-option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" ON)
+# FTD_BUILD_EXPERIMENTAL is declared earlier now (~line 140, before the
+# ftd_cognition target that needs it defined first on a fresh configure —
+# see the comment there, 2026-08-16). Default ON = zero change to any
+# existing build; OFF produces a lean core with the experimental targets
+# absent. A source-lint (cmake/FtdSourceLint.cmake) guards that no production
+# TU includes the quarantined headers.
 if(FTD_ENABLE_PCH AND NOT EMSCRIPTEN)
     target_precompile_headers(ftd_core PRIVATE
         include/ftd/render_bridge.h
