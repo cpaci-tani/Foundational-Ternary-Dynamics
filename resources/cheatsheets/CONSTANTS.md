@@ -6,12 +6,12 @@ Every value traces to `scripts/constants.py`. Errors are against CODATA 2022 / P
 
 | Symbol | Value | Origin |
 |---|---|---|
-| `N_c` | **3** | Master quadratic smaller root `x₋` (number of colors) |
+| `N_c` | **3** | Moore Layer Theorem, 4 independent routes (number of colors). **NOT** the master-quadratic root `x₋` — that identification is RETIRED, FTD-0014 removed from the LEDGER in commit `ca7eb61` |
 | `N_base` | **4** | Second FLT-forbidden exponent — dimensionality of base |
 | `b_3` | **7** | QCD β-coefficient `(11 N_c − 2 N_f)/3` at `N_f = 6` |
 | `N_eff` | **13** | Fibonacci `F_7` — effective degrees of freedom |
 
-Derived: `D_constraint = N_c · N_base² − 1 = 47`, `N_gen = ⌊x₋⌋ = 3` generations.
+Derived: `D_constraint = N_c · N_base² − 1 = 47`; `N_gen = 3` generations (from the Moore Layer Theorem — NOT `⌊x₋⌋`, see the retired identification above).
 
 ## Mathematical primitives
 
@@ -35,7 +35,7 @@ Derived: `D_constraint = N_c · N_base² − 1 = 47`, `N_gen = ⌊x₋⌋ = 3` g
 | `x₊` (tree) | 137.030 | 1/α at tree level |
 | `x₊` (4-term) | 137.0359989 | after `c₁…c₄` corrections (see FORMULAS.md) |
 | `x₊` (1-loop lattice) | 137.036000… | after tadpole integral closes 99.2 % of gap |
-| `x₋` | 3.024 | ≈ `N_c` |
+| `x₋` | 3.024 | mathematical artifact of the quadratic; the `x₋ ≈ N_c` identification is RETIRED (FTD-0014) — `N_c` comes from the Moore Layer Theorem instead |
 | `x₊ − x₋` | 134.012 | φ³ EFT mass² |
 
 ## Couplings

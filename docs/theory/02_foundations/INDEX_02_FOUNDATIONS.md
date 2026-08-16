@@ -138,6 +138,7 @@ The section-schema/four-walls lineage (FTD-0357 → FTD-0520) and the relational
 | [SCOPE_MATTER_ONTOLOGY_CHARTER_v1.md](SCOPE_MATTER_ONTOLOGY_CHARTER_v1.md) | [SCOPE / PROGRAM CHARTER — PRELIMINARY ONTOLOGY ROADMAP; NO NEW PHYSICS CLAIM] | The matter ontology charter: roadmap and evidence baseline for the selected-complete-state `(s,C,F)` matter programme (FTD-0740). |
 | [SCOPE_METASTABLE_MATTER_OBJECT_PREDICATE_v1.md](SCOPE_METASTABLE_MATTER_OBJECT_PREDICATE_v1.md) | [SCOPE / INSTRUMENT CONTRACT — NO EXISTENCE CLAIM] | The metastable matter-object predicate contract governing the charter's object criterion (FTD-0743). |
 | [SCOPE_MATTER_ONTOLOGY_BRANCH_DECISION_MATRIX_v1.md](SCOPE_MATTER_ONTOLOGY_BRANCH_DECISION_MATRIX_v1.md) | [SCOPE / DECISION CONTRACT — NO NEW PHYSICS CLAIM] | The branch decision matrix for the matter programme's selected complete-state `(s,C,F)` choice, under the charter (FTD-0740) and object predicate (FTD-0743). |
+| [DERIV_TERNARY_MASK_EXTENSION_v1.md](DERIV_TERNARY_MASK_EXTENSION_v1.md) | [SELECTION — OWNER-ADOPTED CANDIDATE EXTENSION] + [THEOREM — four structural consequences] + [OPEN — dynamics, genesis stability, implementation] | The owner-adopted domain extension of the compact matter law from binary `σ_a ∈ {−1,+1}` to the substrate's own ternary state set `σ_a ∈ {−1,0,+1}`, mask formula unchanged (FTD-1007). |
 
 ---
 

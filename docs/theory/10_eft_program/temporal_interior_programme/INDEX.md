@@ -69,7 +69,7 @@ IDENTIFICATION, `[CONJECTURE — INTERPRETIVE]` at best.
 | [`SPEC_OBSERVERS_COMPLETION_MAP_v1.md`](SPEC_OBSERVERS_COMPLETION_MAP_v1.md) | native-seed vs observer-completion table; collapse native / unitarity imported |
 | [`FOUND_SELECTION_POTENTIALITY_ACTUALIZATION_CHAIN_v1.md`](FOUND_SELECTION_POTENTIALITY_ACTUALIZATION_CHAIN_v1.md) | the SPA chain; the reconstruction is imported and conditional |
 | [`FOUND_SPA_CHAIN_RELATIVITY_EXTENSION_v1.md`](FOUND_SPA_CHAIN_RELATIVITY_EXTENSION_v1.md) | the Q1/Q2 split; selector-history equivariance as a separate obligation |
-| [`ARCH_FOUND_SPA_CHAIN_v1.2_superseded.md`](ARCH_FOUND_SPA_CHAIN_v1.2_superseded.md) | provenance: the v1.2 conservative revision, superseded by the restored v1.1 framing |
+| [`ARCH_FOUND_SPA_CHAIN_v1.2_superseded.md`](../archive/superseded/ARCH_FOUND_SPA_CHAIN_v1.2_superseded.md) | provenance: the v1.2 conservative revision, superseded by the restored v1.1 framing (archived) |
 
 ## 3. Results by front
 

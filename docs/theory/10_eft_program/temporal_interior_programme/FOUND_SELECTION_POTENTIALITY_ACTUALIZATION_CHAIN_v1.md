@@ -21,7 +21,7 @@ explicit; **revision v1.3 restores the Part H framing of v1.1 at owner
 direction** (the genesis identification, the six-principle scoring, and the
 Born-campaign readings), retaining v1.2's notational precision. The
 superseded v1.2 text is preserved at
-`ARCH_FOUND_SPA_CHAIN_v1.2_superseded.md`. Prior revisions reconciled the
+`../archive/superseded/ARCH_FOUND_SPA_CHAIN_v1.2_superseded.md`. Prior revisions reconciled the
 FTD-facing claims with the canonical Bell and
 Born records.
 

@@ -2,13 +2,14 @@
 
 One paragraph per phase. Full spec: `engine/SPEC_ENGINE.md` §Tick Cycle.
 
-## The six phases
+## The ten phases
 
 ```
-phase_read  →  phase_write  →  gauss_project  →  phase_forces  →  phase_movement  →  tick++
+phase_read → phase_write → pair_production → gauss_project → latency_solve →
+phase_forces → phase_movement → boundary → weak/triad → proper_time → tick++
 ```
 
-Each phase runs over the whole lattice before the next phase starts. No phase can "peek ahead" at later phases in the same tick. This is the local-causality axiom made operational.
+Each phase runs over the whole lattice before the next phase starts. No phase can "peek ahead" at later phases in the same tick. This is the local-causality axiom made operational. Every phase is individually toggle-gated (`engine/src/render_bridge.cpp::tick()`, "Rule 1" through "Rule 8"); phases 3, 5, 8, and 9 (`pair_production`, `latency_solve`, `boundary`, `weak`/`triad`) and phase 10 (`proper_time`) are the ones added after this doc's original "six phases" framing and default OFF like the rest of the phenomenological extensions.
 
 ## 1. `phase_read`
 
@@ -24,19 +25,27 @@ Applies the wave equation, genesis threshold, and any active toggles that modify
 
 **Key toggles:** `wave_equation`, `manifestation`, `damping`, `dual_substrate`, `chirality`, `confinement`.
 
-## 3. `gauss_project`
+## 3. `pair_production` (toggle `pair_production`, default OFF)
+
+Correlated ±1 pairs manifesting from high-flux void: `state==0` sites with `|J| > K_GENESIS` become a linked ±1 pair via `pair_production_cpu()`. This is a code path independent of `phase_write`'s ordinary genesis threshold — the two do not share logic, they just both watch `|J|` against a genesis-scale bound.
+
+## 4. `gauss_project`
 
 Enforces the Gauss constraint `∇·J = ρ` via a successive-over-relaxation (SOR) solver. Without this step, numerical drift in the wave equation would accumulate ∇·J errors and break Coulomb's law. The solver iterates until the constraint residual is below tolerance, then updates `J` in place.
 
 **Why separate phase:** the constraint coupling is non-local, so SOR must run over the whole lattice. Attempting to enforce it per-voxel would fight the wave equation's explicit update.
 
-## 4. `phase_forces`
+## 5. `latency_solve` (toggle `latency_field`, default OFF)
+
+Gravitational-potential Poisson solve: `∇²φ_L = 4πG·ρ_mass`, then `L = √(clamp(φ_L, 0, 0.998))` via `solve_latency_poisson()`. Must run after `gauss_project` (which modifies flux) and before `phase_forces` (which consumes `L`) — the ordering is load-bearing, not incidental.
+
+## 6. `phase_forces`
 
 Computes force fields per voxel for every active interaction: electromagnetic (Coulomb + Lorentz), gravity (from flux gradient), strong (color-coupled, SU(3) confinement), weak (chirality-mediated). Each force is stored in its own field so overlays can display them separately. Forces do **not** move particles yet — they just populate the force tables.
 
 **Why separate from movement:** the strong and weak forces require color/spin state from `phase_write`, but movement needs the combined net force from all active toggles. Splitting lets each force contribute independently.
 
-## 5. `phase_movement`
+## 7. `phase_movement`
 
 Particles integrate their positions using **remainder-accumulation integer jumps**: `remainder += v · dt`, and whenever any axis crosses ±1 the particle moves one lattice cell in that direction and the remainder decrements by 1. Collisions are resolved synchronously via a `moved_` flag: void target → move in; same-sign target → bounce; opposite-sign target → annihilate (cancel to void, flux burst).
 
@@ -57,11 +66,23 @@ Properties:
 
 Verified in `engine/tests/test_gamma_ftd_momentum.cpp`.
 
-**Latency `L`** (gravitational analogue) is tracked per particle and used for proper-time accumulation `dτ/dt = √(f² − v²)/√f` with `f = 1 − L²` — but **only when the `latency_field` toggle is on**. Without it, no gravity-induced time dilation.
+**Boundary conditions (particle-level):** configurable per scenario (cube / sphere / torus / reflective). Particles that leave the boundary either wrap, bounce, or vanish depending on setup. This is distinct from the flux-field boundary phase below — one governs particles leaving the lattice, the other governs the flux field's edge behavior.
 
-**Boundary conditions:** configurable per scenario (cube / sphere / torus / reflective). Particles that leave the boundary either wrap, bounce, or vanish depending on setup.
+## 8. `boundary` — flux-field boundary law (toggles `absorbing_boundary`, `flux_boundary`, default: periodic / no-op)
 
-## 6. `tick++` + energy ledger
+Runs after `gauss_project`/`phase_forces`/`phase_movement` (the last flux writers) so the boundary treatment isn't refilled by a later phase. Two independent gates:
+- **Absorbing sponge** (`apply_absorbing_boundary`, toggle `absorbing_boundary`): disperses outgoing waves into the void at the lattice faces.
+- **Flux boundary mode** (`flux_boundary`): `Periodic` (default) is handled by the lattice's neighbor tables directly — no pass runs, golden-tick hash unaffected. `Reflective`/`Dispersal` re-impose their boundary condition on the shell via a dedicated pass.
+
+## 9. `weak` / `triad` (toggles `weak_transmutation`, `triad_binding`, default OFF)
+
+**Weak transmutation** (`weak_transmutation_cpu()`): polarity flip under field stress. **Triad binding** (`triad_binding_cpu()`): detects 3 same-sign particles forming a locked configuration. Two independent, sequential checks over the lattice.
+
+## 10. `proper_time` (toggles `latency_field` or `de_broglie_clock`, default OFF)
+
+Accumulates each particle's proper time via `accumulate_proper_time()`. The rate is `dτ/dt = √max(1 − v²/C_SPEED² − L², 0)` (`engine/include/ftd/causal_kinematics.h::proper_time_rate()` — **not** the `√(f²−v²)/√f`, `f=1−L²` form this cheatsheet previously stated, which does not match the shipped formula). At `L = 0` this reduces to the special-relativistic rate `√(1−v²)`; with `latency_field` also on, `L` (the gravitational-analogue potential from phase 5) contributes gravitational time dilation.
+
+## `tick++` + energy ledger
 
 Commits the next-tick buffers to the current buffers, increments `_tick`, and calls `update_energy_ledger()` to snapshot the total scalar energy for this tick and compute the drift:
 
@@ -79,7 +100,7 @@ Then the render path runs: `syncRenderableData` reads the new state, the memory 
 
 Because the engine separates physics from visualization from presentation:
 
-| State | Physics (phase 1–5) | Viz recompute (overlays) | Render (canvas) |
+| State | Physics (phases 1–10) | Viz recompute (overlays) | Render (canvas) |
 |---|---|---|---|
 | Global play | ✓ | ✓ | ✓ |
 | Global pause | ✗ | ✗ | ✓ (last frame) |
@@ -90,6 +111,7 @@ Because the engine separates physics from visualization from presentation:
 ## Cross-references
 
 - `engine/SPEC_ENGINE.md` §Tick Cycle — full details
-- `engine/include/ftd/phases.h` — phase entry points
+- `engine/src/render_bridge.cpp::tick()` — the actual phase call sequence and toggle gates
+- `engine/include/ftd/render_bridge_phases.h` — decomposed phase free-function declarations
 - `engine/web/js/scales/scale0/runtime/tick.js` — browser-side equivalent
 - `resources/cheatsheets/MOORE_NEIGHBORHOOD.md` — the 26-cell structure every phase reads

@@ -123,6 +123,15 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 - Claim Boundary panel separating imported parametric physics, computed outputs, presentation effects, and open questions
 - Standard nuclear-physics parametrizations for pedagogy; the island emerges from imported shell corrections, and no FTD physics claim is promoted by this tool
 
+### Unindexed standalone demos
+
+These four exist, are real (non-trivial, multi-commit) artifacts, and are not referenced by any paper, script, or LEDGER row — added to this index on 2026-08-16 (repo cleanup pass) rather than removed, since none carry a superseded-by signal. Treat descriptions below as page titles only; none has been independently verified against current FTD claims the way the entries above have.
+
+- **Mechanism β Visualizer** (`mechanism_beta_visualizer.html`) — "Mechanism β v2 — Back-Reaction & Threshold Shift" (Three.js visualization, added 2026-06-10).
+- **Erdős Unit Distance Toy** (`erdos_unit_distance_toy.html`) — "Erdős Unit Distance Toy Model" (added 2026-06-03).
+- **Chromium Geometry** (`chromium_geometry.html`) — "FTD: The Chromium Anomaly" (added 2026-06-18).
+- **3D Aperiodic Monotile** (`3d_aperiodic_monotile.html`) — "FTD 3D Aperiodic Monotile (Advanced Logic Upgrade)" (added 2026-06-03).
+
 ### Theory Mindmap (`theory_mindmap.html`) — **generated, do not hand-edit**
 
 Two-mode map of **every git-tracked document under `docs/theory/`** (1,734 docs
