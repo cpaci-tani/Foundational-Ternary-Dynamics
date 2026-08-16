@@ -149,7 +149,7 @@ The repository tracks source, theory, proof scripts, and verification code. Rege
 This repository is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (**CC BY-NC-SA 4.0**).
 
 ```bibtex
-@misc{steinmetz2026ftd,
+@misc{ftd2026,
   title  = {Foundational Ternary Dynamics},
   year   = {2026},
   note   = {FTD research corpus and simulation engine},

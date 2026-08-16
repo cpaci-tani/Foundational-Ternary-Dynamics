@@ -23,23 +23,23 @@ inventing it ad hoc.
 
 | # | Phase | Commit | Status | Outcome |
 |---|---|---|---|---|
-| 1 | 0 — Docs scaffolding | [2db67ca](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/2db67ca) | `[x]` | META_PROJECT_ATLAS + CONTRACTS + 9 retroactive ADRs + 7 directory READMEs |
-| 2 | 1 — Diagnostic struct split | [194563a](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/194563a) | `[x]` | render_bridge.h 506→369; ~30→5 TU rebuild fan-out for diagnostic-only field changes |
-| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/6be0a19) | `[x]` | bridge-init.js 2395→879 |
-| 4 | 2b — WasmBridge | [7256a14](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/7256a14) | `[x]` | →213 |
-| 5 | 2c — Capability factories | [c11ef96](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/c11ef96) | `[x]` | →42 (re-export shim only) |
-| 6 | 3 prep — REFACTOR_MAP | [848e839](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/848e839) | `[x]` | 169-method viewport.js extraction guide |
-| 7 | 3b — FluxRenderer | [8b4732d](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/8b4732d) | `[x]` | viewport.js 3953→3785 + viewport/flux-renderer.js (416 LOC) |
-| 8 | 3d — ParticleRenderer | [1506079](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/1506079) | `[x]` | →3542 + viewport/particle-renderer.js (503 LOC) |
-| 9 | 3a — SceneCore | [1499a11](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/1499a11) | `[x]` | →3307 + viewport/scene-core.js (500 LOC); cascade pattern established |
-| 10 | 3c — FieldRenderer | [506805b](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/506805b) | `[x]` | **→1256** + viewport/field-renderer.js (2273 LOC); mesh-factory callbacks rewired |
-| 11 | 4 pre-flight — Golden-tick | [8afc8be](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/8afc8be) | `[x]` | test_render_bridge_golden.cpp; hash `0xcd957b601d47868a` (gate established) |
-| 12 | 4a — phase_write | [9ef51b7](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/9ef51b7) | `[x]` | render_bridge.cpp 1231→972; phase_write.cpp (317 LOC); RF-4 manifest_at dedup |
-| 13 | 4b — phase_forces | [76d2afe](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/76d2afe) | `[x]` | →759 + phase_forces.cpp (251 LOC) |
-| 14 | 4c — phase_read+movement | [be2aa8c](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/be2aa8c) | `[x]` | **→545** + phase_read.cpp + phase_movement.cpp (324 LOC combined) |
-| 15 | 5 — CUDA stencil split | [183a493](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/183a493) | `[~]` | kernels_stencil.cu 1530 → 3 TUs (single 759, dual 565, aux 286) + kernels_stencil_common.cuh |
-| 16 | 6 — Toggle TOGGLE_SPECS[] | [2aa2df9](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/2aa2df9) | `[x]` | 5-place edit → 2-place; ABI hazard documented |
-| 17 | 7 — Test infra extraction | [87158ae](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/87158ae) | `[x]` | test_telemetry.h 412→154; ftd_test_support library; CTest LABELS |
+| 1 | 0 — Docs scaffolding | [eb59d61](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/eb59d61) | `[x]` | META_PROJECT_ATLAS + CONTRACTS + 9 retroactive ADRs + 7 directory READMEs |
+| 2 | 1 — Diagnostic struct split | [2ac1bae](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/2ac1bae) | `[x]` | render_bridge.h 506→369; ~30→5 TU rebuild fan-out for diagnostic-only field changes |
+| 3 | 2a — MockBridge | [6584313](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/6584313) | `[x]` | bridge-init.js 2395→879 |
+| 4 | 2b — WasmBridge | [c019443](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/c019443) | `[x]` | →213 |
+| 5 | 2c — Capability factories | [5b61343](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/5b61343) | `[x]` | →42 (re-export shim only) |
+| 6 | 3 prep — REFACTOR_MAP | [a36df4f](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/a36df4f) | `[x]` | 169-method viewport.js extraction guide |
+| 7 | 3b — FluxRenderer | [4abbe02](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/4abbe02) | `[x]` | viewport.js 3953→3785 + viewport/flux-renderer.js (416 LOC) |
+| 8 | 3d — ParticleRenderer | [0539406](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/0539406) | `[x]` | →3542 + viewport/particle-renderer.js (503 LOC) |
+| 9 | 3a — SceneCore | [cbe1fee](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/cbe1fee) | `[x]` | →3307 + viewport/scene-core.js (500 LOC); cascade pattern established |
+| 10 | 3c — FieldRenderer | [7916757](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/7916757) | `[x]` | **→1256** + viewport/field-renderer.js (2273 LOC); mesh-factory callbacks rewired |
+| 11 | 4 pre-flight — Golden-tick | [3fab178](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/3fab178) | `[x]` | test_render_bridge_golden.cpp; hash `0xcd957b601d47868a` (gate established) |
+| 12 | 4a — phase_write | [3a32b8a](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/3a32b8a) | `[x]` | render_bridge.cpp 1231→972; phase_write.cpp (317 LOC); RF-4 manifest_at dedup |
+| 13 | 4b — phase_forces | [8caac73](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/8caac73) | `[x]` | →759 + phase_forces.cpp (251 LOC) |
+| 14 | 4c — phase_read+movement | [694f6e2](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/694f6e2) | `[x]` | **→545** + phase_read.cpp + phase_movement.cpp (324 LOC combined) |
+| 15 | 5 — CUDA stencil split | [a519ab8](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/a519ab8) | `[~]` | kernels_stencil.cu 1530 → 3 TUs (single 759, dual 565, aux 286) + kernels_stencil_common.cuh |
+| 16 | 6 — Toggle TOGGLE_SPECS[] | [61877a6](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/61877a6) | `[x]` | 5-place edit → 2-place; ABI hazard documented |
+| 17 | 7 — Test infra extraction | [fabb25a](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/fabb25a) | `[x]` | test_telemetry.h 412→154; ftd_test_support library; CTest LABELS |
 
 ## Cumulative LOC reductions
 
