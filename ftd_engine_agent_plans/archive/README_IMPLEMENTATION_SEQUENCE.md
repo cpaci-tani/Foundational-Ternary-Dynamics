@@ -1,7 +1,7 @@
 # FTD Engine Agent Implementation Plans
 
 Version: v0.1  
-Target repo: `williamcpaci-tani/Foundational-Ternary-Dynamics`  
+Target repo: `cpaci-tani/Foundational-Ternary-Dynamics`  
 Purpose: give an engine agent executable, repo-native instructions for integrating the recent graph-theoretic FTD modules into the existing C++/WASM lattice engine.
 
 ## Non-negotiable operating rules

@@ -415,23 +415,23 @@ for the full ledger; commits chained below.
 
 | # | Phase | Commit | Outcome |
 |---|---|---|---|
-| 1 | 0 — Docs scaffolding | [2db67ca](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/2db67ca) | This file + CONTRACTS.md + 9 ADRs + 7 READMEs |
-| 2 | 1 — Diagnostic struct split | [194563a](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/194563a) | `render_bridge.h` 506→369; ~30→5 TU rebuild fan-out |
-| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/6be0a19) | `bridge-init.js` 2395→879 |
-| 4 | 2b — WasmBridge | [7256a14](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/7256a14) | →213 |
-| 5 | 2c — Capability factories | [c11ef96](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/c11ef96) | →42 (re-export shim) |
-| 6 | 3 prep — REFACTOR_MAP | [848e839](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/848e839) | viewport.js method map |
-| 7 | 3b — FluxRenderer | [8b4732d](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/8b4732d) | viewport.js 3953→3785 |
-| 8 | 3d — ParticleRenderer | [1506079](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/1506079) | →3542 |
-| 9 | 3a — SceneCore | [1499a11](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/1499a11) | →3307 |
-| 10 | 3c — FieldRenderer | [506805b](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/506805b) | **→1256** (5 sub-renderers in place) |
-| 11 | 4 pre-flight — Golden-tick test | [8afc8be](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/8afc8be) | hash `0xebaa6f314f66db3f` (gate) |
-| 12 | 4a — phase_write | [9ef51b7](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/9ef51b7) | render_bridge.cpp 1231→972; RF-4 dedup |
-| 13 | 4b — phase_forces | [76d2afe](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/76d2afe) | →759 |
-| 14 | 4c — phase_read+movement | [be2aa8c](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/be2aa8c) | **→545** |
-| 15 | 5 — CUDA stencil split | [183a493](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/183a493) | kernels_stencil.cu 1530 → 3 TUs (single/dual/aux) |
-| 16 | 6 — Toggle TOGGLE_SPECS[] | [2aa2df9](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/2aa2df9) | 5-place edit → 2-place |
-| 17 | 7 — Test fixture + telemetry impl | [87158ae](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/87158ae) | test_telemetry.h 412→154; ftd_test_support library; CTest LABELS |
+| 1 | 0 — Docs scaffolding | [eb59d61](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/eb59d61) | This file + CONTRACTS.md + 9 ADRs + 7 READMEs |
+| 2 | 1 — Diagnostic struct split | [2ac1bae](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/2ac1bae) | `render_bridge.h` 506→369; ~30→5 TU rebuild fan-out |
+| 3 | 2a — MockBridge | [6584313](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/6584313) | `bridge-init.js` 2395→879 |
+| 4 | 2b — WasmBridge | [c019443](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/c019443) | →213 |
+| 5 | 2c — Capability factories | [5b61343](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/5b61343) | →42 (re-export shim) |
+| 6 | 3 prep — REFACTOR_MAP | [a36df4f](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/a36df4f) | viewport.js method map |
+| 7 | 3b — FluxRenderer | [4abbe02](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/4abbe02) | viewport.js 3953→3785 |
+| 8 | 3d — ParticleRenderer | [0539406](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/0539406) | →3542 |
+| 9 | 3a — SceneCore | [cbe1fee](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/cbe1fee) | →3307 |
+| 10 | 3c — FieldRenderer | [7916757](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/7916757) | **→1256** (5 sub-renderers in place) |
+| 11 | 4 pre-flight — Golden-tick test | [3fab178](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/3fab178) | hash `0xebaa6f314f66db3f` (gate) |
+| 12 | 4a — phase_write | [3a32b8a](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/3a32b8a) | render_bridge.cpp 1231→972; RF-4 dedup |
+| 13 | 4b — phase_forces | [8caac73](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/8caac73) | →759 |
+| 14 | 4c — phase_read+movement | [694f6e2](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/694f6e2) | **→545** |
+| 15 | 5 — CUDA stencil split | [a519ab8](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/a519ab8) | kernels_stencil.cu 1530 → 3 TUs (single/dual/aux) |
+| 16 | 6 — Toggle TOGGLE_SPECS[] | [61877a6](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/61877a6) | 5-place edit → 2-place |
+| 17 | 7 — Test fixture + telemetry impl | [fabb25a](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/commit/fabb25a) | test_telemetry.h 412→154; ftd_test_support library; CTest LABELS |
 
 Physics invariants preserved across all 17 commits:
 - Golden hash `0xebaa6f314f66db3f` (100-tick deterministic) **bit-exact** across Phases 4a, 4b, 4c, 5, 6, 7
