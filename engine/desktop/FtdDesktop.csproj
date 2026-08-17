@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>FtdDesktop</AssemblyName>
+    <RootNamespace>FtdDesktop</RootNamespace>
+    <Version>2.18.0</Version>
+    <ApplicationIcon Condition="Exists('Assets\ftd.ico')">Assets\ftd.ico</ApplicationIcon>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4078.44" />
+  </ItemGroup>
+</Project>

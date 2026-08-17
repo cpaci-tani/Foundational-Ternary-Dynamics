@@ -134,6 +134,10 @@ int main() {
         bridge.toggles.strong_force = true;
         bridge.toggles.movement = true;
         bridge.toggles.gauss_projection = true;
+        // Keep the binding experiment in-domain. Without this, the selected
+        // open-face rule removes accelerated movers and particle survival no
+        // longer measures confinement.
+        bridge.toggles.reflective_boundary = true;
 
         // Equilateral triangle in xy-plane, side length ~3 voxels
         // R at (mid, mid-2, mid), G at (mid-2, mid+1, mid), B at (mid+2, mid+1, mid)
@@ -276,6 +280,9 @@ int main() {
             bridge.toggles.gauss_projection = true;
             // genesis OFF to disable evaporation — focus on binding vs scattering
             bridge.toggles.genesis = false;
+            // Face removal is independent of genesis. Reflect movers so the
+            // survival assertion isolates the color-force dynamics.
+            bridge.toggles.reflective_boundary = true;
 
             bridge.inject_particle(mid, mid - 2, mid, +1, co1, +1, c1);
             bridge.inject_particle(mid - 2, mid + 1, mid, +1, co2, +1, c2);

@@ -60,25 +60,6 @@ void periodic_delta_d(int ix, int iy, int iz,
 
 // atomicCAS_byte now lives in cuda_index.cuh (revision C3, ADR-0007).
 
-// Unconditional atomic byte store: avoids races with atomicCAS_byte
-// on bytes sharing the same 32-bit word.
-__device__ __forceinline__
-void atomicStore_byte(int8_t* addr, int8_t val) {
-    unsigned int* word_addr = reinterpret_cast<unsigned int*>(
-        reinterpret_cast<size_t>(addr) & ~3ULL);
-    unsigned int byte_offset = (reinterpret_cast<size_t>(addr) & 3) * 8;
-    unsigned int byte_mask = 0xFFu << byte_offset;
-
-    unsigned int old_word = *word_addr;
-    unsigned int assumed;
-    do {
-        assumed = old_word;
-        unsigned int new_word = (assumed & ~byte_mask)
-                              | (static_cast<unsigned int>(static_cast<unsigned char>(val)) << byte_offset);
-        old_word = atomicCAS(word_addr, assumed, new_word);
-    } while (old_word != assumed);
-}
-
 __device__ __forceinline__
 void ledger_add_face_current(double* current_x,
                              double* current_y,
@@ -372,12 +353,140 @@ __global__ void integrate_forces_kernel(
     }
 }
 
-// ---------- Movement Kernel ----------
-// Accumulate remainder, compute integer moves.
-// For Phase 1 simplicity: movement resolved on CPU (download particle list).
-// This kernel only does remainder accumulation and speed clamping.
+// ---------- Movement transaction ----------
+//
+// CPU movement is a greedy ascending X-major transaction: every committed
+// source mutates state that later sources must observe.  A thread-per-site
+// CUDA kernel cannot preserve that order -- target CAS only serializes one
+// byte, while metadata, flux transport, annihilation scatter, and the source
+// clear remain mutually racy.  It also lets a newly arrived particle execute
+// again when its target thread has not yet run.
+//
+// The common case is sub-cell drift with no integer hop. A parallel prepass
+// classifies original candidates and crossing sites, resets moved[], and
+// reduces one crossing byte per contiguous 256-site block. A compact second
+// kernel applies all non-crossing drift in parallel. The final one-thread
+// kernel scans only flagged blocks and commits crossing sources in ascending
+// index order. Keeping the large collision body out of the parallel kernel is
+// important: otherwise NVCC provisions its local state for every lane. This
+// removes unconditional CUB work while retaining the exact greedy CPU order.
 
-__global__ void phase_movement_kernel(
+constexpr uint8_t MOVEMENT_CANDIDATE = 0x1;
+constexpr uint8_t MOVEMENT_CROSSING  = 0x2;
+constexpr uint8_t MOVEMENT_PROJECTED = 0x4;
+constexpr int MOVEMENT_BLOCK_SIZE = 256;
+
+struct PreparedMovement {
+    double vx, vy, vz;
+    double rx, ry, rz;
+    int dx, dy, dz;
+    bool projected;
+};
+
+__device__ __forceinline__ PreparedMovement prepare_movement(
+    double vx, double vy, double vz,
+    double rx, double ry, double rz,
+    double latency, double dt) {
+    PreparedMovement p{vx, vy, vz, rx, ry, rz, 0, 0, 0, false};
+    const double speed2 = vx*vx + vy*vy + vz*vz;
+    const double projection =
+        ::ftd::movement_projection_scale(latency, speed2);
+    if (projection < 1.0) {
+        p.projected = true;
+        if (projection > 0.0) {
+            p.vx *= projection;
+            p.vy *= projection;
+            p.vz *= projection;
+        } else {
+            p.vx = 0.0;
+            p.vy = 0.0;
+            p.vz = 0.0;
+        }
+    }
+
+    p.rx += p.vx * dt;
+    p.ry += p.vy * dt;
+    p.rz += p.vz * dt;
+    if (p.rx >= 1.0) { p.dx = 1; p.rx -= 1.0; }
+    else if (p.rx <= -1.0) { p.dx = -1; p.rx += 1.0; }
+    if (p.ry >= 1.0) { p.dy = 1; p.ry -= 1.0; }
+    else if (p.ry <= -1.0) { p.dy = -1; p.ry += 1.0; }
+    if (p.rz >= 1.0) { p.dz = 1; p.rz -= 1.0; }
+    else if (p.rz <= -1.0) { p.dz = -1; p.rz += 1.0; }
+    return p;
+}
+
+__global__ void movement_prepass_kernel(
+    const int8_t* __restrict__ state,
+    const uint8_t* __restrict__ locked,
+    const double* __restrict__ vel_x,
+    const double* __restrict__ vel_y,
+    const double* __restrict__ vel_z,
+    const double* __restrict__ rem_x,
+    const double* __restrict__ rem_y,
+    const double* __restrict__ rem_z,
+    const double* __restrict__ latency,
+    uint8_t* __restrict__ site_flags,
+    uint8_t* __restrict__ moved,
+    uint8_t* __restrict__ block_has_crossing,
+    double dt,
+    int N
+) {
+    __shared__ unsigned int has_crossing;
+    if (threadIdx.x == 0) has_crossing = 0;
+    __syncthreads();
+
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < N) {
+        moved[i] = 0;
+        uint8_t flags = 0;
+        if (state[i] != 0 && !locked[i]) {
+            flags = MOVEMENT_CANDIDATE;
+            const PreparedMovement p = prepare_movement(
+                vel_x[i], vel_y[i], vel_z[i],
+                rem_x[i], rem_y[i], rem_z[i], latency[i], dt);
+            if (p.projected) flags |= MOVEMENT_PROJECTED;
+            if (p.dx != 0 || p.dy != 0 || p.dz != 0) {
+                flags |= MOVEMENT_CROSSING;
+                atomicExch(&has_crossing, 1u);
+            }
+        }
+        site_flags[i] = flags;
+    }
+
+    __syncthreads();
+    if (threadIdx.x == 0)
+        block_has_crossing[blockIdx.x] =
+            static_cast<uint8_t>(has_crossing != 0);
+}
+
+__global__ void apply_non_crossing_movement_kernel(
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    double* __restrict__ rem_x,
+    double* __restrict__ rem_y,
+    double* __restrict__ rem_z,
+    const double* __restrict__ latency,
+    const uint8_t* __restrict__ site_flags,
+    unsigned long long* __restrict__ causal_projection_events,
+    double dt,
+    int N
+) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    const uint8_t flags = site_flags[i];
+    if ((flags & MOVEMENT_CANDIDATE) == 0
+        || (flags & MOVEMENT_CROSSING) != 0) return;
+    const PreparedMovement p = prepare_movement(
+        vel_x[i], vel_y[i], vel_z[i],
+        rem_x[i], rem_y[i], rem_z[i], latency[i], dt);
+    vel_x[i] = p.vx; vel_y[i] = p.vy; vel_z[i] = p.vz;
+    rem_x[i] = p.rx; rem_y[i] = p.ry; rem_z[i] = p.rz;
+    if (p.projected) atomicAdd(causal_projection_events, 1ULL);
+}
+
+__global__ void phase_movement_commit_crossings_kernel(
     int8_t* __restrict__ state,
     double* __restrict__ vel_x,
     double* __restrict__ vel_y,
@@ -407,253 +516,259 @@ __global__ void phase_movement_kernel(
     double* __restrict__ fR_x,
     double* __restrict__ fR_y,
     double* __restrict__ fR_z,
+    const uint8_t* __restrict__ site_flags,
+    const uint8_t* __restrict__ block_has_crossing,
+    uint8_t* __restrict__ moved,
     double dt,
     int L,
+    int N,
+    int movement_blocks,
     bool reflective_boundary
 ) {
-    int x = blockIdx.x * blockDim.x + threadIdx.x;
-    int y = blockIdx.y * blockDim.y + threadIdx.y;
-    int z = blockIdx.z * blockDim.z + threadIdx.z;
-    if (x >= L || y >= L || z >= L) return;
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
 
-    int i = x * L * L + y * L + z;  // X-major (matches CPU)
-    if (state[i] == 0 || locked[i]) return;
-    const int q = static_cast<int>(state[i]);
+    for (int movement_block = 0;
+         movement_block < movement_blocks; ++movement_block) {
+        if (!block_has_crossing[movement_block]) continue;
+        const int begin = movement_block * MOVEMENT_BLOCK_SIZE;
+        const int block_end = begin + MOVEMENT_BLOCK_SIZE;
+        const int end = block_end < N ? block_end : N;
+        for (int i = begin; i < end; ++i) {
+        if ((site_flags[i] & MOVEMENT_CROSSING) == 0) continue;
+        // Re-read live state. Earlier commits may have moved into, moved out
+        // of, or annihilated this original candidate site.
+        if (state[i] == 0 || locked[i] || moved[i]) continue;
+        const int q = static_cast<int>(state[i]);
 
-    // Last-resort repair for a velocity written outside normal force
-    // evolution (public mutable voxel access, injection harnesses, etc.).
-    const double speed2 = vel_x[i]*vel_x[i] + vel_y[i]*vel_y[i] + vel_z[i]*vel_z[i];
-    const double projection = ::ftd::movement_projection_scale(latency[i], speed2);
-    if (projection < 1.0) {
-        if (projection > 0.0) {
-            vel_x[i] *= projection;
-            vel_y[i] *= projection;
-            vel_z[i] *= projection;
-        } else {
-            vel_x[i] = 0.0;
-            vel_y[i] = 0.0;
-            vel_z[i] = 0.0;
+        int x, y, z;
+        decode_xyz_d(i, L, x, y, z);
+
+        // Last-resort repair + exact one-axis-per-tick remainder extraction.
+        const PreparedMovement p = prepare_movement(
+            vel_x[i], vel_y[i], vel_z[i],
+            rem_x[i], rem_y[i], rem_z[i], latency[i], dt);
+        vel_x[i] = p.vx; vel_y[i] = p.vy; vel_z[i] = p.vz;
+        rem_x[i] = p.rx; rem_y[i] = p.ry; rem_z[i] = p.rz;
+        if (p.projected) ++(*causal_projection_events);
+        const int dx = p.dx, dy = p.dy, dz = p.dz;
+
+        if (dx == 0 && dy == 0 && dz == 0) continue;
+
+        const int nx = x + dx;
+        const int ny = y + dy;
+        const int nz = z + dz;
+        const bool crosses = nx < 0 || nx >= L || ny < 0 || ny >= L
+                          || nz < 0 || nz >= L;
+        if (crosses) {
+            if (reflective_boundary) {
+                if (dx != 0) vel_x[i] = -vel_x[i];
+                if (dy != 0) vel_y[i] = -vel_y[i];
+                if (dz != 0) vel_z[i] = -vel_z[i];
+                rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+                continue;
+            }
+
+            // Open particle boundary: exhaust into the void. accel_mag is
+            // intentionally left untouched, matching CPU handle_face_crossing.
+            state[i] = 0;
+            vel_x[i] = 0.0; vel_y[i] = 0.0; vel_z[i] = 0.0;
+            rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+            particle_id[i] = -1;
+            pair_id[i] = -1;
+            spin[i] = 0;
+            color[i] = 0;
+            flux_x[i] = 0.0; flux_y[i] = 0.0; flux_z[i] = 0.0;
+            if (dual_substrate) {
+                fL_x[i] = 0.0; fL_y[i] = 0.0; fL_z[i] = 0.0;
+                fR_x[i] = 0.0; fR_y[i] = 0.0; fR_z[i] = 0.0;
+            }
+            continue;
         }
-        atomicAdd(causal_projection_events, 1ULL);
-    }
 
-    // Accumulate remainder
-    rem_x[i] += vel_x[i] * dt;
-    rem_y[i] += vel_y[i] * dt;
-    rem_z[i] += vel_z[i] * dt;
+        const int target = nx * L * L + ny * L + nz;
+        if (state[target] == 0) {
+            ledger_route_moore_current(ledger_current_x, ledger_current_y,
+                                       ledger_current_z, L,
+                                       x, y, z, dx, dy, dz, q);
 
-    // Compute integer displacement
-    int dx = 0, dy = 0, dz = 0;
-    if (rem_x[i] >= 1.0) { dx = 1; rem_x[i] -= 1.0; }
-    else if (rem_x[i] <= -1.0) { dx = -1; rem_x[i] += 1.0; }
-    if (rem_y[i] >= 1.0) { dy = 1; rem_y[i] -= 1.0; }
-    else if (rem_y[i] <= -1.0) { dy = -1; rem_y[i] += 1.0; }
-    if (rem_z[i] >= 1.0) { dz = 1; rem_z[i] -= 1.0; }
-    else if (rem_z[i] <= -1.0) { dz = -1; rem_z[i] += 1.0; }
+            state[target] = state[i];
+            vel_x[target] = vel_x[i];
+            vel_y[target] = vel_y[i];
+            vel_z[target] = vel_z[i];
+            rem_x[target] = rem_x[i];
+            rem_y[target] = rem_y[i];
+            rem_z[target] = rem_z[i];
+            particle_id[target] = particle_id[i];
+            pair_id[target] = pair_id[i];
+            accel_mag[target] = accel_mag[i];
+            spin[target] = spin[i];
+            color[target] = color[i];
 
-    if (dx == 0 && dy == 0 && dz == 0) return;  // No movement
+            const double old_rho = sqrt(flux_x[i]*flux_x[i]
+                                      + flux_y[i]*flux_y[i]
+                                      + flux_z[i]*flux_z[i]);
+            if (old_rho > 1e-15) {
+                const double transfer = fmin(old_rho, K_B);
+                const double ratio = transfer / old_rho;
+                const double sfx = flux_x[i] * ratio;
+                const double sfy = flux_y[i] * ratio;
+                const double sfz = flux_z[i] * ratio;
+                flux_x[i] -= sfx; flux_y[i] -= sfy; flux_z[i] -= sfz;
+                flux_x[target] += sfx;
+                flux_y[target] += sfy;
+                flux_z[target] += sfz;
 
-    const int nx = x + dx;
-    const int ny = y + dy;
-    const int nz = z + dz;
-    const bool crosses = (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L);
-    if (crosses) {
-        if (reflective_boundary) {
+                if (dual_substrate) {
+                    const double sfLx = fL_x[i] * ratio;
+                    const double sfLy = fL_y[i] * ratio;
+                    const double sfLz = fL_z[i] * ratio;
+                    const double sfRx = fR_x[i] * ratio;
+                    const double sfRy = fR_y[i] * ratio;
+                    const double sfRz = fR_z[i] * ratio;
+                    fL_x[i] -= sfLx; fL_y[i] -= sfLy; fL_z[i] -= sfLz;
+                    fR_x[i] -= sfRx; fR_y[i] -= sfRy; fR_z[i] -= sfRz;
+                    fL_x[target] += sfLx;
+                    fL_y[target] += sfLy;
+                    fL_z[target] += sfLz;
+                    fR_x[target] += sfRx;
+                    fR_y[target] += sfRy;
+                    fR_z[target] += sfRz;
+                }
+            }
+
+            state[i] = 0;
+            vel_x[i] = 0.0; vel_y[i] = 0.0; vel_z[i] = 0.0;
+            rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+            particle_id[i] = -1;
+            pair_id[i] = -1;
+            spin[i] = 0;
+            color[i] = 0;
+            moved[target] = 1;
+        } else if (state[target] == state[i]) {
             if (dx != 0) vel_x[i] = -vel_x[i];
             if (dy != 0) vel_y[i] = -vel_y[i];
             if (dz != 0) vel_z[i] = -vel_z[i];
-            rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
-            return;
-        }
-        atomicStore_byte(&state[i], 0);
-        vel_x[i] = 0; vel_y[i] = 0; vel_z[i] = 0;
-        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
-        particle_id[i] = -1;
-        spin[i] = 0;
-        color[i] = 0;
-        pair_id[i] = -1;
-        accel_mag[i] = 0.0;
-        flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
-        // Dual-substrate: zero the registers too (CPU handle_face_crossing
-        // parity; census EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3).
-        if (dual_substrate) {
-            fL_x[i] = 0; fL_y[i] = 0; fL_z[i] = 0;
-            fR_x[i] = 0; fR_y[i] = 0; fR_z[i] = 0;
-        }
-        return;
-    }
+            rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+        } else {
+            // Opposite signs annihilate. Snapshot both fields before clearing,
+            // then scatter each burst to its own periodic 6-neighbor shell.
+            ledger_reaction[i] -= q;
+            ledger_reaction[target] += q;
 
-    int tx = nx;
-    int ty = ny;
-    int tz = nz;
-    int target = tx * L * L + ty * L + tz;  // X-major (matches CPU)
+            // Non-crossing projections were applied/count-staged in parallel
+            // before this ordered transaction. If this target is an original
+            // later non-crosser, CPU order would annihilate it before its turn;
+            // physical cleanup below overwrites the tentative drift, and this
+            // removes its tentative projection telemetry. moved[target]
+            // distinguishes a later arrival from that original candidate.
+            const uint8_t target_flags = site_flags[target];
+            if (target > i && !moved[target]
+                && (target_flags & MOVEMENT_CANDIDATE) != 0
+                && (target_flags & MOVEMENT_CROSSING) == 0
+                && (target_flags & MOVEMENT_PROJECTED) != 0) {
+                --(*causal_projection_events);
+            }
 
-    // Collision resolution via byte-level atomicCAS on state
-    // Try to claim target site (only if currently void)
-    int8_t old = atomicCAS_byte(&state[target], 0, state[i]);
+            const double src_fx = flux_x[i];
+            const double src_fy = flux_y[i];
+            const double src_fz = flux_z[i];
+            const double tgt_fx = flux_x[target];
+            const double tgt_fy = flux_y[target];
+            const double tgt_fz = flux_z[target];
+            const double sLx = dual_substrate ? fL_x[i] : 0.0;
+            const double sLy = dual_substrate ? fL_y[i] : 0.0;
+            const double sLz = dual_substrate ? fL_z[i] : 0.0;
+            const double sRx = dual_substrate ? fR_x[i] : 0.0;
+            const double sRy = dual_substrate ? fR_y[i] : 0.0;
+            const double sRz = dual_substrate ? fR_z[i] : 0.0;
+            const double tLx = dual_substrate ? fL_x[target] : 0.0;
+            const double tLy = dual_substrate ? fL_y[target] : 0.0;
+            const double tLz = dual_substrate ? fL_z[target] : 0.0;
+            const double tRx = dual_substrate ? fR_x[target] : 0.0;
+            const double tRy = dual_substrate ? fR_y[target] : 0.0;
+            const double tRz = dual_substrate ? fR_z[target] : 0.0;
 
-    if (old == 0) {
-        ledger_route_moore_current(ledger_current_x, ledger_current_y,
-                                   ledger_current_z, L,
-                                   x, y, z, dx, dy, dz, q);
-
-        // Successfully claimed target — transfer particle data
-        vel_x[target] = vel_x[i];
-        vel_y[target] = vel_y[i];
-        vel_z[target] = vel_z[i];
-        rem_x[target] = rem_x[i];
-        rem_y[target] = rem_y[i];
-        rem_z[target] = rem_z[i];
-        particle_id[target] = particle_id[i];
-        spin[target] = spin[i];
-        color[target] = color[i];
-        pair_id[target] = pair_id[i];
-        accel_mag[target] = accel_mag[i];
-
-        // Portable self-field transfer
-        double old_rho = sqrt(flux_x[i]*flux_x[i] + flux_y[i]*flux_y[i] + flux_z[i]*flux_z[i]);
-        if (old_rho > 1e-15) {
-            double transfer = fmin(old_rho, K_B);
-            double ratio = transfer / old_rho;
-            double sfx = flux_x[i] * ratio;
-            double sfy = flux_y[i] * ratio;
-            double sfz = flux_z[i] * ratio;
-
-            // Atomic subtract from source, add to target (prevents races)
-            atomicAdd(&flux_x[target], sfx);
-            atomicAdd(&flux_y[target], sfy);
-            atomicAdd(&flux_z[target], sfz);
-            atomicAdd(&flux_x[i], -sfx);
-            atomicAdd(&flux_y[i], -sfy);
-            atomicAdd(&flux_z[i], -sfz);
-
-            // Dual-substrate: carry proportional L/R flux too, with the same
-            // observable-derived ratio (CPU phase_movement parity; without
-            // this the transported observable is erased at the next
-            // obs := L+R sync — census §5.3).
+            state[i] = 0;
+            state[target] = 0;
+            vel_x[i] = 0.0; vel_y[i] = 0.0; vel_z[i] = 0.0;
+            vel_x[target] = 0.0;
+            vel_y[target] = 0.0;
+            vel_z[target] = 0.0;
+            rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+            rem_x[target] = 0.0;
+            rem_y[target] = 0.0;
+            rem_z[target] = 0.0;
+            particle_id[i] = -1;
+            particle_id[target] = -1;
+            pair_id[i] = -1;
+            pair_id[target] = -1;
+            accel_mag[i] = 0.0;
+            accel_mag[target] = 0.0;
+            spin[i] = 0; spin[target] = 0;
+            color[i] = 0; color[target] = 0;
+            flux_x[i] = 0.0; flux_y[i] = 0.0; flux_z[i] = 0.0;
+            flux_x[target] = 0.0;
+            flux_y[target] = 0.0;
+            flux_z[target] = 0.0;
             if (dual_substrate) {
-                const double sfLx = fL_x[i] * ratio;
-                const double sfLy = fL_y[i] * ratio;
-                const double sfLz = fL_z[i] * ratio;
-                const double sfRx = fR_x[i] * ratio;
-                const double sfRy = fR_y[i] * ratio;
-                const double sfRz = fR_z[i] * ratio;
-                atomicAdd(&fL_x[target], sfLx);
-                atomicAdd(&fL_y[target], sfLy);
-                atomicAdd(&fL_z[target], sfLz);
-                atomicAdd(&fR_x[target], sfRx);
-                atomicAdd(&fR_y[target], sfRy);
-                atomicAdd(&fR_z[target], sfRz);
-                atomicAdd(&fL_x[i], -sfLx);
-                atomicAdd(&fL_y[i], -sfLy);
-                atomicAdd(&fL_z[i], -sfLz);
-                atomicAdd(&fR_x[i], -sfRx);
-                atomicAdd(&fR_y[i], -sfRy);
-                atomicAdd(&fR_z[i], -sfRz);
+                fL_x[i] = 0.0; fL_y[i] = 0.0; fL_z[i] = 0.0;
+                fR_x[i] = 0.0; fR_y[i] = 0.0; fR_z[i] = 0.0;
+                fL_x[target] = 0.0;
+                fL_y[target] = 0.0;
+                fL_z[target] = 0.0;
+                fR_x[target] = 0.0;
+                fR_y[target] = 0.0;
+                fR_z[target] = 0.0;
             }
-        }
 
-        // Clear source (use atomic store to avoid races with adjacent CAS ops)
-        atomicStore_byte(&state[i], 0);
-        vel_x[i] = 0; vel_y[i] = 0; vel_z[i] = 0;
-        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
-        particle_id[i] = -1;
-        spin[i] = 0;
-        color[i] = 0;
-        pair_id[i] = -1;
-        accel_mag[i] = 0.0;
-    } else if (old == -state[i]) {
-        atomicAdd(&ledger_reaction[i], -q);
-        atomicAdd(&ledger_reaction[target], q);
-
-        // Opposite charge at target: annihilation
-        // Both particles return to void (use atomic store for thread safety)
-        atomicStore_byte(&state[i], 0);
-        atomicStore_byte(&state[target], 0);
-        vel_x[i] = 0; vel_y[i] = 0; vel_z[i] = 0;
-        vel_x[target] = 0; vel_y[target] = 0; vel_z[target] = 0;
-        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
-        rem_x[target] = 0; rem_y[target] = 0; rem_z[target] = 0;
-        particle_id[i] = -1;
-        particle_id[target] = -1;
-        spin[i] = 0; spin[target] = 0;
-        color[i] = 0; color[target] = 0;
-
-        // Snapshot source/target flux into registers BEFORE scatter to avoid
-        // torn reads from concurrent threads that may also be writing to these
-        // sites. Without this, a second annihilating thread (e.g. the partner
-        // particle running its own movement step) can interleave atomicAdd
-        // operations on flux[i]/flux[target] with the read here, producing
-        // double-scatter and energy non-conservation.
-        const double src_fx = flux_x[i],     src_fy = flux_y[i],     src_fz = flux_z[i];
-        const double tgt_fx = flux_x[target], tgt_fy = flux_y[target], tgt_fz = flux_z[target];
-
-        // Zero source and target flux up-front so any concurrent reader sees a
-        // consistent post-annihilation state.
-        flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
-        flux_x[target] = 0; flux_y[target] = 0; flux_z[target] = 0;
-
-        // Scatter source flux to its 6 face neighbors
-        const double sixth = 1.0 / 6.0;
-        int nbrs_src[6] = {
-            idx3d_d(x+1,y,z,L), idx3d_d(x-1,y,z,L),
-            idx3d_d(x,y+1,z,L), idx3d_d(x,y-1,z,L),
-            idx3d_d(x,y,z+1,L), idx3d_d(x,y,z-1,L)
-        };
-        for (int n = 0; n < 6; ++n) {
-            atomicAdd(&flux_x[nbrs_src[n]], src_fx * sixth);
-            atomicAdd(&flux_y[nbrs_src[n]], src_fy * sixth);
-            atomicAdd(&flux_z[nbrs_src[n]], src_fz * sixth);
-        }
-
-        // Scatter target flux to its 6 face neighbors
-        int nbrs_tgt[6] = {
-            idx3d_d(tx+1,ty,tz,L), idx3d_d(tx-1,ty,tz,L),
-            idx3d_d(tx,ty+1,tz,L), idx3d_d(tx,ty-1,tz,L),
-            idx3d_d(tx,ty,tz+1,L), idx3d_d(tx,ty,tz-1,L)
-        };
-        for (int n = 0; n < 6; ++n) {
-            atomicAdd(&flux_x[nbrs_tgt[n]], tgt_fx * sixth);
-            atomicAdd(&flux_y[nbrs_tgt[n]], tgt_fy * sixth);
-            atomicAdd(&flux_z[nbrs_tgt[n]], tgt_fz * sixth);
-        }
-
-        // Dual-substrate: same snapshot → zero → 6-neighbor scatter for the
-        // L/R registers (CPU annihilation-branch parity; without this the
-        // scattered observable is erased at the next obs := L+R sync —
-        // census §5.3). Same register-snapshot rationale as the observable
-        // above: read before zeroing to avoid torn scatter under concurrent
-        // annihilating threads.
-        if (dual_substrate) {
-            const double sLx = fL_x[i],      sLy = fL_y[i],      sLz = fL_z[i];
-            const double sRx = fR_x[i],      sRy = fR_y[i],      sRz = fR_z[i];
-            const double tLx = fL_x[target], tLy = fL_y[target], tLz = fL_z[target];
-            const double tRx = fR_x[target], tRy = fR_y[target], tRz = fR_z[target];
-            fL_x[i] = 0; fL_y[i] = 0; fL_z[i] = 0;
-            fR_x[i] = 0; fR_y[i] = 0; fR_z[i] = 0;
-            fL_x[target] = 0; fL_y[target] = 0; fL_z[target] = 0;
-            fR_x[target] = 0; fR_y[target] = 0; fR_z[target] = 0;
+            const int nbrs_src[6] = {
+                idx3d_d(x + 1, y, z, L), idx3d_d(x - 1, y, z, L),
+                idx3d_d(x, y + 1, z, L), idx3d_d(x, y - 1, z, L),
+                idx3d_d(x, y, z + 1, L), idx3d_d(x, y, z - 1, L)
+            };
+            const int nbrs_tgt[6] = {
+                idx3d_d(nx + 1, ny, nz, L),
+                idx3d_d(nx - 1, ny, nz, L),
+                idx3d_d(nx, ny + 1, nz, L),
+                idx3d_d(nx, ny - 1, nz, L),
+                idx3d_d(nx, ny, nz + 1, L),
+                idx3d_d(nx, ny, nz - 1, L)
+            };
+            const double sixth = 1.0 / 6.0;
             for (int n = 0; n < 6; ++n) {
-                atomicAdd(&fL_x[nbrs_src[n]], sLx * sixth);
-                atomicAdd(&fL_y[nbrs_src[n]], sLy * sixth);
-                atomicAdd(&fL_z[nbrs_src[n]], sLz * sixth);
-                atomicAdd(&fR_x[nbrs_src[n]], sRx * sixth);
-                atomicAdd(&fR_y[nbrs_src[n]], sRy * sixth);
-                atomicAdd(&fR_z[nbrs_src[n]], sRz * sixth);
-                atomicAdd(&fL_x[nbrs_tgt[n]], tLx * sixth);
-                atomicAdd(&fL_y[nbrs_tgt[n]], tLy * sixth);
-                atomicAdd(&fL_z[nbrs_tgt[n]], tLz * sixth);
-                atomicAdd(&fR_x[nbrs_tgt[n]], tRx * sixth);
-                atomicAdd(&fR_y[nbrs_tgt[n]], tRy * sixth);
-                atomicAdd(&fR_z[nbrs_tgt[n]], tRz * sixth);
+                const int j = nbrs_src[n];
+                flux_x[j] += src_fx * sixth;
+                flux_y[j] += src_fy * sixth;
+                flux_z[j] += src_fz * sixth;
+            }
+            for (int n = 0; n < 6; ++n) {
+                const int j = nbrs_tgt[n];
+                flux_x[j] += tgt_fx * sixth;
+                flux_y[j] += tgt_fy * sixth;
+                flux_z[j] += tgt_fz * sixth;
+            }
+            if (dual_substrate) {
+                for (int n = 0; n < 6; ++n) {
+                    const int j = nbrs_src[n];
+                    fL_x[j] += sLx * sixth;
+                    fL_y[j] += sLy * sixth;
+                    fL_z[j] += sLz * sixth;
+                    fR_x[j] += sRx * sixth;
+                    fR_y[j] += sRy * sixth;
+                    fR_z[j] += sRz * sixth;
+                }
+                for (int n = 0; n < 6; ++n) {
+                    const int j = nbrs_tgt[n];
+                    fL_x[j] += tLx * sixth;
+                    fL_y[j] += tLy * sixth;
+                    fL_z[j] += tLz * sixth;
+                    fR_x[j] += tRx * sixth;
+                    fR_y[j] += tRy * sixth;
+                    fR_z[j] += tRz * sixth;
+                }
             }
         }
-    } else {
-        // Same-sign collision → elastic bounce: reverse velocity along movement axis
-        if (dx != 0) vel_x[i] = -vel_x[i];
-        if (dy != 0) vel_y[i] = -vel_y[i];
-        if (dz != 0) vel_z[i] = -vel_z[i];
-        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
+    }
     }
 }
 
@@ -1021,13 +1136,35 @@ void launch_integrate_forces(GpuBuffers& bufs, double dt) {
 
 void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
                            bool dual_substrate) {
-    int L = bufs.L;
-    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
-    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+    const int L = bufs.L;
+    constexpr int block = MOVEMENT_BLOCK_SIZE;
+    const int grid = (bufs.N + block - 1) / block;
+    // Pair/lifecycle selection and movement are serialized on the default
+    // stream. Reuse the leading bytes of the 4N-byte index scratch for the
+    // ceil(N/256) block flags, avoiding a costly extra cudaMalloc per engine.
+    auto* movement_block_flags =
+        reinterpret_cast<uint8_t*>(bufs.d_pair_candidate_indices);
 
     CUDA_CHECK(cudaMemset(bufs.d_causal_projection_events, 0,
                           sizeof(unsigned long long)));
-    phase_movement_kernel<<<grid, block>>>(
+    movement_prepass_kernel<<<grid, block>>>(
+        bufs.d_state, bufs.d_locked,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_latency,
+        bufs.d_pair_candidate_flags, bufs.d_movement_moved,
+        movement_block_flags,
+        dt, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+
+    apply_non_crossing_movement_kernel<<<grid, block>>>(
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_latency, bufs.d_pair_candidate_flags,
+        bufs.d_causal_projection_events, dt, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+
+    phase_movement_commit_crossings_kernel<<<1, 1>>>(
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
@@ -1042,7 +1179,10 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         dual_substrate,
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
-        dt, L, reflective_boundary
+        bufs.d_pair_candidate_flags,
+        movement_block_flags,
+        bufs.d_movement_moved,
+        dt, L, bufs.N, grid, reflective_boundary
     );
     CUDA_CHECK(cudaGetLastError());
 }

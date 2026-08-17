@@ -6,10 +6,16 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
 #include <cuda_runtime.h>
+#include <cub/device/device_select.cuh>
+#include <cub/device/device_scan.cuh>
+#include <thrust/iterator/counting_iterator.h>
+#include <thrust/iterator/transform_iterator.h>
+#include <algorithm>
 #include <cufft.h>
 #include <cstdio>
 #include <cmath>
 #include <cstring>   // std::memcpy — bit-exact double compare in the C5 delta path
+#include <stdexcept>
 #include <vector>
 
 #ifndef M_PI
@@ -22,11 +28,28 @@
 namespace ftd {
 namespace gpu {
 
+namespace {
+
+// The visual particle path scans the existing byte flag scratch into the
+// existing int32 prefix scratch.  CUB needs matching input/output value types,
+// so make the conversion explicit without materializing an N-sized int flag
+// array.  The scratch is serialized on the default stream with pair/genesis
+// compaction and remains persistent for the lifetime of GpuBuffers.
+struct ByteFlagToInt {
+    __host__ __device__ int operator()(std::uint8_t flag) const {
+        return static_cast<int>(flag);
+    }
+};
+
+}  // namespace
+
 // ---------- Allocation ----------
 
 void GpuBuffers::allocate(int lattice_size) {
     L = lattice_size;
     N = L * L * L;
+
+    try {
 
     // State
     CUDA_CHECK(cudaMalloc(&d_state, N * sizeof(int8_t)));
@@ -54,6 +77,10 @@ void GpuBuffers::allocate(int lattice_size) {
     // Scalar fields
     CUDA_CHECK(cudaMalloc(&d_locked, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMalloc(&d_particle_id, N * sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_next_particle_id, sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_next_pair_id, sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_identity_allocation_base, sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_identity_error, sizeof(int32_t)));
     CUDA_CHECK(cudaMalloc(&d_spin, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMalloc(&d_color, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMalloc(&d_flavor, N * sizeof(int8_t)));
@@ -65,10 +92,12 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_phi_latency, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_latency, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_tau, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_phase, N * sizeof(double)));
     // Zero-initialize the latency fields (warm-start = 0)
     CUDA_CHECK(cudaMemset(d_phi_latency, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_latency, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_tau, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_phase, 0, N * sizeof(double)));
 
     // Read-phase temporaries
     CUDA_CHECK(cudaMalloc(&d_delta_j_x, N * sizeof(double)));
@@ -133,6 +162,41 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_fd_exchange_z, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_causal_projection_events, sizeof(unsigned long long)));
 
+    // Constant-size interactive diagnostic reduction scratch.  Keeping this
+    // in GpuBuffers gives it the same exception-safe lifecycle as the lattice
+    // arrays and avoids cudaMalloc/cudaFree on every dashboard poll.
+    CUDA_CHECK(cudaMalloc(&d_compact_diagnostics,
+                          COMPACT_DIAGNOSTIC_SCALARS * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_compact_charge_sum, sizeof(long long)));
+    // A telemetry publisher writes this buffer once per scheduler epoch then
+    // begins a pinned async D2H copy. Keep it disjoint from
+    // d_compact_diagnostics so a synchronous inspector cannot overwrite an
+    // unread snapshot result.
+    CUDA_CHECK(cudaMalloc(&d_telemetry_snapshot,
+                          COMPACT_TELEMETRY_SCALARS * sizeof(double)));
+    CUDA_CHECK(cudaHostAlloc(reinterpret_cast<void**>(&h_telemetry_snapshot),
+                             COMPACT_TELEMETRY_SCALARS * sizeof(double),
+                             cudaHostAllocPortable));
+    CUDA_CHECK(cudaEventCreateWithFlags(&telemetry_snapshot_ready,
+                                        cudaEventDisableTiming));
+
+    // A visual capture always transfers the same bounded staging capacity.
+    // This avoids a host-side count round trip between device scan/gather and
+    // D2H submission, and (unlike legacy per-frame vectors) requires no
+    // request-path CUDA allocation.
+    CUDA_CHECK(cudaMalloc(&d_visual_particle_header,
+                          sizeof(VisualParticleStagingHeader)));
+    CUDA_CHECK(cudaMalloc(&d_visual_particle_records,
+                          kMaxVisualParticleCapture * sizeof(VisualParticleRecord)));
+    CUDA_CHECK(cudaHostAlloc(reinterpret_cast<void**>(&h_visual_particle_header),
+                             sizeof(VisualParticleStagingHeader),
+                             cudaHostAllocPortable));
+    CUDA_CHECK(cudaHostAlloc(reinterpret_cast<void**>(&h_visual_particle_records),
+                             kMaxVisualParticleCapture * sizeof(VisualParticleRecord),
+                             cudaHostAllocPortable));
+    CUDA_CHECK(cudaEventCreateWithFlags(&visual_snapshot_ready,
+                                        cudaEventDisableTiming));
+
     // FFT workspace
     CUDA_CHECK(cudaMalloc(&d_fft_buf, N * sizeof(cufftDoubleComplex)));
     CUDA_CHECK(cudaMalloc(&d_fft_buf_f, N * sizeof(cufftComplex)));
@@ -146,6 +210,29 @@ void GpuBuffers::allocate(int lattice_size) {
 
     // Pair production tracking
     CUDA_CHECK(cudaMalloc(&d_pair_id, N * sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_pair_candidate_flags, N * sizeof(uint8_t)));
+    CUDA_CHECK(cudaMalloc(&d_pair_candidate_indices, N * sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_pair_candidate_count, sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_movement_moved, N * sizeof(uint8_t)));
+    // Stable compaction is shared by genesis identity ranking and pair
+    // candidates.  The visual particle capture also uses its persistent byte
+    // flags/int32 prefix arrays after a tick; everything is serialized on the
+    // default stream.  Size the one CUB workspace for the larger of select or
+    // scan so no interactive capture performs cudaMalloc/cudaFree.
+    thrust::counting_iterator<int32_t> pair_indices(0);
+    CUDA_CHECK(cub::DeviceSelect::Flagged(
+        nullptr, pair_select_temp_bytes, pair_indices,
+        d_pair_candidate_flags, d_pair_candidate_indices,
+        d_pair_candidate_count, N));
+    std::size_t visual_scan_temp_bytes = 0;
+    const auto visual_flags = thrust::make_transform_iterator(
+        d_pair_candidate_flags, ByteFlagToInt{});
+    CUDA_CHECK(cub::DeviceScan::ExclusiveSum(
+        nullptr, visual_scan_temp_bytes, visual_flags,
+        d_pair_candidate_indices, N));
+    pair_select_temp_bytes = (std::max)(pair_select_temp_bytes,
+                                        visual_scan_temp_bytes);
+    CUDA_CHECK(cudaMalloc(&d_pair_select_temp, pair_select_temp_bytes));
 
     // Native EFT continuity event ledger
     CUDA_CHECK(cudaMalloc(&d_ledger_rho_before, N * sizeof(int)));
@@ -170,6 +257,13 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_remainder_z, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_locked, 0, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMemset(d_particle_id, 0xFF, N * sizeof(int32_t))); // -1
+    CUDA_CHECK(cudaMemset(d_next_particle_id, 0, sizeof(int32_t)));
+    CUDA_CHECK(cudaMemset(d_next_pair_id, 0, sizeof(int32_t)));
+    CUDA_CHECK(cudaMemset(d_identity_allocation_base, 0, sizeof(int32_t)));
+    CUDA_CHECK(cudaMemset(d_identity_error, 0, sizeof(int32_t)));
+    CUDA_CHECK(cudaMemset(d_pair_candidate_flags, 0, N * sizeof(uint8_t)));
+    CUDA_CHECK(cudaMemset(d_pair_candidate_count, 0, sizeof(int32_t)));
+    CUDA_CHECK(cudaMemset(d_movement_moved, 0, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMemset(d_spin, 0, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMemset(d_color, 0, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMemset(d_flavor, 0, N * sizeof(int8_t)));
@@ -238,9 +332,41 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_ledger_current_x, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_ledger_current_y, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_ledger_current_z, 0, N * sizeof(double)));
+    } catch (...) {
+        // GpuBuffers owns raw CUDA pointers. Its destructor is not entered if
+        // allocation is called from a constructor that has not completed, so
+        // release every successfully allocated prefix before propagating.
+        free();
+        throw;
+    }
 }
 
 void GpuBuffers::free() {
+    if (visual_capture_quarantined) return;
+    // Check the visual event before freeing *any* SoA source buffer: a capture
+    // kernel reads state/remainder/spin/color, so releasing those first would
+    // either be unsafe or make cudaFree implicitly wait for a hung stream.
+    // A pending event is handled as a source-lifecycle barrier below; a real
+    // event failure is terminal and recovered by CUDA-context replacement.
+    if (visual_snapshot_ready) {
+        const cudaError_t status = cudaEventQuery(visual_snapshot_ready);
+        if (status == cudaErrorNotReady) {
+            // This is a source-replacement lifecycle violation, not a CUDA
+            // fault.  The native visual scheduler must observe
+            // visual_snapshot_safe_to_replace()==true before it releases the
+            // bridge.  Do not synchronize here: a stuck GPU must not turn a
+            // desktop recovery into a freeze.  The object is intentionally
+            // left intact for its owning context/process to retire.
+            return;
+        }
+        if (status != cudaSuccess) {
+            // A real CUDA event failure is terminal for this source.  Avoid
+            // every dependent cudaFree/host unpin (which may wait forever)
+            // and let context/process replacement reclaim the allocations.
+            visual_capture_quarantined = true;
+            return;
+        }
+    }
     if (d_state)         { cudaFree(d_state); d_state = nullptr; }
     if (d_flux_x)        { cudaFree(d_flux_x); d_flux_x = nullptr; }
     if (d_flux_y)        { cudaFree(d_flux_y); d_flux_y = nullptr; }
@@ -256,6 +382,22 @@ void GpuBuffers::free() {
     if (d_remainder_z)   { cudaFree(d_remainder_z); d_remainder_z = nullptr; }
     if (d_locked)        { cudaFree(d_locked); d_locked = nullptr; }
     if (d_particle_id)   { cudaFree(d_particle_id); d_particle_id = nullptr; }
+    if (d_next_particle_id) {
+        cudaFree(d_next_particle_id);
+        d_next_particle_id = nullptr;
+    }
+    if (d_next_pair_id) {
+        cudaFree(d_next_pair_id);
+        d_next_pair_id = nullptr;
+    }
+    if (d_identity_allocation_base) {
+        cudaFree(d_identity_allocation_base);
+        d_identity_allocation_base = nullptr;
+    }
+    if (d_identity_error) {
+        cudaFree(d_identity_error);
+        d_identity_error = nullptr;
+    }
     if (d_spin)          { cudaFree(d_spin); d_spin = nullptr; }
     if (d_color)         { cudaFree(d_color); d_color = nullptr; }
     if (d_flavor)        { cudaFree(d_flavor); d_flavor = nullptr; }
@@ -265,6 +407,7 @@ void GpuBuffers::free() {
     if (d_phi_latency)   { cudaFree(d_phi_latency); d_phi_latency = nullptr; }
     if (d_latency)       { cudaFree(d_latency); d_latency = nullptr; }
     if (d_tau)           { cudaFree(d_tau); d_tau = nullptr; }
+    if (d_phase)         { cudaFree(d_phase); d_phase = nullptr; }
     if (d_delta_j_x)     { cudaFree(d_delta_j_x); d_delta_j_x = nullptr; }
     if (d_delta_j_y)     { cudaFree(d_delta_j_y); d_delta_j_y = nullptr; }
     if (d_delta_j_z)     { cudaFree(d_delta_j_z); d_delta_j_z = nullptr; }
@@ -323,10 +466,79 @@ void GpuBuffers::free() {
     if (d_fft_buf)       { cudaFree(d_fft_buf); d_fft_buf = nullptr; }
     if (d_fft_buf_f)     { cudaFree(d_fft_buf_f); d_fft_buf_f = nullptr; }
     if (d_green)         { cudaFree(d_green); d_green = nullptr; }
+    if (d_visual_flux_magnitude) {
+        cudaFree(d_visual_flux_magnitude);
+        d_visual_flux_magnitude = nullptr;
+    }
+    if (d_visual_flux_plane) {
+        cudaFree(d_visual_flux_plane);
+        d_visual_flux_plane = nullptr;
+    }
+    if (d_compact_diagnostics) {
+        cudaFree(d_compact_diagnostics);
+        d_compact_diagnostics = nullptr;
+    }
+    if (d_compact_charge_sum) {
+        cudaFree(d_compact_charge_sum);
+        d_compact_charge_sum = nullptr;
+    }
+    // A telemetry copy is issued on the default stream. Synchronize its
+    // per-engine fence before releasing pinned memory; unlike a raw device
+    // pointer, the host target is not protected by cudaFree's stream order.
+    if (telemetry_snapshot_ready) {
+        cudaEventSynchronize(telemetry_snapshot_ready);
+        cudaEventDestroy(telemetry_snapshot_ready);
+        telemetry_snapshot_ready = nullptr;
+    }
+    if (h_telemetry_snapshot) {
+        cudaFreeHost(h_telemetry_snapshot);
+        h_telemetry_snapshot = nullptr;
+    }
+    if (d_telemetry_snapshot) {
+        cudaFree(d_telemetry_snapshot);
+        d_telemetry_snapshot = nullptr;
+    }
+    // At entry the event was queried successfully, before any source buffer
+    // release.  It is therefore safe to free its fixed staging without a
+    // stream synchronization.  Pending/faulted captures returned early above
+    // and leave the whole engine quarantined for context/process replacement.
+    if (visual_snapshot_ready) {
+        cudaEventDestroy(visual_snapshot_ready);
+        visual_snapshot_ready = nullptr;
+    }
+    if (h_visual_particle_records) cudaFreeHost(h_visual_particle_records);
+    if (h_visual_particle_header) cudaFreeHost(h_visual_particle_header);
+    if (d_visual_particle_records) cudaFree(d_visual_particle_records);
+    if (d_visual_particle_header) cudaFree(d_visual_particle_header);
+    h_visual_particle_records = nullptr;
+    h_visual_particle_header = nullptr;
+    d_visual_particle_records = nullptr;
+    d_visual_particle_header = nullptr;
 
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }
     if (d_pair_id)       { cudaFree(d_pair_id); d_pair_id = nullptr; }
+    if (d_pair_candidate_flags) {
+        cudaFree(d_pair_candidate_flags);
+        d_pair_candidate_flags = nullptr;
+    }
+    if (d_pair_candidate_indices) {
+        cudaFree(d_pair_candidate_indices);
+        d_pair_candidate_indices = nullptr;
+    }
+    if (d_pair_candidate_count) {
+        cudaFree(d_pair_candidate_count);
+        d_pair_candidate_count = nullptr;
+    }
+    if (d_movement_moved) {
+        cudaFree(d_movement_moved);
+        d_movement_moved = nullptr;
+    }
+    if (d_pair_select_temp) {
+        cudaFree(d_pair_select_temp);
+        d_pair_select_temp = nullptr;
+    }
+    pair_select_temp_bytes = 0;
     if (d_ledger_rho_before) { cudaFree(d_ledger_rho_before); d_ledger_rho_before = nullptr; }
     if (d_ledger_reaction)   { cudaFree(d_ledger_reaction); d_ledger_reaction = nullptr; }
     if (d_ledger_current_x)  { cudaFree(d_ledger_current_x); d_ledger_current_x = nullptr; }
@@ -349,6 +561,10 @@ void GpuBuffers::upload(const std::vector<Voxel>& host_voxels,
 // ─── C5: upload instrumentation + delta-diff helpers ───────────────────────
 std::size_t g_gpu_upload_bytes      = 0;
 bool        g_gpu_force_full_upload = false;
+std::size_t g_gpu_full_voxel_download_bytes = 0;
+std::size_t g_gpu_full_voxel_download_calls = 0;
+std::size_t g_gpu_identity_counter_download_bytes = 0;
+std::size_t g_gpu_identity_counter_download_calls = 0;
 
 namespace {
 // Bitwise inequality of two doubles' object representations. We compare BITS,
@@ -381,6 +597,7 @@ inline bool uploaded_fields_differ(const Voxel& a, const Voxel& b) {
         || bits_differ(a.accel_mag, b.accel_mag)
         || bits_differ(a.latency, b.latency)
         || bits_differ(a.tau, b.tau)
+        || bits_differ(a.phase, b.phase)
         || vec_differ(a.flux, b.flux)
         || vec_differ(a.wave_vel, b.wave_vel)
         || vec_differ(a.velocity, b.velocity)
@@ -420,6 +637,7 @@ void GpuBuffers::upload_voxels_range(const std::vector<Voxel>& host_voxels,
     std::vector<int32_t> h_pair_id(count);
     std::vector<double>  h_latency(count);
     std::vector<double>  h_tau(count);
+    std::vector<double>  h_phase(count);
     // Dual-substrate staging
     std::vector<double>  h_fLx(count), h_fLy(count), h_fLz(count);
     std::vector<double>  h_fRx(count), h_fRy(count), h_fRz(count);
@@ -456,6 +674,7 @@ void GpuBuffers::upload_voxels_range(const std::vector<Voxel>& host_voxels,
         h_pair_id[k] = v.pair_id;
         h_latency[k] = v.latency;
         h_tau[k]     = v.tau;
+        h_phase[k]   = v.phase;
         // Dual-substrate
         h_fLx[k]  = v.flux_L.x;
         h_fLy[k]  = v.flux_L.y;
@@ -518,6 +737,7 @@ void GpuBuffers::upload_voxels_range(const std::vector<Voxel>& host_voxels,
     FTD_UPLOAD_RANGE(d_pair_id, h_pair_id, int32_t);
     FTD_UPLOAD_RANGE(d_latency, h_latency, double);
     FTD_UPLOAD_RANGE(d_tau, h_tau, double);
+    FTD_UPLOAD_RANGE(d_phase, h_phase, double);
     // Dual-substrate
     FTD_UPLOAD_RANGE(d_flux_L_x, h_fLx, double);
     FTD_UPLOAD_RANGE(d_flux_L_y, h_fLy, double);
@@ -593,6 +813,47 @@ void GpuBuffers::upload_voxels_delta(const std::vector<Voxel>& host_voxels,
     upload_voxels_range(host_voxels, run_lo, run_hi - run_lo + 1);
 }
 
+namespace {
+
+void raise_identity_counter(int32_t* device_counter, int32_t requested_next) {
+    if (requested_next <= 0) return;
+    int32_t current = 0;
+    CUDA_CHECK(cudaMemcpy(&current, device_counter, sizeof(current),
+                          cudaMemcpyDeviceToHost));
+    if (requested_next <= current) return;
+    CUDA_CHECK(cudaMemcpy(device_counter, &requested_next, sizeof(requested_next),
+                          cudaMemcpyHostToDevice));
+}
+
+}  // namespace
+
+void GpuBuffers::raise_identity_counters(int32_t next_particle_id,
+                                         int32_t next_pair_id) {
+    raise_identity_counter(d_next_particle_id, next_particle_id);
+    raise_identity_counter(d_next_pair_id, next_pair_id);
+}
+
+void GpuBuffers::download_identity_counters(int32_t& next_particle_id,
+                                            int32_t& next_pair_id) const {
+    CUDA_CHECK(cudaMemcpy(&next_particle_id, d_next_particle_id,
+                          sizeof(next_particle_id), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(&next_pair_id, d_next_pair_id,
+                          sizeof(next_pair_id), cudaMemcpyDeviceToHost));
+    g_gpu_identity_counter_download_bytes +=
+        sizeof(next_particle_id) + sizeof(next_pair_id);
+    ++g_gpu_identity_counter_download_calls;
+}
+
+void GpuBuffers::throw_if_identity_error() const {
+    int32_t error = 0;
+    CUDA_CHECK(cudaMemcpy(&error, d_identity_error, sizeof(error),
+                          cudaMemcpyDeviceToHost));
+    if (error != 0) {
+        throw std::overflow_error(
+            "GPU particle/pair identity namespace exhausted");
+    }
+}
+
 // ---------- SoA → AoS Download ----------
 
 void GpuBuffers::download(std::vector<Voxel>& host_voxels,
@@ -603,6 +864,94 @@ void GpuBuffers::download(std::vector<Voxel>& host_voxels,
     host_phi_coulomb.resize(N);
     CUDA_CHECK(cudaMemcpy(host_phi.data(), d_phi, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(host_phi_coulomb.data(), d_phi_coulomb, N * sizeof(double), cudaMemcpyDeviceToHost));
+}
+
+void GpuBuffers::download_states(std::vector<std::int8_t>& out) const {
+    out.resize(static_cast<std::size_t>(N));
+    CUDA_CHECK(cudaMemcpy(out.data(), d_state,
+                          static_cast<std::size_t>(N) * sizeof(std::int8_t),
+                          cudaMemcpyDeviceToHost));
+}
+
+__global__ void pack_visual_flux_magnitude_kernel(
+    const double* flux_x,
+    const double* flux_y,
+    const double* flux_z,
+    float* magnitude,
+    int count) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= count) return;
+    const double x = flux_x[i];
+    const double y = flux_y[i];
+    const double z = flux_z[i];
+    magnitude[i] = static_cast<float>(sqrt(x * x + y * y + z * z));
+}
+
+void GpuBuffers::download_flux_magnitude(std::vector<float>& out) {
+    if (!d_visual_flux_magnitude) {
+        CUDA_CHECK(cudaMalloc(&d_visual_flux_magnitude,
+                              static_cast<std::size_t>(N) * sizeof(float)));
+    }
+
+    constexpr int block = 256;
+    const int grid = (N + block - 1) / block;
+    pack_visual_flux_magnitude_kernel<<<grid, block>>>(
+        d_flux_x, d_flux_y, d_flux_z, d_visual_flux_magnitude, N);
+    CUDA_CHECK(cudaGetLastError());
+
+    out.resize(static_cast<std::size_t>(N));
+    CUDA_CHECK(cudaMemcpy(out.data(), d_visual_flux_magnitude,
+                          static_cast<std::size_t>(N) * sizeof(float),
+                          cudaMemcpyDeviceToHost));
+}
+
+__global__ void pack_visual_flux_plane_kernel(
+    const double* flux_x,
+    const double* flux_y,
+    const double* flux_z,
+    float* magnitude,
+    int axis,
+    int plane_index,
+    int L) {
+    const int q = blockIdx.x * blockDim.x + threadIdx.x;
+    const int count = L * L;
+    if (q >= count) return;
+    const int a = q / L;
+    const int b = q - a * L;
+    int x, y, z;
+    if (axis == 0) {
+        x = plane_index; y = a; z = b;
+    } else if (axis == 1) {
+        x = a; y = plane_index; z = b;
+    } else {
+        x = a; y = b; z = plane_index;
+    }
+    const int i = x * L * L + y * L + z;
+    const double fx = flux_x[i], fy = flux_y[i], fz = flux_z[i];
+    magnitude[q] = static_cast<float>(sqrt(fx * fx + fy * fy + fz * fz));
+}
+
+void GpuBuffers::download_flux_magnitude_plane(int axis, int index,
+                                                std::vector<float>& out) {
+    axis = axis == 0 ? 0 : (axis == 1 ? 1 : 2);
+    index %= L;
+    if (index < 0) index += L;
+    const int count = L * L;
+    if (!d_visual_flux_plane) {
+        CUDA_CHECK(cudaMalloc(&d_visual_flux_plane,
+                              static_cast<std::size_t>(count) * sizeof(float)));
+    }
+    constexpr int block = 256;
+    const int grid = (count + block - 1) / block;
+    pack_visual_flux_plane_kernel<<<grid, block>>>(
+        d_flux_x, d_flux_y, d_flux_z, d_visual_flux_plane,
+        axis, index, L);
+    CUDA_CHECK(cudaGetLastError());
+
+    out.resize(static_cast<std::size_t>(count));
+    CUDA_CHECK(cudaMemcpy(out.data(), d_visual_flux_plane,
+                          static_cast<std::size_t>(count) * sizeof(float),
+                          cudaMemcpyDeviceToHost));
 }
 
 void GpuBuffers::download_phi_latency(std::vector<double>& out) const {
@@ -673,6 +1022,12 @@ void GpuBuffers::download_continuity_ledger(
 }
 
 void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
+    // Exact byte count of the arrays copied below: 333 bytes/site.  Potential
+    // and force mirrors are intentionally tracked separately from this core
+    // counter; a compact diagnostics request must leave this value unchanged.
+    constexpr std::size_t BYTES_PER_SITE = 333u;
+    g_gpu_full_voxel_download_bytes += static_cast<std::size_t>(N) * BYTES_PER_SITE;
+    ++g_gpu_full_voxel_download_calls;
     host_voxels.resize(N);
 
     // Download SoA arrays to host staging
@@ -688,10 +1043,12 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     std::vector<int32_t> h_pair_id_dl(N);
     std::vector<double>  h_latency(N);
     std::vector<double>  h_tau(N);
+    std::vector<double>  h_phase(N);
 
     CUDA_CHECK(cudaMemcpy(h_state.data(), d_state, N * sizeof(int8_t), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_latency.data(), d_latency, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_tau.data(), d_tau, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_phase.data(), d_phase, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fx.data(), d_flux_x, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fy.data(), d_flux_y, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fz.data(), d_flux_z, N * sizeof(double), cudaMemcpyDeviceToHost));
@@ -784,6 +1141,7 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
         // Latency field + proper time from GPU (when latency_field toggle is on)
         v.latency     = h_latency[i];
         v.tau         = h_tau[i];
+        v.phase       = h_phase[i];
     }
 }
 

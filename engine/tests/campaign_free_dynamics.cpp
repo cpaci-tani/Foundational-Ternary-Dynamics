@@ -54,12 +54,14 @@ struct ParticleInfo {
     double density;
 };
 
-std::vector<ParticleInfo> find_particles(const ftd::RenderBridge& rb) {
+std::vector<ParticleInfo> find_particles(ftd::RenderBridge& rb) {
     std::vector<ParticleInfo> result;
+    std::vector<std::int8_t> states;
+    rb.copy_visual_states(states);
     for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-        const auto& v = rb.voxels()[i];
-        if (v.state != 0) {
+        if (states[static_cast<std::size_t>(i)] != 0) {
             auto c = rb.lattice().coord(i);
+            const auto v = rb.inspect_voxel(c.x, c.y, c.z).voxel;
             result.push_back({c.x, c.y, c.z, i, v.state,
                               v.velocity, v.remainder, v.density()});
         }
@@ -95,6 +97,7 @@ int main() {
     {
         const int L = 32;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         int mid = L / 2;
         // Inertia is the subject here, so scope out the two channels that
         // can delete the mover: face-crossing removal (420d933f — at
@@ -180,6 +183,7 @@ int main() {
     {
         const int L = 32;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         int mid = L / 2;
 
         double iso = ftd::K_B / std::sqrt(3.0);
@@ -235,6 +239,7 @@ int main() {
     {
         const int L = 48;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         int mid = L / 2;
         int sep = 10;
 
@@ -253,9 +258,12 @@ int main() {
                   << ", PE=" << e0.coulomb_pe << "\n";
 
         // Unlock both
-        for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-            if (rb.voxels()[i].state != 0)
-                rb.voxels()[i].locked = false;
+        {
+            auto& voxels = rb.voxels();
+            for (int i = 0; i < rb.lattice().total_sites(); ++i) {
+                if (voxels[static_cast<std::size_t>(i)].state != 0)
+                    voxels[static_cast<std::size_t>(i)].locked = false;
+            }
         }
 
         // Track separation and energy over 2000 ticks
@@ -319,6 +327,15 @@ int main() {
     {
         const int L = 48;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
+        // Isolate Coulomb repulsion from the two independent lifetime-ending
+        // channels.  Canonical genesis includes stochastic evaporation, and
+        // the open-face default may exhaust a repelled particle before the
+        // observable is sampled.  Those mechanisms have dedicated tests;
+        // FD4 is specifically the same-charge force-sign experiment.
+        rb.toggles.reflective_boundary = true;
+        rb.toggles.genesis = false;
+        rb.toggles.weak_transmutation = false;
         int mid = L / 2;
         int sep = 6;
 
@@ -334,9 +351,12 @@ int main() {
         std::cout << "  Initial separation: " << r0 << "\n";
 
         // Unlock both
-        for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-            if (rb.voxels()[i].state != 0)
-                rb.voxels()[i].locked = false;
+        {
+            auto& voxels = rb.voxels();
+            for (int i = 0; i < rb.lattice().total_sites(); ++i) {
+                if (voxels[static_cast<std::size_t>(i)].state != 0)
+                    voxels[static_cast<std::size_t>(i)].locked = false;
+            }
         }
 
         // Track
@@ -361,7 +381,10 @@ int main() {
                                       ps[1].x, ps[1].y, ps[1].z, L);
             std::cout << "  Final separation: " << rf
                       << ", max separation: " << max_sep << "\n";
-            check("FD4: Same charges repel (separation increases)", rf > r0);
+            // With reflective walls the final separation is phase-sensitive:
+            // after reaching a larger separation the particles may return.
+            // The force-sign claim is the existence of outward motion.
+            check("FD4: Same charges repel (separation increases)", max_sep > r0);
         } else {
             std::cout << "  WARNING: Particle(s) evaporated!\n";
             check("FD4: Same charges repel (separation increases)", false);
@@ -377,6 +400,7 @@ int main() {
     {
         const int L = 48;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         int mid = L / 2;
         int sep = 8;
 
@@ -388,9 +412,12 @@ int main() {
         rb.run(500);  // Settle
 
         // Unlock both
-        for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-            if (rb.voxels()[i].state != 0)
-                rb.voxels()[i].locked = false;
+        {
+            auto& voxels = rb.voxels();
+            for (int i = 0; i < rb.lattice().total_sites(); ++i) {
+                if (voxels[static_cast<std::size_t>(i)].state != 0)
+                    voxels[static_cast<std::size_t>(i)].locked = false;
+            }
         }
 
         auto e0 = rb.energy_audit();
@@ -457,6 +484,7 @@ int main() {
     {
         const int L = 64;  // Larger lattice — electron spirals outward via Larmor radiation
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         int mid = L / 2;
         int r_orbit = 8;
 
@@ -571,6 +599,7 @@ int main() {
     {
         const int L = 48;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         rb.toggles.genesis = false;
         int mid = L / 2;
 

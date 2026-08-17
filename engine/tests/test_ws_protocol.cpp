@@ -19,6 +19,11 @@
 #include <cstring>
 #include <string>
 
+#ifndef _WIN32
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
+
 namespace ftd { namespace test {
 
 static std::string sha1_hex(const std::string& msg) {
@@ -94,8 +99,106 @@ void test_json_helpers() {
     check("json_number fraction", json_number(j, "rate") == 0.25, "");
     check("json_bool true",  json_bool(j, "value") == true, "");
     check("json_bool false", json_bool(j, "off") == false, "");
+    check("json_has_key distinguishes explicit false", json_has_key(j, "off"), "");
+    check("json_has_key rejects missing field", !json_has_key(j, "missing"), "");
     check("json_string missing key is empty", json_string(j, "nope").empty(), "");
 }
+
+#ifndef _WIN32
+void test_lowercase_websocket_handshake() {
+    section("HTTP header names are case-insensitive during WebSocket upgrade");
+    int sockets[2] = {-1, -1};
+    const int pair_result = ::socketpair(AF_UNIX, SOCK_STREAM, 0, sockets);
+    check("handshake socketpair created", pair_result == 0, "POSIX socketpair failed");
+    if (pair_result != 0) return;
+
+    const std::string request =
+        "GET / HTTP/1.1\r\n"
+        "host: localhost\r\n"
+        "upgrade: websocket\r\n"
+        "connection: Upgrade\r\n"
+        "sec-websocket-key:\tdGhlIHNhbXBsZSBub25jZQ==  \r\n"
+        "sec-websocket-version: 13\r\n\r\n";
+    check("lowercase handshake request sent",
+          send_all(sockets[1], request.data(), request.size()), "send failed");
+    check("lowercase Sec-WebSocket-Key accepted", ws_handshake(sockets[0]),
+          "HTTP field names must be matched case-insensitively");
+
+    char response[1024]{};
+    const int received = ::recv(sockets[1], response, sizeof(response) - 1, 0);
+    const std::string text = received > 0 ? std::string(response, received) : std::string{};
+    check("handshake returns HTTP 101",
+          text.find("HTTP/1.1 101 Switching Protocols") != std::string::npos,
+          text.c_str());
+    check("handshake returns canonical accept key",
+          text.find("Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=") != std::string::npos,
+          text.c_str());
+    ::close(sockets[0]);
+    ::close(sockets[1]);
+}
+
+void test_client_frame_validation() {
+    section("client frame validation bounds allocations and enforces masking");
+
+    {
+        int sockets[2] = {-1, -1};
+        check("masked-frame socketpair created",
+              ::socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) == 0, "");
+        const uint8_t frame[] = {0x81, 0x81, 1, 2, 3, 4,
+                                 static_cast<uint8_t>('x' ^ 1)};
+        send_all(sockets[1], frame, sizeof(frame));
+        std::vector<uint8_t> payload;
+        const uint8_t opcode = ws_read_frame(sockets[0], payload);
+        check("valid masked text frame accepted",
+              opcode == WS_TEXT && payload.size() == 1 && payload[0] == 'x', "");
+        ::close(sockets[0]);
+        ::close(sockets[1]);
+    }
+
+    {
+        int sockets[2] = {-1, -1};
+        check("unmasked-frame socketpair created",
+              ::socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) == 0, "");
+        const uint8_t frame[] = {0x81, 0x01, static_cast<uint8_t>('x')};
+        send_all(sockets[1], frame, sizeof(frame));
+        std::vector<uint8_t> payload;
+        check("unmasked client frame rejected",
+              ws_read_frame(sockets[0], payload) == 0xFF, "RFC 6455 requires masking");
+        ::close(sockets[0]);
+        ::close(sockets[1]);
+    }
+
+    {
+        int sockets[2] = {-1, -1};
+        check("oversized-frame socketpair created",
+              ::socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) == 0, "");
+        // FIN + binary, masked + 64-bit length, declared payload = 65,537.
+        const uint8_t header[] = {0x82, 0xFF, 0, 0, 0, 0, 0, 1, 0, 1};
+        send_all(sockets[1], header, sizeof(header));
+        std::vector<uint8_t> payload;
+        check("oversized client frame rejected before allocation",
+              ws_read_frame(sockets[0], payload) == 0xFF && payload.empty(), "");
+        ::close(sockets[0]);
+        ::close(sockets[1]);
+    }
+}
+
+void test_closed_peer_does_not_kill_server() {
+    section("closed WebSocket peer is a recoverable send failure");
+    int sockets[2] = {-1, -1};
+    const int pair_result = ::socketpair(AF_UNIX, SOCK_STREAM, 0, sockets);
+    check("socketpair created", pair_result == 0, "POSIX socketpair failed");
+    if (pair_result != 0) return;
+
+    ::close(sockets[1]);
+    const char byte = 'x';
+    const bool sent = send_all(sockets[0], &byte, 1);
+    check("send to closed peer returns false instead of raising SIGPIPE",
+          !sent,
+          "send_all unexpectedly succeeded after peer close");
+    ::close(sockets[0]);
+}
+#endif
 
 }}  // namespace ftd::test
 
@@ -105,5 +208,10 @@ int main() {
     ftd::test::test_base64_vectors();
     ftd::test::test_rfc6455_accept_derivation();
     ftd::test::test_json_helpers();
+#ifndef _WIN32
+    ftd::test::test_lowercase_websocket_handshake();
+    ftd::test::test_client_frame_validation();
+    ftd::test::test_closed_peer_does_not_kill_server();
+#endif
     return ftd::test::finalize();
 }

@@ -13,11 +13,14 @@
 #include "voxel.h"
 #include "render_bridge.h"  // for Diagnostics, EnergyAudit, TermToggles
 #include "gpu_buffers.h"
+#include "ftd/telemetry_snapshot.h"
+#include "ftd/visual_snapshot.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include <vector>
 #include <cufft.h>
 
 namespace ftd {
+struct LagrangianDiag;
 namespace gpu {
 
 class GpuEngine {
@@ -32,21 +35,74 @@ public:
     // --- Core simulation ---
     void tick();
     void run(int num_ticks);
+    // End-of-tick d_tau update. Public for parity tests and embedders that
+    // drive the GPU sub-phases manually; tick() invokes it automatically for
+    // latency_field when the host-only de Broglie phase is not requested.
+    void accumulate_proper_time(bool update_phase = false, double omega0 = 0.0);
 
     // --- Diagnostics (downloads from GPU) ---
     Diagnostics diagnostics();
     EnergyAudit energy_audit();
+    GravityMetricAgg gravity_metric_agg();
+    void lagrangian_diagnostics(LagrangianDiag& out);
+    void inspect_voxel(int index, VoxelInspection& out);
+    void inspect_force(int index, ForceDiag& out);
+
+    // --- Coherent native telemetry snapshots ---
+    // begin_telemetry_snapshot() appends a fused scalar reduction and pinned
+    // D2H copy to the engine stream, then returns without waiting. Exactly one
+    // snapshot may be pending. poll_telemetry_snapshot() returns false until
+    // its CUDA event has completed; a successful poll consumes the result.
+    // The snapshot carries the tick/state-version captured at begin time.
+    bool begin_telemetry_snapshot(const TelemetrySnapshotRequest& request);
+    bool telemetry_snapshot_ready() const;
+    bool poll_telemetry_snapshot(TelemetrySnapshot& out);
+    void wait_telemetry_snapshot(TelemetrySnapshot& out);
+    TelemetrySnapshot telemetry_snapshot(const TelemetrySnapshotRequest& request);
+
+    // --- Coherent native visual captures ---
+    // Exactly one bounded visual capture may be pending.  The first capture
+    // kind (Particles) counts, scans, and gathers on the device, then starts
+    // a fixed pinned D2H copy.  Polling only observes its event; it never
+    // synchronizes the canonical voxel mirror or allocates CUDA memory.
+    bool begin_visual_snapshot(const VisualSnapshotRequest& request);
+    bool visual_snapshot_ready() const;
+    bool poll_visual_snapshot(VisualSnapshot& out);
+    /// Nonblocking destructive-source barrier.  `true` means the capture is
+    /// absent or its D2H event has completed and may safely be discarded.
+    /// A false result means the owner must keep polling rather than destroy
+    /// the source GpuEngine underneath the capture kernel.
+    bool visual_snapshot_safe_to_replace() const;
+    bool visual_snapshot_in_flight() const { return visual_snapshot_pending_; }
 
     // --- Particle injection (uploads to GPU) ---
     void inject_flux(int x, int y, int z, const Vec3& flux_val);
+    void inject_flux_add(int x, int y, int z, const Vec3& flux_val);
+    void inject_wave_vel_add(int x, int y, int z, const Vec3& wave_vel);
     void inject_particle(int x, int y, int z, int8_t state,
                          const Vec3& flux_val,
                          int8_t spin = 0, int8_t color = 0, int8_t flavor = 0);
     void inject_wavepacket(int cx, int cy, int cz, int8_t state,
                            double sigma = 3.0, double amplitude = K_B);
+    void create_entangled_pair(int x, int y, int z, const Vec3& flux_val);
 
     // --- Sync to host for inspection ---
     void sync_to_host(std::vector<Voxel>& out);
+    // Lifetime identity high-water marks.  These include IDs whose particles
+    // have since evaporated/annihilated and therefore cannot be recovered by
+    // scanning the current voxel image.
+    void identity_counters(int32_t& next_particle_id,
+                           int32_t& next_pair_id) const;
+    void raise_identity_counters(int32_t next_particle_id,
+                                 int32_t next_pair_id);
+    void copy_visual_states(std::vector<std::int8_t>& out) const;
+    void copy_visual_flux_magnitude(std::vector<float>& out);
+    void copy_visual_flux_magnitude_plane(int axis, int index,
+                                          std::vector<float>& out);
+    void copy_visual_field_sample(VisualFieldKind kind, int stride,
+                                  VisualFieldSample& out) const;
+    void copy_visual_particle_attributes(const std::vector<int>& indices,
+                                         std::vector<float>& out) const;
     eft::DualCellContinuity continuity_step() const;
 
     // --- Bulk upload from host (for test setup with custom initial conditions) ---
@@ -80,11 +136,15 @@ public:
     };
     const ForceDiagHost& force_diag() { ensure_host_synced(); return host_force_diag_; }
     unsigned long long causal_projection_events() const {
+        bufs_.throw_if_identity_error();
         return bufs_.download_causal_projection_events();
     }
 
     // Physics toggles (same as CPU engine)
     TermToggles toggles;
+    double genesis_threshold_override = -1.0;
+    double manifest_scale_override = -1.0;
+    bool manifest_use_temperature = false;
 
     // --- Non-Abelian gauge link sector (revision 0.9 option a) ---
     // Device link buffers are lazily allocated by upload_gauge_links() on the
@@ -147,6 +207,10 @@ private:
     int N_;                 // total sites (size^3)
     int tick_ = 0;
     double dt_ = 1.0;
+    // Increments after every GPU-visible state mutation. Unlike tick_, this
+    // also advances for direct injection and host uploads, allowing a native
+    // scheduler to reject stale observations between ticks.
+    std::uint64_t state_version_ = 0;
 
     GpuBuffers bufs_;
 
@@ -189,11 +253,26 @@ private:
     std::vector<double> probe_j0x_, probe_j0y_, probe_j0z_;  // host J(0) reference
     std::vector<double> probe_jx_, probe_jy_, probe_jz_;     // host gather scratch
 
-    int next_particle_id_ = 0;
-    int next_pair_id_ = 0;
     int host_num_particles_ = 0;  // cached particle count from device
     bool weak_field_active_ = false;  // true when flavor/weak-field state needs stepping
     bool continuity_ledger_valid_ = false;
+
+    // One pinned host staging buffer/event lives in GpuBuffers. These fields
+    // capture the immutable provenance for the in-flight request; subsequent
+    // simulation work can be enqueued after the D2H copy without altering it.
+    bool telemetry_snapshot_pending_ = false;
+    TelemetrySnapshotRequest telemetry_snapshot_request_{};
+    std::uint64_t telemetry_snapshot_state_version_ = 0;
+    int telemetry_snapshot_tick_ = 0;
+    bool telemetry_snapshot_gravity_requested_ = false;
+
+    // Immutable provenance of the one in-flight visual capture.  The actual
+    // bounded records/header and completion event live in GpuBuffers so their
+    // allocation/destruction follows the engine's CUDA resource lifecycle.
+    bool visual_snapshot_pending_ = false;
+    VisualSnapshotRequest visual_snapshot_request_{};
+    std::uint64_t visual_snapshot_state_version_ = 0;
+    int visual_snapshot_tick_ = 0;
 
     // Helper: ensure host shadow is up-to-date
     void ensure_host_synced();
@@ -201,6 +280,7 @@ private:
     void push_to_device();
     // Helper: refresh weak_field_active_ after host-side setup changes
     void refresh_weak_field_active_from_host();
+    void mark_device_state_changed() { ++state_version_; }
 };
 
 }  // namespace gpu

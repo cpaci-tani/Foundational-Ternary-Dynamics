@@ -155,6 +155,17 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
       a.chirality_total += integrate_voxel_density(v.chirality_density());
     }
 
+    // Keep the public substrate-energy channels populated on every backend.
+    // GpuEngine has always reported these fields; the extracted CPU audit
+    // accidentally omitted them, making a backend switch zero the native
+    // strong/weak energy bars for an identical lattice snapshot.
+    if (rb.toggles.color_forces || rb.toggles.strong_force) {
+      a.strong_energy += integrate_voxel_density(
+          quadratic_field_energy_density(v.flux_strong.mag2()));
+    }
+    a.weak_energy += integrate_voxel_density(
+        quadratic_field_energy_density(v.flux_weak.mag2()));
+
     const int8_t s = ternary.state_at(i);
     if (s != 0) {
       const double speed2 = v.velocity.mag2();
@@ -225,10 +236,11 @@ EMFieldDiag compute_em_field_at(const RenderBridge& rb, int idx) {
 Vec3 compute_poynting_vector(const RenderBridge& rb, int idx) {
   Vec3 E = rb.voxels()[idx].wave_vel * -1.0;
   Vec3 B = rb.curl_flux(idx);
+  constexpr double C2 = C_SPEED * C_SPEED;
   return Vec3{
-    E.y * B.z - E.z * B.y,
-    E.z * B.x - E.x * B.z,
-    E.x * B.y - E.y * B.x
+    C2 * (E.y * B.z - E.z * B.y),
+    C2 * (E.z * B.x - E.x * B.z),
+    C2 * (E.x * B.y - E.y * B.x)
   };
 }
 

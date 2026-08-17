@@ -7,9 +7,9 @@
 // EXACT 18-point Laplacian eigenvalues (gpu_buffers.cu:786-807,
 // kernel_precompute_green) — i.e. the infinite-SOR-iteration limit of the CPU
 // solver, with the SAME 18-pt-solve / 6-pt-central-divergence stencil
-// mismatch. The GPU correction kernel (kernels_poisson.cu:346) skips
-// manifested sites unconditionally: there is NO exact_dual_gauss branch on
-// the GPU, so that mechanism is CPU-only.
+// mismatch. The GPU correction kernel skips manifested sites in production
+// mode and, like the CPU path, includes them when exact_dual_gauss is enabled.
+// Focused toggle/dual-register parity lives in test_gpu_native_extension_parity.
 //
 // Experiments:
 //   G0  Projection in isolation at 64^3 (only gauss_projection on): FFT

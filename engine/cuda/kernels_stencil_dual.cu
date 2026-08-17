@@ -54,10 +54,17 @@ __global__ void evaporation_kernel(
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int32_t* __restrict__ pair_id,
     int* __restrict__ ledger_reaction,
     int L,
     unsigned long long rng_seed, int tick
 );
+
+void launch_canonical_lifecycle(
+    GpuBuffers& bufs, bool dual_substrate,
+    bool do_genesis, bool do_evaporation,
+    double kinetic_drain, double genesis_threshold, double manifest_scale,
+    unsigned long long rng_seed, int tick);
 
 __global__ void compute_near_particle_kernel(
     const int8_t* __restrict__ state,
@@ -382,6 +389,7 @@ __global__ void genesis_dual_kernel(
     const double* __restrict__ obs_x, const double* __restrict__ obs_y, const double* __restrict__ obs_z,
     int8_t* __restrict__ spin, int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int32_t* __restrict__ pair_id,
     int* __restrict__ ledger_reaction,
     int L,
     // BH-F5/F8/F9 (2026-05-05): SplitMix64 RNG via shared voxel_rng.h.
@@ -449,7 +457,10 @@ __global__ void genesis_dual_kernel(
     else if (afy >= afz) color[i] = 2;
     else color[i] = 3;
 
-    particle_id[i] = i;
+    // ARCH-7: resolve surviving genesis sentinels after evaporation in stable
+    // X-major order (shared post-pass from kernels_stencil_single.cu).
+    particle_id[i] = -2;
+    pair_id[i] = -1;
 }
 
 // ---------- Dual-Substrate Launchers ----------
@@ -511,44 +522,11 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
     );
     CUDA_CHECK(cudaGetLastError());
 
-    // Dual genesis (chirality-based) — BH-F5/F8/F9 (2026-05-05): SplitMix64
-    // stream replaces cuRAND pre-fill.
-    if (do_genesis) {
-        genesis_dual_kernel<<<grid, block>>>(
-            bufs.d_state,
-            bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
-            bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
-            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-            bufs.d_ledger_reaction, L,
-            rng_seed, tick
-        );
-        CUDA_CHECK(cudaGetLastError());
-    }
-
-    // Evaporation — gate on (do_genesis || do_evaporation) for parity with
-    // single-substrate launch_phase_write and CPU phase_write.cpp:291. Pre-fix
-    // this ran unconditionally on the dual path (the F6 single-substrate fix
-    // was not propagated here); fixed 2026-05-05 alongside the toggles.evaporation
-    // flag introduction. Evaporation uses observable field (same as legacy).
-    // Defined in kernels_stencil_single.cu; forward-declared at the top of this
-    // TU. Stochastic since the BH-F5 completion (2026-07-16): rng_seed/tick
-    // feed the shared SplitMix64 Evaporation draw (CPU evaporation is shared
-    // single+dual, so one kernel serves both paths here too).
-    if (do_genesis || do_evaporation) {
-        evaporation_kernel<<<grid, block>>>(
-            bufs.d_state,
-            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-            bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
-            bufs.d_latency,
-            bufs.d_locked,
-            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-            bufs.d_ledger_reaction, L,
-            rng_seed, tick
-        );
-        CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
-    }
+    launch_canonical_lifecycle(
+        bufs, /*dual_substrate=*/true,
+        do_genesis, do_evaporation,
+        /*kinetic_drain=*/0.0, K_GENESIS, K_MANIFEST,
+        rng_seed, tick);
     CUDA_CHECK(cudaGetLastError());
 }
 

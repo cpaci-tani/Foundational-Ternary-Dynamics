@@ -15,9 +15,7 @@
 #include <cuComplex.h>
 #include <cuda_runtime.h>
 
-#include <cstdio>
-#include <cstdlib>
-
+#include "cuda_error.cuh"
 #include "cuda_index.cuh"
 
 namespace ftd {
@@ -117,13 +115,6 @@ __global__ void wilson_dirac_kernel(c2* __restrict__ out,
     for (int k = 0; k < 4; ++k) out[idx * 4 + k] = result[k];
 }
 
-void check_cuda(cudaError_t err, const char* what) {
-    if (err != cudaSuccess) {
-        std::fprintf(stderr, "CUDA error in %s: %s\n", what, cudaGetErrorString(err));
-        std::abort();
-    }
-}
-
 }  // namespace
 
 void apply_wilson_dirac_gpu(SpinorField& out,
@@ -143,15 +134,21 @@ void apply_wilson_dirac_gpu(SpinorField& out,
     c2* d_out = nullptr;
     c2* d_U = nullptr;
 
-    check_cuda(cudaMalloc(&d_psi, spinor_bytes), "cudaMalloc d_psi");
-    check_cuda(cudaMalloc(&d_out, spinor_bytes), "cudaMalloc d_out");
-    check_cuda(cudaMalloc(&d_U,   links_bytes), "cudaMalloc d_U");
+    const auto cleanup = [&] {
+        if (d_psi) { cudaFree(d_psi); d_psi = nullptr; }
+        if (d_out) { cudaFree(d_out); d_out = nullptr; }
+        if (d_U)   { cudaFree(d_U);   d_U = nullptr; }
+    };
+
+    try {
+    CUDA_CHECK(cudaMalloc(&d_psi, spinor_bytes));
+    CUDA_CHECK(cudaMalloc(&d_out, spinor_bytes));
+    CUDA_CHECK(cudaMalloc(&d_U,   links_bytes));
 
     // Pack psi.
     static_assert(sizeof(Spinor) == 4 * sizeof(c2),
                   "Spinor must pack as 4 cuDoubleComplex (8 doubles)");
-    check_cuda(cudaMemcpy(d_psi, psi.data.data(), spinor_bytes, cudaMemcpyHostToDevice),
-               "cudaMemcpy psi -> device");
+    CUDA_CHECK(cudaMemcpy(d_psi, psi.data.data(), spinor_bytes, cudaMemcpyHostToDevice));
 
     // Pack U: layout [mu * N + site].
     {
@@ -162,23 +159,24 @@ void apply_wilson_dirac_gpu(SpinorField& out,
                 U_flat[static_cast<std::size_t>(mu) * N + i] = make_cuDoubleComplex(u.real(), u.imag());
             }
         }
-        check_cuda(cudaMemcpy(d_U, U_flat.data(), links_bytes, cudaMemcpyHostToDevice),
-                   "cudaMemcpy U -> device");
+        CUDA_CHECK(cudaMemcpy(d_U, U_flat.data(), links_bytes, cudaMemcpyHostToDevice));
     }
 
     const int block = 128;
     const int grid = (N + block - 1) / block;
     wilson_dirac_kernel<<<grid, block>>>(d_out, d_psi, d_U, L, params.m, params.r,
                                          params.a, params.spatial_speed);
-    check_cuda(cudaGetLastError(), "wilson_dirac_kernel launch");
-    check_cuda(cudaDeviceSynchronize(), "wilson_dirac_kernel sync");
+    CUDA_CHECK(cudaGetLastError());
+    CUDA_CHECK(cudaDeviceSynchronize());
 
-    check_cuda(cudaMemcpy(out.data.data(), d_out, spinor_bytes, cudaMemcpyDeviceToHost),
-               "cudaMemcpy out -> host");
+    CUDA_CHECK(cudaMemcpy(out.data.data(), d_out, spinor_bytes, cudaMemcpyDeviceToHost));
 
-    cudaFree(d_psi);
-    cudaFree(d_out);
-    cudaFree(d_U);
+    } catch (...) {
+        cleanup();
+        throw;
+    }
+
+    cleanup();
 }
 
 }  // namespace wilson_dirac
