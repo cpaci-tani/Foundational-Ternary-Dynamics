@@ -24,6 +24,9 @@
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #  endif
+#  ifndef NOMINMAX
+#    define NOMINMAX   // windows.h's min/max macros break std::/Clock:: min()/max() calls
+#  endif
 #  include <winsock2.h>
 #  include <ws2tcpip.h>
 #else
