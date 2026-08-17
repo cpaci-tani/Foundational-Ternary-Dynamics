@@ -63,6 +63,19 @@ struct GpuBuffers {
     int N = 0;    // total sites (L^3)
     int L = 0;    // lattice side length
 
+    // --- Engine execution stream (Component A) ---
+    // Created by allocate() with DEFAULT (blocking) flags, destroyed by
+    // free(). Blocking is deliberate: every CUDA call this engine has NOT
+    // migrated (compact diagnostics, injection kernels, the AoS downloads,
+    // the visual capture path) still runs on the legacy default stream, and
+    // a blocking stream implicitly synchronizes with it, so those paths stay
+    // correctly ordered with zero further work. It also makes CUDA reject
+    // legacy-stream work issued while this stream is capturing
+    // (cudaErrorStreamCaptureImplicit), turning an un-migrated tick launcher
+    // into a loud capture failure instead of a silently wrong graph.
+    // NEVER capture on the legacy stream: cudaStreamBeginCapture rejects it.
+    cudaStream_t stream = nullptr;
+
     // --- Per-voxel state ---
     int8_t*   d_state       = nullptr;  // ternary state {-1,0,+1}
 

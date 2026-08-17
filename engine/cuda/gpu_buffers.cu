@@ -51,6 +51,9 @@ void GpuBuffers::allocate(int lattice_size) {
 
     try {
 
+    // Engine execution stream. Default (blocking) flags — see gpu_buffers.h.
+    CUDA_CHECK(cudaStreamCreate(&stream));
+
     // State
     CUDA_CHECK(cudaMalloc(&d_state, N * sizeof(int8_t)));
 
@@ -366,6 +369,20 @@ void GpuBuffers::free() {
             visual_capture_quarantined = true;
             return;
         }
+    }
+    // Drain and release the engine stream BEFORE any device pointer it may
+    // still reference is freed. The quarantine/pending-visual early returns
+    // above (`if (visual_capture_quarantined) return;` and the
+    // cudaErrorNotReady/event-failure branches) skip this destroy, exactly
+    // as they already skip every cudaFree below for the same reason: those
+    // paths hand the allocation off to CUDA-context replacement rather than
+    // resolve it here, deliberately. The stream leaks in that case along
+    // with every other GPU buffer already does — this is the established
+    // pattern in this function, not a gap introduced by this task.
+    if (stream) {
+        cudaStreamSynchronize(stream);
+        cudaStreamDestroy(stream);
+        stream = nullptr;
     }
     if (d_state)         { cudaFree(d_state); d_state = nullptr; }
     if (d_flux_x)        { cudaFree(d_flux_x); d_flux_x = nullptr; }
@@ -895,7 +912,7 @@ void GpuBuffers::download_flux_magnitude(std::vector<float>& out) {
 
     constexpr int block = 256;
     const int grid = (N + block - 1) / block;
-    pack_visual_flux_magnitude_kernel<<<grid, block>>>(
+    pack_visual_flux_magnitude_kernel<<<grid, block, 0, stream>>>(
         d_flux_x, d_flux_y, d_flux_z, d_visual_flux_magnitude, N);
     CUDA_CHECK(cudaGetLastError());
 
@@ -943,7 +960,7 @@ void GpuBuffers::download_flux_magnitude_plane(int axis, int index,
     }
     constexpr int block = 256;
     const int grid = (count + block - 1) / block;
-    pack_visual_flux_plane_kernel<<<grid, block>>>(
+    pack_visual_flux_plane_kernel<<<grid, block, 0, stream>>>(
         d_flux_x, d_flux_y, d_flux_z, d_visual_flux_plane,
         axis, index, L);
     CUDA_CHECK(cudaGetLastError());
@@ -980,7 +997,7 @@ __global__ void reset_continuity_ledger_kernel(
 void GpuBuffers::reset_continuity_ledger() {
     constexpr int block = 256;
     const int grid = (N + block - 1) / block;
-    reset_continuity_ledger_kernel<<<grid, block>>>(
+    reset_continuity_ledger_kernel<<<grid, block, 0, stream>>>(
         d_state, d_ledger_rho_before, d_ledger_reaction,
         d_ledger_current_x, d_ledger_current_y, d_ledger_current_z, N);
     CUDA_CHECK(cudaGetLastError());
@@ -1233,7 +1250,7 @@ void GpuBuffers::download_force_diag(
 void GpuBuffers::precompute_green_function() {
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
-    kernel_precompute_green<<<grid, block>>>(d_green, L);
+    kernel_precompute_green<<<grid, block, 0, stream>>>(d_green, L);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaDeviceSynchronize());
 }

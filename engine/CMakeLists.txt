@@ -1402,6 +1402,13 @@ if(FTD_ENABLE_CUDA)
                  CTEST_NAME gpu_visual_snapshot TIMEOUT 300
                  LABELS unit render scale0 interactive)
 
+    # Component A Task 1: the engine owns one non-legacy CUDA stream, and
+    # moving the tick onto it is physics-neutral.
+    ftd_add_test(test_gpu_stream_binding
+                 tests/test_gpu_stream_binding.cpp GPU_HEAVY
+                 CTEST_NAME gpu_stream_binding TIMEOUT 300
+                 LABELS unit parity interactive)
+
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
 

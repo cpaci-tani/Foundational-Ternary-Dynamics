@@ -267,6 +267,15 @@ GpuEngine::GpuEngine(int lattice_size)
     CUFFT_CHECK(cufftPlan3d(&fft_plan_forward_f_, size_, size_, size_, CUFFT_C2C));
     CUFFT_CHECK(cufftPlan3d(&fft_plan_inverse_f_, size_, size_, size_, CUFFT_C2C));
 
+    // Bind every plan to the engine stream so cufftExec* is stream-ordered
+    // with the surrounding kernels and is capturable. cufftPlan3d allocates
+    // the plan work area at creation time, so no allocation happens at exec
+    // time (which capture would reject).
+    CUFFT_CHECK(cufftSetStream(fft_plan_forward_,   bufs_.stream));
+    CUFFT_CHECK(cufftSetStream(fft_plan_inverse_,   bufs_.stream));
+    CUFFT_CHECK(cufftSetStream(fft_plan_forward_f_, bufs_.stream));
+    CUFFT_CHECK(cufftSetStream(fft_plan_inverse_f_, bufs_.stream));
+
     set_rng_seed(toggles.langevin_seed);
 
     // Initialize host shadow
