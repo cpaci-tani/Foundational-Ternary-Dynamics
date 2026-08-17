@@ -30,9 +30,9 @@ namespace ftd {
 enum class FluxBoundaryMode : int { Periodic = 0, Reflective = 1, Dispersal = 2 };
 
 // Backend bitmask used by ToggleSpec::backends. CPU = 0b001, GPU = 0b010,
-// JS  = 0b100, ANY = 0b111. Currently informational — not enforced at the
-// binding layer — but the WASM map below filters by `(backends & 0b100)`
-// so a future GPU-only toggle won't accidentally appear in the JS surface.
+// JS  = 0b100, ANY = 0b111. The native WebSocket binding enforces this table
+// transactionally through validate_backend(); the WASM map also filters by
+// `(backends & 0b100)` so unsupported terms cannot be acknowledged silently.
 namespace ToggleBackend {
     constexpr uint8_t CPU = 0b001;
     constexpr uint8_t GPU = 0b010;
@@ -95,7 +95,7 @@ struct TermToggles {
                                     // CPU-only, unit-step, default OFF.
     bool su2_gauge = false;         // tick Rule 7b: per-tick SU(2) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool su3_gauge = false;         // tick Rule 7b: per-tick SU(3) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
-    bool symmetric_movement_order = false; // phase_movement: coordinate-independent update traversal & axis ordering
+    bool symmetric_movement_order = false; // CPU/JS phase_movement: coordinate-independent update traversal & axis ordering
     bool absorbing_boundary = false; // tick: imposed D-deep quadratic damping sponge; reflection performance is not guaranteed by the operator definition
     bool reflective_boundary = false; // phase_movement: mirror-bounce at faces when on; particles exhaust into the void when off (no periodic wrap)
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
@@ -176,6 +176,14 @@ struct TermToggles {
     // ── Generated helpers — bodies live in this header (header-only,
     // POD struct preserved). Implementations below TOGGLE_SPECS[]. ────
     bool validate(std::string* err = nullptr) const;
+    // Validate that every enabled term has a real implementation on the
+    // selected backend.  `require_device_resident` is used by the native
+    // interactive CUDA server: hybrid extensions that deliberately mirror the
+    // whole lattice to the host are valid for campaigns, but are not allowed
+    // to masquerade as full-GPU interactive physics.
+    bool validate_backend(uint8_t backend,
+                          bool require_device_resident = false,
+                          std::string* err = nullptr) const;
     std::string cpu_runtime_warnings() const;
     void enable_all();
     void disable_all();
@@ -233,7 +241,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"lorentz_bcc_time_floquet", &TermToggles::lorentz_bcc_time_floquet, false, false, "wave_propagation", "lorentz_period2_floquet", "", ToggleBackend::CPU, "[FTD-0411 SELECTED IR PROTOTYPE] Stable P4-local period-two surrogate for the BCC temporal kernel, with c^2=1/7 and exact q^4 cancellation; differs from literal BCC time at q^6; CPU-only, unit-step, default OFF"},
     {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
     {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
-    {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 "", ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering"},
+    {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 "", ToggleBackend::CPU | ToggleBackend::JS, "Coordinate-independent update traversal & axis ordering"},
     {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Imposed D-deep quadratic damping sponge at lattice faces"},
     {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 "", ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 "", ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
@@ -350,6 +358,11 @@ inline bool TermToggles::validate(std::string* err) const {
         msg += "lorentz_bcc_time_floquet and verlet_wave_integrator are mutually exclusive (FTD-0411 requires the unit-step default kick-drift map)\n";
     if (lorentz_bcc_time_floquet && symplectic_leapfrog)
         msg += "lorentz_bcc_time_floquet and symplectic_leapfrog are mutually exclusive (FTD-0411 requires the unit-step default kick-drift map)\n";
+    // Both CPU and CUDA implement the OU thermostat only on the canonical
+    // single-substrate register.  Accepting Langevin with dual_substrate used
+    // to acknowledge a profile whose stochastic phase was silently skipped.
+    if (langevin && dual_substrate)
+        msg += "langevin requires dual_substrate=false (OU thermostat is single-substrate only)\n";
 
     // FTD-0428: the matched face/edge complex owns all field evolution in its
     // selected branch.  Only conservative particle movement and read-only
@@ -387,6 +400,36 @@ inline bool TermToggles::validate(std::string* err) const {
             || reflective_boundary) {
             msg += "strong_stress_energy projected movement requires the isolated flat collision-free colour sector\n";
         }
+    }
+
+    if (err) *err = msg;
+    return msg.empty();
+}
+
+inline bool TermToggles::validate_backend(uint8_t backend,
+                                          bool require_device_resident,
+                                          std::string* err) const {
+    std::string msg;
+    for (const auto& spec : TOGGLE_SPECS) {
+        if (!(this->*(spec.field))) continue;
+        if ((spec.backends & backend) == 0) {
+            msg += spec.name;
+            msg += " is not implemented on the selected backend\n";
+        }
+    }
+
+    if (backend == ToggleBackend::GPU && require_device_resident) {
+        // These two extensions have intentional campaign-grade hybrid paths,
+        // but each materializes the full canonical AoS every tick.  Reject
+        // them at the native interactive boundary until device kernels exist.
+        if (cluster_inertia)
+            msg += "cluster_inertia requires a full host mirror and is unavailable in full-GPU interactive mode\n";
+        if (knot_tracking)
+            msg += "knot_tracking requires a full host mirror and is unavailable in full-GPU interactive mode\n";
+        // This field is serialization intent for a viewport proxy; no engine
+        // phase consumes it.  Never acknowledge it as native CUDA physics.
+        if (confinement)
+            msg += "confinement is a visualization intent flag, not an implemented native physics term\n";
     }
 
     if (err) *err = msg;

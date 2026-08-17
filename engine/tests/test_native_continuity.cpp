@@ -16,6 +16,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -134,7 +135,13 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(2, 2, 2, +1, {0, 0, ftd::K_B});
-    rb.voxel_at(2, 2, 2).velocity = {1, 0, 0};
+    // FTD-0402 uses an open causal boundary. Use an interior causal speed and
+    // seed the sub-lattice remainder
+    // so this continuity test observes one causal hop in the next tick rather
+    // than relying on the formerly accepted superluminal velocity {1,0,0}.
+    const double hop_speed = 0.5 * ftd::C_SPEED;
+    rb.voxel_at(2, 2, 2).velocity = {hop_speed, 0, 0};
+    rb.voxel_at(2, 2, 2).remainder = {1.0 - hop_speed, 0, 0};
     run_transport_case("NC-1: + charge one face step",
                        rb,
                        {{idx(rb, 2, 2, 2), idx(rb, 3, 2, 2), +1}});
@@ -145,7 +152,13 @@ int main() {
     ftd::RenderBridge rb(8);
     configure_movement_only(rb);
     rb.inject_particle(2, 3, 2, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(2, 3, 2).velocity = {1, -1, 1};
+    const double diagonal_speed = 0.5 * ftd::C_SPEED / std::sqrt(3.0);
+    rb.voxel_at(2, 3, 2).velocity = {
+        diagonal_speed, -diagonal_speed, diagonal_speed};
+    rb.voxel_at(2, 3, 2).remainder = {
+        1.0 - diagonal_speed,
+        -(1.0 - diagonal_speed),
+        1.0 - diagonal_speed};
     run_transport_case("NC-2: - charge one diagonal step",
                        rb,
                        {{idx(rb, 2, 3, 2), idx(rb, 3, 2, 3), -1}});
@@ -157,8 +170,11 @@ int main() {
     configure_movement_only(rb);
     rb.inject_particle(2, 2, 2, +1, {0, 0, ftd::K_B});
     rb.inject_particle(7, 7, 7, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(2, 2, 2).velocity = {1, 0, 0};
-    rb.voxel_at(7, 7, 7).velocity = {0, -1, 0};
+    const double hop_speed = 0.5 * ftd::C_SPEED;
+    rb.voxel_at(2, 2, 2).velocity = {hop_speed, 0, 0};
+    rb.voxel_at(2, 2, 2).remainder = {1.0 - hop_speed, 0, 0};
+    rb.voxel_at(7, 7, 7).velocity = {0, -hop_speed, 0};
+    rb.voxel_at(7, 7, 7).remainder = {0, -(1.0 - hop_speed), 0};
     run_transport_case("NC-3: two independent signed currents",
                        rb,
                        {{idx(rb, 2, 2, 2), idx(rb, 3, 2, 2), +1},
@@ -171,7 +187,9 @@ int main() {
     configure_movement_only(rb);
     rb.inject_particle(2, 2, 2, +1, {0, 0, ftd::K_B});
     rb.inject_particle(3, 2, 2, -1, {0, 0, -ftd::K_B});
-    rb.voxel_at(2, 2, 2).velocity = {1, 0, 0};
+    const double hop_speed = 0.5 * ftd::C_SPEED;
+    rb.voxel_at(2, 2, 2).velocity = {hop_speed, 0, 0};
+    rb.voxel_at(2, 2, 2).remainder = {1.0 - hop_speed, 0, 0};
     run_transport_case("NC-4: + current neutralizes target - charge",
                        rb,
                        {{idx(rb, 2, 2, 2), idx(rb, 3, 2, 2), +1}});
@@ -183,7 +201,9 @@ int main() {
     configure_movement_only(rb);
     rb.inject_particle(2, 2, 2, +1, {0, 0, ftd::K_B});
     rb.inject_particle(3, 2, 2, +1, {0, 0, ftd::K_B});
-    rb.voxel_at(2, 2, 2).velocity = {1, 0, 0};
+    const double hop_speed = 0.5 * ftd::C_SPEED;
+    rb.voxel_at(2, 2, 2).velocity = {hop_speed, 0, 0};
+    rb.voxel_at(2, 2, 2).remainder = {1.0 - hop_speed, 0, 0};
     run_transport_case("NC-5: same-sign bounce leaves rho unchanged", rb, {});
   }
 
@@ -228,4 +248,3 @@ int main() {
 
   return g_failures;
 }
-

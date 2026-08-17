@@ -39,6 +39,9 @@ using namespace ftd;
 
 namespace {
 
+std::vector<Voxel> debug_delta_snapshot;
+std::vector<Voxel> debug_full_snapshot;
+
 inline bool bits_eq(double a, double b) {
     std::uint64_t ua, ub;
     std::memcpy(&ua, &a, sizeof(ua));
@@ -62,7 +65,7 @@ bool voxels_equal_uploaded(const std::vector<Voxel>& a,
             x.spin == y.spin && x.locked == y.locked &&
             x.particle_id == y.particle_id && x.pair_id == y.pair_id &&
             bits_eq(x.accel_mag, y.accel_mag) && bits_eq(x.latency, y.latency) &&
-            bits_eq(x.tau, y.tau) &&
+            bits_eq(x.tau, y.tau) && bits_eq(x.phase, y.phase) &&
             vec_eq(x.flux, y.flux) && vec_eq(x.wave_vel, y.wave_vel) &&
             vec_eq(x.velocity, y.velocity) && vec_eq(x.remainder, y.remainder) &&
             vec_eq(x.flux_L, y.flux_L) && vec_eq(x.flux_R, y.flux_R) &&
@@ -120,6 +123,7 @@ void test_delta_byte_identity() {
         v.flux_strong.z += 0.9;
         v.latency      = 0.42;
         v.tau         += 3.0;
+        v.phase       -= 0.7;
         v.locked       = true;
         v.particle_id  = 777;
         v.pair_id      = 5;
@@ -225,7 +229,12 @@ std::uint64_t run_mutate_tick(bool force_full) {
     rb.tick();
     gpu::g_gpu_force_full_upload = false;
 
-    return test::compute_state_hash_ext(rb);
+    (force_full ? debug_full_snapshot : debug_delta_snapshot) = rb.voxels();
+    // The compact CUDA energy audit is an unordered parallel reduction, so
+    // its last-bit sum is not a cross-instance byte hash. C5 is a trajectory
+    // gate: compare the deterministic state fold here and the complete
+    // uploaded voxel field set below.
+    return test::compute_state_only_hash(rb);
 }
 
 void test_delta_integration_through_flush() {
@@ -241,8 +250,10 @@ void test_delta_integration_through_flush() {
     std::printf("[c5] flush-path hash: delta=0x%016llx full=0x%016llx\n",
                 static_cast<unsigned long long>(h_delta),
                 static_cast<unsigned long long>(h_full));
+    const bool voxel_equal = voxels_equal_uploaded(
+        debug_delta_snapshot, debug_full_snapshot, nullptr);
     test::check("delta flush path == full flush path (identical post-tick state)",
-                h_delta == h_full,
+                h_delta == h_full && voxel_equal,
                 "a single-voxel host edit must tick identically whether flushed "
                 "via the delta path or a full upload");
 }

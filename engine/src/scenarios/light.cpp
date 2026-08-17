@@ -107,6 +107,9 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
         inject_sheet_packet_x(rb, x_start, transverse_off[1], sigma, 2.0,
                               pAmps[1], +1, 2);
     }
+    else {
+        return false;
+    }
     return true;
 }
 

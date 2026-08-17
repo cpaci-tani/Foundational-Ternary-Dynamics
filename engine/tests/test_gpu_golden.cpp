@@ -57,8 +57,17 @@ static constexpr std::uint64_t CPU_DEFAULT_PIN = 0xca1aada0203f0229ULL;  // FTD-
 //     trajectory fields and downstream field/audit values changed; discrete
 //     state, latency, tau, phase, identity labels, and strong/weak sectors were
 //     bit-identical. Three repeated runs produced the pin below.
+//   - 2026-08-16: migrated to the trajectory/audit split introduced in
+//     support/golden_hash.h on 2026-07-27. The GPU test had retained only its
+//     2026-07-21 combined pin after the intentional EM diagnostic correction
+//     and later engine corrections. Current GPU/CPU complete parity and all
+//     bounded CUDA parity gates pass; ten repeated WSL2 captures produced the
+//     three pins below bit-for-bit. Future failures now say whether trajectory
+//     state or reported diagnostics moved.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH_GPU = 0x26eb5cacd8b49734ULL;  // WSL2 RTX 5090; FTD-0402, 2026-07-21
+static constexpr std::uint64_t GOLDEN_HASH_GPU = 0xd4644071ab2fc90fULL;
+static constexpr std::uint64_t GOLDEN_STATE_HASH_GPU = 0xfe2898e082e0204dULL;
+static constexpr std::uint64_t GOLDEN_AUDIT_HASH_GPU = 0x0d730a146c13ad25ULL;
 
 void test_gpu_golden() {
     section("100-tick byte-hash characterization (GPU backend, shipping defaults)");
@@ -73,11 +82,19 @@ void test_gpu_golden() {
     }
 
     const std::uint64_t hash = compute_state_hash_ext(rb);
+    const std::uint64_t state_hash = compute_state_only_hash(rb);
+    const std::uint64_t audit_hash = compute_audit_only_hash(rb);
 
     std::printf("[golden-gpu] computed hash = 0x%016llx\n",
                 static_cast<unsigned long long>(hash));
     std::printf("[golden-gpu] expected hash = 0x%016llx (WSL2 pin)\n",
                 static_cast<unsigned long long>(GOLDEN_HASH_GPU));
+    std::printf("[golden-gpu] state-only hash = 0x%016llx (expected 0x%016llx)\n",
+                static_cast<unsigned long long>(state_hash),
+                static_cast<unsigned long long>(GOLDEN_STATE_HASH_GPU));
+    std::printf("[golden-gpu] audit-only hash = 0x%016llx (expected 0x%016llx)\n",
+                static_cast<unsigned long long>(audit_hash),
+                static_cast<unsigned long long>(GOLDEN_AUDIT_HASH_GPU));
 
     if (hash == CPU_DEFAULT_PIN) {
         std::printf("[golden-gpu] SKIP: hash equals the CPU default-profile pin — "
@@ -87,6 +104,14 @@ void test_gpu_golden() {
     }
 
 #if defined(__linux__)
+    check("GPU trajectory unchanged (state-only fold)",
+          state_hash == GOLDEN_STATE_HASH_GPU,
+          "Per-voxel GPU state or manifested-particle trajectory changed. "
+          "Do not re-pin without an intentional physics rationale.");
+    check("GPU reported diagnostics unchanged (audit-only fold)",
+          audit_hash == GOLDEN_AUDIT_HASH_GPU,
+          "GPU energy-audit readouts changed. If the trajectory fold still "
+          "passes, document the diagnostic correction before re-pinning.");
     check("hash matches frozen GOLDEN_HASH_GPU (WSL2 canonical)",
           hash == GOLDEN_HASH_GPU,
           "GPU-backend physics changed on the canonical WSL2 platform. If "

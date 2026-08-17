@@ -57,6 +57,8 @@ int main() {
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
         engine.force_cpu();  // CPU movement mechanics under test (see header)
+        engine.toggles.genesis = false;
+        engine.toggles.evaporation = false;
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, -1, {iso, iso, iso});
@@ -100,6 +102,8 @@ int main() {
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
         engine.force_cpu();  // CPU movement mechanics under test (see header)
+        engine.toggles.genesis = false;
+        engine.toggles.evaporation = false;
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, -1, {iso, iso, iso});
@@ -125,6 +129,8 @@ int main() {
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
         engine.force_cpu();  // CPU movement mechanics under test (see header)
+        engine.toggles.genesis = false;
+        engine.toggles.evaporation = false;
         // At v_x=0.1 the mover reaches the +x face near tick 155 of 500;
         // since 420d933f face-crossing REMOVES the particle. Bounce at the
         // walls so the 500-tick survival window measures flux-carry, not
@@ -154,6 +160,8 @@ int main() {
         const int mid = L / 2;
         ftd::RenderBridge engine(L);
         engine.force_cpu();  // CPU movement mechanics under test (see header)
+        engine.toggles.genesis = false;
+        engine.toggles.evaporation = false;
 
         double iso = ftd::K_B / std::sqrt(3.0);
         engine.inject_particle(mid, mid, mid, +1, {iso, iso, iso});

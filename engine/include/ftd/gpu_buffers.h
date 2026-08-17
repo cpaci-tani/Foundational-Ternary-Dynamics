@@ -2,16 +2,18 @@
 /**
  * SoA (Structure-of-Arrays) device buffers for GPU-accelerated FTD engine.
  *
- * The CPU engine uses AoS (Voxel struct ~154 bytes). For GPU memory
+ * The CPU engine uses AoS (Voxel is currently 344 bytes on x64). For GPU memory
  * coalescence, we decompose into separate arrays per field.
  * Upload/download functions convert between AoS (host) and SoA (device).
  */
 
 #include "voxel.h"
+#include "ftd/visual_snapshot.h"
 #include <cstddef>   // std::size_t
 #include <cstdint>   // uint8_t etc. — Linux/clang require explicit include
 #include <vector>
 #include <cufft.h>
+#include <cuda_runtime_api.h>
 
 namespace ftd {
 namespace gpu {
@@ -30,7 +32,34 @@ namespace gpu {
 extern std::size_t g_gpu_upload_bytes;
 extern bool        g_gpu_force_full_upload;
 
+// Interactive-readback instrumentation.  The first pair measures only the
+// canonical SoA -> AoS voxel mirror (not compact renderer/observer reads).
+// Compact diagnostic kernels increment the final counter by the fixed scalar
+// payload copied to the host.  Tests reset these counters around a request to
+// prove that a diagnostics poll did not accidentally materialize the lattice.
+extern std::size_t g_gpu_full_voxel_download_bytes;
+extern std::size_t g_gpu_full_voxel_download_calls;
+extern std::size_t g_gpu_compact_diagnostic_download_bytes;
+// Async telemetry snapshots have their own persistent staging allocation. The
+// counter covers only their fixed scalar D2H payload, never a voxel mirror.
+extern std::size_t g_gpu_telemetry_snapshot_download_bytes;
+extern std::size_t g_gpu_telemetry_snapshot_launches;
+// Native visual captures use a distinct persistent bounded staging slot.  The
+// counter covers the fixed particle-frame D2H copy, never a full voxel mirror.
+extern std::size_t g_gpu_visual_snapshot_download_bytes;
+extern std::size_t g_gpu_visual_snapshot_launches;
+// Identity high-water reconciliation is a compact two-scalar D2H operation.
+// Separate counters let performance regressions prove clean host reads do not
+// repeat that synchronization after the high-water marks are current.
+extern std::size_t g_gpu_identity_counter_download_bytes;
+extern std::size_t g_gpu_identity_counter_download_calls;
+
 struct GpuBuffers {
+    GpuBuffers() = default;
+    ~GpuBuffers() { free(); }
+    GpuBuffers(const GpuBuffers&) = delete;
+    GpuBuffers& operator=(const GpuBuffers&) = delete;
+
     int N = 0;    // total sites (L^3)
     int L = 0;    // lattice side length
 
@@ -60,6 +89,13 @@ struct GpuBuffers {
     // --- Scalar fields ---
     uint8_t*  d_locked      = nullptr;  // I2 fix: match kernel/memcpy usage (was bool*)
     int32_t*  d_particle_id = nullptr;
+    // Canonical lifetime-monotonic identity allocators.  These live on the
+    // device so genesis/reaction kernels and host-triggered injections draw
+    // from one namespace.  Host-staged uploads only ever raise the counters.
+    int32_t*  d_next_particle_id = nullptr;
+    int32_t*  d_next_pair_id     = nullptr;
+    int32_t*  d_identity_allocation_base = nullptr;
+    int32_t*  d_identity_error = nullptr;  // nonzero => exhausted int32 namespace
     int8_t*   d_spin        = nullptr;
     int8_t*   d_color       = nullptr;
     int8_t*   d_flavor      = nullptr;
@@ -71,6 +107,7 @@ struct GpuBuffers {
     double*   d_phi_latency = nullptr;  // Latency Poisson potential (warm-started)
     double*   d_latency     = nullptr;  // voxel.latency = sqrt(clamp(|phi_latency|, 0, 0.998))
     double*   d_tau         = nullptr;  // voxel.tau: accumulated proper time
+    double*   d_phase       = nullptr;  // voxel.phase: de Broglie clock phase
 
     // --- Read-phase temporary (delta_j) ---
     double*   d_delta_j_x   = nullptr;
@@ -124,8 +161,8 @@ struct GpuBuffers {
     // Five components × 3 axes, indexed by lattice site. Populated by the
     // force kernels (phase_forces, color_force) so GpuBackend::sync_to_host()
     // can scatter them back into RenderBridge::force_diag_. Allocated
-    // unconditionally — modest cost (15 doubles × N ≈ 1.9 MB at L=64,
-    // 122 MB at L=256) — keeps the kernel signature simple.
+    // unconditionally — 15 doubles × N is about 30 MiB at L=64 and
+    // 1.88 GiB at L=256 — and is included in native resize preflight.
     double*   d_fd_coulomb_x  = nullptr;
     double*   d_fd_coulomb_y  = nullptr;
     double*   d_fd_coulomb_z  = nullptr;
@@ -152,6 +189,40 @@ struct GpuBuffers {
     cufftDoubleComplex* d_fft_buf   = nullptr;  // N complex doubles (high-accuracy path)
     cufftComplex*       d_fft_buf_f = nullptr;  // N complex floats (default, 2× faster C2C)
     double*             d_green     = nullptr;   // precomputed 1/G(k) (double precision, computed once)
+    float*              d_visual_flux_magnitude = nullptr; // lazy compact renderer staging
+    float*              d_visual_flux_plane = nullptr; // lazy L^2 slice staging
+
+    // Fixed-size scratch for device-side diagnostic reductions.  Every
+    // diagnostics result is reduced to <=64 doubles plus one signed charge
+    // scalar before crossing PCIe, so memory and readback cost do not scale
+    // with L.  Shared by the serialized native WebSocket request path.
+    static constexpr int COMPACT_DIAGNOSTIC_SCALARS = 64;
+    double*    d_compact_diagnostics = nullptr;
+    long long* d_compact_charge_sum  = nullptr;
+
+    // Snapshot-specific scratch remains independent from the legacy compact
+    // getter scratch above. This is essential because a telemetry publisher
+    // may have an async D2H copy in flight while an inspector issues a small
+    // synchronous point query on the default stream.
+    static constexpr int COMPACT_TELEMETRY_SCALARS = 80;
+    double* d_telemetry_snapshot = nullptr;
+    double* h_telemetry_snapshot = nullptr;  // pinned host readback target
+    cudaEvent_t telemetry_snapshot_ready = nullptr;
+
+    // One low-priority visual capture slot, deliberately independent of the
+    // scalar telemetry buffers/event.  Particle capture performs a device
+    // count/scan/gather into this fixed <=100k-record staging allocation, then
+    // copies the header plus bounded record array to pinned host memory.
+    // No request-path cudaMalloc/cudaFree or canonical AoS mirror is needed.
+    VisualParticleStagingHeader* d_visual_particle_header = nullptr;
+    VisualParticleRecord* d_visual_particle_records = nullptr;
+    VisualParticleStagingHeader* h_visual_particle_header = nullptr;
+    VisualParticleRecord* h_visual_particle_records = nullptr;
+    cudaEvent_t visual_snapshot_ready = nullptr;
+    // Set only when teardown observes a faulted visual event.  In that
+    // terminal case free() intentionally avoids every dependent CUDA release
+    // (and its implicit stream wait); recovery replaces the context.
+    bool visual_capture_quarantined = false;
 
 
 
@@ -163,6 +234,19 @@ struct GpuBuffers {
 
     // --- Pair production tracking ---
     int32_t*  d_pair_id       = nullptr;  // pair ID (-1 = unpaired) [N]
+    // Pair candidates are detected in parallel, then stably compacted in
+    // ascending X-major index order before one device thread commits the
+    // canonical greedy transactions.  The persistent CUB workspace avoids a
+    // per-tick cudaMalloc/cudaFree stall in interactive scenarios.
+    uint8_t*  d_pair_candidate_flags   = nullptr;  // [N]
+    // Movement reuses the first ceil(N/256) bytes as per-block crossing flags.
+    // Pair/lifecycle compaction and movement are serialized on the default
+    // stream, and the 4N-byte allocation is ample for that byte view.
+    int32_t*  d_pair_candidate_indices = nullptr;  // [N]
+    int32_t*  d_pair_candidate_count   = nullptr;  // one scalar
+    uint8_t*  d_movement_moved         = nullptr;  // [N], per-tick CPU-equivalent arrival guard
+    void*     d_pair_select_temp       = nullptr;
+    std::size_t pair_select_temp_bytes = 0;
 
     // --- Native EFT continuity event ledger ---
     // Reset immediately before GPU movement. Kernels write integrated
@@ -211,8 +295,23 @@ struct GpuBuffers {
     void upload_voxels_delta(const std::vector<Voxel>& host_voxels,
                              const std::vector<Voxel>& shadow);
 
+    // Raise (never lower) the device counters after a host-staged scenario or
+    // test upload. `next_*` are the first IDs not present in the host image.
+    void raise_identity_counters(int32_t next_particle_id,
+                                 int32_t next_pair_id);
+    void download_identity_counters(int32_t& next_particle_id,
+                                    int32_t& next_pair_id) const;
+    void throw_if_identity_error() const;
+
     // Download only voxels (for diagnostics)
     void download_voxels(std::vector<Voxel>& host_voxels) const;
+
+    // Compact interactive visualization readbacks. These do not materialize
+    // the full host Voxel mirror.
+    void download_states(std::vector<std::int8_t>& out) const;
+    void download_flux_magnitude(std::vector<float>& out);
+    void download_flux_magnitude_plane(int axis, int index,
+                                       std::vector<float>& out);
 
     // Download phi_latency from device (Wave 5: GPU latency Poisson)
     void download_phi_latency(std::vector<double>& out) const;

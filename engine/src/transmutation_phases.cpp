@@ -125,22 +125,46 @@ void pair_production_cpu(RenderBridge& rb) {
     voxels[partner].wave_vel *= 0.5;
     v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
 
-    int pid = rb.injector_.next_particle_id();
+    if (rb.toggles.dual_substrate) {
+      const double drain = std::max(0.0, 1.0 - K_GENESIS / jmag);
+      v.flux_L *= drain;
+      v.flux_R *= drain;
+      v.wave_vel_L *= 0.5;
+      v.wave_vel_R *= 0.5;
+
+      auto& partner_voxel = voxels[partner];
+      partner_voxel.flux_L = v.flux_L * -1.0;
+      partner_voxel.flux_R = v.flux_R * -1.0;
+      partner_voxel.wave_vel_L *= 0.5;
+      partner_voxel.wave_vel_R *= 0.5;
+
+      // The dual registers are authoritative in dual mode.  Reassert both
+      // observable sums now so the pair survives the next phase sync exactly.
+      v.flux = v.flux_L + v.flux_R;
+      v.wave_vel = v.wave_vel_L + v.wave_vel_R;
+      partner_voxel.flux = partner_voxel.flux_L + partner_voxel.flux_R;
+      partner_voxel.wave_vel =
+          partner_voxel.wave_vel_L + partner_voxel.wave_vel_R;
+    }
+
+    const int source_pid = rb.injector_.next_particle_id();
+    const int partner_pid = rb.injector_.next_particle_id();
+    const int shared_pair_id = rb.injector_.next_pair_id();
     // The +1 charge should be pushed downstream by the external field, and the -1 upstream.
     // The vector `d` points downstream. Therefore, the partner is downstream.
     // To oppose the external field (Vacuum Polarization), the dipole must point UPSTREAM.
     // So the downstream particle must be +1, and the upstream particle -1.
     // `v` is upstream, `partner` is downstream.
     rb.set_state(i, -1);
-    v.particle_id = pid;
-    v.pair_id = pid;
+    v.particle_id = source_pid;
+    v.pair_id = shared_pair_id;
 
     auto& p2 = voxels[partner];
     rb.set_state(partner, +1);
-    p2.particle_id = rb.injector_.next_particle_id();
-    p2.pair_id = pid;
+    p2.particle_id = partner_pid;
+    p2.pair_id = shared_pair_id;
 
-    p2.flux = v.flux * -1.0;
+    if (!rb.toggles.dual_substrate) p2.flux = v.flux * -1.0;
     // FTD-HISTORY-BEGIN: observation-only native event journal.
     if (rb.history_journal_enabled()) {
       eft::HistoryEvent event;

@@ -155,9 +155,12 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         // Initial Condition Parameters: None.
         // Expected Behaviour: Two complementary states share one pair_id and opposite flux.
         // Verification: classical tagged-pair correlation; not Bell entanglement.
-        rb.toggles.genesis = false;
-        rb.toggles.evaporation = false;
-        rb.toggles.movement = false;
+        // This is an initial-data bookkeeping probe.  Previously it inherited
+        // the RenderBridge defaults (wave/coupling/Gauss/forces/gravity/
+        // Lorentz/dual/weak) and disabled only genesis + movement.  The native
+        // application's automatic prime tick therefore evolved the pair under
+        // an unrelated full-physics stack before the first frame was drawn.
+        configure_static_seed_terms(rb);
         rb.create_entangled_pair(mid, mid, mid, Vec3(0.0, 0.0, K_B));
     }
     else if (name == "quantum-aharonov-bohm") {
@@ -216,6 +219,9 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         // full rationale. Measured cost of applying it anyway: exact one-tick
         // manifested count shifts from its deterministic baseline (491 -> 461)
         // with no corresponding benefit at this usage pattern.
+    }
+    else {
+        return false;
     }
     return true;
 }

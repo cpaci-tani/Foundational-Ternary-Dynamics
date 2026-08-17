@@ -10,6 +10,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/volumetric_measure.h"
 #include <cuda_runtime.h>
 #include <cufft.h>
 #include <cstdio>
@@ -230,11 +231,12 @@ __global__ void compute_coulomb_rhs(
     rhs[i] = -charge_scale * (static_cast<double>(state[i]) - mean_charge);
 }
 
-// ---------- Compute Latency RHS: 4*pi*G * K_B * |state| ----------
+// ---------- Compute Latency RHS: 4*pi*G * rho ----------
 //
 // The latency Poisson equation is:
 //   laplacian(phi) = 4*pi*G * rho_mass
-// where rho_mass = K_B * |state| (mass density of manifested sites).
+// where rho = M_GRAVITATIONAL*|state| and, when selected, the local field
+// energy density 1/2(|J|^2+|W|^2). This mirrors solve_latency_poisson_cpu.
 //
 // The FFT Poisson solver automatically zeroes the DC Fourier mode
 // (Green[0]=0 in gpu_buffers.cu precompute_green_function), which is
@@ -244,15 +246,32 @@ __global__ void compute_coulomb_rhs(
 
 __global__ void compute_latency_rhs(
     const int8_t* __restrict__ state,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const double* __restrict__ wave_x,
+    const double* __restrict__ wave_y,
+    const double* __restrict__ wave_z,
     double* __restrict__ rhs,
-    double four_pi_G_kB,
+    double four_pi_G,
+    bool include_field_energy,
     int N
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
     int s = static_cast<int>(state[i]);
     double abs_s = static_cast<double>(s < 0 ? -s : s);
-    rhs[i] = four_pi_G_kB * abs_s;
+    double rho = M_GRAVITATIONAL * abs_s;
+    if (include_field_energy) {
+        const double flux2 = flux_x[i] * flux_x[i]
+                           + flux_y[i] * flux_y[i]
+                           + flux_z[i] * flux_z[i];
+        const double wave2 = wave_x[i] * wave_x[i]
+                           + wave_y[i] * wave_y[i]
+                           + wave_z[i] * wave_z[i];
+        rho += ::ftd::local_field_wave_energy_density(flux2, wave2);
+    }
+    rhs[i] = four_pi_G * rho;
 }
 
 // ---------- Convert phi_latency to voxel.latency = sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP)) ----------
@@ -274,7 +293,7 @@ __global__ void latency_to_voxel_kernel(
     voxel_latency[i] = sqrt(clamped);
 }
 
-// ---------- Gauss correction: subtract gradient(phi) from flux at void sites ----------
+// ---------- Gauss correction: subtract gradient(phi) from selected sites ----------
 
 __global__ void gauss_correction_kernel(
     double* __restrict__ flux_x,
@@ -282,6 +301,7 @@ __global__ void gauss_correction_kernel(
     double* __restrict__ flux_z,
     const double* __restrict__ phi,
     const int8_t* __restrict__ state,
+    bool exact_dual_gauss,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -290,7 +310,10 @@ __global__ void gauss_correction_kernel(
     if (x >= L || y >= L || z >= L) return;
 
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
-    if (state[i] != 0) return;  // Only correct void sites
+    // Production mode preserves the self-field at manifested sites. Exact
+    // dual-Gauss mode applies the same correction everywhere, matching CPU
+    // gauss_project_cpu's manifested-site semantics.
+    if (!exact_dual_gauss && state[i] != 0) return;
 
     // Gradient of phi (central differences)
     int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
@@ -342,6 +365,7 @@ static void fft_poisson_solve(
 
 void launch_gauss_project(GpuBuffers& bufs,
                           double charge_coupling,
+                          bool exact_dual_gauss,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
     int L = bufs.L;
@@ -386,13 +410,13 @@ void launch_gauss_project(GpuBuffers& bufs,
                         bufs.d_fft_buf_f, bufs.d_green,
                         plan_fwd_f, plan_inv_f, N);
 
-    // Step 3: Gauss correction — subtract gradient(phi) from flux at void sites
+    // Step 3: Gauss correction — void-only normally, all sites in exact mode.
     {
         dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
         dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
         gauss_correction_kernel<<<grid, block>>>(
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_phi, bufs.d_state, L
+            bufs.d_phi, bufs.d_state, exact_dual_gauss, L
         );
         CUDA_CHECK(cudaGetLastError());
     }
@@ -444,8 +468,8 @@ void launch_solve_coulomb(GpuBuffers& bufs,
 
 // ---------- Launcher: Latency Poisson ----------
 //
-// Solves laplacian(phi) = 4*pi*G * K_B * |state| for the gravitational
-// potential phi_latency, then writes voxel.latency = sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP)).
+// Solves laplacian(phi) = 4*pi*G*rho for the gravitational potential, then
+// writes voxel.latency = sqrt(clamp(-phi, 0, LATENCY_HORIZON_CLAMP)).
 //
 // This is the GPU counterpart of RenderBridge::solve_latency_poisson()
 // (engine/src/render_bridge.cpp:696-747). It unblocks every test that
@@ -453,6 +477,7 @@ void launch_solve_coulomb(GpuBuffers& bufs,
 // Wave 5 GPU-first sweep (2026-04-14).
 
 void launch_solve_latency(GpuBuffers& bufs,
+                          bool include_field_energy,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
     int N = bufs.N;
@@ -460,12 +485,16 @@ void launch_solve_latency(GpuBuffers& bufs,
     int threads = 256;
     int blocks = (N + threads - 1) / threads;
 
-    // Step 1: Compute RHS = 4*pi*G * M_GRAVITATIONAL * |state|
+    // Step 1: Compute RHS = 4*pi*G *
+    //   (M_GRAVITATIONAL*|state| + selected local field/wave energy)
     // (DC mode is automatically zeroed by Green's function, equivalent
     // to the CPU's mean-subtraction of rho_mass.)
-    const double FOUR_PI_G_K_B = 4.0 * PI * G_N * M_GRAVITATIONAL;
+    const double FOUR_PI_G = 4.0 * PI * G_N;
     compute_latency_rhs<<<blocks, threads>>>(
-        bufs.d_state, bufs.d_phi_latency, FOUR_PI_G_K_B, N
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_phi_latency, FOUR_PI_G, include_field_energy, N
     );
     CUDA_CHECK(cudaGetLastError());
 

@@ -362,6 +362,95 @@ const FieldSoA& RenderBridge::fields() const {
     return engine_state_.fields;
 }
 
+void RenderBridge::copy_visual_states(std::vector<std::int8_t>& out) {
+  if (backend_) {
+    // Scenario setup can leave direct host-side voxel edits pending before the
+    // first tick. Make those edits visible to the compact GPU readback without
+    // forcing a full device-to-host synchronization.
+    backend_->flush_host_mutations();
+    if (backend_->copy_visual_states(out)) return;
+  }
+  const auto& source = std::as_const(*this).voxels();
+  out.resize(source.size());
+  for (std::size_t i = 0; i < source.size(); ++i) out[i] = source[i].state;
+}
+
+void RenderBridge::copy_visual_flux_magnitude(std::vector<float>& out) {
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_visual_flux_magnitude(out)) return;
+  }
+  const auto& source = std::as_const(*this).voxels();
+  out.resize(source.size());
+  for (std::size_t i = 0; i < source.size(); ++i)
+    out[i] = static_cast<float>(source[i].density());
+}
+
+void RenderBridge::copy_visual_flux_magnitude_plane(
+    int axis, int index, std::vector<float>& out) {
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_visual_flux_magnitude_plane(axis, index, out)) return;
+  }
+  const auto& source = std::as_const(*this).voxels();
+  const int L = lattice_.size();
+  axis = axis == 0 ? 0 : (axis == 1 ? 1 : 2);
+  index %= L;
+  if (index < 0) index += L;
+  out.resize(static_cast<std::size_t>(L) * L);
+  for (int a = 0; a < L; ++a) {
+    for (int b = 0; b < L; ++b) {
+      int x, y, z;
+      if (axis == 0)      { x = index; y = a; z = b; }
+      else if (axis == 1) { x = a; y = index; z = b; }
+      else                { x = a; y = b; z = index; }
+      out[static_cast<std::size_t>(a) * L + b] =
+          static_cast<float>(source[static_cast<std::size_t>(
+              lattice_.index(x, y, z))].density());
+    }
+  }
+}
+
+void RenderBridge::copy_visual_particle_attributes(
+    const std::vector<int>& indices, std::vector<float>& out) {
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_visual_particle_attributes(indices, out)) return;
+  }
+  const auto& source = std::as_const(*this).voxels();
+  out.resize(indices.size() * 5u);
+  for (std::size_t i = 0; i < indices.size(); ++i) {
+    const int idx = indices[i];
+    if (idx < 0 || static_cast<std::size_t>(idx) >= source.size()) continue;
+    const auto& v = source[static_cast<std::size_t>(idx)];
+    out[i * 5u + 0u] = static_cast<float>(v.remainder.x);
+    out[i * 5u + 1u] = static_cast<float>(v.remainder.y);
+    out[i * 5u + 2u] = static_cast<float>(v.remainder.z);
+    out[i * 5u + 3u] = static_cast<float>(v.spin);
+    out[i * 5u + 4u] = static_cast<float>(v.color);
+  }
+}
+
+bool RenderBridge::begin_visual_snapshot(const VisualSnapshotRequest& request) {
+  return backend_ && backend_->begin_visual_snapshot(request);
+}
+
+bool RenderBridge::visual_snapshot_ready() const {
+  return backend_ && backend_->visual_snapshot_ready();
+}
+
+bool RenderBridge::poll_visual_snapshot(VisualSnapshot& out) {
+  return backend_ && backend_->poll_visual_snapshot(out);
+}
+
+bool RenderBridge::visual_snapshot_safe_to_replace() const {
+  return !backend_ || backend_->visual_snapshot_safe_to_replace();
+}
+
+bool RenderBridge::visual_snapshot_in_flight() const {
+  return backend_ && backend_->visual_snapshot_in_flight();
+}
+
 Vec3 RenderBridge::flux_at(int idx) const {
     return fields().flux_at(static_cast<std::size_t>(idx));
 }
@@ -376,6 +465,10 @@ double RenderBridge::density_at(int idx) const {
 
 GravityMetricAgg RenderBridge::gravity_metric_agg() const {
     GravityMetricAgg a;
+    if (backend_) {
+        backend_->flush_host_mutations();
+        if (backend_->copy_compact_gravity_metric(a)) return a;
+    }
     const auto& vox = voxels();
     const int N = static_cast<int>(vox.size());
     double lat_sum = 0.0;
@@ -395,13 +488,11 @@ GravityMetricAgg RenderBridge::gravity_metric_agg() const {
         a.f_min = 1.0 - a.latency_max * a.latency_max;
         a.dilation_max_pct = (1.0 - std::sqrt(std::max(0.0, a.f_min))) * 100.0;
     }
-    // P4 (2026-07-26): `active` conflates "term off" with "term requested but
-    // not implemented on this backend". field_energy_gravity has ZERO read
-    // sites in engine/cuda, so on a CUDA build the GPU sources latency gravity
-    // from rest mass only while the CPU also sources it from local field-energy
-    // density -- for a flux-only configuration the GPU returns phi_latency
-    // identically zero where the CPU returns a real potential. Reporting that
-    // as "gravity not active" hid a backend divergence behind a toggle readout.
+    // Keep `requested` distinct from `active`: a valid gravity profile can be
+    // enabled before its first latency solve has produced any nonzero cells.
+    // Both CPU and CUDA now source field_energy_gravity from
+    // 1/2(|J|^2+|wave_vel|^2); backend parity is pinned by
+    // gpu_native_extension_parity.
     a.requested = (toggles.latency_field || toggles.field_energy_gravity);
     a.active = a.requested && count > 0;
     return a;
@@ -759,24 +850,39 @@ void RenderBridge::tick() {
 
   sync_ternary_from_voxels_if_needed();
 
-  // FTD-0406 v1 is a CPU-scoped selected architecture. A CUDA-backed bridge
-  // falls back explicitly before the tick so the contract is never silently
-  // executed without its host energy projection and T00/C_SPEED^2 source.
-  if (toggles.strong_stress_energy && backend_
-      && backend_->kind() == Backend::Kind::Gpu) {
-    std::cerr << "[FTD-0406] strong_stress_energy is CPU-scoped; forcing CPU backend\n";
+  // CPU-scoped extensions must never fall through the ordinary CUDA ladder.
+  // Preserve the current device snapshot before a legitimate fallback, and
+  // fail explicitly when FTD_FORCE_GPU disables that fallback.  Previously
+  // only matched_gauss_dynamics performed the post-force check; the remaining
+  // terms could be acknowledged and then silently skipped by GpuEngine.
+  const auto require_cpu_backend = [&](bool enabled,
+                                       const char* ticket,
+                                       const char* term) {
+    if (!enabled || !backend_ || backend_->kind() != Backend::Kind::Gpu) return;
+    backend_->sync_to_host();
+    std::cerr << '[' << ticket << "] " << term
+              << " is CPU-scoped; forcing CPU backend\n";
     force_cpu();
-  }
-  if (toggles.lorentz_period2_floquet && backend_
-      && backend_->kind() == Backend::Kind::Gpu) {
-    std::cerr << "[FTD-0408] lorentz_period2_floquet is CPU-scoped; forcing CPU backend\n";
-    force_cpu();
-  }
-  if (toggles.lorentz_bcc_time_floquet && backend_
-      && backend_->kind() == Backend::Kind::Gpu) {
-    std::cerr << "[FTD-0411] lorentz_bcc_time_floquet is CPU-scoped; forcing CPU backend\n";
-    force_cpu();
-  }
+    if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
+#ifdef __EMSCRIPTEN__
+      std::cerr << '[' << ticket << "] FATAL: CPU fallback is disabled\n";
+      std::abort();
+#else
+      throw std::logic_error(std::string("[") + ticket + "] " + term
+          + " cannot run on the GPU backend");
+#endif
+    }
+  };
+  require_cpu_backend(toggles.strong_stress_energy,
+                      "FTD-0406", "strong_stress_energy");
+  require_cpu_backend(toggles.verlet_wave_integrator,
+                      "FTD-0337", "verlet_wave_integrator");
+  require_cpu_backend(toggles.lorentz_period2_floquet,
+                      "FTD-0408", "lorentz_period2_floquet");
+  require_cpu_backend(toggles.lorentz_bcc_time_floquet,
+                      "FTD-0411", "lorentz_bcc_time_floquet");
+  require_cpu_backend(toggles.symmetric_movement_order,
+                      "MOVEMENT-ORDER", "symmetric_movement_order");
 
   // ARCH-2-D: GPU dispatch via Backend. CpuBackend::tick() falls through to
   // the CPU phase ladder below; GpuBackend::tick() owns the full flush →
@@ -787,12 +893,13 @@ void RenderBridge::tick() {
     // voxels()/current_tick(), and the voxels() accessor syncs device→host
     // first, so it sees settled state. Golden-neutral (read-only).
     if (toggles.knot_tracking) knot_tracker_->record(*this);
-    if (toggles.latency_field || toggles.de_broglie_clock) {
-      accumulate_proper_time();
-      // FTD-0402: tau/phase advance exactly once in this common host pass.
-      // Persist the host result back to the device before the next GPU tick.
-      backend_->mark_host_dirty();
-      backend_->flush_host_mutations();
+    // Rule 8 (tau and optional de-Broglie phase) is device-resident on CUDA.
+    // Do not materialize and re-upload the full lattice here.
+    if (interactive_gpu_mode_ && gpu_dirty_) {
+      // The interactive server does not expose EnergyLedger directly. Defer
+      // this host-only bookkeeping with the AoS mirror; explicit diagnostics
+      // and audits still synchronize through their normal accessors.
+      return;
     }
     update_energy_ledger();
     return;
@@ -1066,10 +1173,9 @@ void RenderBridge::run(int num_ticks) {
   // tick on GPU, masking intermediate violations.
   //
   // Fix: always loop tick() so the ledger and proper-time accumulator are
-  // identical on CPU and GPU, tick by tick. The cost is one gpu_sync_to_host()
-  // per tick (~3 MB at L=64; sub-ms on modern hardware). If a campaign needs
-  // the old batched fast-path, call gpu_->run(N) directly via the public
-  // engine accessor and skip the per-tick ledger.
+  // identical on CPU and GPU, tick by tick. Non-interactive callers pay the
+  // canonical host snapshot cost; native interactive mode remains resident.
+  // Campaigns that need a batched device-only path may call GpuEngine::run.
   for (int i = 0; i < num_ticks; ++i) {
     tick();
   }
@@ -1079,12 +1185,76 @@ void RenderBridge::run(int num_ticks) {
 // Diagnostics / audits / EM decomposition — bodies in diagnostics_compute.cpp
 // (R4, 2026-04-18). The methods below are thin wrappers.
 // ============================================================================
-Diagnostics RenderBridge::diagnostics() const { return ::ftd::compute_diagnostics(*this); }
+Diagnostics RenderBridge::diagnostics() const {
+  Diagnostics d;
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_compact_diagnostics(d)) return d;
+  }
+  return ::ftd::compute_diagnostics(*this);
+}
 
 EnergyAudit RenderBridge::energy_audit() const {
-  EnergyAudit a = ::ftd::compute_energy_audit(*this);
+  EnergyAudit a;
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_compact_energy_audit(a)) {
+      a.self_field_injection = self_field_injection_;
+      return a;
+    }
+  }
+  a = ::ftd::compute_energy_audit(*this);
   a.self_field_injection = self_field_injection_;  // private, stitched in here
   return a;
+}
+
+bool RenderBridge::begin_telemetry_snapshot(
+    const TelemetrySnapshotRequest& request) {
+  return backend_ && backend_->begin_telemetry_snapshot(request);
+}
+
+bool RenderBridge::telemetry_snapshot_ready() const {
+  return backend_ && backend_->telemetry_snapshot_ready();
+}
+
+bool RenderBridge::poll_telemetry_snapshot(TelemetrySnapshot& out) {
+  return backend_ && backend_->poll_telemetry_snapshot(out);
+}
+
+bool RenderBridge::copy_compact_lagrangian(LagrangianDiag& out) const {
+  if (!backend_) return false;
+  backend_->flush_host_mutations();
+  return backend_->copy_compact_lagrangian(out);
+}
+
+VoxelInspection RenderBridge::inspect_voxel(int x, int y, int z) const {
+  VoxelInspection out;
+  const int idx = lattice_.index(x, y, z);
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_compact_voxel(idx, out)) return out;
+  }
+  const auto& source = voxels();
+  out.voxel = source[static_cast<std::size_t>(idx)];
+  out.divergence = divergence_flux(idx);
+  out.curl = curl_flux(idx);
+  out.em.E = out.voxel.wave_vel * -1.0;
+  out.em.B = out.curl;
+  out.em.E_mag = out.em.E.mag();
+  out.em.B_mag = out.em.B.mag();
+  return out;
+}
+
+ForceDiag RenderBridge::inspect_force(int x, int y, int z) const {
+  ForceDiag out;
+  const int idx = lattice_.index(x, y, z);
+  if (backend_) {
+    backend_->flush_host_mutations();
+    if (backend_->copy_compact_force(idx, out)) return out;
+  }
+  // sync_to_host() also scatters the device force arrays into force_diag_.
+  (void)voxels();
+  return force_diag_[static_cast<std::size_t>(idx)];
 }
 
 const std::vector<StrongStressCell>& RenderBridge::strong_stress_cells() const {

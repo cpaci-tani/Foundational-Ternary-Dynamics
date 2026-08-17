@@ -744,7 +744,8 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 - **E = -wave_vel**: Electric field (negative time-derivative of flux)
 - **B = curl(J)**: Magnetic field (curl of flux)
 
-`poynting_vector(idx)` returns S = E x B. `EnergyAudit` includes `e_field_energy`, `b_field_energy`, `total_poynting`.
+`poynting_vector(idx)` returns the Hamiltonian-consistent flux S = c²(E x B).
+`EnergyAudit` includes `e_field_energy`, `b_field_energy`, and `total_poynting`.
 
 ---
 
@@ -2143,7 +2144,7 @@ line-by-line target registry.
 - `maxwell` -- 6 sections (M1-M6): div(B)=0, Faraday, E perp B, Coulomb 1/r^2, wave equation, Ampere-Maxwell
 - `em_energy_conservation` -- Vacuum EM energy conserved (drift < 0.01% over 2000 ticks)
 - `continuity` -- Charge conservation exact through all dynamics
-- `poynting` -- Poynting vector S = E x B verified (direction, magnitude, symmetry)
+- `poynting` -- Poynting vector S = c²(E x B) verified (direction, magnitude, symmetry)
 - `larmor` -- Acceleration-dependent damping (power proportional to a^2)
 - `em_fields` -- E/B field diagnostics, E perp B for propagating waves
 - `lorentz_force` -- Zero work, correct direction, toggle safety
@@ -2247,7 +2248,8 @@ line-by-line target registry.
 
 11. **Lorentz magnetic force**: F = alpha*s*(v x B) does zero work (v*F = 0). Toggle-gated.
 
-12. **E/B field decomposition**: E = -wave_vel, B = curl(J). Poynting vector S = E x B for energy flow diagnostics.
+12. **E/B field decomposition**: E = -wave_vel, B = curl(J). The
+Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 
 13. **Backward compatibility**: Removed phase functions exist as no-op stubs. Removed toggles exist as deprecated fields. Removed Lagrangian terms return 0.
 
@@ -2285,7 +2287,7 @@ line-by-line target registry.
 |--------|---------|
 | `force_diag(idx)` | `ForceDiag` -- per-particle force breakdown |
 | `em_field_at(idx)` | `EMFieldDiag {E, B}` |
-| `poynting_vector(idx)` | `Vec3` (S = E x B) |
+| `poynting_vector(idx)` | `Vec3` (S = c²(E x B)) |
 | `aggregate_profile(center, threshold)` | `AggregateProfile` (CoM, energy, r_eff, radial profile) |
 
 ### Configuration
@@ -2469,11 +2471,57 @@ ftd_core (C++ library)
     +-- CLI (src/main.cpp, native)
 ```
 
+### Windows desktop shell
+
+`engine/desktop/` provides the first-class Windows interface. It is a WPF
+application with an embedded WebView2 surface; a small in-process Kestrel host
+serves `engine/web` on loopback without cache, and `EngineHost` supervises the
+canonical WSL2 `engine/build_wsl/ws_server` process. The WebSocket bridge accepts
+the desktop-supplied `?wsPort=<port>` query parameter (9100 remains the browser
+default).
+
+The desktop status is runtime-accurate: `ws_server` reports the active
+`RenderBridge::backend_kind()` as `backend: "cuda"` or `backend: "cpu"`, along
+with the single-sourced `ENGINE_VERSION`. The shell refuses a CPU response
+instead of inferring GPU availability from `FTD_ENABLE_CUDA`. This changes no
+physics path and does not broaden the per-toggle GPU support matrix described
+in Section 14.
+
+The native Scale-0 socket protocol is load-bounded. `tick` and `run` return
+typed completion messages, and `WebSocketBridge` permits one simulation command
+in flight. Real-time animation ticks coalesce to one pending follow-up when CUDA
+cannot match the display cadence; paused Step/+N requests remain exact. A Pause
+also cancels pending playback demand. Flux-volume visualization uses a binary
+`FTV1` header plus uint32 count and float32 magnitudes, avoiding the main-thread
+cost and bandwidth of an N^3 decimal JSON array. Native Scale 0 is single-owner:
+its scenario/toggle/injection commands are not mirrored into the lazy WASM
+fallback, which is reserved for the standalone Scale 1/2 engines.
+
+Large-lattice construction is resource-gated and transactional. The server
+samples available WSL2 host RAM and CUDA memory, reserves safety headroom, and
+reports the estimate through `preflight_resize`. `resize_scenario` combines the
+formerly duplicated resize/reset/setup allocations into one candidate bridge;
+the active bridge is replaced only after allocation and scenario dispatch both
+succeed. CUDA/cuFFT failures throw through this boundary and become correlated
+WebSocket errors rather than process-wide `exit`/`abort` calls. Request IDs keep
+those errors from resolving an unrelated asynchronous diagnostic request.
+
+Interactive CUDA ticks keep the device authoritative and use selective visual
+readback: one byte per voxel for ternary state and one float32 per voxel for
+flux magnitude. Full AoS synchronization remains available to explicit
+diagnostics and scientific/audit callers, while the desktop render loop no
+longer transfers hundreds of bytes per voxel after every tick. During active
+playback at `L >= 113`, the web bridge defers those full scientific snapshots
+until the current CUDA work drains. Binary manifested-particle frames are
+deterministically sampled to at most 300,000 visual points, bounding a frame at
+about 8.4 MiB while leaving the authoritative simulation unchanged. The default
+non-interactive `RenderBridge` behavior is unchanged for tests and campaigns.
+
 ### Dashboard Layout
 
 ```
 +----------------------------------------------------------------+
-|  FTD Engine v2.14     [Engine ▼]                     []       |  Toolbar
+|  FTD Engine v2.18     [Engine ▼]                     []       |  Toolbar
 +----------------------------------------------------------------+
 |                                    [Visualization ▾]           |  Overlay (collapsible)
 |                                     VOLUME  FIELDS  FORCES     |

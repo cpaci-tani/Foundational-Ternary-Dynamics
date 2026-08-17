@@ -4,6 +4,10 @@
 add_library(ftd_cuda STATIC
     gpu_buffers.cu
     gpu_engine.cu
+    diagnostic_reductions.cu
+    kernels_proper_time.cu
+    kernels_injection.cu
+    visual_field_sample.cu
     # Phase 5 split (2026-04-27): kernels_stencil.cu (1530 LOC, 14 kernels) was
     # decomposed into single-substrate, dual-substrate, and auxiliary TUs to
     # halve partial CUDA rebuild time. Shared damping/index helpers live in

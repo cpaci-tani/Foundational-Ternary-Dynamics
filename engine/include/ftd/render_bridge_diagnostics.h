@@ -93,10 +93,10 @@ struct EnergyAudit {
     double self_field_injection = 0.0;  // Energy injected by self-field floor this tick
     double coulomb_pe = 0.0;       // ½·sum α·s·φ_C (electrostatic PE; pair-PE convention)
     double E_field_energy = 0.0;   // sum ½·|E|^2 (electric field energy)
-    double B_field_energy = 0.0;   // sum ½·|B|^2 (magnetic field energy)
+    double B_field_energy = 0.0;   // sum (c²/2)·|B|² (magnetic field energy)
     int charge_total = 0;          // sum of states (should be conserved)
     int manifested_count = 0;      // particle count
-    Vec3 total_poynting;           // Σ S(v) = Σ E(v) × B(v) (Poynting vector)
+    Vec3 total_poynting;           // Σ S(v) = Σ c²(E(v) × B(v))
 
     // Dual-substrate diagnostics (only populated when dual_substrate=true)
     double E_L_total = 0.0;        // ½·sum |J_L|^2 (left substrate energy)
@@ -175,6 +175,17 @@ struct EMFieldDiag {
     Vec3 B;                        // Magnetic field
     double E_mag = 0.0;
     double B_mag = 0.0;
+};
+
+// One-site native inspector snapshot.  Keeping the derived stencil values in
+// the same compact request prevents inspector hover/click events from
+// materializing the entire CUDA lattice merely to read one Voxel and its six
+// face-neighbor fluxes.
+struct VoxelInspection {
+    Voxel voxel;
+    double divergence = 0.0;
+    Vec3 curl;
+    EMFieldDiag em;
 };
 
 // ============================================================================

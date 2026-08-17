@@ -516,6 +516,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         // structure -- Sum(wave_vel) does not cancel. Project out k=0.
         remove_wave_mean(rb);
     }
+    else {
+        return false;
+    }
     return true;
 }
 

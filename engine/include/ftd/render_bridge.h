@@ -34,6 +34,8 @@
 #include "constants.h"
 #include "ftd/gauge_field.h"
 #include "ftd/strong_stress_energy.h"
+#include "ftd/visual_field_sample.h"
+#include "ftd/visual_snapshot.h"
 #include "field_operators.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include "ftd/eft/matched_gauss_transport.h"
@@ -45,12 +47,15 @@
 // the goal is to cut TU rebuild fan-out for diagnostic-only field
 // additions from ~30 TUs to ~5. See docs/adr/0008-r1-r5-phase-extraction.md.
 #include "render_bridge_diagnostics.h"
+#include "ftd/telemetry_snapshot.h"
 
 #ifdef FTD_ENABLE_CUDA
 namespace ftd { namespace gpu { class GpuEngine; } }
 #endif
 
 namespace ftd {
+
+struct LagrangianDiag;
 
 // Observation-only per-knot telemetry recorder (defined in knot_telemetry.h).
 // Forward-declared + held by unique_ptr (PIMPL) here because knot_telemetry.h
@@ -253,6 +258,12 @@ public:
     const Backend& backend() const { return *backend_; }
     Backend::Kind backend_kind() const { return backend_ ? backend_->kind() : Backend::Kind::Cpu; }
 
+    // Interactive native clients can defer the canonical full device-to-host
+    // mirror until an API actually asks for host-only diagnostics. Default is
+    // false so tests, campaigns, and embedders keep the established semantics.
+    void set_interactive_gpu_mode(bool enabled) { interactive_gpu_mode_ = enabled; }
+    bool interactive_gpu_mode() const { return interactive_gpu_mode_; }
+
     // ARCH-2-I: raw access to the GPU engine pointer for code paths that
     // must call GPU-specific methods (inject_*_cpu free functions forward
     // to gpu_->inject_*). Returns nullptr when no GPU is active. Prefer
@@ -284,6 +295,19 @@ public:
         if (const char* p = std::getenv("FTD_FORCE_GPU"); p && *p && *p != '0') {
             return;
         }
+        // A backend switch is a synchronization boundary.  Besides preserving
+        // the latest device voxel image, GpuBackend::sync_to_host() raises the
+        // host Injector counters to the device lifetime high-water marks.  A
+        // scan of live voxels is not sufficient here because every GPU-born
+        // particle may already have evaporated or annihilated.  Flush first:
+        // callers may have staged explicit particle/pair IDs through the
+        // mutable voxels() API, and upload_from_host() is what raises the
+        // device counters above those host-only live maxima before the final
+        // device -> Injector reconciliation.
+        if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
+            backend_->flush_host_mutations();
+            backend_->sync_to_host();
+        }
         // ARCH-2-M: backend_ is now the single source of truth for backend
         // selection. Previous code also set `use_gpu_ = false`; the flag
         // has been deleted.
@@ -296,6 +320,26 @@ public:
     void sync_from_gpu() {
         if (backend_) backend_->sync_to_host();
     }
+
+    // Compact visualization snapshots. The GPU backend implements these as
+    // selective device readbacks, avoiding the 469-byte/site canonical mirror.
+    void copy_visual_states(std::vector<std::int8_t>& out);
+    void copy_visual_flux_magnitude(std::vector<float>& out);
+    void copy_visual_flux_magnitude_plane(int axis, int index,
+                                          std::vector<float>& out);
+    void copy_visual_field_sample(VisualFieldKind kind, int stride,
+                                  VisualFieldSample& out);
+    void copy_visual_particle_attributes(const std::vector<int>& indices,
+                                         std::vector<float>& out);
+
+    // Native visual-lane capture.  This is a versioned begin/poll contract,
+    // not another synchronous renderer getter: CUDA captures into persistent
+    // bounded staging and leaves the canonical AoS host mirror dirty.
+    bool begin_visual_snapshot(const VisualSnapshotRequest& request);
+    bool visual_snapshot_ready() const;
+    bool poll_visual_snapshot(VisualSnapshot& out);
+    bool visual_snapshot_safe_to_replace() const;
+    bool visual_snapshot_in_flight() const;
 
     // Physics term toggles (pedagogy system)
     TermToggles toggles;
@@ -364,6 +408,17 @@ public:
 
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;
+    // Native telemetry publisher contract. GPU begins a fence-backed compact
+    // reduction without blocking; CPU captures an immediately pollable
+    // fallback. Group provenance is carried on TelemetrySnapshot itself.
+    bool begin_telemetry_snapshot(const TelemetrySnapshotRequest& request);
+    bool telemetry_snapshot_ready() const;
+    bool poll_telemetry_snapshot(TelemetrySnapshot& out);
+    // Used by compute_lagrangian_diagnostics() to select the fixed-size CUDA
+    // reduction without making the free diagnostic API backend-aware.
+    bool copy_compact_lagrangian(LagrangianDiag& out) const;
+    VoxelInspection inspect_voxel(int x, int y, int z) const;
+    ForceDiag inspect_force(int x, int y, int z) const;
 
     // FTD-0406 selected local strong T00 / Irving-Kirkwood stress allocation.
     // Recomputed from the current state on every call so direct public voxel
@@ -379,11 +434,9 @@ public:
     //   - GPU: gpu_sync_to_host() runs first (downloads the device
     //          voxels), then the same host-side sum executes.
     //
-    // Cost on GPU: one PCIe download per tick (~3 MB at L=64,
-    // sub-ms on modern hardware). If ever a bottleneck, a device-side
-    // reduction kernel returning (E_field, E_wave, E_kin) as three
-    // scalars would eliminate the download — stub comment is in
-    // cuda/gpu_engine.cu near energy_audit().
+    // Non-interactive GPU mode materializes the canonical host snapshot for
+    // this bookkeeping. Interactive mode defers it and uses compact device
+    // diagnostics, avoiding the ~87 MiB voxel payload at L=64.
     //
     // Tests assert on `bridge.energy_ledger().residual` — expected
     // = −DAMPING when damping ON, 0 otherwise — and refuse regressions.
@@ -479,8 +532,8 @@ public:
     // EM field decomposition at a single site
     EMFieldDiag em_field_at(int idx) const;
 
-    // Poynting vector S = E × B at a single site
-    // E = -wave_vel, B = ∇×J → S = (-wave_vel) × (∇×J)
+    // Hamiltonian-consistent Poynting vector S = c²(E × B) at a single site.
+    // E = -wave_vel, B = ∇×J.
     Vec3 poynting_vector(int idx) const;
 
     // Latency (gravitational potential) field accessor.
@@ -552,6 +605,7 @@ private:
     EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
     mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
     std::string last_validation_warn_;  // ARCH-3: dedup repeated validate() warnings to one per unique string
+    bool interactive_gpu_mode_ = false;
     std::vector<uint8_t> moved_; // Per-tick flag: prevent double-processing in phase_movement
     // ARCH-7b: pre-write flux snapshot. Populated at the start of phase_write
     // when genesis is on so that curl reads (used for spin assignment) see a

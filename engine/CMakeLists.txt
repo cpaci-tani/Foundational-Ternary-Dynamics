@@ -370,6 +370,7 @@ add_library(ftd_core
     src/transmutation_phases.cpp     # R2: weak/pair-production/triad/proper-time
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
+    src/visual_field_sample.cpp      # compact CPU/native field-overlay sampler
     src/strong_stress_energy.cpp     # FTD-0406 selected strong Hamiltonian / local T00-stress contract
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
     src/scale_context.cpp            # Scale-context readout admissibility gate (read-only; α-blind)
@@ -458,6 +459,16 @@ if(WIN32)
 endif()
 endif()
 
+# In-process Win32/D3D12 desktop. Isolated from engine/web and the WPF/WebView2
+# shell. Session library is cross-platform; the D3D12 executable is Windows-only.
+if(NOT EMSCRIPTEN)
+    option(FTD_BUILD_NATIVE_DESKTOP
+           "Build the in-process native desktop (does not affect web/WASM)" ON)
+    if(FTD_BUILD_NATIVE_DESKTOP)
+        add_subdirectory(native_desktop)
+    endif()
+endif()
+
 # ============================================================================
 # Unit Tests (native builds only)
 # ============================================================================
@@ -489,6 +500,15 @@ target_include_directories(ftd_test_support PUBLIC
 )
 # bridge_fixtures.cpp uses RenderBridge; ftd_core supplies it.
 target_link_libraries(ftd_test_support PUBLIC ftd_core)
+
+if(TARGET ftd_native_session)
+    ftd_add_test(test_native_desktop_session
+                 native_desktop/tests/test_engine_session.cpp
+                 LABELS unit native_desktop)
+    target_link_libraries(test_native_desktop_session PRIVATE ftd_native_session)
+    target_include_directories(test_native_desktop_session PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+endif()
 
 # Auto-link ftd_test_support into every test executable defined below in this
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
@@ -698,6 +718,10 @@ endif()
 add_test(NAME ws_protocol COMMAND test_ws_protocol)
 set_tests_properties(ws_protocol PROPERTIES TIMEOUT 60 LABELS "unit")
 
+ftd_add_test(test_visual_field_sample tests/test_visual_field_sample.cpp
+             CTEST_NAME visual_field_sample TIMEOUT 60
+             LABELS unit render scale0)
+
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
 
@@ -757,13 +781,13 @@ ftd_add_test(test_cluster_interaction_dynamic tests/test_cluster_interaction_dyn
 # genealogy detector correctness gate + fission/fusion (Exp-A) + relaxation (Exp-B)
 # campaigns. EXPLORATORY, NOT pre-registered. Campaigns take CLI args; run manually.
 ftd_add_test(test_cluster_genealogy tests/test_cluster_genealogy.cpp)
-ftd_add_test(campaign_cluster_fission_fusion tests/campaign_cluster_fission_fusion.cpp TIMEOUT 1800)
-ftd_add_test(campaign_cluster_relaxation tests/campaign_cluster_relaxation.cpp TIMEOUT 1800)
-ftd_add_test(campaign_alpha_readout_scattering tests/campaign_alpha_readout_scattering.cpp TIMEOUT 3600)
-ftd_add_test(campaign_born_regime_map tests/campaign_born_regime_map.cpp TIMEOUT 7200)
-ftd_add_test(campaign_latency_slow_gate tests/campaign_latency_slow_gate.cpp TIMEOUT 7200)
-ftd_add_test(campaign_higgs_bi_pair_production tests/campaign_higgs_bi_pair_production.cpp TIMEOUT 1800)
-ftd_add_test(campaign_ew_phase_transition tests/campaign_ew_phase_transition.cpp TIMEOUT 1800)
+ftd_add_test(campaign_cluster_fission_fusion tests/campaign_cluster_fission_fusion.cpp BUILD_ONLY)
+ftd_add_test(campaign_cluster_relaxation tests/campaign_cluster_relaxation.cpp BUILD_ONLY)
+ftd_add_test(campaign_alpha_readout_scattering tests/campaign_alpha_readout_scattering.cpp BUILD_ONLY)
+ftd_add_test(campaign_born_regime_map tests/campaign_born_regime_map.cpp BUILD_ONLY)
+ftd_add_test(campaign_latency_slow_gate tests/campaign_latency_slow_gate.cpp BUILD_ONLY)
+ftd_add_test(campaign_higgs_bi_pair_production tests/campaign_higgs_bi_pair_production.cpp BUILD_ONLY)
+ftd_add_test(campaign_ew_phase_transition tests/campaign_ew_phase_transition.cpp BUILD_ONLY)
 
 # Class C Phase C.3: coupling readout sweeps for EM charge scaling and Yukawa fitting.
 ftd_add_test(test_coupling_readout_sweeps tests/test_coupling_readout_sweeps.cpp)
@@ -834,6 +858,9 @@ ftd_add_test(test_genesis_scenario_physics tests/test_genesis_scenario_physics.c
              CTEST_NAME genesis_scenario_physics TIMEOUT 180)
 ftd_add_test(test_reaction_scenario_physics tests/test_reaction_scenario_physics.cpp
              CTEST_NAME reaction_scenario_physics TIMEOUT 180)
+ftd_add_test(test_identity_lifecycle tests/test_identity_lifecycle.cpp
+             CTEST_NAME identity_lifecycle TIMEOUT 120
+             LABELS unit reaction identity regression)
 
 add_executable(test_boundary_movement tests/test_boundary_movement.cpp)
 target_link_libraries(test_boundary_movement ftd_core)
@@ -1338,6 +1365,20 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_parity_complete tests/test_gpu_parity_complete.cpp)
     target_link_libraries(test_gpu_parity_complete ftd_core ftd_cuda)
 
+    add_executable(test_gpu_native_extension_parity
+                   tests/test_gpu_native_extension_parity.cpp)
+    target_link_libraries(test_gpu_native_extension_parity ftd_core ftd_cuda)
+
+    ftd_add_test(test_gpu_movement_transaction
+                 tests/test_gpu_movement_transaction.cpp GPU_HEAVY
+                 CTEST_NAME gpu_movement_transaction TIMEOUT 300
+                 LABELS parity movement regression)
+
+    ftd_add_test(test_gpu_identity_lifecycle_parity
+                 tests/test_gpu_identity_lifecycle_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_identity_lifecycle_parity TIMEOUT 300
+                 LABELS unit parity reaction identity scale0 regression)
+
     # C5 (CUDA ticket): host→device delta upload (GpuBuffers::upload_voxels_delta).
     # Verifies the delta path lands byte-identical DEVICE state to a full upload
     # (read back via download_voxels) and that a handful-of-voxels edit transfers
@@ -1345,6 +1386,21 @@ if(FTD_ENABLE_CUDA)
     # gpu_engine.h/cufft.h. GPU_HEAVY → "gpu" label for serial dispatch.
     ftd_add_test(test_gpu_delta_upload tests/test_gpu_delta_upload.cpp GPU_HEAVY
                  CTEST_NAME gpu_delta_upload TIMEOUT 300 LABELS unit)
+
+    ftd_add_test(test_gpu_compact_diagnostics
+                 tests/test_gpu_compact_diagnostics.cpp GPU_HEAVY
+                 CTEST_NAME gpu_compact_diagnostics TIMEOUT 300
+                 LABELS unit diagnostics interactive)
+
+    ftd_add_test(test_gpu_visual_field_sample
+                 tests/test_gpu_visual_field_sample.cpp GPU_HEAVY
+                 CTEST_NAME gpu_visual_field_sample TIMEOUT 300
+                 LABELS unit render scale0 interactive)
+
+    ftd_add_test(test_gpu_visual_snapshot
+                 tests/test_gpu_visual_snapshot.cpp GPU_HEAVY
+                 CTEST_NAME gpu_visual_snapshot TIMEOUT 300
+                 LABELS unit render scale0 interactive)
 
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
@@ -2016,19 +2072,23 @@ ftd_add_test(campaign_production_ternary_plaquette_recurrence_census tests/campa
 ftd_add_test(campaign_held_out_pair_specific_phase_wedge_centrality tests/campaign_held_out_pair_specific_phase_wedge_centrality.cpp
              CTEST_NAME held_out_pair_specific_phase_wedge_centrality TIMEOUT 2400
              LABELS native eft production observer campaign preregistered held_out orientation_memory pair_specificity centrality phase_wedge genesis engine_as_instrument)
-ftd_add_test(test_l17_complete_tangent_candidate tests/test_l17_complete_tangent_candidate.cpp
+# These are source-pinned, one-shot artifact producers.  Their protocols require
+# the tracked EFT source tree to match commit 93748ac exactly, so executing them
+# from an evolving checkout must fail closed.  Keep the binaries available for
+# isolated historical replay without registering them in the ordinary CTest run.
+ftd_add_test(test_l17_complete_tangent_candidate tests/test_l17_complete_tangent_candidate.cpp BUILD_ONLY
              CTEST_NAME l17_complete_tangent_candidate TIMEOUT 7200
              LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research)
-ftd_add_test(test_l17_complete_tangent_certificate_repair_v2 tests/test_l17_complete_tangent_certificate_repair_v2.cpp
+ftd_add_test(test_l17_complete_tangent_certificate_repair_v2 tests/test_l17_complete_tangent_certificate_repair_v2.cpp BUILD_ONLY
              CTEST_NAME l17_complete_tangent_certificate_repair_v2 TIMEOUT 7200
              LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research certificate_repair)
-ftd_add_test(test_l17_complete_tangent_harmonic_reinsertion_repair_v3 tests/test_l17_complete_tangent_harmonic_reinsertion_repair_v3.cpp
+ftd_add_test(test_l17_complete_tangent_harmonic_reinsertion_repair_v3 tests/test_l17_complete_tangent_harmonic_reinsertion_repair_v3.cpp BUILD_ONLY
              CTEST_NAME l17_complete_tangent_harmonic_reinsertion_repair_v3 TIMEOUT 7200
              LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research certificate_repair harmonic)
-ftd_add_test(test_l17_complete_tangent_representability_floor_v4 tests/test_l17_complete_tangent_representability_floor_v4.cpp
+ftd_add_test(test_l17_complete_tangent_representability_floor_v4 tests/test_l17_complete_tangent_representability_floor_v4.cpp BUILD_ONLY
              CTEST_NAME l17_complete_tangent_representability_floor_v4 TIMEOUT 7200
              LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research certificate_repair harmonic representability)
-ftd_add_test(test_l17_complete_tangent_nonsingular_product_chart_v5 tests/test_l17_complete_tangent_nonsingular_product_chart_v5.cpp
+ftd_add_test(test_l17_complete_tangent_nonsingular_product_chart_v5 tests/test_l17_complete_tangent_nonsingular_product_chart_v5.cpp BUILD_ONLY
              CTEST_NAME l17_complete_tangent_nonsingular_product_chart_v5 TIMEOUT 7200
              LABELS selected_extension eft connected_block tangent matter field gauss energy inverse krylov preregistered observer research chart product_norm)
 ftd_add_test(test_matched_midpoint_poynting tests/test_matched_midpoint_poynting.cpp
@@ -3509,15 +3569,18 @@ ftd_add_test(test_cosmic_toggles_table tests/test_cosmic_toggles_table.cpp
 if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_parity COMMAND test_gpu_parity)
     add_test(NAME gpu_parity_complete COMMAND test_gpu_parity_complete)
+    add_test(NAME gpu_native_extension_parity COMMAND test_gpu_native_extension_parity)
     add_test(NAME gpu_eft_parity COMMAND test_gpu_eft_parity)
     add_test(NAME gpu_benchmark COMMAND test_gpu_benchmark)
     add_test(NAME gpu_continuity_ledger COMMAND test_gpu_continuity_ledger)
     add_test(NAME gpu_physics COMMAND test_gpu_physics)
     add_test(NAME gpu_gauss_law_fidelity COMMAND test_gauss_law_fidelity_gpu)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
-    set_tests_properties(gpu_parity gpu_parity_complete gpu_eft_parity gpu_benchmark
+    set_tests_properties(gpu_parity gpu_parity_complete gpu_native_extension_parity
+                         gpu_eft_parity gpu_benchmark
                          gpu_continuity_ledger gpu_physics gpu_gauss_law_fidelity
                          PROPERTIES TIMEOUT 600)
+    set_property(TEST gpu_native_extension_parity APPEND PROPERTY LABELS "gpu;unit;parity")
     set_property(TEST gpu_gauss_law_fidelity APPEND PROPERTY LABELS "gpu;gauss")
     set_tests_properties(gpu_continuity_ledger PROPERTIES
                          LABELS "gpu;constructor;ledger;observable;eft_quick")
@@ -3750,9 +3813,13 @@ if(FTD_ENABLE_CUDA)
     set(_ftd_gpu_tests
         # Explicit GPU parity/benchmark/physics tests
         gpu_parity
+        gpu_parity_complete
+        gpu_native_extension_parity
+        gpu_eft_parity
         gpu_benchmark
         gpu_continuity_ledger
         gpu_physics
+        gpu_gauss_law_fidelity
         gpu_experiments
         # Wave 2 (Apr 14, 2026): GPU-heavy tests previously false-timing out
         # under ctest -j 24 due to single-RTX-5090 contention. Serializing
@@ -4067,7 +4134,9 @@ endforeach()
 
 add_executable(dump_koopman_trajectory tests/dump_koopman_trajectory.cpp)
 target_link_libraries(dump_koopman_trajectory PRIVATE ftd_core)
-add_test(NAME dump_koopman_trajectory COMMAND dump_koopman_trajectory)
+# Data-generation utility only: its default invocation runs 100,000 ticks and
+# writes a large CSV, but performs no assertions.  Keep it as an explicit
+# build/run target instead of making ordinary CTest audits appear frozen.
 
 # Exploratory scale-context confinement scan (NOT registered with ctest:
 # slow, exploratory). Build target only. See SPEC_SCALE_CONTEXT_READOUT §5.5.
