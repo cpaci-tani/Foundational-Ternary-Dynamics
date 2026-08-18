@@ -439,11 +439,11 @@ void GpuEngine::tick() {
     // and writing self (phase_write). Double-buffering could fix this in the future.
     //
     // ORDERING GUARANTEE (revision C7): both launches go to the same CUDA
-    // stream (the default stream throughout this engine), and CUDA serializes
-    // kernels on one stream in issue order — phase_write can NEVER begin
-    // before every phase_read thread has retired. No explicit sync primitive
-    // is needed or wanted here; do NOT move these onto different streams
-    // without re-introducing the barrier explicitly.
+    // stream (the engine's dedicated stream, bufs_.stream), and CUDA
+    // serializes kernels on one stream in issue order — phase_write can
+    // NEVER begin before every phase_read thread has retired. No explicit
+    // sync primitive is needed or wanted here; do NOT move these onto
+    // different streams without re-introducing the barrier explicitly.
     gpu_phase_read();
     gpu_phase_write();
 
