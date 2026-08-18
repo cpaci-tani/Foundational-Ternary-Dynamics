@@ -29,6 +29,7 @@
 #include "ftd/gpu_engine.h"
 #include "ftd/interop_particle_record.h"
 #include "ftd/test_telemetry.h"
+#include "ftd/visual_snapshot.h"
 
 #include <windows.h>
 #include <algorithm>
@@ -80,7 +81,7 @@ int main() {
     HANDLE fence_handle = nullptr;
     try {
         presenter.initialize(hwnd, 64, 64);
-        buf_handle = presenter.create_shared_particle_buffer(1000);
+        buf_handle = presenter.create_shared_particle_buffer(ftd::kMaxVisualParticleCapture);
         fence_handle = buf_handle ? presenter.create_shared_fence() : nullptr;
         ftd::test::check("shared buffer + fence created", buf_handle && fence_handle);
         if (!buf_handle || !fence_handle) {
@@ -126,6 +127,9 @@ int main() {
         }
         std::vector<ftd::InteropParticleRecord> records;
         engine->debug_read_interop_records(records, static_cast<std::uint32_t>(count));
+
+        ftd::test::check("reference has at least one manifested particle",
+                          !reference.particles.empty());
 
         constexpr float kEps = 1.0e-5f;
         bool all_match = true;
