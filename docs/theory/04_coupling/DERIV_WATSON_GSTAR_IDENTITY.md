@@ -256,7 +256,11 @@ The pattern is systematic: **the rotational symmetry of the lattice's coordinate
 | $Z_4$ (square) | $\Gamma(1/4)$ | $k = 1/\sqrt{2}$ (lemniscatic) | $\mathbb{Q}(i)$ | $1728$ |
 | $Z_6$ (hexagonal) | $\Gamma(1/3)$ | $k = e^{i\pi/3}$ (equianharmonic) | $\mathbb{Q}(\sqrt{-3})$ | $0$ |
 
-**Why this works:** Watson's AGM reduction of the lattice sum integrates out one dimension, leaving a 2D integral over the remaining plane. The 2D integral inherits the planar symmetry of the lattice. For the square lattice (SC, BCC), the 2D integral has $C_{4v}$ symmetry, forcing the elliptic integral modulus to the lemniscatic value $k = 1/\sqrt{2}$ — the unique modulus where the elliptic curve has $Z_4$ automorphisms. For the hexagonal lattice (FCC close-packed planes), the $C_{6v}$ symmetry forces the equianharmonic modulus.
+~~**Why this works:** Watson's AGM reduction of the lattice sum integrates out one dimension, leaving a 2D integral over the remaining plane. The 2D integral inherits the planar symmetry of the lattice. For the square lattice (SC, BCC), the 2D integral has $C_{4v}$ symmetry, forcing the elliptic integral modulus to the lemniscatic value $k = 1/\sqrt{2}$ — the unique modulus where the elliptic curve has $Z_4$ automorphisms.~~ For the hexagonal lattice (FCC close-packed planes), the $C_{6v}$ symmetry forces the equianharmonic modulus.
+
+> **⚠ The struck sentence is refuted (2026-08-16); see the correction box in §7.4.** It groups "(SC, BCC)" together as square-planar and concludes $C_{4v}$ forces $k = 1/\sqrt2$ for both. But §7.3's own table gives **SC** the Gamma class $\Gamma(n/24)$, i.e. discriminant $-24$ — recomputed for this correction as $W_{\rm SC} = 1.5163860591519768\ldots$ (this document's $0.50542$ under the $1/3$-normalized convention). A symmetry both lattices share cannot select between them. **What actually discriminates is multiplicative vs additive structure of the layer eigenvalue** ($1 - \cos k_1\cos k_2\cos k_3$ vs $1 - \sum\cos k_i$), which reaches $\Gamma(1/4)$ through Clausen's quarter-parameter ${}_2F_1$ — not through planar $Z_4$.
+>
+> Even that surviving discriminator is *motivation, not forcing*: [`ANALYSIS_CONSTRUCTION_CLASS_CLOSURE.md`](../10_eft_program/derivations/ANALYSIS_CONSTRUCTION_CLASS_CLOSURE.md) Cor. 2.1 records that *"restrict to the multiplicative layer"* is **"extensionally the same choice re-described"**, and books the restriction as the **d = −4 bit, i.e. FC-0** — an `[AXIOM]`-class modelling choice, not a consequence of P1–P5.
 
 ### 7.3 The 2D Case [THEOREM]
 
@@ -267,16 +271,30 @@ The same correspondence holds in 2D:
 
 ### 7.4 Implication for FTD
 
-FTD postulates a 3D cubic lattice (Axiom 1). This lattice has $Z_4$ planar symmetry. By the lattice symmetry theorem:
+FTD postulates a 3D cubic lattice (Axiom 1). This lattice has $Z_4$ planar symmetry. The chain from there is:
 
-1. The Watson integral involves $\Gamma(1/4)$ [forced by $Z_4$]
+1. ~~The Watson integral involves $\Gamma(1/4)$ [forced by $Z_4$]~~ — **step 1 does not hold; see the correction below.** The BCC integral involves $\Gamma(1/4)$; which integral is read is a *layer selection*, not a consequence of $Z_4$.
 2. The relevant CM curve is $E: y^2 = x^3 - x$ with $j = 1728$ [forced by $\Gamma(1/4)$]
 3. The period of $E$ is $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$ [forced by $E$]
 4. $G^* = 2\varpi/\sqrt{\pi} = \sqrt{2\pi W_3}$ [algebraic identity]
 
-**The curve is not chosen — it is forced by the lattice axiom.** If FTD had postulated an FCC lattice instead, the relevant curve would be $j = 0$, and the master constant would involve $\Gamma(1/3)$ instead of $\Gamma(1/4)$, producing entirely different physics.
+Steps 2–4 stand as stated; they are conditional on step 1's output, not on its stated ground.
 
-This resolves **SP1a** from AUDIT_HIDDEN_SELECTIONS.md: the curve selection is **[THEOREM]**, not [SELECTION].
+> **⚠ CORRECTION (2026-08-16) — step 1's inference is refuted by this document's own table.**
+>
+> §7.3's table two paragraphs above records **SC** with planar symmetry $Z_4$ and *"no $\Gamma(1/4)$ closed form"*, Gamma class $\Gamma(n/24)$. **SC and BCC therefore share the same $Z_4$ planar symmetry and land on different CM fields** — disc $-24$ (i.e. $\mathbb{Q}(\sqrt{-6})$) versus disc $-4$. A property both lattices possess cannot select between them, so $Z_4$ planar symmetry does **not** force $\Gamma(1/4)$, the lemniscatic modulus $k = 1/\sqrt2$, or the curve $j = 1728$.
+>
+> Independently recomputed for this correction: $W_{\rm SC} = 1.5163860591519768\ldots$ (Bessel form $\int_0^\infty e^{-t}I_0(t/3)^3dt$), matching the disc $-24$ Chowla–Selberg closed form $\sqrt6/(32\pi^3)\cdot\Gamma(1/24)\Gamma(5/24)\Gamma(7/24)\Gamma(11/24)$ to 15 digits. (This document's $0.50542$ is the same integral under the $1/3$-normalized convention — the values agree; only the inference above is at fault.)
+>
+> **What does discriminate** is recorded elsewhere in this corpus: the BCC eigenvalue is a *triple product* $1 - \cos k_1\cos k_2\cos k_3$ while SC's is a *sum*. Via Clausen's identity the triple product is the Clausen square of a ${}_2F_1$ with **quarter parameters** — ${}_2F_1(\tfrac14,\tfrac14;1;1)^2 = {}_3F_2(\tfrac12,\tfrac12,\tfrac12;1,1;1) = \Gamma(1/4)^4/(4\pi^3)$, verified to 25 digits. The $4$ enters through **multiplicativity**, not through a four-fold axis. Note the BCC sublattice is spanned by the eight $\langle111\rangle$ body diagonals, whose axes are *three*-fold.
+>
+> **Consequence for SP1a — flagged, not applied.** The sentence below claimed to resolve SP1a as `[THEOREM]`. That resolution rested on step 1 and does **not** survive. On the present evidence the BCC-over-SC/FCC readout is a `[SELECTION]` — a choice of which Moore layer to read. **This note does not move the tag**; see the matching correction in [`AUDIT_HIDDEN_SELECTIONS.md`](../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) §SP1a, and note that FTD-0313 already grades the adjacent BCC-routing choice `[SELECTION + THEOREM-NEGATIVE]` on three independent grounds.
+>
+> **Nothing downstream is retagged.** $G^*$ is an identity and is untouched; $W_3 = G^{*2}/(2\pi)$ (Watson 1939) is untouched. Only the claim that the *lattice axiom forces the curve* fails.
+
+~~**The curve is not chosen — it is forced by the lattice axiom.**~~ If FTD had postulated an FCC lattice instead, the relevant curve would be $j = 0$, and the master constant would involve $\Gamma(1/3)$ instead of $\Gamma(1/4)$, producing entirely different physics — *and the same is true of reading the SC layer of the lattice FTD did postulate, which is the point.*
+
+~~This resolves **SP1a** from AUDIT_HIDDEN_SELECTIONS.md: the curve selection is **[THEOREM]**, not [SELECTION].~~ **Withdrawn 2026-08-16** — see the correction box above.
 
 ---
 
