@@ -93,13 +93,15 @@ void NativeEngineSession::boot() {
 
     // A (re-)boot tears down bridge_ and, with it, whatever GpuEngine
     // try_enable_interop() last imported the shared D3D12 buffer/fence
-    // into. try_enable_interop() is only ever invoked once, at startup,
-    // before the fresh bridge_/GpuEngine constructed below has had any
-    // import call made against it -- so interop_enabled_ must be cleared
-    // here, or callers keep observing interop_enabled() == true (and
-    // request_interop_gather()/poll_interop_particle_count() keep being
-    // invoked) against an engine that was never re-imported and can never
-    // succeed.
+    // into. try_enable_interop() is invoked at startup and, since Interop
+    // Task 12, again on every reload (main.cpp's do_reload branch) -- but
+    // each such call always lands strictly AFTER the fresh bridge_/
+    // GpuEngine constructed below already exists, never before any import
+    // call has been made against that fresh instance -- so interop_enabled_
+    // must be cleared here, or callers keep observing interop_enabled() ==
+    // true (and request_interop_gather()/poll_interop_particle_count() keep
+    // being invoked) against an engine that was never re-imported and can
+    // never succeed.
     interop_enabled_ = false;
 
     bridge_.reset();
