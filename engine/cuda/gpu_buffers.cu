@@ -220,6 +220,10 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_plist_idx, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMalloc(&d_num_particles, sizeof(int)));
     CUDA_CHECK(cudaMalloc(&d_particle_overflow, sizeof(int)));
+    // Deterministic particle-list compaction scratch (see gpu_buffers.h).
+    CUDA_CHECK(cudaMalloc(&d_particle_flags, N * sizeof(uint8_t)));
+    CUDA_CHECK(cudaMalloc(&d_particle_candidate_indices, N * sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_particle_candidate_count, sizeof(int32_t)));
 
     // Device tick mirror
     CUDA_CHECK(cudaMalloc(&d_tick, sizeof(int)));
@@ -248,6 +252,25 @@ void GpuBuffers::allocate(int lattice_size) {
         d_pair_candidate_indices, N));
     pair_select_temp_bytes = (std::max)(pair_select_temp_bytes,
                                         visual_scan_temp_bytes);
+    // launch_build_particle_list (kernels_forces.cu) reuses this same
+    // workspace for a third cub::DeviceSelect::Flagged call over the
+    // particle-list flags/candidate buffers. That call has the identical
+    // (thrust::counting_iterator<int32_t> indices, uint8_t* flags,
+    // int32_t* output, int32_t* num_selected, N) template shape as the
+    // pair-candidate select above — CUB's required temp storage is a
+    // function of exactly those types and N, not of the specific pointer
+    // values — so it is EXPECTED to demand an identical byte count. Rather
+    // than assume that, size it explicitly here too and fold it into the
+    // max, so pair_select_temp_bytes is provably sufficient for all three
+    // call sites regardless of whether that expectation holds.
+    std::size_t particle_select_temp_bytes = 0;
+    thrust::counting_iterator<int32_t> particle_indices(0);
+    CUDA_CHECK(cub::DeviceSelect::Flagged(
+        nullptr, particle_select_temp_bytes, particle_indices,
+        d_particle_flags, d_particle_candidate_indices,
+        d_particle_candidate_count, N));
+    pair_select_temp_bytes = (std::max)(pair_select_temp_bytes,
+                                        particle_select_temp_bytes);
     CUDA_CHECK(cudaMalloc(&d_pair_select_temp, pair_select_temp_bytes));
 
     // Native EFT continuity event ledger
@@ -279,6 +302,8 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_identity_error, 0, sizeof(int32_t)));
     CUDA_CHECK(cudaMemset(d_pair_candidate_flags, 0, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMemset(d_pair_candidate_count, 0, sizeof(int32_t)));
+    CUDA_CHECK(cudaMemset(d_particle_flags, 0, N * sizeof(uint8_t)));
+    CUDA_CHECK(cudaMemset(d_particle_candidate_count, 0, sizeof(int32_t)));
     CUDA_CHECK(cudaMemset(d_movement_moved, 0, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMemset(d_spin, 0, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMemset(d_color, 0, N * sizeof(int8_t)));
@@ -564,6 +589,18 @@ void GpuBuffers::free() {
 
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }
+    if (d_particle_flags) {
+        cudaFree(d_particle_flags);
+        d_particle_flags = nullptr;
+    }
+    if (d_particle_candidate_indices) {
+        cudaFree(d_particle_candidate_indices);
+        d_particle_candidate_indices = nullptr;
+    }
+    if (d_particle_candidate_count) {
+        cudaFree(d_particle_candidate_count);
+        d_particle_candidate_count = nullptr;
+    }
     if (d_pair_id)       { cudaFree(d_pair_id); d_pair_id = nullptr; }
     if (d_pair_candidate_flags) {
         cudaFree(d_pair_candidate_flags);
