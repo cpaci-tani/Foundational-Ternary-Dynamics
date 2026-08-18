@@ -204,5 +204,29 @@ if(WIN32)
             dxgi
             d3dcompiler
         )
+
+        # Interop Task 10: the design doc's own stated validation bar for
+        # Component B -- compare rendered particle positions/colors between
+        # the interop gather kernel (Task 6) and the pre-interop CPU capture
+        # path (NativeEngineSession::capture()) for the same session/tick,
+        # not just "looks right". Needs ftd_native_session (for
+        # NativeEngineSession::debug_gpu_engine()) and ftd_cuda (for
+        # GpuEngine::debug_read_interop_records()), same FTD_ENABLE_CUDA
+        # gating as the rest of this block.
+        add_executable(test_interop_visual_parity
+            tests/test_interop_visual_parity.cpp
+            src/d3d12_presenter.cpp
+            ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+        )
+        target_include_directories(test_interop_visual_parity PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_interop_visual_parity PRIVATE
+            ftd_native_session
+            ftd_cuda
+            d3d12
+            dxgi
+            d3dcompiler
+        )
     endif()
 endif()

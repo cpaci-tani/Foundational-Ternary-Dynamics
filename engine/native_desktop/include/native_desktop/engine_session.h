@@ -7,6 +7,11 @@
 
 namespace ftd {
 class RenderBridge;
+#ifdef FTD_ENABLE_CUDA
+namespace gpu {
+class GpuEngine;
+}
+#endif
 }
 
 namespace ftd::native_desktop {
@@ -120,6 +125,13 @@ public:
     // value.
     int poll_interop_particle_count();
     void request_interop_gather(std::uint64_t fence_value);
+
+    // TEST-ONLY. Exposes the underlying GPU engine for direct verification
+    // (e.g. debug_read_interop_records). Production code never needs this --
+    // it goes through capture()/tick() only.
+#ifdef FTD_ENABLE_CUDA
+    ftd::gpu::GpuEngine* debug_gpu_engine();
+#endif
 
 private:
     void boot();

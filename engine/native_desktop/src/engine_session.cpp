@@ -260,6 +260,12 @@ int NativeEngineSession::poll_interop_particle_count() {
 #endif
 }
 
+#ifdef FTD_ENABLE_CUDA
+ftd::gpu::GpuEngine* NativeEngineSession::debug_gpu_engine() {
+    return bridge_->gpu_engine_ptr();
+}
+#endif
+
 InteropReloadOutcome reimport_interop_after_reload(
     NativeEngineSession& session, void* shared_buffer_handle,
     std::uint64_t buffer_bytes, void* shared_fence_handle, bool was_active) {
