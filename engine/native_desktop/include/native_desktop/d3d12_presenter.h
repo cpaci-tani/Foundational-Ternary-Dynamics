@@ -39,7 +39,8 @@ public:
     void initialize(HWND hwnd, std::uint32_t width, std::uint32_t height);
     void resize(std::uint32_t width, std::uint32_t height);
     void render(const NativeFrame& frame, const Camera& camera,
-                const NativeViewOptions& opts = {});
+                const NativeViewOptions& opts = {},
+                std::uint32_t interop_particle_count = 0);
     void wait_idle();
 
     std::uint32_t width() const { return width_; }
@@ -75,6 +76,15 @@ public:
     std::uint64_t shared_particle_buffer_bytes() const {
         return shared_particle_buffer_bytes_;
     }
+
+    // Creates the SRV describing the current shared particle buffer as a
+    // StructuredBuffer<InteropParticleRecord> and writes it into the
+    // shader-visible SRV heap the interop PSO reads from (register t0). Must
+    // be called after create_shared_particle_buffer() has succeeded (a no-op
+    // if the shared buffer does not exist yet) and again any time that
+    // buffer is recreated at a different size, since the SRV's element count
+    // is derived from shared_particle_buffer_bytes().
+    void bind_interop_particle_srv();
 
     // Creates a D3D12_FENCE_FLAG_SHARED fence starting at value 0 and
     // exports its NT handle for CUDA to import via cudaImportExternalSemaphore.

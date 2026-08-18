@@ -80,6 +80,10 @@ struct GpuVertex {
 
 struct CameraConstants {
     float view_proj[16];
+    float camera_right[3];
+    float _pad0;
+    float camera_up[3];
+    float _pad1;
 };
 
 void perspective(float* out, float fov_y, float aspect, float zn, float zf) {
@@ -197,6 +201,66 @@ float4 ps_main(VSOut input) : SV_Target {
 }
 )";
 
+constexpr char kInteropParticleShader[] = R"(
+#pragma pack_matrix(row_major)
+cbuffer Camera : register(b0) {
+    float4x4 viewProj;
+    float3 cameraRight;
+    float _pad0;
+    float3 cameraUp;
+    float _pad1;
+};
+
+struct ParticleRecord {
+    float3 position;
+    float size;
+    float3 color;
+    float _pad;
+};
+StructuredBuffer<ParticleRecord> Particles : register(t0);
+
+struct VSOut {
+    float4 position : SV_Position;
+    float3 color : COLOR;
+    float2 uv : TEXCOORD;
+};
+
+// One instance per particle, 6 vertices per instance (two triangles making
+// a camera-facing quad) -- mirrors the CPU append_sprites() corner/uv tables
+// in the pre-interop path exactly (d3d12_presenter.cpp's existing `ox`/`oy`/
+// `uv` arrays), so DrawInstanced(6, particle_count, 0, 0) with no vertex or
+// index buffer at all reproduces the same geometry the old CPU path built.
+static const float2 kCornerOffsets[6] = {
+    float2(-1, -1), float2(1, -1), float2(1, 1),
+    float2(-1, -1), float2(1, 1),  float2(-1, 1),
+};
+static const float2 kCornerUVs[6] = {
+    float2(0, 0), float2(1, 0), float2(1, 1),
+    float2(0, 0), float2(1, 1), float2(0, 1),
+};
+
+VSOut vs_main(uint vertex_id : SV_VertexID, uint instance_id : SV_InstanceID) {
+    ParticleRecord p = Particles[instance_id];
+    float2 corner = kCornerOffsets[vertex_id];
+    float3 world = p.position
+        + (cameraRight * corner.x + cameraUp * corner.y) * p.size;
+
+    VSOut o;
+    o.position = mul(float4(world, 1.0), viewProj);
+    o.color = p.color;
+    o.uv = kCornerUVs[vertex_id];
+    return o;
+}
+
+float4 ps_main(VSOut input) : SV_Target {
+    float2 d = input.uv * 2.0 - 1.0;
+    float r2 = dot(d, d);
+    clip(1.0 - r2);
+    float edge = smoothstep(1.0, 0.65, r2);
+    return float4(input.color * edge, edge);
+}
+)";
+
 }  // namespace
 
 struct D3D12Presenter::Impl {
@@ -211,6 +275,8 @@ struct D3D12Presenter::Impl {
     ComPtr<ID3D12RootSignature> root;
     ComPtr<ID3D12PipelineState> pso;
     ComPtr<ID3D12PipelineState> pso_lines;
+    ComPtr<ID3D12DescriptorHeap> srv_heap;
+    ComPtr<ID3D12PipelineState> pso_interop;
     ComPtr<ID3D12DescriptorHeap> dsv_heap;
     ComPtr<ID3D12Resource> depth;
     ComPtr<ID3D12Resource> cb;
@@ -318,12 +384,23 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
                     "CreateCommandList");
     impl_->list->Close();
 
-    D3D12_ROOT_PARAMETER param{};
-    param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-    param.Descriptor.ShaderRegister = 0;
+    D3D12_DESCRIPTOR_RANGE srv_range{};
+    srv_range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    srv_range.NumDescriptors = 1;
+    srv_range.BaseShaderRegister = 0;
+    srv_range.RegisterSpace = 0;
+    srv_range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+    D3D12_ROOT_PARAMETER params[2]{};
+    params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    params[0].Descriptor.ShaderRegister = 0;
+    params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+    params[1].DescriptorTable.NumDescriptorRanges = 1;
+    params[1].DescriptorTable.pDescriptorRanges = &srv_range;
+
     D3D12_ROOT_SIGNATURE_DESC rs{};
-    rs.NumParameters = 1;
-    rs.pParameters = &param;
+    rs.NumParameters = 2;
+    rs.pParameters = params;
     rs.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
     ComPtr<ID3DBlob> blob, err;
     throw_if_failed(
@@ -402,6 +479,31 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
     throw_if_failed(
         impl_->device->CreateGraphicsPipelineState(&lpso, IID_PPV_ARGS(&impl_->pso_lines)),
         "CreateGraphicsPipelineState lines");
+
+    ComPtr<ID3DBlob> ivs, ips, ierr;
+    throw_if_failed(D3DCompile(kInteropParticleShader, sizeof(kInteropParticleShader) - 1,
+                               "interop_particle", nullptr, nullptr, "vs_main",
+                               "vs_5_1", 0, 0, &ivs, &ierr),
+                    "D3DCompile interop vs");
+    throw_if_failed(D3DCompile(kInteropParticleShader, sizeof(kInteropParticleShader) - 1,
+                               "interop_particle", nullptr, nullptr, "ps_main",
+                               "ps_5_1", 0, 0, &ips, &ierr),
+                    "D3DCompile interop ps");
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC ipso = pso;  // reuse blend/raster/depth state
+    ipso.VS = {ivs->GetBufferPointer(), ivs->GetBufferSize()};
+    ipso.PS = {ips->GetBufferPointer(), ips->GetBufferSize()};
+    ipso.InputLayout = {nullptr, 0};  // no input assembler -- SV_VertexID/SV_InstanceID only
+    throw_if_failed(impl_->device->CreateGraphicsPipelineState(
+                        &ipso, IID_PPV_ARGS(&impl_->pso_interop)),
+                    "CreateGraphicsPipelineState interop");
+
+    D3D12_DESCRIPTOR_HEAP_DESC srv_heap_desc{};
+    srv_heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    srv_heap_desc.NumDescriptors = 1;
+    srv_heap_desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    throw_if_failed(impl_->device->CreateDescriptorHeap(
+                        &srv_heap_desc, IID_PPV_ARGS(&impl_->srv_heap)),
+                    "CreateDescriptorHeap SRV");
 
     D3D12_DESCRIPTOR_HEAP_DESC dsv_desc{};
     dsv_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
@@ -556,6 +658,20 @@ HANDLE D3D12Presenter::create_shared_particle_buffer(std::uint32_t max_particles
     return handle;
 }
 
+void D3D12Presenter::bind_interop_particle_srv() {
+    if (!impl_->shared_particle_buffer) return;
+    D3D12_SHADER_RESOURCE_VIEW_DESC srv{};
+    srv.Format = DXGI_FORMAT_UNKNOWN;
+    srv.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+    srv.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srv.Buffer.NumElements = static_cast<UINT>(
+        shared_particle_buffer_bytes_ / sizeof(ftd::InteropParticleRecord));
+    srv.Buffer.StructureByteStride = sizeof(ftd::InteropParticleRecord);
+    impl_->device->CreateShaderResourceView(
+        impl_->shared_particle_buffer.Get(), &srv,
+        impl_->srv_heap->GetCPUDescriptorHandleForHeapStart());
+}
+
 HANDLE D3D12Presenter::create_shared_fence() {
     if (!impl_->device) return nullptr;
 
@@ -602,7 +718,8 @@ void D3D12Presenter::wait_shared_fence(std::uint64_t value) {
 }
 
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
-                            const NativeViewOptions& opts) {
+                            const NativeViewOptions& opts,
+                            std::uint32_t interop_particle_count) {
     const float aspect = static_cast<float>(width_) / static_cast<float>(height_);
     const float cy = std::cos(camera.pitch);
     const float eye_x = camera.target_x + camera.distance * cy * std::sin(camera.yaw);
@@ -614,10 +731,16 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
             camera.target_z, 0.0f, 1.0f, 0.0f);
     perspective(proj, camera.fov_y, aspect, 0.1f, 2048.0f);
     mul4(vp, view, proj);
-    std::memcpy(impl_->cb_mapped, vp, sizeof(vp));
 
     const float rx = view[0], ry = view[4], rz = view[8];
     const float ux = view[1], uy = view[5], uz = view[9];
+
+    CameraConstants cbuf{};
+    std::memcpy(cbuf.view_proj, vp, sizeof(vp));
+    cbuf.camera_right[0] = rx; cbuf.camera_right[1] = ry; cbuf.camera_right[2] = rz;
+    cbuf.camera_up[0] = ux; cbuf.camera_up[1] = uy; cbuf.camera_up[2] = uz;
+    std::memcpy(impl_->cb_mapped, &cbuf, sizeof(cbuf));
+
     const float uv[6][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 0}, {1, 1}, {0, 1}};
     const float ox[6] = {-1, 1, 1, -1, 1, -1};
     const float oy[6] = {-1, -1, 1, -1, 1, 1};
@@ -668,7 +791,11 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     verts.reserve((frame.flux.size() + frame.particles.size()) * 6);
     if (opts.flux) append_sprites(frame.flux, verts);
     const UINT flux_verts = static_cast<UINT>(verts.size());
-    if (opts.particles) append_sprites(frame.particles, verts);
+    // When interop_particle_count > 0, particles are drawn from the imported
+    // D3D12 buffer via the interop PSO below instead of the CPU-expanded
+    // vertex buffer -- do not double-draw. frame.particles stays populated
+    // either way (the CPU backend has no interop path and always needs it).
+    if (opts.particles && interop_particle_count == 0) append_sprites(frame.particles, verts);
 
     const std::size_t sprite_bytes = verts.size() * sizeof(GpuVertex);
     const std::size_t line_bytes = sizeof(lines);
@@ -760,6 +887,16 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         if (particle_verts != 0) {
             impl_->list->DrawInstanced(particle_verts, 1, flux_verts, 0);
         }
+    }
+
+    if (opts.particles && interop_particle_count != 0 && impl_->pso_interop && impl_->srv_heap) {
+        impl_->list->SetPipelineState(impl_->pso_interop.Get());
+        ID3D12DescriptorHeap* heaps[] = {impl_->srv_heap.Get()};
+        impl_->list->SetDescriptorHeaps(1, heaps);
+        impl_->list->SetGraphicsRootDescriptorTable(
+            1, impl_->srv_heap->GetGPUDescriptorHandleForHeapStart());
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        impl_->list->DrawInstanced(6, interop_particle_count, 0, 0);
     }
 
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
