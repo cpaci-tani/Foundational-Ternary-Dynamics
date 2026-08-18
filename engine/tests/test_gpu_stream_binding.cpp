@@ -20,6 +20,9 @@
     const cudaError_t _e = (call); \
     ftd::test::check("cuda call succeeded", _e == cudaSuccess); \
 } while (0)
+#include <algorithm>
+#include <chrono>
+#include <cstdio>
 #include <cstring>
 #include <vector>
 
@@ -125,16 +128,24 @@ int main() {
 
     test::section("S6: the tick leaves work queued (no device-wide sync)");
     {
-        gpu::GpuEngine engine(48);
+        gpu::GpuEngine engine(128);
         seed_scene(engine);
         engine.toggles.forces = true;
         engine.toggles.movement = true;
         CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
 
-        // A tick that contained cudaDeviceSynchronize or a synchronous
-        // cudaMemset could not leave the stream busy. Queue several ticks
-        // back to back and require that at least one observation finds work
-        // still in flight.
+        // S6a: batch-level idleness probe. A tick that contained
+        // cudaDeviceSynchronize or a synchronous cudaMemset could not leave
+        // the stream busy -- but this probe only ever samples the stream
+        // AFTER a whole batch of ticks, so it cannot tell "no sync anywhere"
+        // apart from "a sync at the very start of every tick": a start-of-
+        // tick sync drains the PREVIOUS tick's tail before the query below
+        // ever runs, and the CURRENT tick's own later kernels can still be
+        // in flight, so the query reads "busy" either way. Verified
+        // empirically: re-adding the exact cudaDeviceSynchronize() this task
+        // removed from reset_continuity_ledger() still leaves this probe
+        // passing. Kept as a cheap secondary signal; S6b below is the check
+        // that actually discriminates.
         bool observed_async = false;
         for (int attempt = 0; attempt < 8 && !observed_async; ++attempt) {
             for (int t = 0; t < 4; ++t) engine.tick();
@@ -143,7 +154,63 @@ int main() {
             }
         }
         CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
-        test::check("S6: tick enqueues asynchronously", observed_async);
+        test::check("S6a: tick enqueues asynchronously (batch probe, weak)",
+                    observed_async);
+
+        // S6b: per-call wall-clock probe -- the discriminating check. A
+        // blocking sync placed ANYWHERE inside tick() (start, middle, or
+        // end) inflates that SINGLE call's host-observed duration, unlike
+        // S6a which can only ever see the stream's state after several ticks
+        // have already run. Warm up first to absorb JIT/first-touch
+        // allocation overhead, then time a batch of individual tick() calls
+        // and gate on the MEDIAN (never max or mean) so the assertion is
+        // robust against the periodic multi-millisecond WDDM command-buffer-
+        // batching stalls that are a normal, expected artifact of async GPU
+        // submission on Windows, not a regression signal.
+        //
+        // Calibrated on this machine (RTX 5090, WDDM, L=128, forces+movement
+        // on, 30 samples after an 8-tick warmup, several repeated runs):
+        //   genuinely async (current code):            median ~250-265us,
+        //                                               occasional ~14-16ms
+        //                                               WDDM batching stalls
+        //                                               visible only in max
+        //   cudaDeviceSynchronize() re-added to
+        //   reset_continuity_ledger() (the bug
+        //   this task fixed, reintroduced only
+        //   to calibrate/verify this test):            median ~3.4ms
+        // ~13x separation measured; 1.2ms sits well inside the gap with
+        // roughly 4-5x headroom below and ~3x headroom above.
+        constexpr int kWarmupTicks = 8;
+        constexpr int kSampledTicks = 30;
+        constexpr double kBlockingThresholdUs = 1200.0;
+        for (int t = 0; t < kWarmupTicks; ++t) engine.tick();
+        CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
+
+        std::vector<double> call_us;
+        call_us.reserve(kSampledTicks);
+        for (int t = 0; t < kSampledTicks; ++t) {
+            const auto t0 = std::chrono::high_resolution_clock::now();
+            engine.tick();
+            const auto t1 = std::chrono::high_resolution_clock::now();
+            call_us.push_back(
+                std::chrono::duration<double, std::micro>(t1 - t0).count());
+        }
+        CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
+
+        std::vector<double> sorted_us = call_us;
+        std::sort(sorted_us.begin(), sorted_us.end());
+        const double median_us = sorted_us[sorted_us.size() / 2];
+
+        char detail[160];
+        std::snprintf(detail, sizeof(detail),
+                       "median=%.1fus min=%.1fus max=%.1fus n=%d threshold=%.0fus",
+                       median_us, sorted_us.front(), sorted_us.back(),
+                       kSampledTicks, kBlockingThresholdUs);
+        std::printf("[S6b] per-call tick() timing: %s\n", detail);
+        test::check(
+            "S6b: median per-tick wall time stays in the async regime "
+            "(catches a sync anywhere in the tick, not just at tick-end)",
+            median_us < kBlockingThresholdUs, detail);
     }
 
     return test::finalize();
