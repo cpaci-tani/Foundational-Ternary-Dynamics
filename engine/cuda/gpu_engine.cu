@@ -58,8 +58,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_integrate_forces(GpuBuffers& bufs, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
                                bool dual_substrate);
-    void launch_ew_background_sweep(GpuBuffers& bufs, double drive,
-                                    bool dual_substrate);
+    void launch_ew_background_sweep(GpuBuffers& bufs, bool dual_substrate);
     void launch_absorbing_boundary(GpuBuffers& bufs);
     void launch_reflective_flux_boundary(GpuBuffers& bufs);
     void launch_dispersal_flux_boundary(GpuBuffers& bufs);
@@ -432,11 +431,12 @@ void GpuEngine::tick() {
     // tick input, not a visualization mutation. Apply it before phase_read so
     // the same-tick wave/KG operators consume the driven field. In dual mode
     // the symmetric half split is essential because phase_read reads L/R.
+    // The drive is computed ON-DEVICE from bufs_.d_tick (not passed by value)
+    // so a captured graph replay recomputes it from the current tick instead
+    // of baking in the capture-time value — same hazard class Task 7 fixed
+    // for the RNG-salted kernels.
     if (toggles.ew_background_sweep) {
-        const double drive = (std::sin(static_cast<double>(tick_) * 0.01) + 1.0)
-                           * 0.5 * 0.05;
-        kernels::launch_ew_background_sweep(bufs_, drive,
-                                            toggles.dual_substrate);
+        kernels::launch_ew_background_sweep(bufs_, toggles.dual_substrate);
     }
 
     // Phase 1+2: Wave update (Laplacian + coupling + leapfrog + damping + genesis/evaporation)
