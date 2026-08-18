@@ -1,20 +1,38 @@
 // engine/native_desktop/tests/test_interop_reload_reset.cpp
 //
-// Regression coverage for the round-2 code-review finding that
-// NativeEngineSession::boot() never reset interop_enabled_ after a reload:
-// with a live D3D12/CUDA interop import already in place, ANY reload (the
-// 'R' key, scenario Load, or a lattice-size change in the real app --
-// engine_session.cpp's apply_options()/load_scenario()/set_lattice_size()/
-// reset_current() all funnel through boot()) used to keep reporting
-// interop_enabled() == true against a freshly-constructed GpuEngine that had
-// never been re-imported into, so request_interop_gather()/
-// poll_interop_particle_count() kept firing against a dead interop path
-// forever with no diagnostic.
+// Regression coverage for two related Task 9/Task 12 findings:
 //
-// This exercises the fix through the same public NativeEngineSession API
-// main.cpp itself drives (try_enable_interop() then a reload call), not
-// engine_session.cpp's private interop_enabled_ field directly, so it fails
-// the same way a real 'R'-key reload would if the reset regressed.
+//   1. (Task 9 round-2 review, fixed) NativeEngineSession::boot() must clear
+//      interop_enabled_ on every reload (apply_options()/load_scenario()/
+//      set_lattice_size()/reset_current() all funnel through boot()) -- a
+//      freshly-constructed GpuEngine has never had anything imported into
+//      it, so interop_enabled() must report false immediately after a
+//      reload, or request_interop_gather()/poll_interop_particle_count()
+//      keep being invoked against an engine that can never satisfy them.
+//
+//   2. (Task 9 review, found live, fixed by Task 12) That clearing left a
+//      gap: nothing ever re-imported the shared D3D12 buffer/fence into the
+//      freshly-constructed GpuEngine afterward, so main.cpp's real reload
+//      path (the 'R' key, Load scenario, or a lattice-size change)
+//      permanently fell back to the CPU particle-capture path after the
+//      very first reload of the process. Task 12's fix: main.cpp now keeps
+//      the original D3D12Presenter-issued NT handles open for the process
+//      lifetime (D3D12Presenter itself, unlike NativeEngineSession's
+//      internal bridge_/GpuEngine, is never destroyed by a reload) and
+//      re-supplies them to NativeEngineSession::try_enable_interop() again
+//      once boot() has finished rebuilding bridge_/GpuEngine.
+//
+// This test exercises that exact caller contract through the same public
+// NativeEngineSession API main.cpp itself drives (try_enable_interop(),
+// then a reload, then try_enable_interop() again with the SAME handles),
+// not engine_session.cpp's private interop_enabled_ field directly, so it
+// fails the same way a real reload would if either half regressed. It
+// deliberately drives TWO reload cycles (via two different reload entry
+// points) rather than one: the bug this guards against was "no re-import
+// path exists at all", so a fix that special-cased only the first reload
+// would still pass a single-reload check while leaving every subsequent
+// reload broken.
+//
 // test_engine_session.cpp's "interop path is a safe no-op on the CPU
 // backend" section covers the CPU-backend refusal path; this test is its
 // GPU-backend companion.
@@ -27,6 +45,26 @@
 #include <cstdio>
 #include <stdexcept>
 #include <string>
+
+namespace {
+
+// Drives one request_interop_gather()/poll_interop_particle_count() cycle
+// to completion, mirroring test_interop_gather.cpp's busy-wait idiom
+// (engine->interop_gather_ready()) at the NativeEngineSession level.
+// Returns the polled particle count once ready, or -1 if it never became
+// ready within the retry budget.
+int gather_and_wait(ftd::native_desktop::NativeEngineSession& session,
+                    std::uint64_t fence_value) {
+    session.request_interop_gather(fence_value);
+    int count = -1;
+    for (int i = 0; i < 5000 && count == -1; ++i) {
+        count = session.poll_interop_particle_count();
+        if (count == -1) Sleep(0);
+    }
+    return count;
+}
+
+}  // namespace
 
 int main() {
     ftd::test::init("test_interop_reload_reset");
@@ -76,51 +114,97 @@ int main() {
             DestroyWindow(hwnd);
             return ftd::test::finalize();
         }
+        const std::uint64_t buffer_bytes = presenter.shared_particle_buffer_bytes();
 
-        const bool enabled = session.try_enable_interop(
-            buf_handle, presenter.shared_particle_buffer_bytes(), fence_handle);
-        // Same NT-handle lifetime contract as every other interop test: the
-        // handle may be closed immediately once the import call returns,
-        // success or failure (cudaExternalMemoryHandleDesc's contract, and
-        // D3D12Presenter's fence handle likewise).
-        CloseHandle(buf_handle);
-        CloseHandle(fence_handle);
-        buf_handle = nullptr;
-        fence_handle = nullptr;
+        // Unlike the pre-Task-12 version of this test, buf_handle/
+        // fence_handle are kept open for this test's entire lifetime
+        // instead of being closed immediately after the first import: that
+        // mirrors exactly what main.cpp now does (see its do_reload branch)
+        // so that every later reload can present the SAME still-valid NT
+        // handles to try_enable_interop() again. CUDA never takes ownership
+        // of these handles (GpuEngine::import_d3d12_particle_buffer's own
+        // doc comment: "The handle is NOT closed by this call") so reusing
+        // them across multiple sequential imports is within contract; both
+        // are closed exactly once, at the very end of this test, mirroring
+        // main.cpp closing them once at process shutdown.
+        const bool enabled =
+            session.try_enable_interop(buf_handle, buffer_bytes, fence_handle);
         ftd::test::check("interop enabled against a live GPU session", enabled);
         if (!enabled) {
+            CloseHandle(buf_handle);
+            CloseHandle(fence_handle);
             DestroyWindow(hwnd);
             return ftd::test::finalize();
         }
         ftd::test::check("session reports interop enabled before reload",
                          session.interop_enabled());
 
-        // Any of NativeEngineSession's reload entry points (apply_options()
-        // -- the 'R' key's equivalent --, load_scenario(), set_lattice_size(),
-        // reset_current()) run boot() start to finish and must clear
-        // interop_enabled_. Exercise load_scenario() here: it changes
-        // nothing about the D3D12 side (no new buffer/fence, no
-        // presenter call), isolating the assertion to exactly the
-        // regression -- does boot() clear interop_enabled_ even when the
-        // shared buffer/fence handles themselves are still perfectly valid.
-        session.load_scenario("s0-seed-ee-annihilation");
-        ftd::test::check(
-            "reload clears interop_enabled_ (this is the fix for the "
-            "'stale interop_enabled_ after reload' finding -- no re-import "
-            "path exists yet, so staying disabled post-reload is the "
-            "correct/expected behavior here, not a bug)",
-            !session.interop_enabled());
+        session.tick();
+        const int count_before = gather_and_wait(session, 1);
+        ftd::test::check("interop gather works before any reload",
+                         count_before >= 0,
+                         ("count_before=" + std::to_string(count_before)).c_str());
 
-        // The disabled state must also make the public polling/request API
-        // fail closed instead of reaching back into the torn-down GpuEngine
-        // import -- same -1/no-op contract poll_interop_particle_count()
-        // documents for "interop never enabled" (test_engine_session.cpp
-        // covers that contract on the CPU-backend-refusal path).
-        ftd::test::check("poll_interop_particle_count reports not-ready (-1) after reload",
-                         session.poll_interop_particle_count() == -1);
-        session.request_interop_gather(1);  // must be a harmless no-op, not a crash
-        ftd::test::check("poll after a post-reload no-op gather request still reports -1",
-                         session.poll_interop_particle_count() == -1);
+        // Two reload cycles via two different NativeEngineSession reload
+        // entry points -- apply_options() (the 'R'-key/Reset-button
+        // equivalent) then load_scenario() (the Load-scenario-button
+        // equivalent) -- both of which funnel through boot() exactly like
+        // set_lattice_size()/reset_current() do.
+        for (int reload_i = 0; reload_i < 2; ++reload_i) {
+            const std::string label = std::to_string(reload_i + 1);
+            if (reload_i == 0) {
+                session.apply_options(session.options());
+            } else {
+                session.load_scenario("s0-seed-ee-annihilation");
+            }
+
+            // boot() (invoked by every reload entry point) always clears
+            // interop_enabled_ -- it tears down bridge_/GpuEngine and
+            // constructs a fresh one, and nothing has imported into that
+            // fresh GpuEngine yet. This half of the regression coverage is
+            // unchanged from before Task 12: reload must still start from a
+            // clean slate, never carry a stale interop_enabled_ == true
+            // forward against a GpuEngine nothing has imported into.
+            ftd::test::check(
+                ("boot() clears interop_enabled_ immediately after reload #" + label)
+                    .c_str(),
+                !session.interop_enabled());
+            ftd::test::check(
+                ("poll_interop_particle_count reports not-ready (-1) immediately "
+                 "after reload #" + label + ", before re-import")
+                    .c_str(),
+                session.poll_interop_particle_count() == -1);
+
+            // This is the Task 12 fix under test: the caller re-supplies the
+            // SAME still-open D3D12 buffer/fence NT handles to
+            // try_enable_interop(), importing them into the freshly
+            // constructed GpuEngine boot() just built. Before Task 12,
+            // nothing in main.cpp ever did this -- interop stayed disabled
+            // forever after the first reload. This call is exactly what
+            // main.cpp's do_reload branch now performs.
+            const bool reimported =
+                session.try_enable_interop(buf_handle, buffer_bytes, fence_handle);
+            ftd::test::check(
+                ("try_enable_interop() re-establishes interop after reload #" + label)
+                    .c_str(),
+                reimported);
+            ftd::test::check(
+                ("session reports interop enabled after reload #" + label).c_str(),
+                session.interop_enabled());
+
+            session.tick();
+            const int count_after =
+                gather_and_wait(session, static_cast<std::uint64_t>(reload_i) + 2);
+            ftd::test::check(
+                ("interop gather works again after reload #" + label).c_str(),
+                count_after >= 0,
+                ("count_after=" + std::to_string(count_after)).c_str());
+        }
+
+        CloseHandle(buf_handle);
+        CloseHandle(fence_handle);
+        buf_handle = nullptr;
+        fence_handle = nullptr;
     } catch (const std::exception& ex) {
         std::printf("[interop-reload-reset] SKIP: D3D12 setup failed: %s\n", ex.what());
         ftd::test::check("interop reload reset skipped, no live D3D12 device", true, "");

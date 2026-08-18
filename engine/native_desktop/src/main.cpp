@@ -746,18 +746,42 @@ int main(int argc, char** argv) {
         // OS threads touching the same variable, not because of any
         // ongoing cross-thread read here.
         std::atomic<bool> interop_active{false};
+        // Interop Task 12: kept open for the whole process lifetime (NOT
+        // CloseHandle'd right after the startup import below) so every later
+        // reload can re-import the SAME underlying D3D12 buffer/fence into
+        // the freshly constructed GpuEngine boot() produces -- see the
+        // do_reload branch inside the sim lambda below.
+        // D3D12Presenter/`presenter` -- and with it these shared resources
+        // and their SRV binding (bind_interop_particle_srv(), called once
+        // below) -- is never destroyed or recreated across a reload; only
+        // NativeEngineSession's internal bridge_/GpuEngine is. Reusing the
+        // same NT handles across multiple
+        // sequential imports is within contract: neither
+        // import_d3d12_particle_buffer() nor import_d3d12_fence() takes
+        // ownership of the handle it's given (see gpu_engine.h), so nothing
+        // about closing them "once done" was ever load-bearing beyond
+        // freeing the handle slot -- and since the old GpuEngine each
+        // reload replaces is fully destroyed first (boot() resets bridge_
+        // before reconstructing it), each re-import targets a completely
+        // fresh CUDA-side external-memory/-semaphore object with no
+        // dangling state from the previous one to worry about. Closed once,
+        // together, near the very end of main() after the sim thread has
+        // been joined.
+        HANDLE interop_buf_handle = nullptr;
+        HANDLE interop_fence_handle = nullptr;
+        std::uint64_t interop_buffer_bytes = 0;
         if (!options.force_cpu) {
-            HANDLE buf_handle =
+            interop_buf_handle =
                 presenter.create_shared_particle_buffer(ftd::kMaxVisualParticleCapture);
-            HANDLE fence_handle = buf_handle ? presenter.create_shared_fence() : nullptr;
-            if (buf_handle && fence_handle) {
+            interop_fence_handle =
+                interop_buf_handle ? presenter.create_shared_fence() : nullptr;
+            if (interop_buf_handle && interop_fence_handle) {
+                interop_buffer_bytes = presenter.shared_particle_buffer_bytes();
                 const bool enabled = session.try_enable_interop(
-                    buf_handle, presenter.shared_particle_buffer_bytes(), fence_handle);
+                    interop_buf_handle, interop_buffer_bytes, interop_fence_handle);
                 interop_active.store(enabled);
                 if (enabled) presenter.bind_interop_particle_srv();
             }
-            if (buf_handle) CloseHandle(buf_handle);
-            if (fence_handle) CloseHandle(fence_handle);
             std::cout << "interop: "
                       << (interop_active.load() ? "enabled" : "unavailable, using CPU path")
                       << "\n" << std::flush;
@@ -788,15 +812,30 @@ int main(int argc, char** argv) {
             // handed to the GUI thread below must never mix one gather's
             // count with another gather's fence value.
             //
-            // Neither counter is reset when interop_active flips true ->
-            // false on a reload (see the do_reload branch below). Harmless
-            // today: boot() never re-enables interop, so interop_active
-            // never flips back to true and these values are simply dead for
-            // the rest of the process once that happens. Whoever implements
-            // re-import after a reload (Interop Task 12) needs to reset both
-            // here first, or a resumed interop session would pair its first
-            // post-reload gather with a stale fence baseline left over from
-            // before the reload.
+            // Interop Task 12: deliberately NEVER reset on a reload, even
+            // though interop_active does flip false then (possibly) true
+            // again across the do_reload branch below. The D3D12-side
+            // shared fence these values are eventually signaled against
+            // (interop_fence_handle, imported via import_d3d12_fence() each
+            // time try_enable_interop() runs) is the SAME ID3D12Fence
+            // object before and after a reload -- D3D12Presenter and the
+            // shared resources it owns are never destroyed/recreated by a
+            // reload, only NativeEngineSession's internal bridge_/GpuEngine
+            // is -- so its completed value keeps whatever it reached before
+            // the reload. Resetting interop_fence_counter to 0 here would
+            // make the first post-reload request_interop_gather() try to
+            // signal a value the fence has already passed:
+            // cudaSignalExternalSemaphoresAsync() documents that failing
+            // outright for a non-monotonic value (see
+            // GpuEngine::interop_signal_fence()'s doc comment in
+            // gpu_engine.h), and even if it didn't, a D3D12
+            // queue->Wait(value) for an already-passed value returns
+            // immediately without actually waiting -- silently defeating
+            // the cross-API synchronization wait_shared_fence() exists to
+            // provide, and reintroducing exactly the "read the buffer
+            // before the gather that fills it has finished" race that
+            // synchronization is there to prevent. So both counters simply
+            // keep counting up across arbitrarily many reloads instead.
             std::uint64_t interop_fence_counter = 0;
             std::uint64_t pending_interop_fence = 0;
             while (running.load()) {
@@ -828,25 +867,56 @@ int main(int argc, char** argv) {
                             const bool was_active = interop_active.load();
                             session.apply_options(reload_opts);
                             // boot() (invoked by apply_options()) always clears
-                            // the session's interop_enabled_ -- interop is never
-                            // re-imported after a reload -- so mirror that back
-                            // into the flag the GUI thread reads, or it keeps
-                            // treating a now-permanently-dead interop path as
-                            // live (stale "interop: enabled" behavior).
-                            interop_active.store(session.interop_enabled());
-                            if (was_active && !session.interop_enabled()) {
-                                // No re-import path exists yet (see Interop
-                                // Task 9 follow-up): this reload permanently
-                                // drops the GPU-interop fast path for the rest
-                                // of the process, silently falling back to the
-                                // CPU particle-capture path. The one-time
-                                // startup "interop: enabled" print above is the
-                                // only other diagnostic for this state, so log
-                                // the transition here too rather than leaving it
-                                // undetectable outside a debugger.
-                                std::cout << "interop: disabled by reload, "
-                                             "falling back to CPU particle path "
-                                             "for the rest of this session\n"
+                            // the session's interop_enabled_ -- it tears down
+                            // bridge_/GpuEngine and constructs a fresh one, and
+                            // nothing has imported into that fresh GpuEngine yet.
+                            // Interop Task 12: re-establish it right here, on
+                            // this thread, before mirroring the result into the
+                            // flag the GUI thread reads. try_enable_interop()
+                            // reaches into bridge_, which only this sim thread
+                            // may touch once it exists (same rule as
+                            // tick()/capture()/apply_options() above) -- so this
+                            // is also the only thread from which the re-import
+                            // can safely happen. interop_buf_handle/
+                            // interop_fence_handle/interop_buffer_bytes are the
+                            // SAME values used for the startup import: set once
+                            // before this sim thread was constructed and never
+                            // written again by any thread afterward (see their
+                            // declaration above), so reading them here needs no
+                            // extra synchronization -- same published-before-
+                            // thread-start pattern `options`/`presenter` already
+                            // rely on elsewhere in this lambda. The presenter-
+                            // side D3D12 resources these handles name (the
+                            // shared buffer, its SRV binding, and the shared
+                            // fence) are untouched by a reload, so nothing on
+                            // the GUI-thread/D3D12-presenter side needs to be
+                            // redone -- only this CUDA-side import.
+                            bool reimported = false;
+                            if (interop_buf_handle && interop_fence_handle) {
+                                reimported = session.try_enable_interop(
+                                    interop_buf_handle, interop_buffer_bytes,
+                                    interop_fence_handle);
+                            }
+                            interop_active.store(reimported);
+                            if (reimported) {
+                                if (!was_active) {
+                                    std::cout << "interop: enabled after reload\n"
+                                              << std::flush;
+                                }
+                            } else if (was_active) {
+                                // Genuinely unexpected at this point (the same
+                                // handles/buffer just worked before this
+                                // reload), but not impossible -- e.g. a
+                                // device-removed/TDR event on the shared
+                                // resources during the reload. Log it the same
+                                // way the pre-Task-12 code logged the
+                                // then-permanent "no re-import path" fallback,
+                                // so the degradation is visible somewhere beyond
+                                // a debugger.
+                                std::cout << "interop: reload could not "
+                                             "re-establish the D3D12/CUDA path, "
+                                             "falling back to the CPU particle "
+                                             "path for this session\n"
                                           << std::flush;
                             }
                         } else if (boundary >= 0) {
@@ -1029,6 +1099,13 @@ int main(int argc, char** argv) {
         running.store(false);
         sim.join();
         presenter.wait_idle();
+        // Closed here, once, now that the sim thread (the only thread that
+        // ever reads these after startup, via try_enable_interop() in the
+        // do_reload branch above) is joined and done touching them -- see
+        // their declaration above for why they were kept open this long
+        // instead of being closed right after the startup import.
+        if (interop_fence_handle) CloseHandle(interop_fence_handle);
+        if (interop_buf_handle) CloseHandle(interop_buf_handle);
         DeleteObject(app.font);
         DeleteObject(app.title_font);
         DeleteObject(app.bg);
