@@ -67,6 +67,19 @@ public:
     const std::string& status() const { return status_; }
     const NativeEngineOptions& options() const { return options_; }
 
+    // Thread affinity (single-writer-then-handoff, not enforced by this
+    // class -- callers must honor it): try_enable_interop() is safe to call
+    // only before the sim thread exists, from whichever thread constructs
+    // this session (the current native_desktop main.cpp calls it from the
+    // main/GUI thread, once, at startup). interop_enabled(),
+    // request_interop_gather(), and poll_interop_particle_count() are safe
+    // to call only from the sim thread thereafter -- same as tick(),
+    // capture(), and apply_options(), which carry this same implicit
+    // contract because they all reach into `bridge_`, and boot() (invoked
+    // by apply_options()) can reset `bridge_` to null mid-reconstruction
+    // with zero locking. A call racing a reload from any other thread is a
+    // null-pointer dereference or a torn read, not a defined error.
+    //
     // Attempts to initialize the D3D12/CUDA interop path: imports the given
     // shared buffer and fence handles into the GPU backend. No-op (returns
     // false) on the CPU backend or if either import fails -- callers must
