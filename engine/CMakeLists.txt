@@ -525,6 +525,15 @@ if(TARGET test_d3d12_adapter_selection)
         LABELS "unit;native_desktop;interactive")
 endif()
 
+# CTest registration for test_cuda_d3d12_adapter_match — same ordering
+# rationale as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+if(TARGET test_cuda_d3d12_adapter_match)
+    add_test(NAME cuda_d3d12_adapter_match COMMAND test_cuda_d3d12_adapter_match)
+    set_tests_properties(cuda_d3d12_adapter_match PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
+endif()
+
 # Auto-link ftd_test_support into every test executable defined below in this
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
 # lives in ftd_test_support. This avoids touching every existing
