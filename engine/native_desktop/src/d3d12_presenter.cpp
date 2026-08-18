@@ -85,6 +85,8 @@ struct CameraConstants {
     float camera_up[3];
     float _pad1;
 };
+static_assert(sizeof(CameraConstants) == 96,
+              "CameraConstants must match kInteropParticleShader's cbuffer Camera layout exactly");
 
 void perspective(float* out, float fov_y, float aspect, float zn, float zf) {
     const float y = 1.0f / std::tan(fov_y * 0.5f);
