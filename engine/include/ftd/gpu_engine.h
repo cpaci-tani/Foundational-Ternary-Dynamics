@@ -122,11 +122,29 @@ public:
 
     // The CUDA device's D3D12-comparable LUID (cudaDeviceProp::luid), used by
     // the native desktop app to confirm CUDA and D3D12 selected the same
-    // physical adapter before attempting shared-memory interop. Returns false
-    // if the current CUDA device doesn't report a LUID (cudaDeviceProp::luid
-    // is only meaningful on Windows with a WDDM driver — always true for the
-    // native_desktop target, which is WIN32-only, but this keeps the contract
-    // honest for any future non-Windows caller of GpuEngine).
+    // physical adapter before attempting shared-memory interop.
+    //
+    // Precondition: must be called from the same OS thread that constructed
+    // this GpuEngine (or otherwise established CUDA context ownership for
+    // it). cudaGetDevice() reads the CALLING THREAD's current-device state —
+    // thread-local CUDA runtime state, not a property of this GpuEngine
+    // instance — so a call from a different thread (e.g. a UI thread when
+    // the engine's context lives on a dedicated sim thread) can silently
+    // report a different device's LUID with no error.
+    //
+    // Returns false for three distinct reasons, left undifferentiated to the
+    // caller (this is a capability probe answering "can I attempt interop?",
+    // not a diagnostic):
+    //   1. cudaGetDevice() failed — a genuine CUDA runtime error.
+    //   2. cudaGetDeviceProperties() failed for the reported device — a
+    //      genuine CUDA runtime error.
+    //   3. The device's luidDeviceNodeMask reads 0, checked as a heuristic
+    //      signal that the LUID is unpopulated (non-WDDM). CUDA's own docs
+    //      only say luid/luidDeviceNodeMask's value is "undefined on TCC and
+    //      non-Windows platforms" — not that it is guaranteed zero there.
+    //      Zero is the no-LUID signal observed in practice on this project's
+    //      WIN32-only, WDDM-mode-consumer-GPU native_desktop target, not a
+    //      documented CUDA invalidity guarantee.
     bool device_luid(char out_luid[8]) const;
 
     int total_sites() const { return N_; }
