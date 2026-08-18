@@ -357,13 +357,34 @@ int GpuEngine::device_tick() const {
     return value;
 }
 
+// Unlike almost every other call in this file, this function soft-fails
+// (returns false) instead of going through CUDA_CHECK and throwing. That is
+// deliberate, not an oversight: this is a capability probe callers use to
+// decide WHETHER to attempt D3D12/CUDA interop, not a hot-path tick
+// operation where a hard failure should abort — throwing here would make it
+// unusable as a "can I do this?" check. Both CUDA-call failure branches
+// below call cudaGetLastError() to consume the runtime's per-thread sticky
+// last-error state before returning; without that, a later, unrelated
+// CUDA_CHECK(cudaGetLastError()) elsewhere in the tick path could pick up
+// and misattribute an error this function already handled.
 bool GpuEngine::device_luid(char out_luid[8]) const {
     int device = 0;
-    if (cudaGetDevice(&device) != cudaSuccess) return false;
+    if (cudaGetDevice(&device) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; this is a soft failure
+        return false;
+    }
     cudaDeviceProp prop{};
-    if (cudaGetDeviceProperties(&prop, device) != cudaSuccess) return false;
-    if (!prop.luidDeviceNodeMask) return false;  // 0 means no valid LUID (non-WDDM)
-    std::memcpy(out_luid, prop.luid, 8);
+    if (cudaGetDeviceProperties(&prop, device) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; this is a soft failure
+        return false;
+    }
+    // Checked as a heuristic signal that the LUID is unpopulated (non-WDDM).
+    // CUDA's own docs only say this field's value is undefined on
+    // TCC/non-Windows platforms, not that it's guaranteed zero there — this
+    // project's native_desktop target is WIN32-only with WDDM-mode consumer
+    // GPUs, where zero is the observed no-LUID signal in practice.
+    if (!prop.luidDeviceNodeMask) return false;
+    std::memcpy(out_luid, prop.luid, sizeof(prop.luid));
     return true;
 }
 

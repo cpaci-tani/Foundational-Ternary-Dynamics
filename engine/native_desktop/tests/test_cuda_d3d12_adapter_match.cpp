@@ -15,6 +15,8 @@ int main() {
         &d3d12_luid, &is_hardware);
     ftd::test::check("D3D12 hardware adapter found", found && is_hardware);
 
+    // L=9: an arbitrary small odd lattice, just big enough to construct a
+    // live GPU backend (mirrors L_PARITY in test_gauge_gpu_parity.cpp).
     ftd::RenderBridge rb(9);
     rb.set_interactive_gpu_mode(true);
     if (rb.backend_kind() != ftd::Backend::Kind::Gpu) {
@@ -33,8 +35,9 @@ int main() {
     if (!has_luid) return ftd::test::finalize();
 
     // LUID is a { DWORD LowPart; LONG HighPart; } pair; cudaDeviceProp::luid
-    // stores the same 8 bytes little-endian. Byte-compare directly.
-    const bool matches = std::memcmp(&d3d12_luid, cuda_luid, 8) == 0;
+    // stores the same 8 bytes in the same layout. A plain byte-for-byte
+    // memcmp is endian-agnostic by construction — compare directly.
+    const bool matches = std::memcmp(&d3d12_luid, cuda_luid, sizeof(cuda_luid)) == 0;
     ftd::test::check("D3D12's selected hardware adapter matches CUDA's device",
                       matches,
                       "CUDA and D3D12 picked different physical GPUs -- interop "
