@@ -642,6 +642,14 @@ bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte
         cudaGetLastError();  // clear sticky error; see function-level comment
         cudaDestroyExternalMemory(bufs_.interop_external_memory);
         bufs_.interop_external_memory = nullptr;
+        // cudaExternalMemoryGetMappedBuffer() is this call's own out-param
+        // target; the CUDA Runtime API does not document that it leaves the
+        // pointer untouched on failure, so null it explicitly rather than
+        // relying on driver behavior. Otherwise a caller that bypasses
+        // NativeEngineSession's interop_enabled_ gate (e.g. a direct
+        // GpuEngine test caller) could observe a non-null, potentially
+        // driver-written-garbage bufs_.d_interop_particle_buffer here.
+        bufs_.d_interop_particle_buffer = nullptr;
         return false;
     }
     // Record how many InteropParticleRecord slots the mapped view actually
