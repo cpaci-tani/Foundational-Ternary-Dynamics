@@ -17,6 +17,7 @@
 #include "ftd/visual_snapshot.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include <vector>
+#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <unordered_map>
@@ -119,6 +120,163 @@ public:
     // Device mirror of current_tick(). Blocking 4-byte D2H — diagnostics and
     // tests only, never the tick path.
     int device_tick() const;
+
+    // The CUDA device's D3D12-comparable LUID (cudaDeviceProp::luid), used by
+    // the native desktop app to confirm CUDA and D3D12 selected the same
+    // physical adapter before attempting shared-memory interop.
+    //
+    // Precondition: must be called from the same OS thread that constructed
+    // this GpuEngine (or otherwise established CUDA context ownership for
+    // it). cudaGetDevice() reads the CALLING THREAD's current-device state —
+    // thread-local CUDA runtime state, not a property of this GpuEngine
+    // instance — so a call from a different thread (e.g. a UI thread when
+    // the engine's context lives on a dedicated sim thread) can silently
+    // report a different device's LUID with no error.
+    //
+    // Returns false for three distinct reasons, left undifferentiated to the
+    // caller (this is a capability probe answering "can I attempt interop?",
+    // not a diagnostic):
+    //   1. cudaGetDevice() failed — a genuine CUDA runtime error.
+    //   2. cudaGetDeviceProperties() failed for the reported device — a
+    //      genuine CUDA runtime error.
+    //   3. The device's luidDeviceNodeMask reads 0, checked as a heuristic
+    //      signal that the LUID is unpopulated (non-WDDM). CUDA's own docs
+    //      only say luid/luidDeviceNodeMask's value is "undefined on TCC and
+    //      non-Windows platforms" — not that it is guaranteed zero there.
+    //      Zero is the no-LUID signal observed in practice on this project's
+    //      WIN32-only, WDDM-mode-consumer-GPU native_desktop target, not a
+    //      documented CUDA invalidity guarantee.
+    bool device_luid(char out_luid[8]) const;
+
+    // Imports a D3D12_HEAP_FLAG_SHARED resource (via its NT handle, as
+    // returned by ID3D12Device::CreateSharedHandle) as CUDA external memory,
+    // and maps it as a flat device buffer of `byte_count` bytes. The handle
+    // is NOT closed by this call -- ownership semantics for
+    // cudaExternalMemoryHandleDesc::handle.win32.handle say the OS handle
+    // must stay valid until AFTER cudaImportExternalMemory returns, but CUDA
+    // does not take ownership of it. This function does not require the
+    // caller to close the handle at any particular time either: native_
+    // desktop's main.cpp deliberately keeps interop_buf_handle open for the
+    // whole process lifetime (Interop Task 12, commit 93d03a3c) so every
+    // later reload can re-import the same underlying D3D12 buffer into the
+    // freshly constructed GpuEngine boot() produces, closing it only once,
+    // near process exit, well after any number of import calls.
+    //
+    // Returns false on either of two distinct failure sources, left
+    // undifferentiated to the caller (same probe-style contract as
+    // device_luid() above): cudaImportExternalMemory() rejecting the handle
+    // itself, or cudaExternalMemoryGetMappedBuffer() failing to map the
+    // imported object as a flat buffer.
+    //
+    // Safe to call more than once (e.g. to re-import after a D3D12-side
+    // resize) -- matches D3D12Presenter::create_shared_particle_buffer()'s
+    // own "safe to call more than once" contract: any previously-imported
+    // external memory object is torn down before the new import, so a
+    // second call never leaks the first import's driver-level reference.
+    // Every (re-)import attempt also resets the interop gather-readiness
+    // state (see interop_gather_ready()/interop_particle_count() below), so
+    // polling those immediately after a fresh import but before the next
+    // interop_gather_particles() call correctly reports "not ready" / 0
+    // instead of the previous buffer's stale state.
+    //
+    // On success, byte_count / sizeof(InteropParticleRecord) is recorded as
+    // this buffer's element capacity: interop_gather_particles() below can
+    // never write more particles than that, no matter what max_particles it
+    // is asked for. byte_count must be the D3D12-side resource's EXACT size
+    // (as D3D12Presenter::create_shared_particle_buffer() constructs it,
+    // max_particles * sizeof(InteropParticleRecord)) for that bound to be
+    // meaningful -- passing a byte_count larger than the resource actually
+    // is defeats the clamp and reintroduces the out-of-bounds write it
+    // exists to prevent.
+    //
+    // Precondition: like device_luid(), must be called from the same OS
+    // thread that owns this GpuEngine's CUDA context -- the underlying CUDA
+    // calls operate against the calling thread's current CUDA context, not
+    // a property of this GpuEngine instance.
+    bool import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count);
+
+    // Imports a D3D12_FENCE_FLAG_SHARED fence (via its NT handle) as a CUDA
+    // external semaphore. Same handle-lifetime contract as
+    // import_d3d12_particle_buffer(): this function does not take ownership
+    // of the handle and does not require the caller to close it at any
+    // particular time -- native_desktop's main.cpp deliberately keeps
+    // interop_fence_handle open for the whole process lifetime (Interop
+    // Task 12, commit 93d03a3c) to support re-import across reloads,
+    // closing it only once near process exit.
+    //
+    // Precondition: like import_d3d12_particle_buffer(), must be called from
+    // the same OS thread that owns this GpuEngine's CUDA context --
+    // cudaImportExternalSemaphore operates against the calling thread's
+    // current CUDA context, not a property of this GpuEngine instance.
+    bool import_d3d12_fence(void* nt_handle);
+    // Signals the imported fence to `value` on the engine stream. When
+    // invoked internally by interop_gather_particles() (the expected use),
+    // this is ordered after that call's gather kernel launch -- D3D12's
+    // wait_shared_fence(value) will unblock once this retires on the GPU
+    // timeline (no CPU synchronization involved on either side). This method
+    // is public and may also be called directly; a direct external call
+    // carries no such ordering guarantee against any particular gather -- it
+    // is simply issued on the engine stream at the point of the call.
+    //
+    // Precondition: like import_d3d12_fence(), must be called from the same
+    // OS thread that owns this GpuEngine's CUDA context --
+    // cudaSignalExternalSemaphoresAsync operates against the calling
+    // thread's current CUDA context, not a property of this GpuEngine
+    // instance.
+    bool interop_signal_fence(std::uint64_t value);
+
+    // Runs the interop particle gather (writes directly into the imported
+    // D3D12 buffer set up by import_d3d12_particle_buffer) and records
+    // bufs_.interop_gather_ready. Call after tick(). No-op (returns false)
+    // if import_d3d12_particle_buffer() hasn't succeeded yet.
+    //
+    // max_particles is clamped to the imported buffer's actual element
+    // capacity (set by import_d3d12_particle_buffer() from the byte_count it
+    // was given) in addition to the unrelated kMaxVisualParticleCapture
+    // constant that bounds the separate CPU-decode capture path -- passing 0
+    // or a value larger than the imported buffer can hold never writes past
+    // the end of the mapped external-memory view; it silently gathers fewer
+    // particles instead.
+    //
+    // fence_value is passed straight to interop_signal_fence() after the
+    // gather kernel launches (a no-op if no fence has been imported via
+    // import_d3d12_fence() -- interop_signal_fence() itself no-ops when
+    // bufs_.interop_fence is null). Callers with no imported fence (e.g.
+    // tests that only exercise the gather path) may pass any value; it is
+    // unused in that case.
+    bool interop_gather_particles(std::uint32_t max_particles,
+                                  std::uint64_t fence_value);
+    // True once the CPU-visible event recorded by interop_gather_particles()
+    // has retired -- i.e. the header's captured_count is safe to read on the
+    // CPU. This does NOT by itself prove the buffer is safe for D3D12 to
+    // read from: the event is recorded on bufs_.stream BEFORE
+    // interop_gather_particles() issues interop_signal_fence()'s
+    // cudaSignalExternalSemaphoresAsync() call, and CUDA only guarantees
+    // same-stream ops retire in issue order -- observing this earlier
+    // event's completion does not prove the later-issued semaphore signal
+    // has also retired. The real GPU-timeline safety guarantee for D3D12
+    // reads is carried entirely by D3D12Presenter::wait_shared_fence() (the
+    // D3D12-side Wait() against the cross-API fence), independent of this
+    // CPU-side poll; this function is a "has the CUDA-side gather finished"
+    // convenience only, not a D3D12-read-safety signal. Also false before
+    // the first interop_gather_particles() call ever succeeds, and false
+    // again immediately after any import_d3d12_particle_buffer() call until
+    // the next gather completes.
+    bool interop_gather_ready() const;
+    // Returns 0 (never reads possibly-uninitialized or in-flight host
+    // memory) unless interop_gather_ready() is true for the CURRENT gather;
+    // internally re-checks interop_gather_ready() itself rather than trusting
+    // the caller to have checked it first.
+    std::uint32_t interop_particle_count() const;
+
+    // TEST-ONLY. Synchronously downloads `count` records from the imported
+    // interop buffer. Production code never calls this -- avoiding exactly
+    // this download is the point of the interop path (Task 6). Used only by
+    // test_interop_visual_parity to verify the interop kernel's output
+    // against the pre-interop CPU reference path byte-for-byte.
+    void debug_read_interop_records(std::vector<InteropParticleRecord>& out,
+                                    std::uint32_t count) const;
+
     int total_sites() const { return N_; }
     double dt() const { return dt_; }
     void set_dt(double dt);
@@ -336,6 +494,34 @@ private:
     VisualSnapshotRequest visual_snapshot_request_{};
     std::uint64_t visual_snapshot_state_version_ = 0;
     int visual_snapshot_tick_ = 0;
+
+    // True once interop_gather_particles() has launched at least one gather
+    // against the CURRENTLY-imported D3D12 buffer. Unlike
+    // visual_snapshot_pending_ (a one-shot request/consume flag cleared by
+    // poll_visual_snapshot()), this stays true across repeated
+    // interop_gather_ready()/interop_particle_count() polls once a gather has
+    // run -- the interop caller (a render loop) is expected to poll
+    // repeatedly between gathers, not consume once. Gates
+    // interop_gather_ready(): cudaEventQuery() on an event that has never had
+    // cudaEventRecord() called on it reports cudaSuccess (nothing to wait
+    // for), so without this flag readiness would read true before the first
+    // gather ever launched. Reset to false by import_d3d12_particle_buffer()
+    // on every (re-)import attempt, so it can never describe a gather that
+    // ran against a since-replaced buffer.
+    //
+    // std::atomic: written by interop_gather_particles() (called from the
+    // sim thread via NativeEngineSession::request_interop_gather()) and read
+    // by interop_gather_ready() (called from the same thread today, but this
+    // flag is the one piece of GpuEngine state a future caller could
+    // plausibly poll from a different thread than the one driving tick()/
+    // interop_gather_particles() -- a plain bool here is a formal data race
+    // the moment that happens). Relaxed ordering is sufficient: the real
+    // happens-before relationship between a gather's writes and a caller
+    // observing them ready is already carried by the CUDA event
+    // (bufs_.interop_gather_ready, queried in interop_gather_ready() below)
+    // and, cross-API, by the D3D12 shared fence -- this flag only gates
+    // "has any gather ever launched", not the gather's own completion.
+    std::atomic<bool> interop_gather_launched_{false};
 
     // Helper: ensure host shadow is up-to-date
     void ensure_host_synced();

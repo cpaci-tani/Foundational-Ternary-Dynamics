@@ -508,6 +508,110 @@ if(TARGET ftd_native_session)
     target_link_libraries(test_native_desktop_session PRIVATE ftd_native_session)
     target_include_directories(test_native_desktop_session PRIVATE
         ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    # Interop Task 12 spec-compliance follow-up: reimport_interop_after_reload()
+    # (engine_session.h) is the exact free function main.cpp's do_reload branch
+    # calls to re-establish D3D12/CUDA interop after every reload -- see that
+    # function's doc comment and this test's own header comment for why,
+    # unlike every other interop-labeled test in native_desktop/tests/, it
+    # needs neither FTD_ENABLE_CUDA nor a live D3D12 adapter/display and so
+    # always runs (a CPU-backend NativeEngineSession is enough: on that
+    # backend try_enable_interop() returns false before touching either
+    # handle argument, so this test can drive the full guard/logging control-
+    # flow deterministically with fake handles).
+    ftd_add_test(test_interop_reload_orchestration
+                 native_desktop/tests/test_interop_reload_orchestration.cpp
+                 LABELS unit native_desktop interop)
+    target_link_libraries(test_interop_reload_orchestration PRIVATE ftd_native_session)
+    target_include_directories(test_interop_reload_orchestration PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+endif()
+
+# CTest registration for test_d3d12_adapter_selection (the executable target
+# itself is defined in native_desktop/CMakeLists.txt, built above via
+# add_subdirectory(native_desktop)). Registration happens here, not in
+# native_desktop/CMakeLists.txt, because add_subdirectory(native_desktop) is
+# called before enable_testing() runs later in this file; a subdirectory
+# processed before enable_testing() never gets a CTestTestfile.cmake
+# generated for it, so add_test() calls placed there are silently dropped by
+# CTest. The target is already fully defined by this point, so referencing
+# it here by name is a normal (not forward) reference.
+if(TARGET test_d3d12_adapter_selection)
+    add_test(NAME d3d12_adapter_selection COMMAND test_d3d12_adapter_selection)
+    set_tests_properties(d3d12_adapter_selection PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
+# CTest registration for test_d3d12_shared_buffer — same ordering rationale
+# as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt). "interactive" because it calls
+# D3D12Presenter::initialize(), which creates a real device + swapchain
+# against a hidden window and so needs a live desktop session, same as the
+# adapter-selection test above.
+if(TARGET test_d3d12_shared_buffer)
+    add_test(NAME d3d12_shared_buffer COMMAND test_d3d12_shared_buffer)
+    set_tests_properties(d3d12_shared_buffer PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
+# CTest registration for test_cuda_d3d12_adapter_match — same ordering
+# rationale as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+if(TARGET test_cuda_d3d12_adapter_match)
+    add_test(NAME cuda_d3d12_adapter_match COMMAND test_cuda_d3d12_adapter_match)
+    set_tests_properties(cuda_d3d12_adapter_match PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
+endif()
+
+# CTest registration for test_cuda_import_shared_buffer — same ordering
+# rationale as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+if(TARGET test_cuda_import_shared_buffer)
+    add_test(NAME cuda_import_shared_buffer COMMAND test_cuda_import_shared_buffer)
+    set_tests_properties(cuda_import_shared_buffer PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
+endif()
+
+# CTest registration for test_interop_gather — same ordering rationale as
+# test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+if(TARGET test_interop_gather)
+    add_test(NAME interop_gather COMMAND test_interop_gather)
+    set_tests_properties(interop_gather PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
+endif()
+
+# CTest registration for test_interop_fence_roundtrip — same ordering
+# rationale as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+# TIMEOUT 30: per the test's own comment, a broken D3D12 Wait() call hangs
+# (the GPU queue parks forever waiting on a fence value that never arrives)
+# rather than failing outright, so this needs a hard ceiling instead of
+# running forever.
+if(TARGET test_interop_fence_roundtrip)
+    add_test(NAME interop_fence_roundtrip COMMAND test_interop_fence_roundtrip)
+    set_tests_properties(interop_fence_roundtrip PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive"
+        TIMEOUT 30)
+endif()
+
+# CTest registration for test_interop_reload_reset — same ordering rationale
+# as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+if(TARGET test_interop_reload_reset)
+    add_test(NAME interop_reload_reset COMMAND test_interop_reload_reset)
+    set_tests_properties(interop_reload_reset PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
+endif()
+
+# CTest registration for test_interop_visual_parity (Interop Task 10) — same
+# ordering rationale as test_d3d12_adapter_selection above (executable
+# defined in native_desktop/CMakeLists.txt, only present when
+# FTD_ENABLE_CUDA is ON).
+if(TARGET test_interop_visual_parity)
+    add_test(NAME interop_visual_parity COMMAND test_interop_visual_parity)
+    set_tests_properties(interop_visual_parity PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
 endif()
 
 # Auto-link ftd_test_support into every test executable defined below in this
@@ -545,6 +649,13 @@ ftd_add_test(test_field_soa tests/test_field_soa.cpp
 # conscious decision and the Phase-4.1 side-buffer extraction has a baseline.
 ftd_add_test(test_voxel_layout tests/test_voxel_layout.cpp
              CTEST_NAME voxel_layout TIMEOUT 60 LABELS unit foundation)
+# Interop particle record layout guard (D3D12/CUDA interop plan, Task 3):
+# pins the byte layout of ftd::InteropParticleRecord / InteropParticleHeader,
+# the shared POD the (future) CUDA gather kernel writes and the D3D12 vertex
+# shader reads via a StructuredBuffer. Header-only value type -- no ftd_core
+# link needed (same rationale as test_scale_ratio's NO_CORE above).
+ftd_add_test(test_interop_particle_record_layout tests/test_interop_particle_record_layout.cpp
+             NO_CORE CTEST_NAME interop_particle_record_layout TIMEOUT 60 LABELS unit foundation)
 if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
 target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)

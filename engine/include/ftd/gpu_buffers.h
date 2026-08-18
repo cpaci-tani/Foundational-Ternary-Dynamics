@@ -9,6 +9,7 @@
 
 #include "voxel.h"
 #include "ftd/visual_snapshot.h"
+#include "ftd/interop_particle_record.h"
 #include <cstddef>   // std::size_t
 #include <cstdint>   // uint8_t etc. — Linux/clang require explicit include
 #include <vector>
@@ -254,7 +255,38 @@ struct GpuBuffers {
     // (and its implicit stream wait); recovery replaces the context.
     bool visual_capture_quarantined = false;
 
-
+    // Native-desktop D3D12 interop (Component B). Imported from a shared
+    // D3D12_HEAP_FLAG_SHARED resource via cudaImportExternalMemory --
+    // d_interop_particle_buffer is a *mapped view* into that resource, not a
+    // cudaMalloc allocation, so free() must NOT cudaFree() it -- only
+    // destroy the mapping and the external memory object.
+    void* d_interop_particle_buffer = nullptr;
+    cudaExternalMemory_t interop_external_memory = nullptr;
+    InteropParticleHeader* d_interop_header = nullptr;         // owned, cudaMalloc'd
+    InteropParticleHeader* h_interop_header = nullptr;         // owned, pinned
+    cudaEvent_t interop_gather_ready = nullptr;                // owned
+    // Element capacity of the currently-imported D3D12 buffer, i.e.
+    // byte_count / sizeof(InteropParticleRecord) as computed by
+    // GpuEngine::import_d3d12_particle_buffer() from the SAME byte_count the
+    // D3D12 side sized the resource to (D3D12Presenter::
+    // create_shared_particle_buffer() allocates exactly
+    // max_particles * sizeof(InteropParticleRecord) bytes). 0 whenever no
+    // buffer is imported (initial state, or between a torn-down import and a
+    // new one). launch_interop_particle_gather() MUST clamp its write cap to
+    // this value in addition to kMaxVisualParticleCapture -- this is the only
+    // record of how many InteropParticleRecord slots the mapped external
+    // memory view actually has room for; the D3D12-side buffer is created
+    // with an exact, non-padded size, so writing past this many records is an
+    // out-of-bounds GPU write into memory shared with D3D12.
+    std::uint32_t interop_particle_capacity = 0;
+    // Cross-API GPU-timeline fence (Component B, Task 7). Imported from a
+    // D3D12_FENCE_FLAG_SHARED fence via cudaImportExternalSemaphore --
+    // GpuEngine::interop_signal_fence() signals it (on bufs_.stream) after
+    // the gather kernel so D3D12's command queue can Wait() on it before
+    // issuing the draw that reads d_interop_particle_buffer. Null whenever
+    // no fence is imported (initial state, or between a torn-down import
+    // and a new one).
+    cudaExternalSemaphore_t interop_fence = nullptr;  // imported D3D12 shared fence
 
     // --- Particle list (compact indices of manifested particles) ---
     // Scales with lattice: enough for ~1.5% occupation at any size
