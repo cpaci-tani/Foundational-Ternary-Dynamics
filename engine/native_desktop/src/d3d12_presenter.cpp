@@ -291,6 +291,15 @@ struct D3D12Presenter::Impl {
     ComPtr<ID3D12Fence> shared_fence;
     HANDLE fence_event = nullptr;
     UINT64 fence_value = 0;
+    // Per-frame-slot fence values for real double buffering (Task 11): the
+    // fence value that was signalled after the most recent submission that
+    // used `vb`/`cb` for slot i (index by impl_->frame, mirroring
+    // targets[kFrameCount]/allocators[kFrameCount]). 0 means "this slot has
+    // never been submitted" -- skip the wait. render() waits on
+    // frame_fence_values[frame] at its top, before Map()-writing vb/cb for
+    // that slot, instead of the old per-frame wait_idle() full-pipeline
+    // stall.
+    UINT64 frame_fence_values[kFrameCount] = {};
     UINT frame = 0;
     UINT rtv_size = 0;
     std::size_t vb_capacity = 0;
@@ -720,6 +729,18 @@ void D3D12Presenter::wait_shared_fence(std::uint64_t value) {
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
                             const NativeViewOptions& opts,
                             std::uint32_t interop_particle_count) {
+    // Wait for THIS frame slot's own last submission (kFrameCount frames
+    // ago) to finish being read by the GPU before this call's Map()s below
+    // overwrite vb/cb for it. Skipped on a slot's first-ever use (fence
+    // value 0 means "never submitted").
+    const UINT64 needed = impl_->frame_fence_values[impl_->frame];
+    if (needed != 0 && impl_->fence->GetCompletedValue() < needed) {
+        throw_if_failed(
+            impl_->fence->SetEventOnCompletion(needed, impl_->fence_event),
+            "SetEventOnCompletion");
+        WaitForSingleObject(impl_->fence_event, INFINITE);
+    }
+
     const float aspect = static_cast<float>(width_) / static_cast<float>(height_);
     const float cy = std::cos(camera.pitch);
     const float eye_x = camera.target_x + camera.distance * cy * std::sin(camera.yaw);
@@ -906,7 +927,11 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     ID3D12CommandList* lists[] = {impl_->list.Get()};
     impl_->queue->ExecuteCommandLists(1, lists);
     throw_if_failed(impl_->swapchain->Present(1, 0), "Present");
-    wait_idle();
+
+    ++impl_->fence_value;
+    throw_if_failed(impl_->queue->Signal(impl_->fence.Get(), impl_->fence_value),
+                    "Signal");
+    impl_->frame_fence_values[impl_->frame] = impl_->fence_value;
     impl_->frame = impl_->swapchain->GetCurrentBackBufferIndex();
 }
 
