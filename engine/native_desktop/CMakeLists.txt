@@ -59,6 +59,29 @@ if(WIN32)
     # silently dropped (verified: engine/build/native_desktop/ has no
     # CTestTestfile.cmake even after a full configure).
 
+    # Task 4: D3D12_HEAP_FLAG_SHARED particle buffer + NT handle export.
+    # D3D12-only (no CUDA import on this side), so unlike
+    # test_cuda_d3d12_adapter_match below it does not need to be gated by
+    # FTD_ENABLE_CUDA -- it lives in this same unconditional if(WIN32) block
+    # as test_d3d12_adapter_selection above. Same
+    # cross-directory-ftd_test_support-ordering hazard as that test, so
+    # test_telemetry.cpp is compiled directly into this binary too.
+    add_executable(test_d3d12_shared_buffer
+        tests/test_d3d12_shared_buffer.cpp
+        src/d3d12_presenter.cpp
+        ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+    )
+    target_include_directories(test_d3d12_shared_buffer PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
+    target_link_libraries(test_d3d12_shared_buffer PRIVATE
+        ftd_native_session
+        ftd_core
+        d3d12
+        dxgi
+        d3dcompiler
+    )
+
     if(FTD_ENABLE_CUDA)
         # Cross-checks the D3D12 hardware adapter (Task 1,
         # select_hardware_adapter()) against the CUDA device's LUID

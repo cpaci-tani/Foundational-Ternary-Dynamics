@@ -525,6 +525,18 @@ if(TARGET test_d3d12_adapter_selection)
         LABELS "unit;native_desktop;interactive")
 endif()
 
+# CTest registration for test_d3d12_shared_buffer — same ordering rationale
+# as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt). "interactive" because it calls
+# D3D12Presenter::initialize(), which creates a real device + swapchain
+# against a hidden window and so needs a live desktop session, same as the
+# adapter-selection test above.
+if(TARGET test_d3d12_shared_buffer)
+    add_test(NAME d3d12_shared_buffer COMMAND test_d3d12_shared_buffer)
+    set_tests_properties(d3d12_shared_buffer PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
 # CTest registration for test_cuda_d3d12_adapter_match — same ordering
 # rationale as test_d3d12_adapter_selection above (executable defined in
 # native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).

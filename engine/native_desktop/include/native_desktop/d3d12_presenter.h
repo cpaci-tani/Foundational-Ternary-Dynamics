@@ -54,6 +54,19 @@ public:
     LUID adapter_luid() const { return adapter_luid_; }
     bool has_adapter_luid() const { return has_adapter_luid_; }
 
+    // Creates a D3D12_HEAP_FLAG_SHARED committed buffer sized for
+    // `max_particles` InteropParticleRecord entries and exports an NT handle
+    // CUDA can import via cudaImportExternalMemory. Must be called after
+    // initialize(). The returned handle is owned by the caller -- close it
+    // with CloseHandle once CUDA has imported it (cudaImportExternalMemory
+    // takes ownership semantics that make the D3D12-side handle disposable
+    // immediately after the import call returns, per the CUDA Runtime API
+    // docs for cudaExternalMemoryHandleDesc). Returns nullptr on failure.
+    HANDLE create_shared_particle_buffer(std::uint32_t max_particles);
+    std::uint64_t shared_particle_buffer_bytes() const {
+        return shared_particle_buffer_bytes_;
+    }
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
@@ -61,6 +74,7 @@ private:
     std::uint32_t height_ = 0;
     LUID adapter_luid_{};
     bool has_adapter_luid_ = false;
+    std::uint64_t shared_particle_buffer_bytes_ = 0;
 };
 
 }  // namespace ftd::native_desktop
