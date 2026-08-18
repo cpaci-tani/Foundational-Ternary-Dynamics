@@ -279,8 +279,15 @@ struct D3D12Presenter::Impl {
     ComPtr<ID3D12PipelineState> pso_interop;
     ComPtr<ID3D12DescriptorHeap> dsv_heap;
     ComPtr<ID3D12Resource> depth;
-    ComPtr<ID3D12Resource> cb;
-    ComPtr<ID3D12Resource> vb;
+    // Task 11 correction: cb/vb must be genuinely per-frame-slot resources
+    // (like targets[]/allocators[] below), not single shared ones -- see the
+    // frame_fence_values comment. A single non-slotted resource here would be
+    // Map()-overwritten by every render() call regardless of impl_->frame,
+    // while the per-slot wait below only guarantees the slot from
+    // kFrameCount renders ago has finished, not the immediately-preceding
+    // render() call -- i.e. it would not actually protect a shared resource.
+    ComPtr<ID3D12Resource> cb[kFrameCount];
+    ComPtr<ID3D12Resource> vb[kFrameCount];
     ComPtr<ID3D12Resource> shared_particle_buffer;
     ComPtr<ID3D12Fence> fence;
     // Distinct from `fence` above (the presenter's own present-sync fence,
@@ -293,17 +300,17 @@ struct D3D12Presenter::Impl {
     UINT64 fence_value = 0;
     // Per-frame-slot fence values for real double buffering (Task 11): the
     // fence value that was signalled after the most recent submission that
-    // used `vb`/`cb` for slot i (index by impl_->frame, mirroring
+    // used `vb[i]`/`cb[i]` for slot i (index by impl_->frame, mirroring
     // targets[kFrameCount]/allocators[kFrameCount]). 0 means "this slot has
     // never been submitted" -- skip the wait. render() waits on
-    // frame_fence_values[frame] at its top, before Map()-writing vb/cb for
-    // that slot, instead of the old per-frame wait_idle() full-pipeline
-    // stall.
+    // frame_fence_values[frame] at its top, before Map()-writing vb[frame]/
+    // cb[frame] for that slot, instead of the old per-frame wait_idle()
+    // full-pipeline stall.
     UINT64 frame_fence_values[kFrameCount] = {};
     UINT frame = 0;
     UINT rtv_size = 0;
-    std::size_t vb_capacity = 0;
-    void* cb_mapped = nullptr;
+    std::size_t vb_capacity[kFrameCount] = {};
+    void* cb_mapped[kFrameCount] = {};
 };
 
 D3D12Presenter::D3D12Presenter() : impl_(std::make_unique<Impl>()) {}
@@ -531,12 +538,18 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
     cb_desc.MipLevels = 1;
     cb_desc.SampleDesc.Count = 1;
     cb_desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-    throw_if_failed(impl_->device->CreateCommittedResource(
-                        &upload, D3D12_HEAP_FLAG_NONE, &cb_desc,
-                        D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-                        IID_PPV_ARGS(&impl_->cb)),
-                    "CreateCommittedResource cb");
-    throw_if_failed(impl_->cb->Map(0, nullptr, &impl_->cb_mapped), "Map cb");
+    // One constant buffer per frame slot (Task 11 correction): a single
+    // shared cb would be Map()-overwritten every render() call regardless of
+    // which slot's prior GPU submission is still in flight -- see the Impl
+    // struct comment on cb/vb above.
+    for (UINT i = 0; i < kFrameCount; ++i) {
+        throw_if_failed(impl_->device->CreateCommittedResource(
+                            &upload, D3D12_HEAP_FLAG_NONE, &cb_desc,
+                            D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+                            IID_PPV_ARGS(&impl_->cb[i])),
+                        "CreateCommittedResource cb");
+        throw_if_failed(impl_->cb[i]->Map(0, nullptr, &impl_->cb_mapped[i]), "Map cb");
+    }
 
     throw_if_failed(
         impl_->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&impl_->fence)),
@@ -731,8 +744,10 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
                             std::uint32_t interop_particle_count) {
     // Wait for THIS frame slot's own last submission (kFrameCount frames
     // ago) to finish being read by the GPU before this call's Map()s below
-    // overwrite vb/cb for it. Skipped on a slot's first-ever use (fence
-    // value 0 means "never submitted").
+    // overwrite vb[frame]/cb[frame] for it. Skipped on a slot's first-ever
+    // use (fence value 0 means "never submitted"). This is only correct
+    // because vb/cb are themselves per-slot arrays (Task 11 correction) --
+    // a shared, non-slotted vb/cb would not be protected by a per-slot wait.
     const UINT64 needed = impl_->frame_fence_values[impl_->frame];
     if (needed != 0 && impl_->fence->GetCompletedValue() < needed) {
         throw_if_failed(
@@ -760,7 +775,7 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     std::memcpy(cbuf.view_proj, vp, sizeof(vp));
     cbuf.camera_right[0] = rx; cbuf.camera_right[1] = ry; cbuf.camera_right[2] = rz;
     cbuf.camera_up[0] = ux; cbuf.camera_up[1] = uy; cbuf.camera_up[2] = uz;
-    std::memcpy(impl_->cb_mapped, &cbuf, sizeof(cbuf));
+    std::memcpy(impl_->cb_mapped[impl_->frame], &cbuf, sizeof(cbuf));
 
     const float uv[6][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 0}, {1, 1}, {0, 1}};
     const float ox[6] = {-1, 1, 1, -1, 1, -1};
@@ -821,8 +836,8 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     const std::size_t sprite_bytes = verts.size() * sizeof(GpuVertex);
     const std::size_t line_bytes = sizeof(lines);
     const std::size_t bytes = sprite_bytes + line_bytes;
-    if (bytes > impl_->vb_capacity) {
-        impl_->vb.Reset();
+    if (bytes > impl_->vb_capacity[impl_->frame]) {
+        impl_->vb[impl_->frame].Reset();
         D3D12_HEAP_PROPERTIES upload{};
         upload.Type = D3D12_HEAP_TYPE_UPLOAD;
         D3D12_RESOURCE_DESC desc{};
@@ -836,19 +851,19 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         throw_if_failed(impl_->device->CreateCommittedResource(
                             &upload, D3D12_HEAP_FLAG_NONE, &desc,
                             D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-                            IID_PPV_ARGS(&impl_->vb)),
+                            IID_PPV_ARGS(&impl_->vb[impl_->frame])),
                         "CreateCommittedResource vb");
-        impl_->vb_capacity = static_cast<std::size_t>(desc.Width);
+        impl_->vb_capacity[impl_->frame] = static_cast<std::size_t>(desc.Width);
     }
-    if (impl_->vb) {
+    if (impl_->vb[impl_->frame]) {
         void* mapped = nullptr;
-        throw_if_failed(impl_->vb->Map(0, nullptr, &mapped), "Map vb");
+        throw_if_failed(impl_->vb[impl_->frame]->Map(0, nullptr, &mapped), "Map vb");
         auto* bytes_out = static_cast<std::uint8_t*>(mapped);
         std::memcpy(bytes_out, lines, line_bytes);
         if (sprite_bytes != 0) {
             std::memcpy(bytes_out + line_bytes, verts.data(), sprite_bytes);
         }
-        impl_->vb->Unmap(0, nullptr);
+        impl_->vb[impl_->frame]->Unmap(0, nullptr);
     }
 
     throw_if_failed(impl_->allocators[impl_->frame]->Reset(), "allocator Reset");
@@ -880,11 +895,12 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     impl_->list->RSSetViewports(1, &vp_desc);
     impl_->list->RSSetScissorRects(1, &scissor);
     impl_->list->SetGraphicsRootSignature(impl_->root.Get());
-    impl_->list->SetGraphicsRootConstantBufferView(0, impl_->cb->GetGPUVirtualAddress());
+    impl_->list->SetGraphicsRootConstantBufferView(
+        0, impl_->cb[impl_->frame]->GetGPUVirtualAddress());
 
-    if (opts.lattice_box && impl_->vb) {
+    if (opts.lattice_box && impl_->vb[impl_->frame]) {
         D3D12_VERTEX_BUFFER_VIEW line_view{};
-        line_view.BufferLocation = impl_->vb->GetGPUVirtualAddress();
+        line_view.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress();
         line_view.SizeInBytes = static_cast<UINT>(line_bytes);
         line_view.StrideInBytes = sizeof(LineVertex);
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -896,7 +912,7 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         impl_->list->SetPipelineState(impl_->pso.Get());
         D3D12_VERTEX_BUFFER_VIEW sprite_view{};
         sprite_view.BufferLocation =
-            impl_->vb->GetGPUVirtualAddress() + line_bytes;
+            impl_->vb[impl_->frame]->GetGPUVirtualAddress() + line_bytes;
         sprite_view.SizeInBytes = static_cast<UINT>(sprite_bytes);
         sprite_view.StrideInBytes = sizeof(GpuVertex);
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
