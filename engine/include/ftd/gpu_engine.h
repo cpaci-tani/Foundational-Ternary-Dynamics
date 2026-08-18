@@ -154,8 +154,13 @@ public:
     // is NOT closed by this call -- ownership semantics for
     // cudaExternalMemoryHandleDesc::handle.win32.handle say the OS handle
     // must stay valid until AFTER cudaImportExternalMemory returns, but CUDA
-    // does not take ownership of it; the caller (native_desktop) closes it
-    // once this call returns, success or failure.
+    // does not take ownership of it. This function does not require the
+    // caller to close the handle at any particular time either: native_
+    // desktop's main.cpp deliberately keeps interop_buf_handle open for the
+    // whole process lifetime (Interop Task 12, commit 93d03a3c) so every
+    // later reload can re-import the same underlying D3D12 buffer into the
+    // freshly constructed GpuEngine boot() produces, closing it only once,
+    // near process exit, well after any number of import calls.
     //
     // Returns false on either of two distinct failure sources, left
     // undifferentiated to the caller (same probe-style contract as
@@ -192,8 +197,12 @@ public:
 
     // Imports a D3D12_FENCE_FLAG_SHARED fence (via its NT handle) as a CUDA
     // external semaphore. Same handle-lifetime contract as
-    // import_d3d12_particle_buffer: caller closes the handle after this
-    // call returns.
+    // import_d3d12_particle_buffer(): this function does not take ownership
+    // of the handle and does not require the caller to close it at any
+    // particular time -- native_desktop's main.cpp deliberately keeps
+    // interop_fence_handle open for the whole process lifetime (Interop
+    // Task 12, commit 93d03a3c) to support re-import across reloads,
+    // closing it only once near process exit.
     //
     // Precondition: like import_d3d12_particle_buffer(), must be called from
     // the same OS thread that owns this GpuEngine's CUDA context --

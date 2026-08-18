@@ -606,21 +606,15 @@ void GpuBuffers::free() {
         cudaDestroyExternalMemory(interop_external_memory);
         interop_external_memory = nullptr;
     }
-    // Unlike its closest analogues -- visual_snapshot_ready (explicit
-    // cudaEventQuery + early-return-if-pending, above) and
-    // telemetry_snapshot_ready (explicit cudaEventSynchronize before
-    // freeing its paired pinned buffer, also above) -- this event is
-    // destroyed unconditionally, with no pending-check guard. That is safe
-    // TODAY only because nothing yet records this event: it is allocated in
-    // allocate() but has no producer until a later task wires up the D3D12
-    // interop gather kernel. It is also safe today because the only stream
-    // in play, bufs_.stream, is already drained+destroyed earlier in this
-    // function. Whichever later task first records interop_gather_ready
-    // MUST either record it exclusively on bufs_.stream (so the existing
-    // drain above already covers it) or add the same cudaEventQuery /
-    // cudaEventSynchronize guard its siblings use here -- otherwise this
-    // teardown could free h_interop_header while a D2H copy referencing it
-    // is still in flight.
+    // Unlike its closest analogues -- visual_snapshot_ready and
+    // telemetry_snapshot_ready, both explicitly drained above -- this event
+    // is destroyed unconditionally, with no pending-check guard. That is
+    // safe because its only producer, launch_interop_particle_gather()
+    // (gpu_engine.cu), records it exclusively on bufs_.stream, and
+    // bufs_.stream has already been fully drained via
+    // cudaStreamSynchronize(stream) and destroyed earlier in this same
+    // function -- so by the time this line runs, no D2H copy referencing
+    // h_interop_header can still be in flight.
     if (interop_gather_ready) {
         cudaEventDestroy(interop_gather_ready);
         interop_gather_ready = nullptr;
