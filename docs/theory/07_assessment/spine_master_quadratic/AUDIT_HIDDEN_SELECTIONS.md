@@ -79,15 +79,44 @@ SP1 should be split into two sub-claims:
 
 Watson's 1939 evaluation of the Z³ Green's function reduces through the AGM to the elliptic integral K(1/√2) — the lemniscatic modulus. This modulus corresponds uniquely to E: y²=x³-x (j=1728, Aut ≅ Z₄). The Z₄ rotational symmetry of each coordinate plane in Z³ forces this modulus.
 
-**Clinching evidence:** Watson computed all three cubic Bravais lattice types:
+**Claimed clinching evidence (CORRECTED 2026-08-16 — the SC row was false, and
+the corrected table refutes the claim it was adduced for):**
 
-| Lattice | Planar symmetry | Watson → Γ function | Curve j-invariant |
+| Lattice | Planar symmetry | Watson → Γ function | CM discriminant |
 |---------|----------------|---------------------|-------------------|
-| SC (simple cubic) | Z₄ | Γ(1/4) | 1728 (Z₄ curve) |
-| BCC (body-centered) | Z₄ | Γ(1/4) | 1728 (Z₄ curve) |
-| FCC (face-centered) | Z₆ | Γ(1/3) | 0 (Z₆ curve) |
+| SC (simple cubic) | Z₄ | **Γ(a/24)** — *not* Γ(1/4) | **d = −24**, ℚ(√−6) |
+| BCC (body-centered) | Z₄ | Γ(1/4) | d = −4, ℚ(i), j=1728 |
+| FCC (face-centered) | Z₆ | Γ(1/3) | d = −3, j=0 |
 
-The FCC lattice (hexagonal close-packed planes) produces Γ(1/3), associated with the Z₆ curve j=0. The lattice symmetry genuinely selects the curve across all three types.
+> **⚠ CORRECTION (2026-08-16).** The SC row previously read `Z₄ | Γ(1/4) | 1728
+> (Z₄ curve)`. That is **false**, and it was the row carrying the argument. The
+> simple-cubic Watson integral evaluates to the **discriminant −24**
+> Chowla–Selberg period:
+> `W_SC = √6/(32π³)·Γ(1/24)Γ(5/24)Γ(7/24)Γ(11/24) = 1.5163860591519780…`,
+> independently recomputed here to 15 digits against a Bessel-integral
+> evaluation `∫₀^∞ e^{−t}I₀(t/3)³dt = 1.5163860591519768…`. This is the corpus's
+> own result — see [`THEOREM_WATSON_SC_TRANSCENDENCE.md`](../../09_mathematical/number_theory/THEOREM_WATSON_SC_TRANSCENDENCE.md)
+> `[THEOREM]` — and it contradicted this table for as long as both existed.
+>
+> **The correction inverts the inference.** SC and BCC have the *same* Z₄ planar
+> symmetry and land on *different* imaginary quadratic fields. Therefore Z₄
+> planar symmetry does **not** force the lemniscatic modulus `k = 1/√2`, and the
+> stated ground for SP1a — "the Z₄ rotational symmetry of each coordinate plane
+> in Z³ forces this modulus" — does not hold. The actual discriminator is
+> recorded elsewhere in the corpus as the **multiplicative** structure of the BCC
+> eigenvalue (`1 − cos k₁cos k₂cos k₃`, a triple *product*) versus SC's additive
+> one; via Clausen's identity the triple product is the square of a ₂F₁ with
+> quarter parameters, which is what produces Γ(1/4). Selecting the BCC layer
+> over the SC layer is a **choice of which Moore layer to read**, not a
+> consequence of cubic geometry.
+>
+> **Tag consequence — flagged, not applied.** SP1a's `[THEOREM]` grade below
+> rests on the refuted row and has no surviving stated support; on the evidence
+> here it is a `[SELECTION]` (the BCC-over-SC choice). This note does **not**
+> move the tag — a demotion is an owner call requiring its own audit, per the
+> cleanup discipline. It records that the grade's stated justification has
+> failed. Nothing downstream is retagged here; `G*` itself is untouched, being
+> an identity, not a forcing claim.
 
 **SP1b: The curve's periods govern coupling constants** → remains **[SELECTION]**
 

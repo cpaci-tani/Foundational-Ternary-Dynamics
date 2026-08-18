@@ -18,12 +18,25 @@
 > documented negative result, per house practice.
 
 
-**Status:** `[THEOREM — EXACT NULL-FLAT QUARTIC FROM ZERO-TENSION TRANSVERSE
+**Status:** `[WITHDRAWN 2026-08-03 BY FTD-0789 — SEE BANNER ABOVE]`.
+The tags below are **retained as provenance only and are not in force**:
+~~`[THEOREM — EXACT NULL-FLAT QUARTIC FROM ZERO-TENSION TRANSVERSE
 GEOMETRY]` + `[DERIVED — FIRST NATIVE HARDENING MODE]` +
 `[MEASURED CONTROL — STATIC, SELECTED COMPACT LAW]` +
 `[CLOSED NEGATIVE — C2 AT THE SELECTED `epsilon`]` +
-`[SCOPE CORRECTION — FTD-0783's BRACKET COROLLARY]`
-**Verdict:** `C3_REALIZED_NATIVELY_C2_FAILS_BY_SCALE_SEPARATION`
+`[SCOPE CORRECTION — FTD-0783's BRACKET COROLLARY]`~~
+**Verdict:** `WITHDRAWN` — superseded by FTD-0789's
+`FLEXURAL_QUARTIC_IS_A_CONSTRAINT_ARTIFACT_C3_REQUIRES_SECOND_ORDER_RIGIDITY`.
+Retained as provenance only: ~~`C3_REALIZED_NATIVELY_C2_FAILS_BY_SCALE_SEPARATION`~~
+
+> **Why this block was edited (2026-08-16).** The withdrawal banner above has
+> been correct since 2026-08-03, but the machine-readable `Status:`/`Verdict:`
+> fields still carried the in-force tags. Any grep-based census of this
+> programme keys on exactly those fields, so the withdrawn `[THEOREM …]` and
+> `C3_REALIZED_NATIVELY…` were being counted as live — i.e. C3 could be
+> double-counted as realized by a reader who never scrolled past the header.
+> Only the tag fields changed; **no argument, number, or section below is
+> altered**, and the exact symbolic algebra of §3 stands as the banner says.
 **Parents:** `FTD-0739`, `FTD-0783`, `FTD-0786`, `SPEC_CARRIER_CONSTRAINTS_v1`
 **Production impact:** none; exact algebra plus quadrature, no engine execution
 

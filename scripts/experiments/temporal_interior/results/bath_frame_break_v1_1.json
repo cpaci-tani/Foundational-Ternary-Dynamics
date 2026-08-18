@@ -1,0 +1,67 @@
+{
+ "gates": {
+  "G1 events == 1201": true,
+  "G1 drift < 2": true,
+  "G2 drag k=0.0001 u=0.25": false,
+  "G4 arrest k=0.0001 u=0.25": true,
+  "G2 drag k=0.0001 u=0.5": false,
+  "G4 arrest k=0.0001 u=0.5": true,
+  "G2 drag k=0.0002 u=0.25": false,
+  "G4 arrest k=0.0002 u=0.25": true,
+  "G2 drag k=0.0002 u=0.5": false,
+  "G4 arrest k=0.0002 u=0.5": true,
+  "G3 scaling u=0.25": false,
+  "G3 scaling u=0.5": false
+ },
+ "results": {
+  "0.0001|0.0": {
+   "Gamma": 0.00011821721878243245,
+   "r2_env": 0.9953948348060553
+  },
+  "0.0001|0.25": {
+   "kappa_d": NaN,
+   "r2_drag": 0.0,
+   "frozen": true,
+   "t_stop": 3000,
+   "Gamma_expl": 0.00017871224385741287,
+   "r2_env_expl": 0.984555870127859,
+   "pos_final": 2466.500176285927,
+   "u0": 0.14433756729740646
+  },
+  "0.0001|0.5": {
+   "kappa_d": NaN,
+   "r2_drag": 0.0,
+   "frozen": true,
+   "t_stop": 3000,
+   "Gamma_expl": 0.0002391946423657207,
+   "r2_env_expl": 0.9834055446988713,
+   "pos_final": 2921.4488551855407,
+   "u0": 0.2886751345948129
+  },
+  "0.0002|0.0": {
+   "Gamma": 0.00017304748574398988,
+   "r2_env": 0.9978027042809368
+  },
+  "0.0002|0.25": {
+   "kappa_d": NaN,
+   "r2_drag": 0.0,
+   "frozen": true,
+   "t_stop": 1500,
+   "Gamma_expl": 0.00032650668275664306,
+   "r2_env_expl": 0.9226381303939579,
+   "pos_final": 2311.9523388529765,
+   "u0": 0.14433756729740646
+  },
+  "0.0002|0.5": {
+   "kappa_d": NaN,
+   "r2_drag": 0.0,
+   "frozen": true,
+   "t_stop": 2000,
+   "Gamma_expl": 0.0002704304022481646,
+   "r2_env_expl": 0.9183423062273615,
+   "pos_final": 2629.46678474734,
+   "u0": 0.2886751345948129
+  }
+ },
+ "verdict": "EXECUTION GATES FAILED"
+}

@@ -1,0 +1,34 @@
+{
+ "p_hat": -3.943817830537669,
+ "gates": {
+  "G1 rest events lam=0.03": true,
+  "G1 rest events lam=0.05": true,
+  "G1 events lam=0.03 u=0.25": true,
+  "G2 uniform lam=0.03 u=0.25": false,
+  "G1 events lam=0.03 u=0.4": true,
+  "G2 uniform lam=0.03 u=0.4": false,
+  "G1 events lam=0.03 u=0.5": true,
+  "G2 uniform lam=0.03 u=0.5": false,
+  "G1 events lam=0.05 u=0.25": true,
+  "G2 uniform lam=0.05 u=0.25": false,
+  "G1 events lam=0.05 u=0.4": true,
+  "G2 uniform lam=0.05 u=0.4": false,
+  "G1 events lam=0.05 u=0.5": true,
+  "G2 uniform lam=0.05 u=0.5": false,
+  "G4 universality u=0.25": false,
+  "G4 universality u=0.4": false,
+  "G4 universality u=0.5": false,
+  "G5 held-out lam=0.03": false,
+  "G5 held-out lam=0.05": false,
+  "G3 volume": true
+ },
+ "verdict": "EXECUTION GATES FAILED",
+ "gamma_hats": {
+  "0.03|0.25": 0.8350845412518395,
+  "0.03|0.4": 0.5893669754384728,
+  "0.03|0.5": 0.4952478325572085,
+  "0.05|0.25": 1.001046733769175,
+  "0.05|0.4": 0.7607334905989437,
+  "0.05|0.5": 0.6843112900486138
+ }
+}
