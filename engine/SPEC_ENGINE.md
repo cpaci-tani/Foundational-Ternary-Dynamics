@@ -2728,3 +2728,56 @@ All 10 phases pass with 125+ individual checks:
 2. Statistical Born rule: 10K genesis events chi-squared test
 3. Bell ensemble: S-parameter with confidence intervals
 4. Blind predictions before looking at data
+
+## CUDA tick execution model (Component A, 2026-08-17)
+
+`GpuEngine::tick()` no longer performs any host/device round trip. Its
+contract:
+
+- **Stream.** `GpuBuffers::stream` is a blocking stream created in
+  `allocate()` and drained/destroyed in `free()`. Every tick-path kernel,
+  memset, D2D copy, CUB call and cuFFT plan is bound to it. Everything not
+  migrated (compact diagnostics, injection kernels, AoS downloads, visual
+  capture) stays on the legacy default stream and remains correctly ordered
+  because a blocking stream implicitly synchronizes with the legacy stream.
+- **No blocking reads.** Poisson `mean_charge` is device-resident
+  (`d_poisson_mean_charge`); the pairwise/triad launches are fixed-capacity
+  (`MAX_PARTICLES = 8192` threads, device-side bound, populated via a
+  deterministic `cub::DeviceSelect::Flagged` compaction rather than an
+  atomic-ordered scatter) instead of being sized from a host readback of
+  `d_num_particles`; `reset_continuity_ledger()` no longer calls
+  `cudaDeviceSynchronize()`; the ledger, force-diag and movement resets use
+  `cudaMemsetAsync`.
+- **Capacity overflow** is a sticky device flag (`d_particle_overflow`) set by
+  the particle-list compaction path and surfaced as the same
+  `std::runtime_error` at `ensure_host_synced()` / `causal_projection_events()`
+  — i.e. at synchronization boundaries that already copy scalars, never in
+  the tick.
+- **Tick counter.** `GpuBuffers::d_tick` mirrors `GpuEngine::tick_`. Every
+  RNG-salted kernel reads it through a pointer so a replayed graph advances
+  its SplitMix64 streams exactly as a direct-launch tick does.
+- **Graph capture.** `graph_capture_enabled` (default true) captures the tick
+  body once per `graph_key()` — a hash of every topology toggle plus every
+  host-derived scalar kernel argument except the tick — and replays the
+  cached `cudaGraphExec_t` thereafter. Capture uses
+  `cudaStreamCaptureModeThreadLocal` — chosen as a defensive, forward-looking
+  choice safe even if a future caller becomes multi-threaded; the stream
+  being a *blocking* stream (see above) is what makes any stray
+  legacy-stream or allocating call fail the capture loudly, so an
+  un-migrated kernel is caught rather than silently baked into a wrong
+  graph. A failed capture caches a null exec and falls back to direct launch
+  for that key permanently. `ew_background_sweep` is graph-ineligible
+  because its drive is computed on the host from the tick. `su2_gauge` /
+  `su3_gauge` are graph-ineligible for the same class of reason:
+  `gpu_gauge_relax()`'s src/scratch ping-pong is a host-side `std::swap` of
+  device pointers, which stream capture cannot record, so a captured graph
+  would keep replaying the one buffer pairing baked in at capture time
+  instead of alternating every tick.
+  `test_gpu_graph_capture` gates bit-identity between replay and direct
+  launch across four toggle topologies, plus cache-eviction correctness
+  past `MAX_GRAPH_CACHE`, plus (G8) that the gauge sector never enters the
+  graph cache.
+- **Out of scope of the graph.** `GpuBackend::tick()`'s post-tick
+  `causal_projection_events()` D2H stays outside the captured region: it reads
+  a result of the completed tick and is the native app's per-tick completion
+  fence.
