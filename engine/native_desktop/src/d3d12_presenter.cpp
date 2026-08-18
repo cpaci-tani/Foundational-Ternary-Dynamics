@@ -1,5 +1,7 @@
 #include "native_desktop/d3d12_presenter.h"
 
+#include "ftd/interop_particle_record.h"
+
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
@@ -213,6 +215,7 @@ struct D3D12Presenter::Impl {
     ComPtr<ID3D12Resource> depth;
     ComPtr<ID3D12Resource> cb;
     ComPtr<ID3D12Resource> vb;
+    ComPtr<ID3D12Resource> shared_particle_buffer;
     ComPtr<ID3D12Fence> fence;
     HANDLE fence_event = nullptr;
     UINT64 fence_value = 0;
@@ -484,6 +487,37 @@ void D3D12Presenter::wait_idle() {
             "SetEventOnCompletion");
         WaitForSingleObject(impl_->fence_event, INFINITE);
     }
+}
+
+HANDLE D3D12Presenter::create_shared_particle_buffer(std::uint32_t max_particles) {
+    const UINT64 bytes = static_cast<UINT64>(max_particles) *
+                         sizeof(ftd::InteropParticleRecord);
+    D3D12_HEAP_PROPERTIES heap_default{};
+    heap_default.Type = D3D12_HEAP_TYPE_DEFAULT;
+    D3D12_RESOURCE_DESC desc{};
+    desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    desc.Width = bytes;
+    desc.Height = 1;
+    desc.DepthOrArraySize = 1;
+    desc.MipLevels = 1;
+    desc.SampleDesc.Count = 1;
+    desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;  // CUDA writes it
+    if (FAILED(impl_->device->CreateCommittedResource(
+            &heap_default, D3D12_HEAP_FLAG_SHARED, &desc,
+            D3D12_RESOURCE_STATE_COMMON, nullptr,
+            IID_PPV_ARGS(&impl_->shared_particle_buffer)))) {
+        return nullptr;
+    }
+    HANDLE handle = nullptr;
+    if (FAILED(impl_->device->CreateSharedHandle(
+            impl_->shared_particle_buffer.Get(), nullptr, GENERIC_ALL, nullptr,
+            &handle))) {
+        impl_->shared_particle_buffer.Reset();
+        return nullptr;
+    }
+    shared_particle_buffer_bytes_ = bytes;
+    return handle;
 }
 
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
