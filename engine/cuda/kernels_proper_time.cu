@@ -46,9 +46,10 @@ __global__ void accumulate_proper_time_kernel(
 
 void launch_accumulate_proper_time(GpuBuffers& b, bool update_phase,
                                    double omega0) {
+    const cudaStream_t stream = b.stream;
     constexpr int threads = 256;
     const int blocks = (b.N + threads - 1) / threads;
-    accumulate_proper_time_kernel<<<blocks, threads>>>(
+    accumulate_proper_time_kernel<<<blocks, threads, 0, stream>>>(
         b.d_state, b.d_latency,
         b.d_velocity_x, b.d_velocity_y, b.d_velocity_z,
         b.d_tau, b.d_phase, update_phase, omega0, b.N);

@@ -87,7 +87,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
                                   const double* d_flux_z, const int* d_probe_idx,
                                   double* d_out_x, double* d_out_y, double* d_out_z,
-                                  int n_probe);
+                                  int n_probe, cudaStream_t stream);
     void launch_compact_diagnostics(GpuBuffers& bufs, int tick, bool movement,
                                     Diagnostics& out);
     void launch_compact_energy_audit(GpuBuffers& bufs,
@@ -386,7 +386,7 @@ void GpuEngine::spectro_set_probes(const std::vector<int>& probe_indices) {
     // Capture J(0): gather current device flux into the host J0 reference.
     kernels::launch_gather_probe_flux(bufs_.d_flux_x, bufs_.d_flux_y, bufs_.d_flux_z,
                                       d_probe_idx_, d_probe_jx_, d_probe_jy_, d_probe_jz_,
-                                      n_probe_);
+                                      n_probe_, bufs_.stream);
     probe_j0x_.assign(n_probe_, 0.0);
     probe_j0y_.assign(n_probe_, 0.0);
     probe_j0z_.assign(n_probe_, 0.0);
@@ -399,7 +399,7 @@ double GpuEngine::spectro_autocorr() {
     if (n_probe_ <= 0) return 0.0;
     kernels::launch_gather_probe_flux(bufs_.d_flux_x, bufs_.d_flux_y, bufs_.d_flux_z,
                                       d_probe_idx_, d_probe_jx_, d_probe_jy_, d_probe_jz_,
-                                      n_probe_);
+                                      n_probe_, bufs_.stream);
     CUDA_CHECK(cudaMemcpy(probe_jx_.data(), d_probe_jx_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(probe_jy_.data(), d_probe_jy_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(probe_jz_.data(), d_probe_jz_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
@@ -1245,20 +1245,20 @@ void GpuEngine::download_gauge_links(std::vector<SU2Link>& su2_x,
 void GpuEngine::gpu_gauge_relax() {
     if (!gauge_links_device_) return;
     // One Jacobi sweep per enabled group per tick, matching the CPU Rule 7b
-    // (same GAUGE_RELAX_DT/GAUGE_RELAX_BETA constants). Default stream so the
+    // (same GAUGE_RELAX_DT/GAUGE_RELAX_BETA constants). Engine stream so the
     // sweep serializes with the rest of the tick's kernels (same-stream
     // ordering guarantee); src -> scratch, then pointer swap.
     if (toggles.su2_gauge) {
         launch_relax_su2_links(d_su2_[0], d_su2_[1], d_su2_[2],
                                d_su2_scr_[0], d_su2_scr_[1], d_su2_scr_[2],
-                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, 0);
+                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, bufs_.stream);
         CUDA_CHECK(cudaGetLastError());
         for (int d = 0; d < 3; ++d) std::swap(d_su2_[d], d_su2_scr_[d]);
     }
     if (toggles.su3_gauge) {
         launch_relax_su3_links(d_su3_[0], d_su3_[1], d_su3_[2],
                                d_su3_scr_[0], d_su3_scr_[1], d_su3_scr_[2],
-                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, 0);
+                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, bufs_.stream);
         CUDA_CHECK(cudaGetLastError());
         for (int d = 0; d < 3; ++d) std::swap(d_su3_[d], d_su3_scr_[d]);
     }
