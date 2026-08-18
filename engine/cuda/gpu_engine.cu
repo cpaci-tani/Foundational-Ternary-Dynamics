@@ -639,6 +639,32 @@ std::uint64_t GpuEngine::graph_key() const {
     return h;
 }
 
+// Safety of destroying a possibly still-executing exec: ticks are async by
+// design (no cudaStreamSynchronize between them), so on eviction the exec
+// from the immediately preceding tick may still be running on the device
+// when this runs. No sync precedes this call, and none is needed.
+//
+// CUDA graph execs use the same deferred-destruction model as streams and
+// events: the destroy call returns immediately and the driver defers actual
+// resource release until in-flight work referencing the object completes.
+// This is documented, not assumed:
+//   - cuGraphExecDestroy (driver API, include/cuda.h, CUDA 13.0 local
+//     headers): "Destroys the executable graph specified by hGraphExec...
+//     If the executable graph is in-flight, it will not be terminated, but
+//     rather freed asynchronously on completion." — an explicit statement of
+//     exactly this case, for the function cudaGraphExecDestroy wraps.
+//   - cudaGraphExecDestroy (runtime API, include/cuda_runtime_api.h) carries
+//     the same \note_destroy_ub tag as cudaStreamDestroy and cudaEventDestroy,
+//     both of which spell out the identical asynchronous-release contract in
+//     the same header ("the function will return immediately and the
+//     resources ... will be released automatically once the device has
+//     completed all work"; "the call does not block on completion ... any
+//     associated resources will automatically be released asynchronously").
+// Empirically stress-tested (Task 8 code review, 2026-08-18): forcing
+// destroy_graph_cache() to fire on a still-in-flight exec by cycling 24
+// distinct graph_key() topologies back-to-back with no synchronization
+// (test_gpu_graph_capture.cpp G7) ran clean under both
+// compute-sanitizer --tool memcheck and --tool synccheck, zero errors.
 void GpuEngine::destroy_graph_cache() {
     for (auto& entry : graph_cache_) {
         if (entry.second) cudaGraphExecDestroy(entry.second);
@@ -671,11 +697,16 @@ void GpuEngine::tick() {
             // device work; launching the instantiated graph immediately below
             // is what makes the capturing tick a normal tick. No scratch
             // buffers and no state rollback are involved. Thread-local capture
-            // mode is deliberate: begin_telemetry_snapshot/begin_visual_snapshot
-            // and their copy_visual_*/copy_telemetry_* pollers issue legacy-
-            // stream work from other threads by design and must remain
-            // unaffected by a capture in progress on this thread. Global mode
-            // would make any such concurrent call fail while capture is open.
+            // mode is deliberate but currently defensive rather than load-
+            // bearing: today's only caller (engine/native_desktop/src/main.cpp)
+            // runs tick() and capture()/snapshot polling strictly sequentially
+            // on one thread, so nothing actually issues legacy-stream work
+            // concurrently with a capture in progress. ThreadLocal is chosen
+            // anyway because it is strictly safer than Global at zero cost —
+            // it scopes the capture restriction to this thread instead of
+            // process-wide, so a future multi-threaded caller (e.g. a snapshot
+            // poller on its own thread) cannot be silently broken by legacy-
+            // stream work issued elsewhere while this thread is capturing.
             cudaGraph_t graph = nullptr;
             bool captured = false;
             const cudaError_t begin_status = cudaStreamBeginCapture(

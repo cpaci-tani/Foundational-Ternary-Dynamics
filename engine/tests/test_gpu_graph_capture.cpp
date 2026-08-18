@@ -161,5 +161,51 @@ int main() {
         test::check("G6: device tick is 9", engine.device_tick() == 9);
     }
 
+    test::section("G7: cache eviction at MAX_GRAPH_CACHE");
+    {
+        // GpuEngine::MAX_GRAPH_CACHE (private, gpu_engine.h) is 16: on the
+        // 17th distinct graph_key(), destroy_graph_cache() wipes the whole
+        // cache before capturing again. Cycle through more combinations than
+        // that to force at least one full-cache eviction and confirm: (a)
+        // graph_cache_size() never exceeds the cap, (b) genuine recapture
+        // happens after eviction rather than growth silently stalling at the
+        // cap (graph_captures() ends up strictly greater than the cap), and
+        // (c) nothing crashes or throws — including destroying the exec from
+        // the immediately preceding, un-synchronized tick, which may still be
+        // executing on the device at the moment of eviction (see
+        // destroy_graph_cache()'s doc comment in gpu_engine.cu for why that
+        // is safe). No physics/bit-identity assertion is made here — cache
+        // eviction guarantees a cache-size bound and correct recapture, not
+        // any particular field values.
+        constexpr std::size_t kMaxGraphCache = 16;
+        constexpr int kCombos = 24;  // > kMaxGraphCache: guarantees eviction
+        gpu::GpuEngine engine(17);
+        engine.toggles.enable_all();
+        engine.graph_capture_enabled = true;
+        seed_scene(engine);
+
+        std::size_t max_observed_cache_size = 0;
+        for (int i = 0; i < kCombos; ++i) {
+            // Five independent topology-affecting toggles (all hashed by
+            // graph_key()) bit-flipped per combo give 2^5=32 distinct
+            // topologies; kCombos=24 of them is enough to force eviction.
+            engine.toggles.movement      = (i & 1)  != 0;
+            engine.toggles.forces        = (i & 2)  != 0;
+            engine.toggles.latency_field = (i & 4)  != 0;
+            engine.toggles.color_forces  = (i & 8)  != 0;
+            engine.toggles.damping       = (i & 16) != 0;
+            for (int t = 0; t < 3; ++t) engine.tick();
+            if (engine.graph_cache_size() > max_observed_cache_size) {
+                max_observed_cache_size = engine.graph_cache_size();
+            }
+        }
+        test::check("G7: cache size never exceeds MAX_GRAPH_CACHE",
+                    max_observed_cache_size <= kMaxGraphCache);
+        test::check("G7: recapture happened after eviction (captures > cap)",
+                    engine.graph_captures() > kMaxGraphCache);
+        test::check("G7: no capture failures across the eviction sweep",
+                    engine.graph_capture_failures() == 0);
+    }
+
     return test::finalize();
 }
