@@ -741,6 +741,10 @@ void D3D12Presenter::wait_shared_fence(std::uint64_t value) {
                     "Wait shared_fence");
 }
 
+void* D3D12Presenter::debug_device() const {
+    return impl_->device.Get();
+}
+
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
                             const NativeViewOptions& opts,
                             std::uint32_t interop_particle_count) {

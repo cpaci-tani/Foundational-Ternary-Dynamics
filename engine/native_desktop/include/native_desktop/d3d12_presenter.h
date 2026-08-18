@@ -104,6 +104,18 @@ public:
     // interop buffer.
     void wait_shared_fence(std::uint64_t value);
 
+    // TEST-ONLY. Exposes the underlying ID3D12Device as an opaque IUnknown
+    // pointer -- returned as void* so this header does not need to include
+    // <d3d12.h> for every consumer (main.cpp only ever uses the public
+    // interface above). Callers cast back with
+    // `static_cast<IUnknown*>(...)->QueryInterface(...)` (valid: COM
+    // interfaces are binary-layout-compatible with IUnknown at offset 0) to
+    // pull an ID3D12InfoQueue and inspect debug-layer validation messages
+    // recorded during a render() loop. Returns nullptr before initialize()
+    // has run. Production code never needs this -- it goes through
+    // render()/resize()/wait_idle() only.
+    void* debug_device() const;
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
