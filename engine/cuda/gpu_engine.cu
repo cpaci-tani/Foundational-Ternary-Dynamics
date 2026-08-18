@@ -10,21 +10,18 @@
 #include "ftd/constants.h"
 #include "ftd/volumetric_measure.h"
 #include <cuda_runtime.h>
+#include <cub/device/device_scan.cuh>
+#include <thrust/iterator/transform_iterator.h>
 #include <cufft.h>
 #include <cstdio>
 #include <cmath>
 #include <algorithm>
+#include <limits>
+#include <stdexcept>
+#include <string>
 
-#include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
-
-#define CUFFT_CHECK(call) do { \
-    cufftResult err = (call); \
-    if (err != CUFFT_SUCCESS) { \
-        fprintf(stderr, "cuFFT error at %s:%d: %d\n", \
-                __FILE__, __LINE__, (int)err); \
-        exit(1); \
-    } \
-} while(0)
+#define FTD_CUDA_ERROR_WANT_CUFFT
+#include "cuda_error.cuh"  // CUDA_CHECK + recoverable CUFFT_CHECK
 
 
 
@@ -37,11 +34,14 @@ namespace ftd { namespace gpu { namespace kernels {
                             bool larmor_radiation, double damping_factor,
                             bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                             bool do_langevin, double langevin_gamma, double langevin_T,
-                            uint8_t langevin_site_filter,
-                            double kinetic_drain,
-                            unsigned long long rng_seed, int tick);
+                             uint8_t langevin_site_filter,
+                             double kinetic_drain,
+                             double genesis_threshold,
+                             double manifest_scale,
+                             unsigned long long rng_seed);
     void launch_gauss_project(GpuBuffers& bufs,
                               double charge_coupling,
+                              bool exact_dual_gauss,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_solve_coulomb(GpuBuffers& bufs,
@@ -49,6 +49,7 @@ namespace ftd { namespace gpu { namespace kernels {
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_solve_latency(GpuBuffers& bufs,
+                              bool include_field_energy,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
@@ -57,40 +58,201 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_integrate_forces(GpuBuffers& bufs, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
                                bool dual_substrate);
+    void launch_ew_background_sweep(GpuBuffers& bufs, bool dual_substrate);
+    void launch_absorbing_boundary(GpuBuffers& bufs);
+    void launch_reflective_flux_boundary(GpuBuffers& bufs);
+    void launch_dispersal_flux_boundary(GpuBuffers& bufs);
     // Dual-substrate launchers
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                                 bool do_db_clock, bool do_db_clock_coulomb, double omega0);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
                                   bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
-                                  unsigned long long rng_seed, int tick);
+                                  unsigned long long rng_seed);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
     // Extended physics launchers
     void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate,
-                                   unsigned long long rng_seed, int tick);
-    void launch_pair_production(GpuBuffers& bufs, unsigned long long rng_seed, int tick);
+                                   unsigned long long rng_seed);
+    void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
+                                unsigned long long rng_seed);
+    void launch_advance_device_tick(GpuBuffers& bufs);
     void launch_build_particle_list(GpuBuffers& bufs);
-    void launch_color_force(GpuBuffers& bufs, int num_particles, double dt);
-    void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt);
-    void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt);
-    void launch_triad_detection(GpuBuffers& bufs, int num_particles);
+    void launch_color_force(GpuBuffers& bufs, double dt);
+    void launch_yukawa_force(GpuBuffers& bufs, double dt);
+    void launch_exchange_force(GpuBuffers& bufs, double dt);
+    void launch_triad_detection(GpuBuffers& bufs);
     void launch_strong_field_stencil(GpuBuffers& bufs, double damp);
     void launch_weak_field_stencil(GpuBuffers& bufs, double damp);
     void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
                                   const double* d_flux_z, const int* d_probe_idx,
                                   double* d_out_x, double* d_out_y, double* d_out_z,
-                                  int n_probe);
+                                  int n_probe, cudaStream_t stream);
+    void launch_compact_diagnostics(GpuBuffers& bufs, int tick, bool movement,
+                                    Diagnostics& out);
+    void launch_compact_energy_audit(GpuBuffers& bufs,
+                                     const TermToggles& toggles,
+                                     EnergyAudit& out);
+    void launch_compact_gravity_metric(GpuBuffers& bufs,
+                                       const TermToggles& toggles,
+                                       GravityMetricAgg& out);
+    void launch_compact_lagrangian(GpuBuffers& bufs, LagrangianDiag& out);
+    void launch_telemetry_snapshot(GpuBuffers& bufs, std::uint32_t groups,
+                                   const TermToggles& toggles,
+                                   cudaEvent_t ready_event);
+    void decode_telemetry_snapshot(const GpuBuffers& bufs,
+                                   const TelemetrySnapshotRequest& request,
+                                   int tick, std::uint64_t state_version,
+                                   bool gravity_requested,
+                                   TelemetrySnapshot& out);
+    void launch_compact_voxel(GpuBuffers& bufs, int index,
+                              VoxelInspection& out);
+    void launch_compact_force(GpuBuffers& bufs, int index, ForceDiag& out);
+    void launch_accumulate_proper_time(GpuBuffers& bufs, bool update_phase,
+                                       double omega0);
+    void launch_inject_flux(GpuBuffers& bufs, int index, const Vec3& value,
+                            bool dual, bool additive);
+    void launch_inject_wave_velocity(GpuBuffers& bufs, int index,
+                                     const Vec3& value, bool dual);
+    void launch_inject_particle(GpuBuffers& bufs, int index, int8_t state,
+                                const Vec3& flux, int8_t spin, int8_t color,
+                                int8_t flavor, bool dual);
+    void launch_inject_wavepacket(GpuBuffers& bufs, int cx, int cy, int cz,
+                                  int8_t state, double sigma, double scale,
+                                  int radius, bool dual);
+    bool launch_inject_entangled_pair(
+        GpuBuffers& bufs, int primary, const Vec3& flux, bool dual);
 }}}
 
 namespace ftd {
 namespace gpu {
+
+std::size_t g_gpu_visual_snapshot_download_bytes = 0;
+std::size_t g_gpu_visual_snapshot_launches = 0;
+
+namespace {
+
+struct ParticleFlagToInt {
+    __host__ __device__ int operator()(std::uint8_t flag) const {
+        return static_cast<int>(flag);
+    }
+};
+
+__global__ void visual_particle_flags_kernel(const std::int8_t* state,
+                                             std::uint8_t* flags, int N) {
+    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index < N) flags[index] = state[index] != 0 ? 1u : 0u;
+}
+
+__global__ void visual_particle_header_kernel(
+    const std::uint8_t* flags, const std::int32_t* prefix, int N,
+    std::uint32_t max_particles, VisualParticleStagingHeader* header) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    const std::uint32_t manifested = static_cast<std::uint32_t>(
+        prefix[N - 1] + static_cast<std::int32_t>(flags[N - 1]));
+    header->total_manifested = manifested;
+    header->captured_count = manifested < max_particles
+        ? manifested : max_particles;
+}
+
+__global__ void visual_particle_gather_kernel(
+    const std::int8_t* state, const std::int8_t* spin,
+    const std::int8_t* color, const double* remainder_x,
+    const double* remainder_y, const double* remainder_z,
+    const std::int32_t* prefix, int N,
+    const VisualParticleStagingHeader* header,
+    VisualParticleRecord* records) {
+    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index >= N || state[index] == 0) return;
+
+    const std::uint32_t manifested = header->total_manifested;
+    const std::uint32_t selected = header->captured_count;
+    if (manifested == 0 || selected == 0) return;
+
+    // Match the host visual selection accumulator exactly.  For one-based
+    // manifested rank r, an item is retained iff floor(r*C/M) advances over
+    // floor((r-1)*C/M), where M is total manifested and C is the bounded cap.
+    // The prefix scan gives r-1 in ascending lattice-index order, so the
+    // selected slot is deterministic without atomic insertion ordering.
+    const std::uint64_t previous_rank = static_cast<std::uint64_t>(prefix[index]);
+    const std::uint64_t current_rank = previous_rank + 1u;
+    const std::uint64_t previous_bucket =
+        previous_rank * static_cast<std::uint64_t>(selected) / manifested;
+    const std::uint64_t current_bucket =
+        current_rank * static_cast<std::uint64_t>(selected) / manifested;
+    if (current_bucket == previous_bucket) return;
+
+    const std::uint32_t slot = static_cast<std::uint32_t>(current_bucket - 1u);
+    VisualParticleRecord record;
+    record.index = index;
+    record.state = state[index];
+    record.spin = spin[index];
+    record.color = color[index];
+    record.remainder_x = static_cast<float>(remainder_x[index]);
+    record.remainder_y = static_cast<float>(remainder_y[index]);
+    record.remainder_z = static_cast<float>(remainder_z[index]);
+    records[slot] = record;
+}
+
+void launch_visual_particle_capture(GpuBuffers& bufs,
+                                    std::uint32_t requested_cap,
+                                    cudaEvent_t ready_event) {
+    const std::uint32_t cap = requested_cap == 0
+        ? kMaxVisualParticleCapture
+        : (std::min)(requested_cap, kMaxVisualParticleCapture);
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+    visual_particle_flags_kernel<<<blocks, threads>>>(
+        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+
+    // `d_pair_candidate_flags` and `d_pair_candidate_indices` are persistent
+    // serialized scratch owned by GpuBuffers.  Allocation reserved the larger
+    // of this CUB scan and the pair/genesis select workspace at engine setup.
+    const auto flags = thrust::make_transform_iterator(
+        bufs.d_pair_candidate_flags, ParticleFlagToInt{});
+    CUDA_CHECK(cub::DeviceScan::ExclusiveSum(
+        bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
+        flags, bufs.d_pair_candidate_indices, bufs.N));
+
+    visual_particle_header_kernel<<<1, 1>>>(
+        bufs.d_pair_candidate_flags, bufs.d_pair_candidate_indices, bufs.N,
+        cap, bufs.d_visual_particle_header);
+    CUDA_CHECK(cudaGetLastError());
+    visual_particle_gather_kernel<<<blocks, threads>>>(
+        bufs.d_state, bufs.d_spin, bufs.d_color,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_pair_candidate_indices, bufs.N,
+        bufs.d_visual_particle_header, bufs.d_visual_particle_records);
+    CUDA_CHECK(cudaGetLastError());
+
+    // A fixed bounded copy keeps the entire request asynchronous: waiting for
+    // a count first would require a host round trip before the record D2H can
+    // be issued.  Polling is event-only and copies just the valid prefix into
+    // the public vector once the fence is complete.
+    CUDA_CHECK(cudaMemcpyAsync(
+        bufs.h_visual_particle_header, bufs.d_visual_particle_header,
+        sizeof(VisualParticleStagingHeader), cudaMemcpyDeviceToHost));
+    constexpr std::size_t record_bytes =
+        static_cast<std::size_t>(kMaxVisualParticleCapture)
+        * sizeof(VisualParticleRecord);
+    CUDA_CHECK(cudaMemcpyAsync(
+        bufs.h_visual_particle_records, bufs.d_visual_particle_records,
+        record_bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaEventRecord(ready_event));
+    g_gpu_visual_snapshot_download_bytes +=
+        sizeof(VisualParticleStagingHeader) + record_bytes;
+    ++g_gpu_visual_snapshot_launches;
+}
+
+}  // namespace
 
 // ---------- Construction / Destruction ----------
 
 GpuEngine::GpuEngine(int lattice_size)
     : size_(lattice_size), N_(lattice_size * lattice_size * lattice_size)
 {
+    try {
     // Allocate device buffers
     bufs_.allocate(lattice_size);
 
@@ -104,6 +266,15 @@ GpuEngine::GpuEngine(int lattice_size)
     // Create cuFFT plans (3D single-precision C2C — primary, 2× faster)
     CUFFT_CHECK(cufftPlan3d(&fft_plan_forward_f_, size_, size_, size_, CUFFT_C2C));
     CUFFT_CHECK(cufftPlan3d(&fft_plan_inverse_f_, size_, size_, size_, CUFFT_C2C));
+
+    // Bind every plan to the engine stream so cufftExec* is stream-ordered
+    // with the surrounding kernels and is capturable. cufftPlan3d allocates
+    // the plan work area at creation time, so no allocation happens at exec
+    // time (which capture would reject).
+    CUFFT_CHECK(cufftSetStream(fft_plan_forward_,   bufs_.stream));
+    CUFFT_CHECK(cufftSetStream(fft_plan_inverse_,   bufs_.stream));
+    CUFFT_CHECK(cufftSetStream(fft_plan_forward_f_, bufs_.stream));
+    CUFFT_CHECK(cufftSetStream(fft_plan_inverse_f_, bufs_.stream));
 
     set_rng_seed(toggles.langevin_seed);
 
@@ -131,9 +302,44 @@ GpuEngine::GpuEngine(int lattice_size)
     host_force_diag_.exchange_y.assign(N_, 0.0);
     host_force_diag_.exchange_z.assign(N_, 0.0);
     host_dirty_ = false;
+    } catch (...) {
+        // A later cuFFT plan can fail after earlier plans and GpuBuffers have
+        // succeeded. Destroy the completed plan prefix; GpuBuffers' destructor
+        // releases its allocation prefix while the exception unwinds.
+        if (fft_plan_forward_) cufftDestroy(fft_plan_forward_);
+        if (fft_plan_inverse_) cufftDestroy(fft_plan_inverse_);
+        if (fft_plan_forward_f_) cufftDestroy(fft_plan_forward_f_);
+        if (fft_plan_inverse_f_) cufftDestroy(fft_plan_inverse_f_);
+        fft_plan_forward_ = fft_plan_inverse_ = 0;
+        fft_plan_forward_f_ = fft_plan_inverse_f_ = 0;
+        throw;
+    }
 }
 
 GpuEngine::~GpuEngine() {
+    // A visual capture uses the default stream and reads the engine's SoA
+    // source buffers.  NativeVisualScheduler must keep a bridge alive until
+    // visual_snapshot_safe_to_replace() says its event has retired.  If an
+    // owner violates that barrier, do not synchronize in a destructor (which
+    // could freeze recovery); GpuBuffers::free() preserves the live source.
+    // Only an actual CUDA event error becomes a terminal quarantine.
+    if (visual_snapshot_pending_ && bufs_.visual_snapshot_ready) {
+        const cudaError_t status = cudaEventQuery(bufs_.visual_snapshot_ready);
+        if (status != cudaSuccess) {
+            bufs_.free();  // nonblocking; NotReady is a barrier violation
+            return;
+        }
+    }
+    // Graph execs reference the stream and the device buffers; retire them
+    // before GpuBuffers::free() drains and destroys the stream. The
+    // visual_snapshot_pending_ quarantine branch above (`bufs_.free(); return;`)
+    // skips this call, same as it already skips the fft_plan_*/spectro_free/
+    // free_gauge_links cleanup below it for the identical reason: that path
+    // hands the whole allocation off to CUDA-context replacement rather than
+    // resolve it here. The graph cache leaking there is consistent with the
+    // rest of this destructor's established quarantine behavior, not a new
+    // gap.
+    destroy_graph_cache();
     if (fft_plan_forward_) cufftDestroy(fft_plan_forward_);
     if (fft_plan_inverse_) cufftDestroy(fft_plan_inverse_);
     if (fft_plan_forward_f_) cufftDestroy(fft_plan_forward_f_);
@@ -141,6 +347,13 @@ GpuEngine::~GpuEngine() {
     spectro_free();
     free_gauge_links();
     bufs_.free();
+}
+
+int GpuEngine::device_tick() const {
+    int value = 0;
+    CUDA_CHECK(cudaMemcpy(&value, bufs_.d_tick, sizeof(int),
+                          cudaMemcpyDeviceToHost));
+    return value;
 }
 
 void GpuEngine::set_dt(double dt) {
@@ -190,7 +403,7 @@ void GpuEngine::spectro_set_probes(const std::vector<int>& probe_indices) {
     // Capture J(0): gather current device flux into the host J0 reference.
     kernels::launch_gather_probe_flux(bufs_.d_flux_x, bufs_.d_flux_y, bufs_.d_flux_z,
                                       d_probe_idx_, d_probe_jx_, d_probe_jy_, d_probe_jz_,
-                                      n_probe_);
+                                      n_probe_, bufs_.stream);
     probe_j0x_.assign(n_probe_, 0.0);
     probe_j0y_.assign(n_probe_, 0.0);
     probe_j0z_.assign(n_probe_, 0.0);
@@ -203,7 +416,7 @@ double GpuEngine::spectro_autocorr() {
     if (n_probe_ <= 0) return 0.0;
     kernels::launch_gather_probe_flux(bufs_.d_flux_x, bufs_.d_flux_y, bufs_.d_flux_z,
                                       d_probe_idx_, d_probe_jx_, d_probe_jy_, d_probe_jz_,
-                                      n_probe_);
+                                      n_probe_, bufs_.stream);
     CUDA_CHECK(cudaMemcpy(probe_jx_.data(), d_probe_jx_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(probe_jy_.data(), d_probe_jy_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(probe_jz_.data(), d_probe_jz_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
@@ -220,9 +433,21 @@ double GpuEngine::spectro_autocorr() {
 
 // ---------- Core Simulation ----------
 
-void GpuEngine::tick() {
+void GpuEngine::record_tick_body() {
     bufs_.reset_continuity_ledger();
-    continuity_ledger_valid_ = true;
+
+    // CPU parity: the electroweak scenario's uniform +x drive is part of the
+    // tick input, not a visualization mutation. Apply it before phase_read so
+    // the same-tick wave/KG operators consume the driven field. In dual mode
+    // the symmetric half split is essential because phase_read reads L/R.
+    // The drive is computed ON-DEVICE from bufs_.d_tick (not passed by value)
+    // so a captured graph replay recomputes it from the current tick instead
+    // of baking in the capture-time value — same hazard class Task 7 fixed
+    // for the RNG-salted kernels.
+    if (toggles.ew_background_sweep) {
+        kernels::launch_ew_background_sweep(bufs_, toggles.dual_substrate);
+    }
+
     // Phase 1+2: Wave update (Laplacian + coupling + leapfrog + damping + genesis/evaporation)
     // NOTE: Fusion of phase_read + phase_write into a single kernel (wave_update_kernel)
     // was attempted but has a race condition: thread i reads flux[neighbor_j] while thread j
@@ -231,11 +456,11 @@ void GpuEngine::tick() {
     // and writing self (phase_write). Double-buffering could fix this in the future.
     //
     // ORDERING GUARANTEE (revision C7): both launches go to the same CUDA
-    // stream (the default stream throughout this engine), and CUDA serializes
-    // kernels on one stream in issue order — phase_write can NEVER begin
-    // before every phase_read thread has retired. No explicit sync primitive
-    // is needed or wanted here; do NOT move these onto different streams
-    // without re-introducing the barrier explicitly.
+    // stream (the engine's dedicated stream, bufs_.stream), and CUDA
+    // serializes kernels on one stream in issue order — phase_write can
+    // NEVER begin before every phase_read thread has retired. No explicit
+    // sync primitive is needed or wanted here; do NOT move these onto
+    // different streams without re-introducing the barrier explicitly.
     gpu_phase_read();
     gpu_phase_write();
 
@@ -290,6 +515,18 @@ void GpuEngine::tick() {
         gpu_phase_movement();
     }
 
+    // CPU parity: field boundaries run after the final ordinary flux writer
+    // (Gauss/forces/movement), so projection cannot refill the damped shell.
+    // The sponge and selected flux boundary are sequential and may coexist.
+    if (toggles.absorbing_boundary) {
+        kernels::launch_absorbing_boundary(bufs_);
+    }
+    if (toggles.flux_boundary == FluxBoundaryMode::Reflective) {
+        kernels::launch_reflective_flux_boundary(bufs_);
+    } else if (toggles.flux_boundary == FluxBoundaryMode::Dispersal) {
+        kernels::launch_dispersal_flux_boundary(bufs_);
+    }
+
     // Phase 6: Weak transmutation (stress-threshold polarity flip)
     if (toggles.weak_transmutation) {
         gpu_weak_transmutation();
@@ -306,14 +543,241 @@ void GpuEngine::tick() {
         gpu_gauge_relax();
     }
 
+    // CPU Rule 8 parity without a full voxel mirror. tau and the optional
+    // de-Broglie phase advance together on-device exactly once per tick.
+    if (toggles.latency_field || toggles.de_broglie_clock) {
+        accumulate_proper_time(toggles.de_broglie_clock, toggles.omega0);
+    }
+
+    // Advance the device mirror in the same place the host counter moves, so
+    // a captured graph replays with a fresh RNG salt.
+    kernels::launch_advance_device_tick(bufs_);
+}
+
+// ---------- Graph eligibility / key ----------
+
+bool GpuEngine::graph_eligible() const {
+    // ew_background_sweep's drive is now device-resident (see commit
+    // 7dc754bc, made during Task 7's code review) and could technically be
+    // graph-eligible, but it remains excluded here because it's a research
+    // scenario outside this task's tested profiles (none of
+    // test_gpu_graph_capture.cpp's Profile values enable it) — revisit if a
+    // future profile needs it.
+    if (toggles.ew_background_sweep) return false;
+    // gpu_gauge_relax()'s ping-pong buffer swap (std::swap(d_su2_[d],
+    // d_su2_scr_[d]) / the su3 equivalent) is plain host C++, not a CUDA API
+    // call, so stream capture never records it. A captured graph would keep
+    // replaying the one kernel launch topology recorded at capture time —
+    // src=d_su2_[d]/dst=d_su2_scr_[d] with those exact pointers baked in —
+    // forever, instead of alternating which buffer is "current" the way the
+    // CPU reference does every tick. Confirmed via test_gauge_gpu_parity's P1
+    // regressing from PASS to a 2.141e-02 CPU/GPU divergence once
+    // graph_capture_enabled defaulted to true. Excluded here rather than
+    // reworked into a capture-safe device-resident ping-pong, matching how
+    // ew_background_sweep is handled above.
+    if (toggles.su2_gauge || toggles.su3_gauge) return false;
+    return true;
+}
+
+std::uint64_t GpuEngine::graph_key() const {
+    std::uint64_t h = 1469598103934665603ULL;
+    const auto mix = [&h](const void* p, std::size_t n) {
+        const auto* b = static_cast<const unsigned char*>(p);
+        for (std::size_t i = 0; i < n; ++i) {
+            h ^= b[i];
+            h *= 1099511628211ULL;
+        }
+    };
+    const auto mix_bool = [&mix](bool v) { const unsigned char c = v ? 1u : 0u; mix(&c, 1); };
+    const auto mix_int  = [&mix](int v)  { mix(&v, sizeof(v)); };
+    const auto mix_dbl  = [&mix](double v) { mix(&v, sizeof(v)); };
+
+    // Topology: every toggle that adds, removes or reshapes a launch.
+    mix_bool(toggles.wave_propagation);
+    mix_bool(toggles.coupling);
+    mix_bool(toggles.damping);
+    mix_bool(toggles.selective_damping);
+    mix_bool(toggles.larmor_radiation);
+    mix_bool(toggles.genesis);
+    mix_bool(toggles.evaporation);
+    mix_bool(toggles.langevin);
+    mix_bool(toggles.symplectic_leapfrog);
+    mix_bool(toggles.pair_production);
+    mix_bool(toggles.gauss_projection);
+    mix_bool(toggles.dual_substrate);
+    mix_bool(toggles.latency_field);
+    mix_bool(toggles.field_energy_gravity);
+    mix_bool(toggles.forces);
+    mix_bool(toggles.gravity);
+    mix_bool(toggles.lorentz_force);
+    mix_bool(toggles.poisson_coulomb);
+    mix_bool(toggles.emergent_forces);
+    mix_bool(toggles.color_forces);
+    mix_bool(toggles.strong_force);
+    mix_bool(toggles.exchange_force);
+    mix_bool(toggles.triad_binding);
+    mix_bool(toggles.movement);
+    mix_bool(toggles.reflective_boundary);
+    mix_bool(toggles.absorbing_boundary);
+    mix_int(static_cast<int>(toggles.flux_boundary));
+    mix_bool(toggles.weak_transmutation);
+    mix_bool(toggles.su2_gauge);
+    mix_bool(toggles.su3_gauge);
+    mix_bool(toggles.de_broglie_clock);
+    mix_bool(toggles.db_clock_coulomb);
+    mix_bool(toggles.exact_dual_gauss);
+    mix_bool(toggles.ew_background_sweep);
+    mix_int(static_cast<int>(toggles.bcc_stencil));
+    mix_int(static_cast<int>(toggles.langevin_site_filter));
+
+    // Non-toggle latches that gate whole phases.
+    mix_bool(weak_field_active_);
+    mix_bool(gauge_links_device_);
+
+    // Scalar kernel arguments. These are NOT topology, but CUDA bakes them
+    // into node parameters, so a change must force a recapture just as a
+    // toggle change does.
+    mix_dbl(dt_);
+    mix_dbl(toggles.omega0);
+    mix_dbl(toggles.langevin_T);
+    mix_dbl(toggles.langevin_gamma);
+    mix_dbl(toggles.kinetic_drain);
+    mix_dbl(toggles.coulomb_charge_coupling);
+    mix_dbl(toggles.coulomb_source_scale);
+    mix_dbl(genesis_threshold_override);
+    mix_dbl(manifest_scale_override);
+    mix_bool(manifest_use_temperature);
+    mix_int(static_cast<int>(toggles.langevin_seed));
+    return h;
+}
+
+// Safety of destroying a possibly still-executing exec: ticks are async by
+// design (no cudaStreamSynchronize between them), so on eviction the exec
+// from the immediately preceding tick may still be running on the device
+// when this runs. No sync precedes this call, and none is needed.
+//
+// CUDA graph execs use the same deferred-destruction model as streams and
+// events: the destroy call returns immediately and the driver defers actual
+// resource release until in-flight work referencing the object completes.
+// This is documented, not assumed:
+//   - cuGraphExecDestroy (driver API, include/cuda.h, CUDA 13.0 local
+//     headers): "Destroys the executable graph specified by hGraphExec...
+//     If the executable graph is in-flight, it will not be terminated, but
+//     rather freed asynchronously on completion." — an explicit statement of
+//     exactly this case, for the function cudaGraphExecDestroy wraps.
+//   - cudaGraphExecDestroy (runtime API, include/cuda_runtime_api.h) carries
+//     the same \note_destroy_ub tag as cudaStreamDestroy and cudaEventDestroy,
+//     both of which spell out the identical asynchronous-release contract in
+//     the same header ("the function will return immediately and the
+//     resources ... will be released automatically once the device has
+//     completed all work"; "the call does not block on completion ... any
+//     associated resources will automatically be released asynchronously").
+// Empirically stress-tested (Task 8 code review, 2026-08-18): forcing
+// destroy_graph_cache() to fire on a still-in-flight exec by cycling 24
+// distinct graph_key() topologies back-to-back with no synchronization
+// (test_gpu_graph_capture.cpp G7) ran clean under both
+// compute-sanitizer --tool memcheck and --tool synccheck, zero errors.
+void GpuEngine::destroy_graph_cache() {
+    for (auto& entry : graph_cache_) {
+        if (entry.second) cudaGraphExecDestroy(entry.second);
+    }
+    graph_cache_.clear();
+}
+
+// ---------- Tick dispatch ----------
+
+void GpuEngine::tick() {
+    continuity_ledger_valid_ = true;
+
+    if (!graph_capture_enabled || !graph_eligible()) {
+        record_tick_body();
+    } else {
+        const std::uint64_t key = graph_key();
+        const auto it = graph_cache_.find(key);
+        if (it != graph_cache_.end()) {
+            if (it->second) {
+                CUDA_CHECK(cudaGraphLaunch(it->second, bufs_.stream));
+                ++graph_replays_;
+            } else {
+                // Known-uncapturable key: permanent direct-launch fallback.
+                record_tick_body();
+            }
+        } else {
+            if (graph_cache_.size() >= MAX_GRAPH_CACHE) destroy_graph_cache();
+
+            // Capture RECORDS without executing, so this pass performs zero
+            // device work; launching the instantiated graph immediately below
+            // is what makes the capturing tick a normal tick. No scratch
+            // buffers and no state rollback are involved. Thread-local capture
+            // mode is deliberate but currently defensive rather than load-
+            // bearing: today's only caller (engine/native_desktop/src/main.cpp)
+            // runs tick() and capture()/snapshot polling strictly sequentially
+            // on one thread, so nothing actually issues legacy-stream work
+            // concurrently with a capture in progress. ThreadLocal is chosen
+            // anyway because it is strictly safer than Global at zero cost —
+            // it scopes the capture restriction to this thread instead of
+            // process-wide, so a future multi-threaded caller (e.g. a snapshot
+            // poller on its own thread) cannot be silently broken by legacy-
+            // stream work issued elsewhere while this thread is capturing.
+            cudaGraph_t graph = nullptr;
+            bool captured = false;
+            const cudaError_t begin_status = cudaStreamBeginCapture(
+                bufs_.stream, cudaStreamCaptureModeThreadLocal);
+            if (begin_status == cudaSuccess) {
+                bool recorded = true;
+                try {
+                    record_tick_body();
+                } catch (...) {
+                    recorded = false;
+                }
+                const cudaError_t end_status =
+                    cudaStreamEndCapture(bufs_.stream, &graph);
+                captured = recorded && end_status == cudaSuccess && graph;
+                if (!captured && graph) {
+                    cudaGraphDestroy(graph);
+                    graph = nullptr;
+                }
+            }
+
+            cudaGraphExec_t exec = nullptr;
+            if (captured) {
+                const cudaError_t inst_status =
+                    cudaGraphInstantiate(&exec, graph, 0);
+                cudaGraphDestroy(graph);
+                if (inst_status != cudaSuccess) exec = nullptr;
+            }
+
+            graph_cache_[key] = exec;
+            if (exec) {
+                // The recorded work never ran; run it now as the graph.
+                CUDA_CHECK(cudaGraphLaunch(exec, bufs_.stream));
+                ++graph_captures_;
+                ++graph_replays_;
+            } else {
+                // Capture failed: the recorded work was discarded, so this
+                // tick has done nothing yet. Re-run it with direct launches.
+                ++graph_capture_failures_;
+                cudaGetLastError();   // clear any sticky capture error
+                record_tick_body();
+            }
+        }
+    }
+
     tick_++;
     host_dirty_ = true;
+    mark_device_state_changed();
 }
 
 void GpuEngine::run(int num_ticks) {
     for (int i = 0; i < num_ticks; ++i) {
         tick();
     }
+}
+
+void GpuEngine::accumulate_proper_time(bool update_phase, double omega0) {
+    kernels::launch_accumulate_proper_time(bufs_, update_phase, omega0);
+    host_dirty_ = true;
+    mark_device_state_changed();
 }
 
 // ---------- GPU Tick Sub-Phases ----------
@@ -354,9 +818,14 @@ void GpuEngine::gpu_phase_write() {
     // Bit-exact CPU↔GPU at unit mass.
 
     const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
 
     double damping = 1.0 - ALPHA;
+    const double genesis_threshold = genesis_threshold_override > 0.0
+        ? genesis_threshold_override : K_GENESIS;
+    const double manifest_scale = manifest_use_temperature
+        ? std::max(toggles.langevin_T, 1e-12)
+        : (manifest_scale_override > 0.0
+               ? manifest_scale_override : K_MANIFEST);
     if (toggles.dual_substrate) {
         // Dual-substrate Langevin is not wired in this pass — user-facing
         // scope for FTD-0051 v1 is single-substrate only.
@@ -369,7 +838,7 @@ void GpuEngine::gpu_phase_write() {
                                          toggles.evaporation,
                                          dt_,
                                          toggles.symplectic_leapfrog,
-                                         rng_seed, tick);
+                                         rng_seed);
     } else {
         kernels::launch_phase_write(bufs_,
                                     toggles.damping,
@@ -385,7 +854,9 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.langevin_T,
                                     static_cast<uint8_t>(toggles.langevin_site_filter),
                                     toggles.kinetic_drain,
-                                    rng_seed, tick);
+                                    genesis_threshold,
+                                    manifest_scale,
+                                    rng_seed);
     }
 
     // Step strong field stencil (Stella Octangula propagation)
@@ -406,6 +877,7 @@ void GpuEngine::gpu_phase_write() {
 void GpuEngine::gpu_gauss_project() {
     kernels::launch_gauss_project(bufs_,
                                   toggles.coulomb_charge_coupling,
+                                  toggles.exact_dual_gauss,
                                   fft_plan_forward_,
                                   fft_plan_inverse_,
                                   fft_plan_forward_f_,
@@ -427,6 +899,7 @@ void GpuEngine::gpu_solve_coulomb() {
 // exactly up to the FFT's automatic DC-mode cancellation (gauge freedom).
 void GpuEngine::gpu_solve_latency_poisson() {
     kernels::launch_solve_latency(bufs_,
+                                  toggles.field_energy_gravity,
                                   fft_plan_forward_,
                                   fft_plan_inverse_,
                                   fft_plan_forward_f_,
@@ -459,47 +932,44 @@ void GpuEngine::gpu_phase_movement() {
 
 void GpuEngine::gpu_weak_transmutation() {
     const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
-    kernels::launch_weak_transmutation(bufs_, toggles.dual_substrate, rng_seed, tick);
+    kernels::launch_weak_transmutation(bufs_, toggles.dual_substrate, rng_seed);
 }
 
 void GpuEngine::gpu_pair_production() {
     const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
-    kernels::launch_pair_production(bufs_, rng_seed, tick);
+    kernels::launch_pair_production(bufs_, toggles.dual_substrate, rng_seed);
 }
 
 void GpuEngine::gpu_build_particle_list() {
+    // No host readback: the count stays on the device and the pairwise/triad
+    // kernels bound themselves from it. Capacity overflow is a sticky device
+    // flag surfaced by throw_if_particle_overflow() at the existing
+    // synchronization boundaries (ensure_host_synced /
+    // causal_projection_events), not by a blocking copy inside the tick.
     kernels::launch_build_particle_list(bufs_);
-    // Sync particle count to host for subsequent kernel launches
-    CUDA_CHECK(cudaMemcpy(&host_num_particles_, bufs_.d_num_particles,
-                          sizeof(int), cudaMemcpyDeviceToHost));
-    if (host_num_particles_ > GpuBuffers::MAX_PARTICLES)
-        host_num_particles_ = GpuBuffers::MAX_PARTICLES;
 }
 
 void GpuEngine::gpu_particle_forces() {
-    if (host_num_particles_ <= 0) return;
-
     if (toggles.color_forces) {
-        kernels::launch_color_force(bufs_, host_num_particles_, dt_);
+        kernels::launch_color_force(bufs_, dt_);
     }
     if (toggles.strong_force) {
-        kernels::launch_yukawa_force(bufs_, host_num_particles_, dt_);
+        kernels::launch_yukawa_force(bufs_, dt_);
     }
     if (toggles.exchange_force) {
-        kernels::launch_exchange_force(bufs_, host_num_particles_, dt_);
+        kernels::launch_exchange_force(bufs_, dt_);
     }
 }
 
 void GpuEngine::gpu_triad_detection() {
-    if (host_num_particles_ <= 0) return;
-    kernels::launch_triad_detection(bufs_, host_num_particles_);
+    kernels::launch_triad_detection(bufs_);
 }
 
 // ---------- Diagnostics ----------
 
 void GpuEngine::ensure_host_synced() {
+    bufs_.throw_if_identity_error();
+    bufs_.throw_if_particle_overflow();
     if (host_dirty_) {
         bufs_.download(host_voxels_, host_phi_, host_phi_coulomb_);
         // Wave 5: also download phi_latency for tests that read it directly
@@ -517,40 +987,26 @@ void GpuEngine::ensure_host_synced() {
 }
 
 void GpuEngine::push_to_device() {
+    int32_t max_particle_id = -1;
+    int32_t max_pair_id = -1;
+    for (const auto& voxel : host_voxels_) {
+        max_particle_id = std::max(max_particle_id, voxel.particle_id);
+        max_pair_id = std::max(max_pair_id, voxel.pair_id);
+    }
+    if (max_particle_id == std::numeric_limits<int32_t>::max()
+        || max_pair_id == std::numeric_limits<int32_t>::max()) {
+        throw std::overflow_error(
+            "host-staged identity leaves no representable GPU successor ID");
+    }
     bufs_.upload(host_voxels_, host_phi_, host_phi_coulomb_);
+    bufs_.raise_identity_counters(max_particle_id + 1, max_pair_id + 1);
     host_dirty_ = false;
+    mark_device_state_changed();
 }
 
 Diagnostics GpuEngine::diagnostics() {
-    ensure_host_synced();
-
-    // 2026-05-04 fix: parity with engine/src/diagnostics_compute.cpp:38.
-    // Pre-fix this used `flux.mag2() + wave_vel.mag2()` (no 0.5, no
-    // Born-Infeld). CPU diagnostic uses |born_infeld_core()| which is
-    // a non-trivial functional of flux, wave_vel, and latency. The two
-    // returned different total_energy values for the same scenario.
     Diagnostics d;
-    d.tick = tick_;
-    for (int i = 0; i < N_; ++i) {
-        const auto& v = host_voxels_[i];
-        d.total_flux += v.density();                     // = flux.mag(), matches CPU
-        d.total_energy += std::abs(v.born_infeld_core()); // matches CPU
-        double bw = v.bandwidth_used();
-        if (bw > d.max_bandwidth) d.max_bandwidth = bw;
-        double budget = v.causal_budget();
-        if (budget > d.max_causal_budget) d.max_causal_budget = budget;
-        if (v.state != 0) {
-            d.manifested_count++;
-            if (v.state > 0) d.positive_count++;
-            if (v.state < 0) d.negative_count++;
-            if (v.spin > 0) d.spin_up_count++;
-            if (v.spin < 0) d.spin_down_count++;
-            if (v.color >= 0 && v.color <= 3) d.color_count[v.color]++;
-        }
-    }
-    d.causal_projection_events = toggles.movement
-        ? static_cast<long long>(bufs_.download_causal_projection_events())
-        : 0;
+    kernels::launch_compact_diagnostics(bufs_, tick_, toggles.movement, d);
     return d;
 }
 
@@ -559,7 +1015,7 @@ Diagnostics GpuEngine::diagnostics() {
 // ──────────────────────────────────────────────────────────────────
 // RenderBridge::tick() currently populates the per-tick EnergyLedger
 // on the GPU path by calling gpu_sync_to_host() + update_energy_ledger().
-// That's one full-voxel download per tick (~3 MB at L=64).
+// That used to require a full voxel download per tick (~87 MiB at L=64).
 //
 // If this ever shows up in a profile as a bottleneck, replace with a
 // device-side reduction kernel that returns just three scalars:
@@ -577,122 +1033,229 @@ Diagnostics GpuEngine::diagnostics() {
 // ──────────────────────────────────────────────────────────────────
 
 EnergyAudit GpuEngine::energy_audit() {
-    ensure_host_synced();
-
-    // Match the canonical 1/2 |·|² convention used by
-    // engine/src/diagnostics_compute.cpp:98-99 (compute_energy_audit) and
-    // engine/web/js/bridge/mock-diagnostics.js. Pre-2026-05-03 this kernel
-    // dropped the 1/2 on every quadratic-energy diagnostic, making
-    // GpuEngine::energy_audit() report 2× the RenderBridge value for the
-    // same scenario — caught by test_gpu_parity GP2/GP3/GP4/GP5 all showing
-    // an exact 2:1 mismatch and test_wavepacket WP1/WP3 showing 50% of the
-    // expected K_B² normalization. Mirrors the same fix that was applied
-    // to compute_energy_audit on 2026-04-27.
     EnergyAudit ea;
-    for (int i = 0; i < N_; ++i) {
-        const auto& v = host_voxels_[i];
-        const double field_density = quadratic_field_energy_density(v.flux.mag2());
-        const double wave_density = quadratic_field_energy_density(v.wave_vel.mag2());
-        ea.field_energy_density_sum += field_density;
-        ea.wave_energy_density_sum += wave_density;
-        ea.field_energy += integrate_voxel_density(field_density);
-        ea.wave_energy  += integrate_voxel_density(wave_density);
-        if (v.state != 0) {
-            const double speed2 = v.velocity.mag2();
-            const double gamma0 = flat_gamma(speed2);
-            ea.particle_ke += flat_particle_kinetic_energy(speed2);
-            ea.particle_rest_energy += E_REST;
-            ea.particle_momentum += v.velocity * (gamma0 * M_INERTIAL);
-            ea.manifested_count++;
-            ea.charge_total += v.state;
-        }
-        // Dual-substrate diagnostics — same 1/2 |·|² convention.
-        if (toggles.dual_substrate) {
-            ea.E_L_total += integrate_voxel_density(
-                quadratic_field_energy_density(v.flux_L.mag2()));
-            ea.E_R_total += integrate_voxel_density(
-                quadratic_field_energy_density(v.flux_R.mag2()));
-            ea.wv_L_total += integrate_voxel_density(
-                quadratic_field_energy_density(v.wave_vel_L.mag2()));
-            ea.wv_R_total += integrate_voxel_density(
-                quadratic_field_energy_density(v.wave_vel_R.mag2()));
-            ea.chirality_total += integrate_voxel_density(v.chirality_density());
-        }
-
-        // Strong field diagnostic
-        if (toggles.color_forces || toggles.strong_force) {
-            ea.strong_energy += integrate_voxel_density(
-                quadratic_field_energy_density(v.flux_strong.mag2()));
-        }
-
-        // Weak field diagnostic
-        ea.weak_energy += integrate_voxel_density(
-            quadratic_field_energy_density(v.flux_weak.mag2()));
-    }
-    ea.particle_energy = ea.particle_rest_energy + ea.particle_ke;
-    ea.dynamic_energy = ea.field_energy + ea.wave_energy + ea.particle_ke;
-    ea.total_energy = ea.field_energy + ea.wave_energy + ea.particle_energy;
+    kernels::launch_compact_energy_audit(bufs_, toggles, ea);
     return ea;
+}
+
+GravityMetricAgg GpuEngine::gravity_metric_agg() {
+    GravityMetricAgg out;
+    kernels::launch_compact_gravity_metric(bufs_, toggles, out);
+    return out;
+}
+
+void GpuEngine::lagrangian_diagnostics(LagrangianDiag& out) {
+    kernels::launch_compact_lagrangian(bufs_, out);
+}
+
+bool GpuEngine::begin_telemetry_snapshot(
+    const TelemetrySnapshotRequest& requested) {
+    if (telemetry_snapshot_pending_) return false;
+
+    TelemetrySnapshotRequest request = requested;
+    request.groups &= TELEMETRY_ALL;
+    if (request.groups == 0) request.groups = TELEMETRY_DIAGNOSTICS;
+    if (request.dt <= 0.0) request.dt = dt_;
+    if (request.lattice_size <= 0) request.lattice_size = size_;
+
+    // This launch is deliberately issued after all preceding default-stream
+    // simulation work. It does not synchronize the host: the publisher owns
+    // the event polling cadence and may queue the next tick after the copy.
+    kernels::launch_telemetry_snapshot(bufs_, request.groups, toggles,
+                                       bufs_.telemetry_snapshot_ready);
+    telemetry_snapshot_request_ = request;
+    telemetry_snapshot_state_version_ = state_version_;
+    telemetry_snapshot_tick_ = tick_;
+    telemetry_snapshot_gravity_requested_ = toggles.latency_field
+                                         || toggles.field_energy_gravity;
+    telemetry_snapshot_pending_ = true;
+    return true;
+}
+
+bool GpuEngine::telemetry_snapshot_ready() const {
+    if (!telemetry_snapshot_pending_) return false;
+    const cudaError_t status = cudaEventQuery(bufs_.telemetry_snapshot_ready);
+    if (status == cudaSuccess) return true;
+    if (status == cudaErrorNotReady) return false;
+    throw std::runtime_error(std::string("[GpuEngine] telemetry event query failed: ")
+                             + cudaGetErrorString(status));
+}
+
+bool GpuEngine::poll_telemetry_snapshot(TelemetrySnapshot& out) {
+    if (!telemetry_snapshot_ready()) return false;
+    kernels::decode_telemetry_snapshot(
+        bufs_, telemetry_snapshot_request_, telemetry_snapshot_tick_,
+        telemetry_snapshot_state_version_, telemetry_snapshot_gravity_requested_, out);
+    telemetry_snapshot_pending_ = false;
+    return true;
+}
+
+void GpuEngine::wait_telemetry_snapshot(TelemetrySnapshot& out) {
+    if (!telemetry_snapshot_pending_) {
+        throw std::logic_error("[GpuEngine] no telemetry snapshot is pending");
+    }
+    CUDA_CHECK(cudaEventSynchronize(bufs_.telemetry_snapshot_ready));
+    kernels::decode_telemetry_snapshot(
+        bufs_, telemetry_snapshot_request_, telemetry_snapshot_tick_,
+        telemetry_snapshot_state_version_, telemetry_snapshot_gravity_requested_, out);
+    telemetry_snapshot_pending_ = false;
+}
+
+TelemetrySnapshot GpuEngine::telemetry_snapshot(
+    const TelemetrySnapshotRequest& request) {
+    if (!begin_telemetry_snapshot(request)) {
+        throw std::logic_error(
+            "[GpuEngine] cannot synchronously request telemetry while a snapshot is pending");
+    }
+    TelemetrySnapshot out;
+    wait_telemetry_snapshot(out);
+    return out;
+}
+
+bool GpuEngine::begin_visual_snapshot(
+    const VisualSnapshotRequest& requested) {
+    if (visual_snapshot_pending_
+        || requested.kind != VisualCaptureKind::Particles) {
+        return false;
+    }
+
+    VisualSnapshotRequest request = requested;
+    if (request.max_particles == 0) {
+        request.max_particles = kMaxVisualParticleCapture;
+    } else {
+        request.max_particles = (std::min)(request.max_particles,
+                                           kMaxVisualParticleCapture);
+    }
+    if (request.dt <= 0.0) request.dt = dt_;
+    if (request.lattice_size <= 0) request.lattice_size = size_;
+
+    // All work is appended to the default stream after preceding simulation
+    // work.  No host synchronization occurs here; source provenance is
+    // captured now and decoded only after the visual event completes.
+    launch_visual_particle_capture(bufs_, request.max_particles,
+                                   bufs_.visual_snapshot_ready);
+    visual_snapshot_request_ = request;
+    visual_snapshot_state_version_ = state_version_;
+    visual_snapshot_tick_ = tick_;
+    visual_snapshot_pending_ = true;
+    return true;
+}
+
+bool GpuEngine::visual_snapshot_ready() const {
+    if (!visual_snapshot_pending_) return false;
+    const cudaError_t status = cudaEventQuery(bufs_.visual_snapshot_ready);
+    if (status == cudaSuccess) return true;
+    if (status == cudaErrorNotReady) return false;
+    throw std::runtime_error(std::string("[GpuEngine] visual capture event query failed: ")
+                             + cudaGetErrorString(status));
+}
+
+bool GpuEngine::visual_snapshot_safe_to_replace() const {
+    if (!visual_snapshot_pending_) return true;
+    const cudaError_t status = cudaEventQuery(bufs_.visual_snapshot_ready);
+    if (status == cudaSuccess) return true;
+    if (status == cudaErrorNotReady) return false;
+    throw std::runtime_error(std::string("[GpuEngine] visual capture source barrier failed: ")
+                             + cudaGetErrorString(status));
+}
+
+bool GpuEngine::poll_visual_snapshot(VisualSnapshot& out) {
+    if (!visual_snapshot_ready()) return false;
+    if (visual_snapshot_request_.kind != VisualCaptureKind::Particles) {
+        throw std::logic_error("[GpuEngine] unsupported completed visual capture kind");
+    }
+
+    const VisualParticleStagingHeader header = *bufs_.h_visual_particle_header;
+    const std::uint32_t cap = (std::min)(
+        visual_snapshot_request_.max_particles, kMaxVisualParticleCapture);
+    const std::uint32_t count = (std::min)(header.captured_count, cap);
+
+    out = {};
+    out.kind = VisualCaptureKind::Particles;
+    out.meta.epoch = visual_snapshot_request_.epoch;
+    out.meta.state_version = visual_snapshot_state_version_;
+    out.meta.tick = visual_snapshot_tick_;
+    out.meta.physical_time = visual_snapshot_request_.physical_time;
+    out.meta.dt = visual_snapshot_request_.dt;
+    out.meta.lattice_size = visual_snapshot_request_.lattice_size;
+    out.particles.total_manifested = header.total_manifested;
+    out.particles.records.assign(bufs_.h_visual_particle_records,
+                                 bufs_.h_visual_particle_records + count);
+    visual_snapshot_pending_ = false;
+    return true;
+}
+
+void GpuEngine::inspect_voxel(int index, VoxelInspection& out) {
+    kernels::launch_compact_voxel(bufs_, index, out);
+}
+
+void GpuEngine::inspect_force(int index, ForceDiag& out) {
+    kernels::launch_compact_force(bufs_, index, out);
 }
 
 // ---------- Injection ----------
 
 void GpuEngine::inject_flux(int x, int y, int z, const Vec3& flux_val) {
-    ensure_host_synced();
-    int idx = ((x % size_ + size_) % size_) * size_ * size_
-            + ((y % size_ + size_) % size_) * size_
-            + ((z % size_ + size_) % size_);
-    host_voxels_[idx].flux = flux_val;
-    if (toggles.dual_substrate) {
-        host_voxels_[idx].flux_L = flux_val * 0.5;
-        host_voxels_[idx].flux_R = flux_val * 0.5;
-    }
-    push_to_device();
+    const auto wrap = [&](int value) {
+        value %= size_;
+        return value < 0 ? value + size_ : value;
+    };
+    const int idx = wrap(x) * size_ * size_ + wrap(y) * size_ + wrap(z);
+    kernels::launch_inject_flux(bufs_, idx, flux_val,
+                                toggles.dual_substrate, false);
+    host_dirty_ = true;
+    continuity_ledger_valid_ = false;
+    mark_device_state_changed();
+}
+
+void GpuEngine::inject_flux_add(int x, int y, int z,
+                                const Vec3& flux_val) {
+    const auto wrap = [&](int value) {
+        value %= size_;
+        return value < 0 ? value + size_ : value;
+    };
+    const int idx = wrap(x) * size_ * size_ + wrap(y) * size_ + wrap(z);
+    kernels::launch_inject_flux(bufs_, idx, flux_val,
+                                toggles.dual_substrate, true);
+    host_dirty_ = true;
+    continuity_ledger_valid_ = false;
+    mark_device_state_changed();
+}
+
+void GpuEngine::inject_wave_vel_add(int x, int y, int z,
+                                    const Vec3& wave_vel) {
+    const auto wrap = [&](int value) {
+        value %= size_;
+        return value < 0 ? value + size_ : value;
+    };
+    const int idx = wrap(x) * size_ * size_ + wrap(y) * size_ + wrap(z);
+    kernels::launch_inject_wave_velocity(bufs_, idx, wave_vel,
+                                         toggles.dual_substrate);
+    host_dirty_ = true;
+    continuity_ledger_valid_ = false;
+    mark_device_state_changed();
 }
 
 void GpuEngine::inject_particle(int x, int y, int z, int8_t state,
                                 const Vec3& flux_val,
                                 int8_t spin, int8_t color, int8_t flavor) {
-    ensure_host_synced();
-
-    int idx = ((x % size_ + size_) % size_) * size_ * size_
-            + ((y % size_ + size_) % size_) * size_
-            + ((z % size_ + size_) % size_);
-
-    auto& v = host_voxels_[idx];
-    v.state = state;
-    v.flux = flux_val;
-    v.spin = spin;
-    v.color = color;
-    v.flavor = flavor;
-    v.particle_id = next_particle_id_++;
+    const auto wrap = [&](int value) {
+        value %= size_;
+        return value < 0 ? value + size_ : value;
+    };
+    const int idx = wrap(x) * size_ * size_ + wrap(y) * size_ + wrap(z);
     if (flavor != 0) weak_field_active_ = true;
-
-    // Dual-substrate: split flux between L and R per chirality
-    if (toggles.dual_substrate) {
-        double fL = (state > 0) ? (1.0 + DELTA_APPROX) * 0.5
-                                : (1.0 - DELTA_APPROX) * 0.5;
-        double fR = 1.0 - fL;
-        v.flux_L = flux_val * fL;
-        v.flux_R = flux_val * fR;
-    }
-
-    push_to_device();
+    kernels::launch_inject_particle(bufs_, idx, state, flux_val,
+                                    spin, color, flavor, toggles.dual_substrate);
+    host_dirty_ = true;
+    continuity_ledger_valid_ = false;
+    mark_device_state_changed();
 }
 
 void GpuEngine::inject_wavepacket(int cx, int cy, int cz, int8_t state,
                                   double sigma, double amplitude) {
-    ensure_host_synced();
-
     // Match CPU RenderBridge::inject_wavepacket exactly
-    int radius = static_cast<int>(3.0 * sigma) + 1;
-
-    // Set state at center first
-    int cidx = ((cx % size_ + size_) % size_) * size_ * size_
-             + ((cy % size_ + size_) % size_) * size_
-             + ((cz % size_ + size_) % size_);
-    host_voxels_[cidx].state = state;
-    host_voxels_[cidx].particle_id = next_particle_id_++;
+    int radius = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
 
     // First pass: L2 normalization (sum of g²)
     double norm_sum = 0.0;
@@ -702,53 +1265,33 @@ void GpuEngine::inject_wavepacket(int cx, int cy, int cz, int8_t state,
         if (dx == 0 && dy == 0 && dz == 0) continue;
         double r2 = dx*dx + dy*dy + dz*dz;
         double r = std::sqrt(r2);
-        if (r > 3.0 * sigma) continue;
+        if (r > GAUSSIAN_CUTOFF_SIGMA * sigma) continue;
         double g = std::exp(-r2 / (2.0 * sigma * sigma));
         norm_sum += g * g;
     }
 
     double scale = (norm_sum > 1e-30) ? amplitude / std::sqrt(norm_sum) : 0.0;
 
-    // Dual-substrate fractions
-    double fL_frac = 0.5, fR_frac = 0.5;
-    if (toggles.dual_substrate) {
-        fL_frac = (state > 0) ? (1.0 + DELTA_APPROX) * 0.5
-                               : (1.0 - DELTA_APPROX) * 0.5;
-        fR_frac = 1.0 - fL_frac;
-    }
+    kernels::launch_inject_wavepacket(
+        bufs_, cx, cy, cz, state, sigma, scale, radius,
+        toggles.dual_substrate);
+    host_dirty_ = true;
+    continuity_ledger_valid_ = false;
+    mark_device_state_changed();
+}
 
-    // Second pass: set radial flux
-    for (int dx = -radius; dx <= radius; ++dx)
-    for (int dy = -radius; dy <= radius; ++dy)
-    for (int dz = -radius; dz <= radius; ++dz) {
-        if (dx == 0 && dy == 0 && dz == 0) continue;
-        double r2 = dx*dx + dy*dy + dz*dz;
-        double r = std::sqrt(r2);
-        if (r > 3.0 * sigma) continue;
-
-        int x = ((cx + dx) % size_ + size_) % size_;
-        int y = ((cy + dy) % size_ + size_) % size_;
-        int z = ((cz + dz) % size_ + size_) % size_;
-        int idx = x * size_ * size_ + y * size_ + z;
-
-        double g = std::exp(-r2 / (2.0 * sigma * sigma));
-        double mag = scale * g;
-        Vec3 dJ = { mag * dx / r, mag * dy / r, mag * dz / r };
-        host_voxels_[idx].flux.x += dJ.x;
-        host_voxels_[idx].flux.y += dJ.y;
-        host_voxels_[idx].flux.z += dJ.z;
-
-        if (toggles.dual_substrate) {
-            host_voxels_[idx].flux_L.x += dJ.x * fL_frac;
-            host_voxels_[idx].flux_L.y += dJ.y * fL_frac;
-            host_voxels_[idx].flux_L.z += dJ.z * fL_frac;
-            host_voxels_[idx].flux_R.x += dJ.x * fR_frac;
-            host_voxels_[idx].flux_R.y += dJ.y * fR_frac;
-            host_voxels_[idx].flux_R.z += dJ.z * fR_frac;
-        }
-    }
-
-    push_to_device();
+void GpuEngine::create_entangled_pair(int x, int y, int z,
+                                      const Vec3& flux_val) {
+    const auto wrap = [&](int value) {
+        value %= size_;
+        return value < 0 ? value + size_ : value;
+    };
+    const int idx = wrap(x) * size_ * size_ + wrap(y) * size_ + wrap(z);
+    kernels::launch_inject_entangled_pair(bufs_, idx, flux_val,
+                                          toggles.dual_substrate);
+    host_dirty_ = true;
+    continuity_ledger_valid_ = false;
+    mark_device_state_changed();
 }
 
 // ---------- Sync ----------
@@ -756,6 +1299,30 @@ void GpuEngine::inject_wavepacket(int cx, int cy, int cz, int8_t state,
 void GpuEngine::sync_to_host(std::vector<Voxel>& out) {
     ensure_host_synced();
     out = host_voxels_;
+}
+
+void GpuEngine::identity_counters(int32_t& next_particle_id,
+                                  int32_t& next_pair_id) const {
+    bufs_.throw_if_identity_error();
+    bufs_.download_identity_counters(next_particle_id, next_pair_id);
+}
+
+void GpuEngine::raise_identity_counters(int32_t next_particle_id,
+                                        int32_t next_pair_id) {
+    bufs_.raise_identity_counters(next_particle_id, next_pair_id);
+}
+
+void GpuEngine::copy_visual_states(std::vector<std::int8_t>& out) const {
+    bufs_.download_states(out);
+}
+
+void GpuEngine::copy_visual_flux_magnitude(std::vector<float>& out) {
+    bufs_.download_flux_magnitude(out);
+}
+
+void GpuEngine::copy_visual_flux_magnitude_plane(
+    int axis, int index, std::vector<float>& out) {
+    bufs_.download_flux_magnitude_plane(axis, index, out);
 }
 
 eft::DualCellContinuity GpuEngine::continuity_step() const {
@@ -780,7 +1347,7 @@ void GpuEngine::upload_from_host(const std::vector<Voxel>& voxels) {
     // against host_voxels_ and upload ONLY the changed voxels — byte-identical
     // to the previous full push_to_device() because the device already holds
     // the correct bytes at every unchanged index. A single-voxel edit uploads
-    // ~325 B instead of the whole ~40-array voxel image (85 MB at L=64).
+    // ~333 B instead of the whole ~40-array voxel image (87 MiB at L=64).
     //
     // Cold start (host_voxels_ empty) falls back to a full upload inside
     // upload_voxels_delta. phi/phi_coulomb are intentionally NOT re-uploaded
@@ -789,11 +1356,27 @@ void GpuEngine::upload_from_host(const std::vector<Voxel>& voxels) {
     // them is byte-identical AND keeps the single-voxel path off the two N-sized
     // potential arrays (2×2 MB at L=64) that would otherwise blow the <<1 MB
     // budget.
+    int32_t max_particle_id = -1;
+    int32_t max_pair_id = -1;
+    for (const auto& voxel : voxels) {
+        if (voxel.particle_id > max_particle_id)
+            max_particle_id = voxel.particle_id;
+        if (voxel.pair_id > max_pair_id)
+            max_pair_id = voxel.pair_id;
+    }
+    if (max_particle_id == std::numeric_limits<int32_t>::max()
+        || max_pair_id == std::numeric_limits<int32_t>::max()) {
+        throw std::overflow_error(
+            "host-staged identity leaves no representable GPU successor ID");
+    }
+
     bufs_.upload_voxels_delta(voxels, host_voxels_);
+    bufs_.raise_identity_counters(max_particle_id + 1, max_pair_id + 1);
     host_voxels_ = voxels;
     refresh_weak_field_active_from_host();
     host_dirty_ = false;   // device now equals host_voxels_
     continuity_ledger_valid_ = false;
+    mark_device_state_changed();
 }
 
 void GpuEngine::refresh_weak_field_active_from_host() {
@@ -828,21 +1411,32 @@ void GpuEngine::upload_gauge_links(const std::vector<SU2Link>& su2_x,
                                    const std::vector<SU3Link>& su3_z) {
     const std::size_t bytes2 = static_cast<std::size_t>(N_) * sizeof(SU2Link);
     const std::size_t bytes3 = static_cast<std::size_t>(N_) * sizeof(SU3Link);
-    if (!gauge_links_device_) {
-        // Lazy allocation (mirrors CPU revision 4.1b): live + Jacobi scratch.
+    try {
+        if (!gauge_links_device_) {
+            // Lazy allocation (mirrors CPU revision 4.1b): live + Jacobi
+            // scratch. Publish gauge_links_device_ only after every allocation
+            // and upload succeeds; otherwise a partial cudaMalloc prefix would
+            // leak and the next interactive tick would overwrite its pointers.
+            for (int d = 0; d < 3; ++d) {
+                CUDA_CHECK(cudaMalloc(&d_su2_[d],     bytes2));
+                CUDA_CHECK(cudaMalloc(&d_su2_scr_[d], bytes2));
+                CUDA_CHECK(cudaMalloc(&d_su3_[d],     bytes3));
+                CUDA_CHECK(cudaMalloc(&d_su3_scr_[d], bytes3));
+            }
+        }
+
+        const std::vector<SU2Link>* h2[3] = {&su2_x, &su2_y, &su2_z};
+        const std::vector<SU3Link>* h3[3] = {&su3_x, &su3_y, &su3_z};
         for (int d = 0; d < 3; ++d) {
-            CUDA_CHECK(cudaMalloc(&d_su2_[d],     bytes2));
-            CUDA_CHECK(cudaMalloc(&d_su2_scr_[d], bytes2));
-            CUDA_CHECK(cudaMalloc(&d_su3_[d],     bytes3));
-            CUDA_CHECK(cudaMalloc(&d_su3_scr_[d], bytes3));
+            CUDA_CHECK(cudaMemcpy(d_su2_[d], h2[d]->data(), bytes2, cudaMemcpyHostToDevice));
+            CUDA_CHECK(cudaMemcpy(d_su3_[d], h3[d]->data(), bytes3, cudaMemcpyHostToDevice));
         }
         gauge_links_device_ = true;
-    }
-    const std::vector<SU2Link>* h2[3] = {&su2_x, &su2_y, &su2_z};
-    const std::vector<SU3Link>* h3[3] = {&su3_x, &su3_y, &su3_z};
-    for (int d = 0; d < 3; ++d) {
-        CUDA_CHECK(cudaMemcpy(d_su2_[d], h2[d]->data(), bytes2, cudaMemcpyHostToDevice));
-        CUDA_CHECK(cudaMemcpy(d_su3_[d], h3[d]->data(), bytes3, cudaMemcpyHostToDevice));
+    } catch (...) {
+        // free_gauge_links() is null-safe and clears every pointer plus the
+        // publication flag, making an allocation failure recoverable/retryable.
+        free_gauge_links();
+        throw;
     }
 }
 
@@ -868,20 +1462,20 @@ void GpuEngine::download_gauge_links(std::vector<SU2Link>& su2_x,
 void GpuEngine::gpu_gauge_relax() {
     if (!gauge_links_device_) return;
     // One Jacobi sweep per enabled group per tick, matching the CPU Rule 7b
-    // (same GAUGE_RELAX_DT/GAUGE_RELAX_BETA constants). Default stream so the
+    // (same GAUGE_RELAX_DT/GAUGE_RELAX_BETA constants). Engine stream so the
     // sweep serializes with the rest of the tick's kernels (same-stream
     // ordering guarantee); src -> scratch, then pointer swap.
     if (toggles.su2_gauge) {
         launch_relax_su2_links(d_su2_[0], d_su2_[1], d_su2_[2],
                                d_su2_scr_[0], d_su2_scr_[1], d_su2_scr_[2],
-                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, 0);
+                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, bufs_.stream);
         CUDA_CHECK(cudaGetLastError());
         for (int d = 0; d < 3; ++d) std::swap(d_su2_[d], d_su2_scr_[d]);
     }
     if (toggles.su3_gauge) {
         launch_relax_su3_links(d_su3_[0], d_su3_[1], d_su3_[2],
                                d_su3_scr_[0], d_su3_scr_[1], d_su3_scr_[2],
-                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, 0);
+                               size_, GAUGE_RELAX_DT, GAUGE_RELAX_BETA, bufs_.stream);
         CUDA_CHECK(cudaGetLastError());
         for (int d = 0; d < 3; ++d) std::swap(d_su3_[d], d_su3_scr_[d]);
     }

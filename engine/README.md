@@ -20,6 +20,30 @@ Detailed references:
 
 ## Quick Start
 
+### Windows Desktop (WSL2 CUDA + embedded dashboard)
+
+```bat
+engine\build_desktop.bat
+engine\start_desktop.bat
+```
+
+This creates a native WPF/WebView2 window, serves `engine/web` in-process, and
+supervises the canonical `engine/build_wsl/ws_server` CUDA backend. The shell
+requires a runtime `backend: "cuda"` response and does not silently fall back
+to CPU. See [desktop/README.md](desktop/README.md) for prerequisites, ports,
+arguments, and the exact per-feature GPU boundary.
+
+### Windows native D3D12 (in-process, no WebView2)
+
+Separate from the web dashboard and from the WPF/WebView2 shell. Physics
+runs in-process; particles are drawn with D3D12. Does not modify `engine/web`.
+
+```bat
+engine\start_native_desktop.bat --cpu --lattice 32
+```
+
+See [native_desktop/README.md](native_desktop/README.md).
+
 ### Build (Windows native, CPU + CUDA)
 MUST use the MSVC 14.44 toolset — VS 18's default (14.51+) crashes CUDA 13.0's
 `cudafe++`. The wrapper enters `vcvarsall.bat x64 -vcvars_ver=14.44` and drives

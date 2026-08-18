@@ -371,6 +371,9 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             }
         }
     }
+    else {
+        return false;
+    }
     return true;
 }
 

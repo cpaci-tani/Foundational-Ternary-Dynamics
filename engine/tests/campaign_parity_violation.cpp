@@ -1,8 +1,8 @@
 /**
  * Campaign: Parity Violation (Phase 6 — Weak Sector & SU(2))
  *
- * Tests that weak transmutation in dual-substrate mode preferentially
- * affects +1 (left-chiral) particles over -1 (right-chiral) particles.
+ * Tests that weak transmutation in dual-substrate mode is state-asymmetric
+ * because it reads only the left register.
  *
  * Theory: The dual substrate (J_L, J_R) implements chirality:
  *   +1 particle: J_L dominant (fraction ≈ (1+δ)/2 ≈ 0.978)
@@ -11,24 +11,23 @@
  *
  * The weak force couples only to J_L. In dual mode, the transmutation
  * stress is computed from J_L only (compute_stress_left). This means:
- *   - +1 particles have higher stress_L than -1 particles (self-field asymmetry)
- *   - External injected flux splits 50/50 between L/R (no chirality preference)
- *   - The asymmetry comes from the particle's δ-split self-field
- *   - Transmutation rate is higher for +1 (J_L-dominant) particles
- *   - This IS parity violation [EMERGENT from dual-substrate geometry]
+ *   - opposite states can have different stress_L (self-field asymmetry)
+ *   - The asymmetry comes from a prepared particle/wavepacket's δ-split field
+ *   - Transmutation-rate ordering follows the measured stress_L ordering
+ *   - The L-only readout is [IMPOSED]; the measured asymmetry is [EMERGENT]
  *
  * In single-substrate mode: weak force couples to total J → no asymmetry.
  *
  * Protocol:
- *   1. Create +1 and -1 particles in identical high-stress environments
+ *   1. Create +1 and -1 particles with identical observable wavepackets
  *   2. In dual mode: measure stress_L for each (expect asymmetry)
  *   3. In single mode: measure stress for each (expect symmetry)
  *   4. Run transmutation ensemble and count flip rates
  *
  * Checks:
- *   PV1: In dual mode, stress_L(+1) > stress_L(-1) (asymmetry from self-field)
+ *   PV1: Prepared + packet has higher stress_L than the matched - packet
  *   PV2: In single mode, stress(+1) ≈ stress(-1) (symmetric)
- *   PV3: Dual-mode transmutation rate for +1 > rate for -1
+ *   PV3: Prepared + packet has a higher transmutation rate than matched -
  *   PV4: Chirality density flips sign on transmutation
  */
 
@@ -57,10 +56,21 @@ int main() {
 
     const int L = 32;
     const int mid = L / 2;
-    const int WARMUP = 200;
+    const double packet_amp = ftd::K_B * 10.0;
 
-    // Injection amplitude for high stress
-    const double amp = ftd::K_B * 10.0;
+    // Build identical observable F profiles with opposite state-odd D.  The
+    // wavepacket supplies a resolved neighbour shell, which is required because
+    // stress_field() samples the six neighbours rather than the center value.
+    // All evolution terms stay off so the probe measures the A1/A2 injection
+    // split itself instead of a 200-tick mixture of sourced F and damped D.
+    auto prepare_probe = [&](ftd::RenderBridge& rb, int8_t state,
+                             bool dual, double amplitude) {
+        rb.toggles.disable_all();
+        rb.toggles.dual_substrate = dual;
+        rb.inject_particle(mid, mid, mid, state, {ftd::K_B, 0, 0});
+        rb.inject_wavepacket(mid, mid, mid, state, 2.0, amplitude);
+        rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
+    };
 
     // ================================================================
     // Part 1: Dual-mode stress asymmetry
@@ -73,18 +83,7 @@ int main() {
         // +1 particle in dual mode
         {
             ftd::RenderBridge rb(L);
-            rb.toggles.genesis = false;
-            rb.toggles.dual_substrate = true;
-            rb.toggles.weak_transmutation = false;
-
-            rb.inject_particle(mid, mid, mid, +1, {ftd::K_B, 0, 0});
-            rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-            rb.run(WARMUP);
-
-            // Inject stress
-            rb.inject_flux(mid+1, mid, mid, {amp, 0, 0});
-            rb.inject_flux(mid-1, mid, mid, {-amp, 0, 0});
-            rb.tick();
+            prepare_probe(rb, +1, true, packet_amp);
 
             int idx = rb.lattice().index(mid, mid, mid);
             stress_L_positive = rb.compute_stress_left(idx);
@@ -94,18 +93,7 @@ int main() {
         // -1 particle in dual mode
         {
             ftd::RenderBridge rb(L);
-            rb.toggles.genesis = false;
-            rb.toggles.dual_substrate = true;
-            rb.toggles.weak_transmutation = false;
-
-            rb.inject_particle(mid, mid, mid, -1, {ftd::K_B, 0, 0});
-            rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-            rb.run(WARMUP);
-
-            // Inject same stress
-            rb.inject_flux(mid+1, mid, mid, {amp, 0, 0});
-            rb.inject_flux(mid-1, mid, mid, {-amp, 0, 0});
-            rb.tick();
+            prepare_probe(rb, -1, true, packet_amp);
 
             int idx = rb.lattice().index(mid, mid, mid);
             stress_L_negative = rb.compute_stress_left(idx);
@@ -131,17 +119,7 @@ int main() {
         // +1 particle in single mode
         {
             ftd::RenderBridge rb(L);
-            rb.toggles.genesis = false;
-            rb.toggles.dual_substrate = false;
-            rb.toggles.weak_transmutation = false;
-
-            rb.inject_particle(mid, mid, mid, +1, {ftd::K_B, 0, 0});
-            rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-            rb.run(WARMUP);
-
-            rb.inject_flux(mid+1, mid, mid, {amp, 0, 0});
-            rb.inject_flux(mid-1, mid, mid, {-amp, 0, 0});
-            rb.tick();
+            prepare_probe(rb, +1, false, packet_amp);
 
             stress_single_positive = rb.compute_stress(rb.lattice().index(mid, mid, mid));
         }
@@ -149,17 +127,7 @@ int main() {
         // -1 particle in single mode
         {
             ftd::RenderBridge rb(L);
-            rb.toggles.genesis = false;
-            rb.toggles.dual_substrate = false;
-            rb.toggles.weak_transmutation = false;
-
-            rb.inject_particle(mid, mid, mid, -1, {ftd::K_B, 0, 0});
-            rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-            rb.run(WARMUP);
-
-            rb.inject_flux(mid+1, mid, mid, {amp, 0, 0});
-            rb.inject_flux(mid-1, mid, mid, {-amp, 0, 0});
-            rb.tick();
+            prepare_probe(rb, -1, false, packet_amp);
 
             stress_single_negative = rb.compute_stress(rb.lattice().index(mid, mid, mid));
         }
@@ -183,19 +151,9 @@ int main() {
             {
                 ftd::RenderBridge rb(L);
                 rb.seed_rng(2000 + trial);
-                rb.toggles.genesis = false;
-                rb.toggles.dual_substrate = true;
-                rb.toggles.weak_transmutation = true;
-
-                rb.inject_particle(mid, mid, mid, +1, {ftd::K_B, 0, 0});
-                rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-                rb.run(WARMUP);
-
-                rb.inject_flux(mid+1, mid, mid, {amp, 0, 0});
-                rb.inject_flux(mid-1, mid, mid, {-amp, 0, 0});
-                rb.tick();  // propagate stress
-
+                prepare_probe(rb, +1, true, packet_amp);
                 int8_t before = rb.voxels()[rb.lattice().index(mid, mid, mid)].state;
+                rb.toggles.weak_transmutation = true;
                 rb.tick();  // attempt transmutation
                 int8_t after = rb.voxels()[rb.lattice().index(mid, mid, mid)].state;
                 if (after != before) ++flips_positive;
@@ -205,19 +163,9 @@ int main() {
             {
                 ftd::RenderBridge rb(L);
                 rb.seed_rng(2000 + trial);
-                rb.toggles.genesis = false;
-                rb.toggles.dual_substrate = true;
-                rb.toggles.weak_transmutation = true;
-
-                rb.inject_particle(mid, mid, mid, -1, {ftd::K_B, 0, 0});
-                rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-                rb.run(WARMUP);
-
-                rb.inject_flux(mid+1, mid, mid, {amp, 0, 0});
-                rb.inject_flux(mid-1, mid, mid, {-amp, 0, 0});
-                rb.tick();
-
+                prepare_probe(rb, -1, true, packet_amp);
                 int8_t before = rb.voxels()[rb.lattice().index(mid, mid, mid)].state;
+                rb.toggles.weak_transmutation = true;
                 rb.tick();
                 int8_t after = rb.voxels()[rb.lattice().index(mid, mid, mid)].state;
                 if (after != before) ++flips_negative;
@@ -238,30 +186,28 @@ int main() {
     {
         ftd::RenderBridge rb(L);
         rb.seed_rng(9999);  // Deterministic
-        rb.toggles.genesis = false;
-        rb.toggles.dual_substrate = true;
-        rb.toggles.weak_transmutation = true;
-
-        rb.inject_particle(mid, mid, mid, +1, {ftd::K_B, 0, 0});
-        rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
-        rb.run(WARMUP);
+        double big_amp = ftd::K_B * 50.0;
+        prepare_probe(rb, +1, true, big_amp);
 
         // Measure chirality before
         chirality_before = rb.voxels()[rb.lattice().index(mid, mid, mid)].chirality_density();
 
-        // Inject massive stress to guarantee transmutation (p ≈ 1)
-        double big_amp = ftd::K_B * 50.0;
-        rb.inject_flux(mid+1, mid, mid, {big_amp, 0, 0});
-        rb.inject_flux(mid-1, mid, mid, {-big_amp, 0, 0});
-        rb.inject_flux(mid, mid+1, mid, {0, big_amp, 0});
-        rb.inject_flux(mid, mid-1, mid, {0, -big_amp, 0});
-        rb.tick();  // propagate stress
+        // The resolved packet puts the + channel far above threshold.
+        rb.toggles.weak_transmutation = true;
 
-        // Force many transmutation attempts (run several ticks with high stress)
+        // Attempt until the first state change, then stop immediately. The
+        // weak action swaps the manifested site's registers, not the whole
+        // prepared neighbour shell; continuing through a static superthreshold
+        // shell could flip the site again and hide an earlier event.
+        bool state_flipped = false;
         for (int i = 0; i < 10; ++i) {
-            rb.inject_flux(mid+1, mid, mid, {big_amp, 0, 0});
-            rb.inject_flux(mid-1, mid, mid, {-big_amp, 0, 0});
+            const int8_t before = rb.voxels()[rb.lattice().index(mid, mid, mid)].state;
             rb.tick();
+            const int8_t after = rb.voxels()[rb.lattice().index(mid, mid, mid)].state;
+            if (after != before) {
+                state_flipped = true;
+                break;
+            }
         }
 
         chirality_after = rb.voxels()[rb.lattice().index(mid, mid, mid)].chirality_density();
@@ -273,13 +219,9 @@ int main() {
         std::cout << "  Final state:      " << (int)final_state << "\n";
 
         // Logical structure of PV4: "IF state flipped THEN chirality
-        // sign should change". This is vacuously TRUE when state didn't
-        // flip (transmutation is stochastic and not guaranteed by the
-        // 11-tick stress protocol). When state DID flip, we check the
-        // sign-change condition. 2026-05-04 reframe: the implication-
-        // form is correct logic and accommodates the run-to-run
-        // variance of whether the transmutation event occurred.
-        bool state_flipped = (final_state == -1);  // initial was +1
+        // sign should change". When state DID flip, check the sign change
+        // immediately after that first event; otherwise the implication is
+        // vacuously true for this deterministic finite attempt window.
         if (state_flipped) {
             chirality_flipped = (chirality_before * chirality_after < 0) ||
                                 (chirality_after < 0);
@@ -295,33 +237,36 @@ int main() {
     // ================================================================
     std::cout << "\n--- Checks ---\n";
 
-    // PV1: Dual-mode stress asymmetry (left-chiral stress higher for +1)
-    // The asymmetry comes from the particle's self-field (split by δ ≈ 0.957).
-    // External injected flux splits 50/50 and dominates, so the ratio is modest.
-    // The definitive parity violation test is PV3 (transmutation rate asymmetry).
+    // PV1: For identical prepared observable profiles, injection writes
+    // D=sign(state)*delta*J. Therefore L=(F+D)/2 is major for + and minor
+    // for -, giving a definite initial stress ordering. This is deliberately
+    // scoped to the injection-time chirality touchpoint; D later evolves
+    // source-free and the ordering is not claimed for arbitrary histories.
     double stress_ratio = (stress_L_negative > 1e-15)
         ? stress_L_positive / stress_L_negative
         : 999.0;
     std::cout << "  stress_L ratio (+1/-1): " << stress_ratio << "\n";
-    check("PV1: Dual-mode stress_L(+1) > stress_L(-1) (ratio > 1.05)",
+    check("PV1: Prepared + packet has higher left-channel stress",
           stress_ratio > 1.05);
 
     // PV2: Single-mode stress symmetry (+1 and -1 see same stress)
     double sym_ratio = stress_single_positive / std::max(stress_single_negative, 1e-15);
     std::cout << "  single-mode ratio: " << sym_ratio << "\n";
-    check("PV2: Single-mode stress is symmetric (ratio within 0.5-2.0)",
-          sym_ratio > 0.5 && sym_ratio < 2.0);
+    check("PV2: Matched single-mode packets have equal stress",
+          std::abs(stress_single_positive - stress_single_negative)
+              <= 1e-12 * std::max(1.0, stress_single_positive));
 
-    // PV3: Dual-mode transmutation rate asymmetry
-    // +1 should flip more than -1
+    // PV3: The selected weak probability is monotone in stress_L. With paired
+    // seeds and identical observable packets, the prepared + channel should
+    // flip more often because its injection-time L stress is larger.
     std::cout << "  +1 flips: " << flips_positive << ", -1 flips: " << flips_negative << "\n";
-    check("PV3: +1 particles transmute more than -1 in dual mode",
+    check("PV3: Prepared + packets transmute more often than - packets",
           flips_positive > flips_negative);
 
     // PV4: Chirality changes on transmutation
     // Logical implication: IF state +1 transmuted to -1, THEN chirality
     // sign changed. Vacuously true when transmutation didn't occur during
-    // the stochastic 11-tick stress protocol (chirality_flipped is set to
+    // the stochastic 10-tick stress protocol (chirality_flipped is set to
     // true upstream when no flip happened — see Part 4 above).
     check("PV4: Chirality density changes sign on transmutation",
           chirality_flipped);
@@ -329,12 +274,10 @@ int main() {
     std::cout << "\n================================================================\n";
     std::cout << "  RESULT: " << (failures == 0 ? "ALL PASSED" : "FAILURES DETECTED")
               << " (" << failures << " failures)\n";
-    std::cout << "  NOTE: Parity violation is [EMERGENT] from the dual-substrate\n";
-    std::cout << "  geometry — the asymmetric splitting δ = " << ftd::DELTA_APPROX << "\n";
-    std::cout << "  means +1 particles are J_L-dominant and -1 are J_R-dominant.\n";
-    std::cout << "  The weak force coupling to J_L only is [IMPOSED] from SU(2).\n";
-    std::cout << "  The MAXIMAL parity violation (V-A structure) is [EMERGENT]\n";
-    std::cout << "  from δ being close to 1 (G* >> 1).\n";
+    std::cout << "  NOTE: The injection split delta = " << ftd::DELTA_APPROX << " writes\n";
+    std::cout << "  state-odd D; the weak trigger's L-only coupling is [IMPOSED].\n";
+    std::cout << "  This campaign measures the resulting state asymmetry and does\n";
+    std::cout << "  not claim a fixed post-evolution sign or derive V-A structure.\n";
     std::cout << "================================================================\n";
     return failures;
 }

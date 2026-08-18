@@ -39,6 +39,7 @@ void AtomBuffers::allocate(int capacity) {
     free();
     N_alloc = capacity;
 
+    try {
     CUDA_CHECK(cudaMalloc(&d_pos_x,   capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_pos_y,   capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_pos_z,   capacity * sizeof(double)));
@@ -62,6 +63,10 @@ void AtomBuffers::allocate(int capacity) {
     CUDA_CHECK(cudaMalloc(&d_f_vdw_x,   capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_f_vdw_y,   capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_f_vdw_z,   capacity * sizeof(double)));
+    } catch (...) {
+        free();
+        throw;
+    }
 }
 
 void AtomBuffers::free() {

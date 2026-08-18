@@ -21,6 +21,8 @@
  */
 
 #include <atomic>
+#include <limits>
+#include <stdexcept>
 
 namespace ftd {
 
@@ -32,13 +34,28 @@ public:
     // OpenMP parallel regions or CUDA host threads. Replaces the previous
     // pattern `omp critical(genesis_id) { pid = next_particle_id_++; }`.
     int next_particle_id() {
-        return next_particle_id_.fetch_add(1, std::memory_order_relaxed);
+        int current = next_particle_id_.load(std::memory_order_relaxed);
+        for (;;) {
+            if (current >= std::numeric_limits<int>::max()) {
+                throw std::overflow_error("particle identity namespace exhausted");
+            }
+            if (next_particle_id_.compare_exchange_weak(
+                    current, current + 1,
+                    std::memory_order_relaxed, std::memory_order_relaxed)) {
+                return current;
+            }
+        }
     }
 
     // Get the next entangled-pair ID. NOT atomic — only called from
     // single-threaded test setup paths (create_entangled_pair_cpu); kept as
     // plain int to avoid pretending it's safe under parallelism.
-    int next_pair_id() { return next_pair_id_++; }
+    int next_pair_id() {
+        if (next_pair_id_ >= std::numeric_limits<int>::max()) {
+            throw std::overflow_error("pair identity namespace exhausted");
+        }
+        return next_pair_id_++;
+    }
 
     // Reset both counters. Used by tests that want determinism across
     // sequential RenderBridge constructions in the same process.
@@ -52,6 +69,19 @@ public:
         return next_particle_id_.load(std::memory_order_relaxed);
     }
     int peek_next_pair_id() const { return next_pair_id_; }
+
+    // Raise-only reconciliation for a device backend.  A GPU may have issued
+    // identities to particles that later evaporated, so scanning the live host
+    // voxels cannot reconstruct the lifetime high-water mark.  Never lower a
+    // counter: gaps are allowed; reuse is not.
+    void raise_identity_counters(int next_particle_id, int next_pair_id) {
+        int current = next_particle_id_.load(std::memory_order_relaxed);
+        while (current < next_particle_id
+               && !next_particle_id_.compare_exchange_weak(
+                   current, next_particle_id,
+                   std::memory_order_relaxed, std::memory_order_relaxed)) {}
+        if (next_pair_id_ < next_pair_id) next_pair_id_ = next_pair_id;
+    }
 
 private:
     std::atomic<int> next_particle_id_{0};

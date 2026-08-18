@@ -370,8 +370,7 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
         return true;
     }
 
-    return true;  // matched the prefix but no body — keeps the dispatcher from
-                  // falling through to s0-seed-*.
+    return false;
 }
 
 }  // namespace ftd

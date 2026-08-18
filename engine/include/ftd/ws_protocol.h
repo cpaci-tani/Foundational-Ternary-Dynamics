@@ -24,6 +24,9 @@
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #  endif
+#  ifndef NOMINMAX
+#    define NOMINMAX   // windows.h's min/max macros break std::/Clock:: min()/max() calls
+#  endif
 #  include <winsock2.h>
 #  include <ws2tcpip.h>
 #else
@@ -69,12 +72,14 @@ bool send_all(SOCKET sock, const void* buf, size_t n);
 // ---------------------------------------------------------------------------
 
 // Perform the server-side HTTP Upgrade handshake.
-// Reads up to 4 KB of HTTP headers from `client`, computes the Sec-WebSocket-
-// Accept value, and sends the 101 Switching Protocols response.
+// Reads one complete HTTP header block (bounded to 16 KiB) from `client`,
+// computes the Sec-WebSocket-Accept value, and sends the 101 Switching
+// Protocols response. Header names are matched case-insensitively.
 bool ws_handshake(SOCKET client);
 
 // Read one WebSocket frame.  Returns opcode, fills `payload`.
-// Returns 0xFF on error/disconnect.
+// Client frames must be final, unfragmented, masked, and no larger than 64 KiB.
+// Returns 0xFF on protocol error or disconnect.
 uint8_t ws_read_frame(SOCKET sock, std::vector<uint8_t>& payload);
 
 // Send a WebSocket frame (server frames are NOT masked).
@@ -96,5 +101,9 @@ double json_number(const std::string& json, const std::string& key);
 
 // Find a boolean value for `key`.  Returns false on failure or if absent.
 bool json_bool(const std::string& json, const std::string& key);
+
+// True when an exact quoted key is present. This disambiguates an explicit
+// JSON `false` from an absent field for atomic toggle-profile updates.
+bool json_has_key(const std::string& json, const std::string& key);
 
 }  // namespace ftd

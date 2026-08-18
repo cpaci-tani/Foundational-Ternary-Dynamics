@@ -110,9 +110,10 @@ int main() {
         // BI term should be negative
         check("BI term < 0", bi < 0.0);
 
-        // Coupling term: -g_c * 1 * 0.5 = -0.0427
-        double expected_coup = -ftd::G_C * 1.0 * 0.5;
-        check_close("Coupling = -g_c * s * divJ", coup, expected_coup, 1e-6);
+        // Coupling term: +g_c * 1 * 0.5 = +0.0427.  The 2026-07-18
+        // action-sign correction makes this cooperate with div(J)=rho.
+        double expected_coup = ftd::G_C * 1.0 * 0.5;
+        check_close("Coupling = +g_c * s * divJ", coup, expected_coup, 1e-6);
 
         // Gauss term: -lambda_G * (0.5 - 1.0)^2 = -lambda_G * 0.25
         double expected_gauss = -ftd::LAMBDA_G * 0.25;

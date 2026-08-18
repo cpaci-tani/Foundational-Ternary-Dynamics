@@ -1,0 +1,803 @@
+#ifndef UNICODE
+#define UNICODE
+#endif
+#ifndef _UNICODE
+#define _UNICODE
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <windowsx.h>
+#include <commctrl.h>
+
+#include "ftd/scenarios.h"
+#include "native_desktop/d3d12_presenter.h"
+#include "native_desktop/engine_session.h"
+
+#include <algorithm>
+#include <atomic>
+#include <cctype>
+#include <chrono>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <mutex>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <vector>
+
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(linker, \
+                "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+namespace {
+
+constexpr int kPanelWidth = 332;
+constexpr int kControlPad = 14;
+
+enum ControlId {
+    IDC_FILTER = 1001,
+    IDC_SCENARIOS,
+    IDC_LOAD,
+    IDC_LATTICE,
+    IDC_BOUNDARY,
+    IDC_PLAY,
+    IDC_STEP,
+    IDC_RESET,
+    IDC_SPEED,
+    IDC_SHOW_PARTICLES,
+    IDC_SHOW_FLUX,
+    IDC_SHOW_BOX,
+    IDC_RESET_CAM,
+    IDC_STATUS,
+};
+
+struct PendingWork {
+    std::mutex mu;
+    std::optional<ftd::native_desktop::NativeEngineOptions> reload;
+    std::optional<int> boundary;
+    int steps = 0;
+};
+
+struct AppState {
+    HWND hwnd = nullptr;
+    HWND view = nullptr;
+    HWND filter = nullptr;
+    HWND list = nullptr;
+    HWND lattice = nullptr;
+    HWND boundary = nullptr;
+    HWND play = nullptr;
+    HWND speed = nullptr;
+    HWND chk_particles = nullptr;
+    HWND chk_flux = nullptr;
+    HWND chk_box = nullptr;
+    HWND status = nullptr;
+    HFONT font = nullptr;
+    HFONT title_font = nullptr;
+    HBRUSH bg = nullptr;
+    HBRUSH edit_bg = nullptr;
+
+    ftd::native_desktop::D3D12Presenter* presenter = nullptr;
+    ftd::native_desktop::Camera camera;
+    ftd::native_desktop::NativeViewOptions view_opts;
+    ftd::native_desktop::NativeEngineOptions live_opts;
+    std::vector<std::string> scenario_ids;
+    PendingWork* pending = nullptr;
+    std::atomic<bool>* paused = nullptr;
+    std::atomic<int>* tick_hz = nullptr;
+    std::atomic<bool>* reloading = nullptr;
+
+    bool dragging = false;
+    bool syncing = false;
+    POINT last{};
+};
+
+AppState* app_from_hwnd(HWND hwnd) {
+    return reinterpret_cast<AppState*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+}
+
+std::wstring utf8_to_wide(const std::string& text) {
+    if (text.empty()) return {};
+    const int count =
+        MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, nullptr, 0);
+    std::wstring wide(static_cast<std::size_t>(count > 0 ? count - 1 : 0), L'\0');
+    if (count > 1) {
+        MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, wide.data(), count);
+    }
+    return wide;
+}
+
+std::string wide_to_utf8(const std::wstring& text) {
+    if (text.empty()) return {};
+    const int count =
+        WideCharToMultiByte(CP_UTF8, 0, text.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string out(static_cast<std::size_t>(count > 0 ? count - 1 : 0), '\0');
+    if (count > 1) {
+        WideCharToMultiByte(CP_UTF8, 0, text.c_str(), -1, out.data(), count, nullptr,
+                            nullptr);
+    }
+    return out;
+}
+
+bool contains_ci(const std::string& hay, const std::string& needle) {
+    if (needle.empty()) return true;
+    auto lower = [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    };
+    std::string a = hay;
+    std::string b = needle;
+    std::transform(a.begin(), a.end(), a.begin(), lower);
+    std::transform(b.begin(), b.end(), b.begin(), lower);
+    return a.find(b) != std::string::npos;
+}
+
+HWND create_label(HWND parent, const wchar_t* text, int x, int y, int w, int h,
+                  HFONT font) {
+    HWND hwnd = CreateWindowExW(0, L"STATIC", text,
+                                WS_CHILD | WS_VISIBLE | SS_LEFT, x, y, w, h,
+                                parent, nullptr, GetModuleHandleW(nullptr), nullptr);
+    SendMessageW(hwnd, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
+    return hwnd;
+}
+
+HWND create_button(HWND parent, ControlId id, const wchar_t* text, int x, int y,
+                   int w, int h, HFONT font) {
+    HWND hwnd = CreateWindowExW(0, L"BUTTON", text,
+                                WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+                                x, y, w, h, parent, reinterpret_cast<HMENU>(id),
+                                GetModuleHandleW(nullptr), nullptr);
+    SendMessageW(hwnd, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
+    return hwnd;
+}
+
+void request_reload(AppState* app) {
+    if (!app || !app->pending) return;
+    std::lock_guard<std::mutex> lock(app->pending->mu);
+    app->pending->reload = app->live_opts;
+    if (app->reloading) app->reloading->store(true);
+}
+
+void refill_scenarios(AppState* app) {
+    if (!app || !app->list) return;
+    wchar_t filter_buf[256] = {};
+    GetWindowTextW(app->filter, filter_buf, 256);
+    const std::string filter = wide_to_utf8(filter_buf);
+
+    app->syncing = true;
+    SendMessageW(app->list, LB_RESETCONTENT, 0, 0);
+    int select = 0;
+    int visible = 0;
+    for (const std::string& id : app->scenario_ids) {
+        if (!contains_ci(id, filter)) continue;
+        const std::wstring wide = utf8_to_wide(id);
+        SendMessageW(app->list, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wide.c_str()));
+        if (id == app->live_opts.scenario) select = visible;
+        ++visible;
+    }
+    if (visible > 0) SendMessageW(app->list, LB_SETCURSEL, select, 0);
+    app->syncing = false;
+}
+
+std::string selected_scenario(const AppState* app) {
+    if (!app || !app->list) return {};
+    const int index = static_cast<int>(SendMessageW(app->list, LB_GETCURSEL, 0, 0));
+    if (index < 0) return {};
+    const int len = static_cast<int>(SendMessageW(app->list, LB_GETTEXTLEN, index, 0));
+    if (len < 0) return {};
+    std::wstring wide(static_cast<std::size_t>(len + 1), L'\0');
+    SendMessageW(app->list, LB_GETTEXT, index, reinterpret_cast<LPARAM>(wide.data()));
+    wide.resize(static_cast<std::size_t>(len));
+    return wide_to_utf8(wide);
+}
+
+void load_selected_scenario(AppState* app) {
+    const std::string name = selected_scenario(app);
+    if (name.empty()) return;
+    app->live_opts.scenario = name;
+    request_reload(app);
+}
+
+void sync_lattice_combo(AppState* app) {
+    if (!app || !app->lattice) return;
+    app->syncing = true;
+    const int count = static_cast<int>(SendMessageW(app->lattice, CB_GETCOUNT, 0, 0));
+    int found = -1;
+    for (int i = 0; i < count; ++i) {
+        if (static_cast<int>(SendMessageW(app->lattice, CB_GETITEMDATA, i, 0)) ==
+            app->live_opts.lattice_size) {
+            found = i;
+            break;
+        }
+    }
+    if (found < 0) {
+        const std::wstring label = std::to_wstring(app->live_opts.lattice_size);
+        found = static_cast<int>(SendMessageW(
+            app->lattice, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(label.c_str())));
+        SendMessageW(app->lattice, CB_SETITEMDATA, found, app->live_opts.lattice_size);
+    }
+    SendMessageW(app->lattice, CB_SETCURSEL, found, 0);
+    app->syncing = false;
+}
+
+void layout_shell(AppState* app, int width, int height) {
+    if (!app || !app->view) return;
+    const int view_x = kPanelWidth;
+    const int view_w = std::max(64, width - kPanelWidth);
+    const int view_h = std::max(64, height);
+    MoveWindow(app->view, view_x, 0, view_w, view_h, TRUE);
+}
+
+void set_playing_caption(AppState* app) {
+    if (!app || !app->play || !app->paused) return;
+    SetWindowTextW(app->play, app->paused->load() ? L"Play" : L"Pause");
+}
+
+void apply_camera_for_lattice(AppState* app, int lattice_size) {
+    const float center = static_cast<float>(lattice_size) * 0.5f;
+    app->camera.target_x = center;
+    app->camera.target_y = center;
+    app->camera.target_z = center;
+    app->camera.distance = static_cast<float>(lattice_size) * 1.8f;
+}
+
+LRESULT CALLBACK view_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+    AppState* app = app_from_hwnd(hwnd);
+    switch (msg) {
+        case WM_LBUTTONDOWN:
+            if (app) {
+                app->dragging = true;
+                app->last = {GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)};
+                SetCapture(hwnd);
+            }
+            return 0;
+        case WM_LBUTTONUP:
+            if (app) {
+                app->dragging = false;
+                ReleaseCapture();
+            }
+            return 0;
+        case WM_MOUSEMOVE:
+            if (app && app->dragging) {
+                const int x = GET_X_LPARAM(lparam);
+                const int y = GET_Y_LPARAM(lparam);
+                app->camera.yaw += (x - app->last.x) * 0.01f;
+                app->camera.pitch += (y - app->last.y) * 0.01f;
+                if (app->camera.pitch > 1.4f) app->camera.pitch = 1.4f;
+                if (app->camera.pitch < -1.4f) app->camera.pitch = -1.4f;
+                app->last = {x, y};
+            }
+            return 0;
+        case WM_MOUSEWHEEL:
+            if (app) {
+                const int delta = GET_WHEEL_DELTA_WPARAM(wparam);
+                app->camera.distance *= (delta > 0) ? 0.9f : 1.1f;
+                if (app->camera.distance < 4.0f) app->camera.distance = 4.0f;
+                if (app->camera.distance > 256.0f) app->camera.distance = 256.0f;
+            }
+            return 0;
+        case WM_SIZE:
+            if (app && app->presenter && wparam != SIZE_MINIMIZED) {
+                const UINT w = LOWORD(lparam);
+                const UINT h = HIWORD(lparam);
+                if (w > 0 && h > 0) app->presenter->resize(w, h);
+            }
+            return 0;
+        default:
+            return DefWindowProcW(hwnd, msg, wparam, lparam);
+    }
+}
+
+void handle_command(AppState* app, WPARAM wparam) {
+    if (!app) return;
+    const int id = LOWORD(wparam);
+    const int code = HIWORD(wparam);
+    if (app->syncing) return;
+
+    switch (id) {
+        case IDC_FILTER:
+            if (code == EN_CHANGE) refill_scenarios(app);
+            break;
+        case IDC_SCENARIOS:
+            if (code == LBN_DBLCLK) load_selected_scenario(app);
+            break;
+        case IDC_LOAD:
+            load_selected_scenario(app);
+            break;
+        case IDC_LATTICE:
+            if (code == CBN_SELCHANGE) {
+                const int index =
+                    static_cast<int>(SendMessageW(app->lattice, CB_GETCURSEL, 0, 0));
+                if (index < 0) break;
+                const int size = static_cast<int>(
+                    SendMessageW(app->lattice, CB_GETITEMDATA, index, 0));
+                if (size >= 4) {
+                    app->live_opts.lattice_size = size;
+                    request_reload(app);
+                }
+            }
+            break;
+        case IDC_BOUNDARY:
+            if (code == CBN_SELCHANGE && app->pending) {
+                const int index =
+                    static_cast<int>(SendMessageW(app->boundary, CB_GETCURSEL, 0, 0));
+                if (index < 0) break;
+                const int mode = static_cast<int>(
+                    SendMessageW(app->boundary, CB_GETITEMDATA, index, 0));
+                app->live_opts.flux_boundary = mode;
+                std::lock_guard<std::mutex> lock(app->pending->mu);
+                app->pending->boundary = mode;
+            }
+            break;
+        case IDC_PLAY:
+            if (app->paused) app->paused->store(!app->paused->load());
+            set_playing_caption(app);
+            break;
+        case IDC_STEP:
+            if (app->paused) app->paused->store(true);
+            set_playing_caption(app);
+            if (app->pending) {
+                std::lock_guard<std::mutex> lock(app->pending->mu);
+                ++app->pending->steps;
+            }
+            break;
+        case IDC_RESET:
+            request_reload(app);
+            break;
+        case IDC_SHOW_PARTICLES:
+            app->view_opts.particles =
+                SendMessageW(app->chk_particles, BM_GETCHECK, 0, 0) == BST_CHECKED;
+            break;
+        case IDC_SHOW_FLUX:
+            app->view_opts.flux =
+                SendMessageW(app->chk_flux, BM_GETCHECK, 0, 0) == BST_CHECKED;
+            break;
+        case IDC_SHOW_BOX:
+            app->view_opts.lattice_box =
+                SendMessageW(app->chk_box, BM_GETCHECK, 0, 0) == BST_CHECKED;
+            break;
+        case IDC_RESET_CAM:
+            apply_camera_for_lattice(app, app->live_opts.lattice_size);
+            break;
+        default:
+            break;
+    }
+}
+
+LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+    AppState* app = app_from_hwnd(hwnd);
+    switch (msg) {
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
+        case WM_SIZE:
+            if (app) {
+                layout_shell(app, LOWORD(lparam), HIWORD(lparam));
+            }
+            return 0;
+        case WM_COMMAND:
+            handle_command(app, wparam);
+            return 0;
+        case WM_HSCROLL:
+            if (app && app->speed && reinterpret_cast<HWND>(lparam) == app->speed &&
+                app->tick_hz) {
+                const int pos =
+                    static_cast<int>(SendMessageW(app->speed, TBM_GETPOS, 0, 0));
+                app->tick_hz->store(std::max(1, pos));
+            }
+            return 0;
+        case WM_CTLCOLORSTATIC:
+        case WM_CTLCOLORLISTBOX:
+        case WM_CTLCOLOREDIT: {
+            if (!app) break;
+            const HDC hdc = reinterpret_cast<HDC>(wparam);
+            SetTextColor(hdc, RGB(220, 228, 236));
+            SetBkColor(hdc, msg == WM_CTLCOLORSTATIC ? RGB(18, 22, 28) : RGB(28, 34, 44));
+            return reinterpret_cast<LRESULT>(
+                msg == WM_CTLCOLORSTATIC ? app->bg : app->edit_bg);
+        }
+        case WM_ERASEBKGND: {
+            if (!app) break;
+            RECT rc{};
+            GetClientRect(hwnd, &rc);
+            rc.right = kPanelWidth;
+            FillRect(reinterpret_cast<HDC>(wparam), &rc, app->bg);
+            return 1;
+        }
+        default:
+            return DefWindowProcW(hwnd, msg, wparam, lparam);
+    }
+    return DefWindowProcW(hwnd, msg, wparam, lparam);
+}
+
+void create_controls(HWND parent, AppState* app) {
+    const int x = kControlPad;
+    const int w = kPanelWidth - kControlPad * 2;
+    int y = 12;
+
+    create_label(parent, L"FTD Native Desktop", x, y, w, 22, app->title_font);
+    y += 24;
+    create_label(parent, L"In-process D3D12  ·  not WebView2", x, y, w, 18, app->font);
+    y += 28;
+
+    create_label(parent, L"Filter scenarios", x, y, w, 16, app->font);
+    y += 18;
+    app->filter = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"",
+                                  WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL,
+                                  x, y, w, 24, parent,
+                                  reinterpret_cast<HMENU>(IDC_FILTER),
+                                  GetModuleHandleW(nullptr), nullptr);
+    SendMessageW(app->filter, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    y += 32;
+
+    create_label(parent, L"Scenarios", x, y, w, 16, app->font);
+    y += 18;
+    app->list = CreateWindowExW(
+        WS_EX_CLIENTEDGE, L"LISTBOX", L"",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | LBS_NOTIFY |
+            LBS_NOINTEGRALHEIGHT,
+        x, y, w, 250, parent, reinterpret_cast<HMENU>(IDC_SCENARIOS),
+        GetModuleHandleW(nullptr), nullptr);
+    SendMessageW(app->list, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    y += 258;
+
+    create_button(parent, IDC_LOAD, L"Load scenario", x, y, w, 28, app->font);
+    y += 40;
+
+    create_label(parent, L"Lattice", x, y, 90, 16, app->font);
+    create_label(parent, L"Boundary", x + 110, y, 120, 16, app->font);
+    y += 18;
+    app->lattice = CreateWindowExW(
+        0, L"COMBOBOX", L"",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, x, y, 100,
+        200, parent, reinterpret_cast<HMENU>(IDC_LATTICE), GetModuleHandleW(nullptr),
+        nullptr);
+    app->boundary = CreateWindowExW(
+        0, L"COMBOBOX", L"",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | CBS_DROPDOWNLIST, x + 110, y, w - 110,
+        200, parent, reinterpret_cast<HMENU>(IDC_BOUNDARY), GetModuleHandleW(nullptr),
+        nullptr);
+    SendMessageW(app->lattice, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    SendMessageW(app->boundary, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    y += 36;
+
+    app->play = create_button(parent, IDC_PLAY, L"Pause", x, y, 96, 28, app->font);
+    create_button(parent, IDC_STEP, L"Step", x + 104, y, 88, 28, app->font);
+    create_button(parent, IDC_RESET, L"Reset", x + 200, y, w - 200, 28, app->font);
+    y += 40;
+
+    create_label(parent, L"Ticks / second", x, y, w, 16, app->font);
+    y += 18;
+    app->speed = CreateWindowExW(
+        0, TRACKBAR_CLASSW, L"",
+        WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | TBS_TOOLTIPS, x, y, w, 32, parent,
+        reinterpret_cast<HMENU>(IDC_SPEED), GetModuleHandleW(nullptr), nullptr);
+    SendMessageW(app->speed, TBM_SETRANGE, TRUE, MAKELPARAM(1, 60));
+    SendMessageW(app->speed, TBM_SETPOS, TRUE, 20);
+    y += 40;
+
+    app->chk_particles = CreateWindowExW(
+        0, L"BUTTON", L"Particles",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX, x, y, 100, 22, parent,
+        reinterpret_cast<HMENU>(IDC_SHOW_PARTICLES), GetModuleHandleW(nullptr), nullptr);
+    app->chk_flux = CreateWindowExW(
+        0, L"BUTTON", L"Flux",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX, x + 104, y, 70, 22,
+        parent, reinterpret_cast<HMENU>(IDC_SHOW_FLUX), GetModuleHandleW(nullptr),
+        nullptr);
+    app->chk_box = CreateWindowExW(
+        0, L"BUTTON", L"Lattice box",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX, x + 178, y, 120, 22,
+        parent, reinterpret_cast<HMENU>(IDC_SHOW_BOX), GetModuleHandleW(nullptr),
+        nullptr);
+    SendMessageW(app->chk_particles, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    SendMessageW(app->chk_flux, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    SendMessageW(app->chk_box, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+    SendMessageW(app->chk_particles, BM_SETCHECK, BST_CHECKED, 0);
+    SendMessageW(app->chk_flux, BM_SETCHECK, BST_CHECKED, 0);
+    SendMessageW(app->chk_box, BM_SETCHECK, BST_CHECKED, 0);
+    y += 30;
+
+    create_button(parent, IDC_RESET_CAM, L"Reset camera", x, y, w, 26, app->font);
+    y += 36;
+
+    create_label(parent, L"Status", x, y, w, 16, app->font);
+    y += 18;
+    app->status = CreateWindowExW(
+        0, L"STATIC", L"Loading…",
+        WS_CHILD | WS_VISIBLE | SS_LEFT, x, y, w, 90, parent,
+        reinterpret_cast<HMENU>(IDC_STATUS), GetModuleHandleW(nullptr), nullptr);
+    SendMessageW(app->status, WM_SETFONT, reinterpret_cast<WPARAM>(app->font), TRUE);
+
+    const int sizes[] = {9, 17, 25, 32, 33, 49};
+    for (int size : sizes) {
+        const std::wstring label = std::to_wstring(size);
+        const int index = static_cast<int>(SendMessageW(
+            app->lattice, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(label.c_str())));
+        SendMessageW(app->lattice, CB_SETITEMDATA, index, size);
+    }
+
+    struct BoundaryItem {
+        const wchar_t* label;
+        int value;
+    };
+    const BoundaryItem boundaries[] = {
+        {L"Periodic", 0},
+        {L"Reflective", 1},
+        {L"Dispersal", 2},
+    };
+    for (const BoundaryItem& item : boundaries) {
+        const int index = static_cast<int>(SendMessageW(
+            app->boundary, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item.label)));
+        SendMessageW(app->boundary, CB_SETITEMDATA, index, item.value);
+        if (item.value == app->live_opts.flux_boundary) {
+            SendMessageW(app->boundary, CB_SETCURSEL, index, 0);
+        }
+    }
+}
+
+bool is_edit_focus() {
+    HWND focus = GetFocus();
+    if (!focus) return false;
+    wchar_t cls[32] = {};
+    GetClassNameW(focus, cls, 32);
+    return _wcsicmp(cls, L"Edit") == 0;
+}
+
+ftd::native_desktop::NativeEngineOptions parse_options(int argc, char** argv) {
+    ftd::native_desktop::NativeEngineOptions options;
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg = argv[i];
+        if (arg == "--cpu") {
+            options.force_cpu = true;
+        } else if (arg == "--gpu") {
+            options.force_cpu = false;
+        } else if (arg == "--lattice" && i + 1 < argc) {
+            options.lattice_size = std::stoi(argv[++i]);
+        } else if (arg == "--scenario" && i + 1 < argc) {
+            options.scenario = argv[++i];
+        } else if (arg == "--help") {
+            std::cout
+                << "ftd_native_desktop [--cpu|--gpu] [--lattice N] [--scenario name]\n"
+                << "  Defaults: --cpu --lattice 32 --scenario s0-seed-hydrogen\n"
+                << "  Left panel: scenarios, lattice, play/pause/step/reset\n"
+                << "  View: left-drag orbit, wheel zoom, Space pause, Esc quit\n";
+            std::exit(0);
+        }
+    }
+    return options;
+}
+
+}  // namespace
+
+int main(int argc, char** argv) {
+    try {
+        INITCOMMONCONTROLSEX icc{};
+        icc.dwSize = sizeof(icc);
+        icc.dwICC = ICC_STANDARD_CLASSES | ICC_BAR_CLASSES;
+        InitCommonControlsEx(&icc);
+
+        auto options = parse_options(argc, argv);
+        std::cout << "FTD native desktop (in-process, not WebView2)\n";
+        std::cout << "Loading L=" << options.lattice_size
+                  << " scenario=" << options.scenario
+                  << (options.force_cpu ? " cpu" : " gpu-default") << "...\n"
+                  << std::flush;
+
+        ftd::native_desktop::NativeEngineSession session(options);
+        std::cout << "backend=" << session.backend_name()
+                  << " status=" << session.status() << "\n"
+                  << std::flush;
+
+        PendingWork pending;
+        std::atomic<bool> running{true};
+        std::atomic<bool> paused{false};
+        std::atomic<int> tick_hz{20};
+        std::atomic<bool> reloading{false};
+
+        AppState app;
+        app.live_opts = session.options();
+        app.pending = &pending;
+        app.paused = &paused;
+        app.tick_hz = &tick_hz;
+        app.reloading = &reloading;
+        app.bg = CreateSolidBrush(RGB(18, 22, 28));
+        app.edit_bg = CreateSolidBrush(RGB(28, 34, 44));
+        app.font = CreateFontW(-14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+                               DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+                               CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+                               L"Segoe UI");
+        app.title_font = CreateFontW(-18, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+                                     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                                     CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+                                     DEFAULT_PITCH | FF_DONTCARE, L"Segoe UI");
+        for (std::string_view id : ftd::scale0_scenario_ids()) {
+            app.scenario_ids.emplace_back(id);
+        }
+        apply_camera_for_lattice(&app, session.lattice_size());
+
+        WNDCLASSW wc{};
+        wc.lpfnWndProc = wnd_proc;
+        wc.hInstance = GetModuleHandleW(nullptr);
+        wc.lpszClassName = L"FtdNativeDesktop";
+        wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+        wc.hbrBackground = app.bg;
+        RegisterClassW(&wc);
+
+        WNDCLASSW view_wc{};
+        view_wc.lpfnWndProc = view_proc;
+        view_wc.hInstance = wc.hInstance;
+        view_wc.lpszClassName = L"FtdNativeView";
+        view_wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+        view_wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
+        RegisterClassW(&view_wc);
+
+        HWND hwnd = CreateWindowExW(
+            0, wc.lpszClassName, L"FTD Native Desktop",
+            WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_VISIBLE, CW_USEDEFAULT,
+            CW_USEDEFAULT, 1480, 860, nullptr, nullptr, wc.hInstance, nullptr);
+        if (!hwnd) throw std::runtime_error("CreateWindowExW failed");
+        app.hwnd = hwnd;
+        SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&app));
+
+        create_controls(hwnd, &app);
+        refill_scenarios(&app);
+        sync_lattice_combo(&app);
+        set_playing_caption(&app);
+
+        RECT client{};
+        GetClientRect(hwnd, &client);
+        app.view = CreateWindowExW(
+            0, view_wc.lpszClassName, L"", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
+            kPanelWidth, 0, std::max(64L, client.right - kPanelWidth),
+            std::max(64L, client.bottom), hwnd, nullptr, wc.hInstance, nullptr);
+        SetWindowLongPtrW(app.view, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&app));
+        layout_shell(&app, client.right, client.bottom);
+
+        ftd::native_desktop::D3D12Presenter presenter;
+        RECT view_rc{};
+        GetClientRect(app.view, &view_rc);
+        presenter.initialize(app.view, static_cast<std::uint32_t>(view_rc.right),
+                             static_cast<std::uint32_t>(view_rc.bottom));
+        app.presenter = &presenter;
+
+        std::mutex frame_mu;
+        ftd::native_desktop::NativeFrame latest = session.capture();
+        int camera_lattice = session.lattice_size();
+
+        std::thread sim([&] {
+            while (running.load()) {
+                ftd::native_desktop::NativeEngineOptions reload_opts;
+                bool do_reload = false;
+                int boundary = -1;
+                int steps = 0;
+                {
+                    std::lock_guard<std::mutex> lock(pending.mu);
+                    if (pending.reload) {
+                        reload_opts = *pending.reload;
+                        pending.reload.reset();
+                        do_reload = true;
+                    }
+                    if (pending.boundary) {
+                        boundary = *pending.boundary;
+                        pending.boundary.reset();
+                    }
+                    steps = pending.steps;
+                    pending.steps = 0;
+                }
+
+                const auto start = std::chrono::steady_clock::now();
+                try {
+                    const bool need_work =
+                    do_reload || boundary >= 0 || steps > 0 || !paused.load();
+                if (need_work) {
+                    if (do_reload) {
+                        session.apply_options(reload_opts);
+                    } else if (boundary >= 0) {
+                        session.set_flux_boundary(boundary);
+                    }
+                    if (steps > 0) {
+                        for (int i = 0; i < steps; ++i) session.tick();
+                    } else if (!paused.load() && !do_reload) {
+                        session.tick();
+                    }
+                    ftd::native_desktop::NativeFrame next = session.capture();
+                    {
+                        std::lock_guard<std::mutex> lock(frame_mu);
+                        latest = std::move(next);
+                    }
+                }
+                } catch (const std::exception& ex) {
+                    std::lock_guard<std::mutex> lock(frame_mu);
+                    latest.status = ex.what();
+                }
+                reloading.store(false);
+
+                const int hz = std::max(1, tick_hz.load());
+                const auto budget = std::chrono::milliseconds(1000 / hz);
+                const auto elapsed = std::chrono::steady_clock::now() - start;
+                if (elapsed < budget) {
+                    std::this_thread::sleep_for(budget - elapsed);
+                }
+            }
+        });
+
+        MSG msg{};
+        bool quit = false;
+        while (!quit) {
+            while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+                if (msg.message == WM_QUIT) quit = true;
+                if (msg.message == WM_KEYDOWN) {
+                    const bool typing = is_edit_focus();
+                    if (msg.wParam == VK_ESCAPE) quit = true;
+                    if (!typing && msg.wParam == VK_SPACE) {
+                        paused.store(!paused.load());
+                        set_playing_caption(&app);
+                    }
+                    if (!typing && msg.wParam == 'R') request_reload(&app);
+                    if (!typing && msg.wParam == 'S') {
+                        paused.store(true);
+                        set_playing_caption(&app);
+                        std::lock_guard<std::mutex> lock(pending.mu);
+                        ++pending.steps;
+                    }
+                }
+                TranslateMessage(&msg);
+                DispatchMessageW(&msg);
+            }
+            if (quit) break;
+
+            ftd::native_desktop::NativeFrame frame;
+            {
+                std::lock_guard<std::mutex> lock(frame_mu);
+                frame = latest;
+            }
+            if (frame.lattice_size > 0 && frame.lattice_size != camera_lattice) {
+                apply_camera_for_lattice(&app, frame.lattice_size);
+                camera_lattice = frame.lattice_size;
+            }
+
+            wchar_t title[256];
+            swprintf(title, 256,
+                     L"FTD Native Desktop  %hs  L=%d  tick=%d  %hs",
+                     frame.scenario.empty() ? app.live_opts.scenario.c_str()
+                                            : frame.scenario.c_str(),
+                     frame.lattice_size != 0 ? frame.lattice_size
+                                             : app.live_opts.lattice_size,
+                     frame.tick,
+                     reloading.load() ? "loading"
+                                      : (paused.load() ? "paused" : "run"));
+            SetWindowTextW(hwnd, title);
+
+            wchar_t status[512];
+            swprintf(status, 512,
+                     L"%hs\nbackend %hs\nL=%d  tick=%d\nparticles %zu   flux %zu\n%hs",
+                     frame.scenario.empty() ? app.live_opts.scenario.c_str()
+                                            : frame.scenario.c_str(),
+                     frame.backend.empty() ? "cpu" : frame.backend.c_str(),
+                     frame.lattice_size, frame.tick, frame.particles.size(),
+                     frame.flux.size(),
+                     reloading.load() ? "Loading scenario..."
+                                      : (frame.status.empty() ? "ready"
+                                                              : frame.status.c_str()));
+            SetWindowTextW(app.status, status);
+
+            presenter.render(frame, app.camera, app.view_opts);
+        }
+
+        running.store(false);
+        sim.join();
+        presenter.wait_idle();
+        DeleteObject(app.font);
+        DeleteObject(app.title_font);
+        DeleteObject(app.bg);
+        DeleteObject(app.edit_bg);
+        return 0;
+    } catch (const std::exception& ex) {
+        std::cerr << "ftd_native_desktop: " << ex.what() << "\n";
+        MessageBoxA(nullptr, ex.what(), "FTD Native Desktop", MB_ICONERROR);
+        return 1;
+    }
+}

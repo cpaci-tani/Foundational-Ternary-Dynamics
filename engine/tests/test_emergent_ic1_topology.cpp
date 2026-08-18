@@ -12,6 +12,14 @@
  * FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md section 6.5 (stack-pinned) and
  * LEDGER rows FTD-0110/FTD-0260. The original header follows.
  *
+ * The July 2026 CUDA evaporation-parity correction made the canonical
+ * stochastic Boltzmann lifetime rule live on both backends. Consequently,
+ * terminal cluster size is an ensemble observable: the regression requires
+ * every seed to retain a manifested remnant and a two-thirds majority to lie
+ * in the registered band. The long T4-T8 measurement sweep is available with
+ * --full; ordinary CTest executes only the asserted T1-T3 regression core.
+ * Pass --cpu to run that same core through RenderBridge's CPU backend.
+ *
  * Two regression checks (confirming existing measurements):
  *   T1: Cluster count and voxel count match FTD-0107 at L=32.
  *       Expected: 1 cluster of exactly 25 voxels, 5/5 seeds.
@@ -46,12 +54,15 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <map>
 #include <queue>
 #include <tuple>
 #include <vector>
 
 namespace {
+
+bool g_force_cpu_backend = false;
 
 struct ClusterInfo {
     int voxel_count = 0;
@@ -133,6 +144,7 @@ int wrap_diff(int a, int b, int L) {
 void run_ic1_diagonal_amplitude(int L, std::uint32_t seed, double amp_in_K_GENESIS,
                                 std::vector<ClusterInfo>& out_clusters) {
     ftd::RenderBridge rb(L);
+    if (g_force_cpu_backend) rb.force_cpu();
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;
     rb.toggles.gauss_projection = true;
@@ -156,8 +168,10 @@ void run_ic1_diagonal_amplitude(int L, std::uint32_t seed, double amp_in_K_GENES
 // Same as run_ic1 but with explicit injection amplitude in units of K_GENESIS.
 // Used by T5 to test the O(r*) flux-radius selection hypothesis.
 void run_ic1_amplitude(int L, std::uint32_t seed, double amp_in_K_GENESIS,
-                       std::vector<ClusterInfo>& out_clusters) {
+                       std::vector<ClusterInfo>& out_clusters,
+                       bool* center_ever_manifested = nullptr) {
     ftd::RenderBridge rb(L);
+    if (g_force_cpu_backend) rb.force_cpu();
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;
     rb.toggles.gauss_projection = true;
@@ -172,17 +186,30 @@ void run_ic1_amplitude(int L, std::uint32_t seed, double amp_in_K_GENESIS,
     rb.inject_flux(L / 2, L / 2, L / 2,
                    {amp_in_K_GENESIS * ftd::K_GENESIS, 0, 0});
 
-    rb.run(700);
+    if (center_ever_manifested) {
+        *center_ever_manifested = false;
+        const int center = rb.lattice().index(L / 2, L / 2, L / 2);
+        for (int tick = 0; tick < 700; ++tick) {
+            rb.run(1);
+            *center_ever_manifested = *center_ever_manifested
+                || rb.voxels()[center].state != 0;
+        }
+    } else {
+        rb.run(700);
+    }
 
     out_clusters = detect_clusters(rb);
 }
 
-void run_ic1(int L, std::uint32_t seed, std::vector<ClusterInfo>& out_clusters) {
-    run_ic1_amplitude(L, seed, 10.0, out_clusters);
+void run_ic1(int L, std::uint32_t seed, std::vector<ClusterInfo>& out_clusters,
+             bool* center_ever_manifested = nullptr) {
+    run_ic1_amplitude(L, seed, 10.0, out_clusters,
+                      center_ever_manifested);
 }
 
 bool t1_cluster_count_at_L(int L, int n_seeds, int expected_voxels, double tol_voxels) {
     int passing_seeds = 0;
+    int nonempty_seeds = 0;
     int total_voxels_observed = 0;
     int n_observed_clusters = 0;
     std::vector<int> per_seed_voxel_counts;
@@ -199,6 +226,7 @@ bool t1_cluster_count_at_L(int L, int n_seeds, int expected_voxels, double tol_v
             if (c.voxel_count > largest) largest = c.voxel_count;
         }
         per_seed_voxel_counts.push_back(largest);
+        if (largest > 0) nonempty_seeds++;
         total_voxels_observed += total;
         n_observed_clusters += static_cast<int>(clusters.size());
         if (std::abs(largest - expected_voxels) <= tol_voxels) {
@@ -207,14 +235,22 @@ bool t1_cluster_count_at_L(int L, int n_seeds, int expected_voxels, double tol_v
         std::printf("    seed=%d: %zu cluster(s), largest=%d voxels, total_manifest=%d\n",
                     s, clusters.size(), largest, total);
     }
-    std::printf("  T1@L=%d: passing_seeds=%d/%d (largest cluster within ±%g of %d voxels)\n",
-                L, passing_seeds, n_seeds, tol_voxels, expected_voxels);
-    return passing_seeds == n_seeds;
+    auto ordered = per_seed_voxel_counts;
+    std::sort(ordered.begin(), ordered.end());
+    const int median = ordered[ordered.size() / 2];
+    const int required_band_passes = (2 * n_seeds + 2) / 3;
+    std::printf("  cluster@L=%d: nonempty=%d/%d, passing_band=%d/%d "
+                "(required=%d, median=%d; largest cluster within ±%g of %d voxels)\n",
+                L, nonempty_seeds, n_seeds, passing_seeds, n_seeds,
+                required_band_passes, median, tol_voxels, expected_voxels);
+    return nonempty_seeds == n_seeds
+        && passing_seeds >= required_band_passes;
 }
 
 bool t3_l1_ball_topology(int L, std::uint32_t seed) {
     std::vector<ClusterInfo> clusters;
-    run_ic1(L, seed, clusters);
+    bool center_ever_manifested = false;
+    run_ic1(L, seed, clusters, &center_ever_manifested);
     if (clusters.empty()) {
         std::printf("  T3: FAIL — no cluster formed\n");
         return false;
@@ -274,18 +310,16 @@ bool t3_l1_ball_topology(int L, std::uint32_t seed) {
     std::printf("       edge2 (L¹=3, L∞=2)          : %d  [hypothesis: 0 ]\n", n_edge2);
     std::printf("       other (L¹≥4 or L∞≥3)        : %d  [hypothesis: 0 ]\n", n_other);
     std::printf("\n  ================================================================\n");
-    std::printf("  HYPOTHESIS COMPARISON (informational; not asserted):\n");
+    std::printf("  HISTORICAL HYPOTHESIS COMPARISON (informational; not asserted):\n");
     std::printf("  ----------------------------------------------------------------\n");
     std::printf("  L¹-ball-radius-2 prediction: {1, 6, 12, 6, 0, 0, 0} (25 voxels)\n");
-    std::printf("  Per EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md §3 — REFUTED by this measurement:\n");
-    std::printf("    - hypothesis predicted BCC corners = 0; measured = %d (REFUTES)\n", n_BCC);
+    std::printf("  EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md §3 is already recorded as refuted.\n");
+    std::printf("    - hypothesis predicted BCC corners = 0; measured = %d\n", n_BCC);
     std::printf("    - hypothesis predicted FCC edges = 12; measured = %d (off by %d)\n", n_FCC, n_FCC - 12);
     std::printf("    - hypothesis predicted face2 = 6;    measured = %d (off by %d)\n", n_face2, n_face2 - 6);
-    std::printf("  The 25-voxel count is correct but the SHAPE is closer to Moore-1+center\n");
-    std::printf("  with partial FCC edges + partial face2, NOT the L¹-ball-radius-2.\n");
-    std::printf("  Polytope-duality interpretation in EXPLR_OCTAHEDRAL_BOUND_STATES.md\n");
-    std::printf("  needs corrigendum: the cluster INCLUDES BCC corners, contradicting the\n");
-    std::printf("  cluster-on-SC+FCC vs algebra-on-BCC complementarity reading.\n");
+    std::printf("  This terminal remnant has %d voxels after stochastic evaporation; it\n",
+                c.voxel_count);
+    std::printf("  cannot be used as a fresh test of the historical 25-voxel shape.\n");
     std::printf("  ================================================================\n\n");
     // T4 (2026-04-27 evening): dump per-voxel coordinates relative to injection
     // centre so the actual topology can be analysed structurally. The orbit
@@ -318,30 +352,39 @@ bool t3_l1_ball_topology(int L, std::uint32_t seed) {
     //      stack gives 3–5 at this seed/config; new band 2–10)
     //   2. The cluster is connected (BFS guarantees this by construction)
     //   3. No voxels at L¹ ≥ 4 (cluster is localised; no runaway)
-    //   4. Center voxel is present (the injection point manifested)
+    //   4. Center voxel manifested during the history. Requiring it to remain
+    //      occupied at tick 700 confounds genesis topology with the separately
+    //      tested stochastic evaporation lifetime.
     bool count_ok = (c.voxel_count >= 2 && c.voxel_count <= 10);
     bool localised = true;
     for (auto [l1, n] : l1_histogram) {
         if (l1 >= 4 && n > 0) { localised = false; break; }
     }
-    bool center_ok = (n_center == 1);
+    bool center_ok = center_ever_manifested;
     std::printf("  Robust-invariant checks:\n");
     std::printf("    cluster count in band 2-10 (pre-2026-06 stack: 23-27): %s\n", count_ok ? "PASS" : "FAIL");
     std::printf("    No voxels at L¹ >= 4 (localised):  %s\n", localised ? "PASS" : "FAIL");
-    std::printf("    Center voxel manifested:           %s\n", center_ok ? "PASS" : "FAIL");
+    std::printf("    Center voxel manifested in history: %s (occupied at tick 700: %s)\n",
+                center_ok ? "PASS" : "FAIL", n_center == 1 ? "yes" : "no");
     return count_ok && localised && center_ok;
 }
 
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
     std::setvbuf(stdout, nullptr, _IONBF, 0);
+    bool full_exploration = false;
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--full") == 0) full_exploration = true;
+        else if (std::strcmp(argv[i], "--cpu") == 0) g_force_cpu_backend = true;
+    }
 
     std::printf("================================================================\n");
     std::printf("  FTD-0107 EMERGENT-IC1 TOPOLOGY REGRESSION TEST\n");
     std::printf("  Reproduces FTD-0102/FTD-0107 cluster count and verifies\n");
     std::printf("  L¹-ball-radius-2 topology hypothesis from\n");
     std::printf("  EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md\n");
+    std::printf("  Backend: %s\n", g_force_cpu_backend ? "CPU" : "default");
     std::printf("================================================================\n");
 
     bool all_pass = true;
@@ -375,6 +418,15 @@ int main() {
     bool t3 = t3_l1_ball_topology(32, 0xE0102000u);
     std::printf("  T3 verdict: %s\n", t3 ? "PASS" : "FAIL");
     all_pass &= t3;
+
+    if (!full_exploration) {
+        std::printf("\n  T4-T8 are informational measurement sweeps; run this binary with\n");
+        std::printf("  --full to execute them outside the ordinary CTest regression.\n");
+        std::printf("\n================================================================\n");
+        std::printf("  Overall: %s\n", all_pass ? "PASS" : "FAIL");
+        std::printf("================================================================\n");
+        return all_pass ? 0 : 1;
+    }
 
     // T4 (2026-04-27 evening): multi-seed inclusion-frequency analysis.
     // For each of N_SEEDS seeds, run ic1 to terminal state, dump cluster

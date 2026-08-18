@@ -57,11 +57,17 @@ int main() {
         rb.inject_particle(cx, cy, cz, +1, {0, 0, ftd::K_B});
         rb.inject_particle(cx + 1, cy, cz, -1, {0, 0, -ftd::K_B});
 
-        // Velocity = 1.0 toward each other (remainder reaches 1.0 on tick 1 → move → collision)
+        // Use causal velocities and seed the sub-lattice remainder so the
+        // particles cross a cell boundary on tick 1.  FTD-0402 projects any
+        // raw speed above C_SPEED, so the old unit-speed setup no longer
+        // represented a valid one-tick move.
         int idx_v = rb.lattice().index(cx, cy, cz);
         int idx_t = rb.lattice().index(cx + 1, cy, cz);
-        rb.voxels()[idx_v].velocity = {1.0, 0, 0};
-        rb.voxels()[idx_t].velocity = {-1.0, 0, 0};
+        const double hop_speed = 0.5 * ftd::C_SPEED;
+        rb.voxels()[idx_v].velocity = {hop_speed, 0, 0};
+        rb.voxels()[idx_v].remainder = {1.0 - hop_speed, 0, 0};
+        rb.voxels()[idx_t].velocity = {-hop_speed, 0, 0};
+        rb.voxels()[idx_t].remainder = {-(1.0 - hop_speed), 0, 0};
 
         // Measure flux energy before
         double flux_energy_before = total_flux_mag(rb);
@@ -70,7 +76,7 @@ int main() {
                   << " (+" << d0.positive_count << ", -" << d0.negative_count << ")\n";
         std::cout << "  Before: total flux |J|^2 = " << flux_energy_before << "\n";
 
-        // Run 1 tick — velocity 1.0 means remainder reaches 1.0 → move → annihilate
+        // Run 1 tick — each causal remainder reaches a cell boundary.
         rb.tick();
 
         // Measure flux energy after

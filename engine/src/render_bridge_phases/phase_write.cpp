@@ -80,6 +80,9 @@ inline void manifest_at(RenderBridge& rb,
   // ARCH-7 (2026-04-25): defer particle_id assignment until the sequential
   // post-pass so IDs match voxel-index order regardless of OMP scheduling.
   v.particle_id = -2;
+  // Genesis is a non-pair birth.  Never inherit stale entanglement provenance
+  // from an earlier occupant of the same voxel.
+  v.pair_id = -1;
 
   // ARCH-7b: spin from curl of the pre-write flux snapshot — sibling
   // thread writes don't race the curl read.
@@ -415,6 +418,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         ftd::atomic_inc(rb.evaporation_events_this_tick_);  // FTD-0267 telemetry (observation only)
         rb.set_state(i, 0);
         v.particle_id = -1;
+        v.pair_id = -1;
         v.spin = 0;
         v.color = 0;
         // FTD-HISTORY-BEGIN: observation-only native event journal.

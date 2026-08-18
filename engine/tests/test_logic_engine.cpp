@@ -478,22 +478,21 @@ int main() {
         check("C4: Force stronger at r=3 than r=6", gd3.mag() > gd6.mag());
     }
 
-    // C5: Gravity attracts (density gradient force)
-    // Use opposite-sign charges: their coupling sources create a flux channel
-    // between them (both coupling terms add flux in the same direction),
-    // producing higher density between the charges → gravity gradient pulls inward.
-    // Disable wave propagation and genesis to isolate the density gradient signal.
+    // C5: Gravity follows the density gradient.  Seed a deterministic tier-2
+    // gradient directly so the test does not disable propagation and then
+    // depend on propagation to create its own fixture.
     {
         ftd::RenderBridge rb(32);
-        rb.toggles.genesis = false;
-        rb.toggles.wave_propagation = false;
+        rb.toggles.disable_all();
+        rb.toggles.forces = true;
+        rb.toggles.gravity = true;
         int mid = 16;
-        rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb.inject_particle(mid + 8, mid, mid, -1, {0, 0, -ftd::K_B});
-        rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
         rb.voxels()[rb.lattice().index(mid + 8, mid, mid)].locked = true;
-        rb.run(100);
-        // Gravity on right particle should point leftward (toward +1 particle)
+        rb.voxel_at(mid + 6, mid, mid).flux = {ftd::K_B, 0, 0};
+        rb.voxel_at(mid + 10, mid, mid).flux = {0, 0, 0};
+        rb.run(1);
+        // Higher density is two cells to the left, so gravity points left.
         int idx_right = rb.lattice().index(mid + 8, mid, mid);
         Vec3 fg = rb.force_diag()[idx_right].f_gravity;
         check("C5: Gravity attracts (F_grav_x < 0 toward center)", fg.x < 0);
@@ -614,7 +613,10 @@ int main() {
         int mid = 8;
         rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb.inject_particle(mid + 1, mid, mid, +1, {0, 0, ftd::K_B});
-        rb.voxels()[rb.lattice().index(mid, mid, mid)].velocity = {1.0, 0, 0};
+        auto& moving = rb.voxels()[rb.lattice().index(mid, mid, mid)];
+        const double hop_speed = 0.5 * ftd::C_SPEED;
+        moving.velocity = {hop_speed, 0, 0};
+        moving.remainder = {1.0 - hop_speed, 0, 0};
         rb.run(1);
         // After bounce, left particle should reverse x-velocity
         auto& vleft = rb.voxels()[rb.lattice().index(mid, mid, mid)];
@@ -631,7 +633,10 @@ int main() {
         int mid = 8;
         rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb.inject_particle(mid + 1, mid, mid, -1, {0, 0, -ftd::K_B});
-        rb.voxels()[rb.lattice().index(mid, mid, mid)].velocity = {1.0, 0, 0};
+        auto& moving = rb.voxels()[rb.lattice().index(mid, mid, mid)];
+        const double hop_speed = 0.5 * ftd::C_SPEED;
+        moving.velocity = {hop_speed, 0, 0};
+        moving.remainder = {1.0 - hop_speed, 0, 0};
         int total_before = count_manifested(rb);
         rb.run(1);
         int total_after = count_manifested(rb);

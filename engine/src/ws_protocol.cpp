@@ -12,6 +12,7 @@
 #endif
 
 #include <cstdlib>
+#include <cctype>
 #include <cstring>
 #include <iostream>
 
@@ -36,7 +37,15 @@ bool send_all(SOCKET sock, const void* buf, size_t n) {
     auto p = static_cast<const char*>(buf);
     size_t sent = 0;
     while (sent < n) {
-        int r = ::send(sock, p + sent, static_cast<int>(n - sent), 0);
+        // On Linux/WSL, writing after a WebView reload can otherwise raise
+        // SIGPIPE and terminate the entire CUDA server before send() returns an
+        // error. Windows has no MSG_NOSIGNAL and does not need it.
+#ifdef MSG_NOSIGNAL
+        constexpr int send_flags = MSG_NOSIGNAL;
+#else
+        constexpr int send_flags = 0;
+#endif
+        int r = ::send(sock, p + sent, static_cast<int>(n - sent), send_flags);
         if (r <= 0) return false;
         sent += r;
     }
@@ -49,34 +58,85 @@ bool send_all(SOCKET sock, const void* buf, size_t n) {
 
 static const char* WS_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
+namespace {
+
+bool ascii_iequals(const std::string& lhs, const std::string& rhs) {
+    if (lhs.size() != rhs.size()) return false;
+    for (std::size_t i = 0; i < lhs.size(); ++i) {
+        const auto a = static_cast<unsigned char>(lhs[i]);
+        const auto b = static_cast<unsigned char>(rhs[i]);
+        if (std::tolower(a) != std::tolower(b)) return false;
+    }
+    return true;
+}
+
+std::string http_header_value(const std::string& request,
+                              const std::string& wanted_name) {
+    std::size_t line_start = 0;
+    while (line_start < request.size()) {
+        const std::size_t line_end = request.find("\r\n", line_start);
+        const std::size_t bounded_end = line_end == std::string::npos
+            ? request.size() : line_end;
+        const std::size_t colon = request.find(':', line_start);
+        if (colon != std::string::npos && colon < bounded_end) {
+            std::size_t name_end = colon;
+            while (name_end > line_start &&
+                   (request[name_end - 1] == ' ' || request[name_end - 1] == '\t'))
+                --name_end;
+            const std::string name = request.substr(line_start, name_end - line_start);
+            if (ascii_iequals(name, wanted_name)) {
+                std::size_t value_start = colon + 1;
+                while (value_start < bounded_end &&
+                       (request[value_start] == ' ' || request[value_start] == '\t'))
+                    ++value_start;
+                std::size_t value_end = bounded_end;
+                while (value_end > value_start &&
+                       (request[value_end - 1] == ' ' || request[value_end - 1] == '\t'))
+                    --value_end;
+                return request.substr(value_start, value_end - value_start);
+            }
+        }
+        if (line_end == std::string::npos) break;
+        line_start = line_end + 2;
+    }
+    return {};
+}
+
+}  // namespace
+
 bool ws_handshake(SOCKET client) {
-    // Read the HTTP upgrade request (up to 4KB is plenty)
-    char buf[4096];
+    // Browser upgrade requests are normally small, but cookies and user-agent
+    // metadata can legitimately push them beyond 4 KiB. Keep a strict bound
+    // while allowing a conventional 16 KiB header block.
+    char buf[16 * 1024];
     int total = 0;
+    bool headers_complete = false;
     while (total < (int)sizeof(buf) - 1) {
         int r = ::recv(client, buf + total, 1, 0);
         if (r <= 0) return false;
         total += r;
         buf[total] = '\0';
         // End of HTTP headers
-        if (total >= 4 && std::strstr(buf, "\r\n\r\n"))
+        if (total >= 4 && std::strstr(buf, "\r\n\r\n")) {
+            headers_complete = true;
             break;
+        }
+    }
+
+    if (!headers_complete) {
+        std::cerr << "[ws_server] Incomplete or oversized WebSocket handshake\n";
+        return false;
     }
 
     std::string request(buf, total);
 
-    // Extract Sec-WebSocket-Key
-    std::string key_header = "Sec-WebSocket-Key: ";
-    auto pos = request.find(key_header);
-    if (pos == std::string::npos) {
+    // HTTP field names are case-insensitive (RFC 9110 section 5.1). Chromium,
+    // WebView2, and Node are all free to choose different casing here.
+    const std::string ws_key = http_header_value(request, "Sec-WebSocket-Key");
+    if (ws_key.empty()) {
         std::cerr << "[ws_server] No Sec-WebSocket-Key in handshake\n";
         return false;
     }
-    pos += key_header.size();
-    auto end = request.find("\r\n", pos);
-    std::string ws_key = request.substr(pos, end - pos);
-    // Trim whitespace
-    while (!ws_key.empty() && ws_key.back() == ' ') ws_key.pop_back();
 
     // Compute accept: SHA1(key + GUID), base64
     std::string concat = ws_key + WS_GUID;
@@ -103,10 +163,13 @@ bool ws_handshake(SOCKET client) {
 uint8_t ws_read_frame(SOCKET sock, std::vector<uint8_t>& payload) {
     payload.clear();
 
+    constexpr uint64_t kMaxClientFrameBytes = 64ull * 1024ull;
+
     uint8_t hdr[2];
     if (!recv_exact(sock, hdr, 2)) return 0xFF;
 
-    // bool fin  = (hdr[0] & 0x80) != 0;
+    const bool fin = (hdr[0] & 0x80) != 0;
+    const bool has_reserved_bits = (hdr[0] & 0x70) != 0;
     uint8_t opcode = hdr[0] & 0x0F;
     bool masked = (hdr[1] & 0x80) != 0;
     uint64_t len = hdr[1] & 0x7F;
@@ -123,20 +186,22 @@ uint8_t ws_read_frame(SOCKET sock, std::vector<uint8_t>& payload) {
             len = (len << 8) | ext[i];
     }
 
+    // This server deliberately supports only complete, unextended browser
+    // command frames. Client-to-server frames must be masked by RFC 6455.
+    // Reject before allocating so a bogus 64-bit length cannot exhaust RAM.
+    if (!fin || has_reserved_bits || !masked || len > kMaxClientFrameBytes)
+        return 0xFF;
+
     uint8_t mask_key[4] = {0, 0, 0, 0};
-    if (masked) {
-        if (!recv_exact(sock, mask_key, 4)) return 0xFF;
-    }
+    if (!recv_exact(sock, mask_key, 4)) return 0xFF;
 
     payload.resize(static_cast<size_t>(len));
     if (len > 0) {
         if (!recv_exact(sock, payload.data(), static_cast<size_t>(len)))
             return 0xFF;
         // Unmask
-        if (masked) {
-            for (size_t i = 0; i < payload.size(); i++)
-                payload[i] ^= mask_key[i % 4];
-        }
+        for (size_t i = 0; i < payload.size(); i++)
+            payload[i] ^= mask_key[i % 4];
     }
 
     return opcode;
@@ -207,6 +272,11 @@ bool json_bool(const std::string& json, const std::string& key) {
     pos = json.find(':', pos + search.size());
     if (pos == std::string::npos) return false;
     return json.find("true", pos) < json.find("false", pos);
+}
+
+bool json_has_key(const std::string& json, const std::string& key) {
+    const std::string search = "\"" + key + "\"";
+    return json.find(search) != std::string::npos;
 }
 
 }  // namespace ftd

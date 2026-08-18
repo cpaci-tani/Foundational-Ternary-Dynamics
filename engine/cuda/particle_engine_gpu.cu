@@ -42,6 +42,7 @@ void ParticleBuffers::allocate(int capacity) {
     free();
     N_alloc = capacity;
 
+    try {
     CUDA_CHECK(cudaMalloc(&d_pos_x,   capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_pos_y,   capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_pos_z,   capacity * sizeof(double)));
@@ -62,6 +63,10 @@ void ParticleBuffers::allocate(int capacity) {
     CUDA_CHECK(cudaMalloc(&d_f_gravity_x, capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_f_gravity_y, capacity * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_f_gravity_z, capacity * sizeof(double)));
+    } catch (...) {
+        free();
+        throw;
+    }
 }
 
 void ParticleBuffers::free() {
