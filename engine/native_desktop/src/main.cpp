@@ -866,44 +866,47 @@ int main(int argc, char** argv) {
                         if (do_reload) {
                             const bool was_active = interop_active.load();
                             session.apply_options(reload_opts);
-                            // boot() (invoked by apply_options()) always clears
-                            // the session's interop_enabled_ -- it tears down
-                            // bridge_/GpuEngine and constructs a fresh one, and
-                            // nothing has imported into that fresh GpuEngine yet.
-                            // Interop Task 12: re-establish it right here, on
-                            // this thread, before mirroring the result into the
-                            // flag the GUI thread reads. try_enable_interop()
-                            // reaches into bridge_, which only this sim thread
-                            // may touch once it exists (same rule as
-                            // tick()/capture()/apply_options() above) -- so this
-                            // is also the only thread from which the re-import
-                            // can safely happen. interop_buf_handle/
-                            // interop_fence_handle/interop_buffer_bytes are the
-                            // SAME values used for the startup import: set once
-                            // before this sim thread was constructed and never
-                            // written again by any thread afterward (see their
-                            // declaration above), so reading them here needs no
-                            // extra synchronization -- same published-before-
-                            // thread-start pattern `options`/`presenter` already
-                            // rely on elsewhere in this lambda. The presenter-
-                            // side D3D12 resources these handles name (the
-                            // shared buffer, its SRV binding, and the shared
-                            // fence) are untouched by a reload, so nothing on
-                            // the GUI-thread/D3D12-presenter side needs to be
-                            // redone -- only this CUDA-side import.
-                            bool reimported = false;
-                            if (interop_buf_handle && interop_fence_handle) {
-                                reimported = session.try_enable_interop(
-                                    interop_buf_handle, interop_buffer_bytes,
-                                    interop_fence_handle);
-                            }
-                            interop_active.store(reimported);
-                            if (reimported) {
-                                if (!was_active) {
-                                    std::cout << "interop: enabled after reload\n"
-                                              << std::flush;
-                                }
-                            } else if (was_active) {
+                            // boot() (invoked by apply_options()) always
+                            // clears the session's interop_enabled_ -- it
+                            // tears down bridge_/GpuEngine and constructs a
+                            // fresh one, and nothing has imported into that
+                            // fresh GpuEngine yet. reimport_interop_after_
+                            // reload() (engine_session.h) is the Interop
+                            // Task 12 fix: re-establish it right here, on
+                            // this thread, before mirroring the result into
+                            // the flag the GUI thread reads -- see that
+                            // function's doc comment for the full contract
+                            // (why this thread, why the same handles, why a
+                            // null handle must not reach
+                            // try_enable_interop()) and
+                            // test_interop_reload_orchestration.cpp /
+                            // test_interop_reload_reset.cpp for its ctest
+                            // coverage. interop_buf_handle/
+                            // interop_fence_handle/interop_buffer_bytes are
+                            // the SAME values used for the startup import:
+                            // set once before this sim thread was
+                            // constructed and never written again by any
+                            // thread afterward (see their declaration
+                            // above), so reading them here needs no extra
+                            // synchronization -- same published-before-
+                            // thread-start pattern `options`/`presenter`
+                            // already rely on elsewhere in this lambda. The
+                            // presenter-side D3D12 resources these handles
+                            // name (the shared buffer, its SRV binding, and
+                            // the shared fence) are untouched by a reload,
+                            // so nothing on the GUI-thread/D3D12-presenter
+                            // side needs to be redone -- only this CUDA-side
+                            // import.
+                            const auto outcome =
+                                ftd::native_desktop::reimport_interop_after_reload(
+                                    session, interop_buf_handle,
+                                    interop_buffer_bytes, interop_fence_handle,
+                                    was_active);
+                            interop_active.store(outcome.interop_active);
+                            if (outcome.log_enabled) {
+                                std::cout << "interop: enabled after reload\n"
+                                          << std::flush;
+                            } else if (outcome.log_lost) {
                                 // Genuinely unexpected at this point (the same
                                 // handles/buffer just worked before this
                                 // reload), but not impossible -- e.g. a

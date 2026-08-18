@@ -508,6 +508,23 @@ if(TARGET ftd_native_session)
     target_link_libraries(test_native_desktop_session PRIVATE ftd_native_session)
     target_include_directories(test_native_desktop_session PRIVATE
         ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    # Interop Task 12 spec-compliance follow-up: reimport_interop_after_reload()
+    # (engine_session.h) is the exact free function main.cpp's do_reload branch
+    # calls to re-establish D3D12/CUDA interop after every reload -- see that
+    # function's doc comment and this test's own header comment for why,
+    # unlike every other interop-labeled test in native_desktop/tests/, it
+    # needs neither FTD_ENABLE_CUDA nor a live D3D12 adapter/display and so
+    # always runs (a CPU-backend NativeEngineSession is enough: on that
+    # backend try_enable_interop() returns false before touching either
+    # handle argument, so this test can drive the full guard/logging control-
+    # flow deterministically with fake handles).
+    ftd_add_test(test_interop_reload_orchestration
+                 native_desktop/tests/test_interop_reload_orchestration.cpp
+                 LABELS unit native_desktop interop)
+    target_link_libraries(test_interop_reload_orchestration PRIVATE ftd_native_session)
+    target_include_directories(test_interop_reload_orchestration PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
 endif()
 
 # CTest registration for test_d3d12_adapter_selection (the executable target
