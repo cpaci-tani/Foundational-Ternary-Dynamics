@@ -9,9 +9,12 @@
 //   G1..G4  bit-identity across four toggle topologies
 //   G5      a toggle flip mid-run adds a second cache entry (recapture)
 //   G6      replay actually happened (graph_replays() > 0)
+//   G8      su2_gauge/su3_gauge are excluded from graph capture (Task 9
+//           regression fix — see graph_eligible() in gpu_engine.cu)
 // ============================================================================
 
 #include "ftd/gpu_engine.h"
+#include "ftd/gauge_field.h"
 #include "ftd/voxel.h"
 #include "ftd/test_telemetry.h"
 
@@ -126,6 +129,18 @@ void compare_profile(Profile p, int ticks) {
 int main() {
     test::init("test_gpu_graph_capture");
 
+    test::section("G0: graph capture is on by default");
+    {
+        gpu::GpuEngine engine(17);
+        test::check("G0: graph_capture_enabled defaults to true",
+                    engine.graph_capture_enabled);
+        engine.toggles.enable_all();
+        seed_scene(engine);
+        for (int t = 0; t < 4; ++t) engine.tick();
+        test::check("G0: default-constructed engine replays a graph",
+                    engine.graph_replays() > 0);
+    }
+
     test::section("G1-G4: bit-identity across four toggle topologies");
     compare_profile(Profile::Defaults, 24);
     compare_profile(Profile::SingleSubstrate, 24);
@@ -205,6 +220,50 @@ int main() {
                     engine.graph_captures() > kMaxGraphCache);
         test::check("G7: no capture failures across the eviction sweep",
                     engine.graph_capture_failures() == 0);
+    }
+
+    test::section("G8: gauge-relax toggles never enter the graph cache");
+    {
+        // gpu_gauge_relax()'s src/scratch ping-pong is a host std::swap, which
+        // stream capture cannot record; graph_eligible() excludes su2_gauge
+        // and su3_gauge for exactly that reason (see gpu_engine.cu). Prove the
+        // effect directly: with the gauge sector primed and active, every
+        // tick must fall back to record_tick_body() rather than populate or
+        // hit the graph cache, regardless of how long the run goes.
+        constexpr int L = 17;
+        constexpr int N = L * L * L;
+        std::vector<SU2Link> su2(N);
+        std::vector<SU3Link> su3(N);
+
+        gpu::GpuEngine su2_engine(L);
+        su2_engine.toggles.enable_all();
+        su2_engine.toggles.su2_gauge = true;
+        su2_engine.toggles.su3_gauge = false;
+        su2_engine.graph_capture_enabled = true;
+        su2_engine.upload_gauge_links(su2, su2, su2, su3, su3, su3);
+        seed_scene(su2_engine);
+        for (int t = 0; t < 8; ++t) {
+            su2_engine.tick();
+            test::check("G8 (su2): graph cache stays empty",
+                        su2_engine.graph_cache_size() == 0);
+            test::check("G8 (su2): no capture is ever attempted",
+                        su2_engine.graph_captures() == 0);
+        }
+
+        gpu::GpuEngine su3_engine(L);
+        su3_engine.toggles.enable_all();
+        su3_engine.toggles.su2_gauge = false;
+        su3_engine.toggles.su3_gauge = true;
+        su3_engine.graph_capture_enabled = true;
+        su3_engine.upload_gauge_links(su2, su2, su2, su3, su3, su3);
+        seed_scene(su3_engine);
+        for (int t = 0; t < 8; ++t) {
+            su3_engine.tick();
+            test::check("G8 (su3): graph cache stays empty",
+                        su3_engine.graph_cache_size() == 0);
+            test::check("G8 (su3): no capture is ever attempted",
+                        su3_engine.graph_captures() == 0);
+        }
     }
 
     return test::finalize();

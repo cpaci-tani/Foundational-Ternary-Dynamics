@@ -564,6 +564,18 @@ bool GpuEngine::graph_eligible() const {
     // test_gpu_graph_capture.cpp's Profile values enable it) — revisit if a
     // future profile needs it.
     if (toggles.ew_background_sweep) return false;
+    // gpu_gauge_relax()'s ping-pong buffer swap (std::swap(d_su2_[d],
+    // d_su2_scr_[d]) / the su3 equivalent) is plain host C++, not a CUDA API
+    // call, so stream capture never records it. A captured graph would keep
+    // replaying the one kernel launch topology recorded at capture time —
+    // src=d_su2_[d]/dst=d_su2_scr_[d] with those exact pointers baked in —
+    // forever, instead of alternating which buffer is "current" the way the
+    // CPU reference does every tick. Confirmed via test_gauge_gpu_parity's P1
+    // regressing from PASS to a 2.141e-02 CPU/GPU divergence once
+    // graph_capture_enabled defaulted to true. Excluded here rather than
+    // reworked into a capture-safe device-resident ping-pong, matching how
+    // ew_background_sweep is handled above.
+    if (toggles.su2_gauge || toggles.su3_gauge) return false;
     return true;
 }
 
