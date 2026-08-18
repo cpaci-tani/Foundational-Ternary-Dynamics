@@ -154,8 +154,5 @@ if(WIN32)
             dxgi
             d3dcompiler
         )
-        # Same ftd_test_support cross-directory-ordering hazard as the other
-        # native_desktop tests above: compile test_telemetry.cpp directly
-        # into this binary instead of linking ftd_test_support.
     endif()
 endif()
