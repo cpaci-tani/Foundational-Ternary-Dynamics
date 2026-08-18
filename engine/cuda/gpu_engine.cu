@@ -668,7 +668,10 @@ bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte
 // closes nt_handle after this call returns, success or failure. Safe to
 // call more than once (e.g. to re-import after a presenter reset): any
 // previously-imported semaphore is torn down first so a second call never
-// leaks the prior import's driver-level reference.
+// leaks the prior import's driver-level reference. Like
+// import_d3d12_particle_buffer(), must be called from the same OS thread
+// that owns this GpuEngine's CUDA context -- cudaImportExternalSemaphore
+// operates against the calling thread's current CUDA context.
 bool GpuEngine::import_d3d12_fence(void* nt_handle) {
     if (!nt_handle) return false;
     if (bufs_.interop_fence) {
@@ -691,12 +694,34 @@ bool GpuEngine::import_d3d12_fence(void* nt_handle) {
 // import_d3d12_fence() (e.g. tests exercising only the gather path) can
 // call interop_gather_particles() freely without this branch doing
 // anything.
+//
+// Precondition: like import_d3d12_fence(), must be called from the same OS
+// thread that owns this GpuEngine's CUDA context --
+// cudaSignalExternalSemaphoresAsync operates against the calling thread's
+// current CUDA context, not a property of this GpuEngine instance.
+//
+// On a cudaSignalExternalSemaphoresAsync() failure (e.g. a caller-supplied
+// `value` that does not monotonically increase relative to the fence's
+// current value -- the public API does nothing to prevent that), this
+// clears the sticky per-thread CUDA error before returning, for the exact
+// reason import_d3d12_particle_buffer() and import_d3d12_fence() clear it on
+// their own failure paths (see the function-level comment above
+// import_d3d12_particle_buffer()): this call runs on the same host thread
+// that goes on to do unrelated tick work afterward via
+// interop_gather_particles() (adjacent to real kernel launches immediately
+// followed by CUDA_CHECK(cudaGetLastError())), so an uncleared sticky error
+// here would be misattributed to a completely unrelated kernel launch by the
+// very next such check.
 bool GpuEngine::interop_signal_fence(std::uint64_t value) {
     if (!bufs_.interop_fence) return false;
     cudaExternalSemaphoreSignalParams params{};
     params.params.fence.value = value;
-    return cudaSignalExternalSemaphoresAsync(&bufs_.interop_fence, &params, 1,
-                                             bufs_.stream) == cudaSuccess;
+    if (cudaSignalExternalSemaphoresAsync(&bufs_.interop_fence, &params, 1,
+                                          bufs_.stream) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; see function-level comment
+        return false;
+    }
+    return true;
 }
 
 void GpuEngine::set_dt(double dt) {
