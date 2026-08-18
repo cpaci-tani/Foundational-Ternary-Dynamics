@@ -33,8 +33,13 @@ namespace {
 // The visual particle path scans the existing byte flag scratch into the
 // existing int32 prefix scratch.  CUB needs matching input/output value types,
 // so make the conversion explicit without materializing an N-sized int flag
-// array.  The scratch is serialized on the default stream with pair/genesis
-// compaction and remains persistent for the lifetime of GpuBuffers.
+// array.  Pair/genesis compaction now runs on the engine's dedicated stream
+// (GpuBuffers::stream); the visual-capture consumer of this same scratch
+// (launch_visual_particle_capture in gpu_engine.cu) still runs on the legacy
+// default stream.  Correctness holds via the blocking-stream implicit sync
+// documented on the GpuBuffers::stream member itself, not because the two
+// consumers share a stream.  The scratch remains persistent for the
+// lifetime of GpuBuffers.
 struct ByteFlagToInt {
     __host__ __device__ int operator()(std::uint8_t flag) const {
         return static_cast<int>(flag);
