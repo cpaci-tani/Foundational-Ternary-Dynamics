@@ -668,9 +668,16 @@ int main(int argc, char** argv) {
         // once here on the main thread before the sim thread exists, but
         // NativeEngineSession::boot() clears interop_enabled_ on every
         // reload (see engine_session.cpp), and the sim thread mirrors that
-        // back into this flag after any reload -- so this is written from
-        // the sim thread and read from the GUI/message-loop thread below
-        // (draw_interop_count / poll gating) for the rest of the process.
+        // back into this flag after any reload -- so after startup this is
+        // written only from the sim thread (see the reload branch inside the
+        // sim lambda below). The GUI/message-loop thread never reads this
+        // flag directly (draw_interop_count gating instead comes out of the
+        // frame_mu-protected latest_interop_count/latest_interop_fence
+        // snapshot below, produced by the sim thread's own read of this
+        // flag) -- it stays atomic purely because the main thread's one-time
+        // write above and the sim thread's later writes are two different
+        // OS threads touching the same variable, not because of any
+        // ongoing cross-thread read here.
         std::atomic<bool> interop_active{false};
         if (!options.force_cpu) {
             HANDLE buf_handle =
@@ -741,6 +748,7 @@ int main(int argc, char** argv) {
                     do_reload || boundary >= 0 || steps > 0 || !paused.load();
                 if (need_work) {
                     if (do_reload) {
+                        const bool was_active = interop_active.load();
                         session.apply_options(reload_opts);
                         // boot() (invoked by apply_options()) always clears
                         // the session's interop_enabled_ -- interop is never
@@ -749,6 +757,21 @@ int main(int argc, char** argv) {
                         // treating a now-permanently-dead interop path as
                         // live (stale "interop: enabled" behavior).
                         interop_active.store(session.interop_enabled());
+                        if (was_active && !session.interop_enabled()) {
+                            // No re-import path exists yet (see Interop
+                            // Task 9 follow-up): this reload permanently
+                            // drops the GPU-interop fast path for the rest
+                            // of the process, silently falling back to the
+                            // CPU particle-capture path. The one-time
+                            // startup "interop: enabled" print above is the
+                            // only other diagnostic for this state, so log
+                            // the transition here too rather than leaving it
+                            // undetectable outside a debugger.
+                            std::cout << "interop: disabled by reload, "
+                                         "falling back to CPU particle path "
+                                         "for the rest of this session\n"
+                                      << std::flush;
+                        }
                     } else if (boundary >= 0) {
                         session.set_flux_boundary(boundary);
                     }
@@ -775,6 +798,20 @@ int main(int argc, char** argv) {
                         polled_interop_count = session.poll_interop_particle_count();
                         polled_interop_fence = pending_interop_fence;
                         const std::uint64_t fv = ++interop_fence_counter;
+                        // request_interop_gather() -> GpuEngine::interop_signal_fence()
+                        // is documented (gpu_engine.h) as needing "the same OS
+                        // thread that owns this GpuEngine's CUDA context", but
+                        // try_enable_interop()'s imports ran on the main thread
+                        // above while this call runs on this sim thread -- a
+                        // different OS thread. That precondition is about which
+                        // CUDA device is current on the calling thread, and this
+                        // works only because nothing in this codebase ever calls
+                        // cudaSetDevice(): every thread implicitly defaults to
+                        // device 0, the same assumption device_luid() relies on
+                        // by reading device 0 directly. Fine on this single-GPU
+                        // setup; would need an explicit cudaSetDevice(0) per
+                        // thread (or a real multi-GPU device selection story) to
+                        // hold on a multi-GPU machine.
                         session.request_interop_gather(fv);
                         pending_interop_fence = fv;
                     }
@@ -879,10 +916,32 @@ int main(int argc, char** argv) {
                 this_frame_interop_count > 0
                     ? static_cast<std::uint32_t>(this_frame_interop_count)
                     : 0u;
-            if (draw_interop_count != 0) {
-                presenter.wait_shared_fence(this_frame_fence_value);
+            // wait_shared_fence() and render() both funnel D3D12 failures
+            // through throw_if_failed() (device-removed/TDR, adapter loss on
+            // sleep-resume or a monitor change, CreateCommittedResource
+            // running out of memory, etc. -- realistic GPU-app failure
+            // modes on this GUI/message-loop thread, not exotic ones). The
+            // only handler in this function is the single try/catch wrapping
+            // all of main() below; without a local catch here, an exception
+            // thrown from either call would unwind straight past the still-
+            // joinable `sim` std::thread object above and std::thread's
+            // destructor calls std::terminate() on a joinable thread --
+            // killing the process before main()'s catch (and its
+            // MessageBoxA error dialog) is ever reached. Stop and join `sim`
+            // here, before rethrowing, so the thread is no longer joinable
+            // by the time stack unwinding reaches its destructor; the
+            // rethrow then lets main()'s existing catch report the error
+            // exactly as it does for every other startup/session failure.
+            try {
+                if (draw_interop_count != 0) {
+                    presenter.wait_shared_fence(this_frame_fence_value);
+                }
+                presenter.render(frame, app.camera, app.view_opts, draw_interop_count);
+            } catch (...) {
+                running.store(false);
+                sim.join();
+                throw;
             }
-            presenter.render(frame, app.camera, app.view_opts, draw_interop_count);
         }
 
         running.store(false);

@@ -178,5 +178,31 @@ if(WIN32)
             dxgi
             d3dcompiler
         )
+
+        # Task 9 round-2 code review: NativeEngineSession::boot() must clear
+        # interop_enabled_ on every reload (apply_options() /
+        # load_scenario() / set_lattice_size() / reset_current()), or a
+        # 'stale interop_enabled_ after reload' regression silently reappears
+        # -- see test_interop_reload_reset.cpp's own header comment. Drives
+        # NativeEngineSession's public API directly (not GpuEngine) so it
+        # needs ftd_native_session + a real D3D12Presenter, same as the other
+        # interop tests in this FTD_ENABLE_CUDA block; no direct ftd_cuda
+        # symbols are used, but it stays gated the same way since the
+        # assertions it makes are meaningless without a CUDA-backed session.
+        add_executable(test_interop_reload_reset
+            tests/test_interop_reload_reset.cpp
+            src/d3d12_presenter.cpp
+            ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+        )
+        target_include_directories(test_interop_reload_reset PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_interop_reload_reset PRIVATE
+            ftd_native_session
+            ftd_cuda
+            d3d12
+            dxgi
+            d3dcompiler
+        )
     endif()
 endif()
