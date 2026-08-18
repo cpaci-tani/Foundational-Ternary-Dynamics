@@ -118,6 +118,31 @@ int main() {
         // before any of this task's changes land).
         test::check("P3: sticky device overflow flag exists",
                     engine.bufs().d_particle_overflow != nullptr);
+
+        test::section("P4: overflow flag clears after being observed");
+        // Same engine instance that just overflowed in P3 above — the whole
+        // point is to prove the sticky flag is sticky-UNTIL-ACKNOWLEDGED,
+        // not sticky-forever. P3's sync_to_host() -> ensure_host_synced()
+        // already routed through throw_if_particle_overflow(), which reads
+        // the device flag (observing it as 1, hence the throw above) and
+        // then resets it to 0 on the device. stage_particles() fully
+        // overwrites this engine's voxel state via upload_from_host(), so
+        // staging a small, safely-under-capacity count now produces a
+        // genuinely fresh, non-overflowing state with no leftover particles
+        // from P3.
+        stage_particles(engine, L, 100);
+        bool threw_again = false;
+        try {
+            engine.tick();
+            std::vector<Voxel> out;
+            engine.sync_to_host(out);
+        } catch (const std::runtime_error&) {
+            threw_again = true;
+        }
+        test::check(
+            "P4: no throw once the count is back under capacity "
+            "(flag was cleared, not permanently stuck)",
+            !threw_again);
     }
 
     return test::finalize();

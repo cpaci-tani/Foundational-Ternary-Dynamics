@@ -842,8 +842,15 @@ __global__ void mark_manifested_particles_kernel(
 // left there, and exactly what color_force_kernel/yukawa_force_kernel/
 // exchange_force_kernel/triad_detection_kernel already clamp against
 // (`raw < max_particles ? raw : max_particles`) — and overflow is set
-// sticky (this kernel only ever writes 1 to it, never 0) whenever the raw
-// count exceeds max_particles.
+// whenever the raw count exceeds max_particles. This kernel only ever
+// WRITES 1 to the flag, never 0 — it has no way to know the count has
+// since dropped back under capacity, and clearing it here on an
+// under-capacity tick would just race the read in
+// GpuBuffers::throw_if_particle_overflow(), which is the sole place that
+// clears it back to 0, immediately after observing it at a host
+// synchronization boundary (sticky-until-acknowledged, not sticky-forever
+// at the system level — see the comment on d_particle_overflow in
+// gpu_buffers.h).
 __global__ void finalize_particle_list_kernel(
     const int32_t* __restrict__ candidate_indices,
     const int32_t* __restrict__ candidate_count,
