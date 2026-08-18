@@ -569,6 +569,13 @@ ftd_add_test(test_field_soa tests/test_field_soa.cpp
 # conscious decision and the Phase-4.1 side-buffer extraction has a baseline.
 ftd_add_test(test_voxel_layout tests/test_voxel_layout.cpp
              CTEST_NAME voxel_layout TIMEOUT 60 LABELS unit foundation)
+# Interop particle record layout guard (D3D12/CUDA interop plan, Task 3):
+# pins the byte layout of ftd::InteropParticleRecord / InteropParticleHeader,
+# the shared POD the (future) CUDA gather kernel writes and the D3D12 vertex
+# shader reads via a StructuredBuffer. Header-only value type -- no ftd_core
+# link needed (same rationale as test_scale_ratio's NO_CORE above).
+ftd_add_test(test_interop_particle_record_layout tests/test_interop_particle_record_layout.cpp
+             NO_CORE CTEST_NAME interop_particle_record_layout TIMEOUT 60 LABELS unit foundation)
 if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
 add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
 target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
