@@ -109,5 +109,28 @@ if(WIN32)
         # directly into this binary instead of linking ftd_test_support
         # (which is defined in the parent CMakeLists.txt after
         # add_subdirectory(native_desktop) runs).
+
+        # Task 5: round-trips a D3D12_HEAP_FLAG_SHARED buffer (Task 4) into a
+        # CUDA-mapped device pointer via GpuEngine::import_d3d12_particle_buffer()
+        # (this task). Needs ftd_cuda the same way test_cuda_d3d12_adapter_match
+        # above does, so it lives in the same FTD_ENABLE_CUDA block.
+        add_executable(test_cuda_import_shared_buffer
+            tests/test_cuda_import_shared_buffer.cpp
+            src/d3d12_presenter.cpp
+            ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+        )
+        target_include_directories(test_cuda_import_shared_buffer PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_cuda_import_shared_buffer PRIVATE
+            ftd_native_session
+            ftd_cuda
+            d3d12
+            dxgi
+            d3dcompiler
+        )
+        # Same ftd_test_support cross-directory-ordering hazard as the other
+        # native_desktop tests above: compile test_telemetry.cpp directly
+        # into this binary instead of linking ftd_test_support.
     endif()
 endif()

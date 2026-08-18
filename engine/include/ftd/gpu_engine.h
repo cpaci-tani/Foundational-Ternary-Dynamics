@@ -147,6 +147,16 @@ public:
     //      documented CUDA invalidity guarantee.
     bool device_luid(char out_luid[8]) const;
 
+    // Imports a D3D12_HEAP_FLAG_SHARED resource (via its NT handle, as
+    // returned by ID3D12Device::CreateSharedHandle) as CUDA external memory,
+    // and maps it as a flat device buffer of `byte_count` bytes. The handle
+    // is NOT closed by this call -- ownership semantics for
+    // cudaExternalMemoryHandleDesc::handle.win32.handle say the OS handle
+    // must stay valid until AFTER cudaImportExternalMemory returns, but CUDA
+    // does not take ownership of it; the caller (native_desktop) closes it
+    // once this call returns, success or failure.
+    bool import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count);
+
     int total_sites() const { return N_; }
     double dt() const { return dt_; }
     void set_dt(double dt);

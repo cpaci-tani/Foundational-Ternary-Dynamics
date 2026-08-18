@@ -9,6 +9,7 @@
 
 #include "voxel.h"
 #include "ftd/visual_snapshot.h"
+#include "ftd/interop_particle_record.h"
 #include <cstddef>   // std::size_t
 #include <cstdint>   // uint8_t etc. — Linux/clang require explicit include
 #include <vector>
@@ -254,7 +255,16 @@ struct GpuBuffers {
     // (and its implicit stream wait); recovery replaces the context.
     bool visual_capture_quarantined = false;
 
-
+    // Native-desktop D3D12 interop (Component B). Imported from a shared
+    // D3D12_HEAP_FLAG_SHARED resource via cudaImportExternalMemory --
+    // d_interop_particle_buffer is a *mapped view* into that resource, not a
+    // cudaMalloc allocation, so free() must NOT cudaFree() it -- only
+    // destroy the mapping and the external memory object.
+    void* d_interop_particle_buffer = nullptr;
+    cudaExternalMemory_t interop_external_memory = nullptr;
+    InteropParticleHeader* d_interop_header = nullptr;         // owned, cudaMalloc'd
+    InteropParticleHeader* h_interop_header = nullptr;         // owned, pinned
+    cudaEvent_t interop_gather_ready = nullptr;                // owned
 
     // --- Particle list (compact indices of manifested particles) ---
     // Scales with lattice: enough for ~1.5% occupation at any size
