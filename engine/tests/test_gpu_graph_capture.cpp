@@ -6,11 +6,15 @@
 // are built from the same seed and scene; one runs with graph_capture_enabled
 // false (direct launch), the other true (capture on the first tick of a key,
 // replay thereafter). Every voxel field is compared byte-for-byte.
+//   G0      graph capture is on by default
 //   G1..G4  bit-identity across four toggle topologies
 //   G5      a toggle flip mid-run adds a second cache entry (recapture)
 //   G6      replay actually happened (graph_replays() > 0)
+//   G7      cache eviction at MAX_GRAPH_CACHE
 //   G8      su2_gauge/su3_gauge are excluded from graph capture (Task 9
 //           regression fix — see graph_eligible() in gpu_engine.cu)
+//   G9      a scalar-only graph_key() input (dt_) forces a fresh capture,
+//           not just the topology-affecting toggles G5/G7 exercise
 // ============================================================================
 
 #include "ftd/gpu_engine.h"
@@ -264,6 +268,39 @@ int main() {
             test::check("G8 (su3): no capture is ever attempted",
                         su3_engine.graph_captures() == 0);
         }
+    }
+
+    test::section("G9: a scalar-only change forces a fresh capture");
+    {
+        // G5/G7 only ever flip boolean topology toggles. graph_key() also
+        // hashes a "Scalar kernel arguments" block (dt_, omega0, langevin_T,
+        // ...) precisely because CUDA bakes launch-argument VALUES, not just
+        // pointers, into a captured graph node — so a scalar-only change with
+        // NO toggle flip must still force a recapture, or replay would
+        // silently keep running the OLD scalar forever. Nothing else in this
+        // file exercises that block; this closes the gap by changing dt_ (the
+        // first entry in the scalar block) via the public set_dt() setter.
+        gpu::GpuEngine engine(17);
+        engine.toggles.enable_all();
+        engine.graph_capture_enabled = true;
+        seed_scene(engine);
+        for (int t = 0; t < 6; ++t) engine.tick();
+        test::check("G9: one cached graph for the initial dt",
+                    engine.graph_cache_size() == 1);
+        const std::size_t captures_before_dt_change = engine.graph_captures();
+
+        // dt_ >= 1.0 is honored unconditionally by set_dt() regardless of
+        // symplectic_leapfrog (see gpu_engine.cu), so this is a clean
+        // scalar-only change: no toggle touched, no other graph_key() input
+        // affected.
+        test::check("G9: dt actually changes", engine.dt() != 2.0);
+        engine.set_dt(2.0);
+        for (int t = 0; t < 6; ++t) engine.tick();
+
+        test::check("G9: dt change added a second cached graph",
+                    engine.graph_cache_size() == 2);
+        test::check("G9: exactly one additional capture after the dt change",
+                    engine.graph_captures() == captures_before_dt_change + 1);
     }
 
     return test::finalize();
