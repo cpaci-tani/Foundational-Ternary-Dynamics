@@ -157,8 +157,11 @@ public:
     // replays the instantiated cudaGraphExec_t on every later tick with the
     // same key. Replay must be BIT-IDENTICAL to direct launch — that is what
     // test_gpu_graph_capture asserts. Toggle changes are rare, deliberate
-    // user actions, so recapture is off the hot path.
-    bool graph_capture_enabled = false;
+    // user actions, so recapture is off the hot path. Default ON: this is the
+    // canonical interactive path for ftd_native_desktop. Set false to force
+    // direct kernel launches (the graph parity test does exactly that on one
+    // of its two engines).
+    bool graph_capture_enabled = true;
 
     std::size_t graph_replays() const { return graph_replays_; }
     std::size_t graph_captures() const { return graph_captures_; }
