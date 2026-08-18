@@ -27,7 +27,8 @@ export async function bootBridge(latticeSize, ui) {
 
     let bridge = null;
     if (forceNative || !isLiveServerPort) {
-        debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
+        const requestedWsPort = urlParams.get('wsPort') || '9100';
+        debugLog(`[init] Trying native GPU engine on ws://127.0.0.1:${requestedWsPort}...`);
         try {
             bridge = await tryNativeBridge(latticeSize);
         } catch (e) {
@@ -53,7 +54,7 @@ export async function bootBridge(latticeSize, ui) {
                 ? 'Connected to native GPU engine (CUDA)'
                 : 'Connected to native CPU engine';
         }
-        showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
+        showToast('Native engine connected — CUDA backend active.', 'success');
         return bridge;
     }
 

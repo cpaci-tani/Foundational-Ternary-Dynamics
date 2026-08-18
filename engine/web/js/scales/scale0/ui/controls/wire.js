@@ -58,6 +58,21 @@ function wirePhysicsToggles(ctx, api) {
     for (const [toggleKey, , elId] of SCALE0_TOGGLES) {
         const el = getEl(elId);
         if (!el) continue;
+        if (ctx.bridge?.isNativeGPU && toggleKey === 'confinement') {
+            // TermToggles carries this as an intent flag for serialization,
+            // but no native C++ phase consumes it. Do not present a writable
+            // checkbox that implies string-tension physics is executing. The
+            // separate viewport `toggle-confinement` remains a visual proxy.
+            el.checked = false;
+            el.disabled = true;
+            el.setAttribute('aria-disabled', 'true');
+            const label = el.closest('.toggle-row')?.querySelector('label');
+            if (label) {
+                label.textContent = 'Confinement (visual proxy only)';
+                label.title = 'Native engine term is not implemented. Use the Confinement viewport overlay for visualization only.';
+            }
+            continue;
+        }
         el.addEventListener('change', () => {
             ctx.bridge.setToggle(toggleKey, el.checked);
             getFluxMock()?.capabilities?.scale0?.setToggle(toggleKey, el.checked);
@@ -206,12 +221,29 @@ function wireParameterSliders(ctx) {
     const sliders = [
         { id: 'combo-kb',    valId: 'combo-kb-val',    param: 'kb',       fmt: 3 },
         { id: 'combo-gn',    valId: 'combo-gn-val',    param: 'gn',       fmt: 3 },
-        { id: 'combo-damp',  valId: 'combo-damp-val',  param: 'damping',  fmt: 3 },
+        { id: 'combo-damp',  valId: 'combo-damp-val',  param: 'damping',  fmt: 4 },
     ];
     for (const s of sliders) {
         const slider = getEl(s.id);
         const display = getEl(s.valId);
         if (!slider || !display) continue;
+        if (ctx.bridge?.isNativeGPU) {
+            slider.step = 'any';
+            slider.disabled = true;
+            slider.setAttribute('aria-readonly', 'true');
+            slider.title = `${s.param} is a native engine constant supplied by the acknowledged scenario profile.`;
+            slider.classList.add('ctrl-slider-disabled');
+            const row = slider.closest('.pe-ctrl-row');
+            row?.classList.add('ctrl-native-readonly');
+            if (row && !row.querySelector('.ctrl-native-fixed')) {
+                const badge = document.createElement('span');
+                badge.className = 'ctrl-native-fixed';
+                badge.textContent = 'fixed';
+                badge.title = 'Read-only native engine constant';
+                row.appendChild(badge);
+            }
+            continue;
+        }
         slider.addEventListener('input', () => {
             const val = parseFloat(slider.value);
             display.textContent = val.toFixed(s.fmt);
@@ -268,6 +300,10 @@ function wireFluxVolume(ctx, api) {
     if (opacitySlider && opacityVal) {
         opacitySlider.addEventListener('input', () => {
             const v = parseFloat(opacitySlider.value);
+            if (ctx._scale0ForcedVisualParameterPreferences
+                && 'fluxOpacity' in ctx._scale0ForcedVisualParameterPreferences) {
+                ctx._scale0ForcedVisualParameterPreferences.fluxOpacity = v;
+            }
             opacityVal.textContent = v.toFixed(2);
             ctx.viewport.setFluxOpacity(v);
             ctx.viewport.setFluxSliceOpacity?.(v);
@@ -279,6 +315,10 @@ function wireFluxVolume(ctx, api) {
     if (scaleSlider && scaleVal) {
         scaleSlider.addEventListener('input', () => {
             const v = parseFloat(scaleSlider.value);
+            if (ctx._scale0ForcedVisualParameterPreferences
+                && 'fluxPointScale' in ctx._scale0ForcedVisualParameterPreferences) {
+                ctx._scale0ForcedVisualParameterPreferences.fluxPointScale = v;
+            }
             scaleVal.textContent = v.toFixed(1);
             ctx.viewport.setFluxPointScale(v);
             ctx.viewport.setFluxSlicePointScale?.(v);
@@ -291,7 +331,11 @@ function wireFluxVolume(ctx, api) {
     if (threshSlider && threshVal) {
         threshSlider.addEventListener('input', () => {
             const v = parseFloat(threshSlider.value);
-            threshVal.textContent = v.toFixed(3);
+            if (ctx._scale0ForcedVisualParameterPreferences
+                && 'fluxThreshold' in ctx._scale0ForcedVisualParameterPreferences) {
+                ctx._scale0ForcedVisualParameterPreferences.fluxThreshold = v;
+            }
+            threshVal.textContent = v < 0.001 ? v.toFixed(4) : v.toFixed(3);
             ctx.viewport.setFluxThreshold(v);
             ctx.viewport.setFluxSliceThreshold?.(v);
             api.setLatticeNeedsUpload();

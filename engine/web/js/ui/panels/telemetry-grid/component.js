@@ -201,7 +201,24 @@ export class TelemetryGridPanelComponent {
             const xs = new Float64Array(MAX_SPARK);
             const ys = new Float64Array(MAX_SPARK);
 
-            entry = { u, valueEl, xs, ys, tooltip, hoverActive: false, lastN: 0, color: strokeColor };
+            entry = {
+                u,
+                valueEl,
+                xs,
+                ys,
+                tooltip,
+                hoverActive: false,
+                lastN: 0,
+                color: strokeColor,
+                // The grid may be asked to repaint at UI cadence while the
+                // native telemetry snapshot arrives only a few times per
+                // second. Reusing the last uPlot data until its ring buffer
+                // advances avoids redrawing every mini-chart with identical
+                // samples on intervening animation frames.
+                lastBuffer: null,
+                lastTotal: -1,
+                lastValue: Number.NaN,
+            };
             entry.onPointerEnter = () => {
                 entry.hoverActive = true;
                 this.renderTooltip(entry, chan);
@@ -260,6 +277,11 @@ export class TelemetryGridPanelComponent {
 
             if (!buf || buf.count === 0) return;
 
+            const total = buf.total ?? buf.count;
+            const latestValue = buf.last();
+            if (entry.lastBuffer === buf && entry.lastTotal === total
+                && Object.is(entry.lastValue, latestValue)) return;
+
             // Reuse the preallocated buffers + cached value element — no per-frame
             // allocation and no DOM query (§6.1).
             const { u, valueEl, xs, ys } = entry;
@@ -271,9 +293,12 @@ export class TelemetryGridPanelComponent {
                 ys[i] = buf.get(start + i);
             }
             entry.lastN = n;
+            entry.lastBuffer = buf;
+            entry.lastTotal = total;
+            entry.lastValue = latestValue;
 
             u.setData([xs.subarray(0, n), ys.subarray(0, n)], true);
-            if (valueEl) valueEl.textContent = this.formatValue(buf.last(), chan.unit);
+            if (valueEl) valueEl.textContent = this.formatValue(latestValue, chan.unit);
             if (entry.hoverActive) this.renderTooltip(entry, chan);
         });
     }

@@ -34,7 +34,10 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
 
     if (viewportAdapter.isFluxVolumeVisible()) {
         let volume = activeScale0.getScale0FluxVolume();
-        if (volume && volume.length > 0) viewportAdapter.applyFluxVolume(volume, latticeSize);
+        // Native FTV2 returns a compact regular-grid descriptor instead of an
+        // N^3 buffer. Mock/WASM and legacy FTV1 remain plain typed arrays.
+        const volumeLength = volume?.data?.length ?? volume?.length ?? 0;
+        if (volumeLength > 0) viewportAdapter.applyFluxVolume(volume, latticeSize);
     }
 
     if (viewportAdapter.isFluxSliceVisible()) {

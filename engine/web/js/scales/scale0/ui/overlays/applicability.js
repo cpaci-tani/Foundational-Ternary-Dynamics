@@ -35,6 +35,35 @@ const STATE_TAGS = new Set([
     'collision', 'coulomb', 'transport', 'seed', 'weak',
 ]);
 
+// Canonical scenario seed domains that cannot be inferred from the public
+// semantic tags or from the post-seed term profile.  Most write both J and
+// ternary state, then intentionally run with few or no evolution terms.
+// Keeping the domain metadata explicit preserves the seeded J visualization at
+// tick 0 and after transient particles annihilate/evaporate; broadening tags
+// such as `seed`, `prepared`, or `vacuum` would incorrectly expose flux for
+// many state-only scenarios.  The Wilson-loop seed is the one flux-only member:
+// its native initializer writes the oriented J loop without ternary matter.
+export const SCALE0_SCENARIO_DOMAIN_OVERRIDES = Object.freeze({
+    ...Object.fromEntries([
+        'flux-annihilation',
+        'flux-meson',
+        'flux-string-breaking',
+        'flux-baryon',
+        'quantum-entangle',
+        's0-seed-ee-annihilation',
+        's0-seed-hydrogen',
+        's0-seed-helium',
+        's0-seed-h2-bond-formation',
+        's0-seed-sloop',
+        's0-vacuum-proton',
+        's0-vacuum-neutron',
+        's0-vacuum-pion-charged',
+        's0-vacuum-pion-neutral',
+        's0-vacuum-kaon-charged',
+    ].map((id) => [id, Object.freeze({ flux: true, state: true })])),
+    's0-seed-wilson-loop': Object.freeze({ flux: true, state: false }),
+});
+
 /**
  * Resolve the term profile for a scenario.
  *
@@ -68,6 +97,7 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     const scenario = getScale0Scenario(scenarioId);
     const terms = resolvedTerms(scenarioId, engineTerms);
     const tags = scenario?.tags || [];
+    const domainOverride = SCALE0_SCENARIO_DOMAIN_OVERRIDES[scenarioId] || {};
 
     if (!scenario || scenarioId === 'empty') {
         return {
@@ -78,18 +108,18 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
         };
     }
 
-    const flux = hasAnyTag(tags, FLUX_TAGS)
+    const flux = domainOverride.flux ?? (hasAnyTag(tags, FLUX_TAGS)
         || terms.wave_propagation
         || terms.coupling
         || terms.gauss_projection
         || terms.dual_substrate
-        || terms.de_broglie_clock;
-    const state = hasAnyTag(tags, STATE_TAGS)
+        || terms.de_broglie_clock);
+    const state = domainOverride.state ?? (hasAnyTag(tags, STATE_TAGS)
         || terms.genesis
         || terms.color_forces
         || terms.strong_force
         || terms.confinement
-        || terms.weak_transmutation;
+        || terms.weak_transmutation);
     const dual = flux && terms.dual_substrate;
     const gravity = SCALE0_MASS_GRAVITY_SCENARIOS.has(scenarioId) || !!terms.gravity;
     const emForce = state && !!(terms.forces || terms.poisson_coulomb || terms.lorentz_force);

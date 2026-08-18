@@ -39,7 +39,7 @@ const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 
 const TARGET_DT = 1000 / 60;
 
 let mod = null, bridge = null;
-let N = 33, scenarioId = 'flux-pulse', toggles = {};
+let N = 33, scenarioId = 'flux-pulse', toggles = {}, toggleNames = [];
 let poolThreads = 1;       // Phase 1 = 1 (serial off-thread). Phase 2 raises this
                            // for the 1.8-2.2x in-worker threading (on-demand
                            // nested pthread_create; POOL_SIZE=0 => no pre-spawn).
@@ -144,7 +144,11 @@ let wantLag = true;
 function readEngineToggles() {
   if (!mod || !bridge || typeof mod.getToggle !== 'function') return null;
   const out = {};
-  for (const k in toggles) {
+  // `toggles` contains only pre-setup writes from the dashboard. C++ scenario
+  // bodies also enable non-UI/research terms (for example Langevin baths), so
+  // limiting truth to Object.keys(toggles) made those real engine terms appear
+  // false. The proxy supplies the complete TOGGLE_SPECS name registry.
+  for (const k of toggleNames) {
     try { out[k] = !!mod.getToggle(bridge, k); } catch (e) { /* not in this build */ }
   }
   engineToggles = out;
@@ -313,6 +317,9 @@ self.onmessage = (e) => {
     switch (msg.type) {
       case 'create':
         toggles = msg.toggles || {};
+        toggleNames = Array.isArray(msg.toggleNames) && msg.toggleNames.length
+          ? [...msg.toggleNames]
+          : Object.keys(toggles);
         if (typeof msg.pool === 'number' && msg.pool >= 1) poolThreads = msg.pool | 0;
         if (!mod) initModule(() => { buildBridge(msg.N, msg.scenarioId || scenarioId); if (!timer) loop(); });
         else { buildBridge(msg.N, msg.scenarioId || scenarioId); if (!timer) loop(); }

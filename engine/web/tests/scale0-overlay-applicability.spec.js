@@ -57,14 +57,99 @@ test('pure-wave scenario exposes field diagnostics but hides absent matter featu
     }
 });
 
+test('canonical mixed seeds retain J and state channels independently of live terms or particles', async ({ page }) => {
+    const scenarioIds = [
+        'flux-annihilation',
+        'flux-meson',
+        'flux-string-breaking',
+        'flux-baryon',
+        'quantum-entangle',
+        's0-seed-ee-annihilation',
+        's0-seed-hydrogen',
+        's0-seed-helium',
+        's0-seed-h2-bond-formation',
+        's0-seed-sloop',
+        's0-vacuum-proton',
+        's0-vacuum-neutron',
+        's0-vacuum-pion-charged',
+        's0-vacuum-pion-neutral',
+        's0-vacuum-kaon-charged',
+    ];
+    const result = await page.evaluate(async (ids) => {
+        const { getScale0OverlayApplicability } = await import(
+            '/js/scales/scale0/ui/overlays/applicability.js?mixed-seed-domains-test=1'
+        );
+        return Object.fromEntries(ids.map((id) => {
+            // An all-off engine readback models inert/tick-0 profiles and the
+            // post-annihilation state. Seed-domain metadata must still win.
+            const profile = getScale0OverlayApplicability(id, {
+                wave_propagation: false,
+                coupling: false,
+                gauss_projection: false,
+                genesis: false,
+                forces: false,
+                color_forces: false,
+                strong_force: false,
+                confinement: false,
+                weak_transmutation: false,
+            });
+            return [id, {
+                flux: profile.domains.flux,
+                state: profile.domains.state,
+                volume: profile.applicable.has('toggle-flux-volume'),
+                stateField: profile.applicable.has('toggle-state-field'),
+            }];
+        }));
+    }, scenarioIds);
+
+    for (const id of scenarioIds) {
+        expect(result[id], `${id} must preserve both canonical seed domains`).toEqual({
+            flux: true,
+            state: true,
+            volume: true,
+            stateField: true,
+        });
+    }
+});
+
+test('Wilson loop is a flux-only seed with no blank state channel', async ({ page }) => {
+    const result = await page.evaluate(async () => {
+        const { getScale0OverlayApplicability } = await import(
+            '/js/scales/scale0/ui/overlays/applicability.js?wilson-flux-domain-test=1'
+        );
+        const profile = getScale0OverlayApplicability('s0-seed-wilson-loop', {
+            wave_propagation: false,
+            coupling: false,
+            gauss_projection: false,
+            genesis: false,
+            forces: false,
+        });
+        return {
+            flux: profile.domains.flux,
+            state: profile.domains.state,
+            volume: profile.applicable.has('toggle-flux-volume'),
+            fluxLines: profile.applicable.has('toggle-flux-lines'),
+            stateField: profile.applicable.has('toggle-state-field'),
+        };
+    });
+
+    expect(result).toEqual({
+        flux: true,
+        state: false,
+        volume: true,
+        fluxLines: true,
+        stateField: false,
+    });
+});
+
 test('scenario switch suspends an incompatible overlay and restores its preference later', async ({ page }) => {
     await page.evaluate(() => {
         const btn = document.getElementById('toggle-e-field');
         if (btn && !btn.classList.contains('active')) btn.click();
     });
 
-    await selectScale0Scenario(page, 'flux-annihilation');
-    await waitForOverlayScenario(page, 'flux-annihilation');
+    await selectScale0Scenario(page, 's0-seed-massive-body');
+    await waitForOverlayScenario(page, 's0-seed-massive-body');
 
     const stateOnly = await page.evaluate(async () => {
         const { getScale0State } = await import('/js/scales/scale0/state/store.js');
@@ -110,9 +195,9 @@ test('matter, strong, and gravity scenarios expose only their native channels', 
     ]);
     for (const id of [
         'toggle-state-field', 'toggle-force-em', 'toggle-force-strong',
-        'toggle-color-charge', 'toggle-confinement',
+        'toggle-color-charge', 'toggle-confinement', 'toggle-flux-volume',
     ]) expect(proton[id].applicable, `${id} should apply to the proton cohort`).toBe(true);
-    for (const id of ['toggle-flux-volume', 'toggle-force-gravity', 'toggle-latency']) {
+    for (const id of ['toggle-force-gravity', 'toggle-latency']) {
         expect(proton[id].applicable, `${id} should be hidden for the proton cohort`).toBe(false);
     }
 

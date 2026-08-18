@@ -112,13 +112,17 @@ export function maxRhoOf(mag, M) {
  * kind: latency=L, dilation=L² (lapse deficit), kretschmann=(∇²L)² (18-pt Moore),
  * force=G_N·|∇|J|| (central diff). Stencil kinds zero the one-voxel border.
  * @param {ArrayLike<number>} mag  dense |J| volume, layout idx=(z*N+y)*N+x
+ * @param {number} spacing physical lattice spacing between adjacent samples
  */
-export function gravitySlice(mag, N, axis, index, kind = 'latency', maxRho = 0) {
+export function gravitySlice(mag, N, axis, index, kind = 'latency', maxRho = 0, spacing = 1) {
     const out = new Float64Array(N * N);
     const M = N * N * N;
     if (!mag || mag.length < M) return out;
     const rho = maxRho > 0 ? maxRho : maxRhoOf(mag, M);
     const invRho = 1 / rho;
+    const h = Math.max(1, Number(spacing) || 1);
+    const invH = 1 / h;
+    const invH2 = invH * invH;
     const vidx = (x, y, z) => (z * N + y) * N + x;
     const Lof = (x, y, z) => { const m = mag[vidx(x, y, z)]; return Math.sqrt(Math.min(m * m * invRho, 0.998)); };
     const edge = (x, y, z) => (x <= 0 || x >= N - 1 || y <= 0 || y >= N - 1 || z <= 0 || z >= N - 1);
@@ -141,14 +145,14 @@ export function gravitySlice(mag, N, axis, index, kind = 'latency', maxRho = 0) 
                     const edgeSum = Lof(x + 1, y + 1, z) + Lof(x + 1, y - 1, z) + Lof(x - 1, y + 1, z) + Lof(x - 1, y - 1, z)
                         + Lof(x + 1, y, z + 1) + Lof(x + 1, y, z - 1) + Lof(x - 1, y, z + 1) + Lof(x - 1, y, z - 1)
                         + Lof(x, y + 1, z + 1) + Lof(x, y + 1, z - 1) + Lof(x, y - 1, z + 1) + Lof(x, y - 1, z - 1);
-                    const lap = F3 * faceSum + E6 * edgeSum - 4 * self;
+                    const lap = (F3 * faceSum + E6 * edgeSum - 4 * self) * invH2;
                     v = lap * lap;
                 }
             } else { // force: G_N·|∇|J||
                 if (!edge(x, y, z)) {
-                    const gx = (mag[vidx(x + 1, y, z)] - mag[vidx(x - 1, y, z)]) * 0.5;
-                    const gy = (mag[vidx(x, y + 1, z)] - mag[vidx(x, y - 1, z)]) * 0.5;
-                    const gz = (mag[vidx(x, y, z + 1)] - mag[vidx(x, y, z - 1)]) * 0.5;
+                    const gx = (mag[vidx(x + 1, y, z)] - mag[vidx(x - 1, y, z)]) * 0.5 * invH;
+                    const gy = (mag[vidx(x, y + 1, z)] - mag[vidx(x, y - 1, z)]) * 0.5 * invH;
+                    const gz = (mag[vidx(x, y, z + 1)] - mag[vidx(x, y, z - 1)]) * 0.5 * invH;
                     v = G_N * Math.sqrt(gx * gx + gy * gy + gz * gz);
                 }
             }

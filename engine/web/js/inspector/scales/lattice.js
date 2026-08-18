@@ -13,6 +13,112 @@ import {
 const COLOR_LABELS = { 0: 'colorless', 1: 'red', 2: 'green', 3: 'blue' };
 const COLOR_CSS = { 0: '#9ca3af', 1: '#ef5350', 2: '#4ade80', 3: '#60a5fa' };
 
+// A native point read is an asynchronous command with a device-side query.
+// The inspector used to issue its centre read, force read, and all 27 Moore
+// cells on every display refresh (roughly 20 Hz). Keep the panel live, but
+// make its read budget explicit: one centre + force plus nine neighbours per
+// native refresh. Unknown cells are shown as pending rather than invented as
+// void, and every displayed resolved cell remains an actual engine read.
+const NATIVE_REFRESH_MS = 750;
+const LOCAL_REFRESH_MS = 250;
+const NATIVE_NEIGHBOUR_READ_BUDGET = 9;
+const LOCAL_NEIGHBOUR_READ_BUDGET = 26;
+
+function nowMs() {
+    return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
+
+function voxelKey(x, y, z) {
+    return `${x},${y},${z}`;
+}
+
+function buildNeighbourOrder(x, y, z, L) {
+    const order = [];
+    for (let dz = -1; dz <= 1; dz++) {
+        for (let dy = 1; dy >= -1; dy--) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0 && dz === 0) continue;
+                order.push({
+                    x: (x + dx + L) % L,
+                    y: (y + dy + L) % L,
+                    z: (z + dz + L) % L,
+                });
+            }
+        }
+    }
+    return order;
+}
+
+function inspectionCache(target, x, y, z) {
+    const bridge = target.bridge;
+    const L = Math.max(1, Math.trunc(Number(bridge?.latticeSize) || 64));
+    const positionKey = `${L}:${voxelKey(x, y, z)}`;
+    let cache = target._latticeInspectionCache;
+    if (!cache || cache.bridge !== bridge || cache.positionKey !== positionKey) {
+        cache = {
+            bridge,
+            positionKey,
+            lastRequestAt: -Infinity,
+            lastVisualEpoch: null,
+            voxel: null,
+            force: null,
+            neighbours: new Map(),
+            neighbourOrder: buildNeighbourOrder(x, y, z, L),
+            cursor: 0,
+            revision: 0,
+            renderedRevision: -1,
+        };
+        target._latticeInspectionCache = cache;
+    }
+    return cache;
+}
+
+function refreshInspectionCache(target, x, y, z) {
+    const bridge = target.bridge;
+    const cache = inspectionCache(target, x, y, z);
+    if (typeof bridge?.inspectVoxel !== 'function') return cache;
+
+    const native = !!bridge.isNativeGPU;
+    const interval = native ? NATIVE_REFRESH_MS : LOCAL_REFRESH_MS;
+    const now = nowMs();
+    // WebSocketBridge advances this only when a completed physics frame has
+    // made new visual data available. Once all 26 neighbours are resolved,
+    // avoid re-requesting a paused lattice simply because the inspector is
+    // still being painted.
+    const visualEpoch = native && Number.isFinite(Number(bridge._visualEpoch))
+        ? Number(bridge._visualEpoch)
+        : null;
+    const incomplete = !cache.voxel
+        || cache.neighbours.size < cache.neighbourOrder.length
+        // A native force response can arrive a round later than voxel data.
+        // Keep retrying that one bounded read until it is real rather than
+        // treating the unresolved value as a physical zero.
+        || (typeof bridge.getForceAt === 'function' && !cache.force);
+    if (visualEpoch !== null && visualEpoch === cache.lastVisualEpoch && !incomplete) return cache;
+    if (now - cache.lastRequestAt < interval) return cache;
+    cache.lastRequestAt = now;
+    cache.lastVisualEpoch = visualEpoch;
+    cache.revision++;
+
+    const voxel = bridge.inspectVoxel(x, y, z);
+    if (voxel) cache.voxel = voxel;
+    if (typeof bridge.getForceAt === 'function') {
+        const force = bridge.getForceAt(x, y, z);
+        if (force) cache.force = force;
+    }
+
+    const budget = native ? NATIVE_NEIGHBOUR_READ_BUDGET : LOCAL_NEIGHBOUR_READ_BUDGET;
+    const order = cache.neighbourOrder;
+    for (let i = 0; i < Math.min(budget, order.length); i++) {
+        const idx = (cache.cursor + i) % order.length;
+        const pos = order[idx];
+        const neighbour = bridge.inspectVoxel(pos.x, pos.y, pos.z);
+        if (neighbour) cache.neighbours.set(voxelKey(pos.x, pos.y, pos.z), neighbour);
+    }
+    cache.cursor = (cache.cursor + budget) % order.length;
+    return cache;
+}
+
 export function handleLatticeClick(target, intersects) {
     if (intersects.length > 0) {
         let hit = intersects.find((entry) => entry.object !== target.viewport._voidBox);
@@ -89,6 +195,7 @@ export function hideLatticeInspector(target) {
     }
     const symPanel = document.getElementById('floating-symmetry-panel');
     if (symPanel) symPanel.style.display = 'none';
+    target._latticeInspectionCache = null;
     target._updateInspectorChrome();
 }
 
@@ -96,10 +203,15 @@ export function updateLatticeFields(target) {
     if (!target._selectedPos) return;
     const { x, y, z } = target._selectedPos;
 
-    let voxel = null;
-    let force = null;
-    if (typeof target.bridge.inspectVoxel === 'function') voxel = target.bridge.inspectVoxel(x, y, z);
-    if (typeof target.bridge.getForceAt === 'function') force = target.bridge.getForceAt(x, y, z);
+    const readCache = refreshInspectionCache(target, x, y, z);
+    let voxel = readCache.voxel;
+    let force = readCache.force;
+
+    // The app asks the inspector to paint more often than the bounded read
+    // budget. Rebuilding a 27-cell HTML grid and sixteen text fields with no
+    // new engine response only adds layout work; retain the last real snapshot
+    // until the next scheduled read revision arrives.
+    if (readCache.renderedRevision === readCache.revision) return;
 
     if (!voxel && typeof target.bridge.inspectVoxel !== 'function') {
         voxel = {
@@ -191,13 +303,19 @@ export function updateLatticeFields(target) {
                     const nX = (x + dx + L) % L;
                     const nY = (y + dy + L) % L;
                     const nZ = (z + dz + L) % L;
-                    const nV = target.bridge.inspectVoxel(nX, nY, nZ);
-                    let symbol = '·';
+                    const isCenter = dx === 0 && dy === 0 && dz === 0;
+                    const neighbourKey = voxelKey(nX, nY, nZ);
+                    const nV = isCenter ? voxel : readCache.neighbours.get(neighbourKey);
+                    const known = isCenter ? !!voxel : readCache.neighbours.has(neighbourKey);
+                    let symbol = known ? '·' : '…';
                     let color = '#475569';
                     let bg = '#0f172a';
                     let borderStyle = 'border:1px solid #334155;';
 
-                    if (nV && nV.state === 1) {
+                    if (!known) {
+                        color = '#64748b';
+                        bg = '#111827';
+                    } else if (nV && nV.state === 1) {
                         symbol = '+';
                         color = '#4ade80';
                         bg = 'rgba(74, 222, 128, 0.15)';
@@ -218,7 +336,6 @@ export function updateLatticeFields(target) {
                         }
                     }
 
-                    const isCenter = dx === 0 && dy === 0 && dz === 0;
                     if (isCenter) {
                         borderStyle = 'border:1px solid #94a3b8;';
                         if (bg === '#0f172a') bg = '#1e293b';
@@ -232,4 +349,5 @@ export function updateLatticeFields(target) {
         }
         mooreGrid.innerHTML = html;
     }
+    readCache.renderedRevision = readCache.revision;
 }

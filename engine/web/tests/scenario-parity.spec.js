@@ -249,6 +249,15 @@ const INTENTIONAL_DEFAULT_DIVERGENCES = new Map([
 // ── Tests ───────────────────────────────────────────────────────────
 
 test.describe('Toggle parity (JS whitelist ⊆ C++ TOGGLE_SPECS)', () => {
+    test('worker engine-truth registry exactly covers C++ TOGGLE_SPECS', async () => {
+        const proxyPath = join(WEB_ROOT, 'js', 'bridge', 'wasm-bridge-proxy.js');
+        const proxy = await import(pathToFileURL(proxyPath).href);
+        const cppNames = [...extractCppToggleSpecs().keys()];
+        expect(proxy.SCALE0_ENGINE_TOGGLE_NAMES,
+            'worker readback names must stay ordered and complete with TOGGLE_SPECS')
+            .toEqual(cppNames);
+    });
+
     test('every SCALE0_TOGGLES key exists in TOGGLE_SPECS', () => {
         const js = extractScale0Toggles();
         const cpp = extractCppToggleSpecs();
@@ -616,6 +625,131 @@ test.describe('Catalog counts (derived, never hand-written)', () => {
                 ).toBe(false);
             }
         }
+    });
+
+    test('canonical wave/geometry profiles match their qualified native term sets', async () => {
+        const modulePath = join(WEB_ROOT, 'js', 'config', 'toggles.js');
+        const toggles = await import(pathToFileURL(modulePath).href);
+        const expectedEnabled = {
+            'flux-standing': ['wave_propagation'],
+            'flux-nested-standing': ['wave_propagation'],
+            'flux-interference': ['wave_propagation'],
+            'flux-vortex': [],
+            'flux-soliton': ['gauss_projection', 'wave_propagation'],
+        };
+        const allKeys = toggles.SCALE0_TOGGLES.map(([key]) => key);
+
+        for (const [scenarioId, expected] of Object.entries(expectedEnabled)) {
+            const rows = toggles.SCALE0_SCENARIO_OVERRIDES[scenarioId];
+            expect(rows, `${scenarioId} must have an isolated JS profile`).toBeTruthy();
+            const profile = new Map(rows.map(([key, value]) => [key, !!value]));
+            expect([...profile.keys()].sort(), `${scenarioId} profile must cover every UI term`)
+                .toEqual([...allKeys].sort());
+            const actual = [...profile.entries()]
+                .filter(([, enabled]) => enabled)
+                .map(([key]) => key)
+                .sort();
+            expect(actual, `${scenarioId} JS profile drifted from scenarios.cpp`)
+                .toEqual([...expected].sort());
+        }
+    });
+
+    test('scenario visual and boundary defaults select populated canonical channels', async () => {
+        const togglesPath = join(WEB_ROOT, 'js', 'config', 'toggles.js');
+        const loaderPath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'runtime', 'scenario-loader.js');
+        const toggles = await import(pathToFileURL(togglesPath).href);
+        const loader = await import(pathToFileURL(loaderPath).href);
+        const visuals = loader.SCALE0_SCENARIO_VISUAL_PROFILES;
+
+        expect(visuals['s0-field-uniform-e']?.fieldOverlays,
+            'uniform-E must reveal its nonzero E proxy by default')
+            .toContain('toggle-e-field');
+
+        const vortex = visuals['flux-vortex']?.fieldOverlays || [];
+        expect(vortex, 'vortex must reveal B=curl(J), |curl(J)|, and J curves')
+            .toEqual(expect.arrayContaining([
+                'toggle-b-field', 'toggle-vorticity', 'toggle-flux-lines',
+            ]));
+        expect(vortex, 'vortex E=-wave_vel is initially zero and must not be the default')
+            .not.toContain('toggle-e-field');
+
+        const uniformB = visuals['s0-field-uniform-b'];
+        expect(uniformB?.fieldOverlays,
+            'uniform-B must reveal B=curl(J), not present its vector potential J as B')
+            .toContain('toggle-b-field');
+        expect(uniformB?.fluxVolume,
+            'uniform-B canonical presentation must suppress the misleading A/J cloud')
+            .toBe(false);
+
+        for (const scenarioId of [
+            's0-field-electric-dipole',
+            's0-field-magnetic-dipole',
+            's0-seed-schwarzschild',
+            's0-seed-time-horizon',
+        ]) {
+            const profile = visuals[scenarioId];
+            expect(profile?.fluxVolume, `${scenarioId} must expose its low-amplitude J volume`)
+                .toBe(true);
+            expect(profile?.fluxThreshold, `${scenarioId} threshold must not hide its native field`)
+                .toBeLessThanOrEqual(0.0001);
+            expect(profile?.fieldOverlays, `${scenarioId} must expose a populated vector channel`)
+                .toEqual(expect.arrayContaining(['toggle-flux-lines']));
+        }
+        expect(visuals['s0-field-magnetic-dipole']?.fieldOverlays,
+            'magnetic dipole must default to B=curl(J)')
+            .toContain('toggle-b-field');
+        for (const scenarioId of ['s0-seed-schwarzschild', 's0-seed-time-horizon']) {
+            expect(visuals[scenarioId]?.fieldOverlays,
+                `${scenarioId} must not imply an absent native latency/horizon solution`)
+                .not.toEqual(expect.arrayContaining(['toggle-latency', 'toggle-horizon']));
+        }
+        expect(visuals['s0-seed-massive-body']?.fieldOverlays,
+            'massive-body must lead with populated state plus real Poisson latency')
+            .toEqual(expect.arrayContaining(['toggle-state-field', 'toggle-latency']));
+        const wilson = visuals['s0-seed-wilson-loop'];
+        expect(wilson?.fieldOverlays,
+            'Wilson loop must not imply a continuous field from sparse streamline samples')
+            .toEqual([]);
+        expect(wilson?.fluxVolume,
+            'Wilson loop must lead with the discrete sampled support of its square path')
+            .toBe(true);
+        expect(wilson,
+            'Wilson loop must retain the canonical/user point scale (1.0 by default)')
+            .not.toHaveProperty('fluxPointScale');
+        expect(wilson?.focusRadius,
+            'Wilson loop retains a minimum focus envelope at smaller lattices')
+            .toBe(5);
+        expect(wilson?.focusRadiusFraction,
+            'Wilson loop focus must scale with its native L/8 path radius')
+            .toBeGreaterThan(0.125);
+        for (const scenarioId of [
+            's0-seed-octahedron', 's0-seed-cuboctahedron',
+            's0-seed-stella-octangula', 's0-seed-moore-cell',
+            's0-seed-moore-decomposition', 's0-seed-observer-cell',
+            's0-seed-massive-body',
+        ]) {
+            expect(visuals[scenarioId]?.focusRadius,
+                `${scenarioId} needs compact-seed framing at large L`).toBe(5);
+        }
+
+        const termToggleSource = readFileSync(
+            join(ENGINE_ROOT, 'include', 'ftd', 'term_toggles.h'), 'utf8');
+        expect(termToggleSource,
+            'fresh C++ RenderBridge boundary default must remain explicitly Periodic')
+            .toMatch(/FluxBoundaryMode\s+flux_boundary\s*=\s*FluxBoundaryMode::Periodic\s*;/);
+        const fluxCpp = readFileSync(
+            join(ENGINE_ROOT, 'src', 'scenarios', 'flux.cpp'), 'utf8');
+        const pulseBody = fluxCpp.match(
+            /if\s*\(name\s*==\s*"flux-pulse"\)\s*\{([\s\S]*?)\n\s*\}\s*else if/,
+        )?.[1] || '';
+        expect(pulseBody, 'flux-pulse C++ branch must remain parseable')
+            .toContain('configure_free_wave_terms(rb, false)');
+        expect(pulseBody,
+            'flux-pulse inherits the fresh Periodic boundary; an explicit override needs matching metadata')
+            .not.toContain('flux_boundary');
+        expect(toggles.SCALE0_SCENARIO_BOUNDARY['flux-pulse'],
+            'flux-pulse dashboard metadata must match its inherited C++ boundary')
+            .toEqual({ mode: 0 });
     });
 
     test('JS helpers that pin Periodic have SCALE0_SCENARIO_BOUNDARY entries for callers', async () => {

@@ -181,9 +181,9 @@ function _makeCtx() {
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
         get activeTab() { return activeTab; },
-        // Is a telemetry consumer visible? (active dock tab OR a floated window.)
-        // Drives demand-gated telemetry collection (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5.1).
-        isPanelVisible: (panelId) => activeTab === panelId || floatingWindowManager.has(panelId),
+        // Is a telemetry consumer actually rendered? A collapsed floating
+        // panel has no visible consumer and must not keep GPU reductions alive.
+        isPanelVisible: _isPanelVisibleFn,
         get frameCount() { return frameCount; },
         get dom() { return _dom; },
         updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
@@ -411,6 +411,29 @@ function _fillFieldParticleBuf(pData) {
 // Leaf modules (scenario-loader, scale0 toolbar) reach the toast system via
 // this window hook — they must not import app.js (CONTRACTS §3 Rule 1).
 window.showToast = showToast;
+window.addEventListener('ftd:engine-error', event => {
+    const detail = event.detail || {};
+    const message = detail.error || 'The native engine rejected a command.';
+    showToast(message, 'error');
+    window.chrome?.webview?.postMessage?.({
+        type: 'engine-error',
+        message,
+        // A timed-out CUDA fence cannot be made safe by destroying its live
+        // buffers in-process. Let the desktop host present its clean WSL
+        // engine restart flow instead of leaving the dashboard reconnecting
+        // forever to a deliberately quarantined server.
+        restartRequired: !!detail.restartRequired,
+    });
+});
+window.addEventListener('ftd:engine-progress', event => {
+    const detail = event.detail || {};
+    window.chrome?.webview?.postMessage?.({
+        type: 'engine-progress',
+        operation: detail.operation || 'operation',
+        phase: detail.phase || 'working',
+        size: Number(detail.size) || 0,
+    });
+});
 
 // ── Initialization ───────────────────────────────────────────────────
 // Safety timeout: dismiss loading overlay after 8000ms even if init() hangs
@@ -438,7 +461,16 @@ async function init() {
     _cacheDOM();
 
     _loadProgress(10, 'Probing GPU engine...');
-    const latticeSize = parseInt(document.getElementById('lattice-size').value);
+    const latticeSelect = document.getElementById('lattice-size');
+    const requestedLattice = Number(new URLSearchParams(window.location.search).get('lattice'));
+    if (latticeSelect && Number.isInteger(requestedLattice)
+        && requestedLattice >= 4 && requestedLattice <= 256) {
+        if (![...latticeSelect.options].some(option => Number(option.value) === requestedLattice)) {
+            latticeSelect.add(new Option(String(requestedLattice), String(requestedLattice)));
+        }
+        latticeSelect.value = String(requestedLattice);
+    }
+    const latticeSize = parseInt(latticeSelect.value);
     bridge = await bootBridge(latticeSize, { showToast, loadProgress: _loadProgress });
     appRegistry.register('activeBridge', bridge);
 
@@ -610,8 +642,10 @@ async function init() {
 
     _loadProgress(95, 'Loading scenario...');
 
-    // Load default scenario (flux-pulse: pure substrate wave propagation)
-    Scale0Controller.loadScenario(_makeCtx(), 'flux-pulse');
+    // Load the selector's actual value. Browser/WebView form restoration may
+    // retain a non-default scenario without emitting `change`; the controller
+    // explicitly reconciles it again on pageshow and native reconnect.
+    Scale0Controller.loadSelectedScenario(_makeCtx());
 
     // Done — dismiss loading overlay
     _loadProgress(100, 'Ready');
@@ -666,16 +700,16 @@ function animate(now) {
     // owns its active telemetry panel updates on the same cadence as its
     // telemetry collection; app.js still services floated panels and panels in
     // the other engines.
-    if (_shouldAppUpdatePanel('telemetry-grid')) {
+    if (_shouldAppUpdatePanel('telemetry-grid', now)) {
         telemetryGridPanel?.update();
     }
-    if (_shouldAppUpdatePanel('charts')) {
+    if (_shouldAppUpdatePanel('charts', now)) {
         chartsPanel?.update();
     }
-    if (_shouldAppUpdatePanel('diagnostics')) {
+    if (_shouldAppUpdatePanel('diagnostics', now)) {
         diagnosticsPanel?.update();
     }
-    if (_shouldAppUpdatePanel('lagrangian')) {
+    if (_shouldAppUpdatePanel('lagrangian', now)) {
         lagrangianPanel?.update();
     }
 
@@ -689,13 +723,27 @@ function animate(now) {
     }
 }
 
-function _shouldAppUpdatePanel(panelId) {
-    const visible = activeTab === panelId || floatingWindowManager.has(panelId);
+const _panelUpdateIntervalMs = Object.freeze({
+    diagnostics: 100,
+    charts: 100,
+    'telemetry-grid': 125,
+    lagrangian: 250,
+});
+const _panelLastUpdateAt = new Map();
+
+function _shouldAppUpdatePanel(panelId, now = performance.now()) {
+    const floating = floatingWindowManager.getWindow(panelId);
+    const visible = activeTab === panelId || (!!floating && !floating.isCollapsed);
     if (!visible) return false;
     const scale0Owned = engineMode === 'lattice' &&
         (panelId === 'charts' || panelId === 'diagnostics' || panelId === 'lagrangian') &&
         activeTab === panelId;
-    return !scale0Owned;
+    if (scale0Owned) return false;
+    const interval = _panelUpdateIntervalMs[panelId] ?? 100;
+    const last = _panelLastUpdateAt.get(panelId) ?? Number.NEGATIVE_INFINITY;
+    if (now - last < interval) return false;
+    _panelLastUpdateAt.set(panelId, now);
+    return true;
 }
 
 // animateLattice -- REMOVED: delegated to Scale0Controller.animateLattice(ctx)
@@ -750,8 +798,11 @@ function _buildScale1Ctx(now) {
 
 // Same predicate _makeCtx() exposes, hoisted so the per-frame ctx builder
 // doesn't allocate a closure every frame.
-const _isPanelVisibleFn = (panelId) =>
-    activeTab === panelId || floatingWindowManager.has(panelId);
+const _isPanelVisibleFn = (panelId) => {
+    if (activeTab === panelId) return true;
+    const floating = floatingWindowManager.getWindow(panelId);
+    return !!floating && !floating.isCollapsed;
+};
 
 const _scale2Ctx = {
     bridge: null, viewport: null, running: false,
@@ -1616,6 +1667,7 @@ function buildScale3MoleculeDropdown() {
 // ── Helpers ──────────────────────────────────────────────────────────
 function togglePlay() {
     running = !running;
+    if (!running) bridge?.cancelQueuedTicks?.();
     updatePlayButton();
 }
 

@@ -154,7 +154,7 @@ export function createFluxVolumeCard() {
 
     <div class="combo-section-label">Threshold</div>
     <div class="ctrl-slider-row">
-      <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.1" step="0.001" value="0.005">
+      <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.1" step="0.0001" value="0.005">
       <span class="pe-ctrl-value" id="flux-threshold-val">0.005</span>
     </div>
 

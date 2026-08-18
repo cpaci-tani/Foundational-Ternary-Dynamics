@@ -435,11 +435,15 @@ export const FIELD_DRIVERS = [
 
 export const DRIVER_BY_KEY = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, d]));
 
-// Default per-field override on construction / scenario change. Every field
-// defaults to 'on' (always visible) EXCEPT the 3 force-field rows, which
-// default to null (mirror the 3D viz panel's own toggle, itself default-off
-// — see createFieldFlags() in state/store.js). Force-field sampling is
-// O(sample-points × manifested-voxel-count) for EM and O(sample-points ×
+// Default per-field override on construction / scenario change. Keep the
+// flagship dense |J| slice ready on first open; every other row mirrors the
+// corresponding 3D visualization toggle (normally off at boot). This avoids
+// turning a passive side-panel visit into fourteen raw field requests plus
+// derived dependencies on every native visual epoch. The user can explicitly
+// turn on any row, or use "Show all", without changing the physics itself.
+// Force-field sampling is especially expensive, so its rows also mirror the
+// 3D toggle by default. It is O(sample-points × manifested-voxel-count) for
+// EM and O(sample-points ×
 // manifested-voxel-count²) for Strong (it materializes every particle PAIR)
 // — for a scenario with a few thousand manifested voxels (e.g. two locked
 // marker planes) that is tens of millions to tens of BILLIONS of iterations
@@ -449,9 +453,44 @@ export const DRIVER_BY_KEY = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, d
 // worker's own physics loop. A user who explicitly wants a force-field
 // slice can still turn one on via its chip or the 3D panel's own toggle.
 export const DEFAULT_FIELD_OVERRIDE = Object.fromEntries(
-    FIELD_DRIVERS.map(d => [d.key, d.forceType ? null : 'on']));
+    FIELD_DRIVERS.map(d => [d.key, d.key === 'fluxJ' ? 'on' : null]));
 
 // ── File-local helpers ───────────────────────────────────────────────
+
+/** Choose the sampled coordinate nearest the requested physical slice plane. */
+export function nearestSamplePlane(positions, count, axis, requested) {
+    if (!positions || count <= 0 || axis < 0 || axis > 2) return requested;
+    let nearest = requested;
+    let bestDistance = Infinity;
+    for (let s = 0, p = axis; s < count; s++, p += 3) {
+        const coordinate = (positions[p] - 0.5) | 0;
+        const distance = Math.abs(coordinate - requested);
+        if (distance < bestDistance || (distance === bestDistance && coordinate < nearest)) {
+            nearest = coordinate;
+            bestDistance = distance;
+        }
+    }
+    return nearest;
+}
+
+/**
+ * Resolve the nearest plane in the sampler's declared regular grid. FTS2
+ * metadata is independent of sparse nonzero payload positions, so a genuinely
+ * zero midpoint remains the correct (empty) plane instead of jumping to a
+ * distant nonzero feature. FTS1 falls back to nearest returned coordinate.
+ */
+export function resolveSamplePlane(sample, axis, requested, latticeSize) {
+    const stride = Math.trunc(Number(sample?.effectiveStride));
+    const origin = Math.trunc(Number(sample?.origin));
+    const N = Math.trunc(Number(latticeSize));
+    if (stride > 0 && origin >= 0 && N > 0) {
+        const lastAllowed = origin > 0 ? N - 2 : N - 1;
+        const last = origin + Math.max(0, Math.floor((lastAllowed - origin) / stride)) * stride;
+        const nearest = origin + Math.round((requested - origin) / stride) * stride;
+        return Math.max(origin, Math.min(last, nearest));
+    }
+    return nearestSamplePlane(sample?.positions, sample?.count || 0, axis, requested);
+}
 
 /**
  * Rasterize a sparse sampled vector field (positions = voxel centers,
@@ -488,6 +527,10 @@ export function sliceVectorMag(sample, axis, mid, N) {
     const pos = sample.positions;
     const vec = sample.vectors;
     if (!pos || !vec) return out;
+    // CUDA interior samplers start at voxel 1 and may raise their effective
+    // stride to honor the point budget, so the requested midpoint is often
+    // absent. Render the nearest returned plane instead of an empty slice.
+    const sampledMid = resolveSamplePlane(sample, axis, mid, N);
     const M = N - 1;
     for (let s = 0, p = 0, v = 0; s < sample.count; s++, p += 3, v += 3) {
         // Voxel centers come in as (x + 0.5, y + 0.5, z + 0.5).
@@ -498,15 +541,15 @@ export function sliceVectorMag(sample, axis, mid, N) {
         let row, col;
         if (axis === 0) {
             // yz plane: panel X = y (col), panel Y = z, flipped so +z goes UP.
-            if (ix !== mid) continue;
+            if (ix !== sampledMid) continue;
             col = iy; row = M - iz;
         } else if (axis === 1) {
             // xz plane: panel X = x (col), panel Y = z, flipped so +z goes UP.
-            if (iy !== mid) continue;
+            if (iy !== sampledMid) continue;
             col = ix; row = M - iz;
         } else {
             // xy plane: panel X = x (col), panel Y = y, flipped so +y goes UP.
-            if (iz !== mid) continue;
+            if (iz !== sampledMid) continue;
             col = ix; row = M - iy;
         }
         if (col < 0 || col >= N || row < 0 || row >= N) continue;
@@ -531,6 +574,7 @@ export function sliceScalarSigned(sample, axis, mid, N) {
     const pos = sample.positions;
     const val = sample.values;
     if (!pos || !val) return out;
+    const sampledMid = resolveSamplePlane(sample, axis, mid, N);
     const M = N - 1;
     for (let s = 0, p = 0; s < sample.count; s++, p += 3) {
         const ix = (pos[p]     - 0.5) | 0;
@@ -538,13 +582,13 @@ export function sliceScalarSigned(sample, axis, mid, N) {
         const iz = (pos[p + 2] - 0.5) | 0;
         let row, col;
         if (axis === 0) {
-            if (ix !== mid) continue;
+            if (ix !== sampledMid) continue;
             col = iy; row = M - iz;
         } else if (axis === 1) {
-            if (iy !== mid) continue;
+            if (iy !== sampledMid) continue;
             col = ix; row = M - iz;
         } else {
-            if (iz !== mid) continue;
+            if (iz !== sampledMid) continue;
             col = ix; row = M - iy;
         }
         if (col < 0 || col >= N || row < 0 || row >= N) continue;
@@ -609,6 +653,7 @@ export function sliceDerivedFrame(frame, axis, mid, N) {
     const pos = frame.positions;
     const val = frame.values;
     if (!pos || !val) return out;
+    const sampledMid = resolveSamplePlane(frame, axis, mid, N);
     const M = N - 1;
     for (let s = 0, p = 0; s < frame.count; s++, p += 3) {
         const ix = (pos[p]     - 0.5) | 0;
@@ -616,13 +661,13 @@ export function sliceDerivedFrame(frame, axis, mid, N) {
         const iz = (pos[p + 2] - 0.5) | 0;
         let row, col;
         if (axis === 0) {
-            if (ix !== mid) continue;
+            if (ix !== sampledMid) continue;
             col = iy; row = M - iz;
         } else if (axis === 1) {
-            if (iy !== mid) continue;
+            if (iy !== sampledMid) continue;
             col = ix; row = M - iz;
         } else {
-            if (iz !== mid) continue;
+            if (iz !== sampledMid) continue;
             col = ix; row = M - iy;
         }
         if (col < 0 || col >= N || row < 0 || row >= N) continue;

@@ -3,8 +3,8 @@
  * B3 regression — the `langevin` research toggle must not leak across scenario
  * switches.
  *
- * The emergent-ic* / quark-gluon-plasma scenarios enable the langevin thermostat
- * in their custom `load()`. `langevin` is intentionally NOT in `SCALE0_TOGGLES`
+ * The emergent-ic* / quark-gluon-plasma C++ scenario bodies enable the Langevin
+ * thermostat. `langevin` is intentionally NOT in `SCALE0_TOGGLES`
  * (config/toggles.js documents it as a user-owned research control), so the
  * loader's whitelist reset never clears it — which RAISED the concern (audit B3)
  * that it could persist into the next scenario.
@@ -58,6 +58,10 @@ async function readLangevin(page) {
             useFluxMock: !!st.useFluxMock,
             langevinMain: rd(ctx.bridge),
             langevinMock: rd(st.fluxMock),
+            localLangevinMain: !!ctx.bridge?._toggles
+                && Object.prototype.hasOwnProperty.call(ctx.bridge._toggles, 'langevin'),
+            localLangevinMock: !!st.fluxMock?._toggles
+                && Object.prototype.hasOwnProperty.call(st.fluxMock._toggles, 'langevin'),
         };
     });
 }
@@ -71,6 +75,12 @@ test.describe('Scale-0 langevin toggle-leak (B3)', () => {
         await selectScenario(page, 's0-seed-emergent-ic1');
         const emergent = await readLangevin(page);
         const activeLangevin = emergent.useFluxMock ? emergent.langevinMock : emergent.langevinMain;
+        const activeLocalHadLangevin = emergent.useFluxMock
+            ? emergent.localLangevinMock
+            : emergent.localLangevinMain;
+        expect(activeLocalHadLangevin,
+            'langevin must be learned from C++ setup, not echoed from a pre-setup JS write cache')
+            .toBe(false);
         expect(activeLangevin,
             `emergent-ic1 should run with langevin ON on its active bridge ` +
             `(useFluxMock=${emergent.useFluxMock}, main=${emergent.langevinMain}, mock=${emergent.langevinMock})`)

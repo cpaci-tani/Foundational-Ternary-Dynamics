@@ -6,6 +6,43 @@
 import { BaseComponent } from '../../../../../core/component.js';
 import { cardStyle, titleStyle, tagBadge } from '../_card-helpers.js';
 
+const RADII = [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5];
+const ANGULAR_SAMPLES = 16;
+const NATIVE_SAMPLE_INTERVAL_MS = 1000;
+const LOCAL_SAMPLE_INTERVAL_MS = 250;
+
+/**
+ * Turn either a dense local volume or native FTV2 compact frame into one
+ * regular-grid sampler. FTV2's cells are measured block representatives from
+ * the engine's flux field, not synthesized chart values.
+ */
+export function makeFluxMagnitudeSampler(volume, latticeSize) {
+    const L = Math.max(1, Math.trunc(Number(latticeSize) || 0));
+    if (ArrayBuffer.isView(volume)) {
+        const needed = L * L * L;
+        if (volume.length < needed) return null;
+        return { data: volume, latticeSize: L, axisCount: L, stride: 1 };
+    }
+    if (!volume || !ArrayBuffer.isView(volume.data)) return null;
+    const axisCount = Math.trunc(Number(volume.axisCount) || 0);
+    const stride = Math.max(1, Math.trunc(Number(volume.stride) || 1));
+    const frameL = Math.trunc(Number(volume.latticeSize) || L);
+    if (frameL !== L || axisCount < 1 || volume.data.length < axisCount ** 3) return null;
+    return { data: volume.data, latticeSize: L, axisCount, stride };
+}
+
+/** Read one actual regular-grid |J| value at a periodic lattice position. */
+export function sampleFluxMagnitude(sampler, x, y, z) {
+    if (!sampler) return null;
+    const { data, latticeSize: L, axisCount, stride } = sampler;
+    const wrap = (v) => ((Math.round(v) % L) + L) % L;
+    const xi = Math.min(axisCount - 1, Math.floor(wrap(x) / stride));
+    const yi = Math.min(axisCount - 1, Math.floor(wrap(y) / stride));
+    const zi = Math.min(axisCount - 1, Math.floor(wrap(z) / stride));
+    const value = Number(data[(zi * axisCount + yi) * axisCount + xi]);
+    return Number.isFinite(value) ? value : null;
+}
+
 const TEMPLATE = `
     <section data-section="anisotropy" style="${cardStyle(220)}">
         <div style="${titleStyle()}">Lattice Anisotropy & SO(2) Recovery</div>
@@ -17,82 +54,83 @@ const TEMPLATE = `
 export class AnisotropyComponent extends BaseComponent {
     constructor() {
         super(TEMPLATE);
+        this._lastBridge = null;
+        this._lastSourceKey = '';
+        this._lastSampleAt = -Infinity;
+        this._decayPoints = null;
+        this._sampleStride = 1;
     }
 
-    update(bridge) {
-        const particles = bridge.getScale0ParticleList?.() || [];
-        const activeSource = particles.find((p) => (p.state ?? 0) !== 0);
+    update(bridge, now = performance.now(), particles = null) {
+        if (!bridge) return;
+        const particleList = particles || bridge.getScale0ParticleList?.() || [];
+        const activeSource = particleList.find((p) => (p.state ?? 0) !== 0);
         const L = (typeof bridge.getLatticeSize === 'function' ? bridge.getLatticeSize() : bridge.latticeSize) || 32;
         const cx = activeSource ? activeSource.x : L / 2;
         const cy = activeSource ? activeSource.y : L / 2;
         const cz = activeSource ? activeSource.z : L / 2;
+        const sourceKey = `${L}:${cx}:${cy}:${cz}:${activeSource?.id ?? 'center'}`;
+        const interval = bridge.isNativeGPU ? NATIVE_SAMPLE_INTERVAL_MS : LOCAL_SAMPLE_INTERVAL_MS;
+        const sourceChanged = bridge !== this._lastBridge || sourceKey !== this._lastSourceKey;
+        if (sourceChanged) this._decayPoints = null;
 
-        const decayPoints = [];
-        const radii = [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5];
-        const N_pts = 16;
-
-        for (const r of radii) {
-            const values = [];
-            for (let i = 0; i < N_pts; i++) {
-                const theta = (i * 2.0 * Math.PI) / N_pts;
-                const sx = Math.round(cx + r * Math.cos(theta));
-                const sy = Math.round(cy + r * Math.sin(theta));
-                const sz = Math.round(cz);
-
-                // Wrap periodic boundaries
-                const wx = (sx % L + L) % L;
-                const wy = (sy % L + L) % L;
-                const wz = (sz % L + L) % L;
-
-                // Null-safe: the worker-path bridge (WasmBridgeProxy) returns
-                // null from inspectVoxel (no synchronous worker read), and older
-                // bridges may not implement it at all. Optional-chaining keeps a
-                // single missing method from throwing and tripping the
-                // raf-coordinator ERROR_BUDGET (which would auto-unsubscribe the
-                // whole p1-observables panel).
-                const voxel = bridge.inspectVoxel?.(wx, wy, wz);
-                if (voxel) {
-                    const val = (voxel.Emag !== undefined && voxel.Emag !== null) ? voxel.Emag :
-                                (typeof voxel.density === 'number' ? voxel.density :
-                                Math.sqrt((voxel.fluxX || 0)**2 + (voxel.fluxY || 0)**2 + (voxel.fluxZ || 0)**2));
-                    values.push(val);
-                } else {
-                    values.push(0);
-                }
+        // The old implementation made 128 independent inspect_voxel requests
+        // on every 4 Hz panel pass (plus the inspector's own requests). Native
+        // runs now consume one bounded FTV2 |J| frame, then evaluate all of the
+        // same 8×16 circular probes locally from that measured regular grid.
+        if (sourceChanged || now - this._lastSampleAt >= interval) {
+            this._lastBridge = bridge;
+            this._lastSourceKey = sourceKey;
+            this._lastSampleAt = now;
+            const sampler = makeFluxMagnitudeSampler(bridge.getFluxVolume?.(), L);
+            if (sampler) {
+                this._decayPoints = this._computeDecayPoints(sampler, cx, cy, cz);
+                this._sampleStride = sampler.stride;
             }
-
-            // Compute mean
-            const sum = values.reduce((a, b) => a + b, 0);
-            const mean = sum / N_pts;
-
-            // Compute standard deviation
-            let variance = 0;
-            if (N_pts > 1) {
-                const sqDiffs = values.map(v => (v - mean) ** 2);
-                const sumSqDiffs = sqDiffs.reduce((a, b) => a + b, 0);
-                variance = sumSqDiffs / N_pts;
-            }
-            const stdDev = Math.sqrt(variance);
-
-            // Relative standard deviation in percent
-            const aniso = mean > 1e-9 ? (stdDev / mean) * 100.0 : 0.0;
-            decayPoints.push({ r, aniso, mean });
         }
 
+        const decayPoints = this._decayPoints;
         this._renderAnisotropyDecay(this.refs.plot, decayPoints);
-
-        const minAniso = decayPoints.length > 0 ? decayPoints[decayPoints.length - 1].aniso : 0;
         const sourceLabel = activeSource ? `charge ID ${activeSource.id} (${activeSource.state > 0 ? '+' : ''}${activeSource.state})` : 'grid center';
+        if (!decayPoints) {
+            this.refs.desc.innerHTML = `
+                <div class="p1-anisotropy-desc-sub">${tagBadge('M')}Waiting for the engine's compact |J| field sample; no inferred zero-value probe is shown.</div>
+            `;
+            return;
+        }
 
+        const minAniso = decayPoints[decayPoints.length - 1].aniso;
         this.refs.desc.innerHTML = `
             <div class="p1-anisotropy-desc-flex">
                 <span>${tagBadge('M')}Source: ${sourceLabel}</span>
                 <span>${tagBadge('~M')}Anisotropy: ${minAniso.toFixed(2)}% (at r=8.5a)</span>
             </div>
             <div class="p1-anisotropy-desc-sub">
-                ${tagBadge('D')} Rotational symmetry recovery O_h → SO(2) quantified via relative standard deviation σ_rel(r) = σ(r)/⟨E(r)⟩ × 100% over 16-point circular samplers. Note the power-law decay of grid discretization noise as r → ∞.
+                ${tagBadge('M')} Rotational symmetry recovery O_h → SO(2) quantified via σ_rel(r) = σ(r)/⟨|J|(r)⟩ × 100% over 16-point circular samplers. The values are measured from the engine's bounded regular |J| grid (stride ${this._sampleStride}a), not from synthetic fallback values.
             </div>
         `;
+    }
+
+    _computeDecayPoints(sampler, cx, cy, cz) {
+        const decayPoints = [];
+        for (const r of RADII) {
+            const values = [];
+            for (let i = 0; i < ANGULAR_SAMPLES; i++) {
+                const theta = (i * 2.0 * Math.PI) / ANGULAR_SAMPLES;
+                const value = sampleFluxMagnitude(
+                    sampler,
+                    cx + r * Math.cos(theta),
+                    cy + r * Math.sin(theta),
+                    cz,
+                );
+                if (value !== null) values.push(value);
+            }
+            if (values.length !== ANGULAR_SAMPLES) return null;
+            const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+            const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+            decayPoints.push({ r, aniso: mean > 1e-9 ? Math.sqrt(variance) / mean * 100.0 : 0.0, mean });
+        }
+        return decayPoints;
     }
 
     _renderAnisotropyDecay(container, decayPoints) {

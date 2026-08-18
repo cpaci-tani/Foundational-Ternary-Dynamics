@@ -20,6 +20,51 @@
 
 import { C_SPEED } from './constants.js';
 
+// Native CUDA telemetry is published as independent group deltas.  Keep each
+// group’s provenance instead of attaching one misleading "current tick" to
+// every side-panel value: audit, gravity, and Lagrangian reductions can
+// deliberately run less often than the inexpensive diagnostics summary.
+const SCALE0_SNAPSHOT_GROUPS = Object.freeze([
+    'diagnostics', 'audit', 'lagrangian', 'gravity',
+]);
+
+function hasOwn(value, key) {
+    return !!value && Object.prototype.hasOwnProperty.call(value, key);
+}
+
+function telemetryNow() {
+    return (typeof performance !== 'undefined' && typeof performance.now === 'function')
+        ? performance.now() : Date.now();
+}
+
+function freshScale0State() {
+    return {
+        diag: null,
+        audit: null,
+        lagrangian: null,
+        gravity: null,
+        // `groups` contains the source provenance of the value currently held
+        // in the matching property above. `ageMs` is deliberately a receipt
+        // age, not a claim about when a staggered GPU reduction was computed.
+        meta: {
+            source: null,
+            epoch: null,
+            // Latest native source boundary observed, which may be newer than
+            // an individual cached group after a mutation invalidation.
+            // Group `epoch` remains the epoch at which that group was actually
+            // reduced; the comparison is what makes retained values stale
+            // rather than silently relabelling them as fresh.
+            expectedSourceEpoch: null,
+            snapshotVersion: null,
+            tick: null,
+            stale: true,
+            groups: Object.fromEntries(
+                SCALE0_SNAPSHOT_GROUPS.map(group => [group, null]),
+            ),
+        },
+    };
+}
+
 // ── Ring Buffer ──────────────────────────────────────────────────────────────
 // Exported so chart renderers can type-check and legacy code can import it.
 
@@ -206,7 +251,7 @@ export class RingBufferView {
 export class TelemetryHub {
     constructor() {
         // ── Latest snapshots per scale ──────────────────
-        this.s0  = { diag: null, audit: null, lagrangian: null };
+        this.s0  = freshScale0State();
         this.s1  = {
             diag: null, extended: null, runtime: null,
             _overlaySystemOn: false, _overlayVelocitiesOn: false, _overlayTrailsOn: false,
@@ -225,6 +270,9 @@ export class TelemetryHub {
         this._lastAuditVersion = -1;
         this._prevWantAudit = false;
         this._prevWantLag = false;
+        // Synthetic sequence for direct WASM/mock reads. Native snapshots
+        // supply their own per-group stateVersion/snapshotVersion metadata.
+        this._s0LocalSampleSequence = 0;
 
         // Last tick trackers for pause freezing
         this._lastTick0 = -1;
@@ -328,33 +376,141 @@ export class TelemetryHub {
 
     // ── Scale 0 collection ──────────────────────────────────────────────────
 
-    /**
-     * Collect Scale 0 diagnostics. Implements the dual-bridge logic:
-     * if a JS flux mock is active, use its snapshot because it owns the
-     * field state, particles, and tick for that scenario.
-     * @returns {object} the active diag snapshot
-     */
-    collectScale0(bridge, fluxMock, useFluxMock) {
-        const mainCaps = bridge.capabilities?.scale0;
-        if (!mainCaps) return null;
-
-        const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
-        // Lazy: getScale0Diagnostics() is an uncached O(N^3) sweep on the render
-        // thread (render_bridge.cpp -> diagnostics_compute.cpp, plus two more
-        // passes inside compute_entropy_cpu). It was evaluated unconditionally
-        // and then discarded whenever the worker owned the scenario.
-        let _wasmDiag; let _wasmDiagRead = false;
-        const wasmDiag = () => {
-            if (!_wasmDiagRead) { _wasmDiag = mainCaps.getScale0Diagnostics(); _wasmDiagRead = true; }
-            return _wasmDiag;
+    _directScale0Meta(group, value, source = 'direct') {
+        const tick = Number.isFinite(value?.tick)
+            ? value.tick
+            : (Number.isFinite(this.s0.diag?.tick) ? this.s0.diag.tick : null);
+        const stateVersion = tick ?? ++this._s0LocalSampleSequence;
+        return {
+            source,
+            epoch: null,
+            sourceEpoch: null,
+            stateVersion,
+            snapshotVersion: ++this._s0LocalSampleSequence,
+            tick,
+            stale: false,
+            receivedAt: telemetryNow(),
         };
-        const mockDiag = mockCaps ? mockCaps.getScale0Diagnostics() : null;
+    }
 
-        const diag = mockDiag || wasmDiag();
+    _normalizeScale0GroupMeta(snapshot, rawMeta, value, source = 'native') {
+        const meta = rawMeta && typeof rawMeta === 'object' ? rawMeta : {};
+        const snapshotVersion = meta.snapshotVersion ?? snapshot?.snapshotVersion;
+        const stateVersion = meta.stateVersion ?? null;
+        const tick = meta.tick ?? snapshot?.tick ?? value?.tick ?? null;
+        return {
+            source,
+            epoch: meta.epoch ?? snapshot?.epoch ?? null,
+            sourceEpoch: meta.sourceEpoch ?? snapshot?.sourceEpoch ?? null,
+            stateVersion: Number.isFinite(stateVersion) ? stateVersion : null,
+            // Older native servers have no version metadata.  Give each
+            // response a synthetic monotonic identity so their cache remains
+            // safe, while preferring real source stateVersion when present.
+            snapshotVersion: Number.isFinite(snapshotVersion)
+                ? snapshotVersion : ++this._s0LocalSampleSequence,
+            tick: Number.isFinite(tick) ? tick : null,
+            stale: !!(meta.stale || snapshot?.stale),
+            // Preserve bridge receipt time so a temporarily busy UI still
+            // reports the source sample's age rather than its next paint.
+            receivedAt: Number.isFinite(meta.receivedAt)
+                ? meta.receivedAt : telemetryNow(),
+        };
+    }
 
+    _compareScale0GroupMeta(incoming, current) {
+        if (!current) return 1;
+        if (incoming.source !== current.source) return 1;
+        if (incoming.sourceEpoch !== null && current.sourceEpoch !== null
+            && incoming.sourceEpoch !== current.sourceEpoch) {
+            const incomingSource = Number(incoming.sourceEpoch);
+            const currentSource = Number(current.sourceEpoch);
+            if (Number.isFinite(incomingSource) && Number.isFinite(currentSource)) {
+                return Math.sign(incomingSource - currentSource);
+            }
+            return String(incoming.sourceEpoch).localeCompare(String(current.sourceEpoch));
+        }
+        if (incoming.epoch !== null && current.epoch !== null
+            && incoming.epoch !== current.epoch) {
+            const inEpoch = Number(incoming.epoch);
+            const currentEpoch = Number(current.epoch);
+            if (Number.isFinite(inEpoch) && Number.isFinite(currentEpoch)) {
+                return Math.sign(inEpoch - currentEpoch);
+            }
+            return String(incoming.epoch).localeCompare(String(current.epoch));
+        }
+        // stateVersion is per-group and therefore takes precedence over a
+        // global publication sequence. Equal state versions are duplicates,
+        // even if another group advanced the aggregate snapshot meanwhile.
+        if (incoming.stateVersion !== null && current.stateVersion !== null) {
+            // A later aggregate publication can contain this same cached
+            // group. Equal source versions are duplicates, not fresh data.
+            return Math.sign(incoming.stateVersion - current.stateVersion);
+        }
+        if (incoming.tick !== null && current.tick !== null
+            && incoming.tick !== current.tick) {
+            return Math.sign(incoming.tick - current.tick);
+        }
+        if (incoming.snapshotVersion !== null && current.snapshotVersion !== null) {
+            return Math.sign(incoming.snapshotVersion - current.snapshotVersion);
+        }
+        return 0;
+    }
+
+    _shouldAcceptScale0Group(group, meta) {
+        const current = this.s0.meta.groups[group];
+        // An invalidation can deliberately resend the same cached value with
+        // unchanged provenance but an explicit stale bit. Accept that state
+        // transition so the UI stops presenting its old measurement as live
+        // while the native publisher obtains the replacement reduction.
+        if (meta.stale && current && !current.stale
+            && meta.source === current.source && meta.epoch === current.epoch
+            && meta.sourceEpoch === current.sourceEpoch
+            && meta.stateVersion === current.stateVersion
+            && meta.tick === current.tick) {
+            return true;
+        }
+        const order = this._compareScale0GroupMeta(meta, current);
+        if (order <= 0) return false;
+        // A response explicitly marked stale must not replace a newer live
+        // sample from the same source epoch merely because it arrived late.
+        if (meta.stale && current && !current.stale
+            && meta.source === current.source && meta.epoch === current.epoch) {
+            return false;
+        }
+        return true;
+    }
+
+    _setScale0GroupMeta(group, meta) {
+        const stored = { ...meta, ageMs: 0 };
+        this.s0.meta.groups[group] = stored;
+        this.s0.meta.source = meta.source;
+        this.s0.meta.epoch = meta.epoch;
+        this.s0.meta.sourceEpoch = meta.sourceEpoch;
+        this.s0.meta.snapshotVersion = meta.snapshotVersion;
+        this.s0.meta.tick = meta.tick;
+        this.s0.meta.stale = meta.stale;
+    }
+
+    _observeScale0SourceEpoch(snapshot, source) {
+        if (source !== 'native') return;
+        const epoch = Number(snapshot?.sourceEpoch);
+        if (!Number.isFinite(epoch)) return;
+        const current = this.s0.meta.expectedSourceEpoch;
+        if (current !== null && epoch < current) return;
+        this.s0.meta.expectedSourceEpoch = epoch;
+        if (current === null || epoch > current) {
+            // Do not overwrite the old per-group stamps. They are useful
+            // provenance; getScale0TelemetryMeta will label them stale until
+            // a fresh group at this source epoch arrives.
+            this.s0.meta.stale = true;
+        }
+    }
+
+    _publishScale0Diagnostics(diag, meta) {
         this.s0.diag = diag;
+        this._setScale0GroupMeta('diagnostics', meta);
 
-        const currentTick = diag.tick || 0;
+        const currentTick = meta.tick ?? diag.tick ?? 0;
         if (currentTick !== this._lastTick0) {
             this._lastTick0 = currentTick;
 
@@ -377,108 +533,213 @@ export class TelemetryHub {
                 charges: (diag.positive || 0) - (diag.negative || 0),
                 flux: diag.totalFlux || 0,
                 energy: diag.totalEnergy || 0,
-                entropy: diag.entropy || 0
+                entropy: diag.entropy || 0,
             });
         }
-
         return diag;
     }
 
-    /**
-     * Collect energy audit for Scale 0 (call when diagnostics or charts tab active).
-     */
-    collectScale0Audit(bridge, fluxMock, useFluxMock) {
-        const mainCaps = bridge.capabilities?.scale0;
-        if (!mainCaps) return null;
-        const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
+    _publishScale0Audit(audit, meta) {
+        const eF  = audit.EFieldEnergy || audit.eFieldEnergy || 0;
+        const bF  = audit.BFieldEnergy || audit.bFieldEnergy || 0;
+        const px  = audit.totalPoynting?.x ?? audit.poyntingX ?? 0;
+        const py  = audit.totalPoynting?.y ?? audit.poyntingY ?? 0;
+        const pz  = audit.totalPoynting?.z ?? audit.poyntingZ ?? 0;
+        const pMag = Math.sqrt(px * px + py * py + pz * pz);
 
-        const audit = mockCaps
-            ? mockCaps.getScale0EnergyAudit()
-            : mainCaps.getScale0EnergyAudit();
-
-        this.s0.audit = audit;
-        if (audit) {
-            const eF  = audit.EFieldEnergy || audit.eFieldEnergy || 0;
-            const bF  = audit.BFieldEnergy || audit.bFieldEnergy || 0;
-            const px  = audit.totalPoynting?.x ?? audit.poyntingX ?? 0;
-            const py  = audit.totalPoynting?.y ?? audit.poyntingY ?? 0;
-            const pz  = audit.totalPoynting?.z ?? audit.poyntingZ ?? 0;
-            const pMag = Math.sqrt(px * px + py * py + pz * pz);
-
-            // Energy drift calculation
-            const currentH = audit.dynamicEnergy ?? audit.totalEnergy ?? 0;
-            if (this._initialEnergy === undefined || this._initialEnergy === null) {
-                if (currentH > 1e-12) this._initialEnergy = currentH;
-            }
-            let drift = 0;
-            if (this._initialEnergy) {
-                drift = ((currentH - this._initialEnergy) / this._initialEnergy) * 100;
-            }
-            audit.energyDrift = drift;
-
-            const currentTick = this.s0.diag?.tick || 0;
-            if (currentTick !== this._lastAuditTick) {
-                this._lastAuditTick = currentTick;
-
-                this.ebDiff.push(eF - bF);
-                this.gauss.push(audit.gaussViolation || 0);
-
-                // Per-field trend buffers (drive diagnostics table sparklines)
-                this._s0_aud.push({
-                    fieldEnergy: audit.fieldEnergy || 0,
-                    waveEnergy: audit.waveEnergy || 0,
-                    particleKE: audit.particleKE || 0,
-                    coulombPE: audit.coulombPE || 0,
-                    eFieldEnergy: eF,
-                    bFieldEnergy: bF,
-                    poyntingMag: pMag,
-                    maxGaussError: audit.maxGaussError || 0,
-                    selfFieldInjection: audit.selfFieldInjection || 0,
-                    eLeftEnergy: audit.ELTotal || audit.eLTotal || 0,
-                    eRightEnergy: audit.ERTotal || audit.eRTotal || 0,
-                    chirality: audit.chiralityTotal || 0,
-                    waveLeft: audit.wvLTotal || 0,
-                    waveRight: audit.wvRTotal || 0,
-                    energyDrift: drift
-                });
-            }
+        // Energy drift calculation
+        const currentH = audit.dynamicEnergy ?? audit.totalEnergy ?? 0;
+        if (this._initialEnergy === undefined || this._initialEnergy === null) {
+            if (currentH > 1e-12) this._initialEnergy = currentH;
         }
-        return audit;
+        let drift = 0;
+        if (this._initialEnergy) {
+            drift = ((currentH - this._initialEnergy) / this._initialEnergy) * 100;
+        }
+        const enriched = { ...audit, energyDrift: drift };
+        this.s0.audit = enriched;
+        this._setScale0GroupMeta('audit', meta);
+
+        const currentTick = meta.tick ?? this.s0.diag?.tick ?? 0;
+        if (currentTick !== this._lastAuditTick) {
+            this._lastAuditTick = currentTick;
+
+            this.ebDiff.push(eF - bF);
+            this.gauss.push(audit.gaussViolation || 0);
+
+            // Per-field trend buffers (drive diagnostics table sparklines)
+            this._s0_aud.push({
+                fieldEnergy: audit.fieldEnergy || 0,
+                waveEnergy: audit.waveEnergy || 0,
+                particleKE: audit.particleKE || 0,
+                coulombPE: audit.coulombPE || 0,
+                eFieldEnergy: eF,
+                bFieldEnergy: bF,
+                poyntingMag: pMag,
+                maxGaussError: audit.maxGaussError || 0,
+                selfFieldInjection: audit.selfFieldInjection || 0,
+                eLeftEnergy: audit.ELTotal || audit.eLTotal || 0,
+                eRightEnergy: audit.ERTotal || audit.eRTotal || 0,
+                chirality: audit.chiralityTotal || 0,
+                waveLeft: audit.wvLTotal || 0,
+                waveRight: audit.wvRTotal || 0,
+                energyDrift: drift,
+            });
+        }
+        return enriched;
+    }
+
+    _publishScale0Lagrangian(lag, meta) {
+        this.s0.lagrangian = lag;
+        this._setScale0GroupMeta('lagrangian', meta);
+
+        const currentTick = meta.tick ?? this.s0.diag?.tick ?? 0;
+        if (currentTick !== this._lastLagTick) {
+            this._lastLagTick = currentTick;
+
+            this._s0_lag.push({
+                fieldKinetic: Math.abs(lag.fieldKinetic || 0),
+                fieldGradient: Math.abs(lag.fieldGradient || 0),
+                bornInfeld: Math.abs(lag.bornInfeld || 0),
+                coupling: Math.abs(lag.coupling || 0),
+                velocity: Math.abs(lag.velocity || 0),
+                gauss: Math.abs(lag.gauss || 0),
+                dissipation: Math.abs(lag.dissipation || 0),
+                total: lag.total || 0,
+                hamiltonian: lag.hamiltonian || 0,
+                action: lag.totalAction || 0,
+            });
+        }
+        return lag;
+    }
+
+    _publishScale0Gravity(gravity, meta) {
+        this.s0.gravity = gravity;
+        this._setScale0GroupMeta('gravity', meta);
+        return gravity;
     }
 
     /**
-     * Collect Lagrangian data for Scale 0.
+     * Merge one native snapshot delta into the Scale-0 store. `groups` may be
+     * either the scheduler's nested shape or the former flat get_telemetry
+     * response. Only groups explicitly present are considered; cached/stale
+     * aggregates can never erase a newer local group.
      */
-    collectScale0Lagrangian(bridge, fluxMock, useFluxMock) {
+    ingestScale0Snapshot(snapshot, source = 'native') {
+        if (!snapshot || typeof snapshot !== 'object') return false;
+        this._observeScale0SourceEpoch(snapshot, source);
+        if (snapshot.type === 'telemetry_invalidated') {
+            for (const group of SCALE0_SNAPSHOT_GROUPS) {
+                const meta = this.s0.meta.groups[group];
+                if (!meta || meta.source !== source) continue;
+                this.s0.meta.groups[group] = { ...meta, stale: true };
+            }
+            this.s0.meta.stale = true;
+            return true;
+        }
+        const groups = snapshot.groups && typeof snapshot.groups === 'object'
+            ? snapshot.groups : snapshot;
+        const groupMeta = snapshot.groupMeta && typeof snapshot.groupMeta === 'object'
+            ? snapshot.groupMeta : {};
+        let accepted = false;
+
+        for (const group of SCALE0_SNAPSHOT_GROUPS) {
+            if (!hasOwn(groups, group)) continue;
+            const value = groups[group];
+            if (!value || typeof value !== 'object') continue;
+            const meta = this._normalizeScale0GroupMeta(
+                snapshot, groupMeta[group], value, source,
+            );
+            if (!this._shouldAcceptScale0Group(group, meta)) continue;
+
+            switch (group) {
+            case 'diagnostics': this._publishScale0Diagnostics(value, meta); break;
+            case 'audit': this._publishScale0Audit(value, meta); break;
+            case 'lagrangian': this._publishScale0Lagrangian(value, meta); break;
+            case 'gravity': this._publishScale0Gravity(value, meta); break;
+            default: break;
+            }
+            accepted = true;
+        }
+        return accepted;
+    }
+
+    /** Returns a copy with receipt age for a single Scale-0 group. */
+    getScale0TelemetryMeta(group) {
+        const meta = this.s0.meta.groups[group];
+        if (!meta) return null;
+        const expectedEpoch = this.s0.meta.expectedSourceEpoch;
+        const groupEpoch = Number(meta.sourceEpoch);
+        const staleBySourceBoundary = meta.source === 'native'
+            && Number.isFinite(expectedEpoch)
+            && (!Number.isFinite(groupEpoch) || groupEpoch < expectedEpoch);
+        return {
+            ...meta,
+            stale: !!meta.stale || staleBySourceBoundary,
+            ageMs: Math.max(0, telemetryNow() - (meta.receivedAt || telemetryNow())),
+        };
+    }
+
+    _collectNativeScale0Snapshot(bridge, useFluxMock) {
+        if (useFluxMock || typeof bridge?.getTelemetrySnapshot !== 'function') return false;
+        this.ingestScale0Snapshot(bridge.getTelemetrySnapshot(), 'native');
+        return true;
+    }
+
+    /**
+     * Collect Scale 0 diagnostics. Native bridges expose a cache-only,
+     * versioned snapshot store; direct WASM/mock owners keep their synchronous
+     * reads so their existing physics paths remain unchanged.
+     */
+    collectScale0(bridge, fluxMock, useFluxMock) {
+        if (this._collectNativeScale0Snapshot(bridge, useFluxMock)) return this.s0.diag;
+        const mainCaps = bridge.capabilities?.scale0;
+        if (!mainCaps) return null;
+
+        const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
+        let wasmDiag; let wasmDiagRead = false;
+        const readWasmDiag = () => {
+            if (!wasmDiagRead) { wasmDiag = mainCaps.getScale0Diagnostics(); wasmDiagRead = true; }
+            return wasmDiag;
+        };
+        const diag = (mockCaps ? mockCaps.getScale0Diagnostics() : null) || readWasmDiag();
+        if (!diag) return null;
+        return this._publishScale0Diagnostics(
+            diag,
+            this._directScale0Meta('diagnostics', diag, mockCaps ? 'mock' : 'wasm'),
+        );
+    }
+
+    /** Collect a Scale-0 energy audit without triggering native RPC. */
+    collectScale0Audit(bridge, fluxMock, useFluxMock) {
+        if (this._collectNativeScale0Snapshot(bridge, useFluxMock)) return this.s0.audit;
         const mainCaps = bridge.capabilities?.scale0;
         if (!mainCaps) return null;
         const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
+        const audit = mockCaps
+            ? mockCaps.getScale0EnergyAudit()
+            : mainCaps.getScale0EnergyAudit();
+        if (!audit) return null;
+        return this._publishScale0Audit(
+            audit,
+            this._directScale0Meta('audit', audit, mockCaps ? 'mock' : 'wasm'),
+        );
+    }
 
+    /** Collect Scale-0 Lagrangian data without triggering native RPC. */
+    collectScale0Lagrangian(bridge, fluxMock, useFluxMock) {
+        if (this._collectNativeScale0Snapshot(bridge, useFluxMock)) return this.s0.lagrangian;
+        const mainCaps = bridge.capabilities?.scale0;
+        if (!mainCaps) return null;
+        const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
         const lag = mockCaps
             ? mockCaps.getScale0Lagrangian()
             : mainCaps.getScale0Lagrangian();
-
-        this.s0.lagrangian = lag;
-        if (lag) {
-            const currentTick = this.s0.diag?.tick || 0;
-            if (currentTick !== this._lastLagTick) {
-                this._lastLagTick = currentTick;
-
-                this._s0_lag.push({
-                    fieldKinetic: Math.abs(lag.fieldKinetic || 0),
-                    fieldGradient: Math.abs(lag.fieldGradient || 0),
-                    bornInfeld: Math.abs(lag.bornInfeld || 0),
-                    coupling: Math.abs(lag.coupling || 0),
-                    velocity: Math.abs(lag.velocity || 0),
-                    gauss: Math.abs(lag.gauss || 0),
-                    dissipation: Math.abs(lag.dissipation || 0),
-                    total: lag.total || 0,
-                    hamiltonian: lag.hamiltonian || 0,
-                    action: lag.totalAction || 0
-                });
-            }
-        }
-        return lag;
+        if (!lag) return null;
+        return this._publishScale0Lagrangian(
+            lag,
+            this._directScale0Meta('lagrangian', lag, mockCaps ? 'mock' : 'wasm'),
+        );
     }
 
     // ── Scale 1 collection ──────────────────────────────────────────────────
@@ -964,8 +1225,9 @@ export class TelemetryHub {
                 this._s0_lag.clear();
                 this.ebDiff.clear();
                 this.gauss.clear();
-                this.s0 = { diag: null, audit: null, lagrangian: null };
+                this.s0 = freshScale0State();
                 this._initialEnergy = null;
+                this._s0LocalSampleSequence = 0;
                 this._lastAuditVersion = -1;
                 this._prevWantAudit = false;
                 this._prevWantLag = false;

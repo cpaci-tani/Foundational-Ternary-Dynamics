@@ -10,6 +10,16 @@ import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp } from '../_card-
 
 const PROBE_SAMPLES = 80;
 const FOUR_PI = 4.0 * Math.PI;
+const NATIVE_PROBE_INTERVAL_MS = 1000;
+
+function nativeProbeStride(bridge) {
+    if (!bridge?.isNativeGPU) return 1;
+    const L = Math.max(1, Math.trunc(Number(bridge.latticeSize) || 1));
+    // Bound the interactive probe to roughly a 48³ source grid. The full
+    // stride-1 path remains available through PhysicsHarness for an explicit
+    // high-resolution investigation.
+    return Math.max(2, Math.ceil(L / 48));
+}
 
 const TEMPLATE = `
     <section data-section="coulomb" style="${cardStyle(360)}">
@@ -24,11 +34,23 @@ const TEMPLATE = `
 export class CoulombComponent extends BaseComponent {
     constructor() {
         super(TEMPLATE);
+        this._lastProbe = null;
+        this._lastProbeAt = -Infinity;
+        this._lastProbeKey = '';
     }
 
-    update(bridge) {
-        const particles = bridge.getScale0ParticleList?.() || [];
-        const engineProbe = this._probeCoulombEngineE(bridge, particles);
+    update(bridge, now = performance.now(), particles = null, scenarioId = '') {
+        const particleList = particles || bridge.getScale0ParticleList?.() || [];
+        const pair = findOppositeChargePairFromList(particleList);
+        const probeKey = `${scenarioId}:${pair?.pPos?.id ?? 'none'}:${pair?.pNeg?.id ?? 'none'}`;
+        const due = !bridge?.isNativeGPU || probeKey !== this._lastProbeKey
+            || now - this._lastProbeAt >= NATIVE_PROBE_INTERVAL_MS;
+        if (due) {
+            this._lastProbe = this._probeCoulombEngineE(bridge, particleList);
+            this._lastProbeAt = now;
+            this._lastProbeKey = probeKey;
+        }
+        const engineProbe = this._lastProbe;
 
         let metaLine, heroLine, footerHTML;
         if (engineProbe) {
@@ -110,12 +132,16 @@ export class CoulombComponent extends BaseComponent {
         }
         if (!engineSamples) {
             const harness = getPhysicsHarness(bridge);
+            const probeStride = nativeProbeStride(bridge);
             engineSamples = harness ? harness.sampleEFieldAlongRay(
                 { x: pPos.x, y: pPos.y, z: pPos.z },
                 { x: pNeg.x, y: pNeg.y, z: pNeg.z },
                 PROBE_SAMPLES,
+                { stride: probeStride },
             ) : null;
-            if (engineSamples) probeMode = 'js-trilinear';
+            if (engineSamples) probeMode = probeStride === 1
+                ? 'js-trilinear'
+                : `js-trilinear (stride ${probeStride})`;
         }
         if (!engineSamples) return null;
 

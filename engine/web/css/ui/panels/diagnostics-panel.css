@@ -219,6 +219,21 @@ html[data-panel-mount="right"] .diag-table tbody td {
     margin: 0 0 10px;
 }
 
+.diag-section-freshness {
+    display: block;
+    margin-top: 3px;
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.diag-telemetry-stale .diag-section-freshness {
+    color: var(--warning, #d6a84a);
+}
+
 .diag-table {
     width: 100%;
     /* Fixed layout so a value changing from "0" to "4173.09" can't

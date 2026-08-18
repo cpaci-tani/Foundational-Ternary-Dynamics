@@ -197,11 +197,19 @@ export class PhysicsHarness {
      * Returns null if no E-field samples exist (toggle off / scenario
      * hasn't seeded the field) or if the ray is degenerate.
      * Otherwise: array of `{r, E_mag, E_dot_rhat}` of length n.
+     *
+     * `options.stride` is deliberately opt-in: callers that need a
+     * high-resolution scientific read keep the historical stride-1 behavior,
+     * while continuously refreshing UI instruments can request a bounded
+     * regular-grid sample over a native socket.
      */
-    sampleEFieldAlongRay(p1, p2, n) {
+    sampleEFieldAlongRay(p1, p2, n, options = {}) {
         const bridge = this.bridge;
         if (!bridge || typeof bridge.getEFieldSampled !== 'function') return null;
-        const efs = bridge.getEFieldSampled(1);
+        const requestedStride = Math.max(1, Math.trunc(Number(
+            typeof options === 'number' ? options : options?.stride,
+        ) || 1));
+        const efs = bridge.getEFieldSampled(requestedStride);
         if (!efs || efs.count === 0) return null;
         const latticeSize = bridge.latticeSize || 32;
         const dx = p2.x - p1.x;
@@ -223,7 +231,7 @@ export class PhysicsHarness {
         // either backend and lets the cache survive across ticks while
         // still invalidating on lattice resize. (Audit Bridge-H4 fix,
         // 2026-04-27.)
-        const cacheKey = `${latticeSize}:${efs.count}`;
+        const cacheKey = `${latticeSize}:${requestedStride}:${efs.effectiveStride ?? ''}:${efs.count}`;
         let cached = this._efsIndex;
         if (!cached || cached.key !== cacheKey) {
             const map = new Map();
@@ -236,7 +244,8 @@ export class PhysicsHarness {
             cached = {
                 key: cacheKey,
                 map,
-                stride: Math.max(1, Math.round(latticeSize / Math.cbrt(efs.count))),
+                stride: Math.max(1, Math.trunc(Number(efs.effectiveStride)
+                    || Math.round(latticeSize / Math.cbrt(efs.count)))),
             };
             this._efsIndex = cached;
         }

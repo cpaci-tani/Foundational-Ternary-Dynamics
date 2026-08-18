@@ -56,6 +56,7 @@ export const sections = [
     {
         id: 'particle-state',
         title: 'Particle State',
+        telemetryGroups: ['diagnostics'],
         rows: [
             { id: 'manifested', label: 'Manifested',      unit: 'ct', source: 's0.diag.manifested', trend: 'manifested' },
             { id: 'positive',   label: 'Positive',        unit: 'ct', source: 's0.diag.positive',   trend: 'positive',   variant: 'positive' },
@@ -71,6 +72,11 @@ export const sections = [
     {
         id: 'energy-budget',
         title: 'Energy Budget',
+        // Flux/entropy come from the lightweight state snapshot while the
+        // energy decomposition is a separately scheduled audit. Keep that
+        // provenance visible rather than presenting the whole section as one
+        // simultaneous observation.
+        telemetryGroups: ['diagnostics', 'audit'],
         rows: [
             { id: 'energy',       label: 'Dynamic Energy',    unit: 'E*', source: 's0.audit.dynamicEnergy', trend: 'energy' },
             { id: 'accounted',    label: 'Accounted Energy',  unit: 'E*', source: 's0.audit.totalEnergy' },
@@ -87,6 +93,7 @@ export const sections = [
     {
         id: 'electromagnetic',
         title: 'Electromagnetic',
+        telemetryGroups: ['diagnostics', 'audit'],
         rows: [
             { id: 'e-field',  label: 'E-Field |E|\u00B2/2', unit: 'E*',
               compute: (hub) => hub.s0.audit?.EFieldEnergy ?? hub.s0.audit?.eFieldEnergy,
@@ -110,6 +117,7 @@ export const sections = [
     {
         id: 'constraints',
         title: 'Constraints',
+        telemetryGroups: ['audit'],
         rows: [
             { id: 'gauss',     label: 'Gauss \u03A3(div J\u2212s)\u00B2', unit: 'E*\u00B2',
               source: 's0.audit.gaussViolation',     trend: 'gauss' },
@@ -122,6 +130,7 @@ export const sections = [
     {
         id: 'dual-substrate',
         title: 'Dual Substrate',
+        telemetryGroups: ['audit'],
         rows: [
             { id: 'e-left',    label: 'E_L (left)',   unit: 'E*',
               compute: (hub) => hub.s0.audit?.ELTotal ?? hub.s0.audit?.eLTotal,
