@@ -663,6 +663,24 @@ int main(int argc, char** argv) {
                              static_cast<std::uint32_t>(view_rc.bottom));
         app.presenter = &presenter;
 
+        std::atomic<int> interop_particle_count{-1};
+        std::atomic<std::uint64_t> interop_fence_counter{0};
+        bool interop_active = false;
+        if (!options.force_cpu) {
+            constexpr std::uint32_t kInteropCap = 100000;  // matches kMaxVisualParticleCapture
+            HANDLE buf_handle = presenter.create_shared_particle_buffer(kInteropCap);
+            HANDLE fence_handle = buf_handle ? presenter.create_shared_fence() : nullptr;
+            if (buf_handle && fence_handle) {
+                interop_active = session.try_enable_interop(
+                    buf_handle, presenter.shared_particle_buffer_bytes(), fence_handle);
+                if (interop_active) presenter.bind_interop_particle_srv();
+            }
+            if (buf_handle) CloseHandle(buf_handle);
+            if (fence_handle) CloseHandle(fence_handle);
+            std::cout << "interop: " << (interop_active ? "enabled" : "unavailable, using CPU path")
+                      << "\n" << std::flush;
+        }
+
         std::mutex frame_mu;
         ftd::native_desktop::NativeFrame latest = session.capture();
         int camera_lattice = session.lattice_size();
@@ -702,6 +720,10 @@ int main(int argc, char** argv) {
                         for (int i = 0; i < steps; ++i) session.tick();
                     } else if (!paused.load() && !do_reload) {
                         session.tick();
+                    }
+                    if (interop_active) {
+                        const std::uint64_t fv = interop_fence_counter.fetch_add(1) + 1;
+                        session.request_interop_gather(fv);
                     }
                     ftd::native_desktop::NativeFrame next = session.capture();
                     {
@@ -784,7 +806,32 @@ int main(int argc, char** argv) {
                                                               : frame.status.c_str()));
             SetWindowTextW(app.status, status);
 
-            presenter.render(frame, app.camera, app.view_opts);
+            int this_frame_interop_count = -1;
+            std::uint64_t this_frame_fence_value = 0;
+            if (interop_active) {
+                this_frame_interop_count = session.poll_interop_particle_count();
+                // Reads interop_fence_counter's CURRENT value, not necessarily the
+                // exact value the LAST gather signaled -- the sim thread runs on a
+                // different thread and may have advanced the counter again by the
+                // time this line runs (only frame_mu guards `latest`, not the fence
+                // counter). This is safe: ID3D12CommandQueue::Wait on a value the
+                // fence hasn't reached yet just makes the queue wait longer for a
+                // LATER signal, and CUDA always signals monotonically increasing
+                // values in gather order, so the queue can never be told to wait for
+                // a value that regresses or corresponds to a torn/partial write. The
+                // only cost is the render loop occasionally waiting one gather cycle
+                // longer than the strict minimum under load -- a throughput cost,
+                // not a correctness one.
+                this_frame_fence_value = interop_fence_counter.load();
+            }
+            const std::uint32_t draw_interop_count =
+                this_frame_interop_count > 0
+                    ? static_cast<std::uint32_t>(this_frame_interop_count)
+                    : 0u;
+            if (draw_interop_count != 0) {
+                presenter.wait_shared_fence(this_frame_fence_value);
+            }
+            presenter.render(frame, app.camera, app.view_opts, draw_interop_count);
         }
 
         running.store(false);

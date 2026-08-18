@@ -64,5 +64,20 @@ int main() {
                      session.lattice_size() == 17 &&
                          session.scenario() == "s0-seed-hydrogen");
 
+    ftd::test::section("interop path is a safe no-op on the CPU backend");
+    ftd::test::check("interop starts disabled", !session.interop_enabled());
+    const bool enabled =
+        session.try_enable_interop(nullptr, 0, nullptr);
+    ftd::test::check("try_enable_interop refuses a CPU-backend session",
+                     !enabled);
+    ftd::test::check("interop_enabled stays false after a refused enable",
+                     !session.interop_enabled());
+    ftd::test::check("poll_interop_particle_count reports not-ready (-1)",
+                     session.poll_interop_particle_count() == -1);
+    // Must be a harmless no-op (not a crash) when interop was never enabled.
+    session.request_interop_gather(1);
+    ftd::test::check("poll after a no-op gather request still reports -1",
+                     session.poll_interop_particle_count() == -1);
+
     return ftd::test::finalize();
 }

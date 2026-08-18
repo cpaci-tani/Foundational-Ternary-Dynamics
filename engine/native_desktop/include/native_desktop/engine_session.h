@@ -67,6 +67,22 @@ public:
     const std::string& status() const { return status_; }
     const NativeEngineOptions& options() const { return options_; }
 
+    // Attempts to initialize the D3D12/CUDA interop path: imports the given
+    // shared buffer and fence handles into the GPU backend. No-op (returns
+    // false) on the CPU backend or if either import fails -- callers must
+    // keep using the plain capture()/render() path in that case, exactly as
+    // before this method existed.
+    bool try_enable_interop(void* shared_buffer_handle, std::uint64_t buffer_bytes,
+                            void* shared_fence_handle);
+    bool interop_enabled() const { return interop_enabled_; }
+    // Runs the interop gather (device-side only, no host particle vector) and
+    // returns the particle count once ready, or -1 if not yet ready this call
+    // (poll again). fence_value must be a strictly increasing counter the
+    // caller also passes to D3D12Presenter::wait_shared_fence with the same
+    // value.
+    int poll_interop_particle_count();
+    void request_interop_gather(std::uint64_t fence_value);
+
 private:
     void boot();
     void apply_boundary();
@@ -75,6 +91,7 @@ private:
     NativeEngineOptions options_;
     std::unique_ptr<RenderBridge> bridge_;
     std::string status_;
+    bool interop_enabled_ = false;
 };
 
 }  // namespace ftd::native_desktop
