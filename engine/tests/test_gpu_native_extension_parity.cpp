@@ -5,7 +5,8 @@
  *   EP-2  absorbing/reflective/dispersal field boundaries run post-movement.
  *   EP-3  field_energy_gravity contributes the CPU T00 source to latency.
  *   EP-4  exact_dual_gauss corrects manifested sites and preserves J=L+R.
- *   EP-5  pairwise/triad capacity overflow fails closed (never truncates).
+ *   EP-5  pairwise/triad capacity overflow fails closed (never truncates);
+ *         the sticky device flag surfaces at the next sync boundary.
  */
 
 #include "ftd/constants.h"
@@ -346,16 +347,25 @@ void test_particle_capacity_fails_closed() {
     engine.toggles.color_forces = true;
     engine.upload_from_host(seed);
 
+    // Component A Task 5: the pairwise/triad launches no longer read the
+    // particle count back to the host inside tick() (that blocking D2H is
+    // exactly what Task 5 removes for graph-capture compatibility). Overflow
+    // is now a sticky device-side flag, surfaced only at the synchronization
+    // boundaries that already exist — causal_projection_events() (which
+    // GpuBackend::tick() calls every tick) and ensure_host_synced(). A raw
+    // GpuEngine caller must therefore reach one of those boundaries itself
+    // to observe the failure; tick() alone no longer throws synchronously.
     bool threw = false;
     std::string message;
     try {
         engine.tick();
+        engine.causal_projection_events();
     } catch (const std::runtime_error& ex) {
         threw = true;
         message = ex.what();
     }
     check("GPU refuses partial pairwise/triad physics above capacity",
-          threw && message.find("refusing partial") != std::string::npos);
+          threw && message.find("refusing to report partial") != std::string::npos);
 }
 
 }  // namespace

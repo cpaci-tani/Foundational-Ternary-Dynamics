@@ -78,10 +78,10 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
                                 unsigned long long rng_seed, int tick);
     void launch_build_particle_list(GpuBuffers& bufs);
-    void launch_color_force(GpuBuffers& bufs, int num_particles, double dt);
-    void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt);
-    void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt);
-    void launch_triad_detection(GpuBuffers& bufs, int num_particles);
+    void launch_color_force(GpuBuffers& bufs, double dt);
+    void launch_yukawa_force(GpuBuffers& bufs, double dt);
+    void launch_exchange_force(GpuBuffers& bufs, double dt);
+    void launch_triad_detection(GpuBuffers& bufs);
     void launch_strong_field_stencil(GpuBuffers& bufs, double damp);
     void launch_weak_field_stencil(GpuBuffers& bufs, double damp);
     void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
@@ -714,45 +714,35 @@ void GpuEngine::gpu_pair_production() {
 }
 
 void GpuEngine::gpu_build_particle_list() {
+    // No host readback: the count stays on the device and the pairwise/triad
+    // kernels bound themselves from it. Capacity overflow is a sticky device
+    // flag surfaced by throw_if_particle_overflow() at the existing
+    // synchronization boundaries (ensure_host_synced /
+    // causal_projection_events), not by a blocking copy inside the tick.
     kernels::launch_build_particle_list(bufs_);
-    // Sync particle count to host for subsequent kernel launches
-    CUDA_CHECK(cudaMemcpy(&host_num_particles_, bufs_.d_num_particles,
-                          sizeof(int), cudaMemcpyDeviceToHost));
-    if (host_num_particles_ > GpuBuffers::MAX_PARTICLES) {
-        const int manifested = host_num_particles_;
-        host_num_particles_ = 0;
-        throw std::runtime_error(
-            "[GpuEngine] manifested particle count "
-            + std::to_string(manifested)
-            + " exceeds the CUDA pairwise/triad capacity "
-            + std::to_string(GpuBuffers::MAX_PARTICLES)
-            + "; refusing partial color/Yukawa/exchange/triad physics");
-    }
 }
 
 void GpuEngine::gpu_particle_forces() {
-    if (host_num_particles_ <= 0) return;
-
     if (toggles.color_forces) {
-        kernels::launch_color_force(bufs_, host_num_particles_, dt_);
+        kernels::launch_color_force(bufs_, dt_);
     }
     if (toggles.strong_force) {
-        kernels::launch_yukawa_force(bufs_, host_num_particles_, dt_);
+        kernels::launch_yukawa_force(bufs_, dt_);
     }
     if (toggles.exchange_force) {
-        kernels::launch_exchange_force(bufs_, host_num_particles_, dt_);
+        kernels::launch_exchange_force(bufs_, dt_);
     }
 }
 
 void GpuEngine::gpu_triad_detection() {
-    if (host_num_particles_ <= 0) return;
-    kernels::launch_triad_detection(bufs_, host_num_particles_);
+    kernels::launch_triad_detection(bufs_);
 }
 
 // ---------- Diagnostics ----------
 
 void GpuEngine::ensure_host_synced() {
     bufs_.throw_if_identity_error();
+    bufs_.throw_if_particle_overflow();
     if (host_dirty_) {
         bufs_.download(host_voxels_, host_phi_, host_phi_coulomb_);
         // Wave 5: also download phi_latency for tests that read it directly

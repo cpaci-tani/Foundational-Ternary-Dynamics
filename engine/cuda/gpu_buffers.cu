@@ -219,6 +219,7 @@ void GpuBuffers::allocate(int lattice_size) {
     // Particle list
     CUDA_CHECK(cudaMalloc(&d_plist_idx, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMalloc(&d_num_particles, sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_particle_overflow, sizeof(int)));
 
     // Pair production tracking
     CUDA_CHECK(cudaMalloc(&d_pair_id, N * sizeof(int32_t)));
@@ -340,6 +341,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_poisson_mean_charge, 0, sizeof(double)));
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
+    CUDA_CHECK(cudaMemset(d_particle_overflow, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_pair_id, 0xFF, N * sizeof(int32_t))); // -1
     CUDA_CHECK(cudaMemset(d_ledger_rho_before, 0, N * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_ledger_reaction, 0, N * sizeof(int)));
@@ -487,6 +489,10 @@ void GpuBuffers::free() {
     if (d_fd_exchange_x) { cudaFree(d_fd_exchange_x); d_fd_exchange_x = nullptr; }
     if (d_fd_exchange_y) { cudaFree(d_fd_exchange_y); d_fd_exchange_y = nullptr; }
     if (d_fd_exchange_z) { cudaFree(d_fd_exchange_z); d_fd_exchange_z = nullptr; }
+    if (d_particle_overflow) {
+        cudaFree(d_particle_overflow);
+        d_particle_overflow = nullptr;
+    }
     if (d_causal_projection_events) {
         cudaFree(d_causal_projection_events);
         d_causal_projection_events = nullptr;
@@ -1011,6 +1017,20 @@ __global__ void reset_continuity_ledger_kernel(
     current_x[i] = 0.0;
     current_y[i] = 0.0;
     current_z[i] = 0.0;
+}
+
+void GpuBuffers::throw_if_particle_overflow() const {
+    if (!d_particle_overflow) return;
+    int flag = 0;
+    CUDA_CHECK(cudaMemcpy(&flag, d_particle_overflow, sizeof(int),
+                          cudaMemcpyDeviceToHost));
+    if (flag != 0) {
+        throw std::runtime_error(
+            "[GpuEngine] manifested particle count exceeded the CUDA "
+            "pairwise/triad capacity " + std::to_string(MAX_PARTICLES)
+            + "; refusing to report partial color/Yukawa/exchange/triad "
+              "physics");
+    }
 }
 
 void GpuBuffers::reset_continuity_ledger() {

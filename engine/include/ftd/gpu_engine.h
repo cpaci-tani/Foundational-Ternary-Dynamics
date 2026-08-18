@@ -137,6 +137,7 @@ public:
     const ForceDiagHost& force_diag() { ensure_host_synced(); return host_force_diag_; }
     unsigned long long causal_projection_events() const {
         bufs_.throw_if_identity_error();
+        bufs_.throw_if_particle_overflow();
         return bufs_.download_causal_projection_events();
     }
 
@@ -253,7 +254,6 @@ private:
     std::vector<double> probe_j0x_, probe_j0y_, probe_j0z_;  // host J(0) reference
     std::vector<double> probe_jx_, probe_jy_, probe_jz_;     // host gather scratch
 
-    int host_num_particles_ = 0;  // cached particle count from device
     bool weak_field_active_ = false;  // true when flavor/weak-field state needs stepping
     bool continuity_ledger_valid_ = false;
 

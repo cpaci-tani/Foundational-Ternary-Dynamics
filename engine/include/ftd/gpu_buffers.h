@@ -254,6 +254,14 @@ struct GpuBuffers {
     static constexpr int MAX_PARTICLES = 8192;
     int*      d_plist_idx     = nullptr;  // lattice indices [MAX_PARTICLES]
     int*      d_num_particles = nullptr;  // count (single int on device)
+    // Sticky capacity guard (Component A). build_particle_list_kernel sets
+    // this to 1 when a manifested site would need a slot >= MAX_PARTICLES.
+    // The pairwise/triad kernels clamp their loop bound to MAX_PARTICLES so
+    // they can never read past d_plist_idx; the host surfaces the condition
+    // as the same std::runtime_error it used to throw inline, but reads the
+    // flag only at synchronization boundaries that already copy scalars D2H
+    // (causal_projection_events / ensure_host_synced), never in the tick.
+    int*      d_particle_overflow = nullptr;
 
     // --- Pair production tracking ---
     int32_t*  d_pair_id       = nullptr;  // pair ID (-1 = unpaired) [N]
@@ -325,6 +333,9 @@ struct GpuBuffers {
     void download_identity_counters(int32_t& next_particle_id,
                                     int32_t& next_pair_id) const;
     void throw_if_identity_error() const;
+    // Throws std::runtime_error when the sticky capacity guard fired. Reads
+    // one int D2H; call only at existing synchronization boundaries.
+    void throw_if_particle_overflow() const;
 
     // Download only voxels (for diagnostics)
     void download_voxels(std::vector<Voxel>& host_voxels) const;
