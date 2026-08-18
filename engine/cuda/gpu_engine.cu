@@ -1620,6 +1620,20 @@ std::uint32_t GpuEngine::interop_particle_count() const {
     return interop_gather_ready() ? bufs_.h_interop_header->captured_count : 0u;
 }
 
+// TEST-ONLY (see gpu_engine.h doc comment). A synchronous, blocking
+// cudaMemcpy straight off the imported interop buffer -- never called from
+// any production path, which exists specifically to avoid this download
+// (Task 6). Used only by test_interop_visual_parity to compare the interop
+// gather kernel's output against the pre-interop CPU capture path.
+void GpuEngine::debug_read_interop_records(std::vector<InteropParticleRecord>& out,
+                                           std::uint32_t count) const {
+    out.assign(count, InteropParticleRecord{});
+    if (!bufs_.d_interop_particle_buffer || count == 0) return;
+    CUDA_CHECK(cudaMemcpy(out.data(), bufs_.d_interop_particle_buffer,
+                          static_cast<std::size_t>(count) * sizeof(InteropParticleRecord),
+                          cudaMemcpyDeviceToHost));
+}
+
 void GpuEngine::inspect_voxel(int index, VoxelInspection& out) {
     kernels::launch_compact_voxel(bufs_, index, out);
 }

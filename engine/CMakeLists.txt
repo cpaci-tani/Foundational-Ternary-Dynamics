@@ -604,6 +604,16 @@ if(TARGET test_interop_reload_reset)
         LABELS "unit;native_desktop;gpu;interactive")
 endif()
 
+# CTest registration for test_interop_visual_parity (Interop Task 10) — same
+# ordering rationale as test_d3d12_adapter_selection above (executable
+# defined in native_desktop/CMakeLists.txt, only present when
+# FTD_ENABLE_CUDA is ON).
+if(TARGET test_interop_visual_parity)
+    add_test(NAME interop_visual_parity COMMAND test_interop_visual_parity)
+    set_tests_properties(interop_visual_parity PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive")
+endif()
+
 # Auto-link ftd_test_support into every test executable defined below in this
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
 # lives in ftd_test_support. This avoids touching every existing

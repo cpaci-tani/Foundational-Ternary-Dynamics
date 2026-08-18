@@ -260,6 +260,14 @@ public:
     // the caller to have checked it first.
     std::uint32_t interop_particle_count() const;
 
+    // TEST-ONLY. Synchronously downloads `count` records from the imported
+    // interop buffer. Production code never calls this -- avoiding exactly
+    // this download is the point of the interop path (Task 6). Used only by
+    // test_interop_visual_parity to verify the interop kernel's output
+    // against the pre-interop CPU reference path byte-for-byte.
+    void debug_read_interop_records(std::vector<InteropParticleRecord>& out,
+                                    std::uint32_t count) const;
+
     int total_sites() const { return N_; }
     double dt() const { return dt_; }
     void set_dt(double dt);
