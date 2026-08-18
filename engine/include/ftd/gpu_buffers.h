@@ -196,6 +196,16 @@ struct GpuBuffers {
     // out-of-budget velocities (FTD-0402). Normal force evolution leaves zero.
     unsigned long long* d_causal_projection_events = nullptr;
 
+    // --- Poisson mean-charge scratch (Component A) ---
+    // The Gauss and Coulomb RHS both need mean_charge = (Σ state) / N. That
+    // used to be a per-solve cudaMalloc + cudaMemset + blocking D2H memcpy +
+    // cudaFree, i.e. 1-3 host round trips per tick. Both scalars now live
+    // here for the engine's lifetime and the value never crosses PCIe: the
+    // RHS kernels read the device pointer. Integer reduction is unchanged, so
+    // the computed value is bit-identical to the previous host scalar.
+    long long* d_poisson_charge_sum  = nullptr;
+    double*    d_poisson_mean_charge = nullptr;
+
     // --- FFT workspace ---
     // Both precisions are active: float (C2C) is the default 2× faster path;
     // double (Z2Z) is used by high-accuracy callsites in kernels_poisson.cu.
