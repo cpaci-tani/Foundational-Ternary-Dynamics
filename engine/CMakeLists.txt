@@ -1416,6 +1416,13 @@ if(FTD_ENABLE_CUDA)
                  CTEST_NAME gpu_particle_capacity TIMEOUT 300
                  LABELS unit parity)
 
+    # Component A Task 8: CUDA graph capture/replay must be bit-identical to
+    # direct kernel launch across representative toggle topologies.
+    ftd_add_test(test_gpu_graph_capture
+                 tests/test_gpu_graph_capture.cpp GPU_HEAVY
+                 CTEST_NAME gpu_graph_capture TIMEOUT 600
+                 LABELS unit parity interactive)
+
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
 

@@ -330,6 +330,16 @@ GpuEngine::~GpuEngine() {
             return;
         }
     }
+    // Graph execs reference the stream and the device buffers; retire them
+    // before GpuBuffers::free() drains and destroys the stream. The
+    // visual_snapshot_pending_ quarantine branch above (`bufs_.free(); return;`)
+    // skips this call, same as it already skips the fft_plan_*/spectro_free/
+    // free_gauge_links cleanup below it for the identical reason: that path
+    // hands the whole allocation off to CUDA-context replacement rather than
+    // resolve it here. The graph cache leaking there is consistent with the
+    // rest of this destructor's established quarantine behavior, not a new
+    // gap.
+    destroy_graph_cache();
     if (fft_plan_forward_) cufftDestroy(fft_plan_forward_);
     if (fft_plan_inverse_) cufftDestroy(fft_plan_inverse_);
     if (fft_plan_forward_f_) cufftDestroy(fft_plan_forward_f_);
@@ -423,9 +433,8 @@ double GpuEngine::spectro_autocorr() {
 
 // ---------- Core Simulation ----------
 
-void GpuEngine::tick() {
+void GpuEngine::record_tick_body() {
     bufs_.reset_continuity_ledger();
-    continuity_ledger_valid_ = true;
 
     // CPU parity: the electroweak scenario's uniform +x drive is part of the
     // tick input, not a visualization mutation. Apply it before phase_read so
@@ -543,6 +552,173 @@ void GpuEngine::tick() {
     // Advance the device mirror in the same place the host counter moves, so
     // a captured graph replays with a fresh RNG salt.
     kernels::launch_advance_device_tick(bufs_);
+}
+
+// ---------- Graph eligibility / key ----------
+
+bool GpuEngine::graph_eligible() const {
+    // ew_background_sweep's drive is now device-resident (see commit
+    // 7dc754bc, made during Task 7's code review) and could technically be
+    // graph-eligible, but it remains excluded here because it's a research
+    // scenario outside this task's tested profiles (none of
+    // test_gpu_graph_capture.cpp's Profile values enable it) — revisit if a
+    // future profile needs it.
+    if (toggles.ew_background_sweep) return false;
+    return true;
+}
+
+std::uint64_t GpuEngine::graph_key() const {
+    std::uint64_t h = 1469598103934665603ULL;
+    const auto mix = [&h](const void* p, std::size_t n) {
+        const auto* b = static_cast<const unsigned char*>(p);
+        for (std::size_t i = 0; i < n; ++i) {
+            h ^= b[i];
+            h *= 1099511628211ULL;
+        }
+    };
+    const auto mix_bool = [&mix](bool v) { const unsigned char c = v ? 1u : 0u; mix(&c, 1); };
+    const auto mix_int  = [&mix](int v)  { mix(&v, sizeof(v)); };
+    const auto mix_dbl  = [&mix](double v) { mix(&v, sizeof(v)); };
+
+    // Topology: every toggle that adds, removes or reshapes a launch.
+    mix_bool(toggles.wave_propagation);
+    mix_bool(toggles.coupling);
+    mix_bool(toggles.damping);
+    mix_bool(toggles.selective_damping);
+    mix_bool(toggles.larmor_radiation);
+    mix_bool(toggles.genesis);
+    mix_bool(toggles.evaporation);
+    mix_bool(toggles.langevin);
+    mix_bool(toggles.symplectic_leapfrog);
+    mix_bool(toggles.pair_production);
+    mix_bool(toggles.gauss_projection);
+    mix_bool(toggles.dual_substrate);
+    mix_bool(toggles.latency_field);
+    mix_bool(toggles.field_energy_gravity);
+    mix_bool(toggles.forces);
+    mix_bool(toggles.gravity);
+    mix_bool(toggles.lorentz_force);
+    mix_bool(toggles.poisson_coulomb);
+    mix_bool(toggles.emergent_forces);
+    mix_bool(toggles.color_forces);
+    mix_bool(toggles.strong_force);
+    mix_bool(toggles.exchange_force);
+    mix_bool(toggles.triad_binding);
+    mix_bool(toggles.movement);
+    mix_bool(toggles.reflective_boundary);
+    mix_bool(toggles.absorbing_boundary);
+    mix_int(static_cast<int>(toggles.flux_boundary));
+    mix_bool(toggles.weak_transmutation);
+    mix_bool(toggles.su2_gauge);
+    mix_bool(toggles.su3_gauge);
+    mix_bool(toggles.de_broglie_clock);
+    mix_bool(toggles.db_clock_coulomb);
+    mix_bool(toggles.exact_dual_gauss);
+    mix_bool(toggles.ew_background_sweep);
+    mix_int(static_cast<int>(toggles.bcc_stencil));
+    mix_int(static_cast<int>(toggles.langevin_site_filter));
+
+    // Non-toggle latches that gate whole phases.
+    mix_bool(weak_field_active_);
+    mix_bool(gauge_links_device_);
+
+    // Scalar kernel arguments. These are NOT topology, but CUDA bakes them
+    // into node parameters, so a change must force a recapture just as a
+    // toggle change does.
+    mix_dbl(dt_);
+    mix_dbl(toggles.omega0);
+    mix_dbl(toggles.langevin_T);
+    mix_dbl(toggles.langevin_gamma);
+    mix_dbl(toggles.kinetic_drain);
+    mix_dbl(toggles.coulomb_charge_coupling);
+    mix_dbl(toggles.coulomb_source_scale);
+    mix_dbl(genesis_threshold_override);
+    mix_dbl(manifest_scale_override);
+    mix_bool(manifest_use_temperature);
+    mix_int(static_cast<int>(toggles.langevin_seed));
+    return h;
+}
+
+void GpuEngine::destroy_graph_cache() {
+    for (auto& entry : graph_cache_) {
+        if (entry.second) cudaGraphExecDestroy(entry.second);
+    }
+    graph_cache_.clear();
+}
+
+// ---------- Tick dispatch ----------
+
+void GpuEngine::tick() {
+    continuity_ledger_valid_ = true;
+
+    if (!graph_capture_enabled || !graph_eligible()) {
+        record_tick_body();
+    } else {
+        const std::uint64_t key = graph_key();
+        const auto it = graph_cache_.find(key);
+        if (it != graph_cache_.end()) {
+            if (it->second) {
+                CUDA_CHECK(cudaGraphLaunch(it->second, bufs_.stream));
+                ++graph_replays_;
+            } else {
+                // Known-uncapturable key: permanent direct-launch fallback.
+                record_tick_body();
+            }
+        } else {
+            if (graph_cache_.size() >= MAX_GRAPH_CACHE) destroy_graph_cache();
+
+            // Capture RECORDS without executing, so this pass performs zero
+            // device work; launching the instantiated graph immediately below
+            // is what makes the capturing tick a normal tick. No scratch
+            // buffers and no state rollback are involved. Thread-local capture
+            // mode is deliberate: begin_telemetry_snapshot/begin_visual_snapshot
+            // and their copy_visual_*/copy_telemetry_* pollers issue legacy-
+            // stream work from other threads by design and must remain
+            // unaffected by a capture in progress on this thread. Global mode
+            // would make any such concurrent call fail while capture is open.
+            cudaGraph_t graph = nullptr;
+            bool captured = false;
+            const cudaError_t begin_status = cudaStreamBeginCapture(
+                bufs_.stream, cudaStreamCaptureModeThreadLocal);
+            if (begin_status == cudaSuccess) {
+                bool recorded = true;
+                try {
+                    record_tick_body();
+                } catch (...) {
+                    recorded = false;
+                }
+                const cudaError_t end_status =
+                    cudaStreamEndCapture(bufs_.stream, &graph);
+                captured = recorded && end_status == cudaSuccess && graph;
+                if (!captured && graph) {
+                    cudaGraphDestroy(graph);
+                    graph = nullptr;
+                }
+            }
+
+            cudaGraphExec_t exec = nullptr;
+            if (captured) {
+                const cudaError_t inst_status =
+                    cudaGraphInstantiate(&exec, graph, 0);
+                cudaGraphDestroy(graph);
+                if (inst_status != cudaSuccess) exec = nullptr;
+            }
+
+            graph_cache_[key] = exec;
+            if (exec) {
+                // The recorded work never ran; run it now as the graph.
+                CUDA_CHECK(cudaGraphLaunch(exec, bufs_.stream));
+                ++graph_captures_;
+                ++graph_replays_;
+            } else {
+                // Capture failed: the recorded work was discarded, so this
+                // tick has done nothing yet. Re-run it with direct launches.
+                ++graph_capture_failures_;
+                cudaGetLastError();   // clear any sticky capture error
+                record_tick_body();
+            }
+        }
+    }
 
     tick_++;
     host_dirty_ = true;

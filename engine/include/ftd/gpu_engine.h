@@ -17,7 +17,11 @@
 #include "ftd/visual_snapshot.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include <vector>
+#include <cstddef>
+#include <cstdint>
+#include <unordered_map>
 #include <cufft.h>
+#include <cuda_runtime_api.h>
 
 namespace ftd {
 struct LagrangianDiag;
@@ -146,6 +150,25 @@ public:
 
     // Physics toggles (same as CPU engine)
     TermToggles toggles;
+
+    // --- CUDA graph capture (Component A) ---
+    // When true, tick() captures its kernel sequence once per distinct
+    // combination of topology- and parameter-affecting host state, then
+    // replays the instantiated cudaGraphExec_t on every later tick with the
+    // same key. Replay must be BIT-IDENTICAL to direct launch — that is what
+    // test_gpu_graph_capture asserts. Toggle changes are rare, deliberate
+    // user actions, so recapture is off the hot path.
+    bool graph_capture_enabled = false;
+
+    std::size_t graph_replays() const { return graph_replays_; }
+    std::size_t graph_captures() const { return graph_captures_; }
+    std::size_t graph_capture_failures() const { return graph_capture_failures_; }
+    std::size_t graph_cache_size() const { return graph_cache_.size(); }
+
+    // Deterministic seeding helper used by the graph parity test so both the
+    // direct and the graphed engine start from the same RNG stream.
+    void seed_rng_for_test() { set_rng_seed(42); }
+
     double genesis_threshold_override = -1.0;
     double manifest_scale_override = -1.0;
     bool manifest_use_temperature = false;
@@ -188,6 +211,24 @@ public:
     void spectro_free();
 
 private:
+    // The kernel sequence of one tick, with NO host-side device reads and no
+    // data-dependent host branching. This is what gets captured.
+    void record_tick_body();
+    // Hash of every host-derived value that reaches a kernel argument, EXCEPT
+    // the tick counter (which is device-resident, see GpuBuffers::d_tick).
+    std::uint64_t graph_key() const;
+    // False for tick shapes that cannot be represented by a static graph.
+    bool graph_eligible() const;
+    void destroy_graph_cache();
+
+    std::unordered_map<std::uint64_t, cudaGraphExec_t> graph_cache_;
+    std::size_t graph_replays_ = 0;
+    std::size_t graph_captures_ = 0;
+    std::size_t graph_capture_failures_ = 0;
+    // Bound the cache so a toggle sweep cannot leak graph execs. On overflow
+    // the whole cache is dropped and rebuilt — deterministic and simple.
+    static constexpr std::size_t MAX_GRAPH_CACHE = 16;
+
     // GPU tick sub-phases
     void gpu_phase_read();
     void gpu_phase_write();
