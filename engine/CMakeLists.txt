@@ -554,6 +554,20 @@ if(TARGET test_d3d12_shared_buffer)
         LABELS "unit;native_desktop;interactive")
 endif()
 
+# CTest registration for test_d3d12_render_frame_fencing — same ordering
+# rationale as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt). "interactive" for the same reason as
+# test_d3d12_shared_buffer above (initialize() needs a live desktop
+# session). Regression coverage for D3D12Presenter::render()'s frame-in-
+# flight fencing + per-slot vb/cb double buffering — see
+# test_d3d12_render_frame_fencing.cpp's file-level comment for what it
+# protects and why it previously had zero automated coverage.
+if(TARGET test_d3d12_render_frame_fencing)
+    add_test(NAME d3d12_render_frame_fencing COMMAND test_d3d12_render_frame_fencing)
+    set_tests_properties(d3d12_render_frame_fencing PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
 # CTest registration for test_cuda_d3d12_adapter_match — same ordering
 # rationale as test_d3d12_adapter_selection above (executable defined in
 # native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).

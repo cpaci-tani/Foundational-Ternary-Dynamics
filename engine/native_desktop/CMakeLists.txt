@@ -82,6 +82,32 @@ if(WIN32)
         d3dcompiler
     )
 
+    # Regression coverage for D3D12Presenter::render() itself (Task 11 frame-
+    # in-flight fencing + the immediately-following vb/cb double-buffering
+    # fix) -- see test_d3d12_render_frame_fencing.cpp's file-level comment.
+    # render() is otherwise only called from main.cpp's message loop, so
+    # without this target that logic had zero automated coverage. D3D12-only
+    # (interop_particle_count stays 0, the CPU vertex-buffer path), so like
+    # test_d3d12_shared_buffer above it does not need FTD_ENABLE_CUDA gating
+    # and lives in this same unconditional if(WIN32) block. Same cross-
+    # directory-ftd_test_support-ordering hazard as the other tests here, so
+    # test_telemetry.cpp is compiled directly into this binary too.
+    add_executable(test_d3d12_render_frame_fencing
+        tests/test_d3d12_render_frame_fencing.cpp
+        src/d3d12_presenter.cpp
+        ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+    )
+    target_include_directories(test_d3d12_render_frame_fencing PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
+    target_link_libraries(test_d3d12_render_frame_fencing PRIVATE
+        ftd_native_session
+        ftd_core
+        d3d12
+        dxgi
+        d3dcompiler
+    )
+
     if(FTD_ENABLE_CUDA)
         # Cross-checks the D3D12 hardware adapter (Task 1,
         # select_hardware_adapter()) against the CUDA device's LUID
