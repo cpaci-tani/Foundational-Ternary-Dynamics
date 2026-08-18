@@ -780,6 +780,7 @@ __global__ void build_particle_list_kernel(
     const int8_t* __restrict__ state,
     int* __restrict__ plist_idx,
     int* __restrict__ num_particles,
+    int* __restrict__ overflow,
     int N, int max_particles
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -789,6 +790,11 @@ __global__ void build_particle_list_kernel(
     int slot = atomicAdd(num_particles, 1);
     if (slot < max_particles) {
         plist_idx[slot] = i;
+    } else {
+        // Sticky: the host used to read the count back and throw inline.
+        // Raising a device flag keeps the loud failure without a blocking
+        // D2H inside the tick. Never cleared by the engine.
+        *overflow = 1;
     }
 }
 
@@ -824,7 +830,8 @@ double alpha_s_lattice_d(double r_voxels) {
 
 __global__ void color_force_kernel(
     const int* __restrict__ plist_idx,
-    const int  num_particles,
+    const int* __restrict__ num_particles_ptr,
+    const int  max_particles,
     const int8_t* __restrict__ state,
     const int8_t* __restrict__ color_arr,
     const double* __restrict__ flux_x,
@@ -836,6 +843,8 @@ __global__ void color_force_kernel(
     double* __restrict__ fd_strong_z,
     int L
 ) {
+    const int raw = *num_particles_ptr;
+    const int num_particles = raw < max_particles ? raw : max_particles;
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
     if (pi >= num_particles) return;
 
@@ -913,13 +922,16 @@ __global__ void color_force_kernel(
 
 __global__ void yukawa_force_kernel(
     const int* __restrict__ plist_idx,
-    const int  num_particles,
+    const int* __restrict__ num_particles_ptr,
+    const int  max_particles,
     const int8_t* __restrict__ state,
     double* __restrict__ fd_strong_x,
     double* __restrict__ fd_strong_y,
     double* __restrict__ fd_strong_z,
     int L
 ) {
+    const int raw = *num_particles_ptr;
+    const int num_particles = raw < max_particles ? raw : max_particles;
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
     if (pi >= num_particles) return;
 
@@ -968,7 +980,8 @@ __global__ void yukawa_force_kernel(
 
 __global__ void exchange_force_kernel(
     const int* __restrict__ plist_idx,
-    const int  num_particles,
+    const int* __restrict__ num_particles_ptr,
+    const int  max_particles,
     const int8_t* __restrict__ state,
     const int8_t* __restrict__ spin_arr,
     double* __restrict__ fd_exchange_x,
@@ -976,6 +989,8 @@ __global__ void exchange_force_kernel(
     double* __restrict__ fd_exchange_z,
     int L
 ) {
+    const int raw = *num_particles_ptr;
+    const int num_particles = raw < max_particles ? raw : max_particles;
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
     if (pi >= num_particles) return;
 
@@ -1026,11 +1041,14 @@ __global__ void exchange_force_kernel(
 
 __global__ void triad_detection_kernel(
     const int* __restrict__ plist_idx,
-    const int  num_particles,
+    const int* __restrict__ num_particles_ptr,
+    const int  max_particles,
     const int8_t* __restrict__ state,
     uint8_t* __restrict__ locked,
     int L
 ) {
+    const int raw = *num_particles_ptr;
+    const int num_particles = raw < max_particles ? raw : max_particles;
     int pi = blockIdx.x * blockDim.x + threadIdx.x;
     if (pi >= num_particles) return;
 
@@ -1192,26 +1210,41 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
 
 void launch_build_particle_list(GpuBuffers& bufs) {
     const cudaStream_t stream = bufs.stream;
-    // Reset counter
-    CUDA_CHECK(cudaMemset(bufs.d_num_particles, 0, sizeof(int)));
+    // Reset counter (the overflow flag is deliberately sticky and is NOT
+    // reset here — the host clears it only by reallocating the engine).
+    CUDA_CHECK(cudaMemsetAsync(bufs.d_num_particles, 0, sizeof(int), stream));
 
     int block = 256;
     int grid = (bufs.N + block - 1) / block;
     build_particle_list_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_plist_idx, bufs.d_num_particles,
+        bufs.d_particle_overflow,
         bufs.N, GpuBuffers::MAX_PARTICLES
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
-    const cudaStream_t stream = bufs.stream;
+// ---------- Fixed-capacity pairwise/triad launches (Component A) ----------
+//
+// These used to be sized from a host-side count obtained with a blocking
+// cudaMemcpy of d_num_particles, which forced a host/device round trip 1-4x
+// per tick and made the launch topology data-dependent (fatal for graph
+// capture). Each launch is now a constant MAX_PARTICLES threads — 32 blocks
+// of 256, ~3% of one full-lattice L=64 kernel — and every thread bounds
+// itself against the device counter, clamped to MAX_PARTICLES so no thread
+// can read past the d_plist_idx allocation.
+namespace {
+constexpr int PARTICLE_FORCE_BLOCK = 256;
+constexpr int PARTICLE_FORCE_GRID =
+    (GpuBuffers::MAX_PARTICLES + PARTICLE_FORCE_BLOCK - 1)
+    / PARTICLE_FORCE_BLOCK;
+}  // namespace
+
+void launch_color_force(GpuBuffers& bufs, double dt) {
     (void)dt;
-    if (num_particles <= 0) return;
-    int block = 256;
-    int grid = (num_particles + block - 1) / block;
-    color_force_kernel<<<grid, block, 0, stream>>>(
-        bufs.d_plist_idx, num_particles,
+    const cudaStream_t stream = bufs.stream;
+    color_force_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
         bufs.d_state, bufs.d_color,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
@@ -1220,14 +1253,11 @@ void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt) {
-    const cudaStream_t stream = bufs.stream;
+void launch_yukawa_force(GpuBuffers& bufs, double dt) {
     (void)dt;
-    if (num_particles <= 0) return;
-    int block = 256;
-    int grid = (num_particles + block - 1) / block;
-    yukawa_force_kernel<<<grid, block, 0, stream>>>(
-        bufs.d_plist_idx, num_particles,
+    const cudaStream_t stream = bufs.stream;
+    yukawa_force_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
         bufs.d_state,
         bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
         bufs.L
@@ -1235,14 +1265,11 @@ void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt) {
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt) {
-    const cudaStream_t stream = bufs.stream;
+void launch_exchange_force(GpuBuffers& bufs, double dt) {
     (void)dt;
-    if (num_particles <= 0) return;
-    int block = 256;
-    int grid = (num_particles + block - 1) / block;
-    exchange_force_kernel<<<grid, block, 0, stream>>>(
-        bufs.d_plist_idx, num_particles,
+    const cudaStream_t stream = bufs.stream;
+    exchange_force_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
         bufs.d_state, bufs.d_spin,
         bufs.d_fd_exchange_x, bufs.d_fd_exchange_y, bufs.d_fd_exchange_z,
         bufs.L
@@ -1250,13 +1277,10 @@ void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt) {
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_triad_detection(GpuBuffers& bufs, int num_particles) {
+void launch_triad_detection(GpuBuffers& bufs) {
     const cudaStream_t stream = bufs.stream;
-    if (num_particles <= 0) return;
-    int block = 256;
-    int grid = (num_particles + block - 1) / block;
-    triad_detection_kernel<<<grid, block, 0, stream>>>(
-        bufs.d_plist_idx, num_particles,
+    triad_detection_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
         bufs.d_state, bufs.d_locked, bufs.L
     );
     CUDA_CHECK(cudaGetLastError());

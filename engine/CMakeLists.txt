@@ -1409,6 +1409,13 @@ if(FTD_ENABLE_CUDA)
                  CTEST_NAME gpu_stream_binding TIMEOUT 300
                  LABELS unit parity interactive)
 
+    # Component A Task 5: fixed-capacity pairwise/triad launches plus the
+    # device-side sticky capacity-overflow flag.
+    ftd_add_test(test_gpu_particle_capacity
+                 tests/test_gpu_particle_capacity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_particle_capacity TIMEOUT 300
+                 LABELS unit parity)
+
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
 
