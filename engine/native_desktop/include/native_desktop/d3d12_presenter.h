@@ -45,11 +45,22 @@ public:
     std::uint32_t width() const { return width_; }
     std::uint32_t height() const { return height_; }
 
+    // Enumerates DXGI adapters and picks the first non-software one (skips
+    // WARP). Static + no side effects on `this` so it's testable without a
+    // window or a live device. Returns false if only a software adapter is
+    // available (rare on real hardware, common in some CI/VM environments).
+    static bool select_hardware_adapter(LUID* out_luid, bool* out_is_hardware);
+
+    LUID adapter_luid() const { return adapter_luid_; }
+    bool has_adapter_luid() const { return has_adapter_luid_; }
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
     std::uint32_t width_ = 0;
     std::uint32_t height_ = 0;
+    LUID adapter_luid_{};
+    bool has_adapter_luid_ = false;
 };
 
 }  // namespace ftd::native_desktop
