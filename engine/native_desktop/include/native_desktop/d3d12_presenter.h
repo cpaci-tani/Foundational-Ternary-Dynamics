@@ -56,12 +56,21 @@ public:
 
     // Creates a D3D12_HEAP_FLAG_SHARED committed buffer sized for
     // `max_particles` InteropParticleRecord entries and exports an NT handle
-    // CUDA can import via cudaImportExternalMemory. Must be called after
-    // initialize(). The returned handle is owned by the caller -- close it
-    // with CloseHandle once CUDA has imported it (cudaImportExternalMemory
-    // takes ownership semantics that make the D3D12-side handle disposable
-    // immediately after the import call returns, per the CUDA Runtime API
-    // docs for cudaExternalMemoryHandleDesc). Returns nullptr on failure.
+    // CUDA can import via cudaImportExternalMemory. Should be called after
+    // initialize() -- calling it before initialize() (no live device) is a
+    // graceful nullptr return, not a crash. The returned handle is owned by
+    // the caller -- close it with CloseHandle once CUDA has imported it
+    // (cudaImportExternalMemory takes ownership semantics that make the
+    // D3D12-side handle disposable immediately after the import call
+    // returns, per the CUDA Runtime API docs for
+    // cudaExternalMemoryHandleDesc). Returns nullptr on failure.
+    //
+    // Safe to call more than once (e.g. to resize the buffer): any
+    // previously-created buffer is waited-on (so no in-flight D3D12/CUDA
+    // work is still touching it) and released before the new one is
+    // created. shared_particle_buffer_bytes() reflects the live buffer's
+    // size and resets to 0 on any failure path, so it never reports a
+    // stale size for a buffer that no longer exists.
     HANDLE create_shared_particle_buffer(std::uint32_t max_particles);
     std::uint64_t shared_particle_buffer_bytes() const {
         return shared_particle_buffer_bytes_;
