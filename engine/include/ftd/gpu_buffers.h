@@ -265,6 +265,20 @@ struct GpuBuffers {
     InteropParticleHeader* d_interop_header = nullptr;         // owned, cudaMalloc'd
     InteropParticleHeader* h_interop_header = nullptr;         // owned, pinned
     cudaEvent_t interop_gather_ready = nullptr;                // owned
+    // Element capacity of the currently-imported D3D12 buffer, i.e.
+    // byte_count / sizeof(InteropParticleRecord) as computed by
+    // GpuEngine::import_d3d12_particle_buffer() from the SAME byte_count the
+    // D3D12 side sized the resource to (D3D12Presenter::
+    // create_shared_particle_buffer() allocates exactly
+    // max_particles * sizeof(InteropParticleRecord) bytes). 0 whenever no
+    // buffer is imported (initial state, or between a torn-down import and a
+    // new one). launch_interop_particle_gather() MUST clamp its write cap to
+    // this value in addition to kMaxVisualParticleCapture -- this is the only
+    // record of how many InteropParticleRecord slots the mapped external
+    // memory view actually has room for; the D3D12-side buffer is created
+    // with an exact, non-padded size, so writing past this many records is an
+    // out-of-bounds GPU write into memory shared with D3D12.
+    std::uint32_t interop_particle_capacity = 0;
 
     // --- Particle list (compact indices of manifested particles) ---
     // Scales with lattice: enough for ~1.5% occupation at any size

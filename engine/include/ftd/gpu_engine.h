@@ -167,6 +167,21 @@ public:
     // own "safe to call more than once" contract: any previously-imported
     // external memory object is torn down before the new import, so a
     // second call never leaks the first import's driver-level reference.
+    // Every (re-)import attempt also resets the interop gather-readiness
+    // state (see interop_gather_ready()/interop_particle_count() below), so
+    // polling those immediately after a fresh import but before the next
+    // interop_gather_particles() call correctly reports "not ready" / 0
+    // instead of the previous buffer's stale state.
+    //
+    // On success, byte_count / sizeof(InteropParticleRecord) is recorded as
+    // this buffer's element capacity: interop_gather_particles() below can
+    // never write more particles than that, no matter what max_particles it
+    // is asked for. byte_count must be the D3D12-side resource's EXACT size
+    // (as D3D12Presenter::create_shared_particle_buffer() constructs it,
+    // max_particles * sizeof(InteropParticleRecord)) for that bound to be
+    // meaningful -- passing a byte_count larger than the resource actually
+    // is defeats the clamp and reintroduces the out-of-bounds write it
+    // exists to prevent.
     //
     // Precondition: like device_luid(), must be called from the same OS
     // thread that owns this GpuEngine's CUDA context -- the underlying CUDA
@@ -178,13 +193,28 @@ public:
     // D3D12 buffer set up by import_d3d12_particle_buffer) and records
     // bufs_.interop_gather_ready. Call after tick(). No-op (returns false)
     // if import_d3d12_particle_buffer() hasn't succeeded yet.
+    //
+    // max_particles is clamped to the imported buffer's actual element
+    // capacity (set by import_d3d12_particle_buffer() from the byte_count it
+    // was given) in addition to the unrelated kMaxVisualParticleCapture
+    // constant that bounds the separate CPU-decode capture path -- passing 0
+    // or a value larger than the imported buffer can hold never writes past
+    // the end of the mapped external-memory view; it silently gathers fewer
+    // particles instead.
     bool interop_gather_particles(std::uint32_t max_particles);
     // True once the event recorded by interop_gather_particles() has
     // retired -- i.e. the header's captured_count is safe to read and the
     // buffer is safe for D3D12 to read from (after the fence signal added in
     // Task 7; until then this only guarantees the CUDA-side work is done,
-    // not that D3D12 has been told it may proceed).
+    // not that D3D12 has been told it may proceed). Also false before the
+    // first interop_gather_particles() call ever succeeds, and false again
+    // immediately after any import_d3d12_particle_buffer() call until the
+    // next gather completes.
     bool interop_gather_ready() const;
+    // Returns 0 (never reads possibly-uninitialized or in-flight host
+    // memory) unless interop_gather_ready() is true for the CURRENT gather;
+    // internally re-checks interop_gather_ready() itself rather than trusting
+    // the caller to have checked it first.
     std::uint32_t interop_particle_count() const;
 
     int total_sites() const { return N_; }
@@ -404,6 +434,21 @@ private:
     VisualSnapshotRequest visual_snapshot_request_{};
     std::uint64_t visual_snapshot_state_version_ = 0;
     int visual_snapshot_tick_ = 0;
+
+    // True once interop_gather_particles() has launched at least one gather
+    // against the CURRENTLY-imported D3D12 buffer. Unlike
+    // visual_snapshot_pending_ (a one-shot request/consume flag cleared by
+    // poll_visual_snapshot()), this stays true across repeated
+    // interop_gather_ready()/interop_particle_count() polls once a gather has
+    // run -- the interop caller (a render loop) is expected to poll
+    // repeatedly between gathers, not consume once. Gates
+    // interop_gather_ready(): cudaEventQuery() on an event that has never had
+    // cudaEventRecord() called on it reports cudaSuccess (nothing to wait
+    // for), so without this flag readiness would read true before the first
+    // gather ever launched. Reset to false by import_d3d12_particle_buffer()
+    // on every (re-)import attempt, so it can never describe a gather that
+    // ran against a since-replaced buffer.
+    bool interop_gather_launched_ = false;
 
     // Helper: ensure host shadow is up-to-date
     void ensure_host_synced();

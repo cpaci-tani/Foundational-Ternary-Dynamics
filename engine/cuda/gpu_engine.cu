@@ -309,19 +309,66 @@ void launch_visual_particle_capture(GpuBuffers& bufs,
 
 void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
                                     std::uint32_t requested_cap) {
+    // The write cap must never exceed the ACTUAL element capacity of the
+    // imported D3D12 buffer -- kMaxVisualParticleCapture alone bounds the
+    // unrelated CPU-decode staging array (d_visual_particle_records), not
+    // this call's destination (bufs.d_interop_particle_buffer, a mapped view
+    // whose real size is bufs.interop_particle_capacity, set by
+    // GpuEngine::import_d3d12_particle_buffer() from the D3D12-side
+    // resource's exact byte size). Clamping against both means a caller
+    // that passes requested_cap==0 (or any value larger than the imported
+    // buffer) can never make the gather kernel write past the end of memory
+    // shared with D3D12. If nothing has been imported yet,
+    // interop_particle_capacity is 0 and this clamps the effective cap to 0,
+    // so the header reports zero captured particles and no record write
+    // happens at all -- the safe outcome for a call that should not have
+    // reached here (GpuEngine::interop_gather_particles() already refuses to
+    // call this before an import succeeds; this clamp is defense in depth).
+    const std::uint32_t import_cap =
+        (std::min)(bufs.interop_particle_capacity, kMaxVisualParticleCapture);
     const std::uint32_t cap = requested_cap == 0
-        ? kMaxVisualParticleCapture
-        : (std::min)(requested_cap, kMaxVisualParticleCapture);
+        ? import_cap
+        : (std::min)(requested_cap, import_cap);
     constexpr int threads = 256;
     const int blocks = (bufs.N + threads - 1) / threads;
 
     // Same flags -> prefix-scan -> header sequence as
     // launch_visual_particle_capture -- deliberately duplicated rather than
-    // factored into a shared helper, because the two call sites use
-    // DIFFERENT scratch destinations for the header (d_visual_particle_header
-    // vs d_interop_header) and this project's engine code favors readable
-    // duplication over a helper with hidden which-header-goes-where branching
-    // in a hot path (matches the existing style already in this file).
+    // factored into a shared helper, because this project's engine code
+    // favors readable duplication over a helper with hidden branching in a
+    // hot path (matches the existing style already in this file).
+    //
+    // IMPORTANT: this sequence writes into the SAME scratch
+    // launch_visual_particle_capture uses -- bufs.d_visual_particle_header
+    // (via the same visual_particle_header_kernel) and the same
+    // d_pair_candidate_flags / d_pair_candidate_indices / d_pair_select_temp
+    // CUB workspace. The two launchers do NOT have different header scratch:
+    // d_interop_header is a separate, ADDITIONAL 4-byte host-visible summary
+    // that only interop_particle_gather_kernel's own final `if (index==0)`
+    // branch populates, by copying FROM d_visual_particle_header's
+    // captured_count -- it is not an alternate destination for this shared
+    // sequence.
+    //
+    // Reusing that scratch across two independently-callable launchers is
+    // race-free TODAY only because bufs.stream is created with plain
+    // cudaStreamCreate (blocking, not cudaStreamNonBlocking -- see
+    // gpu_buffers.cu) while launch_visual_particle_capture's kernels run on
+    // the legacy default stream (no stream argument): CUDA's
+    // synchronizing-stream semantics serialize a blocking stream's work
+    // against the default stream in host issue order (the same invariant
+    // GpuBuffers::stream's own doc comment in gpu_buffers.h states for
+    // Component A generally). That is an incidental consequence of
+    // bufs.stream's creation flags, not an explicit synchronization
+    // primitive (no event, no stream wait) between these two functions. It
+    // breaks silently -- corrupting the selection/count of either or both
+    // captures, no crash to signal it -- if launch_visual_particle_capture
+    // ever moves off the default stream, if bufs.stream is ever created with
+    // cudaStreamNonBlocking (the natural choice for a dedicated
+    // graph-capture stream), or if the CPU-decode capture path and this
+    // interop gather are ever invoked concurrently (plausible once a future
+    // task wires interop into the render/debug loop). Whoever changes either
+    // side of that must give the two launchers independent scratch or an
+    // explicit ordering primitive.
     visual_particle_flags_kernel<<<blocks, threads, 0, bufs.stream>>>(
         bufs.d_state, bufs.d_pair_candidate_flags, bufs.N);
     CUDA_CHECK(cudaGetLastError());
@@ -539,6 +586,23 @@ bool GpuEngine::device_luid(char out_luid[8]) const {
 bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count) {
     if (!nt_handle || byte_count == 0) return false;
 
+    // A real (re-)import attempt below invalidates whatever a PRIOR import's
+    // gather state meant, regardless of whether THIS attempt goes on to
+    // succeed or fail: bufs_.interop_particle_capacity described the OLD
+    // buffer's size (about to be torn down), and interop_gather_launched_
+    // tracked whether a gather had ever completed against that OLD buffer.
+    // Resetting both here closes the stale-state window a caller could
+    // otherwise observe by polling interop_gather_ready()/
+    // interop_particle_count() after a fresh import (e.g. the lattice-resize
+    // re-import path already exercised by test_cuda_import_shared_buffer.cpp)
+    // but before the next interop_gather_particles() call -- without this,
+    // interop_gather_ready() would still report the OLD import's completed
+    // event as "ready" and interop_particle_count() would still return the
+    // OLD import's last captured_count for a buffer nothing has gathered
+    // into yet.
+    interop_gather_launched_ = false;
+    bufs_.interop_particle_capacity = 0;
+
     // Tear down a prior import before creating the new one -- otherwise the
     // assignments below simply overwrite bufs_.interop_external_memory /
     // bufs_.d_interop_particle_buffer and the first import's external memory
@@ -580,6 +644,18 @@ bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte
         bufs_.interop_external_memory = nullptr;
         return false;
     }
+    // Record how many InteropParticleRecord slots the mapped view actually
+    // has room for -- this is the D3D12-side buffer's exact size
+    // (D3D12Presenter::create_shared_particle_buffer() allocates precisely
+    // max_particles * sizeof(InteropParticleRecord) bytes, no padding), so
+    // integer division recovers max_particles exactly for any byte_count a
+    // real caller passes. launch_interop_particle_gather() clamps its write
+    // cap to this value so the gather kernel can never write past the end of
+    // the imported memory. A byte_count that is not an exact multiple of
+    // sizeof(InteropParticleRecord) floors to the largest fully-contained
+    // record count, which is the correct conservative bound either way.
+    bufs_.interop_particle_capacity =
+        static_cast<std::uint32_t>(byte_count / sizeof(InteropParticleRecord));
     return true;
 }
 
@@ -1426,11 +1502,28 @@ bool GpuEngine::poll_visual_snapshot(VisualSnapshot& out) {
 bool GpuEngine::interop_gather_particles(std::uint32_t max_particles) {
     if (!bufs_.d_interop_particle_buffer) return false;
     launch_interop_particle_gather(bufs_, size_, max_particles);
+    // Marks that at least one gather has actually been launched against the
+    // CURRENTLY-imported buffer, so interop_gather_ready() below can tell
+    // "the event has never been recorded" apart from "the event retired".
+    // cudaEventQuery on an event that has never had cudaEventRecord() called
+    // on it returns cudaSuccess (there is no outstanding work to wait for),
+    // so without this flag interop_gather_ready() would report READY before
+    // the first gather ever ran, and interop_particle_count() would then
+    // read bufs_.h_interop_header->captured_count while it is still
+    // uninitialized pinned memory (cudaHostAlloc does not zero it).
+    // import_d3d12_particle_buffer() clears this flag on every (re-)import,
+    // so it also cannot outlive the buffer it was measured against.
+    interop_gather_launched_ = true;
     return true;
 }
 
 bool GpuEngine::interop_gather_ready() const {
-    if (!bufs_.interop_gather_ready) return false;
+    // Mirrors visual_snapshot_ready()'s own pending-flag-before-event-query
+    // pattern (see poll_visual_snapshot() above): a flag gate is required
+    // because cudaEventQuery on a not-yet-recorded event reports "ready" by
+    // definition (no work to wait for), which would otherwise make this
+    // function return true before interop_gather_particles() has ever run.
+    if (!interop_gather_launched_ || !bufs_.interop_gather_ready) return false;
     const cudaError_t status = cudaEventQuery(bufs_.interop_gather_ready);
     if (status == cudaSuccess) return true;
     if (status == cudaErrorNotReady) return false;
@@ -1439,7 +1532,17 @@ bool GpuEngine::interop_gather_ready() const {
 }
 
 std::uint32_t GpuEngine::interop_particle_count() const {
-    return bufs_.h_interop_header ? bufs_.h_interop_header->captured_count : 0u;
+    // Only safe to read bufs_.h_interop_header->captured_count once
+    // interop_gather_ready() is true (its doc comment states this contract
+    // explicitly): before the first gather, the pinned host header is
+    // genuinely uninitialized memory; between a gather launch and its event
+    // retiring, the in-flight cudaMemcpyAsync D2H copy is still writing it.
+    // Gating here -- rather than trusting every caller to check
+    // interop_gather_ready() first -- matches this file's own established
+    // pattern for the analogous visual-snapshot path, where
+    // poll_visual_snapshot() (not the caller) enforces the same precondition
+    // via visual_snapshot_ready().
+    return interop_gather_ready() ? bufs_.h_interop_header->captured_count : 0u;
 }
 
 void GpuEngine::inspect_voxel(int index, VoxelInspection& out) {
