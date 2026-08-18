@@ -193,11 +193,26 @@ public:
     // external semaphore. Same handle-lifetime contract as
     // import_d3d12_particle_buffer: caller closes the handle after this
     // call returns.
+    //
+    // Precondition: like import_d3d12_particle_buffer(), must be called from
+    // the same OS thread that owns this GpuEngine's CUDA context --
+    // cudaImportExternalSemaphore operates against the calling thread's
+    // current CUDA context, not a property of this GpuEngine instance.
     bool import_d3d12_fence(void* nt_handle);
-    // Signals the imported fence to `value` on the engine stream, ordered
-    // after the most recent interop_gather_particles() call -- D3D12's
+    // Signals the imported fence to `value` on the engine stream. When
+    // invoked internally by interop_gather_particles() (the expected use),
+    // this is ordered after that call's gather kernel launch -- D3D12's
     // wait_shared_fence(value) will unblock once this retires on the GPU
-    // timeline (no CPU synchronization involved on either side).
+    // timeline (no CPU synchronization involved on either side). This method
+    // is public and may also be called directly; a direct external call
+    // carries no such ordering guarantee against any particular gather -- it
+    // is simply issued on the engine stream at the point of the call.
+    //
+    // Precondition: like import_d3d12_fence(), must be called from the same
+    // OS thread that owns this GpuEngine's CUDA context --
+    // cudaSignalExternalSemaphoresAsync operates against the calling
+    // thread's current CUDA context, not a property of this GpuEngine
+    // instance.
     bool interop_signal_fence(std::uint64_t value);
 
     // Runs the interop particle gather (writes directly into the imported
@@ -221,14 +236,22 @@ public:
     // unused in that case.
     bool interop_gather_particles(std::uint32_t max_particles,
                                   std::uint64_t fence_value);
-    // True once the event recorded by interop_gather_particles() has
-    // retired -- i.e. the header's captured_count is safe to read and the
-    // buffer is safe for D3D12 to read from (after the fence signal added in
-    // Task 7; until then this only guarantees the CUDA-side work is done,
-    // not that D3D12 has been told it may proceed). Also false before the
-    // first interop_gather_particles() call ever succeeds, and false again
-    // immediately after any import_d3d12_particle_buffer() call until the
-    // next gather completes.
+    // True once the CPU-visible event recorded by interop_gather_particles()
+    // has retired -- i.e. the header's captured_count is safe to read on the
+    // CPU. This does NOT by itself prove the buffer is safe for D3D12 to
+    // read from: the event is recorded on bufs_.stream BEFORE
+    // interop_gather_particles() issues interop_signal_fence()'s
+    // cudaSignalExternalSemaphoresAsync() call, and CUDA only guarantees
+    // same-stream ops retire in issue order -- observing this earlier
+    // event's completion does not prove the later-issued semaphore signal
+    // has also retired. The real GPU-timeline safety guarantee for D3D12
+    // reads is carried entirely by D3D12Presenter::wait_shared_fence() (the
+    // D3D12-side Wait() against the cross-API fence), independent of this
+    // CPU-side poll; this function is a "has the CUDA-side gather finished"
+    // convenience only, not a D3D12-read-safety signal. Also false before
+    // the first interop_gather_particles() call ever succeeds, and false
+    // again immediately after any import_d3d12_particle_buffer() call until
+    // the next gather completes.
     bool interop_gather_ready() const;
     // Returns 0 (never reads possibly-uninitialized or in-flight host
     // memory) unless interop_gather_ready() is true for the CURRENT gather;

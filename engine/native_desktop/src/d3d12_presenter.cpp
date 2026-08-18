@@ -558,6 +558,18 @@ HANDLE D3D12Presenter::create_shared_particle_buffer(std::uint32_t max_particles
 
 HANDLE D3D12Presenter::create_shared_fence() {
     if (!impl_->device) return nullptr;
+
+    // Wait for outstanding GPU work before releasing/replacing any previous
+    // shared fence -- mirrors create_shared_particle_buffer()'s wait_idle()
+    // before it recreates/replaces impl_->shared_particle_buffer, for the
+    // identical reason: IID_PPV_ARGS(&impl_->shared_fence) below releases any
+    // previously-held fence via ReleaseAndGetAddressOf() regardless of
+    // whether the new CreateFence call succeeds, and an in-flight
+    // queue->Wait() against the OLD fence object must not be torn out from
+    // under outstanding GPU work. Harmless (cheap) on a queue with nothing in
+    // flight, e.g. the very first call.
+    wait_idle();
+
     if (FAILED(impl_->device->CreateFence(0, D3D12_FENCE_FLAG_SHARED,
                                           IID_PPV_ARGS(&impl_->shared_fence)))) {
         return nullptr;
@@ -572,8 +584,21 @@ HANDLE D3D12Presenter::create_shared_fence() {
 }
 
 void D3D12Presenter::wait_shared_fence(std::uint64_t value) {
-    if (!impl_->shared_fence) return;
-    impl_->queue->Wait(impl_->shared_fence.Get(), value);
+    // Mirrors wait_idle()'s identical `if (!impl_->queue) return;` guard for
+    // the same precondition (called before initialize()). impl_->shared_fence
+    // can't be set without impl_->device/impl_->queue already existing
+    // (create_shared_fence() requires impl_->device), so this is defensive
+    // rather than reachable in practice today.
+    if (!impl_->queue || !impl_->shared_fence) return;
+    // Every other consequential D3D12 call in this file (including the
+    // structurally identical impl_->queue->Signal() in wait_idle()) is
+    // wrapped in throw_if_failed -- Wait() is the actual GPU-timeline
+    // synchronization primitive this task exists to add, so a silently
+    // discarded failure here (device-removed/TDR, stale fence object, wrong
+    // queue type) would leave the caller with zero signal that the
+    // subsequent draw call is about to proceed unsynchronized.
+    throw_if_failed(impl_->queue->Wait(impl_->shared_fence.Get(), value),
+                    "Wait shared_fence");
 }
 
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
