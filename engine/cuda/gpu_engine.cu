@@ -388,6 +388,61 @@ bool GpuEngine::device_luid(char out_luid[8]) const {
     return true;
 }
 
+// Unlike device_luid() above, this is NOT a repeatable, side-effect-free
+// "can I do X?" query -- it is a one-time setup step that later interop work
+// (the gather kernel a subsequent task adds) depends on actually succeeding.
+// A false return here means "interop is unavailable this session", not "try
+// again": on the first-call failure path nothing was imported, and on the
+// second-call failure path the partially-created external memory object is
+// explicitly torn down (cudaDestroyExternalMemory) before returning, so this
+// object never holds a half-imported handle either way.
+//
+// It still soft-fails (bool, no throw) rather than going through CUDA_CHECK,
+// matching this codebase's established pattern for one-time D3D12/CUDA setup
+// calls the native_desktop app probes rather than hard-crashes on (see
+// D3D12Presenter::create_shared_particle_buffer(), which returns nullptr on
+// failure for the same reason: a missing/mismatched adapter or an
+// interop-hostile driver is a real, recoverable-by-the-caller outcome, not a
+// programming error).
+//
+// The sticky-error-clearing concern from device_luid() DOES still apply here,
+// for a reason independent of the "is this a probe?" question: this function
+// runs CUDA API calls on the same host thread that will go on to do
+// unrelated tick work afterward (kernel launches immediately followed by
+// CUDA_CHECK(cudaGetLastError()), the codebase's standard post-launch-error
+// pattern -- see kernels_forces.cu, kernels_poisson.cu, etc.). If a failed
+// import here left the runtime's per-thread sticky error set, the very next
+// unrelated CUDA_CHECK(cudaGetLastError()) in the tick path would pick it up
+// and misattribute this function's stale failure to a completely unrelated
+// kernel launch. Both failure branches below clear it for that reason.
+bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count) {
+    if (!nt_handle || byte_count == 0) return false;
+
+    cudaExternalMemoryHandleDesc mem_desc{};
+    mem_desc.type = cudaExternalMemoryHandleTypeD3D12Resource;
+    mem_desc.handle.win32.handle = nt_handle;
+    mem_desc.size = byte_count;
+    mem_desc.flags = cudaExternalMemoryDedicated;
+    if (cudaImportExternalMemory(&bufs_.interop_external_memory, &mem_desc) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; see function-level comment
+        return false;
+    }
+
+    cudaExternalMemoryBufferDesc buf_desc{};
+    buf_desc.offset = 0;
+    buf_desc.size = byte_count;
+    buf_desc.flags = 0;
+    if (cudaExternalMemoryGetMappedBuffer(&bufs_.d_interop_particle_buffer,
+                                          bufs_.interop_external_memory,
+                                          &buf_desc) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; see function-level comment
+        cudaDestroyExternalMemory(bufs_.interop_external_memory);
+        bufs_.interop_external_memory = nullptr;
+        return false;
+    }
+    return true;
+}
+
 void GpuEngine::set_dt(double dt) {
     // Mirror RenderBridge::set_dt: dt<1 is honored ONLY with symplectic_leapfrog,
     // which permits a CFL-stable sub-step (the plain leapfrog hardcodes dt=1 and
