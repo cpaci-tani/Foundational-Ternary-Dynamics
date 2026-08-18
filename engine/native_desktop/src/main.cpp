@@ -90,6 +90,17 @@ struct AppState {
     std::atomic<bool>* paused = nullptr;
     std::atomic<int>* tick_hz = nullptr;
     std::atomic<bool>* reloading = nullptr;
+    // Set once during main()'s setup (running right after it's declared,
+    // sim right after the sim thread is constructed) and never reassigned
+    // afterward, so reading these pointers from view_proc -- which runs on
+    // this same GUI/message-loop thread, never concurrently with the writes
+    // -- is race-free. See stop_sim_and_rethrow()'s doc comment for why
+    // view_proc needs them at all: any D3D12Presenter call reachable from a
+    // window message (e.g. resize() from WM_SIZE) can throw, and that
+    // exception unwinds straight past the still-joinable `sim` thread
+    // object unless it is stopped and joined first.
+    std::atomic<bool>* running = nullptr;
+    std::thread* sim = nullptr;
 
     bool dragging = false;
     bool syncing = false;
@@ -244,6 +255,44 @@ void apply_camera_for_lattice(AppState* app, int lattice_size) {
     app->camera.distance = static_cast<float>(lattice_size) * 1.8f;
 }
 
+// Must be called from directly inside a `catch (...)` block (it ends with a
+// bare `throw;`, which rethrows "the currently handled exception" and is
+// only well-defined within the dynamic extent of a handler). Stops the sim
+// thread and joins it -- if it exists and is still joinable -- before
+// rethrowing, so that whatever unwinds past the now-defunct `sim`
+// std::thread object finds it already joined. std::thread's destructor
+// calls std::terminate() on a still-joinable thread, and every D3D12 call
+// reachable from this GUI/message-loop thread (resize() from WM_SIZE,
+// wait_shared_fence()/render() from the per-frame draw in main()) funnels
+// failures through throw_if_failed() as std::runtime_error for realistic
+// GPU-app failure modes: device-removed/TDR, adapter loss on sleep-resume
+// or a monitor/DPI change, CreateCommittedResource running out of memory,
+// etc. Centralizing the join-before-rethrow dance here keeps every
+// GUI-thread D3D12 call site consistent instead of re-deriving it per call
+// site (and forgetting one, as WM_SIZE's resize() call once did).
+//
+// `sim` may be null (main() hasn't constructed the sim thread yet, e.g.
+// during initial window/view creation) or non-null but already joined by
+// an earlier call to this same function further down the same unwind --
+// both are handled by the joinable() check, so calling this more than once
+// per exception is safe. `running` may also be null defensively, though in
+// practice both call sites always pass a valid pointer.
+//
+// Note: std::thread::join() can itself throw std::system_error (e.g.
+// resource_deadlock_would_occur) if `sim` is not in a joinable state that
+// join() accepts. That's not expected to happen at either call site --
+// `sim` is never joined anywhere else before this runs -- but if this
+// pattern is ever copy-pasted to a call site where that invariant doesn't
+// hold, a join() failure here would replace the original exception's
+// message with a generic system_error before it reaches main()'s
+// MessageBoxA, silently losing the diagnostic this whole mechanism exists
+// to preserve.
+[[noreturn]] void stop_sim_and_rethrow(std::atomic<bool>* running, std::thread* sim) {
+    if (running) running->store(false);
+    if (sim && sim->joinable()) sim->join();
+    throw;
+}
+
 LRESULT CALLBACK view_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     AppState* app = app_from_hwnd(hwnd);
     switch (msg) {
@@ -283,7 +332,24 @@ LRESULT CALLBACK view_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
             if (app && app->presenter && wparam != SIZE_MINIMIZED) {
                 const UINT w = LOWORD(lparam);
                 const UINT h = HIWORD(lparam);
-                if (w > 0 && h > 0) app->presenter->resize(w, h);
+                // Reachable synchronously from DispatchMessageW well after
+                // the sim thread exists (e.g. dragging/maximizing the main
+                // window -> wnd_proc's WM_SIZE -> layout_shell ->
+                // MoveWindow on app->view -> this handler, all on this GUI
+                // thread, all before MoveWindow returns). D3D12Presenter::
+                // resize() funnels ResizeBuffers/GetBuffer/
+                // CreateCommittedResource/its own wait_idle() through
+                // throw_if_failed() -- see stop_sim_and_rethrow()'s doc
+                // comment for why an uncaught throw here is a
+                // std::terminate hazard, identical to the one already
+                // guarded at the per-frame render() call site below.
+                if (w > 0 && h > 0) {
+                    try {
+                        app->presenter->resize(w, h);
+                    } catch (...) {
+                        stop_sim_and_rethrow(app->running, app->sim);
+                    }
+                }
             }
             return 0;
         default:
@@ -604,6 +670,7 @@ int main(int argc, char** argv) {
         app.paused = &paused;
         app.tick_hz = &tick_hz;
         app.reloading = &reloading;
+        app.running = &running;
         app.bg = CreateSolidBrush(RGB(18, 22, 28));
         app.edit_bg = CreateSolidBrush(RGB(28, 34, 44));
         app.font = CreateFontW(-14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
@@ -720,6 +787,16 @@ int main(int argc, char** argv) {
             // fence value that gather was signaled under -- the snapshot
             // handed to the GUI thread below must never mix one gather's
             // count with another gather's fence value.
+            //
+            // Neither counter is reset when interop_active flips true ->
+            // false on a reload (see the do_reload branch below). Harmless
+            // today: boot() never re-enables interop, so interop_active
+            // never flips back to true and these values are simply dead for
+            // the rest of the process once that happens. Whoever implements
+            // re-import after a reload (Interop Task 12) needs to reset both
+            // here first, or a resumed interop session would pair its first
+            // post-reload gather with a stale fence baseline left over from
+            // before the reload.
             std::uint64_t interop_fence_counter = 0;
             std::uint64_t pending_interop_fence = 0;
             while (running.load()) {
@@ -746,83 +823,90 @@ int main(int argc, char** argv) {
                 try {
                     const bool need_work =
                     do_reload || boundary >= 0 || steps > 0 || !paused.load();
-                if (need_work) {
-                    if (do_reload) {
-                        const bool was_active = interop_active.load();
-                        session.apply_options(reload_opts);
-                        // boot() (invoked by apply_options()) always clears
-                        // the session's interop_enabled_ -- interop is never
-                        // re-imported after a reload -- so mirror that back
-                        // into the flag the GUI thread reads, or it keeps
-                        // treating a now-permanently-dead interop path as
-                        // live (stale "interop: enabled" behavior).
-                        interop_active.store(session.interop_enabled());
-                        if (was_active && !session.interop_enabled()) {
-                            // No re-import path exists yet (see Interop
-                            // Task 9 follow-up): this reload permanently
-                            // drops the GPU-interop fast path for the rest
-                            // of the process, silently falling back to the
-                            // CPU particle-capture path. The one-time
-                            // startup "interop: enabled" print above is the
-                            // only other diagnostic for this state, so log
-                            // the transition here too rather than leaving it
-                            // undetectable outside a debugger.
-                            std::cout << "interop: disabled by reload, "
-                                         "falling back to CPU particle path "
-                                         "for the rest of this session\n"
-                                      << std::flush;
+                    if (need_work) {
+                        if (do_reload) {
+                            const bool was_active = interop_active.load();
+                            session.apply_options(reload_opts);
+                            // boot() (invoked by apply_options()) always clears
+                            // the session's interop_enabled_ -- interop is never
+                            // re-imported after a reload -- so mirror that back
+                            // into the flag the GUI thread reads, or it keeps
+                            // treating a now-permanently-dead interop path as
+                            // live (stale "interop: enabled" behavior).
+                            interop_active.store(session.interop_enabled());
+                            if (was_active && !session.interop_enabled()) {
+                                // No re-import path exists yet (see Interop
+                                // Task 9 follow-up): this reload permanently
+                                // drops the GPU-interop fast path for the rest
+                                // of the process, silently falling back to the
+                                // CPU particle-capture path. The one-time
+                                // startup "interop: enabled" print above is the
+                                // only other diagnostic for this state, so log
+                                // the transition here too rather than leaving it
+                                // undetectable outside a debugger.
+                                std::cout << "interop: disabled by reload, "
+                                             "falling back to CPU particle path "
+                                             "for the rest of this session\n"
+                                          << std::flush;
+                            }
+                        } else if (boundary >= 0) {
+                            session.set_flux_boundary(boundary);
                         }
-                    } else if (boundary >= 0) {
-                        session.set_flux_boundary(boundary);
+                        if (steps > 0) {
+                            for (int i = 0; i < steps; ++i) session.tick();
+                        } else if (!paused.load() && !do_reload) {
+                            session.tick();
+                        }
+                        // Poll and request interop work exclusively on this
+                        // thread. `session`/`bridge_` must never be touched from
+                        // the GUI/message-loop thread: boot() above can reset
+                        // bridge_ to null mid-reconstruction with zero locking,
+                        // so a render-thread call racing a reload is a
+                        // null-pointer dereference waiting to happen. Staying on
+                        // this thread also means a thrown GPU error (e.g.
+                        // GpuEngine::interop_gather_ready()'s cudaEventQuery
+                        // failure path) lands in the catch block below like every
+                        // other session call here, instead of unwinding past the
+                        // still-joinable `sim` thread object and calling
+                        // std::terminate().
+                        int polled_interop_count = -1;
+                        std::uint64_t polled_interop_fence = 0;
+                        if (interop_active.load()) {
+                            polled_interop_count = session.poll_interop_particle_count();
+                            polled_interop_fence = pending_interop_fence;
+                            const std::uint64_t fv = ++interop_fence_counter;
+                            // request_interop_gather() -> GpuEngine::interop_signal_fence()
+                            // is documented (gpu_engine.h) as needing "the same OS
+                            // thread that owns this GpuEngine's CUDA context", but
+                            // try_enable_interop()'s imports ran on the main thread
+                            // above while this call runs on this sim thread -- a
+                            // different OS thread. What actually makes that safe is
+                            // the CUDA Runtime API's per-device primary-context
+                            // sharing: every host thread that touches device 0
+                            // implicitly attaches to that same device-0 primary
+                            // context (no cudaSetDevice() call needed to select it,
+                            // since 0 is the default), so "the thread that owns the
+                            // CUDA context" is really "any thread", and the main
+                            // thread's imports and this sim thread's gather/signal
+                            // calls end up sharing one context regardless of which
+                            // OS thread issues them. That degenerates on a
+                            // multi-GPU machine -- this codebase never calls
+                            // cudaSetDevice(), so every thread defaults to device 0,
+                            // the same assumption device_luid() relies on by reading
+                            // device 0 directly -- and would need an explicit
+                            // cudaSetDevice(0) per thread (or a real multi-GPU
+                            // device selection story) to keep holding.
+                            session.request_interop_gather(fv);
+                            pending_interop_fence = fv;
+                        }
+                        ftd::native_desktop::NativeFrame next = session.capture();
+                        {
+                            std::lock_guard<std::mutex> lock(frame_mu);
+                            latest = std::move(next);
+                            latest_interop_count = polled_interop_count;
+                            latest_interop_fence = polled_interop_fence;
+                        }
                     }
-                    if (steps > 0) {
-                        for (int i = 0; i < steps; ++i) session.tick();
-                    } else if (!paused.load() && !do_reload) {
-                        session.tick();
-                    }
-                    // Poll and request interop work exclusively on this
-                    // thread. `session`/`bridge_` must never be touched from
-                    // the GUI/message-loop thread: boot() above can reset
-                    // bridge_ to null mid-reconstruction with zero locking,
-                    // so a render-thread call racing a reload is a
-                    // null-pointer dereference waiting to happen. Staying on
-                    // this thread also means a thrown GPU error (e.g.
-                    // GpuEngine::interop_gather_ready()'s cudaEventQuery
-                    // failure path) lands in the catch block below like every
-                    // other session call here, instead of unwinding past the
-                    // still-joinable `sim` thread object and calling
-                    // std::terminate().
-                    int polled_interop_count = -1;
-                    std::uint64_t polled_interop_fence = 0;
-                    if (interop_active.load()) {
-                        polled_interop_count = session.poll_interop_particle_count();
-                        polled_interop_fence = pending_interop_fence;
-                        const std::uint64_t fv = ++interop_fence_counter;
-                        // request_interop_gather() -> GpuEngine::interop_signal_fence()
-                        // is documented (gpu_engine.h) as needing "the same OS
-                        // thread that owns this GpuEngine's CUDA context", but
-                        // try_enable_interop()'s imports ran on the main thread
-                        // above while this call runs on this sim thread -- a
-                        // different OS thread. That precondition is about which
-                        // CUDA device is current on the calling thread, and this
-                        // works only because nothing in this codebase ever calls
-                        // cudaSetDevice(): every thread implicitly defaults to
-                        // device 0, the same assumption device_luid() relies on
-                        // by reading device 0 directly. Fine on this single-GPU
-                        // setup; would need an explicit cudaSetDevice(0) per
-                        // thread (or a real multi-GPU device selection story) to
-                        // hold on a multi-GPU machine.
-                        session.request_interop_gather(fv);
-                        pending_interop_fence = fv;
-                    }
-                    ftd::native_desktop::NativeFrame next = session.capture();
-                    {
-                        std::lock_guard<std::mutex> lock(frame_mu);
-                        latest = std::move(next);
-                        latest_interop_count = polled_interop_count;
-                        latest_interop_fence = polled_interop_fence;
-                    }
-                }
                 } catch (const std::exception& ex) {
                     std::lock_guard<std::mutex> lock(frame_mu);
                     latest.status = ex.what();
@@ -837,6 +921,14 @@ int main(int argc, char** argv) {
                 }
             }
         });
+        // Published only after the thread is fully constructed (and thus
+        // already joinable); see AppState::sim's doc comment for why
+        // view_proc can read this pointer race-free. No window message is
+        // dispatched between this point and the sim thread's construction
+        // above (the message loop hasn't started pumping yet), so there is
+        // no window in which a WM_SIZE could observe app.sim as a stale
+        // non-null pointer to a not-yet-started thread.
+        app.sim = &sim;
 
         MSG msg{};
         bool quit = false;
@@ -920,27 +1012,17 @@ int main(int argc, char** argv) {
             // through throw_if_failed() (device-removed/TDR, adapter loss on
             // sleep-resume or a monitor change, CreateCommittedResource
             // running out of memory, etc. -- realistic GPU-app failure
-            // modes on this GUI/message-loop thread, not exotic ones). The
-            // only handler in this function is the single try/catch wrapping
-            // all of main() below; without a local catch here, an exception
-            // thrown from either call would unwind straight past the still-
-            // joinable `sim` std::thread object above and std::thread's
-            // destructor calls std::terminate() on a joinable thread --
-            // killing the process before main()'s catch (and its
-            // MessageBoxA error dialog) is ever reached. Stop and join `sim`
-            // here, before rethrowing, so the thread is no longer joinable
-            // by the time stack unwinding reaches its destructor; the
-            // rethrow then lets main()'s existing catch report the error
-            // exactly as it does for every other startup/session failure.
+            // modes on this GUI/message-loop thread, not exotic ones). See
+            // stop_sim_and_rethrow()'s doc comment for why an uncaught throw
+            // from either call here is a std::terminate hazard (the same one
+            // view_proc's WM_SIZE handler guards resize() against above).
             try {
                 if (draw_interop_count != 0) {
                     presenter.wait_shared_fence(this_frame_fence_value);
                 }
                 presenter.render(frame, app.camera, app.view_opts, draw_interop_count);
             } catch (...) {
-                running.store(false);
-                sim.join();
-                throw;
+                stop_sim_and_rethrow(&running, &sim);
             }
         }
 
