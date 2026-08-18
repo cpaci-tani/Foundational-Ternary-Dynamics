@@ -174,6 +174,19 @@ public:
     // a property of this GpuEngine instance.
     bool import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count);
 
+    // Runs the interop particle gather (writes directly into the imported
+    // D3D12 buffer set up by import_d3d12_particle_buffer) and records
+    // bufs_.interop_gather_ready. Call after tick(). No-op (returns false)
+    // if import_d3d12_particle_buffer() hasn't succeeded yet.
+    bool interop_gather_particles(std::uint32_t max_particles);
+    // True once the event recorded by interop_gather_particles() has
+    // retired -- i.e. the header's captured_count is safe to read and the
+    // buffer is safe for D3D12 to read from (after the fence signal added in
+    // Task 7; until then this only guarantees the CUDA-side work is done,
+    // not that D3D12 has been told it may proceed).
+    bool interop_gather_ready() const;
+    std::uint32_t interop_particle_count() const;
+
     int total_sites() const { return N_; }
     double dt() const { return dt_; }
     void set_dt(double dt);

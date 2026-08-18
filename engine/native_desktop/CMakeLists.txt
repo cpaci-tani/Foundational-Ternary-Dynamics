@@ -132,5 +132,30 @@ if(WIN32)
         # Same ftd_test_support cross-directory-ordering hazard as the other
         # native_desktop tests above: compile test_telemetry.cpp directly
         # into this binary instead of linking ftd_test_support.
+
+        # Task 6: reuses the flags/prefix-scan/header selection pass from
+        # launch_visual_particle_capture but gathers fully-decoded
+        # InteropParticleRecords straight into the buffer imported by Task 5
+        # (test_cuda_import_shared_buffer above), instead of raw
+        # VisualParticleRecords for later CPU decode. Same FTD_ENABLE_CUDA
+        # gating as that test, for the same reason (needs ftd_cuda).
+        add_executable(test_interop_gather
+            tests/test_interop_gather.cpp
+            src/d3d12_presenter.cpp
+            ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+        )
+        target_include_directories(test_interop_gather PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_interop_gather PRIVATE
+            ftd_native_session
+            ftd_cuda
+            d3d12
+            dxgi
+            d3dcompiler
+        )
+        # Same ftd_test_support cross-directory-ordering hazard as the other
+        # native_desktop tests above: compile test_telemetry.cpp directly
+        # into this binary instead of linking ftd_test_support.
     endif()
 endif()
