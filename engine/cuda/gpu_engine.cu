@@ -9,6 +9,7 @@
 #include "ftd/gpu_engine.h"
 #include "ftd/constants.h"
 #include "ftd/volumetric_measure.h"
+#include "ftd/interop_particle_record.h"
 #include <cuda_runtime.h>
 #include <cub/device/device_scan.cuh>
 #include <thrust/iterator/transform_iterator.h>
@@ -195,6 +196,66 @@ __global__ void visual_particle_gather_kernel(
     records[slot] = record;
 }
 
+// Mirrors NativeEngineSession::capture()'s per-particle color assignment
+// (engine/native_desktop/src/engine_session.cpp) and Lattice::coord()'s
+// (engine/include/ftd/lattice.h) world-position decode exactly, so
+// interop-rendered and CPU-rendered particles are visually identical -- this
+// is the fact Task 11's validation test checks. Lattice::index(x,y,z) packs
+// x*L^2 + y*L + z, so the inverse (Lattice::coord()) is z = idx % L,
+// y = (idx / L) % L, x = idx / (L * L) -- x is the SLOWEST-varying digit,
+// not the fastest, so it is deliberately decoded last below.
+__global__ void interop_particle_gather_kernel(
+    const std::int8_t* __restrict__ state,
+    const double* __restrict__ remainder_x,
+    const double* __restrict__ remainder_y,
+    const double* __restrict__ remainder_z,
+    const std::int32_t* __restrict__ prefix, int N, int L,
+    const VisualParticleStagingHeader* __restrict__ header,
+    InteropParticleRecord* __restrict__ records,
+    InteropParticleHeader* __restrict__ interop_header) {
+    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (index == 0) {
+        // Same bounded cap as the existing header kernel writes for the
+        // shared path -- captured_count there is already min(manifested, cap).
+        interop_header->captured_count = header->captured_count;
+    }
+
+    if (index >= N || state[index] == 0) return;
+    const std::uint32_t manifested = header->total_manifested;
+    const std::uint32_t selected = header->captured_count;
+    if (manifested == 0 || selected == 0) return;
+
+    const std::uint64_t previous_rank = static_cast<std::uint64_t>(prefix[index]);
+    const std::uint64_t current_rank = previous_rank + 1u;
+    const std::uint64_t previous_bucket =
+        previous_rank * static_cast<std::uint64_t>(selected) / manifested;
+    const std::uint64_t current_bucket =
+        current_rank * static_cast<std::uint64_t>(selected) / manifested;
+    if (current_bucket == previous_bucket) return;
+    const std::uint32_t slot = static_cast<std::uint32_t>(current_bucket - 1u);
+
+    // Decode lattice index -> integer coord -> world position exactly as
+    // Lattice::coord()/NativeEngineSession::capture() do on the CPU today:
+    // z = index % L, y = (index / L) % L, x = index / (L*L); voxel center is
+    // coord + 0.5, plus the sub-voxel remainder.
+    const int cz = index % L;
+    const int cy = (index / L) % L;
+    const int cx = index / (L * L);
+
+    InteropParticleRecord rec;
+    rec.x = static_cast<float>(cx) + 0.5f + static_cast<float>(remainder_x[index]);
+    rec.y = static_cast<float>(cy) + 0.5f + static_cast<float>(remainder_y[index]);
+    rec.z = static_cast<float>(cz) + 0.5f + static_cast<float>(remainder_z[index]);
+    rec.size = 0.55f;
+    if (state[index] >= 0) {
+        rec.r = 0.29f; rec.g = 0.87f; rec.b = 0.50f;
+    } else {
+        rec.r = 0.97f; rec.g = 0.44f; rec.b = 0.44f;
+    }
+    records[slot] = rec;
+}
+
 void launch_visual_particle_capture(GpuBuffers& bufs,
                                     std::uint32_t requested_cap,
                                     cudaEvent_t ready_event) {
@@ -244,6 +305,54 @@ void launch_visual_particle_capture(GpuBuffers& bufs,
     g_gpu_visual_snapshot_download_bytes +=
         sizeof(VisualParticleStagingHeader) + record_bytes;
     ++g_gpu_visual_snapshot_launches;
+}
+
+void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
+                                    std::uint32_t requested_cap) {
+    const std::uint32_t cap = requested_cap == 0
+        ? kMaxVisualParticleCapture
+        : (std::min)(requested_cap, kMaxVisualParticleCapture);
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+
+    // Same flags -> prefix-scan -> header sequence as
+    // launch_visual_particle_capture -- deliberately duplicated rather than
+    // factored into a shared helper, because the two call sites use
+    // DIFFERENT scratch destinations for the header (d_visual_particle_header
+    // vs d_interop_header) and this project's engine code favors readable
+    // duplication over a helper with hidden which-header-goes-where branching
+    // in a hot path (matches the existing style already in this file).
+    visual_particle_flags_kernel<<<blocks, threads, 0, bufs.stream>>>(
+        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+
+    const auto flags = thrust::make_transform_iterator(
+        bufs.d_pair_candidate_flags, ParticleFlagToInt{});
+    CUDA_CHECK(cub::DeviceScan::ExclusiveSum(
+        bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
+        flags, bufs.d_pair_candidate_indices, bufs.N, bufs.stream));
+
+    visual_particle_header_kernel<<<1, 1, 0, bufs.stream>>>(
+        bufs.d_pair_candidate_flags, bufs.d_pair_candidate_indices, bufs.N,
+        cap, bufs.d_visual_particle_header);
+    CUDA_CHECK(cudaGetLastError());
+
+    interop_particle_gather_kernel<<<blocks, threads, 0, bufs.stream>>>(
+        bufs.d_state, bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_pair_candidate_indices, bufs.N, lattice_size,
+        bufs.d_visual_particle_header,
+        static_cast<InteropParticleRecord*>(bufs.d_interop_particle_buffer),
+        bufs.d_interop_header);
+    CUDA_CHECK(cudaGetLastError());
+
+    // Only the 4-byte count needs a host round trip -- this is the whole
+    // point of the interop path: no per-particle download, no per-particle
+    // CPU decode. Compare to launch_visual_particle_capture's D2H of the
+    // full kMaxVisualParticleCapture-sized record array.
+    CUDA_CHECK(cudaMemcpyAsync(bufs.h_interop_header, bufs.d_interop_header,
+                              sizeof(InteropParticleHeader),
+                              cudaMemcpyDeviceToHost, bufs.stream));
+    CUDA_CHECK(cudaEventRecord(bufs.interop_gather_ready, bufs.stream));
 }
 
 }  // namespace
@@ -1301,6 +1410,36 @@ bool GpuEngine::poll_visual_snapshot(VisualSnapshot& out) {
                                  bufs_.h_visual_particle_records + count);
     visual_snapshot_pending_ = false;
     return true;
+}
+
+// Native-desktop D3D12 interop (Component B). Runs the same
+// flags/prefix-scan/header selection pass as begin_visual_snapshot() above,
+// but gathers fully-decoded InteropParticleRecords straight into the buffer
+// import_d3d12_particle_buffer() imported, instead of raw
+// VisualParticleRecords for later CPU decode -- see
+// launch_interop_particle_gather()'s own comment for why the two paths stay
+// duplicated rather than sharing a helper. Everything here runs on
+// bufs_.stream (the Component-A dedicated stream), unlike
+// begin_visual_snapshot()'s default-stream launches, so it can be ordered
+// with (and graph-captured alongside) the rest of the tick if a future task
+// folds it into Component A's capture.
+bool GpuEngine::interop_gather_particles(std::uint32_t max_particles) {
+    if (!bufs_.d_interop_particle_buffer) return false;
+    launch_interop_particle_gather(bufs_, size_, max_particles);
+    return true;
+}
+
+bool GpuEngine::interop_gather_ready() const {
+    if (!bufs_.interop_gather_ready) return false;
+    const cudaError_t status = cudaEventQuery(bufs_.interop_gather_ready);
+    if (status == cudaSuccess) return true;
+    if (status == cudaErrorNotReady) return false;
+    throw std::runtime_error(std::string("[GpuEngine] interop gather event query failed: ")
+                             + cudaGetErrorString(status));
+}
+
+std::uint32_t GpuEngine::interop_particle_count() const {
+    return bufs_.h_interop_header ? bufs_.h_interop_header->captured_count : 0u;
 }
 
 void GpuEngine::inspect_voxel(int index, VoxelInspection& out) {
