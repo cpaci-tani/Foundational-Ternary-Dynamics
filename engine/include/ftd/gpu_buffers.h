@@ -279,6 +279,14 @@ struct GpuBuffers {
     // with an exact, non-padded size, so writing past this many records is an
     // out-of-bounds GPU write into memory shared with D3D12.
     std::uint32_t interop_particle_capacity = 0;
+    // Cross-API GPU-timeline fence (Component B, Task 7). Imported from a
+    // D3D12_FENCE_FLAG_SHARED fence via cudaImportExternalSemaphore --
+    // GpuEngine::interop_signal_fence() signals it (on bufs_.stream) after
+    // the gather kernel so D3D12's command queue can Wait() on it before
+    // issuing the draw that reads d_interop_particle_buffer. Null whenever
+    // no fence is imported (initial state, or between a torn-down import
+    // and a new one).
+    cudaExternalSemaphore_t interop_fence = nullptr;  // imported D3D12 shared fence
 
     // --- Particle list (compact indices of manifested particles) ---
     // Scales with lattice: enough for ~1.5% occupation at any size

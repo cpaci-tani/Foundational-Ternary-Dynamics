@@ -217,6 +217,12 @@ struct D3D12Presenter::Impl {
     ComPtr<ID3D12Resource> vb;
     ComPtr<ID3D12Resource> shared_particle_buffer;
     ComPtr<ID3D12Fence> fence;
+    // Distinct from `fence` above (the presenter's own present-sync fence,
+    // unchanged by this task). This is the cross-API GPU-timeline fence:
+    // CUDA signals it after the interop gather kernel; wait_shared_fence()
+    // makes the render queue wait on it before the draw that reads the
+    // interop buffer.
+    ComPtr<ID3D12Fence> shared_fence;
     HANDLE fence_event = nullptr;
     UINT64 fence_value = 0;
     UINT frame = 0;
@@ -548,6 +554,26 @@ HANDLE D3D12Presenter::create_shared_particle_buffer(std::uint32_t max_particles
     }
     shared_particle_buffer_bytes_ = bytes;
     return handle;
+}
+
+HANDLE D3D12Presenter::create_shared_fence() {
+    if (!impl_->device) return nullptr;
+    if (FAILED(impl_->device->CreateFence(0, D3D12_FENCE_FLAG_SHARED,
+                                          IID_PPV_ARGS(&impl_->shared_fence)))) {
+        return nullptr;
+    }
+    HANDLE handle = nullptr;
+    if (FAILED(impl_->device->CreateSharedHandle(impl_->shared_fence.Get(), nullptr,
+                                                 GENERIC_ALL, nullptr, &handle))) {
+        impl_->shared_fence.Reset();
+        return nullptr;
+    }
+    return handle;
+}
+
+void D3D12Presenter::wait_shared_fence(std::uint64_t value) {
+    if (!impl_->shared_fence) return;
+    impl_->queue->Wait(impl_->shared_fence.Get(), value);
 }
 
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,

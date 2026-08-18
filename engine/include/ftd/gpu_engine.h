@@ -189,6 +189,17 @@ public:
     // a property of this GpuEngine instance.
     bool import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count);
 
+    // Imports a D3D12_FENCE_FLAG_SHARED fence (via its NT handle) as a CUDA
+    // external semaphore. Same handle-lifetime contract as
+    // import_d3d12_particle_buffer: caller closes the handle after this
+    // call returns.
+    bool import_d3d12_fence(void* nt_handle);
+    // Signals the imported fence to `value` on the engine stream, ordered
+    // after the most recent interop_gather_particles() call -- D3D12's
+    // wait_shared_fence(value) will unblock once this retires on the GPU
+    // timeline (no CPU synchronization involved on either side).
+    bool interop_signal_fence(std::uint64_t value);
+
     // Runs the interop particle gather (writes directly into the imported
     // D3D12 buffer set up by import_d3d12_particle_buffer) and records
     // bufs_.interop_gather_ready. Call after tick(). No-op (returns false)
@@ -201,7 +212,15 @@ public:
     // or a value larger than the imported buffer can hold never writes past
     // the end of the mapped external-memory view; it silently gathers fewer
     // particles instead.
-    bool interop_gather_particles(std::uint32_t max_particles);
+    //
+    // fence_value is passed straight to interop_signal_fence() after the
+    // gather kernel launches (a no-op if no fence has been imported via
+    // import_d3d12_fence() -- interop_signal_fence() itself no-ops when
+    // bufs_.interop_fence is null). Callers with no imported fence (e.g.
+    // tests that only exercise the gather path) may pass any value; it is
+    // unused in that case.
+    bool interop_gather_particles(std::uint32_t max_particles,
+                                  std::uint64_t fence_value);
     // True once the event recorded by interop_gather_particles() has
     // retired -- i.e. the header's captured_count is safe to read and the
     // buffer is safe for D3D12 to read from (after the fence signal added in
