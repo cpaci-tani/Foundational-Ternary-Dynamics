@@ -293,8 +293,9 @@ int main() {
         // symplectic_leapfrog (see gpu_engine.cu), so this is a clean
         // scalar-only change: no toggle touched, no other graph_key() input
         // affected.
-        test::check("G9: dt actually changes", engine.dt() != 2.0);
+        test::check("G9: dt starts below the new value", engine.dt() != 2.0);
         engine.set_dt(2.0);
+        test::check("G9: set_dt took effect", engine.dt() == 2.0);
         for (int t = 0; t < 6; ++t) engine.tick();
 
         test::check("G9: dt change added a second cached graph",
