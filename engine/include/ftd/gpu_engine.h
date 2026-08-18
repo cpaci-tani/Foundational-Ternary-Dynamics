@@ -166,8 +166,15 @@ public:
     std::size_t graph_cache_size() const { return graph_cache_.size(); }
 
     // Deterministic seeding helper used by the graph parity test so both the
-    // direct and the graphed engine start from the same RNG stream.
-    void seed_rng_for_test() { set_rng_seed(42); }
+    // direct and the graphed engine start from the same RNG stream. The GPU
+    // RNG seed that actually reaches kernels is toggles.langevin_seed, read
+    // directly at each launch_pair_production/launch_weak_transmutation call
+    // site (see gpu_engine.cu) — set_rng_seed() alone only writes the private
+    // rng_seed_ member, which nothing else in the engine reads. This mirrors
+    // RenderBridge::seed_rng() (render_bridge.cpp), which sets
+    // toggles.langevin_seed directly and calls the backend's set_rng_seed()
+    // as a secondary no-op-on-GPU step.
+    void seed_rng_for_test() { toggles.langevin_seed = 42; set_rng_seed(42); }
 
     double genesis_threshold_override = -1.0;
     double manifest_scale_override = -1.0;
@@ -216,6 +223,15 @@ private:
     void record_tick_body();
     // Hash of every host-derived value that reaches a kernel argument, EXCEPT
     // the tick counter (which is device-resident, see GpuBuffers::d_tick).
+    // The 64-bit FNV-1a-style hash is used directly as the graph_cache_ key
+    // with no equality check against the source toggle/parameter state on
+    // lookup (the usual hash-map shortcut of trusting the hash). This is an
+    // accepted, deliberate risk, not an oversight: the input space is a
+    // small, bounded combinatorial set of toggles/scalars, at most
+    // MAX_GRAPH_CACHE (16) entries are resident at once, and a 64-bit hash's
+    // collision probability over that space is negligible — a
+    // simplicity/performance tradeoff against adding a full state-equality
+    // fallback on every cache hit.
     std::uint64_t graph_key() const;
     // False for tick shapes that cannot be represented by a static graph.
     bool graph_eligible() const;
