@@ -154,5 +154,29 @@ if(WIN32)
             dxgi
             d3dcompiler
         )
+
+        # Task 7: cross-API GPU-timeline fence. Round-trips a
+        # D3D12_FENCE_FLAG_SHARED fence (D3D12Presenter::create_shared_fence())
+        # into a CUDA external semaphore (GpuEngine::import_d3d12_fence()),
+        # signals it after the Task 6 gather kernel
+        # (GpuEngine::interop_signal_fence(), via interop_gather_particles()'s
+        # fence_value argument), and confirms D3D12's command queue actually
+        # blocks on it (D3D12Presenter::wait_shared_fence()). Same
+        # FTD_ENABLE_CUDA gating as test_interop_gather above (needs ftd_cuda).
+        add_executable(test_interop_fence_roundtrip
+            tests/test_interop_fence_roundtrip.cpp
+            src/d3d12_presenter.cpp
+            ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+        )
+        target_include_directories(test_interop_fence_roundtrip PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_interop_fence_roundtrip PRIVATE
+            ftd_native_session
+            ftd_cuda
+            d3d12
+            dxgi
+            d3dcompiler
+        )
     endif()
 endif()

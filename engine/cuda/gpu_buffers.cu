@@ -630,6 +630,15 @@ void GpuBuffers::free() {
     h_interop_header = nullptr;
     d_interop_header = nullptr;
 
+    // Cross-API GPU-timeline fence (Task 7). Same "safe unconditional
+    // destroy" reasoning as interop_gather_ready above: the only stream that
+    // ever signals it, bufs_.stream, is already drained+destroyed earlier in
+    // this function.
+    if (interop_fence) {
+        cudaDestroyExternalSemaphore(interop_fence);
+        interop_fence = nullptr;
+    }
+
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }
     if (d_particle_flags) {

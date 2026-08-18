@@ -564,6 +564,20 @@ if(TARGET test_interop_gather)
         LABELS "unit;native_desktop;gpu;interactive")
 endif()
 
+# CTest registration for test_interop_fence_roundtrip — same ordering
+# rationale as test_d3d12_adapter_selection above (executable defined in
+# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
+# TIMEOUT 30: per the test's own comment, a broken D3D12 Wait() call hangs
+# (the GPU queue parks forever waiting on a fence value that never arrives)
+# rather than failing outright, so this needs a hard ceiling instead of
+# running forever.
+if(TARGET test_interop_fence_roundtrip)
+    add_test(NAME interop_fence_roundtrip COMMAND test_interop_fence_roundtrip)
+    set_tests_properties(interop_fence_roundtrip PROPERTIES
+        LABELS "unit;native_desktop;gpu;interactive"
+        TIMEOUT 30)
+endif()
+
 # Auto-link ftd_test_support into every test executable defined below in this
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
 # lives in ftd_test_support. This avoids touching every existing

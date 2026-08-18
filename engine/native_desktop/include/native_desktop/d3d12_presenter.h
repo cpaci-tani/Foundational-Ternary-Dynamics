@@ -76,6 +76,16 @@ public:
         return shared_particle_buffer_bytes_;
     }
 
+    // Creates a D3D12_FENCE_FLAG_SHARED fence starting at value 0 and
+    // exports its NT handle for CUDA to import via cudaImportExternalSemaphore.
+    // Must be called after initialize(), independent of create_shared_particle_buffer.
+    HANDLE create_shared_fence();
+    // Makes the render-queue's next command list wait (GPU-side, not
+    // CPU-side -- ID3D12CommandQueue::Wait is a queue-timeline operation)
+    // until the shared fence reaches `value` before executing. Call this
+    // before the draw call that reads the interop buffer.
+    void wait_shared_fence(std::uint64_t value);
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;

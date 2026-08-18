@@ -83,7 +83,10 @@ int main() {
         handle = nullptr;
         ftd::test::check("import succeeded", imported);
 
-        const bool started = engine->interop_gather_particles(1000);
+        // fence_value is unused here -- this test never imports a fence via
+        // import_d3d12_fence(), so interop_gather_particles()'s fence-signal
+        // branch is a no-op regardless of what value is passed (Task 7).
+        const bool started = engine->interop_gather_particles(1000, 0);
         ftd::test::check("interop gather started", started);
 
         bool ready = false;

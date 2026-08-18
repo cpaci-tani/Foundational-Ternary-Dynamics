@@ -659,6 +659,46 @@ bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte
     return true;
 }
 
+// Cross-API GPU-timeline fence (Task 7). Imports a D3D12_FENCE_FLAG_SHARED
+// fence (D3D12Presenter::create_shared_fence()) as a CUDA external
+// semaphore so interop_signal_fence() below can signal it on bufs_.stream
+// after the gather kernel -- the D3D12-side wait_shared_fence() then blocks
+// the render queue (not the CPU) until that signal retires. Same
+// handle-lifetime contract as import_d3d12_particle_buffer(): the caller
+// closes nt_handle after this call returns, success or failure. Safe to
+// call more than once (e.g. to re-import after a presenter reset): any
+// previously-imported semaphore is torn down first so a second call never
+// leaks the prior import's driver-level reference.
+bool GpuEngine::import_d3d12_fence(void* nt_handle) {
+    if (!nt_handle) return false;
+    if (bufs_.interop_fence) {
+        cudaDestroyExternalSemaphore(bufs_.interop_fence);
+        bufs_.interop_fence = nullptr;
+    }
+    cudaExternalSemaphoreHandleDesc desc{};
+    desc.type = cudaExternalSemaphoreHandleTypeD3D12Fence;
+    desc.handle.win32.handle = nt_handle;
+    desc.flags = 0;
+    if (cudaImportExternalSemaphore(&bufs_.interop_fence, &desc) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; mirrors import_d3d12_particle_buffer()
+        return false;
+    }
+    return true;
+}
+
+// Signals bufs_.interop_fence to `value` on bufs_.stream. A no-op (false)
+// when no fence has been imported -- callers that never called
+// import_d3d12_fence() (e.g. tests exercising only the gather path) can
+// call interop_gather_particles() freely without this branch doing
+// anything.
+bool GpuEngine::interop_signal_fence(std::uint64_t value) {
+    if (!bufs_.interop_fence) return false;
+    cudaExternalSemaphoreSignalParams params{};
+    params.params.fence.value = value;
+    return cudaSignalExternalSemaphoresAsync(&bufs_.interop_fence, &params, 1,
+                                             bufs_.stream) == cudaSuccess;
+}
+
 void GpuEngine::set_dt(double dt) {
     // Mirror RenderBridge::set_dt: dt<1 is honored ONLY with symplectic_leapfrog,
     // which permits a CFL-stable sub-step (the plain leapfrog hardcodes dt=1 and
@@ -1499,7 +1539,8 @@ bool GpuEngine::poll_visual_snapshot(VisualSnapshot& out) {
 // begin_visual_snapshot()'s default-stream launches, so it can be ordered
 // with (and graph-captured alongside) the rest of the tick if a future task
 // folds it into Component A's capture.
-bool GpuEngine::interop_gather_particles(std::uint32_t max_particles) {
+bool GpuEngine::interop_gather_particles(std::uint32_t max_particles,
+                                         std::uint64_t fence_value) {
     if (!bufs_.d_interop_particle_buffer) return false;
     launch_interop_particle_gather(bufs_, size_, max_particles);
     // Marks that at least one gather has actually been launched against the
@@ -1514,6 +1555,14 @@ bool GpuEngine::interop_gather_particles(std::uint32_t max_particles) {
     // import_d3d12_particle_buffer() clears this flag on every (re-)import,
     // so it also cannot outlive the buffer it was measured against.
     interop_gather_launched_ = true;
+    // Cross-API GPU-timeline fence (Task 7): signal AFTER the gather kernel
+    // launch above so the signal is ordered on bufs_.stream behind the
+    // gather's writes into d_interop_particle_buffer. A no-op when no fence
+    // has been imported (interop_signal_fence() checks bufs_.interop_fence
+    // itself).
+    if (bufs_.interop_fence) {
+        interop_signal_fence(fence_value);
+    }
     return true;
 }
 
