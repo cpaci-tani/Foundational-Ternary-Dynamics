@@ -31,6 +31,17 @@ void throw_if_failed(HRESULT hr, const char* what) {
 // available (puts the discrete/high-performance GPU first on hybrid-graphics
 // systems), falling back to plain EnumAdapters1 on older DXGI. Returns the
 // first adapter that is not the WARP software rasterizer.
+//
+// Callers (select_hardware_adapter() and initialize()) each pass their own
+// independently-created IDXGIFactory4, built with different creation flags
+// (0 vs. possibly DXGI_CREATE_FACTORY_DEBUG). This relies on DXGI adapter
+// enumeration order being a system-level property, not a property of the
+// enumerating factory instance or its creation flags — so two independently
+// created factories are expected to enumerate adapters identically, and
+// select_hardware_adapter()'s standalone report is expected to match what
+// initialize() actually selects, without the two call sites sharing a
+// factory. This is an assumption about DXGI/OS behavior, not something this
+// code verifies at runtime.
 ComPtr<IDXGIAdapter1> pick_hardware_adapter(IDXGIFactory4& factory, LUID* out_luid) {
     ComPtr<IDXGIFactory6> factory6;
     if (SUCCEEDED(factory.QueryInterface(IID_PPV_ARGS(&factory6)))) {
