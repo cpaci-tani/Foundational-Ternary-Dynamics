@@ -64,7 +64,7 @@ void launch_canonical_lifecycle(
     GpuBuffers& bufs, bool dual_substrate,
     bool do_genesis, bool do_evaporation,
     double kinetic_drain, double genesis_threshold, double manifest_scale,
-    unsigned long long rng_seed, int tick);
+    unsigned long long rng_seed);
 
 __global__ void compute_near_particle_kernel(
     const int8_t* __restrict__ state,
@@ -488,8 +488,9 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
 void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                               bool larmor_radiation, double damping_factor,
                               bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
-                              unsigned long long rng_seed, int tick) {
+                              unsigned long long rng_seed) {
     const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -528,7 +529,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
         bufs, /*dual_substrate=*/true,
         do_genesis, do_evaporation,
         /*kinetic_drain=*/0.0, K_GENESIS, K_MANIFEST,
-        rng_seed, tick);
+        rng_seed);
     CUDA_CHECK(cudaGetLastError());
 }
 

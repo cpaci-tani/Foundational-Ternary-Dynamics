@@ -79,6 +79,23 @@ __device__ __forceinline__ void copy_boundary_fields(
 }  // namespace
 
 // ============================================================================
+// DEVICE TICK COUNTER (Component A)
+// ============================================================================
+// Issued at the very end of the tick body, exactly where the host does
+// `tick_++`. Because it lives inside the recorded region, a replayed graph
+// advances the RNG salt just as a direct-launch tick does.
+
+__global__ void advance_device_tick_kernel(int* __restrict__ tick) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    *tick += 1;
+}
+
+void launch_advance_device_tick(GpuBuffers& bufs) {
+    advance_device_tick_kernel<<<1, 1, 0, bufs.stream>>>(bufs.d_tick);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+// ============================================================================
 // PRE-READ ELECTROWEAK BACKGROUND DRIVE
 // ============================================================================
 
@@ -308,8 +325,9 @@ __global__ void weak_transmutation_kernel(
     int* __restrict__ ledger_reaction,
     int L,
     unsigned long long rng_seed,
-    int                tick
+    const int* __restrict__ tick_ptr
 ) {
+    const int tick = *tick_ptr;
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int z = blockIdx.z * blockDim.z + threadIdx.z;
@@ -407,7 +425,8 @@ __global__ void lifecycle_candidate_kernel(
     double manifest_scale,
     int N,
     unsigned long long rng_seed,
-    int tick) {
+    const int* __restrict__ tick_ptr) {
+    const int tick = *tick_ptr;
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
     uint8_t code = 0;
@@ -497,7 +516,8 @@ __global__ void lifecycle_commit_kernel(
     double genesis_threshold,
     int L,
     unsigned long long rng_seed,
-    int tick) {
+    const int* __restrict__ tick_ptr) {
+    const int tick = *tick_ptr;
     if (blockIdx.x != 0 || threadIdx.x != 0) return;
     const int count = *event_count;
     int survivor_count = 0;
@@ -653,7 +673,8 @@ void launch_canonical_lifecycle(
     GpuBuffers& bufs, bool dual_substrate,
     bool do_genesis, bool do_evaporation,
     double kinetic_drain, double genesis_threshold, double manifest_scale,
-    unsigned long long rng_seed, int tick) {
+    unsigned long long rng_seed) {
+    const int* const tick = bufs.d_tick;
     if (!do_genesis && !do_evaporation) return;
     const cudaStream_t stream = bufs.stream;
     const std::size_t field_bytes = static_cast<std::size_t>(bufs.N) * sizeof(double);
@@ -728,7 +749,9 @@ __global__ void pair_production_candidate_kernel(
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
     uint8_t* __restrict__ candidate,
-    int L, unsigned long long rng_seed, int tick) {
+    int L, unsigned long long rng_seed,
+    const int* __restrict__ tick_ptr) {
+    const int tick = *tick_ptr;
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int z = blockIdx.z * blockDim.z + threadIdx.z;
@@ -870,8 +893,9 @@ __global__ void pair_production_commit_kernel(
 }
 
 void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
-                            unsigned long long rng_seed, int tick) {
+                            unsigned long long rng_seed) {
     const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -907,8 +931,9 @@ void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned long long rng_seed, int tick) {
+void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned long long rng_seed) {
     const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
