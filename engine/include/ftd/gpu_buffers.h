@@ -261,14 +261,20 @@ struct GpuBuffers {
     static constexpr int MAX_PARTICLES = 8192;
     int*      d_plist_idx     = nullptr;  // lattice indices [MAX_PARTICLES]
     int*      d_num_particles = nullptr;  // count (single int on device)
-    // Sticky capacity guard (Component A). finalize_particle_list_kernel
-    // (kernels_forces.cu) sets this to 1 when the manifested count exceeds
-    // MAX_PARTICLES. The pairwise/triad kernels clamp their loop bound to
+    // Sticky-until-acknowledged capacity guard (Component A).
+    // finalize_particle_list_kernel (kernels_forces.cu) sets this to 1 when
+    // the manifested count exceeds MAX_PARTICLES; it never clears it back
+    // to 0 itself. The pairwise/triad kernels clamp their loop bound to
     // MAX_PARTICLES so they can never read past d_plist_idx; the host
     // surfaces the condition as the same std::runtime_error it used to
     // throw inline, but reads the flag only at synchronization boundaries
     // that already copy scalars D2H (causal_projection_events /
-    // ensure_host_synced), never in the tick.
+    // ensure_host_synced), never in the tick. throw_if_particle_overflow()
+    // (gpu_buffers.cu) resets the flag to 0 immediately after reading it, so
+    // the condition is sticky only until the next check observes it — a
+    // transient overflow that later resolves (e.g. via annihilation
+    // bringing the count back under MAX_PARTICLES) does not permanently
+    // poison every future call.
     int*      d_particle_overflow = nullptr;
 
     // --- Deterministic particle-list compaction scratch (2026-08-17 fix) ---
@@ -373,7 +379,10 @@ struct GpuBuffers {
                                     int32_t& next_pair_id) const;
     void throw_if_identity_error() const;
     // Throws std::runtime_error when the sticky capacity guard fired. Reads
-    // one int D2H; call only at existing synchronization boundaries.
+    // one int D2H; call only at existing synchronization boundaries. Resets
+    // the device flag to 0 after reading it (sticky-until-acknowledged, not
+    // sticky-forever) — a later call on the same instance only throws again
+    // if the condition recurs after this one observed it.
     void throw_if_particle_overflow() const;
 
     // Download only voxels (for diagnostics)

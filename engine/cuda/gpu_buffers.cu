@@ -1066,6 +1066,19 @@ void GpuBuffers::throw_if_particle_overflow() const {
     int flag = 0;
     CUDA_CHECK(cudaMemcpy(&flag, d_particle_overflow, sizeof(int),
                           cudaMemcpyDeviceToHost));
+    // Acknowledge-and-clear: the flag is sticky only UNTIL a caller observes
+    // it here, not forever. Without this reset, a single transient overflow
+    // (e.g. a manifestation burst that annihilation later brings back under
+    // MAX_PARTICLES) would poison every future call for the rest of this
+    // GpuBuffers' lifetime, even once the particle count is legitimately
+    // back in bounds. The blocking cudaMemcpy immediately above already
+    // forces completion of everything previously enqueued on `stream`
+    // (this class's established invariant), so this async reset is safely
+    // ordered before the next tick's finalize_particle_list_kernel launch
+    // (also always issued on `stream`) without an extra synchronization.
+    // Resetting an already-zero flag is a harmless no-op, so no branch on
+    // `flag` is needed here.
+    CUDA_CHECK(cudaMemsetAsync(d_particle_overflow, 0, sizeof(int), stream));
     if (flag != 0) {
         throw std::runtime_error(
             "[GpuEngine] manifested particle count exceeded the CUDA "
