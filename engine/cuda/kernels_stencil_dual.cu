@@ -467,11 +467,12 @@ __global__ void genesis_dual_kernel(
 
 void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                             bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    phase_read_dual_kernel<<<grid, block>>>(
+    phase_read_dual_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
         bufs.d_state,
@@ -488,6 +489,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
                               bool larmor_radiation, double damping_factor,
                               bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                               unsigned long long rng_seed, int tick) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -496,7 +498,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
     // compute_near_particle_kernel lives in kernels_stencil_single.cu;
     // forward-declared at the top of this TU.
     if (selective_damping) {
-        compute_near_particle_kernel<<<grid, block>>>(
+        compute_near_particle_kernel<<<grid, block, 0, stream>>>(
             bufs.d_state, bufs.d_accel_mag,
             bufs.d_near_particle, bufs.d_near_accel,
             larmor_radiation, L
@@ -505,7 +507,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
     }
 
     // Dual leapfrog + sync observable (with optional Larmor modulation)
-    phase_write_dual_kernel<<<grid, block>>>(
+    phase_write_dual_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
         bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
@@ -558,11 +560,12 @@ __global__ void gauss_sync_dual_kernel(
 }
 
 void launch_gauss_sync_dual(GpuBuffers& bufs) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    gauss_sync_dual_kernel<<<grid, block>>>(
+    gauss_sync_dual_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
@@ -572,11 +575,12 @@ void launch_gauss_sync_dual(GpuBuffers& bufs) {
 }
 
 void launch_strong_field_stencil(GpuBuffers& bufs, double damp) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    strong_field_stencil_kernel<<<grid, block>>>(
+    strong_field_stencil_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_strong_x, bufs.d_flux_strong_y, bufs.d_flux_strong_z,
         bufs.d_wave_vel_strong_x, bufs.d_wave_vel_strong_y, bufs.d_wave_vel_strong_z,
         bufs.d_state, bufs.d_color,
@@ -586,11 +590,12 @@ void launch_strong_field_stencil(GpuBuffers& bufs, double damp) {
 }
 
 void launch_weak_field_stencil(GpuBuffers& bufs, double damp) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    weak_field_stencil_kernel<<<grid, block>>>(
+    weak_field_stencil_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_weak_x, bufs.d_flux_weak_y, bufs.d_flux_weak_z,
         bufs.d_wave_vel_weak_x, bufs.d_wave_vel_weak_y, bufs.d_wave_vel_weak_z,
         bufs.d_state, bufs.d_flavor,

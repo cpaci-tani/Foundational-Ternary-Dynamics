@@ -594,11 +594,12 @@ __global__ void evaporation_kernel(
 void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         uint8_t bcc_stencil_mode,
                         bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
 
-    phase_read_kernel<<<grid, block>>>(
+    phase_read_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
@@ -618,13 +619,14 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
                         double genesis_threshold,
                         double manifest_scale,
                         unsigned long long rng_seed, int tick) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
 
     // Compute near-particle mask (+ Larmor accel) if selective damping
     if (selective_damping) {
-        compute_near_particle_kernel<<<grid, block>>>(
+        compute_near_particle_kernel<<<grid, block, 0, stream>>>(
             bufs.d_state, bufs.d_accel_mag,
             bufs.d_near_particle, bufs.d_near_accel,
             larmor_radiation, L
@@ -633,7 +635,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
     }
 
     // Leapfrog + damping (with optional Larmor modulation)
-    phase_write_kernel<<<grid, block>>>(
+    phase_write_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
