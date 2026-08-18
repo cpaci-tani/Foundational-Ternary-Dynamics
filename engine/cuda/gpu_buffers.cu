@@ -205,6 +205,10 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaEventCreateWithFlags(&visual_snapshot_ready,
                                         cudaEventDisableTiming));
 
+    // Poisson mean-charge scratch (persistent; see gpu_buffers.h)
+    CUDA_CHECK(cudaMalloc(&d_poisson_charge_sum, sizeof(long long)));
+    CUDA_CHECK(cudaMalloc(&d_poisson_mean_charge, sizeof(double)));
+
     // FFT workspace
     CUDA_CHECK(cudaMalloc(&d_fft_buf, N * sizeof(cufftDoubleComplex)));
     CUDA_CHECK(cudaMalloc(&d_fft_buf_f, N * sizeof(cufftComplex)));
@@ -332,6 +336,8 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_causal_projection_events, 0, sizeof(unsigned long long)));
 
+    CUDA_CHECK(cudaMemset(d_poisson_charge_sum, 0, sizeof(long long)));
+    CUDA_CHECK(cudaMemset(d_poisson_mean_charge, 0, sizeof(double)));
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_pair_id, 0xFF, N * sizeof(int32_t))); // -1
@@ -484,6 +490,14 @@ void GpuBuffers::free() {
     if (d_causal_projection_events) {
         cudaFree(d_causal_projection_events);
         d_causal_projection_events = nullptr;
+    }
+    if (d_poisson_charge_sum) {
+        cudaFree(d_poisson_charge_sum);
+        d_poisson_charge_sum = nullptr;
+    }
+    if (d_poisson_mean_charge) {
+        cudaFree(d_poisson_mean_charge);
+        d_poisson_mean_charge = nullptr;
     }
     if (d_fft_buf)       { cudaFree(d_fft_buf); d_fft_buf = nullptr; }
     if (d_fft_buf_f)     { cudaFree(d_fft_buf_f); d_fft_buf_f = nullptr; }

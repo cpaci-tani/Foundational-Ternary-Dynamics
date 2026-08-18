@@ -15,6 +15,11 @@
 #include "ftd/test_telemetry.h"
 
 #include <cuda_runtime.h>
+#include <cmath>
+#define CUDA_CHECK_TEST(call) do { \
+    const cudaError_t _e = (call); \
+    ftd::test::check("cuda call succeeded", _e == cudaSuccess); \
+} while (0)
 #include <cstring>
 #include <vector>
 
@@ -90,6 +95,32 @@ int main() {
         }
         test::check("S4: no sticky CUDA error after 4 create/destroy cycles",
                     cudaGetLastError() == cudaSuccess);
+    }
+
+    test::section("S5: Poisson mean_charge is device-resident");
+    {
+        gpu::GpuEngine engine(17);
+        test::check("S5: d_poisson_charge_sum allocated",
+                    engine.bufs().d_poisson_charge_sum != nullptr);
+        test::check("S5: d_poisson_mean_charge allocated",
+                    engine.bufs().d_poisson_mean_charge != nullptr);
+
+        seed_scene(engine);
+        engine.toggles.gauss_projection = true;
+        engine.tick();
+        CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
+
+        double host_mean = 1.0;
+        CUDA_CHECK_TEST(cudaMemcpy(&host_mean,
+                                   engine.bufs().d_poisson_mean_charge,
+                                   sizeof(double), cudaMemcpyDeviceToHost));
+        // Two manifested particles of opposite sign in a 17^3 lattice, plus
+        // whatever genesis produced; the device scalar must at minimum be a
+        // finite multiple of 1/N and never the untouched sentinel.
+        const double quantum = 1.0 / static_cast<double>(17 * 17 * 17);
+        const double ratio = host_mean / quantum;
+        test::check("S5: device mean_charge is an exact multiple of 1/N",
+                    std::abs(ratio - std::nearbyint(ratio)) < 1e-9);
     }
 
     return test::finalize();
