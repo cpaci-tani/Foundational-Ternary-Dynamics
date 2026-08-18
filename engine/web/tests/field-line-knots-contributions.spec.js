@@ -66,6 +66,27 @@ test('flux: exact integral over the dense N³ volume; each voxel counted once', 
     expect(c.captured.fluxFrac).toBeCloseTo(54 / (N * N * N), 8);
 });
 
+test('flux: compact FTV2 grid is integrated with physical cell-volume weights', () => {
+    const { tr } = twoKnots();
+    const N = 33;
+    const stride = 4;
+    const axisCount = Math.ceil(N / stride);
+    const volume = {
+        data: new Float32Array(axisCount ** 3).fill(1),
+        latticeSize: N,
+        stride,
+        axisCount,
+    };
+    const c = tr.measureContributions({ fluxVolume: volume, latticeSize: N });
+    // Interior samples cover 4³ cells; terminal samples cover the remaining
+    // 1³ edge. Weighted together they represent the full physical volume.
+    expect(c.totals.flux).toBeCloseTo(N ** 3, 5);
+    expect(c.flux[0]).toBeGreaterThan(0);
+    expect(c.flux[1]).toBeGreaterThan(0);
+    expect(c.captured.fluxFrac).toBeGreaterThan(0);
+    expect(c.captured.fluxFrac).toBeLessThanOrEqual(1);
+});
+
 test('charge: per-knot |∇·J| over the box + fractions', () => {
     const { tr, z } = twoKnots();
     const c0 = [z.centroids[0], z.centroids[1], z.centroids[2]];

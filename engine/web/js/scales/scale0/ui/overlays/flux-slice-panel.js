@@ -1,13 +1,11 @@
 /**
  * Scale 0 — Live Multi-Field Flux Slice Panel
  *
- * Every field defaults to VISIBLE, rendering each as a row of three 2D
- * heatmaps at the lattice mid-planes (xy @ z=L/2, xz @ y=L/2, yz @
- * x=L/2) — independent of the 3D visualization panel's own toggle
- * state. The panel's per-row chip lets the user manually force a row
- * off (or back to mirroring the 3D panel's toggle) if they want to
- * declutter or inspect a field without lighting up the 3D viewport's
- * volumetric overlay.
+ * The flagship |J| row is visible by default; every other field mirrors its
+ * 3D visualization toggle until the user explicitly enables that row. This
+ * keeps the scientific panel useful on first open without silently scheduling
+ * every raw sampler (and every derived dependency) over the native socket.
+ * The per-row chip can force a row on/off independently of the 3D viewport.
  *
  * Supported fields (FIELD_DRIVERS, 27 rows):
  *   - 1 flagship dense volume slice: |J| via bridge.getFluxSlice(axis, mid).
@@ -43,13 +41,12 @@
  *     'on' and resets per-field rolling autoscale, so a new scenario
  *     always opens with everything visible.
  *
- * Performance: 27 fields × 3 axes = 81 tiles, all visible and sampled/
- * painted every throttled frame by default (see `updateEvery`, default 2)
- * — rows that share an underlying quantity (e.g. eField feeding |E|,
- * emEnergy, ePressure, and ℒ(x) simultaneously) still fetch it once per
- * frame via the shared sample cache, not once per row, and a user can
- * force any individual row off via its chip if the full set is more than
- * they want rendered at once.
+ * Performance: the panel is self-driven at a bounded cadence and fetches only
+ * the rows actually visible at that instant. Rows that share an underlying
+ * quantity (e.g. eField feeding |E|, emEnergy, ePressure, and ℒ(x)) still
+ * fetch it once per sweep. "Show all" remains available as an explicit
+ * diagnostic action, rather than becoming background work every scenario
+ * inherits merely by opening this tab.
  */
 
 import { rampViridis } from '../../../../viewport/color-ramps.js';
@@ -68,6 +65,27 @@ import {
     DEFAULT_FIELD_OVERRIDE,
     axisIndex,
 } from './flux-slice-helpers.js';
+
+/**
+ * Keep the native WebSocket command stream interactive at large L. FTS1
+ * transport has its own in-flight cap, but repainting 81 heatmaps at 30 Hz can
+ * still monopolize the browser main thread while CUDA ticks are completing.
+ * WASM/Mock retain the configured cadence because their sampler lifecycle is
+ * worker/local and already separately budgeted.
+ */
+export function effectiveFluxSliceUpdateEvery(bridge, configured = 2) {
+    const base = Math.max(1, Math.trunc(Number(configured) || 1));
+    if (!bridge?.isNativeGPU) return base;
+    const N = Math.max(0, Math.trunc(Number(bridge.latticeSize) || 0));
+    // The panel's single self-drive loop runs at 24 Hz. Four to six visual
+    // samples per second is ample for a heatmap instrument while keeping its
+    // three independent plane requests from competing with simulation and
+    // scientific telemetry on the native socket.
+    const nativeFloor = N > 96 ? 8 : (N > 64 ? 6 : (N > 48 ? 5 : 4));
+    return Math.max(base, nativeFloor);
+}
+
+const FLUX_SLICE_DRIVER_HZ = 24;
 
 
 // ── FluxSlicePanel class ────────────────────────────────────────────
@@ -99,13 +117,9 @@ export class FluxSlicePanel {
         this.frameCount = 0;
         this._lastN = 0;
         this._lastSimTick = 0;
-        // Self-driven rAF loop: kept running while the panel is visible so
-        // the heatmaps refresh whether or not the Scale 0 controller's animate
-        // tail call fires. The controller-driven update() is still wired up
-        // (controller.js:322) and remains the primary path; this loop is the
-        // safety net for stale-cache / mount-order races where the external
-        // hook isn't reliably calling us. Liveness is tracked by `this._sub`
-        // (set/cleared by _startSelfDrive/_stopSelfDrive) — see update().
+        // One self-driven loop owns this panel. It deliberately does not share
+        // the controller render loop: driving from both paths doubled field
+        // requests and canvas paints for every visible frame.
         this._lastSelfTickMs = 0;
 
         this._panel = null;
@@ -246,8 +260,8 @@ export class FluxSlicePanel {
                 ?.addEventListener('click', () => this.setVisible(false));
         } else {
             // Dock mode: wire expand button + start ResizeObserver-driven
-            // canvas sizing. The panel always self-drives; visibility is
-            // managed by the dock's tab system, not the panel.
+            // canvas sizing. The panel self-drives at a bounded rate;
+            // visibility is managed by the dock's tab system, not the panel.
             panel.querySelector('.flux-slice-expand')
                 ?.addEventListener('click', () => this.toggleExpanded());
             this._setupResizeObserver();
@@ -363,7 +377,7 @@ export class FluxSlicePanel {
     _startSelfDrive() {
         if (this._sub) return;
         this._sub = rafCoordinator.subscribe('flux-slice-panel', {
-            hz: 60,
+            hz: FLUX_SLICE_DRIVER_HZ,
             cb: () => {
                 if (!this.visible) { this._stopSelfDrive(); return; }
                 try { this.update(); }
@@ -505,10 +519,10 @@ export class FluxSlicePanel {
         // directly, hot-reload remount of an externally-driven instance).
         if (!this._sub) this._startSelfDrive();
         this.frameCount = (this.frameCount + 1) | 0;
-        if ((this.frameCount % this.updateEvery) !== 0) return;
-
         const bridge = this.getBridge?.();
         if (!bridge) return;
+        const cadence = effectiveFluxSliceUpdateEvery(bridge, this.updateEvery);
+        if ((this.frameCount % cadence) !== 0) return;
 
         const N = bridge.latticeSize | 0;
         if (!Number.isFinite(N) || N < 2) return;

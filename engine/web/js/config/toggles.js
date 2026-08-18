@@ -260,7 +260,12 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'flux-thermalization': isolatedScale0Profile('wave_propagation'),
     'flux-vacuum-foam': isolatedScale0Profile('wave_propagation'),
     'flux-dipole': isolatedScale0Profile('wave_propagation'),
-    'flux-soliton': isolatedScale0Profile('wave_propagation'),
+    'flux-standing': isolatedScale0Profile('wave_propagation'),
+    'flux-nested-standing': isolatedScale0Profile('wave_propagation'),
+    'flux-interference': isolatedScale0Profile('wave_propagation'),
+    // Exact imposed helical-ring initial data; the qualified scenario is inert.
+    'flux-vortex': isolatedScale0Profile(),
+    'flux-soliton': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
     'flux-cascade': isolatedScale0Profile('genesis'),
     'flux-random-genesis': isolatedScale0Profile('genesis'),
     // Finite periodic random-wave invariant probe: only the bare wave map.
@@ -463,6 +468,10 @@ export const SCALE0_SCENARIO_RESEARCH_TERMS = {
 //
 // @type {Partial<Record<ScenarioId, { mode?: number, reflective?: boolean, shape?: string }>>}
 export const SCALE0_SCENARIO_BOUNDARY = {
+    // configure_free_wave_terms leaves the freshly constructed engine's
+    // canonical Periodic boundary intact. The dashboard fallback used to
+    // overwrite flux-pulse with Dispersal immediately after setup.
+    'flux-pulse': { mode: 0 },
     'flux-zero-point': { mode: 0 },
     's0-seed-dynamical-flux-dressing': { mode: 0 },
     's0-seed-moving-source-reciprocity': { mode: 0 },

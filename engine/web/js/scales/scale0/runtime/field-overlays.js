@@ -8,6 +8,7 @@ import {
     lookupField,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
+import { SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
 import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
 import {
@@ -39,6 +40,20 @@ import {
 /** @deprecated Prefer createFieldSampleCache + per-job ensureSample. */
 export function sampleFieldState(fieldCapability, flags, stride, acScale0) {
     return buildSampleSnapshot(fieldCapability, flags, stride, acScale0);
+}
+
+const POISSON_LATENCY_KIND_OVERRIDE = Object.freeze({ latency: 'poissonLatency' });
+
+/**
+ * Native mass-gravity scenarios expose the actual latency-Poisson solution as
+ * FTS2 kind 17. Other scenarios and all proxy-oriented panels retain kind 8's
+ * normalized |J|^2 view.
+ */
+export function scale0FieldKindOverrides(ctx, state) {
+    const active = getActiveScale0Bridge(ctx, state) ?? ctx?.bridge;
+    return active?.isNativeGPU && SCALE0_MASS_GRAVITY_SCENARIOS.has(state.currentScenarioId)
+        ? POISSON_LATENCY_KIND_OVERRIDE
+        : null;
 }
 
 export function buildQuantumOverlayData(ctx, state, sampled) {
@@ -360,16 +375,19 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
     const flags = state.fieldFlags;
 
     if (flags.showDarkMatterHalo || flags.showGenesisIsosurface) {
-        // getScale0FluxVolume() → bridge.getFluxVolume() returns N³ per-voxel
-        // |J| magnitudes (NOT a 3-component interleaved vector field), in JS
-        // x-fastest order (idx = z*N²+y*N+x) — get_flux_volume converts the C++
-        // x-slowest memory layout to x-fastest while PRESERVING coordinates
-        // (logical (x,y,z) → density(x,y,z), the same particle frame as every
-        // *_sampled overlay; it is a layout conversion, not a coordinate swap).
-        // Consume it directly; the flux-renderer and gravity-panel treat the
-        // same buffer as N³ scalars.
+        // Mock/WASM return dense N³ |J| magnitudes. Native FTV2 returns a
+        // compact regular-grid descriptor {data,latticeSize,stride,axisCount}
+        // so large CUDA lattices never perform a full N³ D2H/socket copy.
+        // Both are x-fastest and are consumed without expanding FTV2.
         const fluxVol = fieldCapability?.getScale0FluxVolume?.();
-        if (fluxVol && fluxVol.length >= N * N * N) {
+        const compactData = fluxVol?.data;
+        const compactAxis = Math.trunc(Number(fluxVol?.axisCount) || 0);
+        const compactValid = ArrayBuffer.isView(compactData)
+            && Math.trunc(Number(fluxVol?.latticeSize)) === N
+            && compactAxis > 0
+            && compactData.length === compactAxis * compactAxis * compactAxis;
+        const denseValid = ArrayBuffer.isView(fluxVol) && fluxVol.length >= N * N * N;
+        if (compactValid || denseValid) {
             const magnitude = fluxVol;
             if (flags.showDarkMatterHalo) {
                 const parts = fieldCapability?.getScale0ParticleFrame?.();
@@ -1070,7 +1088,12 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         const fieldCapability = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0
             ?? ctx.bridge.capabilities.scale0;
         const acScale0ForSnapshot = emActiveScale0(ctx, state);
-        sched.sampleCache = createFieldSampleCache(fieldCapability, acScale0ForSnapshot, params.stride);
+        sched.sampleCache = createFieldSampleCache(
+            fieldCapability,
+            acScale0ForSnapshot,
+            params.stride,
+            scale0FieldKindOverrides(ctx, state),
+        );
         sched.forceCache = createForceFieldCache(fieldCapability);
         sched.sampled = sched.sampleCache.sampled;
         if (state.fieldFlags.showEField || state.fieldFlags.showBField) {

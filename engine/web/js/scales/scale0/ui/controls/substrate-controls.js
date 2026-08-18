@@ -2,12 +2,14 @@
  * Scale 0 Substrate Controls Card
  */
 
-import { K_B } from '../../../../constants.js';
+import { DAMPING, G_N, K_B } from '../../../../constants.js';
 
 export function createSubstrateControlsCard() {
   const card = document.createElement('div');
   card.className = 'card scale0-only';
   const kbStr = K_B.toFixed(3);
+  const gnStr = G_N.toFixed(3);
+  const dampingStr = DAMPING.toFixed(4);
   card.innerHTML = `
     <div class="card-title">Substrate Controls</div>
     <div class="combo-section-label">Inject</div>
@@ -53,19 +55,19 @@ export function createSubstrateControlsCard() {
 
     <div class="combo-section-label">Parameters</div>
     <div class="pe-ctrl-row">
-      <span class="pe-ctrl-label ctrl-label-md" title="Genesis Threshold (K_B)">K<sub>B</sub> (Thresh)</span>
+      <span class="pe-ctrl-label ctrl-label-md" title="Engine K_B constant / manifestation anchor">K<sub>B</sub> (Thresh)</span>
       <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01" value="${kbStr}">
       <span class="pe-ctrl-value" id="combo-kb-val">${kbStr}</span>
     </div>
     <div class="pe-ctrl-row">
-      <span class="pe-ctrl-label ctrl-label-md" title="Gravitational Constant (G_N)">G<sub>N</sub> (Gravity)</span>
-      <input type="range" class="pe-slider" id="combo-gn" min="0.0" max="0.1" step="0.001" value="0.010">
-      <span class="pe-ctrl-value" id="combo-gn-val">0.010</span>
+      <span class="pe-ctrl-label ctrl-label-md" title="Engine lattice-gravity constant G_N">G<sub>N</sub> (Gravity)</span>
+      <input type="range" class="pe-slider" id="combo-gn" min="0.0" max="0.1" step="0.001" value="${gnStr}">
+      <span class="pe-ctrl-value" id="combo-gn-val">${gnStr}</span>
     </div>
     <div class="pe-ctrl-row">
-      <span class="pe-ctrl-label ctrl-label-sm">Damp</span>
-      <input type="range" class="pe-slider" id="combo-damp" min="0.0" max="0.05" step="0.0001" value="0.0073">
-      <span class="pe-ctrl-value" id="combo-damp-val">0.0073</span>
+      <span class="pe-ctrl-label ctrl-label-sm" title="Engine damping constant alpha">Damp</span>
+      <input type="range" class="pe-slider" id="combo-damp" min="0.0" max="0.05" step="0.0001" value="${dampingStr}">
+      <span class="pe-ctrl-value" id="combo-damp-val">${dampingStr}</span>
     </div>
 
     <div class="combo-section-label">Field</div>

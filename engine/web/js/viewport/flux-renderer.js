@@ -220,10 +220,12 @@ export class ViewportFluxRenderer {
     }
 
     /**
-     * Update flux volume rendering from a flat Float64Array of flux magnitudes.
-     * ALL voxels are rendered: inactive ones as tiny dark dots, active ones with
-     * flux-driven color and size (blue→cyan→white→yellow→red).
-     * @param {Float64Array} volumeData — N^3 flux magnitudes in x-fastest order
+     * Update flux volume rendering from either a legacy dense N^3 magnitude
+     * array or a native FTV2 descriptor:
+     *   { data, latticeSize, stride, axisCount }
+     * Both layouts are x-fastest. FTV2 is already sampled on the GPU/server,
+     * avoiding a full N^3 device-to-host copy and socket payload at large L.
+     * @param {Float32Array|Float64Array|{data:Float32Array,latticeSize:number,stride:number,axisCount:number}} volumeData
      * @param {number} latticeSize — side length N
      */
     updateFluxVolume(volumeData, latticeSize) {
@@ -245,44 +247,74 @@ export class ViewportFluxRenderer {
         const sizeAttr = this._fluxVolume.geometry.getAttribute('size');
         const N = latticeSize;
 
-        // Early exit if no data
-        if (!volumeData || volumeData.length === 0) {
+        const compact = volumeData && !ArrayBuffer.isView(volumeData)
+            && ArrayBuffer.isView(volumeData.data) ? volumeData : null;
+        const density = compact ? compact.data : volumeData;
+
+        // Early exit if no data.
+        if (!density || density.length === 0) {
             this._fluxVolume.geometry.setDrawRange(0, 0);
             return;
         }
 
-        const total = N * N * N;
-        if (volumeData.length !== total) {
-            // Size mismatch (e.g. during async resize transition or startup lag) — skip rendering this frame
-            return;
+        let samples;
+        let stride;
+        let sourceN;
+        if (compact) {
+            samples = Math.trunc(Number(compact.axisCount));
+            stride = Number(compact.stride);
+            sourceN = samples;
+            const compactCount = samples * samples * samples;
+            if (Math.trunc(Number(compact.latticeSize)) !== N
+                || samples < 1 || samples > FLUX_MAX_AXIS_POINTS
+                || !Number.isFinite(stride) || stride < 1
+                || density.length !== compactCount) {
+                // Async resize transition or malformed descriptor: retain the
+                // previous valid draw until the matching cache arrives.
+                return;
+            }
+        } else {
+            const total = N * N * N;
+            if (density.length !== total) {
+                // Size mismatch during an async resize/startup transition.
+                return;
+            }
+            samples = fluxVolumeAxisSamples(N);
+            stride = N / samples;   // fractional renderer-only resampling
+            sourceN = N;
         }
 
-        // Sample grid — `samples` points per axis (stride = N/samples ≥ 1). The DOTS are
-        // rendered at evenly-spaced stratum centres ((i+0.5)·stride apart, exactly uniform)
-        // and each dot reads its field value from the NEAREST voxel. Rendering at the even
-        // positions — rather than at the floor()-snapped voxel — is what kills the uneven
-        // "blocks": floor(i·stride) at a fractional stride bunches voxels 1,1,1,2,… into
-        // visible bands, but the even render grid has no beat. Collapses to exact voxel
-        // centres when stride==1 (N≤53). vox[] caches the nearest-voxel index per sample.
-        const samples = fluxVolumeAxisSamples(N);
-        const stride = N / samples;   // ≥ 1; exactly 1 when N ≤ FLUX_MAX_AXIS_POINTS
+        // vox[] maps a rendered axis sample to the source-buffer coordinate.
+        // renderCoord[] retains physical lattice coordinates independently:
+        // dense frames use even strata, while compact frames use the exact
+        // integer-stride voxel centres sampled by the native engine.
         if (!this._fluxVox || this._fluxVox.length < samples) {
             this._fluxVox = new Int32Array(FLUX_MAX_AXIS_POINTS);
         }
+        if (!this._fluxRenderCoord || this._fluxRenderCoord.length < samples) {
+            this._fluxRenderCoord = new Float32Array(FLUX_MAX_AXIS_POINTS);
+        }
         const vox = this._fluxVox;
+        const renderCoord = this._fluxRenderCoord;
         for (let i = 0; i < samples; i++) {
-            const v = ((i + 0.5) * stride) | 0;   // nearest voxel to the stratum centre
-            vox[i] = v < N ? v : N - 1;
+            if (compact) {
+                vox[i] = i;
+                renderCoord[i] = Math.min(i * stride, N - 1) + 0.5;
+            } else {
+                const v = ((i + 0.5) * stride) | 0;
+                vox[i] = v < N ? v : N - 1;
+                renderCoord[i] = (i + 0.5) * stride;
+            }
         }
 
         // Find max for normalization over the sampled grid.
         let instantMaxFlux = 0;
         for (let iz = 0; iz < samples; iz++) {
-            const zNN = vox[iz] * N * N;
+            const zNN = vox[iz] * sourceN * sourceN;
             for (let iy = 0; iy < samples; iy++) {
-                const zNNyN = zNN + vox[iy] * N;
+                const zNNyN = zNN + vox[iy] * sourceN;
                 for (let ix = 0; ix < samples; ix++) {
-                    const m = volumeData[zNNyN + vox[ix]];
+                    const m = density[zNNyN + vox[ix]];
                     if (m > instantMaxFlux) instantMaxFlux = m;
                 }
             }
@@ -301,7 +333,7 @@ export class ViewportFluxRenderer {
         // instead of being re-stretched to fill the ramp every frame.
         const maxFlux = this._updatePeakHoldDecay('_fluxMaxDecay', instantMaxFlux);
 
-        // Render every voxel — base dots + flux-driven glow
+        // Render every retained sample — base dots + flux-driven glow.
         // Clip to boundary shape (normalized coords -1..1 from lattice center)
         let count = 0;
         const maxPts = posAttr.array.length / 3;
@@ -332,13 +364,13 @@ export class ViewportFluxRenderer {
         // shared sheets and reads as plaid — and is deterministic (no per-frame shimmer).
         const jamp = this._fluxOrganic ? stride : 0;
         for (let iz = 0; iz < samples && count < maxPts; iz++) {
-            const zNN = vox[iz] * N * N;
-            const ze = (iz + 0.5) * stride;
+            const zNN = vox[iz] * sourceN * sourceN;
+            const ze = renderCoord[iz];
             for (let iy = 0; iy < samples && count < maxPts; iy++) {
-                const zNNyN = zNN + vox[iy] * N;
-                const ye = (iy + 0.5) * stride;
+                const zNNyN = zNN + vox[iy] * sourceN;
+                const ye = renderCoord[iy];
                 for (let ix = 0; ix < samples && count < maxPts; ix++) {
-                    const mag = volumeData[zNNyN + vox[ix]];
+                    const mag = density[zNNyN + vox[ix]];
 
                     // Skip inactive voxels before writing any attributes,
                     // otherwise stale color/size from a prior frame leak through
@@ -347,9 +379,18 @@ export class ViewportFluxRenderer {
                     // Stable 3D sub-cell offsets in [-0.5,0.5)·jamp → organic scatter.
                     let h = (ix * 92837111) ^ (iy * 689287499) ^ (iz * 283923481);
                     h = (h ^ (h >>> 15)) >>> 0;
-                    const xr = (ix + 0.5) * stride + ((h & 1023) / 1024 - 0.5) * jamp;
-                    const yr = ye + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp;
-                    const zr = ze + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp;
+                    const xr = Math.max(0.5, Math.min(
+                        N - 0.5,
+                        renderCoord[ix] + ((h & 1023) / 1024 - 0.5) * jamp,
+                    ));
+                    const yr = Math.max(0.5, Math.min(
+                        N - 0.5,
+                        ye + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp,
+                    ));
+                    const zr = Math.max(0.5, Math.min(
+                        N - 0.5,
+                        ze + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp,
+                    ));
 
                     if (needsClip) {
                         const center = N / 2;

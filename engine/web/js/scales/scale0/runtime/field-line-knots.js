@@ -348,7 +348,35 @@ export class FieldLineKnotTracker {
             }
         }
 
-        if (fluxVolume && N > 0 && fluxVolume.length >= N * N * N && N <= FLUX_DENSE_MAX_N) {  // flux |J| exact
+        const compactFlux = fluxVolume && !ArrayBuffer.isView(fluxVolume)
+            && ArrayBuffer.isView(fluxVolume.data) ? fluxVolume : null;
+        const compactAxis = Math.trunc(Number(compactFlux?.axisCount) || 0);
+        const compactStride = Math.max(1, Number(compactFlux?.stride) || 1);
+        const compactValid = compactFlux
+            && Math.trunc(Number(compactFlux.latticeSize)) === N
+            && compactAxis > 0
+            && compactFlux.data.length === compactAxis * compactAxis * compactAxis;
+        if (compactValid) {
+            // FTV2 represents each retained sample's integer-stride cell. Use
+            // the covered cell volume as an integration weight, including the
+            // shorter terminal cells when N is not divisible by the stride.
+            for (let zi = 0; zi < compactAxis; zi++) {
+                const z = Math.min(zi * compactStride, N - 1);
+                const wz = Math.min(compactStride, N - z);
+                for (let yi = 0; yi < compactAxis; yi++) {
+                    const y = Math.min(yi * compactStride, N - 1);
+                    const wy = Math.min(compactStride, N - y);
+                    const base = (zi * compactAxis + yi) * compactAxis;
+                    for (let xi = 0; xi < compactAxis; xi++) {
+                        const x = Math.min(xi * compactStride, N - 1);
+                        const wx = Math.min(compactStride, N - x);
+                        const f = compactFlux.data[base + xi] * wx * wy * wz;
+                        totF += f;
+                        if (K) { const k = knotAt(x, y, z); if (k >= 0) flux[k] += f; }
+                    }
+                }
+            }
+        } else if (fluxVolume && N > 0 && fluxVolume.length >= N * N * N && N <= FLUX_DENSE_MAX_N) {  // flux |J| exact
             for (let z = 0; z < N; z++) for (let y = 0; y < N; y++) {
                 const base = (z * N + y) * N;
                 for (let x = 0; x < N; x++) {

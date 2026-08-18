@@ -22,6 +22,28 @@ const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
 
+// Complete boolean TermToggles registry, in the same order as
+// engine/include/ftd/term_toggles.h::TOGGLE_SPECS.  The worker must read back
+// every canonical name after C++ setupScenario(), not merely names that the JS
+// UI happened to set before construction: scenario helpers legitimately turn
+// on research terms such as `langevin` that are absent from SCALE0_TOGGLES.
+// scenario-parity.spec.js pins this array exactly to TOGGLE_SPECS so a future
+// engine toggle addition cannot silently disappear from worker truth.
+export const SCALE0_ENGINE_TOGGLE_NAMES = Object.freeze([
+    'wave_propagation', 'coupling', 'damping', 'genesis', 'evaporation',
+    'gauss_projection', 'forces', 'gravity', 'poisson_coulomb', 'movement',
+    'lorentz_force', 'selective_damping', 'larmor_radiation', 'dual_substrate',
+    'color_forces', 'strong_stress_energy', 'weak_transmutation', 'strong_force',
+    'triad_binding', 'pair_production', 'exchange_force', 'latency_field',
+    'exact_dual_gauss', 'matched_gauss_dynamics', 'emergent_forces', 'langevin',
+    'symplectic_leapfrog', 'verlet_wave_integrator', 'lorentz_period2_floquet',
+    'lorentz_bcc_time_floquet', 'su2_gauge', 'su3_gauge',
+    'symmetric_movement_order', 'absorbing_boundary', 'reflective_boundary',
+    'field_energy_gravity', 'cluster_inertia', 'de_broglie_clock',
+    'db_clock_coulomb', 'confinement', 'knot_tracking', 'strict_validation',
+    'ew_background_sweep',
+]);
+
 // Worker thread-pool size. Default 1 (Phase 1: serial off-thread — guaranteed
 // safe). Set window.__ftdWasmWorkerPool = N to enable the in-worker threading
 // (Phase 2; the worker spawns N-1 nested pthread workers on demand).
@@ -532,7 +554,9 @@ export class WasmBridgeProxy {
         this._pendingCommands = []; // discard any commands queued for the previous scenario
         this._worker.postMessage({
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
-            toggles: this._toggles, pool: workerPoolSize(),
+            toggles: this._toggles,
+            toggleNames: SCALE0_ENGINE_TOGGLE_NAMES,
+            pool: workerPoolSize(),
         });
         return true;
     }

@@ -70,7 +70,7 @@ const sizeHolds = (page, n) => expect.poll(
 
 test.describe('Scale-0 lattice resize heap guard', () => {
 
-    test('WASM-owned scenario (empty) refuses an oversized lattice (C++ heap cap)', async ({ page }) => {
+    test('WASM-worker-owned scenario (empty) refuses an oversized lattice (C++ heap cap)', async ({ page }) => {
         await gotoAndReady(page);
         await waitForCtx(page);
 
@@ -85,15 +85,21 @@ test.describe('Scale-0 lattice resize heap guard', () => {
         }), { timeout: 15_000, message: 'scenario should switch to empty' }).toBe('empty');
 
         const st = await readState(page);
-        expect(st.useFluxMock, 'empty is WASM-owned (no fluxMock)').toBe(false);
+        // The legacy fluxMock slot now holds the off-thread WASM proxy.  It is
+        // not a JavaScript physics mock; useFluxMock=true means the C++ WASM
+        // worker is the active Scale-0 owner.
+        expect(st.useFluxMock, 'empty is owned by the C++ WASM worker').toBe(true);
+        expect(st.mockLattice, 'worker reports its live lattice size').toBe(st.bridgeLattice);
 
         // 257 on the WASM owner: 257³ × 1300 B = 20.6 GB > 8 GB (wasm64) ⇒ refused.
         // The refusal short-circuits BEFORE any C++ allocation, so this is cheap.
         const before = st.bridgeLattice;
+        const workerBefore = st.mockLattice;
         await selectSize(page, 257, /* ensureOption */ true);
         await page.waitForTimeout(500);
         const after = await readState(page);
         expect(after.dropdown, '257 reverts on the WASM owner (20.6 GB > 8 GB cap)').toBe(String(before));
         expect(after.bridgeLattice, '257 does not advance the WASM bridge').toBe(before);
+        expect(after.mockLattice, '257 does not advance the WASM worker').toBe(workerBefore);
     });
 });

@@ -6,6 +6,7 @@
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
+import { getScale0ScenarioToggleProfile } from '../../config/toggles.js';
 import { createScale0ViewportAdapter } from './viewport-adapter.js';
 import {
     getFieldStateSnapshot,
@@ -28,9 +29,12 @@ import {
     resetScale0Scenario,
     resetScale0VisualState,
     resizeScale0Lattice,
+    syncComboSliders,
+    syncScale0ToggleUiFromEngine,
     stepScale0,
 } from './runtime/scenario-loader.js';
-import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
+import { bindScale0UI, handleScale0ShortcutKey, updateScenarioMetadata } from './ui/bindings.js';
+import { getSelectedScenarioId } from './ui/dom.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js';
 import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
@@ -58,6 +62,8 @@ import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 const state = getScale0State();
 
 let _playBar = null;
+let _lastScenarioRequestBridge = null;
+let _lastScenarioRequestId = null;
 
 // ── Render mode ──────────────────────────────────────────────────────
 // Removed as part of simplifying UI and removing the render system.
@@ -133,6 +139,26 @@ export function bindUI(ctx) {
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
     appRegistry.register('scale0Ctx', ctx);
 
+    // Browser/WebView form restoration can set an already-selected scenario
+    // without emitting `change`. Reconcile after the first paint and on
+    // pageshow, while deduplicating against the explicit boot load below.
+    // Native reconnect is different: the server may own a fresh default
+    // RenderBridge even though the DOM and client state still agree, so force
+    // one atomic profile replay for every completed socket generation.
+    const reconcileRestoredScenario = () => {
+        if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
+        loadSelectedScenario(ctx);
+    };
+    if (!ctx._scale0ScenarioRestoreBound && typeof window !== 'undefined') {
+        ctx._scale0ScenarioRestoreBound = true;
+        window.addEventListener('pageshow', reconcileRestoredScenario);
+        requestAnimationFrame(reconcileRestoredScenario);
+    }
+    ctx.onBridgeConnectionReady = () => {
+        if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
+        loadSelectedScenario(ctx, { force: true });
+    };
+
     // Provide a callback for the bridge worker's asynchronous 'frame' signal.
     // When paused: trigger lattice + overlay refresh so the UI doesn't stay blank.
     // When running: overlays normally refresh via fieldDataVersion (CTRL.FRAME
@@ -142,10 +168,16 @@ export function bindUI(ctx) {
     // tick. ctx._samplersPending=true (set by loadScale0Scenario) marks this
     // window; one markFieldDirty() forces the overlay to repaint as soon as real
     // sampler data arrives, without bypassing the per-frame throttle afterwards.
-    ctx.onBridgePostFrame = (hadNewSamplers) => {
-        if (!ctx.running) {
+    ctx.onBridgePostFrame = (hadNewSamplers, forceUpload = false) => {
+        // Native FTS1 samples arrive independently of the lattice/particle
+        // frame. The sweep that requested them has already consumed EMPTY (or
+        // the previous epoch), so every new sampler delivery must schedule a
+        // fresh overlay pass. Worker frames remain safe: markFieldDirty is
+        // idempotent and the scheduler coalesces deliveries within a frame.
+        if (hadNewSamplers) markFieldDirty();
+        if (!ctx.running || forceUpload) {
             setLatticeNeedsUpload();
-            markFieldDirty();
+            if (!ctx.running) markFieldDirty();
         } else if (hadNewSamplers && ctx._samplersPending) {
             markFieldDirty();
         }
@@ -155,6 +187,47 @@ export function bindUI(ctx) {
         // postFrame can carry hadNewSamplers=true while the specific overlay's
         // data is still empty; clearing now would disarm the forced repaint and
         // leave the overlay blank until the next tick.
+    };
+
+    // Native physics is asynchronous and the bridge intentionally coalesces
+    // playback demand. Version the field only from server acknowledgements so
+    // overlay scheduling, telemetry, and lattice uploads describe completed
+    // physics rather than attempted rAF calls.
+    ctx.onBridgeSimulationComplete = ({ ticks = 1 } = {}) => {
+        const completed = Math.max(1, Math.trunc(Number(ticks) || 1));
+        state.fieldDataVersion = (state.fieldDataVersion || 0) + completed;
+        setLatticeNeedsUpload();
+        markFieldDirty();
+    };
+
+    // A typed server error proves the socket is still responsive, so keep it
+    // available for Reset/reload/manual Step. Pause automatic playback to avoid
+    // resubmitting the same rejected CUDA tick every animation frame. A true
+    // no-response watchdog additionally retires/reconnects the socket below.
+    ctx.onBridgeSimulationError = () => {
+        ctx.pauseSimulation?.();
+    };
+
+    // Native live profile edits are optimistic only until ws_server validates
+    // the whole TermToggles candidate. Repaint from the acknowledgement (or
+    // rollback snapshot) so dependency/conflict rejection cannot leave the
+    // checkbox card or boundary selector claiming physics the engine refused.
+    ctx.onBridgeProfileUpdate = ({ fluxBoundaryMode } = {}) => {
+        const scenarioId = state.currentScenarioId || 'flux-pulse';
+        // Native scenario/profile acknowledgements carry the authoritative
+        // constant values. Refresh the disabled K_B/G_N/damping controls from
+        // that echo rather than leaving a cosmetic pre-ack value behind.
+        syncComboSliders(ctx, state);
+        syncScale0ToggleUiFromEngine(ctx, viewportAdapter(ctx), scenarioId);
+        const modified = getScale0ScenarioToggleProfile(scenarioId)
+            .some(([name, expected]) => !!ctx.bridge.getToggle?.(name) !== !!expected);
+        updateScenarioMetadata(scenarioId, { profileModified: modified });
+        if (Number.isInteger(fluxBoundaryMode)) {
+            const select = document.getElementById('flux-boundary-mode');
+            if (select) select.value = String(fluxBoundaryMode);
+        }
+        setLatticeNeedsUpload();
+        markFieldDirty();
     };
 
     // Ensure the play bar is mounted (idempotent; may have been
@@ -283,7 +356,25 @@ export function destroy(ctx) {
 }
 
 export function loadScenario(ctx, scenarioId, params) {
+    _lastScenarioRequestBridge = ctx?.bridge ?? null;
+    _lastScenarioRequestId = scenarioId;
     loadScale0Scenario(ctx, state, viewportAdapter(ctx), scenarioId, params);
+}
+
+/**
+ * Load the currently displayed Scale-0 selection without relying on a DOM
+ * `change` event. Returns false when the same bridge already received the same
+ * request, unless `force` is used for a new native socket generation.
+ */
+export function loadSelectedScenario(ctx, { force = false } = {}) {
+    const scenarioId = getSelectedScenarioId('flux-pulse');
+    const bridge = ctx?.bridge ?? null;
+    if (!force
+        && _lastScenarioRequestBridge === bridge
+        && _lastScenarioRequestId === scenarioId) return false;
+    ctx?.pauseSimulation?.();
+    loadScenario(ctx, scenarioId);
+    return true;
 }
 
 export function animate(ctx) {
@@ -293,9 +384,6 @@ export function animate(ctx) {
     renderFrame(ctx);
     updateDiagnosticsAndPanels(ctx, state);
     _playBar?.refresh();
-    // Live flux-slice panel: cheap no-op when hidden; internally
-    // gated to every Nth render frame when visible.
-    if (typeof window !== 'undefined') window.__ftdFluxSlicePanel?.update?.();
 }
 
 export function step(ctx) {

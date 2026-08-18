@@ -24,6 +24,7 @@ const KIND_BY_SLOT = {
     helicity: 'helicity',
     kretschmann: 'kretschmann',
     latency: 'latency',
+    poissonLatency: 'poissonLatency',
     fisher: 'fisher',
     coherence: 'coherence',
     curlJ: 'curlJ',
@@ -57,7 +58,7 @@ export const SCALAR_SAMPLE_DEPS = {
  * @param {object|null} acScale0 — particle-frame source for E/B seed coherence
  * @param {number} stride — sweep stride from computeStreamlineParams
  */
-export function createFieldSampleCache(fieldCapability, acScale0, stride) {
+export function createFieldSampleCache(fieldCapability, acScale0, stride, kindOverrides = null) {
     /** @type {Record<string, object>} */
     const sampled = {};
     /** kind@stride → sample record (dedupes aliases that share a kind+stride) */
@@ -65,7 +66,7 @@ export function createFieldSampleCache(fieldCapability, acScale0, stride) {
 
     function ensureSample(slot) {
         if (sampled[slot] !== undefined) return sampled[slot];
-        const kind = KIND_BY_SLOT[slot];
+        const kind = kindOverrides?.[slot] || KIND_BY_SLOT[slot];
         if (!kind) {
             sampled[slot] = null;
             return null;

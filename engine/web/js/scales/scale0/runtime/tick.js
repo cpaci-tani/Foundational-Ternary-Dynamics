@@ -20,6 +20,12 @@ export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
         mainScale0.tickScale0();
     }
 
+    // WebSocketBridge is asynchronous and may coalesce high-frequency playback
+    // demand. Its tick_complete/run_complete callback owns the version/upload
+    // bump so UI state advances exactly once per physics tick the server really
+    // completed, not once per attempted request.
+    if (ctx.bridge?.isNativeGPU) return;
+
     state.latticeNeedsUpload = true;
     state.fieldDataVersion = (state.fieldDataVersion || 0) + tickCount;
 }

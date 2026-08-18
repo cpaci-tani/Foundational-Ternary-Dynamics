@@ -2,34 +2,37 @@
 /**
  * Gravity Observatory panel — integration test.
  *
- * On the gravitational-wave scenario the panel must: render the per-axis
- * gravity slices (a real painted plane, not blank), populate the proxy
- * telemetry (latency/force/dilation), and grow the live Δ-trace as the field
- * advances. Verifies the whole chain: getGravitySlice → transpose → paint, and
- * getScale0FieldSamples('latency'/'kretschmann') + force field → aggregateMetrics.
+ * The exact transverse-wave control must remain proxy-only: it renders the
+ * field-derived readouts and slices, but it must not fabricate a C++ latency
+ * field. The dedicated massive-body source then proves the genuine C++ Poisson
+ * latency path. Together these checks cover getGravitySlice → transpose →
+ * paint, proxy field sampling, and the real latency aggregate without calling
+ * the closed-negative wave a gravitational field.
  */
 import { test, expect } from '@playwright/test';
-import { gotoAndReady } from './_helpers.js';
+import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
 
 test.describe('Scale-0 Gravity Observatory', () => {
-    test('slices render, telemetry populates, and the Δ-trace responds to field advance', async ({ page }) => {
+    test('keeps the transverse-wave control proxy-only and surfaces real latency for a mass source', async ({ page }) => {
         test.setTimeout(60_000);
         await gotoAndReady(page);
         await expect.poll(() => page.evaluate(() => !!window.__ftdGravityPanel), { timeout: 20_000 }).toBe(true);
 
+        // This exact transverse n=4 wave has no metric, mass source, or
+        // gravity-specific operator. It is valid coverage for the visual
+        // proxy, but it must not activate the real latency solver.
+        await selectScale0Scenario(page, 's0-seed-gravitational-wave');
         await page.evaluate(() => {
-            const sel = document.getElementById('scenario-select');
-            if (sel) { sel.value = 's0-seed-gravitational-wave'; sel.dispatchEvent(new Event('change', { bubbles: true })); }
             const btn = document.getElementById('btn-play');
             if (btn && btn.getAttribute('data-paused') === 'true') btn.click();
             document.querySelector('#tab-bar .tab[data-panel="gravity"]')?.click();
         });
 
-        // Telemetry: the latency proxy populates from the seeded flux field.
+        // The field-derived proxy does respond to the wave.
         await expect.poll(async () => page.evaluate(() => {
             const m = window.__ftdGravityPanel?.lastMetrics;
             return m ? m.L.max : 0;
-        }), { timeout: 12_000, message: 'latency L should populate on the GW scenario' }).toBeGreaterThan(0);
+        }), { timeout: 12_000, message: 'proxy latency L should populate on the transverse-wave control' }).toBeGreaterThan(0);
 
         const tel = await page.evaluate(() => {
             const m = window.__ftdGravityPanel.lastMetrics;
@@ -41,20 +44,9 @@ test.describe('Scale-0 Gravity Observatory', () => {
         expect(Number.isFinite(tel.gravPE), 'gravity PE finite').toBe(true);
         expect(tel.gnG, 'G_N = 0.01').toBeCloseTo(0.01, 5);
 
-        // Real C++ latency (Phase 2): the field-energy gravity source populates
-        // the genuine voxel.latency Poisson field on the GW scenario, shown in
-        // the panel tagged [C++] (distinct from the |J|² proxy rows above).
-        await expect.poll(async () => page.evaluate(() => window.__ftdGravityPanel?.lastAgg?.active),
-            { timeout: 12_000, message: 'real C++ latency should activate on the GW scenario' }).toBe(true);
-        const cpp = await page.evaluate(() => ({
-            latencyMax: window.__ftdGravityPanel.lastAgg.latencyMax,
-            voxelCount: window.__ftdGravityPanel.lastAgg.voxelCount,
-            txt: document.getElementById('panel-gravity')?.textContent || '',
-        }));
-        expect(cpp.latencyMax, 'real latency max > 0').toBeGreaterThan(0);
-        expect(cpp.voxelCount, 'real latency field populated').toBeGreaterThan(0);
-        expect(cpp.txt.includes('Real C++ latency field'), '[C++] block rendered').toBe(true);
-        expect(cpp.txt.includes('[C++]'), '[C++] tag present').toBe(true);
+        const waveCpp = await page.evaluate(() => window.__ftdGravityPanel?.lastAgg);
+        expect(waveCpp?.active, 'closed-negative wave must not fabricate real C++ latency').toBe(false);
+        expect(waveCpp?.voxelCount, 'closed-negative wave has no real latency voxels').toBe(0);
 
         // Slices: at least one of the 3 axis tiles painted non-background pixels.
         const anyPainted = await page.evaluate(() => {
@@ -84,5 +76,26 @@ test.describe('Scale-0 Gravity Observatory', () => {
         expect(sparks, '4 metric sparklines').toBe(4);
         await expect.poll(async () => page.evaluate(() => window.__ftdGravityPanel.historyLength),
             { timeout: 8_000, message: 'Δ-trace history grows as fieldDataVersion bumps' }).toBeGreaterThan(h0);
+
+        // The massive-body setup is the dedicated real-latency source: a
+        // locked rest-mass ball with gravity + latency_field enabled. Its proxy
+        // |J|² value can correctly remain zero, so only the C++ aggregate is
+        // expected to become active here.
+        await selectScale0Scenario(page, 's0-seed-massive-body');
+        await page.evaluate(() => {
+            const btn = document.getElementById('btn-play');
+            if (btn && btn.getAttribute('data-paused') === 'true') btn.click();
+        });
+        await expect.poll(async () => page.evaluate(() => window.__ftdGravityPanel?.lastAgg?.active),
+            { timeout: 12_000, message: 'real C++ latency should activate on the massive-body source' }).toBe(true);
+        const cpp = await page.evaluate(() => ({
+            latencyMax: window.__ftdGravityPanel.lastAgg.latencyMax,
+            voxelCount: window.__ftdGravityPanel.lastAgg.voxelCount,
+            txt: document.getElementById('panel-gravity')?.textContent || '',
+        }));
+        expect(cpp.latencyMax, 'real latency max > 0').toBeGreaterThan(0);
+        expect(cpp.voxelCount, 'real latency field populated').toBeGreaterThan(0);
+        expect(cpp.txt.includes('Real C++ latency field'), '[C++] block rendered').toBe(true);
+        expect(cpp.txt.includes('[C++]'), '[C++] tag present').toBe(true);
     });
 });

@@ -92,6 +92,9 @@ export function bindScale0UI(ctx, api) {
             if (fluxVolBtn.classList.contains('is-inapplicable')) return;
             const on = !readButtonActive('toggle-flux-volume');
             setButtonActive('toggle-flux-volume', on);
+            if (typeof ctx._scale0ForcedFluxVolumePreference === 'boolean') {
+                ctx._scale0ForcedFluxVolumePreference = on;
+            }
             api.viewportAdapter(ctx).setFluxVolumeVisible(on);
             api.setLatticeNeedsUpload();
         });

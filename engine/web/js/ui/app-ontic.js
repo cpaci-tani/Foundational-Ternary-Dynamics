@@ -119,8 +119,15 @@ export function createOnticPanel(deps) {
 
         // Build diagnostics data from current engine state and update observatory
         const diagData = getOnticDiagnostics();
+        // Native GPU telemetry is published asynchronously.  During a source
+        // replacement or reconnect there may deliberately be no settled
+        // scalar snapshot yet; keep the last rendered observatory state rather
+        // than turning that unknown interval into an apparent zero-energy
+        // lattice measurement.
+        if (!diagData) return;
         const scaleIdx = diagData.scale || 0;
         const rawDiag = getRawDiagnostics();
+        if (!rawDiag) return;
         observatory.update(rawDiag, scaleIdx, diagData.tick);
         if (fcCard) renderFcCard(observatory, fcCard);
         if (obsCard) renderObserverCard(observatory, obsCard);
@@ -143,10 +150,10 @@ export function createOnticPanel(deps) {
                 const d = bridge.peGetDiagnostics();
                 return { count: d.particleCount, totalEnergy: d.totalEnergy, maxSep: 0 };
             } else {
-                return bridge.getDiagnostics();
+                return bridge?.getDiagnostics?.() ?? null;
             }
         } catch {
-            return { manifested: 0, totalFlux: 0, totalEnergy: 0, locked: 0 };
+            return null;
         }
     }
 
@@ -188,7 +195,8 @@ export function createOnticPanel(deps) {
                     scenarioName: document.getElementById('pe-scenario-select')?.value || 'pe-custom',
                 };
             } else {
-                const diag = bridge.getDiagnostics();
+                const diag = bridge?.getDiagnostics?.();
+                if (!diag) return null;
                 return {
                     tick: diag.tick,
                     particleCount: diag.manifested,
@@ -202,11 +210,7 @@ export function createOnticPanel(deps) {
                 };
             }
         } catch {
-            return {
-                tick: 0, particleCount: 0, boundCount: 0, latticeSize: 32,
-                spatialExtent: 0, totalEnergy: 0, relaxTime: 100, scale: 0,
-                scenarioName: 'Empty',
-            };
+            return null;
         }
     }
 

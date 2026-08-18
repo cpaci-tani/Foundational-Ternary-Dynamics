@@ -112,6 +112,7 @@ export const SCALE0_SAMPLER_METHODS = Object.freeze({
     helicity:      'getHelicitySampled',
     kretschmann:   'getKretschmannSampled',
     latency:       'getLatencySampled',
+    poissonLatency:'getPoissonLatencySampled',
     fisher:        'getFisherSampled',
     coherence:     'getCoherenceSampled',
     curlJ:         'getCurlJSampled',

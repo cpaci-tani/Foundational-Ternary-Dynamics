@@ -14,6 +14,17 @@
 import { getActiveScale0Bridge } from '../state/store.js';
 import { C_SPEED } from '../../../constants.js';
 
+function sampleGridMetadata(sample) {
+    const meta = {};
+    if (Number.isInteger(sample?.effectiveStride) && sample.effectiveStride > 0) {
+        meta.effectiveStride = sample.effectiveStride;
+    }
+    if (Number.isInteger(sample?.origin) && sample.origin >= 0) {
+        meta.origin = sample.origin;
+    }
+    return meta;
+}
+
 // Peak-hold-with-decay normalizer (audit fix — dynamical accuracy). Several
 // overlays below used to normalize by THIS FRAME's own instant max, which
 // stretches a trivial field and an extreme field into the identical color/
@@ -70,7 +81,7 @@ export function computePsiSquaredFrame(sampled, state, dualActive) {
         if (v > max) max = v;
     }
     buf.normalizer.psi2Max = max;
-    return { positions, values: buf.psi2, count, normalizer: max, dualActive };
+    return { positions, values: buf.psi2, count, normalizer: max, dualActive, ...sampleGridMetadata(sampled.fluxVector) };
 }
 
 export function computePhaseFrame(sampled, state, dualLVecs, dualRVecs) {
@@ -100,7 +111,7 @@ export function computePhaseFrame(sampled, state, dualLVecs, dualRVecs) {
             buf.phase[i] = 0;
         }
     }
-    return { positions, values: buf.phase, count, dualAvailable: hasDual };
+    return { positions, values: buf.phase, count, dualAvailable: hasDual, ...sampleGridMetadata(sampled.fluxVector) };
 }
 
 export function computeLagrangianDensityFrame(sampled, state) {
@@ -146,7 +157,7 @@ export function computeLagrangianDensityFrame(sampled, state) {
         if (a > maxAbs) maxAbs = a;
     }
     buf.normalizer.lagMax = maxAbs;
-    return { positions, values: buf.lagr, count, normalizer: maxAbs };
+    return { positions, values: buf.lagr, count, normalizer: maxAbs, ...sampleGridMetadata(eF) };
 }
 
 export function computeEntropyDensityFrame(sampled, state) {
@@ -182,7 +193,7 @@ export function computeEntropyDensityFrame(sampled, state) {
         const p = max > eps ? m / max : 0;
         buf.entropy[i] = 4 * p * (1 - p);
     }
-    return { positions, values: buf.entropy, count };
+    return { positions, values: buf.entropy, count, ...sampleGridMetadata(sampled.fluxVector) };
 }
 
 export function computeGravPotentialFrame(ctx, sampled, state) {
@@ -213,7 +224,7 @@ export function computeGravPotentialFrame(ctx, sampled, state) {
         if (m > maxAbs) maxAbs = m;
     }
     buf.normalizer.gravMax = maxAbs;
-    return { positions, values: buf.gravPot, count, normalizer: maxAbs };
+    return { positions, values: buf.gravPot, count, normalizer: maxAbs, ...sampleGridMetadata(sampled.fluxVector) };
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -302,7 +313,10 @@ export function computeEmEnergyFrame(sampled, state) {
     const positions = outPositions;
     buf.normalizer.emMax = max;
     const heldMax = updateDecayingMax(state, 'emEnergy', max);
-    return { positions, values: buf.emEnergy, count, normalizer: heldMax, signed: false };
+    return {
+        positions, values: buf.emEnergy, count, normalizer: heldMax, signed: false,
+        ...sampleGridMetadata(eF || bF),
+    };
 }
 
 /**
@@ -407,7 +421,7 @@ export function computeHorizonFrame(sampled, state) {
         }
     }
     if (count === 0) return null;
-    return { positions, values, count, threshold, normalizer: heldMax };
+    return { positions, values, count, threshold, normalizer: heldMax, ...sampleGridMetadata(L) };
 }
 
 /**
@@ -441,6 +455,7 @@ export function computeEPressureFrame(sampled, state) {
         count:     eF.count,
         normalizer: heldMax,
         signed:    false,
+        ...sampleGridMetadata(eF),
     };
 }
 
@@ -475,6 +490,7 @@ export function computeBPressureFrame(sampled, state) {
         count:     bF.count,
         normalizer: heldMax,
         signed:    false,
+        ...sampleGridMetadata(bF),
     };
 }
 
@@ -520,7 +536,15 @@ export function computeLatencyFrame(sampled, state) {
     let max = 0;
     for (let i = 0; i < L.count; i++) if (L.values[i] > max) max = L.values[i];
     const heldMax = updateDecayingMax(state, 'latency', max);
-    return { positions: L.positions, values: L.values, count: L.count, normalizer: heldMax, signed: false };
+    return {
+        positions: L.positions,
+        values: L.values,
+        count: L.count,
+        normalizer: heldMax,
+        signed: false,
+        source: L.kind === 'poissonLatency' ? 'poisson' : 'flux-proxy',
+        ...sampleGridMetadata(L),
+    };
 }
 
 /**

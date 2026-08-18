@@ -25,7 +25,11 @@ import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { rampViridis, rampEmEnergy, rampVorticity } from '../../../../viewport/color-ramps.js';
 
 const PANEL_ID = 'gravity-panel';
-const HZ = 'auto'; // 60 FPS minimum as requested
+// This is an instrument panel, not a render surface. Four fresh snapshots per
+// second preserve the live response while preventing three field samplers, a
+// compact volume, and a metric aggregate from being enqueued every animation
+// frame on the native WebSocket bridge.
+const HZ = 4;
 
 // Load the panel stylesheet via a JS-injected (async, NON-render-blocking) link
 // instead of a <head> <link>, and only on first show. A render-blocking <link>
@@ -231,6 +235,8 @@ export function mountGravityPanel(host, getBridge) {
     let history = [];     // [{ ver, Lmax, Kmax, Fmean, dil }]
     let latched = null;   // metric vector at the previous field-version
     let lastVer = -1;
+    let lastComputedVer = -1;
+    let lastHadVolume = false;
 
     panel.querySelector(`#${PANEL_ID}-qsel`).addEventListener('click', (e) => {
         const btn = e.target.closest('.grav-qbtn');
@@ -249,28 +255,38 @@ export function mountGravityPanel(host, getBridge) {
     function paintSlices(caps) {
         const L = caps.latticeSize || 33;
         const q = QUANTITIES.find((x) => x.kind === activeKind) || QUANTITIES[0];
-        const mid = L >> 1;
-        const M = L * L * L;
-        // The dense |J| volume — available on BOTH bridges (Mock + Wasm), so the
-        // slice is bridge-agnostic. maxRho computed once, shared across the 3 axes.
-        const mag = caps.getScale0FluxVolume?.();
-        if (!mag || mag.length < M) {
+        // Mock/WASM expose dense N³ |J|. Native FTV2 exposes the same quantity
+        // as a bounded regular grid; compute the proxy derivatives directly on
+        // that grid with its physical spacing instead of expanding to N³.
+        const volume = caps.getScale0FluxVolume?.();
+        const compact = volume && !ArrayBuffer.isView(volume) && ArrayBuffer.isView(volume.data);
+        const gridN = compact ? Math.trunc(Number(volume.axisCount) || 0) : L;
+        const spacing = compact ? Math.max(1, Number(volume.stride) || 1) : 1;
+        const mag = compact ? volume.data : volume;
+        const M = gridN * gridN * gridN;
+        const valid = ArrayBuffer.isView(mag) && gridN > 1 && mag.length >= M
+            && (!compact || Math.trunc(Number(volume.latticeSize)) === L);
+        if (!valid) {
             for (const t of tiles) { paintSliceToCanvas(t.canvas, null, L, {}); t.readout.textContent = '—'; }
             return false;
         }
+        const mid = compact
+            ? Math.max(0, Math.min(gridN - 1, Math.round((L >> 1) / spacing)))
+            : (L >> 1);
         const rho = maxRhoOf(mag, M);
-        let anyData = false;
         for (const t of tiles) {
-            const raw = gravitySlice(mag, L, t.axis, mid, activeKind, rho);
-            const data = transposeAndFlipNN(raw, L);
+            const raw = gravitySlice(mag, gridN, t.axis, mid, activeKind, rho, spacing);
+            const data = transposeAndFlipNN(raw, gridN);
             let max = 0;
             for (let i = 0; i < data.length; i++) if (data[i] > max) max = data[i];
-            if (max > 1e-30) anyData = true;
             const norm = max > 1e-30 ? 1 / max : 1;
-            paintSliceToCanvas(t.canvas, data, L, { ramp: q.ramp, signed: false, norm });
+            paintSliceToCanvas(t.canvas, data, gridN, { ramp: q.ramp, signed: false, norm });
             t.readout.textContent = `max ${formatExp(max)}`;
         }
-        return anyData;
+        // A zero field is still a complete physical snapshot. Returning true
+        // here prevents an inert vacuum from turning into a perpetual retry
+        // loop merely because its correctly measured extrema are zero.
+        return true;
     }
 
     function update() {
@@ -278,7 +294,14 @@ export function mountGravityPanel(host, getBridge) {
         const caps = b?.capabilities?.scale0 || null;
         if (!caps) return;
         // reset trace if the bridge identity changed (scenario / scale switch)
-        if (b !== bridgeId) { bridgeId = b; history = []; latched = null; lastVer = -1; }
+        if (b !== bridgeId) {
+            bridgeId = b;
+            history = [];
+            latched = null;
+            lastVer = -1;
+            lastComputedVer = -1;
+            lastHadVolume = false;
+        }
 
         // Gate the heavy work (full-volume read + O(N³) maxRho + 3 slices +
         // samplers) on visibility — when the Gravity tab isn't shown, do nothing.
@@ -286,14 +309,28 @@ export function mountGravityPanel(host, getBridge) {
         // slows scale switches) and is the established panel pattern (isPanelLive).
         if (!isPanelLive(host)) return;
 
+        const ver = (getScale0State()?.fieldDataVersion) | 0;
+        // A native visual read is asynchronous. Do not recompute/paint a
+        // stable field over and over, but keep polling while its first compact
+        // volume is still in flight so a paused scenario can populate after
+        // the binary response arrives.
+        if (ver === lastComputedVer && lastHadVolume && lastMetrics) {
+            // Native gravity aggregates arrive asynchronously from the worker.
+            // Keep the inexpensive aggregate/render poll alive while avoiding
+            // another full-volume read, slice paint, and O(N^3) recomputation.
+            const agg = caps.getScale0GravityMetricAgg?.() || null;
+            lastAgg = agg;
+            renderTelemetry(telBody, lastMetrics, agg);
+            return;
+        }
+
         const m = computeGravity(caps);
         lastMetrics = m;
         const agg = caps.getScale0GravityMetricAgg?.() || null;
         lastAgg = agg;
-        paintSlices(caps);
+        lastHadVolume = !!paintSlices(caps);
         renderTelemetry(telBody, m, agg);
 
-        const ver = (getScale0State()?.fieldDataVersion) | 0;
         if (ver !== lastVer) {
             latched = history.length ? history[history.length - 1] : null;   // previous field-version = baseline
             lastVer = ver;
@@ -301,6 +338,7 @@ export function mountGravityPanel(host, getBridge) {
             if (history.length > SPARK_MAX) history.shift();
         }
         renderDelta(deltaBody, history, latched, m);
+        lastComputedVer = ver;
     }
 
     // Defer the rAF update loop + the stylesheet to first show. A light 2 Hz arm
@@ -322,6 +360,7 @@ export function mountGravityPanel(host, getBridge) {
         get lastMetrics() { return lastMetrics; },
         get lastAgg() { return lastAgg; },
         get activeKind() { return activeKind; },
+        refreshHz: HZ,
         setKind: (k) => { activeKind = k; const caps = getCaps(); if (caps) paintSlices(caps); },
         get historyLength() { return history.length; },
         dispose: () => {

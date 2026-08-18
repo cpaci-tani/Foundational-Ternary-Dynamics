@@ -40,14 +40,15 @@ export class G2Component extends BaseComponent {
         });
     }
 
-    update(bridge) {
+    update(bridge, particles = null) {
         this.bridgeRef = bridge;
         
         if (this.trackingState) {
-            const particles = bridge.getScale0ParticleList?.() || [];
-            const tracked = particles.find((p) => p.id === this.trackingState.trackedId);
+            const particleList = particles || bridge.getScale0ParticleList?.() || [];
+            const tracked = particleList.find((p) => p.id === this.trackingState.trackedId);
             if (tracked) {
                 this.trackingState.position = { x: tracked.x, y: tracked.y, z: tracked.z };
+                this.trackingState.spin = Number.isFinite(tracked.spin) ? tracked.spin : 1;
                 // omegaMeasured is genuinely 0, not a stub: the engine has no
                 // spin-precession dynamics (no torque-from-B update rule) —
                 // particle.spin is assigned once at genesis (curl-sign, or a
@@ -106,16 +107,23 @@ export class G2Component extends BaseComponent {
             omegaHistory: [],
             m_lepton_units: m_lep,
             q,
+            spin: Number.isFinite(tracked.spin) ? tracked.spin : 1,
         };
 
         const sam = this._getSpinArrowManager();
         if (sam) {
             const trackedId = tracked.id;
             sam.track(trackedId, {
+                // The viewport asks these callbacks on every rendered frame.
+                // Reading the bridge in each callback used to schedule a native
+                // particle-frame request at render rate. The P1 panel refreshes
+                // the real tracked snapshot above at its bounded cadence, so
+                // the arrow remains physical without becoming a telemetry pump.
                 getPosition: () => {
-                    const ps = bridge?.getScale0ParticleList?.() || [];
-                    const p = ps.find((pp) => pp.id === trackedId);
-                    return p ? { x: p.x + 0.5, y: p.y + 0.5, z: p.z + 0.5 } : null;
+                    const state = this.trackingState;
+                    if (!state || state.trackedId !== trackedId) return null;
+                    const p = state.position;
+                    return { x: p.x + 0.5, y: p.y + 0.5, z: p.z + 0.5 };
                 },
                 // Real genesis-assigned spin (Voxel::spin, added to the WASM
                 // boundary 2026-07-14) flips the arrow between +z/-z. This is
@@ -124,9 +132,10 @@ export class G2Component extends BaseComponent {
                 // never evolved (see the omegaMeasured comment above) — but it
                 // is the REAL value instead of the previous hardcoded {sz:1}.
                 getSpin: () => {
-                    const ps = bridge?.getScale0ParticleList?.() || [];
-                    const p = ps.find((pp) => pp.id === trackedId);
-                    const sReal = p && Number.isFinite(p.spin) ? p.spin : 1;
+                    const state = this.trackingState;
+                    const sReal = state && state.trackedId === trackedId && Number.isFinite(state.spin)
+                        ? state.spin
+                        : 1;
                     return { sx: 0, sy: 0, sz: sReal >= 0 ? 1 : -1, omega_z: omegaPredicted };
                 },
                 omegaDefault: omegaPredicted,

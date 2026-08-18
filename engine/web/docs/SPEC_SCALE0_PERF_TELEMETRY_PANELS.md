@@ -11,7 +11,8 @@ the cost the live sidepanels (energy-audit + Lagrangian) add on the
 
 **Companions:** [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the per-frame
 `animate()` pipeline), [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md)
-(worker/shadow), [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) (tick/worker offload).
+(worker/shadow), [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) (tick/worker offload), and
+[`SPEC_NATIVE_GPU_TELEMETRY.md`](../../SPEC_NATIVE_GPU_TELEMETRY.md) (the native CUDA snapshot producer).
 
 Re-derive all `file:line` references from source before relying on line numbers.
 
@@ -77,7 +78,9 @@ the memoized viewport adapter are all genuinely well-optimized. This spec change
 
 **Non-goals**
 - N1. Re-doing the producer-side optimizations (sparse tick, worker offload) — done, see LATTICE_PERF.
-- N2. Speeding up the WASM/C++ engine compute. WebGPU compute. Native `ws_server`.
+- N2. Speeding up the WASM/C++ engine compute or WebGPU compute. The native
+  `ws_server` snapshot publisher is deliberately outside this web-only scope;
+  see [`SPEC_NATIVE_GPU_TELEMETRY.md`](../../SPEC_NATIVE_GPU_TELEMETRY.md).
 - N3. Removing or restructuring any panel/feature. This is gate / cache / relocate / amortize only.
 
 ---

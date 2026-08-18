@@ -25,24 +25,28 @@
 const SPAWN_FLASH_DURATION = 0.6; // seconds, matches Scale-1's spawn flash
 const SPAWN_FLASH_RATE_BOOST = 3.5;
 const BASE_RATE = 1.6;
-const _spawnTimes = new Map(); // posKey (string) -> frameSec first seen
+const _spawnTimes = new Map(); // packed voxel key -> frameSec first seen
 
 function posKey(x, y, z) {
-    // A plain string key (not a bit-packed numeric hash) — collision-free
-    // regardless of lattice size, and cheap enough at the ~10^4-particle
-    // scale this runs at (throttled to every 1st/3rd/4th/6th frame by
-    // frame-sync.js, not every raw tick).
-    return Math.floor(x) + ',' + Math.floor(y) + ',' + Math.floor(z);
+    // Native Scale 0 is capped at L=256, so 10 bits per wrapped coordinate is
+    // collision-free. Numeric Map/Set keys avoid allocating and hashing up to
+    // 100K "x,y,z" strings on every large-lattice visual refresh.
+    const xi = Math.floor(x) & 0x3ff;
+    const yi = Math.floor(y) & 0x3ff;
+    const zi = Math.floor(z) & 0x3ff;
+    return (xi | (yi << 10) | (zi << 20)) >>> 0;
 }
 
-// Cheap string hash -> a stable per-voxel phase offset in [0, 2*pi), so
+// Cheap integer mix -> a stable per-voxel phase offset in [0, 2*pi), so
 // simultaneous nearby spawns don't all blink in lockstep (a "wall of
 // flashes" look).
 function phaseFromKey(key) {
-    let h = 0;
-    for (let i = 0; i < key.length; i++) {
-        h = (Math.imul(h, 31) + key.charCodeAt(i)) | 0;
-    }
+    let h = key | 0;
+    h ^= h >>> 16;
+    h = Math.imul(h, 0x7feb352d);
+    h ^= h >>> 15;
+    h = Math.imul(h, 0x846ca68b);
+    h ^= h >>> 16;
     return ((h >>> 0) % 6283) / 1000; // ~[0, 2*pi)
 }
 

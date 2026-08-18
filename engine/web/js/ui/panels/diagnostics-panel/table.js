@@ -16,6 +16,12 @@ import { formatValue } from './formatters.js';
 const DASH = '\u2014';
 const DYNAMIC_COLS = 6;
 const TABLE_SPARK_VISIBLE_SAMPLES = 48;
+const TELEMETRY_GROUP_LABELS = Object.freeze({
+    diagnostics: 'state',
+    audit: 'audit',
+    gravity: 'gravity',
+    lagrangian: 'action',
+});
 
 function resolvePath(obj, path) {
     const parts = path.split('.');
@@ -104,8 +110,14 @@ export class DiagnosticsTable {
 
         const isStatic = section.variant === 'static';
 
+        const telemetryGroups = resetScope === 0 && Array.isArray(section.telemetryGroups)
+            ? section.telemetryGroups.filter(group => TELEMETRY_GROUP_LABELS[group]) : [];
+        this.telemetryGroups = telemetryGroups;
         this.el.innerHTML = `
-            <h3 class="diag-section-title">${section.title}</h3>
+            <h3 class="diag-section-title">
+                <span class="diag-section-title-text">${section.title}</span>
+                ${telemetryGroups.length ? '<span class="diag-section-freshness" aria-live="polite"></span>' : ''}
+            </h3>
             <table class="diag-table${isStatic ? ' diag-table-static' : ''}">
                 <colgroup>
                     <col class="diag-col-metric">
@@ -134,6 +146,7 @@ export class DiagnosticsTable {
         `;
 
         const tbody = this.el.querySelector('tbody');
+        this.freshnessEl = this.el.querySelector('.diag-section-freshness');
         this.cells = new Map();
         this.stats = new Map();
         this.pulseTokens = new Map();
@@ -237,6 +250,7 @@ export class DiagnosticsTable {
             this.resetStats();
         }
         const tick = scopeTick(this.hub, this.resetScope);
+        this.updateFreshness();
 
         for (const row of this.section.rows) {
             const raw = readSource(this.hub, row);
@@ -263,6 +277,37 @@ export class DiagnosticsTable {
             }
         }
         for (const spark of this.sparks) spark.update();
+    }
+
+    /**
+     * Native GPU telemetry is deliberately sampled per group. This compact
+     * section header is provenance, not a scheduling control: it tells the
+     * reader exactly which completed tick (and receipt age) produced the
+     * values below, including mixed state/audit sections.
+     */
+    updateFreshness() {
+        if (!this.freshnessEl || !this.telemetryGroups?.length
+            || typeof this.hub.getScale0TelemetryMeta !== 'function') return;
+        const entries = this.telemetryGroups.map(group => {
+            const label = TELEMETRY_GROUP_LABELS[group] || group;
+            const meta = this.hub.getScale0TelemetryMeta(group);
+            if (!meta || meta.stale || !Number.isFinite(meta.tick)) {
+                return { label, text: `${label}: waiting`, stale: true };
+            }
+            const age = Number.isFinite(meta.ageMs) ? Math.max(0, Math.round(meta.ageMs)) : null;
+            return {
+                label,
+                text: `${label} t${meta.tick}${age === null ? '' : ` · ${age} ms`}`,
+                stale: false,
+            };
+        });
+        const text = entries.map(entry => entry.text).join('  |  ');
+        if (this.freshnessEl.textContent !== text) this.freshnessEl.textContent = text;
+        const stale = entries.some(entry => entry.stale);
+        this.el.classList.toggle('diag-telemetry-stale', stale);
+        this.freshnessEl.title = stale
+            ? 'Waiting for a settled native GPU telemetry snapshot.'
+            : 'Each group is sampled independently by the native GPU scheduler.';
     }
 
     resetStats() {

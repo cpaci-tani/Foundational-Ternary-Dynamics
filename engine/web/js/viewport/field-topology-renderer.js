@@ -9,6 +9,23 @@ import {
     _ensureManifestAttrs,
 } from './field-renderer-shared.js';
 
+function resolveFluxMagnitudeGrid(fluxMag, latticeSize) {
+    const N = Math.trunc(Number(latticeSize) || 0);
+    if (fluxMag && !ArrayBuffer.isView(fluxMag) && ArrayBuffer.isView(fluxMag.data)) {
+        const axisCount = Math.trunc(Number(fluxMag.axisCount) || 0);
+        const stride = Math.max(1, Number(fluxMag.stride) || 1);
+        if (Math.trunc(Number(fluxMag.latticeSize)) === N && axisCount > 0
+            && fluxMag.data.length === axisCount * axisCount * axisCount) {
+            return { data: fluxMag.data, axisCount, stride, compact: true };
+        }
+        return null;
+    }
+    if (ArrayBuffer.isView(fluxMag) && N > 0 && fluxMag.length >= N * N * N) {
+        return { data: fluxMag, axisCount: N, stride: 1, compact: false };
+    }
+    return null;
+}
+
 export const fieldTopologyMethods = {
     _buildDarkMatterHalo() {
         const maxPts = 8000;
@@ -38,25 +55,32 @@ export const fieldTopologyMethods = {
         const colAttr = this._darkMatterHalo.geometry.getAttribute('particleColor');
         const sizeAttr = this._darkMatterHalo.geometry.getAttribute('size');
         const N = latticeSize;
+        const grid = resolveFluxMagnitudeGrid(fluxMag, N);
+        if (!grid) {
+            this._darkMatterHalo.geometry.setDrawRange(0, 0);
+            return;
+        }
         const kGen = K_GENESIS; // 3 * K_MANIFEST = 1.5164 (W_SC kinetics, FTD-0388; audit P2-9 fix: import the named constant, 2026-05-27)
         let vi = 0;
         const maxPts = 8000;
 
-        const step = N > 64 ? 4 : (N > 24 ? 2 : 1);
-        for (let z = 0; z < N && vi < maxPts; z += step) {
-            for (let y = 0; y < N && vi < maxPts; y += step) {
-                for (let x = 0; x < N && vi < maxPts; x += step) {
-                    const idx = z * N * N + y * N + x;
-                    const mag = fluxMag[idx];
+        const gridStep = grid.compact ? 1 : (N > 64 ? 4 : (N > 24 ? 2 : 1));
+        const pointScale = grid.compact ? grid.stride : gridStep;
+        const A = grid.axisCount;
+        for (let gz = 0; gz < A && vi < maxPts; gz += gridStep) {
+            for (let gy = 0; gy < A && vi < maxPts; gy += gridStep) {
+                for (let gx = 0; gx < A && vi < maxPts; gx += gridStep) {
+                    const idx = (gz * A + gy) * A + gx;
+                    const mag = grid.data[idx];
                     if (mag > 0.003 && mag < kGen) {
                         const t = mag / kGen;
-                        posAttr.array[vi * 3]     = x + 0.5;
-                        posAttr.array[vi * 3 + 1] = y + 0.5;
-                        posAttr.array[vi * 3 + 2] = z + 0.5;
+                        posAttr.array[vi * 3]     = Math.min(gx * grid.stride, N - 1) + 0.5;
+                        posAttr.array[vi * 3 + 1] = Math.min(gy * grid.stride, N - 1) + 0.5;
+                        posAttr.array[vi * 3 + 2] = Math.min(gz * grid.stride, N - 1) + 0.5;
                         colAttr.array[vi * 3] = 0.3 + t * 0.4;
                         colAttr.array[vi * 3 + 1] = 0.1 + t * 0.15;
                         colAttr.array[vi * 3 + 2] = 0.5 + t * 0.4;
-                        sizeAttr.array[vi] = (1.0 + 4.0 * t) * step;
+                        sizeAttr.array[vi] = (1.0 + 4.0 * t) * pointScale;
                         vi++;
                     }
                 }
@@ -286,25 +310,32 @@ export const fieldTopologyMethods = {
         const colAttr = this._genesisIsosurface.geometry.getAttribute('particleColor');
         const sizeAttr = this._genesisIsosurface.geometry.getAttribute('size');
         const N = latticeSize;
+        const grid = resolveFluxMagnitudeGrid(fluxMag, N);
+        if (!grid) {
+            this._genesisIsosurface.geometry.setDrawRange(0, 0);
+            return;
+        }
         let vi = 0;
         const band = kGenesis * 0.15;
 
-        const step = N > 64 ? 4 : (N > 24 ? 2 : 1);
+        const gridStep = grid.compact ? 1 : (N > 64 ? 4 : (N > 24 ? 2 : 1));
+        const pointScale = grid.compact ? grid.stride : gridStep;
+        const A = grid.axisCount;
 
-        for (let z = 0; z < N && vi < 4000; z += step) {
-            for (let y = 0; y < N && vi < 4000; y += step) {
-                for (let x = 0; x < N && vi < 4000; x += step) {
-                    const mag = fluxMag[z * N * N + y * N + x];
+        for (let gz = 0; gz < A && vi < 4000; gz += gridStep) {
+            for (let gy = 0; gy < A && vi < 4000; gy += gridStep) {
+                for (let gx = 0; gx < A && vi < 4000; gx += gridStep) {
+                    const mag = grid.data[(gz * A + gy) * A + gx];
                     const dist = Math.abs(mag - kGenesis);
                     if (dist < band && mag > 0.01) {
                         const t = 1.0 - dist / band;
-                        posAttr.array[vi * 3]     = x + 0.5;
-                        posAttr.array[vi * 3 + 1] = y + 0.5;
-                        posAttr.array[vi * 3 + 2] = z + 0.5;
+                        posAttr.array[vi * 3]     = Math.min(gx * grid.stride, N - 1) + 0.5;
+                        posAttr.array[vi * 3 + 1] = Math.min(gy * grid.stride, N - 1) + 0.5;
+                        posAttr.array[vi * 3 + 2] = Math.min(gz * grid.stride, N - 1) + 0.5;
                         colAttr.array[vi * 3] = 0.15 + t * 0.15;
                         colAttr.array[vi * 3 + 1] = 0.7 + t * 0.3;
                         colAttr.array[vi * 3 + 2] = 0.2 + t * 0.15;
-                        sizeAttr.array[vi] = (1.5 + 4.0 * t) * step;
+                        sizeAttr.array[vi] = (1.5 + 4.0 * t) * pointScale;
                         vi++;
                     }
                 }

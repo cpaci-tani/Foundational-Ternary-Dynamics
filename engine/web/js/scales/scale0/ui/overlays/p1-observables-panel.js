@@ -195,13 +195,17 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
 
         const state = getScale0State?.() || {};
         const scenarioId = state.currentScenarioId || '';
+        // Several P1 cards inspect the same particle list. Read the compact
+        // native particle frame once per panel pass and fan the snapshot out,
+        // rather than asking the bridge independently from each card.
+        const particles = bridge.getScale0ParticleList?.() || [];
 
-        coulombComp.update(bridge);
-        anisotropyComp.update(bridge);
+        coulombComp.update(bridge, now, particles, scenarioId);
+        anisotropyComp.update(bridge, now, particles);
         hydrogenComp.update(bridge, scenarioId);
         bellComp.update(bridge, scenarioId);
         gravityComp.update(bridge, scenarioId, now);
-        g2Comp.update(bridge);
+        g2Comp.update(bridge, particles);
         thomsonComp.update(bridge, scenarioId);
         fineStructureComp.update(bridge, scenarioId);
     }
