@@ -14,6 +14,7 @@
 #include <thrust/iterator/transform_iterator.h>
 #include <cufft.h>
 #include <cstdio>
+#include <cstring>
 #include <cmath>
 #include <algorithm>
 #include <limits>
@@ -354,6 +355,16 @@ int GpuEngine::device_tick() const {
     CUDA_CHECK(cudaMemcpy(&value, bufs_.d_tick, sizeof(int),
                           cudaMemcpyDeviceToHost));
     return value;
+}
+
+bool GpuEngine::device_luid(char out_luid[8]) const {
+    int device = 0;
+    if (cudaGetDevice(&device) != cudaSuccess) return false;
+    cudaDeviceProp prop{};
+    if (cudaGetDeviceProperties(&prop, device) != cudaSuccess) return false;
+    if (!prop.luidDeviceNodeMask) return false;  // 0 means no valid LUID (non-WDDM)
+    std::memcpy(out_luid, prop.luid, 8);
+    return true;
 }
 
 void GpuEngine::set_dt(double dt) {

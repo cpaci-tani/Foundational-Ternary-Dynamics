@@ -7,6 +7,10 @@ target_include_directories(ftd_native_session
 )
 target_link_libraries(ftd_native_session PUBLIC ftd_core)
 
+if(FTD_ENABLE_CUDA)
+    target_link_libraries(ftd_native_session PUBLIC ftd_cuda)
+endif()
+
 if(WIN32)
     add_executable(ftd_native_desktop
         src/main.cpp
@@ -54,4 +58,33 @@ if(WIN32)
     # generated for this directory and add_test() calls placed here are
     # silently dropped (verified: engine/build/native_desktop/ has no
     # CTestTestfile.cmake even after a full configure).
+
+    if(FTD_ENABLE_CUDA)
+        # Cross-checks the D3D12 hardware adapter (Task 1,
+        # select_hardware_adapter()) against the CUDA device's LUID
+        # (Task 2, GpuEngine::device_luid()) to confirm both APIs are
+        # targeting the same physical GPU. Needs ftd_cuda + CUDA toolkit
+        # headers reachable via GpuEngine, so it's gated the same way
+        # ftd_native_session's ftd_cuda link above is.
+        add_executable(test_cuda_d3d12_adapter_match
+            tests/test_cuda_d3d12_adapter_match.cpp
+            src/d3d12_presenter.cpp
+            ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+        )
+        target_include_directories(test_cuda_d3d12_adapter_match PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+        target_link_libraries(test_cuda_d3d12_adapter_match PRIVATE
+            ftd_native_session
+            ftd_cuda
+            d3d12
+            dxgi
+            d3dcompiler
+        )
+        # Same ftd_test_support cross-directory-ordering hazard as
+        # test_d3d12_adapter_selection above: compile test_telemetry.cpp
+        # directly into this binary instead of linking ftd_test_support
+        # (which is defined in the parent CMakeLists.txt after
+        # add_subdirectory(native_desktop) runs).
+    endif()
 endif()

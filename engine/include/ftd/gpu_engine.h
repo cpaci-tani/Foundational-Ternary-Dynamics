@@ -119,6 +119,16 @@ public:
     // Device mirror of current_tick(). Blocking 4-byte D2H — diagnostics and
     // tests only, never the tick path.
     int device_tick() const;
+
+    // The CUDA device's D3D12-comparable LUID (cudaDeviceProp::luid), used by
+    // the native desktop app to confirm CUDA and D3D12 selected the same
+    // physical adapter before attempting shared-memory interop. Returns false
+    // if the current CUDA device doesn't report a LUID (cudaDeviceProp::luid
+    // is only meaningful on Windows with a WDDM driver — always true for the
+    // native_desktop target, which is WIN32-only, but this keeps the contract
+    // honest for any future non-Windows caller of GpuEngine).
+    bool device_luid(char out_luid[8]) const;
+
     int total_sites() const { return N_; }
     double dt() const { return dt_; }
     void set_dt(double dt);
