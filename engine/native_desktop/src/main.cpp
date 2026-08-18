@@ -893,10 +893,18 @@ int main(int argc, char** argv) {
                             // already rely on elsewhere in this lambda. The
                             // presenter-side D3D12 resources these handles
                             // name (the shared buffer, its SRV binding, and
-                            // the shared fence) are untouched by a reload,
-                            // so nothing on the GUI-thread/D3D12-presenter
-                            // side needs to be redone -- only this CUDA-side
-                            // import.
+                            // the shared fence) are untouched by a reload --
+                            // but that only means nothing on the GUI-thread/
+                            // D3D12-presenter side needs to be redone when
+                            // interop was ALREADY active before this reload
+                            // (the SRV was already bound then). It does NOT
+                            // cover an inactive->active transition on this
+                            // reload (e.g. interop failed at startup but
+                            // this reload's reimport succeeds): in that case
+                            // bind_interop_particle_srv() has never run for
+                            // this process, and the GUI thread's message loop
+                            // below separately covers that case with its own
+                            // interop_srv_bound catch-up check.
                             const auto outcome =
                                 ftd::native_desktop::reimport_interop_after_reload(
                                     session, interop_buf_handle,
@@ -1023,6 +1031,23 @@ int main(int argc, char** argv) {
 
         MSG msg{};
         bool quit = false;
+        // GUI-thread-local catch-up for D3D12Presenter::bind_interop_
+        // particle_srv(). The startup path above (interop_active.store(enabled)
+        // followed by bind_interop_particle_srv()) only binds the SRV when
+        // interop is already active at startup. reimport_interop_after_
+        // reload() (engine_session.h/.cpp) is explicitly designed to support
+        // an inactive->active transition on ANY later reload -- independent
+        // of whether interop was active at startup -- and that path never
+        // calls bind_interop_particle_srv(). Without this flag, a later
+        // reload flipping interop_active from false to true would leave the
+        // render loop issuing DrawInstanced against an srv_heap slot that was
+        // never populated with a valid CreateShaderResourceView descriptor.
+        // bind_interop_particle_srv() only needs to run once for the
+        // lifetime of the never-recreated shared_particle_buffer resource,
+        // and D3D12Presenter calls must stay off the sim thread (established
+        // rule, commits be7eef14/1b80fb53), so this single GUI-thread check
+        // is the correct and sufficient place for it.
+        bool interop_srv_bound = false;
         while (!quit) {
             while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
                 if (msg.message == WM_QUIT) quit = true;
@@ -1108,6 +1133,17 @@ int main(int argc, char** argv) {
             // from either call here is a std::terminate hazard (the same one
             // view_proc's WM_SIZE handler guards resize() against above).
             try {
+                // Catch-up SRV bind for an inactive->active transition that
+                // happened on a later reload rather than at startup -- see
+                // interop_srv_bound's declaration above for the full
+                // rationale. Idempotent and additive: does not replace the
+                // startup-time bind_interop_particle_srv() call above, which
+                // stays in place for the common case where interop is
+                // already active at startup.
+                if (interop_active.load() && !interop_srv_bound) {
+                    presenter.bind_interop_particle_srv();
+                    interop_srv_bound = true;
+                }
                 if (draw_interop_count != 0) {
                     presenter.wait_shared_fence(this_frame_fence_value);
                 }
