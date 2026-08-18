@@ -997,6 +997,9 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // electroweak symmetry breaking, or a thermodynamic phase transition.
         configure_uniform_genesis_drive_terms(rb);
     }
+    else {
+        return false;
+    }
     return true;
 }
 

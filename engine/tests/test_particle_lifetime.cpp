@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 
@@ -36,10 +37,12 @@ struct PInfo {
     bool found = false;
 };
 
-PInfo find_particle(const ftd::RenderBridge& rb, int8_t sign) {
+PInfo find_particle(ftd::RenderBridge& rb, int8_t sign) {
     PInfo p;
+    std::vector<std::int8_t> states;
+    rb.copy_visual_states(states);
     for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-        if (rb.voxels()[i].state == sign) {
+        if (states[static_cast<std::size_t>(i)] == sign) {
             auto c = rb.lattice().coord(i);
             p = {c.x, c.y, c.z, i, true};
             return p;
@@ -62,6 +65,7 @@ int main() {
         for (double v0 : test_v) {
             const int L = 32;
             ftd::RenderBridge rb(L);
+            rb.set_interactive_gpu_mode(true);
             int mid = L / 2;
 
             double iso = ftd::K_B / std::sqrt(3.0);
@@ -83,7 +87,7 @@ int main() {
 
             double v_final = -1;
             auto p = find_particle(rb, +1);
-            if (p.found) v_final = rb.voxels()[p.idx].speed();
+            if (p.found) v_final = rb.inspect_voxel(p.x, p.y, p.z).voxel.speed();
 
             std::cout << "  v0=" << std::setw(5) << std::setprecision(3) << std::fixed
                       << v0 << "  survived=" << std::setw(4) << survived
@@ -96,6 +100,7 @@ int main() {
         {
             const int L = 32;
             ftd::RenderBridge rb(L);
+            rb.set_interactive_gpu_mode(true);
             int mid = L / 2;
             double iso = ftd::K_B / std::sqrt(3.0);
             rb.inject_particle(mid, mid, mid, +1, {iso, iso, iso});
@@ -119,6 +124,7 @@ int main() {
         for (double v0 : test_v) {
             const int L = 32;
             ftd::RenderBridge rb(L);
+            rb.set_interactive_gpu_mode(true);
             int mid = L / 2;
 
             double iso = ftd::K_B / std::sqrt(3.0);
@@ -141,7 +147,9 @@ int main() {
                 if (t % 100 == 99) {
                     auto ea = rb.energy_audit();
                     auto p = find_particle(rb, +1);
-                    double rho = p.found ? rb.voxels()[p.idx].density() : 0;
+                    double rho = p.found
+                        ? rb.inspect_voxel(p.x, p.y, p.z).voxel.density()
+                        : 0;
                     std::cout << "    " << std::setw(4) << (t + 1)
                               << "  " << std::scientific << std::setprecision(3)
                               << ea.particle_ke
@@ -175,6 +183,12 @@ int main() {
         // orbit and bounce at the walls so the energy budget stays
         // on-lattice.
         rb.toggles.reflective_boundary = true;
+        // PL3 is an orbital-energy diagnostic. Stochastic manifestation
+        // kinetics are covered by PL1/PL2; disable evaporation and polarity
+        // transmutation here so a missing -1 really means orbital/collision
+        // loss rather than a surviving electron whose sign was flipped.
+        rb.toggles.genesis = false;
+        rb.toggles.weak_transmutation = false;
         int mid = L / 2;
 
         // Proton at center (locked)
@@ -183,10 +197,13 @@ int main() {
         rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
 
         // Electron at r=8 with circular velocity for the measured lattice
-        // convention F = alpha/(4*pi*r^2), unit inertial mass:
-        // v_circ = sqrt(F*r) = sqrt(alpha/(4*pi*r0))
+        // convention F = alpha/(4*pi*r^2). Since FTD-0402 the force integrator
+        // explicitly uses M_INERTIAL, so m*v^2/r = F gives
+        // v_circ = sqrt(alpha/(4*pi*M_INERTIAL*r0)). The previous unit-mass
+        // seed predates that role split and under-seeded the orbit.
         int r0 = 8;
-        double v_circ = std::sqrt(ftd::ALPHA / (4.0 * ftd::PI * r0));
+        double v_circ = std::sqrt(
+            ftd::ALPHA / (4.0 * ftd::PI * ftd::M_INERTIAL * r0));
         rb.inject_particle(mid + r0, mid, mid, -1, {iso, iso, iso});
         rb.voxels()[rb.lattice().index(mid + r0, mid, mid)].locked = true;
         rb.run(500);  // Both settle
@@ -248,6 +265,13 @@ int main() {
     {
         const int L = 32;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
+        // This section measures mutual repulsion, not the independently
+        // selected open-face removal or evaporation rules. Keep both
+        // particles in-domain and manifested.
+        rb.toggles.reflective_boundary = true;
+        rb.toggles.genesis = false;
+        rb.toggles.weak_transmutation = false;
         int mid = L / 2;
         double iso = ftd::K_B / std::sqrt(3.0);
 
@@ -259,18 +283,23 @@ int main() {
         rb.run(500);
 
         // Unlock both
-        for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-            if (rb.voxels()[i].state == +1)
-                rb.voxels()[i].locked = false;
+        {
+            auto& voxels = rb.voxels();
+            for (int i = 0; i < rb.lattice().total_sites(); ++i) {
+                if (voxels[static_cast<std::size_t>(i)].state == +1)
+                    voxels[static_cast<std::size_t>(i)].locked = false;
+            }
         }
 
         int survived = 0;
         int count_alive = 0;
+        std::vector<std::int8_t> states;
         for (int t = 0; t < 1000; ++t) {
             rb.tick();
             count_alive = 0;
-            for (int i = 0; i < rb.lattice().total_sites(); ++i) {
-                if (rb.voxels()[i].state == +1) count_alive++;
+            rb.copy_visual_states(states);
+            for (const auto state : states) {
+                if (state == +1) count_alive++;
             }
             if (count_alive == 0) break;
             survived = t + 1;
@@ -286,6 +315,7 @@ int main() {
     {
         const int L = 32;
         ftd::RenderBridge rb(L);
+        rb.set_interactive_gpu_mode(true);
         int mid = L / 2;
 
         double iso = ftd::K_B / std::sqrt(3.0);
@@ -312,8 +342,9 @@ int main() {
                 std::cout << "  " << std::setw(4) << t << "  EVAPORATED\n";
                 break;
             }
-            double rho = rb.voxels()[p.idx].density();
-            double wv = rb.voxels()[p.idx].wave_vel.mag();
+            const auto sample = rb.inspect_voxel(p.x, p.y, p.z).voxel;
+            double rho = sample.density();
+            double wv = sample.wave_vel.mag();
             if (p.z != last_z || t % 50 == 0) {
                 std::cout << "  " << std::setw(4) << t
                           << "  " << std::setw(5) << p.z
@@ -325,7 +356,7 @@ int main() {
         auto p = find_particle(rb, +1);
         check("PL5: Slow particle (v=0.01) retains density after moves", p.found);
         if (p.found) {
-            double rho_final = rb.voxels()[p.idx].density();
+            double rho_final = rb.inspect_voxel(p.x, p.y, p.z).voxel.density();
             std::cout << "  Final density: " << std::setprecision(6) << rho_final
                       << " (threshold: " << ftd::K_B * 1e-4 << ")\n";
             check("PL5b: Final density > evap threshold",

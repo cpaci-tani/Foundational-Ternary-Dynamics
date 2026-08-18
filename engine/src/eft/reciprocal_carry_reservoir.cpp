@@ -22,8 +22,12 @@ bool finite(const ReciprocalTriplet& value) {
 }
 
 bool principal(double value) {
-  const long double extended = static_cast<long double>(value);
-  return extended >= -pi() && extended < pi();
+  // The public labels are doubles, so define the half-open branch using the
+  // same representable endpoints.  Comparing a rounded double +pi against
+  // long-double pi admits the nominally excluded endpoint on platforms where
+  // long double has extra precision (for example GCC on WSL).
+  const double branch_pi = std::acos(-1.0);
+  return value >= -branch_pi && value < branch_pi;
 }
 
 bool safe_add(std::int64_t left, std::int64_t right,

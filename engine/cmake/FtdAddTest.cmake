@@ -32,10 +32,14 @@
 #   # No ftd_core link (header-only tests like the trit_* library).
 #   ftd_add_test(test_trit_packing tests/test_trit_packing.cpp NO_CORE)
 #
+#   # Build an exploratory campaign without registering it with CTest.
+#   ftd_add_test(campaign_sweep tests/campaign_sweep.cpp BUILD_ONLY)
+#
 # Options:
 #   GPU_HEAVY    — needs dedicated CUDA device; links ftd_cuda, gets "gpu"
 #                  CTest label, runner dispatches serially.
 #   NO_CORE      — does not link ftd_core (header-only libraries).
+#   BUILD_ONLY   — build the executable but do not register it with CTest.
 #   CTEST_NAME   — explicit CTest registration name (default: derived from target)
 #   TIMEOUT      — CTest timeout in seconds (default: 300; runner honors this)
 #   LABELS       — additional CTest labels (beyond automatic "gpu" / "unit" /
@@ -53,7 +57,7 @@ if(NOT COMMAND cmake_parse_arguments)
 endif()
 
 function(ftd_add_test target source)
-    set(options GPU_HEAVY NO_CORE)
+    set(options GPU_HEAVY NO_CORE BUILD_ONLY)
     set(one_value_args CTEST_NAME TIMEOUT)
     set(multi_value_args LABELS)
     cmake_parse_arguments(FAT "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
@@ -76,7 +80,20 @@ function(ftd_add_test target source)
 
     # Link libraries.
     if(NOT FAT_NO_CORE)
-        if(FAT_GPU_HEAVY AND FTD_ENABLE_CUDA)
+        if(UNIX AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            # ftd_core consumes ftd_eft, while a small number of late EFT
+            # observer/campaign objects construct RenderBridge and therefore
+            # call back into ftd_core. GNU ld scans static archives once unless
+            # they are grouped; the former flat order left those callbacks
+            # undefined for tests that first pull the late EFT objects. Keep
+            # this test-only link policy scoped to GNU. MSVC resolves archives
+            # with different semantics and must not receive GNU linker flags.
+            target_link_libraries(${target} PRIVATE "-Wl,--start-group" ftd_core)
+            if(FTD_ENABLE_CUDA)
+                target_link_libraries(${target} PRIVATE ftd_cuda)
+            endif()
+            target_link_libraries(${target} PRIVATE ftd_eft "-Wl,--end-group")
+        elseif(FAT_GPU_HEAVY AND FTD_ENABLE_CUDA)
             target_link_libraries(${target} PRIVATE ftd_core ftd_cuda)
         else()
             target_link_libraries(${target} PRIVATE ftd_core)
@@ -93,6 +110,12 @@ function(ftd_add_test target source)
     # subdirectory) — defensive belt-and-suspenders.
     if(TARGET ftd_test_support)
         target_link_libraries(${target} PRIVATE ftd_test_support)
+    endif()
+
+    # Exploratory/data-generation campaigns can reuse the common target setup
+    # without making ordinary test audits execute long parameter sweeps.
+    if(FAT_BUILD_ONLY)
+        return()
     endif()
 
     # Register with CTest.

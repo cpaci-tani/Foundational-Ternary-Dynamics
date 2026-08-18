@@ -7,6 +7,7 @@ namespace ftd {
 
 LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
     LagrangianDiag d;
+    if (rb.copy_compact_lagrangian(d)) return d;
     const int N = static_cast<int>(rb.lattice().total_sites());
     const auto& voxels = rb.voxels();
 

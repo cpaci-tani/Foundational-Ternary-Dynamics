@@ -24,10 +24,22 @@
  */
 
 #include <memory>
+#include <cstdint>
+#include <vector>
+#include "ftd/telemetry_snapshot.h"
+#include "ftd/visual_snapshot.h"
 
 namespace ftd {
 
 class RenderBridge;
+enum class VisualFieldKind : std::uint32_t;
+struct VisualFieldSample;
+struct Diagnostics;
+struct EnergyAudit;
+struct GravityMetricAgg;
+struct LagrangianDiag;
+struct VoxelInspection;
+struct ForceDiag;
 
 namespace gpu { class GpuEngine; }
 namespace eft { struct DualCellContinuity; }
@@ -73,6 +85,67 @@ public:
     /// through `voxels()` will trigger `sync_to_host`. CPU no-op.
     virtual void mark_gpu_dirty() = 0;
 
+    /// Selective visualization readback. GPU implementations copy only the
+    /// compact fields required by the renderer and leave the canonical host
+    /// mirror dirty; CPU returns false so RenderBridge uses its resident AoS.
+    virtual bool copy_visual_states(std::vector<std::int8_t>& /*out*/) { return false; }
+    virtual bool copy_visual_flux_magnitude(std::vector<float>& /*out*/) { return false; }
+    virtual bool copy_visual_flux_magnitude_plane(
+        int /*axis*/, int /*index*/, std::vector<float>& /*out*/) { return false; }
+    virtual bool copy_visual_field_sample(VisualFieldKind /*kind*/, int /*stride*/,
+                                          VisualFieldSample& /*out*/) { return false; }
+    // Five floats per selected manifested site: remainder xyz, spin, color.
+    // The renderer combines the remainder with the cell centre without ever
+    // materializing the full GPU voxel mirror.
+    virtual bool copy_visual_particle_attributes(
+        const std::vector<int>& /*indices*/, std::vector<float>& /*out*/) {
+        return false;
+    }
+
+    /// Fixed-size device reductions for high-frequency native diagnostics.
+    /// False means the caller must use the canonical CPU snapshot path.
+    virtual bool copy_compact_diagnostics(Diagnostics& /*out*/) { return false; }
+    virtual bool copy_compact_energy_audit(EnergyAudit& /*out*/) { return false; }
+    virtual bool copy_compact_gravity_metric(GravityMetricAgg& /*out*/) { return false; }
+    virtual bool copy_compact_lagrangian(LagrangianDiag& /*out*/) { return false; }
+    virtual bool copy_compact_voxel(int /*index*/, VoxelInspection& /*out*/) {
+        return false;
+    }
+    virtual bool copy_compact_force(int /*index*/, ForceDiag& /*out*/) {
+        return false;
+    }
+
+    /// Stage one versioned telemetry observation. GPU implementations return
+    /// immediately after enqueuing their reduction/D2H fence; CPU captures a
+    /// coherent fallback snapshot and makes it immediately pollable. A false
+    /// return means a prior snapshot is still pending or the backend cannot
+    /// serve the request.
+    virtual bool begin_telemetry_snapshot(
+        const TelemetrySnapshotRequest& /*request*/) { return false; }
+    virtual bool telemetry_snapshot_ready() const { return false; }
+    virtual bool poll_telemetry_snapshot(TelemetrySnapshot& /*out*/) {
+        return false;
+    }
+
+    /// Stage one bounded visual frame.  This follows the telemetry lifecycle
+    /// but owns separate staging/fence resources: a slow visual consumer must
+    /// never overwrite or wait on the scalar telemetry publisher.  GPU
+    /// implementations enqueue their device gather + pinned D2H copy and
+    /// return immediately; the CPU compatibility backend is immediately
+    /// pollable.  Only one visual capture may be pending per backend.
+    virtual bool begin_visual_snapshot(
+        const VisualSnapshotRequest& /*request*/) { return false; }
+    virtual bool visual_snapshot_ready() const { return false; }
+    virtual bool poll_visual_snapshot(VisualSnapshot& /*out*/) {
+        return false;
+    }
+    /// Destructive source replacement must wait until this returns true.  A
+    /// CPU snapshot is immediately safe; CUDA returns false only while its
+    /// D2H event is genuinely unfinished.  This is distinct from a capture
+    /// result being unpolled: a completed event is safe to discard.
+    virtual bool visual_snapshot_safe_to_replace() const { return true; }
+    virtual bool visual_snapshot_in_flight() const { return false; }
+
     /// Seed the device-side RNG (cuRAND). Default no-op — the host RNG is
     /// owned by RenderBridge::rng_state_; GpuBackend forwards to GpuEngine.
     /// (Revision 3.1: retired the seed_rng() ifdef in render_bridge.cpp.)
@@ -106,10 +179,24 @@ public:
     void flush_host_mutations() override {}     // Same
     void mirror_phi_latency() override {}       // SOR writes phi_latency_ directly
     void mark_gpu_dirty() override {}            // No device to mark
+    bool begin_telemetry_snapshot(
+        const TelemetrySnapshotRequest& request) override;
+    bool telemetry_snapshot_ready() const override;
+    bool poll_telemetry_snapshot(TelemetrySnapshot& out) override;
+    bool begin_visual_snapshot(
+        const VisualSnapshotRequest& request) override;
+    bool visual_snapshot_ready() const override;
+    bool poll_visual_snapshot(VisualSnapshot& out) override;
+    bool visual_snapshot_safe_to_replace() const override { return true; }
+    bool visual_snapshot_in_flight() const override { return false; }
     Kind kind() const override { return Kind::Cpu; }
 
 private:
     RenderBridge& bridge_;
+    TelemetrySnapshot telemetry_snapshot_{};
+    bool telemetry_snapshot_pending_ = false;
+    VisualSnapshot visual_snapshot_{};
+    bool visual_snapshot_pending_ = false;
 };
 
 #ifdef FTD_ENABLE_CUDA
@@ -126,6 +213,30 @@ public:
     void flush_host_mutations() override;
     void mirror_phi_latency() override;
     void mark_gpu_dirty() override;
+    bool copy_visual_states(std::vector<std::int8_t>& out) override;
+    bool copy_visual_flux_magnitude(std::vector<float>& out) override;
+    bool copy_visual_flux_magnitude_plane(
+        int axis, int index, std::vector<float>& out) override;
+    bool copy_visual_field_sample(VisualFieldKind kind, int stride,
+                                  VisualFieldSample& out) override;
+    bool copy_visual_particle_attributes(
+        const std::vector<int>& indices, std::vector<float>& out) override;
+    bool copy_compact_diagnostics(Diagnostics& out) override;
+    bool copy_compact_energy_audit(EnergyAudit& out) override;
+    bool copy_compact_gravity_metric(GravityMetricAgg& out) override;
+    bool copy_compact_lagrangian(LagrangianDiag& out) override;
+    bool copy_compact_voxel(int index, VoxelInspection& out) override;
+    bool copy_compact_force(int index, ForceDiag& out) override;
+    bool begin_telemetry_snapshot(
+        const TelemetrySnapshotRequest& request) override;
+    bool telemetry_snapshot_ready() const override;
+    bool poll_telemetry_snapshot(TelemetrySnapshot& out) override;
+    bool begin_visual_snapshot(
+        const VisualSnapshotRequest& request) override;
+    bool visual_snapshot_ready() const override;
+    bool poll_visual_snapshot(VisualSnapshot& out) override;
+    bool visual_snapshot_safe_to_replace() const override;
+    bool visual_snapshot_in_flight() const override;
     void set_rng_seed(unsigned int seed) override;
     bool continuity_step(eft::DualCellContinuity& out) override;
     Kind kind() const override { return Kind::Gpu; }
@@ -133,6 +244,14 @@ public:
 private:
     RenderBridge&    bridge_;
     gpu::GpuEngine*  engine_;  // Non-owning; RenderBridge owns the unique_ptr.
+    // EnergyAudit::self_field_injection is maintained by RenderBridge rather
+    // than the device reduction. Capture it at snapshot submission so a poll
+    // after a later tick cannot splice a newer ledger value into old fields.
+    double telemetry_snapshot_self_field_injection_ = 0.0;
+    // Device identity counters change only at a GPU tick/injection or a host
+    // upload.  Once reconciled, repeated clean voxels() reads must not issue
+    // two synchronous scalar D2H copies per accessor call.
+    bool identity_counters_dirty_ = false;
 };
 #endif
 

@@ -10,6 +10,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/volumetric_measure.h"
 #include <cuda_runtime.h>
 #include <cufft.h>
 #include <cstdio>
@@ -124,27 +125,28 @@ static void fft_poisson_solve_f(
     const double* d_green,   // precomputed 1/G(k) (double — computed once)
     cufftHandle plan_fwd,
     cufftHandle plan_inv,
-    int N
+    int N,
+    cudaStream_t stream
 ) {
     int threads = 256;
     int blocks = (N + threads - 1) / threads;
 
     // 1. Pack double RHS into float complex
-    pack_real_to_complex_f<<<blocks, threads>>>(d_rhs, d_fft_buf, N);
+    pack_real_to_complex_f<<<blocks, threads, 0, stream>>>(d_rhs, d_fft_buf, N);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 2. Forward C2C FFT (in-place, single precision)
     CUFFT_CHECK(cufftExecC2C(plan_fwd, d_fft_buf, d_fft_buf, CUFFT_FORWARD));
 
     // 3. Apply Green's function
-    apply_green_f<<<blocks, threads>>>(d_fft_buf, d_green, N);
+    apply_green_f<<<blocks, threads, 0, stream>>>(d_fft_buf, d_green, N);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 4. Inverse C2C FFT (in-place)
     CUFFT_CHECK(cufftExecC2C(plan_inv, d_fft_buf, d_fft_buf, CUFFT_INVERSE));
 
     // 5. Unpack float to double + normalize
-    unpack_complex_to_real_f<<<blocks, threads>>>(d_fft_buf, d_phi, N);
+    unpack_complex_to_real_f<<<blocks, threads, 0, stream>>>(d_fft_buf, d_phi, N);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
 
@@ -178,6 +180,23 @@ __global__ void sum_state_kernel(
     }
 }
 
+// ---------- Finalize mean_charge on the device ----------
+//
+// mean_charge = charge_sum / N. Previously the host read charge_sum back and
+// divided; that blocking D2H ran 1-3x per tick. One thread now does the same
+// division on-device and the RHS kernels read the result through a pointer.
+// The arithmetic is identical (exact int64 sum, one binary64 division), so
+// every downstream value is bit-identical to the previous host scalar.
+
+__global__ void finalize_mean_charge_kernel(
+    const long long* __restrict__ charge_sum,
+    double* __restrict__ mean_charge,
+    int N
+) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    *mean_charge = static_cast<double>(*charge_sum) / static_cast<double>(N);
+}
+
 // ---------- Compute Gauss RHS: rho = div(J) - charge_coupling*(state - mean_charge) ----------
 //
 // Mirrors CPU gauss_project_cpu (poisson_solvers.cpp:164):
@@ -192,7 +211,7 @@ __global__ void compute_gauss_rhs(
     const int8_t* __restrict__ state,
     double* __restrict__ rhs,
     double charge_coupling,
-    double mean_charge,
+    const double* __restrict__ mean_charge,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -211,7 +230,7 @@ __global__ void compute_gauss_rhs(
                        + (flux_y[yp] - flux_y[ym])
                        + (flux_z[zp] - flux_z[zm]));
 
-    rhs[i] = div - charge_coupling * (static_cast<double>(state[i]) - mean_charge);
+    rhs[i] = div - charge_coupling * (static_cast<double>(state[i]) - *mean_charge);
 }
 
 // ---------- Compute Coulomb RHS: rho = -state (+ mean charge subtracted) ----------
@@ -219,7 +238,7 @@ __global__ void compute_gauss_rhs(
 __global__ void compute_coulomb_rhs(
     const int8_t* __restrict__ state,
     double* __restrict__ rhs,
-    double mean_charge,
+    const double* __restrict__ mean_charge,
     double charge_scale,   // FTD-0281 helium extension: nuclear-charge Z
     int N
 ) {
@@ -227,14 +246,15 @@ __global__ void compute_coulomb_rhs(
     if (i >= N) return;
     // rho = -charge_scale·(s − mean_charge). charge_scale=1.0 reproduces the
     // legacy rho = -(s − mean_charge); charge_scale=2 doubles the He+ well.
-    rhs[i] = -charge_scale * (static_cast<double>(state[i]) - mean_charge);
+    rhs[i] = -charge_scale * (static_cast<double>(state[i]) - *mean_charge);
 }
 
-// ---------- Compute Latency RHS: 4*pi*G * K_B * |state| ----------
+// ---------- Compute Latency RHS: 4*pi*G * rho ----------
 //
 // The latency Poisson equation is:
 //   laplacian(phi) = 4*pi*G * rho_mass
-// where rho_mass = K_B * |state| (mass density of manifested sites).
+// where rho = M_GRAVITATIONAL*|state| and, when selected, the local field
+// energy density 1/2(|J|^2+|W|^2). This mirrors solve_latency_poisson_cpu.
 //
 // The FFT Poisson solver automatically zeroes the DC Fourier mode
 // (Green[0]=0 in gpu_buffers.cu precompute_green_function), which is
@@ -244,15 +264,32 @@ __global__ void compute_coulomb_rhs(
 
 __global__ void compute_latency_rhs(
     const int8_t* __restrict__ state,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const double* __restrict__ wave_x,
+    const double* __restrict__ wave_y,
+    const double* __restrict__ wave_z,
     double* __restrict__ rhs,
-    double four_pi_G_kB,
+    double four_pi_G,
+    bool include_field_energy,
     int N
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
     int s = static_cast<int>(state[i]);
     double abs_s = static_cast<double>(s < 0 ? -s : s);
-    rhs[i] = four_pi_G_kB * abs_s;
+    double rho = M_GRAVITATIONAL * abs_s;
+    if (include_field_energy) {
+        const double flux2 = flux_x[i] * flux_x[i]
+                           + flux_y[i] * flux_y[i]
+                           + flux_z[i] * flux_z[i];
+        const double wave2 = wave_x[i] * wave_x[i]
+                           + wave_y[i] * wave_y[i]
+                           + wave_z[i] * wave_z[i];
+        rho += ::ftd::local_field_wave_energy_density(flux2, wave2);
+    }
+    rhs[i] = four_pi_G * rho;
 }
 
 // ---------- Convert phi_latency to voxel.latency = sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP)) ----------
@@ -274,7 +311,7 @@ __global__ void latency_to_voxel_kernel(
     voxel_latency[i] = sqrt(clamped);
 }
 
-// ---------- Gauss correction: subtract gradient(phi) from flux at void sites ----------
+// ---------- Gauss correction: subtract gradient(phi) from selected sites ----------
 
 __global__ void gauss_correction_kernel(
     double* __restrict__ flux_x,
@@ -282,6 +319,7 @@ __global__ void gauss_correction_kernel(
     double* __restrict__ flux_z,
     const double* __restrict__ phi,
     const int8_t* __restrict__ state,
+    bool exact_dual_gauss,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -290,7 +328,10 @@ __global__ void gauss_correction_kernel(
     if (x >= L || y >= L || z >= L) return;
 
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
-    if (state[i] != 0) return;  // Only correct void sites
+    // Production mode preserves the self-field at manifested sites. Exact
+    // dual-Gauss mode applies the same correction everywhere, matching CPU
+    // gauss_project_cpu's manifested-site semantics.
+    if (!exact_dual_gauss && state[i] != 0) return;
 
     // Gradient of phi (central differences)
     int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
@@ -312,27 +353,28 @@ static void fft_poisson_solve(
     const double* d_green,           // precomputed 1/G(k)
     cufftHandle plan_fwd,
     cufftHandle plan_inv,
-    int N
+    int N,
+    cudaStream_t stream
 ) {
     int threads = 256;
     int blocks = (N + threads - 1) / threads;
 
     // 1. Pack real RHS into complex buffer
-    pack_real_to_complex<<<blocks, threads>>>(d_rhs, d_fft_buf, N);
+    pack_real_to_complex<<<blocks, threads, 0, stream>>>(d_rhs, d_fft_buf, N);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 2. Forward FFT (in-place)
     CUFFT_CHECK(cufftExecZ2Z(plan_fwd, d_fft_buf, d_fft_buf, CUFFT_FORWARD));
 
     // 3. Apply Green's function in k-space
-    apply_green<<<blocks, threads>>>(d_fft_buf, d_green, N);
+    apply_green<<<blocks, threads, 0, stream>>>(d_fft_buf, d_green, N);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 
     // 4. Inverse FFT (in-place)
     CUFFT_CHECK(cufftExecZ2Z(plan_inv, d_fft_buf, d_fft_buf, CUFFT_INVERSE));
 
     // 5. Unpack + normalize
-    unpack_complex_to_real<<<blocks, threads>>>(d_fft_buf, d_phi, N);
+    unpack_complex_to_real<<<blocks, threads, 0, stream>>>(d_fft_buf, d_phi, N);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
 
@@ -342,40 +384,39 @@ static void fft_poisson_solve(
 
 void launch_gauss_project(GpuBuffers& bufs,
                           double charge_coupling,
+                          bool exact_dual_gauss,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     int N = bufs.N;
 
     // Step 0: mean_charge = charge_sum / N (mirrors gauss_project_cpu:148-149).
-    // Exact integer reduction → bit-deterministic; copy to host to form the
-    // scalar mean_charge passed into the RHS kernel.
-    double mean_charge = 0.0;
+    // Exact integer reduction → bit-deterministic. Fully device-resident:
+    // no cudaMalloc/cudaFree and no blocking D2H in the tick path.
     {
-        long long* d_charge_sum = nullptr;
-        CUDA_CHECK(cudaMalloc(&d_charge_sum, sizeof(long long)));
-        CUDA_CHECK(cudaMemset(d_charge_sum, 0, sizeof(long long)));
         int threads = 256;
         int blocks = (N + threads - 1) / threads;
-        sum_state_kernel<<<blocks, threads>>>(bufs.d_state, d_charge_sum, N);
+        CUDA_CHECK(cudaMemsetAsync(bufs.d_poisson_charge_sum, 0,
+                                   sizeof(long long), stream));
+        sum_state_kernel<<<blocks, threads, 0, stream>>>(
+            bufs.d_state, bufs.d_poisson_charge_sum, N);
         CUDA_CHECK(cudaGetLastError());
-        long long charge_sum = 0;
-        CUDA_CHECK(cudaMemcpy(&charge_sum, d_charge_sum, sizeof(long long),
-                              cudaMemcpyDeviceToHost));
-        CUDA_CHECK(cudaFree(d_charge_sum));
-        mean_charge = static_cast<double>(charge_sum) / static_cast<double>(N);
+        finalize_mean_charge_kernel<<<1, 1, 0, stream>>>(
+            bufs.d_poisson_charge_sum, bufs.d_poisson_mean_charge, N);
+        CUDA_CHECK(cudaGetLastError());
     }
 
     // Step 1: Compute RHS = div(J) - charge_coupling*(state - mean_charge)
     {
         dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
         dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
-        compute_gauss_rhs<<<grid, block>>>(
+        compute_gauss_rhs<<<grid, block, 0, stream>>>(
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_state,
             bufs.d_phi,
             charge_coupling,
-            mean_charge,
+            bufs.d_poisson_mean_charge,
             L
         );
         CUDA_CHECK(cudaGetLastError());
@@ -384,15 +425,15 @@ void launch_gauss_project(GpuBuffers& bufs,
     // Step 2: FFT Poisson solve (float precision)
     fft_poisson_solve_f(bufs.d_phi, bufs.d_phi,
                         bufs.d_fft_buf_f, bufs.d_green,
-                        plan_fwd_f, plan_inv_f, N);
+                        plan_fwd_f, plan_inv_f, N, stream);
 
-    // Step 3: Gauss correction — subtract gradient(phi) from flux at void sites
+    // Step 3: Gauss correction — void-only normally, all sites in exact mode.
     {
         dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
         dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
-        gauss_correction_kernel<<<grid, block>>>(
+        gauss_correction_kernel<<<grid, block, 0, stream>>>(
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_phi, bufs.d_state, L
+            bufs.d_phi, bufs.d_state, exact_dual_gauss, L
         );
         CUDA_CHECK(cudaGetLastError());
     }
@@ -404,34 +445,31 @@ void launch_solve_coulomb(GpuBuffers& bufs,
                           double charge_scale,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
+    const cudaStream_t stream = bufs.stream;
     int N = bufs.N;
 
     // Step 0: mean_charge = charge_sum / N (mirrors solve_coulomb_poisson_cpu:232).
-    // Exact integer reduction → bit-deterministic. Previously this launcher
-    // hardcoded mean_charge=0; computing it now matches the CPU's mean-subtracted
-    // periodic-BC source (negligible 1/N shift for a single nucleus, but faithful).
-    double mean_charge = 0.0;
+    // Exact integer reduction → bit-deterministic, fully device-resident.
     {
-        long long* d_charge_sum = nullptr;
-        CUDA_CHECK(cudaMalloc(&d_charge_sum, sizeof(long long)));
-        CUDA_CHECK(cudaMemset(d_charge_sum, 0, sizeof(long long)));
         int threads = 256;
         int blocks = (N + threads - 1) / threads;
-        sum_state_kernel<<<blocks, threads>>>(bufs.d_state, d_charge_sum, N);
+        CUDA_CHECK(cudaMemsetAsync(bufs.d_poisson_charge_sum, 0,
+                                   sizeof(long long), stream));
+        sum_state_kernel<<<blocks, threads, 0, stream>>>(
+            bufs.d_state, bufs.d_poisson_charge_sum, N);
         CUDA_CHECK(cudaGetLastError());
-        long long charge_sum = 0;
-        CUDA_CHECK(cudaMemcpy(&charge_sum, d_charge_sum, sizeof(long long),
-                              cudaMemcpyDeviceToHost));
-        CUDA_CHECK(cudaFree(d_charge_sum));
-        mean_charge = static_cast<double>(charge_sum) / static_cast<double>(N);
+        finalize_mean_charge_kernel<<<1, 1, 0, stream>>>(
+            bufs.d_poisson_charge_sum, bufs.d_poisson_mean_charge, N);
+        CUDA_CHECK(cudaGetLastError());
     }
 
     // Step 1: Compute RHS = -charge_scale·(state − mean_charge)
     {
         int threads = 256;
         int blocks = (N + threads - 1) / threads;
-        compute_coulomb_rhs<<<blocks, threads>>>(
-            bufs.d_state, bufs.d_phi_coulomb, mean_charge, charge_scale, N
+        compute_coulomb_rhs<<<blocks, threads, 0, stream>>>(
+            bufs.d_state, bufs.d_phi_coulomb, bufs.d_poisson_mean_charge,
+            charge_scale, N
         );
         CUDA_CHECK(cudaGetLastError());
     }
@@ -439,13 +477,13 @@ void launch_solve_coulomb(GpuBuffers& bufs,
     // Step 2: FFT Poisson solve (float precision)
     fft_poisson_solve_f(bufs.d_phi_coulomb, bufs.d_phi_coulomb,
                         bufs.d_fft_buf_f, bufs.d_green,
-                        plan_fwd_f, plan_inv_f, N);
+                        plan_fwd_f, plan_inv_f, N, stream);
 }
 
 // ---------- Launcher: Latency Poisson ----------
 //
-// Solves laplacian(phi) = 4*pi*G * K_B * |state| for the gravitational
-// potential phi_latency, then writes voxel.latency = sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP)).
+// Solves laplacian(phi) = 4*pi*G*rho for the gravitational potential, then
+// writes voxel.latency = sqrt(clamp(-phi, 0, LATENCY_HORIZON_CLAMP)).
 //
 // This is the GPU counterpart of RenderBridge::solve_latency_poisson()
 // (engine/src/render_bridge.cpp:696-747). It unblocks every test that
@@ -453,29 +491,35 @@ void launch_solve_coulomb(GpuBuffers& bufs,
 // Wave 5 GPU-first sweep (2026-04-14).
 
 void launch_solve_latency(GpuBuffers& bufs,
+                          bool include_field_energy,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
+    const cudaStream_t stream = bufs.stream;
     int N = bufs.N;
 
     int threads = 256;
     int blocks = (N + threads - 1) / threads;
 
-    // Step 1: Compute RHS = 4*pi*G * M_GRAVITATIONAL * |state|
+    // Step 1: Compute RHS = 4*pi*G *
+    //   (M_GRAVITATIONAL*|state| + selected local field/wave energy)
     // (DC mode is automatically zeroed by Green's function, equivalent
     // to the CPU's mean-subtraction of rho_mass.)
-    const double FOUR_PI_G_K_B = 4.0 * PI * G_N * M_GRAVITATIONAL;
-    compute_latency_rhs<<<blocks, threads>>>(
-        bufs.d_state, bufs.d_phi_latency, FOUR_PI_G_K_B, N
+    const double FOUR_PI_G = 4.0 * PI * G_N;
+    compute_latency_rhs<<<blocks, threads, 0, stream>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_phi_latency, FOUR_PI_G, include_field_energy, N
     );
     CUDA_CHECK(cudaGetLastError());
 
     // Step 2: FFT Poisson solve (float precision — same as Coulomb/Gauss)
     fft_poisson_solve_f(bufs.d_phi_latency, bufs.d_phi_latency,
                         bufs.d_fft_buf_f, bufs.d_green,
-                        plan_fwd_f, plan_inv_f, N);
+                        plan_fwd_f, plan_inv_f, N, stream);
 
     // Step 3: Convert phi_latency → voxel.latency via sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP))
-    latency_to_voxel_kernel<<<blocks, threads>>>(
+    latency_to_voxel_kernel<<<blocks, threads, 0, stream>>>(
         bufs.d_latency, bufs.d_phi_latency, N
     );
     CUDA_CHECK(cudaGetLastError());

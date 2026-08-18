@@ -34,6 +34,17 @@ namespace ftd {
 namespace gpu {
 namespace kernels {
 
+// Defined in kernels_aux.cu.  The lifecycle launcher snapshots the post-write
+// field, stably compacts accepted genesis/original evaporation candidates, and
+// commits them in canonical X-major order before assigning surviving IDs by
+// stable rank.  This preserves the CPU's live-neighbour evaporation semantics
+// without an O(N) serial device scan.
+void launch_canonical_lifecycle(
+    GpuBuffers& bufs, bool dual_substrate,
+    bool do_genesis, bool do_evaporation,
+    double kinetic_drain, double genesis_threshold, double manifest_scale,
+    unsigned long long rng_seed);
+
 // ---------- Phase Read Kernel ----------
 // Computes delta_j = C_WAVE^2 * Laplacian(flux) - G_C * gradient(state)
 //                   + G_C * curl(state * velocity)
@@ -315,8 +326,9 @@ __global__ void phase_write_kernel(
     // BH-F9 (2026-05-05): Langevin noise via shared SplitMix64+Box-Muller.
     // Replaces the d_langevin_noise buffer pre-filled by curandGenerateNormalDouble.
     unsigned long long rng_seed,
-    int                tick
+    const int* __restrict__ tick_ptr
 ) {
+    const int tick = *tick_ptr;
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int z = blockIdx.z * blockDim.z + threadIdx.z;
@@ -393,8 +405,8 @@ __global__ void genesis_kernel(
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int32_t* __restrict__ pair_id,
     int* __restrict__ ledger_reaction,
-    int next_pid,  // starting particle ID for this batch
     int L,
     double kinetic_drain,  // FTD-0276: runtime drain fraction (default 0.5)
     // BH-F5/F8/F9 (2026-05-05): per-voxel deterministic SplitMix64 RNG via
@@ -489,8 +501,11 @@ __global__ void genesis_kernel(
     else if (afy >= afz)          color[i] = 2;        // green
     else                          color[i] = 3;        // blue
 
-    // Particle ID: use lattice index as unique ID (no two particles share a site)
-    particle_id[i] = i;
+    // Match the CPU ARCH-7 contract: parallel genesis marks a pending identity;
+    // a post-evaporation device scan resolves surviving sentinels in ascending
+    // X-major voxel order.  This is deterministic across CUDA schedules.
+    particle_id[i] = -2;
+    pair_id[i] = -1;
 }
 
 // ---------- Evaporation Kernel ----------
@@ -511,6 +526,7 @@ __global__ void evaporation_kernel(
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int32_t* __restrict__ pair_id,
     int* __restrict__ ledger_reaction,
     int L,
     unsigned long long rng_seed, int tick
@@ -570,6 +586,7 @@ __global__ void evaporation_kernel(
         spin[i] = 0;
         color[i] = 0;
         particle_id[i] = -1;
+        pair_id[i] = -1;
     }
 }
 
@@ -578,11 +595,12 @@ __global__ void evaporation_kernel(
 void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         uint8_t bcc_stencil_mode,
                         bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
 
-    phase_read_kernel<<<grid, block>>>(
+    phase_read_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
@@ -599,14 +617,18 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
                         bool do_langevin, double langevin_gamma, double langevin_T,
                         uint8_t langevin_site_filter,
                         double kinetic_drain,
-                        unsigned long long rng_seed, int tick) {
+                        double genesis_threshold,
+                        double manifest_scale,
+                        unsigned long long rng_seed) {
+    const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
 
     // Compute near-particle mask (+ Larmor accel) if selective damping
     if (selective_damping) {
-        compute_near_particle_kernel<<<grid, block>>>(
+        compute_near_particle_kernel<<<grid, block, 0, stream>>>(
             bufs.d_state, bufs.d_accel_mag,
             bufs.d_near_particle, bufs.d_near_accel,
             larmor_radiation, L
@@ -615,7 +637,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
     }
 
     // Leapfrog + damping (with optional Larmor modulation)
-    phase_write_kernel<<<grid, block>>>(
+    phase_write_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
@@ -627,49 +649,14 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         langevin_site_filter,
         L,
         rng_seed, tick
-    );
+    );  // `tick` is now bufs.d_tick (const int*)
     CUDA_CHECK(cudaGetLastError());
 
-    // Genesis (stochastic) — BH-F5/F8/F9 (2026-05-05): SplitMix64 stream
-    // replaces the cuRAND pre-fill. Per-voxel deterministic via shared
-    // engine/include/ftd/voxel_rng.h. Bit-exact CPU↔GPU.
-    if (do_genesis) {
-        genesis_kernel<<<grid, block>>>(
-            bufs.d_state,
-            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-            bufs.d_ledger_reaction,
-            0, L,
-            kinetic_drain,
-            rng_seed, tick
-        );
-        CUDA_CHECK(cudaGetLastError());
-    }
-
-    // Evaporation — gate on (do_genesis || do_evaporation). The genesis path
-    // implies evaporation by design (manifestation + evaporation are sister
-    // operations on a single threshold, see CPU phase_write.cpp:291). The
-    // do_evaporation flag lets tests exercise the evaporation path in
-    // isolation without enabling genesis. Pre-F6 this ran every tick
-    // regardless of toggle (audit F6, 2026-05-04). Stochastic since the
-    // BH-F5 completion (2026-07-16): rng_seed/tick feed the shared
-    // SplitMix64 Evaporation draw, matching CPU phase_write.cpp Loop 2.
-    if (do_genesis || do_evaporation) {
-        evaporation_kernel<<<grid, block>>>(
-            bufs.d_state,
-            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-            bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
-            bufs.d_latency,
-            bufs.d_locked,
-            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-            bufs.d_ledger_reaction,
-            L,
-            rng_seed, tick
-        );
-        CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
-    }
+    launch_canonical_lifecycle(
+        bufs, /*dual_substrate=*/false,
+        do_genesis, do_evaporation,
+        kinetic_drain, genesis_threshold, manifest_scale,
+        rng_seed);
     CUDA_CHECK(cudaGetLastError());
 }
 

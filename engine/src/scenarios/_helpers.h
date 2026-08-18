@@ -40,17 +40,65 @@ namespace {
 
 // ── Injection helpers (match JS argument order) ────────────────────
 inline void IF(RenderBridge& rb, int x, int y, int z, double fx, double fy, double fz) {
-    rb.inject_flux_add(x, y, z, Vec3(fx, fy, fz));
+    // Scenario construction is one host-staged batch. Runtime injection uses
+    // direct CUDA kernels, but routing this helper through that path would make
+    // an IF()/IP()/LOCK() loop alternate device writes with full host syncs.
+    // Keep every scenario primitive on the same canonical host shadow and let
+    // the backend perform one lazy upload after construction.
+    const Vec3 value(fx, fy, fz);
+    Voxel& v = rb.voxel_at(x, y, z);
+    v.flux += value;
+    if (rb.toggles.dual_substrate) {
+        const Vec3 half = value * 0.5;
+        v.flux_L += half;
+        v.flux_R += half;
+    }
 }
 inline void IW(RenderBridge& rb, int x, int y, int z, double wx, double wy, double wz) {
-    rb.inject_wave_vel_add(x, y, z, Vec3(wx, wy, wz));
+    const Vec3 value(wx, wy, wz);
+    Voxel& v = rb.voxel_at(x, y, z);
+    v.wave_vel += value;
+    if (rb.toggles.dual_substrate) {
+        const Vec3 half = value * 0.5;
+        v.wave_vel_L += half;
+        v.wave_vel_R += half;
+    }
 }
 inline void IP(RenderBridge& rb, int x, int y, int z, int state) {
-    rb.inject_particle(x, y, z, static_cast<int8_t>(state), Vec3(0, 0, 0));
+    // Do not call the ordinary GPU-aware inject_particle() path for each
+    // marker: a common IP()+LOCK()
+    // pair would otherwise inject on the device, synchronize the entire
+    // lattice back to the host for LOCK(), then upload it again before the
+    // next marker.  Marker sheets contain O(L^2) sites, making that accidental
+    // transfer loop dominate setup at native CUDA lattice sizes.
+    //
+    // Stage the same zero-flux particle record in the canonical host shadow.
+    // voxel_at() marks that shadow dirty; the backend performs one lazy upload
+    // when setup completes and the first visual read or tick is requested.
+    Voxel& v = rb.voxel_at(x, y, z);
+    v.state = static_cast<int8_t>(state);
+    v.flux = Vec3(0, 0, 0);
+    v.spin = 0;
+    v.color = 0;
+    v.particle_id = rb.injector().next_particle_id();
+    v.pair_id = -1;
+    if (rb.toggles.dual_substrate) {
+        v.flux_L = Vec3(0, 0, 0);
+        v.flux_R = Vec3(0, 0, 0);
+    }
 }
 inline void IPF(RenderBridge& rb, int x, int y, int z, int state, int spin, int color) {
-    rb.inject_particle(x, y, z, static_cast<int8_t>(state), Vec3(0, 0, 0),
-                       static_cast<int8_t>(spin), static_cast<int8_t>(color));
+    Voxel& v = rb.voxel_at(x, y, z);
+    v.state = static_cast<int8_t>(state);
+    v.flux = Vec3(0, 0, 0);
+    v.spin = static_cast<int8_t>(spin);
+    v.color = static_cast<int8_t>(color);
+    v.particle_id = rb.injector().next_particle_id();
+    v.pair_id = -1;
+    if (rb.toggles.dual_substrate) {
+        v.flux_L = Vec3(0, 0, 0);
+        v.flux_R = Vec3(0, 0, 0);
+    }
 }
 
 // Mutate a just-injected particle at (x,y,z).

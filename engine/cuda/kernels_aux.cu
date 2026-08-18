@@ -1,10 +1,13 @@
 /**
  * @file kernels_aux.cu
- * @brief Auxiliary physics kernels (weak transmutation, pair production).
+ * @brief Auxiliary physics kernels (drives, boundaries, reactions).
  *
  * Phase 5 split (2026-04-27): extracted verbatim from kernels_stencil.cu.
  * Contains the auxiliary physics kernels that don't fit into the single- or
  * dual-substrate stencil paths:
+ *   - ew_background_sweep_kernel   (pre-read uniform field drive)
+ *   - absorbing_boundary_kernel    (post-movement quadratic sponge)
+ *   - flux_boundary_kernel         (post-movement reflective/dispersal shell)
  *   - weak_transmutation_kernel  (field-stress-driven polarity flip)
  *   - pair_production_kernel     (correlated +/- pair from high flux density)
  * plus their host-side launchers (launch_weak_transmutation,
@@ -20,9 +23,13 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/proper_time_rate.h"
 #include "ftd/voxel_rng.h"
 #include "kernels_stencil_common.cuh"   // wrap, idx3d (+ cuda_index.cuh: atomicCAS_byte)
 #include <cuda_runtime.h>
+#include <cub/device/device_select.cuh>
+#include <thrust/iterator/counting_iterator.h>
+#include <climits>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -32,6 +39,210 @@
 namespace ftd {
 namespace gpu {
 namespace kernels {
+
+namespace {
+
+// Apply a scalar to the six vector fields mutated by the CPU boundary passes:
+// observable J/W plus both dual-substrate J/W registers.
+__device__ __forceinline__ void scale_boundary_fields(
+    int i, double scale,
+    double* flux_x, double* flux_y, double* flux_z,
+    double* wave_x, double* wave_y, double* wave_z,
+    double* flux_L_x, double* flux_L_y, double* flux_L_z,
+    double* flux_R_x, double* flux_R_y, double* flux_R_z,
+    double* wave_L_x, double* wave_L_y, double* wave_L_z,
+    double* wave_R_x, double* wave_R_y, double* wave_R_z) {
+    flux_x[i] *= scale; flux_y[i] *= scale; flux_z[i] *= scale;
+    wave_x[i] *= scale; wave_y[i] *= scale; wave_z[i] *= scale;
+    flux_L_x[i] *= scale; flux_L_y[i] *= scale; flux_L_z[i] *= scale;
+    flux_R_x[i] *= scale; flux_R_y[i] *= scale; flux_R_z[i] *= scale;
+    wave_L_x[i] *= scale; wave_L_y[i] *= scale; wave_L_z[i] *= scale;
+    wave_R_x[i] *= scale; wave_R_y[i] *= scale; wave_R_z[i] *= scale;
+}
+
+__device__ __forceinline__ void copy_boundary_fields(
+    int dst, int src,
+    double* flux_x, double* flux_y, double* flux_z,
+    double* wave_x, double* wave_y, double* wave_z,
+    double* flux_L_x, double* flux_L_y, double* flux_L_z,
+    double* flux_R_x, double* flux_R_y, double* flux_R_z,
+    double* wave_L_x, double* wave_L_y, double* wave_L_z,
+    double* wave_R_x, double* wave_R_y, double* wave_R_z) {
+    flux_x[dst] = flux_x[src]; flux_y[dst] = flux_y[src]; flux_z[dst] = flux_z[src];
+    wave_x[dst] = wave_x[src]; wave_y[dst] = wave_y[src]; wave_z[dst] = wave_z[src];
+    flux_L_x[dst] = flux_L_x[src]; flux_L_y[dst] = flux_L_y[src]; flux_L_z[dst] = flux_L_z[src];
+    flux_R_x[dst] = flux_R_x[src]; flux_R_y[dst] = flux_R_y[src]; flux_R_z[dst] = flux_R_z[src];
+    wave_L_x[dst] = wave_L_x[src]; wave_L_y[dst] = wave_L_y[src]; wave_L_z[dst] = wave_L_z[src];
+    wave_R_x[dst] = wave_R_x[src]; wave_R_y[dst] = wave_R_y[src]; wave_R_z[dst] = wave_R_z[src];
+}
+
+}  // namespace
+
+// ============================================================================
+// DEVICE TICK COUNTER (Component A)
+// ============================================================================
+// Issued at the very end of the tick body, exactly where the host does
+// `tick_++`. Because it lives inside the recorded region, a replayed graph
+// advances the RNG salt just as a direct-launch tick does.
+
+__global__ void advance_device_tick_kernel(int* __restrict__ tick) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    *tick += 1;
+}
+
+void launch_advance_device_tick(GpuBuffers& bufs) {
+    advance_device_tick_kernel<<<1, 1, 0, bufs.stream>>>(bufs.d_tick);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+// ============================================================================
+// PRE-READ ELECTROWEAK BACKGROUND DRIVE
+// ============================================================================
+
+__global__ void ew_background_sweep_kernel(
+    double* flux_x,
+    double* flux_L_x,
+    double* flux_R_x,
+    const int* __restrict__ tick_ptr,
+    bool dual_substrate,
+    int N) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    const int tick = *tick_ptr;
+    const double drive = (sin(static_cast<double>(tick) * 0.01) + 1.0) * 0.5 * 0.05;
+    flux_x[i] += drive;
+    if (dual_substrate) {
+        const double half = drive * 0.5;
+        flux_L_x[i] += half;
+        flux_R_x[i] += half;
+    }
+}
+
+void launch_ew_background_sweep(GpuBuffers& bufs, bool dual_substrate) {
+    const cudaStream_t stream = bufs.stream;
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+    ew_background_sweep_kernel<<<blocks, threads, 0, stream>>>(
+        bufs.d_flux_x, bufs.d_flux_L_x, bufs.d_flux_R_x,
+        bufs.d_tick, dual_substrate, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+// ============================================================================
+// POST-MOVEMENT FIELD BOUNDARIES
+// ============================================================================
+
+__global__ void absorbing_boundary_kernel(
+    double* flux_x, double* flux_y, double* flux_z,
+    double* wave_x, double* wave_y, double* wave_z,
+    double* flux_L_x, double* flux_L_y, double* flux_L_z,
+    double* flux_R_x, double* flux_R_y, double* flux_R_z,
+    double* wave_L_x, double* wave_L_y, double* wave_L_z,
+    double* wave_R_x, double* wave_R_y, double* wave_R_z,
+    int L, int N) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    const int LL = L * L;
+    const int x = i / LL;
+    const int y = (i / L) % L;
+    const int z = i % L;
+    const int Nm1 = L - 1;
+    const int dx = min(x, Nm1 - x);
+    const int dy = min(y, Nm1 - y);
+    const int dz = min(z, Nm1 - z);
+    const int d = min(dx, min(dy, dz));
+    const int depth = min(6, max(2, L / 4));
+    if (d >= depth) return;
+    const double r = static_cast<double>(d) / static_cast<double>(depth);
+    scale_boundary_fields(
+        i, r * r,
+        flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
+        flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
+        wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z);
+}
+
+// mode: 1 = reflective copy, 2 = dispersal attenuation. Periodic never launches.
+__global__ void flux_boundary_kernel(
+    double* flux_x, double* flux_y, double* flux_z,
+    double* wave_x, double* wave_y, double* wave_z,
+    double* flux_L_x, double* flux_L_y, double* flux_L_z,
+    double* flux_R_x, double* flux_R_y, double* flux_R_z,
+    double* wave_L_x, double* wave_L_y, double* wave_L_z,
+    double* wave_R_x, double* wave_R_y, double* wave_R_z,
+    int mode, int L, int N) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    const int LL = L * L;
+    const int x = i / LL;
+    const int y = (i / L) % L;
+    const int z = i % L;
+    const int Nm1 = L - 1;
+    if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1)
+        return;
+
+    if (mode == 1) {
+        if (L < 3) return;
+        // Every source coordinate is strictly interior, including faces,
+        // edges, and corners. No thread writes a source read by another.
+        const int sx = (x == 0) ? 1 : (x == Nm1 ? Nm1 - 1 : x);
+        const int sy = (y == 0) ? 1 : (y == Nm1 ? Nm1 - 1 : y);
+        const int sz = (z == 0) ? 1 : (z == Nm1 ? Nm1 - 1 : z);
+        const int src = sx * LL + sy * L + sz;
+        copy_boundary_fields(
+            i, src,
+            flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
+            flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
+            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z);
+    } else {
+        scale_boundary_fields(
+            i, 1.0 - C_SPEED,
+            flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
+            flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
+            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z);
+    }
+}
+
+namespace {
+
+void launch_boundary_kernel(GpuBuffers& bufs, bool absorbing, int flux_mode) {
+    const cudaStream_t stream = bufs.stream;
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+    if (absorbing) {
+        absorbing_boundary_kernel<<<blocks, threads, 0, stream>>>(
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+            bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+            bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+            bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+            bufs.L, bufs.N);
+    } else {
+        flux_boundary_kernel<<<blocks, threads, 0, stream>>>(
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+            bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+            bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+            bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+            flux_mode, bufs.L, bufs.N);
+    }
+    CUDA_CHECK(cudaGetLastError());
+}
+
+}  // namespace
+
+void launch_absorbing_boundary(GpuBuffers& bufs) {
+    launch_boundary_kernel(bufs, true, 0);
+}
+
+void launch_reflective_flux_boundary(GpuBuffers& bufs) {
+    launch_boundary_kernel(bufs, false, 1);
+}
+
+void launch_dispersal_flux_boundary(GpuBuffers& bufs) {
+    launch_boundary_kernel(bufs, false, 2);
+}
 
 // ============================================================================
 // SPECTROSCOPY PROBE GATHER (FTD-0281 rung-b, 2026-06-20)
@@ -64,11 +275,11 @@ __global__ void gather_probe_flux_kernel(
 void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
                               const double* d_flux_z, const int* d_probe_idx,
                               double* d_out_x, double* d_out_y, double* d_out_z,
-                              int n_probe) {
+                              int n_probe, cudaStream_t stream) {
     if (n_probe <= 0) return;
     int threads = 256;
     int blocks = (n_probe + threads - 1) / threads;
-    gather_probe_flux_kernel<<<blocks, threads>>>(
+    gather_probe_flux_kernel<<<blocks, threads, 0, stream>>>(
         d_flux_x, d_flux_y, d_flux_z, d_probe_idx,
         d_out_x, d_out_y, d_out_z, n_probe);
     CUDA_CHECK(cudaGetLastError());
@@ -115,8 +326,9 @@ __global__ void weak_transmutation_kernel(
     int* __restrict__ ledger_reaction,
     int L,
     unsigned long long rng_seed,
-    int                tick
+    const int* __restrict__ tick_ptr
 ) {
+    const int tick = *tick_ptr;
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int z = blockIdx.z * blockDim.z + threadIdx.z;
@@ -191,107 +403,543 @@ __global__ void weak_transmutation_kernel(
 }
 
 // ============================================================================
-// PAIR PRODUCTION KERNEL [CLAUDE.md §4.1, §12.1]
+// CANONICAL GENESIS / EVAPORATION LIFECYCLE
 // ============================================================================
-// Enhanced genesis: when flux > 2×K_GENESIS at a void site, produce correlated
-// +1/-1 pair at adjacent sites. Uses atomicCAS_byte to claim two sites atomically.
+// CPU phase_write intentionally interleaves these operations in ascending
+// voxel order: an early genesis drain changes the live neighbour energy read by
+// a later evaporation decision.  CUDA therefore detects the sparse event set
+// in parallel, stably compacts it, and commits that ordered set on one device
+// thread.  The post-write observable snapshot lives in d_delta_j_* after the
+// leapfrog pass; those temporaries are dead until the next tick.
 
-// atomicCAS_byte now lives in cuda_index.cuh (revision C3, ADR-0007).
+__global__ void lifecycle_candidate_kernel(
+    const int8_t* __restrict__ state,
+    const uint8_t* __restrict__ locked,
+    const double* __restrict__ snapshot_x,
+    const double* __restrict__ snapshot_y,
+    const double* __restrict__ snapshot_z,
+    uint8_t* __restrict__ flags,
+    bool dual_substrate,
+    bool do_genesis,
+    bool do_evaporation,
+    double genesis_threshold,
+    double manifest_scale,
+    int N,
+    unsigned long long rng_seed,
+    const int* __restrict__ tick_ptr) {
+    const int tick = *tick_ptr;
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    uint8_t code = 0;
+    if (do_genesis && state[i] == 0) {
+        const double fx = snapshot_x[i];
+        const double fy = snapshot_y[i];
+        const double fz = snapshot_z[i];
+        const double density2 = fx*fx + fy*fy + fz*fz;
+        const double threshold = dual_substrate ? K_GENESIS : genesis_threshold;
+        const double scale = dual_substrate ? K_MANIFEST : manifest_scale;
+        // CPU tests the squared magnitude before taking sqrt.  Preserve that
+        // exact threshold ordering at the one-ULP boundary.
+        if (density2 > threshold * threshold) {
+            const double density = sqrt(density2);
+            const double p = 1.0 - exp(-(density - threshold) / scale);
+            const double r = ::ftd::voxel_uniform(
+                rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::GenesisManifest));
+            if (r < p) code = 2;  // accepted genesis (then evaporation check)
+        }
+    } else if ((do_genesis || do_evaporation)
+               && state[i] != 0 && !locked[i]) {
+        code = 1;  // original manifested site: evaporation check only
+    }
+    flags[i] = code;
+}
 
-__global__ void pair_production_kernel(
+__device__ __forceinline__ double lifecycle_chirality_density(
+    int i,
+    const double* fL_x, const double* fL_y, const double* fL_z,
+    const double* fR_x, const double* fR_y, const double* fR_z,
+    const double* velocity_x, const double* velocity_y,
+    const double* velocity_z) {
+    const double vx = velocity_x[i], vy = velocity_y[i], vz = velocity_z[i];
+    const double speed2 = vx*vx + vy*vy + vz*vz;
+    if (speed2 > 1e-12) {
+        const double inv_speed = 1.0 / sqrt(speed2);
+        const double ex = vx * inv_speed;
+        const double ey = vy * inv_speed;
+        const double ez = vz * inv_speed;
+        const double jl_dot = fL_x[i]*ex + fL_y[i]*ey + fL_z[i]*ez;
+        const double jr_dot = fR_x[i]*ex + fR_y[i]*ey + fR_z[i]*ez;
+        const double psi_l2 = fL_x[i]*fL_x[i] + fL_y[i]*fL_y[i]
+                            + fL_z[i]*fL_z[i] - jl_dot*jl_dot;
+        const double psi_r2 = fR_x[i]*fR_x[i] + fR_y[i]*fR_y[i]
+                            + fR_z[i]*fR_z[i] - jr_dot*jr_dot;
+        return psi_l2 - psi_r2;
+    }
+    return (fL_x[i]*fL_x[i] + fL_y[i]*fL_y[i])
+         - (fR_x[i]*fR_x[i] + fR_y[i]*fR_y[i]);
+}
+
+__global__ void lifecycle_commit_kernel(
     int8_t* __restrict__ state,
+    double* __restrict__ flux_x,
+    double* __restrict__ flux_y,
+    double* __restrict__ flux_z,
+    double* __restrict__ wave_x,
+    double* __restrict__ wave_y,
+    double* __restrict__ wave_z,
+    double* __restrict__ flux_L_x,
+    double* __restrict__ flux_L_y,
+    double* __restrict__ flux_L_z,
+    double* __restrict__ flux_R_x,
+    double* __restrict__ flux_R_y,
+    double* __restrict__ flux_R_z,
+    const double* __restrict__ velocity_x,
+    const double* __restrict__ velocity_y,
+    const double* __restrict__ velocity_z,
+    const double* __restrict__ latency,
+    const uint8_t* __restrict__ locked,
+    int8_t* __restrict__ spin,
+    int8_t* __restrict__ color,
+    int32_t* __restrict__ particle_id,
+    int32_t* __restrict__ pair_id,
+    int32_t* __restrict__ next_particle_id,
+    int32_t* __restrict__ identity_error,
+    int* __restrict__ ledger_reaction,
+    const double* __restrict__ snapshot_x,
+    const double* __restrict__ snapshot_y,
+    const double* __restrict__ snapshot_z,
+    const uint8_t* __restrict__ event_code,
+    int32_t* __restrict__ event_indices,
+    const int32_t* __restrict__ event_count,
+    bool dual_substrate,
+    double kinetic_drain,
+    double genesis_threshold,
+    int L,
+    unsigned long long rng_seed,
+    const int* __restrict__ tick_ptr) {
+    const int tick = *tick_ptr;
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    const int count = *event_count;
+    int survivor_count = 0;
+    for (int q = 0; q < count; ++q) {
+        const int i = event_indices[q];
+        const uint8_t code = event_code[i];
+        const int z = i % L;
+        const int y = (i / L) % L;
+        const int x = i / (L * L);
+
+        if (code == 2 && state[i] == 0) {
+            const double sx = snapshot_x[i];
+            const double sy = snapshot_y[i];
+            const double sz = snapshot_z[i];
+            const double density = sqrt(sx*sx + sy*sy + sz*sz);
+            int8_t new_state = -1;
+            if (dual_substrate) {
+                const double chi = lifecycle_chirality_density(
+                    i, flux_L_x, flux_L_y, flux_L_z,
+                    flux_R_x, flux_R_y, flux_R_z,
+                    velocity_x, velocity_y, velocity_z);
+                new_state = chi >= 0.0 ? 1 : -1;
+            } else {
+                const int xp = idx3d(x+1, y, z, L);
+                const int xm = idx3d(x-1, y, z, L);
+                const int yp = idx3d(x, y+1, z, L);
+                const int ym = idx3d(x, y-1, z, L);
+                const int zp = idx3d(x, y, z+1, L);
+                const int zm = idx3d(x, y, z-1, L);
+                double div = 0.0;
+                div += (snapshot_x[xp] - snapshot_x[xm]) * 0.5;
+                div += (snapshot_y[yp] - snapshot_y[ym]) * 0.5;
+                div += (snapshot_z[zp] - snapshot_z[zm]) * 0.5;
+                new_state = div > 0.0 ? 1 : -1;
+                wave_x[i] *= (1.0 - kinetic_drain);
+                wave_y[i] *= (1.0 - kinetic_drain);
+                wave_z[i] *= (1.0 - kinetic_drain);
+                if (density > K_GENESIS_FLUX_EPSILON) {
+                    const double drain = fmax(
+                        0.0, 1.0 - genesis_threshold / density);
+                    flux_x[i] *= drain;
+                    flux_y[i] *= drain;
+                    flux_z[i] *= drain;
+                }
+            }
+
+            state[i] = new_state;
+            ledger_reaction[i] += static_cast<int>(new_state);
+            particle_id[i] = -2;
+            pair_id[i] = -1;
+
+            const int xp = idx3d(x+1, y, z, L);
+            const int xm = idx3d(x-1, y, z, L);
+            const int yp = idx3d(x, y+1, z, L);
+            const int ym = idx3d(x, y-1, z, L);
+            const int zp = idx3d(x, y, z+1, L);
+            const int zm = idx3d(x, y, z-1, L);
+            const double curl_x =
+                (snapshot_z[yp] - snapshot_z[ym]) * 0.5
+              - (snapshot_y[zp] - snapshot_y[zm]) * 0.5;
+            const double curl_y =
+                (snapshot_x[zp] - snapshot_x[zm]) * 0.5
+              - (snapshot_z[xp] - snapshot_z[xm]) * 0.5;
+            const double curl_z =
+                (snapshot_y[xp] - snapshot_y[xm]) * 0.5
+              - (snapshot_x[yp] - snapshot_x[ym]) * 0.5;
+            const double acx = fabs(curl_x), acy = fabs(curl_y), acz = fabs(curl_z);
+            const double max_curl = fmax(acx, fmax(acy, acz));
+            if (max_curl > 1e-15) {
+                if (acz >= acx && acz >= acy) spin[i] = curl_z > 0.0 ? 1 : -1;
+                else if (acy >= acx) spin[i] = curl_y > 0.0 ? 1 : -1;
+                else spin[i] = curl_x > 0.0 ? 1 : -1;
+            } else {
+                const double rs = ::ftd::voxel_uniform(
+                    rng_seed, i, tick,
+                    static_cast<unsigned long long>(::ftd::VoxelRng::GenesisSpin));
+                spin[i] = rs < 0.5 ? 1 : -1;
+            }
+            const double afx = fabs(flux_x[i]);
+            const double afy = fabs(flux_y[i]);
+            const double afz = fabs(flux_z[i]);
+            if (afx >= afy && afx >= afz) color[i] = 1;
+            else if (afy >= afx && afy >= afz) color[i] = 2;
+            else color[i] = 3;
+        }
+
+        // Genesis implies the sister evaporation pass, exactly as on CPU.
+        if (state[i] != 0 && !locked[i]) {
+            const double local_flux2 = flux_x[i]*flux_x[i]
+                                     + flux_y[i]*flux_y[i]
+                                     + flux_z[i]*flux_z[i];
+            const double local_wave2 = wave_x[i]*wave_x[i]
+                                     + wave_y[i]*wave_y[i]
+                                     + wave_z[i]*wave_z[i];
+            double local_energy = local_flux2 + local_wave2;
+            const int neighbors[6] = {
+                idx3d(x+1,y,z,L), idx3d(x-1,y,z,L),
+                idx3d(x,y+1,z,L), idx3d(x,y-1,z,L),
+                idx3d(x,y,z+1,L), idx3d(x,y,z-1,L)
+            };
+            for (int n = 0; n < 6; ++n) {
+                const int j = neighbors[n];
+                const double neighbour_flux2 = flux_x[j]*flux_x[j]
+                                             + flux_y[j]*flux_y[j]
+                                             + flux_z[j]*flux_z[j];
+                const double neighbour_wave2 = wave_x[j]*wave_x[j]
+                                             + wave_y[j]*wave_y[j]
+                                             + wave_z[j]*wave_z[j];
+                local_energy += neighbour_flux2 + neighbour_wave2;
+            }
+            const double speed2 = velocity_x[i]*velocity_x[i]
+                                + velocity_y[i]*velocity_y[i]
+                                + velocity_z[i]*velocity_z[i];
+            const double dtau = ::ftd::proper_time_rate(latency[i], speed2);
+            const double evap_prob = exp(
+                -local_energy / (K_MANIFEST * K_MANIFEST));
+            const double u = ::ftd::voxel_uniform(
+                rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::Evaporation));
+            if (u < evap_prob * K_EVAP_RATE * dtau) {
+                const int8_t old_state = state[i];
+                state[i] = 0;
+                ledger_reaction[i] -= static_cast<int>(old_state);
+                particle_id[i] = -1;
+                pair_id[i] = -1;
+                spin[i] = 0;
+                color[i] = 0;
+            }
+        }
+
+        // event_indices is already stable and ascending. Compact surviving
+        // genesis sentinels in-place while this serial canonical transaction
+        // owns the list; destination <= source, so unread entries are never
+        // overwritten. This replaces a second full-grid flag/select pass.
+        if (particle_id[i] == -2) {
+            event_indices[survivor_count++] = i;
+        }
+    }
+
+    const int32_t next = *next_particle_id;
+    if (survivor_count < 0 || next < 0
+        || survivor_count > INT_MAX - next) {
+        *identity_error = 1;
+        return;
+    }
+    *next_particle_id = next + survivor_count;
+    for (int q = 0; q < survivor_count; ++q) {
+        particle_id[event_indices[q]] = next + q;
+    }
+}
+
+void launch_canonical_lifecycle(
+    GpuBuffers& bufs, bool dual_substrate,
+    bool do_genesis, bool do_evaporation,
+    double kinetic_drain, double genesis_threshold, double manifest_scale,
+    unsigned long long rng_seed) {
+    const int* const tick = bufs.d_tick;
+    if (!do_genesis && !do_evaporation) return;
+    const cudaStream_t stream = bufs.stream;
+    const std::size_t field_bytes = static_cast<std::size_t>(bufs.N) * sizeof(double);
+    if (do_genesis) {
+        CUDA_CHECK(cudaMemcpyAsync(bufs.d_delta_j_x, bufs.d_flux_x, field_bytes,
+                                   cudaMemcpyDeviceToDevice, stream));
+        CUDA_CHECK(cudaMemcpyAsync(bufs.d_delta_j_y, bufs.d_flux_y, field_bytes,
+                                   cudaMemcpyDeviceToDevice, stream));
+        CUDA_CHECK(cudaMemcpyAsync(bufs.d_delta_j_z, bufs.d_flux_z, field_bytes,
+                                   cudaMemcpyDeviceToDevice, stream));
+    }
+
+    constexpr int block = 256;
+    const int grid = (bufs.N + block - 1) / block;
+    lifecycle_candidate_kernel<<<grid, block, 0, stream>>>(
+        bufs.d_state, bufs.d_locked,
+        bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
+        bufs.d_pair_candidate_flags,
+        dual_substrate, do_genesis, do_evaporation,
+        genesis_threshold, manifest_scale, bufs.N, rng_seed, tick);
+    CUDA_CHECK(cudaGetLastError());
+
+    thrust::counting_iterator<int32_t> indices(0);
+    CUDA_CHECK(cub::DeviceSelect::Flagged(
+        bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
+        indices, bufs.d_pair_candidate_flags,
+        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count, bufs.N,
+        stream));
+
+    lifecycle_commit_kernel<<<1, 1, 0, stream>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_latency, bufs.d_locked,
+        bufs.d_spin, bufs.d_color, bufs.d_particle_id, bufs.d_pair_id,
+        bufs.d_next_particle_id, bufs.d_identity_error,
+        bufs.d_ledger_reaction,
+        bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
+        bufs.d_pair_candidate_flags,
+        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count,
+        dual_substrate, kinetic_drain, genesis_threshold,
+        bufs.L, rng_seed, tick);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+// Pair production has a real live-order dependency: two eligible sources can
+// target the same void partner.  The CPU contract is a greedy ascending-index
+// walk.  Detect eligibility in parallel, use CUB's stable Flagged selection to
+// compact X-major indices, then let one device thread commit that sparse list
+// in order.  This preserves GPU throughput for the expensive predicate while
+// making conflicts and identity labels independent of CUDA scheduling.
+
+__device__ __forceinline__ int pair_partner_index(
+    int i, double fx, double fy, double fz, int L) {
+    const int z = i % L;
+    const int y = (i / L) % L;
+    const int x = i / (L * L);
+    int dx = 0, dy = 0, dz = 0;
+    const double afx = fabs(fx), afy = fabs(fy), afz = fabs(fz);
+    if (afx >= afy && afx >= afz) dx = (fx > 0.0) ? 1 : -1;
+    else if (afy >= afx && afy >= afz) dy = (fy > 0.0) ? 1 : -1;
+    else dz = (fz > 0.0) ? 1 : -1;
+    return idx3d(x + dx, y + dy, z + dz, L);
+}
+
+__global__ void pair_production_candidate_kernel(
+    const int8_t* __restrict__ state,
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
-    int32_t* __restrict__ pair_id,
-    int* __restrict__ ledger_reaction,
-    int L,
-    unsigned long long rng_seed,
-    int                tick
-) {
+    uint8_t* __restrict__ candidate,
+    int L, unsigned long long rng_seed,
+    const int* __restrict__ tick_ptr) {
+    const int tick = *tick_ptr;
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int z = blockIdx.z * blockDim.z + threadIdx.z;
     if (x >= L || y >= L || z >= L) return;
 
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
-    if (state[i] != 0) return;  // Only void sites can produce pairs
+    candidate[i] = 0;
+    if (state[i] != 0) return;
 
-    // Check flux magnitude
-    double rho = sqrt(flux_x[i]*flux_x[i] + flux_y[i]*flux_y[i] + flux_z[i]*flux_z[i]);
-    constexpr double PAIR_THRESHOLD = 2.0 * K_GENESIS;
-    if (rho < PAIR_THRESHOLD) return;
+    const double fx = flux_x[i];
+    const double fy = flux_y[i];
+    const double fz = flux_z[i];
+    const double jmag = sqrt(fx*fx + fy*fy + fz*fz);
+    if (jmag <= K_GENESIS) return;
 
-    // Probabilistic: p = 1 - exp(-(rho - threshold) / K_MANIFEST)
-    double p = 1.0 - exp(-(rho - PAIR_THRESHOLD) / K_MANIFEST);
-    double r = ::ftd::voxel_uniform(rng_seed, i, tick,
+    // Same selected hazard and deterministic stream as the CPU path.
+    const double p = 1.0 - exp(-(jmag - K_GENESIS) / K_MANIFEST);
+    const double r = ::ftd::voxel_uniform(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::PairProduction));
     if (r >= p) return;
 
-    // Find best adjacent void site for partner
-    // Check 6 face neighbors
-    int nbrs[6] = {
-        idx3d(x+1,y,z,L), idx3d(x-1,y,z,L),
-        idx3d(x,y+1,z,L), idx3d(x,y-1,z,L),
-        idx3d(x,y,z+1,L), idx3d(x,y,z-1,L)
-    };
+    const int partner = pair_partner_index(i, fx, fy, fz, L);
+    if (state[partner] != 0) return;
+    candidate[i] = 1;
+}
 
-    // Pick neighbor with highest flux (most energetic)
-    int best_j = -1;
-    double best_rho = -1.0;
-    for (int n = 0; n < 6; ++n) {
-        int j = nbrs[n];
-        if (state[j] != 0) continue;  // Must be void
-        double rj = sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
-        if (rj > best_rho) {
-            best_rho = rj;
-            best_j = j;
+__global__ void pair_production_commit_kernel(
+    int8_t* __restrict__ state,
+    double* __restrict__ flux_x,
+    double* __restrict__ flux_y,
+    double* __restrict__ flux_z,
+    double* __restrict__ wave_vel_x,
+    double* __restrict__ wave_vel_y,
+    double* __restrict__ wave_vel_z,
+    double* __restrict__ flux_L_x,
+    double* __restrict__ flux_L_y,
+    double* __restrict__ flux_L_z,
+    double* __restrict__ flux_R_x,
+    double* __restrict__ flux_R_y,
+    double* __restrict__ flux_R_z,
+    double* __restrict__ wave_vel_L_x,
+    double* __restrict__ wave_vel_L_y,
+    double* __restrict__ wave_vel_L_z,
+    double* __restrict__ wave_vel_R_x,
+    double* __restrict__ wave_vel_R_y,
+    double* __restrict__ wave_vel_R_z,
+    int32_t* __restrict__ particle_id,
+    int32_t* __restrict__ pair_id,
+    int32_t* __restrict__ next_particle_id,
+    int32_t* __restrict__ next_pair_id,
+    int32_t* __restrict__ identity_error,
+    int* __restrict__ ledger_reaction,
+    const int32_t* __restrict__ candidates,
+    const int32_t* __restrict__ candidate_count,
+    bool dual_substrate,
+    int L) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    const int count = *candidate_count;
+    for (int q = 0; q < count; ++q) {
+        const int i = candidates[q];
+        if (state[i] != 0) continue;
+
+        const double fx = flux_x[i];
+        const double fy = flux_y[i];
+        const double fz = flux_z[i];
+        const double jmag = sqrt(fx*fx + fy*fy + fz*fz);
+        const int partner = pair_partner_index(i, fx, fy, fz, L);
+        if (state[partner] != 0) continue;
+
+        // Leave the transaction untouched if the representable identity
+        // namespace is exhausted.  The final INT_MAX sentinel is deliberately
+        // not issued because no non-wrapping successor could be recorded.
+        if (*next_particle_id < 0 || *next_pair_id < 0
+            || *next_particle_id > INT_MAX - 2
+            || *next_pair_id >= INT_MAX) {
+            *identity_error = 1;
+            return;
         }
-    }
-    if (best_j < 0) return;  // No adjacent void site
 
-    // Atomically claim both sites: first site → +1, second → -1
-    int8_t old_i = atomicCAS_byte(&state[i], 0, 1);
-    if (old_i != 0) return;  // Someone else claimed it
+        state[i] = -1;
+        state[partner] = 1;
 
-    int8_t old_j = atomicCAS_byte(&state[best_j], 0, -1);
-    if (old_j != 0) {
-        // Rollback: release first site
-        state[i] = 0;
-        return;
-    }
+        const double drain = fmax(0.0, 1.0 - K_GENESIS / jmag);
+        wave_vel_x[i] *= 0.5; wave_vel_y[i] *= 0.5; wave_vel_z[i] *= 0.5;
+        wave_vel_x[partner] *= 0.5;
+        wave_vel_y[partner] *= 0.5;
+        wave_vel_z[partner] *= 0.5;
+        flux_x[i] *= drain; flux_y[i] *= drain; flux_z[i] *= drain;
+        flux_x[partner] = -flux_x[i];
+        flux_y[partner] = -flux_y[i];
+        flux_z[partner] = -flux_z[i];
 
-    // Both claimed — assign matching pair_id (use lattice index as unique ID)
-    pair_id[i] = i;
-    pair_id[best_j] = i;
-    if (ledger_reaction) {
-        atomicAdd(&ledger_reaction[i], 1);
-        atomicAdd(&ledger_reaction[best_j], -1);
+        if (dual_substrate) {
+            flux_L_x[i] *= drain; flux_L_y[i] *= drain; flux_L_z[i] *= drain;
+            flux_R_x[i] *= drain; flux_R_y[i] *= drain; flux_R_z[i] *= drain;
+            flux_L_x[partner] = -flux_L_x[i];
+            flux_L_y[partner] = -flux_L_y[i];
+            flux_L_z[partner] = -flux_L_z[i];
+            flux_R_x[partner] = -flux_R_x[i];
+            flux_R_y[partner] = -flux_R_y[i];
+            flux_R_z[partner] = -flux_R_z[i];
+
+            wave_vel_L_x[i] *= 0.5; wave_vel_L_y[i] *= 0.5; wave_vel_L_z[i] *= 0.5;
+            wave_vel_R_x[i] *= 0.5; wave_vel_R_y[i] *= 0.5; wave_vel_R_z[i] *= 0.5;
+            wave_vel_L_x[partner] *= 0.5;
+            wave_vel_L_y[partner] *= 0.5;
+            wave_vel_L_z[partner] *= 0.5;
+            wave_vel_R_x[partner] *= 0.5;
+            wave_vel_R_y[partner] *= 0.5;
+            wave_vel_R_z[partner] *= 0.5;
+
+            flux_x[i] = flux_L_x[i] + flux_R_x[i];
+            flux_y[i] = flux_L_y[i] + flux_R_y[i];
+            flux_z[i] = flux_L_z[i] + flux_R_z[i];
+            flux_x[partner] = flux_L_x[partner] + flux_R_x[partner];
+            flux_y[partner] = flux_L_y[partner] + flux_R_y[partner];
+            flux_z[partner] = flux_L_z[partner] + flux_R_z[partner];
+            wave_vel_x[i] = wave_vel_L_x[i] + wave_vel_R_x[i];
+            wave_vel_y[i] = wave_vel_L_y[i] + wave_vel_R_y[i];
+            wave_vel_z[i] = wave_vel_L_z[i] + wave_vel_R_z[i];
+            wave_vel_x[partner] = wave_vel_L_x[partner] + wave_vel_R_x[partner];
+            wave_vel_y[partner] = wave_vel_L_y[partner] + wave_vel_R_y[partner];
+            wave_vel_z[partner] = wave_vel_L_z[partner] + wave_vel_R_z[partner];
+        }
+
+        const int32_t primary_pid = *next_particle_id;
+        const int32_t partner_pid = primary_pid + 1;
+        *next_particle_id += 2;
+        const int32_t shared_pair_id = (*next_pair_id)++;
+        particle_id[i] = primary_pid;
+        particle_id[partner] = partner_pid;
+        pair_id[i] = shared_pair_id;
+        pair_id[partner] = shared_pair_id;
+        if (ledger_reaction) {
+            ledger_reaction[i] -= 1;
+            ledger_reaction[partner] += 1;
+        }
     }
 }
 
-void launch_pair_production(GpuBuffers& bufs, unsigned long long rng_seed, int tick) {
+void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
+                            unsigned long long rng_seed) {
+    const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    pair_production_kernel<<<grid, block>>>(
+    pair_production_candidate_kernel<<<grid, block, 0, stream>>>(
+        bufs.d_state, bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_pair_candidate_flags, L, rng_seed, tick);
+    CUDA_CHECK(cudaGetLastError());
+
+    thrust::counting_iterator<int32_t> indices(0);
+    CUDA_CHECK(cub::DeviceSelect::Flagged(
+        bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
+        indices, bufs.d_pair_candidate_flags,
+        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count, bufs.N,
+        stream));
+
+    pair_production_commit_kernel<<<1, 1, 0, stream>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+        bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+        bufs.d_particle_id,
         bufs.d_pair_id,
+        bufs.d_next_particle_id, bufs.d_next_pair_id,
+        bufs.d_identity_error,
         bufs.d_ledger_reaction,
-        L,
-        rng_seed, tick
+        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count,
+        dual_substrate, L
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned long long rng_seed, int tick) {
+void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned long long rng_seed) {
+    const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    weak_transmutation_kernel<<<grid, block>>>(
+    weak_transmutation_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         dual_substrate,

@@ -744,7 +744,8 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 - **E = -wave_vel**: Electric field (negative time-derivative of flux)
 - **B = curl(J)**: Magnetic field (curl of flux)
 
-`poynting_vector(idx)` returns S = E x B. `EnergyAudit` includes `e_field_energy`, `b_field_energy`, `total_poynting`.
+`poynting_vector(idx)` returns the Hamiltonian-consistent flux S = c²(E x B).
+`EnergyAudit` includes `e_field_energy`, `b_field_energy`, and `total_poynting`.
 
 ---
 
@@ -2143,7 +2144,7 @@ line-by-line target registry.
 - `maxwell` -- 6 sections (M1-M6): div(B)=0, Faraday, E perp B, Coulomb 1/r^2, wave equation, Ampere-Maxwell
 - `em_energy_conservation` -- Vacuum EM energy conserved (drift < 0.01% over 2000 ticks)
 - `continuity` -- Charge conservation exact through all dynamics
-- `poynting` -- Poynting vector S = E x B verified (direction, magnitude, symmetry)
+- `poynting` -- Poynting vector S = c²(E x B) verified (direction, magnitude, symmetry)
 - `larmor` -- Acceleration-dependent damping (power proportional to a^2)
 - `em_fields` -- E/B field diagnostics, E perp B for propagating waves
 - `lorentz_force` -- Zero work, correct direction, toggle safety
@@ -2247,7 +2248,8 @@ line-by-line target registry.
 
 11. **Lorentz magnetic force**: F = alpha*s*(v x B) does zero work (v*F = 0). Toggle-gated.
 
-12. **E/B field decomposition**: E = -wave_vel, B = curl(J). Poynting vector S = E x B for energy flow diagnostics.
+12. **E/B field decomposition**: E = -wave_vel, B = curl(J). The
+Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 
 13. **Backward compatibility**: Removed phase functions exist as no-op stubs. Removed toggles exist as deprecated fields. Removed Lagrangian terms return 0.
 
@@ -2285,7 +2287,7 @@ line-by-line target registry.
 |--------|---------|
 | `force_diag(idx)` | `ForceDiag` -- per-particle force breakdown |
 | `em_field_at(idx)` | `EMFieldDiag {E, B}` |
-| `poynting_vector(idx)` | `Vec3` (S = E x B) |
+| `poynting_vector(idx)` | `Vec3` (S = c²(E x B)) |
 | `aggregate_profile(center, threshold)` | `AggregateProfile` (CoM, energy, r_eff, radial profile) |
 
 ### Configuration
@@ -2469,11 +2471,57 @@ ftd_core (C++ library)
     +-- CLI (src/main.cpp, native)
 ```
 
+### Windows desktop shell
+
+`engine/desktop/` provides the first-class Windows interface. It is a WPF
+application with an embedded WebView2 surface; a small in-process Kestrel host
+serves `engine/web` on loopback without cache, and `EngineHost` supervises the
+canonical WSL2 `engine/build_wsl/ws_server` process. The WebSocket bridge accepts
+the desktop-supplied `?wsPort=<port>` query parameter (9100 remains the browser
+default).
+
+The desktop status is runtime-accurate: `ws_server` reports the active
+`RenderBridge::backend_kind()` as `backend: "cuda"` or `backend: "cpu"`, along
+with the single-sourced `ENGINE_VERSION`. The shell refuses a CPU response
+instead of inferring GPU availability from `FTD_ENABLE_CUDA`. This changes no
+physics path and does not broaden the per-toggle GPU support matrix described
+in Section 14.
+
+The native Scale-0 socket protocol is load-bounded. `tick` and `run` return
+typed completion messages, and `WebSocketBridge` permits one simulation command
+in flight. Real-time animation ticks coalesce to one pending follow-up when CUDA
+cannot match the display cadence; paused Step/+N requests remain exact. A Pause
+also cancels pending playback demand. Flux-volume visualization uses a binary
+`FTV1` header plus uint32 count and float32 magnitudes, avoiding the main-thread
+cost and bandwidth of an N^3 decimal JSON array. Native Scale 0 is single-owner:
+its scenario/toggle/injection commands are not mirrored into the lazy WASM
+fallback, which is reserved for the standalone Scale 1/2 engines.
+
+Large-lattice construction is resource-gated and transactional. The server
+samples available WSL2 host RAM and CUDA memory, reserves safety headroom, and
+reports the estimate through `preflight_resize`. `resize_scenario` combines the
+formerly duplicated resize/reset/setup allocations into one candidate bridge;
+the active bridge is replaced only after allocation and scenario dispatch both
+succeed. CUDA/cuFFT failures throw through this boundary and become correlated
+WebSocket errors rather than process-wide `exit`/`abort` calls. Request IDs keep
+those errors from resolving an unrelated asynchronous diagnostic request.
+
+Interactive CUDA ticks keep the device authoritative and use selective visual
+readback: one byte per voxel for ternary state and one float32 per voxel for
+flux magnitude. Full AoS synchronization remains available to explicit
+diagnostics and scientific/audit callers, while the desktop render loop no
+longer transfers hundreds of bytes per voxel after every tick. During active
+playback at `L >= 113`, the web bridge defers those full scientific snapshots
+until the current CUDA work drains. Binary manifested-particle frames are
+deterministically sampled to at most 300,000 visual points, bounding a frame at
+about 8.4 MiB while leaving the authoritative simulation unchanged. The default
+non-interactive `RenderBridge` behavior is unchanged for tests and campaigns.
+
 ### Dashboard Layout
 
 ```
 +----------------------------------------------------------------+
-|  FTD Engine v2.14     [Engine ▼]                     []       |  Toolbar
+|  FTD Engine v2.18     [Engine ▼]                     []       |  Toolbar
 +----------------------------------------------------------------+
 |                                    [Visualization ▾]           |  Overlay (collapsible)
 |                                     VOLUME  FIELDS  FORCES     |
@@ -2680,3 +2728,58 @@ All 10 phases pass with 125+ individual checks:
 2. Statistical Born rule: 10K genesis events chi-squared test
 3. Bell ensemble: S-parameter with confidence intervals
 4. Blind predictions before looking at data
+
+## CUDA tick execution model (Component A, 2026-08-17)
+
+`GpuEngine::tick()` no longer performs any host/device round trip. Its
+contract:
+
+- **Stream.** `GpuBuffers::stream` is a blocking stream created in
+  `allocate()` and drained/destroyed in `free()`. Every tick-path kernel,
+  memset, D2D copy, CUB call and cuFFT plan is bound to it. Everything not
+  migrated (compact diagnostics, injection kernels, AoS downloads, visual
+  capture) stays on the legacy default stream and remains correctly ordered
+  because a blocking stream implicitly synchronizes with the legacy stream.
+- **No blocking reads.** Poisson `mean_charge` is device-resident
+  (`d_poisson_mean_charge`); the pairwise/triad launches are fixed-capacity
+  (`MAX_PARTICLES = 8192` threads, device-side bound, populated via a
+  deterministic `cub::DeviceSelect::Flagged` compaction rather than an
+  atomic-ordered scatter) instead of being sized from a host readback of
+  `d_num_particles`; `reset_continuity_ledger()` no longer calls
+  `cudaDeviceSynchronize()`; the ledger, force-diag and movement resets use
+  `cudaMemsetAsync`.
+- **Capacity overflow** is a sticky device flag (`d_particle_overflow`) set by
+  the particle-list compaction path and surfaced as the same
+  `std::runtime_error` at `ensure_host_synced()` / `causal_projection_events()`
+  — i.e. at synchronization boundaries that already copy scalars, never in
+  the tick.
+- **Tick counter.** `GpuBuffers::d_tick` mirrors `GpuEngine::tick_`. Every
+  RNG-salted kernel reads it through a pointer so a replayed graph advances
+  its SplitMix64 streams exactly as a direct-launch tick does.
+- **Graph capture.** `graph_capture_enabled` (default true) captures the tick
+  body once per `graph_key()` — a hash of every topology toggle plus every
+  host-derived scalar kernel argument except the tick — and replays the
+  cached `cudaGraphExec_t` thereafter. Capture uses
+  `cudaStreamCaptureModeThreadLocal` — chosen as a defensive, forward-looking
+  choice safe even if a future caller becomes multi-threaded; the stream
+  being a *blocking* stream (see above) is what makes any stray
+  legacy-stream or allocating call fail the capture loudly, so an
+  un-migrated kernel is caught rather than silently baked into a wrong
+  graph. A failed capture caches a null exec and falls back to direct launch
+  for that key permanently. `ew_background_sweep`'s drive is device-resident
+  (read from `d_tick`, not host-computed) and could technically be captured;
+  it stays graph-ineligible only because it's a research toggle outside this
+  task's tested profiles, revisit if a future profile needs it. `su2_gauge` /
+  `su3_gauge` are graph-ineligible for the same class of reason:
+  `gpu_gauge_relax()`'s src/scratch ping-pong is a host-side `std::swap` of
+  device pointers, which stream capture cannot record, so a captured graph
+  would keep replaying the one buffer pairing baked in at capture time
+  instead of alternating every tick.
+  `test_gpu_graph_capture` gates bit-identity between replay and direct
+  launch across four toggle topologies, plus cache-eviction correctness
+  past `MAX_GRAPH_CACHE`, plus (G8) that the gauge sector never enters the
+  graph cache.
+- **Out of scope of the graph.** `GpuBackend::tick()`'s post-tick
+  `causal_projection_events()` D2H stays outside the captured region: it reads
+  a result of the completed tick and is the native app's per-tick completion
+  fence.

@@ -54,8 +54,15 @@ void inject_flux_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val
 }
 
 void inject_flux_add_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val) {
-  // Mixed CPU/GPU pattern: read-modify-write on the host shadow with
-  // automatic sync-down + dirty-up via voxels() accessor.
+#ifdef FTD_ENABLE_CUDA
+  if (auto* gpu = rb.gpu_engine_ptr()) {
+    gpu->toggles.dual_substrate = rb.toggles.dual_substrate;
+    rb.backend().flush_host_mutations();
+    gpu->inject_flux_add(x, y, z, flux_val);
+    rb.backend().mark_gpu_dirty();
+    return;
+  }
+#endif
   auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
   v.flux = v.flux + flux_val;
   if (rb.toggles.dual_substrate) {
@@ -66,6 +73,15 @@ void inject_flux_add_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux
 }
 
 void inject_wave_vel_add_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& wv_val) {
+#ifdef FTD_ENABLE_CUDA
+  if (auto* gpu = rb.gpu_engine_ptr()) {
+    gpu->toggles.dual_substrate = rb.toggles.dual_substrate;
+    rb.backend().flush_host_mutations();
+    gpu->inject_wave_vel_add(x, y, z, wv_val);
+    rb.backend().mark_gpu_dirty();
+    return;
+  }
+#endif
   auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
   v.wave_vel = v.wave_vel + wv_val;
   if (rb.toggles.dual_substrate) {
@@ -98,6 +114,7 @@ void inject_particle_cpu(RenderBridge& rb, int x, int y, int z, int8_t state,
   v.spin = spin;
   v.color = color;
   v.particle_id = rb.injector().next_particle_id();
+  v.pair_id = -1;
 
   if (rb.toggles.dual_substrate) {
     double frac_major = (1.0 + DELTA_APPROX) * 0.5;
@@ -133,6 +150,7 @@ void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t stat
   auto& vc = voxels[center];
   rb.set_state(center, state);
   vc.particle_id = rb.injector().next_particle_id();
+  vc.pair_id = -1;
 
   int radius = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
   double norm_sum = 0.0;
@@ -188,6 +206,15 @@ void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t stat
 }
 
 void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val) {
+#ifdef FTD_ENABLE_CUDA
+  if (auto* gpu = rb.gpu_engine_ptr()) {
+    gpu->toggles.dual_substrate = rb.toggles.dual_substrate;
+    rb.backend().flush_host_mutations();
+    gpu->create_entangled_pair(x, y, z, flux_val);
+    rb.backend().mark_gpu_dirty();
+    return;
+  }
+#endif
   const auto& lattice = rb.lattice();
   auto& voxels = rb.voxels();
 
