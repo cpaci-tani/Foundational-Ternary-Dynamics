@@ -112,6 +112,9 @@ public:
     const GpuBuffers& bufs() const { return bufs_; }
     int lattice_size() const { return size_; }
     int current_tick() const { return tick_; }
+    // Device mirror of current_tick(). Blocking 4-byte D2H — diagnostics and
+    // tests only, never the tick path.
+    int device_tick() const;
     int total_sites() const { return N_; }
     double dt() const { return dt_; }
     void set_dt(double dt);

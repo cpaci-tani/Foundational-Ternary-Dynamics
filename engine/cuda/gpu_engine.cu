@@ -38,7 +38,7 @@ namespace ftd { namespace gpu { namespace kernels {
                              double kinetic_drain,
                              double genesis_threshold,
                              double manifest_scale,
-                             unsigned long long rng_seed, int tick);
+                             unsigned long long rng_seed);
     void launch_gauss_project(GpuBuffers& bufs,
                               double charge_coupling,
                               bool exact_dual_gauss,
@@ -69,14 +69,15 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
                                   bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
-                                  unsigned long long rng_seed, int tick);
+                                  unsigned long long rng_seed);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
     // Extended physics launchers
     void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate,
-                                   unsigned long long rng_seed, int tick);
+                                   unsigned long long rng_seed);
     void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
-                                unsigned long long rng_seed, int tick);
+                                unsigned long long rng_seed);
+    void launch_advance_device_tick(GpuBuffers& bufs);
     void launch_build_particle_list(GpuBuffers& bufs);
     void launch_color_force(GpuBuffers& bufs, double dt);
     void launch_yukawa_force(GpuBuffers& bufs, double dt);
@@ -339,6 +340,13 @@ GpuEngine::~GpuEngine() {
     bufs_.free();
 }
 
+int GpuEngine::device_tick() const {
+    int value = 0;
+    CUDA_CHECK(cudaMemcpy(&value, bufs_.d_tick, sizeof(int),
+                          cudaMemcpyDeviceToHost));
+    return value;
+}
+
 void GpuEngine::set_dt(double dt) {
     // Mirror RenderBridge::set_dt: dt<1 is honored ONLY with symplectic_leapfrog,
     // which permits a CFL-stable sub-step (the plain leapfrog hardcodes dt=1 and
@@ -532,6 +540,10 @@ void GpuEngine::tick() {
         accumulate_proper_time(toggles.de_broglie_clock, toggles.omega0);
     }
 
+    // Advance the device mirror in the same place the host counter moves, so
+    // a captured graph replays with a fresh RNG salt.
+    kernels::launch_advance_device_tick(bufs_);
+
     tick_++;
     host_dirty_ = true;
     mark_device_state_changed();
@@ -587,7 +599,6 @@ void GpuEngine::gpu_phase_write() {
     // Bit-exact CPU↔GPU at unit mass.
 
     const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
 
     double damping = 1.0 - ALPHA;
     const double genesis_threshold = genesis_threshold_override > 0.0
@@ -608,7 +619,7 @@ void GpuEngine::gpu_phase_write() {
                                          toggles.evaporation,
                                          dt_,
                                          toggles.symplectic_leapfrog,
-                                         rng_seed, tick);
+                                         rng_seed);
     } else {
         kernels::launch_phase_write(bufs_,
                                     toggles.damping,
@@ -626,7 +637,7 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.kinetic_drain,
                                     genesis_threshold,
                                     manifest_scale,
-                                    rng_seed, tick);
+                                    rng_seed);
     }
 
     // Step strong field stencil (Stella Octangula propagation)
@@ -702,15 +713,12 @@ void GpuEngine::gpu_phase_movement() {
 
 void GpuEngine::gpu_weak_transmutation() {
     const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
-    kernels::launch_weak_transmutation(bufs_, toggles.dual_substrate, rng_seed, tick);
+    kernels::launch_weak_transmutation(bufs_, toggles.dual_substrate, rng_seed);
 }
 
 void GpuEngine::gpu_pair_production() {
     const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
-    kernels::launch_pair_production(bufs_, toggles.dual_substrate,
-                                    rng_seed, tick);
+    kernels::launch_pair_production(bufs_, toggles.dual_substrate, rng_seed);
 }
 
 void GpuEngine::gpu_build_particle_list() {

@@ -213,5 +213,15 @@ int main() {
             median_us < kBlockingThresholdUs, detail);
     }
 
+    test::section("S7: device tick counter mirrors the host counter");
+    {
+        gpu::GpuEngine engine(17);
+        seed_scene(engine);
+        test::check("S7: device tick starts at 0", engine.device_tick() == 0);
+        for (int t = 0; t < 7; ++t) engine.tick();
+        test::check("S7: host tick advanced to 7", engine.current_tick() == 7);
+        test::check("S7: device tick advanced to 7", engine.device_tick() == 7);
+    }
+
     return test::finalize();
 }

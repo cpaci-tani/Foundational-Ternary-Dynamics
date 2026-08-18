@@ -221,6 +221,9 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_num_particles, sizeof(int)));
     CUDA_CHECK(cudaMalloc(&d_particle_overflow, sizeof(int)));
 
+    // Device tick mirror
+    CUDA_CHECK(cudaMalloc(&d_tick, sizeof(int)));
+
     // Pair production tracking
     CUDA_CHECK(cudaMalloc(&d_pair_id, N * sizeof(int32_t)));
     CUDA_CHECK(cudaMalloc(&d_pair_candidate_flags, N * sizeof(uint8_t)));
@@ -342,6 +345,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_particle_overflow, 0, sizeof(int)));
+    CUDA_CHECK(cudaMemset(d_tick, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_pair_id, 0xFF, N * sizeof(int32_t))); // -1
     CUDA_CHECK(cudaMemset(d_ledger_rho_before, 0, N * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_ledger_reaction, 0, N * sizeof(int)));
@@ -489,6 +493,7 @@ void GpuBuffers::free() {
     if (d_fd_exchange_x) { cudaFree(d_fd_exchange_x); d_fd_exchange_x = nullptr; }
     if (d_fd_exchange_y) { cudaFree(d_fd_exchange_y); d_fd_exchange_y = nullptr; }
     if (d_fd_exchange_z) { cudaFree(d_fd_exchange_z); d_fd_exchange_z = nullptr; }
+    if (d_tick) { cudaFree(d_tick); d_tick = nullptr; }
     if (d_particle_overflow) {
         cudaFree(d_particle_overflow);
         d_particle_overflow = nullptr;

@@ -43,7 +43,7 @@ void launch_canonical_lifecycle(
     GpuBuffers& bufs, bool dual_substrate,
     bool do_genesis, bool do_evaporation,
     double kinetic_drain, double genesis_threshold, double manifest_scale,
-    unsigned long long rng_seed, int tick);
+    unsigned long long rng_seed);
 
 // ---------- Phase Read Kernel ----------
 // Computes delta_j = C_WAVE^2 * Laplacian(flux) - G_C * gradient(state)
@@ -326,8 +326,9 @@ __global__ void phase_write_kernel(
     // BH-F9 (2026-05-05): Langevin noise via shared SplitMix64+Box-Muller.
     // Replaces the d_langevin_noise buffer pre-filled by curandGenerateNormalDouble.
     unsigned long long rng_seed,
-    int                tick
+    const int* __restrict__ tick_ptr
 ) {
+    const int tick = *tick_ptr;
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int z = blockIdx.z * blockDim.z + threadIdx.z;
@@ -618,8 +619,9 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
                         double kinetic_drain,
                         double genesis_threshold,
                         double manifest_scale,
-                        unsigned long long rng_seed, int tick) {
+                        unsigned long long rng_seed) {
     const cudaStream_t stream = bufs.stream;
+    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -647,14 +649,14 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         langevin_site_filter,
         L,
         rng_seed, tick
-    );
+    );  // `tick` is now bufs.d_tick (const int*)
     CUDA_CHECK(cudaGetLastError());
 
     launch_canonical_lifecycle(
         bufs, /*dual_substrate=*/false,
         do_genesis, do_evaporation,
         kinetic_drain, genesis_threshold, manifest_scale,
-        rng_seed, tick);
+        rng_seed);
     CUDA_CHECK(cudaGetLastError());
 }
 

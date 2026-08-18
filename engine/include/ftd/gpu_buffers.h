@@ -263,6 +263,14 @@ struct GpuBuffers {
     // (causal_projection_events / ensure_host_synced), never in the tick.
     int*      d_particle_overflow = nullptr;
 
+    // --- Device mirror of GpuEngine::tick_ (Component A) ---
+    // Every RNG-consuming kernel salts SplitMix64 with (seed, voxel, tick).
+    // Passing `tick` by value bakes it into a captured graph's node params,
+    // so a replay would repeat the draw. The kernels read this pointer
+    // instead, and an in-tick kernel increments it exactly where the host
+    // does `tick_++`, keeping the two counters equal by construction.
+    int* d_tick = nullptr;
+
     // --- Pair production tracking ---
     int32_t*  d_pair_id       = nullptr;  // pair ID (-1 = unpaired) [N]
     // Pair candidates are detected in parallel, then stably compacted in
