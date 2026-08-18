@@ -490,7 +490,6 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
                               bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                               unsigned long long rng_seed) {
     const cudaStream_t stream = bufs.stream;
-    const int* const tick = bufs.d_tick;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
