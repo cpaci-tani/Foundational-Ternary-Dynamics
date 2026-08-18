@@ -103,11 +103,13 @@ __global__ void ew_background_sweep_kernel(
     double* flux_x,
     double* flux_L_x,
     double* flux_R_x,
-    double drive,
+    const int* __restrict__ tick_ptr,
     bool dual_substrate,
     int N) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
+    const int tick = *tick_ptr;
+    const double drive = (sin(static_cast<double>(tick) * 0.01) + 1.0) * 0.5 * 0.05;
     flux_x[i] += drive;
     if (dual_substrate) {
         const double half = drive * 0.5;
@@ -116,14 +118,13 @@ __global__ void ew_background_sweep_kernel(
     }
 }
 
-void launch_ew_background_sweep(GpuBuffers& bufs, double drive,
-                                bool dual_substrate) {
+void launch_ew_background_sweep(GpuBuffers& bufs, bool dual_substrate) {
     const cudaStream_t stream = bufs.stream;
     constexpr int threads = 256;
     const int blocks = (bufs.N + threads - 1) / threads;
     ew_background_sweep_kernel<<<blocks, threads, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_L_x, bufs.d_flux_R_x,
-        drive, dual_substrate, bufs.N);
+        bufs.d_tick, dual_substrate, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 }
 
