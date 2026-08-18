@@ -1040,7 +1040,13 @@ void GpuBuffers::reset_continuity_ledger() {
         d_state, d_ledger_rho_before, d_ledger_reaction,
         d_ledger_current_x, d_ledger_current_y, d_ledger_current_z, N);
     CUDA_CHECK(cudaGetLastError());
-    CUDA_CHECK(cudaDeviceSynchronize());
+    // The former cudaDeviceSynchronize() here was the single largest source
+    // of per-tick host stalls: it ran first thing on EVERY tick. It is not
+    // needed for correctness — the reset and every later phase are issued to
+    // the same stream and CUDA serializes one stream in issue order — and it
+    // is illegal inside a stream capture. Consumers of the ledger
+    // (download_continuity_ledger) copy on the legacy stream, which
+    // implicitly synchronizes with this blocking stream.
 }
 
 void GpuBuffers::download_continuity_ledger(
@@ -1233,21 +1239,21 @@ void GpuBuffers::reset_force_diag() {
     // clean slate — matches the per-tick semantics callers expect when they
     // read force_diag_at(...) after tick(). State==0 voxels stay zero, which
     // is the natural default.
-    CUDA_CHECK(cudaMemset(d_fd_coulomb_x,  0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_coulomb_y,  0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_coulomb_z,  0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_strong_x,   0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_strong_y,   0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_strong_z,   0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_magnetic_x, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_magnetic_y, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_magnetic_z, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_gravity_x,  0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_gravity_y,  0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_gravity_z,  0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_exchange_x, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_exchange_y, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_coulomb_x, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_coulomb_y, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_coulomb_z, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_strong_x, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_strong_y, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_strong_z, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_magnetic_x, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_magnetic_y, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_magnetic_z, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_gravity_x, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_gravity_y, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_gravity_z, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_exchange_x, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_exchange_y, 0, N * sizeof(double), stream));
+    CUDA_CHECK(cudaMemsetAsync(d_fd_exchange_z, 0, N * sizeof(double), stream));
 }
 
 unsigned long long GpuBuffers::download_causal_projection_events() const {
