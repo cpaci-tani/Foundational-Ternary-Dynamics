@@ -124,7 +124,14 @@ public:
     // caller also passes to D3D12Presenter::wait_shared_fence with the same
     // value.
     int poll_interop_particle_count();
-    void request_interop_gather(std::uint64_t fence_value);
+    // Returns false if the underlying GpuEngine::interop_gather_particles()
+    // call reports failure (interop disabled/no engine, or a real
+    // interop_signal_fence() failure -- the gather may have succeeded but
+    // the cross-API fence handoff did not, so the whole call is reported as
+    // failed). Callers must treat false as "the D3D12 side cannot safely
+    // consume this buffer" and fall back accordingly (see main.cpp's sim
+    // thread loop).
+    bool request_interop_gather(std::uint64_t fence_value);
 
     // TEST-ONLY. Exposes the underlying GPU engine for direct verification
     // (e.g. debug_read_interop_records). Production code never needs this --

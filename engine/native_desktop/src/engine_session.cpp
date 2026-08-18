@@ -239,13 +239,15 @@ bool NativeEngineSession::try_enable_interop(void* shared_buffer_handle,
 #endif
 }
 
-void NativeEngineSession::request_interop_gather(std::uint64_t fence_value) {
+bool NativeEngineSession::request_interop_gather(std::uint64_t fence_value) {
 #ifdef FTD_ENABLE_CUDA
-    if (!interop_enabled_) return;
+    if (!interop_enabled_) return false;
     ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
-    if (engine) engine->interop_gather_particles(kMaxVisualParticleCapture, fence_value);
+    if (!engine) return false;
+    return engine->interop_gather_particles(kMaxVisualParticleCapture, fence_value);
 #else
     (void)fence_value;
+    return false;
 #endif
 }
 

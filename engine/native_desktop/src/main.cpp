@@ -969,8 +969,26 @@ int main(int argc, char** argv) {
                             // device 0 directly -- and would need an explicit
                             // cudaSetDevice(0) per thread (or a real multi-GPU
                             // device selection story) to keep holding.
-                            session.request_interop_gather(fv);
-                            pending_interop_fence = fv;
+                            if (session.request_interop_gather(fv)) {
+                                pending_interop_fence = fv;
+                            } else {
+                                // A real interop_signal_fence() failure: the
+                                // gather itself may have succeeded, but the
+                                // cross-API handoff that makes the buffer
+                                // safely consumable by D3D12 did not, so the
+                                // GUI thread's wait_shared_fence() would
+                                // otherwise block forever on a fence value
+                                // that is never signaled. Fall back to the
+                                // CPU particle path for the rest of this
+                                // session, the same way a failed post-reload
+                                // re-import does above.
+                                std::cout << "interop: gather/fence-signal "
+                                             "failed mid-session, falling "
+                                             "back to the CPU particle path "
+                                             "for this session\n"
+                                          << std::flush;
+                                interop_active.store(false);
+                            }
                         }
                         ftd::native_desktop::NativeFrame next = session.capture();
                         {

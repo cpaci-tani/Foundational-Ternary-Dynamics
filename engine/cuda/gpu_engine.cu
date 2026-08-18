@@ -21,6 +21,7 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
 #define FTD_CUDA_ERROR_WANT_CUFFT
 #include "cuda_error.cuh"  // CUDA_CHECK + recoverable CUFFT_CHECK
@@ -1592,9 +1593,19 @@ bool GpuEngine::interop_gather_particles(std::uint32_t max_particles,
     // launch above so the signal is ordered on bufs_.stream behind the
     // gather's writes into d_interop_particle_buffer. A no-op when no fence
     // has been imported (interop_signal_fence() checks bufs_.interop_fence
-    // itself).
+    // itself). A real signal failure here means the gather itself may have
+    // succeeded, but the cross-API handoff that makes the buffer safely
+    // consumable by D3D12 did not -- without a signaled fence the render
+    // thread's wait_shared_fence() would block on a value that is never
+    // reached, so this is reported as a failure of the whole call.
     if (bufs_.interop_fence) {
-        interop_signal_fence(fence_value);
+        if (!interop_signal_fence(fence_value)) {
+            std::cerr << "[GpuEngine] interop_gather_particles: "
+                         "interop_signal_fence(" << fence_value
+                      << ") failed; D3D12 side will not see this gather"
+                      << std::endl;
+            return false;
+        }
     }
     return true;
 }
