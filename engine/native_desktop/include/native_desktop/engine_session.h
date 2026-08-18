@@ -132,4 +132,52 @@ private:
     bool interop_enabled_ = false;
 };
 
+// Outcome of one reimport_interop_after_reload() call -- see that function's
+// doc comment for the full contract. `interop_active` is the value the
+// caller should store into its own interop-active flag; `log_enabled` and
+// `log_lost` are mutually exclusive (never both true) hints for which
+// one-line console message, if either, the caller should print. Splitting
+// these out as data lets a caller like main.cpp's do_reload branch be a
+// thin, no-decision-logic-of-its-own call site: every branch that used to be
+// inline there (guard against a missing handle, decide whether this reload
+// crossed an active/inactive transition worth logging) now lives here,
+// where it has ctest coverage (test_interop_reload_orchestration.cpp,
+// test_interop_reload_reset.cpp) instead of none.
+struct InteropReloadOutcome {
+    bool interop_active = false;
+    bool log_enabled = false;
+    bool log_lost = false;
+};
+
+// Re-establishes D3D12/CUDA interop against `session` immediately after a
+// reload (apply_options()/load_scenario()/set_lattice_size()/
+// reset_current() -- every one of which funnels through boot()) has finished
+// rebuilding session's internal bridge_/GpuEngine. This is the Interop
+// Task 12 fix: boot() unconditionally clears interop_enabled_ on every
+// reload (nothing has been imported into the freshly-constructed GpuEngine
+// yet), so the caller must re-supply the SAME still-open D3D12 buffer/fence
+// NT handles it used for the original import.
+//
+// This function does not create, duplicate, or close any handles -- it only
+// re-imports the ones it is given, via try_enable_interop(). Passing a null
+// shared_buffer_handle or shared_fence_handle (e.g. because a caller
+// mistakenly closed them right after the very first import -- Interop
+// Task 12's actual pre-fix bug; see commit 93d03a3c's message) intentionally
+// short-circuits to a failed outcome instead of calling try_enable_interop()
+// with a dangling handle.
+//
+// `was_active` is the caller's own interop-active flag value from
+// immediately before this reload started (i.e. captured before
+// apply_options()/load_scenario()/etc. ran); it controls only which (if
+// either) of InteropReloadOutcome's log_* flags comes back true, never
+// whether re-import is attempted.
+//
+// Thread affinity: identical to try_enable_interop() -- call only from
+// whichever thread currently exclusively owns session's bridge_ (in
+// main.cpp's usage: the sim thread, immediately after apply_options()/
+// load_scenario() has already run on that same thread).
+InteropReloadOutcome reimport_interop_after_reload(
+    NativeEngineSession& session, void* shared_buffer_handle,
+    std::uint64_t buffer_bytes, void* shared_fence_handle, bool was_active);
+
 }  // namespace ftd::native_desktop

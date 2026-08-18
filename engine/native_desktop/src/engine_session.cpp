@@ -260,4 +260,22 @@ int NativeEngineSession::poll_interop_particle_count() {
 #endif
 }
 
+InteropReloadOutcome reimport_interop_after_reload(
+    NativeEngineSession& session, void* shared_buffer_handle,
+    std::uint64_t buffer_bytes, void* shared_fence_handle, bool was_active) {
+    InteropReloadOutcome outcome;
+    bool reimported = false;
+    if (shared_buffer_handle && shared_fence_handle) {
+        reimported = session.try_enable_interop(shared_buffer_handle, buffer_bytes,
+                                                 shared_fence_handle);
+    }
+    outcome.interop_active = reimported;
+    if (reimported) {
+        outcome.log_enabled = !was_active;
+    } else if (was_active) {
+        outcome.log_lost = true;
+    }
+    return outcome;
+}
+
 }  // namespace ftd::native_desktop
