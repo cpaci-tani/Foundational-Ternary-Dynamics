@@ -895,12 +895,14 @@ void RenderBridge::tick() {
     if (toggles.knot_tracking) knot_tracker_->record(*this);
     // Rule 8 (tau and optional de-Broglie phase) is device-resident on CUDA.
     // Do not materialize and re-upload the full lattice here.
+#ifdef FTD_ENABLE_CUDA
     if (interactive_gpu_mode_ && gpu_dirty_) {
       // The interactive server does not expose EnergyLedger directly. Defer
       // this host-only bookkeeping with the AoS mirror; explicit diagnostics
       // and audits still synchronize through their normal accessors.
       return;
     }
+#endif
     update_energy_ledger();
     return;
   }
