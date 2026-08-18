@@ -490,6 +490,22 @@ void D3D12Presenter::wait_idle() {
 }
 
 HANDLE D3D12Presenter::create_shared_particle_buffer(std::uint32_t max_particles) {
+    if (!impl_->device) return nullptr;
+
+    // Reset up front so every failure path below (including the two
+    // CreateCommittedResource/CreateSharedHandle branches) leaves this at 0
+    // rather than reporting a stale size for a buffer that no longer
+    // exists -- IID_PPV_ARGS(&impl_->shared_particle_buffer) below releases
+    // any previously-held resource via ReleaseAndGetAddressOf() regardless
+    // of whether the new CreateCommittedResource call succeeds.
+    shared_particle_buffer_bytes_ = 0;
+
+    // Wait for outstanding GPU work before releasing/replacing any
+    // previous shared buffer -- mirrors resize()'s wait_idle() before it
+    // recreates impl_->depth. Harmless (cheap) on a queue with nothing in
+    // flight, e.g. the very first call.
+    wait_idle();
+
     const UINT64 bytes = static_cast<UINT64>(max_particles) *
                          sizeof(ftd::InteropParticleRecord);
     D3D12_HEAP_PROPERTIES heap_default{};
@@ -502,7 +518,21 @@ HANDLE D3D12Presenter::create_shared_particle_buffer(std::uint32_t max_particles
     desc.MipLevels = 1;
     desc.SampleDesc.Count = 1;
     desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-    desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;  // CUDA writes it
+    // ALLOW_UNORDERED_ACCESS: CUDA writes it. D3D12_RESOURCE_FLAG_ALLOW_
+    // SIMULTANEOUS_ACCESS was considered here too (cross-API access from
+    // CUDA bypasses D3D12's resource-state/barrier tracking) but the D3D12
+    // validation layer rejects it outright on a buffer resource: "MiscFlag
+    // cannot have D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS set when
+    // Dimension is D3D12_RESOURCE_DIMENSION_BUFFER" (confirmed against a
+    // live device -- CreateCommittedResource returns E_INVALIDARG). The
+    // flag is texture-only; D3D12 buffers have no compression/tiling
+    // metadata for a fence-based cross-API handoff to invalidate, so no
+    // buffer-side equivalent is needed for this resource.
+    desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+    // max_particles == 0 (not-yet-populated caller state, not an error) is
+    // intentionally unguarded here: Width == 0 makes CreateCommittedResource
+    // fail on its own, which the existing failure path below already
+    // handles correctly.
     if (FAILED(impl_->device->CreateCommittedResource(
             &heap_default, D3D12_HEAP_FLAG_SHARED, &desc,
             D3D12_RESOURCE_STATE_COMMON, nullptr,
