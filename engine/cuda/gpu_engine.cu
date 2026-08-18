@@ -600,7 +600,7 @@ bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte
     // event as "ready" and interop_particle_count() would still return the
     // OLD import's last captured_count for a buffer nothing has gathered
     // into yet.
-    interop_gather_launched_ = false;
+    interop_gather_launched_.store(false, std::memory_order_relaxed);
     bufs_.interop_particle_capacity = 0;
 
     // Tear down a prior import before creating the new one -- otherwise the
@@ -1579,7 +1579,7 @@ bool GpuEngine::interop_gather_particles(std::uint32_t max_particles,
     // uninitialized pinned memory (cudaHostAlloc does not zero it).
     // import_d3d12_particle_buffer() clears this flag on every (re-)import,
     // so it also cannot outlive the buffer it was measured against.
-    interop_gather_launched_ = true;
+    interop_gather_launched_.store(true, std::memory_order_relaxed);
     // Cross-API GPU-timeline fence (Task 7): signal AFTER the gather kernel
     // launch above so the signal is ordered on bufs_.stream behind the
     // gather's writes into d_interop_particle_buffer. A no-op when no fence
@@ -1597,7 +1597,8 @@ bool GpuEngine::interop_gather_ready() const {
     // because cudaEventQuery on a not-yet-recorded event reports "ready" by
     // definition (no work to wait for), which would otherwise make this
     // function return true before interop_gather_particles() has ever run.
-    if (!interop_gather_launched_ || !bufs_.interop_gather_ready) return false;
+    if (!interop_gather_launched_.load(std::memory_order_relaxed) ||
+        !bufs_.interop_gather_ready) return false;
     const cudaError_t status = cudaEventQuery(bufs_.interop_gather_ready);
     if (status == cudaSuccess) return true;
     if (status == cudaErrorNotReady) return false;

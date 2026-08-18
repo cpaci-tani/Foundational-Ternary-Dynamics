@@ -12,6 +12,7 @@
 #include <commctrl.h>
 
 #include "ftd/scenarios.h"
+#include "ftd/visual_snapshot.h"
 #include "native_desktop/d3d12_presenter.h"
 #include "native_desktop/engine_session.h"
 
@@ -663,29 +664,57 @@ int main(int argc, char** argv) {
                              static_cast<std::uint32_t>(view_rc.bottom));
         app.presenter = &presenter;
 
-        std::atomic<int> interop_particle_count{-1};
-        std::atomic<std::uint64_t> interop_fence_counter{0};
-        bool interop_active = false;
+        // std::atomic, not a plain bool: try_enable_interop() below runs
+        // once here on the main thread before the sim thread exists, but
+        // NativeEngineSession::boot() clears interop_enabled_ on every
+        // reload (see engine_session.cpp), and the sim thread mirrors that
+        // back into this flag after any reload -- so this is written from
+        // the sim thread and read from the GUI/message-loop thread below
+        // (draw_interop_count / poll gating) for the rest of the process.
+        std::atomic<bool> interop_active{false};
         if (!options.force_cpu) {
-            constexpr std::uint32_t kInteropCap = 100000;  // matches kMaxVisualParticleCapture
-            HANDLE buf_handle = presenter.create_shared_particle_buffer(kInteropCap);
+            HANDLE buf_handle =
+                presenter.create_shared_particle_buffer(ftd::kMaxVisualParticleCapture);
             HANDLE fence_handle = buf_handle ? presenter.create_shared_fence() : nullptr;
             if (buf_handle && fence_handle) {
-                interop_active = session.try_enable_interop(
+                const bool enabled = session.try_enable_interop(
                     buf_handle, presenter.shared_particle_buffer_bytes(), fence_handle);
-                if (interop_active) presenter.bind_interop_particle_srv();
+                interop_active.store(enabled);
+                if (enabled) presenter.bind_interop_particle_srv();
             }
             if (buf_handle) CloseHandle(buf_handle);
             if (fence_handle) CloseHandle(fence_handle);
-            std::cout << "interop: " << (interop_active ? "enabled" : "unavailable, using CPU path")
+            std::cout << "interop: "
+                      << (interop_active.load() ? "enabled" : "unavailable, using CPU path")
                       << "\n" << std::flush;
         }
 
         std::mutex frame_mu;
         ftd::native_desktop::NativeFrame latest = session.capture();
         int camera_lattice = session.lattice_size();
+        // Interop poll result, produced exclusively on the sim thread (the
+        // only thread allowed to touch `session`/`bridge_` -- see the sim
+        // lambda below) and consumed on the GUI/message-loop thread under
+        // frame_mu, same pattern as `latest`. -1 means "not ready this
+        // round" or "interop inactive", matching
+        // NativeEngineSession::poll_interop_particle_count()'s own contract.
+        int latest_interop_count = -1;
+        std::uint64_t latest_interop_fence = 0;
 
         std::thread sim([&] {
+            // Both sim-thread-local only -- nothing else reads or writes
+            // either counter, so a plain (non-atomic) std::uint64_t is
+            // correct here. interop_fence_counter is the strictly
+            // increasing value handed to request_interop_gather()/
+            // interop_signal_fence() each time a gather is requested;
+            // pending_interop_fence remembers which of those values the
+            // most recently REQUESTED (possibly still in-flight) gather
+            // used, so it can pair a polled particle count with the exact
+            // fence value that gather was signaled under -- the snapshot
+            // handed to the GUI thread below must never mix one gather's
+            // count with another gather's fence value.
+            std::uint64_t interop_fence_counter = 0;
+            std::uint64_t pending_interop_fence = 0;
             while (running.load()) {
                 ftd::native_desktop::NativeEngineOptions reload_opts;
                 bool do_reload = false;
@@ -713,6 +742,13 @@ int main(int argc, char** argv) {
                 if (need_work) {
                     if (do_reload) {
                         session.apply_options(reload_opts);
+                        // boot() (invoked by apply_options()) always clears
+                        // the session's interop_enabled_ -- interop is never
+                        // re-imported after a reload -- so mirror that back
+                        // into the flag the GUI thread reads, or it keeps
+                        // treating a now-permanently-dead interop path as
+                        // live (stale "interop: enabled" behavior).
+                        interop_active.store(session.interop_enabled());
                     } else if (boundary >= 0) {
                         session.set_flux_boundary(boundary);
                     }
@@ -721,14 +757,33 @@ int main(int argc, char** argv) {
                     } else if (!paused.load() && !do_reload) {
                         session.tick();
                     }
-                    if (interop_active) {
-                        const std::uint64_t fv = interop_fence_counter.fetch_add(1) + 1;
+                    // Poll and request interop work exclusively on this
+                    // thread. `session`/`bridge_` must never be touched from
+                    // the GUI/message-loop thread: boot() above can reset
+                    // bridge_ to null mid-reconstruction with zero locking,
+                    // so a render-thread call racing a reload is a
+                    // null-pointer dereference waiting to happen. Staying on
+                    // this thread also means a thrown GPU error (e.g.
+                    // GpuEngine::interop_gather_ready()'s cudaEventQuery
+                    // failure path) lands in the catch block below like every
+                    // other session call here, instead of unwinding past the
+                    // still-joinable `sim` thread object and calling
+                    // std::terminate().
+                    int polled_interop_count = -1;
+                    std::uint64_t polled_interop_fence = 0;
+                    if (interop_active.load()) {
+                        polled_interop_count = session.poll_interop_particle_count();
+                        polled_interop_fence = pending_interop_fence;
+                        const std::uint64_t fv = ++interop_fence_counter;
                         session.request_interop_gather(fv);
+                        pending_interop_fence = fv;
                     }
                     ftd::native_desktop::NativeFrame next = session.capture();
                     {
                         std::lock_guard<std::mutex> lock(frame_mu);
                         latest = std::move(next);
+                        latest_interop_count = polled_interop_count;
+                        latest_interop_fence = polled_interop_fence;
                     }
                 }
                 } catch (const std::exception& ex) {
@@ -772,9 +827,13 @@ int main(int argc, char** argv) {
             if (quit) break;
 
             ftd::native_desktop::NativeFrame frame;
+            int this_frame_interop_count = -1;
+            std::uint64_t this_frame_fence_value = 0;
             {
                 std::lock_guard<std::mutex> lock(frame_mu);
                 frame = latest;
+                this_frame_interop_count = latest_interop_count;
+                this_frame_fence_value = latest_interop_fence;
             }
             if (frame.lattice_size > 0 && frame.lattice_size != camera_lattice) {
                 apply_camera_for_lattice(&app, frame.lattice_size);
@@ -806,24 +865,16 @@ int main(int argc, char** argv) {
                                                               : frame.status.c_str()));
             SetWindowTextW(app.status, status);
 
-            int this_frame_interop_count = -1;
-            std::uint64_t this_frame_fence_value = 0;
-            if (interop_active) {
-                this_frame_interop_count = session.poll_interop_particle_count();
-                // Reads interop_fence_counter's CURRENT value, not necessarily the
-                // exact value the LAST gather signaled -- the sim thread runs on a
-                // different thread and may have advanced the counter again by the
-                // time this line runs (only frame_mu guards `latest`, not the fence
-                // counter). This is safe: ID3D12CommandQueue::Wait on a value the
-                // fence hasn't reached yet just makes the queue wait longer for a
-                // LATER signal, and CUDA always signals monotonically increasing
-                // values in gather order, so the queue can never be told to wait for
-                // a value that regresses or corresponds to a torn/partial write. The
-                // only cost is the render loop occasionally waiting one gather cycle
-                // longer than the strict minimum under load -- a throughput cost,
-                // not a correctness one.
-                this_frame_fence_value = interop_fence_counter.load();
-            }
+            // this_frame_interop_count/this_frame_fence_value came straight out
+            // of the frame_mu-protected snapshot above -- populated by the sim
+            // thread, which is the only thread that ever calls
+            // session.poll_interop_particle_count()/request_interop_gather()
+            // (see the sim lambda's comment for why: touching `session`/
+            // `bridge_` from this GUI/message-loop thread is unsafe). The
+            // fence value is exactly the one request_interop_gather() was
+            // called with for the gather this count was polled from, so
+            // wait_shared_fence() below always waits on the fence value that
+            // actually produced the buffer contents being drawn.
             const std::uint32_t draw_interop_count =
                 this_frame_interop_count > 0
                     ? static_cast<std::uint32_t>(this_frame_interop_count)

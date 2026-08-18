@@ -17,6 +17,7 @@
 #include "ftd/visual_snapshot.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include <vector>
+#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <unordered_map>
@@ -490,7 +491,20 @@ private:
     // gather ever launched. Reset to false by import_d3d12_particle_buffer()
     // on every (re-)import attempt, so it can never describe a gather that
     // ran against a since-replaced buffer.
-    bool interop_gather_launched_ = false;
+    //
+    // std::atomic: written by interop_gather_particles() (called from the
+    // sim thread via NativeEngineSession::request_interop_gather()) and read
+    // by interop_gather_ready() (called from the same thread today, but this
+    // flag is the one piece of GpuEngine state a future caller could
+    // plausibly poll from a different thread than the one driving tick()/
+    // interop_gather_particles() -- a plain bool here is a formal data race
+    // the moment that happens). Relaxed ordering is sufficient: the real
+    // happens-before relationship between a gather's writes and a caller
+    // observing them ready is already carried by the CUDA event
+    // (bufs_.interop_gather_ready, queried in interop_gather_ready() below)
+    // and, cross-API, by the D3D12 shared fence -- this flag only gates
+    // "has any gather ever launched", not the gather's own completion.
+    std::atomic<bool> interop_gather_launched_{false};
 
     // Helper: ensure host shadow is up-to-date
     void ensure_host_synced();
