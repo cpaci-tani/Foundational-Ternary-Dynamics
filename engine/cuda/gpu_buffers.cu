@@ -205,6 +205,18 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaEventCreateWithFlags(&visual_snapshot_ready,
                                         cudaEventDisableTiming));
 
+    // Native-desktop D3D12 interop (Component B; see gpu_buffers.h). Only the
+    // owned pieces (header + event) are allocated here.
+    // d_interop_particle_buffer / interop_external_memory are NOT allocated
+    // here -- they start null and are populated later by
+    // import_d3d12_particle_buffer(), since the D3D12 buffer doesn't exist
+    // until the presenter creates it, which happens after this allocate().
+    CUDA_CHECK(cudaMalloc(&d_interop_header, sizeof(InteropParticleHeader)));
+    CUDA_CHECK(cudaHostAlloc(reinterpret_cast<void**>(&h_interop_header),
+                             sizeof(InteropParticleHeader), cudaHostAllocDefault));
+    CUDA_CHECK(cudaEventCreateWithFlags(&interop_gather_ready,
+                                        cudaEventDisableTiming));
+
     // Poisson mean-charge scratch (persistent; see gpu_buffers.h)
     CUDA_CHECK(cudaMalloc(&d_poisson_charge_sum, sizeof(long long)));
     CUDA_CHECK(cudaMalloc(&d_poisson_mean_charge, sizeof(double)));
@@ -586,6 +598,40 @@ void GpuBuffers::free() {
     h_visual_particle_header = nullptr;
     d_visual_particle_records = nullptr;
     d_visual_particle_header = nullptr;
+
+    // This is a MAPPED VIEW, not an allocation -- do not cudaFree() it.
+    // Destroying the parent external memory object (below) invalidates it.
+    d_interop_particle_buffer = nullptr;
+    if (interop_external_memory) {
+        cudaDestroyExternalMemory(interop_external_memory);
+        interop_external_memory = nullptr;
+    }
+    // Unlike its closest analogues -- visual_snapshot_ready and
+    // telemetry_snapshot_ready, both explicitly drained above -- this event
+    // is destroyed unconditionally, with no pending-check guard. That is
+    // safe because its only producer, launch_interop_particle_gather()
+    // (gpu_engine.cu), records it exclusively on bufs_.stream, and
+    // bufs_.stream has already been fully drained via
+    // cudaStreamSynchronize(stream) and destroyed earlier in this same
+    // function -- so by the time this line runs, no D2H copy referencing
+    // h_interop_header can still be in flight.
+    if (interop_gather_ready) {
+        cudaEventDestroy(interop_gather_ready);
+        interop_gather_ready = nullptr;
+    }
+    if (h_interop_header) cudaFreeHost(h_interop_header);
+    if (d_interop_header) cudaFree(d_interop_header);
+    h_interop_header = nullptr;
+    d_interop_header = nullptr;
+
+    // Cross-API GPU-timeline fence (Task 7). Same "safe unconditional
+    // destroy" reasoning as interop_gather_ready above: the only stream that
+    // ever signals it, bufs_.stream, is already drained+destroyed earlier in
+    // this function.
+    if (interop_fence) {
+        cudaDestroyExternalSemaphore(interop_fence);
+        interop_fence = nullptr;
+    }
 
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }

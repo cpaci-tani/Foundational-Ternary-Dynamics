@@ -5,6 +5,9 @@
 #include "ftd/term_toggles.h"
 #include "ftd/visual_field_sample.h"
 #include "ftd/visual_snapshot.h"
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_engine.h"
+#endif
 
 #include <algorithm>
 #include <chrono>
@@ -87,6 +90,19 @@ void NativeEngineSession::boot() {
     if (options_.force_cpu) {
         request_cpu_backend();
     }
+
+    // A (re-)boot tears down bridge_ and, with it, whatever GpuEngine
+    // try_enable_interop() last imported the shared D3D12 buffer/fence
+    // into. try_enable_interop() is invoked at startup and, since Interop
+    // Task 12, again on every reload (main.cpp's do_reload branch) -- but
+    // each such call always lands strictly AFTER the fresh bridge_/
+    // GpuEngine constructed below already exists, never before any import
+    // call has been made against that fresh instance -- so interop_enabled_
+    // must be cleared here, or callers keep observing interop_enabled() ==
+    // true (and request_interop_gather()/poll_interop_particle_count() keep
+    // being invoked) against an engine that was never re-imported and can
+    // never succeed.
+    interop_enabled_ = false;
 
     bridge_.reset();
     bridge_ = std::make_unique<RenderBridge>(options_.lattice_size);
@@ -202,6 +218,72 @@ int NativeEngineSession::current_tick() const { return bridge_->current_tick(); 
 
 const char* NativeEngineSession::backend_name() const {
     return bridge_->backend_kind() == Backend::Kind::Gpu ? "cuda" : "cpu";
+}
+
+bool NativeEngineSession::try_enable_interop(void* shared_buffer_handle,
+                                             std::uint64_t buffer_bytes,
+                                             void* shared_fence_handle) {
+#ifdef FTD_ENABLE_CUDA
+    if (bridge_->backend_kind() != Backend::Kind::Gpu) return false;
+    ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
+    if (!engine) return false;
+    if (!engine->import_d3d12_particle_buffer(shared_buffer_handle, buffer_bytes)) {
+        return false;
+    }
+    if (!engine->import_d3d12_fence(shared_fence_handle)) return false;
+    interop_enabled_ = true;
+    return true;
+#else
+    (void)shared_buffer_handle; (void)buffer_bytes; (void)shared_fence_handle;
+    return false;
+#endif
+}
+
+bool NativeEngineSession::request_interop_gather(std::uint64_t fence_value) {
+#ifdef FTD_ENABLE_CUDA
+    if (!interop_enabled_) return false;
+    ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
+    if (!engine) return false;
+    return engine->interop_gather_particles(kMaxVisualParticleCapture, fence_value);
+#else
+    (void)fence_value;
+    return false;
+#endif
+}
+
+int NativeEngineSession::poll_interop_particle_count() {
+#ifdef FTD_ENABLE_CUDA
+    if (!interop_enabled_) return -1;
+    ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
+    if (!engine || !engine->interop_gather_ready()) return -1;
+    return static_cast<int>(engine->interop_particle_count());
+#else
+    return -1;
+#endif
+}
+
+#ifdef FTD_ENABLE_CUDA
+ftd::gpu::GpuEngine* NativeEngineSession::debug_gpu_engine() {
+    return bridge_->gpu_engine_ptr();
+}
+#endif
+
+InteropReloadOutcome reimport_interop_after_reload(
+    NativeEngineSession& session, void* shared_buffer_handle,
+    std::uint64_t buffer_bytes, void* shared_fence_handle, bool was_active) {
+    InteropReloadOutcome outcome;
+    bool reimported = false;
+    if (shared_buffer_handle && shared_fence_handle) {
+        reimported = session.try_enable_interop(shared_buffer_handle, buffer_bytes,
+                                                 shared_fence_handle);
+    }
+    outcome.interop_active = reimported;
+    if (reimported) {
+        outcome.log_enabled = !was_active;
+    } else if (was_active) {
+        outcome.log_lost = true;
+    }
+    return outcome;
 }
 
 }  // namespace ftd::native_desktop

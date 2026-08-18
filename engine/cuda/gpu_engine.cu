@@ -9,16 +9,19 @@
 #include "ftd/gpu_engine.h"
 #include "ftd/constants.h"
 #include "ftd/volumetric_measure.h"
+#include "ftd/interop_particle_record.h"
 #include <cuda_runtime.h>
 #include <cub/device/device_scan.cuh>
 #include <thrust/iterator/transform_iterator.h>
 #include <cufft.h>
 #include <cstdio>
+#include <cstring>
 #include <cmath>
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
 #define FTD_CUDA_ERROR_WANT_CUFFT
 #include "cuda_error.cuh"  // CUDA_CHECK + recoverable CUFFT_CHECK
@@ -194,6 +197,66 @@ __global__ void visual_particle_gather_kernel(
     records[slot] = record;
 }
 
+// Mirrors NativeEngineSession::capture()'s per-particle color assignment
+// (engine/native_desktop/src/engine_session.cpp) and Lattice::coord()'s
+// (engine/include/ftd/lattice.h) world-position decode exactly, so
+// interop-rendered and CPU-rendered particles are visually identical -- this
+// is the fact Task 11's validation test checks. Lattice::index(x,y,z) packs
+// x*L^2 + y*L + z, so the inverse (Lattice::coord()) is z = idx % L,
+// y = (idx / L) % L, x = idx / (L * L) -- x is the SLOWEST-varying digit,
+// not the fastest, so it is deliberately decoded last below.
+__global__ void interop_particle_gather_kernel(
+    const std::int8_t* __restrict__ state,
+    const double* __restrict__ remainder_x,
+    const double* __restrict__ remainder_y,
+    const double* __restrict__ remainder_z,
+    const std::int32_t* __restrict__ prefix, int N, int L,
+    const VisualParticleStagingHeader* __restrict__ header,
+    InteropParticleRecord* __restrict__ records,
+    InteropParticleHeader* __restrict__ interop_header) {
+    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (index == 0) {
+        // Same bounded cap as the existing header kernel writes for the
+        // shared path -- captured_count there is already min(manifested, cap).
+        interop_header->captured_count = header->captured_count;
+    }
+
+    if (index >= N || state[index] == 0) return;
+    const std::uint32_t manifested = header->total_manifested;
+    const std::uint32_t selected = header->captured_count;
+    if (manifested == 0 || selected == 0) return;
+
+    const std::uint64_t previous_rank = static_cast<std::uint64_t>(prefix[index]);
+    const std::uint64_t current_rank = previous_rank + 1u;
+    const std::uint64_t previous_bucket =
+        previous_rank * static_cast<std::uint64_t>(selected) / manifested;
+    const std::uint64_t current_bucket =
+        current_rank * static_cast<std::uint64_t>(selected) / manifested;
+    if (current_bucket == previous_bucket) return;
+    const std::uint32_t slot = static_cast<std::uint32_t>(current_bucket - 1u);
+
+    // Decode lattice index -> integer coord -> world position exactly as
+    // Lattice::coord()/NativeEngineSession::capture() do on the CPU today:
+    // z = index % L, y = (index / L) % L, x = index / (L*L); voxel center is
+    // coord + 0.5, plus the sub-voxel remainder.
+    const int cz = index % L;
+    const int cy = (index / L) % L;
+    const int cx = index / (L * L);
+
+    InteropParticleRecord rec;
+    rec.x = static_cast<float>(cx) + 0.5f + static_cast<float>(remainder_x[index]);
+    rec.y = static_cast<float>(cy) + 0.5f + static_cast<float>(remainder_y[index]);
+    rec.z = static_cast<float>(cz) + 0.5f + static_cast<float>(remainder_z[index]);
+    rec.size = 0.55f;
+    if (state[index] >= 0) {
+        rec.r = 0.29f; rec.g = 0.87f; rec.b = 0.50f;
+    } else {
+        rec.r = 0.97f; rec.g = 0.44f; rec.b = 0.44f;
+    }
+    records[slot] = rec;
+}
+
 void launch_visual_particle_capture(GpuBuffers& bufs,
                                     std::uint32_t requested_cap,
                                     cudaEvent_t ready_event) {
@@ -243,6 +306,101 @@ void launch_visual_particle_capture(GpuBuffers& bufs,
     g_gpu_visual_snapshot_download_bytes +=
         sizeof(VisualParticleStagingHeader) + record_bytes;
     ++g_gpu_visual_snapshot_launches;
+}
+
+void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
+                                    std::uint32_t requested_cap) {
+    // The write cap must never exceed the ACTUAL element capacity of the
+    // imported D3D12 buffer -- kMaxVisualParticleCapture alone bounds the
+    // unrelated CPU-decode staging array (d_visual_particle_records), not
+    // this call's destination (bufs.d_interop_particle_buffer, a mapped view
+    // whose real size is bufs.interop_particle_capacity, set by
+    // GpuEngine::import_d3d12_particle_buffer() from the D3D12-side
+    // resource's exact byte size). Clamping against both means a caller
+    // that passes requested_cap==0 (or any value larger than the imported
+    // buffer) can never make the gather kernel write past the end of memory
+    // shared with D3D12. If nothing has been imported yet,
+    // interop_particle_capacity is 0 and this clamps the effective cap to 0,
+    // so the header reports zero captured particles and no record write
+    // happens at all -- the safe outcome for a call that should not have
+    // reached here (GpuEngine::interop_gather_particles() already refuses to
+    // call this before an import succeeds; this clamp is defense in depth).
+    const std::uint32_t import_cap =
+        (std::min)(bufs.interop_particle_capacity, kMaxVisualParticleCapture);
+    const std::uint32_t cap = requested_cap == 0
+        ? import_cap
+        : (std::min)(requested_cap, import_cap);
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+
+    // Same flags -> prefix-scan -> header sequence as
+    // launch_visual_particle_capture -- deliberately duplicated rather than
+    // factored into a shared helper, because this project's engine code
+    // favors readable duplication over a helper with hidden branching in a
+    // hot path (matches the existing style already in this file).
+    //
+    // IMPORTANT: this sequence writes into the SAME scratch
+    // launch_visual_particle_capture uses -- bufs.d_visual_particle_header
+    // (via the same visual_particle_header_kernel) and the same
+    // d_pair_candidate_flags / d_pair_candidate_indices / d_pair_select_temp
+    // CUB workspace. The two launchers do NOT have different header scratch:
+    // d_interop_header is a separate, ADDITIONAL 4-byte host-visible summary
+    // that only interop_particle_gather_kernel's own final `if (index==0)`
+    // branch populates, by copying FROM d_visual_particle_header's
+    // captured_count -- it is not an alternate destination for this shared
+    // sequence.
+    //
+    // Reusing that scratch across two independently-callable launchers is
+    // race-free TODAY only because bufs.stream is created with plain
+    // cudaStreamCreate (blocking, not cudaStreamNonBlocking -- see
+    // gpu_buffers.cu) while launch_visual_particle_capture's kernels run on
+    // the legacy default stream (no stream argument): CUDA's
+    // synchronizing-stream semantics serialize a blocking stream's work
+    // against the default stream in host issue order (the same invariant
+    // GpuBuffers::stream's own doc comment in gpu_buffers.h states for
+    // Component A generally). That is an incidental consequence of
+    // bufs.stream's creation flags, not an explicit synchronization
+    // primitive (no event, no stream wait) between these two functions. It
+    // breaks silently -- corrupting the selection/count of either or both
+    // captures, no crash to signal it -- if launch_visual_particle_capture
+    // ever moves off the default stream, if bufs.stream is ever created with
+    // cudaStreamNonBlocking (the natural choice for a dedicated
+    // graph-capture stream), or if the CPU-decode capture path and this
+    // interop gather are ever invoked concurrently (plausible once a future
+    // task wires interop into the render/debug loop). Whoever changes either
+    // side of that must give the two launchers independent scratch or an
+    // explicit ordering primitive.
+    visual_particle_flags_kernel<<<blocks, threads, 0, bufs.stream>>>(
+        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+
+    const auto flags = thrust::make_transform_iterator(
+        bufs.d_pair_candidate_flags, ParticleFlagToInt{});
+    CUDA_CHECK(cub::DeviceScan::ExclusiveSum(
+        bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
+        flags, bufs.d_pair_candidate_indices, bufs.N, bufs.stream));
+
+    visual_particle_header_kernel<<<1, 1, 0, bufs.stream>>>(
+        bufs.d_pair_candidate_flags, bufs.d_pair_candidate_indices, bufs.N,
+        cap, bufs.d_visual_particle_header);
+    CUDA_CHECK(cudaGetLastError());
+
+    interop_particle_gather_kernel<<<blocks, threads, 0, bufs.stream>>>(
+        bufs.d_state, bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_pair_candidate_indices, bufs.N, lattice_size,
+        bufs.d_visual_particle_header,
+        static_cast<InteropParticleRecord*>(bufs.d_interop_particle_buffer),
+        bufs.d_interop_header);
+    CUDA_CHECK(cudaGetLastError());
+
+    // Only the 4-byte count needs a host round trip -- this is the whole
+    // point of the interop path: no per-particle download, no per-particle
+    // CPU decode. Compare to launch_visual_particle_capture's D2H of the
+    // full kMaxVisualParticleCapture-sized record array.
+    CUDA_CHECK(cudaMemcpyAsync(bufs.h_interop_header, bufs.d_interop_header,
+                              sizeof(InteropParticleHeader),
+                              cudaMemcpyDeviceToHost, bufs.stream));
+    CUDA_CHECK(cudaEventRecord(bufs.interop_gather_ready, bufs.stream));
 }
 
 }  // namespace
@@ -354,6 +512,225 @@ int GpuEngine::device_tick() const {
     CUDA_CHECK(cudaMemcpy(&value, bufs_.d_tick, sizeof(int),
                           cudaMemcpyDeviceToHost));
     return value;
+}
+
+// Unlike almost every other call in this file, this function soft-fails
+// (returns false) instead of going through CUDA_CHECK and throwing. That is
+// deliberate, not an oversight: this is a capability probe callers use to
+// decide WHETHER to attempt D3D12/CUDA interop, not a hot-path tick
+// operation where a hard failure should abort — throwing here would make it
+// unusable as a "can I do this?" check. Both CUDA-call failure branches
+// below call cudaGetLastError() to consume the runtime's per-thread sticky
+// last-error state before returning; without that, a later, unrelated
+// CUDA_CHECK(cudaGetLastError()) elsewhere in the tick path could pick up
+// and misattribute an error this function already handled.
+bool GpuEngine::device_luid(char out_luid[8]) const {
+    int device = 0;
+    if (cudaGetDevice(&device) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; this is a soft failure
+        return false;
+    }
+    cudaDeviceProp prop{};
+    if (cudaGetDeviceProperties(&prop, device) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; this is a soft failure
+        return false;
+    }
+    // Checked as a heuristic signal that the LUID is unpopulated (non-WDDM).
+    // CUDA's own docs only say this field's value is undefined on
+    // TCC/non-Windows platforms, not that it's guaranteed zero there — this
+    // project's native_desktop target is WIN32-only with WDDM-mode consumer
+    // GPUs, where zero is the observed no-LUID signal in practice.
+    if (!prop.luidDeviceNodeMask) return false;
+    std::memcpy(out_luid, prop.luid, sizeof(prop.luid));
+    return true;
+}
+
+// Unlike device_luid() above, this is NOT a repeatable, side-effect-free
+// "can I do X?" query -- it is a one-time setup step that later interop work
+// (the gather kernel a subsequent task adds) depends on actually succeeding.
+// A false return here means "interop is unavailable this session", not "try
+// again": on the first-call failure path nothing was imported, and on the
+// second-call failure path the partially-created external memory object is
+// explicitly torn down (cudaDestroyExternalMemory) before returning, so this
+// object never holds a half-imported handle either way.
+//
+// It still soft-fails (bool, no throw) rather than going through CUDA_CHECK,
+// matching this codebase's established pattern for one-time D3D12/CUDA setup
+// calls the native_desktop app probes rather than hard-crashes on (see
+// D3D12Presenter::create_shared_particle_buffer(), which returns nullptr on
+// failure for the same reason: a missing/mismatched adapter or an
+// interop-hostile driver is a real, recoverable-by-the-caller outcome, not a
+// programming error).
+//
+// The sticky-error-clearing concern from device_luid() DOES still apply here,
+// for a reason independent of the "is this a probe?" question: this function
+// runs CUDA API calls on the same host thread that will go on to do
+// unrelated tick work afterward (kernel launches immediately followed by
+// CUDA_CHECK(cudaGetLastError()), the codebase's standard post-launch-error
+// pattern -- see kernels_forces.cu, kernels_poisson.cu, etc.). If a failed
+// import here left the runtime's per-thread sticky error set, the very next
+// unrelated CUDA_CHECK(cudaGetLastError()) in the tick path would pick it up
+// and misattribute this function's stale failure to a completely unrelated
+// kernel launch. Both failure branches below clear it for that reason.
+//
+// Safe to call more than once (e.g. to re-import after a D3D12-side buffer
+// resize) -- mirrors D3D12Presenter::create_shared_particle_buffer()'s own
+// "safe to call more than once" contract on the exporting side. Any
+// previously-imported external memory object is torn down (which also
+// invalidates the previously-mapped bufs_.d_interop_particle_buffer view)
+// before the new cudaImportExternalMemory call, so a second call never
+// leaks the first import's driver-level reference to its D3D12 resource.
+// Like device_luid(), this must be called from the same OS thread that
+// owns this GpuEngine's CUDA context -- cudaImportExternalMemory and
+// cudaExternalMemoryGetMappedBuffer both operate against the calling
+// thread's current CUDA context.
+bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count) {
+    if (!nt_handle || byte_count == 0) return false;
+
+    // A real (re-)import attempt below invalidates whatever a PRIOR import's
+    // gather state meant, regardless of whether THIS attempt goes on to
+    // succeed or fail: bufs_.interop_particle_capacity described the OLD
+    // buffer's size (about to be torn down), and interop_gather_launched_
+    // tracked whether a gather had ever completed against that OLD buffer.
+    // Resetting both here closes the stale-state window a caller could
+    // otherwise observe by polling interop_gather_ready()/
+    // interop_particle_count() after a fresh import (e.g. the lattice-resize
+    // re-import path already exercised by test_cuda_import_shared_buffer.cpp)
+    // but before the next interop_gather_particles() call -- without this,
+    // interop_gather_ready() would still report the OLD import's completed
+    // event as "ready" and interop_particle_count() would still return the
+    // OLD import's last captured_count for a buffer nothing has gathered
+    // into yet.
+    interop_gather_launched_.store(false, std::memory_order_relaxed);
+    bufs_.interop_particle_capacity = 0;
+
+    // Tear down a prior import before creating the new one -- otherwise the
+    // assignments below simply overwrite bufs_.interop_external_memory /
+    // bufs_.d_interop_particle_buffer and the first import's external memory
+    // object (and its underlying driver-level reference to the D3D12
+    // resource) leaks for the process lifetime.
+    if (bufs_.interop_external_memory) {
+        cudaDestroyExternalMemory(bufs_.interop_external_memory);
+        bufs_.interop_external_memory = nullptr;
+        bufs_.d_interop_particle_buffer = nullptr;
+    }
+
+    // This call has two distinct failure sources, both handled identically
+    // (soft bool failure, no throw) since the caller only needs to know
+    // "did the import succeed", not which CUDA call rejected it:
+    //   1. cudaImportExternalMemory() below -- the NT handle/description was
+    //      rejected (e.g. adapter mismatch, driver does not support D3D12
+    //      resource import).
+    //   2. cudaExternalMemoryGetMappedBuffer() further below -- the memory
+    //      object imported but could not be mapped as a flat buffer.
+    cudaExternalMemoryHandleDesc mem_desc{};
+    mem_desc.type = cudaExternalMemoryHandleTypeD3D12Resource;
+    mem_desc.handle.win32.handle = nt_handle;
+    mem_desc.size = byte_count;
+    mem_desc.flags = cudaExternalMemoryDedicated;
+    if (cudaImportExternalMemory(&bufs_.interop_external_memory, &mem_desc) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; see function-level comment
+        return false;
+    }
+
+    cudaExternalMemoryBufferDesc buf_desc{};
+    buf_desc.offset = 0;
+    buf_desc.size = byte_count;
+    buf_desc.flags = 0;
+    if (cudaExternalMemoryGetMappedBuffer(&bufs_.d_interop_particle_buffer,
+                                          bufs_.interop_external_memory,
+                                          &buf_desc) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; see function-level comment
+        cudaDestroyExternalMemory(bufs_.interop_external_memory);
+        bufs_.interop_external_memory = nullptr;
+        // cudaExternalMemoryGetMappedBuffer() is this call's own out-param
+        // target; the CUDA Runtime API does not document that it leaves the
+        // pointer untouched on failure, so null it explicitly rather than
+        // relying on driver behavior. Otherwise a caller that bypasses
+        // NativeEngineSession's interop_enabled_ gate (e.g. a direct
+        // GpuEngine test caller) could observe a non-null, potentially
+        // driver-written-garbage bufs_.d_interop_particle_buffer here.
+        bufs_.d_interop_particle_buffer = nullptr;
+        return false;
+    }
+    // Record how many InteropParticleRecord slots the mapped view actually
+    // has room for -- this is the D3D12-side buffer's exact size
+    // (D3D12Presenter::create_shared_particle_buffer() allocates precisely
+    // max_particles * sizeof(InteropParticleRecord) bytes, no padding), so
+    // integer division recovers max_particles exactly for any byte_count a
+    // real caller passes. launch_interop_particle_gather() clamps its write
+    // cap to this value so the gather kernel can never write past the end of
+    // the imported memory. A byte_count that is not an exact multiple of
+    // sizeof(InteropParticleRecord) floors to the largest fully-contained
+    // record count, which is the correct conservative bound either way.
+    bufs_.interop_particle_capacity =
+        static_cast<std::uint32_t>(byte_count / sizeof(InteropParticleRecord));
+    return true;
+}
+
+// Cross-API GPU-timeline fence (Task 7). Imports a D3D12_FENCE_FLAG_SHARED
+// fence (D3D12Presenter::create_shared_fence()) as a CUDA external
+// semaphore so interop_signal_fence() below can signal it on bufs_.stream
+// after the gather kernel -- the D3D12-side wait_shared_fence() then blocks
+// the render queue (not the CPU) until that signal retires. Same
+// handle-lifetime contract as import_d3d12_particle_buffer(): the caller
+// closes nt_handle after this call returns, success or failure. Safe to
+// call more than once (e.g. to re-import after a presenter reset): any
+// previously-imported semaphore is torn down first so a second call never
+// leaks the prior import's driver-level reference. Like
+// import_d3d12_particle_buffer(), must be called from the same OS thread
+// that owns this GpuEngine's CUDA context -- cudaImportExternalSemaphore
+// operates against the calling thread's current CUDA context.
+bool GpuEngine::import_d3d12_fence(void* nt_handle) {
+    if (!nt_handle) return false;
+    if (bufs_.interop_fence) {
+        cudaDestroyExternalSemaphore(bufs_.interop_fence);
+        bufs_.interop_fence = nullptr;
+    }
+    cudaExternalSemaphoreHandleDesc desc{};
+    desc.type = cudaExternalSemaphoreHandleTypeD3D12Fence;
+    desc.handle.win32.handle = nt_handle;
+    desc.flags = 0;
+    if (cudaImportExternalSemaphore(&bufs_.interop_fence, &desc) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; mirrors import_d3d12_particle_buffer()
+        return false;
+    }
+    return true;
+}
+
+// Signals bufs_.interop_fence to `value` on bufs_.stream. A no-op (false)
+// when no fence has been imported -- callers that never called
+// import_d3d12_fence() (e.g. tests exercising only the gather path) can
+// call interop_gather_particles() freely without this branch doing
+// anything.
+//
+// Precondition: like import_d3d12_fence(), must be called from the same OS
+// thread that owns this GpuEngine's CUDA context --
+// cudaSignalExternalSemaphoresAsync operates against the calling thread's
+// current CUDA context, not a property of this GpuEngine instance.
+//
+// On a cudaSignalExternalSemaphoresAsync() failure (e.g. a caller-supplied
+// `value` that does not monotonically increase relative to the fence's
+// current value -- the public API does nothing to prevent that), this
+// clears the sticky per-thread CUDA error before returning, for the exact
+// reason import_d3d12_particle_buffer() and import_d3d12_fence() clear it on
+// their own failure paths (see the function-level comment above
+// import_d3d12_particle_buffer()): this call runs on the same host thread
+// that goes on to do unrelated tick work afterward via
+// interop_gather_particles() (adjacent to real kernel launches immediately
+// followed by CUDA_CHECK(cudaGetLastError())), so an uncleared sticky error
+// here would be misattributed to a completely unrelated kernel launch by the
+// very next such check.
+bool GpuEngine::interop_signal_fence(std::uint64_t value) {
+    if (!bufs_.interop_fence) return false;
+    cudaExternalSemaphoreSignalParams params{};
+    params.params.fence.value = value;
+    if (cudaSignalExternalSemaphoresAsync(&bufs_.interop_fence, &params, 1,
+                                          bufs_.stream) != cudaSuccess) {
+        cudaGetLastError();  // clear sticky error; see function-level comment
+        return false;
+    }
+    return true;
 }
 
 void GpuEngine::set_dt(double dt) {
@@ -1183,6 +1560,105 @@ bool GpuEngine::poll_visual_snapshot(VisualSnapshot& out) {
                                  bufs_.h_visual_particle_records + count);
     visual_snapshot_pending_ = false;
     return true;
+}
+
+// Native-desktop D3D12 interop (Component B). Runs the same
+// flags/prefix-scan/header selection pass as begin_visual_snapshot() above,
+// but gathers fully-decoded InteropParticleRecords straight into the buffer
+// import_d3d12_particle_buffer() imported, instead of raw
+// VisualParticleRecords for later CPU decode -- see
+// launch_interop_particle_gather()'s own comment for why the two paths stay
+// duplicated rather than sharing a helper. Everything here runs on
+// bufs_.stream (the Component-A dedicated stream), unlike
+// begin_visual_snapshot()'s default-stream launches, so it can be ordered
+// with (and graph-captured alongside) the rest of the tick if a future task
+// folds it into Component A's capture.
+bool GpuEngine::interop_gather_particles(std::uint32_t max_particles,
+                                         std::uint64_t fence_value) {
+    if (!bufs_.d_interop_particle_buffer) return false;
+    launch_interop_particle_gather(bufs_, size_, max_particles);
+    // Marks that at least one gather has actually been launched against the
+    // CURRENTLY-imported buffer, so interop_gather_ready() below can tell
+    // "the event has never been recorded" apart from "the event retired".
+    // cudaEventQuery on an event that has never had cudaEventRecord() called
+    // on it returns cudaSuccess (there is no outstanding work to wait for),
+    // so without this flag interop_gather_ready() would report READY before
+    // the first gather ever ran, and interop_particle_count() would then
+    // read bufs_.h_interop_header->captured_count while it is still
+    // uninitialized pinned memory (cudaHostAlloc does not zero it).
+    // import_d3d12_particle_buffer() clears this flag on every (re-)import,
+    // so it also cannot outlive the buffer it was measured against.
+    interop_gather_launched_.store(true, std::memory_order_relaxed);
+    // Cross-API GPU-timeline fence (Task 7): signal AFTER the gather kernel
+    // launch above so the signal is ordered on bufs_.stream behind the
+    // gather's writes into d_interop_particle_buffer. A no-op when no fence
+    // has been imported (interop_signal_fence() checks bufs_.interop_fence
+    // itself). A real signal failure here means the gather itself may have
+    // succeeded, but the cross-API handoff that makes the buffer safely
+    // consumable by D3D12 did not -- without a signaled fence the render
+    // thread's wait_shared_fence() would block on a value that is never
+    // reached, so this is reported as a failure of the whole call.
+    if (bufs_.interop_fence) {
+        if (!interop_signal_fence(fence_value)) {
+            std::cerr << "[GpuEngine] interop_gather_particles: "
+                         "interop_signal_fence(" << fence_value
+                      << ") failed; D3D12 side will not see this gather"
+                      << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool GpuEngine::interop_gather_ready() const {
+    // Mirrors visual_snapshot_ready()'s own pending-flag-before-event-query
+    // pattern (see poll_visual_snapshot() above): a flag gate is required
+    // because cudaEventQuery on a not-yet-recorded event reports "ready" by
+    // definition (no work to wait for), which would otherwise make this
+    // function return true before interop_gather_particles() has ever run.
+    if (!interop_gather_launched_.load(std::memory_order_relaxed) ||
+        !bufs_.interop_gather_ready) return false;
+    const cudaError_t status = cudaEventQuery(bufs_.interop_gather_ready);
+    if (status == cudaSuccess) return true;
+    if (status == cudaErrorNotReady) return false;
+    throw std::runtime_error(std::string("[GpuEngine] interop gather event query failed: ")
+                             + cudaGetErrorString(status));
+}
+
+std::uint32_t GpuEngine::interop_particle_count() const {
+    // Only safe to read bufs_.h_interop_header->captured_count once
+    // interop_gather_ready() is true (its doc comment states this contract
+    // explicitly): before the first gather, the pinned host header is
+    // genuinely uninitialized memory; between a gather launch and its event
+    // retiring, the in-flight cudaMemcpyAsync D2H copy is still writing it.
+    // Gating here -- rather than trusting every caller to check
+    // interop_gather_ready() first -- matches this file's own established
+    // pattern for the analogous visual-snapshot path, where
+    // poll_visual_snapshot() (not the caller) enforces the same precondition
+    // via visual_snapshot_ready().
+    return interop_gather_ready() ? bufs_.h_interop_header->captured_count : 0u;
+}
+
+// TEST-ONLY (see gpu_engine.h doc comment). A synchronous, blocking
+// cudaMemcpy straight off the imported interop buffer -- never called from
+// any production path, which exists specifically to avoid this download
+// (Task 6). Used only by test_interop_visual_parity to compare the interop
+// gather kernel's output against the pre-interop CPU capture path.
+void GpuEngine::debug_read_interop_records(std::vector<InteropParticleRecord>& out,
+                                           std::uint32_t count) const {
+    // Clamp against the imported buffer's real capacity, the same way
+    // launch_interop_particle_gather() clamps its writes -- otherwise a
+    // caller-supplied count larger than bufs_.interop_particle_capacity
+    // would read past the end of the imported device buffer below.
+    // interop_particle_capacity is 0 whenever d_interop_particle_buffer is
+    // null (see import_d3d12_particle_buffer()), so this clamp is safe to
+    // apply unconditionally, before the buffer-validity guard.
+    count = (std::min)(count, bufs_.interop_particle_capacity);
+    out.assign(count, InteropParticleRecord{});
+    if (!bufs_.d_interop_particle_buffer || count == 0) return;
+    CUDA_CHECK(cudaMemcpy(out.data(), bufs_.d_interop_particle_buffer,
+                          static_cast<std::size_t>(count) * sizeof(InteropParticleRecord),
+                          cudaMemcpyDeviceToHost));
 }
 
 void GpuEngine::inspect_voxel(int index, VoxelInspection& out) {
