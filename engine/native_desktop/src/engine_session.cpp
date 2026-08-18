@@ -5,6 +5,9 @@
 #include "ftd/term_toggles.h"
 #include "ftd/visual_field_sample.h"
 #include "ftd/visual_snapshot.h"
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_engine.h"
+#endif
 
 #include <algorithm>
 #include <chrono>
@@ -202,6 +205,46 @@ int NativeEngineSession::current_tick() const { return bridge_->current_tick(); 
 
 const char* NativeEngineSession::backend_name() const {
     return bridge_->backend_kind() == Backend::Kind::Gpu ? "cuda" : "cpu";
+}
+
+bool NativeEngineSession::try_enable_interop(void* shared_buffer_handle,
+                                             std::uint64_t buffer_bytes,
+                                             void* shared_fence_handle) {
+#ifdef FTD_ENABLE_CUDA
+    if (bridge_->backend_kind() != Backend::Kind::Gpu) return false;
+    ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
+    if (!engine) return false;
+    if (!engine->import_d3d12_particle_buffer(shared_buffer_handle, buffer_bytes)) {
+        return false;
+    }
+    if (!engine->import_d3d12_fence(shared_fence_handle)) return false;
+    interop_enabled_ = true;
+    return true;
+#else
+    (void)shared_buffer_handle; (void)buffer_bytes; (void)shared_fence_handle;
+    return false;
+#endif
+}
+
+void NativeEngineSession::request_interop_gather(std::uint64_t fence_value) {
+#ifdef FTD_ENABLE_CUDA
+    if (!interop_enabled_) return;
+    ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
+    if (engine) engine->interop_gather_particles(kMaxVisualParticleCapture, fence_value);
+#else
+    (void)fence_value;
+#endif
+}
+
+int NativeEngineSession::poll_interop_particle_count() {
+#ifdef FTD_ENABLE_CUDA
+    if (!interop_enabled_) return -1;
+    ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
+    if (!engine || !engine->interop_gather_ready()) return -1;
+    return static_cast<int>(engine->interop_particle_count());
+#else
+    return -1;
+#endif
 }
 
 }  // namespace ftd::native_desktop
