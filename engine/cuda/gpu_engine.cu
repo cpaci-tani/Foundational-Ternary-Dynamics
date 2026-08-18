@@ -1646,6 +1646,14 @@ std::uint32_t GpuEngine::interop_particle_count() const {
 // gather kernel's output against the pre-interop CPU capture path.
 void GpuEngine::debug_read_interop_records(std::vector<InteropParticleRecord>& out,
                                            std::uint32_t count) const {
+    // Clamp against the imported buffer's real capacity, the same way
+    // launch_interop_particle_gather() clamps its writes -- otherwise a
+    // caller-supplied count larger than bufs_.interop_particle_capacity
+    // would read past the end of the imported device buffer below.
+    // interop_particle_capacity is 0 whenever d_interop_particle_buffer is
+    // null (see import_d3d12_particle_buffer()), so this clamp is safe to
+    // apply unconditionally, before the buffer-validity guard.
+    count = (std::min)(count, bufs_.interop_particle_capacity);
     out.assign(count, InteropParticleRecord{});
     if (!bufs_.d_interop_particle_buffer || count == 0) return;
     CUDA_CHECK(cudaMemcpy(out.data(), bufs_.d_interop_particle_buffer,
