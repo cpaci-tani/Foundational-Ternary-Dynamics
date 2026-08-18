@@ -101,9 +101,10 @@ __global__ void ew_background_sweep_kernel(
 
 void launch_ew_background_sweep(GpuBuffers& bufs, double drive,
                                 bool dual_substrate) {
+    const cudaStream_t stream = bufs.stream;
     constexpr int threads = 256;
     const int blocks = (bufs.N + threads - 1) / threads;
-    ew_background_sweep_kernel<<<blocks, threads>>>(
+    ew_background_sweep_kernel<<<blocks, threads, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_L_x, bufs.d_flux_R_x,
         drive, dual_substrate, bufs.N);
     CUDA_CHECK(cudaGetLastError());
@@ -186,10 +187,11 @@ __global__ void flux_boundary_kernel(
 namespace {
 
 void launch_boundary_kernel(GpuBuffers& bufs, bool absorbing, int flux_mode) {
+    const cudaStream_t stream = bufs.stream;
     constexpr int threads = 256;
     const int blocks = (bufs.N + threads - 1) / threads;
     if (absorbing) {
-        absorbing_boundary_kernel<<<blocks, threads>>>(
+        absorbing_boundary_kernel<<<blocks, threads, 0, stream>>>(
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
             bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
@@ -198,7 +200,7 @@ void launch_boundary_kernel(GpuBuffers& bufs, bool absorbing, int flux_mode) {
             bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
             bufs.L, bufs.N);
     } else {
-        flux_boundary_kernel<<<blocks, threads>>>(
+        flux_boundary_kernel<<<blocks, threads, 0, stream>>>(
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
             bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
@@ -255,11 +257,11 @@ __global__ void gather_probe_flux_kernel(
 void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
                               const double* d_flux_z, const int* d_probe_idx,
                               double* d_out_x, double* d_out_y, double* d_out_z,
-                              int n_probe) {
+                              int n_probe, cudaStream_t stream) {
     if (n_probe <= 0) return;
     int threads = 256;
     int blocks = (n_probe + threads - 1) / threads;
-    gather_probe_flux_kernel<<<blocks, threads>>>(
+    gather_probe_flux_kernel<<<blocks, threads, 0, stream>>>(
         d_flux_x, d_flux_y, d_flux_z, d_probe_idx,
         d_out_x, d_out_y, d_out_z, n_probe);
     CUDA_CHECK(cudaGetLastError());
@@ -653,19 +655,20 @@ void launch_canonical_lifecycle(
     double kinetic_drain, double genesis_threshold, double manifest_scale,
     unsigned long long rng_seed, int tick) {
     if (!do_genesis && !do_evaporation) return;
+    const cudaStream_t stream = bufs.stream;
     const std::size_t field_bytes = static_cast<std::size_t>(bufs.N) * sizeof(double);
     if (do_genesis) {
         CUDA_CHECK(cudaMemcpyAsync(bufs.d_delta_j_x, bufs.d_flux_x, field_bytes,
-                                   cudaMemcpyDeviceToDevice));
+                                   cudaMemcpyDeviceToDevice, stream));
         CUDA_CHECK(cudaMemcpyAsync(bufs.d_delta_j_y, bufs.d_flux_y, field_bytes,
-                                   cudaMemcpyDeviceToDevice));
+                                   cudaMemcpyDeviceToDevice, stream));
         CUDA_CHECK(cudaMemcpyAsync(bufs.d_delta_j_z, bufs.d_flux_z, field_bytes,
-                                   cudaMemcpyDeviceToDevice));
+                                   cudaMemcpyDeviceToDevice, stream));
     }
 
     constexpr int block = 256;
     const int grid = (bufs.N + block - 1) / block;
-    lifecycle_candidate_kernel<<<grid, block>>>(
+    lifecycle_candidate_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_locked,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
         bufs.d_pair_candidate_flags,
@@ -677,9 +680,10 @@ void launch_canonical_lifecycle(
     CUDA_CHECK(cub::DeviceSelect::Flagged(
         bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
         indices, bufs.d_pair_candidate_flags,
-        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count, bufs.N));
+        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count, bufs.N,
+        stream));
 
-    lifecycle_commit_kernel<<<1, 1>>>(
+    lifecycle_commit_kernel<<<1, 1, 0, stream>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
@@ -867,11 +871,12 @@ __global__ void pair_production_commit_kernel(
 
 void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
                             unsigned long long rng_seed, int tick) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    pair_production_candidate_kernel<<<grid, block>>>(
+    pair_production_candidate_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_pair_candidate_flags, L, rng_seed, tick);
     CUDA_CHECK(cudaGetLastError());
@@ -880,9 +885,10 @@ void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
     CUDA_CHECK(cub::DeviceSelect::Flagged(
         bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
         indices, bufs.d_pair_candidate_flags,
-        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count, bufs.N));
+        bufs.d_pair_candidate_indices, bufs.d_pair_candidate_count, bufs.N,
+        stream));
 
-    pair_production_commit_kernel<<<1, 1>>>(
+    pair_production_commit_kernel<<<1, 1, 0, stream>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
@@ -902,11 +908,12 @@ void launch_pair_production(GpuBuffers& bufs, bool dual_substrate,
 }
 
 void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned long long rng_seed, int tick) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    weak_transmutation_kernel<<<grid, block>>>(
+    weak_transmutation_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         dual_substrate,

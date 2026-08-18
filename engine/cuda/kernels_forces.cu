@@ -1101,11 +1101,12 @@ __global__ void triad_detection_kernel(
 void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
                          bool emergent_forces,
                          bool gravity, bool lorentz_force, double dt) {
+    const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    phase_forces_kernel<<<grid, block>>>(
+    phase_forces_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_locked, bufs.d_phi_coulomb,
         bufs.d_latency,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
@@ -1120,9 +1121,10 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
 }
 
 void launch_integrate_forces(GpuBuffers& bufs, double dt) {
+    const cudaStream_t stream = bufs.stream;
     const int block = 256;
     const int grid = (bufs.N + block - 1) / block;
-    integrate_forces_kernel<<<grid, block>>>(
+    integrate_forces_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_locked, bufs.d_latency,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_fd_coulomb_x, bufs.d_fd_coulomb_y, bufs.d_fd_coulomb_z,
@@ -1136,6 +1138,7 @@ void launch_integrate_forces(GpuBuffers& bufs, double dt) {
 
 void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
                            bool dual_substrate) {
+    const cudaStream_t stream = bufs.stream;
     const int L = bufs.L;
     constexpr int block = MOVEMENT_BLOCK_SIZE;
     const int grid = (bufs.N + block - 1) / block;
@@ -1147,7 +1150,7 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
 
     CUDA_CHECK(cudaMemset(bufs.d_causal_projection_events, 0,
                           sizeof(unsigned long long)));
-    movement_prepass_kernel<<<grid, block>>>(
+    movement_prepass_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_locked,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
@@ -1157,14 +1160,14 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         dt, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 
-    apply_non_crossing_movement_kernel<<<grid, block>>>(
+    apply_non_crossing_movement_kernel<<<grid, block, 0, stream>>>(
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
         bufs.d_latency, bufs.d_pair_candidate_flags,
         bufs.d_causal_projection_events, dt, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 
-    phase_movement_commit_crossings_kernel<<<1, 1>>>(
+    phase_movement_commit_crossings_kernel<<<1, 1, 0, stream>>>(
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
@@ -1188,12 +1191,13 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
 }
 
 void launch_build_particle_list(GpuBuffers& bufs) {
+    const cudaStream_t stream = bufs.stream;
     // Reset counter
     CUDA_CHECK(cudaMemset(bufs.d_num_particles, 0, sizeof(int)));
 
     int block = 256;
     int grid = (bufs.N + block - 1) / block;
-    build_particle_list_kernel<<<grid, block>>>(
+    build_particle_list_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_plist_idx, bufs.d_num_particles,
         bufs.N, GpuBuffers::MAX_PARTICLES
     );
@@ -1201,11 +1205,12 @@ void launch_build_particle_list(GpuBuffers& bufs) {
 }
 
 void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
+    const cudaStream_t stream = bufs.stream;
     (void)dt;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
-    color_force_kernel<<<grid, block>>>(
+    color_force_kernel<<<grid, block, 0, stream>>>(
         bufs.d_plist_idx, num_particles,
         bufs.d_state, bufs.d_color,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
@@ -1216,11 +1221,12 @@ void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
 }
 
 void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt) {
+    const cudaStream_t stream = bufs.stream;
     (void)dt;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
-    yukawa_force_kernel<<<grid, block>>>(
+    yukawa_force_kernel<<<grid, block, 0, stream>>>(
         bufs.d_plist_idx, num_particles,
         bufs.d_state,
         bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
@@ -1230,11 +1236,12 @@ void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt) {
 }
 
 void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt) {
+    const cudaStream_t stream = bufs.stream;
     (void)dt;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
-    exchange_force_kernel<<<grid, block>>>(
+    exchange_force_kernel<<<grid, block, 0, stream>>>(
         bufs.d_plist_idx, num_particles,
         bufs.d_state, bufs.d_spin,
         bufs.d_fd_exchange_x, bufs.d_fd_exchange_y, bufs.d_fd_exchange_z,
@@ -1244,10 +1251,11 @@ void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt) {
 }
 
 void launch_triad_detection(GpuBuffers& bufs, int num_particles) {
+    const cudaStream_t stream = bufs.stream;
     if (num_particles <= 0) return;
     int block = 256;
     int grid = (num_particles + block - 1) / block;
-    triad_detection_kernel<<<grid, block>>>(
+    triad_detection_kernel<<<grid, block, 0, stream>>>(
         bufs.d_plist_idx, num_particles,
         bufs.d_state, bufs.d_locked, bufs.L
     );
