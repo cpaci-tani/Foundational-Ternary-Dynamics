@@ -123,5 +123,28 @@ int main() {
                     std::abs(ratio - std::nearbyint(ratio)) < 1e-9);
     }
 
+    test::section("S6: the tick leaves work queued (no device-wide sync)");
+    {
+        gpu::GpuEngine engine(48);
+        seed_scene(engine);
+        engine.toggles.forces = true;
+        engine.toggles.movement = true;
+        CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
+
+        // A tick that contained cudaDeviceSynchronize or a synchronous
+        // cudaMemset could not leave the stream busy. Queue several ticks
+        // back to back and require that at least one observation finds work
+        // still in flight.
+        bool observed_async = false;
+        for (int attempt = 0; attempt < 8 && !observed_async; ++attempt) {
+            for (int t = 0; t < 4; ++t) engine.tick();
+            if (cudaStreamQuery(engine.bufs().stream) == cudaErrorNotReady) {
+                observed_async = true;
+            }
+        }
+        CUDA_CHECK_TEST(cudaStreamSynchronize(engine.bufs().stream));
+        test::check("S6: tick enqueues asynchronously", observed_async);
+    }
+
     return test::finalize();
 }

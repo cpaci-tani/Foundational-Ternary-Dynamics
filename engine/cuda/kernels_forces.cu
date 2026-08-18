@@ -1166,8 +1166,8 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
     auto* movement_block_flags =
         reinterpret_cast<uint8_t*>(bufs.d_pair_candidate_indices);
 
-    CUDA_CHECK(cudaMemset(bufs.d_causal_projection_events, 0,
-                          sizeof(unsigned long long)));
+    CUDA_CHECK(cudaMemsetAsync(bufs.d_causal_projection_events, 0,
+                               sizeof(unsigned long long), stream));
     movement_prepass_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state, bufs.d_locked,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
