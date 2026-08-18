@@ -415,9 +415,40 @@ bool GpuEngine::device_luid(char out_luid[8]) const {
 // unrelated CUDA_CHECK(cudaGetLastError()) in the tick path would pick it up
 // and misattribute this function's stale failure to a completely unrelated
 // kernel launch. Both failure branches below clear it for that reason.
+//
+// Safe to call more than once (e.g. to re-import after a D3D12-side buffer
+// resize) -- mirrors D3D12Presenter::create_shared_particle_buffer()'s own
+// "safe to call more than once" contract on the exporting side. Any
+// previously-imported external memory object is torn down (which also
+// invalidates the previously-mapped bufs_.d_interop_particle_buffer view)
+// before the new cudaImportExternalMemory call, so a second call never
+// leaks the first import's driver-level reference to its D3D12 resource.
+// Like device_luid(), this must be called from the same OS thread that
+// owns this GpuEngine's CUDA context -- cudaImportExternalMemory and
+// cudaExternalMemoryGetMappedBuffer both operate against the calling
+// thread's current CUDA context.
 bool GpuEngine::import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count) {
     if (!nt_handle || byte_count == 0) return false;
 
+    // Tear down a prior import before creating the new one -- otherwise the
+    // assignments below simply overwrite bufs_.interop_external_memory /
+    // bufs_.d_interop_particle_buffer and the first import's external memory
+    // object (and its underlying driver-level reference to the D3D12
+    // resource) leaks for the process lifetime.
+    if (bufs_.interop_external_memory) {
+        cudaDestroyExternalMemory(bufs_.interop_external_memory);
+        bufs_.interop_external_memory = nullptr;
+        bufs_.d_interop_particle_buffer = nullptr;
+    }
+
+    // This call has two distinct failure sources, both handled identically
+    // (soft bool failure, no throw) since the caller only needs to know
+    // "did the import succeed", not which CUDA call rejected it:
+    //   1. cudaImportExternalMemory() below -- the NT handle/description was
+    //      rejected (e.g. adapter mismatch, driver does not support D3D12
+    //      resource import).
+    //   2. cudaExternalMemoryGetMappedBuffer() further below -- the memory
+    //      object imported but could not be mapped as a flat buffer.
     cudaExternalMemoryHandleDesc mem_desc{};
     mem_desc.type = cudaExternalMemoryHandleTypeD3D12Resource;
     mem_desc.handle.win32.handle = nt_handle;

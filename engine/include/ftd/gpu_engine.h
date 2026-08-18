@@ -155,6 +155,23 @@ public:
     // must stay valid until AFTER cudaImportExternalMemory returns, but CUDA
     // does not take ownership of it; the caller (native_desktop) closes it
     // once this call returns, success or failure.
+    //
+    // Returns false on either of two distinct failure sources, left
+    // undifferentiated to the caller (same probe-style contract as
+    // device_luid() above): cudaImportExternalMemory() rejecting the handle
+    // itself, or cudaExternalMemoryGetMappedBuffer() failing to map the
+    // imported object as a flat buffer.
+    //
+    // Safe to call more than once (e.g. to re-import after a D3D12-side
+    // resize) -- matches D3D12Presenter::create_shared_particle_buffer()'s
+    // own "safe to call more than once" contract: any previously-imported
+    // external memory object is torn down before the new import, so a
+    // second call never leaks the first import's driver-level reference.
+    //
+    // Precondition: like device_luid(), must be called from the same OS
+    // thread that owns this GpuEngine's CUDA context -- the underlying CUDA
+    // calls operate against the calling thread's current CUDA context, not
+    // a property of this GpuEngine instance.
     bool import_d3d12_particle_buffer(void* nt_handle, std::uint64_t byte_count);
 
     int total_sites() const { return N_; }
