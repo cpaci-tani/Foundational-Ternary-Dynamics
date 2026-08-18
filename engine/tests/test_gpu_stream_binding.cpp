@@ -169,8 +169,18 @@ int main() {
         // submission on Windows, not a regression signal.
         //
         // Calibrated on this machine (RTX 5090, WDDM, L=128, forces+movement
-        // on, 30 samples after an 8-tick warmup, several repeated runs):
-        //   genuinely async (current code):            median ~250-265us,
+        // on, 30 samples after an 8-tick warmup, several repeated runs) back
+        // when graph_capture_enabled defaulted to false. Since then
+        // graph_capture_enabled defaults to true (Task 9) and this profile
+        // (forces+movement only) is graph_eligible(), so by default the
+        // warmup tick captures once and every sampled tick below times a
+        // cudaGraphLaunch replay, not a direct kernel-launch sequence — the
+        // numbers below are direct-launch timings, kept as the calibration
+        // record, not necessarily what a fresh run measures today. The
+        // assertion's purpose (catch a blocking sync reintroduced anywhere
+        // in the hot path) holds either way: replay is at least as async as
+        // direct launch, so the threshold stays valid, just conservative.
+        //   genuinely async (direct launch, pre-Task-9): median ~250-265us,
         //                                               occasional ~14-16ms
         //                                               WDDM batching stalls
         //                                               visible only in max

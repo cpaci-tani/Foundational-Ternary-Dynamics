@@ -74,6 +74,13 @@ struct GpuBuffers {
     // (cudaErrorStreamCaptureImplicit), turning an un-migrated tick launcher
     // into a loud capture failure instead of a silently wrong graph.
     // NEVER capture on the legacy stream: cudaStreamBeginCapture rejects it.
+    // This ordering guarantee holds only because today's only caller issues
+    // all GPU work from one host thread in program order — it is host
+    // issue-order, not a device-side interlock. A future multi-threaded
+    // caller (e.g. a snapshot poller on its own thread) issuing legacy-stream
+    // work concurrently with a tick in flight on this stream would race at
+    // the driver's enqueue boundary with no error signal outside an active
+    // capture window.
     cudaStream_t stream = nullptr;
 
     // --- Per-voxel state ---

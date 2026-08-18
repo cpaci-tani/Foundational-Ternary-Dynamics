@@ -2766,8 +2766,10 @@ contract:
   legacy-stream or allocating call fail the capture loudly, so an
   un-migrated kernel is caught rather than silently baked into a wrong
   graph. A failed capture caches a null exec and falls back to direct launch
-  for that key permanently. `ew_background_sweep` is graph-ineligible
-  because its drive is computed on the host from the tick. `su2_gauge` /
+  for that key permanently. `ew_background_sweep`'s drive is device-resident
+  (read from `d_tick`, not host-computed) and could technically be captured;
+  it stays graph-ineligible only because it's a research toggle outside this
+  task's tested profiles, revisit if a future profile needs it. `su2_gauge` /
   `su3_gauge` are graph-ineligible for the same class of reason:
   `gpu_gauge_relax()`'s src/scratch ping-pong is a host-side `std::swap` of
   device pointers, which stream capture cannot record, so a captured graph
