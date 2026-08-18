@@ -27,6 +27,38 @@ void throw_if_failed(HRESULT hr, const char* what) {
     }
 }
 
+// Enumerates adapters via IDXGIFactory6's GPU-preference ordering when
+// available (puts the discrete/high-performance GPU first on hybrid-graphics
+// systems), falling back to plain EnumAdapters1 on older DXGI. Returns the
+// first adapter that is not the WARP software rasterizer.
+ComPtr<IDXGIAdapter1> pick_hardware_adapter(IDXGIFactory4& factory, LUID* out_luid) {
+    ComPtr<IDXGIFactory6> factory6;
+    if (SUCCEEDED(factory.QueryInterface(IID_PPV_ARGS(&factory6)))) {
+        ComPtr<IDXGIAdapter1> adapter;
+        for (UINT i = 0; SUCCEEDED(factory6->EnumAdapterByGpuPreference(
+                 i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter)));
+             ++i) {
+            DXGI_ADAPTER_DESC1 desc{};
+            adapter->GetDesc1(&desc);
+            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
+            if (out_luid) *out_luid = desc.AdapterLuid;
+            return adapter;
+        }
+        return nullptr;
+    }
+    // Fallback for pre-Windows-10-1803 DXGI (no IDXGIFactory6): plain
+    // EnumAdapters1, first non-software hit.
+    ComPtr<IDXGIAdapter1> adapter;
+    for (UINT i = 0; SUCCEEDED(factory.EnumAdapters1(i, &adapter)); ++i) {
+        DXGI_ADAPTER_DESC1 desc{};
+        adapter->GetDesc1(&desc);
+        if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
+        if (out_luid) *out_luid = desc.AdapterLuid;
+        return adapter;
+    }
+    return nullptr;
+}
+
 struct GpuVertex {
     float x, y, z;
     float r, g, b;
@@ -189,6 +221,23 @@ D3D12Presenter::~D3D12Presenter() {
     if (impl_ && impl_->fence_event) CloseHandle(impl_->fence_event);
 }
 
+bool D3D12Presenter::select_hardware_adapter(LUID* out_luid, bool* out_is_hardware) {
+    ComPtr<IDXGIFactory4> factory;
+    if (FAILED(CreateDXGIFactory2(0, IID_PPV_ARGS(&factory)))) {
+        if (out_is_hardware) *out_is_hardware = false;
+        return false;
+    }
+    LUID luid{};
+    ComPtr<IDXGIAdapter1> adapter = pick_hardware_adapter(*factory.Get(), &luid);
+    if (!adapter) {
+        if (out_is_hardware) *out_is_hardware = false;
+        return false;
+    }
+    if (out_luid) *out_luid = luid;
+    if (out_is_hardware) *out_is_hardware = true;
+    return true;
+}
+
 void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
                                 std::uint32_t height) {
     UINT factory_flags = 0;
@@ -201,9 +250,12 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
 #endif
     throw_if_failed(CreateDXGIFactory2(factory_flags, IID_PPV_ARGS(&impl_->factory)),
                     "CreateDXGIFactory2");
-    throw_if_failed(D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0,
+    ComPtr<IDXGIAdapter1> adapter =
+        pick_hardware_adapter(*impl_->factory.Get(), &adapter_luid_);
+    throw_if_failed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0,
                                       IID_PPV_ARGS(&impl_->device)),
                     "D3D12CreateDevice");
+    has_adapter_luid_ = static_cast<bool>(adapter);
 
     D3D12_COMMAND_QUEUE_DESC q{};
     q.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;

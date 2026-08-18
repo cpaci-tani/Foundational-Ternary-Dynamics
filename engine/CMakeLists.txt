@@ -510,6 +510,21 @@ if(TARGET ftd_native_session)
         ${CMAKE_SOURCE_DIR}/native_desktop/include)
 endif()
 
+# CTest registration for test_d3d12_adapter_selection (the executable target
+# itself is defined in native_desktop/CMakeLists.txt, built above via
+# add_subdirectory(native_desktop)). Registration happens here, not in
+# native_desktop/CMakeLists.txt, because add_subdirectory(native_desktop) is
+# called before enable_testing() runs later in this file; a subdirectory
+# processed before enable_testing() never gets a CTestTestfile.cmake
+# generated for it, so add_test() calls placed there are silently dropped by
+# CTest. The target is already fully defined by this point, so referencing
+# it here by name is a normal (not forward) reference.
+if(TARGET test_d3d12_adapter_selection)
+    add_test(NAME d3d12_adapter_selection COMMAND test_d3d12_adapter_selection)
+    set_tests_properties(d3d12_adapter_selection PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
 # Auto-link ftd_test_support into every test executable defined below in this
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
 # lives in ftd_test_support. This avoids touching every existing
