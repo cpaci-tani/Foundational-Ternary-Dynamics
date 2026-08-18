@@ -13,6 +13,8 @@
 #include "ftd/causal_kinematics.h"
 #include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d, ftd::decode_xyz, ftd::periodic_delta
 #include <cuda_runtime.h>
+#include <cub/device/device_select.cuh>
+#include <thrust/iterator/counting_iterator.h>
 #include <cmath>
 #include <cstdio>   // fprintf — Linux/clang stricter than MSVC
 #include <cstdlib>  // exit
@@ -775,27 +777,90 @@ __global__ void phase_movement_commit_crossings_kernel(
 // ============================================================================
 // PARTICLE LIST — compact indices of all manifested particles
 // ============================================================================
+//
+// DETERMINISTIC COMPACTION (replaces an atomic-race scatter, 2026-08-17).
+// The original kernel assigned each manifested particle's plist_idx[] slot
+// via atomicAdd(num_particles, 1). GPU thread-scheduling order for that
+// race is NOT guaranteed identical between separate kernel launches, even
+// from bit-identical prior device state, so the ORDER of particles within
+// plist_idx[] varied run to run. Downstream color_force_kernel/
+// yukawa_force_kernel/exchange_force_kernel accumulate each particle's
+// force with `for (pj = 0; pj < num_particles; ++pj)` in exactly that
+// (nondeterministic) order, and double-precision addition is not
+// associative, so a different accumulation order flipped the last bit(s)
+// of the summed force — divergence that compounds across many ticks into
+// full state divergence. Two direct-launch (no graph capture) engines
+// running an identical QCD profile from an identical seed diverged
+// bit-for-bit by tick 24.
+//
+// Fixed with the same cub::DeviceSelect::Flagged compaction pattern already
+// used for pair-production/lifecycle candidates
+// (launch_pair_production/launch_canonical_lifecycle, kernels_aux.cu):
+// flag manifested sites, compact deterministically (CUB's Flagged select
+// preserves ascending input-index order and is reproducible run to run for
+// identical input, unlike an atomic race), then transfer into the real
+// capacity-bounded plist_idx.
+//
+// d_plist_idx is capacity-capped at MAX_PARTICLES (8192) — that is exactly
+// the condition Task 5's overflow flag exists to detect and report, and the
+// true manifested count can exceed it. CUB's compacted output therefore
+// cannot be written directly into d_plist_idx (a lattice with >8192
+// manifested particles would silently overrun an 8192-capacity buffer). It
+// is written instead into the UNCAPPED N-sized scratch pair
+// (d_particle_candidate_indices/d_particle_candidate_count), and
+// finalize_particle_list_kernel below clamps/copies into the unchanged
+// d_plist_idx/d_num_particles/d_particle_overflow contract that
+// color_force_kernel etc. already read.
 
-__global__ void build_particle_list_kernel(
+// Pass 1: per-site is-manifested flag (mirrors pair_production_candidate_kernel's
+// candidate flag, but with a trivial predicate).
+__global__ void mark_manifested_particles_kernel(
     const int8_t* __restrict__ state,
-    int* __restrict__ plist_idx,
-    int* __restrict__ num_particles,
-    int* __restrict__ overflow,
-    int N, int max_particles
+    uint8_t* __restrict__ flags,
+    int N
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
-    if (state[i] == 0) return;
+    flags[i] = (state[i] != 0) ? 1 : 0;
+}
 
-    int slot = atomicAdd(num_particles, 1);
-    if (slot < max_particles) {
-        plist_idx[slot] = i;
-    } else {
-        // Sticky: the host used to read the count back and throw inline.
-        // Raising a device flag keeps the loud failure without a blocking
-        // D2H inside the tick. Never cleared by the engine.
-        *overflow = 1;
+// Pass 3 (after the cub::DeviceSelect::Flagged compaction, issued between
+// passes 1 and 3 in launch_build_particle_list): clamp
+// the uncapped compacted list into the real capacity-bounded plist_idx.
+// Launched with a fixed MAX_PARTICLES-sized grid (matching the
+// color/yukawa/exchange/triad launch idiom below — a constant launch
+// topology, each thread bounding itself from a device-resident count, so
+// this stays graph-capture-eligible), rather than the single-thread
+// commit-kernel idiom used for pair production, because this pass has no
+// live-order dependency between destination slots: source order is already
+// fixed and stable coming out of CUB, and every copied slot is independent,
+// so a parallel copy is both safe and considerably cheaper than a serial
+// 8192-iteration loop in one thread.
+//
+// Preserves Task 5's exact contract: num_particles ends up holding the RAW
+// (possibly over-capacity) count — exactly what the old atomicAdd scatter
+// left there, and exactly what color_force_kernel/yukawa_force_kernel/
+// exchange_force_kernel/triad_detection_kernel already clamp against
+// (`raw < max_particles ? raw : max_particles`) — and overflow is set
+// sticky (this kernel only ever writes 1 to it, never 0) whenever the raw
+// count exceeds max_particles.
+__global__ void finalize_particle_list_kernel(
+    const int32_t* __restrict__ candidate_indices,
+    const int32_t* __restrict__ candidate_count,
+    int* __restrict__ plist_idx,
+    int* __restrict__ num_particles,
+    int* __restrict__ overflow,
+    int max_particles
+) {
+    const int count = *candidate_count;
+    if (blockIdx.x == 0 && threadIdx.x == 0) {
+        *num_particles = count;
+        if (count > max_particles) *overflow = 1;
     }
+    const int copy_count = count < max_particles ? count : max_particles;
+    int pi = blockIdx.x * blockDim.x + threadIdx.x;
+    if (pi >= copy_count) return;
+    plist_idx[pi] = candidate_indices[pi];
 }
 
 // ============================================================================
@@ -1208,19 +1273,56 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
     CUDA_CHECK(cudaGetLastError());
 }
 
+// Shared fixed launch shape for everything that walks the capacity-bounded
+// plist_idx (the finalize pass below and the pairwise/triad launches
+// further down) — a constant MAX_PARTICLES threads, each bounding itself
+// against a device-resident count, so the launch topology never depends on
+// a host read (required for CUDA graph capture) and no thread can read past
+// the d_plist_idx allocation.
+namespace {
+constexpr int PARTICLE_FORCE_BLOCK = 256;
+constexpr int PARTICLE_FORCE_GRID =
+    (GpuBuffers::MAX_PARTICLES + PARTICLE_FORCE_BLOCK - 1)
+    / PARTICLE_FORCE_BLOCK;
+}  // namespace
+
 void launch_build_particle_list(GpuBuffers& bufs) {
     const cudaStream_t stream = bufs.stream;
-    // Reset counter (the overflow flag is deliberately sticky and is NOT
-    // reset here — the host clears it only by reallocating the engine).
-    CUDA_CHECK(cudaMemsetAsync(bufs.d_num_particles, 0, sizeof(int), stream));
 
-    int block = 256;
-    int grid = (bufs.N + block - 1) / block;
-    build_particle_list_kernel<<<grid, block, 0, stream>>>(
-        bufs.d_state, bufs.d_plist_idx, bufs.d_num_particles,
-        bufs.d_particle_overflow,
-        bufs.N, GpuBuffers::MAX_PARTICLES
-    );
+    // Pass 1: flag every manifested site (parallel, full lattice).
+    constexpr int block = 256;
+    const int grid = (bufs.N + block - 1) / block;
+    mark_manifested_particles_kernel<<<grid, block, 0, stream>>>(
+        bufs.d_state, bufs.d_particle_flags, bufs.N);
+    CUDA_CHECK(cudaGetLastError());
+
+    // Pass 2: deterministic compaction (ascending lattice-index order,
+    // stable/reproducible for identical input — unlike the atomic-race slot
+    // assignment this replaces). Output is UNCAPPED (sized to N, not
+    // MAX_PARTICLES) because the true manifested count can exceed capacity;
+    // see the block comment above mark_manifested_particles_kernel. Reuses
+    // the pair-production/lifecycle CUB scratch workspace
+    // (d_pair_select_temp/pair_select_temp_bytes) — GpuBuffers::allocate()
+    // explicitly sizes that workspace to cover this call too (same
+    // (thrust::counting_iterator<int32_t>, uint8_t* flags, int32_t* output,
+    // int32_t* count, N) shape), and reuse is safe because every kernel and
+    // CUB call in a tick is issued to this one bufs.stream, which CUDA
+    // serializes in issue order — this call never overlaps the
+    // pair-production/lifecycle calls that also use the workspace.
+    thrust::counting_iterator<int32_t> indices(0);
+    CUDA_CHECK(cub::DeviceSelect::Flagged(
+        bufs.d_pair_select_temp, bufs.pair_select_temp_bytes,
+        indices, bufs.d_particle_flags,
+        bufs.d_particle_candidate_indices, bufs.d_particle_candidate_count,
+        bufs.N, stream));
+
+    // Pass 3: clamp/copy into the real capacity-bounded plist_idx and
+    // reproduce the num_particles/overflow contract (see the block comment
+    // above finalize_particle_list_kernel).
+    finalize_particle_list_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
+        bufs.d_particle_candidate_indices, bufs.d_particle_candidate_count,
+        bufs.d_plist_idx, bufs.d_num_particles, bufs.d_particle_overflow,
+        GpuBuffers::MAX_PARTICLES);
     CUDA_CHECK(cudaGetLastError());
 }
 
@@ -1233,12 +1335,6 @@ void launch_build_particle_list(GpuBuffers& bufs) {
 // of 256, ~3% of one full-lattice L=64 kernel — and every thread bounds
 // itself against the device counter, clamped to MAX_PARTICLES so no thread
 // can read past the d_plist_idx allocation.
-namespace {
-constexpr int PARTICLE_FORCE_BLOCK = 256;
-constexpr int PARTICLE_FORCE_GRID =
-    (GpuBuffers::MAX_PARTICLES + PARTICLE_FORCE_BLOCK - 1)
-    / PARTICLE_FORCE_BLOCK;
-}  // namespace
 
 void launch_color_force(GpuBuffers& bufs, double dt) {
     (void)dt;

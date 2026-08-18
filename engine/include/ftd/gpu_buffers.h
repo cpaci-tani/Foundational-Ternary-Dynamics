@@ -254,14 +254,38 @@ struct GpuBuffers {
     static constexpr int MAX_PARTICLES = 8192;
     int*      d_plist_idx     = nullptr;  // lattice indices [MAX_PARTICLES]
     int*      d_num_particles = nullptr;  // count (single int on device)
-    // Sticky capacity guard (Component A). build_particle_list_kernel sets
-    // this to 1 when a manifested site would need a slot >= MAX_PARTICLES.
-    // The pairwise/triad kernels clamp their loop bound to MAX_PARTICLES so
-    // they can never read past d_plist_idx; the host surfaces the condition
-    // as the same std::runtime_error it used to throw inline, but reads the
-    // flag only at synchronization boundaries that already copy scalars D2H
-    // (causal_projection_events / ensure_host_synced), never in the tick.
+    // Sticky capacity guard (Component A). finalize_particle_list_kernel
+    // (kernels_forces.cu) sets this to 1 when the manifested count exceeds
+    // MAX_PARTICLES. The pairwise/triad kernels clamp their loop bound to
+    // MAX_PARTICLES so they can never read past d_plist_idx; the host
+    // surfaces the condition as the same std::runtime_error it used to
+    // throw inline, but reads the flag only at synchronization boundaries
+    // that already copy scalars D2H (causal_projection_events /
+    // ensure_host_synced), never in the tick.
     int*      d_particle_overflow = nullptr;
+
+    // --- Deterministic particle-list compaction scratch (2026-08-17 fix) ---
+    // build_particle_list_kernel used to assign each manifested particle's
+    // plist_idx[] slot via atomicAdd(d_num_particles, 1). GPU
+    // thread-scheduling order for that race is NOT guaranteed identical
+    // between separate kernel launches, even from bit-identical prior
+    // device state, so the ORDER of particles within plist_idx[] varied run
+    // to run — and color_force_kernel/yukawa_force_kernel/
+    // exchange_force_kernel accumulate double-precision force sums by
+    // walking plist_idx[] in that order, so a different order flipped low
+    // force bits that then compounded across ticks into full state
+    // divergence. Replaced with the same cub::DeviceSelect::Flagged
+    // compaction pattern already used for pair-production/lifecycle
+    // candidates (d_pair_candidate_* above), which preserves ascending
+    // lattice-index order deterministically. Because the true manifested
+    // count can exceed MAX_PARTICLES — exactly the condition
+    // d_particle_overflow exists to detect — CUB's compacted output cannot
+    // be written directly into the capacity-bounded d_plist_idx (that would
+    // silently overrun it), so it lands here, in an UNCAPPED N-sized
+    // scratch pair, and a finalize kernel clamps/copies into d_plist_idx.
+    uint8_t*  d_particle_flags             = nullptr;  // [N] is-manifested
+    int32_t*  d_particle_candidate_indices = nullptr;  // [N] uncapped compacted indices
+    int32_t*  d_particle_candidate_count   = nullptr;  // one scalar, uncapped count
 
     // --- Device mirror of GpuEngine::tick_ (Component A) ---
     // Every RNG-consuming kernel salts SplitMix64 with (seed, voxel, tick).
