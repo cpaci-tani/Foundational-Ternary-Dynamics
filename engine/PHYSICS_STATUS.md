@@ -10,12 +10,12 @@
 
 | Scale | Engine | Forces Implemented | Toggles | Force Diag | Tests |
 |-------|--------|--------------------|---------|------------|-------|
-| 0 | RenderBridge | 6 | 20 (TermToggles) | 5 components | ~100 |
-| 1 | ParticleEngine | 9 (+damping) | 12 (ParticleToggles) | 9 components | ~23 |
+| 0 | RenderBridge | 6 | 43 (TermToggles) | 5 components | ~100 |
+| 1 | ParticleEngine | 9 (+damping) | 11 (ParticleToggles) | 9 components | ~23 |
 | 2 | AtomEngine | 8 (+damping, auto-bond) | 12 (AtomToggles) | 8 components | ~12 |
 | 3 | MoleculeEngine | (Natively handled via AtomEngine) | — | — | — |
 
-**Total CTests registered: 145** (CPU + GPU-conditional)
+**Total CTests registered: 610** (CPU + GPU-conditional; verified 2026-08-18 by counting `ftd_add_test(...)` registrations in `engine/CMakeLists.txt` — 444 calls minus 12 `BUILD_ONLY` calls that don't register a CTest — plus 178 direct `add_test(...)` calls in the same file; `engine/cuda/CMakeLists.txt` builds only the `ftd_cuda` library and registers no tests itself, and no other `engine/**/CMakeLists.txt` registers tests)
 
 **DagEngine** (sparse-voxel-DAG prototype): `phase_read` + `phase_write` implemented against `SparseVoxelDAG`; `gauss_project`, `phase_forces`, `phase_movement` are `[OPEN]` stubs. **Experimental, not production.** See `include/ftd/dag_engine.h` banner.
 
@@ -39,11 +39,11 @@ Discrete 3D cubic lattice. Voxel states {-1, 0, +1}. Flux field J in R^3.
 | Weak | Chirality-based polarity flip at stress threshold | `weak_transmutation` | Implemented (toggle-gated) | GP-WEAK |
 | Strong (Yukawa) | Nuclear Yukawa potential | `strong_force` | Implemented (toggle-gated) | GP-STRONG |
 
-### Toggles (TermToggles — 20 booleans)
+### Toggles (TermToggles — 43 booleans)
 
 **Core (10):** wave_propagation, coupling, damping, genesis, gauss_projection, forces, gravity, poisson_coulomb, movement, lorentz_force
 
-**Extension (10):** selective_damping, larmor_radiation, dual_substrate, color_forces, weak_transmutation, strong_force, triad_binding, pair_production, exchange_force, latency_field
+**Extension (33):** evaporation, selective_damping, larmor_radiation, dual_substrate, color_forces, strong_stress_energy, weak_transmutation, strong_force, triad_binding, pair_production, exchange_force, latency_field, exact_dual_gauss, matched_gauss_dynamics, emergent_forces, langevin, symplectic_leapfrog, verlet_wave_integrator, lorentz_period2_floquet, lorentz_bcc_time_floquet, su2_gauge, su3_gauge, symmetric_movement_order, absorbing_boundary, reflective_boundary, field_energy_gravity, cluster_inertia, de_broglie_clock, db_clock_coulomb, confinement, knot_tracking, strict_validation, ew_background_sweep (source: `include/ftd/term_toggles.h` `TOGGLE_SPECS[]`, verified 2026-08-18)
 
 ### Force Diagnostics (ForceDiag — per voxel)
 
@@ -57,7 +57,7 @@ Discrete 3D cubic lattice. Voxel states {-1, 0, +1}. Flux field J in R^3.
 
 ### Energy Audit
 
-16 fields: field_energy, wave_energy, particle_ke, total_energy, gauss_violation, max_gauss_error, self_field_injection, coulomb_pe, E_field_energy, B_field_energy, charge_total, manifested_count, total_poynting, E_L_total, E_R_total, chirality_total
+34 fields (`EnergyAudit` struct, `include/ftd/render_bridge_diagnostics.h`, verified 2026-08-18): field_energy, wave_energy, particle_ke, total_energy, gauss_violation, max_gauss_error, self_field_injection, coulomb_pe, E_field_energy, B_field_energy, charge_total, manifested_count, total_poynting, E_L_total, E_R_total, wv_L_total, wv_R_total, chirality_total, strong_energy, weak_energy, particle_rest_energy, particle_energy, particle_momentum, dynamic_energy, cell_volume, field_energy_density_sum, wave_energy_density_sum, strong_potential_energy, strong_gravitational_mass, strong_projection_residual, strong_projection_lambda, strong_projection_events, strong_projection_failures, strong_topology_failures
 
 ---
 
@@ -86,9 +86,10 @@ Softening = 1.0. Speed limit at C_SPEED = 1/sqrt(3). Annihilation at contact.
 Pairwise j-loop: Coulomb → Gravity → Exchange → Strong → Magnetic Dipole → Spin-Orbit.
 Then: Lorentz (separate B-field accumulation) → Radiation Reaction → Relativistic (MUST be last).
 
-### Toggles (ParticleToggles — 12 booleans)
+### Toggles (ParticleToggles — 11 booleans)
 
 - **Active (10):** coulomb (on), gravity (on), damping (on), exchange (off), strong (off), lorentz (off), magnetic_dipole (off), spin_orbit (off), radiation (off), relativistic (off)
+- **11th toggle:** relativistic_verlet (off by default; turned on by `minimal()`)
 - **Helpers:** `enable_all()`, `minimal()`
 - **Backward compat:** `set_damping_enabled()`, `set_gravity_enabled()` delegate to toggles
 
