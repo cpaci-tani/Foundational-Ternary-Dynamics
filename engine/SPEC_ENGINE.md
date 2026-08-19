@@ -2404,7 +2404,8 @@ for this ~10⁻⁴ systematic difference and not treat it as a regression.
 engine\build_native.bat
 ```
 
-The legacy separate `engine/build_cuda` tree is retired (`build_cuda.bat` now delegates to `build_native.bat`).
+The legacy separate `engine/build_cuda` tree is retired; the deprecated `build_cuda.bat`/`build_cuda_fast.bat`
+delegation shims were themselves deleted 2026-08-18 — use `build_native.bat` directly.
 
 Requirements: CUDA 13.0+, compute capability >= 8.9. Target architectures: "89;120" (Ada + Blackwell).
 
