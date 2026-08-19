@@ -13,6 +13,48 @@
 > boundary-geometry, topology-sheet-renderer, color-ramps, spin-arrow-manager)
 > remain as delegators per the plan.
 
+## Post-closure update (2026-08-18): field-renderer.js further split
+
+> The Phase 3 close-out above (unchanged, see header) recorded
+> `field-renderer.js` as the terminus of the 3c extraction at ~2273 LOC /
+> 66 methods. That file has since been split further, independent of this
+> map's own extraction plan. Verified current state
+> (`wc -l engine/web/js/viewport/field-*.js`, 2026-08-18):
+>
+> | File | LOC | Methods (approx., 4-space-indent class methods) |
+> |---|---:|---:|
+> | `field-renderer.js` | 262 | 6 |
+> | `field-renderer-core.js` | 45 | 4 |
+> | `field-renderer-shared.js` | 63 | 0 (exported helper functions, not class methods) |
+> | `field-em-renderer.js` | 856 | 50 |
+> | `field-force-renderer.js` | 566 | 32 |
+> | `field-quantum-renderer.js` | 499 | 28 |
+> | `field-topology-renderer.js` | 479 | 17 |
+> | **Total (7 files)** | **2770** | **137** |
+>
+> `field-renderer.js` is now a thin 262 LOC orchestrator/delegator over the
+> six sibling modules above, mirroring the same leaf-first decomposition
+> pattern this map used for viewport.js itself. The method-grouping table
+> in the original 3c section below (field heatmap / vectors / PE
+> streamlines / gravity / EM / strong / weak / dark matter / event horizon
+> / damping / genesis / confinement / dual flux / chirality / light /
+> quantum / horizon) maps onto the new files roughly as: EM-family
+> overlays (heatmap, vectors, E/B lines, Poynting, divergence, EM force,
+> gravity field) → `field-em-renderer.js`; force-visualization styles
+> (force heatmap, streamlines, glyphs, arrow forces, strong/weak/dark
+> matter/damping) → `field-force-renderer.js`; quantum-field overlays
+> (psi-squared, phase, Lagrangian density, entropy density, quantum
+> scaffolding) → `field-quantum-renderer.js`; genesis/confinement/dual
+> flux/chirality/light/horizon → `field-topology-renderer.js`; shared
+> factories (`_buildStreamlineMesh`, `_buildArrowFieldMesh`,
+> `_writeArrowFieldIntoMesh`, `_writeStreamlinesIntoMesh`) →
+> `field-renderer-shared.js`; small shared base/state → `field-renderer-core.js`.
+> This grouping is inferred from file names and is not re-verified
+> line-by-line against the original method list — treat as orientation,
+> not a certified mapping. The rest of this document (the original Phase 3
+> plan, extraction order, and risk register) is preserved unchanged below
+> as the historical record of the viewport.js decomposition.
+
 **Authoritative reference for Phase 3 of `.claude/plans/i-want-to-try-crispy-charm.md`.**
 
 `engine/web/js/viewport.js` is 3953 LOC with 169 methods on a single
