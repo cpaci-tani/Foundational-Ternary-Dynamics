@@ -2,7 +2,7 @@
 
 **Living document for AI agents and developers.**
 **Engine version:** 2.18.0 (single-sourced as `ftd::ENGINE_VERSION` in `include/ftd/constants.h`; mirrored by CMake `project(VERSION)`, `ftd_sim --version`, and the WASM `getEngineVersion()` binding — revision 6.1)
-**Golden regression hash:** `0xb604d81a3d79366e` @ L=17 (`test_render_bridge_golden`). The two gauss audit scalars `gauss_violation`/`max_gauss_error` are summed only over vacuum (state==0) sites with the mean-subtracted, coupling-scaled target the SOR projection enforces; per-voxel state/flux/wave_vel/velocity is bit-exact; deterministic (OMP=1 == full pool). Rationale in `test_render_bridge_golden.cpp`.
+**Golden regression pins:** `GOLDEN_HASH=0xc54ffbeda5a3ea63`, `GOLDEN_STATE_HASH=0xe9633be07656e741`, and `GOLDEN_AUDIT_HASH=0x48bd8b3fc2efdba3` for the frozen L=17 profile in `test_render_bridge_golden`. These pins cover only that profile's folded fields; they do not cover off-profile toggles, larger lattices, or horizons beyond its 100 ticks. Rationale and pin history live in `test_render_bridge_golden.cpp`.
 **Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`.
 
 ## 0. System Narrative: From Field Capacity to Manifested Events
@@ -16,8 +16,8 @@ and two coupled voxel layers:
 | Discrete state | `state in {-1, 0, +1}` | Void, negative manifestation, positive manifestation |
 | Flux field | `flux`, `wave_vel` | Dispositional vector field and its staggered wave velocity |
 | Kinematics | `velocity`, `remainder` | Sub-lattice motion registers for manifested sites |
-| Labels | `particle_id`, `pair_id`, `spin`, `color`, `locked` | Identity, pair correlation, internal labels, bound-state locks |
-| Optional sectors | `flux_L/R`, `wave_vel_L/R`, `latency`, `tau` | Dual substrate and latency/proper-time extensions |
+| Labels | `particle_id`, `pair_id`, `spin`, `color`, `flavor`, `locked` | Identity, event-pair tracking, internal labels, bound-state locks |
+| Optional sectors | `flux_L/R`, `wave_vel_L/R`, `flux_strong`, `wave_vel_strong`, `flux_weak`, `wave_vel_weak`, `latency`, `tau`, `phase` | Dual/strong/weak substrate and latency/proper-time/clock extensions |
 
 The continuous-looking physics in the dashboard and diagnostics is an emergent
 large-scale behavior of repeated local steps. Each tick stages the work so that
@@ -66,9 +66,12 @@ lock compact triads when the relevant toggles are enabled.
 The CPU path keeps `std::vector<Voxel>` as the authoritative array-of-structures
 state. The CUDA path mirrors those fields into structure-of-arrays device
 buffers. Host mutations are flushed to the GPU before a device tick; host reads
-download the device state lazily. Both paths preserve the same logical phase
-order even when solver implementations differ (CPU SOR vs GPU spectral/FFT
-machinery where available).
+download the device state lazily. The paths share a broad phase order, but
+CPU-scoped fallbacks and the discrete movement-conflict divergence can change
+which terms run and which particle wins a contended site. See the §14
+discrete-outcome/missing-term table.
+Separately, supported Poisson paths use different numerical solvers (CPU
+warm-started SOR versus CUDA spectral/FFT machinery).
 
 ---
 
@@ -252,6 +255,14 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
 6. **Movement + Collision**: remainder accumulation, speed limit C_SPEED = C_WAVE = 1/sqrt(3), annihilation on contact
 
+These are six **conceptual core rule families**, not a count of constructor
+defaults. The shipping Scale-0 profile is the 13 `TermToggles` member
+initializers set to true: `wave_propagation`, `coupling`, `damping`, `genesis`,
+`gauss_projection`, `forces`, `gravity`, `poisson_coulomb`, `movement`,
+`lorentz_force`, `selective_damping`, `dual_substrate`, and
+`weak_transmutation`. The first ten implement or select paths within the six
+families; the final three are promoted extensions.
+
 **What was removed from the default core** (archived in `archive/engine_v1_phenomenological/`):
 - Pairwise Coulomb, Yukawa, exchange, Lorentz forces
 - QCD running coupling, color Yukawa
@@ -263,16 +274,20 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 - Color forces, strong force, triad binding, pair production, exchange force
 - Latency field and proper-time accumulation when `latency_field` is enabled
 
-A few extension toggles are *promoted to default ON* and run in the default
-tick (see the toggle table below and `term_toggles.h`): `dual_substrate`
-(J_L + J_R chirality), `selective_damping`, and `weak_transmutation`
-(stress-gated polarity flip). Note: `weak_transmutation` is a third J↔s
-coupling not named by the two-channel ontology (FTD-0257); whether it should
-remain default-on is an open governance question, not a settled rule.
+Three extension toggles are *promoted to default ON* and run in the shipping
+tick: `dual_substrate` (J_L + J_R chirality),
+`selective_damping`, and `weak_transmutation` (stress-gated polarity flip).
+`weak_transmutation` is a third J↔s coupling not named by the two-channel
+ontology (FTD-0257); whether it should remain default-on is an open governance
+question, not a settled rule.
 
 ### Scale 5: Cosmic Engine (v2.12)
 
-N-body + SPH cosmic simulation with Barnes-Hut octree gravity. All physics driven by FTD-derived constants (zero free parameters):
+N-body + SPH cosmic simulation with Barnes-Hut octree gravity. Its configured
+constants mix engine parameters, imposed calibrations, and selected or
+parametric theory-side values; using them in the implementation does not make
+them derived or parameter-free. Consult the LEDGER and this specification's
+active/reference constant notes for each value's status:
 - **9 body types**: Dark matter, gas, stars, neutron stars, black holes, quasars, nebulae, white dwarfs, dark energy field
 - **18-phase cosmic tick cycle**: octree build, gravity, SPH density/forces, Friedmann expansion, dark energy, accretion, jets, star formation, stellar evolution, magnetic fields, radiation pressure, gravitational waves, Verlet integration
 - **14 toggles**: gravity, sph_gas, hubble_expansion (core ON); dark_energy, dark_matter_halos, black_hole_accretion, cosmic_radiation, star_formation, stellar_evolution, galaxy_mergers, magnetic_fields, radiation_pressure, relativistic_jets, gravitational_waves (extensions OFF)
@@ -297,155 +312,39 @@ The `ParticleEngine`, `AtomEngine`, and `CosmicEngine` all rely on a dynamically
 - `AtomEngine`'s discrete covalent interactions traverse a fully pre-separated $O(N)$ topographical linked-list ensuring that discrete bounds like `Angle Strain` do not invoke continuous $O(N^2)$ matrices.
 ---
 
-## 2. Directory Layout
+## 2. Repository Inventory
+
+This is an architecture map, not a frozen file listing. Extracted modules, test
+registrations, and line totals change frequently; use the generated inventory
+artifacts below for current detail.
 
 ```
 engine/
-  CMakeLists.txt              # Build system -- all targets and test registration
-  SPEC_ENGINE.md              # This document
-  VISUAL_GUIDE.md             # Learner-facing visual guide to sim flow and discreteness
-  CALLSTACKS.md               # Feature-by-feature runtime callstack map
-  SCENARIO_ARCHITECTURE.md    # Scenario lifecycle, bridge ownership, and seed architecture
-  print_ontic.py              # Utility to print ontic chain values
-  include/ftd/
-    scale_engine.h            # [v2.12] Abstract base class for all scale engines (111L)
-    ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1221L)
-    constants.h               # Re-exports ontic + engine-specific constants (279L)
-    constants_shared.h        # Host+device shared `inline constexpr` constants (renamed from constants_gpu.cuh, revision 2.5; compiles under g++, MSVC, and nvcc; no `__constant__` memory)
-    voxel.h                   # Vec3, ForceDiag, Voxel struct (203L)
-    lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
-    render_bridge.h           # RenderBridge -- main engine API, tick(), diagnostics() (239L)
-    lagrangian.h              # 4-term Lagrangian + Rayleigh dissipation (218L)
-    term_toggles.h            # Scale 0 runtime toggle registry (33 booleans + typed config fields)
-    csv_export.h              # Header-only CSV export (flux field, density slice, timeseries) (385L)
-    particle_engine.h         # ParticleEngine : ScaleEngine -- Scale 1 particles (247L)
-    atom_engine.h             # AtomEngine -- Scale 2 composite atoms + bonds (327L)
-    cosmic_engine.h           # [v2.12] CosmicEngine : ScaleEngine -- Scale 5 N-body+SPH (523L)
-    scale.h                   # OnticEntity + scale bridge declarations (83L)
-    scenarios.h               # Public dispatch_scenario() -- C++ port of JS scenario library
-    correlations.h            # Correlation function analysis (205L)
-    ensemble.h                # Statistical ensemble infrastructure (200L)
-    spectral.h                # Spectral analysis utilities (195L)
-    tracker.h                 # Particle trajectory tracking (173L)
-    hilbert.h                 # Hilbert space utilities (209L)
-    barnes_hut.h              # Octree for long-range 1/r^2 forces (used by PE/AE/CE)
-    constructors.h            # Scenario/state constructors reused across engines
-    dag_engine.h              # DagEngine [EXPERIMENTAL] -- gauss_project/phase_forces/phase_movement stubs
-    dag_lattice.h             # Lattice variant used by DagEngine
-    engine_select.h           # Runtime switch between logic-first and DAG paths
-    test_telemetry.h          # Shared telemetry helpers used by CTests
-    gpu_engine.h              # GpuEngine -- CUDA GPU drop-in for RenderBridge (115L)
-    gpu_buffers.h             # SoA device memory layout (124L)
-    gpu_atom_engine.h         # GPU AtomEngine bindings
-    gpu_particle_engine.h     # GPU ParticleEngine bindings
-  src/
-    render_bridge.cpp         # Logic-first engine -- CPU tick ladder and backend handoff
-    lagrangian.cpp            # compute_lagrangian_diagnostics() -- 4 active terms (166L)
-    main.cpp                  # CLI entry point (scenarios A-K) (937L)
-    particle_engine.cpp       # ParticleEngine: Velocity Verlet + analytical forces (394L)
-    atom_engine.cpp           # AtomEngine: ionic + vdW + covalent forces (762L)
-    cosmic_engine.cpp         # [v2.12] CosmicEngine: Barnes-Hut + SPH + Friedmann (900L)
-    scale_bridge.cpp          # Scale 0<->1<->2<->5 coarsen/refine round-trip (283L)
-    scenarios.cpp             # 84 scenarios (83 ported from JS + flux-genesis-between-gates) (flux-/light-/quantum-/s0-seed-/s0-field-)
-    constructors.cpp          # Shared scenario/state constructor helpers
-    dag_engine.cpp            # DagEngine [EXPERIMENTAL] -- see banner in header
-    ontic_audit.cpp           # Ontic-chain self-audit (prints derivations and consistency checks)
-    ws_server.cpp             # Optional native WebSocket bridge server (consumed by ws-bridge.js)
-  cuda/
-    gpu_buffers.cu            # SoA device allocation, upload, download (445L)
-    gpu_engine.cu             # GpuEngine tick loop, host<->device sync (496L)
-    kernels_stencil.cu        # GPU phase_read + phase_write + near_particle + dual-substrate (1172L)
-    kernels_poisson.cu        # FFT Poisson solver (cuFFT spectral) (328L)
-    kernels_forces.cu         # GPU forces + movement + color/strong/weak/exchange kernels (737L)
-    CMakeLists.txt            # CUDA build rules (35L)
-  config/                     # [v2.12] Data-driven configuration
-    toggles.json              # Unified toggle registry -- 48 toggles across all scales
-    scenarios/                # Scenario manifests per scale (JSON)
-      scale0.json             # 126 lattice scenario entries (incl. legacy-only ids)
-      scale1.json             # 25 particle scenarios
-      scale2.json             # 20 atom scenarios + 118 element entries
-      scale3.json             # 27 molecule scenarios
-      scale4.json             # 10 reference frame context scenarios + 12 figures
-      scale5.json             # 4 cosmic scenarios + camera presets
-      scale6.json             # Meta scenario + 13 toggle controls
-  tests/
-    257 test files            # 211 active CMake targets
-  wasm/
-    ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1512L)
-    CMakeLists.txt            # WASM build rules (Emscripten-only)
-  web/
-    index.html                # Browser dashboard (structural HTML, no inline CSS) (1888L)
-    css/                      # [v2.12] Modular CSS architecture (10 files)
-      tokens.css              # Design tokens, reset, base styles
-      layout.css              # App grid, toolbar, viewport, status bar
-      components.css          # Cards, tabs, panels, toggles, modals, settings
-      scale-visibility.css    # Per-mode show/hide rules (48 selectors)
-      charts.css              # Chart + diagnostic component styles
-      themes/                 # 5 theme override files
-        midnight.css           abyss.css           light.css
-        parchment.css          nord.css
-    js/                       # [v2.12] Modular JS architecture (~40 modules)
-      app.js                  # Main coordinator: init, frame loop, scale dispatch
-      constants.js            # JS mirror of ontic.h derivation chain
-      core/                   # Shared infrastructure
-        state.js              # Centralized runtime state singleton
-        event-bus.js           # Pub/sub for decoupled module communication
-        bridge.js              # UnifiedBridge -- scale-agnostic simulation interface
-      config/                 # Extracted configuration data
-        toggles.js            # Toggle definitions + scenario override maps
-        scenarios.js          # Reference frame context scenario descriptions
-      bridge/                 # Simulation bridge layer
-        bridge-factory.js     # createBridge() factory (WASM -> MockBridge fallback)
-        mock-scale5.js        # CosmicMockBridge (JS-only N-body for dev)
-      scales/                 # Per-scale controllers (each owns its own state)
-        scale0/controller.js  # Lattice: animateLattice, loadScenario, field viz (702L)
-        scale1/controller.js  # Particles: animatePE, cloud rendering, trails (912L)
-        scale2/controller.js  # Atoms: animateAE, orbital clouds, force arrows (1056L)
-        scale3/controller.js  # Molecules: loadMolecule, reuses Scale 2 animate (217L)
-        scale4/controller.js  # Reference frame context: sLoop, Mandelbrot, hologram (443L)
-        scale5/controller.js  # Cosmic: N-body, galaxy rendering (193L)
-        scale6/controller.js  # Meta: existential unit, geometry toggles (150L)
-      viewport.js             # Three.js 3D: particles, bonds, orbitals, fields, camera
-      wasm-bridge.js          # WasmBridge + MockBridge (auto-fallback)
-      cosmic-renderer.js      # [v2.12] Photorealistic cosmic body rendering
-      reference frame context.js        # Reference frame contextEngine (sLoop, measurement cascade)
-      reference frame context-pedagogy.js  # Pedagogical visualizations (Canvas 2D)
-      reference frame context-figure.js    # Holographic figure (Three.js)
-      meta-unit.js            # MetaUnit (3x3x3 Moore neighborhood)
-      meta-pedagogy.js        # Meta info/inspect panels
-      [+ 15 additional library modules: elements, orbitals, molecules, fields, etc.]
-    wasm/
-      ftd_core.js             # Emscripten JS loader (generated)
-      ftd_core.wasm           # WebAssembly binary (generated)
-  build/                      # CPU build directory
-  build_wasm/                 # WASM build directory
-  build_cuda/                 # CUDA build directory (when FTD_ENABLE_CUDA=ON)
+  CMakeLists.txt             # Build graph and target registration
+  include/ftd/               # Public engine types, contracts, and constants
+  src/                       # CPU implementation, phases, scales, and scenarios
+  cuda/                      # CUDA backends, kernels, and device utilities
+  wasm/                      # Emscripten bindings
+  config/                    # Runtime toggle and scenario data
+  tests/                     # Native unit, parity, benchmark, and campaign sources
+  web/                       # Browser application, bridge layer, assets, and web tests
+  tools/print_ontic.py       # Ontic-chain inspection utility
+  docs/                      # Generated inventory plus maintained architecture maps
+  archive/README.md          # Provenance index for retired engine artifacts
 ```
 
-### Source line totals
+Canonical navigation:
 
-| Component | Lines |
-|-----------|-------|
-| Headers (`include/ftd/*.h`) | ~5,500 |
-| Sources (`src/*.cpp`) | ~5,000 |
-| CUDA (`cuda/*.cu + CMakeLists`) | 3,218 |
-| WASM bindings | 1,512 |
-| Web CSS (external) | ~2,000 |
-| Web JS (all modules) | ~25,000 |
-| Config (JSON) | ~600 |
-| **Total engine C++** | **~15,200** |
-| **Total web frontend** | **~28,500** |
+- `docs/ENGINE_FILE_MANIFEST.json` is the machine-readable current tracked
+  code-file inventory; `docs/ENGINE_FILE_MANIFEST.md` is its human-readable
+  rendering.
+- `docs/ENGINE_CODE_MAP.md` maps the major subsystems and extracted modules.
+- `CALLSTACKS.md` traces feature-level runtime paths through the engine.
+- `web/js/bridge/wasm-bridge.js` is the browser WASM/mock bridge implementation.
 
-### Archived Components
-```
-archive/engine_v1_phenomenological/
-  render_bridge.cpp       # Original ~1382-line phenomenological engine
-  lagrangian.cpp          # 9-term Lagrangian diagnostics
-  lagrangian.h            # 9-term Lagrangian definitions
-  term_toggles.h          # 14-toggle system
-
-archive/qt_gui/           # Qt6 native GUI (28 files, replaced by web UI)
-```
+Historical components remain preserved through `archive/README.md` and the
+archive paths it indexes. They are provenance, not part of the active
+architecture, and are intentionally not expanded into a second manifest here.
 
 ---
 
@@ -496,43 +395,52 @@ toggle tells where a phase enters.
 
 ```
 RenderBridge::tick()
-  0.  validate toggles
-  0b. sync_ternary_from_voxels_if_needed()
-  1.  phase_read()                 [wave_propagation || coupling]
-  2.  phase_write()                [always; damping/genesis/evaporation gated inside]
-  2b. pair_production_cpu()        [pair_production]
-  3.  gauss_project()              [gauss_projection]
-  3b. solve_latency_poisson()      [latency_field]
-  4.  phase_forces()               [forces]
-  5.  phase_movement()             [movement]
-  5b. apply_absorbing_boundary()   [absorbing_boundary]
-  5c. apply_reflective_flux_boundary() or
-      apply_dispersal_flux_boundary() [flux_boundary]
-  6.  weak_transmutation_cpu()     [weak_transmutation]
-  7.  triad_binding_cpu()          [triad_binding]
-  7b. relax_su2/su3_links_cpu()    [su2_gauge / su3_gauge]  (links only — no substrate writes)
-  8.  accumulate_proper_time()     [latency_field]
-  9.  physical_time_ += dt_; ++tick_
-  10. sync/dirty flags/energy ledger updates
+  0.   normalize/validate toggles; select CPU backend where required
+  0b.  sync_ternary_from_voxels_if_needed()
+  1.   apply EW background drive      [ew_background_sweep; before read]
+  1a.  solve_coulomb_poisson()        [db_clock_coulomb; before read]
+  1b.  phase_read()                   [wave_propagation || coupling || de_broglie_clock]
+  2.   phase_write()                  [skipped by matched_gauss_dynamics]
+  2a.  phase_read() + second half-kick [verlet_wave_integrator]
+  2b.  pair_production_cpu()          [pair_production]
+  3.   gauss_project()                [gauss_projection]
+  3a.  begin_strong_energy_step()     [strong_stress_energy]
+  3b.  solve_latency_poisson()        [latency_field]
+  4.   phase_forces()                 [forces]
+  4b.  snapshot matched state         [matched_gauss_dynamics]
+  5.   phase_movement()               [movement; reflective_boundary controls face exits]
+  5a.  extract current + advance/sync [matched_gauss_dynamics; after movement]
+  5b.  complete_strong_energy_step()  [strong_stress_energy && movement]
+  5c.  absorbing/flux boundary passes [absorbing_boundary / flux_boundary]
+  6.   weak_transmutation_cpu()       [weak_transmutation]
+  7.   triad_binding_cpu()            [triad_binding]
+  7b.  relax_su2/su3_links_cpu()      [su2_gauge / su3_gauge; links only]
+  8.   accumulate proper time/phase   [latency_field || de_broglie_clock]
+  9.   physical_time_ += dt_; ++tick_
+  10.  record settled knot telemetry  [knot_tracking]
+  11.  sync/dirty flags/energy ledger updates
 ```
 
 ### 4.1 CPU phase details
 
 | Phase | Main toggles | What it does |
 |-------|--------------|-------------|
-| `phase_read` | `wave_propagation`, `coupling` | Parallel read-only voxel loop. Computes `delta_J` from the 18-point Moore Laplacian, `-G_C * grad(state)`, and `+G_C * curl(state * velocity)`. Dual-substrate mode computes separate L/R deltas and recombines observables after write. |
-| `phase_write` | `damping`, `genesis`, `evaporation`, `selective_damping`, `larmor_radiation`, `langevin`, `symplectic_leapfrog` | Parallel commit loop. Advances the staggered wave pair (`wave_vel += delta_J`, `flux += wave_vel`; explicit `dt` factors when `symplectic_leapfrog` is enabled), applies damping/noise, performs genesis and evaporation, snapshots pre-write fields for deterministic labels, and resolves pending manifestation IDs after the parallel section. |
+| EW/pre-read setup | `ew_background_sweep`, `db_clock_coulomb` | The optional uniform EW drive is injected before the field read. The Coulomb-clock diagnostic similarly pre-solves its live Coulomb potential before the read. |
+| `phase_read` | `wave_propagation`, `coupling`, `de_broglie_clock` | Runs when any listed term is enabled. The parallel read-only voxel loop computes `delta_J` from the 18-point Moore Laplacian, `-G_C * grad(state)`, curl source, and the optional clock term. Dual-substrate mode computes separate L/R deltas and recombines observables after write. |
+| `phase_write` / Verlet completion | `matched_gauss_dynamics`, `damping`, `genesis`, `evaporation`, `selective_damping`, `larmor_radiation`, `langevin`, `symplectic_leapfrog`, `verlet_wave_integrator` | The matched-Gauss branch skips this legacy writer. Otherwise the parallel commit loop advances the field, applies damping/noise, and performs genesis/evaporation. Verlet mode then re-runs `phase_read` on the post-drift field and applies its second half-kick before pair production and Gauss projection. |
 | `pair_production_cpu` | `pair_production` | Creates neighboring correlated `-1/+1` pairs from high-flux voids, consumes local wave/flux energy, assigns shared pair IDs, and conserves charge locally. |
 | `gauss_project` | `gauss_projection`, `exact_dual_gauss` | Builds `source = div(J) - coulomb_charge_coupling * state`, solves a warm-started SOR Poisson problem, then subtracts `grad(phi)` from flux. Ordinary mode skips manifested sites during correction; exact dual mode synchronizes the split L/R fields. |
 | `solve_latency_poisson` | `latency_field`, `field_energy_gravity` | Builds a mass/field-energy source, solves a latency potential, and stores bounded `latency` values for time dilation and bandwidth accounting. |
-| `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `strong_force`, `exchange_force`, `cluster_inertia` | Iterates manifested sites. Default EM path solves Coulomb potential and applies `-ALPHA * state * grad(phi_C)`; emergent-force mode uses direct flux gradients instead. Adds gravity, Lorentz, and optional particle-sector forces, writes `ForceDiag`, and integrates velocity using the `gamma_FTD` bandwidth budget. |
-| `phase_movement` | `movement`, `symmetric_movement_order` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. |
+| `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `cluster_inertia` | CPU path: iterates manifested sites. Default EM mode solves the Coulomb potential and applies `-ALPHA * state * grad(phi_C)`; emergent-force mode uses direct flux gradients instead. Adds gravity, Lorentz, and color forces, writes `ForceDiag`, and integrates velocity using the `gamma_FTD` bandwidth budget; the cluster pass then integrates locked groups. `strong_force` and `exchange_force` have CUDA kernels but no CPU implementation, so those toggles are CPU no-ops as recorded by `TOGGLE_SPECS[]`. |
+| `phase_movement` | `movement`, `symmetric_movement_order`, `reflective_boundary` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. An attempted lattice-face crossing mirror-bounces the crossed velocity components and clears the remainder when `reflective_boundary` is on; when it is off, the particle and its local fields/labels are cleared so they exhaust into the void rather than wrapping periodically. |
+| matched-Gauss current/advance | `matched_gauss_dynamics` | Snapshots ternary state before movement, extracts the conservative routed current from the post-movement difference, advances the oriented face/edge state, and synchronizes it back to voxels. |
 | `apply_absorbing_boundary` | `absorbing_boundary` | Applies an imposed D-deep quadratic damping sponge after movement. It is not a derived reflection-free radiation condition. |
 | flux-boundary pass | `flux_boundary` | `Periodic` leaves the toroidal wave map unchanged; `Reflective` copies an interior Neumann ghost shell; `Dispersal` multiplies the outer shell by `1-C_SPEED`. These are computational finite-box laws, not ontological boundaries. |
 | `weak_transmutation_cpu` | `weak_transmutation` | Stress-threshold stochastic polarity flips. In dual-substrate mode the L/R fluxes are swapped with the flip. |
 | `triad_binding_cpu` | `triad_binding` | Detects compact same-sign triples and locks them as bound structures. |
 | `relax_su2/su3_links_cpu` | `su2_gauge`, `su3_gauge` | One Jacobi double-buffered Wilson staple sweep per tick over the SU(2)/SU(3) edge links ([IMPOSED] lattice-gauge import; see §8.1). Write-only w.r.t. the substrate — links feed nothing downstream. Buffers lazily allocated on first use. |
-| `accumulate_proper_time` | `latency_field` | Updates `tau` for manifested sites using the latency/speed bandwidth factor. |
+| `accumulate_proper_time` | `latency_field`, `de_broglie_clock` | Updates `tau` for manifested sites using the latency/speed bandwidth factor and advances the optional de Broglie phase. |
+| settled telemetry | `knot_tracking` | Records observation-only knot telemetry after physical time and the tick counter advance, so it reads settled state. |
 
 ### 4.2 GPU phase ladder
 
@@ -541,25 +449,50 @@ When a CUDA backend is active, `RenderBridge::tick()` delegates to
 the current toggles into `GpuEngine`, runs the device tick, and marks the host
 shadow dirty until diagnostics or voxel access require a download.
 
-`GpuEngine::tick()` preserves the same logical order:
+For terms implemented on-device, `GpuEngine::record_tick_body()` uses this
+order:
 
 ```
+launch_ew_background_sweep() [ew_background_sweep; before phase_read]
 gpu_phase_read()
 gpu_phase_write()
 gpu_pair_production()        [pair_production]
 gpu_gauss_project()          [gauss_projection]
-gpu_latency_solve()          [latency_field]
+launch_gauss_sync_dual()     [gauss_projection && dual_substrate]
+gpu_solve_latency_poisson()  [latency_field]
 gpu_phase_forces()           [forces]
-gpu_pairwise_extensions()    [color/strong/exchange/triad-related toggles]
-gpu_phase_movement()         [movement]
+gpu_build_particle_list()    [color/strong/exchange/triad]
+gpu_particle_forces()        [color/strong/exchange]
+launch_integrate_forces()    [any force channel]
+gpu_triad_detection()        [triad_binding]
+gpu_phase_movement()         [movement; reflective particle-face behavior]
+absorbing/flux boundaries    [absorbing_boundary / flux_boundary]
 gpu_weak_transmutation()     [weak_transmutation]
-tick_++
+gpu_gauge_relax()            [su2_gauge / su3_gauge; primed links only]
+accumulate_proper_time()     [latency_field || de_broglie_clock; phase optional]
+advance device tick
 ```
 
-The main backend difference is numerical plumbing: the CPU path uses
-warm-started SOR buffers for Poisson solves, while the GPU path uses device-side
-parallel kernels and spectral/FFT solvers where the CUDA implementation supports
-them.
+The absorbing sponge and reflective/dispersal flux-boundary passes are native
+CUDA kernels and run after movement. Gauge relaxation runs only after
+`GpuBackend` has primed the lazily allocated link buffers; driving `GpuEngine`
+directly without that priming skips the phase. Proper time and optional
+de Broglie phase advance on-device exactly once per tick.
+
+This is not blanket CPU/GPU feature parity. `matched_gauss_dynamics`,
+`strong_stress_energy`, `verlet_wave_integrator`, and the two Floquet
+prototypes, plus `symmetric_movement_order`, are CPU-scoped and force a
+synchronized CPU fallback (or fail if fallback is disabled). `cluster_inertia`
+and `knot_tracking` use host post-processing after a full device-to-host
+mirror; interactive CUDA rejects that host-scoped path above L=64. These are
+term-availability and discrete-outcome differences. The §14
+discrete-outcome/missing-term table records the live CUDA contract and the
+remaining movement-conflict divergence.
+
+Separately, for supported Poisson paths, the CPU uses warm-started SOR while
+CUDA uses spectral/FFT solvers. Their convergence and floating-point behavior
+are numerical differences, subject to the production Gauss stencil limitation
+documented in §14.
 
 ### 4.3 Integration-scheme notes
 
@@ -592,11 +525,11 @@ distinctions are tracked in the theory ledgers.
 | 1 | `VARPI`, `GAUSS_CONSTANT_M`, `PI` | Elliptic geometry |
 | 2 | `PF`, `G_STAR`, `SQRT_GSTAR` | Universal operator: G* = Gamma(1/4)/Gamma(3/4) ≈ 2.9587 |
 | 2b | `K_CRIT`, `X_BORN` | Euler's identity / emergence of i |
-| 3 | `COEFFICIENT` (16 G*^2), `X_PLUS` (tree-level 1/alpha), `X_MINUS` (retired as an `N_C` source; mathematical root only) | Master quadratic |
-| 3b | `DELTA_SQ`, `DELTA_APPROX` | Dual-substrate splitting: delta^2 = (4G*-1)/(4G*) |
+| 3 | `COEFFICIENT` (16 G*^2), `X_PLUS` (larger algebraic root), `X_MINUS` (retired as an `N_C` source; mathematical root only) | Master quadratic |
+| 3b | `DELTA_SQUARED`, `DELTA_APPROX` | Dual-substrate splitting: delta^2 = (4G*-1)/(4G*) |
 | 4 | `D_SPATIAL`=3, `N_C`=3, `N_GEN`=3, `N_F`=6, `N_BASE`=4, `B_3`=7, `N_EFF`=13 | Framework integers |
 | 5 | `ALPHA`, `G_C`, `G_N`=0.01, `SIN2_WEINBERG` | Coupling constants |
-| 6 | `K_B`=0.511 (imposed mass calibration), `M_INERTIAL=K_B`, `E_REST=K_B/3`, `M_GRAVITATIONAL=K_B`; `K_MANIFEST`=0.505462 (:= W_SC, FTD-0388), `K_GENESIS`=1.516386 | Explicit mass roles and manifestation scale |
+| 6 | `K_B`=0.511 (imposed mass calibration), `M_INERTIAL=K_B`, `E_REST=K_B/3`, `M_GRAVITATIONAL=K_B`; `K_MANIFEST := W_SC`=0.505462 (FTD-0388), `K_GENESIS=N_C*K_MANIFEST`=1.516386 | Explicit mass roles and manifestation scale |
 | 7 | Mass ratios, mixing angles, CP violation | Particle physics |
 | 8 | Cosmological parameters, reference frame context | Extended hierarchy |
 | sim | `C_SPEED`=`C_WAVE`=1/sqrt(3), `DAMPING`=alpha | Simulation parameters |
@@ -607,7 +540,7 @@ distinctions are tracked in the theory ledgers.
 
 | Constant | Value | Used in |
 |----------|-------|---------|
-| `ALPHA` | 0.00729 (1/X_PLUS, tree-level) | Coulomb force, damping, exchange force |
+| `ALPHA` | `1/X_PLUS_PRECISION` | Coulomb force, damping, exchange force, and downstream wave/coupling constants |
 | `ALPHA_EFT` | `G_C²` (≡ ALPHA by construction) | Same two-vertex force paths; consistency alias |
 | `K_B` | 0.511 | Imposed calibration used by wavepacket amplitude, Larmor scale, and de Broglie frequency |
 | `M_INERTIAL` | `K_B` | Particle and cluster momentum integration |
@@ -618,37 +551,46 @@ distinctions are tracked in the theory ledgers.
 | `G_N` | 0.01 (lattice toy — see §5 gravity banner) | Gravitational force |
 | `C_WAVE` | 1/sqrt(3) | Wave propagation speed (Laplacian coefficient) |
 | `C_SPEED` | 1/sqrt(3) | Movement speed limit |
-| `K_GENESIS` | 3 * K_MANIFEST = 1.516386 (FTD-0388) | Genesis threshold |
+| `K_GENESIS` | `N_C*K_MANIFEST` = 1.516386 (FTD-0388) | Genesis threshold |
 | `DAMPING` | alpha | Flux dissipation rate |
-| `PHI` | 1.618... | Binding energy (triad detection) |
 | `DELTA_APPROX` | 0.9568 | Dual-substrate splitting |
 | `WEAK_THRESHOLD` | K_GENESIS | Weak transmutation stress threshold |
-| `K_LARMOR` | 4/(3*K_B) | Larmor radiation modulation |
+| `K_LARMOR` | `4*N_EFF/(3*K_B)` | Larmor radiation modulation |
 | `LARMOR_FLOOR` | 0.01 | Minimum Larmor factor |
-| `ALPHA_S` | varies | Strong coupling (Yukawa force) |
-| `YUKAWA_RANGE` | varies | Strong force range |
+| `ALPHA_S` | 1.0 [IMPOSED] | Fixed lattice-scale strong-force prefactor; distinct from `ALPHA_S_MZ` |
+| `M_YUKAWA` | 1.0 [IMPOSED] | Inverse Yukawa range in lattice units |
 | `N_C` | 3 | Color charge count |
 
-**Reference-only (computed in ontic.h, not read by engine kernels yet)**:
+`ALPHA = 1/X_PLUS_PRECISION` is the active engine input, and
+`ALPHA_PRECISION` is an alias to that same value. The physical identification
+`x_+ = 1/alpha` remains **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013).
+`ALPHA_TREE = 1/X_PLUS` is reference-only and feeds no production force, wave,
+or damping path. Consequently, agreement of engine results cannot evidence the
+master-quadratic identification (FTD-0792).
+
+**Scale-0 inactive constants and broader-engine consumers**:
+
+The constants below are not read by the production Scale-0 CPU/CUDA kernels.
+Some nevertheless have explicit consumers elsewhere in the engine repository,
+as identified per row.
 
 | Constant | Purpose |
 |----------|---------|
-| `X_PLUS_PRECISION` | 4-term corrected 1/α = 137.035999177 (matches CODATA). Opt in to swap from tree-level `X_PLUS`. |
-| `ALPHA_PRECISION` | 1 / X_PLUS_PRECISION — use when benchmark precision surpasses 1 ppm. |
-| `ALPHA_G_APPROX` | 5.9e-39 — *physical* gravitational coupling. Engine uses `G_N = 0.01` instead (see §5 gravity banner). |
-| `MU_RATIO`, `TAU_RATIO`, etc. | Mass ratios (used by ParticleEngine / AtomEngine, not lattice) |
-| `THETA_W`, `THETA_12`, `THETA_13`, `THETA_23` | Mixing angles (theoretical reference) |
-| `DELTA_CP` | CP violation phase (theoretical reference) |
-| `G_STAR`, `PF`, `X_PLUS`, `X_MINUS` | Master quadratic intermediates |
-| `THETA_C`, `PHI_C` | Reference frame context parameters (theoretical reference) |
-| `LAMBDA_COSMO` | Cosmological constant (theoretical reference) |
+| `ALPHA_TREE` | `1/X_PLUS`; tree-level reference value with no production force/wave/damping consumer |
+| `ALPHA_G_ELECTRON` | Canonical electron gravitational fine-structure ratio `alpha_G(e,e)=(m_e/m_P)^2`, approximately `1.745e-45` (FTD-0131; epistemic floor inherits FTD-0015) |
+| `ALPHA_G_APPROX` | `5.91e-39`; legacy/reference approximation, not the canonical electron ratio |
+| `PHI`, `BINDING_ENERGY` | Reference/test quantities with test/audit consumers including `test_sloop.cpp`, `test_triad_confinement.cpp`, `campaign_triad_binding.cpp`, and the ontic audit; production triad detection uses geometric radius/shape thresholds and does not read them |
+| `MU_RATIO`, `TAU_RATIO`, etc. | Mass-ratio constants exported by the C++ ontic chain and read by `campaign_triad_binding.cpp`; browser-side counterparts feed catalog/formula metadata. They are not Scale-0 lattice dynamics inputs. |
+| `SIN2_WEINBERG`, `SIN2_THETA12`, `SIN2_THETA13`, `SIN2_THETA23`, `WZ_MIXING_ANGLE_COS` | Exported mixing-angle quantities |
+| `G_STAR`, `PF`, `X_PLUS`, `X_MINUS` | Master-quadratic intermediates; the roots are algebraic objects, while `x_+ = 1/alpha` is the separate [STRONGLY MOTIVATED CONJECTURE] identification |
+| `COS2_THETA_C`, `SIN2_THETA_C` | Exported reference-frame-context fractions |
 | `EULER_E`, `EULER_GAMMA`, `GAMMA_QUARTER` | Mathematical seeds |
 
 ---
 
 ## 6. Voxel Structure
 
-Each lattice site is represented by the `Voxel` struct (`voxel.h`, 175L):
+Each lattice site is represented by the `Voxel` struct (`voxel.h`):
 
 ### Core fields
 
@@ -660,11 +602,17 @@ Each lattice site is represented by the `Voxel` struct (`voxel.h`, 175L):
 | `velocity` | Vec3 | Lattice velocity (nodes per G*-tick) |
 | `remainder` | Vec3 | Sub-lattice position remainder |
 | `particle_id` | int32_t | Persistent identity (-1 = no particle) |
-| `pair_id` | int | Entanglement partner ID (-1 = none) |
+| `pair_id` | int | Shared ID for particles created by the same pair-production event (-1 = none); event-pair tracking, not proof of quantum entanglement |
 | `spin` | int8_t | Z_2 from lemniscate topology (+1/-1/0) |
-| `color` | int8_t | Z/3Z from 3-lobe structure (0-3) |
+| `color` | int8_t | Stored labels: 0 = colorless; 1, 2, 3 = the three color labels. The four stored values are not identified with `Z/3Z`. |
+| `flavor` | int8_t | Weak-sector label: 0 = none, 1 = e, 2 = mu, 3 = tau |
 | `locked` | bool | Part of a bound structure? |
 | `accel_mag` | double | Acceleration magnitude (for Larmor) |
+| `phase` | double | De Broglie clock phase diagnostic, advanced when its toggle is enabled |
+| `flux_strong` | Vec3 | Strong-substrate field |
+| `wave_vel_strong` | Vec3 | Strong-substrate wave velocity |
+| `flux_weak` | Vec3 | Weak-substrate field |
+| `wave_vel_weak` | Vec3 | Weak-substrate wave velocity |
 
 ### Dual-substrate fields (active when `dual_substrate = true`)
 
@@ -679,11 +627,13 @@ Observable: `flux = flux_L + flux_R`. Chirality: `chirality_density() = |psi_L|^
 
 ### Latency and proper-time fields
 
-`latency` and `tau` are active when `latency_field` is enabled. `latency` is a
-bounded gravitational-potential proxy solved by the latency Poisson path;
-`tau` accumulates proper time for manifested particles. Older noetic/reference
-frame context fields such as `drag`, `attention`, and sLoop markers are not
-part of the current `Voxel` runtime surface.
+`latency` is active when `latency_field` is enabled and is a bounded
+gravitational-potential proxy solved by the latency Poisson path. `tau`
+accumulates proper time for manifested particles whenever either
+`latency_field` or `de_broglie_clock` is enabled; `phase` advances with `tau`
+when `de_broglie_clock` is enabled. Older noetic/reference frame context fields
+such as `drag`, `attention`, and sLoop markers are not part of the current
+`Voxel` runtime surface.
 
 ### Derived quantities
 
@@ -719,7 +669,7 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 1. **Electromagnetic (Coulomb-like)** -- two modes controlled by `toggles.poisson_coulomb`:
 
    **Poisson mode (default)**: `F_EM = -ALPHA * state * gradient_scalar(idx, phi_coulomb_)`
-   - Solves nabla^2 phi_C = -s via warm-started SOR (omega=1.75, 30 iterations)
+   - Solves nabla^2 phi_C = -s via warm-started SOR (`SOR_OMEGA=1.75`, default `SOR_ITERATIONS=6`); `set_sor_iterations(n)` overrides the iteration count at runtime
    - Measured exponent: **-2.25** (ideal: -2.0). GPU: **-2.067**
    - Isotropy ratio: **1.0** at r=5
 
@@ -752,7 +702,7 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 ## 8. TermToggles
 
 The `TermToggles` struct is a table-driven Scale 0 runtime registry. It contains
-**42 boolean toggles** in `TOGGLE_SPECS[]` plus typed configuration fields that
+**43 boolean toggles** in `TOGGLE_SPECS[]` plus typed configuration fields that
 are intentionally kept outside the boolean table.
 
 Adding a new boolean toggle requires a struct field and one registry row; the
@@ -765,10 +715,10 @@ helper methods (`validate`, `enable_all`, `disable_all`,
 |---|---|---|
 | Core field/state | `wave_propagation`, `coupling`, `damping`, `genesis`, `evaporation`, `gauss_projection` | Wave propagation, state coupling, dissipation, manifestation/evaporation, Gauss projection |
 | Forces and motion | `forces`, `gravity`, `poisson_coulomb`, `emergent_forces`, `lorentz_force`, `movement` | Field-mediated force modes and kinematic update |
-| Field extensions | `dual_substrate`, `exact_dual_gauss`, `latency_field`, `field_energy_gravity`, `symplectic_leapfrog`, `verlet_wave_integrator`, `lorentz_period2_floquet`, `lorentz_bcc_time_floquet` | Split substrate, latency/proper-time sector, and alternate wave integration |
-| Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, boundary sponge, traversal artifact control |
-| Particle-sector extensions | `color_forces`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
-| Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Per-tick SU(2)/SU(3) link staple relaxation (tick Rule 7b) and strict validation behavior |
+| Field extensions | `dual_substrate`, `exact_dual_gauss`, `matched_gauss_dynamics`, `latency_field`, `field_energy_gravity`, `de_broglie_clock`, `db_clock_coulomb`, `symplectic_leapfrog`, `verlet_wave_integrator`, `lorentz_period2_floquet`, `lorentz_bcc_time_floquet`, `ew_background_sweep` | Split/matched field evolution, latency/clock sectors, alternate wave integration, and background drive |
+| Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `reflective_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, field/particle boundary controls, traversal artifact control |
+| Particle-sector extensions | `color_forces`, `strong_stress_energy`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
+| Gauge/validation/telemetry | `su2_gauge`, `su3_gauge`, `knot_tracking`, `strict_validation` | Per-tick SU(2)/SU(3) link staple relaxation (tick Rule 7b), observation-only knot telemetry, and strict validation behavior |
 
 **Non-Abelian gauge sector (revision 0.9 option a — wired 2026-07-02).**
 `su2_gauge` / `su3_gauge` (default OFF) gate one Jacobi-double-buffered
@@ -1997,11 +1947,15 @@ Release CTest passes `1/1` and the isolated actualization/EFT chain passes
 `30/30`. No production source, `Voxel`, renderer, boundary, toggle, default,
 or tick phase changes.
 
-Defaults are specified per row in `TOGGLE_SPECS[]`. Core substrate behavior
-defaults on (`wave_propagation`, `coupling`, `damping`, `genesis`,
+`TermToggles` member initializers own the shipping constructor defaults.
+`TOGGLE_SPECS[]` owns table-driven metadata and bulk enable/disable defaults;
+the member initializers and table rows must remain synchronized. The 13
+constructor-default-ON fields are `wave_propagation`, `coupling`, `damping`, `genesis`,
 `gauss_projection`, `forces`, `gravity`, `poisson_coulomb`, `movement`,
-`lorentz_force`). Some promoted extension toggles also default on
-(`selective_damping`, `dual_substrate`, `weak_transmutation`). Exploration
+`lorentz_force`, `selective_damping`, `dual_substrate`, and
+`weak_transmutation`. These shipping defaults are distinct from the six
+conceptual core rule families in §1. The weak-transmutation governance caveat
+there remains in force. Exploration
 toggles such as `pair_production`, `latency_field`, `langevin`, color/strong
 extensions, exact dual Gauss, and `matched_gauss_dynamics` are default off.
 
@@ -2040,14 +1994,20 @@ flags as defined by the registry.
 
 ## 9. Lagrangian System
 
-The 4-term Lagrangian (in `lagrangian.h`) provides the variational foundation:
+`lagrangian.h` exposes a partial six-term discrete field/kinematic action
+diagnostic plus Rayleigh dissipation. It is not a complete variational
+foundation for the production tick: optional matter-force branches remain
+selected update rules, and the onsite velocity term does not generate
+`phase_read`'s coded curl source.
 
 | Term | Expression | Physics |
 |------|-----------|---------|
-| L_BI | -K_B sqrt(1 - v^2) | Rest mass, special relativity |
-| L_COUPLING | -g_c s div(J) | Electric (Coulomb-like) force |
-| L_VELOCITY | -g_c s (v * J) | Magnetic (Lorentz-like) force |
-| L_GAUSS | -lambda_G (div(J) - rho)^2 | Charge conservation, U(1) gauge |
+| L_KINETIC | `0.5*|wave_vel|^2` | Flux-field kinetic term |
+| L_GRADIENT | Pair-counted 18-point weighted link sum | Flux-field gradient term whose variation matches the production Laplacian |
+| L_BI | `-E_REST*sqrt(1-|u|^2/C_SPEED^2-L^2)` | Selected causal kinematic core. The implementation clamps the radicand at zero and currently evaluates this diagnostic at every voxel, independently of `state`. |
+| L_COUPLING | `+g_c*s*div(J)` | Diagnostic electric interaction; its J-variation gives the outward `-g_c*grad(s)` source |
+| L_VELOCITY | `-g_c*s*(v*J)` | Selected onsite matter-side velocity coupling |
+| L_GAUSS | `-lambda_G*(div(J)-rho)^2` | Selected Gauss penalty; not proof of full-event charge conservation or U(1) redundancy |
 | R (dissipation) | (alpha/2) \|wave_vel\|^2 | Vacuum drag |
 
 `compute_lagrangian_diagnostics()` returns `LagrangianDiag` with per-term sums, Gauss violation, conservation checks, and append-only `cell_volume` metadata. FTD-0404 makes the spatial sum explicit as `S=Σ_v L_density(v)·V_cell`, with `V_cell=a_lat³=1` for the production unit lattice. The local densities remain quadratic; the cubic power belongs to the integration measure. This leaves every historical numerical value unchanged and does not support arbitrary non-unit spacing without separately rescaling difference operators and couplings.
@@ -2108,13 +2068,17 @@ Files: `scale.h` (68L), `scale_bridge.cpp` (202L).
 
 ### Summary
 
-Project-level count: **257 C++ test source files**, **211 active CMake
-targets**, plus 18 Playwright specs and 25 Python test files. CTest labels
-include `unit`, `physics`, `golden`, `slow`, and `gpu`; CUDA targets are
-conditional on `FTD_ENABLE_CUDA`.
+`engine/CMakeLists.txt` and its included CMake registration logic are the
+authority for native test targets; source-file totals are not test totals.
+A configured `engine/build` reported **610 CTest registrations on 2026-08-18**
+via `ctest -N -C Release`. This is a dated registration snapshot, not a pass
+count, and it varies with configure options and platform. In particular, CUDA
+tests are registered conditionally when `FTD_ENABLE_CUDA` is enabled. CTest
+labels include `unit`, `physics`, `golden`, `slow`, and `gpu`.
 
-The category list below is a representative map of the suite rather than a
-line-by-line target registry.
+The categories below are explicitly representative, not a complete or frozen
+target registry. Names outside sections marked historical are current CTest
+names in CMake at the date above.
 
 ### Test categories
 
@@ -2129,16 +2093,16 @@ line-by-line target registry.
 - `scale_ratio` -- FC-3 identity criterion: `ScaleRatio` value object (χ = ξ/R, β = δ/R), `is_phenomenon()`, `observe()`; header-only, NO_CORE, α-blind (23 assertions; `engine/include/ftd/scale_ratio.h`)
 
 **Lagrangian verification:**
-- `born_infeld`, `energy`, `gauss`, `stress_energy`, `thermodynamics`, `lagrangian`
+- `born_infeld`, `energy_conservation`, `gauss`, `stress_energy`, `thermodynamics`, `lagrangian`
 
 **Ontic physics:**
 - `ontic_chain`, `genesis`, `gravity_dynamics`, `annihilation`, `annihilation_conservation`, `wave_collapse`
 
 **Wave and field:**
-- `wave_speed`, `interference`, `gauge`, `polarization`, `momentum`, `magnetic`, `flux_mediated`, `entanglement`
+- `campaign_wave_dynamics`, `gauge`, `polarization`, `momentum`, `lorentz`, `flux_mediated`, `campaign_quantum_correlations`
 
 **Lagrangian forces:**
-- `variational_coulomb`, `magnetic_lagrangian`, `dissipation`, `complete_lagrangian`, `constant_activation`, `portable_field`
+- `variational_coulomb`, `lorentz`, `dissipation`, `portable_field`
 
 **Perfected Electromagnetism:**
 - `maxwell` -- 6 sections (M1-M6): div(B)=0, Faraday, E perp B, Coulomb 1/r^2, wave equation, Ampere-Maxwell
@@ -2147,11 +2111,11 @@ line-by-line target registry.
 - `poynting` -- Poynting vector S = c²(E x B) verified (direction, magnitude, symmetry)
 - `larmor` -- Acceleration-dependent damping (power proportional to a^2)
 - `em_fields` -- E/B field diagnostics, E perp B for propagating waves
-- `lorentz_force` -- Zero work, correct direction, toggle safety
+- `lorentz` -- Magnetic/Lorentz-force checks consolidated with the Lorentz suite
 - `selective_damping` -- Vacuum wave preservation, near-particle damping
 
 **Poisson Coulomb (Phase 3):**
-- `poisson_coulomb`, `energy_tracking`
+- `campaign_coulomb_force_law`, `energy_conservation`
 
 **Energy Conservation (Phase 4):**
 - `energy_conservation` (12 checks), `annihilation_conservation`
@@ -2160,10 +2124,10 @@ line-by-line target registry.
 - `campaign_free_dynamics` (10 checks), `particle_lifetime`
 
 **Flux-Aggregate Particles (Phase 6):**
-- `selffield_profile`, `wavepacket`, `campaign_aggregate_interaction`
+- `selffield_profile`, `wavepacket`, `campaign_bound_lifetime`
 
 **Multi-Scale (Phase 7):**
-- `particle_engine` (22 checks), `scale_bridge` (9), `hydrogen_scale1` (6)
+- `particle_engine` (22 checks), `scale_bridge` (9), `campaign_hydrogen_spectrum`
 - `campaign_cross_scale`, `campaign_born_ensemble`
 
 **Atom Engine (Phase 8):**
@@ -2173,25 +2137,38 @@ line-by-line target registry.
 - `dual_substrate` -- Identity, chirality, conservation, backward compatibility
 
 **Comprehensive logic engine:**
-- `test_logic_engine` -- **42 checks** across 6 sections (Field Dynamics, Manifestation, Forces, Movement, Emergence, Lagrangian)
+- `logic_engine` -- **42 checks** across 6 sections (Field Dynamics, Manifestation, Forces, Movement, Emergence, Lagrangian)
 
-**10-Phase Proof-Out** (125+ checks):
+**Historical 10-Phase Proof-Out campaign snapshot (2026-03-16)** (125+
+assertion checks):
+
+`PASS` in this list means that the campaign executable's coded assertions
+passed when this snapshot was recorded. It does not mean that a physical
+quantity was derived from the substrate or independently confirmed.
+
 - Phase 1: `campaign_statistical_convergence`
-- Phase 2: `campaign_dispersion_convergence`, `campaign_coulomb_convergence`, `campaign_wave_isotropy`
-- Phase 3: `campaign_bell_substrate`, `campaign_epr_correlation`, `campaign_born_rule`
+- Phase 2: current consolidated targets `campaign_dispersion`, `campaign_coulomb_force_law`, `campaign_wave_dynamics`
+- Phase 3: current consolidated targets `campaign_quantum_correlations`, `campaign_born_rule` (the former `campaign_bell_substrate`, `campaign_epr_correlation`, and `test_entanglement` were merged into `campaign_quantum_correlations`)
 - Phase 4: `campaign_hydrogen_binding`, `campaign_triad_energy`, `campaign_inertial_mass`, `campaign_structure_stability`
-- Phase 5: `campaign_color_force`, `campaign_color_neutral`, `campaign_confinement`, `campaign_baryon_formation`
+- Phase 5: historical `campaign_color_force`, `campaign_color_neutral`, `campaign_confinement`, `campaign_baryon_formation` executables; these names are retained as provenance and are not current CTest registrations
 - Phase 6: `campaign_weak_transmutation`, `campaign_parity_violation`, `campaign_weak_decay`
 - Phase 7: `campaign_gravitational_wave`, `campaign_gravity_profile`, `campaign_gravity_hierarchy`
 - Phase 8: `campaign_triad_binding`, `campaign_neutrino_sector`
 - Phase 9: `campaign_cosmological_predictions`
 - Phase 10: `campaign_novel_predictions`
 
-**Scientific Validation (Phase 11):**
+**Historical Phase-11 campaign assertions (2026-03-16):**
 - `test_falsifiability` (12 checks) -- Wrong parameters produce wrong physics
-- `campaign_integer_sweep` (7 checks) -- {3,4,7,13} is unique among 315 combinations
-- `campaign_hydrogen_spectrum` (8 checks) -- Quantitative hydrogen orbit (radius 0.0004% error)
-- `campaign_two_slit` (7 checks) -- Interference fringes from two coherent sources
+- `campaign_integer_sweep` (7 checks) -- recorded one passing
+  `{3,4,7,13}` combination among 315 tested, but one of its five gates is
+  `floor(x_-)=N_C`; that physical identification was retired with FTD-0014.
+  The sweep therefore cannot support a current uniqueness claim or grade.
+- `campaign_hydrogen_spectrum` (8 checks) -- classical Kepler/virial
+  consistency for an imposed `1/r` force (including the recorded 0.0004%
+  radius error); generic to classical `1/r` dynamics, not evidence for a
+  quantum spectrum or eigenvalue derivation (FTD-0270;
+  `AUDIT_ATOMIC_DYNAMICS_STATUS.md`).
+- `campaign_wave_dynamics` (historical two-slit checks consolidated here) -- Interference fringes from two coherent sources
 
 **Readout admissibility (scale-context gate):**
 - `scale_context` -- read-only, α-blind scale-context gate (`engine/src/scale_context.cpp`):
@@ -2201,29 +2178,44 @@ line-by-line target registry.
   `docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md`.
 
 **GPU/CUDA** (conditional on `FTD_ENABLE_CUDA`):
-- `gpu_parity` -- 21 checks: SoA round-trip, vacuum wave parity, energy parity (21/21 PASS)
-- `gpu_benchmark` -- Performance timing ( at 64^3)
-- `gpu_physics` -- 26 campaigns, 100+ checks: GP-COULOMB, GP-GAUSS, GP-WAVE-SPEED, GP-ENERGY-LONG, GP-GRAVITY, GP-ANNIHILATION, GP-MAXWELL-AMPERE, GP-EM-ENERGY, GP-CONTINUITY, GP-KCOMP-SHELL, GP-WEAK, GP-COLOR, GP-STRONG, GP-TRIAD, GP-PAIRS, GP-EXCHANGE, GP-BOUNCE, GP-DUAL-SUBSTRATE
+- `gpu_parity` -- As of 2026-08-18, `tests/test_gpu_parity.cpp` contains 24 `CHECK`/`CHECK_CLOSE` invocations covering SoA round-trip, single-tick, vacuum-wave, wavepacket, energy-audit, and Gauss comparisons. This is a source count; no current pass state is asserted here.
+- `gpu_benchmark` -- GPU performance timing
+- `gpu_physics` -- 26 campaigns, 100+ checks: GP-COULOMB, GP-GAUSS, GP-WAVE-SPEED, GP-ENERGY-LONG, GP-GRAVITY, GP-ANNIHILATION, GP-MAXWELL-AMPERE, GP-EM-ENERGY, GP-CONTINUITY, GP-KCOMP-SHELL, GP-WEAK, GP-COLOR, GP-STRONG, GP-TRIAD, GP-PAIRS, GP-EXCHANGE, GP-BOUNCE, GP-DUAL-SUBSTRATE. GP-GAUSS is a bounded production-residual campaign, not an exact FFT Gauss proof.
+- `gpu_gauss_law_fidelity` -- Pins the production 18-point solve / 6-point correction-and-residual stencil contract
 - `gpu_experiments` -- Extended GPU experiments (timeout: 1800s)
 
-**Five Minds Campaign Tests** (15/15 PASS):
+**Historical Five Minds campaign assertions (recorded 2026-04-05 in commit
+`c1d2597b`)** (15/15 assertions reported PASS):
 - `campaign_plato` -- Ontological faithfulness (dispositional ratio, genesis threshold, void energy)
 - `campaign_einstein` -- Conservation & covariance (energy conservation, Lorentz contraction, gravitational redshift)
 - `campaign_vonneumann` -- Computational convergence (Coulomb scaling, wave speed, hydrogen binding)
 - `campaign_wigner` -- Symmetry (octahedral O_h, parity violation, CPT invariance)
 - `campaign_grothendieck` -- Structural universality (color force running, scale bridge, alpha from scattering)
 
+These names and counts are retained as campaign provenance. In particular,
+hydrogen binding is classical, and an alpha/scattering assertion run with the
+inserted runtime alpha cannot evidence the master quadratic (FTD-0792).
+
 ---
 
 ## 12. Key Design Decisions
 
-1. **Field-mediated forces ONLY**: F = -alpha*s*grad(phi_C) + G_N*grad(rho) (Poisson, default). No pairwise formulas. Whatever emerges IS the physics.
+1. **Field-mediated force implementation**:
+   `F = -alpha*s*grad(phi_C) + G_N*grad(rho)` (Poisson, default), with no
+   pairwise-force formula in this path. This states the implemented dynamics.
+   Resulting observations are engine facts or `[MEASURED]` outcomes only where
+   the LEDGER records them as such; any physical identification or
+   engine/theory bridge retains its separate LEDGER tag and is not established
+   merely because the coded dynamics produces a behavior.
 
 2. **Damping hierarchy**: Default: uniform flux decay at rate alpha. With `selective_damping`: only near-particle sites damp. With `larmor_radiation` (requires `selective_damping`): acceleration-modulated damping proportional to a^2 (correct Larmor scaling).
 
 3. **No self-field floor (Phase 4)**: Particles are naturally stable via coupling source g_c*grad(s). Removing the floor eliminated ~4146% energy injection.
 
-4. **K_GENESIS = 3 * K_B**: Genesis threshold at 3x evaporation, derived from N_c = 3.
+4. **Manifestation-kinetics scales**: `K_MANIFEST := W_SC` is the adopted
+   selection of FTD-0388, and `K_GENESIS = N_C*K_MANIFEST`. This records the
+   selected engine contract; it introduces no new derivation claim and does
+   not identify the kinetics scale with the imposed mass calibration `K_B`.
 
 5. **Selected production wave speed**: `C_WAVE=1/sqrt(3)` is linearly stable but
    does not saturate the production 18-point stencil's exact CFL ceiling
@@ -2255,7 +2247,7 @@ Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 
 14. **Double damping is intentional (Rayleigh dissipation)**: Both `flux` and `wave_vel` are damped by `(1-ALPHA)` each tick in `phase_write`. This is deliberate Rayleigh dissipation -- it damps both the position-like degree of freedom (flux) and the velocity-like degree of freedom (wave_vel). Damping only one would leave undamped oscillatory modes. The dual damping ensures monotonic energy decay in the field, which is required for stable self-field buildup and physically correct radiation loss.
 
-15. **Selected causal budget enforced by shared momentum integration** (FTD-0402 implementation; FTD-0403 targeted closure; TRACKER §1.2): stored velocity `u` is raw nodes/tick and `B=|u|²/C_SPEED²+L²<1`. CPU and GPU accumulate every enabled force contribution before one `P/M_INERTIAL` update; `|u|` asymptotes to `C_SPEED·√(1−L²)`. Movement-entry projection is a counted repair only for externally injected or directly mutated invalid velocities; ordinary force evolution produces zero repairs. `tau` and de Broglie phase advance once in the common host post-pass. Exact, native, CUDA, golden, WASM/web, and compatibility gates close the frozen changed surface. This is exact conformance to the selected engine contract, not a theorem of Lorentz covariance.
+15. **Selected causal budget enforced by shared momentum integration** (FTD-0402 implementation; FTD-0403 targeted closure; TRACKER §1.2): stored velocity `u` is raw nodes/tick and `B=|u|²/C_SPEED²+L²<1`. CPU and GPU accumulate every enabled force contribution before one `P/M_INERTIAL` update; `|u|` asymptotes to `C_SPEED·√(1−L²)`. Movement-entry projection is a counted repair only for externally injected or directly mutated invalid velocities; ordinary force evolution produces zero repairs. On CPU, `RenderBridge::tick()` advances `tau` and optional de Broglie phase in its host phase ladder. On CUDA, `GpuEngine::record_tick_body()` advances both device-side; there is no common host proper-time post-pass. Exact, native, CUDA, golden, WASM/web, and compatibility gates close the frozen changed surface. This is exact conformance to the selected engine contract, not a theorem of Lorentz covariance.
 
 16. **Explicit cubic cell measure** (FTD-0404): `VOXEL_EDGE_LENGTH=1`, `VOXEL_FACE_AREA=1`, and `VOXEL_VOLUME=1` are named in a CUDA-safe interface. CPU/GPU volume-density diagnostics integrate with `V_cell`; EnergyAudit also exposes the pre-integration field/wave density sums. Local latency gravity continues to read density, while point-particle and constraint channels are unscaled. The unit measure is numerically neutral; no force or update rule changes.
 
@@ -2279,7 +2271,7 @@ Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 | `inject_flux(x,y,z, fx,fy,fz)` | Raw flux injection (overwrites site) |
 | `inject_flux_add(x,y,z, flux_val)` | Additive flux injection — accumulates instead of overwriting. Required by ported JS scenarios that sum overlapping Gaussians. |
 | `inject_wave_vel_add(x,y,z, wv_val)` | Additive wave-velocity injection — same additive semantics, for wave-equation initial conditions. |
-| `create_entangled_pair(x,y,z, dx,dy,dz)` | Pair production with partner tracking |
+| `create_entangled_pair(x,y,z, dx,dy,dz)` | Pair production with shared event-pair tracking; the legacy API name is not proof of quantum entanglement |
 
 ### Diagnostics
 
@@ -2297,25 +2289,27 @@ Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 | `physical_time()` | Current tick * dt |
 | `dt()` / `set_dt(val)` | Get/set timestep |
 | `seed_rng(seed)` | Set RNG seed for reproducibility |
-| `toggles` | Public `TermToggles` struct (42 boolean toggles + typed config fields) |
+| `toggles` | Public `TermToggles` struct (43 boolean toggles + typed config fields) |
 
 ### Scenario library
 
 `ftd::dispatch_scenario(RenderBridge& rb, const std::string& name)`
-(declared in `include/ftd/scenarios.h`, implemented in `src/scenarios.cpp`,
-~1240 LOC) is the public C++ entry point for scenario setup. It is a
+(declared in `include/ftd/scenarios.h`) is the public C++ entry point for
+scenario setup. The thin router and shared RNG live in `src/scenarios.cpp`;
+scenario bodies are split by responsibility under `src/scenarios/`. It is a
 straight port of the browser-side JS scenario library under
 `engine/web/js/bridge/scenarios/` — the two code paths stay in lockstep
 so that WASM, CLI, and native hosts all seed the lattice identically.
 
-Dispatch tries five prefix groups in order and returns `true` on the
-first match:
+After handling the exact `empty` baseline, dispatch tries six prefix groups in
+order and returns `true` on the first match:
 
 1. `flux-*` — pure-flux field initial conditions
 2. `light-*` — photon-like wavepackets and coherent-state probes
 3. `quantum-*` — superposition, entanglement, and measurement setups
-4. `s0-seed-*` — Scale-0 manifested-particle seeds
-5. `s0-field-*` — Scale-0 background-field presets
+4. `s0-vacuum-*` — vacuum particle-candidate presets
+5. `s0-seed-*` — Scale-0 manifested-particle seeds
+6. `s0-field-*` — Scale-0 background-field presets
 
 Returning `false` means no prefix matched; `wasm/ftd_wasm.cpp` falls
 through to its legacy scenario `switch` for backward-compatibility with
@@ -2365,17 +2359,22 @@ Replaces CPU's iterative SOR with spectral method via cuFFT:
 - **Single-pass**: No iteration count to tune
 - Precomputed Green's function reused every tick
 
-### Backend divergences that are NOT numerical (2026-07-26)
+### Backend discrete-outcome/missing-term table
 
-`SPEC_ENGINE` previously described CPU/GPU differences as "numerical plumbing".
-The following are **discrete-outcome or missing-term divergences**, not rounding:
+Several former CUDA gaps are now closed in live source:
+
+| Term / rule | Current CUDA behavior | Scope note |
+|---|---|---|
+| `field_energy_gravity` | `compute_latency_rhs` includes local flux/wave energy | Uses the CUDA FFT latency solver rather than CPU SOR |
+| `exact_dual_gauss` | `gauss_correction_kernel` corrects manifested sites when enabled | The remaining Gauss limitation is the documented stencil-mismatch floor |
+| `absorbing_boundary`, `flux_boundary` | Native post-movement absorbing and reflective/dispersal kernels | No longer degrade silently to periodic |
+| `ew_background_sweep` | Native pre-read drive | Deliberately graph-ineligible |
+| `symmetric_movement_order` | Synchronized CPU fallback | Never acknowledged as native CUDA execution |
+
+One discrete-outcome divergence remains:
 
 | Term / rule | CPU | CUDA | Consequence |
 |---|---|---|---|
-| `field_energy_gravity` | sources latency from rest mass **and** local field-energy density | **no read site at all** | flux-only configs: GPU `phi_latency` identically zero where CPU returns a real potential |
-| `exact_dual_gauss` | projects manifested sites when ON | unconditional `if (state[i] != 0) return;` | a genuine physics divergence, not precision |
-| `absorbing_boundary`, `flux_boundary` | Reflective / Dispersal honoured | both degrade to Periodic | the GPU lattice is always toroidal |
-| `symmetric_movement_order`, `ew_background_sweep` | honoured | no read site | silently inert |
 | **Particle movement conflict rule (P11)** | deterministic: lowest traversal index wins a contended void site, re-entry blocked (`phase_movement.cpp:106,121,209`) | contended sites awarded by `atomicCAS` **arrival order**; no device visited mask (`grep -c moved engine/cuda/kernels_forces.cu` → 0) | **different physics**, by that file's own header definition. Not yet fixed: implementing a device visited mask + deterministic priority is an architecture change, so it is DECLARED here rather than silently carried. `test_gpu_golden.cpp`'s 10-run bit-stability capture argues against gross run-to-run instability in the tested scenario, but does not establish CPU/GPU agreement on contended sites. |
 
 The toggle bitmask is **not** the drift: `term_toggles.h:32-35` declares it
@@ -2383,13 +2382,19 @@ informational, and `strong_force` is `ANY` with no CPU implementation at all, so
 `ANY` has never meant "implemented on both backends" here. The codebase already
 has `cpu_runtime_warnings()` for the mirror-image case; there is no GPU twin.
 
-**Numerical parity note:** CPU and GPU
-solve the SAME Poisson equation but with different numerical methods
-(SOR iterative vs FFT spectral). CPU output carries a residual ≤ 10⁻⁴
-at the default `SOR_ITERATIONS = 6`; GPU output is exact to floating-
-point roundoff. Benchmarks comparing CPU vs GPU Poisson-dependent
-quantities (Coulomb force, gauss_project, latency field) should account
-for this ~10⁻⁴ systematic difference and not treat it as a regression.
+**Numerical parity note:** CPU and CUDA use different Poisson solvers (SOR
+versus FFT), but neither production Gauss projection is exact: both combine an
+18-point Poisson operator with a 6-point correction/residual operator and
+therefore retain the structural stencil-mismatch floor described above.
+The `gpu_parity` campaign has historically printed a displayed residual with
+the label `(FFT, exact)`; that label describes neither an exact production
+Gauss inverse nor removal of the mismatch floor. A displayed zero from that
+campaign's residual meter is likewise not evidence that the full production
+constraint is exact. The dedicated `gpu_physics` GP-GAUSS gate instead requires
+the long-run maximum residual to remain in its documented nonzero bounded band,
+and `gpu_gauss_law_fidelity` pins the operator mismatch directly.
+Benchmarks must compare against the backend-specific contract rather than
+assuming roundoff-level CPU/CUDA agreement.
 
 ### SoA Memory Layout
 
@@ -2416,16 +2421,17 @@ Requirements: CUDA 13.0+, compute capability >= 8.9. Target architectures: "89;1
 | 16^3 | -- | -- | 18.6x |
 | 32^3 | -- | -- | 41x |
 | 48^3 | -- | -- | 193x |
-| 64^3 | 134 | 0.37 | **** |
+| 64^3 | 134 | 0.37 | not recorded |
 
 ### GPU Physics Campaigns
 
-26 campaigns, 100+ checks validating GPU parity at large lattice sizes:
+26 campaigns and 100+ checks exercise CUDA behavior at large lattice sizes.
+They do not establish blanket CPU/GPU parity; the §14 backend table governs.
 
 | Campaign | Lattice | Key Result |
 |----------|---------|------------|
 | GP-COULOMB | 128^3 | Force exponent -2.067, R^2=0.9999 |
-| GP-GAUSS | 128^3 | FFT violation = 0.0, charge exact 1000 ticks |
+| GP-GAUSS | 128^3 | Production maximum residual remains in the documented nonzero partial-projection band; total charge preserved over 1000 ticks |
 | GP-WAVE-SPEED | 128^3 | Axial 0.700 voxel/tick (1.21x CFL) |
 | GP-ENERGY-LONG | 64^3 | 50K ticks, max drift 4.96%, charge exact |
 | GP-GRAVITY | 128^3 | 20 particles, RMS shrinkage 12.6% |
@@ -2438,18 +2444,23 @@ Requirements: CUDA 13.0+, compute capability >= 8.9. Target architectures: "89;1
 | GP-BOUNCE | 64^3 | Same-sign elastic bounce verified |
 | GP-WEAK/COLOR/STRONG/TRIAD/PAIRS/EXCHANGE | 64^3 | Toggle-gated physics extensions |
 
-### Files
+### Stable source paths
 
-| File | Lines | Content |
-|------|-------|---------|
-| `gpu_engine.h` | 115 | GpuEngine class |
-| `gpu_buffers.h` | 124 | SoA device memory layout |
-| `gpu_buffers.cu` | 445 | Allocation, AoS<->SoA transfer |
-| `gpu_engine.cu` | 496 | Tick loop, host<->device sync |
-| `kernels_stencil.cu` | 1172 | Phase read/write + dual-substrate |
-| `kernels_poisson.cu` | 328 | FFT Poisson solver |
-| `kernels_forces.cu` | 737 | Forces + movement + extensions |
-| `cuda/CMakeLists.txt` | 35 | Build rules |
+The generated `docs/ENGINE_FILE_MANIFEST.json` is authoritative for the current
+file inventory and line counts. Stable CUDA responsibilities are:
+
+| Path | Responsibility |
+|------|----------------|
+| `include/ftd/gpu_engine.h` | `GpuEngine` orchestration interface |
+| `include/ftd/gpu_buffers.h` | Structure-of-arrays device-buffer contract |
+| `cuda/gpu_buffers.cu` | Device allocation and host/device transfer |
+| `cuda/gpu_engine.cu` | Tick orchestration, synchronization, and graph capture |
+| `cuda/kernels_stencil_single.cu`, `cuda/kernels_stencil_dual.cu` | Single- and dual-substrate field read/write kernels |
+| `cuda/kernels_poisson.cu` | FFT Poisson paths |
+| `cuda/kernels_forces.cu` | Force, particle-list, triad, and movement kernels |
+| `cuda/kernels_proper_time.cu` | Device proper-time and phase advance |
+| `cuda/kernels_gauge.cu` | SU(2)/SU(3) link relaxation |
+| `cuda/CMakeLists.txt` | CUDA source registration and build rules |
 
 ---
 
@@ -2643,33 +2654,64 @@ When `toggles.dual_substrate = true`, the single flux field J is replaced by two
 
 ---
 
-## 17. 10-Phase Proof-Out Scorecard
+## 17. Historical 10-Phase Campaign Snapshot (2026-03-16)
 
-All 10 phases pass with 125+ individual checks:
+This table preserves the proof-out campaign record as it stood on 2026-03-16.
+All ten phases' campaign executables reported their 125+ coded assertions as
+passing. Here
+`PASS` means only **the assertions passed**; it is not a `[THEOREM]`,
+`[DERIVED]`, `[EMERGENT]`, or external-confirmation verdict. Current claim
+status comes from the LEDGER, not from this historical scorecard.
 
 | Phase | Campaign | Checks | Result |
 |-------|----------|--------|--------|
 | 1 | Statistical convergence | 5/5 | PASS |
 | 2 | Continuum limit | 15/15 | PASS |
-| 3 | Bell test & Born rule | 18/18 | PASS |
+| 3 | Bell/Born assertions (mixed native and imported-reference checks) | 18/18 | PASS |
 | 4 | Mass spectrum | 20/20 | PASS |
 | 5 | Color dynamics | 16/16 | PASS |
 | 6 | Weak sector | 12/12 | PASS |
 | 7 | Gravitational sector | 13/13 | PASS |
 | 8 | Particle Zoo | 13/13 | PASS |
 | 9 | Cosmological predictions | 6/6 | PASS |
-| 10 | Novel predictions & falsifiability | 7/7 | PASS |
+| 10 | Novel-prediction/falsifiability assertions | 7/7 | PASS |
 
-### Key Results
+### Interpretation boundaries
 
-| Observable | FTD Prediction | Measured | Precision |
-|------------|---------------|----------|-----------|
+- **Bell:** the native deterministic/commutative substrate campaign is a
+  local-hidden-variable check and satisfies `S <= 2`. Standalone cosine,
+  singlet, and `2*sqrt(2)`/Tsirelson checks are imported QM or mathematical
+  identities; they do not establish a lattice Bell violation. The physical
+  `S=2*sqrt(2)` identification remains `[SELECTION]` (FTD-0023), and FTD-0347
+  records the benchmark re-grading.
+- **Hydrogen:** the campaign's Kepler radius and virial/`1/n^2` checks use
+  classical `1/r` dynamics. They are generic classical consistency checks,
+  not quantum-spectrum or eigenvalue evidence (FTD-0270). The later FTD-0278
+  result is separately `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]`, narrowed
+  to its 1s statement; it does not upgrade this historical campaign.
+- **Alpha:** `ALPHA = 1/X_PLUS_PRECISION = 1/137.035999177` is the inserted
+  CODATA-fitted runtime value. `ALPHA_TREE = 1/X_PLUS` is reference-only and
+  has no production force, wave, or damping consumer. Engine agreement
+  therefore cannot evidence the master quadratic (FTD-0792). The master
+  quadratic itself is `[THEOREM]` algebra; `x_+ = 1/alpha` remains
+  `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013).
+- **Integer sweep:** the historical 315-combination result required
+  `floor(x_-)=N_C`. That identification (FTD-0014) is retired, so this sweep
+  cannot support a current uniqueness grade.
+
+### Historical comparison values
+
+The numbers below are retained verbatim as campaign provenance. Their presence
+does not override their current LEDGER tags or make them engine derivations.
+
+| Observable | Historical FTD value | Comparison value | Recorded precision |
+|------------|----------------------|------------------|--------------------|
 | 4-term 1/alpha | 137.035999177 | 137.035999177(21) | **0.325 ppt** |
 | Spectral index n_s | 0.9645 | 0.9649 +/- 0.0042 | **0.096 sigma** |
 | sin^2 theta_W | 3/13 = 0.2308 | 0.2312 | **0.19%** |
 | alpha_s(M_Z) | 7/59 = 0.1186 | 0.1179 +/- 0.0009 | **0.63%** |
 
-### Six Falsification Criteria
+### Six historical falsification criteria
 
 1. No fourth generation of fermions with standard gauge couplings
 2. Normal neutrino mass hierarchy (not inverted)
@@ -2680,55 +2722,74 @@ All 10 phases pass with 125+ individual checks:
 
 ---
 
-## 18. Emergence Observations
+## 18. Historical Mechanisms and Outcomes Snapshot (2026-03-16)
 
-### Confirmed emergent behaviors
+The previous heading grouped implemented rules and measured responses under one
+epistemic label. The split below preserves the historical observations without
+assigning a current epistemic tag.
 
-| Behavior | Evidence |
-|----------|----------|
-| Unlike charges attract | +1/-1 experience force toward each other |
-| Like charges repel | +1/+1 experience force apart |
-| Force ~ 1/r^2 | Poisson Coulomb exponent -2.25 (CPU), -2.067 (GPU) |
-| Isotropic forces | Ratio 1.0 at r=5 |
-| Gravity attracts | Both polarities drift toward density |
-| Pair production | Flux > K_GENESIS creates +/- pairs |
-| Bound states | Opposite charges survive 300+ ticks |
-| Wave propagation | Flux pulses at C_WAVE |
-| Interference | Two sources create fringes |
-| Gauss constraint | div(J) approaches target |
-| Self-field buildup | Coupling source builds steady-state EM envelope |
-| Causality | No flux beyond C_WAVE * ticks |
-| Energy conservation | 0.01% drift (Scale 0), 10^-10% (Scale 1) |
+### Implemented or imposed mechanisms
 
-### Open questions
+| Mechanism | Historical implementation fact |
+|-----------|--------------------------------|
+| Electromagnetic attraction/repulsion | The Poisson Coulomb force law is coded with inserted `ALPHA`; charge signs select direction |
+| Gravity attraction | The attractive density-force branch is coded with imposed lattice `G_N` |
+| Pair production | The lifecycle extension creates `+/-` pairs when its coded threshold is crossed |
+| Wave propagation | The wave update propagates pulses using selected `C_WAVE` |
+| Gauss projection | The solver projects `div(J)` toward its configured target |
 
-- Spontaneous triad formation without binding code -- not observed
-- Stable orbits with radiation damping -- electrons spiral outward (correct physics)
-- Sub-ppm alpha precision from higher-order corrections -- not demonstrated in engine
+These rows establish that mechanisms are implemented. They are not, by that
+fact alone, measured emergent outcomes or substrate derivations.
+
+### Historical measured outcomes
+
+| Outcome | Recorded observation |
+|---------|----------------------|
+| Force profile | Poisson Coulomb exponent -2.25 (CPU), -2.067 (GPU) |
+| Force isotropy | Ratio 1.0 at r=5 |
+| Short-lived binding | Opposite charges survive 300+ ticks |
+| Interference | Two coherent sources create fringes |
+| Self-field response | Coupling source builds a steady-state EM envelope |
+| Causal support | No flux observed beyond `C_WAVE * ticks` |
+| Numerical energy accounting | 0.01% drift (Scale 0), 10^-10% (Scale 1) |
+
+### Historical unresolved observations
+
+- Spontaneous triad formation without binding code -- not observed.
+- Stable orbits with radiation damping -- electrons spiral outward in the
+  recorded setup; this is an observation, not a correctness confirmation.
+- Sub-ppm alpha precision from higher-order corrections -- not demonstrated
+  in the engine; the runtime instead uses the inserted precision alpha
+  described above.
+
+This list is provenance, not the current open-work register. Consult
+`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` for current open
+work.
 
 ---
 
-## 19. Scientific Status
+## 19. Current Scientific-Status Boundaries
 
-**Overall grade: C+ for scientific credibility** -- excellent software engineering but insufficient external physics validation.
+The obsolete overall `C+` and per-category letter grades are retired from this
+specification: they mixed software assertions, engine measurements, imported
+physics, and theory claims into one scale.
 
-| Category | Grade | Notes |
-|----------|-------|-------|
-| Internal consistency | A | Charge exact, energy <1% drift |
-| Force laws | B+ | Coulomb -2.07, R^2=0.9999 |
-| Constants derivation | B | alpha to 1.26 ppm, integers are inputs |
-| Integer uniqueness | A | Only {3,4,7,13} works (315 tested) |
-| Negative results | A | 12 falsifiability checks pass |
-| Hydrogen quantitative | A- | Virial exact, radius 0.0004% |
-| Interference patterns | B+ | 6 fringes, good symmetry |
-| External validation | F | Only external test (CERN) failed |
+- **Claim status and epistemic tags:**
+  `docs/theory/07_assessment/core_ledgers/LEDGER.md`
+- **Current open work:**
+  `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`
+- **Engine/theory call-path and implementation boundary:**
+  `docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_ENGINE_CALLSTACK.md`
+- **Atomic/hydrogen boundary:**
+  `docs/theory/07_assessment/engine_emergence_campaigns/AUDIT_ATOMIC_DYNAMICS_STATUS.md`
+- **Alpha extraction and runtime-input boundary:**
+  `docs/theory/07_assessment/audits/AUDIT_ALPHA_EXTRACTION.md` and LEDGER
+  FTD-0792
+- **Bell benchmark re-grading and imported-QM boundary:**
+  LEDGER FTD-0347 (with FTD-0023 for the physical identification)
 
-### Path forward
-
-1. External cross-validation against lattice QCD, atomic spectroscopy
-2. Statistical Born rule: 10K genesis events chi-squared test
-3. Bell ensemble: S-parameter with confidence intervals
-4. Blind predictions before looking at data
+Historical campaign counts and numbers remain in §§11, 17, and 18 for
+provenance; they do not define current scientific status.
 
 ## CUDA tick execution model (Component A, 2026-08-17)
 
