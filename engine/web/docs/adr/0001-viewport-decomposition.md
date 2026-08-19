@@ -1,6 +1,9 @@
 # ADR 0001 — Decompose `viewport.js`
 
-**Status:** Accepted (deferred execution)
+**Status:** Superseded — see the canonical [`docs/adr/0001-viewport-decomposition.md`](../../../../docs/adr/0001-viewport-decomposition.md)
+at the repo root (and [ADR-0010](../../../../docs/adr/0010-cascade-callback-pattern.md) /
+[ADR-0011](../../../../docs/adr/0011-mesh-factory-callback.md)) for how the
+`viewport.js` decomposition this ADR deferred actually happened.
 **Decider:** Engine team
 **Context:** Phase D.4 of the web-engine refactor
 
