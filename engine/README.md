@@ -143,9 +143,13 @@ Host mutations are flushed to the GPU before a device tick; host reads download 
 
 ## Runtime Toggle Surface
 
-The multi-scale engine uses a table-driven `TermToggles` registry (configured via `toggles.json`). Core rules default on; exploratory extensions are toggle-gated.
+Scale 0 uses the table-driven `TermToggles` registry. Its member initializers
+define shipping constructor defaults; `TOGGLE_SPECS[]` defines table-driven
+metadata and bulk enable/disable defaults, and the two must remain synchronized.
+`config/toggles.json` is a separate multi-scale UI/config catalog whose defaults
+may describe UI profiles rather than `TermToggles` construction.
 
-- **Scale 0 (33 toggles):** Wave propagation, coupling, damping, genesis, Gauss projection, gravity, Lorentz force, emergent forces, latency field, etc.
+- **Scale 0 (43 toggles):** Wave propagation, coupling, damping, genesis, Gauss projection, gravity, Lorentz force, emergent forces, latency field, etc.
 - **Scale 1 (12 toggles):** Coulomb, gravity, damping, exchange, strong, magnetic dipole, spin-orbit, radiation reaction, relativistic corrections.
 - **Scale 2 (12 toggles):** Ionic, vdW, covalent bonds, auto-bonding, angle strain (VSEPR), H-bonds, thermostat.
 - **Scale 5 (14 toggles):** Gravity, SPH gas, Hubble expansion, dark energy, star formation, stellar evolution.

@@ -1,7 +1,7 @@
 {
   "$schema": "ftd-toggle-registry-v1",
   "version": "1.0.0",
-  "description": "Every physics toggle across all FTD scales. Single source of truth consumed by C++ (ScaleEngine::get_toggle/set_toggle), WASM bindings, and JS (config/toggles.js). Human coders: add new toggles here when extending physics.",
+  "description": "Separate multi-scale UI/config catalog of physics toggles. Its defaults may describe UI profiles rather than TermToggles construction. Scale-0 shipping constructor defaults come from TermToggles member initializers; TOGGLE_SPECS[] owns table-driven metadata and bulk enable/disable defaults, and the two C++ declarations must remain synchronized.",
   "toggles": [
     { "name": "wave_propagation",  "scale": [0],    "category": "core",      "default": true,  "label": "Wave Propagation",    "description": "Laplacian wave equation in phase_read",             "phase": "phase_read",    "group": "dynamics" },
     { "name": "coupling",          "scale": [0],    "category": "core",      "default": true,  "label": "Coupling",            "description": "-g_c * grad(s) source term in phase_read (Term 2 sign, 2026-07-18)",           "phase": "phase_read",    "group": "dynamics" },

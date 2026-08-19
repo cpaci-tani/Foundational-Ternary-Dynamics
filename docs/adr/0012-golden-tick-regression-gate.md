@@ -27,7 +27,8 @@ subsequent commit must reproduce the hash exactly.
 - Run exactly 100 ticks
 - 64-bit FNV-1a hash over: every voxel's state + flux + wave_vel +
   velocity, every `EnergyAudit` field, manifested-site state
-- Assert `hash == 0xb604d81a3d79366eULL` (re-baselined for the
+- Historical acceptance pin (superseded): assert
+  `hash == 0xb604d81a3d79366eULL` (re-baselined for the
   audit m1 `gauss_violation` scope fix — per-voxel state/flux/wave_vel/velocity
   byte-identical, only the two gauss audit scalars changed; re-pinned
   after OpenMP race fixes in poisson_solvers.cpp + phase_write.cpp;
@@ -95,6 +96,18 @@ gated by `test_gauge_gpu_parity` (element-wise CPU/GPU tolerance ~1e-15 +
 bit-exact GPU run-to-run determinism), not by a pinned GPU link hash — the
 CPU↔GPU FMA-contraction and product-association differences are documented in
 that test.
+
+**Amendment (2026-08-18): current clean-profile split pins.**
+The current pins owned by `test_render_bridge_golden.cpp` are:
+`GOLDEN_HASH = 0xc54ffbeda5a3ea63`,
+`GOLDEN_STATE_HASH = 0xe9633be07656e741`, and
+`GOLDEN_AUDIT_HASH = 0x48bd8b3fc2efdba3`. The state and audit folds distinguish
+trajectory changes from diagnostic-only changes; the combined fold covers both.
+These three pins apply only to that test's frozen L=17, seed-42, 100-tick toggle
+profile and its folded fields. They do not cover off-profile toggles, larger
+lattices, or longer horizons. Other golden profiles retain independent pins and
+scope. All earlier hashes above remain as superseded provenance, not current
+pins.
 
 ## Alternatives considered
 
