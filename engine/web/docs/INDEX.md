@@ -47,7 +47,7 @@ historical provenance, and where new cleanup or architecture notes should land.
 
 ## ADRs
 
-- [`adr/0001-viewport-decomposition.md`](adr/0001-viewport-decomposition.md) — accepted; viewport decomposition target and prerequisites.
+- [`adr/0001-viewport-decomposition.md`](adr/0001-viewport-decomposition.md) — superseded; the deferred decomposition it recorded has since happened — see the canonical [`docs/adr/0001-viewport-decomposition.md`](../../../docs/adr/0001-viewport-decomposition.md) at the repo root (and ADR-0010/0011).
 - [`adr/0002-scenario-architecture.md`](adr/0002-scenario-architecture.md) — proposed; scenario descriptor decision point.
 
 ## Audits
