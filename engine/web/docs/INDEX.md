@@ -19,7 +19,6 @@ historical provenance, and where new cleanup or architecture notes should land.
 - [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) — per-frame tick/upload/overlay/render/telemetry pipeline.
 - [`SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](SPEC_SCALE0_SCENARIO_ARCHITECTURE.md) — scenario definition layers and lifecycle.
 - [`SPEC_SCALE0_PERF_TELEMETRY_PANELS.md`](SPEC_SCALE0_PERF_TELEMETRY_PANELS.md) — demand-gated telemetry and panel performance.
-- [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) — lattice performance notes.
 - [`SPEC_SCALE0_LATTICE_SPECTROSCOPY.md`](SPEC_SCALE0_LATTICE_SPECTROSCOPY.md) — lattice spectroscopy panel/protocol.
 - [`SPEC_S0_QUANTUM_OVERLAYS.md`](SPEC_S0_QUANTUM_OVERLAYS.md) — Scale-0 quantum/topology overlay semantics.
 - [`SPEC_VACUUM_PARTICLE_SCENARIOS.md`](SPEC_VACUUM_PARTICLE_SCENARIOS.md) — vacuum particle scenario family.
@@ -42,8 +41,6 @@ historical provenance, and where new cleanup or architecture notes should land.
 ## Active Plans
 
 - [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md) — scenario architecture cleanup roadmap.
-- [`PLAN_SCALE0_PHYSICS_WORKER.md`](PLAN_SCALE0_PHYSICS_WORKER.md) — worker rollout provenance; keep until fully superseded by bridge/runtime specs.
-- [`PLAN_SCALE0_SPARSE_TICK.md`](PLAN_SCALE0_SPARSE_TICK.md) — sparse tick implementation provenance; keep until sparse tick is fully documented in active perf specs.
 
 ## ADRs
 
@@ -52,7 +49,6 @@ historical provenance, and where new cleanup or architecture notes should land.
 
 ## Audits
 
-- [`audits/AUDIT_WEB_ARCHITECTURE_EPISTEMIC_STATUS.md`](audits/AUDIT_WEB_ARCHITECTURE_EPISTEMIC_STATUS.md)
 - [`audits/AUDIT_WEB_ENGINE_2026-05-27.md`](audits/AUDIT_WEB_ENGINE_2026-05-27.md)
 - [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
 - [`audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)

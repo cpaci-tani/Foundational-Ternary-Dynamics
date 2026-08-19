@@ -5,13 +5,13 @@ default**; Phase 3 partial (G done); Phase 3-F, the §6.2/§6.3 render items, an
 §9 status).  ·  **Scope:** `engine/web` Scale-0
 consumption-side per-frame cost (telemetry collection, sidepanel rendering, overlay sampling, GC
 hygiene, worker-path config). The **producer** side (the wave tick + worker offload) is covered by
-[`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) and is already shipped — this spec covers
-the cost the live sidepanels (energy-audit + Lagrangian) add on the
+[`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md) §5-6 and is already shipped —
+this spec covers the cost the live sidepanels (energy-audit + Lagrangian) add on the
 **consumption** side.
 
 **Companions:** [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the per-frame
 `animate()` pipeline), [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md)
-(worker/shadow), [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) (tick/worker offload), and
+(worker/shadow, including tick/worker offload), and
 [`SPEC_NATIVE_GPU_TELEMETRY.md`](../../SPEC_NATIVE_GPU_TELEMETRY.md) (the native CUDA snapshot producer).
 
 Re-derive all `file:line` references from source before relying on line numbers.
@@ -50,10 +50,12 @@ check. `serve.py:57-59` sends the headers in dev; production may not.
   shadow" is **stale**. Commit `b319fd90` moved them into the worker; the proxy serves worker-computed
   scalars (`mock-bridge-proxy.js:121-122`), main-thread cost ~0. (So the audit/Lagrangian are *not*
   computed on the render thread on the default path — C1, not a main-thread sweep, is the default-path cause.)
-- `SPEC_SCALE0_LATTICE_PERF.md §1` — the profile table (tick 12/38/89 ms; diagnostics 11/33 ms) was
+- The old `SPEC_SCALE0_LATTICE_PERF.md §1` profile table (tick 12/38/89 ms; diagnostics 11/33 ms) was
   measured **in-thread, 14 overlays**, *before* this regression and *before* the worker became
-  the default path. It does not bound the worker-mode, all-panels-live, 19-scalar case users actually run.
-  **→ Phase 0 re-measures it.**
+  the default path. It did not bound the worker-mode, all-panels-live, 19-scalar case users actually run.
+  **→ Phase 0 re-measures it.** (`SPEC_SCALE0_LATTICE_PERF.md` itself was retired 2026-08-18 — fully
+  superseded by the current worker architecture in `SPEC_SCALE0_BRIDGE_ARCHITECTURE.md` §5-6 — so this
+  historical figure is preserved here rather than by reference.)
 
 ### 1.4 What is already good (do NOT touch — confirmed solid by the redteam)
 
@@ -117,8 +119,8 @@ is replaced.
   with (a) default overlays + controls tab, (b) all telemetry panels open, (c) a floated+collapsed
   Telemetry Grid: worker tick period, main-thread frame time, and per-stage breakdown
   (tick / upload / overlay sweep-start vs drain / diagnostics collect / panel update).
-- Record the numbers in a new profile table; annotate `SPEC_SCALE0_LATTICE_PERF.md §1` as superseded for
-  the worker-mode case.
+- Record the numbers in a new profile table. (The old `SPEC_SCALE0_LATTICE_PERF.md §1` table this would
+  have superseded was retired 2026-08-18 rather than annotated in place — see §1.3.)
 - **Deliverable:** measured baseline + a re-runnable harness (`tests/` spec or a documented `preview_eval`
   snippet) used to validate Phases 1–4.
 
@@ -231,12 +233,13 @@ and use it in all four panels' `update()`. Add the missing self-guard to `diagno
   `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp`
   (`serve.py:57-59` is dev-only). Add a status indicator (extend the existing Native/WASM/Mock · GPU/CPU
   chip) that shows when the **worker path is NOT taken** so the silent in-thread fallback (C4) is detectable.
-- **O — doc reconciliation.** Fix the two stale claims (§1.3): `SPEC_SCALE0_BRIDGE_ARCHITECTURE.md §5`
-  shadow note; `SPEC_SCALE0_LATTICE_PERF.md §1` profile table (annotate + link the Phase-0 worker-mode
-  numbers).
+- **O — doc reconciliation.** Fix the remaining stale claim (§1.3): `SPEC_SCALE0_BRIDGE_ARCHITECTURE.md §5`
+  shadow note. (The other stale claim, `SPEC_SCALE0_LATTICE_PERF.md §1`'s profile table, was resolved by
+  retiring that doc 2026-08-18 rather than annotating it in place — its historical figures are preserved
+  inline in §1.3 above.)
 
-*Files:* `serve.py`, the status-chip component, `docs/SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`,
-`docs/SPEC_SCALE0_LATTICE_PERF.md`. *Effort:* S. *Risk:* Low (config + docs).
+*Files:* `serve.py`, the status-chip component, `docs/SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`.
+*Effort:* S. *Risk:* Low (config + docs).
 
 ---
 

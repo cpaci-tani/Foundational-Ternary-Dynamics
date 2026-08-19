@@ -8,7 +8,7 @@ surface, the Web-Worker proxy + SharedArrayBuffer design, bridge selection, and 
 (scenarios sit on these bridges), [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md)
 (the per-frame loop drives them). Point-in-time audits: [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
 (read-surface under the worker), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
-(lifecycle/teardown). Worker design: [`PLAN_SCALE0_PHYSICS_WORKER.md`](PLAN_SCALE0_PHYSICS_WORKER.md).
+(lifecycle/teardown).
 
 **Path convention:** JS paths relative to `engine/web/js/`; docs relative to `engine/web/docs/`.
 Every claim carries a `file:line` — re-derive from source before relying on it (the discipline that

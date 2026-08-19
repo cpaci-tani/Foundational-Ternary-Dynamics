@@ -8,7 +8,7 @@
  *
  * Requires a COOP/COEP server. The default test server is plain http.server
  * (not isolated) so these tests SKIP there; run against the caching+COOP server
- * to exercise them:  python serve.py 8081 --cache   (see PLAN_SCALE0_PHYSICS_WORKER.md).
+ * to exercise them:  python serve.py 8081 --cache
  */
 import { test, expect } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';
