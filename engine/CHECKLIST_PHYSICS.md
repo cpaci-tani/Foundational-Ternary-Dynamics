@@ -414,7 +414,7 @@ W/Z masses from chirality gap in dual substrate validated. Chirality gap exists 
 
 ### 37.  Higgs Mechanism from Manifestation [SELECTION]
 
-Mexican-hat potential shape validated: flux below K_GENESIS stays void, above triggers genesis (SSB). Goldstone mode propagates at C_SPEED in dual substrate. Higgs as flux-density oscillation confirmed (49 direction changes). M_HIGGS = 124.8 GeV (0.24% err), V_HIGGS = 246.09 GeV (0.05% err). Dynamic SSB: uniform high-flux vacuum spontaneously fills with ~4000 particles.
+Mexican-hat potential shape validated: flux below K_GENESIS stays void, above triggers genesis (SSB). Goldstone mode propagates at C_SPEED in dual substrate. Higgs as flux-density oscillation confirmed (49 direction changes). M_HIGGS = 124.75 GeV — **corrected 2026-07-01 (FTD-0348): −0.36% vs PDG 2024's 125.20 ± 0.11 GeV, a −4.1σ discrepancy at current precision** (the earlier "0.24% err" figure here compared only against the superseded PDG-2020 value 125.10 GeV; at PDG-2024 precision the exact relation is experimentally excluded), V_HIGGS = 246.09 GeV (0.05% err). Dynamic SSB: uniform high-flux vacuum spontaneously fills with ~4000 particles.
 
 - **Theory**: `DERIV_HIGGS_FROM_MANIFESTATION.md`
 - **Constants**: `V_HIGGS = 246.09 GeV`, `M_HIGGS = 124.8 GeV`, `LAMBDA_HIGGS` in `ontic.h`
@@ -499,9 +499,9 @@ Static massive object creates latency profile from Poisson solver. Bandwidth con
 - **Tests**: `test_latency_field`, `test_voxel_properties`, `test_lorentz`
 - **Done means**: Gravitational lensing and time dilation emerge from latency + bandwidth constraint.
 
-### 47.  Einstein Field Equations (Linearized) [THEOREM]
+### 47.  Einstein Field Equations (Linearized) [SELECTION/CONDITIONAL]
 
-R_μν - ½g_μν R = 8πG T_μν. Linearized gravity waves propagate via latency field perturbations.
+R_μν - ½g_μν R = 8πG T_μν. Linearized gravity waves propagate via latency field perturbations. **Retagged 2026-05-21 (LEDGER FTD-0189):** the audited source (`DERIV_RELATIVITY_DERIVATION.md` §14.1, Theorem 14.1) was corrected from [THEOREM] to [SELECTION/CONDITIONAL] — the rank-2 metric perturbation h_μν is *posited* (§10.1 Conjecture 10.1), not constructed from the substrate, so this item's [THEOREM] tag was an overclaim inherited from the pre-audit source.
 
 - **Theory**: `DERIV_EINSTEIN_FIELD_EQUATIONS.md`
 - **Files**: `src/render_bridge.cpp` (latency Poisson solver)
